@@ -148,7 +148,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
                 {maybeR (null)
                         ((price: number) => (
                           <tr>
-                            <td>{translate (l10n) ("weight")}</td>
+                            <td>{translate (l10n) ("price")}</td>
                             <td>
                               {localizeNumber (locale) (price)}
                               {" "}
@@ -235,15 +235,15 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
           <tr>
             <td>{translate (l10n) ("damage")}</td>
             <td>
-              {damageDiceNumber}
+              {renderMaybe (damageDiceNumber)}
               {translate (l10n) ("dice.short")}
-              {damageDiceSides}
+              {renderMaybe (damageDiceSides)}
               {renderMaybeWith (signZero) (damageFlat)}
             </td>
           </tr>
           <tr>
             <td>{translate (l10n) ("reloadtime")}</td>
-            <td>{reloadTime} {translate (l10n) ("actions.short")}</td>
+            <td>{renderMaybe (reloadTime)} {translate (l10n) ("actions.short")}</td>
           </tr>
           <tr>
             <td>{translate (l10n) ("range")}</td>
@@ -283,11 +283,11 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
         <tbody>
           <tr>
             <td>{translate (l10n) ("protection.short")}</td>
-            <td>{pro}</td>
+            <td>{renderMaybe (pro)}</td>
           </tr>
           <tr>
             <td>{translate (l10n) ("encumbrance.short")}</td>
-            <td>{enc}</td>
+            <td>{renderMaybe (enc)}</td>
           </tr>
           <tr>
             <td>{translate (l10n) ("weight")}</td>

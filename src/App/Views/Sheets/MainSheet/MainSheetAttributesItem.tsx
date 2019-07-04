@@ -1,10 +1,11 @@
-import * as classNames from "classnames";
+import classNames from "classnames";
 import * as React from "react";
 import { fmap } from "../../../../Data/Functor";
 import { imap, List, toArray } from "../../../../Data/List";
-import { fromMaybe, fromMaybeR, Maybe, maybeR, maybeRNull, or } from "../../../../Data/Maybe";
+import { fromMaybe, fromMaybeR, isNothing, Maybe, maybeRNull, or } from "../../../../Data/Maybe";
 import { ndash } from "../../../Utilities/Chars";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { renderMaybeWith } from "../../../Utilities/ReactUtils";
 
 export interface MainSheetAttributesItemProps {
   add: Maybe<number>
@@ -43,15 +44,15 @@ export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
           {or (empty) ? ndash : fromMaybe<string | number> (ndash) (base)}
         </div>
         <div className="add">
-          {or (empty) ? ndash : Maybe.sum (add)}+
+          {or (empty) ? ndash : Maybe.sum (add)}
         </div>
         <div
           className={classNames ({
-            "blocked": purchased === undefined,
+            "blocked": isNothing (purchased),
             "purchased": true,
           })}
           >
-          {maybeR ("\uE14B") ((num: number) => or (empty) ? ndash : num) (purchased)}
+          {renderMaybeWith ((num: number) => or (empty) ? ndash : num) (purchased)}
         </div>
         <div className="max">
           {or (empty) ? ndash : Maybe.sum (max)}

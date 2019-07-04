@@ -890,11 +890,13 @@ export const maybeRNull = maybeR (null)
 export const maybeRNullF = flip (maybeR (null))
 
 /**
- * `fromMaybeNil :: Maybe [a] -> [a]`
+ * `joinMaybeList :: Maybe [a] -> [a]`
  *
  * Returns an empty list on `Nothing`, otherwise the contained list.
  */
-export const fromMaybeNil = <A> (x: Maybe<List<A>>): List<A> => fromMaybe (List<A> ()) (x)
+export const joinMaybeList = <A> (x: Maybe<List<A>>): List<A> => fromMaybe (List<A> ()) (x)
+
+Maybe.joinMaybeList = joinMaybeList
 
 
 // NAMESPACED FUNCTIONS
@@ -967,7 +969,6 @@ Maybe.ensure = ensure
 Maybe.imapMaybe = imapMaybe
 Maybe.maybeToNullable = maybeToNullable
 Maybe.maybeToUndefined = maybeToUndefined
-Maybe.fromMaybeNil = fromMaybeNil
 Maybe.maybeR = maybeR
 Maybe.maybeRNull = maybeRNull
 Maybe.maybeRNullF = maybeRNullF

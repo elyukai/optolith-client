@@ -1,4 +1,8 @@
 .scroll {
+	> .scroll-view > .scroll-inner {
+		user-select: text;
+	}
+
 	.track-vertical {
 		height: 100%;
 		right: 0;

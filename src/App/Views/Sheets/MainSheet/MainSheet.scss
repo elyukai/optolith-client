@@ -202,7 +202,25 @@
 						}
 
 						&.blocked {
-							font: 24px/7.4mm Material;
+							position: relative;
+
+							&::before, &::after {
+								content: "";
+								position: absolute;
+								width: 140%;
+								height: 0.3mm;
+								top: calc(50% - 0.3mm);
+								left: -20%;
+								background: black;
+							}
+
+							&::before {
+								transform: rotate(45deg);
+							}
+
+							&::after {
+								transform: rotate(-45deg);
+							}
 						}
 					}
 				}

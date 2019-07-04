@@ -1,6 +1,6 @@
 import * as React from "react";
-import ReactMarkdown = require("react-markdown")
-import breaks = require("remark-breaks")
+import ReactMarkdown from "react-markdown";
+import Ph from "remark-breaks";
 
 export interface MarkdownProps {
   className?: string
@@ -13,12 +13,14 @@ export interface MarkdownRootProps {
   children?: React.ReactNode
 }
 
+type Renderer<A> = (props: A) => React.ReactElement<A>
+
 export function Markdown (props: MarkdownProps) {
   const { className, source = "...", isListElement, oneLine } = props
 
-  const root =
+  const root: string | Renderer<{ children?: React.ReactNode }> =
     oneLine === "fragment"
-      ? (p: { children?: React.ReactNode}) => <>{p.children}</>
+      ? p => <>{p.children}</>
       : oneLine === "span"
       ? "span"
       : isListElement === true
@@ -38,7 +40,7 @@ export function Markdown (props: MarkdownProps) {
         link,
         linkReference: link,
       }}
-      plugins={[breaks]}
+      plugins={[Ph]}
       disallowedTypes={oneLine ? ["paragraph"] : undefined}
       />
   )

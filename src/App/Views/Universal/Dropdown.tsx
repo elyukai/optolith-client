@@ -1,40 +1,62 @@
-import * as classNames from "classnames";
+import classNames from "classnames";
 import * as React from "react";
 import { equals } from "../../../Data/Eq";
-import { fmap } from "../../../Data/Functor";
-import { find, flength, List, map, toArray } from "../../../Data/List";
-import { alt, fromMaybe, isNothing, Maybe, normalize, Nothing, or } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
+import { cons, elemF, filter, find, flength, fnull, intercalate, List, map, notNull, toArray } from "../../../Data/List";
+import { any, ensure, fromJust, fromMaybe, isJust, Just, Maybe, maybe, maybeToList, normalize, Nothing, or } from "../../../Data/Maybe";
+import { Accessors, fromDefault, PartialMaybeOrNothing, Record, RecordCreator, StrictAccessors } from "../../../Data/Record";
+import { pipe, pipe_ } from "../../Utilities/pipe";
+import { renderMaybe } from "../../Utilities/ReactUtils";
 import { Label } from "./Label";
 import { Scroll } from "./Scroll";
 
-export interface DropdownOption {
-  id: Maybe<number | string>
+type DropdownKey = string | number
+
+export interface DropdownOption<A extends DropdownKey = DropdownKey> {
+  id: Maybe<A>
   name: string
   disabled: Maybe<boolean>
 }
 
-export const DropdownOption =
-  fromDefault<DropdownOption> ({
+interface DropdownOptionAccessors extends Accessors<DropdownOption<DropdownKey>> {
+  id: <A extends DropdownKey> (x: Record<Pick<DropdownOption<A>, "id">>) => Maybe<A>
+}
+
+interface DropdownOptionStrictAccessors extends StrictAccessors<DropdownOption<DropdownKey>> {
+  id: <A extends DropdownKey> (x: Record<DropdownOption<A>>) => Maybe<A>
+}
+
+interface DropdownOptionCreator extends RecordCreator<DropdownOption<DropdownKey>> {
+  <A extends DropdownKey = DropdownKey>
+  (x: PartialMaybeOrNothing<DropdownOption<A>>): Record<DropdownOption<A>>
+  readonly default: Record<DropdownOption<DropdownKey>>
+  readonly AL: DropdownOptionAccessors
+  readonly A: DropdownOptionStrictAccessors
+  readonly is:
+    <B, A extends DropdownKey> (x: B | Record<DropdownOption<A>>) => x is Record<DropdownOption<A>>
+}
+
+export const DropdownOption: DropdownOptionCreator =
+  fromDefault<DropdownOption<any>> ({
     id: Nothing,
     name: "",
     disabled: Nothing,
   })
 
-const { disabled: getDisabled, id, name } = DropdownOption.A
+const DOA = DropdownOption.A
 
-export interface DropdownProps {
+export interface DropdownProps<A extends DropdownKey> {
   className?: string
   disabled?: boolean | Maybe<boolean>
   fullWidth?: boolean
   hint?: string
   label?: string
-  options: List<Record<DropdownOption>>
+  options: List<Record<DropdownOption<A>>>
   required?: boolean
-  value: boolean | string | number | Maybe<boolean | string | number>
-  onChange? (option: Maybe<number | string>): void
-  onChangeJust? (option: number | string): void
+  value?: A | Maybe<A>
+  values?: List<A>
+  onChange? (option: Maybe<A>): void
+  onChangeJust? (option: A): void
+  onChangeList? (selected: List<A>): void
 }
 
 interface DropdownState {
@@ -42,7 +64,8 @@ interface DropdownState {
   position: string
 }
 
-export class Dropdown extends React.Component<DropdownProps, DropdownState> {
+export class Dropdown<A extends DropdownKey>
+  extends React.Component<DropdownProps<A>, DropdownState> {
   state = {
     isOpen: false,
     position: "bottom",
@@ -69,15 +92,19 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
     this.setState (() => ({ isOpen: !this.state.isOpen }))
   }
 
-  onChange = (option: Maybe<number | string> = Nothing) => {
-    const { onChange, onChangeJust } = this.props
+  onChange = (option: Maybe<A> = Nothing) => {
+    const { onChange, onChangeJust, onChangeList, values } = this.props
 
     if (typeof onChange === "function") {
       onChange (option)
     }
 
-    if (typeof onChangeJust === "function" && Maybe.isJust (option)) {
-      onChangeJust (Maybe.fromJust (option))
+    if (typeof onChangeJust === "function" && isJust (option)) {
+      onChangeJust (fromJust (option))
+    }
+
+    if (typeof onChangeList === "function" && values !== undefined && isJust (option)) {
+      onChangeList (cons (values) (fromJust (option)))
     }
 
     this.setState ({ isOpen: false })
@@ -103,18 +130,47 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
   }
 
   render () {
-    const { className, disabled, fullWidth, hint, label, options, required, value } = this.props
+    const {
+      className,
+      disabled,
+      fullWidth,
+      hint,
+      label,
+      options,
+      required,
+      value,
+      values,
+    } = this.props
+
     const { isOpen, position } = this.state
 
+    const isMultiple = values !== undefined
     const normalizedValue = normalize (value)
+    const normalizedValues = values === undefined ? List<A> () : values
     const normalizedDisabled = or (normalize (disabled))
 
     const style = isOpen ? (flength (options) < 6 ? flength (options) * 33 + 1 : 166) : 0
 
-    const maybeCurrent =
-      find<Record<DropdownOption>> (pipe (id, equals (normalizedValue))) (options)
+    const mselected =
+      !isMultiple
+        ? pipe_ (
+            options,
+            find<Record<DropdownOption<A>>> (pipe (DOA.id, equals (normalizedValue))),
+            maybeToList
+          )
+        : filter<Record<DropdownOption<A>>> (pipe (DOA.id, any (elemF (normalizedValues))))
+                                            (options)
 
-    const valueText = alt (fmap (name) (maybeCurrent)) (Maybe (hint))
+    const valueText =
+      pipe_ (
+        mselected,
+        ensure (notNull),
+        maybe (renderMaybe (Maybe (hint)))
+              (pipe (
+                map (DOA.name),
+                intercalate (", ")
+              ))
+      )
 
     const downElement = (
       <div style={{ height: style }} className="down">
@@ -122,25 +178,25 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
           <Scroll noInnerElement className={flength (options) > 5 ? "scroll-active" : ""}>
             {
               toArray (
-                map<Record<DropdownOption>, JSX.Element>
+                map<Record<DropdownOption<A>>, JSX.Element>
                   (option => {
                     const classNameInner = classNames (
-                      equals (normalizedValue) (id (option)) ? "active" : undefined,
-                      or (getDisabled (option)) ? "disabled" : undefined
+                      equals (normalizedValue) (DOA.id (option)) ? "active" : undefined,
+                      or (DOA.disabled (option)) ? "disabled" : undefined
                     )
 
                     return (
                       <div
                         className={classNameInner}
-                        key={fromMaybe<string | number> ("__DEFAULT__") (id (option))}
+                        key={fromMaybe<string | number> ("__DEFAULT__") (DOA.id (option))}
                         onClick={
                           !normalizedDisabled
-                          && !or (getDisabled (option))
-                          ? this.onChange.bind (undefined, id (option))
+                          && !or (DOA.disabled (option))
+                          ? this.onChange.bind (undefined, DOA.id (option))
                           : undefined
                         }
                         >
-                        {name (option)}
+                        {DOA.name (option)}
                       </div>
                     )
                   })
@@ -161,7 +217,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
           active: isOpen,
           fullWidth,
           disabled: normalizedDisabled,
-          invalid: required === true && isNothing (maybeCurrent),
+          invalid: required === true && fnull (mselected),
         })}
         ref={node => this.containerRef = node}
         >
@@ -175,9 +231,9 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
           {position === "top" && isOpen ? downElement : placeholder}
           <div
             onClick={this.switch}
-            className={classNames ("value", isNothing (maybeCurrent) ? "hint" : undefined)}
+            className={classNames ("value", fnull (mselected) ? "hint" : undefined)}
             >
-            {fromMaybe ("") (valueText)}
+            {valueText}
           </div>
           {position === "bottom" && isOpen ? downElement : placeholder}
         </div>
@@ -185,3 +241,6 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
     )
   }
 }
+
+export const stringOfListToDropdown =
+  (index: number) => (name: string) => DropdownOption ({ id: Just (index + 1), name })

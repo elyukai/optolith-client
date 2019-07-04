@@ -1,5 +1,5 @@
 import { fmap } from "../../Data/Functor";
-import { bind, bindF, listToMaybe } from "../../Data/Maybe";
+import { bind, bindF, listToMaybe, Maybe } from "../../Data/Maybe";
 import { lookupF } from "../../Data/OrderedMap";
 import { Belongings } from "../Models/Hero/Belongings";
 import { Energies } from "../Models/Hero/Energies";
@@ -45,7 +45,11 @@ export const getCurrentHero = createMaybeSelector (
   (mid, heroes) => bind (mid) (lookupF (heroes))
 )
 
-export const getHeroProp = (_: AppStateRecord, props: { hero: HeroModelRecord }) => props.hero
+export const getHeroProp =
+  (_: AppStateRecord, props: { hero: HeroModelRecord }) => props.hero
+
+export const getMaybeHeroProp =
+  (_: AppStateRecord, props: { mhero: Maybe<HeroModelRecord> }) => props.mhero
 
 
 export const getCurrentHeroPresent =
@@ -95,7 +99,10 @@ export const getSkills =
   pipe (getCurrentHeroPresent, fmap (Hero.skills))
 
 export const getSpecialAbilities =
-  pipe (getCurrentHeroPresent, fmap (Hero.specialAbilities))
+  pipe (getHeroProp, Hero.specialAbilities)
+
+export const getMaybeSpecialAbilities =
+  pipe (getMaybeHeroProp, fmap (Hero.specialAbilities))
 
 export const getSpells =
   pipe (getCurrentHeroPresent, fmap (Hero.spells))

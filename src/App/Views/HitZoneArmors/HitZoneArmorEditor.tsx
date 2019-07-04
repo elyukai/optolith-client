@@ -60,7 +60,7 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
     pipe_ (
       templates,
       mapMaybe (pipe (ensure (pipe (ITA.gr, equals (4))), fmap (itemTemplateToDropdown))),
-      maybe (ident as ident<List<Record<DropdownOption>>>)
+      maybe (ident as ident<List<Record<DropdownOption<string>>>>)
             (pipe (
               mapMaybe (pipe (
                 ensure ((e: Record<Item>) => IA.gr (e) === 4 && !IA.isTemplateLocked (e)),

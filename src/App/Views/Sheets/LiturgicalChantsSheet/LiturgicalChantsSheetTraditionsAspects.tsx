@@ -1,12 +1,11 @@
 import * as React from "react";
-import { intercalate, List } from "../../../../Data/List";
 import { Maybe } from "../../../../Data/Maybe";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
-import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
+import { renderMaybe } from "../../../Utilities/ReactUtils";
 
 export interface LiturgicalChantsSheetTraditionsAspectsProps {
-  aspects: Maybe<List<string>>
+  aspects: Maybe<string>
   blessedPrimary: Maybe<string>
   blessedTradition: Maybe<string>
   l10n: L10nRecord
@@ -30,7 +29,7 @@ export function LiturgicalChantsSheetTraditionsAspects (
           {translate (l10n) ("aspects.oneormore")}
         </span>
         <span className="value">
-          {renderMaybeWith (intercalate (", ")) (aspects)}
+          {renderMaybe (aspects)}
         </span>
       </div>
       <div className="tradition">

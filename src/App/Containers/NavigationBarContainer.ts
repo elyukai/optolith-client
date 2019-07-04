@@ -33,8 +33,8 @@ const mapStateToProps =
                                 (hero => getAPObjectMap (HeroModel.A.id (hero)) (state, ownProps))),
     maximumForMagicalAdvantagesDisadvantages:
       getMagicalAdvantagesDisadvantagesAdventurePointsMaximum (state),
-    isSpellcaster: getIsSpellsTabAvailable (state),
-    isBlessedOne: getIsLiturgicalChantsTabAvailable (state),
+    isSpellcaster: getIsSpellsTabAvailable (state, ownProps),
+    isBlessedOne: getIsLiturgicalChantsTabAvailable (state, ownProps),
   })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch, ownProps: NavigationBarOwnProps) => ({

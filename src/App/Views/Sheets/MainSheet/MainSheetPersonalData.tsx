@@ -171,7 +171,7 @@ export function MainSheetPersonalData (props: MainSheetPersonalDataProps) {
           />
         <LabelBox
           className="ap-total"
-          label={translate (l10n) ("totalap")}
+          label={translate (l10n) ("totalap.novar")}
           value={fmapF (ap) (AdventurePointsCategories.A.total)}
           />
         <LabelBox
@@ -187,7 +187,7 @@ export function MainSheetPersonalData (props: MainSheetPersonalDataProps) {
           />
         <LabelBox
           className="ap-used"
-          label={translate (l10n) ("apspent")}
+          label={translate (l10n) ("apspent.novar")}
           value={fmapF (ap) (AdventurePointsCategories.A.spent)}
           />
       </div>

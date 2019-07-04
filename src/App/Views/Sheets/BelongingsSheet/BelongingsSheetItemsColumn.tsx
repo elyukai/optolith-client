@@ -80,7 +80,7 @@ export function BelongingsSheetItemsColumn (props: BelongingsSheetItemsColumnPro
           )),
           toArray
         )}
-        {replicateR (flength (items) - columnSize)
+        {replicateR (columnSize - flength (items))
                     (index => (
                       <tr key={`undefined-${index}`}>
                         <td className="name"></td>

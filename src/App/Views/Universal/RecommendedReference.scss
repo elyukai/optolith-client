@@ -4,6 +4,7 @@
 	> div {
 		display: flex;
 		align-items: center;
+		height: 32px;
 	}
 
 	.icon {
@@ -15,9 +16,10 @@
 	}
 
 	.name {
-		font: 400 12px/32px Alegreya Sans;
+		font: 400 12px/1 Alegreya Sans;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
+		padding-top: 3px;
 	}
 
 	.rec {
@@ -37,6 +39,16 @@
 
 		.name {
 			color: var(--uncommon-bright-color);
+		}
+	}
+
+	.strongly-recommended {
+		.icon {
+			border-color: var(--important-dark-color);
+		}
+
+		.name {
+			color: var(--important-bright-color);
 		}
 	}
 }

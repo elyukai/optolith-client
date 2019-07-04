@@ -7,11 +7,12 @@ import { getIsPactValid, isPactEditable } from "../Selectors/pactSelectors";
 import { getPact } from "../Selectors/stateSelectors";
 import { PactSettings, PactSettingsDispatchProps, PactSettingsOwnProps, PactSettingsStateProps } from "../Views/Pact/Pact";
 
-const mapStateToProps = (state: AppStateRecord): PactSettingsStateProps => ({
-  pact: getPact (state),
-  isPactValid: getIsPactValid (state),
-  isPactEditable: isPactEditable (state),
-})
+const mapStateToProps =
+  (state: AppStateRecord, ownProps: PactSettingsOwnProps): PactSettingsStateProps => ({
+    pact: getPact (state),
+    isPactValid: getIsPactValid (state),
+    isPactEditable: isPactEditable (state, ownProps),
+  })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): PactSettingsDispatchProps => ({
   setPactCategory (category: Maybe<number>) {

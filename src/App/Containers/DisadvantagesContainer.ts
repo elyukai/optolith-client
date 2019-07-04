@@ -20,8 +20,9 @@ const mapStateToProps =
   (state: AppStateRecord, ownProps: DisadvantagesOwnProps): DisadvantagesStateProps => ({
     activeList: getFilteredActiveDisadvantages (state, ownProps),
     ap: join (getAPObjectMap (HeroModel.A.id (ownProps.hero)) (state, ownProps)),
-    deactiveList: getFilteredInactiveDisadvantages (HeroModel.A.id (ownProps.hero))
-                                                   (state, ownProps),
+    deactiveList:
+      join (getFilteredInactiveDisadvantages (HeroModel.A.id (ownProps.hero))
+                                             (state, ownProps)),
     enableActiveItemHints: getEnableActiveItemHints (state),
     isRemovingEnabled: getIsRemovingEnabled (state),
     stateEntries: getDisadvantages (state),

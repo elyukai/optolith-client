@@ -1,7 +1,7 @@
 import * as React from "react";
 import { List, map, splitAt, toArray } from "../../../../Data/List";
-import { fst, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
+import { fst, snd } from "../../../../Data/Tuple";
 import { NumIdName } from "../../../Models/NumIdName";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";

@@ -2,18 +2,20 @@ import * as React from "react";
 import { equals } from "../../Data/Eq";
 import { flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
-import { elemF, filter, List, pure } from "../../Data/List";
+import { any, elemF, filter, List, pure } from "../../Data/List";
 import { bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, join, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, maybe, maybeToNullable, Nothing } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap, size, sum } from "../../Data/OrderedMap";
 import { OrderedSet } from "../../Data/OrderedSet";
-import { fst, Pair, snd } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { fst, Pair, snd } from "../../Data/Tuple";
 import { LanguagesSelectionListItem } from "../Models/Hero/LanguagesSelectionListItem";
 import { ScriptsSelectionListItem } from "../Models/Hero/ScriptsSelectionListItem";
 import { Cantrip } from "../Models/Wiki/Cantrip";
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
 import { Culture } from "../Models/Wiki/Culture";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
+import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement";
+import { Profession } from "../Models/Wiki/Profession";
 import { CantripsSelection } from "../Models/Wiki/professionSelections/CantripsSelection";
 import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
 import { CursesSelection } from "../Models/Wiki/professionSelections/CursesSelection";
@@ -28,7 +30,7 @@ import { Skill } from "../Models/Wiki/Skill";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
+import { ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
 import { SelectionsCantrips } from "../Views/RCPOptionSelections/SelectionsCantrips";
 import { SelectionsCombatTechniques } from "../Views/RCPOptionSelections/SelectionsCombatTechniques";
 import { SelectionsCurses } from "../Views/RCPOptionSelections/SelectionsCurses";
@@ -40,6 +42,7 @@ import { Checkbox } from "../Views/Universal/Checkbox";
 import { Dropdown, DropdownOption } from "../Views/Universal/Dropdown";
 import { findSelectOption } from "./Activatable/selectionUtils";
 import { translate } from "./I18n";
+import { prefixSA } from "./IDUtils";
 import { pipe, pipe_ } from "./pipe";
 import { sortRecordsByName } from "./sortBy";
 import { getAllWikiEntriesByGroup } from "./WikiUtils";
@@ -47,6 +50,7 @@ import { getAllWikiEntriesByGroup } from "./WikiUtils";
 const WMA = WikiModel.A
 const SAA = SpecialAbility.A
 const CA = Culture.A
+const PA = Profession.A
 const SOA = SelectOption.A
 const LSSA = LanguagesScriptsSelection.A
 const CTSA = CombatTechniquesSelection.A
@@ -531,3 +535,26 @@ export const getMainScriptSelectionElement =
            maybeToNullable
          )
          (guard (snd (isScriptSelectionNeeded)))
+
+export const getGuildMageUnfamiliarSpellSelectionElement =
+  (l10n: L10nRecord) =>
+  (mspells: Maybe<List<Record<DropdownOption>>>) =>
+  (selected: Maybe<string>) =>
+  (setGuildMageUnfamiliarSpell: (id: string) => void) =>
+  (profession: Record<Profession>) =>
+    any ((x: ProfessionPrerequisite) => ProfessionRequireActivatable.is (x)
+                                        && ProfessionRequireActivatable.A.id (x) === prefixSA (70))
+        (PA.prerequisites (profession))
+      ? fmapF (mspells)
+              (spells => (
+                <div className="unfamiliar-spell">
+                  <h4>{translate (l10n) ("unfamiliarspellselectionfortraditionguildmage")}</h4>
+                  <Dropdown<string | number>
+                    hint={translate (l10n) ("selectaspell")}
+                    value={selected}
+                    onChangeJust={setGuildMageUnfamiliarSpell}
+                    options={spells}
+                    />
+                </div>
+              ))
+      : Nothing

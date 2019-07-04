@@ -2,8 +2,8 @@ import * as React from "react";
 import { List, subscriptF } from "../../../../Data/List";
 import { bindF, fromMaybeR, Maybe, maybeR } from "../../../../Data/Maybe";
 import { lookup, OrderedMap } from "../../../../Data/OrderedMap";
-import { Pair } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
+import { Pair } from "../../../../Data/Tuple";
 import { AttributeCombined } from "../../../Models/View/AttributeCombined";
 import { SkillCombined } from "../../../Models/View/SkillCombined";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
@@ -74,21 +74,21 @@ export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
             {pipe_ (groupHeaders, subscriptF (0), fromMaybeR (null))}
             {pipe_ (
               skillsByGroup,
-              bindF (lookup (0)),
+              bindF (lookup (1)),
               maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
             )}
             <EmptyRow />
             {pipe_ (groupHeaders, subscriptF (1), fromMaybeR (null))}
             {pipe_ (
               skillsByGroup,
-              bindF (lookup (1)),
+              bindF (lookup (2)),
               maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
             )}
             <EmptyRow />
             {pipe_ (groupHeaders, subscriptF (2), fromMaybeR (null))}
             {pipe_ (
               skillsByGroup,
-              bindF (lookup (2)),
+              bindF (lookup (3)),
               maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
             )}
           </tbody>
@@ -123,14 +123,14 @@ export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
             {pipe_ (groupHeaders, subscriptF (3), fromMaybeR (null))}
             {pipe_ (
               skillsByGroup,
-              bindF (lookup (3)),
+              bindF (lookup (4)),
               maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
             )}
             <EmptyRow />
             {pipe_ (groupHeaders, subscriptF (4), fromMaybeR (null))}
             {pipe_ (
               skillsByGroup,
-              bindF (lookup (4)),
+              bindF (lookup (5)),
               maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
             )}
           </tbody>

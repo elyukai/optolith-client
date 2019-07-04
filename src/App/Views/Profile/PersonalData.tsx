@@ -60,10 +60,13 @@ export interface PersonalDataStateProps {
   isAddAdventurePointsOpen: boolean
   isEditCharacterAvatarOpen: boolean
   isAlbino: Maybe<boolean>
+  sizeCalcStr: Maybe<string>
+  weightCalcStr: Maybe<string>
 }
 
 export interface PersonalDataDispatchProps extends OverviewPersonalDataDispatchProps {
   setAvatar (path: string): void
+  deleteAvatar (): void
   setHeroName (name: string): void
   setCustomProfessionName (name: string): void
   endCharacterCreation (): void
@@ -143,6 +146,7 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
       closeAddAdventurePoints,
       closeEditCharacterAvatar,
       setAvatar,
+      deleteAvatar,
       ...other
     } = this.props
 
@@ -252,6 +256,12 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
                                )
                              : null
                          }
+                         <BorderButton
+                           className="delete-avatar"
+                           label={translate (l10n) ("deleteavatar")}
+                           onClick={deleteAvatar}
+                           disabled={isNothing (avatar)}
+                           />
                          {professionNameElement}
                        </div>
                        {

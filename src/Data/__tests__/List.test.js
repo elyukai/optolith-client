@@ -1,3 +1,4 @@
+
 // @ts-check
 const { ident } = require('../Function');
 const { Internals } = require('../Internals');
@@ -345,6 +346,11 @@ test ('reverse', () => {
   expect (original === result) .toBeFalsy()
 })
 
+test ('intersperse', () => {
+  expect (List.intersperse (0) (List (3, 2, 1)))
+    .toEqual (List (3, 0, 2, 0, 1))
+})
+
 test ('intercalate', () => {
   expect (List.intercalate (', ') (List (3, 2, 1)))
     .toEqual ('3, 2, 1')
@@ -456,6 +462,10 @@ test ('isInfixOf', () => {
     .toEqual (true)
   expect (List.isInfixOf ('test') ('das asd  dsad   ad tese f as'))
     .toEqual (false)
+  expect (List.isInfixOf ('') ('das asd  dsad   ad tese f as'))
+    .toEqual (true)
+  expect (List.isInfixOf ('') (''))
+    .toEqual (true)
 })
 
 // SEARCHING BY EQUALITY
@@ -980,4 +990,42 @@ test ('mapByIdKeyMap', () => {
   expect (List.mapByIdKeyMap (m)
                              (List (R ({ id: "d" }), R ({ id: "b" }), R ({ id: "a" }))))
     .toEqual (List (4, 2, 1))
+})
+
+test ('intersecting', () => {
+  expect (List.intersecting (List (1, 2, 3)) (List (4, 5, 6))) .toEqual (false)
+  expect (List.intersecting (List (1, 2, 3)) (List (3, 5, 6))) .toEqual (true)
+})
+
+test ('filterMulti', () => {
+  expect (List.filterMulti (List (a => a > 2, a => a < 5)) (List (1, 2, 3, 4, 5)))
+    .toEqual (List (3, 4))
+  expect (List.filterMulti (List (a => a > 2, a => a < 5)) (List (2, 5, 6, 7)))
+    .toEqual (List ())
+})
+
+test ('lengthAtLeast', () => {
+  expect (List.lengthAtLeast (3) (List (1, 2, 3, 4, 5)))
+    .toEqual (true)
+  expect (List.lengthAtLeast (3) (List (1, 2, 3, 4)))
+    .toEqual (true)
+  expect (List.lengthAtLeast (3) (List (1, 2, 3)))
+    .toEqual (true)
+  expect (List.lengthAtLeast (3) (List (1, 2)))
+    .toEqual (false)
+  expect (() => List.lengthAtLeast (-1) (List (1, 2)))
+    .toThrow ()
+})
+
+test ('lengthAtMost', () => {
+  expect (List.lengthAtMost (3) (List (1)))
+    .toEqual (true)
+  expect (List.lengthAtMost (3) (List (1, 2)))
+    .toEqual (true)
+  expect (List.lengthAtMost (3) (List (1, 2, 3)))
+    .toEqual (true)
+  expect (List.lengthAtMost (3) (List (1, 2, 3, 4)))
+    .toEqual (false)
+  expect (() => List.lengthAtMost (-1) (List (1, 2)))
+    .toThrow ()
 })

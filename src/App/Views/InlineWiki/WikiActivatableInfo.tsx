@@ -1,11 +1,11 @@
-import classNames = require("classnames")
 import * as React from "react";
+import { Either, eitherToMaybe, invertEither, Left, Right } from "../../../Data/Either";
 import { cnst, flip, ident, join } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { rangeN } from "../../../Data/Ix";
 import { over, set } from "../../../Data/Lens";
-import { any, append, appendStr, consF, elem, fnull, head, ifoldr, imap, intercalate, isList, List, map, NonEmptyList, notNull, notNullStr, subscript } from "../../../Data/List";
-import { bind, bindF, ensure, fromJust, fromMaybe, fromMaybeNil, isJust, isNothing, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNullF, maybeToNullable, Nothing } from "../../../Data/Maybe";
+import { any, append, appendStr, consF, elem, fnull, head, ifoldr, imap, intercalate, intersperse, isList, List, map, NonEmptyList, notNull, notNullStr, snocF, subscript, toArray } from "../../../Data/List";
+import { bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNullF, Nothing } from "../../../Data/Maybe";
 import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
@@ -34,6 +34,7 @@ import { getCategoryById, isBlessedTraditionId, isMagicalTraditionId, prefixRace
 import { dec, negate } from "../../Utilities/mathUtils";
 import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { renderMaybe } from "../../Utilities/ReactUtils";
 import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy";
 import { isNumber, isString, misNumberM, misStringM } from "../../Utilities/typeCheckUtils";
 import { getWikiEntry } from "../../Utilities/WikiUtils";
@@ -206,7 +207,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             title={header_name}
             subtitle={header_sub_name}
             >
-            <Markdown source={`${SAA.rules (x)}`} />
+            <Markdown source={renderMaybe (SAA.rules (x))} />
             <PrerequisitesText {...props} />
             {cost_elem}
             {source_elem}
@@ -295,8 +296,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
         )
 
       case 25: {
-        // Gebieter des [Aspekts]
-        const sa_id = prefixSA (639)
+        const sa_id = prefixSA (639) // Gebieter des [Aspekts]
         const SA_639 = lookup (sa_id) (specialAbilities)
 
         const add_extended =
@@ -319,7 +319,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                                                    sid: Just (SelectOption.A.id (option)),
                                                  }))
                                    )))),
-            fromMaybeNil
+            joinMaybeList
           )
 
         return (
@@ -566,61 +566,91 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   const prerequisitesTextEnd = AAL.prerequisitesTextEnd (x)
   const prerequisitesTextStart = AAL.prerequisitesTextStart (x)
 
+  type TypeofMaybeList = Maybe<JSX.Element | string>
+  type TypeofList = JSX.Element | string
+
+  const mtext_before = fmapF (prerequisitesTextStart)
+                             (y => <Markdown source={y} oneLine="fragment" />)
+
+  /**
+   * `Right`: Will need a comma before if there are elements before the text.
+   * `Left`: Must not get a comma before the text.
+   */
+  const mtext_after = fmapF (prerequisitesTextEnd)
+                            ((y): Either<JSX.Element, JSX.Element> =>
+                              /^(?: |,|\.)/ .test (y)
+                                ? Left (<Markdown source={y} oneLine="fragment" />)
+                                : Right (<Markdown source={y} oneLine="fragment" />))
+
+  const mtext_after_insidelist = bind (mtext_after) (eitherToMaybe)
+  const mtext_after_outsidelist = bind (mtext_after) (pipe (invertEither, eitherToMaybe))
+
+  const addTextAfterOutsideList =
+    maybe (ident as ident<List<TypeofList>>) <TypeofList> (snocF) (mtext_after_outsidelist)
+
   if (isOrderedMap (prerequisites)) {
     const levelList = rangeN (1, levels)
 
     return (
       <p>
-        <span>{translate (l10n) ("prerequisites")}</span>
+        <span>{translate (l10n) ("prerequisites")}: </span>
         <span>
-          {maybeR (null)
-                  ((y: string) => <Markdown source={y} oneLine="span" />)
-                  (prerequisitesTextStart)}
-          {notMember (1) (prerequisites)
-            ? `${translate (l10n) ("level")} I: ${translate (l10n) ("none")} `
-            : null}
-          {map ((lvl: number) => (
-                 <span key={lvl} className="tier">
-                   {`${translate (l10n) ("level")} ${toRoman (lvl)}: `}
-                   {maybeR (null)
-                           ((rs: List<AllRequirements>) => (
-                             <Prerequisites
-                               {...props}
-                               rs={rs}
-                               req_text_index={prerequisitesTextIndex}
-                               />
-                           ))
-                           (lookup (lvl) (prerequisites))}
-                   {lvl > 1 ? <span>{AAL.name (x)} {toRoman (lvl - 1)}</span> : null}
-                 </span>
-               ))
-               (levelList)}
-          {maybeR (null)
-                  ((y: string) => <Markdown source={y} oneLine="span" />)
-                  (prerequisitesTextEnd)}
+          {pipe_ (
+            List<Maybe<JSX.Element | string>> (
+              mtext_before,
+              notMember (1) (prerequisites)
+                ? Just (`${translate (l10n) ("level")} I: ${translate (l10n) ("none")} `)
+                : Nothing,
+              ...map ((lvl: number) => Just (
+                  <span key={lvl} className="tier">
+                    {`${translate (l10n) ("level")} ${toRoman (lvl)}: `}
+                    {maybeR (null)
+                            ((rs: List<AllRequirements>) =>
+                              pipe_ (
+                                getPrerequisites (rs) (prerequisitesTextIndex) (props),
+                                catMaybes,
+                                intersperse<JSX.Element | string> (", "),
+                                toArray,
+                                e => <>{e}</>
+                              ))
+                            (lookup (lvl) (prerequisites))}
+                    {lvl > 1 ? <span>{AAL.name (x)} {toRoman (lvl - 1)}</span> : null}
+                  </span>
+                ))
+                (levelList),
+              mtext_after_insidelist
+            ),
+            catMaybes,
+            intersperse<JSX.Element | string> (", "),
+            addTextAfterOutsideList,
+            toArray
+          )}
         </span>
+      </p>
+    )
+  }
+  else if (fnull (prerequisites)) {
+    return (
+      <p>
+        <span>{translate (l10n) ("prerequisites")}: </span>
+        <span>{translate (l10n) ("none")}</span>
       </p>
     )
   }
   else {
     return (
       <p>
-        <span>{translate (l10n) ("prerequisites")}</span>
+        <span>{translate (l10n) ("prerequisites")}: </span>
         <span>
-          {maybeR (null)
-                  ((y: string) => <Markdown source={y} oneLine="span" />)
-                  (prerequisitesTextStart)}
-          <Prerequisites
-            {...props}
-            rs={prerequisites}
-            req_text_index={prerequisitesTextIndex}
-            />
-          {maybeR (null)
-                  ((y: string) =>
-                    /^(?:|,|\.)/ .test (y)
-                      ? <Markdown source={y} oneLine="fragment" />
-                      : <Markdown source={y} oneLine="span" />)
-                  (prerequisitesTextEnd)}
+          {pipe_ (
+            getPrerequisites (prerequisites) (prerequisitesTextIndex) (props),
+            consF<TypeofMaybeList> (mtext_before),
+            snocF<TypeofMaybeList> (mtext_after_insidelist),
+            catMaybes,
+            intersperse<JSX.Element | string> (", "),
+            addTextAfterOutsideList,
+            toArray
+          )}
         </span>
       </p>
     )
@@ -628,20 +658,21 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
 }
 
 export interface PrerequisitesProps {
-  rs: List<AllRequirements>
   x: Activatable
   l10n: L10nRecord
-  req_text_index: OrderedMap<number, string | false>
   wiki: WikiModelRecord
 }
 
-export function Prerequisites (props: PrerequisitesProps) {
-  const { rs, x, l10n, req_text_index, wiki } = props
+const getPrerequisites =
+  (rs: List<AllRequirements>) =>
+  (req_text_index: OrderedMap<number, string | false>) =>
+  (props: PrerequisitesProps): List<Maybe<JSX.Element | string>> => {
+  const { x, l10n, wiki } = props
 
   if (fnull (rs) && !isExtendedSpecialAbility (x)) {
-    return <>
-      {translate (l10n) ("none")}
-    </>
+    return List<Maybe<JSX.Element | string>> (
+      Just (translate (l10n) ("none"))
+    )
   }
 
   const items = getCategorizedItems (req_text_index) (rs)
@@ -664,37 +695,33 @@ export function Prerequisites (props: PrerequisitesProps) {
   const category = AAL.category (x)
   const gr = AAL.gr (x)
 
-  return <>
-    {(isString (rcp) ? notNullStr (rcp) : rcp)
-      ? getPrerequisitesRCPText (l10n) (x) (rcp)
-      : null}
-    {getPrerequisitesActivatablesText (l10n) (wiki) (casterBlessedOne)}
-    {getPrerequisitesActivatablesText (l10n) (wiki) (traditions)}
-    {getPrerequisitesAttributesText (l10n) (WikiModel.A.attributes (wiki)) (attributes)}
-    {pipe_ (primaryAttribute, fmap (getPrerequisitesPrimaryAttributeText (l10n)), maybeToNullable)}
-    {getPrerequisitesSkillsText (l10n) (wiki) (skills)}
-    {getPrerequisitesActivatedSkillsText (l10n) (wiki) (activeSkills)}
-    {getPrerequisitesActivatablesText (l10n) (wiki) (otherActiveSpecialAbilities)}
-    {getPrerequisitesActivatablesText (l10n) (wiki) (inactiveSpecialAbilities)}
-    {getPrerequisitesActivatablesText (l10n) (wiki) (otherActiveAdvantages)}
-    {getPrerequisitesActivatablesText (l10n) (wiki) (inactiveAdvantages)}
-    {getPrerequisitesActivatablesText (l10n) (wiki) (activeDisadvantages)}
-    {getPrerequisitesActivatablesText (l10n) (wiki) (inactiveDisadvantages)}
-    {pipe_ (
-      race,
-      fmap (getPrerequisitesRaceText (l10n) (WikiModel.A.races (wiki))),
-      maybeToNullable
-    )}
-    {category === Categories.SPECIAL_ABILITIES
+  return List<Maybe<JSX.Element | string>> (
+    (isString (rcp) ? notNullStr (rcp) : rcp)
+      ? Just (getPrerequisitesRCPText (l10n) (x) (rcp))
+      : Nothing,
+    ...getPrerequisitesActivatablesText (l10n) (wiki) (casterBlessedOne),
+    ...getPrerequisitesActivatablesText (l10n) (wiki) (traditions),
+    getPrerequisitesAttributesText (l10n) (WikiModel.A.attributes (wiki)) (attributes),
+    fmap (getPrerequisitesPrimaryAttributeText (l10n)) (primaryAttribute),
+    getPrerequisitesSkillsText (l10n) (wiki) (skills),
+    getPrerequisitesActivatedSkillsText (l10n) (wiki) (activeSkills),
+    ...getPrerequisitesActivatablesText (l10n) (wiki) (otherActiveSpecialAbilities),
+    ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveSpecialAbilities),
+    ...getPrerequisitesActivatablesText (l10n) (wiki) (otherActiveAdvantages),
+    ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveAdvantages),
+    ...getPrerequisitesActivatablesText (l10n) (wiki) (activeDisadvantages),
+    ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveDisadvantages),
+    fmap (getPrerequisitesRaceText (l10n) (WikiModel.A.races (wiki))) (race),
+    category === Categories.SPECIAL_ABILITIES
       ? (gr === 11
-        ? <span>{translate (l10n) ("appropriatecombatstylespecialability")}</span>
+        ? Just (translate (l10n) ("appropriatecombatstylespecialability"))
         : gr === 14
-        ? <span>{translate (l10n) ("appropriatemagicalstylespecialability")}</span>
+        ? Just (translate (l10n) ("appropriatemagicalstylespecialability"))
         : gr === 26
-        ? <span>{translate (l10n) ("appropriateblessedstylespecialability")}</span>
-        : "")
-      : ""}
-  </>
+        ? Just (translate (l10n) ("appropriateblessedstylespecialability"))
+        : Nothing)
+      : Nothing
+  )
 }
 
 interface ActivatableStringObject {
@@ -739,32 +766,30 @@ const getPrerequisitesAttributesText =
 
     return pipe (
       ensure (notNull as notNull<IncreasablePrerequisiteObjects>),
-      maybeR (null)
-             (pipe (
-               map (e => {
-                 if (RequireIncreasable.is (e)) {
-                   const ids = RIA.id (e)
-                   const value = RIA.value (e)
+      fmap (pipe (
+        map (e => {
+          if (RequireIncreasable.is (e)) {
+            const ids = RIA.id (e)
+            const value = RIA.value (e)
 
-                   if (isList (ids)) {
-                     const name = pipe_ (ids, mapMaybe (getAttrAbbrv), localizeOrList (l10n))
+            if (isList (ids)) {
+              const name = pipe_ (ids, mapMaybe (getAttrAbbrv), localizeOrList (l10n))
 
-                     return `${name} ${value}`
-                   }
-                   else {
-                     const name = pipe_ (ids, getAttrAbbrv, fromMaybe (""))
+              return `${name} ${value}`
+            }
+            else {
+              const name = pipe_ (ids, getAttrAbbrv, fromMaybe (""))
 
-                     return `${name} ${value}`
-                   }
-                 }
-                 else {
-                   return e
-                 }
-               }),
-               sortStrings (L10n.A.id (l10n)),
-               intercalate (", "),
-               str => <span>{str}</span>
-             ))
+              return `${name} ${value}`
+            }
+          }
+          else {
+            return e
+          }
+        }),
+        sortStrings (L10n.A.id (l10n)),
+        intercalate (", ")
+      ))
     )
   }
 
@@ -783,31 +808,30 @@ const getPrerequisitesSkillsText =
   (wiki: WikiModelRecord) =>
     pipe (
       ensure (notNull as notNull<IncreasablePrerequisiteObjects>),
-      maybeR (null)
-             (pipe (
-               map (e => {
-                 if (RequireIncreasable.is (e)) {
-                   const ids = RIA.id (e)
-                   const value = RIA.value (e)
+      fmap (pipe (
+        map (e => {
+          if (RequireIncreasable.is (e)) {
+            const ids = RIA.id (e)
+            const value = RIA.value (e)
 
-                   if (isList (ids)) {
-                     const name = pipe_ (ids, mapMaybe (getNameById (wiki)), localizeOrList (l10n))
+            if (isList (ids)) {
+              const name = pipe_ (ids, mapMaybe (getNameById (wiki)), localizeOrList (l10n))
 
-                     return `${name} ${value}`
-                   }
-                   else {
-                     const name = pipe_ (ids, getNameById (wiki), fromMaybe (""))
+              return `${name} ${value}`
+            }
+            else {
+              const name = pipe_ (ids, getNameById (wiki), fromMaybe (""))
 
-                     return `${name} ${value}`
-                   }
-                 }
-                 else {
-                   return e
-                 }
-               }),
-               sortStrings (L10n.A.id (l10n)),
-               intercalate (", ")
-             ))
+              return `${name} ${value}`
+            }
+          }
+          else {
+            return e
+          }
+        }),
+        sortStrings (L10n.A.id (l10n)),
+        intercalate (", ")
+      ))
     )
 
 const getPrerequisitesActivatedSkillsTextCategoryAdd =
@@ -829,36 +853,35 @@ const getPrerequisitesActivatedSkillsText =
   (wiki: WikiModelRecord) =>
     pipe (
       ensure (notNull as notNull<ActivatablePrerequisiteObjects>),
-      maybeR (null)
-             (pipe (
-               map (e => {
-                 if (RequireActivatable.is (e)) {
-                   const ids = RAA.id (e)
+      fmap (pipe (
+        map (e => {
+          if (RequireActivatable.is (e)) {
+            const ids = RAA.id (e)
 
-                   if (isList (ids)) {
-                     const category_add =
-                       getPrerequisitesActivatedSkillsTextCategoryAdd (l10n) (head (ids))
+            if (isList (ids)) {
+              const category_add =
+                getPrerequisitesActivatedSkillsTextCategoryAdd (l10n) (head (ids))
 
-                     const name = pipe_ (ids, mapMaybe (getNameById (wiki)), localizeOrList (l10n))
+              const name = pipe_ (ids, mapMaybe (getNameById (wiki)), localizeOrList (l10n))
 
-                     return `${category_add} ${name}`
-                   }
-                   else {
-                     const category_add =
-                       getPrerequisitesActivatedSkillsTextCategoryAdd (l10n) (ids)
+              return `${category_add} ${name}`
+            }
+            else {
+              const category_add =
+                getPrerequisitesActivatedSkillsTextCategoryAdd (l10n) (ids)
 
-                     const name = pipe_ (ids, getNameById (wiki), fromMaybe (""))
+              const name = pipe_ (ids, getNameById (wiki), fromMaybe (""))
 
-                     return `${category_add} ${name}`
-                   }
-                 }
-                 else {
-                   return e .value
-                 }
-               }),
-               sortStrings (L10n.A.id (l10n)),
-               intercalate (", ")
-             ))
+              return `${category_add} ${name}`
+            }
+          }
+          else {
+            return e .value
+          }
+        }),
+        sortStrings (L10n.A.id (l10n)),
+        intercalate (", ")
+      ))
     )
 
 interface ActivatablePrerequisiteText {
@@ -972,16 +995,24 @@ const getPrerequisitesActivatablesText =
         }
       }),
       sortRecordsByName (L10n.A.id (l10n)),
-      map (x => {
+      map ((x): Just<string | JSX.Element> => {
         const id = APTA.id (x)
         const name = APTA.name (x)
         const active = APTA.active (x)
 
-        return (
-          <span key={notNullStr (name) ? name : isString (id) ? id : ""}>
-            <span className={classNames (!active ? "disabled" : undefined)}>{name}</span>
-          </span>
-        )
+        if (!active) {
+          return Just (
+            <span
+              key={notNullStr (name) ? name : isString (id) ? id : ""}
+              className="disabled"
+              >
+              {name}
+            </span>
+          )
+        }
+        else {
+          return Just (name)
+        }
       })
     )
 

@@ -1,48 +1,48 @@
 interface pipe {
-  <A, B, C> (ab: (a: A) => B, bc: (b: B) => C): (a: A) => C
-  <A, B, C, D> (ab: (a: A) => B, bc: (b: B) => C, cd: (c: C) => D): (a: A) => D
+  <A extends any[], B, C> (ab: (...a: A) => B, bc: (b: B) => C): (...a: A) => C
+  <A extends any[], B, C, D> (ab: (...a: A) => B, bc: (b: B) => C, cd: (c: C) => D): (...a: A) => D
 
-  <A, B, C, D, E>
+  <A extends any[], B, C, D, E>
   (
-    ab: (a: A) => B,
+    ab: (...a: A) => B,
     bc: (b: B) => C,
     cd: (c: C) => D,
     de: (d: D) => E
-  ): (a: A) => E
+  ): (...a: A) => E
 
-  <A, B, C, D, E, F>
+  <A extends any[], B, C, D, E, F>
   (
-    ab: (a: A) => B,
+    ab: (...a: A) => B,
     bc: (b: B) => C,
     cd: (c: C) => D,
     de: (d: D) => E,
     ef: (e: E) => F
-  ): (a: A) => F
+  ): (...a: A) => F
 
-  <A, B, C, D, E, F, G>
+  <A extends any[], B, C, D, E, F, G>
   (
-    ab: (a: A) => B,
+    ab: (...a: A) => B,
     bc: (b: B) => C,
     cd: (c: C) => D,
     de: (d: D) => E,
     ef: (e: E) => F,
     fg: (f: F) => G
-  ): (a: A) => G
+  ): (...a: A) => G
 
-  <A, B, C, D, E, F, G, H>
+  <A extends any[], B, C, D, E, F, G, H>
   (
-    ab: (a: A) => B,
+    ab: (...a: A) => B,
     bc: (b: B) => C,
     cd: (c: C) => D,
     de: (d: D) => E,
     ef: (e: E) => F,
     fg: (f: F) => G,
     gh: (g: G) => H
-  ): (a: A) => H
+  ): (...a: A) => H
 
-  <A, B, C, D, E, F, G, H, I>
+  <A extends any[], B, C, D, E, F, G, H, I>
   (
-    ab: (a: A) => B,
+    ab: (...a: A) => B,
     bc: (b: B) => C,
     cd: (c: C) => D,
     de: (d: D) => E,
@@ -50,11 +50,11 @@ interface pipe {
     fg: (f: F) => G,
     gh: (g: G) => H,
     hi: (h: H) => I
-  ): (a: A) => I
+  ): (...a: A) => I
 
-  <A, B, C, D, E, F, G, H, I, J>
+  <A extends any[], B, C, D, E, F, G, H, I, J>
   (
-    ab: (a: A) => B,
+    ab: (...a: A) => B,
     bc: (b: B) => C,
     cd: (c: C) => D,
     de: (d: D) => E,
@@ -63,11 +63,11 @@ interface pipe {
     gh: (g: G) => H,
     hi: (h: H) => I,
     ij: (i: I) => J
-  ): (a: A) => J
+  ): (...a: A) => J
 
-  <A, B, C, D, E, F, G, H, I, J, K>
+  <A extends any[], B, C, D, E, F, G, H, I, J, K>
   (
-    ab: (a: A) => B,
+    ab: (...a: A) => B,
     bc: (b: B) => C,
     cd: (c: C) => D,
     de: (d: D) => E,
@@ -77,7 +77,22 @@ interface pipe {
     hi: (h: H) => I,
     ij: (i: I) => J,
     jk: (j: J) => K
-  ): (a: A) => K
+  ): (...a: A) => K
+
+  <A extends any[], B, C, D, E, F, G, H, I, J, K, L>
+  (
+    ab: (...a: A) => B,
+    bc: (b: B) => C,
+    cd: (c: C) => D,
+    de: (d: D) => E,
+    ef: (e: E) => F,
+    fg: (f: F) => G,
+    gh: (g: G) => H,
+    hi: (h: H) => I,
+    ij: (i: I) => J,
+    jk: (j: J) => K,
+    kl: (k: L) => L
+  ): (...a: A) => L
 }
 
 /**
@@ -87,8 +102,12 @@ interface pipe {
  * initial invocation.
  */
 export const pipe: pipe =
-  (...fs: ((x: any) => any)[]) => (x: any): any =>
-    fs .reduce<any> ((y, f) => f (y), x)
+  (...fs: ((...x: any[]) => any)[]) => (...x: any[]): any =>
+    fs.length === 0
+    ? x
+    : fs.length === 1
+    ? fs [0] (...x)
+    : fs .slice (1) .reduce<any> ((y, f) => f (y), fs [0] (...x))
 
 interface pipe_ {
   <A, B, C> (a: A, ab: (a: A) => B, bc: (b: B) => C): C

@@ -16,14 +16,14 @@ const mapStateToProps = (
   ownProps: LiturgicalChantsOwnProps
 ): LiturgicalChantsStateProps => ({
   attributes: getAttributesForSheet (state, ownProps),
-  addChantsDisabled: isActivationDisabled (state),
+  addChantsDisabled: isActivationDisabled (state, ownProps),
   derivedCharacteristics: getDerivedCharacteristicsMap (state, ownProps),
   enableActiveItemHints: getEnableActiveItemHints (state),
   isRemovingEnabled: getIsRemovingEnabled (state),
   activeList: getFilteredActiveLiturgicalChantsAndBlessings (state, ownProps),
   inactiveList: getFilteredInactiveLiturgicalChantsAndBlessings (state, ownProps),
   sortOrder: getLiturgiesSortOrder (state),
-  traditionId: getBlessedTraditionNumericId (state),
+  traditionId: getBlessedTraditionNumericId (state, ownProps),
   filterText: getLiturgicalChantsFilterText (state),
   inactiveFilterText: getInactiveLiturgicalChantsFilterText (state),
 })

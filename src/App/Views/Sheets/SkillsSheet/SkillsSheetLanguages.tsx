@@ -2,7 +2,7 @@ import * as React from "react";
 import { flip } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
 import { compare } from "../../../../Data/Int";
-import { List, map, toArray } from "../../../../Data/List";
+import { flength, List, map, replicateR, toArray } from "../../../../Data/List";
 import { bindF, fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe";
 import { reverseCompare } from "../../../../Data/Ord";
 import { fromDefault, Record } from "../../../../Data/Record";
@@ -65,24 +65,29 @@ export function SkillsSheetLanguages (props: SkillsSheetLanguagesProps) {
 
   return (
     <TextBox label={translate (l10n) ("languages")}>
-      <table className="languages-list">
-        <tbody>
-          {pipe_ (
-            languages,
-            map (e => (
-              <tr key={`lang-${IdNameLevel.A.id (e)}`}>
-                <td>{IdNameLevel.A.name (e)}</td>
-                <td>
-                  {IdNameLevel.A.level (e) === 4
-                    ? translate (l10n) ("nativetongue.short")
-                    : toRoman (IdNameLevel.A.level (e))}
-                </td>
-              </tr>
-            )),
-            toArray
-          )}
-        </tbody>
-      </table>
+      <ul className="languages-list">
+        {pipe_ (
+          languages,
+          map (e => (
+            <li key={`lang-${IdNameLevel.A.id (e)}`}>
+              <span>{IdNameLevel.A.name (e)}</span>
+              <span>
+                {IdNameLevel.A.level (e) === 4
+                  ? translate (l10n) ("nativetongue.short")
+                  : toRoman (IdNameLevel.A.level (e))}
+              </span>
+            </li>
+          )),
+          toArray
+        )}
+        {replicateR (8 - flength (languages))
+                    (index => (
+                      <li key={`undefined-${index}`}>
+                        <span></span>
+                        <span></span>
+                      </li>
+                    ))}
+      </ul>
     </TextBox>
   )
 }

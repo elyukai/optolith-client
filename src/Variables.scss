@@ -6,6 +6,7 @@ $defaultEase: cubic-bezier(.28,.3,.09,.82);
 	--secondary-text-color: rgba(122, 122, 122, .5);
 	--disabled-color: rgba(122, 122, 122, .3);
 	--separator-color-transparent: rgba(122, 122, 122, .2);
+	--selection-color: #79643c;
 	--accent-color: #826a3e;
 	--accent-color-intense: #5d4517;
 	--background-color: #111;
@@ -20,7 +21,7 @@ $defaultEase: cubic-bezier(.28,.3,.09,.82);
 	--common-bright-color: #0acbe6;
 	--common-dark-color: #005177;
 	--uncommon-bright-color: #ff2345;
-	--uncommon-dark-color: #aa1b32;
+	--adult-badge: #aa1b33;
 	--courage-color: #aa1b32;
 	--sagacity-color: #6b4497;
 	--intuition-color: #06a341;
@@ -32,6 +33,7 @@ $defaultEase: cubic-bezier(.28,.3,.09,.82);
 }
 
 .theme-light {
+	--selection-color: #c2ad88;
 	--accent-color-intense: #b6a68a;
 	--background-color: #f0f0f0;
 	--background-color-transparent06: transparentize(#f0f0f0, .4);

@@ -1,4 +1,5 @@
-import { bindF, ensure, Just, Maybe, maybe } from "../../Data/Maybe";
+import { fmap } from "../../Data/Functor";
+import { bindF, ensure, Just, Maybe, maybe, or } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { Profession } from "../Models/Wiki/Profession";
 import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
@@ -81,5 +82,16 @@ export const getAllAdjustmentSelections =
           bindF (pipe (PVA.selections, PVSA[ProfessionSelectionIds.TERRAIN_KNOWLEDGE])),
           maybe (pipe_ (prof, PA.selections, PSA[ProfessionSelectionIds.TERRAIN_KNOWLEDGE]))
                 (Just)
+        ),
+      [ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL]:
+        pipe_ (
+          mprof_var,
+          fmap (pipe (PVA.selections, PVSA[ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL])),
+          mpv_gmus => {
+            const p_gmus =
+              pipe_ (prof, PA.selections, PSA[ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL])
+
+            return p_gmus || or (mpv_gmus)
+          }
         ),
     })

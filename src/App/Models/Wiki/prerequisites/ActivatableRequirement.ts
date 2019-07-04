@@ -35,6 +35,8 @@ export const RequireActivatableL = makeLenses (RequireActivatable)
 export const ProfessionRequireActivatable =
   RequireActivatable as RecordCreator<ProfessionRequireActivatable>
 
+export const ProfessionRequireActivatableL = makeLenses (ProfessionRequireActivatable)
+
 export const isRequiringActivatable =
   (req: AllRequirementObjects): req is Record<RequireActivatable> => {
     const id = RequireActivatable.AL.id (req)

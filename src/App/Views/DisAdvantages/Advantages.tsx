@@ -71,8 +71,6 @@ export interface AdvantagesState {
   currentSlideinId: Maybe<string>
 }
 
-const APCA = AdventurePointsCategories.A
-
 export class Advantages extends React.Component<AdvantagesProps, AdvantagesState> {
   state: AdvantagesState = {
     showAddSlidein: false,
@@ -134,14 +132,12 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
                         (fmapF (m_ap)
                                (ap => (
                                  <AdvantagesDisadvantagesAdventurePoints
-                                   total={APCA.spentOnAdvantages (ap)}
-                                   blessed={APCA.spentOnBlessedAdvantages (ap)}
-                                   magical={APCA.spentOnMagicalAdvantages (ap)}
+                                   ap={ap}
                                    magicalMax={magicalMax}
                                    l10n={l10n}
                                    />
                                )))}
-            {showRating ? <RecommendedReference l10n={l10n} /> : null}
+            {showRating ? <RecommendedReference l10n={l10n} strongly /> : null}
           </Options>
           <MainContent>
             <ListHeader>
@@ -182,7 +178,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
             label={translate (l10n) ("add")}
             onClick={this.showAddSlidein}
             />
-          {showRating ? <RecommendedReference l10n={l10n} /> : null}
+          {showRating ? <RecommendedReference l10n={l10n} strongly /> : null}
         </Options>
         <MainContent>
           <ListHeader>

@@ -1,7 +1,7 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
-import { Pair } from "../../../Data/Pair";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
+import { Pair } from "../../../Data/Tuple";
 import { Categories } from "../../Constants/Categories";
 import { Die } from "./sub/Die";
 import { SourceLink } from "./sub/SourceLink";

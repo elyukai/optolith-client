@@ -2,12 +2,11 @@ import { Either, fromRight_, isLeft, mapM, maybeToEither, maybeToEither_ } from 
 import { List } from "../../../../Data/List";
 import { ensure, liftM2 } from "../../../../Data/Maybe";
 import { fromList, lookupF, OrderedMap } from "../../../../Data/OrderedMap";
-import { Pair } from "../../../../Data/Pair";
 import { show } from "../../../../Data/Show";
+import { Pair } from "../../../../Data/Tuple";
 import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { mensureMapNonEmptyString, mensureMapNonEmptyStringList } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
-
 const localeRx = /[a-z]{2}-[A-Z]{2}/
 
 const isLocale =
@@ -84,6 +83,8 @@ export const toL10n =
         "adventurepoints.short": checkL10nNonEmptyString ("adventurepoints.short"),
         "adventurepoint": checkL10nNonEmptyString ("adventurepoint"),
         "adventurepoints": checkL10nNonEmptyString ("adventurepoints"),
+        "totalap.novar": checkL10nNonEmptyString ("totalap.novar"),
+        "apspent.novar": checkL10nNonEmptyString ("apspent.novar"),
         "totalap": checkL10nNonEmptyString ("totalap"),
         "apspent": checkL10nNonEmptyString ("apspent"),
         "apspentonadvantages": checkL10nNonEmptyString ("apspentonadvantages"),
@@ -673,6 +674,12 @@ export const toL10n =
           checkL10nNonEmptyString ("chooseacategorytodisplayalist"),
         "emptylistnoresults": checkL10nNonEmptyString ("emptylistnoresults"),
         "extendedskillspecialabilities": checkL10nNonEmptyString ("extendedskillspecialabilities"),
+        "deleteavatar": checkL10nNonEmptyString ("deleteavatar"),
+        "stronglyrecommended": checkL10nNonEmptyString ("stronglyrecommended"),
+        "unfamiliarspells": checkL10nNonEmptyString ("unfamiliarspells"),
+        "unfamiliarspellselectionfortraditionguildmage":
+          checkL10nNonEmptyString ("unfamiliarspellselectionfortraditionguildmage"),
+        "selectaspell": checkL10nNonEmptyString ("selectaspell"),
       }
 
       return mapMNamed
@@ -715,6 +722,8 @@ export const toL10n =
           "adventurepoints.short": res ["adventurepoints.short"],
           "adventurepoint": res ["adventurepoint"],
           "adventurepoints": res ["adventurepoints"],
+          "totalap.novar": res ["totalap.novar"],
+          "apspent.novar": res ["apspent.novar"],
           "totalap": res ["totalap"],
           "apspent": res ["apspent"],
           "apspentonadvantages": res ["apspentonadvantages"],
@@ -1278,6 +1287,12 @@ export const toL10n =
           "chooseacategorytodisplayalist": res ["chooseacategorytodisplayalist"],
           "emptylistnoresults": res ["emptylistnoresults"],
           "extendedskillspecialabilities": res ["extendedskillspecialabilities"],
+          "deleteavatar": res ["deleteavatar"],
+          "stronglyrecommended": res ["stronglyrecommended"],
+          "unfamiliarspells": res ["unfamiliarspells"],
+          "unfamiliarspellselectionfortraditionguildmage":
+            res ["unfamiliarspellselectionfortraditionguildmage"],
+          "selectaspell": res ["selectaspell"],
           // tslint:enable: no-string-literal
         }))
     }

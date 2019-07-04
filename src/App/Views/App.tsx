@@ -1,4 +1,4 @@
-import * as classNames from "classnames";
+import classNames from "classnames";
 import * as React from "react";
 import { splitOn } from "../../Data/List";
 import { fromMaybe, listToMaybe, Maybe, maybe } from "../../Data/Maybe";

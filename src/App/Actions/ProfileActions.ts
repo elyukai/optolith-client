@@ -48,6 +48,14 @@ export const setHeroAvatar = (path: string): SetHeroAvatarAction => ({
   },
 })
 
+export interface DeleteHeroAvatarAction {
+  type: ActionTypes.DELETE_HERO_AVATAR
+}
+
+export const deleteHeroAvatar = (): DeleteHeroAvatarAction => ({
+  type: ActionTypes.DELETE_HERO_AVATAR,
+})
+
 export interface SetFamilyAction {
   type: ActionTypes.SET_FAMILY
   payload: {

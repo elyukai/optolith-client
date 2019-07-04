@@ -171,7 +171,7 @@ export interface DeleteHeroAction {
   }
 }
 
-export const deleteHero = (id: string): DeleteHeroAction => ({
+const deleteHero = (id: string): DeleteHeroAction => ({
   type: ActionTypes.DELETE_HERO,
   payload: {
     id,
@@ -191,7 +191,7 @@ export const deleteHeroValidate =
 
       const resolve: ReduxAction = futureDispatch => {
         futureDispatch (deleteHero (id))
-        tryIO (futureDispatch (requestHeroDeletion (l10n) (id)))
+        runIO (tryIO (futureDispatch (requestHeroDeletion (l10n) (id))))
       }
 
       // @ts-ignore

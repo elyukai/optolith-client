@@ -80,14 +80,12 @@
 	}
 
 	.personal-data {
-		display: flex;
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
 		margin-top: 10px;
 
 		> div {
-			flex: 1 1 auto;
 			display: flex;
-			min-width: 200px;
 			margin-right: 22px;
 			margin-bottom: 10px;
 			align-items: flex-end;

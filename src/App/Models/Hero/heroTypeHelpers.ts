@@ -2,8 +2,8 @@ import { List } from "../../../Data/List";
 import { Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
-import { Pair } from "../../../Data/Pair";
 import { Record, RecordI } from "../../../Data/Record";
+import { Pair } from "../../../Data/Tuple";
 import { ReduxActions } from "../../Actions/Actions";
 import { TabId } from "../../Utilities/LocationUtils";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
@@ -59,6 +59,7 @@ export interface Selections {
   specialization: Maybe<number | string>
   specializationSkillId: Maybe<string>
   terrainKnowledge: Maybe<number>
+  unfamiliarSpell: Maybe<string>
   map: Record<ProfessionSelections>
 }
 

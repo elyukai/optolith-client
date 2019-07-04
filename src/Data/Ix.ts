@@ -9,8 +9,8 @@
 
 import { inc } from "../App/Utilities/mathUtils";
 import { cons, List } from "./List";
-import { fst, Pair, snd } from "./Pair";
 import { show } from "./Show";
+import { fst, Pair, snd } from "./Tuple";
 
 /**
  * `range :: Int a => (a, a) -> [a]`

@@ -1,6 +1,6 @@
 import { any } from "../../../Data/List";
-import { Pair } from "../../../Data/Pair";
 import { member, Record } from "../../../Data/Record";
+import { Pair } from "../../../Data/Tuple";
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
 import { Advantage } from "../../Models/Wiki/Advantage";

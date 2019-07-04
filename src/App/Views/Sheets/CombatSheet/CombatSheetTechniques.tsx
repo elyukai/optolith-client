@@ -8,6 +8,7 @@ import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/Att
 import { CombatTechniqueWithAttackParryBase, CombatTechniqueWithAttackParryBaseA_ } from "../../../Models/View/CombatTechniqueWithAttackParryBase";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
+import { ndash } from "../../../Utilities/Chars";
 import { translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { TextBox } from "../../Universal/TextBox";
@@ -75,7 +76,7 @@ export function CombatSheetTechniques (props: CombatSheetTechniquesProps) {
                   <td className="value">{CTWAPBA_.value (e)}</td>
                   <td className="at">{CTWAPBA.at (e)}</td>
                   <td className="pa">
-                    {Maybe.fromMaybe<string | number> ("-") (CTWAPBA.pa (e))}
+                    {Maybe.fromMaybe<string | number> (ndash) (CTWAPBA.pa (e))}
                   </td>
                 </tr>
               )),

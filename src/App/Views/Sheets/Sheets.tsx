@@ -3,8 +3,8 @@ import { equals } from "../../../Data/Eq";
 import { find, List } from "../../../Data/List";
 import { bindF, Maybe, maybeRNull } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
-import { Pair } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
+import { Pair } from "../../../Data/Tuple";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
@@ -93,10 +93,10 @@ export interface SheetsStateProps {
   cantrips: Maybe<List<Record<CantripCombined>>>
   magicalPrimary: Maybe<string>
   magicalSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
-  magicalTradition: Maybe<string>
-  properties: Maybe<List<string>>
+  magicalTradition: string
+  properties: Maybe<string>
   spells: Maybe<List<Record<SpellCombined>>>
-  aspects: Maybe<List<string>>
+  aspects: Maybe<string>
   blessedPrimary: Maybe<string>
   blessedSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   blessedTradition: Maybe<string>

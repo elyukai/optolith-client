@@ -1,12 +1,12 @@
 import { equals } from "../../Data/Eq";
-import { flip, thrush } from "../../Data/Function";
+import { flip, ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
-import { all, cons, Cons, elem, elemF, filter, find, foldr, List, ListI, map, subscriptF } from "../../Data/List";
-import { bind, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe";
+import { all, cons, Cons, consF, elem, elemF, filter, find, foldr, intercalate, List, ListI, map, subscriptF } from "../../Data/List";
+import { alt, bind, bindF, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
-import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Tuple/Curry";
 import { Categories } from "../Constants/Categories";
 import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
@@ -25,14 +25,16 @@ import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
 import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement";
 import { isProfessionRequiringIncreasable, ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement";
 import { Profession } from "../Models/Wiki/Profession";
-import { CombatTechniquesSelectionL } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
+import { CombatTechniquesSelection, CombatTechniquesSelectionL } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
 import { ProfessionSelectionsL } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
+import { ProfessionVariantSelectionsL } from "../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
 import { Race, RaceL } from "../Models/Wiki/Race";
 import { RaceVariant, RaceVariantL } from "../Models/Wiki/RaceVariant";
 import { Skill } from "../Models/Wiki/Skill";
 import { Spell } from "../Models/Wiki/Spell";
 import { CommonProfession } from "../Models/Wiki/sub/CommonProfession";
+import { Die } from "../Models/Wiki/sub/Die";
 import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill";
 import { IncreaseSkillList } from "../Models/Wiki/sub/IncreaseSkillList";
 import { NameBySex } from "../Models/Wiki/sub/NameBySex";
@@ -40,9 +42,12 @@ import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
 import { getNameCostForWiki } from "../Utilities/Activatable/activatableActiveUtils";
 import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils";
+import { minus } from "../Utilities/Chars";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
+import { translate } from "../Utilities/I18n";
 import { getCategoryById } from "../Utilities/IDUtils";
+import { abs } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { validateProfession } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
 import { getFullProfessionName } from "../Utilities/rcpUtils";
@@ -75,6 +80,7 @@ const CTA = CombatTechnique.A
 const LCA = LiturgicalChant.A
 const PRIA = ProfessionRequireIncreasable.A
 const PSL = ProfessionSelectionsL
+const PVSL = ProfessionVariantSelectionsL
 
 export const getCurrentRace = createMaybeSelector (
   getWikiRaces,
@@ -343,30 +349,30 @@ export const getAllProfessions = createMaybeSelector (
                         ProfessionVariantCombined ({
                           mappedPrerequisites:
                             imapMaybe (mapProfessionPrerequisite (l10n) (wiki))
-                                      (PA.prerequisites (p)),
+                                      (PVA.prerequisites (v)),
                           mappedSpecialAbilities:
                             imapMaybe (mapProfessionSpecialAbility (l10n) (wiki))
-                                      (PA.specialAbilities (p)),
+                                      (PVA.specialAbilities (v)),
                           mappedSelections:
-                            thrush (PA.selections (p))
-                                   (mapProfessionSelection (wiki)),
+                            thrush (PVA.selections (v))
+                                   (mapProfessionVariantSelection (wiki)),
                           mappedCombatTechniques:
-                            thrush (PA.combatTechniques (p))
+                            thrush (PVA.combatTechniques (v))
                                    (mapMaybe (mapCombatTechniquePrevious (wiki)
                                                                          (PA.combatTechniques (p))
                                              )),
                           mappedSkills:
-                            thrush (PA.skills (p))
+                            thrush (PVA.skills (v))
                                    (mapMaybe (mapSkillPrevious (wiki)
                                                                (PA.skills (p)))),
                           mappedSpells:
-                            thrush (PA.spells (p))
+                            thrush (PVA.spells (v))
                                    (mapMaybe<
                                      ListI<Profession["spells"]>,
                                      ListI<ProfessionCombined["mappedSpells"]>
                                    > (mapSpellPrevious (wiki) (PA.spells (p)))),
                           mappedLiturgicalChants:
-                            thrush (PA.liturgicalChants (p))
+                            thrush (PVA.liturgicalChants (v))
                                    (mapMaybe<
                                      ListI<Profession["liturgicalChants"]>,
                                      ListI<ProfessionCombined["mappedLiturgicalChants"]>
@@ -395,15 +401,13 @@ const mapProfessionPrerequisite =
           sid: ProfessionRequireActivatable.A.sid (e),
           tier: ProfessionRequireActivatable.A.tier (e),
         }),
-        getNameCostForWiki (l10n)
-                           (wiki),
+        getNameCostForWiki (l10n) (wiki),
         fmap (pipe (
           convertPerTierCostToFinalCost (false) (l10n),
           nameAndCost =>
             ActivatableNameCostIsActive ({
               nameAndCost,
-              isActive:
-                ProfessionRequireActivatable.A.active (e),
+              isActive: ProfessionRequireActivatable.A.active (e),
             })
         ))
       )
@@ -425,8 +429,7 @@ const mapProfessionSpecialAbility =
         sid: ProfessionRequireActivatable.A.sid (e),
         tier: ProfessionRequireActivatable.A.tier (e),
       }),
-      getNameCostForWiki (l10n)
-                         (wiki),
+      getNameCostForWiki (l10n) (wiki),
       fmap (pipe (
         convertPerTierCostToFinalCost (false) (l10n),
         nameAndCost =>
@@ -437,14 +440,26 @@ const mapProfessionSpecialAbility =
       ))
     )
 
+const mapCombatTechniquesSelectionNames =
+  (wiki: WikiModelRecord) =>
+    over (CombatTechniquesSelectionL.sid)
+         (mapMaybe (pipe (
+                     lookupF (WA.combatTechniques (wiki)),
+                     fmap (CTA.name)
+                   )))
+
 const mapProfessionSelection =
   (wiki: WikiModelRecord) =>
     over (PSL[ProfessionSelectionIds.COMBAT_TECHNIQUES])
-         (fmap (over (CombatTechniquesSelectionL.sid)
-               (mapMaybe (pipe (
-                           lookupF (WA.combatTechniques (wiki)),
-                           fmap (CTA.name)
-                         )))))
+         (fmap (mapCombatTechniquesSelectionNames (wiki)))
+
+const mapProfessionVariantSelection =
+  (wiki: WikiModelRecord) =>
+    over (PVSL[ProfessionSelectionIds.COMBAT_TECHNIQUES])
+         (fmap (sel =>
+                 CombatTechniquesSelection.is (sel)
+                   ? mapCombatTechniquesSelectionNames (wiki) (sel)
+                   : sel))
 
 const mapIncreaseSkill =
   <a>
@@ -746,6 +761,17 @@ export const getFilteredProfessions = createMaybeSelector (
                                                                  ? NameBySex.A[sex] (n)
                                                                  : n)
                                                  ),
+                                                 pipe (
+                                                   PCA.mappedVariants,
+                                                   map (pipe (
+                                                    PVCA.wikiEntry,
+                                                    PVA.name,
+                                                    ident,
+                                                    n => NameBySex.is (n)
+                                                           ? NameBySex.A[sex] (n)
+                                                           : n
+                                                   ))
+                                                 ),
                                                ])
                                                (sort_options)
                                                (filter_text)
@@ -768,4 +794,68 @@ export const getCurrentFullProfessionName = createMaybeSelector (
                                         (mprof_id)
                                         (mprof_var_id)
                                         (mcustom_prof_name))
+)
+
+export const getRandomSizeCalcStr = createMaybeSelector (
+  getLocaleAsProp,
+  getCurrentRace,
+  getCurrentRaceVariant,
+  (l10n, mrace, mrace_var) => {
+    const msize_base = alt (bindF (RA.sizeBase) (mrace))
+                           (bindF (RVA.sizeBase) (mrace_var))
+
+    const msize_randoms = alt (bindF (RA.sizeRandom) (mrace))
+                              (bindF (RVA.sizeRandom) (mrace_var))
+
+    return liftM2 ((base: number) => (randoms: List<Record<Die>>) => {
+                    const dice_tag = translate (l10n) ("dice.short")
+
+                    return pipe_ (
+                      randoms,
+                      map (die => {
+                        const sides = Die.A.sides (die)
+                        const amount = Die.A.amount (die)
+                        const sign = getSign (sides)
+
+                        return `${sign} ${amount}${dice_tag}${abs (sides)}`
+                      }),
+                      consF (`${base}`),
+                      intercalate (" ")
+                    )
+                  })
+                  (msize_base)
+                  (msize_randoms)
+  }
+)
+
+const getSign = (x: number) => x < 0 ? minus : "+"
+
+export const getRandomWeightCalcStr = createMaybeSelector (
+  getLocaleAsProp,
+  getCurrentRace,
+  (l10n, mrace) => {
+    const mweight_base = fmap (RA.weightBase) (mrace)
+    const mweight_randoms = fmap (RA.weightRandom) (mrace)
+
+    return liftM2 ((base: number) => (randoms: List<Record<Die>>) => {
+                    const size_tag = translate (l10n) ("size")
+                    const dice_tag = translate (l10n) ("dice.short")
+
+                    return pipe_ (
+                      randoms,
+                      map (die => {
+                        const sides = Die.A.sides (die)
+                        const amount = Die.A.amount (die)
+                        const sign = getSign (sides)
+
+                        return `${sign} ${amount}${dice_tag}${abs (sides)}`
+                      }),
+                      consF (`${minus} ${base}`),
+                      consF (size_tag),
+                      intercalate (" ")
+                    )
+                  })
+                  (mweight_base)
+                  (mweight_randoms)
+  }
 )

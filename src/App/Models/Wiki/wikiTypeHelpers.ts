@@ -143,6 +143,7 @@ export enum ProfessionSelectionIds {
   SKILLS = "SKILLS",
   SPECIAL_ABILITY = "SPECIAL_ABILITY",
   TERRAIN_KNOWLEDGE = "TERRAIN_KNOWLEDGE",
+  GUILD_MAGE_UNFAMILIAR_SPELL = "GUILD_MAGE_UNFAMILIAR_SPELL",
 }
 
 export type AnyProfessionSelection =

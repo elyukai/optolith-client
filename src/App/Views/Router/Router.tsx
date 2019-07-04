@@ -94,7 +94,8 @@ export class Router extends React.Component<RouterProps> {
         () => unwrapWithHero (hero => <PersonalDataContainer l10n={l10n} hero={hero} />),
       [TabId.CharacterSheet]:
         () => unwrapWithHero (hero => <SheetsContainer l10n={l10n} hero={hero} />),
-      [TabId.Pact]: () => <PactContainer l10n={l10n} />,
+      [TabId.Pact]:
+        () => unwrapWithHero (hero => <PactContainer l10n={l10n} hero={hero} />),
       [TabId.Rules]:
         () => unwrapWithHero (hero => <RulesContainer l10n={l10n} hero={hero} />),
 

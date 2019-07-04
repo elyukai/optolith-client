@@ -3,12 +3,12 @@ import { not } from "../../../Data/Bool";
 import { notEquals } from "../../../Data/Eq";
 import { cnst } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
-import { flength, notNullStr } from "../../../Data/List";
+import { flength, List, notNullStr } from "../../../Data/List";
 import { bindF, ensure, fromJust, isJust, isNothing, Just, liftM3, mapMaybe, Maybe, maybe, maybeToNullable, maybe_, Nothing, or } from "../../../Data/Maybe";
 import { adjust, alter, lookup, lookupF, OrderedMap, size } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
-import { first, fst, Pair, second, snd } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
+import { first, fst, Pair, second, snd } from "../../../Data/Tuple";
 import { Selections as SelectionsInterface } from "../../Models/Hero/heroTypeHelpers";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Culture } from "../../Models/Wiki/Culture";
@@ -26,7 +26,7 @@ import { add, dec, gt, inc, lt, subtract } from "../../Utilities/mathUtils";
 import { getAllAdjustmentSelections } from "../../Utilities/mergeRcpAdjustmentSelections";
 import { sign } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
-import { getBuyScriptElement, getCantripsElementAndValidation, getCombatTechniquesElementAndValidation, getCombatTechniquesSecondElementAndValidation, getCursesElementAndValidation, getLanguagesAndScriptsElementAndValidation, getMainScriptSelectionElement, getMotherTongueSelectionElement, getSkillsElementAndValidation, getSkillSpecializationElement, getTerrainKnowledgeElement } from "../../Utilities/rcpAdjustmentSelectionUtils";
+import { getBuyScriptElement, getCantripsElementAndValidation, getCombatTechniquesElementAndValidation, getCombatTechniquesSecondElementAndValidation, getCursesElementAndValidation, getGuildMageUnfamiliarSpellSelectionElement, getLanguagesAndScriptsElementAndValidation, getMainScriptSelectionElement, getMotherTongueSelectionElement, getSkillsElementAndValidation, getSkillSpecializationElement, getTerrainKnowledgeElement } from "../../Utilities/rcpAdjustmentSelectionUtils";
 import { BorderButton } from "../Universal/BorderButton";
 import { Checkbox } from "../Universal/Checkbox";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
@@ -44,6 +44,7 @@ export interface SelectionsStateProps {
   currentProfession: Maybe<Record<Profession>>
   currentProfessionVariant: Maybe<Record<ProfessionVariant>>
   wiki: WikiModelRecord
+  munfamiliar_spells: Maybe<List<Record<DropdownOption>>>
 }
 
 export interface SelectionsDispatchProps {
@@ -68,6 +69,7 @@ export interface SelectionsState {
   specialization: Pair<Maybe<number>, string> // first: selection id second: user input
   specializationSkillId: Maybe<string>
   terrainKnowledge: Maybe<number>
+  selectedUnfamiliarSpell: Maybe<string>
 }
 
 const AttrA = Attribute.A
@@ -90,6 +92,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
     specializationSkillId: Nothing,
     terrainKnowledge: Nothing,
     useCulturePackage: false,
+    selectedUnfamiliarSpell: Nothing,
   }
 
   setAttributeAdjustment = (option: string) => this.setState ({ attributeAdjustment: option })
@@ -204,6 +207,9 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
   setTerrainKnowledge = (terrainKnowledge: number) =>
     this.setState ({ terrainKnowledge: Just (terrainKnowledge) })
 
+  setGuildMageUnfamiliarSpellId = (id: string) =>
+    this.setState ({ selectedUnfamiliarSpell: Just (id) })
+
   assignRCPEntries = (selMap: Record<ProfessionSelections>) => {
     this.props.setSelections ({
       ...this.state,
@@ -212,6 +218,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
         maybe_ <Maybe<string | number>> (() => fst (this.state.specialization))
                                         (Just as (x: string) => Just<string>)
                                         (ensure (notNullStr) (snd (this.state.specialization))),
+      unfamiliarSpell: this.state.selectedUnfamiliarSpell,
     })
   }
 
@@ -224,6 +231,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
       currentRace: maybeRace,
       l10n,
       wiki,
+      munfamiliar_spells,
     } = this.props
 
     const {
@@ -242,6 +250,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
       specializationSkillId,
       useCulturePackage,
       terrainKnowledge: terrainKnowledgeActive,
+      selectedUnfamiliarSpell,
     } = this.state
 
     type R = Record<Race>
@@ -250,6 +259,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
 
     return pipe_ (
       maybeProfession,
+      // tslint:disable-next-line: cyclomatic-complexity
       liftM3 ((race: R) => (culture: C) => (profession: P) => {
                const attributeAdjustmentSelection = Race.A.attributeAdjustmentsSelection (race)
                const attributeAdjustmentValue = fst (attributeAdjustmentSelection)
@@ -345,6 +355,13 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                                                                    (this.setTerrainKnowledge)
                                                                    (prof_sels)
 
+               const guildMageUnfamiliarSpell =
+                 getGuildMageUnfamiliarSpellSelectionElement (l10n)
+                                                             (munfamiliar_spells)
+                                                             (selectedUnfamiliarSpell)
+                                                             (this.setGuildMageUnfamiliarSpellId)
+                                                             (profession)
+
                return (
                  <Slidein isOpen close={close} className="rcp-selections">
                    <Scroll>
@@ -372,7 +389,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                        {translate (l10n) ("buyculturalpackage")}
                        {" ("}
                        {Culture.A.culturalPackageAdventurePoints (culture)}
-                       {" AP)"}
+                       {` ${translate (l10n) ("adventurepoints.short")})`}
                      </Checkbox>
                      {getMotherTongueSelectionElement (l10n)
                                                       (wiki)
@@ -398,6 +415,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                      {maybeToNullable (fmapF (combatTechniques) (snd))}
                      {maybeToNullable (fmapF (combatTechniquesSecond) (snd))}
                      {maybeToNullable (fmapF (curses) (snd))}
+                     {maybeToNullable (guildMageUnfamiliarSpell)}
                      {maybeToNullable (fmapF (cantrips) (snd))}
                      {maybeToNullable (fmapF (skills) (snd))}
                      {maybeToNullable (terrainKnowledge)}
@@ -426,6 +444,10 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                          || (
                           isJust (PSA[ProfessionSelectionIds.TERRAIN_KNOWLEDGE] (prof_sels))
                            && isNothing (terrainKnowledgeActive)
+                         )
+                         || (
+                           PSA[ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL] (prof_sels)
+                           && isNothing (selectedUnfamiliarSpell)
                          )
                        }
                        onClick={this.assignRCPEntries.bind (null, prof_sels)}
