@@ -11,6 +11,7 @@
     "noEmitHelpers": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
+    "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "app/",
@@ -21,7 +22,7 @@
       }
     ],
     "removeComments": true,
-    "rootDir": "src/",
+    "rootDir": "./",
     "strict": true,
     "skipLibCheck": true,
     "target": "es2017"
