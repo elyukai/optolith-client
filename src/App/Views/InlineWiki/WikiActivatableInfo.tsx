@@ -4,8 +4,8 @@ import { cnst, flip, ident, join } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { rangeN } from "../../../Data/Ix";
 import { over, set } from "../../../Data/Lens";
-import { any, append, appendStr, consF, elem, fnull, head, ifoldr, imap, intercalate, intersperse, isList, List, map, NonEmptyList, notNull, notNullStr, snocF, subscript, toArray } from "../../../Data/List";
-import { bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNullF, Nothing } from "../../../Data/Maybe";
+import { any, append, appendStr, concatMap, consF, elem, fnull, head, ifoldr, imap, intercalate, intersperse, isList, List, map, NonEmptyList, notNull, notNullStr, snoc, snocF, subscript, toArray } from "../../../Data/List";
+import { bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNull, maybeRNullF, Nothing } from "../../../Data/Maybe";
 import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
@@ -585,8 +585,8 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   const mtext_after_insidelist = bind (mtext_after) (eitherToMaybe)
   const mtext_after_outsidelist = bind (mtext_after) (pipe (invertEither, eitherToMaybe))
 
-  const addTextAfterOutsideList =
-    maybe (ident as ident<List<TypeofList>>) <TypeofList> (snocF) (mtext_after_outsidelist)
+  const addTextAfterOutsideList: <A> (xs: List<TypeofList | A>) => List<TypeofList | A> =
+    xs => maybe (xs) (snoc (xs)) (mtext_after_outsidelist)
 
   if (isOrderedMap (prerequisites)) {
     const levelList = rangeN (1, levels)
@@ -596,33 +596,42 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
         <span>{translate (l10n) ("prerequisites")}: </span>
         <span>
           {pipe_ (
-            List<Maybe<JSX.Element | string>> (
+            List<Maybe<TypeofList>> (
               mtext_before,
               notMember (1) (prerequisites)
                 ? Just (`${translate (l10n) ("level")} I: ${translate (l10n) ("none")} `)
                 : Nothing,
-              ...map ((lvl: number) => Just (
-                  <span key={lvl} className="tier">
-                    {`${translate (l10n) ("level")} ${toRoman (lvl)}: `}
-                    {maybeR (null)
-                            ((rs: List<AllRequirements>) =>
-                              pipe_ (
-                                getPrerequisites (rs) (prerequisitesTextIndex) (props),
-                                catMaybes,
-                                intersperse<JSX.Element | string> (", "),
-                                toArray,
-                                e => <>{e}</>
-                              ))
-                            (lookup (lvl) (prerequisites))}
-                    {lvl > 1 ? <span>{AAL.name (x)} {toRoman (lvl - 1)}</span> : null}
-                  </span>
-                ))
+              ...map ((lvl: number) => {
+                const prereqForLevel = lookup (lvl) (prerequisites)
+                const not_empty = Maybe.any (notNull) (prereqForLevel)
+
+                const level_num_str = `${translate (l10n) ("level")} ${toRoman (lvl)}: `
+
+                const requires_last_str =
+                  lvl > 1 ? `${not_empty ? ", " : ""}${AAL.name (x)} ${toRoman (lvl - 1)}` : ""
+
+                return Just (
+                  <React.Fragment key={lvl}>
+                    {level_num_str}
+                    {maybeRNull ((rs: List<AllRequirements>) =>
+                                  pipe_ (
+                                    getPrerequisites (rs) (prerequisitesTextIndex) (props),
+                                    catMaybes,
+                                    intersperse<TypeofList> (", "),
+                                    toArray,
+                                    e => <>{e}</>
+                                  ))
+                                (prereqForLevel)}
+                    {requires_last_str}
+                  </React.Fragment>
+                )})
                 (levelList),
               mtext_after_insidelist
             ),
             catMaybes,
-            intersperse<JSX.Element | string> (", "),
+            intersperse<TypeofList> ("; "),
             addTextAfterOutsideList,
+            concatMap (xs => isList (xs) ? xs : List (xs)),
             toArray
           )}
         </span>
