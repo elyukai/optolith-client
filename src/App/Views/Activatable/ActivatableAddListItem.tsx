@@ -1,7 +1,6 @@
-import classNames from "classnames";
 import * as React from "react";
-import { notNullStrUndef } from "../../../Data/List";
-import { fromJust, fromMaybeR, isJust, Maybe, maybeToUndefined } from "../../../Data/Maybe";
+import { List, notNullStrUndef } from "../../../Data/List";
+import { fromJust, fromMaybeR, guardReplace, isJust, Just, Maybe, maybeToUndefined, orN } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { fst, snd } from "../../../Data/Tuple";
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
@@ -12,6 +11,7 @@ import { L10nRecord } from "../../Models/Wiki/L10n";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, InactiveActivatableControlElements, insertFinalCurrentCost, PropertiesAffectedByState } from "../../Utilities/Activatable/activatableInactiveViewUtils";
+import { classListMaybe } from "../../Utilities/CSS";
 import { translate } from "../../Utilities/I18n";
 import { pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
@@ -227,13 +227,11 @@ export class ActivatableAddListItem extends
         : null}
         <ListItemValues>
           <div
-            className={
-              classNames (
-                "cost",
-                hideGroup === true ? "value-btn" : undefined,
-                typeof customCost === "string" ? "custom-cost" : undefined
-              )
-            }
+            className={classListMaybe (List (
+              Just ("cost"),
+              guardReplace (orN (hideGroup)) ("value-btn"),
+              guardReplace (typeof customCost === "string") ("custom-cost")
+            ))}
             onClick={this.showCustomCostDialog}
             >
             {renderMaybe (PABSA.currentCost (snd (finalProps)))}

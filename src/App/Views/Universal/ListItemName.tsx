@@ -1,6 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
-import { Maybe, maybe, Nothing } from "../../../Data/Maybe";
+import { List } from "../../../Data/List";
+import { guardReplace, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
 export interface ListItemNameProps {
   addName?: Maybe<string>
@@ -22,7 +23,14 @@ export function ListItemName (props: ListItemNameProps) {
                              (madd_name)
 
   return (
-    <div className={classNames ("name", large !== undefined ? "large" : undefined)}>
+    <div
+      className={
+        classListMaybe (List (
+          Just ("name"),
+          guardReplace (large !== undefined) ("large")
+        ))
+      }
+      >
       {titleElement}
       {children}
     </div>

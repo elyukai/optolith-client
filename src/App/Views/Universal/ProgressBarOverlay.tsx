@@ -1,4 +1,5 @@
 import * as React from "react";
+import { orN } from "../../../Data/Maybe";
 
 export interface ProgressBarOverlayProps {
   current: number
@@ -10,7 +11,7 @@ export function ProgressBarOverlay (props: ProgressBarOverlayProps) {
   const { current, max, horizontal } = props
 
   const style =
-    horizontal === true
+    orN (horizontal)
       ? { width: `${current / max * 100}%` }
       : { height: `${current / max * 100}%` }
 

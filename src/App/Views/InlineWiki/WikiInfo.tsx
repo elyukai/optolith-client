@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Maybe } from "../../../Data/Maybe";
+import { Maybe, orN } from "../../../Data/Maybe";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Aside } from "../Universal/Aside";
 import { ErrorMessage } from "../Universal/ErrorMessage";
@@ -51,7 +51,7 @@ export class WikiInfo extends React.Component<WikiInfoProps, WikiInfoState> {
           />
       )
 
-      return noWrapper === true ? currentElement : <Aside>{currentElement}</Aside>
+      return orN (noWrapper) ? currentElement : <Aside>{currentElement}</Aside>
     }
 
     return <WikiInfoContent {...this.props} />

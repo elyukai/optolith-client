@@ -1,9 +1,11 @@
-import classNames from "classnames";
 import * as React from "react";
 import { connect } from "react-redux";
+import { List } from "../../../Data/List";
+import { guardReplace, Just, orN } from "../../../Data/Maybe";
 import { AppStateRecord } from "../../Reducers/appReducer";
 import { getTheme } from "../../Selectors/uisettingsSelectors";
 import { close, createOverlay } from "../../Utilities/createOverlay";
+import { classListMaybe } from "../../Utilities/CSS";
 import { Overlay } from "./Overlay";
 
 export interface TooltipToggleOwnProps {
@@ -39,13 +41,10 @@ export class TooltipToggleWrapped extends React.Component<TooltipToggleProps, {}
 
     this.node = createOverlay (
       <Overlay
-        className={
-          classNames (
-            "tooltip",
-            `theme-${theme}`,
-            small === true ? "tooltip-small" : undefined
-          )
-        }
+        className={classListMaybe (List (
+          Just (`tooltip theme-${theme}`),
+          guardReplace (orN (small)) ("tooltip-small")
+        ))}
         position={position}
         trigger={event.currentTarget}
         margin={margin}

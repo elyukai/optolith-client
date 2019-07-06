@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "jsx": "react",
     "lib": ["esnext", "dom"],
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
     "noEmitHelpers": true,
     "noFallthroughCasesInSwitch": true,

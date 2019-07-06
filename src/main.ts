@@ -2,8 +2,7 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import * as log from "electron-log";
 // tslint:disable-next-line:no-implicit-dependencies
 import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater";
-// tslint:disable-next-line:ordered-imports
-import windowStateKeeper from "electron-window-state";
+// import windowStateKeeper from "electron-window-state";
 import * as path from "path";
 import { prerelease } from "semver";
 import * as url from "url";
@@ -13,6 +12,8 @@ import { fromLeft_, isLeft } from "./Data/Either";
 import { fmap } from "./Data/Functor";
 import { Unit } from "./Data/Unit";
 import { existsFile, IO, join, liftM2, runIO, thenF } from "./System/IO";
+// tslint:disable-next-line:ordered-imports
+import windowStateKeeper = require("electron-window-state");
 
 let mainWindow: Electron.BrowserWindow | null | undefined
 

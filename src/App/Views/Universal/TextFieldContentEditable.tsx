@@ -1,6 +1,8 @@
 // import { TextareaAutosize } from 'react-textarea-autosize'
-import classNames from "classnames";
 import * as React from "react";
+import { orN, Just, guardReplace } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
+import { List } from "../../../Data/List";
 
 export interface TextFieldContentEditableProps {
   disabled?: boolean
@@ -23,7 +25,12 @@ export class TextFieldContentEditable extends React.Component<TextFieldContentEd
 
     return (
       <div
-        className={classNames ("textarea", singleLine === true ? "single-line" : undefined)}
+        className={
+          classListMaybe (List (
+            Just ("textarea"),
+            guardReplace (orN (singleLine)) ("single-line")
+          ))
+        }
         contentEditable={disabled !== true}
         onInput={this.handleChange}
         ref={e => this.element = e}

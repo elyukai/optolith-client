@@ -1,7 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
 import { isList, List, subscript } from "../../../Data/List";
-import { fromMaybeR, isJust, Just, Maybe, normalize, Nothing } from "../../../Data/Maybe";
+import { fromMaybeR, guardReplace, isJust, Just, Maybe, normalize, Nothing, orN } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
 export interface ListItemGroupProps {
   children?: React.ReactNode
@@ -25,7 +25,14 @@ export function ListItemGroup (props: ListItemGroupProps) {
                  : Nothing)
 
   return (
-    <div className={classNames ("group", small === true ? "small-info-text" : undefined)}>
+    <div
+      className={
+        classListMaybe (List (
+          Just ("group"),
+          guardReplace (orN (small)) ("small-info-text")
+        ))
+      }
+      >
       {content}
     </div>
   )

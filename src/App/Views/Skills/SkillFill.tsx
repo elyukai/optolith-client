@@ -1,4 +1,5 @@
 import * as React from "react";
+import { orN } from "../../../Data/Maybe";
 
 export interface SkillFillProps {
   addFillElement?: boolean
@@ -7,11 +8,5 @@ export interface SkillFillProps {
 export function SkillFill (props: SkillFillProps) {
   const { addFillElement } = props
 
-  if (addFillElement === true) {
-    return (
-      <div className="fill" />
-    )
-  }
-
-  return null
+  return orN (addFillElement) ? <div className="fill" /> : null
 }

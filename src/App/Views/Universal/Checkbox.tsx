@@ -1,7 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
-import { notNullStrUndef } from "../../../Data/List";
-import { Maybe, normalize, or } from "../../../Data/Maybe";
+import { List, notNullStrUndef } from "../../../Data/List";
+import { Just, Maybe, normalize, or } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 import { pipe } from "../../Utilities/pipe";
 import { Activate } from "./Activate";
 import { Icon } from "./Icon";
@@ -26,7 +26,7 @@ export function Checkbox (props: CheckboxProps) {
     <Activate
       {...other}
       active={normalizeChecked (checked)}
-      className={classNames ("checkbox", className)}
+      className={classListMaybe (List (Just ("checkbox"), Maybe (className)))}
       onClick={onClick}
       >
       <Icon>

@@ -1,5 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
+import { List } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
 export interface SliderProps {
   className?: string
@@ -14,7 +16,7 @@ export function Slider (props: SliderProps) {
   const { className, label, max, min, onChange, value } = props
 
   return (
-    <div className={classNames ("slider", className)}>
+    <div className={classListMaybe (List (Just ("slider"), Maybe (className)))}>
       <label>
         <span>{label}</span>
         <span>{value}</span>

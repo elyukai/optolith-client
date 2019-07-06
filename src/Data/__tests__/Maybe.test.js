@@ -859,3 +859,16 @@ test ('joinMaybeList', () => {
   expect (Maybe.joinMaybeList (Nothing))
     .toEqual (List ())
 })
+
+test ('guardReplace', () => {
+  expect (Maybe.guardReplace (true) (3))
+    .toEqual (Just (3))
+  expect (Maybe.guardReplace (false) (3))
+    .toEqual (Nothing)
+})
+
+test ('orN', () => {
+  expect (Maybe.orN (true)) .toEqual (true)
+  expect (Maybe.orN (false)) .toEqual (false)
+  expect (Maybe.orN (undefined)) .toEqual (false)
+})

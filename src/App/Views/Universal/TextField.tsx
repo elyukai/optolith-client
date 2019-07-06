@@ -1,11 +1,11 @@
 // import { TextareaAutosize } from 'react-textarea-autosize'
-import classNames from "classnames";
 import * as React from "react";
 import { findDOMNode } from "react-dom";
 import { fmapF } from "../../../Data/Functor";
-import { notNullStr } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, fromMaybeR, Maybe, maybeR, normalize } from "../../../Data/Maybe";
+import { List, notNullStr } from "../../../Data/List";
+import { bindF, ensure, fromMaybe, fromMaybeR, guardReplace, Just, Maybe, maybeR, normalize, orN } from "../../../Data/Maybe";
 import { InputKeyEvent, InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
+import { classListMaybe } from "../../Utilities/CSS";
 import { pipe_ } from "../../Utilities/pipe";
 import { isNumber } from "../../Utilities/typeCheckUtils";
 import { Label } from "./Label";
@@ -62,7 +62,12 @@ export class TextField extends React.Component<TextFieldProps, {}> {
       fmapF (mhint)
             (hint => (
               <div
-                className={classNames ("textfield-hint", value !== "" ? "hide" : undefined)}
+                className={
+                  classListMaybe (List (
+                    Just ("textfield-hint"),
+                    guardReplace (value !== "") ("hide")
+                  ))
+                }
                 >
                 {hint}
               </div>
@@ -80,7 +85,7 @@ export class TextField extends React.Component<TextFieldProps, {}> {
         type={type}
         value={value}
         onChange={
-          disabled === true
+          orN (disabled)
             ? undefined
             : (onChange && onChangeString)
             ? event => {
@@ -91,7 +96,7 @@ export class TextField extends React.Component<TextFieldProps, {}> {
             ? event => onChangeString (event.target.value)
             : onChange
         }
-        onKeyPress={disabled === true ? undefined : onKeyDown}
+        onKeyPress={orN (disabled) ? undefined : onKeyDown}
         readOnly={disabled}
         ref={node => this.inputRef = node}
       />
@@ -101,12 +106,17 @@ export class TextField extends React.Component<TextFieldProps, {}> {
       isNumber (countMax) ? <div>{countCurrent} / {countMax}</div> : null
 
     return (
-      <div className={classNames (className, {
-        textfield: true,
-        fullWidth,
-        disabled,
-        invalid: valid === false,
-      })}>
+      <div
+        className={
+          classListMaybe (List (
+            Just ("textfield"),
+            Maybe (className),
+            guardReplace (orN (fullWidth)) ("fullWidth"),
+            guardReplace (orN (disabled)) ("disabled"),
+            guardReplace (valid === false) ("invalid")
+          ))
+        }
+        >
         {pipe_ (mlabel, bindF (ensure (notNullStr)), maybeR (null) (l => <Label text={l} />))}
         {inputElement}
         {fromMaybeR (null) (hintElement)}

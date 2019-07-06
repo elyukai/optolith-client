@@ -1,6 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
-import { Maybe } from "../../../Data/Maybe";
+import { List } from "../../../Data/List";
+import { guardReplace, Just, Maybe } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 import { isPathValidM } from "../../Utilities/RegexUtils";
 import { Avatar } from "./Avatar";
 
@@ -18,10 +19,10 @@ export function AvatarWrapper (props: AvatarWrapperProps) {
 
   const validPath = isPathValidM (msrc)
 
-  className = classNames (className, {
-    "avatar-wrapper": true,
-    "no-avatar": !validPath,
-  })
+  className = classListMaybe (List (
+    Just ("avatar-wrapper"),
+    guardReplace (!validPath) ("no-avatar")
+  ))
 
   return (
     <div className={className} onClick={onClick}>

@@ -2,7 +2,7 @@ import { remote } from "electron";
 import * as localShortcut from "electron-localshortcut";
 import * as React from "react";
 import { AnyAction } from "redux";
-import { Maybe } from "../../../Data/Maybe";
+import { Maybe, orN } from "../../../Data/Maybe";
 import { ReduxDispatch } from "../../Actions/Actions";
 import { Alert as AlertOptions, AlertButton, ViewAlertButton } from "../../Models/Hero/heroTypeHelpers";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -40,11 +40,11 @@ export function Alert (props: AlertProps) {
 
   const buttonOptions: AlertButton[] = confirm ? [
     {
-      label: confirmYesNo === true ? translate (l10n) ("yes") : translate (l10n) ("ok"),
+      label: orN (confirmYesNo) ? translate (l10n) ("yes") : translate (l10n) ("ok"),
       dispatchOnClick: confirm.resolve,
     },
     {
-      label: confirmYesNo === true ? translate (l10n) ("no") : translate (l10n) ("cancel"),
+      label: orN (confirmYesNo) ? translate (l10n) ("no") : translate (l10n) ("cancel"),
       dispatchOnClick: confirm.reject,
     },
   ] : buttonsOption

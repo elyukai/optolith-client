@@ -1,4 +1,5 @@
 import * as React from "react";
+import { orN } from "../../../Data/Maybe";
 import { Aside } from "../Universal/Aside";
 import { WikiInfoEmpty } from "./WikiInfoEmpty";
 
@@ -12,5 +13,5 @@ export function WikiInfoContentWrapper (props: WikiInfoContentWrapperProps): JSX
 
   const safe_elem = children !== null && children !== undefined ? children : <WikiInfoEmpty />
 
-  return noWrapper === true ? safe_elem : <Aside>{safe_elem}</Aside>
+  return orN (noWrapper) ? safe_elem : <Aside>{safe_elem}</Aside>
 }

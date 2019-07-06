@@ -1,5 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
+import { List } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 import { TooltipHint } from "./TooltipHint";
 
 export interface ListHeaderTagProps {
@@ -14,7 +16,7 @@ export function ListHeaderTag (props: ListHeaderTagProps) {
   if (typeof hint === "string") {
     return (
       <TooltipHint hint={hint}>
-        <div className={classNames (className, "has-hint")}>
+        <div className={classListMaybe (List (Just ("has-hint"), Maybe (className)))}>
           {children}
         </div>
       </TooltipHint>

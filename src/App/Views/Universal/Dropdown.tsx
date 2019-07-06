@@ -1,9 +1,9 @@
-import classNames from "classnames";
 import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { cons, elemF, filter, find, flength, fnull, intercalate, List, map, notNull, toArray } from "../../../Data/List";
-import { any, ensure, fromJust, fromMaybe, isJust, Just, Maybe, maybe, maybeToList, normalize, Nothing, or } from "../../../Data/Maybe";
+import { any, ensure, fromJust, fromMaybe, guardReplace, isJust, Just, Maybe, maybe, maybeToList, normalize, Nothing, or, orN } from "../../../Data/Maybe";
 import { Accessors, fromDefault, PartialMaybeOrNothing, Record, RecordCreator, StrictAccessors } from "../../../Data/Record";
+import { classListMaybe } from "../../Utilities/CSS";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
 import { Label } from "./Label";
@@ -180,10 +180,11 @@ export class Dropdown<A extends DropdownKey>
               toArray (
                 map<Record<DropdownOption<A>>, JSX.Element>
                   (option => {
-                    const classNameInner = classNames (
-                      equals (normalizedValue) (DOA.id (option)) ? "active" : undefined,
-                      or (DOA.disabled (option)) ? "disabled" : undefined
-                    )
+                    const classNameInner =
+                      classListMaybe (List (
+                        guardReplace (equals (normalizedValue) (DOA.id (option))) ("active"),
+                        guardReplace (or (DOA.disabled (option))) ("disabled")
+                      ))
 
                     return (
                       <div
@@ -212,13 +213,17 @@ export class Dropdown<A extends DropdownKey>
 
     return (
       <div
-        className={classNames (className, position, {
-          dropdown: true,
-          active: isOpen,
-          fullWidth,
-          disabled: normalizedDisabled,
-          invalid: required === true && fnull (mselected),
-        })}
+        className={
+          classListMaybe (List (
+            Just (position),
+            Just ("dropdown"),
+            Maybe (className),
+            guardReplace (isOpen) ("active"),
+            guardReplace (orN (fullWidth)) ("fullWidth"),
+            guardReplace (normalizedDisabled) ("disabled"),
+            guardReplace (orN (required) && fnull (mselected)) ("invalid")
+          ))
+        }
         ref={node => this.containerRef = node}
         >
         {typeof label === "string" ? <Label text={label} disabled={normalizedDisabled} /> : null}
@@ -231,7 +236,12 @@ export class Dropdown<A extends DropdownKey>
           {position === "top" && isOpen ? downElement : placeholder}
           <div
             onClick={this.switch}
-            className={classNames ("value", fnull (mselected) ? "hint" : undefined)}
+            className={
+              classListMaybe (List (
+                Just ("value"),
+                guardReplace (fnull (mselected)) ("hint")
+              ))
+            }
             >
             {valueText}
           </div>

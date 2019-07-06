@@ -1,5 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
+import { List } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
 export interface TitleBarButtonProps {
   className?: string
@@ -9,7 +11,10 @@ export interface TitleBarButtonProps {
 
 export function TitleBarButton (props: TitleBarButtonProps) {
   return (
-    <div className={classNames ("titlebar-btn", props.className)} onClick={props.onClick}>
+    <div
+      className={classListMaybe (List (Just ("titlebar-btn"), Maybe (props.className)))}
+      onClick={props.onClick}
+      >
       <span>{props.icon}</span>
     </div>
   )

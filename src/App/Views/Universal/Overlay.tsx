@@ -1,6 +1,8 @@
-import classNames from "classnames";
 import * as React from "react";
 import { findDOMNode } from "react-dom";
+import { List } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
 export interface OverlayProps {
   className?: string
@@ -153,7 +155,12 @@ export class Overlay extends React.Component<OverlayProps, OverlayState> {
     return (
       <div
         {...newOther}
-        className={classNames (this.props.className, "overlay", `overlay-${position}`)}
+        className={
+          classListMaybe (List (
+            Just (`overlay overlay-${position}`),
+            Maybe (this.props.className)
+          ))
+        }
         ref={node => {
           if (node !== null) {
             this.overlayRef = findDOMNode (node) as Element | null

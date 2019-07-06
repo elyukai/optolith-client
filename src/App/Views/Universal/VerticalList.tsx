@@ -1,5 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
+import { List } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
 export interface VerticalListProps {
   className?: string
@@ -10,7 +12,7 @@ export function VerticalList (props: VerticalListProps) {
   const { children, className, ...other } = props
 
   return (
-    <div {...other} className={classNames (className, "vertical-list")}>
+    <div {...other} className={classListMaybe (List (Just ("vertical-list"), Maybe (className)))}>
       {children}
     </div>
   )

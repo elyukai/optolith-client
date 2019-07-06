@@ -1,10 +1,10 @@
-import classNames from "classnames";
 import * as React from "react";
-import { fnullStr, notNullStr } from "../../../Data/List";
-import { fromMaybe, Maybe } from "../../../Data/Maybe";
+import { fnullStr, notNullStr, List } from "../../../Data/List";
+import { fromMaybe, Maybe, Just } from "../../../Data/Maybe";
 import { InputKeyEvent, InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { IconButton } from "./IconButton";
 import { TextField } from "./TextField";
+import { classListMaybe } from "../../Utilities/CSS";
 
 export interface EditTextProps {
   autoFocus?: boolean
@@ -35,7 +35,13 @@ export class EditText extends React.Component<EditTextProps, EditTextState> {
 
   render () {
     return (
-      <div className={classNames ("confirm-edit", this.props.className)}>
+      <div
+        className={
+          classListMaybe (List (
+            Just ("confirm-edit"),
+            Maybe (this.props.className)
+          ))
+        }>
         <TextField
           value={this.state.text}
           onChange={this.handleInput}

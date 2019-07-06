@@ -1,5 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
+import { List } from "../../../Data/List";
+import { guardReplace, Maybe, orN } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
 export interface ListItemProps {
   active?: boolean
@@ -31,17 +33,20 @@ export function ListItem (props: ListItemProps) {
   return (
     <li
       {...other}
-      className={classNames (className, {
-        "active": active,
-        "imp": important,
-        "typ": recommended,
-        "untyp": unrecommended,
-        "no-increase": noIncrease,
-        "top-margin": insertTopMargin,
-        disabled,
-      })}
+      className={
+        classListMaybe (List (
+          Maybe (className),
+          guardReplace (orN (active)) ("active"),
+          guardReplace (orN (important)) ("imp"),
+          guardReplace (orN (recommended)) ("typ"),
+          guardReplace (orN (unrecommended)) ("untyp"),
+          guardReplace (orN (noIncrease)) ("no-increase"),
+          guardReplace (orN (insertTopMargin)) ("top-margin"),
+          guardReplace (orN (disabled)) ("disabled")
+        ))
+      }
       >
-      {insertTopMargin === true ? <div className="separator"></div> : null}
+      {orN (insertTopMargin) ? <div className="separator"></div> : null}
       {children}
     </li>
   )

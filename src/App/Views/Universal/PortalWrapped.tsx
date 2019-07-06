@@ -1,6 +1,8 @@
-import classNames from "classnames";
 import * as React from "react";
 import { Portal } from "react-portal";
+import { List } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
 interface CallBackProps extends React.Props<any> {
   closePortal (): void
@@ -42,7 +44,7 @@ export function PortalWrapped (props: PortalWrappedProps) {
   return isOpen
     ? (
       <Portal {...other}>
-        <div className={classNames (className, `theme-${theme}`)} id={id}>
+        <div className={classListMaybe (List (Just (`theme-${theme}`), Maybe (className)))} id={id}>
           {children}
         </div>
       </Portal>

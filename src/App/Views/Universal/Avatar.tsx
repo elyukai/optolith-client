@@ -1,6 +1,8 @@
-import classNames from "classnames";
 import * as React from "react";
-import { guard, Maybe, then } from "../../../Data/Maybe";
+import { List } from "../../../Data/List";
+import { bind, guard, guardReplace, Just, Maybe, orN, then } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
+import { renderMaybe } from "../../Utilities/ReactUtils";
 import { isPathValidM } from "../../Utilities/RegexUtils";
 
 export interface AvatarProps {
@@ -19,18 +21,16 @@ export function Avatar (props: AvatarProps) {
     validPath = isPathValidM (msrc),
   } = props
 
-  const className = classNames (
-    hasWrapper !== true ? inheritedClassName : undefined,
-    {
-      "avatar": true,
-      "no-avatar": hasWrapper !== true && !validPath,
-    }
-  )
+  const className = classListMaybe (List (
+    Just ("avatar"),
+    bind (Maybe (inheritedClassName)) (guardReplace (hasWrapper !== true)),
+    guardReplace (hasWrapper !== true && !validPath) ("no-avatar")
+  ))
 
-  return img === true ? (
+  return orN (img) ? (
     <img
       className={className}
-      src={Maybe.fromMaybe ("") (then (guard (validPath)) (msrc))}
+      src={renderMaybe (then (guard (validPath)) (msrc))}
       onClick={onClick}
       alt=""
       />
@@ -39,7 +39,7 @@ export function Avatar (props: AvatarProps) {
       className={className}
       style={
         validPath
-          ? { backgroundImage: `url("${Maybe.fromMaybe ("") (msrc)}")` }
+          ? { backgroundImage: `url("${renderMaybe (msrc)}")` }
           : undefined
       }
       onClick={onClick}

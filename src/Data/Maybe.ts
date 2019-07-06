@@ -382,7 +382,7 @@ export const foldl =
   (f: (acc: B) => (x: A) => B) =>
   (initial: B) =>
   (x: Maybe<A>): B =>
-    isJust (x) ? f (initial) (x .value) : initial
+    isNothing (x) ? initial : f (initial) (x .value)
 
 /**
  * `toList :: Maybe a -> [a]`
@@ -897,6 +897,34 @@ export const maybeRNullF = flip (maybeR (null))
 export const joinMaybeList = <A> (x: Maybe<List<A>>): List<A> => fromMaybe (List<A> ()) (x)
 
 Maybe.joinMaybeList = joinMaybeList
+
+/**
+ * `guardReplace :: Bool -> a -> Maybe a`
+ *
+ * `guardReplace cond x` returns `Just x` if `cond` is `True`, otherwise
+ * `Nothing`.
+ *
+ * ```haskell
+ * guardReplace = (flip mapReplace) . guard
+ * ```
+ */
+export const guardReplace: (cond: boolean) => <A> (x: A) => Maybe<A> =
+  cond => x => cond ? Just (x) : Nothing
+
+Maybe.guardReplace = guardReplace
+
+/**
+ * `orN :: Bool | Undefined -> Bool`
+ *
+ * ```haskell
+ * orN True == True
+ * orN False == False
+ * orN Undefined == False
+ * ```
+ */
+export const orN: (x: boolean | undefined) => boolean = x => x === undefined ? false : x
+
+Maybe.orN = orN
 
 
 // NAMESPACED FUNCTIONS
