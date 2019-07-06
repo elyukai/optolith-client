@@ -503,13 +503,21 @@ const getFinalLevelName =
     const current_id = ActivatableNameCostA_.id (entry)
     const current_cost = ActivatableNameCost.A.finalCost (entry)
 
+    console.log("Current_Id:" + current_id + ", Current_Cost:" + current_cost 
+      + "Current_Level: " + current_level + "IsSpecialAbility?: " + isSpecialAbilityById (current_id) 
+      + "IsList(cost)?:" + isList (current_cost))
+
     if (current_id === "SA_29" && current_level === 4) {
       return ` ${translate (l10n) ("nativetongue.short")}`
     }
 
+    console.log("No mothertongue language")
+
     if (isList (current_cost) || isSpecialAbilityById (current_id)) {
       return getSpecialAbilityLevel (current_level)
     }
+
+    console.log("No Special Ability or smth")
 
     return getLevel (current_level)
   }
@@ -557,15 +565,16 @@ const putLevelName =
 /**
  * Calculates level name and level-based cost and (optionally) updates `name`.
  * @param locale
- * @param addTierToCombinedTier If true, does not add `tierName` to `name`.
+ * @param addLevelToName If true, does not add `current_level` to `name`.
  */
 export const convertPerTierCostToFinalCost =
   (addLevelToName: boolean) =>
   (l10n: L10nRecord) =>
     pipe (
       putLevelName (addLevelToName) (l10n),
-      putCurrentCost
+      putCurrentCost,
     )
+    
 
 export const getActiveWithNoCustomCost =
   filter (pipe (ActiveObject.A.cost, isNothing))

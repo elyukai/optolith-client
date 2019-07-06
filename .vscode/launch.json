@@ -9,7 +9,7 @@
             "stopOnEntry": false,
             "args": [],
             "cwd": "${workspaceRoot}",
-            "preLaunchTask": "tsc: build - tsconfig.json",
+            //"preLaunchTask": "tsc: build - tsconfig.json",
             
 "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd",
             
@@ -19,7 +19,7 @@
             ],
             
 "env": {},            "console": "internalConsole",
-            "sourceMaps": false,
+            "sourceMaps": true,
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]
@@ -31,7 +31,7 @@
             "port": 5858,
             "address": "localhost",
             "restart": false,
-            "sourceMaps": false,
+            "sourceMaps": true,
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ],

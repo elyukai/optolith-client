@@ -68,14 +68,14 @@ export const getActiveMap =
                                                                (wiki))
 
 export const getActiveForView = <T extends ActivatableCategory>(category: T) =>
-  getActive (category, false)
-
-export const getActiveForEditView = <T extends ActivatableCategory>(category: T) =>
   getActive (category, true)
 
-export const getActiveForViewMap = getActiveMap (false)
+export const getActiveForEditView = <T extends ActivatableCategory>(category: T) =>
+  getActive (category, false)
 
-export const getActiveForEditViewMap = getActiveMap (true)
+export const getActiveForViewMap = getActiveMap (true)
+
+export const getActiveForEditViewMap = getActiveMap (false)
 
 type RatingMap = OrderedMap<string, EntryRating>
 

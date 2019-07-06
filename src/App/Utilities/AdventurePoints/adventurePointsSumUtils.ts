@@ -299,7 +299,7 @@ export const getAPObjectAreas =
         getAPSpentForSpecialAbilities (wiki)
                                       (HeroModel.A.specialAbilities (hero))
                                       (getAllActiveByCategory (Categories.SPECIAL_ABILITIES)
-                                                              (false)
+                                                              (true)
                                                               (l10n)
                                                               (wiki)
                                                               (hero)),
@@ -307,7 +307,7 @@ export const getAPObjectAreas =
         getAPSpentForAdvantages (wiki)
                                 (HeroModel.A.advantages (hero))
                                 (getAllActiveByCategory (Categories.ADVANTAGES)
-                                                        (false)
+                                                        (true)
                                                         (l10n)
                                                         (wiki)
                                                         (hero)),
@@ -315,7 +315,7 @@ export const getAPObjectAreas =
         getAPSpentForMagicalAdvantages (wiki)
                                         (HeroModel.A.advantages (hero))
                                         (getAllActiveByCategory (Categories.ADVANTAGES)
-                                                                (false)
+                                                                (true)
                                                                 (l10n)
                                                                 (wiki)
                                                                 (hero)),
@@ -323,7 +323,7 @@ export const getAPObjectAreas =
         getAPSpentForBlessedAdvantages (wiki)
                                         (HeroModel.A.advantages (hero))
                                         (getAllActiveByCategory (Categories.ADVANTAGES)
-                                                                (false)
+                                                                (true)
                                                                 (l10n)
                                                                 (wiki)
                                                                 (hero)),
@@ -331,7 +331,7 @@ export const getAPObjectAreas =
         getAPSpentForDisadvantages (wiki)
                                     (HeroModel.A.disadvantages (hero))
                                     (getAllActiveByCategory (Categories.DISADVANTAGES)
-                                                            (false)
+                                                            (true)
                                                             (l10n)
                                                             (wiki)
                                                             (hero)),
@@ -339,7 +339,7 @@ export const getAPObjectAreas =
         getAPSpentForMagicalDisadvantages (wiki)
                                           (HeroModel.A.disadvantages (hero))
                                           (getAllActiveByCategory (Categories.DISADVANTAGES)
-                                                                  (false)
+                                                                  (true)
                                                                   (l10n)
                                                                   (wiki)
                                                                   (hero)),
@@ -347,7 +347,7 @@ export const getAPObjectAreas =
         getAPSpentForBlessedDisadvantages (wiki)
                                           (HeroModel.A.disadvantages (hero))
                                           (getAllActiveByCategory (Categories.DISADVANTAGES)
-                                                                  (false)
+                                                                  (true)
                                                                   (l10n)
                                                                   (wiki)
                                                                   (hero)),
