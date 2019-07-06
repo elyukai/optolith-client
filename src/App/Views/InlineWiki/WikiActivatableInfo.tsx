@@ -4,7 +4,7 @@ import { cnst, flip, ident, join } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { rangeN } from "../../../Data/Ix";
 import { over, set } from "../../../Data/Lens";
-import { any, append, appendStr, concatMap, consF, elem, fnull, head, ifoldr, imap, intercalate, intersperse, isList, List, map, NonEmptyList, notNull, notNullStr, snoc, snocF, subscript, toArray } from "../../../Data/List";
+import { any, append, appendStr, consF, elem, fnull, head, ifoldr, imap, intercalate, intersperse, isList, List, map, NonEmptyList, notNull, notNullStr, snoc, snocF, subscript, toArray } from "../../../Data/List";
 import { bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNull, maybeRNullF, Nothing } from "../../../Data/Maybe";
 import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
@@ -631,7 +631,6 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
             catMaybes,
             intersperse<TypeofList> ("; "),
             addTextAfterOutsideList,
-            concatMap (xs => isList (xs) ? xs : List (xs)),
             toArray
           )}
         </span>
