@@ -14,6 +14,7 @@ import { getHeroes, getWikiExperienceLevels } from "../Selectors/stateSelectors"
 import { translate, translateP } from "../Utilities/I18n";
 import { getNewIdByDate } from "../Utilities/IDUtils";
 import { pipe_ } from "../Utilities/pipe";
+import { SortNames } from "../Views/Universal/SortOptions";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 import { requestAllHeroesSave, requestHeroDeletion, requestHeroExport, requestHeroSave } from "./IOActions";
@@ -21,11 +22,11 @@ import { requestAllHeroesSave, requestHeroDeletion, requestHeroExport, requestHe
 export interface SetHerolistSortOrderAction {
   type: ActionTypes.SET_HEROLIST_SORT_ORDER
   payload: {
-    sortOrder: string;
+    sortOrder: SortNames;
   }
 }
 
-export const setHerolistSortOrder = (sortOrder: string): SetHerolistSortOrderAction => ({
+export const setHerolistSortOrder = (sortOrder: SortNames): SetHerolistSortOrderAction => ({
   type: ActionTypes.SET_HEROLIST_SORT_ORDER,
   payload: {
     sortOrder,
@@ -224,6 +225,26 @@ export const duplicateHero = (id: string): DuplicateHeroAction => {
     payload: {
       id,
       newId,
+    },
+  }
+}
+
+export interface UpdateDateModifiedAction {
+  type: ActionTypes.UPDATE_DATE_MODIFIED
+  payload: {
+    id: string;
+    dateModified: Date;
+  }
+}
+
+export const updateDateModified = (id: string): UpdateDateModifiedAction => {
+  const dateModified = new Date ()
+
+  return {
+    type: ActionTypes.UPDATE_DATE_MODIFIED,
+    payload: {
+      id,
+      dateModified,
     },
   }
 }

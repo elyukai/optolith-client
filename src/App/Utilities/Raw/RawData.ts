@@ -1,5 +1,6 @@
 import { StringKeyObject } from "../../../Data/Record";
 import { SID } from "../../Models/Wiki/wikiTypeHelpers";
+import { SortNames } from "../../Views/Universal/SortOptions";
 
 export interface RawUser {
   id: string
@@ -192,26 +193,26 @@ export interface RawPet {
 }
 
 export interface RawConfig {
-  herolistSortOrder: string
+  herolistSortOrder: SortNames
   herolistVisibilityFilter: string
-  racesSortOrder: string
+  racesSortOrder: SortNames
   racesValueVisibility: boolean
-  culturesSortOrder: string
+  culturesSortOrder: SortNames
   culturesVisibilityFilter: string
   culturesValueVisibility: boolean
-  professionsSortOrder: string
+  professionsSortOrder: SortNames
   professionsVisibilityFilter: string
   professionsGroupVisibilityFilter: number
   professionsFromExpansionsVisibility: boolean
   advantagesDisadvantagesCultureRatingVisibility: boolean
-  talentsSortOrder: string
+  talentsSortOrder: SortNames
   talentsCultureRatingVisibility: boolean
-  combatTechniquesSortOrder: string
-  specialAbilitiesSortOrder: string
-  spellsSortOrder: string
+  combatTechniquesSortOrder: SortNames
+  specialAbilitiesSortOrder: SortNames
+  spellsSortOrder: SortNames
   spellsUnfamiliarVisibility: boolean
-  liturgiesSortOrder: string
-  equipmentSortOrder: string
+  liturgiesSortOrder: SortNames
+  equipmentSortOrder: SortNames
   equipmentGroupVisibilityFilter: number
   sheetCheckAttributeValueVisibility?: boolean
   enableActiveItemHints: boolean

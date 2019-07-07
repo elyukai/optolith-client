@@ -44,7 +44,7 @@ export interface EquipmentStateProps {
   items: Maybe<List<Record<Item>>>
   hasNoAddedAP: boolean
   purse: Maybe<Record<Purse>>
-  sortOrder: string
+  sortOrder: SortNames
   templates: Maybe<List<Record<ItemTemplate>>>
   totalPrice: Maybe<number>
   totalWeight: Maybe<number>
@@ -56,7 +56,7 @@ export interface EquipmentStateProps {
 }
 
 export interface EquipmentDispatchProps {
-  setSortOrder (option: string): void
+  setSortOrder (option: SortNames): void
   setDucates (value: string): void
   setSilverthalers (value: string): void
   setHellers (value: string): void

@@ -1,4 +1,5 @@
 import { ActionTypes } from "../Constants/ActionTypes";
+import { SortNames } from "../Views/Universal/SortOptions";
 
 export interface SelectCultureAction {
   type: ActionTypes.SELECT_CULTURE
@@ -17,11 +18,11 @@ export const selectCulture = (id: string): SelectCultureAction => ({
 export interface SetCulturesSortOrderAction {
   type: ActionTypes.SET_CULTURES_SORT_ORDER
   payload: {
-    sortOrder: string;
+    sortOrder: SortNames;
   }
 }
 
-export const setSortOrder = (sortOrder: string): SetCulturesSortOrderAction => ({
+export const setSortOrder = (sortOrder: SortNames): SetCulturesSortOrderAction => ({
   type: ActionTypes.SET_CULTURES_SORT_ORDER,
   payload: {
     sortOrder,

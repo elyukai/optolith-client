@@ -24,6 +24,7 @@ import { translate, translateP } from "../Utilities/I18n";
 import { subtract } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { getWikiEntry } from "../Utilities/WikiUtils";
+import { SortNames } from "../Views/Universal/SortOptions";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 
@@ -245,12 +246,12 @@ export const setSpecialAbilityLevel =
 export interface SetSpecialAbilitiesSortOrderAction {
   type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER
   payload: {
-    sortOrder: string;
+    sortOrder: SortNames;
   }
 }
 
 export const setSpecialAbilitiesSortOrder =
-  (sortOrder: string): SetSpecialAbilitiesSortOrderAction => ({
+  (sortOrder: SortNames): SetSpecialAbilitiesSortOrderAction => ({
     type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER,
     payload: {
       sortOrder,

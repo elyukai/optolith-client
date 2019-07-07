@@ -18,6 +18,7 @@ import { SetSkillsSortOrderAction, SwitchSkillRatingVisibilityAction } from "../
 import { SetSpecialAbilitiesSortOrderAction } from "../Actions/SpecialAbilitiesActions";
 import { SetSpellsSortOrderAction } from "../Actions/SpellsActions";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { SortNames } from "../Views/Universal/SortOptions";
 
 type Action = ReceiveInitialDataAction
             | SetCombatTechniquesSortOrderAction
@@ -48,26 +49,26 @@ type Action = ReceiveInitialDataAction
             | SwitchEnableAnimationsAction
 
 export interface UISettingsState {
-  herolistSortOrder: string
+  herolistSortOrder: SortNames
   herolistVisibilityFilter: string
-  racesSortOrder: string
+  racesSortOrder: SortNames
   racesValueVisibility: boolean
-  culturesSortOrder: string
+  culturesSortOrder: SortNames
   culturesVisibilityFilter: string
   culturesValueVisibility: boolean
-  professionsSortOrder: string
+  professionsSortOrder: SortNames
   professionsVisibilityFilter: string
   professionsGroupVisibilityFilter: number
   professionsFromExpansionsVisibility: boolean
   advantagesDisadvantagesCultureRatingVisibility: boolean
-  talentsSortOrder: string
+  talentsSortOrder: SortNames
   talentsCultureRatingVisibility: boolean
-  combatTechniquesSortOrder: string
-  specialAbilitiesSortOrder: string
-  spellsSortOrder: string
+  combatTechniquesSortOrder: SortNames
+  specialAbilitiesSortOrder: SortNames
+  spellsSortOrder: SortNames
   spellsUnfamiliarVisibility: boolean
-  liturgiesSortOrder: string
-  equipmentSortOrder: string
+  liturgiesSortOrder: SortNames
+  equipmentSortOrder: SortNames
   equipmentGroupVisibilityFilter: number
   enableActiveItemHints: boolean
   sheetCheckAttributeValueVisibility: boolean

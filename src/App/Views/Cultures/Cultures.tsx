@@ -27,14 +27,14 @@ export interface CulturesOwnProps {
 export interface CulturesStateProps {
   cultures: Maybe<List<Record<CultureCombined>>>
   currentId: Maybe<string>
-  sortOrder: string
+  sortOrder: SortNames
   visibilityFilter: string
   filterText: string
 }
 
 export interface CulturesDispatchProps {
   selectCulture (id: string): void
-  setSortOrder (sortOrder: string): void
+  setSortOrder (sortOrder: SortNames): void
   setVisibilityFilter (option: string): void
   switchValueVisibilityFilter (): void
   setFilterText (filterText: string): void

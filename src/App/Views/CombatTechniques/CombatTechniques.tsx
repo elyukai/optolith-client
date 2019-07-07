@@ -37,12 +37,12 @@ export interface CombatTechniquesStateProps {
   derivedCharacteristics: OrderedMap<DCIds, Record<DerivedCharacteristic>>
   list: Maybe<List<Record<CombatTechniqueWithRequirements>>>
   isRemovingEnabled: boolean
-  sortOrder: string
+  sortOrder: SortNames
   filterText: string
 }
 
 export interface CombatTechniquesDispatchProps {
-  setSortOrder (sortOrder: string): void
+  setSortOrder (sortOrder: SortNames): void
   addPoint (id: string): void
   removePoint (id: string): void
   setFilterText (filterText: string): void

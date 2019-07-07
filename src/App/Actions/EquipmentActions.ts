@@ -11,6 +11,7 @@ import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
 import { getHitZoneArmorsState, getItemEditorInstance, getItemsState, getWikiItemTemplates } from "../Selectors/stateSelectors";
 import { getNewId, prefixId } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
+import { SortNames } from "../Views/Universal/SortOptions";
 import { ReduxAction } from "./Actions";
 
 const getNewIdFromCurrentItems: (x: Just<OrderedMap<string, Record<Item>>>) => string =
@@ -129,11 +130,11 @@ export const removeItem = (id: string): RemoveItemAction => ({
 export interface SetItemsSortOrderAction {
   type: ActionTypes.SET_ITEMS_SORT_ORDER
   payload: {
-    sortOrder: string;
+    sortOrder: SortNames;
   }
 }
 
-export const setItemsSortOrder = (sortOrder: string): SetItemsSortOrderAction => ({
+export const setItemsSortOrder = (sortOrder: SortNames): SetItemsSortOrderAction => ({
   type: ActionTypes.SET_ITEMS_SORT_ORDER,
   payload: {
     sortOrder,

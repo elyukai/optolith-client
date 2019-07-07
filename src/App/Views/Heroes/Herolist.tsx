@@ -31,7 +31,7 @@ export interface HerolistStateProps {
   filterText: string
   list: List<HeroModelRecord>
   visibilityFilter: string
-  sortOrder: string
+  sortOrder: SortNames
   isCharacterCreatorOpen: boolean
   sortedBooks: List<Record<Book>>
 }
@@ -46,7 +46,7 @@ export interface HerolistDispatchProps {
   ): void
   importHero (): void
   setFilterText (event: InputTextEvent): void
-  setSortOrder (id: string): void
+  setSortOrder (id: SortNames): void
   setVisibilityFilter (id: Maybe<string>): void
   openCharacterCreator (): void
   closeCharacterCreator (): void

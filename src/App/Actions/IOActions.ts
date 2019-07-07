@@ -11,7 +11,7 @@ import { Either, eitherToMaybe, fromLeft, fromLeft_, fromRight_, isLeft, isRight
 import { cnst, flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { List, notNull } from "../../Data/List";
-import { altF_, bind, bindF, ensure, fromJust, fromMaybe, isJust, Just, listToMaybe, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
+import { altF_, alt_, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
 import { any, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap";
 import { differenceF, map } from "../../Data/OrderedSet";
 import { Record, StringKeyObject, toObject } from "../../Data/Record";
@@ -38,9 +38,11 @@ import { convertHeroesForSave, convertHeroForSave } from "../Utilities/Raw/conve
 import { parseTables } from "../Utilities/Raw/parseTable";
 import { RawConfig, RawHero, RawHerolist } from "../Utilities/Raw/RawData";
 import { isBase64Image } from "../Utilities/RegexUtils";
+import { UndoState } from "../Utilities/undo";
 import { readUpdate, writeUpdate } from "../Utilities/Update";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
+import { updateDateModified } from "./HerolistActions";
 
 // const getInstalledResourcesPath = (): string => remote.app.getAppPath ()
 
@@ -227,8 +229,18 @@ export const requestConfigSave =
 export const requestAllHeroesSave =
   (l10n: L10nRecord): ReduxAction<IO<boolean>> =>
   (dispatch, getState) => {
-    const state = getState ()
+    const heroes_before = getHeroes (getState ())
 
+    OrderedMap.map ((x: Record<UndoState<Record<HeroModel>>>) => {
+                     if (notNull (heroReducer.A.past (x))) {
+                       dispatch (updateDateModified (HeroModel.A.id (heroReducer.A.present (x))))
+                     }
+
+                     return x
+                   })
+                   (heroes_before)
+
+    const state = getState ()
     const wiki = getWiki (state)
     const heroes = getHeroes (state)
     const users = getUsers (state)
@@ -288,6 +300,16 @@ export const requestHeroSave =
   (l10n: L10nRecord) =>
   (mcurrent_id: Maybe<string>): ReduxAction<IO<Maybe<string>>> =>
   (dispatch, getState) => {
+    const mcurrent_id_alt = alt_ (mcurrent_id) (() => getCurrentHeroId (getState ()))
+
+    if (isNothing (mcurrent_id_alt)) {
+      return IO (cnst (Promise.resolve (Nothing)))
+    }
+
+    const current_id = fromJust (mcurrent_id_alt)
+
+    dispatch (updateDateModified (current_id))
+
     const state = getState ()
 
     const wiki = getWiki (state)

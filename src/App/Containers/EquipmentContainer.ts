@@ -11,6 +11,7 @@ import { getAvailableSortedEquipmentGroups, getFilteredItems, getFilteredItemTem
 import { getEquipmentFilterText, getItemTemplatesFilterText, getPurse } from "../Selectors/stateSelectors";
 import { getEquipmentSortOrder, getMeleeItemTemplateCombatTechniqueFilter, getRangedItemTemplateCombatTechniqueFilter } from "../Selectors/uisettingsSelectors";
 import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStateProps } from "../Views/Equipment/Equipment";
+import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: EquipmentOwnProps): EquipmentStateProps => ({
@@ -44,7 +45,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): EquipmentDispatchProps => 
   deleteItem (id: string) {
     dispatch (EquipmentActions.removeItem (id))
   },
-  setSortOrder (option: string) {
+  setSortOrder (option: SortNames) {
     dispatch (EquipmentActions.setItemsSortOrder (option))
   },
   setDucates (value: string) {

@@ -39,13 +39,13 @@ export interface SpecialAbilitiesStateProps {
   wikiEntries: OrderedMap<string, Record<SpecialAbility>>
   enableActiveItemHints: boolean
   isRemovingEnabled: boolean
-  sortOrder: string
+  sortOrder: SortNames
   filterText: string
   inactiveFilterText: string
 }
 
 export interface SpecialAbilitiesDispatchProps {
-  setSortOrder (sortOrder: string): void
+  setSortOrder (sortOrder: SortNames): void
   switchActiveItemHints (): void
   addToList (args: Record<ActivatableActivationOptions>): void
   removeFromList (args: Record<ActivatableDeactivationOptions>): void

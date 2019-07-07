@@ -46,7 +46,7 @@ export const getHerolistSortOptions = createMaybeSelector (
   getLocaleAsProp,
   uiSettingsSelectors.getHerolistSortOrder,
   (l10n, sortOrder): SortOptions<HeroModel> =>
-    sortOrder === "datemodified"
+    sortOrder === "dateModified"
       ? [
           {
             compare: comparingR (pipe (HeroModel.A.dateModified, x => x .valueOf ()))

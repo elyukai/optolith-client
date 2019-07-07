@@ -10,6 +10,7 @@ import * as IOActions from "../Actions/IOActions";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { getInitialHeroObject, HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { User } from "../Models/Hero/heroTypeHelpers";
+import { composeL } from "../Utilities/compose";
 import { pipe } from "../Utilities/pipe";
 import { reduceReducersC } from "../Utilities/reduceReducers";
 import { UndoState } from "../Utilities/undo";
@@ -22,6 +23,7 @@ type Action = IOActions.ReceiveInitialDataAction
             | HerolistActions.SaveHeroAction
             | HerolistActions.DeleteHeroAction
             | HerolistActions.DuplicateHeroAction
+            | HerolistActions.UpdateDateModifiedAction
 
 export interface HeroesState {
   heroes: OrderedMap<string, Record<UndoState<HeroModelRecord>>>
@@ -120,6 +122,15 @@ export const precedingHerolistReducer =
                                                     (heroReducer.A.present (hero)))))
                    (state))
             (lookup (id) (HeroesState.AL.heroes (state)))
+      }
+
+      case ActionTypes.UPDATE_DATE_MODIFIED: {
+        const { id, dateModified } = action.payload
+
+        return over (HeroesStateL.heroes)
+                    (adjust (set (composeL (heroReducer.L.present, HeroModelL.dateModified))
+                                 (dateModified))
+                            (id))
       }
 
       default:
