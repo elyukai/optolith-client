@@ -14,8 +14,8 @@ import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStat
 const mapStateToProps =
   (state: AppStateRecord, ownProps: AttributesOwnProps): AttributesStateProps => ({
     adjustmentValue: getAdjustmentValue (state),
-    attributes: getAttributesForView (state),
-    availableAttributeIds: getAvailableAdjustmentIds (state),
+    attributes: getAttributesForView (state, ownProps),
+    availableAttributeIds: getAvailableAdjustmentIds (state, ownProps),
     currentAttributeId: getCurrentAttributeAdjustmentId (state),
     isInCharacterCreation: getIsInCharacterCreation (state),
     isRemovingEnabled: getIsRemovingEnabled (state),

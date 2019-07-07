@@ -91,7 +91,7 @@ export interface SheetsStateProps {
   scriptsWikiEntry: Maybe<Record<SpecialAbility>>
   scriptsStateEntry: Maybe<Record<ActivatableDependent>>
   cantrips: Maybe<List<Record<CantripCombined>>>
-  magicalPrimary: Maybe<string>
+  magicalPrimary: List<string>
   magicalSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   magicalTradition: string
   properties: Maybe<string>

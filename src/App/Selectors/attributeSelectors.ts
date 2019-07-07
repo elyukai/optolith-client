@@ -1,17 +1,19 @@
 import { equals } from "../../Data/Eq";
 import { blackbirdF } from "../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../Data/Functor";
-import { cons, consF, elem, filter, find, List, map, maximum } from "../../Data/List";
-import { and, any, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, join, Just, liftM2, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
+import { consF, elem, filter, find, flength, head, List, map, maximum, NonEmptyList, notNull } from "../../Data/List";
+import { any, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, join, Just, liftM2, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
 import { elems, foldr, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
-import { fst, snd } from "../../Data/Tuple";
-import { uncurryN } from "../../Data/Tuple/Curry";
+import { fst, snd, Tuple } from "../../Data/Tuple";
+import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
+import { sel1, sel2, sel3 } from "../../Data/Tuple/Select";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { AttributeDependent, createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
+import { Energies } from "../Models/Hero/Energies";
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { AttributeCombined } from "../Models/View/AttributeCombined";
+import { AttributeCombined, AttributeCombinedA_ } from "../Models/View/AttributeCombined";
 import { AttributeWithRequirements } from "../Models/View/AttributeWithRequirements";
 import { Attribute } from "../Models/Wiki/Attribute";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
@@ -20,15 +22,18 @@ import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies";
 import { getNumericBlessedTraditionIdByInstanceId, getNumericMagicalTraditionIdByInstanceId, prefixAttr, prefixId } from "../Utilities/IDUtils";
-import { add, gte, lt, multiply, subtractBy } from "../Utilities/mathUtils";
+import { add, gte, lt, max, multiply, subtractBy } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { getCurrentEl, getStartEl } from "./elSelectors";
 import { getBlessedTraditionFromState } from "./liturgicalChantsSelectors";
 import { getCurrentRace } from "./rcpSelectors";
 import { getMagicalTraditionsFromHero } from "./spellsSelectors";
-import { getAttributes, getAttributeValueLimit, getCurrentAttributeAdjustmentId, getCurrentHeroPresent, getPhase, getWiki, getWikiAttributes } from "./stateSelectors";
+import { getAttributes, getAttributeValueLimit, getCurrentAttributeAdjustmentId, getCurrentHeroPresent, getHeroProp, getPhase, getWiki, getWikiAttributes } from "./stateSelectors";
 
+const HA = HeroModel.A
+const EA = Energies.A
 const ACA = AttributeCombined.A
+const ACA_ = AttributeCombinedA_
 const AA = Attribute.A
 const ADA = AttributeDependent.A
 const AWRA = AttributeWithRequirements.A
@@ -103,57 +108,32 @@ const getAttributeMaximum =
 const getAttributeMinimum =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
-  (dependencies: AttributeDependent["dependencies"]): number =>
-    maximum (cons (flattenDependencies (wiki) (hero) (dependencies))
-                  (8))
+  /**
+   * `(lp, ae, kp)`
+   */
+  (added: Tuple<[number, number, number]>) =>
+  (mblessed_primary_attr: Maybe<Record<AttributeCombined>>) =>
+  (mhighest_magical_primary_attr: Maybe<Record<AttributeCombined>>) =>
+  (hero_entry: Record<AttributeDependent>): number =>
+    maximum (List<number> (
+              ...flattenDependencies (wiki) (hero) (ADA.dependencies (hero_entry)),
+              ...(ADA.id (hero_entry) === prefixAttr (8) ? List (sel1 (added)) : List<number> ()),
+              ...(Maybe.elem (ADA.id (hero_entry)) (fmap (ACA_.id) (mhighest_magical_primary_attr))
+                ? List (sel2 (added))
+                : List<number> ()),
+              ...(Maybe.elem (ADA.id (hero_entry)) (fmap (ACA_.id) (mblessed_primary_attr))
+                ? List (sel3 (added))
+                : List<number> ()),
+              8
+            ))
 
-/**
- * Returns a `List` of attributes including state, full wiki infos and a
- * minimum and optional maximum value.
- */
-export const getAttributesForView = createMaybeSelector (
-  getCurrentHeroPresent,
-  getStartEl,
-  getCurrentEl,
-  getPhase,
-  getAttributeValueLimit,
-  getWiki,
-  getCurrentRace,
-  (mhero, startEl, currentEl, mphase, attributeValueLimit, wiki, mrace) =>
-    fmapF (mhero)
-          (hero => foldr ((wiki_entry: Record<Attribute>) => {
-                           const current_id = AA.id (wiki_entry)
-
-                           const hero_entry = fromMaybe (createPlainAttributeDependent (current_id))
-                                                        (pipe_ (
-                                                          hero,
-                                                          HeroModel.A.attributes,
-                                                          lookup (current_id)
-                                                        ))
-
-                           const max =
-                            getAttributeMaximum (current_id)
-                                                (mrace)
-                                                (HeroModel.A.attributeAdjustmentSelected (hero))
-                                                (startEl)
-                                                (currentEl)
-                                                (mphase)
-                                                (attributeValueLimit)
-
-                           const min =
-                             getAttributeMinimum (wiki)
-                                                 (hero)
-                                                 (ADA.dependencies (hero_entry))
-
-                           return consF (AttributeWithRequirements ({
-                                          max,
-                                          min,
-                                          stateEntry: hero_entry,
-                                          wikiEntry: wiki_entry,
-                                        }))
-                         })
-                         (List.empty)
-                         (WikiModel.A.attributes (wiki)))
+const getAddedEnergies = createMaybeSelector (
+  getHeroProp,
+  hero => Tuple (
+    pipe_ (hero, HA.energies, EA.addedLifePoints),
+    pipe_ (hero, HA.energies, EA.addedArcaneEnergyPoints),
+    pipe_ (hero, HA.energies, EA.addedKarmaPoints)
+  )
 )
 
 /**
@@ -235,32 +215,40 @@ const getPrimaryMagicalAttributeByTrad =
       })
     )
 
-const mgetValueFromAttrCombined = fmap (pipe (ACA.stateEntry, ADA.value))
-
-export const getPrimaryMagicalAttribute = createMaybeSelector (
-  getMagicalTraditionsFromHero,
-  getAttributes,
+export const getPrimaryMagicalAttributes = createMaybeSelector (
   getWikiAttributes,
-  (traditions, hero_attributes, wiki_attributes) =>
-    List.foldr ((trad: Record<ActivatableDependent>) =>
-                 (mhighest: Maybe<Record<AttributeCombined>>) => {
-                   const mattr = getPrimaryMagicalAttributeByTrad (wiki_attributes)
-                                                                  (hero_attributes)
-                                                                  (trad)
+  getAttributes,
+  getMagicalTraditionsFromHero,
+  uncurryN3 (wiki_attributes =>
+             hero_attributes =>
+               mapMaybe (getPrimaryMagicalAttributeByTrad (wiki_attributes) (hero_attributes)))
+)
 
-                   const attrVal = mgetValueFromAttrCombined (mattr)
+export const getHighestPrimaryMagicalAttributeValue = createMaybeSelector (
+  getPrimaryMagicalAttributes,
+  pipe (ensure (notNull), fmap (List.foldr (pipe (ACA_.value, max)) (0)))
+)
 
-                   return and (liftM2 (lt) (attrVal) (mgetValueFromAttrCombined (mhighest)))
-                     ? mattr
-                     : mhighest
-                 })
-               (Nothing)
-               (traditions)
+export const getHighestPrimaryMagicalAttributes = createMaybeSelector (
+  getPrimaryMagicalAttributes,
+  getHighestPrimaryMagicalAttributeValue,
+  uncurryN (attrs => fmap (max_value => filter (pipe (ACA_.value, equals (max_value))) (attrs)))
+)
+
+type AttrCs = List<Record<AttributeCombined>>
+type NonEmotyAttrCs = NonEmptyList<Record<AttributeCombined>>
+
+export const getHighestPrimaryMagicalAttribute = createMaybeSelector (
+  getHighestPrimaryMagicalAttributes,
+  pipe (
+    bindF (ensure (pipe (flength, equals (1)) as (xs: AttrCs) => xs is NonEmotyAttrCs)),
+    fmap (head)
+  )
 )
 
 export const getPrimaryMagicalAttributeForSheet = createMaybeSelector (
-  getPrimaryMagicalAttribute,
-  fmap (pipe (ACA.wikiEntry, AA.short))
+  getPrimaryMagicalAttributes,
+  map (ACA_.short)
 )
 
 const getPrimaryBlessedAttributeByTrad =
@@ -326,6 +314,72 @@ export const getPrimaryBlessedAttribute = createMaybeSelector (
 export const getPrimaryBlessedAttributeForSheet = createMaybeSelector (
   getPrimaryBlessedAttribute,
   fmap (pipe (ACA.wikiEntry, AA.short))
+)
+
+/**
+ * Returns a `List` of attributes including state, full wiki infos and a
+ * minimum and optional maximum value.
+ */
+export const getAttributesForView = createMaybeSelector (
+  getCurrentHeroPresent,
+  getStartEl,
+  getCurrentEl,
+  getPhase,
+  getAttributeValueLimit,
+  getWiki,
+  getCurrentRace,
+  getAddedEnergies,
+  getPrimaryBlessedAttribute,
+  getHighestPrimaryMagicalAttribute,
+  (
+    mhero,
+    startEl,
+    currentEl,
+    mphase,
+    attributeValueLimit,
+    wiki,
+    mrace,
+    added,
+    mblessed_primary_attr,
+    mhighest_magical_primary_attr
+  ) =>
+    fmapF (mhero)
+          (hero => foldr ((wiki_entry: Record<Attribute>) => {
+                           const current_id = AA.id (wiki_entry)
+
+                           const hero_entry = fromMaybe (createPlainAttributeDependent (current_id))
+                                                        (pipe_ (
+                                                          hero,
+                                                          HeroModel.A.attributes,
+                                                          lookup (current_id)
+                                                        ))
+
+                           const max_value =
+                             getAttributeMaximum (current_id)
+                                                 (mrace)
+                                                 (HeroModel.A.attributeAdjustmentSelected (hero))
+                                                 (startEl)
+                                                 (currentEl)
+                                                 (mphase)
+                                                 (attributeValueLimit)
+
+                           const min_value =
+                             getAttributeMinimum (wiki)
+                                                 (hero)
+                                                 (added)
+                                                 (mblessed_primary_attr)
+                                                 (mhighest_magical_primary_attr)
+                                                 (hero_entry)
+
+                           return consF (AttributeWithRequirements ({
+                                          max: max_value,
+                                          min: min_value,
+                                          stateEntry: hero_entry,
+                                          wikiEntry: wiki_entry,
+                                        }))
+                         })
+                         (List.empty)
+                         (WikiModel.A.attributes (wiki)))
 )
 
 export const getCarryingCapacity = createMaybeSelector (
