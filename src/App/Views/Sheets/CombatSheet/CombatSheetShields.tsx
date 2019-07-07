@@ -37,7 +37,7 @@ export function CombatSheetShields (props: CombatSheetShieldsProps) {
               {translate (l10n) ("structurepoints.short")}
             </th>
             <th className="bf">{translate (l10n) ("breakingpointrating.short")}</th>
-            <th className="loss">{translate (l10n) ("damaged")}</th>
+            <th className="loss">{translate (l10n) ("damaged.short")}</th>
             <th className="mod">{translate (l10n) ("attackparrymodifier.short")}</th>
             <th className="weight">{translate (l10n) ("weight")}</th>
           </tr>

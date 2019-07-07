@@ -2,7 +2,7 @@ import * as React from "react";
 import { isNumber, isString } from "util";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { consF, imap, notNullStr, subscript, unfoldr } from "../../../Data/List";
-import { and, bindF, ensure, isNothing, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
+import { and, bindF, ensure, isJust, isNothing, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -52,11 +52,13 @@ export function PactSettings (props: PactSettingsProps) {
     setTargetName,
     setTargetType,
     l10n,
+    isPactValid,
   } = props
 
   return (
     <Page id="pact">
       <div className="pact-content">
+        {!isPactValid && isJust (mpact) ? <p>{translate (l10n) ("pactisincompletehint")}</p> : null}
         <Dropdown
           label={translate (l10n) ("pactcategory")}
           options={pipe_ (

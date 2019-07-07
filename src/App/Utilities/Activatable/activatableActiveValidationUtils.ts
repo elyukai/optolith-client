@@ -14,8 +14,6 @@ import { alt, altF, bindF, ensure, fromJust, isJust, isNothing, Just, liftM2, Ma
 import { elems, isOrderedMap, lookupF } from "../../../Data/OrderedMap";
 import { size } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
-import { show } from "../../../Data/Show";
-import { traceShowOn } from "../../../Debug/Trace";
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -487,36 +485,28 @@ export const getIsRemovalOrChangeDisabled =
                                                          (entry)
                                                          (addependencies (hero_entry))
 
-                        const x = ActivatableActivationValidation ({
+                        return ActivatableActivationValidation ({
                           disabled:
                             // Disable if a minimum level is required
-                            traceShowOn<boolean> (() => id (entry) === "DISADV_73")
-                                                 ("hasRequiredMinimumLevel")
-                                        (hasRequiredMinimumLevel (minimum_level)
-                                                    (tiers (wiki_entry)))
+                            hasRequiredMinimumLevel (minimum_level)
+                                                    (tiers (wiki_entry))
 
                             // Disable if other entries depend on this entry
-                            || traceShowOn<boolean> (() => id (entry) === "DISADV_73")
-                                                    ("isRequiredByOthers")
-                                           (isRequiredByOthers (entry)
-                                                  (hero_entry))
+                            || isRequiredByOthers (entry)
+                                                  (hero_entry)
 
                             // Disable if style special ability is required for
                             // extended special abilities
-                            || traceShowOn<boolean> (() => id (entry) === "DISADV_73")
-                                                    ("isStyleSpecialAbilityRemovalDisabled")
-                                           (isStyleSpecialAbilityRemovalDisabled (hero)
-                                                                    (wiki_entry))
+                            || isStyleSpecialAbilityRemovalDisabled (hero)
+                                                                    (wiki_entry)
 
                             // Disable if specific entry conditions disallow
                             // remove
-                            || traceShowOn<boolean> (() => id (entry) === "DISADV_73")
-                                                    ("isRemovalDisabledEntrySpecific")
-                                           (isRemovalDisabledEntrySpecific (wiki)
+                            || isRemovalDisabledEntrySpecific (wiki)
                                                               (hero)
                                                               (wiki_entry)
                                                               (hero_entry)
-                                                              (entry)),
+                                                              (entry),
                           minLevel: minimum_level,
                           maxLevel: getMaxTier (wiki)
                                                (hero)
@@ -524,12 +514,6 @@ export const getIsRemovalOrChangeDisabled =
                                                (addependencies (hero_entry))
                                                (id (entry)),
                         })
-
-                        if (id (entry) === "DISADV_73") {
-                          console.log (show (x))
-                        }
-
-                        return x
                       })
                     )
                     (entry)

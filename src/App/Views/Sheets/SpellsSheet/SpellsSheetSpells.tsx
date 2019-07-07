@@ -107,6 +107,9 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
                       >
                       <Textfit max={11} min={7} mode="single">
                         {SCA_.name (e)}
+                        {notNull (SCA_.tradition (e))
+                          ? ` (${translate (l10n) ("unfamiliarspell")})`
+                          : ""}
                       </Textfit>
                     </td>
                     <td className="check">

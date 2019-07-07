@@ -108,19 +108,8 @@ export function RulesView (props: RulesProps) {
           disabled={isEnableLanguageSpecializationsDeactivatable}
           />
         <div className="temporary-fixes">
-          <h3>Temporary Options</h3>
-          <p>
-            Die folgenden ein bis zwei Optionen sind nur temporär verfügbar. Die
-            Sprache sollte auf die Sprache eingestellt sein, mit der der Held erstellt
-            wurde. Die gildenmagische Tradition muss auch konfiguriert werden, um
-            spätere Bände zuzulassen.
-          </p>
-          <p>
-          The following one or two options are only temporarily available. The
-          language should be set to the language the hero was created in. The guild
-          mage tradition must also be configured to allow later rule books to
-          introduce more options for your hero.
-          </p>
+          <h3>{translate (l10n) ("manualherodatarepair")}</h3>
+          <p>{translate (l10n) ("manualherodatarepairexplanation")}</p>
           <Dropdown
             options={List (
               DropdownOption ({

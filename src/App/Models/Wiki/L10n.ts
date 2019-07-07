@@ -605,6 +605,10 @@ export interface L10n {
   "unfamiliarspells": string
   "unfamiliarspellselectionfortraditionguildmage": string
   "selectaspell": string
+  "pactisincompletehint": string
+  "manualherodatarepair": string
+  "manualherodatarepairexplanation": string
+  "unfamiliarspell": string
 }
 
 export type L10nKey = keyof L10n
@@ -1216,4 +1220,8 @@ export const L10n =
     "unfamiliarspells": "",
     "unfamiliarspellselectionfortraditionguildmage": "",
     "selectaspell": "",
+    "pactisincompletehint": "",
+    "manualherodatarepair": "",
+    "manualherodatarepairexplanation": "",
+    "unfamiliarspell": "",
   })

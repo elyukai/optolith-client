@@ -1417,10 +1417,10 @@ export const insertAt =
   (index: number) => <A> (x: A) => (xs: List<A>): List<A> =>
     index < 0
     ? xs
-    : isNil (xs)
-    ? Nil
     : index === 0
     ? Cons (x, xs)
+    : isNil (xs)
+    ? Nil
     : Cons (xs .x, insertAt (index - 1) (x) (xs .xs))
 
 // Maps
