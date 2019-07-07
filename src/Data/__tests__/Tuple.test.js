@@ -1,5 +1,5 @@
 // @ts-check
-const { Tuple, bimap, first, second, fst, snd, curry, uncurry, swap, toArray, fromArray, isTuple } = require('../Tuple')
+const { Tuple, Pair, bimap, first, second, fst, snd, curry, uncurry, swap, toArray, fromArray, isTuple } = require('../Tuple')
 
 // CONSTRUCTOR
 
@@ -18,6 +18,22 @@ describe ("Tuple ()", () => {
     expect (pair .values [1]) .toEqual (1)
     expect (pair .values [2]) .toEqual (2)
     expect (pair .length) .toEqual (3)
+    expect (pair .isTuple) .toEqual (true)
+  })
+})
+
+describe ('Pair x y', () => {
+  it ("returns a Pair when curried", () => {
+    const pair = Pair (3) (1)
+    expect (pair .values [0]) .toEqual (3)
+    expect (pair .values [1]) .toEqual (1)
+    expect (pair .isTuple) .toEqual (true)
+  })
+
+  it ("returns a Pair when not curried", () => {
+    const pair = Pair (3, 1)
+    expect (pair .values [0]) .toEqual (3)
+    expect (pair .values [1]) .toEqual (1)
     expect (pair .isTuple) .toEqual (true)
   })
 })

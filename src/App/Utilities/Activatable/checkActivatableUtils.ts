@@ -4,7 +4,7 @@ import { Pair } from "../../../Data/Tuple";
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
 import { Advantage } from "../../Models/Wiki/Advantage";
-import { isRequiringActivatable, RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
+import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
 import { getFirstLevelPrerequisites } from "../Prerequisites/flattenPrerequisites";
 
@@ -15,7 +15,7 @@ const getMagicalOrBlessedFilter =
   (advantageId: "ADV_12" | "ADV_50") =>
     (e: AllRequirements) =>
       e !== "RCP"
-        && isRequiringActivatable (e)
+        && RequireActivatable.is (e)
         && id (e) === advantageId
         && active (e)
 

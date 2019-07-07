@@ -1,11 +1,10 @@
 import { fmap } from "../../../../Data/Functor";
-import { all, elemF, isList, NonEmptyList } from "../../../../Data/List";
+import { elemF, NonEmptyList } from "../../../../Data/List";
 import { or } from "../../../../Data/Maybe";
-import { fromDefault, makeLenses, member, Record, RecordCreator } from "../../../../Data/Record";
+import { fromNamedDefault, makeLenses, member, Record } from "../../../../Data/Record";
 import { Categories, IncreasableCategories } from "../../../Constants/Categories";
 import { getCategoryById } from "../../../Utilities/IDUtils";
-import { pipe } from "../../../Utilities/pipe";
-import { AllRequirementObjects, ProfessionPrerequisite } from "../wikiTypeHelpers";
+import { ProfessionPrerequisite } from "../wikiTypeHelpers";
 
 export interface RequireIncreasable {
   id: string | NonEmptyList<string>
@@ -17,34 +16,20 @@ export interface ProfessionRequireIncreasable extends RequireIncreasable {
 }
 
 export const RequireIncreasable =
-  fromDefault<RequireIncreasable> ({
-    id: "",
-    value: 0,
-  })
+  fromNamedDefault ("RequireIncreasable")
+                   <RequireIncreasable> ({
+                     id: "",
+                     value: 0,
+                   })
 
 export const ProfessionRequireIncreasable =
-  RequireIncreasable as RecordCreator<ProfessionRequireIncreasable>
+  fromNamedDefault ("ProfessionRequireIncreasable")
+                   <ProfessionRequireIncreasable> ({
+                     id: "",
+                     value: 0,
+                   })
 
 export const RequireIncreasableL = makeLenses (RequireIncreasable)
-
-export const isRequiringIncreasable =
-  (req: AllRequirementObjects): req is Record<RequireIncreasable> => {
-    const id = RequireIncreasable.AL.id (req)
-
-    if (isList (id)) {
-      return member ("value") (req)
-        && all<string> (pipe (
-                         getCategoryById,
-                         category => or (fmap (elemF<Categories> (IncreasableCategories))
-                                              (category))
-                       ))
-                       (id)
-    }
-
-    return member ("value") (req)
-      && or (fmap (elemF<Categories> (IncreasableCategories))
-                  (getCategoryById (id)))
-  }
 
 export const isProfessionRequiringIncreasable =
   (req: ProfessionPrerequisite): req is Record<ProfessionRequireIncreasable> => {

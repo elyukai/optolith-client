@@ -6,6 +6,7 @@ import { isRecord, Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
+import { ActivatableDependency } from "../../Models/Hero/heroTypeHelpers";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
@@ -89,7 +90,7 @@ export const getRequiredSelections:
   (m: Maybe<Record<ActivatableDependent>>) => Maybe<List<string | number | List<number>>> =
     fmap (pipe (
       ADA.dependencies,
-      mapMaybe (pipe (
+      mapMaybe<ActivatableDependency, string | number | List<number>> (pipe (
         ensure (isRecord),
         bindF (DependencyObject.AL.sid)
       ))

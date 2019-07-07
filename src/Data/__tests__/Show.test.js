@@ -2,7 +2,7 @@
 const { Internals } = require('../Internals');
 const { show } = require('../Show');
 const { List } = require('../List');
-const { Pair } = require('../Pair');
+const { Pair } = require('../Tuple');
 const { fromUniqueElements } = require('../OrderedSet');
 const { fromUniquePairs } = require('../OrderedMap');
 const { fromDefault } = require('../Record');

@@ -1,12 +1,9 @@
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { all, elemF, head, isList, NonEmptyList } from "../../../../Data/List";
-import { Maybe, Nothing, or } from "../../../../Data/Maybe";
-import { fromDefault, makeLenses, member, Record, RecordCreator } from "../../../../Data/Record";
-import { ActivatableLikeCategories, Categories } from "../../../Constants/Categories";
-import { getCategoryById } from "../../../Utilities/IDUtils";
-import { pipe } from "../../../Utilities/pipe";
+import { fmapF } from "../../../../Data/Functor";
+import { head, isList, NonEmptyList } from "../../../../Data/List";
+import { Maybe, Nothing } from "../../../../Data/Maybe";
+import { fromNamedDefault, makeLenses, Record } from "../../../../Data/Record";
 import { ActiveObject } from "../../ActiveEntries/ActiveObject";
-import { AllRequirementObjects, ProfessionPrerequisite, SID } from "../wikiTypeHelpers";
+import { SID } from "../wikiTypeHelpers";
 
 export interface RequireActivatable {
   id: string | NonEmptyList<string>
@@ -22,48 +19,28 @@ export interface ProfessionRequireActivatable extends RequireActivatable {
 }
 
 export const RequireActivatable =
-  fromDefault<RequireActivatable> ({
-    id: "",
-    active: true,
-    sid: Nothing,
-    sid2: Nothing,
-    tier: Nothing,
-  })
+  fromNamedDefault ("RequireActivatable")
+                   <RequireActivatable> ({
+                     id: "",
+                     active: true,
+                     sid: Nothing,
+                     sid2: Nothing,
+                     tier: Nothing,
+                   })
 
 export const RequireActivatableL = makeLenses (RequireActivatable)
 
 export const ProfessionRequireActivatable =
-  RequireActivatable as RecordCreator<ProfessionRequireActivatable>
+  fromNamedDefault ("ProfessionRequireActivatable")
+                   <ProfessionRequireActivatable> ({
+                     id: "",
+                     active: true,
+                     sid: Nothing,
+                     sid2: Nothing,
+                     tier: Nothing,
+                   })
 
 export const ProfessionRequireActivatableL = makeLenses (ProfessionRequireActivatable)
-
-export const isRequiringActivatable =
-  (req: AllRequirementObjects): req is Record<RequireActivatable> => {
-    const id = RequireActivatable.AL.id (req)
-
-    if (isList (id)) {
-      return member ("value") (req)
-        && all<string> (pipe (
-                         getCategoryById,
-                         category => or (fmap (elemF<Categories> (ActivatableLikeCategories))
-                                              (category))
-                       ))
-                       (id)
-    }
-
-    return member ("value") (req)
-      && or (fmap (elemF<Categories> (ActivatableLikeCategories))
-                  (getCategoryById (id)))
-  }
-
-export const isProfessionRequiringActivatable =
-  (req: ProfessionPrerequisite): req is Record<ProfessionRequireActivatable> => {
-    const id = RequireActivatable.AL.id (req) as string
-
-    return member ("value") (req)
-      && or (fmap (elemF<Categories> (ActivatableLikeCategories))
-                  (getCategoryById (id)))
-  }
 
 const RAA = RequireActivatable.A
 const PRAA = ProfessionRequireActivatable.A

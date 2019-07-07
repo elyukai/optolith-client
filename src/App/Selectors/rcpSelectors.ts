@@ -23,7 +23,7 @@ import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
 import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement";
-import { isProfessionRequiringIncreasable, ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement";
+import { ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement";
 import { Profession } from "../Models/Wiki/Profession";
 import { CombatTechniquesSelection, CombatTechniquesSelectionL } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
 import { ProfessionSelectionsL } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
@@ -596,7 +596,7 @@ const filterProfessionOrVariant =
     return isProfessionValid
       && thrush (prerequisites)
                 (all (d => {
-                  if (isProfessionRequiringIncreasable (d)) {
+                  if (ProfessionRequireIncreasable.is (d)) {
                     const category = getCategoryById (PRIA.id (d))
 
                     const isAttribute = Maybe.elemF (category) (Categories.ATTRIBUTES)

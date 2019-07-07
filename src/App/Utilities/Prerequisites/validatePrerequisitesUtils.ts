@@ -22,7 +22,7 @@ import { Pact } from "../../Models/Hero/Pact";
 import { Culture } from "../../Models/Wiki/Culture";
 import { RequireActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement, isCultureRequirement } from "../../Models/Wiki/prerequisites/CultureRequirement";
-import { isRequiringIncreasable, RequireIncreasable, RequireIncreasableL } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
+import { RequireIncreasable, RequireIncreasableL } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { isPactRequirement, PactRequirement } from "../../Models/Wiki/prerequisites/PactRequirement";
 import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
 import { isRaceRequirement, RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
@@ -376,7 +376,7 @@ export const validateObject =
       ? isPactValid (pact (hero)) (req)
       : isPrimaryAttributeRequirement (req)
       ? isPrimaryAttributeValid (hero) (req)
-      : isRequiringIncreasable (req)
+      : RequireIncreasable.is (req)
       ? isIncreasableValid (wiki) (hero) (sourceId) (req) (validateObject)
       : isActivatableValid (wiki) (hero) (sourceId) (req) (validateObject)
 

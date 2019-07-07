@@ -73,7 +73,9 @@ export const show = (x: any): string => {
   }
 
   if (Internals.isRecord (x)) {
-    return `{ ${
+    const named = x .name !== undefined && x .name .length > 0 ? `${x .name} ` : ""
+
+    return `${named}{ ${
       [...x .keys .value]
         .sort ()
         .map (key =>
@@ -203,19 +205,23 @@ const showPDepth = (depth: number) => (x: any): string => {
   }
 
   if (Internals.isRecord (x)) {
-    return `${dws}{ ${
+    const named = x .name !== undefined && x .name .length > 0 ? `${x .name} ` : ""
+
+    const mod_depth = depth + named .length / 2
+
+    return `${dws}${named}{ ${
       [...x .keys .value]
         .sort ()
         .map (key =>
           `${key} = ${
-            trimNextDepth (depth)
+            trimNextDepth (mod_depth)
                           (x .values [key] === null || x .values [key] === undefined
                           ? x .defaultValues [key]
                           : x .values [key])
                           .replace (/\n/g, `\n   ${" " .repeat (key .length)}`)
           }`
         )
-        .join (`\n${dws}, `)
+        .join (`\n${" " .repeat (named .length)}${dws}, `)
     } }`
   }
 
