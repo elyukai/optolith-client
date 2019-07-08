@@ -564,9 +564,8 @@ export const convertPerTierCostToFinalCost =
   (l10n: L10nRecord) =>
     pipe (
       putLevelName (addLevelToName) (l10n),
-      putCurrentCost,
+      putCurrentCost
     )
-    
 
 export const getActiveWithNoCustomCost =
   filter (pipe (ActiveObject.A.cost, isNothing))
