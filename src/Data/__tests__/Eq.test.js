@@ -1,7 +1,7 @@
 // @ts-check
 const { equals } = require('../Eq');
 const { List } = require('../List');
-const { Pair } = require('../Pair');
+const { Pair } = require('../Tuple');
 const { Internals } = require('../Internals');
 const { fromUniqueElements } = require('../OrderedSet');
 const { fromUniquePairs } = require('../OrderedMap');

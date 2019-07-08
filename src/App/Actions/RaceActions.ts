@@ -1,5 +1,6 @@
 import { Maybe } from "../../Data/Maybe";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { SortNames } from "../Views/Universal/SortOptions";
 
 export interface SelectRaceAction {
   type: ActionTypes.SELECT_RACE
@@ -34,11 +35,11 @@ export const setRaceVariant = (id: string): SetRaceVariantAction => ({
 export interface SetRacesSortOrderAction {
   type: ActionTypes.SET_RACES_SORT_ORDER
   payload: {
-    sortOrder: string;
+    sortOrder: SortNames;
   }
 }
 
-export const setRacesSortOrder = (sortOrder: string): SetRacesSortOrderAction => ({
+export const setRacesSortOrder = (sortOrder: SortNames): SetRacesSortOrderAction => ({
   type: ActionTypes.SET_RACES_SORT_ORDER,
   payload: {
     sortOrder,

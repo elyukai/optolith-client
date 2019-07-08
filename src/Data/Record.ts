@@ -37,6 +37,7 @@ export interface Record<A extends RecordBase> extends RecordPrototype {
   readonly defaultValues: Readonly<A>
   readonly keys: OrderedSet<string>
   readonly unique: symbol
+  readonly name?: string
   readonly prototype: RecordPrototype
 }
 
@@ -51,6 +52,7 @@ export interface RecordCreator<A extends RecordBase> {
 
 const _Record =
   <A extends RecordBase>
+  (name?: string) =>
   (unique: symbol) =>
   (keys: OrderedSet<string>) =>
   (def: A) =>
@@ -74,10 +76,15 @@ const _Record =
           value: unique,
           enumerable: true,
         },
+        name: {
+          value: name,
+          enumerable: true,
+        },
       }
     )
 
-export const fromDefault =
+const _createRecordCreator =
+  (name?: string) =>
   <A extends RecordBase> (def: Required<A>): RecordCreator<A> => {
     const defaultValues = Object.freeze (Object.entries (def) .reduce<Required<A>> (
       (acc, [key, value]) => {
@@ -110,6 +117,7 @@ export const fromDefault =
 
     const creator = (x: PartialMaybeOrNothing<A>) =>
       _Record<A>
+        (name)
         (unique)
         (keys)
         (defaultValues)
@@ -153,6 +161,11 @@ export const fromDefault =
     return Object.freeze (creator)
   }
 
+export const fromDefault = _createRecordCreator ()
+
+// tslint:disable-next-line: no-unnecessary-callback-wrapper
+export const fromNamedDefault = (name: string) => _createRecordCreator (name)
+
 
 // LENSES
 
@@ -176,7 +189,8 @@ export const makeLenses =
 // MERGING RECORDS
 
 const mergeSafe = <A extends RecordBase> (x: Partial<A>) => (r: Record<A>): Record<A> =>
-  _Record<A> (r .unique)
+  _Record<A> (r .name)
+             (r .unique)
              (r .keys)
              (r .defaultValues)
              (foldl<string, Required<A>> (acc => key => ({
@@ -265,7 +279,8 @@ const accessor = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => {
 const setter = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => (x: A[typeof key]) =>
   r .values [key] === x
   ? r
-  : _Record<A> (r .unique)
+  : _Record<A> (r .name)
+               (r .unique)
                (r .keys)
                (r .defaultValues)
                ({

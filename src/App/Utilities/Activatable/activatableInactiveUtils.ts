@@ -7,6 +7,7 @@
  * @since 1.1.0
  */
 
+import { notP } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
 import { ident, thrush } from "../../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
@@ -15,7 +16,6 @@ import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isL
 import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or } from "../../../Data/Maybe";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { Record, RecordI } from "../../../Data/Record";
-import { showP } from "../../../Data/Show";
 import { fst, Pair, snd } from "../../../Data/Tuple";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
@@ -28,6 +28,7 @@ import { InactiveActivatable, InactiveActivatableL } from "../../Models/View/Ina
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { Application } from "../../Models/Wiki/sub/Application";
 import { SelectOption, SelectOptionL } from "../../Models/Wiki/sub/SelectOption";
@@ -37,6 +38,7 @@ import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup } from "../heroStateUtils";
 import { getBlessedTradStrIdFromNumId, prefixSA } from "../IDUtils";
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
+import { isOwnTradition } from "../Increasable/spellUtils";
 import { add, gt, gte, inc, lt, multiply, subtract } from "../mathUtils";
 import { pipe, pipe_ } from "../pipe";
 import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
@@ -53,7 +55,7 @@ import { getBlessedTradition, getMagicalTraditionsHeroEntries } from "./traditio
 const WA = WikiModel.A
 const HA = HeroModel.A
 
-const { select, id, cost, prerequisites } = Advantage.AL
+const AAL = Advantage.AL
 const { aspects, ic } = LiturgicalChant.AL
 const { property } = Spell.AL
 const { active, dependencies } = ActivatableDependent.AL
@@ -196,17 +198,14 @@ const list7and8 = List (7, 8)
 const modifySelectOptions =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
+  (magical_traditions: List<Record<SpecialAbility>>) =>
   (wiki_entry: Activatable) =>
   // tslint:disable-next-line: cyclomatic-complexity
   (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<List<Record<SelectOption>>> => {
-    const current_id = id (wiki_entry)
+    const current_id = AAL.id (wiki_entry)
     const mcurrent_select = fmap (filterByAvailability (SOA.src)
                                  (Pair (WA.books (wiki), HA.rules (hero))))
-                                 (select (wiki_entry))
-
-    if (current_id === "SA_72") {
-      console.log ("SA_72 mcurrent_select = ", showP (mcurrent_select))
-    }
+                                 (AAL.select (wiki_entry))
 
     const isNoRequiredOrActiveSelection =
       isNotRequiredNotActive (mhero_entry)
@@ -439,7 +438,7 @@ const modifySelectOptions =
                                         ensure (isNumber),
                                         fmap (getTraditionOfAspect),
                                         bindF (getBlessedTradStrIdFromNumId),
-                                        Maybe.elem (id (trad))
+                                        Maybe.elem (AAL.id (trad))
                                       )
                                       (e)
                                  && isNoRequiredOrActiveSelection (e)
@@ -450,11 +449,17 @@ const modifySelectOptions =
 
       // Adaption (Zauber)
       case "SA_231": {
-        return fmap (filter ((e: Record<SelectOption>) =>
-                              isNoRequiredOrActiveSelection (e)
-                              && maybe (false)
-                                       (pipe (value, gte (10)))
-                                       (pipe (HA.spells, lookup (SOA.id (e))) (hero))))
+        return fmap (filter ((e: Record<SelectOption>) => {
+                              const id = SOA.id (e)
+
+                              return isNoRequiredOrActiveSelection (e)
+                                && maybe (false)
+                                         (pipe (value, gte (10)))
+                                         (pipe (HA.spells, lookup (SOA.id (e))) (hero))
+                                && isString (id)
+                                && Maybe.any (notP (isOwnTradition (magical_traditions)))
+                                             (lookup (id) (WA.spells (wiki)))
+                            }))
                     (mcurrent_select)
       }
 
@@ -553,7 +558,7 @@ const modifySelectOptions =
         return pipe (
                       WA.specialAbilities,
                       lookup ("SA_29"),
-                      bindF (select),
+                      bindF (AAL.select),
                       fmap (current_select => {
                              const available_langs =
                                      // Pair: fst = sid, snd = current_level
@@ -598,7 +603,7 @@ const modifySelectOptions =
                                                        List.all (pipe (
                                                          sid,
                                                          Maybe.elem<string | number>
-                                                           (id (hero_entry))
+                                                           (AAL.id (hero_entry))
                                                        ))
                                                      )
                                                      (hero_entry))
@@ -667,7 +672,7 @@ const modifyOtherOptions =
   (ap: Record<AdventurePointsCategories>) =>
   (wiki_entry: Activatable) =>
   (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<OtherOptionsModifier> => {
-    const current_id = id (wiki_entry)
+    const current_id = AAL.id (wiki_entry)
 
     switch (current_id) {
       // Kleine Zauberauswahl
@@ -735,7 +740,7 @@ const modifyOtherOptions =
       // Aspect Knowledge
       case "SA_87": {
         return pipe (
-                      cost,
+                      AAL.cost,
                       bindF<number | List<number>, List<number>> (ensure (isList)),
                       bindF (costs => subscript (costs)
                                                 (maybe (0) (pipe (active, flength)) (mhero_entry))),
@@ -791,7 +796,7 @@ const modifyOtherOptions =
                                                     set (costL)
                                                   ))
                                            )
-                                           (cost (wiki_entry)))
+                                           (AAL.cost (wiki_entry)))
                     )
                     (hero)
       }
@@ -898,10 +903,11 @@ export const getInactiveView =
   (hero: HeroModelRecord) =>
   (adventure_points: Record<AdventurePointsCategories>) =>
   (validExtendedSpecialAbilities: List<string>) =>
+  (magical_traditions: List<Record<SpecialAbility>>) =>
   (wiki_entry: Activatable) =>
   (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<Record<InactiveActivatable>> => {
-    const current_id = id (wiki_entry)
-    const current_prerequisites = prerequisites (wiki_entry)
+    const current_id = AAL.id (wiki_entry)
+    const current_prerequisites = AAL.prerequisites (wiki_entry)
 
     const max_level = isOrderedMap (current_prerequisites)
       ? validateLevel (wiki)
@@ -921,7 +927,11 @@ export const getInactiveView =
                                           (max_level)
 
     if (!isNotValid) {
-      const specificSelections = modifySelectOptions (wiki) (hero) (wiki_entry) (mhero_entry)
+      const specificSelections = modifySelectOptions (wiki)
+                                                     (hero)
+                                                     (magical_traditions)
+                                                     (wiki_entry)
+                                                     (mhero_entry)
 
       const mmodifyOtherOptions = modifyOtherOptions (wiki)
                                                      (hero)
@@ -935,12 +945,12 @@ export const getInactiveView =
                       modify (InactiveActivatable ({
                         id: current_id,
                         name: SpAL.name (wiki_entry),
-                        cost: cost (wiki_entry),
+                        cost: AAL.cost (wiki_entry),
                         maxLevel: max_level,
                         heroEntry: mhero_entry,
                         wikiEntry: wiki_entry as Record<RecordI<Activatable>>,
                         selectOptions: fmapF (select_options)
-                                             (sortRecordsByName (id (l10n))),
+                                             (sortRecordsByName (AAL.id (l10n))),
                       })))
                     (mmodifyOtherOptions)
                     (ensure (Maybe.all (notNull)) (specificSelections))

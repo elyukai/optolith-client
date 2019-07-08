@@ -1,5 +1,5 @@
 import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault } from "../../../Data/Record";
+import { fromNamedDefault } from "../../../Data/Record";
 
 export interface ActivatableActivationValidation {
   disabled: boolean
@@ -8,8 +8,9 @@ export interface ActivatableActivationValidation {
 }
 
 export const ActivatableActivationValidation =
-  fromDefault<ActivatableActivationValidation> ({
-    disabled: false,
-    maxLevel: Nothing,
-    minLevel: Nothing,
-  })
+  fromNamedDefault ("ActivatableActivationValidation")
+                   <ActivatableActivationValidation> ({
+                     disabled: false,
+                     maxLevel: Nothing,
+                     minLevel: Nothing,
+                   })

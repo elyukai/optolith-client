@@ -3,7 +3,7 @@ import { Textfit } from "react-textfit";
 import { equals } from "../../../../Data/Eq";
 import { fmap, fmapF } from "../../../../Data/Functor";
 import { find, flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
-import { ensure, fromMaybeR, mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { ensure, fromMaybeR, guardReplace, Just, mapMaybe, Maybe } from "../../../../Data/Maybe";
 import { elems } from "../../../../Data/OrderedSet";
 import { Record } from "../../../../Data/Record";
 import { AttributeCombined } from "../../../Models/View/AttributeCombined";
@@ -12,12 +12,11 @@ import { SpellCombined, SpellCombinedA_ } from "../../../Models/View/SpellCombin
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { DCIds } from "../../../Selectors/derivedCharacteristicsSelectors";
 import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
+import { classListMaybe } from "../../../Utilities/CSS";
 import { translate } from "../../../Utilities/I18n";
-import { dec } from "../../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybe } from "../../../Utilities/ReactUtils";
+import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils";
-import { sortStrings } from "../../../Utilities/sortBy";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface SpellsSheetSpellsProps {
@@ -41,7 +40,6 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
   } = props
 
   const propertyNames = translate (l10n) ("propertylist")
-  const traditionNames = translate (l10n) ("magicaltraditions")
 
   return (
     <TextBox
@@ -99,21 +97,19 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
 
                 return (
                   <tr key={SCA_.id (e)}>
-                    <td className="name">
+                    <td
+                      className={
+                        classListMaybe (List (
+                          Just ("name"),
+                          guardReplace (notNull (SCA_.tradition (e))) ("unfamiliar")
+                        ))
+                      }
+                      >
                       <Textfit max={11} min={7} mode="single">
                         {SCA_.name (e)}
-                        {pipe_ (
-                          e,
-                          SCA_.tradition,
-                          ensure (notNull),
-                          fmap (pipe (
-                            mapMaybe (pipe (dec, subscript (traditionNames))),
-                            sortStrings (l10n),
-                            intercalate (", "),
-                            str => ` (${str})`
-                          )),
-                          renderMaybe
-                        )}
+                        {notNull (SCA_.tradition (e))
+                          ? ` (${translate (l10n) ("unfamiliarspell")})`
+                          : ""}
                       </Textfit>
                     </td>
                     <td className="check">
@@ -123,14 +119,17 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
                           e,
                           SCA_.checkmod,
                           elems,
-                          mapMaybe (id => fmapF (find (pipe (
-                                                        DCA.id,
-                                                        equals<DCIds> (id)
-                                                      ))
-                                                      (derivedCharacteristics))
-                                                (DCA.short)),
-                          intercalate ("/"),
-                          str => ` (+${str})`
+                          ensure (notNull),
+                          renderMaybeWith (pipe (
+                            mapMaybe (id => fmapF (find (pipe (
+                                                          DCA.id,
+                                                          equals<DCIds> (id)
+                                                        ))
+                                                        (derivedCharacteristics))
+                                                  (DCA.short)),
+                            intercalate ("/"),
+                            str => ` (+${str})`
+                          ))
                         )}
                       </Textfit>
                     </td>

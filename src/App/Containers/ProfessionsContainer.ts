@@ -8,6 +8,7 @@ import { getFilteredProfessions } from "../Selectors/rcpSelectors";
 import { getCurrentProfessionId, getCurrentProfessionVariantId, getProfessionsFilterText, getSex, getWiki } from "../Selectors/stateSelectors";
 import { getProfessionsGroupVisibilityFilter, getProfessionsSortOrder, getProfessionsVisibilityFilter } from "../Selectors/uisettingsSelectors";
 import { Professions, ProfessionsDispatchProps, ProfessionsOwnProps, ProfessionsStateProps } from "../Views/Professions/Professions";
+import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: ProfessionsOwnProps): ProfessionsStateProps => ({
@@ -29,7 +30,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): ProfessionsDispatchProps =
   selectProfessionVariant (id: Maybe<string>) {
     dispatch (ProfessionVariantActions.selectProfessionVariant (id))
   },
-  setSortOrder (sortOrder: string) {
+  setSortOrder (sortOrder: SortNames) {
     dispatch (ProfessionActions.setProfessionsSortOrder (sortOrder))
   },
   setVisibilityFilter (filter: string) {

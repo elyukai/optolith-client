@@ -1,7 +1,8 @@
-import classNames from "classnames";
 import * as React from "react";
-import { notNullStrUndef } from "../../../Data/List";
+import { List, notNullStrUndef } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
 import { close } from "../../Utilities/createOverlay";
+import { classListMaybe } from "../../Utilities/CSS";
 import { ButtonProps, DialogButtons } from "./DialogButtons";
 
 export interface DialogProps {
@@ -29,7 +30,7 @@ export class Dialog extends React.Component<DialogProps, {}> {
 
     return (
       <div
-        className={classNames ("modal modal-backdrop", className)}
+        className={classListMaybe (List (Just ("modal modal-backdrop"), Maybe (className)))}
         {...other}
         >
         <div className="modal-container">

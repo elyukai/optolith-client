@@ -3,7 +3,7 @@
 const { ident } = require('../Function');
 const { Internals } = require('../Internals');
 const { List } = require('../List')
-const { Pair } = require('../Pair')
+const { Pair } = require('../Tuple')
 const { Int } = require('../Int')
 const { OrderedMap } = require('../OrderedMap')
 const { fromDefault } = require('../Record')

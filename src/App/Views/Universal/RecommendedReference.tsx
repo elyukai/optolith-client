@@ -1,4 +1,5 @@
 import * as React from "react";
+import { orN } from "../../../Data/Maybe";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 
@@ -11,7 +12,7 @@ export interface RecommendedReferenceProps {
 export function RecommendedReference (props: RecommendedReferenceProps) {
   const { l10n, strongly, unfamiliarSpells } = props
 
-  if (unfamiliarSpells === true) {
+  if (orN (unfamiliarSpells)) {
     return (
       <div className="recommended-ref">
         <div className="unrec">
@@ -24,7 +25,7 @@ export function RecommendedReference (props: RecommendedReferenceProps) {
 
   return (
     <div className="recommended-ref">
-      {strongly === true
+      {orN (strongly)
         ? (
           <div className="strongly-recommended">
             <div className="icon"></div>

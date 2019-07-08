@@ -1,7 +1,7 @@
 // @ts-check
 const { Internals } = require('../Internals');
 const { List } = require('../List')
-const { Pair } = require('../Pair')
+const { Pair } = require('../Tuple')
 const { Either } = require('../Either')
 const { add } = require('../../App/Utilities/mathUtils')
 

@@ -14,6 +14,7 @@ import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUti
 import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
+import { SortNames } from "../Views/Universal/SortOptions";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 
@@ -208,11 +209,11 @@ export const removeSpellPoint = (id: string): RemoveSpellPointAction => ({
 export interface SetSpellsSortOrderAction {
   type: ActionTypes.SET_SPELLS_SORT_ORDER
   payload: {
-    sortOrder: string;
+    sortOrder: SortNames;
   }
 }
 
-export const setSpellsSortOrder = (sortOrder: string): SetSpellsSortOrderAction => ({
+export const setSpellsSortOrder = (sortOrder: SortNames): SetSpellsSortOrderAction => ({
   type: ActionTypes.SET_SPELLS_SORT_ORDER,
   payload: {
     sortOrder,

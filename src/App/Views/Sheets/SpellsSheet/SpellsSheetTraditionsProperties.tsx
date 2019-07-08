@@ -1,4 +1,5 @@
 import * as React from "react";
+import { intercalate, List } from "../../../../Data/List";
 import { Maybe } from "../../../../Data/Maybe";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
@@ -6,7 +7,7 @@ import { renderMaybe } from "../../../Utilities/ReactUtils";
 
 export interface SpellsSheetTraditionsPropertiesProps {
   l10n: L10nRecord
-  magicalPrimary: Maybe<string>
+  magicalPrimary: List<string>
   magicalTradition: string
   properties: Maybe<string>
 }
@@ -20,7 +21,7 @@ export function SpellsSheetTraditionsProperties (props: SpellsSheetTraditionsPro
         <span className="label">
           {translate (l10n) ("primaryattribute")}
         </span>
-        <span className="value">{renderMaybe (magicalPrimary)}</span>
+        <span className="value">{intercalate ("/") (magicalPrimary)}</span>
       </div>
       <div className="properties">
         <span className="label">

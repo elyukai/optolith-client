@@ -54,12 +54,12 @@ export interface LiturgicalChantsStateProps {
   inactiveFilterText: string
   inactiveList: Maybe<List<Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>>>
   isRemovingEnabled: boolean
-  sortOrder: string
+  sortOrder: SortNames
   traditionId: Maybe<number>
 }
 
 export interface LiturgicalChantsDispatchProps {
-  setSortOrder (sortOrder: string): void
+  setSortOrder (sortOrder: SortNames): void
   switchActiveItemHints (): void
   addPoint (id: string): void
   addToList (id: string): void

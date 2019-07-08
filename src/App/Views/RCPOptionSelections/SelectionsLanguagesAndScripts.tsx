@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import * as React from "react";
 import { filter, List, map, toArray } from "../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../Data/Maybe";
@@ -66,7 +65,7 @@ export function SelectionsLanguagesAndScripts (props: SelectionsLanguagesAndScri
               const active_level = findWithDefault (0) (id) (languagesActive)
 
               return (
-                <div key={id} className={classNames (disabled ? "disabled" : undefined)}>
+                <div key={id} className={disabled ? "disabled" : undefined}>
                   <Checkbox
                     checked={is_active || native}
                     disabled={disabled}
@@ -129,7 +128,7 @@ export function SelectionsLanguagesAndScripts (props: SelectionsLanguagesAndScri
               const disabled = native || !is_active && apLeft - cost < 0
 
               return (
-                <div key={id} className={classNames (disabled ? "disabled" : undefined)}>
+                <div key={id} className={disabled ? "disabled" : undefined}>
                   <Checkbox
                     checked={is_active || native}
                     disabled={disabled}

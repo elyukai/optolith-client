@@ -6,7 +6,6 @@ import { over, set } from "../../../Data/Lens";
 import { countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, subscript, subscriptF, sum, take } from "../../../Data/List";
 import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, maybe_, Nothing, or, then, thenF } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Omit, Record } from "../../../Data/Record";
-import { showP } from "../../../Data/Show";
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple";
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -567,11 +566,6 @@ export const getIdSpecificAffectedAndDispatchProps =
 
                   const mselected_cost = bind (mselected_option) (SOA.cost)
 
-                  if (id === "SA_414") {
-                    console.log (showP (mselected_option))
-                    console.log (showP (mselected_cost))
-                  }
-
                   if (isJust (mselected_cost)) {
                     return bimap (setSelectOptionId)
                                  (set (PABYL.currentCost) (mselected_cost))
@@ -587,10 +581,6 @@ export const getIdSpecificAffectedAndDispatchProps =
                   return ident
                 }
               }) ()
-
-        if (id === "SA_414") {
-          console.log (showP (fillPairForNoLevel (base_pair)))
-        }
 
         return fromMaybe (fillPairForNoLevel)
                          (pipe_ (mlevels, thenF (mselected_level), fmap (fillPairForActiveLevel)))

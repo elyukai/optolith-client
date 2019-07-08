@@ -41,14 +41,14 @@ export interface SkillsStateProps {
   derivedCharacteristics: OrderedMap<DCIds, Record<DerivedCharacteristic>>
   list: Maybe<List<Record<SkillWithRequirements>>>
   isRemovingEnabled: boolean
-  sortOrder: string
+  sortOrder: SortNames
   filterText: string
   ratingVisibility: boolean
   skillRating: OrderedMap<string, EntryRating>
 }
 
 export interface SkillsDispatchProps {
-  setSortOrder (sortOrder: string): void
+  setSortOrder (sortOrder: SortNames): void
   setFilterText (filterText: string): void
   switchRatingVisibility (): void
   addPoint (id: string): void

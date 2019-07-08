@@ -1,4 +1,5 @@
 import * as React from "react";
+import { orN } from "../../../Data/Maybe";
 import { isNumber } from "../../Utilities/typeCheckUtils";
 import { IconButton } from "../Universal/IconButton";
 import { ListItemButtons } from "../Universal/ListItemButtons";
@@ -41,7 +42,7 @@ export function SkillButtons (props: SkillButtonsProps) {
 
   return (
     <ListItemButtons>
-      {isNotActive === true
+      {orN (isNotActive)
         ? (
           <IconButton
             icon="&#xE916;"

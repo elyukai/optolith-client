@@ -12,6 +12,7 @@ import { AppState } from "../Reducers/appReducer";
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from "../Selectors/rcpSelectors";
 import { getWiki } from "../Selectors/stateSelectors";
 import { pipe_ } from "../Utilities/pipe";
+import { SortNames } from "../Views/Universal/SortOptions";
 import { ReduxAction } from "./Actions";
 
 export interface SelectProfessionAction {
@@ -83,11 +84,11 @@ export const setSelections =
 export interface SetProfessionsSortOrderAction {
   type: ActionTypes.SET_PROFESSIONS_SORT_ORDER
   payload: {
-    sortOrder: string;
+    sortOrder: SortNames;
   }
 }
 
-export const setProfessionsSortOrder = (sortOrder: string): SetProfessionsSortOrderAction => ({
+export const setProfessionsSortOrder = (sortOrder: SortNames): SetProfessionsSortOrderAction => ({
   type: ActionTypes.SET_PROFESSIONS_SORT_ORDER,
   payload: {
     sortOrder,

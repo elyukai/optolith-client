@@ -7,6 +7,7 @@ import { Pair } from "../../../../Data/Tuple";
 import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { mensureMapNonEmptyString, mensureMapNonEmptyStringList } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
+
 const localeRx = /[a-z]{2}-[A-Z]{2}/
 
 const isLocale =
@@ -680,6 +681,11 @@ export const toL10n =
         "unfamiliarspellselectionfortraditionguildmage":
           checkL10nNonEmptyString ("unfamiliarspellselectionfortraditionguildmage"),
         "selectaspell": checkL10nNonEmptyString ("selectaspell"),
+        "pactisincompletehint": checkL10nNonEmptyString ("pactisincompletehint"),
+        "manualherodatarepair": checkL10nNonEmptyString ("manualherodatarepair"),
+        "manualherodatarepairexplanation":
+          checkL10nNonEmptyString ("manualherodatarepairexplanation"),
+        "unfamiliarspell": checkL10nNonEmptyString ("unfamiliarspell"),
       }
 
       return mapMNamed
@@ -1293,6 +1299,10 @@ export const toL10n =
           "unfamiliarspellselectionfortraditionguildmage":
             res ["unfamiliarspellselectionfortraditionguildmage"],
           "selectaspell": res ["selectaspell"],
+          "pactisincompletehint": res ["pactisincompletehint"],
+          "manualherodatarepair": res ["manualherodatarepair"],
+          "manualherodatarepairexplanation": res ["manualherodatarepairexplanation"],
+          "unfamiliarspell": res ["unfamiliarspell"],
           // tslint:enable: no-string-literal
         }))
     }

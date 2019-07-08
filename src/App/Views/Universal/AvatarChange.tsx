@@ -1,6 +1,6 @@
 import { remote } from "electron";
 import * as React from "react";
-import { ensure } from "../../../Data/Maybe";
+import { ensure, orN } from "../../../Data/Maybe";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { AvatarWrapper } from "./AvatarWrapper";
@@ -53,7 +53,7 @@ export class AvatarChange extends React.Component<AvatarChangeProps, AvatarChang
   }
 
   componentWillReceiveProps (nextProps: AvatarChangeProps) {
-    if (nextProps.isOpen === false && this.props.isOpen === true) {
+    if (nextProps.isOpen === false && orN (this.props.isOpen)) {
       this.setState ({
         fileValid: false,
         url: "",

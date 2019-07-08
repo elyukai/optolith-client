@@ -9,6 +9,7 @@ import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
 import { getCombatTechniquesFilterText } from "../Selectors/stateSelectors";
 import { getCombatTechniquesSortOrder } from "../Selectors/uisettingsSelectors";
 import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnProps, CombatTechniquesStateProps } from "../Views/CombatTechniques/CombatTechniques";
+import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (
   state: AppStateRecord,
@@ -32,7 +33,7 @@ const mapDispatchToProps = (
   removePoint (id: string) {
     dispatch (CombatTechniquesActions.removeCombatTechniquePoint (id))
   },
-  setSortOrder (sortOrder: string) {
+  setSortOrder (sortOrder: SortNames) {
     dispatch (CombatTechniquesActions.setCombatTechniquesSortOrder (sortOrder))
   },
   setFilterText (filterText: string) {

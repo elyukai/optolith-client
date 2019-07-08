@@ -16,6 +16,7 @@ import { L10nRecord } from "../Models/Wiki/L10n";
 import { isSpecialAbility, SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
+import { getAutomaticAdvantages } from "../Selectors/rcpSelectors";
 import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors";
 import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils";
 import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils";
@@ -24,6 +25,7 @@ import { translate, translateP } from "../Utilities/I18n";
 import { subtract } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { getWikiEntry } from "../Utilities/WikiUtils";
+import { SortNames } from "../Views/Universal/SortOptions";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 
@@ -182,6 +184,7 @@ export const setSpecialAbilityLevel =
           (isEntryToAdd: boolean) =>
             pipe (
               getNameCost (isEntryToAdd)
+                          (getAutomaticAdvantages (state))
                           (l10n)
                           (wiki)
                           (hero),
@@ -245,12 +248,12 @@ export const setSpecialAbilityLevel =
 export interface SetSpecialAbilitiesSortOrderAction {
   type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER
   payload: {
-    sortOrder: string;
+    sortOrder: SortNames;
   }
 }
 
 export const setSpecialAbilitiesSortOrder =
-  (sortOrder: string): SetSpecialAbilitiesSortOrderAction => ({
+  (sortOrder: SortNames): SetSpecialAbilitiesSortOrderAction => ({
     type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER,
     payload: {
       sortOrder,

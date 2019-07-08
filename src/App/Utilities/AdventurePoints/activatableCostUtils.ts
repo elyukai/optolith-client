@@ -38,6 +38,9 @@ import { pipe, pipe_ } from "../pipe";
 import { isNumber, misNumberM, misStringM } from "../typeCheckUtils";
 import { getWikiEntry, isActivatableWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
 
+const AAL = Advantage.AL
+const AOWIA = ActiveObjectWithId.A
+
 const isDisadvantageActive =
   (id: string) =>
     pipe (
@@ -61,11 +64,11 @@ const getEntrySpecificCost =
   (hero_entry: Maybe<Record<ActivatableDependent>>) =>
   // tslint:disable-next-line: cyclomatic-complexity
   (entry: Record<ActiveObjectWithId>): Maybe<number | List<number>> => {
-    const current_id = ActiveObjectWithId.A.id (entry)
-    const mcurrent_sid = ActiveObjectWithId.A.sid (entry)
-    const mcurrent_level = ActiveObjectWithId.A.tier (entry)
+    const current_id = AOWIA.id (entry)
+    const mcurrent_sid = AOWIA.sid (entry)
+    const mcurrent_level = AOWIA.tier (entry)
 
-    const mcurrent_cost = Advantage.AL.cost (wiki_entry)
+    const mcurrent_cost = AAL.cost (wiki_entry)
 
     const all_active = joinMaybeList (fmap (ActivatableDependent.A.active) (hero_entry))
 
@@ -376,17 +379,21 @@ export const compareSubMaxLevel =
 
 const getTotalCost =
   (isEntryToAdd: boolean) =>
+  (automatic_advantages: List<string>) =>
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
   (entry: Record<ActiveObjectWithId>) =>
   (hero_entry: Maybe<Record<ActivatableDependent>>) =>
   (wiki_entry: Activatable): number | List<number> => {
-    const custom_cost = ActiveObjectWithId.A.cost (entry)
+    const custom_cost = AOWIA.cost (entry)
 
     if (isJust (custom_cost)) {
       const is_disadvantage = Disadvantage.is (wiki_entry)
 
       return is_disadvantage ? -fromJust (custom_cost) : fromJust (custom_cost)
+    }
+    else if (List.elem (AAL.id (wiki_entry)) (automatic_advantages)) {
+      return 0
     }
 
     const mentry_specifc_cost = getEntrySpecificCost (isEntryToAdd)
@@ -413,20 +420,22 @@ const getTotalCost =
  */
 export const getCost =
   (isEntryToAdd: boolean) =>
+  (automatic_advantages: List<string>) =>
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
   (entry: Record<ActiveObjectWithId>): Maybe<number | List<number>> => {
-    const current_id = ActiveObjectWithId.A.id (entry)
+    const current_id = AOWIA.id (entry)
 
     return pipe_ (
       getWikiEntry (wiki) (current_id),
       bindF (ensure (isActivatableWikiEntry)),
       fmap (getTotalCost (isEntryToAdd)
-                          (wiki)
-                          (hero)
-                          (entry)
-                          (bind (getHeroStateItem (hero) (current_id))
-                                (ensure (isActivatableDependent))))
+                         (automatic_advantages)
+                         (wiki)
+                         (hero)
+                         (entry)
+                         (bind (getHeroStateItem (hero) (current_id))
+                               (ensure (isActivatableDependent))))
     )
   }
 

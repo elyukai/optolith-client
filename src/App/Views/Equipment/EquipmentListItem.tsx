@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ensure, maybe } from "../../../Data/Maybe";
+import { ensure, maybe, orN } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { Item } from "../../Models/Hero/Item";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -29,7 +29,7 @@ export function EquipmentListItem (props: EquipmentListItemProps) {
 
   const numberValue = ensure<number> (gt (1)) (IA.amount (data))
 
-  return add === true ? (
+  return orN (add) ? (
     <ListItem>
       <ListItemName name={IA.name (data)} />
       <ListItemSeparator />

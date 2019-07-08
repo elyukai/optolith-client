@@ -7,6 +7,7 @@ npm-debug.log*
 .rpt2_cache
 .esm-cache
 app/**/*.js
+app/**/*.js.map
 !app/index.js
 /installer/
 electron-builder.env

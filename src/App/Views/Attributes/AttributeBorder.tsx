@@ -1,5 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
+import { List } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 import { TooltipToggle } from "../Universal/TooltipToggle";
 
 export interface AttributeBorderProps {
@@ -23,7 +25,7 @@ export function AttributeBorder (props: AttributeBorderProps) {
   )
 
   return (
-    <div className={classNames ("attr", className)}>
+    <div className={classListMaybe (List (Just ("attr"), Maybe (className)))}>
       <div className="short">{label}</div>
       {valueElement}
       {children}

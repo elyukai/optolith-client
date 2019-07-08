@@ -29,14 +29,14 @@ export interface RacesStateProps {
   currentId: Maybe<string>
   currentVariantId: Maybe<string>
   races: Maybe<List<Record<RaceCombined>>>
-  sortOrder: string
+  sortOrder: SortNames
   filterText: string
 }
 
 export interface RacesDispatchProps {
   selectRace (id: string): (variantId: Maybe<string>) => void
   selectRaceVariant (id: string): void
-  setSortOrder (sortOrder: string): void
+  setSortOrder (sortOrder: SortNames): void
   switchValueVisibilityFilter (): void
   setFilterText (filterText: string): void
   switchToCultures (): void

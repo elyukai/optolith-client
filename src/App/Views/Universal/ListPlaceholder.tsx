@@ -1,6 +1,8 @@
-import classNames from "classnames";
 import * as React from "react";
+import { List } from "../../../Data/List";
+import { guardReplace, Just, orN } from "../../../Data/Maybe";
 import { L10nRecord } from "../../Models/Wiki/L10n";
+import { classListMaybe } from "../../Utilities/CSS";
 import { translate } from "../../Utilities/I18n";
 import { IconButton } from "./IconButton";
 import { ListView } from "./List";
@@ -230,19 +232,18 @@ export function ListPlaceholder (props: ListPlaceholderProps) {
   return (
     <ListView
       className={
-        classNames (
-          "placeholder-wrapper",
-          [
-            "advantages",
-            "disadvantages",
-            "specialAbilities",
-            "inactiveAdvantages",
-            "inactiveDisadvantages",
-            "inactiveSpecialAbilities",
-          ].includes (type)
-            ? "increased-padding"
-            : undefined
-        )
+        classListMaybe (List (
+          Just ("placeholder-wrapper"),
+          guardReplace ([
+                         "advantages",
+                         "disadvantages",
+                         "specialAbilities",
+                         "inactiveAdvantages",
+                         "inactiveDisadvantages",
+                         "inactiveSpecialAbilities",
+                       ].includes (type))
+                       ("increased-padding")
+        ))
       }
       >
       {placeholder}
@@ -252,16 +253,16 @@ export function ListPlaceholder (props: ListPlaceholderProps) {
       {placeholder}
       <div
         className={
-          classNames (
-            "placeholder-message",
-            props.wikiInitial === true ? "wiki-initial" : undefined
-          )
+          classListMaybe (List (
+            Just ("placeholder-message"),
+            guardReplace (orN (props.wikiInitial)) ("wiki-initial")
+          ))
         }
         >
         {
-          props.wikiInitial === true
+          orN (props.wikiInitial)
             ? translate (props.l10n) ("chooseacategorytodisplayalist")
-            : props.noResults === true
+            : orN (props.noResults)
             ? translate (props.l10n) ("emptylistnoresults")
             : translate (props.l10n) ("emptylist")
         }

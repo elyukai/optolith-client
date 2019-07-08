@@ -1,6 +1,7 @@
 import * as React from "react";
-import ReactMarkdown from "react-markdown";
-import Ph from "remark-breaks";
+import { orN } from "../../../Data/Maybe";
+import Ph = require("remark-breaks");
+import ReactMarkdown = require("react-markdown");
 
 export interface MarkdownProps {
   className?: string
@@ -23,7 +24,7 @@ export function Markdown (props: MarkdownProps) {
       ? p => <>{p.children}</>
       : oneLine === "span"
       ? "span"
-      : isListElement === true
+      : orN (isListElement)
       ? "ul"
       : "div"
 

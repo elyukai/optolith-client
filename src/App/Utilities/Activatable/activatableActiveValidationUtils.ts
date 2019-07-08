@@ -10,7 +10,7 @@ import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { any, countWith, elem, filter, find, flength, foldl, intersect, isList, List, mapByIdKeyMap, sdelete } from "../../../Data/List";
-import { alt, altF, bindF, ensure, fromJust, isJust, Just, liftM2, Maybe, Nothing, or, sum } from "../../../Data/Maybe";
+import { alt, altF, bindF, ensure, fromJust, isJust, isNothing, Just, liftM2, Maybe, Nothing, or, sum } from "../../../Data/Maybe";
 import { elems, isOrderedMap, lookupF } from "../../../Data/OrderedMap";
 import { size } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
@@ -34,8 +34,8 @@ import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils";
 import { prefixSA } from "../IDUtils";
 import { ifElse } from "../ifElse";
 import { isOwnTradition } from "../Increasable/liturgicalChantUtils";
-import { add, gt, gte, inc, lt, subtract, subtractBy } from "../mathUtils";
-import { pipe } from "../pipe";
+import { add, gt, gte, inc, lt, min, subtract, subtractBy } from "../mathUtils";
+import { pipe, pipe_ } from "../pipe";
 import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites";
 import { setPrerequisiteId } from "../Prerequisites/setPrerequisiteId";
 import { validateLevel, validateObject } from "../Prerequisites/validatePrerequisitesUtils";
@@ -371,6 +371,16 @@ const getEntrySpecificMinimumLevel =
       case "ADV_80":
         return getSermonsAndVisionsMinTier (wiki) (hero) (true) (27)
 
+      default:
+        return Nothing
+    }
+  }
+
+const getEntrySpecificMaximumLevel =
+  (wiki: WikiModelRecord) =>
+  (hero: HeroModelRecord) =>
+  (entry_id: string): Maybe<number> => {
+    switch (entry_id) {
       // Wenige Predigten
       case "DISADV_72":
         return getSermonsAndVisionsMinTier (wiki) (hero) (false) (24)
@@ -378,6 +388,10 @@ const getEntrySpecificMinimumLevel =
       // Wenige Visionen
       case "DISADV_73":
         return getSermonsAndVisionsMinTier (wiki) (hero) (false) (27)
+
+      // Dunkles Abbild der Bündnisgabe
+      case "SA_667":
+        return pipe_ (hero, pact, fmap (level))
 
       default:
         return Nothing
@@ -388,7 +402,7 @@ type isDependencyObject = (x: ActivatableDependency) => x is Record<DependencyOb
 
 const adjustMinimumLevelByDependencies =
   (entry: Record<ActiveObjectWithId>) =>
-    flip (foldl ((min: Maybe<number>): (dep: ActivatableDependency) => Maybe<number> =>
+    flip (foldl ((min_level: Maybe<number>): (dep: ActivatableDependency) => Maybe<number> =>
                   pipe (
                     // dependency must include a minimum level, which only occurs
                     // in a DependencyObject
@@ -396,14 +410,14 @@ const adjustMinimumLevelByDependencies =
                     // get the level dependency from the object and ensure it's
                     // greater than the current mininumu level and that
                     bindF (dep => bindF<number, number>
-                                    (ensure (dep_level => sum (min) < dep_level
+                                    (ensure (dep_level => sum (min_level) < dep_level
                                                           && or (liftM2 (equals)
                                                                         (sid (dep))
                                                                         (sid (entry)))))
                                     (tier (dep))),
                     // if the current dependency's level is not valid, return
                     // the current minimum
-                    altF (min)
+                    altF (min_level)
                   )))
 
 /**
@@ -420,6 +434,9 @@ export const getMinTier =
                                                                    (hero)
                                                                    (entry))
 
+const minMaybe: (mx: Maybe<number>) => (my: Maybe<number>) => Maybe<number> =
+  mx => my => isNothing (mx) ? my : isNothing (my) ? mx : Just (min (fromJust (mx)) (fromJust (my)))
+
 /**
  * Get maximum valid tier.
  */
@@ -429,21 +446,18 @@ export const getMaxTier =
   (entry_prerequisites: LevelAwarePrerequisites) =>
   (entry_dependencies: List<ActivatableDependency>) =>
   (entry_id: string): Maybe<number> => {
-    const current_pact = pact (hero)
-
-    if (entry_id === "SA_667" && isJust (current_pact)) {
-      return Just (level (fromJust (current_pact)))
-    }
+    const entry_specific_max_level = getEntrySpecificMaximumLevel (wiki) (hero) (entry_id)
 
     if (isOrderedMap (entry_prerequisites)) {
-      return validateLevel (wiki)
-                           (hero)
-                           (entry_prerequisites)
-                           (entry_dependencies)
-                           (entry_id)
+      return minMaybe (entry_specific_max_level)
+                      (validateLevel (wiki)
+                                     (hero)
+                                     (entry_prerequisites)
+                                     (entry_dependencies)
+                                     (entry_id))
     }
 
-    return Nothing
+    return entry_specific_max_level
   }
 
 /**

@@ -3,7 +3,7 @@ import { cnst, flip, ident, join, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over, set } from "../../Data/Lens";
 import { append, consF, elem, filter, flength, foldr, isList, List, ListI, map } from "../../Data/List";
-import { bind, ensure, fromMaybe, isJust, Just, listToMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
+import { bind, ensure, fromMaybe, isJust, isNothing, Just, listToMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
 import { alter, foldrWithKey, insertF, keys, lookup, member, OrderedMap } from "../../Data/OrderedMap";
 import { insert, OrderedSet, toList, union } from "../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
@@ -197,7 +197,32 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
                                   // should remove the entry of the SA added by
                                   // the profession
                                   if (!PRAA.active (sa)) {
-                                    return filter (pipe (PRAA.id, notEquals (PRAA.id (sa))))
+                                    type MSID = Maybe<string | number>
+
+                                    const id = PRAA.id (sa)
+                                    const msid = PRAA.sid (sa)
+                                    const msid2 = PRAA.sid2 (sa)
+
+                                    if (isJust (msid) || isJust (msid2)) {
+                                      return filter ((x: Record<ProfessionRequireActivatable>) => {
+                                                      const current_id = PRAA.id (x)
+                                                      const mcurrent_sid = PRAA.sid (x)
+                                                      const mcurrent_sid2 = PRAA.sid2 (x)
+
+                                                      return id !== current_id
+                                                        || (
+                                                          isNothing (msid)
+                                                          || notEquals<MSID> (msid) (mcurrent_sid)
+                                                        )
+                                                        && (
+                                                          isNothing (msid2)
+                                                          || notEquals<MSID> (msid2) (mcurrent_sid2)
+                                                        )
+                                                    })
+                                    }
+                                    else {
+                                      return filter (pipe (PRAA.id, notEquals (PRAA.id (sa))))
+                                    }
                                   }
 
                                   // otherwise just add the entry

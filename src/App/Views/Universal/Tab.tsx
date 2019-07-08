@@ -1,6 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
-import { notNullStrUndef } from "../../../Data/List";
+import { List, notNullStrUndef } from "../../../Data/List";
+import { guardReplace, Just, Maybe, orN } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 import { Text } from "./Text";
 
 export interface TabBaseProps {
@@ -20,12 +21,15 @@ export function Tab (props: TabProps) {
 
   return (
     <div
-      className={classNames (className, {
-        "active": active,
-        "disabled": disabled,
-        "tab": true,
-      })}
-      onClick={disabled === true ? undefined : onClick}
+      className={
+        classListMaybe (List (
+          Just ("tab"),
+          guardReplace (active) ("active"),
+          guardReplace (orN (disabled)) ("disabled"),
+          Maybe (className)
+        ))
+      }
+      onClick={orN (disabled) ? undefined : onClick}
       >
       <Text>{notNullStrUndef (label) ? label : children}</Text>
     </div>

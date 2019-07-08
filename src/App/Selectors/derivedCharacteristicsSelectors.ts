@@ -19,10 +19,10 @@ import { translate } from "../Utilities/I18n";
 import { prefixAdv, prefixAttr, prefixDis, prefixSA } from "../Utilities/IDUtils";
 import { getAttributeValueWithDefault } from "../Utilities/Increasable/attributeUtils";
 import { add, multiply, negate, subtract } from "../Utilities/mathUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
+import { pipe } from "../Utilities/pipe";
 import { isBookEnabled } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice, mapGetToSlice, mapGetToSliceWithProps } from "../Utilities/SelectorsUtils";
-import { getPrimaryBlessedAttribute, getPrimaryMagicalAttribute } from "./attributeSelectors";
+import { getHighestPrimaryMagicalAttributeValue, getPrimaryBlessedAttribute } from "./attributeSelectors";
 import { getCurrentRace } from "./rcpSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getMagicalTraditionsFromHero } from "./spellsSelectors";
@@ -82,13 +82,13 @@ export const getLP = createMaybeSelector (
 
 export const getAE = createMaybeSelector (
   getMagicalTraditionsFromHero,
-  getPrimaryMagicalAttribute,
+  getHighestPrimaryMagicalAttributeValue,
   getPermanentArcaneEnergyPoints,
   mapGetToMaybeSlice (getAdvantages) (prefixAdv (23)),
   mapGetToMaybeSlice (getDisadvantages) (prefixDis (26)),
   getAddedArcaneEnergyPoints,
   getLocaleAsProp,
-  (trads, mprimary, paep, minc, mdec, added, l10n) => {
+  (trads, mprimary_value, paep, minc, mdec, added, l10n) => {
     const mlast_trad = listToMaybe (trads)
 
     const mredeemed = fmap (PermanentEnergyLossAndBoughtBack.A.redeemed) (paep)
@@ -105,8 +105,8 @@ export const getAE = createMaybeSelector (
     const mbaseAndAdd =
       fmapF (mlast_trad)
             (last_trad => fromMaybe (Pair (20, 0))
-                                    (fmapF (mprimary)
-                                           (primary => {
+                                    (fmapF (mprimary_value)
+                                           (primary_value => {
                                             const hasTraditionHalfAE =
                                               elem (ActivatableDependent.A.id (last_trad))
                                                    (List (
@@ -116,10 +116,8 @@ export const getAE = createMaybeSelector (
                                                      prefixSA (1221)))
 
                                             const maxAdd = hasTraditionHalfAE
-                                              ? divideBy2AndRound (pipe_ (primary,
-                                                                          ACA.stateEntry,
-                                                                          ADA.value))
-                                              : pipe_ (primary, ACA.stateEntry, ADA.value)
+                                              ? divideBy2AndRound (primary_value)
+                                              : primary_value
 
                                             return Pair (maxAdd + 20, maxAdd)
                                           })))

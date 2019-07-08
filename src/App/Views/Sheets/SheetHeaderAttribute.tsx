@@ -1,6 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
-import { Maybe } from "../../../Data/Maybe";
+import { List } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 import { renderMaybe } from "../../Utilities/ReactUtils";
 
 export interface SheetHeaderAttributeProps {
@@ -11,7 +12,7 @@ export interface SheetHeaderAttributeProps {
 
 export function SheetHeaderAttribute (props: SheetHeaderAttributeProps) {
   return (
-    <div className={classNames ("sheet-attribute", props.id)}>
+    <div className={classListMaybe (List (Just ("sheet-attribute"), Maybe (props.id)))}>
       <span className="label">{props.label}</span>
       <span className="value">{renderMaybe (props.value)}</span>
     </div>

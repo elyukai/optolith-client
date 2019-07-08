@@ -1,6 +1,6 @@
 import { set } from "../../../Data/Lens";
-import { isRequiringActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { isRequiringIncreasable, RequireIncreasableL } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
+import { RequireActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
+import { RequireIncreasable, RequireIncreasableL } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { AllRequirementObjects } from "../../Models/Wiki/wikiTypeHelpers";
 
 const { id: ra_id } = RequireActivatableL
@@ -14,8 +14,8 @@ const { id: ri_id } = RequireIncreasableL
 export const setPrerequisiteId =
   (id: string) =>
   (req: AllRequirementObjects) =>
-    isRequiringActivatable (req)
+    RequireActivatable.is (req)
     ? set (ra_id) (id) (req)
-    : isRequiringIncreasable (req)
+    : RequireIncreasable.is (req)
     ? set (ri_id) (id) (req)
     : req

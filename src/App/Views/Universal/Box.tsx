@@ -1,5 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
+import { List } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
 export interface BoxProps {
   children?: React.ReactNode
@@ -37,7 +39,7 @@ export function Box (props: BoxProps) {
   const { children, ...other } = props
   let { className } = props
 
-  className = classNames ("box", className)
+  className = classListMaybe (List (Just ("box"), Maybe (className)))
 
   return (
     <div {...other} className={className}>

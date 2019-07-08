@@ -25,6 +25,7 @@ import { getWikiSliceGetterByCategory } from "../Utilities/WikiUtils";
 import { getAPObjectMap } from "./adventurePointsSelectors";
 import { EnabledSourceBooks, getRuleBooksEnabled } from "./rulesSelectors";
 import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
+import { getMagicalTraditionsFromWiki } from "./spellsSelectors";
 import * as stateSelectors from "./stateSelectors";
 
 export const getExtendedSpecialAbilitiesToAdd = createMaybeSelector (
@@ -49,11 +50,12 @@ export const getInactiveForView =
                       (
                         stateSelectors.getLocaleAsProp,
                         getExtendedSpecialAbilitiesToAdd,
-                        stateSelectors.getWiki
+                        stateSelectors.getWiki,
+                        getMagicalTraditionsFromWiki
                       )
                       (heroReducer.A.present)
                       (madventure_points =>
-                       (l10n, validExtendedSpecialAbilities, wiki) =>
+                       (l10n, validExtendedSpecialAbilities, wiki, magical_traditions) =>
                        (hero): Inactives<T> =>
                          fmapF (join (madventure_points))
                                (adventure_points => {
@@ -69,9 +71,10 @@ export const getInactiveForView =
                                                                    (hero)
                                                                    (adventure_points)
                                                                    (validExtendedSpecialAbilities)
+                                                                   (magical_traditions)
                                                                    (wiki_entry)
                                                                    (lookup (getId (wiki_entry))
-                                                                           (stateSlice)))
+                                                                             (stateSlice)))
                                                  (elems<Activatable> (wikiSlice))
                                })
                     )

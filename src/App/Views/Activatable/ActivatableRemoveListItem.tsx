@@ -1,19 +1,19 @@
-import classNames from "classnames";
 import * as React from "react";
 import { isString } from "util";
 import { notEquals } from "../../../Data/Eq";
 import { onF } from "../../../Data/Function";
-import { fmap, fmapF } from "../../../Data/Functor";
-import { cons, flength } from "../../../Data/List";
-import { bindF, ensure, fromJust, fromMaybe, isJust, Just, liftM2, listToMaybe, Maybe, maybe, or } from "../../../Data/Maybe";
+import { fmap, mapReplace } from "../../../Data/Functor";
+import { cons, flength, List } from "../../../Data/List";
+import { bindF, ensure, fromJust, fromMaybe, guard, isJust, Just, liftM2, listToMaybe, Maybe, maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
 import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
 import { L10nRecord } from "../../Models/Wiki/L10n";
+import { classListMaybe } from "../../Utilities/CSS";
 import { translate } from "../../Utilities/I18n";
 import { getLevelElementsWithMin } from "../../Utilities/levelUtils";
 import { max, min } from "../../Utilities/mathUtils";
-import { pipe_ } from "../../Utilities/pipe";
+import { pipe, pipe_ } from "../../Utilities/pipe";
 import { misStringM } from "../../Utilities/typeCheckUtils";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { IconButton } from "../Universal/IconButton";
@@ -152,12 +152,15 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
         : null}
         <ListItemValues>
           <div
-            className={
-              classNames (
-                "cost",
-                or (fmapF (AAA_.customCost (item)) (notEquals (0))) ? "custom-cost" : undefined
+            className={classListMaybe (List (
+              Just ("cost"),
+              pipe_ (
+                item,
+                AAA_.customCost,
+                bindF (pipe (notEquals (0), guard)),
+                mapReplace ("custom-cost")
               )
-            }
+            ))}
             >
             {AAA_.finalCost (item)}
           </div>

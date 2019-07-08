@@ -1,6 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
-import { fromMaybeR, Maybe, Nothing } from "../../../Data/Maybe";
+import { List } from "../../../Data/List";
+import { fromMaybeR, Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 import { Box } from "./Box";
 
 export interface LabelBoxProps {
@@ -14,7 +15,7 @@ export function LabelBox (props: LabelBoxProps) {
   const { className, children, label, value = Nothing } = props
 
   return (
-    <div className={classNames ("labelbox", className)}>
+    <div className={classListMaybe (List (Just ("labelbox"), Maybe (className)))}>
       <Box>{fromMaybeR (children as any) (value)}</Box>
       <label>{label}</label>
     </div>

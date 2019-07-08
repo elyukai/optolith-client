@@ -5,7 +5,7 @@ const { Const } = require ('../Functor/Const')
 const { Identity } = require ('../../Control/Monad/Identity')
 const { List } = require ('../List')
 const { fromUniquePairs } = require ('../OrderedMap')
-const { Pair } = require ('../Pair')
+const { Pair } = require ('../Tuple')
 const { add } = require ('../../App/Utilities/mathUtils')
 
 const Just = Internals.Just

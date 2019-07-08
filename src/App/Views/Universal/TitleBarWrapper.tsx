@@ -1,5 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
+import { List } from "../../../Data/List";
+import { guardReplace, Just } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
 export interface TitleBarWrapperProps {
   children?: React.ReactNode
@@ -8,7 +10,14 @@ export interface TitleBarWrapperProps {
 
 export function TitleBarWrapper (props: TitleBarWrapperProps) {
   return (
-    <div className={classNames ("titlebar", !props.isFocused ? "not-focused" : undefined)}>
+    <div
+      className={
+        classListMaybe (List (
+          Just ("titlebar"),
+          guardReplace (!props.isFocused) ("not-focused")
+        ))
+      }
+      >
       <div className="titlebar-inner">
         {props.children}
       </div>

@@ -1,6 +1,8 @@
-import classNames from "classnames";
 import * as React from "react";
 import { Textfit } from "react-textfit";
+import { classListMaybe } from "../../Utilities/CSS";
+import { List } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
 
 export interface TextBoxProps {
   children?: React.ReactNode
@@ -13,7 +15,7 @@ export const TextBox = (props: TextBoxProps) => {
   const { children, className, label, value } = props
 
   return (
-    <div className={classNames ("textbox", className)}>
+    <div className={classListMaybe (List (Just ("textbox"), Maybe (className)))}>
       <h3>{label}</h3>
       {value !== undefined
         ? (

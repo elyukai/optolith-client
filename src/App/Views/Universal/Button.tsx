@@ -1,6 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
-import { isMaybe, Maybe } from "../../../Data/Maybe";
+import { List } from "../../../Data/List";
+import { guardReplace, Just, Maybe, normalize, or, orN } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
 export interface ButtonProps {
   active?: boolean
@@ -32,20 +33,21 @@ export const Button = (props: ButtonProps) => {
 
   let { className } = props
 
-  className = classNames (className, {
-    "btn": true,
-    "btn-round": round === true,
-    "btn-text": round !== true,
-    "btn-primary": primary,
-    "btn-flat": flat,
-    "autoWidth": autoWidth,
-    "fullWidth": fullWidth,
-    "disabled": isMaybe (disabled) ? Maybe.elem (true) (disabled) : disabled,
-    "active": active,
-  })
+  const disabled_m = or (normalize (disabled))
+
+  className = classListMaybe (List (
+    Just ("btn"),
+    Just (orN (round) ? "btn-round" : "btn-text"),
+    guardReplace (orN (primary)) ("btn-primary"),
+    guardReplace (orN (flat)) ("btn-flat"),
+    guardReplace (orN (autoWidth)) ("autoWidth"),
+    guardReplace (orN (fullWidth)) ("fullWidth"),
+    guardReplace (disabled_m) ("disabled"),
+    guardReplace (orN (active)) ("active")
+  ))
 
   return (
-    <div {...other} className={className} onClick={disabled === true ? undefined : onClick}>
+    <div {...other} className={className} onClick={disabled_m ? undefined : onClick}>
       {children}
     </div>
   )

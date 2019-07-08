@@ -8,6 +8,7 @@ import { getCulturesFilterText, getCurrentCultureId } from "../Selectors/stateSe
 import { getCulturesSortOrder, getCulturesVisibilityFilter } from "../Selectors/uisettingsSelectors";
 import { TabId } from "../Utilities/LocationUtils";
 import { Cultures, CulturesDispatchProps, CulturesOwnProps, CulturesStateProps } from "../Views/Cultures/Cultures";
+import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: CulturesOwnProps): CulturesStateProps => ({
@@ -22,7 +23,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): CulturesDispatchProps => (
   selectCulture (id: string) {
     dispatch (CultureActions.selectCulture (id))
   },
-  setSortOrder (sortOrder: string) {
+  setSortOrder (sortOrder: SortNames) {
     dispatch (CultureActions.setSortOrder (sortOrder))
   },
   setVisibilityFilter (sortOrder: string) {

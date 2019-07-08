@@ -1,12 +1,12 @@
-import classNames from "classnames";
 import * as React from "react";
-import { splitOn } from "../../Data/List";
-import { fromMaybe, listToMaybe, Maybe, maybe } from "../../Data/Maybe";
+import { List, splitOn } from "../../Data/List";
+import { fromMaybe, guardReplace, Just, listToMaybe, Maybe, maybe } from "../../Data/Maybe";
 import { AlertsContainer } from "../Containers/AlertsContainer";
 import { DownloaderContainer } from "../Containers/DownloaderContainer";
 import { NavigationBarContainer } from "../Containers/NavigationBarContainer";
 import { HeroModelRecord } from "../Models/Hero/HeroModel";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
+import { classListMaybe } from "../Utilities/CSS";
 import { TabId } from "../Utilities/LocationUtils";
 import { Router } from "./Router/Router";
 import { Scroll } from "./Universal/Scroll";
@@ -83,11 +83,11 @@ export class App extends React.Component<AppProps, AppState> {
       ((l10n: L10nRecord) => (
         <div
           id="body"
-          className={classNames (
-            `theme-${theme}`,
-            `platform-${platform}`,
-            { "show-animations": areAnimationsEnabled }
-          )}
+          className={classListMaybe (List (
+            Just (`theme-${theme}`),
+            Just (`platform-${platform}`),
+            guardReplace (areAnimationsEnabled) ("show-animations")
+          ))}
           lang={fromMaybe ("") (listToMaybe (splitOn ("-") (L10n.A.id (l10n))))}
           >
           <div className="background-image">

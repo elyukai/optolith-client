@@ -10,6 +10,7 @@ import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrip
 import { getInactiveSpellsFilterText, getSpellsFilterText } from "../Selectors/stateSelectors";
 import { getEnableActiveItemHints, getSpellsSortOrder } from "../Selectors/uisettingsSelectors";
 import { Spells, SpellsDispatchProps, SpellsOwnProps, SpellsStateProps } from "../Views/Spells/Spells";
+import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (state: AppStateRecord, ownProps: SpellsOwnProps): SpellsStateProps => ({
   activeList: getFilteredActiveSpellsAndCantrips (state, ownProps),
@@ -44,7 +45,7 @@ const mapDispatchToProps =
     removeCantripFromList (id: string) {
       dispatch (SpellsActions.removeCantrip (id))
     },
-    setSortOrder (sortOrder: string) {
+    setSortOrder (sortOrder: SortNames) {
       dispatch (SpellsActions.setSpellsSortOrder (sortOrder))
     },
     switchActiveItemHints () {

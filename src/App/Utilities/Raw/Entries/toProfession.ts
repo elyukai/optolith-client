@@ -10,7 +10,7 @@ import { traceShow } from "../../../../Debug/Trace";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
-import { ProfessionRequireIncreasable, RequireIncreasable } from "../../../Models/Wiki/prerequisites/IncreasableRequirement";
+import { ProfessionRequireIncreasable } from "../../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { RaceRequirement } from "../../../Models/Wiki/prerequisites/RaceRequirement";
 import { SexRequirement } from "../../../Models/Wiki/prerequisites/SexRequirement";
 import { Profession } from "../../../Models/Wiki/Profession";
@@ -100,18 +100,18 @@ export const stringToPrerequisites =
           const obj = fromJust<any> (mobj)
 
           return isRawProfessionRequiringActivatable (obj)
-            ? Just (RequireActivatable ({
+            ? Just (ProfessionRequireActivatable ({
                 id: obj .id,
                 active: fromMaybe (true) (Maybe (obj .active)),
                 sid: Maybe (obj .sid),
                 sid2: Maybe (obj .sid2),
                 tier: Maybe (obj .tier),
-              }) as Record<ProfessionRequireActivatable>)
+              }))
             : isRawProfessionRequiringIncreasable (obj)
-            ? Just (RequireIncreasable ({
+            ? Just (ProfessionRequireIncreasable ({
                 id: obj .id,
                 value: obj .value,
-              }) as Record<ProfessionRequireIncreasable>)
+              }))
             : Nothing
         }
 

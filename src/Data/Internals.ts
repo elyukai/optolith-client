@@ -29,6 +29,7 @@ export namespace Internals {
     readonly defaultValues: Readonly<A>
     readonly keys: OrderedSet<string>
     readonly unique: symbol
+    readonly name?: string
     readonly prototype: RecordPrototype
   }
 

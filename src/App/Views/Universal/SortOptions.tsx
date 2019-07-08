@@ -19,7 +19,7 @@ export type SortNames = "name"
 export interface SortOptionsProps {
   l10n: L10nRecord
   options: List<SortNames>
-  sortOrder: string
+  sortOrder: SortNames
   sort (option: string): void
 }
 

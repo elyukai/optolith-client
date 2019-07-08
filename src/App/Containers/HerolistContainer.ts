@@ -15,6 +15,7 @@ import { getCurrentHeroPresent, getHerolistFilterText, getIsCharacterCreatorOpen
 import { getHerolistSortOrder, getHerolistVisibilityFilter } from "../Selectors/uisettingsSelectors";
 import { TabId } from "../Utilities/LocationUtils";
 import { Herolist, HerolistDispatchProps, HerolistOwnProps, HerolistStateProps } from "../Views/Heroes/Herolist";
+import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (state: AppStateRecord, props: HerolistOwnProps) => ({
   currentHero: getCurrentHeroPresent (state),
@@ -69,7 +70,7 @@ const mapDispatchToProps = (
   importHero () {
     dispatch (IOActions.requestHeroImport (l10n))
   },
-  setSortOrder (id: string) {
+  setSortOrder (id: SortNames) {
     dispatch (HerolistActions.setHerolistSortOrder (id))
   },
   setFilterText (event: InputTextEvent) {

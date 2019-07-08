@@ -1,6 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
-import { Maybe, normalize } from "../../../Data/Maybe";
+import { List } from "../../../Data/List";
+import { guardReplace, Maybe, normalize, orN } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
 export interface ActivateProps {
   active: boolean;
@@ -16,15 +17,16 @@ export function Activate (props: ActivateProps) {
 
   const normalizedValue = normalize (value);
 
-  const onClickEval = disabled === true ? undefined : () => onClick (normalizedValue);
+  const onClickEval = orN (disabled) ? undefined : () => onClick (normalizedValue);
 
   return (
     <div
       {...other}
-      className={classNames (className, {
-        "active": active,
-        "disabled": disabled,
-      })}
+      className={classListMaybe (List (
+        Maybe (className),
+        guardReplace (active) ("active"),
+        guardReplace (orN (disabled)) ("disabled")
+      ))}
       onClick={onClickEval}
       />
   );

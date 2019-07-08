@@ -2,8 +2,8 @@ import * as React from "react";
 import { Textfit } from "react-textfit";
 import { equals } from "../../../../Data/Eq";
 import { fmap, fmapF } from "../../../../Data/Functor";
-import { find, flength, intercalate, List, map, replicateR, subscript, toArray } from "../../../../Data/List";
-import { fromMaybeR, mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { find, flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
+import { ensure, fromMaybeR, mapMaybe, Maybe } from "../../../../Data/Maybe";
 import { elems } from "../../../../Data/OrderedSet";
 import { Record } from "../../../../Data/Record";
 import { AttributeCombined } from "../../../Models/View/AttributeCombined";
@@ -15,6 +15,7 @@ import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUti
 import { translate } from "../../../Utilities/I18n";
 import { dec } from "../../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils";
 import { sortStrings } from "../../../Utilities/sortBy";
 import { TextBox } from "../../Universal/TextBox";
@@ -109,14 +110,17 @@ export function LiturgicalChantsSheetLiturgicalChants (
                           e,
                           LCWRA_.checkmod,
                           elems,
-                          mapMaybe (id => fmapF (find (pipe (
-                                                        DCA.id,
-                                                        equals<DCIds> (id)
-                                                      ))
-                                                      (derivedCharacteristics))
-                                                (DCA.short)),
-                          intercalate ("/"),
-                          str => ` (+${str})`
+                          ensure (notNull),
+                          renderMaybeWith (pipe (
+                            mapMaybe (id => fmapF (find (pipe (
+                                                          DCA.id,
+                                                          equals<DCIds> (id)
+                                                        ))
+                                                        (derivedCharacteristics))
+                                                  (DCA.short)),
+                            intercalate ("/"),
+                            str => ` (+${str})`
+                          ))
                         )}
                       </Textfit>
                     </td>
@@ -141,7 +145,8 @@ export function LiturgicalChantsSheetLiturgicalChants (
                           e,
                           LCWRA_.aspects,
                           mapMaybe (pipe (dec, subscript (aspectNames))),
-                          sortStrings (l10n)
+                          sortStrings (l10n),
+                          intercalate (", ")
                         )}
                       </Textfit>
                     </td>

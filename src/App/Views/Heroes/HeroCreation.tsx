@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List, map } from "../../../Data/List";
-import { fromJust, isJust, isNothing, Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { fromJust, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe";
 import { elems, OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet, toggle } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
@@ -82,7 +82,7 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
   }
 
   componentWillReceiveProps (nextProps: HeroCreationProps) {
-    if (nextProps.isOpen === false && this.props.isOpen === true) {
+    if (nextProps.isOpen === false && orN (this.props.isOpen)) {
       this.clear ()
     }
   }

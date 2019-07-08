@@ -66,6 +66,7 @@ export const getActivatableWikiSliceByCategory =
  */
 export const getNameCost =
   (isEntryToAdd: boolean) =>
+  (automatic_advantages: List<string>) =>
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
@@ -76,7 +77,7 @@ export const getNameCost =
                active: entry,
                finalCost,
              }))
-           (getCost (isEntryToAdd) (wiki) (hero) (entry))
+           (getCost (isEntryToAdd) (automatic_advantages) (wiki) (hero) (entry))
            (getName (l10n) (wiki) (entry))
 
 /**
@@ -96,13 +97,14 @@ export const getNameCostForWiki =
                naming,
                finalCost,
              }))
-           (getCost (true) (wiki) (HeroModel.default) (active))
+           (getCost (true) (List ()) (wiki) (HeroModel.default) (active))
            (getName (l10n) (wiki) (active))
 
 export const getAllActiveByCategory =
   <T extends ActivatableCategory>
   (category: T) =>
   (addLevelToName: boolean) =>
+  (automatic_advantages: List<string>) =>
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord): List<Record<ActiveActivatable<WikiEntryByCategory[T]>>> => {
@@ -130,7 +132,12 @@ export const getAllActiveByCategory =
                                    wikiEntry: wiki_entry,
                                   }))
                                (fmap (convertCost)
-                                     (getNameCost (false) (l10n) (wiki) (hero) (active)))
+                                     (getNameCost (false)
+                                                  (automatic_advantages)
+                                                  (l10n)
+                                                  (wiki)
+                                                  (hero)
+                                                  (active)))
                                (lookup (current_id) (wiki_slice) as Maybe<GenericWikiEntry>)
                                (lookup (current_id) (hero_slice))
                                (getIsRemovalOrChangeDisabled (wiki) (hero) (active))

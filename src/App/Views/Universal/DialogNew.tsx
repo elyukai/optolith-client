@@ -1,6 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
-import { notNullStrUndef } from "../../../Data/List";
+import { List, notNullStrUndef } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 import { ButtonProps, DialogButtons } from "./DialogButtons";
 import { Portal, PortalWrappedOwnProps } from "./Portal";
 
@@ -34,7 +35,7 @@ export class Dialog extends React.Component<DialogProps, {}> {
     return (
       <Portal
         {...other}
-        className={classNames ("modal modal-backdrop", className)}
+        className={classListMaybe (List (Just ("modal modal-backdrop"), Maybe (className)))}
         >
         <div className="modal-container">
           {noCloseButton !== true

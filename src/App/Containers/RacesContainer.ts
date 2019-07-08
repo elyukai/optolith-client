@@ -9,6 +9,7 @@ import { getCurrentRaceId, getCurrentRaceVariantId, getRacesFilterText } from ".
 import { getRacesSortOrder } from "../Selectors/uisettingsSelectors";
 import { TabId } from "../Utilities/LocationUtils";
 import { Races, RacesDispatchProps, RacesOwnProps, RacesStateProps } from "../Views/Races/Races";
+import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (state: AppStateRecord, ownProps: RacesOwnProps): RacesStateProps => {
   return {
@@ -27,7 +28,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): RacesDispatchProps => ({
   selectRaceVariant (id: string) {
     dispatch (RaceActions.setRaceVariant (id))
   },
-  setSortOrder (sortOrder: string) {
+  setSortOrder (sortOrder: SortNames) {
     dispatch (RaceActions.setRacesSortOrder (sortOrder))
   },
   switchValueVisibilityFilter () {

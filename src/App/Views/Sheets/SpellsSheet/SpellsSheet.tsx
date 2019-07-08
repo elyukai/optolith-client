@@ -30,7 +30,7 @@ export interface SpellsSheetProps {
   checkAttributeValueVisibility: boolean
   derivedCharacteristics: List<Record<DerivedCharacteristic>>
   l10n: L10nRecord
-  magicalPrimary: Maybe<string>
+  magicalPrimary: List<string>
   magicalSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   magicalTradition: string
   properties: Maybe<string>

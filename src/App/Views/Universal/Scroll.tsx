@@ -1,6 +1,8 @@
-import classNames from "classnames";
 import * as React from "react";
 import Scrollbars from "react-custom-scrollbars";
+import { List } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
 export interface ScrollProps {
   children?: React.ReactNode
@@ -13,7 +15,7 @@ export function Scroll (props: ScrollProps) {
 
   return (
     <Scrollbars
-      className={classNames (className, "scroll")}
+      className={classListMaybe (List (Just ("scroll"), Maybe (className)))}
       renderThumbHorizontal={
         p => <div {...p} className="thumb thumb-horizontal"><div/></div>
       }

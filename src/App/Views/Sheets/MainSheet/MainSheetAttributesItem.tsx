@@ -1,9 +1,9 @@
-import classNames from "classnames";
 import * as React from "react";
 import { fmap } from "../../../../Data/Functor";
 import { imap, List, toArray } from "../../../../Data/List";
-import { fromMaybe, fromMaybeR, isNothing, Maybe, maybeRNull, or } from "../../../../Data/Maybe";
+import { fromMaybe, fromMaybeR, guardReplace, isNothing, Just, Maybe, maybeRNull, or } from "../../../../Data/Maybe";
 import { ndash } from "../../../Utilities/Chars";
+import { classListMaybe } from "../../../Utilities/CSS";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybeWith } from "../../../Utilities/ReactUtils";
 
@@ -47,10 +47,10 @@ export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
           {or (empty) ? ndash : Maybe.sum (add)}
         </div>
         <div
-          className={classNames ({
-            "blocked": isNothing (purchased),
-            "purchased": true,
-          })}
+          className={classListMaybe (List (
+            guardReplace (isNothing (purchased)) ("blocked"),
+            Just ("purchased")
+          ))}
           >
           {renderMaybeWith ((num: number) => or (empty) ? ndash : num) (purchased)}
         </div>

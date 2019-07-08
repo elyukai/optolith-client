@@ -1,7 +1,7 @@
 import { ident } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
 import { any, elem, insertAt, List, snocF } from "../../Data/List";
-import { Just, Maybe, Nothing } from "../../Data/Maybe";
+import { Just, Maybe, maybe, Nothing } from "../../Data/Maybe";
 import { SubTab } from "../Models/Hero/heroTypeHelpers";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { translate } from "../Utilities/I18n";
@@ -11,7 +11,7 @@ import { isBookEnabled } from "../Utilities/RulesUtils";
 import { NavigationBarTabProps } from "../Views/NavBar/NavigationBarTabs";
 import { getIsLiturgicalChantsTabAvailable } from "./liturgicalChantsSelectors";
 import { getIsRemovingEnabled } from "./phaseSelectors";
-import { getRuleBooksEnabled } from "./rulesSelectors";
+import { EnabledSourceBooks, getRuleBooksEnabled } from "./rulesSelectors";
 import { getIsSpellsTabAvailable } from "./spellsSelectors";
 import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleAsProp, getPhase } from "./stateSelectors";
 
@@ -207,7 +207,7 @@ export const getSubtabs = createMaybeSelector (
         const rcpSubTabs = List (TabId.Races, TabId.Cultures, TabId.Professions)
 
         if (elem (tab) (profileSubTabs)) {
-          return Just (List<SubTab> (
+          const tabs = List<SubTab> (
             {
               id: TabId.Profile,
               label: translate (locale) ("overview"),
@@ -219,22 +219,31 @@ export const getSubtabs = createMaybeSelector (
               disabled: true,
             },
             {
-              id: TabId.Pact,
-              label: translate (locale) ("pact"),
-              disabled: Maybe.elem (true)
-                                   (fmapF (mruleBooksEnabled)
-                                          (ruleBooksEnabled => isBookEnabled (ruleBooksEnabled)
-                                                                             ("US25102")
-                                                               || isBookEnabled (ruleBooksEnabled)
-                                                                                ("US25008"))),
-            },
-            {
               id: TabId.Rules,
               label: translate (locale) ("rules"),
               disabled: false,
             }
-          ))
+          )
+
+          if (maybe (false)
+                    ((ruleBooksEnabled: EnabledSourceBooks) =>
+                      any (isBookEnabled (ruleBooksEnabled))
+                          (List ("US25102", "US25008")))
+                    (mruleBooksEnabled)) {
+            return Just (insertAt (2)
+                                  <SubTab>
+                                  ({
+                                    id: TabId.Pact,
+                                    label: translate (locale) ("pact"),
+                                    disabled: false,
+                                  })
+                                  (tabs))
+          }
+          else {
+            return Just (tabs)
+          }
         }
+
         if (elem (tab) (rcpSubTabs)) {
           const racesTab: SubTab = {
             id: TabId.Races,
@@ -295,44 +304,46 @@ export const getSubtabs = createMaybeSelector (
         const belongingsSubTabs = List (TabId.Equipment, TabId.ZoneArmor, TabId.Pets)
 
         if (elem (tab) (profileSubTabs)) {
-          const baseTabs = List<SubTab> (
-            {
-              id: TabId.Profile,
-              label: translate (locale) ("overview"),
-              disabled: false,
-            },
-            {
-              id: TabId.PersonalData,
-              label: translate (locale) ("personaldata"),
-              disabled: true,
-            },
-            {
-              id: TabId.Pact,
-              label: translate (locale) ("pact"),
-              disabled:
-                Maybe.elem (true)
-                           (fmapF (mruleBooksEnabled)
-                                  (ruleBooksEnabled => any (isBookEnabled (ruleBooksEnabled))
-                                                           (List ("US25102", "US25008")))),
-            },
-            {
-              id: TabId.Rules,
-              label: translate (locale) ("rules"),
-              disabled: false,
-            }
+          return pipe_ (
+            List<SubTab> (
+              {
+                id: TabId.Profile,
+                label: translate (locale) ("overview"),
+                disabled: false,
+              },
+              {
+                id: TabId.PersonalData,
+                label: translate (locale) ("personaldata"),
+                disabled: true,
+              },
+              {
+                id: TabId.Rules,
+                label: translate (locale) ("rules"),
+                disabled: false,
+              }
+            ),
+            Maybe.elem (3) (phase)
+              ? insertAt (2)
+                         <SubTab> ({
+                           id: TabId.CharacterSheet,
+                           label: translate (locale) ("charactersheet"),
+                           disabled: false,
+                         })
+              : ident,
+            maybe (false)
+                  ((ruleBooksEnabled: EnabledSourceBooks) =>
+                    any (isBookEnabled (ruleBooksEnabled))
+                        (List ("US25102", "US25008")))
+                  (mruleBooksEnabled)
+              ? insertAt (Maybe.elem (3) (phase) ? 3 : 2)
+                         <SubTab> ({
+                           id: TabId.Pact,
+                           label: translate (locale) ("pact"),
+                           disabled: false,
+                         })
+              : ident,
+            Just
           )
-
-          if (Maybe.elem (3) (phase)) {
-            return Just (insertAt (2)
-                                  <SubTab> ({
-                                    id: TabId.CharacterSheet,
-                                    label: translate (locale) ("charactersheet"),
-                                    disabled: false,
-                                  })
-                                  (baseTabs))
-          }
-
-          return Just (baseTabs)
         }
 
         if (elem (tab) (disadvSubTabs)) {

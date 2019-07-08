@@ -1,5 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
+import { orN, Maybe, guardReplace } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
+import { List } from "../../../Data/List";
 
 export interface LabelProps {
   className?: string
@@ -13,7 +15,12 @@ export function Label (props: LabelProps) {
   return (
     <label
       {...other}
-      className={classNames (className, disabled === true ? "disabled" : undefined)}
+      className={
+        classListMaybe (List (
+          Maybe (className),
+          guardReplace (orN (disabled)) ("disabled")
+        ))
+      }
       >
       {text}
     </label>

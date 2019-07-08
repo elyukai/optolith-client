@@ -35,7 +35,7 @@ export interface ProfessionsStateProps {
   currentProfessionVariantId: Maybe<string>
   groupVisibilityFilter: number
   professions: Maybe<List<Record<ProfessionCombined>>>
-  sortOrder: string
+  sortOrder: SortNames
   sex: Maybe<Sex>
   visibilityFilter: string
   filterText: string
@@ -45,7 +45,7 @@ export interface ProfessionsDispatchProps {
   selectProfession (id: string): void
   selectProfessionVariant (id: Maybe<string>): void
   setGroupVisibilityFilter (filter: number): void
-  setSortOrder (sortOrder: string): void
+  setSortOrder (sortOrder: SortNames): void
   setVisibilityFilter (filter: string): void
   switchExpansionVisibilityFilter (): void
   setFilterText (filterText: string): void

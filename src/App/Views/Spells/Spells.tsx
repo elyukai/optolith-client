@@ -54,11 +54,11 @@ export interface SpellsStateProps {
   inactiveFilterText: string
   inactiveList: Maybe<List<Record<SpellWithRequirements> | Record<CantripCombined>>>
   isRemovingEnabled: boolean
-  sortOrder: string
+  sortOrder: SortNames
 }
 
 export interface SpellsDispatchProps {
-  setSortOrder (sortOrder: string): void
+  setSortOrder (sortOrder: SortNames): void
   switchActiveItemHints (): void
   addPoint (id: string): void
   addToList (id: string): void

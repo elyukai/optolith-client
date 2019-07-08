@@ -10,6 +10,7 @@ import { getCombatTechniques, getCurrentHeroPresent, getWikiCombatTechniques } f
 import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
+import { SortNames } from "../Views/Universal/SortOptions";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 
@@ -72,12 +73,12 @@ export const removeCombatTechniquePoint = (id: string): RemoveCombatTechniquePoi
 export interface SetCombatTechniquesSortOrderAction {
   type: ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER
   payload: {
-    sortOrder: string;
+    sortOrder: SortNames;
   }
 }
 
 export const setCombatTechniquesSortOrder =
-  (sortOrder: string): SetCombatTechniquesSortOrderAction => ({
+  (sortOrder: SortNames): SetCombatTechniquesSortOrderAction => ({
     type: ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER,
     payload: {
       sortOrder,
