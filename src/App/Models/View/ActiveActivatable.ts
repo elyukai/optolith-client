@@ -38,6 +38,11 @@ const AOWIA = ActiveObjectWithId.A
 
 export const ActiveActivatableA_ = {
   id: pipe (AAA.wikiEntry, Advantage.AL.id) as GenA<string>,
+  nameInWiki:
+    pipe (
+      AAA.wikiEntry as StrictAccessor<ActiveActivatable<SpecialAbility>, "wikiEntry">,
+      SpecialAbility.A.nameInWiki
+    ),
   levels: pipe (AAA.wikiEntry, Advantage.AL.tiers),
   gr: pipe (AAA.wikiEntry, Advantage.AL.gr),
   level: pipe (AAA.nameAndCost, ANCA_.tier),

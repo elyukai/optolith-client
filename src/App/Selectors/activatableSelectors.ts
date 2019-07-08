@@ -44,6 +44,8 @@ import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
 import { getMagicalTraditionsFromWiki } from "./spellsSelectors";
 import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getHeroes, getLocaleAsProp, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from "./stateSelectors";
 
+const AAA_ = ActiveActivatableA_
+
 export const getActive = <T extends ActivatableCategory>(category: T, addLevelToName: boolean) =>
   createMaybeSelector (
     getLocaleAsProp,
@@ -219,7 +221,7 @@ export const getFilteredActiveSpecialAbilities = createMaybeSelector (
     fmapF (mspecial_abilities)
           (filterAndSortRecordsBy (0)
                                   <ActiveActivatable<SpecialAbility>>
-                                  ([ActiveActivatableA_.name])
+                                  ([AAA_.name, pipe (AAA_.nameInWiki, fromMaybe (""))])
                                   (sortOptions)
                                   (filterText))
 )
