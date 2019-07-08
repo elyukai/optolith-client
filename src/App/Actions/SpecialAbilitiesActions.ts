@@ -16,6 +16,7 @@ import { L10nRecord } from "../Models/Wiki/L10n";
 import { isSpecialAbility, SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
+import { getAutomaticAdvantages } from "../Selectors/rcpSelectors";
 import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors";
 import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils";
 import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils";
@@ -183,6 +184,7 @@ export const setSpecialAbilityLevel =
           (isEntryToAdd: boolean) =>
             pipe (
               getNameCost (isEntryToAdd)
+                          (getAutomaticAdvantages (state))
                           (l10n)
                           (wiki)
                           (hero),

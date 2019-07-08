@@ -859,3 +859,8 @@ export const getRandomWeightCalcStr = createMaybeSelector (
                   (mweight_randoms)
   }
 )
+
+export const getAutomaticAdvantages = createMaybeSelector (
+  getCurrentRace,
+  maybe (List<string> ()) (RA.automaticAdvantages)
+)

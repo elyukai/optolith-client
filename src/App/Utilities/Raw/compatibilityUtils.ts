@@ -626,6 +626,7 @@ const convertLowerThanOrEqual0_51_2 = (hero: RawHero): RawHero => {
   if (entry.activatable.hasOwnProperty ("SA_243") && entry.activatable.hasOwnProperty ("SA_255")) {
     const { SA_255: _, ...other } = entry.activatable
     entry.activatable = other
+    // @ts-ignore
     entry.ap.spent -= 10
   }
   else if (entry.activatable.hasOwnProperty ("SA_255")) {

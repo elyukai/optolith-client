@@ -19,12 +19,8 @@ import { Item } from "../../Models/Hero/Item";
 import { PersonalData } from "../../Models/Hero/PersonalData";
 import { Rules } from "../../Models/Hero/Rules";
 import { UndoableHero, UndoableHeroModelRecord } from "../../Models/Hero/UndoHero";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { L10nRecord } from "../../Models/Wiki/L10n";
 import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { current_version } from "../../Selectors/envSelectors";
-import { getAPObject } from "../AdventurePoints/adventurePointsSumUtils";
 import { HeroStateMapKey } from "../heroStateUtils";
 import { ifElse } from "../ifElse";
 import { gt } from "../mathUtils";
@@ -284,8 +280,6 @@ const getPetsForSave = pipe (
 )
 
 export const convertHeroForSave =
-  (wiki: WikiModelRecord) =>
-  (locale: L10nRecord) =>
   (users: OrderedMap<string, User>) =>
   (hero: HeroModelRecord): RawHero => {
     const {
@@ -306,8 +300,6 @@ export const convertHeroForSave =
       rules,
     } = toObject (hero)
 
-    const adventurePoints = getAPObject (locale) (wiki) (hero)
-
     const maybeUser = bind (player (hero))
                                               (OrderedMap.lookupF<string, User> (users))
 
@@ -321,8 +313,7 @@ export const convertHeroForSave =
       name,
       avatar: maybeToUndefined (avatar),
       ap: {
-        total: AdventurePointsCategories.A.total (adventurePoints),
-        spent: AdventurePointsCategories.A.spent (adventurePoints),
+        total: HeroModel.A.adventurePointsTotal (hero),
       },
       el: experienceLevel,
       r: maybeToUndefined (race),
@@ -370,9 +361,7 @@ export const convertHeroForSave =
 const { present } = UndoableHero.AL
 
 export const convertHeroesForSave =
-  (wiki: WikiModelRecord) =>
-  (locale: L10nRecord) =>
   (users: OrderedMap<string, User>) =>
   (heroes: OrderedMap<string, UndoableHeroModelRecord>) =>
-    toObjectWith (pipe (present, convertHeroForSave (wiki) (locale) (users)))
+    toObjectWith (pipe (present, convertHeroForSave (users)))
                  (heroes)

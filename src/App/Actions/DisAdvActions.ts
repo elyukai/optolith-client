@@ -22,7 +22,7 @@ import { Race } from "../Models/Wiki/Race";
 import { RaceVariant } from "../Models/Wiki/RaceVariant";
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
-import { getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
+import { getAutomaticAdvantages, getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
 import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors";
 import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils";
 import { isBlessedOrMagical } from "../Utilities/Activatable/checkActivatableUtils";
@@ -365,6 +365,7 @@ export const setDisAdvantageLevel =
           (isEntryToAdd: boolean) =>
             pipe (
               getNameCost (isEntryToAdd)
+                          (getAutomaticAdvantages (state))
                           (l10n)
                           (wiki)
                           (hero),

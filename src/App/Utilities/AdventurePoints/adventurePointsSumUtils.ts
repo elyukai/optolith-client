@@ -270,10 +270,11 @@ export const getAPSpentForProfession =
       ))
     )
 
-export const getAPObjectAreas =
+const getAPObjectAreas =
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
+  (automatic_advantages: List<string>) =>
     AdventurePointsCategories ({
       total: HeroModel.A.adventurePointsTotal (hero),
       spent: 0,
@@ -300,6 +301,7 @@ export const getAPObjectAreas =
                                       (HeroModel.A.specialAbilities (hero))
                                       (getAllActiveByCategory (Categories.SPECIAL_ABILITIES)
                                                               (false)
+                                                              (automatic_advantages)
                                                               (l10n)
                                                               (wiki)
                                                               (hero)),
@@ -308,6 +310,7 @@ export const getAPObjectAreas =
                                 (HeroModel.A.advantages (hero))
                                 (getAllActiveByCategory (Categories.ADVANTAGES)
                                                         (false)
+                                                        (automatic_advantages)
                                                         (l10n)
                                                         (wiki)
                                                         (hero)),
@@ -316,6 +319,7 @@ export const getAPObjectAreas =
                                         (HeroModel.A.advantages (hero))
                                         (getAllActiveByCategory (Categories.ADVANTAGES)
                                                                 (false)
+                                                                (automatic_advantages)
                                                                 (l10n)
                                                                 (wiki)
                                                                 (hero)),
@@ -324,6 +328,7 @@ export const getAPObjectAreas =
                                         (HeroModel.A.advantages (hero))
                                         (getAllActiveByCategory (Categories.ADVANTAGES)
                                                                 (false)
+                                                                (automatic_advantages)
                                                                 (l10n)
                                                                 (wiki)
                                                                 (hero)),
@@ -332,6 +337,7 @@ export const getAPObjectAreas =
                                     (HeroModel.A.disadvantages (hero))
                                     (getAllActiveByCategory (Categories.DISADVANTAGES)
                                                             (false)
+                                                            (automatic_advantages)
                                                             (l10n)
                                                             (wiki)
                                                             (hero)),
@@ -340,6 +346,7 @@ export const getAPObjectAreas =
                                           (HeroModel.A.disadvantages (hero))
                                           (getAllActiveByCategory (Categories.DISADVANTAGES)
                                                                   (false)
+                                                                  (automatic_advantages)
                                                                   (l10n)
                                                                   (wiki)
                                                                   (hero)),
@@ -348,6 +355,7 @@ export const getAPObjectAreas =
                                           (HeroModel.A.disadvantages (hero))
                                           (getAllActiveByCategory (Categories.DISADVANTAGES)
                                                                   (false)
+                                                                  (automatic_advantages)
                                                                   (l10n)
                                                                   (wiki)
                                                                   (hero)),
@@ -382,8 +390,9 @@ const getAPAvailable =
 export const getAPObject =
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
-  (hero: HeroModelRecord): Record<AdventurePointsCategories> => {
-    const areas = getAPObjectAreas (l10n) (wiki) (hero)
+  (hero: HeroModelRecord) =>
+  (automatic_advantages: List<string>): Record<AdventurePointsCategories> => {
+    const areas = getAPObjectAreas (l10n) (wiki) (hero) (automatic_advantages)
 
     const spent = getAPSpent (areas)
 

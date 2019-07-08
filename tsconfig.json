@@ -22,6 +22,7 @@
     ],
     "removeComments": true,
     "rootDir": "src/",
+    "inlineSourceMap": true,
     "strict": true,
     "skipLibCheck": true,
     "target": "es2017"

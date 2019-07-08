@@ -13,7 +13,6 @@ export interface RawHero {
   readonly avatar?: string
   readonly ap: {
     total: number;
-    spent: number;
   }
   readonly r?: string
   readonly rv?: string

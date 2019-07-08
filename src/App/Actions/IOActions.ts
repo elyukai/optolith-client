@@ -27,7 +27,7 @@ import { heroReducer } from "../Reducers/heroReducer";
 import { UISettingsState } from "../Reducers/uiSettingsReducer";
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors";
 import { user_data_path } from "../Selectors/envSelectors";
-import { getCurrentHeroId, getHeroes, getLocaleId, getLocaleMessages, getUsers, getWiki } from "../Selectors/stateSelectors";
+import { getCurrentHeroId, getHeroes, getLocaleId, getLocaleMessages, getUsers } from "../Selectors/stateSelectors";
 import { getUISettingsState } from "../Selectors/uisettingsSelectors";
 import { APCache, deleteCache, forceCacheIsAvailable, insertAppStateCache, insertCacheMap, insertHeroesCache, readCache, toAPCache, writeCache } from "../Utilities/Cache";
 import { translate, translateP } from "../Utilities/I18n";
@@ -241,11 +241,10 @@ export const requestAllHeroesSave =
                    (heroes_before)
 
     const state = getState ()
-    const wiki = getWiki (state)
     const heroes = getHeroes (state)
     const users = getUsers (state)
 
-    const data = convertHeroesForSave (wiki) (l10n) (users) (heroes)
+    const data = convertHeroesForSave (users) (heroes)
 
     return pipe_ (
       join (user_data_path, "heroes.json"),
@@ -312,7 +311,6 @@ export const requestHeroSave =
 
     const state = getState ()
 
-    const wiki = getWiki (state)
     const heroes = getHeroes (state)
     const users = getUsers (state)
 
@@ -321,7 +319,7 @@ export const requestHeroSave =
         mcurrent_id,
         altF_ (() => getCurrentHeroId (state)),
         bindF (lookupF (heroes)),
-        fmap (pipe (heroReducer.A_.present, convertHeroForSave (wiki) (l10n) (users)))
+        fmap (pipe (heroReducer.A_.present, convertHeroForSave (users)))
       )
 
     if (isJust (mhero)) {
@@ -416,7 +414,6 @@ export const requestHeroExport =
   (dispatch, getState) => {
     const state = getState ()
 
-    const wiki = getWiki (state)
     const heroes = getHeroes (state)
     const users = getUsers (state)
 
@@ -426,7 +423,7 @@ export const requestHeroExport =
         lookup (id),
         fmap (pipe (
           heroReducer.A_.present,
-          convertHeroForSave (wiki) (l10n) (users),
+          convertHeroForSave (users),
           hero => {
             // Embed the avatar image file
             if (

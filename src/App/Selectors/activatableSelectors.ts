@@ -39,7 +39,7 @@ import { blessedSpecialAbilityGroups, combatSpecialAbilityGroups, generalSpecial
 import { comparingR, sortStrings } from "../Utilities/sortBy";
 import { misStringM } from "../Utilities/typeCheckUtils";
 import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors";
-import { getCurrentCulture, getCurrentProfession, getCurrentRace } from "./rcpSelectors";
+import { getAutomaticAdvantages, getCurrentCulture, getCurrentProfession, getCurrentRace } from "./rcpSelectors";
 import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
 import { getMagicalTraditionsFromWiki } from "./spellsSelectors";
 import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getHeroes, getLocaleAsProp, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from "./stateSelectors";
@@ -49,10 +49,13 @@ export const getActive = <T extends ActivatableCategory>(category: T, addLevelTo
     getLocaleAsProp,
     getWiki,
     getCurrentHeroPresent,
-    (l10n, wiki, mhero) => fmapF (mhero) (getAllActiveByCategory (category)
-                                                                 (addLevelToName)
-                                                                 (l10n)
-                                                                 (wiki))
+    getAutomaticAdvantages,
+    (l10n, wiki, mhero, automatic_advantages) =>
+      fmapF (mhero) (getAllActiveByCategory (category)
+                                            (addLevelToName)
+                                            (automatic_advantages)
+                                            (l10n)
+                                            (wiki))
   )
 
 export const getActiveMap =
@@ -60,12 +63,14 @@ export const getActiveMap =
   <T extends ActivatableCategory>
   (category: T) =>
     createMapSelectorP (getHeroes)
-                       (getWiki, getLocaleAsProp)
+                       (getWiki, getLocaleAsProp, getAutomaticAdvantages)
                        (heroReducer.A.present)
-                       ((wiki, l10n) => getAllActiveByCategory (category)
-                                                               (addLevelToName)
-                                                               (l10n)
-                                                               (wiki))
+                       ((wiki, l10n, automatic_advantages) =>
+                         getAllActiveByCategory (category)
+                                                (addLevelToName)
+                                                (automatic_advantages)
+                                                (l10n)
+                                                (wiki))
 
 export const getActiveForView = <T extends ActivatableCategory>(category: T) =>
   getActive (category, false)
