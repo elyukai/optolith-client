@@ -300,7 +300,6 @@ const getAPObjectAreas =
         getAPSpentForSpecialAbilities (wiki)
                                       (HeroModel.A.specialAbilities (hero))
                                       (getAllActiveByCategory (Categories.SPECIAL_ABILITIES)
-                                                              (true)
                                                               (false)
                                                               (automatic_advantages)
                                                               (l10n)
