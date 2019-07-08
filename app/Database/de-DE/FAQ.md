@@ -6,12 +6,12 @@ Folgende Voraussetungen gelten:
 ### Zauber:
 
 - Wähle den Vorteil *Zauberer*.
-- Wähle die magische SF *Tradition*.
+- Wähle eine magische *Traditions*-SF.
 
 ### Liturgien:
 
 * Wähle den Vorteil *Geweihter*.
-* Wähle die karmale SF *Tradition*.
+* Wähle eine karmale *Traditions*-SF.
 
 ## Ich kann einen der folgenden Zauber nicht hinzufügen: Invocatio Minor, Invocatio Maior, Elementarer Diener, Dschinnenruf!
 
@@ -22,3 +22,10 @@ Demnach haben diese Zauber folgende Voraussetzungen und können erst nach Erfül
 * Invocatio Maior: Invocatio Minor 12
 * Elementarer Diener: Manifesto 10
 * Dschinnenruf: Elementarer Diener 12
+
+## Wie kann ich mir mehr LE/AE/KE kaufen?
+
+Das hängt davon ab, ob du dich noch in der Heldenerstellung befindest oder diese abgeschlossen hast.
+
+* *Während der Heldenerstellung* kannst du zusätzliche LE/AE/KE über die Vorteile *Hohe Lebenskraft/Astralenergie/Karmaenergie I-VII* kaufen. Das solltest du auch nutzen, wenn es dir auf hohe Werte in diesen Bereichen ankommt, da du Vorteile in der Regel nicht nachträglich kaufen kannst!
+* *Nach der Heldenerstellung* kannst du zusätzliche LE/AE/KE im *Eigenschaften*-Tab über den &raquo;+&laquo;-Button bei der jeweiligen Energie kaufen. Die Maxima dafür entsprechen den dafür definierten laut **Regelwerk S. 350&ndash;352**.

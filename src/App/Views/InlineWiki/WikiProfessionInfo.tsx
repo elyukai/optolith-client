@@ -12,7 +12,6 @@ import { show } from "../../../Data/Show";
 import { fst, Pair, snd, Tuple } from "../../../Data/Tuple";
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select";
 import { upd1, upd2, upd3 } from "../../../Data/Tuple/Update";
-import { traceShow } from "../../../Debug/Trace";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ActivatableNameCostIsActive, ActivatableNameCostIsActiveA_ } from "../../Models/View/ActivatableNameCostIsActive";
 import { IncreasableForView } from "../../Models/View/IncreasableForView";
@@ -208,7 +207,6 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
   const prereq_strs =
     pipe_ (
       x,
-      traceShow ("ProfessionCombined"),
       PCA.mappedPrerequisites,
       mapMaybe (e => {
         if (ProfessionRequireIncreasable.is (e)) {
