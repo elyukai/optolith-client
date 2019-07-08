@@ -15,6 +15,7 @@ import { appendStr, countWith, filter, find, foldl, ifoldr, isList, List, map, n
 import { any, bind, bindF, elem, elemF, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, listToMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { lookup, lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { traceShow } from "../../../Debug/Trace";
 import { Categories } from "../../Constants/Categories";
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -321,7 +322,10 @@ const getEntrySpecificCost =
 
       default: {
         if (any (notNull) (Advantage.AL.select (wiki_entry)) && isNothing (mcurrent_cost)) {
-          return getSelectOptionCost (wiki_entry) (mcurrent_sid)
+          traceShow ("") (entry)
+
+          return traceShow (`${Advantage.AL.name (wiki_entry)}: getSelectOptionCost =`)
+                           (getSelectOptionCost (wiki_entry) (mcurrent_sid))
         }
 
         return mcurrent_cost

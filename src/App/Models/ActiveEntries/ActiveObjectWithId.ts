@@ -1,5 +1,5 @@
 import { Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
+import { fromNamedDefault, makeLenses, Record } from "../../../Data/Record";
 import { ActiveObject } from "./ActiveObject";
 
 export interface ActiveObjectWithId extends ActiveObject {
@@ -8,14 +8,15 @@ export interface ActiveObjectWithId extends ActiveObject {
 }
 
 export const ActiveObjectWithId =
-  fromDefault<ActiveObjectWithId> ({
-    id: "",
-    index: -1,
-    cost: Nothing,
-    sid: Nothing,
-    sid2: Nothing,
-    tier: Nothing,
-  })
+  fromNamedDefault ("ActiveObjectWithId")
+                   <ActiveObjectWithId> ({
+                     id: "",
+                     index: -1,
+                     cost: Nothing,
+                     sid: Nothing,
+                     sid2: Nothing,
+                     tier: Nothing,
+                   })
 
 export const ActiveObjectWithIdL = makeLenses (ActiveObjectWithId)
 
