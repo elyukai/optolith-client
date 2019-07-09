@@ -353,6 +353,6 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
   )
 }
 
-const SrcObj = fromDefault ({ src: List<Record<SourceLink>> () })
+const SrcObj = fromDefault ("SrcObj") ({ src: List<Record<SourceLink>> () })
 
 const ensureNatural = bindF (ensure (gt (0)))

@@ -29,28 +29,29 @@ export interface LiturgicalChant {
 }
 
 export const LiturgicalChant =
-  fromDefault<LiturgicalChant> ({
-    id: "",
-    name: "",
-    aspects: List.empty,
-    category: Categories.LITURGIES,
-    check: List.empty,
-    checkmod: OrderedSet.empty,
-    gr: 0,
-    ic: 0,
-    tradition: List.empty,
-    effect: "",
-    castingTime: "",
-    castingTimeShort: "",
-    cost: "",
-    costShort: "",
-    range: "",
-    rangeShort: "",
-    duration: "",
-    durationShort: "",
-    target: "",
-    src: List.empty,
-  })
+  fromDefault ("LiturgicalChant")
+              <LiturgicalChant> ({
+                id: "",
+                name: "",
+                aspects: List.empty,
+                category: Categories.LITURGIES,
+                check: List.empty,
+                checkmod: OrderedSet.empty,
+                gr: 0,
+                ic: 0,
+                tradition: List.empty,
+                effect: "",
+                castingTime: "",
+                castingTimeShort: "",
+                cost: "",
+                costShort: "",
+                range: "",
+                rangeShort: "",
+                duration: "",
+                durationShort: "",
+                target: "",
+                src: List.empty,
+              })
 
 export const LiturgicalChantL = makeLenses (LiturgicalChant)
 

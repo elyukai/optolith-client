@@ -10,8 +10,9 @@ export interface LanguagesSelectionListItem {
  * Create a new `LanguagesSelectionListItem` object.
  */
 export const LanguagesSelectionListItem =
-  fromDefault<LanguagesSelectionListItem> ({
-    id: 0,
-    name: "",
-    native: false,
-  })
+  fromDefault ("LanguagesSelectionListItem")
+              <LanguagesSelectionListItem> ({
+                id: 0,
+                name: "",
+                native: false,
+              })

@@ -9,12 +9,13 @@ export interface LiturgicalChantWithRequirements
   extends LiturgicalChantCombined, IncreasableWithRequirements { }
 
 export const LiturgicalChantWithRequirements =
-  fromDefault<LiturgicalChantWithRequirements> ({
-    wikiEntry: LiturgicalChant .default,
-    stateEntry: ActivatableSkillDependent .default,
-    isIncreasable: false,
-    isDecreasable: false,
-  })
+  fromDefault ("LiturgicalChantWithRequirements")
+              <LiturgicalChantWithRequirements> ({
+                wikiEntry: LiturgicalChant .default,
+                stateEntry: ActivatableSkillDependent .default,
+                isIncreasable: false,
+                isDecreasable: false,
+              })
 
 const LCWRA = LiturgicalChantWithRequirements.A
 const LCA = LiturgicalChant.A

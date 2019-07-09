@@ -37,33 +37,34 @@ export interface ItemEditorInputValidation {
 }
 
 export const ItemEditorInputValidation =
-  fromDefault<ItemEditorInputValidation> ({
-    name: true,
-    amount: true,
-    at: true,
-    damageDiceNumber: true,
-    damageFlat: true,
-    firstDamageThreshold: true,
-    secondDamageThreshold: true,
-    damageThreshold: true,
-    enc: true,
-    ini: true,
-    length: true,
-    mov: true,
-    pa: true,
-    price: true,
-    pro: true,
-    range1: true,
-    range2: true,
-    range3: true,
-    stabilityMod: true,
-    weight: true,
+  fromDefault ("ItemEditorInputValidation")
+              <ItemEditorInputValidation> ({
+                name: true,
+                amount: true,
+                at: true,
+                damageDiceNumber: true,
+                damageFlat: true,
+                firstDamageThreshold: true,
+                secondDamageThreshold: true,
+                damageThreshold: true,
+                enc: true,
+                ini: true,
+                length: true,
+                mov: true,
+                pa: true,
+                price: true,
+                pro: true,
+                range1: true,
+                range2: true,
+                range3: true,
+                stabilityMod: true,
+                weight: true,
 
-    melee: true,
-    ranged: true,
-    armor: true,
-    other: true,
-  })
+                melee: true,
+                ranged: true,
+                armor: true,
+                other: true,
+              })
 
 const EIA = EditItem.A
 const IEIVA = ItemEditorInputValidation.A

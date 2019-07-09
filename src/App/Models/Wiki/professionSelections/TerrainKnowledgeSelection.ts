@@ -8,10 +8,11 @@ export interface TerrainKnowledgeSelection {
 }
 
 export const TerrainKnowledgeSelection =
-  fromDefault<TerrainKnowledgeSelection> ({
-    id: ProfessionSelectionIds.TERRAIN_KNOWLEDGE,
-    sid: List.empty,
-  })
+  fromDefault ("TerrainKnowledgeSelection")
+              <TerrainKnowledgeSelection> ({
+                id: ProfessionSelectionIds.TERRAIN_KNOWLEDGE,
+                sid: List.empty,
+              })
 
 export const isTerrainKnowledgeSelection =
   (obj: AnyProfessionSelection): obj is Record<TerrainKnowledgeSelection> =>

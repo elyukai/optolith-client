@@ -15,12 +15,13 @@ export interface ActivatableActivationEntryType {
 }
 
 export const ActivatableActivationEntryType =
-  fromDefault<ActivatableActivationEntryType> ({
-    isBlessed: false,
-    isMagical: false,
-    isDisadvantage: false,
-    hairColor: Nothing,
-    eyeColor: Nothing,
-    heroEntry: Nothing,
-    wikiEntry: Advantage.default,
-  })
+  fromDefault ("ActivatableActivationEntryType")
+              <ActivatableActivationEntryType> ({
+                isBlessed: false,
+                isMagical: false,
+                isDisadvantage: false,
+                hairColor: Nothing,
+                eyeColor: Nothing,
+                heroEntry: Nothing,
+                wikiEntry: Advantage.default,
+              })

@@ -21,20 +21,21 @@ export interface PersonalData {
  * Create a new `PersonalData` object.
  */
 export const PersonalData =
-  fromDefault<PersonalData> ({
-    family: Nothing,
-    placeOfBirth: Nothing,
-    dateOfBirth: Nothing,
-    age: Nothing,
-    hairColor: Nothing,
-    eyeColor: Nothing,
-    size: Nothing,
-    weight: Nothing,
-    title: Nothing,
-    socialStatus: Nothing,
-    characteristics: Nothing,
-    otherInfo: Nothing,
-    cultureAreaKnowledge: Nothing,
-  })
+  fromDefault ("PersonalData")
+              <PersonalData> ({
+                family: Nothing,
+                placeOfBirth: Nothing,
+                dateOfBirth: Nothing,
+                age: Nothing,
+                hairColor: Nothing,
+                eyeColor: Nothing,
+                size: Nothing,
+                weight: Nothing,
+                title: Nothing,
+                socialStatus: Nothing,
+                characteristics: Nothing,
+                otherInfo: Nothing,
+                cultureAreaKnowledge: Nothing,
+              })
 
 export const PersonalDataL = makeLenses (PersonalData)

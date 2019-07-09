@@ -11,12 +11,13 @@ export interface ActivatableSkillDependent {
 }
 
 export const ActivatableSkillDependent =
-  fromDefault<ActivatableSkillDependent> ({
-    id: "",
-    value: 0,
-    active: false,
-    dependencies: List<ExtendedSkillDependency> (),
-  })
+  fromDefault ("ActivatableSkillDependent")
+              <ActivatableSkillDependent> ({
+                id: "",
+                value: 0,
+                active: false,
+                dependencies: List<ExtendedSkillDependency> (),
+              })
 
 export const ActivatableSkillDependentL = makeLenses (ActivatableSkillDependent)
 

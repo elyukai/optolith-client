@@ -12,11 +12,12 @@ export interface ActivatableDependent {
 }
 
 export const ActivatableDependent =
-  fromDefault<ActivatableDependent> ({
-    id: "",
-    active: List<Record<ActiveObject>> (),
-    dependencies: List<ActivatableDependency> (),
-  })
+  fromDefault ("ActivatableDependent")
+              <ActivatableDependent> ({
+                id: "",
+                active: List<Record<ActiveObject>> (),
+                dependencies: List<ActivatableDependency> (),
+              })
 
 export const ActivatableDependentL = makeLenses (ActivatableDependent)
 

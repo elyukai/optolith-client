@@ -22,21 +22,22 @@ export interface HitZoneArmor extends HitZoneArmorBase {
 }
 
 export const HitZoneArmor =
-  fromDefault<HitZoneArmor> ({
-    id: "",
-    name: "",
-    head: Nothing,
-    headLoss: Nothing,
-    leftArm: Nothing,
-    leftArmLoss: Nothing,
-    rightArm: Nothing,
-    rightArmLoss: Nothing,
-    torso: Nothing,
-    torsoLoss: Nothing,
-    leftLeg: Nothing,
-    leftLegLoss: Nothing,
-    rightLeg: Nothing,
-    rightLegLoss: Nothing,
-  })
+  fromDefault ("HitZoneArmor")
+              <HitZoneArmor> ({
+                id: "",
+                name: "",
+                head: Nothing,
+                headLoss: Nothing,
+                leftArm: Nothing,
+                leftArmLoss: Nothing,
+                rightArm: Nothing,
+                rightArmLoss: Nothing,
+                torso: Nothing,
+                torsoLoss: Nothing,
+                leftLeg: Nothing,
+                leftLegLoss: Nothing,
+                rightLeg: Nothing,
+                rightLegLoss: Nothing,
+              })
 
 export const HitZoneArmorL = makeLenses (HitZoneArmor)

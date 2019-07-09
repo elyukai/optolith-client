@@ -57,7 +57,8 @@ export interface RecordWithName extends RecordBase {
   name: string
 }
 
-export const RecordWithName = fromDefault<RecordWithName> ({ name: "" })
+export const RecordWithName = fromDefault ("RecordWithName")
+                                          <RecordWithName> ({ name: "" })
 
 const { name } = RecordWithName.AL
 

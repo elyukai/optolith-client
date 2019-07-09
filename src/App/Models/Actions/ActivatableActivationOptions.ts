@@ -17,14 +17,15 @@ export interface ActivatableActivationOptions {
 // }
 
 export const ActivatableActivationOptions =
-  fromDefault<ActivatableActivationOptions> ({
-    id: "",
-    selectOptionId1: Nothing,
-    selectOptionId2: Nothing,
-    input: Nothing,
-    level: Nothing,
-    cost: 0,
-    customCost: Nothing,
-  })
+  fromDefault ("ActivatableActivationOptions")
+              <ActivatableActivationOptions> ({
+                id: "",
+                selectOptionId1: Nothing,
+                selectOptionId2: Nothing,
+                input: Nothing,
+                level: Nothing,
+                cost: 0,
+                customCost: Nothing,
+              })
 
 export const ActivatableActivationOptionsL = makeLenses (ActivatableActivationOptions)

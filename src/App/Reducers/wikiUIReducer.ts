@@ -35,19 +35,20 @@ export interface UIWikiState {
 }
 
 export const UIWikiState =
-  fromDefault<UIWikiState> ({
-    filter: "",
-    filterAll: "",
-    category1: Nothing,
-    category2: Nothing,
-    professionsGroup: Nothing,
-    skillsGroup: Nothing,
-    combatTechniquesGroup: Nothing,
-    specialAbilitiesGroup: Nothing,
-    spellsGroup: Nothing,
-    liturgicalChantsGroup: Nothing,
-    itemTemplatesGroup: Nothing,
-  })
+  fromDefault ("UIWikiState")
+              <UIWikiState> ({
+                filter: "",
+                filterAll: "",
+                category1: Nothing,
+                category2: Nothing,
+                professionsGroup: Nothing,
+                skillsGroup: Nothing,
+                combatTechniquesGroup: Nothing,
+                specialAbilitiesGroup: Nothing,
+                spellsGroup: Nothing,
+                liturgicalChantsGroup: Nothing,
+                itemTemplatesGroup: Nothing,
+              })
 
 const L = makeLenses (UIWikiState)
 

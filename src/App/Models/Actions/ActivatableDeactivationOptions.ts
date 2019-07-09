@@ -7,10 +7,11 @@ export interface ActivatableDeactivationOptions {
 }
 
 export const ActivatableDeactivationOptions =
-  fromDefault<ActivatableDeactivationOptions> ({
-    id: "",
-    index: -1,
-    cost: 0,
-  })
+  fromDefault ("ActivatableDeactivationOptions")
+              <ActivatableDeactivationOptions> ({
+                id: "",
+                index: -1,
+                cost: 0,
+              })
 
 export const ActivatableDeactivationOptionsL = makeLenses (ActivatableDeactivationOptions)

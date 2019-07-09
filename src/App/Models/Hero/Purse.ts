@@ -11,11 +11,12 @@ export interface Purse {
  * Create a new `Purse` object.
  */
 export const Purse =
-  fromDefault<Purse> ({
-    d: "",
-    s: "",
-    h: "",
-    k: "",
-  })
+  fromDefault ("Purse")
+              <Purse> ({
+                d: "",
+                s: "",
+                h: "",
+                k: "",
+              })
 
 export const PurseL = makeLenses (Purse)

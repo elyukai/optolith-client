@@ -7,7 +7,8 @@ export interface SpellIsActive extends IsActive {
 }
 
 const SpellIsActive =
-  fromDefault<SpellIsActive> ({
-    wikiEntry: Spell .default,
-    active: false,
-  })
+  fromDefault ("SpellIsActive")
+              <SpellIsActive> ({
+                wikiEntry: Spell .default,
+                active: false,
+              })

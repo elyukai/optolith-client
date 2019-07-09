@@ -18,11 +18,12 @@ export interface LocaleState {
 }
 
 export const LocaleState =
-  fromDefault<LocaleState> ({
-    id: Nothing,
-    type: "default",
-    messages: Nothing,
-  })
+  fromDefault ("LocaleState")
+              <LocaleState> ({
+                id: Nothing,
+                type: "default",
+                messages: Nothing,
+              })
 
 export const LocaleStateL = makeLenses (LocaleState)
 

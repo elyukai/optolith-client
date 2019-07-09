@@ -8,8 +8,9 @@ export interface PermanentEnergyLoss {
  * Create a new `PermanentEnergyLoss` object.
  */
 export const PermanentEnergyLoss =
-  fromDefault<PermanentEnergyLoss> ({
-    lost: 0,
-  })
+  fromDefault ("PermanentEnergyLoss")
+              <PermanentEnergyLoss> ({
+                lost: 0,
+              })
 
 export const PermanentEnergyLossL = makeLenses (PermanentEnergyLoss)

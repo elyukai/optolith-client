@@ -10,12 +10,13 @@ export interface Attribute {
 }
 
 export const Attribute =
-  fromDefault<Attribute> ({
-    id: "",
-    name: "",
-    short: "",
-    category: Categories.ATTRIBUTES,
-  })
+  fromDefault ("Attribute")
+              <Attribute> ({
+                id: "",
+                name: "",
+                short: "",
+                category: Categories.ATTRIBUTES,
+              })
 
 export const isAttribute =
   (r: EntryWithCategory): r is Record<Attribute> =>

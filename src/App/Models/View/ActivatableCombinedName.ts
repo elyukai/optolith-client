@@ -9,11 +9,12 @@ export interface ActivatableCombinedName {
 }
 
 export const ActivatableCombinedName =
-  fromDefault<ActivatableCombinedName> ({
-    name: "",
-    baseName: "",
-    addName: Nothing,
-    levelName: Nothing,
-  })
+  fromDefault ("ActivatableCombinedName")
+              <ActivatableCombinedName> ({
+                name: "",
+                baseName: "",
+                addName: Nothing,
+                levelName: Nothing,
+              })
 
 export const ActivatableCombinedNameL = makeLenses (ActivatableCombinedName)

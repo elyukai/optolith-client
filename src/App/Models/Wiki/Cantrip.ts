@@ -20,19 +20,20 @@ export interface Cantrip {
 }
 
 export const Cantrip =
-  fromDefault<Cantrip> ({
-    id: "",
-    name: "",
-    property: 0,
-    tradition: List.empty,
-    category: Categories.CANTRIPS,
-    effect: "",
-    range: "",
-    duration: "",
-    target: "",
-    note: Nothing,
-    src: List.empty,
-  })
+  fromDefault ("Cantrip")
+              <Cantrip> ({
+                id: "",
+                name: "",
+                property: 0,
+                tradition: List.empty,
+                category: Categories.CANTRIPS,
+                effect: "",
+                range: "",
+                duration: "",
+                target: "",
+                note: Nothing,
+                src: List.empty,
+              })
 
 export const isCantrip =
   (r: EntryWithCategory) => Cantrip.AL.category (r) === Categories.CANTRIPS

@@ -17,19 +17,20 @@ export interface UIState {
   wiki: Record<UIWikiState>
 }
 
-export const uiReducer = combineReducerRecord<UIState> ({
-                                                         alerts: AlertsStateDefault,
-                                                         filters: FiltersState.default,
-                                                         location: RouteDefault,
-                                                         settings: UISettingsState.default,
-                                                         subwindows: SubWindowsState.default,
-                                                         wiki: UIWikiState.default,
-                                                       })
-                                                       ({
-                                                         alerts,
-                                                         filters,
-                                                         location,
-                                                         settings,
-                                                         subwindows,
-                                                         wiki,
-                                                       })
+export const uiReducer = combineReducerRecord ("UIState")
+                                              <UIState> ({
+                                                          alerts: AlertsStateDefault,
+                                                          filters: FiltersState.default,
+                                                          location: RouteDefault,
+                                                          settings: UISettingsState.default,
+                                                          subwindows: SubWindowsState.default,
+                                                          wiki: UIWikiState.default,
+                                                        })
+                                                        ({
+                                                          alerts,
+                                                          filters,
+                                                          location,
+                                                          settings,
+                                                          subwindows,
+                                                          wiki,
+                                                        })

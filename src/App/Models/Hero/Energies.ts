@@ -15,13 +15,14 @@ export interface Energies {
  * Create a new `Energies` object.
  */
 export const Energies =
-  fromDefault<Energies> ({
-    addedLifePoints: 0,
-    addedArcaneEnergyPoints: 0,
-    addedKarmaPoints: 0,
-    permanentLifePoints: PermanentEnergyLoss .default,
-    permanentArcaneEnergyPoints: PermanentEnergyLossAndBoughtBack .default,
-    permanentKarmaPoints: PermanentEnergyLossAndBoughtBack .default,
-  })
+  fromDefault ("Energies")
+              <Energies> ({
+                addedLifePoints: 0,
+                addedArcaneEnergyPoints: 0,
+                addedKarmaPoints: 0,
+                permanentLifePoints: PermanentEnergyLoss .default,
+                permanentArcaneEnergyPoints: PermanentEnergyLossAndBoughtBack .default,
+                permanentKarmaPoints: PermanentEnergyLossAndBoughtBack .default,
+              })
 
 export const EnergiesL = makeLenses (Energies)

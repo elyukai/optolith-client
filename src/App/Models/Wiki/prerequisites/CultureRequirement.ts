@@ -11,10 +11,11 @@ export interface CultureRequirement {
 }
 
 export const CultureRequirement =
-  fromDefault<CultureRequirement> ({
-    id: "CULTURE",
-    value: 0,
-  })
+  fromDefault ("CultureRequirement")
+              <CultureRequirement> ({
+                id: "CULTURE",
+                value: 0,
+              })
 
 export const isCultureRequirement =
   pipe (RequireActivatable.AL.id, equals<string | List<string>> ("CULTURE")) as unknown as

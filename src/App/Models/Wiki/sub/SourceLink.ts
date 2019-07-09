@@ -7,7 +7,8 @@ export interface SourceLink {
 }
 
 export const SourceLink =
-  fromDefault<SourceLink> ({
-    id: "",
-    page: 0,
-  })
+  fromDefault ("SourceLink")
+              <SourceLink> ({
+                id: "",
+                page: 0,
+              })

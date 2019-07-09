@@ -15,15 +15,16 @@ export interface Armor {
 }
 
 export const Armor =
-  fromDefault<Armor> ({
-    id: "",
-    name: "",
-    st: Nothing,
-    loss: Nothing,
-    pro: Nothing,
-    enc: Nothing,
-    mov: 0,
-    ini: 0,
-    weight: Nothing,
-    where: Nothing,
-  })
+  fromDefault ("Armor")
+              <Armor> ({
+                id: "",
+                name: "",
+                st: Nothing,
+                loss: Nothing,
+                pro: Nothing,
+                enc: Nothing,
+                mov: 0,
+                ini: 0,
+                weight: Nothing,
+                where: Nothing,
+              })

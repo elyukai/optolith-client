@@ -9,11 +9,12 @@ export interface ActiveObject {
 }
 
 export const ActiveObject =
-  fromDefault<ActiveObject> ({
-    cost: Nothing,
-    sid: Nothing,
-    sid2: Nothing,
-    tier: Nothing,
-  })
+  fromDefault ("ActiveObject")
+              <ActiveObject> ({
+                cost: Nothing,
+                sid: Nothing,
+                sid2: Nothing,
+                tier: Nothing,
+              })
 
 export const ActiveObjectL = makeLenses (ActiveObject)

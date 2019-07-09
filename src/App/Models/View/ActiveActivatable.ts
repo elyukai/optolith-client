@@ -18,12 +18,13 @@ export interface ActiveActivatable<A extends RecordI<Activatable> = RecordI<Acti
 }
 
 export const ActiveActivatable =
-  fromDefault<ActiveActivatable> ({
-    nameAndCost: ActivatableNameCost.default as Record<ActivatableNameCostSafeCost>,
-    validation: ActivatableActivationValidation.default,
-    heroEntry: ActivatableDependent.default,
-    wikiEntry: Advantage.default,
-  })
+  fromDefault ("ActiveActivatable")
+              <ActiveActivatable> ({
+                nameAndCost: ActivatableNameCost.default as Record<ActivatableNameCostSafeCost>,
+                validation: ActivatableActivationValidation.default,
+                heroEntry: ActivatableDependent.default,
+                wikiEntry: Advantage.default,
+              })
 
 type GenA<B> =
   <A extends Advantage | Disadvantage | SpecialAbility = Advantage | Disadvantage | SpecialAbility>

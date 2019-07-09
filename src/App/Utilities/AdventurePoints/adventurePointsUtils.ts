@@ -74,11 +74,12 @@ export interface MissingAPForDisAdvantage {
 }
 
 export const MissingAPForDisAdvantage =
-  fromDefault<MissingAPForDisAdvantage> ({
-    totalMissing: Nothing,
-    mainMissing: Nothing,
-    subMissing: Nothing,
-  })
+  fromDefault ("MissingAPForDisAdvantage")
+              <MissingAPForDisAdvantage> ({
+                totalMissing: Nothing,
+                mainMissing: Nothing,
+                subMissing: Nothing,
+              })
 
 const getDisAdvantageSubtypeAPSpent =
   (isBlessedOrMagical: Pair<boolean, boolean>) =>

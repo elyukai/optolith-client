@@ -11,9 +11,10 @@ export interface ScriptsSelectionListItem {
  * Create a new `ScriptsSelectionListItem` object.
  */
 export const ScriptsSelectionListItem =
-  fromDefault<ScriptsSelectionListItem> ({
-    id: 0,
-    name: "",
-    cost: 0,
-    native: false,
-  })
+  fromDefault ("ScriptsSelectionListItem")
+              <ScriptsSelectionListItem> ({
+                id: 0,
+                name: "",
+                cost: 0,
+                native: false,
+              })

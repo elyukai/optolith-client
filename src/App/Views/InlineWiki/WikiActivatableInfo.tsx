@@ -899,11 +899,11 @@ interface ActivatablePrerequisiteText {
 }
 
 const ActivatablePrerequisiteText =
-  fromDefault<ActivatablePrerequisiteText> ({
-    id: "",
-    active: false,
-    name: "",
-  })
+  fromDefault ("ActivatablePrerequisiteText") <ActivatablePrerequisiteText> ({
+                id: "",
+                active: false,
+                name: "",
+              })
 
 const APTA = ActivatablePrerequisiteText.A
 
@@ -1071,22 +1071,22 @@ interface CategorizedItems {
 }
 
 const CategorizedItems =
-  fromDefault<CategorizedItems> ({
-    rcp: false,
-    casterBlessedOne: List (),
-    traditions: List (),
-    attributes: List (),
-    primaryAttribute: Nothing,
-    skills: List (),
-    activeSkills: List (),
-    otherActiveSpecialAbilities: List (),
-    inactiveSpecialAbilities: List (),
-    otherActiveAdvantages: List (),
-    inactiveAdvantages: List (),
-    activeDisadvantages: List (),
-    inactiveDisadvantages: List (),
-    race: Nothing,
-  })
+  fromDefault ("CategorizedItems") <CategorizedItems> ({
+                rcp: false,
+                casterBlessedOne: List (),
+                traditions: List (),
+                attributes: List (),
+                primaryAttribute: Nothing,
+                skills: List (),
+                activeSkills: List (),
+                otherActiveSpecialAbilities: List (),
+                inactiveSpecialAbilities: List (),
+                otherActiveAdvantages: List (),
+                inactiveAdvantages: List (),
+                activeDisadvantages: List (),
+                inactiveDisadvantages: List (),
+                race: Nothing,
+              })
 
 const CIA = CategorizedItems.A
 const CIL = makeLenses (CategorizedItems)

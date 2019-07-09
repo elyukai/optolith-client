@@ -31,11 +31,11 @@ interface IdNameLevel {
 }
 
 const IdNameLevel =
-  fromDefault<IdNameLevel> ({
-    id: 0,
-    name: "",
-    level: 0,
-  })
+  fromDefault ("IdNameLevel") <IdNameLevel> ({
+                id: 0,
+                name: "",
+                level: 0,
+              })
 
 export function SkillsSheetLanguages (props: SkillsSheetLanguagesProps) {
   const {

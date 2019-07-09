@@ -25,23 +25,24 @@ export interface MeleeWeapon {
 }
 
 export const MeleeWeapon =
-  fromDefault<MeleeWeapon> ({
-    id: "",
-    name: "",
-    combatTechnique: "",
-    primary: List.empty,
-    primaryBonus: 0,
-    damageDiceNumber: Nothing,
-    damageDiceSides: Nothing,
-    damageFlat: 0,
-    atMod: Nothing,
-    at: 0,
-    paMod: Nothing,
-    pa: Nothing,
-    reach: Nothing,
-    bf: 0,
-    loss: Nothing,
-    weight: Nothing,
-    isImprovisedWeapon: false,
-    isTwoHandedWeapon: false,
-  })
+  fromDefault ("MeleeWeapon")
+              <MeleeWeapon> ({
+                id: "",
+                name: "",
+                combatTechnique: "",
+                primary: List.empty,
+                primaryBonus: 0,
+                damageDiceNumber: Nothing,
+                damageDiceSides: Nothing,
+                damageFlat: 0,
+                atMod: Nothing,
+                at: 0,
+                paMod: Nothing,
+                pa: Nothing,
+                reach: Nothing,
+                bf: 0,
+                loss: Nothing,
+                weight: Nothing,
+                isImprovisedWeapon: false,
+                isTwoHandedWeapon: false,
+              })

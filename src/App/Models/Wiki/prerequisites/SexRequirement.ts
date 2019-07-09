@@ -12,10 +12,11 @@ export interface SexRequirement {
 }
 
 export const SexRequirement =
-  fromDefault<SexRequirement> ({
-    id: "SEX",
-    value: "m",
-  })
+  fromDefault ("SexRequirement")
+              <SexRequirement> ({
+                id: "SEX",
+                value: "m",
+              })
 
 export const isSexRequirement =
   pipe (RequireActivatable.AL.id, equals<string | List<string>> ("SEX")) as unknown as

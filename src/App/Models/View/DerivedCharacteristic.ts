@@ -41,20 +41,21 @@ interface DerivedCharacteristicCreator extends RecordCreator<DerivedCharacterist
 }
 
 export const DerivedCharacteristic =
-  fromDefault<DerivedCharacteristic> ({
-    id: "LP",
-    short: "",
-    name: "",
-    calc: "",
-    base: Nothing,
-    value: Nothing,
-    add: Nothing,
-    mod: Nothing,
-    maxAdd: Nothing,
-    currentAdd: Nothing,
-    permanentLost: Nothing,
-    permanentRedeemed: Nothing,
-  }) as DerivedCharacteristicCreator
+  fromDefault ("DerivedCharacteristic")
+              <DerivedCharacteristic> ({
+                id: "LP",
+                short: "",
+                name: "",
+                calc: "",
+                base: Nothing,
+                value: Nothing,
+                add: Nothing,
+                mod: Nothing,
+                maxAdd: Nothing,
+                currentAdd: Nothing,
+                permanentLost: Nothing,
+                permanentRedeemed: Nothing,
+              }) as DerivedCharacteristicCreator
 
 export const isDerivedCharacteristicEnergy =
   <I extends DCIds = DCIds> (x: Record<DerivedCharacteristic<I>>): x is Record<Energy<I>> =>

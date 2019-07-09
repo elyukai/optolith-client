@@ -19,16 +19,17 @@ export interface InactiveActivatable<T extends RecordI<Activatable> = RecordI<Ac
 }
 
 export const InactiveActivatable =
-  fromDefault<InactiveActivatable> ({
-    id: "",
-    name: "",
-    cost: Nothing,
-    maxLevel: Nothing,
-    minLevel: Nothing,
-    selectOptions: Nothing,
-    heroEntry: Nothing,
-    wikiEntry: Advantage.default,
-    customCostDisabled: Nothing,
-  })
+  fromDefault ("InactiveActivatable")
+              <InactiveActivatable> ({
+                id: "",
+                name: "",
+                cost: Nothing,
+                maxLevel: Nothing,
+                minLevel: Nothing,
+                selectOptions: Nothing,
+                heroEntry: Nothing,
+                wikiEntry: Advantage.default,
+                customCostDisabled: Nothing,
+              })
 
 export const InactiveActivatableL = makeLenses (InactiveActivatable)

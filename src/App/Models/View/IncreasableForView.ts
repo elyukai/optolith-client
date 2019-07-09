@@ -10,12 +10,13 @@ export interface IncreasableForView {
 }
 
 export const IncreasableForView =
-  fromDefault<IncreasableForView> ({
-    id: "",
-    name: "",
-    value: 0,
-    previous: Nothing,
-  })
+  fromDefault ("IncreasableForView")
+              <IncreasableForView> ({
+                id: "",
+                name: "",
+                value: 0,
+                previous: Nothing,
+              })
 
 export const increasableViewFrom =
   (x: Record<IncreaseSkill>) =>

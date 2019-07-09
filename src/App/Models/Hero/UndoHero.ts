@@ -10,10 +10,11 @@ export type UndoableHeroModel = UndoState<HeroModelRecord>
  * Create a new `UndoHero` object.
  */
 export const UndoableHero =
-  fromDefault<UndoableHeroModel> ({
-    past: List.empty,
-    present: HeroModel .default,
-    future: List.empty,
-  })
+  fromDefault ("UndoableHero")
+              <UndoableHeroModel> ({
+                past: List.empty,
+                present: HeroModel .default,
+                future: List.empty,
+              })
 
 export const UndoableHeroL = makeLenses (UndoableHero)

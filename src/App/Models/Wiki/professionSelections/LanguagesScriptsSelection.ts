@@ -7,10 +7,11 @@ export interface LanguagesScriptsSelection {
 }
 
 export const LanguagesScriptsSelection =
-  fromDefault<LanguagesScriptsSelection> ({
-    id: ProfessionSelectionIds.LANGUAGES_SCRIPTS,
-    value: 0,
-  })
+  fromDefault ("LanguagesScriptsSelection")
+              <LanguagesScriptsSelection> ({
+                id: ProfessionSelectionIds.LANGUAGES_SCRIPTS,
+                value: 0,
+              })
 
 export const isLanguagesScriptsSelection =
   (obj: AnyProfessionSelection): obj is Record<LanguagesScriptsSelection> =>

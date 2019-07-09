@@ -9,10 +9,11 @@ export interface AttributeCombined {
 }
 
 export const AttributeCombined =
-  fromDefault<AttributeCombined> ({
-    wikiEntry: Attribute .default,
-    stateEntry: AttributeDependent .default,
-  })
+  fromDefault ("AttributeCombined")
+              <AttributeCombined> ({
+                wikiEntry: Attribute .default,
+                stateEntry: AttributeDependent .default,
+              })
 
 export const AttributeCombinedA_ = {
   id: pipe (AttributeCombined.A.wikiEntry, Attribute.A.id),

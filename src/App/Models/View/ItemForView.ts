@@ -14,15 +14,16 @@ export interface ItemForView {
 }
 
 export const ItemForView =
-  fromDefault<ItemForView> ({
-    id: "",
-    name: "",
-    amount: 0,
-    price: Nothing,
-    weight: Nothing,
-    where: Nothing,
-    gr: 0,
-  })
+  fromDefault ("ItemForView")
+              <ItemForView> ({
+                id: "",
+                name: "",
+                amount: 0,
+                price: Nothing,
+                weight: Nothing,
+                where: Nothing,
+                gr: 0,
+              })
 
 export const itemToItemForView =
   (x: Record<Item>) =>

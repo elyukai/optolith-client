@@ -8,10 +8,11 @@ export interface BlessingCombined extends IsActive {
 }
 
 export const BlessingCombined =
-  fromDefault<BlessingCombined> ({
-    wikiEntry: Blessing .default,
-    active: false,
-  })
+  fromDefault ("BlessingCombined")
+              <BlessingCombined> ({
+                wikiEntry: Blessing .default,
+                active: false,
+              })
 
 export const BlessingCombinedA_ = {
   name: pipe (BlessingCombined.A.wikiEntry, Blessing.A.name),

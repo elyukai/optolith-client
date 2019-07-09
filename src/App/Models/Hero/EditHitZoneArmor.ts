@@ -11,22 +11,23 @@ export interface EditHitZoneArmorSafe extends EditHitZoneArmor {
 }
 
 export const EditHitZoneArmor =
-  fromDefault<EditHitZoneArmor> ({
-    id: Nothing,
-    name: "",
-    head: Nothing,
-    headLoss: Nothing,
-    leftArm: Nothing,
-    leftArmLoss: Nothing,
-    rightArm: Nothing,
-    rightArmLoss: Nothing,
-    torso: Nothing,
-    torsoLoss: Nothing,
-    leftLeg: Nothing,
-    leftLegLoss: Nothing,
-    rightLeg: Nothing,
-    rightLegLoss: Nothing,
-  })
+  fromDefault ("EditHitZoneArmor")
+              <EditHitZoneArmor> ({
+                id: Nothing,
+                name: "",
+                head: Nothing,
+                headLoss: Nothing,
+                leftArm: Nothing,
+                leftArmLoss: Nothing,
+                rightArm: Nothing,
+                rightArmLoss: Nothing,
+                torso: Nothing,
+                torsoLoss: Nothing,
+                leftLeg: Nothing,
+                leftLegLoss: Nothing,
+                rightLeg: Nothing,
+                rightLegLoss: Nothing,
+              })
 
 export const EditHitZoneArmorL = makeLenses (EditHitZoneArmor)
 

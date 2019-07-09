@@ -6,7 +6,8 @@ export interface Die {
 }
 
 export const Die =
-  fromDefault<Die> ({
-    amount: 0,
-    sides: 0,
-  })
+  fromDefault ("Die")
+              <Die> ({
+                amount: 0,
+                sides: 0,
+              })

@@ -31,30 +31,31 @@ export interface Spell {
 }
 
 export const Spell =
-  fromDefault<Spell> ({
-    id: "",
-    name: "",
-    category: Categories.SPELLS,
-    check: List.empty,
-    checkmod: OrderedSet.empty,
-    gr: 0,
-    ic: 0,
-    property: 0,
-    tradition: List.empty,
-    subtradition: List.empty,
-    prerequisites: List.empty,
-    effect: "",
-    castingTime: "",
-    castingTimeShort: "",
-    cost: "",
-    costShort: "",
-    range: "",
-    rangeShort: "",
-    duration: "",
-    durationShort: "",
-    target: "",
-    src: List.empty,
-  })
+  fromDefault ("Spell")
+              <Spell> ({
+                id: "",
+                name: "",
+                category: Categories.SPELLS,
+                check: List.empty,
+                checkmod: OrderedSet.empty,
+                gr: 0,
+                ic: 0,
+                property: 0,
+                tradition: List.empty,
+                subtradition: List.empty,
+                prerequisites: List.empty,
+                effect: "",
+                castingTime: "",
+                castingTimeShort: "",
+                cost: "",
+                costShort: "",
+                range: "",
+                rangeShort: "",
+                duration: "",
+                durationShort: "",
+                target: "",
+                src: List.empty,
+              })
 
 export const SpellL = makeLenses (Spell)
 

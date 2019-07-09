@@ -8,7 +8,8 @@ export interface SpecialAbilitySelection {
 }
 
 export const SpecialAbilitySelection =
-  fromDefault<SpecialAbilitySelection> ({
-    id: ProfessionSelectionIds.SPECIALIZATION,
-    sid: "",
-  })
+  fromDefault ("SpecialAbilitySelection")
+              <SpecialAbilitySelection> ({
+                id: ProfessionSelectionIds.SPECIALIZATION,
+                sid: "",
+              })

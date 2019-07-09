@@ -19,18 +19,19 @@ export interface RangedWeapon {
 }
 
 export const RangedWeapon =
-  fromDefault<RangedWeapon> ({
-    id: "",
-    name: "",
-    combatTechnique: "",
-    reloadTime: Nothing,
-    damageDiceNumber: Nothing,
-    damageDiceSides: Nothing,
-    damageFlat: Nothing,
-    at: 0,
-    range: Nothing,
-    bf: 0,
-    loss: Nothing,
-    weight: Nothing,
-    ammunition: Nothing,
-  })
+  fromDefault ("RangedWeapon")
+              <RangedWeapon> ({
+                id: "",
+                name: "",
+                combatTechnique: "",
+                reloadTime: Nothing,
+                damageDiceNumber: Nothing,
+                damageDiceSides: Nothing,
+                damageFlat: Nothing,
+                at: 0,
+                range: Nothing,
+                bf: 0,
+                loss: Nothing,
+                weight: Nothing,
+                ammunition: Nothing,
+              })

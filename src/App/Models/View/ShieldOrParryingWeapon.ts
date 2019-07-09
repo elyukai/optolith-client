@@ -13,13 +13,14 @@ export interface ShieldOrParryingWeapon {
 }
 
 export const ShieldOrParryingWeapon =
-  fromDefault<ShieldOrParryingWeapon> ({
-    id: "",
-    name: "",
-    stp: Nothing,
-    bf: 0,
-    loss: Nothing,
-    atMod: Nothing,
-    paMod: Nothing,
-    weight: Nothing,
-  })
+  fromDefault ("ShieldOrParryingWeapon")
+              <ShieldOrParryingWeapon> ({
+                id: "",
+                name: "",
+                stp: Nothing,
+                bf: 0,
+                loss: Nothing,
+                atMod: Nothing,
+                paMod: Nothing,
+                weight: Nothing,
+              })

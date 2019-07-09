@@ -60,9 +60,9 @@ test ('OrderedMap', () => {
 })
 
 test ('Record', () => {
-  const creator1 = fromDefault ({ x: 0, y: 0 })
-  const creator2 = fromDefault ({ x: 0, y: 0, z: 0 })
-  const creator3 = fromDefault ({ x: 0, y: 1 })
+  const creator1 = fromDefault ("Creator1") ({ x: 0, y: 0 })
+  const creator2 = fromDefault ("Creator2") ({ x: 0, y: 0, z: 0 })
+  const creator3 = fromDefault ("Creator3") ({ x: 0, y: 1 })
 
   expect (equals (creator1 ({ x: Nothing, y: 2 })) (creator2 ({ x: Nothing, y: 2, z: Nothing }))) .toEqual (false)
   expect (equals (creator1 ({ x: Nothing, y: Nothing })) (creator1 ({ x: Nothing, y: Nothing }))) .toEqual (true)

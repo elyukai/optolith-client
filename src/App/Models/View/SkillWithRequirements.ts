@@ -8,12 +8,13 @@ import { IncreasableWithRequirements } from "./viewTypeHelpers";
 export interface SkillWithRequirements extends SkillCombined, IncreasableWithRequirements { }
 
 export const SkillWithRequirements =
-  fromDefault<SkillWithRequirements> ({
-    wikiEntry: Skill .default,
-    stateEntry: SkillDependent .default,
-    isIncreasable: false,
-    isDecreasable: false,
-  })
+  fromDefault ("SkillWithRequirements")
+              <SkillWithRequirements> ({
+                wikiEntry: Skill .default,
+                stateEntry: SkillDependent .default,
+                isIncreasable: false,
+                isDecreasable: false,
+              })
 
 export const SkillWithRequirementsA_ = {
   id: pipe (SkillWithRequirements.A.wikiEntry, Skill.A.id),

@@ -10,10 +10,11 @@ export interface RaceCombined {
 }
 
 export const RaceCombined =
-  fromDefault<RaceCombined> ({
-    wikiEntry: Race .default,
-    mappedVariants: List.empty,
-  })
+  fromDefault ("RaceCombined")
+              <RaceCombined> ({
+                wikiEntry: Race .default,
+                mappedVariants: List.empty,
+              })
 
 export const RaceCombinedA_ = {
   id: pipe (RaceCombined.A.wikiEntry, Race.A.id),

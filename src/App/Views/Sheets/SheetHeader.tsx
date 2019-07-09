@@ -15,11 +15,11 @@ export interface HeaderValue {
 }
 
 export const HeaderValue =
-  fromDefault<HeaderValue> ({
-    id: "",
-    short: "",
-    value: Nothing,
-  })
+  fromDefault ("HeaderValue") <HeaderValue> ({
+                id: "",
+                short: "",
+                value: Nothing,
+              })
 
 export interface SheetHeaderProps {
   add?: List<Record<HeaderValue>>

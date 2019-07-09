@@ -25,24 +25,25 @@ export interface RaceVariant {
 }
 
 export const RaceVariant =
-  fromDefault<RaceVariant> ({
-    id: "",
-    name: "",
-    commonCultures: List.empty,
-    commonAdvantages: List.empty,
-    commonAdvantagesText: Nothing,
-    commonDisadvantages: List.empty,
-    commonDisadvantagesText: Nothing,
-    uncommonAdvantages: List.empty,
-    uncommonAdvantagesText: Nothing,
-    uncommonDisadvantages: List.empty,
-    uncommonDisadvantagesText: Nothing,
-    hairColors: Nothing,
-    eyeColors: Nothing,
-    sizeBase: Nothing,
-    sizeRandom: Nothing,
-    category: Categories.RACE_VARIANTS,
-  })
+  fromDefault ("RaceVariant")
+              <RaceVariant> ({
+                id: "",
+                name: "",
+                commonCultures: List.empty,
+                commonAdvantages: List.empty,
+                commonAdvantagesText: Nothing,
+                commonDisadvantages: List.empty,
+                commonDisadvantagesText: Nothing,
+                uncommonAdvantages: List.empty,
+                uncommonAdvantagesText: Nothing,
+                uncommonDisadvantages: List.empty,
+                uncommonDisadvantagesText: Nothing,
+                hairColors: Nothing,
+                eyeColors: Nothing,
+                sizeBase: Nothing,
+                sizeRandom: Nothing,
+                category: Categories.RACE_VARIANTS,
+              })
 
 export const RaceVariantL = makeLenses (RaceVariant)
 

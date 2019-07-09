@@ -8,10 +8,11 @@ export interface EditPrimaryAttributeDamageThreshold {
 }
 
 export const EditPrimaryAttributeDamageThreshold =
-  fromDefault<EditPrimaryAttributeDamageThreshold> ({
-    primary: Nothing,
-    threshold: "",
-  })
+  fromDefault ("EditPrimaryAttributeDamageThreshold")
+              <EditPrimaryAttributeDamageThreshold> ({
+                primary: Nothing,
+                threshold: "",
+              })
 
 export const EditPrimaryAttributeDamageThresholdL =
   makeLenses (EditPrimaryAttributeDamageThreshold)

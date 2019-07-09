@@ -38,16 +38,17 @@ export interface SubWindowsState {
 }
 
 export const SubWindowsState =
-  fromDefault<SubWindowsState> ({
-    editPermanentEnergy: Nothing,
-    addPermanentEnergy: Nothing,
-    updateDownloadProgress: Nothing,
-    isCharacterCreatorOpen: false,
-    isAddAdventurePointsOpen: false,
-    isSettingsOpen: false,
-    isEditCharacterAvatarOpen: false,
-    isEditPetAvatarOpen: false,
-  })
+  fromDefault ("SubWindowsState")
+              <SubWindowsState> ({
+                editPermanentEnergy: Nothing,
+                addPermanentEnergy: Nothing,
+                updateDownloadProgress: Nothing,
+                isCharacterCreatorOpen: false,
+                isAddAdventurePointsOpen: false,
+                isSettingsOpen: false,
+                isEditCharacterAvatarOpen: false,
+                isEditPetAvatarOpen: false,
+              })
 
 const SubWindowsStateL = makeLenses (SubWindowsState)
 

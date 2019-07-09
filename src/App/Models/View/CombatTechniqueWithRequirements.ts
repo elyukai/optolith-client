@@ -11,14 +11,15 @@ export interface CombatTechniqueWithRequirements extends CombatTechniqueWithAtta
 }
 
 export const CombatTechniqueWithRequirements =
-  fromDefault<CombatTechniqueWithRequirements> ({
-    wikiEntry: CombatTechnique .default,
-    stateEntry: SkillDependent .default,
-    at: 0,
-    pa: Nothing,
-    max: 0,
-    min: 0,
-  })
+  fromDefault ("CombatTechniqueWithRequirements")
+              <CombatTechniqueWithRequirements> ({
+                wikiEntry: CombatTechnique .default,
+                stateEntry: SkillDependent .default,
+                at: 0,
+                pa: Nothing,
+                max: 0,
+                min: 0,
+              })
 
 export const CombatTechniqueWithRequirementsA_ = {
   id: pipe (CombatTechniqueWithRequirements.A.wikiEntry, CombatTechnique.A.id),

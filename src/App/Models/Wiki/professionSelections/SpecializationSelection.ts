@@ -8,10 +8,11 @@ export interface SpecializationSelection {
 }
 
 export const SpecializationSelection =
-  fromDefault<SpecializationSelection> ({
-    id: ProfessionSelectionIds.SPECIALIZATION,
-    sid: "",
-  })
+  fromDefault ("SpecializationSelection")
+              <SpecializationSelection> ({
+                id: ProfessionSelectionIds.SPECIALIZATION,
+                sid: "",
+              })
 
 export const isSpecializationSelection =
   (obj: AnyProfessionSelection): obj is Record<SpecializationSelection> =>

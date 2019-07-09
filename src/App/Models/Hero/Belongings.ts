@@ -21,14 +21,15 @@ export interface Belongings {
  * Create a new `Belongings` object.
  */
 export const Belongings =
-  fromDefault<Belongings> ({
-    items: OrderedMap.empty,
-    itemInEditor: Nothing,
-    isInItemCreation: false,
-    hitZoneArmors: OrderedMap.empty,
-    hitZoneArmorInEditor: Nothing,
-    isInHitZoneArmorCreation: false,
-    purse: Purse .default,
-  })
+  fromDefault ("Belongings")
+              <Belongings> ({
+                items: OrderedMap.empty,
+                itemInEditor: Nothing,
+                isInItemCreation: false,
+                hitZoneArmors: OrderedMap.empty,
+                hitZoneArmorInEditor: Nothing,
+                isInHitZoneArmorCreation: false,
+                purse: Purse .default,
+              })
 
 export const BelongingsL = makeLenses (Belongings)

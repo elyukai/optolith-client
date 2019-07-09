@@ -10,13 +10,14 @@ export interface SpellWithRequirements extends SpellCombined, IncreasableWithReq
 }
 
 export const SpellWithRequirements =
-  fromDefault<SpellWithRequirements> ({
-    wikiEntry: Spell .default,
-    stateEntry: ActivatableSkillDependent .default,
-    isIncreasable: false,
-    isDecreasable: false,
-    isUnfamiliar: false,
-  })
+  fromDefault ("SpellWithRequirements")
+              <SpellWithRequirements> ({
+                wikiEntry: Spell .default,
+                stateEntry: ActivatableSkillDependent .default,
+                isIncreasable: false,
+                isDecreasable: false,
+                isUnfamiliar: false,
+              })
 
 const SWRA = SpellWithRequirements.A
 const SA = Spell.A

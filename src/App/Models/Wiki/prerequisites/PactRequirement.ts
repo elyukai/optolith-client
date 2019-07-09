@@ -14,12 +14,13 @@ export interface PactRequirement {
 }
 
 export const PactRequirement =
-  fromDefault<PactRequirement> ({
-    id: "PACT",
-    category: 0,
-    domain: Nothing,
-    level: Nothing,
-  })
+  fromDefault ("PactRequirement")
+              <PactRequirement> ({
+                id: "PACT",
+                category: 0,
+                domain: Nothing,
+                level: Nothing,
+              })
 
 export const isPactRequirement =
   pipe (RequireActivatable.AL.id, equals<string | List<string>> ("PACT")) as unknown as

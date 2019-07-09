@@ -10,10 +10,11 @@ export interface LiturgicalChantCombined {
 }
 
 export const LiturgicalChantCombined =
-  fromDefault<LiturgicalChantCombined> ({
-    wikiEntry: LiturgicalChant .default,
-    stateEntry: ActivatableSkillDependent .default,
-  })
+  fromDefault ("LiturgicalChantCombined")
+              <LiturgicalChantCombined> ({
+                wikiEntry: LiturgicalChant .default,
+                stateEntry: ActivatableSkillDependent .default,
+              })
 
 export const isLiturgicalChantCombined =
   (x: Record<LiturgicalChantCombined> | Record<Blessing>): x is Record<LiturgicalChantCombined> =>

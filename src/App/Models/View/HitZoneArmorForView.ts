@@ -16,16 +16,17 @@ export interface HitZoneArmorForView {
 }
 
 export const HitZoneArmorForView =
-  fromDefault<HitZoneArmorForView> ({
-    id: "",
-    name: "",
-    head: Nothing,
-    leftArm: Nothing,
-    leftLeg: Nothing,
-    rightArm: Nothing,
-    rightLeg: Nothing,
-    torso: Nothing,
-    enc: 0,
-    addPenalties: false,
-    weight: 0,
-  })
+  fromDefault ("HitZoneArmorForView")
+              <HitZoneArmorForView> ({
+                id: "",
+                name: "",
+                head: Nothing,
+                leftArm: Nothing,
+                leftLeg: Nothing,
+                rightArm: Nothing,
+                rightLeg: Nothing,
+                torso: Nothing,
+                enc: 0,
+                addPenalties: false,
+                weight: 0,
+              })
