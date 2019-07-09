@@ -20,11 +20,12 @@ interface ActivatableNameCostConstructor extends RecordCreator<ActivatableNameCo
 }
 
 export const ActivatableNameCost =
-  fromDefault<ActivatableNameCost> ({
-    naming: ActivatableCombinedName.default,
-    active: ActiveObjectWithId.default,
-    finalCost: 0,
-  }) as ActivatableNameCostConstructor
+  fromDefault ("ActivatableNameCost")
+              <ActivatableNameCost> ({
+                naming: ActivatableCombinedName.default,
+                active: ActiveObjectWithId.default,
+                finalCost: 0,
+              }) as ActivatableNameCostConstructor
 
 export const ActivatableNameCostA_ = {
   id: pipe (ActivatableNameCost.A.active, ActiveObjectWithId.A.id),

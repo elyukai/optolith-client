@@ -9,10 +9,11 @@ export interface SkillCombined {
 }
 
 export const SkillCombined =
-  fromDefault<SkillCombined> ({
-    wikiEntry: Skill .default,
-    stateEntry: SkillDependent .default,
-  })
+  fromDefault ("SkillCombined")
+              <SkillCombined> ({
+                wikiEntry: Skill .default,
+                stateEntry: SkillDependent .default,
+              })
 
 export const SkillCombinedA_ = {
   id: pipe (SkillCombined.A.wikiEntry, Skill.A.id),

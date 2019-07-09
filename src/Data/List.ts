@@ -2064,8 +2064,7 @@ export const groupByKey =
 interface RecordBaseWithId extends RecordBase {
   id: string
 }
-
-const RecordBaseWithId = fromDefault<RecordBaseWithId> ({ id: "" })
+const RecordBaseWithId = fromDefault ("RecordBaseWithId") <RecordBaseWithId> ({ id: "" })
 
 /**
  * `mapByIdKeyMap map xs` takes a map and a list containing records with an `id`

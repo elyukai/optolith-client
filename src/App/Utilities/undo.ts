@@ -14,11 +14,12 @@ export interface UndoState<S> {
 }
 
 export const createUndoState =
-  <S> (x: S) => fromDefault<UndoState<S>> ({
-    past: List.empty,
-    present: x,
-    future: List.empty,
-  })
+  <S> (x: S) => fromDefault ("UndoState")
+                            <UndoState<S>> ({
+                              past: List.empty,
+                              present: x,
+                              future: List.empty,
+                            })
 
 export type UndoReducer<S, A> =
   (state: UndoState<S>, action: A) => UndoState<S>

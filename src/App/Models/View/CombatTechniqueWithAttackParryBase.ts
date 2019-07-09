@@ -11,12 +11,13 @@ export interface CombatTechniqueWithAttackParryBase extends CombatTechniqueCombi
 }
 
 export const CombatTechniqueWithAttackParryBase =
-  fromDefault<CombatTechniqueWithAttackParryBase> ({
-    wikiEntry: CombatTechnique .default,
-    stateEntry: SkillDependent .default,
-    at: 0,
-    pa: Nothing,
-  })
+  fromDefault ("CombatTechniqueWithAttackParryBase")
+              <CombatTechniqueWithAttackParryBase> ({
+                wikiEntry: CombatTechnique .default,
+                stateEntry: SkillDependent .default,
+                at: 0,
+                pa: Nothing,
+              })
 
 const CTWAPBA = CombatTechniqueWithAttackParryBase.A
 const CTA = CombatTechnique.A

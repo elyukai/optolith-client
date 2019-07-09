@@ -12,10 +12,11 @@ export type VariantCombatTechniquesSecondSelection =
   Record<RemoveCombatTechniquesSecondSelection>
 
 const _RemoveCombatTechniquesSecondSelection =
-  fromDefault<RemoveCombatTechniquesSecondSelection> ({
-    id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND,
-    active: false,
-  })
+  fromDefault ("RemoveCombatTechniquesSecondSelection")
+              <RemoveCombatTechniquesSecondSelection> ({
+                id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND,
+                active: false,
+              })
 
 export const RemoveCombatTechniquesSecondSelection =
   _RemoveCombatTechniquesSecondSelection ({

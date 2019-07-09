@@ -11,10 +11,11 @@ export interface IncreaseSkillList {
 }
 
 export const IncreaseSkillList =
-  fromDefault<IncreaseSkillList> ({
-    id: List.empty,
-    value: 0,
-  })
+  fromDefault ("IncreaseSkillList")
+              <IncreaseSkillList> ({
+                id: List.empty,
+                value: 0,
+              })
 
 export const pairToIncreaseSkillList =
   (prefix: IdPrefixes) =>

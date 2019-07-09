@@ -83,8 +83,8 @@ const _Record =
       }
     )
 
-const _createRecordCreator =
-  (name?: string) =>
+export const fromDefault =
+  (name: string) =>
   <A extends RecordBase> (def: Required<A>): RecordCreator<A> => {
     const defaultValues = Object.freeze (Object.entries (def) .reduce<Required<A>> (
       (acc, [key, value]) => {
@@ -160,11 +160,6 @@ const _createRecordCreator =
 
     return Object.freeze (creator)
   }
-
-export const fromDefault = _createRecordCreator ()
-
-// tslint:disable-next-line: no-unnecessary-callback-wrapper
-export const fromNamedDefault = (name: string) => _createRecordCreator (name)
 
 
 // LENSES

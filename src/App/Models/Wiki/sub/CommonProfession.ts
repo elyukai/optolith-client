@@ -7,7 +7,8 @@ export interface CommonProfession {
 }
 
 export const CommonProfession =
-  fromDefault<CommonProfession> ({
-    list: List.empty,
-    reverse: false,
-  })
+  fromDefault ("CommonProfession")
+              <CommonProfession> ({
+                list: List.empty,
+                reverse: false,
+              })

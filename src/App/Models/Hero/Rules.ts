@@ -13,12 +13,13 @@ export interface Rules {
  * Create a new `Rules` object.
  */
 export const Rules =
-  fromDefault<Rules> ({
-    higherParadeValues: 0,
-    attributeValueLimit: false,
-    enableAllRuleBooks: false,
-    enabledRuleBooks: OrderedSet.empty,
-    enableLanguageSpecializations: false,
-  })
+  fromDefault ("Rules")
+              <Rules> ({
+                higherParadeValues: 0,
+                attributeValueLimit: false,
+                enableAllRuleBooks: false,
+                enabledRuleBooks: OrderedSet.empty,
+                enableLanguageSpecializations: false,
+              })
 
 export const RulesL = makeLenses (Rules)

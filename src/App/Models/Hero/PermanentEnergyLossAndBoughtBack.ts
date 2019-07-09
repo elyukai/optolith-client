@@ -9,10 +9,11 @@ export interface PermanentEnergyLossAndBoughtBack extends PermanentEnergyLoss {
  * Create a new `PermanentEnergyLossAndBoughtBack` object.
  */
 export const PermanentEnergyLossAndBoughtBack =
-  fromDefault<PermanentEnergyLossAndBoughtBack> ({
-    lost: 0,
-    redeemed: 0,
-  })
+  fromDefault ("PermanentEnergyLossAndBoughtBack")
+              <PermanentEnergyLossAndBoughtBack> ({
+                lost: 0,
+                redeemed: 0,
+              })
 
 export const PermanentEnergyLossAndBoughtBackL =
   makeLenses (PermanentEnergyLossAndBoughtBack)

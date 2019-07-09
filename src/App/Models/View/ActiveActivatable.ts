@@ -18,12 +18,13 @@ export interface ActiveActivatable<A extends RecordI<Activatable> = RecordI<Acti
 }
 
 export const ActiveActivatable =
-  fromDefault<ActiveActivatable> ({
-    nameAndCost: ActivatableNameCost.default as Record<ActivatableNameCostSafeCost>,
-    validation: ActivatableActivationValidation.default,
-    heroEntry: ActivatableDependent.default,
-    wikiEntry: Advantage.default,
-  })
+  fromDefault ("ActiveActivatable")
+              <ActiveActivatable> ({
+                nameAndCost: ActivatableNameCost.default as Record<ActivatableNameCostSafeCost>,
+                validation: ActivatableActivationValidation.default,
+                heroEntry: ActivatableDependent.default,
+                wikiEntry: Advantage.default,
+              })
 
 type GenA<B> =
   <A extends Advantage | Disadvantage | SpecialAbility = Advantage | Disadvantage | SpecialAbility>
@@ -38,6 +39,11 @@ const AOWIA = ActiveObjectWithId.A
 
 export const ActiveActivatableA_ = {
   id: pipe (AAA.wikiEntry, Advantage.AL.id) as GenA<string>,
+  nameInWiki:
+    pipe (
+      AAA.wikiEntry as StrictAccessor<ActiveActivatable<SpecialAbility>, "wikiEntry">,
+      SpecialAbility.A.nameInWiki
+    ),
   levels: pipe (AAA.wikiEntry, Advantage.AL.tiers),
   gr: pipe (AAA.wikiEntry, Advantage.AL.gr),
   level: pipe (AAA.nameAndCost, ANCA_.tier),

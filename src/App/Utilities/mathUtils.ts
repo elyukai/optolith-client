@@ -202,3 +202,17 @@ export const lcm =
       return x * y / gcd (x) (y)
     }
   }
+
+/**
+ * `signum :: Num a => a -> a`
+ *
+ * Sign of a number. The functions abs and signum should satisfy the law:
+ *
+ * ```haskell
+ * abs x * signum x == x
+ * ```
+ *
+ * For real numbers, the `signum` is either `-1` (negative), `0` (zero) or `1`
+ * (positive).
+ */
+export const signum = (x: number) => x < 0 ? -1 : x > 0 ? 1 : 0

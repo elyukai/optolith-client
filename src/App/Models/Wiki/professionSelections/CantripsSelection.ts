@@ -9,11 +9,12 @@ export interface CantripsSelection {
 }
 
 export const CantripsSelection =
-  fromDefault<CantripsSelection> ({
-    id: ProfessionSelectionIds.CANTRIPS,
-    amount: 0,
-    sid: List.empty,
-  })
+  fromDefault ("CantripsSelection")
+              <CantripsSelection> ({
+                id: ProfessionSelectionIds.CANTRIPS,
+                amount: 0,
+                sid: List.empty,
+              })
 
 export const isCantripsSelection =
   (obj: AnyProfessionSelection): obj is Record<CantripsSelection> =>

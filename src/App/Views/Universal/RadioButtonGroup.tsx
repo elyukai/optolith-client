@@ -20,12 +20,12 @@ export interface OptionCreator extends RecordCreator<Option<any>> {
 }
 
 export const Option: OptionCreator =
-  fromDefault<Option<any>> ({
-    className: Nothing,
-    disabled: Nothing,
-    name: "",
-    value: Nothing,
-  })
+  fromDefault ("Option") <Option<any>> ({
+                className: Nothing,
+                disabled: Nothing,
+                name: "",
+                value: Nothing,
+              })
 
 export interface RadioButtonGroupProps<T extends OptionValue = OptionValue> {
   active: Maybe<T> | T

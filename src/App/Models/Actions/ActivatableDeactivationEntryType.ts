@@ -15,12 +15,13 @@ export interface ActivatableDeactivationEntryType {
 }
 
 export const ActivatableDeactivationEntryType =
-  fromDefault<ActivatableDeactivationEntryType> ({
-    isBlessed: false,
-    isMagical: false,
-    isDisadvantage: false,
-    hairColor: Nothing,
-    eyeColor: Nothing,
-    heroEntry: ActivatableDependent.default,
-    wikiEntry: Advantage.default,
-  })
+  fromDefault ("ActivatableDeactivationEntryType")
+              <ActivatableDeactivationEntryType> ({
+                isBlessed: false,
+                isMagical: false,
+                isDisadvantage: false,
+                hairColor: Nothing,
+                eyeColor: Nothing,
+                heroEntry: ActivatableDependent.default,
+                wikiEntry: Advantage.default,
+              })

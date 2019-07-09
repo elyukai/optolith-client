@@ -24,17 +24,18 @@ export interface ProfessionSelections {
 }
 
 export const ProfessionSelections =
-  fromDefault<ProfessionSelections> ({
-    [ProfessionSelectionIds.CANTRIPS]: Nothing,
-    [ProfessionSelectionIds.COMBAT_TECHNIQUES]: Nothing,
-    [ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND]: Nothing,
-    [ProfessionSelectionIds.CURSES]: Nothing,
-    [ProfessionSelectionIds.LANGUAGES_SCRIPTS]: Nothing,
-    [ProfessionSelectionIds.SPECIALIZATION]: Nothing,
-    [ProfessionSelectionIds.SKILLS]: Nothing,
-    [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]: Nothing,
-    [ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL]: false,
-    // [ProfessionSelectionIds.SPECIAL_ABILITY]: Nothing,
-  })
+  fromDefault ("ProfessionSelections")
+              <ProfessionSelections> ({
+                [ProfessionSelectionIds.CANTRIPS]: Nothing,
+                [ProfessionSelectionIds.COMBAT_TECHNIQUES]: Nothing,
+                [ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND]: Nothing,
+                [ProfessionSelectionIds.CURSES]: Nothing,
+                [ProfessionSelectionIds.LANGUAGES_SCRIPTS]: Nothing,
+                [ProfessionSelectionIds.SPECIALIZATION]: Nothing,
+                [ProfessionSelectionIds.SKILLS]: Nothing,
+                [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]: Nothing,
+                [ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL]: false,
+                // [ProfessionSelectionIds.SPECIAL_ABILITY]: Nothing,
+              })
 
 export const ProfessionSelectionsL = makeLenses (ProfessionSelections)

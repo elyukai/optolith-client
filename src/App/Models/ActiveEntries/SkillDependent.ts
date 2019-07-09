@@ -13,11 +13,12 @@ export interface SkillDependent {
 }
 
 export const SkillDependent =
-  fromDefault<SkillDependent> ({
-    id: "",
-    value: 0,
-    dependencies: List<SkillDependency> (),
-  })
+  fromDefault ("SkillDependent")
+              <SkillDependent> ({
+                id: "",
+                value: 0,
+                dependencies: List<SkillDependency> (),
+              })
 
 export const SkillDependentL = makeLenses (SkillDependent)
 

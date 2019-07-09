@@ -44,7 +44,7 @@ test ('OrderedMap', () => {
 })
 
 test ('Record', () => {
-  const creator = fromDefault ({ x: 0, y: 0 })
+  const creator = fromDefault ("X") ({ x: 0, y: 0 })
 
-  expect (show (creator ({ y: 2, x: Nothing }))) .toEqual ('{ x = 0, y = 2 }')
+  expect (show (creator ({ y: 2, x: Nothing }))) .toEqual ('X { x = 0, y = 2 }')
 })

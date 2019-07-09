@@ -36,11 +36,11 @@ interface DropdownOptionCreator extends RecordCreator<DropdownOption<DropdownKey
 }
 
 export const DropdownOption: DropdownOptionCreator =
-  fromDefault<DropdownOption<any>> ({
-    id: Nothing,
-    name: "",
-    disabled: Nothing,
-  })
+  fromDefault ("DropdownOption") <DropdownOption<any>> ({
+                id: Nothing,
+                name: "",
+                disabled: Nothing,
+              })
 
 const DOA = DropdownOption.A
 

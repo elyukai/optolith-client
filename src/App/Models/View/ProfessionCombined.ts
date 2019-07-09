@@ -31,22 +31,23 @@ export interface ProfessionCombined {
 }
 
 export const ProfessionCombined =
-  fromDefault<ProfessionCombined> ({
-    wikiEntry: Profession .default,
-    mappedAP: 0,
-    mappedPrerequisites: List.empty,
-    mappedSpecialAbilities: List.empty,
-    mappedSelections: ProfessionSelections.default,
-    mappedCombatTechniques: List.empty,
-    mappedPhysicalSkills: List.empty,
-    mappedSocialSkills: List.empty,
-    mappedNatureSkills: List.empty,
-    mappedKnowledgeSkills: List.empty,
-    mappedCraftSkills: List.empty,
-    mappedSpells: List.empty,
-    mappedLiturgicalChants: List.empty,
-    mappedVariants: List.empty,
-  })
+  fromDefault ("ProfessionCombined")
+              <ProfessionCombined> ({
+                wikiEntry: Profession .default,
+                mappedAP: 0,
+                mappedPrerequisites: List.empty,
+                mappedSpecialAbilities: List.empty,
+                mappedSelections: ProfessionSelections.default,
+                mappedCombatTechniques: List.empty,
+                mappedPhysicalSkills: List.empty,
+                mappedSocialSkills: List.empty,
+                mappedNatureSkills: List.empty,
+                mappedKnowledgeSkills: List.empty,
+                mappedCraftSkills: List.empty,
+                mappedSpells: List.empty,
+                mappedLiturgicalChants: List.empty,
+                mappedVariants: List.empty,
+              })
 
 export const ProfessionCombinedL = makeLenses (ProfessionCombined)
 

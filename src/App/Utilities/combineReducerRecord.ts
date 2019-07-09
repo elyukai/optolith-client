@@ -26,10 +26,11 @@ type ReducerRecord<S extends RecordBase, A extends Action = any> = {
  * - `L`: Lenses for all slices.
  */
 export const combineReducerRecord =
+  (recordName: string) =>
   <S extends RecordBase, A extends Action = any>
   (defaults: Required<S>) =>
   (reducers: Required<ReducerRecord<S>>) => {
-    const x = fromDefault (defaults)
+    const x = fromDefault (recordName) (defaults)
     const xL = makeLenses (x)
 
     const reducer =

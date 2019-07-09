@@ -8,7 +8,8 @@ export interface PrimaryAttributeDamageThreshold {
 }
 
 export const PrimaryAttributeDamageThreshold =
-  fromDefault<PrimaryAttributeDamageThreshold> ({
-    primary: Nothing,
-    threshold: 0,
-  })
+  fromDefault ("PrimaryAttributeDamageThreshold")
+              <PrimaryAttributeDamageThreshold> ({
+                primary: Nothing,
+                threshold: 0,
+              })

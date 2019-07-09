@@ -31,11 +31,13 @@ export interface HeroesState {
   currentId: Maybe<string>
 }
 
-export const HeroesState = fromDefault<HeroesState> ({
-  heroes: OrderedMap.empty,
-  users: OrderedMap.empty,
-  currentId: Nothing,
-})
+export const HeroesState =
+  fromDefault ("HeroesState")
+              <HeroesState> ({
+                heroes: OrderedMap.empty,
+                users: OrderedMap.empty,
+                currentId: Nothing,
+              })
 
 export const HeroesStateL = makeLenses (HeroesState)
 

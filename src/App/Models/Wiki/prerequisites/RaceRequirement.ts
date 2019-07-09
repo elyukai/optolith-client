@@ -11,10 +11,11 @@ export interface RaceRequirement {
 }
 
 export const RaceRequirement =
-  fromDefault<RaceRequirement> ({
-    id: "RACE",
-    value: 0,
-  })
+  fromDefault ("RaceRequirement")
+              <RaceRequirement> ({
+                id: "RACE",
+                value: 0,
+              })
 
 export const isRaceRequirement =
   pipe (RequireActivatable.AL.id, equals<string | List<string>> ("RACE")) as unknown as

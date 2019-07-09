@@ -425,10 +425,10 @@ interface SkillsSelectionJoined {
 }
 
 const SkillsSelectionJoined =
-  fromDefault<SkillsSelectionJoined> ({
-    properties: SkillsSelection.default,
-    text: "",
-  })
+  fromDefault ("SkillsSelectionJoined") <SkillsSelectionJoined> ({
+                properties: SkillsSelection.default,
+                text: "",
+              })
 
 const getSkillSelection =
   (l10n: L10nRecord) =>
@@ -873,11 +873,11 @@ interface VariantPrerequisiteIntermediate {
 }
 
 const VariantPrerequisiteIntermediate =
-  fromDefault<VariantPrerequisiteIntermediate> ({
-    id: "",
-    name: "",
-    active: Nothing,
-  })
+  fromDefault ("VariantPrerequisiteIntermediate") <VariantPrerequisiteIntermediate> ({
+                id: "",
+                name: "",
+                active: Nothing,
+              })
 
 const VariantPrerequisites = (props: VariantPrerequisitesProps): JSX.Element | null => {
   const {
@@ -1274,7 +1274,8 @@ interface CombinedSpell {
   value: number
 }
 
-const CombinedSpell = fromDefault<CombinedSpell> ({ newId: "", oldId: "", value: 0 })
+const CombinedSpell = fromDefault ("CombinedSpell") <CombinedSpell>
+                                  ({ newId: "", oldId: "", value: 0 })
 
 const CSA = CombinedSpell.A
 

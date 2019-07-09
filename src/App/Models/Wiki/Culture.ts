@@ -40,34 +40,35 @@ export interface Culture {
 }
 
 export const Culture =
-  fromDefault<Culture> ({
-    id: "",
-    name: "",
-    culturalPackageAdventurePoints: 0,
-    languages: List.empty,
-    scripts: List.empty,
-    socialStatus: List.empty,
-    areaKnowledge: "",
-    areaKnowledgeShort: "",
-    commonProfessions: List.empty,
-    commonMundaneProfessions: Nothing,
-    commonMagicProfessions: Nothing,
-    commonBlessedProfessions: Nothing,
-    commonAdvantages: List.empty,
-    commonAdvantagesText: Nothing,
-    commonDisadvantages: List.empty,
-    commonDisadvantagesText: Nothing,
-    uncommonAdvantages: List.empty,
-    uncommonAdvantagesText: Nothing,
-    uncommonDisadvantages: List.empty,
-    uncommonDisadvantagesText: Nothing,
-    commonSkills: List.empty,
-    uncommonSkills: List.empty,
-    commonNames: "",
-    culturalPackageSkills: List.empty,
-    category: Categories.CULTURES,
-    src: List.empty,
-  })
+  fromDefault ("Culture")
+              <Culture> ({
+                id: "",
+                name: "",
+                culturalPackageAdventurePoints: 0,
+                languages: List.empty,
+                scripts: List.empty,
+                socialStatus: List.empty,
+                areaKnowledge: "",
+                areaKnowledgeShort: "",
+                commonProfessions: List.empty,
+                commonMundaneProfessions: Nothing,
+                commonMagicProfessions: Nothing,
+                commonBlessedProfessions: Nothing,
+                commonAdvantages: List.empty,
+                commonAdvantagesText: Nothing,
+                commonDisadvantages: List.empty,
+                commonDisadvantagesText: Nothing,
+                uncommonAdvantages: List.empty,
+                uncommonAdvantagesText: Nothing,
+                uncommonDisadvantages: List.empty,
+                uncommonDisadvantagesText: Nothing,
+                commonSkills: List.empty,
+                uncommonSkills: List.empty,
+                commonNames: "",
+                culturalPackageSkills: List.empty,
+                category: Categories.CULTURES,
+                src: List.empty,
+              })
 
 export const CultureL = makeLenses (Culture)
 

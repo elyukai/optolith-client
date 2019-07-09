@@ -23,10 +23,11 @@ export interface StyleDependency {
  * Create a new `StyleDependency` object.
  */
 export const StyleDependency =
-  fromDefault<StyleDependency> ({
-    id: "",
-    active: Nothing,
-    origin: "",
-  })
+  fromDefault ("StyleDependency")
+              <StyleDependency> ({
+                id: "",
+                active: Nothing,
+                origin: "",
+              })
 
 export const StyleDependencyL = makeLenses (StyleDependency)

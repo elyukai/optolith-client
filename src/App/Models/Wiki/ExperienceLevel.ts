@@ -13,14 +13,15 @@ export interface ExperienceLevel {
 }
 
 export const ExperienceLevel =
-  fromDefault<ExperienceLevel> ({
-    id: "",
-    name: "",
-    ap: 0,
-    maxAttributeValue: 0,
-    maxSkillRating: 0,
-    maxCombatTechniqueRating: 0,
-    maxTotalAttributeValues: 0,
-    maxSpellsLiturgicalChants: 0,
-    maxUnfamiliarSpells: 0,
-  })
+  fromDefault ("ExperienceLevel")
+              <ExperienceLevel> ({
+                id: "",
+                name: "",
+                ap: 0,
+                maxAttributeValue: 0,
+                maxSkillRating: 0,
+                maxCombatTechniqueRating: 0,
+                maxTotalAttributeValues: 0,
+                maxSpellsLiturgicalChants: 0,
+                maxUnfamiliarSpells: 0,
+              })

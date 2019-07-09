@@ -6,7 +6,7 @@ const { fromDefault } = require ("../../../Data/Record")
 
 describe ("sortRecordsBy", () => {
   it ("sorts a list of record by one comparing factor", () => {
-    const X = fromDefault ({ x: 0 })
+    const X = fromDefault ("X") ({ x: 0 })
 
     const xs =
       List (
@@ -37,7 +37,7 @@ describe ("sortRecordsBy", () => {
   })
 
   it ("sorts a list of record by two comparing factors", () => {
-    const X = fromDefault ({ x: 0, y: 0 })
+    const X = fromDefault ("X") ({ x: 0, y: 0 })
 
     const xs =
       List (
@@ -67,7 +67,7 @@ describe ("sortRecordsBy", () => {
       .toEqual (exs)
   })
   it ("sorts a list of record by two comparing factors reversed", () => {
-    const X = fromDefault ({ x: 0, y: 0 })
+    const X = fromDefault ("X") ({ x: 0, y: 0 })
 
     const xs =
       List (

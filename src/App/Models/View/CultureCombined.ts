@@ -10,10 +10,11 @@ export interface CultureCombined {
 }
 
 export const CultureCombined =
-  fromDefault<CultureCombined> ({
-    wikiEntry: Culture .default,
-    mappedCulturalPackageSkills: List.empty,
-  })
+  fromDefault ("CultureCombined")
+              <CultureCombined> ({
+                wikiEntry: Culture .default,
+                mappedCulturalPackageSkills: List.empty,
+              })
 
 const CCA = CultureCombined.A
 const CA = Culture.A

@@ -1,7 +1,7 @@
 import { fmapF } from "../../../../Data/Functor";
 import { head, isList, NonEmptyList } from "../../../../Data/List";
 import { Maybe, Nothing } from "../../../../Data/Maybe";
-import { fromNamedDefault, makeLenses, Record } from "../../../../Data/Record";
+import { fromDefault, makeLenses, Record } from "../../../../Data/Record";
 import { ActiveObject } from "../../ActiveEntries/ActiveObject";
 import { SID } from "../wikiTypeHelpers";
 
@@ -19,26 +19,26 @@ export interface ProfessionRequireActivatable extends RequireActivatable {
 }
 
 export const RequireActivatable =
-  fromNamedDefault ("RequireActivatable")
-                   <RequireActivatable> ({
-                     id: "",
-                     active: true,
-                     sid: Nothing,
-                     sid2: Nothing,
-                     tier: Nothing,
-                   })
+  fromDefault ("RequireActivatable")
+              <RequireActivatable> ({
+                id: "",
+                active: true,
+                sid: Nothing,
+                sid2: Nothing,
+                tier: Nothing,
+              })
 
 export const RequireActivatableL = makeLenses (RequireActivatable)
 
 export const ProfessionRequireActivatable =
-  fromNamedDefault ("ProfessionRequireActivatable")
-                   <ProfessionRequireActivatable> ({
-                     id: "",
-                     active: true,
-                     sid: Nothing,
-                     sid2: Nothing,
-                     tier: Nothing,
-                   })
+  fromDefault ("ProfessionRequireActivatable")
+              <ProfessionRequireActivatable> ({
+                id: "",
+                active: true,
+                sid: Nothing,
+                sid2: Nothing,
+                tier: Nothing,
+              })
 
 export const ProfessionRequireActivatableL = makeLenses (ProfessionRequireActivatable)
 

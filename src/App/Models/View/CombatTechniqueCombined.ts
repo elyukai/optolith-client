@@ -8,7 +8,8 @@ export interface CombatTechniqueCombined {
 }
 
 export const CombatTechniqueCombined =
-  fromDefault<CombatTechniqueCombined> ({
-    wikiEntry: CombatTechnique .default,
-    stateEntry: SkillDependent .default,
-  })
+  fromDefault ("CombatTechniqueCombined")
+              <CombatTechniqueCombined> ({
+                wikiEntry: CombatTechnique .default,
+                stateEntry: SkillDependent .default,
+              })

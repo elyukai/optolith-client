@@ -2,7 +2,7 @@ import { equals } from "../../Data/Eq";
 import { ident } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
 import { any, filter, isInfixOf, List, lower } from "../../Data/List";
-import { guard, imapMaybe, Just, Maybe, maybe } from "../../Data/Maybe";
+import { fromMaybe, guard, imapMaybe, Just, Maybe, maybe } from "../../Data/Maybe";
 import { elems } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
@@ -205,8 +205,10 @@ export const getSpecialAbilitiesFilteredByOptions = createMaybeSelector (
 export const getPreparedSpecialAbilities = createMaybeSelector (
   getWikiFilterText,
   getSpecialAbilitiesFilteredByOptions,
-  // tslint:disable-next-line: no-unnecessary-callback-wrapper
-  uncurryN (filter_text => filterRecordsByName (filter_text))
+  uncurryN (filterRecordsByA ([
+                               SpecialAbility.A.name,
+                               pipe (SpecialAbility.A.nameInWiki, fromMaybe ("")),
+                             ]))
 )
 
 export const getSpellsSortedByName = createMaybeSelector (

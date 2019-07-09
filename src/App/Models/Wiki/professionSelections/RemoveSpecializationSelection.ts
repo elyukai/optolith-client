@@ -12,10 +12,11 @@ export type VariantSpecializationSelection =
   Record<RemoveSpecializationSelection>
 
 const _RemoveSpecializationSelection =
-  fromDefault<RemoveSpecializationSelection> ({
-    id: ProfessionSelectionIds.SPECIALIZATION,
-    active: false,
-  })
+  fromDefault ("RemoveSpecializationSelection")
+              <RemoveSpecializationSelection> ({
+                id: ProfessionSelectionIds.SPECIALIZATION,
+                active: false,
+              })
 
 export const RemoveSpecializationSelection =
   _RemoveSpecializationSelection ({

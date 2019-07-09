@@ -10,9 +10,10 @@ export interface IncreasableListForView {
 }
 
 export const IncreasableListForView =
-  fromDefault<IncreasableListForView> ({
-    id: List.pure (""),
-    name: List.empty,
-    value: 0,
-    previous: Nothing,
-  })
+  fromDefault ("IncreasableListForView")
+              <IncreasableListForView> ({
+                id: List.pure (""),
+                name: List.empty,
+                value: 0,
+                previous: Nothing,
+              })

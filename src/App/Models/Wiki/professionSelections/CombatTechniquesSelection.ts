@@ -10,12 +10,13 @@ export interface CombatTechniquesSelection {
 }
 
 export const CombatTechniquesSelection =
-  fromDefault<CombatTechniquesSelection> ({
-    id: ProfessionSelectionIds.COMBAT_TECHNIQUES,
-    amount: 0,
-    value: 0,
-    sid: List.empty,
-  })
+  fromDefault ("CombatTechniquesSelection")
+              <CombatTechniquesSelection> ({
+                id: ProfessionSelectionIds.COMBAT_TECHNIQUES,
+                amount: 0,
+                value: 0,
+                sid: List.empty,
+              })
 
 export const CombatTechniquesSelectionL = makeLenses (CombatTechniquesSelection)
 

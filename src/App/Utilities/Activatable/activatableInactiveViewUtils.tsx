@@ -46,15 +46,15 @@ interface PropertiesAffectedByState {
 }
 
 export const PropertiesAffectedByState =
-  fromDefault<PropertiesAffectedByState> ({
-    currentCost: Nothing,
-    disabled: Nothing,
-    selectElement: Nothing,
-    firstSelectOptions: Nothing,
-    secondSelectOptions: Nothing,
-    inputElement: Nothing,
-    inputDescription: Nothing,
-  })
+  fromDefault ("PropertiesAffectedByState") <PropertiesAffectedByState> ({
+                currentCost: Nothing,
+                disabled: Nothing,
+                selectElement: Nothing,
+                firstSelectOptions: Nothing,
+                secondSelectOptions: Nothing,
+                inputElement: Nothing,
+                inputDescription: Nothing,
+              })
 
 const PropertiesAffectedByStateL = makeLenses (PropertiesAffectedByState)
 
@@ -68,14 +68,14 @@ interface InactiveActivatableControlElements {
 }
 
 export const InactiveActivatableControlElements =
-  fromDefault<InactiveActivatableControlElements> ({
-    disabled: Nothing,
-    selectElement: Nothing,
-    secondSelectElement: Nothing,
-    inputElement: Nothing,
-    levelElementBefore: Nothing,
-    levelElementAfter: Nothing,
-  })
+  fromDefault ("InactiveActivatableControlElements") <InactiveActivatableControlElements> ({
+                disabled: Nothing,
+                selectElement: Nothing,
+                secondSelectElement: Nothing,
+                inputElement: Nothing,
+                levelElementBefore: Nothing,
+                levelElementAfter: Nothing,
+              })
 
 const InactiveActivatableControlElementsL = makeLenses (InactiveActivatableControlElements)
 

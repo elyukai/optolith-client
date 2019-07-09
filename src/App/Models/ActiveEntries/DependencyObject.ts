@@ -11,10 +11,11 @@ export interface DependencyObject {
 }
 
 export const DependencyObject =
-  fromDefault<DependencyObject> ({
-    origin: Nothing,
-    active: Nothing,
-    sid: Nothing,
-    sid2: Nothing,
-    tier: Nothing,
-  })
+  fromDefault ("DependencyObject")
+              <DependencyObject> ({
+                origin: Nothing,
+                active: Nothing,
+                sid: Nothing,
+                sid2: Nothing,
+                tier: Nothing,
+              })

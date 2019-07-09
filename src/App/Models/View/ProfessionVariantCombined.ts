@@ -23,16 +23,17 @@ export interface ProfessionVariantCombined {
 }
 
 export const ProfessionVariantCombined =
-  fromDefault<ProfessionVariantCombined> ({
-    wikiEntry: ProfessionVariant .default,
-    mappedPrerequisites: List.empty,
-    mappedSpecialAbilities: List.empty,
-    mappedSelections: ProfessionVariantSelections.default,
-    mappedCombatTechniques: List.empty,
-    mappedSkills: List.empty,
-    mappedSpells: List.empty,
-    mappedLiturgicalChants: List.empty,
-  })
+  fromDefault ("ProfessionVariantCombined")
+              <ProfessionVariantCombined> ({
+                wikiEntry: ProfessionVariant .default,
+                mappedPrerequisites: List.empty,
+                mappedSpecialAbilities: List.empty,
+                mappedSelections: ProfessionVariantSelections.default,
+                mappedCombatTechniques: List.empty,
+                mappedSkills: List.empty,
+                mappedSpells: List.empty,
+                mappedLiturgicalChants: List.empty,
+              })
 
 export const ProfessionVariantCombinedA_ = {
   id: pipe (ProfessionVariantCombined.A.wikiEntry, ProfessionVariant.A.id),

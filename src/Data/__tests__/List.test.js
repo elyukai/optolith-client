@@ -983,7 +983,7 @@ test ('groupByKey', () => {
 })
 
 test ('mapByIdKeyMap', () => {
-  const R = fromDefault ({ id: "" })
+  const R = fromDefault ("R") ({ id: "" })
 
   const m = OrderedMap.fromArray ([["a", 1], ["b", 2], ["c", 3], ["d", 4], ["e", 5]])
 

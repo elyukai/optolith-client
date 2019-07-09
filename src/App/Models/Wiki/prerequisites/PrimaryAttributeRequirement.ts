@@ -12,11 +12,12 @@ export interface RequirePrimaryAttribute {
 }
 
 export const RequirePrimaryAttribute =
-  fromDefault<RequirePrimaryAttribute> ({
-    id: "ATTR_PRIMARY",
-    type: 1,
-    value: 0,
-  })
+  fromDefault ("RequirePrimaryAttribute")
+              <RequirePrimaryAttribute> ({
+                id: "ATTR_PRIMARY",
+                type: 1,
+                value: 0,
+              })
 
 export const isPrimaryAttributeRequirement =
   pipe (RequireActivatable.AL.id, equals<string | List<string>> ("ATTR_PRIMARY")) as unknown as

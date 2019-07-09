@@ -10,12 +10,13 @@ export interface CombatTechniquesSecondSelection {
 }
 
 export const CombatTechniquesSecondSelection =
-  fromDefault<CombatTechniquesSecondSelection> ({
-    id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND,
-    amount: 0,
-    value: 0,
-    sid: List.empty,
-  })
+  fromDefault ("CombatTechniquesSecondSelection")
+              <CombatTechniquesSecondSelection> ({
+                id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND,
+                amount: 0,
+                value: 0,
+                sid: List.empty,
+              })
 
 export const isSecondCombatTechniquesSelection =
   (obj: AnyProfessionSelection): obj is Record<CombatTechniquesSecondSelection> =>

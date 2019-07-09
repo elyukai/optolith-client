@@ -9,11 +9,12 @@ export interface CantripCombined extends IsActive {
 }
 
 export const CantripCombined =
-  fromDefault<CantripCombined> ({
-    wikiEntry: Cantrip .default,
-    active: false,
-    isUnfamiliar: false,
-  })
+  fromDefault ("CantripCombined")
+              <CantripCombined> ({
+                wikiEntry: Cantrip .default,
+                active: false,
+                isUnfamiliar: false,
+              })
 
 export const CantripCombinedA_ = {
   name: pipe (CantripCombined.A.wikiEntry, Cantrip.A.name),

@@ -6,10 +6,11 @@ export interface NumIdName {
 }
 
 export const NumIdName =
-  fromDefault<NumIdName> ({
-    id: 0,
-    name: "",
-  })
+  fromDefault ("NumIdName")
+              <NumIdName> ({
+                id: 0,
+                name: "",
+              })
 
 /**
  * Note: The id will always be 1 higher than the corresponding index.

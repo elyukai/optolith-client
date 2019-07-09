@@ -11,12 +11,13 @@ export interface AttributeDependent {
 }
 
 export const AttributeDependent =
-  fromDefault<AttributeDependent> ({
-    id: "",
-    value: 8,
-    mod: 0,
-    dependencies: List<SkillDependency> (),
-  })
+  fromDefault ("AttributeDependent")
+              <AttributeDependent> ({
+                id: "",
+                value: 8,
+                mod: 0,
+                dependencies: List<SkillDependency> (),
+              })
 
 export const AttributeDependentL = makeLenses (AttributeDependent)
 

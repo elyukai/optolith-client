@@ -17,11 +17,12 @@ export interface SkillsSelection {
 }
 
 export const SkillsSelection =
-  fromDefault<SkillsSelection> ({
-    id: ProfessionSelectionIds.SKILLS,
-    value: 0,
-    gr: Nothing,
-  })
+  fromDefault ("SkillsSelection")
+              <SkillsSelection> ({
+                id: ProfessionSelectionIds.SKILLS,
+                value: 0,
+                gr: Nothing,
+              })
 
 export const isSkillsSelection =
   (obj: AnyProfessionSelection): obj is Record<SkillsSelection> =>

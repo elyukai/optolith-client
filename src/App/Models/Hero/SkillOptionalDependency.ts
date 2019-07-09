@@ -9,7 +9,8 @@ export interface SkillOptionalDependency {
  * Create a new `SkillOptionalDependency` object.
  */
 export const SkillOptionalDependency =
-  fromDefault<SkillOptionalDependency> ({
-    value: 0,
-    origin: "",
-  })
+  fromDefault ("SkillOptionalDependency")
+              <SkillOptionalDependency> ({
+                value: 0,
+                origin: "",
+              })

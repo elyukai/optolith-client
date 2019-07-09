@@ -9,10 +9,11 @@ export interface Book {
 }
 
 export const Book =
-  fromDefault<Book> ({
-    id: "",
-    name: "",
-    short: "",
-    isCore: false,
-    isAdultContent: false,
-  })
+  fromDefault ("Book")
+              <Book> ({
+                id: "",
+                name: "",
+                short: "",
+                isCore: false,
+                isAdultContent: false,
+              })

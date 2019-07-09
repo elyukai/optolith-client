@@ -27,25 +27,26 @@ export interface SelectOption {
 }
 
 export const SelectOption =
-  fromDefault<SelectOption> ({
-    id: 0,
-    name: "",
-    cost: Nothing,
-    prerequisites: Nothing,
-    description: Nothing,
-    isSecret: Nothing,
-    languages: Nothing,
-    continent: Nothing,
-    isExtinct: Nothing,
-    specializations: Nothing,
-    specializationInput: Nothing,
-    gr: Nothing,
-    level: Nothing,
-    target: Nothing,
-    applications: Nothing,
-    applicationInput: Nothing,
-    src: List.empty,
-  })
+  fromDefault ("SelectOption")
+              <SelectOption> ({
+                id: 0,
+                name: "",
+                cost: Nothing,
+                prerequisites: Nothing,
+                description: Nothing,
+                isSecret: Nothing,
+                languages: Nothing,
+                continent: Nothing,
+                isExtinct: Nothing,
+                specializations: Nothing,
+                specializationInput: Nothing,
+                gr: Nothing,
+                level: Nothing,
+                target: Nothing,
+                applications: Nothing,
+                applicationInput: Nothing,
+                src: List.empty,
+              })
 
 export const SelectOptionL = makeLenses (SelectOption)
 

@@ -7,10 +7,11 @@ export interface NameBySex {
 }
 
 export const NameBySex =
-  fromDefault<NameBySex> ({
-    m: "",
-    f: "",
-  })
+  fromDefault ("NameBySex")
+              <NameBySex> ({
+                m: "",
+                f: "",
+              })
 
 export const nameBySex =
   (sex: Sex) => NameBySex.AL[sex] as unknown as (name: Record<NameBySex>) => string

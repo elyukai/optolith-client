@@ -29,24 +29,25 @@ export interface ProfessionVariant {
 }
 
 export const ProfessionVariant =
-  fromDefault<ProfessionVariant> ({
-    id: "",
-    name: "",
-    ap: 0,
-    dependencies: List.empty,
-    prerequisites: List.empty,
-    selections: ProfessionVariantSelections.default,
-    specialAbilities: List.empty,
-    combatTechniques: List.empty,
-    skills: List.empty,
-    spells: List.empty,
-    liturgicalChants: List.empty,
-    blessings: List.empty,
-    precedingText: Nothing,
-    fullText: Nothing,
-    concludingText: Nothing,
-    category: Categories.PROFESSION_VARIANTS,
-  })
+  fromDefault ("ProfessionVariant")
+              <ProfessionVariant> ({
+                id: "",
+                name: "",
+                ap: 0,
+                dependencies: List.empty,
+                prerequisites: List.empty,
+                selections: ProfessionVariantSelections.default,
+                specialAbilities: List.empty,
+                combatTechniques: List.empty,
+                skills: List.empty,
+                spells: List.empty,
+                liturgicalChants: List.empty,
+                blessings: List.empty,
+                precedingText: Nothing,
+                fullText: Nothing,
+                concludingText: Nothing,
+                category: Categories.PROFESSION_VARIANTS,
+              })
 
 export const ProfessionVariantL = makeLenses (ProfessionVariant)
 

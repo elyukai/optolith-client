@@ -17,17 +17,18 @@ export interface Blessing {
 }
 
 export const Blessing =
-  fromDefault<Blessing> ({
-    id: "",
-    name: "",
-    tradition: List.empty,
-    category: Categories.BLESSINGS,
-    effect: "",
-    range: "",
-    duration: "",
-    target: "",
-    src: List.empty,
-  })
+  fromDefault ("Blessing")
+              <Blessing> ({
+                id: "",
+                name: "",
+                tradition: List.empty,
+                category: Categories.BLESSINGS,
+                effect: "",
+                range: "",
+                duration: "",
+                target: "",
+                src: List.empty,
+              })
 
 export const isBlessing =
   (r: EntryWithCategory) => Blessing.AL.category (r) === Categories.BLESSINGS

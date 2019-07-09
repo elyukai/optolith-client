@@ -11,12 +11,13 @@ export interface AttributeWithRequirements extends AttributeCombined {
 }
 
 export const AttributeWithRequirements =
-  fromDefault<AttributeWithRequirements> ({
-    wikiEntry: Attribute .default,
-    stateEntry: AttributeDependent .default,
-    max: Nothing,
-    min: 0,
-  })
+  fromDefault ("AttributeWithRequirements")
+              <AttributeWithRequirements> ({
+                wikiEntry: Attribute .default,
+                stateEntry: AttributeDependent .default,
+                max: Nothing,
+                min: 0,
+              })
 
 export const AttributeWithRequirementsA_ = {
   id: pipe (AttributeWithRequirements.A.wikiEntry, Attribute.A.id),

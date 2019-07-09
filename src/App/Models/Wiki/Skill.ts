@@ -25,23 +25,24 @@ export interface Skill {
 }
 
 export const Skill =
-  fromDefault<Skill> ({
-    id: "",
-    name: "",
-    category: Categories.TALENTS,
-    check: List.empty,
-    encumbrance: "",
-    gr: 0,
-    ic: 0,
-    applications: List.empty,
-    applicationsInput: Nothing,
-    tools: Nothing,
-    quality: "",
-    failed: "",
-    critical: "",
-    botch: "",
-    src: List.empty,
-  })
+  fromDefault ("Skill")
+              <Skill> ({
+                id: "",
+                name: "",
+                category: Categories.TALENTS,
+                check: List.empty,
+                encumbrance: "",
+                gr: 0,
+                ic: 0,
+                applications: List.empty,
+                applicationsInput: Nothing,
+                tools: Nothing,
+                quality: "",
+                failed: "",
+                critical: "",
+                botch: "",
+                src: List.empty,
+              })
 
 export const isSkill =
   (r: EntryWithCategory) => Skill.AL.category (r) === Categories.TALENTS

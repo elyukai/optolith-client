@@ -11,10 +11,11 @@ export interface SpellCombined {
 }
 
 export const SpellCombined =
-  fromDefault<SpellCombined> ({
-    wikiEntry: Spell .default,
-    stateEntry: ActivatableSkillDependent .default,
-  })
+  fromDefault ("SpellCombined")
+              <SpellCombined> ({
+                wikiEntry: Spell .default,
+                stateEntry: ActivatableSkillDependent .default,
+              })
 
 export const SpellCombinedA_ = {
   id: pipe (SpellCombined.A.wikiEntry, Spell.A.id),

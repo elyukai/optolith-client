@@ -195,13 +195,15 @@ const showPDepth = (depth: number) => (x: any): string => {
   }
 
   if (Internals.isOrderedSet (x)) {
-    return `${dws}Set (${[...x] .map (trimNextDepth (depth + 2)) .join (`\n${dws}    , `)})`
+    return `${dws}Set ( ${
+      [...x] .map (trimNextDepth (depth + 2)) .join (`\n${dws}    , `)
+    }\n${dws})`
   }
 
   if (Internals.isOrderedMap (x)) {
-    return `${dws}Map (${
+    return `${dws}Map ( ${
       [...x] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (`\n${dws}    , `)
-    })`
+    }\n${dws})`
   }
 
   if (Internals.isRecord (x)) {

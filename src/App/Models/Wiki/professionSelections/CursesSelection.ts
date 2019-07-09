@@ -7,10 +7,11 @@ export interface CursesSelection {
 }
 
 export const CursesSelection =
-  fromDefault<CursesSelection> ({
-    id: ProfessionSelectionIds.CURSES,
-    value: 0,
-  })
+  fromDefault ("CursesSelection")
+              <CursesSelection> ({
+                id: ProfessionSelectionIds.CURSES,
+                value: 0,
+              })
 
 export const isCursesSelection =
   (obj: AnyProfessionSelection): obj is Record<CursesSelection> =>

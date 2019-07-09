@@ -7,7 +7,8 @@ export interface LiturgicalChantIsActive extends IsActive {
 }
 
 export const LiturgicalChantIsActive =
-  fromDefault<LiturgicalChantIsActive> ({
-    wikiEntry: LiturgicalChant .default,
-    active: false,
-  })
+  fromDefault ("LiturgicalChantIsActive")
+              <LiturgicalChantIsActive> ({
+                wikiEntry: LiturgicalChant .default,
+                active: false,
+              })

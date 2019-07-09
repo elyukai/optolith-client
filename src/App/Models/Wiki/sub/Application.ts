@@ -10,8 +10,9 @@ export interface Application {
 }
 
 export const Application =
-  fromDefault<Application> ({
-    id: 0,
-    name: "",
-    prerequisites: Nothing,
-  })
+  fromDefault ("Application")
+              <Application> ({
+                id: 0,
+                name: "",
+                prerequisites: Nothing,
+              })

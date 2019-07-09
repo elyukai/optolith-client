@@ -54,15 +54,16 @@ interface ConcatenatedModifications {
 }
 
 const ConcatenatedModifications =
-  fromDefault<ConcatenatedModifications> ({
-    hero: HeroModel.default,
-    skillRatingList: OrderedMap.empty,
-    skillActivateList: OrderedSet.empty,
-    activatable: List.empty,
-    languages: OrderedMap.empty,
-    scripts: OrderedSet.empty,
-    professionPrerequisites: List.empty,
-  })
+  fromDefault ("ConcatenatedModifications")
+              <ConcatenatedModifications> ({
+                hero: HeroModel.default,
+                skillRatingList: OrderedMap.empty,
+                skillActivateList: OrderedSet.empty,
+                activatable: List.empty,
+                languages: OrderedMap.empty,
+                scripts: OrderedSet.empty,
+                professionPrerequisites: List.empty,
+              })
 
 const CMA = ConcatenatedModifications.A
 const CML = makeLenses (ConcatenatedModifications)

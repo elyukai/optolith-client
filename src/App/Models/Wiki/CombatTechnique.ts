@@ -18,17 +18,18 @@ export interface CombatTechnique {
 }
 
 export const CombatTechnique =
-  fromDefault<CombatTechnique> ({
-    id: "",
-    name: "",
-    category: Categories.COMBAT_TECHNIQUES,
-    gr: 0,
-    ic: 0,
-    bpr: 0,
-    primary: List.empty,
-    special: Nothing,
-    src: List.empty,
-  })
+  fromDefault ("CombatTechnique")
+              <CombatTechnique> ({
+                id: "",
+                name: "",
+                category: Categories.COMBAT_TECHNIQUES,
+                gr: 0,
+                ic: 0,
+                bpr: 0,
+                primary: List.empty,
+                special: Nothing,
+                src: List.empty,
+              })
 
 export const isCombatTechnique =
   (r: EntryWithCategory) => CombatTechnique.AL.category (r) === Categories.COMBAT_TECHNIQUES

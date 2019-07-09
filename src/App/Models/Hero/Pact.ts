@@ -9,12 +9,13 @@ export interface Pact {
 }
 
 export const Pact =
-  fromDefault<Pact> ({
-    name: "",
-    category: 0,
-    domain: 0,
-    type: 0,
-    level: 0,
-  })
+  fromDefault ("Pact")
+              <Pact> ({
+                name: "",
+                category: 0,
+                domain: 0,
+                type: 0,
+                level: 0,
+              })
 
 export const PactL = makeLenses (Pact)
