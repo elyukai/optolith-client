@@ -187,11 +187,17 @@ export const isSpellDecreasable =
                                               (wiki_entry)
                                               (hero_entry)
 
-export const isUnfamiliarSpell =
-  (trad_hero_entries: List<Record<ActivatableDependent>>) => {
+export const isUnfamiliarSpell:
+  (trad_hero_entries: List<Record<ActivatableDependent>>) =>
+  (spell: Record<Spell> | Record<Cantrip>) => boolean =
+  trads => {
+    if (any (pipe (ADA.id, equals (prefixSA (679)))) (trads)) {
+      return cnst (false)
+    }
+
     const mguild_mage_sel =
       pipe_ (
-        trad_hero_entries,
+        trads,
         find (pipe (ADA.id, equals (prefixSA (70)))),
         bindF (pipe (ADA.active, listToMaybe)),
         bindF (AOA.sid)
@@ -199,20 +205,20 @@ export const isUnfamiliarSpell =
 
     const active_trad_num_ids =
       cons (mapMaybe (pipe (ADA.id, getNumericMagicalTraditionIdByInstanceId, fmap (inc)))
-                     (trad_hero_entries))
+                     (trads))
            (1)
 
     const isNoTraditionActive = notP (intersecting (active_trad_num_ids))
 
-    return (spell: Record<Spell> | Record<Cantrip>) => {
+    return x => {
       if (isJust (mguild_mage_sel)) {
         const guild_mage_sel = fromJust (mguild_mage_sel)
 
-        if (guild_mage_sel === SAL.id (spell)) {
+        if (guild_mage_sel === SAL.id (x)) {
           return false
         }
       }
 
-      return isNoTraditionActive (SAL.tradition (spell))
+      return isNoTraditionActive (SAL.tradition (x))
     }
   }

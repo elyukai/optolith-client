@@ -7,6 +7,7 @@ import { show } from "../../../Data/Show";
 import { toInt, toNatural, unsafeToInt } from "../NumberUtils";
 import { pipe, pipe_ } from "../pipe";
 import { id_rx, isNaturalNumber } from "../RegexUtils";
+import { isNumber } from "../typeCheckUtils";
 
 /**
  * Lookup property `"id"` in passed line from universal table and returns an
@@ -119,7 +120,7 @@ export const mergeRowsByIdAndMainId =
     const sameId =
       pipe (
         lookup ("id") as (x: OrderedMap<string, string>) => Maybe<string>,
-        elem (show (id))
+        elem (isNumber (id) ? show (id) : id)
       )
 
     const ml10n_row =
@@ -182,7 +183,7 @@ export const mergeRowsByIdAndMainIdUnivOpt =
     const sameId =
       pipe (
         lookup ("id") as (x: OrderedMap<string, string>) => Maybe<string>,
-        elem (show (id))
+        elem (isNumber (id) ? show (id) : id)
       )
 
     const muniv_row =
