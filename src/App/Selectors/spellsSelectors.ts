@@ -1,9 +1,10 @@
 import { notP } from "../../Data/Bool";
+import { equals } from "../../Data/Eq";
 import { ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
 import { append, consF, countWith, elemF, List, map, notNull, partition } from "../../Data/List";
-import { all, any, bindF, ensure, fromMaybe_, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, liftM3 } from "../../Data/Maybe";
+import { all, any, bindF, ensure, fromMaybe_, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { member } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
@@ -40,7 +41,6 @@ import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCantripsSortOptions, getSpellsCombinedSortOptions, getSpellsSortOptions } from "./sortOptionsSelectors";
 import { getAdvantages, getCantrips, getDisadvantages, getHeroProp, getInactiveSpellsFilterText, getLocaleAsProp, getMaybeSpecialAbilities, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki, getWikiCantrips, getWikiSpecialAbilities, getWikiSpells } from "./stateSelectors";
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
-import { equals } from "../../Data/Eq";
 
 const HA = HeroModel.A
 const WA = WikiModel.A
@@ -273,15 +273,15 @@ export const getInactiveSpells = createMaybeSelector (
             const mhero_entry = lookup (k) (hero_spells)
 
             if (isSpellPrereqsValid (wiki_entry)
-                && SA.gr (wiki_entry) === 1 // Intuitive Magier können nur Zauber erlernen
+                // Intuitive Magier können nur Zauber erlernen:
+                && SA.gr (wiki_entry) === 1
+                // Muss inaktiv sein:
                 && all (notP (ASDA.active)) (mhero_entry)
-                && SA.ic (wiki_entry) < 4 // Keine Zauber mit Steigerungsfaktor D
-                && !((SA.ic (wiki_entry) === 3)
-                && OrderedMap.any ((x: Record<ActivatableSkillDependent>) => {
-                  return ASDA.active (x)
-                    && pipe_ (x, ASDA.id, lookupF (wiki_spells), maybe (false)
-                    (pipe (SA.ic, equals (3))));
-                }) (hero_spells))) { // Nur ein C Zauber
+                // Keine Zauber mit Steigerungsfaktor D:
+                && SA.ic (wiki_entry) < 4
+                // Nur ein C Zauber:
+                && !(SA.ic (wiki_entry) === 3 && isAnySpellActiveWithImpCostC (wiki_spells)
+                                                                              (hero_spells))) {
               return consF (SpellWithRequirements ({
                 wikiEntry: wiki_entry,
                 stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (k))
@@ -366,6 +366,17 @@ export const getInactiveSpells = createMaybeSelector (
                                        (wiki_spells)
       }))
 )
+
+const isAnySpellActiveWithImpCostC =
+  (wiki_spells: OrderedMap<string, Record<Spell>>) =>
+    OrderedMap.any ((x: Record<ActivatableSkillDependent>) => ASDA.active (x)
+                                                              && pipe_ (
+                                                                x,
+                                                                ASDA.id,
+                                                                lookupF (wiki_spells),
+                                                                maybe (false)
+                                                                      (pipe (SA.ic, equals (3)))
+                                                              ))
 
 export const getAvailableInactiveSpells = createMaybeSelector (
   getRuleBooksEnabled,

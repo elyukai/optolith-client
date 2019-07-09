@@ -681,6 +681,8 @@ export const uncons =
   <A> (xs: List<A>): Maybe<Pair<A, List<A>>> =>
     fnull (xs) ? Nothing : Just (Pair (xs .x, tail (xs)))
 
+export type unconsSafe = <A> (xs: NonEmptyList<A>) => Just<Pair<A, List<A>>>
+
 
 // LIST TRANSFORMATIONS
 

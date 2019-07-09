@@ -5,7 +5,7 @@ import { over, set } from "../../Data/Lens";
 import { append, consF, elem, filter, flength, foldr, isList, List, ListI, map } from "../../Data/List";
 import { bind, ensure, fromMaybe, isJust, isNothing, Just, listToMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
 import { alter, foldrWithKey, insertF, keys, lookup, member, OrderedMap } from "../../Data/OrderedMap";
-import { insert, OrderedSet, toList, union } from "../../Data/OrderedSet";
+import { insert, OrderedSet, sdelete, toList, union } from "../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { SetSelectionsAction } from "../Actions/ProfessionActions";
 import { ActionTypes } from "../Constants/ActionTypes";
@@ -252,7 +252,7 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
                                     maybe (ident as ident<OrderedSet<string>>)
                                           (pipe (ISA.id, x => member (x) (CMA.skillRatingList (cm))
                                                                 ? insert (x)
-                                                                : ident))
+                                                                : sdelete (x)))
                                   )))
                            (prof_var_spells_chants))
                      (cm)
