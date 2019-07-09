@@ -570,7 +570,7 @@ const putLevelName =
 /**
  * Calculates level name and level-based cost and (optionally) updates `name`.
  * @param locale
- * @param addTierToCombinedTier If true, does not add `tierName` to `name`.
+ * @param addLevelToName If true, does not add `current_level` to `name`.
  */
 export const convertPerTierCostToFinalCost =
   (addLevelToName: boolean) =>

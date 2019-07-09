@@ -403,7 +403,7 @@ const mapProfessionPrerequisite =
         }),
         getNameCostForWiki (l10n) (wiki),
         fmap (pipe (
-          convertPerTierCostToFinalCost (false) (l10n),
+          convertPerTierCostToFinalCost (true) (l10n),
           nameAndCost =>
             ActivatableNameCostIsActive ({
               nameAndCost,
@@ -431,7 +431,7 @@ const mapProfessionSpecialAbility =
       }),
       getNameCostForWiki (l10n) (wiki),
       fmap (pipe (
-        convertPerTierCostToFinalCost (false) (l10n),
+        convertPerTierCostToFinalCost (true) (l10n),
         nameAndCost =>
           ActivatableNameCostIsActive ({
             nameAndCost,

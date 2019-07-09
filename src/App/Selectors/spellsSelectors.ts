@@ -3,12 +3,12 @@ import { ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
 import { append, consF, countWith, elemF, List, map, notNull, partition } from "../../Data/List";
-import { all, any, bindF, ensure, fromMaybe_, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
+import { all, any, bindF, ensure, fromMaybe_, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, liftM3 } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { member } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
 import { fst, snd } from "../../Data/Tuple";
-import { uncurryN, uncurryN3, uncurryN5, uncurryN6, uncurryN8 } from "../../Data/Tuple/Curry";
+import { uncurryN, uncurryN3, uncurryN5, uncurryN6, uncurryN9 } from "../../Data/Tuple/Curry";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
@@ -40,6 +40,7 @@ import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCantripsSortOptions, getSpellsCombinedSortOptions, getSpellsSortOptions } from "./sortOptionsSelectors";
 import { getAdvantages, getCantrips, getDisadvantages, getHeroProp, getInactiveSpellsFilterText, getLocaleAsProp, getMaybeSpecialAbilities, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki, getWikiCantrips, getWikiSpecialAbilities, getWikiSpells } from "./stateSelectors";
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
+import { equals } from "../../Data/Eq";
 
 const HA = HeroModel.A
 const WA = WikiModel.A
@@ -191,6 +192,45 @@ const isUnfamiliarSpellsActivationDisabled = createMaybeSelector (
   uncurryN (count => maybe (false) (pipe (ELA.maxUnfamiliarSpells, lte (count))))
 )
 
+export const isActivationDisabled = createMaybeSelector (
+  getActiveSpellsCounter,
+  mapGetToMaybeSlice (getAdvantages) (prefixAdv (58)),
+  mapGetToMaybeSlice (getDisadvantages) (prefixDis (59)),
+  getMagicalTraditionsFromHero,
+  getStartEl,
+  getPhase,
+  uncurryN6 (active_spells =>
+             mbonus =>
+             mmalus =>
+             hero_trads =>
+               liftM2 (start_el =>
+                       phase =>
+                         pipe_ (
+                           hero_trads,
+                           listToMaybe,
+                           maybe (true)
+                                 (trad => {
+                                   const trad_id = ADA.id (trad)
+
+                                   if (trad_id === prefixSA (679)) {
+                                     const max_spells =
+                                       getModifierByActiveLevel (Just (3))
+                                                                (mbonus)
+                                                                (mmalus)
+
+                                     if (active_spells >= max_spells) {
+                                       return true
+                                     }
+                                   }
+
+                                   const maxSpellsLiturgicalChants =
+                                     ExperienceLevel.A.maxSpellsLiturgicalChants (start_el)
+
+                                   return phase < 3 && active_spells >= maxSpellsLiturgicalChants
+                                 })
+                         )))
+)
+
 type Combined = Record<SpellWithRequirements>
 
 export const getInactiveSpells = createMaybeSelector (
@@ -202,15 +242,17 @@ export const getInactiveSpells = createMaybeSelector (
   isUnfamiliarSpellsActivationDisabled,
   getIsMaximumOfSpellsReached,
   getSpells,
-  uncurryN8 (
+  isActivationDisabled,
+  uncurryN9 (
     wiki =>
     trads_hero =>
     wiki_spells =>
     hero =>
     trads_wiki =>
     is_max_unfamiliar =>
-      liftM2 (is_max =>
-              hero_spells => {
+      liftM3 (is_max =>
+              hero_spells =>
+              is_activation_disabled => {
         const isLastTrad = pipe_ (trads_wiki, listToMaybe, fmap (SAA.id), Maybe.elemF)
 
         const isSpellPrereqsValid =
@@ -223,7 +265,7 @@ export const getInactiveSpells = createMaybeSelector (
         const isUnfamiliar = isUnfamiliarSpell (trads_hero)
 
         if (isLastTrad (prefixSA (679))) {
-          if (is_max) {
+          if (is_max || is_activation_disabled) {
             return List<Combined> ()
           }
 
@@ -231,14 +273,20 @@ export const getInactiveSpells = createMaybeSelector (
             const mhero_entry = lookup (k) (hero_spells)
 
             if (isSpellPrereqsValid (wiki_entry)
-                && SA.gr (wiki_entry) < 3
-                && (isOwnTradition (trads_wiki) (wiki_entry) || !is_max_unfamiliar)
-                && all (notP (ASDA.active)) (mhero_entry)) {
+                && SA.gr (wiki_entry) === 1 // Intuitive Magier können nur Zauber erlernen
+                && all (notP (ASDA.active)) (mhero_entry)
+                && SA.ic (wiki_entry) < 4 // Keine Zauber mit Steigerungsfaktor D
+                && !((SA.ic (wiki_entry) === 3)
+                && OrderedMap.any ((x: Record<ActivatableSkillDependent>) => {
+                  return ASDA.active (x)
+                    && pipe_ (x, ASDA.id, lookupF (wiki_spells), maybe (false)
+                    (pipe (SA.ic, equals (3))));
+                }) (hero_spells))) { // Nur ein C Zauber
               return consF (SpellWithRequirements ({
                 wikiEntry: wiki_entry,
                 stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (k))
                                        (mhero_entry),
-                isUnfamiliar: isUnfamiliar (wiki_entry),
+                isUnfamiliar: false,
                 isDecreasable: Nothing,
                 isIncreasable: Nothing,
               }))
@@ -253,7 +301,7 @@ export const getInactiveSpells = createMaybeSelector (
         }
 
         if (isLastTrad (prefixSA (677)) || isLastTrad (prefixSA (678))) {
-          if (is_max) {
+          if (is_max || is_activation_disabled) {
             return List<Combined> ()
           }
 
@@ -294,7 +342,7 @@ export const getInactiveSpells = createMaybeSelector (
         const h = (k: string) => (wiki_entry: Record<Spell>) => {
           const mhero_entry = lookup (k) (hero_spells)
 
-          if ((!is_max || SA.gr (wiki_entry) > 2)
+          if ((!(is_max || is_activation_disabled) || SA.gr (wiki_entry) > 2)
               && isSpellPrereqsValid (wiki_entry)
               && (isOwnTradition (trads_wiki) (wiki_entry)
                   || (SA.gr (wiki_entry) < 3 && !is_max_unfamiliar))
@@ -386,45 +434,6 @@ export const getFilteredInactiveSpellsAndCantrips = createMaybeSelector (
                                               (areActiveItemHintsEnabled
                                                 ? append (active) (inactive)
                                                 : inactive) as ListCombined))
-)
-
-export const isActivationDisabled = createMaybeSelector (
-  getActiveSpellsCounter,
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (58)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (59)),
-  getMagicalTraditionsFromHero,
-  getStartEl,
-  getPhase,
-  uncurryN6 (active_spells =>
-             mbonus =>
-             mmalus =>
-             hero_trads =>
-               liftM2 (start_el =>
-                       phase =>
-                         pipe_ (
-                           hero_trads,
-                           listToMaybe,
-                           maybe (true)
-                                 (trad => {
-                                   const trad_id = ADA.id (trad)
-
-                                   if (trad_id === prefixSA (679)) {
-                                     const max_spells =
-                                       getModifierByActiveLevel (Just (3))
-                                                                (mbonus)
-                                                                (mmalus)
-
-                                     if (active_spells >= max_spells) {
-                                       return true
-                                     }
-                                   }
-
-                                   const maxSpellsLiturgicalChants =
-                                     ExperienceLevel.A.maxSpellsLiturgicalChants (start_el)
-
-                                   return phase < 3 && active_spells >= maxSpellsLiturgicalChants
-                                 })
-                         )))
 )
 
 export const getCantripsForSheet = createMaybeSelector (
