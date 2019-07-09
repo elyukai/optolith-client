@@ -52,6 +52,33 @@
     {
       "label": "bundle_css",
       "command": "npm run bundle_css"
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "tsconfig.json",
+      "isBackground": true,
+      "problemMatcher": [
+        "$tsc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "tsconfig.json",
+      "option": "watch",
+      "isBackground": true,
+      "problemMatcher": [
+        "$tsc-watch"
+      ],
+      "group": "build"
+    },
+    {
+      "type": "npm",
+      "script": "buildWin",
+      "problemMatcher": []
     }
   ]
 }

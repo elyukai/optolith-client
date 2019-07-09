@@ -370,7 +370,7 @@ export const setDisAdvantageLevel =
                           (wiki)
                           (hero),
               fmap (pipe (
-                convertPerTierCostToFinalCost (false) (l10n),
+                convertPerTierCostToFinalCost (true) (l10n),
                 ActivatableNameCost.A.finalCost as
                   (x: Record<ActivatableNameCostSafeCost>) => number
               ))
