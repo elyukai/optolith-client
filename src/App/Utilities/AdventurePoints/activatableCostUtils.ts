@@ -244,11 +244,14 @@ const getEntrySpecificCost =
         const decreaseCost = (id: string) => (cost: number) =>
           isDisadvantageActive (id) (hero) ? cost - 10 : cost
 
-        return fmap (pipe (
-                      decreaseCost ("DISADV_17"),
-                      decreaseCost ("DISADV_18")
-                    ))
-                    (misNumberM (mcurrent_cost))
+        return pipe_ (
+          mcurrent_cost,
+          misNumberM,
+          fmap (pipe (
+            decreaseCost ("DISADV_17"),
+            decreaseCost ("DISADV_18")
+          ))
+        )
       }
 
       // Recherchegespür

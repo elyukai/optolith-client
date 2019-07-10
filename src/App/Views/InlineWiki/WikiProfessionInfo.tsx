@@ -8,7 +8,7 @@ import { alt_, any, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, fromMay
 import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet";
 import { fromDefault, Record } from "../../../Data/Record";
-import { show, showP } from "../../../Data/Show";
+import { show } from "../../../Data/Show";
 import { fst, isTuple, Pair, snd } from "../../../Data/Tuple";
 import { traceShow } from "../../../Debug/Trace";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
@@ -1189,9 +1189,6 @@ const getVariantSkillsSelection =
           })
           (combinedSpellsList)
 
-    console.log (showP (combinedSpellsList))
-    console.log (showP (spellsList))
-
     const combinedList =
       intercalate (", ")
                   (List (
@@ -1240,7 +1237,7 @@ const mapVariantSkills =
     map ((e: Record<IncreasableForView>) => {
       const prev = maybe (6) (add (add_x)) (IFVA.previous (e))
 
-      return `${IFVA.name (e)} ${prev + IFVA.value (e)} ${translate (l10n) ("insteadof")} ${prev}`
+      return `${IFVA.name (e)} ${IFVA.value (e)} ${translate (l10n) ("insteadof")} ${prev}`
     })
 
 const getCombinedSpellName =

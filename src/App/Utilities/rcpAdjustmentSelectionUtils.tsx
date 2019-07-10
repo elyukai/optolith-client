@@ -261,7 +261,7 @@ export const getCursesElementAndValidation =
                sortRecordsByName (L10n.AL.id (l10n))
                                  (getAllWikiEntriesByGroup (WMA.spells (wiki)) (pure (3)))
 
-             const apLeft = CSA.value (selection) - size (cursesActive) - sum (cursesActive) * 2
+             const apLeft = CSA.value (selection) - (size (cursesActive) + sum (cursesActive)) * 2
 
              return Pair (
                apLeft,

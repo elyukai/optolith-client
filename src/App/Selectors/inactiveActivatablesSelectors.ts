@@ -1,6 +1,6 @@
 import { flip } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
-import { fromArray, List } from "../../Data/List";
+import { cons, fromArray, List } from "../../Data/List";
 import { catMaybes, join, liftM2, mapMaybe, Maybe } from "../../Data/Maybe";
 import { elems, lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
@@ -18,6 +18,7 @@ import { getAllAvailableExtendedSpecialAbilities } from "../Utilities/Activatabl
 import { createMapMaybeSelector } from "../Utilities/createMapMaybeSelector";
 import { createMapSelector, ignore3rd } from "../Utilities/createMapSelector";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
+import { prefixSA } from "../Utilities/IDUtils";
 import { pipe } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { sortRecordsBy } from "../Utilities/sortBy";
@@ -25,7 +26,7 @@ import { getWikiSliceGetterByCategory } from "../Utilities/WikiUtils";
 import { getAPObjectMap } from "./adventurePointsSelectors";
 import { EnabledSourceBooks, getRuleBooksEnabled } from "./rulesSelectors";
 import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
-import { getMagicalTraditionsFromWiki } from "./spellsSelectors";
+import { getMagicalTraditionsFromHero, getMagicalTraditionsFromWiki } from "./spellsSelectors";
 import * as stateSelectors from "./stateSelectors";
 
 export const getExtendedSpecialAbilitiesToAdd = createMaybeSelector (
@@ -33,7 +34,10 @@ export const getExtendedSpecialAbilitiesToAdd = createMaybeSelector (
   stateSelectors.getCombatStyleDependencies,
   stateSelectors.getMagicalStyleDependencies,
   (...styleDependencles) =>
-    getAllAvailableExtendedSpecialAbilities (catMaybes (fromArray (styleDependencles)))
+    cons (getAllAvailableExtendedSpecialAbilities (catMaybes (fromArray (styleDependencles))))
+         // "Gebieter des [Aspekts]" is never listed as a dependency and thus
+         // must be added manually
+         (prefixSA (639))
 )
 
 const getId = Advantage.AL.id
@@ -51,11 +55,18 @@ export const getInactiveForView =
                         stateSelectors.getLocaleAsProp,
                         getExtendedSpecialAbilitiesToAdd,
                         stateSelectors.getWiki,
-                        getMagicalTraditionsFromWiki
+                        getMagicalTraditionsFromWiki,
+                        getMagicalTraditionsFromHero
                       )
                       (heroReducer.A.present)
                       (madventure_points =>
-                       (l10n, validExtendedSpecialAbilities, wiki, magical_traditions) =>
+                       (
+                         l10n,
+                         validExtendedSpecialAbilities,
+                         wiki,
+                         wiki_magical_traditions,
+                         hero_magical_traditions
+                       ) =>
                        (hero): Inactives<T> =>
                          fmapF (join (madventure_points))
                                (adventure_points => {
@@ -71,7 +82,8 @@ export const getInactiveForView =
                                                                    (hero)
                                                                    (adventure_points)
                                                                    (validExtendedSpecialAbilities)
-                                                                   (magical_traditions)
+                                                                   (wiki_magical_traditions)
+                                                                   (hero_magical_traditions)
                                                                    (wiki_entry)
                                                                    (lookup (getId (wiki_entry))
                                                                              (stateSlice)))
