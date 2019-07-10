@@ -117,6 +117,14 @@ export const setPetAvatar = (path: string): SetPetAvatarAction => ({
   },
 })
 
+export interface DeletePetAvatarAction {
+  type: ActionTypes.DELETE_PET_AVATAR
+}
+
+export const deletePetAvatar = (): DeletePetAvatarAction => ({
+  type: ActionTypes.DELETE_PET_AVATAR,
+})
+
 export interface SetPetNameAction {
   type: ActionTypes.SET_PET_NAME
   payload: {

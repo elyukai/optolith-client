@@ -10,6 +10,7 @@ import { and } from "../../Data/Bool";
 import { Either, eitherToMaybe, fromLeft, fromLeft_, fromRight_, isLeft, isRight, second } from "../../Data/Either";
 import { cnst, flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
+import { over } from "../../Data/Lens";
 import { List, notNull } from "../../Data/List";
 import { altF_, alt_, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
 import { any, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap";
@@ -19,8 +20,9 @@ import { fst, Pair } from "../../Data/Tuple";
 import { IO, readFile, runIO, writeFile } from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
-import { HeroModel } from "../Models/Hero/HeroModel";
+import { HeroModel, HeroModelL } from "../Models/Hero/HeroModel";
 import { User } from "../Models/Hero/heroTypeHelpers";
+import { PetL } from "../Models/Hero/Pet";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { heroReducer } from "../Reducers/heroReducer";
@@ -408,6 +410,27 @@ export const requestHeroDeletion =
 
     }
 
+const convertImageToBase64 =
+  (url: Maybe<string>): Maybe<string> => {
+    if (isJust (url)) {
+      const just_url = fromJust (url)
+
+      if (just_url.length > 0 && !isBase64Image (just_url)) {
+        const preparedUrl = just_url .replace (/file:[\\\/]+/, "")
+
+        if (fs.existsSync (preparedUrl)) {
+          const prefix = `data:image/${extname (just_url).slice (1)}base64,`
+          const file = fs.readFileSync (preparedUrl)
+          const fileString = file.toString ("base64")
+
+          return Just (prefix + fileString)
+        }
+      }
+    }
+
+    return url
+  }
+
 export const requestHeroExport =
   (l10n: L10nRecord) =>
   (id: string): ReduxAction =>
@@ -423,30 +446,9 @@ export const requestHeroExport =
         lookup (id),
         fmap (pipe (
           heroReducer.A_.present,
-          convertHeroForSave (users),
-          hero => {
-            // Embed the avatar image file
-            if (
-              typeof hero.avatar === "string"
-              && hero.avatar.length > 0
-              && !isBase64Image (hero.avatar)
-            ) {
-              const preparedUrl = hero.avatar.replace (/file:[\\\/]+/, "")
-
-              if (fs.existsSync (preparedUrl)) {
-                const prefix = `data:image/${extname (hero.avatar).slice (1)}base64,`
-                const file = fs.readFileSync (preparedUrl)
-                const fileString = file.toString ("base64")
-
-                return {
-                  ...hero,
-                  avatar: prefix + fileString,
-                }
-              }
-            }
-
-            return hero
-          }
+          over (HeroModelL.avatar) (convertImageToBase64),
+          over (HeroModelL.pets) (OrderedMap.map (over (PetL.avatar) (convertImageToBase64))),
+          convertHeroForSave (users)
         ))
       )
 

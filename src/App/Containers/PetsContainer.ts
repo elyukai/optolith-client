@@ -36,6 +36,9 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): PetsDispatchProps => ({
   setAvatar (path: string) {
     dispatch (PetActions.setPetAvatar (path))
   },
+  deleteAvatar () {
+    dispatch (PetActions.deletePetAvatar ())
+  },
   setName (name: string) {
     dispatch (PetActions.setPetName (name))
   },

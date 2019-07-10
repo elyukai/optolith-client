@@ -19,6 +19,7 @@ type Action = PetActions.AddPetAction
             | PetActions.EditPetAction
             | PetActions.RemovePetAction
             | PetActions.SetPetAvatarAction
+            | PetActions.DeletePetAvatarAction
             | PetActions.SetPetNameAction
             | PetActions.SetPetSizeAction
             | PetActions.SetPetTypeAction
@@ -60,6 +61,10 @@ const petGeneralReducer =
       case ActionTypes.SET_PET_AVATAR:
         return modifyEditPet (set (EditPetL.avatar)
                                   (Just (action.payload.path)))
+
+      case ActionTypes.DELETE_PET_AVATAR:
+        return modifyEditPet (set (EditPetL.avatar)
+                                  (Nothing))
 
       case ActionTypes.SET_PET_NAME:
         return modifyEditPet (set (EditPetL.name)
