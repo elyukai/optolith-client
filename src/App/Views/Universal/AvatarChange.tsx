@@ -1,8 +1,11 @@
 import { remote } from "electron";
+import * as path from "path";
 import * as React from "react";
+import { pathToFileURL } from "url";
 import { ensure, orN } from "../../../Data/Maybe";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
+import { isURLValid } from "../../Utilities/RegexUtils";
 import { AvatarWrapper } from "./AvatarWrapper";
 import { BorderButton } from "./BorderButton";
 import { Dialog, DialogProps } from "./DialogNew";
@@ -18,6 +21,9 @@ export interface AvatarChangeState {
   fileValid: boolean
 }
 
+const valid_extensions = ["jpeg", "png", "jpg"]
+const valid_extnames = valid_extensions .map (ext => `.${ext}`)
+
 export class AvatarChange extends React.Component<AvatarChangeProps, AvatarChangeState> {
   state = {
     fileValid: false,
@@ -25,18 +31,20 @@ export class AvatarChange extends React.Component<AvatarChangeProps, AvatarChang
   }
 
   selectFile = () => {
-    const extensions = ["jpeg", "png", "jpg"]
+
     remote.dialog.showOpenDialog (
       remote.getCurrentWindow (),
       {
-        filters: [{ name: translate (this.props.l10n) ("image"), extensions }],
+        filters: [{ name: translate (this.props.l10n) ("image"), extensions: valid_extensions }],
       },
       fileNames => {
         if (fileNames !== undefined && fileNames.length > 0) {
-          const fileName = fileNames[0]
-          const splitted = fileName.split (".")
-          if (extensions.includes (splitted[splitted.length - 1])) {
-            this.setState ({ fileValid: true, url: `file://${fileName.replace (/\\/g, "/")}` })
+          const pathToImage = fileNames[0]
+          const url = pathToFileURL (pathToImage) .toString ()
+          const ext = path .extname (pathToImage) .toLowerCase ()
+
+          if (valid_extnames .includes (ext) && isURLValid (url)) {
+            this.setState ({ fileValid: true, url })
           }
           else {
             this.setState ({ fileValid: false, url: "" })
