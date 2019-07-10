@@ -33,12 +33,12 @@ import { Spell } from "../../Models/Wiki/Spell";
 import { Application } from "../../Models/Wiki/sub/Application";
 import { SelectOption, SelectOptionL } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
+import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup } from "../heroStateUtils";
 import { getBlessedTradStrIdFromNumId, prefixSA } from "../IDUtils";
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
-import { isOwnTradition } from "../Increasable/spellUtils";
+import { isOwnTradition, isUnfamiliarSpell } from "../Increasable/spellUtils";
 import { add, gt, gte, inc, lt, multiply, subtract } from "../mathUtils";
 import { pipe, pipe_ } from "../pipe";
 import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
@@ -198,7 +198,8 @@ const list7and8 = List (7, 8)
 const modifySelectOptions =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
-  (magical_traditions: List<Record<SpecialAbility>>) =>
+  (wiki_magical_traditions: List<Record<SpecialAbility>>) =>
+  (hero_magical_traditions: List<Record<ActivatableDependent>>) =>
   (wiki_entry: Activatable) =>
   // tslint:disable-next-line: cyclomatic-complexity
   (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<List<Record<SelectOption>>> => {
@@ -303,11 +304,11 @@ const modifySelectOptions =
         return fmap (filter ((e: Record<SelectOption>) =>
                               isNoRequiredOrActiveSelection (e)
                               && maybe (true)
-                                       (pipe (
+                                       ((reqs: List<AllRequirements>) =>
                                          validatePrerequisites (wiki)
-                                                               (hero),
-                                         thrush (current_id)
-                                       ))
+                                                               (hero)
+                                                               (reqs)
+                                                               (current_id))
                                        (SOA.prerequisites (e))))
                     (mcurrent_select)
       }
@@ -457,7 +458,7 @@ const modifySelectOptions =
                                          (pipe (value, gte (10)))
                                          (pipe (HA.spells, lookup (SOA.id (e))) (hero))
                                 && isString (id)
-                                && Maybe.any (notP (isOwnTradition (magical_traditions)))
+                                && Maybe.any (notP (isOwnTradition (wiki_magical_traditions)))
                                              (lookup (id) (WA.spells (wiki)))
                             }))
                     (mcurrent_select)
@@ -517,6 +518,10 @@ const modifySelectOptions =
             ? bindF (lookupF (WA.spells (wiki)))
             : bindF (lookupF (WA.liturgicalChants (wiki)))
 
+        const isNotUnfamiliar =
+          (x: Record<Spell> | Record<LiturgicalChant>) =>
+            LiturgicalChant.is (x) || !isUnfamiliarSpell (hero_magical_traditions) (x)
+
         return fmap (foldr ((e: Record<SelectOption>) => {
                              const mtarget_hero_entry = getTargetHeroEntry (SOA.target (e))
                              const mtarget_wiki_entry = getTargetWikiEntry (SOA.target (e))
@@ -533,6 +538,7 @@ const modifySelectOptions =
                                                         (current_id)
                                && isJust (mtarget_wiki_entry)
                                && isJust (mtarget_hero_entry)
+                               && isNotUnfamiliar (fromJust (mtarget_wiki_entry))
                                && value (fromJust (mtarget_hero_entry))
                                   >= maybe (0)
                                            (pipe (multiply (4), add (4)))
@@ -631,7 +637,7 @@ const modifySelectOptions =
       }
 
       default:
-        return fmap (filter (isNotRequiredNotActive (mhero_entry)))
+        return fmap (filter (isNoRequiredOrActiveSelection))
                     (mcurrent_select)
     }
   }
@@ -903,7 +909,8 @@ export const getInactiveView =
   (hero: HeroModelRecord) =>
   (adventure_points: Record<AdventurePointsCategories>) =>
   (validExtendedSpecialAbilities: List<string>) =>
-  (magical_traditions: List<Record<SpecialAbility>>) =>
+  (wiki_magical_traditions: List<Record<SpecialAbility>>) =>
+  (hero_magical_traditions: List<Record<ActivatableDependent>>) =>
   (wiki_entry: Activatable) =>
   (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<Record<InactiveActivatable>> => {
     const current_id = AAL.id (wiki_entry)
@@ -929,7 +936,8 @@ export const getInactiveView =
     if (!isNotValid) {
       const specificSelections = modifySelectOptions (wiki)
                                                      (hero)
-                                                     (magical_traditions)
+                                                     (wiki_magical_traditions)
+                                                     (hero_magical_traditions)
                                                      (wiki_entry)
                                                      (mhero_entry)
 

@@ -47,7 +47,7 @@ import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { translate } from "../Utilities/I18n";
 import { getCategoryById } from "../Utilities/IDUtils";
-import { abs } from "../Utilities/mathUtils";
+import { abs, add } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { validateProfession } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
 import { getFullProfessionName } from "../Utilities/rcpUtils";
@@ -524,19 +524,24 @@ const mapIncreaseSkillPrevious =
       lookupF (wikiAcc (wiki)),
       fmap (pipe (
         nameAcc,
-        name =>
-          IncreasableForView ({
-            id: ISA.id (e),
-            name,
-            previous: pipe_ (
+        name => {
+          const previous = pipe_ (
               main_xs,
               find (incsk => IncreaseSkill.is (incsk)
                                ? pipe_ (e, ISA.id, equals (ISA.id (incsk)))
                                : false),
               fmap (IncreaseSkill.AL.value)
-            ),
-            value: ISA.value (e),
+            )
+
+          const value = ISA.value (e)
+
+          return IncreasableForView ({
+            id: ISA.id (e),
+            name,
+            previous,
+            value: maybe (value) (add (value)) (previous),
           })
+        }
       ))
     )
 
@@ -555,19 +560,24 @@ const mapIncreaseSkillListPrevious =
           mapM (lookupF (wikiAcc (wiki))),
           fmap (pipe (
             map (nameAcc),
-            name =>
-              IncreasableListForView ({
-                id: ISLA.id (e) as Cons<string>,
-                name,
-                previous: pipe_ (
+            name => {
+              const previous = pipe_ (
                   main_xs,
                   find (incsk => IncreaseSkill.is (incsk)
                                    ? false
                                    : pipe_ (e, ISLA.id, all (elemF (ISLA.id (incsk))))),
                   fmap (IncreaseSkill.AL.value)
-                ),
-                value: ISLA.value (e),
+                )
+
+              const value = ISLA.value (e)
+
+              return IncreasableListForView ({
+                id: ISLA.id (e) as Cons<string>,
+                name,
+                previous,
+                value: maybe (value) (add (value)) (previous),
               })
+            }
           ))
         )
 

@@ -56,7 +56,6 @@ export interface PersonalDataStateProps {
   raceVariant: Maybe<Record<RaceVariant>>
   sex: Maybe<Sex>
   isRemovingEnabled: boolean
-  isEditingHeroAfterCreationPhaseEnabled: boolean
   isAddAdventurePointsOpen: boolean
   isEditCharacterAvatarOpen: boolean
   isAlbino: Maybe<boolean>
@@ -138,7 +137,6 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
       race,
       raceVariant,
       sex: maybeSex,
-      isEditingHeroAfterCreationPhaseEnabled,
       isAddAdventurePointsOpen,
       isEditCharacterAvatarOpen,
       openAddAdventurePoints,
@@ -293,11 +291,7 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
                                  label={translate (l10n) ("endherocreation")}
                                  onClick={endCharacterCreation}
                                  primary
-                                 disabled={
-                                   any (lt (0)) (apLeft)
-                                   || any (gt (10)) (apLeft)
-                                   && !isEditingHeroAfterCreationPhaseEnabled
-                                 }
+                                 disabled={any (lt (0)) (apLeft) || any (gt (10)) (apLeft)}
                                  />
                              </div>
                            )

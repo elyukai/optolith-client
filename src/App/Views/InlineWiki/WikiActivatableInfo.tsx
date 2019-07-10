@@ -637,14 +637,6 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
       </p>
     )
   }
-  else if (fnull (prerequisites)) {
-    return (
-      <p>
-        <span>{translate (l10n) ("prerequisites")}: </span>
-        <span>{translate (l10n) ("none")}</span>
-      </p>
-    )
-  }
   else {
     return (
       <p>
@@ -675,62 +667,62 @@ const getPrerequisites =
   (rs: List<AllRequirements>) =>
   (req_text_index: OrderedMap<number, string | false>) =>
   (props: PrerequisitesProps): List<Maybe<JSX.Element | string>> => {
-  const { x, l10n, wiki } = props
+    const { x, l10n, wiki } = props
 
-  if (fnull (rs) && !isExtendedSpecialAbility (x)) {
+    if (fnull (rs) && !isExtendedSpecialAbility (x)) {
+      return List<Maybe<JSX.Element | string>> (
+        Just (translate (l10n) ("none"))
+      )
+    }
+
+    const items = getCategorizedItems (req_text_index) (rs)
+
+    const rcp = CIA.rcp (items)
+    const casterBlessedOne = CIA.casterBlessedOne (items)
+    const traditions = CIA.traditions (items)
+    const attributes = CIA.attributes (items)
+    const primaryAttribute = CIA.primaryAttribute (items)
+    const skills = CIA.skills (items)
+    const activeSkills = CIA.activeSkills (items)
+    const otherActiveSpecialAbilities = CIA.otherActiveSpecialAbilities (items)
+    const inactiveSpecialAbilities = CIA.inactiveSpecialAbilities (items)
+    const otherActiveAdvantages = CIA.otherActiveAdvantages (items)
+    const inactiveAdvantages = CIA.inactiveAdvantages (items)
+    const activeDisadvantages = CIA.activeDisadvantages (items)
+    const inactiveDisadvantages = CIA.inactiveDisadvantages (items)
+    const race = CIA.race (items)
+
+    const category = AAL.category (x)
+    const gr = AAL.gr (x)
+
     return List<Maybe<JSX.Element | string>> (
-      Just (translate (l10n) ("none"))
+      (isString (rcp) ? notNullStr (rcp) : rcp)
+        ? Just (getPrerequisitesRCPText (l10n) (x) (rcp))
+        : Nothing,
+      ...getPrerequisitesActivatablesText (l10n) (wiki) (casterBlessedOne),
+      ...getPrerequisitesActivatablesText (l10n) (wiki) (traditions),
+      getPrerequisitesAttributesText (l10n) (WikiModel.A.attributes (wiki)) (attributes),
+      fmap (getPrerequisitesPrimaryAttributeText (l10n)) (primaryAttribute),
+      getPrerequisitesSkillsText (l10n) (wiki) (skills),
+      getPrerequisitesActivatedSkillsText (l10n) (wiki) (activeSkills),
+      ...getPrerequisitesActivatablesText (l10n) (wiki) (otherActiveSpecialAbilities),
+      ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveSpecialAbilities),
+      ...getPrerequisitesActivatablesText (l10n) (wiki) (otherActiveAdvantages),
+      ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveAdvantages),
+      ...getPrerequisitesActivatablesText (l10n) (wiki) (activeDisadvantages),
+      ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveDisadvantages),
+      fmap (getPrerequisitesRaceText (l10n) (WikiModel.A.races (wiki))) (race),
+      category === Categories.SPECIAL_ABILITIES
+        ? (gr === 11
+          ? Just (translate (l10n) ("appropriatecombatstylespecialability"))
+          : gr === 14
+          ? Just (translate (l10n) ("appropriatemagicalstylespecialability"))
+          : gr === 26
+          ? Just (translate (l10n) ("appropriateblessedstylespecialability"))
+          : Nothing)
+        : Nothing
     )
   }
-
-  const items = getCategorizedItems (req_text_index) (rs)
-
-  const rcp = CIA.rcp (items)
-  const casterBlessedOne = CIA.casterBlessedOne (items)
-  const traditions = CIA.traditions (items)
-  const attributes = CIA.attributes (items)
-  const primaryAttribute = CIA.primaryAttribute (items)
-  const skills = CIA.skills (items)
-  const activeSkills = CIA.activeSkills (items)
-  const otherActiveSpecialAbilities = CIA.otherActiveSpecialAbilities (items)
-  const inactiveSpecialAbilities = CIA.inactiveSpecialAbilities (items)
-  const otherActiveAdvantages = CIA.otherActiveAdvantages (items)
-  const inactiveAdvantages = CIA.inactiveAdvantages (items)
-  const activeDisadvantages = CIA.activeDisadvantages (items)
-  const inactiveDisadvantages = CIA.inactiveDisadvantages (items)
-  const race = CIA.race (items)
-
-  const category = AAL.category (x)
-  const gr = AAL.gr (x)
-
-  return List<Maybe<JSX.Element | string>> (
-    (isString (rcp) ? notNullStr (rcp) : rcp)
-      ? Just (getPrerequisitesRCPText (l10n) (x) (rcp))
-      : Nothing,
-    ...getPrerequisitesActivatablesText (l10n) (wiki) (casterBlessedOne),
-    ...getPrerequisitesActivatablesText (l10n) (wiki) (traditions),
-    getPrerequisitesAttributesText (l10n) (WikiModel.A.attributes (wiki)) (attributes),
-    fmap (getPrerequisitesPrimaryAttributeText (l10n)) (primaryAttribute),
-    getPrerequisitesSkillsText (l10n) (wiki) (skills),
-    getPrerequisitesActivatedSkillsText (l10n) (wiki) (activeSkills),
-    ...getPrerequisitesActivatablesText (l10n) (wiki) (otherActiveSpecialAbilities),
-    ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveSpecialAbilities),
-    ...getPrerequisitesActivatablesText (l10n) (wiki) (otherActiveAdvantages),
-    ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveAdvantages),
-    ...getPrerequisitesActivatablesText (l10n) (wiki) (activeDisadvantages),
-    ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveDisadvantages),
-    fmap (getPrerequisitesRaceText (l10n) (WikiModel.A.races (wiki))) (race),
-    category === Categories.SPECIAL_ABILITIES
-      ? (gr === 11
-        ? Just (translate (l10n) ("appropriatecombatstylespecialability"))
-        : gr === 14
-        ? Just (translate (l10n) ("appropriatemagicalstylespecialability"))
-        : gr === 26
-        ? Just (translate (l10n) ("appropriateblessedstylespecialability"))
-        : Nothing)
-      : Nothing
-  )
-}
 
 interface ActivatableStringObject {
   id: string
