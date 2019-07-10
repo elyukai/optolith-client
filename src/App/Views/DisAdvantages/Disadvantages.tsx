@@ -159,6 +159,7 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
               showRating={showRating}
               addToList={addToList}
               selectForInfo={this.showSlideinInfo}
+              selectedForInfo={this.state.currentSlideinId}
               />
           </MainContent>
           <WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
@@ -198,6 +199,7 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
             filterText={filterText}
             list={activeList}
             selectForInfo={this.showInfo}
+            selectedForInfo={this.state.currentId}
             />
         </MainContent>
         <WikiInfoContainer {...this.props} {...this.state} />

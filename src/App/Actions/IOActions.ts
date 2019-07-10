@@ -273,10 +273,10 @@ export const requestAllHeroesSave =
     )
   }
 
-const requestSaveAll = (l10n: L10nRecord): ReduxAction<IO<boolean>> =>
+const requestSaveAll = (save_heroes: boolean) => (l10n: L10nRecord): ReduxAction<IO<boolean>> =>
   dispatch => {
     const configSavedDone = dispatch (requestConfigSave (l10n))
-    const heroesSavedDone = dispatch (requestAllHeroesSave (l10n))
+    const heroesSavedDone = save_heroes ? dispatch (requestAllHeroesSave (l10n)) : IO.pure (true)
 
     return IO.liftM2 (and) (configSavedDone) (heroesSavedDone)
   }
@@ -561,15 +561,15 @@ const isAnyHeroUnsaved = pipe (getHeroes, any (pipe (heroReducer.A.past, notNull
 
 const close =
   (l10n: L10nRecord) =>
-  (unsaved: boolean) =>
+  (save_heroes: boolean) =>
   (f: Maybe<() => void>): ReduxAction =>
   dispatch => pipe_ (
     dispatch (requestSaveCache (l10n)),
-    IO.thenF (dispatch (requestSaveAll (l10n))),
+    IO.thenF (dispatch (requestSaveAll (save_heroes) (l10n))),
     fmap (all_saved => {
-           if (all_saved) {
+           if (all_saved && save_heroes) {
              dispatch (addAlert ({
-               message: translate (l10n) (unsaved ? "everythingelsesaved" : "allsaved"),
+               message: translate (l10n) ("allsaved"),
                onClose () {
                  if (isJust (f)) {
                    fromJust (f) ()
@@ -578,6 +578,9 @@ const close =
                  remote .getCurrentWindow () .close ()
                },
              }))
+           }
+           else {
+             remote .getCurrentWindow () .close ()
            }
          }),
     runIO
@@ -602,11 +605,19 @@ export const requestClose =
         dispatch (addAlert ({
           title: translate (l10n) ("unsavedactions"),
           message: translate (l10n) ("unsavedactions.text"),
-          confirm: {
-            resolve: close (l10n) (false) (optionalCall),
-            reject: close (l10n) (true) (optionalCall),
-          },
-          confirmYesNo: true,
+          buttons: [
+            {
+              label: translate (l10n) ("close"),
+              dispatchOnClick: close (l10n) (false) (optionalCall),
+            },
+            {
+              label: translate (l10n) ("cancel"),
+            },
+            {
+              label: translate (l10n) ("saveandclose"),
+              dispatchOnClick: close (l10n) (true) (optionalCall),
+            },
+          ],
         }))
       }
     }

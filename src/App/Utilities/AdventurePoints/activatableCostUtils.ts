@@ -491,7 +491,7 @@ const getLevel = (level: number) => ` ${toRoman (level)}`
  * range when multiple levels have been bought.
  */
 const getSpecialAbilityLevel =
-  (level: number) => level > 1 ? ` I-${toRoman (level)}` : getLevel (level)
+  (level: number) => level > 1 ? ` I–${toRoman (level)}` : getLevel (level)
 
 /**
  * Id-based check if the entry is a special ability.

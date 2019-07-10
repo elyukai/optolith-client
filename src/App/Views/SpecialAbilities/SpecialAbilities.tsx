@@ -143,6 +143,7 @@ export class SpecialAbilities
               inactiveList={deactiveList}
               l10n={l10n}
               selectForInfo={this.showSlideinInfo}
+              selectedForInfo={this.state.currentSlideinId}
               />
           </MainContent>
           <WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId}/>
@@ -187,6 +188,7 @@ export class SpecialAbilities
             removeFromList={removeFromList}
             setLevel={setLevel}
             selectForInfo={this.showInfo}
+            selectedForInfo={this.state.currentId}
             />
         </MainContent>
         <WikiInfoContainer {...this.props} {...this.state} />

@@ -259,6 +259,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                             : propertyName
                                         }
                                         untyp={SWRAL.isUnfamiliar (curr)}
+                                        selectedForInfo={this.state.currentSlideinId}
                                         />
                                     )
                                   )
@@ -292,6 +293,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                         selectForInfo={this.showSlideinInfo}
                                         addText={add_text}
                                         untyp={SWRAL.isUnfamiliar (curr)}
+                                        selectedForInfo={this.state.currentSlideinId}
                                         />
                                     )
                                   )
@@ -390,6 +392,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                           : propertyName
                                       }
                                       untyp={SWRAL.isUnfamiliar (curr)}
+                                      selectedForInfo={this.state.currentId}
                                       />
                                   )
                                 )
@@ -428,6 +431,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                       selectForInfo={this.showInfo}
                                       addText={add_text}
                                       untyp={SWRAL.isUnfamiliar (curr)}
+                                      selectedForInfo={this.state.currentId}
                                       />
                                   )
                                 )

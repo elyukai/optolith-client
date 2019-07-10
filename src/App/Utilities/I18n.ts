@@ -134,8 +134,8 @@ export const compareLocale =
     return (a: string) => (b: string) => toOrdering (coll .compare (a, b))
   }
 
-export const localizeList =
-  (sepWord: string): (xs: List<string | number>) => string =>
+export const localizeList: (sepWord: string) => (xs: List<string | number>) => string =
+  sepWord =>
     pipe (
       unsnoc,
       maybe ("")

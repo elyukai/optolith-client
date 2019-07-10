@@ -175,6 +175,7 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
                                     selectForInfo={this.showInfo}
                                     groupIndex={SWRA_.gr (curr)}
                                     groupList={translate (l10n) ("skillgroups")}
+                                    selectedForInfo={infoId}
                                     />
                                 )
                               ))

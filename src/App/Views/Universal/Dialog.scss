@@ -123,7 +123,7 @@ $modal-padding: 24px;
 
 		.modal-content {
 			position: relative;
-			@include calc(height, "100% - 77px");
+			height: calc(100% - 77px);
 			width: 378px;
 
 			.modal-content-inner {
@@ -171,6 +171,7 @@ $modal-padding: 24px;
 				background: var(--background-color);
 				position: relative;
 				padding: 0 2px;
+				margin: 0 24px;
 				border-width: 0 1px;
 				border-style: solid;
 				border-color: var(--accent-color);
@@ -187,6 +188,23 @@ $modal-padding: 24px;
 					&:last-child:after {
 						right: -1px;
 					}
+				}
+			}
+		}
+
+		&.more-buttons .dialog-buttons {
+			height: auto;
+
+			> .dialog-buttons-inner {
+				display: flex;
+				flex-direction: column;
+
+				> div:not(:first-child) {
+					margin-top: 1px;
+				}
+
+				> div:not(:last-child) {
+					margin-bottom: 1px;
 				}
 			}
 		}

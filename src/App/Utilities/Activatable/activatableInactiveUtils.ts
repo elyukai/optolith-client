@@ -28,6 +28,7 @@ import { InactiveActivatable, InactiveActivatableL } from "../../Models/View/Ina
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
+import { Skill } from "../../Models/Wiki/Skill";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { Application } from "../../Models/Wiki/sub/Application";
@@ -64,6 +65,7 @@ const { value } = ActivatableSkillDependent.AL
 const SOA = SelectOption.A
 const AppA = Application.A
 const SpAL = Spell.AL
+const SA = Skill.A
 
 const { cost: select_costL, applications, name: nameL } = SelectOptionL
 const { sid, tier } = ActiveObject.AL
@@ -279,19 +281,15 @@ const modifySelectOptions =
         const isAdvActive =
           pipe (lookupF (HA.advantages (hero)), isMaybeActive)
 
-        const isSkillOfIcB =
-          pipe (
-            SOA.id,
-            ensure (isString),
-            bindF (lookupF (WA.skills (wiki))),
-            fmap (pipe (ic, equals (2))),
-            or
-          )
+        const isNotSocialSkill = notP (isSocialSkill (wiki))
 
         return fmap (filter ((e: Record<SelectOption>) =>
-                              (isAdvActive ("ADV_40") || isAdvActive ("ADV_46"))
-                              && isSkillOfIcB (e)
-                              || isNoRequiredOrActiveSelection (e)))
+                              // Socially Adaptable and Inspire Confidence
+                              // require no Incompetence in social skills
+                              (isAdvActive ("ADV_40") || isAdvActive ("ADV_46")
+                                ? isNotSocialSkill (e)
+                                : true)
+                              && isNoRequiredOrActiveSelection (e)))
                     (mcurrent_select)
       }
 
@@ -641,6 +639,16 @@ const modifySelectOptions =
                     (mcurrent_select)
     }
   }
+
+const isSocialSkill =
+  (wiki: WikiModelRecord) =>
+    pipe (
+      SOA.id,
+      ensure (isString),
+      bindF (lookupF (WA.skills (wiki))),
+      fmap (pipe (SA.gr, equals (2))),
+      or
+    )
 
 const isAddExistSkillSpecAllowed =
   (hero: HeroModelRecord) =>
