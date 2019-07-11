@@ -64,10 +64,13 @@
   "scripts": {
     "buildInsiderWin": "node ./buildInsiderWin.js",
     "buildInsiderLinux": "node ./buildInsiderLinux.js",
+    "buildInsiderMac": "node ./buildInsiderMac.js",
     "buildWin": "node ./buildWin.js",
     "buildLinux": "node ./buildLinux.js",
     "buildMac": "node ./buildMac.js",
     "buildCss": "node --experimental-modules buildSass.mjs",
+    "copyTables": "node ./copyTables.js",
+    "copyTablesInsider": "node ./copyTablesInsider.js",
     "compile": "tsc",
     "watch": "tsc --watch",
     "start": "electron .",
