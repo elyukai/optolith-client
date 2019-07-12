@@ -1,7 +1,8 @@
 import * as React from "react";
 import { equals } from "../../../../Data/Eq";
+import { compare } from "../../../../Data/Int";
 import { filter, flength, List, map, toArray } from "../../../../Data/List";
-import { bindF, elem, ensure, Maybe, maybeR } from "../../../../Data/Maybe";
+import { bindF, elem, ensure, Maybe, maybeR, sum } from "../../../../Data/Maybe";
 import { Record, RecordBase } from "../../../../Data/Record";
 import { Categories } from "../../../Constants/Categories";
 import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
@@ -10,7 +11,7 @@ import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybe } from "../../../Utilities/ReactUtils";
-import { sortRecordsByName } from "../../../Utilities/sortBy";
+import { comparingR, sortRecordsBy } from "../../../Utilities/sortBy";
 import { Markdown } from "../../Universal/Markdown";
 
 interface Accessors<A extends RecordBase> {
@@ -48,7 +49,7 @@ export function WikiExtensions<A extends RecordBase> (props: WikiExtensionsProps
     bindF (SpecialAbility.A.select),
     bindF (pipe (
       filter (pipe (SelectOption.A.target, elem (acc.id (x)))),
-      sortRecordsByName (L10n.A.id (l10n)),
+      sortExts,
       ensure<List<Record<SelectOption>>> (pipe (flength, equals (3)))
     )),
     maybeR (null)
@@ -84,3 +85,5 @@ export function WikiExtensions<A extends RecordBase> (props: WikiExtensionsProps
            ))
   )
 }
+
+const sortExts = sortRecordsBy ([comparingR (pipe (SelectOption.A.cost, sum)) (compare)])
