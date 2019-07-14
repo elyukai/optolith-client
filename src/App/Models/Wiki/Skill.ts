@@ -12,10 +12,12 @@ export interface Skill {
   category: Categories
   check: List<string>
   encumbrance: string
+  encumbranceDescription: Maybe<string>
   gr: number
   ic: number
   applications: List<Record<Application>>
   applicationsInput: Maybe<string>
+  uses: List<Record<Application>>
   tools: Maybe<string>
   quality: string
   failed: string
@@ -32,10 +34,12 @@ export const Skill =
                 category: Categories.TALENTS,
                 check: List.empty,
                 encumbrance: "",
+                encumbranceDescription: Nothing,
                 gr: 0,
                 ic: 0,
                 applications: List.empty,
                 applicationsInput: Nothing,
+                uses: List.empty,
                 tools: Nothing,
                 quality: "",
                 failed: "",

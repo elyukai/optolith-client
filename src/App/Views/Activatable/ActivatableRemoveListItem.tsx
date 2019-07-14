@@ -6,7 +6,6 @@ import { fmap, mapReplace } from "../../../Data/Functor";
 import { cons, flength, List } from "../../../Data/List";
 import { bindF, ensure, fromJust, fromMaybe, guard, INTERNAL_shallowEquals, isJust, Just, liftM2, listToMaybe, Maybe, maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
-import { traceShow } from "../../../Debug/Trace";
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
 import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -138,13 +137,11 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
         active={Maybe.elem (AAA_.id (item)) (selectedForInfo)}
         >
         <ListItemName
-          name={pipe_ (mlevel_element, misStringM, maybe (traceShow ("no locked level")
-                                                                          (maybe (baseName)
+          name={pipe_ (mlevel_element, misStringM, maybe (maybe (baseName)
                                                                 ((add_str: string) =>
                                                                   `${baseName} (${add_str})`)
-                                                                (AAA_.addName (item))))
-                                                         (() => traceShow ("locked level")
-                                                                          (AAA_.name (item))))}
+                                                                (AAA_.addName (item)))
+                                                         (() => AAA_.name (item)))}
           />
         <ListItemSelections>
           {pipe_ (

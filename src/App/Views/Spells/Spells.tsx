@@ -496,6 +496,5 @@ const getSpellAddText =
     pipe_ (
       guard (sortOrder === "group"),
       thenF (subscript (translate (l10n) ("spellgroups")) (SWRA_.gr (curr) - 1)),
-      maybe (property_str)
-            (gr_str => `${property_str} / ${gr_str}`)
+      maybe (property_str) (gr_str => `${property_str} / ${gr_str}`)
     )

@@ -607,14 +607,14 @@ export const requestClose =
           message: translate (l10n) ("unsavedactions.text"),
           buttons: [
             {
-              label: translate (l10n) ("close"),
+              label: translate (l10n) ("quit"),
               dispatchOnClick: close (l10n) (false) (optionalCall),
             },
             {
               label: translate (l10n) ("cancel"),
             },
             {
-              label: translate (l10n) ("saveandclose"),
+              label: translate (l10n) ("saveandquit"),
               dispatchOnClick: close (l10n) (true) (optionalCall),
             },
           ],

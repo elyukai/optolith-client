@@ -1,7 +1,7 @@
 import { liftM2 } from "../../../../Data/Either";
 import { fmap } from "../../../../Data/Functor";
 import { fromArray, List, lookup, map, NonEmptyList, notNullStr } from "../../../../Data/List";
-import { any, ensure, fromJust, Just, Maybe, maybe_, Nothing, Some } from "../../../../Data/Maybe";
+import { any, ensure, fromJust, joinMaybeList, Just, Maybe, maybe_, Nothing, Some } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { parseJSON } from "../../../../Data/String/JSON";
 import { fst, Pair, snd } from "../../../../Data/Tuple";
@@ -72,7 +72,17 @@ export const toSkill =
                        (TableType.L10n)
                        (lookup_l10n)
 
-      const checkApplicationsUniv =
+      const checkUsesL10n =
+        lookupKeyValid (mensureMapPairListOptional ("&&")
+                                                   ("?")
+                                                   (Expect.Integer)
+                                                   (Expect.NonEmptyString)
+                                                   (toInt)
+                                                   (ensure (notNullStr)))
+                       (TableType.L10n)
+                       (lookup_l10n)
+
+      const checkApplicationsUsesUniv =
         lookupKeyValid (mensureMapPairListOptional ("&")
                                                    ("?")
                                                    (Expect.Integer)
@@ -104,7 +114,7 @@ export const toSkill =
 
       const eapplicationsL10n = checkApplicationsL10n ("applications")
 
-      const eapplicationsUniv = checkApplicationsUniv ("applications")
+      const eapplicationsUniv = checkApplicationsUsesUniv ("applications")
 
       const eapplications =
         liftM2<
@@ -132,12 +142,35 @@ export const toSkill =
 
       const applicationsInput = lookup_l10n ("input")
 
+      const eusesL10n = checkUsesL10n ("uses")
+
+      const eusesUniv = checkApplicationsUsesUniv ("uses")
+
+      const euses =
+        liftM2
+          (Maybe.liftM2<
+            List<Pair<number, string>>,
+            List<Pair<number, List<Record<RequireActivatable>>>>,
+            List<Record<Application>>
+          > (l10n => univ => map ((p: Pair<number, string>) => Application ({
+                                   id: fst (p),
+                                   name: snd (p),
+                                   prerequisites:
+                                     lookup<number, List<Record<RequireActivatable>>> (fst (p))
+                                                                                      (univ),
+                                 }))
+                                 (l10n)))
+          (eusesL10n)
+          (eusesUniv)
+
       const echeck = fmap (map (prefixId (IdPrefixes.ATTRIBUTES)))
                                  (checkSkillCheck ("check"))
 
       const eic = checkUnivNaturalNumber ("ic")
 
       const eenc = checkEncumbranceInfluence ("enc")
+
+      const encDescription = lookup_l10n ("encDescription")
 
       const tools = lookup_l10n ("tools")
 
@@ -159,6 +192,7 @@ export const toSkill =
         ({
           ename,
           eapplications,
+          euses,
           echeck,
           eic,
           eenc,
@@ -174,9 +208,11 @@ export const toSkill =
           name: rs.ename,
           applications: rs.eapplications,
           applicationsInput,
+          uses: joinMaybeList (rs.euses),
           check: rs.echeck,
           ic: rs.eic,
           encumbrance: rs.eenc,
+          encumbranceDescription: encDescription,
           tools,
           quality: rs.equality,
           failed: rs.efailed,

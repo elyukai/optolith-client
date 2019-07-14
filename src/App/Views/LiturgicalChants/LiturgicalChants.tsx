@@ -2,7 +2,7 @@ import * as React from "react";
 import { notEquals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { elemF, intercalate, List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, fromMaybeR, guard, Just, mapMaybe, Maybe, Nothing, or, thenF } from "../../../Data/Maybe";
+import { bindF, ensure, fromMaybe, fromMaybeR, guard, Just, mapMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
@@ -14,7 +14,7 @@ import { BlessingCombined } from "../../Models/View/BlessingCombined";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../Models/View/LiturgicalChantWithRequirements";
 import { Blessing } from "../../Models/Wiki/Blessing";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../Utilities/I18n";
@@ -489,7 +489,7 @@ const getAspectsStr =
                      ))
                    ))
                    (LCBCA.aspects (curr)),
-        sortStrings (L10n.A.id (l10n)),
+        sortStrings (l10n),
         intercalate (", ")
       )),
       fromMaybe ("")
@@ -498,10 +498,10 @@ const getAspectsStr =
 const getLCAddText =
   (l10n: L10nRecord) =>
   (sortOrder: string) =>
-  (aspectsStr: string) =>
+  (aspects_str: string) =>
   (curr: Record<LiturgicalChantWithRequirements>) =>
     pipe_ (
       guard (sortOrder === "group"),
       thenF (subscript (translate (l10n) ("liturgicalchantgroups")) (LCWRA_.gr (curr) - 1)),
-      fromMaybe (aspectsStr)
+      maybe (aspects_str) (gr_str => `${aspects_str} / ${gr_str}`)
     )

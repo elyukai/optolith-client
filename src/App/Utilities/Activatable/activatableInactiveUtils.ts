@@ -40,7 +40,7 @@ import { getAllEntriesByGroup } from "../heroStateUtils";
 import { getBlessedTradStrIdFromNumId, prefixSA } from "../IDUtils";
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
 import { isOwnTradition, isUnfamiliarSpell } from "../Increasable/spellUtils";
-import { add, gt, gte, inc, lt, multiply, subtract } from "../mathUtils";
+import { add, dec, gt, gte, inc, lt, multiply, subtract } from "../mathUtils";
 import { pipe, pipe_ } from "../pipe";
 import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
 import { filterByAvailability } from "../RulesUtils";
@@ -192,7 +192,7 @@ const getAspectsWith3Gte10 =
       foldCounter
     )
 
-const list7and8 = List (7, 8)
+const is7or8 = elemF (List (7, 8))
 
 /**
  * Modifies the select options of specific entries to match current conditions.
@@ -266,7 +266,7 @@ const modifySelectOptions =
         if (current_id === "DISADV_33") {
           return fmap (filter (
                                 (e: Record<SelectOption>) =>
-                                  elem (SOA.id (e) as number) (list7and8)
+                                  is7or8 (SOA.id (e) as number)
                                   || isNoRequiredOrActiveSelection (e)
                               ))
                               (mcurrent_select)
@@ -406,12 +406,7 @@ const modifySelectOptions =
 
         return fmap (filter ((e: Record<SelectOption>) =>
                               isNoRequiredOrActiveSelection (e)
-                              && pipe_ (
-                                e,
-                                SOA.id,
-                                ensure (isNumber),
-                                maybe (false) (pipe (inc, elemF (valid_props)))
-                              )))
+                              && elem (SOA.id (e)) (valid_props)))
                     (mcurrent_select)
       }
 
@@ -435,8 +430,11 @@ const modifySelectOptions =
                                  pipe (
                                         SOA.id,
                                         ensure (isNumber),
-                                        fmap (getTraditionOfAspect),
-                                        bindF (getBlessedTradStrIdFromNumId),
+                                        bindF (pipe (
+                                          getTraditionOfAspect,
+                                          dec,
+                                          getBlessedTradStrIdFromNumId
+                                        )),
                                         Maybe.elem (AAL.id (trad))
                                       )
                                       (e)
@@ -448,6 +446,8 @@ const modifySelectOptions =
 
       // Adaption (Zauber)
       case "SA_231": {
+        const isFromUnfamiliarTrad = notP (isOwnTradition (wiki_magical_traditions))
+
         return fmap (filter ((e: Record<SelectOption>) => {
                               const id = SOA.id (e)
 
@@ -456,8 +456,7 @@ const modifySelectOptions =
                                          (pipe (value, gte (10)))
                                          (pipe (HA.spells, lookup (SOA.id (e))) (hero))
                                 && isString (id)
-                                && Maybe.any (notP (isOwnTradition (wiki_magical_traditions)))
-                                             (lookup (id) (WA.spells (wiki)))
+                                && Maybe.any (isFromUnfamiliarTrad) (lookup (id) (WA.spells (wiki)))
                             }))
                     (mcurrent_select)
       }

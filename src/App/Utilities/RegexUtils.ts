@@ -1,7 +1,10 @@
 import { existsSync } from "fs";
 import { fileURLToPath } from "url";
+import { trySync } from "../../Control/Exception";
+import { cnst } from "../../Data/Function";
 import { notNullStr } from "../../Data/List";
 import { maybe } from "../../Data/Maybe";
+import { traceShow } from "../../Debug/Trace";
 
 export const naturalNumber = /^(?:0|[1-9][0-9]*)$/
 
@@ -29,7 +32,7 @@ export const float = /^(?:(?:0|-?[1-9][0-9]*)(?:[\.,][0-9]+)?)$/
  */
 export const floatU = "0|-?[1-9][0-9]*(?:[\.,][0-9]+)?"
 
-export const base64Image = /^data:image\/(png|gif|jpeg|jpg)base64,.+/
+export const base64Image = /^data:image\/(png|gif|jpeg|jpg);base64,.+/
 
 /**
  * Checks if the provided string is a string representation of a natural number.
@@ -70,10 +73,12 @@ export const isBase64Image = (test: string) => base64Image.test (test)
 /**
  * Checks if the passed path string points to an existing file.
  */
-export const isURLValid = (url: string) => notNullStr (url)
+export const isURLValid = (url: string) => notNullStr (traceShow ("url =") (url))
                                            && (
                                              isBase64Image (url)
-                                             || existsSync (fileURLToPath (url))
+                                             || trySync (existsSync)
+                                                        (cnst (false))
+                                                        (() => fileURLToPath (url))
                                            )
 
 /**

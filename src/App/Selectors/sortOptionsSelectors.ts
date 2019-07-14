@@ -308,6 +308,7 @@ export const getSpellsSortOptions = createMaybeSelector (
         comparingR (pipe (
                      SpellWithRequirements.A.wikiEntry,
                      Spell.A.property,
+                     dec,
                      subscript (translate (l10n) ("propertylist")),
                      fromMaybe ("")
                    ))
@@ -360,6 +361,7 @@ export const getSpellsCombinedSortOptions = createMaybeSelector (
         comparingR (pipe (
                      getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                      Spell.AL.property,
+                     dec,
                      subscript (translate (l10n) ("propertylist")),
                      fromMaybe ("")
                    ))
