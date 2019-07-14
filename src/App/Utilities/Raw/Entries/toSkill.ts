@@ -10,7 +10,7 @@ import { RequireActivatable } from "../../../Models/Wiki/prerequisites/Activatab
 import { Skill } from "../../../Models/Wiki/Skill";
 import { Application } from "../../../Models/Wiki/sub/Application";
 import { prefixId } from "../../IDUtils";
-import { toInt } from "../../NumberUtils";
+import { toInt, toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { Expect } from "../showExpected";
 import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapPairList, mensureMapPairListOptional, mensureMapStringPred } from "../validateMapValueUtils";
@@ -75,17 +75,27 @@ export const toSkill =
       const checkUsesL10n =
         lookupKeyValid (mensureMapPairListOptional ("&&")
                                                    ("?")
-                                                   (Expect.Integer)
+                                                   (Expect.NaturalNumber)
                                                    (Expect.NonEmptyString)
-                                                   (toInt)
+                                                   (toNatural)
                                                    (ensure (notNullStr)))
                        (TableType.L10n)
                        (lookup_l10n)
 
-      const checkApplicationsUsesUniv =
+      const checkApplicationsUniv =
         lookupKeyValid (mensureMapPairListOptional ("&")
                                                    ("?")
                                                    (Expect.Integer)
+                                                   ("RequireActivatable")
+                                                   (toInt)
+                                                   (stringToPrerequisite))
+                       (TableType.Univ)
+                       (lookup_univ)
+
+      const checkUsesUniv =
+        lookupKeyValid (mensureMapPairListOptional ("&")
+                                                   ("?")
+                                                   (Expect.NaturalNumber)
                                                    ("RequireActivatable")
                                                    (toInt)
                                                    (stringToPrerequisite))
@@ -114,7 +124,7 @@ export const toSkill =
 
       const eapplicationsL10n = checkApplicationsL10n ("applications")
 
-      const eapplicationsUniv = checkApplicationsUsesUniv ("applications")
+      const eapplicationsUniv = checkApplicationsUniv ("applications")
 
       const eapplications =
         liftM2<
@@ -144,7 +154,7 @@ export const toSkill =
 
       const eusesL10n = checkUsesL10n ("uses")
 
-      const eusesUniv = checkApplicationsUsesUniv ("uses")
+      const eusesUniv = checkUsesUniv ("uses")
 
       const euses =
         liftM2
