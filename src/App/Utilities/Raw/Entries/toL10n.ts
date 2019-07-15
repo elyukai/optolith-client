@@ -688,6 +688,7 @@ export const toL10n =
         "unfamiliarspell": checkL10nNonEmptyString ("unfamiliarspell"),
         "saveandquit": checkL10nNonEmptyString ("saveandquit"),
         "uses": checkL10nNonEmptyString ("uses"),
+        "complementarysources": checkL10nNonEmptyString ("complementarysources"),
       }
 
       return mapMNamed
@@ -1307,6 +1308,7 @@ export const toL10n =
           "unfamiliarspell": res ["unfamiliarspell"],
           "saveandquit": res ["saveandquit"],
           "uses": res ["uses"],
+          "complementarysources": res ["complementarysources"],
           // tslint:enable: no-string-literal
         }))
     }

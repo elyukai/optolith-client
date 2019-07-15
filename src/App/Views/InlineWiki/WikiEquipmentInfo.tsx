@@ -117,6 +117,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
            (mpadt_obj)
 
   const isLancesCT = Maybe.elem (prefixCT (7)) (combatTechniqueId)
+  const isShieldsCT = Maybe.elem (prefixCT (10)) (combatTechniqueId)
 
   return (
     <WikiBoxTemplate
@@ -206,14 +207,19 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
               {translate (l10n) ("weightunit.short")}
             </td>
           </tr>
-          <tr>
-            <td>{translate (l10n) ("length")}</td>
-            <td>
-              {renderMaybeWith (pipe (localizeSize (locale), localizeNumber (locale))) (mlength)}
-              {" "}
-              {translate (l10n) ("lengthunit")}
-            </td>
-          </tr>
+          {!isShieldsCT
+            ? (
+                <tr>
+                  <td>{translate (l10n) ("length")}</td>
+                  <td>
+                    {renderMaybeWith (pipe (localizeSize (locale), localizeNumber (locale)))
+                                    (mlength)}
+                    {" "}
+                    {translate (l10n) ("lengthunit")}
+                  </td>
+                </tr>
+              )
+            : null}
           <tr>
             <td>{translate (l10n) ("price")}</td>
             <td>

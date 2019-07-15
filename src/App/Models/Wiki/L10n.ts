@@ -611,6 +611,7 @@ export interface L10n {
   "unfamiliarspell": string
   "saveandquit": string
   "uses": string
+  "complementarysources": string
 }
 
 export type L10nKey = keyof L10n
@@ -1229,4 +1230,5 @@ export const L10n =
                 "unfamiliarspell": "",
                 "saveandquit": "",
                 "uses": "",
+                "complementarysources": "",
               })

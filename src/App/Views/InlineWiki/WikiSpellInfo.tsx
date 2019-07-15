@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Maybe } from "../../../Data/Maybe";
+import { map } from "../../../Data/List";
+import { joinMaybeList, Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Attribute } from "../../Models/Wiki/Attribute";
@@ -7,11 +8,13 @@ import { Book } from "../../Models/Wiki/Book";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
+import { pipe_ } from "../../Utilities/pipe";
 import { WikiCastingTime } from "./Elements/WikiCastingTime";
 import { WikiCost } from "./Elements/WikiCost";
 import { WikiDuration } from "./Elements/WikiDuration";
 import { WikiEffect } from "./Elements/WikiEffect";
-import { WikiExtensions } from "./Elements/WikiExtensions";
+import { getExtensionsForEntry, WikiExtensions } from "./Elements/WikiExtensions";
 import { WikiImprovementCost } from "./Elements/WikiImprovementCost";
 import { WikiRange } from "./Elements/WikiRange";
 import { WikiSkillCheck } from "./Elements/WikiSkillCheck";
@@ -53,7 +56,11 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
     // Spells
     case 1:
     // Rituals
-    case 2:
+    case 2: {
+      const mextensions = getExtensionsForEntry (SpA.id (x)) (spellExtensions)
+
+      const add_srcs = pipe_ (mextensions, joinMaybeList, map (SelectOption.A.src))
+
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -66,10 +73,13 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSpellProperty {...props} acc={SpA} />
           <WikiSpellTraditions {...props} acc={SpA} />
           <WikiImprovementCost {...props} acc={SpA} />
-          <WikiExtensions {...props} extensions={spellExtensions} acc={SpA} />
           <WikiSource {...props} acc={SpA} />
+          <WikiExtensions {...props} extensions={mextensions} acc={SpA} />
+          <WikiSource {...props} addSrcs={add_srcs} />
         </WikiBoxTemplate>
       )
+    }
+
     // Curses
     case 3:
       return (
@@ -82,6 +92,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
+
     // Elven Magical Songs
     case 4:
       return (
@@ -95,6 +106,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
+
     // Zaubermelodien
     case 5:
       return (
@@ -110,6 +122,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
+
     // Zaubertänze
     case 6:
       return (
@@ -124,6 +137,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
+
     // Herrschaftsrituale
     case 7:
       return (

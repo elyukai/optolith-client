@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Maybe } from "../../../Data/Maybe";
+import { map } from "../../../Data/List";
+import { joinMaybeList, Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Attribute } from "../../Models/Wiki/Attribute";
@@ -7,11 +8,13 @@ import { Book } from "../../Models/Wiki/Book";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
+import { pipe_ } from "../../Utilities/pipe";
 import { WikiCastingTime } from "./Elements/WikiCastingTime";
 import { WikiCost } from "./Elements/WikiCost";
 import { WikiDuration } from "./Elements/WikiDuration";
 import { WikiEffect } from "./Elements/WikiEffect";
-import { WikiExtensions } from "./Elements/WikiExtensions";
+import { getExtensionsForEntry, WikiExtensions } from "./Elements/WikiExtensions";
 import { WikiImprovementCost } from "./Elements/WikiImprovementCost";
 import { WikiLiturgicalChantTraditions } from "./Elements/WikiLiturgicalChantTraditions";
 import { WikiRange } from "./Elements/WikiRange";
@@ -43,6 +46,10 @@ export function WikiLiturgicalChantInfo (props: WikiLiturgicalChantInfoProps) {
   //   )
   // }
 
+  const mextensions = getExtensionsForEntry (LCA.id (x)) (liturgicalChantExtensions)
+
+  const add_srcs = pipe_ (mextensions, joinMaybeList, map (SelectOption.A.src))
+
   return (
     <WikiBoxTemplate className="liturgicalchant" title={LCA.name (x)}>
       <WikiSkillCheck {...props} acc={LCA} />
@@ -54,8 +61,9 @@ export function WikiLiturgicalChantInfo (props: WikiLiturgicalChantInfoProps) {
       <WikiTargetCategory {...props} acc={LCA} />
       <WikiLiturgicalChantTraditions {...props} acc={LCA} />
       <WikiImprovementCost {...props} acc={LCA} />
-      <WikiExtensions {...props} extensions={liturgicalChantExtensions} acc={LCA} />
       <WikiSource {...props} acc={LCA} />
+      <WikiExtensions {...props} extensions={mextensions} acc={LCA} />
+      <WikiSource {...props} addSrcs={add_srcs} />
     </WikiBoxTemplate>
   )
 }
