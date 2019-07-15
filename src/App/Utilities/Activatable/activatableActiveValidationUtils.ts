@@ -10,7 +10,7 @@ import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { any, countWith, elem, filter, find, flength, foldl, intersect, isList, List, mapByIdKeyMap, sdelete } from "../../../Data/List";
-import { alt, altF, bindF, ensure, fromJust, isJust, isNothing, Just, liftM2, Maybe, Nothing, or, sum } from "../../../Data/Maybe";
+import { alt, bind, bindF, ensure, fromJust, isJust, isNothing, Just, liftM2, Maybe, maybe, Nothing, or, sum } from "../../../Data/Maybe";
 import { elems, isOrderedMap, lookupF } from "../../../Data/OrderedMap";
 import { size } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
@@ -39,7 +39,7 @@ import { pipe, pipe_ } from "../pipe";
 import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites";
 import { setPrerequisiteId } from "../Prerequisites/setPrerequisiteId";
 import { validateLevel, validateObject } from "../Prerequisites/validatePrerequisitesUtils";
-import { isBoolean, isObject } from "../typeCheckUtils";
+import { isBoolean } from "../typeCheckUtils";
 import { getWikiEntry, isActivatableWikiEntry } from "../WikiUtils";
 import { countActiveSkillEntries } from "./activatableSkillUtils";
 import { isStyleValidToRemove } from "./ExtendedStyleUtils";
@@ -56,6 +56,8 @@ const { specialAbilities: wiki_specialAbilities } = WikiModel.AL
 const { maxCombatTechniqueRating, maxSkillRating } = ExperienceLevel.AL
 const { id, dependencies: addependencies, active: adactive } = ActivatableDependent.AL
 const { active: asdactive } = ActivatableSkillDependent.AL
+const DOA = DependencyObject.A
+const AOWIA = ActiveObjectWithId.A
 const { active: doactive, sid, sid2, tier, origin } = DependencyObject.AL
 const { prerequisites, tiers } = SpecialAbility.AL
 const { id: ra_id } = RequireActivatable.AL
@@ -398,7 +400,7 @@ const getEntrySpecificMaximumLevel =
     }
   }
 
-type isDependencyObject = (x: ActivatableDependency) => x is Record<DependencyObject>
+type MinLevelDepSid = string | number | List<number>
 
 const adjustMinimumLevelByDependencies =
   (entry: Record<ActiveObjectWithId>) =>
@@ -406,18 +408,27 @@ const adjustMinimumLevelByDependencies =
                   pipe (
                     // dependency must include a minimum level, which only occurs
                     // in a DependencyObject
-                    ensure (isObject as isDependencyObject),
+                    ensure (DependencyObject.is),
                     // get the level dependency from the object and ensure it's
-                    // greater than the current mininumu level and that
-                    bindF (dep => bindF<number, number>
-                                    (ensure (dep_level => sum (min_level) < dep_level
-                                                          && or (liftM2 (equals)
-                                                                        (sid (dep))
-                                                                        (sid (entry)))))
-                                    (tier (dep))),
+                    // greater than the current minimum level and that
+                    bindF (dep => bind (DOA.tier (dep))
+                                                             // new min must be lower than current
+                                                             // min level
+                                       (ensure (dep_level => sum (min_level) < dep_level
+                                                             // if the DependencyObject defines a
+                                                             // sid, too, the entry must match the
+                                                             // sid as well. A DependencyObject
+                                                             // without a sid is valid for all
+                                                             // entries (in case of calculating a
+                                                             // minimum level)
+                                                             && maybe (false)
+                                                                      (flip (Maybe.elem)
+                                                                            <MinLevelDepSid>
+                                                                            (AOWIA.sid (entry)))
+                                                                      (DOA.sid (dep))))),
                     // if the current dependency's level is not valid, return
                     // the current minimum
-                    altF (min_level)
+                    flip (alt) (min_level)
                   )))
 
 /**
