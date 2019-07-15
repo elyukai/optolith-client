@@ -1,4 +1,4 @@
-import { flip, on } from "../../Data/Function";
+import { flip, ident, on } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { compare } from "../../Data/Int";
 import { range } from "../../Data/Ix";
@@ -94,7 +94,7 @@ export const mergeSources: (xss: List<List<Record<SourceLink>>>) => List<Record<
  */
 export const groupInt =
   pipe (
-    reverse,
+    reverse as ident<List<number>>,
     foldr ((x: number) => (xs: List<Page>) =>
             maybe_ (() => List<Page> (x))
                    ((prev: Page) =>
