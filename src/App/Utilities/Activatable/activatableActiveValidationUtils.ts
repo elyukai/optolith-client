@@ -9,9 +9,9 @@ import { notP } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
-import { any, countWith, elem, filter, find, flength, foldl, intersect, isList, List, mapByIdKeyMap, sdelete } from "../../../Data/List";
+import { all, any, countWith, elem, filter, find, flength, foldl, intersect, isList, List, mapByIdKeyMap, notElemF, sdelete } from "../../../Data/List";
 import { alt, bind, bindF, ensure, fromJust, isJust, isNothing, Just, liftM2, Maybe, maybe, Nothing, or, sum } from "../../../Data/Maybe";
-import { elems, isOrderedMap, lookupF } from "../../../Data/OrderedMap";
+import { elems, isOrderedMap, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { size } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -24,14 +24,16 @@ import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { ActivatableDependency, Dependent } from "../../Models/Hero/heroTypeHelpers";
 import { Pact } from "../../Models/Hero/Pact";
 import { ActivatableActivationValidation } from "../../Models/View/ActivatableActivationValidationObject";
+import { Advantage } from "../../Models/Wiki/Advantage";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
+import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { isSpecialAbility, SpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { isSpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, AllRequirementObjects, EntryWithCategory, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils";
-import { prefixSA } from "../IDUtils";
 import { ifElse } from "../ifElse";
 import { isOwnTradition } from "../Increasable/liturgicalChantUtils";
 import { add, gt, gte, inc, lt, min, subtract, subtractBy } from "../mathUtils";
@@ -39,7 +41,7 @@ import { pipe, pipe_ } from "../pipe";
 import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites";
 import { setPrerequisiteId } from "../Prerequisites/setPrerequisiteId";
 import { validateLevel, validateObject } from "../Prerequisites/validatePrerequisitesUtils";
-import { isBoolean } from "../typeCheckUtils";
+import { isBoolean, misNumberM, misStringM } from "../typeCheckUtils";
 import { getWikiEntry, isActivatableWikiEntry } from "../WikiUtils";
 import { countActiveSkillEntries } from "./activatableSkillUtils";
 import { isStyleValidToRemove } from "./ExtendedStyleUtils";
@@ -51,35 +53,37 @@ const hasRequiredMinimumLevel =
   (min_level: Maybe<number>) => (max_level: Maybe<number>): boolean =>
     isJust (max_level) && isJust (min_level)
 
-const { blessings, cantrips, liturgicalChants, specialAbilities, pact } = HeroModel.AL
-const { specialAbilities: wiki_specialAbilities } = WikiModel.AL
-const { maxCombatTechniqueRating, maxSkillRating } = ExperienceLevel.AL
-const { id, dependencies: addependencies, active: adactive } = ActivatableDependent.AL
-const { active: asdactive } = ActivatableSkillDependent.AL
+const HA = HeroModel.A
+const WA = WikiModel.A
+const ELA = ExperienceLevel.A
+const AAL = Advantage.AL
+const ADA = ActivatableDependent.A
+const ASDA = ActivatableSkillDependent.A
 const DOA = DependencyObject.A
+const AOA = ActiveObject.A
 const AOWIA = ActiveObjectWithId.A
-const { active: doactive, sid, sid2, tier, origin } = DependencyObject.AL
-const { prerequisites, tiers } = SpecialAbility.AL
-const { id: ra_id } = RequireActivatable.AL
-const { level } = Pact.AL
+const RAAL = RequireActivatable.AL
+const PA = Pact.A
+const SA = Spell.A
+const LCA = LiturgicalChant.A
 
 const isRequiredByOthers =
   (current_active: Record<ActiveObject>) =>
   (state_entry: Record<ActivatableDependent>): boolean =>
     pipe (
-           addependencies,
+           ADA.dependencies,
            any (
              ifElse<ActivatableDependency, boolean>
                (isBoolean)
-               (e => e && flength (adactive (state_entry)) === 1)
-               (e => equals (sid (current_active)) (sid (e))
-                 && equals (sid2 (current_active)) (sid2 (e))
-                 && equals (tier (current_active)) (tier (e))
-                 || isJust (tier (e))
-                 && isJust (tier (current_active))
-                 && or (fmap (equals (Maybe.gte (tier (e))
-                                                (tier (current_active))))
-                             (doactive (e))))
+               (e => e && flength (ADA.active (state_entry)) === 1)
+               (e => equals (DOA.sid (e)) (AOA.sid (current_active))
+                 && equals (AOA.sid2 (current_active)) (DOA.sid2 (e))
+                 && equals (AOA.tier (current_active)) (DOA.tier (e))
+                 || isJust (DOA.tier (e))
+                 && isJust (AOA.tier (current_active))
+                 && or (fmap (equals (Maybe.gte (DOA.tier (e))
+                                                (AOA.tier (current_active))))
+                             (DOA.active (e))))
            )
          )
          (state_entry)
@@ -97,25 +101,27 @@ const isRemovalDisabledEntrySpecific =
       lookupF (WikiModel.AL.experienceLevels (wiki))
               (HeroModel.AL.experienceLevel (hero))
 
-    switch (id (wiki_entry)) {
+    switch (AAL.id (wiki_entry)) {
       // Exceptional Skill
       case "ADV_16": {
         // value of target skill
         const mvalue =
-          pipe (
-                 bindF (lookupF (HeroModel.AL.skills (hero))),
-                 fmap (SkillDependent.AL.value)
-               )
-               (sid (active) as Maybe<string>)
+          pipe_ (
+            active,
+            AOA.sid,
+            misStringM,
+            bindF (lookupF (HeroModel.AL.skills (hero))),
+            fmap (SkillDependent.AL.value)
+          )
 
         // amount of active Exceptional Skill advantages for the same skill
-        const counter = countWith (pipe (sid, equals (sid (active))))
-                                  (adactive (hero_entry))
+        const counter = countWith (pipe (AOA.sid, equals (AOA.sid (active))))
+                                  (ADA.active (hero_entry))
 
         // if the maximum value is reached removal needs to be disabled
         return or (liftM2 (gte)
                           (mvalue)
-                          (fmap (pipe (maxSkillRating, add (counter)))
+                          (fmap (pipe (ELA.maxSkillRating, add (counter)))
                                 (mstart_el)))
       }
 
@@ -123,34 +129,36 @@ const isRemovalDisabledEntrySpecific =
       case "ADV_17": {
         // value of target combat technique
         const mvalue =
-          pipe (
-                 bindF (lookupF (HeroModel.AL.combatTechniques (hero))),
-                 fmap (SkillDependent.AL.value)
-               )
-               (sid (active) as Maybe<string>)
+          pipe_ (
+            active,
+            AOA.sid,
+            misStringM,
+            bindF (lookupF (HeroModel.AL.combatTechniques (hero))),
+            fmap (SkillDependent.AL.value)
+          )
 
         // if the maximum value is reached removal needs to be disabled
         return or (liftM2 (gte)
                           (mvalue)
-                          (fmap (pipe (maxCombatTechniqueRating, inc))
+                          (fmap (pipe (ELA.maxCombatTechniqueRating, inc))
                                 (mstart_el)))
       }
 
       // Magical traditions
-      case prefixSA (70):
-      case prefixSA (255):
-      case prefixSA (345):
-      case prefixSA (346):
-      case prefixSA (676):
-      case prefixSA (677):
-      case prefixSA (678):
-      case prefixSA (679):
-      case prefixSA (680):
-      case prefixSA (681):
-      case prefixSA (1255):
-      case prefixSA (750):
-      case prefixSA (726):
-      case prefixSA (1221): {
+      case "SA_70":
+      case "SA_255":
+      case "SA_345":
+      case "SA_346":
+      case "SA_676":
+      case "SA_677":
+      case "SA_678":
+      case "SA_679":
+      case "SA_680":
+      case "SA_681":
+      case "SA_1255":
+      case "SA_750":
+      case "SA_726":
+      case "SA_1221": {
         // All active tradition entries
         const traditions =
           getMagicalTraditionsHeroEntries (HeroModel.AL.specialAbilities (hero))
@@ -161,8 +169,26 @@ const isRemovalDisabledEntrySpecific =
         // active spell or cantrip
         return multiple_traditions
           || countActiveSkillEntries ("spells") (hero) > 0
-          || size (cantrips (hero)) > 0
+          || size (HA.cantrips (hero)) > 0
       }
+
+      case "SA_72":
+        return pipe_ (
+          active,
+          AOA.sid,
+          misNumberM,
+          maybe (false)
+                (prop_id => OrderedMap.any ((spell: Record<ActivatableSkillDependent>) =>
+                                             ASDA.value (spell) > 14
+                                             && pipe_ (
+                                                  spell,
+                                                  ASDA.id,
+                                                  lookupF (WA.spells (wiki)),
+                                                  maybe (true)
+                                                        (pipe (SA.property, equals (prop_id)))
+                                                ))
+                                           (HA.spells (hero)))
+        )
 
       // Blessed traditions
       case "SA_86":
@@ -186,7 +212,37 @@ const isRemovalDisabledEntrySpecific =
       case "SA_1049": {
         // there must be no active liturgical chant or blessing
         return countActiveSkillEntries ("liturgicalChants") (hero) > 0
-          || size (blessings (hero)) > 0
+          || size (HA.blessings (hero)) > 0
+      }
+
+      case "SA_87": {
+        const all_aspcs = getActiveSelections (hero_entry)
+
+        return pipe_ (
+          active,
+          AOA.sid,
+          misNumberM,
+          maybe (false)
+                (aspc_id => {
+                  const other_aspcs = sdelete<string | number> (aspc_id) (all_aspcs)
+
+                  return OrderedMap.any ((chant: Record<ActivatableSkillDependent>) =>
+                                          ASDA.value (chant) > 14
+                                          && pipe_ (
+                                               chant,
+                                               ASDA.id,
+                                               lookupF (WA.liturgicalChants (wiki)),
+                                               maybe (true)
+                                                     (pipe (
+                                                       LCA.aspects,
+                                                       aspcs => elem (aspc_id) (aspcs)
+                                                                && all (notElemF (other_aspcs))
+                                                                       (aspcs)
+                                                     ))
+                                             ))
+                                        (HA.liturgicalChants (hero))
+                })
+        )
       }
 
       // Combat Style Combination
@@ -219,17 +275,17 @@ const isRemovalDisabledEntrySpecific =
       case "SA_632": {
         const mblessed_tradition =
           getBlessedTraditionFromWiki (WikiModel.AL.specialAbilities (wiki))
-                                      (specialAbilities (hero))
+                                      (HA.specialAbilities (hero))
 
         // Wiki entries for all active liturgical chants
         const active_chants =
-          pipe (
-                 liturgicalChants,
-                 elems,
-                 filter<Record<ActivatableSkillDependent>> (asdactive),
-                 mapByIdKeyMap (WikiModel.AL.liturgicalChants (wiki))
-               )
-               (hero)
+          pipe_ (
+            hero,
+            HA.liturgicalChants,
+            elems,
+            filter<Record<ActivatableSkillDependent>> (ASDA.active),
+            mapByIdKeyMap (WikiModel.AL.liturgicalChants (wiki))
+          )
 
         // If there are chants active that do not belong to the own tradition
         const mactive_unfamiliar_chants =
@@ -253,7 +309,7 @@ const isRemovalDisabledEntrySpecific =
                      // A Just if the depedency exists because of a list of ids
                      // in a prerequiste. Contains the source id of the object
                      // where the prerequisite is from.
-                     const current_origin = origin (dep)
+                     const current_origin = DOA.origin (dep)
 
                      if (isJust (current_origin)) {
                        return or (
@@ -265,8 +321,8 @@ const isRemovalDisabledEntrySpecific =
                                 // Get flat prerequisites for origin entry
                                 fmap (origin_entry =>
                                   flattenPrerequisites (Nothing)
-                                                       (alt (tiers (origin_entry)) (Just (1)))
-                                                       (prerequisites (origin_entry))),
+                                                       (alt (AAL.tiers (origin_entry)) (Just (1)))
+                                                       (AAL.prerequisites (origin_entry))),
 
                                 // Get the prerequisite that matches this entry
                                 // to get all other options from list
@@ -275,7 +331,7 @@ const isRemovalDisabledEntrySpecific =
                                                 return false
                                               }
 
-                                              const current_id = ra_id (req)
+                                              const current_id = RAAL.id (req)
 
                                               // the id must be a list of ids
                                               // because otherwise no options in
@@ -285,10 +341,9 @@ const isRemovalDisabledEntrySpecific =
                                                 // check if the current entry's
                                                 // id is actually a member of
                                                 // the prerequisite
-                                                && elem (id (wiki_entry))
+                                                && elem (AAL.id (wiki_entry))
                                                         (current_id)
                                             })),
-
 
                                 // Check if there are other entries that would
                                 // match the prerequisite so that this entry
@@ -298,8 +353,9 @@ const isRemovalDisabledEntrySpecific =
                                         validateObject (wiki)
                                                         (hero)
                                                         (setPrerequisiteId (x) (req))
-                                                        (id (wiki_entry)))
-                                      (sdelete (id (wiki_entry)) (ra_id (req) as List<string>))
+                                                        (AAL.id (wiki_entry)))
+                                      (sdelete (AAL.id (wiki_entry))
+                                               (RAAL.id (req) as List<string>))
                                 )
 
                               )
@@ -308,7 +364,7 @@ const isRemovalDisabledEntrySpecific =
                      }
 
                      // sid of the current dependency
-                     const current_dep_sid = sid (dep)
+                     const current_dep_sid = DOA.sid (dep)
 
                      if (Maybe.any (isList) (current_dep_sid)) {
                        // list of possible sids to fulfill the prerequisite
@@ -330,7 +386,7 @@ const isRemovalDisabledEntrySpecific =
 
                      return false
                    })
-                   (addependencies (hero_entry))
+                   (ADA.dependencies (hero_entry))
     }
   }
 
@@ -349,15 +405,15 @@ const getSermonsAndVisionsMinTier =
     fmap (more ? subtractBy (3) : subtract (3))
          (ensure (more ? gt (3) : lt (3))
                  (countWith (isActive)
-                            (getAllEntriesByGroup (wiki_specialAbilities (wiki))
-                                                  (specialAbilities (state))
+                            (getAllEntriesByGroup (WA.specialAbilities (wiki))
+                                                  (HA.specialAbilities (state))
                                                   (gr))))
 
 const getEntrySpecificMinimumLevel =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
   (x: Record<ActiveObjectWithId>): Maybe<number> => {
-    switch (id (x)) {
+    switch (AOWIA.id (x)) {
       // Große Zauberauswahl
       case "ADV_58":
         return fmap (subtractBy (3))
@@ -393,7 +449,7 @@ const getEntrySpecificMaximumLevel =
 
       // Dunkles Abbild der Bündnisgabe
       case "SA_667":
-        return pipe_ (hero, pact, fmap (level))
+        return pipe_ (hero, HA.pact, fmap (PA.level))
 
       default:
         return Nothing
@@ -421,7 +477,7 @@ const adjustMinimumLevelByDependencies =
                                                              // without a sid is valid for all
                                                              // entries (in case of calculating a
                                                              // minimum level)
-                                                             && maybe (false)
+                                                             && maybe (true)
                                                                       (flip (Maybe.elem)
                                                                             <MinLevelDepSid>
                                                                             (AOWIA.sid (entry)))
@@ -485,49 +541,49 @@ export const getIsRemovalOrChangeDisabled =
            bindF<EntryWithCategory, Activatable> (ensure (isActivatableWikiEntry)),
            bindF (
              wiki_entry =>
-               pipe (
-                      id,
-                      getHeroStateItem (hero),
-                      bindF<Dependent, Record<ActivatableDependent>>
-                        (ensure (isActivatableDependent)),
-                      fmap (hero_entry => {
-                        const minimum_level = getMinTier (wiki)
+               pipe_ (
+                 entry,
+                 AOWIA.id,
+                 getHeroStateItem (hero),
+                 bindF<Dependent, Record<ActivatableDependent>>
+                   (ensure (isActivatableDependent)),
+                 fmap (hero_entry => {
+                   const minimum_level = getMinTier (wiki)
+                                                    (hero)
+                                                    (entry)
+                                                    (ADA.dependencies (hero_entry))
+
+                   return ActivatableActivationValidation ({
+                     disabled:
+                       // Disable if a minimum level is required
+                       hasRequiredMinimumLevel (minimum_level)
+                                               (AAL.tiers (wiki_entry))
+
+                       // Disable if other entries depend on this entry
+                       || isRequiredByOthers (entry)
+                                             (hero_entry)
+
+                       // Disable if style special ability is required for
+                       // extended special abilities
+                       || isStyleSpecialAbilityRemovalDisabled (hero)
+                                                               (wiki_entry)
+
+                       // Disable if specific entry conditions disallow
+                       // remove
+                       || isRemovalDisabledEntrySpecific (wiki)
                                                          (hero)
-                                                         (entry)
-                                                         (addependencies (hero_entry))
-
-                        return ActivatableActivationValidation ({
-                          disabled:
-                            // Disable if a minimum level is required
-                            hasRequiredMinimumLevel (minimum_level)
-                                                    (tiers (wiki_entry))
-
-                            // Disable if other entries depend on this entry
-                            || isRequiredByOthers (entry)
-                                                  (hero_entry)
-
-                            // Disable if style special ability is required for
-                            // extended special abilities
-                            || isStyleSpecialAbilityRemovalDisabled (hero)
-                                                                    (wiki_entry)
-
-                            // Disable if specific entry conditions disallow
-                            // remove
-                            || isRemovalDisabledEntrySpecific (wiki)
-                                                              (hero)
-                                                              (wiki_entry)
-                                                              (hero_entry)
-                                                              (entry),
-                          minLevel: minimum_level,
-                          maxLevel: getMaxTier (wiki)
-                                               (hero)
-                                               (prerequisites (wiki_entry))
-                                               (addependencies (hero_entry))
-                                               (id (entry)),
-                        })
-                      })
-                    )
-                    (entry)
+                                                         (wiki_entry)
+                                                         (hero_entry)
+                                                         (entry),
+                     minLevel: minimum_level,
+                     maxLevel: getMaxTier (wiki)
+                                          (hero)
+                                          (AAL.prerequisites (wiki_entry))
+                                          (ADA.dependencies (hero_entry))
+                                          (AOWIA.id (entry)),
+                   })
+                 })
+               )
            )
          )
-         (id (entry))
+         (AOWIA.id (entry))

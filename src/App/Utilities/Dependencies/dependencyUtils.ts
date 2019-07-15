@@ -44,7 +44,7 @@ const putActivatableDependency =
     const current_id = RAA.id (req)
 
     if (isList (current_id)) {
-      if (isNothing (RAA.sid (req)) || isNothing (RAA.sid2 (req)) || isNothing (RAA.tier (req))) {
+      if (isNothing (RAA.sid (req)) && isNothing (RAA.sid2 (req)) && isNothing (RAA.tier (req))) {
         return flip (foldr (f (DependencyObject ({
                                                   origin: Just (sourceId),
                                                   active: Just (RAA.active (req)),
@@ -67,7 +67,7 @@ const putActivatableDependency =
 
     // current_id is no list:
 
-    if (isNothing (RAA.sid (req)) || isNothing (RAA.sid2 (req)) || isNothing (RAA.tier (req))) {
+    if (isNothing (RAA.sid (req)) && isNothing (RAA.sid2 (req)) && isNothing (RAA.tier (req))) {
       return f (RAA.active (req)) (current_id)
     }
 

@@ -78,7 +78,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiEffect {...props} acc={SpA} />
           <WikiCost {...props} acc={SpA} />
           <WikiDuration {...props} acc={SpA} />
-          <WikiTargetCategory {...props} acc={SpA} />
+          <WikiSpellProperty {...props} acc={SpA} />
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
@@ -95,6 +95,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
+    // Zaubermelodien
     case 5:
       return (
         <WikiBoxTemplate className="spell" title={name}>
@@ -109,6 +110,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
+    // Zaubertänze
     case 6:
       return (
         <WikiBoxTemplate className="spell" title={name}>
@@ -119,6 +121,18 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSpellProperty {...props} acc={SpA} />
           <WikiSpellTraditions {...props} acc={SpA} />
           <WikiImprovementCost {...props} acc={SpA} />
+          <WikiSource {...props} acc={SpA} />
+        </WikiBoxTemplate>
+      )
+    // Herrschaftsrituale
+    case 7:
+      return (
+        <WikiBoxTemplate className="spell" title={name}>
+          <WikiSkillCheck {...props} acc={SpA} />
+          <WikiEffect {...props} acc={SpA} />
+          <WikiCost {...props} acc={SpA} />
+          <WikiDuration {...props} acc={SpA} />
+          <WikiSpellProperty {...props} acc={SpA} />
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )

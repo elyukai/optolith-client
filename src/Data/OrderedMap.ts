@@ -1082,6 +1082,29 @@ export const mapMEitherWithKey =
     return Right (fromArray (arr))
   }
 
+/**
+ * `adjustDef :: Ord k => a -> (a -> a) -> k -> Map k a -> Map k a`
+ *
+ * Update a value at a specific key with the result of the provided function.
+ * When the key is not a member of the map, the default value passed to this
+ * function is used as the parameter passed to the provided function and the
+ * result is inserted into the map.
+ */
+export const adjustDef =
+  <A>
+  (def: A) =>
+  (f: (value: A) => A) =>
+  <K>
+  (key: K) =>
+  (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
+    maybe_ (() => insert (key) (f (def)) (mp))
+           ((x: A) => {
+             const x1 = f (x)
+
+             return x === x1 ? mp : insert (key) (x1) (mp)
+           })
+           (lookup (key) (mp))
+
 // NAMESPACED FUNCTIONS
 
 export const OrderedMap = {
@@ -1167,6 +1190,7 @@ export const OrderedMap = {
   lookup2,
   lookup2F,
   mapMEitherWithKey,
+  adjustDef,
 }
 
 

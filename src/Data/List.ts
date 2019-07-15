@@ -1349,14 +1349,14 @@ export const deleteAt =
  * returned.
  */
 export const setAt =
-  <A> (index: number) => (x: A) => (xs: List<A>): List<A> =>
+  (index: number) => <A> (x: A) => (xs: List<A>): List<A> =>
     index < 0
     ? xs
     : isNil (xs)
     ? Nil
     : index === 0
     ? Cons (x, xs .xs)
-    : Cons (xs .x, setAt<A> (index - 1) (x) (xs .xs))
+    : Cons (xs .x, setAt (index - 1) (x) (xs .xs))
 
 /**
  * `modifyAt :: Int -> (a -> a) -> [a] -> [a]`

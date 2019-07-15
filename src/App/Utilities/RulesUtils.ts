@@ -11,7 +11,6 @@ import { WikiModel } from "../Models/Wiki/WikiModel";
 import { EnabledSourceBooks } from "../Selectors/rulesSelectors";
 import { pipe } from "./pipe";
 
-
 const RA = Rules.A
 const BA = Book.A
 const SLA = SourceLink.A
