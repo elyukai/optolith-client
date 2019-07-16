@@ -14,7 +14,7 @@ import { EQ, GT, LT, Ordering } from "./Ord";
  * equal.
  */
 export const compare =
-  (x: number) => (y: number): Ordering => x < y ? LT : x > y ? GT : EQ
+  (a: number) => (b: number): Ordering => a < b ? LT : a > b ? GT : EQ
 
 export const Int = {
   compare,

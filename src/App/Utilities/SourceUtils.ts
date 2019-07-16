@@ -1,4 +1,4 @@
-import { flip, ident, on } from "../../Data/Function";
+import { flip, on } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { compare } from "../../Data/Int";
 import { range } from "../../Data/Ix";
@@ -74,27 +74,25 @@ export const mergeSources: (xss: List<List<Record<SourceLink>>>) => List<Record<
                              pages: pipe_ (
                                x,
                                toList,
-                               sortBy (compare),
-                               groupInt
+                               groupSortInt
                              ),
                            })))
                    (List ())
     )
 
 /**
- * `groupInt :: [Int] -> [Int | (Int, Int)]`
+ * `groupSortInt :: [Int] -> [Int | (Int, Int)]`
  *
  * Combines adjacent integers into a pair. Leaves the other ints as they are.
- *
- * Requires a sorted list (**highest** to **lowest** number).
+ * The result is sorted in ascending order.
  *
  * ```haskell
- * groupInt [1, 3, 4, 5, 7, 9, 10, 12] == [1, (3, 5), 7, (9, 10), 12]
+ * groupSortInt [1, 3, 12, 4, 7, 5, 9, 10] == [1, (3, 5), 7, (9, 10), 12]
  * ```
  */
-export const groupInt =
+export const groupSortInt =
   pipe (
-    reverse as ident<List<number>>,
+    sortBy (flip (compare)),
     foldr ((x: number) => (xs: List<Page>) =>
             maybe_ (() => List<Page> (x))
                    ((prev: Page) =>

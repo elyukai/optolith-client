@@ -1,12 +1,14 @@
 import { fmap } from "../../../../Data/Functor";
 import { map } from "../../../../Data/List";
 import { Nothing } from "../../../../Data/Maybe";
+import { OrderedMap } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { Advantage } from "../../../Models/Wiki/Advantage";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
+import { modifyNegIntNoBreak } from "../rawConversionUtils";
 import { mensureMapNatural, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toActivatableCost } from "./Sub/toActivatableCost";
@@ -119,16 +121,18 @@ export const toAdvantage =
                                                     (rs.eselect),
 
           input,
-          rules: rs.erules,
-          range,
-          actions,
-          apValue,
-          apValueAppend,
+          rules: modifyNegIntNoBreak (rs.erules),
+          range: fmap (modifyNegIntNoBreak) (range),
+          actions: fmap (modifyNegIntNoBreak) (actions),
+          apValue: fmap (modifyNegIntNoBreak) (apValue),
+          apValueAppend: fmap (modifyNegIntNoBreak) (apValueAppend),
           prerequisites: rs.eprerequisites,
-          prerequisitesText: prerequisites,
-          prerequisitesTextIndex: rs.eprerequisitesIndex,
-          prerequisitesTextStart: prerequisitesStart,
-          prerequisitesTextEnd: prerequisitesEnd,
+          prerequisitesText: fmap (modifyNegIntNoBreak) (prerequisites),
+          prerequisitesTextIndex: OrderedMap.map ((x: string | false) =>
+                                                   x === false ? false : modifyNegIntNoBreak (x))
+                                                 (rs.eprerequisitesIndex),
+          prerequisitesTextStart: fmap (modifyNegIntNoBreak) (prerequisitesStart),
+          prerequisitesTextEnd: fmap (modifyNegIntNoBreak) (prerequisitesEnd),
 
           gr: rs.egr,
 

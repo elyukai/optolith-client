@@ -140,13 +140,15 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
                                   (listToMaybe)
                                   (CA.languages (culture))),
 
-      maybe (ident as ident<Record<ConcatenatedModifications>>)
-            <number> (pipe (insert, over (CML.scripts)))
-            (ifElse<List<number>> (pipe (flength, gt (1)))
-                                  <Maybe<number>>
-                                  (cnst (Just (action .payload .mainScript)))
-                                  (listToMaybe)
-                                  (CA.scripts (culture)))
+      action.payload.isBuyingMainScriptEnabled
+        ? maybe (ident as ident<Record<ConcatenatedModifications>>)
+                <number> (pipe (insert, over (CML.scripts)))
+                (ifElse<List<number>> (pipe (flength, gt (1)))
+                                      <Maybe<number>>
+                                      (cnst (Just (action .payload .mainScript)))
+                                      (listToMaybe)
+                                      (CA.scripts (culture)))
+        : ident
     ),
 
     // Profession selections:

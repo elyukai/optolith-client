@@ -25,6 +25,7 @@ import { WikiModel, WikiModelL, WikiModelRecord } from "../../Models/Wiki/WikiMo
 import { Activatable, Skillish } from "../../Models/Wiki/wikiTypeHelpers";
 import { app_path } from "../../Selectors/envSelectors";
 import { prefixProf } from "../IDUtils";
+import { lt } from "../mathUtils";
 import { pipe, pipe_ } from "../pipe";
 import { getWikiSliceGetterByCategory } from "../WikiUtils";
 import { CsvColumnDelimiter, csvToList } from "./csvToList";
@@ -385,24 +386,35 @@ export const parseTables =
 
 const mapCatToSelectOptions =
   (wiki: WikiModelRecord) =>
-    foldr (pipe (
-              SelectOption.A.id as (x: Record<SelectOption>) => Categories,
+    foldr ((x: Record<SelectOption>) => {
+            const cat = (SelectOption.A.id as (x: Record<SelectOption>) => Categories) (x)
+
+            return pipe_ (
+              cat,
               getWikiSliceGetterByCategory as
                 (c: Categories) =>
                   (x: Record<WikiModel>) => OrderedMap<string, Skillish>,
               thrush (wiki),
               elems,
-              map (
-                r => SelectOption ({
-                  id: Skill.AL.id (r),
-                  name: Skill.AL.name (r),
-                  cost: member ("ic") (r) ? Just (Skill.AL.ic (r)) : Nothing,
-                  src: Skill.AL.src (r),
-                })
-              ),
+              cat === Categories.SPELLS
+                ? mapMaybe (pipe (
+                    ensure<Skillish> (pipe (Skill.AL.gr, lt (3))),
+                    fmap (skillishToSelectOption)
+                  ))
+                : map (skillishToSelectOption),
               append
-            ))
-            (List ())
+            )
+          })
+          (List ())
+
+const skillishToSelectOption =
+  (r: Skillish) =>
+    SelectOption ({
+      id: Skill.AL.id (r),
+      name: Skill.AL.name (r),
+      cost: member ("ic") (r) ? Just (Skill.AL.ic (r)) : Nothing,
+      src: Skill.AL.src (r),
+    })
 
 const mapCatToSelectOptionsPred =
   (pred: (x: Skillish) => boolean) =>

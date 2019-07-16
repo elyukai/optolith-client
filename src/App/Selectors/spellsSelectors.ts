@@ -1,5 +1,5 @@
 import { notP } from "../../Data/Bool";
-import { equals } from "../../Data/Eq";
+import { equals, notEquals } from "../../Data/Eq";
 import { ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
@@ -77,7 +77,8 @@ export const getMagicalTraditionsFromWiki = createMaybeSelector (
 
 export const getIsSpellsTabAvailable = createMaybeSelector (
   getMaybeMagicalTraditionsFromHero,
-  any (notNull)
+  any (xs => notNull (xs)
+             && List.all (pipe (ActivatableDependent.A.id, notEquals (prefixSA (680)))) (xs))
 )
 
 export const getActiveSpells = createMaybeSelector (

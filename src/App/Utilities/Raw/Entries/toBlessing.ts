@@ -3,6 +3,7 @@ import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { Blessing } from "../../../Models/Wiki/Blessing";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
+import { modifyNegIntNoBreak } from "../rawConversionUtils";
 import { mensureMapNaturalList, mensureMapNonEmptyString } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
@@ -51,7 +52,7 @@ export const toBlessing =
           id: prefixId (IdPrefixes.BLESSINGS) (id),
           name: rs.ename,
           tradition: rs.etraditions,
-          effect: rs.eeffect,
+          effect: modifyNegIntNoBreak (rs.eeffect),
           range: rs.erange,
           duration: rs.eduration,
           target: rs.etarget,

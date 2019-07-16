@@ -4,7 +4,7 @@ import { notEquals } from "../../../Data/Eq";
 import { onF } from "../../../Data/Function";
 import { fmap, mapReplace } from "../../../Data/Functor";
 import { cons, flength, List } from "../../../Data/List";
-import { bindF, ensure, fromJust, fromMaybe, guard, INTERNAL_shallowEquals, isJust, Just, liftM2, listToMaybe, Maybe, maybe } from "../../../Data/Maybe";
+import { any, bindF, ensure, fromJust, fromMaybe, guard, INTERNAL_shallowEquals, isJust, Just, liftM2, listToMaybe, Maybe, maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
 import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
@@ -15,7 +15,6 @@ import { getLevelElementsWithMin } from "../../Utilities/levelUtils";
 import { max, min } from "../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
-import { misStringM } from "../../Utilities/typeCheckUtils";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { IconButton } from "../Universal/IconButton";
 import { ListItem } from "../Universal/ListItem";
@@ -137,11 +136,14 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
         active={Maybe.elem (AAA_.id (item)) (selectedForInfo)}
         >
         <ListItemName
-          name={pipe_ (mlevel_element, misStringM, maybe (maybe (baseName)
-                                                                ((add_str: string) =>
-                                                                  `${baseName} (${add_str})`)
-                                                                (AAA_.addName (item)))
-                                                         (() => AAA_.name (item)))}
+          name={
+            any ((x: string | JSX.Element) => !isString (x)) (mlevel_element)
+              ? maybe (baseName)
+                      ((add_str: string) =>
+                        `${baseName} (${add_str})`)
+                      (AAA_.addName (item))
+              : AAA_.name (item)
+          }
           />
         <ListItemSelections>
           {pipe_ (

@@ -12,6 +12,7 @@ import { Application } from "../../../Models/Wiki/sub/Application";
 import { prefixId } from "../../IDUtils";
 import { toInt, toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
+import { modifyNegIntNoBreak } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
 import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapPairList, mensureMapPairListOptional, mensureMapStringPred } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
@@ -223,11 +224,11 @@ export const toSkill =
           ic: rs.eic,
           encumbrance: rs.eenc,
           encumbranceDescription: encDescription,
-          tools,
-          quality: rs.equality,
-          failed: rs.efailed,
-          critical: rs.ecritical,
-          botch: rs.ebotch,
+          tools: fmap (modifyNegIntNoBreak) (tools),
+          quality: modifyNegIntNoBreak (rs.equality),
+          failed: modifyNegIntNoBreak (rs.efailed),
+          critical: modifyNegIntNoBreak (rs.ecritical),
+          botch: modifyNegIntNoBreak (rs.ebotch),
           gr: rs.egr,
           src: rs.esrc,
           category: Nothing,

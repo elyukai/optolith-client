@@ -31,7 +31,7 @@ import { prefixCantrip, prefixCT, prefixId, prefixSA } from "../../IDUtils";
 import { toNatural } from "../../NumberUtils";
 import { pipe, pipe_ } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
-import { maybePrefix } from "../rawConversionUtils";
+import { maybePrefix, modifyNegIntNoBreak } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
 import { mensureMapBoolean, mensureMapListBindAfterOptional, mensureMapListOptional, mensureMapNatural, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamedPred, mapTotalPred, TableType } from "../validateValueUtils";
@@ -511,8 +511,8 @@ export const toProfession =
             prerequisites:
               fromMaybe<Profession["prerequisites"]> (empty) (rs.eprerequisites),
 
-            prerequisitesStart,
-            prerequisitesEnd,
+            prerequisitesStart: fmap (modifyNegIntNoBreak) (prerequisitesStart),
+            prerequisitesEnd: fmap (modifyNegIntNoBreak) (prerequisitesEnd),
 
             selections:
               is_guild_mage_tradition_add
@@ -555,22 +555,22 @@ export const toProfession =
             suggestedAdvantages:
               maybePrefix (IdPrefixes.ADVANTAGES) (rs.esuggestedAdvantages),
 
-            suggestedAdvantagesText,
+            suggestedAdvantagesText: fmap (modifyNegIntNoBreak) (suggestedAdvantagesText),
 
             suggestedDisadvantages:
               maybePrefix (IdPrefixes.DISADVANTAGES) (rs.esuggestedDisadvantages),
 
-            suggestedDisadvantagesText,
+            suggestedDisadvantagesText: fmap (modifyNegIntNoBreak) (suggestedDisadvantagesText),
 
             unsuitableAdvantages:
               maybePrefix (IdPrefixes.ADVANTAGES) (rs.eunsuitableAdvantages),
 
-            unsuitableAdvantagesText,
+            unsuitableAdvantagesText: fmap (modifyNegIntNoBreak) (unsuitableAdvantagesText),
 
             unsuitableDisadvantages:
               maybePrefix (IdPrefixes.DISADVANTAGES) (rs.eunsuitableDisadvantages),
 
-            unsuitableDisadvantagesText,
+            unsuitableDisadvantagesText: fmap (modifyNegIntNoBreak) (unsuitableDisadvantagesText),
 
             isVariantRequired: rs.eisVariantRequired,
 

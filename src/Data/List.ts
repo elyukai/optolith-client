@@ -129,6 +129,8 @@ export const List =
  */
 export const pure = <A> (x: A) => Cons (x, Nil)
 
+List.pure = pure
+
 /**
  * `(<*>) :: [a -> b] -> [a] -> [b]`
  *
@@ -149,6 +151,8 @@ const mapAp =
     ? xs
     : Cons (f (x .x), mapAp (f) (xs) (x .xs))
 
+List.ap = ap
+
 
 // ALTERNATIVE
 
@@ -163,6 +167,8 @@ export const alt =
   <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
     isNil (xs1) ? xs2 : xs1
 
+List.alt = alt
+
 /**
  * `altF :: [a] -> [a] -> [a]`
  *
@@ -176,12 +182,16 @@ export const altF =
   <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
     alt (xs2) (xs1)
 
+List.altF = altF
+
 /**
  * `empty :: [a]`
  *
  * The empty list.
  */
 export const empty = Nil
+
+List.empty = empty
 
 /**
  * `guard :: Bool -> [()]`
@@ -201,6 +211,8 @@ export const guard =
   (pred: boolean): List<true> =>
     pred ? pure<true> (true) : empty
 
+List.guard = guard
+
 
 // MONAD
 
@@ -212,12 +224,16 @@ export const bind =
     isNil (xs) ? Nil : append (f (xs .x))
                               (bind<A, B> (xs .xs) (f))
 
+List.bind = bind
+
 /**
  * `(=<<) :: (a -> [b]) -> [a] -> [b]`
  */
 export const bindF =
   <A, B> (f: (x: A) => List<B>) => (xs: List<A>): List<B> =>
     bind<A, B> (xs) (f)
+
+List.bindF = bindF
 
 /**
  * `(>>) :: [a] -> [b] -> [b]`
@@ -232,6 +248,8 @@ export const then =
   <A> (xs1: List<any>) => (xs2: List<A>): List<A> =>
     bind<any, A> (xs1) (_ => xs2)
 
+List.then = then
+
 /**
  * `(>=>) :: (a -> [b]) -> (b -> [c]) -> a -> [c]`
  *
@@ -240,6 +258,8 @@ export const then =
 export const kleisli =
   <A, B, C> (f1: (x: A) => List<B>) => (f2: (x: B) => List<C>) =>
     pipe (f1, bindF (f2))
+
+List.kleisli = kleisli
 
 /**
  * `join :: [[a]] -> [a]`
@@ -251,6 +271,8 @@ export const kleisli =
 export const join =
   <A> (xss: List<List<A>>): List<A> =>
     bind<List<A>, A> (xss) (ident)
+
+List.join = join
 
 
 // FOLDABLE
@@ -270,6 +292,8 @@ export const foldr =
   <A, B> (f: (x: A) => (acc: B) => B) => (initial: B) => (xs: List<A>): B =>
     isNil (xs) ? initial : f (xs .x) (foldr (f) (initial) (xs .xs))
 
+List.foldr = foldr
+
 /**
  * `foldl :: (b -> a -> b) -> b -> [a] -> b`
  *
@@ -284,6 +308,8 @@ export const foldr =
 export const foldl =
   <A, B> (f: (acc: B) => (x: A) => B) => (initial: B) => (xs: List<A>): B =>
     isNil (xs) ? initial : foldl (f) (f (initial) (xs .x)) (xs .xs)
+
+List.foldl = foldl
 
 /**
  * `foldr1 :: (a -> a -> a) -> [a] -> a`
@@ -301,6 +327,8 @@ export const foldr1 =
 
     throw new TypeError ("Cannot apply foldr1 to an empty list.")
   }
+
+List.foldr1 = foldr1
 
 const foldr1Safe =
   <A> (f: (x: A) => (acc: A) => A) => (xs: Cons<A>): A =>
@@ -325,6 +353,8 @@ export const foldl1 =
     throw new TypeError ("Cannot apply foldl1 to an empty list.")
   }
 
+List.foldl1 = foldl1
+
 const foldl1Safe =
   <A>
   (f: (acc: A) => (x: A) => A) =>
@@ -339,6 +369,8 @@ const foldl1Safe =
  */
 export const toList = <A> (xs: List<A>): List<A> => xs
 
+List.toList = toList
+
 /**
  * `null :: [a] -> Bool`
  *
@@ -348,6 +380,8 @@ export const toList = <A> (xs: List<A>): List<A> => xs
  */
 export const fnull = isNil
 
+List.fnull = fnull
+
 /**
  * `null :: [a] -> Bool`
  *
@@ -356,6 +390,8 @@ export const fnull = isNil
  * way to do better.
  */
 export const fnullStr = (xs: string): boolean => xs .length === 0
+
+List.fnullStr = fnullStr
 
 /**
  * `length :: [a] -> Int`
@@ -368,6 +404,8 @@ export const flength =
   (xs: List<any>): number =>
     foldr<any, number> (() => inc) (0) (xs)
 
+List.flength = flength
+
 /**
  * `length :: [a] -> Int`
  *
@@ -378,6 +416,8 @@ export const flength =
 export const flengthStr =
   (xs: string): number =>
     xs .length
+
+List.flengthStr = flengthStr
 
 /**
  * `elem :: Eq a => a -> [a] -> Bool`
@@ -390,6 +430,8 @@ export const elem =
 
 export type elem<A> = (x: A) => (xs: List<A>) => boolean
 
+List.elem = elem
+
 /**
  * `elemF :: Eq a => [a] -> a -> Bool`
  *
@@ -399,12 +441,16 @@ export type elem<A> = (x: A) => (xs: List<A>) => boolean
  */
 export const elemF = <A> (xs: List<A>) => (x: A): boolean => elem (x) (xs)
 
+List.elemF = elemF
+
 /**
  * `sum :: Num a => [a] -> a`
  *
  * The `sum` function computes the sum of the numbers of a structure.
  */
 export const sum = foldr (add) (0)
+
+List.sum = sum
 
 /**
  * `product :: Num a => [a] -> a`
@@ -413,6 +459,8 @@ export const sum = foldr (add) (0)
  */
 export const product = foldr (multiply) (1)
 
+List.product = product
+
 /**
  * `maximum :: Ord a => [a] -> a`
  *
@@ -420,12 +468,16 @@ export const product = foldr (multiply) (1)
  */
 export const maximum = foldr (max) (-Infinity)
 
+List.maximum = maximum
+
 /**
  * `minimum :: Ord a => [a] -> a`
  *
  * The least element of a non-empty structure.
  */
 export const minimum = foldr (min) (Infinity)
+
+List.minimum = minimum
 
 // Specialized folds
 
@@ -436,6 +488,8 @@ export const minimum = foldr (min) (Infinity)
  */
 export const concat = join
 
+List.concat = concat
+
 /**
  * `concatMap :: (a -> [b]) -> [a] -> [b]`
  *
@@ -443,6 +497,8 @@ export const concat = join
  * resulting lists.
  */
 export const concatMap = bindF
+
+List.concatMap = concatMap
 
 /**
  * `and :: [Bool] -> Bool`
@@ -455,6 +511,8 @@ export const and =
   (xs: List<boolean>): boolean =>
     isNil (xs) ? true : xs .x && and (xs .xs)
 
+List.and = and
+
 /**
  * `or :: [Bool] -> Bool`
  *
@@ -466,6 +524,8 @@ export const or =
   (xs: List<boolean>): boolean =>
     isNil (xs) ? false : xs .x || or (xs .xs)
 
+List.or = or
+
 /**
  * `any :: (a -> Bool) -> [a] -> Bool`
  *
@@ -474,6 +534,8 @@ export const or =
 export const any =
   <A> (f: (x: A) => boolean) => (xs: List<A>): boolean =>
     isNil (xs) ? false : f (xs .x) || any (f) (xs .xs)
+
+List.any = any
 
 /**
  * `all :: (a -> Bool) -> [a] -> Bool`
@@ -484,6 +546,8 @@ export const all =
   <A> (f: (x: A) => boolean) => (xs: List<A>): boolean =>
     isNil (xs) ? true : f (xs .x) && all (f) (xs .xs)
 
+List.all = all
+
 // Searches
 
 /**
@@ -493,6 +557,8 @@ export const all =
  */
 export const notElem = <A> (x: A) => pipe (elem (x), not)
 
+List.notElem = notElem
+
 /**
  * `notElemF :: Eq a => a -> [a] -> Bool`
  *
@@ -501,6 +567,8 @@ export const notElem = <A> (x: A) => pipe (elem (x), not)
  * `notElemF` is the same as `notElem` but with arguments flipped.
  */
 export const notElemF = <A> (xs: List<A>) => (x: A) => notElem (x) (xs)
+
+List.notElemF = notElemF
 
 interface Find {
   /**
@@ -533,6 +601,8 @@ export const find: Find =
   <A> (pred: (x: A) => boolean) => (xs: List<A>): Maybe<A> =>
     isNil (xs) ? Nothing : pred (xs .x) ? Just (xs .x) : find (pred) (xs .xs)
 
+List.find = find
+
 
 // BASIC FUNCTIONS
 
@@ -554,6 +624,8 @@ const appendSafe =
   <A> (xs1: List<A>) => (xs2: Cons<A>): Cons<A> =>
     isNil (xs1) ? xs2 : Cons (xs1 .x, appendSafe (xs1 .xs) (xs2))
 
+List.append = append
+
 /**
  * `(++) :: String -> String -> String`
  *
@@ -568,12 +640,16 @@ export const appendStr =
   (xs1: string) => (xs2: string): string =>
     xs1 + xs2
 
+List.appendStr = appendStr
+
 /**
  * `(:) :: [a] -> a -> [a]`
  *
  * Prepends an element to the list.
  */
 export const cons = <A> (xs: List<A>) => (x: A): List<A> => Cons (x, xs)
+
+List.cons = cons
 
 /**
  * `head :: [a] -> a`
@@ -591,6 +667,8 @@ export const head = <A> (xs: Cons<A>): A => {
   return xs .x
 }
 
+List.head = head
+
 /**
  * `last :: [a] -> a`
  *
@@ -603,6 +681,8 @@ export const last = <A> (xs: Cons<A>): A => {
 
   return isNil (xs .xs) ? xs .x : last (xs .xs)
 }
+
+List.last = last
 
 /**
  * `lastS :: [a] -> Maybe a`
@@ -617,6 +697,8 @@ export const lastS =
   <A> (xs: List<A>): Maybe<A> =>
     fnull (xs) ? Nothing : Just (last (xs))
 
+List.lastS = lastS
+
 /**
  * `tail :: [a] -> [a]`
  *
@@ -630,6 +712,8 @@ export const tail = <A> (xs: Cons<A>): List<A> => {
   return xs .xs
 }
 
+List.tail = tail
+
 /**
  * `tailS :: [a] -> Maybe [a]`
  *
@@ -642,6 +726,8 @@ export const tail = <A> (xs: Cons<A>): List<A> => {
 export const tailS =
   <A> (xs: List<A>): Maybe<List<A>> =>
     fnull (xs) ? Nothing : Just (tail (xs))
+
+List.tailS = tailS
 
 /**
  * `init :: [a] -> [a]`
@@ -657,6 +743,8 @@ export const init = <A> (xs: Cons<A>): List<A> => {
   return isNil (xs .xs) ? Nil : Cons (xs .x, init (xs .xs))
 }
 
+List.init = init
+
 /**
  * `initS :: [a] -> Maybe [a]`
  *
@@ -669,6 +757,8 @@ export const init = <A> (xs: Cons<A>): List<A> => {
 export const initS =
   <A> (xs: List<A>): Maybe<List<A>> =>
     fnull (xs) ? Nothing : Just (init (xs))
+
+List.initS = initS
 
 /**
  * `uncons :: [a] -> Maybe (a, [a])`
@@ -683,6 +773,8 @@ export const uncons =
 
 export type unconsSafe = <A> (xs: NonEmptyList<A>) => Just<Pair<A, List<A>>>
 
+List.uncons = uncons
+
 
 // LIST TRANSFORMATIONS
 
@@ -695,6 +787,8 @@ export const map =
   <A, B> (f: (x: A) => B) => (xs: List<A>): List<B> =>
     isNil (xs) ? Nil : Cons (f (xs .x), map (f) (xs .xs))
 
+List.map = map
+
 /**
  * `reverse :: [a] -> [a]`
  *
@@ -704,6 +798,8 @@ export const map =
 export const reverse =
   <A> (xs: List<A>): List<A> =>
     foldl<A, List<A>> (cons) (empty) (xs)
+
+List.reverse = reverse
 
 /**
  * `intersperse :: a -> [a] -> [a]`
@@ -747,6 +843,8 @@ export const intercalate =
     ? xs .x .toString ()
     : xs .x .toString () + separator + intercalate (separator) (xs .xs)
 
+List.intercalate = intercalate
+
 
 // BUILDING LISTS
 
@@ -786,6 +884,8 @@ const scanlIterator =
     return Nil
   }
 
+List.scanl = scanl
+
 
 // ACCUMULATING MAPS
 
@@ -813,6 +913,8 @@ export const mapAccumL =
     return Pair (initial, Nil)
   }
 
+List.mapAccumL = mapAccumL
+
 
 // INFINITE LISTS
 
@@ -825,6 +927,8 @@ export const mapAccumL =
  */
 export const replicate =
   (len: number) => <A> (x: A): List<A> => len > 0 ? Cons (x, replicate (len - 1) (x)) : Nil
+
+List.replicate = replicate
 
 /**
  * `replicateR :: Int -> (Int -> a) -> [a]`
@@ -839,6 +943,8 @@ export const replicateR =
   (f: (index: number) => A): List<A> =>
     unfoldr ((index: number) => index < len ? Just (Pair (f (index), index + 1)) : Nothing)
             (0)
+
+List.replicateR = replicateR
 
 
 // UNFOLDING
@@ -888,6 +994,8 @@ export const unfoldr =
     return Nil
   }
 
+List.unfoldr = unfoldr
+
 
 // EXTRACTING SUBLISTS
 
@@ -901,6 +1009,8 @@ export const take =
   (n: number) => <A> (xs: List<A>): List<A> =>
     n <= 0 || isNil (xs) ? Nil : Cons (xs .x, take (n - 1) (xs .xs))
 
+List.take = take
+
 /**
  * `drop :: Int -> [a] -> [a]`
  *
@@ -910,6 +1020,8 @@ export const take =
 export const drop =
   (n: number) => <A> (xs: List<A>): List<A> =>
     n <= 0 ? xs : isNil (xs) ? Nil : drop (n - 1) (xs .xs)
+
+List.drop = drop
 
 /**
  * `splitAt :: Int -> [a] -> ([a], [a])`
@@ -933,6 +1045,8 @@ export const splitAt =
 
     return Pair (Cons (y, fst (p)), snd (p))
   }
+
+List.splitAt = splitAt
 
 
 // PREDICATES
@@ -958,6 +1072,8 @@ export const isInfixOf =
   (x: string) => (y: string): boolean =>
     y .includes (x)
 
+List.isInfixOf = isInfixOf
+
 
 // SEARCHING BY EQUALITY
 
@@ -970,6 +1086,8 @@ export const lookup = <K, V> (key: K) => (assocs: List<Pair<K, V>>): Maybe<V> =>
   fmapF (find<Pair<K, V>> (pipe (fst, equals (key)))
                           (assocs))
         (snd)
+
+List.lookup = lookup
 
 
 // SEARCHING WITH A PREDICATE
@@ -1004,6 +1122,8 @@ export const filter: Filter =
                       (Nil)
                       (xs)
 
+List.filter = filter
+
 /**
  * `partition :: (a -> Bool) -> [a] -> ([a], [a])`
  *
@@ -1022,6 +1142,8 @@ export const partition =
       (x => pred (x) ? first (consF (x)) : second (consF (x)))
       (Pair (Nil, Nil))
 
+List.partition = partition
+
 
 // INDEXING LISTS
 
@@ -1039,6 +1161,8 @@ export const subscript =
     ? subscript (xs .xs) (index - 1)
     : Just (xs .x)
 
+List.subscript = subscript
+
 /**
  * `(!!) :: Int -> [a] -> Maybe a`
  *
@@ -1050,6 +1174,8 @@ export const subscript =
 export const subscriptF =
   (index: number) => <A> (xs: List<A>): Maybe<A> =>
     subscript (xs) (index)
+
+List.subscriptF = subscriptF
 
 /**
  * `elemIndex :: Eq a => a -> [a] -> Maybe Int`
@@ -1065,6 +1191,8 @@ export const elemIndex =
     : equals (x) (xs .x)
     ? Just (0)
     : fmap (inc) (elemIndex (x) (xs .xs))
+
+List.elemIndex = elemIndex
 
 /**
  * `elemIndices :: Eq a => a -> [a] -> [Int]`
@@ -1084,6 +1212,8 @@ const elemIndicesIndex =
     ? Cons (index, elemIndicesIndex (x) (index + 1) (xs .xs))
     : elemIndicesIndex (x) (index + 1) (xs .xs)
 
+List.elemIndices = elemIndices
+
 /**
  * `findIndex :: (a -> Bool) -> [a] -> Maybe Int`
  *
@@ -1098,6 +1228,8 @@ export const findIndex =
     : pred (xs .x)
     ? Just (0)
     : fmap (inc) (findIndex (pred) (xs .xs))
+
+List.findIndex = findIndex
 
 /**
  * `findIndices :: (a -> Bool) -> [a] -> [Int]`
@@ -1120,6 +1252,8 @@ const findIndicesIndex =
     ? Cons (index, findIndicesIndex (pred) (index + 1) (xs .xs))
     : findIndicesIndex (pred) (index + 1) (xs .xs)
 
+List.findIndices = findIndices
+
 
 // ZIPPING AND UNZIPPING LISTS
 
@@ -1132,6 +1266,8 @@ const findIndicesIndex =
 export const zip =
   <A> (xs1: List<A>) => <B> (xs2: List<B>): List<Pair<A, B>> =>
     zipWith<A, B, Pair<A, B>> (Pair) (xs1) (xs2)
+
+List.zip = zip
 
 /**
  * `zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]`
@@ -1147,6 +1283,8 @@ export const zipWith =
   (xs2: List<B>): List<C> =>
     imapMaybe<A, C> (index => e => fmap (f (e)) (subscript (xs2) (index)))
                     (xs1)
+
+List.zipWith = zipWith
 
 
 // SPECIAL LISTS
@@ -1206,6 +1344,8 @@ export const lines =
     ? empty
     : fromArray (x .replace (/\n$/, "") .split (/\n/))
 
+List.lines = lines
+
 
 // "SET" OPERATIONS
 
@@ -1221,6 +1361,8 @@ export const sdelete =
     : equals (x) (xs .x)
     ? xs .xs
     : Cons (xs .x, sdelete (x) (xs .xs))
+
+List.sdelete = sdelete
 
 /**
  * `intersect :: Eq a => [a] -> [a] -> [a]`
@@ -1247,6 +1389,8 @@ export const sdelete =
 export const intersect =
   <A> (xs: List<A>) => (ys: List<A>): List<A> =>
     filter (elemF (ys)) (xs)
+
+List.intersect = intersect
 
 
 // ORDERED LISTS
@@ -1304,6 +1448,8 @@ const sortBySortedMerge =
 const sortByGetMiddle = <A> (xs: List<A>): Pair<List<A>, List<A>> =>
   splitAt (flength (xs) / 2) (xs)
 
+List.sortBy = sortBy
+
 
 // LIST.INDEX
 
@@ -1321,6 +1467,8 @@ const sortByGetMiddle = <A> (xs: List<A>): Pair<List<A>, List<A>> =>
  */
 export const indexed = <A> (xs: List<A>): List<Pair<number, A>> =>
   imap<A, Pair<number, A>> (Pair) (xs)
+
+List.indexed = indexed
 
 /**
  * `deleteAt :: Int -> [a] -> [a]`
@@ -1340,6 +1488,8 @@ export const deleteAt =
     ? xs .xs
     : Cons (xs .x, deleteAt (index - 1) (xs .xs))
 
+List.deleteAt = deleteAt
+
 /**
  * `setAt :: Int -> a -> [a] -> [a]`
  *
@@ -1357,6 +1507,8 @@ export const setAt =
     : index === 0
     ? Cons (x, xs .xs)
     : Cons (xs .x, setAt (index - 1) (x) (xs .xs))
+
+List.setAt = setAt
 
 /**
  * `modifyAt :: Int -> (a -> a) -> [a] -> [a]`
@@ -1379,6 +1531,8 @@ export const modifyAt =
     ? Cons (f (xs .x), xs .xs)
     : Cons (xs .x, modifyAt (index - 1) (f) (xs .xs))
 
+List.modifyAt = modifyAt
+
 /**
  * `updateAt :: Int -> (a -> Maybe a) -> [a] -> [a]`
  *
@@ -1390,8 +1544,8 @@ export const modifyAt =
  * returned.
  */
 export const updateAt =
-  <A>
   (index: number) =>
+  <A>
   (f: (old_value: A) => Maybe<A>) =>
   (xs: List<A>): List<A> =>
     index < 0
@@ -1402,7 +1556,9 @@ export const updateAt =
     ? maybe (xs .xs)
             ((x: A) => Cons (x, xs .xs))
             (f (xs .x))
-    : Cons (xs .x, updateAt<A> (index - 1) (f) (xs .xs))
+    : Cons (xs .x, updateAt (index - 1) (f) (xs .xs))
+
+List.updateAt = updateAt
 
 /**
  * `insertAt :: Int -> a -> [a] -> [a]`
@@ -1425,6 +1581,8 @@ export const insertAt =
     ? Nil
     : Cons (xs .x, insertAt (index - 1) (x) (xs .xs))
 
+List.insertAt = insertAt
+
 // Maps
 
 /**
@@ -1435,6 +1593,8 @@ export const insertAt =
 export const imap =
   <A, B> (f: (index: number) => (x: A) => B) => (xs: List<A>): List<B> =>
     ifoldr (i => pipe (f (i), consF)) (Nil) (xs)
+
+List.imap = imap
 
 // Folds
 
@@ -1459,6 +1619,8 @@ const ifoldrSafe =
     isNil (xs)
     ? acc
     : f (index) (xs .x) (ifoldrSafe (f) (index + 1) (acc) (xs .xs))
+
+List.ifoldr = ifoldr
 
 /**
  * `ifoldl :: Foldable t => (b -> Int -> a -> b) -> b -> t a -> b`
@@ -1486,6 +1648,8 @@ const ifoldlIterator =
     ? acc
     : ifoldlIterator (f) (index + 1) (f (acc) (index) (xs .x)) (xs .xs)
 
+List.ifoldl = ifoldl
+
 /**
  * `iall :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
  *
@@ -1503,6 +1667,8 @@ const iallIterator =
     isNil (xs)
     ? true
     : f (index) (xs .x) && iallIterator (f) (index + 1) (xs .xs)
+
+List.iall = iall
 
 /**
  * `iany :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
@@ -1522,6 +1688,8 @@ const ianyIterator =
     ? false
     : f (index) (xs .x) || ianyIterator (f) (index + 1) (xs .xs)
 
+List.iany = iany
+
 /**
  * `iconcatMap :: (Int -> a -> [b]) -> [a] -> [b]`
  */
@@ -1538,6 +1706,8 @@ const iconcatMapIterator =
     ? Nil
     : append (f (index) (xs .x))
              (iconcatMapIterator (f) (index + 1) (xs .xs))
+
+List.iconcatMap = iconcatMap
 
 // Sublists
 
@@ -1573,6 +1743,8 @@ export const ifilter: Ifilter =
                        (Nil)
                        (xs)
 
+List.ifilter = ifilter
+
 /**
  * `ipartition :: (Int ->a -> Bool) -> [a] -> ([a], [a])`
  *
@@ -1590,6 +1762,8 @@ export const ipartition =
     ifoldr<A, Pair<List<A>, List<A>>>
       (i => x => pred (i) (x) ? first (consF (x)) : second (consF (x)))
       (Pair (Nil, Nil))
+
+List.ipartition = ipartition
 
 // Search
 
@@ -1637,6 +1811,8 @@ const ifindIterator =
     ? Just (xs .x)
     : ifindIterator (pred) (index + 1) (xs .xs)
 
+List.ifind = ifind
+
 /**
  * `ifindIndex :: (Int -> a -> Bool) -> [a] -> Maybe Int`
  *
@@ -1661,6 +1837,8 @@ const ifindIndexNode =
     ? Just (index)
     : ifindIndexNode (pred) (index + 1) (xs .xs)
 
+List.ifindIndex = ifindIndex
+
 /**
  * `ifindIndices :: (a -> Bool) -> [a] -> [Int]`
  *
@@ -1684,6 +1862,8 @@ const ifindIndicesNode =
     ? Cons (index, ifindIndicesNode (pred) (index + 1) (xs .xs))
     : ifindIndicesNode (pred) (index + 1) (xs .xs)
 
+List.ifindIndices = ifindIndices
+
 
 // LIST.EXTRA
 
@@ -1696,6 +1876,8 @@ const ifindIndicesNode =
  */
 export const lower = (str: string) => str .toLowerCase ()
 
+List.lower = lower
+
 /**
  * `trimStart :: String -> String`
  *
@@ -1703,12 +1885,16 @@ export const lower = (str: string) => str .toLowerCase ()
  */
 export const trimStart = (str: string) => str .replace (/^\s+/, "")
 
+List.trimStart = trimStart
+
 /**
  * `trimEnd :: String -> String`
  *
  * Remove spaces from the end of a string, see `trim`.
  */
 export const trimEnd = (str: string) => str .replace (/\s+$/, "")
+
+List.trimEnd = trimEnd
 
 /**
  * `escapeRegex :: String -> String`
@@ -1725,6 +1911,8 @@ export const escapeRegex =
   // $& means the whole matched string
   (x: string) => x .replace (/[.*+?^${}()|[\]\\]/g, "\\$&")
 
+List.escapeRegex = escapeRegex
+
 
 // Splitting
 
@@ -1739,6 +1927,8 @@ export const splitOn =
   (del: string) => (x: string): List<string> =>
     fromArray (x .split (del))
 
+List.splitOn = splitOn
+
 
 // Basics
 
@@ -1752,12 +1942,16 @@ export const notNull =
 
 export type notNull<A> = (xs: List<A>) => xs is NonEmptyList<A>
 
+List.notNull = notNull
+
 /**
  * `notNull :: String -> Bool`
  *
  * A composition of `not` and `null`.
  */
 export const notNullStr = (xs: string) => xs .length > 0
+
+List.notNullStr = notNullStr
 
 /**
  * `list :: b -> (a -> [a] -> b) -> [a] -> b`
@@ -1773,6 +1967,8 @@ export const notNullStr = (xs: string) => xs .length > 0
 export const list =
   <A, B> (def: B) => (f: (x: A) => (xs: List<A>) => B) => (xs: List<A>): B =>
     isNil (xs) ? def : f (xs .x) (xs .xs)
+
+List.list = list
 
 /**
  * `unsnoc :: [a] -> Maybe ([a], a)`
@@ -1791,6 +1987,8 @@ const unsnocSafe =
   <A> (xs: Cons<A>): Pair<List<A>, A> =>
     isNil (xs .xs) ? Pair (Nil, xs .x) : first (consF (xs .x)) (unsnocSafe (xs .xs))
 
+List.unsnoc = unsnoc
+
 /**
  * `cons :: a -> [a] -> [a]`
  *
@@ -1799,6 +1997,8 @@ const unsnocSafe =
  * Flipped version of `(:)`.
  */
 export const consF = <A> (x: A) => (xs: List<A>): List<A> => cons (xs) (x)
+
+List.consF = consF
 
 /**
  * `snoc :: [a] -> a -> [a]`
@@ -1815,6 +2015,8 @@ const snocSafe =
     ? Cons (xs .x, pure (x))
     : Cons (xs .x, snocSafe (xs .xs) (x))
 
+List.snoc = snoc
+
 /**
  * `snocF :: a -> [a] -> [a]`
  *
@@ -1825,6 +2027,8 @@ const snocSafe =
 export const snocF =
   <A> (x: A) => (xs: List<A>): List<A> =>
     snoc (xs) (x)
+
+List.snocF = snocF
 
 
 // List operations
@@ -1849,6 +2053,8 @@ export const maximumOn =
       fst
     )
 
+List.maximumOn = maximumOn
+
 /**
  * `minimumOn :: Ord b => (a -> b) -> [a] -> Maybe a`
  *
@@ -1868,6 +2074,8 @@ export const minimumOn =
         (Pair (Nothing, Infinity)),
       fst
     )
+
+List.minimumOn = minimumOn
 
 /**
  * `firstJust :: (a -> Maybe b) -> [a] -> Maybe b`
@@ -1897,6 +2105,8 @@ export const firstJust =
     return firstJust (pred) (xs .xs)
   }
 
+List.firstJust = firstJust
+
 /**
  * `replace :: (Partial, Eq a) => [a] -> [a] -> [a] -> [a]`
  *
@@ -1906,6 +2116,20 @@ export const firstJust =
 export const replaceStr =
   (old_subseq: string) => (new_subseq: string) => (x: string): string =>
     x .replace (new RegExp (escapeRegex (old_subseq), "g"), new_subseq)
+
+List.replaceStr = replaceStr
+
+/**
+ * `replace :: (Partial, Eq a) => RegExp -> [a] -> [a] -> [a]`
+ *
+ * Replace a subsequence. Use the `g` flag on the `RegExp` to replace all
+ * occurrences.
+ */
+export const replaceStrRx =
+  (old_subseq_rx: RegExp) => (new_subseq: string) => (x: string): string =>
+    x .replace (old_subseq_rx, new_subseq)
+
+List.replaceStrRx = replaceStrRx
 
 
 // OWN METHODS
@@ -1938,6 +2162,8 @@ export const unsafeIndex =
     return unsafeIndex (xs .xs) (index - 1)
   }
 
+List.unsafeIndex = unsafeIndex
+
 /**
  * Builds a new `List` from a native Array.
  */
@@ -1951,11 +2177,15 @@ export const fromArray = <A> (xs: ReadonlyArray<A>): List<A> => {
   )
 }
 
+List.fromArray = fromArray
+
 /**
  * Converts a `List` to a native Array.
  */
 export const toArray = <A> (xs: List<A>): A[] =>
   foldl<A, A[]> (arr => x => [...arr, x]) ([]) (xs)
+
+List.toArray = toArray
 
 /**
  * Returns the sum of all elements of the list that match the provided
@@ -1963,6 +2193,8 @@ export const toArray = <A> (xs: List<A>): A[] =>
  */
 export const countWith =
   <A> (pred: (x: A) => boolean) => pipe (filter (pred), flength)
+
+List.countWith = countWith
 
 /**
  * `countWithByKey :: (a -> k) -> [a] -> Map k Int`
@@ -1993,6 +2225,8 @@ export const countWithByKey =
 
     return fromMap (m)
   }
+
+List.countWithByKey = countWithByKey
 
 /**
  * `countWithByKeyMaybe :: (a -> Maybe k) -> [a] -> Map k Int`
@@ -2028,11 +2262,15 @@ export const countWithByKeyMaybe =
     return fromMap (m)
   }
 
+List.countWithByKeyMaybe = countWithByKeyMaybe
+
 /**
  * The largest element of a non-empty structure. The minimum value returned is
  * `0`.
  */
 export const maximumNonNegative = pipe (consF (0), maximum)
+
+List.maximumNonNegative = maximumNonNegative
 
 /**
  * `groupByKey :: (a -> b) -> [a] -> Map b [a]`
@@ -2063,6 +2301,8 @@ export const groupByKey =
     return fromMap (m)
   }
 
+List.groupByKey = groupByKey
+
 interface RecordBaseWithId extends RecordBase {
   id: string
 }
@@ -2080,6 +2320,8 @@ export const mapByIdKeyMap =
 List.mapByIdKeyMap = mapByIdKeyMap
 
 export import isList = Internals.isList
+
+List.isList = isList
 
 /**
  * Returns `True` if the passed value is a non-empty string, `False` if the
@@ -2176,152 +2418,6 @@ const lengthAtMostIter =
   }
 
 List.lengthAtMost = lengthAtMost
-
-
-// NAMESPACED FUNCTIONS
-
-List.pure = pure
-List.ap = ap
-
-List.alt = alt
-List.altF = altF
-List.empty = empty
-List.guard = guard
-
-List.bind = bind
-List.bindF = bindF
-List.then = then
-List.kleisli = kleisli
-List.join = join
-
-List.foldr = foldr
-List.foldl = foldl
-List.foldr1 = foldr1
-List.foldl1 = foldl1
-List.toList = toList
-List.fnull = fnull
-List.fnullStr = fnullStr
-List.flength = flength
-List.flengthStr = flengthStr
-List.elem = elem
-List.elemF = elemF
-List.sum = sum
-List.product = product
-List.maximum = maximum
-List.minimum = minimum
-List.concat = concat
-List.concatMap = concatMap
-List.and = and
-List.or = or
-List.any = any
-List.all = all
-List.notElem = notElem
-List.notElemF = notElemF
-List.find = find
-
-List.append = append
-List.appendStr = appendStr
-List.cons = cons
-List.head = head
-List.last = last
-List.lastS = lastS
-List.tail = tail
-List.tailS = tailS
-List.init = init
-List.initS = initS
-List.uncons = uncons
-
-List.map = map
-List.reverse = reverse
-List.intercalate = intercalate
-
-List.scanl = scanl
-
-List.mapAccumL = mapAccumL
-
-List.replicate = replicate
-List.replicateR = replicateR
-
-List.unfoldr = unfoldr
-
-List.take = take
-List.drop = drop
-List.splitAt = splitAt
-
-List.isInfixOf = isInfixOf
-
-List.lookup = lookup
-
-List.filter = filter
-List.partition = partition
-
-List.subscript = subscript
-List.subscriptF = subscriptF
-List.elemIndex = elemIndex
-List.elemIndices = elemIndices
-List.findIndex = findIndex
-List.findIndices = findIndices
-
-List.zip = zip
-List.zipWith = zipWith
-
-List.lines = lines
-
-List.sdelete = sdelete
-List.intersect = intersect
-
-List.sortBy = sortBy
-
-List.indexed = indexed
-List.deleteAt = deleteAt
-List.setAt = setAt
-List.modifyAt = modifyAt
-List.updateAt = updateAt
-List.insertAt = insertAt
-
-List.imap = imap
-
-List.ifoldr = ifoldr
-List.ifoldl = ifoldl
-List.iall = iall
-List.iany = iany
-List.iconcatMap = iconcatMap
-
-List.ifilter = ifilter
-List.ipartition = ipartition
-List.ifind = ifind
-List.ifindIndex = ifindIndex
-List.ifindIndices = ifindIndices
-
-List.lower = lower
-List.trimStart = trimStart
-List.trimEnd = trimEnd
-List.escapeRegex = escapeRegex
-
-List.splitOn = splitOn
-
-List.notNull = notNull
-List.notNullStr = notNullStr
-List.list = list
-List.unsnoc = unsnoc
-List.consF = consF
-List.snoc = snoc
-List.snocF = snocF
-
-List.maximumOn = maximumOn
-List.minimumOn = minimumOn
-List.firstJust = firstJust
-List.replaceStr = replaceStr
-
-List.unsafeIndex = unsafeIndex
-List.fromArray = fromArray
-List.toArray = toArray
-List.isList = isList
-List.countWith = countWith
-List.countWithByKey = countWithByKey
-List.countWithByKeyMaybe = countWithByKeyMaybe
-List.maximumNonNegative = maximumNonNegative
-List.groupByKey = groupByKey
 
 
 // TYPE HELPERS

@@ -8,7 +8,7 @@
  * @since 1.1.0
  */
 
-import { thrush } from "../../../Data/Function";
+import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { appendStr, elem, find, flength, groupByKey, intercalate, List, map, replaceStr, subscript, subscriptF } from "../../../Data/List";
 import { altF_, any, bind, bindF, elemF, ensure, fromMaybe, isJust, Just, liftM2, listToMaybe, maybe, Maybe, Nothing } from "../../../Data/Maybe";
@@ -215,7 +215,7 @@ const getEntrySpecificNameAddition =
                       sid,
                       misStringM,
                       bindF (lookupF (skills (wiki))),
-                      fmap (skill => `: ${name (skill)}`)
+                      fmap (name)
                     )
                     (hero_entry)
 
@@ -310,20 +310,18 @@ const getEntrySpecificNameReplacements =
       // Tradition (Zauberbarde)
       case "SA_677":
       // Tradition (Zaubertänzer)
-      case "SA_678": {
-        const part = getBracketedNameFromFullName (name (wiki_entry))
-
-        return maybeMap (
-          name_add => replaceStr (part)
-                                 (`${part}: ${name_add}`)
-                                 (name (wiki_entry))
-        )
+      case "SA_678":
+      // Tradition (Meistertalentierte)
+      case "SA_680": {
+        return maybeMap (flip (addSndinParenthesis) (name (wiki_entry)))
       }
 
       default:
         return maybeMap (name_add => `${name (wiki_entry)} (${name_add})`)
     }
   }
+
+const addSndinParenthesis = (snd: string) => replaceStr (")") (`: ${snd})`)
 
 /**
  * Returns name, splitted and combined, of advantage/disadvantage/special

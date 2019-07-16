@@ -7,6 +7,7 @@ import { LiturgicalChant } from "../../../Models/Wiki/LiturgicalChant";
 import { CheckModifier } from "../../../Models/Wiki/wikiTypeHelpers";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
+import { modifyNegIntNoBreak } from "../rawConversionUtils";
 import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapStringPredSetOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
@@ -114,7 +115,7 @@ export const toLiturgicalChant =
           ic: rs.eic,
           tradition: rs.etraditions,
           aspects: fromMaybe (List<number> ()) (rs.easpects),
-          effect: rs.eeffect,
+          effect: modifyNegIntNoBreak (rs.eeffect),
           castingTime: rs.ecastingTime,
           castingTimeShort: rs.ecastingTimeShort,
           cost: rs.ekpCost,
