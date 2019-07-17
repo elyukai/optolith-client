@@ -4,7 +4,6 @@ import { trySync } from "../../Control/Exception";
 import { cnst } from "../../Data/Function";
 import { notNullStr } from "../../Data/List";
 import { maybe } from "../../Data/Maybe";
-import { traceShow } from "../../Debug/Trace";
 
 export const naturalNumber = /^(?:0|[1-9][0-9]*)$/
 
@@ -73,7 +72,7 @@ export const isBase64Image = (test: string) => base64Image.test (test)
 /**
  * Checks if the passed path string points to an existing file.
  */
-export const isURLValid = (url: string) => notNullStr (traceShow ("url =") (url))
+export const isURLValid = (url: string) => notNullStr (url)
                                            && (
                                              isBase64Image (url)
                                              || trySync (existsSync)

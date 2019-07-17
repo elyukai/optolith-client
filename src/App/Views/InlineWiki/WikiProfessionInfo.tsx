@@ -8,9 +8,8 @@ import { alt_, any, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, fromMay
 import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet";
 import { fromDefault, Record } from "../../../Data/Record";
-import { show } from "../../../Data/Show";
+import { show, showP } from "../../../Data/Show";
 import { fst, isTuple, Pair, snd } from "../../../Data/Tuple";
-import { traceShow } from "../../../Debug/Trace";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ActivatableNameCostIsActive, ActivatableNameCostIsActiveA_ } from "../../Models/View/ActivatableNameCostIsActive";
 import { IncreasableForView } from "../../Models/View/IncreasableForView";
@@ -1165,6 +1164,9 @@ const getVariantSkillsSelection =
     const skillsList =
       pipe_ (variant, PVCA.mappedSkills, mapVariantSkills (l10n) (0))
 
+    console.log (showP (PVCA.mappedSkills (variant)))
+    console.log (showP (skillsList))
+
     const combinedSpellsList = combineSpells (PVCA.mappedSpells (variant))
 
     const spellsList =
@@ -1233,9 +1235,9 @@ const getVariantSkillsSelection =
 
 const mapVariantSkills =
   (l10n: L10nRecord) =>
-  (add_x: number) =>
+  (base: number) =>
     map ((e: Record<IncreasableForView>) => {
-      const prev = maybe (6) (add (add_x)) (IFVA.previous (e))
+      const prev = maybe (base) (add (base)) (IFVA.previous (e))
 
       return `${IFVA.name (e)} ${IFVA.value (e)} ${translate (l10n) ("insteadof")} ${prev}`
     })
@@ -1278,11 +1280,6 @@ const combineSpells: (mapped_spells: List<CombinedMappedSpell>) => CombinedSpell
                 const mcurrent_previous_value = IFVAL.previous (current)
                 const remainings = snd (remainings_separate)
 
-                traceShow ("remainings =") (remainings)
-                traceShow ("current =") (current)
-                traceShow ("processeds =") (processeds)
-                traceShow ("has previous value =") (isJust (mcurrent_previous_value))
-
                 // This is the previous spell, and we need the next to form a pair
                 if (isJust (mcurrent_previous_value)) {
                   // Index of a spell to pair `current` with
@@ -1291,8 +1288,6 @@ const combineSpells: (mapped_spells: List<CombinedMappedSpell>) => CombinedSpell
                                 IFVAL.value (e) === fromJust (mcurrent_previous_value)
                                 && current_value === 0)
                               (remainings)
-
-                  traceShow ("matching_spell_index =") (mmatching_spell_index)
 
                   if (isJust (mmatching_spell_index)) {
                     // Index found, so we can pair
@@ -1316,8 +1311,6 @@ const combineSpells: (mapped_spells: List<CombinedMappedSpell>) => CombinedSpell
                                 Maybe.elem (current_value) (IFVAL.previous (e))
                                 && IFVAL.value (e) === 0)
                               (remainings)
-
-                  traceShow ("matching_spell_index =") (mmatching_spell_index)
 
                   if (isJust (mmatching_spell_index)) {
                     // Index found, so we can pair
