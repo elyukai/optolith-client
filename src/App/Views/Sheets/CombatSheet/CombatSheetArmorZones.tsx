@@ -78,7 +78,7 @@ export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
             )),
             fromMaybeR (null)
           )}
-          {replicateR (3 - Maybe.sum (fmapF (mhit_zone_armors) (flength)))
+          {replicateR (2 - Maybe.sum (fmapF (mhit_zone_armors) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
                           <td className="name"></td>

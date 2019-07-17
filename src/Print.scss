@@ -13,8 +13,17 @@
 	}
 
 	html, body, #bodywrapper, #body, .page {
-		overflow: auto;
-		@include size(auto);
+		overflow-x: hidden;
+		height: auto;
+		width: auto;
+	}
+
+	html, body {
+		overflow-y: auto;
+	}
+
+	#bodywrapper, #body, .page {
+		overflow-y: hidden;
 	}
 
 	#body {
@@ -30,7 +39,7 @@
 	}
 
 	section {
-		overflow: auto;
+		overflow: hidden auto;
 		padding: 0;
 		display: block;
 
@@ -41,12 +50,122 @@
 
 			> .scroll {
 				margin: 0;
-				overflow: auto !important;
+				overflow: hidden auto !important;
 				height: auto !important;
 				width: auto !important;
 
 				.scroll-view {
-					overflow: auto !important;
+					overflow: hidden auto !important;
+					height: auto !important;
+					width: auto !important;
+					position: relative !important;
+					top: auto !important;
+					bottom: auto !important;
+					left: auto !important;
+					right: auto !important;
+					margin: auto !important;
+				}
+
+				.scroll-inner {
+					padding: 0;
+
+					.sheet {
+						height: 287.1mm;
+						width: 210mm;
+						margin: 0;
+						padding: 8.9mm 8.9mm 0;
+						-webkit-print-color-adjust: exact;
+						page-break-inside: avoid;
+						overflow: hidden;
+
+						&:not(:first-child) {
+							page-break-before: always;
+						}
+
+						&:first-child {
+							page-break-before: avoid;
+						}
+					}
+				}
+
+				.track {
+					display: none;
+				}
+			}
+
+			.options {
+				margin: 0;
+				padding: 0;
+			}
+
+			.options, .print-document {
+				display: none;
+			}
+		}
+	}
+
+	.sheet-wrapper {
+		display: block;
+
+		&:not(:first-child) {
+			margin-top: 0;
+		}
+	}
+}
+
+html.print {
+	.titlebar-inner::after, .navigationbar-inner::after, .navigationbar-subtabs::after {
+		display: none;
+	}
+
+	&, body, #bodywrapper, #body, section {
+		background: none;
+	}
+
+	&, body, #bodywrapper, #body, .page {
+		overflow-x: hidden;
+		height: auto;
+		width: auto;
+	}
+
+	&, body {
+		overflow-y: auto;
+	}
+
+	#bodywrapper, #body, .page {
+		overflow-y: hidden;
+	}
+
+	#body {
+		display: block;
+		border: none;
+		background: white;
+	}
+
+	.titlebar, section#content > .navigationbar, section#content > .navigationbar-subtabs, .background-image {
+		display: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	section {
+		overflow: hidden auto;
+		padding: 0;
+		display: block;
+
+		> .page#sheets {
+			padding: 0;
+			flex: unset;
+			display: block;
+
+			> .scroll {
+				margin: 0;
+				overflow: hidden auto !important;
+				height: auto !important;
+				width: auto !important;
+
+				.scroll-view {
+					overflow: hidden auto !important;
 					height: auto !important;
 					width: auto !important;
 					position: relative !important;

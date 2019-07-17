@@ -94,7 +94,7 @@ export function CombatSheetArmor (props: CombatSheetArmorProps) {
                         toArray
                       ))
                       (marmors)}
-          {replicateR (3 - Maybe.sum (fmapF (marmors) (flength)))
+          {replicateR (2 - Maybe.sum (fmapF (marmors) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
                           <td className="name"></td>
