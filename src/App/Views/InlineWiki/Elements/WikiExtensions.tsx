@@ -1,8 +1,8 @@
 import * as React from "react";
 import { equals } from "../../../../Data/Eq";
-import { compare } from "../../../../Data/Float";
 import { filter, flength, List, map, toArray } from "../../../../Data/List";
 import { bindF, elem, ensure, Maybe, maybeR, sum } from "../../../../Data/Maybe";
+import { compare } from "../../../../Data/Num";
 import { Record, RecordBase } from "../../../../Data/Record";
 import { Categories } from "../../../Constants/Categories";
 import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";

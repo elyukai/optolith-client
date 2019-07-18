@@ -1,12 +1,11 @@
 import { not } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
-import { compare } from "../../../Data/Float";
 import { flip, on, thrush } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { set } from "../../../Data/Lens";
 import { all, any, concat, elem, elemF, foldl, isList, List, map, sortBy } from "../../../Data/List";
 import { and, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../Data/Maybe";
-import { dec, gt, gte, lte, min } from "../../../Data/Num";
+import { compare, dec, gt, gte, lte, min } from "../../../Data/Num";
 import { lookupF, OrderedMap, toList } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";

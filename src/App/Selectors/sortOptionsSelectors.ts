@@ -1,7 +1,6 @@
-import { compare } from "../../Data/Float";
 import { fnull, head, List, subscript } from "../../Data/List";
 import { bindF, ensure, fromMaybe, listToMaybe, maybe, Maybe } from "../../Data/Maybe";
-import { dec } from "../../Data/Num";
+import { compare, dec } from "../../Data/Num";
 import { Record } from "../../Data/Record";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { Sex } from "../Models/Hero/heroTypeHelpers";

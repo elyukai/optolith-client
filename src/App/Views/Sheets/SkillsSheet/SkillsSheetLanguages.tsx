@@ -1,9 +1,9 @@
 import * as React from "react";
-import { compare } from "../../../../Data/Float";
 import { flip } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
 import { flength, List, map, replicateR, toArray } from "../../../../Data/List";
 import { bindF, fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { compare } from "../../../../Data/Num";
 import { fromDefault, Record } from "../../../../Data/Record";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";

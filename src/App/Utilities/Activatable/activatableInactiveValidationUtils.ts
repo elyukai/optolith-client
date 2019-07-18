@@ -35,7 +35,6 @@ import { isActive, isMaybeActive } from "./isActive";
 const { specialAbilities } = WikiModel.AL
 const AAL = Advantage.AL
 const { specialAbilities: hero_specialAbilities, pact, rules } = HeroModel.AL
-const { id, gr, prerequisites, cost, tiers, max } = SpecialAbility.AL
 const { active, dependencies } = ActivatableDependent.AL
 const { tier } = ActiveObject.AL
 const { level } = Pact.AL
@@ -53,13 +52,13 @@ const isAdditionDisabledForCombatStyle =
       const totalActive = countActiveGroupEntries (wiki) (hero) (9, 10)
 
       const equalTypeStylesActive =
-        countActiveGroupEntries (wiki) (hero) (gr (wiki_entry))
+        countActiveGroupEntries (wiki) (hero) (AAL.gr (wiki_entry))
 
       return totalActive >= 3 || equalTypeStylesActive >= 2
     }
     // Otherwise, only one of each type can be active.
     else {
-      return pipe_ (wiki_entry, gr, hasActiveGroupEntry (wiki) (hero))
+      return pipe_ (wiki_entry, AAL.gr, hasActiveGroupEntry (wiki) (hero))
     }
   }
 
@@ -67,7 +66,7 @@ const isAdditionDisabledSpecialAbilitySpecific =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
   (wiki_entry: Record<SpecialAbility>): boolean => {
-    const current_id = id (wiki_entry)
+    const current_id = AAL.id (wiki_entry)
 
     // Combat Styles
     if (CheckStyleUtils.isCombatStyleSpecialAbility (wiki_entry)) {
@@ -108,7 +107,7 @@ const isAdditionDisabledSpecialAbilitySpecific =
     }
 
     // Pact Gifts
-    if (gr (wiki_entry) === 30) {
+    if (AAL.gr (wiki_entry) === 30) {
       const dunkles_abbild = lookup ("SA_667") (hero_specialAbilities (hero))
 
       const allPactPresents = getAllEntriesByGroup (specialAbilities (wiki))
@@ -118,14 +117,14 @@ const isAdditionDisabledSpecialAbilitySpecific =
       const countPactPresents =
         foldr ((obj: Record<ActivatableDependent>) => {
                 if (isActive (obj)) {
-                  const wikiObj = lookup (id (obj)) (specialAbilities (wiki))
+                  const wikiObj = lookup (AAL.id (obj)) (specialAbilities (wiki))
 
                   if (
-                    any (pipe (prerequisites, isOrderedMap))
+                    any (pipe (AAL.prerequisites, isOrderedMap))
                         (wikiObj)
-                    && any (pipe (cost, isList))
+                    && any (pipe (AAL.cost, isList))
                            (wikiObj)
-                    && isJust (bind (wikiObj) (tiers))
+                    && isJust (bind (wikiObj) (AAL.tiers))
                   ) {
                     return add (sum (
                       bindF (tier) (listToMaybe (active (obj)))
@@ -148,7 +147,7 @@ const isAdditionDisabledSpecialAbilitySpecific =
       return pipe (rules, enableLanguageSpecializations, not) (hero)
     }
 
-    if (elem (gr (wiki_entry)) (List (31, 32))) {
+    if (elem (AAL.gr (wiki_entry)) (List (31, 32))) {
       // TODO: add option to activate vampire or lycanthropy and activate this
       // SAs based on that option
       return true
@@ -170,8 +169,8 @@ const isAdditionDisabledEntrySpecific =
     && isAdditionDisabledSpecialAbilitySpecific (wiki) (hero) (wiki_entry)
     || !validatePrerequisites (wiki)
                               (hero)
-                              (getFirstLevelPrerequisites (prerequisites (wiki_entry)))
-                              (id (wiki_entry))
+                              (getFirstLevelPrerequisites (AAL.prerequisites (wiki_entry)))
+                              (AAL.id (wiki_entry))
 
 const hasGeneralRestrictionToAdd =
   any (pipe (dependencies, elem<ActivatableDependency> (false)))
@@ -182,7 +181,7 @@ const hasReachedMaximumEntries =
     any (lte (fromMaybe (0)
                         (fmap (pipe (active, flength))
                               (mhero_entry))))
-        (max (wiki_entry))
+        (AAL.max (wiki_entry))
 
 const hasReachedImpossibleMaximumLevel = Maybe.elem (0)
 
@@ -190,7 +189,7 @@ const isInvalidExtendedSpecialAbility =
   (wiki_entry: Activatable) =>
   (validExtendedSpecialAbilities: List<string>) =>
     CheckStyleUtils.isExtendedSpecialAbility (wiki_entry)
-    && notElem (id (wiki_entry)) (validExtendedSpecialAbilities)
+    && notElem (AAL.id (wiki_entry)) (validExtendedSpecialAbilities)
 
 /**
  * Checks if the given entry can be added.

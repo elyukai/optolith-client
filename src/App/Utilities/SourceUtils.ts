@@ -1,9 +1,9 @@
-import { compare } from "../../Data/Float";
 import { flip, on } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { range } from "../../Data/Ix";
 import { consF, foldr, intercalate, List, map, reverse, setAt, sortBy } from "../../Data/List";
 import { listToMaybe, mapMaybe, maybe_ } from "../../Data/Maybe";
+import { compare } from "../../Data/Num";
 import { adjustDef, foldrWithKey, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { empty, insert, OrderedSet, toList } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
