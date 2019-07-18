@@ -7,6 +7,7 @@ import { fmap } from "../../../Data/Functor";
 import { Lens_, over, set } from "../../../Data/Lens";
 import { all, append, consF, elemF, empty, foldr, List, map, notElemF } from "../../../Data/List";
 import { catMaybes, ensure, fromMaybe, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
+import { lt } from "../../../Data/Num";
 import { adjust, elems, fromList, insert, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { makeLenses, member, Record } from "../../../Data/Record";
@@ -25,7 +26,6 @@ import { WikiModel, WikiModelL, WikiModelRecord } from "../../Models/Wiki/WikiMo
 import { Activatable, Skillish } from "../../Models/Wiki/wikiTypeHelpers";
 import { app_path } from "../../Selectors/envSelectors";
 import { prefixProf } from "../IDUtils";
-import { lt } from "../mathUtils";
 import { pipe, pipe_ } from "../pipe";
 import { getWikiSliceGetterByCategory } from "../WikiUtils";
 import { CsvColumnDelimiter, csvToList } from "./csvToList";

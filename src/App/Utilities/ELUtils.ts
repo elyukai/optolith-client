@@ -1,11 +1,11 @@
 import { fmap } from "../../Data/Functor";
 import { and } from "../../Data/Maybe";
+import { inc, lt } from "../../Data/Num";
 import { foldlWithKey, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
 import { getNumericId, prefixId } from "./IDUtils";
-import { inc, lt } from "./mathUtils";
 import { pipe } from "./pipe";
 
 const { ap } = ExperienceLevel.AL

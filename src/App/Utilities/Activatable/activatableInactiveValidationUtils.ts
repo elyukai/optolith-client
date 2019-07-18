@@ -11,9 +11,9 @@ import { ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { elem, flength, foldr, isList, List, notElem } from "../../../Data/List";
 import { all, any, bind, bindF, fromMaybe, isJust, listToMaybe, Maybe, sum } from "../../../Data/Maybe";
+import { add, inc, lte } from "../../../Data/Num";
 import { isOrderedMap, lookup } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { traceShowIdWhen } from "../../../Debug/Trace";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -26,7 +26,6 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries, hasActiveGroupEntry } from "../entryGroupUtils";
 import { getAllEntriesByGroup } from "../heroStateUtils";
-import { add, inc, lte } from "../mathUtils";
 import { pipe, pipe_ } from "../pipe";
 import { getFirstLevelPrerequisites } from "../Prerequisites/flattenPrerequisites";
 import { validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
@@ -169,10 +168,10 @@ const isAdditionDisabledEntrySpecific =
   (wiki_entry: Activatable): boolean =>
     isSpecialAbility (wiki_entry)
     && isAdditionDisabledSpecialAbilitySpecific (wiki) (hero) (wiki_entry)
-    || traceShowIdWhen (AAL.id (wiki_entry) === "DISADV_5") (!validatePrerequisites (wiki)
+    || !validatePrerequisites (wiki)
                               (hero)
                               (getFirstLevelPrerequisites (prerequisites (wiki_entry)))
-                              (id (wiki_entry)))
+                              (id (wiki_entry))
 
 const hasGeneralRestrictionToAdd =
   any (pipe (dependencies, elem<ActivatableDependency> (false)))
@@ -205,13 +204,8 @@ export const isAdditionDisabled =
   (wiki_entry: Activatable) =>
   (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
   (max_level: Maybe<number>): boolean =>
-    traceShowIdWhen (AAL.id (wiki_entry) === "DISADV_5") (
-      isAdditionDisabledEntrySpecific (wiki) (hero) (wiki_entry))
-    || traceShowIdWhen (AAL.id (wiki_entry) === "DISADV_5") (
-      hasGeneralRestrictionToAdd (mhero_entry))
-    || traceShowIdWhen (AAL.id (wiki_entry) === "DISADV_5") (
-      hasReachedMaximumEntries (wiki_entry) (mhero_entry))
-    || traceShowIdWhen (AAL.id (wiki_entry) === "DISADV_5") (
-      hasReachedImpossibleMaximumLevel (max_level))
-    || traceShowIdWhen (AAL.id (wiki_entry) === "DISADV_5") (
-      isInvalidExtendedSpecialAbility (wiki_entry) (validExtendedSpecialAbilities))
+    isAdditionDisabledEntrySpecific (wiki) (hero) (wiki_entry)
+    || hasGeneralRestrictionToAdd (mhero_entry)
+    || hasReachedMaximumEntries (wiki_entry) (mhero_entry)
+    || hasReachedImpossibleMaximumLevel (max_level)
+    || isInvalidExtendedSpecialAbility (wiki_entry) (validExtendedSpecialAbilities)

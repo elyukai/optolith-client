@@ -4,6 +4,7 @@ import { fmap, fmapF } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
 import { any, append, consF, filter, foldr, ifilter, imap, List, map, maximum, subscript, sum } from "../../Data/List";
 import { altF_, bind, bindF, fromMaybe, guard, isJust, Just, liftM2, mapMaybe, Maybe, maybe, thenF } from "../../Data/Maybe";
+import { add, dec, multiply, subtractBy } from "../../Data/Num";
 import { elems, lookup, lookupF } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { fst, isTuple, Pair, snd } from "../../Data/Tuple";
@@ -30,7 +31,6 @@ import { filterAndSortRecordsBy, filterAndSortRecordsByName } from "../Utilities
 import { filterRecordsByName } from "../Utilities/filterBy";
 import { getAttack, getParry } from "../Utilities/Increasable/combatTechniqueUtils";
 import { convertPrimaryAttributeToArray } from "../Utilities/ItemUtils";
-import { add, dec, multiply, subtractBy } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { sortRecordsByName } from "../Utilities/sortBy";

@@ -15,12 +15,12 @@
  */
 
 import { ifElse } from "../App/Utilities/ifElse";
-import * as Math from "../App/Utilities/mathUtils";
 import { pipe } from "../App/Utilities/pipe";
 import { cnst, flip, ident } from "./Function";
 import { fmap, fmapF } from "./Functor";
 import { Internals } from "./Internals";
 import { cons, consF, head, ifoldr, List } from "./List";
+import * as Math from "./Num";
 
 export import Just = Internals.Just
 export import Nothing = Internals.Nothing

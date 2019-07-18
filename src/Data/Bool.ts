@@ -83,7 +83,7 @@ export const otherwise: Bool = true
  * This is equivalent to `if p then y else x`; that is, one can think of it as
  * an if-then-else construct with its arguments reordered.
  */
-export const bool: <A> (x: A) => (y: A) => (cond: Bool) => A =
+export const bool: <A> (isFalse: A) => (isTrue: A) => (cond: Bool) => A =
   x => y => cond => cond ? y : x
 
 /**
@@ -98,5 +98,5 @@ export const bool: <A> (x: A) => (y: A) => (cond: Bool) => A =
  *
  * Lazy version of `bool`.
  */
-export const bool_: <A> (f: () => A) => (g: () => A) => (cond: Bool) => A =
+export const bool_: <A> (isFalse: () => A) => (isTrue: () => A) => (cond: Bool) => A =
   f => g => cond => cond ? g () : f ()

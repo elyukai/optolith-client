@@ -1,10 +1,12 @@
 import * as React from "react";
+import { bool_ } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
-import { cnst, Functn, ident } from "../../../Data/Function";
+import { Functn, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
 import { countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, subscript, subscriptF, sum, take } from "../../../Data/List";
-import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, maybe_, Nothing, or, then, thenF } from "../../../Data/Maybe";
+import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, or, then, thenF } from "../../../Data/Maybe";
+import { dec, gte, max, min, multiply, negate } from "../../../Data/Num";
 import { fromDefault, makeLenses, Omit, Record } from "../../../Data/Record";
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple";
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
@@ -25,7 +27,6 @@ import { TextField } from "../../Views/Universal/TextField";
 import { getActiveWithNoCustomCost } from "../AdventurePoints/activatableCostUtils";
 import { translate } from "../I18n";
 import { getLevelElementsWithMin } from "../levelUtils";
-import { dec, gte, lt, max, min, multiply, negate } from "../mathUtils";
 import { toInt } from "../NumberUtils";
 import { pipe, pipe_ } from "../pipe";
 import { isNumber, misNumberM, misStringM } from "../typeCheckUtils";
@@ -395,16 +396,14 @@ export const getIdSpecificAffectedAndDispatchProps =
                 ? pipe_ (
                     entry,
                     IAA.heroEntry,
-                    bindF (pipe (
-                      ADA.active,
-                      ensure (pipe (
-                        getActiveWithNoCustomCost,
-                        flength,
-                        lt (2)
-                      ))
-                    )),
-                    maybe_ (() => getPlainCostFromEntry (entry))
-                           (cnst (Just (0)))
+                    maybe (false)
+                          (pipe (
+                            ADA.active,
+                            getActiveWithNoCustomCost,
+                            flength,
+                            gte (3)
+                          )),
+                    bool_ (() => getPlainCostFromEntry (entry)) (() => Just (0))
                   )
                 : getPlainCostFromEntry (entry),
             disabled: Just (isNothing (mselected) && isNothing (minput_text)),
@@ -525,6 +524,8 @@ export const getIdSpecificAffectedAndDispatchProps =
             PropertiesAffectedByState ({ })
           )
 
+        const has_input = isJust (pipe_ (entry, IAA.wikiEntry, SAAL.input))
+
         const fillPairForActiveLevel =
           (selectedLevel: number) =>
             pipe (
@@ -545,8 +546,11 @@ export const getIdSpecificAffectedAndDispatchProps =
               first (pipe (
                 set (AAOL.level) (Just (selectedLevel)),
                 isNothing (IAA.cost (entry)) && isJust (mselect_options)
-                  ? set (AAOL.selectOptionId1) (mselected)
-                  : isJust (pipe_ (entry, IAA.wikiEntry, SAAL.input))
+                  ? pipe (
+                      set (AAOL.selectOptionId1) (mselected),
+                      has_input ? set (AAOL.input) (minput_text) : ident
+                    )
+                  : has_input
                   ? set (AAOL.input) (minput_text)
                   : ident
               ))
@@ -554,7 +558,10 @@ export const getIdSpecificAffectedAndDispatchProps =
 
         const fillPairForNoLevel: ident<IdSpecificAffectedAndDispatchProps> =
           isJust (IAA.cost (entry))
-            ? bimap (set (AAOL.selectOptionId1) (mselected))
+            ? bimap (pipe (
+                      set (AAOL.selectOptionId1) (mselected),
+                      has_input ? set (AAOL.input) (minput_text) : ident
+                    ))
                     (set (PABYL.currentCost) (getPlainCostFromEntry (entry)))
             : (() => {
                 if (isJust (mselect_options)) {
@@ -567,14 +574,20 @@ export const getIdSpecificAffectedAndDispatchProps =
                   const mselected_cost = bind (mselected_option) (SOA.cost)
 
                   if (isJust (mselected_cost)) {
-                    return bimap (setSelectOptionId)
+                    return bimap (pipe (
+                                   setSelectOptionId,
+                                   has_input ? set (AAOL.input) (minput_text) : ident
+                                 ))
                                  (set (PABYL.currentCost) (mselected_cost))
                   }
                   else {
-                    return first (setSelectOptionId)
+                    return first (pipe (
+                                   setSelectOptionId,
+                                   has_input ? set (AAOL.input) (minput_text) : ident
+                                 ))
                   }
                 }
-                else if (isJust (pipe_ (entry, IAA.wikiEntry, SAAL.input))) {
+                else if (has_input) {
                   return first (set (AAOL.input) (minput_text))
                 }
                 else {

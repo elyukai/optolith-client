@@ -1,6 +1,7 @@
-import { flip } from "../../Data/Function";
-import { Pair } from "../../Data/Tuple";
-import { ifElse } from "./ifElse";
+import { ifElse } from "../App/Utilities/ifElse";
+import { flip } from "./Function";
+import { EQ, GT, LT, Ordering } from "./Ord";
+import { Pair } from "./Tuple";
 
 /**
  * Adds two numbers. Equivalent to `a + b` but curried.
@@ -75,18 +76,14 @@ export const even = (x: number) => x % 2 === 0
 export const odd = (x: number) => x % 2 !== 0
 
 /**
- * `gt :: Ord a => a -> a -> Bool`
+ * `compare :: Int -> Int -> Ordering`
  *
- * Checks if the *second* value is greater than the first.
+ * `compare a b` compares the two integers `a` and `b` and returns `LT` if `a`
+ * is lower than `b`, `GT` if `a` is greater than `b` and `EQ` if both are
+ * equal.
  */
-export const gt = (y: number) => (x: number) => x > y
-
-/**
- * `gte :: Ord a => a -> a -> Bool`
- *
- * Checks if the *second* value is greater than or equals the first.
- */
-export const gte = (y: number) => (x: number) => x >= y
+export const compare =
+  (a: number) => (b: number): Ordering => a < b ? LT : a > b ? GT : EQ
 
 /**
  * `lt :: Ord a => a -> a -> Bool`
@@ -103,11 +100,18 @@ export const lt = (y: number) => (x: number) => x < y
 export const lte = (y: number) => (x: number) => x <= y
 
 /**
- * `min :: Ord a => a -> a -> a`
+ * `gt :: Ord a => a -> a -> Bool`
  *
- * Returns the smaller of its two arguments.
+ * Checks if the *second* value is greater than the first.
  */
-export const min = (x: number) => (y: number) => x < y ? x : y
+export const gt = (y: number) => (x: number) => x > y
+
+/**
+ * `gte :: Ord a => a -> a -> Bool`
+ *
+ * Checks if the *second* value is greater than or equals the first.
+ */
+export const gte = (y: number) => (x: number) => x >= y
 
 /**
  * `max :: Ord a => a -> a -> a`
@@ -115,6 +119,13 @@ export const min = (x: number) => (y: number) => x < y ? x : y
  * Returns the larger of its two arguments.
  */
 export const max = (x: number) => (y: number) => x > y ? x : y
+
+/**
+ * `min :: Ord a => a -> a -> a`
+ *
+ * Returns the smaller of its two arguments.
+ */
+export const min = (x: number) => (y: number) => x < y ? x : y
 
 /**
  * `minmax :: Ord a => a -> a -> (a, a)`
@@ -216,3 +227,31 @@ export const lcm =
  * (positive).
  */
 export const signum = (x: number) => x < 0 ? -1 : x > 0 ? 1 : 0
+
+export const Num = {
+  add,
+  subtract,
+  subtractBy,
+  subtractAbs,
+  subtractAbsBy,
+  multiply,
+  divide,
+  divideBy,
+  even,
+  odd,
+  compare,
+  lt,
+  lte,
+  gt,
+  gte,
+  max,
+  min,
+  minmax,
+  inc,
+  dec,
+  negate,
+  abs,
+  gcd,
+  lcm,
+  signum,
+}

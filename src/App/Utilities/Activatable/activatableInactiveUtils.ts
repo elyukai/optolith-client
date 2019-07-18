@@ -14,10 +14,10 @@ import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
 import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, subscript } from "../../../Data/List";
 import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or } from "../../../Data/Maybe";
+import { add, dec, gt, gte, inc, multiply } from "../../../Data/Num";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { Record, RecordI } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
-import { traceShowIdWhen } from "../../../Debug/Trace";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -41,7 +41,6 @@ import { getAllEntriesByGroup } from "../heroStateUtils";
 import { getBlessedTradStrIdFromNumId, prefixSA } from "../IDUtils";
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
 import { isOwnTradition, isUnfamiliarSpell } from "../Increasable/spellUtils";
-import { add, dec, gt, gte, inc, multiply } from "../mathUtils";
 import { pipe, pipe_ } from "../pipe";
 import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
 import { filterByAvailability } from "../RulesUtils";
@@ -892,9 +891,6 @@ export const getInactiveView =
                                                                    (mhero_entry))
                       (current_id)
       : Nothing
-
-    traceShowIdWhen (AAL.id (wiki_entry) === "DISADV_5") (wiki_entry)
-    traceShowIdWhen (AAL.id (wiki_entry) === "DISADV_5") (mhero_entry)
 
     const isNotValid = isAdditionDisabled (wiki)
                                           (hero)

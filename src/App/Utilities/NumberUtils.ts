@@ -1,8 +1,8 @@
 import { not } from "../../Data/Bool";
 import { List, subscript } from "../../Data/List";
 import { bindF, ensure, fromMaybe, Just, Maybe, Nothing } from "../../Data/Maybe";
+import { dec } from "../../Data/Num";
 import { minus } from "./Chars";
-import { dec } from "./mathUtils";
 import { pipe } from "./pipe";
 import { isInteger, isNaturalNumber } from "./RegexUtils";
 

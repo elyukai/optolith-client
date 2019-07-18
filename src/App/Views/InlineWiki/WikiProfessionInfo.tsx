@@ -1,10 +1,11 @@
 import * as React from "react";
 import { equals } from "../../../Data/Eq";
+import { compare } from "../../../Data/Float";
 import { flip, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
-import { compare } from "../../../Data/Int";
 import { append, cons, consF, deleteAt, find, findIndex, flength, foldr, imap, intercalate, intersperse, isList, List, ListI, map, NonEmptyList, notElem, notNull, reverse, snoc, sortBy, subscript, toArray, uncons, unconsSafe, unsafeIndex } from "../../../Data/List";
 import { alt_, any, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNull, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe";
+import { add, dec, gt } from "../../../Data/Num";
 import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet";
 import { fromDefault, Record } from "../../../Data/Record";
@@ -48,7 +49,6 @@ import { getSelectOptionName } from "../../Utilities/Activatable/selectionUtils"
 import { ndash } from "../../Utilities/Chars";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
 import { getNumericId, prefixRace, prefixSA } from "../../Utilities/IDUtils";
-import { add, dec, gt } from "../../Utilities/mathUtils";
 import { signNeg } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils";

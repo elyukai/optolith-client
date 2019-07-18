@@ -3,6 +3,7 @@ import { List, notNullStrUndef } from "../../../Data/List";
 import { fromJust, fromMaybeR, guardReplace, isJust, Just, Maybe, maybeToUndefined, orN } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { fst, snd } from "../../../Data/Tuple";
+import { traceShowId } from "../../../Debug/Trace";
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
 import { HeroModel } from "../../Models/Hero/HeroModel";
 import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
@@ -123,7 +124,7 @@ export class ActivatableAddListItem extends
   deleteCustomCost = () => this.setState ({ customCost: undefined })
 
   addToList = (args: Record<ActivatableActivationOptions>) => {
-    this.props.addToList (args)
+    this.props.addToList (traceShowId (args))
 
     if (
       this.state.selected !== undefined

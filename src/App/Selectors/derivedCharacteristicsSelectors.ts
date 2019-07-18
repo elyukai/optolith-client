@@ -1,6 +1,7 @@
 import { fmap, fmapF } from "../../Data/Functor";
 import { elem, foldr, List, snoc } from "../../Data/List";
 import { bindF, fromMaybe, Just, liftM2, listToMaybe, maybe, Maybe, Nothing } from "../../Data/Maybe";
+import { add, multiply, negate, subtract } from "../../Data/Num";
 import { elems, fromList } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { fst, Pair, snd } from "../../Data/Tuple";
@@ -18,7 +19,6 @@ import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { translate } from "../Utilities/I18n";
 import { prefixAdv, prefixAttr, prefixDis, prefixSA } from "../Utilities/IDUtils";
 import { getAttributeValueWithDefault } from "../Utilities/Increasable/attributeUtils";
-import { add, multiply, negate, subtract } from "../Utilities/mathUtils";
 import { pipe } from "../Utilities/pipe";
 import { isBookEnabled } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice, mapGetToSlice, mapGetToSliceWithProps } from "../Utilities/SelectorsUtils";

@@ -1,9 +1,9 @@
 import { ident } from "../../Data/Function";
 import { over } from "../../Data/Lens";
+import { add } from "../../Data/Num";
 import { AddAdventurePointsAction } from "../Actions/ProfileActions";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { add } from "../Utilities/mathUtils";
 
 type Action = AddAdventurePointsAction
 

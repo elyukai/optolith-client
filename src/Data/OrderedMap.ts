@@ -7,7 +7,6 @@
  * @author Lukas Obermann
  */
 
-import { add, multiply } from "../App/Utilities/mathUtils";
 import { pipe } from "../App/Utilities/pipe";
 import { not } from "./Bool";
 import { Either, fromRight_, isLeft, Right } from "./Either";
@@ -17,6 +16,7 @@ import { fmapF } from "./Functor";
 import { Internals } from "./Internals";
 import { append, List } from "./List";
 import { bind, fromMaybe, Just, Maybe, maybe, maybe_ } from "./Maybe";
+import { add, multiply } from "./Num";
 import { show } from "./Show";
 import { Pair, Tuple } from "./Tuple";
 

@@ -1,6 +1,7 @@
-import { compare } from "../../Data/Int";
+import { compare } from "../../Data/Float";
 import { fnull, head, List, subscript } from "../../Data/List";
 import { bindF, ensure, fromMaybe, listToMaybe, maybe, Maybe } from "../../Data/Maybe";
+import { dec } from "../../Data/Num";
 import { Record } from "../../Data/Record";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
@@ -32,7 +33,6 @@ import { NameBySex } from "../Models/Wiki/sub/NameBySex";
 import { SourceLink } from "../Models/Wiki/sub/SourceLink";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { compareLocale, translate } from "../Utilities/I18n";
-import { dec } from "../Utilities/mathUtils";
 import { pipe } from "../Utilities/pipe";
 import { comparingR, SortOptions } from "../Utilities/sortBy";
 import { isNumber, isString } from "../Utilities/typeCheckUtils";

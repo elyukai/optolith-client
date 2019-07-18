@@ -1,5 +1,5 @@
+import { add, inc, max, multiply, negate, subtractBy } from "../../../Data/Num";
 import { bimap, fst, Pair, snd } from "../../../Data/Tuple";
-import { add, inc, max, multiply, negate, subtractBy } from "../mathUtils";
 import { pipe } from "../pipe";
 
 /**

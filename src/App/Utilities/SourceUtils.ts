@@ -1,6 +1,6 @@
+import { compare } from "../../Data/Float";
 import { flip, on } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
-import { compare } from "../../Data/Int";
 import { range } from "../../Data/Ix";
 import { consF, foldr, intercalate, List, map, reverse, setAt, sortBy } from "../../Data/List";
 import { listToMaybe, mapMaybe, maybe_ } from "../../Data/Maybe";

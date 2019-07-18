@@ -1,11 +1,11 @@
 import { cnst } from "../../Data/Function";
 import { foldl } from "../../Data/List";
 import { Just, Maybe, Nothing } from "../../Data/Maybe";
+import { inc, max } from "../../Data/Num";
 import { lookupF, memberF, OrderedMap } from "../../Data/OrderedMap";
 import { Categories } from "../Constants/Categories";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { match } from "./match";
-import { inc, max } from "./mathUtils";
 import { pipe } from "./pipe";
 
 export const getIdPrefix = (id: string) => id.split (/_/)[0] as IdPrefixes

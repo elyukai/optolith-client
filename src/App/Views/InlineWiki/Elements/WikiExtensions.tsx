@@ -1,6 +1,6 @@
 import * as React from "react";
 import { equals } from "../../../../Data/Eq";
-import { compare } from "../../../../Data/Int";
+import { compare } from "../../../../Data/Float";
 import { filter, flength, List, map, toArray } from "../../../../Data/List";
 import { bindF, elem, ensure, Maybe, maybeR, sum } from "../../../../Data/Maybe";
 import { Record, RecordBase } from "../../../../Data/Record";

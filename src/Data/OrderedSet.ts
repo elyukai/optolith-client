@@ -6,7 +6,6 @@
  * @author Lukas Obermann
  */
 
-import { add, multiply } from "../App/Utilities/mathUtils";
 import { pipe } from "../App/Utilities/pipe";
 import { not } from "./Bool";
 import { equals, notEquals } from "./Eq";
@@ -14,6 +13,7 @@ import { ident } from "./Function";
 import { Internals } from "./Internals";
 import { append, List } from "./List";
 import { Maybe } from "./Maybe";
+import { add, multiply } from "./Num";
 import { show } from "./Show";
 
 import isList = Internals.isList

@@ -6,13 +6,13 @@
  * @author Lukas Obermann
  */
 
-import { add, inc, max, min, multiply } from "../App/Utilities/mathUtils";
 import { pipe, pipe_ } from "../App/Utilities/pipe";
 import { not } from "./Bool";
 import { equals } from "./Eq";
 import { ident, thrush } from "./Function";
 import { fmap, fmapF } from "./Functor";
 import { Internals } from "./Internals";
+import { add, inc, max, min, multiply } from "./Num";
 import { isLTorEQ, Ordering } from "./Ord";
 import { fromDefault, RecordBase } from "./Record";
 import { show } from "./Show";

@@ -3,6 +3,7 @@ import { flip } from "../../../../../Data/Function";
 import { fmap } from "../../../../../Data/Functor";
 import { fromArray, isInfixOf, List, NonEmptyList, splitOn, uncons } from "../../../../../Data/List";
 import { bindF, ensure, fromJust, fromMaybe, isNothing, Just, Maybe, Nothing } from "../../../../../Data/Maybe";
+import { gte } from "../../../../../Data/Num";
 import { fromList } from "../../../../../Data/OrderedMap";
 import { show } from "../../../../../Data/Show";
 import { parseJSON } from "../../../../../Data/String/JSON";
@@ -17,7 +18,6 @@ import { RaceRequirement } from "../../../../Models/Wiki/prerequisites/RaceRequi
 import { SexRequirement } from "../../../../Models/Wiki/prerequisites/SexRequirement";
 import { AllRequirementObjects, AllRequirements, LevelAwarePrerequisites } from "../../../../Models/Wiki/wikiTypeHelpers";
 import { ifElse } from "../../../ifElse";
-import { gte } from "../../../mathUtils";
 import { toInt } from "../../../NumberUtils";
 import { pipe } from "../../../pipe";
 import { Expect } from "../../showExpected";
