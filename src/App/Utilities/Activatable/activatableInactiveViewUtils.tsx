@@ -545,22 +545,20 @@ export const getIdSpecificAffectedAndDispatchProps =
                           )),
               first (pipe (
                 set (AAOL.level) (Just (selectedLevel)),
-                isNothing (IAA.cost (entry)) && isJust (mselect_options)
-                  ? pipe (
-                      set (AAOL.selectOptionId1) (mselected),
-                      has_input ? set (AAOL.input) (minput_text) : ident
-                    )
-                  : has_input
-                  ? set (AAOL.input) (minput_text)
-                  : ident
+                isJust (mselect_options) ? set (AAOL.selectOptionId1) (mselected) : ident,
+                has_input ? set (AAOL.input) (minput_text) : ident
               ))
             )
 
         const fillPairForNoLevel: ident<IdSpecificAffectedAndDispatchProps> =
           isJust (IAA.cost (entry))
             ? bimap (pipe (
-                      set (AAOL.selectOptionId1) (mselected),
-                      has_input ? set (AAOL.input) (minput_text) : ident
+                      isJust (mselect_options)
+                        ? set (AAOL.selectOptionId1) (mselected)
+                        : ident as ident<Record<ActivatableActivationOptions>>,
+                      has_input
+                        ? set (AAOL.input) (minput_text)
+                        : ident as ident<Record<ActivatableActivationOptions>>
                     ))
                     (set (PABYL.currentCost) (getPlainCostFromEntry (entry)))
             : (() => {

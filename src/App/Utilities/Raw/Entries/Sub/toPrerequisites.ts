@@ -43,7 +43,7 @@ const toLevelAwarePrerequisites =
                                               (toInt (fst (p)))
 
           if (isNothing (level)) {
-            return Left (`Invalid level. Expected: Natural, Received: ${fst (p)}`)
+            return Left (`Invalid level. Expected: Natural, Received: "${fst (p)}"`)
           }
 
           const levelAwarePrerequisites =

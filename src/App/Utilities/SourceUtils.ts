@@ -4,8 +4,8 @@ import { range } from "../../Data/Ix";
 import { consF, foldr, intercalate, List, map, reverse, setAt, sortBy } from "../../Data/List";
 import { listToMaybe, mapMaybe, maybe_ } from "../../Data/Maybe";
 import { compare } from "../../Data/Num";
-import { adjustDef, foldrWithKey, lookupF, OrderedMap } from "../../Data/OrderedMap";
-import { empty, insert, OrderedSet, toList } from "../../Data/OrderedSet";
+import { adjust, adjustDef, foldrWithKey, lookupF, OrderedMap } from "../../Data/OrderedMap";
+import { empty, insert, OrderedSet, sdelete, toList } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
 import { fst, isTuple, Pair, snd } from "../../Data/Tuple";
 import { upd2 } from "../../Data/Tuple/Update";
@@ -29,10 +29,19 @@ export const combineShowSources =
   (books: OrderedMap<string, Record<Book>>) =>
     pipe (
       mergeSources,
-      renderSources (l10n) (books)
+      showSources (l10n) (books)
     )
 
-export const renderSources =
+export const combineShowSourcesWithout =
+  (l10n: L10nRecord) =>
+  (books: OrderedMap<string, Record<Book>>) =>
+  (without: List<List<Record<SourceLink>>>) =>
+    pipe (
+      mergeSourcesWithout (without),
+      showSources (l10n) (books)
+    )
+
+export const showSources =
   (l10n: L10nRecord) =>
   (books: OrderedMap<string, Record<Book>>) =>
     pipe (
@@ -41,14 +50,14 @@ export const renderSources =
                    x,
                    SLsA.id,
                    lookupF (books),
-                   fmap (pipe (BA.name, name => Pair (name, renderPages (SLsA.pages (x)))))
+                   fmap (pipe (BA.name, name => Pair (name, showPages (SLsA.pages (x)))))
                  )),
       sortBy (on (compareLocale (l10n)) (fst)),
       map (x => `${fst (x)} ${snd (x)}`),
       intercalate ("; ")
     )
 
-const renderPages =
+const showPages =
   pipe (
     map ((x: Page) => isNumber (x) ? `${x}` : `${fst (x)}${ndash}${snd (x)}`),
     intercalate (", ")
@@ -78,6 +87,27 @@ export const mergeSources: (xss: List<List<Record<SourceLink>>>) => List<Record<
                              ),
                            })))
                    (List ())
+    )
+
+export const mergeSourcesWithout:
+  (excludes: List<List<Record<SourceLink>>>) =>
+  (xss: List<List<Record<SourceLink>>>) => List<Record<SourceLinks>> =
+  excludes =>
+    pipe (
+      foldr (unfoldSources) (OrderedMap.empty),
+      flip (foldrWithKey ((k: string) => (x: OrderedSet<number>) =>
+                           adjust (flip (foldr (sdelete)) (toList (x))) (k)))
+           (foldr (unfoldSources) (OrderedMap.empty) (excludes)),
+      foldrWithKey ((k: string) => (x: OrderedSet<number>) =>
+                    consF (SourceLinks ({
+                            id: k,
+                            pages: pipe_ (
+                              x,
+                              toList,
+                              groupSortInt
+                            ),
+                          })))
+                  (List ())
     )
 
 /**

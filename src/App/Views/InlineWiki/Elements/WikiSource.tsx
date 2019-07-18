@@ -1,7 +1,7 @@
 import * as React from "react";
 import { thrush } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
-import { append, List, map, notNull } from "../../../../Data/List";
+import { append, List, map, notNull, notNullStr } from "../../../../Data/List";
 import { bindF, ensure, joinMaybeList, Maybe, maybe_, normalize, Nothing } from "../../../../Data/Maybe";
 import { OrderedMap } from "../../../../Data/OrderedMap";
 import { Record, RecordBase } from "../../../../Data/Record";
@@ -10,8 +10,8 @@ import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { SourceLink } from "../../../Models/Wiki/sub/SourceLink";
 import { translate } from "../../../Utilities/I18n";
-import { pipe_ } from "../../../Utilities/pipe";
-import { combineShowSources } from "../../../Utilities/SourceUtils";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { combineShowSources, combineShowSourcesWithout } from "../../../Utilities/SourceUtils";
 
 interface Accessors<A extends RecordBase> {
   select?: (r: Record<A>) => Maybe<List<Record<SelectOption>>>
@@ -55,23 +55,28 @@ export function WikiSource<A extends RecordBase> (props: WikiSourceProps<A>) {
       ? Nothing
       : ensure (notNull) (append (add_src) (select_src))
 
-  return maybe_ (() => (
-                  <p className="source">
-                    <span>{combineShowSources (l10n) (books) (main_src)}</span>
-                  </p>
-                ))
-                ((compl_src: List<List<Record<SourceLink>>>) => (
-                  <>
-                    <p className="source">
-                      <span>{combineShowSources (l10n) (books) (main_src)}</span>
-                    </p>
-                    <p className="source">
-                      <span>
-                        <strong>{translate (l10n) ("complementarysources")}:</strong>
-                        {" "}
-                        {combineShowSources (l10n) (books) (compl_src)}</span>
-                    </p>
-                  </>
-                ))
-                (mcompl_src)
+  return pipe_ (
+    mcompl_src,
+    bindF (pipe (
+      combineShowSourcesWithout (l10n) (books) (main_src),
+      ensure (notNullStr)
+    )),
+    maybe_ (() => (
+             <p className="source">
+               <span>{combineShowSources (l10n) (books) (main_src)}</span>
+             </p>
+           ))
+           (compl_src => (
+             <>
+               <p className="source">
+                 <span>{combineShowSources (l10n) (books) (main_src)}</span>
+               </p>
+               <p className="source">
+                 <span>
+                   <strong>{translate (l10n) ("complementarysources")}:</strong> {compl_src}
+                 </span>
+               </p>
+             </>
+           ))
+  )
 }

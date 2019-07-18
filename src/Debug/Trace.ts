@@ -41,7 +41,7 @@ export const traceShowBoth =
   <A> (a: A) => pipe (traceShow (a), traceShowId)
 
 /**
- * `traceShowIdWhen :: Show a => a -> a`
+ * `traceShowIdWhen :: Show a => Bool -> a -> a`
  *
  * Like `traceShowId` but only prints to console if the passed boolean is
  * `True`.

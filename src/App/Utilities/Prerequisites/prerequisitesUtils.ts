@@ -12,12 +12,13 @@ import { Application } from "../../Models/Wiki/sub/Application";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { Activatable, AllRequirementObjects, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
 import { findSelectOption } from "../Activatable/selectionUtils";
-import { pipe } from "../pipe";
+import { pipe, pipe_ } from "../pipe";
+import { misStringM } from "../typeCheckUtils";
 
-const { id } = Advantage.AL
-const { sid, sid2 } = ActiveObject.AL
-const { active } = ActivatableDependent.AL
-const { applications, target, level, prerequisites } = SelectOption.AL
+const AAL = Advantage.AL
+const AOA = ActiveObject.A
+const ADA = ActivatableDependent.A
+const SOA = SelectOption.A
 
 /**
  * Some advantages, disadvantages and special abilities need more prerequisites
@@ -34,14 +35,17 @@ export const getGeneratedPrerequisites =
   (wiki_entry: Activatable) =>
   (hero_entry: Maybe<Record<ActivatableDependent>>) =>
   (current: Record<ActiveObject>): Maybe<List<AllRequirementObjects>> => {
-    switch (id (wiki_entry)) {
+    const sid = AOA.sid (current)
+    const sid2 = AOA.sid2 (current)
+
+    switch (AAL.id (wiki_entry)) {
       // Begabung
       case "ADV_4":
         return Just (List (
           RequireActivatable ({
             id: "DISADV_48",
             active: false,
-            sid: sid (current),
+            sid,
           })
         ))
 
@@ -51,7 +55,7 @@ export const getGeneratedPrerequisites =
           RequireActivatable ({
             id: "DISADV_48",
             active: false,
-            sid: sid (current),
+            sid,
           })
         ))
 
@@ -61,7 +65,7 @@ export const getGeneratedPrerequisites =
           RequireActivatable ({
             id: "DISADV_24",
             active: false,
-            sid: sid (current),
+            sid,
           })
         ))
 
@@ -71,7 +75,7 @@ export const getGeneratedPrerequisites =
           RequireActivatable ({
             id: "ADV_32",
             active: false,
-            sid: sid (current),
+            sid,
           })
         ))
 
@@ -81,12 +85,12 @@ export const getGeneratedPrerequisites =
           RequireActivatable ({
             id: "ADV_4",
             active: false,
-            sid: sid (current),
+            sid,
           }),
           RequireActivatable ({
             id: "ADV_16",
             active: false,
-            sid: sid (current),
+            sid,
           })
         ))
 
@@ -99,13 +103,13 @@ export const getGeneratedPrerequisites =
       // Tierwandlung
       case "SA_338":
         return bindF (SelectOption.AL.prerequisites)
-                     (findSelectOption (wiki_entry) (sid (current)))
+                     (findSelectOption (wiki_entry) (sid))
 
       case "SA_9": {
         const sameSkill = maybe (0)
                                 (pipe (
-                                  active,
-                                  filter (pipe (sid, equals (sid (current)))),
+                                  ADA.active,
+                                  filter (pipe (AOA.sid, equals (sid))),
                                   flength
                                 ))
                                 (hero_entry)
@@ -115,14 +119,14 @@ export const getGeneratedPrerequisites =
                  id: justSid as string,
                  value: (sameSkill + (add ? 1 : 0)) * 6,
                }))
-               (sid (current))
+               (sid)
 
         return pipe (
-                      bindF (applications),
+                      bindF (SOA.applications),
                       bindF (
                         find<Record<Application>> (pipe (
                                                                Application.AL.id,
-                                                               elemF (sid2 (current))
+                                                               elemF (sid2)
                                                              ))
                       ),
                       bindF (Application.AL.prerequisites),
@@ -139,7 +143,7 @@ export const getGeneratedPrerequisites =
                           (sameSkillDependency)
                       )
                     )
-                    (findSelectOption (wiki_entry) (sid (current)))
+                    (findSelectOption (wiki_entry) (sid))
       }
 
       case "SA_81":
@@ -147,9 +151,20 @@ export const getGeneratedPrerequisites =
           RequireActivatable ({
             id: "SA_72",
             active: true,
-            sid: sid (current),
+            sid,
           })
         ))
+
+      // Adaption (Zauber)
+      case "SA_231":
+        return pipe_ (
+          sid,
+          misStringM,
+          fmap (id => List (RequireIncreasable ({
+                              id,
+                              value: 10,
+                            })))
+        )
 
       case "SA_414":
       case "SA_663":
@@ -161,19 +176,19 @@ export const getGeneratedPrerequisites =
                                     value: optionTier * 4 + 4,
                                   }))
                                 )
-                              (target (option))
-                              (level (option)))
-                     (findSelectOption (wiki_entry) (sid (current)))
+                              (SOA.target (option))
+                              (SOA.level (option)))
+                     (findSelectOption (wiki_entry) (sid))
 
       case "SA_639":
-        return bindF (prerequisites) (findSelectOption (wiki_entry) (sid (current)))
+        return bindF (SOA.prerequisites) (findSelectOption (wiki_entry) (sid))
 
       case "SA_699": {
         return Just (List (
           RequireActivatable ({
             id: "SA_29",
             active: true,
-            sid: sid (current),
+            sid,
             tier: Just (3),
           })
         ))
