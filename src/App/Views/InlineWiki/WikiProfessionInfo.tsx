@@ -8,7 +8,7 @@ import { add, compare, dec, gt } from "../../../Data/Num";
 import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet";
 import { fromDefault, Record } from "../../../Data/Record";
-import { show, showP } from "../../../Data/Show";
+import { show } from "../../../Data/Show";
 import { fst, isTuple, Pair, snd } from "../../../Data/Tuple";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ActivatableNameCostIsActive, ActivatableNameCostIsActiveA_ } from "../../Models/View/ActivatableNameCostIsActive";
@@ -1162,9 +1162,6 @@ const getVariantSkillsSelection =
 
     const skillsList =
       pipe_ (variant, PVCA.mappedSkills, mapVariantSkills (l10n) (0))
-
-    console.log (showP (PVCA.mappedSkills (variant)))
-    console.log (showP (skillsList))
 
     const combinedSpellsList = combineSpells (PVCA.mappedSpells (variant))
 

@@ -7,7 +7,6 @@ import { cons, flength, List } from "../../../Data/List";
 import { any, bindF, ensure, fromJust, fromMaybe, guard, INTERNAL_shallowEquals, isJust, Just, liftM2, listToMaybe, Maybe, maybe } from "../../../Data/Maybe";
 import { max, min } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
-import { traceShowIdWhen } from "../../../Debug/Trace";
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
 import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -128,8 +127,6 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
       )
 
     const baseName = AAA_.baseName (item)
-
-    traceShowIdWhen (AAA_.id (item) === "SA_240") (item)
 
     return (
       <ListItem
