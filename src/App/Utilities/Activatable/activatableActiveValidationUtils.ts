@@ -9,7 +9,7 @@ import { notP } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
-import { all, any, countWith, elem, filter, find, flength, foldl, intersect, isList, List, mapByIdKeyMap, notElemF, sdelete } from "../../../Data/List";
+import { all, any, countWith, elem, filter, find, flength, foldl, intersect, isList, List, mapByIdKeyMap, notElem, notElemF, sdelete } from "../../../Data/List";
 import { alt, bind, bindF, ensure, fromJust, isJust, isNothing, Just, liftM2, Maybe, maybe, Nothing, or, sum } from "../../../Data/Maybe";
 import { elems, isOrderedMap, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { size } from "../../../Data/OrderedSet";
@@ -36,7 +36,7 @@ import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils";
 import { ifElse } from "../ifElse";
 import { isOwnTradition } from "../Increasable/liturgicalChantUtils";
-import { add, gt, gte, inc, lt, min, subtract, subtractBy } from "../mathUtils";
+import { add, gt, gte, inc, lte, max, min, subtract, subtractBy } from "../mathUtils";
 import { pipe, pipe_ } from "../pipe";
 import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites";
 import { setPrerequisiteId } from "../Prerequisites/setPrerequisiteId";
@@ -128,20 +128,17 @@ const isRemovalDisabledEntrySpecific =
       // Exceptional Combat Technique
       case "ADV_17": {
         // value of target combat technique
-        const mvalue =
+        const value =
           pipe_ (
             active,
             AOA.sid,
             misStringM,
-            bindF (lookupF (HeroModel.AL.combatTechniques (hero))),
-            fmap (SkillDependent.AL.value)
+            bindF (lookupF (HeroModel.A.combatTechniques (hero))),
+            maybe (6) (SkillDependent.A.value)
           )
 
         // if the maximum value is reached removal needs to be disabled
-        return or (liftM2 (gte)
-                          (mvalue)
-                          (fmap (pipe (ELA.maxCombatTechniqueRating, inc))
-                                (mstart_el)))
+        return maybe (true) (pipe (ELA.maxCombatTechniqueRating, inc, lte (value))) (mstart_el)
       }
 
       // Magical traditions
@@ -296,99 +293,113 @@ const isRemovalDisabledEntrySpecific =
       }
 
       default:
-        // if there is any dependency that disables the possibility to remove
-        // the entry
-        return any ((dep: ActivatableDependency) => {
-                     // If there is a top-level dependency for the whole entry,
-                     // it must be `true` because `false` would have prevented
-                     // the entry from being added.
-                     if (isBoolean (dep)) {
-                       return true
-                     }
-
-                     // A Just if the depedency exists because of a list of ids
-                     // in a prerequiste. Contains the source id of the object
-                     // where the prerequisite is from.
-                     const current_origin = DOA.origin (dep)
-
-                     if (isJust (current_origin)) {
-                       return or (
-                         pipe (
-                                getWikiEntry (wiki),
-                                bindF<EntryWithCategory, Activatable>
-                                  (ensure (isActivatableWikiEntry)),
-
-                                // Get flat prerequisites for origin entry
-                                fmap (origin_entry =>
-                                  flattenPrerequisites (Nothing)
-                                                       (alt (AAL.tiers (origin_entry)) (Just (1)))
-                                                       (AAL.prerequisites (origin_entry))),
-
-                                // Get the prerequisite that matches this entry
-                                // to get all other options from list
-                                bindF (find ((req): req is AllRequirementObjects => {
-                                              if (typeof req === "string") {
-                                                return false
-                                              }
-
-                                              const current_id = RAAL.id (req)
-
-                                              // the id must be a list of ids
-                                              // because otherwise no options in
-                                              // terms of fulfilling the
-                                              // prerequisite would be possible
-                                              return isList (current_id)
-                                                // check if the current entry's
-                                                // id is actually a member of
-                                                // the prerequisite
-                                                && elem (AAL.id (wiki_entry))
-                                                        (current_id)
-                                            })),
-
-                                // Check if there are other entries that would
-                                // match the prerequisite so that this entry
-                                // could be removed
-                                fmap (req =>
-                                  any ((x: string) =>
-                                        validateObject (wiki)
-                                                        (hero)
-                                                        (setPrerequisiteId (x) (req))
-                                                        (AAL.id (wiki_entry)))
-                                      (sdelete (AAL.id (wiki_entry))
-                                               (RAAL.id (req) as List<string>))
-                                )
-
-                              )
-                              (fromJust (current_origin))
-                       )
-                     }
-
-                     // sid of the current dependency
-                     const current_dep_sid = DOA.sid (dep)
-
-                     if (Maybe.any (isList) (current_dep_sid)) {
-                       // list of possible sids to fulfill the prerequisite
-                       // and thus to fulfill the dependency
-                       const xs = fromJust (current_dep_sid) as List<number>
-
-                       const current_active_selections = getActiveSelections (hero_entry)
-
-                       // there must be at least two active sids being contained
-                       // in the list of possible sids so that one of them can
-                       // be removed
-                       const multiple_valid_for_dependency =
-                         flength (intersect (current_active_selections) (xs)) > 1
-
-                       // must be negated because it must return `false` if
-                       // the dependency says it can be removed
-                       return !multiple_valid_for_dependency
-                     }
-
-                     return false
-                   })
-                   (ADA.dependencies (hero_entry))
+        return false
     }
   }
+
+const isEntryDisabledByDependencies =
+  (wiki: WikiModelRecord) =>
+  (hero: HeroModelRecord) =>
+  (wiki_entry: Activatable) =>
+  (hero_entry: Record<ActivatableDependent>) =>
+  (active: Record<ActiveObject>) =>
+    // if there is any dependency that disables the possibility to remove
+    // the entry
+    any ((dep: ActivatableDependency) => {
+      // If there is a top-level dependency for the whole entry,
+      // it must be `true` because `false` would have prevented
+      // the entry from being added.
+      if (isBoolean (dep)) {
+        return true
+      }
+
+      // A Just if the depedency exists because of a list of ids
+      // in a prerequiste. Contains the source id of the object
+      // where the prerequisite is from.
+      const current_origin = DOA.origin (dep)
+
+      if (isJust (current_origin)) {
+        return or (
+          pipe (
+                 getWikiEntry (wiki),
+                 bindF<EntryWithCategory, Activatable>
+                   (ensure (isActivatableWikiEntry)),
+
+                 // Get flat prerequisites for origin entry
+                 fmap (origin_entry =>
+                   flattenPrerequisites (Nothing)
+                                        (alt (AAL.tiers (origin_entry)) (Just (1)))
+                                        (AAL.prerequisites (origin_entry))),
+
+                 // Get the prerequisite that matches this entry
+                 // to get all other options from list
+                 bindF (find ((req): req is AllRequirementObjects => {
+                               if (typeof req === "string") {
+                                 return false
+                               }
+
+                               const current_id = RAAL.id (req)
+
+                               // the id must be a list of ids
+                               // because otherwise no options in
+                               // terms of fulfilling the
+                               // prerequisite would be possible
+                               return isList (current_id)
+                                 // check if the current entry's
+                                 // id is actually a member of
+                                 // the prerequisite
+                                 && elem (AAL.id (wiki_entry))
+                                         (current_id)
+                             })),
+
+                 // Check if there are other entries that would
+                 // match the prerequisite so that this entry
+                 // could be removed
+                 fmap (req =>
+                  !any ((x: string) =>
+                         validateObject (wiki)
+                                         (hero)
+                                         (setPrerequisiteId (x) (req))
+                                         (AAL.id (wiki_entry)))
+                       (sdelete (AAL.id (wiki_entry))
+                                (RAAL.id (req) as List<string>))
+                 )
+
+               )
+               (fromJust (current_origin))
+        )
+      }
+
+      // sid of the current dependency
+      const current_dep_sid = DOA.sid (dep)
+      const mcurrent_sid = AOA.sid (active)
+
+      if (Maybe.any (isList) (current_dep_sid) && isJust (mcurrent_sid)) {
+        // list of possible sids to fulfill the prerequisite
+        // and thus to fulfill the dependency
+        const xs = fromJust (current_dep_sid)
+        const current_sid = fromJust (mcurrent_sid)
+
+        if (notElem (current_sid) (xs)) {
+          return false
+        }
+
+        const current_active_selections = getActiveSelections (hero_entry)
+
+        // there must be at least two active sids being contained
+        // in the list of possible sids so that one of them can
+        // be removed
+        const multiple_valid_for_dependency =
+          flength (intersect (current_active_selections) (xs)) > 1
+
+        // must be negated because it must return `false` if
+        // the dependency says it can be removed
+        return !multiple_valid_for_dependency
+      }
+
+      return false
+    })
+    (ADA.dependencies (hero_entry))
 
 const isStyleSpecialAbilityRemovalDisabled =
   (hero: HeroModelRecord) =>
@@ -397,17 +408,30 @@ const isStyleSpecialAbilityRemovalDisabled =
     && !isStyleValidToRemove (hero)
                              (Just (wiki_entry))
 
-const getSermonsAndVisionsMinTier =
+export const getMinLevelForIncreaseEntry: (def: number) => (count: number) => Maybe<number> =
+  // the entry allows to have more entries, which would not be possible without.
+  // The minimum is simply the count - def, because if there are def + 1
+  // entries, it must be at least 1, if there are def + 2 entries,
+  // it must be at least 2. And if the count is not greater than def, the
+  // increase entry is not used so we dont need a restriction
+  def => pipe (ensure (gt (def)), fmap (subtractBy (def)))
+
+export const getMaxLevelForDecreaseEntry: (def: number) => (count: number) => Maybe<number> =
+  // the more entries the user buys, the less levels are
+  // possible. If the user has 3 or more entries, the decrease entry cannot
+  // be used at all. In those cases (which should not happen), the maximum
+  // will be 0.
+  def => pipe (subtract (def), max (0), Just)
+
+export const getSermonsAndVisionsCount =
   (wiki: WikiModelRecord) =>
-  (state: HeroModelRecord) =>
-  (more: boolean) =>
-  (gr: number): Maybe<number> =>
-    fmap (more ? subtractBy (3) : subtract (3))
-         (ensure (more ? gt (3) : lt (3))
-                 (countWith (isActive)
-                            (getAllEntriesByGroup (WA.specialAbilities (wiki))
-                                                  (HA.specialAbilities (state))
-                                                  (gr))))
+  (state: HeroModelRecord):
+  (gr: number) => number =>
+    pipe (
+      getAllEntriesByGroup (WA.specialAbilities (wiki))
+                           (HA.specialAbilities (state)),
+      countWith (isActive)
+    )
 
 const getEntrySpecificMinimumLevel =
   (wiki: WikiModelRecord) =>
@@ -416,18 +440,15 @@ const getEntrySpecificMinimumLevel =
     switch (AOWIA.id (x)) {
       // Große Zauberauswahl
       case "ADV_58":
-        return fmap (subtractBy (3))
-                    (ensure (gt (3))
-                            (countActiveSkillEntries ("spells")
-                                                     (hero)))
+        return pipe_ (hero, countActiveSkillEntries ("spells"), getMinLevelForIncreaseEntry (3))
 
       // Zahlreiche Predigten
       case "ADV_79":
-        return getSermonsAndVisionsMinTier (wiki) (hero) (true) (24)
+        return pipe_ (24, getSermonsAndVisionsCount (wiki) (hero), getMinLevelForIncreaseEntry (3))
 
       // Zahlreiche Visionen
       case "ADV_80":
-        return getSermonsAndVisionsMinTier (wiki) (hero) (true) (27)
+        return pipe_ (27, getSermonsAndVisionsCount (wiki) (hero), getMinLevelForIncreaseEntry (3))
 
       default:
         return Nothing
@@ -439,13 +460,17 @@ const getEntrySpecificMaximumLevel =
   (hero: HeroModelRecord) =>
   (entry_id: string): Maybe<number> => {
     switch (entry_id) {
+      // Kleine Zauberauswahl
+      case "ADV_58":
+        return pipe_ (hero, countActiveSkillEntries ("spells"), getMaxLevelForDecreaseEntry (3))
+
       // Wenige Predigten
       case "DISADV_72":
-        return getSermonsAndVisionsMinTier (wiki) (hero) (false) (24)
+        return pipe_ (24, getSermonsAndVisionsCount (wiki) (hero), getMaxLevelForDecreaseEntry (3))
 
       // Wenige Visionen
       case "DISADV_73":
-        return getSermonsAndVisionsMinTier (wiki) (hero) (false) (27)
+        return pipe_ (27, getSermonsAndVisionsCount (wiki) (hero), getMaxLevelForDecreaseEntry (3))
 
       // Dunkles Abbild der Bündnisgabe
       case "SA_667":
@@ -567,6 +592,14 @@ export const getIsRemovalOrChangeDisabled =
                        // extended special abilities
                        || isStyleSpecialAbilityRemovalDisabled (hero)
                                                                (wiki_entry)
+
+                       // Disable if dependencies disable remove
+                       // (overlap with `isRequiredByOther`? => merge?)
+                       || isEntryDisabledByDependencies (wiki)
+                                                        (hero)
+                                                        (wiki_entry)
+                                                        (hero_entry)
+                                                        (entry)
 
                        // Disable if specific entry conditions disallow
                        // remove

@@ -5,7 +5,7 @@ import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { Lens_, over, set } from "../../../Data/Lens";
-import { all, append, consF, empty, foldr, List, map, notElemF } from "../../../Data/List";
+import { all, append, consF, elemF, empty, foldr, List, map, notElemF } from "../../../Data/List";
 import { catMaybes, ensure, fromMaybe, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
 import { adjust, elems, fromList, insert, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
@@ -439,5 +439,7 @@ const mapCatToSelectOptionsPred =
             ))
             (List ())
 
-const noGuildMageSkill = (x: Skillish) => !Spell.is (x) || all (notElemF (List (1, 2)))
-                                                               (Spell.A.tradition (x))
+const noGuildMageSkill = (x: Skillish) => !Spell.is (x)
+                                          || all (notElemF (List (1, 2)))
+                                                 (Spell.A.tradition (x))
+                                          || elemF (List (1, 2)) (Spell.A.gr (x))

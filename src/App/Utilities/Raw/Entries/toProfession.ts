@@ -2,11 +2,11 @@ import { equals } from "../../../../Data/Eq";
 import { ident } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
 import { set } from "../../../../Data/Lens";
-import { empty, flength, foldr, fromArray, List, map, notNull, splitOn } from "../../../../Data/List";
-import { altF_, any, bindF, ensure, fromJust, fromMaybe, isJust, Just, mapM, maybe, Maybe, Nothing, Some } from "../../../../Data/Maybe";
+import { append, empty, flength, foldr, fromArray, List, map, notNull, splitOn } from "../../../../Data/List";
+import { altF_, any, bindF, ensure, fromJust, fromMaybe, isJust, joinMaybeList, Just, mapM, maybe, Maybe, Nothing, Some } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { parseJSON } from "../../../../Data/String/JSON";
-import { traceShow } from "../../../../Debug/Trace";
+import { traceShowBoth } from "../../../../Debug/Trace";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
@@ -190,7 +190,7 @@ const stringToSelections =
                   id: Nothing,
                   value: obj .value,
                 }))
-              : (traceShow ("Invalid selection: ") (obj), Nothing)
+              : (traceShowBoth ("Invalid selection: ") (obj), Nothing)
           }
 
           return Nothing
@@ -478,11 +478,14 @@ export const toProfession =
           esrc,
         })
         (rs => {
+          const prerequisites = append (joinMaybeList (rs.eprerequisites))
+                                       (joinMaybeList (rs.eprerequisitesL10n))
+
           const is_guild_mage_tradition_add =
-            any (List.any ((x: ProfessionPrerequisite) =>
+            List.any ((x: ProfessionPrerequisite) =>
                             ProfessionRequireActivatable.is (x)
-                            && ProfessionRequireActivatable.A.id (x) === prefixSA (70)))
-                (rs.eprerequisites)
+                            && ProfessionRequireActivatable.A.id (x) === prefixSA (70))
+                     (prerequisites)
             && any (List.any (pipe (ProfessionRequireActivatable.A.id, equals (prefixSA (70)))))
                    (rs.especialAbilities)
 
@@ -508,8 +511,7 @@ export const toProfession =
             dependencies:
               fromMaybe<Profession["dependencies"]> (empty) (rs.edependencies),
 
-            prerequisites:
-              fromMaybe<Profession["prerequisites"]> (empty) (rs.eprerequisites),
+            prerequisites,
 
             prerequisitesStart: fmap (modifyNegIntNoBreak) (prerequisitesStart),
             prerequisitesEnd: fmap (modifyNegIntNoBreak) (prerequisitesEnd),

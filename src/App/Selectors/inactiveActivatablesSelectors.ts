@@ -1,7 +1,7 @@
 import { flip } from "../../Data/Function";
-import { fmapF } from "../../Data/Functor";
+import { fmap, fmapF } from "../../Data/Functor";
 import { cons, fromArray, List } from "../../Data/List";
-import { catMaybes, join, liftM2, mapMaybe, Maybe } from "../../Data/Maybe";
+import { catMaybes, join, mapMaybe, Maybe } from "../../Data/Maybe";
 import { elems, lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { ActivatableCategory, Categories } from "../Constants/Categories";
@@ -109,10 +109,12 @@ const getSrc = pipe (getWikiEntry, Advantage.AL.src) as
   <T extends ActivatableCategory> (x: Inactive<T>) => List<Record<SourceLink>>
 
 const filterDeactiveAdv =
-  ignore3rd (flip (liftM2<Av, listAdv, listAdv> (filterByAvailability (getSrc))))
+  ignore3rd (flip ((a: Av) =>
+                    fmap<listAdv, listAdv> (filterByAvailability (getSrc)
+                                                                 <Categories.ADVANTAGES> (a))))
 
 const filterDeactiveDis =
-  filterDeactiveAdv as (a: Maybe<listDis>) => (b: Maybe<Av>) => () => Maybe<listDis>
+  filterDeactiveAdv as (a: Maybe<listDis>) => (b: Av) => () => Maybe<listDis>
 
 export const getDeactiveAdvantages =
   createMapMaybeSelector (stateSelectors.getHeroes)
@@ -136,11 +138,10 @@ export const getDeactiveSpecialAbilities =
                          (getInactiveSpecialAbilitiesForView)
                          (getSpecialAbilitiesSortOptions, getRuleBooksEnabled)
                          ()
-                         (mxs => (sort_options, mrules) => () =>
-                           liftM2<Av, listSA, listSA> (availability => pipe (
-                                                        filterByAvailability (getSrc)
-                                                                             <CatSA> (availability),
-                                                        sortRecordsBy<InAcSA> (sort_options)
-                                                      ))
-                                                      (mrules)
-                                                      (mxs))
+                         (mxs => (sort_options, availability) => () =>
+                           fmap<listSA, listSA> (pipe (
+                                                  filterByAvailability (getSrc)
+                                                                       <CatSA> (availability),
+                                                  sortRecordsBy<InAcSA> (sort_options)
+                                                ))
+                                                (mxs))

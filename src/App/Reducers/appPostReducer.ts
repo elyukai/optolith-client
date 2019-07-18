@@ -12,8 +12,8 @@ import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from "../Actions/
 import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { Alert, User } from "../Models/Hero/heroTypeHelpers";
-import { getRuleBooksEnabled } from "../Selectors/rulesSelectors";
-import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase } from "../Selectors/stateSelectors";
+import { getRuleBooksEnabledM } from "../Selectors/rulesSelectors";
+import { getCurrentCultureId, getCurrentHeroPresent, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase } from "../Selectors/stateSelectors";
 import { composeL } from "../Utilities/compose";
 import { TabId } from "../Utilities/LocationUtils";
 import { pipe } from "../Utilities/pipe";
@@ -146,7 +146,8 @@ export const appPostReducer =
                        (TabId.Races)
           }
 
-          const rule_books_enabled = getRuleBooksEnabled (previousState)
+          const rule_books_enabled =
+            getRuleBooksEnabledM (previousState, { mhero: getCurrentHeroPresent (previousState) })
 
           if (or (fmapF (rule_books_enabled) (flip (isBookEnabled) ("US25208")))
               && and (fmapF (rule_books_enabled) (notP (flip (isBookEnabled) ("US25208"))))

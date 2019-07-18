@@ -100,12 +100,19 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
     // }
 
     switch (SAA.gr (x)) {
+      // Staff Enchantments
       case 5:
+      // Bannschwert
       case 15:
+      // Dolch
       case 16:
+      // Instrument
       case 17:
+      // Gewand
       case 18:
+      // Kugel
       case 19:
+      // Stecken
       case 20:
         return (
           <WikiBoxTemplate
@@ -141,7 +148,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             {maybeRNullF (bind (misNumberM (SAA.property (x)))
                                (pipe (dec, subscript (translate (l10n) ("propertylist")))))
                          (str => (
-                           <WikiProperty l10n={l10n} title="bindingcost">
+                           <WikiProperty l10n={l10n} title="property">
                              {str}
                            </WikiProperty>
                          ))}
@@ -151,6 +158,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
+      // Zeremonialgegenstände
       case 23:
         return (
           <WikiBoxTemplate
@@ -178,6 +186,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
+      // Bann-/Schutzkreise
       case 8:
         return (
           <WikiBoxTemplate
@@ -199,7 +208,9 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
+      // Magische Traditionen
       case 28:
+      // Karmale Traditionen
       case 29:
         return (
           <WikiBoxTemplate
@@ -214,7 +225,9 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
+      // Combat Styles (armed)
       case 9:
+      // Combat Styles (unarmed)
       case 10:
         return (
           <WikiBoxTemplate
@@ -260,6 +273,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
+      // Zauberstile
       case 13:
         return (
           <WikiBoxTemplate
@@ -295,6 +309,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
+      // Liturgiestile
       case 25: {
         const sa_id = prefixSA (639) // Gebieter des [Aspekts]
         const SA_639 = lookup (sa_id) (specialAbilities)
@@ -557,8 +572,12 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   const prerequisitesText = AAL.prerequisitesText (x)
   const prerequisitesTextIndex = AAL.prerequisitesTextIndex (x)
 
-  if (isString (prerequisitesText)) {
-    return <Markdown source={`**${translate (l10n) ("prerequisites")}:** ${prerequisitesText}`} />
+  if (isJust (prerequisitesText)) {
+    return (
+      <Markdown
+        source={`**${translate (l10n) ("prerequisites")}:** ${fromJust (prerequisitesText)}`}
+        />
+    )
   }
 
   const levels = Maybe.product (AAL.tiers (x))
@@ -570,7 +589,7 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   type TypeofList = JSX.Element | string
 
   const mtext_before = fmapF (prerequisitesTextStart)
-                             (y => <Markdown source={y} oneLine="fragment" />)
+                             (y => <Markdown key="before" source={y} oneLine="fragment" />)
 
   /**
    * `Right`: Will need a comma before if there are elements before the text.
@@ -579,8 +598,8 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   const mtext_after = fmapF (prerequisitesTextEnd)
                             ((y): Either<JSX.Element, JSX.Element> =>
                               /^(?: |,|\.)/ .test (y)
-                                ? Left (<Markdown source={y} oneLine="fragment" />)
-                                : Right (<Markdown source={y} oneLine="fragment" />))
+                                ? Left (<Markdown key="after" source={y} oneLine="fragment" />)
+                                : Right (<Markdown key="after" source={y} oneLine="fragment" />))
 
   const mtext_after_insidelist = bind (mtext_after) (eitherToMaybe)
   const mtext_after_outsidelist = bind (mtext_after) (pipe (invertEither, eitherToMaybe))

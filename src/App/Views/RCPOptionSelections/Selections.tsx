@@ -9,7 +9,9 @@ import { adjust, alter, lookup, lookupF, OrderedMap, size } from "../../../Data/
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
 import { first, fst, Pair, second, snd } from "../../../Data/Tuple";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Selections as SelectionsInterface } from "../../Models/Hero/heroTypeHelpers";
+import { Rules } from "../../Models/Hero/Rules";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Culture } from "../../Models/Wiki/Culture";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -34,6 +36,7 @@ import { Scroll } from "../Universal/Scroll";
 import { Slidein } from "../Universal/Slidein";
 
 export interface SelectionsOwnProps {
+  hero: HeroModelRecord
   l10n: L10nRecord
   close (): void
 }
@@ -45,6 +48,7 @@ export interface SelectionsStateProps {
   currentProfessionVariant: Maybe<Record<ProfessionVariant>>
   wiki: WikiModelRecord
   munfamiliar_spells: Maybe<List<Record<DropdownOption>>>
+  rules: Record<Rules>
 }
 
 export interface SelectionsDispatchProps {
@@ -230,6 +234,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
       currentProfessionVariant: maybeProfessionVariant,
       currentRace: maybeRace,
       l10n,
+      rules,
       wiki,
       munfamiliar_spells,
     } = this.props
@@ -291,6 +296,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                const languagesAndScripts =
                  getLanguagesAndScriptsElementAndValidation (l10n)
                                                             (wiki)
+                                                            (rules)
                                                             (culture)
                                                             (languages)
                                                             (scripts)
@@ -305,6 +311,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
 
                const curses = getCursesElementAndValidation (l10n)
                                                             (wiki)
+                                                            (rules)
                                                             (cursesActive)
                                                             (this.adjustCurse)
                                                             (prof_sels)

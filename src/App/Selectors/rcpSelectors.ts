@@ -1,5 +1,5 @@
 import { equals } from "../../Data/Eq";
-import { flip, ident, thrush } from "../../Data/Function";
+import { ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { all, cons, Cons, consF, elemF, filter, find, foldr, intercalate, List, ListI, map, subscriptF } from "../../Data/List";
@@ -146,22 +146,16 @@ export const getAllRaces = createMaybeSelector (
 )
 
 export const getAvailableRaces = createMaybeSelector (
-  getAllRaces,
   getRuleBooksEnabled,
-  uncurryN (races => fmap (flip (filterByAvailability (pipe (RCA.wikiEntry, RA.src)))
-                                (races)))
+  getAllRaces,
+  uncurryN (filterByAvailability (pipe (RCA.wikiEntry, RA.src)))
 )
 
 export const getFilteredRaces = createMaybeSelector (
   getRacesCombinedSortOptions,
   getRacesFilterText,
   getAvailableRaces,
-  uncurryN3 (sort_options =>
-             filter_text =>
-               fmap (filterAndSortRecordsBy (0)
-                                            ([pipe (RCA.wikiEntry, RA.name)])
-                                            (sort_options)
-                                            (filter_text)))
+  uncurryN3 (filterAndSortRecordsBy (0) ([pipe (RCA.wikiEntry, RA.name)]))
 )
 
 export const getAllCultures = createMaybeSelector (
@@ -211,24 +205,26 @@ export const getAvailableCultures = createMaybeSelector (
   uncurryN4 (common_cultures =>
              visibility =>
              cs =>
-              fmap (visibility === "common"
-                     ? flip (filterByAvailability (pipe (CCA.wikiEntry, CA.src)))
-                            (filter (pipe (CCA.wikiEntry, CA.id, elemF (common_cultures)))
-                                    (cs))
-                     : flip (filterByAvailability (pipe (CCA.wikiEntry, CA.src)))
-                            (cs)))
+             av =>
+              visibility === "common"
+                ? filterByAvailability (pipe (CCA.wikiEntry, CA.src))
+                                       (av)
+                                       (filter (pipe (
+                                                 CCA.wikiEntry,
+                                                 CA.id,
+                                                 elemF (common_cultures)
+                                               ))
+                                               (cs))
+                : filterByAvailability (pipe (CCA.wikiEntry, CA.src))
+                                       (av)
+                                       (cs))
 )
 
 export const getFilteredCultures = createMaybeSelector (
-  getCulturesFilterText,
   getCulturesCombinedSortOptions,
+  getCulturesFilterText,
   getAvailableCultures,
-  uncurryN3 (filter_text =>
-             sort_options =>
-               fmap (filterAndSortRecordsBy (0)
-                                            ([pipe (CCA.wikiEntry, CA.name)])
-                                            (sort_options)
-                                            (filter_text)))
+  uncurryN3 (filterAndSortRecordsBy (0) ([pipe (CCA.wikiEntry, CA.name)]))
 )
 
 interface SkillGroupLists {
@@ -744,16 +740,18 @@ export const getCommonProfessions = createMaybeSelector (
 
 export const getAvailableProfessions = createMaybeSelector (
   getProfessionsVisibilityFilter,
-  getCommonProfessions,
   getRuleBooksEnabled,
+  getCommonProfessions,
   uncurryN3 (visibility =>
-              liftM2 (xs =>
-                      availability => visibility === "all"
-                                      ? filterByAvailabilityAndPred (ProfessionCombinedA_.src)
-                                                                    (isCustomProfession)
-                                                                    (availability)
-                                                                    (xs)
-                                      : xs))
+             availability =>
+              fmap (xs => visibility === "all"
+                          ? filterByAvailabilityAndPred (ProfessionCombinedA_.src)
+                                                        (isCustomProfession)
+                                                        (availability)
+                                                        (xs)
+                          : filterByAvailability (ProfessionCombinedA_.src)
+                                                 (availability)
+                                                 (xs)))
 )
 
 export const getFilteredProfessions = createMaybeSelector (

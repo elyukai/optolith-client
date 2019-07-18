@@ -1,6 +1,6 @@
 import { fmap, fmapF } from "../../Data/Functor";
 import { elem, foldr, List, snoc } from "../../Data/List";
-import { bindF, fromMaybe, Just, liftM2, listToMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
+import { bindF, fromMaybe, Just, liftM2, listToMaybe, maybe, Maybe, Nothing } from "../../Data/Maybe";
 import { elems, fromList } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { fst, Pair, snd } from "../../Data/Tuple";
@@ -369,7 +369,7 @@ export const getDerivedCharacteristicsMap = createMaybeSelector (
   getMOV,
   getWT,
   getRuleBooksEnabled,
-  (LP, AE, KP, SPI, TOU, DO, INI, MOV, WT, mrule_books_enabled) => {
+  (LP, AE, KP, SPI, TOU, DO, INI, MOV, WT, rule_books_enabled) => {
     type BaseDerived = Record<DerivedCharacteristic>
 
     const xs = List<(Pair<DCIds, BaseDerived>)> (
@@ -383,9 +383,7 @@ export const getDerivedCharacteristicsMap = createMaybeSelector (
       Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (MOV), MOV)
     )
 
-    const isWoundThresholdEnabled =
-      or (fmapF (mrule_books_enabled)
-                (rule_books_enabled => isBookEnabled (rule_books_enabled) ("US25003")))
+    const isWoundThresholdEnabled = isBookEnabled (rule_books_enabled) ("US25003")
 
     if (isWoundThresholdEnabled) {
       return fromList (snoc (xs) (Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (WT), WT)))

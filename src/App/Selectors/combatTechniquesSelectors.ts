@@ -193,8 +193,9 @@ export const getAllCombatTechniques = createMaybeSelector (
 export const getAvailableCombatTechniques = createMaybeSelector (
   getRuleBooksEnabled,
   getAllCombatTechniques,
-  uncurryN (liftM2 (filterByAvailabilityAndPred (pipe (CTWRA.wikiEntry, CTA.src))
-                                                (pipe (CTWRA.stateEntry, SDA.value, gt (6)))))
+  uncurryN (av => fmap (filterByAvailabilityAndPred (pipe (CTWRA.wikiEntry, CTA.src))
+                                                    (pipe (CTWRA.stateEntry, SDA.value, gt (6)))
+                                                    (av)))
 )
 
 export const getFilteredCombatTechniques = createMaybeSelector (

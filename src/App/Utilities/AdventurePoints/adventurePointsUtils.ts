@@ -2,7 +2,7 @@ import { equals } from "../../../Data/Eq";
 import { ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { any, countWith, countWithByKeyMaybe, elemF, find, flength, foldl, foldr, isList, lastS, List, take } from "../../../Data/List";
-import { all, altF, bind, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, listToMaybe, Maybe, Nothing, or, sum } from "../../../Data/Maybe";
+import { all, altF, bind, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, Nothing, or, sum } from "../../../Data/Maybe";
 import { alter, empty, findWithDefault, lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, Record } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
@@ -173,7 +173,7 @@ const getPrinciplesObligationsDiff =
   (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
   (entries: List<Record<ActiveActivatable>>): number => {
     if (any (pipe (ActiveActivatableAL_.id, equals (id))) (entries)) {
-      return sum (pipe_ (
+      return pipe_ (
         hero_slice,
         lookup (id),
         bindF (entry => {
@@ -200,15 +200,12 @@ const getPrinciplesObligationsDiff =
               misNumberM
             )
 
-          const amount_diff = at_max_level > 1
+          return at_max_level > 1
             ? fmapF (mbase_cost) (base => current_max_level * -base)
-            : Just (0)
-
-          const level_diff = fmapF (mbase_cost) (base => current_second_max_level * -base)
-
-          return liftM2 (add) (amount_diff) (level_diff)
-        })
-      ))
+            : fmapF (mbase_cost) (base => current_second_max_level * -base)
+        }),
+        sum
+      )
     }
 
     return 0

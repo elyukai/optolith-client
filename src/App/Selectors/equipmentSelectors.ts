@@ -34,7 +34,7 @@ import { add, dec, multiply, subtractBy } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { sortRecordsByName } from "../Utilities/sortBy";
-import { DropdownOption, stringOfListToDropdown } from "../Views/Universal/Dropdown";
+import { stringOfListToDropdown } from "../Views/Universal/Dropdown";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getEquipmentSortOptions } from "./sortOptionsSelectors";
 import { getCurrentHeroPresent, getEquipmentFilterText, getEquipmentState, getHigherParadeValues, getHitZoneArmorsState, getItemsState, getItemTemplatesFilterText, getLocaleAsProp, getWiki, getWikiItemTemplates, getZoneArmorFilterText } from "./stateSelectors";
@@ -98,13 +98,13 @@ export const getSortedTemplates = createMaybeSelector (
 export const getAvailableItemTemplates = createMaybeSelector (
   getSortedTemplates,
   getRuleBooksEnabled,
-  uncurryN (xs => fmap (availability => filterByAvailability (ITA.src) (availability) (xs)))
+  uncurryN (flip (filterByAvailability (ITA.src)))
 )
 
 export const getFilteredItemTemplates = createMaybeSelector (
   getItemTemplatesFilterText,
   getAvailableItemTemplates,
-  uncurryN (filterText => fmap (filterRecordsByName (filterText)))
+  uncurryN (filterText => xs => filterRecordsByName (filterText) (xs))
 )
 
 export const getItems = createMaybeSelector (
@@ -734,9 +734,8 @@ const filterGrsIfAnyTplAvailable =
 export const getAvailableSortedEquipmentGroups = createMaybeSelector (
   getLocaleAsProp,
   getAvailableItemTemplates,
-  uncurryN (l10n => maybe (List<Record<DropdownOption>> ())
-                          (pipe (
-                            flip (filterGrsIfAnyTplAvailable) (l10n),
-                            sortRecordsByName (l10n)
-                          )))
+  uncurryN (l10n => pipe (
+                      flip (filterGrsIfAnyTplAvailable) (l10n),
+                      sortRecordsByName (l10n)
+                    ))
 )

@@ -12,11 +12,12 @@ import { equals } from "../../../Data/Eq";
 import { ident, thrush } from "../../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
-import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, maximum, notElem, notElemF, notNull, subscript } from "../../../Data/List";
+import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, subscript } from "../../../Data/List";
 import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or } from "../../../Data/Maybe";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { Record, RecordI } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
+import { traceShowIdWhen } from "../../../Debug/Trace";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -40,17 +41,18 @@ import { getAllEntriesByGroup } from "../heroStateUtils";
 import { getBlessedTradStrIdFromNumId, prefixSA } from "../IDUtils";
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
 import { isOwnTradition, isUnfamiliarSpell } from "../Increasable/spellUtils";
-import { add, dec, gt, gte, inc, lt, multiply, subtract } from "../mathUtils";
+import { add, dec, gt, gte, inc, multiply } from "../mathUtils";
 import { pipe, pipe_ } from "../pipe";
 import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
 import { filterByAvailability } from "../RulesUtils";
 import { sortRecordsByName } from "../sortBy";
 import { isNumber, isString, misStringM } from "../typeCheckUtils";
+import { getMaxLevelForDecreaseEntry, getSermonsAndVisionsCount } from "./activatableActiveValidationUtils";
 import { isAdditionDisabled } from "./activatableInactiveValidationUtils";
 import { getModifierByActiveLevel } from "./activatableModifierUtils";
 import { countActiveSkillEntries } from "./activatableSkillUtils";
 import { isMaybeActive } from "./isActive";
-import { findSelectOption, getActiveSecondarySelections, getActiveSelectionsMaybe, getRequiredSelections } from "./selectionUtils";
+import { getActiveSecondarySelections, getActiveSelectionsMaybe, getRequiredSelections } from "./selectionUtils";
 import { getBlessedTradition, getMagicalTraditionsHeroEntries } from "./traditionUtils";
 
 const WA = WikiModel.A
@@ -69,7 +71,7 @@ const SA = Skill.A
 
 const { cost: select_costL, applications, name: nameL } = SelectOptionL
 const { sid, tier } = ActiveObject.AL
-const { maxLevel, cost: costL } = InactiveActivatableL
+const IAL = InactiveActivatableL
 const { level: pact_level } = Pact.AL
 const { spentOnMagicalAdvantages, spentOnMagicalDisadvantages } = AdventurePointsCategories.AL
 
@@ -207,7 +209,7 @@ const modifySelectOptions =
   (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<List<Record<SelectOption>>> => {
     const current_id = AAL.id (wiki_entry)
     const mcurrent_select = fmap (filterByAvailability (SOA.src)
-                                 (Pair (WA.books (wiki), HA.rules (hero))))
+                                                       (Pair (WA.books (wiki), HA.rules (hero))))
                                  (AAL.select (wiki_entry))
 
     const isNoRequiredOrActiveSelection =
@@ -224,35 +226,6 @@ const modifySelectOptions =
 
         return fmap (filter ((e: Record<SelectOption>) =>
                               hasLessThanTwoSameIdActiveSelections (e)
-                              && isNoRequiredSelection (e)))
-                    (mcurrent_select)
-      }
-
-      // Immunity to (Poison)
-      case "ADV_28":
-      // Immunity to (Disease)
-      case "ADV_29":
-      // Afraid of ...
-      case "DISADV_1":
-      // Principles
-      case "DISADV_34":
-      // Obligations
-      case "DISADV_50":
-        return fmap (filter (isNotRequired (mhero_entry)))
-                    (mcurrent_select)
-
-      // Magical Attunement
-      case "ADV_32":
-      // Magical Restriction
-      case "DISADV_24": {
-        const flipped_id = current_id === "DISADV_24" ? "ADV_32" : "DISADV_24"
-
-        // Selection must not be active on the other entry, respectively.
-        const isNotActiveOnOther =
-          isNotActive (lookup (flipped_id) (HA.disadvantages (hero)))
-
-        return fmap (filter ((e: Record<SelectOption>) =>
-                              isNotActiveOnOther (e)
                               && isNoRequiredSelection (e)))
                     (mcurrent_select)
       }
@@ -293,10 +266,16 @@ const modifySelectOptions =
                     (mcurrent_select)
       }
 
+      // Exceptional Sense
+      case "ADV_18":
+      // Restricted Sense
+      case "DISADV_7":
       // Trade Secret
       case "SA_3":
       // Writing
       case "SA_28":
+      // Tierwandlung
+      case "SA_338":
       // Gebieter
       case "SA_639": {
         return fmap (filter ((e: Record<SelectOption>) =>
@@ -458,46 +437,6 @@ const modifySelectOptions =
                                 && isString (id)
                                 && Maybe.any (isFromUnfamiliarTrad) (lookup (id) (WA.spells (wiki)))
                             }))
-                    (mcurrent_select)
-      }
-
-      // Tierwandlung
-      case "SA_338": {
-        const mactive_sels = getActiveSelectionsMaybe (mhero_entry)
-
-        return fmap ((xs: List<Record<SelectOption>>) => {
-                      if (isMaybeActive (mhero_entry)) {
-                        const path =
-                          pipe (
-                                 active,
-                                 listToMaybe,
-                                 bindF (sid),
-                                 findSelectOption (wiki_entry),
-                                 bindF (SOA.gr)
-                               )
-                               (fromJust (mhero_entry))
-
-                        const highest_level =
-                          fmap (pipe (
-                                 mapMaybe (pipe (
-                                   Just as (x: string | number) => Maybe<string | number>,
-                                   findSelectOption (wiki_entry),
-                                   bindF (SOA.level)
-                                 )),
-                                 maximum,
-                                 inc
-                               ))
-                               (mactive_sels)
-
-                        return filter ((e: Record<SelectOption>) =>
-                                          equals (path) (SOA.gr (e))
-                                          && equals (SOA.level (e)) (highest_level))
-                                      (xs)
-                      }
-
-                      return filter<Record<SelectOption>> (pipe (SOA.level, Maybe.elem (1)))
-                                                          (xs)
-                    })
                     (mcurrent_select)
       }
 
@@ -688,14 +627,35 @@ const modifyOtherOptions =
     const current_id = AAL.id (wiki_entry)
 
     switch (current_id) {
+      // Wenige Predigten
+      case "DISADV_72":
+        return pipe_ (
+          24,
+          getSermonsAndVisionsCount (wiki) (hero),
+          getMaxLevelForDecreaseEntry (3),
+          set (IAL.maxLevel),
+          Just
+        )
+
+      // Wenige Visionen
+      case "DISADV_73":
+        return pipe_ (
+          27,
+          getSermonsAndVisionsCount (wiki) (hero),
+          getMaxLevelForDecreaseEntry (3),
+          set (IAL.maxLevel),
+          Just
+        )
+
       // Kleine Zauberauswahl
       case "DISADV_59": {
-        return pipe (
-                      countActiveSkillEntries ("spells"),
-                      ensure (lt (3)),
-                      fmap (pipe (subtract (3), Just, set (maxLevel)))
-                    )
-                    (hero)
+        return pipe_ (
+          hero,
+          countActiveSkillEntries ("spells"),
+          getMaxLevelForDecreaseEntry (3),
+          set (IAL.maxLevel),
+          Just
+        )
       }
 
       // Craft Instruments
@@ -757,7 +717,7 @@ const modifyOtherOptions =
                       bindF<number | List<number>, List<number>> (ensure (isList)),
                       bindF (costs => subscript (costs)
                                                 (maybe (0) (pipe (active, flength)) (mhero_entry))),
-                      fmap (pipe (Just, set (costL)))
+                      fmap (pipe (Just, set (IAL.cost)))
                     )
                     (wiki_entry)
       }
@@ -806,7 +766,7 @@ const modifyOtherOptions =
                                              fmap (pipe (
                                                     map (add (ic (skill))),
                                                     Just,
-                                                    set (costL)
+                                                    set (IAL.cost)
                                                   ))
                                            )
                                            (AAL.cost (wiki_entry)))
@@ -876,7 +836,7 @@ const modifyOtherOptions =
       case "SA_667": {
         return pipe (
                       HA.pact,
-                      fmap (pipe (pact_level, Just, set (maxLevel)))
+                      fmap (pipe (pact_level, Just, set (IAL.maxLevel)))
                     )
                     (hero)
       }
@@ -932,6 +892,9 @@ export const getInactiveView =
                                                                    (mhero_entry))
                       (current_id)
       : Nothing
+
+    traceShowIdWhen (AAL.id (wiki_entry) === "DISADV_5") (wiki_entry)
+    traceShowIdWhen (AAL.id (wiki_entry) === "DISADV_5") (mhero_entry)
 
     const isNotValid = isAdditionDisabled (wiki)
                                           (hero)

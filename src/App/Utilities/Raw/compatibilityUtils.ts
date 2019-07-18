@@ -896,7 +896,46 @@ export const convertHero =
                                                   && /^TAL_/ .test (activeObj .sid)),
                       },
                     })
-                  : hero)
+                  : hero),
+      convertLT ("1.1.0-alpha.20")
+                (hero => {
+                  let activatable = { ...hero.activatable }
+
+                  const editBase = (base: string) => {
+                    if (activatable [base] !== undefined && activatable [base] .length === 1) {
+                      activatable = {
+                        ...activatable,
+                        [base]: [{ sid: 1 }],
+                      }
+                    }
+                  }
+
+                  const editOther = (base: string) => (id: string) => (sid: number) => {
+                    if (activatable [id] !== undefined && activatable [id] .length === 1) {
+                      activatable = {
+                        ...activatable,
+                        [base]: activatable [base] !== undefined
+                          ? [...activatable [base], { sid }]
+                          : [{ sid }],
+                      }
+                    }
+                  }
+
+                  editBase ("ADV_18")
+                  editOther ("ADV_18") ("ADV_19") (2)
+                  editOther ("ADV_18") ("ADV_20") (3)
+                  editOther ("ADV_18") ("ADV_21") (4)
+
+                  editBase ("DISADV_7")
+                  editOther ("DISADV_7") ("DISADV_8") (2)
+                  editOther ("DISADV_7") ("DISADV_9") (3)
+                  editOther ("DISADV_7") ("DISADV_10") (4)
+
+                  return ({
+                    ...hero,
+                    activatable,
+                  })
+                })
     )
   }
 

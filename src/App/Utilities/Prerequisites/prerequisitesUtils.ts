@@ -35,7 +35,69 @@ export const getGeneratedPrerequisites =
   (hero_entry: Maybe<Record<ActivatableDependent>>) =>
   (current: Record<ActiveObject>): Maybe<List<AllRequirementObjects>> => {
     switch (id (wiki_entry)) {
+      // Begabung
+      case "ADV_4":
+        return Just (List (
+          RequireActivatable ({
+            id: "DISADV_48",
+            active: false,
+            sid: sid (current),
+          })
+        ))
+
+      // Herausragende Fertigkeit
+      case "ADV_16":
+        return Just (List (
+          RequireActivatable ({
+            id: "DISADV_48",
+            active: false,
+            sid: sid (current),
+          })
+        ))
+
+      // Magical Attunement
+      case "ADV_32":
+        return Just (List (
+          RequireActivatable ({
+            id: "DISADV_24",
+            active: false,
+            sid: sid (current),
+          })
+        ))
+
+      // Magical Restriction
+      case "DISADV_24":
+        return Just (List (
+          RequireActivatable ({
+            id: "ADV_32",
+            active: false,
+            sid: sid (current),
+          })
+        ))
+
+      // Incompetent
+      case "DISADV_48":
+        return Just (List (
+          RequireActivatable ({
+            id: "ADV_4",
+            active: false,
+            sid: sid (current),
+          }),
+          RequireActivatable ({
+            id: "ADV_16",
+            active: false,
+            sid: sid (current),
+          })
+        ))
+
+      // Exceptional Sense
+      case "ADV_18":
+      // Restricted Sense
+      case "DISADV_7":
+      // Trade Secret
       case "SA_3":
+      // Tierwandlung
+      case "SA_338":
         return bindF (SelectOption.AL.prerequisites)
                      (findSelectOption (wiki_entry) (sid (current)))
 

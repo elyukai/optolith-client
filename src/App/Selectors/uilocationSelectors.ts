@@ -11,7 +11,7 @@ import { isBookEnabled } from "../Utilities/RulesUtils";
 import { NavigationBarTabProps } from "../Views/NavBar/NavigationBarTabs";
 import { getIsLiturgicalChantsTabAvailable } from "./liturgicalChantsSelectors";
 import { getIsRemovingEnabled } from "./phaseSelectors";
-import { EnabledSourceBooks, getRuleBooksEnabled } from "./rulesSelectors";
+import { EnabledSourceBooks, getRuleBooksEnabledM } from "./rulesSelectors";
 import { getIsSpellsTabAvailable } from "./spellsSelectors";
 import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleAsProp, getPhase } from "./stateSelectors";
 
@@ -165,7 +165,7 @@ export const getSubtabs = createMaybeSelector (
   getCurrentCultureId,
   getIsSpellsTabAvailable,
   getIsLiturgicalChantsTabAvailable,
-  getRuleBooksEnabled,
+  getRuleBooksEnabledM,
   (
     tab,
     isMainSection,

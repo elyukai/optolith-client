@@ -20,7 +20,7 @@ import { getPrimaryAttributeId } from "../primaryAttributeUtils";
 import { addActivatableDependency, addActivatableSkillDependency, addAttributeDependency, addSkillDependency } from "./addDependencyUtils";
 import { removeActivatableDependency, removeActivatableSkillDependency, removeAttributeDependency, removeSkillDependency } from "./removeDependencyUtils";
 
-const { specialAbilities } = HeroModel.AL
+const HA = HeroModel.A
 const RAA = RequireActivatable.A
 const RPAA = RequirePrimaryAttribute.A
 
@@ -41,46 +41,49 @@ const putActivatableDependency =
   (sourceId: string) =>
   (req: Record<RequireActivatable>): ident<HeroModelRecord> => {
 
-    const current_id = RAA.id (req)
+    const id = RAA.id (req)
+    const sid = RAA.sid (req)
+    const sid2 = RAA.sid2 (req)
+    const level = RAA.tier (req)
 
-    if (isList (current_id)) {
-      if (isNothing (RAA.sid (req)) && isNothing (RAA.sid2 (req)) && isNothing (RAA.tier (req))) {
+    if (isList (id)) {
+      if (isNothing (sid) && isNothing (sid2) && isNothing (level)) {
         return flip (foldr (f (DependencyObject ({
                                                   origin: Just (sourceId),
                                                   active: Just (RAA.active (req)),
                                                 }))))
-                    (current_id)
+                    (id)
       }
 
       return flip (foldr (f (DependencyObject ({
                                                 origin: Just (sourceId),
                                                 active:
-                                                  isList (RAA.sid (req))
+                                                  isList (sid)
                                                   ? Just (RAA.active (req))
                                                   : Nothing,
-                                                sid: RAA.sid (req),
-                                                sid2: RAA.sid2 (req),
-                                                tier: RAA.tier (req),
+                                                sid,
+                                                sid2,
+                                                tier: level,
                                               }))))
-                  (current_id)
+                  (id)
     }
 
     // current_id is no list:
 
-    if (isNothing (RAA.sid (req)) && isNothing (RAA.sid2 (req)) && isNothing (RAA.tier (req))) {
-      return f (RAA.active (req)) (current_id)
+    if (isNothing (sid) && isNothing (sid2) && isNothing (level)) {
+      return f (RAA.active (req)) (id)
     }
 
     return f (DependencyObject ({
                                  active:
-                                   isList (RAA.sid (req))
+                                   isList (sid)
                                    ? Just (RAA.active (req))
                                    : Nothing,
-                                 sid: RAA.sid (req),
-                                 sid2: RAA.sid2 (req),
-                                 tier: RAA.tier (req),
+                                 sid,
+                                 sid2,
+                                 tier: level,
                                }))
-             (current_id)
+             (id)
   }
 
 const putPrimaryAttributeDependency =
@@ -89,7 +92,7 @@ const putPrimaryAttributeDependency =
   (state: HeroModelRecord): HeroModelRecord =>
     fromMaybe (state)
               (fmap ((x: string) => f (RPAA.value (req)) (x) (state))
-                    (getPrimaryAttributeId (specialAbilities (state))
+                    (getPrimaryAttributeId (HA.specialAbilities (state))
                                            (RPAA.type (req))))
 
 const getMatchingIncreasableModifier =

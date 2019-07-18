@@ -1,8 +1,9 @@
 import * as React from "react";
 import { List, map, notNull, toArray } from "../../../Data/List";
-import { bindF, ensure, Maybe, maybeR } from "../../../Data/Maybe";
+import { ensure, Maybe, maybeR } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
@@ -22,13 +23,14 @@ import { RacesListItem } from "./RacesListItem";
 import { RaceVariants } from "./RaceVariants";
 
 export interface RacesOwnProps {
+  hero: HeroModelRecord
   l10n: L10nRecord
 }
 
 export interface RacesStateProps {
   currentId: Maybe<string>
   currentVariantId: Maybe<string>
-  races: Maybe<List<Record<RaceCombined>>>
+  races: List<Record<RaceCombined>>
   sortOrder: SortNames
   filterText: string
 }
@@ -78,7 +80,7 @@ export function Races (props: RacesProps) {
           <ListView>
             {pipe_ (
               list,
-              bindF (ensure (notNull)),
+              ensure (notNull),
               maybeR (
                        <ListPlaceholder
                          l10n={l10n}

@@ -20,7 +20,7 @@ import { Cantrip } from "../Models/Wiki/Cantrip";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { Spell, SpellL } from "../Models/Wiki/Spell";
-import { selectToDropdownOption } from "../Models/Wiki/sub/SelectOption";
+import { SelectOption, selectToDropdownOption } from "../Models/Wiki/sub/SelectOption";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { getModifierByActiveLevel } from "../Utilities/Activatable/activatableModifierUtils";
 import { getMagicalTraditionsHeroEntries } from "../Utilities/Activatable/traditionUtils";
@@ -55,6 +55,7 @@ const SWRL = SpellWithRequirementsL
 const SA = Spell.A
 const SL = SpellL
 const SAA = SpecialAbility.A
+const SOA = SelectOption.A
 
 export const getMagicalTraditionsFromHero = createMaybeSelector (
   getSpecialAbilities,
@@ -382,13 +383,13 @@ const isAnySpellActiveWithImpCostC =
 export const getAvailableInactiveSpells = createMaybeSelector (
   getRuleBooksEnabled,
   getInactiveSpells,
-  uncurryN (liftM2 (filterByAvailability (pipe (SWRA.wikiEntry, SA.src))))
+  uncurryN (a => fmap (filterByAvailability (pipe (SWRA.wikiEntry, SA.src)) (a)))
 )
 
 export const getAvailableInactiveCantrips = createMaybeSelector (
   getRuleBooksEnabled,
   getInactiveCantrips,
-  uncurryN (liftM2 (filterByAvailability (pipe (CCA.wikiEntry, CA.src))))
+  uncurryN (a => fmap (filterByAvailability (pipe (CCA.wikiEntry, CA.src)) (a)))
 )
 
 type ListCombined = List<Record<SpellWithRequirements> | Record<CantripCombined>>
@@ -472,13 +473,15 @@ export const getSpellsForSheet = createMaybeSelector (
 
 export const getAllSpellsForManualGuildMageSelect = createMaybeSelector (
   getLocaleAsProp,
+  getRuleBooksEnabled,
   getWikiSpecialAbilities,
-  uncurryN (l10n => pipe (
-                      lookup (prefixSA (70)),
-                      bindF (SAA.select),
-                      fmap (pipe (
-                        map (selectToDropdownOption),
-                        sortRecordsByName (l10n)
-                      ))
-                    ))
+  uncurryN3 (l10n => av => pipe (
+                             lookup (prefixSA (70)),
+                             bindF (SAA.select),
+                             fmap (pipe (
+                               filterByAvailability (SOA.src) (av),
+                               map (selectToDropdownOption),
+                               sortRecordsByName (l10n)
+                             ))
+                           ))
 )

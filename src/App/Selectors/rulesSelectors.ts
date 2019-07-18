@@ -9,13 +9,19 @@ import { isMaybeActive } from "../Utilities/Activatable/isActive";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { prefixSA } from "../Utilities/IDUtils";
 import { mapGetToSlice } from "../Utilities/SelectorsUtils";
-import { getRules, getSpecialAbilities, getWikiBooks } from "./stateSelectors";
+import { getRules, getRulesM, getSpecialAbilities, getWikiBooks } from "./stateSelectors";
 
 export type EnabledSourceBooks = Pair<OrderedMap<string, Record<Book>>, Record<Rules>>
 
 export const getRuleBooksEnabled = createMaybeSelector (
   getWikiBooks,
   getRules,
+  uncurryN (bs => (r): EnabledSourceBooks => Pair (bs, r))
+)
+
+export const getRuleBooksEnabledM = createMaybeSelector (
+  getWikiBooks,
+  getRulesM,
   uncurryN (bs => fmap ((r): EnabledSourceBooks => Pair (bs, r)))
 )
 
