@@ -41,6 +41,7 @@ export interface PetsDispatchProps {
   closeEditPetAvatar (): void
 
   setAvatar (path: string): void
+  deleteAvatar (): void
   setName (name: string): void
   setSize (size: string): void
   setType (type: string): void

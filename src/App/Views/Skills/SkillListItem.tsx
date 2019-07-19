@@ -1,5 +1,6 @@
 import * as React from "react";
 import { List } from "../../../Data/List";
+import { INTERNAL_shallowEquals, Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
@@ -42,6 +43,7 @@ export interface SkillListItemProps {
   sr?: number
   typ?: boolean
   untyp?: boolean
+  selectedForInfo: Maybe<string>
   activate? (): void
   addPoint? (): void
   removePoint? (): void
@@ -50,14 +52,15 @@ export interface SkillListItemProps {
 
 export class SkillListItem extends React.Component<SkillListItemProps> {
   shouldComponentUpdate (nextProps: SkillListItemProps) {
-    return this.props.sr !== nextProps.sr ||
-      this.props.addText !== nextProps.addText ||
-      this.props.activateDisabled !== nextProps.activateDisabled ||
-      this.props.attributes !== nextProps.attributes ||
-      this.props.derivedCharacteristics !== nextProps.derivedCharacteristics ||
-      this.props.insertTopMargin !== nextProps.insertTopMargin ||
-      this.props.typ !== nextProps.typ ||
-      this.props.untyp !== nextProps.untyp
+    return this.props.sr !== nextProps.sr
+      || this.props.addText !== nextProps.addText
+      || this.props.activateDisabled !== nextProps.activateDisabled
+      || this.props.attributes !== nextProps.attributes
+      || this.props.derivedCharacteristics !== nextProps.derivedCharacteristics
+      || this.props.insertTopMargin !== nextProps.insertTopMargin
+      || this.props.typ !== nextProps.typ
+      || this.props.untyp !== nextProps.untyp
+      || !INTERNAL_shallowEquals (this.props.selectedForInfo) (nextProps.selectedForInfo)
   }
 
   render () {
@@ -67,6 +70,8 @@ export class SkillListItem extends React.Component<SkillListItemProps> {
       noIncrease,
       typ,
       untyp,
+      id,
+      selectedForInfo,
     } = this.props
 
     return (
@@ -75,6 +80,7 @@ export class SkillListItem extends React.Component<SkillListItemProps> {
         recommended={typ}
         unrecommended={untyp}
         insertTopMargin={insertTopMargin}
+        active={Maybe.elem (id) (selectedForInfo)}
         >
         <ListItemName name={name} />
         <ListItemSeparator />

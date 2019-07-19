@@ -24,6 +24,7 @@ export interface ActivatableRemoveListProps {
   isRemovingEnabled: boolean
   rating?: Maybe<OrderedMap<string, EntryRating>>
   showRating?: boolean
+  selectedForInfo: Maybe<string>
   setLevel (id: string, index: number, level: number): void
   removeFromList (args: Record<ActivatableDeactivationOptions>): void
   selectForInfo (id: string): void

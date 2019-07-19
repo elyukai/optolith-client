@@ -246,6 +246,7 @@ const getPetsForSave = pipe (
       return {
         id: obj .id,
         name: obj .name,
+        avatar: maybeToUndefined (obj .avatar),
         size: maybeToUndefined (obj .size),
         type: maybeToUndefined (obj .type),
         attack: maybeToUndefined (obj .attack),
@@ -274,6 +275,7 @@ const getPetsForSave = pipe (
         mov: maybeToUndefined (obj .mov),
         at: maybeToUndefined (obj .at),
         pa: maybeToUndefined (obj .pa),
+
       }
     }
   )

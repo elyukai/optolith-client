@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ensure, maybe, orN } from "../../../Data/Maybe";
+import { ensure, maybe, Maybe, orN } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { Item } from "../../Models/Hero/Item";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -16,6 +16,7 @@ export interface EquipmentListItemProps {
   add?: boolean
   data: Record<Item>
   l10n: L10nRecord
+  selectedForInfo: Maybe<string>
   addTemplateToList (id: string): void
   deleteItem (id: string): void
   editItem (id: string): void
@@ -25,12 +26,21 @@ export interface EquipmentListItemProps {
 const IA = Item.A
 
 export function EquipmentListItem (props: EquipmentListItemProps) {
-  const { add, addTemplateToList, data, deleteItem, editItem, l10n: locale, selectForInfo } = props
+  const {
+    add,
+    addTemplateToList,
+    data,
+    deleteItem,
+    editItem,
+    l10n: locale,
+    selectForInfo,
+    selectedForInfo,
+  } = props
 
   const numberValue = ensure<number> (gt (1)) (IA.amount (data))
 
   return orN (add) ? (
-    <ListItem>
+    <ListItem active={Maybe.elem (IA.id (data)) (selectedForInfo)}>
       <ListItemName name={IA.name (data)} />
       <ListItemSeparator />
       <ListItemButtons>
@@ -47,7 +57,7 @@ export function EquipmentListItem (props: EquipmentListItemProps) {
       </ListItemButtons>
     </ListItem>
   ) : (
-    <ListItem>
+    <ListItem active={Maybe.elem (IA.id (data)) (selectedForInfo)}>
       <ListItemName
         name={
           `${maybe ("") ((value: number) => `${value}x `) (numberValue)}${IA.name (data)}`

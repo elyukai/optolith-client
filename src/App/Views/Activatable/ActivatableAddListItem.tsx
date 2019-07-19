@@ -34,6 +34,7 @@ export interface ActivatableAddListItemOwnProps {
   isUntypical?: boolean
   hideGroup?: boolean
   l10n: L10nRecord
+  selectedForInfo: Maybe<string>
   addToList (args: Record<ActivatableActivationOptions>): void
   selectForInfo (id: string): void
 }
@@ -150,6 +151,7 @@ export class ActivatableAddListItem extends
       hideGroup,
       l10n,
       selectForInfo,
+      selectedForInfo,
       wiki,
     } = this.props
 
@@ -207,7 +209,12 @@ export class ActivatableAddListItem extends
     const mdisabled = IACEA.disabled (controlElements)
 
     return (
-      <ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
+      <ListItem
+        important={isImportant}
+        recommended={isTypical}
+        unrecommended={isUntypical}
+        active={Maybe.elem (IAA.id (item)) (selectedForInfo)}
+        >
         <ListItemLeft>
           <ListItemName name={IAA.name (item)} />
           {fromMaybeR (null) (mlevelElementBefore)}

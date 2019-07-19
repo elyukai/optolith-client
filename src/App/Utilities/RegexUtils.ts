@@ -1,4 +1,5 @@
 import { existsSync } from "fs";
+import { fileURLToPath } from "url";
 import { notNullStr } from "../../Data/List";
 import { maybe } from "../../Data/Maybe";
 
@@ -67,17 +68,19 @@ export const isEmptyOr =
 export const isBase64Image = (test: string) => base64Image.test (test)
 
 /**
+ * Checks if the passed path string points to an existing file.
+ */
+export const isURLValid = (url: string) => notNullStr (url)
+                                           && (
+                                             isBase64Image (url)
+                                             || existsSync (fileURLToPath (url))
+                                           )
+
+/**
  * Checks if the passed path string points to an existing file. Returns `False`
  * if the passed path is `Nothing`.
  */
-export const isPathValidM =
-  maybe (false)
-        ((src: string) => notNullStr (src)
-                          && (
-                            isBase64Image (src)
-                            || existsSync (src.replace (/file:[\\\/]+/, ""))
-                          ))
-
+export const isURLValidM = maybe (false) (isURLValid)
 
 /**
  * Surrounds a regular expression string with `^(?:` ... `)$`.

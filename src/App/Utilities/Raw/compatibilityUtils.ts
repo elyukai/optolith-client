@@ -883,7 +883,20 @@ export const convertHero =
                       fromEntries
                     ),
                   },
-                }))
+                })),
+      convertLT ("1.1.0-alpha.18")
+                (hero => hero.activatable.DISADV_48 !== undefined
+                  ? ({
+                      ...hero,
+                      activatable: {
+                        ...hero.activatable,
+                        DISADV_48:
+                          hero.activatable.DISADV_48
+                            .filter (activeObj => typeof activeObj .sid === "string"
+                                                  && /^TAL_/ .test (activeObj .sid)),
+                      },
+                    })
+                  : hero)
     )
   }
 

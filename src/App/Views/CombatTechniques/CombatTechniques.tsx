@@ -185,6 +185,7 @@ export class CombatTechniques
                             selectForInfo={this.showInfo}
                             groupIndex={CTWRA_.gr (x)}
                             groupList={translate (l10n) ("combattechniquegroups")}
+                            selectedForInfo={infoId}
                             />
                         )
                       }

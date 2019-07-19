@@ -10,6 +10,7 @@ import { and } from "../../Data/Bool";
 import { Either, eitherToMaybe, fromLeft, fromLeft_, fromRight_, isLeft, isRight, second } from "../../Data/Either";
 import { cnst, flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
+import { over } from "../../Data/Lens";
 import { List, notNull } from "../../Data/List";
 import { altF_, alt_, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
 import { any, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap";
@@ -19,8 +20,9 @@ import { fst, Pair } from "../../Data/Tuple";
 import { IO, readFile, runIO, writeFile } from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
-import { HeroModel } from "../Models/Hero/HeroModel";
+import { HeroModel, HeroModelL } from "../Models/Hero/HeroModel";
 import { User } from "../Models/Hero/heroTypeHelpers";
+import { PetL } from "../Models/Hero/Pet";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { heroReducer } from "../Reducers/heroReducer";
@@ -271,10 +273,10 @@ export const requestAllHeroesSave =
     )
   }
 
-const requestSaveAll = (l10n: L10nRecord): ReduxAction<IO<boolean>> =>
+const requestSaveAll = (save_heroes: boolean) => (l10n: L10nRecord): ReduxAction<IO<boolean>> =>
   dispatch => {
     const configSavedDone = dispatch (requestConfigSave (l10n))
-    const heroesSavedDone = dispatch (requestAllHeroesSave (l10n))
+    const heroesSavedDone = save_heroes ? dispatch (requestAllHeroesSave (l10n)) : IO.pure (true)
 
     return IO.liftM2 (and) (configSavedDone) (heroesSavedDone)
   }
@@ -408,6 +410,27 @@ export const requestHeroDeletion =
 
     }
 
+const convertImageToBase64 =
+  (url: Maybe<string>): Maybe<string> => {
+    if (isJust (url)) {
+      const just_url = fromJust (url)
+
+      if (just_url.length > 0 && !isBase64Image (just_url)) {
+        const preparedUrl = just_url .replace (/file:[\\\/]+/, "")
+
+        if (fs.existsSync (preparedUrl)) {
+          const prefix = `data:image/${extname (just_url).slice (1)}base64,`
+          const file = fs.readFileSync (preparedUrl)
+          const fileString = file.toString ("base64")
+
+          return Just (prefix + fileString)
+        }
+      }
+    }
+
+    return url
+  }
+
 export const requestHeroExport =
   (l10n: L10nRecord) =>
   (id: string): ReduxAction =>
@@ -423,30 +446,9 @@ export const requestHeroExport =
         lookup (id),
         fmap (pipe (
           heroReducer.A_.present,
-          convertHeroForSave (users),
-          hero => {
-            // Embed the avatar image file
-            if (
-              typeof hero.avatar === "string"
-              && hero.avatar.length > 0
-              && !isBase64Image (hero.avatar)
-            ) {
-              const preparedUrl = hero.avatar.replace (/file:[\\\/]+/, "")
-
-              if (fs.existsSync (preparedUrl)) {
-                const prefix = `data:image/${extname (hero.avatar).slice (1)}base64,`
-                const file = fs.readFileSync (preparedUrl)
-                const fileString = file.toString ("base64")
-
-                return {
-                  ...hero,
-                  avatar: prefix + fileString,
-                }
-              }
-            }
-
-            return hero
-          }
+          over (HeroModelL.avatar) (convertImageToBase64),
+          over (HeroModelL.pets) (OrderedMap.map (over (PetL.avatar) (convertImageToBase64))),
+          convertHeroForSave (users)
         ))
       )
 
@@ -559,15 +561,15 @@ const isAnyHeroUnsaved = pipe (getHeroes, any (pipe (heroReducer.A.past, notNull
 
 const close =
   (l10n: L10nRecord) =>
-  (unsaved: boolean) =>
+  (save_heroes: boolean) =>
   (f: Maybe<() => void>): ReduxAction =>
   dispatch => pipe_ (
     dispatch (requestSaveCache (l10n)),
-    IO.thenF (dispatch (requestSaveAll (l10n))),
+    IO.thenF (dispatch (requestSaveAll (save_heroes) (l10n))),
     fmap (all_saved => {
-           if (all_saved) {
+           if (all_saved && save_heroes) {
              dispatch (addAlert ({
-               message: translate (l10n) (unsaved ? "everythingelsesaved" : "allsaved"),
+               message: translate (l10n) ("allsaved"),
                onClose () {
                  if (isJust (f)) {
                    fromJust (f) ()
@@ -576,6 +578,9 @@ const close =
                  remote .getCurrentWindow () .close ()
                },
              }))
+           }
+           else {
+             remote .getCurrentWindow () .close ()
            }
          }),
     runIO
@@ -600,11 +605,19 @@ export const requestClose =
         dispatch (addAlert ({
           title: translate (l10n) ("unsavedactions"),
           message: translate (l10n) ("unsavedactions.text"),
-          confirm: {
-            resolve: close (l10n) (false) (optionalCall),
-            reject: close (l10n) (true) (optionalCall),
-          },
-          confirmYesNo: true,
+          buttons: [
+            {
+              label: translate (l10n) ("close"),
+              dispatchOnClick: close (l10n) (false) (optionalCall),
+            },
+            {
+              label: translate (l10n) ("cancel"),
+            },
+            {
+              label: translate (l10n) ("saveandclose"),
+              dispatchOnClick: close (l10n) (true) (optionalCall),
+            },
+          ],
         }))
       }
     }

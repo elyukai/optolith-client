@@ -9,7 +9,7 @@ import { Book } from "../Models/Wiki/Book";
 import { SourceLink } from "../Models/Wiki/sub/SourceLink";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { EnabledSourceBooks } from "../Selectors/rulesSelectors";
-import { pipe, pipe_ } from "./pipe";
+import { pipe } from "./pipe";
 
 
 const RA = Rules.A
@@ -20,27 +20,23 @@ const SLA = SourceLink.A
  * Returns if a book is currently enabled.
  */
 export const isBookEnabled =
-  (availability: EnabledSourceBooks) =>
-  (id: string): boolean => {
-    const mb = lookup (id) (fst (availability))
+  (availability: EnabledSourceBooks) => {
+    const books = fst (availability)
+    const rules = snd (availability)
 
-    if (isJust (mb)) {
-      const b = fromJust (mb)
+    return (id: string): boolean => {
+      const mb = lookup (id) (books)
 
-      if (BA.isCore (b)) {
-        return true
+      if (isJust (mb)) {
+        const b = fromJust (mb)
+
+        return BA.isCore (b)
+          || RA.enableAllRuleBooks (rules) && !BA.isAdultContent (b)
+          || member (id) (RA.enabledRuleBooks (rules))
       }
 
-      if (RA.enableAllRuleBooks (snd (availability))) {
-        if (BA.isAdultContent (b)) {
-          return member (id) (RA.enabledRuleBooks (snd (availability)))
-        }
-
-        return true
-      }
+      return false
     }
-
-    return false
   }
 
 /**
@@ -51,17 +47,7 @@ export const isAvailable =
   <A>
   (f: (x: A) => List<Record<SourceLink>>) =>
   (availablility: EnabledSourceBooks) =>
-  (x: A): boolean => {
-    if (typeof availablility === "boolean") {
-      return availablility
-    }
-
-    return pipe_ (
-      x,
-      f,
-      any (pipe (SLA.id, isBookEnabled (availablility)))
-    )
-  }
+    pipe (f, any (pipe (SLA.id, isBookEnabled (availablility))))
 
 /**
  * Returns if the given entry is from a core rule book.

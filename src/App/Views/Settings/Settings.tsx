@@ -83,10 +83,12 @@ export function Settings (props: SettingsProps) {
           DropdownOption ({
             id: Just ("nl-BE"),
             name: "Nederlands (België)",
+            disabled: Just (true),
           }),
           DropdownOption ({
             id: Just ("fr-FR"),
             name: "Français (France)",
+            disabled: Just (true),
           })
         )}
         value={localeType === "default" ? Nothing : localeString}

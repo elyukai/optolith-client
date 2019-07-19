@@ -220,6 +220,14 @@
 				background: none;
 				padding: 0;
 				@include size(24mm);
+
+				> .avatar {
+					width: calc(100% + 0.15mm);
+				}
+
+				&::after {
+					display: none;
+				}
 			}
 
 			.avatar-wrapper, .avatar {
@@ -235,6 +243,21 @@
 
 		.value {
 			font: 500 11px/4mm Alegreya Sans;
+		}
+
+		.row.pet-actions,
+		.row.pet-skills,
+		.row.pet-specialabilities,
+		.row.pet-notes {
+			div {
+				.label {
+					flex: 0 0 auto;
+				}
+
+				.value {
+					flex: 1 1 100%;
+				}
+			}
 		}
 	}
 }

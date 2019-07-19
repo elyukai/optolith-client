@@ -266,6 +266,7 @@ export class LiturgicalChants
                                             ? `${aspects} / ${translate (l10n) ("blessing")}`
                                             : aspects
                                         }
+                                        selectedForInfo={this.state.currentSlideinId}
                                         />
                                     )
                                   )
@@ -292,6 +293,7 @@ export class LiturgicalChants
                                         derivedCharacteristics={derivedCharacteristics}
                                         selectForInfo={this.showSlideinInfo}
                                         addText={add_text}
+                                        selectedForInfo={this.state.currentSlideinId}
                                         />
                                     )
                                   )
@@ -388,6 +390,7 @@ export class LiturgicalChants
                                           ? `${aspects} / ${translate (l10n) ("blessing")}`
                                           : aspects
                                       }
+                                      selectedForInfo={this.state.currentId}
                                       />
                                   )
                                 )
@@ -422,6 +425,7 @@ export class LiturgicalChants
                                       derivedCharacteristics={derivedCharacteristics}
                                       selectForInfo={this.showInfo}
                                       addText={add_text}
+                                      selectedForInfo={this.state.currentId}
                                       />
                                   )
                                 )

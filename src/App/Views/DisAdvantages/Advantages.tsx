@@ -157,6 +157,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
               showRating={showRating}
               addToList={addToList}
               selectForInfo={this.showSlideinInfo}
+              selectedForInfo={this.state.currentSlideinId}
               />
           </MainContent>
           <WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
@@ -196,6 +197,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
             filterText={filterText}
             list={activeList}
             selectForInfo={this.showInfo}
+            selectedForInfo={this.state.currentId}
             />
         </MainContent>
         <WikiInfoContainer {...this.props} {...this.state} />

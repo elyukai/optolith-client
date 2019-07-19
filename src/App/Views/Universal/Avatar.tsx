@@ -3,7 +3,7 @@ import { List } from "../../../Data/List";
 import { bind, guard, guardReplace, Just, Maybe, orN, then } from "../../../Data/Maybe";
 import { classListMaybe } from "../../Utilities/CSS";
 import { renderMaybe } from "../../Utilities/ReactUtils";
-import { isPathValidM } from "../../Utilities/RegexUtils";
+import { isURLValidM } from "../../Utilities/RegexUtils";
 
 export interface AvatarProps {
   className?: string
@@ -18,7 +18,7 @@ export function Avatar (props: AvatarProps) {
   const { className: inheritedClassName, hasWrapper, img, onClick, src: msrc } = props
 
   const {
-    validPath = isPathValidM (msrc),
+    validPath = isURLValidM (msrc),
   } = props
 
   const className = classListMaybe (List (

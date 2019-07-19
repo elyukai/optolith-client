@@ -2,7 +2,7 @@ import * as React from "react";
 import { List } from "../../../Data/List";
 import { guardReplace, Just, Maybe } from "../../../Data/Maybe";
 import { classListMaybe } from "../../Utilities/CSS";
-import { isPathValidM } from "../../Utilities/RegexUtils";
+import { isURLValidM } from "../../Utilities/RegexUtils";
 import { Avatar } from "./Avatar";
 
 export interface AvatarWrapperProps {
@@ -17,7 +17,7 @@ export function AvatarWrapper (props: AvatarWrapperProps) {
   const { children, img, onClick, src: msrc } = props
   let { className } = props
 
-  const validPath = isPathValidM (msrc)
+  const validPath = isURLValidM (msrc)
 
   className = classListMaybe (List (
     Just ("avatar-wrapper"),

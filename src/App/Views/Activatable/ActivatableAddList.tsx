@@ -28,6 +28,7 @@ export interface ActivatableAddListProps {
   l10n: L10nRecord
   rating?: Maybe<OrderedMap<string, EntryRating>>
   showRating?: boolean
+  selectedForInfo: Maybe<string>
   addToList (args: Record<ActivatableActivationOptions>): void
   selectForInfo (id: string): void
 }

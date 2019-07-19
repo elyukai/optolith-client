@@ -82,8 +82,6 @@ export const getActiveForEditView = <T extends ActivatableCategory>(category: T)
 
 export const getActiveForViewMap = getActiveMap (true)
 
-export const getActiveForEditViewMap = getActiveMap (false)
-
 type RatingMap = OrderedMap<string, EntryRating>
 
 const insertRating = flip (insert as insert<string, EntryRating>)
@@ -163,7 +161,7 @@ export const getAdvantagesForSheet = createMaybeSelector (
   ident
 )
 
-export const getAdvantagesForEditMap = getActiveForEditViewMap (Categories.ADVANTAGES)
+export const getAdvantagesForEditMap = getActiveForViewMap (Categories.ADVANTAGES)
 
 export const getAdvantagesForEdit = mapCurrentHero (getAdvantagesForEditMap)
 
@@ -186,7 +184,7 @@ export const getDisadvantagesForSheet = createMaybeSelector (
   ident
 )
 
-export const getDisadvantagesForEditMap = getActiveForEditViewMap (Categories.DISADVANTAGES)
+export const getDisadvantagesForEditMap = getActiveForViewMap (Categories.DISADVANTAGES)
 
 export const getDisadvantagesForEdit = mapCurrentHero (getDisadvantagesForEditMap)
 
@@ -209,7 +207,7 @@ export const getSpecialAbilitiesForSheet = createMaybeSelector (
   ident
 )
 
-export const getSpecialAbilitiesForEditMap = getActiveForEditViewMap (Categories.SPECIAL_ABILITIES)
+export const getSpecialAbilitiesForEditMap = getActiveForViewMap (Categories.SPECIAL_ABILITIES)
 
 export const getSpecialAbilitiesForEdit = mapCurrentHero (getSpecialAbilitiesForEditMap)
 

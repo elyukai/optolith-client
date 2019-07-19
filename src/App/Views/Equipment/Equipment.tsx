@@ -230,6 +230,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
                           key={ITA.id (obj)}
                           data={fromItemTemplate (ITA.id (obj)) (obj)}
                           selectForInfo={this.showSlideinInfo}
+                          selectedForInfo={this.state.currentSlideinId}
                           add
                           />
                       )
@@ -291,6 +292,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
                         key={IA.id (obj)}
                         data={obj}
                         selectForInfo={this.showInfo}
+                        selectedForInfo={this.state.currentId}
                         />
                     )
                   ),

@@ -4,8 +4,9 @@ import { notEquals } from "../../../Data/Eq";
 import { onF } from "../../../Data/Function";
 import { fmap, mapReplace } from "../../../Data/Functor";
 import { cons, flength, List } from "../../../Data/List";
-import { bindF, ensure, fromJust, fromMaybe, guard, isJust, Just, liftM2, listToMaybe, Maybe, maybe } from "../../../Data/Maybe";
+import { bindF, ensure, fromJust, fromMaybe, guard, INTERNAL_shallowEquals, isJust, Just, liftM2, listToMaybe, Maybe, maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
+import { traceShow } from "../../../Debug/Trace";
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
 import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -14,6 +15,7 @@ import { translate } from "../../Utilities/I18n";
 import { getLevelElementsWithMin } from "../../Utilities/levelUtils";
 import { max, min } from "../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { renderMaybe } from "../../Utilities/ReactUtils";
 import { misStringM } from "../../Utilities/typeCheckUtils";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { IconButton } from "../Universal/IconButton";
@@ -33,6 +35,7 @@ export interface ActivatableRemoveListItemProps {
   isImportant?: boolean
   isTypical?: boolean
   isUntypical?: boolean
+  selectedForInfo: Maybe<string>
   setLevel (id: string, index: number, level: number): void
   removeFromList (args: Record<ActivatableDeactivationOptions>): void
   selectForInfo (id: string): void
@@ -61,6 +64,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
       || onF (AAA_.maxLevel) (notEquals) (curr_item) (next_item)
       || onF (AAA_.name) (notEquals) (curr_item) (next_item)
       || onF (AAA_.disabled) (notEquals) (curr_item) (next_item)
+      || !INTERNAL_shallowEquals (this.props.selectedForInfo) (nextProps.selectedForInfo)
   }
 
   render () {
@@ -73,6 +77,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
       isUntypical,
       l10n,
       selectForInfo,
+      selectedForInfo,
       removeFromList,
     } = this.props
 
@@ -107,7 +112,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
                 options={levelOptionsWithMotherTongue}
                 />
             )
-            : pipe_ (levelOptions, listToMaybe, fmap (o => ` ${DOA.name (o)}`), fromMaybe (""))
+            : pipe_ (levelOptions, listToMaybe, fmap (o => ` ${DOA.name (o)}`), renderMaybe)
         })
         (AAA_.levels (item))
         (AAA_.level (item))
@@ -126,13 +131,20 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
     const baseName = AAA_.baseName (item)
 
     return (
-      <ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
+      <ListItem
+        important={isImportant}
+        recommended={isTypical}
+        unrecommended={isUntypical}
+        active={Maybe.elem (AAA_.id (item)) (selectedForInfo)}
+        >
         <ListItemName
-          name={pipe_ (mlevel_element, misStringM, maybe (maybe (baseName)
+          name={pipe_ (mlevel_element, misStringM, maybe (traceShow ("no locked level")
+                                                                          (maybe (baseName)
                                                                 ((add_str: string) =>
                                                                   `${baseName} (${add_str})`)
-                                                                (AAA_.addName (item)))
-                                                         (l => `${AAA_.name (item)}${l}`))}
+                                                                (AAA_.addName (item))))
+                                                         (() => traceShow ("locked level")
+                                                                          (AAA_.name (item))))}
           />
         <ListItemSelections>
           {pipe_ (

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { fmap } from "../../../Data/Functor";
-import { fromJust, isJust, Maybe } from "../../../Data/Maybe";
+import { fromJust, isJust, isNothing, Maybe } from "../../../Data/Maybe";
 import { lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { EditPet } from "../../Models/Hero/EditPet";
@@ -30,6 +30,7 @@ export interface PetEditorProps {
   closeEditPetAvatar (): void
 
   setAvatar (path: string): void
+  deleteAvatar (): void
   setName (name: string): void
   setSize (size: string): void
   setType (type: string): void
@@ -74,6 +75,12 @@ export function PetEditor (props: PetEditorProps) {
         <div className="pet-edit">
           <div className="left">
             <AvatarWrapper src={EPA.avatar (pet)} onClick={props.openEditPetAvatar} />
+            <BorderButton
+              className="delete-avatar"
+              label={translate (l10n) ("deleteavatar")}
+              onClick={props .deleteAvatar}
+              disabled={isNothing (EPA.avatar (pet))}
+              />
           </div>
           <div className="right">
             <div className="row">
@@ -93,12 +100,12 @@ export function PetEditor (props: PetEditorProps) {
                 onChangeString={props.setType}
                 />
               <TextField
-                label={translate (l10n) ("apspent")}
+                label={translate (l10n) ("apspent.novar")}
                 value={EPA.spentAp (pet)}
                 onChangeString={props.setSpentAp}
                 />
               <TextField
-                label={translate (l10n) ("totalap")}
+                label={translate (l10n) ("totalap.novar")}
                 value={EPA.totalAp (pet)}
                 onChangeString={props.setTotalAp}
                 />

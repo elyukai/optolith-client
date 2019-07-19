@@ -1,5 +1,5 @@
 import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault } from "../../../Data/Record";
+import { fromDefault, makeLenses } from "../../../Data/Record";
 
 export interface PetBase {
   name: string
@@ -73,3 +73,5 @@ export const Pet =
                 at: Nothing,
                 pa: Nothing,
               })
+
+export const PetL = makeLenses (Pet)
