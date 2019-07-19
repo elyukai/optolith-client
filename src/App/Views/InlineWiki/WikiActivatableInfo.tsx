@@ -650,7 +650,8 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
             catMaybes,
             intersperse<TypeofList> ("; "),
             addTextAfterOutsideList,
-            toArray
+            ensure (notNull),
+            maybeR (translate (l10n) ("none")) (toArray)
           )}
         </span>
       </p>
@@ -668,7 +669,8 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
             catMaybes,
             intersperse<JSX.Element | string> (", "),
             addTextAfterOutsideList,
-            toArray
+            ensure (notNull),
+            maybeR (translate (l10n) ("none")) (toArray)
           )}
         </span>
       </p>

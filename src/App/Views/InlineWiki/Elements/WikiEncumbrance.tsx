@@ -1,4 +1,5 @@
 import * as React from "react";
+import { fromMaybe, Maybe } from "../../../../Data/Maybe";
 import { Record, RecordBase } from "../../../../Data/Record";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
@@ -6,6 +7,7 @@ import { WikiProperty } from "../WikiProperty";
 
 interface Accessors<A extends RecordBase> {
   encumbrance: (r: Record<A>) => string
+  encumbranceDescription: (r: Record<A>) => Maybe<string>
 }
 
 export interface WikiEncumbranceProps<A extends RecordBase> {
@@ -21,7 +23,8 @@ export function WikiEncumbrance<A extends RecordBase> (props: WikiEncumbrancePro
     l10n,
   } = props
 
-  let string = translate (l10n) ("maybe")
+  let string = fromMaybe (translate (l10n) ("maybe"))
+                         (acc.encumbranceDescription (x))
 
   const encumbrance = acc.encumbrance (x)
 
