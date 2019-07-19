@@ -62,34 +62,6 @@ export const divide: (a: number) => (b: number) => number = a => b => a / b
 export const divideBy: (b: number) => (a: number) => number = flip (divide)
 
 /**
- * `even :: Integral a => a -> Bool`
- *
- * Checks if a number is even.
- */
-export const even =
-  (x: number): boolean => {
-    if (Number.isInteger (x)) {
-      return x % 2 === 0
-    }
-
-    throw new TypeError (`even: ${x} is not an instance of Integral`)
-  }
-
-/**
- * `odd :: Integral a => a -> Bool`
- *
- * Checks if a number is odd.
- */
-export const odd =
-  (x: number): boolean => {
-    if (Number.isInteger (x)) {
-      return x % 2 !== 0
-    }
-
-    throw new TypeError (`odd: ${x} is not an instance of Integral`)
-  }
-
-/**
  * `compare :: Int -> Int -> Ordering`
  *
  * `compare a b` compares the two integers `a` and `b` and returns `LT` if `a`
@@ -185,6 +157,34 @@ export const negate: (x: number) => number = x => -x
 export const abs: (x: number) => number = x => Math.abs (x)
 
 /**
+ * `even :: Integral a => a -> Bool`
+ *
+ * Checks if a number is even.
+ */
+export const even =
+  (x: number): boolean => {
+    if (Number.isInteger (x)) {
+      return x % 2 === 0
+    }
+
+    throw new TypeError (`even: x = ${x} is not an instance of Integral`)
+  }
+
+/**
+ * `odd :: Integral a => a -> Bool`
+ *
+ * Checks if a number is odd.
+ */
+export const odd =
+  (x: number): boolean => {
+    if (Number.isInteger (x)) {
+      return x % 2 !== 0
+    }
+
+    throw new TypeError (`odd: x = ${x} is not an instance of Integral`)
+  }
+
+/**
  * `gcd :: Integral a => a -> a -> a`
  *
  * `gcd x y` is the greatest (positive) integer that divides both `x` and `y`;
@@ -193,7 +193,13 @@ export const abs: (x: number) => number = x => Math.abs (x)
  */
 export const gcd: (x: number) => (y: number) => number =
   x => y => {
-    if (x === 0 && y === 0) {
+    if (!Number.isInteger (x)) {
+      throw new TypeError (`gcd: x = ${x} is not an instance of Integral`)
+    }
+    else if (!Number.isInteger (y)) {
+      throw new TypeError (`gcd: y = ${y} is not an instance of Integral`)
+    }
+    else if (x === 0 && y === 0) {
       throw new TypeError ("gcd: Both inputs cannot be 0.")
     }
     else if (x === 0) {
@@ -221,8 +227,14 @@ const modUntilNoRemainder =
  */
 export const lcm: (x: number) => (y: number) => number =
   x => y => {
-    if (x === 0 && y === 0) {
-      throw new TypeError ("gcd: Both inputs cannot be 0.")
+    if (!Number.isInteger (x)) {
+      throw new TypeError (`lcm: x = ${x} is not an instance of Integral`)
+    }
+    else if (!Number.isInteger (y)) {
+      throw new TypeError (`lcm: y = ${y} is not an instance of Integral`)
+    }
+    else if (x === 0 && y === 0) {
+      throw new TypeError ("lcm: Both inputs cannot be 0.")
     }
     else if (x === 0) {
       return 0
@@ -258,8 +270,6 @@ export const Num = {
   multiply,
   divide,
   divideBy,
-  even,
-  odd,
   compare,
   lt,
   lte,
@@ -272,6 +282,8 @@ export const Num = {
   dec,
   negate,
   abs,
+  even,
+  odd,
   gcd,
   lcm,
   signum,

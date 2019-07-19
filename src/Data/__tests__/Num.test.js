@@ -41,16 +41,6 @@ test ('divideBy', () => {
   expect (Num.divideBy (1) (2)) .toEqual (2)
 })
 
-test ('even', () => {
-  expect (Num.even (1)) .toEqual (false)
-  expect (Num.even (2)) .toEqual (true)
-})
-
-test ('odd', () => {
-  expect (Num.odd (1)) .toEqual (true)
-  expect (Num.odd (2)) .toEqual (false)
-})
-
 test ('compare', () => {
   expect (Num.compare (1) (2)) .toEqual (LT)
   expect (Num.compare (3) (2)) .toEqual (GT)
@@ -116,6 +106,16 @@ test ('abs', () => {
   expect (Num.abs (3)) .toEqual (3)
   expect (Num.abs (0)) .toEqual (0)
   expect (Num.abs (-5)) .toEqual (5)
+})
+
+test ('even', () => {
+  expect (Num.even (1)) .toEqual (false)
+  expect (Num.even (2)) .toEqual (true)
+})
+
+test ('odd', () => {
+  expect (Num.odd (1)) .toEqual (true)
+  expect (Num.odd (2)) .toEqual (false)
 })
 
 test ('gcd', () => {
