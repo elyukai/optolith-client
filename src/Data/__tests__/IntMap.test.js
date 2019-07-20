@@ -8,16 +8,11 @@ const { Pair, Tuple } = require('../Tuple');
 const { OrderedSet } = require('../OrderedSet');
 const IntMap = require('../IntMap');
 const { Maybe } = require('../Maybe');
-const { showP } = require('../Show');
+const { show } = require('../Show');
 const { pipe } = require('../../App/Utilities/pipe');
 
 const Just = Internals.Just
 const Nothing = Internals.Nothing
-
-const _equals =
-  mp1 => mp2 =>
-    on (equals) (IntMap.size) (mp1) (mp2)
-    && on (equals) (IntMap.assocs) (mp1) (mp2)
 
 const from1to5 = IntMap.fromListN ([[1, 'a'], [2, 'b'], [4, 'd'], [3, 'c'], [5, 'e']])
 
@@ -46,7 +41,7 @@ test ('internal equals', () => {
                                 [3, 'c'],
                                 [7, 'g']])
 
-  expect (_equals (t1) (t2)) .toBeTruthy ()
+  expect (equals (t1) (t2)) .toBeTruthy ()
 })
 
 describe ("Foldable", () => {
@@ -210,11 +205,11 @@ describe ("Delete/Update", () => {
   test ('sdelete', () => {
     const map = IntMap.fromListN ([[1, 'a'], [2, 'b'], [3, 'c']])
 
-    expect (IntMap.sdelete (3) (map))
-      .toEqual(IntMap.fromListN ([[1, 'a'], [2, 'b']]))
+    expect (equals (IntMap.sdelete (3) (map)) (IntMap.fromListN ([[1, 'a'], [2, 'b']])))
+      .toBeTruthy ()
 
     expect (IntMap.sdelete (4) (map) === map)
-      .toBeTruthy()
+      .toBeTruthy ()
   })
 })
 
@@ -234,9 +229,9 @@ describe ("Lists", () => {
       Pair (3) ('c'),
       Pair (2) ('b')
     )
-    const res = fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])
+    const res = IntMap.fromListN ([[1, 'a'], [2, 'b'], [3, 'c']])
 
-    expect (OrderedMap.fromList (map)) .toEqual (res)
+    expect (IntMap.fromList (map)) .toEqual (res)
   })
 
   test ('fromListN', () => {
@@ -245,8 +240,14 @@ describe ("Lists", () => {
       Pair (3) ('c'),
       Pair (2) ('b')
     )
-    const res = fromArray ([[1, 'a'], [3, 'c'], [2, 'b']])
 
-    expect (OrderedMap.fromList (map)) .toEqual (res)
+    const res = Internals.Bin (3)
+                              (2)
+                              (2)
+                              ("b")
+                              (Internals.Bin (1) (1) (1) ("a") (Internals.Tip) (Internals.Tip))
+                              (Internals.Bin (1) (1) (3) ("c") (Internals.Tip) (Internals.Tip))
+
+    expect (IntMap.fromList (map)) .toEqual (res)
   })
 })

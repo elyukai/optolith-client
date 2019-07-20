@@ -666,8 +666,7 @@ export const updateWithKey =
       (lookup (key) (mp))
 
 /**
- * `updateLookupWithKey :: Ord k => (k -> a -> Maybe a) -> k -> Map k a ->
-   (Maybe a, Map k a)`
+ * `updateLookupWithKey :: Ord k => (k -> a -> Maybe a) -> k -> Map k a -> (Maybe a, Map k a)`
  *
  * Lookup and update. See also `updateWithKey`. The function returns changed
  * value, if it is updated. Returns the original key value if the map entry is

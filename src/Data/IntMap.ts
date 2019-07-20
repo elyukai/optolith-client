@@ -9,14 +9,15 @@
 
 import { pipe } from "../App/Utilities/pipe";
 import { not } from "./Bool";
-import { flip, ident, on } from "./Function";
+import { equals } from "./Eq";
+import { cnst, flip, ident, on } from "./Function";
 import { fmapF } from "./Functor";
 import { Internals } from "./Internals";
 import { consF, List, trimStart } from "./List";
-import { fromMaybe, Just, Maybe, Nothing } from "./Maybe";
-import { abs, inc, max } from "./Num";
-import { showP, showPDepth } from "./Show";
-import { curry, fst, Pair, snd, uncurry } from "./Tuple";
+import { fromJust, fromMaybe, isJust, Just, Maybe, maybe, Nothing } from "./Maybe";
+import { abs, add, inc, max } from "./Num";
+import { show, showP, showPDepth } from "./Show";
+import { curry, fst, Pair, second, snd, uncurry } from "./Tuple";
 import { upd2 } from "./Tuple/Update";
 
 import Map = Internals.Map
@@ -207,9 +208,8 @@ export const insert =
     : key < mp .key
     ? (() => {
         const left = insert (key) (value) (mp .left)
-        const leftSize = (left as Bin<number, A>) .size
 
-        return rebalance (Bin (1 + leftSize + size (mp .right))
+        return rebalance (Bin (calcSize (left) (mp .right))
                               (calcHeight (left) (mp .right))
                               (mp .key)
                               (mp .value)
@@ -218,9 +218,8 @@ export const insert =
       }) ()
     : (() => {
         const right = insert (key) (value) (mp .right)
-        const rightSize = (right as Bin<number, A>) .size
 
-        return rebalance (Bin (1 + size (mp .left) + rightSize)
+        return rebalance (Bin (calcSize (mp .left) (right))
                               (calcHeight (mp .left) (right))
                               (mp .key)
                               (mp .value)
@@ -247,9 +246,8 @@ export const insertWith =
     : key < mp .key
     ? (() => {
         const left = insertWith (f) (key) (value) (mp .left)
-        const leftSize = (left as Bin<number, A>) .size
 
-        return rebalance (Bin (1 + leftSize + size (mp .right))
+        return rebalance (Bin (calcSize (left) (mp .right))
                               (calcHeight (left) (mp .right))
                               (mp .key)
                               (mp .value)
@@ -258,9 +256,8 @@ export const insertWith =
       }) ()
     : (() => {
         const right = insertWith (f) (key) (value) (mp .right)
-        const rightSize = (right as Bin<number, A>) .size
 
-        return rebalance (Bin (1 + size (mp .left) + rightSize)
+        return rebalance (Bin (calcSize (mp .left) (right))
                               (calcHeight (mp .left) (right))
                               (mp .key)
                               (mp .value)
@@ -287,9 +284,8 @@ export const insertWithKey =
     : key < mp .key
     ? (() => {
         const left = insertWithKey (f) (key) (value) (mp .left)
-        const leftSize = (left as Bin<number, A>) .size
 
-        return rebalance (Bin (1 + leftSize + size (mp .right))
+        return rebalance (Bin (calcSize (left) (mp .right))
                               (calcHeight (left) (mp .right))
                               (mp .key)
                               (mp .value)
@@ -298,9 +294,8 @@ export const insertWithKey =
       }) ()
     : (() => {
         const right = insertWithKey (f) (key) (value) (mp .right)
-        const rightSize = (right as Bin<number, A>) .size
 
-        return rebalance (Bin (1 + size (mp .left) + rightSize)
+        return rebalance (Bin (calcSize (mp .left) (right))
                               (calcHeight (mp .left) (right))
                               (mp .key)
                               (mp .value)
@@ -328,9 +323,8 @@ export const insertLookupWithKey =
     : key < mp .key
     ? (() => {
         const left = insertLookupWithKey (f) (key) (value) (mp .left)
-        const leftSize = (snd (left) as Bin<number, A>) .size
 
-        return upd2 (rebalance (Bin (1 + leftSize + size (mp .right))
+        return upd2 (rebalance (Bin (calcSize (snd (left)) (mp .right))
                                     (calcHeight (snd (left)) (mp .right))
                                     (mp .key)
                                     (mp .value)
@@ -340,9 +334,8 @@ export const insertLookupWithKey =
       }) ()
     : (() => {
         const right = insertLookupWithKey (f) (key) (value) (mp .right)
-        const rightSize = (snd (right) as Bin<number, A>) .size
 
-        return upd2 (rebalance (Bin (1 + size (mp .left) + rightSize)
+        return upd2 (rebalance (Bin (calcSize (mp .left) (snd (right)))
                                     (calcHeight (mp .left) (snd (right)))
                                     (mp .key)
                                     (mp .value)
@@ -378,15 +371,15 @@ const sdeleteMaybe =
     ? isTip (mp .left) && isTip (mp .right)
       ? Just (Tip)
       : isTip (mp .left)
-      ? Just (mp .left)
-      : isTip (mp .right)
       ? Just (mp .right)
+      : isTip (mp .right)
+      ? Just (mp .left)
       : (() => {
           const keyValue_ = minKeyValue (mp .right as IntBin<A>)
           const right_ = sdelete (fst (keyValue_)) (mp .right)
 
-          return Just (rebalance (Bin (calcSizeLR (mp .left) (mp .right))
-                                      (calcHeight (mp .left) (mp .right))
+          return Just (rebalance (Bin (calcSize (mp .left) (right_))
+                                      (calcHeight (mp .left) (right_))
                                       (fst (keyValue_))
                                       (snd (keyValue_))
                                       (mp .left)
@@ -408,6 +401,184 @@ const sdeleteMaybe =
                                      (mp .left)
                                      (right)))
 
+/**
+ * `adjust :: (a -> a) -> Key -> IntMap a -> IntMap a`
+ *
+ * Update a value at a specific key with the result of the provided function.
+ * When the key is not a member of the map, the original map is returned.
+ */
+export const adjust =
+  <A>
+  (f: (value: A) => A) =>
+  (key: Key) =>
+  (mp: IntMap<A>): IntMap<A> =>
+    fromMaybe (mp) (adjustWithKeyMaybe (cnst (f)) (key) (mp))
+
+/**
+ * `adjustWithKey :: (Key -> a -> a) -> Key -> IntMap a -> IntMap a`
+ *
+ * Adjust a value at a specific key. When the key is not a member of the map,
+ * the original map is returned.
+ */
+export const adjustWithKey =
+  <A>
+  (f: (key: Key) => (value: A) => A) =>
+  (key: Key) =>
+  (mp: IntMap<A>): IntMap<A> =>
+    fromMaybe (mp) (adjustWithKeyMaybe (f) (key) (mp))
+
+const adjustWithKeyMaybe =
+  <A>
+  (f: (key: Key) => (value: A) => A) =>
+  (key: Key) =>
+  (mp: IntMap<A>): Maybe<IntMap<A>> =>
+    isTip (mp)
+    ? Nothing
+    : mp .key === key
+    ? Just (Bin (mp .size)
+                (mp .height)
+                (key)
+                (f (key) (mp .value))
+                (mp .left)
+                (mp .right))
+    : key < mp .key
+    ? fmapF (adjustWithKeyMaybe (f) (key) (mp .left))
+            (left => Bin (mp .size)
+                         (mp .height)
+                         (mp .key)
+                         (mp .value)
+                         (left)
+                         (mp .right))
+    : fmapF (adjustWithKeyMaybe (f) (key) (mp .right))
+            (right => Bin (mp .size)
+                          (mp .height)
+                          (mp .key)
+                          (mp .value)
+                          (mp .left)
+                          (right))
+
+/**
+ * `update :: Ord k => (a -> Maybe a) -> k -> Map k a -> Map k a`
+ *
+ * The expression `(update f k map)` updates the value `x` at `k` (if it is in
+ * the map). If `(f x)` is `Nothing`, the element is deleted. If it is
+ * `(Just y)`, the key `k` is bound to the new value `y`.
+ */
+export const update =
+  <A>
+  (f: (value: A) => Maybe<A>) =>
+  (key: Key) =>
+  (mp: IntMap<A>): IntMap<A> =>
+    maybe (mp) <Pair<Maybe<A>, IntMap<A>>> (snd) (updateLookupWithKeyMaybe (cnst (f)) (key) (mp))
+
+/**
+ * `updateWithKey :: Ord k => (k -> a -> Maybe a) -> k -> Map k a -> Map k a`
+ *
+ * The expression `(updateWithKey f k map)` updates the value `x` at `k` (if
+ * it is in the map). If `(f k x)` is `Nothing`, the element is deleted. If it
+ * is `(Just y)`, the key `k` is bound to the new value `y`.
+ */
+export const updateWithKey =
+  <A>
+  (f: (key: Key) => (value: A) => Maybe<A>) =>
+  (key: Key) =>
+  (mp: IntMap<A>): IntMap<A> =>
+    maybe (mp) <Pair<Maybe<A>, IntMap<A>>> (snd) (updateLookupWithKeyMaybe (f) (key) (mp))
+
+/**
+ * `updateLookupWithKey :: (Key -> a -> Maybe a) -> Key -> IntMap a -> (Maybe a, IntMap a)`
+ *
+ * Lookup and update. See also `updateWithKey`. The function returns changed
+ * value, if it is updated. Returns the original key value if the map entry is
+ * deleted.
+ */
+export const updateLookupWithKey =
+  <A>
+  (f: (key: Key) => (value: A) => Maybe<A>) =>
+  (key: Key) =>
+  (mp: IntMap<A>): Pair<Maybe<A>, IntMap<A>> =>
+    fromMaybe<Pair<Maybe<A>, IntMap<A>>> (Pair (Nothing, mp))
+                                         (updateLookupWithKeyMaybe (f) (key) (mp))
+
+const updateLookupWithKeyMaybe =
+  <A>
+  (f: (key: Key) => (value: A) => Maybe<A>) =>
+  (key: Key) =>
+  (mp: IntMap<A>): Maybe<Pair<Maybe<A>, IntMap<A>>> =>
+    isTip (mp)
+    ? Nothing
+    : mp .key === key
+    ? (() => {
+        const mupd = f (mp .key) (mp .value)
+
+        if (isJust (mupd)) {
+          const upd = fromJust (mupd)
+
+          if (equals (upd) (mp .value)) {
+            return Nothing
+          }
+          else {
+            return Just (Pair (Just (mp .value), Bin (mp .size)
+                                                     (mp .height)
+                                                     (key)
+                                                     (upd)
+                                                     (mp .left)
+                                                     (mp .right)))
+          }
+        }
+        else {
+          return isTip (mp .left) && isTip (mp .right)
+          ? Just (Pair (Just (mp .value), Tip))
+          : isTip (mp .left)
+          ? Just (Pair (Just (mp .value), mp .right))
+          : isTip (mp .right)
+          ? Just (Pair (Just (mp .value), mp .left))
+          : (() => {
+              const keyValue_ = minKeyValue (mp .right as IntBin<A>)
+              const right_ = sdelete (fst (keyValue_)) (mp .right)
+
+              return Just (Pair (Just (mp .value), rebalance (Bin (calcSize (mp .left) (right_))
+                                                                  (calcHeight (mp .left) (right_))
+                                                                  (fst (keyValue_))
+                                                                  (snd (keyValue_))
+                                                                  (mp .left)
+                                                                  (right_))))
+            }) ()
+        }
+      }) ()
+    : key < mp .key
+    ? fmapF (updateLookupWithKeyMaybe (f) (key) (mp .left))
+            (second (left => rebalance (Bin (calcSize (left) (mp .right))
+                                            (calcHeight (left) (mp .right))
+                                            (mp .key)
+                                            (mp .value)
+                                            (left)
+                                            (mp .right))))
+    : fmapF (updateLookupWithKeyMaybe (f) (key) (mp .right))
+            (second (right => rebalance (Bin (calcSize (mp .left) (right))
+                                             (calcHeight (mp .left) (right))
+                                             (mp .key)
+                                             (mp .value)
+                                             (mp .left)
+                                             (right))))
+
+/**
+ * `alter :: (Maybe a -> Maybe a) -> Key -> IntMap a -> IntMap a`
+ *
+ * The expression `(alter f k map)` alters the value `x` at `k`, or absence
+ * thereof. `alter` can be used to insert, delete, or update a value in a
+ * `Map`. In short: `lookup k (alter f k m) = f (lookup k m)`.
+ */
+export const alter =
+  <A>
+  (f: (old_value: Maybe<A>) => Maybe<A>) =>
+  (key: Key) =>
+  (mp: IntMap<A>): IntMap<A> =>
+    maybe<ident<IntMap<A>>> (sdelete (key))
+                            <A> (insert (key))
+                            (f (lookup (key) (mp)))
+                            (mp)
+
 
 // MAP
 
@@ -428,6 +599,24 @@ export const map =
           (f (mp .value))
           (map (f) (mp .left))
           (map (f) (mp .right))
+
+/**
+ * `mapWithKey :: (Key -> a -> b) -> IntMap a -> IntMap b`
+ *
+ * Map a function over all values in the map.
+ */
+export const mapWithKey =
+  <A, B>
+  (f: (key: Key) => (value: A) => B) =>
+  (mp: IntMap<A>): IntMap<B> =>
+    isTip (mp)
+    ? Tip
+    : Bin (mp .size)
+          (mp .height)
+          (mp .key)
+          (f (mp .key) (mp .value))
+          (mapWithKey (f) (mp .left))
+          (mapWithKey (f) (mp .right))
 
 
 // FOLD
@@ -507,11 +696,15 @@ export const showTree = <A> (mp: IntMap<A>): string => {
   else {
     const key_str = showP (mp .key)
     const value_str = trimStart (showPDepth ((key_str .length + 3) / 2) (mp .value))
+    const s_str = show (mp .size)
+    const h_str = show (mp .height)
+    const keyvalue_str = `${key_str} = ${value_str}`
+    const prop_str = `{{ s = ${s_str}, h = ${h_str} }}`
 
     const l_str = showBranch (1) (mp .left)
     const r_str = showBranch (1) (mp .right)
 
-    return `${key_str} = ${value_str}\n|\n| ${l_str}\n|\n| ${r_str}`
+    return `${keyvalue_str} ${prop_str}\n|\n| ${l_str}\n|\n| ${r_str}`
   }
 }
 
@@ -524,11 +717,15 @@ const showBranch = (depth: number) => <A> (mp: IntMap<A>): string => {
   else {
     const key_str = showP (mp .key)
     const value_str = trimStart (showPDepth ((key_str .length + 3) / 2 + depth) (mp .value))
+    const s_str = show (mp .size)
+    const h_str = show (mp .height)
+    const keyvalue_str = `${key_str} = ${value_str}`
+    const prop_str = `{{ s = ${s_str}, h = ${h_str} }}`
 
     const l_str = showBranch (depth + 1) (mp .left)
     const r_str = showBranch (depth + 1) (mp .right)
 
-    return `${key_str} = ${value_str}\n${dws}|\n${dws}| ${l_str}\n${dws}|\n${dws}| ${r_str}`
+    return `${keyvalue_str} ${prop_str}\n${dws}|\n${dws}| ${l_str}\n${dws}|\n${dws}| ${r_str}`
   }
 }
 
@@ -546,21 +743,29 @@ const rebalance =
     : slope_current === 2 && slope_left !== -1
     ? rotateRight (mp)
     : slope_current === 2 && slope_left === -1
-    ? rotateRight (Bin (mp .size)
-                       (mp .height)
-                       (mp .key)
-                       (mp .value)
-                       (rotateLeft (mp .left as IntBin<A>))
-                       (mp .right))
+    ? (() => {
+        const new_left = rotateLeft (mp .left as IntBin<A>)
+
+        return rotateRight (Bin (calcSize (new_left) (mp .right))
+                                (calcHeight (new_left) (mp .right))
+                                (mp .key)
+                                (mp .value)
+                                (new_left)
+                                (mp .right))
+      }) ()
     : slope_current === -2 && slope_right !== 1
     ? rotateLeft (mp)
     : slope_current === -2 && slope_right === 1
-    ? rotateLeft (Bin (mp .size)
-                      (mp .height)
-                      (mp .key)
-                      (mp .value)
-                      (mp .left)
-                      (rotateRight (mp .right as IntBin<A>)))
+    ? (() => {
+        const new_right = rotateRight (mp .right as IntBin<A>)
+
+        return rotateLeft (Bin (calcSize (mp .left) (new_right))
+                               (calcHeight (mp .left) (new_right))
+                               (mp .key)
+                               (mp .value)
+                               (mp .left)
+                               (new_right))
+      }) ()
     : (() => { throw new TypeError ("rebalance: BST was not balanced before") }) ()
   }
 
@@ -573,10 +778,8 @@ const height = <A> (mp: IntMap<A>): number => isTip (mp) ? 0 : mp .height
 const calcHeight: <A> (l: IntMap<A>) => (r: IntMap<A>) => number =
   l => pipe (on (max) (height) (l), inc)
 
-const calcSizeLR = on (max) (size)
-
 const calcSize: <A> (l: IntMap<A>) => (r: IntMap<A>) => number =
-  l => pipe (calcSizeLR (l), inc)
+  l => pipe (on (add) (size) (l), inc)
 
 const rotateRight =
   <A> (mp: IntBin<A>): IntBin<A> => {
@@ -589,10 +792,9 @@ const rotateRight =
     const x_key = mp .key
     const x_value = mp .value
 
-    const right_height = calcHeight (t2) (t3)
-    const right = Bin (calcSize (t2) (t3)) (right_height) (x_key) (x_value) (t2) (t3)
+    const right = Bin (calcSize (t2) (t3)) (calcHeight (t2) (t3)) (x_key) (x_value) (t2) (t3)
 
-    return Bin (mp .size)
+    return Bin (calcSize (t1) (right))
                (calcHeight (t1) (right))
                (y_key)
                (y_value)
@@ -611,10 +813,9 @@ const rotateLeft =
     const x_key = right .key
     const x_value = right .value
 
-    const left_height = calcHeight (t1) (t2)
-    const left = Bin (calcSize (t1) (t2)) (left_height) (y_key) (y_value) (t1) (t2)
+    const left = Bin (calcSize (t1) (t2)) (calcHeight (t1) (t2)) (y_key) (y_value) (t1) (t2)
 
-    return Bin (mp .size)
+    return Bin (calcSize (left) (t3))
                (calcHeight (left) (t3))
                (x_key)
                (x_value)

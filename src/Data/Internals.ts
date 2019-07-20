@@ -14,11 +14,7 @@ export namespace Internals {
     readonly value: ReadonlySet<A>
   }
 
-  export interface Pair<A, B> extends Internals.PairPrototype {
-    readonly first: A
-    readonly second: B
-    readonly prototype: Internals.PairPrototype
-  }
+  export type Pair<A, B> = Tuple<[A, B]>
 
   export interface RecordBase {
     [key: string]: any
@@ -677,9 +673,8 @@ export namespace Internals {
    * The `isMap` function returns `True` if its argument is a `Map`.
    */
   export const isMap =
-    <K, A, A0 extends any[]>(x: A | Map<K, A0>): x is Map<K, A0> =>
+    <K, A, A0>(x: A | Map<K, A0>): x is Map<K, A0> =>
       typeof x === "object"
       && x !== null
-      && Object.getPrototypeOf (x) === BinPrototype
-      && Object.getPrototypeOf (x) === TipPrototype
+      && (isTip (x as Map<K, A0>) || Object.getPrototypeOf (x) === BinPrototype)
 }
