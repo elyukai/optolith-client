@@ -2,7 +2,7 @@
 const { Internals } = require('../Internals');
 const { cnst, ident, thrush, join, on, onF, flip, blackbird, blackbirdF } = require ('../Function')
 const { fromJust } = require ('../Maybe')
-const { add, multiply } = require ('../../App/Utilities/mathUtils')
+const { add, multiply } = require ('../Num')
 
 const Just = Internals.Just
 

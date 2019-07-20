@@ -1,6 +1,6 @@
 // @ts-check
 const Lens = require ('../Lens')
-const { add } = require ('../../App/Utilities/mathUtils')
+const { add } = require ('../Num')
 
 test ('view', () => {
   const customLens = Lens.lens (e => e.value)

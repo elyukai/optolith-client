@@ -1,6 +1,6 @@
 // @ts-check
 const { sortRecordsBy, comparingR, sortRecordsByName, sortStrings } = require ("../sortBy")
-const { compare } = require ("../../../Data/Int")
+const { compare } = require ("../../../Data/Num")
 const { List } = require ("../../../Data/List")
 const { fromDefault } = require ("../../../Data/Record")
 
