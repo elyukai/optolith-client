@@ -1,7 +1,8 @@
 const { promises: { copyFile }, existsSync } = require ("fs")
 const { join } = require ("path")
+const { insider } = require ("./tablesSrc.json")
 
-const src_dir = join ("..", "..", "OneDrive", "TDE app", "data", "insider")
+const src_dir = join (...insider)
 
 const copyL10nTable =
   async locale => {

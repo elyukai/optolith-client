@@ -110,7 +110,8 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
                 : pipe_ (
                     primary_attr_id_list,
                     mapMaybe (pipe (lookupF (attributes), fmap (AA.short))),
-                    intercalate ("/")
+                    intercalate ("/"),
+                    attr => `${attr} ${th}`
                   )
             })
            (mprimary_attr_id_list)
