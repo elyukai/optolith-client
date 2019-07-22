@@ -612,6 +612,7 @@ export interface L10n {
   "saveandquit": string
   "uses": string
   "complementarysources": string
+  "and": string
 }
 
 export type L10nKey = keyof L10n
@@ -1231,4 +1232,5 @@ export const L10n =
                 "saveandquit": "",
                 "uses": "",
                 "complementarysources": "",
+                "and": "",
               })

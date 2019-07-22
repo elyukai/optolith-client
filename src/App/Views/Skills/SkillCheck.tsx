@@ -11,6 +11,7 @@ import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/Attrib
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { CheckModifier } from "../../Models/Wiki/wikiTypeHelpers";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
+import { minus } from "../../Utilities/Chars";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 
 export interface SkillCheckProps {
@@ -62,7 +63,7 @@ export function SkillCheck (props: SkillCheckProps) {
                     ))
                  (Maybe (derived))
                  (bind (Maybe (checkmod)) (ensure (pipe (size, gt (0))))),
-          fmap (characteristic => <div className="check mod">+{characteristic}</div>),
+          fmap (characteristic => <div className="check mod">{minus}{characteristic}</div>),
           fromMaybeR (null)
         )}
       </>

@@ -65,11 +65,13 @@ export function WikiLiturgicalChantTraditions<A extends RecordBase>
                                 mapMaybe (pipe (dec, subscript (aspect_strings))) (as)
 
                               const complete_aspects =
-                                intercalate (", ") (sortStrings (l10n) (mapped_aspects))
+                                intercalate (` ${translate (l10n) ("and")} `)
+                                            (sortStrings (l10n) (mapped_aspects))
 
                               return consF (`${main_trad} (${complete_aspects})`)
                             })
                             (List ()),
+    sortStrings (l10n),
     traditions => (
       <WikiProperty l10n={l10n} title="traditions">
         {intercalate (", ") (traditions)}

@@ -1,7 +1,8 @@
 import * as React from "react";
 import { notEquals } from "../../../Data/Eq";
+import { ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
-import { elemF, intercalate, List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
+import { consF, elem, elemF, intercalate, List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
 import { bindF, ensure, fromMaybe, fromMaybeR, guard, Just, mapMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
 import { dec } from "../../../Data/Num";
 import { OrderedMap } from "../../../Data/OrderedMap";
@@ -119,6 +120,14 @@ const LCBCA = {
           LiturgicalChant.A.aspects
         )
       : List (1),
+  tradition: (x: Combined): List<number> =>
+    LiturgicalChantWithRequirements.is (x)
+      ? pipe_ (
+          x,
+          LiturgicalChantWithRequirements.A.wikiEntry,
+          LiturgicalChant.A.tradition
+        )
+      : List (1),
   id: pipe (wikiEntryCombined, Blessing.AL.id),
   name: pipe (wikiEntryCombined, Blessing.AL.name),
 }
@@ -204,7 +213,7 @@ export class LiturgicalChants
                 {translate (l10n) ("name")}
               </ListHeaderTag>
               <ListHeaderTag className="group">
-                {translate (l10n) ("aspect")}
+                {translate (l10n) ("traditions")}
                 {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
               </ListHeaderTag>
               <ListHeaderTag className="check">
@@ -337,7 +346,7 @@ export class LiturgicalChants
               {translate (l10n) ("name")}
             </ListHeaderTag>
             <ListHeaderTag className="group">
-              {translate (l10n) ("aspect")}
+              {translate (l10n) ("traditions")}
               {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
             </ListHeaderTag>
             <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
@@ -489,6 +498,10 @@ const getAspectsStr =
                      ))
                    ))
                    (LCBCA.aspects (curr)),
+        elem (14) (LCBCA.tradition (curr))
+          ? maybe (ident as ident<List<string>>) <string> (consF)
+                  (subscript (translate (l10n) ("blessedtraditions")) (13))
+          : ident,
         sortStrings (l10n),
         intercalate (", ")
       )),

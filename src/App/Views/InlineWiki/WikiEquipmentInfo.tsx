@@ -119,6 +119,34 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
   const isLancesCT = Maybe.elem (prefixCT (7)) (combatTechniqueId)
   const isShieldsCT = Maybe.elem (prefixCT (10)) (combatTechniqueId)
 
+  const weightElement =
+    maybeR (null)
+           ((weight: number) => (
+             <tr>
+               <td>{translate (l10n) ("weight")}</td>
+               <td>
+                 {pipe_ (weight, localizeWeight (locale), localizeNumber (locale))}
+                 {" "}
+                 {translate (l10n) ("weightunit.short")}
+               </td>
+             </tr>
+           ))
+           (ensureNatural (mweight))
+
+  const priceElement =
+    maybeR (null)
+           ((price: number) => (
+             <tr>
+               <td>{translate (l10n) ("price")}</td>
+               <td>
+                 {localizeNumber (locale) (price)}
+                 {" "}
+                 {translate (l10n) ("priceunit")}
+               </td>
+             </tr>
+           ))
+           (ensureNatural (mprice))
+
   return (
     <WikiBoxTemplate
       className="item"
@@ -134,30 +162,8 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
         ? (
             <table className="melee">
               <tbody>
-                {maybeR (null)
-                        ((weight: number) => (
-                          <tr>
-                            <td>{translate (l10n) ("weight")}</td>
-                            <td>
-                              {pipe_ (weight, localizeWeight (locale), localizeNumber (locale))}
-                              {" "}
-                              {translate (l10n) ("weightunit.short")}
-                            </td>
-                          </tr>
-                        ))
-                        (ensureNatural (mweight))}
-                {maybeR (null)
-                        ((price: number) => (
-                          <tr>
-                            <td>{translate (l10n) ("price")}</td>
-                            <td>
-                              {localizeNumber (locale) (price)}
-                              {" "}
-                              {translate (l10n) ("priceunit")}
-                            </td>
-                          </tr>
-                        ))
-                        (ensureNatural (mprice))}
+                {weightElement}
+                {priceElement}
               </tbody>
             </table>
           )
@@ -199,14 +205,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
                   )}
             </td>
           </tr>
-          <tr>
-            <td>{translate (l10n) ("weight")}</td>
-            <td>
-              {renderMaybeWith (pipe (localizeWeight (locale), localizeNumber (locale))) (mweight)}
-              {" "}
-              {translate (l10n) ("weightunit.short")}
-            </td>
-          </tr>
+          {weightElement}
           {!isShieldsCT
             ? (
                 <tr>
@@ -220,14 +219,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
                 </tr>
               )
             : null}
-          <tr>
-            <td>{translate (l10n) ("price")}</td>
-            <td>
-              {renderMaybeWith (localizeNumber (locale)) (mprice)}
-              {" "}
-              {translate (l10n) ("priceunit")}
-            </td>
-          </tr>
+          {priceElement}
         </tbody>
       </table> : null}
       {gr === 2 ? <table className="ranged">
@@ -259,14 +251,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
             <td>{translate (l10n) ("ammunition")}</td>
             <td>{maybe (translate (l10n) ("none")) (ITAL.name) (ammunitionTemplate)}</td>
           </tr>
-          <tr>
-            <td>{translate (l10n) ("weight")}</td>
-            <td>
-              {renderMaybeWith (pipe (localizeWeight (locale), localizeNumber (locale))) (mweight)}
-              {" "}
-              {translate (l10n) ("weightunit.short")}
-            </td>
-          </tr>
+          {weightElement}
           <tr>
             <td>{translate (l10n) ("length")}</td>
             <td>
@@ -275,14 +260,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
               {translate (l10n) ("lengthunit")}
             </td>
           </tr>
-          <tr>
-            <td>{translate (l10n) ("price")}</td>
-            <td>
-              {renderMaybeWith (localizeNumber (locale)) (mprice)}
-              {" "}
-              {translate (l10n) ("priceunit")}
-            </td>
-          </tr>
+          {priceElement}
         </tbody>
       </table> : null}
       {gr === 4 ? <table className="armor">
@@ -295,22 +273,8 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
             <td>{translate (l10n) ("encumbrance.short")}</td>
             <td>{renderMaybe (enc)}</td>
           </tr>
-          <tr>
-            <td>{translate (l10n) ("weight")}</td>
-            <td>
-              {renderMaybeWith (pipe (localizeWeight (locale), localizeNumber (locale))) (mweight)}
-              {" "}
-              {translate (l10n) ("weightunit.short")}
-            </td>
-          </tr>
-          <tr>
-            <td>{translate (l10n) ("price")}</td>
-            <td>
-              {renderMaybeWith (localizeNumber (locale)) (mprice)}
-              {" "}
-              {translate (l10n) ("priceunit")}
-            </td>
-          </tr>
+          {weightElement}
+          {priceElement}
           <tr>
             <td>{translate (l10n) ("additionalpenalties")}</td>
             <td>{maybe (ndash) (intercalate (", ")) (ensure (notNull) (addPenaltiesArr))}</td>
