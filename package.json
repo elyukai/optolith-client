@@ -69,6 +69,7 @@
     "buildMac": "node ./buildMac.js",
     "buildCss": "node --experimental-modules buildSass.mjs",
     "compile": "tsc",
+    "cti": "node ./copyTablesOnly.js",
     "watch": "tsc --watch",
     "start": "electron .",
     "test": "jest",
