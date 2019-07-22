@@ -614,7 +614,7 @@ export const requestClose =
               label: translate (l10n) ("cancel"),
             },
             {
-              label: translate (l10n) ("saveandclose"),
+              label: translate (l10n) ("saveandquit"),
               dispatchOnClick: close (l10n) (true) (optionalCall),
             },
           ],

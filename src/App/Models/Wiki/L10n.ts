@@ -609,7 +609,7 @@ export interface L10n {
   "manualherodatarepair": string
   "manualherodatarepairexplanation": string
   "unfamiliarspell": string
-  "saveandclose": string
+  "saveandquit": string
 }
 
 export type L10nKey = keyof L10n
@@ -1226,5 +1226,5 @@ export const L10n =
                 "manualherodatarepair": "",
                 "manualherodatarepairexplanation": "",
                 "unfamiliarspell": "",
-                "saveandclose": "",
+                "saveandquit": "",
               })
