@@ -1,9 +1,10 @@
 import { any, filter, fnull, List } from "../../Data/List";
 import { fromJust, isJust, Maybe } from "../../Data/Maybe";
-import { lookup, lookupF } from "../../Data/OrderedMap";
-import { member } from "../../Data/OrderedSet";
+import { lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
+import { member, OrderedSet } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
-import { fst, snd } from "../../Data/Tuple";
+import { fst, snd, Tuple } from "../../Data/Tuple";
+import { uncurry3 } from "../../Data/Tuple/Curry";
 import { Rules } from "../Models/Hero/Rules";
 import { Book } from "../Models/Wiki/Book";
 import { SourceLink } from "../Models/Wiki/sub/SourceLink";
@@ -15,27 +16,29 @@ const RA = Rules.A
 const BA = Book.A
 const SLA = SourceLink.A
 
+export const sourceBooksPairToTuple =
+  (x: EnabledSourceBooks) =>
+    Tuple (fst (x), RA.enabledRuleBooks (snd (x)), RA.enableAllRuleBooks (snd (x)))
+
 /**
  * Returns if a book is currently enabled.
  */
 export const isBookEnabled =
-  (availability: EnabledSourceBooks) => {
-    const books = fst (availability)
-    const rules = snd (availability)
+  (booksMap: OrderedMap<string, Record<Book>>) =>
+  (enabledRuleBooks: OrderedSet<string>) =>
+  (areAllRuleBooksEnabled: boolean) =>
+  (id: string): boolean => {
+    const mb = lookup (id) (booksMap)
 
-    return (id: string): boolean => {
-      const mb = lookup (id) (books)
+    if (isJust (mb)) {
+      const b = fromJust (mb)
 
-      if (isJust (mb)) {
-        const b = fromJust (mb)
-
-        return BA.isCore (b)
-          || RA.enableAllRuleBooks (rules) && !BA.isAdultContent (b)
-          || member (id) (RA.enabledRuleBooks (rules))
-      }
-
-      return false
+      return BA.isCore (b)
+        || areAllRuleBooksEnabled && !BA.isAdultContent (b)
+        || member (id) (enabledRuleBooks)
     }
+
+    return false
   }
 
 /**
@@ -46,7 +49,17 @@ export const isAvailable =
   <A>
   (f: (x: A) => List<Record<SourceLink>>) =>
   (availablility: EnabledSourceBooks) =>
-    pipe (f, any (pipe (SLA.id, isBookEnabled (availablility))))
+    pipe (f, any (pipe (SLA.id, uncurry3 (isBookEnabled) (sourceBooksPairToTuple (availablility)))))
+
+export const isAvailableF =
+  (booksMap: OrderedMap<string, Record<Book>>) =>
+  (enabledRuleBooks: OrderedSet<string>) =>
+  (areAllRuleBooksEnabled: boolean) =>
+  <A>
+  (f: (x: A) => List<Record<SourceLink>>) =>
+    pipe (f, any (pipe (SLA.id, isBookEnabled (booksMap)
+                                              (enabledRuleBooks)
+                                              (areAllRuleBooksEnabled))))
 
 /**
  * Returns if the given entry is from a core rule book.
@@ -67,6 +80,14 @@ export const filterByAvailability =
   (f: (x: A) => List<Record<SourceLink>>) =>
   (availablility: EnabledSourceBooks) =>
     filter<A> (e => fnull (f (e)) || isAvailable (f) (availablility) (e))
+
+export const filterByAvailabilityF =
+  (booksMap: OrderedMap<string, Record<Book>>) =>
+  (enabledRuleBooks: OrderedSet<string>) =>
+  (areAllRuleBooksEnabled: boolean) =>
+  <A> (f: (x: A) => List<Record<SourceLink>>) =>
+    filter<A> (e => fnull (f (e))
+                    || isAvailableF (booksMap) (enabledRuleBooks) (areAllRuleBooksEnabled) (f) (e))
 
 /**
  * Filters a list of `SourceLink`s by availability or by the given predicate (at

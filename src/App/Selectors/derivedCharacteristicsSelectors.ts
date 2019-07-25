@@ -6,6 +6,7 @@ import { add, multiply, negate, subtract } from "../../Data/Num";
 import { elems, fromList } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { Pair, Tuple } from "../../Data/Tuple";
+import { uncurry3 } from "../../Data/Tuple/Curry";
 import { sel1, sel2, sel3 } from "../../Data/Tuple/Select";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
@@ -23,7 +24,7 @@ import { translate } from "../Utilities/I18n";
 import { prefixAdv, prefixAttr, prefixDis, prefixSA } from "../Utilities/IDUtils";
 import { getAttributeValueWithDefault } from "../Utilities/Increasable/attributeUtils";
 import { pipe } from "../Utilities/pipe";
-import { isBookEnabled } from "../Utilities/RulesUtils";
+import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice, mapGetToSlice, mapGetToSliceWithProps } from "../Utilities/SelectorsUtils";
 import { getHighestPrimaryMagicalAttributeValue, getPrimaryBlessedAttribute } from "./attributeSelectors";
 import { getCurrentRace } from "./rcpSelectors";
@@ -408,7 +409,9 @@ export const getDerivedCharacteristicsMap = createMaybeSelector (
       Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (MOV), MOV)
     )
 
-    const isWoundThresholdEnabled = isBookEnabled (rule_books_enabled) ("US25003")
+    const isWoundThresholdEnabled = uncurry3 (isBookEnabled)
+                                             (sourceBooksPairToTuple (rule_books_enabled))
+                                             ("US25003")
 
     if (isWoundThresholdEnabled) {
       return fromList (snoc (xs) (Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (WT), WT)))

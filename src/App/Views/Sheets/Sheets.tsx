@@ -11,6 +11,7 @@ import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { PersonalData } from "../../Models/Hero/PersonalData";
 import { Pet } from "../../Models/Hero/Pet";
 import { Purse } from "../../Models/Hero/Purse";
+import { Rules } from "../../Models/Hero/Rules";
 import { NumIdName } from "../../Models/NumIdName";
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
@@ -116,6 +117,9 @@ export interface SheetsDispatchProps {
 
 export type SheetsProps = SheetsStateProps & SheetsDispatchProps & SheetsOwnProps
 
+const HA = HeroModel.A
+const RA = Rules.A
+
 export function Sheets (props: SheetsProps) {
   const maybeArcaneEnergy = find (pipe (DerivedCharacteristic.A.id, equals<DCIds> ("AE")))
                                  (props.derivedCharacteristics)
@@ -129,7 +133,10 @@ export function Sheets (props: SheetsProps) {
         <MainSheet {...props} />
         <SkillsSheet {...props} />
         <CombatSheet {...props} />
-        {isBookEnabled (Pair (props.books, HeroModel.A.rules (props.hero))) ("US25208")
+        {isBookEnabled (props.books)
+                       (RA.enabledRuleBooks (HA.rules (props.hero)))
+                       (RA.enableAllRuleBooks (HA.rules (props.hero)))
+                       ("US25208")
           ? <CombatSheetZones {...props} />
           : null}
         <BelongingsSheet {...props} />
