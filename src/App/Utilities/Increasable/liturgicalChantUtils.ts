@@ -239,6 +239,10 @@ const traditionsByAspect = fromArray ([
   [33, 18],
   [34, 19],
   [35, 19],
+  [36, 20],
+  [37, 20],
+  [38, 21],
+  [39, 21],
 ])
 
 /**
@@ -272,6 +276,8 @@ const aspectsByTradition = fromArray<number, List<number>> ([
   [17, List (30, 31)],
   [18, List (32, 33)],
   [19, List (34, 35)],
+  [20, List (36, 37)],
+  [21, List (38, 39)],
 ])
 
 /**

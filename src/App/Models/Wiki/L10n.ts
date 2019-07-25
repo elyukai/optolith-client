@@ -313,6 +313,8 @@ export interface L10n {
   "arcaneenergy": string
   "arcaneenergy.short": string
   "arcaneenergycalc": string
+  "arcaneenergycalc.halfprimary": string
+  "arcaneenergycalc.noprimary": string
   "karmapoints": string
   "karmapoints.short": string
   "karmapointscalc": string
@@ -936,6 +938,8 @@ export const L10n =
                 "karmapoints": "",
                 "karmapoints.short": "",
                 "karmapointscalc": "",
+                "arcaneenergycalc.halfprimary": "",
+                "arcaneenergycalc.noprimary": "",
                 "spirit": "",
                 "spirit.short": "",
                 "spiritcalc": "",

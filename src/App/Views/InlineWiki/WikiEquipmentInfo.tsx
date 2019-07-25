@@ -191,7 +191,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
           <tr>
             <td>{translate (l10n) ("attackparrymodifier.short")}</td>
             <td>
-              {isLancesCT ? ndash : `${renderMaybeWith (sign) (at)}/${renderMaybeWith (sign) (pa)}`}
+              {isLancesCT ? ndash : `${renderMaybeWith (sign) (at)}/${maybe (ndash) (sign) (pa)}`}
             </td>
           </tr>
           <tr>

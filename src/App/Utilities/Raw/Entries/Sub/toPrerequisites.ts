@@ -27,7 +27,7 @@ import { isRawCultureRequirement } from "../Prerequisites/RawCultureRequirement"
 import { isRawRequiringIncreasable } from "../Prerequisites/RawIncreasableRequirement";
 import { isRawPactRequirement } from "../Prerequisites/RawPactRequirement";
 import { isRawRequiringPrimaryAttribute } from "../Prerequisites/RawPrimaryAttributeRequirement";
-import { isRawRaceRequirement } from "../Prerequisites/RawRaceRequirement";
+import { isRawRaceRequirement, toRaceRequirement } from "../Prerequisites/RawRaceRequirement";
 import { isRawSexRequirement } from "../Prerequisites/RawSexRequirement";
 const parseJSONAndRCP = (x: string) => x === "RCP" ? Just (x) : parseJSON (x)
 
@@ -85,12 +85,7 @@ const toLevelAwarePrerequisites =
                         value: x .value,
                       }))
                     : isRawRaceRequirement (x)
-                    ? Just (RaceRequirement ({
-                        id: Nothing,
-                        value: Array.isArray (x .value)
-                          ? fromArray (x .value)
-                          : x .value,
-                      }))
+                    ? Just (toRaceRequirement (x))
                     : isRawCultureRequirement (x)
                     ? Just (CultureRequirement ({
                         id: Nothing,
@@ -176,6 +171,7 @@ const toFlatPrerequisites =
                        value: Array.isArray (x .value)
                          ? fromArray (x .value)
                          : x .value,
+                       active: x .active === undefined ? true : x .active,
                      }))
                    : isRawCultureRequirement (x)
                    ? Just (CultureRequirement ({
@@ -246,6 +242,7 @@ const toFlatSpellPrerequisites =
                        value: Array.isArray (x .value)
                          ? fromArray (x .value)
                          : x .value,
+                       active: x .active === undefined ? true : x .active,
                      }))
                    : isRawCultureRequirement (x)
                    ? Just (CultureRequirement ({

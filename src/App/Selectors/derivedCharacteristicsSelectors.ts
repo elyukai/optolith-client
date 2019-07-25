@@ -5,7 +5,8 @@ import { bindF, ensure, fromMaybe, Just, liftM2, listToMaybe, maybe, Maybe, Noth
 import { add, multiply, negate, subtract } from "../../Data/Num";
 import { elems, fromList } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
-import { fst, Pair, snd } from "../../Data/Tuple";
+import { Pair, Tuple } from "../../Data/Tuple";
+import { sel1, sel2, sel3 } from "../../Data/Tuple/Select";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
 import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
@@ -106,34 +107,36 @@ export const getAE = createMaybeSelector (
      */
     const mbaseAndAdd =
       fmapF (mlast_trad)
-            (last_trad => fromMaybe (Pair (20, 0))
+            (last_trad => fromMaybe (Tuple (20, 0, 0))
                                     (fmapF (mprimary_value)
                                            (primary_value => {
-                                            const hasTraditionHalfAE =
-                                              elem (ActivatableDependent.A.id (last_trad))
-                                                   (List (
-                                                     prefixSA (677),
-                                                     prefixSA (678),
-                                                     prefixSA (750),
-                                                     prefixSA (1221)))
+                                            const ae_mod = getPrimaryAEMod (last_trad)
 
-                                            const maxAdd = hasTraditionHalfAE
-                                              ? divideBy2AndRound (primary_value)
-                                              : primary_value
+                                            const maxAdd = Math.round (primary_value * ae_mod)
 
-                                            return Pair (maxAdd + 20, maxAdd)
+                                            return Tuple (maxAdd + 20, maxAdd, ae_mod)
                                           })))
 
     const value = fmapF (mbaseAndAdd)
-                        (pipe (fst, base => base + mod + Maybe.sum (added)))
+                        (pipe (sel1, base => base + mod + Maybe.sum (added)))
+
+    const calc = maybe (translate (l10n) ("arcaneenergycalc"))
+                       <Tuple<[number, number, number]>> (pipe (
+                         sel3,
+                         ae_mod =>
+                          ae_mod === 1 ? translate (l10n) ("arcaneenergycalc") :
+                          ae_mod === 0.5 ? translate (l10n) ("arcaneenergycalc.halfprimary") :
+                          translate (l10n) ("arcaneenergycalc.noprimary")
+                       ))
+                       (mbaseAndAdd)
 
     return DerivedCharacteristic<"AE"> ({
       add: Just (Maybe.sum (added)),
-      base: fmapF (mbaseAndAdd) (fst),
-      calc: translate (l10n) ("arcaneenergycalc"),
+      base: fmapF (mbaseAndAdd) (sel1),
+      calc,
       currentAdd: Just (Maybe.sum (added)),
       id: "AE",
-      maxAdd: Just (Maybe.sum (fmapF (mbaseAndAdd) (snd))),
+      maxAdd: Just (Maybe.sum (fmapF (mbaseAndAdd) (sel2))),
       mod: Just (mod),
       name: translate (l10n) ("arcaneenergy"),
       permanentLost: Just (Maybe.sum (mlost)),
@@ -143,6 +146,22 @@ export const getAE = createMaybeSelector (
     })
   }
 )
+
+const getPrimaryAEMod =
+  (last_trad: Record<ActivatableDependent>): number =>
+    elem (ActivatableDependent.A.id (last_trad))
+        (List (
+          prefixSA (677),
+          prefixSA (678),
+          prefixSA (750),
+          prefixSA (1221)))
+    ? 0.5
+    : elem (ActivatableDependent.A.id (last_trad))
+           (List (
+             prefixSA (679),
+             prefixSA (680)))
+    ? 0
+    : 1
 
 export const getKP = createMaybeSelector (
   getPrimaryBlessedAttribute,

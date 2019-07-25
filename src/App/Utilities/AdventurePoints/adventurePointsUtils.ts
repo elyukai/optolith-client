@@ -6,6 +6,7 @@ import { all, altF, bind, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNo
 import { add, gt, inc, lt, multiply, negate, subtractBy } from "../../../Data/Num";
 import { alter, empty, findWithDefault, lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, Record } from "../../../Data/Record";
+import { showP } from "../../../Data/Show";
 import { fst, Pair, snd } from "../../../Data/Tuple";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -163,6 +164,13 @@ export const getMissingAPForDisAdvantage =
     const totalMissing = getMissingAP (isInCharacterCreation)
                                       (cost)
                                       (AP.available (ap))
+
+    console.log (`isBlessedOrMagical = ${showP (isBlessedOrMagical)}`)
+    console.log (`subCurrentAPSpent = ${showP (subCurrentAPSpent)}`)
+    console.log (`smallMax = ${showP (smallMax)}`)
+    console.log (`subMissing = ${showP (subMissing)}`)
+    console.log (`mainMissing = ${showP (mainMissing)}`)
+    console.log (`totalMissing = ${showP (totalMissing)}`)
 
     return MissingAPForDisAdvantage ({ totalMissing, mainMissing, subMissing })
   }

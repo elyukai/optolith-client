@@ -1048,6 +1048,7 @@ const getPrerequisitesRaceText =
     const race_tag = translate (l10n) ("race")
 
     const value = RaceRequirement.A.value (race)
+    const active = RaceRequirement.A.active (race)
 
     if (isList (value)) {
       const curr_races =
@@ -1057,12 +1058,12 @@ const getPrerequisitesRaceText =
           localizeOrList (l10n)
         )
 
-      return <span>{`${race_tag} ${curr_races}`}</span>
+      return <span className={!active ? "disabled" : ""}>{`${race_tag} ${curr_races}`}</span>
     }
     else {
       const curr_race = pipe_ (value, prefixRace, lookupF (races), maybe ("") (Race.A.name))
 
-      return <span>{`${race_tag} ${curr_race}`}</span>
+      return <span className={!active ? "disabled" : ""}>{`${race_tag} ${curr_race}`}</span>
     }
   }
 

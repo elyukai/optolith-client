@@ -13,10 +13,10 @@ import { equals } from "./Eq";
 import { cnst, flip, ident, on } from "./Function";
 import { fmapF } from "./Functor";
 import { Internals } from "./Internals";
-import { consF, List, trimStart } from "./List";
-import { fromJust, fromMaybe, isJust, Just, Maybe, maybe, Nothing } from "./Maybe";
+import { consF, intercalate, List, notNull } from "./List";
+import { alt, fromJust, fromMaybe, isJust, Just, Maybe, maybe, Nothing } from "./Maybe";
 import { abs, add, inc, max } from "./Num";
-import { show, showP, showPDepth } from "./Show";
+import { show } from "./Show";
 import { curry, fst, Pair, second, snd, uncurry } from "./Tuple";
 import { upd2 } from "./Tuple/Update";
 
@@ -78,7 +78,7 @@ export const all =
  *
  * Is the map empty?
  */
-export const fnull = (mp: IntMap<any>): mp is Tip => isTip (mp)
+export const fnull = isTip
 
 /**
  * `size :: IntMap a -> Int`
@@ -619,7 +619,7 @@ export const mapWithKey =
           (mapWithKey (f) (mp .right))
 
 
-// FOLD
+// FOLDS
 
 /**
  * `foldrWithKey :: (Key -> a -> b -> b) -> b -> IntMap a -> b`
@@ -643,9 +643,7 @@ export const foldrWithKey =
  *
  * Return all elements of the map.
  */
-export const elems =
-  <A> (mp: IntMap<A>): List<A> =>
-    toList (mp)
+export const elems = toList
 
 /**
  * `keys :: IntMap a -> [Key]`
@@ -684,50 +682,65 @@ export const fromList =
  */
 export const fromListN =
   <A> (xs: [Key, A][]): IntMap<A> =>
-    xs .reduce<IntMap<A>> ((map, [k, v]) => insert (k) (v) (map), empty)
+    xs .reduce<IntMap<A>> ((mp, [k, v]) => insert (k) (v) (mp), empty)
 
 
 // DEBUGGING
 
-export const showTree = <A> (mp: IntMap<A>): string => {
+export const showTreeWith =
+  <A> (showelem: (key: Key) => (x: A) => string) =>
+  (wide: boolean) =>
+  (mp: IntMap<A>): string => {
   if (isTip (mp)) {
-    return "0"
+    return "+"
   }
   else {
-    const key_str = showP (mp .key)
-    const value_str = trimStart (showPDepth ((key_str .length + 3) / 2) (mp .value))
-    const s_str = show (mp .size)
-    const h_str = show (mp .height)
-    const keyvalue_str = `${key_str} = ${value_str}`
-    const prop_str = `{{ s = ${s_str}, h = ${h_str} }}`
-
-    const l_str = showBranch (1) (mp .left)
-    const r_str = showBranch (1) (mp .right)
-
-    return `${keyvalue_str} ${prop_str}\n|\n| ${l_str}\n|\n| ${r_str}`
+    return intercalate ("\n") (showBranch (true) (showelem) (wide) (Nothing) (0) (mp))
   }
 }
 
-const showBranch = (depth: number) => <A> (mp: IntMap<A>): string => {
-  const dws = " " .repeat (depth * 2) // depth whitespace
+const showBranch =
+  (start: boolean) =>
+  <A> (showelem: (key: Key) => (x: A) => string) =>
+  (wide: boolean) =>
+  (depthLinesStart: Maybe<number>) =>
+  (depth: number) =>
+  (mp: IntMap<A>): List<string> => {
+    const dls = fromMaybe (depth) (depthLinesStart)
+    const with_line = depth - dls
+    const without_line = depth - with_line
+    const dws = "   " .repeat (without_line) + "|  " .repeat (with_line) // depth whitespace
+    const elem_dws = dws .slice (0, -3) + (start ? "" : "+--")
 
-  if (isTip (mp)) {
-    return "0"
+    if (isTip (mp)) {
+      return List ()
+    }
+    else {
+      const elem_str = showelem (mp .key) (mp .value)
+      const s_str = show (mp .size)
+      const h_str = show (mp .height)
+      const full_elem = `${elem_dws}${elem_str} {{ s = ${s_str}, h = ${h_str} }}`
+
+      const l_str = showBranch (false)
+                               (showelem)
+                               (wide)
+                               (alt (depthLinesStart) (Just (depth)))
+                               (depth + 1)
+                               (mp .left)
+
+      const r_str = showBranch (false) (showelem) (wide) (depthLinesStart) (depth + 1) (mp .right)
+
+      return List (
+        full_elem,
+        ...(notNull (l_str) && wide ? List (`${dws}|`) : List<string> ()),
+        ...l_str,
+        ...(notNull (r_str) && wide ? List (`${dws}|`) : List<string> ()),
+        ...r_str
+      )
+    }
   }
-  else {
-    const key_str = showP (mp .key)
-    const value_str = trimStart (showPDepth ((key_str .length + 3) / 2 + depth) (mp .value))
-    const s_str = show (mp .size)
-    const h_str = show (mp .height)
-    const keyvalue_str = `${key_str} = ${value_str}`
-    const prop_str = `{{ s = ${s_str}, h = ${h_str} }}`
 
-    const l_str = showBranch (depth + 1) (mp .left)
-    const r_str = showBranch (depth + 1) (mp .right)
-
-    return `${keyvalue_str} ${prop_str}\n${dws}|\n${dws}| ${l_str}\n${dws}|\n${dws}| ${r_str}`
-  }
-}
+export const showTree = showTreeWith<any> (k => x => `(${show (k)}, ${show (x)})`) (true)
 
 
 // Internal
@@ -737,7 +750,62 @@ const rebalance =
     const slope_current = slope (mp)
     const slope_left = slope (mp .left)
     const slope_right = slope (mp .right)
+    // const is_rotation_needed_for_left_weight = isRotationNeededForLeftWeight (mp)
 
+    // if (is_rotation_needed_for_left_weight) {
+    //   console.log (`slope_current = ${slope_current}`)
+    //   console.log (`slope_left = ${slope_left}`)
+    //   console.log (`slope_right = ${slope_right}`)
+    //   console.log (`before\n${showTree (mp)}`)
+    //   if (isTip ((mp .right as IntBin<A>) .right)) {
+    //     console.log (`after alt\n${showTree ((() => {
+    //       const new_left = Bin (calcSize (mp .left) (Tip))
+    //                            (calcHeight (mp .left) (Tip))
+    //                            (mp .key)
+    //                            (mp .value)
+    //                            (mp .left)
+    //                            (Tip)
+
+    //       const new_right = singleton ((mp .right as IntBin<A>) .key)
+    //                                   ((mp .right as IntBin<A>) .value)
+
+    //       const new_main = (mp .right as IntBin<A>) .left as IntBin<A>
+
+    //       return Bin (calcSize (mp .left) (new_right))
+    //                  (calcHeight (mp .left) (new_right))
+    //                  (new_main .key)
+    //                  (new_main .value)
+    //                  (new_left)
+    //                  (new_right)
+    //     }) ())}`)
+    //   }
+    //   console.log (`after\n${showTree (rotateLeft (mp))}`)
+    // }
+
+    // return is_rotation_needed_for_left_weight
+    // ? isTip ((mp .right as IntBin<A>) .right)
+    //   ? (() => {
+    //       const new_left = Bin (calcSize (mp .left) (Tip))
+    //                            (calcHeight (mp .left) (Tip))
+    //                            (mp .key)
+    //                            (mp .value)
+    //                            (mp .left)
+    //                            (Tip)
+
+    //       const new_right = singleton ((mp .right as IntBin<A>) .key)
+    //                                   ((mp .right as IntBin<A>) .value)
+
+    //       const new_main = (mp .right as IntBin<A>) .left as IntBin<A>
+
+    //       return Bin (calcSize (mp .left) (new_right))
+    //                  (calcHeight (mp .left) (new_right))
+    //                  (new_main .key)
+    //                  (new_main .value)
+    //                  (new_left)
+    //                  (new_right)
+    //     }) ()
+    //   : rotateLeft (mp)
+    // : abs (slope_current) < 2
     return abs (slope_current) < 2
     ? mp
     : slope_current === 2 && slope_left !== -1
@@ -780,6 +848,15 @@ const calcHeight: <A> (l: IntMap<A>) => (r: IntMap<A>) => number =
 
 const calcSize: <A> (l: IntMap<A>) => (r: IntMap<A>) => number =
   l => pipe (on (add) (size) (l), inc)
+
+// /**
+//  * If the trees are balanced but the left side weights less than the right side,
+//  * we need to ensure the left side is heavier so that we can compare trees by
+//  * structural equality.
+//  */
+// const isRotationNeededForLeftWeight =
+//   <A> (mp: IntBin<A>) =>
+//     slope (mp) === -1 && size (mp .left) >= 1 && size (mp .right) >= 2
 
 const rotateRight =
   <A> (mp: IntBin<A>): IntBin<A> => {

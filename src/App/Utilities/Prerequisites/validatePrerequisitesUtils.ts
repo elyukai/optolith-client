@@ -25,7 +25,7 @@ import { CultureRequirement, isCultureRequirement } from "../../Models/Wiki/prer
 import { RequireIncreasable, RequireIncreasableL } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { isPactRequirement, PactRequirement } from "../../Models/Wiki/prerequisites/PactRequirement";
 import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
-import { isRaceRequirement, RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
+import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
 import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement";
 import { Profession } from "../../Models/Wiki/Profession";
 import { Race } from "../../Models/Wiki/Race";
@@ -123,17 +123,18 @@ const isSexValid =
 const isRaceValid =
   (current_race_id: string) =>
   (req: Record<RaceRequirement>): boolean => {
-    const value = RaceRequirement.AL.value (req)
+    const value = RaceRequirement.A.value (req)
+    const active = RaceRequirement.A.active (req)
 
     if (isList (value)) {
       return any (pipe (
                          prefixId (IdPrefixes.RACES),
                          equals (current_race_id)
                        ))
-                 (value)
+                 (value) === active
     }
 
-    return prefixId (IdPrefixes.RACES) (value) === current_race_id
+    return prefixId (IdPrefixes.RACES) (value) === current_race_id === active
   }
 
 const isCultureValid =
@@ -368,7 +369,7 @@ export const validateObject =
       ? isRCPValid (wiki) (hero) (sourceId)
       : isSexRequirement (req)
       ? isSexValid (sex (hero)) (req)
-      : isRaceRequirement (req)
+      : RaceRequirement.is (req)
       ? or (fmapF (race (hero)) (flip (isRaceValid) (req)))
       : isCultureRequirement (req)
       ? or (fmapF (culture (hero)) (flip (isCultureValid) (req)))
@@ -472,7 +473,7 @@ export const validateProfession =
     all<ProfessionDependency> (req =>
                                      isSexRequirement (req)
                                      ? isSexValid (current_sex) (req)
-                                     : isRaceRequirement (req)
+                                     : RaceRequirement.is (req)
                                      ? isRaceValid (current_race_id) (req)
                                      : isCultureRequirement (req)
                                      ? isCultureValid (current_culture_id) (req)

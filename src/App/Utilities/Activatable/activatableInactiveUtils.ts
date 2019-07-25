@@ -9,8 +9,9 @@
 
 import { notP } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
-import { ident, thrush } from "../../../Data/Function";
+import { flip, ident, thrush } from "../../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
+import * as IntMap from "../../../Data/IntMap";
 import { over, set } from "../../../Data/Lens";
 import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, subscript } from "../../../Data/List";
 import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or } from "../../../Data/Maybe";
@@ -146,10 +147,8 @@ const incMapVal = alter (pipe (maybe (1) (inc), Just))
 
 const addChantToCounter =
   (chant: Record<LiturgicalChant>) =>
-    pipe (
-      foldr<number, OrderedMap<number, number>> (incMapVal),
-      thrush (aspects (chant))
-    )
+    flip (foldr<number, IntMap.IntMap<number>> (flip (IntMap.insertWith (add)) (1)))
+         (aspects (chant))
 
 const addSpellToCounter = pipe (property, incMapVal)
 
@@ -189,8 +188,9 @@ const getAspectsWith3Gte10 =
       elems,
       filterSkillsGte10,
       mapByIdKeyMap (WA.liturgicalChants (wiki)),
-      foldr (addChantToCounter) (OrderedMap.empty),
-      foldCounter
+      foldr (addChantToCounter) (IntMap.empty),
+      IntMap.foldrWithKey<number, List<number>> (k => x => x >= 3 ? consF (k) : ident)
+                                                (List.empty)
     )
 
 const is7or8 = elemF (List (7, 8))

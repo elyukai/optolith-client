@@ -23,7 +23,7 @@ import { Cantrip } from "../../Models/Wiki/Cantrip";
 import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { ProfessionRequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { isRaceRequirement, RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
+import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
 import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement";
 import { CantripsSelection } from "../../Models/Wiki/professionSelections/CantripsSelection";
 import { CombatTechniquesSelection } from "../../Models/Wiki/professionSelections/CombatTechniquesSelection";
@@ -137,7 +137,7 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
     getLiturgicalChants (l10n) (blessings) (liturgicalChants) (x)
 
   const raceRequirement =
-     pipe_ (x, PCA_.dependencies, find (isRaceRequirement))
+     pipe_ (x, PCA_.dependencies, find (RaceRequirement.is))
 
   const sexRequirement =
      pipe_ (x, PCA_.dependencies, find (isSexRequirement))

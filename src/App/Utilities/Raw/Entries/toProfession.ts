@@ -11,7 +11,6 @@ import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
 import { ProfessionRequireIncreasable } from "../../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { RaceRequirement } from "../../../Models/Wiki/prerequisites/RaceRequirement";
 import { SexRequirement } from "../../../Models/Wiki/prerequisites/SexRequirement";
 import { Profession } from "../../../Models/Wiki/Profession";
 import { CantripsSelection } from "../../../Models/Wiki/professionSelections/CantripsSelection";
@@ -38,7 +37,7 @@ import { lookupKeyValid, mapMNamedPred, mapTotalPred, TableType } from "../valid
 import { isRawProfessionRequiringActivatable } from "./Prerequisites/RawActivatableRequirement";
 import { isRawCultureRequirement } from "./Prerequisites/RawCultureRequirement";
 import { isRawProfessionRequiringIncreasable } from "./Prerequisites/RawIncreasableRequirement";
-import { isRawRaceRequirement } from "./Prerequisites/RawRaceRequirement";
+import { isRawRaceRequirement, toRaceRequirement } from "./Prerequisites/RawRaceRequirement";
 import { isRawSexRequirement } from "./Prerequisites/RawSexRequirement";
 import { isRawCantripsSelection } from "./ProfessionSelections/RawCantripsSelection";
 import { isRawCombatTechniquesSelection } from "./ProfessionSelections/RawCombatTechniquesSelection";
@@ -68,11 +67,8 @@ export const stringToDependencies =
                 id: Nothing,
                 value: obj .value,
               }))
-            :  isRawRaceRequirement (obj)
-            ? Just (RaceRequirement ({
-                id: Nothing,
-                value: Array.isArray (obj .value) ? fromArray (obj .value) : obj .value,
-              }))
+            : isRawRaceRequirement (obj)
+            ? Just (toRaceRequirement (obj))
             : isRawCultureRequirement (obj)
             ? Just (CultureRequirement ({
                 id: Nothing,

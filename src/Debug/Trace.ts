@@ -37,8 +37,7 @@ export const traceShowId = <A> (x: A) => (console.log (showP (x)), x)
  * A combination of `traceShow` and `traceShowId`. Prints both inputs to the
  * console and returns the second parameter.
  */
-export const traceShowBoth =
-  <A> (a: A) => pipe (traceShow (a), traceShowId)
+export const traceShowBoth = <A> (a: A) => pipe (traceShow (a), traceShowId)
 
 /**
  * `traceShowIdWhen :: Show a => Bool -> a -> a`
@@ -48,6 +47,8 @@ export const traceShowBoth =
  */
 export const traceShowIdWhen =
   (print: boolean) => <A> (x: A) => print ? (console.log (showP (x)), x) : x
+
+export const traceIdWith = <A> (f: (x: A) => string) => (x: A): A => (console.log (f (x)), x)
 
 /**
  * `traceWithN :: Show b => String -> (a -> b) -> a -> a`

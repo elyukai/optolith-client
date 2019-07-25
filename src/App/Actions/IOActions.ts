@@ -12,7 +12,7 @@ import { cnst, flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { List, notNull } from "../../Data/List";
-import { altF_, alt_, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
+import { alt_, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
 import { any, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap";
 import { differenceF, map } from "../../Data/OrderedSet";
 import { Record, StringKeyObject, toObject } from "../../Data/Record";
@@ -318,9 +318,8 @@ export const requestHeroSave =
 
     const mhero =
       pipe_ (
-        mcurrent_id,
-        altF_ (() => getCurrentHeroId (state)),
-        bindF (lookupF (heroes)),
+        current_id,
+        lookupF (heroes),
         fmap (pipe (heroReducer.A_.present, convertHeroForSave (users)))
       )
 

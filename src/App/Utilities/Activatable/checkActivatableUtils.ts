@@ -9,7 +9,7 @@ import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
 import { getFirstLevelPrerequisites } from "../Prerequisites/flattenPrerequisites";
 
 const { id, active } = RequireActivatable.AL
-const { prerequisites } = Advantage.AL
+const AAL = Advantage.AL
 
 const getMagicalOrBlessedFilter =
   (advantageId: "ADV_12" | "ADV_50") =>
@@ -25,10 +25,10 @@ const getMagicalOrBlessedFilter =
  */
 export const isBlessedOrMagical =
   (obj: Activatable) => {
-    const firstTier = getFirstLevelPrerequisites (prerequisites (obj))
+    const firstTier = getFirstLevelPrerequisites (AAL.prerequisites (obj))
 
-    const isBlessed = any (getMagicalOrBlessedFilter ("ADV_12")) (firstTier)
-    const isMagical = any (getMagicalOrBlessedFilter ("ADV_50")) (firstTier)
+    const isBlessed = AAL.gr (obj) === 3 || any (getMagicalOrBlessedFilter ("ADV_12")) (firstTier)
+    const isMagical = AAL.gr (obj) === 2 || any (getMagicalOrBlessedFilter ("ADV_50")) (firstTier)
 
     return Pair (isBlessed, isMagical)
   }

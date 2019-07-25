@@ -8,9 +8,8 @@ import { on } from "./Function";
 import { Internals } from "./Internals";
 import { consF, List } from "./List";
 import { show } from "./Show";
-import { curry } from "./Tuple";
+import { curry, Pair } from "./Tuple";
 
-import Pair = Internals.Pair
 import Some = Internals.Some
 import Maybe = Internals.Maybe
 import Record = Internals.Record
@@ -131,8 +130,7 @@ export const equals =
 
     if (Internals.isMap (x1)) {
       if (Internals.isMap (x2)) {
-        return on (equals) (size) (x1) (x2)
-        && on (equals) (assocs) (x1) (x2)
+        return on (equals) (size) (x1) (x2) && on (equals) (assocs) (x1) (x2)
       }
 
       return false
@@ -180,7 +178,7 @@ export const equals =
  *
  * Right-associative fold of a structure.
  */
-export const foldrWithKey =
+const foldrWithKey =
   <K, A, B>
   (f: (key: K) => (current: A) => (acc: B) => B) =>
   (init: B) =>
@@ -194,16 +192,26 @@ export const foldrWithKey =
  *
  * The number of elements in the map.
  */
-export const size = (mp: Map<any, any>) => isTip (mp) ? 0 : mp .size
+const size = (mp: Map<any, any>) => isTip (mp) ? 0 : mp .size
 
 /**
  * `assocs :: IntMap a -> [(Key, a)]`
  *
  * Return all key/value pairs in the map.
  */
-export const assocs =
+const assocs =
   <K, A> (mp: Map<K, A>): List<Pair<K, A>> =>
     foldrWithKey<K, A, List<Pair<K, A>>> (curry (consF)) (List ()) (mp)
+
+// const equalsMap = (mp1: Map<any, any>) => (mp2: Map<any, any>): boolean =>
+//   isTip (mp1) === isTip (mp2)
+//   && (
+//     isTip (mp1)
+//     || equals (mp1.key) ((mp2 as Bin<any, any>) .key)
+//     && equals (mp1 .value) ((mp2 as Bin<any, any>) .value)
+//     && equalsMap (mp1 .left) ((mp2 as Bin<any, any>) .left)
+//     && equalsMap (mp1 .right) ((mp2 as Bin<any, any>) .right)
+//   )
 
 
 export type equals<A> = (x1: A) => (x2: A) => boolean
