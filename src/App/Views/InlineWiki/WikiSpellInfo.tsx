@@ -122,6 +122,71 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
+    case 7:
+      return (
+        <WikiBoxTemplate className="spell" title={name}>
+          <WikiSkillCheck {...props} acc={SpA} />
+          <WikiEffect {...props} acc={SpA} />
+          <WikiCastingTime {...props} acc={SpA} />
+          <WikiCost {...props} acc={SpA} />
+          <WikiSpellProperty {...props} acc={SpA} />
+          <WikiSpellTraditions {...props} acc={SpA} />
+          <WikiImprovementCost {...props} acc={SpA} />
+          <WikiSource {...props} acc={SpA} />
+        </WikiBoxTemplate>
+      )
+    case 8:
+      return (
+        <WikiBoxTemplate className="spell" title={name}>
+          <WikiSkillCheck {...props} acc={SpA} />
+          <WikiEffect {...props} acc={SpA} />
+          <WikiCastingTime {...props} acc={SpA} />
+          <WikiCost {...props} acc={SpA} />
+          <WikiSpellProperty {...props} acc={SpA} />
+          <WikiSpellTraditions {...props} acc={SpA} />
+          <WikiImprovementCost {...props} acc={SpA} />
+          <WikiSource {...props} acc={SpA} />
+        </WikiBoxTemplate>
+        )
+    case 9:
+      return (
+        <WikiBoxTemplate className="spell" title={name}>
+          <WikiSkillCheck {...props} acc={SpA} />
+          <WikiEffect {...props} acc={SpA} />
+          <WikiCastingTime {...props} acc={SpA} />
+          <WikiCost {...props} acc={SpA} />
+          <WikiSpellProperty {...props} acc={SpA} />
+          <WikiSpellTraditions {...props} acc={SpA} />
+          <WikiImprovementCost {...props} acc={SpA} />
+          <WikiSource {...props} acc={SpA} />
+        </WikiBoxTemplate>
+      )
+    case 10:
+      return (
+        <WikiBoxTemplate className="spell" title={name}>
+          <WikiSkillCheck {...props} acc={SpA} />
+          <WikiEffect {...props} acc={SpA} />
+          <WikiCastingTime {...props} acc={SpA} />
+          <WikiCost {...props} acc={SpA} />
+          <WikiSpellProperty {...props} acc={SpA} />
+          <WikiSpellTraditions {...props} acc={SpA} />
+          <WikiImprovementCost {...props} acc={SpA} />
+          <WikiSource {...props} acc={SpA} />
+        </WikiBoxTemplate>
+      )
+    case 11:
+      return (
+        <WikiBoxTemplate className="spell" title={name}>
+          <WikiSkillCheck {...props} acc={SpA} />
+          <WikiEffect {...props} acc={SpA} />
+          <WikiCastingTime {...props} acc={SpA} />
+          <WikiCost {...props} acc={SpA} />
+          <WikiSpellProperty {...props} acc={SpA} />
+          <WikiSpellTraditions {...props} acc={SpA} />
+          <WikiImprovementCost {...props} acc={SpA} />
+          <WikiSource {...props} acc={SpA} />
+        </WikiBoxTemplate>
+      )
   }
 
   return null
