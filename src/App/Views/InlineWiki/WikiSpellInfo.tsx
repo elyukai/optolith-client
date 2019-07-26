@@ -154,6 +154,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSkillCheck {...props} acc={SpA} />
           <WikiEffect {...props} acc={SpA} />
           <WikiCastingTime {...props} acc={SpA} />
+          <WikiDuration {...props} acc={SpA} />
           <WikiCost {...props} acc={SpA} />
           <WikiSpellProperty {...props} acc={SpA} />
           <WikiSpellTraditions {...props} acc={SpA} />
