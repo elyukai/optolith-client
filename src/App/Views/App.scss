@@ -50,6 +50,43 @@ html, body, #bodywrapper, #body {
 	}
 }
 
+.loading-wrapper {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	@keyframes rotateLoading {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.loading {
+		width: 80px;
+		height: 80px;
+		border-radius: 50%;
+		border-width: 3px;
+		border-color: var(--accent-color) transparent;
+		border-style: solid;
+		animation-name: rotateLoading;
+		animation-timing-function: linear;
+		animation-duration: 2s;
+		animation-iteration-count: infinite;
+	}
+
+	.loading-text {
+		margin-top: 24px;
+		color: var(--accent-color);
+		font: 500 14px "Alegreya Sans";
+	}
+}
+
 section#content {
 	display: flex;
 	flex-direction: column;

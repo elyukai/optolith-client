@@ -14,11 +14,12 @@ import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
 import * as IntMap from "../../../Data/IntMap";
 import { over, set } from "../../../Data/Lens";
 import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, subscript } from "../../../Data/List";
-import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or } from "../../../Data/Maybe";
+import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
 import { add, dec, gt, gte, inc, multiply } from "../../../Data/Num";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { Record, RecordI } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
+import { traceShowId } from "../../../Debug/Trace";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -46,7 +47,7 @@ import { pipe, pipe_ } from "../pipe";
 import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
 import { filterByAvailability } from "../RulesUtils";
 import { sortRecordsByName } from "../sortBy";
-import { isNumber, isString, misStringM } from "../typeCheckUtils";
+import { isNumber, isString, misNumberM, misStringM } from "../typeCheckUtils";
 import { getMaxLevelForDecreaseEntry, getSermonsAndVisionsCount } from "./activatableActiveValidationUtils";
 import { isAdditionDisabled } from "./activatableInactiveValidationUtils";
 import { getModifierByActiveLevel } from "./activatableModifierUtils";
@@ -66,11 +67,12 @@ const { value } = ActivatableSkillDependent.AL
 
 const SOA = SelectOption.A
 const AppA = Application.A
+const AOA = ActiveObject.A
 const SpAL = Spell.AL
 const SA = Skill.A
 
 const { cost: select_costL, applications, name: nameL } = SelectOptionL
-const { sid, tier } = ActiveObject.AL
+const { sid } = ActiveObject.AL
 const IAL = InactiveActivatableL
 const { level: pact_level } = Pact.AL
 const { spentOnMagicalAdvantages, spentOnMagicalDisadvantages } = AdventurePointsCategories.AL
@@ -500,27 +502,27 @@ const modifySelectOptions =
                       WA.specialAbilities,
                       lookup ("SA_29"),
                       bindF (AAL.select),
+                      traceShowId,
                       fmap (current_select => {
                              const available_langs =
                                      // Pair: fst = sid, snd = current_level
-                               maybe (List<Pair<number, number>> ())
+                               traceShowId (maybe (List<Pair<number, number>> ())
                                      (pipe (
                                        active,
                                        foldr ((obj: Record<ActiveObject>) =>
                                                pipe (
-                                                      tier,
+                                                      AOA.tier,
                                                       bindF (current_level =>
-                                                              pipe (
-                                                                     sid,
-                                                                     bindF<string | number, number>
-                                                                       (ensure (is3or4)),
-                                                                     fmap (current_sid =>
-                                                                            consF (Pair (
-                                                                                    current_sid,
-                                                                                    current_level
-                                                                                  )))
-                                                                   )
-                                                                   (obj)),
+                                                              pipe_ (
+                                                                guard (is3or4 (current_level)),
+                                                                thenF (AOA.sid (obj)),
+                                                                misNumberM,
+                                                                fmap (current_sid =>
+                                                                       consF (Pair (
+                                                                               current_sid,
+                                                                               current_level
+                                                                             )))
+                                                              )),
                                                       fromMaybe (
                                                         ident as ident<List<Pair<number, number>>>
                                                       )
@@ -529,7 +531,7 @@ const modifySelectOptions =
                                              )
                                              (List ())
                                      ))
-                                     (pipe (HA.specialAbilities, lookup ("SA_29")) (hero))
+                                     (pipe (HA.specialAbilities, lookup ("SA_29")) (hero)))
 
                              return foldr ((e: Record<SelectOption>) => {
                                             const lang =
@@ -537,20 +539,10 @@ const modifySelectOptions =
                                                      fst (l) === SOA.id (e))
                                                    (available_langs)
 
-                                            const first_for_language =
-                                              fmap ((hero_entry: Record<ActivatableDependent>) =>
-                                                     pipe (
-                                                       active,
-                                                       List.all (pipe (
-                                                         sid,
-                                                         Maybe.elem<string | number>
-                                                           (AAL.id (hero_entry))
-                                                       ))
-                                                     )
-                                                     (hero_entry))
-                                                   (mhero_entry)
+                                            const not_active_not_required =
+                                              isNoRequiredOrActiveSelection (e)
 
-                                            if (isJust (lang) && or (first_for_language)) {
+                                            if (isJust (lang) && not_active_not_required) {
                                               const isMotherTongue =
                                                 snd (fromJust (lang)) === 4
 
