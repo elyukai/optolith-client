@@ -70,6 +70,8 @@ const loadDatabase =
       return res
     }
 
+console.log (join (user_data_path, "config.json"));
+
 const loadConfig = () =>
   pipe_ (
     join (user_data_path, "config.json"),

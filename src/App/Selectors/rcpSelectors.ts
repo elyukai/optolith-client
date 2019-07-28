@@ -508,9 +508,10 @@ const mapSpell = mapIncreaseSkillOrList (WA.spells) (SPA.name)
 const mapLiturgicalChant = mapIncreaseSkillOrList (WA.liturgicalChants) (LCA.name)
 
 const mapIncreaseSkillPrevious =
-  <a>
-  (wikiAcc: (w: WikiModelRecord) => OrderedMap<string, a>) =>
-  (nameAcc: (x: a) => string) =>
+  (base: number) =>
+  <A>
+  (wikiAcc: (w: WikiModelRecord) => OrderedMap<string, A>) =>
+  (nameAcc: (x: A) => string) =>
   (wiki: WikiModelRecord) =>
   (main_xs: List<Record<IncreaseSkill> | Record<IncreaseSkillList>>) =>
   (e: Record<IncreaseSkill>) =>
@@ -526,7 +527,10 @@ const mapIncreaseSkillPrevious =
               find (incsk => IncreaseSkill.is (incsk)
                                ? pipe_ (e, ISA.id, equals (ISA.id (incsk)))
                                : false),
-              fmap (IncreaseSkill.AL.value)
+              fmap (pipe (
+                IncreaseSkill.AL.value,
+                add (base)
+              ))
             )
 
           const value = ISA.value (e)
@@ -535,21 +539,22 @@ const mapIncreaseSkillPrevious =
             id: ISA.id (e),
             name,
             previous,
-            value: maybe (value) (add (value)) (previous),
+            value: maybe (value + base) (add (value)) (previous),
           })
         }
       ))
     )
 
 const mapIncreaseSkillListPrevious =
-  <a>
-  (wikiAcc: (w: WikiModelRecord) => OrderedMap<string, a>) =>
-  (nameAcc: (x: a) => string) =>
+  (base: number) =>
+  <A>
+  (wikiAcc: (w: WikiModelRecord) => OrderedMap<string, A>) =>
+  (nameAcc: (x: A) => string) =>
   (wiki: WikiModelRecord) =>
   (main_xs: List<Record<IncreaseSkill> | Record<IncreaseSkillList>>) =>
   (e: Record<IncreaseSkill> | Record<IncreaseSkillList>) =>
     IncreaseSkill.is (e)
-      ? mapIncreaseSkillPrevious (wikiAcc) (nameAcc) (wiki) (main_xs) (e)
+      ? mapIncreaseSkillPrevious (base) (wikiAcc) (nameAcc) (wiki) (main_xs) (e)
       : pipe_ (
           e,
           ISLA.id,
@@ -562,7 +567,10 @@ const mapIncreaseSkillListPrevious =
                   find (incsk => IncreaseSkill.is (incsk)
                                    ? false
                                    : pipe_ (e, ISLA.id, all (elemF (ISLA.id (incsk))))),
-                  fmap (IncreaseSkill.AL.value)
+                  fmap (pipe (
+                    IncreaseSkill.AL.value,
+                    add (base)
+                  ))
                 )
 
               const value = ISLA.value (e)
@@ -571,19 +579,19 @@ const mapIncreaseSkillListPrevious =
                 id: ISLA.id (e) as Cons<string>,
                 name,
                 previous,
-                value: maybe (value) (add (value)) (previous),
+                value: maybe (value + base) (add (value)) (previous),
               })
             }
           ))
         )
 
-const mapSkillPrevious = mapIncreaseSkillPrevious (WA.skills) (SA.name)
+const mapSkillPrevious = mapIncreaseSkillPrevious (0) (WA.skills) (SA.name)
 
-const mapCombatTechniquePrevious = mapIncreaseSkillPrevious (WA.combatTechniques) (CTA.name)
+const mapCombatTechniquePrevious = mapIncreaseSkillPrevious (6) (WA.combatTechniques) (CTA.name)
 
-const mapSpellPrevious = mapIncreaseSkillListPrevious (WA.spells) (SPA.name)
+const mapSpellPrevious = mapIncreaseSkillListPrevious (0) (WA.spells) (SPA.name)
 
-const mapLiturgicalChantPrevious = mapIncreaseSkillListPrevious (WA.liturgicalChants) (LCA.name)
+const mapLiturgicalChantPrevious = mapIncreaseSkillListPrevious (0) (WA.liturgicalChants) (LCA.name)
 
 const isCustomProfession = (e: Record<ProfessionCombined>) => ProfessionCombinedA_.id (e) === "P_0"
 

@@ -195,13 +195,13 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             subtitle={header_sub_name}
             >
             <WikiProperty l10n={l10n} title="aecost">
-              {SAA.aeCost (x)}
+              {renderMaybe (SAA.aeCost (x))}
             </WikiProperty>
             <WikiProperty l10n={l10n} title="protectivecircle">
-              {SAA.protectiveCircle (x)}
+              {renderMaybe (SAA.protectiveCircle (x))}
             </WikiProperty>
             <WikiProperty l10n={l10n} title="wardingcircle">
-              {SAA.wardingCircle (x)}
+              {renderMaybe (SAA.wardingCircle (x))}
             </WikiProperty>
             {cost_elem}
             {source_elem}
