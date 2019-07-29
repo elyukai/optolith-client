@@ -95,7 +95,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
-    case 5:
+    case 5: // Zaubermelodien
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -109,7 +109,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
-    case 6:
+    case 6: // Zaubertänze
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -122,12 +122,13 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
-    case 7:
+    case 7: // Herrschaftsrituale
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
           <WikiEffect {...props} acc={SpA} />
           <WikiCastingTime {...props} acc={SpA} />
+          <WikiDuration {...props} acc={SpA} />
           <WikiCost {...props} acc={SpA} />
           <WikiSpellProperty {...props} acc={SpA} />
           <WikiSpellTraditions {...props} acc={SpA} />
@@ -135,7 +136,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
-    case 8:
+    case 8: // Schelmenzauber
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -148,7 +149,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
         )
-    case 9:
+    case 9: // Animistenkräfte
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -162,26 +163,32 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
-    case 10:
+    case 10: // Geodenrituale
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
           <WikiEffect {...props} acc={SpA} />
           <WikiCastingTime {...props} acc={SpA} />
           <WikiCost {...props} acc={SpA} />
+          <WikiRange {...props} acc={SpA} />
+          <WikiDuration {...props} acc={SpA} />
+          <WikiTargetCategory {...props} acc={SpA} />
           <WikiSpellProperty {...props} acc={SpA} />
           <WikiSpellTraditions {...props} acc={SpA} />
           <WikiImprovementCost {...props} acc={SpA} />
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
-    case 11:
+    case 11: // Zibiljarituale
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
           <WikiEffect {...props} acc={SpA} />
           <WikiCastingTime {...props} acc={SpA} />
           <WikiCost {...props} acc={SpA} />
+          <WikiRange {...props} acc={SpA} />
+          <WikiDuration {...props} acc={SpA} />
+          <WikiTargetCategory {...props} acc={SpA} />
           <WikiSpellProperty {...props} acc={SpA} />
           <WikiSpellTraditions {...props} acc={SpA} />
           <WikiImprovementCost {...props} acc={SpA} />
