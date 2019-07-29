@@ -107,6 +107,15 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
       case 18:
       case 19:
       case 20:
+      case 35:
+      case 36:
+      case 37:
+      case 38:
+      case 39:
+      case 42:
+      case 43:
+      case 44:
+      case 45:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -141,7 +150,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             {maybeRNullF (bind (misNumberM (SAA.property (x)))
                                (pipe (dec, subscript (translate (l10n) ("propertylist")))))
                          (str => (
-                           <WikiProperty l10n={l10n} title="bindingcost">
+                           <WikiProperty l10n={l10n} title="property">
                              {str}
                            </WikiProperty>
                          ))}
