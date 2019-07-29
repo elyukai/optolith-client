@@ -264,7 +264,9 @@ export const getInactiveSpells = createMaybeSelector (
 
         const isUnfamiliar = isUnfamiliarSpell (trads_hero)
 
-        if (isLastTrad (prefixSA (679))) {
+        // Intuitive Magier/Animisten können nur max. 1 C-Zauber,
+        // keine D-Zauber und keine Rituale erlernen
+        if (isLastTrad (prefixSA (679)) || isLastTrad (prefixSA (1221))) {
           if (is_max || is_activation_disabled) {
             return List<Combined> ()
           }
