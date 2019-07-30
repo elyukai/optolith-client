@@ -2,16 +2,15 @@ import { equals } from "../../../../Data/Eq";
 import { ident } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
 import { set } from "../../../../Data/Lens";
-import { empty, flength, foldr, fromArray, List, map, notNull, splitOn } from "../../../../Data/List";
-import { altF_, any, bindF, ensure, fromJust, fromMaybe, isJust, Just, mapM, maybe, Maybe, Nothing, Some } from "../../../../Data/Maybe";
+import { append, empty, flength, foldr, fromArray, List, map, notNull, splitOn } from "../../../../Data/List";
+import { altF_, any, bindF, ensure, fromJust, fromMaybe, isJust, joinMaybeList, Just, mapM, maybe, Maybe, Nothing, Some } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { parseJSON } from "../../../../Data/String/JSON";
-import { traceShow } from "../../../../Debug/Trace";
+import { traceShowBoth } from "../../../../Debug/Trace";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
 import { ProfessionRequireIncreasable } from "../../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { RaceRequirement } from "../../../Models/Wiki/prerequisites/RaceRequirement";
 import { SexRequirement } from "../../../Models/Wiki/prerequisites/SexRequirement";
 import { Profession } from "../../../Models/Wiki/Profession";
 import { CantripsSelection } from "../../../Models/Wiki/professionSelections/CantripsSelection";
@@ -31,14 +30,14 @@ import { prefixCantrip, prefixCT, prefixId, prefixSA } from "../../IDUtils";
 import { toNatural } from "../../NumberUtils";
 import { pipe, pipe_ } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
-import { maybePrefix } from "../rawConversionUtils";
+import { maybePrefix, modifyNegIntNoBreak } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
 import { mensureMapBoolean, mensureMapListBindAfterOptional, mensureMapListOptional, mensureMapNatural, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamedPred, mapTotalPred, TableType } from "../validateValueUtils";
 import { isRawProfessionRequiringActivatable } from "./Prerequisites/RawActivatableRequirement";
 import { isRawCultureRequirement } from "./Prerequisites/RawCultureRequirement";
 import { isRawProfessionRequiringIncreasable } from "./Prerequisites/RawIncreasableRequirement";
-import { isRawRaceRequirement } from "./Prerequisites/RawRaceRequirement";
+import { isRawRaceRequirement, toRaceRequirement } from "./Prerequisites/RawRaceRequirement";
 import { isRawSexRequirement } from "./Prerequisites/RawSexRequirement";
 import { isRawCantripsSelection } from "./ProfessionSelections/RawCantripsSelection";
 import { isRawCombatTechniquesSelection } from "./ProfessionSelections/RawCombatTechniquesSelection";
@@ -68,11 +67,8 @@ export const stringToDependencies =
                 id: Nothing,
                 value: obj .value,
               }))
-            :  isRawRaceRequirement (obj)
-            ? Just (RaceRequirement ({
-                id: Nothing,
-                value: Array.isArray (obj .value) ? fromArray (obj .value) : obj .value,
-              }))
+            : isRawRaceRequirement (obj)
+            ? Just (toRaceRequirement (obj))
             : isRawCultureRequirement (obj)
             ? Just (CultureRequirement ({
                 id: Nothing,
@@ -190,7 +186,7 @@ const stringToSelections =
                   id: Nothing,
                   value: obj .value,
                 }))
-              : (traceShow ("Invalid selection: ") (obj), Nothing)
+              : (traceShowBoth ("Invalid selection: ") (obj), Nothing)
           }
 
           return Nothing
@@ -478,11 +474,14 @@ export const toProfession =
           esrc,
         })
         (rs => {
+          const prerequisites = append (joinMaybeList (rs.eprerequisites))
+                                       (joinMaybeList (rs.eprerequisitesL10n))
+
           const is_guild_mage_tradition_add =
-            any (List.any ((x: ProfessionPrerequisite) =>
+            List.any ((x: ProfessionPrerequisite) =>
                             ProfessionRequireActivatable.is (x)
-                            && ProfessionRequireActivatable.A.id (x) === prefixSA (70)))
-                (rs.eprerequisites)
+                            && ProfessionRequireActivatable.A.id (x) === prefixSA (70))
+                     (prerequisites)
             && any (List.any (pipe (ProfessionRequireActivatable.A.id, equals (prefixSA (70)))))
                    (rs.especialAbilities)
 
@@ -508,11 +507,10 @@ export const toProfession =
             dependencies:
               fromMaybe<Profession["dependencies"]> (empty) (rs.edependencies),
 
-            prerequisites:
-              fromMaybe<Profession["prerequisites"]> (empty) (rs.eprerequisites),
+            prerequisites,
 
-            prerequisitesStart,
-            prerequisitesEnd,
+            prerequisitesStart: fmap (modifyNegIntNoBreak) (prerequisitesStart),
+            prerequisitesEnd: fmap (modifyNegIntNoBreak) (prerequisitesEnd),
 
             selections:
               is_guild_mage_tradition_add
@@ -555,22 +553,22 @@ export const toProfession =
             suggestedAdvantages:
               maybePrefix (IdPrefixes.ADVANTAGES) (rs.esuggestedAdvantages),
 
-            suggestedAdvantagesText,
+            suggestedAdvantagesText: fmap (modifyNegIntNoBreak) (suggestedAdvantagesText),
 
             suggestedDisadvantages:
               maybePrefix (IdPrefixes.DISADVANTAGES) (rs.esuggestedDisadvantages),
 
-            suggestedDisadvantagesText,
+            suggestedDisadvantagesText: fmap (modifyNegIntNoBreak) (suggestedDisadvantagesText),
 
             unsuitableAdvantages:
               maybePrefix (IdPrefixes.ADVANTAGES) (rs.eunsuitableAdvantages),
 
-            unsuitableAdvantagesText,
+            unsuitableAdvantagesText: fmap (modifyNegIntNoBreak) (unsuitableAdvantagesText),
 
             unsuitableDisadvantages:
               maybePrefix (IdPrefixes.DISADVANTAGES) (rs.eunsuitableDisadvantages),
 
-            unsuitableDisadvantagesText,
+            unsuitableDisadvantagesText: fmap (modifyNegIntNoBreak) (unsuitableDisadvantagesText),
 
             isVariantRequired: rs.eisVariantRequired,
 

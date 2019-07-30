@@ -4,7 +4,8 @@ import { flip, ident, thrush } from "../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { any, append, consF, elem, filter, flength, foldr, List, map, notElem, notNull, partition } from "../../Data/List";
-import { all, and, bind, bindF, ensure, fromMaybe_, guard, isJust, liftM2, liftM4, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
+import { all, and, bind, bindF, ensure, fromMaybe_, guard, isJust, liftM2, liftM3, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
+import { inc, lt, lte } from "../../Data/Num";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { insert, member, OrderedSet } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
@@ -27,7 +28,6 @@ import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { getNumericBlessedTraditionIdByInstanceId, prefixAdv, prefixSA } from "../Utilities/IDUtils";
 import { getAspectsOfTradition, isLiturgicalChantDecreasable, isLiturgicalChantIncreasable, isOwnTradition } from "../Utilities/Increasable/liturgicalChantUtils";
-import { inc, lt, lte } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
@@ -312,11 +312,12 @@ export const getAdditionalValidLiturgicalChants = createMaybeSelector (
 )
 
 export const getAvailableInactiveLiturgicalChants = createMaybeSelector (
+  getRuleBooksEnabled,
   getAdditionalValidLiturgicalChants,
   getBlessedTraditionFromWikiState,
   getInactiveLiturgicalChants,
-  getRuleBooksEnabled,
-  uncurryN4 (liftM4 (add_valid_chants =>
+  uncurryN4 (availability =>
+             liftM3 (add_valid_chants =>
                      current_trad =>
                        pipe (
                          filter (e => {
@@ -326,7 +327,7 @@ export const getAvailableInactiveLiturgicalChants = createMaybeSelector (
                            return is_own_trad || elem (pipe_ (e, LCWRA.wikiEntry, LCA.id))
                                                       (add_valid_chants)
                          }),
-                         flip (filterByAvailability (pipe (LCWRA.wikiEntry, LCA.src)))
+                         filterByAvailability (pipe (LCWRA.wikiEntry, LCA.src)) (availability)
                        )))
 )
 

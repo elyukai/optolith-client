@@ -8,10 +8,12 @@
  * @since 1.1.0
  */
 
-import { thrush } from "../../../Data/Function";
+import { equals } from "../../../Data/Eq";
+import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { appendStr, elem, find, flength, groupByKey, intercalate, List, map, replaceStr, subscript, subscriptF } from "../../../Data/List";
-import { altF_, any, bind, bindF, elemF, ensure, fromMaybe, isJust, Just, liftM2, listToMaybe, maybe, Maybe, Nothing } from "../../../Data/Maybe";
+import { altF_, any, bind, bindF, elemF, ensure, fromMaybe, isJust, Just, liftM2, listToMaybe, maybe, Maybe, Nothing, thenF } from "../../../Data/Maybe";
+import { dec } from "../../../Data/Num";
 import { elems, lookup, lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
@@ -26,20 +28,21 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, ActivatableSkillEntry, EntryWithCategory, SID, SkillishEntry } from "../../Models/Wiki/wikiTypeHelpers";
 import { translate } from "../I18n";
 import { ifElse } from "../ifElse";
-import { dec } from "../mathUtils";
 import { toRoman } from "../NumberUtils";
-import { pipe } from "../pipe";
+import { pipe, pipe_ } from "../pipe";
 import { sortStrings } from "../sortBy";
 import { isNumber, isString, misNumberM, misStringM } from "../typeCheckUtils";
 import { getWikiEntry, isActivatableWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
 import { findSelectOption, getSelectOptionName } from "./selectionUtils";
 
-const { skills, spells, liturgicalChants, specialAbilities } = WikiModel.AL
-const { id, sid, sid2, tier } = ActiveObjectWithId.AL
+const WA = WikiModel.A
+const AOWIA = ActiveObjectWithId.A
 const AAA_ = ActiveActivatableA_
-const { input, select } = Advantage.AL
-const { applications, name } = Skill.AL
-const { target, specializations } = SelectOption.AL
+const AAL = Advantage.AL
+const SA = Skill.A
+const SAL = Skill.AL
+const SOA = SelectOption.A
+const AA = Application.A
 
 /**
  * Returns the name of the given object. If the object is a string, it returns
@@ -79,7 +82,7 @@ const getEntrySpecificNameAddition =
   (wiki: WikiModelRecord) =>
   (wiki_entry: Activatable) =>
   (hero_entry: Record<ActiveObjectWithId>): Maybe<string> => {
-    switch (id (hero_entry)) {
+    switch (AOWIA.id (hero_entry)) {
       // Entry with Skill selection
       case "ADV_4":
       case "ADV_47":
@@ -94,29 +97,29 @@ const getEntrySpecificNameAddition =
       case "SA_533":
       case "SA_569":
         return pipe (
-                      sid,
+                      AOWIA.sid,
                       misStringM,
                       bindF (getWikiEntry (wiki)),
                       bindF<EntryWithCategory, SkillishEntry> (ensure (isSkillishWikiEntry)),
-                      fmap (name)
+                      fmap (SAL.name)
                     )
                     (hero_entry)
 
       // Hatred of
       case "ADV_68":
         return pipe (
-                      sid,
+                      AOWIA.sid,
                       findSelectOption (wiki_entry),
                       liftM2 ((type: string | number) => (frequency: Record<SelectOption>) =>
-                               `${type} (${name (frequency)})`)
-                             (sid2 (hero_entry))
+                               `${type} (${SOA.name (frequency)})`)
+                             (AOWIA.sid2 (hero_entry))
                     )
                     (hero_entry)
 
       // Personality Flaw
       case "DISADV_33":
         return pipe (
-                      sid,
+                      AOWIA.sid,
                       getSelectOptionName (wiki_entry),
                       fmap (option_name => maybe (option_name)
 
@@ -124,7 +127,7 @@ const getEntrySpecificNameAddition =
                                                  ((specialInput: string | number) =>
                                                    `${option_name}: ${specialInput}`)
                                                  (pipe (
-                                                         sid,
+                                                         AOWIA.sid,
 
                                                          // Check if the select option allows
                                                          // additional input
@@ -134,7 +137,7 @@ const getEntrySpecificNameAddition =
                                                                && elem (x) (List (7, 8))
                                                            )
                                                          ),
-                                                         bindF (() => sid2 (hero_entry))
+                                                         bindF (() => AOWIA.sid2 (hero_entry))
                                                        )
                                                        (hero_entry)))
                     )
@@ -143,45 +146,57 @@ const getEntrySpecificNameAddition =
       // Skill Specialization
       case "SA_9":
         return pipe (
-                      sid,
+                      AOWIA.sid,
                       misStringM,
-                      bindF (lookupF (skills (wiki))),
+                      bindF (lookupF (WA.skills (wiki))),
                       bindF (skill => pipe (
-                                        sid2,
+                                        AOWIA.sid2,
 
                                         // If input string use input
                                         misStringM,
 
                                         // Otherwise lookup application name
                                         altF_ (() => pipe (
-                                                            applications,
+                                                            SA.applications,
                                                             find<Record<Application>> (pipe (
                                                               Application.AL.id,
-                                                              elemF (sid2 (hero_entry))
+                                                              elemF (AOWIA.sid2 (hero_entry))
                                                             )),
-                                                            fmap (name)
+                                                            fmap (AA.name)
                                                           )
                                                           (skill)),
 
                                         // Merge skill name and application name
-                                        fmap (appl => `${name (skill)}: ${appl}`)
+                                        fmap (appl => `${SA.name (skill)}: ${appl}`)
                                       )
                                       (hero_entry))
                     )
                     (hero_entry)
 
+      // Exorzist
+      case "SA_240":
+        return pipe_ (
+          hero_entry,
+          AOWIA.tier,
+          Maybe.product,
+          ensure (equals (1)),
+          thenF (AOWIA.sid (hero_entry)),
+          findSelectOption (wiki_entry),
+          fmap (SOA.name)
+        )
+
       // Spell/Liturgical Chant Extension
       case "SA_414":
       case "SA_663":
         return pipe (
-                      sid,
+                      AOWIA.sid,
                       findSelectOption (wiki_entry),
                       bindF (ext => pipe (
                                            bindF ((target_id: string) => {
                                              const acc =
-                                               id (hero_entry) === "SA_414"
-                                                 ? spells
-                                                 : liturgicalChants
+                                               AOWIA.id (hero_entry) === "SA_414"
+                                                 ? WA.spells
+                                                 : WA.liturgicalChants
 
                                              return lookupF<string, ActivatableSkillEntry>
                                                (acc (wiki))
@@ -189,10 +204,10 @@ const getEntrySpecificNameAddition =
                                            }),
                                            fmap (
                                              target_entry =>
-                                               `${name (target_entry)}: ${name (ext)}`
+                                               `${SAL.name (target_entry)}: ${SOA.name (ext)}`
                                            )
                                          )
-                                         (target (ext))
+                                         (SOA.target (ext))
                       )
                     )
                     (hero_entry)
@@ -202,7 +217,7 @@ const getEntrySpecificNameAddition =
       // Tradition (Zaubertänzer)
       case "SA_678": {
         return pipe (
-                      sid2,
+                      AOWIA.sid2,
                       misNumberM,
                       bindF (pipe (dec, subscript (translate (l10n) ("musictraditions"))))
                     )
@@ -212,48 +227,48 @@ const getEntrySpecificNameAddition =
       // Tradition (Meistertalentierte)
       case "SA_680":
         return pipe (
-                      sid,
+                      AOWIA.sid,
                       misStringM,
-                      bindF (lookupF (skills (wiki))),
-                      fmap (skill => `: ${name (skill)}`)
+                      bindF (lookupF (WA.skills (wiki))),
+                      fmap (SA.name)
                     )
                     (hero_entry)
 
       // Language Specialization
       case "SA_699":
         return pipe (
-                      specialAbilities,
+                      WA.specialAbilities,
                       lookup ("SA_29"),
                       bindF (pipe (
                         findSelectOption,
-                        thrush (sid (hero_entry))
+                        thrush (AOWIA.sid (hero_entry))
                       )),
                       bindF (lang => pipe (
-                                            sid2,
+                                            AOWIA.sid2,
                                             bindF (
                                               ifElse<string | number, string>
                                                 (isString)
                                                 <Maybe<string>>
                                                 (Just)
-                                                (spec_id => bind (specializations (lang))
+                                                (spec_id => bind (SOA.specializations (lang))
                                                                  (subscriptF (spec_id - 1)))
                                             ),
-                                            fmap (spec => `${name (lang)}: ${spec}`)
+                                            fmap (spec => `${SOA.name (lang)}: ${spec}`)
                                           )
                                           (hero_entry))
                     )
                     (wiki)
 
       default: {
-        const current_sid = sid (hero_entry)
+        const current_sid = AOWIA.sid (hero_entry)
 
         // Text input
-        if (isJust (input (wiki_entry)) && any (isString) (current_sid)) {
+        if (isJust (AAL.input (wiki_entry)) && any (isString) (current_sid)) {
           return current_sid
         }
 
         // Plain select option
-        if (isJust (select (wiki_entry))) {
+        if (isJust (AAL.select (wiki_entry))) {
           return getSelectOptionName (wiki_entry) (current_sid)
         }
 
@@ -273,13 +288,13 @@ const getEntrySpecificNameReplacements =
   (wiki_entry: Activatable) =>
   (hero_entry: Record<ActiveObjectWithId>) =>
   (mname_add: Maybe<string>): string => {
-    const def = fromMaybe (name (wiki_entry))
+    const def = fromMaybe (AAL.name (wiki_entry))
 
-    const maybeMap = (f: (x: string) => string) => maybe (name (wiki_entry))
+    const maybeMap = (f: (x: string) => string) => maybe (AAL.name (wiki_entry))
                                                          (f)
                                                          (mname_add)
 
-    switch (id (wiki_entry)) {
+    switch (AAL.id (wiki_entry)) {
       // Immunity to Poison
       case "ADV_28":
       // Immunity to Disease
@@ -299,31 +314,29 @@ const getEntrySpecificNameReplacements =
       // Obligations
       case "DISADV_50":
         return def (liftM2 ((level: number) => (name_add: string) =>
-                             `${name (wiki_entry)} ${toRoman (level)} (${name_add})`)
-                           (tier (hero_entry))
+                             `${AAL.name (wiki_entry)} ${toRoman (level)} (${name_add})`)
+                           (AOWIA.tier (hero_entry))
                            (mname_add))
 
       // Gebieter des [Aspekts]
       case "SA_639":
-        return maybeMap (name_add => `${name (wiki_entry)} ${name_add}`)
+        return maybeMap (name_add => `${AAL.name (wiki_entry)} ${name_add}`)
 
       // Tradition (Zauberbarde)
       case "SA_677":
       // Tradition (Zaubertänzer)
-      case "SA_678": {
-        const part = getBracketedNameFromFullName (name (wiki_entry))
-
-        return maybeMap (
-          name_add => replaceStr (part)
-                                 (`${part}: ${name_add}`)
-                                 (name (wiki_entry))
-        )
+      case "SA_678":
+      // Tradition (Meistertalentierte)
+      case "SA_680": {
+        return maybeMap (flip (addSndinParenthesis) (AAL.name (wiki_entry)))
       }
 
       default:
-        return maybeMap (name_add => `${name (wiki_entry)} (${name_add})`)
+        return maybeMap (name_add => `${AAL.name (wiki_entry)} (${name_add})`)
     }
   }
+
+const addSndinParenthesis = (snd: string) => replaceStr (")") (`: ${snd})`)
 
 /**
  * Returns name, splitted and combined, of advantage/disadvantage/special
@@ -337,7 +350,7 @@ export const getName =
   (wiki: WikiModelRecord) =>
   (hero_entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableCombinedName>> =>
     pipe (
-           id,
+           AOWIA.id,
            getWikiEntry (wiki),
            bindF<EntryWithCategory, Activatable> (ensure (isActivatableWikiEntry)),
            fmap ((wiki_entry: Activatable) => {
@@ -353,7 +366,7 @@ export const getName =
 
              return ActivatableCombinedName ({
                name: fullName,
-               baseName: name (wiki_entry),
+               baseName: AAL.name (wiki_entry),
                addName: maddName,
              })
            })
@@ -392,7 +405,7 @@ export const compressList =
 
                                             return selectOptionPart + levelPart
                                           }),
-                                          sortStrings (id (l10n)),
+                                          sortStrings (l10n),
                                           intercalate (", "),
                                           x => ` (${x})`,
                                           x => maybe ("")
@@ -402,7 +415,7 @@ export const compressList =
                                         )
                                         (xs_group))
                   ),
-                  sortStrings (id (l10n)),
+                  sortStrings (l10n),
                   intercalate (", ")
                 )
                 (grouped_xs)

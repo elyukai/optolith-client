@@ -12,10 +12,10 @@ import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { pipe } from "../pipe";
 
-const { select } = Advantage.AL
-const { id: getId, name, cost } = SelectOption.AL
+const AAL = Advantage.AL
+const SOA = SelectOption.A
 const ADA = ActivatableDependent.A
-const { sid, sid2 } = ActiveObject.AL
+const AOA = ActiveObject.A
 
 /**
  * Get a selection option with the given id from given wiki entry. Returns
@@ -25,29 +25,30 @@ const { sid, sid2 } = ActiveObject.AL
 export const findSelectOption =
   (obj: Activatable) =>
   (id: Maybe<string | number>): Maybe<Record<SelectOption>> =>
-    bind<List<Record<SelectOption>>>
-      (select (obj))
-      (find<Record<SelectOption>> (pipe (getId, elemF (id))))
+    bind (id) (_id => bind (AAL.select (obj))
+                           (find (pipe (SOA.id, elemF (Just (_id))))))
 
 /**
  * Get a selection option's name with the given id from given wiki entry.
  * Returns `Nothing` if not found.
  * @param obj The entry.
  */
-export const getSelectOptionName = (obj: Activatable) => pipe (findSelectOption (obj), fmap (name))
+export const getSelectOptionName =
+  (obj: Activatable) => pipe (findSelectOption (obj), fmap (SOA.name))
 
 /**
  * Get a selection option's cost with the given id from given wiki entry.
  * Returns `Nothing` if not found.
  * @param obj The entry.
  */
-export const getSelectOptionCost = (obj: Activatable) => pipe (findSelectOption (obj), bindF (cost))
+export const getSelectOptionCost =
+  (obj: Activatable) => pipe (findSelectOption (obj), bindF (SOA.cost))
 
 /**
  * Get all `ActiveObject.sid` values from the given instance.
  * @param obj The entry.
  */
-export const getActiveSelections = pipe (ADA.active, mapMaybe (sid))
+export const getActiveSelections = pipe (ADA.active, mapMaybe (AOA.sid))
 
 /**
  * Get all `ActiveObject.sid` values from the given instance.
@@ -77,8 +78,8 @@ export const getActiveSecondarySelections =
                                      ))
                                      (id)
                                      (map))
-                                   (sid (selection))
-                                   (sid2 (selection))))
+                                   (AOA.sid (selection))
+                                   (AOA.sid2 (selection))))
                      (OrderedMap.empty)
              ))
 

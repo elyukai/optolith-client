@@ -1,13 +1,10 @@
-import { equals } from "../../../../Data/Eq";
 import { List } from "../../../../Data/List";
-import { fromDefault, Record } from "../../../../Data/Record";
-import { pipe } from "../../../Utilities/pipe";
-import { AllRequirementObjects } from "../wikiTypeHelpers";
-import { RequireActivatable } from "./ActivatableRequirement";
+import { fromDefault } from "../../../../Data/Record";
 
 export interface RaceRequirement {
   id: "RACE"
   value: number | List<number>
+  active: boolean
 }
 
 export const RaceRequirement =
@@ -15,8 +12,5 @@ export const RaceRequirement =
               <RaceRequirement> ({
                 id: "RACE",
                 value: 0,
+                active: true,
               })
-
-export const isRaceRequirement =
-  pipe (RequireActivatable.AL.id, equals<string | List<string>> ("RACE")) as unknown as
-    (req: AllRequirementObjects) => req is Record<RaceRequirement>

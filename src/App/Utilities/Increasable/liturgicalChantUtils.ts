@@ -2,6 +2,7 @@ import { cnst, ident, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { all, any, consF, foldr, List, minimum, notElem, notElemF } from "../../../Data/List";
 import { and, bindF, elem, ensure, fromJust, isJust, Just, Maybe, maybe, sum } from "../../../Data/Maybe";
+import { gte, inc, min } from "../../../Data/Num";
 import { alter, empty, filter, findWithDefault, foldl, fromArray, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -17,7 +18,6 @@ import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
 import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies";
 import { getNumericBlessedTraditionIdByInstanceId } from "../IDUtils";
 import { ifElse } from "../ifElse";
-import { gte, inc, min } from "../mathUtils";
 import { pipe } from "../pipe";
 import { isNumber } from "../typeCheckUtils";
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
@@ -239,6 +239,10 @@ const traditionsByAspect = fromArray ([
   [33, 18],
   [34, 19],
   [35, 19],
+  [36, 20],
+  [37, 20],
+  [38, 21],
+  [39, 21],
 ])
 
 /**
@@ -272,6 +276,8 @@ const aspectsByTradition = fromArray<number, List<number>> ([
   [17, List (30, 31)],
   [18, List (32, 33)],
   [19, List (34, 35)],
+  [20, List (36, 37)],
+  [21, List (38, 39)],
 ])
 
 /**

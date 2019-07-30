@@ -2,6 +2,7 @@ import * as React from "react";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { elemF, intercalate, List, notElem, notNull, subscript } from "../../../Data/List";
 import { alt_, bind, bindF, ensure, fromMaybe, guard, imapMaybe, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNullF, then } from "../../../Data/Maybe";
+import { dec, gt } from "../../../Data/Num";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, Record } from "../../../Data/Record";
 import { fst, isTuple, snd } from "../../../Data/Tuple";
@@ -17,7 +18,6 @@ import { minus, ndash } from "../../Utilities/Chars";
 import { localizeNumber, localizeSize, localizeWeight, translate } from "../../Utilities/I18n";
 import { prefixCT } from "../../Utilities/IDUtils";
 import { convertPrimaryAttributeToArray } from "../../Utilities/ItemUtils";
-import { dec, gt } from "../../Utilities/mathUtils";
 import { sign, signZero } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils";
@@ -110,13 +110,43 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
                 : pipe_ (
                     primary_attr_id_list,
                     mapMaybe (pipe (lookupF (attributes), fmap (AA.short))),
-                    intercalate ("/")
+                    intercalate ("/"),
+                    attr => `${attr} ${th}`
                   )
             })
            (mprimary_attr_id_list)
            (mpadt_obj)
 
   const isLancesCT = Maybe.elem (prefixCT (7)) (combatTechniqueId)
+  const isShieldsCT = Maybe.elem (prefixCT (10)) (combatTechniqueId)
+
+  const weightElement =
+    maybeR (null)
+           ((weight: number) => (
+             <tr>
+               <td>{translate (l10n) ("weight")}</td>
+               <td>
+                 {pipe_ (weight, localizeWeight (locale), localizeNumber (locale))}
+                 {" "}
+                 {translate (l10n) ("weightunit.short")}
+               </td>
+             </tr>
+           ))
+           (ensureNatural (mweight))
+
+  const priceElement =
+    maybeR (null)
+           ((price: number) => (
+             <tr>
+               <td>{translate (l10n) ("price")}</td>
+               <td>
+                 {localizeNumber (locale) (price)}
+                 {" "}
+                 {translate (l10n) ("priceunit")}
+               </td>
+             </tr>
+           ))
+           (ensureNatural (mprice))
 
   return (
     <WikiBoxTemplate
@@ -133,30 +163,8 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
         ? (
             <table className="melee">
               <tbody>
-                {maybeR (null)
-                        ((weight: number) => (
-                          <tr>
-                            <td>{translate (l10n) ("weight")}</td>
-                            <td>
-                              {pipe_ (weight, localizeWeight (locale), localizeNumber (locale))}
-                              {" "}
-                              {translate (l10n) ("weightunit.short")}
-                            </td>
-                          </tr>
-                        ))
-                        (ensureNatural (mweight))}
-                {maybeR (null)
-                        ((price: number) => (
-                          <tr>
-                            <td>{translate (l10n) ("price")}</td>
-                            <td>
-                              {localizeNumber (locale) (price)}
-                              {" "}
-                              {translate (l10n) ("priceunit")}
-                            </td>
-                          </tr>
-                        ))
-                        (ensureNatural (mprice))}
+                {weightElement}
+                {priceElement}
               </tbody>
             </table>
           )
@@ -183,7 +191,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
           <tr>
             <td>{translate (l10n) ("attackparrymodifier.short")}</td>
             <td>
-              {isLancesCT ? ndash : `${renderMaybeWith (sign) (at)}/${renderMaybeWith (sign) (pa)}`}
+              {isLancesCT ? ndash : `${renderMaybeWith (sign) (at)}/${maybe (ndash) (sign) (pa)}`}
             </td>
           </tr>
           <tr>
@@ -198,30 +206,21 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
                   )}
             </td>
           </tr>
-          <tr>
-            <td>{translate (l10n) ("weight")}</td>
-            <td>
-              {renderMaybeWith (pipe (localizeWeight (locale), localizeNumber (locale))) (mweight)}
-              {" "}
-              {translate (l10n) ("weightunit.short")}
-            </td>
-          </tr>
-          <tr>
-            <td>{translate (l10n) ("length")}</td>
-            <td>
-              {renderMaybeWith (pipe (localizeSize (locale), localizeNumber (locale))) (mlength)}
-              {" "}
-              {translate (l10n) ("lengthunit")}
-            </td>
-          </tr>
-          <tr>
-            <td>{translate (l10n) ("price")}</td>
-            <td>
-              {renderMaybeWith (localizeNumber (locale)) (mprice)}
-              {" "}
-              {translate (l10n) ("priceunit")}
-            </td>
-          </tr>
+          {weightElement}
+          {!isShieldsCT
+            ? (
+                <tr>
+                  <td>{translate (l10n) ("length")}</td>
+                  <td>
+                    {renderMaybeWith (pipe (localizeSize (locale), localizeNumber (locale)))
+                                    (mlength)}
+                    {" "}
+                    {translate (l10n) ("lengthunit")}
+                  </td>
+                </tr>
+              )
+            : null}
+          {priceElement}
         </tbody>
       </table> : null}
       {gr === 2 ? <table className="ranged">
@@ -253,14 +252,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
             <td>{translate (l10n) ("ammunition")}</td>
             <td>{maybe (translate (l10n) ("none")) (ITAL.name) (ammunitionTemplate)}</td>
           </tr>
-          <tr>
-            <td>{translate (l10n) ("weight")}</td>
-            <td>
-              {renderMaybeWith (pipe (localizeWeight (locale), localizeNumber (locale))) (mweight)}
-              {" "}
-              {translate (l10n) ("weightunit.short")}
-            </td>
-          </tr>
+          {weightElement}
           <tr>
             <td>{translate (l10n) ("length")}</td>
             <td>
@@ -269,14 +261,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
               {translate (l10n) ("lengthunit")}
             </td>
           </tr>
-          <tr>
-            <td>{translate (l10n) ("price")}</td>
-            <td>
-              {renderMaybeWith (localizeNumber (locale)) (mprice)}
-              {" "}
-              {translate (l10n) ("priceunit")}
-            </td>
-          </tr>
+          {priceElement}
         </tbody>
       </table> : null}
       {gr === 4 ? <table className="armor">
@@ -289,22 +274,8 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
             <td>{translate (l10n) ("encumbrance.short")}</td>
             <td>{renderMaybe (enc)}</td>
           </tr>
-          <tr>
-            <td>{translate (l10n) ("weight")}</td>
-            <td>
-              {renderMaybeWith (pipe (localizeWeight (locale), localizeNumber (locale))) (mweight)}
-              {" "}
-              {translate (l10n) ("weightunit.short")}
-            </td>
-          </tr>
-          <tr>
-            <td>{translate (l10n) ("price")}</td>
-            <td>
-              {renderMaybeWith (localizeNumber (locale)) (mprice)}
-              {" "}
-              {translate (l10n) ("priceunit")}
-            </td>
-          </tr>
+          {weightElement}
+          {priceElement}
           <tr>
             <td>{translate (l10n) ("additionalpenalties")}</td>
             <td>{maybe (ndash) (intercalate (", ")) (ensure (notNull) (addPenaltiesArr))}</td>

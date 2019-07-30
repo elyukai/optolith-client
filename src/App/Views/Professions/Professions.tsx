@@ -4,6 +4,7 @@ import { bindF, ensure, Just, Maybe, maybeR } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { SelectionsContainer } from "../../Containers/RCPSelectionsContainer";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { InputTextEvent, Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -26,6 +27,7 @@ import { ProfessionsListItem } from "./ProfessionsListItem";
 import { ProfessionVariants } from "./ProfessionVariants";
 
 export interface ProfessionsOwnProps {
+  hero: HeroModelRecord
   l10n: L10nRecord
 }
 
@@ -74,6 +76,7 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
       currentProfessionId,
       groupVisibilityFilter,
       l10n,
+      hero,
       professions,
       setGroupVisibilityFilter,
       setSortOrder,
@@ -87,7 +90,9 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 
     return (
       <Page id="professions">
-        {showAddSlidein ? <SelectionsContainer close={this.hideAddSlidein} l10n={l10n} /> : null}
+        {showAddSlidein
+          ? <SelectionsContainer close={this.hideAddSlidein} l10n={l10n} hero={hero} />
+          : null}
         <Options>
           <TextField
             hint={translate (l10n) ("search")}

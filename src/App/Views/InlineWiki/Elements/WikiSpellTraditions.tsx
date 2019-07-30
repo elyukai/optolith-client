@@ -1,10 +1,10 @@
 import * as React from "react";
 import { flength, intercalate, List, notNull, subscript } from "../../../../Data/List";
 import { bindF, ensure, mapMaybe } from "../../../../Data/Maybe";
+import { dec, lte } from "../../../../Data/Num";
 import { Record, RecordBase } from "../../../../Data/Record";
 import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
-import { dec, lte } from "../../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { sortStrings } from "../../../Utilities/sortBy";
 import { WikiProperty } from "../WikiProperty";

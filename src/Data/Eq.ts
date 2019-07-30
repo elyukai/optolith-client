@@ -4,14 +4,19 @@
  * @author Lukas Obermann
  */
 
+import { on } from "./Function";
 import { Internals } from "./Internals";
+import { consF, List } from "./List";
 import { show } from "./Show";
+import { curry, Pair } from "./Tuple";
 
 import Some = Internals.Some
 import Maybe = Internals.Maybe
 import Record = Internals.Record
 import OrderedMap = Internals.OrderedMap
 import OrderedSet = Internals.OrderedSet
+import Map = Internals.Map
+import isTip = Internals.isTip
 
 const flengthMap = (xs: OrderedMap<any, any>): number => xs .value .size
 
@@ -32,11 +37,7 @@ export const all =
  */
 export const equals =
   // tslint:disable-next-line: cyclomatic-complexity
-  <A extends Some> (x1: A) => (x2: A): boolean => {
-    if (typeof x1 !== typeof x2) {
-      return false
-    }
-
+  <A> (x1: A) => (x2: A): boolean => {
     if (Internals.isMaybe (x1)) {
       return Internals.isMaybe (x2)
         && (
@@ -127,6 +128,14 @@ export const equals =
       return false
     }
 
+    if (Internals.isMap (x1)) {
+      if (Internals.isMap (x2)) {
+        return on (equals) (size) (x1) (x2) && on (equals) (assocs) (x1) (x2)
+      }
+
+      return false
+    }
+
     // tslint:disable-next-line: strict-type-predicates
     if (typeof x1 === "bigint") {
       // tslint:disable-next-line: strict-type-predicates
@@ -163,6 +172,47 @@ export const equals =
 
     return x1 === x2
   }
+
+/**
+ * `foldrWithKey :: (Key -> a -> b -> b) -> b -> IntMap a -> b`
+ *
+ * Right-associative fold of a structure.
+ */
+const foldrWithKey =
+  <K, A, B>
+  (f: (key: K) => (current: A) => (acc: B) => B) =>
+  (init: B) =>
+  (mp: Map<K, A>): B =>
+    isTip (mp)
+    ? init
+    : foldrWithKey (f) (f (mp .key) (mp .value) (foldrWithKey (f) (init) (mp .right))) (mp .left)
+
+/**
+ * `size :: IntMap a -> Int`
+ *
+ * The number of elements in the map.
+ */
+const size = (mp: Map<any, any>) => isTip (mp) ? 0 : mp .size
+
+/**
+ * `assocs :: IntMap a -> [(Key, a)]`
+ *
+ * Return all key/value pairs in the map.
+ */
+const assocs =
+  <K, A> (mp: Map<K, A>): List<Pair<K, A>> =>
+    foldrWithKey<K, A, List<Pair<K, A>>> (curry (consF)) (List ()) (mp)
+
+// const equalsMap = (mp1: Map<any, any>) => (mp2: Map<any, any>): boolean =>
+//   isTip (mp1) === isTip (mp2)
+//   && (
+//     isTip (mp1)
+//     || equals (mp1.key) ((mp2 as Bin<any, any>) .key)
+//     && equals (mp1 .value) ((mp2 as Bin<any, any>) .value)
+//     && equalsMap (mp1 .left) ((mp2 as Bin<any, any>) .left)
+//     && equalsMap (mp1 .right) ((mp2 as Bin<any, any>) .right)
+//   )
+
 
 export type equals<A> = (x1: A) => (x2: A) => boolean
 

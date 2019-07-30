@@ -13,8 +13,17 @@
 	}
 
 	html, body, #bodywrapper, #body, .page {
-		overflow: auto;
-		@include size(auto);
+		overflow-x: hidden;
+		height: auto;
+		width: auto;
+	}
+
+	html, body {
+		overflow-y: auto;
+	}
+
+	#bodywrapper, #body, .page {
+		overflow-y: hidden;
 	}
 
 	#body {
@@ -30,7 +39,7 @@
 	}
 
 	section {
-		overflow: auto;
+		overflow: hidden auto;
 		padding: 0;
 		display: block;
 
@@ -41,12 +50,12 @@
 
 			> .scroll {
 				margin: 0;
-				overflow: auto !important;
+				overflow: hidden auto !important;
 				height: auto !important;
 				width: auto !important;
 
 				.scroll-view {
-					overflow: auto !important;
+					overflow: hidden auto !important;
 					height: auto !important;
 					width: auto !important;
 					position: relative !important;

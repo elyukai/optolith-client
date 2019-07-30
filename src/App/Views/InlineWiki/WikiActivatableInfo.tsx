@@ -6,6 +6,7 @@ import { rangeN } from "../../../Data/Ix";
 import { over, set } from "../../../Data/Lens";
 import { any, append, appendStr, consF, elem, fnull, head, ifoldr, imap, intercalate, intersperse, isList, List, map, NonEmptyList, notNull, notNullStr, snoc, snocF, subscript, toArray } from "../../../Data/List";
 import { bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNull, maybeRNullF, Nothing } from "../../../Data/Maybe";
+import { dec, negate } from "../../../Data/Num";
 import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
@@ -31,7 +32,6 @@ import { getName } from "../../Utilities/Activatable/activatableNameUtils";
 import { isExtendedSpecialAbility } from "../../Utilities/Activatable/checkStyleUtils";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
 import { getCategoryById, isBlessedTraditionId, isMagicalTraditionId, prefixRace, prefixSA } from "../../Utilities/IDUtils";
-import { dec, negate } from "../../Utilities/mathUtils";
 import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
@@ -100,12 +100,19 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
     // }
 
     switch (SAA.gr (x)) {
+      // Staff Enchantments
       case 5:
+      // Bannschwert
       case 15:
+      // Dolch
       case 16:
+      // Instrument
       case 17:
+      // Gewand
       case 18:
+      // Kugel
       case 19:
+      // Stecken
       case 20:
       case 35:
       case 36:
@@ -160,6 +167,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
+      // Zeremonialgegenstände
       case 23:
         return (
           <WikiBoxTemplate
@@ -187,6 +195,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
+      // Bann-/Schutzkreise
       case 8:
         return (
           <WikiBoxTemplate
@@ -195,20 +204,22 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             subtitle={header_sub_name}
             >
             <WikiProperty l10n={l10n} title="aecost">
-              {SAA.aeCost (x)}
+              {renderMaybe (SAA.aeCost (x))}
             </WikiProperty>
             <WikiProperty l10n={l10n} title="protectivecircle">
-              {SAA.protectiveCircle (x)}
+              {renderMaybe (SAA.protectiveCircle (x))}
             </WikiProperty>
             <WikiProperty l10n={l10n} title="wardingcircle">
-              {SAA.wardingCircle (x)}
+              {renderMaybe (SAA.wardingCircle (x))}
             </WikiProperty>
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
 
+      // Magische Traditionen
       case 28:
+      // Karmale Traditionen
       case 29:
         return (
           <WikiBoxTemplate
@@ -223,7 +234,9 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
+      // Combat Styles (armed)
       case 9:
+      // Combat Styles (unarmed)
       case 10:
         return (
           <WikiBoxTemplate
@@ -269,6 +282,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
+      // Zauberstile
       case 13:
         return (
           <WikiBoxTemplate
@@ -304,6 +318,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
+      // Liturgiestile
       case 25: {
         const sa_id = prefixSA (639) // Gebieter des [Aspekts]
         const SA_639 = lookup (sa_id) (specialAbilities)
@@ -566,8 +581,12 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   const prerequisitesText = AAL.prerequisitesText (x)
   const prerequisitesTextIndex = AAL.prerequisitesTextIndex (x)
 
-  if (isString (prerequisitesText)) {
-    return <Markdown source={`**${translate (l10n) ("prerequisites")}:** ${prerequisitesText}`} />
+  if (isJust (prerequisitesText)) {
+    return (
+      <Markdown
+        source={`**${translate (l10n) ("prerequisites")}:** ${fromJust (prerequisitesText)}`}
+        />
+    )
   }
 
   const levels = Maybe.product (AAL.tiers (x))
@@ -579,7 +598,7 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   type TypeofList = JSX.Element | string
 
   const mtext_before = fmapF (prerequisitesTextStart)
-                             (y => <Markdown source={y} oneLine="fragment" />)
+                             (y => <Markdown key="before" source={y} oneLine="fragment" />)
 
   /**
    * `Right`: Will need a comma before if there are elements before the text.
@@ -588,8 +607,8 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   const mtext_after = fmapF (prerequisitesTextEnd)
                             ((y): Either<JSX.Element, JSX.Element> =>
                               /^(?: |,|\.)/ .test (y)
-                                ? Left (<Markdown source={y} oneLine="fragment" />)
-                                : Right (<Markdown source={y} oneLine="fragment" />))
+                                ? Left (<Markdown key="after" source={y} oneLine="fragment" />)
+                                : Right (<Markdown key="after" source={y} oneLine="fragment" />))
 
   const mtext_after_insidelist = bind (mtext_after) (eitherToMaybe)
   const mtext_after_outsidelist = bind (mtext_after) (pipe (invertEither, eitherToMaybe))
@@ -640,7 +659,8 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
             catMaybes,
             intersperse<TypeofList> ("; "),
             addTextAfterOutsideList,
-            toArray
+            ensure (notNull),
+            maybeR (translate (l10n) ("none")) (toArray)
           )}
         </span>
       </p>
@@ -658,7 +678,8 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
             catMaybes,
             intersperse<JSX.Element | string> (", "),
             addTextAfterOutsideList,
-            toArray
+            ensure (notNull),
+            maybeR (translate (l10n) ("none")) (toArray)
           )}
         </span>
       </p>
@@ -1036,6 +1057,7 @@ const getPrerequisitesRaceText =
     const race_tag = translate (l10n) ("race")
 
     const value = RaceRequirement.A.value (race)
+    const active = RaceRequirement.A.active (race)
 
     if (isList (value)) {
       const curr_races =
@@ -1045,12 +1067,12 @@ const getPrerequisitesRaceText =
           localizeOrList (l10n)
         )
 
-      return <span>{`${race_tag} ${curr_races}`}</span>
+      return <span className={!active ? "disabled" : ""}>{`${race_tag} ${curr_races}`}</span>
     }
     else {
       const curr_race = pipe_ (value, prefixRace, lookupF (races), maybe ("") (Race.A.name))
 
-      return <span>{`${race_tag} ${curr_race}`}</span>
+      return <span className={!active ? "disabled" : ""}>{`${race_tag} ${curr_race}`}</span>
     }
   }
 

@@ -1,7 +1,7 @@
 {
   "name": "optolith",
-  "productName": "Optolith Insider",
-  "version": "1.1.0-alpha.18",
+  "productName": "Optolith",
+  "version": "1.1.1",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'.",
   "author": {
     "name": "Lukas Obermann",
@@ -64,10 +64,13 @@
   "scripts": {
     "buildInsiderWin": "node ./buildInsiderWin.js",
     "buildInsiderLinux": "node ./buildInsiderLinux.js",
+    "buildInsiderMac": "node ./buildInsiderMac.js",
     "buildWin": "node ./buildWin.js",
     "buildLinux": "node ./buildLinux.js",
     "buildMac": "node ./buildMac.js",
     "buildCss": "node --experimental-modules buildSass.mjs",
+    "copyTables": "node ./copyTablesOnly.js",
+    "copyTablesInsider": "node ./copyTablesInsiderOnly.js",
     "compile": "tsc",
     "cti": "node ./copyTablesOnly.js",
     "watch": "tsc --watch",

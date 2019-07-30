@@ -1,8 +1,10 @@
 import * as React from "react";
 import { notEquals } from "../../../Data/Eq";
+import { ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
-import { elemF, intercalate, List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, fromMaybeR, guard, Just, mapMaybe, Maybe, Nothing, or, thenF } from "../../../Data/Maybe";
+import { consF, elem, elemF, intercalate, List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
+import { bindF, ensure, fromMaybe, fromMaybeR, guard, Just, mapMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
+import { dec } from "../../../Data/Num";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
@@ -14,12 +16,11 @@ import { BlessingCombined } from "../../Models/View/BlessingCombined";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../Models/View/LiturgicalChantWithRequirements";
 import { Blessing } from "../../Models/Wiki/Blessing";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../Utilities/I18n";
 import { getAspectsOfTradition } from "../../Utilities/Increasable/liturgicalChantUtils";
-import { dec } from "../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { sortStrings } from "../../Utilities/sortBy";
 import { SkillListItem } from "../Skills/SkillListItem";
@@ -119,6 +120,14 @@ const LCBCA = {
           LiturgicalChant.A.aspects
         )
       : List (1),
+  tradition: (x: Combined): List<number> =>
+    LiturgicalChantWithRequirements.is (x)
+      ? pipe_ (
+          x,
+          LiturgicalChantWithRequirements.A.wikiEntry,
+          LiturgicalChant.A.tradition
+        )
+      : List (1),
   id: pipe (wikiEntryCombined, Blessing.AL.id),
   name: pipe (wikiEntryCombined, Blessing.AL.name),
 }
@@ -204,7 +213,7 @@ export class LiturgicalChants
                 {translate (l10n) ("name")}
               </ListHeaderTag>
               <ListHeaderTag className="group">
-                {translate (l10n) ("aspect")}
+                {translate (l10n) ("traditions")}
                 {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
               </ListHeaderTag>
               <ListHeaderTag className="check">
@@ -337,7 +346,7 @@ export class LiturgicalChants
               {translate (l10n) ("name")}
             </ListHeaderTag>
             <ListHeaderTag className="group">
-              {translate (l10n) ("aspect")}
+              {translate (l10n) ("traditions")}
               {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
             </ListHeaderTag>
             <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
@@ -489,7 +498,11 @@ const getAspectsStr =
                      ))
                    ))
                    (LCBCA.aspects (curr)),
-        sortStrings (L10n.A.id (l10n)),
+        elem (14) (LCBCA.tradition (curr))
+          ? maybe (ident as ident<List<string>>) <string> (consF)
+                  (subscript (translate (l10n) ("blessedtraditions")) (13))
+          : ident,
+        sortStrings (l10n),
         intercalate (", ")
       )),
       fromMaybe ("")
@@ -498,10 +511,10 @@ const getAspectsStr =
 const getLCAddText =
   (l10n: L10nRecord) =>
   (sortOrder: string) =>
-  (aspectsStr: string) =>
+  (aspects_str: string) =>
   (curr: Record<LiturgicalChantWithRequirements>) =>
     pipe_ (
       guard (sortOrder === "group"),
       thenF (subscript (translate (l10n) ("liturgicalchantgroups")) (LCWRA_.gr (curr) - 1)),
-      fromMaybe (aspectsStr)
+      maybe (aspects_str) (gr_str => `${aspects_str} / ${gr_str}`)
     )

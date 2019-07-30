@@ -7,6 +7,7 @@ import { Spell } from "../../../Models/Wiki/Spell";
 import { CheckModifier } from "../../../Models/Wiki/wikiTypeHelpers";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
+import { modifyNegIntNoBreak } from "../rawConversionUtils";
 import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapStringPredSetOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSpellPrerequisites } from "./Sub/toPrerequisites";
@@ -121,7 +122,7 @@ export const toSpell =
           tradition: rs.etraditions,
           subtradition: fromMaybe<List<number>> (empty) (rs.esubtraditions),
           property: rs.eproperty,
-          effect: rs.eeffect,
+          effect: modifyNegIntNoBreak (rs.eeffect),
           castingTime: fromMaybe ("") (castingTime),
           castingTimeShort: rs.ecastingTimeShort,
           cost: rs.eaeCost,

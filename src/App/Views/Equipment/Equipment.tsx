@@ -1,7 +1,7 @@
 import * as React from "react";
 import { notP } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
-import { fmap, fmapF } from "../../../Data/Functor";
+import { fmap } from "../../../Data/Functor";
 import { any, cons, filter, List, map, notNull, toArray } from "../../../Data/List";
 import { bindF, elem, ensure, fromJust, fromMaybe, fromMaybeR, isJust, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
@@ -45,7 +45,7 @@ export interface EquipmentStateProps {
   hasNoAddedAP: boolean
   purse: Maybe<Record<Purse>>
   sortOrder: SortNames
-  templates: Maybe<List<Record<ItemTemplate>>>
+  templates: List<Record<ItemTemplate>>
   totalPrice: Maybe<number>
   totalWeight: Maybe<number>
   meleeItemTemplateCombatTechniqueFilter: Maybe<string>
@@ -164,8 +164,8 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 
     const templateList =
       templatesFilterText.length === 0
-        ? fmapF (templates) (filter (filterTemplatesByIsActiveAndInGroup))
-        : fmapF (templates) (filter (filterTemplatesByIsActive))
+        ? filter (filterTemplatesByIsActiveAndInGroup) (templates)
+        : filter (filterTemplatesByIsActive) (templates)
 
     return (
       <Page id="equipment">
@@ -221,7 +221,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
               <ListView>
                 {pipe_ (
                   templateList,
-                  bindF (ensure (notNull)),
+                  ensure (notNull),
                   fmap (pipe (
                     map (
                       obj => (

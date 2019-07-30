@@ -1,11 +1,11 @@
 import * as React from "react";
 import { fmapF } from "../../../Data/Functor";
 import { bindF, ensure, fromJust, fromMaybe, isJust, liftM2, maybe, Maybe, or } from "../../../Data/Maybe";
+import { gt, subtractBy } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
-import { gt, subtractBy } from "../../Utilities/mathUtils";
 import { sign, signNeg } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { IconButton } from "../Universal/IconButton";

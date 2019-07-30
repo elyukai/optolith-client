@@ -4,7 +4,7 @@ const { ident } = require('../Function');
 const { Internals } = require('../Internals');
 const { List } = require('../List')
 const { Pair } = require('../Tuple')
-const { Int } = require('../Int')
+const { Num } = require('../Num')
 const { OrderedMap } = require('../OrderedMap')
 const { fromDefault } = require('../Record')
 
@@ -653,7 +653,7 @@ test ('intersect', () => {
 // ORDERED LISTS
 
 test ('sortBy', () => {
-  expect (List.sortBy (Int.compare) (List (2, 3, 1, 5, 4)))
+  expect (List.sortBy (Num.compare) (List (2, 3, 1, 5, 4)))
     .toEqual (List (1, 2, 3, 4, 5))
 })
 

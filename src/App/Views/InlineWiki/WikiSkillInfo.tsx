@@ -17,6 +17,7 @@ import { WikiQuality } from "./Elements/WikiQuality";
 import { WikiSkillCheck } from "./Elements/WikiSkillCheck";
 import { WikiSource } from "./Elements/WikiSource";
 import { WikiTools } from "./Elements/WikiTools";
+import { WikiUses } from "./Elements/WikiUses";
 import { WikiBoxTemplate } from "./WikiBoxTemplate";
 
 export interface WikiSkillInfoProps {
@@ -48,6 +49,7 @@ export function WikiSkillInfo (props: WikiSkillInfoProps) {
   return (
     <WikiBoxTemplate className="skill" title={name}>
       <WikiApplications {...props} showNewApplications acc={Skill.A} />
+      <WikiUses {...props} acc={Skill.A} />
       <WikiSkillCheck {...props} acc={Skill.A} />
       <WikiApplications {...props} acc={Skill.A} />
       <WikiEncumbrance {...props} acc={Skill.A} />

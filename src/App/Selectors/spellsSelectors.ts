@@ -1,10 +1,11 @@
 import { notP } from "../../Data/Bool";
-import { equals } from "../../Data/Eq";
+import { equals, notEquals } from "../../Data/Eq";
 import { ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
 import { append, consF, countWith, elemF, List, map, notNull, partition } from "../../Data/List";
 import { all, any, bindF, ensure, fromMaybe_, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
+import { lte } from "../../Data/Num";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { member } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
@@ -20,7 +21,7 @@ import { Cantrip } from "../Models/Wiki/Cantrip";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { Spell, SpellL } from "../Models/Wiki/Spell";
-import { selectToDropdownOption } from "../Models/Wiki/sub/SelectOption";
+import { SelectOption, selectToDropdownOption } from "../Models/Wiki/sub/SelectOption";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { getModifierByActiveLevel } from "../Utilities/Activatable/activatableModifierUtils";
 import { getMagicalTraditionsHeroEntries } from "../Utilities/Activatable/traditionUtils";
@@ -29,7 +30,6 @@ import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { prefixAdv, prefixDis, prefixSA } from "../Utilities/IDUtils";
 import { isOwnTradition, isSpellDecreasable, isSpellIncreasable, isUnfamiliarSpell } from "../Utilities/Increasable/spellUtils";
-import { lte } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { validatePrerequisites } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
 import { filterByAvailability } from "../Utilities/RulesUtils";
@@ -55,6 +55,7 @@ const SWRL = SpellWithRequirementsL
 const SA = Spell.A
 const SL = SpellL
 const SAA = SpecialAbility.A
+const SOA = SelectOption.A
 
 export const getMagicalTraditionsFromHero = createMaybeSelector (
   getSpecialAbilities,
@@ -77,7 +78,8 @@ export const getMagicalTraditionsFromWiki = createMaybeSelector (
 
 export const getIsSpellsTabAvailable = createMaybeSelector (
   getMaybeMagicalTraditionsFromHero,
-  any (notNull)
+  any (xs => notNull (xs)
+             && List.all (pipe (ActivatableDependent.A.id, notEquals (prefixSA (680)))) (xs))
 )
 
 export const getActiveSpells = createMaybeSelector (
@@ -383,13 +385,13 @@ const isAnySpellActiveWithImpCostC =
 export const getAvailableInactiveSpells = createMaybeSelector (
   getRuleBooksEnabled,
   getInactiveSpells,
-  uncurryN (liftM2 (filterByAvailability (pipe (SWRA.wikiEntry, SA.src))))
+  uncurryN (a => fmap (filterByAvailability (pipe (SWRA.wikiEntry, SA.src)) (a)))
 )
 
 export const getAvailableInactiveCantrips = createMaybeSelector (
   getRuleBooksEnabled,
   getInactiveCantrips,
-  uncurryN (liftM2 (filterByAvailability (pipe (CCA.wikiEntry, CA.src))))
+  uncurryN (a => fmap (filterByAvailability (pipe (CCA.wikiEntry, CA.src)) (a)))
 )
 
 type ListCombined = List<Record<SpellWithRequirements> | Record<CantripCombined>>
@@ -473,13 +475,15 @@ export const getSpellsForSheet = createMaybeSelector (
 
 export const getAllSpellsForManualGuildMageSelect = createMaybeSelector (
   getLocaleAsProp,
+  getRuleBooksEnabled,
   getWikiSpecialAbilities,
-  uncurryN (l10n => pipe (
-                      lookup (prefixSA (70)),
-                      bindF (SAA.select),
-                      fmap (pipe (
-                        map (selectToDropdownOption),
-                        sortRecordsByName (l10n)
-                      ))
-                    ))
+  uncurryN3 (l10n => av => pipe (
+                             lookup (prefixSA (70)),
+                             bindF (SAA.select),
+                             fmap (pipe (
+                               filterByAvailability (SOA.src) (av),
+                               map (selectToDropdownOption),
+                               sortRecordsByName (l10n)
+                             ))
+                           ))
 )

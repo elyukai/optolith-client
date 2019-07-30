@@ -3,11 +3,12 @@ import { flip } from "../../../../../Data/Function";
 import { fmap } from "../../../../../Data/Functor";
 import { fromArray, isInfixOf, List, NonEmptyList, splitOn, uncons } from "../../../../../Data/List";
 import { bindF, ensure, fromJust, fromMaybe, isNothing, Just, Maybe, Nothing } from "../../../../../Data/Maybe";
+import { gte } from "../../../../../Data/Num";
 import { fromList } from "../../../../../Data/OrderedMap";
 import { show } from "../../../../../Data/Show";
 import { parseJSON } from "../../../../../Data/String/JSON";
 import { fst, Pair, snd } from "../../../../../Data/Tuple";
-import { traceShow } from "../../../../../Debug/Trace";
+import { traceShowBoth } from "../../../../../Debug/Trace";
 import { RequireActivatable } from "../../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../../Models/Wiki/prerequisites/CultureRequirement";
 import { RequireIncreasable } from "../../../../Models/Wiki/prerequisites/IncreasableRequirement";
@@ -17,7 +18,6 @@ import { RaceRequirement } from "../../../../Models/Wiki/prerequisites/RaceRequi
 import { SexRequirement } from "../../../../Models/Wiki/prerequisites/SexRequirement";
 import { AllRequirementObjects, AllRequirements, LevelAwarePrerequisites } from "../../../../Models/Wiki/wikiTypeHelpers";
 import { ifElse } from "../../../ifElse";
-import { gte } from "../../../mathUtils";
 import { toInt } from "../../../NumberUtils";
 import { pipe } from "../../../pipe";
 import { Expect } from "../../showExpected";
@@ -27,7 +27,7 @@ import { isRawCultureRequirement } from "../Prerequisites/RawCultureRequirement"
 import { isRawRequiringIncreasable } from "../Prerequisites/RawIncreasableRequirement";
 import { isRawPactRequirement } from "../Prerequisites/RawPactRequirement";
 import { isRawRequiringPrimaryAttribute } from "../Prerequisites/RawPrimaryAttributeRequirement";
-import { isRawRaceRequirement } from "../Prerequisites/RawRaceRequirement";
+import { isRawRaceRequirement, toRaceRequirement } from "../Prerequisites/RawRaceRequirement";
 import { isRawSexRequirement } from "../Prerequisites/RawSexRequirement";
 const parseJSONAndRCP = (x: string) => x === "RCP" ? Just (x) : parseJSON (x)
 
@@ -43,7 +43,7 @@ const toLevelAwarePrerequisites =
                                               (toInt (fst (p)))
 
           if (isNothing (level)) {
-            return Left (`Invalid level. Expected: Natural, Received: ${fst (p)}`)
+            return Left (`Invalid level. Expected: Natural, Received: "${fst (p)}"`)
           }
 
           const levelAwarePrerequisites =
@@ -85,12 +85,7 @@ const toLevelAwarePrerequisites =
                         value: x .value,
                       }))
                     : isRawRaceRequirement (x)
-                    ? Just (RaceRequirement ({
-                        id: Nothing,
-                        value: Array.isArray (x .value)
-                          ? fromArray (x .value)
-                          : x .value,
-                      }))
+                    ? Just (toRaceRequirement (x))
                     : isRawCultureRequirement (x)
                     ? Just (CultureRequirement ({
                         id: Nothing,
@@ -107,7 +102,7 @@ const toLevelAwarePrerequisites =
                           : Maybe (x .domain),
                         level: Maybe (x .level),
                       }))
-                    : (traceShow ("Invalid prerequisite: ") (x), Nothing)
+                    : (traceShowBoth ("Invalid prerequisite: ") (x), Nothing)
                 )
               ))
               (snd (p))
@@ -176,6 +171,7 @@ const toFlatPrerequisites =
                        value: Array.isArray (x .value)
                          ? fromArray (x .value)
                          : x .value,
+                       active: x .active === undefined ? true : x .active,
                      }))
                    : isRawCultureRequirement (x)
                    ? Just (CultureRequirement ({
@@ -193,7 +189,7 @@ const toFlatPrerequisites =
                          : Maybe (x .domain),
                        level: Maybe (x .level),
                      }))
-                   : (traceShow ("Invalid prerequisite: ") (x), Nothing)
+                   : (traceShowBoth ("Invalid prerequisite: ") (x), Nothing)
                )
              )),
            maybeToEither
@@ -246,6 +242,7 @@ const toFlatSpellPrerequisites =
                        value: Array.isArray (x .value)
                          ? fromArray (x .value)
                          : x .value,
+                       active: x .active === undefined ? true : x .active,
                      }))
                    : isRawCultureRequirement (x)
                    ? Just (CultureRequirement ({
@@ -263,7 +260,7 @@ const toFlatSpellPrerequisites =
                          : Maybe (x .domain),
                        level: Maybe (x .level),
                      }))
-                   : (traceShow ("Invalid prerequisite: ") (x), Nothing)
+                   : (traceShowBoth ("Invalid prerequisite: ") (x), Nothing)
                )
              )),
            maybeToEither

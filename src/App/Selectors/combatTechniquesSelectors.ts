@@ -2,6 +2,7 @@ import { thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { cons, consF, elem, List, map, maximum } from "../../Data/List";
 import { fromJust, isJust, Just, liftM2, Maybe, Nothing, or } from "../../Data/Maybe";
+import { add, divideBy, gt, max, subtractBy } from "../../Data/Num";
 import { findWithDefault, foldrWithKey, lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { uncurryN, uncurryN4 } from "../../Data/Tuple/Curry";
@@ -21,7 +22,6 @@ import { flattenDependencies } from "../Utilities/Dependencies/flattenDependenci
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { compareLocale } from "../Utilities/I18n";
 import { prefixAdv, prefixId, prefixSA } from "../Utilities/IDUtils";
-import { add, divideBy, gt, max, subtractBy } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailabilityAndPred } from "../Utilities/RulesUtils";
 import { comparingR, sortRecordsBy } from "../Utilities/sortBy";
@@ -193,8 +193,9 @@ export const getAllCombatTechniques = createMaybeSelector (
 export const getAvailableCombatTechniques = createMaybeSelector (
   getRuleBooksEnabled,
   getAllCombatTechniques,
-  uncurryN (liftM2 (filterByAvailabilityAndPred (pipe (CTWRA.wikiEntry, CTA.src))
-                                                (pipe (CTWRA.stateEntry, SDA.value, gt (6)))))
+  uncurryN (av => fmap (filterByAvailabilityAndPred (pipe (CTWRA.wikiEntry, CTA.src))
+                                                    (pipe (CTWRA.stateEntry, SDA.value, gt (6)))
+                                                    (av)))
 )
 
 export const getFilteredCombatTechniques = createMaybeSelector (

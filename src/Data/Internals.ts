@@ -14,11 +14,7 @@ export namespace Internals {
     readonly value: ReadonlySet<A>
   }
 
-  export interface Pair<A, B> extends Internals.PairPrototype {
-    readonly first: A
-    readonly second: B
-    readonly prototype: Internals.PairPrototype
-  }
+  export type Pair<A, B> = Tuple<[A, B]>
 
   export interface RecordBase {
     [key: string]: any
@@ -590,4 +586,95 @@ export namespace Internals {
   export const isTuple =
     <A, A0 extends any[]>(x: A | Tuple<A0>): x is Tuple<A0> =>
       typeof x === "object" && x !== null && Object.getPrototypeOf (x) === TuplePrototype
+
+  // OrderedMap
+
+  export interface MapPrototype {
+    readonly isMap: true
+  }
+
+  export interface BinPrototype extends MapPrototype {
+    readonly isTip: false
+  }
+
+  export interface TipPrototype extends MapPrototype {
+    readonly isTip: true
+  }
+
+  export interface Bin<K, A> extends BinPrototype {
+    readonly key: K
+    readonly value: A
+    readonly size: number
+    readonly height: number
+    readonly left: Map<K, A>
+    readonly right: Map<K, A>
+  }
+
+  export interface Tip extends TipPrototype { }
+
+  export type Map<K, A> = Bin<K, A> | Tip
+
+  const BinPrototype =
+    Object.freeze<BinPrototype> ({
+      isMap: true,
+      isTip: false,
+    })
+
+  const TipPrototype =
+    Object.freeze<TipPrototype> ({
+      isMap: true,
+      isTip: true,
+    })
+
+  export const Bin =
+    (size: number) =>
+    (height: number) =>
+    <K> (key: K) =>
+    <A> (value: A) =>
+    (left: Map<K, A>) =>
+    (right: Map<K, A>): Bin<K, A> =>
+        Object.create (
+          BinPrototype,
+          {
+            size: {
+              value: size,
+              enumerable: true,
+            },
+            height: {
+              value: height,
+              enumerable: true,
+            },
+            key: {
+              value: key,
+              enumerable: true,
+            },
+            value: {
+              value,
+              enumerable: true,
+            },
+            left: {
+              value: left,
+              enumerable: true,
+            },
+            right: {
+              value: right,
+              enumerable: true,
+            },
+          }
+        )
+
+  export const Tip: Tip = Object.create (TipPrototype)
+
+  export const isTip = <K, A> (x: Map<K, A>): x is Tip => x === Tip
+
+  /**
+   * `isMap :: a -> Bool`
+   *
+   * The `isMap` function returns `True` if its argument is a `Map`.
+   */
+  export const isMap =
+    <K, A, A0>(x: A | Map<K, A0>): x is Map<K, A0> =>
+      typeof x === "object"
+      && x !== null
+      && (isTip (x as Map<K, A0>) || Object.getPrototypeOf (x) === BinPrototype)
 }

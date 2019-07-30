@@ -26,27 +26,27 @@ describe ("andFL", () => {
   })
 })
 
-describe ("and", () => {
+describe ("or", () => {
   it ("returns True if at least one parameter is True", () => {
-    expect (Bool.and (true) (false)) .toBe (true)
-    expect (Bool.and (false) (true)) .toBe (true)
-    expect (Bool.and (true) (true)) .toBe (true)
+    expect (Bool.or (true) (false)) .toBe (true)
+    expect (Bool.or (false) (true)) .toBe (true)
+    expect (Bool.or (true) (true)) .toBe (true)
   })
 
   it ("returns False if both parameters are False", () => {
-    expect (Bool.and (false) (false)) .toBe (false)
+    expect (Bool.or (false) (false)) .toBe (false)
   })
 })
 
-describe ("andFL", () => {
+describe ("orFL", () => {
   it ("returns True if at least one parameter is True", () => {
-    expect (Bool.andFL (() => false) (true)) .toBe (true)
-    expect (Bool.andFL (() => true) (false)) .toBe (true)
-    expect (Bool.andFL (() => true) (true)) .toBe (true)
+    expect (Bool.orFL (() => false) (true)) .toBe (true)
+    expect (Bool.orFL (() => true) (false)) .toBe (true)
+    expect (Bool.orFL (() => true) (true)) .toBe (true)
   })
 
   it ("returns False if both parameters are False", () => {
-    expect (Bool.andFL (() => false) (false)) .toBe (false)
+    expect (Bool.orFL (() => false) (false)) .toBe (false)
   })
 })
 
@@ -62,11 +62,11 @@ describe ("not", () => {
 
 describe ("notP", () => {
   it ("returns True if it returns False", () => {
-    expect (Bool.notP (() => false)) .toBe (true)
+    expect (Bool.notP (() => false) ()) .toBe (true)
   })
 
   it ("returns False if it returns True", () => {
-    expect (Bool.notP (() => true)) .toBe (false)
+    expect (Bool.notP (() => true) ()) .toBe (false)
   })
 })
 

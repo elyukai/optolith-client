@@ -1,10 +1,10 @@
 import * as React from "react";
 import { ensure, maybe, Maybe, orN } from "../../../Data/Maybe";
+import { gt } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
 import { Item } from "../../Models/Hero/Item";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
-import { gt } from "../../Utilities/mathUtils";
 import { IconButton } from "../Universal/IconButton";
 import { ListItem } from "../Universal/ListItem";
 import { ListItemButtons } from "../Universal/ListItemButtons";

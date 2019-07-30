@@ -2,6 +2,7 @@ import { cnst } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { foldr, fromArray } from "../../Data/List";
 import { any, elem, fromJust, isJust, isMaybe, join, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe";
+import { add, subtract } from "../../Data/Num";
 import { Record } from "../../Data/Record";
 import { uncurryN3 } from "../../Data/Tuple/Curry";
 import { HeroModel } from "../Models/Hero/HeroModel";
@@ -12,7 +13,6 @@ import { getAPSpentForAdvantages, getAPSpentForAttributes, getAPSpentForBlessedA
 import { getDisAdvantagesSubtypeMax } from "../Utilities/AdventurePoints/adventurePointsUtils";
 import { createMapSelector, createMapSelectorS } from "../Utilities/createMapSelector";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { add, subtract } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { getAdvantagesForEditMap, getDisadvantagesForEditMap, getSpecialAbilitiesForEditMap } from "./activatableSelectors";
 import { getStartEl } from "./elSelectors";

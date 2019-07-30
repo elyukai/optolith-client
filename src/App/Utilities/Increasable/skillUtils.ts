@@ -2,6 +2,7 @@ import { cnst, ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { consF, countWith, foldr, List, maximum, maximumNonNegative, minimum } from "../../../Data/List";
 import { elem, Just, maybe, Maybe, Nothing, sum } from "../../../Data/Maybe";
+import { add } from "../../../Data/Num";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
@@ -19,7 +20,6 @@ import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { isMaybeActive } from "../Activatable/isActive";
 import { flattenDependencies } from "../Dependencies/flattenDependencies";
 import { ifElse } from "../ifElse";
-import { add } from "../mathUtils";
 import { pipe } from "../pipe";
 import { getSkillCheckValues } from "./attributeUtils";
 

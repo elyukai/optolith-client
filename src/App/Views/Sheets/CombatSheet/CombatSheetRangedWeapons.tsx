@@ -100,7 +100,7 @@ export function CombatSheetRangedWeapons (props: CombatSheetRangedWeaponProps) {
             )),
             fromMaybeR (null)
           )}
-          {replicateR (3 - Maybe.sum (fmapF (mranged_weapons) (flength)))
+          {replicateR (2 - Maybe.sum (fmapF (mranged_weapons) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
                           <td className="name"></td>

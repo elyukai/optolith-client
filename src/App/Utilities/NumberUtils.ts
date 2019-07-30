@@ -1,8 +1,8 @@
 import { not } from "../../Data/Bool";
 import { List, subscript } from "../../Data/List";
 import { bindF, ensure, fromMaybe, Just, Maybe, Nothing } from "../../Data/Maybe";
+import { dec } from "../../Data/Num";
 import { minus } from "./Chars";
-import { dec } from "./mathUtils";
 import { pipe } from "./pipe";
 import { isInteger, isNaturalNumber } from "./RegexUtils";
 
@@ -55,7 +55,7 @@ export const toRomanFromIndex = pipe (subscript (romanNumbers), fromMaybe (""))
 export const signNullCustom =
   (zero: string) =>
   (x: number): string =>
-    x > 0 ? `+${x}` : x < 0 ? `${minus}${Math.abs (x)}` : zero
+    x > 0 ? `+${x}` : x < 0 ? `${minus}\u2060${Math.abs (x)}` : zero
 
 /**
  * Forces signing on the given number.
@@ -74,7 +74,7 @@ export const sign = signNullCustom ("0")
  * signNeg 1 === "1"
  * ```
  */
-export const signNeg = (x: number) => x < 0 ? `${minus}${Math.abs (x)}` : `${x}`
+export const signNeg = (x: number) => x < 0 ? `${minus}\u2060${Math.abs (x)}` : `${x}`
 
 /**
  * Forces signing on the given number, ignores 0.

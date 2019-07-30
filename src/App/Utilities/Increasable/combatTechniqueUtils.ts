@@ -1,6 +1,7 @@
 import { fmap } from "../../../Data/Functor";
 import { cons, elem, foldl, List, maximum } from "../../../Data/List";
 import { guard, Just, Maybe, maybe, sum, then } from "../../../Data/Maybe";
+import { add, divideBy, max } from "../../../Data/Num";
 import { lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
@@ -10,7 +11,6 @@ import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
 import { flattenDependencies } from "../Dependencies/flattenDependencies";
-import { add, divideBy, max } from "../mathUtils";
 import { pipe } from "../pipe";
 
 const { value, dependencies } = SkillDependent.AL

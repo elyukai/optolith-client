@@ -77,7 +77,12 @@ export class App extends React.Component<AppProps, AppState> {
         <div className="background-image">
           <img src="images/background.svg" alt=""/>
         </div>
-
+        <div className="loading-wrapper">
+          <div className="loading"></div>
+          <div className="loading-text">
+            Loading and validating tables and user data...
+          </div>
+        </div>
         <AlertsContainer l10n={L10n.default} />
       </div>)
       ((l10n: L10nRecord) => (

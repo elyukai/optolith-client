@@ -12,8 +12,10 @@ import { getUsers, getWiki } from "../Selectors/stateSelectors";
 import { TabId } from "../Utilities/LocationUtils";
 import { HerolistItem, HerolistItemDispatchProps, HerolistItemOwnProps, HerolistItemStateProps } from "../Views/Heroes/HerolistItem";
 
+const HA = HeroModel.A
+
 const mapStateToProps = (state: AppStateRecord, props: HerolistItemOwnProps) => ({
-  ap: join (getAPObjectMap (HeroModel.A.id (props .hero)) (state, props)),
+  ap: join (getAPObjectMap (HA.id (props .hero)) (state, props)),
   unsavedHeroesById: getUnsavedHeroesById (state),
   users: getUsers (state),
   wiki: getWiki (state),
@@ -21,25 +23,25 @@ const mapStateToProps = (state: AppStateRecord, props: HerolistItemOwnProps) => 
 
 const mapDispatchToProps = (
   dispatch: ReduxDispatch<Action>,
-  { l10n }: HerolistItemOwnProps
+  { l10n, hero }: HerolistItemOwnProps
 ) => ({
-  loadHero (id: string) {
-    dispatch (HerolistActions.loadHero (id))
+  loadHero () {
+    dispatch (HerolistActions.loadHero (HA.id (hero)))
   },
   showHero () {
     dispatch (LocationActions.setTab (TabId.Profile))
   },
-  saveHero (id: string) {
-    dispatch (HerolistActions.saveHero (l10n) (Just (id)))
+  saveHero () {
+    dispatch (HerolistActions.saveHero (l10n) (Just (HA.id (hero))))
   },
-  saveHeroAsJSON (id: string) {
-    dispatch (HerolistActions.exportHeroValidate (l10n) (id))
+  saveHeroAsJSON () {
+    dispatch (HerolistActions.exportHeroValidate (l10n) (HA.id (hero)))
   },
-  deleteHero (id: string) {
-    dispatch (HerolistActions.deleteHeroValidate (l10n) (id))
+  deleteHero () {
+    dispatch (HerolistActions.deleteHeroValidate (l10n) (HA.id (hero)))
   },
-  duplicateHero (id: string) {
-    dispatch (HerolistActions.duplicateHero (id))
+  duplicateHero () {
+    dispatch (HerolistActions.duplicateHero (HA.id (hero)))
   },
 })
 

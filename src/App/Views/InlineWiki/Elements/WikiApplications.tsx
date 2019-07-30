@@ -5,7 +5,7 @@ import { bindF, ensure, isNothing, listToMaybe, mapMaybe, Maybe, maybe } from ".
 import { member, OrderedMap } from "../../../../Data/OrderedMap";
 import { Record, RecordBase } from "../../../../Data/Record";
 import { Advantage } from "../../../Models/Wiki/Advantage";
-import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
 import { Application } from "../../../Models/Wiki/sub/Application";
@@ -63,8 +63,7 @@ export function WikiApplications <A extends RecordBase> (props: WikiApplications
         return null
       }
 
-      const sorted_new_apps = sortStrings (L10n.A.id (l10n))
-                                          (new_apps)
+      const sorted_new_apps = sortStrings (l10n) (new_apps)
 
       return (
         <WikiProperty l10n={l10n} title="newapplications">
@@ -77,8 +76,7 @@ export function WikiApplications <A extends RecordBase> (props: WikiApplications
       mapMaybe (pipe (ensure (pipe (AA.prerequisites, isNothing)), fmap (AA.name)))
                (applications)
 
-    const sorted_default_apps = sortStrings (L10n.A.id (l10n))
-                                            (default_apps)
+    const sorted_default_apps = sortStrings (l10n) (default_apps)
 
     return (
       <WikiProperty l10n={l10n} title="applications">

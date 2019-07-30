@@ -1,6 +1,7 @@
 import { fmap } from "../../../../Data/Functor";
 import { map } from "../../../../Data/List";
 import { alt, Nothing } from "../../../../Data/Maybe";
+import { OrderedMap } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
@@ -8,6 +9,7 @@ import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
 import { toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
+import { modifyNegIntNoBreak } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
 import { mensureMapListLengthInRangeOptional, mensureMapNatural, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional, mensureMapStringPredOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
@@ -176,24 +178,26 @@ export const toSpecialAbility =
           gr: rs.egr,
           type: rs.etype,
           extended: fmap (map (prefixId (IdPrefixes.SPECIAL_ABILITIES))) (rs.eextended),
-          rules,
-          effect,
-          penalty,
-          combatTechniques,
-          aeCost,
-          protectiveCircle,
-          wardingCircle,
-          volume,
-          bindingCost,
+          rules: fmap (modifyNegIntNoBreak) (rules),
+          effect: fmap (modifyNegIntNoBreak) (effect),
+          penalty: fmap (modifyNegIntNoBreak) (penalty),
+          combatTechniques: fmap (modifyNegIntNoBreak) (combatTechniques),
+          aeCost: fmap (modifyNegIntNoBreak) (aeCost),
+          protectiveCircle: fmap (modifyNegIntNoBreak) (protectiveCircle),
+          wardingCircle: fmap (modifyNegIntNoBreak) (wardingCircle),
+          volume: fmap (modifyNegIntNoBreak) (volume),
+          bindingCost: fmap (modifyNegIntNoBreak) (bindingCost),
           property: alt<string | number> (rs.eproperty) (property),
           aspect: rs.easpect,
-          apValue,
-          apValueAppend,
+          apValue: fmap (modifyNegIntNoBreak) (apValue),
+          apValueAppend: fmap (modifyNegIntNoBreak) (apValueAppend),
           prerequisites: rs.eprerequisites,
-          prerequisitesText: prerequisites,
-          prerequisitesTextIndex: rs.eprerequisitesIndex,
-          prerequisitesTextStart: prerequisitesStart,
-          prerequisitesTextEnd: prerequisitesEnd,
+          prerequisitesText: fmap (modifyNegIntNoBreak) (prerequisites),
+          prerequisitesTextIndex: OrderedMap.map ((x: string | false) =>
+                                                   x === false ? false : modifyNegIntNoBreak (x))
+                                                 (rs.eprerequisitesIndex),
+          prerequisitesTextStart: fmap (modifyNegIntNoBreak) (prerequisitesStart),
+          prerequisitesTextEnd: fmap (modifyNegIntNoBreak) (prerequisitesEnd),
 
           src: rs.esrc,
 

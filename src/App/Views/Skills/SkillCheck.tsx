@@ -3,6 +3,7 @@ import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { find, intercalate, List, toArray } from "../../../Data/List";
 import { bind, ensure, fromMaybeR, imapMaybe, liftM2, mapMaybe, Maybe } from "../../../Data/Maybe";
+import { gt } from "../../../Data/Num";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { elems, OrderedSet, size } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
@@ -10,7 +11,7 @@ import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/Attrib
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { CheckModifier } from "../../Models/Wiki/wikiTypeHelpers";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
-import { gt } from "../../Utilities/mathUtils";
+import { minus } from "../../Utilities/Chars";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 
 export interface SkillCheckProps {
@@ -62,7 +63,7 @@ export function SkillCheck (props: SkillCheckProps) {
                     ))
                  (Maybe (derived))
                  (bind (Maybe (checkmod)) (ensure (pipe (size, gt (0))))),
-          fmap (characteristic => <div className="check mod">+{characteristic}</div>),
+          fmap (characteristic => <div className="check mod">{minus}{characteristic}</div>),
           fromMaybeR (null)
         )}
       </>

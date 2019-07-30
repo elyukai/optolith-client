@@ -99,9 +99,12 @@ export class Router extends React.Component<RouterProps> {
       [TabId.Rules]:
         () => unwrapWithHero (hero => <RulesContainer l10n={l10n} hero={hero} />),
 
-      [TabId.Races]: () => <RacesContainer l10n={l10n} />,
-      [TabId.Cultures]: () => <CulturesContainer l10n={l10n} />,
-      [TabId.Professions]: () => <ProfessionsContainer l10n={l10n} />,
+      [TabId.Races]:
+        () => unwrapWithHero (hero => <RacesContainer l10n={l10n} hero={hero} />),
+      [TabId.Cultures]:
+        () => unwrapWithHero (hero => <CulturesContainer l10n={l10n} hero={hero} />),
+      [TabId.Professions]:
+        () => unwrapWithHero (hero => <ProfessionsContainer l10n={l10n} hero={hero} />),
 
       [TabId.Attributes]:
         () => unwrapWithHero (hero => <AttributesContainer l10n={l10n} hero={hero} />),

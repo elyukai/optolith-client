@@ -7,7 +7,6 @@
  * @author Lukas Obermann
  */
 
-import { add, multiply } from "../App/Utilities/mathUtils";
 import { pipe } from "../App/Utilities/pipe";
 import { not } from "./Bool";
 import { Either, fromRight_, isLeft, Right } from "./Either";
@@ -17,6 +16,7 @@ import { fmapF } from "./Functor";
 import { Internals } from "./Internals";
 import { append, List } from "./List";
 import { bind, fromMaybe, Just, Maybe, maybe, maybe_ } from "./Maybe";
+import { add, multiply } from "./Num";
 import { show } from "./Show";
 import { Pair, Tuple } from "./Tuple";
 
@@ -666,8 +666,7 @@ export const updateWithKey =
       (lookup (key) (mp))
 
 /**
- * `updateLookupWithKey :: Ord k => (k -> a -> Maybe a) -> k -> Map k a ->
-   (Maybe a, Map k a)`
+ * `updateLookupWithKey :: Ord k => (k -> a -> Maybe a) -> k -> Map k a -> (Maybe a, Map k a)`
  *
  * Lookup and update. See also `updateWithKey`. The function returns changed
  * value, if it is updated. Returns the original key value if the map entry is
@@ -1082,6 +1081,29 @@ export const mapMEitherWithKey =
     return Right (fromArray (arr))
   }
 
+/**
+ * `adjustDef :: Ord k => a -> (a -> a) -> k -> Map k a -> Map k a`
+ *
+ * Update a value at a specific key with the result of the provided function.
+ * When the key is not a member of the map, the default value passed to this
+ * function is used as the parameter passed to the provided function and the
+ * result is inserted into the map.
+ */
+export const adjustDef =
+  <A>
+  (def: A) =>
+  (f: (value: A) => A) =>
+  <K>
+  (key: K) =>
+  (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
+    maybe_ (() => insert (key) (f (def)) (mp))
+           ((x: A) => {
+             const x1 = f (x)
+
+             return x === x1 ? mp : insert (key) (x1) (mp)
+           })
+           (lookup (key) (mp))
+
 // NAMESPACED FUNCTIONS
 
 export const OrderedMap = {
@@ -1167,6 +1189,7 @@ export const OrderedMap = {
   lookup2,
   lookup2F,
   mapMEitherWithKey,
+  adjustDef,
 }
 
 

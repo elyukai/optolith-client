@@ -5,11 +5,14 @@ import { cnst } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { flength, List, notNullStr } from "../../../Data/List";
 import { bindF, ensure, fromJust, isJust, isNothing, Just, liftM3, mapMaybe, Maybe, maybe, maybeToNullable, maybe_, Nothing, or } from "../../../Data/Maybe";
+import { add, dec, gt, inc, lt, subtract } from "../../../Data/Num";
 import { adjust, alter, lookup, lookupF, OrderedMap, size } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
 import { first, fst, Pair, second, snd } from "../../../Data/Tuple";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Selections as SelectionsInterface } from "../../Models/Hero/heroTypeHelpers";
+import { Rules } from "../../Models/Hero/Rules";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Culture } from "../../Models/Wiki/Culture";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -22,7 +25,6 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers";
 import { translate } from "../../Utilities/I18n";
 import { prefixProf } from "../../Utilities/IDUtils";
-import { add, dec, gt, inc, lt, subtract } from "../../Utilities/mathUtils";
 import { getAllAdjustmentSelections } from "../../Utilities/mergeRcpAdjustmentSelections";
 import { sign } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
@@ -34,6 +36,7 @@ import { Scroll } from "../Universal/Scroll";
 import { Slidein } from "../Universal/Slidein";
 
 export interface SelectionsOwnProps {
+  hero: HeroModelRecord
   l10n: L10nRecord
   close (): void
 }
@@ -45,6 +48,7 @@ export interface SelectionsStateProps {
   currentProfessionVariant: Maybe<Record<ProfessionVariant>>
   wiki: WikiModelRecord
   munfamiliar_spells: Maybe<List<Record<DropdownOption>>>
+  rules: Record<Rules>
 }
 
 export interface SelectionsDispatchProps {
@@ -230,6 +234,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
       currentProfessionVariant: maybeProfessionVariant,
       currentRace: maybeRace,
       l10n,
+      rules,
       wiki,
       munfamiliar_spells,
     } = this.props
@@ -291,6 +296,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                const languagesAndScripts =
                  getLanguagesAndScriptsElementAndValidation (l10n)
                                                             (wiki)
+                                                            (rules)
                                                             (culture)
                                                             (languages)
                                                             (scripts)
@@ -305,6 +311,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
 
                const curses = getCursesElementAndValidation (l10n)
                                                             (wiki)
+                                                            (rules)
                                                             (cursesActive)
                                                             (this.adjustCurse)
                                                             (prof_sels)

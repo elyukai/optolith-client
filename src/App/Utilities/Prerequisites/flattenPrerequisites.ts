@@ -2,10 +2,10 @@ import { cnst } from "../../../Data/Function";
 import { inRange } from "../../../Data/Ix";
 import { concat } from "../../../Data/List";
 import { fromJust, isJust, Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { inc, lte, minmax } from "../../../Data/Num";
 import { elems, filterWithKey, isOrderedMap } from "../../../Data/OrderedMap";
 import { first } from "../../../Data/Tuple";
 import { ActivatablePrerequisites, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers";
-import { inc, lte, minmax } from "../mathUtils";
 import { pipe } from "../pipe";
 
 const keyInRangePred =

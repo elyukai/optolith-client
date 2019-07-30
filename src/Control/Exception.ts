@@ -38,3 +38,25 @@ export const catchIO =
 export const tryIO =
   <A> (x: IO<A>): IO<Either<Error, A>> =>
     IO (() => fromIO (x) .then (Right, Left))
+
+/**
+ * `trySync :: Exception e => (a -> b) -> (e -> b) -> (() -> a) -> b`
+ *
+ * `trySync f g h` runs `h`. If it throws, it calls `g` with the thrown error
+ * and the result of `g` is returned. Otherwise, `f` is called with the result
+ * of `h` and the result of `f` is returned.
+ *
+ * Similar to `try {} catch {]`, but functional.
+ */
+export const trySync:
+  <A, B> (success: (x: A) => B) => (failure: (x: Error) => B) => (toTry: () => A) => B =
+    f => g => h => {
+      try {
+        const a = h ()
+
+        return f (a)
+      }
+      catch (err) {
+        return g (err)
+      }
+    }

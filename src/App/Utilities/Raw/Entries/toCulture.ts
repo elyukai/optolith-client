@@ -1,3 +1,4 @@
+import { fmap } from "../../../../Data/Functor";
 import { empty, List, map, notNull } from "../../../../Data/List";
 import { fromMaybe, maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
@@ -10,7 +11,7 @@ import { prefixId, prefixProf } from "../../IDUtils";
 import { toNatural, unsafeToInt } from "../../NumberUtils";
 import { exactR, isNaturalNumber, naturalNumberU } from "../../RegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { maybePrefix } from "../rawConversionUtils";
+import { maybePrefix, modifyNegIntNoBreak } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
 import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapPairList, mensureMapStringPredListOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
@@ -211,29 +212,29 @@ export const toCulture =
               : blessedAll
             ),
 
-            commonMundaneProfessions,
-            commonMagicProfessions,
-            commonBlessedProfessions,
+            commonMundaneProfessions: fmap (modifyNegIntNoBreak) (commonMundaneProfessions),
+            commonMagicProfessions: fmap (modifyNegIntNoBreak) (commonMagicProfessions),
+            commonBlessedProfessions: fmap (modifyNegIntNoBreak) (commonBlessedProfessions),
 
             commonAdvantages:
               maybePrefix (IdPrefixes.ADVANTAGES) (rs.ecommonAdvantages),
 
-            commonAdvantagesText,
+            commonAdvantagesText: fmap (modifyNegIntNoBreak) (commonAdvantagesText),
 
             commonDisadvantages:
               maybePrefix (IdPrefixes.DISADVANTAGES) (rs.ecommonDisadvantages),
 
-            commonDisadvantagesText,
+            commonDisadvantagesText: fmap (modifyNegIntNoBreak) (commonDisadvantagesText),
 
             uncommonAdvantages:
               maybePrefix (IdPrefixes.ADVANTAGES) (rs.euncommonAdvantages),
 
-            uncommonAdvantagesText,
+            uncommonAdvantagesText: fmap (modifyNegIntNoBreak) (uncommonAdvantagesText),
 
             uncommonDisadvantages:
               maybePrefix (IdPrefixes.DISADVANTAGES) (rs.euncommonDisadvantages),
 
-            uncommonDisadvantagesText,
+            uncommonDisadvantagesText: fmap (modifyNegIntNoBreak) (uncommonDisadvantagesText),
 
             commonSkills:
               map (prefixId (IdPrefixes.SKILLS)) (rs.ecommonSkills),

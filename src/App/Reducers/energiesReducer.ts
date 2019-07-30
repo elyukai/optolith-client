@@ -1,5 +1,6 @@
 import { ident } from "../../Data/Function";
 import { over, view } from "../../Data/Lens";
+import { add, dec, inc } from "../../Data/Num";
 import * as AttributesActions from "../Actions/AttributesActions";
 import * as ProfessionActions from "../Actions/ProfessionActions";
 import { ActionTypes } from "../Constants/ActionTypes";
@@ -8,7 +9,6 @@ import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { PermanentEnergyLossL } from "../Models/Hero/PermanentEnergyLoss";
 import { PermanentEnergyLossAndBoughtBackL } from "../Models/Hero/PermanentEnergyLossAndBoughtBack";
 import { composeL } from "../Utilities/compose";
-import { add, dec, inc } from "../Utilities/mathUtils";
 import { pipe } from "../Utilities/pipe";
 
 type AddedEnergyAction =

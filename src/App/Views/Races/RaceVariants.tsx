@@ -13,7 +13,7 @@ export interface RaceVariantsProps {
   currentId: Maybe<string>
   currentVariantId: Maybe<string>
   l10n: L10nRecord
-  races: Maybe<List<Record<RaceCombined>>>
+  races: List<Record<RaceCombined>>
   selectRaceVariant (id: string): void
 }
 
@@ -22,7 +22,7 @@ export function RaceVariants (props: RaceVariantsProps) {
 
   return pipe_ (
     races,
-    bindF (find (pipe (RaceCombinedA_.id, Maybe.elemF (currentId)))),
+    find (pipe (RaceCombinedA_.id, Maybe.elemF (currentId))),
     bindF (pipe (
       RaceCombined.A.mappedVariants,
       map (e => Option ({

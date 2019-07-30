@@ -3,14 +3,18 @@ import { ident } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
 import { any, filter, isInfixOf, List, lower } from "../../Data/List";
 import { fromMaybe, guard, imapMaybe, Just, Maybe, maybe } from "../../Data/Maybe";
-import { elems } from "../../Data/OrderedMap";
+import { elems, keysSet } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
-import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
+import { uncurryN, uncurryN3, uncurryN4 } from "../../Data/Tuple/Curry";
 import { CultureCombinedA_ } from "../Models/View/CultureCombined";
 import { ProfessionCombined, ProfessionCombinedA_ } from "../Models/View/ProfessionCombined";
 import { ProfessionVariantCombined } from "../Models/View/ProfessionVariantCombined";
 import { RaceCombinedA_ } from "../Models/View/RaceCombined";
+import { Advantage } from "../Models/Wiki/Advantage";
+import { Blessing } from "../Models/Wiki/Blessing";
+import { Cantrip } from "../Models/Wiki/Cantrip";
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
+import { Disadvantage } from "../Models/Wiki/Disadvantage";
 import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
 import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
@@ -22,16 +26,22 @@ import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterRecordsByA, filterRecordsByName } from "../Utilities/filterBy";
 import { compareLocale, translate } from "../Utilities/I18n";
 import { pipe, pipe_ } from "../Utilities/pipe";
+import { filterByAvailabilityF } from "../Utilities/RulesUtils";
 import { comparingR, sortRecordsBy, sortRecordsByName } from "../Utilities/sortBy";
 import { DropdownOption } from "../Views/Universal/Dropdown";
 import { getAllCultures, getAllProfessions, getAllRaces } from "./rcpSelectors";
 import { getWikiProfessionsCombinedSortOptions } from "./sortOptionsSelectors";
-import { getLocaleAsProp, getWikiAdvantages, getWikiBlessings, getWikiCantrips, getWikiCombatTechniques, getWikiCombatTechniquesGroup, getWikiDisadvantages, getWikiFilterText, getWikiItemTemplates, getWikiItemTemplatesGroup, getWikiLiturgicalChants, getWikiLiturgicalChantsGroup, getWikiProfessionsGroup, getWikiSkills, getWikiSkillsGroup, getWikiSpecialAbilities, getWikiSpecialAbilitiesGroup, getWikiSpells, getWikiSpellsGroup } from "./stateSelectors";
+import { getLocaleAsProp, getWikiAdvantages, getWikiBlessings, getWikiBooks, getWikiCantrips, getWikiCombatTechniques, getWikiCombatTechniquesGroup, getWikiDisadvantages, getWikiFilterText, getWikiItemTemplates, getWikiItemTemplatesGroup, getWikiLiturgicalChants, getWikiLiturgicalChantsGroup, getWikiProfessionsGroup, getWikiSkills, getWikiSkillsGroup, getWikiSpecialAbilities, getWikiSpecialAbilitiesGroup, getWikiSpells, getWikiSpellsGroup } from "./stateSelectors";
 
 const PCA = ProfessionCombined.A
 const PCA_ = ProfessionCombinedA_
 const PVA = ProfessionVariant.A
 const PVCA = ProfessionVariantCombined.A
+
+export const filterByWikiAvailablilty = createMaybeSelector (
+  getWikiBooks,
+  booksMap => filterByAvailabilityF (booksMap) (keysSet (booksMap)) (true)
+)
 
 export const getRacesSortedByName = createMaybeSelector (
   getLocaleAsProp,
@@ -40,10 +50,14 @@ export const getRacesSortedByName = createMaybeSelector (
 )
 
 export const getPreparedRaces = createMaybeSelector (
+  filterByWikiAvailablilty,
   getWikiFilterText,
   getRacesSortedByName,
-  // tslint:disable-next-line: no-unnecessary-callback-wrapper
-  uncurryN (filter_text => filterRecordsByA ([RaceCombinedA_.name]) (filter_text))
+  uncurryN3 (filterWiki => filter_text =>
+              pipe (
+                filterRecordsByA ([RaceCombinedA_.name]) (filter_text),
+                filterWiki (RaceCombinedA_.src)
+              ))
 )
 
 export const getCulturesSortedByName = createMaybeSelector (
@@ -53,10 +67,14 @@ export const getCulturesSortedByName = createMaybeSelector (
 )
 
 export const getPreparedCultures = createMaybeSelector (
+  filterByWikiAvailablilty,
   getWikiFilterText,
   getCulturesSortedByName,
-  // tslint:disable-next-line: no-unnecessary-callback-wrapper
-  uncurryN (filter_text => filterRecordsByA ([CultureCombinedA_.name]) (filter_text))
+  uncurryN3 (filterWiki => filter_text =>
+              pipe (
+                filterRecordsByA ([CultureCombinedA_.name]) (filter_text),
+                filterWiki (CultureCombinedA_.src)
+              ))
 )
 
 export const getProfessionsSortedByName = createMaybeSelector (
@@ -114,16 +132,27 @@ const isProfessionIncludedInFilter =
     )
 
 export const getPreparedProfessions = createMaybeSelector (
+  filterByWikiAvailablilty,
   getWikiFilterText,
   getWikiProfessionsGroup,
   getProfessionsSortedByName,
-  uncurryN3 (filter_text => gr => filter (isProfessionIncludedInFilter (filter_text) (gr)))
+  uncurryN4 (filterWiki => filter_text => gr =>
+              pipe (
+                filter (isProfessionIncludedInFilter (filter_text) (gr)),
+                filterWiki (PCA_.src)
+              ))
 )
 
 export const getAdvantagesSortedByName = createMaybeSelector (
+  filterByWikiAvailablilty,
   getLocaleAsProp,
   getWikiAdvantages,
-  uncurryN (l10n => pipe (elems, sortRecordsByName (l10n)))
+  uncurryN3 (filterWiki => l10n =>
+              pipe (
+                elems,
+                filterWiki (Advantage.A.src),
+                sortRecordsByName (l10n)
+              ))
 )
 
 export const getPreparedAdvantages = createMaybeSelector (
@@ -134,9 +163,15 @@ export const getPreparedAdvantages = createMaybeSelector (
 )
 
 export const getDisadvantagesSortedByName = createMaybeSelector (
+  filterByWikiAvailablilty,
   getLocaleAsProp,
   getWikiDisadvantages,
-  uncurryN (l10n => pipe (elems, sortRecordsByName (l10n)))
+  uncurryN3 (filterWiki => l10n =>
+              pipe (
+                elems,
+                filterWiki (Disadvantage.A.src),
+                sortRecordsByName (l10n)
+              ))
 )
 
 export const getPreparedDisadvantages = createMaybeSelector (
@@ -147,9 +182,15 @@ export const getPreparedDisadvantages = createMaybeSelector (
 )
 
 export const getSkillsSortedByName = createMaybeSelector (
+  filterByWikiAvailablilty,
   getLocaleAsProp,
   getWikiSkills,
-  uncurryN (l10n => pipe (elems, sortRecordsByName (l10n)))
+  uncurryN3 (filterWiki => l10n =>
+              pipe (
+                elems,
+                filterWiki (Skill.A.src),
+                sortRecordsByName (l10n)
+              ))
 )
 
 export const getSkillsFilteredByOptions = createMaybeSelector (
@@ -168,9 +209,15 @@ export const getPreparedSkills = createMaybeSelector (
 )
 
 export const getCombatTechniquesSortedByName = createMaybeSelector (
+  filterByWikiAvailablilty,
   getLocaleAsProp,
   getWikiCombatTechniques,
-  uncurryN (l10n => pipe (elems, sortRecordsByName (l10n)))
+  uncurryN3 (filterWiki => l10n =>
+              pipe (
+                elems,
+                filterWiki (CombatTechnique.A.src),
+                sortRecordsByName (l10n)
+              ))
 )
 
 export const getCombatTechniquesFilteredByOptions = createMaybeSelector (
@@ -189,9 +236,15 @@ export const getPreparedCombatTechniques = createMaybeSelector (
 )
 
 export const getSpecialAbilitiesSortedByName = createMaybeSelector (
+  filterByWikiAvailablilty,
   getLocaleAsProp,
   getWikiSpecialAbilities,
-  uncurryN (l10n => pipe (elems, sortRecordsByName (l10n)))
+  uncurryN3 (filterWiki => l10n =>
+              pipe (
+                elems,
+                filterWiki (SpecialAbility.A.src),
+                sortRecordsByName (l10n)
+              ))
 )
 
 export const getSpecialAbilitiesFilteredByOptions = createMaybeSelector (
@@ -212,9 +265,15 @@ export const getPreparedSpecialAbilities = createMaybeSelector (
 )
 
 export const getSpellsSortedByName = createMaybeSelector (
+  filterByWikiAvailablilty,
   getLocaleAsProp,
   getWikiSpells,
-  uncurryN (l10n => pipe (elems, sortRecordsByName (l10n)))
+  uncurryN3 (filterWiki => l10n =>
+              pipe (
+                elems,
+                filterWiki (Spell.A.src),
+                sortRecordsByName (l10n)
+              ))
 )
 
 export const getSpellsFilteredByOptions = createMaybeSelector (
@@ -233,9 +292,15 @@ export const getPreparedSpells = createMaybeSelector (
 )
 
 export const getCantripsSortedByName = createMaybeSelector (
+  filterByWikiAvailablilty,
   getLocaleAsProp,
   getWikiCantrips,
-  uncurryN (l10n => pipe (elems, sortRecordsByName (l10n)))
+  uncurryN3 (filterWiki => l10n =>
+              pipe (
+                elems,
+                filterWiki (Cantrip.A.src),
+                sortRecordsByName (l10n)
+              ))
 )
 
 export const getPreparedCantrips = createMaybeSelector (
@@ -246,9 +311,15 @@ export const getPreparedCantrips = createMaybeSelector (
 )
 
 export const getLiturgicalChantsSortedByName = createMaybeSelector (
+  filterByWikiAvailablilty,
   getLocaleAsProp,
   getWikiLiturgicalChants,
-  uncurryN (l10n => pipe (elems, sortRecordsByName (l10n)))
+  uncurryN3 (filterWiki => l10n =>
+              pipe (
+                elems,
+                filterWiki (LiturgicalChant.A.src),
+                sortRecordsByName (l10n)
+              ))
 )
 
 export const getLiturgicalChantsFilteredByOptions = createMaybeSelector (
@@ -267,9 +338,15 @@ export const getPreparedLiturgicalChants = createMaybeSelector (
 )
 
 export const getBlessingsSortedByName = createMaybeSelector (
+  filterByWikiAvailablilty,
   getLocaleAsProp,
   getWikiBlessings,
-  uncurryN (l10n => pipe (elems, sortRecordsByName (l10n)))
+  uncurryN3 (filterWiki => l10n =>
+              pipe (
+                elems,
+                filterWiki (Blessing.A.src),
+                sortRecordsByName (l10n)
+              ))
 )
 
 export const getPreparedBlessings = createMaybeSelector (
@@ -280,9 +357,15 @@ export const getPreparedBlessings = createMaybeSelector (
 )
 
 export const getItemTemplatesSortedByName = createMaybeSelector (
+  filterByWikiAvailablilty,
   getLocaleAsProp,
   getWikiItemTemplates,
-  uncurryN (l10n => pipe (elems, sortRecordsByName (l10n)))
+  uncurryN3 (filterWiki => l10n =>
+              pipe (
+                elems,
+                filterWiki (ItemTemplate.A.src),
+                sortRecordsByName (l10n)
+              ))
 )
 
 export const getItemTemplatesFilteredByOptions = createMaybeSelector (
@@ -302,16 +385,13 @@ export const getPreparedItemTemplates = createMaybeSelector (
 
 export const getSpecialAbilityGroups = createMaybeSelector (
   getLocaleAsProp,
-  getWikiSpecialAbilities,
-  uncurryN (l10n => xmap => {
-             const xs = elems (xmap)
-
-             return pipe_ (
+  getSpecialAbilitiesSortedByName,
+  uncurryN (l10n => xs =>
+             pipe_ (
                translate (l10n) ("specialabilitygroups"),
                imapMaybe (i => x => fmapF (guard (any (pipe (SpecialAbility.A.gr, equals (i + 1)))
                                                       (xs)))
                                           (() => DropdownOption ({ id: Just (i + 1), name: x }))),
                sortRecordsByName (l10n)
-             )
-           })
+             ))
 )

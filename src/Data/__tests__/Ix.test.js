@@ -1,7 +1,7 @@
 // @ts-check
 const { range, rangeN, index, inRange, inRangeN, rangeSize } = require('../Ix')
 const { List } = require('../List')
-const { Pair } = require('../Pair')
+const { Pair } = require('../Tuple')
 
 test ('range', () => {
   expect (range (Pair (1, 5))) .toEqual (List (1, 2, 3, 4, 5))

@@ -7,8 +7,8 @@
  * @author Lukas Obermann
  */
 
-import { inc } from "../App/Utilities/mathUtils";
 import { cons, List } from "./List";
+import { inc } from "./Num";
 import { show } from "./Show";
 import { fst, Pair, snd } from "./Tuple";
 
