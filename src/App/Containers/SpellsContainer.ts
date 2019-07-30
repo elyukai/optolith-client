@@ -4,7 +4,6 @@ import * as ConfigActions from "../Actions/ConfigActions";
 import * as SpellsActions from "../Actions/SpellsActions";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getAttributesForSheet } from "../Selectors/attributeSelectors";
-import { getDerivedCharacteristicsMap } from "../Selectors/derivedCharacteristicsSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
 import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrips, isActivationDisabled } from "../Selectors/spellsSelectors";
 import { getInactiveSpellsFilterText, getSpellsFilterText } from "../Selectors/stateSelectors";
@@ -16,7 +15,6 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SpellsOwnProps): Spell
   activeList: getFilteredActiveSpellsAndCantrips (state, ownProps),
   inactiveList: getFilteredInactiveSpellsAndCantrips (state, ownProps),
   attributes: getAttributesForSheet (state, ownProps),
-  derivedCharacteristics: getDerivedCharacteristicsMap (state, ownProps),
   addSpellsDisabled: isActivationDisabled (state, ownProps),
   enableActiveItemHints: getEnableActiveItemHints (state),
   isRemovingEnabled: getIsRemovingEnabled (state),
