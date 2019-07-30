@@ -18,6 +18,7 @@ import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, j
 import { add, dec, gt, gte, inc, multiply } from "../../../Data/Num";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { Record, RecordI } from "../../../Data/Record";
+import { filterMapT, filterT } from "../../../Data/Transducer";
 import { fst, Pair, snd } from "../../../Data/Tuple";
 import { traceShowId } from "../../../Debug/Trace";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -26,6 +27,7 @@ import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Pact } from "../../Models/Hero/Pact";
+import { Rules } from "../../Models/Hero/Rules";
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
 import { InactiveActivatable, InactiveActivatableL } from "../../Models/View/InactiveActivatable";
 import { Advantage } from "../../Models/Wiki/Advantage";
@@ -37,7 +39,7 @@ import { Spell } from "../../Models/Wiki/Spell";
 import { Application } from "../../Models/Wiki/sub/Application";
 import { SelectOption, SelectOptionL } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
+import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup } from "../heroStateUtils";
 import { getBlessedTradStrIdFromNumId, prefixSA } from "../IDUtils";
@@ -45,7 +47,7 @@ import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
 import { isOwnTradition, isUnfamiliarSpell } from "../Increasable/spellUtils";
 import { pipe, pipe_ } from "../pipe";
 import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
-import { filterByAvailability } from "../RulesUtils";
+import { isEntryAvailable } from "../RulesUtils";
 import { sortRecordsByName } from "../sortBy";
 import { isNumber, isString, misNumberM, misStringM } from "../typeCheckUtils";
 import { getMaxLevelForDecreaseEntry, getSermonsAndVisionsCount } from "./activatableActiveValidationUtils";
@@ -70,6 +72,7 @@ const AppA = Application.A
 const AOA = ActiveObject.A
 const SpAL = Spell.AL
 const SA = Skill.A
+const RA = Rules.A
 
 const { cost: select_costL, applications, name: nameL } = SelectOptionL
 const { sid } = ActiveObject.AL
@@ -209,8 +212,20 @@ const modifySelectOptions =
   // tslint:disable-next-line: cyclomatic-complexity
   (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<List<Record<SelectOption>>> => {
     const current_id = AAL.id (wiki_entry)
-    const mcurrent_select = fmap (filterByAvailability (SOA.src)
-                                                       (Pair (WA.books (wiki), HA.rules (hero))))
+    const rules = HA.rules (hero)
+    const mcurrent_select = fmap (filterMapT (pipe (
+                                   filterT (isEntryAvailable (WA.books (wiki))
+                                                             (RA.enabledRuleBooks (rules))
+                                                             (RA.enableAllRuleBooks (rules))
+                                                             (SOA.src)),
+                                   filterT (pipe (
+                                     SOA.prerequisites,
+                                     Maybe.all (reqs => validatePrerequisites (wiki)
+                                                                              (hero)
+                                                                              (reqs)
+                                                                              (current_id))
+                                   ))
+                                 )))
                                  (AAL.select (wiki_entry))
 
     const isNoRequiredOrActiveSelection =
@@ -264,30 +279,6 @@ const modifySelectOptions =
                                 ? isNotSocialSkill (e)
                                 : true)
                               && isNoRequiredOrActiveSelection (e)))
-                    (mcurrent_select)
-      }
-
-      // Exceptional Sense
-      case "ADV_18":
-      // Restricted Sense
-      case "DISADV_7":
-      // Trade Secret
-      case "SA_3":
-      // Writing
-      case "SA_28":
-      // Tierwandlung
-      case "SA_338":
-      // Gebieter
-      case "SA_639": {
-        return fmap (filter ((e: Record<SelectOption>) =>
-                              isNoRequiredOrActiveSelection (e)
-                              && maybe (true)
-                                       ((reqs: List<AllRequirements>) =>
-                                         validatePrerequisites (wiki)
-                                                               (hero)
-                                                               (reqs)
-                                                               (current_id))
-                                       (SOA.prerequisites (e))))
                     (mcurrent_select)
       }
 
@@ -465,14 +456,6 @@ const modifySelectOptions =
 
                              if (
                                isNoRequiredOrActiveSelection (e)
-                               && validatePrerequisites (wiki)
-                                                        (hero)
-                                                        (pipe (
-                                                                SOA.prerequisites,
-                                                                fromMaybe (List ())
-                                                              )
-                                                              (e))
-                                                        (current_id)
                                && isJust (mtarget_wiki_entry)
                                && isJust (mtarget_hero_entry)
                                && isNotUnfamiliar (fromJust (mtarget_wiki_entry))

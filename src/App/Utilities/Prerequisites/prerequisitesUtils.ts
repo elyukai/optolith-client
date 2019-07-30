@@ -1,7 +1,7 @@
 import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { append, consF, filter, find, flength, List } from "../../../Data/List";
-import { altF, ap, bindF, elemF, fromMaybe, Just, liftM2, Maybe, maybe, Nothing } from "../../../Data/Maybe";
+import { altF, ap, bindF, elemF, fromMaybe, joinMaybeList, Just, liftM2, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -37,6 +37,14 @@ export const getGeneratedPrerequisites =
   (current: Record<ActiveObject>): Maybe<List<AllRequirementObjects>> => {
     const sid = AOA.sid (current)
     const sid2 = AOA.sid2 (current)
+
+    const addToSelectOptionReqs =
+      (xs: Maybe<List<AllRequirementObjects>>) =>
+        pipe_ (
+          findSelectOption (wiki_entry) (sid),
+          bindF (SelectOption.AL.prerequisites),
+          maybe (xs) (pipe (append (joinMaybeList (xs)), Just))
+        )
 
     switch (AAL.id (wiki_entry)) {
       // Begabung
@@ -94,17 +102,6 @@ export const getGeneratedPrerequisites =
           })
         ))
 
-      // Exceptional Sense
-      case "ADV_18":
-      // Restricted Sense
-      case "DISADV_7":
-      // Trade Secret
-      case "SA_3":
-      // Tierwandlung
-      case "SA_338":
-        return bindF (SelectOption.AL.prerequisites)
-                     (findSelectOption (wiki_entry) (sid))
-
       case "SA_9": {
         const sameSkill = maybe (0)
                                 (pipe (
@@ -147,13 +144,13 @@ export const getGeneratedPrerequisites =
       }
 
       case "SA_81":
-        return Just (List (
+        return addToSelectOptionReqs (Just (List (
           RequireActivatable ({
             id: "SA_72",
             active: true,
             sid,
           })
-        ))
+        )))
 
       // Adaption (Zauber)
       case "SA_231":
@@ -168,34 +165,31 @@ export const getGeneratedPrerequisites =
 
       case "SA_414":
       case "SA_663":
-        return bindF ((option: Record<SelectOption>) =>
-                       liftM2 ((optionTarget: string) => (optionTier: number) =>
-                                List (
-                                  RequireIncreasable ({
-                                    id: optionTarget,
-                                    value: optionTier * 4 + 4,
-                                  }))
-                                )
-                              (SOA.target (option))
-                              (SOA.level (option)))
-                     (findSelectOption (wiki_entry) (sid))
-
-      case "SA_639":
-        return bindF (SOA.prerequisites) (findSelectOption (wiki_entry) (sid))
+        return addToSelectOptionReqs (bindF ((option: Record<SelectOption>) =>
+                                              liftM2 ((target: string) => (level: number) =>
+                                                       List (
+                                                         RequireIncreasable ({
+                                                           id: target,
+                                                           value: level * 4 + 4,
+                                                         }))
+                                                       )
+                                                     (SOA.target (option))
+                                                     (SOA.level (option)))
+                                            (findSelectOption (wiki_entry) (sid)))
 
       case "SA_699": {
-        return Just (List (
+        return addToSelectOptionReqs (Just (List (
           RequireActivatable ({
             id: "SA_29",
             active: true,
             sid,
             tier: Just (3),
           })
-        ))
+        )))
       }
     }
 
-    return Nothing
+    return addToSelectOptionReqs (Nothing)
   }
 
 export const addDynamicPrerequisites =
