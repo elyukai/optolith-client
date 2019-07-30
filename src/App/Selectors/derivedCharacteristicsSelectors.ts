@@ -35,8 +35,8 @@ import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, ge
 const ACA = AttributeCombined.A
 const ADA = AttributeDependent.A
 
-export type DCIds = "LP" | "AE" | "KP" | "SPI" | "TOU" | "DO" | "INI" | "MOV" | "WT"
-export type DCIdsWithoutWT = "LP" | "AE" | "KP" | "SPI" | "TOU" | "DO" | "INI" | "MOV"
+export type DCIds = "LP" | "AE" | "KP" | "SPI" | "TOU" | "DO" | "INI" | "MOV" | "WT" | "SPI/2"
+export type DCIdsWithoutWT = "LP" | "AE" | "KP" | "SPI" | "TOU" | "DO" | "INI" | "MOV" | "SPI/2"
 export type EnergyIds = "LP" | "AE" | "KP"
 
 const divideByXAndRound = (x: number) => (a: number) => Math.round (a / x)

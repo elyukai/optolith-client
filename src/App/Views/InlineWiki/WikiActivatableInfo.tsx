@@ -114,6 +114,15 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
       case 19:
       // Stecken
       case 20:
+      case 35:
+      case 36:
+      case 37:
+      case 38:
+      case 39:
+      case 42:
+      case 43:
+      case 44:
+      case 45:
         return (
           <WikiBoxTemplate
             className="specialability"
