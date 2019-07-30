@@ -28,7 +28,9 @@ export function WikiCastingTime<A extends RecordBase> (props: WikiCastingTimePro
   const category = acc.category (x)
   const gr = acc.gr (x)
 
-  if (category === Categories.SPELLS && gr === 2) {
+  if (category === Categories.SPELLS &&
+      (gr === 2 ||gr === 7 || gr ===10 || gr === 11)
+        ) {
     key = "ritualtime"
   }
   else if (category === Categories.SPELLS && (gr === 5 || gr === 6)) {

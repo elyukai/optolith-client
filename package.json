@@ -72,6 +72,7 @@
     "copyTables": "node ./copyTablesOnly.js",
     "copyTablesInsider": "node ./copyTablesInsiderOnly.js",
     "compile": "tsc",
+    "cti": "node ./copyTablesOnly.js",
     "watch": "tsc --watch",
     "start": "electron .",
     "test": "jest",

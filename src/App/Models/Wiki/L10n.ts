@@ -321,6 +321,8 @@ export interface L10n {
   "spirit": string
   "spirit.short": string
   "spiritcalc": string
+  "spirithalf": string
+  "spirithalf.short": string
   "toughness": string
   "toughness.short": string
   "toughnesscalc": string
@@ -943,6 +945,8 @@ export const L10n =
                 "spirit": "",
                 "spirit.short": "",
                 "spiritcalc": "",
+                "spirithalf": "",
+                "spirithalf.short": "",
                 "toughness": "",
                 "toughness.short": "",
                 "toughnesscalc": "",

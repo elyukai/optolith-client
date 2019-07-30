@@ -202,7 +202,7 @@ export interface AdvantageDisadvantageBase extends ActivatableBase {
   apValueAppend: Maybe<string>
 }
 
-export type CheckModifier = "SPI" | "TOU"
+export type CheckModifier = "SPI" | "TOU" | "SPI/2"
 
 export interface SkillExtension extends SelectOption {
   target: Just<string>
