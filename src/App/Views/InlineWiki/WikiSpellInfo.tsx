@@ -127,12 +127,9 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
           <WikiEffect {...props} acc={SpA} />
-          <WikiCastingTime {...props} acc={SpA} />
-          <WikiDuration {...props} acc={SpA} />
           <WikiCost {...props} acc={SpA} />
+          <WikiDuration {...props} acc={SpA} />
           <WikiSpellProperty {...props} acc={SpA} />
-          <WikiSpellTraditions {...props} acc={SpA} />
-          <WikiImprovementCost {...props} acc={SpA} />
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
@@ -154,9 +151,8 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
           <WikiEffect {...props} acc={SpA} />
-          <WikiCastingTime {...props} acc={SpA} />
-          <WikiDuration {...props} acc={SpA} />
           <WikiCost {...props} acc={SpA} />
+          <WikiDuration {...props} acc={SpA} />
           <WikiSpellProperty {...props} acc={SpA} />
           <WikiSpellTraditions {...props} acc={SpA} />
           <WikiImprovementCost {...props} acc={SpA} />
@@ -175,7 +171,6 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiTargetCategory {...props} acc={SpA} />
           <WikiSpellProperty {...props} acc={SpA} />
           <WikiSpellTraditions {...props} acc={SpA} />
-          <WikiImprovementCost {...props} acc={SpA} />
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
@@ -190,7 +185,6 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiDuration {...props} acc={SpA} />
           <WikiTargetCategory {...props} acc={SpA} />
           <WikiSpellProperty {...props} acc={SpA} />
-          <WikiSpellTraditions {...props} acc={SpA} />
           <WikiImprovementCost {...props} acc={SpA} />
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
