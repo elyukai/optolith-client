@@ -3,7 +3,6 @@ import { ReduxDispatch } from "../Actions/Actions";
 import * as SkillActions from "../Actions/SkillActions";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getAttributesForSheet } from "../Selectors/attributeSelectors";
-import { getDerivedCharacteristicsMap } from "../Selectors/derivedCharacteristicsSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
 import { getFilteredSkills, getSkillRating } from "../Selectors/skillsSelectors";
 import { getSkillsFilterText } from "../Selectors/stateSelectors";
@@ -13,7 +12,6 @@ import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (state: AppStateRecord, ownProps: SkillsOwnProps): SkillsStateProps => ({
   attributes: getAttributesForSheet (state, ownProps),
-  derivedCharacteristics: getDerivedCharacteristicsMap (state, ownProps),
   isRemovingEnabled: getIsRemovingEnabled (state),
   list: getFilteredSkills (state, ownProps),
   sortOrder: getSkillsSortOrder (state),

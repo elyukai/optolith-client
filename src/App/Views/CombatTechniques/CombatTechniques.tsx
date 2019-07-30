@@ -3,15 +3,12 @@ import { equals } from "../../../Data/Eq";
 import { fmapF } from "../../../Data/Functor";
 import { find, flength, intercalate, List, map, notNull, toArray } from "../../../Data/List";
 import { bindF, ensure, fromMaybe, Just, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
 import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements";
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { L10nRecord } from "../../Models/Wiki/L10n";
-import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { ndash } from "../../Utilities/Chars";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
@@ -34,7 +31,6 @@ export interface CombatTechniquesOwnProps {
 
 export interface CombatTechniquesStateProps {
   attributes: List<Record<AttributeCombined>>
-  derivedCharacteristics: OrderedMap<DCIds, Record<DerivedCharacteristic>>
   list: Maybe<List<Record<CombatTechniqueWithRequirements>>>
   isRemovingEnabled: boolean
   sortOrder: SortNames
@@ -73,7 +69,6 @@ export class CombatTechniques
     const {
       addPoint,
       attributes,
-      derivedCharacteristics,
       list,
       l10n,
       isRemovingEnabled,
@@ -181,7 +176,7 @@ export class CombatTechniques
                               }
                             )}
                             attributes={attributes}
-                            derivedCharacteristics={derivedCharacteristics}
+                            l10n={l10n}
                             selectForInfo={this.showInfo}
                             groupIndex={CTWRA_.gr (x)}
                             groupList={translate (l10n) ("combattechniquegroups")}

@@ -4,7 +4,6 @@ import * as CombatTechniquesActions from "../Actions/CombatTechniquesActions";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getAttributesForSheet } from "../Selectors/attributeSelectors";
 import { getFilteredCombatTechniques } from "../Selectors/combatTechniquesSelectors";
-import { getDerivedCharacteristicsMap } from "../Selectors/derivedCharacteristicsSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
 import { getCombatTechniquesFilterText } from "../Selectors/stateSelectors";
 import { getCombatTechniquesSortOrder } from "../Selectors/uisettingsSelectors";
@@ -16,7 +15,6 @@ const mapStateToProps = (
   ownProps: CombatTechniquesOwnProps
 ): CombatTechniquesStateProps => ({
   attributes: getAttributesForSheet (state, ownProps),
-  derivedCharacteristics: getDerivedCharacteristicsMap (state, ownProps),
   isRemovingEnabled: getIsRemovingEnabled (state),
   list: getFilteredCombatTechniques (state, ownProps),
   sortOrder: getCombatTechniquesSortOrder (state),

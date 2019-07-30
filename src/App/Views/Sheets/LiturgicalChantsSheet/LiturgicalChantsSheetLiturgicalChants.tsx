@@ -1,35 +1,32 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
-import { equals } from "../../../../Data/Eq";
 import { fmap, fmapF } from "../../../../Data/Functor";
-import { find, flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
+import { flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
 import { ensure, fromMaybeR, mapMaybe, Maybe } from "../../../../Data/Maybe";
 import { dec } from "../../../../Data/Num";
 import { elems } from "../../../../Data/OrderedSet";
 import { Record } from "../../../../Data/Record";
 import { AttributeCombined } from "../../../Models/View/AttributeCombined";
-import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
 import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../../Models/View/LiturgicalChantWithRequirements";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { DCIds } from "../../../Selectors/derivedCharacteristicsSelectors";
 import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
+import { minus } from "../../../Utilities/Chars";
 import { translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils";
 import { sortStrings } from "../../../Utilities/sortBy";
+import { getCheckModStr } from "../../InlineWiki/Elements/WikiSkillCheck";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface LiturgicalChantsSheetLiturgicalChantsProps {
   attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
-  derivedCharacteristics: List<Record<DerivedCharacteristic>>
   liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
   l10n: L10nRecord
 }
 
 const LCWRA_ = LiturgicalChantWithRequirementsA_
-const DCA = DerivedCharacteristic.A
 
 export function LiturgicalChantsSheetLiturgicalChants (
   props: LiturgicalChantsSheetLiturgicalChantsProps
@@ -37,7 +34,6 @@ export function LiturgicalChantsSheetLiturgicalChants (
   const {
     attributes,
     checkAttributeValueVisibility,
-    derivedCharacteristics,
     l10n,
     liturgicalChants: maybeLiturgicalChants,
   } = props
@@ -112,14 +108,9 @@ export function LiturgicalChantsSheetLiturgicalChants (
                           elems,
                           ensure (notNull),
                           renderMaybeWith (pipe (
-                            mapMaybe (id => fmapF (find (pipe (
-                                                          DCA.id,
-                                                          equals<DCIds> (id)
-                                                        ))
-                                                        (derivedCharacteristics))
-                                                  (DCA.short)),
+                            map (getCheckModStr (l10n)),
                             intercalate ("/"),
-                            str => ` (+${str})`
+                            str => ` (${minus}${str})`
                           ))
                         )}
                       </Textfit>

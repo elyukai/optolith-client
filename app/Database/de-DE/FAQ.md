@@ -1,7 +1,7 @@
 ## Ich kann keine Zauber oder Liturgien hinzufügen!
 
-Es wird daran liegen, dass du die Voraussetungen dafür nicht erfüllst!
-Folgende Voraussetungen gelten:
+Es wird daran liegen, dass du die Voraussetzungen dafür nicht erfüllst!
+Folgende Voraussetzungen gelten:
 
 ### Zauber:
 

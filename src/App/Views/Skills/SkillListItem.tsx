@@ -1,13 +1,11 @@
 import * as React from "react";
 import { List } from "../../../Data/List";
 import { INTERNAL_shallowEquals, Maybe } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
 import { AttributeCombined } from "../../Models/View/AttributeCombined";
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { CheckModifier } from "../../Models/Wiki/wikiTypeHelpers";
-import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { ListItem } from "../Universal/ListItem";
 import { ListItemName } from "../Universal/ListItemName";
 import { ListItemSeparator } from "../Universal/ListItemSeparator";
@@ -30,7 +28,6 @@ export interface SkillListItemProps {
   check?: List<string>
   checkDisabled?: boolean
   checkmod?: OrderedSet<CheckModifier>
-  derivedCharacteristics?: OrderedMap<DCIds, Record<DerivedCharacteristic>>
   groupList?: List<string>
   groupIndex?: number
   ic?: number
@@ -44,6 +41,7 @@ export interface SkillListItemProps {
   typ?: boolean
   untyp?: boolean
   selectedForInfo: Maybe<string>
+  l10n: L10nRecord
   activate? (): void
   addPoint? (): void
   removePoint? (): void
@@ -58,7 +56,7 @@ export class SkillListItem extends React.Component<SkillListItemProps> {
       || this.props.addDisabled !== nextProps.addDisabled
       || this.props.removeDisabled !== nextProps.removeDisabled
       || this.props.attributes !== nextProps.attributes
-      || this.props.derivedCharacteristics !== nextProps.derivedCharacteristics
+      || this.props.l10n !== nextProps.l10n
       || this.props.insertTopMargin !== nextProps.insertTopMargin
       || this.props.typ !== nextProps.typ
       || this.props.untyp !== nextProps.untyp

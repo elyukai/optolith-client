@@ -10,10 +10,8 @@ import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
 import { AttributeCombined } from "../../Models/View/AttributeCombined";
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { SkillWithRequirements, SkillWithRequirementsA_ } from "../../Models/View/SkillWithRequirements";
 import { L10nRecord } from "../../Models/Wiki/L10n";
-import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../Utilities/I18n";
 import { isCommon, isUncommon } from "../../Utilities/Increasable/skillUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
@@ -38,7 +36,6 @@ export interface SkillsOwnProps {
 
 export interface SkillsStateProps {
   attributes: List<Record<AttributeCombined>>
-  derivedCharacteristics: OrderedMap<DCIds, Record<DerivedCharacteristic>>
   list: Maybe<List<Record<SkillWithRequirements>>>
   isRemovingEnabled: boolean
   sortOrder: SortNames
@@ -76,7 +73,6 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
     const {
       addPoint,
       attributes,
-      derivedCharacteristics,
       l10n,
       isRemovingEnabled,
       ratingVisibility: is_rating_visible,
@@ -171,7 +167,7 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
                                     addFillElement
                                     insertTopMargin={isTopMarginNeeded (sortOrder) (curr) (mprev)}
                                     attributes={attributes}
-                                    derivedCharacteristics={derivedCharacteristics}
+                                    l10n={l10n}
                                     selectForInfo={this.showInfo}
                                     groupIndex={SWRA_.gr (curr)}
                                     groupList={translate (l10n) ("skillgroups")}

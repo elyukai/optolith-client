@@ -45,10 +45,7 @@ export function WikiSkillCheck<A extends RecordBase> (props: WikiSkillCheckProps
 
   const checkmods = fmapF (Maybe (acc.checkmod)) (pipe (thrush (x), toList))
 
-  const mod = map ((id: CheckModifier) =>
-                    id === "SPI"
-                      ? translate (l10n) ("spirit.short")
-                      : translate (l10n) ("toughness.short"))
+  const mod = map (getCheckModStr (l10n))
                   (fromMaybe (List<CheckModifier> ()) (checkmods))
 
   return (
@@ -59,3 +56,10 @@ export function WikiSkillCheck<A extends RecordBase> (props: WikiSkillCheckProps
     </WikiProperty>
   )
 }
+
+export const getCheckModStr = (l10n: L10nRecord) =>
+                              (id: CheckModifier) => id === "SPI"
+                                                     ? translate (l10n) ("spirit.short")
+                                                     : id === "TOU"
+                                                     ? translate (l10n) ("toughness.short")
+                                                     : translate (l10n) ("spirithalf.short")

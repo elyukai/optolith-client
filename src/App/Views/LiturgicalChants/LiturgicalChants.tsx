@@ -5,7 +5,6 @@ import { fmap } from "../../../Data/Functor";
 import { consF, elem, elemF, intercalate, List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
 import { bindF, ensure, fromMaybe, fromMaybeR, guard, Just, mapMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
 import { dec } from "../../../Data/Num";
-import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
@@ -13,12 +12,10 @@ import { ActivatableSkillDependent } from "../../Models/ActiveEntries/Activatabl
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { AttributeCombined } from "../../Models/View/AttributeCombined";
 import { BlessingCombined } from "../../Models/View/BlessingCombined";
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../Models/View/LiturgicalChantWithRequirements";
 import { Blessing } from "../../Models/Wiki/Blessing";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../Utilities/I18n";
 import { getAspectsOfTradition } from "../../Utilities/Increasable/liturgicalChantUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
@@ -49,7 +46,6 @@ export interface LiturgicalChantsStateProps {
   activeList: Maybe<List<Record<BlessingCombined> | Record<LiturgicalChantWithRequirements>>>
   addChantsDisabled: boolean
   attributes: List<Record<AttributeCombined>>
-  derivedCharacteristics: OrderedMap<DCIds, Record<DerivedCharacteristic>>
   enableActiveItemHints: boolean
   filterText: string
   inactiveFilterText: string
@@ -160,7 +156,6 @@ export class LiturgicalChants
       addBlessingToList,
       enableActiveItemHints,
       attributes,
-      derivedCharacteristics,
       activeList,
       inactiveList,
       l10n,
@@ -268,7 +263,7 @@ export class LiturgicalChants
                                         addFillElement
                                         insertTopMargin={insertTopMargin}
                                         attributes={attributes}
-                                        derivedCharacteristics={derivedCharacteristics}
+                                        l10n={l10n}
                                         selectForInfo={this.showSlideinInfo}
                                         addText={
                                           sortOrder === "group"
@@ -299,7 +294,7 @@ export class LiturgicalChants
                                         ic={LCWRA_.ic (curr)}
                                         insertTopMargin={insertTopMargin}
                                         attributes={attributes}
-                                        derivedCharacteristics={derivedCharacteristics}
+                                        l10n={l10n}
                                         selectForInfo={this.showSlideinInfo}
                                         addText={add_text}
                                         selectedForInfo={this.state.currentSlideinId}
@@ -392,7 +387,7 @@ export class LiturgicalChants
                                       noIncrease
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
-                                      derivedCharacteristics={derivedCharacteristics}
+                                      l10n={l10n}
                                       selectForInfo={this.showInfo}
                                       addText={
                                         sortOrder === "group"
@@ -431,7 +426,7 @@ export class LiturgicalChants
                                       sr={LCWRA_.value (curr)}
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
-                                      derivedCharacteristics={derivedCharacteristics}
+                                      l10n={l10n}
                                       selectForInfo={this.showInfo}
                                       addText={add_text}
                                       selectedForInfo={this.state.currentId}
