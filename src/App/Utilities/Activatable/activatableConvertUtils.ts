@@ -56,7 +56,7 @@ export const convertUIStateToActiveObject =
                                   (AAOA.selectOptionId1 (activate)),
         sid2: then (guard (isJust (AAOA.input (activate))
                            || isJust (AAOA.selectOptionId1 (activate))))
-                                    (AAOA.selectOptionId2 (activate)),
+                   (AAOA.selectOptionId2 (activate)),
         tier: AAOA.level (activate),
         cost: AAOA.customCost (activate),
       })

@@ -1,9 +1,10 @@
 import { equals } from "../../Data/Eq";
-import { flip, ident, thrush } from "../../Data/Function";
+import { ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
-import { all, cons, Cons, consF, elem, elemF, filter, find, foldr, intercalate, List, ListI, map, subscriptF } from "../../Data/List";
+import { all, cons, Cons, consF, elemF, filter, find, foldr, intercalate, List, ListI, map, subscriptF } from "../../Data/List";
 import { alt, bind, bindF, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe";
+import { abs, add } from "../../Data/Num";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Tuple/Curry";
@@ -47,7 +48,6 @@ import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { translate } from "../Utilities/I18n";
 import { getCategoryById } from "../Utilities/IDUtils";
-import { abs, add } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { validateProfession } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
 import { getFullProfessionName } from "../Utilities/rcpUtils";
@@ -146,22 +146,16 @@ export const getAllRaces = createMaybeSelector (
 )
 
 export const getAvailableRaces = createMaybeSelector (
-  getAllRaces,
   getRuleBooksEnabled,
-  uncurryN (races => fmap (flip (filterByAvailability (pipe (RCA.wikiEntry, RA.src)))
-                                (races)))
+  getAllRaces,
+  uncurryN (filterByAvailability (pipe (RCA.wikiEntry, RA.src)))
 )
 
 export const getFilteredRaces = createMaybeSelector (
   getRacesCombinedSortOptions,
   getRacesFilterText,
   getAvailableRaces,
-  uncurryN3 (sort_options =>
-             filter_text =>
-               fmap (filterAndSortRecordsBy (0)
-                                            ([pipe (RCA.wikiEntry, RA.name)])
-                                            (sort_options)
-                                            (filter_text)))
+  uncurryN3 (filterAndSortRecordsBy (0) ([pipe (RCA.wikiEntry, RA.name)]))
 )
 
 export const getAllCultures = createMaybeSelector (
@@ -211,24 +205,26 @@ export const getAvailableCultures = createMaybeSelector (
   uncurryN4 (common_cultures =>
              visibility =>
              cs =>
-              fmap (visibility === "common"
-                     ? flip (filterByAvailability (pipe (CCA.wikiEntry, CA.src)))
-                            (filter (pipe (CCA.wikiEntry, CA.id, elemF (common_cultures)))
-                                    (cs))
-                     : flip (filterByAvailability (pipe (CCA.wikiEntry, CA.src)))
-                            (cs)))
+             av =>
+              visibility === "common"
+                ? filterByAvailability (pipe (CCA.wikiEntry, CA.src))
+                                       (av)
+                                       (filter (pipe (
+                                                 CCA.wikiEntry,
+                                                 CA.id,
+                                                 elemF (common_cultures)
+                                               ))
+                                               (cs))
+                : filterByAvailability (pipe (CCA.wikiEntry, CA.src))
+                                       (av)
+                                       (cs))
 )
 
 export const getFilteredCultures = createMaybeSelector (
-  getCulturesFilterText,
   getCulturesCombinedSortOptions,
+  getCulturesFilterText,
   getAvailableCultures,
-  uncurryN3 (filter_text =>
-             sort_options =>
-               fmap (filterAndSortRecordsBy (0)
-                                            ([pipe (CCA.wikiEntry, CA.name)])
-                                            (sort_options)
-                                            (filter_text)))
+  uncurryN3 (filterAndSortRecordsBy (0) ([pipe (CCA.wikiEntry, CA.name)]))
 )
 
 interface SkillGroupLists {
@@ -512,9 +508,10 @@ const mapSpell = mapIncreaseSkillOrList (WA.spells) (SPA.name)
 const mapLiturgicalChant = mapIncreaseSkillOrList (WA.liturgicalChants) (LCA.name)
 
 const mapIncreaseSkillPrevious =
-  <a>
-  (wikiAcc: (w: WikiModelRecord) => OrderedMap<string, a>) =>
-  (nameAcc: (x: a) => string) =>
+  (base: number) =>
+  <A>
+  (wikiAcc: (w: WikiModelRecord) => OrderedMap<string, A>) =>
+  (nameAcc: (x: A) => string) =>
   (wiki: WikiModelRecord) =>
   (main_xs: List<Record<IncreaseSkill> | Record<IncreaseSkillList>>) =>
   (e: Record<IncreaseSkill>) =>
@@ -530,7 +527,10 @@ const mapIncreaseSkillPrevious =
               find (incsk => IncreaseSkill.is (incsk)
                                ? pipe_ (e, ISA.id, equals (ISA.id (incsk)))
                                : false),
-              fmap (IncreaseSkill.AL.value)
+              fmap (pipe (
+                IncreaseSkill.AL.value,
+                add (base)
+              ))
             )
 
           const value = ISA.value (e)
@@ -539,21 +539,22 @@ const mapIncreaseSkillPrevious =
             id: ISA.id (e),
             name,
             previous,
-            value: maybe (value) (add (value)) (previous),
+            value: maybe (value + base) (add (value)) (previous),
           })
         }
       ))
     )
 
 const mapIncreaseSkillListPrevious =
-  <a>
-  (wikiAcc: (w: WikiModelRecord) => OrderedMap<string, a>) =>
-  (nameAcc: (x: a) => string) =>
+  (base: number) =>
+  <A>
+  (wikiAcc: (w: WikiModelRecord) => OrderedMap<string, A>) =>
+  (nameAcc: (x: A) => string) =>
   (wiki: WikiModelRecord) =>
   (main_xs: List<Record<IncreaseSkill> | Record<IncreaseSkillList>>) =>
   (e: Record<IncreaseSkill> | Record<IncreaseSkillList>) =>
     IncreaseSkill.is (e)
-      ? mapIncreaseSkillPrevious (wikiAcc) (nameAcc) (wiki) (main_xs) (e)
+      ? mapIncreaseSkillPrevious (base) (wikiAcc) (nameAcc) (wiki) (main_xs) (e)
       : pipe_ (
           e,
           ISLA.id,
@@ -566,7 +567,10 @@ const mapIncreaseSkillListPrevious =
                   find (incsk => IncreaseSkill.is (incsk)
                                    ? false
                                    : pipe_ (e, ISLA.id, all (elemF (ISLA.id (incsk))))),
-                  fmap (IncreaseSkill.AL.value)
+                  fmap (pipe (
+                    IncreaseSkill.AL.value,
+                    add (base)
+                  ))
                 )
 
               const value = ISLA.value (e)
@@ -575,23 +579,23 @@ const mapIncreaseSkillListPrevious =
                 id: ISLA.id (e) as Cons<string>,
                 name,
                 previous,
-                value: maybe (value) (add (value)) (previous),
+                value: maybe (value + base) (add (value)) (previous),
               })
             }
           ))
         )
 
-const mapSkillPrevious = mapIncreaseSkillPrevious (WA.skills) (SA.name)
+const mapSkillPrevious = mapIncreaseSkillPrevious (0) (WA.skills) (SA.name)
 
-const mapCombatTechniquePrevious = mapIncreaseSkillPrevious (WA.combatTechniques) (CTA.name)
+const mapCombatTechniquePrevious = mapIncreaseSkillPrevious (6) (WA.combatTechniques) (CTA.name)
 
-const mapSpellPrevious = mapIncreaseSkillListPrevious (WA.spells) (SPA.name)
+const mapSpellPrevious = mapIncreaseSkillListPrevious (0) (WA.spells) (SPA.name)
 
-const mapLiturgicalChantPrevious = mapIncreaseSkillListPrevious (WA.liturgicalChants) (LCA.name)
+const mapLiturgicalChantPrevious = mapIncreaseSkillListPrevious (0) (WA.liturgicalChants) (LCA.name)
 
 const isCustomProfession = (e: Record<ProfessionCombined>) => ProfessionCombinedA_.id (e) === "P_0"
 
-const filterProfessionOrVariant =
+const areProfessionOrVariantPrerequisitesValid =
   (current_sex: Sex) =>
   (current_race_id: string) =>
   (current_culture_id: string) =>
@@ -628,59 +632,69 @@ const filterProfession =
   (current_culture: Record<Culture>) =>
   (start_el: Record<ExperienceLevel>) =>
   (e: Record<ProfessionCombined>) => {
-    const prof_gr = pipe_ (e, PCA.wikiEntry, PA.gr)
+    // Custom profession always visible
+    if (isCustomProfession (e)) {
+      return true
+    }
 
-    const mcommon_profs_for_gr = pipe_ (current_culture, CA.commonProfessions, subscriptF (prof_gr))
+    // Group of current profession
+    const gr = ProfessionCombinedA_.gr (e)
 
-    const isSubgrCommon =
-      pipe (
-        CommonProfession.A.list,
-        elem<string | number> (ProfessionCombinedA_.subgr (e))
-      )
+    // All groups must be visible or it must be of selected group
+    if (group_visibility !== 0 && group_visibility !== gr) {
+      return false
+    }
 
-    const common_visible =
+    // The visibility rules for common professions of the current profession's
+    // group
+    const mcommon_profs_for_gr = pipe_ (current_culture, CA.commonProfessions, subscriptF (gr - 1))
+
+    const is_common =
+      // Either its not restricted to common professions
       visibility === "all"
-      || isCustomProfession (e)
-      || Maybe.and (fmapF (mcommon_profs_for_gr)
-                          (common_profs_for_gr => {
-                            const is_from_core_book = isEntryFromCoreBook (ProfessionCombinedA_.src)
-                                                                          (wiki_books)
-                                                                          (e)
-                            if (typeof common_profs_for_gr === "boolean") {
-                              return is_from_core_book
-                            }
+      // Or it must be a common profession
+      || maybe (true)
+               ((common_profs_for_gr: boolean | Record<CommonProfession>) => {
+                 // Entry must be from core book if everything from the group or
+                 // a subgroup this entry belongs to is common
+                 const is_from_core_book = isEntryFromCoreBook (ProfessionCombinedA_.src)
+                                                               (wiki_books)
+                                                               (e)
 
-                            const is_subgr_common = isSubgrCommon (common_profs_for_gr)
-                            const is_reverse = CommonProfession.A.reverse (common_profs_for_gr)
+                 if (typeof common_profs_for_gr === "boolean") {
+                   // Group must be common and it must be from core book
+                   return common_profs_for_gr && is_from_core_book
+                 }
 
-                            return is_subgr_common
-                              ? (is_subgr_common !== is_reverse && is_from_core_book)
-                              : is_reverse
-                                ? !is_subgr_common && is_from_core_book
-                                : is_subgr_common
-                          }))
+                 // Check if the passed id or subgroup is in the list
+                 const isCommon = elemF (CommonProfession.A.list (common_profs_for_gr))
 
-    /**
-      * const commonVisible = visibility === 'all' || e.id === 'P_0'
-      * || (typeof typicalList === 'boolean' ? typicalList === true :
-      * (typicalList.list.includes(e.subgr) ? typicalList.list.includes(e.subgr)
-      * !== typicalList.reverse : typicalList.list.includes(e.id)
-      * !== typicalList.reverse))
-    */
+                 const is_id_included = isCommon (ProfessionCombinedA_.id (e))
 
-    const group_visible =
-      group_visibility === 0
-      || isCustomProfession (e)
-      || group_visibility === ProfessionCombinedA_.gr (e)
+                 const is_subgr_included = isCommon (ProfessionCombinedA_.subgr (e))
 
-    return filterProfessionOrVariant (current_sex)
-                                     (current_race_id)
-                                     (CA.id (current_culture))
-                                     (start_el)
-                                     (pipe_ (e, PCA.wikiEntry, PA.dependencies))
-                                     (pipe_ (e, PCA.wikiEntry, PA.prerequisites))
-      && group_visible
-      && common_visible
+                 const is_included = is_id_included || is_subgr_included
+
+                 const is_reverse = CommonProfession.A.reverse (common_profs_for_gr)
+
+                 return is_reverse
+                   // if reversed, the entry does not need to be in the list to be common
+                   ? !is_included && is_from_core_book
+                   // if not reversed, the entry must be in the list to be common
+                   : is_included && is_from_core_book
+               })
+               (mcommon_profs_for_gr)
+
+    if (!is_common) {
+      return false
+    }
+
+    return areProfessionOrVariantPrerequisitesValid (current_sex)
+                                                    (current_race_id)
+                                                    (CA.id (current_culture))
+                                                    (start_el)
+                                                    (ProfessionCombinedA_.dependencies (e))
+                                                    (ProfessionCombinedA_.prerequisites (e))
   }
 
 const filterProfessionVariant =
@@ -689,12 +703,12 @@ const filterProfessionVariant =
   (current_culture_id: string) =>
   (start_el: Record<ExperienceLevel>) =>
   (e: Record<ProfessionVariantCombined>) =>
-    filterProfessionOrVariant (current_sex)
-                              (current_race_id)
-                              (current_culture_id)
-                              (start_el)
-                              (pipe_ (e, PVCA.wikiEntry, PVA.dependencies))
-                              (pipe_ (e, PVCA.wikiEntry, PVA.prerequisites))
+    areProfessionOrVariantPrerequisitesValid (current_sex)
+                                             (current_race_id)
+                                             (current_culture_id)
+                                             (start_el)
+                                             (pipe_ (e, PVCA.wikiEntry, PVA.dependencies))
+                                             (pipe_ (e, PVCA.wikiEntry, PVA.prerequisites))
 
 export const getCommonProfessions = createMaybeSelector (
   getWikiBooks,
@@ -734,16 +748,18 @@ export const getCommonProfessions = createMaybeSelector (
 
 export const getAvailableProfessions = createMaybeSelector (
   getProfessionsVisibilityFilter,
-  getCommonProfessions,
   getRuleBooksEnabled,
+  getCommonProfessions,
   uncurryN3 (visibility =>
-              liftM2 (xs =>
-                      availability => visibility === "all"
-                                      ? filterByAvailabilityAndPred (ProfessionCombinedA_.src)
-                                                                    (isCustomProfession)
-                                                                    (availability)
-                                                                    (xs)
-                                      : xs))
+             availability =>
+              fmap (xs => visibility === "all"
+                          ? filterByAvailabilityAndPred (ProfessionCombinedA_.src)
+                                                        (isCustomProfession)
+                                                        (availability)
+                                                        (xs)
+                          : filterByAvailability (ProfessionCombinedA_.src)
+                                                 (availability)
+                                                 (xs)))
 )
 
 export const getFilteredProfessions = createMaybeSelector (

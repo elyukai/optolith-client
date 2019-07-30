@@ -1,3 +1,4 @@
+import { fmap } from "../../../../Data/Functor";
 import { notNull, notNullStr } from "../../../../Data/List";
 import { Just, Nothing } from "../../../../Data/Maybe";
 import { Pair } from "../../../../Data/Tuple";
@@ -5,6 +6,7 @@ import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsByIdAndMainIdUnivOpt } from "../mergeTableRows";
+import { modifyNegIntNoBreak } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
 import { mensureMapBoolean, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
@@ -92,7 +94,7 @@ export const toActivatableSelectOption =
               name: rs.ename,
               cost: rs.ecost,
               prerequisites: notNull (rs.eprerequisites) ? Just (rs.eprerequisites) : Nothing,
-              description,
+              description: fmap (modifyNegIntNoBreak) (description),
               isSecret: Just (rs.eisSecret),
               languages: rs.elanguages,
               continent: rs.econtinent,

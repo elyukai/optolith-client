@@ -7,7 +7,7 @@ const { Pair, Tuple } = require('../Tuple');
 const { OrderedSet } = require('../OrderedSet');
 const { fromArray, fromUniquePairs, fromMap, OrderedMap } = require('../OrderedMap');
 const { Maybe } = require('../Maybe');
-const { add } = require('../../App/Utilities/mathUtils');
+const { add } = require('../Num');
 const { pipe } = require('../../App/Utilities/pipe');
 
 const Just = Internals.Just

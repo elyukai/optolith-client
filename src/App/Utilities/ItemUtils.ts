@@ -3,6 +3,7 @@ import { fmap } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
 import { flength, fromArray, List, map, notNullStr } from "../../Data/List";
 import { bindF, ensure, fromJust, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, product } from "../../Data/Maybe";
+import { gt } from "../../Data/Num";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
 import { bimap, fst, isTuple, Pair, snd } from "../../Data/Tuple";
@@ -16,7 +17,6 @@ import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttri
 import { prefixId } from "./IDUtils";
 import { ifElse } from "./ifElse";
 import { getLevelElementsWithZero } from "./levelUtils";
-import { gt } from "./mathUtils";
 import { toFloat, toInt } from "./NumberUtils";
 import { pipe } from "./pipe";
 

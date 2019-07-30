@@ -2,18 +2,19 @@ import * as React from "react";
 import { equals } from "../../Data/Eq";
 import { flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
-import { any, elemF, filter, List, pure } from "../../Data/List";
+import { any, elemF, filter, List } from "../../Data/List";
 import { bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, join, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, maybe, maybeToNullable, Nothing } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap, size, sum } from "../../Data/OrderedMap";
 import { OrderedSet } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
 import { fst, Pair, snd } from "../../Data/Tuple";
 import { LanguagesSelectionListItem } from "../Models/Hero/LanguagesSelectionListItem";
+import { Rules } from "../Models/Hero/Rules";
 import { ScriptsSelectionListItem } from "../Models/Hero/ScriptsSelectionListItem";
 import { Cantrip } from "../Models/Wiki/Cantrip";
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
 import { Culture } from "../Models/Wiki/Culture";
-import { L10n, L10nRecord } from "../Models/Wiki/L10n";
+import { L10nRecord } from "../Models/Wiki/L10n";
 import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement";
 import { Profession } from "../Models/Wiki/Profession";
 import { CantripsSelection } from "../Models/Wiki/professionSelections/CantripsSelection";
@@ -28,6 +29,7 @@ import { SpecializationSelection } from "../Models/Wiki/professionSelections/Spe
 import { TerrainKnowledgeSelection } from "../Models/Wiki/professionSelections/TerrainKnowledgeSelection";
 import { Skill } from "../Models/Wiki/Skill";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
+import { Spell } from "../Models/Wiki/Spell";
 import { SelectOption } from "../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
@@ -44,13 +46,15 @@ import { findSelectOption } from "./Activatable/selectionUtils";
 import { translate } from "./I18n";
 import { prefixSA } from "./IDUtils";
 import { pipe, pipe_ } from "./pipe";
+import { filterByAvailability, isAvailable } from "./RulesUtils";
 import { sortRecordsByName } from "./sortBy";
 import { getAllWikiEntriesByGroup } from "./WikiUtils";
 
-const WMA = WikiModel.A
+const WA = WikiModel.A
 const SAA = SpecialAbility.A
 const CA = Culture.A
 const PA = Profession.A
+const SA = Spell.A
 const SOA = SelectOption.A
 const LSSA = LanguagesScriptsSelection.A
 const CTSA = CombatTechniquesSelection.A
@@ -72,7 +76,7 @@ export const getBuyScriptElement =
           (() => {
             const selectionItem =
               pipe (
-                     WMA.specialAbilities,
+                     WA.specialAbilities,
                      lookup ("SA_27"),
                      bindF (flip (findSelectOption)
                                  (listToMaybe (Culture.AL.scripts (culture))))
@@ -106,83 +110,94 @@ export const getBuyScriptElement =
 
 const getScripts =
   (l10n: L10nRecord) =>
+  (wiki: WikiModelRecord) =>
+  (rules: Record<Rules>) =>
   (culture: Record<Culture>) =>
   (mainScript: number) =>
   (isBuyingMainScriptEnabled: boolean) =>
   (isScriptSelectionNeeded: Pair<boolean, boolean>) =>
-  (wikiEntryScripts: Record<SpecialAbility>) =>
-    fmap (pipe (
-           mapMaybe (
-             pipe (
-               SOA.id,
-               Just,
-               findSelectOption (wikiEntryScripts),
-               bindF (option => {
-                       const optionId = SOA.id (option)
+  (wikiEntryScripts: Record<SpecialAbility>) => {
+    const isSOAvailable = isAvailable (SOA.src) (Pair (WA.books (wiki), rules))
 
-                       if (typeof optionId === "number") {
-                         const maybeCost = SOA.cost (option)
+    return fmap (pipe (
+                  mapMaybe (
+                    pipe (
+                      SOA.id,
+                      Just,
+                      findSelectOption (wikiEntryScripts),
+                      bindF (option => {
+                              const optionId = SOA.id (option)
 
-                         if (isJust (maybeCost)) {
-                           const native =
-                             isBuyingMainScriptEnabled
-                             && (
-                               !snd (isScriptSelectionNeeded)
-                               && pipe (CA.scripts, listToMaybe, elem (optionId))
-                                       (culture)
-                               || optionId === mainScript
-                             )
+                              if (typeof optionId === "number" && isSOAvailable (option)) {
+                                const maybeCost = SOA.cost (option)
 
-                           return Just (ScriptsSelectionListItem ({
-                             id: optionId,
-                             name: SOA.name (option),
-                             cost: fromJust (maybeCost),
-                             native,
-                           }))
-                         }
-                       }
+                                if (isJust (maybeCost)) {
+                                  const native =
+                                    isBuyingMainScriptEnabled
+                                    && (
+                                      !snd (isScriptSelectionNeeded)
+                                      && pipe (CA.scripts, listToMaybe, elem (optionId))
+                                              (culture)
+                                      || optionId === mainScript
+                                    )
 
-                       return Nothing
-                     })
-             )
-           ),
-           sortRecordsByName (L10n.AL.id (l10n))
-         ))
-         (SAA.select (wikiEntryScripts))
+                                  return Just (ScriptsSelectionListItem ({
+                                    id: optionId,
+                                    name: SOA.name (option),
+                                    cost: fromJust (maybeCost),
+                                    native,
+                                  }))
+                                }
+                              }
+
+                              return Nothing
+                            })
+                    )
+                  ),
+                  sortRecordsByName (l10n)
+                ))
+                (SAA.select (wikiEntryScripts))
+  }
 
 const getLanguages =
   (l10n: L10nRecord) =>
+  (wiki: WikiModelRecord) =>
+  (rules: Record<Rules>) =>
   (culture: Record<Culture>) =>
   (motherTongue: number) =>
   (isMotherTongueSelectionNeeded: boolean) =>
-  (wikiEntryLanguages: Record<SpecialAbility>) =>
-    fmapF (SAA.select (wikiEntryLanguages))
-          (pipe (
-            mapMaybe (option => {
-                       const optionId = SOA.id (option)
+  (wikiEntryLanguages: Record<SpecialAbility>) => {
+    const isSOAvailable = isAvailable (SOA.src) (Pair (WA.books (wiki), rules))
 
-                       if (typeof optionId === "number") {
-                         const native =
-                           !isMotherTongueSelectionNeeded
-                           && pipe (CA.languages, listToMaybe, elem (optionId))
-                                   (culture)
-                           || optionId === motherTongue
+    return fmapF (SAA.select (wikiEntryLanguages))
+                 (pipe (
+                   mapMaybe (option => {
+                              const optionId = SOA.id (option)
 
-                         return Just (LanguagesSelectionListItem ({
-                           id: optionId,
-                           name: SOA.name (option),
-                           native,
-                         }))
-                       }
+                              if (typeof optionId === "number" && isSOAvailable (option)) {
+                                const native =
+                                  !isMotherTongueSelectionNeeded
+                                  && pipe (CA.languages, listToMaybe, elem (optionId))
+                                          (culture)
+                                  || optionId === motherTongue
 
-                       return Nothing
-                     }),
-            sortRecordsByName (L10n.AL.id (l10n))
-          ))
+                                return Just (LanguagesSelectionListItem ({
+                                  id: optionId,
+                                  name: SOA.name (option),
+                                  native,
+                                }))
+                              }
+
+                              return Nothing
+                            }),
+                   sortRecordsByName (l10n)
+                 ))
+  }
 
 export const getLanguagesAndScriptsElementAndValidation =
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
+  (rules: Record<Rules>) =>
   (culture: Record<Culture>) =>
   (selected_languages: OrderedMap<number, number>) =>
   (selected_scripts: OrderedMap<number, number>) =>
@@ -203,6 +218,8 @@ export const getLanguagesAndScriptsElementAndValidation =
       >
         (selection => wikiEntryScripts => wikiEntryLanguages => {
           const maybeScriptsList = getScripts (l10n)
+                                              (wiki)
+                                              (rules)
                                               (culture)
                                               (mainScript)
                                               (isBuyingMainScriptEnabled)
@@ -210,6 +227,8 @@ export const getLanguagesAndScriptsElementAndValidation =
                                               (wikiEntryScripts)
 
           const maybeLanguagesList = getLanguages (l10n)
+                                                  (wiki)
+                                                  (rules)
                                                   (culture)
                                                   (motherTongue)
                                                   (isMotherTongueSelectionNeeded)
@@ -245,21 +264,25 @@ export const getLanguagesAndScriptsElementAndValidation =
             (maybeLanguagesList)
         })
         (ProfessionSelections.AL[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (professionSelections))
-        (lookupF (WMA.specialAbilities (wiki)) ("SA_27"))
-        (lookupF (WMA.specialAbilities (wiki)) ("SA_29"))
+        (lookupF (WA.specialAbilities (wiki)) ("SA_27"))
+        (lookupF (WA.specialAbilities (wiki)) ("SA_29"))
     )
 
 export const getCursesElementAndValidation =
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
+  (rules: Record<Rules>) =>
   (cursesActive: OrderedMap<string, number>) =>
   (adjustCurse: (id: string) => (maybeOption: Maybe<"add" | "remove">) => void) =>
     pipe (
       ProfessionSelections.AL[ProfessionSelectionIds.CURSES],
       fmap (selection => {
              const list =
-               sortRecordsByName (L10n.AL.id (l10n))
-                                 (getAllWikiEntriesByGroup (WMA.spells (wiki)) (pure (3)))
+               pipe_ (
+                 getAllWikiEntriesByGroup (WA.spells (wiki)) (List (3)),
+                 filterByAvailability (SA.src) (Pair (WA.books (wiki), rules)),
+                 sortRecordsByName (l10n)
+               )
 
              const apLeft = CSA.value (selection) - (size (cursesActive) + sum (cursesActive)) * 2
 
@@ -290,7 +313,7 @@ export const getCombatTechniquesElementAndValidation =
       fmap (selection => {
              const list =
                pipe (
-                      WMA.combatTechniques,
+                      WA.combatTechniques,
                       elems,
                       filter (pipe (CombatTechnique.A.id, elemF (CTSA.sid (selection))))
                     )
@@ -325,7 +348,7 @@ export const getCombatTechniquesSecondElementAndValidation =
       fmap (selection => {
             const list =
               pipe (
-                     WMA.combatTechniques,
+                     WA.combatTechniques,
                      elems,
                      filter (pipe (CombatTechnique.A.id, elemF (CTSSA.sid (selection))))
                    )
@@ -360,7 +383,7 @@ export const getCantripsElementAndValidation =
             const list =
               pipe_ (
                 wiki,
-                WMA.cantrips,
+                WA.cantrips,
                 elems,
                 filter (pipe (Cantrip.A.id, elemF (CaSA.sid (selection))))
               )
@@ -399,7 +422,7 @@ export const getSkillSpecializationElement =
                change={setSpecialization}
                changeId={setSpecializationSkill}
                l10n={l10n}
-               skills={WMA.skills (wiki)}
+               skills={WA.skills (wiki)}
                />
            ))
     )
@@ -414,10 +437,10 @@ export const getSkillsElementAndValidation =
       ProfessionSelections.AL[ProfessionSelectionIds.SKILLS],
       fmap (selection => {
             const list =
-              maybe (elems (WMA.skills (wiki)))
+              maybe (elems (WA.skills (wiki)))
                     ((group: number) =>
                       pipe (
-                        WMA.skills,
+                        WA.skills,
                         elems,
                         filter<Record<Skill>>
                           (pipe (Skill.AL.gr, equals (group)))
@@ -460,7 +483,7 @@ export const getTerrainKnowledgeElement =
             active={terrainKnowledgeActive}
             />
         ))
-        (lookupF (WMA.specialAbilities (wiki)) ("SA_12"))
+        (lookupF (WA.specialAbilities (wiki)) ("SA_12"))
     )
 
 export const getMotherTongueSelectionElement =
@@ -472,7 +495,7 @@ export const getMotherTongueSelectionElement =
   (isAnyLanguageOrScriptSelected: boolean) =>
   (setMotherTongue: (option: number) => void) =>
     pipe (
-           bindF (() => lookupF (WMA.specialAbilities (wiki)) ("SA_29")),
+           bindF (() => lookupF (WA.specialAbilities (wiki)) ("SA_29")),
            fmap ((wikiEntry: Record<SpecialAbility>) => (
                   <Dropdown
                     hint={translate (locale) ("selectnativetongue")}
@@ -507,7 +530,7 @@ export const getMainScriptSelectionElement =
   (isBuyingMainScriptEnabled: boolean) =>
   (setMainCulturalLiteracy: (option: number) => void) =>
     pipe (
-           bindF (() => lookupF (WMA.specialAbilities (wiki)) ("SA_27")),
+           bindF (() => lookupF (WA.specialAbilities (wiki)) ("SA_27")),
            fmap ((wikiEntry: Record<SpecialAbility>) => (
                   <Dropdown
                     hint={translate (l10n) ("selectscript")}

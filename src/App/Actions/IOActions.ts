@@ -12,7 +12,7 @@ import { cnst, flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { List, notNull } from "../../Data/List";
-import { altF_, alt_, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
+import { alt_, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
 import { any, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap";
 import { differenceF, map } from "../../Data/OrderedSet";
 import { Record, StringKeyObject, toObject } from "../../Data/Record";
@@ -69,6 +69,8 @@ const loadDatabase =
 
       return res
     }
+
+console.log (join (user_data_path, "config.json"));
 
 const loadConfig = () =>
   pipe_ (
@@ -318,9 +320,8 @@ export const requestHeroSave =
 
     const mhero =
       pipe_ (
-        mcurrent_id,
-        altF_ (() => getCurrentHeroId (state)),
-        bindF (lookupF (heroes)),
+        current_id,
+        lookupF (heroes),
         fmap (pipe (heroReducer.A_.present, convertHeroForSave (users)))
       )
 
@@ -607,14 +608,14 @@ export const requestClose =
           message: translate (l10n) ("unsavedactions.text"),
           buttons: [
             {
-              label: translate (l10n) ("close"),
+              label: translate (l10n) ("quit"),
               dispatchOnClick: close (l10n) (false) (optionalCall),
             },
             {
               label: translate (l10n) ("cancel"),
             },
             {
-              label: translate (l10n) ("saveandclose"),
+              label: translate (l10n) ("saveandquit"),
               dispatchOnClick: close (l10n) (true) (optionalCall),
             },
           ],

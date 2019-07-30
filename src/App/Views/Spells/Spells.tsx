@@ -3,6 +3,7 @@ import { notEquals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
 import { bindF, ensure, fromMaybeR, guard, Just, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
+import { dec } from "../../../Data/Num";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
@@ -18,7 +19,6 @@ import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Spell } from "../../Models/Wiki/Spell";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../Utilities/I18n";
-import { dec } from "../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
 import { SkillListItem } from "../Skills/SkillListItem";
@@ -496,6 +496,5 @@ const getSpellAddText =
     pipe_ (
       guard (sortOrder === "group"),
       thenF (subscript (translate (l10n) ("spellgroups")) (SWRA_.gr (curr) - 1)),
-      maybe (property_str)
-            (gr_str => `${property_str} / ${gr_str}`)
+      maybe (property_str) (gr_str => `${property_str} / ${gr_str}`)
     )

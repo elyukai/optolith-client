@@ -1,9 +1,9 @@
 import * as React from "react";
 import { fmapF } from "../../../Data/Functor";
 import { Maybe, or } from "../../../Data/Maybe";
+import { lte } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
 import { AttributeWithRequirements, AttributeWithRequirementsA_ } from "../../Models/View/AttributeWithRequirements";
-import { lte } from "../../Utilities/mathUtils";
 import { IconButton } from "../Universal/IconButton";
 import { NumberBox } from "../Universal/NumberBox";
 import { AttributeBorder } from "./AttributeBorder";

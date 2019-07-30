@@ -148,7 +148,10 @@ export const getPact =
 
 
 export const getRules =
-  pipe (getCurrentHeroPresent, fmap (Hero.rules))
+  pipe (getHeroProp, Hero.rules)
+
+export const getRulesM =
+  pipe (getMaybeHeroProp, fmap (Hero.rules))
 
 const Rul = Rules.A
 

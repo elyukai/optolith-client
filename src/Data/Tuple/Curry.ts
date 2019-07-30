@@ -1,3 +1,6 @@
+import { Tuple } from "../Tuple";
+import { sel1, sel2, sel3 } from "./Select";
+
 /**
  * `curryN :: ((a, b) -> c) -> a -> b -> c`
  *
@@ -15,6 +18,15 @@ export const curryN =
 export const uncurryN =
   <A, B, C> (f: (a: A) => (b: B) => C) => (x: A, y: B): C =>
     f (x) (y)
+
+/**
+ * `uncurry3 :: (a -> b -> c -> d) -> (a, b, c) -> d`
+ *
+ * `uncurry3` converts a curried function to a function on pairs.
+ */
+export const uncurry3 =
+  <A, B, C, D> (f: (a: A) => (b: B) => (c: C) => D) => (x: Tuple<[A, B, C]>): D =>
+    f (sel1 (x)) (sel2 (x)) (sel3 (x))
 
 /**
  * `uncurryN3 :: (a -> b -> c -> d) -> (a, b, c) -> d`

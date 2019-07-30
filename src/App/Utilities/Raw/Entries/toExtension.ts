@@ -5,6 +5,7 @@ import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
+import { modifyNegIntNoBreak } from "../rawConversionUtils";
 import { mensureMapNatural, mensureMapNaturalInRange, mensureMapNonEmptyString } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSpellPrerequisites } from "./Sub/toPrerequisites";
@@ -58,7 +59,7 @@ export const toExtension =
           (rs => SelectOption ({
             id,
             name: rs.ename,
-            description: Just (rs.eeffect),
+            description: Just (modifyNegIntNoBreak (rs.eeffect)),
             target: Just (rs.etarget),
             level: Just (rs.elevel),
             prerequisites: notNull (rs.eprerequisites) ? Just (rs.eprerequisites) : Nothing,

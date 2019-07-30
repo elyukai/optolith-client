@@ -2,16 +2,17 @@ import { ident } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
 import { any, elem, insertAt, List, snocF } from "../../Data/List";
 import { Just, Maybe, maybe, Nothing } from "../../Data/Maybe";
+import { uncurry3 } from "../../Data/Tuple/Curry";
 import { SubTab } from "../Models/Hero/heroTypeHelpers";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { translate } from "../Utilities/I18n";
 import { isHeroSectionTab, isMainSectionTab, TabId } from "../Utilities/LocationUtils";
-import { pipe_ } from "../Utilities/pipe";
-import { isBookEnabled } from "../Utilities/RulesUtils";
+import { pipe, pipe_ } from "../Utilities/pipe";
+import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils";
 import { NavigationBarTabProps } from "../Views/NavBar/NavigationBarTabs";
 import { getIsLiturgicalChantsTabAvailable } from "./liturgicalChantsSelectors";
 import { getIsRemovingEnabled } from "./phaseSelectors";
-import { EnabledSourceBooks, getRuleBooksEnabled } from "./rulesSelectors";
+import { getRuleBooksEnabledM } from "./rulesSelectors";
 import { getIsSpellsTabAvailable } from "./spellsSelectors";
 import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleAsProp, getPhase } from "./stateSelectors";
 
@@ -165,7 +166,7 @@ export const getSubtabs = createMaybeSelector (
   getCurrentCultureId,
   getIsSpellsTabAvailable,
   getIsLiturgicalChantsTabAvailable,
-  getRuleBooksEnabled,
+  getRuleBooksEnabledM,
   (
     tab,
     isMainSection,
@@ -226,9 +227,12 @@ export const getSubtabs = createMaybeSelector (
           )
 
           if (maybe (false)
-                    ((ruleBooksEnabled: EnabledSourceBooks) =>
-                      any (isBookEnabled (ruleBooksEnabled))
-                          (List ("US25102", "US25008")))
+                    (pipe (
+                      sourceBooksPairToTuple,
+                      ruleBooksEnabled =>
+                      any (uncurry3 (isBookEnabled) (ruleBooksEnabled))
+                          (List ("US25102", "US25008"))
+                    ))
                     (mruleBooksEnabled)) {
             return Just (insertAt (2)
                                   <SubTab>
@@ -331,9 +335,12 @@ export const getSubtabs = createMaybeSelector (
                          })
               : ident,
             maybe (false)
-                  ((ruleBooksEnabled: EnabledSourceBooks) =>
-                    any (isBookEnabled (ruleBooksEnabled))
-                        (List ("US25102", "US25008")))
+                  (pipe (
+                    sourceBooksPairToTuple,
+                    ruleBooksEnabled =>
+                    any (uncurry3 (isBookEnabled) (ruleBooksEnabled))
+                        (List ("US25102", "US25008"))
+                  ))
                   (mruleBooksEnabled)
               ? insertAt (Maybe.elem (3) (phase) ? 3 : 2)
                          <SubTab> ({
@@ -415,8 +422,11 @@ export const getSubtabs = createMaybeSelector (
 
           if (Maybe.elem (true)
                          (fmapF (mruleBooksEnabled)
-                                (ruleBooksEnabled => isBookEnabled (ruleBooksEnabled)
-                                                                   ("US25208")))) {
+                                (pipe (
+                                  sourceBooksPairToTuple,
+                                  ruleBooksEnabled => uncurry3 (isBookEnabled) (ruleBooksEnabled)
+                                                                               ("US25208")
+                                )))) {
             return Just (insertAt (1)
                                   <SubTab> ({
                                     id: TabId.ZoneArmor,

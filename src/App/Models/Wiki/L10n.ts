@@ -313,6 +313,8 @@ export interface L10n {
   "arcaneenergy": string
   "arcaneenergy.short": string
   "arcaneenergycalc": string
+  "arcaneenergycalc.halfprimary": string
+  "arcaneenergycalc.noprimary": string
   "karmapoints": string
   "karmapoints.short": string
   "karmapointscalc": string
@@ -609,7 +611,10 @@ export interface L10n {
   "manualherodatarepair": string
   "manualherodatarepairexplanation": string
   "unfamiliarspell": string
-  "saveandclose": string
+  "saveandquit": string
+  "uses": string
+  "complementarysources": string
+  "and": string
 }
 
 export type L10nKey = keyof L10n
@@ -933,6 +938,8 @@ export const L10n =
                 "karmapoints": "",
                 "karmapoints.short": "",
                 "karmapointscalc": "",
+                "arcaneenergycalc.halfprimary": "",
+                "arcaneenergycalc.noprimary": "",
                 "spirit": "",
                 "spirit.short": "",
                 "spiritcalc": "",
@@ -1226,5 +1233,8 @@ export const L10n =
                 "manualherodatarepair": "",
                 "manualherodatarepairexplanation": "",
                 "unfamiliarspell": "",
-                "saveandclose": "",
+                "saveandquit": "",
+                "uses": "",
+                "complementarysources": "",
+                "and": "",
               })

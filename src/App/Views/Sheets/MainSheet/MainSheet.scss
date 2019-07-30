@@ -107,9 +107,10 @@
 					height: 37.6mm;
 
 					img.avatar {
-						@include size(100%);
 						border-radius: 0;
 						object-fit: cover;
+						width: calc(100% + 0.15mm);
+						height: 100%;
 					}
 				}
 
@@ -142,14 +143,18 @@
 		> .calculated {
 			width: 76mm;
 			flex: none;
-			margin-top: 36px;
+			margin-top: 9mm;
+			margin-bottom: 2mm;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
 
 			> div.calc-header {
-				margin-top: 5mm;
 				justify-content: flex-end;
 				height: auto;
 				align-items: flex-end;
 				margin-right: -2mm;
+				flex: 0 0 auto;
 
 				> div {
 					width: 8mm;
@@ -163,6 +168,7 @@
 				justify-content: space-between;
 				margin-bottom: 2mm;
 				height: 13mm;
+				flex: 0 0 13mm;
 
 				> .label {
 					span {
@@ -223,10 +229,6 @@
 							}
 						}
 					}
-				}
-
-				&.fate {
-					margin-top: 36px;
 				}
 			}
 		}

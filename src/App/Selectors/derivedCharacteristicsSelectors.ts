@@ -1,14 +1,19 @@
+import { notEquals } from "../../Data/Eq";
 import { fmap, fmapF } from "../../Data/Functor";
 import { elem, foldr, List, snoc } from "../../Data/List";
-import { bindF, fromMaybe, Just, liftM2, listToMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
+import { bindF, ensure, fromMaybe, Just, liftM2, listToMaybe, maybe, Maybe, Nothing } from "../../Data/Maybe";
+import { add, multiply, negate, subtract } from "../../Data/Num";
 import { elems, fromList } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
-import { fst, Pair, snd } from "../../Data/Tuple";
+import { Pair, Tuple } from "../../Data/Tuple";
+import { uncurry3 } from "../../Data/Tuple/Curry";
+import { sel1, sel2, sel3 } from "../../Data/Tuple/Select";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
 import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
 import { PermanentEnergyLoss } from "../Models/Hero/PermanentEnergyLoss";
 import { PermanentEnergyLossAndBoughtBack } from "../Models/Hero/PermanentEnergyLossAndBoughtBack";
+import { Rules } from "../Models/Hero/Rules";
 import { AttributeCombined } from "../Models/View/AttributeCombined";
 import { DerivedCharacteristic } from "../Models/View/DerivedCharacteristic";
 import { Race } from "../Models/Wiki/Race";
@@ -18,15 +23,14 @@ import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { translate } from "../Utilities/I18n";
 import { prefixAdv, prefixAttr, prefixDis, prefixSA } from "../Utilities/IDUtils";
 import { getAttributeValueWithDefault } from "../Utilities/Increasable/attributeUtils";
-import { add, multiply, negate, subtract } from "../Utilities/mathUtils";
 import { pipe } from "../Utilities/pipe";
-import { isBookEnabled } from "../Utilities/RulesUtils";
+import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice, mapGetToSlice, mapGetToSliceWithProps } from "../Utilities/SelectorsUtils";
 import { getHighestPrimaryMagicalAttributeValue, getPrimaryBlessedAttribute } from "./attributeSelectors";
 import { getCurrentRace } from "./rcpSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getMagicalTraditionsFromHero } from "./spellsSelectors";
-import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getDisadvantages, getLocaleAsProp, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getSpecialAbilities } from "./stateSelectors";
+import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getDisadvantages, getLocaleAsProp, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getRules, getSpecialAbilities } from "./stateSelectors";
 
 const ACA = AttributeCombined.A
 const ADA = AttributeDependent.A
@@ -104,34 +108,36 @@ export const getAE = createMaybeSelector (
      */
     const mbaseAndAdd =
       fmapF (mlast_trad)
-            (last_trad => fromMaybe (Pair (20, 0))
+            (last_trad => fromMaybe (Tuple (20, 0, 0))
                                     (fmapF (mprimary_value)
                                            (primary_value => {
-                                            const hasTraditionHalfAE =
-                                              elem (ActivatableDependent.A.id (last_trad))
-                                                   (List (
-                                                     prefixSA (677),
-                                                     prefixSA (678),
-                                                     prefixSA (750),
-                                                     prefixSA (1221)))
+                                            const ae_mod = getPrimaryAEMod (last_trad)
 
-                                            const maxAdd = hasTraditionHalfAE
-                                              ? divideBy2AndRound (primary_value)
-                                              : primary_value
+                                            const maxAdd = Math.round (primary_value * ae_mod)
 
-                                            return Pair (maxAdd + 20, maxAdd)
+                                            return Tuple (maxAdd + 20, maxAdd, ae_mod)
                                           })))
 
     const value = fmapF (mbaseAndAdd)
-                        (pipe (fst, base => base + mod + Maybe.sum (added)))
+                        (pipe (sel1, base => base + mod + Maybe.sum (added)))
+
+    const calc = maybe (translate (l10n) ("arcaneenergycalc"))
+                       <Tuple<[number, number, number]>> (pipe (
+                         sel3,
+                         ae_mod =>
+                          ae_mod === 1 ? translate (l10n) ("arcaneenergycalc") :
+                          ae_mod === 0.5 ? translate (l10n) ("arcaneenergycalc.halfprimary") :
+                          translate (l10n) ("arcaneenergycalc.noprimary")
+                       ))
+                       (mbaseAndAdd)
 
     return DerivedCharacteristic<"AE"> ({
       add: Just (Maybe.sum (added)),
-      base: fmapF (mbaseAndAdd) (fst),
-      calc: translate (l10n) ("arcaneenergycalc"),
+      base: fmapF (mbaseAndAdd) (sel1),
+      calc,
       currentAdd: Just (Maybe.sum (added)),
       id: "AE",
-      maxAdd: Just (Maybe.sum (fmapF (mbaseAndAdd) (snd))),
+      maxAdd: Just (Maybe.sum (fmapF (mbaseAndAdd) (sel2))),
       mod: Just (mod),
       name: translate (l10n) ("arcaneenergy"),
       permanentLost: Just (Maybe.sum (mlost)),
@@ -141,6 +147,22 @@ export const getAE = createMaybeSelector (
     })
   }
 )
+
+const getPrimaryAEMod =
+  (last_trad: Record<ActivatableDependent>): number =>
+    elem (ActivatableDependent.A.id (last_trad))
+        (List (
+          prefixSA (677),
+          prefixSA (678),
+          prefixSA (750),
+          prefixSA (1221)))
+    ? 0.5
+    : elem (ActivatableDependent.A.id (last_trad))
+           (List (
+             prefixSA (679),
+             prefixSA (680)))
+    ? 0
+    : 1
 
 export const getKP = createMaybeSelector (
   getPrimaryBlessedAttribute,
@@ -253,10 +275,14 @@ export const getDO = createMaybeSelector (
   mapGetToSliceWithProps (getAttributes) (prefixAttr (6)),
   mapGetToSlice (getSpecialAbilities) (prefixSA (64)),
   getLocaleAsProp,
-  (magi, mimproved_dodge, l10n) => {
+  getRules,
+  (magi, mimproved_dodge, l10n, rules) => {
     const base = divideBy2AndRound (getAttributeValueWithDefault (magi))
 
-    const mod = getFirstLevel (mimproved_dodge)
+    const higher_parade_values = Rules.A.higherParadeValues (rules)
+
+    const mod = ensure (notEquals (0))
+                       (Maybe.sum (getFirstLevel (mimproved_dodge)) + higher_parade_values)
 
     const value = base + Maybe.sum (mod)
 
@@ -369,7 +395,7 @@ export const getDerivedCharacteristicsMap = createMaybeSelector (
   getMOV,
   getWT,
   getRuleBooksEnabled,
-  (LP, AE, KP, SPI, TOU, DO, INI, MOV, WT, mrule_books_enabled) => {
+  (LP, AE, KP, SPI, TOU, DO, INI, MOV, WT, rule_books_enabled) => {
     type BaseDerived = Record<DerivedCharacteristic>
 
     const xs = List<(Pair<DCIds, BaseDerived>)> (
@@ -383,9 +409,9 @@ export const getDerivedCharacteristicsMap = createMaybeSelector (
       Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (MOV), MOV)
     )
 
-    const isWoundThresholdEnabled =
-      or (fmapF (mrule_books_enabled)
-                (rule_books_enabled => isBookEnabled (rule_books_enabled) ("US25003")))
+    const isWoundThresholdEnabled = uncurry3 (isBookEnabled)
+                                             (sourceBooksPairToTuple (rule_books_enabled))
+                                             ("US25003")
 
     if (isWoundThresholdEnabled) {
       return fromList (snoc (xs) (Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (WT), WT)))

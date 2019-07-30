@@ -3,7 +3,7 @@ const React = require('react');
 const { Internals } = require('../Internals');
 const { List } = require('../List');
 const { fmap } = require('../Functor');
-const { add } = require('../../App/Utilities/mathUtils');
+const { add } = require('../Num');
 const { Maybe } = require('../Maybe');
 
 const Just = Internals.Just

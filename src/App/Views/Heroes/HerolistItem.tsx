@@ -38,12 +38,12 @@ export interface HerolistItemStateProps {
 }
 
 export interface HerolistItemDispatchProps {
-  loadHero (id: string): void
+  loadHero (): void
   showHero (): void
-  saveHero (id: string): void
-  saveHeroAsJSON (id: string): void
-  deleteHero (id: string): void
-  duplicateHero (id: string): void
+  saveHero (): void
+  saveHeroAsJSON (): void
+  deleteHero (): void
+  duplicateHero (): void
 }
 
 export type HerolistItemProps = HerolistItemStateProps
@@ -129,13 +129,13 @@ export function HerolistItem (props: HerolistItemProps) {
         <BorderButton
           className="save"
           label={translate (l10n) ("save")}
-          onClick={saveHero.bind (undefined, id)}
+          onClick={saveHero}
           disabled={notMember (id) (unsavedHeroesById)}
           />
-        <IconButton icon="&#xE907;" onClick={duplicateHero.bind (undefined, id)} />
-        <IconButton icon="&#xE914;" onClick={saveHeroAsJSON.bind (undefined, id)} />
-        <IconButton icon="&#xE90b;" onClick={deleteHero.bind (undefined, id)} />
-        <IconButton icon="&#xE90e;" onClick={loadHero.bind (undefined, id)} />
+        <IconButton icon="&#xE907;" onClick={duplicateHero} />
+        <IconButton icon="&#xE914;" onClick={saveHeroAsJSON} />
+        <IconButton icon="&#xE90b;" onClick={deleteHero} />
+        <IconButton icon="&#xE90e;" onClick={loadHero} />
       </ListItemButtons>
     </ListItem>
   )

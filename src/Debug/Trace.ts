@@ -1,34 +1,54 @@
+import { pipe } from "../App/Utilities/pipe";
 import { Internals } from "../Data/Internals";
 import { showP } from "../Data/Show";
 
 /**
  * `trace :: Show a => String -> a -> a`
  *
- * The `trace` prints the passed `String` to the console and returns the second
- * parameter.
+ * The `trace` function outputs the trace message given as its first argument,
+ * before returning the second argument as its result.
  */
 export const trace = (msg: string) => <A> (x: A) => (console.log (msg), x)
 
 /**
- * `traceShowIO :: Show a => String -> a -> IO a`
+ * `traceId :: String -> String`
  *
- * The `traceShowIO` function is a variant of the `print` function. It takes a
- * `String` and a showable value and returns an `IO`, that prints the String
- * concatenated with the value (a space in between) to the console and returns
- * the showable value.
+ * Like `trace` but returns the message instead of a third value.
  */
-export const traceShowIO =
-  (msg: string) =>
-  <A> (x: A) =>
-    Internals.IO (async () => (console.log (`${msg} ${showP (x)}`), Promise.resolve (x)))
+export const traceId = (msg: string) => (console.log (msg), msg)
 
 /**
- * `traceShow :: Show a => String -> a -> a`
+ * `traceShow :: Show a => a -> b -> b`
  *
- * The `traceShow` function is a variant of the `trace` function that doesn't use
- * `IO` but only native JS-functions.
+ * Like `trace`, but uses `show` on the argument to convert it to a `String`.
  */
-export const traceShow = (msg: string) => <A> (x: A) => (console.log (`${msg} ${showP (x)}`), x)
+export const traceShow = <A> (a: A) => <B> (b: B) => (console.log (showP (a)), b)
+
+/**
+ * `traceShowId :: Show a => a -> a`
+ *
+ * Like `traceShow` but returns the shown value instead of a third value.
+ */
+export const traceShowId = <A> (x: A) => (console.log (showP (x)), x)
+
+/**
+ * `traceShowBoth :: Show a => a -> b -> b`
+ *
+ * A combination of `traceShow` and `traceShowId`. Prints both inputs to the
+ * console and returns the second parameter.
+ */
+export const traceShowBoth = <A> (a: A) => pipe (traceShow (a), traceShowId)
+
+/**
+ * `traceShowIdWhen :: Show a => Bool -> a -> a`
+ *
+ * Like `traceShowId` but only prints to console if the passed boolean is
+ * `True`.
+ */
+export const traceShowIdWhen =
+  (print: boolean) => <A> (x: A) => print ? (console.log (showP (x)), x) : x
+
+export const traceIdWith = <A> (f: (x: A) => string) => (x: A): A => (console.log (f (x)), x)
 
 /**
  * `traceWithN :: Show b => String -> (a -> b) -> a -> a`
@@ -47,7 +67,7 @@ export const traceShowWith =
   (msg: string) =>
   <A, B> (f: (x: A) => B) =>
   (x: A): A =>
-    (console.log (`${msg} ${showP (f (x))}`), x)
+    (console.log (concatMsgValue (msg) (f (x))), x)
 
 /**
  * `traceShowOn :: Show a => String -> a -> a`
@@ -59,4 +79,21 @@ export const traceShowWith =
 export const traceShowOn =
   <A> (pred: (x: A) => boolean) =>
   (msg: string) =>
-  (x: A) => pred (x) ? (console.log (`${msg} ${showP (x)}`), x) : x
+  (x: A) => pred (x) ? (console.log (concatMsgValue (msg) (x)), x) : x
+
+/**
+ * `traceShowIO :: Show a => String -> a -> IO a`
+ *
+ * The `traceShowIO` function is a variant of the `print` function. It takes a
+ * `String` and a showable value and returns an `IO`, that prints the String
+ * concatenated with the value (a space in between) to the console and returns
+ * the showable value.
+ */
+export const traceShowIO =
+  (msg: string) =>
+  <A> (x: A) =>
+    Internals.IO (async () => (console.log (concatMsgValue (msg) (x)), Promise.resolve (x)))
+
+const concatMsgValue = (msg: string) => (x: any) => `${insertSpaceNotNull (msg)}${showP (x)}`
+
+const insertSpaceNotNull = (x: string) => x .length > 0 ? `${x} ` : ""

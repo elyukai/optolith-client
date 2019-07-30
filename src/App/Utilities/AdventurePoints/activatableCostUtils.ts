@@ -13,6 +13,7 @@ import { fmap, fmapF } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
 import { appendStr, countWith, filter, find, foldl, ifoldr, isList, List, map, notElem, notNull, subscript, subscriptF } from "../../../Data/List";
 import { any, bind, bindF, elem, elemF, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, listToMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe";
+import { add, dec, multiply, negate } from "../../../Data/Num";
 import { lookup, lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
@@ -32,7 +33,6 @@ import { getSelectOptionCost } from "../Activatable/selectionUtils";
 import { getHeroStateItem } from "../heroStateUtils";
 import { translate } from "../I18n";
 import { getCategoryById } from "../IDUtils";
-import { add, dec, multiply, negate } from "../mathUtils";
 import { toRoman } from "../NumberUtils";
 import { pipe, pipe_ } from "../pipe";
 import { isNumber, misNumberM, misStringM } from "../typeCheckUtils";
@@ -171,12 +171,10 @@ const getEntrySpecificCost =
 
       // Bad Habit
       case "DISADV_36": {
-        if (
-          // more than three entries cannot contribute to AP spent; entries with
-          // custom cost are ignored for the rule's effect
-          countWith (pipe (ActiveObject.AL.cost, isNothing))
-                    (all_active) > (isEntryToAdd ? 2 : 3)
-        ) {
+        // more than three entries cannot contribute to AP spent; entries with
+        // custom cost are ignored for the rule's effect
+        if (countWith (pipe (ActiveObject.AL.cost, isNothing))
+                      (all_active) > (isEntryToAdd ? 2 : 3)) {
           return Nothing
         }
 

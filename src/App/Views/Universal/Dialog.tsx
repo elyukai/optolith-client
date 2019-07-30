@@ -1,9 +1,9 @@
 import * as React from "react";
 import { List, notNullStrUndef } from "../../../Data/List";
 import { guardReplace, Just, Maybe } from "../../../Data/Maybe";
+import { abs, max } from "../../../Data/Num";
 import { close } from "../../Utilities/createOverlay";
 import { classListMaybe } from "../../Utilities/CSS";
-import { abs, max } from "../../Utilities/mathUtils";
 import { ButtonProps, DialogButtons } from "./DialogButtons";
 
 export interface DialogProps {

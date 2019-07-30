@@ -6,10 +6,10 @@ import { fmap, fmapF } from "../../Data/Functor";
 import { Internals } from "../../Data/Internals";
 import { flength, fromArray, List, subscript } from "../../Data/List";
 import { fromMaybe, normalize, Nothing } from "../../Data/Maybe";
+import { divideBy, inc } from "../../Data/Num";
 import { bimap, fst, Pair, snd } from "../../Data/Tuple";
 import { Unit } from "../../Data/Unit";
 import { bind, pure } from "../../System/IO";
-import { divideBy, inc } from "./mathUtils";
 import { pipe } from "./pipe";
 
 import IO = Internals.IO

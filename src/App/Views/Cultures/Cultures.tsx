@@ -1,8 +1,9 @@
 import * as React from "react";
 import { List, map, notNull, toArray } from "../../../Data/List";
-import { bindF, ensure, Just, Maybe, maybe } from "../../../Data/Maybe";
+import { ensure, Just, Maybe, maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
@@ -21,11 +22,12 @@ import { TextField } from "../Universal/TextField";
 import { CulturesListItem } from "./CulturesListItem";
 
 export interface CulturesOwnProps {
+  hero: HeroModelRecord
   l10n: L10nRecord
 }
 
 export interface CulturesStateProps {
-  cultures: Maybe<List<Record<CultureCombined>>>
+  cultures: List<Record<CultureCombined>>
   currentId: Maybe<string>
   sortOrder: SortNames
   visibilityFilter: string
@@ -97,7 +99,7 @@ export function Cultures (props: CulturesProps) {
           <ListView>
             {pipe_ (
               mcultures,
-              bindF (ensure (notNull)),
+              ensure (notNull),
               maybe<NonNullable<React.ReactNode>>
                 (<ListPlaceholder l10n={l10n} type="cultures" noResults />)
                 (pipe (

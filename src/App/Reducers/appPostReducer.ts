@@ -7,19 +7,20 @@ import { and, elem, fromJust, isJust, isNothing, Just, or } from "../../Data/May
 import { insert, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { fst, snd } from "../../Data/Tuple";
+import { uncurry3 } from "../../Data/Tuple/Curry";
 import { RedoAction, UndoAction } from "../Actions/HistoryActions";
 import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from "../Actions/IOActions";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { Alert, User } from "../Models/Hero/heroTypeHelpers";
-import { getRuleBooksEnabled } from "../Selectors/rulesSelectors";
-import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase } from "../Selectors/stateSelectors";
+import { getRuleBooksEnabledM } from "../Selectors/rulesSelectors";
+import { getCurrentCultureId, getCurrentHeroPresent, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase } from "../Selectors/stateSelectors";
 import { composeL } from "../Utilities/compose";
 import { TabId } from "../Utilities/LocationUtils";
 import { pipe } from "../Utilities/pipe";
 import { convertHero } from "../Utilities/Raw/compatibilityUtils";
 import { convertFromRawHero } from "../Utilities/Raw/initHeroUtils";
-import { isBookEnabled } from "../Utilities/RulesUtils";
+import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils";
 import { UndoState } from "../Utilities/undo";
 import { AppState, AppStateRecord } from "./appReducer";
 import { appSlicesReducer } from "./appSlicesReducer";
@@ -146,10 +147,19 @@ export const appPostReducer =
                        (TabId.Races)
           }
 
-          const rule_books_enabled = getRuleBooksEnabled (previousState)
+          const rule_books_enabled =
+            getRuleBooksEnabledM (previousState, { mhero: getCurrentHeroPresent (previousState) })
 
-          if (or (fmapF (rule_books_enabled) (flip (isBookEnabled) ("US25208")))
-              && and (fmapF (rule_books_enabled) (notP (flip (isBookEnabled) ("US25208"))))
+          if (or (fmapF (rule_books_enabled)
+                        (pipe (
+                          sourceBooksPairToTuple,
+                          flip (uncurry3 (isBookEnabled)) ("US25208")
+                        )))
+              && and (fmapF (rule_books_enabled)
+                            (pipe (
+                              sourceBooksPairToTuple,
+                              notP (flip (uncurry3 (isBookEnabled)) ("US25208"))
+                            )))
               && getCurrentTab (state) === TabId.ZoneArmor) {
             return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
                        (TabId.Equipment)

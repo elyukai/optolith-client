@@ -1,34 +1,50 @@
 // @ts-check
 
 const builder = require ("electron-builder")
+const { copyTables } = require ("./copyTables")
 
 module.exports = {
   buildWindows:
-    () => {
+    async () => {
+      await copyTables ()
+
       console.log ("Building Optolith for Windows...")
 
-      builder
-        .build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
-        .then (() => console.log ("Optolith Build for Windows successful."))
-        .catch (err => console.error (err))
+      try {
+        await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
+        console.log ("Optolith Build for Windows successful.")
+      }
+      catch (err) {
+        console.error (err)
+      }
     },
   buildLinux:
-    () => {
+    async () => {
+      await copyTables ()
+
       console.log ("Building Optolith for Linux...")
 
-      builder
-        .build ({ config, targets: builder.Platform.LINUX.createTarget () })
-        .then (() => console.log ("Optolith Build for Linux successful."))
-        .catch (err => console.error (err))
+      try {
+        await builder.build ({ config, targets: builder.Platform.LINUX.createTarget () })
+        console.log ("Optolith Build for Linux successful.")
+      }
+      catch (err) {
+        console.error (err)
+      }
     },
   buildMac:
-    () => {
-      console.log ("Building Optolith for Linux...")
+    async () => {
+      await copyTables ()
 
-      builder
-        .build ({ config, targets: builder.Platform.MAC.createTarget () })
-        .then (() => console.log ("Optolith Build for Linux successful."))
-        .catch (err => console.error (err))
+      console.log ("Building Optolith for Mac...")
+
+      try {
+        await builder.build ({ config, targets: builder.Platform.MAC.createTarget () })
+        console.log ("Optolith Build for Mac successful.")
+      }
+      catch (err) {
+        console.error (err)
+      }
     },
 }
 

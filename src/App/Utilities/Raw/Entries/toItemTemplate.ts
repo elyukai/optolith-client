@@ -10,6 +10,7 @@ import { toNatural } from "../../NumberUtils";
 import { pipe } from "../../pipe";
 import { exactR } from "../../RegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
+import { modifyNegIntNoBreak } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
 import { mensureMapBoolean, mensureMapFloatOptional, mensureMapIntegerOptional, mensureMapListBindAfterOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalInRange, mensureMapNaturalInRangeOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
@@ -172,10 +173,10 @@ export const toItemTemplate =
           name: rs.ename,
           template: prefixId (IdPrefixes.ITEM_TEMPLATE) (id),
           amount: Nothing,
-          note,
-          rules,
-          advantage,
-          disadvantage,
+          note: fmap (modifyNegIntNoBreak) (note),
+          rules: fmap (modifyNegIntNoBreak) (rules),
+          advantage: fmap (modifyNegIntNoBreak) (advantage),
+          disadvantage: fmap (modifyNegIntNoBreak) (disadvantage),
           price: rs.eprice,
           weight: rs.eweight,
           gr: rs.egr,

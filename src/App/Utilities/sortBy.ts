@@ -1,6 +1,6 @@
-import { on } from "../../Data/Function";
+import { flip, on } from "../../Data/Function";
 import { flength, List, sortBy } from "../../Data/List";
-import { EQ, Ordering, reverseCompare } from "../../Data/Ord";
+import { EQ, Ordering } from "../../Data/Ord";
 import { fromDefault, Record, RecordBase } from "../../Data/Record";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { compareLocale } from "./I18n";
@@ -35,7 +35,7 @@ export const sortRecordsBy =
           typeof x === "function"
           ? x
           : x .reverse
-          ? reverseCompare (x .compare)
+          ? flip (x .compare)
           : x .compare
       )
 

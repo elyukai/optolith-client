@@ -358,6 +358,8 @@ export const toL10n =
         "arcaneenergy": checkL10nNonEmptyString ("arcaneenergy"),
         "arcaneenergy.short": checkL10nNonEmptyString ("arcaneenergy.short"),
         "arcaneenergycalc": checkL10nNonEmptyString ("arcaneenergycalc"),
+        "arcaneenergycalc.halfprimary": checkL10nNonEmptyString ("arcaneenergycalc.halfprimary"),
+        "arcaneenergycalc.noprimary": checkL10nNonEmptyString ("arcaneenergycalc.noprimary"),
         "karmapoints": checkL10nNonEmptyString ("karmapoints"),
         "karmapoints.short": checkL10nNonEmptyString ("karmapoints.short"),
         "karmapointscalc": checkL10nNonEmptyString ("karmapointscalc"),
@@ -686,7 +688,10 @@ export const toL10n =
         "manualherodatarepairexplanation":
           checkL10nNonEmptyString ("manualherodatarepairexplanation"),
         "unfamiliarspell": checkL10nNonEmptyString ("unfamiliarspell"),
-        "saveandclose": checkL10nNonEmptyString ("saveandclose"),
+        "saveandquit": checkL10nNonEmptyString ("saveandquit"),
+        "uses": checkL10nNonEmptyString ("uses"),
+        "complementarysources": checkL10nNonEmptyString ("complementarysources"),
+        "and": checkL10nNonEmptyString ("and"),
       }
 
       return mapMNamed
@@ -1004,6 +1009,8 @@ export const toL10n =
           "arcaneenergy": res ["arcaneenergy"],
           "arcaneenergy.short": res ["arcaneenergy.short"],
           "arcaneenergycalc": res ["arcaneenergycalc"],
+          "arcaneenergycalc.halfprimary": res ["arcaneenergycalc.halfprimary"],
+          "arcaneenergycalc.noprimary": res ["arcaneenergycalc.noprimary"],
           "karmapoints": res ["karmapoints"],
           "karmapoints.short": res ["karmapoints.short"],
           "karmapointscalc": res ["karmapointscalc"],
@@ -1304,7 +1311,10 @@ export const toL10n =
           "manualherodatarepair": res ["manualherodatarepair"],
           "manualherodatarepairexplanation": res ["manualherodatarepairexplanation"],
           "unfamiliarspell": res ["unfamiliarspell"],
-          "saveandclose": res ["saveandclose"],
+          "saveandquit": res ["saveandquit"],
+          "uses": res ["uses"],
+          "complementarysources": res ["complementarysources"],
+          "and": res ["and"],
           // tslint:enable: no-string-literal
         }))
     }

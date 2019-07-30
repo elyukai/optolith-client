@@ -88,7 +88,7 @@
       }
     ],
     "no-default-export": true,
-    "no-duplicate-imports": true,
+    "no-duplicate-imports": [true, { "allow-namespace-imports": true }],
     // "prefer-const": true,
     "prefer-readonly": true,
 

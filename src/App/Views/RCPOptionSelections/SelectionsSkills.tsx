@@ -2,13 +2,13 @@ import * as React from "react";
 import { fmap } from "../../../Data/Functor";
 import { List, map, subscriptF, toArray } from "../../../Data/List";
 import { isNothing, Maybe, maybe } from "../../../Data/Maybe";
+import { divideBy } from "../../../Data/Num";
 import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Skill } from "../../Models/Wiki/Skill";
 import { minus } from "../../Utilities/Chars";
 import { translate, translateP } from "../../Utilities/I18n";
-import { divideBy } from "../../Utilities/mathUtils";
 import { pipe_ } from "../../Utilities/pipe";
 import { BorderButton } from "../Universal/BorderButton";
 

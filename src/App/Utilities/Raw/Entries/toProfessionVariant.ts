@@ -29,6 +29,7 @@ import { prefixCantrip, prefixCT, prefixId, prefixSA } from "../../IDUtils";
 import { toInt, toNatural } from "../../NumberUtils";
 import { pipe, pipe_ } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
+import { modifyNegIntNoBreak } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
 import { mensureMapInteger, mensureMapListOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
@@ -369,9 +370,9 @@ export const toProfessionVariant =
                 (map (prefixId (IdPrefixes.BLESSINGS)))
                 (rs.eblessings),
 
-            precedingText,
-            fullText,
-            concludingText,
+            precedingText: fmap (modifyNegIntNoBreak) (precedingText),
+            fullText: fmap (modifyNegIntNoBreak) (fullText),
+            concludingText: fmap (modifyNegIntNoBreak) (concludingText),
 
             category: Nothing,
           })

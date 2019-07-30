@@ -2,6 +2,7 @@ import { fmap, fmapF } from "../../Data/Functor";
 import { over, set } from "../../Data/Lens";
 import { List, subscriptF, uncons } from "../../Data/List";
 import { altF_, bind, bindF, elem, ensure, fromJust, isJust, join, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe";
+import { negate, subtract } from "../../Data/Num";
 import { lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { fst, Pair, PairP1_, snd } from "../../Data/Tuple";
@@ -29,7 +30,6 @@ import { isBlessedOrMagical } from "../Utilities/Activatable/checkActivatableUti
 import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils";
 import { getDisAdvantagesSubtypeMax, getMissingAPForDisAdvantage, MissingAPForDisAdvantage } from "../Utilities/AdventurePoints/adventurePointsUtils";
 import { translate, translateP } from "../Utilities/I18n";
-import { negate, subtract } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { misNumberM } from "../Utilities/typeCheckUtils";
 import { getWikiEntry } from "../Utilities/WikiUtils";

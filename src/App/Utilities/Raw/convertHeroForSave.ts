@@ -2,6 +2,7 @@ import { ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { List } from "../../../Data/List";
 import { bind, elem, maybeToUndefined } from "../../../Data/Maybe";
+import { gt } from "../../../Data/Num";
 import { foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from "../../../Data/OrderedMap";
 import { toArray } from "../../../Data/OrderedSet";
 import { Record, StringKeyObject, toObject } from "../../../Data/Record";
@@ -23,7 +24,6 @@ import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAt
 import { current_version } from "../../Selectors/envSelectors";
 import { HeroStateMapKey } from "../heroStateUtils";
 import { ifElse } from "../ifElse";
-import { gt } from "../mathUtils";
 import { pipe } from "../pipe";
 import { RawActiveObject, RawArmorZone, RawCustomItem, RawHero, RawPet, RawPrimaryAttributeDamageThreshold } from "./RawData";
 

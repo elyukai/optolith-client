@@ -1,10 +1,9 @@
 import * as React from "react";
 import { flip } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
-import { compare } from "../../../../Data/Int";
 import { flength, List, map, replicateR, toArray } from "../../../../Data/List";
 import { bindF, fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe";
-import { reverseCompare } from "../../../../Data/Ord";
+import { compare } from "../../../../Data/Num";
 import { fromDefault, Record } from "../../../../Data/Record";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
@@ -58,7 +57,7 @@ export function SkillsSheetLanguages (props: SkillsSheetLanguagesProps) {
                              }))
     )),
     sortRecordsBy ([
-                    comparingR (IdNameLevel.A.level) (reverseCompare (compare)),
+                    comparingR (IdNameLevel.A.level) (flip (compare)),
                     comparingR (IdNameLevel.A.name) (compareLocale (L10n.A.id (l10n))),
                   ])
   )

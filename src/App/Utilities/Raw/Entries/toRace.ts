@@ -8,7 +8,7 @@ import { Die } from "../../../Models/Wiki/sub/Die";
 import { prefixId } from "../../IDUtils";
 import { toInt, toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { maybePrefix } from "../rawConversionUtils";
+import { maybePrefix, modifyNegIntNoBreak } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
 import { mensureMapInteger, mensureMapIntegerOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapPairList, mensureMapPairListOptional } from "../validateMapValueUtils";
 import { lookupKeyMapValidNatural, lookupKeyMapValidNonEmptyString, lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
@@ -227,7 +227,7 @@ export const toRace =
               map (prefixId (IdPrefixes.ATTRIBUTES)) (rs.eattributeAdjustmentsSelectionList)
             ),
 
-          attributeAdjustmentsText: rs.eattributeAdjustmentsText,
+          attributeAdjustmentsText: modifyNegIntNoBreak (rs.eattributeAdjustmentsText),
 
           commonCultures:
             map (prefixId (IdPrefixes.CULTURES)) (fromMaybe (List<number> ()) (rs.ecommonCultures)),
@@ -238,7 +238,8 @@ export const toRace =
               (fmap (map (prefixId (IdPrefixes.ADVANTAGES)))
                     (rs.eautomaticAdvantages)),
 
-          automaticAdvantagesText,
+          automaticAdvantagesText:
+            fmap (modifyNegIntNoBreak) (automaticAdvantagesText),
 
           stronglyRecommendedAdvantages:
             fromMaybe<List<string>>
@@ -246,7 +247,8 @@ export const toRace =
               (fmap (map (prefixId (IdPrefixes.ADVANTAGES)))
                     (rs.estronglyRecommendedAdvantages)),
 
-          stronglyRecommendedAdvantagesText,
+          stronglyRecommendedAdvantagesText:
+            fmap (modifyNegIntNoBreak) (stronglyRecommendedAdvantagesText),
 
           stronglyRecommendedDisadvantages:
             fromMaybe<List<string>>
@@ -254,27 +256,32 @@ export const toRace =
               (fmap (map (prefixId (IdPrefixes.DISADVANTAGES)))
                     (rs.estronglyRecommendedDisadvantages)),
 
-          stronglyRecommendedDisadvantagesText,
+          stronglyRecommendedDisadvantagesText:
+            fmap (modifyNegIntNoBreak) (stronglyRecommendedDisadvantagesText),
 
           commonAdvantages:
             maybePrefix (IdPrefixes.ADVANTAGES) (rs.ecommonAdvantages),
 
-          commonAdvantagesText,
+          commonAdvantagesText:
+            fmap (modifyNegIntNoBreak) (commonAdvantagesText),
 
           commonDisadvantages:
             maybePrefix (IdPrefixes.DISADVANTAGES) (rs.ecommonDisadvantages),
 
-          commonDisadvantagesText,
+          commonDisadvantagesText:
+            fmap (modifyNegIntNoBreak) (commonDisadvantagesText),
 
           uncommonAdvantages:
             maybePrefix (IdPrefixes.ADVANTAGES) (rs.euncommonAdvantages),
 
-          uncommonAdvantagesText,
+          uncommonAdvantagesText:
+            fmap (modifyNegIntNoBreak) (uncommonAdvantagesText),
 
           uncommonDisadvantages:
             maybePrefix (IdPrefixes.DISADVANTAGES) (rs.euncommonDisadvantages),
 
-          uncommonDisadvantagesText,
+          uncommonDisadvantagesText:
+            fmap (modifyNegIntNoBreak) (uncommonDisadvantagesText),
 
           hairColors: rs.ehairColors,
 

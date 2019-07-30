@@ -1,6 +1,7 @@
 import { fmap, fmapF } from "../../Data/Functor";
 import { foldr, subscriptF } from "../../Data/List";
 import { altF, bindF, elem, fromMaybe, Just, liftM2, Maybe, sum } from "../../Data/Maybe";
+import { add, lt, odd, subtract, subtractBy } from "../../Data/Num";
 import { lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
@@ -15,7 +16,6 @@ import { NameBySex, nameBySexDef } from "../Models/Wiki/sub/NameBySex";
 import { rollDiceFold, rollDiceR, rollDie } from "./dice";
 import { translate } from "./I18n";
 import { ifElse } from "./ifElse";
-import { add, lt, odd, subtract, subtractBy } from "./mathUtils";
 import { multiplyString, toInt } from "./NumberUtils";
 import { pipe, pipe_ } from "./pipe";
 

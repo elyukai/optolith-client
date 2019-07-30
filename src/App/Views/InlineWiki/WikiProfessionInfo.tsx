@@ -2,15 +2,14 @@ import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { flip, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
-import { compare } from "../../../Data/Int";
 import { append, cons, consF, deleteAt, find, findIndex, flength, foldr, imap, intercalate, intersperse, isList, List, ListI, map, NonEmptyList, notElem, notNull, reverse, snoc, sortBy, subscript, toArray, uncons, unconsSafe, unsafeIndex } from "../../../Data/List";
 import { alt_, any, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNull, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe";
+import { add, compare, dec, gt } from "../../../Data/Num";
 import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet";
 import { fromDefault, Record } from "../../../Data/Record";
 import { show } from "../../../Data/Show";
 import { fst, isTuple, Pair, snd } from "../../../Data/Tuple";
-import { traceShow } from "../../../Debug/Trace";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ActivatableNameCostIsActive, ActivatableNameCostIsActiveA_ } from "../../Models/View/ActivatableNameCostIsActive";
 import { IncreasableForView } from "../../Models/View/IncreasableForView";
@@ -24,7 +23,7 @@ import { Cantrip } from "../../Models/Wiki/Cantrip";
 import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { ProfessionRequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { isRaceRequirement, RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
+import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
 import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement";
 import { CantripsSelection } from "../../Models/Wiki/professionSelections/CantripsSelection";
 import { CombatTechniquesSelection } from "../../Models/Wiki/professionSelections/CombatTechniquesSelection";
@@ -49,7 +48,6 @@ import { getSelectOptionName } from "../../Utilities/Activatable/selectionUtils"
 import { ndash } from "../../Utilities/Chars";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
 import { getNumericId, prefixRace, prefixSA } from "../../Utilities/IDUtils";
-import { add, dec, gt } from "../../Utilities/mathUtils";
 import { signNeg } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils";
@@ -139,7 +137,7 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
     getLiturgicalChants (l10n) (blessings) (liturgicalChants) (x)
 
   const raceRequirement =
-     pipe_ (x, PCA_.dependencies, find (isRaceRequirement))
+     pipe_ (x, PCA_.dependencies, find (RaceRequirement.is))
 
   const sexRequirement =
      pipe_ (x, PCA_.dependencies, find (isSexRequirement))
@@ -1233,9 +1231,9 @@ const getVariantSkillsSelection =
 
 const mapVariantSkills =
   (l10n: L10nRecord) =>
-  (add_x: number) =>
+  (base: number) =>
     map ((e: Record<IncreasableForView>) => {
-      const prev = maybe (6) (add (add_x)) (IFVA.previous (e))
+      const prev = maybe (base) (add (base)) (IFVA.previous (e))
 
       return `${IFVA.name (e)} ${IFVA.value (e)} ${translate (l10n) ("insteadof")} ${prev}`
     })
@@ -1278,11 +1276,6 @@ const combineSpells: (mapped_spells: List<CombinedMappedSpell>) => CombinedSpell
                 const mcurrent_previous_value = IFVAL.previous (current)
                 const remainings = snd (remainings_separate)
 
-                traceShow ("remainings =") (remainings)
-                traceShow ("current =") (current)
-                traceShow ("processeds =") (processeds)
-                traceShow ("has previous value =") (isJust (mcurrent_previous_value))
-
                 // This is the previous spell, and we need the next to form a pair
                 if (isJust (mcurrent_previous_value)) {
                   // Index of a spell to pair `current` with
@@ -1291,8 +1284,6 @@ const combineSpells: (mapped_spells: List<CombinedMappedSpell>) => CombinedSpell
                                 IFVAL.value (e) === fromJust (mcurrent_previous_value)
                                 && current_value === 0)
                               (remainings)
-
-                  traceShow ("matching_spell_index =") (mmatching_spell_index)
 
                   if (isJust (mmatching_spell_index)) {
                     // Index found, so we can pair
@@ -1316,8 +1307,6 @@ const combineSpells: (mapped_spells: List<CombinedMappedSpell>) => CombinedSpell
                                 Maybe.elem (current_value) (IFVAL.previous (e))
                                 && IFVAL.value (e) === 0)
                               (remainings)
-
-                  traceShow ("matching_spell_index =") (mmatching_spell_index)
 
                   if (isJust (mmatching_spell_index)) {
                     // Index found, so we can pair

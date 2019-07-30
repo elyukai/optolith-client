@@ -3,7 +3,7 @@ const { Internals } = require('../Internals');
 const { List } = require('../List')
 const { Pair } = require('../Tuple')
 const { Either } = require('../Either')
-const { add } = require('../../App/Utilities/mathUtils')
+const { add } = require('../Num')
 
 const Just = Internals.Just
 const Nothing = Internals.Nothing

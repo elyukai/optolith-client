@@ -140,7 +140,7 @@ export const show = (x: any): string => {
 }
 
 // tslint:disable-next-line: cyclomatic-complexity
-const showPDepth = (depth: number) => (x: any): string => {
+export const showPDepth = (depth: number) => (x: any): string => {
   const dws = " " .repeat (depth * 2) // depth whitespace
 
   if (Internals.isMaybe (x)) {

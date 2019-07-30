@@ -5,8 +5,9 @@ import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { Lens_, over, set } from "../../../Data/Lens";
-import { all, append, consF, empty, foldr, List, map, notElemF } from "../../../Data/List";
+import { all, append, consF, elemF, empty, foldr, List, map, notElemF } from "../../../Data/List";
 import { catMaybes, ensure, fromMaybe, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
+import { lt } from "../../../Data/Num";
 import { adjust, elems, fromList, insert, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { makeLenses, member, Record } from "../../../Data/Record";
@@ -385,24 +386,35 @@ export const parseTables =
 
 const mapCatToSelectOptions =
   (wiki: WikiModelRecord) =>
-    foldr (pipe (
-              SelectOption.A.id as (x: Record<SelectOption>) => Categories,
+    foldr ((x: Record<SelectOption>) => {
+            const cat = (SelectOption.A.id as (x: Record<SelectOption>) => Categories) (x)
+
+            return pipe_ (
+              cat,
               getWikiSliceGetterByCategory as
                 (c: Categories) =>
                   (x: Record<WikiModel>) => OrderedMap<string, Skillish>,
               thrush (wiki),
               elems,
-              map (
-                r => SelectOption ({
-                  id: Skill.AL.id (r),
-                  name: Skill.AL.name (r),
-                  cost: member ("ic") (r) ? Just (Skill.AL.ic (r)) : Nothing,
-                  src: Skill.AL.src (r),
-                })
-              ),
+              cat === Categories.SPELLS
+                ? mapMaybe (pipe (
+                    ensure<Skillish> (pipe (Skill.AL.gr, lt (3))),
+                    fmap (skillishToSelectOption)
+                  ))
+                : map (skillishToSelectOption),
               append
-            ))
-            (List ())
+            )
+          })
+          (List ())
+
+const skillishToSelectOption =
+  (r: Skillish) =>
+    SelectOption ({
+      id: Skill.AL.id (r),
+      name: Skill.AL.name (r),
+      cost: member ("ic") (r) ? Just (Skill.AL.ic (r)) : Nothing,
+      src: Skill.AL.src (r),
+    })
 
 const mapCatToSelectOptionsPred =
   (pred: (x: Skillish) => boolean) =>
@@ -427,5 +439,7 @@ const mapCatToSelectOptionsPred =
             ))
             (List ())
 
-const noGuildMageSkill = (x: Skillish) => !Spell.is (x) || all (notElemF (List (1, 2)))
-                                                               (Spell.A.tradition (x))
+const noGuildMageSkill = (x: Skillish) => !Spell.is (x)
+                                          || all (notElemF (List (1, 2)))
+                                                 (Spell.A.tradition (x))
+                                          || elemF (List (1, 2)) (Spell.A.gr (x))

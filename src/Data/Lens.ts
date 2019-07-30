@@ -10,7 +10,10 @@ import { pipe } from "../App/Utilities/pipe";
 import { Identity, runIdentity } from "../Control/Monad/Identity";
 import { fmap } from "./Functor";
 import { Const, getConst } from "./Functor/Const";
+import { List } from "./List";
 import { fst, Pair, snd } from "./Tuple";
+
+// S and T can be read as Source type and Target type
 
 interface Getter <S, T, A, B> {
   (lift: (x: A) => Const<A, B>): (m: S) => Const<A, T>
@@ -47,22 +50,22 @@ export interface Lens <S, T, A, B>
  */
 export type Lens_ <S, A> = Lens<S, S, A, A>
 
-// /**
-//  * `Traversal s t a b = Applicative f => (a -> f b) -> s -> f t`
-//  *
-//  * A getter and setter combined. Can be used by `Traversal` functions.
-//  */
-// export interface Traversal<S, T, A, B> extends Setter<S, T, A, B> {
-//   (lift: (x: A) => Const<List<A>, B>): (m: S) => Const<List<A>, T>
-//   (lift: (x: A) => Identity<B>): (m: S) => Identity<T>
-// }
+/**
+ * `Traversal s t a b = Applicative f => (a -> f b) -> s -> f t`
+ *
+ * A getter and setter combined. Can be used by `Traversal` functions.
+ */
+export interface Traversal<S, T, A, B> extends Setter<S, T, A, B> {
+  (lift: (x: A) => Const<List<A>, B>): (m: S) => Const<List<A>, T>
+  (lift: (x: A) => Identity<B>): (m: S) => Identity<T>
+}
 
-// /**
-//  * `Traversal' s a = Traversal s s a a`
-//  *
-//  * A `Simple Traversal`.
-//  */
-// export type Traversal_<S, A> = Traversal<S, S, A, A>
+/**
+ * `Traversal' s a = Traversal s s a a`
+ *
+ * A `Simple Traversal`.
+ */
+export type Traversal_<S, A> = Traversal<S, S, A, A>
 
 
 // /**
@@ -180,11 +183,11 @@ export const set = <S, A> (l: Setter_<S, A>) => (x: A) => over (l) (_ => x)
 //  */
 // export const setP = <S, T, A, B> (l: ExplA<Prism<S, T, A, B>>) => (x: B) => overP (l) (_ => x)
 
-// /**
-//  * `toListOf :: Traversal' s a -> s -> [a]`
-//  */
-// export const toListOf = <S, A> (l: Traversal_<S, A>) => (m: S): List<A> =>
-//   getConst (l (x => Const (List (x))) (m))
+/**
+ * `toListOf :: Traversal' s a -> s -> [a]`
+ */
+export const toListOf = <S, A> (l: Traversal_<S, A>) => (m: S): List<A> =>
+  getConst (l (x => Const (List (x))) (m))
 
 // /**
 //  * `review :: AReview t b -> b -> t`
