@@ -4,7 +4,6 @@ import * as ConfigActions from "../Actions/ConfigActions";
 import * as LiturgicalChantActions from "../Actions/LiturgicalChantActions";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getAttributesForSheet } from "../Selectors/attributeSelectors";
-import { getDerivedCharacteristicsMap } from "../Selectors/derivedCharacteristicsSelectors";
 import { getBlessedTraditionNumericId, getFilteredActiveLiturgicalChantsAndBlessings, getFilteredInactiveLiturgicalChantsAndBlessings, isActivationDisabled } from "../Selectors/liturgicalChantsSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
 import { getInactiveLiturgicalChantsFilterText, getLiturgicalChantsFilterText } from "../Selectors/stateSelectors";
@@ -18,7 +17,6 @@ const mapStateToProps = (
 ): LiturgicalChantsStateProps => ({
   attributes: getAttributesForSheet (state, ownProps),
   addChantsDisabled: isActivationDisabled (state, ownProps),
-  derivedCharacteristics: getDerivedCharacteristicsMap (state, ownProps),
   enableActiveItemHints: getEnableActiveItemHints (state),
   isRemovingEnabled: getIsRemovingEnabled (state),
   activeList: getFilteredActiveLiturgicalChantsAndBlessings (state, ownProps),

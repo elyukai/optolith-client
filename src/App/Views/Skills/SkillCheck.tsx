@@ -1,25 +1,24 @@
 import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
-import { find, intercalate, List, toArray } from "../../../Data/List";
-import { bind, ensure, fromMaybeR, imapMaybe, liftM2, mapMaybe, Maybe } from "../../../Data/Maybe";
+import { find, intercalate, List, map, toArray } from "../../../Data/List";
+import { bindF, ensure, fromMaybeR, imapMaybe, Maybe } from "../../../Data/Maybe";
 import { gt } from "../../../Data/Num";
-import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { elems, OrderedSet, size } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
 import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { CheckModifier } from "../../Models/Wiki/wikiTypeHelpers";
-import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { minus } from "../../Utilities/Chars";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { getCheckModStr } from "../InlineWiki/Elements/WikiSkillCheck";
 
 export interface SkillCheckProps {
   attributes: List<Record<AttributeCombined>>
   check?: List<string>
   checkDisabled?: boolean
   checkmod?: OrderedSet<CheckModifier>
-  derivedCharacteristics?: OrderedMap<DCIds, Record<DerivedCharacteristic>>
+  l10n: L10nRecord
 }
 
 export function SkillCheck (props: SkillCheckProps) {
@@ -28,7 +27,7 @@ export function SkillCheck (props: SkillCheckProps) {
     check,
     checkDisabled,
     checkmod,
-    derivedCharacteristics: derived,
+    l10n,
   } = props
 
   if (checkDisabled !== true && check !== undefined) {
@@ -53,17 +52,14 @@ export function SkillCheck (props: SkillCheckProps) {
           toArray
         )}
         {pipe_ (
-          liftM2 ((dcs: OrderedMap<DCIds, Record<DerivedCharacteristic<DCIds>>>) =>
-                  (check_mod: OrderedSet<CheckModifier>) =>
-                    pipe_ (
-                      check_mod,
-                      elems,
-                      mapMaybe (pipe (lookupF (dcs), fmap (DerivedCharacteristic.A.short))),
-                      intercalate ("/")
-                    ))
-                 (Maybe (derived))
-                 (bind (Maybe (checkmod)) (ensure (pipe (size, gt (0))))),
-          fmap (characteristic => <div className="check mod">{minus}{characteristic}</div>),
+          Maybe (checkmod),
+          bindF (ensure (pipe (size, gt (0)))),
+          fmap (pipe (
+            elems,
+            map (getCheckModStr (l10n)),
+            intercalate ("/"),
+            characteristic => <div className="check mod">{minus}{characteristic}</div>
+          )),
           fromMaybeR (null)
         )}
       </>

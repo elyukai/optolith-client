@@ -4,7 +4,6 @@ import { fmap } from "../../../Data/Functor";
 import { List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
 import { bindF, ensure, fromMaybeR, guard, Just, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
 import { dec } from "../../../Data/Num";
-import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
@@ -12,12 +11,10 @@ import { ActivatableSkillDependent } from "../../Models/ActiveEntries/Activatabl
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { AttributeCombined } from "../../Models/View/AttributeCombined";
 import { CantripCombined, CantripCombinedA_ } from "../../Models/View/CantripCombined";
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { SpellWithRequirements, SpellWithRequirementsA_ } from "../../Models/View/SpellWithRequirements";
 import { Cantrip } from "../../Models/Wiki/Cantrip";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Spell } from "../../Models/Wiki/Spell";
-import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
@@ -48,7 +45,6 @@ export interface SpellsStateProps {
   activeList: Maybe<List<Record<SpellWithRequirements> | Record<CantripCombined>>>
   addSpellsDisabled: Maybe<boolean>
   attributes: List<Record<AttributeCombined>>
-  derivedCharacteristics: OrderedMap<DCIds, Record<DerivedCharacteristic>>
   enableActiveItemHints: boolean
   filterText: string
   inactiveFilterText: string
@@ -147,7 +143,6 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
       addCantripToList,
       enableActiveItemHints,
       attributes,
-      derivedCharacteristics,
       inactiveList,
       activeList,
       l10n,
@@ -251,7 +246,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                         addFillElement
                                         insertTopMargin={insertTopMargin}
                                         attributes={attributes}
-                                        derivedCharacteristics={derivedCharacteristics}
+                                        l10n={l10n}
                                         selectForInfo={this.showSlideinInfo}
                                         addText={
                                           sortOrder === "group"
@@ -289,7 +284,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                         ic={SWRA_.ic (curr)}
                                         insertTopMargin={insertTopMargin}
                                         attributes={attributes}
-                                        derivedCharacteristics={derivedCharacteristics}
+                                        l10n={l10n}
                                         selectForInfo={this.showSlideinInfo}
                                         addText={add_text}
                                         untyp={SWRAL.isUnfamiliar (curr)}
@@ -384,7 +379,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                       noIncrease
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
-                                      derivedCharacteristics={derivedCharacteristics}
+                                      l10n={l10n}
                                       selectForInfo={this.showInfo}
                                       addText={
                                         sortOrder === "group"
@@ -427,7 +422,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                       sr={SWRA_.value (curr)}
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
-                                      derivedCharacteristics={derivedCharacteristics}
+                                      l10n={l10n}
                                       selectForInfo={this.showInfo}
                                       addText={add_text}
                                       untyp={SWRAL.isUnfamiliar (curr)}
