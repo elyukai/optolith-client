@@ -687,6 +687,8 @@ export const toL10n =
           checkL10nNonEmptyString ("manualherodatarepairexplanation"),
         "unfamiliarspell": checkL10nNonEmptyString ("unfamiliarspell"),
         "saveandquit": checkL10nNonEmptyString ("saveandquit"),
+        "spirithalf": checkL10nNonEmptyString ("spirithalf"),
+        "spirithalf.short": checkL10nNonEmptyString ("spirithalf.short"),
       }
 
       return mapMNamed
@@ -1305,6 +1307,8 @@ export const toL10n =
           "manualherodatarepairexplanation": res ["manualherodatarepairexplanation"],
           "unfamiliarspell": res ["unfamiliarspell"],
           "saveandquit": res ["saveandquit"],
+          "spirithalf": res ["spirithalf"],
+          "spirithalf.short": res ["spirithalf.short"],
           // tslint:enable: no-string-literal
         }))
     }

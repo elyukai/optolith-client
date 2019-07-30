@@ -610,6 +610,8 @@ export interface L10n {
   "manualherodatarepairexplanation": string
   "unfamiliarspell": string
   "saveandquit": string
+  "spirithalf": string
+  "spirithalf.short": string
 }
 
 export type L10nKey = keyof L10n
@@ -1227,4 +1229,6 @@ export const L10n =
                 "manualherodatarepairexplanation": "",
                 "unfamiliarspell": "",
                 "saveandquit": "",
+                "spirithalf": "",
+                "spirithalf.short": "",
               })
