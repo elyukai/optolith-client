@@ -15,8 +15,8 @@ const getAttributeIdByMagicalNumericId =
   bindF (
     (numericId: number) => match<number, Maybe<string>> (numericId)
       .on (elemF (List (1, 4, 10, 13)), cnst (Just ("ATTR_2")))
-      .on (elemF (List (3, 14, 15)), cnst (Just ("ATTR_3")))
-      .on (elemF (List (2, 5, 6, 7, 12)), cnst (Just ("ATTR_4")))
+      .on (elemF (List (3, 14, 15, 16)), cnst (Just ("ATTR_3")))
+      .on (elemF (List (2, 5, 6, 7, 12, 17)), cnst (Just ("ATTR_4")))
       .otherwise (cnst (Nothing))
   )
 
