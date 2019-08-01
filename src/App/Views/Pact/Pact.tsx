@@ -74,7 +74,7 @@ export function PactSettings (props: PactSettingsProps) {
           onChange={setPactCategory}
           value={fmapF (mpact) (Pact.A.category)}
           disabled={!isPactEditable}
-          /> // Hier muss die Liste genommen werden
+          />
         <Dropdown
           label={translate (l10n) ("pactlevel")}
           options={
@@ -96,7 +96,7 @@ export function PactSettings (props: PactSettingsProps) {
           onChange={setPactLevel}
           value={fmapF (mpact) (Pact.A.level)}
           disabled={isNothing (mpact)}
-          /> // Das hier heißt für Dämonen Kreis der Verdammnis/Minderpakt
+          />
         <Dropdown
           label={translate (l10n) ("fairytype")}
           options={imap (i => (name: string) => DropdownOption ({
@@ -107,7 +107,7 @@ export function PactSettings (props: PactSettingsProps) {
           onChange={setTargetType}
           value={fmapF (mpact) (Pact.A.type)}
           disabled={!isPactEditable || isNothing (mpact)}
-          /> // demontypes, alles drunter braucht ein Dämonenpakt nicht
+          />
         <Dropdown
           label={translate (l10n) ("domain")}
           options={imap (i => (name: string) => DropdownOption ({
