@@ -694,6 +694,7 @@ export const toL10n =
         "uses": checkL10nNonEmptyString ("uses"),
         "complementarysources": checkL10nNonEmptyString ("complementarysources"),
         "and": checkL10nNonEmptyString ("and"),
+        "demondomains": checkL10nNonEmptyStringList("demondomains"),
       }
 
       return mapMNamed
@@ -1319,6 +1320,7 @@ export const toL10n =
           "uses": res ["uses"],
           "complementarysources": res ["complementarysources"],
           "and": res ["and"],
+          "demondomains": res ["demondomains"],
           // tslint:enable: no-string-literal
         }))
     }

@@ -617,6 +617,7 @@ export interface L10n {
   "uses": string
   "complementarysources": string
   "and": string
+  "demondomains": List<string>
 }
 
 export type L10nKey = keyof L10n
@@ -1241,4 +1242,5 @@ export const L10n =
                 "uses": "",
                 "complementarysources": "",
                 "and": "",
+                "demondomains": List.empty,
               })
