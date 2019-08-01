@@ -694,7 +694,7 @@ export const toL10n =
         "uses": checkL10nNonEmptyString ("uses"),
         "complementarysources": checkL10nNonEmptyString ("complementarysources"),
         "and": checkL10nNonEmptyString ("and"),
-        "demondomains": checkL10nNonEmptyStringList("demondomains"),
+        "demondomains": checkL10nNonEmptyStringList ("demondomains"),
       }
 
       return mapMNamed
