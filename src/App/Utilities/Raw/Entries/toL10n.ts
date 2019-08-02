@@ -695,6 +695,8 @@ export const toL10n =
         "complementarysources": checkL10nNonEmptyString ("complementarysources"),
         "and": checkL10nNonEmptyString ("and"),
         "demondomains": checkL10nNonEmptyStringList ("demondomains"),
+        "demontypes": checkL10nNonEmptyStringList ("demontypes"),
+        "demontype": checkL10nNonEmptyString ("demontype"),
       }
 
       return mapMNamed
@@ -1321,6 +1323,8 @@ export const toL10n =
           "complementarysources": res ["complementarysources"],
           "and": res ["and"],
           "demondomains": res ["demondomains"],
+          "demontypes": res ["demontypes"],
+          "demontype": res ["demontype"],
           // tslint:enable: no-string-literal
         }))
     }
