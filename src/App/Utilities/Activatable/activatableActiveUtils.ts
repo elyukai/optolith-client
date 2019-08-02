@@ -12,6 +12,7 @@ import { List } from "../../../Data/List";
 import { liftM2, liftM4, mapMaybe, Maybe } from "../../../Data/Maybe";
 import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { fst, Pair, snd } from "../../../Data/Tuple";
 import { ActivatableCategory, Categories } from "../../Constants/Categories";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
@@ -71,11 +72,13 @@ export const getNameCost =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
   (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableNameCost>> =>
-    liftM2 ((finalCost: number | List<number>) => (naming: Record<ActivatableCombinedName>) =>
+    liftM2 ((finalCost: Pair<number | List<number>, boolean>) =>
+            (naming: Record<ActivatableCombinedName>) =>
              ActivatableNameCost ({
                naming,
                active: entry,
-               finalCost,
+               finalCost: fst (finalCost),
+               isAutomatic: snd (finalCost),
              }))
            (getCost (isEntryToAdd) (automatic_advantages) (wiki) (hero) (entry))
            (getName (l10n) (wiki) (entry))
@@ -91,11 +94,13 @@ export const getNameCostForWiki =
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
   (active: Record<ActiveObjectWithId>): Maybe<Record<ActivatableNameCost>> =>
-    liftM2 ((finalCost: number | List<number>) => (naming: Record<ActivatableCombinedName>) =>
+    liftM2 ((finalCost: Pair<number | List<number>, boolean>) =>
+            (naming: Record<ActivatableCombinedName>) =>
              ActivatableNameCost ({
                active,
                naming,
-               finalCost,
+               finalCost: fst (finalCost),
+               isAutomatic: snd (finalCost),
              }))
            (getCost (true) (List ()) (wiki) (HeroModel.default) (active))
            (getName (l10n) (wiki) (active))

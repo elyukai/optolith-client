@@ -9,18 +9,17 @@
 
 import { notP } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
-import { flip, ident, thrush } from "../../../Data/Function";
+import { cnst, flip, ident, thrush } from "../../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
 import * as IntMap from "../../../Data/IntMap";
 import { over, set } from "../../../Data/Lens";
-import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, subscript } from "../../../Data/List";
-import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
+import { consF, countWith, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, subscript } from "../../../Data/List";
+import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
 import { add, dec, gt, gte, inc, multiply } from "../../../Data/Num";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { Record, RecordI } from "../../../Data/Record";
-import { filterMapT, filterT } from "../../../Data/Transducer";
+import { filterMapListT, filterT, mapT } from "../../../Data/Transducer";
 import { fst, Pair, snd } from "../../../Data/Tuple";
-import { traceShowId } from "../../../Debug/Trace";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -40,6 +39,7 @@ import { Application } from "../../Models/Wiki/sub/Application";
 import { SelectOption, SelectOptionL } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
+import { composeT } from "../compose";
 import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup } from "../heroStateUtils";
 import { getBlessedTradStrIdFromNumId, prefixSA } from "../IDUtils";
@@ -198,7 +198,7 @@ const getAspectsWith3Gte10 =
                                                 (List.empty)
     )
 
-const is7or8 = elemF (List (7, 8))
+const is7or8 = elemF<string | number> (List (7, 8))
 
 /**
  * Modifies the select options of specific entries to match current conditions.
@@ -210,40 +210,42 @@ const modifySelectOptions =
   (hero_magical_traditions: List<Record<ActivatableDependent>>) =>
   (wiki_entry: Activatable) =>
   // tslint:disable-next-line: cyclomatic-complexity
-  (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<List<Record<SelectOption>>> => {
+  (mhero_entry: Maybe<Record<ActivatableDependent>>): ident<List<Record<SelectOption>>> => {
     const current_id = AAL.id (wiki_entry)
-    const rules = HA.rules (hero)
-    const mcurrent_select = fmap (filterMapT (pipe (
-                                   filterT (isEntryAvailable (WA.books (wiki))
-                                                             (RA.enabledRuleBooks (rules))
-                                                             (RA.enableAllRuleBooks (rules))
-                                                             (SOA.src)),
-                                   filterT (pipe (
-                                     SOA.prerequisites,
-                                     Maybe.all (reqs => validatePrerequisites (wiki)
-                                                                              (hero)
-                                                                              (reqs)
-                                                                              (current_id))
-                                   ))
-                                 )))
-                                 (AAL.select (wiki_entry))
+
+    const isAvailable =
+      composeT (
+        filterT (isEntryAvailable (WA.books (wiki))
+                                  (RA.enabledRuleBooks (HA.rules (hero)))
+                                  (RA.enableAllRuleBooks (HA.rules (hero)))
+                                  (SOA.src)),
+        filterT (pipe (
+          SOA.prerequisites,
+          Maybe.all (reqs => validatePrerequisites (wiki)
+                                                  (hero)
+                                                  (reqs)
+                                                  (current_id))
+        ))
+      )
 
     const isNoRequiredOrActiveSelection =
-      isNotRequiredNotActive (mhero_entry)
+      composeT (isAvailable, filterT (isNotRequiredNotActive (mhero_entry)))
 
     const isNoRequiredSelection =
-      isNotRequired (mhero_entry)
+      composeT (isAvailable, filterT (isNotRequired (mhero_entry)))
+
+    const isNoActiveSelection =
+      isNotActive (mhero_entry)
 
     switch (current_id) {
       // Exceptional Skill
       case "ADV_16": {
-        const hasLessThanTwoSameIdActiveSelections =
-          areNoSameActive (mhero_entry)
+        const hasLessThanTwoSameIdActiveSelections = filterT (areNoSameActive (mhero_entry))
 
-        return fmap (filter ((e: Record<SelectOption>) =>
-                              hasLessThanTwoSameIdActiveSelections (e)
-                              && isNoRequiredSelection (e)))
-                    (mcurrent_select)
+        return filterMapListT (composeT (
+                                isNoRequiredSelection,
+                                hasLessThanTwoSameIdActiveSelections
+                              ))
       }
 
       // Personality Flaws
@@ -253,15 +255,13 @@ const modifySelectOptions =
       // Maimed/Verstümmelt
       case "DISADV_51": {
         if (current_id === "DISADV_33") {
-          return fmap (filter (
-                                (e: Record<SelectOption>) =>
-                                  is7or8 (SOA.id (e) as number)
-                                  || isNoRequiredOrActiveSelection (e)
-                              ))
-                              (mcurrent_select)
+          return filterMapListT (composeT (
+                                  isNoRequiredSelection,
+                                  filterT (e => is7or8 (SOA.id (e)) || isNoActiveSelection (e))
+                                ))
         }
         else {
-          return fmap (filter (isNoRequiredOrActiveSelection)) (mcurrent_select)
+          return filterMapListT (isNoRequiredOrActiveSelection)
         }
       }
 
@@ -272,164 +272,154 @@ const modifySelectOptions =
 
         const isNotSocialSkill = notP (isSocialSkill (wiki))
 
-        return fmap (filter ((e: Record<SelectOption>) =>
-                              // Socially Adaptable and Inspire Confidence
-                              // require no Incompetence in social skills
-                              (isAdvActive ("ADV_40") || isAdvActive ("ADV_46")
-                                ? isNotSocialSkill (e)
-                                : true)
-                              && isNoRequiredOrActiveSelection (e)))
-                    (mcurrent_select)
+        return filterMapListT (composeT (
+                                isNoRequiredOrActiveSelection,
+                                filterT (e =>
+                                  // Socially Adaptable and Inspire Confidence
+                                  // require no Incompetence in social skills
+                                  (isAdvActive ("ADV_40") || isAdvActive ("ADV_46")
+                                    ? isNotSocialSkill (e)
+                                    : true))
+                              ))
       }
 
       // Skill Specialization
       case "SA_9": {
         const mcounter = getActiveSecondarySelections (mhero_entry)
 
-        return fmap (mapMaybe ((x: Record<SelectOption>) => {
-                                const curr_select_id = SOA.id (x)
+        return filterMapListT (composeT (
+                                isNoRequiredSelection,
+                                filterT (e => {
+                                  const curr_select_id = SOA.id (e)
 
-                                return pipe_ (
-                                  x,
-                                  ensure (e => {
-                                    // if an inactive selection is a dependency (which is the
-                                    // result of isNoRequiredSelection), it means you cannot
-                                    // activate that one
-                                    if (!isNoRequiredSelection (e)) {
-                                      return false
+                                  // if mcounter is available, mhero_entry must be a Just and thus
+                                  // there can be active selections
+                                  if (isJust (mcounter)) {
+                                    const counter = fromJust (mcounter)
+
+                                    if (member (curr_select_id) (counter)) {
+                                      return isAddExistSkillSpecAllowed (hero)
+                                                                        (counter)
+                                                                        (curr_select_id)
                                     }
+                                  }
 
-                                    // if mcounter is available, mhero_entry must be a Just and thus
-                                    // there can be active selections
-                                    if (isJust (mcounter)) {
-                                      const counter = fromJust (mcounter)
+                                  // otherwise we only need to check if the skill rating is at
+                                  // least 6, as there can't be an activated selection.
+                                  return isAddNotExistSkillSpecAllowed (hero) (curr_select_id)
+                                }),
+                                mapT (e => {
+                                  const curr_select_id = SOA.id (e)
 
-                                      if (member (curr_select_id) (counter)) {
-                                        return isAddExistSkillSpecAllowed (hero)
-                                                                          (counter)
-                                                                          (curr_select_id)
-                                      }
-                                    }
+                                  const mcounts = bind (mcounter) (lookup (curr_select_id))
 
-                                    // otherwise we only need to check if the skill rating is at
-                                    // least 6, as there can't be an activated selection.
-                                    return isAddNotExistSkillSpecAllowed (hero) (curr_select_id)
-                                  }),
-                                  fmap (e => {
-                                    const mcounts = bind (mcounter) (lookup (curr_select_id))
+                                  const adjustSelectOption =
+                                    pipe (
+                                      over (select_costL)
+                                           (isJust (mcounts)
+                                             // Increase cost if there are active specializations
+                                             // for the same skill
+                                             ? fmap (multiply (flength (fromJust (mcounts)) + 1))
 
-                                    const adjustSelectOption =
-                                      pipe (
-                                        over (select_costL)
-                                             (isJust (mcounts)
-                                               // Increase cost if there are active specializations
-                                               // for the same skill
-                                               ? fmap (multiply (flength (fromJust (mcounts)) + 1))
+                                             // otherwise return current cost
+                                             : ident),
+                                      over (applications)
+                                           (fmap (filter (app => {
+                                                           const isInactive =
+                                                             all (notElem<number | string>
+                                                                   (AppA.id (app)))
+                                                                 (mcounts)
 
-                                               // otherwise return current cost
-                                               : ident),
-                                        over (applications)
-                                             (fmap (filter (app => {
-                                                             const isInactive =
-                                                               all (notElem<number | string>
-                                                                     (AppA.id (app)))
-                                                                   (mcounts)
+                                                           const arePrerequisitesMet =
+                                                             all (pipe (
+                                                                   validatePrerequisites (wiki)
+                                                                                         (hero),
+                                                                   thrush (current_id)
+                                                                 ))
+                                                                 (AppA.prerequisites (app))
 
-                                                             const arePrerequisitesMet =
-                                                               all (pipe (
-                                                                     validatePrerequisites (wiki)
-                                                                                           (hero),
-                                                                     thrush (current_id)
-                                                                   ))
-                                                                   (AppA.prerequisites (app))
+                                                           return isInactive
+                                                             && arePrerequisitesMet
+                                                         })))
+                                    )
 
-                                                             return isInactive
-                                                               && arePrerequisitesMet
-                                                           })))
-                                      )
-
-                                    return adjustSelectOption (e)
-                                  })
-                                )
-
-                              })
-                    )
-                    (mcurrent_select)
-      }
-
-      // Languages
-      case "SA_29": {
-        const actives =
-          maybe (List<Record<ActiveObject>> ())
-                (active)
-                (mhero_entry)
-
-        return fmap (filter ((e: Record<SelectOption>) =>
-                              isNoRequiredSelection (e)
-                              && List.all (pipe (sid, Maybe.notElem (SOA.id (e))))
-                                          (actives)))
-                    (mcurrent_select)
+                                  return adjustSelectOption (e)
+                                })
+                              ))
       }
 
       // Property Knowledge
       case "SA_72": {
-        const valid_props = getPropsWith3Gte10 (wiki) (hero)
+        const isValidProperty =
+          filterT (pipe (SOA.id, elemF<string | number> (getPropsWith3Gte10 (wiki) (hero))))
 
-        return fmap (filter ((e: Record<SelectOption>) =>
-                              isNoRequiredOrActiveSelection (e)
-                              && elem (SOA.id (e)) (valid_props)))
-                    (mcurrent_select)
+        return filterMapListT (composeT (
+                                isNoRequiredOrActiveSelection,
+                                isValidProperty
+                              ))
       }
 
       // Property Focus
       case "SA_81": {
-        const isNoActivePropertyKnowledge =
-          pipe_ (hero, HA.specialAbilities, lookup ("SA_72"), isNotActive)
+        const isActivePropertyKnowledge =
+          filterT (notP (pipe_ (hero, HA.specialAbilities, lookup ("SA_72"), isNotActive)))
 
-        return fmap (filter ((e: Record<SelectOption>) =>
-                              isNoRequiredOrActiveSelection (e)
-                              && !isNoActivePropertyKnowledge (e)))
-                    (mcurrent_select)
+        return filterMapListT (composeT (
+                                isNoRequiredOrActiveSelection,
+                                isActivePropertyKnowledge
+                              ))
       }
 
       // Aspect Knowledge
       case "SA_87": {
         const valid_aspects = getAspectsWith3Gte10 (wiki) (hero)
 
-        return liftM2 ((trad: Record<ActivatableDependent>) =>
-                        filter ((e: Record<SelectOption>) =>
-                                 pipe (
-                                        SOA.id,
-                                        ensure (isNumber),
-                                        bindF (pipe (
-                                          getTraditionOfAspect,
-                                          dec,
-                                          getBlessedTradStrIdFromNumId
-                                        )),
-                                        Maybe.elem (AAL.id (trad))
-                                      )
-                                      (e)
-                                 && isNoRequiredOrActiveSelection (e)
-                                 && elem (SOA.id (e)) (valid_aspects)))
-                      (getBlessedTradition (HA.specialAbilities (hero)))
-                      (mcurrent_select)
+        const isAspectValid = pipe (SOA.id, elemF<string | number> (valid_aspects))
+
+        return maybe (ident as ident<List<Record<SelectOption>>>)
+                     ((blessed_trad: Record<ActivatableDependent>) =>
+                      filterMapListT (composeT (
+                                       filterT (pipe (
+                                         SOA.id,
+                                         ensure (isNumber),
+                                         bindF (pipe (
+                                           getTraditionOfAspect,
+                                           dec,
+                                           getBlessedTradStrIdFromNumId
+                                         )),
+                                         Maybe.elem (AAL.id (blessed_trad))
+                                       )),
+                                       isNoRequiredOrActiveSelection,
+                                       filterT (isAspectValid)
+                                     )))
+                     (getBlessedTradition (HA.specialAbilities (hero)))
       }
 
       // Adaption (Zauber)
       case "SA_231": {
-        const isFromUnfamiliarTrad = notP (isOwnTradition (wiki_magical_traditions))
+        const isWikiEntryFromUnfamiliarTrad = notP (isOwnTradition (wiki_magical_traditions))
 
-        return fmap (filter ((e: Record<SelectOption>) => {
-                              const id = SOA.id (e)
+        const isSpellAbove10 =
+          pipe (
+            SOA.id,
+            ensure (isString),
+            bindF (lookupF (HA.spells (hero))),
+            maybe (false) (pipe (value, gte (10)))
+          )
 
-                              return isNoRequiredOrActiveSelection (e)
-                                && maybe (false)
-                                         (pipe (value, gte (10)))
-                                         (pipe (HA.spells, lookup (SOA.id (e))) (hero))
-                                && isString (id)
-                                && Maybe.any (isFromUnfamiliarTrad) (lookup (id) (WA.spells (wiki)))
-                            }))
-                    (mcurrent_select)
+        const isFromUnfamiliarTrad =
+          pipe (
+            SOA.id,
+            ensure (isString),
+            bindF (lookupF (WA.spells (wiki))),
+            maybe (false) (isWikiEntryFromUnfamiliarTrad)
+          )
+
+        return filterMapListT (composeT (
+                                isNoRequiredOrActiveSelection,
+                                filterT (isSpellAbove10),
+                                filterT (isFromUnfamiliarTrad)
+                              ))
       }
 
       // Spell Extensions
@@ -450,33 +440,31 @@ const modifySelectOptions =
           (x: Record<Spell> | Record<LiturgicalChant>) =>
             LiturgicalChant.is (x) || !isUnfamiliarSpell (hero_magical_traditions) (x)
 
-        return fmap (foldr ((e: Record<SelectOption>) => {
-                             const mtarget_hero_entry = getTargetHeroEntry (SOA.target (e))
-                             const mtarget_wiki_entry = getTargetWikiEntry (SOA.target (e))
+        return foldr (isNoRequiredOrActiveSelection (e => {
+                       const mtarget_hero_entry = getTargetHeroEntry (SOA.target (e))
+                       const mtarget_wiki_entry = getTargetWikiEntry (SOA.target (e))
 
-                             if (
-                               isNoRequiredOrActiveSelection (e)
-                               && isJust (mtarget_wiki_entry)
-                               && isJust (mtarget_hero_entry)
-                               && isNotUnfamiliar (fromJust (mtarget_wiki_entry))
-                               && value (fromJust (mtarget_hero_entry))
-                                  >= maybe (0)
-                                           (pipe (multiply (4), add (4)))
-                                           (SOA.level (e))
-                             ) {
-                               const target_wiki_entry = fromJust (mtarget_wiki_entry)
+                       if (
+                         isJust (mtarget_wiki_entry)
+                         && isJust (mtarget_hero_entry)
+                         && isNotUnfamiliar (fromJust (mtarget_wiki_entry))
+                         && value (fromJust (mtarget_hero_entry))
+                            >= maybe (0)
+                                     (pipe (multiply (4), add (4)))
+                                     (SOA.level (e))
+                       ) {
+                         const target_wiki_entry = fromJust (mtarget_wiki_entry)
 
-                               return consF (
-                                 set (nameL)
-                                     (`${SpAL.name (target_wiki_entry)}: ${SOA.name (e)}`)
-                                     (e)
-                               )
-                             }
+                         return consF (
+                           set (nameL)
+                               (`${SpAL.name (target_wiki_entry)}: ${SOA.name (e)}`)
+                               (e)
+                         )
+                       }
 
-                             return ident as ident<List<Record<SelectOption>>>
-                           })
-                           (List ()))
-                    (mcurrent_select)
+                       return ident as ident<List<Record<SelectOption>>>
+                     }))
+                     (List ())
       }
 
       // Language Specializations
@@ -485,70 +473,68 @@ const modifySelectOptions =
                       WA.specialAbilities,
                       lookup ("SA_29"),
                       bindF (AAL.select),
-                      traceShowId,
-                      fmap (current_select => {
-                             const available_langs =
-                                     // Pair: fst = sid, snd = current_level
-                               traceShowId (maybe (List<Pair<number, number>> ())
-                                     (pipe (
-                                       active,
-                                       foldr ((obj: Record<ActiveObject>) =>
-                                               pipe (
-                                                      AOA.tier,
-                                                      bindF (current_level =>
-                                                              pipe_ (
-                                                                guard (is3or4 (current_level)),
-                                                                thenF (AOA.sid (obj)),
-                                                                misNumberM,
-                                                                fmap (current_sid =>
-                                                                       consF (Pair (
-                                                                               current_sid,
-                                                                               current_level
-                                                                             )))
-                                                              )),
-                                                      fromMaybe (
-                                                        ident as ident<List<Pair<number, number>>>
-                                                      )
-                                                    )
-                                                    (obj)
-                                             )
-                                             (List ())
-                                     ))
-                                     (pipe (HA.specialAbilities, lookup ("SA_29")) (hero)))
+                      maybe (cnst (List ()) as ident<List<Record<SelectOption>>>)
+                            (current_select => {
+                              const available_langs =
+                                      // Pair: fst = sid, snd = current_level
+                                maybe (List<Pair<number, number>> ())
+                                      (pipe (
+                                        active,
+                                        foldr ((obj: Record<ActiveObject>) =>
+                                                pipe (
+                                                       AOA.tier,
+                                                       bindF (current_level =>
+                                                               pipe_ (
+                                                                 guard (is3or4 (current_level)),
+                                                                 thenF (AOA.sid (obj)),
+                                                                 misNumberM,
+                                                                 fmap (current_sid =>
+                                                                        consF (Pair (
+                                                                                current_sid,
+                                                                                current_level
+                                                                              )))
+                                                               )),
+                                                       fromMaybe (
+                                                         ident as ident<List<Pair<number, number>>>
+                                                       )
+                                                     )
+                                                     (obj)
+                                              )
+                                              (List ())
+                                      ))
+                                      (pipe (HA.specialAbilities, lookup ("SA_29")) (hero))
 
-                             return foldr ((e: Record<SelectOption>) => {
-                                            const lang =
-                                              find ((l: Pair<number, number>) =>
-                                                     fst (l) === SOA.id (e))
-                                                   (available_langs)
+                              const filterLanguages =
+                                foldr (isNoRequiredOrActiveSelection
+                                        (e => {
+                                          const lang =
+                                            find ((l: Pair<number, number>) =>
+                                                   fst (l) === SOA.id (e))
+                                                 (available_langs)
 
-                                            const not_active_not_required =
-                                              isNoRequiredOrActiveSelection (e)
+                                          if (isJust (lang)) {
+                                            const isMotherTongue =
+                                              snd (fromJust (lang)) === 4
 
-                                            if (isJust (lang) && not_active_not_required) {
-                                              const isMotherTongue =
-                                                snd (fromJust (lang)) === 4
-
-                                              if (isMotherTongue) {
-                                                return consF (set (select_costL) (Just (0)) (e))
-                                              }
-
-                                              return consF (e)
+                                            if (isMotherTongue) {
+                                              return consF (set (select_costL) (Just (0)) (e))
                                             }
 
-                                            return ident as ident<List<Record<SelectOption>>>
+                                            return consF (e)
                                           }
-                                        )
-                                        (List ())
-                                        (current_select)
-                           })
+
+                                          return ident as ident<List<Record<SelectOption>>>
+                                        }))
+                                      (List ())
+
+                              return cnst (filterLanguages (current_select))
+                            })
                     )
                     (wiki)
       }
 
       default:
-        return fmap (filter (isNoRequiredOrActiveSelection))
-                    (mcurrent_select)
+        return filterMapListT (isNoRequiredOrActiveSelection)
     }
   }
 
@@ -848,6 +834,7 @@ export const getInactiveView =
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
+  (automatic_advantages: List<string>) =>
   (adventure_points: Record<AdventurePointsCategories>) =>
   (validExtendedSpecialAbilities: List<string>) =>
   (wiki_magical_traditions: List<Record<SpecialAbility>>) =>
@@ -875,12 +862,13 @@ export const getInactiveView =
                                           (max_level)
 
     if (!isNotValid) {
-      const specificSelections = modifySelectOptions (wiki)
-                                                     (hero)
-                                                     (wiki_magical_traditions)
-                                                     (hero_magical_traditions)
-                                                     (wiki_entry)
-                                                     (mhero_entry)
+      const specificSelections = fmap (modifySelectOptions (wiki)
+                                                           (hero)
+                                                           (wiki_magical_traditions)
+                                                           (hero_magical_traditions)
+                                                           (wiki_entry)
+                                                           (mhero_entry))
+                                      (AAL.select (wiki_entry))
 
       const mmodifyOtherOptions = modifyOtherOptions (wiki)
                                                      (hero)
@@ -900,6 +888,7 @@ export const getInactiveView =
                         wikiEntry: wiki_entry as Record<RecordI<Activatable>>,
                         selectOptions: fmapF (select_options)
                                              (sortRecordsByName (AAL.id (l10n))),
+                        isAutomatic: List.elem (AAL.id (wiki_entry)) (automatic_advantages),
                       })))
                     (mmodifyOtherOptions)
                     (ensure (Maybe.all (notNull)) (specificSelections))

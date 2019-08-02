@@ -1,21 +1,21 @@
 import { ident } from "./Function";
 import { List } from "./List";
 
-export const mapT =
-  <A, B> (f: (x: A) => B): Transducer<A, B, List<B>> =>
-  foldr =>
-  x =>
-    foldr (f (x))
+export const mapT = <A, B> (f: (x: A) => B): Transducer<A, B> => g => x => g (f (x))
 
-export const filterT =
-  <A> (pred: (x: A) => boolean): Transducer<A, A, List<A>> =>
-  foldr =>
-  x =>
-    pred (x) ? foldr (x) : ident as ident<List<A>>
+interface filterT {
+  <A, A0 extends A> (pred: (x: A) => x is A0): Transducer<A, A0>
+  <A> (pred: (x: A) => boolean): Transducer<A, A>
+}
 
-export type Transducer<A, B, C> = (foldr: (x: B) => (acc: C) => C) => (x: A) => (acc: C) => C
+export const filterT: filterT = <A> (pred: (x: A) => boolean): Transducer<A, A> => g => x =>
+  pred (x) ? g (x) : ident
 
-export const filterMapT =
-  <A, B> (t: Transducer<A, B, List<B>>) =>
+export type FoldR<A, B> = (x: A) => (acc: B) => B
+
+export type Transducer<A, B> = <C> (foldr: FoldR<B, C>) => FoldR<A, C>
+
+export const filterMapListT =
+  <A, B> (t: Transducer<A, B>) =>
   (xs: List<A>): List<B> =>
     List.foldr (t (List.consF)) (List ()) (xs)

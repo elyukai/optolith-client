@@ -264,6 +264,7 @@ export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
                             baseName: SpecialAbility.A.name (culture_area_knowledge),
                             addName: culture_area_knowledge_text,
                           }),
+                          isAutomatic: false,
                         }),
                         validation: ActivatableActivationValidation ({
                           disabled: true,

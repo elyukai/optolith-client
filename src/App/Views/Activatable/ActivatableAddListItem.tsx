@@ -14,7 +14,7 @@ import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlEle
 import { classListMaybe } from "../../Utilities/CSS";
 import { translate } from "../../Utilities/I18n";
 import { pipe_ } from "../../Utilities/pipe";
-import { renderMaybe } from "../../Utilities/ReactUtils";
+import { renderMaybeWith } from "../../Utilities/ReactUtils";
 import { isInteger } from "../../Utilities/RegexUtils";
 import { Dialog } from "../Universal/DialogNew";
 import { IconButton } from "../Universal/IconButton";
@@ -241,7 +241,8 @@ export class ActivatableAddListItem extends
             ))}
             onClick={this.showCustomCostDialog}
             >
-            {renderMaybe (PABSA.currentCost (snd (finalProps)))}
+            {renderMaybeWith ((x: number | string) => IAA.isAutomatic (item) ? `(${x})` : x)
+                             (PABSA.currentCost (snd (finalProps)))}
           </div>
           <Dialog
             id="custom-cost-dialog"

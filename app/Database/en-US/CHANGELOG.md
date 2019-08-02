@@ -1,3 +1,129 @@
+# 1.1.0/1.1.1
+
+*The exact version number of the app is 1.1.1.*
+
+After more than one year a big update is finally coming—even though you probably won’t notice it: Optolith got a completely new code. This is accompanied by an internal restructuring, so that features like groups will be possible in the future. This is the biggest change, but not the only one: All reported bugs are fixed and over the last two weeks my testers found several bugs, which are also fixed here.
+
+You will probably notice that Optolith takes a few seconds longer to load than before. This is because I rebuilt Optolith with the basic idea that it runs more stable. So I do checks during loading to make sure that all data that is loaded really looks as expected and so that nothing unexpected and unintentional, caused by wrong tables or other wrong data in the program, happens. The start performance is definitely going to be improved, but for now I prefer a more stable program to a fast one; after all this is only about starting the program, the performance during use is not affected.
+
+Last but not least a big thank you to you, for your patience and all your feedback and further help, without which I would not have been able to fix all those bugs. Although new rules have not yet made it into this version, and the next version won’t contain all new ones, Optolith will be able to get up to date more quickly than before.
+
+But now it’s time for the changelog of this version:
+
+## New Features
+
+- Heroes can now be saved from the hero list.
+- Avatars of heroes and pets can now be deleted.
+
+## Enhancements
+
+- Select option lists are now filtered by activated books. Previously, that only worked for main lists like special abilities, but now it works for all list, for example the list of trade secrets.
+  - Wiki entry lists cannot be filtered by specific books, neither can the wiki entry text in opened heroes. This will be implemented later!
+- Unfamiliar spells are now going to be highlighted in red (just like uncommon advantages).
+- Searching for professions now includes profession variants.
+- The space for languages on the character sheet is now twice as large.
+- When adding advantages or disadvantages, AP spent on advantages as well as on disadvantages will always be shown.
+- Shields on character sheet are now listed as a weapon as well as a shield.
+- Wiki texts are now selectable.
+- For *Tradition (Guild Mage)*, you need to set a specific unfamiliar spell. **For an already activated SA, you can to the via the *Rules* tab. Please set the spell, because it is needed for upcoming books!**
+- To be able to better handle differences between languages in terms of rules, heroes are now saving the languages they were created in. **For already created heroes, the creation language will be set to the current UI language. To change that, you need to switch to the *Rules* tab! Please check it, because it is going to be relevant in future versions!**
+- The term for generating random weight and size of the hero is now shown above the respective input field.
+- Der Dialog, der beim Schließen auftaucht, wenn ungespeicherte Aktionen vorhanden sind, ist jetzt klarer formuliert und hat jetzt drei Buttons für alle drei Optionen.
+- Text auf dem Heldenbogen kann jetzt selektiert werden. Diese Option ist aber nicht dazu geeignet, um den gesamten Heldenbogen zu kopieren, weil das Layout nicht richtig übernommen wird.
+- Den FAQ wurde der Eintrag hinzugefügt, wie man LE/AE/KE hinzufügt.
+- Wenn man den Wikieintrag für einen Eintrag außerhalb des Wikis angezeigen lässt, wird der Listeneintrag wie im Wiki hervorgehoben.
+- Die AP, die beim Beenden der Heldenerschaffung maximal übrig sein dürfen, betragen jetzt immer 10 AP, egal in welchem Modus man sich befindet.
+- Einsatzmöglichkeiten für Talente hinzugefügt.
+- Bei Talenten, bei denen die Einrechnung der Belastung nicht eindeutig ist, wird im Wikieintrag jetzt die komplette Beschreibung angezeigt, wann die Belastung relevant ist und wann nicht.
+- Die einzelnen Einträge für Vorteil *Herausragender Sinn* und Nachteil *Eingeschränkter Sinn* wurden zusammengefügt.
+- Unter *Ergänzende Quellen* werden in Wikieinträgen von Vorteilen, Nachteilen und Sonderfertigkeiten jetzt die Quellen genannt, von denen die jeweiligen Einträge ihre Auswahlmöglichkeiten bekommen. Z. B. wird bei Berufsgeheimnissen dann nicht nur die eigentliche SF aus dem Basisregelwerk als Quelle genannt, sondern eben auch die Quellen weiterer Berufsgeheimnisse auch anderen Büchern.
+- Analog zur geweihten Variante des Rabenschnabels gibt es jetzt die im Regelwerk beschriebene profane Variante des Rabenschnabels zum dort genannten Preis von 90 S. Außer des Status *geweiht/nicht geweiht* unterscheiden sich die Gegenstände nicht.
+- Die dargstellte Formel zur Berechnung der Astralenergie passt sich jetzt entsprechend der Tradition an. Denn bei einigen Traditionen fließt nur die Hälfte der Leiteigenschaft ein und einige haben keine Leiteigenschaft, die einfließen könnte.
+- Bei Stabzaubern wird *Bindung des Stabes* als Voraussetzung ausgeblendet.
+
+## Bug Fixes
+
+- Nach einem Wechsel von Deutsch zu Englisch konnten Charaktere nicht mehr bearbeitet werden.
+- Sonderfertigkeiten können wieder nach Gruppen sortiert werden.
+- Verbreitung von Liturgien wird jetzt alphabetisch sortiert.
+- Fertigkeits- und Kampftechnik-Maxima werden bei der Erstellung nun auch von den Probeneigenschaften bzw. Leiteigenschaften beeinflusst.
+- Gelb hervorgehobene Vorteile/Nachteile werden jetzt auch in der Legende erklärt.
+- Ein/e durch eine Professionsvariante entfernte/r Zauber/Liturgie der Basisprofession wird jetzt auch wirklich entfernt und nicht mehr auf FW 0 aktiviert.
+- Fehlende Professionsvarianten für Profession *Wildniskundiger* hinzugefügt.
+- Bilder werden auf Linux wieder angezeigt.
+- Automatische Vorteile haben jetzt Kosten von 0 AP, sodass Spezieskosten wieder korrekt sind.
+- Das Sortieren von Ausrüstung nach Gruppen wirft keinen Fehler mehr.
+- Das Portrait von Begleitern wird nun beim Export auch mit exportiert.
+- Details für Zauber und Liturgien werden wieder auf dem Heldenbogen angezeigt.
+- Die Voraussetzung „Spezies, Kultur oder Profession muss [...] als automatischen oder empfohlenen [Vorteil/Nachteil] aufweisen“ berücksichtigt jetzt auch wieder automatische Vorteile der Spezies, sollten diese entfernt worden sein.
+- Begleiterlayout auf dem Heldenbogen ist jetzt wieder korrekt.
+- Bei der PDF ist jetzt kein Scrollbalken mehr zu sehen.
+- Bann-/Schutzkreise werden wieder auf dem Heldenbogen angezeigt.
+- Beim Senken von Eigenschaften im Editor-Modus werden nun hinzugekaufte LE/AE/KE berücksichtigt und verhindern ggf. das Senken.
+- Manchmal wurde im Wikieintrag von Professionen anstelle eines Wertes, z. B. bei *Ehrenhaftigkeit 6*, `null` angezeigt, sodass dort dann *Ehrenhaftigkeit null* stand.
+- Manchmal wurde der im Wikieintrag angezeigte vorherige Wert von durch Professionsvarianten veränderte Wert um 6 erhöht. Beispiel Profession Ritter: *Etikette 2 statt 12* ist eigentlich *Etikette 2 statt 6*.
+- Nachteil *Schlechte Eigenschaft (Geiz)* und *(Verschwendungssucht)* haben sich nicht ausgeschlossen.
+- Zauber und Liturgien sind jetzt nicht mehr im Nachteil *Unfähig* enthalten. Bei Helden, die dies hatten, wird der Nachteil automatisch entfernt.
+- SF *Aspektkenntnis* kann wieder problemlos hinzugefügt werden.
+- SF *Astralraub*: Leerzeichen fehlte.
+- SF *Eisenhagel* kann wieder gekauft werden.
+- SF *Merkmalskenntnis* kann wieder problemlos hinzugefügt werden.
+- SF *Präziser Schuss/Wurf* hatte falsche Eigenschaftsvoraussetzungen.
+- SF *Scharfschütze II*: Voraussetzung ist jetzt IN 17 statt IN 15.
+- Die Nachteile *Keine Flugsalbe* und *Kein Vertrauter* verringern nun korrekt die Kosten der SF *Tradition (Hexen)*.
+- SF *Tradition (Gildenmagier)* wird jetzt bei der Fremdzauberbegrenzung berücksichtigt (siehe dazu auch die Änderung an der Tradition weiter oben).
+- SF *Volumenerweiterung des Bannschwerts*: AsP-Kosten ergänzt.
+- *Bekehren & Überzeugen*: Probe MU/IN/CH → MU/KL/CH.
+- *Etikette*, Belastung: Evtl. → Nein.
+- *Verkleiden*, Belastung: Evtl. → Ja.
+- Falsche Probeneigenschaften von Zaubern/Magischen Handlungen:
+  - *Friedenslied*: MU/KL/IN → MU/IN/CH
+  - *Sorgenlied*: MU/CH/CH→ MU/IN/IN
+  - *Zaubermelodie*: MU/KL/CH → MU/IN/CH
+- Text, dass ein bestimmter Aspekt eines Zaubers nicht modifiziert werden kann, fehlt:
+  - MOTORICUS: Kosten
+  - MOVIMENTO: Wirkungsdauer
+  - NEBELWAND: Kosten
+- Fehlende Probenmodifikatoren (SK/ZK) bei Zaubern hinzugefügt.
+- ANALYS ARKANSTRUKTUR: Zauberdauer 2 Aktionen → 32 Aktionen.
+- KARNIFILO hieß vorher Kanifilo.
+- KLARUM PURUM, Kosten: 8 AsP.
+- UNBERÜHRT VON SATINAV: Merkmal Objekt → Merkmal Temporal.
+- ZAUBERKLINGE GEISTERSPEER – Zaubererweiterungen: Formatierung korrigiert.
+- Falsche Probeneigenschaften von Liturgien:
+  - *Kleiner Bannstrahl*: MU/KL/CH → MU/IN/CH
+  - *Ehrenhaftigkeit*: MU/KL/CH → MU/IN/CH
+  - *Ermutigung*: MU/KL/CH → MU/IN/CH
+  - *Friedvolle Aura*: MU/KL/CH → MU/IN/CH
+- Text, dass ein bestimmter Aspekt einer Liturgie nicht modifiziert werden kann, fehlt:
+  - *Liturgieschild*: Kosten
+  - *Magiebann*: Liturgiedauer
+  - *Motivation*: Kosten
+- *Blitzschlag*: Verbreitung *Boron (Tod)* statt *Rondra (Sturm)*.
+- *Klarer Geist*: Aspekt *Bildung* entfernt.
+- *Nebelschwaden*: Effekttext korrigiert.
+- *Obsession* fehlte.
+- *Opfergang*: Typo korrigiert.
+- *Ruf der Heimat*: Effekttext vervollständigt.
+- *Traumbild*, Effekt: Leerzeichen fehlte.
+- *Traumbild* – Liturgieerweiterungen: Formatierung korrigiert.
+- *Verblassende Erinnerung*: Falsche Verbreitung.
+- *Verblassende Erinnerung* – Liturgieerweiterungen: Formatierung korrigiert.
+- *Dietrichset* hat jetzt auch Preis und Gewicht.
+- *Faustschild*: Formatierung korrigiert.
+- *Hakendolch*: Vorteil und Nachteil ergänzt.
+- *Handspiegel* zeigt jetzt die dazugehörige Regeltechnik.
+- *Hunde-, Pony, Pferdefutter*: Gewicht entfernt.
+- *Kettenhemd*: Formatierung angepasst.
+- *Kletterseil* hat jetzt korrekte Kosten.
+- *Pergament, gutes, 1 Blatt*: Preis korrigiert.
+- *Richtschwert* war nicht als Waffe gruppiert.
+- *Sense* war keine improvisierte Waffe mit einem Gewicht von 3,5 Stn.
+- Kosten und Gewicht für *Seidenseil* ergänzt.
+- *Stockdegen*: Formatierung angepasst.
+- *Sturmsense*: Formatierung angepasst.
+- *Wurfnetz*: Formatierung korrigiert.
+
 # 1.0.3
 
 - Renamed Optolyth to Optolith to be in line with all other locations where the name occurs.
@@ -11,7 +137,7 @@
 
 - Fixed issue with rendering list items of advantages/disadvantages/special abilities.
 - Fixed shortcuts being global.
-- Reloading a hero with `Stigma (Albino)` won't change selected eye color anymore.
+- Reloading a hero with `Stigma (Albino)` won’t change selected eye color anymore.
 
 ## macOS
 
@@ -218,7 +344,7 @@
 - Fixed calculating PA on character sheet.
 - You can now select the rule books you want to include in the Profile > Rules tab. Inactive book entries will not be displayed (only Races, Cultures, Professions, Skills, Spells and Liturgical Chants).
 - Displaying races now corresponds with the Core Rules.
-- Fixed inactive Advantages/Disadvantages/Special Abilities list's layout (temporarily).
+- Fixed inactive Advantages/Disadvantages/Special Abilities list’s layout (temporarily).
 
 ## macOS
 
@@ -259,7 +385,7 @@
 # 0.50.0
 
 - Custom AP cost possible for advantages and disadvantages.
-- Fixed ItemEditor's and ArmorZonesEditor's theming and layout.
+- Fixed ItemEditor’s and ArmorZonesEditor’s theming and layout.
 - Slightly brightened the color for disabled elements.
 
 # 0.49.6
@@ -281,12 +407,12 @@
 - Extended P+T functionality and fixed items based on that.
 - Now allows negative AP left during character creation phase.
 - Fixed search fields (it unintentionally converted text into a regular expression - thus some strange results).
-- Fixed filtering magical tradition's selection objects (previously, having more than 25 AP spent/received for magical advantages/disadvantages adding a tradition was completely disabled).
+- Fixed filtering magical tradition’s selection objects (previously, having more than 25 AP spent/received for magical advantages/disadvantages adding a tradition was completely disabled).
 - Fixed professions requiring specific cultures.
 - Fixed *Exceptional Skill/Combat Technique*
 - Fixed calculating TOU.
 - Fixed showing Own Profession without having extension books in profession list.
-- Added prerquisites and special abilities entries for professions' wiki info.
+- Added prerquisites and special abilities entries for professions’ wiki info.
 - Fixed disabling to add AE instead of to add permanently lost AE when more than one permanent AE point is lost.
 - Wiki test page added.
 - Added *Last Changes* tab in *About* section.
@@ -367,7 +493,7 @@
 - *Nimble* now increases MOV by 1.
 - *Immunity to (Disease/Poison)* now correctly adds the selected entry.
 - Derived characteristics are now correctly calculated on character sheet.
-- Item templates have floating number values (again). This **won't** affect non-locked item templates in items.
+- Item templates have floating number values (again). This **won’t** affect non-locked item templates in items.
 - Requiring Spells now correctly disables the decrease button if the SR hits the required value.
 - Invalid avatar paths will no longer result in a colored border with black background and an invalid file error in the console.
 - Now filters Aspect Knowledge selection by active tradition.
@@ -385,7 +511,7 @@
 - Improved general performance.
 - In *Profile Overview* and *Character Sheet* tabs, entries such as `Skill Specialization (Climbing: Trees), Skill Specialization (Survival: Find Campsite)` are now written as `Skill Specialization (Climbing: Trees, Survival: Find Campsite)`, providing a better overview and readability in addition to more space.
 - A new Redo button is added to the Navigation Bar. History resets after saving, finishing RCP selection and finishing character creation as well as switching to another character.
-- Fixed *Property Knowledge*'s and *Aspect Knowledge*'s AP cost and effects.
+- Fixed *Property Knowledge*’s and *Aspect Knowledge*’s AP cost and effects.
 - Fixed Languages and Scripts selection texts in RCP selections window.
 - Fixed loading characters with active Blessings.
 
@@ -394,7 +520,7 @@
 - Includes new traditions, aspects and liturgcal chants from **Aventurisches Götterwirken I**.
 - Added info for selected race in Races tab.
 - CON instead of COU now increases WS value.
-- Fixed *Intuitive Caster*'s spell limit and AE value.
+- Fixed *Intuitive Caster*’s spell limit and AE value.
 
 ## English Specific
 
@@ -409,7 +535,7 @@
 
 # 0.48.0
 
-- Heaps of bugs fixed. I lost sight of all bugs, so I won't provide a detailed list this time.
+- Heaps of bugs fixed. I lost sight of all bugs, so I won’t provide a detailed list this time.
 - Added a funtion to duplicate heroes.
 - New interface for managing permanent AE/KP loss.
 - Windows x86 support. (I am sorry for all the macOS users out there; I am still searching for a good way to build for Mac as I do not have a Mac at home.)

@@ -15,3 +15,7 @@ export const ndash = "–"
  * The minus sign.
  */
 export const minus = "−"
+
+export const nobr = "\u2060"
+
+export const nbsp = "\xA0"

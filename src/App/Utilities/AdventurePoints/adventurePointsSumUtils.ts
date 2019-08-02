@@ -117,15 +117,18 @@ type ActiveAdvantage = Record<ActiveActivatable<Advantage>>
 type ActiveDisadvantage = Record<ActiveActivatable<Disadvantage>>
 type ActiveSpecialAbility = Record<ActiveActivatable<SpecialAbility>>
 
+const AAA_ = ActiveActivatableA_
+
 export const getAPSpentForAdvantages =
   (wiki: WikiModelRecord) =>
   (xmap: HeroModel["advantages"]) =>
   (active: List<ActiveAdvantage>) =>
     pipe_ (
       active,
-      List.foldr<Record<ActiveActivatable<Advantage>>, number>
-        (pipe (ActiveActivatableA_.finalCost, add))
-        (0),
+      List.foldr ((e: Record<ActiveActivatable<Advantage>>) => AAA_.isAutomatic (e)
+                                                               ? ident as ident<number>
+                                                               : add (AAA_.finalCost (e)))
+                 (0),
       add (getAdventurePointsSpentDifference (wiki)
                                              (xmap)
                                              (active))
@@ -159,9 +162,10 @@ export const getAPSpentForDisadvantages =
   (active: List<ActiveDisadvantage>) =>
     pipe_ (
       active,
-      List.foldr<Record<ActiveActivatable<Disadvantage>>, number>
-        (pipe (ActiveActivatableA_.finalCost, add))
-        (0),
+      List.foldr ((e: Record<ActiveActivatable<Disadvantage>>) => AAA_.isAutomatic (e)
+                                                                  ? ident as ident<number>
+                                                                  : add (AAA_.finalCost (e)))
+                 (0),
       add (getAdventurePointsSpentDifference (wiki)
                                              (xmap)
                                              (active))
