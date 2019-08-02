@@ -620,6 +620,8 @@ export interface L10n {
   "demondomains": List<string>
   "demontypes": List<string>
   "demontype": string
+  "circleofdamnation": string
+  "lesserpact": string
 }
 
 export type L10nKey = keyof L10n
@@ -1247,4 +1249,6 @@ export const L10n =
                 "demondomains": List.empty,
                 "demontypes": List.empty,
                 "demontype": "",
+                "circleofdamnation": "",
+                "lesserpact": "",
               })

@@ -697,6 +697,8 @@ export const toL10n =
         "demondomains": checkL10nNonEmptyStringList ("demondomains"),
         "demontypes": checkL10nNonEmptyStringList ("demontypes"),
         "demontype": checkL10nNonEmptyString ("demontype"),
+        "circleofdamnation": checkL10nNonEmptyString ("circleofdamnation"),
+        "lesserpact": checkL10nNonEmptyString ("lesserpact"),
       }
 
       return mapMNamed
@@ -1325,6 +1327,8 @@ export const toL10n =
           "demondomains": res ["demondomains"],
           "demontypes": res ["demontypes"],
           "demontype": res ["demontype"],
+          "circleofdamnation": res["circleofdamnation"],
+          "lesserpact": res ["lesserpact"],
           // tslint:enable: no-string-literal
         }))
     }

@@ -79,23 +79,37 @@ export function PactSettings (props: PactSettingsProps) {
             disabled={!isPactEditable}
           />
           {maybe (false) (pipe (Pact.A.category, equals (2))) (mpact) ? <Dropdown
-          label={translate (l10n) ("pactlevel")}
+          label={translate (l10n) ("circleofdamnation")}
           options={
             unfoldr ((id: number) => id > 7
                       ? Nothing
-                      : Just (
-                        Pair (
-                          DropdownOption ({
-                            id: Just (id),
-                            name: toRoman (id),
-                            disabled: Just (maybe (!isPactEditable)
-                                                  (pipe (Pact.A.level, gte (id)))
-                                                  (mpact)),
-                          }),
-                          inc (id)
-                        )
-                      ))
-                    (1)}
+                      : id === 0 ?
+                          Just (
+                            Pair (
+                              DropdownOption ({
+                                id: Just (id),
+                                name: translate (l10n) ("lesserpact"),
+                                disabled: Just (maybe (!isPactEditable)
+                                                      (pipe (Pact.A.level, gte (id+2)))
+                                                      (mpact)),
+                              }),
+                              inc (id)
+                            )
+                          )
+                        :
+                          Just (
+                            Pair (
+                              DropdownOption ({
+                                id: Just (id),
+                                name: toRoman (id),
+                                disabled: Just (maybe (!isPactEditable)
+                                                      (pipe (Pact.A.level, gte (id)))
+                                                      (mpact)),
+                              }),
+                              inc (id)
+                            )
+                        ))
+                    (0)}
           onChange={setPactLevel}
           value={fmapF (mpact) (Pact.A.level)}
           disabled={isNothing (mpact)}
