@@ -1,0 +1,117 @@
+#sheets {
+	.options {
+		margin-left: 0;
+		margin-right: 24px;
+		padding-top: 0;
+		flex: none;
+	}
+
+	.scroll-inner {
+		flex-flow: column nowrap;
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+table {
+	border-spacing: 0;
+	white-space: nowrap;
+	width: 100%;
+}
+
+.print-document {
+	margin-top: 0;
+}
+
+.sheet-wrapper {
+	display: flex;
+
+	&:not(:first-child) {
+		margin-top: 24px;
+	}
+}
+
+.sheet-options {
+	flex: none;
+	margin-right: 24px;
+}
+
+.sheet {
+	flex: none;
+	width: 21cm;
+	height: 29.7cm;
+	background: white;
+	text-align: left;
+	padding: 8.5mm;
+	font: 11px/16px Alegreya;
+	color: black;
+	letter-spacing: 0;
+	display: flex;
+	flex-direction: column;
+	user-select: text;
+
+	* {
+		user-select: text;
+	}
+
+	::selection {
+		background: var(--selection-color);
+		color: var(--headings-color);
+	}
+
+	> div {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	h1, h2, h3 {
+		color: black;
+		margin: 0;
+	}
+
+	h1 {
+		font: italic bold 24px/22px Alegreya;
+	}
+
+	h2 {
+		font: 17px/13px Alegreya SC;
+		text-transform: none;
+		letter-spacing: 0;
+	}
+
+	h3 {
+		font: bold 16px Alegreya;
+		letter-spacing: 0;
+		width: 100%;
+	}
+
+	th, td {
+		border-style: solid;
+		border-color: #c8c8c8;
+		border-width: 0;
+		padding: 0;
+	}
+
+	th {
+		height: 5mm;
+		border-width: 0.3mm 0;
+		font: bold 10px/1 Alegreya SC;
+		border-color: grey;
+	}
+
+	td {
+		height: 4.5mm;
+		border-width: 0 0 0.15mm;
+		font: 500 11px/4.35mm Alegreya Sans;
+	}
+
+	.activatable-list > div {
+		font: 400 16px Alegreya Sans;
+		letter-spacing: 0;
+		padding-top: 8px;
+	}
+}
+
+@import "SheetHeader";
+@import "SheetHeaderAttribute";
+@import "AttributeMods";

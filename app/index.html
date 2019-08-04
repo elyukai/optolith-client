@@ -5,6 +5,12 @@
 		<title>Optolith</title>
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta
+			http-equiv="Content-Security-Policy"
+			content="
+				default-src 'self' 'unsafe-inline';
+				img-src 'self' data:;
+				">
 
 		<link href="main.css" rel="stylesheet">
 		<link href="favicon.png" rel="icon" type="image/png" size="267x267">
@@ -12,6 +18,10 @@
 
 	<body>
 		<div id="bodywrapper"></div>
-		<script>require('./entry.js')</script>
+		<script>
+			// require = require('esm')(module)
+			require('./entry.js')
+		</script>
+		<!-- <script src="./testmodule.js" type="module"></script> -->
 	</body>
 </html>

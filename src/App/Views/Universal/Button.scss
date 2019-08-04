@@ -1,0 +1,43 @@
+.btn {
+	height: auto;
+	min-height: 32px;
+	color: var(--accent-color);
+	text-align: center;
+	overflow: hidden;
+	border: 1px solid var(--accent-color);
+
+	&:hover, &:active {
+		cursor: pointer;
+	}
+
+	&.disabled {
+		border-color: var(--separator-color-transparent);
+		background: none;
+		color: var(--separator-color-halftransparent);
+		pointer-events: none;
+
+		&:hover {
+			border-color: var(--separator-color-transparent);
+			color: var(--separator-color-halftransparent);
+		}
+	}
+
+	&.active {
+		background: var(--accent-color);
+		color: var(--background-color);
+		pointer-events: none;
+
+		&:hover {
+			border-color: var(--accent-color);
+		}
+	}
+
+	&.autoWidth {
+		width: auto;
+		min-width: auto;
+	}
+
+	&.btn-flat {
+		border: none;
+	}
+}

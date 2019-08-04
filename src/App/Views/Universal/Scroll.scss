@@ -1,0 +1,55 @@
+.scroll {
+	> .scroll-view > .scroll-inner {
+		user-select: text;
+	}
+
+	.track-vertical {
+		height: 100%;
+		right: 0;
+	}
+
+	.track-horizontal {
+		width: 100%;
+		bottom: 0;
+	}
+
+	.thumb {
+		position: relative;
+		display: block;
+		width: 0;
+		height: 0;
+		cursor: pointer;
+		border: 3px solid transparent;
+		background-clip: padding-box;
+		overflow: hidden;
+
+		&:active div {
+			border-color: var(--accent-color-intense);
+			background-color: var(--accent-color-intense);
+		}
+
+		div {
+			width: 100%;
+			height: 100%;
+			border: 1px solid var(--separator-color-transparent);
+		}
+	}
+
+	&:hover {
+		.thumb {
+			div {
+				border-color: var(--accent-color);
+			}
+
+			&:hover div {
+				border-color: var(--accent-color);
+				background-color: var(--accent-color);
+			}
+
+			&:active div {
+				border-color: var(--accent-color-intense);
+				background-color: var(--accent-color-intense);
+			}
+		}
+	}
+}

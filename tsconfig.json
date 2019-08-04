@@ -1,33 +1,39 @@
 {
-	"compilerOptions": {
-		"allowJs": true,
-		"allowSyntheticDefaultImports": true,
-		"forceConsistentCasingInFileNames": true,
-		"importHelpers": true,
-		"jsx": "react",
-		"lib": [
-			"dom",
-			"esnext"
-		],
-		"module": "commonjs",
-		"moduleResolution": "node",
-		"noEmitHelpers": true,
-		"noFallthroughCasesInSwitch": true,
-		"noImplicitReturns": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"outDir": "app/",
-		"removeComments": true,
-		"rootDir": "src/",
-		"strict": true,
-		"target": "es2017"
-	},
-	"include": [
-		"src/**/*",
-		"src/*"
-	],
-	"exclude": [
-		"node_modules",
-		"src/data/*"
-	]
+  "compilerOptions": {
+    "allowJs": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "jsx": "react",
+    "lib": ["esnext", "dom"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmitHelpers": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": "app/",
+    "plugins": [
+      {
+        "name": "typescript-tslint-plugin",
+        "alwaysShowRuleFailuresAsWarnings": false,
+      }
+    ],
+    "removeComments": true,
+    "rootDir": "src/",
+    "inlineSourceMap": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "target": "es2017"
+  },
+  "include": [
+    "src/**/*",
+    "src/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/data/*",
+    "**/__tests__/**"
+  ]
 }

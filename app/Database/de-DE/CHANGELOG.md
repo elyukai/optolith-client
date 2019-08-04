@@ -1,0 +1,205 @@
+# 1.1.0/1.1.1
+
+*Die genaue Versionsnummer der App ist 1.1.1.*
+
+Nach mehr als über einem Jahr kommt nun endlich ein großes Update – auch wenn man es als Benutzer nicht unbedingt mitbekommt: Optolith hat einen komplett neuen Code bekommen. Mit einher geht eine interne Umstrukturierung, sodass Features wie Gruppen in Zukunft performant möglich sein werden. Das ist zwar die größte Änderung, aber nicht die einzige: Sämtliche gemeldeten Bugs sind behoben und über die letzten zwei Wochen haben meine Tester auch noch diverse Bugs gefunden, die hiermit auch behoben werden.
+
+Vermutlich werdet ihr feststellen, dass Optolith ein paar Sekunden länger braucht zum Laden als vorher. Das liegt daran, dass ich Optolith neu gebaut habe mit dem Grundgedanken, dass es stabiler läuft. Ich führe daher beim Laden Prüfungen durch, damit alle Daten, die geladen werden, auch wirklich so aussehen wie erwartet und nicht durch falsche Tabellen oder andere Daten etwas im Programm passiert, was nicht beabsichtigt ist. Die Start-Performance wird definitiv noch verbessert werden, für den Anfang ist mir ein stabileres Programm aber lieber als ein schnelles; schließlich geht es hier auch nur um den Programmstart, die Performance bei der Benutzung ist davon nicht betroffen.
+
+Nicht zuletzt aber auch ein bereits an anderer Stelle erwähntes großes Dankeschön an euch, für eure Geduld und euer ganzes Feedback und weitere Hilfe, ohne die ich nicht all die Fehler hätte beheben können. Zwar haben es neue Regelwerke noch nicht in diese Version geschafft, und auch die nächste Version wird nicht alle neuen beinhalten, aber dennoch wird Optolith jetzt vergleichsweise schnell auf den aktuellen Stand der Regeln kommen können.
+
+Aber nun zum Changelog dieser Version:
+
+## Neue Features
+
+- Helden können über die Heldenliste nun direkt gespeichert werden.
+- Portraits von Helden und Begleitern können jetzt auch wieder gelöscht werden.
+
+## Verbesserungen
+
+- Auswahllisten werden nach aktivierten Regelwerken gefiltert. Das funktionierte vorher nur für die Hauptlisten wie Sonderfertigkeiten, jetzt aber eben auch für z. B. die Liste von Berufsgeheimnissen.
+  - Wikieinträge können nicht nach bestimmten Regelwerken gefiltert werden; ebenso wenig wie diese bei geöffneten Helden nach den dort gewählten Regelwerken gefiltert werden. Dies wird noch nachgereicht!
+- Fremdzauber werden jetzt wie untypische Vorteile durch eine rote Einfärbung markiert.
+- Die Suche nach Professionen durchsucht jetzt auch Professionsvarianten.
+- Auf dem Heldenbogen ist jetzt für doppelt so viele Sprachen Platz.
+- Beim Hinzufügen von Vor-/Nachteilen werden jetzt sowohl die AP für Vorteile als auch für Nachteile angezeigt.
+- Schilde werden auf dem Heldenbogen jetzt sowohl als Schild als auch als Waffe eingetragen.
+- Texte des Wikis können jetzt selektiert und dadurch kopiert werden.
+- Für die *Tradition (Gildenmagier)* muss jetzt ein Fremdzauber festgelegt werden. **Für eine bereits aktivierte SF funktioniert dies im *Regeln*-Tab! Bitte stellt dies ein, weil es für kommende Regelwerke relevant ist!**
+- Um später besser auf Unterschiede von Versionen in verschiedenen Sprachen reagieren zu könne, wird zu den Helden ab jetzt auch die Sprache gespeichert, in der der Held erstellt wurde. **Für ältere Helden wird diese auf die aktuell eingestellte Sprache eingestellt. Zum Ändern müsst ihr in den *Regeln*-Tab wechseln! Bitte stellt dies ein, weil es in kommenden Versionen relevant wird!**
+- Im Profil wird jetzt angezeigt, wie sich die zufällige Generierung für Gewicht und Größe zusammensetzt.
+- Der Dialog, der beim Schließen auftaucht, wenn ungespeicherte Aktionen vorhanden sind, ist jetzt klarer formuliert und hat jetzt drei Buttons für alle drei Optionen.
+- Text auf dem Heldenbogen kann jetzt selektiert werden. Diese Option ist aber nicht dazu geeignet, um den gesamten Heldenbogen zu kopieren, weil das Layout nicht richtig übernommen wird.
+- Den FAQ wurde der Eintrag hinzugefügt, wie man LE/AE/KE hinzufügt.
+- Wenn man den Wikieintrag für einen Eintrag außerhalb des Wikis angezeigen lässt, wird der Listeneintrag wie im Wiki hervorgehoben.
+- Beim Pakt wird angezeigt, wenn Felder fehlen, die ausgefüllt werden müssen, um einen vollständigen Pakt zu erhalten.
+- Die AP, die beim Beenden der Heldenerschaffung maximal übrig sein dürfen, betragen jetzt immer 10 AP, egal in welchem Modus man sich befindet.
+- Einsatzmöglichkeiten für Talente hinzugefügt.
+- Bei Talenten, bei denen die Einrechnung der Belastung nicht eindeutig ist, wird im Wikieintrag jetzt die komplette Beschreibung angezeigt, wann die Belastung relevant ist und wann nicht.
+- Die einzelnen Einträge für Vorteil *Herausragender Sinn* und Nachteil *Eingeschränkter Sinn* wurden zusammengefügt.
+- Unter *Ergänzende Quellen* werden in Wikieinträgen von Vorteilen, Nachteilen und Sonderfertigkeiten jetzt die Quellen genannt, von denen die jeweiligen Einträge ihre Auswahlmöglichkeiten bekommen. Z. B. wird bei Berufsgeheimnissen dann nicht nur die eigentliche SF aus dem Basisregelwerk als Quelle genannt, sondern eben auch die Quellen weiterer Berufsgeheimnisse auch anderen Büchern.
+- Analog zur geweihten Variante des Rabenschnabels gibt es jetzt die im Regelwerk beschriebene profane Variante des Rabenschnabels zum dort genannten Preis von 90 S. Außer des Status *geweiht/nicht geweiht* unterscheiden sich die Gegenstände nicht.
+- Die dargstellte Formel zur Berechnung der Astralenergie passt sich jetzt entsprechend der Tradition an. Denn bei einigen Traditionen fließt nur die Hälfte der Leiteigenschaft ein und einige haben keine Leiteigenschaft, die einfließen könnte.
+- Bei Stabzaubern wird *Bindung des Stabes* als Voraussetzung ausgeblendet.
+
+## Fehlerbehebungen
+
+- Nach einem Wechsel von Deutsch zu Englisch konnten Charaktere nicht mehr bearbeitet werden.
+- Sonderfertigkeiten können wieder nach Gruppen sortiert werden.
+- Verbreitung von Liturgien wird jetzt alphabetisch sortiert.
+- Fertigkeits- und Kampftechnik-Maxima werden bei der Erstellung nun auch von den Probeneigenschaften bzw. Leiteigenschaften beeinflusst.
+- Hesindegeweihter: Sternkunde 4 anstelle von Alchimie 4.
+- FAQ: Zwei Typos korrigiert.
+- *Meistertalentierte* können keine Zauber mehr kaufen.
+- Gelb hervorgehobene Vorteile/Nachteile werden jetzt auch in der Legende erklärt.
+- Ein/e durch eine Professionsvariante entfernte/r Zauber/Liturgie der Basisprofession wird jetzt auch wirklich entfernt und nicht mehr auf FW 0 aktiviert.
+- Fehlende Professionsvarianten für Profession *Wildniskundiger* hinzugefügt.
+- Fehlende Berufsgeheimnisse aus dem **Aventurischen Kompendium I** hinzugefügt.
+- Bilder werden auf Linux wieder angezeigt.
+- Automatische Vorteile haben jetzt Kosten von 0 AP, sodass Spezieskosten wieder korrekt sind.
+- Das Sortieren von Ausrüstung nach Gruppen wirft keinen Fehler mehr.
+- Das Portrait von Begleitern wird nun beim Export auch mit exportiert.
+- Details für Zauber und Liturgien werden wieder auf dem Heldenbogen angezeigt.
+- *Intuitive Zauberer* haben keinen Zugriff mehr auf Rituale und Zauber des Steigerungsfaktors D.
+- „Steigerungskosten“ → „Steigerungsfaktor“.
+- Astralenergie wird beim *Gildenmagier aus Perricum* wieder richtig berechnet.
+- Die Voraussetzung „Spezies, Kultur oder Profession muss \[...] als automatischen oder empfohlenen \[Vorteil/Nachteil] aufweisen“ berücksichtigt jetzt auch wieder automatische Vorteile der Spezies, sollten diese entfernt worden sein.
+- Liturgiestile werden jetzt beim Charakterwechsel auch korrekt übernommen, sodass keine Zulassungen durch vorherige Stile mehr relevant sind.
+- Begleiterlayout auf dem Heldenbogen ist jetzt wieder korrekt.
+- Bei der PDF ist jetzt kein Scrollbalken mehr zu sehen.
+- Ein valider Pakt wirft bei Sonderfertigkeiten keinen Fehler mehr.
+- Bann-/Schutzkreise werden wieder auf dem Heldenbogen angezeigt.
+- Beim Senken von Eigenschaften im Editor-Modus werden nun hinzugekaufte LE/AE/KE berücksichtigt und verhindern ggf. das Senken.
+- *Intuitive Zauberer* behandeln jetzt alle Zauber als Zauber ihrer Tradition.
+- Manchmal wurde im Wikieintrag von Professionen anstelle eines Wertes, z. B. bei *Ehrenhaftigkeit 6*, `null` angezeigt, sodass dort dann *Ehrenhaftigkeit null* stand.
+- Manchmal wurde der im Wikieintrag angezeigte vorherige Wert von durch Professionsvarianten veränderte Wert um 6 erhöht. Beispiel Profession Ritter: *Etikette 2 statt 12* ist eigentlich *Etikette 2 statt 6*.
+- Vorteil *Herausragende Fertigkeit* funktioniert jetzt auch wieder für Zauber.
+- Vorteil *Koboldfreund* fehlte.
+- Nachteil *Kleine Zauberauswahl* ist wieder für *Intuitive Zauberer* verfügbar.
+- Nachteil *Lästige Blütenfeen* fehlte.
+- Nachteil *Schlechte Eigenschaft (Geiz)* und *(Verschwendungssucht)* haben sich nicht ausgeschlossen.
+- Im Eingabefeld für Nachteil *Prinzipientreue* steht jetzt „Prinzip“ und nicht mehr „Prinzipie“.
+- Zauber und Liturgien sind jetzt nicht mehr im Nachteil *Unfähig* enthalten. Bei Helden, die dies hatten, wird der Nachteil automatisch entfernt.
+- Das Kaufen des Nachteils *Wenige Visionen* wirft keinen Fehler mehr.
+- SF *Adaption (Zauber)* wird jetzt angezeigt, wenn die Voraussetzungen erfüllt sind.
+- SF *Adaption (Zauber)* exkludiert jetzt Fremdzauber.
+- SF *Aspektkenntnis* kann wieder problemlos hinzugefügt werden.
+- SF *Astralraub*: Leerzeichen fehlte.
+- SF *Böser Namensvetter*, *Lächerlicher Name*, *Schurkenname*, *Unpassender Name*: Nicht mehr als Elf wählbar.
+- SF *Böser Namensvetter*: Formatierung korrigiert.
+- SF *Buchdrucker*: Voraussetzung Stoffbearbeitung 4 → Mechanik 4.
+- SF *Eisenhagel* kann wieder gekauft werden.
+- SF *Gebieter des \[Aspekts\]* wird jetzt wieder angezeigt, wenn die Voraussetzungen dafür erfüllt werden.
+- SF *Kupferstich*: Voraussetzung Lebensmittelbearbeitung 4 → Malen & Zeichen 4.
+- SF *Macht der Namenlosen Klinge* ist jetzt wieder in allen 13 Stufen auswählbar, natürlich vorausgesetzt, dass die Voraussetzungen erfüllt sind.
+- SF *Merkmalskenntnis* kann wieder problemlos hinzugefügt werden.
+- SF *Präziser Schuss/Wurf* hatte falsche Eigenschaftsvoraussetzungen.
+- SF *Scharfschütze II*: Voraussetzung ist jetzt IN 17 statt IN 15.
+- SF *Siegelbrecher*: Merkmal Hellsicht → Merkmal Antimagie.
+- SF *Verschwinde!*: AsP-Kosten und Volumen ergänzt.
+- Die Nachteile *Keine Flugsalbe* und *Kein Vertrauter* verringern nun korrekt die Kosten der SF *Tradition (Hexen)*.
+- SF *Tradition (Gildenmagier)* wird jetzt bei der Fremdzauberbegrenzung berücksichtigt (siehe dazu auch die Änderung an der Tradition weiter oben).
+- SF *Volumenerweiterung des Bannschwerts*: AsP-Kosten ergänzt.
+- *Bekehren & Überzeugen*: Probe MU/IN/CH → MU/KL/CH.
+- *Etikette*, Belastung: Evtl. → Nein.
+- *Fahrzeuge*: Unter **Werkzeuge** fehlte *Fahrzeug*.
+- *Tanzen*, misslungene Probe: Vorher war dort der Text von *Sinnesschärfe*.
+- *Verkleiden*, Belastung: Evtl. → Ja.
+- Falsche Probeneigenschaften von Zaubern/Magischen Handlungen:
+  - *Friedenslied*: MU/KL/IN → MU/IN/CH
+  - *Sorgenlied*: MU/CH/CH → MU/IN/IN
+  - *Zaubermelodie*: MU/KL/CH → MU/IN/CH
+- Text, dass ein bestimmter Aspekt eines Zaubers nicht modifiziert werden kann, fehlt:
+  - MOTORICUS: Kosten
+  - MOVIMENTO: Wirkungsdauer
+  - NEBELWAND: Kosten
+- Fehlende Probenmodifikatoren (SK/ZK) bei Zaubern hinzugefügt.
+- ADLERAUGE: Tradition Druiden ergänzt, AMA1-Quelle ergänzt.
+- ANALYS ARKANSTRUKTUR: Zauberdauer 2 Aktionen → 32 Aktionen.
+- ATTRIBUTO für Mut, Fingerfertigkeit, Gewandheit und Konstitution beinhaltet nun auch die Wirkungen der einzelnen QS.
+- BAND UND FESSEL – Zaubererweiterungen: Wortdopplung korrigiert.
+- DUNKELHEIT – Zaubererweiterungen: Leerzeichen fehlten.
+- FULMINICTUS – Zaubererweiterungen: Name korrigiert und Voraussetzungen angepasst.
+- KARNIFILO hieß vorher Kanifilo.
+- KLARUM PURUM, Kosten: 8 AsP.
+- KRABBELNDER SCHRECKEN – *Starker Ekel*: Typo korrigiert.
+- MANUS MIRACULA – Zaubererweiterungen: Name korrigiert und Voraussetzungen angepasst.
+- PHYSIOSTABILIS: Effekttext ist wieder korrekt.
+- SCHWARZER SCHRECKEN, Kosten: 8 AsP → 4 AsP.
+- UNBERÜHRT VON SATINAV: Merkmal Objekt → Merkmal Temporal.
+- WIRBELFORM verhält sich jetzt vollständig wie der Eintrag aus **Aventurische Magie II**.
+- XENOGRAPHUS – *Besseres Sprachverständnis* hieß vorher *Längere Wirkungsdauer*.
+- ZAUBERKLINGE GEISTERSPEER – Zaubererweiterungen: Formatierung korrigiert.
+- *Melodie des Magieschadens* war nicht durch Ceoladir wählbar.
+- *Melodie der Zähigkeit*: Formatierung korrigiert.
+- *Melodie des Zögerns* war nicht durch Derwisch wählbar, konnte aber durch Sangara gewählt werden.
+- Herrschaftsrituale sind nun enthalten.
+- Falsche Probeneigenschaften von Liturgien:
+  - *Kleiner Bannstrahl*: MU/KL/CH → MU/IN/CH
+  - *Ehrenhaftigkeit*: MU/KL/CH → MU/IN/CH
+  - *Ermutigung*: MU/KL/CH → MU/IN/CH
+  - *Friedvolle Aura*: MU/KL/CH → MU/IN/CH
+  - *Wasserlauf*: MU/KL/IN → MU/IN/GE
+- Text, dass ein bestimmter Aspekt einer Liturgie nicht modifiziert werden kann, fehlt:
+  - *Bann der göttlichen Gaben*: Liturgiedauer
+  - *Dämonenwall*: Kosten
+  - *Liturgieschild*: Kosten
+  - *Mächtiger Angriff*: Kosten
+  - *Magiebann*: Liturgiedauer
+  - *Magiespiegel*: Kosten
+  - *Motivation*: Kosten
+  - *Namenlose Kälte*: Kosten
+- *Ächtung (Exkommunikation)* – Liturgieerweiterungen: Buchname bei der Seitenangabe ergänzt.
+- *Blitzschlag*: Verbreitung *Boron (Tod)* statt *Rondra (Sturm)*.
+- *Delphingestalt*: Effekttext korrigiert.
+- *Häutung* und *Häutung* – Liturgieerweiterungen: Leerzeichen fehlte.
+- *Guter Fang*: Liturgie → Zeremonie.
+- *Guter Fang* – Liturgieerweiterungen: Formatierung korrigiert.
+- *Klarer Geist*: Aspekt *Bildung* entfernt.
+- *Namenlose Zweifel*: Effekttext korrigiert.
+- *Namenloses Vergessen*: Effekttext korrigiert.
+- *Nebelschwaden*: Effekttext korrigiert.
+- *Obsession* fehlte.
+- *Opfergang*: Typo korrigiert.
+- *Pech und Schwefel*: Effekttext vervollständigt.
+- *Ruf der Heimat*: Effekttext vervollständigt.
+- *Seevogelsprache* – Mehr Vögel: Leerzeichen eingefügt.
+- *Sicherer Weg*: Leerzeichen eingefügt.
+- *Traumbild*, Effekt: Leerzeichen fehlte.
+- *Traumbild* – Liturgieerweiterungen: Formatierung korrigiert.
+- *Verblassende Erinnerung*: Falsche Verbreitung.
+- *Verblassende Erinnerung* – Liturgieerweiterungen: Formatierung korrigiert.
+- *Wasserlauf*: Verbreitung *Allgemein* hinzugefügt, Effekttext korrigiert.
+- *Windruf*, Zielkategorie: Objekt (profane Objekte, Segel).
+- *Zähe Haut*: Aspekt *Gutes Gold* hinzugefügt.
+- *Albernische Bauernwehr*: Wort fehlte.
+- *Albernisches Entermesser*: Typo behoben.
+- *Amazonensäbel* fehlte.
+- *Andergaster*: Formatierung des Waffenvorteils korrigiert.
+- *Dietrichset* hat jetzt auch Preis und Gewicht.
+- *Faustschild*: Formatierung korrigiert.
+- *Gänsebeutel*: Preis korrigiert.
+- *Gaoraith*: Länge fehlte.
+- *Hakendolch*: Vorteil und Nachteil ergänzt.
+- *Handspiegel* zeigt jetzt die dazugehörige Regeltechnik.
+- *Harbener Säbel*, Länge: 100 HF → 75 HF.
+- *Havener Messer*: Formatierung korrigiert.
+- *Hunde-, Pony, Pferdefutter*: Gewicht entfernt.
+- *Kettenhemd*: Formatierung angepasst.
+- *Kletterseil* hat jetzt korrekte Kosten.
+- *Korspieß*: Formatierung korrigiert.
+- Der Waffennachteil des *Langbogens* war unvollständig.
+- *Neckerdreizack*: Typo behoben.
+- *Pergament, gutes, 1 Blatt*: Preis korrigiert.
+- *Richtschwert* war nicht als Waffe gruppiert.
+- *Seesäbel*: Formatierung korrigiert und fehlendes Wort ergänzt.
+- *Sense* war keine improvisierte Waffe mit einem Gewicht von 3,5 Stn.
+- Kosten und Gewicht für *Seidenseil* ergänzt.
+- *Spealleagh* war nicht als Waffe eingetragen.
+- *Streitkolben der Streitenden Königreiche* fehlte.
+- *Stockdegen*: Formatierung angepasst.
+- *Sturmsense*: Formatierung angepasst.
+- *Turnierrüstung*: Formatierung angepasst.
+- *Turnierzweihänder*: Leiteigenschaften angepasst.
+- *Wurfnetz*: Formatierung korrigiert.
+- *Zugvogelfedern*: Preis korrigiert.

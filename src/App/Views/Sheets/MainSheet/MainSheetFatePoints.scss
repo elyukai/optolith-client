@@ -1,0 +1,46 @@
+#main-sheet > .lower > .calculated > div.fate-points {
+	display: flex;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+	position: relative;
+	flex: 0 0 auto;
+	margin: auto 0 0;
+	height: auto;
+
+	h3 {
+		width: 100%;
+		flex: none;
+		margin: 0 0 8mm;
+	}
+
+	label {
+		position: absolute;
+		top: 9.5mm;
+		font: bold 9px Alegreya Sans;
+	}
+
+	.labelbox {
+		&:not(:last-child) {
+			margin-right: 2mm;
+			width: 1cm;
+			flex: none;
+		}
+
+		&:nth-last-child(2) {
+			.box {
+				font-weight: bold;
+			}
+		}
+
+		&:last-child {
+			flex: 1 1 0%;
+		}
+	}
+
+	.box {
+		width: 100%;
+		font: 21px/9.4mm Alegreya Sans;
+		letter-spacing: 0.05em;
+		text-align: center;
+	}
+}

@@ -1,0 +1,104 @@
+# 1.1.0/1.1.1
+
+[i]The exact version number of the app is 1.1.1.[/i]
+
+After more than one year a big update is finally coming—even though you probably won’t notice it: Optolith got a completely new code. This is accompanied by an internal restructuring, so that features like groups will be possible in the future. This is the biggest change, but not the only one: All reported bugs are fixed and over the last two weeks my testers found several bugs, which are also fixed here.
+
+You will probably notice that Optolith takes a few seconds longer to load than before. This is because I rebuilt Optolith with the basic idea that it runs more stable. So I do checks during loading to make sure that all data that is loaded really looks as expected and so that nothing unexpected and unintentional, caused by wrong tables or other wrong data in the program, happens. The start performance is definitely going to be improved, but for now I prefer a more stable program to a fast one; after all this is only about starting the program, the performance during use is not affected.
+
+Last but not least a big thank you to you, for your patience and all your feedback and further help, without which I would not have been able to fix all those bugs. Although new rules have not yet made it into this version, and the next version won’t contain all new ones, Optolith will be able to get up to date more quickly than before.
+
+But now it’s time for the changelog of this version:
+
+## New Features
+
+[list]
+[*]Heroes can now be saved from the hero list.
+[*]Avatars of heroes and pets can now be deleted.
+[/list]
+
+## Enhancements
+
+[list]
+[*]Select option lists are now filtered by activated books. Previously, that only worked for main lists like special abilities, but now it works for all list, for example the list of trade secrets.
+  [list]
+  [*]Wiki entry lists cannot be filtered by specific books, neither can the wiki entry text in opened heroes. This will be implemented later!
+  [/list]
+[*]Unfamiliar spells are now going to be highlighted in red (just like uncommon advantages).
+[*]Searching for professions now includes profession variants.
+[*]The space for languages on the character sheet is now twice as large.
+[*]When adding advantages or disadvantages, AP spent on advantages as well as on disadvantages will always be shown.
+[*]Shields on character sheet are now listed as a weapon as well as a shield.
+[*]Wiki texts are now selectable.
+[*]For [i]Tradition (Guild Mage)[/i], you need to set a specific unfamiliar spell. [b]For an already activated SA, you can to the via the [i]Rules[/i] tab. Please set the spell, because it is needed for upcoming books![/b]
+[*]To be able to better handle differences between languages in terms of rules, heroes are now saving the languages they were created in. [b]For already created heroes, the creation language will be set to the current UI language. To change that, you need to switch to the [i]Rules[/i] tab! Please check it, because it is going to be relevant in future versions![/b]
+[*]The term for generating random weight and size of the hero is now shown above the respective input field.
+[*]The dialog shown on application quit if there are unsaved actions is now clearer and shows three buttons for all three possible options.
+[*]Text on character sheet is now selectable. This option is not useful for copying the complete character sheet as the layout is not preserved properly.
+[*]Added FAQ entry on how to add LP/AE/KP.
+[*]If you open a wiki entry when a character is open, the respective list item is highlighted just like they are in the wiki.
+[*]The maximum available AP that can be left when finishing hero creation phase is now always 10 AP, no matter whether you are in editing mode or not.
+[*]Added [i]Uses[/i] for skills.
+[*]For skills where it is not 100% clear whether encumbrance is relevant or not, the full description when it is relevant and when it is not is now shown instead of „maybe“.
+[*]The separate entries for advantage [i]Exceptional Sense[/i] and disadvantage [i]Restricted Sense[/i] are now joined.
+[*][i]Additional sources[/i] lists sources from which the entry gets its select options. For example, SA [i]Trade Secrets[/i] not only shows the source for the base SA, but also the different trade secret sources from all the different books.
+[*]Analogous to the Raven’s Beaks blessed variant, there’s now a mundane variant available, too. It costs 90 S. There’s no difference between the two versions except for [i]blessed/mundane[/i].
+[*]For Staff Enchantments, [i]Binding of the Staff[/i] as a prerequisite is now hidden (because it is hidden in Core Rules, too).
+[/list]
+
+## Bug Fixes
+
+[list]
+[*]After switching from German to English, heroes could not be edited anymore.
+[*]Special Abilities can now be sorted by group again.
+[*]Liturgical chant traditions and aspects are now sorted alphabetically.
+[*]Maxima of skills and combat techniques are now also influenced by skill check attributes or primary attributes during character creation phase.
+[*]Yellow-highlighted advantages/disadvantages are now explained in the legend on the left.
+[*]A spell or chant from a base profession removed by a profession variant now removes the entry entirely instead of activating it on SR 0.
+[*]Images are now shown on Linux again.
+[*]Automatic advantages cost 0 AP so that race AP cost are correct now.
+[*]Sorting equipment by group does not result in an error anymore.
+[*]Avatars of pets are now exported as well when exporting the character.
+[*]Details of spells and chants are shown on character sheet again.
+[*]The prerequisite Race, culture, or profession must have \[...] as an automatic or suggested \[advantage/disadvantage]“ now also includes automatic advantages if they are removed.
+[*]Pet layout on character sheet should work again.
+[*]The PDF does not include a scroll bar anymore.
+[*]Protective/Warding circles are now shown on character sheet.
+[*]Lowering attributes in editing mode takes added LP/AE/KP into account and restricts lowering if needed.
+[*]Sometimes, instead of a value, for example in [i]Enforce Honor 6[/i], `null` was shown in the wiki entry for professions, so it was actually [i]Ehrenhaftigkeit null[/i].
+[*]Sometimes, the value of a entry in a profession, changed by a profession variant, was increased by 6. For example, Knight: [i]Etiquette 2 instead of 12[/i] actually is [i]Etiquette 2 instead of 6[/i].
+[*]Disadvantage [i]Negative Trait (Stinginess)[/i] and [i](Wastefulness)[/i] were not mutually exclusive.
+[*]Spells and chants are not included in disadvantage [i]Incompetent[/i]. Heroes with those entries will get the disadvantage removed automatically.
+[*]SA [i]Aspect Knowledge[/i] can now be added as expected.
+[*]SA [i]Property Knowledge[/i] can now be added as expected.
+[*]SA [i]Precise Shot/Throw[/i] had wrong attribute prerequisites.
+[*]Disadvantages [i]No Flying Balm[/i] and [i]No Familiar[/i] now correctly decrease the cost of SA [i]Tradition (Witch)[/i] by 10 AP each.
+[*]SA [i]Tradition (Guild Mage)[/i] is now taken into account for restrictions concerning unfamiliar spells (see the change to the SA listed above also).
+[*][i]Disguise[/i], Encumbrance: Maybe → Yes.
+[*][i]Etiquette[/i], Encumbrance: Maybe → No.
+[*][i]Persuasion[/i]: Skill check COU/INT/CHA → COU/SGC/CHA.
+[*]Wrong skill checks of spells:
+  [list]
+  [*][i]Magical Melody[/i]: COU/SGC/CHA → COU/INT/CHA
+  [*][i]Song of Piece[/i]: COU/SGC/INT → COU/INT/CHA
+  [*][i]Song of Sorrow[/i]: COU/CHA/CHA → COU/INT/INT
+  [/list]
+[*]Text missing which states that a special aspect of a spell cannot be modified:
+  [list]
+  [*]MOTORICUS: Cost
+  [*]WALL OF FOG: Cost
+  [/list]
+[*]Missing skill check modifiers (SPI/TOU) added to spells.
+[*]ANALYZE ARCANE STRUCTURE: Casting time 2 actions → 32 actions.
+[*]KLARUM PURUM, Cost: 8 AE.
+[*]Wrong skill checks of liturgical chants:
+  [list]
+  [*][i]Minor Banishing Ray[/i]: COU/SGC/CHA → COU/INT/CHA
+  [*][i]Enforce Honor[/i]: COU/SGC/CHA → COU/INT/CHA
+  [*][i]Encourage[/i]: COU/SGC/CHA → COU/INT/CHA
+  [*][i]Peaceful Aura[/i]: COU/SGC/CHA → COU/INT/CHA
+  [/list]
+[*][i]Hand mirror[/i] now lists the corresponding rule.
+[*][i]Dog food, Horse feed, Pony feed[/i]: Removed weight.
+[*][i]Rope, climbing[/i] now has a correct price.
+[/list]
