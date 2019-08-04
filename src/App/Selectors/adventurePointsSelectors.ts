@@ -1,9 +1,10 @@
 import { cnst } from "../../Data/Function";
-import { fmap } from "../../Data/Functor";
-import { foldr, fromArray } from "../../Data/List";
+import { fmap, fmapF } from "../../Data/Functor";
+import { foldr, List } from "../../Data/List";
 import { any, elem, fromJust, isJust, isMaybe, join, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe";
 import { add, subtract } from "../../Data/Num";
 import { Record } from "../../Data/Record";
+import { fst, snd } from "../../Data/Tuple";
 import { uncurryN3 } from "../../Data/Tuple/Curry";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories";
@@ -13,7 +14,7 @@ import { getAPSpentForAdvantages, getAPSpentForAttributes, getAPSpentForBlessedA
 import { getDisAdvantagesSubtypeMax } from "../Utilities/AdventurePoints/adventurePointsUtils";
 import { createMapSelector, createMapSelectorS } from "../Utilities/createMapSelector";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { pipe, pipe_ } from "../Utilities/pipe";
+import { pipe } from "../Utilities/pipe";
 import { getAdvantagesForEditMap, getDisadvantagesForEditMap, getSpecialAbilitiesForEditMap } from "./activatableSelectors";
 import { getStartEl } from "./elSelectors";
 import { getCurrentHeroPresent, getHeroes, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells } from "./stateSelectors";
@@ -165,18 +166,43 @@ export const getAPSpentMap =
                     )
                     ()
                     ()
-                    ((...keyed) => () => () =>
-                      pipe_ (
-                        keyed,
-                        fromArray,
-                        foldr (pipe (
-                                (e: Maybe<number> | Maybe<Maybe<number>>) =>
-                                  any (isMaybe) (e) ? join (e) : e,
-                                Maybe.sum,
-                                add
-                              ))
-                              (0)
-                      ))
+                    ((
+                      spentOnAttributes,
+                      spentOnSkills,
+                      spentOnCombatTechniques,
+                      spentOnSpells,
+                      spentOnLiturgicalChants,
+                      spentOnCantrips,
+                      spentOnBlessings,
+                      spentOnEnergies,
+                      spentOnAdvantages,
+                      spentOnDisadvantages,
+                      spentOnSpecialAbilities,
+                      spentOnProfession,
+                      spentOnRace
+                    ) => () => () =>
+                      foldr (pipe (
+                              (e: Maybe<number> | Maybe<Maybe<number>>) =>
+                                any (isMaybe) (e) ? join (e) : e,
+                              Maybe.sum,
+                              add
+                            ))
+                            (0)
+                            (List<Maybe<number> | Maybe<Maybe<number>>> (
+                              spentOnAttributes,
+                              spentOnSkills,
+                              spentOnCombatTechniques,
+                              spentOnSpells,
+                              spentOnLiturgicalChants,
+                              spentOnCantrips,
+                              spentOnBlessings,
+                              spentOnEnergies,
+                              fmapF (spentOnAdvantages) (fmap (snd)),
+                              fmapF (spentOnDisadvantages) (fmap (snd)),
+                              spentOnSpecialAbilities,
+                              spentOnProfession,
+                              spentOnRace
+                            )))
 
 export const getAvailableAPMap =
   createMapSelector (getHeroes)
@@ -256,12 +282,12 @@ export const getAPObjectMap =
                         total,
                         spent: fromJust (spent),
                         available: fromJust (fromJust (available)),
-                        spentOnAdvantages: fromJust (fromJust (advs)),
-                        spentOnMagicalAdvantages: fromJust (fromJust (ma_advs)),
-                        spentOnBlessedAdvantages: fromJust (fromJust (bl_advs)),
-                        spentOnDisadvantages: Math.abs (fromJust (fromJust (diss))),
-                        spentOnMagicalDisadvantages: Math.abs (fromJust (fromJust (ma_diss))),
-                        spentOnBlessedDisadvantages: Math.abs (fromJust (fromJust (bl_diss))),
+                        spentOnAdvantages: fst (fromJust (fromJust (advs))),
+                        spentOnMagicalAdvantages: fst (fromJust (fromJust (ma_advs))),
+                        spentOnBlessedAdvantages: fst (fromJust (fromJust (bl_advs))),
+                        spentOnDisadvantages: Math.abs (fst (fromJust (fromJust (diss)))),
+                        spentOnMagicalDisadvantages: Math.abs (fst (fromJust (fromJust (ma_diss)))),
+                        spentOnBlessedDisadvantages: Math.abs (fst (fromJust (fromJust (bl_diss)))),
                         spentOnSpecialAbilities: fromJust (fromJust (sas)),
                         spentOnAttributes: fromJust (attrs),
                         spentOnSkills: fromJust (skills),
