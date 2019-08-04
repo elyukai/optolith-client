@@ -3,14 +3,14 @@ import { ReduxDispatch } from "../Actions/Actions";
 import * as ProfessionActions from "../Actions/ProfessionActions";
 import { Selections as SelectionsInterface } from "../Models/Hero/heroTypeHelpers";
 import { AppStateRecord } from "../Reducers/appReducer";
-import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from "../Selectors/rcpSelectors";
+import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getRace } from "../Selectors/rcpSelectors";
 import { getAllSpellsForManualGuildMageSelect } from "../Selectors/spellsSelectors";
 import { getRules, getWiki } from "../Selectors/stateSelectors";
 import { RCPOptionSelections, SelectionsDispatchProps, SelectionsOwnProps, SelectionsStateProps } from "../Views/RCPOptionSelections/Selections";
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: SelectionsOwnProps): SelectionsStateProps => ({
-    currentRace: getCurrentRace (state),
+    currentRace: getRace (state, ownProps),
     currentCulture: getCurrentCulture (state),
     currentProfession: getCurrentProfession (state),
     currentProfessionVariant: getCurrentProfessionVariant (state),

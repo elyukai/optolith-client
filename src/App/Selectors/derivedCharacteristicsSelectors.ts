@@ -27,7 +27,7 @@ import { pipe } from "../Utilities/pipe";
 import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice, mapGetToSlice, mapGetToSliceWithProps } from "../Utilities/SelectorsUtils";
 import { getHighestPrimaryMagicalAttributeValue, getPrimaryBlessedAttribute } from "./attributeSelectors";
-import { getCurrentRace } from "./rcpSelectors";
+import { getRace } from "./rcpSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getMagicalTraditionsFromHero } from "./spellsSelectors";
 import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getDisadvantages, getLocaleAsProp, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getRules, getSpecialAbilities } from "./stateSelectors";
@@ -50,7 +50,7 @@ const getFirstLevel =
   )
 
 export const getLP = createMaybeSelector (
-  getCurrentRace,
+  getRace,
   mapGetToSliceWithProps (getAttributes) (prefixAttr (7)),
   getPermanentLifePoints,
   mapGetToMaybeSlice (getAdvantages) (prefixAdv (25)),
@@ -208,7 +208,7 @@ export const getKP = createMaybeSelector (
 )
 
 export const getSPI = createMaybeSelector (
-  getCurrentRace,
+  getRace,
   mapGetToSliceWithProps (getAttributes) (prefixAttr (1)),
   mapGetToSliceWithProps (getAttributes) (prefixAttr (2)),
   mapGetToSliceWithProps (getAttributes) (prefixAttr (3)),
@@ -241,7 +241,7 @@ export const getSPI = createMaybeSelector (
 )
 
 export const getTOU = createMaybeSelector (
-  getCurrentRace,
+  getRace,
   mapGetToSliceWithProps (getAttributes) (prefixAttr (7)),
   mapGetToSliceWithProps (getAttributes) (prefixAttr (8)),
   mapGetToMaybeSlice (getAdvantages) (prefixAdv (27)),
@@ -325,7 +325,7 @@ export const getINI = createMaybeSelector (
 )
 
 export const getMOV = createMaybeSelector (
-  getCurrentRace,
+  getRace,
   mapGetToMaybeSlice (getAdvantages) (prefixAdv (9)),
   mapGetToMaybeSlice (getDisadvantages) (prefixDis (51)),
   mapGetToMaybeSlice (getDisadvantages) (prefixDis (4)),

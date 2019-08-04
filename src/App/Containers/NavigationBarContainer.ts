@@ -30,7 +30,8 @@ const mapStateToProps =
     tabs: getTabs (state, ownProps),
     subtabs: getSubtabs (state, ownProps),
     adventurePoints: join (bind (ownProps.mhero)
-                                (hero => getAPObjectMap (HeroModel.A.id (hero)) (state, ownProps))),
+                                (hero => getAPObjectMap (HeroModel.A.id (hero))
+                                                        (state, { ...ownProps, hero }))),
     maximumForMagicalAdvantagesDisadvantages:
       getMagicalAdvantagesDisadvantagesAdventurePointsMaximum (state),
     isSpellcaster: getIsSpellsTabAvailable (state, ownProps),

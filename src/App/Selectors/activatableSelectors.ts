@@ -39,7 +39,7 @@ import { blessedSpecialAbilityGroups, combatSpecialAbilityGroups, generalSpecial
 import { comparingR, sortStrings } from "../Utilities/sortBy";
 import { misStringM } from "../Utilities/typeCheckUtils";
 import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors";
-import { getAutomaticAdvantages, getCurrentCulture, getCurrentProfession, getCurrentRace } from "./rcpSelectors";
+import { getAutomaticAdvantages, getCurrentCulture, getCurrentProfession, getRace } from "./rcpSelectors";
 import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
 import { getMagicalTraditionsFromWiki } from "./spellsSelectors";
 import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getHeroes, getLocaleAsProp, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from "./stateSelectors";
@@ -87,7 +87,7 @@ type RatingMap = OrderedMap<string, EntryRating>
 const insertRating = flip (insert as insert<string, EntryRating>)
 
 export const getAdvantagesRating = createMaybeSelector (
-  getCurrentRace,
+  getRace,
   getCurrentCulture,
   getCurrentProfession,
   (mrace, mculture, mprofession) =>
@@ -122,7 +122,7 @@ export const getAdvantagesRating = createMaybeSelector (
 )
 
 export const getDisadvantagesRating = createMaybeSelector (
-  getCurrentRace,
+  getRace,
   getCurrentCulture,
   getCurrentProfession,
   (mrace, mculture, mprofession) =>

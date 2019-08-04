@@ -63,7 +63,7 @@ Aber nun zum Changelog dieser Version:
 - *Intuitive Zauberer* haben keinen Zugriff mehr auf Rituale und Zauber des Steigerungsfaktors D.
 - „Steigerungskosten“ → „Steigerungsfaktor“.
 - Astralenergie wird beim *Gildenmagier aus Perricum* wieder richtig berechnet.
-- Die Voraussetzung „Spezies, Kultur oder Profession muss [...] als automatischen oder empfohlenen [Vorteil/Nachteil] aufweisen“ berücksichtigt jetzt auch wieder automatische Vorteile der Spezies, sollten diese entfernt worden sein.
+- Die Voraussetzung „Spezies, Kultur oder Profession muss \[...] als automatischen oder empfohlenen \[Vorteil/Nachteil] aufweisen“ berücksichtigt jetzt auch wieder automatische Vorteile der Spezies, sollten diese entfernt worden sein.
 - Liturgiestile werden jetzt beim Charakterwechsel auch korrekt übernommen, sodass keine Zulassungen durch vorherige Stile mehr relevant sind.
 - Begleiterlayout auf dem Heldenbogen ist jetzt wieder korrekt.
 - Bei der PDF ist jetzt kein Scrollbalken mehr zu sehen.
@@ -107,7 +107,7 @@ Aber nun zum Changelog dieser Version:
 - *Verkleiden*, Belastung: Evtl. → Ja.
 - Falsche Probeneigenschaften von Zaubern/Magischen Handlungen:
   - *Friedenslied*: MU/KL/IN → MU/IN/CH
-  - *Sorgenlied*: MU/CH/CH→ MU/IN/IN
+  - *Sorgenlied*: MU/CH/CH → MU/IN/IN
   - *Zaubermelodie*: MU/KL/CH → MU/IN/CH
 - Text, dass ein bestimmter Aspekt eines Zaubers nicht modifiziert werden kann, fehlt:
   - MOTORICUS: Kosten

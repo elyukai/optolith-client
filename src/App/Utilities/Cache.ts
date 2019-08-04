@@ -10,6 +10,7 @@ import { Record } from "../../Data/Record";
 import { parseJSON } from "../../Data/String/JSON";
 import { Tuple } from "../../Data/Tuple";
 import { deleteFile, readFile, writeFile } from "../../System/IO";
+import { HeroModelRecord } from "../Models/Hero/HeroModel";
 import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { AppStateRecord } from "../Reducers/appReducer";
@@ -182,7 +183,7 @@ export const insertHeroesCache =
 export const forceCacheIsAvailable =
   (id: string) =>
   (state: AppStateRecord) =>
-  (props: { l10n: L10nRecord }) => {
+  (props: { l10n: L10nRecord; hero: HeroModelRecord }) => {
     getAPSpentMap (id) (state, props)
     getAvailableAPMap (id) (state, props)
     getAPSpentOnAttributesMap (id) (state)

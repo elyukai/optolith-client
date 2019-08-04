@@ -28,101 +28,66 @@ But now it’s time for the changelog of this version:
 - For *Tradition (Guild Mage)*, you need to set a specific unfamiliar spell. **For an already activated SA, you can to the via the *Rules* tab. Please set the spell, because it is needed for upcoming books!**
 - To be able to better handle differences between languages in terms of rules, heroes are now saving the languages they were created in. **For already created heroes, the creation language will be set to the current UI language. To change that, you need to switch to the *Rules* tab! Please check it, because it is going to be relevant in future versions!**
 - The term for generating random weight and size of the hero is now shown above the respective input field.
-- Der Dialog, der beim Schließen auftaucht, wenn ungespeicherte Aktionen vorhanden sind, ist jetzt klarer formuliert und hat jetzt drei Buttons für alle drei Optionen.
-- Text auf dem Heldenbogen kann jetzt selektiert werden. Diese Option ist aber nicht dazu geeignet, um den gesamten Heldenbogen zu kopieren, weil das Layout nicht richtig übernommen wird.
-- Den FAQ wurde der Eintrag hinzugefügt, wie man LE/AE/KE hinzufügt.
-- Wenn man den Wikieintrag für einen Eintrag außerhalb des Wikis angezeigen lässt, wird der Listeneintrag wie im Wiki hervorgehoben.
-- Die AP, die beim Beenden der Heldenerschaffung maximal übrig sein dürfen, betragen jetzt immer 10 AP, egal in welchem Modus man sich befindet.
-- Einsatzmöglichkeiten für Talente hinzugefügt.
-- Bei Talenten, bei denen die Einrechnung der Belastung nicht eindeutig ist, wird im Wikieintrag jetzt die komplette Beschreibung angezeigt, wann die Belastung relevant ist und wann nicht.
-- Die einzelnen Einträge für Vorteil *Herausragender Sinn* und Nachteil *Eingeschränkter Sinn* wurden zusammengefügt.
-- Unter *Ergänzende Quellen* werden in Wikieinträgen von Vorteilen, Nachteilen und Sonderfertigkeiten jetzt die Quellen genannt, von denen die jeweiligen Einträge ihre Auswahlmöglichkeiten bekommen. Z. B. wird bei Berufsgeheimnissen dann nicht nur die eigentliche SF aus dem Basisregelwerk als Quelle genannt, sondern eben auch die Quellen weiterer Berufsgeheimnisse auch anderen Büchern.
-- Analog zur geweihten Variante des Rabenschnabels gibt es jetzt die im Regelwerk beschriebene profane Variante des Rabenschnabels zum dort genannten Preis von 90 S. Außer des Status *geweiht/nicht geweiht* unterscheiden sich die Gegenstände nicht.
-- Die dargstellte Formel zur Berechnung der Astralenergie passt sich jetzt entsprechend der Tradition an. Denn bei einigen Traditionen fließt nur die Hälfte der Leiteigenschaft ein und einige haben keine Leiteigenschaft, die einfließen könnte.
-- Bei Stabzaubern wird *Bindung des Stabes* als Voraussetzung ausgeblendet.
+- The dialog shown on application quit if there are unsaved actions is now clearer and shows three buttons for all three possible options.
+- Text on character sheet is now selectable. This option is not useful for copying the complete character sheet as the layout is not preserved properly.
+- Added FAQ entry on how to add LP/AE/KP.
+- If you open a wiki entry when a character is open, the respective list item is highlighted just like they are in the wiki.
+- The maximum available AP that can be left when finishing hero creation phase is now always 10 AP, no matter whether you are in editing mode or not.
+- Added *Uses* for skills.
+- For skills where it is not 100% clear whether encumbrance is relevant or not, the full description when it is relevant and when it is not is now shown instead of „maybe“.
+- The separate entries for advantage *Exceptional Sense* and disadvantage *Restricted Sense* are now joined.
+- *Additional sources* lists sources from which the entry gets its select options. For example, SA *Trade Secrets* not only shows the source for the base SA, but also the different trade secret sources from all the different books.
+- Analogous to the Raven’s Beaks blessed variant, there’s now a mundane variant available, too. It costs 90 S. There’s no difference between the two versions except for *blessed/mundane*.
+- For Staff Enchantments, *Binding of the Staff* as a prerequisite is now hidden (because it is hidden in Core Rules, too).
 
 ## Bug Fixes
 
-- Nach einem Wechsel von Deutsch zu Englisch konnten Charaktere nicht mehr bearbeitet werden.
-- Sonderfertigkeiten können wieder nach Gruppen sortiert werden.
-- Verbreitung von Liturgien wird jetzt alphabetisch sortiert.
-- Fertigkeits- und Kampftechnik-Maxima werden bei der Erstellung nun auch von den Probeneigenschaften bzw. Leiteigenschaften beeinflusst.
-- Gelb hervorgehobene Vorteile/Nachteile werden jetzt auch in der Legende erklärt.
-- Ein/e durch eine Professionsvariante entfernte/r Zauber/Liturgie der Basisprofession wird jetzt auch wirklich entfernt und nicht mehr auf FW 0 aktiviert.
-- Fehlende Professionsvarianten für Profession *Wildniskundiger* hinzugefügt.
-- Bilder werden auf Linux wieder angezeigt.
-- Automatische Vorteile haben jetzt Kosten von 0 AP, sodass Spezieskosten wieder korrekt sind.
-- Das Sortieren von Ausrüstung nach Gruppen wirft keinen Fehler mehr.
-- Das Portrait von Begleitern wird nun beim Export auch mit exportiert.
-- Details für Zauber und Liturgien werden wieder auf dem Heldenbogen angezeigt.
-- Die Voraussetzung „Spezies, Kultur oder Profession muss [...] als automatischen oder empfohlenen [Vorteil/Nachteil] aufweisen“ berücksichtigt jetzt auch wieder automatische Vorteile der Spezies, sollten diese entfernt worden sein.
-- Begleiterlayout auf dem Heldenbogen ist jetzt wieder korrekt.
-- Bei der PDF ist jetzt kein Scrollbalken mehr zu sehen.
-- Bann-/Schutzkreise werden wieder auf dem Heldenbogen angezeigt.
-- Beim Senken von Eigenschaften im Editor-Modus werden nun hinzugekaufte LE/AE/KE berücksichtigt und verhindern ggf. das Senken.
-- Manchmal wurde im Wikieintrag von Professionen anstelle eines Wertes, z. B. bei *Ehrenhaftigkeit 6*, `null` angezeigt, sodass dort dann *Ehrenhaftigkeit null* stand.
-- Manchmal wurde der im Wikieintrag angezeigte vorherige Wert von durch Professionsvarianten veränderte Wert um 6 erhöht. Beispiel Profession Ritter: *Etikette 2 statt 12* ist eigentlich *Etikette 2 statt 6*.
-- Nachteil *Schlechte Eigenschaft (Geiz)* und *(Verschwendungssucht)* haben sich nicht ausgeschlossen.
-- Zauber und Liturgien sind jetzt nicht mehr im Nachteil *Unfähig* enthalten. Bei Helden, die dies hatten, wird der Nachteil automatisch entfernt.
-- SF *Aspektkenntnis* kann wieder problemlos hinzugefügt werden.
-- SF *Astralraub*: Leerzeichen fehlte.
-- SF *Eisenhagel* kann wieder gekauft werden.
-- SF *Merkmalskenntnis* kann wieder problemlos hinzugefügt werden.
-- SF *Präziser Schuss/Wurf* hatte falsche Eigenschaftsvoraussetzungen.
-- SF *Scharfschütze II*: Voraussetzung ist jetzt IN 17 statt IN 15.
-- Die Nachteile *Keine Flugsalbe* und *Kein Vertrauter* verringern nun korrekt die Kosten der SF *Tradition (Hexen)*.
-- SF *Tradition (Gildenmagier)* wird jetzt bei der Fremdzauberbegrenzung berücksichtigt (siehe dazu auch die Änderung an der Tradition weiter oben).
-- SF *Volumenerweiterung des Bannschwerts*: AsP-Kosten ergänzt.
-- *Bekehren & Überzeugen*: Probe MU/IN/CH → MU/KL/CH.
-- *Etikette*, Belastung: Evtl. → Nein.
-- *Verkleiden*, Belastung: Evtl. → Ja.
-- Falsche Probeneigenschaften von Zaubern/Magischen Handlungen:
-  - *Friedenslied*: MU/KL/IN → MU/IN/CH
-  - *Sorgenlied*: MU/CH/CH→ MU/IN/IN
-  - *Zaubermelodie*: MU/KL/CH → MU/IN/CH
-- Text, dass ein bestimmter Aspekt eines Zaubers nicht modifiziert werden kann, fehlt:
-  - MOTORICUS: Kosten
-  - MOVIMENTO: Wirkungsdauer
-  - NEBELWAND: Kosten
-- Fehlende Probenmodifikatoren (SK/ZK) bei Zaubern hinzugefügt.
-- ANALYS ARKANSTRUKTUR: Zauberdauer 2 Aktionen → 32 Aktionen.
-- KARNIFILO hieß vorher Kanifilo.
-- KLARUM PURUM, Kosten: 8 AsP.
-- UNBERÜHRT VON SATINAV: Merkmal Objekt → Merkmal Temporal.
-- ZAUBERKLINGE GEISTERSPEER – Zaubererweiterungen: Formatierung korrigiert.
-- Falsche Probeneigenschaften von Liturgien:
-  - *Kleiner Bannstrahl*: MU/KL/CH → MU/IN/CH
-  - *Ehrenhaftigkeit*: MU/KL/CH → MU/IN/CH
-  - *Ermutigung*: MU/KL/CH → MU/IN/CH
-  - *Friedvolle Aura*: MU/KL/CH → MU/IN/CH
-- Text, dass ein bestimmter Aspekt einer Liturgie nicht modifiziert werden kann, fehlt:
-  - *Liturgieschild*: Kosten
-  - *Magiebann*: Liturgiedauer
-  - *Motivation*: Kosten
-- *Blitzschlag*: Verbreitung *Boron (Tod)* statt *Rondra (Sturm)*.
-- *Klarer Geist*: Aspekt *Bildung* entfernt.
-- *Nebelschwaden*: Effekttext korrigiert.
-- *Obsession* fehlte.
-- *Opfergang*: Typo korrigiert.
-- *Ruf der Heimat*: Effekttext vervollständigt.
-- *Traumbild*, Effekt: Leerzeichen fehlte.
-- *Traumbild* – Liturgieerweiterungen: Formatierung korrigiert.
-- *Verblassende Erinnerung*: Falsche Verbreitung.
-- *Verblassende Erinnerung* – Liturgieerweiterungen: Formatierung korrigiert.
-- *Dietrichset* hat jetzt auch Preis und Gewicht.
-- *Faustschild*: Formatierung korrigiert.
-- *Hakendolch*: Vorteil und Nachteil ergänzt.
-- *Handspiegel* zeigt jetzt die dazugehörige Regeltechnik.
-- *Hunde-, Pony, Pferdefutter*: Gewicht entfernt.
-- *Kettenhemd*: Formatierung angepasst.
-- *Kletterseil* hat jetzt korrekte Kosten.
-- *Pergament, gutes, 1 Blatt*: Preis korrigiert.
-- *Richtschwert* war nicht als Waffe gruppiert.
-- *Sense* war keine improvisierte Waffe mit einem Gewicht von 3,5 Stn.
-- Kosten und Gewicht für *Seidenseil* ergänzt.
-- *Stockdegen*: Formatierung angepasst.
-- *Sturmsense*: Formatierung angepasst.
-- *Wurfnetz*: Formatierung korrigiert.
+- After switching from German to English, heroes could not be edited anymore.
+- Special Abilities can now be sorted by group again.
+- Liturgical chant traditions and aspects are now sorted alphabetically.
+- Maxima of skills and combat techniques are now also influenced by skill check attributes or primary attributes during character creation phase.
+- Yellow-highlighted advantages/disadvantages are now explained in the legend on the left.
+- A spell or chant from a base profession removed by a profession variant now removes the entry entirely instead of activating it on SR 0.
+- Images are now shown on Linux again.
+- Automatic advantages cost 0 AP so that race AP cost are correct now.
+- Sorting equipment by group does not result in an error anymore.
+- Avatars of pets are now exported as well when exporting the character.
+- Details of spells and chants are shown on character sheet again.
+- The prerequisite Race, culture, or profession must have \[...] as an automatic or suggested \[advantage/disadvantage]“ now also includes automatic advantages if they are removed.
+- Pet layout on character sheet should work again.
+- The PDF does not include a scroll bar anymore.
+- Protective/Warding circles are now shown on character sheet.
+- Lowering attributes in editing mode takes added LP/AE/KP into account and restricts lowering if needed.
+- Sometimes, instead of a value, for example in *Enforce Honor 6*, `null` was shown in the wiki entry for professions, so it was actually *Ehrenhaftigkeit null*.
+- Sometimes, the value of a entry in a profession, changed by a profession variant, was increased by 6. For example, Knight: *Etiquette 2 instead of 12* actually is *Etiquette 2 instead of 6*.
+- Disadvantage *Negative Trait (Stinginess)* and *(Wastefulness)* were not mutually exclusive.
+- Spells and chants are not included in disadvantage *Incompetent*. Heroes with those entries will get the disadvantage removed automatically.
+- SA *Aspect Knowledge* can now be added as expected.
+- SA *Property Knowledge* can now be added as expected.
+- SA *Precise Shot/Throw* had wrong attribute prerequisites.
+- Disadvantages *No Flying Balm* and *No Familiar* now correctly decrease the cost of SA *Tradition (Witch)* by 10 AP each.
+- SA *Tradition (Guild Mage)* is now taken into account for restrictions concerning unfamiliar spells (see the change to the SA listed above also).
+- *Disguise*, Encumbrance: Maybe → Yes.
+- *Etiquette*, Encumbrance: Maybe → No.
+- *Persuasion*: Skill check COU/INT/CHA → COU/SGC/CHA.
+- Wrong skill checks of spells:
+  - *Magical Melody*: COU/SGC/CHA → COU/INT/CHA
+  - *Song of Piece*: COU/SGC/INT → COU/INT/CHA
+  - *Song of Sorrow*: COU/CHA/CHA → COU/INT/INT
+- Text missing which states that a special aspect of a spell cannot be modified:
+  - MOTORICUS: Cost
+  - WALL OF FOG: Cost
+- Missing skill check modifiers (SPI/TOU) added to spells.
+- ANALYZE ARCANE STRUCTURE: Casting time 2 actions → 32 actions.
+- KLARUM PURUM, Cost: 8 AE.
+- Wrong skill checks of liturgical chants:
+  - *Minor Banishing Ray*: COU/SGC/CHA → COU/INT/CHA
+  - *Enforce Honor*: COU/SGC/CHA → COU/INT/CHA
+  - *Encourage*: COU/SGC/CHA → COU/INT/CHA
+  - *Peaceful Aura*: COU/SGC/CHA → COU/INT/CHA
+- *Hand mirror* now lists the corresponding rule.
+- *Dog food, Horse feed, Pony feed*: Removed weight.
+- *Rope, climbing* now has a correct price.
 
 # 1.0.3
 
