@@ -46,6 +46,7 @@ export const ActiveActivatableA_ = {
     ),
   levels: pipe (AAA.wikiEntry, Advantage.AL.tiers),
   gr: pipe (AAA.wikiEntry, Advantage.AL.gr),
+  isAutomatic: pipe (AAA.nameAndCost, ANCA.isAutomatic),
   level: pipe (AAA.nameAndCost, ANCA_.tier),
   customCost: pipe (AAA.nameAndCost, ANCA.active, AOWIA.cost),
   index: pipe (AAA.nameAndCost, ANCA_.index) as GenA<number>,

@@ -86,7 +86,7 @@ export class Router extends React.Component<RouterProps> {
       [TabId.Faq]: () => <HelpContainer l10n={l10n} />,
       [TabId.Imprint]: () => <Imprint l10n={l10n} />,
       [TabId.ThirdPartyLicenses]: () => <ThirdPartyLicenses />,
-      [TabId.LastChanges]: () => <LastChanges />,
+      [TabId.LastChanges]: () => <LastChanges l10n={l10n} />,
 
       [TabId.Profile]:
         () => unwrapWithHero (hero => <PersonalDataContainer l10n={l10n} hero={hero} />),

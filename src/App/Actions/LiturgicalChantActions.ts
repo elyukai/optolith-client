@@ -36,7 +36,7 @@ export const addLiturgicalChant =
     const missingAPForInc =
       pipe_ (
         mhero,
-        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
         join,
         liftM2 (getMissingAP (getIsInCharacterCreation (state)))
                (fmapF (lookup (id) (wiki_liturgical_chants))
@@ -77,7 +77,7 @@ export const addBlessing =
     const missingAP =
       pipe_ (
         mhero,
-        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
         join,
         bindF (getMissingAP (getIsInCharacterCreation (state))
                             (1))
@@ -146,7 +146,7 @@ export const addLiturgicalChantPoint =
     const missingAPForInc =
       pipe_ (
         mhero,
-        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
         join,
         liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
                                                        (bind (mhero_liturgical_chants)

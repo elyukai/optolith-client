@@ -13,7 +13,7 @@ import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStat
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: AttributesOwnProps): AttributesStateProps => ({
-    adjustmentValue: getAdjustmentValue (state),
+    adjustmentValue: getAdjustmentValue (state, ownProps),
     attributes: getAttributesForView (state, ownProps),
     availableAttributeIds: getAvailableAdjustmentIds (state, ownProps),
     currentAttributeId: getCurrentAttributeAdjustmentId (state),

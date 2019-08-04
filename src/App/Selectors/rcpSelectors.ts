@@ -55,7 +55,7 @@ import { filterByAvailability, filterByAvailabilityAndPred, isEntryFromCoreBook 
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCulturesCombinedSortOptions, getProfessionsCombinedSortOptions, getRacesCombinedSortOptions } from "./sortOptionsSelectors";
-import { getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getProfessionsFilterText, getRacesFilterText, getSex, getWiki, getWikiBooks, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors";
+import { getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getProfessionsFilterText, getRaceId, getRacesFilterText, getSex, getWiki, getWikiBooks, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors";
 import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from "./uisettingsSelectors";
 
 const WA = WikiModel.A
@@ -81,6 +81,13 @@ const LCA = LiturgicalChant.A
 const PRIA = ProfessionRequireIncreasable.A
 const PSL = ProfessionSelectionsL
 const PVSL = ProfessionVariantSelectionsL
+
+export const getRace = createMaybeSelector (
+  getWikiRaces,
+  getRaceId,
+  (races, raceId) => bind (raceId)
+                          (lookupF (races))
+)
 
 export const getCurrentRace = createMaybeSelector (
   getWikiRaces,
@@ -183,7 +190,7 @@ export const getAllCultures = createMaybeSelector (
 )
 
 export const getCommonCultures = createMaybeSelector (
-  getCurrentRace,
+  getRace,
   getCurrentRaceVariant,
   (mrace, mrace_variant) => {
     const mrace_cultures = fmapF (mrace) (RA.commonCultures)
@@ -716,7 +723,7 @@ export const getCommonProfessions = createMaybeSelector (
   getProfessionsGroupVisibilityFilter,
   getProfessionsVisibilityFilter,
   getStartEl,
-  getCurrentRaceId,
+  getRaceId,
   getCurrentCulture,
   getSex,
   uncurryN8 (wiki_books =>
@@ -824,7 +831,7 @@ export const getCurrentFullProfessionName = createMaybeSelector (
 
 export const getRandomSizeCalcStr = createMaybeSelector (
   getLocaleAsProp,
-  getCurrentRace,
+  getRace,
   getCurrentRaceVariant,
   (l10n, mrace, mrace_var) => {
     const msize_base = alt (bindF (RA.sizeBase) (mrace))
@@ -858,7 +865,7 @@ const getSign = (x: number) => x < 0 ? minus : "+"
 
 export const getRandomWeightCalcStr = createMaybeSelector (
   getLocaleAsProp,
-  getCurrentRace,
+  getRace,
   (l10n, mrace) => {
     const mweight_base = fmap (RA.weightBase) (mrace)
     const mweight_randoms = fmap (RA.weightRandom) (mrace)
@@ -887,6 +894,6 @@ export const getRandomWeightCalcStr = createMaybeSelector (
 )
 
 export const getAutomaticAdvantages = createMaybeSelector (
-  getCurrentRace,
+  getRace,
   maybe (List<string> ()) (RA.automaticAdvantages)
 )

@@ -8,8 +8,9 @@ import { bindF, ensure, mapM, Maybe } from "../../Data/Maybe";
 import { fromList, OrderedMap, toObjectWith } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { parseJSON } from "../../Data/String/JSON";
-import { Tuple } from "../../Data/Tuple";
+import { Pair, Tuple } from "../../Data/Tuple";
 import { deleteFile, readFile, writeFile } from "../../System/IO";
+import { HeroModelRecord } from "../Models/Hero/HeroModel";
 import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { AppStateRecord } from "../Reducers/appReducer";
@@ -31,12 +32,12 @@ const APP_VERSION_KEY = "appVersion"
 export interface APCache {
   spent: number
   available?: number
-  spentOnAdvantages?: number
-  spentOnMagicalAdvantages?: number
-  spentOnBlessedAdvantages?: number
-  spentOnDisadvantages?: number
-  spentOnMagicalDisadvantages?: number
-  spentOnBlessedDisadvantages?: number
+  spentOnAdvantages?: number | [number, number]
+  spentOnMagicalAdvantages?: number | [number, number]
+  spentOnBlessedAdvantages?: number | [number, number]
+  spentOnDisadvantages?: number | [number, number]
+  spentOnMagicalDisadvantages?: number | [number, number]
+  spentOnBlessedDisadvantages?: number | [number, number]
   spentOnSpecialAbilities?: number
   spentOnAttributes: number
   spentOnSkills: number
@@ -143,20 +144,34 @@ export const insertCacheAt =
     getAPSpentOnEnergiesMap .setCacheAt (key_str)
                                         (cache.spentOnEnergies)
     getAPSpentOnAdvantagesMap .setCacheAt (key_str)
-                                          (Maybe (cache.spentOnAdvantages))
+                                          (unsafeFromNumOrPair (cache.spentOnAdvantages))
     getAPSpentOnBlessedAdvantagesMap .setCacheAt (key_str)
-                                                 (Maybe (cache.spentOnBlessedAdvantages))
+                                                 (unsafeFromNumOrPair (
+                                                   cache.spentOnBlessedAdvantages
+                                                 ))
     getAPSpentOnMagicalAdvantagesMap .setCacheAt (key_str)
-                                                 (Maybe (cache.spentOnMagicalAdvantages))
+                                                 (unsafeFromNumOrPair (
+                                                   cache.spentOnMagicalAdvantages
+                                                 ))
     getAPSpentOnDisadvantagesMap .setCacheAt (key_str)
-                                             (Maybe (cache.spentOnDisadvantages))
+                                             (unsafeFromNumOrPair (cache.spentOnDisadvantages))
     getAPSpentOnBlessedDisadvantagesMap .setCacheAt (key_str)
-                                                    (Maybe (cache.spentOnBlessedDisadvantages))
+                                                    (unsafeFromNumOrPair (
+                                                      cache.spentOnBlessedDisadvantages
+                                                    ))
     getAPSpentOnMagicalDisadvantagesMap .setCacheAt (key_str)
-                                                    (Maybe (cache.spentOnMagicalDisadvantages))
+                                                    (unsafeFromNumOrPair (
+                                                      cache.spentOnMagicalDisadvantages
+                                                    ))
     getAPSpentOnSpecialAbilitiesMap .setCacheAt (key_str)
                                                 (Maybe (cache.spentOnSpecialAbilities))
   }
+
+const unsafeFromNumOrPair =
+  (x: number | [number, number] | undefined) => fmap (fromNumOrPair) (Maybe (x))
+
+const fromNumOrPair =
+  (x: number | [number, number]) => typeof x === "number" ? Pair (x, x) : Pair (...x)
 
 export const insertHeroesCache =
   (hs: HeroesState["heroes"]) => {
@@ -182,7 +197,7 @@ export const insertHeroesCache =
 export const forceCacheIsAvailable =
   (id: string) =>
   (state: AppStateRecord) =>
-  (props: { l10n: L10nRecord }) => {
+  (props: { l10n: L10nRecord; hero: HeroModelRecord }) => {
     getAPSpentMap (id) (state, props)
     getAvailableAPMap (id) (state, props)
     getAPSpentOnAttributesMap (id) (state)

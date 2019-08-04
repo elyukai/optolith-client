@@ -23,7 +23,7 @@ import { Race } from "../Models/Wiki/Race";
 import { RaceVariant } from "../Models/Wiki/RaceVariant";
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
-import { getAutomaticAdvantages, getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
+import { getAutomaticAdvantages, getCurrentRaceVariant, getRace } from "../Selectors/rcpSelectors";
 import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors";
 import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils";
 import { isBlessedOrMagical } from "../Utilities/Activatable/checkActivatableUtils";
@@ -141,7 +141,7 @@ export const addDisAdvantage =
         const entryType = isBlessedOrMagical (wiki_entry)
 
         const mmissingAPForDisAdvantage =
-          fmapF (join (getAPObjectMap (HeroModel.A.id (hero)) (state, { l10n })))
+          fmapF (join (getAPObjectMap (HeroModel.A.id (hero)) (state, { l10n, hero })))
                 (ap => getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
                                                    (entryType)
                                                    (is_disadvantage)
@@ -234,7 +234,7 @@ export const removeDisAdvantage =
         const entryType = isBlessedOrMagical (wiki_entry)
 
         const mmissingAPForDisAdvantage =
-          fmapF (join (getAPObjectMap (HeroModel.A.id (hero)) (state, { l10n })))
+          fmapF (join (getAPObjectMap (HeroModel.A.id (hero)) (state, { l10n, hero })))
                 (ap => getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
                                                    (entryType)
                                                    (is_disadvantage)
@@ -253,7 +253,7 @@ export const removeDisAdvantage =
                       bindF (ActiveObject.A.sid),
                       misNumberM
                     ))
-              ? bind (getCurrentRace (state))
+              ? bind (getRace (state, { hero }))
                      (race => {
                        const mrace_var = getCurrentRaceVariant (state)
 
@@ -365,7 +365,7 @@ export const setDisAdvantageLevel =
           (isEntryToAdd: boolean) =>
             pipe (
               getNameCost (isEntryToAdd)
-                          (getAutomaticAdvantages (state))
+                          (getAutomaticAdvantages (state, { hero }))
                           (l10n)
                           (wiki)
                           (hero),
@@ -394,7 +394,7 @@ export const setDisAdvantageLevel =
           const entryType = isBlessedOrMagical (wiki_entry)
 
           const mmissingAPForDisAdvantage =
-            fmapF (join (getAPObjectMap (HeroModel.A.id (hero)) (state, { l10n })))
+            fmapF (join (getAPObjectMap (HeroModel.A.id (hero)) (state, { l10n, hero })))
                   (ap => getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
                                                      (entryType)
                                                      (is_disadvantage)

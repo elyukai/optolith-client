@@ -6,6 +6,7 @@ export const Expect = Object.freeze ({
   Boolean: "Bool",
   Maybe: (x: string) => `Maybe ${x}`,
   List: (x: string) => `[${x}]`,
+  Array: (x: string) => `[${x}]`,
   NonEmptyList: (x: string) => `[${x}] { length > 0 }`,
   ListLength: (len: number) => (x: string) => `[${x}] { length = ${len} }`,
   ListLengthRange: (l: number) => (u: number) => (x: string) => `[${x}] { ${l} <= length <= ${u} }`,

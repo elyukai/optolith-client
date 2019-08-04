@@ -545,7 +545,7 @@ export const all = (
   <A extends Some>
   (f: (x: A) => boolean) =>
   (x: Maybe<A>): boolean =>
-    fromMaybe (true) (fmap (f) (x))
+    maybe (true) (f) (x)
 ) as All
 
 // Searches

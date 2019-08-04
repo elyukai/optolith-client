@@ -16,6 +16,7 @@ export interface InactiveActivatable<T extends RecordI<Activatable> = RecordI<Ac
   heroEntry: Maybe<Record<ActivatableDependent>>
   wikiEntry: Record<T>
   customCostDisabled: Maybe<boolean>
+  isAutomatic: boolean
 }
 
 export const InactiveActivatable =
@@ -30,6 +31,7 @@ export const InactiveActivatable =
                 heroEntry: Nothing,
                 wikiEntry: Advantage.default,
                 customCostDisabled: Nothing,
+                isAutomatic: false,
               })
 
 export const InactiveActivatableL = makeLenses (InactiveActivatable)

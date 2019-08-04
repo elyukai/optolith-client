@@ -24,6 +24,7 @@ import { filterByAvailability } from "../Utilities/RulesUtils";
 import { sortRecordsBy } from "../Utilities/sortBy";
 import { getWikiSliceGetterByCategory } from "../Utilities/WikiUtils";
 import { getAPObjectMap } from "./adventurePointsSelectors";
+import { getAutomaticAdvantages } from "./rcpSelectors";
 import { EnabledSourceBooks, getRuleBooksEnabled } from "./rulesSelectors";
 import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
 import { getMagicalTraditionsFromHero, getMagicalTraditionsFromWiki } from "./spellsSelectors";
@@ -56,7 +57,8 @@ export const getInactiveForView =
                         getExtendedSpecialAbilitiesToAdd,
                         stateSelectors.getWiki,
                         getMagicalTraditionsFromWiki,
-                        getMagicalTraditionsFromHero
+                        getMagicalTraditionsFromHero,
+                        getAutomaticAdvantages
                       )
                       (heroReducer.A.present)
                       (madventure_points =>
@@ -65,7 +67,8 @@ export const getInactiveForView =
                          validExtendedSpecialAbilities,
                          wiki,
                          wiki_magical_traditions,
-                         hero_magical_traditions
+                         hero_magical_traditions,
+                         automatic_advantages
                        ) =>
                        (hero): Inactives<T> =>
                          fmapF (join (madventure_points))
@@ -80,6 +83,7 @@ export const getInactiveForView =
                                                    getInactiveView (l10n)
                                                                    (wiki)
                                                                    (hero)
+                                                                   (automatic_advantages)
                                                                    (adventure_points)
                                                                    (validExtendedSpecialAbilities)
                                                                    (wiki_magical_traditions)

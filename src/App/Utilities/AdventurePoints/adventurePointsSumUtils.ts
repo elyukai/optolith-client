@@ -1,13 +1,13 @@
 import { equals } from "../../../Data/Eq";
 import { cnst, ident, join } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
-import { set } from "../../../Data/Lens";
 import { filter, List, sum } from "../../../Data/List";
 import { bindF, ensure, maybe, Maybe, thenF } from "../../../Data/Maybe";
 import { add, multiply } from "../../../Data/Num";
 import { foldr, lookupF } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
+import { bimap, first, fst, Pair, snd } from "../../../Data/Tuple";
 import { Categories } from "../../Constants/Categories";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
@@ -16,7 +16,7 @@ import { Energies } from "../../Models/Hero/Energies";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { PermanentEnergyLossAndBoughtBack } from "../../Models/Hero/PermanentEnergyLossAndBoughtBack";
 import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
-import { AdventurePointsCategories, AdventurePointsCategoriesL } from "../../Models/View/AdventurePointsCategories";
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
 import { Disadvantage } from "../../Models/Wiki/Disadvantage";
@@ -117,18 +117,25 @@ type ActiveAdvantage = Record<ActiveActivatable<Advantage>>
 type ActiveDisadvantage = Record<ActiveActivatable<Disadvantage>>
 type ActiveSpecialAbility = Record<ActiveActivatable<SpecialAbility>>
 
+const AAA_ = ActiveActivatableA_
+
 export const getAPSpentForAdvantages =
   (wiki: WikiModelRecord) =>
   (xmap: HeroModel["advantages"]) =>
   (active: List<ActiveAdvantage>) =>
     pipe_ (
       active,
-      List.foldr<Record<ActiveActivatable<Advantage>>, number>
-        (pipe (ActiveActivatableA_.finalCost, add))
-        (0),
-      add (getAdventurePointsSpentDifference (wiki)
-                                             (xmap)
-                                             (active))
+      List.foldr ((e: Record<ActiveActivatable<Advantage>>): ident<Pair<number, number>> =>
+                   AAA_.isAutomatic (e)
+                   ? first (add (AAA_.finalCost (e)))
+                   : bimap (add (AAA_.finalCost (e)))
+                           (add (AAA_.finalCost (e))))
+                 (Pair (0, 0)),
+      p => {
+        const addDiff = add (getAdventurePointsSpentDifference (wiki) (xmap) (active))
+
+        return bimap (addDiff) (addDiff) (p)
+      }
     )
 
 export const getAPSpentForMagicalAdvantages =
@@ -153,18 +160,26 @@ export const getAPSpentForBlessedAdvantages =
       getAPSpentForAdvantages (wiki) (xmap)
     )
 
+/**
+ * Returns (AP spent on disadvantages, actual AP lost)
+ */
 export const getAPSpentForDisadvantages =
   (wiki: WikiModelRecord) =>
   (xmap: HeroModel["disadvantages"]) =>
-  (active: List<ActiveDisadvantage>) =>
+  (active: List<ActiveDisadvantage>): Pair<number, number> =>
     pipe_ (
       active,
-      List.foldr<Record<ActiveActivatable<Disadvantage>>, number>
-        (pipe (ActiveActivatableA_.finalCost, add))
-        (0),
-      add (getAdventurePointsSpentDifference (wiki)
-                                             (xmap)
-                                             (active))
+      List.foldr ((e: Record<ActiveActivatable<Disadvantage>>): ident<Pair<number, number>> =>
+                   AAA_.isAutomatic (e)
+                   ? first (add (AAA_.finalCost (e)))
+                   : bimap (add (AAA_.finalCost (e)))
+                           (add (AAA_.finalCost (e))))
+                 (Pair (0, 0)),
+      p => {
+        const addDiff = add (getAdventurePointsSpentDifference (wiki) (xmap) (active))
+
+        return bimap (addDiff) (addDiff) (p)
+      }
     )
 
 export const getAPSpentForMagicalDisadvantages =
@@ -270,42 +285,51 @@ export const getAPSpentForProfession =
       ))
     )
 
-const getAPObjectAreas =
+export const getAPObject =
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
-  (automatic_advantages: List<string>) =>
-    AdventurePointsCategories ({
-      total: HeroModel.A.adventurePointsTotal (hero),
-      spent: 0,
-      available: 0,
-      spentOnAttributes: getAPSpentForAttributes (HeroModel.A.attributes (hero)),
-      spentOnSkills: getAPSpentForSkills (WikiModel.A.skills (wiki))
-                                         (HeroModel.A.skills (hero)),
-      spentOnCombatTechniques: getAPSpentForCombatTechniques (WikiModel.A.combatTechniques (wiki))
-                                                             (HeroModel.A.combatTechniques (hero)),
-      spentOnSpells: getAPSpentForSpells (WikiModel.A.spells (wiki))
-                                         (HeroModel.A.spells (hero)),
-      spentOnLiturgicalChants: getAPSpentForLiturgicalChants (WikiModel.A.liturgicalChants (wiki))
-                                                             (HeroModel.A.liturgicalChants (hero)),
-      spentOnCantrips: getAPSpentForCantrips (HeroModel.A.cantrips (hero)),
-      spentOnBlessings: getAPSpentForBlessings (HeroModel.A.blessings (hero)),
-      spentOnEnergies: getAPSpentForEnergies (HeroModel.A.energies (hero)),
-      spentOnRace: getAPSpentForRace (wiki) (HeroModel.A.race (hero)),
-      spentOnProfession: getAPSpentForProfession (wiki)
-                                                 (HeroModel.A.profession (hero))
-                                                 (HeroModel.A.professionVariant (hero))
-                                                 (HeroModel.A.phase (hero)),
-      spentOnSpecialAbilities:
-        getAPSpentForSpecialAbilities (wiki)
-                                      (HeroModel.A.specialAbilities (hero))
-                                      (getAllActiveByCategory (Categories.SPECIAL_ABILITIES)
-                                                              (false)
-                                                              (automatic_advantages)
-                                                              (l10n)
-                                                              (wiki)
-                                                              (hero)),
-      spentOnAdvantages:
+  (automatic_advantages: List<string>) => {
+    const total = HeroModel.A.adventurePointsTotal (hero)
+
+    const spentOnAttributes = getAPSpentForAttributes (HeroModel.A.attributes (hero))
+
+    const spentOnSkills = getAPSpentForSkills (WikiModel.A.skills (wiki))
+                                              (HeroModel.A.skills (hero))
+
+    const spentOnCombatTechniques =
+      getAPSpentForCombatTechniques (WikiModel.A.combatTechniques (wiki))
+                                    (HeroModel.A.combatTechniques (hero))
+
+    const spentOnSpells = getAPSpentForSpells (WikiModel.A.spells (wiki))
+                                              (HeroModel.A.spells (hero))
+
+    const spentOnLiturgicalChants =
+      getAPSpentForLiturgicalChants (WikiModel.A.liturgicalChants (wiki))
+                                    (HeroModel.A.liturgicalChants (hero))
+
+    const spentOnCantrips = getAPSpentForCantrips (HeroModel.A.cantrips (hero))
+
+    const spentOnBlessings = getAPSpentForBlessings (HeroModel.A.blessings (hero))
+
+    const spentOnEnergies = getAPSpentForEnergies (HeroModel.A.energies (hero))
+
+    const spentOnRace = getAPSpentForRace (wiki) (HeroModel.A.race (hero))
+
+    const spentOnProfession = getAPSpentForProfession (wiki)
+                                                      (HeroModel.A.profession (hero))
+                                                      (HeroModel.A.professionVariant (hero))
+                                                      (HeroModel.A.phase (hero))
+    const spentOnSpecialAbilities =
+      getAPSpentForSpecialAbilities (wiki)
+                                    (HeroModel.A.specialAbilities (hero))
+                                    (getAllActiveByCategory (Categories.SPECIAL_ABILITIES)
+                                                            (false)
+                                                            (automatic_advantages)
+                                                            (l10n)
+                                                            (wiki)
+                                                            (hero))
+    const spentOnAdvantages =
         getAPSpentForAdvantages (wiki)
                                 (HeroModel.A.advantages (hero))
                                 (getAllActiveByCategory (Categories.ADVANTAGES)
@@ -313,8 +337,8 @@ const getAPObjectAreas =
                                                         (automatic_advantages)
                                                         (l10n)
                                                         (wiki)
-                                                        (hero)),
-      spentOnMagicalAdvantages:
+                                                        (hero))
+    const spentOnMagicalAdvantages =
         getAPSpentForMagicalAdvantages (wiki)
                                         (HeroModel.A.advantages (hero))
                                         (getAllActiveByCategory (Categories.ADVANTAGES)
@@ -322,8 +346,8 @@ const getAPObjectAreas =
                                                                 (automatic_advantages)
                                                                 (l10n)
                                                                 (wiki)
-                                                                (hero)),
-      spentOnBlessedAdvantages:
+                                                                (hero))
+    const spentOnBlessedAdvantages =
         getAPSpentForBlessedAdvantages (wiki)
                                         (HeroModel.A.advantages (hero))
                                         (getAllActiveByCategory (Categories.ADVANTAGES)
@@ -331,8 +355,8 @@ const getAPObjectAreas =
                                                                 (automatic_advantages)
                                                                 (l10n)
                                                                 (wiki)
-                                                                (hero)),
-      spentOnDisadvantages:
+                                                                (hero))
+    const spentOnDisadvantages =
         getAPSpentForDisadvantages (wiki)
                                     (HeroModel.A.disadvantages (hero))
                                     (getAllActiveByCategory (Categories.DISADVANTAGES)
@@ -340,8 +364,8 @@ const getAPObjectAreas =
                                                             (automatic_advantages)
                                                             (l10n)
                                                             (wiki)
-                                                            (hero)),
-      spentOnMagicalDisadvantages:
+                                                            (hero))
+    const spentOnMagicalDisadvantages =
         getAPSpentForMagicalDisadvantages (wiki)
                                           (HeroModel.A.disadvantages (hero))
                                           (getAllActiveByCategory (Categories.DISADVANTAGES)
@@ -349,8 +373,8 @@ const getAPObjectAreas =
                                                                   (automatic_advantages)
                                                                   (l10n)
                                                                   (wiki)
-                                                                  (hero)),
-      spentOnBlessedDisadvantages:
+                                                                  (hero))
+    const spentOnBlessedDisadvantages =
         getAPSpentForBlessedDisadvantages (wiki)
                                           (HeroModel.A.disadvantages (hero))
                                           (getAllActiveByCategory (Categories.DISADVANTAGES)
@@ -358,49 +382,47 @@ const getAPObjectAreas =
                                                                   (automatic_advantages)
                                                                   (l10n)
                                                                   (wiki)
-                                                                  (hero)),
+                                                                  (hero))
+
+    const spent =
+      spentOnAttributes
+      + spentOnSkills
+      + spentOnCombatTechniques
+      + spentOnSpells
+      + spentOnLiturgicalChants
+      + spentOnCantrips
+      + spentOnBlessings
+      + spentOnEnergies
+      + spentOnRace
+      + Maybe.sum (spentOnProfession)
+      + spentOnSpecialAbilities
+      + snd (spentOnAdvantages)
+      + snd (spentOnMagicalAdvantages)
+      + snd (spentOnBlessedAdvantages)
+      + snd (spentOnDisadvantages)
+      + snd (spentOnMagicalDisadvantages)
+      + snd (spentOnBlessedDisadvantages)
+
+    return AdventurePointsCategories ({
+      total,
+      spent,
+      available: total - spent,
+      spentOnAttributes,
+      spentOnSkills,
+      spentOnCombatTechniques,
+      spentOnSpells,
+      spentOnLiturgicalChants,
+      spentOnCantrips,
+      spentOnBlessings,
+      spentOnEnergies,
+      spentOnRace,
+      spentOnProfession,
+      spentOnSpecialAbilities,
+      spentOnAdvantages: fst (spentOnAdvantages),
+      spentOnMagicalAdvantages: fst (spentOnMagicalAdvantages),
+      spentOnBlessedAdvantages: fst (spentOnBlessedAdvantages),
+      spentOnDisadvantages: fst (spentOnDisadvantages),
+      spentOnMagicalDisadvantages: fst (spentOnMagicalDisadvantages),
+      spentOnBlessedDisadvantages: fst (spentOnBlessedDisadvantages),
     })
-
-const getAPSpent = (ap: Record<AdventurePointsCategories>) =>
-  sum (List (
-    AdventurePointsCategories.A.spentOnAttributes (ap),
-    AdventurePointsCategories.A.spentOnSkills (ap),
-    AdventurePointsCategories.A.spentOnCombatTechniques (ap),
-    AdventurePointsCategories.A.spentOnSpells (ap),
-    AdventurePointsCategories.A.spentOnLiturgicalChants (ap),
-    AdventurePointsCategories.A.spentOnCantrips (ap),
-    AdventurePointsCategories.A.spentOnBlessings (ap),
-    AdventurePointsCategories.A.spentOnSpecialAbilities (ap),
-    AdventurePointsCategories.A.spentOnEnergies (ap),
-    AdventurePointsCategories.A.spentOnRace (ap),
-    Maybe.sum (AdventurePointsCategories.A.spentOnProfession (ap)),
-    AdventurePointsCategories.A.spentOnAdvantages (ap),
-    AdventurePointsCategories.A.spentOnMagicalAdvantages (ap),
-    AdventurePointsCategories.A.spentOnBlessedAdvantages (ap),
-    AdventurePointsCategories.A.spentOnDisadvantages (ap),
-    AdventurePointsCategories.A.spentOnMagicalDisadvantages (ap),
-    AdventurePointsCategories.A.spentOnBlessedDisadvantages (ap)
-  ))
-
-const getAPAvailable =
-  (ap: Record<AdventurePointsCategories>) =>
-  (spent: number) =>
-    AdventurePointsCategories.A.total (ap) - spent
-
-export const getAPObject =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
-  (hero: HeroModelRecord) =>
-  (automatic_advantages: List<string>): Record<AdventurePointsCategories> => {
-    const areas = getAPObjectAreas (l10n) (wiki) (hero) (automatic_advantages)
-
-    const spent = getAPSpent (areas)
-
-    const available = getAPAvailable (areas) (spent)
-
-    return pipe_ (
-      areas,
-      set (AdventurePointsCategoriesL.spent) (spent),
-      set (AdventurePointsCategoriesL.available) (available)
-    )
   }

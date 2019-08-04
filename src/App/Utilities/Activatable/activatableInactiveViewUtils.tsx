@@ -481,28 +481,28 @@ export const getIdSpecificAffectedAndDispatchProps =
 
       // Language Specializations
       case "SA_699": {
-        const currentSelectOption = getCurrentSelectOption (entry) (mselected)
+        const moption = getCurrentSelectOption (entry) (mselected)
 
-        const spec_input = bind (currentSelectOption) (SOA.specializationInput)
+        const mspec_input = bind (moption) (SOA.specializationInput)
 
         return Pair (
           ActivatableActivationOptions ({
             id,
             selectOptionId1: mselected,
-            selectOptionId2: isJust (spec_input) ? minput_text : mselected2,
+            selectOptionId2: isJust (mspec_input) ? minput_text : mselected2,
             cost: Nothing,
           }),
           PropertiesAffectedByState ({
             currentCost:
               pipe_ (
-                currentSelectOption,
+                moption,
                 bindF (SOA.cost),
                 altF_ (() => getPlainCostFromEntry (entry))
               ),
-            inputDescription: spec_input,
+            inputDescription: mspec_input,
             secondSelectOptions:
               pipe_ (
-                currentSelectOption,
+                moption,
                 bindF (SOA.specializations),
                 fmap (imap (i => name => SelectOption ({
                                            id: i + 1,
