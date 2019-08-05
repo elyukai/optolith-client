@@ -2,7 +2,7 @@ import * as React from "react";
 import { isNumber, isString } from "util";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { consF, imap, notNullStr, subscript, unfoldr, take, drop } from "../../../Data/List";
-import { and, bindF, ensure, isJust, isNothing, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
+import { and, bindF, ensure, isJust, isNothing, Just, Maybe, maybe, Nothing, fromJust } from "../../../Data/Maybe";
 import { dec, gte, inc } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
@@ -18,6 +18,7 @@ import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { Page } from "../Universal/Page";
 import { TextField } from "../Universal/TextField";
 import { equals } from "../../../Data/Eq";
+import { Checkbox } from "../Universal/Checkbox";
 
 export interface PactSettingsOwnProps {
   l10n: L10nRecord
@@ -57,6 +58,8 @@ export function PactSettings (props: PactSettingsProps) {
     isPactValid,
   } = props
 
+  const checked = maybe (false) (pipe (Pact.A.level, equals (0))) (mpact)
+
   return (
     <Page id="pact">
       <div className="pact-content">
@@ -78,26 +81,20 @@ export function PactSettings (props: PactSettingsProps) {
             value={fmapF (mpact) (Pact.A.category)}
             disabled={!isPactEditable}
           />
+          {(maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)) ?
+          <Checkbox
+            label={translate (l10n) ("lesserpact")}
+            checked={checked}
+            onClick={() => checked ? setPactLevel (Just (1)) : setPactLevel (Just (0))}
+            disabled={!isPactEditable || isNothing (mpact)
+              || pipe (Pact.A.level, gte (2)) (fromJust (mpact))}
+          /> : null}
           {maybe (false) (pipe (Pact.A.category, equals (2))) (mpact) ? <Dropdown
           label={translate (l10n) ("circleofdamnation")}
           options={
             unfoldr ((id: number) => id > 7
                       ? Nothing
-                      : id === 0 ?
-                          Just (
-                            Pair (
-                              DropdownOption ({
-                                id: Just (id),
-                                name: translate (l10n) ("lesserpact"),
-                                disabled: Just (maybe (!isPactEditable)
-                                                      (pipe (Pact.A.level, gte (id+2)))
-                                                      (mpact)),
-                              }),
-                              inc (id)
-                            )
-                          )
-                        :
-                          Just (
+                      : Just (
                             Pair (
                               DropdownOption ({
                                 id: Just (id),
@@ -109,10 +106,10 @@ export function PactSettings (props: PactSettingsProps) {
                               inc (id)
                             )
                         ))
-                    (0)}
+                    (1)}
           onChange={setPactLevel}
           value={fmapF (mpact) (Pact.A.level)}
-          disabled={isNothing (mpact)}
+          disabled={isNothing (mpact) || pipe (Pact.A.level, equals (0)) (fromJust (mpact)) }
           />
         :
           <Dropdown
