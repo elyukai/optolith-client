@@ -179,7 +179,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
         </WikiBoxTemplate>
       )
 
-    case 10: // Geodenrituale
+    case 10: // Geodenrituale zw. Property und Source sollte prerequisites sein
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -190,7 +190,6 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiDuration {...props} acc={SpA} />
           <WikiTargetCategory {...props} acc={SpA} />
           <WikiSpellProperty {...props} acc={SpA} />
-          <WikiSpellTraditions {...props} acc={SpA} />
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )

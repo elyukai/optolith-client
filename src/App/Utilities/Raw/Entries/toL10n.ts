@@ -694,6 +694,13 @@ export const toL10n =
         "uses": checkL10nNonEmptyString ("uses"),
         "complementarysources": checkL10nNonEmptyString ("complementarysources"),
         "and": checkL10nNonEmptyString ("and"),
+        "demondomains": checkL10nNonEmptyStringList ("demondomains"),
+        "demontypes": checkL10nNonEmptyStringList ("demontypes"),
+        "demontype": checkL10nNonEmptyString ("demontype"),
+        "circleofdamnation": checkL10nNonEmptyString ("circleofdamnation"),
+        "lesserpact": checkL10nNonEmptyString ("lesserpact"),
+        "tribaltraditions": checkL10nNonEmptyString ("tribaltraditions"),
+        "tribes": checkL10nNonEmptyStringList ("tribes"),
       }
 
       return mapMNamed
@@ -1319,6 +1326,13 @@ export const toL10n =
           "uses": res ["uses"],
           "complementarysources": res ["complementarysources"],
           "and": res ["and"],
+          "demondomains": res ["demondomains"],
+          "demontypes": res ["demontypes"],
+          "demontype": res ["demontype"],
+          "circleofdamnation": res["circleofdamnation"],
+          "lesserpact": res ["lesserpact"],
+          "tribaltraditions": res ["tribaltraditions"],
+          "tribes": res ["tribes"],
           // tslint:enable: no-string-literal
         }))
     }

@@ -192,11 +192,15 @@ const getPrimaryMagicalAttributeByTrad =
           case 1:
           case 4:
           case 10:
+          case 13:
             return getAttributeCombined (wiki_attributes)
                                         (hero_attributes)
                                         (prefixId (IdPrefixes.ATTRIBUTES) (2))
 
           case 3:
+          case 14:
+          case 15:
+          case 16:
             return getAttributeCombined (wiki_attributes)
                                         (hero_attributes)
                                         (prefixId (IdPrefixes.ATTRIBUTES) (3))
@@ -205,6 +209,8 @@ const getPrimaryMagicalAttributeByTrad =
           case 5:
           case 6:
           case 7:
+          case 12:
+          case 17:
             return getAttributeCombined (wiki_attributes)
                                         (hero_attributes)
                                         (prefixId (IdPrefixes.ATTRIBUTES) (4))
