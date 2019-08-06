@@ -77,9 +77,9 @@ export function PactSettings (props: PactSettingsProps) {
                           name: translate (l10n) ("nopact"),
                         }))
                       )}
-            onChange={setPactCategory}
-            value={fmapF (mpact) (Pact.A.category)}
-            disabled={!isPactEditable}
+          onChange={setPactCategory}
+          value={fmapF (mpact) (Pact.A.category)}
+          disabled={!isPactEditable}
           />
           {(maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)) ?
           <Checkbox
