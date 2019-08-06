@@ -146,6 +146,11 @@ const x = myFunction (otherFunc ("Hi")
 // very bad ("Other string" seems to be a param of myFunction but its not)
 const x = myFunction (otherFunc ("Hi")
                      ("Other string")) (3);
+
+// very bad ("Other string" seems to be a param of myFunction but its not, but 3 is)
+const x = myFunction (otherFunc ("Hi")
+                     ("Other string"))
+                     (3);
 ```
 
 ### Methods
