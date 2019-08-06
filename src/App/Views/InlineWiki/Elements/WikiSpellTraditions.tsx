@@ -43,7 +43,7 @@ export function WikiSpellTraditions<A extends RecordBase> (props: WikiSpellTradi
     )
   }
 
-  if (elem (7) (trad) || elem (8) (trad)) {
+  if (elem (7) (trad) || elem (8) (trad)) { // Zauberbarden/Zaubertänzer
     return (
       <WikiProperty l10n={l10n} title="musictradition">
         {pipe_ (
