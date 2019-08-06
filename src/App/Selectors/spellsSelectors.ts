@@ -41,6 +41,7 @@ import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCantripsSortOptions, getSpellsCombinedSortOptions, getSpellsSortOptions } from "./sortOptionsSelectors";
 import { getAdvantages, getCantrips, getDisadvantages, getHeroProp, getInactiveSpellsFilterText, getLocaleAsProp, getMaybeSpecialAbilities, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki, getWikiCantrips, getWikiSpecialAbilities, getWikiSpells } from "./stateSelectors";
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
+import { traceShowId } from "../../Debug/Trace";
 
 const HA = HeroModel.A
 const WA = WikiModel.A
@@ -291,8 +292,8 @@ export const getInactiveSpells = createMaybeSelector (
                 // Es dürfen nur maximal 3 Zauber erlernt werden
                 && (countWith (pipe (ASDA.id, lookupF (wiki_spells), maybe (false)
                                     (pipe (SA.gr, equals (1)))))
-                    (elems (hero_spells)) < 3)
-                    || SA.gr (wiki_entry) === 9) {
+                              (elems (hero_spells)) < 3
+                    || SA.gr (wiki_entry) === 9)) {
               return consF (SpellWithRequirements ({
                 wikiEntry: wiki_entry,
                 stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (k))
@@ -306,9 +307,9 @@ export const getInactiveSpells = createMaybeSelector (
             return ident as ident<List<Record<SpellWithRequirements>>>
           }
 
-          return OrderedMap.foldrWithKey (f)
+          return traceShowId (OrderedMap.foldrWithKey (f)
                                          (List ())
-                                         (wiki_spells)
+                                         (wiki_spells))
         }
 
         if (isLastTrad (prefixSA (677)) || isLastTrad (prefixSA (678))) {
