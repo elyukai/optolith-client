@@ -51,6 +51,30 @@ else {
 }
 ```
 
+### Ternary Operator
+
+`?` and `:` must start on a new line if the expression is too long to fit one line.
+
+```ts
+// bad
+condition ?
+expression :
+expression
+
+// good
+condition
+? expression
+: expression
+
+// also good
+condition
+  ? expression
+  : expression
+
+// best (but requires the whole construct to fit one line)
+condition ? expression : expression
+```
+
 ### Curried functions
 
 Functions (and methods) have to be fully curried. There should not be partial function application, as this would cause different possibilities in calling functions. I want to enforce one style:

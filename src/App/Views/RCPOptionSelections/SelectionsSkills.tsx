@@ -1,7 +1,7 @@
 import * as React from "react";
 import { fmap } from "../../../Data/Functor";
 import { List, map, subscriptF, toArray } from "../../../Data/List";
-import { isNothing, Maybe, maybe } from "../../../Data/Maybe";
+import { fromMaybe, isNothing, Maybe, maybe } from "../../../Data/Maybe";
 import { divideBy } from "../../../Data/Num";
 import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
@@ -10,6 +10,7 @@ import { Skill } from "../../Models/Wiki/Skill";
 import { minus } from "../../Utilities/Chars";
 import { translate, translateP } from "../../Utilities/I18n";
 import { pipe_ } from "../../Utilities/pipe";
+import { renderMaybe } from "../../Utilities/ReactUtils";
 import { BorderButton } from "../Universal/BorderButton";
 
 export interface SelectionsSkillsProps {
@@ -31,14 +32,15 @@ export function SelectionsSkills (props: SelectionsSkillsProps) {
       <h4>
         {pipe_ (
           translate (l10n) ("skillselectiongroups"),
-          subscriptF (Maybe.sum (gr)),
+          subscriptF (fromMaybe (0) (gr)),
           fmap (gr_name => translateP (l10n)
                                       ("skillselectionap")
                                       (List<string | number> (
                                         gr_name,
                                         value,
                                         left
-                                      )))
+                                      ))),
+          renderMaybe
         )}
       </h4>
       {pipe_ (
