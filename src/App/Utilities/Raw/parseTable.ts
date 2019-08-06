@@ -439,7 +439,7 @@ const mapCatToSelectOptionsPred =
             ))
             (List ())
 
-const noGuildMageSkill = (x: Skillish) => !Spell.is (x)
-                                          || all (notElemF (List (1, 2)))
+const noGuildMageSkill = (x: Skillish) => Spell.is (x)
+                                          && all (notElemF (List (1, 2)))
                                                  (Spell.A.tradition (x))
-                                          || elemF (List (1, 2)) (Spell.A.gr (x))
+                                          && elemF (List (1, 2)) (Spell.A.gr (x))

@@ -624,6 +624,7 @@ export interface L10n {
   "lesserpact": string
   "tribaltraditions": string
   "tribes": List<string>
+  "saveheroerror": string
 }
 
 export type L10nKey = keyof L10n
@@ -1255,4 +1256,5 @@ export const L10n =
                 "lesserpact": "",
                 "tribaltraditions": "",
                 "tribes": List.empty,
+                "saveheroerror": "",
               })
