@@ -7,6 +7,7 @@ import { NavigationBarContainer } from "../Containers/NavigationBarContainer";
 import { HeroModelRecord } from "../Models/Hero/HeroModel";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { classListMaybe } from "../Utilities/CSS";
+import { getSystemLocale } from "../Utilities/IOUtils";
 import { TabId } from "../Utilities/LocationUtils";
 import { Router } from "./Router/Router";
 import { Scroll } from "./Universal/Scroll";
@@ -80,7 +81,9 @@ export class App extends React.Component<AppProps, AppState> {
         <div className="loading-wrapper">
           <div className="loading"></div>
           <div className="loading-text">
-            Loading and validating tables and user data...
+            {getSystemLocale () === "de-DE"
+            ? "Lade und überprüfe Tabellen und Nutzerdaten..."
+            : "Loading and validating tables and user data..."}
           </div>
         </div>
         <AlertsContainer l10n={L10n.default} />
