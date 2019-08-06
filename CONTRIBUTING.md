@@ -120,6 +120,34 @@ add 2 3
 
 **Fun fact:** `add (2) (3)` is valid Haskell, it just contains unnecessary groupings.
 
+#### Function calls as a parameter
+
+```ts
+// good
+const x = myFunction (otherFunc ("Hi")) (3);
+
+// good (such line breaks (compare to above) are usually needed either because of readability or because the line would be too long otherwise)
+const x = myFunction (otherFunc ("Hi"))
+                     (3);
+
+// also good
+const x = myFunction (otherFunc ("Hi")
+                                ("Other string"))
+                     (3);
+
+// also good
+const x = myFunction (otherFunc ("Hi") ("Other string"))
+                     (3);
+
+// bad
+const x = myFunction (otherFunc ("Hi")
+                                ("Other string")) (3);
+
+// very bad ("Other string" seems to be a param of myFunction but its not)
+const x = myFunction (otherFunc ("Hi")
+                     ("Other string")) (3);
+```
+
 ### Methods
 
 If you need to use a class (e.g. the custom data structures *Maybe*, *List* a.s.o. are implemented as classes, consider the following styistic rules for using methods:
