@@ -1,3 +1,19 @@
+# 1.1.2
+
+## Verbesserungen
+
+- Die Meldung beim Laden ist jetzt auf Deutsch.
+- Das Abschließen der SKP-Auswahl kann jetzt rückgängig gemacht werden.
+
+## Fehlerbehebungen
+
+- Kampfsonderfertigkeiten zeigen jetzt wieder ihren Typ (passiv/Basismanöver/Spezialmanöver) im Wiki an.
+- Zauber nach Gruppe zu sortieren sortiert die Gruppen jetzt alphabetisch.
+- Auf EG *Unerfahren* kann mal als Gildenmagier jetzt auch den ausgewählten Fremdzauber (der jetzt keiner mehr ist) auswählen.
+- In der Auswahlliste für SF *Tradition (Gildenmagier)* werden jetzt keine traditionseigenen Zauber mehr angezeigt.
+- Das englische User Interface lädt jetzt wieder ohne Probleme.
+- Profession *Akademie von Licht und Dunkelheit* kann jetzt wieder ohne UI-Fehler ausgewählt werden.
+
 # 1.1.0/1.1.1
 
 *Die genaue Versionsnummer der App ist 1.1.1.*
