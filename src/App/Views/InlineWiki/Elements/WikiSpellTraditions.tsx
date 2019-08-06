@@ -1,5 +1,5 @@
 import * as React from "react";
-import { flength, intercalate, List, notNull, subscript } from "../../../../Data/List";
+import { flength, intercalate, List, notNull, subscript, elem } from "../../../../Data/List";
 import { bindF, ensure, mapMaybe } from "../../../../Data/Maybe";
 import { dec, lte } from "../../../../Data/Num";
 import { Record, RecordBase } from "../../../../Data/Record";
@@ -8,10 +8,12 @@ import { translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { sortStrings } from "../../../Utilities/sortBy";
 import { WikiProperty } from "../WikiProperty";
+import { AllRequirements } from "../../../Models/Wiki/wikiTypeHelpers";
 
 interface Accessors<A extends RecordBase> {
   subtradition: (r: Record<A>) => List<number>
   tradition: (r: Record<A>) => List<number>
+  prerequisites: (r: Record<A>) => List<AllRequirements>
 }
 
 export interface WikiSpellTraditionsProps<A extends RecordBase> {
@@ -29,6 +31,19 @@ export function WikiSpellTraditions<A extends RecordBase> (props: WikiSpellTradi
 
   const trad = acc.tradition (x)
   const subtrad = acc.subtradition (x)
+
+  if (elem (16) (trad)) { // Tradition (Animisten)
+    return (
+      <WikiProperty l10n={l10n} title="tribaltraditions">
+        {pipe_ (
+          subtrad,
+          mapMaybe (pipe (dec, subscript (translate (l10n) ("tribes")))),
+          sortStrings (L10n.A.id (l10n)),
+          intercalate (", ")
+        )}
+      </WikiProperty>
+    )
+  }
 
   if (notNull (subtrad)) {
     return (
