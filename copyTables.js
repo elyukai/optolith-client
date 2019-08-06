@@ -10,7 +10,7 @@ const copyL10nTable =
     if (existsSync (src)) {
       const dest = join ("app", "Database", locale, "l10n.xlsx")
       await copyFile (src, dest)
-      console.log (`"l10n_${locale}.xlsx" copied to "${dest}"!`)
+      console.log (`"TDE5_${locale}.xlsx" copied to "${dest}"!`)
     }
   }
 
@@ -20,7 +20,7 @@ module.exports = {
 
     const dest = join ("app", "Database", "TDE5.xlsx")
     await copyFile (join (src_dir, `univ.xlsx`), dest)
-    console.log (`"univ.xlsx" copied to "${dest}"!`)
+    console.log (`"TDE5.xlsx" copied to "${dest}"!`)
 
     await copyL10nTable ("de-DE")
     await copyL10nTable ("en-US")
