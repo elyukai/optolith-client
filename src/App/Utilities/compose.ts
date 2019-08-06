@@ -1,4 +1,5 @@
 import { Lens_ } from "../../Data/Lens";
+import { Transducer } from "../../Data/Transducer";
 
 interface compose {
   <A, B, C> (bc: (b: B) => C, ab: (a: A) => B): (a: A) => C
@@ -100,9 +101,34 @@ interface composeL {
 /**
  * Combine lenses to focus on deeper parts of an object at once.
  */
-export const composeL: composeL =
-  (...ls: Lens_<any, any>[]) => (x: any): any =>
-    ls .reduceRight<any> ((y, l) => l (y), x)
+export const composeL: composeL = compose
+
+interface composeT {
+  <A, B, C> (ab: Transducer<A, B>, bc: Transducer<B, C>): Transducer<A, C>
+
+  <A, B, C, D>
+  (
+    ab: Transducer<A, B>,
+    bc: Transducer<B, C>,
+    cd: Transducer<C, D>
+  ): Transducer<A, D>
+
+  <A, B, C, D, E>
+  (
+    ab: Transducer<A, B>,
+    bc: Transducer<B, C>,
+    cd: Transducer<C, D>,
+    de: Transducer<D, E>
+  ): Transducer<A, E>
+}
+
+/**
+ * Creates a new function that runs each of the functions supplied as parameters
+ * in turn, passing the return value of each function invocation to the next
+ * function invocation, beginning with whatever arguments were passed to the
+ * initial invocation.
+ */
+export const composeT: composeT = compose
 
 
 // type LensOrPrism<S, T, A, B> = Lens<S, T, A, B> | ExplA<Prism<S, T, A, B>>

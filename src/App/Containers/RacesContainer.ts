@@ -5,7 +5,7 @@ import { setTab } from "../Actions/LocationActions";
 import * as RaceActions from "../Actions/RaceActions";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getFilteredRaces } from "../Selectors/rcpSelectors";
-import { getCurrentRaceId, getCurrentRaceVariantId, getRacesFilterText } from "../Selectors/stateSelectors";
+import { getCurrentRaceVariantId, getRaceId, getRacesFilterText } from "../Selectors/stateSelectors";
 import { getRacesSortOrder } from "../Selectors/uisettingsSelectors";
 import { TabId } from "../Utilities/LocationUtils";
 import { Races, RacesDispatchProps, RacesOwnProps, RacesStateProps } from "../Views/Races/Races";
@@ -13,7 +13,7 @@ import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (state: AppStateRecord, ownProps: RacesOwnProps): RacesStateProps => {
   return {
-    currentId: getCurrentRaceId (state),
+    currentId: getRaceId (state, ownProps),
     currentVariantId: getCurrentRaceVariantId (state),
     races: getFilteredRaces (state, ownProps),
     sortOrder: getRacesSortOrder (state),

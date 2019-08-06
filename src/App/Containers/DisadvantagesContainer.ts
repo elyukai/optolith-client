@@ -28,7 +28,7 @@ const mapStateToProps =
     stateEntries: getDisadvantages (state),
     wikiEntries: getWikiDisadvantages (state),
     magicalMax: getMagicalAdvantagesDisadvantagesAdventurePointsMaximum (state),
-    rating: getDisadvantagesRating (state),
+    rating: getDisadvantagesRating (state, ownProps),
     showRating: getAdvantagesDisadvantagesCultureRatingVisibility (state),
     filterText: getDisadvantagesFilterText (state),
     inactiveFilterText: getInactiveDisadvantagesFilterText (state),

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { elemF, intercalate, List, notElem, notNull, subscript } from "../../../Data/List";
-import { alt_, bind, bindF, ensure, fromMaybe, guard, imapMaybe, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNullF, then } from "../../../Data/Maybe";
+import { alt_, bind, bindF, ensure, fromMaybe, imapMaybe, Just, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNullF, Nothing } from "../../../Data/Maybe";
 import { dec, gt } from "../../../Data/Num";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, Record } from "../../../Data/Record";
@@ -36,6 +36,7 @@ export interface WikiEquipmentInfoProps {
 
 const ITAL = ItemTemplate.AL
 const ITA = ItemTemplate.A
+const IA = Item.A
 const PADTA = PrimaryAttributeDamageThreshold.A
 const CTA = CombatTechnique.A
 const AA = Attribute.A
@@ -65,14 +66,18 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
   const movMod = ITAL.movMod (x)
   const iniMod = ITAL.iniMod (x)
   const addPenalties = ITAL.addPenalties (x)
-  const templ = then (guard (ITAL.isTemplateLocked (x))) (ensure (ItemTemplate.is) (x))
-  const msrc = fmap (ITA.src) (templ)
-  const mnote = bindF (ITA.note) (templ)
-  const mrules = bindF (ITA.rules) (templ)
+  const mtpl =
+    ITAL.isTemplateLocked (x)
+      ? bind (ItemTemplate.is (x) ? Just (ITA.template (x)) : IA.template (x))
+             (lookupF (itemTemplates))
+      : Nothing
+  const msrc = fmap (ITA.src) (mtpl)
+  const mnote = bindF (ITA.note) (mtpl)
+  const mrules = bindF (ITA.rules) (mtpl)
   const madvantage =
-    pipe (bindF (ensure (pipe (ITA.gr, elemF (List (1, 2, 4))))), fmap (ITA.advantage)) (templ)
+    pipe (bindF (ensure (pipe (ITA.gr, elemF (List (1, 2, 4))))), fmap (ITA.advantage)) (mtpl)
   const mdisadvantage =
-    pipe (bindF (ensure (pipe (ITA.gr, elemF (List (1, 2, 4))))), fmap (ITA.disadvantage)) (templ)
+    pipe (bindF (ensure (pipe (ITA.gr, elemF (List (1, 2, 4))))), fmap (ITA.disadvantage)) (mtpl)
 
   const ammunitionTemplate = bind (ammunition) (lookupF (itemTemplates))
 

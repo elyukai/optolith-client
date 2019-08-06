@@ -9,6 +9,7 @@ export interface ActivatableNameCost {
   naming: Record<ActivatableCombinedName>
   active: Record<ActiveObjectWithId>
   finalCost: number | List<number>
+  isAutomatic: boolean
 }
 
 export interface ActivatableNameCostSafeCost extends ActivatableNameCost {
@@ -25,6 +26,7 @@ export const ActivatableNameCost =
                 naming: ActivatableCombinedName.default,
                 active: ActiveObjectWithId.default,
                 finalCost: 0,
+                isAutomatic: false,
               }) as ActivatableNameCostConstructor
 
 export const ActivatableNameCostA_ = {

@@ -13,7 +13,7 @@ import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
 import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUtils";
 import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
+import { pipe_ } from "../Utilities/pipe";
 import { SortNames } from "../Views/Universal/SortOptions";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
@@ -42,7 +42,7 @@ export const addSpell =
       const missingAPForInc =
         pipe_ (
           mhero,
-          bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+          bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
           join,
           bindF (getMissingAP (getIsInCharacterCreation (state))
                               (pipe_ (wiki_entry, Spell.A.ic, getICMultiplier)))
@@ -83,7 +83,7 @@ export const addCantrip =
     const missingAP =
       pipe_ (
         mhero,
-        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
         join,
         bindF (getMissingAP (getIsInCharacterCreation (state))
                             (1))
@@ -167,7 +167,7 @@ export const addSpellPoint =
     const missingAPForInc =
       pipe_ (
         mhero,
-        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
         join,
         liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
                                                        (bind (mhero_spells)

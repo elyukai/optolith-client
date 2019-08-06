@@ -14,7 +14,7 @@ import { getIsLiturgicalChantsTabAvailable } from "./liturgicalChantsSelectors";
 import { getIsRemovingEnabled } from "./phaseSelectors";
 import { getRuleBooksEnabledM } from "./rulesSelectors";
 import { getIsSpellsTabAvailable } from "./spellsSelectors";
-import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleAsProp, getPhase } from "./stateSelectors";
+import { getCurrentCultureId, getCurrentTab, getLocaleAsProp, getPhase, getRaceIdM } from "./stateSelectors";
 
 export const getIsMainSection = createMaybeSelector (
   getCurrentTab,
@@ -162,7 +162,7 @@ export const getSubtabs = createMaybeSelector (
   getIsHeroSection,
   getLocaleAsProp,
   getPhase,
-  getCurrentRaceId,
+  getRaceIdM,
   getCurrentCultureId,
   getIsSpellsTabAvailable,
   getIsLiturgicalChantsTabAvailable,

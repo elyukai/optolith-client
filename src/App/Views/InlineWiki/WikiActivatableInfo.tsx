@@ -11,8 +11,7 @@ import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../D
 import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
-import { ActivatableCombinedName } from "../../Models/View/ActivatableCombinedName";
-import { ActivatableNameCostA_ } from "../../Models/View/ActivatableNameCost";
+import { ActivatableNameCost, ActivatableNameCostA_ } from "../../Models/View/ActivatableNameCost";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Book } from "../../Models/Wiki/Book";
@@ -30,6 +29,8 @@ import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
 import { getNameCostForWiki } from "../../Utilities/Activatable/activatableActiveUtils";
 import { getName } from "../../Utilities/Activatable/activatableNameUtils";
 import { isExtendedSpecialAbility } from "../../Utilities/Activatable/checkStyleUtils";
+import { putLevelName } from "../../Utilities/AdventurePoints/activatableCostUtils";
+import { nbsp } from "../../Utilities/Chars";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
 import { getCategoryById, isBlessedTraditionId, isMagicalTraditionId, prefixRace, prefixSA } from "../../Utilities/IDUtils";
 import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils";
@@ -668,7 +669,9 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
                 const level_num_str = `${translate (l10n) ("level")} ${toRoman (lvl)}: `
 
                 const requires_last_str =
-                  lvl > 1 ? `${not_empty ? ", " : ""}${AAL.name (x)} ${toRoman (lvl - 1)}` : ""
+                  lvl > 1
+                  ? `${not_empty ? ", " : ""}${AAL.name (x)}${nbsp}${toRoman (lvl - 1)}`
+                  : ""
 
                 return Just (
                   <React.Fragment key={lvl}>
@@ -988,20 +991,28 @@ const mapPrerequisitesActivatablesTextElem =
 
         const category_add = getPrerequisitesActivatablesCategoryAdd (l10n) (curr_id)
 
+        const active = ActiveObjectWithId ({
+          id: curr_id,
+          sid,
+          sid2,
+          tier: level,
+          index: 0,
+        })
+
         const mcombined_name =
-          getName (l10n)
-                  (wiki)
-                  (ActiveObjectWithId ({
-                    id: curr_id,
-                    sid,
-                    sid2,
-                    tier: level,
-                    index: 0,
-                  }))
+          fmapF (getName (l10n) (wiki) (active))
+                (naming => putLevelName (true)
+                                        (l10n)
+                                        (ActivatableNameCost ({
+                                          active,
+                                          naming,
+                                          finalCost: 0,
+                                          isAutomatic: false,
+                                        })))
 
         return fmapF (mcombined_name)
                      (combined_name =>
-                       `${category_add}${ActivatableCombinedName.A.name (combined_name)}`)
+                       `${category_add}${ActivatableNameCostA_.name (combined_name)}`)
       })
     )
 
@@ -1057,7 +1068,7 @@ const getPrerequisitesActivatablesText =
           })
         }
       }),
-      sortRecordsByName (L10n.A.id (l10n)),
+      sortRecordsByName (l10n),
       map ((x): Just<string | JSX.Element> => {
         const id = APTA.id (x)
         const name = APTA.name (x)

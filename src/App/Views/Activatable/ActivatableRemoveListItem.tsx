@@ -173,7 +173,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
               )
             ))}
             >
-            {AAA_.finalCost (item)}
+            {AAA_.isAutomatic (item) ? `(${AAA_.finalCost (item)})` : AAA_.finalCost (item)}
           </div>
         </ListItemValues>
         <ListItemButtons>

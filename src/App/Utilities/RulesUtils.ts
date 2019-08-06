@@ -81,13 +81,21 @@ export const filterByAvailability =
   (availablility: EnabledSourceBooks) =>
     filter<A> (e => fnull (f (e)) || isAvailable (f) (availablility) (e))
 
+export const isEntryAvailable =
+  (booksMap: OrderedMap<string, Record<Book>>) =>
+  (enabledRuleBooks: OrderedSet<string>) =>
+  (areAllRuleBooksEnabled: boolean) =>
+  <A> (f: (x: A) => List<Record<SourceLink>>) =>
+  (x: A) =>
+    fnull (f (x))
+    || isAvailableF (booksMap) (enabledRuleBooks) (areAllRuleBooksEnabled) (f) (x)
+
 export const filterByAvailabilityF =
   (booksMap: OrderedMap<string, Record<Book>>) =>
   (enabledRuleBooks: OrderedSet<string>) =>
   (areAllRuleBooksEnabled: boolean) =>
   <A> (f: (x: A) => List<Record<SourceLink>>) =>
-    filter<A> (e => fnull (f (e))
-                    || isAvailableF (booksMap) (enabledRuleBooks) (areAllRuleBooksEnabled) (f) (e))
+    filter (isEntryAvailable (booksMap) (enabledRuleBooks) (areAllRuleBooksEnabled) (f))
 
 /**
  * Filters a list of `SourceLink`s by availability or by the given predicate (at

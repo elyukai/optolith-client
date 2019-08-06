@@ -33,7 +33,7 @@ export const addAttributePoint = (l10n: L10nRecord) => (id: string): ReduxAction
     const missingAPForInc =
       pipe_ (
         mhero,
-        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
         join,
         liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
                                                        (bind (mhero_attributes)
@@ -83,7 +83,7 @@ export const addLifePoint = (l10n: L10nRecord): ReduxAction => (dispatch, getSta
   const missingAP =
     pipe_ (
       mhero,
-      bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+      bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
       join,
       liftM2 (pipe (
                // get AP for added points
@@ -120,7 +120,7 @@ export const addArcaneEnergyPoint = (l10n: L10nRecord): ReduxAction =>
     const missingAP =
       pipe_ (
         mhero,
-        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
         join,
         liftM2 (pipe (
                  // get AP for added points
@@ -156,7 +156,7 @@ export const addKarmaPoint = (l10n: L10nRecord): ReduxAction => (dispatch, getSt
   const missingAP =
     pipe_ (
       mhero,
-      bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+      bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
       join,
       liftM2 (pipe (
                // get AP for added points
@@ -217,7 +217,7 @@ export const addBoughtBackAEPoint = (l10n: L10nRecord): ReduxAction =>
     const missingAP =
       pipe_ (
         mhero,
-        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
         join,
         bindF (getMissingAP (getIsInCharacterCreation (state))
                             (2))
@@ -316,7 +316,7 @@ export const addBoughtBackKPPoint = (l10n: L10nRecord): ReduxAction =>
     const missingAP =
       pipe_ (
         mhero,
-        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
         join,
         bindF (getMissingAP (getIsInCharacterCreation (state))
                             (2))
