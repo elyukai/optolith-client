@@ -1,6 +1,6 @@
-# 1.1.0/1.1.1
+# 1.1.0/1.1.2
 
-*The exact version number of the app is 1.1.1.*
+*The exact version number of the app is 1.1.2.*
 
 After more than one year a big update is finally coming—even though you probably won’t notice it: Optolith got a completely new code. This is accompanied by an internal restructuring, so that features like groups will be possible in the future. This is the biggest change, but not the only one: All reported bugs are fixed and over the last two weeks my testers found several bugs, which are also fixed here.
 
@@ -39,6 +39,7 @@ But now it’s time for the changelog of this version:
 - *Additional sources* lists sources from which the entry gets its select options. For example, SA *Trade Secrets* not only shows the source for the base SA, but also the different trade secret sources from all the different books.
 - Analogous to the Raven’s Beaks blessed variant, there’s now a mundane variant available, too. It costs 90 S. There’s no difference between the two versions except for *blessed/mundane*.
 - For Staff Enchantments, *Binding of the Staff* as a prerequisite is now hidden (because it is hidden in Core Rules, too).
+- Finishing RCP selection can now be undone.
 
 ## Bug Fixes
 
@@ -60,6 +61,10 @@ But now it’s time for the changelog of this version:
 - Lowering attributes in editing mode takes added LP/AE/KP into account and restricts lowering if needed.
 - Sometimes, instead of a value, for example in *Enforce Honor 6*, `null` was shown in the wiki entry for professions, so it was actually *Ehrenhaftigkeit null*.
 - Sometimes, the value of a entry in a profession, changed by a profession variant, was increased by 6. For example, Knight: *Etiquette 2 instead of 12* actually is *Etiquette 2 instead of 6*.
+- Combat Style Special Abilities now show their type (passive/base maneuver/special maneuver) in wiki again.
+- Sorting spells by group now sorts the groups alphabetically.
+- When EL *Inexperienced* is selected and you got SA *Tradition (Guild Mage)*, you can now also buy and increase the selected unfamiliar spell (which is not unfamiliar anymore).
+- The select option list for SA *Tradition (Guild Mage)* does not list familiar spells anymore.
 - Disadvantage *Negative Trait (Stinginess)* and *(Wastefulness)* were not mutually exclusive.
 - Spells and chants are not included in disadvantage *Incompetent*. Heroes with those entries will get the disadvantage removed automatically.
 - SA *Aspect Knowledge* can now be added as expected.

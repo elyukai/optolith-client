@@ -326,8 +326,14 @@ export const getSpellsSortOptions = createMaybeSelector (
     }
     else if (sortOrder === "group") {
       return [
-        comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.gr))
-                   (compare),
+        comparingR (pipe (
+                     SpellWithRequirements.A.wikiEntry,
+                     Spell.A.gr,
+                     dec,
+                     subscript (translate (l10n) ("spellgroups")),
+                     fromMaybe ("")
+                   ))
+                   (compareLocale (l10n)),
         comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.name))
                    (compareLocale (l10n)),
       ]
@@ -392,9 +398,14 @@ export const getSpellsCombinedSortOptions = createMaybeSelector (
         comparingR (pipe (
                      getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                      ensure (isSpell) as ensureSpell,
-                     maybe (100) (Spell.A.gr)
+                     bindF (pipe (
+                       Spell.A.gr,
+                       dec,
+                       subscript (translate (l10n) ("spellgroups"))
+                     )),
+                     fromMaybe (translate (l10n) ("cantrips"))
                    ))
-                   (compare),
+                   (compareLocale (l10n)),
         comparingR (pipe (
                      getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                      Spell.AL.name

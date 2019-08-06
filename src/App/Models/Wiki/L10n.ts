@@ -617,6 +617,14 @@ export interface L10n {
   "uses": string
   "complementarysources": string
   "and": string
+  "demondomains": List<string>
+  "demontypes": List<string>
+  "demontype": string
+  "circleofdamnation": string
+  "lesserpact": string
+  "tribaltraditions": string
+  "tribes": List<string>
+  "saveheroerror": string
 }
 
 export type L10nKey = keyof L10n
@@ -1241,4 +1249,12 @@ export const L10n =
                 "uses": "",
                 "complementarysources": "",
                 "and": "",
+                "demondomains": List.empty,
+                "demontypes": List.empty,
+                "demontype": "",
+                "circleofdamnation": "",
+                "lesserpact": "",
+                "tribaltraditions": "",
+                "tribes": List.empty,
+                "saveheroerror": "",
               })

@@ -19,7 +19,6 @@ import { rulesReducer } from "./rulesReducer";
 
 export const heroReducer =
   undo (List (
-         ActionTypes.ASSIGN_RCP_OPTIONS,
          ActionTypes.SAVE_HERO
        ))
        (List (

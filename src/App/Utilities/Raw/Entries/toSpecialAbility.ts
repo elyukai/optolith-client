@@ -11,7 +11,7 @@ import { toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { modifyNegIntNoBreak } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
-import { mensureMapListLengthInRangeOptional, mensureMapNatural, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional, mensureMapStringPredOptional } from "../validateMapValueUtils";
+import { mensureMapListLengthInRangeOptional, mensureMapNatural, mensureMapNaturalInRangeOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toActivatableCost } from "./Sub/toActivatableCost";
 import { toPrerequisites } from "./Sub/toPrerequisites";
@@ -22,11 +22,6 @@ const category = /[A-Z_]+/
 
 const checkCategory =
   (x: string) => category .test (x)
-
-const combatSpecialAbilityType = /p|b|s/
-
-const checkCSATypeString =
-  (x: string) => combatSpecialAbilityType .test (x)
 
 export const toSpecialAbility =
   mergeRowsById
@@ -44,12 +39,6 @@ export const toSpecialAbility =
                        (TableType.Univ)
                        (lookup_univ)
 
-      const checkCombatSpecialAbilityType =
-        lookupKeyValid (mensureMapStringPredOptional (checkCSATypeString)
-                                                     (`"p" | "b" | "s"`))
-                       (TableType.Univ)
-                       (lookup_univ)
-
       const checkExtendedSpecialAbilitiesList =
         lookupKeyValid (mensureMapListLengthInRangeOptional (1)
                                                             (3)
@@ -61,6 +50,11 @@ export const toSpecialAbility =
 
       const checkUnivNaturalNumber =
         lookupKeyValid (mensureMapNatural)
+                       (TableType.Univ)
+                       (lookup_univ)
+
+      const checkOptionalUnivNaturalInRange1to3Number =
+        lookupKeyValid (mensureMapNaturalInRangeOptional (1) (3))
                        (TableType.Univ)
                        (lookup_univ)
 
@@ -87,7 +81,7 @@ export const toSpecialAbility =
 
       const egr = checkUnivNaturalNumber ("gr")
 
-      const etype = checkCombatSpecialAbilityType ("type")
+      const esubgr = checkOptionalUnivNaturalInRange1to3Number ("subgr")
 
       const eextended = checkExtendedSpecialAbilitiesList ("extended")
 
@@ -141,7 +135,7 @@ export const toSpecialAbility =
           emax,
           eselect,
           egr,
-          etype,
+          esubgr,
           eextended,
           eproperty,
           easpect,
@@ -176,7 +170,7 @@ export const toSpecialAbility =
 
           input,
           gr: rs.egr,
-          type: rs.etype,
+          subgr: rs.esubgr,
           extended: fmap (map (prefixId (IdPrefixes.SPECIAL_ABILITIES))) (rs.eextended),
           rules: fmap (modifyNegIntNoBreak) (rules),
           effect: fmap (modifyNegIntNoBreak) (effect),

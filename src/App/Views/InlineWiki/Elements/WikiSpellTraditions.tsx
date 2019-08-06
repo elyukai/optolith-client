@@ -1,5 +1,5 @@
 import * as React from "react";
-import { flength, intercalate, List, notNull, subscript } from "../../../../Data/List";
+import { flength, intercalate, List, subscript, elem } from "../../../../Data/List";
 import { bindF, ensure, mapMaybe } from "../../../../Data/Maybe";
 import { dec, lte } from "../../../../Data/Num";
 import { Record, RecordBase } from "../../../../Data/Record";
@@ -30,7 +30,20 @@ export function WikiSpellTraditions<A extends RecordBase> (props: WikiSpellTradi
   const trad = acc.tradition (x)
   const subtrad = acc.subtradition (x)
 
-  if (notNull (subtrad)) {
+  if (elem (16) (trad)) { // Tradition (Animisten)
+    return (
+      <WikiProperty l10n={l10n} title="tribaltraditions">
+        {pipe_ (
+          subtrad,
+          mapMaybe (pipe (dec, subscript (translate (l10n) ("tribes")))),
+          sortStrings (L10n.A.id (l10n)),
+          intercalate (", ")
+        )}
+      </WikiProperty>
+    )
+  }
+
+  if (elem (7) (trad) || elem (8) (trad)) { // Zauberbarden/Zaubertänzer
     return (
       <WikiProperty l10n={l10n} title="musictradition">
         {pipe_ (

@@ -33,7 +33,6 @@ import { Advantage } from "../../Models/Wiki/Advantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { Skill } from "../../Models/Wiki/Skill";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { Application } from "../../Models/Wiki/sub/Application";
 import { SelectOption, SelectOptionL } from "../../Models/Wiki/sub/SelectOption";
@@ -44,7 +43,7 @@ import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup } from "../heroStateUtils";
 import { getBlessedTradStrIdFromNumId, prefixSA } from "../IDUtils";
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
-import { isOwnTradition, isUnfamiliarSpell } from "../Increasable/spellUtils";
+import { isUnfamiliarSpell } from "../Increasable/spellUtils";
 import { pipe, pipe_ } from "../pipe";
 import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
 import { isEntryAvailable } from "../RulesUtils";
@@ -206,7 +205,6 @@ const is7or8 = elemF<string | number> (List (7, 8))
 const modifySelectOptions =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
-  (wiki_magical_traditions: List<Record<SpecialAbility>>) =>
   (hero_magical_traditions: List<Record<ActivatableDependent>>) =>
   (wiki_entry: Activatable) =>
   // tslint:disable-next-line: cyclomatic-complexity
@@ -398,7 +396,7 @@ const modifySelectOptions =
 
       // Adaption (Zauber)
       case "SA_231": {
-        const isWikiEntryFromUnfamiliarTrad = notP (isOwnTradition (wiki_magical_traditions))
+        const isWikiEntryFromUnfamiliarTrad = isUnfamiliarSpell (hero_magical_traditions)
 
         const isSpellAbove10 =
           pipe (
@@ -838,7 +836,6 @@ export const getInactiveView =
   (automatic_advantages: List<string>) =>
   (adventure_points: Record<AdventurePointsCategories>) =>
   (validExtendedSpecialAbilities: List<string>) =>
-  (wiki_magical_traditions: List<Record<SpecialAbility>>) =>
   (hero_magical_traditions: List<Record<ActivatableDependent>>) =>
   (wiki_entry: Activatable) =>
   (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<Record<InactiveActivatable>> => {
@@ -865,7 +862,6 @@ export const getInactiveView =
     if (!isNotValid) {
       const specificSelections = modifySelectOptions (wiki)
                                                      (hero)
-                                                     (wiki_magical_traditions)
                                                      (hero_magical_traditions)
                                                      (wiki_entry)
                                                      (mhero_entry)
