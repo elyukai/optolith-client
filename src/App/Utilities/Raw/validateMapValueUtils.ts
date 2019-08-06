@@ -1,7 +1,7 @@
 import { Either, maybeToEither_ } from "../../../Data/Either";
 import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
-import { inRange } from "../../../Data/Ix";
+import { inRange, inRangeN } from "../../../Data/Ix";
 import { Cons, flength, List, notNullStr, splitOn } from "../../../Data/List";
 import { bindF, ensure, fromMaybe, Just, liftM2, mapM, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { fromList, OrderedSet } from "../../../Data/OrderedSet";
@@ -243,7 +243,7 @@ export const mensureMapNaturalPredOptional =
 export const mensureMapNaturalInRangeOptional =
   (l: number) =>
   (u: number) =>
-    mensureMapNaturalPredOptional (inRange (Pair (l, u)))
+    mensureMapNaturalPredOptional (inRangeN (l, u))
 
 export const mensureMapNaturalList =
   (del: string) =>

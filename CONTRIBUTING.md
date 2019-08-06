@@ -75,6 +75,68 @@ condition
 condition ? expression : expression
 ```
 
+### Logical operators
+
+```ts
+// bad
+condition &&
+condition ||
+condition
+
+// good (because && has a higher precedence, but it must fit one line then)
+condition && condition
+|| condition
+
+// good
+condition
+&& condition
+|| condition
+
+// also good (useful if conditions are so long that parenthesis would improve readability)
+(
+  condition
+  && condition
+)
+|| condition
+
+// good (but requires the whole construct to fit one line)
+condition && condition || condition
+
+// good (but requires the whole construct to fit one line)
+condition && (condition || condition) && condition
+
+// good
+condition
+&& (
+  condition
+  || condition
+)
+&& condition
+
+// also good
+condition
+&& (condition
+    || condition)
+&& condition
+
+// also good
+condition
+&& (condition || condition)
+&& condition
+
+// bad
+condition
+&& (condition
+|| condition)
+&& condition
+
+// bad
+condition
+&& (condition
+  || condition)
+&& condition
+```
+
 ### Curried functions
 
 Functions (and methods) have to be fully curried. There should not be partial function application, as this would cause different possibilities in calling functions. I want to enforce one style:
