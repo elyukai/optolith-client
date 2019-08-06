@@ -126,7 +126,8 @@ add 2 3
 // good
 const x = myFunction (otherFunc ("Hi")) (3);
 
-// good (such line breaks (compare to above) are usually needed either because of readability or because the line would be too long otherwise)
+// good (such line breaks (compare to above) are usually needed either because of readability
+// or because the line would be too long otherwise)
 const x = myFunction (otherFunc ("Hi"))
                      (3);
 
