@@ -168,6 +168,12 @@ export const getEnabledRuleBooks =
   pipe (getCurrentHeroPresent, fmap (pipe (Hero.rules, Rul.enabledRuleBooks)))
 
 
+export const getRaceId =
+  pipe (getHeroProp, Hero.race)
+
+export const getRaceIdM =
+  pipe (getMaybeHeroProp, bindF (Hero.race))
+
 export const getCurrentRaceId =
   pipe (getCurrentHeroPresent, bindF (Hero.race))
 

@@ -14,7 +14,7 @@ import { getStartEl } from "../Selectors/elSelectors";
 import { getAllItems, getArmors, getArmorZones, getMeleeWeapons, getRangedWeapons, getShieldsAndParryingWeapons, getTotalPrice, getTotalWeight } from "../Selectors/equipmentSelectors";
 import { getBlessingsForSheet, getLiturgicalChantsForSheet } from "../Selectors/liturgicalChantsSelectors";
 import { getPet } from "../Selectors/petsSelectors";
-import { getCurrentCulture, getCurrentFullProfessionName, getCurrentRace } from "../Selectors/rcpSelectors";
+import { getCurrentCulture, getCurrentFullProfessionName, getRace } from "../Selectors/rcpSelectors";
 import { getConditions, getSkillPages, getSkillsByGroup, getStates } from "../Selectors/sheetSelectors";
 import { getAllSkills } from "../Selectors/skillsSelectors";
 import { getCantripsForSheet, getSpellsForSheet } from "../Selectors/spellsSelectors";
@@ -47,7 +47,7 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): Sheet
   // profession: getCurrentProfession (state),
   // professionVariant: getCurrentProfessionVariant (state),
   profile: getProfile (state),
-  race: getCurrentRace (state),
+  race: getRace (state, ownProps),
   rangedWeapons: getRangedWeapons (state),
   sex: getSex (state),
   shieldsAndParryingWeapons: getShieldsAndParryingWeapons (state),

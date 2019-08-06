@@ -13,8 +13,8 @@ import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { List, notNull } from "../../Data/List";
 import { alt_, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
-import { any, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap";
-import { differenceF, map } from "../../Data/OrderedSet";
+import { any, filter, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap";
+import { notMember } from "../../Data/OrderedSet";
 import { Record, StringKeyObject, toObject } from "../../Data/Record";
 import { fst, Pair } from "../../Data/Tuple";
 import { IO, readFile, runIO, writeFile } from "../../System/IO";
@@ -116,16 +116,22 @@ export const requestInitialData: ReduxAction<IO<void>> = dispatch =>
                 insertCacheMap (cache)
 
                 pipe_ (
-                  cache,
-                  keysSet,
-                  differenceF (keysSet (getHeroes (getState ()))),
-                  map (id => {
-                    forceCacheIsAvailable (id)
-                                          (getState ())
-                                          ({ l10n: fst (fromRight_ (data) .tables) })
+                  getHeroes (getState ()),
+                  filter (pipe (
+                    heroReducer.A.present,
+                    HeroModel.A.id,
+                    flip (notMember) (keysSet (cache))
+                  )),
+                  OrderedMap.map (pipe (
+                    heroReducer.A.present,
+                    hero => {
+                      forceCacheIsAvailable (HeroModel.A.id (hero))
+                                            (getState ())
+                                            ({ l10n: fst (fromRight_ (data) .tables), hero })
 
-                    return id
-                  })
+                      return hero
+                    }
+                  ))
                 )
               }
 
@@ -291,8 +297,7 @@ export const requestSaveCache =
       getHeroes,
       mapMaybe (pipe (
         heroReducer.A.present,
-        HeroModel.A.id,
-        id => getAPObjectMap (id) (getState (), { l10n }),
+        hero => getAPObjectMap (HeroModel.A.id (hero)) (getState (), { l10n, hero }),
         Maybe.join,
         fmap (toAPCache)
       )),

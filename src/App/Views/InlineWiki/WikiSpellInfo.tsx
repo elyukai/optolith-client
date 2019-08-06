@@ -106,6 +106,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
+
     // Zaubermelodien
     case 5:
       return (
@@ -121,6 +122,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
+
     // Zaubertänze
     case 6:
       return (

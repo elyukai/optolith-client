@@ -26,7 +26,7 @@ import { getNumericBlessedTraditionIdByInstanceId, getNumericMagicalTraditionIdB
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { getCurrentEl, getStartEl } from "./elSelectors";
 import { getBlessedTraditionFromState } from "./liturgicalChantsSelectors";
-import { getCurrentRace } from "./rcpSelectors";
+import { getRace } from "./rcpSelectors";
 import { getMagicalTraditionsFromHero } from "./spellsSelectors";
 import { getAttributes, getAttributeValueLimit, getCurrentAttributeAdjustmentId, getCurrentHeroPresent, getHeroProp, getPhase, getWiki, getWikiAttributes } from "./stateSelectors";
 
@@ -333,7 +333,7 @@ export const getAttributesForView = createMaybeSelector (
   getPhase,
   getAttributeValueLimit,
   getWiki,
-  getCurrentRace,
+  getRace,
   getAddedEnergies,
   getPrimaryBlessedAttribute,
   getHighestPrimaryMagicalAttribute,
@@ -394,7 +394,7 @@ export const getCarryingCapacity = createMaybeSelector (
 )
 
 export const getAdjustmentValue = createMaybeSelector (
-  getCurrentRace,
+  getRace,
   fmap (pipe (Race.A.attributeAdjustmentsSelection, fst))
 )
 
@@ -406,7 +406,7 @@ export const getCurrentAttributeAdjustment = createMaybeSelector (
 )
 
 export const getAvailableAdjustmentIds = createMaybeSelector (
-  getCurrentRace,
+  getRace,
   getAdjustmentValue,
   getAttributesForView,
   getCurrentAttributeAdjustment,

@@ -9,7 +9,7 @@ import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
 import { getCurrentHeroPresent, getSkills, getWikiSkills } from "../Selectors/stateSelectors";
 import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
+import { pipe_ } from "../Utilities/pipe";
 import { SortNames } from "../Views/Universal/SortOptions";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
@@ -33,7 +33,7 @@ export const addSkillPoint =
     const missingAPForInc =
       pipe_ (
         mhero,
-        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
         join,
         liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
                                                        (bind (mhero_skills)

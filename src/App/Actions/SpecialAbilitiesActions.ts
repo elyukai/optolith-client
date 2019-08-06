@@ -66,7 +66,7 @@ export const addSpecialAbility =
         const mmissingAP =
           pipe_ (
             mhero,
-            bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+            bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
             join,
             bindF (getMissingAP (getIsInCharacterCreation (state))
                                 (current_cost))
@@ -184,7 +184,7 @@ export const setSpecialAbilityLevel =
           (isEntryToAdd: boolean) =>
             pipe (
               getNameCost (isEntryToAdd)
-                          (getAutomaticAdvantages (state))
+                          (getAutomaticAdvantages (state, { hero }))
                           (l10n)
                           (wiki)
                           (hero),
@@ -210,11 +210,7 @@ export const setSpecialAbilityLevel =
 
           const mmissingAP =
             pipe_ (
-              mhero,
-              bindF (pipe (
-                HeroModel.A.id,
-                hero_id => getAvailableAPMap (hero_id) (state, { l10n })
-              )),
+              getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero }),
               join,
               bindF (getMissingAP (getIsInCharacterCreation (state))
                                   (diff_cost))

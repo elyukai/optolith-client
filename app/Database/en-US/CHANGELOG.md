@@ -1,3 +1,94 @@
+# 1.1.0/1.1.1
+
+*The exact version number of the app is 1.1.1.*
+
+After more than one year a big update is finally coming—even though you probably won’t notice it: Optolith got a completely new code. This is accompanied by an internal restructuring, so that features like groups will be possible in the future. This is the biggest change, but not the only one: All reported bugs are fixed and over the last two weeks my testers found several bugs, which are also fixed here.
+
+You will probably notice that Optolith takes a few seconds longer to load than before. This is because I rebuilt Optolith with the basic idea that it runs more stable. So I do checks during loading to make sure that all data that is loaded really looks as expected and so that nothing unexpected and unintentional, caused by wrong tables or other wrong data in the program, happens. The start performance is definitely going to be improved, but for now I prefer a more stable program to a fast one; after all this is only about starting the program, the performance during use is not affected.
+
+Last but not least a big thank you to you, for your patience and all your feedback and further help, without which I would not have been able to fix all those bugs. Although new rules have not yet made it into this version, and the next version won’t contain all new ones, Optolith will be able to get up to date more quickly than before.
+
+But now it’s time for the changelog of this version:
+
+## New Features
+
+- Heroes can now be saved from the hero list.
+- Avatars of heroes and pets can now be deleted.
+
+## Enhancements
+
+- Select option lists are now filtered by activated books. Previously, that only worked for main lists like special abilities, but now it works for all list, for example the list of trade secrets.
+  - Wiki entry lists cannot be filtered by specific books, neither can the wiki entry text in opened heroes. This will be implemented later!
+- Unfamiliar spells are now going to be highlighted in red (just like uncommon advantages).
+- Searching for professions now includes profession variants.
+- The space for languages on the character sheet is now twice as large.
+- When adding advantages or disadvantages, AP spent on advantages as well as on disadvantages will always be shown.
+- Shields on character sheet are now listed as a weapon as well as a shield.
+- Wiki texts are now selectable.
+- For *Tradition (Guild Mage)*, you need to set a specific unfamiliar spell. **For an already activated SA, you can to the via the *Rules* tab. Please set the spell, because it is needed for upcoming books!**
+- To be able to better handle differences between languages in terms of rules, heroes are now saving the languages they were created in. **For already created heroes, the creation language will be set to the current UI language. To change that, you need to switch to the *Rules* tab! Please check it, because it is going to be relevant in future versions!**
+- The term for generating random weight and size of the hero is now shown above the respective input field.
+- The dialog shown on application quit if there are unsaved actions is now clearer and shows three buttons for all three possible options.
+- Text on character sheet is now selectable. This option is not useful for copying the complete character sheet as the layout is not preserved properly.
+- Added FAQ entry on how to add LP/AE/KP.
+- If you open a wiki entry when a character is open, the respective list item is highlighted just like they are in the wiki.
+- The maximum available AP that can be left when finishing hero creation phase is now always 10 AP, no matter whether you are in editing mode or not.
+- Added *Uses* for skills.
+- For skills where it is not 100% clear whether encumbrance is relevant or not, the full description when it is relevant and when it is not is now shown instead of „maybe“.
+- The separate entries for advantage *Exceptional Sense* and disadvantage *Restricted Sense* are now joined.
+- *Additional sources* lists sources from which the entry gets its select options. For example, SA *Trade Secrets* not only shows the source for the base SA, but also the different trade secret sources from all the different books.
+- Analogous to the Raven’s Beaks blessed variant, there’s now a mundane variant available, too. It costs 90 S. There’s no difference between the two versions except for *blessed/mundane*.
+- For Staff Enchantments, *Binding of the Staff* as a prerequisite is now hidden (because it is hidden in Core Rules, too).
+
+## Bug Fixes
+
+- After switching from German to English, heroes could not be edited anymore.
+- Special Abilities can now be sorted by group again.
+- Liturgical chant traditions and aspects are now sorted alphabetically.
+- Maxima of skills and combat techniques are now also influenced by skill check attributes or primary attributes during character creation phase.
+- Yellow-highlighted advantages/disadvantages are now explained in the legend on the left.
+- A spell or chant from a base profession removed by a profession variant now removes the entry entirely instead of activating it on SR 0.
+- Images are now shown on Linux again.
+- Automatic advantages cost 0 AP so that race AP cost are correct now.
+- Sorting equipment by group does not result in an error anymore.
+- Avatars of pets are now exported as well when exporting the character.
+- Details of spells and chants are shown on character sheet again.
+- The prerequisite Race, culture, or profession must have \[...] as an automatic or suggested \[advantage/disadvantage]“ now also includes automatic advantages if they are removed.
+- Pet layout on character sheet should work again.
+- The PDF does not include a scroll bar anymore.
+- Protective/Warding circles are now shown on character sheet.
+- Lowering attributes in editing mode takes added LP/AE/KP into account and restricts lowering if needed.
+- Sometimes, instead of a value, for example in *Enforce Honor 6*, `null` was shown in the wiki entry for professions, so it was actually *Ehrenhaftigkeit null*.
+- Sometimes, the value of a entry in a profession, changed by a profession variant, was increased by 6. For example, Knight: *Etiquette 2 instead of 12* actually is *Etiquette 2 instead of 6*.
+- Disadvantage *Negative Trait (Stinginess)* and *(Wastefulness)* were not mutually exclusive.
+- Spells and chants are not included in disadvantage *Incompetent*. Heroes with those entries will get the disadvantage removed automatically.
+- SA *Aspect Knowledge* can now be added as expected.
+- SA *Property Knowledge* can now be added as expected.
+- SA *Precise Shot/Throw* had wrong attribute prerequisites.
+- Disadvantages *No Flying Balm* and *No Familiar* now correctly decrease the cost of SA *Tradition (Witch)* by 10 AP each.
+- SA *Tradition (Guild Mage)* is now taken into account for restrictions concerning unfamiliar spells (see the change to the SA listed above also).
+- *Disguise*, Encumbrance: Maybe → Yes.
+- *Etiquette*, Encumbrance: Maybe → No.
+- *Persuasion*: Skill check COU/INT/CHA → COU/SGC/CHA.
+- Wrong skill checks of spells:
+  - *Magical Melody*: COU/SGC/CHA → COU/INT/CHA
+  - *Song of Piece*: COU/SGC/INT → COU/INT/CHA
+  - *Song of Sorrow*: COU/CHA/CHA → COU/INT/INT
+- Text missing which states that a special aspect of a spell cannot be modified:
+  - MOTORICUS: Cost
+  - WALL OF FOG: Cost
+- Missing skill check modifiers (SPI/TOU) added to spells.
+- ANALYZE ARCANE STRUCTURE: Casting time 2 actions → 32 actions.
+- KLARUM PURUM, Cost: 8 AE.
+- Wrong skill checks of liturgical chants:
+  - *Minor Banishing Ray*: COU/SGC/CHA → COU/INT/CHA
+  - *Enforce Honor*: COU/SGC/CHA → COU/INT/CHA
+  - *Encourage*: COU/SGC/CHA → COU/INT/CHA
+  - *Peaceful Aura*: COU/SGC/CHA → COU/INT/CHA
+- *Hand mirror* now lists the corresponding rule.
+- *Dog food, Horse feed, Pony feed*: Removed weight.
+- *Rope, climbing* now has a correct price.
+
 # 1.0.3
 
 - Renamed Optolyth to Optolith to be in line with all other locations where the name occurs.
@@ -11,7 +102,7 @@
 
 - Fixed issue with rendering list items of advantages/disadvantages/special abilities.
 - Fixed shortcuts being global.
-- Reloading a hero with `Stigma (Albino)` won't change selected eye color anymore.
+- Reloading a hero with `Stigma (Albino)` won’t change selected eye color anymore.
 
 ## macOS
 
@@ -218,7 +309,7 @@
 - Fixed calculating PA on character sheet.
 - You can now select the rule books you want to include in the Profile > Rules tab. Inactive book entries will not be displayed (only Races, Cultures, Professions, Skills, Spells and Liturgical Chants).
 - Displaying races now corresponds with the Core Rules.
-- Fixed inactive Advantages/Disadvantages/Special Abilities list's layout (temporarily).
+- Fixed inactive Advantages/Disadvantages/Special Abilities list’s layout (temporarily).
 
 ## macOS
 
@@ -259,7 +350,7 @@
 # 0.50.0
 
 - Custom AP cost possible for advantages and disadvantages.
-- Fixed ItemEditor's and ArmorZonesEditor's theming and layout.
+- Fixed ItemEditor’s and ArmorZonesEditor’s theming and layout.
 - Slightly brightened the color for disabled elements.
 
 # 0.49.6
@@ -281,12 +372,12 @@
 - Extended P+T functionality and fixed items based on that.
 - Now allows negative AP left during character creation phase.
 - Fixed search fields (it unintentionally converted text into a regular expression - thus some strange results).
-- Fixed filtering magical tradition's selection objects (previously, having more than 25 AP spent/received for magical advantages/disadvantages adding a tradition was completely disabled).
+- Fixed filtering magical tradition’s selection objects (previously, having more than 25 AP spent/received for magical advantages/disadvantages adding a tradition was completely disabled).
 - Fixed professions requiring specific cultures.
 - Fixed *Exceptional Skill/Combat Technique*
 - Fixed calculating TOU.
 - Fixed showing Own Profession without having extension books in profession list.
-- Added prerquisites and special abilities entries for professions' wiki info.
+- Added prerquisites and special abilities entries for professions’ wiki info.
 - Fixed disabling to add AE instead of to add permanently lost AE when more than one permanent AE point is lost.
 - Wiki test page added.
 - Added *Last Changes* tab in *About* section.
@@ -367,7 +458,7 @@
 - *Nimble* now increases MOV by 1.
 - *Immunity to (Disease/Poison)* now correctly adds the selected entry.
 - Derived characteristics are now correctly calculated on character sheet.
-- Item templates have floating number values (again). This **won't** affect non-locked item templates in items.
+- Item templates have floating number values (again). This **won’t** affect non-locked item templates in items.
 - Requiring Spells now correctly disables the decrease button if the SR hits the required value.
 - Invalid avatar paths will no longer result in a colored border with black background and an invalid file error in the console.
 - Now filters Aspect Knowledge selection by active tradition.
@@ -385,7 +476,7 @@
 - Improved general performance.
 - In *Profile Overview* and *Character Sheet* tabs, entries such as `Skill Specialization (Climbing: Trees), Skill Specialization (Survival: Find Campsite)` are now written as `Skill Specialization (Climbing: Trees, Survival: Find Campsite)`, providing a better overview and readability in addition to more space.
 - A new Redo button is added to the Navigation Bar. History resets after saving, finishing RCP selection and finishing character creation as well as switching to another character.
-- Fixed *Property Knowledge*'s and *Aspect Knowledge*'s AP cost and effects.
+- Fixed *Property Knowledge*’s and *Aspect Knowledge*’s AP cost and effects.
 - Fixed Languages and Scripts selection texts in RCP selections window.
 - Fixed loading characters with active Blessings.
 
@@ -394,7 +485,7 @@
 - Includes new traditions, aspects and liturgcal chants from **Aventurisches Götterwirken I**.
 - Added info for selected race in Races tab.
 - CON instead of COU now increases WS value.
-- Fixed *Intuitive Caster*'s spell limit and AE value.
+- Fixed *Intuitive Caster*’s spell limit and AE value.
 
 ## English Specific
 
@@ -409,7 +500,7 @@
 
 # 0.48.0
 
-- Heaps of bugs fixed. I lost sight of all bugs, so I won't provide a detailed list this time.
+- Heaps of bugs fixed. I lost sight of all bugs, so I won’t provide a detailed list this time.
 - Added a funtion to duplicate heroes.
 - New interface for managing permanent AE/KP loss.
 - Windows x86 support. (I am sorry for all the macOS users out there; I am still searching for a good way to build for Mac as I do not have a Mac at home.)

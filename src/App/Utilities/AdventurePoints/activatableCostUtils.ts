@@ -16,6 +16,7 @@ import { any, bind, bindF, elem, elemF, ensure, fromJust, fromMaybe, isJust, isN
 import { add, dec, multiply, negate } from "../../../Data/Num";
 import { lookup, lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { Pair } from "../../../Data/Tuple";
 import { Categories } from "../../Constants/Categories";
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -30,6 +31,7 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, EntryWithCategory, SkillishEntry } from "../../Models/Wiki/wikiTypeHelpers";
 import { isMaybeActive } from "../Activatable/isActive";
 import { getSelectOptionCost } from "../Activatable/selectionUtils";
+import { nbsp, nobr } from "../Chars";
 import { getHeroStateItem } from "../heroStateUtils";
 import { translate } from "../I18n";
 import { getCategoryById } from "../IDUtils";
@@ -378,6 +380,9 @@ export const compareSubMaxLevel =
     return previous_max
   }
 
+/**
+ * Returns the AP value and if the entry is an automatic entry
+ */
 const getTotalCost =
   (isEntryToAdd: boolean) =>
   (automatic_advantages: List<string>) =>
@@ -385,16 +390,15 @@ const getTotalCost =
   (hero: HeroModelRecord) =>
   (entry: Record<ActiveObjectWithId>) =>
   (hero_entry: Maybe<Record<ActivatableDependent>>) =>
-  (wiki_entry: Activatable): number | List<number> => {
+  (wiki_entry: Activatable): Pair<number | List<number>, boolean> => {
     const custom_cost = AOWIA.cost (entry)
+
+    const is_automatic = List.elem (AAL.id (wiki_entry)) (automatic_advantages)
 
     if (isJust (custom_cost)) {
       const is_disadvantage = Disadvantage.is (wiki_entry)
 
-      return is_disadvantage ? -fromJust (custom_cost) : fromJust (custom_cost)
-    }
-    else if (List.elem (AAL.id (wiki_entry)) (automatic_advantages)) {
-      return 0
+      return Pair (is_disadvantage ? -fromJust (custom_cost) : fromJust (custom_cost), is_automatic)
     }
 
     const mentry_specifc_cost = getEntrySpecificCost (isEntryToAdd)
@@ -407,10 +411,13 @@ const getTotalCost =
     const current_cost = fromMaybe<number | List<number>> (0) (mentry_specifc_cost)
 
     if (isDisadvantage (wiki_entry)) {
-      return isList (current_cost) ? map (negate) (current_cost) : -current_cost
+      return Pair (
+        isList (current_cost) ? map (negate) (current_cost) : -current_cost,
+        is_automatic
+      )
     }
 
-    return current_cost
+    return Pair (current_cost, is_automatic)
   }
 
 /**
@@ -424,7 +431,7 @@ export const getCost =
   (automatic_advantages: List<string>) =>
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
-  (entry: Record<ActiveObjectWithId>): Maybe<number | List<number>> => {
+  (entry: Record<ActiveObjectWithId>): Maybe<Pair<number | List<number>, boolean>> => {
     const current_id = AOWIA.id (entry)
 
     return pipe_ (
@@ -481,7 +488,7 @@ const putCurrentCost =
 /**
  * Gets the level string that has to be appended to the name.
  */
-const getLevel = (level: number) => ` ${toRoman (level)}`
+const getLevel = (level: number) => `${nbsp}${toRoman (level)}`
 
 /**
  * Gets the level string that has to be appended to the name. For special
@@ -489,7 +496,7 @@ const getLevel = (level: number) => ` ${toRoman (level)}`
  * range when multiple levels have been bought.
  */
 const getSpecialAbilityLevel =
-  (level: number) => level > 1 ? ` I–${toRoman (level)}` : getLevel (level)
+  (level: number) => level > 1 ? `${nbsp}I${nobr}–${nobr}${toRoman (level)}` : getLevel (level)
 
 /**
  * Id-based check if the entry is a special ability.
@@ -514,7 +521,7 @@ const getFinalLevelName =
     const current_cost = ActivatableNameCost.A.finalCost (entry)
 
     if (current_id === "SA_29" && current_level === 4) {
-      return ` ${translate (l10n) ("nativetongue.short")}`
+      return `${nbsp}${translate (l10n) ("nativetongue.short")}`
     }
 
     if (isList (current_cost) || isSpecialAbilityById (current_id)) {
@@ -535,15 +542,13 @@ const getLevelNameIfValid =
     const mcurrent_level = ActivatableNameCostA_.tier (entry)
 
     if (isJust (mcurrent_level) && notElem (current_id) (List ("DISADV_34", "DISADV_50"))) {
-      return Just (getFinalLevelName (l10n)
-                                        (entry)
-                                        (fromJust (mcurrent_level)))
+      return Just (getFinalLevelName (l10n) (entry) (fromJust (mcurrent_level)))
     }
 
     return Nothing
   }
 
-const putLevelName =
+export const putLevelName =
   (addLevelToName: boolean) =>
   (l10n: L10nRecord) =>
   (entry: Record<ActivatableNameCost>): Record<ActivatableNameCost> =>
