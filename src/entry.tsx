@@ -59,7 +59,7 @@ pipe_ (
               },
               { type: "separator" },
               { role: "hide" },
-              { role: "hideothers" },
+              { role: "hideOthers" },
               { role: "unhide" },
               { type: "separator" },
               {
@@ -75,7 +75,7 @@ pipe_ (
               { role: "copy" },
               { role: "paste" },
               { role: "delete" },
-              { role: "selectall" },
+              { role: "selectAll" },
             ],
           },
           {

@@ -1,14 +1,12 @@
 import { remote } from "electron";
 import { tryIO } from "../../Control/Exception";
 import { Either, fromLeft_, fromRight_, isLeft, Left, Right } from "../../Data/Either";
-import { cnst } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { Internals } from "../../Data/Internals";
 import { flength, fromArray, List, subscript } from "../../Data/List";
-import { fromMaybe, normalize, Nothing } from "../../Data/Maybe";
+import { fromMaybe, guard, joinMaybeList, Maybe, normalize, Nothing, then } from "../../Data/Maybe";
 import { divideBy, inc } from "../../Data/Num";
 import { bimap, fst, Pair, snd } from "../../Data/Tuple";
-import { Unit } from "../../Data/Unit";
 import { bind, pure } from "../../System/IO";
 import { pipe } from "./pipe";
 
@@ -18,41 +16,37 @@ import IO = Internals.IO
  * Prints windows' web page as PDF with Chromium's preview printing custom settings.
  */
 export const windowPrintToPDF =
-  (options: Electron.PrintToPDFOptions) =>
-    IO (async () => new Promise<Buffer> ((res, rej) => remote
-                                                         .getCurrentWindow ()
-                                                         .webContents
-                                                         .printToPDF (
-                                                           options,
-                                                           (error, data) => error !== null
-                                                                              ? rej (error)
-                                                                              : res (data)
-                                                         )))
+  (options: Electron.PrintToPDFOptions): IO<Buffer> =>
+    IO (async () => remote .getCurrentWindow ()
+                           .webContents
+                           .printToPDF (options))
 
 /**
  * Shows a native save dialog.
  */
 export const showSaveDialog =
-  (options: Electron.SaveDialogOptions) =>
-    IO (async () => new Promise<string> (res => remote.dialog.showSaveDialog (
-                                                 remote .getCurrentWindow (),
-                                                 options,
-                                                 res
-                                               )))
+  (options: Electron.SaveDialogOptions): IO<Maybe<string>> =>
+    IO (async () => remote.dialog.showSaveDialog (
+                      remote .getCurrentWindow (),
+                      options
+                    )
+                    .then (res => then (guard (!res .canceled))  (normalize (res .filePath))))
 
 /**
  * Shows a native open dialog.
  */
 export const showOpenDialog =
-  (options: Electron.OpenDialogOptions) =>
-    IO (async () => new Promise<List<string>> (res => remote.dialog.showOpenDialog (
-                                                       remote .getCurrentWindow (),
-                                                       options,
-                                                       pipe (
-                                                         normalize,
-                                                         fmap (pipe (fromArray, res, cnst (Unit))
-                                                       ))
-                                                     )))
+  (options: Electron.OpenDialogOptions): IO<List<string>> =>
+    IO (async () => remote.dialog.showOpenDialog (
+                      remote .getCurrentWindow (),
+                      options
+                    )
+                    .then (pipe (
+                      res => res .filePaths,
+                      normalize,
+                      fmap (fromArray),
+                      joinMaybeList
+                    )))
 
 export const NothingIO = pure (Nothing)
 
