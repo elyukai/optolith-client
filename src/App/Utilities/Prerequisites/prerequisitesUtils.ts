@@ -143,6 +143,7 @@ export const getGeneratedPrerequisites =
                     (findSelectOption (wiki_entry) (sid))
       }
 
+      // Merkmalskenntnis
       case "SA_81":
         return addToSelectOptionReqs (Just (List (
           RequireActivatable ({
@@ -187,6 +188,15 @@ export const getGeneratedPrerequisites =
           })
         )))
       }
+
+      // Schönheit der Dar-Klajid
+      case "SA_1421":
+        return addToSelectOptionReqs (Just (List (
+          RequireActivatable ({
+            id: "DISADV_14",
+            active: false,
+          })
+        )))
     }
 
     return addToSelectOptionReqs (Nothing)

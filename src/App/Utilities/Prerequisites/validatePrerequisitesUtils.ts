@@ -434,7 +434,7 @@ export const validateLevel =
               !skipLevelCheck (entry) (max)
               // otherwise, validate them
               && !validatePrerequisites (wiki) (state) (snd (entry)) (sourceId)
-                // if *not* valid, set the max to be lower than the acutal
+                // if *not* valid, set the max to be lower than the actual
                 // current level (because it must not be reached)
                 ? Just (fst (entry) - 1)
                 // otherwise, just pass the previous max value
