@@ -2,7 +2,7 @@ import { notP } from "../../Data/Bool";
 import { flip, ident, join } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
 import { over, set } from "../../Data/Lens";
-import { consF, List } from "../../Data/List";
+import { consF, List, notElem } from "../../Data/List";
 import { and, elem, fromJust, isJust, isNothing, Just, or } from "../../Data/Maybe";
 import { insert, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
@@ -15,6 +15,7 @@ import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { Alert, User } from "../Models/Hero/heroTypeHelpers";
 import { getRuleBooksEnabledM } from "../Selectors/rulesSelectors";
 import { getCurrentCultureId, getCurrentHeroPresent, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase } from "../Selectors/stateSelectors";
+import { PHASE_1_PROFILE_TABS, PHASE_1_RCP_TABS } from "../Selectors/uilocationSelectors";
 import { composeL } from "../Utilities/compose";
 import { TabId } from "../Utilities/LocationUtils";
 import { pipe } from "../Utilities/pipe";
@@ -136,15 +137,22 @@ export const appPostReducer =
 
       case ActionTypes.UNDO: {
         return join (state => {
+          const current_tab = getCurrentTab (state)
+
           if (isNothing (getCurrentCultureId (state))
-              && getCurrentTab (state) === TabId.Professions) {
+              && current_tab === TabId.Professions) {
             return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
                        (TabId.Cultures)
           }
-
-          if (isNothing (getCurrentRaceId (state)) && getCurrentTab (state) === TabId.Cultures) {
+          else if (isNothing (getCurrentRaceId (state)) && current_tab === TabId.Cultures) {
             return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
                        (TabId.Races)
+          }
+          else if (elem (1) (getPhase (state))
+                   && notElem (current_tab) (PHASE_1_PROFILE_TABS)
+                   && notElem (current_tab) (PHASE_1_RCP_TABS)) {
+            return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
+                       (TabId.Professions)
           }
 
           const rule_books_enabled =
@@ -160,7 +168,7 @@ export const appPostReducer =
                               sourceBooksPairToTuple,
                               notP (flip (uncurry3 (isBookEnabled)) ("US25208"))
                             )))
-              && getCurrentTab (state) === TabId.ZoneArmor) {
+              && current_tab === TabId.ZoneArmor) {
             return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
                        (TabId.Equipment)
           }
@@ -171,11 +179,18 @@ export const appPostReducer =
 
       case ActionTypes.REDO: {
         return join (state => {
+          const current_tab = getCurrentTab (state)
+
           if (elem (2) (getPhase (previousState))
               && elem (3) (getPhase (state))
-              && List.elem (getCurrentTab (state)) (List (TabId.Advantages, TabId.Disadvantages))) {
+              && List.elem (current_tab) (List (TabId.Advantages, TabId.Disadvantages))) {
             return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
                        (TabId.Profile)
+          }
+          else if (elem (2) (getPhase (state))
+                   && List.elem (current_tab) (PHASE_1_RCP_TABS)) {
+            return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
+                       (TabId.Attributes)
           }
 
           return ident

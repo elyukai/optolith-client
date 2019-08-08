@@ -70,8 +70,6 @@ const loadDatabase =
       return res
     }
 
-console.log (join (user_data_path, "config.json"));
-
 const loadConfig = () =>
   pipe_ (
     join (user_data_path, "config.json"),
@@ -469,7 +467,8 @@ export const requestHeroExport =
           ],
           defaultPath: hero.name.replace (/\//, "\/"),
         }),
-        IO.bindF (flip (writeFile) (JSON.stringify (hero))),
+        IO.bindF (maybe (IO.pure<void> (undefined))
+                        (flip (writeFile) (JSON.stringify (hero)))),
         tryIO,
         fmap (res => {
           if (isRight (res)) {
@@ -639,12 +638,14 @@ export const requestPrintHeroToPDF =
         printBackground: true,
       }),
       fmap (flip (writeFile)),
-      IO.bindF (IO.bind (showSaveDialog ({
-                          title: translate (l10n) ("printcharactersheettopdf"),
-                          filters: [
-                            { name: "PDF", extensions: ["pdf"] },
-                          ],
-                        }))),
+      IO.bindF (f => IO.bind (showSaveDialog ({
+                               title: translate (l10n) ("printcharactersheettopdf"),
+                               filters: [
+                                 { name: "PDF", extensions: ["pdf"] },
+                               ],
+                             }))
+                             (maybe (IO.pure<void> (undefined))
+                                    (f))),
       tryIO,
       fmap (res => {
         if (isRight (res)) {

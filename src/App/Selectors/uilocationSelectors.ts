@@ -26,6 +26,12 @@ export const getIsHeroSection = createMaybeSelector (
   isHeroSectionTab
 )
 
+export const PHASE_1_PROFILE_TABS =
+  List (TabId.Profile, TabId.PersonalData, TabId.Pact, TabId.Rules)
+
+export const PHASE_1_RCP_TABS =
+  List (TabId.Races, TabId.Cultures, TabId.Professions)
+
 export const getTabs = createMaybeSelector (
   getIsMainSection,
   getIsHeroSection,
@@ -66,12 +72,12 @@ export const getTabs = createMaybeSelector (
           {
             id: TabId.Profile,
             label: translate (l10n) ("profile"),
-            subTabs: List (TabId.Profile, TabId.PersonalData, TabId.Pact, TabId.Rules),
+            subTabs: PHASE_1_PROFILE_TABS,
           },
           {
             id: TabId.Races,
             label: translate (l10n) ("racecultureandprofession"),
-            subTabs: List (TabId.Races, TabId.Cultures, TabId.Professions),
+            subTabs: PHASE_1_RCP_TABS,
           }
         )
       }

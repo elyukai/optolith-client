@@ -701,6 +701,7 @@ export const toL10n =
         "lesserpact": checkL10nNonEmptyString ("lesserpact"),
         "tribaltraditions": checkL10nNonEmptyString ("tribaltraditions"),
         "tribes": checkL10nNonEmptyStringList ("tribes"),
+        "saveheroerror": checkL10nNonEmptyString ("saveheroerror"),
       }
 
       return mapMNamed
@@ -1333,6 +1334,7 @@ export const toL10n =
           "lesserpact": res ["lesserpact"],
           "tribaltraditions": res ["tribaltraditions"],
           "tribes": res ["tribes"],
+          "saveheroerror": res ["saveheroerror"],
           // tslint:enable: no-string-literal
         }))
     }

@@ -27,7 +27,7 @@ import { getAPObjectMap } from "./adventurePointsSelectors";
 import { getAutomaticAdvantages } from "./rcpSelectors";
 import { EnabledSourceBooks, getRuleBooksEnabled } from "./rulesSelectors";
 import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
-import { getMagicalTraditionsFromHero, getMagicalTraditionsFromWiki } from "./spellsSelectors";
+import { getMagicalTraditionsFromHero } from "./spellsSelectors";
 import * as stateSelectors from "./stateSelectors";
 
 export const getExtendedSpecialAbilitiesToAdd = createMaybeSelector (
@@ -56,7 +56,6 @@ export const getInactiveForView =
                         stateSelectors.getLocaleAsProp,
                         getExtendedSpecialAbilitiesToAdd,
                         stateSelectors.getWiki,
-                        getMagicalTraditionsFromWiki,
                         getMagicalTraditionsFromHero,
                         getAutomaticAdvantages
                       )
@@ -66,7 +65,6 @@ export const getInactiveForView =
                          l10n,
                          validExtendedSpecialAbilities,
                          wiki,
-                         wiki_magical_traditions,
                          hero_magical_traditions,
                          automatic_advantages
                        ) =>
@@ -86,7 +84,6 @@ export const getInactiveForView =
                                                                    (automatic_advantages)
                                                                    (adventure_points)
                                                                    (validExtendedSpecialAbilities)
-                                                                   (wiki_magical_traditions)
                                                                    (hero_magical_traditions)
                                                                    (wiki_entry)
                                                                    (lookup (getId (wiki_entry))

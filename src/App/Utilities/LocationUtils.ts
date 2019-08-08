@@ -1,4 +1,4 @@
-import { elemF, List } from "../../Data/List";
+import { elemF, filter, List, notElemF } from "../../Data/List";
 
 export enum TabId {
   Herolist,
@@ -62,6 +62,27 @@ export const heroSectionTabs =
     TabId.ZoneArmor,
     TabId.Pets
   )
+
+export const generalHeroSectionTabs =
+  List<TabId> (
+    TabId.Profile,
+    TabId.PersonalData,
+    TabId.CharacterSheet,
+    TabId.Pact,
+    TabId.Rules
+  )
+
+export const phase1ExclusiveTabs =
+  List<TabId> (
+    TabId.Cultures,
+    TabId.Professions,
+    TabId.Races
+  )
+
+export const phase23Tabs =
+  filter ((tab: TabId) => notElemF (generalHeroSectionTabs) (tab)
+                          && notElemF (phase1ExclusiveTabs) (tab))
+         (heroSectionTabs)
 
 export const isMainSectionTab = elemF (mainSectionTabs)
 export const isHeroSectionTab = elemF (heroSectionTabs)

@@ -29,7 +29,7 @@ import { composeL } from "../Utilities/compose";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { prefixAdv, prefixDis, prefixSA } from "../Utilities/IDUtils";
-import { isOwnTradition, isSpellDecreasable, isSpellIncreasable, isUnfamiliarSpell } from "../Utilities/Increasable/spellUtils";
+import { isSpellDecreasable, isSpellIncreasable, isUnfamiliarSpell } from "../Utilities/Increasable/spellUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { validatePrerequisites } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
 import { filterByAvailability } from "../Utilities/RulesUtils";
@@ -330,14 +330,14 @@ export const getInactiveSpells = createMaybeSelector (
             const mhero_entry = lookup (k) (hero_spells)
 
             if (isSpellPrereqsValid (wiki_entry)
-                && isOwnTradition (trads_wiki) (wiki_entry)
+                && !isUnfamiliar (wiki_entry)
                 && Maybe.or (fmapF (msub_trad) (elemF (SA.subtradition (wiki_entry))))
                 && all (notP (ASDA.active)) (mhero_entry)) {
               return consF (SpellWithRequirements ({
                 wikiEntry: wiki_entry,
                 stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (k))
                                        (mhero_entry),
-                isUnfamiliar: isUnfamiliar (wiki_entry),
+                isUnfamiliar: false,
                 isDecreasable: Nothing,
                 isIncreasable: Nothing,
               }))
@@ -356,7 +356,7 @@ export const getInactiveSpells = createMaybeSelector (
 
           if ((!(is_max || is_activation_disabled) || SA.gr (wiki_entry) > 2)
               && isSpellPrereqsValid (wiki_entry)
-              && (isOwnTradition (trads_wiki) (wiki_entry)
+              && (!isUnfamiliar (wiki_entry)
                   || (SA.gr (wiki_entry) < 3 && !is_max_unfamiliar))
               && all (notP (ASDA.active)) (mhero_entry)) {
             return consF (SpellWithRequirements ({
@@ -467,12 +467,11 @@ export const getCantripsForSheet = createMaybeSelector (
 
 export const getSpellsForSheet = createMaybeSelector (
   getSpellsSortOptions,
-  getMagicalTraditionsFromWiki,
+  getMagicalTraditionsFromHero,
   getActiveSpells,
   uncurryN3 (sort_options =>
-              wiki_trads => fmap (pipe (
-                                   map (s => isOwnTradition (wiki_trads)
-                                                            (SWRA.wikiEntry (s))
+              hero_trads => fmap (pipe (
+                                   map (s => !isUnfamiliarSpell (hero_trads) (SWRA.wikiEntry (s))
                                                ? set (composeL (SWRL.wikiEntry, SL.tradition))
                                                      (List ())
                                                      (s)
