@@ -139,7 +139,7 @@ const isAdditionDisabledSpecialAbilitySpecific =
               (0)
               (allPactPresents)
 
-      const isGiftValid = all (pipe (category, lte (1))) (pact (hero)) // isFaeriePact?
+      const isDisabled = all (pipe (category, lte (1))) (pact (hero)) // isFaeriePact?
                             ? isMaybeActive (dunkles_abbild)
                               || all (pipe (level, lte (countPactPresents))) (pact (hero))
                             : all (pipe (level, lte (0))) (pact (hero)) // is Lesser Pact?
@@ -148,7 +148,7 @@ const isAdditionDisabledSpecialAbilitySpecific =
                                 // Normal DemonPact: KdV + 7 PactGifts
                                 : all (pipe (level, lte (countPactPresents - 7))) (pact (hero))
 
-      return isGiftValid
+      return isDisabled
     }
 
     if (current_id === "SA_699") {
