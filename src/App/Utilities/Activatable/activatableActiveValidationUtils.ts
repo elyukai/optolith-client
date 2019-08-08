@@ -9,12 +9,14 @@ import { notP } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
-import { all, any, countWith, elem, filter, find, flength, foldl, intersect, isList, List, mapByIdKeyMap, notElem, notElemF, sdelete } from "../../../Data/List";
+import { all, any, countWith, elem, elemF, filter, find, flength, foldl, intersect, isList, List, mapByIdKeyMap, notElem, notElemF, sdelete } from "../../../Data/List";
 import { alt, bind, bindF, ensure, fromJust, isJust, isNothing, Just, liftM2, Maybe, maybe, Nothing, or, sum } from "../../../Data/Maybe";
 import { add, gt, gte, inc, lte, max, min, subtract, subtractBy } from "../../../Data/Num";
 import { elems, isOrderedMap, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { size } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
+import { Tuple } from "../../../Data/Tuple";
+import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select";
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -94,8 +96,10 @@ const isRequiredByOthers =
 const isRemovalDisabledEntrySpecific =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
+  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (wiki_entry: Activatable) =>
   (hero_entry: Record<ActivatableDependent>) =>
+  // tslint:disable-next-line: cyclomatic-complexity
   (active: Record<ActiveObject>): boolean => {
     const mstart_el =
       lookupF (WikiModel.AL.experienceLevels (wiki))
@@ -139,6 +143,42 @@ const isRemovalDisabledEntrySpecific =
 
         // if the maximum value is reached removal needs to be disabled
         return maybe (true) (pipe (ELA.maxCombatTechniqueRating, inc, lte (value))) (mstart_el)
+      }
+
+      // Scripts
+      case "SA_27": {
+        if (sel1 (matching_script_and_lang_related)) {
+          const active_matching_scripts = sel2 (matching_script_and_lang_related)
+
+          return flength (active_matching_scripts) !== 1
+            ? false
+            : pipe_ (
+                AOA.sid (active),
+                misNumberM,
+                maybe (false) (elemF (active_matching_scripts))
+              )
+        }
+        else {
+          return false
+        }
+      }
+
+      // Languages
+      case "SA_29": {
+        if (sel1 (matching_script_and_lang_related)) {
+          const active_matching_languages = sel3 (matching_script_and_lang_related)
+
+          return flength (active_matching_languages) !== 1
+            ? false
+            : pipe_ (
+                AOA.sid (active),
+                misNumberM,
+                maybe (false) (elemF (active_matching_languages))
+              )
+        }
+        else {
+          return false
+        }
       }
 
       // Magical traditions
@@ -560,6 +600,7 @@ export const getMaxTier =
 export const getIsRemovalOrChangeDisabled =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
+  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableActivationValidation>> =>
     pipe (
            getWikiEntry (wiki),
@@ -605,6 +646,7 @@ export const getIsRemovalOrChangeDisabled =
                        // remove
                        || isRemovalDisabledEntrySpecific (wiki)
                                                          (hero)
+                                                         (matching_script_and_lang_related)
                                                          (wiki_entry)
                                                          (hero_entry)
                                                          (entry),

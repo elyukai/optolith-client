@@ -14,6 +14,8 @@ import { all, any, bind, bindF, fromMaybe, isJust, listToMaybe, Maybe, sum } fro
 import { add, inc, lte } from "../../../Data/Num";
 import { isOrderedMap, lookup } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { Tuple } from "../../../Data/Tuple";
+import { sel2, sel3 } from "../../../Data/Tuple/Select";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -65,6 +67,7 @@ const isAdditionDisabledForCombatStyle =
 const isAdditionDisabledSpecialAbilitySpecific =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
+  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (wiki_entry: Record<SpecialAbility>): boolean => {
     const current_id = AAL.id (wiki_entry)
 
@@ -104,6 +107,12 @@ const isAdditionDisabledSpecialAbilitySpecific =
     // Dunkles Abbild der Bündnisgabe
     if (current_id === "SA_667") {
       return hasActiveGroupEntry (wiki) (hero) (30)
+    }
+
+    // Weg der Schreiberin
+    if (current_id === "SA_1075") {
+      return flength (sel2 (matching_script_and_lang_related)) >= 1
+             && flength (sel3 (matching_script_and_lang_related)) >= 1
     }
 
     // Pact Gifts
@@ -164,9 +173,13 @@ const isAdditionDisabledSpecialAbilitySpecific =
 const isAdditionDisabledEntrySpecific =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
+  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (wiki_entry: Activatable): boolean =>
     isSpecialAbility (wiki_entry)
-    && isAdditionDisabledSpecialAbilitySpecific (wiki) (hero) (wiki_entry)
+    && isAdditionDisabledSpecialAbilitySpecific (wiki)
+                                                (hero)
+                                                (matching_script_and_lang_related)
+                                                (wiki_entry)
     || !validatePrerequisites (wiki)
                               (hero)
                               (getFirstLevelPrerequisites (AAL.prerequisites (wiki_entry)))
@@ -200,10 +213,11 @@ export const isAdditionDisabled =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
   (validExtendedSpecialAbilities: List<string>) =>
+  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (wiki_entry: Activatable) =>
   (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
   (max_level: Maybe<number>): boolean =>
-    isAdditionDisabledEntrySpecific (wiki) (hero) (wiki_entry)
+    isAdditionDisabledEntrySpecific (wiki) (hero) (matching_script_and_lang_related) (wiki_entry)
     || hasGeneralRestrictionToAdd (mhero_entry)
     || hasReachedMaximumEntries (wiki_entry) (mhero_entry)
     || hasReachedImpossibleMaximumLevel (max_level)

@@ -20,7 +20,7 @@ const getFirstActive =
  * base `mbase_mod`. If the entry `mincrease`, that should increase the base, is
  * active, it adds the level to the base. If the entry `mdecrease`, that should
  * decrease the base, is active, it subtracts the level from the base. If the
- * passed base is `Nothing`, this function returns `0`.
+ * passed base is `Nothing`, this function always returns `0`.
  */
 export const getModifierByActiveLevel =
   (mbase_mod: Maybe<number>) =>
@@ -53,7 +53,7 @@ export const getModifierByActiveLevel =
  * base `mbase_mod`. If the entry `mincrease`, that should increase the base, is
  * active, it adds `1` to the base. If the entry `mdecrease`, that should
  * decrease the base, is active, it subtracts `1` from the base. If the
- * passed base is `Nothing`, this function returns `0`.
+ * passed base is `Nothing`, this function always returns `0`.
  */
 export const getModifierByIsActive =
   (mbase_mod: Maybe<number>) =>

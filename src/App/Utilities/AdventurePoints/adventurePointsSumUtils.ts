@@ -7,7 +7,7 @@ import { add, multiply } from "../../../Data/Num";
 import { foldr, lookupF } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
-import { bimap, first, fst, Pair, snd } from "../../../Data/Tuple";
+import { bimap, first, fst, Pair, snd, Tuple } from "../../../Data/Tuple";
 import { Categories } from "../../Constants/Categories";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
@@ -289,7 +289,8 @@ export const getAPObject =
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
-  (automatic_advantages: List<string>) => {
+  (automatic_advantages: List<string>) =>
+  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) => {
     const total = HeroModel.A.adventurePointsTotal (hero)
 
     const spentOnAttributes = getAPSpentForAttributes (HeroModel.A.attributes (hero))
@@ -326,6 +327,7 @@ export const getAPObject =
                                     (getAllActiveByCategory (Categories.SPECIAL_ABILITIES)
                                                             (false)
                                                             (automatic_advantages)
+                                                            (matching_script_and_lang_related)
                                                             (l10n)
                                                             (wiki)
                                                             (hero))
@@ -335,6 +337,7 @@ export const getAPObject =
                                 (getAllActiveByCategory (Categories.ADVANTAGES)
                                                         (false)
                                                         (automatic_advantages)
+                                                        (matching_script_and_lang_related)
                                                         (l10n)
                                                         (wiki)
                                                         (hero))
@@ -344,6 +347,7 @@ export const getAPObject =
                                         (getAllActiveByCategory (Categories.ADVANTAGES)
                                                                 (false)
                                                                 (automatic_advantages)
+                                                                (matching_script_and_lang_related)
                                                                 (l10n)
                                                                 (wiki)
                                                                 (hero))
@@ -353,6 +357,7 @@ export const getAPObject =
                                         (getAllActiveByCategory (Categories.ADVANTAGES)
                                                                 (false)
                                                                 (automatic_advantages)
+                                                                (matching_script_and_lang_related)
                                                                 (l10n)
                                                                 (wiki)
                                                                 (hero))
@@ -362,6 +367,7 @@ export const getAPObject =
                                     (getAllActiveByCategory (Categories.DISADVANTAGES)
                                                             (false)
                                                             (automatic_advantages)
+                                                            (matching_script_and_lang_related)
                                                             (l10n)
                                                             (wiki)
                                                             (hero))
@@ -371,6 +377,7 @@ export const getAPObject =
                                           (getAllActiveByCategory (Categories.DISADVANTAGES)
                                                                   (false)
                                                                   (automatic_advantages)
+                                                                  (matching_script_and_lang_related)
                                                                   (l10n)
                                                                   (wiki)
                                                                   (hero))
@@ -380,6 +387,7 @@ export const getAPObject =
                                           (getAllActiveByCategory (Categories.DISADVANTAGES)
                                                                   (false)
                                                                   (automatic_advantages)
+                                                                  (matching_script_and_lang_related)
                                                                   (l10n)
                                                                   (wiki)
                                                                   (hero))

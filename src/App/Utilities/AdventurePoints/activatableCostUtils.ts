@@ -96,23 +96,35 @@ const getEntrySpecificCost =
       // Wissensdurst
       case "SA_531":
       // Lieblingsliturgie
-      case "SA_569": {
-        type NumList = List<number>
+      case "SA_569":
+      // Weg der Gelehrten
+      case "SA_1040":
+      // Fachwissen
+      case "SA_1100":
+      // Handwerkskunst
+      case "SA_1108":
+      // Kind der Natur
+      case "SA_1110":
+      // Körperliches Geschick
+      case "SA_1112":
+      // Soziale Kompetenz
+      case "SA_1123":
+      // Universalgenie
+      case "SA_1127": {
+        return pipe_ (
+          mcurrent_sid,
+          misStringM,
+          bindF (getWikiEntry (wiki)),
+          bindF<EntryWithCategory, SkillishEntry> (ensure (isSkillishWikiEntry)),
+          bindF (skill => pipe_ (
+                            mcurrent_cost,
+                            bindF (ensure (isList)),
 
-        return pipe (
-                      misStringM,
-                      bindF (getWikiEntry (wiki)),
-                      bindF<EntryWithCategory, SkillishEntry> (ensure (isSkillishWikiEntry)),
-                      bindF (skill => pipe (
-                                        bindF<number | NumList, NumList> (ensure (isList)),
-
-                                        // Use the IC as an index for the list
-                                        // of AP
-                                        bindF (subscriptF (Skill.AL.ic (skill) - 1))
-                                      )
-                                      (mcurrent_cost))
-                    )
-                    (mcurrent_sid)
+                            // Use the IC as an index for the list
+                            // of AP
+                            bindF (subscriptF (Skill.AL.ic (skill) - 1))
+                          ))
+        )
       }
 
       // Personality Flaw

@@ -1350,6 +1350,22 @@ List.lines = lines
 // "SET" OPERATIONS
 
 /**
+ * `nub :: Eq a => [a] -> [a]`
+ *
+ * The `nub` function removes duplicate elements from a list. In particular, it
+ * keeps only the first occurrence of each element. (The name `nub` means
+ * 'essence'.) It is a special case of `nubBy`, which allows the programmer to
+ * supply their own equality test.
+ */
+export const nub =
+  <A> (xs: List<A>) =>
+    foldr<A, List<A>> (x => acc => notElem (x) (acc) ? cons (acc) (x) : acc)
+                      (List ())
+                      (xs)
+
+List.nub = nub
+
+/**
  * `delete :: Eq a => a -> [a] -> [a]`
  *
  * `delete x` removes the first occurrence of `x` from its list argument.

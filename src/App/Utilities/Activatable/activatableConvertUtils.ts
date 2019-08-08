@@ -14,11 +14,10 @@ import { mergeSafeR2, Record } from "../../../Data/Record";
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
+import { toActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
 import { pipe, pipe_ } from "../pipe";
 
 const ADA = ActivatableDependent.A
-const AOA = ActiveObject.A
 const AAOA = ActivatableActivationOptions.A
 
 /**
@@ -69,16 +68,7 @@ export const convertActivatableToArray =
     pipe_ (
             x,
             ADA.active,
-            imap (
-              index => e => ActiveObjectWithId ({
-                                                id: ADA.id (x),
-                                                index,
-                                                sid: AOA.sid (e),
-                                                sid2: AOA.sid2 (e),
-                                                tier: AOA.tier (e),
-                                                cost: AOA.cost (e),
-                                              })
-            )
+            imap (index => toActiveObjectWithId (index) (ADA.id (x)))
           )
 
 /**

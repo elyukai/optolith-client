@@ -1,31 +1,33 @@
 import * as React from "react";
 import { bool_ } from "../../../Data/Bool";
-import { equals } from "../../../Data/Eq";
+import { equals, notEquals } from "../../../Data/Eq";
 import { Functn, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
-import { countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, subscript, subscriptF, sum, take } from "../../../Data/List";
+import { countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, notNull, subscript, subscriptF, sum, take } from "../../../Data/List";
 import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, or, then, thenF } from "../../../Data/Maybe";
 import { dec, gte, max, min, multiply, negate } from "../../../Data/Num";
+import { lookupF } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Omit, Record } from "../../../Data/Record";
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple";
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
+import { InactiveActivatable, InactiveActivatableA_ } from "../../Models/View/InactiveActivatable";
 import { Disadvantage } from "../../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Skill } from "../../Models/Wiki/Skill";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Application } from "../../Models/Wiki/sub/Application";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { ActivatableAddListItemState } from "../../Views/Activatable/ActivatableAddListItem";
 import { Dropdown, DropdownOption } from "../../Views/Universal/Dropdown";
 import { TextField } from "../../Views/Universal/TextField";
 import { getActiveWithNoCustomCost } from "../AdventurePoints/activatableCostUtils";
 import { translate } from "../I18n";
+import { prefixSkill } from "../IDUtils";
 import { getLevelElementsWithMin } from "../levelUtils";
 import { toInt } from "../NumberUtils";
 import { pipe, pipe_ } from "../pipe";
@@ -42,6 +44,7 @@ interface PropertiesAffectedByState {
   selectElement: Maybe<JSX.Element>
   firstSelectOptions: Maybe<List<Record<SelectOption>>>
   secondSelectOptions: Maybe<List<Record<SelectOption>>>
+  thirdSelectOptions: Maybe<List<Record<SelectOption>>>
   inputElement: Maybe<JSX.Element>
   inputDescription: Maybe<string>
 }
@@ -53,6 +56,7 @@ export const PropertiesAffectedByState =
                 selectElement: Nothing,
                 firstSelectOptions: Nothing,
                 secondSelectOptions: Nothing,
+                thirdSelectOptions: Nothing,
                 inputElement: Nothing,
                 inputDescription: Nothing,
               })
@@ -63,6 +67,7 @@ interface InactiveActivatableControlElements {
   disabled: Maybe<boolean>
   selectElement: Maybe<JSX.Element>
   secondSelectElement: Maybe<JSX.Element>
+  thirdSelectElement: Maybe<JSX.Element>
   inputElement: Maybe<JSX.Element>
   levelElementBefore: Maybe<JSX.Element>
   levelElementAfter: Maybe<JSX.Element>
@@ -73,6 +78,7 @@ export const InactiveActivatableControlElements =
                 disabled: Nothing,
                 selectElement: Nothing,
                 secondSelectElement: Nothing,
+                thirdSelectElement: Nothing,
                 inputElement: Nothing,
                 levelElementBefore: Nothing,
                 levelElementAfter: Nothing,
@@ -80,10 +86,13 @@ export const InactiveActivatableControlElements =
 
 const InactiveActivatableControlElementsL = makeLenses (InactiveActivatableControlElements)
 
+const WA = WikiModel.A
 const IAA = InactiveActivatable.A
+const IAA_ = InactiveActivatableA_
 const SAAL = SpecialAbility.AL
 const ADA = ActivatableDependent.A
 const SOA = SelectOption.A
+const SkA = Skill.A
 const SkAL = Skill.AL
 const AOA = ActiveObject.A
 const AA = Application.A
@@ -165,6 +174,7 @@ export const getIdSpecificAffectedAndDispatchProps =
     const id = IAA.id (entry)
     const mselected = Maybe (selectedOptions.selected)
     const mselected2 = Maybe (selectedOptions.selected2)
+    const mselected3 = Maybe (selectedOptions.selected3)
     const minput_text = Maybe (selectedOptions.input)
     const mselected_level = Maybe (selectedOptions.selectedTier)
 
@@ -177,11 +187,24 @@ export const getIdSpecificAffectedAndDispatchProps =
       case "DISADV_48":
       case "SA_231":
       case "SA_250":
-      case "SA_569":
       case "SA_472":
       case "SA_473":
       case "SA_531":
-      case "SA_533": {
+      case "SA_533":
+      // Lieblingsliturgie
+      case "SA_569":
+      // Weg der Gelehrten
+      case "SA_1040":
+      // Handwerkskunst
+      case "SA_1108":
+      // Kind der Natur
+      case "SA_1110":
+      // Körperliches Geschick
+      case "SA_1112":
+      // Soziale Kompetenz
+      case "SA_1123":
+      // Universalgenie
+      case "SA_1127": {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -510,6 +533,56 @@ export const getIdSpecificAffectedAndDispatchProps =
                                            src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
                                          })))
               ),
+          })
+        )
+      }
+
+      // Fachwissen
+      case "SA_1100": {
+        const getApps =
+          (mother_id: Maybe<string | number>) =>
+            pipe_ (
+              mselected,
+              bindF (pipe (
+                prefixSkill,
+                lookupF (WA.skills (wiki))
+              )),
+              fmap (SkA.applications),
+              joinMaybeList,
+              maybe (ident as ident<List<Record<Application>>>)
+                    ((other_id: string | number) => filter (pipe (AA.id, notEquals (other_id))))
+                    (mother_id),
+              ensure (notNull),
+              fmap (map (e => SelectOption ({
+                                id: AA.id (e),
+                                name: AA.name (e),
+                                src: IAA_.src (entry),
+                              })))
+            )
+
+        return Pair (
+          ActivatableActivationOptions ({
+            id,
+            selectOptionId1: mselected,
+            selectOptionId2: mselected2,
+            selectOptionId3: mselected3,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost:
+              pipe_ (
+                mselected,
+                misStringM,
+                bindF (getWikiEntry (wiki)),
+                bindF (ensure (isSkillishWikiEntry)),
+                bindF (pipe (
+                  SkAL.ic,
+                  dec,
+                  i => pipe_ (entry, IAA.cost, bindF (ensure (isList)), bindF (subscriptF (i)))
+                ))
+              ),
+            secondSelectOptions: getApps (mselected3),
+            thirdSelectOptions: getApps (mselected2),
           })
         )
       }

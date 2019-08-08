@@ -54,6 +54,7 @@ export type ActivatableAddListItemProps =
 export interface ActivatableAddListItemState {
   selected?: string | number
   selected2?: string | number
+  selected3?: string | number
   selectedTier?: number
   input?: string
   input2?: string
@@ -76,12 +77,19 @@ export class ActivatableAddListItem extends
     this.setState (() => ({
       selected: maybeToUndefined (selected),
       selected2: undefined,
+      selected3: undefined,
     }))
   }
 
   handleSelect2 = (selected2: Maybe<string | number>) => {
     this.setState ({
       selected2: maybeToUndefined (selected2),
+    })
+  }
+
+  handleSelect3 = (selected3: Maybe<string | number>) => {
+    this.setState ({
+      selected3: maybeToUndefined (selected3),
     })
   }
 
@@ -135,6 +143,7 @@ export class ActivatableAddListItem extends
         input2: undefined,
         selected: undefined,
         selected2: undefined,
+        selected3: undefined,
         selectedTier: undefined,
         customCost: undefined,
       })
@@ -205,6 +214,7 @@ export class ActivatableAddListItem extends
     const mlevelElementAfter = IACEA.levelElementAfter (controlElements)
     const mselectElement = IACEA.selectElement (controlElements)
     const msecondSelectElement = IACEA.secondSelectElement (controlElements)
+    const mthirdSelectElement = IACEA.thirdSelectElement (controlElements)
     const minputElement = IACEA.inputElement (controlElements)
     const mdisabled = IACEA.disabled (controlElements)
 
@@ -220,6 +230,7 @@ export class ActivatableAddListItem extends
           {fromMaybeR (null) (mlevelElementBefore)}
           {fromMaybeR (null) (mselectElement)}
           {fromMaybeR (null) (msecondSelectElement)}
+          {fromMaybeR (null) (mthirdSelectElement)}
           {fromMaybeR (null) (minputElement)}
           {fromMaybeR (null) (mlevelElementAfter)}
         </ListItemLeft>

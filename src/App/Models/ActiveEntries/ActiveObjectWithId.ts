@@ -15,6 +15,7 @@ export const ActiveObjectWithId =
                 cost: Nothing,
                 sid: Nothing,
                 sid2: Nothing,
+                sid3: Nothing,
                 tier: Nothing,
               })
 
@@ -30,6 +31,7 @@ export const toActiveObjectWithId =
       cost: ActiveObject.A.cost (active),
       sid: ActiveObject.A.sid (active),
       sid2: ActiveObject.A.sid2 (active),
+      sid3: ActiveObject.A.sid3 (active),
       tier: ActiveObject.A.tier (active),
     })
 
@@ -39,5 +41,6 @@ export const fromActiveObjectWithId =
       cost: ActiveObject.A.cost (active),
       sid: ActiveObject.A.sid (active),
       sid2: ActiveObject.A.sid2 (active),
+      sid3: ActiveObject.A.sid3 (active),
       tier: ActiveObject.A.tier (active),
     })

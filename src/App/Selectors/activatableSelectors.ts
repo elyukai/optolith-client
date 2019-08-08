@@ -1,10 +1,12 @@
+import { equals } from "../../Data/Eq";
 import { flip, ident } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
-import { consF, elem, filter, filterMulti, foldr, intercalate, List, map, notElemF } from "../../Data/List";
-import { bindF, fromMaybe, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
+import { any, consF, elem, filter, filterMulti, find, foldr, intercalate, List, map, notElemF, nub } from "../../Data/List";
+import { bindF, elemF, ensure, fromMaybe, joinMaybeList, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { insert, lookup, OrderedMap } from "../../Data/OrderedMap";
 import { member, OrderedSet } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
+import { fst, Pair, snd, Tuple } from "../../Data/Tuple";
 import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
 import { ActivatableCategory, Categories } from "../Constants/Categories";
 import { IdPrefixes } from "../Constants/IdPrefixes";
@@ -23,10 +25,12 @@ import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { Profession } from "../Models/Wiki/Profession";
 import { Race } from "../Models/Wiki/Race";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
+import { SelectOption } from "../Models/Wiki/sub/SelectOption";
 import { heroReducer } from "../Reducers/heroReducer";
 import { getAllActiveByCategory } from "../Utilities/Activatable/activatableActiveUtils";
-import { getModifierByActiveLevel, getModifierByIsActive } from "../Utilities/Activatable/activatableModifierUtils";
+import { getModifierByActiveLevel } from "../Utilities/Activatable/activatableModifierUtils";
 import { getBracketedNameFromFullName } from "../Utilities/Activatable/activatableNameUtils";
+import { isMaybeActive } from "../Utilities/Activatable/isActive";
 import { getActiveSelections, getSelectOptionName } from "../Utilities/Activatable/selectionUtils";
 import { createMapSelectorP } from "../Utilities/createMapSelector";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
@@ -37,7 +41,7 @@ import { pipe, pipe_ } from "../Utilities/pipe";
 import { mapCurrentHero, mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
 import { blessedSpecialAbilityGroups, combatSpecialAbilityGroups, generalSpecialAbilityGroups, magicalSpecialAbilityGroups } from "../Utilities/sheetUtils";
 import { comparingR, sortStrings } from "../Utilities/sortBy";
-import { misStringM } from "../Utilities/typeCheckUtils";
+import { misNumberM, misStringM } from "../Utilities/typeCheckUtils";
 import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors";
 import { getAutomaticAdvantages, getCurrentCulture, getCurrentProfession, getRace } from "./rcpSelectors";
 import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
@@ -45,6 +49,88 @@ import { getMagicalTraditionsFromWiki } from "./spellsSelectors";
 import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getHeroes, getLocaleAsProp, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from "./stateSelectors";
 
 const AAA_ = ActiveActivatableA_
+const SAA = SpecialAbility.A
+const ADA = ActivatableDependent.A
+const AOA = ActiveObject.A
+const SOA = SelectOption.A
+
+const getSelectOptions = pipe (bindF (SAA.select), joinMaybeList)
+const mapActiveObjects =
+  (sos: List<Record<SelectOption>>) =>
+    pipe (
+      fmap (ADA.active) as
+        (m: Maybe<Record<ActivatableDependent>>) => Maybe<List<Record<ActiveObject>>>,
+      joinMaybeList,
+      mapMaybe (pipe (AOA.sid, sid => find (pipe (SOA.id, elemF (sid))) (sos)))
+    )
+
+export const getActiveScriptsAndLanguages = createMaybeSelector (
+  mapGetToSlice (getSpecialAbilities) (prefixSA (27)),
+  mapGetToSlice (getWikiSpecialAbilities) (prefixSA (27)),
+  mapGetToSlice (getSpecialAbilities) (prefixSA (29)),
+  mapGetToSlice (getWikiSpecialAbilities) (prefixSA (29)),
+  (mscripts_hero, scripts_wiki, mlanguages_hero, languages_wiki) => {
+    const scripts = getSelectOptions (scripts_wiki)
+    const languages = getSelectOptions (languages_wiki)
+
+    const active_scripts = mapActiveObjects (scripts) (mscripts_hero)
+    const active_languages = mapActiveObjects (languages) (mlanguages_hero)
+
+    return Pair (active_scripts, active_languages)
+  }
+)
+
+export const getScriptsWithMatchingLanguages = createMaybeSelector (
+  getActiveScriptsAndLanguages,
+  p => {
+    const active_scripts = fst (p)
+    const active_languages = snd (p)
+
+    return mapMaybe (pipe (
+                      ensure (pipe (
+                        SOA.languages,
+                        joinMaybeList,
+                        any (id => any (pipe (SOA.id, equals<string | number> (id)))
+                                       (active_languages))
+                      )),
+                      fmap (SOA.id),
+                      misNumberM
+                    ))
+                    (active_scripts)
+  }
+)
+
+export const getLanguagesWithMatchingScripts = createMaybeSelector (
+  getActiveScriptsAndLanguages,
+  p => {
+    const active_scripts = fst (p)
+    const active_languages = snd (p)
+
+    return nub (mapMaybe (pipe (
+                           SOA.languages,
+                           joinMaybeList,
+                           find (id => any (pipe (SOA.id, equals<string | number> (id)))
+                                           (active_languages))
+                         ))
+                         (active_scripts))
+  }
+)
+
+export const isEntryRequiringMatchingScriptAndLangActive = createMaybeSelector (
+  getSpecialAbilities,
+  pipe (
+    lookup ("SA_1075"),
+    isMaybeActive
+  )
+)
+
+export const getMatchingScriptAndLangRelated = createMaybeSelector (
+  isEntryRequiringMatchingScriptAndLangActive,
+  getScriptsWithMatchingLanguages,
+  getLanguagesWithMatchingScripts,
+  // tslint:disable-next-line: no-unnecessary-callback-wrapper
+  (is, scripts, langs) => Tuple (is, scripts, langs)
+)
 
 export const getActive = <T extends ActivatableCategory>(category: T, addLevelToName: boolean) =>
   createMaybeSelector (
@@ -52,10 +138,12 @@ export const getActive = <T extends ActivatableCategory>(category: T, addLevelTo
     getWiki,
     getCurrentHeroPresent,
     getAutomaticAdvantages,
-    (l10n, wiki, mhero, automatic_advantages) =>
+    getMatchingScriptAndLangRelated,
+    (l10n, wiki, mhero, automatic_advantages, matching_script_and_lang_related) =>
       fmapF (mhero) (getAllActiveByCategory (category)
                                             (addLevelToName)
                                             (automatic_advantages)
+                                            (matching_script_and_lang_related)
                                             (l10n)
                                             (wiki))
   )
@@ -65,12 +153,18 @@ export const getActiveMap =
   <T extends ActivatableCategory>
   (category: T) =>
     createMapSelectorP (getHeroes)
-                       (getWiki, getLocaleAsProp, getAutomaticAdvantages)
+                       (
+                         getWiki,
+                         getLocaleAsProp,
+                         getAutomaticAdvantages,
+                         getMatchingScriptAndLangRelated
+                       )
                        (heroReducer.A.present)
-                       ((wiki, l10n, automatic_advantages) =>
+                       ((wiki, l10n, automatic_advantages, matching_script_and_lang_related) =>
                          getAllActiveByCategory (category)
                                                 (addLevelToName)
                                                 (automatic_advantages)
+                                                (matching_script_and_lang_related)
                                                 (l10n)
                                                 (wiki))
 
@@ -305,7 +399,7 @@ export const getBlessedSpecialAbilitiesForSheet = createMaybeSelector (
 export const getFatePointsModifier = createMaybeSelector (
   mapGetToMaybeSlice (getAdvantages) ("ADV_14"),
   mapGetToMaybeSlice (getDisadvantages) ("DISADV_31"),
-  uncurryN (getModifierByIsActive (Nothing))
+  uncurryN (getModifierByActiveLevel (Just (0)))
 )
 
 export const getMagicalTraditionForSheet = createMaybeSelector (

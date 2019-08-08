@@ -1,6 +1,7 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
+import { pipe } from "../../Utilities/pipe";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { Advantage } from "../Wiki/Advantage";
 import { SelectOption } from "../Wiki/sub/SelectOption";
@@ -33,5 +34,9 @@ export const InactiveActivatable =
                 customCostDisabled: Nothing,
                 isAutomatic: false,
               })
+
+export const InactiveActivatableA_ = {
+  src: pipe (InactiveActivatable.A.wikiEntry, Advantage.AL.src),
+}
 
 export const InactiveActivatableL = makeLenses (InactiveActivatable)

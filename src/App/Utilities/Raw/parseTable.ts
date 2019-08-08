@@ -148,7 +148,7 @@ export const parseTables =
     const l10n_path = path.join (app_path, "app", "Database", locale, "l10n.xlsx")
 
     try {
-      univ_wb = xlsx.readFile (univ_path, { raw: true })
+      univ_wb = xlsx.readFile (univ_path)
     }
     catch (e) {
       console.error (e)
@@ -157,7 +157,7 @@ export const parseTables =
     }
 
     try {
-      l10n_wb = xlsx.readFile (l10n_path, { raw: true })
+      l10n_wb = xlsx.readFile (l10n_path)
     }
     catch (e) {
       console.error (e)

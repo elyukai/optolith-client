@@ -19,7 +19,7 @@ import { add, dec, gt, gte, inc, multiply } from "../../../Data/Num";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { Record, RecordI } from "../../../Data/Record";
 import { filterMapListT, filterT, mapT } from "../../../Data/Transducer";
-import { fst, Pair, snd } from "../../../Data/Tuple";
+import { fst, Pair, snd, Tuple } from "../../../Data/Tuple";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -834,6 +834,7 @@ export const getInactiveView =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
   (automatic_advantages: List<string>) =>
+  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (adventure_points: Record<AdventurePointsCategories>) =>
   (validExtendedSpecialAbilities: List<string>) =>
   (hero_magical_traditions: List<Record<ActivatableDependent>>) =>
@@ -855,6 +856,7 @@ export const getInactiveView =
     const isNotValid = isAdditionDisabled (wiki)
                                           (hero)
                                           (validExtendedSpecialAbilities)
+                                          (matching_script_and_lang_related)
                                           (wiki_entry)
                                           (mhero_entry)
                                           (max_level)

@@ -23,6 +23,7 @@ import { pipe } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { sortRecordsBy } from "../Utilities/sortBy";
 import { getWikiSliceGetterByCategory } from "../Utilities/WikiUtils";
+import { getMatchingScriptAndLangRelated } from "./activatableSelectors";
 import { getAPObjectMap } from "./adventurePointsSelectors";
 import { getAutomaticAdvantages } from "./rcpSelectors";
 import { EnabledSourceBooks, getRuleBooksEnabled } from "./rulesSelectors";
@@ -57,7 +58,8 @@ export const getInactiveForView =
                         getExtendedSpecialAbilitiesToAdd,
                         stateSelectors.getWiki,
                         getMagicalTraditionsFromHero,
-                        getAutomaticAdvantages
+                        getAutomaticAdvantages,
+                        getMatchingScriptAndLangRelated
                       )
                       (heroReducer.A.present)
                       (madventure_points =>
@@ -66,7 +68,8 @@ export const getInactiveForView =
                          validExtendedSpecialAbilities,
                          wiki,
                          hero_magical_traditions,
-                         automatic_advantages
+                         automatic_advantages,
+                         matching_script_and_lang_rel
                        ) =>
                        (hero): Inactives<T> =>
                          fmapF (join (madventure_points))
@@ -82,6 +85,7 @@ export const getInactiveForView =
                                                                    (wiki)
                                                                    (hero)
                                                                    (automatic_advantages)
+                                                                   (matching_script_and_lang_rel)
                                                                    (adventure_points)
                                                                    (validExtendedSpecialAbilities)
                                                                    (hero_magical_traditions)

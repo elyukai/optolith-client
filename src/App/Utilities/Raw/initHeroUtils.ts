@@ -268,6 +268,7 @@ const getActivatableDependent =
                                                   cost: Maybe (e .cost),
                                                   sid: Maybe (e .sid),
                                                   sid2: Maybe (e .sid2),
+                                                  sid3: Maybe (e .sid3),
                                                   tier: Maybe (e .tier),
                                                 }))))
                                                 (id),
@@ -377,10 +378,10 @@ export const convertFromRawHero =
     return pipe_ (
       intermediateState,
 
-      join (s => addDependenciesForSlice (cnst (ident))
-                                         (HeroModel.A.advantages (s))
-                                         (WikiModel.A.advantages (wiki))
-                                         (activeAdvantages)),
+      join ((s: HeroModelRecord) => addDependenciesForSlice (cnst (ident))
+                                                            (HeroModel.A.advantages (s))
+                                                            (WikiModel.A.advantages (wiki))
+                                                            (activeAdvantages)),
 
       join (s => addDependenciesForSlice (cnst (ident))
                                          (HeroModel.A.disadvantages (s))

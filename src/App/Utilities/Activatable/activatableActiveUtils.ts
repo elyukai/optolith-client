@@ -12,7 +12,7 @@ import { List } from "../../../Data/List";
 import { liftM2, liftM4, mapMaybe, Maybe } from "../../../Data/Maybe";
 import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { fst, Pair, snd } from "../../../Data/Tuple";
+import { fst, Pair, snd, Tuple } from "../../../Data/Tuple";
 import { ActivatableCategory, Categories } from "../../Constants/Categories";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
@@ -110,6 +110,7 @@ export const getAllActiveByCategory =
   (category: T) =>
   (addLevelToName: boolean) =>
   (automatic_advantages: List<string>) =>
+  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord): List<Record<ActiveActivatable<WikiEntryByCategory[T]>>> => {
@@ -145,7 +146,10 @@ export const getAllActiveByCategory =
                                                   (active)))
                                (lookup (current_id) (wiki_slice) as Maybe<GenericWikiEntry>)
                                (lookup (current_id) (hero_slice))
-                               (getIsRemovalOrChangeDisabled (wiki) (hero) (active))
+                               (getIsRemovalOrChangeDisabled (wiki)
+                                                             (hero)
+                                                             (matching_script_and_lang_related)
+                                                             (active))
                })
     )
   }

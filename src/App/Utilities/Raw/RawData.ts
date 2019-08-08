@@ -84,6 +84,7 @@ export interface RawHero {
 export interface RawActiveObject {
   sid?: string | number
   sid2?: string | number
+  sid3?: string | number
   tier?: number
   cost?: number
 }
