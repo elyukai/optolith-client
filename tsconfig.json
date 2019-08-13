@@ -21,6 +21,7 @@
       }
     ],
     "removeComments": true,
+    "resolveJsonModule": true,
     "rootDir": "src/",
     "inlineSourceMap": true,
     "strict": true,

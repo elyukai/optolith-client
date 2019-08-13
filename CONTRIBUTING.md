@@ -1,14 +1,14 @@
 # Contributing
 
+*An English version is still pending*
+
 Es gibt ein paar Richtlinien fürs Helfen beim Coden:
 
-- Der Code steht unter der Lizenz des Scriptoriums, weshalb diese Repo auch privat ist. Wird dieses Repo geforkt, **muss** das geforkte Repo auch privat sein. Eine Verwendung außerhalb dessen ist nicht möglich.
-- Bitte schaut, dass der beigesteuerte Code dem Stil des bisherigen Codes entspricht. Ich habe mich für keinen verfügbaren Styleguide entscheiden können und mit Helfern wie Prettier konnte ich mich - bis jetzt - auh noch nicht anfreunden.
+- Bitte schaut, dass der beigesteuerte Code dem Stil des bisherigen Codes entspricht. Ich habe mich für keinen verfügbaren Styleguide entscheiden können und mit Helfern wie Prettier konnte ich mich - bis jetzt - auch noch nicht anfreunden, da sie nicht die Einstellungen bieten, die ich brauche.
 - Der **develop**-Branch ist der Arbeitsbranch. Codeänderungen - also Pull Requests - führen meistens darauf zurück.
-- Der Masterbranch wird nur für Releases verwendet (das aber erst, nachdem die Beta fertig ist). Diese bekommen dann auch ihre eigenen temporären Branches, bei denen nur noch Bugfixes einfließen dürfen.
+- Der Masterbranch wird nur für Releases verwendet. Diese bekommen dann auch ihre eigenen temporären Branches, bei denen nur noch Bugfixes einfließen dürfen.
 - Es ließ sich nicht einstellen, daher hier noch einmal schriftlich: Ich möchte jede Pull Request, die als Zielbranch **master**, **develop** oder einen von mir erstellten Branch hat, reviewen.
-- Bitte schreibt nach Möglichkeit JSDoc Texte für neue Funktionen. Ich bin auch dabei, dass für alte Funktionen nachzuholen. Es ist jetzt nicht essenziell, wäre aber zum Verständnis besser! :)
-- Solange #1 (Use Redux instead of Flux) noch aktiv ist, solltet ihr von dem **electron-redux**-Branch abbranchen, so ihr denn in dieser Repo arbeitet.
+- Bitte schreibt nach Möglichkeit JSDoc Texte für neue Funktionen, zumindest welche, die vom jeweiligen Modul exportiert werden. Ich bin auch dabei, dass für alte Funktionen nachzuholen. Es ist jetzt nicht essenziell, wäre aber zum Verständnis besser! :)
 
 Ich habe das jetzt einfach etwas direkter formuliert, da ich bei solchen Geschichten ungern um den heißen Brei herum rede! ;)
 
@@ -87,9 +87,16 @@ condition
 condition && condition
 || condition
 
-// good
+// also good
 condition
 && condition
+|| condition
+
+// also good (useful if conditions are so long that parenthesis would improve readability)
+(
+  condition
+  && condition
+)
 || condition
 
 // also good (useful if conditions are so long that parenthesis would improve readability)
@@ -136,40 +143,49 @@ condition
   || condition)
 && condition
 ```
+### Semicolons
+
+In Functional Programming, we don't have statements so we also don't need semicolons. JavaScript is able to insert semicolons on it's own (in almost all cases) so we don't need visual clutter.
 
 ### Curried functions
 
 Functions (and methods) have to be fully curried. There should not be partial function application, as this would cause different possibilities in calling functions. I want to enforce one style:
 
 ```ts
-const add = (a: number) => (b: number) => a + b;
+const add = (a: number) => (b: number) => a + b
 
 // worst
-const addedNumbers = add(2)(3);
+const addedNumbers = add(2)(3)
 
 // still bad
-const addedNumbers = add(2) (3);
+const addedNumbers = add(2) (3)
 
 // still bad
-const addedNumbers = add (2)(3);
+const addedNumbers = add (2)(3)
 
 // good
-const addedNumbers = add (2) (3);
+const addedNumbers = add (2) (3)
 
-// multiline
+// multiline (useful is function name or arguments are long) ...
 const addedNumbers = add (2)
-                         (3);
+                         (3)
 
-// or
+// ... or (useful if the above is too long) ...
 const addedNumbers =
   add (2)
-      (3);
+      (3)
 
-// or
+// ... with defined generics (add has no generics here, but lets just assume it has)
+const addedNumbers =
+  add <number, number>
+      (2)
+      (3)
+
+// ... or (useful if the function name is too long)
 const addedNumbers =
   add
     (2)
-    (3);
+    (3)
 ```
 
 This style is readable while having curried functions. It's derived from the Haskell style of calling functions, where the arguments are separate by one whitespace as well:
@@ -186,34 +202,34 @@ add 2 3
 
 ```ts
 // good
-const x = myFunction (otherFunc ("Hi")) (3);
+const x = myFunction (otherFunc ("Hi")) (3)
 
 // good (such line breaks (compare to above) are usually needed either because of readability
 // or because the line would be too long otherwise)
 const x = myFunction (otherFunc ("Hi"))
-                     (3);
+                     (3)
 
 // also good
 const x = myFunction (otherFunc ("Hi")
                                 ("Other string"))
-                     (3);
+                     (3)
 
 // also good
 const x = myFunction (otherFunc ("Hi") ("Other string"))
-                     (3);
+                     (3)
 
 // bad
 const x = myFunction (otherFunc ("Hi")
-                                ("Other string")) (3);
+                                ("Other string")) (3)
 
 // very bad ("Other string" seems to be a param of myFunction but its not)
 const x = myFunction (otherFunc ("Hi")
-                     ("Other string")) (3);
+                     ("Other string")) (3)
 
 // very bad ("Other string" seems to be a param of myFunction but its not, but 3 is)
 const x = myFunction (otherFunc ("Hi")
                      ("Other string"))
-                     (3);
+                     (3)
 ```
 
 ### Methods
