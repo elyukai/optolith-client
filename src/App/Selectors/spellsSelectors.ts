@@ -41,6 +41,7 @@ import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCantripsSortOptions, getSpellsCombinedSortOptions, getSpellsSortOptions } from "./sortOptionsSelectors";
 import { getAdvantages, getCantrips, getDisadvantages, getHeroProp, getInactiveSpellsFilterText, getLocaleAsProp, getMaybeSpecialAbilities, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki, getWikiCantrips, getWikiSpecialAbilities, getWikiSpells } from "./stateSelectors";
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
+import { traceShowId } from "../../Debug/Trace";
 
 const HA = HeroModel.A
 const WA = WikiModel.A
@@ -277,15 +278,22 @@ export const getInactiveSpells = createMaybeSelector (
             const mhero_entry = lookup (k) (hero_spells)
 
             if (isSpellPrereqsValid (wiki_entry)
-                // Intuitive Magier können nur Zauber erlernen:
-                && SA.gr (wiki_entry) === 1
+                // Intuitive Magier können nur Zauber erlernen,
+                // Animisten dürfen auch Animistenkräfte erlernen:
+                && (SA.gr (wiki_entry) === 1 ||
+                   (SA.gr (wiki_entry) === 9) && isLastTrad (prefixSA (1221)))
                 // Muss inaktiv sein:
                 && all (notP (ASDA.active)) (mhero_entry)
                 // Keine Zauber mit Steigerungsfaktor D:
                 && SA.ic (wiki_entry) < 4
                 // Nur ein C Zauber:
                 && !(SA.ic (wiki_entry) === 3 && isAnySpellActiveWithImpCostC (wiki_spells)
-                                                                              (hero_spells))) {
+                                                                              (hero_spells))
+                // Es dürfen nur maximal 3 Zauber erlernt werden
+                && (countWith (pipe (ASDA.id, lookupF (wiki_spells), maybe (false)
+                                    (pipe (SA.gr, equals (1)))))
+                              (elems (hero_spells)) < 3
+                    || SA.gr (wiki_entry) === 9)) {
               return consF (SpellWithRequirements ({
                 wikiEntry: wiki_entry,
                 stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (k))
@@ -299,9 +307,9 @@ export const getInactiveSpells = createMaybeSelector (
             return ident as ident<List<Record<SpellWithRequirements>>>
           }
 
-          return OrderedMap.foldrWithKey (f)
+          return traceShowId (OrderedMap.foldrWithKey (f)
                                          (List ())
-                                         (wiki_spells)
+                                         (wiki_spells))
         }
 
         if (isLastTrad (prefixSA (677)) || isLastTrad (prefixSA (678))) {

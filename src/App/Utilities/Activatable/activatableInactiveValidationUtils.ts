@@ -39,7 +39,7 @@ const AAL = Advantage.AL
 const { specialAbilities: hero_specialAbilities, pact, rules } = HeroModel.AL
 const { active, dependencies } = ActivatableDependent.AL
 const { tier } = ActiveObject.AL
-const { level } = Pact.AL
+const { category, level } = Pact.AL
 const { enableLanguageSpecializations } = Rules.AL
 
 const isAdditionDisabledForCombatStyle =
@@ -148,8 +148,16 @@ const isAdditionDisabledSpecialAbilitySpecific =
               (0)
               (allPactPresents)
 
-      return isMaybeActive (dunkles_abbild)
-        || all (pipe (level, lte (countPactPresents))) (pact (hero))
+      const isDisabled = all (pipe (category, lte (1))) (pact (hero)) // isFaeriePact?
+                            ? isMaybeActive (dunkles_abbild)
+                              || all (pipe (level, lte (countPactPresents))) (pact (hero))
+                            : all (pipe (level, lte (0))) (pact (hero)) // is Lesser Pact?
+                                // Lesser Pact only provides 3 PactGifts
+                                ? countPactPresents >= 3
+                                // Normal DemonPact: KdV + 7 PactGifts
+                                : all (pipe (level, lte (countPactPresents - 7))) (pact (hero))
+
+      return isDisabled
     }
 
     if (current_id === "SA_699") {

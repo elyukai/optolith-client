@@ -143,6 +143,7 @@ export const getGeneratedPrerequisites =
                     (findSelectOption (wiki_entry) (sid))
       }
 
+      // Merkmalskenntnis
       case "SA_81":
         return addToSelectOptionReqs (Just (List (
           RequireActivatable ({

@@ -430,7 +430,39 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             {source_elem}
           </WikiBoxTemplate>
         )
-
+      // Paktgeschenke
+      case 30:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.effect (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
+                         ))}
+            <PrerequisitesText {...props} />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+        /* :
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.effect (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
+                         ))}
+            <PrerequisitesText {...props} />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        ) */
       default:
         return (
           <WikiBoxTemplate
@@ -769,6 +801,7 @@ type PrimaryAttributePrerequisiteObjects = Record<RequirePrimaryAttribute> | str
 type IncreasablePrerequisiteObjects = Record<RequireIncreasable> | string
 type RacePrerequisiteObjects = Record<RaceRequirement> | string
 type RCPPrerequisiteObjects = boolean | string
+//type PactPrerequisiteObjects = Record<PactRequirement> | string
 
 const getPrerequisitesRCPText =
   (l10n: L10nRecord) =>

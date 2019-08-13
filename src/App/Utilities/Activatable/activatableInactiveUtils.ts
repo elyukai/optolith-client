@@ -656,8 +656,7 @@ const modifyOtherOptions =
       case prefixSA (681):
       case prefixSA (1255):
       case prefixSA (750):
-      case prefixSA (726):
-      case prefixSA (1221): {
+      case prefixSA (726): {
         return pipe (
                       HA.specialAbilities,
                       getMagicalTraditionsHeroEntries,
@@ -807,7 +806,9 @@ const modifyOtherOptions =
       // Tradition (Intuitiver Zauberer)
       case "SA_679":
       // Tradition (Meistertalentierte)
-      case "SA_680": {
+      case "SA_680":
+      // Tradition (Animisten)
+      case "SA_1221": {
         return mapReplace (ident)
                           (guard (spentOnMagicalAdvantages (ap) <= 25
                                   && spentOnMagicalDisadvantages (ap) <= 25

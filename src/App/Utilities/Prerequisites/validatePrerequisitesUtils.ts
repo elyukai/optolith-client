@@ -193,7 +193,11 @@ const hasNeededPactDomain =
   }
 
 const hasNeededPactLevel = (state: Record<Pact>) => (req: Record<PactRequirement>) =>
-  or (fmap (lte (Pact.AL.level (state))) (PactRequirement.AL.level (req)))
+  // Fulfills the level requirement
+  or (fmap (lte (Pact.AL.level (state))) (PactRequirement.AL.level (req))) ||
+  // Its a lesser Pact and the needed Pact-Level is "1"
+  (or (fmap (lte (1)) (PactRequirement.AL.level (req)))
+    && (Pact.AL.level (state) === 0))
 
 const isPactValid =
   (maybePact: Maybe<Record<Pact>>) => (req: Record<PactRequirement>): boolean =>
@@ -430,7 +434,7 @@ export const validateLevel =
               !skipLevelCheck (entry) (max)
               // otherwise, validate them
               && !validatePrerequisites (wiki) (state) (snd (entry)) (sourceId)
-                // if *not* valid, set the max to be lower than the acutal
+                // if *not* valid, set the max to be lower than the actual
                 // current level (because it must not be reached)
                 ? Just (fst (entry) - 1)
                 // otherwise, just pass the previous max value
