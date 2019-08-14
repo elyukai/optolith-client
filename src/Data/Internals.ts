@@ -1,9 +1,7 @@
 export namespace Internals {
   export type Either<A, B> = Left<A> | Right<B>
   export type List<A> = Internals.Nil | Internals.Cons<A>
-  export type Maybe<A extends Some> = Internals.Just<A> | Internals.Nothing
-  // tslint:disable-next-line: interface-over-type-literal
-  export type Some = {}
+  export type Maybe<A> = Internals.Just<A> | Internals.Nothing
   export type Nullable = null | undefined
 
   export interface OrderedMap<K, A> extends Internals.OrderedMapPrototype<K, A> {
@@ -304,7 +302,7 @@ export namespace Internals {
         }
       )
 
-  export interface Just<A extends Some> extends JustPrototype {
+  export interface Just<A> extends JustPrototype {
     readonly value: A
   }
 
@@ -313,7 +311,7 @@ export namespace Internals {
    *
    * Creates a new `Just` from the passed value.
    */
-  export const Just = <A extends Some> (x: A): Just<A> => {
+  export const Just = <A> (x: A): Just<A> => {
     if (x !== null && x !== undefined) {
       return Object.create (
         JustPrototype,
@@ -515,7 +513,7 @@ export namespace Internals {
    * `Just _`.
    */
   export const isJust =
-    <A extends Some> (x: Maybe<A>): x is Just<A> =>
+    <A> (x: Maybe<A>): x is Just<A> =>
       Object.getPrototypeOf (x) === JustPrototype
 
   /**
@@ -523,7 +521,7 @@ export namespace Internals {
    *
    * The `isNothing` function returns `true` if its argument is `Nothing`.
    */
-  export const isNothing = (x: Maybe<Some>): x is Nothing => x === Nothing
+  export const isNothing = (x: Maybe<any>): x is Nothing => x === Nothing
 
   /**
    * `isMaybe :: a -> Bool`
@@ -531,7 +529,7 @@ export namespace Internals {
    * The `isMaybe` function returns `True` if its argument is a `Maybe`.
    */
   export const isMaybe =
-    <A, A0 extends Some>(x: A | Maybe<A0>): x is Maybe<A0> =>
+    <A, A0>(x: A | Maybe<A0>): x is Maybe<A0> =>
       typeof x === "object"
       && x !== null
       && (x === Nothing || Object.getPrototypeOf (x) === JustPrototype)

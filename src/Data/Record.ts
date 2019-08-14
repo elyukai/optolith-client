@@ -386,11 +386,11 @@ export type RequiredExcept<A extends RecordBase, K extends keyof A> = {
   [K1 in K]?: A[K1]
 }
 
-type PartialMaybeRequiredKeys<A> = {
+type PartialMaybeRequiredKeys<A extends RecordBase> = {
   [K in keyof A]: A[K] extends Maybe<any> ? never : K
 } [keyof A]
 
-type PartialMaybePartialKeys<A> = {
+type PartialMaybePartialKeys<A extends RecordBase> = {
   [K in keyof A]: A[K] extends Maybe<any> ? K : never
 } [keyof A]
 
@@ -399,7 +399,7 @@ type MaybeOrPartialMaybe<A> = A extends Maybe<any> ? A : A | Internals.Nothing
 /**
  * All `Maybe` properties will be optional and all others required.
  */
-export type PartialMaybeOrNothing<A> = {
+export type PartialMaybeOrNothing<A extends RecordBase> = {
   [K in PartialMaybeRequiredKeys<A>]-?: A[K] extends Maybe<any> ? never : (A[K] | Internals.Nothing)
 } & {
   [K in PartialMaybePartialKeys<A>]?: A[K] extends Maybe<any> ? A[K] : never

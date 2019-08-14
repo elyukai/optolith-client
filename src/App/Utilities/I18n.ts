@@ -1,9 +1,7 @@
-import { thrush } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
-import { fnull, intercalate, List, subscript, unsnoc } from "../../Data/List";
+import { fnull, List, subscript, toArray } from "../../Data/List";
 import { maybe, Maybe, normalize, sum } from "../../Data/Maybe";
 import { toOrdering } from "../../Data/Ord";
-import { fst, snd } from "../../Data/Tuple";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { pipe } from "./pipe";
 import { isString } from "./typeCheckUtils";
@@ -22,7 +20,7 @@ export const translateP =
   <K extends keyof typeof L10n.AL>
   (key: K) =>
   (params: List<string | number>): L10n [K] => {
-    const message = L10n.AL [key] (messages)
+    const message = L10n.A [key] (messages) as L10n [K]
 
     if (!fnull (params) && typeof message === "string") {
       return message.replace (
@@ -65,7 +63,7 @@ export const translateMP =
   (key: K) =>
   (params: List<string | number>): Maybe<L10n [K]> =>
     fmap<L10nRecord, L10n [K]>
-      (pipe (translateP, thrush (key), (thrush (params))))
+      (msg => translateP (msg) (key) (params))
       (messages)
 
 /**
@@ -134,16 +132,6 @@ export const compareLocale =
     return (a: string) => (b: string) => toOrdering (coll .compare (a, b))
   }
 
-export const localizeList: (sepWord: string) => (xs: List<string | number>) => string =
-  sepWord =>
-    pipe (
-      unsnoc,
-      maybe ("")
-            (x => fnull (fst (x))
-                    ? `${snd (x)}`
-                    : `${intercalate (", ") (fst (x))} ${sepWord} ${snd (x)}`)
-    )
-
 /**
  * `localizeOrList :: L10n -> [String | Int] -> String`
  *
@@ -159,5 +147,9 @@ export const localizeList: (sepWord: string) => (xs: List<string | number>) => s
  * localizeOrList l10n [13, 14, 15, 24] == "13, 14, 15 or 24"
  * ```
  */
-export const localizeOrList =
-  (l10n: L10nRecord) => localizeList (translate (l10n) ("or"))
+export const localizeOrList: (l10n: L10nRecord) => (xs: List<string | number>) => string =
+  l10n => {
+    const intl = new Intl.ListFormat (L10n.A.id (l10n), { type: "disjunction" })
+
+    return pipe (toArray, arr => intl.format (arr))
+  }

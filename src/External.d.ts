@@ -215,3 +215,26 @@ declare module "electron-localshortcut" {
 
   export = LocalShortcut;
 }
+
+declare namespace Intl {
+  function getCanonicalLocales(locales: string | string[]): string[];
+
+  class RelativeTimeFormat {
+      constructor(locale: string);
+  }
+
+  class ListFormat {
+      constructor(locale: string, options?: ListFormatOptions);
+      format(list: Iterable<any>): string;
+  }
+
+  type ListFormatOptions = {
+    localeMatcher?: "lookup" | "best fit";
+    type: "conjunction" | "disjunction" | "unit";
+    style?: "long";
+  } | {
+    localeMatcher?: "lookup" | "best fit";
+    type: "unit";
+    style: "short" | "narrow";
+  }
+}

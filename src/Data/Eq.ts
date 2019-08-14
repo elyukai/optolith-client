@@ -10,7 +10,6 @@ import { consF, List } from "./List";
 import { show } from "./Show";
 import { curry, Pair } from "./Tuple";
 
-import Some = Internals.Some
 import Maybe = Internals.Maybe
 import Record = Internals.Record
 import OrderedMap = Internals.OrderedMap
@@ -114,15 +113,10 @@ export const equals =
     if (Internals.isRecord (x1)) {
       if (Internals.isRecord (x2)) {
         return flength (x1 .keys) === flength (x2 .keys)
-          && all
-            (key => elem (key) (x2 .keys)
-              && equals (getRecordField<typeof x1["defaultValues"]>
-                          (key as string)
-                          (x1))
-                        (getRecordField<typeof x2["defaultValues"]>
-                          (key as string)
-                          (x2)))
-            (x1 .keys)
+          && all (key => elem (key) (x2 .keys)
+                   && equals (getRecordField<any> (key as string) (x1 as Record<any>))
+                             (getRecordField<any> (key as string) (x2 as Record<any>)))
+                 (x1 .keys)
       }
 
       return false
@@ -222,7 +216,7 @@ export type equals<A> = (x1: A) => (x2: A) => boolean
  * Returns if both given values are not equal.
  */
 export const notEquals =
-  <A extends Some> (m1: A) => (m2: A): boolean =>
+  <A> (m1: A) => (m2: A): boolean =>
     !equals (m1) (m2)
 
 const getRecordField = <A> (key: keyof A) => (r: Record<A>) => {
