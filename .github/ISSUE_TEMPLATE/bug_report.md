@@ -23,7 +23,8 @@ assignees: ''
 **Screenshots**
 > If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
+**Environment**
+> Please complete the following information
  - OS: [e.g. Windows 10]
  - Version [e.g. 1.1.0]
 
