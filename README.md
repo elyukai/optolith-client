@@ -10,4 +10,8 @@ It is available for Windows 7+ as well as for Linux (Ubuntu 12.04+, Fedora 21, D
 
 ## Contributing
 
-Check out [respective file](CONTRIBUTING.md)!
+Info on reporting bugs, getting help, contributing code and more can be found in the [Contributing Guide](CONTRIBUTING.md)!
+
+## License
+
+[MPL 2.0](LICENSE)
