@@ -26,9 +26,10 @@ You can suggest features either in the issues tracker or in one of the [listed f
 
 ## Contributing code
 
-- Due to licensing, the tables containing the crunch elements from the books is not included in this repository. Please join my [Discord Server](https://discord.gg/uDyR4yr) if you need access to them.
+- Due to licensing, the tables containing the crunch elements from the books is not included in this repository. Please join my [Discord Server](https://discord.gg/uDyR4yr) if you need access to them. Just text me in a channel on the server or PN me (@elyukai).
 - Braches (mostly) follow Git Flow. Please try to follow Git Flow as well if you edit this repository.
 - Please check out the [Style Guide](https://github.com/elyukai/optolith-client/wiki/Code-Style-Guide) for more information on that topic! Sadly, TSLint cannot ensure the whole style so you partially need to take care of that on your own!
+- There is a page covering [Naming Conventions](https://github.com/elyukai/optolith-client/wiki/Naming-Conventions) as well!
 
 ### Prepare the repo
 
@@ -56,6 +57,15 @@ Create a `tablesSrc.json` in root. The JSON consists of an object that has the f
 ```
 
 Both list an array of strings that represents the path to a folder that contains the tables for stable or insider version, repectively. The array is consumed by `path.join` from Node.js in the end.
+
+Example:
+
+```json
+{
+  "stable": ["..", "OneDrive", "Optolith", "Data"],
+  "insider": ["..", "OneDrive", "Optolith", "Data", "Insider"];
+}
+```
 
 ### First run
 
