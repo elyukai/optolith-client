@@ -225,7 +225,7 @@ declare namespace Intl {
 
   class ListFormat {
       constructor(locale: string, options?: ListFormatOptions);
-      format(list: Iterable<any>): string;
+      format(list: Iterable<string>): string;
   }
 
   type ListFormatOptions = {

@@ -1,7 +1,8 @@
 import { fmap } from "../../Data/Functor";
-import { fnull, List, subscript, toArray } from "../../Data/List";
+import { fnull, intercalate, List, subscript, unsnoc } from "../../Data/List";
 import { maybe, Maybe, normalize, sum } from "../../Data/Maybe";
 import { toOrdering } from "../../Data/Ord";
+import { fst, snd } from "../../Data/Tuple";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { pipe } from "./pipe";
 import { isString } from "./typeCheckUtils";
@@ -148,8 +149,16 @@ export const compareLocale =
  * ```
  */
 export const localizeOrList: (l10n: L10nRecord) => (xs: List<string | number>) => string =
-  l10n => {
-    const intl = new Intl.ListFormat (L10n.A.id (l10n), { type: "disjunction" })
+// l10n => {
+//   const intl = new Intl.ListFormat (L10n.A.id (l10n), { type: "disjunction" })
 
-    return pipe (toArray, arr => intl.format (arr))
-  }
+//   return pipe (map (e => isString (e) ? e : e .toString (10)), toArray, arr => intl.format (arr))
+// }
+  l10n =>
+    pipe (
+      unsnoc,
+      maybe ("")
+            (x => fnull (fst (x))
+                    ? `${snd (x)}`
+                    : `${intercalate (", ") (fst (x))} ${L10n.A.or (l10n)} ${snd (x)}`)
+    )

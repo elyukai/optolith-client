@@ -302,6 +302,32 @@ export namespace Internals {
         }
       )
 
+  /**
+   * `List :: (...a) -> [a]`
+   *
+   * Creates a new `List` instance from the passed arguments.
+   */
+  export const List =
+    <A> (...values: A[]): List<A> => {
+      if (values .length === 0) {
+        return Nil
+      }
+
+      let h: List<A> = Nil
+
+      for (let i = 0; i < values.length; i++) {
+        const x = values[values.length - 1 - i]
+
+        h = Cons (x, h)
+      }
+
+      return h
+
+      // const [_head, ..._tail] = values
+
+      // return Cons (_head, List (..._tail))
+    }
+
   export interface Just<A> extends JustPrototype {
     readonly value: A
   }

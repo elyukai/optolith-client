@@ -13,11 +13,11 @@ import { cnst } from "./Function";
 import { Const } from "./Functor/Const";
 import { Internals } from "./Internals";
 import { isMarket, Market } from "./Market";
-import { Maybe } from "./Maybe";
 import { show, showP } from "./Show";
 import { Pair } from "./Tuple";
 
 import Just = Internals.Just
+import Maybe = Internals.Maybe
 import Either = Internals.Either
 import Right = Internals.Right
 import List = Internals.List

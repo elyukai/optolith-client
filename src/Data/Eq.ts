@@ -6,9 +6,9 @@
 
 import { on } from "./Function";
 import { Internals } from "./Internals";
-import { consF, List } from "./List";
 import { show } from "./Show";
 import { curry, Pair } from "./Tuple";
+import { curryN } from "./Tuple/Curry";
 
 import Maybe = Internals.Maybe
 import Record = Internals.Record
@@ -16,6 +16,7 @@ import OrderedMap = Internals.OrderedMap
 import OrderedSet = Internals.OrderedSet
 import Map = Internals.Map
 import isTip = Internals.isTip
+import List = Internals.List
 
 const flengthMap = (xs: OrderedMap<any, any>): number => xs .value .size
 
@@ -195,7 +196,7 @@ const size = (mp: Map<any, any>) => isTip (mp) ? 0 : mp .size
  */
 const assocs =
   <K, A> (mp: Map<K, A>): List<Pair<K, A>> =>
-    foldrWithKey<K, A, List<Pair<K, A>>> (curry (consF)) (List ()) (mp)
+    foldrWithKey<K, A, List<Pair<K, A>>> (curry (curryN (Internals.Cons))) (List ()) (mp)
 
 // const equalsMap = (mp1: Map<any, any>) => (mp2: Map<any, any>): boolean =>
 //   isTip (mp1) === isTip (mp2)
