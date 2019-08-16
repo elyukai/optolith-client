@@ -18,7 +18,7 @@ import { ident } from "./Function";
 import { fmap, fmapF } from "./Functor";
 import { Internals } from "./Internals";
 import { cons, consF, List } from "./List";
-import { fromJust, isJust, Just, Maybe, Nothing, Some } from "./Maybe";
+import { fromJust, isJust, Just, Maybe, Nothing } from "./Maybe";
 import { Pair, Tuple } from "./Tuple";
 
 export import Left = Internals.Left
@@ -316,7 +316,7 @@ export const mapM =
  * right.
  */
 export const liftM2 =
-  <A1 extends Some, A2 extends Some, B extends Some>
+  <A1, A2, B>
   (f: (a1: A1) => (a2: A2) => B) =>
   <E>
   (x1: Either<E, A1>) =>

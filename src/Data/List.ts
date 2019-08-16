@@ -28,11 +28,10 @@ import Nothing = Internals.Nothing
 import isJust = Internals.isJust
 import OrderedMap = Internals.OrderedMap
 import _OrderedMap = Internals._OrderedMap
-import Some = Internals.Some
 import Nullable = Internals.Nullable
 
 const fromJust =
-  <A extends Some> (x: Just<A>): A => {
+  <A> (x: Just<A>): A => {
     if (isJust (x)) {
       return x.value
     }
@@ -41,7 +40,7 @@ const fromJust =
   }
 
 const imapMaybe =
-  <A extends Some, B extends Some>
+  <A, B>
   (f: (index: number) => (x: A) => Maybe<B>) =>
     ifoldr<A, List<B>>
       (index => x => acc =>
@@ -53,7 +52,7 @@ const imapMaybe =
       (List.empty)
 
 const mapMaybe =
-  <A extends Some, B extends Some>
+  <A, B>
   (f: (x: A) => Maybe<B>) =>
     List.foldr<A, List<B>> (pipe (
                              f,
@@ -63,8 +62,8 @@ const mapMaybe =
                            (List.empty)
 
 const maybe =
-  <B extends Some> (def: B) =>
-  <A extends Some> (f: (x: A) => B) =>
+  <B> (def: B) =>
+  <A> (f: (x: A) => B) =>
   (x: Maybe<A>) =>
     isJust (x) ? f (x .value) : def
 
@@ -80,7 +79,7 @@ const fromMap =
   }
 
 const Maybe =
-  <A extends Some> (x: A | Nullable): Maybe<A> =>
+  <A> (x: A | Nullable): Maybe<A> =>
     x !== null && x !== undefined ? Just (x) : Nothing
 
 const lookupF =
