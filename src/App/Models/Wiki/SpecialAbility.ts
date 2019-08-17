@@ -22,6 +22,7 @@ export interface SpecialAbility extends ActivatableBase {
   aspect: Maybe<number | string>
   apValue: Maybe<string>
   apValueAppend: Maybe<string>
+  brew: Maybe<number>
 }
 
 export const SpecialAbility =
@@ -57,6 +58,7 @@ export const SpecialAbility =
                 aspect: Nothing,
                 apValue: Nothing,
                 apValueAppend: Nothing,
+                brew: Nothing,
                 category: Categories.SPECIAL_ABILITIES,
               })
 

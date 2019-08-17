@@ -123,6 +123,8 @@ export const toSpecialAbility =
 
       const prerequisitesEnd = lookup_l10n ("prerequisitesEnd")
 
+      const ebrew = checkOptionalUnivNaturalNumber ("brew")
+
       const esrc = toSourceLinks (lookup_l10n)
 
       // Return error or result
@@ -141,6 +143,7 @@ export const toSpecialAbility =
           easpect,
           eprerequisites,
           eprerequisitesIndex,
+          ebrew,
           esrc,
         })
         (rs => SpecialAbility ({
@@ -192,6 +195,7 @@ export const toSpecialAbility =
                                                  (rs.eprerequisitesIndex),
           prerequisitesTextStart: fmap (modifyNegIntNoBreak) (prerequisitesStart),
           prerequisitesTextEnd: fmap (modifyNegIntNoBreak) (prerequisitesEnd),
+          brew: rs.ebrew,
 
           src: rs.esrc,
 
