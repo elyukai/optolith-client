@@ -7,14 +7,16 @@ jobs:
     - stage: "Test"
       script: npm test
     - stage: "Build"
-      if: tag IS present
       name: "Build OS X"
+      if: tag IS present
       os: osx
       script: npm run build:osx
     - name: "Build Linux"
+      if: tag IS present
       os: linux
       script: npm run build:linux
     - name: "Build Windows"
+      if: tag IS present
       os: win
       script: npm run build:win
     - stage: "Deploy"
