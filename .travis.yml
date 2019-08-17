@@ -1,3 +1,22 @@
 language: node_js
 node_js:
   - node
+
+jobs:
+  include:
+    - stage: "Test"
+      script: npm test
+    - stage: "Build"
+      if: tag IS present
+      name: "Build OS X"
+      os: osx
+      script: npm run build:osx
+    - name: "Build Linux"
+      os: linux
+      script: npm run build:linux
+    - name: "Build Windows"
+      os: win
+      script: npm run build:win
+    - stage: "Deploy"
+      if: tag IS present
+      script: skip
