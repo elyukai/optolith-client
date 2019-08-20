@@ -50,6 +50,7 @@ import { isStyleValidToRemove } from "./ExtendedStyleUtils";
 import { isActive } from "./isActive";
 import { getActiveSelections } from "./selectionUtils";
 import { getBlessedTraditionFromWiki, getMagicalTraditionsHeroEntries } from "./traditionUtils";
+import { isMagicalTraditionId, isBlessedTraditionId } from "../IDUtils";
 
 const hasRequiredMinimumLevel =
   (min_level: Maybe<number>) => (max_level: Maybe<number>): boolean =>
@@ -104,6 +105,24 @@ const isRemovalDisabledEntrySpecific =
     const mstart_el =
       lookupF (WikiModel.AL.experienceLevels (wiki))
               (HeroModel.AL.experienceLevel (hero))
+
+    if (isMagicalTraditionId (AAL.id (wiki_entry))) {
+      // All active tradition entries
+      const traditions =
+        getMagicalTraditionsHeroEntries (HeroModel.AL.specialAbilities (hero))
+
+      const multiple_traditions = flength (traditions) > 1
+
+      // multiple traditions are currently not supported and there must be no
+      // active spell or cantrip
+      return multiple_traditions
+        || countActiveSkillEntries ("spells") (hero) > 0
+        || size (HA.cantrips (hero)) > 0
+    } else if (isBlessedTraditionId (AAL.id (wiki_entry))) {
+      // there must be no active liturgical chant or blessing
+      return countActiveSkillEntries ("liturgicalChants") (hero) > 0
+        || size (HA.blessings (hero)) > 0
+    }
 
     switch (AAL.id (wiki_entry)) {
       // Exceptional Skill
@@ -181,34 +200,6 @@ const isRemovalDisabledEntrySpecific =
         }
       }
 
-      // Magical traditions
-      case "SA_70":
-      case "SA_255":
-      case "SA_345":
-      case "SA_346":
-      case "SA_676":
-      case "SA_677":
-      case "SA_678":
-      case "SA_679":
-      case "SA_680":
-      case "SA_681":
-      case "SA_1255":
-      case "SA_750":
-      case "SA_726":
-      case "SA_1221": {
-        // All active tradition entries
-        const traditions =
-          getMagicalTraditionsHeroEntries (HeroModel.AL.specialAbilities (hero))
-
-        const multiple_traditions = flength (traditions) > 1
-
-        // multiple traditions are currently not supported and there must be no
-        // active spell or cantrip
-        return multiple_traditions
-          || countActiveSkillEntries ("spells") (hero) > 0
-          || size (HA.cantrips (hero)) > 0
-      }
-
       case "SA_72":
         return pipe_ (
           active,
@@ -226,31 +217,6 @@ const isRemovalDisabledEntrySpecific =
                                                 ))
                                            (HA.spells (hero)))
         )
-
-      // Blessed traditions
-      case "SA_86":
-      case "SA_682":
-      case "SA_683":
-      case "SA_684":
-      case "SA_685":
-      case "SA_686":
-      case "SA_687":
-      case "SA_688":
-      case "SA_689":
-      case "SA_690":
-      case "SA_691":
-      case "SA_692":
-      case "SA_693":
-      case "SA_694":
-      case "SA_695":
-      case "SA_696":
-      case "SA_697":
-      case "SA_698":
-      case "SA_1049": {
-        // there must be no active liturgical chant or blessing
-        return countActiveSkillEntries ("liturgicalChants") (hero) > 0
-          || size (HA.blessings (hero)) > 0
-      }
 
       case "SA_87": {
         const all_aspcs = getActiveSelections (hero_entry)
