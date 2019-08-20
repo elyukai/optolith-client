@@ -1,24 +1,32 @@
 language: node_js
 node_js:
-  - node
-
+- node
 jobs:
   include:
-    - stage: "Test"
-      script: npm test
-    - stage: "Build"
-      name: "Build OS X"
-      if: tag IS present
-      os: osx
-      script: npm run build:osx
-    - name: "Build Linux"
-      if: tag IS present
-      os: linux
-      script: npm run build:linux
-    - name: "Build Windows"
-      if: tag IS present
-      os: win
-      script: npm run build:win
-    - stage: "Deploy"
-      if: tag IS present
-      script: skip
+  - stage: Test
+    script: npm test
+  - stage: Build & Deploy
+    name: Build OS X
+    if: tag IS present && branch = master
+    os: osx
+    script: npm run compile && npm run release:osx
+  - name: Build OS X Insider
+    if: tag IS present && branch != master
+    os: osx
+    script: npm run compile && npm run prerelease:osx
+  - name: Build Linux
+    if: tag IS present && branch = master
+    os: linux
+    script: npm run compile && npm run release:linux
+  - name: Build Linux Insider
+    if: tag IS present && branch != master
+    os: linux
+    script: npm run compile && npm run prerelease:linux
+  - name: Build Windows
+    if: tag IS present && branch = master
+    os: win
+    script: npm run compile && npm run release:win
+  - name: Build Windows Insider
+    if: tag IS present && branch != master
+    os: win
+    script: npm run compile && npm run prerelease:win

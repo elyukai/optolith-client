@@ -7,7 +7,7 @@
     "name": "Lukas Obermann",
     "email": "support@optolith.app"
   },
-  "homepage": "https://github.com/Elytherion/tdeheroes",
+  "homepage": "https://github.com/Elytherion/optolith-client",
   "license": "MPL-2.0",
   "main": "app/main.js",
   "dependencies": {
@@ -44,6 +44,7 @@
     "@types/react-redux": "7.0.8",
     "@types/semver": "6.0.0",
     "@types/styled-components": "4.1.15",
+    "basic-ftp": "3.8.1",
     "electron": "6.0.1",
     "electron-builder": "21.2.0",
     "eslint": "4.19.1",
@@ -62,12 +63,12 @@
     "typescript-tslint-plugin": "0.3.1"
   },
   "scripts": {
-    "buildInsiderWin": "node ./buildInsiderWin.js",
-    "buildInsiderLinux": "node ./buildInsiderLinux.js",
-    "buildInsiderMac": "node ./buildInsiderMac.js",
-    "build:win": "node ./buildWin.js",
-    "build:linux": "node ./buildLinux.js",
-    "build:osx": "node ./buildMac.js",
+    "prerelease:win": "PUBLISH_URL=$PUBLISH_URL_INSIDER node ./buildInsiderWin.js",
+    "prerelease:linux": "PUBLISH_URL=$PUBLISH_URL_INSIDER node ./buildInsiderLinux.js",
+    "prerelease:mac": "PUBLISH_URL=$PUBLISH_URL_INSIDER node ./buildInsiderMac.js",
+    "release:win": "PUBLISH_URL=$PUBLISH_URL node ./buildWin.js",
+    "release:linux": "PUBLISH_URL=$PUBLISH_URL node ./buildLinux.js",
+    "release:osx": "PUBLISH_URL=$PUBLISH_URL node ./buildMac.js",
     "buildCss": "node --experimental-modules buildSass.mjs",
     "copyTables": "node ./copyTablesOnly.js",
     "copyTablesInsider": "node ./copyTablesInsiderOnly.js",
@@ -78,7 +79,7 @@
     "test": "jest",
     "circ": "madge -c ./src"
   },
-  "repository": {},
+  "repository": "github:elyukai/optolith-client",
   "jest": {
     "transform": {
       "^.+\\.tsx?$": "ts-jest"

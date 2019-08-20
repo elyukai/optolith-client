@@ -2,8 +2,6 @@
 
 const builder = require ("electron-builder")
 const { copyTables } = require ("./copyTables")
-// @ts-ignore
-const { stable } = require ("./publishSettings.json")
 
 module.exports = {
   buildWindows:
@@ -99,5 +97,9 @@ const config = {
     target: "default",
     artifactName: "Optolith_${version}.${ext}"
   },
-  publish: stable,
+  publish: {
+    "provider": "generic",
+    "url": process.env.PUBLISH_URL_INSIDER,
+    "channel": "latest"
+  },
 }
