@@ -76,7 +76,7 @@ function createWindow () {
     center: true,
     title: "Optolith",
     acceptFirstMouse: true,
-    backgroundColor: "#000000",
+    backgroundColor: "#111111",
     show: false,
     webPreferences: {
       nodeIntegration: true,

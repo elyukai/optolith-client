@@ -5,10 +5,12 @@ import { TitleBarWrapper } from "./TitleBarWrapper";
 
 export interface TitleBarProps {
   platform: string
+  isLoading?: boolean
   minimize (): void
   maximize (): void
   restore (): void
   close (): void
+  closeDuringLoad (): void
   enterFullscreen (): void
   leaveFullscreen (): void
 }
@@ -48,9 +50,26 @@ export class TitleBar extends React.Component<TitleBarProps, TitleBarState> {
       .removeListener ("focus", this.updateState)
   }
 
-  render () {
+  closeFn () {
     const {
       close,
+      closeDuringLoad,
+      isLoading,
+    } = this.props
+
+    isLoading === true ? closeDuringLoad () : close ()
+  }
+
+  updateState () {
+    this.setState ({
+      isMaximized: remote .getCurrentWindow () .isMaximized (),
+      isFullScreen: remote .getCurrentWindow () .isFullScreen (),
+      isFocused: remote .getCurrentWindow () .isFocused (),
+    })
+  }
+
+  render () {
+    const {
       platform,
       maximize,
       minimize,
@@ -65,7 +84,7 @@ export class TitleBar extends React.Component<TitleBarProps, TitleBarState> {
       return (
         <TitleBarWrapper {...this.state}>
           <div className="macos-hover-area">
-            <TitleBarButton icon="&#xE900;" onClick={close} className="close" />
+            <TitleBarButton icon="&#xE900;" onClick={this.closeFn} className="close" />
             <TitleBarButton icon="&#xE903;" onClick={minimize} className="minimize" />
             {
               isFullScreen
@@ -86,16 +105,8 @@ export class TitleBar extends React.Component<TitleBarProps, TitleBarState> {
         {isMaximized
           ? <TitleBarButton icon="&#xE902;" onClick={restore} className="restore" />
           : null}
-        <TitleBarButton icon="&#xE900;" onClick={close} className="close" />
+        <TitleBarButton icon="&#xE900;" onClick={this.closeFn} className="close" />
       </TitleBarWrapper>
     )
-  }
-
-  private readonly updateState = () => {
-    this.setState ({
-      isMaximized: remote.getCurrentWindow ().isMaximized (),
-      isFullScreen: remote.getCurrentWindow ().isFullScreen (),
-      isFocused: remote.getCurrentWindow ().isFocused (),
-    })
   }
 }

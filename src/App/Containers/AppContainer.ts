@@ -31,6 +31,9 @@ const mapDispatchToProps = (dispatch: ReduxDispatch<Action>) => ({
   close () {
     dispatch (IOActions.requestClose (Nothing))
   },
+  closeDuringLoad () {
+    remote .getCurrentWindow () .close ()
+  },
   enterFullscreen () {
     remote.getCurrentWindow ().setFullScreen (true)
   },

@@ -1,8 +1,6 @@
 // @ts-check
 
 const builder = require ("electron-builder")
-// @ts-ignore
-const { insider } = require ("./publishSettings.json")
 
 module.exports = {
   buildWindows:
@@ -96,5 +94,9 @@ const config = {
     target: "default",
     artifactName: "OptolithInsider_${version}.${ext}"
   },
-  publish: insider,
+  publish: {
+    "provider": "generic",
+    "url": process.env.PUBLISH_URL,
+    "channel": "latest"
+  },
 }
