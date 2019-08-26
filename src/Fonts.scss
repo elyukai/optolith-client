@@ -13,4 +13,8 @@
 @include font-face('Alegreya Sans', 'fonts/AlegreyaSans-Medium', 500, normal, $file-formats: ttf);
 @include font-face('Alegreya Sans', 'fonts/AlegreyaSans-MediumItalic', 500, italic, $file-formats: ttf);
 @include font-face('Alegreya Sans', 'fonts/AlegreyaSans-Regular', 400, normal, $file-formats: ttf);
+@include font-face('Alegreya Sans SC', 'fonts/AlegreyaSansSC-Italic', 400, italic, $file-formats: ttf);
+@include font-face('Alegreya Sans SC', 'fonts/AlegreyaSansSC-Medium', 500, normal, $file-formats: ttf);
+@include font-face('Alegreya Sans SC', 'fonts/AlegreyaSansSC-MediumItalic', 500, italic, $file-formats: ttf);
+@include font-face('Alegreya Sans SC', 'fonts/AlegreyaSansSC-Regular', 400, normal, $file-formats: ttf);
 @include font-face('Gentium Basic', 'fonts/GentiumBasic-Regular', 400, normal, $file-formats: ttf);

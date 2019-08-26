@@ -1,12 +1,17 @@
 import * as React from "react";
 import { orN } from "../../../Data/Maybe";
-import Ph = require("remark-breaks");
-import ReactMarkdown = require("react-markdown");
+import Ph = require ("remark-breaks");
+import ReactMarkdown = require ("react-markdown");
+import HTMLParser = require ("react-markdown/plugins/html-parser")
+
+const parseHtml = HTMLParser ({
+  isValidNode: (node: any) => node.type !== "script",
+})
 
 export interface MarkdownProps {
   className?: string
   isListElement?: boolean
-  oneLine?: "span" | "fragment"
+  noWrapper?: boolean
   source: string
 }
 
@@ -17,16 +22,10 @@ export interface MarkdownRootProps {
 type Renderer<A> = (props: A) => React.ReactElement<A>
 
 export function Markdown (props: MarkdownProps) {
-  const { className, source = "...", isListElement, oneLine } = props
+  const { className, source = "...", isListElement, noWrapper } = props
 
   const root: string | Renderer<{ children?: React.ReactNode }> =
-    oneLine === "fragment"
-      ? p => <>{p.children}</>
-      : oneLine === "span"
-      ? "span"
-      : orN (isListElement)
-      ? "ul"
-      : "div"
+    noWrapper === true ? p => <>{p.children}</> : orN (isListElement) ? "ul" : "div"
 
   const link = (p: { children?: React.ReactNode}) => (<>[{p.children}]</>)
 
@@ -34,15 +33,16 @@ export function Markdown (props: MarkdownProps) {
     <ReactMarkdown
       className={className}
       source={source}
-      unwrapDisallowed={typeof oneLine === "string"}
-      skipHtml
+      unwrapDisallowed={noWrapper === true}
       renderers={{
         root,
         link,
         linkReference: link,
       }}
       plugins={[Ph]}
-      disallowedTypes={oneLine ? ["paragraph"] : undefined}
+      disallowedTypes={noWrapper === true ? ["paragraph"] : undefined}
+      escapeHtml={false}
+      astPlugins={[parseHtml]}
       />
   )
 }

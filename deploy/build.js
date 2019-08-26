@@ -95,11 +95,11 @@ const config = {
     type: "distribution",
     icon: "app/icon.icns",
     target: "default",
-    artifactName: "Optolith_${version}.${ext}"
+    artifactName: "Optolith_${version}.${ext}",
   },
   publish: {
     "provider": "generic",
     "url": process.env.PUBLISH_URL_INSIDER,
     "channel": "latest"
-  },
+  }
 }

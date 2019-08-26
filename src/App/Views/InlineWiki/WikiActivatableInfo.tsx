@@ -631,7 +631,7 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   type TypeofList = JSX.Element | string
 
   const mtext_before = fmapF (prerequisitesTextStart)
-                             (y => <Markdown key="before" source={y} oneLine="fragment" />)
+                             (y => <Markdown key="before" source={y} noWrapper />)
 
   /**
    * `Right`: Will need a comma before if there are elements before the text.
@@ -640,8 +640,8 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   const mtext_after = fmapF (prerequisitesTextEnd)
                             ((y): Either<JSX.Element, JSX.Element> =>
                               /^(?: |,|\.)/ .test (y)
-                                ? Left (<Markdown key="after" source={y} oneLine="fragment" />)
-                                : Right (<Markdown key="after" source={y} oneLine="fragment" />))
+                                ? Left (<Markdown key="after" source={y} noWrapper />)
+                                : Right (<Markdown key="after" source={y} noWrapper />))
 
   const mtext_after_insidelist = bind (mtext_after) (eitherToMaybe)
   const mtext_after_outsidelist = bind (mtext_after) (pipe (invertEither, eitherToMaybe))

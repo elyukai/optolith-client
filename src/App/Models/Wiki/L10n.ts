@@ -374,7 +374,6 @@ export interface L10n {
   "mundaneprofessions": string
   "magicalprofessions": string
   "blessedprofessions": string
-  "alwaysshowprofessionsfromextensions": string
   "novariant": string
   "ownprofession": string
   "prerequisites": string
@@ -1006,7 +1005,6 @@ export const L10n =
                 "mundaneprofessions": "",
                 "magicalprofessions": "",
                 "blessedprofessions": "",
-                "alwaysshowprofessionsfromextensions": "",
                 "novariant": "",
                 "ownprofession": "",
                 "prerequisites": "",

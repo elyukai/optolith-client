@@ -80,8 +80,8 @@ export const getSystemLocale = () => {
 
   return /^de/ .test (systemLocale)
     ? "de-DE"
-    // : /^nl/ .test (systemLocale)
-    // ? "nl-BE"
+    : /^nl/ .test (systemLocale)
+    ? "nl-BE"
     : "en-US"
 }
 
