@@ -700,6 +700,8 @@ export const toL10n =
         "tribaltraditions": checkL10nNonEmptyString ("tribaltraditions"),
         "tribes": checkL10nNonEmptyStringList ("tribes"),
         "saveheroerror": checkL10nNonEmptyString ("saveheroerror"),
+        "brews": checkL10nNonEmptyStringList ("brews"),
+        "brew": checkL10nNonEmptyString ("brew"),
       }
 
       return mapMNamed
@@ -1332,6 +1334,8 @@ export const toL10n =
           "tribaltraditions": res ["tribaltraditions"],
           "tribes": res ["tribes"],
           "saveheroerror": res ["saveheroerror"],
+          "brews": res ["brews"],
+          "brew": res ["brew"],
           // tslint:enable: no-string-literal
         }))
     }

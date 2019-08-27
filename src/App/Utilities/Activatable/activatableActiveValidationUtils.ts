@@ -52,6 +52,7 @@ import { isStyleValidToRemove } from "./ExtendedStyleUtils";
 import { isActive } from "./isActive";
 import { getActiveSelections } from "./selectionUtils";
 import { getBlessedTraditionFromWiki, getMagicalTraditionsHeroEntries } from "./traditionUtils";
+import { isMagicalTraditionId, isBlessedTraditionId } from "../IDUtils";
 
 const hasRequiredMinimumLevel =
   (min_level: Maybe<number>) => (max_level: Maybe<number>): boolean =>
@@ -110,6 +111,25 @@ const isRemovalDisabledEntrySpecific =
     const mstart_el =
       lookupF (WikiModel.AL.experienceLevels (wiki))
               (HeroModel.AL.experienceLevel (hero))
+
+    if (isMagicalTraditionId (AAL.id (wiki_entry))) {
+      // All active tradition entries
+      const traditions =
+        getMagicalTraditionsHeroEntries (HeroModel.AL.specialAbilities (hero))
+
+      const multiple_traditions = flength (traditions) > 1
+
+      // multiple traditions are currently not supported and there must be no
+      // active spell or cantrip
+      return multiple_traditions
+        || countActiveSkillEntries ("spells") (hero) > 0
+        || size (HA.cantrips (hero)) > 0
+    }
+    else if (isBlessedTraditionId (AAL.id (wiki_entry))) {
+      // there must be no active liturgical chant or blessing
+      return countActiveSkillEntries ("liturgicalChants") (hero) > 0
+        || size (HA.blessings (hero)) > 0
+    }
 
     switch (AAL.id (wiki_entry)) {
       case AdvantageId.ExceptionalSkill: {
@@ -181,34 +201,6 @@ const isRemovalDisabledEntrySpecific =
         }
       }
 
-      case SpecialAbilityId.TraditionGuildMages:
-      case SpecialAbilityId.TraditionWitches:
-      case SpecialAbilityId.TraditionElves:
-      case SpecialAbilityId.TraditionDruids:
-      case SpecialAbilityId.TraditionScharlatane:
-      case SpecialAbilityId.TraditionZauberbarden:
-      case SpecialAbilityId.TraditionZaubertaenzer:
-      case SpecialAbilityId.TraditionIntuitiveZauberer:
-      case SpecialAbilityId.TraditionMeistertalentierte:
-      case SpecialAbilityId.TraditionQabalyamagier:
-      case SpecialAbilityId.TraditionGeoden:
-      case SpecialAbilityId.TraditionZauberalchimisten:
-      case SpecialAbilityId.TraditionSchelme:
-      case SpecialAbilityId.TraditionAnimisten:
-      case SpecialAbilityId.TraditionBrobimGeoden: {
-        // All active tradition entries
-        const traditions =
-          getMagicalTraditionsHeroEntries (HeroModel.AL.specialAbilities (hero))
-
-        const multiple_traditions = flength (traditions) > 1
-
-        // multiple traditions are currently not supported and there must be no
-        // active spell or cantrip
-        return multiple_traditions
-          || countActiveSkillEntries ("spells") (hero) > 0
-          || size (HA.cantrips (hero)) > 0
-      }
-
       case SpecialAbilityId.PropertyKnowledge:
         return pipe_ (
           active,
@@ -226,30 +218,6 @@ const isRemovalDisabledEntrySpecific =
                                                 ))
                                            (HA.spells (hero)))
         )
-
-      case SpecialAbilityId.TraditionChurchOfPraios:
-      case SpecialAbilityId.TraditionChurchOfRondra:
-      case SpecialAbilityId.TraditionChurchOfBoron:
-      case SpecialAbilityId.TraditionChurchOfHesinde:
-      case SpecialAbilityId.TraditionChurchOfPhex:
-      case SpecialAbilityId.TraditionChurchOfPeraine:
-      case SpecialAbilityId.TraditionChurchOfEfferd:
-      case SpecialAbilityId.TraditionChurchOfTravia:
-      case SpecialAbilityId.TraditionChurchOfFirun:
-      case SpecialAbilityId.TraditionChurchOfTsa:
-      case SpecialAbilityId.TraditionChurchOfIngerimm:
-      case SpecialAbilityId.TraditionChurchOfRahja:
-      case SpecialAbilityId.TraditionCultOfTheNamelessOne:
-      case SpecialAbilityId.TraditionChurchOfAves:
-      case SpecialAbilityId.TraditionChurchOfIfirn:
-      case SpecialAbilityId.TraditionChurchOfKor:
-      case SpecialAbilityId.TraditionChurchOfNandus:
-      case SpecialAbilityId.TraditionChurchOfSwafnir:
-      case SpecialAbilityId.TraditionCultOfNuminoru: {
-        // there must be no active liturgical chant or blessing
-        return countActiveSkillEntries ("liturgicalChants") (hero) > 0
-          || size (HA.blessings (hero)) > 0
-      }
 
       case SpecialAbilityId.AspectKnowledge: {
         const all_aspcs = getActiveSelections (hero_entry)

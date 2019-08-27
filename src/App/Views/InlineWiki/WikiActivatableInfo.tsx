@@ -406,6 +406,58 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
+      case SpecialAbilityGroup.Hexenkessel:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.effect (x))
+                          (str => (
+                            <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
+                          ))}
+            {maybeRNullF (SAA.volume (x))
+                          (str => (
+                            <WikiProperty l10n={l10n} title="volume">
+                              {str}
+                            </WikiProperty>
+                          ))}
+            {maybeRNullF (bind (misNumberM (SAA.brew (x)))
+                                (pipe (dec, subscript (translate (l10n) ("brews")))))
+                          (str => (
+                            <WikiProperty l10n={l10n} title="brew">
+                              {str}
+                            </WikiProperty>
+                          ))}
+            {maybeRNullF (SAA.aeCost (x))
+                          (str => (
+                            <WikiProperty l10n={l10n} title="aecost">
+                              {str}
+                            </WikiProperty>
+                          ))}
+            {isNothing (SAA.aeCost (x)) && isNothing (SAA.bindingCost (x))
+              ? <WikiProperty l10n={l10n} title="aecost">{translate (l10n) ("none")}</WikiProperty>
+              : null}
+            {maybeRNullF (SAA.bindingCost (x))
+                          (str => (
+                            <WikiProperty l10n={l10n} title="bindingcost">
+                              {str}
+                            </WikiProperty>
+                          ))}
+            {maybeRNullF (bind (misNumberM (SAA.property (x)))
+                                (pipe (dec, subscript (translate (l10n) ("propertylist")))))
+                          (str => (
+                            <WikiProperty l10n={l10n} title="property">
+                              {str}
+                            </WikiProperty>
+                          ))}
+            <PrerequisitesText {...props} />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
       case SpecialAbilityGroup.Paktgeschenke:
         return (
           <WikiBoxTemplate
