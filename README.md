@@ -1,4 +1,4 @@
-# Optolith Character Generator
+# Optolith Character Generator and Manager [![Build Status](https://travis-ci.com/elyukai/optolith-client.svg?branch=develop)](https://travis-ci.com/elyukai/optolith-client)
 
 This is the repository for Optolith, a desktop application for The Dark Eye 5th Edition.
 

@@ -16,6 +16,7 @@ import { altF_, any, bind, bindF, elemF, ensure, fromMaybe, isJust, Just, liftM2
 import { dec } from "../../../Data/Num";
 import { elems, lookup, lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
 import { ActivatableCombinedName } from "../../Models/View/ActivatableCombinedName";
 import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
@@ -63,13 +64,13 @@ export const getFullName =
  */
 export const getBracketedNameFromFullName =
   (full_name: string): string => {
-    const result = /\((.+)\)/ .exec (full_name)
+    const result = /\((?<subname>.+)\)/u .exec (full_name)
 
-    if (result === null) {
+    if (result === null || result .groups === undefined) {
       return ""
     }
 
-    return result [1]
+    return result .groups .subname
   }
 
 /**
@@ -84,18 +85,24 @@ const getEntrySpecificNameAddition =
   (hero_entry: Record<ActiveObjectWithId>): Maybe<string> => {
     switch (AOWIA.id (hero_entry)) {
       // Entry with Skill selection
-      case "ADV_4":
-      case "ADV_47":
-      case "ADV_16":
-      case "ADV_17":
-      case "DISADV_48":
-      case "SA_231":
-      case "SA_250":
-      case "SA_472":
-      case "SA_473":
-      case "SA_531":
-      case "SA_533":
-      case "SA_569":
+      case AdvantageId.Aptitude:
+      case AdvantageId.ExceptionalSkill:
+      case AdvantageId.ExceptionalCombatTechnique:
+      case AdvantageId.WeaponAptitude:
+      case DisadvantageId.Incompetent:
+      case SpecialAbilityId.AdaptionZauber:
+      case SpecialAbilityId.Lieblingszauber:
+      case SpecialAbilityId.Forschungsgebiet:
+      case SpecialAbilityId.Expertenwissen:
+      case SpecialAbilityId.Wissensdurst:
+      case SpecialAbilityId.Recherchegespuer:
+      case SpecialAbilityId.Lieblingsliturgie:
+      case SpecialAbilityId.WegDerGelehrten:
+      case SpecialAbilityId.Handwerkskunst:
+      case SpecialAbilityId.KindDerNatur:
+      case SpecialAbilityId.KoerperlichesGeschick:
+      case SpecialAbilityId.SozialeKompetenz:
+      case SpecialAbilityId.Universalgenie:
         return pipe (
                       AOWIA.sid,
                       misStringM,
@@ -105,8 +112,7 @@ const getEntrySpecificNameAddition =
                     )
                     (hero_entry)
 
-      // Hatred of
-      case "ADV_68":
+      case AdvantageId.HatredOf:
         return pipe (
                       AOWIA.sid,
                       findSelectOption (wiki_entry),
@@ -116,8 +122,7 @@ const getEntrySpecificNameAddition =
                     )
                     (hero_entry)
 
-      // Personality Flaw
-      case "DISADV_33":
+      case DisadvantageId.PersonalityFlaw:
         return pipe (
                       AOWIA.sid,
                       getSelectOptionName (wiki_entry),
@@ -143,8 +148,7 @@ const getEntrySpecificNameAddition =
                     )
                     (hero_entry)
 
-      // Skill Specialization
-      case "SA_9":
+      case SpecialAbilityId.SkillSpecialization:
         return pipe (
                       AOWIA.sid,
                       misStringM,
@@ -173,8 +177,7 @@ const getEntrySpecificNameAddition =
                     )
                     (hero_entry)
 
-      // Exorzist
-      case "SA_240":
+      case SpecialAbilityId.Exorzist:
         return pipe_ (
           hero_entry,
           AOWIA.tier,
@@ -185,16 +188,16 @@ const getEntrySpecificNameAddition =
           fmap (SOA.name)
         )
 
-      // Spell/Liturgical Chant Extension
-      case "SA_414":
-      case "SA_663":
+      case SpecialAbilityId.SpellExtensions:
+      case SpecialAbilityId.ChantExtensions:
         return pipe (
                       AOWIA.sid,
                       findSelectOption (wiki_entry),
                       bindF (ext => pipe (
                                            bindF ((target_id: string) => {
                                              const acc =
-                                               AOWIA.id (hero_entry) === "SA_414"
+                                               AOWIA.id (hero_entry)
+                                               === SpecialAbilityId.SpellExtensions
                                                  ? WA.spells
                                                  : WA.liturgicalChants
 
@@ -207,15 +210,12 @@ const getEntrySpecificNameAddition =
                                                `${SAL.name (target_entry)}: ${SOA.name (ext)}`
                                            )
                                          )
-                                         (SOA.target (ext))
-                      )
+                                         (SOA.target (ext)))
                     )
                     (hero_entry)
 
-      // Tradition (Zauberbarde)
-      case "SA_677":
-      // Tradition (Zaubertänzer)
-      case "SA_678": {
+      case SpecialAbilityId.TraditionZauberbarden:
+      case SpecialAbilityId.TraditionZaubertaenzer: {
         return pipe (
                       AOWIA.sid2,
                       misNumberM,
@@ -224,8 +224,7 @@ const getEntrySpecificNameAddition =
                     (hero_entry)
       }
 
-      // Tradition (Meistertalentierte)
-      case "SA_680":
+      case SpecialAbilityId.TraditionMeistertalentierte:
         return pipe (
                       AOWIA.sid,
                       misStringM,
@@ -234,11 +233,10 @@ const getEntrySpecificNameAddition =
                     )
                     (hero_entry)
 
-      // Language Specialization
-      case "SA_699":
+      case SpecialAbilityId.LanguageSpecializations:
         return pipe (
                       WA.specialAbilities,
-                      lookup ("SA_29"),
+                      lookup<string> (SpecialAbilityId.Language),
                       bindF (pipe (
                         findSelectOption,
                         thrush (AOWIA.sid (hero_entry))
@@ -295,39 +293,29 @@ const getEntrySpecificNameReplacements =
                                                          (mname_add)
 
     switch (AAL.id (wiki_entry)) {
-      // Immunity to Poison
-      case "ADV_28":
-      // Immunity to Disease
-      case "ADV_29":
+      case AdvantageId.ImmunityToPoison:
+      case AdvantageId.ImmunityToDisease:
         return maybeMap (name_add => `${translate (l10n) ("immunityto")} ${name_add}`)
 
-      // Hatred of
-      case "ADV_68":
+      case AdvantageId.HatredOf:
         return maybeMap (name_add => `${translate (l10n) ("hatredof")} ${name_add}`)
 
-      // Afraid of
-      case "DISADV_1":
+      case DisadvantageId.AfraidOf:
         return maybeMap (name_add => `${translate (l10n) ("afraidof")} ${name_add}`)
 
-      // Principles
-      case "DISADV_34":
-      // Obligations
-      case "DISADV_50":
+      case DisadvantageId.Principles:
+      case DisadvantageId.Obligations:
         return def (liftM2 ((level: number) => (name_add: string) =>
                              `${AAL.name (wiki_entry)} ${toRoman (level)} (${name_add})`)
                            (AOWIA.tier (hero_entry))
                            (mname_add))
 
-      // Gebieter des [Aspekts]
-      case "SA_639":
+      case SpecialAbilityId.GebieterDesAspekts:
         return maybeMap (name_add => `${AAL.name (wiki_entry)} ${name_add}`)
 
-      // Tradition (Zauberbarde)
-      case "SA_677":
-      // Tradition (Zaubertänzer)
-      case "SA_678":
-      // Tradition (Meistertalentierte)
-      case "SA_680": {
+      case SpecialAbilityId.TraditionZauberbarden:
+      case SpecialAbilityId.TraditionZaubertaenzer:
+      case SpecialAbilityId.TraditionMeistertalentierte: {
         return maybeMap (flip (addSndinParenthesis) (AAL.name (wiki_entry)))
       }
 

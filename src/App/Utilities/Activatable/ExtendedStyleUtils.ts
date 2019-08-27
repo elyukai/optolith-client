@@ -7,6 +7,7 @@ import { alt, and, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, Maybe, 
 import { gt } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
 import { fst, snd } from "../../../Data/Tuple";
+import { SpecialAbilityGroup } from "../../Constants/Groups";
 import { HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { StyleDependency, StyleDependencyL } from "../../Models/Hero/StyleDependency";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
@@ -24,11 +25,10 @@ const { id: dpid, active, origin } = StyleDependency.AL
 
 type StyleDependenciesLens = Lens_<HeroModelRecord, List<Record<StyleDependency>>>
 
-export type StyleDependencyStateKeys =
-  "combatStyleDependencies" |
-  "magicalStyleDependencies" |
-  "blessedStyleDependencies" |
-  "skillStyleDependencies"
+export type StyleDependencyStateKeys = "combatStyleDependencies"
+                                     | "magicalStyleDependencies"
+                                     | "blessedStyleDependencies"
+                                     | "skillStyleDependencies"
 
 /**
  * Checks if the given entry is a Style Special Ability and which state key it
@@ -40,19 +40,20 @@ const lensByStyle =
       return Nothing
     }
 
-    if (gr (x) === 9 || gr (x) === 10) {
+    if (gr (x) === SpecialAbilityGroup.CombatStylesArmed
+        || gr (x) === SpecialAbilityGroup.CombatStylesUnarmed) {
       return Just (combatStyleDependencies)
     }
 
-    if (gr (x) === 13) {
+    if (gr (x) === SpecialAbilityGroup.MagicalStyles) {
       return Just (magicalStyleDependencies)
     }
 
-    if (gr (x) === 25) {
+    if (gr (x) === SpecialAbilityGroup.BlessedStyles) {
       return Just (blessedStyleDependencies)
     }
 
-    if (gr (x) === 33) {
+    if (gr (x) === SpecialAbilityGroup.SkillStyles) {
       return Just (skillStyleDependencies)
     }
 
@@ -65,16 +66,16 @@ const lensByStyle =
  */
 const lensByExtended =
   (x: Record<SpecialAbility>): Maybe<StyleDependenciesLens> => {
-    if (gr (x) === 11) {
+    if (gr (x) === SpecialAbilityGroup.CombatExtended) {
       return Just (combatStyleDependencies)
     }
-    else if (gr (x) === 14) {
+    else if (gr (x) === SpecialAbilityGroup.MagicalExtended) {
       return Just (magicalStyleDependencies)
     }
-    else if (gr (x) === 26) {
+    else if (gr (x) === SpecialAbilityGroup.KarmaExtended) {
       return Just (blessedStyleDependencies)
     }
-    else if (gr (x) === 34) {
+    else if (gr (x) === SpecialAbilityGroup.SkillExtended) {
       return Just (skillStyleDependencies)
     }
 
@@ -160,15 +161,12 @@ export const addExtendedSpecialAbilityDependency =
                       (set (StyleDependencyL.active) (Just (id (wiki_entry))))
                       (xs))
                    (hero))
-            (lensByExtended (wiki_entry))
-  )
+            (lensByExtended (wiki_entry)))
 
 const getIndexForExtendedSpecialAbilityDependency =
   (wiki_entry: Record<SpecialAbility>) =>
   (xs: List<Record<StyleDependency>>) =>
-        /**
-         * Checks if requested entry is plain dependency.
-         */
+        // Checks if requested entry is plain dependency
     alt (findIndex (pipe (dpid, equals, thrush (id (wiki_entry))))
                    (xs))
 

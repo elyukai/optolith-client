@@ -4,6 +4,12 @@
  * A record is a simple data structure for key-value pairs where the keys must
  * be `String`s and all values can have different types.
  *
+ * Record automatically create accessor functions to access the values inside a
+ * record behind the `A` attribute of a record creator function. If you need to
+ * modify or set the values, you need to `makeLenses` from the record creator
+ * function. You can use the lenses with the `Data.Lens` module to view, set and
+ * modify values.
+ *
  * @author Lukas Obermann
  */
 

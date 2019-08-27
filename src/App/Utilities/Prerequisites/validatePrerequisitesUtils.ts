@@ -194,10 +194,12 @@ const hasNeededPactDomain =
 
 const hasNeededPactLevel = (state: Record<Pact>) => (req: Record<PactRequirement>) =>
   // Fulfills the level requirement
-  or (fmap (lte (Pact.AL.level (state))) (PactRequirement.AL.level (req))) ||
+  or (fmap (lte (Pact.A.level (state))) (PactRequirement.A.level (req)))
   // Its a lesser Pact and the needed Pact-Level is "1"
-  (or (fmap (lte (1)) (PactRequirement.AL.level (req)))
-    && (Pact.AL.level (state) === 0))
+  || (
+    or (fmap (lte (1)) (PactRequirement.A.level (req)))
+    && (Pact.A.level (state) === 0)
+  )
 
 const isPactValid =
   (maybePact: Maybe<Record<Pact>>) => (req: Record<PactRequirement>): boolean =>
@@ -475,12 +477,11 @@ export const validateProfession =
   (current_race_id: string) =>
   (current_culture_id: string): boolean =>
     all<ProfessionDependency> (req =>
-                                     isSexRequirement (req)
-                                     ? isSexValid (current_sex) (req)
-                                     : RaceRequirement.is (req)
-                                     ? isRaceValid (current_race_id) (req)
-                                     : isCultureRequirement (req)
-                                     ? isCultureValid (current_culture_id) (req)
-                                     : false
-                                   )
-                                   (prerequisites)
+                                isSexRequirement (req)
+                                ? isSexValid (current_sex) (req)
+                                : RaceRequirement.is (req)
+                                ? isRaceValid (current_race_id) (req)
+                                : isCultureRequirement (req)
+                                ? isCultureValid (current_culture_id) (req)
+                                : false)
+                              (prerequisites)

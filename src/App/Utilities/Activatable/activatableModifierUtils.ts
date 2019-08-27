@@ -13,7 +13,8 @@ const { tier } = ActiveObject.A
 const getFirstActive =
   pipe (
     fmap (active) as (m: Maybe<Record<ActivatableDependent>>) => Maybe<List<Record<ActiveObject>>>,
-    bindF (listToMaybe))
+    bindF (listToMaybe)
+  )
 
 /**
  * `getModifierByActiveLevel mbase_mod mincrease mdecrease` adjusts the given

@@ -10,6 +10,7 @@ import { dec, gte, max, min, multiply, negate } from "../../../Data/Num";
 import { lookupF } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Omit, Record } from "../../../Data/Record";
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple";
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -37,9 +38,6 @@ import { getActiveSelectionsMaybe, getSelectOptionCost } from "./selectionUtils"
 
 interface PropertiesAffectedByState {
   currentCost: Maybe<number | string>
-  /**
-   * @default false
-   */
   disabled: Maybe<boolean>
   selectElement: Maybe<JSX.Element>
   firstSelectOptions: Maybe<List<Record<SelectOption>>>
@@ -180,31 +178,24 @@ export const getIdSpecificAffectedAndDispatchProps =
 
     switch (id) {
       // Entry with Skill selection
-      case "ADV_4":
-      case "ADV_16":
-      case "ADV_17":
-      case "ADV_47":
-      case "DISADV_48":
-      case "SA_231":
-      case "SA_250":
-      case "SA_472":
-      case "SA_473":
-      case "SA_531":
-      case "SA_533":
-      // Lieblingsliturgie
-      case "SA_569":
-      // Weg der Gelehrten
-      case "SA_1040":
-      // Handwerkskunst
-      case "SA_1108":
-      // Kind der Natur
-      case "SA_1110":
-      // Körperliches Geschick
-      case "SA_1112":
-      // Soziale Kompetenz
-      case "SA_1123":
-      // Universalgenie
-      case "SA_1127": {
+      case AdvantageId.Aptitude:
+      case AdvantageId.ExceptionalSkill:
+      case AdvantageId.ExceptionalCombatTechnique:
+      case AdvantageId.WeaponAptitude:
+      case DisadvantageId.Incompetent:
+      case SpecialAbilityId.AdaptionZauber:
+      case SpecialAbilityId.Lieblingszauber:
+      case SpecialAbilityId.Forschungsgebiet:
+      case SpecialAbilityId.Expertenwissen:
+      case SpecialAbilityId.Wissensdurst:
+      case SpecialAbilityId.Recherchegespuer:
+      case SpecialAbilityId.Lieblingsliturgie:
+      case SpecialAbilityId.WegDerGelehrten:
+      case SpecialAbilityId.Handwerkskunst:
+      case SpecialAbilityId.KindDerNatur:
+      case SpecialAbilityId.KoerperlichesGeschick:
+      case SpecialAbilityId.SozialeKompetenz:
+      case SpecialAbilityId.Universalgenie: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -228,14 +219,10 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      // Immunity to (Poison)
-      case "ADV_28":
-      // Immunity to (Disease)
-      case "ADV_29":
-      // Negative Trait
-      case "DISADV_37":
-      // Maimed
-      case "DISADV_51": {
+      case AdvantageId.ImmunityToPoison:
+      case AdvantageId.ImmunityToDisease:
+      case DisadvantageId.NegativeTrait:
+      case DisadvantageId.Maimed: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -249,8 +236,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      // Afraid of ...
-      case "DISADV_1": {
+      case DisadvantageId.AfraidOf: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -268,10 +254,8 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      // Principles
-      case "DISADV_34":
-      // Obligations
-      case "DISADV_50": {
+      case DisadvantageId.Principles:
+      case DisadvantageId.Obligations: {
         const active_selections =
           joinMaybeList (getActiveSelectionsMaybe (IAA.heroEntry (entry)))
 
@@ -328,10 +312,8 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      // Magical Attunement
-      case "ADV_32":
-      // Magical Restriction
-      case "DISADV_24": {
+      case AdvantageId.MagicalAttunement:
+      case DisadvantageId.MagicalRestriction: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -346,8 +328,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      // Hatred of ...
-      case "ADV_68": {
+      case AdvantageId.HatredOf: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -363,8 +344,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      // Personality Flaw
-      case "DISADV_33": {
+      case DisadvantageId.PersonalityFlaw: {
         const is_text_input_required = any (elemF (List<string | number> (7, 8))) (mselected)
 
         const isMaxActiveSelections =
@@ -402,10 +382,8 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      // Bad Habit
-      case "DISADV_36":
-      // Stigma
-      case "DISADV_45": {
+      case DisadvantageId.BadHabit:
+      case DisadvantageId.Stigma: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -415,7 +393,7 @@ export const getIdSpecificAffectedAndDispatchProps =
           }),
           PropertiesAffectedByState ({
             currentCost:
-              id === "DISADV_36"
+              id === DisadvantageId.BadHabit
                 ? pipe_ (
                     entry,
                     IAA.heroEntry,
@@ -434,8 +412,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      // Skill Specialization
-      case "SA_9": {
+      case SpecialAbilityId.SkillSpecialization: {
         const x = getCurrentSelectOption (entry) (mselected)
 
         const src = pipe_ (entry, IAA.wikiEntry, SAAL.src)
@@ -465,8 +442,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      // Languages
-      case "SA_29": {
+      case SpecialAbilityId.Language: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -481,29 +457,27 @@ export const getIdSpecificAffectedAndDispatchProps =
                 misNumberM,
                 thenF (liftM2 ((l: number) => (c: number) => l === 4 ? 0 : c * l)
                               (mselected_level)
-                              (getPlainCostFromEntry (entry)))),
+                              (getPlainCostFromEntry (entry)))
+              ),
           })
         )
       }
 
-      // Tradition (Zauberbarde)
-      case "SA_677": {
+      case SpecialAbilityId.TraditionZauberbarden: {
         return getIdSpecificAffectedAndDispatchPropsForMusicTraditions (l10n)
                                                                        (entry)
                                                                        (List (1, 2, 3))
                                                                        (mselected)
       }
 
-      // Tradition (Zaubertänzer)
-      case "SA_678": {
+      case SpecialAbilityId.TraditionZaubertaenzer: {
         return getIdSpecificAffectedAndDispatchPropsForMusicTraditions (l10n)
                                                                        (entry)
                                                                        (List (4, 5, 6, 7))
                                                                        (mselected)
       }
 
-      // Language Specializations
-      case "SA_699": {
+      case SpecialAbilityId.LanguageSpecializations: {
         const moption = getCurrentSelectOption (entry) (mselected)
 
         const mspec_input = bind (moption) (SOA.specializationInput)
@@ -537,8 +511,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      // Fachwissen
-      case "SA_1100": {
+      case SpecialAbilityId.Fachwissen: {
         const getApps =
           (mother_id: Maybe<string | number>) =>
             pipe_ (
@@ -761,7 +734,8 @@ export const getInactiveActivatableControlElements =
 
                 return pipe_ (
                   elements,
-                  set (["DISADV_34", "DISADV_50"].includes (IAA.id (entry))
+                  set (([DisadvantageId.Principles, DisadvantageId.Obligations] as string[])
+                        .includes (IAA.id (entry))
                         ? IACEL.levelElementBefore
                         : IACEL.levelElementAfter)
                       (
@@ -783,7 +757,8 @@ export const getInactiveActivatableControlElements =
       fromMaybe
         (ident as ident<Record<InactiveActivatableControlElements>>)
         (pipe_ (
-          guard (notElem (IAA.id (entry)) (List ("DISADV_34", "DISADV_50"))),
+          guard (notElem (IAA.id (entry))
+                         (List (DisadvantageId.Principles, DisadvantageId.Obligations))),
           thenF (msels),
           fmap (pipe (
             map (selectToDropdownOption),
@@ -801,23 +776,24 @@ export const getInactiveActivatableControlElements =
           ))
         )),
       (
-        isJust (msels) && isNothing (mselected)
-        || isJust (minput_desc) && isNothing (minput_text)
+        (isJust (msels) && isNothing (mselected))
+        || (isJust (minput_desc) && isNothing (minput_text))
       )
       && notElem (IAA.id (entry))
-                 (List ("ADV_32",
-                        "DISADV_1",
-                        "DISADV_24",
-                        "DISADV_34",
-                        "DISADV_36",
-                        "DISADV_45",
-                        "DISADV_50"))
+                 (List<string> (AdvantageId.MagicalAttunement,
+                                DisadvantageId.AfraidOf,
+                                DisadvantageId.MagicalRestriction,
+                                DisadvantageId.Principles,
+                                DisadvantageId.BadHabit,
+                                DisadvantageId.Stigma,
+                                DisadvantageId.Obligations))
         ? set (IACEL.disabled) (Just (true))
         : ident,
       fromMaybe
         (ident as ident<Record<InactiveActivatableControlElements>>)
         (pipe_ (
-          guard (notElem (IAA.id (entry)) (List ("ADV_28", "ADV_29"))),
+          guard (notElem (IAA.id (entry))
+                         (List (AdvantageId.ImmunityToPoison, AdvantageId.ImmunityToDisease))),
           thenF (minput_desc),
           fmap (
             input =>
@@ -830,8 +806,9 @@ export const getInactiveActivatableControlElements =
                         onChangeString={inputHandlers.handleInput} />
                     )
                   )
-          ))),
-      IAA.id (entry) === "SA_9"
+          )
+        )),
+      IAA.id (entry) === SpecialAbilityId.SkillSpecialization
         ? pipe (
             set (IACEL.inputElement)
                 (Just (

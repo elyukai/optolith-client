@@ -1,7 +1,7 @@
 import { bindF, Either, Left, maybeToEither, Right } from "../../../Data/Either";
 import { fmap } from "../../../Data/Functor";
-import { cons, empty, filter, find, flength, head, ifoldr, lines, List, map, notNull, notNullStr, replaceStr, splitOn, uncons, zip } from "../../../Data/List";
-import { ensure, fromJust, isJust, mapMaybe } from "../../../Data/Maybe";
+import { cons, empty, filter, findIndex, flength, head, ifoldr, lines, List, map, notNull, notNullStr, replaceStr, splitOn, take, uncons, zip } from "../../../Data/List";
+import { ensure, fromMaybe_, mapMaybe } from "../../../Data/Maybe";
 import { fromList, OrderedMap } from "../../../Data/OrderedMap";
 import { show } from "../../../Data/Show";
 import { fst, Pair, second, snd } from "../../../Data/Tuple";
@@ -17,7 +17,7 @@ type Data = List<OrderedMap<string, string>>
 
 export const CsvColumnDelimiter = ";;"
 
-const emptyColRegex = /(?:Spalte|Column)\d+/
+const emptyColRegex = /(?:^(?:Spalte|Column)\d+$)|(?:^_)/
 
 /**
  * Converts a CSV string into a list of entries. If `check` is `True`, the line
@@ -45,19 +45,22 @@ export const csvToList =
     bindF (headerAndBody => {
             const header = fst (headerAndBody)
 
-            const me_col = find ((x: string) => x .length === 0 || emptyColRegex .test (x))
-                                (header)
+            const header_length = flength (header)
 
-            if (isJust (me_col)) {
+            const valid_header_length =
+              fromMaybe_ (() => flength (header))
+                         (findIndex ((x: string) => x .length === 0 || emptyColRegex .test (x))
+                                    (header))
+
+            const valid_header = take (valid_header_length) (header)
+
+            if (valid_header_length === 0) {
               return Left (
-                `csvToList: empty or unspecified column in table: "${fromJust (me_col)}"`
-                + `Table header: \n${show (header)}`
+                `csvToList: empty worksheet, table header: \n${show (header)}`
               )
             }
 
             const body = snd (headerAndBody)
-
-            const header_length = flength (header)
 
             return ifoldr<List<string>, Either<string, Data>>
               (i => l =>
@@ -70,7 +73,7 @@ export const csvToList =
                     )
                     : Right (cons (acc)
                                   (fromList (mapMaybe (decode)
-                                                      (zip (header) (l)))))
+                                                      (zip (valid_header) (l)))))
                 ))
               (Right (empty))
               (body)

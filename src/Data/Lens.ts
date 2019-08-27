@@ -3,6 +3,14 @@
  *
  * Simple `Lens` implementation.
  *
+ * A `Lens` is a function that is used to "zoom" into a data structure and do
+ * something with the value you zoom at. For example, you can "get" (`view`) the
+ * value, "set" (`set`) the value to a new one or transform the value with a
+ * function (`over`).
+ *
+ * A common use case are `Record`s, where lenses are used to get, set and
+ * transform it's attributes.
+ *
  * @author Lukas Obermann
  */
 
@@ -35,6 +43,11 @@ type Setter_ <S, A> = Setter<S, S, A, A>
  * `Lens s t a b = Functor f => (a -> f b) -> s -> f t`
  *
  * A getter and setter combined. Can be used by `Lens` functions.
+ *
+ * A `Lens` focuses on one part of `s`, which is of type `a`. It can transform
+ * `a` into the type `b`, which leads to `s` being transformed into `t`. The
+ * actual behaviour is defined by each lens in combination with the function
+ * that consumes the lens.
  */
 export interface Lens <S, T, A, B>
   extends Setter<S, T, A, B>, Getter<S, T, A, B> {

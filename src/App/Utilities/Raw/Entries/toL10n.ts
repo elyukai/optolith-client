@@ -421,8 +421,6 @@ export const toL10n =
         "mundaneprofessions": checkL10nNonEmptyString ("mundaneprofessions"),
         "magicalprofessions": checkL10nNonEmptyString ("magicalprofessions"),
         "blessedprofessions": checkL10nNonEmptyString ("blessedprofessions"),
-        "alwaysshowprofessionsfromextensions":
-          checkL10nNonEmptyString ("alwaysshowprofessionsfromextensions"),
         "novariant": checkL10nNonEmptyString ("novariant"),
         "ownprofession": checkL10nNonEmptyString ("ownprofession"),
         "prerequisites": checkL10nNonEmptyString ("prerequisites"),
@@ -1082,7 +1080,6 @@ export const toL10n =
           "mundaneprofessions": res ["mundaneprofessions"],
           "magicalprofessions": res ["magicalprofessions"],
           "blessedprofessions": res ["blessedprofessions"],
-          "alwaysshowprofessionsfromextensions": res ["alwaysshowprofessionsfromextensions"],
           "novariant": res ["novariant"],
           "ownprofession": res ["ownprofession"],
           "prerequisites": res ["prerequisites"],
