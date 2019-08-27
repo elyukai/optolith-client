@@ -2,11 +2,11 @@ import * as React from "react";
 import { List } from "../../../Data/List";
 import { Maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
+import { EnergyId } from "../../Constants/Ids";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { AttributeWithRequirements } from "../../Models/View/AttributeWithRequirements";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { L10nRecord } from "../../Models/Wiki/L10n";
-import { EnergyIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../Utilities/I18n";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
@@ -30,8 +30,8 @@ export interface AttributesStateProps {
   adjustmentValue: Maybe<number>
   availableAttributeIds: Maybe<List<string>>
   currentAttributeId: Maybe<string>
-  getEditPermanentEnergy: Maybe<EnergyIds>
-  getAddPermanentEnergy: Maybe<EnergyIds>
+  getEditPermanentEnergy: Maybe<EnergyId>
+  getAddPermanentEnergy: Maybe<EnergyId>
 }
 
 export interface AttributesDispatchProps {
@@ -57,16 +57,16 @@ export interface AttributesDispatchProps {
   removeLostKPPoint (): void
   addLostKPPoints (value: number): void
   setAdjustmentId (id: Maybe<string>): void
-  openAddPermanentEnergyLoss (energy: "LP" | "AE" | "KP"): void
+  openAddPermanentEnergyLoss (energy: EnergyId): void
   closeAddPermanentEnergyLoss (): void
-  openEditPermanentEnergy (energy: "LP" | "AE" | "KP"): void
+  openEditPermanentEnergy (energy: EnergyId): void
   closeEditPermanentEnergy (): void
 }
 
 export type AttributesProps = AttributesStateProps & AttributesDispatchProps & AttributesOwnProps
 
 export function Attributes (props: AttributesProps) {
-  const { l10n: l10n, isInCharacterCreation, maxTotalAttributeValues, sum } = props
+  const { l10n, isInCharacterCreation, maxTotalAttributeValues, sum } = props
 
   return (
     <Page id="attribute">

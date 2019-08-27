@@ -3,6 +3,7 @@ import { fmapF } from "../../../../Data/Functor";
 import { List, map, toArray } from "../../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
+import { DCId } from "../../../Constants/Ids";
 import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { Race } from "../../../Models/Wiki/Race";
@@ -44,14 +45,14 @@ export function MainSheetAttributes (props: MainSheetAttributesProps) {
             purchased={DCA.currentAdd (attribute)}
             subLabel={(() => {
               switch (DCA.id (attribute)) {
-                case "LP":
-                case "SPI":
-                case "TOU":
-                case "MOV":
+                case DCId.LP:
+                case DCId.SPI:
+                case DCId.TOU:
+                case DCId.MOV:
                   return Just (translate (l10n) ("basestat"))
 
-                case "AE":
-                case "KP":
+                case DCId.AE:
+                case DCId.KP:
                   return Just (translate (l10n) ("permanentlylostboughtback"))
 
                 default:
@@ -60,15 +61,15 @@ export function MainSheetAttributes (props: MainSheetAttributesProps) {
             }) ()}
             subArray={(() => {
               switch (DCA.id (attribute)) {
-                case "LP":
+                case DCId.LP:
                   return Just (
                     List (
                       Maybe.sum (fmapF (race) (Race.A.lp))
                     )
                   )
 
-                case "AE":
-                case "KP":
+                case DCId.AE:
+                case DCId.KP:
                   return Just (
                     List (
                       Maybe.sum (DCA.permanentLost (attribute)),
@@ -76,21 +77,21 @@ export function MainSheetAttributes (props: MainSheetAttributesProps) {
                     )
                   )
 
-                case "SPI":
+                case DCId.SPI:
                   return Just (
                     List (
                       Maybe.sum (fmapF (race) (Race.A.spi))
                     )
                   )
 
-                case "TOU":
+                case DCId.TOU:
                   return Just (
                     List (
                       Maybe.sum (fmapF (race) (Race.A.tou))
                     )
                   )
 
-                case "MOV":
+                case DCId.MOV:
                   return Just (
                     List (
                       Maybe.sum (fmapF (race) (Race.A.mov))
@@ -103,8 +104,8 @@ export function MainSheetAttributes (props: MainSheetAttributesProps) {
             }) ()}
             empty={(() => {
               switch (DCA.id (attribute)) {
-                case "AE":
-                case "KP":
+                case DCId.AE:
+                case DCId.KP:
                   return Just (Maybe.isNothing (DCA.value (attribute)))
 
                 default:

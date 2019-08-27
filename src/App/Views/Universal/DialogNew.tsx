@@ -16,13 +16,13 @@ export interface DialogProps extends PortalWrappedOwnProps {
   onClose? (): void
 }
 
-export class Dialog extends React.Component<DialogProps, {}> {
+export class Dialog extends React.Component<DialogProps> {
   clickButton = (f: () => void) => {
     if (typeof f === "function") {
       f ()
     }
 
-    if (this.props.onClose) {
+    if (typeof this.props.onClose === "function") {
       this.props.onClose ()
     }
 
@@ -58,9 +58,9 @@ export class Dialog extends React.Component<DialogProps, {}> {
             ))
           }
           >
-          {noCloseButton !== true
-            ? <div className="modal-close" onClick={close}><div>&#xE5CD;</div></div>
-            : null}
+          {noCloseButton === true
+            ? null
+            : <div className="modal-close" onClick={close}><div>&#xE5CD;</div></div>}
           {notNullStrUndef (title)
             ? <div className="modal-header"><div className="modal-header-inner">{title}</div></div>
             : null}

@@ -1,8 +1,8 @@
 import { isJust, Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record";
-import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
+import { DCId } from "../../Constants/Ids";
 
-export interface DerivedCharacteristic<I extends DCIds = DCIds> {
+export interface DerivedCharacteristic<I extends DCId = DCId> {
   id: I
   short: string
   name: string
@@ -17,7 +17,7 @@ export interface DerivedCharacteristic<I extends DCIds = DCIds> {
   permanentRedeemed: Maybe<number>
 }
 
-export interface Energy<I extends DCIds = DCIds> extends DerivedCharacteristic<I> {
+export interface Energy<I extends DCId = DCId> extends DerivedCharacteristic<I> {
   add: Just<number>
   mod: Just<number>
   maxAdd: Just<number>
@@ -25,25 +25,25 @@ export interface Energy<I extends DCIds = DCIds> extends DerivedCharacteristic<I
   permanentLost: Just<number>
 }
 
-export interface EnergyWithLoss<I extends DCIds = DCIds> extends Energy<I> {
+export interface EnergyWithLoss<I extends DCId = DCId> extends Energy<I> {
   permanentRedeemed: Just<number>
 }
 
 interface DerivedCharacteristicCreator extends RecordCreator<DerivedCharacteristic> {
-  <I extends DCIds = DCIds>
+  <I extends DCId = DCId>
   (x: EnergyWithLoss<I>): Record<EnergyWithLoss<I>>
 
-  <I extends DCIds = DCIds>
+  <I extends DCId = DCId>
   (x: Energy<I>): Record<Energy<I>>
 
-  <I extends DCIds = DCIds>
+  <I extends DCId = DCId>
   (x: PartialMaybeOrNothing<DerivedCharacteristic<I>>): Record<DerivedCharacteristic<I>>
 }
 
 export const DerivedCharacteristic =
   fromDefault ("DerivedCharacteristic")
               <DerivedCharacteristic> ({
-                id: "LP",
+                id: DCId.LP,
                 short: "",
                 name: "",
                 calc: "",
@@ -58,7 +58,7 @@ export const DerivedCharacteristic =
               }) as DerivedCharacteristicCreator
 
 export const isDerivedCharacteristicEnergy =
-  <I extends DCIds = DCIds> (x: Record<DerivedCharacteristic<I>>): x is Record<Energy<I>> =>
+  <I extends DCId = DCId> (x: Record<DerivedCharacteristic<I>>): x is Record<Energy<I>> =>
     isJust (DerivedCharacteristic.A.add (x))
     && isJust (DerivedCharacteristic.A.mod (x))
     && isJust (DerivedCharacteristic.A.maxAdd (x))
@@ -66,7 +66,7 @@ export const isDerivedCharacteristicEnergy =
     && isJust (DerivedCharacteristic.A.permanentLost (x))
 
 export const isDerivedCharacteristicEnergyWithLoss =
-  <I extends DCIds = DCIds> (x: Record<DerivedCharacteristic<I>>): x is Record<EnergyWithLoss<I>> =>
+  <I extends DCId = DCId> (x: Record<DerivedCharacteristic<I>>): x is Record<EnergyWithLoss<I>> =>
     isJust (DerivedCharacteristic.A.add (x))
     && isJust (DerivedCharacteristic.A.mod (x))
     && isJust (DerivedCharacteristic.A.maxAdd (x))

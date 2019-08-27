@@ -3,6 +3,7 @@ import { equals } from "../../../../Data/Eq";
 import { find, List } from "../../../../Data/List";
 import { bindF, Maybe } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
+import { DCId } from "../../../Constants/Ids";
 import { ActiveActivatable } from "../../../Models/View/ActiveActivatable";
 import { AttributeCombined } from "../../../Models/View/AttributeCombined";
 import { BlessingCombined } from "../../../Models/View/BlessingCombined";
@@ -10,7 +11,6 @@ import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristi
 import { LiturgicalChantWithRequirements } from "../../../Models/View/LiturgicalChantWithRequirements";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
-import { DCIds } from "../../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { Checkbox } from "../../Universal/Checkbox";
@@ -53,7 +53,7 @@ export function LiturgicalChantsSheet (props: LiturgicalChantsSheetProps) {
       value:
         pipe_ (
           derivedCharacteristics,
-          find (pipe (DerivedCharacteristic.A.id, equals<DCIds> ("KP"))),
+          find (pipe (DerivedCharacteristic.A.id, equals<DCId> (DCId.KP))),
           bindF (DerivedCharacteristic.A.value)
         ),
     }),

@@ -175,7 +175,7 @@
     "no-trailing-spaces": 2,
     "no-unneeded-ternary": 2,
     "nonblock-statement-body-position": 2,
-    "object-curly-newline": [2, { "multiline": true }],
+    // "object-curly-newline": [2, { "multiline": true }],
     "object-curly-spacing": [2, "always"],
     "operator-assignment": 2,
     "operator-linebreak": [

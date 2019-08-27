@@ -1,14 +1,15 @@
 import * as React from "react";
 import { fromJust, isJust, Maybe } from "../../../Data/Maybe";
+import { EnergyId } from "../../Constants/Ids";
 import { L10nRecord } from "../../Models/Wiki/L10n";
-import { EnergyIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../Utilities/I18n";
 import { isFunction } from "../../Utilities/typeCheckUtils";
 import { Dialog, DialogProps } from "../Universal/DialogNew";
 import { IconButton } from "../Universal/IconButton";
 
 export interface PermanentPointsProps extends DialogProps {
-  id: EnergyIds
+  id: string
+  eid: EnergyId
   l10n: L10nRecord
   permanentBoughtBack: Maybe<number>
   permanentSpent: number
@@ -20,7 +21,7 @@ export interface PermanentPointsProps extends DialogProps {
 
 export function PermanentPoints (props: PermanentPointsProps) {
   const {
-    id,
+    eid,
     l10n,
     addBoughtBackPoint,
     addLostPoint,
@@ -35,9 +36,9 @@ export function PermanentPoints (props: PermanentPointsProps) {
       {...props}
       className="permanent-points-editor"
       title={
-        id === "AE"
+        eid === EnergyId.AE
           ? translate (l10n) ("arcaneenergylostpermanently")
-          : id === "KP"
+          : eid === EnergyId.KP
           ? translate (l10n) ("karmapointslostpermanently")
           : translate (l10n) ("lifepointslostpermanently")
       }

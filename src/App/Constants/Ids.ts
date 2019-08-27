@@ -9,6 +9,24 @@ export enum AttrId {
   Strength = "ATTR_8",
 }
 
+export enum DCId {
+  LP = "LP",
+  AE = "AE",
+  KP = "KP",
+  SPI = "SPI",
+  TOU = "TOU",
+  DO = "DO",
+  INI = "INI",
+  MOV = "MOV",
+  WT = "WT",
+}
+
+export enum EnergyId {
+  LP = DCId.LP,
+  AE = DCId.AE,
+  KP = DCId.KP,
+}
+
 export enum AdvantageId {
   // Begabung
   Aptitude = "ADV_4",

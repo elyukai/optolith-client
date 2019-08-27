@@ -5,6 +5,7 @@ import { bindF, Maybe, maybeRNull } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
+import { DCId } from "../../Constants/Ids";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
@@ -37,7 +38,6 @@ import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Race } from "../../Models/Wiki/Race";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModel } from "../../Models/Wiki/WikiModel";
-import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { isBookEnabled } from "../../Utilities/RulesUtils";
 import { Page } from "../Universal/Page";
@@ -121,10 +121,10 @@ const HA = HeroModel.A
 const RA = Rules.A
 
 export function Sheets (props: SheetsProps) {
-  const maybeArcaneEnergy = find (pipe (DerivedCharacteristic.A.id, equals<DCIds> ("AE")))
+  const maybeArcaneEnergy = find (pipe (DerivedCharacteristic.A.id, equals<DCId> (DCId.AE)))
                                  (props.derivedCharacteristics)
 
-  const maybeKarmaPoints = find (pipe (DerivedCharacteristic.A.id, equals<DCIds> ("KP")))
+  const maybeKarmaPoints = find (pipe (DerivedCharacteristic.A.id, equals<DCId> (DCId.KP)))
                                 (props.derivedCharacteristics)
 
   return (

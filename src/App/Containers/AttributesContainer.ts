@@ -3,6 +3,7 @@ import { fromJust, isJust, Maybe } from "../../Data/Maybe";
 import { ReduxDispatch } from "../Actions/Actions";
 import * as AttributesActions from "../Actions/AttributesActions";
 import * as SubwindowsActions from "../Actions/SubwindowsActions";
+import { EnergyId } from "../Constants/Ids";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getAdjustmentValue, getAttributesForView, getAttributeSum, getAvailableAdjustmentIds } from "../Selectors/attributeSelectors";
 import { getDerivedCharacteristics } from "../Selectors/derivedCharacteristicsSelectors";
@@ -93,13 +94,13 @@ const mapDispatchToProps = (
   addLostKPPoints: (value: number) => {
     dispatch (AttributesActions.addLostKPPoints (value))
   },
-  openAddPermanentEnergyLoss: (energy: "LP" | "AE" | "KP") => {
+  openAddPermanentEnergyLoss: (energy: EnergyId) => {
     dispatch (SubwindowsActions.openAddPermanentEnergyLoss (energy))
   },
   closeAddPermanentEnergyLoss: () => {
     dispatch (SubwindowsActions.closeAddPermanentEnergyLoss ())
   },
-  openEditPermanentEnergy: (energy: "LP" | "AE" | "KP") => {
+  openEditPermanentEnergy: (energy: EnergyId) => {
     dispatch (SubwindowsActions.openEditPermanentEnergy (energy))
   },
   closeEditPermanentEnergy: () => {

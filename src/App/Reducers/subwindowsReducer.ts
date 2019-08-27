@@ -8,6 +8,7 @@ import { SetUpdateDownloadProgressAction } from "../Actions/IOActions";
 import { SetTabAction } from "../Actions/LocationActions";
 import * as SubwindowsActions from "../Actions/SubwindowsActions";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { EnergyId } from "../Constants/Ids";
 
 type Action = SetTabAction
             | SetUpdateDownloadProgressAction
@@ -27,8 +28,8 @@ type Action = SetTabAction
             | SubwindowsActions.CloseEditPetAvatarAction
 
 export interface SubWindowsState {
-  editPermanentEnergy: Maybe<"LP" | "AE" | "KP">
-  addPermanentEnergy: Maybe<"LP" | "AE" | "KP">
+  editPermanentEnergy: Maybe<EnergyId>
+  addPermanentEnergy: Maybe<EnergyId>
   updateDownloadProgress: Maybe<ProgressInfo>
   isCharacterCreatorOpen: boolean
   isAddAdventurePointsOpen: boolean
