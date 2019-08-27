@@ -1,10 +1,11 @@
-import { fmap, fmapF } from "../../Data/Functor";
+import { fmap } from "../../Data/Functor";
 import { foldr, subscriptF } from "../../Data/List";
 import { altF, bindF, elem, fromMaybe, Just, liftM2, Maybe, sum } from "../../Data/Maybe";
 import { add, lt, odd, subtract, subtractBy } from "../../Data/Num";
 import { lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
+import { RaceId } from "../Constants/Ids";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { Profession } from "../Models/Wiki/Profession";
@@ -118,7 +119,7 @@ export const rerollWeight =
     const rerolled_weight =
       fmap (pipe (
              (race: Record<Race>) => {
-               const f = id (race) === "R_1"
+               const f = id (race) === RaceId.Humans
                  ? randomWeightRace (odd)
                  : randomWeightRace (lt (0))
 
@@ -187,14 +188,9 @@ export const getFullProfessionName =
     )
   }
 
-export const getNameBySex =
-  (sex: Sex) =>
-  // tslint:disable-next-line: no-shadowed-variable
-  (name: string | Record<NameBySex>): string =>
-    NameBySex.is (name) ? NameBySex.A[sex] (name) : name
+export const getNameBySex: (sex: Sex) => (name: string | Record<NameBySex>) => string =
+  s => n => NameBySex.is (n) ? NameBySex.A[s] (n) : n
 
-export const getNameBySexM =
-  (sex: Sex) =>
-  (mname: Maybe<string | Record<NameBySex>>): Maybe<string> =>
-                  // tslint:disable-next-line: no-shadowed-variable
-    fmapF (mname) (name => NameBySex.is (name) ? NameBySex.A[sex] (name) : name)
+export const getNameBySexM: (sex: Sex) =>
+                            (mname: Maybe<string | Record<NameBySex>>) => Maybe<string> =
+  s => fmap (n => NameBySex.is (n) ? NameBySex.A[s] (n) : n)

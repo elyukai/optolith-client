@@ -171,8 +171,7 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
                             or
                           ))
                           (DropdownOption ({ id: Just (index + 1), name })))
-                      (socialstatusTags)
-          )
+                      (socialstatusTags))
           (mculture)
 
   const age = PersonalData.A.age (profile)

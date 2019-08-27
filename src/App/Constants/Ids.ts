@@ -1,3 +1,10 @@
+export enum RaceId {
+  Humans = "R_1",
+  Elves = "R_2",
+  HalfElves = "R_3",
+  Dwarves = "R_4",
+}
+
 export enum AttrId {
   Courage = "ATTR_1",
   Sagacity = "ATTR_2",

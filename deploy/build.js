@@ -1,13 +1,11 @@
 // @ts-check
 
+require ('dotenv') .config ()
 const builder = require ("electron-builder")
-const { copyTables } = require ("./copyTables")
 
 module.exports = {
   buildWindows:
     async () => {
-      await copyTables ()
-
       console.log ("Building Optolith for Windows...")
 
       try {
@@ -20,8 +18,6 @@ module.exports = {
     },
   buildLinux:
     async () => {
-      await copyTables ()
-
       console.log ("Building Optolith for Linux...")
 
       try {
@@ -34,8 +30,6 @@ module.exports = {
     },
   buildMac:
     async () => {
-      await copyTables ()
-
       console.log ("Building Optolith for Mac...")
 
       try {
@@ -86,6 +80,12 @@ const config = {
         arch: [
           "x64"
         ]
+      },
+      {
+        target: "tar.gz",
+        arch: [
+          "x64"
+        ]
       }
     ],
     artifactName: "Optolith_${version}_${arch}.${ext}"
@@ -99,7 +99,7 @@ const config = {
   },
   publish: {
     "provider": "generic",
-    "url": process.env.PUBLISH_URL_INSIDER,
+    "url": process.env.PUBLISH_URL,
     "channel": "latest"
   }
 }

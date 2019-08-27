@@ -1,5 +1,6 @@
 // @ts-check
 
+require ('dotenv') .config ()
 const builder = require ("electron-builder")
 
 module.exports = {
@@ -96,7 +97,7 @@ const config = {
   },
   publish: {
     "provider": "generic",
-    "url": process.env.PUBLISH_URL,
+    "url": process.env.PUBLISH_URL_INSIDER,
     "channel": "latest"
-  },
+  }
 }
