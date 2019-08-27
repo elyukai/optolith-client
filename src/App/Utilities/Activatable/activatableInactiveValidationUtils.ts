@@ -16,7 +16,6 @@ import { isOrderedMap, lookup } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Tuple } from "../../../Data/Tuple";
 import { sel2, sel3 } from "../../../Data/Tuple/Select";
-import { traceShowId } from "../../../Debug/Trace";
 import { SpecialAbilityGroup } from "../../Constants/Groups";
 import { SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -222,7 +221,7 @@ const isInvalidExtendedSpecialAbility =
   (wiki_entry: Activatable) =>
   (validExtendedSpecialAbilities: List<string>) =>
     CheckStyleUtils.isExtendedSpecialAbility (wiki_entry)
-    && notElem (AAL.id (wiki_entry)) (traceShowId (validExtendedSpecialAbilities))
+    && notElem (AAL.id (wiki_entry)) (validExtendedSpecialAbilities)
 
 /**
  * Checks if the given entry can be added.

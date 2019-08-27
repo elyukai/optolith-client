@@ -40,7 +40,6 @@ const putActivatableDependency =
   (f: ModifyActivatableDependency) =>
   (sourceId: string) =>
   (req: Record<RequireActivatable>): ident<HeroModelRecord> => {
-
     const id = RAA.id (req)
     const sid = RAA.sid (req)
     const sid2 = RAA.sid2 (req)

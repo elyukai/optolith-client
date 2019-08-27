@@ -109,13 +109,16 @@ export const getSpells =
 
 
 export const getBlessedStyleDependencies =
-  pipe (getCurrentHeroPresent, fmap (Hero.blessedStyleDependencies))
+  pipe (getHeroProp, Hero.blessedStyleDependencies)
 
 export const getCombatStyleDependencies =
-  pipe (getCurrentHeroPresent, fmap (Hero.combatStyleDependencies))
+  pipe (getHeroProp, Hero.combatStyleDependencies)
 
 export const getMagicalStyleDependencies =
-  pipe (getCurrentHeroPresent, fmap (Hero.magicalStyleDependencies))
+  pipe (getHeroProp, Hero.magicalStyleDependencies)
+
+export const getSkillStyleDependencies =
+  pipe (getHeroProp, Hero.skillStyleDependencies)
 
 
 export const getCurrentHeroName =

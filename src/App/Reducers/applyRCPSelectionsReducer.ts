@@ -195,33 +195,19 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
 
               over (CML.activatable)
                    (flip (foldr ((sa: Record<ProfessionRequireActivatable>) => {
-                                  // Having an `active = True` on a special
+                                  // Having an `active = False` on a special
                                   // ability entry of a profession variant
                                   // should remove the entry of the SA added by
                                   // the profession
                                   if (!PRAA.active (sa)) {
-                                    type MSID = Maybe<string | number>
-
                                     const id = PRAA.id (sa)
                                     const msid = PRAA.sid (sa)
                                     const msid2 = PRAA.sid2 (sa)
 
                                     if (isJust (msid) || isJust (msid2)) {
-                                      return filter ((x: Record<ProfessionRequireActivatable>) => {
-                                                      const current_id = PRAA.id (x)
-                                                      const mcurrent_sid = PRAA.sid (x)
-                                                      const mcurrent_sid2 = PRAA.sid2 (x)
-
-                                                      return id !== current_id
-                                                        || (
-                                                          isNothing (msid)
-                                                          || notEquals<MSID> (msid) (mcurrent_sid)
-                                                        )
-                                                        && (
-                                                          isNothing (msid2)
-                                                          || notEquals<MSID> (msid2) (mcurrent_sid2)
-                                                        )
-                                                    })
+                                      return filter (shouldSABeRemovedByProfVariant (id)
+                                                                                    (msid)
+                                                                                    (msid2))
                                     }
                                     else {
                                       return filter (pipe (PRAA.id, notEquals (PRAA.id (sa))))
@@ -258,7 +244,8 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
                                   )))
                            (prof_var_spells_chants))
                      (cm)
-            )})
+            )
+          })
           (mprofession_variant)
   )
 }
@@ -448,7 +435,8 @@ const applyModifications =
 
                                   return Nothing
                                 })
-                                (k))),
+                                (k)
+        )),
         over (CML.hero)
       )),
 
@@ -618,3 +606,27 @@ const updateListToContainNewEntry =
         ? addAllStyleRelatedDependencies (wiki_entry)
         : ident
     )
+
+const shouldSABeRemovedByProfVariant =
+  (id: string) =>
+  (msid: Maybe<string | number>) =>
+  (msid2: Maybe<string | number>) =>
+  (x: Record<ProfessionRequireActivatable>) => {
+    type MSID = Maybe<string | number>
+
+    const current_id = PRAA.id (x)
+    const mcurrent_sid = PRAA.sid (x)
+    const mcurrent_sid2 = PRAA.sid2 (x)
+
+    return id !== current_id
+      || (
+        (
+          isNothing (msid)
+          || notEquals<MSID> (msid) (mcurrent_sid)
+        )
+        && (
+          isNothing (msid2)
+          || notEquals<MSID> (msid2) (mcurrent_sid2)
+        )
+      )
+  }

@@ -1,7 +1,7 @@
 import { flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { cons, fromArray, List } from "../../Data/List";
-import { catMaybes, join, mapMaybe, Maybe } from "../../Data/Maybe";
+import { join, mapMaybe, Maybe } from "../../Data/Maybe";
 import { elems, lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { ActivatableCategory, Categories } from "../Constants/Categories";
@@ -35,8 +35,9 @@ export const getExtendedSpecialAbilitiesToAdd = createMaybeSelector (
   stateSelectors.getBlessedStyleDependencies,
   stateSelectors.getCombatStyleDependencies,
   stateSelectors.getMagicalStyleDependencies,
+  stateSelectors.getSkillStyleDependencies,
   (...styleDependencles) =>
-    cons (getAllAvailableExtendedSpecialAbilities (catMaybes (fromArray (styleDependencles))))
+    cons (getAllAvailableExtendedSpecialAbilities (fromArray (styleDependencles)))
          // "Gebieter des [Aspekts]" is never listed as a dependency and thus
          // must be added manually
          (prefixSA (639))
@@ -93,8 +94,7 @@ export const getInactiveForView =
                                                                    (lookup (getId (wiki_entry))
                                                                              (stateSlice)))
                                                  (elems<Activatable> (wikiSlice))
-                               })
-                    )
+                               }))
 
 const getInactiveAdvantagesForView = getInactiveForView (Categories.ADVANTAGES)
 const getInactiveDisadvantagesForView = getInactiveForView (Categories.DISADVANTAGES)

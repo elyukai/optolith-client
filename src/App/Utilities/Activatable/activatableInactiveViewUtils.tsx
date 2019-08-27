@@ -177,7 +177,7 @@ export const getIdSpecificAffectedAndDispatchProps =
     const mselected_level = Maybe (selectedOptions.selectedTier)
 
     switch (id) {
-      // Entry with Skill selection
+      // Entry with Skill selection (string id)
       case AdvantageId.Aptitude:
       case AdvantageId.ExceptionalSkill:
       case AdvantageId.ExceptionalCombatTechnique:
@@ -189,34 +189,26 @@ export const getIdSpecificAffectedAndDispatchProps =
       case SpecialAbilityId.Expertenwissen:
       case SpecialAbilityId.Wissensdurst:
       case SpecialAbilityId.Recherchegespuer:
-      case SpecialAbilityId.Lieblingsliturgie:
+      case SpecialAbilityId.Lieblingsliturgie: {
+        return getPropsForEntryWithSkillSel (misStringM)
+                                            (wiki)
+                                            (mselected)
+                                            (entry)
+                                            (id)
+      }
+
+      // Entry with Skill selection (numeric id)
       case SpecialAbilityId.WegDerGelehrten:
       case SpecialAbilityId.Handwerkskunst:
       case SpecialAbilityId.KindDerNatur:
       case SpecialAbilityId.KoerperlichesGeschick:
       case SpecialAbilityId.SozialeKompetenz:
       case SpecialAbilityId.Universalgenie: {
-        return Pair (
-          ActivatableActivationOptions ({
-            id,
-            selectOptionId1: mselected,
-            cost: Nothing,
-          }),
-          PropertiesAffectedByState ({
-            currentCost:
-              pipe_ (
-                mselected,
-                misStringM,
-                bindF (getWikiEntry (wiki)),
-                bindF (ensure (isSkillishWikiEntry)),
-                bindF (pipe (
-                  SkAL.ic,
-                  dec,
-                  i => pipe_ (entry, IAA.cost, bindF (ensure (isList)), bindF (subscriptF (i)))
-                ))
-              ),
-          })
-        )
+        return getPropsForEntryWithSkillSel (pipe (misNumberM, fmap (prefixSkill)))
+                                            (wiki)
+                                            (mselected)
+                                            (entry)
+                                            (id)
       }
 
       case AdvantageId.ImmunityToPoison:
@@ -857,3 +849,31 @@ export const getInactiveActivatableControlElements =
                 (msels2)
     )
   }
+
+const getPropsForEntryWithSkillSel =
+  (ensureId: (x: Maybe<number | string>) => Maybe<string>) =>
+  (wiki: WikiModelRecord) =>
+  (mselected: Maybe<string | number>) =>
+  (entry: Record<InactiveActivatable>) =>
+  (id: string) =>
+    Pair (
+      ActivatableActivationOptions ({
+        id,
+        selectOptionId1: mselected,
+        cost: Nothing,
+      }),
+      PropertiesAffectedByState ({
+        currentCost:
+          pipe_ (
+            mselected,
+            ensureId,
+            bindF (getWikiEntry (wiki)),
+            bindF (ensure (isSkillishWikiEntry)),
+            bindF (pipe (
+              SkAL.ic,
+              dec,
+              i => pipe_ (entry, IAA.cost, bindF (ensure (isList)), bindF (subscriptF (i)))
+            ))
+          ),
+      })
+    )

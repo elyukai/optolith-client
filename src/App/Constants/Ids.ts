@@ -19,6 +19,8 @@ export enum AdvantageId {
 
 export enum DisadvantageId {
   AfraidOf = "DISADV_1",
+  NoFlyingBalm = "DISADV_17",
+  NoFamiliar = "DISADV_18",
   MagicalRestriction = "DISADV_24",
   PersonalityFlaw = "DISADV_33",
   Principles = "DISADV_34",

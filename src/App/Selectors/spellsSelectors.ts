@@ -41,7 +41,6 @@ import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCantripsSortOptions, getSpellsCombinedSortOptions, getSpellsSortOptions } from "./sortOptionsSelectors";
 import { getAdvantages, getCantrips, getDisadvantages, getHeroProp, getInactiveSpellsFilterText, getLocaleAsProp, getMaybeSpecialAbilities, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki, getWikiCantrips, getWikiSpecialAbilities, getWikiSpells } from "./stateSelectors";
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
-import { traceShowId } from "../../Debug/Trace";
 
 const HA = HeroModel.A
 const WA = WikiModel.A
@@ -121,8 +120,7 @@ export const getActiveSpells = createMaybeSelector (
                                          isUnfamiliar: isUnfamiliar (wiki_entry),
                                          stateEntry: hero_entry,
                                          wikiEntry: wiki_entry,
-                                       })
-                                     )
+                                       }))
                                    ))
                          ))))
                 (mstart_el)
@@ -280,8 +278,10 @@ export const getInactiveSpells = createMaybeSelector (
             if (isSpellPrereqsValid (wiki_entry)
                 // Intuitive Magier können nur Zauber erlernen,
                 // Animisten dürfen auch Animistenkräfte erlernen:
-                && (SA.gr (wiki_entry) === 1 ||
-                   (SA.gr (wiki_entry) === 9) && isLastTrad (prefixSA (1221)))
+                && (
+                  SA.gr (wiki_entry) === 1
+                  || (SA.gr (wiki_entry) === 9 && isLastTrad (prefixSA (1221)))
+                )
                 // Muss inaktiv sein:
                 && all (notP (ASDA.active)) (mhero_entry)
                 // Keine Zauber mit Steigerungsfaktor D:
@@ -307,9 +307,9 @@ export const getInactiveSpells = createMaybeSelector (
             return ident as ident<List<Record<SpellWithRequirements>>>
           }
 
-          return traceShowId (OrderedMap.foldrWithKey (f)
+          return OrderedMap.foldrWithKey (f)
                                          (List ())
-                                         (wiki_spells))
+                                         (wiki_spells)
         }
 
         if (isLastTrad (prefixSA (677)) || isLastTrad (prefixSA (678))) {
@@ -376,7 +376,8 @@ export const getInactiveSpells = createMaybeSelector (
         return OrderedMap.foldrWithKey (h)
                                        (List ())
                                        (wiki_spells)
-      }))
+      })
+  )
 )
 
 const isAnySpellActiveWithImpCostC =
@@ -471,11 +472,11 @@ export const getSpellsForSheet = createMaybeSelector (
   getActiveSpells,
   uncurryN3 (sort_options =>
               hero_trads => fmap (pipe (
-                                   map (s => !isUnfamiliarSpell (hero_trads) (SWRA.wikiEntry (s))
-                                               ? set (composeL (SWRL.wikiEntry, SL.tradition))
+                                   map (s => isUnfamiliarSpell (hero_trads) (SWRA.wikiEntry (s))
+                                               ? s
+                                               : set (composeL (SWRL.wikiEntry, SL.tradition))
                                                      (List ())
-                                                     (s)
-                                               : s),
+                                                     (s)),
                                    sortRecordsBy (sort_options)
                                  )))
 )
