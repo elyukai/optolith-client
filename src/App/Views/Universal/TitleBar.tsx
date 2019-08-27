@@ -50,17 +50,22 @@ export class TitleBar extends React.Component<TitleBarProps, TitleBarState> {
       .removeListener ("focus", this.updateState)
   }
 
-  closeFn () {
+  closeFn = () => {
     const {
       close,
       closeDuringLoad,
       isLoading,
     } = this.props
 
-    isLoading === true ? closeDuringLoad () : close ()
+    if (isLoading === true) {
+      closeDuringLoad ()
+    }
+    else {
+      close ()
+    }
   }
 
-  updateState () {
+  updateState = () => {
     this.setState ({
       isMaximized: remote .getCurrentWindow () .isMaximized (),
       isFullScreen: remote .getCurrentWindow () .isFullScreen (),
@@ -99,9 +104,9 @@ export class TitleBar extends React.Component<TitleBarProps, TitleBarState> {
     return (
       <TitleBarWrapper {...this.state}>
         <TitleBarButton icon="&#xE903;" onClick={minimize} className="minimize" />
-        {!isMaximized
-          ? <TitleBarButton icon="&#xE901;" onClick={maximize} className="maximize" />
-          : null}
+        {isMaximized
+          ? null
+          : <TitleBarButton icon="&#xE901;" onClick={maximize} className="maximize" />}
         {isMaximized
           ? <TitleBarButton icon="&#xE902;" onClick={restore} className="restore" />
           : null}

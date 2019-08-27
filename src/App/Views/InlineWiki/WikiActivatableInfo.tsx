@@ -10,6 +10,8 @@ import { dec, negate } from "../../../Data/Num";
 import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
+import { SpecialAbilityGroup } from "../../Constants/Groups";
+import { SpecialAbilityId } from "../../Constants/Ids";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
 import { ActivatableNameCost, ActivatableNameCostA_ } from "../../Models/View/ActivatableNameCost";
 import { Advantage } from "../../Models/Wiki/Advantage";
@@ -32,7 +34,7 @@ import { isExtendedSpecialAbility } from "../../Utilities/Activatable/checkStyle
 import { putLevelName } from "../../Utilities/AdventurePoints/activatableCostUtils";
 import { nbsp } from "../../Utilities/Chars";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
-import { getCategoryById, isBlessedTraditionId, isMagicalTraditionId, prefixRace, prefixSA } from "../../Utilities/IDUtils";
+import { getCategoryById, isBlessedTraditionId, isMagicalTraditionId, prefixRace } from "../../Utilities/IDUtils";
 import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
@@ -61,7 +63,6 @@ const RIA = RequireIncreasable.A
 const RPAA = RequirePrimaryAttribute.A
 const AAL = Advantage.AL
 
-// tslint:disable-next-line: cyclomatic-complexity
 export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
   const { x, l10n, specialAbilities, wiki } = props
 
@@ -90,40 +91,23 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
              (bind (SAA.subgr (x))
                    (pipe (dec, subscript (translate (l10n) ("combatspecialabilitygroups")))))
 
-    // if (["nl-BE"].includes(l10n.id)) {
-    //   return (
-    //     <WikiBoxTemplate
-    //       className="specialability"
-    //       title={headerName}
-    //       subtitle={headerSubName}
-    //       />
-    //   )
-    // }
-
     switch (SAA.gr (x)) {
-      // Staff Enchantments
-      case 5:
-      // Bannschwert
-      case 15:
-      // Dolch
-      case 16:
-      // Instrument
-      case 17:
-      // Gewand
-      case 18:
-      // Kugel
-      case 19:
-      // Stecken
-      case 20:
-      case 35:
-      case 36:
-      case 37:
-      case 38:
-      case 39:
-      case 42:
-      case 43:
-      case 44:
-      case 45:
+      case SpecialAbilityGroup.StaffEnchantments:
+      case SpecialAbilityGroup.Bannschwert:
+      case SpecialAbilityGroup.Dolch:
+      case SpecialAbilityGroup.Instrument:
+      case SpecialAbilityGroup.Gewand:
+      case SpecialAbilityGroup.Kugel:
+      case SpecialAbilityGroup.Stecken:
+      case SpecialAbilityGroup.Magierkugel:
+      case SpecialAbilityGroup.Hexenkessel:
+      case SpecialAbilityGroup.Narrenkappe:
+      case SpecialAbilityGroup.Schelmenspielzeug:
+      case SpecialAbilityGroup.Alchimistenschale:
+      case SpecialAbilityGroup.WaffenzauberAnimisten:
+      case SpecialAbilityGroup.Sichelrituale:
+      case SpecialAbilityGroup.Ringzauber:
+      case SpecialAbilityGroup.Chronikzauber:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -168,8 +152,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
-      // Zeremonialgegenstände
-      case 23:
+      case SpecialAbilityGroup.Zeremonialgegenstände:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -196,8 +179,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
-      // Bann-/Schutzkreise
-      case 8:
+      case SpecialAbilityGroup.ProtectiveWardingCircles:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -218,10 +200,8 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
-      // Magische Traditionen
-      case 28:
-      // Karmale Traditionen
-      case 29:
+      case SpecialAbilityGroup.MagicalTraditions:
+      case SpecialAbilityGroup.BlessedTraditions:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -235,10 +215,8 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
-      // Combat Styles (armed)
-      case 9:
-      // Combat Styles (unarmed)
-      case 10:
+      case SpecialAbilityGroup.CombatStylesArmed:
+      case SpecialAbilityGroup.CombatStylesUnarmed:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -283,8 +261,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
-      // Zauberstile
-      case 13:
+      case SpecialAbilityGroup.MagicalStyles:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -319,10 +296,8 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
-      // Liturgiestile
-      case 25: {
-        const sa_id = prefixSA (639) // Gebieter des [Aspekts]
-        const SA_639 = lookup (sa_id) (specialAbilities)
+      case SpecialAbilityGroup.BlessedStyles: {
+        const SA_639 = lookup<string> (SpecialAbilityId.GebieterDesAspekts) (specialAbilities)
 
         const add_extended =
           pipe_ (
@@ -339,7 +314,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                                                        : elem (SAA.id (x)) (req_ids)
                                                    }))),
                                      fmap (() => ActiveObjectWithId ({
-                                                   id: sa_id,
+                                                   id: SpecialAbilityId.GebieterDesAspekts,
                                                    index: 0,
                                                    sid: Just (SelectOption.A.id (option)),
                                                  }))
@@ -396,7 +371,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
         )
       }
 
-      case 33:
+      case SpecialAbilityGroup.SkillStyles:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -417,7 +392,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                               bindF (lookupF (specialAbilities)),
                               fmap (SAA.name)
                             )),
-                            sortStrings (L10n.A.id (l10n)),
+                            sortStrings (l10n),
                             intercalate (", ")
                            )
 
@@ -430,8 +405,8 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             {source_elem}
           </WikiBoxTemplate>
         )
-      // Paktgeschenke
-      case 30:
+
+      case SpecialAbilityGroup.Paktgeschenke:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -447,22 +422,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             {source_elem}
           </WikiBoxTemplate>
         )
-        /* :
-        return (
-          <WikiBoxTemplate
-            className="specialability"
-            title={header_name}
-            subtitle={header_sub_name}
-            >
-            {maybeRNullF (SAA.effect (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
-                         ))}
-            <PrerequisitesText {...props} />
-            {cost_elem}
-            {source_elem}
-          </WikiBoxTemplate>
-        ) */
+
       default:
         return (
           <WikiBoxTemplate
@@ -519,12 +479,6 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
     const header_rcp = has_rcp ? " (*)" : ""
 
     const header_name = `${header_full_name}${header_name_levels}${header_rcp}`
-
-    // if (["en-US", "nl-BE"].includes(l10n.id)) {
-    //   return (
-    //     <WikiBoxTemplate className="race" title={headerName} />
-    //   )
-    // }
 
     return (
       <WikiBoxTemplate className="disadv" title={header_name}>
@@ -583,15 +537,14 @@ const getCost =
 
             return `${str}${level_str} ${level_nums}: ${level_costs} ${ap_str}`
           }
-          else {
-            const abs_cost = AcA.category (x) === Categories.DISADVANTAGES ? -cost : cost
 
-            const plain_str = `${str}${abs_cost} ${ap_str}`
+          const abs_cost = AcA.category (x) === Categories.DISADVANTAGES ? -cost : cost
 
-            return isJust (AcA.tiers (x))
-              ? `${plain_str} ${translate (l10n) ("perlevel")}`
-              : plain_str
-          }
+          const plain_str = `${str}${abs_cost} ${ap_str}`
+
+          return isJust (AcA.tiers (x))
+            ? `${plain_str} ${translate (l10n) ("perlevel")}`
+            : plain_str
         }
 
         return str
@@ -639,7 +592,7 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
    */
   const mtext_after = fmapF (prerequisitesTextEnd)
                             ((y): Either<JSX.Element, JSX.Element> =>
-                              /^(?: |,|\.)/ .test (y)
+                              /^(?: |,|\.)/u .test (y)
                                 ? Left (<Markdown key="after" source={y} noWrapper />)
                                 : Right (<Markdown key="after" source={y} noWrapper />))
 
@@ -663,31 +616,32 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
                 ? Just (`${translate (l10n) ("level")} I: ${translate (l10n) ("none")} `)
                 : Nothing,
               ...map ((lvl: number) => {
-                const prereqForLevel = lookup (lvl) (prerequisites)
-                const not_empty = Maybe.any (notNull) (prereqForLevel)
+                  const prereqForLevel = lookup (lvl) (prerequisites)
+                  const not_empty = Maybe.any (notNull) (prereqForLevel)
 
-                const level_num_str = `${translate (l10n) ("level")} ${toRoman (lvl)}: `
+                  const level_num_str = `${translate (l10n) ("level")} ${toRoman (lvl)}: `
 
-                const requires_last_str =
-                  lvl > 1
-                  ? `${not_empty ? ", " : ""}${AAL.name (x)}${nbsp}${toRoman (lvl - 1)}`
-                  : ""
+                  const requires_last_str =
+                    lvl > 1
+                    ? `${not_empty ? ", " : ""}${AAL.name (x)}${nbsp}${toRoman (lvl - 1)}`
+                    : ""
 
-                return Just (
-                  <React.Fragment key={lvl}>
-                    {level_num_str}
-                    {maybeRNull ((rs: List<AllRequirements>) =>
-                                  pipe_ (
-                                    getPrerequisites (rs) (prerequisitesTextIndex) (props),
-                                    catMaybes,
-                                    intersperse<TypeofList> (", "),
-                                    toArray,
-                                    e => <>{e}</>
-                                  ))
-                                (prereqForLevel)}
-                    {requires_last_str}
-                  </React.Fragment>
-                )})
+                  return Just (
+                    <React.Fragment key={lvl}>
+                      {level_num_str}
+                      {maybeRNull ((rs: List<AllRequirements>) =>
+                                    pipe_ (
+                                      getPrerequisites (rs) (prerequisitesTextIndex) (props),
+                                      catMaybes,
+                                      intersperse<TypeofList> (", "),
+                                      toArray,
+                                      e => <>{e}</>
+                                    ))
+                                  (prereqForLevel)}
+                      {requires_last_str}
+                    </React.Fragment>
+                  )
+                })
                 (levelList),
               mtext_after_insidelist
             ),
@@ -801,7 +755,6 @@ type PrimaryAttributePrerequisiteObjects = Record<RequirePrimaryAttribute> | str
 type IncreasablePrerequisiteObjects = Record<RequireIncreasable> | string
 type RacePrerequisiteObjects = Record<RaceRequirement> | string
 type RCPPrerequisiteObjects = boolean | string
-//type PactPrerequisiteObjects = Record<PactRequirement> | string
 
 const getPrerequisitesRCPText =
   (l10n: L10nRecord) =>
@@ -853,7 +806,7 @@ const getPrerequisitesAttributesText =
             return e
           }
         }),
-        sortStrings (L10n.A.id (l10n)),
+        sortStrings (l10n),
         intercalate (", ")
       ))
     )
@@ -895,7 +848,7 @@ const getPrerequisitesSkillsText =
             return e
           }
         }),
-        sortStrings (L10n.A.id (l10n)),
+        sortStrings (l10n),
         intercalate (", ")
       ))
     )
@@ -945,7 +898,7 @@ const getPrerequisitesActivatedSkillsText =
             return e .value
           }
         }),
-        sortStrings (L10n.A.id (l10n)),
+        sortStrings (l10n),
         intercalate (", ")
       ))
     )
@@ -1074,7 +1027,10 @@ const getPrerequisitesActivatablesText =
         const name = APTA.name (x)
         const active = APTA.active (x)
 
-        if (!active) {
+        if (active) {
+          return Just (name)
+        }
+        else {
           return Just (
             <span
               key={notNullStr (name) ? name : isString (id) ? id : ""}
@@ -1083,9 +1039,6 @@ const getPrerequisitesActivatablesText =
               {name}
             </span>
           )
-        }
-        else {
-          return Just (name)
         }
       })
     )
@@ -1111,12 +1064,12 @@ const getPrerequisitesRaceText =
           localizeOrList (l10n)
         )
 
-      return <span className={!active ? "disabled" : ""}>{`${race_tag} ${curr_races}`}</span>
+      return <span className={active ? "" : "disabled"}>{`${race_tag} ${curr_races}`}</span>
     }
     else {
       const curr_race = pipe_ (value, prefixRace, lookupF (races), maybe ("") (Race.A.name))
 
-      return <span className={!active ? "disabled" : ""}>{`${race_tag} ${curr_race}`}</span>
+      return <span className={active ? "" : "disabled"}>{`${race_tag} ${curr_race}`}</span>
     }
   }
 
@@ -1178,7 +1131,6 @@ const getActivatablePrerequisite =
 
 export const getCategorizedItems =
   (req_text_index: OrderedMap<number, string | false>) =>
-  // tslint:disable-next-line: cyclomatic-complexity
   ifoldr (i => (e: AllRequirements): ident<Record<CategorizedItems>> => {
            const index_special = lookup (i) (req_text_index)
 

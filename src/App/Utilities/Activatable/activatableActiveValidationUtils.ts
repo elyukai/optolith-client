@@ -17,6 +17,8 @@ import { size } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
 import { Tuple } from "../../../Data/Tuple";
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select";
+import { SpecialAbilityGroup } from "../../Constants/Groups";
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -78,14 +80,18 @@ const isRequiredByOthers =
              ifElse<ActivatableDependency, boolean>
                (isBoolean)
                (e => e && flength (ADA.active (state_entry)) === 1)
-               (e => equals (DOA.sid (e)) (AOA.sid (current_active))
-                 && equals (AOA.sid2 (current_active)) (DOA.sid2 (e))
-                 && equals (AOA.tier (current_active)) (DOA.tier (e))
-                 || isJust (DOA.tier (e))
-                 && isJust (AOA.tier (current_active))
-                 && or (fmap (equals (Maybe.gte (DOA.tier (e))
-                                                (AOA.tier (current_active))))
-                             (DOA.active (e))))
+               (e => (
+                   equals (DOA.sid (e)) (AOA.sid (current_active))
+                   && equals (AOA.sid2 (current_active)) (DOA.sid2 (e))
+                   && equals (AOA.tier (current_active)) (DOA.tier (e))
+                 )
+                 || (
+                   isJust (DOA.tier (e))
+                   && isJust (AOA.tier (current_active))
+                   && or (fmap (equals (Maybe.gte (DOA.tier (e))
+                                                  (AOA.tier (current_active))))
+                               (DOA.active (e)))
+                 ))
            )
          )
          (state_entry)
@@ -106,8 +112,7 @@ const isRemovalDisabledEntrySpecific =
               (HeroModel.AL.experienceLevel (hero))
 
     switch (AAL.id (wiki_entry)) {
-      // Exceptional Skill
-      case "ADV_16": {
+      case AdvantageId.ExceptionalSkill: {
         // value of target skill
         const mvalue =
           pipe_ (
@@ -129,8 +134,7 @@ const isRemovalDisabledEntrySpecific =
                                 (mstart_el)))
       }
 
-      // Exceptional Combat Technique
-      case "ADV_17": {
+      case AdvantageId.ExceptionalCombatTechnique: {
         // value of target combat technique
         const value =
           pipe_ (
@@ -145,57 +149,53 @@ const isRemovalDisabledEntrySpecific =
         return maybe (true) (pipe (ELA.maxCombatTechniqueRating, inc, lte (value))) (mstart_el)
       }
 
-      // Scripts
-      case "SA_27": {
+      case SpecialAbilityId.Literacy: {
         if (sel1 (matching_script_and_lang_related)) {
           const active_matching_scripts = sel2 (matching_script_and_lang_related)
 
-          return flength (active_matching_scripts) !== 1
-            ? false
-            : pipe_ (
-                AOA.sid (active),
-                misNumberM,
-                maybe (false) (elemF (active_matching_scripts))
-              )
+          return flength (active_matching_scripts) === 1
+            && pipe_ (
+              AOA.sid (active),
+              misNumberM,
+              maybe (false) (elemF (active_matching_scripts))
+            )
         }
         else {
           return false
         }
       }
 
-      // Languages
-      case "SA_29": {
+      case SpecialAbilityId.Language: {
         if (sel1 (matching_script_and_lang_related)) {
           const active_matching_languages = sel3 (matching_script_and_lang_related)
 
-          return flength (active_matching_languages) !== 1
-            ? false
-            : pipe_ (
-                AOA.sid (active),
-                misNumberM,
-                maybe (false) (elemF (active_matching_languages))
-              )
+          return flength (active_matching_languages) === 1
+            && pipe_ (
+              AOA.sid (active),
+              misNumberM,
+              maybe (false) (elemF (active_matching_languages))
+            )
         }
         else {
           return false
         }
       }
 
-      // Magical traditions
-      case "SA_70":
-      case "SA_255":
-      case "SA_345":
-      case "SA_346":
-      case "SA_676":
-      case "SA_677":
-      case "SA_678":
-      case "SA_679":
-      case "SA_680":
-      case "SA_681":
-      case "SA_1255":
-      case "SA_750":
-      case "SA_726":
-      case "SA_1221": {
+      case SpecialAbilityId.TraditionGuildMages:
+      case SpecialAbilityId.TraditionWitches:
+      case SpecialAbilityId.TraditionElves:
+      case SpecialAbilityId.TraditionDruids:
+      case SpecialAbilityId.TraditionScharlatane:
+      case SpecialAbilityId.TraditionZauberbarden:
+      case SpecialAbilityId.TraditionZaubertaenzer:
+      case SpecialAbilityId.TraditionIntuitiveZauberer:
+      case SpecialAbilityId.TraditionMeistertalentierte:
+      case SpecialAbilityId.TraditionQabalyamagier:
+      case SpecialAbilityId.TraditionGeoden:
+      case SpecialAbilityId.TraditionZauberalchimisten:
+      case SpecialAbilityId.TraditionSchelme:
+      case SpecialAbilityId.TraditionAnimisten:
+      case SpecialAbilityId.TraditionBrobimGeoden: {
         // All active tradition entries
         const traditions =
           getMagicalTraditionsHeroEntries (HeroModel.AL.specialAbilities (hero))
@@ -209,7 +209,7 @@ const isRemovalDisabledEntrySpecific =
           || size (HA.cantrips (hero)) > 0
       }
 
-      case "SA_72":
+      case SpecialAbilityId.PropertyKnowledge:
         return pipe_ (
           active,
           AOA.sid,
@@ -227,32 +227,31 @@ const isRemovalDisabledEntrySpecific =
                                            (HA.spells (hero)))
         )
 
-      // Blessed traditions
-      case "SA_86":
-      case "SA_682":
-      case "SA_683":
-      case "SA_684":
-      case "SA_685":
-      case "SA_686":
-      case "SA_687":
-      case "SA_688":
-      case "SA_689":
-      case "SA_690":
-      case "SA_691":
-      case "SA_692":
-      case "SA_693":
-      case "SA_694":
-      case "SA_695":
-      case "SA_696":
-      case "SA_697":
-      case "SA_698":
-      case "SA_1049": {
+      case SpecialAbilityId.TraditionChurchOfPraios:
+      case SpecialAbilityId.TraditionChurchOfRondra:
+      case SpecialAbilityId.TraditionChurchOfBoron:
+      case SpecialAbilityId.TraditionChurchOfHesinde:
+      case SpecialAbilityId.TraditionChurchOfPhex:
+      case SpecialAbilityId.TraditionChurchOfPeraine:
+      case SpecialAbilityId.TraditionChurchOfEfferd:
+      case SpecialAbilityId.TraditionChurchOfTravia:
+      case SpecialAbilityId.TraditionChurchOfFirun:
+      case SpecialAbilityId.TraditionChurchOfTsa:
+      case SpecialAbilityId.TraditionChurchOfIngerimm:
+      case SpecialAbilityId.TraditionChurchOfRahja:
+      case SpecialAbilityId.TraditionCultOfTheNamelessOne:
+      case SpecialAbilityId.TraditionChurchOfAves:
+      case SpecialAbilityId.TraditionChurchOfIfirn:
+      case SpecialAbilityId.TraditionChurchOfKor:
+      case SpecialAbilityId.TraditionChurchOfNandus:
+      case SpecialAbilityId.TraditionChurchOfSwafnir:
+      case SpecialAbilityId.TraditionCultOfNuminoru: {
         // there must be no active liturgical chant or blessing
         return countActiveSkillEntries ("liturgicalChants") (hero) > 0
           || size (HA.blessings (hero)) > 0
       }
 
-      case "SA_87": {
+      case SpecialAbilityId.AspectKnowledge: {
         const all_aspcs = getActiveSelections (hero_entry)
 
         return pipe_ (
@@ -282,10 +281,15 @@ const isRemovalDisabledEntrySpecific =
         )
       }
 
-      // Combat Style Combination
-      case "SA_164": {
-        const armedStyleActive = countActiveGroupEntries (wiki) (hero) (9)
-        const unarmedStyleActive = countActiveGroupEntries (wiki) (hero) (10)
+      case SpecialAbilityId.CombatStyleCombination: {
+        const armedStyleActive = countActiveGroupEntries (wiki)
+                                                         (hero)
+                                                         (SpecialAbilityGroup.CombatStylesArmed)
+
+        const unarmedStyleActive = countActiveGroupEntries (wiki)
+                                                           (hero)
+                                                           (SpecialAbilityGroup.CombatStylesUnarmed)
+
         const totalActive = armedStyleActive + unarmedStyleActive
 
         // default is 1 per group (armed/unarmed), but with this SA 1 more in
@@ -296,8 +300,7 @@ const isRemovalDisabledEntrySpecific =
           || unarmedStyleActive >= 2
       }
 
-      // Magical Style Combination
-      case "SA_266": {
+      case SpecialAbilityId.MagicalStyleCombination: {
         const totalActive = countActiveGroupEntries (wiki) (hero) (13)
 
         // default is 1, but with this SA its 2. If it's 2 this SA is neccessary
@@ -307,9 +310,9 @@ const isRemovalDisabledEntrySpecific =
 
       // Extended Blessed Special Abilities that allow to learn liturgical
       // chants of different traditions
-      case "SA_623":
-      case "SA_625":
-      case "SA_632": {
+      case SpecialAbilityId.Zugvoegel:
+      case SpecialAbilityId.JaegerinnenDerWeißenMaid:
+      case SpecialAbilityId.AnhaengerDesGueldenen: {
         const mblessed_tradition =
           getBlessedTraditionFromWiki (WikiModel.AL.specialAbilities (wiki))
                                       (HA.specialAbilities (hero))
@@ -359,54 +362,51 @@ const isEntryDisabledByDependencies =
       const current_origin = DOA.origin (dep)
 
       if (isJust (current_origin)) {
-        return or (
-          pipe (
-                 getWikiEntry (wiki),
-                 bindF<EntryWithCategory, Activatable>
-                   (ensure (isActivatableWikiEntry)),
+        return pipe_ (
+          fromJust (current_origin),
+          getWikiEntry (wiki),
+          bindF<EntryWithCategory, Activatable>
+            (ensure (isActivatableWikiEntry)),
 
-                 // Get flat prerequisites for origin entry
-                 fmap (origin_entry =>
-                   flattenPrerequisites (Nothing)
-                                        (alt (AAL.tiers (origin_entry)) (Just (1)))
-                                        (AAL.prerequisites (origin_entry))),
+          // Get flat prerequisites for origin entry
+          fmap (origin_entry =>
+            flattenPrerequisites (Nothing)
+                                 (alt (AAL.tiers (origin_entry)) (Just (1)))
+                                 (AAL.prerequisites (origin_entry))),
 
-                 // Get the prerequisite that matches this entry
-                 // to get all other options from list
-                 bindF (find ((req): req is AllRequirementObjects => {
-                               if (typeof req === "string") {
-                                 return false
-                               }
+          // Get the prerequisite that matches this entry
+          // to get all other options from list
+          bindF (find ((req): req is AllRequirementObjects => {
+                        if (typeof req === "string") {
+                          return false
+                        }
 
-                               const current_id = RAAL.id (req)
+                        const current_id = RAAL.id (req)
 
-                               // the id must be a list of ids
-                               // because otherwise no options in
-                               // terms of fulfilling the
-                               // prerequisite would be possible
-                               return isList (current_id)
-                                 // check if the current entry's
-                                 // id is actually a member of
-                                 // the prerequisite
-                                 && elem (AAL.id (wiki_entry))
-                                         (current_id)
-                             })),
+                        // the id must be a list of ids
+                        // because otherwise no options in
+                        // terms of fulfilling the
+                        // prerequisite would be possible
+                        return isList (current_id)
+                          // check if the current entry's
+                          // id is actually a member of
+                          // the prerequisite
+                          && elem (AAL.id (wiki_entry))
+                                  (current_id)
+                      })),
 
-                 // Check if there are other entries that would
-                 // match the prerequisite so that this entry
-                 // could be removed
-                 fmap (req =>
-                  !any ((x: string) =>
-                         validateObject (wiki)
-                                         (hero)
-                                         (setPrerequisiteId (x) (req))
-                                         (AAL.id (wiki_entry)))
-                       (sdelete (AAL.id (wiki_entry))
-                                (RAAL.id (req) as List<string>))
-                 )
-
-               )
-               (fromJust (current_origin))
+          // Check if there are other entries that would
+          // match the prerequisite so that this entry
+          // could be removed
+          fmap (req =>
+           !any ((x: string) =>
+                  validateObject (wiki)
+                                  (hero)
+                                  (setPrerequisiteId (x) (req))
+                                  (AAL.id (wiki_entry)))
+                (sdelete (AAL.id (wiki_entry))
+                         (RAAL.id (req) as List<string>))),
+          or
         )
       }
 
@@ -478,16 +478,13 @@ const getEntrySpecificMinimumLevel =
   (hero: HeroModelRecord) =>
   (x: Record<ActiveObjectWithId>): Maybe<number> => {
     switch (AOWIA.id (x)) {
-      // Große Zauberauswahl
-      case "ADV_58":
+      case AdvantageId.GrosseZauberauswahl:
         return pipe_ (hero, countActiveSkillEntries ("spells"), getMinLevelForIncreaseEntry (3))
 
-      // Zahlreiche Predigten
-      case "ADV_79":
+      case AdvantageId.ZahlreichePredigten:
         return pipe_ (24, getSermonsAndVisionsCount (wiki) (hero), getMinLevelForIncreaseEntry (3))
 
-      // Zahlreiche Visionen
-      case "ADV_80":
+      case AdvantageId.ZahlreicheVisionen:
         return pipe_ (27, getSermonsAndVisionsCount (wiki) (hero), getMinLevelForIncreaseEntry (3))
 
       default:
@@ -500,20 +497,16 @@ const getEntrySpecificMaximumLevel =
   (hero: HeroModelRecord) =>
   (entry_id: string): Maybe<number> => {
     switch (entry_id) {
-      // Kleine Zauberauswahl
-      case "ADV_58":
+      case DisadvantageId.KleineZauberauswahl:
         return pipe_ (hero, countActiveSkillEntries ("spells"), getMaxLevelForDecreaseEntry (3))
 
-      // Wenige Predigten
-      case "DISADV_72":
+      case DisadvantageId.WenigePredigten:
         return pipe_ (24, getSermonsAndVisionsCount (wiki) (hero), getMaxLevelForDecreaseEntry (3))
 
-      // Wenige Visionen
-      case "DISADV_73":
+      case DisadvantageId.WenigeVisionen:
         return pipe_ (27, getSermonsAndVisionsCount (wiki) (hero), getMaxLevelForDecreaseEntry (3))
 
-      // Dunkles Abbild der Bündnisgabe
-      case "SA_667":
+      case SpecialAbilityId.DunklesAbbildDerBuendnisgabe:
         return pipe_ (hero, HA.pact, fmap (PA.level))
 
       default:

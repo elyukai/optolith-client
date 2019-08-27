@@ -20,6 +20,8 @@ import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, Orde
 import { Record, RecordI } from "../../../Data/Record";
 import { filterMapListT, filterT, mapT } from "../../../Data/Transducer";
 import { fst, Pair, snd, Tuple } from "../../../Data/Tuple";
+import { CombatTechniqueGroup, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups";
+import { AdvantageId, DisadvantageId, SkillId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -41,7 +43,7 @@ import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { composeT } from "../compose";
 import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup } from "../heroStateUtils";
-import { getBlessedTradStrIdFromNumId, prefixSA } from "../IDUtils";
+import { getBlessedTradStrIdFromNumId } from "../IDUtils";
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
 import { isUnfamiliarSpell } from "../Increasable/spellUtils";
 import { pipe, pipe_ } from "../pipe";
@@ -236,8 +238,7 @@ const modifySelectOptions =
       isNotActive (mhero_entry)
 
     switch (current_id) {
-      // Exceptional Skill
-      case "ADV_16": {
+      case AdvantageId.ExceptionalSkill: {
         const hasLessThanTwoSameIdActiveSelections = filterT (areNoSameActive (mhero_entry))
 
         return fmap (filterMapListT (composeT (
@@ -246,13 +247,10 @@ const modifySelectOptions =
                                     )))
       }
 
-      // Personality Flaws
-      case "DISADV_33":
-      // Negative Trait
-      case "DISADV_37":
-      // Maimed/Verstümmelt
-      case "DISADV_51": {
-        if (current_id === "DISADV_33") {
+      case DisadvantageId.PersonalityFlaw:
+      case DisadvantageId.NegativeTrait:
+      case DisadvantageId.Maimed: {
+        if (current_id === DisadvantageId.PersonalityFlaw) {
           return fmap (filterMapListT (composeT (
                                         isNoRequiredSelection,
                                         filterT (e => is7or8 (SOA.id (e))
@@ -264,8 +262,7 @@ const modifySelectOptions =
         }
       }
 
-      // Incompetent
-      case "DISADV_48": {
+      case DisadvantageId.Incompetent: {
         const isAdvActive =
           pipe (lookupF (HA.advantages (hero)), isMaybeActive)
 
@@ -282,8 +279,7 @@ const modifySelectOptions =
                                     )))
       }
 
-      // Skill Specialization
-      case "SA_9": {
+      case SpecialAbilityId.SkillSpecialization: {
         const mcounter = getActiveSecondarySelections (mhero_entry)
 
         return fmap (filterMapListT (composeT (
@@ -347,8 +343,7 @@ const modifySelectOptions =
         )))
       }
 
-      // Property Knowledge
-      case "SA_72": {
+      case SpecialAbilityId.PropertyKnowledge: {
         const isValidProperty =
           filterT (pipe (SOA.id, elemF<string | number> (getPropsWith3Gte10 (wiki) (hero))))
 
@@ -358,8 +353,7 @@ const modifySelectOptions =
                                     )))
       }
 
-      // Property Focus
-      case "SA_81": {
+      case SpecialAbilityId.PropertyFocus: {
         const isActivePropertyKnowledge =
           filterT (notP (pipe_ (hero, HA.specialAbilities, lookup ("SA_72"), isNotActive)))
 
@@ -369,8 +363,7 @@ const modifySelectOptions =
                                     )))
       }
 
-      // Aspect Knowledge
-      case "SA_87": {
+      case SpecialAbilityId.AspectKnowledge: {
         const valid_aspects = getAspectsWith3Gte10 (wiki) (hero)
 
         const isAspectValid = pipe (SOA.id, elemF<string | number> (valid_aspects))
@@ -394,8 +387,7 @@ const modifySelectOptions =
                      (getBlessedTradition (HA.specialAbilities (hero)))
       }
 
-      // Adaption (Zauber)
-      case "SA_231": {
+      case SpecialAbilityId.AdaptionZauber: {
         const isWikiEntryFromUnfamiliarTrad = isUnfamiliarSpell (hero_magical_traditions)
 
         const isSpellAbove10 =
@@ -421,17 +413,15 @@ const modifySelectOptions =
                                     )))
       }
 
-      // Spell Extensions
-      case "SA_414":
-      // Chant Extensions
-      case "SA_663": {
-        const getTargetHeroEntry = current_id === "SA_414"
+      case SpecialAbilityId.SpellExtensions:
+      case SpecialAbilityId.ChantExtensions: {
+        const getTargetHeroEntry = current_id === SpecialAbilityId.SpellExtensions
           ? bindF (lookupF (HA.spells (hero)))
           : bindF (lookupF (HA.liturgicalChants (hero)))
 
         const getTargetWikiEntry:
           ((x: Maybe<string>) => Maybe<Record<Spell> | Record<LiturgicalChant>>) =
-          current_id === "SA_414"
+          current_id === SpecialAbilityId.SpellExtensions
             ? bindF (lookupF (WA.spells (wiki)))
             : bindF (lookupF (WA.liturgicalChants (wiki)))
 
@@ -466,12 +456,11 @@ const modifySelectOptions =
                            (List ()))
       }
 
-      // Language Specializations
-      case "SA_699": {
+      case SpecialAbilityId.LanguageSpecializations: {
         return pipe_ (
           wiki,
           WA.specialAbilities,
-          lookup ("SA_29"),
+          lookup<string> (SpecialAbilityId.Language),
           bindF (AAL.select),
           maybe (cnst (Nothing) as ident<Maybe<List<Record<SelectOption>>>>)
                 (current_select => {
@@ -481,28 +470,31 @@ const modifySelectOptions =
                           (pipe (
                             active,
                             foldr ((obj: Record<ActiveObject>) =>
-                                    pipe (
-                                           AOA.tier,
-                                           bindF (current_level =>
-                                                   pipe_ (
-                                                     guard (is3or4 (current_level)),
-                                                     thenF (AOA.sid (obj)),
-                                                     misNumberM,
-                                                     fmap (current_sid =>
-                                                            consF (Pair (
-                                                                    current_sid,
-                                                                    current_level
-                                                                  )))
-                                                   )),
-                                           fromMaybe (
-                                             ident as ident<List<Pair<number, number>>>
-                                           )
-                                         )
-                                         (obj)
-                                  )
+                                    pipe_ (
+                                      obj,
+                                      AOA.tier,
+                                      bindF (current_level =>
+                                              pipe_ (
+                                                guard (is3or4 (current_level)),
+                                                thenF (AOA.sid (obj)),
+                                                misNumberM,
+                                                fmap (current_sid =>
+                                                       consF (Pair (
+                                                               current_sid,
+                                                               current_level
+                                                             )))
+                                              )),
+                                      fromMaybe (
+                                        ident as ident<List<Pair<number, number>>>
+                                      )
+                                    ))
                                   (List ())
                           ))
-                          (pipe (HA.specialAbilities, lookup ("SA_29")) (hero))
+                          (pipe_ (
+                            hero,
+                            HA.specialAbilities,
+                            lookup<string> (SpecialAbilityId.Language)
+                          ))
 
                   const filterLanguages =
                     foldr (isNoRequiredOrActiveSelection
@@ -543,7 +535,7 @@ const isSocialSkill =
       SOA.id,
       ensure (isString),
       bindF (lookupF (WA.skills (wiki))),
-      fmap (pipe (SA.gr, equals (2))),
+      fmap (pipe (SA.gr, equals (SkillGroup.Social))),
       or
     )
 
@@ -586,28 +578,25 @@ const modifyOtherOptions =
     const current_id = AAL.id (wiki_entry)
 
     switch (current_id) {
-      // Wenige Predigten
-      case "DISADV_72":
+      case DisadvantageId.WenigePredigten:
         return pipe_ (
-          24,
+          SpecialAbilityGroup.Predigten,
           getSermonsAndVisionsCount (wiki) (hero),
           getMaxLevelForDecreaseEntry (3),
           set (IAL.maxLevel),
           Just
         )
 
-      // Wenige Visionen
-      case "DISADV_73":
+      case DisadvantageId.WenigeVisionen:
         return pipe_ (
-          27,
+          SpecialAbilityGroup.Visionen,
           getSermonsAndVisionsCount (wiki) (hero),
           getMaxLevelForDecreaseEntry (3),
           set (IAL.maxLevel),
           Just
         )
 
-      // Kleine Zauberauswahl
-      case "DISADV_59": {
+      case DisadvantageId.KleineZauberauswahl: {
         return pipe_ (
           hero,
           countActiveSkillEntries ("spells"),
@@ -617,8 +606,7 @@ const modifyOtherOptions =
         )
       }
 
-      // Craft Instruments
-      case "SA_17": {
+      case SpecialAbilityId.CraftInstruments: {
         return join (liftM2 (
                               (woodworking: Record<SkillDependent>) =>
                               (metalworking: Record<SkillDependent>) =>
@@ -626,37 +614,32 @@ const modifyOtherOptions =
                                   ? Just (ident)
                                   : Nothing
                             )
-                            (pipe (HA.skills, lookup ("TAL_51")) (hero))
-                            (pipe (HA.skills, lookup ("TAL_55")) (hero)))
+                            (pipe (HA.skills, lookup<string> (SkillId.Woodworking)) (hero))
+                            (pipe (HA.skills, lookup<string> (SkillId.Metalworking)) (hero)))
       }
 
-      // Hunter
-      case "SA_18": {
-        return pipe (
-                      getAllEntriesByGroup (WA.combatTechniques (wiki))
-                                           (HA.combatTechniques (hero)),
-                      filter (pipe (value, gte (10))),
-                      flength,
-                      ensure (gt (0)),
-                      mapReplace (ident)
-                    )
-                    (2)
+      case SpecialAbilityId.Hunter: {
+        return pipe_ (
+          CombatTechniqueGroup.Ranged,
+          getAllEntriesByGroup (WA.combatTechniques (wiki))
+                               (HA.combatTechniques (hero)),
+          filter (pipe (value, gte (10))),
+          flength,
+          ensure (gt (0)),
+          mapReplace (ident)
+        )
       }
 
-      // Magical Traditions (excluding below)
-      case prefixSA (70):
-      case prefixSA (255):
-      case prefixSA (345):
-      case prefixSA (346):
-      case prefixSA (676):
-      case prefixSA (677):
-      case prefixSA (678):
-      case prefixSA (679):
-      case prefixSA (680):
-      case prefixSA (681):
-      case prefixSA (1255):
-      case prefixSA (750):
-      case prefixSA (726): {
+      case SpecialAbilityId.TraditionGuildMages:
+      case SpecialAbilityId.TraditionWitches:
+      case SpecialAbilityId.TraditionElves:
+      case SpecialAbilityId.TraditionDruids:
+      case SpecialAbilityId.TraditionScharlatane:
+      case SpecialAbilityId.TraditionQabalyamagier:
+      case SpecialAbilityId.TraditionGeoden:
+      case SpecialAbilityId.TraditionZauberalchimisten:
+      case SpecialAbilityId.TraditionSchelme:
+      case SpecialAbilityId.TraditionBrobimGeoden: {
         return pipe (
                       HA.specialAbilities,
                       getMagicalTraditionsHeroEntries,
@@ -666,10 +649,8 @@ const modifyOtherOptions =
                     (hero)
       }
 
-      // Property Knowledge
-      case "SA_72":
-      // Aspect Knowledge
-      case "SA_87": {
+      case SpecialAbilityId.PropertyKnowledge:
+      case SpecialAbilityId.AspectKnowledge: {
         return pipe (
                       AAL.cost,
                       bindF<number | List<number>, List<number>> (ensure (isList)),
@@ -680,26 +661,25 @@ const modifyOtherOptions =
                     (wiki_entry)
       }
 
-      // Blessed Traditions
-      case "SA_86":
-      case "SA_682":
-      case "SA_683":
-      case "SA_684":
-      case "SA_685":
-      case "SA_686":
-      case "SA_687":
-      case "SA_688":
-      case "SA_689":
-      case "SA_690":
-      case "SA_691":
-      case "SA_692":
-      case "SA_693":
-      case "SA_694":
-      case "SA_695":
-      case "SA_696":
-      case "SA_697":
-      case "SA_698":
-      case "SA_1049": {
+      case SpecialAbilityId.TraditionChurchOfPraios:
+      case SpecialAbilityId.TraditionChurchOfRondra:
+      case SpecialAbilityId.TraditionChurchOfBoron:
+      case SpecialAbilityId.TraditionChurchOfHesinde:
+      case SpecialAbilityId.TraditionChurchOfPhex:
+      case SpecialAbilityId.TraditionChurchOfPeraine:
+      case SpecialAbilityId.TraditionChurchOfEfferd:
+      case SpecialAbilityId.TraditionChurchOfTravia:
+      case SpecialAbilityId.TraditionChurchOfFirun:
+      case SpecialAbilityId.TraditionChurchOfTsa:
+      case SpecialAbilityId.TraditionChurchOfIngerimm:
+      case SpecialAbilityId.TraditionChurchOfRahja:
+      case SpecialAbilityId.TraditionCultOfTheNamelessOne:
+      case SpecialAbilityId.TraditionChurchOfAves:
+      case SpecialAbilityId.TraditionChurchOfIfirn:
+      case SpecialAbilityId.TraditionChurchOfKor:
+      case SpecialAbilityId.TraditionChurchOfNandus:
+      case SpecialAbilityId.TraditionChurchOfSwafnir:
+      case SpecialAbilityId.TraditionCultOfNuminoru: {
         return pipe_ (
                        hero,
                        HA.specialAbilities,
@@ -708,11 +688,10 @@ const modifyOtherOptions =
                      )
       }
 
-      // Recherchegespür
-      case "SA_533": {
+      case SpecialAbilityId.Recherchegespuer: {
         return pipe (
                       HA.specialAbilities,
-                      lookup ("SA_531"),
+                      lookup<string> (SpecialAbilityId.Wissensdurst),
                       fmap (active),
                       bindF (listToMaybe),
                       bindF (sid),
@@ -732,16 +711,11 @@ const modifyOtherOptions =
                     (hero)
       }
 
-      // Predigt der Gemeinschaft
-      case "SA_544":
-      // Predigt der Zuversicht
-      case "SA_545":
-      // Predigt des Gottvertrauens
-      case "SA_546":
-      // Predigt des Wohlgefallens
-      case "SA_547":
-      // Predigt wider Missgeschicke
-      case "SA_548": {
+      case SpecialAbilityId.PredigtDerGemeinschaft:
+      case SpecialAbilityId.PredigtDerZuversicht:
+      case SpecialAbilityId.PredigtDesGottvertrauens:
+      case SpecialAbilityId.PredigtDesWohlgefallens:
+      case SpecialAbilityId.PredigtWiderMissgeschicke: {
         return mapReplace (ident)
                           (guard_ (() => {
                                     const isAdvActive =
@@ -750,27 +724,26 @@ const modifyOtherOptions =
                                     const max =
                                       getModifierByActiveLevel
                                         (Just (3))
-                                        (lookup ("ADV_79") (HA.advantages (hero)))
-                                        (lookup ("DISADV_72") (HA.disadvantages (hero)))
+                                        (lookup<string> (AdvantageId.ZahlreichePredigten)
+                                                        (HA.advantages (hero)))
+                                        (lookup<string> (DisadvantageId.WenigePredigten)
+                                                        (HA.disadvantages (hero)))
 
                                     const isLessThanMax =
-                                      countActiveGroupEntries (wiki) (hero) (24) < max
+                                      countActiveGroupEntries (wiki)
+                                                              (hero)
+                                                              (SpecialAbilityGroup.Predigten) < max
 
-                                    return (isAdvActive ("ADV_77") && isLessThanMax)
-                                      || isAdvActive ("ADV_12")
+                                    return (isAdvActive (AdvantageId.Prediger) && isLessThanMax)
+                                      || isAdvActive (AdvantageId.Blessed)
                                   }))
       }
 
-      // Vision der Bestimmung
-      case "SA_549":
-      // Vision der Entrückung
-      case "SA_550":
-      // Vision der Gottheit
-      case "SA_551":
-      // Vision des Schicksals
-      case "SA_552":
-      // Vision des Wahren Glaubens
-      case "SA_553": {
+      case SpecialAbilityId.VisionDerBestimmung:
+      case SpecialAbilityId.VisionDerEntrückung:
+      case SpecialAbilityId.VisionDerGottheit:
+      case SpecialAbilityId.VisionDesSchicksals:
+      case SpecialAbilityId.VisionDesWahrenGlaubens: {
         return mapReplace (ident)
                           (guard_ (() => {
                                     const isAdvActive =
@@ -779,19 +752,22 @@ const modifyOtherOptions =
                                     const max =
                                       getModifierByActiveLevel
                                         (Just (3))
-                                        (lookup ("ADV_80") (HA.advantages (hero)))
-                                        (lookup ("DISADV_73") (HA.disadvantages (hero)))
+                                        (lookup<string> (AdvantageId.ZahlreicheVisionen)
+                                                        (HA.advantages (hero)))
+                                        (lookup<string> (DisadvantageId.WenigeVisionen)
+                                                        (HA.disadvantages (hero)))
 
                                     const isLessThanMax =
-                                      countActiveGroupEntries (wiki) (hero) (27) < max
+                                      countActiveGroupEntries (wiki)
+                                                              (hero)
+                                                              (SpecialAbilityGroup.Visionen) < max
 
-                                    return (isAdvActive ("ADV_78") && isLessThanMax)
-                                      || isAdvActive ("ADV_12")
+                                    return (isAdvActive (AdvantageId.Visionaer) && isLessThanMax)
+                                      || isAdvActive (AdvantageId.Blessed)
                                   }))
       }
 
-      // Dunkles Abbild der Bündnisgabe
-      case "SA_667": {
+      case SpecialAbilityId.DunklesAbbildDerBuendnisgabe: {
         return pipe (
                       HA.pact,
                       fmap (pipe (pact_level, Just, set (IAL.maxLevel)))
@@ -799,16 +775,11 @@ const modifyOtherOptions =
                     (hero)
       }
 
-      // Tradition (Zauberbarde)
-      case "SA_677":
-      // Tradition (Zaubertänzer)
-      case "SA_678":
-      // Tradition (Intuitiver Zauberer)
-      case "SA_679":
-      // Tradition (Meistertalentierte)
-      case "SA_680":
-      // Tradition (Animisten)
-      case "SA_1221": {
+      case SpecialAbilityId.TraditionZauberbarden:
+      case SpecialAbilityId.TraditionZaubertaenzer:
+      case SpecialAbilityId.TraditionIntuitiveZauberer:
+      case SpecialAbilityId.TraditionMeistertalentierte:
+      case SpecialAbilityId.TraditionAnimisten: {
         return mapReplace (ident)
                           (guard (spentOnMagicalAdvantages (ap) <= 25
                                   && spentOnMagicalDisadvantages (ap) <= 25
