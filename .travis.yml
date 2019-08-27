@@ -1,44 +1,32 @@
-language: generic
-
-before-install:
-  - echo before install
-
-install:
-  - sudo apt-get update
-  - sudo apt-get install -y curl python3
-  - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-  - export NVM_DIR="$HOME/.nvm"
-  - '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'
-  - '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'
-  - nvm install node
-  - node --version
-  - npm --version
-  - npm i
-  - python3 prepareTables.py
-
-stages:
-  - test
-  - name: build
-    if: branch = master
-  - name: buildInsider
-    if: branch = develop
-
+language: node_js
+node_js:
+- node
 jobs:
   include:
-  - stage: test
-    script:
-    - npm test
-  - stage: build
-    script:
-    - npm run compile
-    - npm run release:win
-    - npm run release:linux
-    - npm run release:osx
-    - echo Collecting artifacts
-  - stage: buildInsider
-    script:
-    - npm run compile
-    - npm run prerelease:win
-    - npm run prerelease:linux
-    - npm run prerelease:osx
-    - echo Collecting artifacts
+  - stage: Test
+    script: npm test
+  - stage: Build & Deploy
+    name: Build OS X
+    if: tag IS present && branch = master
+    os: osx
+    script: npm run compile && npm run release:osx
+  - name: Build OS X Insider
+    if: tag IS present && branch != master
+    os: osx
+    script: npm run compile && npm run prerelease:osx
+  - name: Build Linux
+    if: tag IS present && branch = master
+    os: linux
+    script: npm run compile && npm run release:linux
+  - name: Build Linux Insider
+    if: tag IS present && branch != master
+    os: linux
+    script: npm run compile && npm run prerelease:linux
+  - name: Build Windows
+    if: tag IS present && branch = master
+    os: win
+    script: npm run compile && npm run release:win
+  - name: Build Windows Insider
+    if: tag IS present && branch != master
+    os: win
+    script: npm run compile && npm run prerelease:win
