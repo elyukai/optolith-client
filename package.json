@@ -1,7 +1,7 @@
 {
   "name": "optolith",
   "productName": "Optolith",
-  "version": "1.2.0-alpha.1",
+  "version": "1.2.0-alpha.3",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'.",
   "author": {
     "name": "Lukas Obermann",
@@ -65,7 +65,7 @@
   "scripts": {
     "prerelease:win": "set PUBLISH_URL=$PUBLISH_URL_INSIDER && node ./deploy/buildInsiderWin.js",
     "prerelease:linux": "PUBLISH_URL=$PUBLISH_URL_INSIDER node ./deploy/buildInsiderLinux.js",
-    "prerelease:mac": "PUBLISH_URL=$PUBLISH_URL_INSIDER node ./deploy/buildInsiderMac.js",
+    "prerelease:osx": "PUBLISH_URL=$PUBLISH_URL_INSIDER node ./deploy/buildInsiderMac.js",
     "release:win": "set PUBLISH_URL=$PUBLISH_URL && node ./deploy/buildWin.js",
     "release:linux": "PUBLISH_URL=$PUBLISH_URL node ./deploy/buildLinux.js",
     "release:osx": "PUBLISH_URL=$PUBLISH_URL node ./deploy/buildMac.js",

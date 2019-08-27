@@ -29,17 +29,14 @@ describe (">>=", () => {
 
     let a
 
-    IO.bind (Internals.IO (() => new Promise (res => (a = 1, res (2)))))
-            (b => {
-              expect (b) .toEqual (2)
-              expect (a) .toEqual (1)
+    expect (IO.bind (Internals.IO (() => new Promise (res => (a = 1, res (2)))))
+                    (b => {
+                      expect (b) .toEqual (2)
+                      expect (a) .toEqual (1)
 
-              return IO.pure (3)
-            })
-            .f ()
-            .then (c => {
-              expect (c) .toEqual (3)
-            })
+                      return IO.pure (3)
+                    })
+                    .f ()) .resolves .toEqual (3)
   })
 })
 
@@ -49,16 +46,13 @@ describe ("=<<", () => {
 
     let a
 
-    IO.bindF (b => {
-               expect (b) .toEqual (2)
-               expect (a) .toEqual (1)
+    expect (IO.bindF (b => {
+                       expect (b) .toEqual (2)
+                       expect (a) .toEqual (1)
 
-               return IO.pure (3)
-             })
-             (Internals.IO (() => new Promise (res => (a = 1, res (2)))))
-             .f ()
-             .then (c => {
-               expect (c) .toEqual (3)
-             })
+                       return IO.pure (3)
+                     })
+                     (Internals.IO (() => new Promise (res => (a = 1, res (2)))))
+                     .f ()) .resolves .toEqual (3)
   })
 })

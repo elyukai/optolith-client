@@ -1,3 +1,14 @@
+export enum AttrId {
+  Courage = "ATTR_1",
+  Sagacity = "ATTR_2",
+  Intuition = "ATTR_3",
+  Charisma = "ATTR_4",
+  Dexterity = "ATTR_5",
+  Agility = "ATTR_6",
+  Constitution = "ATTR_7",
+  Strength = "ATTR_8",
+}
+
 export enum AdvantageId {
   // Begabung
   Aptitude = "ADV_4",
