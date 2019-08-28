@@ -6,48 +6,59 @@ node_js:
 sudo: required
 
 stages:
-  - test
-  - name: build
+  - Test
+  - name: Build Linux
     if: tag ~= /^v\d+\.\d+\.\d+$/
     # if: branch = master
-  - name: buildInsider
+  - name: Build OSX
+    if: tag ~= /^v\d+\.\d+\.\d+$/
+    # if: branch = master
+  - name: Build Windows
+    if: tag ~= /^v\d+\.\d+\.\d+$/
+    # if: branch = master
+  - name: Build Linux Insider
+    if: tag ~= /^v\d+\.\d+\.\d+\-\w+\.\d+$/
+    # if: branch = develop
+  - name: Build OSX Insider
+    if: tag ~= /^v\d+\.\d+\.\d+\-\w+\.\d+$/
+    # if: branch = develop
+  - name: Build Windows Insider
     if: tag ~= /^v\d+\.\d+\.\d+\-\w+\.\d+$/
     # if: branch = develop
 
 jobs:
   include:
   # Test stage
-  - stage: test
+  - stage: Test
     install:
     - npm ci
     script:
     - npm test
 
-  # Normal build stage
-  - stage: build
-    name: Build Win
+  # Normal build stages
+  - stage: Build Windows
     os: windows
     install:
     - ./.travis/InstallWin.bat
     script:
     - npm run release:win
 
-  - name: Build Linux
+  - stage: Build Linux
     os: linux
     install:
     - sh ./.travis/InstallLinux.sh
     script:
     - npm run release:linux
 
-  - name: Build Mac
+  - stage: Build OSX
     os: osx
     install:
     - sh ./.travis/InstallMac.sh
     script:
     - npm run release:osx
 
-  # Insider build stage
-  - stage: buildInsider
+  # Insider build stages
+  - stage: Build Windows Insider
     name: Build Win
     os: windows
     install:
@@ -55,14 +66,14 @@ jobs:
     script:
     - npm run prerelease:win
 
-  - name: Build Linux
+  - stage: Build Linux Insider
     os: linux
     install:
     - sh ./.travis/InstallLinux.sh
     script:
     - npm run prerelease:linux
 
-  - name: Build Mac
+  - stage: Build OSX Insider
     os: osx
     install:
     - sh ./.travis/InstallMac.sh
