@@ -119,9 +119,7 @@ const publishToServer =
           )
         })
 
-    for await (const res of latestFiles) {
-      res;
-    }
+    await Promise.all(latestFiles)
 
     Client.close ()
   }

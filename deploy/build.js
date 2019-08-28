@@ -4,18 +4,32 @@ const builder = require ("electron-builder")
 const { copyTables } = require ("./copyTablesCICD.js")
 const { publishToServer } = require ("./publishToServer.js")
 
+process.on ('unhandledRejection', error => {
+  throw new Error (`Unhandled promise rejection: ${error .toString ()}`);
+});
+
 module.exports = {
   buildWindows:
     async () => {
-      console.log ("Copy tables to directories...")
-      await copyTables ()
 
-      console.log ("Building Optolith for Windows...")
-      await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
-      console.log ("Optolith Build for Windows successful.")
+      try {
+        console.log ("Copy tables to directories...")
+        await copyTables ()
 
-      await publishToServer ("stable", "win")
-      console.log ("Optolith Build for Windows deployed.")
+        console.log ("Building Optolith for Windows...")
+        await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
+        console.log ("Optolith Build for Windows successful.")
+
+        await publishToServer ("stable", "win")
+        console.log ("Optolith Build for Windows deployed.")
+
+        return 0
+      }
+      catch (error) {
+        console.error(error)
+
+        return -1
+      }
     },
   buildLinux:
     async () => {

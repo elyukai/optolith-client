@@ -1,14 +1,15 @@
 import base64
-import sys
 import os
 import os.path
+import sys
 import zipfile
 
 import cryptography
+from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.fernet import Fernet
+
 
 def decryptTables():
     print("Decrypting tables")
@@ -23,7 +24,7 @@ def decryptTables():
     salt=salt,
     iterations=100000,
     backend=default_backend())
-    cryptoKey = base64.urlsafe_b64encode(kdf.derive(key.encode(encoding='UTF-8'))) 
+    cryptoKey = base64.urlsafe_b64encode(kdf.derive(key.encode(encoding='UTF-8')))
 
     # Encrypt file
     f = Fernet(cryptoKey)
@@ -42,7 +43,7 @@ def prepareTables():
         zip_ref.extractall("tables")
     # Create tablesSrc.json
     with open(os.path.join("deploy", "tablesSrc.json"), "w") as f:
-        f.write("{\n\"stable\": [\".\", \"tables\"],\n\"insider\": [\".\", \"tables\", \"insider\"]\n}")
+        f.write("{\n\"stable\": [\".\", \"tables\"],\n\"insider\": [\".\", \"tables\"]\n}")
     print("Tables unpacked")
 
 

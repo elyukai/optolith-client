@@ -4,6 +4,10 @@ const builder = require ("electron-builder")
 const { copyTablesInsider } = require ("./copyTablesCICD.js")
 const { publishToServer } = require ("./publishToServer.js")
 
+process.on ('unhandledRejection', error => {
+  throw new Error (`Unhandled promise rejection: ${error .toString ()}`);
+});
+
 module.exports = {
   buildWindows:
     async () => {
