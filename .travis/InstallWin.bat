@@ -9,4 +9,4 @@ C:/Python37/python.exe -m pip install cryptography
 REM Decrypt tables
 C:/Python37/python.exe prepareTables.py
 REM Prepare node
-npm i
+npm ci

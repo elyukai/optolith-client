@@ -20,7 +20,7 @@ jobs:
   # Test stage
   - stage: test
     install:
-    - npm i
+    - npm ci
     script:
     - npm test
   

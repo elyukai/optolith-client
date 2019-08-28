@@ -11,5 +11,5 @@ python3 -m pip install cryptography
 echo python3 prepareTables.py
 python3 prepareTables.py
 # Prepare node
-echo npm i
-npm i
+echo npm ci
+npm ci
