@@ -11,25 +11,15 @@ process.on ('unhandledRejection', error => {
 module.exports = {
   buildWindows:
     async () => {
+      console.log ("Copy tables to directories...")
+      await copyTables ()
 
-      try {
-        console.log ("Copy tables to directories...")
-        await copyTables ()
+      console.log ("Building Optolith for Windows...")
+      await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
+      console.log ("Optolith Build for Windows successful.")
 
-        console.log ("Building Optolith for Windows...")
-        await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
-        console.log ("Optolith Build for Windows successful.")
-
-        await publishToServer ("stable", "win")
-        console.log ("Optolith Build for Windows deployed.")
-
-        return 0
-      }
-      catch (error) {
-        console.error(error)
-
-        return -1
-      }
+      await publishToServer ("stable", "win")
+      console.log ("Optolith Build for Windows deployed.")
     },
   buildLinux:
     async () => {

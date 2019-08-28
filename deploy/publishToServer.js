@@ -1,5 +1,6 @@
 // @ts-check
 
+require("dotenv").config()
 const ftp = require ("basic-ftp")
 const fs = require ("fs")
 const path = require ("path")
@@ -8,7 +9,7 @@ const semver = require ("semver");
 /**
  * Needed env variables:
  * - `HOST`
- * - `USER`
+ * - `USERNAME`
  * - `PASSWORD`
  *
  * Needed command line args:
@@ -36,9 +37,12 @@ const publishToServer =
 
     await Client.access ({
       host: process.env.HOST,
-      user: process.env.USER,
+      user: process.env.USERNAME,
       password: process.env.PASSWORD,
       secure: true,
+      secureOptions: {
+        rejectUnauthorized: false
+      }
     })
 
     const subFolder = os === "win" ? "win" : os === "linux" ? "linux" : "mac"
@@ -52,9 +56,11 @@ const publishToServer =
 
     const distPath = channel === "insider" ? ["dist", "insider"] : ["dist"]
 
+    const serverPath = `${channel === "insider" ? "/insider/" : "/"}${subFolder}`
+
     const updateYml = fs.createReadStream (path.join (...distPath, updateYmlName))
 
-    await Client.upload (updateYml, `${process.env.UPLOAD_PATH}/${subFolder}/${updateYmlName}`)
+    await Client.upload (updateYml, `${serverPath}/${updateYmlName}`)
 
     const regex =
       channel === "insider"
@@ -115,7 +121,7 @@ const publishToServer =
 
           return Client.upload (
             stream,
-            `${channel === "insider" ? "/insider" : "/"}${subFolder}/${fileName}`
+            `${serverPath}/${fileName}`
           )
         })
 

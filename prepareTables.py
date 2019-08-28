@@ -41,9 +41,6 @@ def prepareTables():
     os.mkdir("tables")
     with zipfile.ZipFile("Tables.zip", 'r') as zip_ref:
         zip_ref.extractall("tables")
-    # Create tablesSrc.json
-    with open(os.path.join("deploy", "tablesSrc.json"), "w") as f:
-        f.write("{\n\"stable\": [\".\", \"tables\"],\n\"insider\": [\".\", \"tables\"]\n}")
     print("Tables unpacked")
 
 

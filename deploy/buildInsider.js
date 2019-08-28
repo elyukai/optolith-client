@@ -1,7 +1,7 @@
 // @ts-check
 
 const builder = require ("electron-builder")
-const { copyTablesInsider } = require ("./copyTablesCICD.js")
+const { copyTables } = require ("./copyTablesCICD.js")
 const { publishToServer } = require ("./publishToServer.js")
 
 process.on ('unhandledRejection', error => {
@@ -12,7 +12,7 @@ module.exports = {
   buildWindows:
     async () => {
       console.log ("Copy tables to directories...")
-      await copyTablesInsider ()
+      await copyTables ()
 
       console.log ("Building Optolith Insider for Windows...")
       await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
@@ -24,7 +24,7 @@ module.exports = {
   buildLinux:
     async () => {
       console.log ("Copy tables to directories...")
-      await copyTablesInsider ()
+      await copyTables ()
 
       console.log ("Building Optolith Insider for Linux...")
       await builder.build ({ config, targets: builder.Platform.LINUX.createTarget () })
@@ -36,7 +36,7 @@ module.exports = {
   buildMac:
     async () => {
       console.log ("Copy tables to directories...")
-      await copyTablesInsider ()
+      await copyTables ()
 
       console.log ("Building Optolith Insider for OSX...")
       await builder.build ({ config, targets: builder.Platform.MAC.createTarget () })
