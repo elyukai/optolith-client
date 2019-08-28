@@ -8,10 +8,10 @@ sudo: required
 stages:
   - test
   - name: build
-    if: tag ~= /^v\d*\.\d*\.\d*$/
+    if: tag ~= /^v\d+\.\d+\.\d+$/
     # if: branch = master
   - name: buildInsider
-    if: tag ~= /^v\d*\.\d*\.\d*-\w\.\d*$/
+    if: tag ~= /^v\d+\.\d+\.\d+\-\w+\.\d+$/
     # if: branch = develop
 
 jobs:
