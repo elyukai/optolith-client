@@ -7,54 +7,39 @@ const { publishToServer } = require ("./publishToServer.js")
 module.exports = {
   buildWindows:
     async () => {
-      try {
-        console.log ("Copy tables to directories...")
-        await copyTablesInsider ()
+      console.log ("Copy tables to directories...")
+      await copyTablesInsider ()
 
-        console.log ("Building Optolith Insider for Windows...")
-        await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
-        console.log ("Optolith Insider Build for Windows successful.")
+      console.log ("Building Optolith Insider for Windows...")
+      await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
+      console.log ("Optolith Insider Build for Windows successful.")
 
-        await publishToServer ("insider", "win")
-        console.log ("Optolith Insider Build for Windows deployed.")
-      }
-      catch (err) {
-        console.error (err)
-      }
+      await publishToServer ("insider", "win")
+      console.log ("Optolith Insider Build for Windows deployed.")
     },
   buildLinux:
     async () => {
-      try {
-        console.log ("Copy tables to directories...")
-        await copyTablesInsider ()
+      console.log ("Copy tables to directories...")
+      await copyTablesInsider ()
 
-        console.log ("Building Optolith Insider for Linux...")
-        await builder.build ({ config, targets: builder.Platform.LINUX.createTarget () })
-        console.log ("Optolith Insider Build for Linux successful.")
+      console.log ("Building Optolith Insider for Linux...")
+      await builder.build ({ config, targets: builder.Platform.LINUX.createTarget () })
+      console.log ("Optolith Insider Build for Linux successful.")
 
-        await publishToServer ("insider", "linux")
-        console.log ("Optolith Insider Build for Linux deployed.")
-      }
-      catch (err) {
-        console.error (err)
-      }
+      await publishToServer ("insider", "linux")
+      console.log ("Optolith Insider Build for Linux deployed.")
     },
   buildMac:
     async () => {
-      try {
-        console.log ("Copy tables to directories...")
-        await copyTablesInsider ()
+      console.log ("Copy tables to directories...")
+      await copyTablesInsider ()
 
-        console.log ("Building Optolith Insider for OSX...")
-        await builder.build ({ config, targets: builder.Platform.MAC.createTarget () })
-        console.log ("Optolith Insider Build for OSX successful.")
+      console.log ("Building Optolith Insider for OSX...")
+      await builder.build ({ config, targets: builder.Platform.MAC.createTarget () })
+      console.log ("Optolith Insider Build for OSX successful.")
 
-        await publishToServer ("insider", "osx")
-        console.log ("Optolith Insider Build for OSX deployed.")
-      }
-      catch (err) {
-        console.error (err)
-      }
+      await publishToServer ("insider", "osx")
+      console.log ("Optolith Insider Build for OSX deployed.")
     },
 }
 

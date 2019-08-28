@@ -8,10 +8,10 @@ sudo: required
 stages:
   - test
   - name: build
-    if: tag IS present && branch = master
+    if: branch = master && fork = false
     # if: branch = master
   - name: buildInsider
-    if: tag IS present && branch = develop
+    if: branch = develop && fork = false
     # if: branch = develop
 
 
@@ -23,7 +23,7 @@ jobs:
     - npm ci
     script:
     - npm test
-  
+
   # Normal build stage
   - stage: build
     name: Build Win
@@ -69,4 +69,3 @@ jobs:
     - sh ./.travis/InstallMac.sh
     script:
     - npm run prerelease:osx
-    

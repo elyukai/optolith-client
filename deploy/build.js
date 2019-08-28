@@ -7,54 +7,39 @@ const { publishToServer } = require ("./publishToServer.js")
 module.exports = {
   buildWindows:
     async () => {
-      try {
-        console.log ("Copy tables to directories...")
-        await copyTables ()
+      console.log ("Copy tables to directories...")
+      await copyTables ()
 
-        console.log ("Building Optolith for Windows...")
-        await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
-        console.log ("Optolith Build for Windows successful.")
+      console.log ("Building Optolith for Windows...")
+      await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
+      console.log ("Optolith Build for Windows successful.")
 
-        await publishToServer ("stable", "win")
-        console.log ("Optolith Build for Windows deployed.")
-      }
-      catch (err) {
-        console.error (err)
-      }
+      await publishToServer ("stable", "win")
+      console.log ("Optolith Build for Windows deployed.")
     },
   buildLinux:
     async () => {
-      try {
-        console.log ("Copy tables to directories...")
-        await copyTables ()
+      console.log ("Copy tables to directories...")
+      await copyTables ()
 
-        console.log ("Building Optolith for Linux...")
-        await builder.build ({ config, targets: builder.Platform.LINUX.createTarget () })
-        console.log ("Optolith Build for Linux successful.")
+      console.log ("Building Optolith for Linux...")
+      await builder.build ({ config, targets: builder.Platform.LINUX.createTarget () })
+      console.log ("Optolith Build for Linux successful.")
 
-        await publishToServer ("stable", "linux")
-        console.log ("Optolith Build for Linux deployed.")
-      }
-      catch (err) {
-        console.error (err)
-      }
+      await publishToServer ("stable", "linux")
+      console.log ("Optolith Build for Linux deployed.")
     },
   buildMac:
     async () => {
-      try {
-        console.log ("Copy tables to directories...")
-        await copyTables ()
+      console.log ("Copy tables to directories...")
+      await copyTables ()
 
-        console.log ("Building Optolith for OSX...")
-        await builder.build ({ config, targets: builder.Platform.MAC.createTarget () })
-        console.log ("Optolith Build for OSX successful.")
+      console.log ("Building Optolith for OSX...")
+      await builder.build ({ config, targets: builder.Platform.MAC.createTarget () })
+      console.log ("Optolith Build for OSX successful.")
 
-        await publishToServer ("stable", "osx")
-        console.log ("Optolith Build for OSX deployed.")
-      }
-      catch (err) {
-        console.error (err)
-      }
+      await publishToServer ("stable", "osx")
+      console.log ("Optolith Build for OSX deployed.")
     },
 }
 
