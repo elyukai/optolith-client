@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import * as log from "electron-log";
 // tslint:disable-next-line:no-implicit-dependencies
 import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater";
+import { existsSync, mkdirSync } from "fs";
 // import windowStateKeeper from "electron-window-state";
 import * as path from "path";
 import { prerelease } from "semver";
@@ -21,12 +22,14 @@ let mainWindow: Electron.BrowserWindow | null = null
 
 const isPrerelease = prerelease (app .getVersion ()) !== null
 
-if (isPrerelease) {
-  app.setPath ("userData", path.join (app.getPath ("appData"), "Optolith Insider"))
+const userDataPath =
+  path.join (app.getPath ("appData"), isPrerelease ? "Optolith Insider" : "Optolith")
+
+if (!existsSync (userDataPath)) {
+  mkdirSync (userDataPath)
 }
-else {
-  app.setPath ("userData", path.join (app.getPath ("appData"), "Optolith"))
-}
+
+app.setPath ("userData", userDataPath)
 
 /**
  * Path to directory where all of the cached and saved files are located.
