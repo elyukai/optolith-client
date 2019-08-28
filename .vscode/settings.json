@@ -1,0 +1,17 @@
+{
+    "typescript.tsdk": "node_modules\\typescript\\lib",
+    "typescript.preferences.quoteStyle": "double",
+    "javascript.preferences.quoteStyle": "double",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/*.js.map": true
+    },
+    "eslint.validate": [
+        "typescript",
+        "typescriptreact"
+    ]
+}

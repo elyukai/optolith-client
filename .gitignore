@@ -19,8 +19,6 @@ tablesSrc.json
 publishSettings.json
 
 .env*
-.vscode/
-
 
 Tables.zip
 tables/
