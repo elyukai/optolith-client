@@ -17,4 +17,11 @@ app/Database/de-DE/.~lock.l10n.xlsx#
 app/Database/.~lock.univ.xlsx#
 tablesSrc.json
 publishSettings.json
+
 .env*
+.vscode/
+
+
+Tables.zip
+tables/
+deploy/tablesSrc.json
