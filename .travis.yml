@@ -1,32 +1,72 @@
 language: node_js
+
 node_js:
 - node
+
+sudo: required
+
+stages:
+  - test
+  - name: build
+    if: tag IS present && branch = master
+    # if: branch = master
+  - name: buildInsider
+    if: tag IS present && branch = develop
+    # if: branch = develop
+
+
 jobs:
   include:
-  - stage: Test
-    script: npm test
-  - stage: Build & Deploy
-    name: Build OS X
-    if: tag IS present && branch = master
-    os: osx
-    script: npm run compile && npm run release:osx
-  - name: Build OS X Insider
-    if: tag IS present && branch != master
-    os: osx
-    script: npm run compile && npm run prerelease:osx
+  # Test stage
+  - stage: test
+    install:
+    - npm ci
+    script:
+    - npm test
+  
+  # Normal build stage
+  - stage: build
+    name: Build Win
+    os: windows
+    install:
+    - ./.travis/InstallWin.bat
+    script:
+    - npm run release:win
+
   - name: Build Linux
-    if: tag IS present && branch = master
     os: linux
-    script: npm run compile && npm run release:linux
-  - name: Build Linux Insider
-    if: tag IS present && branch != master
+    install:
+    - sh ./.travis/InstallLinux.sh
+    script:
+    - npm run release:linux
+
+  - name: Build Mac
+    os: osx
+    install:
+    - sh ./.travis/InstallMac.sh
+    script:
+    - npm run release:osx
+
+  # Insider build stage
+  - stage: buildInsider
+    name: Build Win
+    os: windows
+    install:
+    - ./.travis/InstallWin.bat
+    script:
+    - npm run prerelease:win
+
+  - name: Build Linux
     os: linux
-    script: npm run compile && npm run prerelease:linux
-  - name: Build Windows
-    if: tag IS present && branch = master
-    os: win
-    script: npm run compile && npm run release:win
-  - name: Build Windows Insider
-    if: tag IS present && branch != master
-    os: win
-    script: npm run compile && npm run prerelease:win
+    install:
+    - sh ./.travis/InstallLinux.sh
+    script:
+    - npm run prerelease:linux
+
+  - name: Build Mac
+    os: osx
+    install:
+    - sh ./.travis/InstallMac.sh
+    script:
+    - npm run prerelease:osx
+    
