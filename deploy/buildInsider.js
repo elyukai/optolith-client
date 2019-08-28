@@ -1,16 +1,22 @@
 // @ts-check
 
-require ('dotenv') .config ()
 const builder = require ("electron-builder")
+const { copyTablesInsider } = require ("./copyTablesCICD.js")
+const { publishToServer } = require ("./publishToServer.js")
 
 module.exports = {
   buildWindows:
     async () => {
-      console.log ("Building Optolith Insider for Windows...")
-
       try {
+        console.log ("Copy tables to directories...")
+        await copyTablesInsider ()
+
+        console.log ("Building Optolith Insider for Windows...")
         await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
         console.log ("Optolith Insider Build for Windows successful.")
+
+        await publishToServer ("insider", "win")
+        console.log ("Optolith Insider Build for Windows deployed.")
       }
       catch (err) {
         console.error (err)
@@ -18,11 +24,16 @@ module.exports = {
     },
   buildLinux:
     async () => {
-      console.log ("Building Optolith Insider for Linux...")
-
       try {
+        console.log ("Copy tables to directories...")
+        await copyTablesInsider ()
+
+        console.log ("Building Optolith Insider for Linux...")
         await builder.build ({ config, targets: builder.Platform.LINUX.createTarget () })
         console.log ("Optolith Insider Build for Linux successful.")
+
+        await publishToServer ("insider", "linux")
+        console.log ("Optolith Insider Build for Linux deployed.")
       }
       catch (err) {
         console.error (err)
@@ -30,11 +41,16 @@ module.exports = {
     },
   buildMac:
     async () => {
-      console.log ("Building Optolith Insider for Mac...")
-
       try {
+        console.log ("Copy tables to directories...")
+        await copyTablesInsider ()
+
+        console.log ("Building Optolith Insider for OSX...")
         await builder.build ({ config, targets: builder.Platform.MAC.createTarget () })
-        console.log ("Optolith Insider Build for Mac successful.")
+        console.log ("Optolith Insider Build for OSX successful.")
+
+        await publishToServer ("insider", "osx")
+        console.log ("Optolith Insider Build for OSX deployed.")
       }
       catch (err) {
         console.error (err)

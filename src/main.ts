@@ -15,9 +15,18 @@ import { existsFile, IO, join, liftM2, runIO, thenF } from "./System/IO";
 // tslint:disable-next-line:ordered-imports
 import windowStateKeeper = require("electron-window-state");
 
-let mainWindow: Electron.BrowserWindow | null | undefined
-
 app.setAppUserModelId ("lukasobermann.optolith")
+
+let mainWindow: Electron.BrowserWindow | null = null
+
+const isPrerelease = prerelease (app .getVersion ()) !== null
+
+if (isPrerelease) {
+  app.setPath ("userData", path.join (app.getPath ("appData"), "Optolith Insider"))
+}
+else {
+  app.setPath ("userData", path.join (app.getPath ("appData"), "Optolith"))
+}
 
 /**
  * Path to directory where all of the cached and saved files are located.
@@ -101,17 +110,18 @@ function createWindow () {
       }
 
       ipcMain.addListener ("loading-done", () => {
-        let cancellationToken: CancellationToken | undefined
+        let cancellationToken: CancellationToken | undefined = undefined
 
         autoUpdater
           .checkForUpdates ()
           .then (res => {
             if (res.cancellationToken !== undefined) {
-              cancellationToken = res.cancellationToken
+              const { cancellationToken: token } = res
+              cancellationToken = token
               mainWindow!.webContents.send ("update-available", res.updateInfo)
             }
           })
-          .catch ()
+          .catch (() => {})
 
         autoUpdater.addListener ("update-available", (info: UpdateInfo) => {
           mainWindow!.webContents.send ("update-available", info)
@@ -121,22 +131,24 @@ function createWindow () {
         ipcMain.addListener ("download-update", () => {
           autoUpdater
             .downloadUpdate (cancellationToken)
-            .catch ()
+            .catch (() => {})
         })
 
         ipcMain.addListener ("check-for-updates", () => {
           autoUpdater
             .checkForUpdates ()
             .then (res => {
-              if (res.cancellationToken !== undefined) {
-                cancellationToken = res.cancellationToken
-                mainWindow!.webContents.send ("update-available", res.updateInfo)
-              }
-              else {
+              const { cancellationToken: token } = res
+
+              if (token === undefined) {
                 mainWindow!.webContents.send ("update-not-available")
               }
+              else {
+                cancellationToken = token
+                mainWindow!.webContents.send ("update-available", res.updateInfo)
+              }
             })
-            .catch ()
+            .catch (() => {})
         })
 
         autoUpdater.signals.progress (progressObj => {
@@ -152,7 +164,7 @@ function createWindow () {
         })
       })
     })
-    .catch (err => { console.error (err) })
+    .catch (err => console.error (err))
 
   mainWindow.on ("closed", () => {
     mainWindow = null
@@ -195,7 +207,7 @@ const copyAllFiles =
     )
 
 function main () {
-  if (prerelease (require ("../package.json") .version) !== null) {
+  if (isPrerelease) {
     pipe_ (
       copyAllFiles (copyFileFromToFolder (path.join (user_data_path, "..", "Optolyth"))
                                          (path.join (user_data_path, "..", "Optolith"))),

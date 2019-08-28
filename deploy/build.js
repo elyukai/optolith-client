@@ -1,16 +1,22 @@
 // @ts-check
 
-require ('dotenv') .config ()
 const builder = require ("electron-builder")
+const { copyTables } = require ("./copyTablesCICD.js")
+const { publishToServer } = require ("./publishToServer.js")
 
 module.exports = {
   buildWindows:
     async () => {
-      console.log ("Building Optolith for Windows...")
-
       try {
+        console.log ("Copy tables to directories...")
+        await copyTables ()
+
+        console.log ("Building Optolith for Windows...")
         await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
         console.log ("Optolith Build for Windows successful.")
+
+        await publishToServer ("stable", "win")
+        console.log ("Optolith Build for Windows deployed.")
       }
       catch (err) {
         console.error (err)
@@ -18,11 +24,16 @@ module.exports = {
     },
   buildLinux:
     async () => {
-      console.log ("Building Optolith for Linux...")
-
       try {
+        console.log ("Copy tables to directories...")
+        await copyTables ()
+
+        console.log ("Building Optolith for Linux...")
         await builder.build ({ config, targets: builder.Platform.LINUX.createTarget () })
         console.log ("Optolith Build for Linux successful.")
+
+        await publishToServer ("stable", "linux")
+        console.log ("Optolith Build for Linux deployed.")
       }
       catch (err) {
         console.error (err)
@@ -30,11 +41,16 @@ module.exports = {
     },
   buildMac:
     async () => {
-      console.log ("Building Optolith for Mac...")
-
       try {
+        console.log ("Copy tables to directories...")
+        await copyTables ()
+
+        console.log ("Building Optolith for OSX...")
         await builder.build ({ config, targets: builder.Platform.MAC.createTarget () })
-        console.log ("Optolith Build for Mac successful.")
+        console.log ("Optolith Build for OSX successful.")
+
+        await publishToServer ("stable", "osx")
+        console.log ("Optolith Build for OSX deployed.")
       }
       catch (err) {
         console.error (err)
@@ -88,7 +104,7 @@ const config = {
         ]
       }
     ],
-    artifactName: "Optolith_${version}_${arch}.${ext}"
+    artifactName: "Optolith_${version}.${ext}"
   },
   mac: {
     category: "public.app-category.role-playing-games",

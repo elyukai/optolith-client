@@ -13,3 +13,6 @@ python3 prepareTables.py
 # Prepare node
 echo npm ci
 npm ci
+# Compile TypeScript
+echo npm run compile
+npm run compile

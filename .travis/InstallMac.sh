@@ -7,3 +7,5 @@ python3 -m pip install cryptography
 python3 prepareTables.py
 # Prepare node
 npm ci
+# Compile TypeScript
+npm run compile
