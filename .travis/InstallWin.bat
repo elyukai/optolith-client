@@ -10,5 +10,3 @@ REM Decrypt tables
 C:/Python37/python.exe prepareTables.py
 REM Prepare node
 npm ci
-REM Compile TypeScript
-npm run compile
