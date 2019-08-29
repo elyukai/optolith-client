@@ -47,8 +47,8 @@ const publishToServer =
       }
     })
 
-    if (accessRes .code !== 200) {
-      throw new Error(`Server error code: ${accessRes .code}, message: ${accessRes .message}`)
+    if (accessRes .code < 200 && accessRes .code >= 300) {
+      throw new Error(`Server error: ${accessRes .message}`)
     }
 
     console.log("Server connection established");
