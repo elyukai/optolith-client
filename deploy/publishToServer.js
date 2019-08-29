@@ -134,5 +134,3 @@ const publishToServer =
 module.exports = {
   publishToServer
 }
-
-publishToServer("insider","linux")
