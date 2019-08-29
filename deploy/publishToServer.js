@@ -37,7 +37,7 @@ const publishToServer =
 
     console.log("Connecting to server...");
 
-    await Client.access ({
+    const accessRes = await Client.access ({
       host: process.env.HOST,
       user: process.env.USERNAME,
       password: process.env.PASSWORD,
@@ -46,6 +46,10 @@ const publishToServer =
         rejectUnauthorized: false
       }
     })
+
+    if (accessRes .code !== 200) {
+      throw new Error(`Server error code: ${accessRes .code}, message: ${accessRes .message}`)
+    }
 
     console.log("Server connection established");
 
