@@ -2,6 +2,7 @@
 
 require("dotenv").config()
 const ftp = require ("basic-ftp")
+const Client = require ("ssh2-sftp-client")
 const fs = require ("fs")
 const path = require ("path")
 const semver = require ("semver");
@@ -33,26 +34,6 @@ const publishToServer =
     //   throw new TypeError (`publishToServer requires a specified OS ("win", "osx" or "linux"), but it received ${os .toString ()}`)
     // }
 
-    const Client = new ftp.Client ()
-
-    console.log("Connecting to server...");
-
-    const accessRes = await Client.access ({
-      host: process.env.HOST,
-      user: process.env.USERNAME,
-      password: process.env.PASSWORD,
-      secure: true,
-      secureOptions: {
-        rejectUnauthorized: false
-      }
-    })
-
-    if (accessRes .code < 200 && accessRes .code >= 300) {
-      throw new Error(`Server error: ${accessRes .message}`)
-    }
-
-    console.log(`Server connection established (${accessRes .message})`);
-
     const subFolder = os === "win" ? "win" : os === "linux" ? "linux" : "mac"
 
     const updateYmlName =
@@ -64,17 +45,7 @@ const publishToServer =
 
     const distPath = channel === "insider" ? ["dist", "insider"] : ["dist"]
 
-    const serverPath = `${channel === "insider" ? "/insider/" : "/"}${subFolder}`
-
-    const updateYml = fs.createReadStream (path.join (...distPath, updateYmlName))
-
-    const ymlRes = await Client.upload (updateYml, `${serverPath}/${updateYmlName}`)
-
-    if (ymlRes .code < 200 && ymlRes .code >= 300) {
-      throw new Error(`Upload error: ${ymlRes .message} (${updateYmlName})`)
-    }
-
-    console.log(`Upload done: ${updateYmlName} (${ymlRes .message})`);
+    const serverPath = `/update.optolith.app/${channel === "insider" ? "insider/" : ""}${subFolder}`
 
     const regex =
       channel === "insider"
@@ -128,18 +99,34 @@ const publishToServer =
 
     const latestFileNames = recreateFileNames (allInstallerVersionsSorted [0])
 
+    console.log(`Files to upload: ${[updateYmlName, ...latestFileNames] .join (", ")}`);
+
+    // Actual server connection
+
+    const client = new Client ()
+
+    console.log("Connecting to server...");
+
+    await client.connect ({
+      host: process.env.HOST,
+      port: 22,
+      username: process.env.USERNAME,
+      password: process.env.PASSWORD
+    })
+
+    console.log(`Server connection established`);
+
+    const ymlRes = await client.fastPut (path.join (...distPath, updateYmlName), `${serverPath}/${updateYmlName}`)
+
+    console.log(`Upload done: ${updateYmlName} (${ymlRes})`);
+
     for (const fileName of latestFileNames) {
-      const stream = fs.createReadStream (path.join (...distPath, fileName))
-      const fileRes = await Client.upload (stream, `${serverPath}/${fileName}`)
+      const fileRes = await client.fastPut (path.join (...distPath, fileName), `${serverPath}/${fileName}`)
 
-      if (fileRes .code < 200 && fileRes .code >= 300) {
-        throw new Error(`Upload error: ${fileRes .message} (${fileName})`)
-      }
-
-      console.log(`Upload done: ${fileName} (${fileRes .message})`);
+      console.log(`Upload done: ${fileName} (${fileRes})`);
     }
 
-    Client.close ()
+    await client.end ()
 
     console.log("Closed server connection.");
   }
