@@ -35,6 +35,8 @@ const publishToServer =
 
     const Client = new ftp.Client ()
 
+    console.log("Connecting to server...");
+
     await Client.access ({
       host: process.env.HOST,
       user: process.env.USERNAME,
@@ -44,6 +46,8 @@ const publishToServer =
         rejectUnauthorized: false
       }
     })
+
+    console.log("Server connection established");
 
     const subFolder = os === "win" ? "win" : os === "linux" ? "linux" : "mac"
 
@@ -61,6 +65,8 @@ const publishToServer =
     const updateYml = fs.createReadStream (path.join (...distPath, updateYmlName))
 
     await Client.upload (updateYml, `${serverPath}/${updateYmlName}`)
+
+    console.log(`Upload done: ${updateYmlName}`);
 
     const regex =
       channel === "insider"
@@ -114,22 +120,19 @@ const publishToServer =
 
     const latestFileNames = recreateFileNames (allInstallerVersionsSorted [0])
 
-    const latestFiles =
-      latestFileNames
-        .map (fileName => {
-          const stream = fs.createReadStream (path.join (...distPath, fileName))
-
-          return Client.upload (
-            stream,
-            `${serverPath}/${fileName}`
-          )
-        })
-
-    await Promise.all(latestFiles)
+    for (const fileName of latestFileNames) {
+      const stream = fs.createReadStream (path.join (...distPath, fileName))
+      await Client.upload (stream, `${serverPath}/${fileName}`)
+      console.log(`Upload done: ${fileName}`);
+    }
 
     Client.close ()
+
+    console.log("Closed server connection.");
   }
 
 module.exports = {
   publishToServer
 }
+
+publishToServer("insider","linux")

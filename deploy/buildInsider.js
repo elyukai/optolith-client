@@ -89,6 +89,12 @@ const config = {
         arch: [
           "x64"
         ]
+      },
+      {
+        target: "tar.gz",
+        arch: [
+          "x64"
+        ]
       }
     ],
     artifactName: "OptolithInsider_${version}.${ext}"
