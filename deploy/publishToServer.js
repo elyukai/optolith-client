@@ -51,7 +51,7 @@ const publishToServer =
       throw new Error(`Server error: ${accessRes .message}`)
     }
 
-    console.log("Server connection established");
+    console.log(`Server connection established (${accessRes .message})`);
 
     const subFolder = os === "win" ? "win" : os === "linux" ? "linux" : "mac"
 
@@ -68,9 +68,13 @@ const publishToServer =
 
     const updateYml = fs.createReadStream (path.join (...distPath, updateYmlName))
 
-    await Client.upload (updateYml, `${serverPath}/${updateYmlName}`)
+    const ymlRes = await Client.upload (updateYml, `${serverPath}/${updateYmlName}`)
 
-    console.log(`Upload done: ${updateYmlName}`);
+    if (ymlRes .code < 200 && ymlRes .code >= 300) {
+      throw new Error(`Upload error: ${ymlRes .message} (${updateYmlName})`)
+    }
+
+    console.log(`Upload done: ${updateYmlName} (${ymlRes .message})`);
 
     const regex =
       channel === "insider"
@@ -126,8 +130,13 @@ const publishToServer =
 
     for (const fileName of latestFileNames) {
       const stream = fs.createReadStream (path.join (...distPath, fileName))
-      await Client.upload (stream, `${serverPath}/${fileName}`)
-      console.log(`Upload done: ${fileName}`);
+      const fileRes = await Client.upload (stream, `${serverPath}/${fileName}`)
+
+      if (fileRes .code < 200 && fileRes .code >= 300) {
+        throw new Error(`Upload error: ${fileRes .message} (${fileName})`)
+      }
+
+      console.log(`Upload done: ${fileName} (${fileRes .message})`);
     }
 
     Client.close ()
