@@ -7,22 +7,10 @@ sudo: required
 
 stages:
   - Test
-  - name: Build OSX
+  - name: Build
     if: tag ~= /^v\d+\.\d+\.\d+$/
     # if: branch = master
-  - name: Build Linux
-    if: tag ~= /^v\d+\.\d+\.\d+$/
-    # if: branch = master
-  - name: Build Windows
-    if: tag ~= /^v\d+\.\d+\.\d+$/
-    # if: branch = master
-  - name: Build OSX Insider
-    if: tag ~= /^v\d+\.\d+\.\d+\-\w+\.\d+$/
-    # if: branch = develop
-  - name: Build Linux Insider
-    if: tag ~= /^v\d+\.\d+\.\d+\-\w+\.\d+$/
-    # if: branch = develop
-  - name: Build Windows Insider
+  - name: Build Insider
     if: tag ~= /^v\d+\.\d+\.\d+\-\w+\.\d+$/
     # if: branch = develop
 
@@ -36,7 +24,8 @@ jobs:
       - npm test
 
   # Normal build stage
-  - stage: Build Windows
+  - stage: Build
+    name: Build Windows
     os: windows
     install:
       - ./.travis/InstallWin.bat
@@ -44,7 +33,7 @@ jobs:
       - npm run compile
       - npm run release:win
 
-  - stage: Build Linux
+  - name: Build Linux
     os: linux
     install:
       - sh ./.travis/InstallLinux.sh
@@ -52,7 +41,7 @@ jobs:
       - npm run compile
       - npm run release:linux
 
-  - stage: Build OSX
+  - name: Build OSX
     os: osx
     install:
       - sh ./.travis/InstallMac.sh
@@ -61,7 +50,8 @@ jobs:
       - npm run release:osx
 
   # Insider build stage
-  - stage: Build Windows Insider
+  - stage: Build Insider
+    name: Build Windows Insider
     os: windows
     install:
       - ./.travis/InstallWin.bat
@@ -69,7 +59,7 @@ jobs:
       - npm run compile
       - npm run prerelease:win
 
-  - stage: Build Linux Insider
+  - name: Build Linux Insider
     os: linux
     install:
       - sh ./.travis/InstallLinux.sh
@@ -77,7 +67,7 @@ jobs:
       - npm run compile
       - npm run prerelease:linux
 
-  - stage: Build OSX Insider
+  - name: Build OSX Insider
     os: osx
     install:
       - sh ./.travis/InstallMac.sh
