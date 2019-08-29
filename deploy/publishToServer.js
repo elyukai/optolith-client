@@ -43,7 +43,7 @@ const publishToServer =
       ? "latest-linux.yml"
       : "latest-mac.yml"
 
-    const distPath = channel === "insider" ? ["dist", "insider"] : ["dist"]
+    const distPath = channel === "insider" ? [".", "dist", "insider"] : [".", "dist"]
 
     const serverPath = `/update.optolith.app/${channel === "insider" ? "insider/" : ""}${subFolder}`
 
@@ -116,12 +116,15 @@ const publishToServer =
 
     console.log(`Server connection established`);
 
-    const ymlRes = await client.fastPut (path.join (...distPath, updateYmlName), `${serverPath}/${updateYmlName}`)
+
+    const updateYml = fs.readFileSync (path.join (...distPath, updateYmlName))
+    const ymlRes = await client.put (updateYml, `${serverPath}/${updateYmlName}`)
 
     console.log(`Upload done: ${updateYmlName} (${ymlRes})`);
 
     for (const fileName of latestFileNames) {
-      const fileRes = await client.fastPut (path.join (...distPath, fileName), `${serverPath}/${fileName}`)
+      const stream = fs.readFileSync (path.join (...distPath, fileName))
+      const fileRes = await client.put (stream, `${serverPath}/${fileName}`)
 
       console.log(`Upload done: ${fileName} (${fileRes})`);
     }
