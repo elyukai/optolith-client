@@ -43,9 +43,9 @@ const publishToServer =
       ? "latest-linux.yml"
       : "latest-mac.yml"
 
-    const distPath = channel === "insider" ? [".", "dist", "insider"] : [".", "dist"]
+    const distPath = channel === "insider" ? ["dist", "insider"] : ["dist"]
 
-    const serverPath = `/update.optolith.app/${channel === "insider" ? "insider/" : ""}${subFolder}`
+    const serverPath = `./update.optolith.app/${channel === "insider" ? "insider/" : ""}${subFolder}`
 
     const regex =
       channel === "insider"
@@ -115,7 +115,6 @@ const publishToServer =
     })
 
     console.log(`Server connection established`);
-
 
     const updateYml = fs.readFileSync (path.join (...distPath, updateYmlName))
     const ymlRes = await client.put (updateYml, `${serverPath}/${updateYmlName}`)
