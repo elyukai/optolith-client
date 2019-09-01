@@ -226,12 +226,26 @@ export const rerollWeight: ReduxAction =
   (dispatch, getState) => {
     const state = getState ()
     const race = getCurrentRace (state)
+    const raceVariant = getCurrentRaceVariant (state)
     const prevSize = getSize (state)
 
-    const { weight, size } = RCPUtils.rerollWeight (prevSize) (race)
+    if(isJust (prevSize) && prevSize.value !== "") {
+      const { weight, size } = RCPUtils.rerollWeight (prevSize) (race)
 
-    if (isJust (weight)) {
-      dispatch (setWeight (fromJust (weight)) (size))
+      if (isJust (weight)) {
+        dispatch (setWeight (fromJust (weight)) (size))
+      }
+    }
+    else {
+      const mnew_size = RCPUtils.rerollSize (race) (raceVariant)
+      if (isJust(mnew_size)) {
+        dispatch (setSize (fromJust (mnew_size)) (Nothing))
+        const { weight, size } = RCPUtils.rerollWeight (mnew_size) (race)
+
+        if (isJust (weight)) {
+          dispatch (setWeight (fromJust (weight)) (size))
+        }
+      }
     }
   }
 
