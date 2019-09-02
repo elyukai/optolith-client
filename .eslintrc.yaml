@@ -230,7 +230,9 @@ rules:
   quote-props:
     - 2
     - consistent
-  quotes: 2
+  quotes:
+    - 2
+    - avoidEscape: true
   semi: 0
   semi-spacing: 2
   semi-style: 2

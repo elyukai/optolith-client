@@ -1,18 +1,17 @@
-import { fmap } from "../../../../Data/Functor";
+import { fmap, fmapF } from "../../../../Data/Functor";
 import { map } from "../../../../Data/List";
-import { alt, fromJust, isNothing, Nothing } from "../../../../Data/Maybe";
+import { alt, joinMaybeList, Nothing } from "../../../../Data/Maybe";
 import { OrderedMap } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
-import { Pair } from "../../../../Data/Tuple";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
-import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
+import { SpecialAbility, SpecialAbilityCombatTechniqueGroup, SpecialAbilityCombatTechniques } from "../../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixCT, prefixId } from "../../IDUtils";
 import { toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { modifyNegIntNoBreak } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
-import { mensureMapBoolean, mensureMapListLengthInRangeOptional, mensureMapNatural, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional } from "../validateMapValueUtils";
+import { mensureMapListLengthInRangeOptional, mensureMapNatural, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapNumEnumOption, mensureMapStringPredListOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toActivatableCost } from "./Sub/toActivatableCost";
 import { toPrerequisites } from "./Sub/toPrerequisites";
@@ -69,8 +68,9 @@ export const toSpecialAbility =
                        (TableType.Univ)
                        (lookup_univ)
 
-      const checkUnivBoolean =
-        lookupKeyValid (mensureMapBoolean)
+      const checkCombatTechniqueGroup =
+        lookupKeyValid (mensureMapNumEnumOption ("SpecialAbilityCombatTechniqueGroup")
+                                                (SpecialAbilityCombatTechniqueGroup))
                        (TableType.Univ)
                        (lookup_univ)
 
@@ -104,7 +104,7 @@ export const toSpecialAbility =
 
       const ecombatTechniques = checkOptionalUnivNaturalNumberList ("combatTechniques")
 
-      const ecombatTechniquesAll = checkUnivBoolean ("combatTechniquesAll")
+      const ecombatTechniquesGroup = checkCombatTechniqueGroup ("combatTechniquesGroup")
 
       const combatTechniques = lookup_l10n ("combatTechniques")
 
@@ -152,7 +152,7 @@ export const toSpecialAbility =
           emax,
           eselect,
           ecombatTechniques,
-          ecombatTechniquesAll,
+          ecombatTechniquesGroup,
           egr,
           esubgr,
           eextended,
@@ -196,19 +196,12 @@ export const toSpecialAbility =
           effect: fmap (modifyNegIntNoBreak) (effect),
           penalty: fmap (modifyNegIntNoBreak) (penalty),
           combatTechniques:
-            (() => {
-              const num_cts = rs.ecombatTechniques
-              const all_cts = rs.ecombatTechniquesAll
-
-              return Pair (
-                all_cts
-                ? true
-                : isNothing (num_cts)
-                ? false
-                : map (prefixCT) (fromJust (num_cts)),
-                combatTechniques
-              )
-            }) (),
+            fmapF (rs.ecombatTechniquesGroup)
+                  (group => SpecialAbilityCombatTechniques ({
+                              group,
+                              explicitIds: map (prefixCT) (joinMaybeList (rs.ecombatTechniques)),
+                              customText: combatTechniques,
+                            })),
           aeCost: fmap (modifyNegIntNoBreak) (aeCost),
           protectiveCircle: fmap (modifyNegIntNoBreak) (protectiveCircle),
           wardingCircle: fmap (modifyNegIntNoBreak) (wardingCircle),

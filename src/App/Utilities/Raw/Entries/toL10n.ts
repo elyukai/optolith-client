@@ -704,6 +704,12 @@ export const toL10n =
         "brews": checkL10nNonEmptyStringList ("brews"),
         "brew": checkL10nNonEmptyString ("brew"),
         "all": checkL10nNonEmptyString ("all"),
+        "allmeleecombattechniques": checkL10nNonEmptyString ("allmeleecombattechniques"),
+        "allrangedcombattechniques": checkL10nNonEmptyString ("allrangedcombattechniques"),
+        "allmeleecombattechniqueswithparry":
+          checkL10nNonEmptyString ("allmeleecombattechniqueswithparry"),
+        "allmeleecombattechniquesforonehandedweapons":
+          checkL10nNonEmptyString ("allmeleecombattechniquesforonehandedweapons"),
       }
 
       return mapMNamed
@@ -1339,6 +1345,11 @@ export const toL10n =
           "brews": res ["brews"],
           "brew": res ["brew"],
           "all": res ["all"],
+          "allmeleecombattechniques": res ["allmeleecombattechniques"],
+          "allrangedcombattechniques": res ["allrangedcombattechniques"],
+          "allmeleecombattechniqueswithparry": res ["allmeleecombattechniqueswithparry"],
+          "allmeleecombattechniquesforonehandedweapons":
+            res ["allmeleecombattechniquesforonehandedweapons"],
           // tslint:enable: no-string-literal
         }))
     }

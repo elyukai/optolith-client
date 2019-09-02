@@ -25,7 +25,7 @@ import { ActivatableDependency } from "../../Models/Hero/heroTypeHelpers";
 import { Pact } from "../../Models/Hero/Pact";
 import { Rules } from "../../Models/Hero/Rules";
 import { Advantage } from "../../Models/Wiki/Advantage";
-import { isSpecialAbility, SpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries, hasActiveGroupEntry } from "../entryGroupUtils";
@@ -193,7 +193,7 @@ const isAdditionDisabledEntrySpecific =
   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (wiki_entry: Activatable): boolean =>
     (
-      isSpecialAbility (wiki_entry)
+      SpecialAbility.is (wiki_entry)
       && isAdditionDisabledSpecialAbilitySpecific (wiki)
                                                   (hero)
                                                   (matching_script_and_lang_related)

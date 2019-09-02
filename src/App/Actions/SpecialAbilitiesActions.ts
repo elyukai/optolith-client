@@ -14,7 +14,7 @@ import { ActiveObjectWithIdL, toActiveObjectWithId } from "../Models/ActiveEntri
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../Models/View/ActivatableNameCost";
 import { L10nRecord } from "../Models/Wiki/L10n";
-import { isSpecialAbility, SpecialAbility } from "../Models/Wiki/SpecialAbility";
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
 import { getAutomaticAdvantages } from "../Selectors/rcpSelectors";
@@ -54,7 +54,7 @@ export const addSpecialAbility =
 
       const mwiki_entry =
         bind (getWikiEntry (getWiki (state)) (current_id))
-             (ensure (isSpecialAbility))
+             (ensure (SpecialAbility.is))
 
       const mhero_entry =
         lookup (current_id)
@@ -114,7 +114,7 @@ export const removeSpecialAbility =
 
       const mwiki_entry =
         bind (getWikiEntry (getWiki (state)) (current_id))
-             (ensure (isSpecialAbility))
+             (ensure (SpecialAbility.is))
 
       const mhero_entry =
         lookup (current_id)
@@ -158,7 +158,7 @@ export const setSpecialAbilityLevel =
 
       const mwiki_entry =
         bind (getWikiEntry (getWiki (state)) (current_id))
-             (ensure (isSpecialAbility))
+             (ensure (SpecialAbility.is))
 
       const mhero_entry =
         lookup (current_id)

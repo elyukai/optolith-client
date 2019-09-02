@@ -47,7 +47,7 @@ export interface Record<A extends RecordIBase<any>> extends RecordPrototype {
   readonly prototype: RecordPrototype
 }
 
-export interface RecordCreator<A extends RecordIBase<Name>, Name extends string = A["@@name"]> {
+export interface RecordCreator<A extends RecordIBase<any>> {
   (x: PartialMaybeOrNothing<OmitName<A>>): Record<A>
   readonly keys: OrderedSet<string>
   readonly default: Record<A>

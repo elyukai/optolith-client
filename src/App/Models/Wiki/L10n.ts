@@ -628,6 +628,10 @@ export interface L10n {
   "brews": List<string>
   "brew": string
   "all": string
+  "allmeleecombattechniques": string
+  "allrangedcombattechniques": string
+  "allmeleecombattechniqueswithparry": string
+  "allmeleecombattechniquesforonehandedweapons": string
 }
 
 export type L10nKey = keyof L10n
@@ -1262,4 +1266,8 @@ export const L10n =
                 "brews": List.empty,
                 "brew": "",
                 "all": "",
+                "allmeleecombattechniques": "",
+                "allrangedcombattechniques": "",
+                "allmeleecombattechniqueswithparry": "",
+                "allmeleecombattechniquesforonehandedweapons": "",
               })

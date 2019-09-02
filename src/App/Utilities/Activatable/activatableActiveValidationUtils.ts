@@ -33,7 +33,7 @@ import { Advantage } from "../../Models/Wiki/Advantage";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { isSpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, AllRequirementObjects, EntryWithCategory, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers";
@@ -412,7 +412,7 @@ const isEntryDisabledByDependencies =
 const isStyleSpecialAbilityRemovalDisabled =
   (hero: HeroModelRecord) =>
   (wiki_entry: Activatable): boolean =>
-    isSpecialAbility (wiki_entry)
+    SpecialAbility.is (wiki_entry)
     && !isStyleValidToRemove (hero)
                              (Just (wiki_entry))
 

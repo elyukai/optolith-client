@@ -1,19 +1,20 @@
 import * as React from "react";
 import { fmap } from "../../../../Data/Functor";
-import { intercalate, List } from "../../../../Data/List";
-import { fromMaybe_, mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { intercalate, notNull } from "../../../../Data/List";
+import { fromJust, isJust, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../../Data/OrderedMap";
 import { Record, RecordIBase } from "../../../../Data/Record";
-import { fst, Pair, snd } from "../../../../Data/Tuple";
 import { CombatTechnique } from "../../../Models/Wiki/CombatTechnique";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { SpecialAbilityCombatTechniqueGroup, SpecialAbilityCombatTechniques } from "../../../Models/Wiki/SpecialAbility";
 import { ndash } from "../../../Utilities/Chars";
 import { translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { sortStrings } from "../../../Utilities/sortBy";
 import { Markdown } from "../../Universal/Markdown";
 
 interface Accessors<A extends RecordIBase<any>> {
-  combatTechniques: (r: Record<A>) => Pair<boolean | List<string>, Maybe<string>>
+  combatTechniques: (r: Record<A>) => Maybe<Record<SpecialAbilityCombatTechniques>>
 }
 
 export interface WikiCombatTechniquesProps<A extends RecordIBase<any>> {
@@ -24,6 +25,7 @@ export interface WikiCombatTechniquesProps<A extends RecordIBase<any>> {
 }
 
 const CTA = CombatTechnique.A
+const SACTA = SpecialAbilityCombatTechniques.A
 
 export function WikiCombatTechniques <A extends RecordIBase<any>> (props: WikiCombatTechniquesProps<A>) {
   const {
@@ -33,25 +35,40 @@ export function WikiCombatTechniques <A extends RecordIBase<any>> (props: WikiCo
     l10n,
   } = props
 
-  const p = acc.combatTechniques (x)
+  return maybe <JSX.Element | null>
+               (null)
+               ((cts: Record<SpecialAbilityCombatTechniques>) => {
+                 const customText = SACTA.customText (cts)
+                 const group = SACTA.group (cts)
+                 const explicitIds = SACTA.explicitIds (cts)
 
-  const str =
-    fromMaybe_ (() => {
-                 const cts = fst (p)
+                 const str =
+                   isJust (customText)
+                   ? fromJust (customText)
+                   : group === SpecialAbilityCombatTechniqueGroup.All
+                   ? translate (l10n) ("all")
+                   : group === SpecialAbilityCombatTechniqueGroup.Melee
+                   ? translate (l10n) ("allmeleecombattechniques")
+                   : group === SpecialAbilityCombatTechniqueGroup.Ranged
+                   ? translate (l10n) ("allrangedcombattechniques")
+                   : group === SpecialAbilityCombatTechniqueGroup.WithParry
+                   ? translate (l10n) ("allmeleecombattechniqueswithparry")
+                   : group === SpecialAbilityCombatTechniqueGroup.OneHanded
+                   ? translate (l10n) ("allmeleecombattechniquesforonehandedweapons")
+                   : notNull (explicitIds)
+                   ? pipe_ (
+                       explicitIds,
+                       mapMaybe (pipe (lookupF (combatTechniques), fmap (CTA.name))),
+                       sortStrings (l10n),
+                       intercalate (", ")
+                     )
+                   : ndash
 
-                 return cts === true
-                 ? translate (l10n) ("all")
-                 : cts === false
-                 ? ndash
-                 : pipe_ (
-                     cts,
-                     mapMaybe (pipe (lookupF (combatTechniques), fmap (CTA.name))),
-                     intercalate (", ")
-                   )
+                 return (
+                   <Markdown
+                     source={`**${translate (l10n) ("combattechniques")}:** ${str}`}
+                     />
+                 )
                })
-               (snd (p))
-
-  return (
-    <Markdown source={`**${translate (l10n) ("combattechniques")}:** ${str}`} />
-  )
+               (acc.combatTechniques (x))
 }

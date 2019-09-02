@@ -64,9 +64,7 @@ export const mapMNamed =
           {} as MapRight<A>
         )
 
-    if (isEither (rs)) return rs
-
-    return Right (f (rs))
+    return isEither (rs) ? rs : Right (f (rs))
   }
 
 /**
