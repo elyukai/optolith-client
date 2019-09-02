@@ -39,6 +39,7 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, AllRequirementObjects, EntryWithCategory, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils";
+import { isBlessedTraditionId, isMagicalTraditionId } from "../IDUtils";
 import { ifElse } from "../ifElse";
 import { isOwnTradition } from "../Increasable/liturgicalChantUtils";
 import { pipe, pipe_ } from "../pipe";
@@ -52,7 +53,6 @@ import { isStyleValidToRemove } from "./ExtendedStyleUtils";
 import { isActive } from "./isActive";
 import { getActiveSelections } from "./selectionUtils";
 import { getBlessedTraditionFromWiki, getMagicalTraditionsHeroEntries } from "./traditionUtils";
-import { isMagicalTraditionId, isBlessedTraditionId } from "../IDUtils";
 
 const hasRequiredMinimumLevel =
   (min_level: Maybe<number>) => (max_level: Maybe<number>): boolean =>
@@ -73,7 +73,7 @@ const SA = Spell.A
 const LCA = LiturgicalChant.A
 
 const isRequiredByOthers =
-  (current_active: Record<ActiveObject>) =>
+  (current_active: Record<ActiveObjectWithId>) =>
   (state_entry: Record<ActivatableDependent>): boolean =>
     pipe (
            ADA.dependencies,
@@ -82,15 +82,15 @@ const isRequiredByOthers =
                (isBoolean)
                (e => e && flength (ADA.active (state_entry)) === 1)
                (e => (
-                   equals (DOA.sid (e)) (AOA.sid (current_active))
-                   && equals (AOA.sid2 (current_active)) (DOA.sid2 (e))
-                   && equals (AOA.tier (current_active)) (DOA.tier (e))
+                   equals (DOA.sid (e)) (AOWIA.sid (current_active))
+                   && equals (AOWIA.sid2 (current_active)) (DOA.sid2 (e))
+                   && equals (AOWIA.tier (current_active)) (DOA.tier (e))
                  )
                  || (
                    isJust (DOA.tier (e))
-                   && isJust (AOA.tier (current_active))
+                   && isJust (AOWIA.tier (current_active))
                    && or (fmap (equals (Maybe.gte (DOA.tier (e))
-                                                  (AOA.tier (current_active))))
+                                                  (AOWIA.tier (current_active))))
                                (DOA.active (e)))
                  ))
            )
@@ -107,7 +107,7 @@ const isRemovalDisabledEntrySpecific =
   (wiki_entry: Activatable) =>
   (hero_entry: Record<ActivatableDependent>) =>
   // tslint:disable-next-line: cyclomatic-complexity
-  (active: Record<ActiveObject>): boolean => {
+  (active: Record<ActiveObjectWithId>): boolean => {
     const mstart_el =
       lookupF (WikiModel.AL.experienceLevels (wiki))
               (HeroModel.AL.experienceLevel (hero))
@@ -137,14 +137,14 @@ const isRemovalDisabledEntrySpecific =
         const mvalue =
           pipe_ (
             active,
-            AOA.sid,
+            AOWIA.sid,
             misStringM,
             bindF (lookupF (HeroModel.AL.skills (hero))),
             fmap (SkillDependent.AL.value)
           )
 
         // amount of active Exceptional Skill advantages for the same skill
-        const counter = countWith (pipe (AOA.sid, equals (AOA.sid (active))))
+        const counter = countWith (pipe (AOA.sid, equals (AOWIA.sid (active))))
                                   (ADA.active (hero_entry))
 
         // if the maximum value is reached removal needs to be disabled
@@ -159,7 +159,7 @@ const isRemovalDisabledEntrySpecific =
         const value =
           pipe_ (
             active,
-            AOA.sid,
+            AOWIA.sid,
             misStringM,
             bindF (lookupF (HeroModel.A.combatTechniques (hero))),
             maybe (6) (SkillDependent.A.value)
@@ -175,7 +175,7 @@ const isRemovalDisabledEntrySpecific =
 
           return flength (active_matching_scripts) === 1
             && pipe_ (
-              AOA.sid (active),
+              AOWIA.sid (active),
               misNumberM,
               maybe (false) (elemF (active_matching_scripts))
             )
@@ -191,7 +191,7 @@ const isRemovalDisabledEntrySpecific =
 
           return flength (active_matching_languages) === 1
             && pipe_ (
-              AOA.sid (active),
+              AOWIA.sid (active),
               misNumberM,
               maybe (false) (elemF (active_matching_languages))
             )
@@ -204,7 +204,7 @@ const isRemovalDisabledEntrySpecific =
       case SpecialAbilityId.PropertyKnowledge:
         return pipe_ (
           active,
-          AOA.sid,
+          AOWIA.sid,
           misNumberM,
           maybe (false)
                 (prop_id => OrderedMap.any ((spell: Record<ActivatableSkillDependent>) =>
@@ -224,7 +224,7 @@ const isRemovalDisabledEntrySpecific =
 
         return pipe_ (
           active,
-          AOA.sid,
+          AOWIA.sid,
           misNumberM,
           maybe (false)
                 (aspc_id => {
@@ -313,7 +313,7 @@ const isEntryDisabledByDependencies =
   (hero: HeroModelRecord) =>
   (wiki_entry: Activatable) =>
   (hero_entry: Record<ActivatableDependent>) =>
-  (active: Record<ActiveObject>) =>
+  (active: Record<ActiveObjectWithId>) =>
     // if there is any dependency that disables the possibility to remove
     // the entry
     any ((dep: ActivatableDependency) => {
@@ -380,7 +380,7 @@ const isEntryDisabledByDependencies =
 
       // sid of the current dependency
       const current_dep_sid = DOA.sid (dep)
-      const mcurrent_sid = AOA.sid (active)
+      const mcurrent_sid = AOWIA.sid (active)
 
       if (Maybe.any (isList) (current_dep_sid) && isJust (mcurrent_sid)) {
         // list of possible sids to fulfill the prerequisite

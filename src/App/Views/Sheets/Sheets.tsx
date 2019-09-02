@@ -29,7 +29,7 @@ import { MeleeWeapon } from "../../Models/View/MeleeWeapon";
 import { RangedWeapon } from "../../Models/View/RangedWeapon";
 import { ShieldOrParryingWeapon } from "../../Models/View/ShieldOrParryingWeapon";
 import { SkillCombined } from "../../Models/View/SkillCombined";
-import { SpellCombined } from "../../Models/View/SpellCombined";
+import { SpellWithRequirements } from "../../Models/View/SpellWithRequirements";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { Culture } from "../../Models/Wiki/Culture";
 import { Disadvantage } from "../../Models/Wiki/Disadvantage";
@@ -96,7 +96,7 @@ export interface SheetsStateProps {
   magicalSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   magicalTradition: string
   properties: Maybe<string>
-  spells: Maybe<List<Record<SpellCombined>>>
+  spells: Maybe<List<Record<SpellWithRequirements>>>
   aspects: Maybe<string>
   blessedPrimary: Maybe<string>
   blessedSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>

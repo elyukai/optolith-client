@@ -3,6 +3,7 @@ import { Spell } from "../Wiki/Spell";
 import { IsActive } from "./viewTypeHelpers";
 
 export interface SpellIsActive extends IsActive {
+  "@@name": "SpellIsActive"
   wikiEntry: Record<Spell>
 }
 

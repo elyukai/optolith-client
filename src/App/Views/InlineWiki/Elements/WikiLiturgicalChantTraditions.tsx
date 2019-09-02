@@ -4,7 +4,7 @@ import { consF, elem, flength, foldr, intercalate, List, subscript } from "../..
 import { fromJust, fromMaybe, isNothing, Just, mapMaybe } from "../../../../Data/Maybe";
 import { dec } from "../../../../Data/Num";
 import { alter, insert, OrderedMap } from "../../../../Data/OrderedMap";
-import { Record, RecordBase } from "../../../../Data/Record";
+import { Record, RecordIBase } from "../../../../Data/Record";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
 import { getAspectsOfTradition, getTraditionOfAspect } from "../../../Utilities/Increasable/liturgicalChantUtils";
@@ -12,18 +12,18 @@ import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { sortStrings } from "../../../Utilities/sortBy";
 import { WikiProperty } from "../WikiProperty";
 
-interface Accessors<A extends RecordBase> {
+interface Accessors<A extends RecordIBase<any>> {
   aspects: (r: Record<A>) => List<number>
   tradition: (r: Record<A>) => List<number>
 }
 
-export interface WikiLiturgicalChantTraditionsProps<A extends RecordBase> {
+export interface WikiLiturgicalChantTraditionsProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
   l10n: L10nRecord
 }
 
-export function WikiLiturgicalChantTraditions<A extends RecordBase>
+export function WikiLiturgicalChantTraditions<A extends RecordIBase<any>>
   (props: WikiLiturgicalChantTraditionsProps<A>) {
   const {
     x,

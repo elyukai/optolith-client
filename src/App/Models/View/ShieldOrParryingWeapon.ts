@@ -2,6 +2,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault } from "../../../Data/Record";
 
 export interface ShieldOrParryingWeapon {
+  "@@name": "ShieldOrParryingWeapon"
   id: string
   name: string
   stp: Maybe<string>

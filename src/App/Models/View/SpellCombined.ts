@@ -6,6 +6,7 @@ import { Cantrip } from "../Wiki/Cantrip";
 import { Spell } from "../Wiki/Spell";
 
 export interface SpellCombined {
+  "@@name": "SpellCombined"
   wikiEntry: Record<Spell>
   stateEntry: Record<ActivatableSkillDependent>
 }

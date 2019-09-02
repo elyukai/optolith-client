@@ -6,6 +6,7 @@ import { Die } from "./sub/Die";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface RaceVariant {
+  "@@name": "RaceVariant"
   id: string
   name: string
   commonCultures: List<string>

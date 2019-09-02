@@ -7,7 +7,7 @@ import { compare } from "../../../../Data/Num";
 import { fromDefault, Record } from "../../../../Data/Record";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
-import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { findSelectOption } from "../../../Utilities/Activatable/selectionUtils";
@@ -24,6 +24,7 @@ export interface SkillsSheetLanguagesProps {
 }
 
 interface IdNameLevel {
+  "@@name": "IdNameLevel"
   id: string | number
   name: string
   level: number
@@ -58,7 +59,7 @@ export function SkillsSheetLanguages (props: SkillsSheetLanguagesProps) {
     )),
     sortRecordsBy ([
                     comparingR (IdNameLevel.A.level) (flip (compare)),
-                    comparingR (IdNameLevel.A.name) (compareLocale (L10n.A.id (l10n))),
+                    comparingR (IdNameLevel.A.name) (compareLocale (l10n)),
                   ])
   )
 

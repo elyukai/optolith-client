@@ -5,6 +5,7 @@ import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Blessing {
+  "@@name": "Blessing"
   id: string
   name: string
   tradition: List<number>

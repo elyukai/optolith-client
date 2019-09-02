@@ -50,8 +50,11 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
   }
 
   changeName = (name: string) => this.setState (() => ({ name }))
+
   changeGender = (sex: Maybe<"m" | "f">) => this.setState (() => ({ sex }))
+
   changeEL = (el: Maybe<string>) => this.setState (() => ({ el }))
+
   create = () => {
     const { name, sex, el, enableAllRuleBooks, enabledRuleBooks } = this.state
 

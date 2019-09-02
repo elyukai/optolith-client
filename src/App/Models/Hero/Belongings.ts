@@ -8,6 +8,7 @@ import { Item } from "./Item";
 import { Purse } from "./Purse";
 
 export interface Belongings {
+  "@@name": "Belongings"
   items: OrderedMap<string, Record<Item>>
   itemInEditor: Maybe<Record<EditItem>>
   isInItemCreation: boolean

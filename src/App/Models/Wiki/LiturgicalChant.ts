@@ -6,6 +6,7 @@ import { SourceLink } from "./sub/SourceLink";
 import { CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface LiturgicalChant {
+  "@@name": "LiturgicalChant"
   id: string
   name: string
   aspects: List<number>

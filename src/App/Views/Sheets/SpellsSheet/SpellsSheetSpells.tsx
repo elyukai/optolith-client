@@ -6,7 +6,7 @@ import { ensure, fromMaybeR, guardReplace, Just, Maybe } from "../../../../Data/
 import { elems } from "../../../../Data/OrderedSet";
 import { Record } from "../../../../Data/Record";
 import { AttributeCombined } from "../../../Models/View/AttributeCombined";
-import { SpellCombined, SpellCombinedA_ } from "../../../Models/View/SpellCombined";
+import { SpellWithRequirements, SpellWithRequirementsA_ } from "../../../Models/View/SpellWithRequirements";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
 import { minus } from "../../../Utilities/Chars";
@@ -22,10 +22,10 @@ export interface SpellsSheetSpellsProps {
   attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
   l10n: L10nRecord
-  spells: Maybe<List<Record<SpellCombined>>>
+  spells: Maybe<List<Record<SpellWithRequirements>>>
 }
 
-const SCA_ = SpellCombinedA_
+const SWRA_ = SpellWithRequirementsA_
 
 export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
   const {
@@ -88,22 +88,22 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
                 const check =
                   getAttributeStringByIdList (checkAttributeValueVisibility)
                                              (attributes)
-                                             (SCA_.check (e))
+                                             (SWRA_.check (e))
 
 
                 return (
-                  <tr key={SCA_.id (e)}>
+                  <tr key={SWRA_.id (e)}>
                     <td
                       className={
                         classListMaybe (List (
                           Just ("name"),
-                          guardReplace (notNull (SCA_.tradition (e))) ("unfamiliar")
+                          guardReplace (notNull (SWRA_.tradition (e))) ("unfamiliar")
                         ))
                       }
                       >
                       <Textfit max={11} min={7} mode="single">
-                        {SCA_.name (e)}
-                        {notNull (SCA_.tradition (e))
+                        {SWRA_.name (e)}
+                        {notNull (SWRA_.tradition (e))
                           ? ` (${translate (l10n) ("unfamiliarspell")})`
                           : ""}
                       </Textfit>
@@ -113,7 +113,7 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
                         {check}
                         {pipe_ (
                           e,
-                          SCA_.checkmod,
+                          SWRA_.checkmod,
                           elems,
                           ensure (notNull),
                           renderMaybeWith (pipe (
@@ -124,27 +124,27 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
                         )}
                       </Textfit>
                     </td>
-                    <td className="value">{SCA_.value (e)}</td>
+                    <td className="value">{SWRA_.value (e)}</td>
                     <td className="cost">
-                      <Textfit max={11} min={7} mode="single">{SCA_.costShort (e)}</Textfit>
+                      <Textfit max={11} min={7} mode="single">{SWRA_.costShort (e)}</Textfit>
                     </td>
                     <td className="cast-time">
                       <Textfit max={11} min={7} mode="single">
-                        {SCA_.castingTimeShort (e)}
+                        {SWRA_.castingTimeShort (e)}
                       </Textfit>
                     </td>
                     <td className="range">
-                      <Textfit max={11} min={7} mode="single">{SCA_.rangeShort (e)}</Textfit>
+                      <Textfit max={11} min={7} mode="single">{SWRA_.rangeShort (e)}</Textfit>
                     </td>
                     <td className="duration">
-                      <Textfit max={11} min={7} mode="single">{SCA_.durationShort (e)}</Textfit>
+                      <Textfit max={11} min={7} mode="single">{SWRA_.durationShort (e)}</Textfit>
                     </td>
                     <td className="property">
                       <Textfit max={11} min={7} mode="single">
-                        {renderMaybe (subscript (propertyNames) (SCA_.property (e) - 1))}
+                        {renderMaybe (subscript (propertyNames) (SWRA_.property (e) - 1))}
                       </Textfit>
                     </td>
-                    <td className="ic">{getICName (SCA_.ic (e))}</td>
+                    <td className="ic">{getICName (SWRA_.ic (e))}</td>
                     <td className="effect"></td>
                     <td className="ref"></td>
                   </tr>

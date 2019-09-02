@@ -3,6 +3,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault } from "../../../Data/Record";
 
 export interface RangedWeapon {
+  "@@name": "RangedWeapon"
   id: string
   name: string
   combatTechnique: string

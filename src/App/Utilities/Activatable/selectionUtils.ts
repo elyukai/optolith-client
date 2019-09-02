@@ -93,6 +93,6 @@ export const getRequiredSelections:
       ADA.dependencies,
       mapMaybe<ActivatableDependency, string | number | List<number>> (pipe (
         ensure (isRecord),
-        bindF (DependencyObject.AL.sid)
+        bindF (DependencyObject.A.sid)
       ))
     ))

@@ -1,26 +1,26 @@
 import * as React from "react";
-import { flength, intercalate, List, subscript, elem } from "../../../../Data/List";
+import { elem, flength, intercalate, List, subscript } from "../../../../Data/List";
 import { bindF, ensure, mapMaybe } from "../../../../Data/Maybe";
 import { dec, lte } from "../../../../Data/Num";
-import { Record, RecordBase } from "../../../../Data/Record";
+import { Record, RecordIBase } from "../../../../Data/Record";
 import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { sortStrings } from "../../../Utilities/sortBy";
 import { WikiProperty } from "../WikiProperty";
 
-interface Accessors<A extends RecordBase> {
+interface Accessors<A extends RecordIBase<any>> {
   subtradition: (r: Record<A>) => List<number>
   tradition: (r: Record<A>) => List<number>
 }
 
-export interface WikiSpellTraditionsProps<A extends RecordBase> {
+export interface WikiSpellTraditionsProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
   l10n: L10nRecord
 }
 
-export function WikiSpellTraditions<A extends RecordBase> (props: WikiSpellTraditionsProps<A>) {
+export function WikiSpellTraditions<A extends RecordIBase<any>> (props: WikiSpellTraditionsProps<A>) {
   const {
     x,
     acc,

@@ -8,7 +8,7 @@ import { any, append, appendStr, consF, elem, fnull, head, ifoldr, imap, interca
 import { bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNull, maybeRNullF, Nothing } from "../../../Data/Maybe";
 import { dec, negate } from "../../../Data/Num";
 import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../Data/OrderedMap";
-import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record, RecordI, RecordIBase } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { SpecialAbilityGroup } from "../../Constants/Groups";
 import { SpecialAbilityId } from "../../Constants/Ids";
@@ -42,6 +42,7 @@ import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy";
 import { isNumber, isString, misNumberM, misStringM } from "../../Utilities/typeCheckUtils";
 import { getWikiEntry } from "../../Utilities/WikiUtils";
 import { Markdown } from "../Universal/Markdown";
+import { WikiCombatTechniques } from "./Elements/WikiCombatTechniques";
 import { WikiSource } from "./Elements/WikiSource";
 import { WikiBoxTemplate } from "./WikiBoxTemplate";
 import { WikiProperty } from "./WikiProperty";
@@ -62,6 +63,7 @@ const RAAL = RequireActivatable.AL
 const RIA = RequireIncreasable.A
 const RPAA = RequirePrimaryAttribute.A
 const AAL = Advantage.AL
+const WA = WikiModel.A
 
 export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
   const { x, l10n, specialAbilities, wiki } = props
@@ -100,7 +102,6 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
       case SpecialAbilityGroup.Kugel:
       case SpecialAbilityGroup.Stecken:
       case SpecialAbilityGroup.Magierkugel:
-      case SpecialAbilityGroup.Hexenkessel:
       case SpecialAbilityGroup.Narrenkappe:
       case SpecialAbilityGroup.Schelmenspielzeug:
       case SpecialAbilityGroup.Alchimistenschale:
@@ -216,7 +217,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
         )
 
       case SpecialAbilityGroup.CombatStylesArmed:
-      case SpecialAbilityGroup.CombatStylesUnarmed:
+      case SpecialAbilityGroup.CombatStylesUnarmed: {
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -249,17 +250,18 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                          (str => (
                            <Markdown source={`**${translate (l10n) ("penalty")}:** ${str}`} />
                          ))}
-            {maybeRNullF (SAA.combatTechniques (x))
-                         (str => (
-                           <Markdown
-                             source={`**${translate (l10n) ("combattechniques")}:** ${str}`}
-                             />
-                         ))}
+            <WikiCombatTechniques
+              acc={SAA}
+              combatTechniques={WA.combatTechniques (wiki)}
+              l10n={l10n}
+              x={x}
+              />
             <PrerequisitesText {...props} />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
+      }
 
       case SpecialAbilityGroup.MagicalStyles:
         return (
@@ -353,16 +355,6 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                                <Markdown source={`**${tag}:** ${str}`} />
                              )
                            }
-                         ))}
-            {maybeRNullF (SAA.penalty (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("penalty")}:** ${str}`} />
-                         ))}
-            {maybeRNullF (SAA.combatTechniques (x))
-                         (str => (
-                           <Markdown
-                             source={`**${translate (l10n) ("combattechniques")}:** ${str}`}
-                             />
                          ))}
             <PrerequisitesText {...props} />
             {cost_elem}
@@ -475,7 +467,8 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
-      default:
+      case SpecialAbilityGroup.Combat:
+      case SpecialAbilityGroup.CombatExtended:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -494,11 +487,42 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                          (str => (
                            <Markdown source={`**${translate (l10n) ("penalty")}:** ${str}`} />
                          ))}
-            {maybeRNullF (SAA.combatTechniques (x))
+            <WikiCombatTechniques
+              acc={SAA}
+              combatTechniques={WA.combatTechniques (wiki)}
+              l10n={l10n}
+              x={x}
+              />
+            {maybeRNullF (SAA.aeCost (x))
                          (str => (
-                           <Markdown
-                             source={`**${translate (l10n) ("combattechniques")}:** ${str}`}
-                             />
+                           <WikiProperty l10n={l10n} title="aecost">
+                             {str}
+                           </WikiProperty>
+                         ))}
+            <PrerequisitesText {...props} />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
+      default:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.effect (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.penalty (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("penalty")}:** ${str}`} />
                          ))}
             {maybeRNullF (SAA.aeCost (x))
                          (str => (
@@ -801,7 +825,7 @@ interface ActivatableStringObject {
   value: string
 }
 
-type ReplacedPrerequisite<T = RequireActivatable> = Record<T> | string
+type ReplacedPrerequisite<T extends RecordIBase<any> = RequireActivatable> = Record<T> | string
 type ActivatablePrerequisiteObjects = Record<RequireActivatable> | ActivatableStringObject
 type PrimaryAttributePrerequisiteObjects = Record<RequirePrimaryAttribute> | string
 type IncreasablePrerequisiteObjects = Record<RequireIncreasable> | string
@@ -956,6 +980,7 @@ const getPrerequisitesActivatedSkillsText =
     )
 
 interface ActivatablePrerequisiteText {
+  "@@name": "ActivatablePrerequisiteText"
   id: string | NonEmptyList<string>
   active: boolean
   name: string
@@ -1126,6 +1151,7 @@ const getPrerequisitesRaceText =
   }
 
 interface CategorizedItems {
+  "@@name": "CategorizedItems"
   rcp: RCPPrerequisiteObjects
   casterBlessedOne: List<ActivatablePrerequisiteObjects>
   traditions: List<ActivatablePrerequisiteObjects>

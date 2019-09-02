@@ -9,6 +9,7 @@ import { LocaleState } from "./localeReducer";
 import { UIState } from "./uiReducer";
 
 export interface AppState {
+  "@@name": "AppState"
   herolist: Record<HeroesState>
   l10n: Record<LocaleState>
   ui: Record<UIState>

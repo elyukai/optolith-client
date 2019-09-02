@@ -1,20 +1,20 @@
 import * as React from "react";
-import { Record, RecordBase } from "../../../../Data/Record";
+import { Record, RecordIBase } from "../../../../Data/Record";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
 import { WikiProperty } from "../WikiProperty";
 
-interface Accessors<A extends RecordBase> {
+interface Accessors<A extends RecordIBase<any>> {
   ic: (r: Record<A>) => number
 }
 
-export interface WikiImprovementCostProps<A extends RecordBase> {
+export interface WikiImprovementCostProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
   l10n: L10nRecord
 }
 
-export function WikiImprovementCost<A extends RecordBase> (props: WikiImprovementCostProps<A>) {
+export function WikiImprovementCost<A extends RecordIBase<any>> (props: WikiImprovementCostProps<A>) {
   const {
     x,
     acc,

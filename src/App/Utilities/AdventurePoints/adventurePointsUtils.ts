@@ -69,6 +69,7 @@ export const getDisAdvantagesSubtypeMax =
   }
 
 export interface MissingAPForDisAdvantage {
+  "@@name": "MissingAPForDisAdvantage"
   totalMissing: Maybe<number>
   mainMissing: Maybe<number>
   subMissing: Maybe<number>

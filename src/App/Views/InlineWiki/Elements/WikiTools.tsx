@@ -1,21 +1,21 @@
 import * as React from "react";
 import { Maybe, maybeR } from "../../../../Data/Maybe";
-import { Record, RecordBase } from "../../../../Data/Record";
+import { Record, RecordIBase } from "../../../../Data/Record";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
 import { Markdown } from "../../Universal/Markdown";
 
-interface Accessors<A extends RecordBase> {
+interface Accessors<A extends RecordIBase<any>> {
   tools: (r: Record<A>) => Maybe<string>
 }
 
-export interface WikiToolsProps<A extends RecordBase> {
+export interface WikiToolsProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
   l10n: L10nRecord
 }
 
-export function WikiTools<A extends RecordBase> (props: WikiToolsProps<A>) {
+export function WikiTools<A extends RecordIBase<any>> (props: WikiToolsProps<A>) {
   const {
     x,
     acc,

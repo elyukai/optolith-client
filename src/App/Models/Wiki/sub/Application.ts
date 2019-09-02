@@ -4,6 +4,7 @@ import { fromDefault } from "../../../../Data/Record";
 import { AllRequirementObjects } from "../wikiTypeHelpers";
 
 export interface Application {
+  "@@name": "Application"
   id: number
   name: string
   prerequisites: Maybe<List<AllRequirementObjects>>

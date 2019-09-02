@@ -6,6 +6,7 @@ import { SourceLink } from "./sub/SourceLink";
 import { AllRequirementObjects, CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Spell {
+  "@@name": "Spell"
   id: string
   name: string
   category: Categories

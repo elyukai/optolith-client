@@ -1,11 +1,13 @@
 import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault } from "../../../Data/Record";
+import { fromDefault, Record } from "../../../Data/Record";
 import { pipe } from "../../Utilities/pipe";
 import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
 import { Attribute } from "../Wiki/Attribute";
-import { AttributeCombined } from "./AttributeCombined";
 
-export interface AttributeWithRequirements extends AttributeCombined {
+export interface AttributeWithRequirements {
+  "@@name": "AttributeWithRequirements"
+  wikiEntry: Record<Attribute>
+  stateEntry: Record<AttributeDependent>
   max: Maybe<number>
   min: number
 }

@@ -1,6 +1,6 @@
 import { thrush } from "../../Data/Function";
 import { any, filter, isInfixOf, List, lower } from "../../Data/List";
-import { Record, RecordBase } from "../../Data/Record";
+import { Record, RecordIBase } from "../../Data/Record";
 import { pipe, pipe_ } from "./pipe";
 import { RecordWithName } from "./sortBy";
 import { isString } from "./typeCheckUtils";
@@ -11,7 +11,7 @@ import { isString } from "./typeCheckUtils";
  */
 const PERF_MIN = 3
 
-export type FilterAccessor<A> = (x: Record<A>) => string | List<string>
+export type FilterAccessor<A extends RecordIBase<any>> = (x: Record<A>) => string | List<string>
 
 /**
  * `filterRecordsBy min accs text xs` filters a list of records `xs` by checking
@@ -21,7 +21,7 @@ export type FilterAccessor<A> = (x: Record<A>) => string | List<string>
  */
 export const filterRecordsBy =
   (minFilterTextLength: number) =>
-  <A extends RecordBase>
+  <A extends RecordIBase<any>>
   (filterAccessors: FilterAccessor<A>[]) =>
   (filterText: string) =>
   (xs: List<Record<A>>): List<Record<A>> => {

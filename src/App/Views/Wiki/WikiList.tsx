@@ -74,9 +74,15 @@ export class WikiList extends React.Component<WikiListProps> {
 
                 return <WikiListItem {...this.props} id={id} key={id} name={name} />
               }
-              else if (Advantage.is (x) || Disadvantage.is (x)) {
+              else if (Advantage.is (x)) {
                 const name = addLevelToName (Advantage.A.name (x))
                                             (Advantage.A.tiers (x))
+
+                return <WikiListItem {...this.props} id={id} key={id} name={name} />
+              }
+              else if (Disadvantage.is (x)) {
+                const name = addLevelToName (Disadvantage.A.name (x))
+                                            (Disadvantage.A.tiers (x))
 
                 return <WikiListItem {...this.props} id={id} key={id} name={name} />
               }

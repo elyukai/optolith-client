@@ -49,6 +49,7 @@ type Action = ReceiveInitialDataAction
             | SwitchEnableAnimationsAction
 
 export interface UISettingsState {
+  "@@name": "UISettingsState"
   herolistSortOrder: SortNames
   herolistVisibilityFilter: string
   racesSortOrder: SortNames

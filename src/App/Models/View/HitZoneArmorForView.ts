@@ -2,6 +2,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault } from "../../../Data/Record";
 
 export interface HitZoneArmorForView {
+  "@@name": "HitZoneArmorForView"
   id: string
   name: string
   head: Maybe<number>

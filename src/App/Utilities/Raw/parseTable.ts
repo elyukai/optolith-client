@@ -10,7 +10,7 @@ import { catMaybes, ensure, fromMaybe, Just, mapMaybe, Maybe, Nothing } from "..
 import { lt } from "../../../Data/Num";
 import { adjust, elems, fromList, insert, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
-import { makeLenses, member, Record } from "../../../Data/Record";
+import { makeLenses, member, Record, RecordIBase } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
 import { Categories } from "../../Constants/Categories";
 import { AdvantageL } from "../../Models/Wiki/Advantage";
@@ -66,9 +66,13 @@ export const workbookToMap =
 
 const { id } = Book.AL
 
+interface RecordWithId extends RecordIBase<any> {
+  id: string
+}
+
 const listToMap =
-  pipe (map ((x: Record<{ id: string }>) => Pair (id (x), x)), fromList) as
-    <A extends { id: string }> (x0: List<Record<A>>) => OrderedMap<string, Record<A>>
+  pipe (map ((x: Record<RecordWithId>) => Pair (id (x), x)), fromList) as
+    <A extends RecordWithId> (x0: List<Record<A>>) => OrderedMap<string, Record<A>>
 
 type Convert<A> =
   (l10n: List<OrderedMap<string, string>>) =>
@@ -103,7 +107,7 @@ const bindM2MapMUnivOpt =
 const bindM2MapMToMap =
   (lookup_l10n: LookupSheet) =>
   (lookup_univ: LookupSheet) =>
-  <A extends { id: string }>
+  <A extends RecordWithId>
   (f: Convert<Record<A>>) =>
   (sheet_name: string) =>
     fmap<List<Record<A>>, OrderedMap<string, Record<A>>>

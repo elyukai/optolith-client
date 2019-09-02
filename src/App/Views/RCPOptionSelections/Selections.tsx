@@ -70,7 +70,8 @@ export interface SelectionsState {
   languages: OrderedMap<number, number>
   scripts: OrderedMap<number, number>
   skills: OrderedMap<string, number>
-  specialization: Pair<Maybe<number>, string> // first: selection id second: user input
+  // first: selection id, second: user input
+  specialization: Pair<Maybe<number>, string>
   specializationSkillId: Maybe<string>
   terrainKnowledge: Maybe<number>
   selectedUnfamiliarSpell: Maybe<string>
@@ -382,8 +383,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                                            fmap (attr => DropdownOption ({
                                                id: Just (AttrA.id (attr)),
                                                name: `${AttrA.name (attr)} ${signed_attr_ajst_val}`,
-                                             })
-                                           )
+                                             }))
                                          ))
                                          (snd (attributeAdjustmentSelection))}
                        />

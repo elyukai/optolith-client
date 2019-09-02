@@ -2,14 +2,16 @@ import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
+import { Pair } from "../../../Data/Tuple";
 import { Categories } from "../../Constants/Categories";
 import { ActivatableBase, EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface SpecialAbility extends ActivatableBase {
+  "@@name": "SpecialAbility"
   extended: Maybe<List<string | List<string>>>
   nameInWiki: Maybe<string>
   subgr: Maybe<number>
-  combatTechniques: Maybe<string>
+  combatTechniques: Pair<boolean | List<string>, Maybe<string>>
   rules: Maybe<string>
   effect: Maybe<string>
   volume: Maybe<string>
@@ -45,7 +47,7 @@ export const SpecialAbility =
                 extended: Nothing,
                 nameInWiki: Nothing,
                 subgr: Nothing,
-                combatTechniques: Nothing,
+                combatTechniques: Pair (false, Nothing),
                 rules: Nothing,
                 effect: Nothing,
                 volume: Nothing,

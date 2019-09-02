@@ -417,6 +417,7 @@ function CombatTechniques (props: CombatTechniquesProps): JSX.Element {
 }
 
 interface SkillsSelectionJoined {
+  "@@name": "SkillsSelectionJoined"
   properties: Record<SkillsSelection>
   text: string
 }
@@ -864,6 +865,7 @@ interface VariantPrerequisitesProps {
 }
 
 interface VariantPrerequisiteIntermediate {
+  "@@name": "VariantPrerequisiteIntermediate"
   id: string
   name: string
   active: Maybe<boolean>

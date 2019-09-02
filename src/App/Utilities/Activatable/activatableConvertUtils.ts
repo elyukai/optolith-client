@@ -10,7 +10,7 @@ import { fmap } from "../../../Data/Functor";
 import { append, elemF, empty, imap, List } from "../../../Data/List";
 import { alt, guard, isJust, Nothing, or, then } from "../../../Data/Maybe";
 import { foldr } from "../../../Data/OrderedMap";
-import { mergeSafeR2, Record } from "../../../Data/Record";
+import { Record } from "../../../Data/Record";
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -82,11 +82,3 @@ export const getActiveFromState =
 export interface ActiveObjectAny extends ActiveObject {
   [key: string]: any
 }
-
-/**
- * Returns only `sid`, `sid2` and `tier` property of passed `ActiveObject`.
- * @param activeObject
- */
-export const getActiveObjectCore =
-  (x: Record<ActiveObjectAny>): Record<ActiveObject> =>
-    mergeSafeR2<ActiveObject> (x) (ActiveObject.default)

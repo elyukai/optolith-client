@@ -919,6 +919,18 @@ export const orN: (x: boolean | undefined) => boolean = x => x === undefined ? f
 
 Maybe.orN = orN
 
+/**
+ * `maybeMir :: Maybe a -> (a -> b) -> b -> b`
+ *
+ * Mirrored version of `maybe`:
+ *
+ * `maybeMir x y z = maybe z y x`
+ */
+export const maybeMir: <A> (x: Maybe<A>) => <B> (f: (x: A) => B) => (def: B) => B =
+  x => f => def => maybe (def) (f) (x)
+
+Maybe.maybeMir = maybeMir
+
 
 // NAMESPACED FUNCTIONS
 

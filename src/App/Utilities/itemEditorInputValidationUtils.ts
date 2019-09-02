@@ -9,6 +9,7 @@ import { pipe } from "./pipe";
 import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from "./RegexUtils";
 
 export interface ItemEditorInputValidation {
+  "@@name": "ItemEditorInputValidation"
   name: boolean
   amount: boolean
   at: boolean

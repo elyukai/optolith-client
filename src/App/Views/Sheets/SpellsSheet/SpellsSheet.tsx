@@ -8,7 +8,7 @@ import { ActiveActivatable } from "../../../Models/View/ActiveActivatable";
 import { AttributeCombined } from "../../../Models/View/AttributeCombined";
 import { CantripCombined } from "../../../Models/View/CantripCombined";
 import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
-import { SpellCombined } from "../../../Models/View/SpellCombined";
+import { SpellWithRequirements } from "../../../Models/View/SpellWithRequirements";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
 import { translate } from "../../../Utilities/I18n";
@@ -34,7 +34,7 @@ export interface SpellsSheetProps {
   magicalSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   magicalTradition: string
   properties: Maybe<string>
-  spells: Maybe<List<Record<SpellCombined>>>
+  spells: Maybe<List<Record<SpellWithRequirements>>>
   switchAttributeValueVisibility (): void
 }
 

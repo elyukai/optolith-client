@@ -26,6 +26,7 @@ type Action = IOActions.ReceiveInitialDataAction
             | HerolistActions.UpdateDateModifiedAction
 
 export interface HeroesState {
+  "@@name": "HeroesState"
   heroes: OrderedMap<string, Record<UndoState<HeroModelRecord>>>
   users: OrderedMap<string, User>
   currentId: Maybe<string>

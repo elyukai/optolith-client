@@ -5,6 +5,7 @@ import { Race } from "../Wiki/Race";
 import { RaceVariant } from "../Wiki/RaceVariant";
 
 export interface RaceCombined {
+  "@@name": "RaceCombined"
   wikiEntry: Record<Race>
   mappedVariants: List<Record<RaceVariant>>
 }

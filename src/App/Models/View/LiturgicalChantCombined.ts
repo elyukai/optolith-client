@@ -5,6 +5,7 @@ import { Blessing } from "../Wiki/Blessing";
 import { LiturgicalChant } from "../Wiki/LiturgicalChant";
 
 export interface LiturgicalChantCombined {
+  "@@name": "LiturgicalChantCombined"
   wikiEntry: Record<LiturgicalChant>
   stateEntry: Record<ActivatableSkillDependent>
 }

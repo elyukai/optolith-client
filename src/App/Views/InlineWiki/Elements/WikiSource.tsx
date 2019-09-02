@@ -4,7 +4,7 @@ import { fmap } from "../../../../Data/Functor";
 import { append, List, map, notNull, notNullStr } from "../../../../Data/List";
 import { bindF, ensure, joinMaybeList, Maybe, maybe_, normalize, Nothing } from "../../../../Data/Maybe";
 import { OrderedMap } from "../../../../Data/OrderedMap";
-import { Record, RecordBase } from "../../../../Data/Record";
+import { Record, RecordIBase } from "../../../../Data/Record";
 import { Book } from "../../../Models/Wiki/Book";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
@@ -13,12 +13,12 @@ import { translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { combineShowSources, combineShowSourcesWithout } from "../../../Utilities/SourceUtils";
 
-interface Accessors<A extends RecordBase> {
+interface Accessors<A extends RecordIBase<any>> {
   select?: (r: Record<A>) => Maybe<List<Record<SelectOption>>>
   src: (r: Record<A>) => List<Record<SourceLink>>
 }
 
-export interface WikiSourceProps<A extends RecordBase> {
+export interface WikiSourceProps<A extends RecordIBase<any>> {
   books: OrderedMap<string, Record<Book>>
   x: Record<A>
   acc?: Accessors<A>
@@ -26,7 +26,7 @@ export interface WikiSourceProps<A extends RecordBase> {
   addSrcs?: List<List<Record<SourceLink>>>
 }
 
-export function WikiSource<A extends RecordBase> (props: WikiSourceProps<A>) {
+export function WikiSource<A extends RecordIBase<any>> (props: WikiSourceProps<A>) {
   const {
     books,
     x,

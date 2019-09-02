@@ -38,6 +38,7 @@ type Action = SetTabAction
             | SetZoneArmorFilterTextAction
 
 export interface FiltersState {
+  "@@name": "FiltersState"
   herolistFilterText: string
   racesFilterText: string
   culturesFilterText: string

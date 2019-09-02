@@ -9,6 +9,7 @@ import { IncreasableForView } from "./IncreasableForView";
 import { IncreasableListForView } from "./IncreasableListForView";
 
 export interface ProfessionVariantCombined {
+  "@@name": "ProfessionVariantCombined"
   wikiEntry: Record<ProfessionVariant>
   mappedPrerequisites: List<
     Record<ActivatableNameCostIsActive> |

@@ -1,3 +1,5 @@
+import { RecordIBase } from "./Record";
+
 export namespace Internals {
   export type Either<A, B> = Left<A> | Right<B>
   export type List<A> = Internals.Nil | Internals.Cons<A>
@@ -18,12 +20,12 @@ export namespace Internals {
     [key: string]: any
   }
 
-  export interface Record<A extends RecordBase> extends RecordPrototype {
+  export interface Record<A extends RecordIBase<any>> extends RecordPrototype {
     readonly values: Readonly<Required<A>>
     readonly defaultValues: Readonly<A>
     readonly keys: OrderedSet<string>
     readonly unique: symbol
-    readonly name?: string
+    readonly name: A["@@name"]
     readonly prototype: RecordPrototype
   }
 
@@ -590,7 +592,7 @@ export namespace Internals {
    * @param x The value to test.
    */
   export const isRecord =
-    (x: any): x is Record<any> =>
+    <A, I extends RecordIBase<any>>(x: A | Record<I>): x is Record<I> =>
       typeof x === "object" && x !== null && Object.getPrototypeOf (x) === RecordPrototype
 
   /**

@@ -1,11 +1,13 @@
 import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault } from "../../../Data/Record";
+import { fromDefault, Record } from "../../../Data/Record";
 import { pipe } from "../../Utilities/pipe";
 import { SkillDependent } from "../ActiveEntries/SkillDependent";
 import { CombatTechnique } from "../Wiki/CombatTechnique";
-import { CombatTechniqueCombined } from "./CombatTechniqueCombined";
 
-export interface CombatTechniqueWithAttackParryBase extends CombatTechniqueCombined {
+export interface CombatTechniqueWithAttackParryBase {
+  "@@name": "CombatTechniqueWithAttackParryBase"
+  wikiEntry: Record<CombatTechnique>
+  stateEntry: Record<SkillDependent>
   at: number
   pa: Maybe<number>
 }

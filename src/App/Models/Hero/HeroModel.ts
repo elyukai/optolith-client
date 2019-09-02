@@ -22,6 +22,7 @@ import { StyleDependency } from "./StyleDependency";
 export type HeroModelRecord = Record<HeroModel>
 
 export interface HeroModel {
+  "@@name": "Hero"
   id: string
   clientVersion: string
   locale: string

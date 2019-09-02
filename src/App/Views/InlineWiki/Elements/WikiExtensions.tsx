@@ -3,7 +3,7 @@ import { equals } from "../../../../Data/Eq";
 import { filter, flength, List, map, toArray } from "../../../../Data/List";
 import { bindF, elem, ensure, Maybe, maybeR, sum } from "../../../../Data/Maybe";
 import { compare } from "../../../../Data/Num";
-import { Record, RecordBase } from "../../../../Data/Record";
+import { Record, RecordIBase } from "../../../../Data/Record";
 import { Categories } from "../../../Constants/Categories";
 import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
@@ -14,12 +14,12 @@ import { renderMaybe } from "../../../Utilities/ReactUtils";
 import { comparingR, sortRecordsBy } from "../../../Utilities/sortBy";
 import { Markdown } from "../../Universal/Markdown";
 
-interface Accessors<A extends RecordBase> {
+interface Accessors<A extends RecordIBase<any>> {
   id: (r: Record<A>) => string
   category: (r: Record<A>) => Categories
 }
 
-export interface WikiExtensionsProps<A extends RecordBase> {
+export interface WikiExtensionsProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
   extensions: Maybe<List<Record<SelectOption>>>
@@ -28,7 +28,7 @@ export interface WikiExtensionsProps<A extends RecordBase> {
 
 const SOA = SelectOption.A
 
-export function WikiExtensions<A extends RecordBase> (props: WikiExtensionsProps<A>) {
+export function WikiExtensions<A extends RecordIBase<any>> (props: WikiExtensionsProps<A>) {
   const {
     x,
     acc,

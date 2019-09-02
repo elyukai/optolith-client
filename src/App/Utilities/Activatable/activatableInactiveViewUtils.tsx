@@ -37,6 +37,7 @@ import { getWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
 import { getActiveSelectionsMaybe, getSelectOptionCost } from "./selectionUtils";
 
 interface PropertiesAffectedByState {
+  "@@name": "PropertiesAffectedByState"
   currentCost: Maybe<number | string>
   disabled: Maybe<boolean>
   selectElement: Maybe<JSX.Element>
@@ -62,6 +63,7 @@ export const PropertiesAffectedByState =
 const PropertiesAffectedByStateL = makeLenses (PropertiesAffectedByState)
 
 interface InactiveActivatableControlElements {
+  "@@name": "InactiveActivatableControlElements"
   disabled: Maybe<boolean>
   selectElement: Maybe<JSX.Element>
   secondSelectElement: Maybe<JSX.Element>

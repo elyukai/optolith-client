@@ -6,6 +6,7 @@ import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Cantrip {
+  "@@name": "Cantrip"
   id: string
   name: string
   property: number

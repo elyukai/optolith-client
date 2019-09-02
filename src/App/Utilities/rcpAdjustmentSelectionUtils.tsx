@@ -22,7 +22,6 @@ import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/C
 import { CursesSelection } from "../Models/Wiki/professionSelections/CursesSelection";
 import { LanguagesScriptsSelection } from "../Models/Wiki/professionSelections/LanguagesScriptsSelection";
 import { ProfessionSelections } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
-import { ProfessionVariantSelections } from "../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
 import { CombatTechniquesSecondSelection } from "../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
 import { SkillsSelection } from "../Models/Wiki/professionSelections/SkillsSelection";
 import { SpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection";
@@ -412,7 +411,7 @@ export const getSkillSpecializationElement =
   (setSpecialization: (value: string | number) => void) =>
   (setSpecializationSkill: (id: string) => void) =>
     pipe (
-      ProfessionVariantSelections.A[ProfessionSelectionIds.SPECIALIZATION],
+      ProfessionSelections.A[ProfessionSelectionIds.SPECIALIZATION],
       bindF (ensure (SpecializationSelection.is)),
       fmap (selection => (
              <SelectionsSkillSpecialization

@@ -1,6 +1,7 @@
 import { fromDefault, makeLenses } from "../../../Data/Record";
 
 export interface Purse {
+  "@@name": "Purse"
   d: string
   s: string
   k: string

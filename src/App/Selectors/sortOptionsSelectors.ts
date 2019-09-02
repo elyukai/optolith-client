@@ -14,7 +14,7 @@ import { InactiveActivatable } from "../Models/View/InactiveActivatable";
 import { LiturgicalChantWithRequirements } from "../Models/View/LiturgicalChantWithRequirements";
 import { ProfessionCombined } from "../Models/View/ProfessionCombined";
 import { RaceCombined } from "../Models/View/RaceCombined";
-import { SkillCombined } from "../Models/View/SkillCombined";
+import { SkillWithRequirements } from "../Models/View/SkillWithRequirements";
 import { SpellWithRequirements } from "../Models/View/SpellWithRequirements";
 import { Blessing } from "../Models/Wiki/Blessing";
 import { Cantrip } from "../Models/Wiki/Cantrip";
@@ -193,26 +193,26 @@ export const getWikiProfessionsCombinedSortOptions = createMaybeSelector (
 export const getSkillsCombinedSortOptions = createMaybeSelector (
   getLocaleAsProp,
   uiSettingsSelectors.getSkillsSortOrder,
-  (l10n, sortOrder): SortOptions<SkillCombined> => {
+  (l10n, sortOrder): SortOptions<SkillWithRequirements> => {
     if (sortOrder === "ic") {
       return [
-        comparingR (pipe (SkillCombined.A.wikiEntry, Skill.A.ic))
+        comparingR (pipe (SkillWithRequirements.A.wikiEntry, Skill.A.ic))
                    (compare),
-        comparingR (pipe (SkillCombined.A.wikiEntry, Skill.A.name))
+        comparingR (pipe (SkillWithRequirements.A.wikiEntry, Skill.A.name))
                    (compareLocale (l10n)),
       ]
     }
     else if (sortOrder === "group") {
       return [
-        comparingR (pipe (SkillCombined.A.wikiEntry, Skill.A.gr))
+        comparingR (pipe (SkillWithRequirements.A.wikiEntry, Skill.A.gr))
                    (compare),
-        comparingR (pipe (SkillCombined.A.wikiEntry, Skill.A.name))
+        comparingR (pipe (SkillWithRequirements.A.wikiEntry, Skill.A.name))
                    (compareLocale (l10n)),
       ]
     }
 
     return [
-      comparingR (pipe (SkillCombined.A.wikiEntry, Skill.A.name))
+      comparingR (pipe (SkillWithRequirements.A.wikiEntry, Skill.A.name))
                  (compareLocale (l10n)),
     ]
   }

@@ -8,6 +8,7 @@ import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Culture {
+  "@@name": "Culture"
   id: string
   name: string
   culturalPackageAdventurePoints: number
@@ -30,6 +31,7 @@ export interface Culture {
   uncommonDisadvantagesText: Maybe<string>
   commonSkills: List<string>
   uncommonSkills: List<string>
+
   /**
    * Markdown supported.
    */

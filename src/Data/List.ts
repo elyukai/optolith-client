@@ -2319,8 +2319,10 @@ export const groupByKey =
 List.groupByKey = groupByKey
 
 interface RecordBaseWithId extends RecordBase {
+  "@@name": "RecordBaseWithId"
   id: string
 }
+
 const RecordBaseWithId = fromDefault ("RecordBaseWithId") <RecordBaseWithId> ({ id: "" })
 
 /**

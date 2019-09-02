@@ -6,6 +6,7 @@ import { AllRequirementObjects } from "../wikiTypeHelpers";
 import { RequireActivatable } from "./ActivatableRequirement";
 
 export interface RequirePrimaryAttribute {
+  "@@name": "RequirePrimaryAttribute"
   id: "ATTR_PRIMARY"
   value: number
   type: 1 | 2

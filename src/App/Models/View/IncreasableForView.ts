@@ -3,6 +3,7 @@ import { fromDefault, Record } from "../../../Data/Record";
 import { IncreaseSkill } from "../Wiki/sub/IncreaseSkill";
 
 export interface IncreasableForView {
+  "@@name": "IncreasableForView"
   id: string
   name: string
   value: number

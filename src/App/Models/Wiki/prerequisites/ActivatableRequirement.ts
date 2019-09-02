@@ -6,6 +6,7 @@ import { ActiveObject } from "../../ActiveEntries/ActiveObject";
 import { SID } from "../wikiTypeHelpers";
 
 export interface RequireActivatable {
+  "@@name": "RequireActivatable"
   id: string | NonEmptyList<string>
   active: boolean
   sid: Maybe<SID>
@@ -13,9 +14,13 @@ export interface RequireActivatable {
   tier: Maybe<number>
 }
 
-export interface ProfessionRequireActivatable extends RequireActivatable {
+export interface ProfessionRequireActivatable {
+  "@@name": "ProfessionRequireActivatable"
   id: string
+  active: boolean
   sid: Maybe<string | number>
+  sid2: Maybe<string | number>
+  tier: Maybe<number>
 }
 
 export const RequireActivatable =

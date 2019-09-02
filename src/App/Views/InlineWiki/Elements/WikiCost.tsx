@@ -1,21 +1,21 @@
 import * as React from "react";
-import { Record, RecordBase } from "../../../../Data/Record";
+import { Record, RecordIBase } from "../../../../Data/Record";
 import { Categories } from "../../../Constants/Categories";
 import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { WikiProperty } from "../WikiProperty";
 
-interface Accessors<A extends RecordBase> {
+interface Accessors<A extends RecordIBase<any>> {
   cost: (r: Record<A>) => string
   category: (r: Record<A>) => Categories
 }
 
-export interface WikiCostProps<A extends RecordBase> {
+export interface WikiCostProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
   l10n: L10nRecord
 }
 
-export function WikiCost<A extends RecordBase> (props: WikiCostProps<A>) {
+export function WikiCost<A extends RecordIBase<any>> (props: WikiCostProps<A>) {
   const {
     x,
     acc,

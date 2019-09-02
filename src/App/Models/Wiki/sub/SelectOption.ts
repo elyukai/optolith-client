@@ -7,6 +7,7 @@ import { Application } from "./Application";
 import { SourceLink } from "./SourceLink";
 
 export interface SelectOption {
+  "@@name": "SelectOption"
   id: string | number
   name: string
   cost: Maybe<number>

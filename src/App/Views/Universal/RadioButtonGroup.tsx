@@ -2,13 +2,14 @@ import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { List, map, toArray } from "../../../Data/List";
 import { elem, fromJust, fromMaybe, isJust, Maybe, normalize, Nothing } from "../../../Data/Maybe";
-import { fromDefault, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record";
+import { fromDefault, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record";
 import { pipe_ } from "../../Utilities/pipe";
 import { RadioButton } from "./RadioButton";
 
 export type OptionValue = string | number
 
 export interface Option<A extends OptionValue = OptionValue> {
+  "@@name": "Option"
   className: Maybe<string>
   disabled: Maybe<boolean>
   name: string
@@ -16,7 +17,8 @@ export interface Option<A extends OptionValue = OptionValue> {
 }
 
 export interface OptionCreator extends RecordCreator<Option<any>> {
-  <O extends OptionValue = OptionValue> (x: PartialMaybeOrNothing<Option<O>>): Record<Option<O>>
+  <O extends OptionValue = OptionValue>
+  (x: PartialMaybeOrNothing<OmitName<Option<O>>>): Record<Option<O>>
 }
 
 export const Option: OptionCreator =

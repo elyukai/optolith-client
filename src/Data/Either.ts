@@ -323,6 +323,23 @@ export const liftM2 =
   (x2: Either<E, A2>): Either<E, B> =>
     bind (x1) (pipe (f, fmapF (x2)))
 
+/**
+ * `liftM2F :: Either e a1 -> Either e a2 -> (a1 -> a2 -> r) -> Either e r`
+ *
+ * Promote a function to a monad, scanning the monadic arguments from left to
+ * right.
+ *
+ * Flipped version of `liftM2`.
+ */
+export const liftM2F =
+  <E, A1>
+  (x1: Either<E, A1>) =>
+  <A2>
+  (x2: Either<E, A2>) =>
+  <B>
+  (f: (a1: A1) => (a2: A2) => B): Either<E, B> =>
+    bind (x1) (pipe (f, fmapF (x2)))
+
 
 // FOLDABLE
 

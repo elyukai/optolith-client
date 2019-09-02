@@ -44,6 +44,7 @@ import { isString } from "../Utilities/typeCheckUtils";
 import { getWikiEntry, isActivatableWikiEntry } from "../Utilities/WikiUtils";
 
 interface ConcatenatedModifications {
+  "@@name": "ConcatenatedModifications"
   hero: HeroModelRecord
   skillRatingList: OrderedMap<string, number>
   skillActivateList: OrderedSet<string>

@@ -30,7 +30,7 @@ const trimStart = (str: string) => str .replace (/^\s+/, "")
  * Convert a value to a readable `String`.
  */
 // tslint:disable-next-line: cyclomatic-complexity
-export const show = (x: any): string => {
+export const show = (x: unknown): string => {
   if (Internals.isMaybe (x)) {
     if (Internals.isJust (x)) {
       return `Just (${show (x.value)})`
@@ -140,7 +140,7 @@ export const show = (x: any): string => {
 }
 
 // tslint:disable-next-line: cyclomatic-complexity
-export const showPDepth = (depth: number) => (x: any): string => {
+export const showPDepth = (depth: number) => (x: unknown): string => {
   const dws = " " .repeat (depth * 2) // depth whitespace
 
   if (Internals.isMaybe (x)) {

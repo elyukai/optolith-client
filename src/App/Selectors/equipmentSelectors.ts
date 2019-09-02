@@ -6,7 +6,7 @@ import { any, append, consF, filter, foldr, ifilter, imap, List, map, maximum, s
 import { altF_, bind, bindF, fromMaybe, guard, isJust, Just, liftM2, mapMaybe, Maybe, maybe, thenF } from "../../Data/Maybe";
 import { add, dec, multiply, subtractBy } from "../../Data/Num";
 import { elems, lookup, lookupF } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
+import { OmitName, Record } from "../../Data/Record";
 import { fst, isTuple, Pair, snd } from "../../Data/Tuple";
 import { uncurryN } from "../../Data/Tuple/Curry";
 import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
@@ -146,7 +146,7 @@ export const getFilteredHitZoneArmors = createMaybeSelector (
 
 type HitZoneKeys =
   Exclude<
-    keyof HitZoneArmor,
+    keyof OmitName<HitZoneArmor>,
     "id"
     | "name"
     | "headLoss"
@@ -344,8 +344,7 @@ export const getMeleeWeapons = createMaybeSelector (
                                         map (subtractBy (damage_thresholds)),
                                         consF (0),
                                         maximum
-                                      )
-                              )
+                                      ))
 
                         const damageFlat =
                           Maybe.sum (liftM2 (add) (IA.damageFlat (full_item)) (damage_flat_bonus))
@@ -629,7 +628,7 @@ const getProtectionTotal =
   (torso: Maybe<Record<Item>>) => {
     const total =
       sum (List (
-        getProtection (head) * 1,
+        getProtection (head),
         getProtection (torso) * 5,
         getProtection (leftArm) * 2,
         getProtection (rightArm) * 2,
@@ -696,7 +695,7 @@ export const getProtectionAndWeight =
 
     const protectionSum =
       sum (List (
-        getProtection (headArmor) * 1,
+        getProtection (headArmor),
         getProtection (torsoArmor) * 5,
         getProtection (leftArmArmor) * 2,
         getProtection (rightArmArmor) * 2,

@@ -14,6 +14,7 @@ import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite } from "./wikiTypeHelpers";
 
 export interface Profession {
+  "@@name": "Profession"
   id: string
   name: string | Record<NameBySex>
   subname: Maybe<string | Record<NameBySex>>
@@ -41,6 +42,7 @@ export interface Profession {
   variants: List<string>
   category: Categories
   gr: number
+
   /**
    * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the
    * Twelve Gods" or "Fighter".

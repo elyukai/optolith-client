@@ -28,6 +28,7 @@ type Action = SetTabAction
             | SubwindowsActions.CloseEditPetAvatarAction
 
 export interface SubWindowsState {
+  "@@name": "SubWindowsState"
   editPermanentEnergy: Maybe<EnergyId>
   addPermanentEnergy: Maybe<EnergyId>
   updateDownloadProgress: Maybe<ProgressInfo>

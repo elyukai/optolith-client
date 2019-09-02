@@ -1,22 +1,22 @@
 import * as React from "react";
-import { Record, RecordBase } from "../../../../Data/Record";
+import { Record, RecordIBase } from "../../../../Data/Record";
 import { Categories } from "../../../Constants/Categories";
 import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { WikiProperty } from "../WikiProperty";
 
-interface Accessors<A extends RecordBase> {
+interface Accessors<A extends RecordIBase<any>> {
   castingTime: (r: Record<A>) => string
   category: (r: Record<A>) => Categories
   gr: (r: Record<A>) => number
 }
 
-export interface WikiCastingTimeProps<A extends RecordBase> {
+export interface WikiCastingTimeProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
   l10n: L10nRecord
 }
 
-export function WikiCastingTime<A extends RecordBase> (props: WikiCastingTimeProps<A>) {
+export function WikiCastingTime<A extends RecordIBase<any>> (props: WikiCastingTimeProps<A>) {
   const {
     x,
     acc,

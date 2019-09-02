@@ -5,6 +5,7 @@ import { Advantage } from "../Wiki/Advantage";
 import { Disadvantage } from "../Wiki/Disadvantage";
 
 export interface ActivatableDeactivationEntryType {
+  "@@name": "ActivatableDeactivationEntryType"
   isBlessed: boolean
   isMagical: boolean
   isDisadvantage: boolean

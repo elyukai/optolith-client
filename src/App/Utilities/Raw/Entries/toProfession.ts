@@ -8,7 +8,7 @@ import { Record } from "../../../../Data/Record";
 import { parseJSON } from "../../../../Data/String/JSON";
 import { traceShowBoth } from "../../../../Debug/Trace";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
-import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
+import { ProfessionRequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
 import { ProfessionRequireIncreasable } from "../../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { SexRequirement } from "../../../Models/Wiki/prerequisites/SexRequirement";
@@ -253,13 +253,13 @@ export const stringToSpecialAbilities =
           const obj = fromJust<any> (mobj)
 
           return isRawProfessionRequiringActivatable (obj)
-            ? Just (RequireActivatable ({
+            ? Just (ProfessionRequireActivatable ({
                 id: obj .id,
                 active: fromMaybe (true) (Maybe (obj .active)),
                 sid: Maybe (obj .sid),
                 sid2: Maybe (obj .sid2),
                 tier: Maybe (obj .tier),
-              }) as Record<ProfessionRequireActivatable>)
+              }))
             : Nothing
         }
 

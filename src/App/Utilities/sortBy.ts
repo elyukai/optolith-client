@@ -1,19 +1,19 @@
 import { flip, on } from "../../Data/Function";
 import { flength, List, sortBy } from "../../Data/List";
 import { EQ, Ordering } from "../../Data/Ord";
-import { fromDefault, Record, RecordBase } from "../../Data/Record";
+import { fromDefault, Record, RecordIBase } from "../../Data/Record";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { compareLocale } from "./I18n";
 import { pipe } from "./pipe";
 
-export type CompareR<A> = (x: Record<A>) => (y: Record<A>) => Ordering
+export type CompareR<A extends RecordIBase<any>> = (x: Record<A>) => (y: Record<A>) => Ordering
 
-export interface SortOption<A extends RecordBase> {
+export interface SortOption<A extends RecordIBase<any>> {
   compare: CompareR<A>
   reverse: boolean
 }
 
-export type SortOptions<A extends RecordBase> = (CompareR<A> | SortOption<A>)[]
+export type SortOptions<A extends RecordIBase<any>> = (CompareR<A> | SortOption<A>)[]
 
 /**
  * Sort a list based on the passed sort options array. A sort option can either
@@ -22,7 +22,7 @@ export type SortOptions<A extends RecordBase> = (CompareR<A> | SortOption<A>)[]
  * takes precedence over the second sort option and so on.
  */
 export const sortRecordsBy =
-  <A extends RecordBase>
+  <A extends RecordIBase<any>>
   (sortOptions: SortOptions<A>) =>
   (xs: List<Record<A>>): List<Record<A>> => {
     if (flength (xs) < 2 || sortOptions .length === 0) {
@@ -53,7 +53,7 @@ export const sortRecordsBy =
                              (xs)
   }
 
-export interface RecordWithName extends RecordBase {
+export interface RecordWithName extends RecordIBase<any> {
   name: string
 }
 
@@ -84,7 +84,7 @@ export const sortRecordsByName = (
  * accessor.
  */
 export const comparingR =
-  <A extends RecordBase, B>
+  <A extends RecordIBase<any>, B>
   (accessor: (x: Record<A>) => B) =>
   (compare: (x: B) => (y: B) => Ordering) =>
     on (compare) (accessor)
