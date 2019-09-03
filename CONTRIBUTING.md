@@ -47,7 +47,7 @@ $ npm i
 
 This installs all necessary packages.
 
-Create a `tablesSrc.json` in root. The JSON consists of an object that has the following interface:
+Create a `tablesSrc.json` in the `/deploy` folder. The JSON consists of an object that has the following interface:
 
 ```ts
 {
@@ -63,16 +63,22 @@ Example:
 ```json
 {
   "stable": ["..", "OneDrive", "Optolith", "Data"],
-  "insider": ["..", "OneDrive", "Optolith", "Data", "Insider"];
+  "insider": ["..", "OneDrive", "Optolith", "Data", "Insider"]
 }
 ```
 
 ### First run
 
-Compile the source code:
+Compile the source code&hellip;
 
 ```
 $ npm run compile
+```
+
+&hellip;or watch it for better performance for subsequent compiling on save.
+
+```
+$ npm run watch
 ```
 
 Import stable or insider tables:
