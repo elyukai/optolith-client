@@ -280,7 +280,7 @@ export const getDO = createMaybeSelector (
   (magi, mimproved_dodge, l10n, rules) => {
     const base = divideBy2AndRound (getAttributeValueWithDefault (magi))
 
-    const higher_parade_values = Rules.A.higherParadeValues (rules)
+    const higher_parade_values = Rules.A.higherParadeValues (rules) / 2
 
     const mod = ensure (notEquals (0))
                        (Maybe.sum (getFirstLevel (mimproved_dodge)) + higher_parade_values)
