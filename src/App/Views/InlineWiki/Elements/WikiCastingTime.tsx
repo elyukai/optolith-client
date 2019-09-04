@@ -1,11 +1,14 @@
 import * as React from "react";
 import { Record, RecordIBase } from "../../../../Data/Record";
 import { Categories } from "../../../Constants/Categories";
-import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
+import { BlessedGroup, MagicalGroup } from "../../../Constants/Groups";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
 import { WikiProperty } from "../WikiProperty";
 
 interface Accessors<A extends RecordIBase<any>> {
   castingTime: (r: Record<A>) => string
+  castingTimeNoMod: (r: Record<A>) => boolean
   category: (r: Record<A>) => Categories
   gr: (r: Record<A>) => number
 }
@@ -23,29 +26,57 @@ export function WikiCastingTime<A extends RecordIBase<any>> (props: WikiCastingT
     l10n,
   } = props
 
-  let key: keyof L10n = "castingtime"
-
   const category = acc.category (x)
   const gr = acc.gr (x)
+  const isNoModAllowed = acc.castingTimeNoMod (x)
 
-  if (category === Categories.SPELLS &&
-      (gr === 2 ||gr === 7 || gr ===10 || gr === 11)
-        ) {
-    key = "ritualtime"
-  }
-  else if (category === Categories.SPELLS && (gr === 5 || gr === 6)) {
-    key = "lengthoftime"
-  }
-  else if (category === Categories.LITURGIES && gr === 1) {
-    key = "liturgicaltime"
-  }
-  else if (category === Categories.LITURGIES && gr === 2) {
-    key = "ceremonialtime"
-  }
+  const key = getNameKey (category) (gr)
+  const keyNoMod = nameKeyToModKey (key)
 
   return (
     <WikiProperty l10n={l10n} title={key}>
-      {acc.castingTime (x)}
+      {acc.castingTime (x)}{isNoModAllowed ? ` (${translate (l10n) (keyNoMod)})` : ""}
     </WikiProperty>
   )
 }
+
+type NameKey = "castingtime"
+             | "ritualtime"
+             | "lengthoftime"
+             | "liturgicaltime"
+             | "ceremonialtime"
+
+type ModKey = "youcannotuseamodificationonthisspellscastingtime"
+            | "youcannotuseamodificationonthisspellsritualtime"
+            | "youcannotuseamodificationonthischantsliturgicaltime"
+            | "youcannotuseamodificationonthischantsceremonialtime"
+
+const getNameKey =
+  (category: Categories) =>
+  (gr: number): NameKey =>
+    (category === Categories.SPELLS
+     && (gr === MagicalGroup.Rituals
+         || gr === MagicalGroup.Herrschaftsrituale
+         || gr === MagicalGroup.Geodenrituale
+         || gr === MagicalGroup.Zibiljarituale))
+    ? "ritualtime"
+    : (category === Categories.SPELLS
+       && (gr === MagicalGroup.Zaubermelodien || gr === MagicalGroup.Zaubertaenze))
+    ? "lengthoftime"
+    : category === Categories.LITURGIES && gr === BlessedGroup.LiturgicalChants
+    ? "liturgicaltime"
+    : category === Categories.LITURGIES && gr === BlessedGroup.Ceremonies
+    ? "ceremonialtime"
+    : "castingtime"
+
+const nameKeyToModKey =
+  (x: NameKey): ModKey =>
+    x === "castingtime"
+    ? "youcannotuseamodificationonthisspellscastingtime"
+    : x === "ritualtime"
+    ? "youcannotuseamodificationonthisspellsritualtime"
+    : x === "lengthoftime"
+    ? "youcannotuseamodificationonthisspellscastingtime"
+    : x === "liturgicaltime"
+    ? "youcannotuseamodificationonthischantsliturgicaltime"
+    : "youcannotuseamodificationonthischantsceremonialtime"

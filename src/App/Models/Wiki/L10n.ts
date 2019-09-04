@@ -632,6 +632,16 @@ export interface L10n {
   "allrangedcombattechniques": string
   "allmeleecombattechniqueswithparry": string
   "allmeleecombattechniquesforonehandedweapons": string
+  "youcannotuseamodificationonthisspellscastingtime": string
+  "youcannotuseamodificationonthisspellsritualtime": string
+  "youcannotuseamodificationonthisspellscost": string
+  "youcannotuseamodificationonthisspellsrange": string
+  "youcannotuseamodificationonthisspellsduration": string
+  "youcannotuseamodificationonthischantsliturgicaltime": string
+  "youcannotuseamodificationonthischantsceremonialtime": string
+  "youcannotuseamodificationonthischantscost": string
+  "youcannotuseamodificationonthischantsrange": string
+  "youcannotuseamodificationonthischantsduration": string
 }
 
 export type L10nKey = keyof L10n
@@ -1270,4 +1280,14 @@ export const L10n =
                 "allrangedcombattechniques": "",
                 "allmeleecombattechniqueswithparry": "",
                 "allmeleecombattechniquesforonehandedweapons": "",
+                "youcannotuseamodificationonthisspellscastingtime": "",
+                "youcannotuseamodificationonthisspellsritualtime": "",
+                "youcannotuseamodificationonthisspellscost": "",
+                "youcannotuseamodificationonthisspellsrange": "",
+                "youcannotuseamodificationonthisspellsduration": "",
+                "youcannotuseamodificationonthischantsliturgicaltime": "",
+                "youcannotuseamodificationonthischantsceremonialtime": "",
+                "youcannotuseamodificationonthischantscost": "",
+                "youcannotuseamodificationonthischantsrange": "",
+                "youcannotuseamodificationonthischantsduration": "",
               })

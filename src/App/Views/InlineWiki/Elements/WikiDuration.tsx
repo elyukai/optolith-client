@@ -1,11 +1,14 @@
 import * as React from "react";
 import { Record, RecordIBase } from "../../../../Data/Record";
 import { Categories } from "../../../Constants/Categories";
-import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
+import { MagicalGroup } from "../../../Constants/Groups";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
 import { WikiProperty } from "../WikiProperty";
 
 interface Accessors<A extends RecordIBase<any>> {
   duration: (r: Record<A>) => string
+  durationNoMod: (r: Record<A>) => boolean
   category: (r: Record<A>) => Categories
   gr: (r: Record<A>) => number
 }
@@ -23,18 +26,24 @@ export function WikiDuration<A extends RecordIBase<any>> (props: WikiDurationPro
     l10n,
   } = props
 
-  let key: keyof L10n = "duration"
-
   const category = acc.category (x)
   const gr = acc.gr (x)
+  const isNoModAllowed = acc.durationNoMod (x)
 
-  if (category === Categories.SPELLS && (gr === 4 || gr === 5)) {
-    key = "skill"
-  }
+  const key =
+    category === Categories.SPELLS
+    && (gr === MagicalGroup.ElvenMagicalSongs || gr === MagicalGroup.Zaubermelodien)
+    ? "skill"
+    : "duration"
+
+  const modKey =
+    category === Categories.LITURGIES
+    ? "youcannotuseamodificationonthischantsduration"
+    : "youcannotuseamodificationonthisspellsduration"
 
   return (
     <WikiProperty l10n={l10n} title={key}>
-      {acc.duration (x)}
+      {acc.duration (x)}{isNoModAllowed ? ` (${translate (l10n) (modKey)})` : ""}
     </WikiProperty>
   )
 }

@@ -5,7 +5,8 @@ import { inc, max } from "../../Data/Num";
 import { lookupF, memberF, OrderedMap } from "../../Data/OrderedMap";
 import { Categories } from "../Constants/Categories";
 import { IdPrefixes } from "../Constants/IdPrefixes";
-import { SpecialAbilityId } from "../Constants/Ids";
+import { DCId, SpecialAbilityId } from "../Constants/Ids";
+import { CheckModifier } from "../Models/Wiki/wikiTypeHelpers";
 import { match } from "./match";
 import { pipe } from "./pipe";
 
@@ -200,3 +201,6 @@ export const isBlessedTraditionId = memberF (blessedNumericIdByTraditionId)
 export const getBlessedTradStrIdFromNumId = lookupF (blessedTraditionIdByNumericId)
 
 export const getNumericBlessedTraditionIdByInstanceId = lookupF (blessedNumericIdByTraditionId)
+
+export const isCheckMod: (x: string) => x is CheckModifier =
+  (x): x is CheckModifier => x === DCId.SPI || x === DCId.TOU || x === "SPI/2"

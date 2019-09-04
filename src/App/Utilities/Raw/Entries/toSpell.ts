@@ -2,21 +2,17 @@ import { fmap } from "../../../../Data/Functor";
 import { empty, List, map } from "../../../../Data/List";
 import { fromMaybe, Nothing } from "../../../../Data/Maybe";
 import { OrderedSet } from "../../../../Data/OrderedSet";
+import { MagicalGroup, MagicalTradition, Property } from "../../../Constants/Groups";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { Spell } from "../../../Models/Wiki/Spell";
 import { CheckModifier } from "../../../Models/Wiki/wikiTypeHelpers";
-import { prefixId } from "../../IDUtils";
+import { isCheckMod, prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { modifyNegIntNoBreak } from "../rawConversionUtils";
-import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapStringPredSetOptional } from "../validateMapValueUtils";
+import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalFixedList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapNumEnum, mensureMapNumEnumList, mensureMapStringPredSetOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSpellPrerequisites } from "./Sub/toPrerequisites";
 import { toSourceLinks } from "./Sub/toSourceLinks";
-
-const checkMod = /SPI|TOU/
-
-const checkCheckMod =
-  (x: string): x is CheckModifier => checkMod .test (x)
 
 export const toSpell =
   mergeRowsById
@@ -33,7 +29,7 @@ export const toSpell =
                        (lookup_univ)
 
       const checkCheckModifier =
-        lookupKeyValid (mensureMapStringPredSetOptional (checkCheckMod)
+        lookupKeyValid (mensureMapStringPredSetOptional (isCheckMod)
                                                         (`"SPI" | "TOU"`)
                                                         (","))
                        (TableType.Univ)
@@ -42,11 +38,30 @@ export const toSpell =
       const checkUnivNaturalNumber =
         lookupKeyValid (mensureMapNatural) (TableType.Univ) (lookup_univ)
 
-      const checkUnivNaturalNumberList =
-        lookupKeyValid (mensureMapNaturalList ("&")) (TableType.Univ) (lookup_univ)
-
       const checkUnivNaturalNumberListOptional =
         lookupKeyValid (mensureMapNaturalListOptional ("&")) (TableType.Univ) (lookup_univ)
+
+      const checkUnivBoolean =
+        lookupKeyValid (mensureMapBoolean) (TableType.Univ) (lookup_univ)
+
+      const checkSpellTraditions =
+        lookupKeyValid (mensureMapNumEnumList ("MagicalTradition")
+                                              (MagicalTradition)
+                                              ("&"))
+                       (TableType.Univ)
+                       (lookup_univ)
+
+      const checkSpellGroup =
+        lookupKeyValid (mensureMapNumEnum ("MagicalGroup")
+                                          (MagicalGroup))
+                       (TableType.Univ)
+                       (lookup_univ)
+
+      const checkProperty =
+        lookupKeyValid (mensureMapNumEnum ("Property")
+                                          (Property))
+                       (TableType.Univ)
+                       (lookup_univ)
 
       // Check and convert fields
 
@@ -61,11 +76,11 @@ export const toSpell =
 
       const eic = checkUnivNaturalNumber ("ic")
 
-      const etraditions = checkUnivNaturalNumberList ("traditions")
+      const etraditions = checkSpellTraditions ("traditions")
 
       const esubtraditions = checkUnivNaturalNumberListOptional ("subtraditions")
 
-      const eproperty = checkUnivNaturalNumber ("property")
+      const eproperty = checkProperty ("property")
 
       const eeffect = checkL10nNonEmptyString ("effect")
 
@@ -73,21 +88,29 @@ export const toSpell =
 
       const ecastingTimeShort = checkL10nNonEmptyString ("castingTimeShort")
 
+      const ecastingTimeNoMod = checkUnivBoolean ("castingTimeNoMod")
+
       const eaeCost = checkL10nNonEmptyString ("aeCost")
 
       const eaeCostShort = checkL10nNonEmptyString ("aeCostShort")
+
+      const eaeCostNoMod = checkUnivBoolean ("aeCostNoMod")
 
       const range = lookup_l10n ("range")
 
       const erangeShort = checkL10nNonEmptyString ("rangeShort")
 
+      const erangeNoMod = checkUnivBoolean ("rangeNoMod")
+
       const duration = lookup_l10n ("duration")
 
       const durationShort = lookup_l10n ("durationShort")
 
+      const edurationNoMod = checkUnivBoolean ("durationNoMod")
+
       const target = lookup_l10n ("target")
 
-      const egr = checkUnivNaturalNumber ("gr")
+      const egr = checkSpellGroup ("gr")
 
       const eprerequisites = toSpellPrerequisites (lookup_univ)
 
@@ -106,9 +129,13 @@ export const toSpell =
           eproperty,
           eeffect,
           ecastingTimeShort,
+          ecastingTimeNoMod,
           eaeCost,
           eaeCostShort,
+          eaeCostNoMod,
           erangeShort,
+          erangeNoMod,
+          edurationNoMod,
           egr,
           eprerequisites,
           esrc,
@@ -125,12 +152,16 @@ export const toSpell =
           effect: modifyNegIntNoBreak (rs.eeffect),
           castingTime: fromMaybe ("") (castingTime),
           castingTimeShort: rs.ecastingTimeShort,
+          castingTimeNoMod: rs.ecastingTimeNoMod,
           cost: rs.eaeCost,
           costShort: rs.eaeCostShort,
+          costNoMod: rs.eaeCostNoMod,
           range: fromMaybe ("") (range),
           rangeShort: rs.erangeShort,
+          rangeNoMod: rs.erangeNoMod,
           duration: fromMaybe ("") (duration),
           durationShort: fromMaybe ("") (durationShort),
+          durationNoMod: rs.edurationNoMod,
           target: fromMaybe ("") (target),
           gr: rs.egr,
           prerequisites: rs.eprerequisites,

@@ -99,7 +99,7 @@ export enum MagicalGroup {
   Curses = 3,
   ElvenMagicalSongs = 4,
   Zaubermelodien = 5,
-  Zaubertänze = 6,
+  Zaubertaenze = 6,
   Herrschaftsrituale = 7,
   Schelmenzauber = 8,
   Animistenkräfte = 9,

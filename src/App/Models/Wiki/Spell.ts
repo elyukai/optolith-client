@@ -2,6 +2,7 @@ import { List } from "../../../Data/List";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
+import { MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups";
 import { SourceLink } from "./sub/SourceLink";
 import { AllRequirementObjects, CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
 
@@ -12,21 +13,25 @@ export interface Spell {
   category: Categories
   check: List<string>
   checkmod: OrderedSet<CheckModifier>
-  gr: number
+  gr: MagicalGroup
   ic: number
-  property: number
-  tradition: List<number>
+  property: Property
+  tradition: List<MagicalTradition>
   subtradition: List<number>
   prerequisites: List<AllRequirementObjects>
   effect: string
   castingTime: string
   castingTimeShort: string
+  castingTimeNoMod: boolean
   cost: string
   costShort: string
+  costNoMod: boolean
   range: string
   rangeShort: string
+  rangeNoMod: boolean
   duration: string
   durationShort: string
+  durationNoMod: boolean
   target: string
   src: List<Record<SourceLink>>
 }
@@ -48,12 +53,16 @@ export const Spell =
                 effect: "",
                 castingTime: "",
                 castingTimeShort: "",
+                castingTimeNoMod: false,
                 cost: "",
                 costShort: "",
+                costNoMod: false,
                 range: "",
                 rangeShort: "",
+                rangeNoMod: false,
                 duration: "",
                 durationShort: "",
+                durationNoMod: false,
                 target: "",
                 src: List.empty,
               })

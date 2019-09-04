@@ -9,7 +9,7 @@ import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { mensureMapNonEmptyString, mensureMapNonEmptyStringList } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 
-const localeRx = /[a-z]{2}-[A-Z]{2}/
+const localeRx = /[a-z]{2}-[A-Z]{2}/u
 
 const isLocale =
   (x: string) => localeRx .test (x)
@@ -710,6 +710,26 @@ export const toL10n =
           checkL10nNonEmptyString ("allmeleecombattechniqueswithparry"),
         "allmeleecombattechniquesforonehandedweapons":
           checkL10nNonEmptyString ("allmeleecombattechniquesforonehandedweapons"),
+        "youcannotuseamodificationonthisspellscastingtime":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthisspellscastingtime"),
+        "youcannotuseamodificationonthisspellsritualtime":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthisspellsritualtime"),
+        "youcannotuseamodificationonthisspellscost":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthisspellscost"),
+        "youcannotuseamodificationonthisspellsrange":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthisspellsrange"),
+        "youcannotuseamodificationonthisspellsduration":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthisspellsduration"),
+        "youcannotuseamodificationonthischantsliturgicaltime":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthischantsliturgicaltime"),
+        "youcannotuseamodificationonthischantsceremonialtime":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthischantsceremonialtime"),
+        "youcannotuseamodificationonthischantscost":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthischantscost"),
+        "youcannotuseamodificationonthischantsrange":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthischantsrange"),
+        "youcannotuseamodificationonthischantsduration":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthischantsduration"),
       }
 
       return mapMNamed
@@ -1350,6 +1370,26 @@ export const toL10n =
           "allmeleecombattechniqueswithparry": res ["allmeleecombattechniqueswithparry"],
           "allmeleecombattechniquesforonehandedweapons":
             res ["allmeleecombattechniquesforonehandedweapons"],
+          "youcannotuseamodificationonthisspellscastingtime":
+            res ["youcannotuseamodificationonthisspellscastingtime"],
+          "youcannotuseamodificationonthisspellsritualtime":
+            res ["youcannotuseamodificationonthisspellsritualtime"],
+          "youcannotuseamodificationonthisspellscost":
+            res ["youcannotuseamodificationonthisspellscost"],
+          "youcannotuseamodificationonthisspellsrange":
+            res ["youcannotuseamodificationonthisspellsrange"],
+          "youcannotuseamodificationonthisspellsduration":
+            res ["youcannotuseamodificationonthisspellsduration"],
+          "youcannotuseamodificationonthischantsliturgicaltime":
+            res ["youcannotuseamodificationonthischantsliturgicaltime"],
+          "youcannotuseamodificationonthischantsceremonialtime":
+            res ["youcannotuseamodificationonthischantsceremonialtime"],
+          "youcannotuseamodificationonthischantscost":
+            res ["youcannotuseamodificationonthischantscost"],
+          "youcannotuseamodificationonthischantsrange":
+            res ["youcannotuseamodificationonthischantsrange"],
+          "youcannotuseamodificationonthischantsduration":
+            res ["youcannotuseamodificationonthischantsduration"],
           // tslint:enable: no-string-literal
         }))
     }

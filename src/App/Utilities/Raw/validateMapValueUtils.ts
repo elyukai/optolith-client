@@ -289,14 +289,36 @@ export const mensureMapBoolean =
 export const mensureMapStrEnumOption =
   (enum_name: string) =>
   <A extends object> (enum_values: A) =>
-    mensureMap (enum_name)
+    mensureMap (Expect.Maybe (enum_name))
                (bindOptional (ensure (isInStrEnum (enum_values))))
 
-export const mensureMapNumEnumOption =
+export const mensureMapNumEnum =
   (enum_name: string) =>
   <A extends object> (enum_values: A) =>
     mensureMap (enum_name)
+               (bindF (pipe (toInt, bindF (ensure (isInNumEnum (enum_values))))))
+
+export const mensureMapNumEnumOptional =
+  (enum_name: string) =>
+  <A extends object> (enum_values: A) =>
+    mensureMap (Expect.Maybe (enum_name))
                (bindOptional (pipe (toInt, bindF (ensure (isInNumEnum (enum_values))))))
+
+export const mensureMapNumEnumList =
+  (enum_name: string) =>
+  <A extends object> (enum_values: A) =>
+  (del: string) =>
+    mensureMapList (del)
+                   (enum_name)
+                   (pipe (toInt, bindF (ensure (isInNumEnum (enum_values)))))
+
+export const mensureMapNumEnumListOptional =
+  (enum_name: string) =>
+  <A extends object> (enum_values: A) =>
+  (del: string) =>
+    mensureMapListOptional (del)
+                           (enum_name)
+                           (pipe (toInt, bindF (ensure (isInNumEnum (enum_values)))))
 
 const mapPairList =
   (delPair: string) =>

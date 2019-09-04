@@ -1,3 +1,7 @@
+/**
+ * Please keep enum members sorted by value and not by key!
+ */
+
 export enum RaceId {
   Humans = "R_1",
   Elves = "R_2",

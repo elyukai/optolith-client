@@ -173,7 +173,7 @@ rules:
     - code: 100
       ignoreComments: true
       ignoreTemplateLiterals: true
-      ignorePattern: "^import |^export \\{(.*?)\\}|class [a-zA-Z]+ implements |^ \\* "
+      ignorePattern: "^import |^export \\{(.*?)\\}|^ \\* "
   max-statements-per-line: [2, { max: 2 }]
   multiline-ternary:
     - 2
@@ -232,7 +232,9 @@ rules:
     - consistent
   quotes:
     - 2
+    - double
     - avoidEscape: true
+      allowTemplateLiterals: true
   semi: 0
   semi-spacing: 2
   semi-style: 2
@@ -293,7 +295,7 @@ rules:
   "@typescript-eslint/adjacent-overload-signatures": 2
   "@typescript-eslint/array-type": 2
   "@typescript-eslint/await-thenable": 2
-  "@typescript-eslint/class-name-casing": 2
+  # "@typescript-eslint/class-name-casing": 2
   "@typescript-eslint/consistent-type-assertions": 2
   "@typescript-eslint/func-call-spacing":
     - 2

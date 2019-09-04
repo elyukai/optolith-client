@@ -11,7 +11,7 @@ import { toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { modifyNegIntNoBreak } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
-import { mensureMapListLengthInRangeOptional, mensureMapNatural, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapNumEnumOption, mensureMapStringPredListOptional } from "../validateMapValueUtils";
+import { mensureMapListLengthInRangeOptional, mensureMapNatural, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapNumEnumOptional, mensureMapStringPredListOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toActivatableCost } from "./Sub/toActivatableCost";
 import { toPrerequisites } from "./Sub/toPrerequisites";
@@ -69,7 +69,7 @@ export const toSpecialAbility =
                        (lookup_univ)
 
       const checkCombatTechniqueGroup =
-        lookupKeyValid (mensureMapNumEnumOption ("SpecialAbilityCombatTechniqueGroup")
+        lookupKeyValid (mensureMapNumEnumOptional ("SpecialAbilityCombatTechniqueGroup")
                                                 (SpecialAbilityCombatTechniqueGroup))
                        (TableType.Univ)
                        (lookup_univ)

@@ -11,6 +11,8 @@ import { member } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
 import { fst, snd } from "../../Data/Tuple";
 import { uncurryN, uncurryN3, uncurryN5, uncurryN6, uncurryN9 } from "../../Data/Tuple/Curry";
+import { IC, MagicalGroup } from "../Constants/Groups";
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
@@ -28,7 +30,6 @@ import { getMagicalTraditionsHeroEntries } from "../Utilities/Activatable/tradit
 import { composeL } from "../Utilities/compose";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
-import { prefixAdv, prefixDis, prefixSA } from "../Utilities/IDUtils";
 import { isSpellDecreasable, isSpellIncreasable, isUnfamiliarSpell } from "../Utilities/Increasable/spellUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { validatePrerequisites } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
@@ -79,13 +80,17 @@ export const getMagicalTraditionsFromWiki = createMaybeSelector (
 export const getIsSpellsTabAvailable = createMaybeSelector (
   getMaybeMagicalTraditionsFromHero,
   any (xs => notNull (xs)
-             && List.all (pipe (ActivatableDependent.A.id, notEquals (prefixSA (680)))) (xs))
+             && List.all (pipe (
+                           ActivatableDependent.A.id,
+                           notEquals<string> (SpecialAbilityId.TraditionMeistertalentierte)
+                         ))
+                         (xs))
 )
 
 export const getActiveSpells = createMaybeSelector (
   getStartEl,
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (16)),
-  mapGetToSlice (getSpecialAbilities) (prefixSA (72)),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.ExceptionalSkill),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.PropertyKnowledge),
   getWiki,
   getHeroProp,
   getMagicalTraditionsFromHero,
@@ -162,7 +167,11 @@ export const getInactiveCantrips = createMaybeSelector (
 export const getActiveSpellsCounter = createMaybeSelector (
   getActiveSpells,
   pipe (
-    fmap (countWith (pipe (SWRA.wikiEntry, SA.gr, elemF (List (1, 2))))),
+    fmap (countWith (pipe (
+                      SWRA.wikiEntry,
+                      SA.gr,
+                      elemF (List<MagicalGroup> (MagicalGroup.Spells, MagicalGroup.Rituals))
+                    ))),
     Maybe.sum
   )
 )
@@ -195,8 +204,8 @@ const isUnfamiliarSpellsActivationDisabled = createMaybeSelector (
 
 export const isActivationDisabled = createMaybeSelector (
   getActiveSpellsCounter,
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (58)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (59)),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.GrosseZauberauswahl),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.KleineZauberauswahl),
   getMagicalTraditionsFromHero,
   getStartEl,
   getPhase,
@@ -213,7 +222,7 @@ export const isActivationDisabled = createMaybeSelector (
                                  (trad => {
                                    const trad_id = ADA.id (trad)
 
-                                   if (trad_id === prefixSA (679)) {
+                                   if (trad_id === SpecialAbilityId.TraditionIntuitiveZauberer) {
                                      const max_spells =
                                        getModifierByActiveLevel (Just (3))
                                                                 (mbonus)
@@ -267,7 +276,8 @@ export const getInactiveSpells = createMaybeSelector (
 
         // Intuitive Magier/Animisten können nur max. 1 C-Zauber,
         // keine D-Zauber und keine Rituale erlernen
-        if (isLastTrad (prefixSA (679)) || isLastTrad (prefixSA (1221))) {
+        if (isLastTrad (SpecialAbilityId.TraditionIntuitiveZauberer)
+            || isLastTrad (SpecialAbilityId.TraditionAnimisten)) {
           if (is_max || is_activation_disabled) {
             return List<Combined> ()
           }
@@ -279,21 +289,22 @@ export const getInactiveSpells = createMaybeSelector (
                 // Intuitive Magier können nur Zauber erlernen,
                 // Animisten dürfen auch Animistenkräfte erlernen:
                 && (
-                  SA.gr (wiki_entry) === 1
-                  || (SA.gr (wiki_entry) === 9 && isLastTrad (prefixSA (1221)))
+                  SA.gr (wiki_entry) === MagicalGroup.Spells
+                  || (SA.gr (wiki_entry) === MagicalGroup.Animistenkräfte
+                      && isLastTrad (SpecialAbilityId.TraditionAnimisten))
                 )
                 // Muss inaktiv sein:
                 && all (notP (ASDA.active)) (mhero_entry)
                 // Keine Zauber mit Steigerungsfaktor D:
-                && SA.ic (wiki_entry) < 4
+                && SA.ic (wiki_entry) < IC.D
                 // Nur ein C Zauber:
-                && !(SA.ic (wiki_entry) === 3 && isAnySpellActiveWithImpCostC (wiki_spells)
-                                                                              (hero_spells))
+                && !(SA.ic (wiki_entry) === IC.C && isAnySpellActiveWithImpCostC (wiki_spells)
+                                                                                 (hero_spells))
                 // Es dürfen nur maximal 3 Zauber erlernt werden
                 && (countWith (pipe (ASDA.id, lookupF (wiki_spells), maybe (false)
-                                    (pipe (SA.gr, equals (1)))))
+                                    (pipe (SA.gr, equals<MagicalGroup> (MagicalGroup.Spells)))))
                               (elems (hero_spells)) < 3
-                    || SA.gr (wiki_entry) === 9)) {
+                    || SA.gr (wiki_entry) === MagicalGroup.Animistenkräfte)) {
               return consF (SpellWithRequirements ({
                 wikiEntry: wiki_entry,
                 stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (k))
@@ -312,7 +323,8 @@ export const getInactiveSpells = createMaybeSelector (
                                          (wiki_spells)
         }
 
-        if (isLastTrad (prefixSA (677)) || isLastTrad (prefixSA (678))) {
+        if (isLastTrad (SpecialAbilityId.TraditionZauberbarden)
+            || isLastTrad (SpecialAbilityId.TraditionZaubertaenzer)) {
           if (is_max || is_activation_disabled) {
             return List<Combined> ()
           }
@@ -354,10 +366,10 @@ export const getInactiveSpells = createMaybeSelector (
         const h = (k: string) => (wiki_entry: Record<Spell>) => {
           const mhero_entry = lookup (k) (hero_spells)
 
-          if ((!(is_max || is_activation_disabled) || SA.gr (wiki_entry) > 2)
+          if ((!(is_max || is_activation_disabled) || SA.gr (wiki_entry) > MagicalGroup.Rituals)
               && isSpellPrereqsValid (wiki_entry)
               && (!isUnfamiliar (wiki_entry)
-                  || (SA.gr (wiki_entry) < 3 && !is_max_unfamiliar))
+                  || (SA.gr (wiki_entry) <= MagicalGroup.Rituals && !is_max_unfamiliar))
               && all (notP (ASDA.active)) (mhero_entry)) {
             return consF (SpellWithRequirements ({
               wikiEntry: wiki_entry,
@@ -388,7 +400,7 @@ const isAnySpellActiveWithImpCostC =
                                                                 ASDA.id,
                                                                 lookupF (wiki_spells),
                                                                 maybe (false)
-                                                                      (pipe (SA.ic, equals (3)))
+                                                                      (pipe (SA.ic, equals (IC.C)))
                                                               ))
 
 export const getAvailableInactiveSpells = createMaybeSelector (
@@ -486,7 +498,7 @@ export const getAllSpellsForManualGuildMageSelect = createMaybeSelector (
   getRuleBooksEnabled,
   getWikiSpecialAbilities,
   uncurryN3 (l10n => av => pipe (
-                             lookup (prefixSA (70)),
+                             lookup<string> (SpecialAbilityId.TraditionGuildMages),
                              bindF (SAA.select),
                              fmap (pipe (
                                filterByAvailability (SOA.src) (av),
