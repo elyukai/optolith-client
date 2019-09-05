@@ -42,11 +42,13 @@ export enum AdvantageId {
   // Begabung
   Aptitude = "ADV_4",
   Blessed = "ADV_12",
+  Luck = "ADV_14",
   ExceptionalSkill = "ADV_16",
   ExceptionalCombatTechnique = "ADV_17",
   ImmunityToPoison = "ADV_28",
   ImmunityToDisease = "ADV_29",
   MagicalAttunement = "ADV_32",
+  Rich = "ADV_36",
   WeaponAptitude = "ADV_47",
   Spellcaster = "ADV_50",
   GrosseZauberauswahl = "ADV_58",
@@ -59,9 +61,11 @@ export enum AdvantageId {
 
 export enum DisadvantageId {
   AfraidOf = "DISADV_1",
+  Poor = "DISADV_2",
   NoFlyingBalm = "DISADV_17",
   NoFamiliar = "DISADV_18",
   MagicalRestriction = "DISADV_24",
+  BadLuck = "DISADV_31",
   PersonalityFlaw = "DISADV_33",
   Principles = "DISADV_34",
   BadHabit = "DISADV_36",
@@ -87,6 +91,7 @@ export enum SpecialAbilityId {
   SkillSpecialization = "SA_9",
   CraftInstruments = "SA_17",
   Hunter = "SA_18",
+  AreaKnowledge = "SA_22",
   Literacy = "SA_27",
   Language = "SA_29",
   TraditionGuildMages = "SA_70",

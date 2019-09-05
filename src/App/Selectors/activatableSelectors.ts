@@ -9,7 +9,7 @@ import { Record } from "../../Data/Record";
 import { fst, Pair, snd, Tuple } from "../../Data/Tuple";
 import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
 import { ActivatableCategory, Categories } from "../Constants/Categories";
-import { IdPrefixes } from "../Constants/IdPrefixes";
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
 import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
@@ -21,7 +21,7 @@ import { ActiveActivatable, ActiveActivatableA_ } from "../Models/View/ActiveAct
 import { Advantage } from "../Models/Wiki/Advantage";
 import { Culture } from "../Models/Wiki/Culture";
 import { Disadvantage } from "../Models/Wiki/Disadvantage";
-import { L10n, L10nRecord } from "../Models/Wiki/L10n";
+import { L10nRecord } from "../Models/Wiki/L10n";
 import { Profession } from "../Models/Wiki/Profession";
 import { Race } from "../Models/Wiki/Race";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
@@ -36,7 +36,7 @@ import { createMapSelectorP } from "../Utilities/createMapSelector";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { compareLocale } from "../Utilities/I18n";
-import { prefixId, prefixSA } from "../Utilities/IDUtils";
+import { prefixSA } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { mapCurrentHero, mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
 import { blessedSpecialAbilityGroups, combatSpecialAbilityGroups, generalSpecialAbilityGroups, magicalSpecialAbilityGroups } from "../Utilities/sheetUtils";
@@ -119,7 +119,7 @@ export const getLanguagesWithMatchingScripts = createMaybeSelector (
 export const isEntryRequiringMatchingScriptAndLangActive = createMaybeSelector (
   getSpecialAbilities,
   pipe (
-    lookup ("SA_1075"),
+    lookup<string> (SpecialAbilityId.WegDerSchreiberin),
     isMaybeActive
   )
 )
@@ -269,7 +269,7 @@ export const getFilteredActiveAdvantages = createMaybeSelector (
                                   <ActiveActivatable<Advantage>>
                                   ([ActiveActivatableA_.name])
                                   ([comparingR (ActiveActivatableA_.name)
-                                               (compareLocale (L10n.A.id (l10n)))])
+                                               (compareLocale (l10n))])
                                   (filterText))
 )
 
@@ -292,7 +292,7 @@ export const getFilteredActiveDisadvantages = createMaybeSelector (
                                   <ActiveActivatable<Disadvantage>>
                                   ([ActiveActivatableA_.name])
                                   ([comparingR (ActiveActivatableA_.name)
-                                               (compareLocale (L10n.A.id (l10n)))])
+                                               (compareLocale (l10n))])
                                   (filterText))
 )
 
@@ -337,7 +337,7 @@ export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
                     pipe (
                       ActiveActivatable.A.wikiEntry,
                       SpecialAbility.AL.id,
-                      notElemF (List (prefixSA (27), prefixSA (29)))
+                      notElemF (List<string> (SpecialAbilityId.Literacy, SpecialAbilityId.Language))
                     )
                   )),
                 consF (ActiveActivatable ({
@@ -367,9 +367,10 @@ export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
                         }),
                         heroEntry: ActivatableDependent.default,
                         wikiEntry: SpecialAbility.default,
-                      }) as Record<ActiveActivatable<SpecialAbility>>)))
-           (lookup (prefixId (IdPrefixes.SPECIAL_ABILITIES) (22))
-                   (wiki_special_abilities))
+                      }) as Record<ActiveActivatable<SpecialAbility>>)
+              ))
+           (lookup<string> (SpecialAbilityId.AreaKnowledge)
+                           (wiki_special_abilities))
            (mspecial_abilities)
 )
 
@@ -397,8 +398,8 @@ export const getBlessedSpecialAbilitiesForSheet = createMaybeSelector (
 )
 
 export const getFatePointsModifier = createMaybeSelector (
-  mapGetToMaybeSlice (getAdvantages) ("ADV_14"),
-  mapGetToMaybeSlice (getDisadvantages) ("DISADV_31"),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.Luck),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.BadLuck),
   uncurryN (getModifierByActiveLevel (Just (0)))
 )
 
@@ -429,26 +430,26 @@ const getPropertyOrAspectKnowledgesForSheet =
 
 export const getPropertyKnowledgesForSheet = createMaybeSelector (
   getLocaleAsProp,
-  mapGetToSlice (getWikiSpecialAbilities) ("SA_72"),
-  mapGetToSlice (getSpecialAbilities) ("SA_72"),
+  mapGetToSlice (getWikiSpecialAbilities) (SpecialAbilityId.PropertyKnowledge),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.PropertyKnowledge),
   getPropertyOrAspectKnowledgesForSheet
 )
 
 export const getAspectKnowledgesForSheet = createMaybeSelector (
   getLocaleAsProp,
-  mapGetToSlice (getWikiSpecialAbilities) ("SA_87"),
-  mapGetToSlice (getSpecialAbilities) ("SA_87"),
+  mapGetToSlice (getWikiSpecialAbilities) (SpecialAbilityId.AspectKnowledge),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.AspectKnowledge),
   getPropertyOrAspectKnowledgesForSheet
 )
 
 export const getInitialStartingWealth = createMaybeSelector (
-  mapGetToMaybeSlice (getAdvantages) ("ADV_36"),
-  mapGetToMaybeSlice (getDisadvantages) ("DISADV_2"),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.Rich),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.Poor),
   (rich, poor) => getModifierByActiveLevel (Just (0)) (rich) (poor) * 250 + 750
 )
 
 export const isAlbino = createMaybeSelector (
-  mapGetToMaybeSlice (getDisadvantages) ("DISADV_45"),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.Stigma),
   fmap (pipe (
     getActiveSelections,
     elem<string | number> (1)
@@ -456,7 +457,7 @@ export const isAlbino = createMaybeSelector (
 )
 
 export const getGuildMageUnfamiliarSpellId = createMaybeSelector (
-  mapGetToSlice (getSpecialAbilities) (prefixSA (70)),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.TraditionGuildMages),
   pipe (
     bindF (pipe (ActivatableDependent.A.active, listToMaybe)),
     fmap (pipe (ActiveObject.A.sid, misStringM))

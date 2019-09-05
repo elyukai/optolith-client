@@ -5,6 +5,7 @@ import { join, mapMaybe, Maybe } from "../../Data/Maybe";
 import { elems, lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { ActivatableCategory, Categories } from "../Constants/Categories";
+import { SpecialAbilityId } from "../Constants/Ids";
 import { InactiveActivatable } from "../Models/View/InactiveActivatable";
 import { Advantage } from "../Models/Wiki/Advantage";
 import { Disadvantage } from "../Models/Wiki/Disadvantage";
@@ -18,7 +19,6 @@ import { getAllAvailableExtendedSpecialAbilities } from "../Utilities/Activatabl
 import { createMapMaybeSelector } from "../Utilities/createMapMaybeSelector";
 import { createMapSelector, ignore3rd } from "../Utilities/createMapSelector";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { prefixSA } from "../Utilities/IDUtils";
 import { pipe } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { sortRecordsBy } from "../Utilities/sortBy";
@@ -36,11 +36,11 @@ export const getExtendedSpecialAbilitiesToAdd = createMaybeSelector (
   stateSelectors.getCombatStyleDependencies,
   stateSelectors.getMagicalStyleDependencies,
   stateSelectors.getSkillStyleDependencies,
-  (...styleDependencles) =>
-    cons (getAllAvailableExtendedSpecialAbilities (fromArray (styleDependencles)))
+  (...styleDependencies) =>
+    cons (getAllAvailableExtendedSpecialAbilities (fromArray (styleDependencies)))
          // "Gebieter des [Aspekts]" is never listed as a dependency and thus
          // must be added manually
-         (prefixSA (639))
+         (SpecialAbilityId.GebieterDesAspekts)
 )
 
 const getId = Advantage.AL.id
