@@ -58,8 +58,7 @@ const config = {
     output: "dist/insider"
   },
   files: [
-    "app/**/*",
-    "CHANGELOG.md"
+    "app/**/*"
   ],
   asarUnpack: "app/Database/**/*",
   win: {
