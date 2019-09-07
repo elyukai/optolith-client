@@ -9,7 +9,7 @@ if($insider) {
 
 Write-Output "Source: $(Resolve-Path -Path $source)"
 
-$filter = [regex] "^TDE5(?:_[a-z]{2}-[A-Z]{2})\.xlsx$"
+$filter = [regex] "^TDE5(?:_[a-z]{2}-[A-Z]{2})?\.xlsx$"
 
 if (!(Test-Path $target -PathType Container)) {
   New-Item -Path $target -ItemType Directory
