@@ -29,6 +29,7 @@ export namespace Internals {
     readonly prototype: RecordPrototype
   }
 
+  // eslint-disable-next-line @typescript-eslint/interface-name-prefix
   export interface IO<A> extends IOPrototype {
     readonly f: () => Promise<A>
   }
@@ -90,7 +91,7 @@ export namespace Internals {
   const ListPrototype =
     Object.freeze<ListPrototype<any>> ({
       isList: true,
-      *[Symbol.iterator] () {
+      * [Symbol.iterator] () {
         // tslint:disable-next-line: no-this-assignment
         let current = this as List<any>
 
@@ -167,6 +168,7 @@ export namespace Internals {
       isRecord: true,
     })
 
+  // eslint-disable-next-line @typescript-eslint/interface-name-prefix
   export interface IOPrototype {
     readonly isIO: true
   }
@@ -190,6 +192,7 @@ export namespace Internals {
 
   export interface Const<A, B> extends ConstPrototype {
     readonly value: A
+
     /**
      * No actual field!
      */
@@ -364,6 +367,10 @@ export namespace Internals {
    */
   export const Nothing: Nothing = Object.create (NothingPrototype)
 
+  export const Maybe =
+    <A> (x: A | Nullable): Maybe<A> =>
+      x !== null && x !== undefined ? Just (x) : Nothing
+
   export const _OrderedMap =
     <K, A> (x: ReadonlyMap<K, A>): OrderedMap<K, A> =>
       Object.create (
@@ -383,7 +390,7 @@ export namespace Internals {
    */
   export const mapFromArray =
     (show: (x: any) => string) =>
-    <K, A> (xs: ReadonlyArray<[K, A]>): OrderedMap<K, A> => {
+    <K, A> (xs: readonly [K, A][]): OrderedMap<K, A> => {
       if (Array.isArray (xs)) {
         return _OrderedMap (new Map (xs))
       }
@@ -412,7 +419,7 @@ export namespace Internals {
    */
   export const setFromArray =
     (show: (x: any) => string) =>
-    <A> (xs: ReadonlyArray<A>): OrderedSet<A> => {
+    <A> (xs: readonly A[]): OrderedSet<A> => {
       if (Array.isArray (xs)) {
         return _OrderedSet (new Set (xs))
       }

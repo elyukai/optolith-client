@@ -1,5 +1,5 @@
 import { List } from "../../../Data/List";
-import { fromDefault, Record } from "../../../Data/Record";
+import { fromDefault, OmitName, Record } from "../../../Data/Record";
 
 export interface L10n {
   "@@name": "L10n"
@@ -644,7 +644,7 @@ export interface L10n {
   "youcannotuseamodificationonthischantsduration": string
 }
 
-export type L10nKey = keyof L10n
+export type L10nKey = keyof OmitName<L10n>
 
 export type L10nRecord = Record<L10n>
 

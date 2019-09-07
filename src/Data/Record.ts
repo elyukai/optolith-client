@@ -272,14 +272,14 @@ export type Accessor<A extends RecordIBase<any>, K extends keyof A> =
   (r: Record<Pick<A, K> & { "@@name": string }>) => A[K]
 
 export type Accessors<A extends RecordIBase<any>> = {
-  [K in keyof A]: Accessor<A, K>
+  [K in keyof OmitName<A>]: Accessor<A, K>
 }
 
 export type StrictAccessor<A extends RecordIBase<any>, K extends keyof A> =
   (r: Record<A>) => A[K]
 
 export type StrictAccessors<A extends RecordIBase<any>> = {
-  [K in keyof A]: StrictAccessor<A, K>
+  [K in keyof OmitName<A>]: StrictAccessor<A, K>
 }
 
 export type Lenses<A extends RecordIBase<any>> = {

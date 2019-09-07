@@ -5,7 +5,7 @@ import { bindF, elem, ensure, Maybe, maybeR, sum } from "../../../../Data/Maybe"
 import { compare } from "../../../../Data/Num";
 import { Record, RecordIBase } from "../../../../Data/Record";
 import { Categories } from "../../../Constants/Categories";
-import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
+import { L10nKey, L10nRecord } from "../../../Models/Wiki/L10n";
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { translate } from "../../../Utilities/I18n";
@@ -38,7 +38,7 @@ export function WikiExtensions<A extends RecordIBase<any>> (props: WikiExtension
 
   const category = acc.category (x)
 
-  let key: keyof L10n = "spellextensions"
+  let key: L10nKey = "spellextensions"
 
   if (category === Categories.LITURGIES) {
     key = "liturgicalchantextensions"

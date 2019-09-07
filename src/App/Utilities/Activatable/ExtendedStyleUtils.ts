@@ -1,12 +1,12 @@
-import { equals, notEquals } from "../../../Data/Eq";
+import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { Lens_, over, set, view } from "../../../Data/Lens";
-import { all, append, concatMap, elem, empty, filter, findIndex, flength, foldr, isList, List, ListI, map, modifyAt, partition, pure } from "../../../Data/List";
+import { all, append, concatMap, elem, empty, filter, findIndex, foldr, isList, List, ListI, map, mapAccumL, modifyAt, partition, pure } from "../../../Data/List";
 import { alt_, and, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, Maybe, Nothing, or } from "../../../Data/Maybe";
 import { gt } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
-import { fst, snd } from "../../../Data/Tuple";
+import { fst, Pair, snd, uncurry } from "../../../Data/Tuple";
 import { traceShowId } from "../../../Debug/Trace";
 import { SpecialAbilityGroup } from "../../Constants/Groups";
 import { HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -32,28 +32,23 @@ export type StyleDependencyStateKeys = "combatStyleDependencies"
  */
 const lensByStyle =
   (x: Record<SpecialAbility>): Maybe<StyleDependenciesLens> => {
-    if (Maybe.all (pipe (flength, notEquals (3))) (SAA.extended (x))) {
-      return Nothing
-    }
+    switch (SAA.gr (x)) {
+      case SpecialAbilityGroup.CombatStylesArmed:
+      case SpecialAbilityGroup.CombatStylesUnarmed:
+        return Just (HL.combatStyleDependencies)
 
-    if (SAA.gr (x) === SpecialAbilityGroup.CombatStylesArmed
-        || SAA.gr (x) === SpecialAbilityGroup.CombatStylesUnarmed) {
-      return Just (HL.combatStyleDependencies)
-    }
+      case SpecialAbilityGroup.MagicalStyles:
+        return Just (HL.magicalStyleDependencies)
 
-    if (SAA.gr (x) === SpecialAbilityGroup.MagicalStyles) {
-      return Just (HL.magicalStyleDependencies)
-    }
+      case SpecialAbilityGroup.BlessedStyles:
+        return Just (HL.blessedStyleDependencies)
 
-    if (SAA.gr (x) === SpecialAbilityGroup.BlessedStyles) {
-      return Just (HL.blessedStyleDependencies)
-    }
+      case SpecialAbilityGroup.SkillStyles:
+        return Just (HL.skillStyleDependencies)
 
-    if (SAA.gr (x) === SpecialAbilityGroup.SkillStyles) {
-      return Just (HL.skillStyleDependencies)
+      default:
+        return Nothing
     }
-
-    return Nothing
   }
 
 /**
@@ -62,20 +57,22 @@ const lensByStyle =
  */
 const lensByExtended =
   (x: Record<SpecialAbility>): Maybe<StyleDependenciesLens> => {
-    if (SAA.gr (x) === SpecialAbilityGroup.CombatExtended) {
-      return Just (HL.combatStyleDependencies)
-    }
-    else if (SAA.gr (x) === SpecialAbilityGroup.MagicalExtended) {
-      return Just (HL.magicalStyleDependencies)
-    }
-    else if (SAA.gr (x) === SpecialAbilityGroup.KarmaExtended) {
-      return Just (HL.blessedStyleDependencies)
-    }
-    else if (SAA.gr (x) === SpecialAbilityGroup.SkillExtended) {
-      return Just (HL.skillStyleDependencies)
-    }
+    switch (SAA.gr (x)) {
+      case SpecialAbilityGroup.CombatExtended:
+        return Just (HL.combatStyleDependencies)
 
-    return Nothing
+      case SpecialAbilityGroup.MagicalExtended:
+        return Just (HL.magicalStyleDependencies)
+
+      case SpecialAbilityGroup.KarmaExtended:
+        return Just (HL.blessedStyleDependencies)
+
+      case SpecialAbilityGroup.SkillExtended:
+        return Just (HL.skillStyleDependencies)
+
+      default:
+        return Nothing
+    }
   }
 
 /**
@@ -95,7 +92,7 @@ export const addStyleExtendedSpecialAbilityDependencies =
       pipe_ (
         wiki_entry,
         SAA.extended,
-        fmap (map (x => StyleDependency ({ id: x, origin: SAA.id (wiki_entry) })))
+        fmap (map (x => StyleDependency ({ id: x, origin: SAA.id (wiki_entry) }))),
       )
 
     type DependencyList = List<Record<StyleDependency>>
@@ -104,34 +101,49 @@ export const addStyleExtendedSpecialAbilityDependencies =
                      (liftM2 ((l: StyleDependenciesLens) => (newxs: DependencyList) =>
                                over (l)
                                     (pipe (
-                                      map ((x: Record<StyleDependency>) => {
-                                        const current_id = SDA.id (x)
-                                        const current_active = SDA.active (x)
-
-                                        // TODO: Add proper comments
-                                        if (isList (current_id) && isJust (current_active)) {
-                                          const index =
-                                            findIndex (pipe (
-                                                              SDA.id,
-                                                              equals,
-                                                              thrush (fromJust (current_active))
-                                                            ))
-                                                      (newxs)
-
-                                          if (isJust (index)) {
-                                            return set (StyleDependencyL.active)
-                                                       (Nothing)
-                                                       (x)
-                                          }
-                                        }
-
-                                        return x
-                                      }),
-                                      append (newxs)
+                                      mapAccumL (moveActiveInListToNew)
+                                                (newxs),
+                                      uncurry (append)
                                     ))
                                     (hero))
                              (ml)
                              (mnewxs))
+  }
+
+const moveActiveInListToNew: (newxs: List<Record<StyleDependency>>) =>
+                             (x: Record<StyleDependency>) =>
+                             Pair<List<Record<StyleDependency>>, Record<StyleDependency>> =
+  newxs => x => {
+    const current_id = SDA.id (x)
+    const current_active = SDA.active (x)
+
+    // If the dependency has got a list of possible ids and
+    // is used, we check if the used id is included in the
+    // new dependencies as a dependency without a list of
+    // options to make more special abilities possible
+    if (isList (current_id) && isJust (current_active)) {
+      const index =
+        findIndex (pipe (
+                          SDA.id,
+                          equals,
+                          thrush (fromJust (current_active))
+                        ))
+                  (newxs)
+
+      if (isJust (index)) {
+        return Pair (
+          modifyAt (fromJust (index))
+                   (set (StyleDependencyL.active)
+                        (current_active))
+                   (newxs),
+          set (StyleDependencyL.active)
+              (Nothing)
+              (x)
+        )
+      }
+    }
+
+    return Pair (newxs, x)
   }
 
 /**
@@ -238,9 +250,9 @@ const removeStyleExtendedSpecialAbilityDependencies =
       (fmap ((l: Lens_<HeroModelRecord, List<Record<StyleDependency>>>) =>
               over (l)
                    (xs => {
-                     const splitted = traceShowId (
-                       getSplittedRemainingAndToRemove (SAA.id (wiki_entry)) (xs)
-                      )
+                     const splitted =
+                       traceShowId (getSplittedRemainingAndToRemove (SAA.id (wiki_entry))
+                                                                    (xs))
                      const itemsToRemove = fst (splitted)
                      const leftItems = snd (splitted)
 
@@ -271,10 +283,10 @@ const removeExtendedSpecialAbilityDependency =
       (fmap ((l: Lens_<HeroModelRecord, List<Record<StyleDependency>>>) =>
               over (l)
                    (xs => modifyAt
-                      (traceShowId (fromMaybe
+                      (fromMaybe
                         (-1)
                         (getIndexForExtendedSpecialAbilityDependency (wiki_entry)
-                                                                     (xs))))
+                                                                     (xs)))
                       (set (StyleDependencyL.active) (Nothing))
                       (xs))
                    (hero))
