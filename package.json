@@ -75,6 +75,7 @@
     "buildCss": "node --experimental-modules ./deploy/buildSass.mjs",
     "copyTables": "node ./deploy/copyTablesOnly.js",
     "copyTablesInsider": "node ./deploy/copyTablesInsiderOnly.js",
+    "encrypttables": "@powershell ./encryptTables.ps1 insider",
     "compile": "tsc",
     "cti": "node ./deploy/copyTablesOnly.js",
     "watch": "tsc --watch",
