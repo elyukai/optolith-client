@@ -116,13 +116,6 @@ const publishToServer =
 
     console.log(`Server connection established`);
 
-    console.log(`Uploading ${updateYmlName}`);
-
-    const updateYml = fs.readFileSync (path.join (...distPath, updateYmlName))
-    const ymlRes = await client.put (updateYml, `${serverPath}/${updateYmlName}`)
-
-    console.log(`Upload done: ${updateYmlName} (${ymlRes})`);
-
     for (const fileName of latestFileNames) {
       console.log(`Uploading ${fileName}`);
 
@@ -131,6 +124,13 @@ const publishToServer =
 
       console.log(`Upload done: ${fileName} (${fileRes})`);
     }
+
+    console.log(`Uploading ${updateYmlName}`);
+
+    const updateYml = fs.readFileSync (path.join (...distPath, updateYmlName))
+    const ymlRes = await client.put (updateYml, `${serverPath}/${updateYmlName}`)
+
+    console.log(`Upload done: ${updateYmlName} (${ymlRes})`);
 
     await client.end ()
 
