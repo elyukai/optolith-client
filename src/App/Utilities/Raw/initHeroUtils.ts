@@ -49,6 +49,10 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
     race: Maybe (hero .r),
     raceVariant: Maybe (hero .rv),
     culture: Maybe (hero .c),
+    isCulturalPackageActive:
+      typeof hero .isCulturalPackageActive === "boolean"
+      ? hero .isCulturalPackageActive
+      : false,
     profession: Maybe (hero .p),
     professionName: Maybe (hero .professionName),
     professionVariant: Maybe (hero .pv),
@@ -94,9 +98,9 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
       permanentKarmaPoints:
         PermanentEnergyLossAndBoughtBack (hero .attr .permanentKP),
       permanentLifePoints:
-        hero .attr .permanentLP
-          ? PermanentEnergyLoss (hero .attr .permanentLP)
-          : PermanentEnergyLoss ({ lost: 0 }),
+        typeof hero .attr .permanentLP === "object"
+        ? PermanentEnergyLoss (hero .attr .permanentLP)
+        : PermanentEnergyLoss ({ lost: 0 }),
     }),
 
     ...getActivatables (hero),
@@ -111,66 +115,65 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
     belongings: Belongings ({
       items: OrderedMap.fromArray (
         Object.entries (hero .belongings .items) .map<[string, Record<Item>]> (
-          ([id, obj]) => {
-            return [
+          ([id, obj]) => [
+            id,
+            Item ({
               id,
-              Item ({
-                id,
-                name: obj .name,
-                ammunition: Maybe (obj .ammunition),
-                combatTechnique: Maybe (obj .combatTechnique),
-                damageDiceSides: Maybe (obj .damageDiceSides),
-                gr: obj .gr,
-                isParryingWeapon:
-                  typeof obj .isParryingWeapon === "boolean" ? obj .isParryingWeapon : false,
-                isTemplateLocked: obj .isTemplateLocked,
-                reach: Maybe (obj .reach),
-                template: Maybe (obj .template),
-                isTwoHandedWeapon:
-                  typeof obj .isTwoHandedWeapon === "boolean" ? obj .isTwoHandedWeapon : false,
-                improvisedWeaponGroup: Maybe (obj .imp),
-                loss: Maybe (obj .loss),
-                forArmorZoneOnly:
-                  typeof obj .forArmorZoneOnly === "boolean" ? obj .forArmorZoneOnly : false,
-                addPenalties:
-                  typeof obj .addPenalties === "boolean" ? obj .addPenalties : false,
-                armorType: Maybe (obj .armorType),
-                at: Maybe (obj .at),
-                iniMod: Maybe (obj .iniMod),
-                movMod: Maybe (obj .movMod),
-                damageBonus:
-                  fmap<
-                    Raw.RawPrimaryAttributeDamageThreshold,
-                    Record<PrimaryAttributeDamageThreshold>
-                  >
-                    (primaryThreshold => PrimaryAttributeDamageThreshold ({
-                      primary: Maybe (primaryThreshold .primary),
-                      threshold: typeof primaryThreshold .threshold === "object"
-                        ? Tuple.fromArray (primaryThreshold .threshold as [number, number])
-                        : primaryThreshold .threshold,
-                    }))
-                    (Maybe (obj .primaryThreshold)),
-                damageDiceNumber: Maybe (obj .damageDiceNumber),
-                damageFlat: Maybe (obj .damageFlat),
-                enc: Maybe (obj .enc),
-                length: Maybe (obj .length),
-                amount: obj .amount,
-                pa: Maybe (obj .pa),
-                price: Maybe (obj .price),
-                pro: Maybe (obj .pro),
-                range: fmap<number[], List<number>> (List.fromArray)
-                                                    (Maybe (obj .range)),
-                reloadTime: Maybe (obj .reloadTime),
-                stp: Maybe (obj .stp),
-                weight: Maybe (obj .weight),
-                stabilityMod: Maybe (obj .stabilityMod),
-              }),
-            ];
-          }
+              name: obj .name,
+              ammunition: Maybe (obj .ammunition),
+              combatTechnique: Maybe (obj .combatTechnique),
+              damageDiceSides: Maybe (obj .damageDiceSides),
+              gr: obj .gr,
+              isParryingWeapon:
+                typeof obj .isParryingWeapon === "boolean" ? obj .isParryingWeapon : false,
+              isTemplateLocked: obj .isTemplateLocked,
+              reach: Maybe (obj .reach),
+              template: Maybe (obj .template),
+              isTwoHandedWeapon:
+                typeof obj .isTwoHandedWeapon === "boolean" ? obj .isTwoHandedWeapon : false,
+              improvisedWeaponGroup: Maybe (obj .imp),
+              loss: Maybe (obj .loss),
+              forArmorZoneOnly:
+                typeof obj .forArmorZoneOnly === "boolean" ? obj .forArmorZoneOnly : false,
+              addPenalties:
+                typeof obj .addPenalties === "boolean" ? obj .addPenalties : false,
+              armorType: Maybe (obj .armorType),
+              at: Maybe (obj .at),
+              iniMod: Maybe (obj .iniMod),
+              movMod: Maybe (obj .movMod),
+              damageBonus:
+                fmap<
+                  Raw.RawPrimaryAttributeDamageThreshold,
+                  Record<PrimaryAttributeDamageThreshold>
+                >
+                  (primaryThreshold => PrimaryAttributeDamageThreshold ({
+                    primary: Maybe (primaryThreshold .primary),
+                    threshold: typeof primaryThreshold .threshold === "object"
+                      ? Tuple.fromArray (primaryThreshold .threshold as [number, number])
+                      : primaryThreshold .threshold,
+                  }))
+                  (Maybe (obj .primaryThreshold)),
+              damageDiceNumber: Maybe (obj .damageDiceNumber),
+              damageFlat: Maybe (obj .damageFlat),
+              enc: Maybe (obj .enc),
+              length: Maybe (obj .length),
+              amount: obj .amount,
+              pa: Maybe (obj .pa),
+              price: Maybe (obj .price),
+              pro: Maybe (obj .pro),
+              range: fmap<number[], List<number>> (List.fromArray)
+                                                  (Maybe (obj .range)),
+              reloadTime: Maybe (obj .reloadTime),
+              stp: Maybe (obj .stp),
+              weight: Maybe (obj .weight),
+              stabilityMod: Maybe (obj .stabilityMod),
+            }),
+          ]
         )
       ),
 
-      hitZoneArmors: hero .belongings .armorZones
+      hitZoneArmors:
+        typeof hero .belongings .armorZones === "object"
         ? OrderedMap.fromArray (
           Object.entries (hero .belongings .armorZones)
             .map<[string, Record<HitZoneArmor>]> (
@@ -208,7 +211,8 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
       enabledRuleBooks: OrderedSet.fromArray (hero.rules.enabledRuleBooks),
     }),
 
-    pets: hero .pets
+    pets:
+      typeof hero .pets === "object"
       ? OrderedMap.fromArray (
         Object.entries (hero .pets)
           .map<[string, Record<Pet>]> (

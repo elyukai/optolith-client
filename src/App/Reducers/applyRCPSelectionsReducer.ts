@@ -557,6 +557,10 @@ const applyModifications =
         over (CML.hero)
       )),
 
+      // - Cultural Package activation
+      set (composeL (CML.hero, HL.isCulturalPackageActive))
+          (action .payload .useCulturePackage),
+
       // - Lower Combat Techniques with too high CTR
       join (acc => over (composeL (CML.hero, HL.combatTechniques))
                         (maybe (ident as ident<HeroModel["combatTechniques"]>)

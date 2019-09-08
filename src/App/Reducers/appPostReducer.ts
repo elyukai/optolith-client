@@ -53,7 +53,7 @@ const prepareHerolist =
 
           const undoState = toHeroWithHistory (heroInstance)
 
-          if (updatedHero.player) {
+          if (typeof updatedHero.player === "object") {
             return {
               users: insert (updatedHero.player.id) (updatedHero.player) (users),
               heroes: insert (key) (undoState) (heroes),
@@ -106,7 +106,7 @@ const prepareImportedHero =
                                             (updatedHero)
 
 
-    if (player) {
+    if (typeof player === "object") {
       const undoStateWithPlayer = toHeroWithHistory (set (HeroModelL.player)
                                                     (Just (player.id))
                                                     (heroInstance))

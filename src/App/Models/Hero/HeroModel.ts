@@ -36,6 +36,7 @@ export interface HeroModel {
   race: Maybe<string>
   raceVariant: Maybe<string>
   culture: Maybe<string>
+  isCulturalPackageActive: boolean
   profession: Maybe<string>
   professionName: Maybe<string>
   professionVariant: Maybe<string>
@@ -86,6 +87,7 @@ export const HeroModel =
                 race: Nothing,
                 raceVariant: Nothing,
                 culture: Nothing,
+                isCulturalPackageActive: false,
                 profession: Nothing,
                 professionName: Nothing,
                 professionVariant: Nothing,
@@ -140,6 +142,7 @@ export const getInitialHeroObject =
       phase: Nothing,
       name,
       adventurePointsTotal: totalAp,
+      isCulturalPackageActive: false,
       sex,
       experienceLevel,
       personalData: Nothing,
