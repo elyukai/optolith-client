@@ -142,8 +142,8 @@ export function LiturgicalChantsSheetLiturgicalChants (
                       </Textfit>
                     </td>
                     <td className="ic">{getICName (LCWRA_.ic (e))}</td>
-                    <td className="effect"></td>
-                    <td className="ref"></td>
+                    <td className="effect" />
+                    <td className="ref" />
                   </tr>
                 )
               }),

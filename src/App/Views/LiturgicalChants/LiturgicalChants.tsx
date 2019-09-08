@@ -7,6 +7,7 @@ import { bindF, ensure, fromMaybe, fromMaybeR, guard, Just, mapMaybe, Maybe, may
 import { dec } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
+import { BlessedTradition } from "../../Constants/Groups";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -478,15 +479,13 @@ const isTopMarginNeeded =
 const getAspectsStr =
   (l10n: L10nRecord) =>
   (curr: Combined) =>
-  (mtradition_id: Maybe<number>) =>
+  (mtradition_id: Maybe<BlessedTradition>) =>
     pipe_ (
       mtradition_id,
       fmap (pipe (
         tradition_id =>
           mapMaybe (pipe (
-                     ensure (elemF (
-                       getAspectsOfTradition (tradition_id + 1)
-                     )),
+                     ensure (elemF (getAspectsOfTradition (tradition_id))),
                      bindF (pipe (
                        dec,
                        subscript (translate (l10n) ("aspectlist"))

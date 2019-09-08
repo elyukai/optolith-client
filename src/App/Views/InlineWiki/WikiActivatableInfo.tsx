@@ -11,7 +11,7 @@ import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../D
 import { fromDefault, makeLenses, Record, RecordI, RecordIBase } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { SpecialAbilityGroup } from "../../Constants/Groups";
-import { SpecialAbilityId } from "../../Constants/Ids";
+import { AdvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
 import { ActivatableNameCost, ActivatableNameCostA_ } from "../../Models/View/ActivatableNameCost";
 import { Advantage } from "../../Models/Wiki/Advantage";
@@ -31,10 +31,11 @@ import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
 import { getNameCostForWiki } from "../../Utilities/Activatable/activatableActiveUtils";
 import { getName } from "../../Utilities/Activatable/activatableNameUtils";
 import { isExtendedSpecialAbility } from "../../Utilities/Activatable/checkStyleUtils";
+import { isBlessedTradId, isMagicalTradId } from "../../Utilities/Activatable/traditionUtils";
 import { putLevelName } from "../../Utilities/AdventurePoints/activatableCostUtils";
 import { nbsp } from "../../Utilities/Chars";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
-import { getCategoryById, isBlessedTraditionId, isMagicalTraditionId, prefixRace } from "../../Utilities/IDUtils";
+import { getCategoryById, prefixRace } from "../../Utilities/IDUtils";
 import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
@@ -1189,8 +1190,10 @@ const CategorizedItems =
 const CIA = CategorizedItems.A
 const CIL = makeLenses (CategorizedItems)
 
-const isCasterOrBlessedOneId = (x: string) => x === "ADV_12" || x === "ADV_50"
-const isTraditionId = (x: string) => isMagicalTraditionId (x) || isBlessedTraditionId (x)
+const isCasterOrBlessedOneId =
+  (x: string) => x === AdvantageId.Blessed || x === AdvantageId.Spellcaster
+
+const isTraditionId = (x: string) => isMagicalTradId (x) || isBlessedTradId (x)
 
 const getActivatablePrerequisite =
   (index_special: Maybe<string | false>) =>

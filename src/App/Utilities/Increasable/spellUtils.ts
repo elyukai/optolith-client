@@ -7,6 +7,7 @@ import { and, bindF, elem, ensure, fromJust, isJust, Just, listToMaybe, mapMaybe
 import { gte, inc } from "../../../Data/Num";
 import { alter, empty, filter, foldl, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { MagicalTradition, Property } from "../../Constants/Groups";
 import { SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
@@ -19,8 +20,8 @@ import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
+import { mapMagicalTradIdToNumId } from "../Activatable/traditionUtils";
 import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies";
-import { getNumericMagicalTraditionIdByInstanceId } from "../IDUtils";
 import { ifElse } from "../ifElse";
 import { pipe, pipe_ } from "../pipe";
 import { isNumber } from "../typeCheckUtils";
@@ -39,11 +40,10 @@ const AOA = ActiveObject.A
  * of active traditions `xs`.
  */
 const isActiveTradition =
-  (e: number) =>
+  (e: MagicalTradition) =>
     find (pipe (
            SAA.id,
-           getNumericMagicalTraditionIdByInstanceId,
-           fmap (inc),
+           mapMagicalTradIdToNumId,
            elem (e)
          ))
 
@@ -56,7 +56,8 @@ export const isOwnTradition =
   (x: Record<Spell> | Record<Cantrip>): boolean =>
     pipe (
            SAL.tradition,
-           any (e => e === 1 || isJust (isActiveTradition (e) (activeTradition)))
+           any (e => e === MagicalTradition.General
+                     || isJust (isActiveTradition (e) (activeTradition)))
          )
          (x)
 
@@ -108,10 +109,10 @@ export const isSpellIncreasable =
  */
 export const countActiveSpellsPerProperty =
   (wiki: OrderedMap<string, Record<Spell>>):
-  (hero: OrderedMap<string, Record<ActivatableSkillDependent>>) => OrderedMap<number, number> =>
+  (hero: OrderedMap<string, Record<ActivatableSkillDependent>>) => OrderedMap<Property, number> =>
     pipe (
       filter (pipe (ASDA.value, gte (10))),
-      foldl ((acc: OrderedMap<number, number>) => pipe (
+      foldl ((acc: OrderedMap<Property, number>) => pipe (
               ASDA.id,
               lookupF (wiki),
               maybe
@@ -183,7 +184,7 @@ export const isSpellDecreasable =
   (hero_entry: Record<ActivatableSkillDependent>): boolean =>
     isSpellDecreasableByDependencies (wiki) (state) (hero_entry)
     && isSpellDecreasableByPropertyKnowledges (wiki)
-                                              (HeroModel.AL.spells (state))
+                                              (HeroModel.A.spells (state))
                                               (propertyKnowledge)
                                               (wiki_entry)
                                               (hero_entry)
@@ -199,15 +200,15 @@ export const isUnfamiliarSpell:
     const mguild_mage_sel =
       pipe_ (
         trads,
-        find (pipe (ADA.id, equals (SpecialAbilityId.TraditionGuildMages))),
+        find (pipe (ADA.id, equals<string> (SpecialAbilityId.TraditionGuildMages))),
         bindF (pipe (ADA.active, listToMaybe)),
         bindF (AOA.sid)
       )
 
     const active_trad_num_ids =
-      cons (mapMaybe (pipe (ADA.id, getNumericMagicalTraditionIdByInstanceId, fmap (inc)))
+      cons (mapMaybe (pipe (ADA.id, mapMagicalTradIdToNumId))
                      (trads))
-           (1)
+           (MagicalTradition.General)
 
     const isNoTraditionActive = notP (intersecting (active_trad_num_ids))
 

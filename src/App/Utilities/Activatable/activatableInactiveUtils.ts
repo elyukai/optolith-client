@@ -15,7 +15,7 @@ import * as IntMap from "../../../Data/IntMap";
 import { over, set } from "../../../Data/Lens";
 import { consF, countWith, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, subscript } from "../../../Data/List";
 import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
-import { add, dec, gt, gte, inc, multiply } from "../../../Data/Num";
+import { add, gt, gte, inc, multiply } from "../../../Data/Num";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { Record, RecordI } from "../../../Data/Record";
 import { filterMapListT, filterT, mapT } from "../../../Data/Transducer";
@@ -43,7 +43,6 @@ import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { composeT } from "../compose";
 import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup } from "../heroStateUtils";
-import { getBlessedTradStrIdFromNumId } from "../IDUtils";
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
 import { isUnfamiliarSpell } from "../Increasable/spellUtils";
 import { pipe, pipe_ } from "../pipe";
@@ -57,7 +56,7 @@ import { getModifierByActiveLevel } from "./activatableModifierUtils";
 import { countActiveSkillEntries } from "./activatableSkillUtils";
 import { isMaybeActive } from "./isActive";
 import { getActiveSecondarySelections, getActiveSelectionsMaybe, getRequiredSelections } from "./selectionUtils";
-import { getBlessedTradition, getMagicalTraditionsHeroEntries } from "./traditionUtils";
+import { getBlessedTradition, getMagicalTraditionsHeroEntries, mapBlessedNumIdToTradId } from "./traditionUtils";
 
 const WA = WikiModel.A
 const HA = HeroModel.A
@@ -273,7 +272,8 @@ const modifySelectOptions =
                                       filterT (e =>
                                         // Socially Adaptable and Inspire Confidence
                                         // require no Incompetence in social skills
-                                        (isAdvActive ("ADV_40") || isAdvActive ("ADV_46")
+                                        (isAdvActive (AdvantageId.SociallyAdaptable)
+                                        || isAdvActive (AdvantageId.InspireConfidence)
                                           ? isNotSocialSkill (e)
                                           : true))
                                     )))
@@ -355,7 +355,12 @@ const modifySelectOptions =
 
       case SpecialAbilityId.PropertyFocus: {
         const isActivePropertyKnowledge =
-          filterT (notP (pipe_ (hero, HA.specialAbilities, lookup ("SA_72"), isNotActive)))
+          filterT (notP (pipe_ (
+                          hero,
+                          HA.specialAbilities,
+                          lookup<string> (SpecialAbilityId.PropertyKnowledge),
+                          isNotActive
+                        )))
 
         return fmap (filterMapListT (composeT (
                                       isNoRequiredOrActiveSelection,
@@ -376,8 +381,7 @@ const modifySelectOptions =
                                                 ensure (isNumber),
                                                 bindF (pipe (
                                                   getTraditionOfAspect,
-                                                  dec,
-                                                  getBlessedTradStrIdFromNumId
+                                                  mapBlessedNumIdToTradId
                                                 )),
                                                 Maybe.elem (AAL.id (blessed_trad))
                                               )),

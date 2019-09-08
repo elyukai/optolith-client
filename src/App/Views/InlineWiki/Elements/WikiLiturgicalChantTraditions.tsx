@@ -5,6 +5,7 @@ import { fromJust, fromMaybe, isNothing, Just, mapMaybe } from "../../../../Data
 import { dec } from "../../../../Data/Num";
 import { alter, insert, OrderedMap } from "../../../../Data/OrderedMap";
 import { Record, RecordIBase } from "../../../../Data/Record";
+import { Aspect, BlessedTradition } from "../../../Constants/Groups";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
 import { getAspectsOfTradition, getTraditionOfAspect } from "../../../Utilities/Increasable/liturgicalChantUtils";
@@ -13,8 +14,8 @@ import { sortStrings } from "../../../Utilities/sortBy";
 import { WikiProperty } from "../WikiProperty";
 
 interface Accessors<A extends RecordIBase<any>> {
-  aspects: (r: Record<A>) => List<number>
-  tradition: (r: Record<A>) => List<number>
+  aspects: (r: Record<A>) => List<Aspect>
+  tradition: (r: Record<A>) => List<BlessedTradition>
 }
 
 export interface WikiLiturgicalChantTraditionsProps<A extends RecordIBase<any>> {
@@ -39,7 +40,7 @@ export function WikiLiturgicalChantTraditions<A extends RecordIBase<any>>
   return pipe_ (
     x,
     acc.aspects,
-    foldr ((asp: number) => {
+    foldr ((asp: Aspect) => {
             const trad = getTraditionOfAspect (asp)
 
             return trad <= flength (tradition_strings)

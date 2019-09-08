@@ -39,7 +39,6 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, AllRequirementObjects, EntryWithCategory, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils";
-import { isBlessedTraditionId, isMagicalTraditionId } from "../IDUtils";
 import { ifElse } from "../ifElse";
 import { isOwnTradition } from "../Increasable/liturgicalChantUtils";
 import { pipe, pipe_ } from "../pipe";
@@ -52,7 +51,7 @@ import { countActiveSkillEntries } from "./activatableSkillUtils";
 import { isStyleValidToRemove } from "./ExtendedStyleUtils";
 import { isActive } from "./isActive";
 import { getActiveSelections } from "./selectionUtils";
-import { getBlessedTraditionFromWiki, getMagicalTraditionsHeroEntries } from "./traditionUtils";
+import { getBlessedTraditionFromWiki, getMagicalTraditionsHeroEntries, isBlessedTradId, isMagicalTradId } from "./traditionUtils";
 
 const hasRequiredMinimumLevel =
   (min_level: Maybe<number>) => (max_level: Maybe<number>): boolean =>
@@ -112,7 +111,7 @@ const isRemovalDisabledEntrySpecific =
       lookupF (WikiModel.AL.experienceLevels (wiki))
               (HeroModel.AL.experienceLevel (hero))
 
-    if (isMagicalTraditionId (AAL.id (wiki_entry))) {
+    if (isMagicalTradId (AAL.id (wiki_entry))) {
       // All active tradition entries
       const traditions =
         getMagicalTraditionsHeroEntries (HeroModel.AL.specialAbilities (hero))
@@ -125,7 +124,7 @@ const isRemovalDisabledEntrySpecific =
         || countActiveSkillEntries ("spells") (hero) > 0
         || size (HA.cantrips (hero)) > 0
     }
-    else if (isBlessedTraditionId (AAL.id (wiki_entry))) {
+    else if (isBlessedTradId (AAL.id (wiki_entry))) {
       // there must be no active liturgical chant or blessing
       return countActiveSkillEntries ("liturgicalChants") (hero) > 0
         || size (HA.blessings (hero)) > 0

@@ -6,6 +6,7 @@ import { bindF, ensure, fromMaybeR, guard, Just, Maybe, maybe, Nothing, or, then
 import { dec } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
+import { Property } from "../../Constants/Groups";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -104,7 +105,7 @@ const SCCA = {
           Just
         )
       : Nothing,
-  property: (x: Combined): number =>
+  property: (x: Combined): Property =>
     SpellWithRequirements.is (x)
       ? pipe_ (
           x,

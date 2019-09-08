@@ -1,6 +1,7 @@
 import { List } from "../../../Data/List";
 import { fromDefault, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
+import { BlessedTradition } from "../../Constants/Groups";
 import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
@@ -8,7 +9,7 @@ export interface Blessing {
   "@@name": "Blessing"
   id: string
   name: string
-  tradition: List<number>
+  tradition: List<BlessedTradition>
   category: Categories
   effect: string
   range: string

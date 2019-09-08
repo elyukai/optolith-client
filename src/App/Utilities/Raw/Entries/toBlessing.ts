@@ -1,10 +1,11 @@
 import { Nothing } from "../../../../Data/Maybe";
+import { BlessedTradition } from "../../../Constants/Groups";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { Blessing } from "../../../Models/Wiki/Blessing";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { modifyNegIntNoBreak } from "../rawConversionUtils";
-import { mensureMapNaturalList, mensureMapNonEmptyString } from "../validateMapValueUtils";
+import { mensureMapNonEmptyString, mensureMapNumEnumList } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
@@ -17,14 +18,18 @@ export const toBlessing =
       const checkL10nNonEmptyString =
         lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
-      const checkUnivNaturalNumberList =
-        lookupKeyValid (mensureMapNaturalList (",")) (TableType.Univ) (lookup_univ)
+      const checkBlessedTraditions =
+        lookupKeyValid (mensureMapNumEnumList ("BlessedTradition")
+                                              (BlessedTradition)
+                                              ("&"))
+                       (TableType.Univ)
+                       (lookup_univ)
 
       // Check and convert fields
 
       const ename = checkL10nNonEmptyString ("name")
 
-      const etraditions = checkUnivNaturalNumberList ("traditions")
+      const etraditions = checkBlessedTraditions ("traditions")
 
       const eeffect = checkL10nNonEmptyString ("effect")
 

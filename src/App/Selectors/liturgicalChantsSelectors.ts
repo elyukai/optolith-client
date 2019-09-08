@@ -5,13 +5,13 @@ import { fmap, fmapF, mapReplace } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { any, append, consF, elem, filter, flength, foldr, List, map, notElem, notNull, partition } from "../../Data/List";
 import { all, and, bind, bindF, ensure, fromMaybe_, guard, isJust, liftM2, liftM3, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
-import { inc, lt, lte } from "../../Data/Num";
+import { lt, lte } from "../../Data/Num";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { insert, member, OrderedSet } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
 import { fst, snd } from "../../Data/Tuple";
 import { uncurryN, uncurryN3, uncurryN4, uncurryN5, uncurryN6 } from "../../Data/Tuple/Curry";
-import { IC } from "../Constants/Groups";
+import { Aspect, IC } from "../Constants/Groups";
 import { AdvantageId, SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
@@ -24,11 +24,10 @@ import { LiturgicalChant, LiturgicalChantL } from "../Models/Wiki/LiturgicalChan
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { isMaybeActive } from "../Utilities/Activatable/isActive";
-import { getBlessedTradition } from "../Utilities/Activatable/traditionUtils";
+import { getBlessedTradition, mapBlessedTradIdToNumId } from "../Utilities/Activatable/traditionUtils";
 import { composeL } from "../Utilities/compose";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
-import { getNumericBlessedTraditionIdByInstanceId } from "../Utilities/IDUtils";
 import { getAspectsOfTradition, isLiturgicalChantDecreasable, isLiturgicalChantIncreasable, isOwnTradition } from "../Utilities/Increasable/liturgicalChantUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
@@ -79,7 +78,7 @@ export const getIsLiturgicalChantsTabAvailable = createMaybeSelector (
 
 export const getBlessedTraditionNumericId = createMaybeSelector (
   getBlessedTraditionFromState,
-  bindF (pipe (ADA.id, getNumericBlessedTraditionIdByInstanceId))
+  bindF (pipe (ADA.id, mapBlessedTradIdToNumId))
 )
 
 export const getActiveLiturgicalChants = createMaybeSelector (
@@ -155,7 +154,7 @@ const getInactiveBlessings = createMaybeSelector (
 export const getAvailableInactiveBlessings = createMaybeSelector (
   getBlessedTraditionNumericId,
   getInactiveBlessings,
-  uncurryN (liftM2 (id => filter (pipe (BCA_.tradition, any (equals (id + 1))))))
+  uncurryN (liftM2 (id => filter (pipe (BCA_.tradition, any (equals (id))))))
 )
 
 export const getActiveLiturgicalChantsCounter = createMaybeSelector (
@@ -415,9 +414,9 @@ export const getLiturgicalChantsForSheet = createMaybeSelector (
   getBlessedTraditionFromState,
   uncurryN3 (sort_options =>
              mchants => pipe (
-                         bindF (pipe (ADA.id, getNumericBlessedTraditionIdByInstanceId)),
-                         fmap (pipe (inc, getAspectsOfTradition)),
-                         liftM2 (flip ((available_aspects: List<number>) =>
+                         bindF (pipe (ADA.id, mapBlessedTradIdToNumId)),
+                         fmap (getAspectsOfTradition),
+                         liftM2 (flip ((available_aspects: List<Aspect>) =>
                                         map (over (composeL (LCWRL.wikiEntry, LCL.aspects))
                                                   (filter (flip (elem) (available_aspects))))))
                                 (mchants),

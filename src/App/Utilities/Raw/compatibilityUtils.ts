@@ -1,8 +1,10 @@
 import { lt, lte, satisfies } from "semver";
 import { ident } from "../../../Data/Function";
+import { fromMaybe } from "../../../Data/Maybe";
 import { StringKeyObject } from "../../../Data/Record";
 import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
 import { getBlessedTradStrIdFromNumId, getMagicalTraditionInstanceIdByNumericId } from "../IDUtils";
+import { hasOwnProperty } from "../Object";
 import { pipe_ } from "../pipe";
 import { isNumber } from "../typeCheckUtils";
 import { RawActiveObject, RawCustomItem, RawHero } from "./RawData";
@@ -512,16 +514,19 @@ const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
     "SA_501": { id: "SA_431" },
   }
 
-  const updateObjects = (list: RawActiveObject[], sid?: string | number, tier?: number) => {
-    return [...list].map (e => ({
+  const updateObjects = (list: RawActiveObject[], sid?: string | number, tier?: number) =>
+    [...list].map (e => ({
       ...e,
       sid: sid === undefined ? e.sid : sid,
-      tier: tier === undefined || typeof e.tier === "number" && e.tier > tier ? e.tier : tier,
+      tier: tier === undefined || (typeof e.tier === "number" && e.tier > tier) ? e.tier : tier,
     }))
-  }
 
   for (const [id, activeObjects] of Object.entries (entry.activatable)) {
-    if (convertIds[id] !== undefined) {
+    if (convertIds[id] === undefined) {
+      // @ts-ignore
+      newActivatable[id] = activeObjects
+    }
+    else {
       const { id: newId, sid, tier } = convertIds[id]
       // @ts-ignore
       newActivatable[newId] =
@@ -530,10 +535,6 @@ const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
           sid,
           tier
         )
-    }
-    else {
-      // @ts-ignore
-      newActivatable[id] = activeObjects
     }
   }
 
@@ -606,6 +607,8 @@ const convertLowerThanOrEqual0_51_0 = (hero: RawHero): RawHero => {
     case "R_12":
       entry.r = "R_4"
       break
+    default:
+      break
   }
 
   entry.rules = {
@@ -623,13 +626,14 @@ const convertLowerThanOrEqual0_51_0 = (hero: RawHero): RawHero => {
 const convertLowerThanOrEqual0_51_2 = (hero: RawHero): RawHero => {
   const entry = { ...hero }
 
-  if (entry.activatable.hasOwnProperty ("SA_243") && entry.activatable.hasOwnProperty ("SA_255")) {
+  if (hasOwnProperty ("SA_243") (entry.activatable)
+      && hasOwnProperty ("SA_255") (entry.activatable)) {
     const { SA_255: _, ...other } = entry.activatable
     entry.activatable = other
     // @ts-ignore
     entry.ap.spent -= 10
   }
-  else if (entry.activatable.hasOwnProperty ("SA_255")) {
+  else if (hasOwnProperty ("SA_255") (entry.activatable)) {
     const { SA_255: arr, ...other } = entry.activatable
     entry.activatable = {
       ...other,
@@ -646,14 +650,14 @@ const convertLowerThanOrEqual0_51_2 = (hero: RawHero): RawHero => {
 const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
   const entry = { ...hero }
 
-  if (entry.activatable.hasOwnProperty ("SA_344")) {
+  if (hasOwnProperty ("SA_344") (entry.activatable)) {
     entry.activatable = {
       ...entry.activatable,
       SA_344: [{ sid: "CT_3" }],
     }
   }
 
-  if (entry.activatable.hasOwnProperty ("SA_345")) {
+  if (hasOwnProperty ("SA_345") (entry.activatable)) {
     const { SA_344: arr, ...other } = entry.activatable
     if (Array.isArray (arr)) {
       entry.activatable = {
@@ -669,7 +673,7 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
     }
   }
 
-  if (entry.activatable.hasOwnProperty ("SA_346")) {
+  if (hasOwnProperty ("SA_346") (entry.activatable)) {
     const { SA_344: arr, ...other } = entry.activatable
     if (Array.isArray (arr)) {
       entry.activatable = {
@@ -685,7 +689,7 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
     }
   }
 
-  if (entry.activatable.hasOwnProperty ("SA_70")) {
+  if (hasOwnProperty ("SA_70") (entry.activatable)) {
     const { SA_70: arr, ...other } = entry.activatable
     entry.activatable = other
     for (const active of arr) {
@@ -696,7 +700,7 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
     }
   }
 
-  if (entry.activatable.hasOwnProperty ("SA_86")) {
+  if (hasOwnProperty ("SA_86") (entry.activatable)) {
     const { SA_86: arr, ...other } = entry.activatable
     entry.activatable = other
     for (const active of arr) {
@@ -707,7 +711,7 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
     }
   }
 
-  if (entry.activatable.hasOwnProperty ("DISADV_34")) {
+  if (hasOwnProperty ("DISADV_34") (entry.activatable)) {
     entry.activatable = {
       ...entry.activatable,
       DISADV_34: entry.activatable.DISADV_34.map (e => {
@@ -732,9 +736,9 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
             return { sid: 1, tier: 3 }
           case 14:
             return { sid: 12, tier: 3 }
+          default:
+            return e
         }
-
-        return e
       }),
     }
   }
@@ -749,7 +753,7 @@ const convertLowerThan1_0_0 = (hero: RawHero): RawHero => {
   const entry = { ...hero }
 
   if (
-    entry.activatable.hasOwnProperty ("DISADV_45")
+    hasOwnProperty ("DISADV_45") (entry.activatable)
     && entry.activatable.DISADV_45.some (e => e.sid === 1)
   ) {
     entry.pers.haircolor = 24
@@ -796,8 +800,8 @@ const convertLowerThan1_0_2 = (hero: RawHero): RawHero => {
 }
 
 // tslint:disable-next-line:variable-name
-const convertLowerThan1_1_0_Alpha_1 = (hero: RawHero): RawHero => {
-  return {
+const convertLowerThan1_1_0_Alpha_1 = (hero: RawHero): RawHero =>
+  ({
     ...hero,
     attr: {
       ...hero.attr,
@@ -823,8 +827,7 @@ const convertLowerThan1_1_0_Alpha_1 = (hero: RawHero): RawHero => {
     },
     // ct: Object.entries (hero.ct)
     //   .reduce<StringKeyObject<number>> ((acc, e) => ({ ...acc, [e[0]]: e[1] - 6 }), {}),
-  }
-}
+  })
 
 export const convertHero =
   (l10n: L10nRecord) =>
@@ -836,13 +839,13 @@ export const convertHero =
     }
 
     if (
-      lte (entry.clientVersion.split (/-/)[0], "0.51.0")
+      lte (entry.clientVersion.split (/-/u)[0], "0.51.0")
       || entry.clientVersion === "0.51.1-alpha.1"
     ) {
       entry = convertLowerThanOrEqual0_51_0 (entry)
     }
 
-    if (satisfies (entry.clientVersion.split (/-/)[0], "<= 0.51.2 || <= 0.51.3-alpha.3")) {
+    if (satisfies (entry.clientVersion.split (/-/u)[0], "<= 0.51.2 || <= 0.51.3-alpha.3")) {
       entry = convertLowerThanOrEqual0_51_2 (entry)
     }
 
@@ -885,18 +888,18 @@ export const convertHero =
                   },
                 })),
       convertLT ("1.1.0-alpha.18")
-                (hero => hero.activatable.DISADV_48 !== undefined
-                  ? ({
+                (hero => hero.activatable.DISADV_48 === undefined
+                  ? hero
+                  : ({
                       ...hero,
                       activatable: {
                         ...hero.activatable,
                         DISADV_48:
                           hero.activatable.DISADV_48
                             .filter (activeObj => typeof activeObj .sid === "string"
-                                                  && /^TAL_/ .test (activeObj .sid)),
+                                                  && /^TAL_/u .test (activeObj .sid)),
                       },
-                    })
-                  : hero),
+                    })),
       convertLT ("1.1.0-alpha.20")
                 (hero => {
                   let activatable = { ...hero.activatable }
@@ -914,9 +917,9 @@ export const convertHero =
                     if (activatable [id] !== undefined && activatable [id] .length === 1) {
                       activatable = {
                         ...activatable,
-                        [base]: activatable [base] !== undefined
-                          ? [...activatable [base], { sid }]
-                          : [{ sid }],
+                        [base]: activatable [base] === undefined
+                          ? [{ sid }]
+                          : [...activatable [base], { sid }],
                       }
                     }
                   }

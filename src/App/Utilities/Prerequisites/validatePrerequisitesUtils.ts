@@ -23,8 +23,8 @@ import { Culture } from "../../Models/Wiki/Culture";
 import { RequireActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement, isCultureRequirement } from "../../Models/Wiki/prerequisites/CultureRequirement";
 import { RequireIncreasable, RequireIncreasableL } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { isPactRequirement, PactRequirement } from "../../Models/Wiki/prerequisites/PactRequirement";
-import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
+import { PactRequirement } from "../../Models/Wiki/prerequisites/PactRequirement";
+import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
 import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
 import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement";
 import { Profession } from "../../Models/Wiki/Profession";
@@ -373,15 +373,15 @@ export const validateObject =
   (sourceId: string): boolean =>
     req === "RCP"
       ? isRCPValid (wiki) (hero) (sourceId)
-      : isSexRequirement (req)
+      : SexRequirement.is (req)
       ? isSexValid (sex (hero)) (req)
       : RaceRequirement.is (req)
       ? or (fmapF (race (hero)) (flip (isRaceValid) (req)))
-      : isCultureRequirement (req)
+      : CultureRequirement.is (req)
       ? or (fmapF (culture (hero)) (flip (isCultureValid) (req)))
-      : isPactRequirement (req)
+      : PactRequirement.is (req)
       ? isPactValid (pact (hero)) (req)
-      : isPrimaryAttributeRequirement (req)
+      : RequirePrimaryAttribute.is (req)
       ? isPrimaryAttributeValid (hero) (req)
       : RequireIncreasable.is (req)
       ? isIncreasableValid (wiki) (hero) (sourceId) (req) (validateObject)

@@ -67,6 +67,8 @@ export enum AdvantageId {
   ImmunityToDisease = "ADV_29",
   MagicalAttunement = "ADV_32",
   Rich = "ADV_36",
+  SociallyAdaptable = "ADV_40",
+  InspireConfidence = "ADV_46",
   WeaponAptitude = "ADV_47",
   Spellcaster = "ADV_50",
   // Eisern

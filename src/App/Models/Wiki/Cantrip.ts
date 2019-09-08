@@ -2,6 +2,7 @@ import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
+import { Property } from "../../Constants/Groups";
 import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
@@ -9,7 +10,7 @@ export interface Cantrip {
   "@@name": "Cantrip"
   id: string
   name: string
-  property: number
+  property: Property
   tradition: List<number>
   category: Categories
   effect: string
@@ -25,7 +26,7 @@ export const Cantrip =
               <Cantrip> ({
                 id: "",
                 name: "",
-                property: 0,
+                property: Property.AntiMagic,
                 tradition: List.empty,
                 category: Categories.CANTRIPS,
                 effect: "",
