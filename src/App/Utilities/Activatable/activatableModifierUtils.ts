@@ -1,5 +1,5 @@
 import { fmap } from "../../../Data/Functor";
-import { List } from "../../../Data/List";
+import { countWith, List } from "../../../Data/List";
 import { bind, bindF, fromJust, isJust, listToMaybe, Maybe, maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -66,5 +66,21 @@ export const getModifierByIsActive =
     return maybe (0)
                  ((baseMod: number) =>
                    hasIncrease ? baseMod + 1 : hasDecrease ? baseMod - 1 : baseMod)
+                 (mbase_mod)
+  }
+
+/**
+ * `getModifierByActiveLevels mbase_mod mincreases mdecreases` adjusts the given
+ * base `mbase_mod`.
+ */
+export const getModifierByIsActives =
+  (mbase_mod: Maybe<number>) =>
+  (mincreases: List<Maybe<Record<ActivatableDependent>>>) =>
+  (mdecreases: List<Maybe<Record<ActivatableDependent>>>): number => {
+    const incs = countWith (isMaybeActive) (mincreases)
+    const decs = countWith (isMaybeActive) (mdecreases)
+
+    return maybe (0)
+                 ((baseMod: number) => baseMod + incs - decs)
                  (mbase_mod)
   }

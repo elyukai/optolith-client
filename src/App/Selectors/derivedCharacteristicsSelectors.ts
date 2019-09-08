@@ -18,7 +18,7 @@ import { Rules } from "../Models/Hero/Rules";
 import { AttributeCombined } from "../Models/View/AttributeCombined";
 import { DerivedCharacteristic } from "../Models/View/DerivedCharacteristic";
 import { Race } from "../Models/Wiki/Race";
-import { getModifierByActiveLevel, getModifierByIsActive } from "../Utilities/Activatable/activatableModifierUtils";
+import { getModifierByActiveLevel, getModifierByIsActive, getModifierByIsActives } from "../Utilities/Activatable/activatableModifierUtils";
 import { getActiveSelections } from "../Utilities/Activatable/selectionUtils";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { translate } from "../Utilities/I18n";
@@ -329,8 +329,9 @@ export const getMOV = createMaybeSelector (
   mapGetToMaybeSlice (getAdvantages) (AdvantageId.Nimble),
   mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.Maimed),
   mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.Slow),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.LeichterGang),
   getLocaleAsProp,
-  (mrace, mnimble, mmaimed, mslow, l10n) => {
+  (mrace, mnimble, mmaimed, mslow, mleichter_gang, l10n) => {
     const mbase = fmapF (mrace)
                         (pipe (
                           Race.A.mov,
@@ -344,7 +345,7 @@ export const getMOV = createMaybeSelector (
                             : base
                         ))
 
-    const mod = getModifierByIsActive (Just (0)) (mnimble) (mslow)
+    const mod = getModifierByIsActives (Just (0)) (List (mnimble)) (List (mslow, mleichter_gang))
 
     const value = fmapF (mbase) (add (mod))
 
