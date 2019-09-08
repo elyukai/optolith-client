@@ -7,7 +7,7 @@ import * as fs from "fs";
 import { extname, join } from "path";
 import { tryIO } from "../../Control/Exception";
 import { and } from "../../Data/Bool";
-import { Either, eitherToMaybe, fromLeft, fromLeft_, fromRight_, isLeft, isRight, second } from "../../Data/Either";
+import { bimap, Either, eitherToMaybe, fromLeft, fromLeft_, fromRight_, isLeft, isRight } from "../../Data/Either";
 import { cnst, flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
@@ -37,7 +37,7 @@ import { getNewIdByDate, prefixId } from "../Utilities/IDUtils";
 import { bytify, getSystemLocale, NothingIO, showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { convertHeroesForSave, convertHeroForSave } from "../Utilities/Raw/convertHeroForSave";
-import { parseTables } from "../Utilities/Raw/parseTable";
+import { parseTables, TableParseRes } from "../Utilities/Raw/parseTable";
 import { RawConfig, RawHero, RawHerolist } from "../Utilities/Raw/RawData";
 import { isBase64Image } from "../Utilities/RegexUtils";
 import { UndoState } from "../Utilities/undo";
@@ -47,28 +47,6 @@ import { addAlert } from "./AlertActions";
 import { updateDateModified } from "./HerolistActions";
 
 // const getInstalledResourcesPath = (): string => remote.app.getAppPath ()
-
-const loadDatabase =
-  (locale: string): ReduxAction<Either<string, Pair<Record<L10n>, Record<WikiModel>>>> =>
-    dispatch => {
-      console.log ("Parsing tables ...")
-
-      const res = parseTables (locale)
-
-      if (isLeft (res)) {
-        console.error (`Table parse error: ${fromLeft_ (res)}`)
-
-        dispatch (addAlert ({
-          message: fromLeft_ (res),
-          title: "Error",
-        }))
-      }
-      else {
-        console.log ("Tables parsed")
-      }
-
-      return res
-    }
 
 const loadConfig = () =>
   pipe_ (
@@ -165,24 +143,31 @@ export const getInitialData: ReduxAction<IO<Either<string, InitialData>>> =
       IO.thenF (IO.liftM3 ((mconfig: Maybe<RawConfig>) =>
                            (mheroes: Maybe<StringKeyObject<RawHero>>) =>
                            (mcache: Maybe<OrderedMap<string, APCache>>) =>
-                            second ((tables: Pair<Record<L10n>, Record<WikiModel>>):
-                                    InitialData =>
-                                      ({
-                                        tables,
-                                        heroes: mheroes,
-                                        defaultLocale,
-                                        config: mconfig,
-                                        cache: mcache,
-                                      }))
-                                   (dispatch (
-                                     loadDatabase (
-                                       fromMaybe (defaultLocale)
-                                                 (bind (mconfig) (c => Maybe (c.locale)))
-                                     )
-                                   )))
+                             fmapF (parseTables (fromMaybe (defaultLocale)
+                                                           (bind (mconfig)
+                                                                 (c => Maybe (c.locale)))))
+                                   (bimap ((msg: string) => {
+                                            console.error (`Table parse error: ${msg}`)
+
+                                            dispatch (addAlert ({
+                                              message: msg,
+                                              title: "Error",
+                                            }))
+
+                                            return msg
+                                          })
+                                          ((tables: TableParseRes): InitialData =>
+                                             ({
+                                               tables,
+                                               heroes: mheroes,
+                                               defaultLocale,
+                                               config: mconfig,
+                                               cache: mcache,
+                                             }))))
                           (loadConfig ())
                           (loadHeroes ())
-                          (readCache))
+                          (readCache)),
+      IO.join
     )
   }
 
@@ -375,44 +360,43 @@ export const requestHeroSave =
 export const requestHeroDeletion =
   (l10n: L10nRecord) =>
   (id: string): ReduxAction<IO<boolean>> =>
-    dispatch => {
-      return IO.bind (loadHeroes ())
-                     (msaved_heroes =>
-                       pipe_ (
-                         join (user_data_path, "heroes.json"),
-                         flip (writeFile) (JSON.stringify (
-                                             maybe<RawHerolist> ({})
-                                                                ((savedHeroes: RawHerolist) => {
-                                                                  const {
-                                                                    [id]: _,
-                                                                    ...other
-                                                                  } = savedHeroes
+    dispatch =>
+      IO.bind (loadHeroes ())
+              (msaved_heroes =>
+                pipe_ (
+                  join (user_data_path, "heroes.json"),
+                  flip (writeFile) (JSON.stringify (
+                                      maybe<RawHerolist> ({})
+                                                         ((savedHeroes: RawHerolist) => {
+                                                           const {
+                                                             [id]: _,
+                                                             ...other
+                                                           } = savedHeroes
 
-                                                                  return other
-                                                                })
-                                                                (msaved_heroes))),
-                         tryIO,
-                         fmap (res => {
-                           if (isLeft (res)) {
-                             dispatch (addAlert ({
-                               message: `${
-                                 translate (l10n) ("saveheroeserror")
-                               } (${
-                                 translate (l10n) ("errorcode")
-                               }: ${
-                                 JSON.stringify (fromLeft_ (res))
-                               })`,
-                               title: translate (l10n) ("error"),
-                             }))
+                                                           return other
+                                                         })
+                                                         (msaved_heroes)
+                                   )),
+                  tryIO,
+                  fmap (res => {
+                    if (isLeft (res)) {
+                      dispatch (addAlert ({
+                        message: `${
+                          translate (l10n) ("saveheroeserror")
+                        } (${
+                          translate (l10n) ("errorcode")
+                        }: ${
+                          JSON.stringify (fromLeft_ (res))
+                        })`,
+                        title: translate (l10n) ("error"),
+                      }))
 
-                             return false
-                           }
+                      return false
+                    }
 
-                           return true
-                         })
-                       ))
-
-    }
+                    return true
+                  })
+                ))
 
 const convertImageToBase64 =
   (url: Maybe<string>): Maybe<string> => {
@@ -420,7 +404,7 @@ const convertImageToBase64 =
       const just_url = fromJust (url)
 
       if (just_url.length > 0 && !isBase64Image (just_url)) {
-        const preparedUrl = just_url .replace (/file:[\\\/]+/, "")
+        const preparedUrl = just_url .replace (/file:[\\/]+/u, "")
 
         if (fs.existsSync (preparedUrl)) {
           const prefix = `data:image/${extname (just_url).slice (1)}base64,`
@@ -465,7 +449,7 @@ export const requestHeroExport =
           filters: [
             { name: "JSON", extensions: ["json"] },
           ],
-          defaultPath: hero.name.replace (/\//, "\/"),
+          defaultPath: hero.name.replace (/\//u, "/"),
         }),
         IO.bindF (maybe (IO.pure<void> (undefined))
                         (flip (writeFile) (JSON.stringify (hero)))),
@@ -504,8 +488,8 @@ export interface ReceiveImportedHeroAction {
 
 export const loadImportedHero =
   (l10n: L10nRecord): ReduxAction<IO<Maybe<RawHero>>> =>
-  dispatch => {
-    return pipe_ (
+  dispatch =>
+    pipe_ (
       showOpenDialog ({ filters: [{ name: "JSON", extensions: ["json"] }] }),
       IO.bindF (pipe (
         listToMaybe,
@@ -532,7 +516,6 @@ export const loadImportedHero =
         return Nothing
       }))
     )
-  }
 
 export const requestHeroImport =
   (l10n: L10nRecord): ReduxAction =>
@@ -548,7 +531,7 @@ export const receiveHeroImport = (raw: RawHero): ReceiveImportedHeroAction => {
     id: newId,
     avatar: avatar !== undefined
       && avatar.length > 0
-      && (isBase64Image (avatar) || fs.existsSync (avatar.replace (/file:[\\\/]+/, "")))
+      && (isBase64Image (avatar) || fs.existsSync (avatar.replace (/file:[\\/]+/u, "")))
       ? avatar
       : undefined,
   }

@@ -22,11 +22,6 @@ export const prefixId = (prefix: IdPrefixes) => (id: number | string) => `${pref
 export const prefixRace = prefixId (IdPrefixes.RACES)
 
 /**
- * Create a culture id.
- */
-export const prefixC = prefixId (IdPrefixes.CULTURES)
-
-/**
  * Create a profession id.
  */
 export const prefixProf = prefixId (IdPrefixes.PROFESSIONS)
@@ -35,21 +30,6 @@ export const prefixProf = prefixId (IdPrefixes.PROFESSIONS)
  * Create an attribute id.
  */
 export const prefixAttr = prefixId (IdPrefixes.ATTRIBUTES)
-
-/**
- * Create an advantage id.
- */
-export const prefixAdv = prefixId (IdPrefixes.ADVANTAGES)
-
-/**
- * Create a disadvantage id.
- */
-export const prefixDis = prefixId (IdPrefixes.DISADVANTAGES)
-
-/**
- * Create a special ability id.
- */
-export const prefixSA = prefixId (IdPrefixes.SPECIAL_ABILITIES)
 
 /**
  * Create a skill id.

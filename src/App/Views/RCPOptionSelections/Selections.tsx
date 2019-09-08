@@ -10,6 +10,7 @@ import { adjust, alter, lookup, lookupF, OrderedMap, size } from "../../../Data/
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
 import { first, fst, Pair, second, snd } from "../../../Data/Tuple";
+import { ProfessionId } from "../../Constants/Ids";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Selections as SelectionsInterface } from "../../Models/Hero/heroTypeHelpers";
 import { Rules } from "../../Models/Hero/Rules";
@@ -24,7 +25,6 @@ import { Skill } from "../../Models/Wiki/Skill";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers";
 import { translate } from "../../Utilities/I18n";
-import { prefixProf } from "../../Utilities/IDUtils";
 import { getAllAdjustmentSelections } from "../../Utilities/mergeRcpAdjustmentSelections";
 import { sign } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
@@ -414,7 +414,11 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                                                     (isAnyLanguageOrScriptSelected)
                                                     (isBuyingMainScriptEnabled)
                                                     (this.setMainCulturalLiteracy)}
-                     {pipe_ (profession, Profession.A.id, notEquals (prefixProf (0)))
+                     {pipe_ (
+                       profession,
+                       Profession.A.id,
+                       notEquals<string> (ProfessionId.CustomProfession)
+                     )
                        ? <h3>{translate (l10n) ("profession")}</h3>
                        : null}
                      {maybeToNullable (skillSpecialization)}

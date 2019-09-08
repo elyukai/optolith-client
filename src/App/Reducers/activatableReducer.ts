@@ -7,6 +7,7 @@ import { fst, snd } from "../../Data/Tuple";
 import * as DisAdvActions from "../Actions/DisAdvActions";
 import * as SpecialAbilitiesActions from "../Actions/SpecialAbilitiesActions";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
 import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType";
 import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions";
@@ -16,7 +17,6 @@ import { SkillDependentL } from "../Models/ActiveEntries/SkillDependent";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { activate, deactivate, setLevel } from "../Utilities/Activatable/activatableActivationUtils";
 import { addAllStyleRelatedDependencies, removeAllStyleRelatedDependencies } from "../Utilities/Activatable/ExtendedStyleUtils";
-import { prefixCT, prefixSA } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 
 type Action = DisAdvActions.ActivateDisAdvAction
@@ -62,10 +62,10 @@ export const activatableReducer =
           deactivate (pipe_ (action.payload, fst, ADOA.index))
                      (pipe_ (action.payload, snd, fst))
                      (pipe_ (action.payload, snd, snd)),
-          pipe_ (action.payload, fst, ADOA.id) === prefixSA (109)
+          pipe_ (action.payload, fst, ADOA.id) === SpecialAbilityId.Feuerschlucker
             ? over (HeroModelL.combatTechniques)
                    (adjust (set (SkillDependentL.value) (6))
-                           (prefixCT (17)))
+                           (CombatTechniqueId.Feuerspeien as string))
             : ident
         )
       }
@@ -90,7 +90,7 @@ export const activatableReducer =
                                   (modifyAt (0)
                                             (set (ActiveObjectL.sid)
                                                  (Just (action.payload.id)))))
-                            (prefixSA (70)))
+                            (SpecialAbilityId.TraditionGuildMages as string))
       }
 
       default:

@@ -2,8 +2,8 @@ import { List } from "../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
+import { ProfessionId } from "../../Constants/Ids";
 import { translate } from "../../Utilities/I18n";
-import { prefixProf } from "../../Utilities/IDUtils";
 import { L10nRecord } from "./L10n";
 import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement";
 import { ProfessionSelections } from "./professionSelections/ProfessionAdjustmentSelections";
@@ -93,7 +93,7 @@ export const isProfession =
 export const getCustomProfession =
   (l10n: L10nRecord) =>
     Profession ({
-      id: prefixProf (0),
+      id: ProfessionId.CustomProfession,
       name: translate (l10n) ("ownprofession"),
       subname: Nothing,
       ap: Just (0),

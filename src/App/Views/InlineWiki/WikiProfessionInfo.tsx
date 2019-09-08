@@ -10,6 +10,7 @@ import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/
 import { fromDefault, Record } from "../../../Data/Record";
 import { show } from "../../../Data/Show";
 import { fst, isTuple, Pair, snd } from "../../../Data/Tuple";
+import { SpecialAbilityId } from "../../Constants/Ids";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ActivatableNameCostIsActive, ActivatableNameCostIsActiveA_ } from "../../Models/View/ActivatableNameCostIsActive";
 import { IncreasableForView } from "../../Models/View/IncreasableForView";
@@ -47,7 +48,7 @@ import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers";
 import { getSelectOptionName } from "../../Utilities/Activatable/selectionUtils";
 import { ndash } from "../../Utilities/Chars";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
-import { getNumericId, prefixRace, prefixSA } from "../../Utilities/IDUtils";
+import { getNumericId, prefixRace } from "../../Utilities/IDUtils";
 import { signNeg } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils";
@@ -523,7 +524,7 @@ const getTerrainKnowledgeSelection =
                  localizeOrList (l10n),
                  xs => `${SpecialAbility.A.name (terrain_knowledge)} (${xs})`
                ))
-             (lookup (prefixSA (12)) (specialAbilities))
+             (lookup<string> (SpecialAbilityId.TerrainKnowledge) (specialAbilities))
     )
 
 const getSpells =

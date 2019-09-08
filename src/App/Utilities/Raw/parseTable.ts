@@ -1,6 +1,7 @@
 import * as path from "path";
 import * as xlsx from "xlsx";
-import { bind, bindF, Either, first, fromRight_, isLeft, Left, mapM, maybeToEither } from "../../../Data/Either";
+import { tryIO } from "../../../Control/Exception";
+import { bind, bindF, Either, first, fromRight_, isLeft, join, mapM, maybeToEither } from "../../../Data/Either";
 import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
@@ -12,7 +13,10 @@ import { adjust, elems, fromList, insert, lookupF, mapMEitherWithKey, OrderedMap
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { makeLenses, member, Record, RecordIBase } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
+import { trace, traceId } from "../../../Debug/Trace";
+import { IO } from "../../../System/IO";
 import { Categories } from "../../Constants/Categories";
+import { ProfessionId, SpecialAbilityId } from "../../Constants/Ids";
 import { AdvantageL } from "../../Models/Wiki/Advantage";
 import { Book } from "../../Models/Wiki/Book";
 import { DisadvantageL } from "../../Models/Wiki/Disadvantage";
@@ -25,7 +29,6 @@ import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelL, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, Skillish } from "../../Models/Wiki/wikiTypeHelpers";
 import { app_path } from "../../Selectors/envSelectors";
-import { prefixProf } from "../IDUtils";
 import { pipe, pipe_ } from "../pipe";
 import { getWikiSliceGetterByCategory } from "../WikiUtils";
 import { CsvColumnDelimiter, csvToList } from "./csvToList";
@@ -129,7 +132,10 @@ const matchSelectOptionsToBaseRecords =
     <A extends Activatable>
     (initial: OrderedMap<string, A>) => OrderedMap<string, A>
 
-const matchExtensionsToBaseRecord =
+const matchExtensionsToBaseRecord: (extensions: List<Record<SelectOption>>) =>
+                                   (key: string) =>
+                                   (mp: OrderedMap<string, Record<SpecialAbility>>) =>
+                                   OrderedMap<string, Record<SpecialAbility>> =
   (extensions: List<Record<SelectOption>>) =>
     adjust (set (select) (Just (extensions)))
 
@@ -144,31 +150,46 @@ const wrapCsvErr =
 const wrapUnivCsvErr = wrapCsvErr ("univ")
 const wrapL10nCsvErr = (locale: string) => wrapCsvErr (`${locale}/l10n`)
 
+const readXLSX =
+  (pathToFile: string) => IO (async () => {
+                                try {
+                                  const work_book = xlsx.readFile (univ_path)
+
+                                  return Promise.resolve (work_book)
+                                }
+                                catch (e) {
+                                  console.error (e)
+
+                                  return Promise.reject (
+                                    new Error (`readXLSX: XLSX file not found at ${pathToFile}.`)
+                                  )
+                                }
+                              })
+
+export type TableParseRes = Pair<L10nRecord, WikiModelRecord>
+
 export const parseTables =
-  (locale: string): Either<string, Pair<L10nRecord, WikiModelRecord>> => {
-    let univ_wb
-    let l10n_wb
+  (locale: string): IO<Either<string, TableParseRes>> => {
+    traceId ("Parsing tables...")
 
     const l10n_path = path.join (app_path, "app", "Database", locale, "l10n.xlsx")
 
-    try {
-      univ_wb = xlsx.readFile (univ_path)
-    }
-    catch (e) {
-      console.error (e)
+    return pipe_ (
+      IO.liftM2 (parseWorkbooks (locale))
+                (readXLSX (univ_path))
+                (readXLSX (l10n_path)),
+      tryIO,
+      fmap (pipe (
+        first (e => e.message),
+        join
+      ))
+    )
+  }
 
-      return Left (`univ.xlsx not found at ${univ_path}.`)
-    }
-
-    try {
-      l10n_wb = xlsx.readFile (l10n_path)
-    }
-    catch (e) {
-      console.error (e)
-
-      return Left (`l10n.xlsx not found at ${l10n_path}.`)
-    }
-
+const parseWorkbooks =
+  (locale: string) =>
+  (univ_wb: xlsx.WorkBook) =>
+  (l10n_wb: xlsx.WorkBook): Either<string, Pair<L10nRecord, WikiModelRecord>> => {
     const euniv_map =
       mapMEitherWithKey ((k: string) => pipe (csvToList, first (wrapUnivCsvErr (k))))
                         (workbookToMap (univ_wb))
@@ -190,7 +211,8 @@ export const parseTables =
         pipe_ (
           sheet,
           lookupF (fromRight_ (euniv_map)),
-          maybeToEither (`univ.xlsx: "${sheet}" sheet not found.`))
+          maybeToEither (`univ.xlsx: "${sheet}" sheet not found.`)
+        )
 
     const lookup_l10n =
       (sheet: string) =>
@@ -287,105 +309,115 @@ export const parseTables =
         specialAbilitySelectOptions,
         itemTemplates,
       })
-      (rs => Pair (
-        rs.l10n,
-        pipe_ (
-          WikiModel ({
-            books: rs.books,
-            experienceLevels: rs.experienceLevels,
-            races: rs.races,
-            raceVariants: rs.raceVariants,
-            cultures: rs.cultures,
-            professions: rs.professions,
-            professionVariants: rs.professionVariants,
-            attributes: rs.attributes,
-            advantages: rs.advantages,
-            disadvantages: rs.disadvantages,
-            specialAbilities: rs.specialAbilities,
-            skills: rs.skills,
-            combatTechniques: rs.combatTechniques,
-            spells: rs.spells,
-            cantrips: rs.cantrips,
-            liturgicalChants: rs.liturgicalChants,
-            blessings: rs.blessings,
-            itemTemplates: rs.itemTemplates,
-          }),
-          over (WikiModelL.professions)
-               (insert (prefixProf (0)) (getCustomProfession (rs.l10n))),
-          w => over (WikiModelL.advantages)
-                    (pipe (
-                      OrderedMap.map (over (AdvantageL.select)
-                                           (fmap (mapCatToSelectOptions (w)))),
-                      matchSelectOptionsToBaseRecords (rs.advantageSelectOptions)
-                    ))
-                    (w),
-          w => over (WikiModelL.disadvantages)
-                    (pipe (
-                      OrderedMap.map (over (DisadvantageL.select)
-                                           (fmap (mapCatToSelectOptions (w)))),
-                      matchSelectOptionsToBaseRecords (rs.disadvantageSelectOptions)
-                    ))
-                    (w),
-          w => {
-            const knowledge_skills =
-              mapMaybe (pipe (
-                         ensure (pipe (Skill.A.gr, equals (4))),
-                         fmap (x => SelectOption ({
-                                      id: Skill.A.id (x),
-                                      name: Skill.A.name (x),
-                                      cost: Just (Skill.A.ic (x)),
-                                      src: Skill.A.src (x),
-                                    }))
-                       ))
-                       (elems (WikiModel.A.skills (w)))
+      (rs =>
+        trace ("Tables parsed")
+              (Pair (
+                rs.l10n,
+                pipe_ (
+                  WikiModel ({
+                    books: rs.books,
+                    experienceLevels: rs.experienceLevels,
+                    races: rs.races,
+                    raceVariants: rs.raceVariants,
+                    cultures: rs.cultures,
+                    professions: rs.professions,
+                    professionVariants: rs.professionVariants,
+                    attributes: rs.attributes,
+                    advantages: rs.advantages,
+                    disadvantages: rs.disadvantages,
+                    specialAbilities: rs.specialAbilities,
+                    skills: rs.skills,
+                    combatTechniques: rs.combatTechniques,
+                    spells: rs.spells,
+                    cantrips: rs.cantrips,
+                    liturgicalChants: rs.liturgicalChants,
+                    blessings: rs.blessings,
+                    itemTemplates: rs.itemTemplates,
+                  }),
+                  over (WikiModelL.professions)
+                      (insert<string> (ProfessionId.CustomProfession)
+                                      (getCustomProfession (rs.l10n))),
+                  w => over (WikiModelL.advantages)
+                            (pipe (
+                              OrderedMap.map (over (AdvantageL.select)
+                                                  (fmap (mapCatToSelectOptions (w)))),
+                              matchSelectOptionsToBaseRecords (rs.advantageSelectOptions)
+                            ))
+                            (w),
+                  w => over (WikiModelL.disadvantages)
+                            (pipe (
+                              OrderedMap.map (over (DisadvantageL.select)
+                                                  (fmap (mapCatToSelectOptions (w)))),
+                              matchSelectOptionsToBaseRecords (rs.disadvantageSelectOptions)
+                            ))
+                            (w),
+                  w => {
+                    const knowledge_skills =
+                      mapMaybe (pipe (
+                                ensure (pipe (Skill.A.gr, equals (4))),
+                                fmap (x => SelectOption ({
+                                              id: Skill.A.id (x),
+                                              name: Skill.A.name (x),
+                                              cost: Just (Skill.A.ic (x)),
+                                              src: Skill.A.src (x),
+                                            }))
+                              ))
+                              (elems (WikiModel.A.skills (w)))
 
-            const skills_with_apps =
-              map ((x: Record<Skill>) => SelectOption ({
-                                           id: Skill.A.id (x),
-                                           name: Skill.A.name (x),
-                                           cost: Just (Skill.A.ic (x)),
-                                           applications: Just (Skill.A.applications (x)),
-                                           applicationInput: Skill.A.applicationsInput (x),
-                                           src: Skill.A.src (x),
-                                         }))
-                  (elems (WikiModel.A.skills (w)))
+                    const skills_with_apps =
+                      map ((x: Record<Skill>) => SelectOption ({
+                                                  id: Skill.A.id (x),
+                                                  name: Skill.A.name (x),
+                                                  cost: Just (Skill.A.ic (x)),
+                                                  applications: Just (Skill.A.applications (x)),
+                                                  applicationInput: Skill.A.applicationsInput (x),
+                                                  src: Skill.A.src (x),
+                                                }))
+                          (elems (WikiModel.A.skills (w)))
 
-            return over (WikiModelL.specialAbilities)
-                        (pipe (
-                          OrderedMap.map (x => {
-                            switch (SpecialAbility.A.id (x)) {
-                              case "SA_472":
-                              case "SA_473":
-                              case "SA_531":
-                              case "SA_533": {
-                                return set (SpecialAbilityL.select) (Just (knowledge_skills)) (x)
-                              }
+                    return over (WikiModelL.specialAbilities)
+                                (pipe (
+                                  OrderedMap.map (x => {
+                                    switch (SpecialAbility.A.id (x)) {
+                                      case SpecialAbilityId.Forschungsgebiet:
+                                      case SpecialAbilityId.Expertenwissen:
+                                      case SpecialAbilityId.Wissensdurst:
+                                      case SpecialAbilityId.Recherchegespuer: {
+                                        return set (SpecialAbilityL.select)
+                                                   (Just (knowledge_skills))
+                                                   (x)
+                                      }
 
-                              case "SA_9": {
-                                return set (SpecialAbilityL.select) (Just (skills_with_apps)) (x)
-                              }
+                                      case SpecialAbilityId.SkillSpecialization: {
+                                        return set (SpecialAbilityL.select)
+                                                   (Just (skills_with_apps))
+                                                   (x)
+                                      }
 
-                              case "SA_70": {
-                                return over (SpecialAbilityL.select)
-                                            (fmap (mapCatToSelectOptionsPred (noGuildMageSkill)
-                                                                             (w)))
-                                            (x)
-                              }
+                                      case SpecialAbilityId.TraditionGuildMages: {
+                                        return over (SpecialAbilityL.select)
+                                                    (fmap (mapCatToSelectOptionsPred
+                                                            (noGuildMageSkill)
+                                                            (w)))
+                                                    (x)
+                                      }
 
-                              default:
-                                return over (SpecialAbilityL.select)
-                                            (fmap (mapCatToSelectOptions (w)))
-                                            (x)
-                            }
-                          }),
-                          matchSelectOptionsToBaseRecords (rs.specialAbilitySelectOptions),
-                          matchExtensionsToBaseRecord (rs.spellExtensions) ("SA_414"),
-                          matchExtensionsToBaseRecord (rs.liturgicalChantExtensions) ("SA_663")
-                        ))
-                        (w)
-          }
-        )
-      ))
+                                      default:
+                                        return over (SpecialAbilityL.select)
+                                                    (fmap (mapCatToSelectOptions (w)))
+                                                    (x)
+                                    }
+                                  }),
+                                  matchSelectOptionsToBaseRecords (rs.specialAbilitySelectOptions),
+                                  matchExtensionsToBaseRecord (rs.spellExtensions)
+                                                              (SpecialAbilityId.SpellExtensions),
+                                  matchExtensionsToBaseRecord (rs.liturgicalChantExtensions)
+                                                              (SpecialAbilityId.ChantExtensions)
+                                ))
+                                (w)
+                  }
+                )
+              )))
   }
 
 const mapCatToSelectOptions =

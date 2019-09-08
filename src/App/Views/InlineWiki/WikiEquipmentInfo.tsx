@@ -6,6 +6,7 @@ import { dec, gt } from "../../../Data/Num";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, Record } from "../../../Data/Record";
 import { fst, isTuple, snd } from "../../../Data/Tuple";
+import { CombatTechniqueId } from "../../Constants/Ids";
 import { Item } from "../../Models/Hero/Item";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Book } from "../../Models/Wiki/Book";
@@ -16,7 +17,6 @@ import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAt
 import { SourceLink } from "../../Models/Wiki/sub/SourceLink";
 import { minus, ndash } from "../../Utilities/Chars";
 import { localizeNumber, localizeSize, localizeWeight, translate } from "../../Utilities/I18n";
-import { prefixCT } from "../../Utilities/IDUtils";
 import { convertPrimaryAttributeToArray } from "../../Utilities/ItemUtils";
 import { sign, signZero } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
@@ -122,8 +122,8 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
            (mprimary_attr_id_list)
            (mpadt_obj)
 
-  const isLancesCT = Maybe.elem (prefixCT (7)) (combatTechniqueId)
-  const isShieldsCT = Maybe.elem (prefixCT (10)) (combatTechniqueId)
+  const isLancesCT = Maybe.elem<string> (CombatTechniqueId.Lances) (combatTechniqueId)
+  const isShieldsCT = Maybe.elem<string> (CombatTechniqueId.Shields) (combatTechniqueId)
 
   const weightElement =
     maybeR (null)

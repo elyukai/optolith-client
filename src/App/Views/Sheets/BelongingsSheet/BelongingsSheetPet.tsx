@@ -5,11 +5,11 @@ import { fmap } from "../../../../Data/Functor";
 import { find, List } from "../../../../Data/List";
 import { bind, bindF, Maybe } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
+import { AttrId } from "../../../Constants/Ids";
 import { Pet } from "../../../Models/Hero/Pet";
 import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
-import { prefixAttr } from "../../../Utilities/IDUtils";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { AvatarWrapper } from "../../Universal/AvatarWrapper";
@@ -22,7 +22,7 @@ export interface BelongingsSheetPetProps {
 }
 
 export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
-  const { attributes, l10n, pet: mpet, } = props
+  const { attributes, l10n, pet: mpet } = props
 
   return (
     <div className="pet">
@@ -55,7 +55,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="value">
                   {pipe_ (mpet, bindF (Pet.A.spentAp), renderMaybe)}
                 </span>
-                <span className="label">/</span>
+                <span className="label">{"/"}</span>
                 <span className="value">
                   {pipe_ (mpet, bindF (Pet.A.totalAp), renderMaybe)}
                 </span>
@@ -66,7 +66,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (1)))),
+                    find (pipe (AttributeCombinedA_.id, equals<string> (AttrId.Courage))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>
@@ -78,7 +78,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (2)))),
+                    find (pipe (AttributeCombinedA_.id, equals<string> (AttrId.Sagacity))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>
@@ -90,7 +90,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (3)))),
+                    find (pipe (AttributeCombinedA_.id, equals<string> (AttrId.Intuition))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>
@@ -102,7 +102,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (4)))),
+                    find (pipe (AttributeCombinedA_.id, equals<string> (AttrId.Charisma))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>
@@ -114,7 +114,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (5)))),
+                    find (pipe (AttributeCombinedA_.id, equals<string> (AttrId.Dexterity))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>
@@ -126,7 +126,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (6)))),
+                    find (pipe (AttributeCombinedA_.id, equals<string> (AttrId.Agility))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>
@@ -138,7 +138,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (7)))),
+                    find (pipe (AttributeCombinedA_.id, equals<string> (AttrId.Constitution))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>
@@ -150,7 +150,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (8)))),
+                    find (pipe (AttributeCombinedA_.id, equals<string> (AttrId.Strength))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>

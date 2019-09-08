@@ -3,12 +3,12 @@ import { fmap } from "../../../Data/Functor";
 import { fromJust, isJust, isNothing, Maybe } from "../../../Data/Maybe";
 import { lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { AttrId } from "../../Constants/Ids";
 import { EditPet } from "../../Models/Hero/EditPet";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { WikiModel } from "../../Models/Wiki/WikiModel";
 import { translate } from "../../Utilities/I18n";
-import { prefixAttr } from "../../Utilities/IDUtils";
 import { pipe } from "../../Utilities/pipe";
 import { AvatarChange } from "../Universal/AvatarChange";
 import { AvatarWrapper } from "../Universal/AvatarWrapper";
@@ -112,42 +112,42 @@ export function PetEditor (props: PetEditorProps) {
             </div>
             <div className="row">
               <TextField
-                label={getAttrShort (attributes) (prefixAttr (1))}
+                label={getAttrShort (attributes) (AttrId.Courage)}
                 value={EPA.cou (pet)}
                 onChangeString={props.setCourage}
                 />
               <TextField
-                label={getAttrShort (attributes) (prefixAttr (2))}
+                label={getAttrShort (attributes) (AttrId.Sagacity)}
                 value={EPA.sgc (pet)}
                 onChangeString={props.setSagacity}
                 />
               <TextField
-                label={getAttrShort (attributes) (prefixAttr (3))}
+                label={getAttrShort (attributes) (AttrId.Intuition)}
                 value={EPA.int (pet)}
                 onChangeString={props.setIntuition}
                 />
               <TextField
-                label={getAttrShort (attributes) (prefixAttr (4))}
+                label={getAttrShort (attributes) (AttrId.Charisma)}
                 value={EPA.cha (pet)}
                 onChangeString={props.setCharisma}
                 />
               <TextField
-                label={getAttrShort (attributes) (prefixAttr (5))}
+                label={getAttrShort (attributes) (AttrId.Dexterity)}
                 value={EPA.dex (pet)}
                 onChangeString={props.setDexterity}
                 />
               <TextField
-                label={getAttrShort (attributes) (prefixAttr (6))}
+                label={getAttrShort (attributes) (AttrId.Agility)}
                 value={EPA.agi (pet)}
                 onChangeString={props.setAgility}
                 />
               <TextField
-                label={getAttrShort (attributes) (prefixAttr (7))}
+                label={getAttrShort (attributes) (AttrId.Constitution)}
                 value={EPA.con (pet)}
                 onChangeString={props.setConstitution}
                 />
               <TextField
-                label={getAttrShort (attributes) (prefixAttr (8))}
+                label={getAttrShort (attributes) (AttrId.Strength)}
                 value={EPA.str (pet)}
                 onChangeString={props.setStrength}
                 />

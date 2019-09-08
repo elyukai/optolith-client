@@ -36,7 +36,6 @@ import { createMapSelectorP } from "../Utilities/createMapSelector";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { compareLocale } from "../Utilities/I18n";
-import { prefixSA } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { mapCurrentHero, mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
 import { blessedSpecialAbilityGroups, combatSpecialAbilityGroups, generalSpecialAbilityGroups, magicalSpecialAbilityGroups } from "../Utilities/sheetUtils";
@@ -65,10 +64,10 @@ const mapActiveObjects =
     )
 
 export const getActiveScriptsAndLanguages = createMaybeSelector (
-  mapGetToSlice (getSpecialAbilities) (prefixSA (27)),
-  mapGetToSlice (getWikiSpecialAbilities) (prefixSA (27)),
-  mapGetToSlice (getSpecialAbilities) (prefixSA (29)),
-  mapGetToSlice (getWikiSpecialAbilities) (prefixSA (29)),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.Literacy),
+  mapGetToSlice (getWikiSpecialAbilities) (SpecialAbilityId.Literacy),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.Language),
+  mapGetToSlice (getWikiSpecialAbilities) (SpecialAbilityId.Language),
   (mscripts_hero, scripts_wiki, mlanguages_hero, languages_wiki) => {
     const scripts = getSelectOptions (scripts_wiki)
     const languages = getSelectOptions (languages_wiki)

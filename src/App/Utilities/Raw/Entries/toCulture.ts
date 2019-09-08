@@ -18,7 +18,7 @@ import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const exception =
-  new RegExp (exactR (`${naturalNumberU}|${prefixProf (naturalNumberU)}`))
+  new RegExp (exactR (`${naturalNumberU}|${prefixProf (naturalNumberU)}`), "u")
 
 const checkException =
   (x: string) => exception .test (x)

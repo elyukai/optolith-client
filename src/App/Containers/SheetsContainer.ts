@@ -3,6 +3,7 @@ import { join, Just } from "../../Data/Maybe";
 import { ReduxDispatch } from "../Actions/Actions";
 import * as IOActions from "../Actions/IOActions";
 import * as SheetActions from "../Actions/SheetActions";
+import { SpecialAbilityId } from "../Constants/Ids";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getAdvantagesForSheet, getAspectKnowledgesForSheet, getBlessedSpecialAbilitiesForSheet, getBlessedTraditionForSheet, getCombatSpecialAbilitiesForSheet, getDisadvantagesForSheet, getFatePointsModifier, getGeneralSpecialAbilitiesForSheet, getMagicalSpecialAbilitiesForSheet, getMagicalTraditionForSheet, getPropertyKnowledgesForSheet } from "../Selectors/activatableSelectors";
@@ -20,7 +21,6 @@ import { getAllSkills } from "../Selectors/skillsSelectors";
 import { getCantripsForSheet, getSpellsForSheet } from "../Selectors/spellsSelectors";
 import { getAvatar, getCurrentHeroName, getProfile, getPurse, getSex, getSpecialAbilities, getWikiBooks, getWikiSpecialAbilities } from "../Selectors/stateSelectors";
 import { getSheetCheckAttributeValueVisibility } from "../Selectors/uisettingsSelectors";
-import { prefixSA } from "../Utilities/IDUtils";
 import { pipe } from "../Utilities/pipe";
 import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
 import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from "../Views/Sheets/Sheets";
@@ -58,16 +58,16 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): Sheet
   totalPrice: getTotalPrice (state, ownProps),
   totalWeight: getTotalWeight (state, ownProps),
   languagesWikiEntry: mapGetToMaybeSlice (pipe (getWikiSpecialAbilities, Just))
-                                         (prefixSA (29))
+                                         (SpecialAbilityId.Language)
                                          (state),
   languagesStateEntry: mapGetToSlice (getSpecialAbilities)
-                                     (prefixSA (29))
+                                     (SpecialAbilityId.Language)
                                      (state, ownProps),
   scriptsWikiEntry: mapGetToMaybeSlice (pipe (getWikiSpecialAbilities, Just))
-                                       (prefixSA (27))
+                                       (SpecialAbilityId.Literacy)
                                        (state),
   scriptsStateEntry: mapGetToSlice (getSpecialAbilities)
-                                   (prefixSA (27))
+                                   (SpecialAbilityId.Literacy)
                                    (state, ownProps),
   cantrips: getCantripsForSheet (state, ownProps),
   magicalPrimary: getPrimaryMagicalAttributeForSheet (state, ownProps),

@@ -9,6 +9,17 @@ export enum RaceId {
   Dwarves = "R_4",
 }
 
+export enum CultureId {
+  GladeElves = "C_19",
+  Firnelves = "C_20",
+  WoodElves = "C_21",
+  Steppenelfen = "C_28",
+}
+
+export enum ProfessionId {
+  CustomProfession = "P_0",
+}
+
 export enum AttrId {
   Courage = "ATTR_1",
   Sagacity = "ATTR_2",
@@ -41,30 +52,46 @@ export enum EnergyId {
 export enum AdvantageId {
   // Begabung
   Aptitude = "ADV_4",
+  // Flink
+  Nimble = "ADV_9",
   Blessed = "ADV_12",
   Luck = "ADV_14",
   ExceptionalSkill = "ADV_16",
   ExceptionalCombatTechnique = "ADV_17",
+  IncreasedAstralPower = "ADV_23",
+  IncreasedKarmaPoints = "ADV_24",
+  IncreasedLifePoints = "ADV_25",
+  IncreasedSpirit = "ADV_26",
+  IncreasedToughness = "ADV_27",
   ImmunityToPoison = "ADV_28",
   ImmunityToDisease = "ADV_29",
   MagicalAttunement = "ADV_32",
   Rich = "ADV_36",
   WeaponAptitude = "ADV_47",
   Spellcaster = "ADV_50",
+  // Eisern
+  Unyielding = "ADV_54",
   GrosseZauberauswahl = "ADV_58",
   HatredOf = "ADV_68",
   Prediger = "ADV_77",
   Visionaer = "ADV_78",
   ZahlreichePredigten = "ADV_79",
   ZahlreicheVisionen = "ADV_80",
+  LeichterGang = "ADV_92",
 }
 
 export enum DisadvantageId {
   AfraidOf = "DISADV_1",
   Poor = "DISADV_2",
+  Slow = "DISADV_4",
   NoFlyingBalm = "DISADV_17",
   NoFamiliar = "DISADV_18",
   MagicalRestriction = "DISADV_24",
+  DecreasedArcanePower = "DISADV_26",
+  DecreasedKarmaPoints = "DISADV_27",
+  DecreasedLifePoints = "DISADV_28",
+  DecreasedSpirit = "DISADV_29",
+  DecreasedToughness = "DISADV_30",
   BadLuck = "DISADV_31",
   PersonalityFlaw = "DISADV_33",
   Principles = "DISADV_34",
@@ -77,6 +104,8 @@ export enum DisadvantageId {
   Obligations = "DISADV_50",
   // Verstümmelt
   Maimed = "DISADV_51",
+  // Gläsern
+  BrittleBones = "DISADV_56",
   KleineZauberauswahl = "DISADV_59",
   WenigePredigten = "DISADV_72",
   WenigeVisionen = "DISADV_73",
@@ -87,18 +116,28 @@ export enum SkillId {
   Metalworking = "TAL_55",
 }
 
+export enum CombatTechniqueId {
+  Lances = "CT_7",
+  Shields = "CT_10",
+  Feuerspeien = "CT_17",
+}
+
 export enum SpecialAbilityId {
   SkillSpecialization = "SA_9",
+  TerrainKnowledge = "SA_12",
   CraftInstruments = "SA_17",
   Hunter = "SA_18",
   AreaKnowledge = "SA_22",
   Literacy = "SA_27",
   Language = "SA_29",
+  CombatReflexes = "SA_51",
+  ImprovedDodge = "SA_64",
   TraditionGuildMages = "SA_70",
   PropertyKnowledge = "SA_72",
   PropertyFocus = "SA_81",
   AspectKnowledge = "SA_87",
   TraditionChurchOfPraios = "SA_86",
+  Feuerschlucker = "SA_109",
   CombatStyleCombination = "SA_164",
   AdaptionZauber = "SA_231",
   Exorzist = "SA_240",
@@ -122,6 +161,7 @@ export enum SpecialAbilityId {
   VisionDerGottheit = "SA_551",
   VisionDesSchicksals = "SA_552",
   VisionDesWahrenGlaubens = "SA_553",
+  HoheWeihe = "SA_563",
   Lieblingsliturgie = "SA_569",
   Zugvoegel = "SA_623",
   JaegerinnenDerWeißenMaid = "SA_625",

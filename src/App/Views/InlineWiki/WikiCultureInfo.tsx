@@ -6,6 +6,7 @@ import { bindF, ensure, fromMaybe, mapMaybe, maybe, Maybe } from "../../../Data/
 import { dec } from "../../../Data/Num";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { CultureId } from "../../Constants/Ids";
 import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
 import { IncreasableForView } from "../../Models/View/IncreasableForView";
 import { Book } from "../../Models/Wiki/Book";
@@ -14,7 +15,6 @@ import { Skill } from "../../Models/Wiki/Skill";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
-import { prefixC } from "../../Utilities/IDUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
 import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy";
@@ -38,10 +38,16 @@ const IFVA = IncreasableForView.A
 const SAA = SpecialAbility.A
 const SOA = SelectOption.A
 
-const isElvenCulture = elemF (List (prefixC (19), prefixC (20), prefixC (21)))
+const isElvenCulture =
+  elemF (List<string> (
+    CultureId.GladeElves,
+    CultureId.Firnelves,
+    CultureId.WoodElves,
+    CultureId.Steppenelfen
+  ))
 
 export function WikiCultureInfo (props: WikiCultureInfoProps) {
-  const { x, languages, l10n, scripts, skills } = props
+  const { x, languages, l10n, scripts, skills, books } = props
 
   const culturalPackageSkills = CCA.mappedCulturalPackageSkills (x)
 
@@ -142,22 +148,36 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
       <WikiProperty l10n={l10n} title="commonprofessions">
         {isElvenCulture (CCA_.id (x)) ? renderMaybe (CCA_.commonMagicProfessions (x)) : null}
       </WikiProperty>
-      {!isElvenCulture (CCA_.id (x))
-        ? <ul>
+      {isElvenCulture (CCA_.id (x))
+        ? null
+        : (
+          <ul>
             <li>
-              <em>{translate (l10n) ("commonmundaneprofessions")}:</em>
+              <em>
+                {translate (l10n) ("commonmundaneprofessions")}
+                {":"}
+              </em>
               {" "}
-              {fromMaybe ("–") (CCA_.commonMundaneProfessions (x))}</li>
+              {fromMaybe ("–") (CCA_.commonMundaneProfessions (x))}
+            </li>
             <li>
-              <em>{translate (l10n) ("commonmagicprofessions")}:</em>
+              <em>
+                {translate (l10n) ("commonmagicprofessions")}
+                {":"}
+              </em>
               {" "}
-              {fromMaybe ("–") (CCA_.commonMagicProfessions (x))}</li>
+              {fromMaybe ("–") (CCA_.commonMagicProfessions (x))}
+            </li>
             <li>
-              <em>{translate (l10n) ("commonblessedprofessions")}:</em>
+              <em>
+                {translate (l10n) ("commonblessedprofessions")}
+                {":"}
+              </em>
               {" "}
-              {fromMaybe ("–") (CCA_.commonBlessedProfessions (x))}</li>
+              {fromMaybe ("–") (CCA_.commonBlessedProfessions (x))}
+            </li>
           </ul>
-        : null}
+        )}
       <WikiProperty l10n={l10n} title="commonadvantages">
         {fromMaybe (translate (l10n) ("none"))
                    (CCA_.commonAdvantagesText (x))}
@@ -211,7 +231,12 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
           )}
         </span>
       </p>
-      <WikiSource {...props} acc={CCA_} />
+      <WikiSource
+        acc={CCA_}
+        books={books}
+        l10n={l10n}
+        x={x}
+        />
     </WikiBoxTemplate>
   )
 }

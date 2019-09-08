@@ -6,13 +6,13 @@ import { fromMaybe, fromMaybeR, Just, Maybe, Nothing } from "../../../../Data/Ma
 import { divideBy, max, multiply } from "../../../../Data/Num";
 import { Record } from "../../../../Data/Record";
 import { fst, snd } from "../../../../Data/Tuple";
+import { AttrId } from "../../../Constants/Ids";
 import { Pet } from "../../../Models/Hero/Pet";
 import { Purse } from "../../../Models/Hero/Purse";
 import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined";
 import { ItemForView } from "../../../Models/View/ItemForView";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
-import { prefixAttr } from "../../../Utilities/IDUtils";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybe } from "../../../Utilities/ReactUtils";
 import { LabelBox } from "../../Universal/LabelBox";
@@ -46,7 +46,7 @@ export function BelongingsSheet (props: BelongingsSheetProps) {
   const strength =
     pipe_ (
       attributes,
-      find (pipe (AttributeCombinedA_.id, equals (prefixAttr (8)))),
+      find (pipe (AttributeCombinedA_.id, equals<string> (AttrId.Strength))),
       fmap (AttributeCombinedA_.value),
       Maybe.sum
     )
@@ -67,7 +67,7 @@ export function BelongingsSheet (props: BelongingsSheetProps) {
 
   return (
     <SheetWrapper>
-      <Options/>
+      <Options />
       <Sheet
         id="belongings"
         title={translate (l10n) ("belongings")}
@@ -95,7 +95,7 @@ export function BelongingsSheet (props: BelongingsSheetProps) {
                     />
                 </div>
               )),
-              fromMaybeR (<div></div>)
+              fromMaybeR (<div />)
             )}
             <div className="total">
               <label>
@@ -179,7 +179,7 @@ export function BelongingsSheet (props: BelongingsSheetProps) {
                 value={Nothing}
                 />
             </div>
-            <div className="fill"></div>
+            <div className="fill" />
             <div className="carrying-capacity">
               <div className="left">
                 <h3>{translate (l10n) ("carryingcapacity")}</h3>
@@ -192,7 +192,7 @@ export function BelongingsSheet (props: BelongingsSheetProps) {
             </div>
           </TextBox>
         </div>
-        <div className="fill"></div>
+        <div className="fill" />
         <BelongingsSheetPet {...props} />
       </Sheet>
     </SheetWrapper>

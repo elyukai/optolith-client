@@ -8,6 +8,7 @@ import { elems, lookup, lookupF, OrderedMap, size, sum } from "../../Data/Ordere
 import { OrderedSet } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
 import { fst, Pair, snd } from "../../Data/Tuple";
+import { SpecialAbilityId } from "../Constants/Ids";
 import { LanguagesSelectionListItem } from "../Models/Hero/LanguagesSelectionListItem";
 import { Rules } from "../Models/Hero/Rules";
 import { ScriptsSelectionListItem } from "../Models/Hero/ScriptsSelectionListItem";
@@ -43,7 +44,6 @@ import { Checkbox } from "../Views/Universal/Checkbox";
 import { Dropdown, DropdownOption } from "../Views/Universal/Dropdown";
 import { findSelectOption } from "./Activatable/selectionUtils";
 import { translate } from "./I18n";
-import { prefixSA } from "./IDUtils";
 import { pipe, pipe_ } from "./pipe";
 import { filterByAvailability, isAvailable } from "./RulesUtils";
 import { sortRecordsByName } from "./sortBy";
@@ -565,7 +565,8 @@ export const getGuildMageUnfamiliarSpellSelectionElement =
   (setGuildMageUnfamiliarSpell: (id: string) => void) =>
   (profession: Record<Profession>) =>
     any ((x: ProfessionPrerequisite) => ProfessionRequireActivatable.is (x)
-                                        && ProfessionRequireActivatable.A.id (x) === prefixSA (70))
+                                        && ProfessionRequireActivatable.A.id (x)
+                                          === SpecialAbilityId.TraditionGuildMages)
         (PA.prerequisites (profession))
       ? fmapF (mspells)
               (spells => (

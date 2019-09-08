@@ -8,7 +8,7 @@ import { Record } from "../../Data/Record";
 import { Pair, Tuple } from "../../Data/Tuple";
 import { uncurry3 } from "../../Data/Tuple/Curry";
 import { sel1, sel2, sel3 } from "../../Data/Tuple/Select";
-import { DCId } from "../Constants/Ids";
+import { AdvantageId, AttrId, DCId, DisadvantageId, SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
 import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
@@ -22,7 +22,6 @@ import { getModifierByActiveLevel, getModifierByIsActive } from "../Utilities/Ac
 import { getActiveSelections } from "../Utilities/Activatable/selectionUtils";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { translate } from "../Utilities/I18n";
-import { prefixAdv, prefixAttr, prefixDis, prefixSA } from "../Utilities/IDUtils";
 import { getAttributeValueWithDefault } from "../Utilities/Increasable/attributeUtils";
 import { pipe } from "../Utilities/pipe";
 import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils";
@@ -48,10 +47,10 @@ const getFirstLevel =
 
 export const getLP = createMaybeSelector (
   getRace,
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (7)),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Constitution),
   getPermanentLifePoints,
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (25)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (28)),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.IncreasedLifePoints),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.DecreasedLifePoints),
   getAddedLifePoints,
   getLocaleAsProp,
   (mrace, mcon, plp, minc, mdec, added, l10n) => {
@@ -85,8 +84,8 @@ export const getAE = createMaybeSelector (
   getMagicalTraditionsFromHero,
   getHighestPrimaryMagicalAttributeValue,
   getPermanentArcaneEnergyPoints,
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (23)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (26)),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.IncreasedAstralPower),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.DecreasedArcanePower),
   getAddedArcaneEnergyPoints,
   getLocaleAsProp,
   (trads, mprimary_value, paep, minc, mdec, added, l10n) => {
@@ -151,16 +150,16 @@ const getPrimaryAEMod =
   (last_trad: Record<ActivatableDependent>): number =>
     elem (ActivatableDependent.A.id (last_trad))
         (List (
-          prefixSA (677),
-          prefixSA (678),
-          prefixSA (750),
-          prefixSA (1221)
+          SpecialAbilityId.TraditionZauberbarden,
+          SpecialAbilityId.TraditionZaubertaenzer,
+          SpecialAbilityId.TraditionZauberalchimisten,
+          SpecialAbilityId.TraditionAnimisten
         ))
     ? 0.5
     : elem (ActivatableDependent.A.id (last_trad))
            (List (
-             prefixSA (679),
-             prefixSA (680)
+             SpecialAbilityId.TraditionIntuitiveZauberer,
+             SpecialAbilityId.TraditionMeistertalentierte
            ))
     ? 0
     : 1
@@ -168,11 +167,11 @@ const getPrimaryAEMod =
 export const getKP = createMaybeSelector (
   getPrimaryBlessedAttribute,
   getPermanentKarmaPoints,
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (24)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (27)),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.IncreasedKarmaPoints),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.DecreasedKarmaPoints),
   getAddedKarmaPoints,
   getLocaleAsProp,
-  mapGetToSlice (getSpecialAbilities) (prefixSA (563)),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.HoheWeihe),
   (mprimary, pkp, minc, mdec, added, l10n, mhigh_consecration) => {
     const mredeemed = fmap (PermanentEnergyLossAndBoughtBack.A.redeemed) (pkp)
 
@@ -210,11 +209,11 @@ export const getKP = createMaybeSelector (
 
 export const getSPI = createMaybeSelector (
   getRace,
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (1)),
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (2)),
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (3)),
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (26)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (29)),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Courage),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Sagacity),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Intuition),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.IncreasedSpirit),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.DecreasedSpirit),
   getLocaleAsProp,
   (mrace, mcou, msgc, mint, minc, mdec, l10n) => {
     const mbase = fmapF (mrace)
@@ -243,10 +242,10 @@ export const getSPI = createMaybeSelector (
 
 export const getTOU = createMaybeSelector (
   getRace,
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (7)),
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (8)),
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (27)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (30)),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Constitution),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Strength),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.IncreasedToughness),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.DecreasedToughness),
   getLocaleAsProp,
   (mrace, mcon, mstr, minc, mdec, l10n) => {
     const mbase = fmapF (mrace)
@@ -273,8 +272,8 @@ export const getTOU = createMaybeSelector (
 )
 
 export const getDO = createMaybeSelector (
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (6)),
-  mapGetToSlice (getSpecialAbilities) (prefixSA (64)),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Agility),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.ImprovedDodge),
   getLocaleAsProp,
   getRules,
   (magi, mimproved_dodge, l10n, rules) => {
@@ -300,9 +299,9 @@ export const getDO = createMaybeSelector (
 )
 
 export const getINI = createMaybeSelector (
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (1)),
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (6)),
-  mapGetToSlice (getSpecialAbilities) (prefixSA (51)),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Courage),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Agility),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.CombatReflexes),
   getLocaleAsProp,
   (mcou, magi, mcombat_reflexes, l10n) => {
     const base = divideBy2AndRound (
@@ -327,9 +326,9 @@ export const getINI = createMaybeSelector (
 
 export const getMOV = createMaybeSelector (
   getRace,
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (9)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (51)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (4)),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.Nimble),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.Maimed),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.Slow),
   getLocaleAsProp,
   (mrace, mnimble, mmaimed, mslow, l10n) => {
     const mbase = fmapF (mrace)
@@ -362,9 +361,9 @@ export const getMOV = createMaybeSelector (
 )
 
 export const getWT = createMaybeSelector (
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (7)),
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (54)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (56)),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Constitution),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.Unyielding),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.BrittleBones),
   getLocaleAsProp,
   (mcon, minc, mdec, l10n) => {
     const base = divideBy2AndRound (getAttributeValueWithDefault (mcon))

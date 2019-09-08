@@ -9,7 +9,7 @@ import { Record } from "../../Data/Record";
 import { fst, snd, Tuple } from "../../Data/Tuple";
 import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
 import { sel1, sel2, sel3 } from "../../Data/Tuple/Select";
-import { IdPrefixes } from "../Constants/IdPrefixes";
+import { AttrId } from "../Constants/Ids";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { AttributeDependent, createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
 import { Energies } from "../Models/Hero/Energies";
@@ -22,7 +22,7 @@ import { Race } from "../Models/Wiki/Race";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies";
-import { getNumericBlessedTraditionIdByInstanceId, getNumericMagicalTraditionIdByInstanceId, prefixAttr, prefixId } from "../Utilities/IDUtils";
+import { getNumericBlessedTraditionIdByInstanceId, getNumericMagicalTraditionIdByInstanceId } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { getCurrentEl, getStartEl } from "./elSelectors";
 import { getBlessedTraditionFromState } from "./liturgicalChantsSelectors";
@@ -108,6 +108,7 @@ const getAttributeMaximum =
 const getAttributeMinimum =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
+
   /**
    * `(lp, ae, kp)`
    */
@@ -117,7 +118,7 @@ const getAttributeMinimum =
   (hero_entry: Record<AttributeDependent>): number =>
     maximum (List<number> (
               ...flattenDependencies (wiki) (hero) (ADA.dependencies (hero_entry)),
-              ...(ADA.id (hero_entry) === prefixAttr (8) ? List (sel1 (added)) : List<number> ()),
+              ...(ADA.id (hero_entry) === AttrId.Strength ? List (sel1 (added)) : List<number> ()),
               ...(Maybe.elem (ADA.id (hero_entry)) (fmap (ACA_.id) (mhighest_magical_primary_attr))
                 ? List (sel2 (added))
                 : List<number> ()),
@@ -195,7 +196,7 @@ const getPrimaryMagicalAttributeByTrad =
           case 13:
             return getAttributeCombined (wiki_attributes)
                                         (hero_attributes)
-                                        (prefixId (IdPrefixes.ATTRIBUTES) (2))
+                                        (AttrId.Sagacity)
 
           case 3:
           case 14:
@@ -203,7 +204,7 @@ const getPrimaryMagicalAttributeByTrad =
           case 16:
             return getAttributeCombined (wiki_attributes)
                                         (hero_attributes)
-                                        (prefixId (IdPrefixes.ATTRIBUTES) (3))
+                                        (AttrId.Intuition)
 
           case 2:
           case 5:
@@ -213,7 +214,7 @@ const getPrimaryMagicalAttributeByTrad =
           case 17:
             return getAttributeCombined (wiki_attributes)
                                         (hero_attributes)
-                                        (prefixId (IdPrefixes.ATTRIBUTES) (4))
+                                        (AttrId.Charisma)
 
           default:
             return Nothing
@@ -275,15 +276,16 @@ const getPrimaryBlessedAttributeByTrad =
           case 18:
             return getAttributeCombined (wiki_attributes)
                                         (hero_attributes)
-                                        (prefixId (IdPrefixes.ATTRIBUTES) (1))
+                                        (AttrId.Courage)
 
           case 1:
           case 4:
           case 8:
           case 17:
+          case 19:
             return getAttributeCombined (wiki_attributes)
                                         (hero_attributes)
-                                        (prefixId (IdPrefixes.ATTRIBUTES) (2))
+                                        (AttrId.Sagacity)
 
           case 5:
           case 6:
@@ -291,7 +293,7 @@ const getPrimaryBlessedAttributeByTrad =
           case 14:
             return getAttributeCombined (wiki_attributes)
                                         (hero_attributes)
-                                        (prefixId (IdPrefixes.ATTRIBUTES) (3))
+                                        (AttrId.Intuition)
 
           case 7:
           case 10:
@@ -299,7 +301,7 @@ const getPrimaryBlessedAttributeByTrad =
           case 15:
             return getAttributeCombined (wiki_attributes)
                                         (hero_attributes)
-                                        (prefixId (IdPrefixes.ATTRIBUTES) (4))
+                                        (AttrId.Charisma)
 
           default:
             return Nothing
@@ -390,7 +392,7 @@ export const getAttributesForView = createMaybeSelector (
 
 export const getCarryingCapacity = createMaybeSelector (
   getAttributes,
-  pipe (lookup (prefixAttr (8)), fmap (pipe (ADA.value, multiply (2))))
+  pipe (lookup<string> (AttrId.Strength), fmap (pipe (ADA.value, multiply (2))))
 )
 
 export const getAdjustmentValue = createMaybeSelector (

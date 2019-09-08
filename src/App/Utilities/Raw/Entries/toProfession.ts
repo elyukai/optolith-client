@@ -8,6 +8,7 @@ import { Record } from "../../../../Data/Record";
 import { parseJSON } from "../../../../Data/String/JSON";
 import { traceShowBoth } from "../../../../Debug/Trace";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
+import { SpecialAbilityId } from "../../../Constants/Ids";
 import { ProfessionRequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
 import { ProfessionRequireIncreasable } from "../../../Models/Wiki/prerequisites/IncreasableRequirement";
@@ -26,7 +27,7 @@ import { pairToIncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
 import { pairToIncreaseSkillOrList } from "../../../Models/Wiki/sub/IncreaseSkillList";
 import { NameBySex } from "../../../Models/Wiki/sub/NameBySex";
 import { AnyProfessionSelection, ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../../../Models/Wiki/wikiTypeHelpers";
-import { prefixCantrip, prefixCT, prefixId, prefixSA } from "../../IDUtils";
+import { prefixCantrip, prefixCT, prefixId } from "../../IDUtils";
 import { toNatural } from "../../NumberUtils";
 import { pipe, pipe_ } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
@@ -480,9 +481,13 @@ export const toProfession =
           const is_guild_mage_tradition_add =
             List.any ((x: ProfessionPrerequisite) =>
                             ProfessionRequireActivatable.is (x)
-                            && ProfessionRequireActivatable.A.id (x) === prefixSA (70))
+                            && ProfessionRequireActivatable.A.id (x)
+                              === SpecialAbilityId.TraditionGuildMages)
                      (prerequisites)
-            && any (List.any (pipe (ProfessionRequireActivatable.A.id, equals (prefixSA (70)))))
+            && any (List.any (pipe (
+                               ProfessionRequireActivatable.A.id,
+                               equals<string> (SpecialAbilityId.TraditionGuildMages)
+                             )))
                    (rs.especialAbilities)
 
           const selections = fromMaybe (ProfessionSelections.default) (rs.eselections)

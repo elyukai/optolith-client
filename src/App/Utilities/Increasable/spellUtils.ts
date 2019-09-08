@@ -7,6 +7,7 @@ import { and, bindF, elem, ensure, fromJust, isJust, Just, listToMaybe, mapMaybe
 import { gte, inc } from "../../../Data/Num";
 import { alter, empty, filter, foldl, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -19,7 +20,7 @@ import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
 import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies";
-import { getNumericMagicalTraditionIdByInstanceId, prefixSA } from "../IDUtils";
+import { getNumericMagicalTraditionIdByInstanceId } from "../IDUtils";
 import { ifElse } from "../ifElse";
 import { pipe, pipe_ } from "../pipe";
 import { isNumber } from "../typeCheckUtils";
@@ -191,14 +192,14 @@ export const isUnfamiliarSpell:
   (trad_hero_entries: List<Record<ActivatableDependent>>) =>
   (spell: Record<Spell> | Record<Cantrip>) => boolean =
   trads => {
-    if (any (pipe (ADA.id, equals (prefixSA (679)))) (trads)) {
+    if (any (pipe (ADA.id, equals<string> (SpecialAbilityId.TraditionIntuitiveZauberer))) (trads)) {
       return cnst (false)
     }
 
     const mguild_mage_sel =
       pipe_ (
         trads,
-        find (pipe (ADA.id, equals (prefixSA (70)))),
+        find (pipe (ADA.id, equals (SpecialAbilityId.TraditionGuildMages))),
         bindF (pipe (ADA.active, listToMaybe)),
         bindF (AOA.sid)
       )

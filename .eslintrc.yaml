@@ -392,7 +392,7 @@ rules:
     - 2
   react/jsx-max-props-per-line:
     - 2
-    - maximum: 2
+    - maximum: 3
   react/jsx-no-bind: 2
   react/jsx-no-comment-textnodes: 2
   react/jsx-no-literals: 2

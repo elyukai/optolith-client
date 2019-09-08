@@ -10,6 +10,7 @@ import { insert, OrderedSet, sdelete, toList, union } from "../../Data/OrderedSe
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { SetSelectionsAction } from "../Actions/ProfessionActions";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableDependent, ActivatableDependentL, createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, ActivatableSkillDependentL } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
@@ -37,7 +38,6 @@ import { addAllStyleRelatedDependencies } from "../Utilities/Activatable/Extende
 import { composeL } from "../Utilities/compose";
 import { addDependencies } from "../Utilities/Dependencies/dependencyUtils";
 import { getHeroStateItem, updateEntryDef } from "../Utilities/heroStateUtils";
-import { prefixSA } from "../Utilities/IDUtils";
 import { ifElse } from "../Utilities/ifElse";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { isString } from "../Utilities/typeCheckUtils";
@@ -269,7 +269,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
               if (isList (possible_skills) && isJust (mselected_app) && isJust (mselected_skill)) {
                 return over (CML.activatable)
                             (consF (ProfessionRequireActivatable ({
-                              id: prefixSA (9),
+                              id: SpecialAbilityId.SkillSpecialization,
                               active: true,
                               sid: mselected_skill,
                               sid2: mselected_app,
@@ -279,7 +279,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
               if (isString (possible_skills) && isJust (mselected_app)) {
                 return over (CML.activatable)
                             (consF (ProfessionRequireActivatable ({
-                              id: prefixSA (9),
+                              id: SpecialAbilityId.SkillSpecialization,
                               active: true,
                               sid: Just (possible_skills),
                               sid2: mselected_app,
@@ -301,7 +301,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
               if (isJust (mselected_terrain)) {
                 return over (CML.activatable)
                             (consF (ProfessionRequireActivatable ({
-                              id: prefixSA (12),
+                              id: SpecialAbilityId.TerrainKnowledge,
                               active: true,
                               sid: mselected_terrain,
                             })))
@@ -365,7 +365,8 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
     maybe (ident as ident<Record<ConcatenatedModifications>>)
           ((spell_id: string) => over (CML.professionPrerequisites)
                                       (map (x => ProfessionRequireActivatable.is (x)
-                                                 && PRAA.id (x) === prefixSA (70)
+                                                 && PRAA.id (x)
+                                                   === SpecialAbilityId.TraditionGuildMages
                                                  ? set (ProfessionRequireActivatableL.sid)
                                                        (Just (spell_id))
                                                        (x)
@@ -465,7 +466,9 @@ const applyModifications =
       // - Scripts additions
       join (acc => over (composeL (CML.hero, HL.specialAbilities))
                         (alter (pipe (
-                                 fromMaybe (createPlainActivatableDependent (prefixSA (27))),
+                                 fromMaybe (
+                                   createPlainActivatableDependent (SpecialAbilityId.Literacy)
+                                 ),
                                  over (ActivatableDependentL.active)
                                       (append (pipe_ (
                                         acc,
@@ -475,12 +478,14 @@ const applyModifications =
                                       ))),
                                  Just
                                ))
-                               (prefixSA (27)))),
+                               (SpecialAbilityId.Literacy as string))),
 
       // - Languages additions
       join (acc => over (composeL (CML.hero, HL.specialAbilities))
                         (alter (pipe (
-                                 fromMaybe (createPlainActivatableDependent (prefixSA (29))),
+                                 fromMaybe (
+                                   createPlainActivatableDependent (SpecialAbilityId.Language)
+                                 ),
                                  over (ActivatableDependentL.active)
                                       (append (pipe_ (
                                         acc,
@@ -495,7 +500,7 @@ const applyModifications =
                                       ))),
                                  Just
                                ))
-                               (prefixSA (29)))),
+                               (SpecialAbilityId.Language as string))),
 
       // - Profession prerequisites
       join (pipe (

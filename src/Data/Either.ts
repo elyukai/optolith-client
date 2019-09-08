@@ -176,8 +176,9 @@ export const maybeToEither_ =
  * `bimap :: (a -> b) -> (c -> d) -> Either a c -> Either b d`
  */
 export const bimap =
-  <A, B, C, D>
+  <A, B>
   (fLeft: (l: A) => B) =>
+  <C, D>
   (fRight: (r: C) => D) =>
   (x: Either<A, C>): Either<B, D> =>
     isRight (x)
@@ -477,6 +478,7 @@ export const or = fromRight (false)
 export const any =
   <A0>(f: (x: A0) => boolean) => (x: Either<any, A0>): boolean =>
     fromRight (false) (fmap (f) (x))
+
 /**
  * `all :: (a0 -> Bool) -> Either a a0 -> Bool`
  *
@@ -498,6 +500,7 @@ export const notElem =
     !elem (x) (y)
 
 interface Find {
+
   /**
    * `find :: (a0 -> Bool) -> Either a a0 -> Maybe a0`
    *
@@ -548,9 +551,9 @@ export const gt =
   <A extends number | string, B extends number | string>
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
-    isRight (m2) && isLeft (m1)
-    || isRight (m1) && isRight (m2) && m2 .value > m1 .value
-    || isLeft (m1) && isLeft (m2) && m2 .value > m1 .value
+    (isRight (m2) && isLeft (m1))
+    || (isRight (m1) && isRight (m2) && m2 .value > m1 .value)
+    || (isLeft (m1) && isLeft (m2) && m2 .value > m1 .value)
 
 /**
  * `(<) :: Either a b -> Either a b -> Bool`
@@ -567,9 +570,9 @@ export const lt =
   <A extends number | string, B extends number | string>
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
-    isLeft (m2) && isRight (m1)
-    || isRight (m1) && isRight (m2) && m2 .value < m1 .value
-    || isLeft (m1) && isLeft (m2) && m2 .value < m1 .value
+    (isLeft (m2) && isRight (m1))
+    || (isRight (m1) && isRight (m2) && m2 .value < m1 .value)
+    || (isLeft (m1) && isLeft (m2) && m2 .value < m1 .value)
 
 /**
  * `(>=) :: Either a b -> Either a b -> Bool`
@@ -587,9 +590,9 @@ export const gte =
   <A extends number | string, B extends number | string>
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
-    isRight (m2) && isLeft (m1)
-    || isRight (m1) && isRight (m2) && m2 .value >= m1 .value
-    || isLeft (m1) && isLeft (m2) && m2 .value >= m1 .value
+    (isRight (m2) && isLeft (m1))
+    || (isRight (m1) && isRight (m2) && m2 .value >= m1 .value)
+    || (isLeft (m1) && isLeft (m2) && m2 .value >= m1 .value)
 
 /**
  * `(<=) :: Either a b -> Either a b -> Bool`
@@ -607,9 +610,9 @@ export const lte =
   <A extends number | string, B extends number | string>
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
-    isLeft (m2) && isRight (m1)
-    || isRight (m1) && isRight (m2) && m2 .value <= m1 .value
-    || isLeft (m1) && isLeft (m2) && m2 .value <= m1 .value
+    (isLeft (m2) && isRight (m1))
+    || (isRight (m1) && isRight (m2) && m2 .value <= m1 .value)
+    || (isLeft (m1) && isLeft (m2) && m2 .value <= m1 .value)
 
 
 // EITHER FUNCTIONS (PART 2)
