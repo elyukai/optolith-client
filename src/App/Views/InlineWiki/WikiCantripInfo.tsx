@@ -21,17 +21,7 @@ export interface WikiCantripInfoProps {
 const CA = Cantrip.A
 
 export function WikiCantripInfo (props: WikiCantripInfoProps) {
-  const { x, l10n } = props
-
-  // if (["nl-BE"].includes(locale.id)) {
-  //   return (
-  //     <WikiBoxTemplate className="cantrip" title={x.name}>
-  //       <WikiProperty l10n={locale} title="info.property">
-  //         {translate(locale, "spells.view.properties")[x.property - 1]}
-  //       </WikiProperty>
-  //     </WikiBoxTemplate>
-  //   )
-  // }
+  const { x, l10n, books } = props
 
   return (
     <WikiBoxTemplate className="cantrip" title={CA.name (x)}>
@@ -41,13 +31,18 @@ export function WikiCantripInfo (props: WikiCantripInfoProps) {
       <WikiProperty l10n={l10n} title="targetcategory">{CA.target (x)}</WikiProperty>
       {maybeRNullF (subscript (translate (l10n) ("propertylist")) (CA.property (x) - 1))
                    (str => (
-                    <WikiProperty l10n={l10n} title="property">{str}</WikiProperty>
+                     <WikiProperty l10n={l10n} title="property">{str}</WikiProperty>
                    ))}
       {maybeRNullF (CA.note (x))
                    (str => (
-                    <WikiProperty l10n={l10n} title="notes">{str}</WikiProperty>
+                     <WikiProperty l10n={l10n} title="notes">{str}</WikiProperty>
                    ))}
-      <WikiSource {...props} acc={CA} />
+      <WikiSource
+        books={books}
+        x={x}
+        l10n={l10n}
+        acc={CA}
+        />
     </WikiBoxTemplate>
   )
 }

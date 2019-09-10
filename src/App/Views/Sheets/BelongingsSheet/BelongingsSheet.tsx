@@ -2,7 +2,7 @@ import * as React from "react";
 import { equals } from "../../../../Data/Eq";
 import { fmap, fmapF } from "../../../../Data/Functor";
 import { filter, find, flength, intercalate, List, map, splitAt } from "../../../../Data/List";
-import { fromMaybe, fromMaybeR, Just, Maybe, Nothing } from "../../../../Data/Maybe";
+import { fromMaybe, Just, Maybe, Nothing } from "../../../../Data/Maybe";
 import { divideBy, max, multiply } from "../../../../Data/Num";
 import { Record } from "../../../../Data/Record";
 import { fst, snd } from "../../../../Data/Tuple";
@@ -95,7 +95,7 @@ export function BelongingsSheet (props: BelongingsSheetProps) {
                     />
                 </div>
               )),
-              fromMaybeR (<div />)
+              fromMaybe (<div />)
             )}
             <div className="total">
               <label>

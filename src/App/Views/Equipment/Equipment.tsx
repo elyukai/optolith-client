@@ -3,7 +3,7 @@ import { notP } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { any, cons, filter, List, map, notNull, toArray } from "../../../Data/List";
-import { bindF, elem, ensure, fromJust, fromMaybe, fromMaybeR, isJust, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
+import { bindF, elem, ensure, fromJust, fromMaybe, isJust, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { ItemEditorContainer } from "../../Containers/ItemEditorContainer";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
@@ -238,7 +238,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
                     toArray,
                     arr => <>{arr}</>
                   )),
-                  fromMaybeR (<ListPlaceholder l10n={l10n} type="itemTemplates" noResults />)
+                  fromMaybe (<ListPlaceholder l10n={l10n} type="itemTemplates" noResults />)
                 )}
               </ListView>
             </Scroll>
@@ -299,7 +299,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
                   toArray,
                   arr => <>{arr}</>
                 )),
-                fromMaybeR (<ListPlaceholder
+                fromMaybe (<ListPlaceholder
                               l10n={l10n}
                               type="equipment"
                               noResults={filterText.length > 0}

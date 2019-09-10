@@ -2,7 +2,7 @@ import * as React from "react";
 import { Textfit } from "react-textfit";
 import { fmap, fmapF } from "../../../../Data/Functor";
 import { flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
-import { ensure, fromMaybeR, guardReplace, Just, Maybe } from "../../../../Data/Maybe";
+import { ensure, fromMaybe, guardReplace, Just, Maybe } from "../../../../Data/Maybe";
 import { elems } from "../../../../Data/OrderedSet";
 import { Record } from "../../../../Data/Record";
 import { AttributeCombined } from "../../../Models/View/AttributeCombined";
@@ -152,7 +152,7 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
               }),
               toArray
             )),
-            fromMaybeR (null)
+            fromMaybe (null as React.ReactNode)
           )}
           {replicateR (21 - Maybe.sum (fmapF (maybeSpells) (flength)))
                       (i => (

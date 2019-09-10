@@ -14,7 +14,6 @@ import { Disadvantage } from "../../Models/Wiki/Disadvantage";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Profession } from "../../Models/Wiki/Profession";
-import { ProfessionVariant } from "../../Models/Wiki/ProfessionVariant";
 import { Race } from "../../Models/Wiki/Race";
 import { RaceVariant } from "../../Models/Wiki/RaceVariant";
 import { translate } from "../../Utilities/I18n";
@@ -50,7 +49,6 @@ export interface PersonalDataStateProps {
   profession: Maybe<Record<Profession>>
   professionName: Maybe<string>
   fullProfessionName: Maybe<string>
-  professionVariant: Maybe<Record<ProfessionVariant>>
   profile: Maybe<Record<PersonalData>>
   race: Maybe<Record<Race>>
   raceVariant: Maybe<Record<RaceVariant>>
@@ -84,36 +82,32 @@ export type PersonalDataProps =
 export interface PersonalDataState {
   editName: boolean
   editProfessionName: boolean
-  isAvatarChangeOpened: boolean
-  isAddAPOpened: boolean
 }
 
 export class PersonalDataView extends React.Component<PersonalDataProps, PersonalDataState> {
   state = {
     editName: false,
     editProfessionName: false,
-    isAvatarChangeOpened: false,
-    isAddAPOpened: false,
   }
 
-  openAvatarChange = () => this.setState (() => ({ isAvatarChangeOpened: true }))
-  closeAvatarChange = () => this.setState (() => ({ isAvatarChangeOpened: false }))
-  openAddAP = () => this.setState (() => ({ isAddAPOpened: true }))
-  closeAddAP = () => this.setState (() => ({ isAddAPOpened: false }))
-
   changeName = (name: string) => {
-    this.props.setHeroName (name)
+    const { setHeroName } = this.props
+    setHeroName (name)
     this.setState ({ editName: false })
   }
 
   changeProfessionName = (name: string) => {
-    this.props.setCustomProfessionName (name)
+    const { setCustomProfessionName } = this.props
+    setCustomProfessionName (name)
     this.setState ({ editProfessionName: false })
   }
 
-  editName = () => this.setState ({ editName: true })
+  handleNameUpdate = () => this.setState ({ editName: true })
+
   editNameCancel = () => this.setState ({ editName: false })
-  editProfessionName = () => this.setState ({ editProfessionName: true })
+
+  handleProfessionNameUpdate = () => this.setState ({ editProfessionName: true })
+
   editProfessionNameCancel = () => this.setState ({ editProfessionName: false })
 
   render () {
@@ -132,7 +126,6 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
       profession,
       professionName,
       fullProfessionName,
-      professionVariant,
       profile: maybeProfile,
       race,
       raceVariant,
@@ -145,7 +138,28 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
       closeEditCharacterAvatar,
       setAvatar,
       deleteAvatar,
-      ...other
+      changeFamily,
+      changePlaceOfBirth,
+      changeDateOfBirth,
+      changeAge,
+      changeHaircolor,
+      changeEyecolor,
+      changeSize,
+      changeWeight,
+      changeTitle,
+      changeSocialStatus,
+      changeCharacteristics,
+      changeOtherInfo,
+      changeCultureAreaKnowledge,
+      rerollHair,
+      rerollEyes,
+      rerollSize,
+      rerollWeight,
+      isAlbino,
+      sizeCalcStr,
+      weightCalcStr,
+      isRemovingEnabled,
+      addAdventurePoints,
     } = this.props
 
     const {
@@ -168,7 +182,7 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
     ) : (
       <h1 className="confirm-edit">
         {renderMaybe (name)}
-        <IconButton icon="&#xE90c;" onClick={this.editName} />
+        <IconButton icon="&#xE90c;" onClick={this.handleNameUpdate} />
       </h1>
     )
 
@@ -186,7 +200,7 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
             <BorderButton
               className="edit-profession-name-btn"
               label={translate (l10n) ("editprofessionname")}
-              onClick={this.editProfessionName}
+              onClick={this.handleProfessionNameUpdate}
               />
           ))
         : null
@@ -200,44 +214,45 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
                          <div className="text-wrapper">
                            {nameElement}
                            {
-                             !isProfessionUndefined
-                               ? (
-                                 <VerticalList className="rcp">
-                                   {
-                                     maybe (<></>)
-                                           ((sex: Sex) => (
-                                               <span>
-                                                 {translate (l10n)
-                                                            (sex === "m" ? "male" : "female")}
-                                               </span>
-                                             )
-                                           )
-                                           (maybeSex)
-                                   }
-                                   <span className="race">
-                                     {renderMaybeWith (Race.A.name) (race)}
-                                     {renderMaybeWith (pipe (
-                                                        RaceVariant.A.name,
-                                                        str => ` (${str})`
-                                                      ))
-                                                      (raceVariant)}
-                                   </span>
-                                   <span className="culture">
-                                     {renderMaybeWith (Culture.A.name) (culture)}
-                                   </span>
-                                   <span className="profession">
-                                     {renderMaybe (fullProfessionName)}
-                                   </span>
-                                 </VerticalList>
-                               )
-                             : null
+                             isProfessionUndefined
+                             ? null
+                             : (
+                               <VerticalList className="rcp">
+                                 {
+                                   maybe (<></>)
+                                         ((sex: Sex) => (
+                                             <span>
+                                               {translate (l10n)
+                                                          (sex === "m" ? "male" : "female")}
+                                             </span>
+                                           ))
+                                         (maybeSex)
+                                 }
+                                 <span className="race">
+                                   {renderMaybeWith (Race.A.name) (race)}
+                                   {renderMaybeWith (pipe (
+                                                      RaceVariant.A.name,
+                                                      str => ` (${str})`
+                                                    ))
+                                                    (raceVariant)}
+                                 </span>
+                                 <span className="culture">
+                                   {renderMaybeWith (Culture.A.name) (culture)}
+                                 </span>
+                                 <span className="profession">
+                                   {renderMaybe (fullProfessionName)}
+                                 </span>
+                               </VerticalList>
+                             )
                            }
                            <VerticalList className="el">
                              <span>
                                {renderMaybeWith (ExperienceLevel.A.name) (currentEl)}
                              </span>
                              <span>
-                               {Maybe.sum (apTotal)} {translate (l10n) ("adventurepoints.short")}
+                               {Maybe.sum (apTotal)}
+                               {" "}
+                               {translate (l10n) ("adventurepoints.short")}
                              </span>
                            </VerticalList>
                          </div>
@@ -263,24 +278,43 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
                          {professionNameElement}
                        </div>
                        {
-                         !isProfessionUndefined
-                           ? (
-                               <>
-                                 <h3>{translate (l10n) ("personaldata")}</h3>
-                                 <OverviewPersonalData
-                                   {...other}
-                                   profile={profile}
-                                   culture={culture}
-                                   eyecolorTags={translate (l10n) ("eyecolors")}
-                                   haircolorTags={translate (l10n) ("haircolors")}
-                                   race={race}
-                                   raceVariant={raceVariant}
-                                   socialstatusTags={translate (l10n) ("socialstatuses")}
-                                   l10n={l10n}
-                                   />
-                               </>
-                             )
-                           : null
+                         isProfessionUndefined
+                         ? null
+                         : (
+                           <>
+                             <h3>{translate (l10n) ("personaldata")}</h3>
+                             <OverviewPersonalData
+                               profile={profile}
+                               culture={culture}
+                               eyecolorTags={translate (l10n) ("eyecolors")}
+                               haircolorTags={translate (l10n) ("haircolors")}
+                               race={race}
+                               raceVariant={raceVariant}
+                               socialstatusTags={translate (l10n) ("socialstatuses")}
+                               isAlbino={isAlbino}
+                               sizeCalcStr={sizeCalcStr}
+                               weightCalcStr={weightCalcStr}
+                               l10n={l10n}
+                               changeFamily={changeFamily}
+                               changePlaceOfBirth={changePlaceOfBirth}
+                               changeDateOfBirth={changeDateOfBirth}
+                               changeAge={changeAge}
+                               changeHaircolor={changeHaircolor}
+                               changeEyecolor={changeEyecolor}
+                               changeSize={changeSize}
+                               changeWeight={changeWeight}
+                               changeTitle={changeTitle}
+                               changeSocialStatus={changeSocialStatus}
+                               changeCharacteristics={changeCharacteristics}
+                               changeOtherInfo={changeOtherInfo}
+                               changeCultureAreaKnowledge={changeCultureAreaKnowledge}
+                               rerollHair={rerollHair}
+                               rerollEyes={rerollEyes}
+                               rerollSize={rerollSize}
+                               rerollWeight={rerollWeight}
+                               />
+                           </>
+                         )
                        }
                        {
                          Maybe.elem (2) (phase)
@@ -307,8 +341,7 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
                                                  list={advantages}
                                                  l10n={l10n}
                                                  />
-                                             )
-                                           )
+                                             ))
                                            (maybeAdvantages)}
                                <h3>{translate (l10n) ("disadvantages")}</h3>
                                {maybeRNull ((disadvantages: List<Record<ActiveActivatable>>) => (
@@ -316,8 +349,7 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
                                                  list={disadvantages}
                                                  l10n={l10n}
                                                  />
-                                             )
-                                           )
+                                             ))
                                            (maybeDisadvantages)}
                              </div>
                            )
@@ -325,15 +357,17 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
                        }
                      </Scroll>
                      <OverviewAddAP
-                       {...this.props}
                        close={closeAddAdventurePoints}
                        isOpen={isAddAdventurePointsOpen}
+                       isRemovingEnabled={isRemovingEnabled}
+                       addAdventurePoints={addAdventurePoints}
+                       l10n={l10n}
                        />
                      <AvatarChange
-                       {...this.props}
                        setPath={setAvatar}
                        close={closeEditCharacterAvatar}
                        isOpen={isEditCharacterAvatarOpen}
+                       l10n={l10n}
                        />
                    </Page>
                  ))

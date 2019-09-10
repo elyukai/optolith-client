@@ -1,4 +1,7 @@
+import { ReactElement } from "react";
 import { fromMaybe, maybe, Maybe } from "../../Data/Maybe";
+
+export type ReactReturn = ReactElement | null
 
 /**
  * `renderMaybe :: Maybe (String | Int) -> (String | Int)`

@@ -5,7 +5,7 @@ import { fmap, fmapF } from "../../../Data/Functor";
 import { rangeN } from "../../../Data/Ix";
 import { over, set } from "../../../Data/Lens";
 import { any, append, appendStr, consF, elem, fnull, head, ifoldr, imap, intercalate, intersperse, isList, List, map, NonEmptyList, notNull, notNullStr, snoc, snocF, subscript, toArray } from "../../../Data/List";
-import { bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNull, maybeRNullF, Nothing } from "../../../Data/Maybe";
+import { bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, mapMaybe, maybe, Maybe, maybeRNull, maybeRNullF, Nothing } from "../../../Data/Maybe";
 import { dec, negate } from "../../../Data/Num";
 import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record, RecordI, RecordIBase } from "../../../Data/Record";
@@ -66,13 +66,20 @@ const RPAA = RequirePrimaryAttribute.A
 const AAL = Advantage.AL
 const WA = WikiModel.A
 
-export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
-  const { x, l10n, specialAbilities, wiki } = props
+export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => {
+  const { x, l10n, specialAbilities, wiki, books } = props
 
   const cost = getCost (l10n) (x)
   const cost_elem = <Markdown source={cost} />
 
-  const source_elem = <WikiSource<RecordI<Activatable>> {...props} acc={AcA} />
+  const source_elem = (
+    <WikiSource<RecordI<Activatable>>
+      books={books}
+      l10n={l10n}
+      x={x}
+      acc={AcA}
+      />
+  )
 
   if (SpecialAbility.is (x)) {
     const header_name_levels =
@@ -85,14 +92,14 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
     const header_name = `${header_full_name}${header_name_levels}`
 
     const header_sub_name =
-      maybeR (null)
-             ((subgr: string) => (
-               <p className="title">
-                 {subgr}
-               </p>
-             ))
-             (bind (SAA.subgr (x))
-                   (pipe (dec, subscript (translate (l10n) ("combatspecialabilitygroups")))))
+      maybe (null as React.ReactNode)
+            ((subgr: string) => (
+              <p className="title">
+                {subgr}
+              </p>
+            ))
+            (bind (SAA.subgr (x))
+                  (pipe (dec, subscript (translate (l10n) ("combatspecialabilitygroups")))))
 
     switch (SAA.gr (x)) {
       case SpecialAbilityGroup.StaffEnchantments:
@@ -148,7 +155,11 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                              {str}
                            </WikiProperty>
                          ))}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
@@ -175,7 +186,11 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                                : aspect}
                            </WikiProperty>
                          ))}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
@@ -211,7 +226,11 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             subtitle={header_sub_name}
             >
             <Markdown source={renderMaybe (SAA.rules (x))} />
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
@@ -257,7 +276,11 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
               l10n={l10n}
               x={x}
               />
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
@@ -293,7 +316,11 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                              <Markdown source={`**${tag}:** ${names}`} />
                            )
                          })}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
@@ -357,7 +384,11 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                              )
                            }
                          ))}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
@@ -393,7 +424,11 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                              <Markdown source={`**${tag}:** ${names}`} />
                            )
                          })}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
@@ -445,7 +480,11 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                               {str}
                             </WikiProperty>
                           ))}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
@@ -462,7 +501,11 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                          (str => (
                            <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
                          ))}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
@@ -500,7 +543,11 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                              {str}
                            </WikiProperty>
                          ))}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
@@ -531,7 +578,11 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                              {str}
                            </WikiProperty>
                          ))}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
@@ -572,7 +623,11 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                          {str}
                        </WikiProperty>
                      ))}
-        <PrerequisitesText {...props} />
+        <PrerequisitesText
+          l10n={l10n}
+          wiki={wiki}
+          x={x}
+          />
         {cost_elem}
         {source_elem}
       </WikiBoxTemplate>
@@ -684,7 +739,10 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
 
     return (
       <p>
-        <span>{translate (l10n) ("prerequisites")}: </span>
+        <span>
+          {translate (l10n) ("prerequisites")}
+          {": "}
+        </span>
         <span>
           {pipe_ (
             List<Maybe<TypeofList>> (
@@ -726,7 +784,7 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
             intersperse<TypeofList> ("; "),
             addTextAfterOutsideList,
             ensure (notNull),
-            maybeR (translate (l10n) ("none")) (toArray)
+            maybe<React.ReactNode> (translate (l10n) ("none")) (toArray)
           )}
         </span>
       </p>
@@ -735,7 +793,10 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   else {
     return (
       <p>
-        <span>{translate (l10n) ("prerequisites")}: </span>
+        <span>
+          {translate (l10n) ("prerequisites")}
+          {": "}
+        </span>
         <span>
           {pipe_ (
             getPrerequisites (prerequisites) (prerequisitesTextIndex) (props),
@@ -745,7 +806,7 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
             intersperse<JSX.Element | string> (", "),
             addTextAfterOutsideList,
             ensure (notNull),
-            maybeR (translate (l10n) ("none")) (toArray)
+            maybe<React.ReactNode> (translate (l10n) ("none")) (toArray)
           )}
         </span>
       </p>

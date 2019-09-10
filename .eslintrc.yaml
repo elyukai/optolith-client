@@ -350,7 +350,7 @@ rules:
   react/no-direct-mutation-state: 2
   react/no-find-dom-node: 2
   react/no-is-mounted: 2
-  react/no-multi-comp: 2
+  # react/no-multi-comp: 2
   react/no-redundant-should-component-update: 2
   react/no-render-return-value: 2
   react/no-typos: 2
@@ -384,9 +384,9 @@ rules:
   react/jsx-equals-spacing: 2
   react/jsx-first-prop-new-line: 2
   react/jsx-handler-names: 2
-  react/jsx-indent:
-    - 2
-    - 2
+  # react/jsx-indent:
+  #   - 2
+  #   - 2
   react/jsx-indent-props:
     - 2
     - 2

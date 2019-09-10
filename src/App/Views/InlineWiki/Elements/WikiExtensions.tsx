@@ -1,7 +1,7 @@
 import * as React from "react";
 import { equals } from "../../../../Data/Eq";
 import { filter, flength, List, map, toArray } from "../../../../Data/List";
-import { bindF, elem, ensure, Maybe, maybeR, sum } from "../../../../Data/Maybe";
+import { bindF, elem, ensure, Maybe, maybe, sum } from "../../../../Data/Maybe";
 import { compare } from "../../../../Data/Num";
 import { Record, RecordIBase } from "../../../../Data/Record";
 import { Categories } from "../../../Constants/Categories";
@@ -10,7 +10,7 @@ import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybe } from "../../../Utilities/ReactUtils";
+import { ReactReturn, renderMaybe } from "../../../Utilities/ReactUtils";
 import { comparingR, sortRecordsBy } from "../../../Utilities/sortBy";
 import { Markdown } from "../../Universal/Markdown";
 
@@ -28,55 +28,56 @@ export interface WikiExtensionsProps<A extends RecordIBase<any>> {
 
 const SOA = SelectOption.A
 
-export function WikiExtensions<A extends RecordIBase<any>> (props: WikiExtensionsProps<A>) {
-  const {
-    x,
-    acc,
-    extensions,
-    l10n,
-  } = props
+export const WikiExtensions =
+  <A extends RecordIBase<any>> (props: WikiExtensionsProps<A>): ReactReturn => {
+    const {
+      x,
+      acc,
+      extensions,
+      l10n,
+    } = props
 
-  const category = acc.category (x)
+    const category = acc.category (x)
 
-  let key: L10nKey = "spellextensions"
+    let key: L10nKey = "spellextensions"
 
-  if (category === Categories.LITURGIES) {
-    key = "liturgicalchantextensions"
+    if (category === Categories.LITURGIES) {
+      key = "liturgicalchantextensions"
+    }
+
+    return maybe (null as ReactReturn)
+                 ((exs: List<Record<SelectOption>>) => (
+                   <>
+                     <p className="extensions-title">
+                       <span>{translate (l10n) (key)}</span>
+                     </p>
+                     <ul className="extensions">
+                       {pipe_ (
+                         exs,
+                         map (e => {
+                           const requiredSR = Maybe.product (SOA.level (e)) * 4 + 4
+                           const srText = `${translate (l10n) ("skillrating.short")} ${requiredSR}`
+
+                           const ap = Maybe.sum (SOA.cost (e))
+                           const apText = `${ap} ${translate (l10n) ("adventurepoints.short")}`
+
+                           const desc = renderMaybe (SOA.description (e))
+
+                           return (
+                             <Markdown
+                               key={SOA.id (e)}
+                               source={`*${SOA.name (e)}* (${srText}, ${apText}): ${desc}`}
+                               isListElement
+                               />
+                           )
+                         }),
+                         toArray
+                       )}
+                     </ul>
+                   </>
+                 ))
+                 (extensions)
   }
-
-  return maybeR (null)
-                ((exs: List<Record<SelectOption>>) => (
-                  <>
-                    <p className="extensions-title">
-                      <span>{translate (l10n) (key)}</span>
-                    </p>
-                    <ul className="extensions">
-                      {pipe_ (
-                        exs,
-                        map (e => {
-                          const requiredSR = Maybe.product (SOA.level (e)) * 4 + 4
-                          const srText = `${translate (l10n) ("skillrating.short")} ${requiredSR}`
-
-                          const ap = Maybe.sum (SOA.cost (e))
-                          const apText = `${ap} ${translate (l10n) ("adventurepoints.short")}`
-
-                          const desc = renderMaybe (SOA.description (e))
-
-                          return (
-                            <Markdown
-                              key={SOA.id (e)}
-                              source={`*${SOA.name (e)}* (${srText}, ${apText}): ${desc}`}
-                              isListElement
-                              />
-                          )
-                        }),
-                        toArray
-                      )}
-                    </ul>
-                  </>
-                ))
-                (extensions)
-}
 
 const sortExts = sortRecordsBy ([comparingR (pipe (SelectOption.A.cost, sum)) (compare)])
 

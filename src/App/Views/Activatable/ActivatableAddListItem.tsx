@@ -1,8 +1,10 @@
 import * as React from "react";
-import { List, notNullStrUndef } from "../../../Data/List";
-import { fromJust, fromMaybeR, guardReplace, isJust, Just, Maybe, maybeToUndefined, orN } from "../../../Data/Maybe";
+import { notP } from "../../../Data/Bool";
+import { List, notNullStr } from "../../../Data/List";
+import { all, any, ensure, fromMaybe, guardReplace, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { fst, snd } from "../../../Data/Tuple";
+import { AdvantageId, DisadvantageId } from "../../Constants/Ids";
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
 import { HeroModel } from "../../Models/Hero/HeroModel";
 import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
@@ -51,253 +53,281 @@ export type ActivatableAddListItemProps =
   & ActivatableAddListItemDispatchProps
   & ActivatableAddListItemOwnProps
 
-export interface ActivatableAddListItemState {
-  selected?: string | number
-  selected2?: string | number
-  selected3?: string | number
-  selectedTier?: number
-  input?: string
-  input2?: string
-  customCost?: string
-  customCostPreview?: string
-  showCustomCostDialog: boolean
+export interface ActivatableAddListItemSelectedOptions {
+  selected: Maybe<string | number>
+  selected2: Maybe<string | number>
+  selected3: Maybe<string | number>
+  selectedTier: Maybe<number>
+  input: Maybe<string>
+  customCost: Maybe<string>
 }
 
 const IAA = InactiveActivatable.A
 const IACEA = InactiveActivatableControlElements.A
 const PABSA = PropertiesAffectedByState.A
 
-export class ActivatableAddListItem extends
-  React.Component<ActivatableAddListItemProps, ActivatableAddListItemState> {
-  state: ActivatableAddListItemState = {
-    showCustomCostDialog: false,
-  }
+export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = props => {
+  const {
+    item,
+    isImportant,
+    isTypical,
+    isUntypical,
+    hideGroup,
+    l10n,
+    selectForInfo,
+    selectedForInfo,
+    wiki,
+  } = props
 
-  handleSelect = (selected: Maybe<string | number>) => {
-    this.setState (() => ({
-      selected: maybeToUndefined (selected),
-      selected2: undefined,
-      selected3: undefined,
-    }))
-  }
+  const id = IAA.id (item)
 
-  handleSelect2 = (selected2: Maybe<string | number>) => {
-    this.setState ({
-      selected2: maybeToUndefined (selected2),
-    })
-  }
+  const [mselected, setSelected] = React.useState<Maybe<string | number>> (Nothing)
+  const [mselected2, setSelected2] = React.useState<Maybe<string | number>> (Nothing)
+  const [mselected3, setSelected3] = React.useState<Maybe<string | number>> (Nothing)
+  const [mselected_level, setSelectedLevel] = React.useState<Maybe<number>> (Nothing)
+  const [minput, setInput] = React.useState<Maybe<string>> (Nothing)
+  const [mcustom_cost, setCustomCost] = React.useState<Maybe<string>> (Nothing)
+  const [mcustom_cost_preview, setCustomCostPreview] = React.useState<Maybe<string>> (Nothing)
+  const [showCustomCostDialog, setShowCustomCostDialog] = React.useState<boolean> (false)
 
-  handleSelect3 = (selected3: Maybe<string | number>) => {
-    this.setState ({
-      selected3: maybeToUndefined (selected3),
-    })
-  }
-
-  handleLevel = (maybeLevel: Maybe<number>) => {
-    if (isJust (maybeLevel)) {
-      const level = fromJust (maybeLevel)
-
-      if (["DISADV_34", "DISADV_50"].includes (IAA.id (this.props.item))) {
-        this.setState ({ selectedTier: level, selected: undefined })
-      }
-      else {
-        this.setState ({ selectedTier: level })
-      }
-    }
-  }
-
-  handleInput = (input: string) =>
-    this.setState ({ input: notNullStrUndef (input) ? input :  undefined })
-
-  handleSecondInput = (event: InputTextEvent) => {
-    const input2 = event.target.value
-    this.setState ({ input2: notNullStrUndef (input2) ? input2 : undefined })
-  }
-
-  showCustomCostDialog = () => this.setState ({
-    showCustomCostDialog: this.props.hideGroup === true,
-    customCostPreview: this.state.customCost,
-  })
-
-  closeCustomCostDialog = () => this.setState ({ showCustomCostDialog: false })
-
-  setCustomCost = () => this.setState ({ customCost: this.state.customCostPreview })
-
-  setCustomCostPreview = (event: InputTextEvent) => {
-    const custom_cost = event.target.value
-    this.setState ({ customCostPreview: notNullStrUndef (custom_cost) ? custom_cost : undefined })
-  }
-
-  deleteCustomCost = () => this.setState ({ customCost: undefined })
-
-  addToList = (args: Record<ActivatableActivationOptions>) => {
-    this.props.addToList (args)
-
-    if (
-      this.state.selected !== undefined
-      || this.state.selectedTier !== undefined
-      || this.state.input !== undefined
-    ) {
-      this.setState ({
-        input: undefined,
-        input2: undefined,
-        selected: undefined,
-        selected2: undefined,
-        selected3: undefined,
-        selectedTier: undefined,
-        customCost: undefined,
-      })
-    }
-  }
-
-  // tslint:disable-next-line:cyclomatic-complexity
-  render () {
-    const {
-      item,
-      isImportant,
-      isTypical,
-      isUntypical,
-      hideGroup,
-      l10n,
-      selectForInfo,
-      selectedForInfo,
-      wiki,
-    } = this.props
-
-    const {
-      customCost,
-      customCostPreview,
-      input: inputText,
-      showCustomCostDialog,
-    } = this.state
-
-    const selectElementDisabled =
-      [
-        "ADV_32",
-        "DISADV_1",
-        "DISADV_24",
-        "DISADV_34",
-        "DISADV_36",
-        "DISADV_45",
-        "DISADV_50",
-      ].includes (IAA.id (item))
-      && notNullStrUndef (inputText)
-
-    const propsAndActivationArgs =
-      getIdSpecificAffectedAndDispatchProps
-        ({
-          handleInput: this.handleInput,
-          handleSelect: this.handleSelect,
-          selectElementDisabled,
-        })
-        (l10n)
-        (wiki)
-        (item)
-        (this.state)
-
-    const finalProps = insertFinalCurrentCost (item) (this.state) (propsAndActivationArgs)
-
-    const controlElements =
-      getInactiveActivatableControlElements
-        ({
-          handleInput: this.handleInput,
-          handleSelect: this.handleSelect,
-          handleSecondSelect: this.handleSelect2,
-          handleLevel: this.handleLevel,
-          selectElementDisabled,
-        })
-        (item)
-        (this.state)
-        (finalProps)
-
-    const mlevelElementBefore = IACEA.levelElementBefore (controlElements)
-    const mlevelElementAfter = IACEA.levelElementAfter (controlElements)
-    const mselectElement = IACEA.selectElement (controlElements)
-    const msecondSelectElement = IACEA.secondSelectElement (controlElements)
-    const mthirdSelectElement = IACEA.thirdSelectElement (controlElements)
-    const minputElement = IACEA.inputElement (controlElements)
-    const mdisabled = IACEA.disabled (controlElements)
-
-    return (
-      <ListItem
-        important={isImportant}
-        recommended={isTypical}
-        unrecommended={isUntypical}
-        active={Maybe.elem (IAA.id (item)) (selectedForInfo)}
-        >
-        <ListItemLeft>
-          <ListItemName name={IAA.name (item)} />
-          {fromMaybeR (null) (mlevelElementBefore)}
-          {fromMaybeR (null) (mselectElement)}
-          {fromMaybeR (null) (msecondSelectElement)}
-          {fromMaybeR (null) (mthirdSelectElement)}
-          {fromMaybeR (null) (minputElement)}
-          {fromMaybeR (null) (mlevelElementAfter)}
-        </ListItemLeft>
-        <ListItemSeparator/>
-        {hideGroup !== true
-          ? (
-            <ListItemGroup
-              list={translate (l10n) ("specialabilitygroups")}
-              index={pipe_ (item, IAA.wikiEntry, SpecialAbility.AL.gr)}
-              />
-          )
-        : null}
-        <ListItemValues>
-          <div
-            className={classListMaybe (List (
-              Just ("cost"),
-              guardReplace (orN (hideGroup)) ("value-btn"),
-              guardReplace (typeof customCost === "string") ("custom-cost")
-            ))}
-            onClick={this.showCustomCostDialog}
-            >
-            {renderMaybeWith ((x: number | string) => IAA.isAutomatic (item) ? `(${x})` : x)
-                             (PABSA.currentCost (snd (finalProps)))}
-          </div>
-          <Dialog
-            id="custom-cost-dialog"
-            close={this.closeCustomCostDialog}
-            isOpen={showCustomCostDialog}
-            title={translate (l10n) ("customcost")}
-            buttons={[
-              {
-                autoWidth: true,
-                label: translate (l10n) ("done"),
-                disabled: typeof customCostPreview === "string" && !isInteger (customCostPreview),
-                onClick: this.setCustomCost,
-              },
-              {
-                autoWidth: true,
-                label: translate (l10n) ("delete"),
-                disabled: customCost === undefined,
-                onClick: this.deleteCustomCost,
-              },
-            ]}
-            >
-            {translate (l10n) ("customcostfor")}{IAA.name (item)}
-            <TextField
-              value={customCostPreview}
-              onChange={this.setCustomCostPreview}
-              fullWidth
-              autoFocus
-              />
-          </Dialog>
-        </ListItemValues>
-        <ListItemButtons>
-          <IconButton
-            icon="&#xE916;"
-            disabled={mdisabled}
-            onClick={this.addToList.bind (null, fst (finalProps))}
-            flat
-            />
-          <IconButton
-            icon="&#xE912;"
-            onClick={() => selectForInfo (IAA.id (item))}
-            flat
-            />
-        </ListItemButtons>
-      </ListItem>
+  const handleSelect =
+    React.useCallback (
+      (nextSelected: Maybe<string | number>) => {
+        setSelected (nextSelected)
+        setSelected2 (Nothing)
+        setSelected3 (Nothing)
+      },
+      [setSelected, setSelected2, setSelected3]
     )
+
+  const handleLevel =
+    React.useCallback (
+      (mlevel: Maybe<number>) => {
+        if (isJust (mlevel)) {
+          if (DisadvantageId.Principles === id || DisadvantageId.Obligations === id) {
+            setSelectedLevel (mlevel)
+            setSelected (Nothing)
+          }
+          else {
+            setSelectedLevel (mlevel)
+          }
+        }
+      },
+      [setSelectedLevel, setSelected, item]
+    )
+
+  const handleInput =
+    React.useCallback (
+      (input: string) => setInput (ensure (notNullStr) (input)),
+      [setInput]
+    )
+
+  const handleShowCustomCostDialog =
+    React.useCallback (
+      () => {
+        setShowCustomCostDialog (orN (hideGroup))
+        setCustomCostPreview (mcustom_cost)
+      },
+      [setShowCustomCostDialog, setCustomCostPreview]
+    )
+
+  const handleCloseCustomCostDialog =
+    React.useCallback (
+      () => setShowCustomCostDialog (false),
+      [setShowCustomCostDialog]
+    )
+
+  const handleSetCustomCost =
+    React.useCallback (
+      () => setCustomCost (mcustom_cost_preview),
+      [setCustomCost]
+    )
+
+  const handleSetCustomCostPreview =
+    React.useCallback (
+      (event: InputTextEvent) => setCustomCostPreview (ensure (notNullStr) (event.target.value)),
+      [setCustomCostPreview]
+    )
+
+  const handleDeleteCustomCost =
+    React.useCallback (
+      () => setCustomCost (Nothing),
+      [setCustomCost]
+    )
+
+  const selectElementDisabled =
+    ([
+      AdvantageId.MagicalAttunement,
+      DisadvantageId.AfraidOf,
+      DisadvantageId.MagicalRestriction,
+      DisadvantageId.Principles,
+      DisadvantageId.BadHabit,
+      DisadvantageId.Stigma,
+      DisadvantageId.Obligations,
+    ] as string[]) .includes (id)
+    && any (notNullStr) (minput)
+
+  const selectedOptions: ActivatableAddListItemSelectedOptions = {
+    selected: mselected,
+    selected2: mselected2,
+    selected3: mselected3,
+    selectedTier: mselected_level,
+    input: minput,
+    customCost: mcustom_cost,
   }
+
+  const propsAndActivationArgs =
+    getIdSpecificAffectedAndDispatchProps
+      ({
+        handleInput,
+        handleSelect,
+        selectElementDisabled,
+      })
+      (l10n)
+      (wiki)
+      (item)
+      (selectedOptions)
+
+  const finalProps = insertFinalCurrentCost (item) (selectedOptions) (propsAndActivationArgs)
+
+  const controlElements =
+    getInactiveActivatableControlElements
+      ({
+        handleInput,
+        handleSelect,
+        handleSecondSelect: setSelected2,
+        handleLevel,
+        selectElementDisabled,
+      })
+      (item)
+      (selectedOptions)
+      (finalProps)
+
+  const mlevelElementBefore = IACEA.levelElementBefore (controlElements)
+  const mlevelElementAfter = IACEA.levelElementAfter (controlElements)
+  const mselectElement = IACEA.selectElement (controlElements)
+  const msecondSelectElement = IACEA.secondSelectElement (controlElements)
+  const mthirdSelectElement = IACEA.thirdSelectElement (controlElements)
+  const minputElement = IACEA.inputElement (controlElements)
+  const mdisabled = IACEA.disabled (controlElements)
+
+  const handleAddToList =
+    React.useCallback (
+      () => {
+        const args = fst (finalProps)
+        const { addToList } = props
+
+        addToList (args)
+
+        if (isJust (mselected) || isJust (mselected_level) || isJust (minput)) {
+          setInput (Nothing)
+          setSelected (Nothing)
+          setSelected2 (Nothing)
+          setSelected3 (Nothing)
+          setSelectedLevel (Nothing)
+          setCustomCost (Nothing)
+        }
+      },
+      [
+        mselected,
+        mselected_level,
+        minput,
+        setInput,
+        setSelected,
+        setSelected2,
+        setSelected3,
+        setSelectedLevel,
+        setCustomCost,
+        finalProps,
+      ]
+    )
+
+  const handleSelectForInfo =
+    React.useCallback (
+      () => selectForInfo (id),
+      [selectForInfo, id]
+    )
+
+  return (
+    <ListItem
+      important={isImportant}
+      recommended={isTypical}
+      unrecommended={isUntypical}
+      active={Maybe.elem (IAA.id (item)) (selectedForInfo)}
+      >
+      <ListItemLeft>
+        <ListItemName name={IAA.name (item)} />
+        {fromMaybe (null as React.ReactNode) (mlevelElementBefore)}
+        {fromMaybe (null as React.ReactNode) (mselectElement)}
+        {fromMaybe (null as React.ReactNode) (msecondSelectElement)}
+        {fromMaybe (null as React.ReactNode) (mthirdSelectElement)}
+        {fromMaybe (null as React.ReactNode) (minputElement)}
+        {fromMaybe (null as React.ReactNode) (mlevelElementAfter)}
+      </ListItemLeft>
+      <ListItemSeparator />
+      {orN (hideGroup)
+        ? null
+        : (
+          <ListItemGroup
+            list={translate (l10n) ("specialabilitygroups")}
+            index={pipe_ (item, IAA.wikiEntry, SpecialAbility.AL.gr)}
+            />
+        )}
+      <ListItemValues>
+        <div
+          className={classListMaybe (List (
+            Just ("cost"),
+            guardReplace (orN (hideGroup)) ("value-btn"),
+            guardReplace (isJust (mcustom_cost)) ("custom-cost")
+          ))}
+          onClick={handleShowCustomCostDialog}
+          >
+          {renderMaybeWith ((x: number | string) => IAA.isAutomatic (item) ? `(${x})` : x)
+                           (PABSA.currentCost (snd (finalProps)))}
+        </div>
+        <Dialog
+          id="custom-cost-dialog"
+          close={handleCloseCustomCostDialog}
+          isOpen={showCustomCostDialog}
+          title={translate (l10n) ("customcost")}
+          buttons={[
+            {
+              autoWidth: true,
+              label: translate (l10n) ("done"),
+              disabled: all (notP (isInteger)) (mcustom_cost_preview),
+              onClick: handleSetCustomCost,
+            },
+            {
+              autoWidth: true,
+              label: translate (l10n) ("delete"),
+              disabled: isNothing (mcustom_cost),
+              onClick: handleDeleteCustomCost,
+            },
+          ]}
+          >
+          {translate (l10n) ("customcostfor")}
+          {IAA.name (item)}
+          <TextField
+            value={mcustom_cost_preview}
+            onChange={handleSetCustomCostPreview}
+            fullWidth
+            autoFocus
+            />
+        </Dialog>
+      </ListItemValues>
+      <ListItemButtons>
+        <IconButton
+          icon="&#xE916;"
+          disabled={mdisabled}
+          onClick={handleAddToList}
+          flat
+          />
+        <IconButton
+          icon="&#xE912;"
+          onClick={handleSelectForInfo}
+          flat
+          />
+      </ListItemButtons>
+    </ListItem>
+  )
 }

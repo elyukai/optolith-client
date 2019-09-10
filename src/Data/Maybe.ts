@@ -553,6 +553,7 @@ export const notElem =
     !elem (e) (m)
 
 interface Find {
+
   /**
    * `find :: (a -> Bool) -> Maybe a -> Maybe a`
    *
@@ -719,6 +720,8 @@ export const mapMaybe =
 
 export import isMaybe = Internals.isMaybe
 
+Maybe.isMaybe = isMaybe
+
 /**
  * `normalize :: (a | Maybe a) -> Maybe a`
  *
@@ -730,7 +733,10 @@ export const normalize =
   (x: A | Nullable | Maybe<A>): Maybe<A> =>
     isMaybe (x) ? x : Maybe (x)
 
+Maybe.normalize = normalize
+
 interface Ensure {
+
   /**
    * `ensure :: (a -> Bool) -> a -> Maybe a`
    *
@@ -766,6 +772,8 @@ export const ensure: Ensure =
   (x: A): Maybe<A> =>
     pred (x) ? Just (x) : Nothing
 
+Maybe.ensure = ensure
+
 /**
  * `imapMaybe :: (Int -> a -> Maybe b) -> [a] -> [b]`
  *
@@ -778,13 +786,14 @@ export const imapMaybe =
   <A, B>
   (f: (index: number) => (x: A) => Maybe<B>) =>
     ifoldr<A, List<B>>
-      (index => x => acc =>
-        pipe (
-          f (index),
-          maybe<List<B>> (acc)
-                         (cons (acc)))
-                         (x))
+      (index => flip (acc => pipe (
+                       f (index),
+                       maybe<List<B>> (acc)
+                                      (cons (acc))
+                     )))
       (List.empty)
+
+Maybe.imapMaybe = imapMaybe
 
 /**
  * `maybeToNullable :: Maybe a -> (a | Null)`
@@ -797,6 +806,8 @@ export const maybeToNullable =
   (x: Maybe<A>): A | null =>
     isJust (x) ? x .value : null
 
+Maybe.maybeToNullable = maybeToNullable
+
 /**
  * `maybeToUndefined :: Maybe a -> (a | undefined)`
  *
@@ -807,6 +818,8 @@ export const maybeToUndefined =
   <A>
   (x: Maybe<A>): A | undefined =>
     isJust (x) ? x .value : undefined
+
+Maybe.maybeToUndefined = maybeToUndefined
 
 /**
  * `maybe' :: (() -> b) -> (a -> b) -> Maybe a -> b`
@@ -827,42 +840,10 @@ export const INTERNAL_shallowEquals =
   <A>
   (x: Maybe<A>) =>
   (y: Maybe<A>) =>
-    isNothing (x) && isNothing (y)
-    || isJust (x) && isJust (y) && x .value === y .value
+    (isNothing (x) && isNothing (y))
+    || (isJust (x) && isJust (y) && x .value === y .value)
 
 type ReactElement = JSX.Element | null | string | number | (string | JSX.Element)[]
-
-/**
- * `fromMaybeR :: a -> Maybe a -> a`
- *
- * The `fromMaybeR` function takes a default value and and `Maybe` value. If
- * the `Maybe` is `Nothing`, it returns the default values otherwise, it
- * returns the value contained in the `Maybe`.
- *
- * A variant of `fromMaybe` specialized to the React library and thus allowing
- * a React node, which can be nullable, as the default value.
- */
-export const fromMaybeR =
-  (def: ReactElement) => (x: Maybe<NonNullable<ReactElement>>): ReactElement =>
-    isJust (x) ? x .value : def
-
-/**
- * `maybeR :: b -> (a -> b) -> Maybe a -> b`
- *
- * The `maybeR` function takes a default value, a function, and a `Maybe`
- * value. If the `Maybe` value is `Nothing`, the function returns the default
- * value. Otherwise, it applies the function to the value inside the `Just`
- * and returns the result.
- *
- * A variant of `maybe` specialized to the React library and thus allowing a
- * React node, which can be nullable, as the default value.
- */
-export const maybeR =
-  <R1 extends ReactElement>
-  (def: R1) =>
-  <A, R2 extends ReactElement> (f: (x: A) => NonNullable<R2>) =>
-  (x: Maybe<A>): R1 | R2 =>
-    isJust (x) ? f (x .value) : def
 
 /**
  * `maybeRNull :: (a -> b) -> Maybe a -> b`
@@ -871,7 +852,9 @@ export const maybeR =
  * maybeRNull == maybeR null
  * ```
  */
-export const maybeRNull = maybeR (null)
+export const maybeRNull = maybe<ReactElement> (null)
+
+Maybe.maybeRNull = maybeRNull
 
 /**
  * `maybeRNullF :: Maybe a -> (a -> b) -> b`
@@ -880,7 +863,9 @@ export const maybeRNull = maybeR (null)
  * maybeRNull == flip (maybeR null)
  * ```
  */
-export const maybeRNullF = flip (maybeR (null))
+export const maybeRNullF = flip (maybe<ReactElement> (null))
+
+Maybe.maybeRNullF = maybeRNullF
 
 /**
  * `joinMaybeList :: Maybe [a] -> [a]`
@@ -919,18 +904,6 @@ export const orN: (x: boolean | undefined) => boolean = x => x === undefined ? f
 
 Maybe.orN = orN
 
-/**
- * `maybeMir :: Maybe a -> (a -> b) -> b -> b`
- *
- * Mirrored version of `maybe`:
- *
- * `maybeMir x y z = maybe z y x`
- */
-export const maybeMir: <A> (x: Maybe<A>) => <B> (f: (x: A) => B) => (def: B) => B =
-  x => f => def => maybe (def) (f) (x)
-
-Maybe.maybeMir = maybeMir
-
 
 // NAMESPACED FUNCTIONS
 
@@ -938,45 +911,45 @@ Maybe.Just = Just
 Maybe.Nothing = Nothing
 Maybe.fromNullable = Maybe
 
-Maybe.pure = pure,
-Maybe.ap = ap,
+Maybe.pure = pure
+Maybe.ap = ap
 
-Maybe.alt = alt,
-Maybe.alt_ = alt_,
-Maybe.altF = altF,
-Maybe.altF_ = altF_,
-Maybe.empty = empty,
-Maybe.guard = guard,
-Maybe.guard_ = guard_,
+Maybe.alt = alt
+Maybe.alt_ = alt_
+Maybe.altF = altF
+Maybe.altF_ = altF_
+Maybe.empty = empty
+Maybe.guard = guard
+Maybe.guard_ = guard_
 
-Maybe.bind = bind,
-Maybe.bindF = bindF,
-Maybe.then = then,
-Maybe.kleisli = kleisli,
-Maybe.join = join,
-Maybe.mapM = mapM,
-Maybe.liftM2 = liftM2,
-Maybe.liftM3 = liftM3,
-Maybe.liftM4 = liftM4,
-Maybe.liftM5 = liftM5,
+Maybe.bind = bind
+Maybe.bindF = bindF
+Maybe.then = then
+Maybe.kleisli = kleisli
+Maybe.join = join
+Maybe.mapM = mapM
+Maybe.liftM2 = liftM2
+Maybe.liftM3 = liftM3
+Maybe.liftM4 = liftM4
+Maybe.liftM5 = liftM5
 
-Maybe.foldr = foldr,
-Maybe.foldl = foldl,
-Maybe.toList = toList,
-Maybe.fnull = fnull,
-Maybe.flength = flength,
-Maybe.elem = elem,
-Maybe.elemF = elemF,
-Maybe.sum = sum,
-Maybe.product = product,
-Maybe.concat = concat,
-Maybe.concatMap = concatMap,
-Maybe.and = and,
-Maybe.or = or,
-Maybe.any = any,
-Maybe.all = all,
-Maybe.notElem = notElem,
-Maybe.find = find,
+Maybe.foldr = foldr
+Maybe.foldl = foldl
+Maybe.toList = toList
+Maybe.fnull = fnull
+Maybe.flength = flength
+Maybe.elem = elem
+Maybe.elemF = elemF
+Maybe.sum = sum
+Maybe.product = product
+Maybe.concat = concat
+Maybe.concatMap = concatMap
+Maybe.and = and
+Maybe.or = or
+Maybe.any = any
+Maybe.all = all
+Maybe.notElem = notElem
+Maybe.find = find
 
 Maybe.isJust = isJust
 Maybe.isNothing = isNothing
@@ -995,16 +968,6 @@ Maybe.listToMaybe = listToMaybe
 Maybe.maybeToList = maybeToList
 Maybe.catMaybes = catMaybes
 Maybe.mapMaybe = mapMaybe
-
-Maybe.isMaybe = isMaybe
-Maybe.normalize = normalize
-Maybe.ensure = ensure
-Maybe.imapMaybe = imapMaybe
-Maybe.maybeToNullable = maybeToNullable
-Maybe.maybeToUndefined = maybeToUndefined
-Maybe.maybeR = maybeR
-Maybe.maybeRNull = maybeRNull
-Maybe.maybeRNullF = maybeRNullF
 
 
 // TYPE HELPERS

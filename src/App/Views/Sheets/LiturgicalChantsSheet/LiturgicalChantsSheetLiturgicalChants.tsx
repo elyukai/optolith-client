@@ -2,7 +2,7 @@ import * as React from "react";
 import { Textfit } from "react-textfit";
 import { fmap, fmapF } from "../../../../Data/Functor";
 import { flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
-import { ensure, fromMaybeR, mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { ensure, fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe";
 import { dec } from "../../../../Data/Num";
 import { elems } from "../../../../Data/OrderedSet";
 import { Record } from "../../../../Data/Record";
@@ -149,7 +149,7 @@ export function LiturgicalChantsSheetLiturgicalChants (
               }),
               toArray
             )),
-            fromMaybeR (null)
+            fromMaybe (null as React.ReactNode)
           )}
           {replicateR (21 - Maybe.sum (fmapF (maybeLiturgicalChants) (flength)))
                       (i => (

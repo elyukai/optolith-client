@@ -2,7 +2,7 @@ import * as React from "react";
 import { notEquals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybeR, guard, Just, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
+import { bindF, ensure, fromMaybe, guard, Just, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
 import { dec } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
@@ -300,7 +300,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                     toArray,
                     arr => <>{arr}</>
                   )),
-                  fromMaybeR (
+                  fromMaybe (
                     <ListPlaceholder l10n={l10n} type="inactiveSpells" noResults />
                   )
                 )}
@@ -438,7 +438,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                   toArray,
                   arr => <>{arr}</>
                 )),
-                fromMaybeR (
+                fromMaybe (
                   <ListPlaceholder
                     l10n={l10n}
                     type="spells"

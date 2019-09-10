@@ -1,7 +1,7 @@
 import * as React from "react";
 import { fmapF } from "../../../Data/Functor";
 import { List } from "../../../Data/List";
-import { fromMaybeR, Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { fromMaybe, Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
@@ -128,15 +128,15 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
               onClick={switchActiveItemHints}>
               {translate (l10n) ("showactivated")}
             </Checkbox>
-            {fromMaybeR (null)
-                        (fmapF (m_ap)
-                               (ap => (
-                                 <AdvantagesDisadvantagesAdventurePoints
-                                   ap={ap}
-                                   magicalMax={magicalMax}
-                                   l10n={l10n}
-                                   />
-                               )))}
+            {fromMaybe (null as React.ReactNode)
+                       (fmapF (m_ap)
+                              (ap => (
+                                <AdvantagesDisadvantagesAdventurePoints
+                                  ap={ap}
+                                  magicalMax={magicalMax}
+                                  l10n={l10n}
+                                  />
+                              )))}
             {showRating ? <RecommendedReference l10n={l10n} strongly /> : null}
           </Options>
           <MainContent>

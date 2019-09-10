@@ -1,8 +1,6 @@
 import { connect } from "react-redux";
-import { Maybe } from "../../Data/Maybe";
 import { ReduxDispatch } from "../Actions/Actions";
 import * as ProfessionActions from "../Actions/ProfessionActions";
-import * as ProfessionVariantActions from "../Actions/ProfessionVariantActions";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getFilteredProfessions } from "../Selectors/rcpSelectors";
 import { getCurrentProfessionId, getCurrentProfessionVariantId, getProfessionsFilterText, getSex, getWiki } from "../Selectors/stateSelectors";
@@ -24,12 +22,6 @@ const mapStateToProps =
   })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): ProfessionsDispatchProps => ({
-  selectProfession (id: string) {
-    dispatch (ProfessionActions.selectProfession (id))
-  },
-  selectProfessionVariant (id: Maybe<string>) {
-    dispatch (ProfessionVariantActions.selectProfessionVariant (id))
-  },
   setSortOrder (sortOrder: SortNames) {
     dispatch (ProfessionActions.setProfessionsSortOrder (sortOrder))
   },

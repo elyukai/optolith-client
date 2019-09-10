@@ -3,7 +3,7 @@ import { notEquals } from "../../../Data/Eq";
 import { ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { consF, elem, elemF, intercalate, List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, fromMaybeR, guard, Just, mapMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
+import { bindF, ensure, fromMaybe, guard, Just, mapMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
 import { dec } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
@@ -309,7 +309,7 @@ export class LiturgicalChants
                     toArray,
                     arr => <>{arr}</>
                   )),
-                  fromMaybeR (
+                  fromMaybe (
                     <ListPlaceholder l10n={l10n} type="inactiveLiturgicalChants" noResults />
                   )
                 )}
@@ -441,7 +441,7 @@ export class LiturgicalChants
                   toArray,
                   arr => <>{arr}</>
                 )),
-                fromMaybeR (
+                fromMaybe (
                   <ListPlaceholder
                     l10n={l10n}
                     type="liturgicalChants"

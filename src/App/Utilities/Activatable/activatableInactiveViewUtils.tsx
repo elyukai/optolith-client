@@ -8,7 +8,7 @@ import { countWith, elemF, filter, find, flength, foldr, imap, isList, List, map
 import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, or, then, thenF } from "../../../Data/Maybe";
 import { dec, gte, max, min, multiply, negate } from "../../../Data/Num";
 import { lookupF } from "../../../Data/OrderedMap";
-import { fromDefault, makeLenses, Omit, Record } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple";
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
@@ -23,7 +23,7 @@ import { Application } from "../../Models/Wiki/sub/Application";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
-import { ActivatableAddListItemState } from "../../Views/Activatable/ActivatableAddListItem";
+import { ActivatableAddListItemSelectedOptions } from "../../Views/Activatable/ActivatableAddListItem";
 import { Dropdown, DropdownOption } from "../../Views/Universal/Dropdown";
 import { TextField } from "../../Views/Universal/TextField";
 import { getActiveWithNoCustomCost } from "../AdventurePoints/activatableCostUtils";
@@ -101,9 +101,6 @@ const PABYA = PropertiesAffectedByState.A
 const PABYL = PropertiesAffectedByStateL
 const IACEL = InactiveActivatableControlElementsL
 
-type SelectedOptions =
-  Partial<Omit<ActivatableAddListItemState, "showCustomCostDialog" | "customCostPreview">>
-
 /**
  * @default Pair (Record ({ id, cost: 0 }), Record ())
  */
@@ -170,13 +167,13 @@ export const getIdSpecificAffectedAndDispatchProps =
   (wiki: WikiModelRecord) =>
   (entry: Record<InactiveActivatable>) =>
   // tslint:disable-next-line: cyclomatic-complexity
-  (selectedOptions: SelectedOptions): IdSpecificAffectedAndDispatchProps => {
+  (selectedOptions: ActivatableAddListItemSelectedOptions): IdSpecificAffectedAndDispatchProps => {
     const id = IAA.id (entry)
-    const mselected = Maybe (selectedOptions.selected)
-    const mselected2 = Maybe (selectedOptions.selected2)
-    const mselected3 = Maybe (selectedOptions.selected3)
-    const minput_text = Maybe (selectedOptions.input)
-    const mselected_level = Maybe (selectedOptions.selectedTier)
+    const mselected = selectedOptions.selected
+    const mselected2 = selectedOptions.selected2
+    const mselected3 = selectedOptions.selected3
+    const minput_text = selectedOptions.input
+    const mselected_level = selectedOptions.selectedTier
 
     switch (id) {
       // Entry with Skill selection (string id)
@@ -370,7 +367,8 @@ export const getIdSpecificAffectedAndDispatchProps =
                 <TextField
                   value={minput_text}
                   onChangeString={inputHandlers.handleInput}
-                  disabled={!is_text_input_required} />
+                  disabled={!is_text_input_required}
+                  />
               ),
           })
         )
@@ -642,10 +640,11 @@ export const getIdSpecificAffectedAndDispatchProps =
 
 export const insertFinalCurrentCost =
   (entry: Record<InactiveActivatable>) =>
-  (selectedOptions: SelectedOptions): ident<IdSpecificAffectedAndDispatchProps> => {
+  (selectedOptions: ActivatableAddListItemSelectedOptions):
+  ident<IdSpecificAffectedAndDispatchProps> => {
     const mcustom_cost =
       pipe_ (
-        Maybe (selectedOptions.customCost),
+        selectedOptions.customCost,
         bindF (toInt),
         fmap (Math.abs)
       )
@@ -690,12 +689,12 @@ interface InactiveActivatableControlElementsInputHandlers {
 export const getInactiveActivatableControlElements =
   (inputHandlers: InactiveActivatableControlElementsInputHandlers) =>
   (entry: Record<InactiveActivatable>) =>
-  (selectedOptions: SelectedOptions) =>
+  (selectedOptions: ActivatableAddListItemSelectedOptions) =>
   (props: IdSpecificAffectedAndDispatchProps): Record<InactiveActivatableControlElements> => {
-    const mselected = Maybe (selectedOptions.selected)
-    const mselected2 = Maybe (selectedOptions.selected2)
-    const minput_text = Maybe (selectedOptions.input)
-    const mselected_level = Maybe (selectedOptions.selectedTier)
+    const mselected = selectedOptions.selected
+    const mselected2 = selectedOptions.selected2
+    const minput_text = selectedOptions.input
+    const mselected_level = selectedOptions.selectedTier
 
     const msels = pipe_ (props, snd, PABYA.firstSelectOptions, altF (IAA.selectOptions (entry)))
 
@@ -764,7 +763,8 @@ export const getInactiveActivatableControlElements =
                         value={mselected}
                         onChange={inputHandlers.handleSelect}
                         options={sel}
-                        disabled={inputHandlers.selectElementDisabled} />
+                        disabled={inputHandlers.selectElementDisabled}
+                        />
                     )
                   )
           ))
@@ -797,7 +797,8 @@ export const getInactiveActivatableControlElements =
                       <TextField
                         hint={input}
                         value={minput_text}
-                        onChangeString={inputHandlers.handleInput} />
+                        onChangeString={inputHandlers.handleInput}
+                        />
                     )
                   )
           )

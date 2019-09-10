@@ -1,7 +1,7 @@
 import { remote } from "electron";
 import * as React from "react";
 import { List } from "../../../Data/List";
-import { Maybe, maybe, maybeR } from "../../../Data/Maybe";
+import { Maybe, maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { SettingsContainer } from "../../Containers/SettingsContainer";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -61,8 +61,10 @@ export interface NavigationBarDispatchProps {
 export type NavigationBarProps =
   NavigationBarStateProps & NavigationBarDispatchProps & NavigationBarOwnProps
 
-export function NavigationBar (props: NavigationBarProps) {
+export const NavigationBar: React.FC<NavigationBarProps> = props => {
   const {
+    currentTab,
+    tabs,
     subtabs: msubtabs,
     openSettings,
     closeSettings,
@@ -76,81 +78,114 @@ export function NavigationBar (props: NavigationBarProps) {
     saveHero,
     setTab,
     adventurePoints: m_ap,
+    maximumForMagicalAdvantagesDisadvantages,
+    isSpellcaster,
+    isBlessedOne,
+    isSettingsOpen,
+    platform,
+    checkForUpdates,
   } = props
+
+  const handleHerolistTab = React.useCallback (() => setTab (TabId.Herolist), [setTab])
 
   return (
     <>
       <NavigationBarWrapper>
         <NavigationBarLeft>
           {isHeroSection
-            ? <>
-              <NavigationBarBack setTab={() => setTab (TabId.Herolist)} />
-              <AvatarWrapper src={avatar} />
-            </>
+            ? (
+              <>
+                <NavigationBarBack setTab={handleHerolistTab} />
+                <AvatarWrapper src={avatar} />
+              </>
+            )
             : null}
-          <NavigationBarTabs {...props} />
+          <NavigationBarTabs
+            currentTab={currentTab}
+            tabs={tabs}
+            setTab={setTab}
+            />
         </NavigationBarLeft>
         <NavigationBarRight>
           {isHeroSection
-            ? <>
-              {maybeR (<Text className="collected-ap">
-                        {"X "}
-                        {translate (l10n) ("adventurepoints.short")}
-                      </Text>)
-                      ((ap: Record<AdventurePointsCategories>) => (
-                        <TooltipToggle
-                          position="bottom"
-                          margin={12}
-                          content={<ApTooltip {...props} adventurePoints={ap} />}
-                          >
-                          <Text className="collected-ap">
-                            {maybe<string | number > ("")
-                                                     (pipe (
-                                                       AdventurePointsCategories.A.available,
-                                                       signNeg
-                                                     ))
-                                                     (m_ap)}
-                            {" "}
-                            {translate (l10n) ("adventurepoints.short")}
-                          </Text>
-                        </TooltipToggle>
-                      ))
-                      (m_ap)}
-              <IconButton
-                icon="&#xE90f;"
-                onClick={undo}
-                disabled={!isUndoAvailable}
-                />
-              <IconButton
-                icon="&#xE910;"
-                onClick={redo}
-                disabled={!isRedoAvailable}
-                />
-              <BorderButton
-                label={translate (l10n) ("save")}
-                onClick={saveHero}
-                />
-            </>
+            ? (
+              <>
+                {maybe (<Text className="collected-ap">
+                          {"X "}
+                          {translate (l10n) ("adventurepoints.short")}
+                        </Text>)
+                        ((ap: Record<AdventurePointsCategories>) => (
+                          <TooltipToggle
+                            position="bottom"
+                            margin={12}
+                            content={
+                              <ApTooltip
+                                adventurePoints={ap}
+                                l10n={l10n}
+                                maximumForMagicalAdvantagesDisadvantages={
+                                  maximumForMagicalAdvantagesDisadvantages
+                                }
+                                isSpellcaster={isSpellcaster}
+                                isBlessedOne={isBlessedOne}
+                                />
+                            }
+                            >
+                            <Text className="collected-ap">
+                              {maybe<string | number > ("")
+                                                       (pipe (
+                                                         AdventurePointsCategories.A.available,
+                                                         signNeg
+                                                       ))
+                                                       (m_ap)}
+                              {" "}
+                              {translate (l10n) ("adventurepoints.short")}
+                            </Text>
+                          </TooltipToggle>
+                        ))
+                        (m_ap)}
+                <IconButton
+                  icon="&#xE90f;"
+                  onClick={undo}
+                  disabled={!isUndoAvailable}
+                  />
+                <IconButton
+                  icon="&#xE910;"
+                  onClick={redo}
+                  disabled={!isRedoAvailable}
+                  />
+                <BorderButton
+                  label={translate (l10n) ("save")}
+                  onClick={saveHero}
+                  />
+              </>
+            )
             : null}
           <IconButton
             icon="&#xE906;"
             onClick={openSettings}
             />
-          <SettingsContainer {...props} close={closeSettings} />
+          <SettingsContainer
+            l10n={l10n}
+            isSettingsOpen={isSettingsOpen}
+            platform={platform}
+            close={closeSettings}
+            checkForUpdates={checkForUpdates}
+            />
           <IconButton
             icon="&#xE911;"
             onClick={toggleDevtools}
             />
         </NavigationBarRight>
       </NavigationBarWrapper>
-      {maybeR (null)
-              ((subtabs: List<SubTab>) => (
-                <NavigationBarSubTabs
-                  {...props}
-                  tabs={subtabs}
-                  />
-              ))
-              (msubtabs)}
+      {maybe (null as React.ReactNode)
+             ((subtabs: List<SubTab>) => (
+               <NavigationBarSubTabs
+                 tabs={subtabs}
+                 currentTab={currentTab}
+                 setTab={setTab}
+                 />
+             ))
+             (msubtabs)}
     </>
   )
 }

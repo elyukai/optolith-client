@@ -2,7 +2,7 @@ import * as React from "react";
 import { Textfit } from "react-textfit";
 import { fmap, fmapF } from "../../../../Data/Functor";
 import { flength, List, map, replicateR, toArray } from "../../../../Data/List";
-import { fromMaybeR, Maybe } from "../../../../Data/Maybe";
+import { fromMaybe, Maybe } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { HitZoneArmorForView } from "../../../Models/View/HitZoneArmorForView";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
@@ -76,7 +76,7 @@ export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
               )),
               toArray
             )),
-            fromMaybeR (null)
+            fromMaybe (null as React.ReactNode)
           )}
           {replicateR (2 - Maybe.sum (fmapF (mhit_zone_armors) (flength)))
                       (i => (

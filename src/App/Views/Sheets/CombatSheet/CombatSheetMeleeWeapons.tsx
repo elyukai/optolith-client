@@ -2,7 +2,7 @@ import * as React from "react";
 import { Textfit } from "react-textfit";
 import { fmap, fmapF } from "../../../../Data/Functor";
 import { flength, intercalate, List, map, replicateR, subscript, subscriptF, toArray } from "../../../../Data/List";
-import { bindF, fromMaybeR, Maybe } from "../../../../Data/Maybe";
+import { bindF, fromMaybe, Maybe } from "../../../../Data/Maybe";
 import { dec } from "../../../../Data/Num";
 import { Record } from "../../../../Data/Record";
 import { bimap, fst, isTuple, snd } from "../../../../Data/Tuple";
@@ -107,7 +107,7 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
                     </td>
                     <td className="at">{MWA.at (e)}</td>
                     <td className="pa">
-                      {fromMaybeR (ndash) (MWA.pa (e))}
+                      {fromMaybe<string | number> (ndash) (MWA.pa (e))}
                     </td>
                     <td className="weight">
                       {pipe_ (
@@ -124,7 +124,7 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
               }),
               toArray
             )),
-            fromMaybeR (null)
+            fromMaybe (null as React.ReactNode)
           )}
           {replicateR (2 - Maybe.sum (fmapF (mmelee_weapons) (flength)))
                       (i => (

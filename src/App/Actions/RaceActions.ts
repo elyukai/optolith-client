@@ -25,7 +25,7 @@ export interface SetRaceVariantAction {
   }
 }
 
-export const setRaceVariant = (id: string): SetRaceVariantAction => ({
+export const selectRaceVariant = (id: string): SetRaceVariantAction => ({
   type: ActionTypes.SET_RACE_VARIANT,
   payload: {
     id,

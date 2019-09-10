@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List, map, notNull, toArray } from "../../../Data/List";
-import { ensure, Maybe, maybeR } from "../../../Data/Maybe";
+import { ensure, Maybe, maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -36,18 +36,24 @@ export interface RacesStateProps {
 }
 
 export interface RacesDispatchProps {
-  selectRace (id: string): (variantId: Maybe<string>) => void
-  selectRaceVariant (id: string): void
   setSortOrder (sortOrder: SortNames): void
   switchValueVisibilityFilter (): void
   setFilterText (filterText: string): void
-  switchToCultures (): void
 }
 
 export type RacesProps = RacesStateProps & RacesDispatchProps & RacesOwnProps
 
 export function Races (props: RacesProps) {
-  const { filterText, l10n, races: list, sortOrder } = props
+  const {
+    currentId,
+    currentVariantId,
+    filterText,
+    l10n,
+    races,
+    sortOrder,
+    setFilterText,
+    setSortOrder,
+  } = props
 
   return (
     <Page id="races">
@@ -55,12 +61,12 @@ export function Races (props: RacesProps) {
         <TextField
           hint={translate (l10n) ("search")}
           value={filterText}
-          onChangeString={props.setFilterText}
+          onChangeString={setFilterText}
           fullWidth
           />
         <SortOptions
           sortOrder={sortOrder}
-          sort={props.setSortOrder}
+          sort={setSortOrder}
           options={List<SortNames> ("name", "cost")}
           l10n={l10n}
           />
@@ -79,28 +85,42 @@ export function Races (props: RacesProps) {
         <Scroll>
           <ListView>
             {pipe_ (
-              list,
+              races,
               ensure (notNull),
-              maybeR (
-                       <ListPlaceholder
-                         l10n={l10n}
-                         type="races"
-                         noResults={filterText.length > 0}
-                         />
-                     )
-                     (pipe (
-                       map (race => (
-                         <RacesListItem {...props} key={RaceCombinedA_.id (race)} race={race} />
-                       )),
-                       toArray
-                     ))
+              maybe<React.ReactNode> (
+                                       <ListPlaceholder
+                                         l10n={l10n}
+                                         type="races"
+                                         noResults={filterText.length > 0}
+                                         />
+                                     )
+                                     (pipe (
+                                       map (race => (
+                                         <RacesListItem
+                                           key={RaceCombinedA_.id (race)}
+                                           race={race}
+                                           currentId={currentId}
+                                           l10n={l10n}
+                                           />
+                                       )),
+                                       toArray
+                                     ))
             )}
           </ListView>
         </Scroll>
       </MainContent>
       <Aside>
-        <RaceVariants {...props} />
-        <WikiInfoContainer {...props} noWrapper />
+        <RaceVariants
+          currentId={currentId}
+          currentVariantId={currentVariantId}
+          l10n={l10n}
+          races={races}
+          />
+        <WikiInfoContainer
+          currentId={currentId}
+          l10n={l10n}
+          noWrapper
+          />
       </Aside>
     </Page>
   )

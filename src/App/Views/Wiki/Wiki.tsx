@@ -1,9 +1,10 @@
 import * as React from "react";
 import { fmapF } from "../../../Data/Functor";
 import { cons, consF, imap, List, notNull } from "../../../Data/List";
-import { Just, Maybe, maybeR, Nothing } from "../../../Data/Maybe";
+import { Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
+import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { CultureCombined } from "../../Models/View/CultureCombined";
 import { ProfessionCombined } from "../../Models/View/ProfessionCombined";
 import { RaceCombined } from "../../Models/View/RaceCombined";
@@ -121,12 +122,18 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
     const mxs: Maybe<List<InlineWikiEntry>> =
       fmapF (maybeCategory) (category => other[category as keyof WikiTabLists])
 
+    const handleFilterText =
+      React.useCallback (
+        (e: InputTextEvent) => setFilter (e.target.value),
+        [setFilter]
+      )
+
     return (
       <Page id="wiki">
         <Options>
           <TextField
             hint={translate (l10n) ("search")}
-            onChange={e => setFilter (e.target.value)}
+            onChange={handleFilterText}
             value={filterText}
             />
           <Dropdown
@@ -292,7 +299,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
         </Options>
         <MainContent>
           <Scroll>
-            {maybeR (<ListPlaceholder wikiInitial l10n={l10n} type="wiki" />)
+            {maybe (<ListPlaceholder wikiInitial l10n={l10n} type="wiki" />)
                     ((xs: List<InlineWikiEntry>) =>
                       notNull (xs)
                         ? <WikiList list={xs} showInfo={this.showInfo} currentInfoId={infoId} />
@@ -300,7 +307,10 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
                     (mxs)}
           </Scroll>
         </MainContent>
-        <WikiInfoContainer {...this.props} currentId={infoId}/>
+        <WikiInfoContainer
+          l10n={l10n}
+          currentId={infoId}
+          />
       </Page>
     )
   }

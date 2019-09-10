@@ -1,8 +1,9 @@
 import * as React from "react";
-import { Maybe, maybeR } from "../../../../Data/Maybe";
+import { Maybe, maybe } from "../../../../Data/Maybe";
 import { Record, RecordIBase } from "../../../../Data/Record";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
+import { ReactReturn } from "../../../Utilities/ReactUtils";
 import { Markdown } from "../../Universal/Markdown";
 
 interface Accessors<A extends RecordIBase<any>> {
@@ -15,16 +16,16 @@ export interface WikiToolsProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiTools<A extends RecordIBase<any>> (props: WikiToolsProps<A>) {
+export const WikiTools = <A extends RecordIBase<any>> (props: WikiToolsProps<A>): ReactReturn => {
   const {
     x,
     acc,
     l10n,
   } = props
 
-  return maybeR (null)
-                ((tools: string) => (
-                  <Markdown source={`**${translate (l10n) ("tools")}:** ${tools}`} />
-                ))
-                (acc.tools (x))
+  return maybe (null as ReactReturn)
+               ((tools: string) => (
+                 <Markdown source={`**${translate (l10n) ("tools")}:** ${tools}`} />
+               ))
+               (acc.tools (x))
 }

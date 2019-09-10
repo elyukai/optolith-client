@@ -11,7 +11,7 @@ import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from "../Se
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { getStartEl } from "../Selectors/elSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
-import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentProfessionVariant, getCurrentRaceVariant, getRace, getRandomSizeCalcStr, getRandomWeightCalcStr } from "../Selectors/rcpSelectors";
+import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentRaceVariant, getRace, getRandomSizeCalcStr, getRandomWeightCalcStr } from "../Selectors/rcpSelectors";
 import { getAvatar, getCurrentHeroName, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getPhase, getProfile, getSex, getTotalAdventurePoints } from "../Selectors/stateSelectors";
 import { PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps, PersonalDataView } from "../Views/Profile/PersonalData";
 
@@ -30,7 +30,6 @@ const mapStateToProps =
     profession: getCurrentProfession (state),
     professionName: getCustomProfessionName (state),
     fullProfessionName: getCurrentFullProfessionName (state, ownProps),
-    professionVariant: getCurrentProfessionVariant (state),
     profile: getProfile (state),
     race: getRace (state, ownProps),
     raceVariant: getCurrentRaceVariant (state),
@@ -74,16 +73,16 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): PersonalDataDispatchProps 
     dispatch (SubwindowsActions.closeEditCharacterAvatar ())
   },
   changeFamily (e: InputTextEvent) {
-    dispatch (ProfileActions.setFamily (e.target.value as string))
+    dispatch (ProfileActions.setFamily (e.target.value))
   },
   changePlaceOfBirth (e: InputTextEvent) {
-    dispatch (ProfileActions.setPlaceOfBirth (e.target.value as string))
+    dispatch (ProfileActions.setPlaceOfBirth (e.target.value))
   },
   changeDateOfBirth (e: InputTextEvent) {
-    dispatch (ProfileActions.setDateOfBirth (e.target.value as string))
+    dispatch (ProfileActions.setDateOfBirth (e.target.value))
   },
   changeAge (e: InputTextEvent) {
-    dispatch (ProfileActions.setAge (e.target.value as string))
+    dispatch (ProfileActions.setAge (e.target.value))
   },
   changeHaircolor (mresult: Maybe<number>) {
     fmapF (mresult) (res => dispatch (ProfileActions.setHairColor (res)))
@@ -92,25 +91,25 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): PersonalDataDispatchProps 
     fmapF (mresult) (res => dispatch (ProfileActions.setEyeColor (res)))
   },
   changeSize (e: InputTextEvent) {
-    dispatch (ProfileActions.setSize (e.target.value as string) (Nothing))
+    dispatch (ProfileActions.setSize (e.target.value) (Nothing))
   },
   changeWeight (e: InputTextEvent) {
-    dispatch (ProfileActions.setWeight (e.target.value as string) (Nothing))
+    dispatch (ProfileActions.setWeight (e.target.value) (Nothing))
   },
   changeTitle (e: InputTextEvent) {
-    dispatch (ProfileActions.setTitle (e.target.value as string))
+    dispatch (ProfileActions.setTitle (e.target.value))
   },
   changeSocialStatus (mresult: Maybe<number>) {
     fmapF (mresult) (res => dispatch (ProfileActions.setSocialStatus (res)))
   },
   changeCharacteristics (e: InputTextEvent) {
-    dispatch (ProfileActions.setCharacteristics (e.target.value as string))
+    dispatch (ProfileActions.setCharacteristics (e.target.value))
   },
   changeOtherInfo (e: InputTextEvent) {
-    dispatch (ProfileActions.setOtherInfo (e.target.value as string))
+    dispatch (ProfileActions.setOtherInfo (e.target.value))
   },
   changeCultureAreaKnowledge (e: InputTextEvent) {
-    dispatch (ProfileActions.setCultureAreaKnowledge (e.target.value as string))
+    dispatch (ProfileActions.setCultureAreaKnowledge (e.target.value))
   },
   rerollHair () {
     dispatch (ProfileActions.rerollHairColor)

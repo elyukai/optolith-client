@@ -2,7 +2,7 @@ import * as React from "react";
 import { notEquals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { List, mapAccumL, notNull, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybeR, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
+import { bindF, ensure, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
@@ -180,7 +180,7 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
                   toArray,
                   arr => <>{arr}</>
                 )),
-                fromMaybeR (<ListPlaceholder l10n={l10n} type="skills" noResults />)
+                fromMaybe (<ListPlaceholder l10n={l10n} type="skills" noResults />)
               )}
             </ListView>
           </Scroll>

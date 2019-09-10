@@ -1,12 +1,12 @@
 // import { TextareaAutosize } from 'react-textarea-autosize'
 import * as React from "react";
-import { findDOMNode } from "react-dom";
 import { fmapF } from "../../../Data/Functor";
 import { List, notNullStr } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, fromMaybeR, guardReplace, Just, Maybe, maybeR, normalize, orN } from "../../../Data/Maybe";
+import { bindF, ensure, fromMaybe, guardReplace, Just, Maybe, maybe, normalize, orN } from "../../../Data/Maybe";
 import { InputKeyEvent, InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { classListMaybe } from "../../Utilities/CSS";
 import { pipe_ } from "../../Utilities/pipe";
+import { renderMaybe } from "../../Utilities/ReactUtils";
 import { isNumber } from "../../Utilities/typeCheckUtils";
 import { Label } from "./Label";
 
@@ -28,100 +28,116 @@ export interface TextFieldProps {
   valid?: boolean
 }
 
-export class TextField extends React.Component<TextFieldProps, {}> {
-  inputRef: HTMLInputElement | null = null
+export const TextField: React.FC<TextFieldProps> = props => {
+  const inputRef = React.useRef<HTMLInputElement | null> (null)
 
-  componentDidMount () {
-    if (Maybe.elem (true) (Maybe.normalize (this.props.autoFocus)) && this.inputRef !== null) {
-      (findDOMNode (this.inputRef) as HTMLInputElement).focus ()
-    }
-  }
+  React.useEffect (
+    () => {
+      const { autoFocus } = props
 
-  render () {
-    const {
-      className,
-      countCurrent,
-      countMax,
-      disabled,
-      fullWidth,
-      label,
-      onChange,
-      onChangeString,
-      onKeyDown,
-      type = "text",
-      valid,
-    } = this.props
+      if (Maybe.elem (true) (Maybe.normalize (autoFocus)) && inputRef.current !== null) {
+        inputRef.current.focus ()
+      }
+    },
+    []
+  )
 
-    const value = fromMaybe<string | number> ("") (normalize (this.props.value))
+  const {
+    className,
+    countCurrent,
+    countMax,
+    disabled,
+    fullWidth,
+    label,
+    onChange,
+    onChangeString,
+    onKeyDown,
+    type = "text",
+    valid,
+    value: mvalue,
+    hint: mhint,
+  } = props
 
-    const mlabel = normalize (label)
+  const value = renderMaybe (normalize (mvalue))
+  const mlabel = normalize (label)
 
-    const mhint = normalize (this.props.hint)
+  const hintElement =
+    fmapF (normalize (mhint))
+          (hint => (
+            <div
+              className={
+                classListMaybe (List (
+                  Just ("textfield-hint"),
+                  guardReplace (value !== "") ("hide")
+                ))
+              }
+              >
+              {hint}
+            </div>
+          ))
 
-    const hintElement =
-      fmapF (mhint)
-            (hint => (
-              <div
-                className={
-                  classListMaybe (List (
-                    Just ("textfield-hint"),
-                    guardReplace (value !== "") ("hide")
-                  ))
-                }
-                >
-                {hint}
-              </div>
-            ))
-
-    // const inputElement = this.props.multiLine ? (
-    // 	<TextareaAutosize
-    // 		defaultValue={trueValue}
-    // 		onChange={onChange}
-    // 		onKeyPress={onKeyDown}
-    // 	/>
-    // ) : (
-    const inputElement = (
-      <input
-        type={type}
-        value={value}
-        onChange={
-          orN (disabled)
-            ? undefined
-            : (onChange && onChangeString)
-            ? event => {
-              onChange (event)
-              onChangeString (event.target.value)
-            }
-            : onChangeString
-            ? event => onChangeString (event.target.value)
-            : onChange
+  const handleChange =
+    React.useCallback (
+      orN (disabled)
+        ? () => undefined
+        : (typeof onChange === "function" && typeof onChangeString === "function")
+        ? (event: InputTextEvent) => {
+          onChange (event)
+          onChangeString (event.target.value)
         }
-        onKeyPress={orN (disabled) ? undefined : onKeyDown}
-        readOnly={disabled}
-        ref={node => this.inputRef = node}
-      />
+        : typeof onChangeString === "function"
+        ? (event: InputTextEvent) => onChangeString (event.target.value)
+        : typeof onChange === "function"
+        ? onChange
+        : () => undefined,
+      [disabled, onChange, onChangeString]
     )
 
-    const counterTextElement =
-      isNumber (countMax) ? <div>{countCurrent} / {countMax}</div> : null
-
-    return (
-      <div
-        className={
-          classListMaybe (List (
-            Just ("textfield"),
-            Maybe (className),
-            guardReplace (orN (fullWidth)) ("fullWidth"),
-            guardReplace (orN (disabled)) ("disabled"),
-            guardReplace (valid === false) ("invalid")
-          ))
-        }
-        >
-        {pipe_ (mlabel, bindF (ensure (notNullStr)), maybeR (null) (l => <Label text={l} />))}
-        {inputElement}
-        {fromMaybeR (null) (hintElement)}
-        {counterTextElement}
+  // const inputElement = multiLine ? (
+  //  <TextareaAutosize
+  //    defaultValue={trueValue}
+  //    onChange={onChange}
+  //    onKeyPress={onKeyDown}
+  //  />
+  // ) : (
+  const inputElement = (
+    <input
+      type={type}
+      value={value}
+      onChange={handleChange}
+      onKeyPress={orN (disabled) ? undefined : onKeyDown}
+      readOnly={disabled}
+      ref={inputRef}
+      />
+  )
+  const counterTextElement =
+    isNumber (countMax)
+    ? (
+      <div>
+        {countCurrent}
+        {" / "}
+        {countMax}
       </div>
     )
-  }
+    : null
+
+  return (
+    <div
+      className={
+        classListMaybe (List (
+          Just ("textfield"),
+          Maybe (className),
+          guardReplace (orN (fullWidth)) ("fullWidth"),
+          guardReplace (orN (disabled)) ("disabled"),
+          guardReplace (valid === false) ("invalid")
+        ))
+      }
+      >
+      {pipe_ (mlabel, bindF (ensure (notNullStr)), maybe (null as React.ReactNode)
+                                                         (l => <Label text={l} />))}
+      {inputElement}
+      {fromMaybe (null as React.ReactNode) (hintElement)}
+      {counterTextElement}
+    </div>
+  )
 }

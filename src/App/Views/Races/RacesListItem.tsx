@@ -1,8 +1,12 @@
 import * as React from "react";
+import { useDispatch } from "react-redux";
 import { listToMaybe, Maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
+import { setTab } from "../../Actions/LocationActions";
+import { selectRace } from "../../Actions/RaceActions";
 import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
 import { L10nRecord } from "../../Models/Wiki/L10n";
+import { TabId } from "../../Utilities/LocationUtils";
 import { IconButton } from "../Universal/IconButton";
 import { ListItem } from "../Universal/ListItem";
 import { ListItemButtons } from "../Universal/ListItemButtons";
@@ -14,14 +18,26 @@ export interface RacesListItemProps {
   currentId: Maybe<string>
   l10n: L10nRecord
   race: Record<RaceCombined>
-  selectRace (id: string): (variantId: Maybe<string>) => void
-  switchToCultures (): void
 }
 
 export function RacesListItem (props: RacesListItemProps) {
-  const { currentId, race, selectRace, switchToCultures } = props
+  const { currentId, race } = props
 
   const race_id = RaceCombinedA_.id (race)
+
+  const dispatch = useDispatch ()
+
+  const handleRaceSelect =
+    React.useCallback (
+      () => dispatch (selectRace (race_id) (listToMaybe (RaceCombinedA_.variants (race)))),
+      [dispatch]
+    )
+
+  const switchToCultures =
+    React.useCallback (
+      () => dispatch (setTab (TabId.Cultures)),
+      [dispatch]
+    )
 
   return (
     <ListItem active={Maybe.elem (race_id) (currentId)}>
@@ -33,9 +49,7 @@ export function RacesListItem (props: RacesListItemProps) {
       <ListItemButtons>
         <IconButton
           icon="&#xE90a;"
-          onClick={
-            () => selectRace (race_id) (listToMaybe (RaceCombinedA_.variants (race)))
-          }
+          onClick={handleRaceSelect}
           disabled={Maybe.elem (race_id) (currentId)}
           />
         <IconButton

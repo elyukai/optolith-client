@@ -1,7 +1,7 @@
 import * as React from "react";
 import { fmap } from "../../../Data/Functor";
 import { map, toArray } from "../../../Data/List";
-import { fromMaybeR, Maybe } from "../../../Data/Maybe";
+import { fromMaybe, Maybe } from "../../../Data/Maybe";
 import { elems, OrderedMap, size } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { EditPet } from "../../Models/Hero/EditPet";
@@ -17,6 +17,7 @@ import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
 import { PetEditor } from "./PetEditor";
 import { PetsListItem } from "./PetsListItem";
+import { ReactReturn } from "../../Utilities/ReactUtils";
 
 export interface PetsOwnProps {
   l10n: L10nRecord
@@ -103,7 +104,7 @@ export function Pets (props: PetsProps) {
               toArray,
               x => <>{x}</>
             )),
-            fromMaybeR (null)
+            fromMaybe (null as ReactReturn)
           )}
         </ListView>
       </Scroll>

@@ -1,9 +1,11 @@
 import * as React from "react";
+import { useDispatch } from "react-redux";
 import { find, List, map, notNull } from "../../../Data/List";
-import { bindF, ensure, Just, Maybe, maybeRNull } from "../../../Data/Maybe";
+import { bindF, ensure, Just, Maybe, maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
+import { selectRaceVariant } from "../../Actions/RaceActions";
 import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { RaceVariant } from "../../Models/Wiki/RaceVariant";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { sortRecordsByName } from "../../Utilities/sortBy";
@@ -14,11 +16,18 @@ export interface RaceVariantsProps {
   currentVariantId: Maybe<string>
   l10n: L10nRecord
   races: List<Record<RaceCombined>>
-  selectRaceVariant (id: string): void
 }
 
-export function RaceVariants (props: RaceVariantsProps) {
-  const { currentId, currentVariantId, l10n, races, selectRaceVariant } = props
+export const RaceVariants: React.FC<RaceVariantsProps> = props => {
+  const { currentId, currentVariantId, l10n, races } = props
+
+  const dispatch = useDispatch ()
+
+  const handleSelectRaceVariant =
+    React.useCallback (
+      (id: string) => dispatch (selectRaceVariant (id)),
+      [dispatch]
+    )
 
   return pipe_ (
     races,
@@ -29,15 +38,16 @@ export function RaceVariants (props: RaceVariantsProps) {
         name: RaceVariant.A.name (e),
         value: Just (RaceVariant.A.id (e)),
       })),
-      sortRecordsByName (L10n.A.id (l10n)),
+      sortRecordsByName (l10n),
       ensure (notNull)
     )),
-    maybeRNull (vars => (
-                          <RadioButtonGroup
-                            active={currentVariantId}
-                            onClickJust={selectRaceVariant}
-                            array={vars}
-                            />
-                        ))
+    maybe (<></>)
+          (vars => (
+            <RadioButtonGroup
+              active={currentVariantId}
+              onClickJust={handleSelectRaceVariant}
+              array={vars}
+              />
+          ))
   )
 }
