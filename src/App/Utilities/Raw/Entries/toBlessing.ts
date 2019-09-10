@@ -21,7 +21,7 @@ export const toBlessing =
       const checkBlessedTraditions =
         lookupKeyValid (mensureMapNumEnumList ("BlessedTradition")
                                               (BlessedTradition)
-                                              ("&"))
+                                              (","))
                        (TableType.Univ)
                        (lookup_univ)
 

@@ -84,236 +84,234 @@ export interface WikiState {
   infoId: Maybe<string>
 }
 
-export class Wiki extends React.Component<WikiProps, WikiState> {
-  state: WikiState = {
-    infoId: Nothing,
-  }
+export const Wiki: React.FC<WikiProps> = props => {
+  const {
+    category: maybeCategory,
+    filterText,
+    l10n,
+    setCategory1,
+    setCategory2,
+    setFilter,
+    professionsGroup,
+    skillsGroup,
+    combatTechniquesGroup,
+    specialAbilitiesGroup,
+    spellsGroup,
+    liturgicalChantsGroup,
+    itemTemplatesGroup,
+    setProfessionsGroup,
+    setSkillsGroup,
+    setCombatTechniquesGroup,
+    setSpecialAbilitiesGroup,
+    setSpellsGroup,
+    setLiturgicalChantsGroup,
+    setItemTemplatesGroup,
+    specialAbilityGroups,
+    ...other
+  } = props
 
-  showInfo = (id: string) => this.setState (() => ({ infoId: Just (id) }))
+  const [infoId, setInfoId] = React.useState<Maybe<string>> (Nothing)
 
-  render () {
-    const {
-      category: maybeCategory,
-      filterText,
-      l10n,
-      setCategory1,
-      setCategory2,
-      setFilter,
-      professionsGroup,
-      skillsGroup,
-      combatTechniquesGroup,
-      specialAbilitiesGroup,
-      spellsGroup,
-      liturgicalChantsGroup,
-      itemTemplatesGroup,
-      setProfessionsGroup,
-      setSkillsGroup,
-      setCombatTechniquesGroup,
-      setSpecialAbilitiesGroup,
-      setSpellsGroup,
-      setLiturgicalChantsGroup,
-      setItemTemplatesGroup,
-      specialAbilityGroups,
-      ...other
-    } = this.props
+  const mxs: Maybe<List<InlineWikiEntry>> =
+    fmapF (maybeCategory) (category => other[category as keyof WikiTabLists])
 
-    const { infoId } = this.state
+  const handleFilterText =
+    React.useCallback (
+      (e: InputTextEvent) => setFilter (e.target.value),
+      [setFilter]
+    )
 
-    const mxs: Maybe<List<InlineWikiEntry>> =
-      fmapF (maybeCategory) (category => other[category as keyof WikiTabLists])
+  const handleShowInfo =
+    React.useCallback (
+      (id: string) => setInfoId (Just (id)),
+      [setInfoId]
+    )
 
-    const handleFilterText =
-      React.useCallback (
-        (e: InputTextEvent) => setFilter (e.target.value),
-        [setFilter]
-      )
-
-    return (
-      <Page id="wiki">
-        <Options>
-          <TextField
-            hint={translate (l10n) ("search")}
-            onChange={handleFilterText}
-            value={filterText}
-            />
-          <Dropdown
-            value={maybeCategory}
-            onChange={setCategory1}
-            hint={translate (l10n) ("chooseacategory")}
-            options={List (
-              DropdownOption ({
-                id: Just ("races"),
-                name: translate (l10n) ("races"),
-              }),
-              DropdownOption ({
-                id: Just ("cultures"),
-                name: translate (l10n) ("cultures"),
-              }),
-              DropdownOption ({
-                id: Just ("professions"),
-                name: translate (l10n) ("professions"),
-              }),
-              DropdownOption ({
-                id: Just ("advantages"),
-                name: translate (l10n) ("advantages"),
-              }),
-              DropdownOption ({
-                id: Just ("disadvantages"),
-                name: translate (l10n) ("disadvantages"),
-              }),
-              DropdownOption ({
-                id: Just ("skills"),
-                name: translate (l10n) ("skills"),
-              }),
-              DropdownOption ({
-                id: Just ("combatTechniques"),
-                name: translate (l10n) ("combattechniques"),
-              }),
-              DropdownOption ({
-                id: Just ("specialAbilities"),
-                name: translate (l10n) ("specialabilities"),
-              }),
-              DropdownOption ({
-                id: Just ("spells"),
-                name: translate (l10n) ("spells"),
-              }),
-              DropdownOption ({
-                id: Just ("cantrips"),
-                name: translate (l10n) ("cantrips"),
-              }),
-              DropdownOption ({
-                id: Just ("liturgicalChants"),
-                name: translate (l10n) ("liturgicalchants"),
-              }),
-              DropdownOption ({
-                id: Just ("blessings"),
-                name: translate (l10n) ("blessings"),
-              }),
-              DropdownOption ({
-                id: Just ("itemTemplates"),
-                name: translate (l10n) ("items"),
-              })
-            )}
-            />
-          {Maybe.elem ("professions") (maybeCategory)
-            ? (
-                <Dropdown
-                  value={professionsGroup}
-                  onChange={setProfessionsGroup}
-                  options={List (
-                    DropdownOption ({
-                      id: Nothing,
-                      name: translate (l10n) ("allprofessiongroups"),
-                    }),
-                    DropdownOption ({
-                      id: Just (1),
-                      name: translate (l10n) ("mundaneprofessions"),
-                    }),
-                    DropdownOption ({
-                      id: Just (2),
-                      name: translate (l10n) ("magicalprofessions"),
-                    }),
-                    DropdownOption ({
-                      id: Just (3),
-                      name: translate (l10n) ("blessedprofessions"),
-                    })
-                  )}
-                  fullWidth
-                  />
-              )
-            : null}
-          {Maybe.elem ("skills") (maybeCategory)
-            ? (
+  return (
+    <Page id="wiki">
+      <Options>
+        <TextField
+          hint={translate (l10n) ("search")}
+          onChange={handleFilterText}
+          value={filterText}
+          />
+        <Dropdown
+          value={maybeCategory}
+          onChange={setCategory1}
+          hint={translate (l10n) ("chooseacategory")}
+          options={List (
+            DropdownOption ({
+              id: Just ("races"),
+              name: translate (l10n) ("races"),
+            }),
+            DropdownOption ({
+              id: Just ("cultures"),
+              name: translate (l10n) ("cultures"),
+            }),
+            DropdownOption ({
+              id: Just ("professions"),
+              name: translate (l10n) ("professions"),
+            }),
+            DropdownOption ({
+              id: Just ("advantages"),
+              name: translate (l10n) ("advantages"),
+            }),
+            DropdownOption ({
+              id: Just ("disadvantages"),
+              name: translate (l10n) ("disadvantages"),
+            }),
+            DropdownOption ({
+              id: Just ("skills"),
+              name: translate (l10n) ("skills"),
+            }),
+            DropdownOption ({
+              id: Just ("combatTechniques"),
+              name: translate (l10n) ("combattechniques"),
+            }),
+            DropdownOption ({
+              id: Just ("specialAbilities"),
+              name: translate (l10n) ("specialabilities"),
+            }),
+            DropdownOption ({
+              id: Just ("spells"),
+              name: translate (l10n) ("spells"),
+            }),
+            DropdownOption ({
+              id: Just ("cantrips"),
+              name: translate (l10n) ("cantrips"),
+            }),
+            DropdownOption ({
+              id: Just ("liturgicalChants"),
+              name: translate (l10n) ("liturgicalchants"),
+            }),
+            DropdownOption ({
+              id: Just ("blessings"),
+              name: translate (l10n) ("blessings"),
+            }),
+            DropdownOption ({
+              id: Just ("itemTemplates"),
+              name: translate (l10n) ("items"),
+            })
+          )}
+          />
+        {Maybe.elem ("professions") (maybeCategory)
+          ? (
               <Dropdown
-                value={skillsGroup}
-                onChange={setSkillsGroup}
-                options={getSortedGroupsDef (l10n)
-                                            (translate (l10n) ("allskills"))
-                                            (translate (l10n) ("skillgroups"))}
+                value={professionsGroup}
+                onChange={setProfessionsGroup}
+                options={List (
+                  DropdownOption ({
+                    id: Nothing,
+                    name: translate (l10n) ("allprofessiongroups"),
+                  }),
+                  DropdownOption ({
+                    id: Just (1),
+                    name: translate (l10n) ("mundaneprofessions"),
+                  }),
+                  DropdownOption ({
+                    id: Just (2),
+                    name: translate (l10n) ("magicalprofessions"),
+                  }),
+                  DropdownOption ({
+                    id: Just (3),
+                    name: translate (l10n) ("blessedprofessions"),
+                  })
+                )}
                 fullWidth
                 />
             )
-            : null}
-          {Maybe.elem ("combatTechniques") (maybeCategory)
-            ? (
-                <Dropdown
-                  value={combatTechniquesGroup}
-                  onChange={setCombatTechniquesGroup}
-                  options={getSortedGroupsDef (l10n)
-                                              (translate (l10n) ("allcombattechniques"))
-                                              (translate (l10n) ("combattechniquegroups"))}
-                  fullWidth
-                  />
-              )
-            : null}
-          {Maybe.elem ("specialAbilities") (maybeCategory)
-            ? (
-                <Dropdown
-                  value={specialAbilitiesGroup}
-                  onChange={setSpecialAbilitiesGroup}
-                  options={cons (specialAbilityGroups)
-                                (DropdownOption ({
-                                  id: Nothing,
-                                  name: translate (l10n) ("allspecialabilities"),
-                                }))}
-                  fullWidth
-                  />
-              )
-            : null}
-          {Maybe.elem ("spells") (maybeCategory)
-            ? (
-                <Dropdown
-                  value={spellsGroup}
-                  onChange={setSpellsGroup}
-                  options={getSortedGroupsDef (l10n)
-                                              (translate (l10n) ("allspells"))
-                                              (translate (l10n) ("spellgroups"))}
-                  fullWidth
-                  />
-              )
-            : null}
-          {Maybe.elem ("liturgicalChants") (maybeCategory)
-            ? (
-                <Dropdown
-                  value={liturgicalChantsGroup}
-                  onChange={setLiturgicalChantsGroup}
-                  options={getSortedGroupsDef (l10n)
-                                              (translate (l10n) ("allliturgicalchants"))
-                                              (translate (l10n) ("liturgicalchantgroups"))}
-                  fullWidth
-                  />
-              )
-            : null}
-          {Maybe.elem ("itemTemplates") (maybeCategory)
-            ? (
-                <Dropdown
-                  value={itemTemplatesGroup}
-                  onChange={setItemTemplatesGroup}
-                  options={getSortedGroupsDef (l10n)
-                                              (translate (l10n) ("allitemtemplates"))
-                                              (translate (l10n) ("itemgroups"))}
-                  fullWidth
-                  />
-              )
-            : null}
-        </Options>
-        <MainContent>
-          <Scroll>
-            {maybe (<ListPlaceholder wikiInitial l10n={l10n} type="wiki" />)
-                    ((xs: List<InlineWikiEntry>) =>
-                      notNull (xs)
-                        ? <WikiList list={xs} showInfo={this.showInfo} currentInfoId={infoId} />
-                        : <ListPlaceholder noResults l10n={l10n} type="wiki" />)
-                    (mxs)}
-          </Scroll>
-        </MainContent>
-        <WikiInfoContainer
-          l10n={l10n}
-          currentId={infoId}
-          />
-      </Page>
-    )
-  }
+          : null}
+        {Maybe.elem ("skills") (maybeCategory)
+          ? (
+            <Dropdown
+              value={skillsGroup}
+              onChange={setSkillsGroup}
+              options={getSortedGroupsDef (l10n)
+                                          (translate (l10n) ("allskills"))
+                                          (translate (l10n) ("skillgroups"))}
+              fullWidth
+              />
+          )
+          : null}
+        {Maybe.elem ("combatTechniques") (maybeCategory)
+          ? (
+              <Dropdown
+                value={combatTechniquesGroup}
+                onChange={setCombatTechniquesGroup}
+                options={getSortedGroupsDef (l10n)
+                                            (translate (l10n) ("allcombattechniques"))
+                                            (translate (l10n) ("combattechniquegroups"))}
+                fullWidth
+                />
+            )
+          : null}
+        {Maybe.elem ("specialAbilities") (maybeCategory)
+          ? (
+              <Dropdown
+                value={specialAbilitiesGroup}
+                onChange={setSpecialAbilitiesGroup}
+                options={cons (specialAbilityGroups)
+                              (DropdownOption ({
+                                id: Nothing,
+                                name: translate (l10n) ("allspecialabilities"),
+                              }))}
+                fullWidth
+                />
+            )
+          : null}
+        {Maybe.elem ("spells") (maybeCategory)
+          ? (
+              <Dropdown
+                value={spellsGroup}
+                onChange={setSpellsGroup}
+                options={getSortedGroupsDef (l10n)
+                                            (translate (l10n) ("allspells"))
+                                            (translate (l10n) ("spellgroups"))}
+                fullWidth
+                />
+            )
+          : null}
+        {Maybe.elem ("liturgicalChants") (maybeCategory)
+          ? (
+              <Dropdown
+                value={liturgicalChantsGroup}
+                onChange={setLiturgicalChantsGroup}
+                options={getSortedGroupsDef (l10n)
+                                            (translate (l10n) ("allliturgicalchants"))
+                                            (translate (l10n) ("liturgicalchantgroups"))}
+                fullWidth
+                />
+            )
+          : null}
+        {Maybe.elem ("itemTemplates") (maybeCategory)
+          ? (
+              <Dropdown
+                value={itemTemplatesGroup}
+                onChange={setItemTemplatesGroup}
+                options={getSortedGroupsDef (l10n)
+                                            (translate (l10n) ("allitemtemplates"))
+                                            (translate (l10n) ("itemgroups"))}
+                fullWidth
+                />
+            )
+          : null}
+      </Options>
+      <MainContent>
+        <Scroll>
+          {maybe (<ListPlaceholder wikiInitial l10n={l10n} type="wiki" />)
+                  ((xs: List<InlineWikiEntry>) =>
+                    notNull (xs)
+                      ? <WikiList list={xs} showInfo={handleShowInfo} currentInfoId={infoId} />
+                      : <ListPlaceholder noResults l10n={l10n} type="wiki" />)
+                  (mxs)}
+        </Scroll>
+      </MainContent>
+      <WikiInfoContainer
+        l10n={l10n}
+        currentId={infoId}
+        />
+    </Page>
+  )
 }
 
 const getSortedGroupsDef =

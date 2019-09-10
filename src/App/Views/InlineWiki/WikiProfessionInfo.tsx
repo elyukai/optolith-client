@@ -4,7 +4,7 @@ import { flip, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { append, cons, consF, deleteAt, find, findIndex, flength, foldr, imap, intercalate, intersperse, isList, List, ListI, map, NonEmptyList, notElem, notNull, reverse, snoc, sortBy, subscript, toArray, uncons, unconsSafe, unsafeIndex } from "../../../Data/List";
 import { alt_, any, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe";
-import { add, compare, dec, gt } from "../../../Data/Num";
+import { compare, dec, gt } from "../../../Data/Num";
 import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet";
 import { fromDefault, Record } from "../../../Data/Record";
@@ -1238,7 +1238,7 @@ const mapVariantSkills =
   (l10n: L10nRecord) =>
   (base: number) =>
     map ((e: Record<IncreasableForView>) => {
-      const prev = maybe (base) (add (base)) (IFVA.previous (e))
+      const prev = fromMaybe (base) (IFVA.previous (e))
 
       return `${IFVA.name (e)} ${IFVA.value (e)} ${translate (l10n) ("insteadof")} ${prev}`
     })

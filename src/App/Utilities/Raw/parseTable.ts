@@ -153,7 +153,7 @@ const wrapL10nCsvErr = (locale: string) => wrapCsvErr (`${locale}/l10n`)
 const readXLSX =
   (pathToFile: string) => IO (async () => {
                                 try {
-                                  const work_book = xlsx.readFile (univ_path)
+                                  const work_book = xlsx.readFile (pathToFile)
 
                                   return Promise.resolve (work_book)
                                 }
