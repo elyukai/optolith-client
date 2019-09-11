@@ -103,3 +103,11 @@ Run the app:
 ```
 $ npm start
 ```
+
+### Stylesheets
+
+To compile the SCSS files, use
+
+```
+$ npm run buildCss
+```
