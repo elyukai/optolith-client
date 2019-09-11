@@ -6,7 +6,7 @@ import { consF, List, notElem } from "../../Data/List";
 import { and, elem, fromJust, isJust, isNothing, Just, or } from "../../Data/Maybe";
 import { insert, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
-import { fst, snd } from "../../Data/Tuple";
+import { fst, snd, uncurry } from "../../Data/Tuple";
 import { uncurry3 } from "../../Data/Tuple/Curry";
 import { RedoAction, UndoAction } from "../Actions/HistoryActions";
 import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from "../Actions/IOActions";
@@ -14,7 +14,7 @@ import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { Alert, User } from "../Models/Hero/heroTypeHelpers";
 import { getRuleBooksEnabledM } from "../Selectors/rulesSelectors";
-import { getCurrentCultureId, getCurrentHeroPresent, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase } from "../Selectors/stateSelectors";
+import { getCurrentCultureId, getCurrentHeroPresent, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase, getWiki } from "../Selectors/stateSelectors";
 import { PHASE_1_PROFILE_TABS, PHASE_1_RCP_TABS } from "../Selectors/uilocationSelectors";
 import { composeL } from "../Utilities/compose";
 import { TabId } from "../Utilities/LocationUtils";
@@ -46,7 +46,7 @@ const prepareHerolist =
     if (isJust (rawHeroes)) {
       const hs = Object.entries (fromJust (rawHeroes)).reduce<Reduced> (
         ({ heroes, users }, [key, hero]) => {
-          const updatedHero = convertHero (fst (action.payload.tables)) (hero)
+          const updatedHero = uncurry (convertHero) (action.payload.tables) (hero)
           const heroInstance = convertFromRawHero (fst (action.payload.tables))
                                                   (snd (action.payload.tables))
                                                   (updatedHero)
@@ -88,6 +88,7 @@ const prepareImportedHero =
     const { data, player } = action.payload
 
     const ml10n = getLocaleMessages (state)
+    const wiki = getWiki (state)
 
     if (isNothing (ml10n)) {
       return over (composeL (AppState.L.ui, uiReducer.L.alerts))
@@ -100,7 +101,7 @@ const prepareImportedHero =
 
     const l10n = fromJust (ml10n)
 
-    const updatedHero = convertHero (l10n) (data)
+    const updatedHero = convertHero (l10n) (wiki) (data)
     const heroInstance = convertFromRawHero (l10n)
                                             (appSlicesReducer.A.wiki (state))
                                             (updatedHero)

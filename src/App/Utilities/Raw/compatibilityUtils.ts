@@ -1,13 +1,20 @@
 import { lt, lte, satisfies } from "semver";
 import { ident } from "../../../Data/Function";
-import { fromMaybe } from "../../../Data/Maybe";
+import { all } from "../../../Data/List";
+import { bindF, fromMaybe, Maybe, maybe_ } from "../../../Data/Maybe";
+import { lookupF } from "../../../Data/OrderedMap";
 import { StringKeyObject } from "../../../Data/Record";
+import { Culture } from "../../Models/Wiki/Culture";
 import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { IncreaseSkill } from "../../Models/Wiki/sub/IncreaseSkill";
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { getBlessedTradStrIdFromNumId, getMagicalTraditionInstanceIdByNumericId } from "../IDUtils";
 import { hasOwnProperty } from "../Object";
-import { pipe_ } from "../pipe";
+import { pipe, pipe_ } from "../pipe";
 import { isNumber } from "../typeCheckUtils";
 import { RawActiveObject, RawCustomItem, RawHero } from "./RawData";
+
+const WA = WikiModel.A
 
 // tslint:disable-next-line:variable-name
 const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
@@ -831,6 +838,7 @@ const convertLowerThan1_1_0_Alpha_1 = (hero: RawHero): RawHero =>
 
 export const convertHero =
   (l10n: L10nRecord) =>
+  (wiki: WikiModelRecord) =>
   (orig_hero: RawHero): RawHero => {
     let entry = { ...orig_hero }
 
@@ -938,7 +946,29 @@ export const convertHero =
                     ...hero,
                     activatable,
                   })
-                })
+                }),
+      convertLT ("1.2.0-alpha.6")
+                (hero => pipe_ (
+                  // Try to infer if player used cultural package
+                  // To check that, we compare all skills of the cultural package
+                  // if the actual SRs from the character are at least as high
+                  // as the bonus from the package is
+                  Maybe (hero .c),
+                  bindF (lookupF (WA.cultures (wiki))),
+                  maybe_ (() => ({
+                           ...hero,
+                           isCulturalPackageActive: false,
+                         }))
+                         (pipe (
+                           Culture.A.culturalPackageSkills,
+                           all (skill => hero .talents [IncreaseSkill.A.id (skill)]
+                                         >= IncreaseSkill.A.value (skill)),
+                           isCulturalPackageActive => ({
+                             ...hero,
+                             isCulturalPackageActive,
+                           })
+                         ))
+                ))
     )
   }
 
