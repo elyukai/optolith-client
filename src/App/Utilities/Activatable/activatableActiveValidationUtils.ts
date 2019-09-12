@@ -33,10 +33,11 @@ import { Advantage } from "../../Models/Wiki/Advantage";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
+import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable, AllRequirementObjects, EntryWithCategory, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers";
+import { Activatable, EntryWithCategory, LevelAwarePrerequisites, PrerequisitesWithIds } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils";
 import { ifElse } from "../ifElse";
@@ -343,8 +344,8 @@ const isEntryDisabledByDependencies =
 
           // Get the prerequisite that matches this entry
           // to get all other options from list
-          bindF (find ((req): req is AllRequirementObjects => {
-                        if (typeof req === "string") {
+          bindF (find ((req): req is PrerequisitesWithIds => {
+                        if (typeof req === "string" || SocialPrerequisite.is (req)) {
                           return false
                         }
 

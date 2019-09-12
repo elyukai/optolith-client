@@ -120,6 +120,9 @@ export const getMagicalStyleDependencies =
 export const getSkillStyleDependencies =
   pipe (getHeroProp, Hero.skillStyleDependencies)
 
+export const getSocialDependencies =
+  pipe (getHeroProp, Hero.socialStatusDependencies)
+
 
 export const getCurrentHeroName =
   pipe (getCurrentHeroPresent, fmap (Hero.name))
@@ -144,6 +147,9 @@ export const getWeight =
 
 export const getAvatar =
   pipe (getCurrentHeroPresent, bindF (Hero.avatar))
+
+export const getSocialStatus =
+  pipe (getHeroProp, Hero.personalData, Pers.socialStatus)
 
 
 export const getPact =

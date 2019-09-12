@@ -3,6 +3,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
+import { SocialStatusId } from "../../Constants/Ids";
 import { current_version } from "../../Selectors/envSelectors";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
@@ -65,6 +66,7 @@ export interface HeroModel {
   magicalStyleDependencies: List<Record<StyleDependency>>
   blessedStyleDependencies: List<Record<StyleDependency>>
   skillStyleDependencies: List<Record<StyleDependency>>
+  socialStatusDependencies: List<SocialStatusId>
 }
 
 /**
@@ -116,6 +118,7 @@ export const HeroModel =
                 magicalStyleDependencies: List (),
                 blessedStyleDependencies: List (),
                 skillStyleDependencies: List (),
+                socialStatusDependencies: List (),
               })
 
 export const HeroModelL = makeLenses (HeroModel)
@@ -172,4 +175,5 @@ export const getInitialHeroObject =
       magicalStyleDependencies: Nothing,
       blessedStyleDependencies: Nothing,
       skillStyleDependencies: Nothing,
+      socialStatusDependencies: Nothing,
     })

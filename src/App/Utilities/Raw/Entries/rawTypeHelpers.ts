@@ -5,6 +5,7 @@ import { RawPactRequirement } from "./Prerequisites/RawPactRequirement";
 import { RawRequirePrimaryAttribute } from "./Prerequisites/RawPrimaryAttributeRequirement";
 import { RawRaceRequirement } from "./Prerequisites/RawRaceRequirement";
 import { RawSexRequirement } from "./Prerequisites/RawSexRequirement";
+import { RawSocialPrerequisite } from "./Prerequisites/RawSocialPrerequisite";
 import { RawCantripsSelection } from "./ProfessionSelections/RawCantripsSelection";
 import { RawCombatTechniquesSelection } from "./ProfessionSelections/RawCombatTechniquesSelection";
 import { RawCursesSelection } from "./ProfessionSelections/RawCursesSelection";
@@ -52,5 +53,6 @@ export type AllRawRequirementObjects = RawProfessionDependency
                                      | RawRequireIncreasable
                                      | RawRequirePrimaryAttribute
                                      | RawPactRequirement
+                                     | RawSocialPrerequisite
 
 export type AllRawRequirements = "RCP" | AllRawRequirementObjects

@@ -1,18 +1,20 @@
 import { notEquals } from "../../../Data/Eq";
 import { flip, ident, join, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
-import { foldr, isList } from "../../../Data/List";
+import { over } from "../../../Data/Lens";
+import { consF, foldr, isList, sdelete } from "../../../Data/List";
 import { elemF, fromMaybe, isNothing, Just, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { HeroModel, HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { ActivatableDependency, ExtendedSkillDependency, SkillDependency } from "../../Models/Hero/heroTypeHelpers";
 import { SkillOptionalDependency } from "../../Models/Hero/SkillOptionalDependency";
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { isDependentPrerequisite } from "../../Models/Wiki/prerequisites/DependentRequirement";
 import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
+import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite";
 import { AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
 import { getCategoryById } from "../IDUtils";
 import { pipe } from "../pipe";
@@ -21,6 +23,7 @@ import { addActivatableDependency, addActivatableSkillDependency, addAttributeDe
 import { removeActivatableDependency, removeActivatableSkillDependency, removeAttributeDependency, removeSkillDependency } from "./removeDependencyUtils";
 
 const HA = HeroModel.A
+const HL = HeroModelL
 const RAA = RequireActivatable.A
 const RPAA = RequirePrimaryAttribute.A
 
@@ -146,7 +149,14 @@ const putIncreasableDependency =
                                           (state)
   }
 
+const modifySocialDependency: (isToAdd: boolean) =>
+                              (prerequisite: Record<SocialPrerequisite>) =>
+                              (hero: Record<HeroModel>) => Record<HeroModel> =
+  isToAdd => x => over (HL.socialStatusDependencies)
+                       ((isToAdd ? consF : sdelete) (SocialPrerequisite.A.value (x)))
+
 const modifyDependencies =
+  (isToAdd: boolean) =>
   (modifyAttributeDependency: ModifyAttributeDependency) =>
   (modifySkillDependency: ModifySkillDependency) =>
   (modifyActivatableSkillDependency: ModifyActivatableSkillDependency) =>
@@ -176,6 +186,9 @@ const modifyDependencies =
                                                       (x)
                     }
                   }
+                  else if (SocialPrerequisite.is (x)) {
+                    return modifySocialDependency (isToAdd) (x)
+                  }
 
                   return ident
                 }))
@@ -183,7 +196,8 @@ const modifyDependencies =
 /**
  * Adds dependencies to all required entries to ensure rule validity.
  */
-export const addDependencies = modifyDependencies (addAttributeDependency)
+export const addDependencies = modifyDependencies (true)
+                                                  (addAttributeDependency)
                                                   (addSkillDependency)
                                                   (addActivatableSkillDependency)
                                                   (addActivatableDependency)
@@ -191,7 +205,8 @@ export const addDependencies = modifyDependencies (addAttributeDependency)
 /**
  * Removes dependencies from all required entries to ensure rule validity.
  */
-export const removeDependencies = modifyDependencies (removeAttributeDependency)
+export const removeDependencies = modifyDependencies (false)
+                                                     (removeAttributeDependency)
                                                      (removeSkillDependency)
                                                      (removeActivatableSkillDependency)
                                                      (removeActivatableDependency)

@@ -260,6 +260,7 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
     combatStyleDependencies: Nothing,
     magicalStyleDependencies: Nothing,
     skillStyleDependencies: Nothing,
+    socialStatusDependencies: Nothing,
   })
 
 const getActivatableDependent =

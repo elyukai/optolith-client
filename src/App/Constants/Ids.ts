@@ -283,3 +283,11 @@ export enum SpecialAbilityId {
   TraditionBrobimGeoden = "SA_1438",
   TraditionKristallomanten = "",
 }
+
+export enum SocialStatusId {
+  NotFree = 1,
+  Free = 2,
+  LesserNoble = 3,
+  Noble = 4,
+  Aristocracy = 5,
+}
