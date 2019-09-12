@@ -7,6 +7,7 @@ import { foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, 
 import { toArray } from "../../../Data/OrderedSet";
 import { Record, StringKeyObject, toObject } from "../../../Data/Record";
 import { isTuple, Pair, Tuple } from "../../../Data/Tuple";
+import { ProfessionId } from "../../Constants/Ids";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -322,7 +323,9 @@ export const convertHeroForSave =
       rv: maybeToUndefined (raceVariant),
       c: maybeToUndefined (culture),
       p: maybeToUndefined (profession),
-      professionName: elem ("P_0") (profession) ? maybeToUndefined (professionName) : undefined,
+      professionName: elem<string> (ProfessionId.CustomProfession) (profession)
+        ? maybeToUndefined (professionName)
+        : undefined,
       pv: maybeToUndefined (professionVariant),
       sex,
       pers: {

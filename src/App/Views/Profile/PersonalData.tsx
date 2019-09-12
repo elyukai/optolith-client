@@ -30,6 +30,7 @@ import { Scroll } from "../Universal/Scroll";
 import { VerticalList } from "../Universal/VerticalList";
 import { OverviewAddAP } from "./OverviewAddAP";
 import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from "./OverviewPersonalData";
+import { ProfessionId } from "../../Constants/Ids";
 
 export interface PersonalDataOwnProps {
   l10n: L10nRecord
@@ -167,7 +168,12 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
       editProfessionName,
     } = this.state
 
-    const isOwnProfession = pipe_ (profession, fmap (Profession.A.id), Maybe.elem ("P_0"))
+    const isOwnProfession =
+      pipe_ (
+        profession,
+        fmap (Profession.A.id),
+        Maybe.elem<string> (ProfessionId.CustomProfession)
+      )
 
     const isProfessionUndefined = isNothing (profession)
 

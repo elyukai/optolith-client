@@ -58,7 +58,7 @@ export interface SelectionsDispatchProps {
 export type SelectionsProps = SelectionsStateProps & SelectionsDispatchProps & SelectionsOwnProps
 
 export interface SelectionsState {
-  attributeAdjustment: string
+  attributeAdjustment: Maybe<string>
   useCulturePackage: boolean
   motherTongue: number
   isBuyingMainScriptEnabled: boolean
@@ -82,7 +82,7 @@ const PSA = ProfessionSelections.A
 
 export class RCPOptionSelections extends React.Component<SelectionsProps, SelectionsState> {
   state: SelectionsState = {
-    attributeAdjustment: "ATTR_0",
+    attributeAdjustment: Nothing,
     isBuyingMainScriptEnabled: false,
     cantrips: OrderedSet.empty,
     combatTechniquesSecond: OrderedSet.empty,
@@ -100,7 +100,8 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
     selectedUnfamiliarSpell: Nothing,
   }
 
-  setAttributeAdjustment = (option: string) => this.setState ({ attributeAdjustment: option })
+  setAttributeAdjustment = (option: string) =>
+    this.setState ({ attributeAdjustment: Just (option) })
 
   switchIsCulturalPackageEnabled = () => this.setState (
     prevState => ({ useCulturePackage: !prevState .useCulturePackage })
@@ -216,15 +217,21 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
     this.setState ({ selectedUnfamiliarSpell: Just (id) })
 
   assignRCPEntries = (selMap: Record<ProfessionSelections>) => {
-    this.props.setSelections ({
-      ...this.state,
-      map: selMap,
-      specialization:
-        maybe_ <Maybe<string | number>> (() => fst (this.state.specialization))
-                                        (Just as (x: string) => Just<string>)
-                                        (ensure (notNullStr) (snd (this.state.specialization))),
-      unfamiliarSpell: this.state.selectedUnfamiliarSpell,
-    })
+    const { setSelections } = this.props
+    const { attributeAdjustment, specialization, selectedUnfamiliarSpell } = this.state
+
+    if (isJust (attributeAdjustment)) {
+      setSelections ({
+        ...this.state,
+        attributeAdjustment: fromJust (attributeAdjustment),
+        map: selMap,
+        specialization:
+          maybe_ <Maybe<string | number>> (() => fst (specialization))
+                                          (Just as (x: string) => Just<string>)
+                                          (ensure (notNullStr) (snd (specialization))),
+        unfamiliarSpell: selectedUnfamiliarSpell,
+      })
+    }
   }
 
   render () {
@@ -434,7 +441,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                        label={translate (l10n) ("complete")}
                        primary
                        disabled={
-                         attributeAdjustment === "ATTR_0"
+                         isNothing (attributeAdjustment)
                          || (isMotherTongueSelectionNeeded && motherTongue === 0)
                          || (
                            isBuyingMainScriptEnabled

@@ -35,6 +35,7 @@ import { misNumberM } from "../Utilities/typeCheckUtils";
 import { getWikiEntry } from "../Utilities/WikiUtils";
 import { ReduxAction, ReduxDispatch } from "./Actions";
 import { addAlert } from "./AlertActions";
+import { DisadvantageId } from "../Constants/Ids";
 
 /**
  * Advantages and disadvantages might not only be added or removed due to not
@@ -151,9 +152,10 @@ export const addDisAdvantage =
 
         const successFn = () => {
           const color: Maybe<Pair<number, number>> =
-            current_id === "DISADV_45"
+            current_id === DisadvantageId.Stigma
             && elem<string | number> (1) (ActivatableActivationOptions.AL.selectOptionId1 (args))
-              ? Just (Pair (19, 24)) // (eyeColor, hairColor)
+              // Just (eyeColor, hairColor)
+              ? Just (Pair (19, 24))
               : Nothing
 
           dispatch<ActivateDisAdvAction> ({
@@ -244,7 +246,7 @@ export const removeDisAdvantage =
 
         const successFn = () => {
           const color: Maybe<Pair<number, number>> =
-            current_id === "DISADV_45"
+            current_id === DisadvantageId.Stigma
             && elem (1)
                     (pipe_ (
                       hero_entry,

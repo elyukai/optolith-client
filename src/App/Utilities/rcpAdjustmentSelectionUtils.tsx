@@ -76,7 +76,7 @@ export const getBuyScriptElement =
             const selectionItem =
               pipe (
                      WA.specialAbilities,
-                     lookup ("SA_27"),
+                     lookup<string> (SpecialAbilityId.Literacy),
                      bindF (flip (findSelectOption)
                                  (listToMaybe (Culture.AL.scripts (culture))))
                    )
@@ -263,8 +263,8 @@ export const getLanguagesAndScriptsElementAndValidation =
             (maybeLanguagesList)
         })
         (ProfessionSelections.AL[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (professionSelections))
-        (lookupF (WA.specialAbilities (wiki)) ("SA_27"))
-        (lookupF (WA.specialAbilities (wiki)) ("SA_29"))
+        (lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.Literacy))
+        (lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.Language))
     )
 
 export const getCursesElementAndValidation =
@@ -482,7 +482,7 @@ export const getTerrainKnowledgeElement =
             active={terrainKnowledgeActive}
             />
         ))
-        (lookupF (WA.specialAbilities (wiki)) ("SA_12"))
+        (lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.TerrainKnowledge))
     )
 
 export const getMotherTongueSelectionElement =
@@ -494,7 +494,7 @@ export const getMotherTongueSelectionElement =
   (isAnyLanguageOrScriptSelected: boolean) =>
   (setMotherTongue: (option: number) => void) =>
     pipe (
-           bindF (() => lookupF (WA.specialAbilities (wiki)) ("SA_29")),
+           bindF (() => lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.Language)),
            fmap ((wikiEntry: Record<SpecialAbility>) => (
                   <Dropdown
                     hint={translate (locale) ("selectnativetongue")}
@@ -529,7 +529,7 @@ export const getMainScriptSelectionElement =
   (isBuyingMainScriptEnabled: boolean) =>
   (setMainCulturalLiteracy: (option: number) => void) =>
     pipe (
-           bindF (() => lookupF (WA.specialAbilities (wiki)) ("SA_27")),
+           bindF (() => lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.Literacy)),
            fmap ((wikiEntry: Record<SpecialAbility>) => (
                   <Dropdown
                     hint={translate (l10n) ("selectscript")}

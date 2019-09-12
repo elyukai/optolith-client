@@ -38,6 +38,7 @@ import { stringOfListToDropdown } from "../Views/Universal/Dropdown";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getEquipmentSortOptions } from "./sortOptionsSelectors";
 import { getCurrentHeroPresent, getEquipmentFilterText, getEquipmentState, getHigherParadeValues, getHitZoneArmorsState, getItemsState, getItemTemplatesFilterText, getLocaleAsProp, getWiki, getWikiItemTemplates, getZoneArmorFilterText } from "./stateSelectors";
+import { CombatTechniqueId } from "../Constants/Ids";
 
 const HA = HeroModel.A
 const WA = WikiModel.A
@@ -582,7 +583,8 @@ export const getShieldsAndParryingWeapons = createMaybeSelector (
               thrush (rawItems)
                      (filter (item => IA.gr (item) === 1
                                       && (
-                                        Maybe.elem ("CT_10") (IA.combatTechnique (item))
+                                        Maybe.elem<string> (CombatTechniqueId.Shields)
+                                                           (IA.combatTechnique (item))
                                         || IA.isParryingWeapon (item)
                                       )))
 

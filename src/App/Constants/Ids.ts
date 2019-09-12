@@ -2,6 +2,16 @@
  * Please keep enum members sorted by value and not by key!
  */
 
+export enum ExperienceLevelId {
+  Inexperienced = "EL_1",
+  Ordinary = "EL_2",
+  Experienced = "EL_3",
+  Competent = "EL_4",
+  Masterly = "EL_5",
+  Brilliant = "EL_6",
+  Legendary = "EL_7",
+}
+
 export enum RaceId {
   Humans = "R_1",
   Elves = "R_2",
@@ -101,6 +111,8 @@ export enum DisadvantageId {
   // Schlechte Eigenschaft
   NegativeTrait = "DISADV_37",
   Stigma = "DISADV_45",
+  // Taub
+  Deaf = "DISADV_47",
   Incompetent = "DISADV_48",
   // Verpflichtungen
   Obligations = "DISADV_50",
@@ -114,12 +126,71 @@ export enum DisadvantageId {
 }
 
 export enum SkillId {
+  Flying = "TAL_1",
+  Gaukelei = "TAL_2",
+  Climbing = "TAL_3",
+  BodyControl = "TAL_4",
+  FeatOfStrength = "TAL_5",
+  Riding = "TAL_6",
+  Swimming = "TAL_7",
+  SelfControl = "TAL_8",
+  Singing = "TAL_9",
+  Perception = "TAL_10",
+  Dancing = "TAL_11",
+  Pickpocket = "TAL_12",
+  Stealth = "TAL_13",
+  Carousing = "TAL_14",
+  Persuasion = "TAL_15",
+  Seduction = "TAL_16",
+  Intimidation = "TAL_17",
+  Etiquette = "TAL_18",
+  Streetwise = "TAL_19",
+  Empathy = "TAL_20",
+  FastTalk = "TAL_21",
+  Disguise = "TAL_22",
+  Willpower = "TAL_23",
+  Tracking = "TAL_24",
+  Ropes = "TAL_25",
+  Fishing = "TAL_26",
+  Orienting = "TAL_27",
+  PlantLore = "TAL_28",
+  AnimalLore = "TAL_29",
+  Survival = "TAL_30",
+  Gambling = "TAL_31",
+  Geography = "TAL_32",
+  History = "TAL_33",
+  Religions = "TAL_34",
+  Warfare = "TAL_35",
+  MagicalLore = "TAL_36",
+  Mechanics = "TAL_37",
+  Math = "TAL_38",
+  Law = "TAL_39",
+  MythsAndLegends = "TAL_40",
+  SphereLore = "TAL_41",
+  Astronomy = "TAL_42",
+  Alchemy = "TAL_43",
+  Sailing = "TAL_44",
+  Driving = "TAL_45",
+  Commerce = "TAL_46",
+  TreatPoison = "TAL_47",
+  TreatDisease = "TAL_48",
+  TreatSoul = "TAL_49",
+  TreatWounds = "TAL_50",
   Woodworking = "TAL_51",
+  PrepareFood = "TAL_52",
+  Leatherworking = "TAL_53",
+  ArtisticAbility = "TAL_54",
   Metalworking = "TAL_55",
+  Music = "TAL_56",
+  PickLocks = "TAL_57",
+  Earthencraft = "TAL_58",
+  Clothworking = "TAL_59",
 }
 
 export enum CombatTechniqueId {
+  ChainWeapons = "CT_6",
   Lances = "CT_7",
+  Brawling = "CT_8",
   Shields = "CT_10",
   Feuerspeien = "CT_17",
 }

@@ -5,7 +5,7 @@ import { add, lt, odd, subtract, subtractBy } from "../../Data/Num";
 import { lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
-import { RaceId } from "../Constants/Ids";
+import { ProfessionId, RaceId } from "../Constants/Ids";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { Profession } from "../Models/Wiki/Profession";
@@ -156,7 +156,7 @@ export const getFullProfessionName =
   (professionId: Maybe<string>) =>
   (professionVariantId: Maybe<string>) =>
   (customProfessionName: Maybe<string>) => {
-    if (elem ("P_0") (professionId)) {
+    if (elem<string> (ProfessionId.CustomProfession) (professionId)) {
       return fromMaybe (translate (l10n) ("ownprofession"))
                        (customProfessionName)
     }

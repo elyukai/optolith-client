@@ -24,6 +24,7 @@ import { ListItemName } from "../Universal/ListItemName";
 import { ListItemSelections } from "../Universal/ListItemSelections";
 import { ListItemSeparator } from "../Universal/ListItemSeparator";
 import { ListItemValues } from "../Universal/ListItemValues";
+import { SpecialAbilityId } from "../../Constants/Ids";
 
 export interface ActivatableRemoveListItemProps {
   item: Record<ActiveActivatable>
@@ -92,7 +93,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
           const levelOptions = getLevelElementsWithMin (curr_min) (curr_max)
 
           const levelOptionsWithMotherTongue =
-            AAA_.id (item) === "SA_29"
+            AAA_.id (item) === SpecialAbilityId.Language
             && (level === 4 || isRemovingEnabled)
               ? cons (levelOptions)
                      (DropdownOption ({

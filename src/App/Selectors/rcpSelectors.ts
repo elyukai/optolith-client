@@ -9,7 +9,7 @@ import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Tuple/Curry";
 import { Categories } from "../Constants/Categories";
-import { RaceId } from "../Constants/Ids";
+import { RaceId, ProfessionId } from "../Constants/Ids";
 import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
 import { ActivatableNameCostIsActive } from "../Models/View/ActivatableNameCostIsActive";
@@ -599,7 +599,8 @@ const mapSpellPrevious = mapIncreaseSkillListPrevious (0) (WA.spells) (SPA.name)
 
 const mapLiturgicalChantPrevious = mapIncreaseSkillListPrevious (0) (WA.liturgicalChants) (LCA.name)
 
-const isCustomProfession = (e: Record<ProfessionCombined>) => ProfessionCombinedA_.id (e) === "P_0"
+const isCustomProfession = (e: Record<ProfessionCombined>) => ProfessionCombinedA_.id (e)
+                                                              === ProfessionId.CustomProfession
 
 const areProfessionOrVariantPrerequisitesValid =
   (current_sex: Sex) =>
