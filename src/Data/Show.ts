@@ -22,7 +22,7 @@ const map =
   <A, B> (f: (x: A) => B) => (xs: Internals.List<A>): Internals.List<B> =>
   Internals.isNil (xs) ? Internals.Nil : Internals.Cons (f (xs .x), map (f) (xs .xs))
 
-const trimStart = (str: string) => str .replace (/^\s+/, "")
+const trimStart = (str: string) => str .replace (/^\s+/u, "")
 
 /**
  * `show :: a -> String`

@@ -13,7 +13,7 @@ import { ident, thrush } from "./Function";
 import { fmap, fmapF } from "./Functor";
 import { Internals } from "./Internals";
 import { add, inc, max, min, multiply } from "./Num";
-import { isLTorEQ, Ordering } from "./Ord";
+import { Compare, GT, isLTorEQ, LT, Ordering } from "./Ord";
 import { fromDefault, RecordBase } from "./Record";
 import { show } from "./Show";
 import { first, fst, Pair, second, snd } from "./Tuple";
@@ -1471,6 +1471,29 @@ const sortByGetMiddle = <A> (xs: List<A>): Pair<List<A>, List<A>> =>
 
 List.sortBy = sortBy
 
+/**
+ * `maximumBy :: Foldable t => (a -> a -> Ordering) -> t a -> a`
+ *
+ * The largest element of a non-empty structure with respect to the given
+ * comparison function.
+ */
+export const maximumBy = <A> (f: Compare<A>) => (xs: NonEmptyList<A>): A =>
+  foldr1Safe <A> (x => acc => f (x) (acc) === GT ? x : acc)
+                 (xs)
+
+List.maximumBy = maximumBy
+
+/**
+ * `minimumBy :: Foldable t => (a -> a -> Ordering) -> t a -> a`
+ *
+ * The least element of a non-empty structure with respect to the given
+ * comparison function.
+ */
+export const minimumBy = <A> (f: Compare<A>) => (xs: NonEmptyList<A>): A =>
+  foldr1Safe <A> (x => acc => f (x) (acc) === LT ? x : acc)
+                 (xs)
+
+List.minimumBy = minimumBy
 
 // LIST.INDEX
 
