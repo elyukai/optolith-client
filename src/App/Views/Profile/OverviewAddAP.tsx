@@ -1,6 +1,5 @@
 import * as React from "react";
 import { fromJust, isJust } from "../../../Data/Maybe";
-import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { toInt } from "../../Utilities/NumberUtils";
@@ -16,62 +15,55 @@ interface OverviewAddAPProps {
   close (): void
 }
 
-interface OverviewAddAPState {
-  value: string
-}
+export const OverviewAddAP: React.FC<OverviewAddAPProps> = props => {
+  const { addAdventurePoints, isRemovingEnabled, l10n, isOpen, close } = props
 
-export class OverviewAddAP extends React.Component<OverviewAddAPProps, OverviewAddAPState> {
-  state = {
-    value: "",
+  const [value, setValue] = React.useState ("")
+  const [prevIsOpen, setPrevIsOpen] = React.useState (false)
+
+  if (prevIsOpen !== isOpen) {
+    setValue ("")
+    setPrevIsOpen (isOpen)
   }
 
-  onChange = (event: InputTextEvent) => this.setState ({ value: event.target.value })
-  addAP = () => {
-    const mvalue = toInt (this.state.value)
+  const addAP =
+    React.useCallback (
+      () => {
+        const mvalue = toInt (value)
 
-    if (isJust (mvalue)) {
-      this.props.addAdventurePoints (fromJust (mvalue))
-    }
-  }
-
-  componentWillReceiveProps (nextProps: OverviewAddAPProps) {
-    if (!nextProps.isOpen && this.props.isOpen) {
-      this.setState ({
-        value: "",
-      })
-    }
-  }
-
-  render () {
-    const { isRemovingEnabled, l10n } = this.props
-    const { value } = this.state
-
-    return (
-      <Dialog
-        {...this.props}
-        id="overview-add-ap"
-        title={translate (l10n) ("addadventurepoints")}
-        buttons={[
-          {
-            disabled: isRemovingEnabled
-              ? !isInteger (value)
-              : (!isNaturalNumber (value) || value === "0"),
-            label: translate (l10n) ("add"),
-            onClick: this.addAP,
-          },
-          {
-            label: translate (l10n) ("cancel"),
-          },
-        ]}
-        >
-        <TextField
-          hint={translate (l10n) ("adventurepoints")}
-          value={value}
-          onChange={this.onChange}
-          fullWidth
-          valid={isRemovingEnabled ? isInteger (value) : isNaturalNumber (value) && value !== "0"}
-          />
-      </Dialog>
+        if (isJust (mvalue)) {
+          addAdventurePoints (fromJust (mvalue))
+        }
+      },
+      [addAdventurePoints, value]
     )
-  }
+
+  return (
+    <Dialog
+      id="overview-add-ap"
+      title={translate (l10n) ("addadventurepoints")}
+      buttons={[
+        {
+          disabled: isRemovingEnabled
+            ? !isInteger (value)
+            : (!isNaturalNumber (value) || value === "0"),
+          label: translate (l10n) ("add"),
+          onClick: addAP,
+        },
+        {
+          label: translate (l10n) ("cancel"),
+        },
+      ]}
+      close={close}
+      isOpen={isOpen}
+      >
+      <TextField
+        hint={translate (l10n) ("adventurepoints")}
+        value={value}
+        onChange={setValue}
+        fullWidth
+        valid={isRemovingEnabled ? isInteger (value) : isNaturalNumber (value) && value !== "0"}
+        />
+    </Dialog>
+  )
 }

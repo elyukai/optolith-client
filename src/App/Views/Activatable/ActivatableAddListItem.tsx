@@ -7,7 +7,6 @@ import { fst, snd } from "../../../Data/Tuple";
 import { AdvantageId, DisadvantageId } from "../../Constants/Ids";
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
 import { HeroModel } from "../../Models/Hero/HeroModel";
-import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
@@ -15,7 +14,7 @@ import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, InactiveActivatableControlElements, insertFinalCurrentCost, PropertiesAffectedByState } from "../../Utilities/Activatable/activatableInactiveViewUtils";
 import { classListMaybe } from "../../Utilities/CSS";
 import { translate } from "../../Utilities/I18n";
-import { pipe_ } from "../../Utilities/pipe";
+import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybeWith } from "../../Utilities/ReactUtils";
 import { isInteger } from "../../Utilities/RegexUtils";
 import { Dialog } from "../Universal/DialogNew";
@@ -77,6 +76,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
     selectForInfo,
     selectedForInfo,
     wiki,
+    addToList,
   } = props
 
   const id = IAA.id (item)
@@ -113,7 +113,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
           }
         }
       },
-      [setSelectedLevel, setSelected, item]
+      [setSelectedLevel, setSelected, id]
     )
 
   const handleInput =
@@ -128,7 +128,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
         setShowCustomCostDialog (orN (hideGroup))
         setCustomCostPreview (mcustom_cost)
       },
-      [setShowCustomCostDialog, setCustomCostPreview]
+      [setShowCustomCostDialog, setCustomCostPreview, hideGroup, mcustom_cost]
     )
 
   const handleCloseCustomCostDialog =
@@ -140,12 +140,12 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
   const handleSetCustomCost =
     React.useCallback (
       () => setCustomCost (mcustom_cost_preview),
-      [setCustomCost]
+      [setCustomCost, mcustom_cost_preview]
     )
 
   const handleSetCustomCostPreview =
     React.useCallback (
-      (event: InputTextEvent) => setCustomCostPreview (ensure (notNullStr) (event.target.value)),
+      pipe (ensure (notNullStr), setCustomCostPreview),
       [setCustomCostPreview]
     )
 
@@ -215,7 +215,6 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
     React.useCallback (
       () => {
         const args = fst (finalProps)
-        const { addToList } = props
 
         addToList (args)
 
@@ -239,6 +238,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
         setSelectedLevel,
         setCustomCost,
         finalProps,
+        addToList,
       ]
     )
 

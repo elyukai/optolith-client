@@ -100,7 +100,7 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
             className="name"
             label={translate (l10n) ("name")}
             value={EHZAA.name (armorZonesEditor)}
-            onChangeString={props.setName}
+            onChange={props.setName}
             autoFocus={Maybe.elem (true) (isInHitZoneArmorCreation)}
             />
         </div>

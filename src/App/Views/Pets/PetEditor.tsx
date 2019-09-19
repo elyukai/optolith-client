@@ -87,157 +87,157 @@ export function PetEditor (props: PetEditorProps) {
               <TextField
                 label={translate (l10n) ("name")}
                 value={EPA.name (pet)}
-                onChangeString={props.setName}
+                onChange={props.setName}
                 />
               <TextField
                 label={translate (l10n) ("sizecategory")}
                 value={EPA.size (pet)}
-                onChangeString={props.setSize}
+                onChange={props.setSize}
                 />
               <TextField
                 label={translate (l10n) ("type")}
                 value={EPA.type (pet)}
-                onChangeString={props.setType}
+                onChange={props.setType}
                 />
               <TextField
                 label={translate (l10n) ("apspent.novar")}
                 value={EPA.spentAp (pet)}
-                onChangeString={props.setSpentAp}
+                onChange={props.setSpentAp}
                 />
               <TextField
                 label={translate (l10n) ("totalap.novar")}
                 value={EPA.totalAp (pet)}
-                onChangeString={props.setTotalAp}
+                onChange={props.setTotalAp}
                 />
             </div>
             <div className="row">
               <TextField
                 label={getAttrShort (attributes) (AttrId.Courage)}
                 value={EPA.cou (pet)}
-                onChangeString={props.setCourage}
+                onChange={props.setCourage}
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Sagacity)}
                 value={EPA.sgc (pet)}
-                onChangeString={props.setSagacity}
+                onChange={props.setSagacity}
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Intuition)}
                 value={EPA.int (pet)}
-                onChangeString={props.setIntuition}
+                onChange={props.setIntuition}
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Charisma)}
                 value={EPA.cha (pet)}
-                onChangeString={props.setCharisma}
+                onChange={props.setCharisma}
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Dexterity)}
                 value={EPA.dex (pet)}
-                onChangeString={props.setDexterity}
+                onChange={props.setDexterity}
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Agility)}
                 value={EPA.agi (pet)}
-                onChangeString={props.setAgility}
+                onChange={props.setAgility}
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Constitution)}
                 value={EPA.con (pet)}
-                onChangeString={props.setConstitution}
+                onChange={props.setConstitution}
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Strength)}
                 value={EPA.str (pet)}
-                onChangeString={props.setStrength}
+                onChange={props.setStrength}
                 />
             </div>
             <div className="row">
               <TextField
                 label={translate (l10n) ("lifepoints.short")}
                 value={EPA.lp (pet)}
-                onChangeString={props.setLp}
+                onChange={props.setLp}
                 />
               <TextField
                 label={translate (l10n) ("arcaneenergy.short")}
                 value={EPA.ae (pet)}
-                onChangeString={props.setAe}
+                onChange={props.setAe}
                 />
               <TextField
                 label={translate (l10n) ("spirit.short")}
                 value={EPA.spi (pet)}
-                onChangeString={props.setSpi}
+                onChange={props.setSpi}
                 />
               <TextField
                 label={translate (l10n) ("toughness.short")}
                 value={EPA.tou (pet)}
-                onChangeString={props.setTou}
+                onChange={props.setTou}
                 />
               <TextField
                 label={translate (l10n) ("protection.short")}
                 value={EPA.pro (pet)}
-                onChangeString={props.setPro}
+                onChange={props.setPro}
                 />
               <TextField
                 label={translate (l10n) ("initiative.short")}
                 value={EPA.ini (pet)}
-                onChangeString={props.setIni}
+                onChange={props.setIni}
                 />
               <TextField
                 label={translate (l10n) ("movement.short")}
                 value={EPA.mov (pet)}
-                onChangeString={props.setMov}
+                onChange={props.setMov}
                 />
             </div>
             <div className="row">
               <TextField
                 label={translate (l10n) ("attack")}
                 value={EPA.attack (pet)}
-                onChangeString={props.setAttack}
+                onChange={props.setAttack}
                 />
               <TextField
                 label={translate (l10n) ("attack.short")}
                 value={EPA.at (pet)}
-                onChangeString={props.setAt}
+                onChange={props.setAt}
                 />
               <TextField
                 label={translate (l10n) ("parry.short")}
                 value={EPA.pa (pet)}
-                onChangeString={props.setPa}
+                onChange={props.setPa}
                 />
               <TextField
                 label={translate (l10n) ("damagepoints.short")}
                 value={EPA.dp (pet)}
-                onChangeString={props.setDp}
+                onChange={props.setDp}
                 />
               <TextField
                 label={translate (l10n) ("reach")}
                 value={EPA.reach (pet)}
-                onChangeString={props.setReach}
+                onChange={props.setReach}
                 />
             </div>
             <div className="row">
               <TextField
                 label={translate (l10n) ("actions")}
                 value={EPA.actions (pet)}
-                onChangeString={props.setActions}
+                onChange={props.setActions}
                 />
               <TextField
                 label={translate (l10n) ("skills")}
                 value={EPA.talents (pet)}
-                onChangeString={props.setSkills}
+                onChange={props.setSkills}
                 />
               <TextField
                 label={translate (l10n) ("specialabilities")}
                 value={EPA.skills (pet)}
-                onChangeString={props.setAbilities}
+                onChange={props.setAbilities}
                 />
             </div>
             <div className="row">
               <TextField
                 label={translate (l10n) ("notes")}
                 value={EPA.notes (pet)}
-                onChangeString={props.setNotes}
+                onChange={props.setNotes}
                 />
             </div>
             {Maybe.elem (true) (isInCreation)

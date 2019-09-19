@@ -87,7 +87,7 @@ export class CombatTechniques
           <TextField
             hint={translate (l10n) ("search")}
             value={filterText}
-            onChangeString={setFilterText}
+            onChange={setFilterText}
             fullWidth
             />
           <SortOptions

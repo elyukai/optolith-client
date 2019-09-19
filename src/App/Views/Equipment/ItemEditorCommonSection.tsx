@@ -68,14 +68,14 @@ export function ItemEditorCommonSection (props: ItemEditorCommonSectionProps) {
           className="number"
           label={translate (l10n) ("number")}
           value={EIA.amount (item)}
-          onChangeString={props.setAmount}
+          onChange={props.setAmount}
           valid={IEIVA.amount (inputValidation)}
           />
         <TextField
           className="name"
           label={translate (l10n) ("name")}
           value={EIA.name (item)}
-          onChangeString={props.setName}
+          onChange={props.setName}
           autoFocus={props.isInCreation}
           disabled={locked}
           valid={IEIVA.name (inputValidation)}
@@ -86,7 +86,7 @@ export function ItemEditorCommonSection (props: ItemEditorCommonSectionProps) {
           className="price"
           label={translate (l10n) ("price")}
           value={EIA.price (item)}
-          onChangeString={props.setPrice}
+          onChange={props.setPrice}
           disabled={locked}
           valid={IEIVA.price (inputValidation)}
           />
@@ -94,7 +94,7 @@ export function ItemEditorCommonSection (props: ItemEditorCommonSectionProps) {
           className="weight"
           label={translate (l10n) ("weight")}
           value={EIA.weight (item)}
-          onChangeString={props.setWeight}
+          onChange={props.setWeight}
           disabled={locked}
           valid={IEIVA.weight (inputValidation)}
           />
@@ -102,7 +102,7 @@ export function ItemEditorCommonSection (props: ItemEditorCommonSectionProps) {
           className="where"
           label={translate (l10n) ("carriedwhere")}
           value={EIA.where (item)}
-          onChangeString={props.setWhere}
+          onChange={props.setWhere}
           />
       </div>
       <div className="row">

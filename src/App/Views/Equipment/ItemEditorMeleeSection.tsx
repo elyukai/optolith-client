@@ -157,14 +157,14 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                     <TextField
                       className="damage-threshold-part"
                       value={fst (damageBonusThreshold)}
-                      onChangeString={props.setFirstDamageThreshold}
+                      onChange={props.setFirstDamageThreshold}
                       disabled={lockedByNoCombatTechniqueOrLances}
                       valid={IEIVA.firstDamageThreshold (inputValidation)}
                       />
                     <TextField
                       className="damage-threshold-part"
                       value={snd (damageBonusThreshold)}
-                      onChangeString={props.setSecondDamageThreshold}
+                      onChange={props.setSecondDamageThreshold}
                       disabled={lockedByNoCombatTechniqueOrLances}
                       valid={IEIVA.secondDamageThreshold (inputValidation)}
                       />
@@ -175,7 +175,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                     className="damage-threshold"
                     label={translate (l10n) ("damagethreshold")}
                     value={damageBonusThreshold}
-                    onChangeString={props.setDamageThreshold}
+                    onChange={props.setDamageThreshold}
                     disabled={lockedByNoCombatTechniqueOrLances}
                     valid={IEIVA.damageThreshold (inputValidation)}
                     />
@@ -215,7 +215,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               <TextField
                 className="damage-dice-number"
                 value={EIA.damageDiceNumber (item)}
-                onChangeString={props.setDamageDiceNumber}
+                onChange={props.setDamageDiceNumber}
                 disabled={locked}
                 valid={IEIVA.damageDiceNumber (inputValidation)}
                 />
@@ -230,7 +230,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               <TextField
                 className="damage-flat"
                 value={EIA.damageFlat (item)}
-                onChangeString={props.setDamageFlat}
+                onChange={props.setDamageFlat}
                 disabled={locked}
                 valid={IEIVA.damageFlat (inputValidation)}
                 />
@@ -239,7 +239,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               className="stabilitymod"
               label={translate (l10n) ("breakingpointratingmodifier.short")}
               value={EIA.stabilityMod (item)}
-              onChangeString={props.setStabilityModifier}
+              onChange={props.setStabilityModifier}
               disabled={locked}
               valid={IEIVA.stabilityMod (inputValidation)}
               />
@@ -271,14 +271,14 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               <TextField
                 className="at"
                 value={EIA.at (item)}
-                onChangeString={props.setAttack}
+                onChange={props.setAttack}
                 disabled={locked || elem<string> (CombatTechniqueId.Lances) (combatTechnique)}
                 valid={IEIVA.at (inputValidation)}
               />
             <TextField
               className="pa"
               value={EIA.pa (item)}
-              onChangeString={props.setParry}
+              onChange={props.setParry}
               disabled={
                 locked
                 || elem<string> (CombatTechniqueId.ChainWeapons) (combatTechnique)
@@ -294,7 +294,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                   className="stp"
                   label={translate (l10n) ("structurepoints.short")}
                   value={EIA.stp (item)}
-                  onChangeString={props.setStructurePoints}
+                  onChange={props.setStructurePoints}
                   disabled={locked}
                   />
               )
@@ -303,7 +303,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                   className="length"
                   label={translate (l10n) ("length")}
                   value={EIA.length (item)}
-                  onChangeString={props.setLength}
+                  onChange={props.setLength}
                   disabled={locked}
                   valid={IEIVA.length (inputValidation)}
                   />

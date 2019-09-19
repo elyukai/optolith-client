@@ -109,7 +109,7 @@ export class SpecialAbilities
             <TextField
               hint={translate (l10n) ("search")}
               value={inactiveFilterText}
-              onChangeString={this.props.setInactiveFilterText}
+              onChange={this.props.setInactiveFilterText}
               fullWidth />
             <SortOptions
               sortOrder={sortOrder}
@@ -152,7 +152,7 @@ export class SpecialAbilities
           <TextField
             hint={translate (l10n) ("search")}
             value={filterText}
-            onChangeString={this.props.setFilterText}
+            onChange={this.props.setFilterText}
             fullWidth
             />
           <SortOptions

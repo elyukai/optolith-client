@@ -93,7 +93,7 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
           <TextField
             hint={translate (l10n) ("search")}
             value={filterText}
-            onChangeString={this.props.setFilterText}
+            onChange={this.props.setFilterText}
             fullWidth
             />
           <SortOptions

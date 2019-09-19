@@ -4,7 +4,6 @@ import { cons, consF, imap, List, notNull } from "../../../Data/List";
 import { Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { CultureCombined } from "../../Models/View/CultureCombined";
 import { ProfessionCombined } from "../../Models/View/ProfessionCombined";
 import { RaceCombined } from "../../Models/View/RaceCombined";
@@ -115,12 +114,6 @@ export const Wiki: React.FC<WikiProps> = props => {
   const mxs: Maybe<List<InlineWikiEntry>> =
     fmapF (maybeCategory) (category => other[category as keyof WikiTabLists])
 
-  const handleFilterText =
-    React.useCallback (
-      (e: InputTextEvent) => setFilter (e.target.value),
-      [setFilter]
-    )
-
   const handleShowInfo =
     React.useCallback (
       (id: string) => setInfoId (Just (id)),
@@ -132,7 +125,7 @@ export const Wiki: React.FC<WikiProps> = props => {
       <Options>
         <TextField
           hint={translate (l10n) ("search")}
-          onChange={handleFilterText}
+          onChange={setFilter}
           value={filterText}
           />
         <Dropdown

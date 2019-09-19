@@ -1,6 +1,7 @@
 plugins:
   - "@typescript-eslint"
   - eslint-plugin-react
+  - eslint-plugin-react-hooks
 parser: "@typescript-eslint/parser"
 parserOptions:
   ecmaVersion: 2020
@@ -418,6 +419,10 @@ rules:
       condition: parens-new-line
       logical: parens-new-line
       prop: ignore
+
+  # React Hooks
+  react-hooks/rules-of-hooks: 2
+  react-hooks/exhaustive-deps: 2
 settings:
   react:
     version: detect

@@ -83,7 +83,7 @@ export class InGame extends Component {
 				/>
 				<div className="header-controls">
 					<div className="online-link">
-						<TextField hint="Online-Link" value={this.state.online} onChange={this.setOnline} />
+						<TextField hint="Online-Link" value={this.state.online} onChangeE={this.setOnline} />
 						<BorderButton label="Laden" onClick={this.load} />
 					</div>
 					<IconButton className="add-fighter" icon="&#xE7FE;" onClick={this.addFighter} />

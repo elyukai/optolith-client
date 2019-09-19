@@ -3,7 +3,6 @@ import { fmap } from "../../../Data/Functor";
 import { elem, elemF, List, subscriptF } from "../../../Data/List";
 import { all, alt, bind, catMaybes, ensure, fromJust, imapMaybe, isJust, Just, liftM2, Maybe, maybe, or } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
-import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { PersonalData } from "../../Models/Hero/PersonalData";
 import { Culture } from "../../Models/Wiki/Culture";
 import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
@@ -34,19 +33,19 @@ export interface OverviewPersonalDataOwnProps {
 }
 
 export interface OverviewPersonalDataDispatchProps {
-  changeFamily (event: InputTextEvent): void
-  changePlaceOfBirth (event: InputTextEvent): void
-  changeDateOfBirth (event: InputTextEvent): void
-  changeAge (event: InputTextEvent): void
+  changeFamily (newText: string): void
+  changePlaceOfBirth (newText: string): void
+  changeDateOfBirth (newText: string): void
+  changeAge (newText: string): void
   changeHaircolor (result: Maybe<number>): void
   changeEyecolor (result: Maybe<number>): void
-  changeSize (event: InputTextEvent): void
-  changeWeight (event: InputTextEvent): void
-  changeTitle (event: InputTextEvent): void
+  changeSize (newText: string): void
+  changeWeight (newText: string): void
+  changeTitle (newText: string): void
   changeSocialStatus (result: Maybe<number>): void
-  changeCharacteristics (event: InputTextEvent): void
-  changeOtherInfo (event: InputTextEvent): void
-  changeCultureAreaKnowledge (event: InputTextEvent): void
+  changeCharacteristics (newText: string): void
+  changeOtherInfo (newText: string): void
+  changeCultureAreaKnowledge (newText: string): void
   rerollHair (): void
   rerollEyes (): void
   rerollSize (): void
@@ -138,7 +137,7 @@ const getHairColorAndEyeColorOptions =
     }
   }
 
-export function OverviewPersonalData (props: OverviewPersonalDataProps) {
+export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props => {
   const {
     culture: mculture,
     eyecolorTags,
@@ -151,6 +150,23 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
     isAlbino,
     sizeCalcStr,
     weightCalcStr,
+    changeFamily,
+    changePlaceOfBirth,
+    changeDateOfBirth,
+    changeAge,
+    changeHaircolor,
+    changeEyecolor,
+    changeSize,
+    changeWeight,
+    changeTitle,
+    changeSocialStatus,
+    changeCharacteristics,
+    changeOtherInfo,
+    changeCultureAreaKnowledge,
+    rerollHair,
+    rerollEyes,
+    rerollSize,
+    rerollWeight,
   } = props
 
   const hairAndEyeColorOptions = getHairColorAndEyeColorOptions (l10n)
@@ -184,28 +200,28 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
         <TextField
           label={translate (l10n) ("family")}
           value={PersonalData.A.family (profile)}
-          onChange={props.changeFamily}
+          onChange={changeFamily}
           />
       </div>
       <div>
         <TextField
           label={translate (l10n) ("placeofbirth")}
           value={PersonalData.A.placeOfBirth (profile)}
-          onChange={props.changePlaceOfBirth}
+          onChange={changePlaceOfBirth}
           />
       </div>
       <div>
         <TextField
           label={translate (l10n) ("dateofbirth")}
           value={PersonalData.A.dateOfBirth (profile)}
-          onChange={props.changeDateOfBirth}
+          onChange={changeDateOfBirth}
           />
       </div>
       <div>
         <TextField
           label={translate (l10n) ("age")}
           value={age}
-          onChange={props.changeAge}
+          onChange={changeAge}
           valid={all (isEmptyOr (isNaturalNumber)) (age)}
           />
       </div>
@@ -213,51 +229,51 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
         <Dropdown
           label={translate (l10n) ("haircolor")}
           value={PersonalData.A.hairColor (profile)}
-          onChange={props.changeHaircolor}
+          onChange={changeHaircolor}
           options={hairAndEyeColorOptions.hairOptions}
           disabled={isAlbino}
           />
-        <IconButton icon="&#xE913;" onClick={props.rerollHair} disabled={isAlbino} />
+        <IconButton icon="&#xE913;" onClick={rerollHair} disabled={isAlbino} />
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <Dropdown
           label={translate (l10n) ("eyecolor")}
           value={PersonalData.A.eyeColor (profile)}
-          onChange={props.changeEyecolor}
+          onChange={changeEyecolor}
           options={hairAndEyeColorOptions.eyeOptions}
           />
-        <IconButton icon="&#xE913;" onClick={props.rerollEyes} />
+        <IconButton icon="&#xE913;" onClick={rerollEyes} />
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
           label={`${translate (l10n) ("size")}${wrapParenSpace (sizeCalcStr)}`}
           value={PersonalData.A.size (profile)}
-          onChange={props.changeSize}
+          onChange={changeSize}
           valid={all (isEmptyOr (isFloat)) (size)}
           />
-        <IconButton icon="&#xE913;" onClick={props.rerollSize} />
+        <IconButton icon="&#xE913;" onClick={rerollSize} />
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
           label={`${translate (l10n) ("weight")}${wrapParenSpace (weightCalcStr)}`}
           value={PersonalData.A.weight (profile)}
-          onChange={props.changeWeight}
+          onChange={changeWeight}
           valid={all (isEmptyOr (isNaturalNumber)) (weight)}
           />
-        <IconButton icon="&#xE913;" onClick={props.rerollWeight} />
+        <IconButton icon="&#xE913;" onClick={rerollWeight} />
       </InputButtonGroup>
       <div>
         <TextField
           label={translate (l10n) ("title")}
           value={PersonalData.A.title (profile)}
-          onChange={props.changeTitle}
+          onChange={changeTitle}
           />
       </div>
       <div>
         <Dropdown
           label={translate (l10n) ("socialstatus")}
           value={PersonalData.A.socialStatus (profile)}
-          onChange={props.changeSocialStatus}
+          onChange={changeSocialStatus}
           options={socialOptions}
           />
       </div>
@@ -265,21 +281,21 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
         <TextField
           label={translate (l10n) ("characteristics")}
           value={PersonalData.A.characteristics (profile)}
-          onChange={props.changeCharacteristics}
+          onChange={changeCharacteristics}
           />
       </div>
       <div>
         <TextField
           label={translate (l10n) ("otherinfo")}
           value={PersonalData.A.otherInfo (profile)}
-          onChange={props.changeOtherInfo}
+          onChange={changeOtherInfo}
           />
       </div>
       <div>
         <TextField
           label={translate (l10n) ("cultureareaknowledge")}
           value={PersonalData.A.cultureAreaKnowledge (profile)}
-          onChange={props.changeCultureAreaKnowledge}
+          onChange={changeCultureAreaKnowledge}
           />
       </div>
     </div>

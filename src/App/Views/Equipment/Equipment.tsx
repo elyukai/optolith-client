@@ -174,7 +174,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
             <TextField
               hint={translate (l10n) ("search")}
               value={templatesFilterText}
-              onChangeString={this.props.setTemplatesFilterText}
+              onChange={this.props.setTemplatesFilterText}
               fullWidth
               />
             <Dropdown
@@ -249,7 +249,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
           <TextField
             hint={translate (l10n) ("search")}
             value={filterText}
-            onChangeString={this.props.setFilterText}
+            onChange={this.props.setFilterText}
             fullWidth
             />
           <SortOptions

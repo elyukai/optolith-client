@@ -169,7 +169,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
             <TextField
               hint={translate (l10n) ("search")}
               value={inactiveFilterText}
-              onChangeString={setInactiveFilterText}
+              onChange={setInactiveFilterText}
               fullWidth
               />
             <SortOptions
@@ -313,7 +313,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
           <TextField
             hint={translate (l10n) ("search")}
             value={filterText}
-            onChangeString={setFilterText}
+            onChange={setFilterText}
             fullWidth
             />
           <SortOptions

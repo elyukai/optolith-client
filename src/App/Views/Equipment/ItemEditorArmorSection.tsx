@@ -56,7 +56,7 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
                 className="pro"
                 label={translate (l10n) ("protection.short")}
                 value={EIA.pro (item)}
-                onChangeString={props.setProtection}
+                onChange={props.setProtection}
                 disabled={locked}
                 valid={IEIVA.pro (inputValidation)}
                 />
@@ -64,7 +64,7 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
                 className="enc"
                 label={translate (l10n) ("encumbrance.short")}
                 value={EIA.enc (item)}
-                onChangeString={props.setEncumbrance}
+                onChange={props.setEncumbrance}
                 disabled={locked}
                 valid={IEIVA.enc (inputValidation)}
                 />
@@ -86,7 +86,7 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
                 className="stabilitymod"
                 label={translate (l10n) ("sturdinessmodifier.short")}
                 value={EIA.stabilityMod (item)}
-                onChangeString={props.setStabilityModifier}
+                onChange={props.setStabilityModifier}
                 disabled={locked}
                 valid={IEIVA.stabilityMod (inputValidation)}
                 />
@@ -112,7 +112,7 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
                 className="mov"
                 label={translate (l10n) ("movementmodifier.short")}
                 value={EIA.movMod (item)}
-                onChangeString={props.setMovementModifier}
+                onChange={props.setMovementModifier}
                 disabled={locked}
                 valid={IEIVA.mov (inputValidation)}
                 />
@@ -120,7 +120,7 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
                 className="ini"
                 label={translate (l10n) ("initiativemodifier.short")}
                 value={EIA.iniMod (item)}
-                onChangeString={props.setInitiativeModifier}
+                onChange={props.setInitiativeModifier}
                 disabled={locked}
                 valid={IEIVA.ini (inputValidation)}
                 />

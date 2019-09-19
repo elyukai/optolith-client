@@ -9,7 +9,7 @@ import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableAc
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { EntryRating, InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
+import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
@@ -78,8 +78,6 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
     currentSlideinId: Nothing,
   }
 
-  filter = (event: InputTextEvent) => this.props.setFilterText (event.target.value)
-  filterSlidein = (event: InputTextEvent) => this.props.setInactiveFilterText (event.target.value)
   showAddSlidein = () => this.setState ({ showAddSlidein: true })
 
   hideAddSlidein = () => {
@@ -105,6 +103,8 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
       switchRatingVisibility,
       filterText,
       inactiveFilterText,
+      setFilterText,
+      setInactiveFilterText,
     } = this.props
 
     return (
@@ -114,7 +114,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
             <TextField
               hint={translate (l10n) ("search")}
               value={inactiveFilterText}
-              onChange={this.filterSlidein}
+              onChange={setInactiveFilterText}
               fullWidth
               />
             <Checkbox
@@ -166,7 +166,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
           <TextField
             hint={translate (l10n) ("search")}
             value={filterText}
-            onChange={this.filter}
+            onChange={setFilterText}
             fullWidth
             />
           <Checkbox

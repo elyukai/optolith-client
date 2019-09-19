@@ -366,7 +366,7 @@ export const getIdSpecificAffectedAndDispatchProps =
               Just (
                 <TextField
                   value={minput_text}
-                  onChangeString={inputHandlers.handleInput}
+                  onChange={inputHandlers.handleInput}
                   disabled={!is_text_input_required}
                   />
               ),
@@ -797,7 +797,7 @@ export const getInactiveActivatableControlElements =
                       <TextField
                         hint={input}
                         value={minput_text}
-                        onChangeString={inputHandlers.handleInput}
+                        onChange={inputHandlers.handleInput}
                         />
                     )
                   )
@@ -810,7 +810,7 @@ export const getInactiveActivatableControlElements =
                   <TextField
                     hint={fromMaybe ("") (minput_desc)}
                     value={minput_text}
-                    onChangeString={inputHandlers.handleInput}
+                    onChange={inputHandlers.handleInput}
                     disabled={isNothing (minput_desc)}
                     />
                 )),

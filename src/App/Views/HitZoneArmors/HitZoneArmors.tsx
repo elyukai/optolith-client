@@ -96,7 +96,7 @@ export function HitZoneArmors (props: HitZoneArmorsProps) {
         <TextField
           hint={translate (l10n) ("search")}
           value={filterText}
-          onChangeString={props.setFilterText}
+          onChange={props.setFilterText}
           fullWidth
           />
         <BorderButton

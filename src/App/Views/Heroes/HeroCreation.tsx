@@ -124,7 +124,7 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
         <TextField
           hint={translate (l10n) ("nameofhero")}
           value={this.state.name}
-          onChangeString={this.changeName}
+          onChange={this.changeName}
           fullWidth
           autoFocus
           />

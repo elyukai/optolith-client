@@ -20,8 +20,7 @@ export interface TextFieldProps {
   hint?: Maybe<string> | string
   label?: Maybe<string> | string
   multiLine?: boolean
-  onChange? (event: InputTextEvent): void
-  onChangeString? (updatedText: string): void
+  onChange (newText: string): void
   onKeyDown? (event: InputKeyEvent): void
   type?: string
   value?: string | number | Maybe<string | number>
@@ -29,20 +28,8 @@ export interface TextFieldProps {
 }
 
 export const TextField: React.FC<TextFieldProps> = props => {
-  const inputRef = React.useRef<HTMLInputElement | null> (null)
-
-  React.useEffect (
-    () => {
-      const { autoFocus } = props
-
-      if (Maybe.elem (true) (Maybe.normalize (autoFocus)) && inputRef.current !== null) {
-        inputRef.current.focus ()
-      }
-    },
-    []
-  )
-
   const {
+    autoFocus,
     className,
     countCurrent,
     countMax,
@@ -50,7 +37,6 @@ export const TextField: React.FC<TextFieldProps> = props => {
     fullWidth,
     label,
     onChange,
-    onChangeString,
     onKeyDown,
     type = "text",
     valid,
@@ -58,8 +44,29 @@ export const TextField: React.FC<TextFieldProps> = props => {
     hint: mhint,
   } = props
 
-  const value = renderMaybe (normalize (mvalue))
+  const saved_value = renderMaybe (normalize (mvalue))
   const mlabel = normalize (label)
+
+  const inputRef = React.useRef<HTMLInputElement | null> (null)
+
+  const defaultValue = typeof saved_value === "number" ? saved_value .toString () : saved_value
+
+  const [value, setValue] = React.useState (defaultValue)
+  const [prevValue, setPrevValue] = React.useState (defaultValue)
+
+  if (prevValue !== defaultValue) {
+    setValue (defaultValue)
+    setPrevValue (defaultValue)
+  }
+
+  React.useEffect (
+    () => {
+      if (Maybe.elem (true) (Maybe.normalize (autoFocus)) && inputRef.current !== null) {
+        inputRef.current.focus ()
+      }
+    },
+    [autoFocus]
+  )
 
   const hintElement =
     fmapF (normalize (mhint))
@@ -80,17 +87,16 @@ export const TextField: React.FC<TextFieldProps> = props => {
     React.useCallback (
       orN (disabled)
         ? () => undefined
-        : (typeof onChange === "function" && typeof onChangeString === "function")
-        ? (event: InputTextEvent) => {
-          onChange (event)
-          onChangeString (event.target.value)
-        }
-        : typeof onChangeString === "function"
-        ? (event: InputTextEvent) => onChangeString (event.target.value)
-        : typeof onChange === "function"
-        ? onChange
-        : () => undefined,
-      [disabled, onChange, onChangeString]
+        : (event: InputTextEvent) => setValue (event.target.value),
+      [disabled, onChange, onChange]
+    )
+
+  const handleBlur =
+    React.useCallback (
+      orN (disabled)
+        ? () => undefined
+        : () => defaultValue === value ? undefined : onChange (value),
+      [disabled, onChange, value]
     )
 
   // const inputElement = multiLine ? (
@@ -108,8 +114,10 @@ export const TextField: React.FC<TextFieldProps> = props => {
       onKeyPress={orN (disabled) ? undefined : onKeyDown}
       readOnly={disabled}
       ref={inputRef}
+      onBlur={handleBlur}
       />
   )
+
   const counterTextElement =
     isNumber (countMax)
     ? (

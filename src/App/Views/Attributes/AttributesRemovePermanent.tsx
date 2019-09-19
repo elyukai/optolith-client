@@ -1,6 +1,5 @@
 import * as React from "react";
 import { fromJust, isJust } from "../../../Data/Maybe";
-import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { toInt } from "../../Utilities/NumberUtils";
@@ -23,7 +22,8 @@ export class AttributesRemovePermanent
     value: "",
   }
 
-  onChange = (event: InputTextEvent) => this.setState ({ value: event.target.value })
+  handleChange = (value: string) => this.setState ({ value })
+
   remove = () => {
     const mvalue = toInt (this.state.value)
 
@@ -54,7 +54,7 @@ export class AttributesRemovePermanent
         <TextField
           hint={translate (l10n) ("removeenergypointslostpermanentlyinputhint")}
           value={value}
-          onChange={this.onChange}
+          onChange={this.handleChange}
           fullWidth
           autoFocus
           />

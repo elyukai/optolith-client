@@ -5,7 +5,6 @@ import { ReduxDispatch } from "../Actions/Actions";
 import * as ProfileActions from "../Actions/ProfileActions";
 import * as SubwindowsActions from "../Actions/SubwindowsActions";
 import { HeroModel } from "../Models/Hero/HeroModel";
-import { InputTextEvent } from "../Models/Hero/heroTypeHelpers";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from "../Selectors/activatableSelectors";
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
@@ -72,17 +71,17 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): PersonalDataDispatchProps 
   closeEditCharacterAvatar () {
     dispatch (SubwindowsActions.closeEditCharacterAvatar ())
   },
-  changeFamily (e: InputTextEvent) {
-    dispatch (ProfileActions.setFamily (e.target.value))
+  changeFamily (newText: string) {
+    dispatch (ProfileActions.setFamily (newText))
   },
-  changePlaceOfBirth (e: InputTextEvent) {
-    dispatch (ProfileActions.setPlaceOfBirth (e.target.value))
+  changePlaceOfBirth (newText: string) {
+    dispatch (ProfileActions.setPlaceOfBirth (newText))
   },
-  changeDateOfBirth (e: InputTextEvent) {
-    dispatch (ProfileActions.setDateOfBirth (e.target.value))
+  changeDateOfBirth (newText: string) {
+    dispatch (ProfileActions.setDateOfBirth (newText))
   },
-  changeAge (e: InputTextEvent) {
-    dispatch (ProfileActions.setAge (e.target.value))
+  changeAge (newText: string) {
+    dispatch (ProfileActions.setAge (newText))
   },
   changeHaircolor (mresult: Maybe<number>) {
     fmapF (mresult) (res => dispatch (ProfileActions.setHairColor (res)))
@@ -90,26 +89,26 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): PersonalDataDispatchProps 
   changeEyecolor (mresult: Maybe<number>) {
     fmapF (mresult) (res => dispatch (ProfileActions.setEyeColor (res)))
   },
-  changeSize (e: InputTextEvent) {
-    dispatch (ProfileActions.setSize (e.target.value) (Nothing))
+  changeSize (newText: string) {
+    dispatch (ProfileActions.setSize (newText) (Nothing))
   },
-  changeWeight (e: InputTextEvent) {
-    dispatch (ProfileActions.setWeight (e.target.value) (Nothing))
+  changeWeight (newText: string) {
+    dispatch (ProfileActions.setWeight (newText) (Nothing))
   },
-  changeTitle (e: InputTextEvent) {
-    dispatch (ProfileActions.setTitle (e.target.value))
+  changeTitle (newText: string) {
+    dispatch (ProfileActions.setTitle (newText))
   },
   changeSocialStatus (mresult: Maybe<number>) {
     fmapF (mresult) (res => dispatch (ProfileActions.setSocialStatus (res)))
   },
-  changeCharacteristics (e: InputTextEvent) {
-    dispatch (ProfileActions.setCharacteristics (e.target.value))
+  changeCharacteristics (newText: string) {
+    dispatch (ProfileActions.setCharacteristics (newText))
   },
-  changeOtherInfo (e: InputTextEvent) {
-    dispatch (ProfileActions.setOtherInfo (e.target.value))
+  changeOtherInfo (newText: string) {
+    dispatch (ProfileActions.setOtherInfo (newText))
   },
-  changeCultureAreaKnowledge (e: InputTextEvent) {
-    dispatch (ProfileActions.setCultureAreaKnowledge (e.target.value))
+  changeCultureAreaKnowledge (newText: string) {
+    dispatch (ProfileActions.setCultureAreaKnowledge (newText))
   },
   rerollHair () {
     dispatch (ProfileActions.rerollHairColor)

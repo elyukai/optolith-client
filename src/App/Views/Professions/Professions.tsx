@@ -93,7 +93,7 @@ export const Professions: React.FC<ProfessionsProps> = props => {
         <TextField
           hint={translate (l10n) ("search")}
           value={filterText}
-          onChangeString={setFilterText}
+          onChange={setFilterText}
           fullWidth
           />
         <Dropdown
