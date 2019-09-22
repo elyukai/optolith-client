@@ -129,18 +129,19 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
                                 isBlessedOne={isBlessedOne}
                                 />
                             }
-                            >
-                            <Text className="collected-ap">
-                              {maybe<string | number > ("")
-                                                       (pipe (
-                                                         AdventurePointsCategories.A.available,
-                                                         signNeg
-                                                       ))
-                                                       (m_ap)}
-                              {" "}
-                              {translate (l10n) ("adventurepoints.short")}
-                            </Text>
-                          </TooltipToggle>
+                            target={
+                              <Text className="collected-ap">
+                                {maybe<string | number > ("")
+                                                         (pipe (
+                                                           AdventurePointsCategories.A.available,
+                                                           signNeg
+                                                         ))
+                                                         (m_ap)}
+                                {" "}
+                                {translate (l10n) ("adventurepoints.short")}
+                              </Text>
+                            }
+                            />
                         ))
                         (m_ap)}
                 <IconButton

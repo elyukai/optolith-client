@@ -100,6 +100,7 @@ export class Overlay extends React.Component<OverlayProps, OverlayState> {
             finalPosition = "bottom"
           }
           break
+
         case "bottom":
           setForBottom ()
 
@@ -108,6 +109,7 @@ export class Overlay extends React.Component<OverlayProps, OverlayState> {
             finalPosition = "top"
           }
           break
+
         case "left":
           setForLeft ()
 
@@ -116,6 +118,7 @@ export class Overlay extends React.Component<OverlayProps, OverlayState> {
             finalPosition = "right"
           }
           break
+
         case "right":
           setForRight ()
 
@@ -123,6 +126,9 @@ export class Overlay extends React.Component<OverlayProps, OverlayState> {
             setForLeft ()
             finalPosition = "left"
           }
+          break
+
+        default:
           break
       }
 
@@ -141,10 +147,6 @@ export class Overlay extends React.Component<OverlayProps, OverlayState> {
     const {
       children,
       className,
-      node: _node,
-      margin: _margin,
-      position: _position,
-      trigger: _trigger,
       ...other
     } = this.props
 
