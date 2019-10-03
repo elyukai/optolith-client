@@ -27,7 +27,13 @@ export function Markdown (props: MarkdownProps) {
   const root: string | Renderer<{ children?: React.ReactNode }> =
     noWrapper === true ? p => <>{p.children}</> : orN (isListElement) ? "ul" : "div"
 
-  const link = (p: { children?: React.ReactNode}) => (<>[{p.children}]</>)
+  const link = (p: { children?: React.ReactNode}) => (
+                 <>
+                   {"["}
+                   {p.children}
+                   {"]"}
+                 </>
+               )
 
   return (
     <ReactMarkdown

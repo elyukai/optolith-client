@@ -8,10 +8,11 @@ export interface TextProps extends ChildrenProps {
   className?: string
   onMouseOut?: () => void
   onMouseOver?: () => void
+  onMouseDown?: () => void
 }
 
 const TextBase: React.RefForwardingComponent<HTMLDivElement, TextProps> = (props, ref) => {
-  const { children, className, onMouseOut, onMouseOver } = props
+  const { children, className, onMouseOut, onMouseOver, onMouseDown } = props
 
   return (
     <div
@@ -19,6 +20,7 @@ const TextBase: React.RefForwardingComponent<HTMLDivElement, TextProps> = (props
       className={classListMaybe (List (Just ("text"), Maybe (className)))}
       onMouseOut={onMouseOut}
       onMouseOver={onMouseOver}
+      onMouseDown={onMouseDown}
       >
       {children}
     </div>

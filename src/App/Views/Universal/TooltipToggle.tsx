@@ -51,6 +51,7 @@ export const TooltipToggle: React.FC<TooltipToggleProps> = props => {
             position={position}
             trigger={targetRef .current}
             margin={margin}
+            small={small}
             >
             {content}
           </Overlay>

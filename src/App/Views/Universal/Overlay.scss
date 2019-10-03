@@ -33,22 +33,12 @@
 		}
 	}
 
-	&.overlay-top::after, &.overlay-bottom::before {
-		content: "";
+	> .arrow {
 		position: absolute;
-		@include size(12px);
 		border: 1px solid var(--accent-color);
 		background: var(--background-color);
 		transform: rotate(45deg);
-		@include calc(left, "50% - 8px");
 		pointer-events: none;
-	}
-
-	&.overlay-top::after {
-		bottom: -7.5px;
-	}
-
-	&.overlay-bottom::before {
-		top: -7.5px;
+		padding: 0;
 	}
 }

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Markdown } from "./Markdown";
 import { TooltipToggle } from "./TooltipToggle";
 
 export interface TooltipHintProps {
@@ -11,7 +12,7 @@ export const TooltipHint: React.FC<TooltipHintProps> = props => {
 
   return (
     <TooltipToggle
-      content={hint}
+      content={<Markdown source={hint} />}
       small
       target={target}
       />
