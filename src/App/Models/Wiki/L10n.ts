@@ -642,6 +642,10 @@ export interface L10n {
   "youcannotuseamodificationonthischantscost": string
   "youcannotuseamodificationonthischantsrange": string
   "youcannotuseamodificationonthischantsduration": string
+  "duplicatehero": string
+  "deletehero.novar": string
+  "openhero": string
+  "socialstatusxorhigher": string
 }
 
 export type L10nKey = keyof OmitName<L10n>
@@ -1290,4 +1294,8 @@ export const L10n =
                 "youcannotuseamodificationonthischantscost": "",
                 "youcannotuseamodificationonthischantsrange": "",
                 "youcannotuseamodificationonthischantsduration": "",
+                "duplicatehero": "",
+                "deletehero.novar": "",
+                "openhero": "",
+                "socialstatusxorhigher": "",
               })

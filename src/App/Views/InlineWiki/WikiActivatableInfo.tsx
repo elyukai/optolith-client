@@ -47,6 +47,7 @@ import { WikiCombatTechniques } from "./Elements/WikiCombatTechniques";
 import { WikiSource } from "./Elements/WikiSource";
 import { WikiBoxTemplate } from "./WikiBoxTemplate";
 import { WikiProperty } from "./WikiProperty";
+import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite";
 
 export interface WikiActivatableInfoProps {
   attributes: OrderedMap<string, Record<Attribute>>
@@ -65,6 +66,7 @@ const RIA = RequireIncreasable.A
 const RPAA = RequirePrimaryAttribute.A
 const AAL = Advantage.AL
 const WA = WikiModel.A
+const SPA = SocialPrerequisite.A
 
 export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => {
   const { x, l10n, specialAbilities, wiki, books } = props
@@ -337,6 +339,10 @@ export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => 
                                    pipe (
                                      SelectOption.A.prerequisites,
                                      bindF (ensure (any (e => {
+                                                     if (!RequireActivatable.is (e)) {
+                                                       return false
+                                                     }
+
                                                      const req_ids = RAAL.id (e)
 
                                                      return isString (req_ids)
@@ -848,6 +854,7 @@ const getPrerequisites =
     const activeDisadvantages = CIA.activeDisadvantages (items)
     const inactiveDisadvantages = CIA.inactiveDisadvantages (items)
     const race = CIA.race (items)
+    const social = CIA.social (items)
 
     const category = AAL.category (x)
     const gr = AAL.gr (x)
@@ -869,6 +876,7 @@ const getPrerequisites =
       ...getPrerequisitesActivatablesText (l10n) (wiki) (activeDisadvantages),
       ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveDisadvantages),
       fmap (getPrerequisitesRaceText (l10n) (WikiModel.A.races (wiki))) (race),
+      fmap (getSocialPrerequisiteText (l10n)) (social),
       category === Categories.SPECIAL_ABILITIES
         ? (gr === 11
           ? Just (translate (l10n) ("appropriatecombatstylespecialability"))
@@ -892,6 +900,7 @@ type ActivatablePrerequisiteObjects = Record<RequireActivatable> | ActivatableSt
 type PrimaryAttributePrerequisiteObjects = Record<RequirePrimaryAttribute> | string
 type IncreasablePrerequisiteObjects = Record<RequireIncreasable> | string
 type RacePrerequisiteObjects = Record<RaceRequirement> | string
+type SocialPrerequisiteObjects = Record<SocialPrerequisite> | string
 type RCPPrerequisiteObjects = boolean | string
 
 const getPrerequisitesRCPText =
@@ -1212,6 +1221,18 @@ const getPrerequisitesRaceText =
     }
   }
 
+const getSocialPrerequisiteText: (l10n: L10nRecord) =>
+                                 (x: SocialPrerequisiteObjects) => string =
+  l10n => x => isString (x)
+               ? x
+               : translateP (l10n)
+                            ("socialstatusxorhigher")
+                            (List (
+                              fromMaybe<string | number> (SPA.value (x))
+                                                         (subscript (L10n.A.socialstatuses (l10n))
+                                                                    (SPA.value (x) - 1))
+                            ))
+
 interface CategorizedItems {
   "@@name": "CategorizedItems"
   rcp: RCPPrerequisiteObjects
@@ -1228,6 +1249,7 @@ interface CategorizedItems {
   activeDisadvantages: List<ActivatablePrerequisiteObjects>
   inactiveDisadvantages: List<ActivatablePrerequisiteObjects>
   race: Maybe<RacePrerequisiteObjects>
+  social: Maybe<SocialPrerequisiteObjects>
 }
 
 const CategorizedItems =
@@ -1246,6 +1268,7 @@ const CategorizedItems =
                 activeDisadvantages: List (),
                 inactiveDisadvantages: List (),
                 race: Nothing,
+                social: Nothing,
               })
 
 const CIA = CategorizedItems.A
@@ -1287,6 +1310,12 @@ export const getCategorizedItems =
            if (RaceRequirement.is (e)) {
              return set (CIL.race)
                         (Just (fromMaybe<RacePrerequisiteObjects> (e) (misStringM (index_special))))
+           }
+
+           if (SocialPrerequisite.is (e)) {
+             return set (CIL.social)
+                        (Just (fromMaybe<SocialPrerequisiteObjects> (e)
+                                                                    (misStringM (index_special))))
            }
 
            if (RequirePrimaryAttribute.is (e)) {

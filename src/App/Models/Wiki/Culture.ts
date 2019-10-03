@@ -2,6 +2,7 @@ import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
+import { SocialStatusId } from "../../Constants/Ids";
 import { CommonProfession } from "./sub/CommonProfession";
 import { IncreaseSkill } from "./sub/IncreaseSkill";
 import { SourceLink } from "./sub/SourceLink";
@@ -14,7 +15,7 @@ export interface Culture {
   culturalPackageAdventurePoints: number
   languages: List<number>
   scripts: List<number>
-  socialStatus: List<number>
+  socialStatus: List<SocialStatusId>
   areaKnowledge: string
   areaKnowledgeShort: string
   commonProfessions: List<boolean | Record<CommonProfession>>

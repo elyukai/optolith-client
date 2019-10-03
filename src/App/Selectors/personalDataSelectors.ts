@@ -1,15 +1,19 @@
 import { ident } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
-import { filter, imap, List, minimumBy, notNull } from "../../Data/List";
-import { ensure, maybe } from "../../Data/Maybe";
-import { Compare, EQ, GT, LT } from "../../Data/Ord";
-import { fst, Pair } from "../../Data/Tuple";
-import { uncurryN } from "../../Data/Tuple/Curry";
+import { elem, filter, imap, List, map, minimum, notNull } from "../../Data/List";
+import { ensure, Just, liftM2, maybe } from "../../Data/Maybe";
+import { fst, Pair, snd } from "../../Data/Tuple";
+import { curryN, uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
 import { SocialStatusId } from "../Constants/Ids";
+import { Culture } from "../Models/Wiki/Culture";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { translate } from "../Utilities/I18n";
 import { pipe } from "../Utilities/pipe";
+import { DropdownOption } from "../Views/Universal/Dropdown";
+import { getCulture } from "./rcpSelectors";
 import { getLocaleAsProp, getSocialDependencies } from "./stateSelectors";
+
+const CA = Culture.A
 
 const getSocialStatusAssocs = createMaybeSelector (
   getLocaleAsProp,
@@ -18,33 +22,46 @@ const getSocialStatusAssocs = createMaybeSelector (
          (translate (l10n) ("socialstatuses"))
 )
 
-const compareSocialStatusId: Compare<SocialStatusId> =
-  x => y => x > y ? GT : x < y ? LT : EQ
-
-const gteSocialStatusId: (y: SocialStatusId) => (x: SocialStatusId) => boolean =
-  y => x => x >= y
-
 const getMinimumSocialStatus = createMaybeSelector (
   getSocialDependencies,
   pipe (
     ensure (notNull),
-    fmap (minimumBy (compareSocialStatusId))
+    fmap (minimum)
   )
 )
 
-const indexToSocialStatusId = (index: number) => index === 0
-                                                 ? SocialStatusId.NotFree
-                                                 : index === 1
-                                                 ? SocialStatusId.Free
-                                                 : index === 2
-                                                 ? SocialStatusId.LesserNoble
-                                                 : index === 3
-                                                 ? SocialStatusId.Noble
-                                                 : SocialStatusId.Aristocracy
+const indexToSocialStatusId: (index: number) => SocialStatusId =
+  i => {
+    switch (i) {
+      case 0: return SocialStatusId.NotFree
+      case 2: return SocialStatusId.LesserNoble
+      case 3: return SocialStatusId.Noble
+      case 4: return SocialStatusId.Aristocracy
+      default: return SocialStatusId.Free
+    }
+  }
 
-export const getAvailableSocialStatuses = createMaybeSelector (
+const getAvailableSocialStatusesTuples = createMaybeSelector (
+  getCulture,
   getMinimumSocialStatus,
   getSocialStatusAssocs,
-  uncurryN (maybe (ident as ident<List<Pair<SocialStatusId, string>>>)
-                            ((min: SocialStatusId) => filter (pipe (fst, gteSocialStatusId (min)))))
+  uncurryN3 (curryN (pipe (
+    uncurryN (liftM2 (culture => min => filter <Pair<SocialStatusId, string>>
+                                               (pipe (
+                                                 fst,
+                                                 id => id >= min
+                                                       && elem (id) (CA.socialStatus (culture))
+                                               )))),
+    maybe (ident as ident<List<Pair<SocialStatusId, string>>>)
+          <ident<List<Pair<SocialStatusId, string>>>>
+          (ident)
+  )))
+)
+
+export const getAvailableSocialStatuses = createMaybeSelector (
+  getAvailableSocialStatusesTuples,
+  map ((t: Pair<SocialStatusId, string>) => DropdownOption ({
+    id: Just (fst (t)),
+    name: snd (t),
+  }))
 )

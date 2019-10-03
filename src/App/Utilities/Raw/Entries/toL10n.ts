@@ -730,6 +730,10 @@ export const toL10n =
           checkL10nNonEmptyString ("youcannotuseamodificationonthischantsrange"),
         "youcannotuseamodificationonthischantsduration":
           checkL10nNonEmptyString ("youcannotuseamodificationonthischantsduration"),
+        "duplicatehero": checkL10nNonEmptyString ("duplicatehero"),
+        "deletehero.novar": checkL10nNonEmptyString ("deletehero.novar"),
+        "openhero": checkL10nNonEmptyString ("openhero"),
+        "socialstatusxorhigher": checkL10nNonEmptyString ("socialstatusxorhigher"),
       }
 
       return mapMNamed
@@ -1390,6 +1394,10 @@ export const toL10n =
             res ["youcannotuseamodificationonthischantsrange"],
           "youcannotuseamodificationonthischantsduration":
             res ["youcannotuseamodificationonthischantsduration"],
+          "duplicatehero": res ["duplicatehero"],
+          "deletehero.novar": res ["deletehero.novar"],
+          "openhero": res ["openhero"],
+          "socialstatusxorhigher": res ["socialstatusxorhigher"],
           // tslint:enable: no-string-literal
         }))
     }

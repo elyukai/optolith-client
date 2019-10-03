@@ -4,11 +4,13 @@ import { join, Maybe, Nothing } from "../../Data/Maybe";
 import { ReduxDispatch } from "../Actions/Actions";
 import * as ProfileActions from "../Actions/ProfileActions";
 import * as SubwindowsActions from "../Actions/SubwindowsActions";
+import { SocialStatusId } from "../Constants/Ids";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from "../Selectors/activatableSelectors";
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { getStartEl } from "../Selectors/elSelectors";
+import { getAvailableSocialStatuses } from "../Selectors/personalDataSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
 import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentRaceVariant, getRace, getRandomSizeCalcStr, getRandomWeightCalcStr } from "../Selectors/rcpSelectors";
 import { getAvatar, getCurrentHeroName, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getPhase, getProfile, getSex, getTotalAdventurePoints } from "../Selectors/stateSelectors";
@@ -33,6 +35,7 @@ const mapStateToProps =
     race: getRace (state, ownProps),
     raceVariant: getCurrentRaceVariant (state),
     sex: getSex (state),
+    socialStatuses: getAvailableSocialStatuses (state, ownProps),
     isAddAdventurePointsOpen: getIsAddAdventurePointsOpen (state),
     isEditCharacterAvatarOpen: getIsEditCharacterAvatarOpen (state),
     isAlbino: isAlbino (state),
@@ -98,7 +101,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): PersonalDataDispatchProps 
   changeTitle (newText: string) {
     dispatch (ProfileActions.setTitle (newText))
   },
-  changeSocialStatus (mresult: Maybe<number>) {
+  changeSocialStatus (mresult: Maybe<SocialStatusId>) {
     fmapF (mresult) (res => dispatch (ProfileActions.setSocialStatus (res)))
   },
   changeCharacteristics (newText: string) {

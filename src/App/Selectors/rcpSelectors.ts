@@ -9,7 +9,7 @@ import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Tuple/Curry";
 import { Categories } from "../Constants/Categories";
-import { RaceId, ProfessionId } from "../Constants/Ids";
+import { ProfessionId, RaceId } from "../Constants/Ids";
 import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
 import { ActivatableNameCostIsActive } from "../Models/View/ActivatableNameCostIsActive";
@@ -56,7 +56,7 @@ import { filterByAvailability, filterByAvailabilityAndPred, isEntryFromCoreBook 
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCulturesCombinedSortOptions, getProfessionsCombinedSortOptions, getRacesCombinedSortOptions } from "./sortOptionsSelectors";
-import { getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getProfessionsFilterText, getRaceId, getRacesFilterText, getSex, getWiki, getWikiBooks, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors";
+import { getCultureId, getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getProfessionsFilterText, getRaceId, getRacesFilterText, getSex, getWiki, getWikiBooks, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors";
 import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from "./uisettingsSelectors";
 
 const WA = WikiModel.A
@@ -102,6 +102,13 @@ export const getCurrentRaceVariant = createMaybeSelector (
   getCurrentRaceVariantId,
   (raceVariants, raceVariantId) => bind (raceVariantId)
                                         (lookupF (raceVariants))
+)
+
+export const getCulture = createMaybeSelector (
+  getWikiCultures,
+  getCultureId,
+  (cultures, cultureId) => bind (cultureId)
+                                (lookupF (cultures))
 )
 
 export const getCurrentCulture = createMaybeSelector (

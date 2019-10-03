@@ -1,5 +1,6 @@
 import { fromJust, fromMaybe, isJust, Just, Maybe, Nothing } from "../../Data/Maybe";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { SocialStatusId } from "../Constants/Ids";
 import { isAlbino } from "../Selectors/activatableSelectors";
 import { getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
 import { getSize, getWeight } from "../Selectors/stateSelectors";
@@ -252,11 +253,11 @@ export const setTitle = (title: string): SetTitleAction => ({
 export interface SetSocialStatusAction {
   type: ActionTypes.SET_SOCIALSTATUS
   payload: {
-    socialstatus: number;
+    socialstatus: SocialStatusId;
   }
 }
 
-export const setSocialStatus = (socialstatus: number): SetSocialStatusAction => ({
+export const setSocialStatus = (socialstatus: SocialStatusId): SetSocialStatusAction => ({
   type: ActionTypes.SET_SOCIALSTATUS,
   payload: {
     socialstatus,

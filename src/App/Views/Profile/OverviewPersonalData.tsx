@@ -1,10 +1,10 @@
 import * as React from "react";
 import { fmap } from "../../../Data/Functor";
-import { elem, elemF, List, subscriptF } from "../../../Data/List";
-import { all, alt, bind, catMaybes, ensure, fromJust, imapMaybe, isJust, Just, liftM2, Maybe, maybe, or } from "../../../Data/Maybe";
+import { elem, List, subscriptF } from "../../../Data/List";
+import { all, alt, bind, catMaybes, ensure, fromJust, imapMaybe, isJust, Just, liftM2, Maybe, or } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
+import { SocialStatusId } from "../../Constants/Ids";
 import { PersonalData } from "../../Models/Hero/PersonalData";
-import { Culture } from "../../Models/Wiki/Culture";
 import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
 import { Race } from "../../Models/Wiki/Race";
 import { RaceVariant } from "../../Models/Wiki/RaceVariant";
@@ -19,14 +19,13 @@ import { InputButtonGroup } from "../Universal/InputButtonGroup";
 import { TextField } from "../Universal/TextField";
 
 export interface OverviewPersonalDataOwnProps {
-  culture: Maybe<Record<Culture>>
   eyecolorTags: List<string>
   haircolorTags: List<string>
   l10n: L10nRecord
   profile: Record<PersonalData>
   race: Maybe<Record<Race>>
   raceVariant: Maybe<Record<RaceVariant>>
-  socialstatusTags: List<string>
+  socialStatuses: List<Record<DropdownOption<SocialStatusId>>>
   isAlbino: Maybe<boolean>
   sizeCalcStr: Maybe<string>
   weightCalcStr: Maybe<string>
@@ -42,7 +41,7 @@ export interface OverviewPersonalDataDispatchProps {
   changeSize (newText: string): void
   changeWeight (newText: string): void
   changeTitle (newText: string): void
-  changeSocialStatus (result: Maybe<number>): void
+  changeSocialStatus (result: Maybe<SocialStatusId>): void
   changeCharacteristics (newText: string): void
   changeOtherInfo (newText: string): void
   changeCultureAreaKnowledge (newText: string): void
@@ -139,14 +138,13 @@ const getHairColorAndEyeColorOptions =
 
 export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props => {
   const {
-    culture: mculture,
     eyecolorTags,
     haircolorTags,
     l10n,
     profile,
     race,
     raceVariant,
-    socialstatusTags,
+    socialStatuses,
     isAlbino,
     sizeCalcStr,
     weightCalcStr,
@@ -175,20 +173,6 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
                                                                 (haircolorTags)
                                                                 (eyecolorTags)
                                                                 (isAlbino)
-
-  const socialOptions =
-    maybe (List<Record<DropdownOption<number>>> ())
-          ((culture: Record<Culture>) =>
-            imapMaybe (index => (name: string) =>
-                        ensure<Record<DropdownOption<number>>>
-                          (pipe (
-                            DropdownOption.A.id,
-                            fmap (elemF (Culture.A.socialStatus (culture))),
-                            or
-                          ))
-                          (DropdownOption ({ id: Just (index + 1), name })))
-                      (socialstatusTags))
-          (mculture)
 
   const age = PersonalData.A.age (profile)
   const size = PersonalData.A.size (profile)
@@ -274,7 +258,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
           label={translate (l10n) ("socialstatus")}
           value={PersonalData.A.socialStatus (profile)}
           onChange={changeSocialStatus}
-          options={socialOptions}
+          options={socialStatuses}
           />
       </div>
       <div>

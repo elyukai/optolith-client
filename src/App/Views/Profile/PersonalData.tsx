@@ -4,6 +4,7 @@ import { List } from "../../../Data/List";
 import { any, isNothing, Maybe, maybe, maybeRNull } from "../../../Data/Maybe";
 import { gt, lt } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
+import { ProfessionId, SocialStatusId } from "../../Constants/Ids";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { PersonalData } from "../../Models/Hero/PersonalData";
@@ -23,6 +24,7 @@ import { ActivatableTextList } from "../Activatable/ActivatableTextList";
 import { AvatarChange } from "../Universal/AvatarChange";
 import { AvatarWrapper } from "../Universal/AvatarWrapper";
 import { BorderButton } from "../Universal/BorderButton";
+import { DropdownOption } from "../Universal/Dropdown";
 import { EditText } from "../Universal/EditText";
 import { IconButton } from "../Universal/IconButton";
 import { Page } from "../Universal/Page";
@@ -30,7 +32,6 @@ import { Scroll } from "../Universal/Scroll";
 import { VerticalList } from "../Universal/VerticalList";
 import { OverviewAddAP } from "./OverviewAddAP";
 import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from "./OverviewPersonalData";
-import { ProfessionId } from "../../Constants/Ids";
 
 export interface PersonalDataOwnProps {
   l10n: L10nRecord
@@ -54,6 +55,7 @@ export interface PersonalDataStateProps {
   race: Maybe<Record<Race>>
   raceVariant: Maybe<Record<RaceVariant>>
   sex: Maybe<Sex>
+  socialStatuses: List<Record<DropdownOption<SocialStatusId>>>
   isRemovingEnabled: boolean
   isAddAdventurePointsOpen: boolean
   isEditCharacterAvatarOpen: boolean
@@ -131,6 +133,7 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
       race,
       raceVariant,
       sex: maybeSex,
+      socialStatuses,
       isAddAdventurePointsOpen,
       isEditCharacterAvatarOpen,
       openAddAdventurePoints,
@@ -291,12 +294,11 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
                              <h3>{translate (l10n) ("personaldata")}</h3>
                              <OverviewPersonalData
                                profile={profile}
-                               culture={culture}
                                eyecolorTags={translate (l10n) ("eyecolors")}
                                haircolorTags={translate (l10n) ("haircolors")}
                                race={race}
                                raceVariant={raceVariant}
-                               socialstatusTags={translate (l10n) ("socialstatuses")}
+                               socialStatuses={socialStatuses}
                                isAlbino={isAlbino}
                                sizeCalcStr={sizeCalcStr}
                                weightCalcStr={weightCalcStr}
