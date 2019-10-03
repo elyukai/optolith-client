@@ -10,6 +10,16 @@
 		padding: 20px;
 	}
 
+	> div.markdown {
+		p {
+			margin: 8px 0 0;
+
+			&:first-child {
+				margin-top: 0;
+			}
+		}
+	}
+
 	h4 {
 		font: bold 14px/18px Alegreya SC;
 		text-transform: uppercase;

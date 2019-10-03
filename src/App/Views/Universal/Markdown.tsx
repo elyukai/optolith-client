@@ -1,5 +1,7 @@
 import * as React from "react";
-import { orN } from "../../../Data/Maybe";
+import { List } from "../../../Data/List";
+import { Just, Maybe, orN } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 import Ph = require ("remark-breaks");
 import ReactMarkdown = require ("react-markdown");
 import HTMLParser = require ("react-markdown/plugins/html-parser")
@@ -37,7 +39,10 @@ export function Markdown (props: MarkdownProps) {
 
   return (
     <ReactMarkdown
-      className={className}
+      className={classListMaybe (List (
+        Just (`markdown`),
+        Maybe (className)
+      ))}
       source={source}
       unwrapDisallowed={noWrapper === true}
       renderers={{

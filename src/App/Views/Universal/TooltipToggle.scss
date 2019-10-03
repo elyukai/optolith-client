@@ -12,4 +12,8 @@
 	letter-spacing: 0.04em;
 	text-transform: none;
 	color: var(--text-color);
+
+	> div.markdown {
+		padding: 0;
+	}
 }

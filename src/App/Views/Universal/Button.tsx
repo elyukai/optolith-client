@@ -60,6 +60,7 @@ export const Button: React.FC<ButtonProps> = props => {
                  <TooltipHint
                    hint={hint}
                    target={btnElement}
+                   margin={8}
                    />
                ))
                (normalize (mhint))
