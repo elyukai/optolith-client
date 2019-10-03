@@ -1,178 +1,222 @@
+/**
+ * The main axis is the axis that crosses both trigger and overlay:
+ *
+ * ```
+ *     |
+ *     |
+ *     |
+ * [overlay]
+ *     |
+ * [trigger]
+ *     |
+ *     |
+ *     |
+ * ```
+ *
+ * The cross axis is orthogonal to the main axis.
+ */
+
 import * as React from "react";
-import { findDOMNode } from "react-dom";
+import { ident } from "../../../Data/Function";
+import { over } from "../../../Data/Lens";
 import { List } from "../../../Data/List";
 import { Just, Maybe } from "../../../Data/Maybe";
+import { fromDefault, makeLenses, Record, toObject } from "../../../Data/Record";
 import { classListMaybe } from "../../Utilities/CSS";
+
+type Position = "top" | "bottom" | "left" | "right"
+
+interface OverlayPosition {
+  "@@name": "OverlayPosition"
+  top: number
+  left: number
+}
+
+const OverlayPosition = fromDefault ("OverlayPosition") <OverlayPosition> ({ top: 0, left: 0 })
+
+const OPL = makeLenses (OverlayPosition)
 
 export interface OverlayProps {
   className?: string
   margin?: number
-  node?: React.ReactNode
-  position?: "top" | "bottom" | "left" | "right"
+  position?: Position
   trigger: Element
 }
 
-interface OverlayState {
-  position?: string
-  style: any
+export const Overlay: React.FC<OverlayProps> = props => {
+  const {
+    children,
+    className,
+    margin = 0,
+    position: defPosition = "top",
+    trigger,
+  } = props
+
+  const [position, setPosition] = React.useState<Position> (defPosition)
+  const [style, setStyle] = React.useState<React.CSSProperties> ({ visibility: "hidden" })
+  const overlayRef = React.useRef<HTMLDivElement> (null)
+
+  React.useEffect (
+    () => {
+      const [new_pos, new_coords] = alignToElement (overlayRef) (trigger) (defPosition) (margin)
+      setPosition (new_pos)
+      setStyle (new_coords)
+    },
+    [setPosition, setStyle, defPosition, margin, trigger]
+  )
+
+  return (
+    <div
+      style={style}
+      className={
+        classListMaybe (List (
+          Just (`overlay overlay-${position}`),
+          Maybe (className)
+        ))
+      }
+      ref={overlayRef}
+      >
+      {children}
+    </div>
+  )
 }
 
-export class Overlay extends React.Component<OverlayProps, OverlayState> {
-  state = {
-    style: {},
-    position: "",
-  }
+// Minimum offset from window border in pixel
+const MIN_WINDOW_OFFSET = 10
 
-  overlayRef: Element | null = null
+const getTopGapMainAxis: (triggerCoord: ClientRect | DOMRect) =>
+                         (overlayCoord: ClientRect | DOMRect) =>
+                         (margin: number) => number =
+  trg => ovl => m => trg .top - m - ovl .height - MIN_WINDOW_OFFSET
 
-  alignToElement = () => {
-    if (this.overlayRef !== null) {
-      const { margin = 0, position, trigger } = this.props
+const getBottomGapMainAxis: (triggerCoord: ClientRect | DOMRect) =>
+                            (overlayCoord: ClientRect | DOMRect) =>
+                            (margin: number) => number =
+  trg => ovl => m => window .innerHeight
+                     - (trg .top + trg .height + m + ovl .height + MIN_WINDOW_OFFSET)
 
-      const triggerCoordinates = trigger.getBoundingClientRect ()
-      const overlayCoordinates = this.overlayRef.getBoundingClientRect ()
+const getLeftGapMainAxis: (triggerCoord: ClientRect | DOMRect) =>
+                          (overlayCoord: ClientRect | DOMRect) =>
+                          (margin: number) => number =
+  trg => ovl => m => trg .left - m - ovl .width - MIN_WINDOW_OFFSET
 
-      let top = 0
-      let left = 0
+const getRightGapMainAxis: (triggerCoord: ClientRect | DOMRect) =>
+                           (overlayCoord: ClientRect | DOMRect) =>
+                           (margin: number) => number =
+  trg => ovl => m => window .innerWidth
+                     - (trg .left + trg .width + m + ovl .width + MIN_WINDOW_OFFSET)
 
-      const setHorizonally = () => {
-        left = Math.max (
-          0,
-          triggerCoordinates.left + triggerCoordinates.width / 2 - overlayCoordinates.width / 2
-        )
+const getPositionIfNotEnoughFreeSpace: (triggerCoord: ClientRect | DOMRect) =>
+                                       (overlayCoord: ClientRect | DOMRect) =>
+                                       (margin: number) =>
+                                       (defPosition: Position) => Position =
+  trg => ovl => m => pos => {
+    switch (pos) {
+      case "top":
+        return getTopGapMainAxis (trg) (ovl) (m) < 0 && getBottomGapMainAxis (trg) (ovl) (m) >= 0
+          ? "bottom"
+          : "top"
 
-        const right = window.innerWidth - overlayCoordinates.width - left
+      case "bottom":
+        return getBottomGapMainAxis (trg) (ovl) (m) < 0 && getTopGapMainAxis (trg) (ovl) (m) >= 0
+          ? "top"
+          : "bottom"
 
-        if (right < 0) {
-          left = Math.max (left, left + right)
-        }
-      }
+      case "left":
+        return getLeftGapMainAxis (trg) (ovl) (m) < 0 && getRightGapMainAxis (trg) (ovl) (m) >= 0
+          ? "right"
+          : "left"
 
-      const setForTop = () => {
-        top = triggerCoordinates.top - overlayCoordinates.height - margin
-        setHorizonally ()
-      }
+      case "right":
+        return getRightGapMainAxis (trg) (ovl) (m) < 0 && getLeftGapMainAxis (trg) (ovl) (m) >= 0
+          ? "left"
+          : "right"
 
-      const setForBottom = () => {
-        top = triggerCoordinates.top + triggerCoordinates.height + margin
-        setHorizonally ()
-      }
-
-      const setVertically = () => {
-        top = Math.max (
-          0,
-          triggerCoordinates.top + triggerCoordinates.height / 2 - overlayCoordinates.height / 2
-        )
-
-        const bottom = window.innerHeight - overlayCoordinates.height - top
-
-        if (bottom < 0) {
-          top = Math.max (bottom, top + bottom)
-        }
-      }
-
-      const setForLeft = () => {
-        top = Math.max (
-          0,
-          triggerCoordinates.left + triggerCoordinates.width / 2 - overlayCoordinates.width / 2
-        )
-
-        setVertically ()
-      }
-
-      const setForRight = () => {
-        top = Math.max (
-          0,
-          triggerCoordinates.top + triggerCoordinates.height / 2 - overlayCoordinates.height / 2
-        )
-
-        setVertically ()
-      }
-
-      let finalPosition = position
-
-      switch (position) {
-        case "top":
-          setForTop ()
-
-          if (top < 0) {
-            setForBottom ()
-            finalPosition = "bottom"
-          }
-          break
-
-        case "bottom":
-          setForBottom ()
-
-          if (top + overlayCoordinates.height + margin > window.innerHeight) {
-            setForTop ()
-            finalPosition = "top"
-          }
-          break
-
-        case "left":
-          setForLeft ()
-
-          if (left < 0) {
-            setForRight ()
-            finalPosition = "right"
-          }
-          break
-
-        case "right":
-          setForRight ()
-
-          if (left + overlayCoordinates.width + margin > window.innerWidth) {
-            setForLeft ()
-            finalPosition = "left"
-          }
-          break
-
-        default:
-          break
-      }
-
-      this.setState ({
-        style: { top, left },
-        position: finalPosition,
-      })
+      default:
+        return pos
     }
   }
 
-  componentDidMount () {
-    this.alignToElement ()
+const getCenteredOverlayPosition: (triggerCoord: ClientRect | DOMRect) =>
+                                  (overlayCoord: ClientRect | DOMRect) =>
+                                  (margin: number) =>
+                                  (position: Position) => Record<OverlayPosition> =
+  trg => ovl => m => pos => {
+    switch (pos) {
+      case "top":
+        return OverlayPosition ({
+          left: trg .left + trg .width / 2 - ovl .width / 2,
+          top: trg .top - m - ovl .height,
+        })
+
+      case "bottom":
+        return OverlayPosition ({
+          left: trg .left + trg .width / 2 - ovl .width / 2,
+          top: trg .top + trg .height + m,
+        })
+
+      case "left":
+        return OverlayPosition ({
+          left: trg .left - m - ovl .width,
+          top: trg .top + trg .height / 2 - ovl .height / 2,
+        })
+
+      case "right":
+        return OverlayPosition ({
+          left: trg .left + trg .width + m,
+          top: trg .top + trg .height / 2 - ovl .height / 2,
+        })
+
+      default:
+        return OverlayPosition.default
+    }
   }
 
-  render () {
-    const {
-      children,
-      className,
-      ...other
-    } = this.props
+const adjustCrossAxis: (overlayCoord: ClientRect | DOMRect) =>
+                       (position: Position) =>
+                       (centeredCoord: Record<OverlayPosition>) => Record<OverlayPosition> =
+  ovl => pos => {
+    switch (pos) {
+      case "top":
+      case "bottom":
+        return over (OPL.left)
+                    (left => left < MIN_WINDOW_OFFSET
+                             ? MIN_WINDOW_OFFSET
+                             : left + ovl .width > window .innerWidth - MIN_WINDOW_OFFSET
+                             ? window .innerWidth - MIN_WINDOW_OFFSET - ovl .width
+                             : left)
 
-    const { position, style } = this.state
+      case "left":
+      case "right":
+        return over (OPL.top)
+                    (top => top < MIN_WINDOW_OFFSET
+                             ? MIN_WINDOW_OFFSET
+                             : top + ovl .height > window .innerHeight - MIN_WINDOW_OFFSET
+                             ? window .innerHeight - MIN_WINDOW_OFFSET - ovl .height
+                             : top)
 
-    const newOther = { ...other, style }
-
-    return (
-      <div
-        {...newOther}
-        className={
-          classListMaybe (List (
-            Just (`overlay overlay-${position}`),
-            Maybe (this.props.className)
-          ))
-        }
-        ref={node => {
-          if (node !== null) {
-            this.overlayRef = findDOMNode (node) as Element | null
-          }
-
-          this.overlayRef = node
-        }}
-        >
-        {children}
-      </div>
-    )
+      default:
+        return ident
+    }
   }
-}
+
+const alignToElement: (ref: React.RefObject<HTMLDivElement>) =>
+                      (trigger: Element) =>
+                      (defPosition: Position) =>
+                      (margin: number) => [Position, React.CSSProperties] =
+  ref => trg => def_pos => m => {
+    if (ref .current !== null) {
+      const triggerCoord = trg .getBoundingClientRect ()
+      const overlayCoord = ref .current .getBoundingClientRect ()
+
+      const pos = getPositionIfNotEnoughFreeSpace (triggerCoord) (overlayCoord) (m) (def_pos)
+
+      const centered_coords = getCenteredOverlayPosition (triggerCoord) (overlayCoord) (m) (pos)
+
+      const adjusted_coords = adjustCrossAxis (overlayCoord) (pos) (centered_coords)
+
+      return [pos, toObject (adjusted_coords)]
+    }
+
+    return [def_pos, {}]
+  }

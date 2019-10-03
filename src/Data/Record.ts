@@ -283,7 +283,7 @@ export type StrictAccessors<A extends RecordIBase<any>> = {
 }
 
 export type Lenses<A extends RecordIBase<any>> = {
-  [K in keyof A]: Lens_<Record<A>, A[K]>
+  [K in keyof OmitName<A>]: Lens_<Record<A>, A[K]>
 }
 
 export interface UnsafeStringKeyObject<V> {
