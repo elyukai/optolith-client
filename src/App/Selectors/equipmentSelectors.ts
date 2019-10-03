@@ -7,8 +7,9 @@ import { altF_, bind, bindF, fromMaybe, guard, isJust, Just, liftM2, mapMaybe, M
 import { add, dec, multiply, subtractBy } from "../../Data/Num";
 import { elems, lookup, lookupF } from "../../Data/OrderedMap";
 import { OmitName, Record } from "../../Data/Record";
-import { fst, isTuple, Pair, snd } from "../../Data/Tuple";
+import { bimap, fst, isTuple, Pair, snd } from "../../Data/Tuple";
 import { uncurryN } from "../../Data/Tuple/Curry";
+import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids";
 import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
 import { Belongings } from "../Models/Hero/Belongings";
 import { HeroModel } from "../Models/Hero/HeroModel";
@@ -26,6 +27,7 @@ import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
 import { L10n } from "../Models/Wiki/L10n";
 import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
 import { WikiModel } from "../Models/Wiki/WikiModel";
+import { isMaybeActive } from "../Utilities/Activatable/isActive";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy, filterAndSortRecordsByName } from "../Utilities/filterAndSortBy";
 import { filterRecordsByName } from "../Utilities/filterBy";
@@ -33,12 +35,13 @@ import { getAttack, getParry } from "../Utilities/Increasable/combatTechniqueUti
 import { convertPrimaryAttributeToArray } from "../Utilities/ItemUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
+import { mapGetToSlice } from "../Utilities/SelectorsUtils";
 import { sortRecordsByName } from "../Utilities/sortBy";
+import { isNumber } from "../Utilities/typeCheckUtils";
 import { stringOfListToDropdown } from "../Views/Universal/Dropdown";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getEquipmentSortOptions } from "./sortOptionsSelectors";
-import { getCurrentHeroPresent, getEquipmentFilterText, getEquipmentState, getHigherParadeValues, getHitZoneArmorsState, getItemsState, getItemTemplatesFilterText, getLocaleAsProp, getWiki, getWikiItemTemplates, getZoneArmorFilterText } from "./stateSelectors";
-import { CombatTechniqueId } from "../Constants/Ids";
+import { getCurrentHeroPresent, getEquipmentFilterText, getEquipmentState, getHigherParadeValues, getHitZoneArmorsState, getItemsState, getItemTemplatesFilterText, getLocaleAsProp, getSpecialAbilities, getWiki, getWikiItemTemplates, getZoneArmorFilterText } from "./stateSelectors";
 
 const HA = HeroModel.A
 const WA = WikiModel.A
@@ -264,7 +267,8 @@ export const getMeleeWeapons = createMaybeSelector (
   getCurrentHeroPresent,
   getHigherParadeValues,
   getWiki,
-  (mhero, higherParadeValues, wiki) =>
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.GaretherGossenStil),
+  (mhero, higherParadeValues, wiki, garether_gossen_stil) =>
     fmapF (mhero)
           (hero => {
             const items = pipe_ (hero, HA.belongings, BA.items)
@@ -274,6 +278,8 @@ export const getMeleeWeapons = createMaybeSelector (
               thrush (rawItems)
                      (filter (item => IA.gr (item) === 1
                                       || Maybe.elem (1) (IA.improvisedWeaponGroup (item))))
+
+            const is_garether_gossen_stil_active = isMaybeActive (garether_gossen_stil)
 
             const mapper = pipe (
               IA.id,
@@ -319,10 +325,27 @@ export const getMeleeWeapons = createMaybeSelector (
 
                         type Thresholds = number | Pair<number, number>
 
+                        const dec_dt =
+                          is_garether_gossen_stil_active
+                          && CTA.id (wiki_entry) === CombatTechniqueId.Brawling
+
                         const damage_thresholds =
-                          fromMaybe<Thresholds> (0)
-                                                (fmapF (IA.damageBonus (full_item))
-                                                       (PADTA.threshold))
+                          pipe_ (
+                            full_item,
+                            IA.damageBonus,
+                            maybe<Thresholds> (0) (PADTA.threshold),
+                            dec_dt
+
+                            // Decrement damage threshold if Garether Gossen-Stil
+                            // is active and the item has combat technique
+                            // Brawling.
+                            ? x => isNumber (x)
+                                   ? dec (x)
+                                   : bimap (dec) (dec) (x)
+
+                            // Otherwise just keep the value
+                            : ident
+                          )
 
                         const damage_flat_bonus =
                           fmapF (mprimary_attr_values)

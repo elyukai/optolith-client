@@ -268,6 +268,7 @@ export enum SpecialAbilityId {
   LanguageSpecializations = "SA_699",
   TraditionSchelme = "SA_726",
   TraditionZauberalchimisten = "SA_750",
+  GaretherGossenStil = "SA_901",
   WegDerGelehrten = "SA_1040",
   TraditionCultOfNuminoru = "SA_1049",
   WegDerSchreiberin = "SA_1075",

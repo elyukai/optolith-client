@@ -41,7 +41,7 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): Sheet
   el: getStartEl (state),
   fatePointsModifier: getFatePointsModifier (state),
   generalsaActive: getGeneralSpecialAbilitiesForSheet (state, ownProps),
-  meleeWeapons: getMeleeWeapons (state),
+  meleeWeapons: getMeleeWeapons (state, ownProps),
   name: getCurrentHeroName (state),
   professionName: getCurrentFullProfessionName (state, ownProps),
   // profession: getCurrentProfession (state),
