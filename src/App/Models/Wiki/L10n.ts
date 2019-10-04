@@ -621,7 +621,7 @@ export interface L10n {
   "demontypes": List<string>
   "demontype": string
   "circleofdamnation": string
-  "lesserpact": string
+  "minorpact": string
   "tribaltraditions": string
   "tribes": List<string>
   "saveheroerror": string
@@ -1273,7 +1273,7 @@ export const L10n =
                 "demontypes": List.empty,
                 "demontype": "",
                 "circleofdamnation": "",
-                "lesserpact": "",
+                "minorpact": "",
                 "tribaltraditions": "",
                 "tribes": List.empty,
                 "saveheroerror": "",

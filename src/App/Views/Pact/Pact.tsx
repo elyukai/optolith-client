@@ -97,7 +97,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
         {(maybe (false) (pipe (Pact.A.category, equals (2))) (mpact))
           ? (
             <Checkbox
-              label={translate (l10n) ("lesserpact")}
+              label={translate (l10n) ("minorpact")}
               checked={checked}
               onClick={setLesserPactLevel}
               disabled={!isPactEditable || isNothing (mpact)
