@@ -56,7 +56,7 @@ import { filterByAvailability, filterByAvailabilityAndPred, isEntryFromCoreBook 
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCulturesCombinedSortOptions, getProfessionsCombinedSortOptions, getRacesCombinedSortOptions } from "./sortOptionsSelectors";
-import { getCultureId, getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getProfessionsFilterText, getRaceId, getRacesFilterText, getSex, getWiki, getWikiBooks, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors";
+import { getCultureId, getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getProfessionsFilterText, getRaceId, getRacesFilterText, getRaceVariantId, getSex, getWiki, getWikiBooks, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors";
 import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from "./uisettingsSelectors";
 
 const WA = WikiModel.A
@@ -95,6 +95,13 @@ export const getCurrentRace = createMaybeSelector (
   getCurrentRaceId,
   (races, raceId) => bind (raceId)
                           (lookupF (races))
+)
+
+export const getRaceVariant = createMaybeSelector (
+  getWikiRaceVariants,
+  getRaceVariantId,
+  (raceVariants, raceVariantId) => bind (raceVariantId)
+                                        (lookupF (raceVariants))
 )
 
 export const getCurrentRaceVariant = createMaybeSelector (

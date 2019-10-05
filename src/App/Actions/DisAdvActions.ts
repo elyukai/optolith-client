@@ -5,8 +5,10 @@ import { altF_, bind, bindF, elem, ensure, fromJust, isJust, join, Just, liftM2,
 import { negate, subtract } from "../../Data/Num";
 import { lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
+import { showP } from "../../Data/Show";
 import { fst, Pair, PairP1_, snd } from "../../Data/Tuple";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { DisadvantageId } from "../Constants/Ids";
 import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
 import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType";
@@ -35,7 +37,6 @@ import { misNumberM } from "../Utilities/typeCheckUtils";
 import { getWikiEntry } from "../Utilities/WikiUtils";
 import { ReduxAction, ReduxDispatch } from "./Actions";
 import { addAlert } from "./AlertActions";
-import { DisadvantageId } from "../Constants/Ids";
 
 /**
  * Advantages and disadvantages might not only be added or removed due to not
@@ -151,12 +152,18 @@ export const addDisAdvantage =
                                                    (current_cost))
 
         const successFn = () => {
-          const color: Maybe<Pair<number, number>> =
+          const color: Pair<Maybe<number>, Maybe<number>> =
             current_id === DisadvantageId.Stigma
-            && elem<string | number> (1) (ActivatableActivationOptions.AL.selectOptionId1 (args))
-              // Just (eyeColor, hairColor)
-              ? Just (Pair (19, 24))
-              : Nothing
+              && elem<string | number> (1) (ActivatableActivationOptions.AL.selectOptionId1 (args))
+              // (eyeColor, hairColor)
+            ? Pair (Just (19), Just (24))
+            : current_id === DisadvantageId.Stigma
+              && elem<string | number> (3) (ActivatableActivationOptions.AL.selectOptionId1 (args))
+              // (eyeColor, hairColor)
+            ? Pair (Nothing, Just (25))
+            : Pair (Nothing, Nothing)
+
+          console.log (showP (color))
 
           dispatch<ActivateDisAdvAction> ({
             type: ActionTypes.ACTIVATE_DISADV,
@@ -164,8 +171,8 @@ export const addDisAdvantage =
               Pair (
                 args,
                 ActivatableActivationEntryType ({
-                  eyeColor: fmapF (color) (fst),
-                  hairColor: fmapF (color) (snd),
+                  eyeColor: fst (color),
+                  hairColor: snd (color),
                   isBlessed: fst (entryType),
                   isDisadvantage: is_disadvantage,
                   isMagical: snd (entryType),
@@ -213,7 +220,8 @@ export const removeDisAdvantage =
       const current_index = ActivatableDeactivationOptions.AL.index (args)
       const current_cost = ActivatableDeactivationOptions.AL.cost (args)
 
-      const negativeCost = current_cost * -1 // the entry should be removed
+      // the entry should be removed
+      const negativeCost = current_cost * -1
 
       const mwiki_entry =
         bind (getWikiEntry (getWiki (state)) (current_id))
@@ -247,14 +255,14 @@ export const removeDisAdvantage =
         const successFn = () => {
           const color: Maybe<Pair<number, number>> =
             current_id === DisadvantageId.Stigma
-            && elem (1)
-                    (pipe_ (
-                      hero_entry,
-                      ActivatableDependent.A.active,
-                      subscriptF (current_index),
-                      bindF (ActiveObject.A.sid),
-                      misNumberM
-                    ))
+            && Maybe.any (List.elemF (List (1, 3)))
+                         (pipe_ (
+                           hero_entry,
+                           ActivatableDependent.A.active,
+                           subscriptF (current_index),
+                           bindF (ActiveObject.A.sid),
+                           misNumberM
+                         ))
               ? bind (getRace (state, { hero }))
                      (race => {
                        const mrace_var = getCurrentRaceVariant (state)

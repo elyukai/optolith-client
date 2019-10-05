@@ -107,8 +107,6 @@ export class App extends React.Component<AppProps, AppState> {
               {getSystemLocale () === "de-DE"
               ? "Lade und überprüfe Tabellen und Nutzerdaten..."
               : "Loading and validating tables and user data..."}
-              {" "}
-              {loading_phase}
             </div>
           </div>
 

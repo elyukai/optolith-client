@@ -120,12 +120,22 @@ const personalDataReducer =
                       ))
         }
 
+        if (isJust (eyeColor)) {
+          return over (HeroModelL.personalData)
+                      (set (PersonalDataL.eyeColor) (eyeColor))
+        }
+
+        if (isJust (hairColor)) {
+          return over (HeroModelL.personalData)
+                      (set (PersonalDataL.hairColor) (hairColor))
+        }
+
         return ident
       }
 
       case ActionTypes.SET_CULTURE_AREA_KNOWLEDGE:
-      return set (composeL (HeroModelL.personalData, PersonalDataL.cultureAreaKnowledge))
-                 (Just (action.payload.cultureAreaKnowledge))
+        return set (composeL (HeroModelL.personalData, PersonalDataL.cultureAreaKnowledge))
+                   (Just (action.payload.cultureAreaKnowledge))
 
       default:
         return ident

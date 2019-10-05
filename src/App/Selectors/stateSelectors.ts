@@ -187,6 +187,9 @@ export const getRaceIdM =
 export const getCurrentRaceId =
   pipe (getCurrentHeroPresent, bindF (Hero.race))
 
+export const getRaceVariantId =
+  pipe (getHeroProp, Hero.raceVariant)
+
 export const getCurrentRaceVariantId =
   pipe (getCurrentHeroPresent, bindF (Hero.raceVariant))
 

@@ -1,7 +1,7 @@
 import { equals } from "../../Data/Eq";
 import { flip, ident } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
-import { any, consF, elem, filter, filterMulti, find, foldr, intercalate, List, map, notElemF, nub } from "../../Data/List";
+import { any, consF, filter, filterMulti, find, foldr, intercalate, List, map, notElemF, nub } from "../../Data/List";
 import { bindF, elemF, ensure, fromMaybe, joinMaybeList, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { insert, lookup, OrderedMap } from "../../Data/OrderedMap";
 import { member, OrderedSet } from "../../Data/OrderedSet";
@@ -445,14 +445,6 @@ export const getInitialStartingWealth = createMaybeSelector (
   mapGetToMaybeSlice (getAdvantages) (AdvantageId.Rich),
   mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.Poor),
   (rich, poor) => getModifierByActiveLevel (Just (0)) (rich) (poor) * 250 + 750
-)
-
-export const isAlbino = createMaybeSelector (
-  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.Stigma),
-  fmap (pipe (
-    getActiveSelections,
-    elem<string | number> (1)
-  ))
 )
 
 export const getGuildMageUnfamiliarSpellId = createMaybeSelector (

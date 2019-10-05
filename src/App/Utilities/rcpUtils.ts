@@ -1,7 +1,7 @@
 import { fmap } from "../../Data/Functor";
-import { foldr, subscriptF } from "../../Data/List";
-import { altF, bindF, elem, fromMaybe, Just, liftM2, Maybe, sum } from "../../Data/Maybe";
-import { add, lt, odd, subtract, subtractBy } from "../../Data/Num";
+import { flength, foldr, List, subscript } from "../../Data/List";
+import { altF, bindF, elem, fromMaybe, liftM2, Maybe, sum } from "../../Data/Maybe";
+import { add, dec, lt, odd, subtract, subtractBy } from "../../Data/Num";
 import { lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
@@ -20,38 +20,16 @@ import { ifElse } from "./ifElse";
 import { multiplyString, toInt } from "./NumberUtils";
 import { pipe, pipe_ } from "./pipe";
 
-const { id, hairColors, eyeColors, sizeBase, sizeRandom, weightBase, weightRandom } = Race.AL
+const { id, sizeBase, sizeRandom, weightBase, weightRandom } = Race.AL
 const { amount, sides } = Die.AL
 const { name, subname } = Profession.AL
 
 /**
- * Reroll the hair color based on the current race and race variant.
+ * Reroll the color.
  */
-export const rerollHairColor =
-  (race: Maybe<Record<Race>>) =>
-  (raceVariant: Maybe<Record<RaceVariant>>): Maybe<number> =>
-    pipe (
-           bindF (hairColors),
-           altF (bindF (hairColors) (raceVariant)),
-           bindF (subscriptF (rollDie (20) - 1))
-         )
-         (race)
-
-/**
- * Reroll the eye color based on the current race and race variant.
- */
-export const rerollEyeColor =
-  (isAlbino: boolean) =>
-  (race: Maybe<Record<Race>>) =>
-  (raceVariant: Maybe<Record<RaceVariant>>): Maybe<number> =>
-    isAlbino
-    ? Just (rollDie (2) + 18)
-    : pipe (
-             bindF (eyeColors),
-             altF (bindF (eyeColors) (raceVariant)),
-             bindF (subscriptF (rollDie (20) - 1))
-           )
-           (race)
+export const rerollColor =
+  <A> (colors: List<A>): Maybe<A> =>
+    pipe_ (colors, flength, rollDie, dec, subscript (colors))
 
 /**
  * Reroll the size based on the current race and race variant.

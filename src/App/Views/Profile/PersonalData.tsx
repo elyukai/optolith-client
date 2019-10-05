@@ -4,6 +4,7 @@ import { List } from "../../../Data/List";
 import { any, isNothing, Maybe, maybe, maybeRNull } from "../../../Data/Maybe";
 import { gt, lt } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
+import { showP } from "../../../Data/Show";
 import { ProfessionId, SocialStatusId } from "../../Constants/Ids";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
@@ -59,9 +60,10 @@ export interface PersonalDataStateProps {
   isRemovingEnabled: boolean
   isAddAdventurePointsOpen: boolean
   isEditCharacterAvatarOpen: boolean
-  isAlbino: Maybe<boolean>
   sizeCalcStr: Maybe<string>
   weightCalcStr: Maybe<string>
+  hairColors: List<Record<DropdownOption<number>>>
+  eyeColors: List<Record<DropdownOption<number>>>
 }
 
 export interface PersonalDataDispatchProps extends OverviewPersonalDataDispatchProps {
@@ -159,12 +161,15 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
       rerollEyes,
       rerollSize,
       rerollWeight,
-      isAlbino,
       sizeCalcStr,
       weightCalcStr,
       isRemovingEnabled,
       addAdventurePoints,
+      hairColors,
+      eyeColors,
     } = this.props
+
+    console.log (showP (hairColors))
 
     const {
       editName,
@@ -294,12 +299,7 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
                              <h3>{translate (l10n) ("personaldata")}</h3>
                              <OverviewPersonalData
                                profile={profile}
-                               eyecolorTags={translate (l10n) ("eyecolors")}
-                               haircolorTags={translate (l10n) ("haircolors")}
-                               race={race}
-                               raceVariant={raceVariant}
                                socialStatuses={socialStatuses}
-                               isAlbino={isAlbino}
                                sizeCalcStr={sizeCalcStr}
                                weightCalcStr={weightCalcStr}
                                l10n={l10n}
@@ -320,6 +320,8 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
                                rerollEyes={rerollEyes}
                                rerollSize={rerollSize}
                                rerollWeight={rerollWeight}
+                               hairColors={hairColors}
+                               eyeColors={eyeColors}
                                />
                            </>
                          )

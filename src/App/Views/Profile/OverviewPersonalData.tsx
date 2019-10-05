@@ -1,34 +1,30 @@
 import * as React from "react";
-import { fmap } from "../../../Data/Functor";
-import { elem, List, subscriptF } from "../../../Data/List";
-import { all, alt, bind, catMaybes, ensure, fromJust, imapMaybe, isJust, Just, liftM2, Maybe, or } from "../../../Data/Maybe";
+import { equals } from "../../../Data/Eq";
+import { flength, List } from "../../../Data/List";
+import { all, bind, listToMaybe, Maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { SocialStatusId } from "../../Constants/Ids";
 import { PersonalData } from "../../Models/Hero/PersonalData";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
-import { Race } from "../../Models/Wiki/Race";
-import { RaceVariant } from "../../Models/Wiki/RaceVariant";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybeWith } from "../../Utilities/ReactUtils";
 import { isEmptyOr, isFloat, isNaturalNumber } from "../../Utilities/RegexUtils";
-import { sortRecordsByName } from "../../Utilities/sortBy";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { IconButton } from "../Universal/IconButton";
 import { InputButtonGroup } from "../Universal/InputButtonGroup";
 import { TextField } from "../Universal/TextField";
 
+const PDA = PersonalData.A
+const DOA = DropdownOption.A
+
 export interface OverviewPersonalDataOwnProps {
-  eyecolorTags: List<string>
-  haircolorTags: List<string>
   l10n: L10nRecord
   profile: Record<PersonalData>
-  race: Maybe<Record<Race>>
-  raceVariant: Maybe<Record<RaceVariant>>
   socialStatuses: List<Record<DropdownOption<SocialStatusId>>>
-  isAlbino: Maybe<boolean>
   sizeCalcStr: Maybe<string>
   weightCalcStr: Maybe<string>
+  hairColors: List<Record<DropdownOption<number>>>
+  eyeColors: List<Record<DropdownOption<number>>>
 }
 
 export interface OverviewPersonalDataDispatchProps {
@@ -55,97 +51,13 @@ export type OverviewPersonalDataProps =
   OverviewPersonalDataDispatchProps
   & OverviewPersonalDataOwnProps
 
-interface HairColorAndEyeColorOptions {
-  hairOptions: List<Record<DropdownOption<number>>>
-  eyeOptions: List<Record<DropdownOption<number>>>
-}
-
 const wrapParenSpace = renderMaybeWith<string> (str => ` (${str})`)
-
-const getDropdownOption =
-  (id: number) => fmap ((name: string) => DropdownOption ({ id: Just (id), name }))
-
-const getHairColorAndEyeColorOptions =
-  (l10n: L10nRecord) =>
-  (mrace: Maybe<Record<Race>>) =>
-  (mrace_var: Maybe<Record<RaceVariant>>) =>
-  (hair_color_tags: List<string>) =>
-  (eye_color_tags: List<string>) =>
-  (mis_albino: Maybe<boolean>): HairColorAndEyeColorOptions => {
-    if (or (mis_albino)) {
-      return {
-        hairOptions: catMaybes (List (pipe_ (
-                                       hair_color_tags,
-                                       subscriptF (23),
-                                       getDropdownOption (24)
-                                     ))),
-        eyeOptions: pipe_ (
-          List (
-            pipe_ (eye_color_tags, subscriptF (18), getDropdownOption (19)),
-            pipe_ (eye_color_tags, subscriptF (19), getDropdownOption (20))
-          ),
-          catMaybes,
-          sortRecordsByName (L10n.A.id (l10n))
-        ),
-      }
-    }
-
-    if (isJust (mrace)) {
-      const race = fromJust (mrace)
-      const raceHairColors = Race.A.hairColors (race)
-      const raceEyeColors = Race.A.eyeColors (race)
-
-      const raceVariantHairColors =
-        bind (mrace_var) (RaceVariant.A.hairColors)
-
-      const raceVariantEyeColors =
-        bind (mrace_var) (RaceVariant.A.eyeColors)
-
-      const hairColors = alt (raceHairColors) (raceVariantHairColors)
-      const eyeColors = alt (raceEyeColors) (raceVariantEyeColors)
-
-      return {
-        hairOptions: pipe_ (
-          hair_color_tags,
-          imapMaybe (index => (name: string) =>
-                      ensure<Record<DropdownOption<number>>>
-                        (pipe (
-                          DropdownOption.A.id,
-                          id => or (liftM2 (elem as elem<number>) (id) (hairColors))
-                        ))
-                        (DropdownOption ({ id: Just (index + 1), name }))),
-          sortRecordsByName (l10n)
-        ),
-        eyeOptions: pipe_ (
-          eye_color_tags,
-          imapMaybe (index => (name: string) =>
-                      ensure<Record<DropdownOption<number>>>
-                        (pipe (
-                          DropdownOption.A.id,
-                          id => or (liftM2 (elem as elem<number>) (id) (eyeColors))
-                        ))
-                        (DropdownOption ({ id: Just (index + 1), name }))),
-          sortRecordsByName (L10n.A.id (l10n))
-        ),
-      }
-    }
-
-    return {
-      hairOptions: List (),
-      eyeOptions: List (),
-    }
-  }
 
 export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props => {
   const {
-    eyecolorTags,
-    haircolorTags,
     l10n,
     profile,
-    race,
-    raceVariant,
     socialStatuses,
-    isAlbino,
     sizeCalcStr,
     weightCalcStr,
     changeFamily,
@@ -165,39 +77,41 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
     rerollEyes,
     rerollSize,
     rerollWeight,
+    hairColors,
+    eyeColors,
   } = props
 
-  const hairAndEyeColorOptions = getHairColorAndEyeColorOptions (l10n)
-                                                                (race)
-                                                                (raceVariant)
-                                                                (haircolorTags)
-                                                                (eyecolorTags)
-                                                                (isAlbino)
+  const age = PDA.age (profile)
+  const size = PDA.size (profile)
+  const weight = PDA.weight (profile)
+  const hair_color = PDA.hairColor (profile)
 
-  const age = PersonalData.A.age (profile)
-  const size = PersonalData.A.size (profile)
-  const weight = PersonalData.A.weight (profile)
+  const is_hcsel_disabled = React.useMemo (
+    () => flength (hairColors) === 1
+          && equals (hair_color) (bind (listToMaybe (hairColors)) (DOA.id)),
+    [hairColors, hair_color]
+  )
 
   return (
     <div className="personal-data">
       <div>
         <TextField
           label={translate (l10n) ("family")}
-          value={PersonalData.A.family (profile)}
+          value={PDA.family (profile)}
           onChange={changeFamily}
           />
       </div>
       <div>
         <TextField
           label={translate (l10n) ("placeofbirth")}
-          value={PersonalData.A.placeOfBirth (profile)}
+          value={PDA.placeOfBirth (profile)}
           onChange={changePlaceOfBirth}
           />
       </div>
       <div>
         <TextField
           label={translate (l10n) ("dateofbirth")}
-          value={PersonalData.A.dateOfBirth (profile)}
+          value={PDA.dateOfBirth (profile)}
           onChange={changeDateOfBirth}
           />
       </div>
@@ -212,26 +126,26 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       <InputButtonGroup className="reroll">
         <Dropdown
           label={translate (l10n) ("haircolor")}
-          value={PersonalData.A.hairColor (profile)}
+          value={hair_color}
           onChange={changeHaircolor}
-          options={hairAndEyeColorOptions.hairOptions}
-          disabled={isAlbino}
+          options={hairColors}
+          disabled={is_hcsel_disabled}
           />
-        <IconButton icon="&#xE913;" onClick={rerollHair} disabled={isAlbino} />
+        <IconButton icon="&#xE913;" onClick={rerollHair} disabled={is_hcsel_disabled} />
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <Dropdown
           label={translate (l10n) ("eyecolor")}
-          value={PersonalData.A.eyeColor (profile)}
+          value={PDA.eyeColor (profile)}
           onChange={changeEyecolor}
-          options={hairAndEyeColorOptions.eyeOptions}
+          options={eyeColors}
           />
         <IconButton icon="&#xE913;" onClick={rerollEyes} />
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
           label={`${translate (l10n) ("size")}${wrapParenSpace (sizeCalcStr)}`}
-          value={PersonalData.A.size (profile)}
+          value={PDA.size (profile)}
           onChange={changeSize}
           valid={all (isEmptyOr (isFloat)) (size)}
           />
@@ -240,7 +154,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       <InputButtonGroup className="reroll">
         <TextField
           label={`${translate (l10n) ("weight")}${wrapParenSpace (weightCalcStr)}`}
-          value={PersonalData.A.weight (profile)}
+          value={PDA.weight (profile)}
           onChange={changeWeight}
           valid={all (isEmptyOr (isNaturalNumber)) (weight)}
           />
@@ -249,14 +163,14 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       <div>
         <TextField
           label={translate (l10n) ("title")}
-          value={PersonalData.A.title (profile)}
+          value={PDA.title (profile)}
           onChange={changeTitle}
           />
       </div>
       <div>
         <Dropdown
           label={translate (l10n) ("socialstatus")}
-          value={PersonalData.A.socialStatus (profile)}
+          value={PDA.socialStatus (profile)}
           onChange={changeSocialStatus}
           options={socialStatuses}
           />
@@ -264,21 +178,21 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       <div>
         <TextField
           label={translate (l10n) ("characteristics")}
-          value={PersonalData.A.characteristics (profile)}
+          value={PDA.characteristics (profile)}
           onChange={changeCharacteristics}
           />
       </div>
       <div>
         <TextField
           label={translate (l10n) ("otherinfo")}
-          value={PersonalData.A.otherInfo (profile)}
+          value={PDA.otherInfo (profile)}
           onChange={changeOtherInfo}
           />
       </div>
       <div>
         <TextField
           label={translate (l10n) ("cultureareaknowledge")}
-          value={PersonalData.A.cultureAreaKnowledge (profile)}
+          value={PDA.cultureAreaKnowledge (profile)}
           onChange={changeCultureAreaKnowledge}
           />
       </div>
