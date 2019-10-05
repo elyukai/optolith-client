@@ -28,7 +28,7 @@ import { MainContent } from "../Universal/MainContent";
 import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
-import { TextField } from "../Universal/TextField";
+import { SearchField } from "../Universal/SearchField";
 import { WikiList } from "./WikiList";
 
 export interface WikiOwnProps {
@@ -123,8 +123,8 @@ export const Wiki: React.FC<WikiProps> = props => {
   return (
     <Page id="wiki">
       <Options>
-        <TextField
-          hint={translate (l10n) ("search")}
+        <SearchField
+          l10n={l10n}
           onChange={setFilter}
           value={filterText}
           />

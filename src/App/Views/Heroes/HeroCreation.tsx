@@ -44,7 +44,15 @@ export interface HeroCreationState {
 }
 
 export const HeroCreation: React.FC<HeroCreationProps> = props => {
-  const { createHero, experienceLevels: experienceLevelsMap, l10n, sortedBooks, isOpen } = props
+  const {
+    createHero,
+    experienceLevels: experienceLevelsMap,
+    l10n,
+    sortedBooks,
+    isOpen,
+    close,
+  } = props
+
   const [name, setName] = React.useState ("")
   const [enableAllRuleBooks, setEnableAllRuleBooks] = React.useState (false)
   const [enabledRuleBooks, setEnabledRuleBooks] =
@@ -82,7 +90,7 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
       close ()
       handleClear ()
     },
-    [handleClear]
+    [handleClear, close]
   )
 
   const handleSwitchEnableAllRuleBooks = React.useCallback (

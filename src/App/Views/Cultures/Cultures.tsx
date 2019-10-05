@@ -17,8 +17,8 @@ import { MainContent } from "../Universal/MainContent";
 import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
+import { SearchField } from "../Universal/SearchField";
 import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { TextField } from "../Universal/TextField";
 import { CulturesListItem } from "./CulturesListItem";
 
 export interface CulturesOwnProps {
@@ -59,8 +59,8 @@ export function Cultures (props: CulturesProps) {
   return (
     <Page id="cultures">
       <Options>
-        <TextField
-          hint={translate (l10n) ("search")}
+        <SearchField
+          l10n={l10n}
           value={filterText}
           onChange={props.setFilterText}
           fullWidth

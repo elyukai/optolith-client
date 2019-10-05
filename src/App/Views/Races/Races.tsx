@@ -17,8 +17,8 @@ import { MainContent } from "../Universal/MainContent";
 import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
+import { SearchField } from "../Universal/SearchField";
 import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { TextField } from "../Universal/TextField";
 import { RacesListItem } from "./RacesListItem";
 import { RaceVariants } from "./RaceVariants";
 
@@ -58,8 +58,8 @@ export function Races (props: RacesProps) {
   return (
     <Page id="races">
       <Options>
-        <TextField
-          hint={translate (l10n) ("search")}
+        <SearchField
+          l10n={l10n}
           value={filterText}
           onChange={setFilterText}
           fullWidth

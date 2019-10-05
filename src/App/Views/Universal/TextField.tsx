@@ -25,6 +25,7 @@ export interface TextFieldProps {
   type?: string
   value?: string | number | Maybe<string | number>
   valid?: boolean
+  everyKeyDown?: boolean
 }
 
 export const TextField: React.FC<TextFieldProps> = props => {
@@ -42,6 +43,7 @@ export const TextField: React.FC<TextFieldProps> = props => {
     valid,
     value: mvalue,
     hint: mhint,
+    everyKeyDown,
   } = props
 
   const saved_value = renderMaybe (normalize (mvalue))
@@ -85,7 +87,13 @@ export const TextField: React.FC<TextFieldProps> = props => {
 
   const handleChange =
     React.useCallback (
-      orN (disabled)
+      everyKeyDown === true
+        ? (event: InputTextEvent) => {
+          setValue (event.target.value)
+          setPrevValue (event.target.value)
+          onChange (event.target.value)
+        }
+        : orN (disabled)
         ? () => undefined
         : (event: InputTextEvent) => setValue (event.target.value),
       [disabled, onChange, onChange]
@@ -93,7 +101,7 @@ export const TextField: React.FC<TextFieldProps> = props => {
 
   const handleBlur =
     React.useCallback (
-      orN (disabled)
+      orN (disabled) || everyKeyDown === true
         ? () => undefined
         : () => defaultValue === value ? undefined : onChange (value),
       [disabled, onChange, value]

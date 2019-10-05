@@ -26,9 +26,9 @@ import { MainContent } from "../Universal/MainContent";
 import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
+import { SearchField } from "../Universal/SearchField";
 import { Slidein } from "../Universal/Slidein";
 import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { TextField } from "../Universal/TextField";
 import { EquipmentListItem } from "./EquipmentListItem";
 import { PurseAndTotals } from "./PurseAndTotals";
 
@@ -171,8 +171,8 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
       <Page id="equipment">
         <Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
           <Options>
-            <TextField
-              hint={translate (l10n) ("search")}
+            <SearchField
+              l10n={l10n}
               value={templatesFilterText}
               onChange={this.props.setTemplatesFilterText}
               fullWidth
@@ -246,8 +246,8 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
           <WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
         </Slidein>
         <Options>
-          <TextField
-            hint={translate (l10n) ("search")}
+          <SearchField
+            l10n={l10n}
             value={filterText}
             onChange={this.props.setFilterText}
             fullWidth

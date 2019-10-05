@@ -17,8 +17,8 @@ import { ListView } from "../Universal/List";
 import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
+import { SearchField } from "../Universal/SearchField";
 import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { TextField } from "../Universal/TextField";
 import { HeroCreation } from "./HeroCreation";
 
 export interface HerolistOwnProps {
@@ -91,8 +91,8 @@ export const Herolist: React.FC<HerolistProps> = props => {
   return (
     <Page id="herolist">
       <Options>
-        <TextField
-          hint={translate (l10n) ("search")}
+        <SearchField
+          l10n={l10n}
           value={filterText}
           onChange={setFilterText}
           fullWidth

@@ -21,8 +21,8 @@ import { MainContent } from "../Universal/MainContent";
 import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
+import { SearchField } from "../Universal/SearchField";
 import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { TextField } from "../Universal/TextField";
 import { ProfessionsListItem } from "./ProfessionsListItem";
 import { ProfessionVariants } from "./ProfessionVariants";
 
@@ -90,8 +90,8 @@ export const Professions: React.FC<ProfessionsProps> = props => {
         ? <SelectionsContainer close={handleCloseSlidein} l10n={l10n} hero={hero} />
         : null}
       <Options>
-        <TextField
-          hint={translate (l10n) ("search")}
+        <SearchField
+          l10n={l10n}
           value={filterText}
           onChange={setFilterText}
           fullWidth

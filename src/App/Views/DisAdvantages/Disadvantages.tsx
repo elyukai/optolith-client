@@ -24,8 +24,8 @@ import { MainContent } from "../Universal/MainContent";
 import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
 import { RecommendedReference } from "../Universal/RecommendedReference";
+import { SearchField } from "../Universal/SearchField";
 import { Slidein } from "../Universal/Slidein";
-import { TextField } from "../Universal/TextField";
 import { ActiveList } from "./ActiveList";
 import { AdvantagesDisadvantagesAdventurePoints } from "./AdvantagesDisadvantagesAdventurePoints";
 import { InactiveList } from "./DeactiveList";
@@ -112,8 +112,8 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
       <Page id="advantages">
         <Slidein isOpen={this.state.showAddSlidein} close={this.hideAddSlidein}>
           <Options>
-            <TextField
-              hint={translate (l10n) ("search")}
+            <SearchField
+              l10n={l10n}
               value={inactiveFilterText}
               onChange={setInactiveFilterText}
               fullWidth
@@ -165,8 +165,8 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
           <WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
         </Slidein>
         <Options>
-          <TextField
-            hint={translate (l10n) ("search")}
+          <SearchField
+            l10n={l10n}
             value={filterText}
             onChange={setFilterText}
             fullWidth

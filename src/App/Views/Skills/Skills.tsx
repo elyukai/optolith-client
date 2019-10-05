@@ -25,8 +25,8 @@ import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
 import { RecommendedReference } from "../Universal/RecommendedReference";
 import { Scroll } from "../Universal/Scroll";
+import { SearchField } from "../Universal/SearchField";
 import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { TextField } from "../Universal/TextField";
 import { SkillListItem } from "./SkillListItem";
 
 export interface SkillsOwnProps {
@@ -90,8 +90,8 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
     return (
       <Page id="talents">
         <Options>
-          <TextField
-            hint={translate (l10n) ("search")}
+          <SearchField
+            l10n={l10n}
             value={filterText}
             onChange={this.props.setFilterText}
             fullWidth
