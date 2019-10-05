@@ -4,7 +4,6 @@ import { List } from "../../../Data/List";
 import { any, isNothing, Maybe, maybe, maybeRNull } from "../../../Data/Maybe";
 import { gt, lt } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
-import { showP } from "../../../Data/Show";
 import { ProfessionId, SocialStatusId } from "../../Constants/Ids";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
@@ -168,8 +167,6 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
       hairColors,
       eyeColors,
     } = this.props
-
-    console.log (showP (hairColors))
 
     const {
       editName,

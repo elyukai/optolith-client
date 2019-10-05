@@ -20,7 +20,17 @@ export interface DialogProps {
 }
 
 export const Dialog: React.FC<DialogProps> = props => {
-  const { buttons = [], className, close, noCloseButton, title, onClose, children, isOpen } = props
+  const {
+    buttons = [],
+    className,
+    close,
+    noCloseButton,
+    title,
+    onClose,
+    children,
+    isOpen,
+    id
+  } = props
 
   const element = React.useMemo (() => document.createElement ("div"), [])
 
@@ -67,7 +77,10 @@ export const Dialog: React.FC<DialogProps> = props => {
 
   return isOpen
     ? ReactDOM.createPortal (
-        <div className={classListMaybe (List (Just ("modal modal-backdrop"), Maybe (className)))}>
+        <div
+          className={classListMaybe (List (Just ("modal modal-backdrop"), Maybe (className)))}
+          id={id}
+          >
           <div
             className={
               classListMaybe (List (

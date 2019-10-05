@@ -5,7 +5,6 @@ import { altF_, bind, bindF, elem, ensure, fromJust, isJust, join, Just, liftM2,
 import { negate, subtract } from "../../Data/Num";
 import { lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
-import { showP } from "../../Data/Show";
 import { fst, Pair, PairP1_, snd } from "../../Data/Tuple";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { DisadvantageId } from "../Constants/Ids";
@@ -162,8 +161,6 @@ export const addDisAdvantage =
               // (eyeColor, hairColor)
             ? Pair (Nothing, Just (25))
             : Pair (Nothing, Nothing)
-
-          console.log (showP (color))
 
           dispatch<ActivateDisAdvAction> ({
             type: ActionTypes.ACTIVATE_DISADV,

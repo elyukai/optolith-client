@@ -1,22 +1,23 @@
 import * as path from "path";
 import * as React from "react";
-import { pathToFileURL } from "url";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { head, notNull } from "../../../Data/List";
-import { ensure, orN } from "../../../Data/Maybe";
+import { ensure, fromJust, isJust, Just, orN } from "../../../Data/Maybe";
+import { imgPathToBase64 } from "../../Actions/IOActions";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { showOpenDialog } from "../../Utilities/IOUtils";
 import { pipe } from "../../Utilities/pipe";
-import { isURLValid } from "../../Utilities/RegexUtils";
 import { AvatarWrapper } from "./AvatarWrapper";
 import { BorderButton } from "./BorderButton";
-import { Dialog, DialogProps } from "./Dialog";
+import { Dialog } from "./Dialog";
 
-export interface AvatarChangeProps extends DialogProps {
+export interface AvatarChangeProps {
   l10n: L10nRecord
   title?: string
+  isOpen: boolean
   setPath (path: string): void
+  close: () => void
 }
 
 export interface AvatarChangeState {
@@ -28,7 +29,7 @@ const valid_extensions = ["jpeg", "png", "jpg"]
 const valid_extnames = valid_extensions .map (ext => `.${ext}`)
 
 export const AvatarChange: React.FC<AvatarChangeProps> = props => {
-  const { setPath, isOpen, l10n, title } = props
+  const { setPath, isOpen, l10n, title, close } = props
   const [fileValid, setFileValid] = React.useState (false)
   const [url, setUrl] = React.useState ("")
   const [prevIsOpen, setPrevIsOpen] = React.useState (isOpen)
@@ -36,19 +37,23 @@ export const AvatarChange: React.FC<AvatarChangeProps> = props => {
   const handleSelectFile = React.useCallback (
     async () =>
       fmapF (showOpenDialog ({
-              filters: [{ name: translate (l10n) ("image"), extensions: valid_extensions }],
+              filters: [
+                { name: translate (l10n) ("image"), extensions: valid_extensions },
+                { name: "JPG", extensions: ["jpeg", "jpg"] },
+                { name: "PNG", extensions: ["png"] },
+              ],
             }))
             (pipe (
               ensure (notNull),
               fmap (pipe (
                 head,
                 path_to_image => {
-                  const new_url = pathToFileURL (path_to_image) .toString ()
-                  const ext = path .extname (path_to_image) .toLowerCase ()
+                  const new_url = imgPathToBase64 (Just (path_to_image))
+                  const ext = path.extname (path_to_image) .toLowerCase ()
 
-                  if (valid_extnames .includes (ext) && isURLValid (new_url)) {
+                  if (valid_extnames .includes (ext) && isJust (new_url)) {
                     setFileValid (true)
-                    setUrl (new_url)
+                    setUrl (fromJust (new_url))
                   }
                   else {
                     setFileValid (false)
@@ -67,11 +72,22 @@ export const AvatarChange: React.FC<AvatarChangeProps> = props => {
     [setPath, url]
   )
 
+  const handleClose = React.useCallback (
+    () => {
+      setFileValid (false)
+      setUrl ("")
+      close ()
+    },
+    [setFileValid, setUrl, close]
+  )
+
   if (!isOpen && orN (prevIsOpen)) {
     setFileValid (false)
     setUrl ("")
     setPrevIsOpen (false)
   }
+
+  console.log (fileValid, url)
 
   return (
     <Dialog
@@ -84,7 +100,7 @@ export const AvatarChange: React.FC<AvatarChangeProps> = props => {
           onClick: handleSubmit,
         },
       ]}
-      close={close}
+      close={handleClose}
       isOpen={isOpen}
       >
       <BorderButton
@@ -94,9 +110,11 @@ export const AvatarChange: React.FC<AvatarChangeProps> = props => {
       <AvatarWrapper
         src={ensure ((unsafeUrl: string) => fileValid && unsafeUrl !== "") (url)}
         />
-      {!fileValid && url !== "" ? (
-        <p>{translate (l10n) ("changeheroavatar.invalidfile")}</p>
-      ) : null}
+      {!fileValid && url !== ""
+        ? (
+          <p>{translate (l10n) ("changeheroavatar.invalidfile")}</p>
+        )
+        : null}
     </Dialog>
   )
 }

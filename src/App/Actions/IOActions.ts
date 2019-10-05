@@ -399,7 +399,7 @@ export const requestHeroDeletion =
     )
   }
 
-const convertImageToBase64 =
+export const imgPathToBase64 =
   (url: Maybe<string>): Maybe<string> => {
     if (isJust (url)) {
       const just_url = fromJust (url)
@@ -408,13 +408,17 @@ const convertImageToBase64 =
         const preparedUrl = just_url .replace (/file:[\\/]+/u, "")
 
         if (fs.existsSync (preparedUrl)) {
-          const prefix = `data:image/${extname (just_url).slice (1)}base64,`
+          const prefix = `data:image/${extname (just_url).slice (1)};base64,`
           const file = fs.readFileSync (preparedUrl)
           const fileString = file.toString ("base64")
 
           return Just (prefix + fileString)
         }
+
+        return Nothing
       }
+
+      return url
     }
 
     return url
@@ -435,8 +439,8 @@ export const requestHeroExport =
         lookup (id),
         fmap (pipe (
           heroReducer.A_.present,
-          over (HeroModelL.avatar) (convertImageToBase64),
-          over (HeroModelL.pets) (OrderedMap.map (over (PetL.avatar) (convertImageToBase64))),
+          over (HeroModelL.avatar) (imgPathToBase64),
+          over (HeroModelL.pets) (OrderedMap.map (over (PetL.avatar) (imgPathToBase64))),
           convertHeroForSave (users)
         ))
       )
