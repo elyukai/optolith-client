@@ -56,26 +56,13 @@ describe ('fmap', () => {
       .toEqual (Pair (3, 2))
   })
 
-  it ("works on IO", () => {
-    expect.assertions (4)
+  it ("works on Promise", () => {
+    expect.assertions (1)
 
-    let a
+    const io = new Promise (res => res (1))
 
-    const io = Internals.IO (() => new Promise (res => (a = 1, res (1))))
-
-    expect (a) .toBeUndefined ()
-
-    const mappedIO = fmap (x => {
-                            expect (a) .toEqual (1)
-                            a++
-                            return x + 1
-                          })
-                          (io)
-                          .f ()
-                          .then (x => {
-                            expect (a) .toEqual (2)
-                            expect (x) .toEqual (2)
-                          })
+    expect (fmap (x => x + 1)
+                 (io)) .resolves .toEqual (2)
   })
 })
 
