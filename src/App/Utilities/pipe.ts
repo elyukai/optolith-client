@@ -110,6 +110,7 @@ export const pipe: pipe =
     : fs .slice (1) .reduce<any> ((y, f) => f (y), fs [0] (...x))
 
 interface pipe_ {
+  <A, B> (a: A, ab: (a: A) => B): B
   <A, B, C> (a: A, ab: (a: A) => B, bc: (b: B) => C): C
   <A, B, C, D> (a: A, ab: (a: A) => B, bc: (b: B) => C, cd: (c: C) => D): D
 

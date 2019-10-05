@@ -43,6 +43,7 @@ export interface ActivatableAddListItemOwnProps {
 export interface ActivatableAddListItemStateProps {
   skills: Maybe<HeroModel["skills"]>
   wiki: WikiModelRecord
+  isEditingAllowed: boolean
 }
 
 export interface ActivatableAddListItemDispatchProps { }
@@ -77,6 +78,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
     selectedForInfo,
     wiki,
     addToList,
+    isEditingAllowed,
   } = props
 
   const id = IAA.id (item)
@@ -177,31 +179,33 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
   }
 
   const propsAndActivationArgs =
-    getIdSpecificAffectedAndDispatchProps
-      ({
-        handleInput,
-        handleSelect,
-        selectElementDisabled,
-      })
-      (l10n)
-      (wiki)
-      (item)
-      (selectedOptions)
+    getIdSpecificAffectedAndDispatchProps ({
+                                            handleInput,
+                                            handleSelect,
+                                            selectElementDisabled,
+                                          })
+                                          (l10n)
+                                          (wiki)
+                                          (item)
+                                          (selectedOptions)
 
-  const finalProps = insertFinalCurrentCost (item) (selectedOptions) (propsAndActivationArgs)
+  const finalProps = insertFinalCurrentCost (item)
+                                            (selectedOptions)
+                                            (propsAndActivationArgs)
 
   const controlElements =
-    getInactiveActivatableControlElements
-      ({
-        handleInput,
-        handleSelect,
-        handleSecondSelect: setSelected2,
-        handleLevel,
-        selectElementDisabled,
-      })
-      (item)
-      (selectedOptions)
-      (finalProps)
+    getInactiveActivatableControlElements (l10n)
+                                          (isEditingAllowed)
+                                          ({
+                                            handleInput,
+                                            handleSelect,
+                                            handleSecondSelect: setSelected2,
+                                            handleLevel,
+                                            selectElementDisabled,
+                                          })
+                                          (item)
+                                          (selectedOptions)
+                                          (finalProps)
 
   const mlevelElementBefore = IACEA.levelElementBefore (controlElements)
   const mlevelElementAfter = IACEA.levelElementAfter (controlElements)

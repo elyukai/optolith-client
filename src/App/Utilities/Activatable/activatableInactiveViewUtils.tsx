@@ -4,7 +4,7 @@ import { equals, notEquals } from "../../../Data/Eq";
 import { Functn, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
-import { countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, notNull, subscript, subscriptF, sum, take } from "../../../Data/List";
+import { cons, countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, notNull, subscript, subscriptF, sum, take } from "../../../Data/List";
 import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, or, then, thenF } from "../../../Data/Maybe";
 import { dec, gte, max, min, multiply, negate } from "../../../Data/Num";
 import { lookupF } from "../../../Data/OrderedMap";
@@ -687,10 +687,13 @@ interface InactiveActivatableControlElementsInputHandlers {
 }
 
 export const getInactiveActivatableControlElements =
+  (l10n: L10nRecord) =>
+  (isEditingAllowed: boolean) =>
   (inputHandlers: InactiveActivatableControlElementsInputHandlers) =>
   (entry: Record<InactiveActivatable>) =>
   (selectedOptions: ActivatableAddListItemSelectedOptions) =>
   (props: IdSpecificAffectedAndDispatchProps): Record<InactiveActivatableControlElements> => {
+    const id = IAA.id (entry)
     const mselected = selectedOptions.selected
     const mselected2 = selectedOptions.selected2
     const minput_text = selectedOptions.input
@@ -723,7 +726,17 @@ export const getInactiveActivatableControlElements =
                 const max_level =
                   fromMaybe (levels) (pipe_ (entry, IAA.maxLevel, fmap (min (levels))))
 
-                const levelOptions = getLevelElementsWithMin (min_level) (max_level)
+                const levelOptions =
+                  pipe_ (
+                    getLevelElementsWithMin (min_level) (max_level),
+                    ls => SpecialAbilityId.Language === id && isEditingAllowed
+                          ? cons (ls)
+                                 (DropdownOption ({
+                                   id: Just (4),
+                                   name: translate (l10n) ("nativetongue.short"),
+                                 }))
+                          : ls
+                  )
 
                 return pipe_ (
                   elements,
