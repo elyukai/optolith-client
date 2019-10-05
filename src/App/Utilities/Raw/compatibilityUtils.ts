@@ -968,7 +968,20 @@ export const convertHero =
                              isCulturalPackageActive,
                            })
                          ))
-                ))
+                )),
+      convertLT ("1.2.0-alpha.7")
+                // Fix Stigma (Green Hair) actually allow green hair in
+                // personal data
+                (hero => hasOwnProperty ("DISADV_45") (hero .activatable)
+                  && hero .activatable .DISADV_45 .some (e => e .sid === 3)
+                  ? {
+                    ...hero,
+                    pers: {
+                      ...hero.pers,
+                      haircolor: 25,
+                    },
+                  }
+                  : hero)
     )
   }
 
