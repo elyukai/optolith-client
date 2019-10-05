@@ -7,13 +7,9 @@
  * @see IO
  */
 
-import { pipe } from "../App/Utilities/pipe";
 import { Either, Left, Right } from "../Data/Either";
-import { ident } from "../Data/Function";
-import { Internals } from "../Data/Internals";
-import { fromIO } from "../System/IO";
 
-import IO = Internals.IO
+export const toMsg = (err: Error) => err .message
 
 /**
  * `catch :: Exception e => IO a -> (e -> IO a) -> IO a`
@@ -23,10 +19,15 @@ import IO = Internals.IO
  * with the value of the exception passed as an argument. Otherwise, the result
  * is returned as normal.
  */
-export const catchIO =
-  <A> (x: IO<A>) =>
-  (f: (err: Error) => IO<A>): IO<A> =>
-    IO (() => fromIO (x) .then (ident, pipe (f, fromIO)))
+export const catchIO: <A> (x: () => Promise<A>) => (f: (err: Error) => Promise<A>) => Promise<A> =
+  x => async f => {
+    try {
+      return x ()
+    }
+    catch (err) {
+      return f (err)
+    }
+  }
 
 /**
  * `try :: Exception e => IO a -> IO (Either e a)`
@@ -35,9 +36,16 @@ export const catchIO =
  * exception was raised, or `(Left ex)` if an exception was raised and its value
  * is `ex`.
  */
-export const tryIO =
-  <A> (x: IO<A>): IO<Either<Error, A>> =>
-    IO (() => fromIO (x) .then (Right, Left))
+export const tryIO: <A extends any[], B> (x: (...p: A) => Promise<B>) =>
+                    (...p: A) => Promise<Either<Error, B>> =
+  x => async (...p) => {
+    try {
+      return Right (await x (...p))
+    }
+    catch (err) {
+      return Left (err)
+    }
+  }
 
 /**
  * `trySync :: Exception e => (a -> b) -> (e -> b) -> (() -> a) -> b`

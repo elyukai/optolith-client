@@ -18,15 +18,13 @@ import { AppContainer } from "./App/Containers/AppContainer";
 import { appReducer, AppState, AppStateRecord } from "./App/Reducers/appReducer";
 import { getLocaleMessages } from "./App/Selectors/stateSelectors";
 import { translate, translateP } from "./App/Utilities/I18n";
-import { pipe, pipe_ } from "./App/Utilities/pipe";
+import { pipe } from "./App/Utilities/pipe";
 import { isDialogOpen } from "./App/Utilities/SubwindowsUtils";
 import { flip } from "./Data/Function";
-import { fmap } from "./Data/Functor";
 import { List } from "./Data/List";
 import { fromJust, isJust, Just } from "./Data/Maybe";
 import { uncurryN } from "./Data/Tuple/Curry";
 import { Unit } from "./Data/Unit";
-import { runIO } from "./System/IO";
 
 const nativeAppReducer =
   uncurryN (pipe ((x: AppStateRecord | undefined) => x === undefined ? AppState.default : x,
@@ -35,9 +33,9 @@ const nativeAppReducer =
 const store: Store<AppStateRecord, Action> & { dispatch: ReduxDispatch<Action> } =
   createStore (nativeAppReducer, applyMiddleware (thunk))
 
-pipe_ (
-  store .dispatch (requestInitialData),
-  fmap (() => {
+store
+  .dispatch (requestInitialData)
+  .then (() => {
     const currentWindow = remote.getCurrentWindow ()
 
     const { getState, dispatch } = store
@@ -138,9 +136,8 @@ pipe_ (
     ipcRenderer.send ("loading-done")
 
     return Unit
-  }),
-  runIO
-)
+  })
+  .catch (() => undefined)
 
 render (
   <Provider store={store}>

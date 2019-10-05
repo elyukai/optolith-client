@@ -26,6 +26,7 @@ const UI = uiReducer.A_
 
 export const getCurrentTab = pipe (App.ui, UI.location)
 
+export const getLoadingPhase = App.isReady
 
 export const getLocaleMessages = pipe (App.l10n, LocaleState.AL.messages)
 export const getLocaleId = pipe (App.l10n, LocaleState.AL.id)

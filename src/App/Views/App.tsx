@@ -1,11 +1,12 @@
 import * as React from "react";
 import { List, splitOn } from "../../Data/List";
-import { fromMaybe, guardReplace, Just, listToMaybe, Maybe, maybe } from "../../Data/Maybe";
+import { bind, ensure, fromMaybe, guardReplace, Just, listToMaybe, Maybe, maybe } from "../../Data/Maybe";
 import { AlertsContainer } from "../Containers/AlertsContainer";
 import { DownloaderContainer } from "../Containers/DownloaderContainer";
 import { NavigationBarContainer } from "../Containers/NavigationBarContainer";
 import { HeroModelRecord } from "../Models/Hero/HeroModel";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
+import { LAST_LOADING_PHASE } from "../Reducers/isReadyReducer";
 import { classListMaybe } from "../Utilities/CSS";
 import { getSystemLocale } from "../Utilities/IOUtils";
 import { TabId } from "../Utilities/LocationUtils";
@@ -22,6 +23,7 @@ export interface AppStateProps {
   platform: string
   theme: string
   areAnimationsEnabled: boolean
+  loading_phase: number
 }
 
 export interface AppDispatchProps {
@@ -67,9 +69,8 @@ export class App extends React.Component<AppProps, AppState> {
       enterFullscreen,
       leaveFullscreen,
       checkForUpdates,
+      loading_phase,
     } = this.props
-
-    console.log (platform)
 
     const { hasError } = this.state
 
@@ -106,6 +107,8 @@ export class App extends React.Component<AppProps, AppState> {
               {getSystemLocale () === "de-DE"
               ? "Lade und überprüfe Tabellen und Nutzerdaten..."
               : "Loading and validating tables and user data..."}
+              {" "}
+              {loading_phase}
             </div>
           </div>
 
@@ -166,6 +169,6 @@ export class App extends React.Component<AppProps, AppState> {
           </section>
         </div>
       ))
-      (ml10n)
+      (bind (ml10n) (ensure (() => loading_phase === LAST_LOADING_PHASE)))
   }
 }

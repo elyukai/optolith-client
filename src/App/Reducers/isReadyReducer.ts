@@ -1,14 +1,16 @@
 import { cnst, ident } from "../../Data/Function";
-import { EndLoadingState } from "../Actions/IOActions";
+import { SetLoadingPhase } from "../Actions/IOActions";
 import { ActionTypes } from "../Constants/ActionTypes";
 
-type Action = EndLoadingState
+type Action = SetLoadingPhase
+
+export const LAST_LOADING_PHASE = 25
 
 export const isReadyReducer =
-  (action: Action): ident<boolean> => {
+  (action: Action): ident<number> => {
     switch (action.type) {
-      case ActionTypes.END_LOADING_STATE:
-        return cnst (true)
+      case ActionTypes.SET_LOADING_PHASE:
+        return cnst (action.payload.phase)
 
       default:
         return ident

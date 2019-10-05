@@ -7,12 +7,11 @@ import { existsSync, mkdirSync } from "fs";
 import * as path from "path";
 import { prerelease } from "semver";
 import * as url from "url";
-import { pipe_ } from "./App/Utilities/pipe";
 import { tryIO } from "./Control/Exception";
 import { fromLeft_, isLeft } from "./Data/Either";
-import { fmap } from "./Data/Functor";
+import { fmapF } from "./Data/Functor";
 import { Unit } from "./Data/Unit";
-import { existsFile, IO, join, liftM2, runIO, thenF } from "./System/IO";
+import { copyFile, existsFile } from "./System/IO";
 // tslint:disable-next-line:ordered-imports
 import windowStateKeeper = require("electron-window-state");
 
@@ -51,16 +50,16 @@ const app_path = app.getAppPath ()
 const copyFileFromToFolder =
   (originFolder: string) =>
   (destFolder: string) =>
-  (fileName: string) => {
+  async (fileName: string) => {
     const originPath = path.join (originFolder, fileName)
     const destPath = path.join (destFolder, fileName)
 
-    return join (liftM2 ((origin_exists: boolean) => (dest_exists: boolean) =>
-                          !dest_exists && origin_exists
-                            ? IO.copyFile (originPath) (destPath)
-                            : IO.pure (undefined))
-                        (existsFile (originPath))
-                        (existsFile (destPath)))
+    const origin_exists = await existsFile (originPath)
+    const dest_exists = await existsFile (destPath)
+
+    return !dest_exists && origin_exists
+           ? copyFile (originPath) (destPath)
+           : Promise.resolve ()
   }
 
 const copyFileToCurrent =
@@ -196,35 +195,29 @@ const openMainWindow = () => {
 }
 
 const copyAllFiles =
-  (copy: (fileName: string) => IO<void>) =>
-    pipe_ (
-      copy ("window.json"),
-      tryIO,
-      fmap (x => isLeft (x) ? (console.warn (fromLeft_ (x)), Unit) : Unit),
-      thenF (copy ("heroes.json")),
-      tryIO,
-      fmap (x => isLeft (x) ? (console.warn (fromLeft_ (x)), Unit) : Unit),
-      thenF (copy ("config.json")),
-      tryIO,
-      fmap (x => isLeft (x) ? (console.warn (fromLeft_ (x)), Unit) : Unit)
-    )
+  async (copy: (fileName: string) => Promise<void>) => {
+    await fmapF (tryIO (copy) ("window.json"))
+                (x => isLeft (x) ? (console.warn (fromLeft_ (x)), undefined) : undefined)
 
-function main () {
+    await fmapF (tryIO (copy) ("heroes.json"))
+                (x => isLeft (x) ? (console.warn (fromLeft_ (x)), undefined) : undefined)
+
+    await fmapF (tryIO (copy) ("config.json"))
+                (x => isLeft (x) ? (console.warn (fromLeft_ (x)), undefined) : undefined)
+  }
+
+const main = () => {
   if (isPrerelease) {
-    pipe_ (
-      copyAllFiles (copyFileFromToFolder (path.join (user_data_path, "..", "Optolyth"))
-                                         (path.join (user_data_path, "..", "Optolith"))),
-      thenF (copyAllFiles (copyFileToCurrent ("Optolith"))),
-      fmap (openMainWindow),
-      runIO
-    )
+    copyAllFiles (copyFileFromToFolder (path.join (user_data_path, "..", "Optolyth"))
+                                       (path.join (user_data_path, "..", "Optolith")))
+      .then (async () => fmapF (copyAllFiles (copyFileToCurrent ("Optolith")))
+                               (openMainWindow))
+      .catch (() => undefined)
   }
   else {
-    pipe_ (
-      copyAllFiles (copyFileToCurrent ("Optolyth")),
-      fmap (openMainWindow),
-      runIO
-    )
+    fmapF (copyAllFiles (copyFileToCurrent ("Optolyth")))
+          (openMainWindow)
+      .catch (() => undefined)
   }
 }
 

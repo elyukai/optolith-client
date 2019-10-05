@@ -18,12 +18,12 @@ const file_path = join (user_data_path, "update.json")
  * there is no file present.
  */
 export const readUpdate =
-  pipe_ (
-    file_path,
-    readFile,
-    tryIO,
-    fmap (pipe (eitherToMaybe, bindF (parseJSON), fmap (x => x[property_name] === true), and))
-  )
+  async () =>
+    pipe_ (
+      file_path,
+      tryIO (readFile),
+      fmap (pipe (eitherToMaybe, bindF (parseJSON), fmap (x => x[property_name] === true), and))
+    )
 
 /**
  * Pass in if an update has been downloaded or not, and then create/overwrite
@@ -33,6 +33,5 @@ export const writeUpdate =
   pipe (
     (x: boolean) => ({ [property_name]: x }),
     JSON.stringify,
-    writeFile (file_path),
-    tryIO
+    tryIO (writeFile (file_path))
   )

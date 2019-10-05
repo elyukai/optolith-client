@@ -21,14 +21,13 @@ import Maybe = Internals.Maybe
 import Either = Internals.Either
 import Right = Internals.Right
 import List = Internals.List
-import IO = Internals.IO
 import OrderedMap = Internals.OrderedMap
 import mapFromArray = Internals.mapFromArray
 
 export type Functor<A> = Const<A, any>
                        | Either<any, A>
                        | Identity<A>
-                       | IO<A>
+                       | Promise<A>
                        | List<A>
                        | Maybe<A>
                        | OrderedMap<any, A>
@@ -42,7 +41,7 @@ export type FunctorMap<A, B> =
     F extends Const<infer A0, A> ? Const<A0, B> :
     F extends Either<any, A> ? Exclude<F, Right<any>> | Right<B> :
     F extends Identity<A> ? Identity<B> :
-    F extends IO<A> ? IO<B> :
+    F extends Promise<A> ? Promise<B> :
     F extends List<A> ? List<B> :
     F extends Maybe<A> ? Maybe<B> :
     F extends OrderedMap<infer K, A> ? OrderedMap<K, B> :
@@ -106,10 +105,8 @@ export const fmap =
       return Identity (nextValue)
     }
 
-    if (Internals.isIO (x)) {
-      const res = x .f ()
-
-      return IO (() => res .then (f))
+    if (x instanceof Promise) {
+      return x .then (f)
     }
 
     if (Internals.isMaybe (x)) {
@@ -164,7 +161,7 @@ interface fmapF {
   /**
    * `fmap :: IO a -> (a -> b) -> IO b`
    */
-  <A> (x: IO<A>): <B> (f: (x: A) => B) => IO<B>
+  <A> (x: Promise<A>): <B> (f: (x: A) => B) => Promise<B>
   /**
    * `fmap :: [a] -> (a -> b) -> [b]`
    */

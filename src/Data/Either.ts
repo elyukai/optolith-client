@@ -189,9 +189,9 @@ export const bimap =
  * `first :: (a -> b) -> Either a c -> Either b c`
  */
 export const first =
-  <A, B, C>
+  <A, B>
   (f: (l: A) => B) =>
-  (x: Either<A, C>): Either<B, C> =>
+  <C> (x: Either<A, C>): Either<B, C> =>
     isLeft (x)
       ? Left (f (x .value))
       : x

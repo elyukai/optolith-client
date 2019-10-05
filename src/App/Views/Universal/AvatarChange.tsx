@@ -1,14 +1,13 @@
 import * as path from "path";
 import * as React from "react";
 import { pathToFileURL } from "url";
-import { fmap } from "../../../Data/Functor";
+import { fmap, fmapF } from "../../../Data/Functor";
 import { head, notNull } from "../../../Data/List";
 import { ensure, orN } from "../../../Data/Maybe";
-import { runIO } from "../../../System/IO";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { showOpenDialog } from "../../Utilities/IOUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
+import { pipe } from "../../Utilities/pipe";
 import { isURLValid } from "../../Utilities/RegexUtils";
 import { AvatarWrapper } from "./AvatarWrapper";
 import { BorderButton } from "./BorderButton";
@@ -35,35 +34,31 @@ export const AvatarChange: React.FC<AvatarChangeProps> = props => {
   const [prevIsOpen, setPrevIsOpen] = React.useState (isOpen)
 
   const handleSelectFile = React.useCallback (
-    () => {
-      pipe_ (
-        showOpenDialog ({
-          filters: [{ name: translate (l10n) ("image"), extensions: valid_extensions }],
-        }),
-        fmap (pipe (
-          ensure (notNull),
-          fmap (pipe (
-            head,
-            path_to_image => {
-              const new_url = pathToFileURL (path_to_image) .toString ()
-              const ext = path .extname (path_to_image) .toLowerCase ()
+    async () =>
+      fmapF (showOpenDialog ({
+              filters: [{ name: translate (l10n) ("image"), extensions: valid_extensions }],
+            }))
+            (pipe (
+              ensure (notNull),
+              fmap (pipe (
+                head,
+                path_to_image => {
+                  const new_url = pathToFileURL (path_to_image) .toString ()
+                  const ext = path .extname (path_to_image) .toLowerCase ()
 
-              if (valid_extnames .includes (ext) && isURLValid (new_url)) {
-                setFileValid (true)
-                setUrl (new_url)
-              }
-              else {
-                setFileValid (false)
-                setUrl ("")
-              }
+                  if (valid_extnames .includes (ext) && isURLValid (new_url)) {
+                    setFileValid (true)
+                    setUrl (new_url)
+                  }
+                  else {
+                    setFileValid (false)
+                    setUrl ("")
+                  }
 
-              return path_to_image
-            }
-          ))
-        )),
-        runIO
-      )
-    },
+                  return path_to_image
+                }
+              ))
+            )),
     [l10n]
   )
 

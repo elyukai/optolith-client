@@ -1,24 +1,20 @@
 import * as path from "path";
-import * as xlsx from "xlsx";
-import { tryIO } from "../../../Control/Exception";
-import { bind, bindF, Either, first, fromRight_, isLeft, join, mapM, maybeToEither } from "../../../Data/Either";
+import { bind, Either, first, fromRight_, isLeft, Left, maybeToEither } from "../../../Data/Either";
 import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { Lens_, over, set } from "../../../Data/Lens";
 import { all, append, consF, elemF, empty, foldr, List, map, notElemF } from "../../../Data/List";
-import { catMaybes, ensure, fromMaybe, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
+import { ensure, fromMaybe, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
 import { lt } from "../../../Data/Num";
-import { adjust, elems, fromList, insert, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { makeLenses, member, Record, RecordIBase } from "../../../Data/Record";
+import { adjust, elems, insert, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
+import { makeLenses, member, Record } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
 import { trace, traceId } from "../../../Debug/Trace";
-import { IO } from "../../../System/IO";
+import { ReduxAction } from "../../Actions/Actions";
 import { Categories } from "../../Constants/Categories";
 import { ProfessionId, SpecialAbilityId } from "../../Constants/Ids";
 import { AdvantageL } from "../../Models/Wiki/Advantage";
-import { Book } from "../../Models/Wiki/Book";
 import { DisadvantageL } from "../../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { getCustomProfession } from "../../Models/Wiki/Profession";
@@ -31,7 +27,7 @@ import { Activatable, Skillish } from "../../Models/Wiki/wikiTypeHelpers";
 import { app_path } from "../../Selectors/envSelectors";
 import { pipe, pipe_ } from "../pipe";
 import { getWikiSliceGetterByCategory } from "../WikiUtils";
-import { CsvColumnDelimiter, csvToList } from "./csvToList";
+import { csvToList } from "./csvToList";
 import { toAdvantage } from "./Entries/toAdvantage";
 import { toAdvantageSelectOption } from "./Entries/toAdvantageSelectOption";
 import { toAttribute } from "./Entries/toAttribute";
@@ -56,66 +52,9 @@ import { toSpecialAbility } from "./Entries/toSpecialAbility";
 import { toSpecialAbilitySelectOption } from "./Entries/toSpecialAbilitySelectOption";
 import { toSpell } from "./Entries/toSpell";
 import { toSpellExtension } from "./Entries/toSpellExtension";
+import { lookupBothRequiredToRecordFromSheetLoading, lookupL10nRequiredToRecordFromSheetLoading, lookupL10nToRecordFromSheetLoading, lookupNoRequiredToRecordFromSheetLoading } from "./FromSheetToRecord";
 import { mapMNamed } from "./validateValueUtils";
-
-const workbookToMap =
-  (wb: xlsx.WorkBook) =>
-    OrderedMap.fromSet ((name: string) =>
-                         xlsx.utils.sheet_to_csv (
-                           wb .Sheets [name],
-                           { FS: CsvColumnDelimiter, RS: "\n", blankrows: false }
-                         ))
-                       (OrderedSet.fromArray (wb.SheetNames))
-
-const { id } = Book.AL
-
-interface RecordWithId extends RecordIBase<any> {
-  id: string
-}
-
-const listToMap =
-  pipe (map ((x: Record<RecordWithId>) => Pair (id (x), x)), fromList) as
-    <A extends RecordWithId> (x0: List<Record<A>>) => OrderedMap<string, Record<A>>
-
-type Convert<A> =
-  (l10n: List<OrderedMap<string, string>>) =>
-  (univ_row: OrderedMap<string, string>) => Either<string, Maybe<A>>
-
-type LookupSheet = (x0: string) => Either<string, List<OrderedMap<string, string>>>
-
-const bindM2MapM =
-  (lookup_l10n: LookupSheet) =>
-  (lookup_univ: LookupSheet) =>
-  <A>
-  (f: Convert<A>) =>
-  (sheet_name: string) =>
-    (bindF ((l10n: List<OrderedMap<string, string>>) =>
-             fmap<List<Maybe<A>>, List<A>> (catMaybes)
-                  (bindF (mapM (f (l10n)))
-                         (lookup_univ (sheet_name))))
-           (lookup_l10n (sheet_name)))
-
-const bindM2MapMUnivOpt =
-  (lookup_l10n: LookupSheet) =>
-  (lookup_univ: LookupSheet) =>
-  <A>
-  (f: Convert<A>) =>
-  (sheet_name: string) =>
-    (bindF ((univ: List<OrderedMap<string, string>>) =>
-             fmap<List<Maybe<A>>, List<A>> (catMaybes)
-                  (bindF (mapM (f (univ)))
-                         (lookup_l10n (sheet_name))))
-           (lookup_univ (sheet_name)))
-
-const bindM2MapMToMap =
-  (lookup_l10n: LookupSheet) =>
-  (lookup_univ: LookupSheet) =>
-  <A extends RecordWithId>
-  (f: Convert<Record<A>>) =>
-  (sheet_name: string) =>
-    fmap<List<Record<A>>, OrderedMap<string, Record<A>>>
-      (listToMap)
-      (bindM2MapM (lookup_l10n) (lookup_univ) (f) (sheet_name))
+import { readXLSX } from "./XLSXParser";
 
 const { select } = makeLenses (SpecialAbility)
 
@@ -150,53 +89,39 @@ const wrapCsvErr =
 const wrapUnivCsvErr = wrapCsvErr ("univ")
 const wrapL10nCsvErr = (locale: string) => wrapCsvErr (`${locale}/l10n`)
 
-const readXLSX =
-  (pathToFile: string) => IO (async () => {
-                                try {
-                                  const work_book = xlsx.readFile (pathToFile)
-
-                                  return Promise.resolve (work_book)
-                                }
-                                catch (e) {
-                                  console.error (e)
-
-                                  return Promise.reject (
-                                    new Error (`readXLSX: XLSX file not found at ${pathToFile}.`)
-                                  )
-                                }
-                              })
-
 export type TableParseRes = Pair<L10nRecord, WikiModelRecord>
 
 export const parseTables =
-  (locale: string): IO<Either<string, TableParseRes>> => {
+  (locale: string): ReduxAction<Promise<Either<string, TableParseRes>>> =>
+  async dispatch => {
     traceId ("Parsing tables...")
 
     const l10n_path = path.join (app_path, "app", "Database", locale, "l10n.xlsx")
 
-    return pipe_ (
-      IO.liftM2 (parseWorkbooks (locale))
-                (readXLSX (univ_path))
-                (readXLSX (l10n_path)),
-      tryIO,
-      fmap (pipe (
-        first (e => e.message),
-        join
-      ))
-    )
+    const univ = await readXLSX (univ_path)
+    const l10n = await readXLSX (l10n_path)
+
+    try {
+      return await dispatch (parseWorkbooks (locale) (univ) (l10n))
+    }
+    catch (e) {
+      return Left (e .message)
+    }
   }
 
 const parseWorkbooks =
   (locale: string) =>
-  (univ_wb: xlsx.WorkBook) =>
-  (l10n_wb: xlsx.WorkBook): Either<string, Pair<L10nRecord, WikiModelRecord>> => {
+  (univ_wb: OrderedMap<string, string>) =>
+  (l10n_wb: OrderedMap<string, string>):
+  ReduxAction<Promise<Either<string, Pair<L10nRecord, WikiModelRecord>>>> =>
+  async dispatch => {
     const euniv_map =
       mapMEitherWithKey ((k: string) => pipe (csvToList, first (wrapUnivCsvErr (k))))
-                        (workbookToMap (univ_wb))
+                        (univ_wb)
 
     const el10n_map =
       mapMEitherWithKey ((k: string) => pipe (csvToList, first (wrapL10nCsvErr (locale) (k))))
-                        (workbookToMap (l10n_wb))
+                        (l10n_wb)
 
     if (isLeft (euniv_map)) {
       return euniv_map
@@ -222,65 +147,92 @@ const parseWorkbooks =
           maybeToEither (`l10n.xlsx: "${sheet}" sheet not found.`)
         )
 
-    const lookupBindM2MapM = bindM2MapM (lookup_l10n) (lookup_univ)
+    const convertRecordNoRequiredFromSheet =
+      lookupNoRequiredToRecordFromSheetLoading (lookup_l10n) (lookup_univ)
 
-    const lookupBindM2MapMUnivOpt = bindM2MapMUnivOpt (lookup_l10n) (lookup_univ)
+    const convertRecordL10nRequiredFromSheet =
+      lookupL10nRequiredToRecordFromSheetLoading (lookup_l10n) (lookup_univ)
 
-    const lookupBindM2MapMToMap = bindM2MapMToMap (lookup_l10n) (lookup_univ)
+    const convertRecordL10nOnlyFromSheet =
+      lookupL10nToRecordFromSheetLoading (lookup_l10n)
+
+    const convertRecordFromSheet =
+      lookupBothRequiredToRecordFromSheetLoading (lookup_l10n) (lookup_univ)
 
     const l10n = bind (lookup_l10n ("UI")) <L10nRecord> (toL10n (locale))
 
-    const books =
-      fmap<List<Record<Book>>, OrderedMap<string, Record<Book>>>
-        (listToMap)
-        (bindF (mapM (toBook)) (lookup_l10n ("BOOKS")))
+    const books = await dispatch (convertRecordL10nOnlyFromSheet (toBook) ("BOOKS") (2))
 
-    const experienceLevels = lookupBindM2MapMToMap (toExperienceLevel) ("EXPERIENCE_LEVELS")
+    const experienceLevels = await dispatch (convertRecordFromSheet (toExperienceLevel)
+                                                                    ("EXPERIENCE_LEVELS")
+                                                                    (3))
 
-    const races = lookupBindM2MapMToMap (toRace) ("RACES")
+    const races = await dispatch (convertRecordFromSheet (toRace) ("RACES") (4))
 
-    const raceVariants = lookupBindM2MapMToMap (toRaceVariant) ("RACE_VARIANTS")
+    const raceVariants = await dispatch (convertRecordFromSheet (toRaceVariant)
+                                                                ("RACE_VARIANTS")
+                                                                (5))
 
-    const cultures = lookupBindM2MapMToMap (toCulture) ("CULTURES")
+    const cultures = await dispatch (convertRecordFromSheet (toCulture) ("CULTURES") (6))
 
-    const professions = lookupBindM2MapMToMap (toProfession) ("PROFESSIONS")
+    const professions = await dispatch (convertRecordFromSheet (toProfession) ("PROFESSIONS") (7))
 
-    const professionVariants = lookupBindM2MapMToMap (toProfessionVariant) ("PROFESSION_VARIANTS")
+    const professionVariants = await dispatch (convertRecordFromSheet (toProfessionVariant)
+                                                                      ("PROFESSION_VARIANTS")
+                                                                      (8))
 
-    const attributes = lookupBindM2MapMToMap (toAttribute) ("ATTRIBUTES")
+    const attributes = await dispatch (convertRecordFromSheet (toAttribute) ("ATTRIBUTES") (9))
 
-    const advantages = lookupBindM2MapMToMap (toAdvantage) ("ADVANTAGES")
+    const advantages = await dispatch (convertRecordFromSheet (toAdvantage) ("ADVANTAGES") (10))
 
     const advantageSelectOptions =
-      lookupBindM2MapMUnivOpt (toAdvantageSelectOption) ("AdvantagesSelections")
+      await dispatch (convertRecordL10nRequiredFromSheet (toAdvantageSelectOption)
+                                                         ("AdvantagesSelections")
+                                                         (11))
 
-    const disadvantages = lookupBindM2MapMToMap (toDisadvantage) ("DISADVANTAGES")
+    const disadvantages = await dispatch (convertRecordFromSheet (toDisadvantage)
+                                                                 ("DISADVANTAGES")
+                                                                 (12))
 
     const disadvantageSelectOptions =
-      lookupBindM2MapMUnivOpt (toDisadvantageSelectOption) ("DisadvantagesSelections")
+      await dispatch (convertRecordL10nRequiredFromSheet (toDisadvantageSelectOption)
+                                                         ("DisadvantagesSelections") (13))
 
-    const skills = lookupBindM2MapMToMap (toSkill) ("SKILLS")
+    const skills = await dispatch (convertRecordFromSheet (toSkill) ("SKILLS") (14))
 
-    const combatTechniques = lookupBindM2MapMToMap (toCombatTechnique) ("COMBAT_TECHNIQUES")
+    const combatTechniques = await dispatch (convertRecordFromSheet (toCombatTechnique)
+                                                                    ("COMBAT_TECHNIQUES")
+                                                                    (15))
 
-    const spells = lookupBindM2MapMToMap (toSpell) ("SPELLS")
+    const spells = await dispatch (convertRecordFromSheet (toSpell) ("SPELLS") (16))
 
-    const spellExtensions = lookupBindM2MapM (toSpellExtension) ("SpellX")
+    const spellExtensions = await dispatch (convertRecordNoRequiredFromSheet (toSpellExtension)
+                                                                             ("SpellX")
+                                                                             (17))
 
-    const cantrips = lookupBindM2MapMToMap (toCantrip) ("CANTRIPS")
+    const cantrips = await dispatch (convertRecordFromSheet (toCantrip) ("CANTRIPS") (18))
 
-    const liturgicalChants = lookupBindM2MapMToMap (toLiturgicalChant) ("CHANTS")
+    const liturgicalChants = await dispatch (convertRecordFromSheet (toLiturgicalChant)
+                                                                    ("CHANTS")
+                                                                    (19))
 
-    const liturgicalChantExtensions = lookupBindM2MapM (toLiturgicalChantExtension) ("ChantX")
+    const liturgicalChantExtensions =
+      await dispatch (convertRecordNoRequiredFromSheet (toLiturgicalChantExtension) ("ChantX") (20))
 
-    const blessings = lookupBindM2MapMToMap (toBlessing) ("BLESSINGS")
+    const blessings = await dispatch (convertRecordFromSheet (toBlessing) ("BLESSINGS") (21))
 
-    const specialAbilities = lookupBindM2MapMToMap (toSpecialAbility) ("SPECIAL_ABILITIES")
+    const specialAbilities = await dispatch (convertRecordFromSheet (toSpecialAbility)
+                                                                    ("SPECIAL_ABILITIES")
+                                                                    (22))
 
     const specialAbilitySelectOptions =
-      lookupBindM2MapMUnivOpt (toSpecialAbilitySelectOption) ("SpecialAbilitiesSelections")
+      await dispatch (convertRecordL10nRequiredFromSheet (toSpecialAbilitySelectOption)
+                                                         ("SpecialAbilitiesSelections")
+                                                         (23))
 
-    const itemTemplates = lookupBindM2MapMToMap (toItemTemplate) ("EQUIPMENT")
+    const itemTemplates = await dispatch (convertRecordFromSheet (toItemTemplate)
+                                                                 ("EQUIPMENT")
+                                                                 (24))
 
     return mapMNamed
       ({

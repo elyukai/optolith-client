@@ -220,7 +220,6 @@ export const fromRow =
 
     const id = fromRight_ (either_id)
 
-    return first<string, string, Record<A>>
-      (appendStr (`${origin}: `))
-      (f (id) (lookupF (l10n_row)))
+    return first (appendStr (`${origin}: `))
+                 (f (id) (lookupF (l10n_row)))
   }

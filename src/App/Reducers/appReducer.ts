@@ -14,7 +14,7 @@ export interface AppState {
   l10n: Record<LocaleState>
   ui: Record<UIState>
   wiki: WikiModelRecord
-  isReady: boolean
+  isReady: number
 }
 
 export type AppStateRecord = Record<AppState>
