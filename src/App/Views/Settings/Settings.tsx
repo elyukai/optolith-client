@@ -5,7 +5,7 @@ import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { BorderButton } from "../Universal/BorderButton";
 import { Checkbox } from "../Universal/Checkbox";
-import { Dialog } from "../Universal/DialogNew";
+import { Dialog } from "../Universal/Dialog";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { Option, SegmentedControls } from "../Universal/SegmentedControls";
 

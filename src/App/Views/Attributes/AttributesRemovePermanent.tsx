@@ -4,11 +4,13 @@ import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { toInt } from "../../Utilities/NumberUtils";
 import { isNaturalNumber } from "../../Utilities/RegexUtils";
-import { Dialog, DialogProps } from "../Universal/DialogNew";
+import { Dialog } from "../Universal/Dialog";
 import { TextField } from "../Universal/TextField";
 
-export interface AttributesRemovePermanentProps extends DialogProps {
+export interface AttributesRemovePermanentProps {
+  isOpen: boolean
   l10n: L10nRecord
+  close (): void
   remove (value: number): void
 }
 
@@ -16,49 +18,46 @@ export interface AttributesRemovePermanentState {
   value: string
 }
 
-export class AttributesRemovePermanent
-  extends React.Component<AttributesRemovePermanentProps, AttributesRemovePermanentState> {
-  state = {
-    value: "",
-  }
+export const AttributesRemovePermanent: React.FC<AttributesRemovePermanentProps> = props => {
+  const { l10n, remove, isOpen, close } = props
 
-  handleChange = (value: string) => this.setState ({ value })
+  const [value, setValue] = React.useState ("")
 
-  remove = () => {
-    const mvalue = toInt (this.state.value)
+  const handleRemove = React.useCallback (
+    () => {
+      const mvalue = toInt (value)
 
-    if (isJust (mvalue)) {
-      this.props.remove (fromJust (mvalue))
-    }
-  }
+      if (isJust (mvalue)) {
+        remove (fromJust (mvalue))
+      }
+    },
+    [remove, value]
+  )
 
-  render () {
-    const { l10n, ...other } = this.props
-    const { value } = this.state
-
-    return (
-      <Dialog
-        {...other}
-        id="overview-add-ap"
-        title={translate (l10n) ("removeenergypointslostpermanently")}
-        buttons={[
-          {
-            disabled: !isNaturalNumber (this.state.value),
-            label: translate (l10n) ("remove"),
-            onClick: this.remove,
-          },
-          {
-            label: translate (l10n) ("cancel"),
-          },
-        ]}>
-        <TextField
-          hint={translate (l10n) ("removeenergypointslostpermanentlyinputhint")}
-          value={value}
-          onChange={this.handleChange}
-          fullWidth
-          autoFocus
-          />
-      </Dialog>
-    )
-  }
+  return (
+    <Dialog
+      id="overview-add-ap"
+      title={translate (l10n) ("removeenergypointslostpermanently")}
+      buttons={[
+        {
+          disabled: !isNaturalNumber (value),
+          label: translate (l10n) ("remove"),
+          onClick: handleRemove,
+        },
+        {
+          label: translate (l10n) ("cancel"),
+        },
+      ]}
+      isOpen={isOpen}
+      close={close}
+      >
+      <TextField
+        hint={translate (l10n) ("removeenergypointslostpermanentlyinputhint")}
+        value={value}
+        onChange={setValue}
+        fullWidth
+        autoFocus
+        />
+    </Dialog>
+  )
 }

@@ -52,15 +52,6 @@ export class Router extends React.Component<RouterProps> {
     this.setState (() => ({ hasError: { error, info } }))
   }
 
-  componentWillReceiveProps (nextProps: RouterProps) {
-    const { id } = this.props
-    const { hasError } = this.state
-
-    if (nextProps.id !== id && typeof hasError === "object") {
-      this.setState (() => ({ hasError: undefined }))
-    }
-  }
-
   render (): React.ReactNode {
     const { id, l10n, mhero } = this.props
     const { hasError } = this.state

@@ -4,23 +4,20 @@ import { guardReplace, Just } from "../../../Data/Maybe";
 import { classListMaybe } from "../../Utilities/CSS";
 
 export interface TitleBarWrapperProps {
-  children?: React.ReactNode
   isFocused: boolean
 }
 
-export function TitleBarWrapper (props: TitleBarWrapperProps) {
-  return (
-    <div
-      className={
-        classListMaybe (List (
-          Just ("titlebar"),
-          guardReplace (!props.isFocused) ("not-focused")
-        ))
-      }
-      >
-      <div className="titlebar-inner">
-        {props.children}
-      </div>
+export const TitleBarWrapper: React.FC<TitleBarWrapperProps> = ({ isFocused, children }) => (
+  <div
+    className={
+      classListMaybe (List (
+        Just ("titlebar"),
+        guardReplace (!isFocused) ("not-focused")
+      ))
+    }
+    >
+    <div className="titlebar-inner">
+      {children}
     </div>
-  )
-}
+  </div>
+)

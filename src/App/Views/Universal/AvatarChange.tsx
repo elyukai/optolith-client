@@ -12,7 +12,7 @@ import { pipe, pipe_ } from "../../Utilities/pipe";
 import { isURLValid } from "../../Utilities/RegexUtils";
 import { AvatarWrapper } from "./AvatarWrapper";
 import { BorderButton } from "./BorderButton";
-import { Dialog, DialogProps } from "./DialogNew";
+import { Dialog, DialogProps } from "./Dialog";
 
 export interface AvatarChangeProps extends DialogProps {
   l10n: L10nRecord
@@ -28,83 +28,80 @@ export interface AvatarChangeState {
 const valid_extensions = ["jpeg", "png", "jpg"]
 const valid_extnames = valid_extensions .map (ext => `.${ext}`)
 
-export class AvatarChange extends React.Component<AvatarChangeProps, AvatarChangeState> {
-  state = {
-    fileValid: false,
-    url: "",
-  }
+export const AvatarChange: React.FC<AvatarChangeProps> = props => {
+  const { setPath, isOpen, l10n, title } = props
+  const [fileValid, setFileValid] = React.useState (false)
+  const [url, setUrl] = React.useState ("")
+  const [prevIsOpen, setPrevIsOpen] = React.useState (isOpen)
 
-  selectFile = () => {
-    pipe_ (
-      showOpenDialog ({
-        filters: [{ name: translate (this.props.l10n) ("image"), extensions: valid_extensions }],
-      }),
-      fmap (pipe (
-        ensure (notNull),
+  const handleSelectFile = React.useCallback (
+    () => {
+      pipe_ (
+        showOpenDialog ({
+          filters: [{ name: translate (l10n) ("image"), extensions: valid_extensions }],
+        }),
         fmap (pipe (
-          head,
-          path_to_image => {
-            const url = pathToFileURL (path_to_image) .toString ()
-            const ext = path .extname (path_to_image) .toLowerCase ()
+          ensure (notNull),
+          fmap (pipe (
+            head,
+            path_to_image => {
+              const new_url = pathToFileURL (path_to_image) .toString ()
+              const ext = path .extname (path_to_image) .toLowerCase ()
 
-            if (valid_extnames .includes (ext) && isURLValid (url)) {
-              this.setState ({ fileValid: true, url })
+              if (valid_extnames .includes (ext) && isURLValid (new_url)) {
+                setFileValid (true)
+                setUrl (new_url)
+              }
+              else {
+                setFileValid (false)
+                setUrl ("")
+              }
+
+              return path_to_image
             }
-            else {
-              this.setState ({ fileValid: false, url: "" })
-            }
+          ))
+        )),
+        runIO
+      )
+    },
+    [l10n]
+  )
 
-            return path_to_image
-          }
-        ))
-      )),
-      runIO
-    )
+  const handleSubmit = React.useCallback (
+    () => setPath (url),
+    [setPath, url]
+  )
+
+  if (!isOpen && orN (prevIsOpen)) {
+    setFileValid (false)
+    setUrl ("")
+    setPrevIsOpen (false)
   }
 
-  load = () => {
-    const { setPath } = this.props
-    const { url } = this.state
-    setPath (url)
-  }
-
-  componentWillReceiveProps (nextProps: AvatarChangeProps) {
-    if (nextProps.isOpen === false && orN (this.props.isOpen)) {
-      this.setState ({
-        fileValid: false,
-        url: "",
-      })
-    }
-  }
-
-  render () {
-    const { l10n, title } = this.props
-    const { fileValid, url } = this.state
-
-    return (
-      <Dialog
-        {...this.props}
-        id="avatar-change"
-        title={title !== undefined ? title : translate (l10n) ("changeheroavatar")}
-        buttons={[
-          {
-            disabled: !fileValid || url === "",
-            label: translate (l10n) ("apply"),
-            onClick: this.load,
-          },
-        ]}
-        >
-        <BorderButton
-          label={translate (l10n) ("selectfile")}
-          onClick={this.selectFile}
-          />
-        <AvatarWrapper
-          src={ensure ((unsafeUrl: string) => fileValid && unsafeUrl !== "") (url)}
-          />
-        {!fileValid && url !== "" ? (
-          <p>{translate (l10n) ("changeheroavatar.invalidfile")}</p>
-        ) : null}
-      </Dialog>
-    )
-  }
+  return (
+    <Dialog
+      id="avatar-change"
+      title={title === undefined ? translate (l10n) ("changeheroavatar") : title}
+      buttons={[
+        {
+          disabled: !fileValid || url === "",
+          label: translate (l10n) ("apply"),
+          onClick: handleSubmit,
+        },
+      ]}
+      close={close}
+      isOpen={isOpen}
+      >
+      <BorderButton
+        label={translate (l10n) ("selectfile")}
+        onClick={handleSelectFile}
+        />
+      <AvatarWrapper
+        src={ensure ((unsafeUrl: string) => fileValid && unsafeUrl !== "") (url)}
+        />
+      {!fileValid && url !== "" ? (
+        <p>{translate (l10n) ("changeheroavatar.invalidfile")}</p>
+      ) : null}
+    </Dialog>
+  )
 }

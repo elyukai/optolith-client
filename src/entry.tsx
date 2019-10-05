@@ -32,7 +32,7 @@ const nativeAppReducer =
   uncurryN (pipe ((x: AppStateRecord | undefined) => x === undefined ? AppState.default : x,
                   flip (appReducer)))
 
-const store: Store<AppStateRecord, Action<any>> & { dispatch: ReduxDispatch<Action> } =
+const store: Store<AppStateRecord, Action> & { dispatch: ReduxDispatch<Action> } =
   createStore (nativeAppReducer, applyMiddleware (thunk))
 
 pipe_ (
@@ -40,8 +40,7 @@ pipe_ (
   fmap (() => {
     const currentWindow = remote.getCurrentWindow ()
 
-    const { getState } = store
-    const dispatch = store.dispatch
+    const { getState, dispatch } = store
 
     if (remote.process.platform === "darwin") {
       const maybeLocale = getLocaleMessages (getState ())

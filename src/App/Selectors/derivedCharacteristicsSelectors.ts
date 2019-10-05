@@ -273,16 +273,14 @@ export const getTOU = createMaybeSelector (
 
 export const getDO = createMaybeSelector (
   mapGetToSliceWithProps (getAttributes) (AttrId.Agility),
-  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.ImprovedDodge),
   getLocaleAsProp,
   getRules,
-  (magi, mimproved_dodge, l10n, rules) => {
+  (magi, l10n, rules) => {
     const base = divideBy2AndRound (getAttributeValueWithDefault (magi))
 
     const higher_parade_values = Rules.A.higherParadeValues (rules) / 2
 
-    const mod = ensure (notEquals (0))
-                       (Maybe.sum (getFirstLevel (mimproved_dodge)) + higher_parade_values)
+    const mod = ensure (notEquals (0)) (higher_parade_values)
 
     const value = base + Maybe.sum (mod)
 

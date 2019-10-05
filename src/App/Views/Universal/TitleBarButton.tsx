@@ -9,13 +9,11 @@ export interface TitleBarButtonProps {
   onClick (): void
 }
 
-export function TitleBarButton (props: TitleBarButtonProps) {
-  return (
-    <div
-      className={classListMaybe (List (Just ("titlebar-btn"), Maybe (props.className)))}
-      onClick={props.onClick}
-      >
-      <span>{props.icon}</span>
-    </div>
-  )
-}
+export const TitleBarButton: React.FC<TitleBarButtonProps> = ({ className, icon, onClick }) => (
+  <div
+    className={classListMaybe (List (Just ("titlebar-btn"), Maybe (className)))}
+    onClick={onClick}
+    >
+    <span>{icon}</span>
+  </div>
+)

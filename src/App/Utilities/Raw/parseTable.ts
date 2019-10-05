@@ -58,7 +58,7 @@ import { toSpell } from "./Entries/toSpell";
 import { toSpellExtension } from "./Entries/toSpellExtension";
 import { mapMNamed } from "./validateValueUtils";
 
-export const workbookToMap =
+const workbookToMap =
   (wb: xlsx.WorkBook) =>
     OrderedMap.fromSet ((name: string) =>
                          xlsx.utils.sheet_to_csv (

@@ -17,7 +17,7 @@ import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybeWith } from "../../Utilities/ReactUtils";
 import { isInteger } from "../../Utilities/RegexUtils";
-import { Dialog } from "../Universal/DialogNew";
+import { Dialog } from "../Universal/Dialog";
 import { IconButton } from "../Universal/IconButton";
 import { ListItem } from "../Universal/ListItem";
 import { ListItemButtons } from "../Universal/ListItemButtons";

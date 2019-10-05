@@ -15,103 +15,101 @@ export interface TitleBarProps {
   leaveFullscreen (): void
 }
 
-export interface TitleBarState {
-  isMaximized: boolean
-  isFullScreen: boolean
-  isFocused: boolean
-}
+const win = remote.getCurrentWindow ()
 
-export class TitleBar extends React.Component<TitleBarProps, TitleBarState> {
-  state = {
-    isMaximized: remote.getCurrentWindow ().isMaximized (),
-    isFullScreen: remote.getCurrentWindow ().isFullScreen (),
-    isFocused: remote.getCurrentWindow ().isFocused (),
-  }
+export const TitleBar: React.FC<TitleBarProps> = props => {
+  const {
+    platform,
+    maximize,
+    minimize,
+    restore,
+    enterFullscreen,
+    leaveFullscreen,
+    isLoading,
+    close,
+    closeDuringLoad,
+  } = props
 
-  componentDidMount () {
-    const win = remote.getCurrentWindow ()
-    win
-      .addListener ("maximize", this.updateState)
-      .addListener ("unmaximize", this.updateState)
-      .addListener ("enter-full-screen", this.updateState)
-      .addListener ("leave-full-screen", this.updateState)
-      .addListener ("blur", this.updateState)
-      .addListener ("focus", this.updateState)
-  }
+  const [isMaximized, setIsMaximized] = React.useState (win .isMaximized ())
+  const [isFullScreen, setIsFullScreen] = React.useState (win .isFullScreen ())
+  const [isFocused, setIsFocused] = React.useState (win .isFocused ())
 
-  componentWillUnmount () {
-    const win = remote.getCurrentWindow ()
-    win
-      .removeListener ("maximize", this.updateState)
-      .removeListener ("unmaximize", this.updateState)
-      .removeListener ("enter-full-screen", this.updateState)
-      .removeListener ("leave-full-screen", this.updateState)
-      .removeListener ("blur", this.updateState)
-      .removeListener ("focus", this.updateState)
-  }
+  const handleMaximized = React.useCallback (
+    () => setIsMaximized (remote.getCurrentWindow () .isMaximized ()),
+    []
+  )
 
-  closeFn = () => {
-    const {
-      close,
-      closeDuringLoad,
-      isLoading,
-    } = this.props
+  const handleFullScreen = React.useCallback (
+    () => setIsFullScreen (remote.getCurrentWindow () .isFullScreen ()),
+    []
+  )
 
-    if (isLoading === true) {
-      closeDuringLoad ()
-    }
-    else {
-      close ()
-    }
-  }
+  const handleFocused = React.useCallback (
+    () => setIsFocused (remote.getCurrentWindow () .isFocused ()),
+    []
+  )
 
-  updateState = () => {
-    this.setState ({
-      isMaximized: remote .getCurrentWindow () .isMaximized (),
-      isFullScreen: remote .getCurrentWindow () .isFullScreen (),
-      isFocused: remote .getCurrentWindow () .isFocused (),
-    })
-  }
+  React.useEffect (
+    () => {
+      remote.getCurrentWindow ()
+        .addListener ("maximize", handleMaximized)
+        .addListener ("unmaximize", handleMaximized)
+        .addListener ("enter-full-screen", handleFullScreen)
+        .addListener ("leave-full-screen", handleFullScreen)
+        .addListener ("blur", handleFocused)
+        .addListener ("focus", handleFocused)
 
-  render () {
-    const {
-      platform,
-      maximize,
-      minimize,
-      restore,
-      enterFullscreen,
-      leaveFullscreen,
-    } = this.props
+      return () => {
+        remote.getCurrentWindow ()
+          .removeListener ("maximize", handleMaximized)
+          .removeListener ("unmaximize", handleMaximized)
+          .removeListener ("enter-full-screen", handleFullScreen)
+          .removeListener ("leave-full-screen", handleFullScreen)
+          .removeListener ("blur", handleFocused)
+          .removeListener ("focus", handleFocused)
+      }
+    },
+    [handleMaximized, handleFullScreen, handleFocused]
+  )
 
-    const { isMaximized, isFullScreen } = this.state
+  const handleClose = React.useCallback (
+    () => {
+      if (isLoading === true) {
+        closeDuringLoad ()
+      }
+      else {
+        close ()
+      }
+    },
+    [isLoading, close, closeDuringLoad]
+  )
 
-    if (platform === "darwin") {
-      return (
-        <TitleBarWrapper {...this.state}>
-          <div className="macos-hover-area">
-            <TitleBarButton icon="&#xE900;" onClick={this.closeFn} className="close" />
-            <TitleBarButton icon="&#xE903;" onClick={minimize} className="minimize" />
-            {
-              isFullScreen
-              ? <TitleBarButton icon="&#xE902;" onClick={leaveFullscreen} className="fullscreen" />
-              : <TitleBarButton icon="&#xE901;" onClick={enterFullscreen} className="fullscreen" />
-            }
-          </div>
-        </TitleBarWrapper>
-      )
-    }
-
+  if (platform === "darwin") {
     return (
-      <TitleBarWrapper {...this.state}>
-        <TitleBarButton icon="&#xE903;" onClick={minimize} className="minimize" />
-        {isMaximized
-          ? null
-          : <TitleBarButton icon="&#xE901;" onClick={maximize} className="maximize" />}
-        {isMaximized
-          ? <TitleBarButton icon="&#xE902;" onClick={restore} className="restore" />
-          : null}
-        <TitleBarButton icon="&#xE900;" onClick={this.closeFn} className="close" />
+      <TitleBarWrapper isFocused={isFocused}>
+        <div className="macos-hover-area">
+          <TitleBarButton icon="&#xE900;" onClick={handleClose} className="close" />
+          <TitleBarButton icon="&#xE903;" onClick={minimize} className="minimize" />
+          {
+            isFullScreen
+            ? <TitleBarButton icon="&#xE902;" onClick={leaveFullscreen} className="fullscreen" />
+            : <TitleBarButton icon="&#xE901;" onClick={enterFullscreen} className="fullscreen" />
+          }
+        </div>
       </TitleBarWrapper>
     )
   }
+
+  return (
+    <TitleBarWrapper isFocused={isFocused}>
+      <TitleBarButton icon="&#xE903;" onClick={minimize} className="minimize" />
+      {isMaximized
+        ? null
+        : <TitleBarButton icon="&#xE901;" onClick={maximize} className="maximize" />}
+      {isMaximized
+        ? <TitleBarButton icon="&#xE902;" onClick={restore} className="restore" />
+        : null}
+      <TitleBarButton icon="&#xE900;" onClick={handleClose} className="close" />
+    </TitleBarWrapper>
+  )
 }

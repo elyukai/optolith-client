@@ -13,7 +13,7 @@ import { translate } from "../../Utilities/I18n";
 import { getLossLevelElements } from "../../Utilities/ItemUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { sortRecordsByName } from "../../Utilities/sortBy";
-import { Dialog } from "../Universal/DialogNew";
+import { Dialog } from "../Universal/Dialog";
 import { DropdownOption } from "../Universal/Dropdown";
 import { TextField } from "../Universal/TextField";
 import { HitZoneArmorEditorRow } from "./HitZoneArmorEditorRow";
@@ -64,8 +64,8 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
             (pipe (
               mapMaybe (pipe (
                 ensure ((e: Record<Item>) => IA.gr (e) === 4 && !IA.isTemplateLocked (e)),
-                fmap (itemToDropdown))
-              ),
+                fmap (itemToDropdown)
+              )),
               append
             ))
             (mitems),

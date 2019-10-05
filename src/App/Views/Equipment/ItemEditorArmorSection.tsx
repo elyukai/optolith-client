@@ -31,8 +31,21 @@ export interface ItemEditorArmorSectionProps {
 const EIA = EditItem.A
 const IEIVA = ItemEditorInputValidation.A
 
-export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
-  const { inputValidation, item, l10n } = props
+export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = props => {
+  const {
+    item,
+    l10n,
+    inputValidation,
+    setProtection,
+    setEncumbrance,
+    setMovementModifier,
+    setInitiativeModifier,
+    setStabilityModifier,
+    setLoss,
+    switchIsForArmorZonesOnly,
+    setHasAdditionalPenalties,
+    setArmorType,
+  } = props
 
   const gr = EIA.gr (item)
   const locked = EIA.isTemplateLocked (item)
@@ -56,7 +69,7 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
                 className="pro"
                 label={translate (l10n) ("protection.short")}
                 value={EIA.pro (item)}
-                onChange={props.setProtection}
+                onChange={setProtection}
                 disabled={locked}
                 valid={IEIVA.pro (inputValidation)}
                 />
@@ -64,7 +77,7 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
                 className="enc"
                 label={translate (l10n) ("encumbrance.short")}
                 value={EIA.enc (item)}
-                onChange={props.setEncumbrance}
+                onChange={setEncumbrance}
                 disabled={locked}
                 valid={IEIVA.enc (inputValidation)}
                 />
@@ -75,7 +88,7 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
               hint={translate (l10n) ("none")}
               value={EIA.armorType (item)}
               options={armorTypes}
-              onChangeJust={props.setArmorType}
+              onChangeJust={setArmorType}
               disabled={locked}
               required
               />
@@ -86,7 +99,7 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
                 className="stabilitymod"
                 label={translate (l10n) ("sturdinessmodifier.short")}
                 value={EIA.stabilityMod (item)}
-                onChange={props.setStabilityModifier}
+                onChange={setStabilityModifier}
                 disabled={locked}
                 valid={IEIVA.stabilityMod (inputValidation)}
                 />
@@ -95,14 +108,14 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
                 label={translate (l10n) ("wear")}
                 value={EIA.loss (item)}
                 options={getLossLevelElements ()}
-                onChange={props.setLoss}
+                onChange={setLoss}
                 />
             </div>
             <Checkbox
               className="only-zones"
               label={translate (l10n) ("hitzonearmoronly")}
               checked={EIA.forArmorZoneOnly (item)}
-              onClick={props.switchIsForArmorZonesOnly}
+              onClick={switchIsForArmorZonesOnly}
               disabled={locked}
               />
           </div>
@@ -112,7 +125,7 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
                 className="mov"
                 label={translate (l10n) ("movementmodifier.short")}
                 value={EIA.movMod (item)}
-                onChange={props.setMovementModifier}
+                onChange={setMovementModifier}
                 disabled={locked}
                 valid={IEIVA.mov (inputValidation)}
                 />
@@ -120,7 +133,7 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
                 className="ini"
                 label={translate (l10n) ("initiativemodifier.short")}
                 value={EIA.iniMod (item)}
-                onChange={props.setInitiativeModifier}
+                onChange={setInitiativeModifier}
                 disabled={locked}
                 valid={IEIVA.ini (inputValidation)}
                 />
@@ -129,12 +142,12 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
               className="add-penalties"
               label={translate (l10n) ("additionalpenalties")}
               checked={EIA.addPenalties (item)}
-              onClick={props.setHasAdditionalPenalties}
+              onClick={setHasAdditionalPenalties}
               disabled={locked}
               />
           </div>
         </div>
-    </>
-  )
-  : null
+      </>
+    )
+    : null
 }

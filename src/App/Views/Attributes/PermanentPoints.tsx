@@ -4,23 +4,26 @@ import { EnergyId } from "../../Constants/Ids";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { isFunction } from "../../Utilities/typeCheckUtils";
-import { Dialog, DialogProps } from "../Universal/DialogNew";
+import { Dialog } from "../Universal/Dialog";
 import { IconButton } from "../Universal/IconButton";
 
-export interface PermanentPointsProps extends DialogProps {
+export interface PermanentPointsProps {
   id: string
   eid: EnergyId
   l10n: L10nRecord
   permanentBoughtBack: Maybe<number>
   permanentSpent: number
+  isOpen: boolean
   addBoughtBackPoint? (): void
   addLostPoint (): void
   removeBoughtBackPoint? (): void
   removeLostPoint (): void
+  close (): void
 }
 
 export function PermanentPoints (props: PermanentPointsProps) {
   const {
+    id,
     eid,
     l10n,
     addBoughtBackPoint,
@@ -29,11 +32,15 @@ export function PermanentPoints (props: PermanentPointsProps) {
     permanentSpent,
     removeBoughtBackPoint,
     removeLostPoint,
+    close,
+    isOpen,
   } = props
 
   return (
     <Dialog
-      {...props}
+      id={id}
+      isOpen={isOpen}
+      close={close}
       className="permanent-points-editor"
       title={
         eid === EnergyId.AE
@@ -76,7 +83,8 @@ export function PermanentPoints (props: PermanentPointsProps) {
                 </div>
               </div>
             )
-            : null}
+            : null
+        }
         <div className="column lost">
           <div className="value">{permanentSpent}</div>
           <div className="description smallcaps">{translate (l10n) ("spent")}</div>
