@@ -17,7 +17,7 @@
     "plugins": [
       {
         "name": "typescript-tslint-plugin",
-        "alwaysShowRuleFailuresAsWarnings": false,
+        "alwaysShowRuleFailuresAsWarnings": false
       }
     ],
     "removeComments": true,
