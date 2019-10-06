@@ -4,6 +4,7 @@ import { inc, lt } from "../../Data/Num";
 import { foldlWithKey, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { IdPrefixes } from "../Constants/IdPrefixes";
+import { ExperienceLevelId } from "../Constants/Ids";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
 import { getNumericId, prefixId } from "./IDUtils";
 import { pipe } from "./pipe";
@@ -25,9 +26,8 @@ export const getExperienceLevelIdByAp =
           return current_ap >= threshold && and (fmap (pipe (ap, lt (threshold))) (prev))
             ? id
             : result
-        }
-      )
-      ("EL_1")
+        })
+      (ExperienceLevelId.Inexperienced)
       (experience_levels)
 
 /**

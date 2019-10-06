@@ -1,6 +1,7 @@
 import { fromDefault, makeLenses } from "../../../Data/Record";
 
 export interface Pact {
+  "@@name": "Pact"
   category: number
   level: number
   type: number

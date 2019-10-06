@@ -6,6 +6,7 @@ import { prefixId } from "../../../Utilities/IDUtils";
 import { pairToIncreaseSkill } from "./IncreaseSkill";
 
 export interface IncreaseSkillList {
+  "@@name": "IncreaseSkillList"
   id: List<string>
   value: number
 }

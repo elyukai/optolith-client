@@ -33,3 +33,12 @@ export const nobr = "\u2060"
  * Non-breaking space.
  */
 export const nbsp = "\xA0"
+
+/**
+ * `plusmn :: Char`
+ *
+ * &plusmn;
+ *
+ * Plus/minus sign.
+ */
+export const plusmn = "\xB1"

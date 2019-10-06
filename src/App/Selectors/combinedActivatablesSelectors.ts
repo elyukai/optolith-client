@@ -5,7 +5,7 @@ import { Accessor, Record, RecordI } from "../../Data/Record";
 import { ActiveActivatable } from "../Models/View/ActiveActivatable";
 import { InactiveActivatable } from "../Models/View/InactiveActivatable";
 import { Advantage } from "../Models/Wiki/Advantage";
-import { L10n, L10nRecord } from "../Models/Wiki/L10n";
+import { L10nRecord } from "../Models/Wiki/L10n";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { Activatable } from "../Models/Wiki/wikiTypeHelpers";
 import { createMapMaybeSelector } from "../Utilities/createMapMaybeSelector";
@@ -57,7 +57,7 @@ const getFilteredInactives =
                                      (inactive))
 
 const sortByName = (l10n: L10nRecord) => [comparingR (getName)
-                                                     (compareLocale (L10n.A.id (l10n)))]
+                                                     (compareLocale (l10n))]
 
 export const getFilteredInactiveAdvantages =
   createMapMaybeSelector (getHeroes)

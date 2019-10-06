@@ -25,28 +25,44 @@ const HZAA = HitZoneArmor.A
 export function HitZoneArmorsListItem (props: HitZoneArmorsListItemProps) {
   const { data: item, editItem, deleteItem } = props
 
+  const handleEdit =
+    React.useCallback (
+      () => editItem (HZAA.id (item)),
+      [editItem, item]
+    )
+
+  const handleDelete =
+    React.useCallback (
+      () => deleteItem (HZAA.id (item)),
+      [deleteItem, item]
+    )
+
   return (
-    <TooltipToggle content={
-      <div className="inventory-item">
-        <h4><span>{HZAA.name (item)}</span></h4>
-      </div>
-    } margin={11}>
-      <ListItem>
-        <ListItemName name={HZAA.name (item)} />
-        <ListItemSeparator />
-        <ListItemButtons>
-          <IconButton
-            icon="&#xE90c;"
-            onClick={() => editItem (HZAA.id (item))}
-            flat
-            />
-          <IconButton
-            icon="&#xE90b;"
-            onClick={() => deleteItem (HZAA.id (item))}
-            flat
-            />
-        </ListItemButtons>
-      </ListItem>
-    </TooltipToggle>
+    <TooltipToggle
+      content={
+        <div className="inventory-item">
+          <h4><span>{HZAA.name (item)}</span></h4>
+        </div>
+      }
+      margin={11}
+      target={
+        <ListItem>
+          <ListItemName name={HZAA.name (item)} />
+          <ListItemSeparator />
+          <ListItemButtons>
+            <IconButton
+              icon="&#xE90c;"
+              onClick={handleEdit}
+              flat
+              />
+            <IconButton
+              icon="&#xE90b;"
+              onClick={handleDelete}
+              flat
+              />
+          </ListItemButtons>
+        </ListItem>
+      }
+      />
   )
 }

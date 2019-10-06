@@ -2,7 +2,7 @@ import * as React from "react";
 import { notEquals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { List, mapAccumL, notNull, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybeR, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
+import { bindF, ensure, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
@@ -25,8 +25,8 @@ import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
 import { RecommendedReference } from "../Universal/RecommendedReference";
 import { Scroll } from "../Universal/Scroll";
+import { SearchField } from "../Universal/SearchField";
 import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { TextField } from "../Universal/TextField";
 import { SkillListItem } from "./SkillListItem";
 
 export interface SkillsOwnProps {
@@ -90,10 +90,10 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
     return (
       <Page id="talents">
         <Options>
-          <TextField
-            hint={translate (l10n) ("search")}
+          <SearchField
+            l10n={l10n}
             value={filterText}
-            onChangeString={this.props.setFilterText}
+            onChange={this.props.setFilterText}
             fullWidth
             />
           <SortOptions
@@ -180,7 +180,7 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
                   toArray,
                   arr => <>{arr}</>
                 )),
-                fromMaybeR (<ListPlaceholder l10n={l10n} type="skills" noResults />)
+                fromMaybe (<ListPlaceholder l10n={l10n} type="skills" noResults />)
               )}
             </ListView>
           </Scroll>

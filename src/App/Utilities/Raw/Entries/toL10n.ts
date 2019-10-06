@@ -2,13 +2,14 @@ import { Either, fromRight_, isLeft, mapM, maybeToEither, maybeToEither_ } from 
 import { List } from "../../../../Data/List";
 import { ensure, liftM2 } from "../../../../Data/Maybe";
 import { fromList, lookupF, OrderedMap } from "../../../../Data/OrderedMap";
+import { OmitName } from "../../../../Data/Record";
 import { show } from "../../../../Data/Show";
 import { Pair } from "../../../../Data/Tuple";
 import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { mensureMapNonEmptyString, mensureMapNonEmptyStringList } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 
-const localeRx = /[a-z]{2}-[A-Z]{2}/
+const localeRx = /[a-z]{2}-[A-Z]{2}/u
 
 const isLocale =
   (x: string) => localeRx .test (x)
@@ -46,7 +47,7 @@ export const toL10n =
 
       type MapWithEither<A> = { [K in keyof A]: Either<string, A[K]>}
 
-      const mappedL10n: MapWithEither<L10n> = {
+      const mappedL10n: MapWithEither<OmitName<L10n>> = {
         "id": maybeToEither_ (() => `Expected: Locale, Received: ${show (id)}`)
                              (ensure (isLocale) (id)),
         "lastchanges": checkL10nNonEmptyString ("lastchanges"),
@@ -696,12 +697,43 @@ export const toL10n =
         "demontypes": checkL10nNonEmptyStringList ("demontypes"),
         "demontype": checkL10nNonEmptyString ("demontype"),
         "circleofdamnation": checkL10nNonEmptyString ("circleofdamnation"),
-        "lesserpact": checkL10nNonEmptyString ("lesserpact"),
+        "minorpact": checkL10nNonEmptyString ("minorpact"),
         "tribaltraditions": checkL10nNonEmptyString ("tribaltraditions"),
         "tribes": checkL10nNonEmptyStringList ("tribes"),
         "saveheroerror": checkL10nNonEmptyString ("saveheroerror"),
         "brews": checkL10nNonEmptyStringList ("brews"),
         "brew": checkL10nNonEmptyString ("brew"),
+        "all": checkL10nNonEmptyString ("all"),
+        "allmeleecombattechniques": checkL10nNonEmptyString ("allmeleecombattechniques"),
+        "allrangedcombattechniques": checkL10nNonEmptyString ("allrangedcombattechniques"),
+        "allmeleecombattechniqueswithparry":
+          checkL10nNonEmptyString ("allmeleecombattechniqueswithparry"),
+        "allmeleecombattechniquesforonehandedweapons":
+          checkL10nNonEmptyString ("allmeleecombattechniquesforonehandedweapons"),
+        "youcannotuseamodificationonthisspellscastingtime":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthisspellscastingtime"),
+        "youcannotuseamodificationonthisspellsritualtime":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthisspellsritualtime"),
+        "youcannotuseamodificationonthisspellscost":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthisspellscost"),
+        "youcannotuseamodificationonthisspellsrange":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthisspellsrange"),
+        "youcannotuseamodificationonthisspellsduration":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthisspellsduration"),
+        "youcannotuseamodificationonthischantsliturgicaltime":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthischantsliturgicaltime"),
+        "youcannotuseamodificationonthischantsceremonialtime":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthischantsceremonialtime"),
+        "youcannotuseamodificationonthischantscost":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthischantscost"),
+        "youcannotuseamodificationonthischantsrange":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthischantsrange"),
+        "youcannotuseamodificationonthischantsduration":
+          checkL10nNonEmptyString ("youcannotuseamodificationonthischantsduration"),
+        "duplicatehero": checkL10nNonEmptyString ("duplicatehero"),
+        "deletehero.novar": checkL10nNonEmptyString ("deletehero.novar"),
+        "openhero": checkL10nNonEmptyString ("openhero"),
+        "socialstatusxorhigher": checkL10nNonEmptyString ("socialstatusxorhigher"),
       }
 
       return mapMNamed
@@ -1330,12 +1362,42 @@ export const toL10n =
           "demontypes": res ["demontypes"],
           "demontype": res ["demontype"],
           "circleofdamnation": res["circleofdamnation"],
-          "lesserpact": res ["lesserpact"],
+          "minorpact": res ["minorpact"],
           "tribaltraditions": res ["tribaltraditions"],
           "tribes": res ["tribes"],
           "saveheroerror": res ["saveheroerror"],
           "brews": res ["brews"],
           "brew": res ["brew"],
+          "all": res ["all"],
+          "allmeleecombattechniques": res ["allmeleecombattechniques"],
+          "allrangedcombattechniques": res ["allrangedcombattechniques"],
+          "allmeleecombattechniqueswithparry": res ["allmeleecombattechniqueswithparry"],
+          "allmeleecombattechniquesforonehandedweapons":
+            res ["allmeleecombattechniquesforonehandedweapons"],
+          "youcannotuseamodificationonthisspellscastingtime":
+            res ["youcannotuseamodificationonthisspellscastingtime"],
+          "youcannotuseamodificationonthisspellsritualtime":
+            res ["youcannotuseamodificationonthisspellsritualtime"],
+          "youcannotuseamodificationonthisspellscost":
+            res ["youcannotuseamodificationonthisspellscost"],
+          "youcannotuseamodificationonthisspellsrange":
+            res ["youcannotuseamodificationonthisspellsrange"],
+          "youcannotuseamodificationonthisspellsduration":
+            res ["youcannotuseamodificationonthisspellsduration"],
+          "youcannotuseamodificationonthischantsliturgicaltime":
+            res ["youcannotuseamodificationonthischantsliturgicaltime"],
+          "youcannotuseamodificationonthischantsceremonialtime":
+            res ["youcannotuseamodificationonthischantsceremonialtime"],
+          "youcannotuseamodificationonthischantscost":
+            res ["youcannotuseamodificationonthischantscost"],
+          "youcannotuseamodificationonthischantsrange":
+            res ["youcannotuseamodificationonthischantsrange"],
+          "youcannotuseamodificationonthischantsduration":
+            res ["youcannotuseamodificationonthischantsduration"],
+          "duplicatehero": res ["duplicatehero"],
+          "deletehero.novar": res ["deletehero.novar"],
+          "openhero": res ["openhero"],
+          "socialstatusxorhigher": res ["socialstatusxorhigher"],
           // tslint:enable: no-string-literal
         }))
     }

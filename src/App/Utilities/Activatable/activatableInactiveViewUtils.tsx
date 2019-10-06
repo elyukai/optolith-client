@@ -4,11 +4,11 @@ import { equals, notEquals } from "../../../Data/Eq";
 import { Functn, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
-import { countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, notNull, subscript, subscriptF, sum, take } from "../../../Data/List";
+import { cons, countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, notNull, subscript, subscriptF, sum, take } from "../../../Data/List";
 import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, or, then, thenF } from "../../../Data/Maybe";
 import { dec, gte, max, min, multiply, negate } from "../../../Data/Num";
 import { lookupF } from "../../../Data/OrderedMap";
-import { fromDefault, makeLenses, Omit, Record } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple";
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
@@ -23,7 +23,7 @@ import { Application } from "../../Models/Wiki/sub/Application";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
-import { ActivatableAddListItemState } from "../../Views/Activatable/ActivatableAddListItem";
+import { ActivatableAddListItemSelectedOptions } from "../../Views/Activatable/ActivatableAddListItem";
 import { Dropdown, DropdownOption } from "../../Views/Universal/Dropdown";
 import { TextField } from "../../Views/Universal/TextField";
 import { getActiveWithNoCustomCost } from "../AdventurePoints/activatableCostUtils";
@@ -37,6 +37,7 @@ import { getWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
 import { getActiveSelectionsMaybe, getSelectOptionCost } from "./selectionUtils";
 
 interface PropertiesAffectedByState {
+  "@@name": "PropertiesAffectedByState"
   currentCost: Maybe<number | string>
   disabled: Maybe<boolean>
   selectElement: Maybe<JSX.Element>
@@ -62,6 +63,7 @@ export const PropertiesAffectedByState =
 const PropertiesAffectedByStateL = makeLenses (PropertiesAffectedByState)
 
 interface InactiveActivatableControlElements {
+  "@@name": "InactiveActivatableControlElements"
   disabled: Maybe<boolean>
   selectElement: Maybe<JSX.Element>
   secondSelectElement: Maybe<JSX.Element>
@@ -98,9 +100,6 @@ const AAOL = ActivatableActivationOptionsL
 const PABYA = PropertiesAffectedByState.A
 const PABYL = PropertiesAffectedByStateL
 const IACEL = InactiveActivatableControlElementsL
-
-type SelectedOptions =
-  Partial<Omit<ActivatableAddListItemState, "showCustomCostDialog" | "customCostPreview">>
 
 /**
  * @default Pair (Record ({ id, cost: 0 }), Record ())
@@ -168,16 +167,16 @@ export const getIdSpecificAffectedAndDispatchProps =
   (wiki: WikiModelRecord) =>
   (entry: Record<InactiveActivatable>) =>
   // tslint:disable-next-line: cyclomatic-complexity
-  (selectedOptions: SelectedOptions): IdSpecificAffectedAndDispatchProps => {
+  (selectedOptions: ActivatableAddListItemSelectedOptions): IdSpecificAffectedAndDispatchProps => {
     const id = IAA.id (entry)
-    const mselected = Maybe (selectedOptions.selected)
-    const mselected2 = Maybe (selectedOptions.selected2)
-    const mselected3 = Maybe (selectedOptions.selected3)
-    const minput_text = Maybe (selectedOptions.input)
-    const mselected_level = Maybe (selectedOptions.selectedTier)
+    const mselected = selectedOptions.selected
+    const mselected2 = selectedOptions.selected2
+    const mselected3 = selectedOptions.selected3
+    const minput_text = selectedOptions.input
+    const mselected_level = selectedOptions.selectedTier
 
     switch (id) {
-      // Entry with Skill selection
+      // Entry with Skill selection (string id)
       case AdvantageId.Aptitude:
       case AdvantageId.ExceptionalSkill:
       case AdvantageId.ExceptionalCombatTechnique:
@@ -189,34 +188,26 @@ export const getIdSpecificAffectedAndDispatchProps =
       case SpecialAbilityId.Expertenwissen:
       case SpecialAbilityId.Wissensdurst:
       case SpecialAbilityId.Recherchegespuer:
-      case SpecialAbilityId.Lieblingsliturgie:
+      case SpecialAbilityId.Lieblingsliturgie: {
+        return getPropsForEntryWithSkillSel (misStringM)
+                                            (wiki)
+                                            (mselected)
+                                            (entry)
+                                            (id)
+      }
+
+      // Entry with Skill selection (numeric id)
       case SpecialAbilityId.WegDerGelehrten:
       case SpecialAbilityId.Handwerkskunst:
       case SpecialAbilityId.KindDerNatur:
       case SpecialAbilityId.KoerperlichesGeschick:
       case SpecialAbilityId.SozialeKompetenz:
       case SpecialAbilityId.Universalgenie: {
-        return Pair (
-          ActivatableActivationOptions ({
-            id,
-            selectOptionId1: mselected,
-            cost: Nothing,
-          }),
-          PropertiesAffectedByState ({
-            currentCost:
-              pipe_ (
-                mselected,
-                misStringM,
-                bindF (getWikiEntry (wiki)),
-                bindF (ensure (isSkillishWikiEntry)),
-                bindF (pipe (
-                  SkAL.ic,
-                  dec,
-                  i => pipe_ (entry, IAA.cost, bindF (ensure (isList)), bindF (subscriptF (i)))
-                ))
-              ),
-          })
-        )
+        return getPropsForEntryWithSkillSel (pipe (misNumberM, fmap (prefixSkill)))
+                                            (wiki)
+                                            (mselected)
+                                            (entry)
+                                            (id)
       }
 
       case AdvantageId.ImmunityToPoison:
@@ -375,8 +366,9 @@ export const getIdSpecificAffectedAndDispatchProps =
               Just (
                 <TextField
                   value={minput_text}
-                  onChangeString={inputHandlers.handleInput}
-                  disabled={!is_text_input_required} />
+                  onChange={inputHandlers.handleInput}
+                  disabled={!is_text_input_required}
+                  />
               ),
           })
         )
@@ -648,10 +640,11 @@ export const getIdSpecificAffectedAndDispatchProps =
 
 export const insertFinalCurrentCost =
   (entry: Record<InactiveActivatable>) =>
-  (selectedOptions: SelectedOptions): ident<IdSpecificAffectedAndDispatchProps> => {
+  (selectedOptions: ActivatableAddListItemSelectedOptions):
+  ident<IdSpecificAffectedAndDispatchProps> => {
     const mcustom_cost =
       pipe_ (
-        Maybe (selectedOptions.customCost),
+        selectedOptions.customCost,
         bindF (toInt),
         fmap (Math.abs)
       )
@@ -694,14 +687,17 @@ interface InactiveActivatableControlElementsInputHandlers {
 }
 
 export const getInactiveActivatableControlElements =
+  (l10n: L10nRecord) =>
+  (isEditingAllowed: boolean) =>
   (inputHandlers: InactiveActivatableControlElementsInputHandlers) =>
   (entry: Record<InactiveActivatable>) =>
-  (selectedOptions: SelectedOptions) =>
+  (selectedOptions: ActivatableAddListItemSelectedOptions) =>
   (props: IdSpecificAffectedAndDispatchProps): Record<InactiveActivatableControlElements> => {
-    const mselected = Maybe (selectedOptions.selected)
-    const mselected2 = Maybe (selectedOptions.selected2)
-    const minput_text = Maybe (selectedOptions.input)
-    const mselected_level = Maybe (selectedOptions.selectedTier)
+    const id = IAA.id (entry)
+    const mselected = selectedOptions.selected
+    const mselected2 = selectedOptions.selected2
+    const minput_text = selectedOptions.input
+    const mselected_level = selectedOptions.selectedTier
 
     const msels = pipe_ (props, snd, PABYA.firstSelectOptions, altF (IAA.selectOptions (entry)))
 
@@ -730,7 +726,17 @@ export const getInactiveActivatableControlElements =
                 const max_level =
                   fromMaybe (levels) (pipe_ (entry, IAA.maxLevel, fmap (min (levels))))
 
-                const levelOptions = getLevelElementsWithMin (min_level) (max_level)
+                const levelOptions =
+                  pipe_ (
+                    getLevelElementsWithMin (min_level) (max_level),
+                    ls => SpecialAbilityId.Language === id && isEditingAllowed
+                          ? cons (ls)
+                                 (DropdownOption ({
+                                   id: Just (4),
+                                   name: translate (l10n) ("nativetongue.short"),
+                                 }))
+                          : ls
+                  )
 
                 return pipe_ (
                   elements,
@@ -770,7 +776,8 @@ export const getInactiveActivatableControlElements =
                         value={mselected}
                         onChange={inputHandlers.handleSelect}
                         options={sel}
-                        disabled={inputHandlers.selectElementDisabled} />
+                        disabled={inputHandlers.selectElementDisabled}
+                        />
                     )
                   )
           ))
@@ -803,7 +810,8 @@ export const getInactiveActivatableControlElements =
                       <TextField
                         hint={input}
                         value={minput_text}
-                        onChangeString={inputHandlers.handleInput} />
+                        onChange={inputHandlers.handleInput}
+                        />
                     )
                   )
           )
@@ -815,7 +823,7 @@ export const getInactiveActivatableControlElements =
                   <TextField
                     hint={fromMaybe ("") (minput_desc)}
                     value={minput_text}
-                    onChangeString={inputHandlers.handleInput}
+                    onChange={inputHandlers.handleInput}
                     disabled={isNothing (minput_desc)}
                     />
                 )),
@@ -857,3 +865,31 @@ export const getInactiveActivatableControlElements =
                 (msels2)
     )
   }
+
+const getPropsForEntryWithSkillSel =
+  (ensureId: (x: Maybe<number | string>) => Maybe<string>) =>
+  (wiki: WikiModelRecord) =>
+  (mselected: Maybe<string | number>) =>
+  (entry: Record<InactiveActivatable>) =>
+  (id: string) =>
+    Pair (
+      ActivatableActivationOptions ({
+        id,
+        selectOptionId1: mselected,
+        cost: Nothing,
+      }),
+      PropertiesAffectedByState ({
+        currentCost:
+          pipe_ (
+            mselected,
+            ensureId,
+            bindF (getWikiEntry (wiki)),
+            bindF (ensure (isSkillishWikiEntry)),
+            bindF (pipe (
+              SkAL.ic,
+              dec,
+              i => pipe_ (entry, IAA.cost, bindF (ensure (isList)), bindF (subscriptF (i)))
+            ))
+          ),
+      })
+    )

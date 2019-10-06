@@ -11,9 +11,8 @@
         "**/*.js.map": true
     },
     "eslint.validate": [
-        "javascript",
-        "javascriptreact",
         "typescript",
         "typescriptreact"
-    ]
+    ],
+    "python.pythonPath": "C:\\Program Files\\Python37\\python.exe"
 }

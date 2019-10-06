@@ -75,31 +75,31 @@ const ap_optional_cache_keys: List<keyof APCache> =
   )
 
 export const readCache =
-  pipe_ (
-    file_path,
-    readFile,
-    tryIO,
-    fmap (pipe (
-      eitherToMaybe,
-      bindF (parseJSON),
-      bindF (x => Maybe (x [AP_KEY])),
-      bindF (ensure (isObject)),
-      bindF (pipe (
-        Object.entries,
-        fromArray,
-        mapM (pipe (
-          ensure ((e): e is [string, APCache] =>
-                   all ((k: keyof APCache) => typeof e [1] [k] === "number")
-                       (ap_cache_keys)
-                   && all ((k: keyof APCache) => typeof e [1] [k] === "number"
-                                                 || e [1] [k] === undefined)
-                          (ap_optional_cache_keys)),
-          fmap (Tuple.fromArray)
-        ))
-      )),
-      fmap (fromList)
-    ))
-  )
+  async () =>
+    pipe_ (
+      file_path,
+      tryIO (readFile),
+      fmap (pipe (
+        eitherToMaybe,
+        bindF (parseJSON),
+        bindF (x => Maybe (x [AP_KEY])),
+        bindF (ensure (isObject)),
+        bindF (pipe (
+          Object.entries,
+          fromArray,
+          mapM (pipe (
+            ensure ((e): e is [string, APCache] =>
+                     all ((k: keyof APCache) => typeof e [1] [k] === "number")
+                         (ap_cache_keys)
+                     && all ((k: keyof APCache) => typeof e [1] [k] === "number"
+                                                   || e [1] [k] === undefined)
+                            (ap_optional_cache_keys)),
+            fmap (Tuple.fromArray)
+          ))
+        )),
+        fmap (fromList)
+      ))
+    )
 
 export const writeCache =
   pipe (
@@ -109,11 +109,10 @@ export const writeCache =
       [AP_KEY]: m,
     }),
     JSON.stringify,
-    writeFile (file_path),
-    tryIO
+    tryIO (writeFile (file_path))
   )
 
-export const deleteCache = () => tryIO (deleteFile (file_path))
+export const deleteCache = async () => tryIO (deleteFile) (file_path)
 
 export const insertCacheMap =
   (map: OrderedMap<string, APCache>) => {

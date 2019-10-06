@@ -28,24 +28,9 @@ const RVA = RaceVariant.A
 const RCA_ = RaceCombinedA_
 
 export function WikiRaceInfo (props: WikiRaceInfoProps) {
-  const { x, l10n } = props
+  const { x, l10n, books } = props
 
   const name = RCA_.name (x)
-
-  // if (["nl-BE"].includes(l10n.id)) {
-  //   return (
-  //     <WikiBoxTemplate className="race" title={name}>
-  //       <WikiProperty l10n={l10n} title="info.apvalue">
-  //         {x.ap} {translate(l10n, "aptext")}
-  //       </WikiProperty>
-  //       <WikiProperty l10n={l10n} title="info.lifepointbasevalue">{x.lp}</WikiProperty>
-  //       <WikiProperty l10n={l10n} title="info.spiritbasevalue">{x.spi}</WikiProperty>
-  //       <WikiProperty l10n={l10n} title="info.toughnessbasevalue">{x.tou}</WikiProperty>
-  //       <WikiProperty l10n={l10n} title="info.movementbasevalue">{x.mov}</WikiProperty>
-  //       <WikiSource {...props} />
-  //     </WikiBoxTemplate>
-  //   )
-  // }
 
   const variants = RCA.mappedVariants (x)
 
@@ -69,7 +54,9 @@ export function WikiRaceInfo (props: WikiRaceInfoProps) {
   return (
     <WikiBoxTemplate className="race" title={name}>
       <WikiProperty l10n={l10n} title="apvalue">
-        {RCA_.ap (x)} {translate (l10n) ("adventurepoints")}
+        {RCA_.ap (x)}
+        {" "}
+        {translate (l10n) ("adventurepoints")}
       </WikiProperty>
       <WikiProperty l10n={l10n} title="lifepointbasevalue">{signNeg (RCA_.lp (x))}</WikiProperty>
       <WikiProperty l10n={l10n} title="spiritbasevalue">{signNeg (RCA_.spi (x))}</WikiProperty>
@@ -104,7 +91,8 @@ export function WikiRaceInfo (props: WikiRaceInfoProps) {
                    ))}
       <WikiProperty l10n={l10n} title="commoncultures">
         {sameCommonCultures
-          ? <span>
+          ? (
+            <span>
               {pipe_ (
                 x,
                 RCA_.commonCultures,
@@ -114,10 +102,13 @@ export function WikiRaceInfo (props: WikiRaceInfoProps) {
                 intercalate (", ")
               )}
             </span>
+          )
           : null}
       </WikiProperty>
-      {!sameCommonCultures
-        ? <ul className="race-variant-options">
+      {sameCommonCultures
+        ? null
+        : (
+          <ul className="race-variant-options">
             {pipe_ (
               variants,
               map (e => {
@@ -129,15 +120,20 @@ export function WikiRaceInfo (props: WikiRaceInfoProps) {
                         intercalate (", ")
                       )
 
-                    return <li key={RVA.id (e)}>
-                      <span>{RVA.name (e)}: </span>
-                      <span>{commonCultures}</span>
-                    </li>
+                    return (
+                      <li key={RVA.id (e)}>
+                        <span>
+                          {RVA.name (e)}
+                          {": "}
+                        </span>
+                        <span>{commonCultures}</span>
+                      </li>
+                    )
                   }),
               toArray
             )}
           </ul>
-        : null}
+        )}
       {renderPlainOrByVars (l10n)
                            (RCA_.commonAdvantagesText)
                            (RVA.commonAdvantagesText)
@@ -166,7 +162,12 @@ export function WikiRaceInfo (props: WikiRaceInfoProps) {
                            ("uncommondisadvantages")
                            (sameUncommonDisadvantages)
                            (x)}
-      <WikiSource {...props} acc={RCA_} />
+      <WikiSource
+        books={books}
+        x={x}
+        l10n={l10n}
+        acc={RCA_}
+        />
     </WikiBoxTemplate>
   )
 }
@@ -183,15 +184,17 @@ const renderPlainOrByVars =
   (vars: List<Record<RaceVariant>>) =>
   (title: PlainOrByVarsTitle) =>
   (same_for_vars: boolean) =>
-  (x: Record<RaceCombined>) =>
+  (x: Record<RaceCombined>) => (
     <>
       <WikiProperty l10n={l10n} title={title}>
         {same_for_vars
           ? <span>{fromMaybe (translate (l10n) ("none")) (mapText (x))}</span>
           : null}
       </WikiProperty>
-      {!same_for_vars
-        ? <ul className="race-variant-options">
+      {same_for_vars
+        ? null
+        : (
+          <ul className="race-variant-options">
             {toArray (mapMaybe ((v: Record<RaceVariant>) =>
                                  pipe_ (
                                    v,
@@ -205,5 +208,6 @@ const renderPlainOrByVars =
                                  ))
                                (vars))}
           </ul>
-        : null}
+        )}
     </>
+  )

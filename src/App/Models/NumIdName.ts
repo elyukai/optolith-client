@@ -1,6 +1,7 @@
 import { fromDefault } from "../../Data/Record";
 
 export interface NumIdName {
+  "@@name": "NumIdName"
   id: number
   name: string
 }

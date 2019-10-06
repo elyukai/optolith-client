@@ -5,12 +5,14 @@ import { fmap, fmapF, mapReplace } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { any, append, consF, elem, filter, flength, foldr, List, map, notElem, notNull, partition } from "../../Data/List";
 import { all, and, bind, bindF, ensure, fromMaybe_, guard, isJust, liftM2, liftM3, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
-import { inc, lt, lte } from "../../Data/Num";
+import { lt, lte } from "../../Data/Num";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { insert, member, OrderedSet } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
 import { fst, snd } from "../../Data/Tuple";
 import { uncurryN, uncurryN3, uncurryN4, uncurryN5, uncurryN6 } from "../../Data/Tuple/Curry";
+import { Aspect, IC } from "../Constants/Groups";
+import { AdvantageId, SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
@@ -22,11 +24,10 @@ import { LiturgicalChant, LiturgicalChantL } from "../Models/Wiki/LiturgicalChan
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { isMaybeActive } from "../Utilities/Activatable/isActive";
-import { getBlessedTradition } from "../Utilities/Activatable/traditionUtils";
+import { getBlessedTradition, mapBlessedTradIdToNumId } from "../Utilities/Activatable/traditionUtils";
 import { composeL } from "../Utilities/compose";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
-import { getNumericBlessedTraditionIdByInstanceId, prefixAdv, prefixSA } from "../Utilities/IDUtils";
 import { getAspectsOfTradition, isLiturgicalChantDecreasable, isLiturgicalChantIncreasable, isOwnTradition } from "../Utilities/Increasable/liturgicalChantUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
@@ -66,7 +67,8 @@ export const getBlessedTraditionFromWikiState = createMaybeSelector (
   getBlessedTraditionFromState,
   uncurryN (
     wiki_special_abilities =>
-      bindF (pipe (ActivatableDependent.A.id, lookupF (wiki_special_abilities))))
+      bindF (pipe (ActivatableDependent.A.id, lookupF (wiki_special_abilities)))
+  )
 )
 
 export const getIsLiturgicalChantsTabAvailable = createMaybeSelector (
@@ -76,14 +78,14 @@ export const getIsLiturgicalChantsTabAvailable = createMaybeSelector (
 
 export const getBlessedTraditionNumericId = createMaybeSelector (
   getBlessedTraditionFromState,
-  bindF (pipe (ADA.id, getNumericBlessedTraditionIdByInstanceId))
+  bindF (pipe (ADA.id, mapBlessedTradIdToNumId))
 )
 
 export const getActiveLiturgicalChants = createMaybeSelector (
   getBlessedTraditionFromWikiState,
   getStartEl,
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (16)),
-  mapGetToSlice (getSpecialAbilities) (prefixSA (87)),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.ExceptionalSkill),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.AspectKnowledge),
   getWiki,
   getCurrentHeroPresent,
   (mblessed_trad, mstart_el, mexceptional_skill, maspect_knowledge, wiki, mhero) =>
@@ -117,8 +119,7 @@ export const getActiveLiturgicalChants = createMaybeSelector (
                                                                           (hero_entry),
                                            stateEntry: hero_entry,
                                            wikiEntry: wiki_entry,
-                                         })
-                                       )
+                                         }))
                                      ))
                            ))))
                   (mhero)
@@ -153,7 +154,7 @@ const getInactiveBlessings = createMaybeSelector (
 export const getAvailableInactiveBlessings = createMaybeSelector (
   getBlessedTraditionNumericId,
   getInactiveBlessings,
-  uncurryN (liftM2 (id => filter (pipe (BCA_.tradition, any (equals (id + 1))))))
+  uncurryN (liftM2 (id => filter (pipe (BCA_.tradition, any (equals (id))))))
 )
 
 export const getActiveLiturgicalChantsCounter = createMaybeSelector (
@@ -209,7 +210,8 @@ export const getInactiveLiturgicalChants = createMaybeSelector (
                                     return ident as ident<List<Combined>>
                                   })
                                   (List ())
-                                  (wiki_chants)))
+                                  (wiki_chants))
+  )
 )
 
 const additionalInactiveListFilter =
@@ -223,7 +225,7 @@ const additionalInactiveListFilter =
                         const isTraditionValid = notElem (1) (LCA.tradition (wiki_entry))
                           && check (chant)
 
-                        const isICValid = LCA.ic (wiki_entry) <= 3
+                        const isICValid = LCA.ic (wiki_entry) <= IC.C
 
                         return mapReplace (LCA.id (wiki_entry))
                                           (guard (isTraditionValid && isICValid))
@@ -242,9 +244,9 @@ const isGr =
 
 export const getAdditionalValidLiturgicalChants = createMaybeSelector (
   getBlessedTraditionFromWikiState,
-  mapGetToSlice (getSpecialAbilities) (prefixSA (623)),
-  mapGetToSlice (getSpecialAbilities) (prefixSA (625)),
-  mapGetToSlice (getSpecialAbilities) (prefixSA (632)),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.Zugvoegel),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.JaegerinnenDerWeißenMaid),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.AnhaengerDesGueldenen),
   getInactiveLiturgicalChants,
   getActiveLiturgicalChants,
   uncurryN6 (
@@ -308,7 +310,9 @@ export const getAdditionalValidLiturgicalChants = createMaybeSelector (
         }
 
         return List.empty
-      }))
+      }
+    )
+  )
 )
 
 export const getAvailableInactiveLiturgicalChants = createMaybeSelector (
@@ -410,9 +414,9 @@ export const getLiturgicalChantsForSheet = createMaybeSelector (
   getBlessedTraditionFromState,
   uncurryN3 (sort_options =>
              mchants => pipe (
-                         bindF (pipe (ADA.id, getNumericBlessedTraditionIdByInstanceId)),
-                         fmap (pipe (inc, getAspectsOfTradition)),
-                         liftM2 (flip ((available_aspects: List<number>) =>
+                         bindF (pipe (ADA.id, mapBlessedTradIdToNumId)),
+                         fmap (getAspectsOfTradition),
+                         liftM2 (flip ((available_aspects: List<Aspect>) =>
                                         map (over (composeL (LCWRL.wikiEntry, LCL.aspects))
                                                   (filter (flip (elem) (available_aspects))))))
                                 (mchants),

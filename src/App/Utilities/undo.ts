@@ -8,6 +8,7 @@ import { fst, Pair, snd } from "../../Data/Tuple";
 import { ActionTypes } from "../Constants/ActionTypes";
 
 export interface UndoState<S> {
+  "@@name": "UndoState"
   past: List<S>
   present: S
   future: List<S>

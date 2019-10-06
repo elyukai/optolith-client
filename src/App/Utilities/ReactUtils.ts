@@ -1,4 +1,11 @@
+import { ReactElement, ReactNode } from "react";
 import { fromMaybe, maybe, Maybe } from "../../Data/Maybe";
+
+export interface ChildrenProps {
+  children?: ReactNode
+}
+
+export type ReactReturn = ReactElement | null
 
 /**
  * `renderMaybe :: Maybe (String | Int) -> (String | Int)`

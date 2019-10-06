@@ -4,6 +4,7 @@ import { foldr, map } from "../../Data/List";
 import { fromMaybe, liftM3, maybe } from "../../Data/Maybe";
 import { elems, insertF, lookup, OrderedMap } from "../../Data/OrderedMap";
 import { uncurryN, uncurryN3, uncurryN4 } from "../../Data/Tuple/Curry";
+import { AdvantageId } from "../Constants/Ids";
 import { createPlainSkillDependent } from "../Models/ActiveEntries/SkillDependent";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { EntryRating } from "../Models/Hero/heroTypeHelpers";
@@ -13,7 +14,6 @@ import { Culture } from "../Models/Wiki/Culture";
 import { Skill } from "../Models/Wiki/Skill";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
-import { prefixAdv } from "../Utilities/IDUtils";
 import { isSkillDecreasable, isSkillIncreasable } from "../Utilities/Increasable/skillUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { getStartEl } from "./elSelectors";
@@ -55,15 +55,17 @@ export const getSkillsWithRequirements = createMaybeSelector (
                       start_el =>
                         map (x =>
                               SkillWithRequirements ({
-                                isDecreasable: isSkillDecreasable (wiki)
-                                                                  (hero)
-                                                                  (x),
-                                isIncreasable: isSkillIncreasable (start_el)
-                                                                  (HA.phase (hero))
-                                                                  (HA.attributes (hero))
-                                                                  (lookup (prefixAdv (16))
-                                                                          (HA.advantages (hero)))
-                                                                  (x),
+                                isDecreasable:
+                                  isSkillDecreasable (wiki)
+                                                     (hero)
+                                                     (x),
+                                isIncreasable:
+                                  isSkillIncreasable (start_el)
+                                                     (HA.phase (hero))
+                                                     (HA.attributes (hero))
+                                                     (lookup<string> (AdvantageId.ExceptionalSkill)
+                                                                     (HA.advantages (hero)))
+                                                     (x),
                                 stateEntry: SCA.stateEntry (x),
                                 wikiEntry: SCA.wikiEntry (x),
                               }))))

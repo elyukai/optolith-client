@@ -8,6 +8,7 @@ import { ValueBasedDependent } from "../../Models/Hero/heroTypeHelpers";
 import { SkillOptionalDependency } from "../../Models/Hero/SkillOptionalDependency";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
+import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { AbilityRequirement, Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { getHeroStateItem } from "../heroStateUtils";
@@ -44,6 +45,7 @@ export const flattenDependencies =
                    flattenPrerequisites (Nothing) (Nothing),
                    find ((r): r is AbilityRequirement =>
                      r !== "RCP"
+                     && !SocialPrerequisite.is (r)
                      && isList (id (r))
                      && elem (origin (e)) (id (r) as List<string>))
                  )),

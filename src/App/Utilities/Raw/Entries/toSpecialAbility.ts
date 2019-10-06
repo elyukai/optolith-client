@@ -1,24 +1,24 @@
-import { fmap } from "../../../../Data/Functor";
+import { fmap, fmapF } from "../../../../Data/Functor";
 import { map } from "../../../../Data/List";
-import { alt, Nothing } from "../../../../Data/Maybe";
+import { alt, joinMaybeList, Nothing } from "../../../../Data/Maybe";
 import { OrderedMap } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
-import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
+import { SpecialAbility, SpecialAbilityCombatTechniqueGroup, SpecialAbilityCombatTechniques } from "../../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
-import { prefixId } from "../../IDUtils";
+import { prefixCT, prefixId } from "../../IDUtils";
 import { toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { modifyNegIntNoBreak } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
-import { mensureMapListLengthInRangeOptional, mensureMapNatural, mensureMapNaturalInRangeOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional } from "../validateMapValueUtils";
+import { mensureMapListLengthInRangeOptional, mensureMapNatural, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapNumEnumOptional, mensureMapStringPredListOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toActivatableCost } from "./Sub/toActivatableCost";
 import { toPrerequisites } from "./Sub/toPrerequisites";
 import { toPrerequisitesIndex } from "./Sub/toPrerequisitesIndex";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
-const category = /[A-Z_]+/
+const category = /[A-Z_]+/u
 
 const checkCategory =
   (x: string) => category .test (x)
@@ -63,6 +63,17 @@ export const toSpecialAbility =
                        (TableType.Univ)
                        (lookup_univ)
 
+      const checkOptionalUnivNaturalNumberList =
+        lookupKeyValid (mensureMapNaturalListOptional ("&"))
+                       (TableType.Univ)
+                       (lookup_univ)
+
+      const checkCombatTechniqueGroup =
+        lookupKeyValid (mensureMapNumEnumOptional ("SpecialAbilityCombatTechniqueGroup")
+                                                (SpecialAbilityCombatTechniqueGroup))
+                       (TableType.Univ)
+                       (lookup_univ)
+
       // Check and convert fields
 
       const ename = checkL10nNonEmptyString ("name")
@@ -90,6 +101,10 @@ export const toSpecialAbility =
       const effect = lookup_l10n ("effect")
 
       const penalty = lookup_l10n ("penalty")
+
+      const ecombatTechniques = checkOptionalUnivNaturalNumberList ("combatTechniques")
+
+      const ecombatTechniquesGroup = checkCombatTechniqueGroup ("combatTechniquesGroup")
 
       const combatTechniques = lookup_l10n ("combatTechniques")
 
@@ -136,6 +151,8 @@ export const toSpecialAbility =
           etiers,
           emax,
           eselect,
+          ecombatTechniques,
+          ecombatTechniquesGroup,
           egr,
           esubgr,
           eextended,
@@ -178,7 +195,13 @@ export const toSpecialAbility =
           rules: fmap (modifyNegIntNoBreak) (rules),
           effect: fmap (modifyNegIntNoBreak) (effect),
           penalty: fmap (modifyNegIntNoBreak) (penalty),
-          combatTechniques: fmap (modifyNegIntNoBreak) (combatTechniques),
+          combatTechniques:
+            fmapF (rs.ecombatTechniquesGroup)
+                  (group => SpecialAbilityCombatTechniques ({
+                              group,
+                              explicitIds: map (prefixCT) (joinMaybeList (rs.ecombatTechniques)),
+                              customText: combatTechniques,
+                            })),
           aeCost: fmap (modifyNegIntNoBreak) (aeCost),
           protectiveCircle: fmap (modifyNegIntNoBreak) (protectiveCircle),
           wardingCircle: fmap (modifyNegIntNoBreak) (wardingCircle),

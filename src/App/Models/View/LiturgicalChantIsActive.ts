@@ -3,6 +3,7 @@ import { LiturgicalChant } from "../Wiki/LiturgicalChant";
 import { IsActive } from "./viewTypeHelpers";
 
 export interface LiturgicalChantIsActive extends IsActive {
+  "@@name": "LiturgicalChantIsActive"
   wikiEntry: Record<LiturgicalChant>
 }
 

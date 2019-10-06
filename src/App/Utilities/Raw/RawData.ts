@@ -17,6 +17,7 @@ export interface RawHero {
   readonly r?: string
   readonly rv?: string
   readonly c?: string
+  readonly isCulturalPackageActive?: boolean
   readonly p?: string
   professionName?: string
   readonly pv?: string
@@ -138,7 +139,7 @@ export interface RawCustomItem {
 
 export interface RawPrimaryAttributeDamageThreshold {
   primary?: string
-  threshold: number | ReadonlyArray<number>
+  threshold: number | readonly number[]
 }
 
 export interface RawArmorZone {
@@ -225,10 +226,12 @@ export interface RawConfig {
 }
 
 export interface ValueOptionalDependency {
+
   /**
    * The skill/spell/chant rating or rather attribute value.
    */
   value: number
+
   /**
    * The entry that created this dependency.
    */

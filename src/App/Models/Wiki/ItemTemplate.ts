@@ -6,6 +6,7 @@ import { PrimaryAttributeDamageThreshold } from "./sub/PrimaryAttributeDamageThr
 import { SourceLink } from "./sub/SourceLink";
 
 export interface ItemTemplate {
+  "@@name": "ItemTemplate"
   id: string
   name: string
   addPenalties: boolean

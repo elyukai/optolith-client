@@ -1,14 +1,15 @@
 import { ActionTypes } from "../Constants/ActionTypes";
+import { EnergyId } from "../Constants/Ids";
 
 export interface OpenEditPermanentEnergyAction {
   type: ActionTypes.OPEN_EDIT_PERMANENT_ENERGY
   payload: {
-    energy: "LP" | "AE" | "KP";
+    energy: EnergyId;
   }
 }
 
 export const openEditPermanentEnergy =
-  (energy: "LP" | "AE" | "KP"): OpenEditPermanentEnergyAction => ({
+  (energy: EnergyId): OpenEditPermanentEnergyAction => ({
     type: ActionTypes.OPEN_EDIT_PERMANENT_ENERGY,
     payload: {
       energy,
@@ -26,12 +27,12 @@ export const closeEditPermanentEnergy = (): CloseEditPermanentEnergyAction => ({
 export interface OpenAddPermanentEnergyLossAction {
   type: ActionTypes.OPEN_ADD_PERMANENT_ENERGY_LOSS
   payload: {
-    energy: "LP" | "AE" | "KP";
+    energy: EnergyId;
   }
 }
 
 export const openAddPermanentEnergyLoss =
-  (energy: "LP" | "AE" | "KP"): OpenAddPermanentEnergyLossAction => ({
+  (energy: EnergyId): OpenAddPermanentEnergyLossAction => ({
     type: ActionTypes.OPEN_ADD_PERMANENT_ENERGY_LOSS,
     payload: {
       energy,

@@ -7,6 +7,7 @@ import { AllRequirementObjects } from "../wikiTypeHelpers";
 import { RequireActivatable } from "./ActivatableRequirement";
 
 export interface PactRequirement {
+  "@@name": "PactRequirement"
   id: "PACT"
   category: number
   domain: Maybe<number | List<number>>

@@ -6,6 +6,7 @@ import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface CombatTechnique {
+  "@@name": "CombatTechnique"
   id: string
   name: string
   category: Categories

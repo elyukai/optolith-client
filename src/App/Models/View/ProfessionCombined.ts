@@ -11,6 +11,7 @@ import { IncreasableListForView } from "./IncreasableListForView";
 import { ProfessionVariantCombined } from "./ProfessionVariantCombined";
 
 export interface ProfessionCombined {
+  "@@name": "ProfessionCombined"
   wikiEntry: Record<Profession>
   mappedAP: List<number> | number
   mappedPrerequisites: List<

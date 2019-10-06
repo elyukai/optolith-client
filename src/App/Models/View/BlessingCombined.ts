@@ -4,6 +4,7 @@ import { Blessing } from "../Wiki/Blessing";
 import { IsActive } from "./viewTypeHelpers";
 
 export interface BlessingCombined extends IsActive {
+  "@@name": "BlessingCombined"
   wikiEntry: Record<Blessing>
 }
 

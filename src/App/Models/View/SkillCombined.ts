@@ -4,6 +4,7 @@ import { SkillDependent } from "../ActiveEntries/SkillDependent";
 import { Skill } from "../Wiki/Skill";
 
 export interface SkillCombined {
+  "@@name": "SkillCombined"
   wikiEntry: Record<Skill>
   stateEntry: Record<SkillDependent>
 }

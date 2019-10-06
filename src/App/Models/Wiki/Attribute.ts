@@ -3,6 +3,7 @@ import { Categories } from "../../Constants/Categories";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Attribute {
+  "@@name": "Attribute"
   id: string
   name: string
   category: Categories

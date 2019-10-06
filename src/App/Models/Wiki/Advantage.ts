@@ -5,7 +5,9 @@ import { fromDefault, makeLenses } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { AdvantageDisadvantageBase, EntryWithCategory } from "./wikiTypeHelpers";
 
-export interface Advantage extends AdvantageDisadvantageBase { }
+export interface Advantage extends AdvantageDisadvantageBase {
+  "@@name": "Advantage"
+}
 
 export const Advantage =
   fromDefault ("Advantage")

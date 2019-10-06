@@ -2,7 +2,7 @@ import * as React from "react";
 import { Textfit } from "react-textfit";
 import { fmap, fmapF } from "../../../../Data/Functor";
 import { flength, List, map, replicateR, toArray } from "../../../../Data/List";
-import { fromMaybeR, Maybe } from "../../../../Data/Maybe";
+import { fromMaybe, Maybe } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { ShieldOrParryingWeapon } from "../../../Models/View/ShieldOrParryingWeapon";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
@@ -75,7 +75,7 @@ export function CombatSheetShields (props: CombatSheetShieldsProps) {
               )),
               toArray
             )),
-            fromMaybeR (null)
+            fromMaybe (null as React.ReactNode)
           )}
           {replicateR (2 - Maybe.sum (fmapF (msh_or_parry_weapons) (flength)))
                       (i => (

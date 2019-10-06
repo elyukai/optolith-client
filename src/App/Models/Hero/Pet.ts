@@ -7,6 +7,7 @@ export interface PetBase {
 }
 
 export interface Pet extends PetBase {
+  "@@name": "Pet"
   id: string
   size: Maybe<string>
   type: Maybe<string>

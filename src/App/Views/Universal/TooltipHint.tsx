@@ -1,20 +1,22 @@
 import * as React from "react";
+import { Markdown } from "./Markdown";
 import { TooltipToggle } from "./TooltipToggle";
 
 export interface TooltipHintProps {
-  children?: React.ReactNode
   hint: string
+  target: JSX.Element
+  margin?: number
 }
 
-export function TooltipHint (props: TooltipHintProps) {
-  const { children, hint } = props
+export const TooltipHint: React.FC<TooltipHintProps> = props => {
+  const { hint, target, margin } = props
 
   return (
     <TooltipToggle
-      content={hint}
+      content={<Markdown source={hint} />}
       small
-      >
-      {children}
-    </TooltipToggle>
+      target={target}
+      margin={margin}
+      />
   )
 }

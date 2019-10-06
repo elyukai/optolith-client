@@ -21,6 +21,7 @@ import { PurseL } from "../Models/Hero/Purse";
 import { composeL } from "../Utilities/compose";
 import { editableToHitZoneArmor, editableToItem, fromItemTemplateEdit, hitZoneArmorToEditable, itemToEditable } from "../Utilities/ItemUtils";
 import { pipe } from "../Utilities/pipe";
+import { CombatTechniqueId } from "../Constants/Ids";
 
 type Action = EquipmentActions.AddItemAction
             | EquipmentActions.AddItemTemplateAction
@@ -355,7 +356,7 @@ const itemDetailsReducer =
   (action: Action): ident<HeroModelRecord> => {
     switch (action.type) {
       case ActionTypes.SET_ITEM_COMBAT_TECHNIQUE: {
-        return modifyEditItem (action.payload.id === "CT_7"
+        return modifyEditItem (action.payload.id === CombatTechniqueId.Lances
                                 ? pipe (
                                   set (at) (""),
                                   set (pa) (""),
@@ -616,8 +617,7 @@ const hitZoneArmorsReducer =
                               (insert (fromJust (view (ehza_id) (edit_hza) as Just<string>))
                                       (
                                         editableToHitZoneArmor (edit_hza)
-                                      )
-                              ),
+                                      )),
                          set (itemInEditor) (Nothing)
                        ))
                        (hero))

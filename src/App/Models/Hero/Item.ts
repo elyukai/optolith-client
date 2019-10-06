@@ -27,6 +27,7 @@ export interface ItemBase {
 }
 
 export interface Item extends ItemBase {
+  "@@name": "Item"
   id: string
   at: Maybe<number>
   iniMod: Maybe<number>

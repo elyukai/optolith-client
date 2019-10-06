@@ -1,43 +1,49 @@
 // @ts-check
 
 const builder = require ("electron-builder")
+const { copyTables } = require ("./copyTablesCICD.js")
+const { publishToServer } = require ("./publishToServer.js")
+
+process.on ('unhandledRejection', error => {
+  throw new Error (`Unhandled promise rejection: ${error .toString ()}`);
+});
 
 module.exports = {
   buildWindows:
     async () => {
-      console.log ("Building Optolith Insider for Windows...")
+      console.log ("Copy tables to directories...")
+      await copyTables ()
 
-      try {
-        await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
-        console.log ("Optolith Insider Build for Windows successful.")
-      }
-      catch (err) {
-        console.error (err)
-      }
+      console.log ("Building Optolith Insider for Windows...")
+      await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
+      console.log ("Optolith Insider Build for Windows successful.")
+
+      await publishToServer ("insider", "win")
+      console.log ("Optolith Insider Build for Windows deployed.")
     },
   buildLinux:
     async () => {
-      console.log ("Building Optolith Insider for Linux...")
+      console.log ("Copy tables to directories...")
+      await copyTables ()
 
-      try {
-        await builder.build ({ config, targets: builder.Platform.LINUX.createTarget () })
-        console.log ("Optolith Insider Build for Linux successful.")
-      }
-      catch (err) {
-        console.error (err)
-      }
+      console.log ("Building Optolith Insider for Linux...")
+      await builder.build ({ config, targets: builder.Platform.LINUX.createTarget () })
+      console.log ("Optolith Insider Build for Linux successful.")
+
+      await publishToServer ("insider", "linux")
+      console.log ("Optolith Insider Build for Linux deployed.")
     },
   buildMac:
     async () => {
-      console.log ("Building Optolith Insider for Mac...")
+      console.log ("Copy tables to directories...")
+      await copyTables ()
 
-      try {
-        await builder.build ({ config, targets: builder.Platform.MAC.createTarget () })
-        console.log ("Optolith Insider Build for Mac successful.")
-      }
-      catch (err) {
-        console.error (err)
-      }
+      console.log ("Building Optolith Insider for OSX...")
+      await builder.build ({ config, targets: builder.Platform.MAC.createTarget () })
+      console.log ("Optolith Insider Build for OSX successful.")
+
+      await publishToServer ("insider", "osx")
+      console.log ("Optolith Insider Build for OSX deployed.")
     },
 }
 
@@ -52,8 +58,7 @@ const config = {
     output: "dist/insider"
   },
   files: [
-    "app/**/*",
-    "CHANGELOG.md"
+    "app/**/*"
   ],
   asarUnpack: "app/Database/**/*",
   win: {
@@ -83,6 +88,12 @@ const config = {
         arch: [
           "x64"
         ]
+      },
+      {
+        target: "tar.gz",
+        arch: [
+          "x64"
+        ]
       }
     ],
     artifactName: "OptolithInsider_${version}.${ext}"
@@ -96,7 +107,7 @@ const config = {
   },
   publish: {
     "provider": "generic",
-    "url": process.env.PUBLISH_URL,
+    "url": process.env.PUBLISH_URL_INSIDER,
     "channel": "latest"
-  },
+  }
 }

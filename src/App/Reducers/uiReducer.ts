@@ -9,6 +9,7 @@ import { uiSettingsReducer as settings, UISettingsState } from "./uiSettingsRedu
 import { UIWikiState, wikiUIReducer as wiki } from "./wikiUIReducer";
 
 export interface UIState {
+  "@@name": "UIState"
   alerts: AlertsState
   filters: Record<FiltersState>
   location: TabId

@@ -7,7 +7,6 @@ import * as HerolistActions from "../Actions/HerolistActions";
 import * as IOActions from "../Actions/IOActions";
 import * as LocationActions from "../Actions/LocationActions";
 import * as SubwindowsActions from "../Actions/SubwindowsActions";
-import { InputTextEvent } from "../Models/Hero/heroTypeHelpers";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getSortedBooks } from "../Selectors/bookSelectors";
 import { getSortedHerolist, getUnsavedHeroesById } from "../Selectors/herolistSelectors";
@@ -73,8 +72,8 @@ const mapDispatchToProps = (
   setSortOrder (id: SortNames) {
     dispatch (HerolistActions.setHerolistSortOrder (id))
   },
-  setFilterText (event: InputTextEvent) {
-    dispatch (HerolistActions.setHerolistFilterText (event.target.value))
+  setFilterText (newText: string) {
+    dispatch (HerolistActions.setHerolistFilterText (newText))
   },
   setVisibilityFilter (id: Maybe<string>) {
     if (isJust (id)) {

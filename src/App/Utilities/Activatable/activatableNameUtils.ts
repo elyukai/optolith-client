@@ -84,7 +84,7 @@ const getEntrySpecificNameAddition =
   (wiki_entry: Activatable) =>
   (hero_entry: Record<ActiveObjectWithId>): Maybe<string> => {
     switch (AOWIA.id (hero_entry)) {
-      // Entry with Skill selection
+      // Entry with Skill selection (string id)
       case AdvantageId.Aptitude:
       case AdvantageId.ExceptionalSkill:
       case AdvantageId.ExceptionalCombatTechnique:
@@ -97,12 +97,6 @@ const getEntrySpecificNameAddition =
       case SpecialAbilityId.Wissensdurst:
       case SpecialAbilityId.Recherchegespuer:
       case SpecialAbilityId.Lieblingsliturgie:
-      case SpecialAbilityId.WegDerGelehrten:
-      case SpecialAbilityId.Handwerkskunst:
-      case SpecialAbilityId.KindDerNatur:
-      case SpecialAbilityId.KoerperlichesGeschick:
-      case SpecialAbilityId.SozialeKompetenz:
-      case SpecialAbilityId.Universalgenie:
         return pipe (
                       AOWIA.sid,
                       misStringM,

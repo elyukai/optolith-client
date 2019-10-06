@@ -3,7 +3,7 @@ import { List, map, toArray } from "../../../Data/List";
 import { SubTab } from "../../Models/Hero/heroTypeHelpers";
 import { TabId } from "../../Utilities/LocationUtils";
 import { pipe_ } from "../../Utilities/pipe";
-import { Tab } from "../Universal/Tab";
+import { NavigationBarSubTab } from "./NavigationBarSubTab";
 
 export interface NavigationBarSubTabsProps {
   currentTab: TabId
@@ -12,24 +12,20 @@ export interface NavigationBarSubTabsProps {
 }
 
 export function NavigationBarSubTabs (props: NavigationBarSubTabsProps) {
+  const { currentTab, tabs, setTab } = props
+
   return (
     <div className="navigationbar-subtabs">
       {pipe_ (
-        props.tabs,
-        map (tab => {
-          const { id, ...other } = tab
-          const isActive = props.currentTab === id
-          const set = () => props.setTab (id)
-
-          return (
-            <Tab
-              {...other}
-              key={id}
-              active={isActive}
-              onClick={set}
-              />
-          )
-        }),
+        tabs,
+        map (tab => (
+          <NavigationBarSubTab
+            key={tab .id}
+            currentTab={currentTab}
+            tab={tab}
+            setTab={setTab}
+            />
+        )),
         toArray
       )}
     </div>

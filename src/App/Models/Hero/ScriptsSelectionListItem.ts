@@ -1,6 +1,7 @@
 import { fromDefault } from "../../../Data/Record";
 
 export interface ScriptsSelectionListItem {
+  "@@name": "ScriptsSelectionListItem"
   id: number
   name: string
   cost: number

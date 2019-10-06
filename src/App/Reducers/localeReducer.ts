@@ -12,6 +12,7 @@ import { pipe } from "../Utilities/pipe";
 type Action = ReceiveInitialDataAction | SetLocaleAction
 
 export interface LocaleState {
+  "@@name": "LocaleState"
   id: Maybe<string>
   type: "default" | "set"
   messages: Maybe<L10nRecord>

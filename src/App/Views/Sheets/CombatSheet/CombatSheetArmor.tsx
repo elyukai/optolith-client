@@ -97,14 +97,14 @@ export function CombatSheetArmor (props: CombatSheetArmorProps) {
           {replicateR (2 - Maybe.sum (fmapF (marmors) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
-                          <td className="name"></td>
-                          <td className="st"></td>
-                          <td className="loss"></td>
-                          <td className="pro"></td>
-                          <td className="enc"></td>
-                          <td className="add-penalties"></td>
-                          <td className="weight"></td>
-                          <td className="where"></td>
+                          <td className="name" />
+                          <td className="st" />
+                          <td className="loss" />
+                          <td className="pro" />
+                          <td className="enc" />
+                          <td className="add-penalties" />
+                          <td className="weight" />
+                          <td className="where" />
                         </tr>
                       ))}
         </tbody>

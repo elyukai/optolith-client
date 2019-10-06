@@ -18,6 +18,7 @@ import { lookup, lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
 import { Categories } from "../../Constants/Categories";
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
@@ -34,19 +35,20 @@ import { getSelectOptionCost } from "../Activatable/selectionUtils";
 import { nbsp, nobr } from "../Chars";
 import { getHeroStateItem } from "../heroStateUtils";
 import { translate } from "../I18n";
-import { getCategoryById } from "../IDUtils";
+import { getCategoryById, prefixSkill } from "../IDUtils";
 import { toRoman } from "../NumberUtils";
 import { pipe, pipe_ } from "../pipe";
 import { isNumber, misNumberM, misStringM } from "../typeCheckUtils";
 import { getWikiEntry, isActivatableWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
 
+const HA = HeroModel.A
 const AAL = Advantage.AL
 const AOWIA = ActiveObjectWithId.A
 
 const isDisadvantageActive =
   (id: string) =>
     pipe (
-      HeroModel.A.disadvantages,
+      HA.disadvantages,
       lookup (id),
       isMaybeActive
     )
@@ -75,60 +77,38 @@ const getEntrySpecificCost =
     const all_active = joinMaybeList (fmap (ActivatableDependent.A.active) (hero_entry))
 
     switch (current_id) {
-      // Aptitude
-      case "ADV_4":
-      // Exceptional Skill
-      case "ADV_16":
-      // Exceptional Combat Technique
-      case "ADV_17":
-      // Weapon Aptitude
-      case "ADV_47":
-      // Incompetent
-      case "DISADV_48":
-      // Adaption (Zauber)
-      case "SA_231":
-      // Lieblingszauber
-      case "SA_250":
-      // Forschungsgebiet
-      case "SA_472":
-      // Expertenwissen
-      case "SA_473":
-      // Wissensdurst
-      case "SA_531":
-      // Lieblingsliturgie
-      case "SA_569":
-      // Weg der Gelehrten
-      case "SA_1040":
-      // Fachwissen
-      case "SA_1100":
-      // Handwerkskunst
-      case "SA_1108":
-      // Kind der Natur
-      case "SA_1110":
-      // Körperliches Geschick
-      case "SA_1112":
-      // Soziale Kompetenz
-      case "SA_1123":
-      // Universalgenie
-      case "SA_1127": {
-        return pipe_ (
-          mcurrent_sid,
-          misStringM,
-          bindF (getWikiEntry (wiki)),
-          bindF<EntryWithCategory, SkillishEntry> (ensure (isSkillishWikiEntry)),
-          bindF (skill => pipe_ (
-                            mcurrent_cost,
-                            bindF (ensure (isList)),
-
-                            // Use the IC as an index for the list
-                            // of AP
-                            bindF (subscriptF (Skill.AL.ic (skill) - 1))
-                          ))
-        )
+      // Entry with Skill selection (string id)
+      case AdvantageId.Aptitude:
+      case AdvantageId.ExceptionalSkill:
+      case AdvantageId.ExceptionalCombatTechnique:
+      case AdvantageId.WeaponAptitude:
+      case DisadvantageId.Incompetent:
+      case SpecialAbilityId.AdaptionZauber:
+      case SpecialAbilityId.Lieblingszauber:
+      case SpecialAbilityId.Forschungsgebiet:
+      case SpecialAbilityId.Expertenwissen:
+      case SpecialAbilityId.Wissensdurst:
+      case SpecialAbilityId.Lieblingsliturgie: {
+        return getCostForEntryWithSkillSel (misStringM)
+                                           (wiki)
+                                           (mcurrent_sid)
+                                           (mcurrent_cost)
       }
 
-      // Personality Flaw
-      case "DISADV_33": {
+      // Entry with Skill selection (numeric id)
+      case SpecialAbilityId.WegDerGelehrten:
+      case SpecialAbilityId.Handwerkskunst:
+      case SpecialAbilityId.KindDerNatur:
+      case SpecialAbilityId.KoerperlichesGeschick:
+      case SpecialAbilityId.SozialeKompetenz:
+      case SpecialAbilityId.Universalgenie: {
+        return getCostForEntryWithSkillSel (pipe (misNumberM, fmap (prefixSkill)))
+                                           (wiki)
+                                           (mcurrent_sid)
+                                           (mcurrent_cost)
+      }
+
+      case DisadvantageId.PersonalityFlaw: {
         if (
           // 7 = "Prejudice" => more than one entry possible
           elemF (mcurrent_sid) (7)
@@ -145,10 +125,8 @@ const getEntrySpecificCost =
         return getSelectOptionCost (wiki_entry) (mcurrent_sid)
       }
 
-      // Principles
-      case "DISADV_34":
-      // Obligations
-      case "DISADV_50": {
+      case DisadvantageId.Principles:
+      case DisadvantageId.Obligations: {
         const current_max_level = foldl (compareMaxLevel)
                                         (0)
                                         (all_active)
@@ -183,8 +161,7 @@ const getEntrySpecificCost =
                      (multiply (current_level - current_second_max_level))
       }
 
-      // Bad Habit
-      case "DISADV_36": {
+      case DisadvantageId.BadHabit: {
         // more than three entries cannot contribute to AP spent; entries with
         // custom cost are ignored for the rule's effect
         if (countWith (pipe (ActiveObject.AL.cost, isNothing))
@@ -195,45 +172,41 @@ const getEntrySpecificCost =
         return mcurrent_cost
       }
 
-      // Skill Specialization
-      case "SA_9": {
-        return pipe (
-                      misStringM,
-                      bindF (
-                        current_sid =>
-                          fmapF (lookup (current_sid)
-                                        (WikiModel.A.skills (wiki)))
-                                (skill =>
-                                  // Multiply number of final occurences of the
-                                  // same skill...
-                                  (countWith ((e: Record<ActiveObject>) =>
-                                              pipe (
-                                                     ActiveObject.AL.sid,
-                                                     elem<string | number> (current_sid)
-                                                   )
-                                                   (e)
+      case SpecialAbilityId.SkillSpecialization: {
+        return pipe_ (
+          mcurrent_sid,
+          misStringM,
+          bindF (
+            current_sid =>
+              fmapF (lookup (current_sid)
+                            (WikiModel.A.skills (wiki)))
+                    (skill =>
+                      // Multiply number of final occurences of the
+                      // same skill...
+                      (countWith ((e: Record<ActiveObject>) =>
+                                  pipe (
+                                         ActiveObject.AL.sid,
+                                         elem<string | number> (current_sid)
+                                       )
+                                       (e)
 
-                                              // Entries with custom cost are ignored for the rule
-                                              && isNothing (ActiveObject.AL.cost (e)))
-                                            (all_active) + (isEntryToAdd ? 1 : 0))
+                                  // Entries with custom cost are ignored for the rule
+                                  && isNothing (ActiveObject.AL.cost (e)))
+                                (all_active) + (isEntryToAdd ? 1 : 0))
 
-                                  // ...with the skill's IC
-                                  * Skill.AL.ic (skill)))
-
-                    )
-                    (mcurrent_sid)
+                      // ...with the skill's IC
+                      * Skill.AL.ic (skill))
+          )
+        )
       }
 
-      // Language
-      case "SA_29": {
+      case SpecialAbilityId.Language: {
         // Native Tongue (level 4) does not cost anything
         return elem (4) (mcurrent_level) ? Nothing : mcurrent_cost
       }
 
-      // Property Knowledge
-      case "SA_72":
-      // Aspect Knowledge
-      case "SA_87": {
+      case SpecialAbilityId.PropertyKnowledge:
+      case SpecialAbilityId.AspectKnowledge: {
         // Does not include custom cost activations in terms of calculated cost
         const amount = countWith (pipe (ActiveObject.AL.cost, isNothing))
                                  (all_active)
@@ -249,8 +222,7 @@ const getEntrySpecificCost =
         return isList (current_cost) ? subscript (current_cost) (index) : Nothing
       }
 
-      // Tradition (Witch)
-      case "SA_255": {
+      case SpecialAbilityId.TraditionWitches: {
         // There are two disadvantages that, when active, decrease the cost of
         // this tradition by 10 AP each
         const decreaseCost = (id: string) => (cost: number) =>
@@ -260,20 +232,19 @@ const getEntrySpecificCost =
           mcurrent_cost,
           misNumberM,
           fmap (pipe (
-            decreaseCost ("DISADV_17"),
-            decreaseCost ("DISADV_18")
+            decreaseCost (DisadvantageId.NoFlyingBalm),
+            decreaseCost (DisadvantageId.NoFamiliar)
           ))
         )
       }
 
-      // Recherchegespür
-      case "SA_533": {
+      case SpecialAbilityId.Recherchegespuer: {
         // The AP cost for this SA consist of two parts: AP based on the IC of
         // the main subject (from "SA_531"/Wissensdurst) in addition to AP based
         // on the IC of the side subject selected in this SA.
 
-        const mhero_entry_SA_531 = lookup ("SA_531")
-                                          (HeroModel.A.specialAbilities (hero))
+        const mhero_entry_SA_531 = lookup<string> (SpecialAbilityId.Wissensdurst)
+                                                  (HA.specialAbilities (hero))
 
         if (isNothing (mhero_entry_SA_531)) {
           return Nothing
@@ -307,11 +278,9 @@ const getEntrySpecificCost =
                         listToMaybe,
                         bindF (getCostFromHeroEntry)
                       ))
-
       }
 
-      // Language Specialization
-      case "SA_699": {
+      case SpecialAbilityId.LanguageSpecializations: {
         if (isNothing (mcurrent_sid)) {
           return Nothing
         }
@@ -319,8 +288,8 @@ const getEntrySpecificCost =
         const current_sid = fromJust (mcurrent_sid)
 
         return pipe (
-                      HeroModel.A.specialAbilities,
-                      lookup ("SA_29"),
+                      HA.specialAbilities,
+                      lookup<string> (SpecialAbilityId.Language),
                       bindF (pipe (
                         ActivatableDependent.A.active,
                         // Get the `ActiveObject` for the corresponding language
@@ -486,8 +455,8 @@ const putCurrentCost =
            // disadvantages where this is not valid.
            if (
              isJust (mcurrent_level)
-             && current_id !== "DISADV_34"
-             && current_id !== "DISADV_50"
+             && current_id !== DisadvantageId.Principles
+             && current_id !== DisadvantageId.Obligations
              && isNothing (ActivatableNameCostA_.customCost (entry))
            ) {
              return maybe (0) (multiply (current_cost)) (mcurrent_level)
@@ -524,6 +493,7 @@ const isSpecialAbilityById =
 const getFinalLevelName =
   (l10n: L10nRecord) =>
   (entry: Record<ActivatableNameCost>) =>
+
   /**
    * @param current_level This is the same value from param `entry`, but this is
    * ensured to be a number.
@@ -532,7 +502,7 @@ const getFinalLevelName =
     const current_id = ActivatableNameCostA_.id (entry)
     const current_cost = ActivatableNameCost.A.finalCost (entry)
 
-    if (current_id === "SA_29" && current_level === 4) {
+    if (current_id === SpecialAbilityId.Language && current_level === 4) {
       return `${nbsp}${translate (l10n) ("nativetongue.short")}`
     }
 
@@ -553,7 +523,8 @@ const getLevelNameIfValid =
     const current_id = ActivatableNameCostA_.id (entry)
     const mcurrent_level = ActivatableNameCostA_.tier (entry)
 
-    if (isJust (mcurrent_level) && notElem (current_id) (List ("DISADV_34", "DISADV_50"))) {
+    if (isJust (mcurrent_level)
+        && notElem (current_id) (List (DisadvantageId.Principles, DisadvantageId.Obligations))) {
       return Just (getFinalLevelName (l10n) (entry) (fromJust (mcurrent_level)))
     }
 
@@ -596,3 +567,23 @@ export const convertPerTierCostToFinalCost =
 
 export const getActiveWithNoCustomCost =
   filter (pipe (ActiveObject.A.cost, isNothing))
+
+const getCostForEntryWithSkillSel =
+  (ensureId: (x: Maybe<number | string>) => Maybe<string>) =>
+  (wiki: WikiModelRecord) =>
+  (mcurrent_sid: Maybe<string | number>) =>
+  (mcurrent_cost: Maybe<number | List<number>>) =>
+    pipe_ (
+      mcurrent_sid,
+      ensureId,
+      bindF (getWikiEntry (wiki)),
+      bindF<EntryWithCategory, SkillishEntry> (ensure (isSkillishWikiEntry)),
+      bindF (skill => pipe_ (
+                        mcurrent_cost,
+                        bindF (ensure (isList)),
+
+                        // Use the IC as an index for the list
+                        // of AP
+                        bindF (subscriptF (Skill.AL.ic (skill) - 1))
+                      ))
+    )

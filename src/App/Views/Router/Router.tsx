@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Maybe, maybeR } from "../../../Data/Maybe";
+import { Maybe, maybe } from "../../../Data/Maybe";
 import { AdvantagesContainer } from "../../Containers/AdvantagesContainer";
 import { AttributesContainer } from "../../Containers/AttributesContainer";
 import { CombatTechniquesContainer } from "../../Containers/CombatTechniquesContainer";
@@ -49,35 +49,31 @@ export class Router extends React.Component<RouterProps> {
   state: RouterState = {}
 
   componentDidCatch (error: any, info: any) {
-    this.setState (() => ({ hasError: { error, info }}))
-  }
-
-  componentWillReceiveProps (nextProps: RouterProps) {
-    if (nextProps.id !== this.props.id && typeof this.state.hasError === "object") {
-      this.setState (() => ({ hasError: undefined }))
-    }
+    this.setState (() => ({ hasError: { error, info } }))
   }
 
   render (): React.ReactNode {
     const { id, l10n, mhero } = this.props
     const { hasError } = this.state
 
-    if (hasError) {
-      return <Page>
-        <MainContent>
-          <Scroll className="error-message">
-            <h4>Error</h4>
-            <p>{hasError.error.stack}</p>
-            <h4>Component Stack</h4>
-            <p>{hasError.info.componentStack}</p>
-          </Scroll>
-        </MainContent>
-      </Page>
+    if (typeof hasError === "object") {
+      return (
+        <Page>
+          <MainContent>
+            <Scroll className="error-message">
+              <h4>{"Error"}</h4>
+              <p>{hasError.error.stack}</p>
+              <h4>{"Component Stack"}</h4>
+              <p>{hasError.info.componentStack}</p>
+            </Scroll>
+          </MainContent>
+        </Page>
+      )
     }
 
     const unwrapWithHero =
       (f: (hero: HeroModelRecord) => JSX.Element) =>
-        maybeR (null) (f) (mhero)
+        maybe (null as React.ReactNode) (f) (mhero)
 
     const VIEWS: { [K in TabId]: () => React.ReactNode } = {
       [TabId.Herolist]: () => <HerolistContainer l10n={l10n} />,

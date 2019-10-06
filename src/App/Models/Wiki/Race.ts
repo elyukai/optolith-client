@@ -8,6 +8,7 @@ import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Race {
+  "@@name": "Race"
   id: string
   name: string
   ap: number

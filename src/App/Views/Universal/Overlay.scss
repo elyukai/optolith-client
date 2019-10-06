@@ -10,6 +10,16 @@
 		padding: 20px;
 	}
 
+	> div.markdown {
+		p {
+			margin: 8px 0 0;
+
+			&:first-child {
+				margin-top: 0;
+			}
+		}
+	}
+
 	h4 {
 		font: bold 14px/18px Alegreya SC;
 		text-transform: uppercase;
@@ -33,22 +43,12 @@
 		}
 	}
 
-	&.overlay-top::after, &.overlay-bottom::before {
-		content: "";
+	> .arrow {
 		position: absolute;
-		@include size(12px);
 		border: 1px solid var(--accent-color);
 		background: var(--background-color);
 		transform: rotate(45deg);
-		@include calc(left, "50% - 8px");
 		pointer-events: none;
-	}
-
-	&.overlay-top::after {
-		bottom: -7.5px;
-	}
-
-	&.overlay-bottom::before {
-		top: -7.5px;
+		padding: 0;
 	}
 }

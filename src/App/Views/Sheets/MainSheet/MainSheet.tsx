@@ -1,7 +1,7 @@
 import * as React from "react";
 import { fmap } from "../../../../Data/Functor";
 import { List } from "../../../../Data/List";
-import { fromMaybeR, Maybe } from "../../../../Data/Maybe";
+import { fromMaybe, Maybe } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { Sex } from "../../../Models/Hero/heroTypeHelpers";
 import { PersonalData } from "../../../Models/Hero/PersonalData";
@@ -109,7 +109,7 @@ export function MainSheet (props: MainSheetProps) {
                   value={compressList (l10n) (advantagesActive)}
                   />
               )),
-              fromMaybeR (null)
+              fromMaybe (null as React.ReactNode)
             )}
             {pipe_ (
               maybeDisadvantagesActive,
@@ -120,7 +120,7 @@ export function MainSheet (props: MainSheetProps) {
                   value={compressList (l10n) (disadvantagesActive)}
                   />
               )),
-              fromMaybeR (null)
+              fromMaybe (null as React.ReactNode)
             )}
             {pipe_ (
               maybeGeneralsaActive,
@@ -131,7 +131,7 @@ export function MainSheet (props: MainSheetProps) {
                   value={compressList (l10n) (generalsaActive)}
                   />
               )),
-              fromMaybeR (null)
+              fromMaybe (null as React.ReactNode)
             )}
           </div>
           <MainSheetAttributes

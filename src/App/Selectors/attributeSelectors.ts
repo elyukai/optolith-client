@@ -4,13 +4,12 @@ import { fmap, fmapF, mapReplace } from "../../Data/Functor";
 import { consF, elem, filter, find, flength, head, List, map, maximum, NonEmptyList, notNull } from "../../Data/List";
 import { any, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, join, Just, liftM2, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
 import { add, gte, lt, max, multiply, subtractBy } from "../../Data/Num";
-import { elems, foldr, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
+import { elems, foldr, lookup, lookupF } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { fst, snd, Tuple } from "../../Data/Tuple";
 import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
 import { sel1, sel2, sel3 } from "../../Data/Tuple/Select";
-import { IdPrefixes } from "../Constants/IdPrefixes";
-import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
+import { AttrId } from "../Constants/Ids";
 import { AttributeDependent, createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
 import { Energies } from "../Models/Hero/Energies";
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
@@ -22,8 +21,8 @@ import { Race } from "../Models/Wiki/Race";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies";
-import { getNumericBlessedTraditionIdByInstanceId, getNumericMagicalTraditionIdByInstanceId, prefixAttr, prefixId } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
+import { mapTradHeroEntryToAttrCombined } from "../Utilities/primaryAttributeUtils";
 import { getCurrentEl, getStartEl } from "./elSelectors";
 import { getBlessedTraditionFromState } from "./liturgicalChantsSelectors";
 import { getRace } from "./rcpSelectors";
@@ -35,7 +34,7 @@ const EA = Energies.A
 const ACA = AttributeCombined.A
 const ACA_ = AttributeCombinedA_
 const AA = Attribute.A
-const ADA = AttributeDependent.A
+const AtDA = AttributeDependent.A
 const AWRA = AttributeWithRequirements.A
 
 export const getAttributeSum = createMaybeSelector (
@@ -45,7 +44,7 @@ export const getAttributeSum = createMaybeSelector (
                                   AA.id,
                                   lookupF (hero_attrs),
                                   maybe (add (8))
-                                        (pipe (ADA.value, add))
+                                        (pipe (AtDA.value, add))
                                 ))
                                 (0))
 )
@@ -108,6 +107,7 @@ const getAttributeMaximum =
 const getAttributeMinimum =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
+
   /**
    * `(lp, ae, kp)`
    */
@@ -116,12 +116,12 @@ const getAttributeMinimum =
   (mhighest_magical_primary_attr: Maybe<Record<AttributeCombined>>) =>
   (hero_entry: Record<AttributeDependent>): number =>
     maximum (List<number> (
-              ...flattenDependencies (wiki) (hero) (ADA.dependencies (hero_entry)),
-              ...(ADA.id (hero_entry) === prefixAttr (8) ? List (sel1 (added)) : List<number> ()),
-              ...(Maybe.elem (ADA.id (hero_entry)) (fmap (ACA_.id) (mhighest_magical_primary_attr))
+              ...flattenDependencies (wiki) (hero) (AtDA.dependencies (hero_entry)),
+              ...(AtDA.id (hero_entry) === AttrId.Strength ? List (sel1 (added)) : List<number> ()),
+              ...(Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mhighest_magical_primary_attr))
                 ? List (sel2 (added))
                 : List<number> ()),
-              ...(Maybe.elem (ADA.id (hero_entry)) (fmap (ACA_.id) (mblessed_primary_attr))
+              ...(Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mblessed_primary_attr))
                 ? List (sel3 (added))
                 : List<number> ()),
               8
@@ -163,62 +163,9 @@ export const getAttributesForSheet = createMaybeSelector (
 export const getMaxAttributeValueByID =
   (attributes: HeroModel["attributes"]) =>
     pipe (
-      mapMaybe (pipe (lookupF (attributes), fmap (ADA.value))),
+      mapMaybe (pipe (lookupF (attributes), fmap (AtDA.value))),
       consF (8),
       maximum
-    )
-
-const getAttributeCombined =
-  (wiki_attributes: OrderedMap<string, Record<Attribute>>) =>
-  (hero_attributes: OrderedMap<string, Record<AttributeDependent>>) =>
-  (id: string) =>
-    fmapF (lookup (id) (wiki_attributes))
-          (wiki_entry => AttributeCombined ({
-                           stateEntry: fromMaybe (createPlainAttributeDependent (id))
-                                                 (lookup (id) (hero_attributes)),
-                           wikiEntry: wiki_entry,
-                         }))
-
-const getPrimaryMagicalAttributeByTrad =
-  (wiki_attributes: WikiModel["attributes"]) =>
-  (hero_attributes: HeroModel["attributes"]) =>
-  (tradition: Record<ActivatableDependent>): Maybe<Record<AttributeCombined>> =>
-    pipe_ (
-      tradition,
-      ActivatableDependent.A.id,
-      getNumericMagicalTraditionIdByInstanceId,
-      bindF (numericId => {
-        switch (numericId) {
-          case 1:
-          case 4:
-          case 10:
-          case 13:
-            return getAttributeCombined (wiki_attributes)
-                                        (hero_attributes)
-                                        (prefixId (IdPrefixes.ATTRIBUTES) (2))
-
-          case 3:
-          case 14:
-          case 15:
-          case 16:
-            return getAttributeCombined (wiki_attributes)
-                                        (hero_attributes)
-                                        (prefixId (IdPrefixes.ATTRIBUTES) (3))
-
-          case 2:
-          case 5:
-          case 6:
-          case 7:
-          case 12:
-          case 17:
-            return getAttributeCombined (wiki_attributes)
-                                        (hero_attributes)
-                                        (prefixId (IdPrefixes.ATTRIBUTES) (4))
-
-          default:
-            return Nothing
-        }
-      })
     )
 
 export const getPrimaryMagicalAttributes = createMaybeSelector (
@@ -227,7 +174,7 @@ export const getPrimaryMagicalAttributes = createMaybeSelector (
   getMagicalTraditionsFromHero,
   uncurryN3 (wiki_attributes =>
              hero_attributes =>
-               mapMaybe (getPrimaryMagicalAttributeByTrad (wiki_attributes) (hero_attributes)))
+               mapMaybe (mapTradHeroEntryToAttrCombined (wiki_attributes) (hero_attributes)))
 )
 
 export const getHighestPrimaryMagicalAttributeValue = createMaybeSelector (
@@ -257,64 +204,12 @@ export const getPrimaryMagicalAttributeForSheet = createMaybeSelector (
   map (ACA_.short)
 )
 
-const getPrimaryBlessedAttributeByTrad =
-  (wiki_attributes: WikiModel["attributes"]) =>
-  (hero_attributes: HeroModel["attributes"]) =>
-  (tradition: Record<ActivatableDependent>): Maybe<Record<AttributeCombined>> =>
-    pipe_ (
-      tradition,
-      ActivatableDependent.A.id,
-      getNumericBlessedTraditionIdByInstanceId,
-      bindF (numericId => {
-        switch (numericId) {
-          case 2:
-          case 3:
-          case 9:
-          case 13:
-          case 16:
-          case 18:
-            return getAttributeCombined (wiki_attributes)
-                                        (hero_attributes)
-                                        (prefixId (IdPrefixes.ATTRIBUTES) (1))
-
-          case 1:
-          case 4:
-          case 8:
-          case 17:
-            return getAttributeCombined (wiki_attributes)
-                                        (hero_attributes)
-                                        (prefixId (IdPrefixes.ATTRIBUTES) (2))
-
-          case 5:
-          case 6:
-          case 11:
-          case 14:
-            return getAttributeCombined (wiki_attributes)
-                                        (hero_attributes)
-                                        (prefixId (IdPrefixes.ATTRIBUTES) (3))
-
-          case 7:
-          case 10:
-          case 12:
-          case 15:
-            return getAttributeCombined (wiki_attributes)
-                                        (hero_attributes)
-                                        (prefixId (IdPrefixes.ATTRIBUTES) (4))
-
-          default:
-            return Nothing
-        }
-      })
-    )
-
 export const getPrimaryBlessedAttribute = createMaybeSelector (
   getBlessedTraditionFromState,
   getAttributes,
   getWikiAttributes,
-  (mtradition, mhero_attributes, wiki_attributes) =>
-    bind (mtradition)
-         (getPrimaryBlessedAttributeByTrad (wiki_attributes)
-                                           (mhero_attributes))
+  (mtradition, hero_attributes, wiki_attributes) =>
+    bind (mtradition) (mapTradHeroEntryToAttrCombined (wiki_attributes) (hero_attributes))
 )
 
 export const getPrimaryBlessedAttributeForSheet = createMaybeSelector (
@@ -390,7 +285,7 @@ export const getAttributesForView = createMaybeSelector (
 
 export const getCarryingCapacity = createMaybeSelector (
   getAttributes,
-  pipe (lookup (prefixAttr (8)), fmap (pipe (ADA.value, multiply (2))))
+  pipe (lookup<string> (AttrId.Strength), fmap (pipe (AtDA.value, multiply (2))))
 )
 
 export const getAdjustmentValue = createMaybeSelector (
@@ -419,12 +314,12 @@ export const getAvailableAdjustmentIds = createMaybeSelector (
               if (isJust (mcurr_attr)) {
                 const curr_attr = fromJust (mcurr_attr)
 
-                const curr_attr_val = pipe_ (curr_attr, AWRA.stateEntry, ADA.value)
+                const curr_attr_val = pipe_ (curr_attr, AWRA.stateEntry, AtDA.value)
 
                 if (or (pipe_ (curr_attr, AWRA.max, liftM2 (blackbirdF (subtractBy)
                                                                        (lt (curr_attr_val)))
                                                            (madjustmentValue)))) {
-                  const curr_attr_id = pipe_ (curr_attr, AWRA.stateEntry, ADA.id)
+                  const curr_attr_id = pipe_ (curr_attr, AWRA.stateEntry, AtDA.id)
 
                   return List (curr_attr_id)
                 }
@@ -440,14 +335,14 @@ export const getAvailableAdjustmentIds = createMaybeSelector (
                                 const mmax = AWRA.max (attr)
 
                                 const mcurr_attr_id = fmapF (mcurr_attr)
-                                                            (pipe (AWRA.stateEntry, ADA.id))
+                                                            (pipe (AWRA.stateEntry, AtDA.id))
 
                                 if (isNothing (mmax) || Maybe.elem (id) (mcurr_attr_id)) {
                                   return true
                                 }
 
                                 if (isJust (madjustmentValue)) {
-                                  const attr_val = pipe_ (attr, AWRA.stateEntry, ADA.value)
+                                  const attr_val = pipe_ (attr, AWRA.stateEntry, AtDA.value)
 
                                   return maybe (true)
                                                (pipe (

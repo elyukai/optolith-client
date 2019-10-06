@@ -16,7 +16,6 @@ import { isOrderedMap, lookup } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Tuple } from "../../../Data/Tuple";
 import { sel2, sel3 } from "../../../Data/Tuple/Select";
-import { traceShowId } from "../../../Debug/Trace";
 import { SpecialAbilityGroup } from "../../Constants/Groups";
 import { SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -26,7 +25,7 @@ import { ActivatableDependency } from "../../Models/Hero/heroTypeHelpers";
 import { Pact } from "../../Models/Hero/Pact";
 import { Rules } from "../../Models/Hero/Rules";
 import { Advantage } from "../../Models/Wiki/Advantage";
-import { isSpecialAbility, SpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries, hasActiveGroupEntry } from "../entryGroupUtils";
@@ -194,7 +193,7 @@ const isAdditionDisabledEntrySpecific =
   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (wiki_entry: Activatable): boolean =>
     (
-      isSpecialAbility (wiki_entry)
+      SpecialAbility.is (wiki_entry)
       && isAdditionDisabledSpecialAbilitySpecific (wiki)
                                                   (hero)
                                                   (matching_script_and_lang_related)
@@ -222,7 +221,7 @@ const isInvalidExtendedSpecialAbility =
   (wiki_entry: Activatable) =>
   (validExtendedSpecialAbilities: List<string>) =>
     CheckStyleUtils.isExtendedSpecialAbility (wiki_entry)
-    && notElem (AAL.id (wiki_entry)) (traceShowId (validExtendedSpecialAbilities))
+    && notElem (AAL.id (wiki_entry)) (validExtendedSpecialAbilities)
 
 /**
  * Checks if the given entry can be added.

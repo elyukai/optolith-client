@@ -1,7 +1,8 @@
 import { fromDefault, makeLenses } from "../../../Data/Record";
-import { PermanentEnergyLoss } from "./PermanentEnergyLoss";
 
-export interface PermanentEnergyLossAndBoughtBack extends PermanentEnergyLoss {
+export interface PermanentEnergyLossAndBoughtBack {
+  "@@name": "PermanentEnergyLossAndBoughtBack"
+  lost: number
   redeemed: number
 }
 

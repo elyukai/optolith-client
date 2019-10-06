@@ -70,6 +70,22 @@ export const traceShowWith =
     (console.log (concatMsgValue (msg) (f (x))), x)
 
 /**
+ * `traceShowIdWith :: Show b => (a -> b) -> a -> a`
+ *
+ * The `traceWithN msg f x` function takes a message `msg`, a function `f` and
+ * an input `x`. It applies `x` to `f`, the result of `f` to `showP` and appends
+ * the result of `showP` to the passed `msg`, which is then printed out to the
+ * console. The actual input is returned by the function.
+ *
+ * This is useful to print a part of a structure to the console.
+ *
+ * The `traceWithN` function is a variant of the `traceWIth` function that
+ * doesn't use `IO` but only native functions.
+ */
+export const traceShowIdWith: <A, B> (f: (x: A) => B) => (x: A) => A =
+  f => x => (console.log (showP (f (x))), x)
+
+/**
  * `traceShowOn :: Show a => String -> a -> a`
  *
  * The `traceShowOn` function is a variant of the `trace` function that doesn't

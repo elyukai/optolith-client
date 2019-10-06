@@ -1,32 +1,76 @@
 language: node_js
+
 node_js:
 - node
+
+sudo: required
+
+stages:
+  - Test
+  - name: Build
+    if: tag ~= /^v\d+\.\d+\.\d+$/
+    # if: branch = master
+  - name: Build Insider
+    if: tag ~= /^v\d+\.\d+\.\d+\-\w+\.\d+$/
+    # if: branch = develop
+
 jobs:
   include:
+  # Test stage
   - stage: Test
-    script: npm test
-  - stage: Build & Deploy
-    name: Build OS X
-    if: tag IS present && branch = master
-    os: osx
-    script: npm run compile && npm run release:osx
-  - name: Build OS X Insider
-    if: tag IS present && branch != master
-    os: osx
-    script: npm run compile && npm run prerelease:osx
+    install:
+      - npm ci
+    script:
+      - npm test
+
+  # Normal build stage
+  - stage: Build
+    name: Build Windows
+    os: windows
+    install:
+      - ./.travis/InstallWin.bat
+    script:
+      - npm run compile
+      - npm run release:win
+
   - name: Build Linux
-    if: tag IS present && branch = master
     os: linux
-    script: npm run compile && npm run release:linux
+    install:
+      - sh ./.travis/InstallLinux.sh
+    script:
+      - npm run compile
+      - npm run release:linux
+
+  - name: Build OSX
+    os: osx
+    install:
+      - sh ./.travis/InstallMac.sh
+    script:
+      - npm run compile
+      - npm run release:osx
+
+  # Insider build stage
+  - stage: Build Insider
+    name: Build Windows Insider
+    os: windows
+    install:
+      - ./.travis/InstallWin.bat
+    script:
+      - npm run compile
+      - npm run prerelease:win
+
   - name: Build Linux Insider
-    if: tag IS present && branch != master
     os: linux
-    script: npm run compile && npm run prerelease:linux
-  - name: Build Windows
-    if: tag IS present && branch = master
-    os: win
-    script: npm run compile && npm run release:win
-  - name: Build Windows Insider
-    if: tag IS present && branch != master
-    os: win
-    script: npm run compile && npm run prerelease:win
+    install:
+      - sh ./.travis/InstallLinux.sh
+    script:
+      - npm run compile
+      - npm run prerelease:linux
+
+  - name: Build OSX Insider
+    os: osx
+    install:
+      - sh ./.travis/InstallMac.sh
+    script:
+      - npm run compile
+      - npm run prerelease:osx

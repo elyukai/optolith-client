@@ -23,7 +23,7 @@ import { MainContent } from "../Universal/MainContent";
 import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
-import { TextField } from "../Universal/TextField";
+import { SearchField } from "../Universal/SearchField";
 import { HitZoneArmorEditor } from "./HitZoneArmorEditor";
 import { HitZoneArmorsListItem } from "./HitZoneArmorsListItem";
 
@@ -93,10 +93,10 @@ export function HitZoneArmors (props: HitZoneArmorsProps) {
   return (
     <Page id="armor-zones">
       <Options>
-        <TextField
-          hint={translate (l10n) ("search")}
+        <SearchField
+          l10n={l10n}
           value={filterText}
-          onChangeString={props.setFilterText}
+          onChange={props.setFilterText}
           fullWidth
           />
         <BorderButton

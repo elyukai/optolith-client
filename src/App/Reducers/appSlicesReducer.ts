@@ -14,7 +14,7 @@ export const appSlicesReducer =
                                     l10n: LocaleState.default,
                                     ui: uiReducer.default,
                                     wiki: WikiModel.default,
-                                    isReady: false,
+                                    isReady: 0,
                                   })
                                   ({
                                     herolist: herolistReducer,

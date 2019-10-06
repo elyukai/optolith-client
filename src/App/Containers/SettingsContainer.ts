@@ -1,6 +1,5 @@
 import { connect } from "react-redux";
 import { fromJust, isJust, Maybe } from "../../Data/Maybe";
-import { runIO } from "../../System/IO";
 import { ReduxDispatch } from "../Actions/Actions";
 import * as ConfigActions from "../Actions/ConfigActions";
 import * as IOActions from "../Actions/IOActions";
@@ -28,8 +27,8 @@ const mapDispatchToProps =
     switchEnableEditingHeroAfterCreationPhase () {
       dispatch (ConfigActions.switchEnableEditingHeroAfterCreationPhase ())
     },
-    saveConfig () {
-      runIO (dispatch (IOActions.requestConfigSave (ownProps.l10n)))
+    async saveConfig () {
+      await dispatch (IOActions.requestConfigSave (ownProps.l10n))
     },
     setLocale (id: Maybe<string>) {
       dispatch (LocaleActions.setLocale (id))

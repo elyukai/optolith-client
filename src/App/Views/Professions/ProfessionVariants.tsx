@@ -1,9 +1,11 @@
 import * as React from "react";
+import { useDispatch } from "react-redux";
 import { ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { consF, find, List, map, notNull } from "../../../Data/List";
-import { bind, ensure, join, Just, liftM2, Maybe, maybeRNull } from "../../../Data/Maybe";
+import { bind, ensure, join, Just, liftM2, Maybe, maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
+import { selectProfessionVariant } from "../../Actions/ProfessionVariantActions";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
 import { ProfessionVariantCombinedA_ } from "../../Models/View/ProfessionVariantCombined";
@@ -20,22 +22,28 @@ export interface ProfessionVariantsProps {
   l10n: L10nRecord
   professions: Maybe<List<Record<ProfessionCombined>>>
   sex: Maybe<Sex>
-  selectProfessionVariant (id: Maybe<string>): void
 }
 
 const PCA = ProfessionCombined.A
 const PCA_ = ProfessionCombinedA_
 const PVCA_ = ProfessionVariantCombinedA_
 
-export function ProfessionVariants (props: ProfessionVariantsProps) {
+export const ProfessionVariants: React.FC<ProfessionVariantsProps> = props => {
   const {
     currentProfessionId,
     currentProfessionVariantId,
     l10n,
     professions,
-    selectProfessionVariant,
     sex: msex,
   } = props
+
+  const dispatch = useDispatch ()
+
+  const handleProfessionVariantSelect =
+    React.useCallback (
+      (id: Maybe<string>) => dispatch (selectProfessionVariant (id)),
+      [dispatch]
+    )
 
   const mvars =
     liftM2 ((sex: Sex) => (prof: Record<ProfessionCombined>) =>
@@ -55,20 +63,21 @@ export function ProfessionVariants (props: ProfessionVariantsProps) {
                    })
                  }),
                  sortRecordsByName (L10n.A.id (l10n)),
-                 !PCA_.isVariantRequired (prof)
-                   ? consF (Option ({ name: translate (l10n) ("novariant") }))
-                   : ident
+                 PCA_.isVariantRequired (prof)
+                   ? ident
+                   : consF (Option ({ name: translate (l10n) ("novariant") }))
                ))
              ))
            (msex)
            (bind (professions) (find (pipe (PCA_.id, Maybe.elemF (currentProfessionId)))))
 
-  return maybeRNull ((vars: List<Record<Option<string>>>) => (
-                      <RadioButtonGroup
-                        active={currentProfessionVariantId}
-                        onClick={selectProfessionVariant}
-                        array={vars}
-                        />
-                    ))
-                    (join (mvars))
+  return maybe (<></>)
+               ((vars: List<Record<Option<string>>>) => (
+                 <RadioButtonGroup
+                   active={currentProfessionVariantId}
+                   onClick={handleProfessionVariantSelect}
+                   array={vars}
+                   />
+               ))
+               (join (mvars))
 }

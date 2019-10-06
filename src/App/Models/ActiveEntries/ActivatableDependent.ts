@@ -6,6 +6,7 @@ import { ActivatableSkillDependent } from "./ActivatableSkillDependent";
 import { ActiveObject } from "./ActiveObject";
 
 export interface ActivatableDependent {
+  "@@name": "ActivatableDependent"
   id: string;
   active: List<Record<ActiveObject>>;
   dependencies: List<ActivatableDependency>;

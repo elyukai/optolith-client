@@ -15,11 +15,14 @@ export function ListHeaderTag (props: ListHeaderTagProps) {
 
   if (typeof hint === "string") {
     return (
-      <TooltipHint hint={hint}>
-        <div className={classListMaybe (List (Just ("has-hint"), Maybe (className)))}>
-          {children}
-        </div>
-      </TooltipHint>
+      <TooltipHint
+        hint={hint}
+        target={
+          <div className={classListMaybe (List (Just ("has-hint"), Maybe (className)))}>
+            {children}
+          </div>
+        }
+        />
     )
   }
 

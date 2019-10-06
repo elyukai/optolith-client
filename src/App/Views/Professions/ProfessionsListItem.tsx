@@ -1,10 +1,12 @@
 import * as React from "react";
+import { useDispatch } from "react-redux";
 import { flip } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { notNull, toArray } from "../../../Data/List";
 import { bind, fromMaybe, mapMaybe, Maybe, maybe, maybeRNull } from "../../../Data/Maybe";
 import { lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { selectProfession } from "../../Actions/ProfessionActions";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
 import { Book } from "../../Models/Wiki/Book";
@@ -26,7 +28,6 @@ export interface ProfessionsListItemProps {
   profession: Record<ProfessionCombined>
   sex: Maybe<Sex>
   wiki: WikiModelRecord
-  selectProfession (id: string): void
   showAddSlidein (): void
 }
 
@@ -37,7 +38,6 @@ export function ProfessionsListItem (props: ProfessionsListItemProps) {
     showAddSlidein,
     currentProfessionId,
     profession,
-    selectProfession,
     sex: msex,
     wiki,
   } = props
@@ -53,6 +53,14 @@ export function ProfessionsListItem (props: ProfessionsListItemProps) {
 
   const id = PCA_.id (profession)
   const src = PCA_.src (profession)
+
+  const dispatch = useDispatch ()
+
+  const handleProfessionSelect =
+    React.useCallback (
+      () => dispatch (selectProfession (id)),
+      [dispatch]
+    )
 
   return (
     <ListItem active={Maybe.elem (id) (currentProfessionId)}>
@@ -80,7 +88,7 @@ export function ProfessionsListItem (props: ProfessionsListItemProps) {
       <ListItemButtons>
         <IconButton
           icon="&#xE90a;"
-          onClick={() => selectProfession (id)}
+          onClick={handleProfessionSelect}
           disabled={Maybe.elem (id) (currentProfessionId)}
           />
         <IconButton

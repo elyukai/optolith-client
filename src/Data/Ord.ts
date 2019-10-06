@@ -8,6 +8,14 @@
 
 export type Ordering = LT | EQ | GT
 
+/**
+ * A compare function returns how the elements are related in terms of order.
+ *
+ * The returned `Ordering` is to be read *x Ordering y*, so that if `x` is
+ * larger than `y`, `GT` is returned.
+ */
+export type Compare<A> = (x: A) => (y: A) => Ordering
+
 export type LT = typeof LT
 export const LT = Symbol ("LT")
 

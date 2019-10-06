@@ -1,5 +1,6 @@
 import * as React from "react";
-import { BorderButton, BorderButtonProps } from "./BorderButton";
+import { BorderButtonProps } from "./BorderButton";
+import { DialogButton } from "./DialogButton";
 
 export { BorderButtonProps as ButtonProps };
 
@@ -13,13 +14,13 @@ export function DialogButtons (props: DialogButtonsProps) {
 
   const buttons =
     Array.isArray (list) && list.length > 0
-      ? list.map (e => (<BorderButton
-                          {...e}
-                          onClick={onClickDefault
-                                     ? onClickDefault.bind (null, e.onClick)
-                                     : e.onClick}
-                          key={e.label}
-                          />))
+      ? list.map (e => (
+                   <DialogButton
+                     key={e.label}
+                     buttonProps={e}
+                     onClickDefault={onClickDefault}
+                     />
+                 ))
       : []
 
   return (

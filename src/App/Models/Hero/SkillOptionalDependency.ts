@@ -1,6 +1,7 @@
 import { fromDefault } from "../../../Data/Record";
 
 export interface SkillOptionalDependency {
+  "@@name": "SkillOptionalDependency"
   value: number
   origin: string
 }

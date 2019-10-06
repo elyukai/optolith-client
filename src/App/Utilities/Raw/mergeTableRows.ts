@@ -2,7 +2,7 @@ import { bimap, Either, first, fromRight_, isLeft, maybeToEither, Right } from "
 import { appendStr, find, List, notNullStr } from "../../../Data/List";
 import { bind, bindF, elem, ensure, fromJust, isJust, Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
+import { Record, RecordIBase } from "../../../Data/Record";
 import { show } from "../../../Data/Show";
 import { toInt, toNatural, unsafeToInt } from "../NumberUtils";
 import { pipe, pipe_ } from "../pipe";
@@ -59,10 +59,10 @@ export const mergeRowsById =
     if (isJust (ml10n_row)) {
       const l10n_row = fromJust (ml10n_row)
 
-      const x = bimap<string, string, A, Maybe<A>>
-        (appendStr (`${origin} at id ${id}: `))
-        (Just)
-        (f (id) (lookupF (l10n_row)) (lookupF (univ_row)))
+      const x = bimap (appendStr (`${origin} at id ${id}: `))
+                      <A, Maybe<A>>
+                      (Just)
+                      (f (id) (lookupF (l10n_row)) (lookupF (univ_row)))
 
       return x
     }
@@ -130,10 +130,10 @@ export const mergeRowsByIdAndMainId =
     if (isJust (ml10n_row)) {
       const l10n_row = fromJust (ml10n_row)
 
-      return bimap<string, string, A, Maybe<A>>
-        (appendStr (`${origin} at main_id ${mainId} at id ${id}: `))
-        (Just)
-        (f (mainId) (id) (lookupF (l10n_row)) (lookupF (univ_row)))
+      return bimap (appendStr (`${origin} at main_id ${mainId} at id ${id}: `))
+                   <A, Maybe<A>>
+                   (Just)
+                   (f (mainId) (id) (lookupF (l10n_row)) (lookupF (univ_row)))
     }
 
     return Right (Nothing)
@@ -190,13 +190,16 @@ export const mergeRowsByIdAndMainIdUnivOpt =
       find<OrderedMap<string, string>> (e => sameMainId (e) && sameId (e))
                                        (univ)
 
-    return bimap<string, string, A, Maybe<A>>
-      (appendStr (`${origin} at main_id ${mainId} at id ${id}: `))
-      (Just)
-      (f (mainId) (id) (lookupF (l10n_row)) (curr_id => bind (muniv_row) (lookup (curr_id))))
+    return bimap (appendStr (`${origin} at main_id ${mainId} at id ${id}: `))
+                 <A, Maybe<A>>
+                 (Just)
+                 (f (mainId)
+                    (id)
+                    (lookupF (l10n_row))
+                    (curr_id => bind (muniv_row) (lookup (curr_id))))
   }
 
-type FromRowFunction<A> =
+type FromRowFunction<A extends RecordIBase<any>> =
   (id: string) =>
   (lookup_l10n: (key: string) => Maybe<string>) => Either<string, Record<A>>
 
@@ -207,7 +210,7 @@ type FromRowFunction<A> =
  */
 export const fromRow =
   (origin: string) =>
-  <A> (f: FromRowFunction<A>) =>
+  <A extends RecordIBase<any>> (f: FromRowFunction<A>) =>
   (l10n_row: OrderedMap<string, string>): Either<string, Record<A>> => {
     const either_id = lookupId (origin) (ensure (notNullStr)) ("id") (l10n_row)
 
@@ -217,7 +220,6 @@ export const fromRow =
 
     const id = fromRight_ (either_id)
 
-    return first<string, string, Record<A>>
-      (appendStr (`${origin}: `))
-      (f (id) (lookupF (l10n_row)))
+    return first (appendStr (`${origin}: `))
+                 (f (id) (lookupF (l10n_row)))
   }

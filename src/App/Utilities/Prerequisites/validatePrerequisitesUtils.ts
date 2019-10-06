@@ -19,14 +19,16 @@ import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { ActivatableDependency, Dependent, Sex } from "../../Models/Hero/heroTypeHelpers";
 import { Pact } from "../../Models/Hero/Pact";
+import { PersonalData } from "../../Models/Hero/PersonalData";
 import { Culture } from "../../Models/Wiki/Culture";
 import { RequireActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement, isCultureRequirement } from "../../Models/Wiki/prerequisites/CultureRequirement";
 import { RequireIncreasable, RequireIncreasableL } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { isPactRequirement, PactRequirement } from "../../Models/Wiki/prerequisites/PactRequirement";
-import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
+import { PactRequirement } from "../../Models/Wiki/prerequisites/PactRequirement";
+import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
 import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
 import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement";
+import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite";
 import { Profession } from "../../Models/Wiki/Profession";
 import { Race } from "../../Models/Wiki/Race";
 import { Skill } from "../../Models/Wiki/Skill";
@@ -47,6 +49,8 @@ type Validator = (wiki: WikiModelRecord) =>
                  (sourceId: string) => boolean
 
 const { races, cultures, professions, skills } = WikiModel.AL
+const HA = HeroModel.A
+const PDA = PersonalData.A
 const { race, culture, profession, specialAbilities, attributes, sex, pact } = HeroModel.AL
 
 const RIA = RequireIncreasable.A
@@ -221,6 +225,14 @@ const isPrimaryAttributeValid =
              (getPrimaryAttributeId (specialAbilities (state))
                                     (RequirePrimaryAttribute.AL.type (req))))
 
+const isSocialPrerequisiteValid: (hero: Record<HeroModel>) =>
+                                 (req: Record<SocialPrerequisite>) => boolean =
+  hero =>
+    pipe (
+      SocialPrerequisite.A.value,
+      lte (pipe_ (hero, HA.personalData, PDA.socialStatus, Maybe.sum))
+    )
+
 const isIncreasableValid =
   (wiki: WikiModelRecord) =>
   (state: HeroModelRecord) =>
@@ -373,16 +385,18 @@ export const validateObject =
   (sourceId: string): boolean =>
     req === "RCP"
       ? isRCPValid (wiki) (hero) (sourceId)
-      : isSexRequirement (req)
+      : SexRequirement.is (req)
       ? isSexValid (sex (hero)) (req)
       : RaceRequirement.is (req)
       ? or (fmapF (race (hero)) (flip (isRaceValid) (req)))
-      : isCultureRequirement (req)
+      : CultureRequirement.is (req)
       ? or (fmapF (culture (hero)) (flip (isCultureValid) (req)))
-      : isPactRequirement (req)
+      : PactRequirement.is (req)
       ? isPactValid (pact (hero)) (req)
-      : isPrimaryAttributeRequirement (req)
+      : RequirePrimaryAttribute.is (req)
       ? isPrimaryAttributeValid (hero) (req)
+      : SocialPrerequisite.is (req)
+      ? isSocialPrerequisiteValid (hero) (req)
       : RequireIncreasable.is (req)
       ? isIncreasableValid (wiki) (hero) (sourceId) (req) (validateObject)
       : isActivatableValid (wiki) (hero) (sourceId) (req) (validateObject)

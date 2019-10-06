@@ -1,26 +1,29 @@
 import * as React from "react";
-import { flength, intercalate, List, subscript, elem } from "../../../../Data/List";
+import { elem, flength, intercalate, List, subscript } from "../../../../Data/List";
 import { bindF, ensure, mapMaybe } from "../../../../Data/Maybe";
 import { dec, lte } from "../../../../Data/Num";
-import { Record, RecordBase } from "../../../../Data/Record";
-import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
+import { Record, RecordIBase } from "../../../../Data/Record";
+import { MagicalTradition } from "../../../Constants/Groups";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { sortStrings } from "../../../Utilities/sortBy";
 import { WikiProperty } from "../WikiProperty";
 
-interface Accessors<A extends RecordBase> {
+interface Accessors<A extends RecordIBase<any>> {
   subtradition: (r: Record<A>) => List<number>
-  tradition: (r: Record<A>) => List<number>
+  tradition: (r: Record<A>) => List<MagicalTradition>
 }
 
-export interface WikiSpellTraditionsProps<A extends RecordBase> {
+export interface WikiSpellTraditionsProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
   l10n: L10nRecord
 }
 
-export function WikiSpellTraditions<A extends RecordBase> (props: WikiSpellTraditionsProps<A>) {
+export function WikiSpellTraditions<A extends RecordIBase<any>> (
+  props: WikiSpellTraditionsProps<A>
+) {
   const {
     x,
     acc,
@@ -30,26 +33,26 @@ export function WikiSpellTraditions<A extends RecordBase> (props: WikiSpellTradi
   const trad = acc.tradition (x)
   const subtrad = acc.subtradition (x)
 
-  if (elem (16) (trad)) { // Tradition (Animisten)
+  if (elem (MagicalTradition.Animisten) (trad)) {
     return (
       <WikiProperty l10n={l10n} title="tribaltraditions">
         {pipe_ (
           subtrad,
           mapMaybe (pipe (dec, subscript (translate (l10n) ("tribes")))),
-          sortStrings (L10n.A.id (l10n)),
+          sortStrings (l10n),
           intercalate (", ")
         )}
       </WikiProperty>
     )
   }
 
-  if (elem (7) (trad) || elem (8) (trad)) { // Zauberbarden/Zaubertänzer
+  if (elem (MagicalTradition.Zauberbarden) (trad) || elem (MagicalTradition.Zaubertaenzer) (trad)) {
     return (
       <WikiProperty l10n={l10n} title="musictradition">
         {pipe_ (
           subtrad,
           mapMaybe (pipe (dec, subscript (translate (l10n) ("musictraditions")))),
-          sortStrings (L10n.A.id (l10n)),
+          sortStrings (l10n),
           intercalate (", ")
         )}
       </WikiProperty>
@@ -66,7 +69,7 @@ export function WikiSpellTraditions<A extends RecordBase> (props: WikiSpellTradi
           ensure (lte (flength (trad_strs))),
           bindF (pipe (dec, subscript (trad_strs)))
         )),
-        sortStrings (L10n.A.id (l10n)),
+        sortStrings (l10n),
         intercalate (", ")
       )}
     </WikiProperty>
