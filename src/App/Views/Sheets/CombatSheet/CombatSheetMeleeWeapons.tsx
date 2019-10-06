@@ -129,18 +129,18 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
           {replicateR (2 - Maybe.sum (fmapF (mmelee_weapons) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
-                          <td className="name"></td>
-                          <td className="combat-technique"></td>
-                          <td className="damage-bonus"></td>
-                          <td className="damage"></td>
-                          <td className="at-mod mod"></td>
-                          <td className="pa-mod mod"></td>
-                          <td className="reach"></td>
-                          <td className="bf"></td>
-                          <td className="loss"></td>
-                          <td className="at"></td>
-                          <td className="pa"></td>
-                          <td className="weight"></td>
+                          <td className="name" />
+                          <td className="combat-technique" />
+                          <td className="damage-bonus" />
+                          <td className="damage" />
+                          <td className="at-mod mod" />
+                          <td className="pa-mod mod" />
+                          <td className="reach" />
+                          <td className="bf" />
+                          <td className="loss" />
+                          <td className="at" />
+                          <td className="pa" />
+                          <td className="weight" />
                         </tr>
                       ))}
         </tbody>
