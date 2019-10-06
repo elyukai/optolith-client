@@ -3,13 +3,38 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
-import { ActivatableBase, EntryWithCategory } from "./wikiTypeHelpers";
+import { ActivatableBase } from "./wikiTypeHelpers";
+
+export enum SpecialAbilityCombatTechniqueGroup {
+  None = 0,
+  All = 1,
+  Melee = 2,
+  Ranged = 3,
+  WithParry = 4,
+  OneHanded = 5,
+}
+
+export interface SpecialAbilityCombatTechniques {
+  "@@name": "SpecialAbilityCombatTechniques"
+  group: SpecialAbilityCombatTechniqueGroup
+  explicitIds: List<string>
+  customText: Maybe<string>
+}
+
+export const SpecialAbilityCombatTechniques =
+  fromDefault ("SpecialAbilityCombatTechniques")
+              <SpecialAbilityCombatTechniques> ({
+                group: SpecialAbilityCombatTechniqueGroup.None,
+                explicitIds: List.empty,
+                customText: Nothing
+              })
 
 export interface SpecialAbility extends ActivatableBase {
+  "@@name": "SpecialAbility"
   extended: Maybe<List<string | List<string>>>
   nameInWiki: Maybe<string>
   subgr: Maybe<number>
-  combatTechniques: Maybe<string>
+  combatTechniques: Maybe<Record<SpecialAbilityCombatTechniques>>
   rules: Maybe<string>
   effect: Maybe<string>
   volume: Maybe<string>
@@ -61,9 +86,5 @@ export const SpecialAbility =
                 brew: Nothing,
                 category: Categories.SPECIAL_ABILITIES,
               })
-
-export const isSpecialAbility =
-  (r: EntryWithCategory): r is Record<SpecialAbility> =>
-    SpecialAbility.AL.category (r) === Categories.SPECIAL_ABILITIES
 
 export const SpecialAbilityL = makeLenses (SpecialAbility)

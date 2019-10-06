@@ -6,6 +6,7 @@
 
 import { on } from "./Function";
 import { Internals } from "./Internals";
+import { RecordIBase } from "./Record";
 import { show } from "./Show";
 import { curry, Pair } from "./Tuple";
 import { curryN } from "./Tuple/Curry";
@@ -220,7 +221,7 @@ export const notEquals =
   <A> (m1: A) => (m2: A): boolean =>
     !equals (m1) (m2)
 
-const getRecordField = <A> (key: keyof A) => (r: Record<A>) => {
+const getRecordField = <A extends RecordIBase<any>> (key: keyof A) => (r: Record<A>) => {
   if (elem (key as string) (r .keys)) {
     const specifiedValue = r .values [key]
 

@@ -1,10 +1,10 @@
 import * as React from "react";
-import { fnullStr, notNullStr, List } from "../../../Data/List";
-import { fromMaybe, Maybe, Just } from "../../../Data/Maybe";
-import { InputKeyEvent, InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
+import { fnullStr, List, notNullStr } from "../../../Data/List";
+import { fromMaybe, Just, Maybe } from "../../../Data/Maybe";
+import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers";
+import { classListMaybe } from "../../Utilities/CSS";
 import { IconButton } from "./IconButton";
 import { TextField } from "./TextField";
-import { classListMaybe } from "../../Utilities/CSS";
 
 export interface EditTextProps {
   autoFocus?: boolean
@@ -14,50 +14,51 @@ export interface EditTextProps {
   submit (text: string): void
 }
 
-export interface EditTextState {
-  text: string
-}
+export const EditText: React.FC<EditTextProps> = props => {
+  const { autoFocus, className, text: defaultText, submit, cancel } = props
 
-export class EditText extends React.Component<EditTextProps, EditTextState> {
-  state = {
-    text: fromMaybe ("") (Maybe (this.props.text)),
-  }
+  const [text, setText] = React.useState (fromMaybe ("") (Maybe (defaultText)))
 
-  submit = () => notNullStr (this.state.text) ? this.props.submit (this.state.text) : undefined
-
-  handleEnter = (event: InputKeyEvent) => {
-    if (event.charCode === 13 && notNullStr (this.state.text)) {
-      this.submit ()
-    }
-  }
-
-  handleInput = (event: InputTextEvent) => this.setState ({ text: event.target.value })
-
-  render () {
-    return (
-      <div
-        className={
-          classListMaybe (List (
-            Just ("confirm-edit"),
-            Maybe (this.props.className)
-          ))
-        }>
-        <TextField
-          value={this.state.text}
-          onChange={this.handleInput}
-          onKeyDown={this.handleEnter}
-          autoFocus={this.props.autoFocus}
-          />
-        <IconButton
-          icon="&#xE90a;"
-          onClick={this.submit}
-          disabled={fnullStr (this.state.text)}
-          />
-        <IconButton
-          icon="&#xE915;"
-          onClick={this.props.cancel}
-          />
-      </div>
+  const handleSubmit =
+    React.useCallback (
+      () => notNullStr (text) ? submit (text) : undefined,
+      [submit, text]
     )
-  }
+
+  const handleEnter =
+    React.useCallback (
+      (event: InputKeyEvent) => {
+        if (event.charCode === 13 && text !== "") {
+          submit (text)
+        }
+      },
+      [submit, text]
+    )
+
+  return (
+    <div
+      className={
+        classListMaybe (List (
+          Just ("confirm-edit"),
+          Maybe (className)
+        ))
+      }
+      >
+      <TextField
+        value={text}
+        onChange={setText}
+        onKeyDown={handleEnter}
+        autoFocus={autoFocus}
+        />
+      <IconButton
+        icon="&#xE90a;"
+        onClick={handleSubmit}
+        disabled={fnullStr (text)}
+        />
+      <IconButton
+        icon="&#xE915;"
+        onClick={cancel}
+        />
+    </div>
+  )
 }

@@ -1,12 +1,14 @@
-import { fromDefault, makeLenses } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { pipe } from "../../Utilities/pipe";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
 import { LiturgicalChant } from "../Wiki/LiturgicalChant";
-import { LiturgicalChantCombined } from "./LiturgicalChantCombined";
 import { IncreasableWithRequirements } from "./viewTypeHelpers";
 
-export interface LiturgicalChantWithRequirements
-  extends LiturgicalChantCombined, IncreasableWithRequirements { }
+export interface LiturgicalChantWithRequirements extends IncreasableWithRequirements {
+    "@@name": "LiturgicalChantWithRequirements"
+    wikiEntry: Record<LiturgicalChant>
+    stateEntry: Record<ActivatableSkillDependent>
+  }
 
 export const LiturgicalChantWithRequirements =
   fromDefault ("LiturgicalChantWithRequirements")

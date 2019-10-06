@@ -1,6 +1,6 @@
 import * as React from "react";
 import { isList, List, subscript } from "../../../Data/List";
-import { fromMaybeR, guardReplace, isJust, Just, Maybe, normalize, Nothing, orN } from "../../../Data/Maybe";
+import { fromMaybe, guardReplace, isJust, Just, Maybe, normalize, Nothing, orN } from "../../../Data/Maybe";
 import { classListMaybe } from "../../Utilities/CSS";
 
 export interface ListItemGroupProps {
@@ -17,7 +17,7 @@ export function ListItemGroup (props: ListItemGroupProps) {
   const normalizedIndex = normalize (index)
 
   const content =
-    fromMaybeR (children as any)
+    fromMaybe (children as any)
                (isJust (normalizedIndex) && isList (list)
                  ? subscript (list) (Maybe.fromJust (normalizedIndex) - 1)
                  : typeof text === "string"

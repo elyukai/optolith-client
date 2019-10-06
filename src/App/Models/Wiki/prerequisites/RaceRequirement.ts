@@ -2,6 +2,7 @@ import { List } from "../../../../Data/List";
 import { fromDefault } from "../../../../Data/Record";
 
 export interface RaceRequirement {
+  "@@name": "RaceRequirement"
   id: "RACE"
   value: number | List<number>
   active: boolean

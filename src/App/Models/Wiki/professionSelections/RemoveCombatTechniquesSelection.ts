@@ -3,6 +3,7 @@ import { AnyProfessionVariantSelection, ProfessionSelectionIds } from "../wikiTy
 import { CombatTechniquesSelection } from "./CombatTechniquesSelection";
 
 export interface RemoveCombatTechniquesSelection {
+  "@@name": "RemoveCombatTechniquesSelection"
   id: ProfessionSelectionIds
   active: false
 }

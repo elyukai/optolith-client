@@ -4,6 +4,7 @@ import { fromDefault } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
 
 export interface MeleeWeapon {
+  "@@name": "MeleeWeapon"
   id: string
   name: string
   combatTechnique: string

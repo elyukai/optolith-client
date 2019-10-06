@@ -1,12 +1,12 @@
 // import { TextareaAutosize } from 'react-textarea-autosize'
 import * as React from "react";
-import { findDOMNode } from "react-dom";
 import { fmapF } from "../../../Data/Functor";
 import { List, notNullStr } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, fromMaybeR, guardReplace, Just, Maybe, maybeR, normalize, orN } from "../../../Data/Maybe";
+import { bindF, ensure, fromMaybe, guardReplace, Just, Maybe, maybe, normalize, orN } from "../../../Data/Maybe";
 import { InputKeyEvent, InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { classListMaybe } from "../../Utilities/CSS";
 import { pipe_ } from "../../Utilities/pipe";
+import { renderMaybe } from "../../Utilities/ReactUtils";
 import { isNumber } from "../../Utilities/typeCheckUtils";
 import { Label } from "./Label";
 
@@ -20,108 +20,140 @@ export interface TextFieldProps {
   hint?: Maybe<string> | string
   label?: Maybe<string> | string
   multiLine?: boolean
-  onChange? (event: InputTextEvent): void
-  onChangeString? (updatedText: string): void
+  onChange (newText: string): void
   onKeyDown? (event: InputKeyEvent): void
   type?: string
   value?: string | number | Maybe<string | number>
   valid?: boolean
+  everyKeyDown?: boolean
 }
 
-export class TextField extends React.Component<TextFieldProps, {}> {
-  inputRef: HTMLInputElement | null = null
+export const TextField: React.FC<TextFieldProps> = props => {
+  const {
+    autoFocus,
+    className,
+    countCurrent,
+    countMax,
+    disabled,
+    fullWidth,
+    label,
+    onChange,
+    onKeyDown,
+    type = "text",
+    valid,
+    value: mvalue,
+    hint: mhint,
+    everyKeyDown,
+  } = props
 
-  componentDidMount () {
-    if (Maybe.elem (true) (Maybe.normalize (this.props.autoFocus)) && this.inputRef !== null) {
-      (findDOMNode (this.inputRef) as HTMLInputElement).focus ()
-    }
+  const saved_value = renderMaybe (normalize (mvalue))
+  const mlabel = normalize (label)
+
+  const inputRef = React.useRef<HTMLInputElement | null> (null)
+
+  const defaultValue = typeof saved_value === "number" ? saved_value .toString () : saved_value
+
+  const [value, setValue] = React.useState (defaultValue)
+  const [prevValue, setPrevValue] = React.useState (defaultValue)
+
+  if (prevValue !== defaultValue) {
+    setValue (defaultValue)
+    setPrevValue (defaultValue)
   }
 
-  render () {
-    const {
-      className,
-      countCurrent,
-      countMax,
-      disabled,
-      fullWidth,
-      label,
-      onChange,
-      onChangeString,
-      onKeyDown,
-      type = "text",
-      valid,
-    } = this.props
+  React.useEffect (
+    () => {
+      if (Maybe.elem (true) (Maybe.normalize (autoFocus)) && inputRef.current !== null) {
+        inputRef.current.focus ()
+      }
+    },
+    [autoFocus]
+  )
 
-    const value = fromMaybe<string | number> ("") (normalize (this.props.value))
+  const hintElement =
+    fmapF (normalize (mhint))
+          (hint => (
+            <div
+              className={
+                classListMaybe (List (
+                  Just ("textfield-hint"),
+                  guardReplace (value !== "") ("hide")
+                ))
+              }
+              >
+              {hint}
+            </div>
+          ))
 
-    const mlabel = normalize (label)
-
-    const mhint = normalize (this.props.hint)
-
-    const hintElement =
-      fmapF (mhint)
-            (hint => (
-              <div
-                className={
-                  classListMaybe (List (
-                    Just ("textfield-hint"),
-                    guardReplace (value !== "") ("hide")
-                  ))
-                }
-                >
-                {hint}
-              </div>
-            ))
-
-    // const inputElement = this.props.multiLine ? (
-    // 	<TextareaAutosize
-    // 		defaultValue={trueValue}
-    // 		onChange={onChange}
-    // 		onKeyPress={onKeyDown}
-    // 	/>
-    // ) : (
-    const inputElement = (
-      <input
-        type={type}
-        value={value}
-        onChange={
-          orN (disabled)
-            ? undefined
-            : (onChange && onChangeString)
-            ? event => {
-              onChange (event)
-              onChangeString (event.target.value)
-            }
-            : onChangeString
-            ? event => onChangeString (event.target.value)
-            : onChange
+  const handleChange =
+    React.useCallback (
+      everyKeyDown === true
+        ? (event: InputTextEvent) => {
+          setValue (event.target.value)
+          setPrevValue (event.target.value)
+          onChange (event.target.value)
         }
-        onKeyPress={orN (disabled) ? undefined : onKeyDown}
-        readOnly={disabled}
-        ref={node => this.inputRef = node}
-      />
+        : orN (disabled)
+        ? () => undefined
+        : (event: InputTextEvent) => setValue (event.target.value),
+      [disabled, onChange, onChange]
     )
 
-    const counterTextElement =
-      isNumber (countMax) ? <div>{countCurrent} / {countMax}</div> : null
+  const handleBlur =
+    React.useCallback (
+      orN (disabled) || everyKeyDown === true
+        ? () => undefined
+        : () => defaultValue === value ? undefined : onChange (value),
+      [disabled, onChange, value]
+    )
 
-    return (
-      <div
-        className={
-          classListMaybe (List (
-            Just ("textfield"),
-            Maybe (className),
-            guardReplace (orN (fullWidth)) ("fullWidth"),
-            guardReplace (orN (disabled)) ("disabled"),
-            guardReplace (valid === false) ("invalid")
-          ))
-        }
-        >
-        {pipe_ (mlabel, bindF (ensure (notNullStr)), maybeR (null) (l => <Label text={l} />))}
-        {inputElement}
-        {fromMaybeR (null) (hintElement)}
-        {counterTextElement}
+  // const inputElement = multiLine ? (
+  //  <TextareaAutosize
+  //    defaultValue={trueValue}
+  //    onChange={onChange}
+  //    onKeyPress={onKeyDown}
+  //  />
+  // ) : (
+  const inputElement = (
+    <input
+      type={type}
+      value={value}
+      onChange={handleChange}
+      onKeyPress={orN (disabled) ? undefined : onKeyDown}
+      readOnly={disabled}
+      ref={inputRef}
+      onBlur={handleBlur}
+      />
+  )
+
+  const counterTextElement =
+    isNumber (countMax)
+    ? (
+      <div>
+        {countCurrent}
+        {" / "}
+        {countMax}
       </div>
     )
-  }
+    : null
+
+  return (
+    <div
+      className={
+        classListMaybe (List (
+          Just ("textfield"),
+          Maybe (className),
+          guardReplace (orN (fullWidth)) ("fullWidth"),
+          guardReplace (orN (disabled)) ("disabled"),
+          guardReplace (valid === false) ("invalid")
+        ))
+      }
+      >
+      {pipe_ (mlabel, bindF (ensure (notNullStr)), maybe (null as React.ReactNode)
+                                                         (l => <Label text={l} />))}
+      {inputElement}
+      {fromMaybe (null as React.ReactNode) (hintElement)}
+      {counterTextElement}
+    </div>
+  )
 }

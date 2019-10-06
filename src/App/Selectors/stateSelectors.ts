@@ -26,6 +26,7 @@ const UI = uiReducer.A_
 
 export const getCurrentTab = pipe (App.ui, UI.location)
 
+export const getLoadingPhase = App.isReady
 
 export const getLocaleMessages = pipe (App.l10n, LocaleState.AL.messages)
 export const getLocaleId = pipe (App.l10n, LocaleState.AL.id)
@@ -109,13 +110,19 @@ export const getSpells =
 
 
 export const getBlessedStyleDependencies =
-  pipe (getCurrentHeroPresent, fmap (Hero.blessedStyleDependencies))
+  pipe (getHeroProp, Hero.blessedStyleDependencies)
 
 export const getCombatStyleDependencies =
-  pipe (getCurrentHeroPresent, fmap (Hero.combatStyleDependencies))
+  pipe (getHeroProp, Hero.combatStyleDependencies)
 
 export const getMagicalStyleDependencies =
-  pipe (getCurrentHeroPresent, fmap (Hero.magicalStyleDependencies))
+  pipe (getHeroProp, Hero.magicalStyleDependencies)
+
+export const getSkillStyleDependencies =
+  pipe (getHeroProp, Hero.skillStyleDependencies)
+
+export const getSocialDependencies =
+  pipe (getHeroProp, Hero.socialStatusDependencies)
 
 
 export const getCurrentHeroName =
@@ -141,6 +148,9 @@ export const getWeight =
 
 export const getAvatar =
   pipe (getCurrentHeroPresent, bindF (Hero.avatar))
+
+export const getSocialStatus =
+  pipe (getHeroProp, Hero.personalData, Pers.socialStatus)
 
 
 export const getPact =
@@ -177,8 +187,14 @@ export const getRaceIdM =
 export const getCurrentRaceId =
   pipe (getCurrentHeroPresent, bindF (Hero.race))
 
+export const getRaceVariantId =
+  pipe (getHeroProp, Hero.raceVariant)
+
 export const getCurrentRaceVariantId =
   pipe (getCurrentHeroPresent, bindF (Hero.raceVariant))
+
+export const getCultureId =
+  pipe (getHeroProp, Hero.culture)
 
 export const getCurrentCultureId =
   pipe (getCurrentHeroPresent, bindF (Hero.culture))

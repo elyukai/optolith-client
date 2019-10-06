@@ -1,7 +1,7 @@
 import { Either, maybeToEither_ } from "../../../Data/Either";
 import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
-import { inRange, inRangeN } from "../../../Data/Ix";
+import { inRangeN } from "../../../Data/Ix";
 import { Cons, flength, List, notNullStr, splitOn } from "../../../Data/List";
 import { bindF, ensure, fromMaybe, Just, liftM2, mapM, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { fromList, OrderedSet } from "../../../Data/OrderedSet";
@@ -17,9 +17,8 @@ export const mensureMap =
   (received: Maybe<string>): Either<string, A> => {
     const res = f (received)
 
-    return maybeToEither_
-      (() => `Expected: ${expected}, Received: ${show (received)}`)
-      (res)
+    return maybeToEither_ (() => `Expected: ${expected}, Received: ${show (received)}`)
+                          (res)
   }
 
 /**
@@ -108,7 +107,7 @@ const mapListLengthInRange =
   (del: string) =>
   <A> (f: (x: string) => Maybe<A>) =>
   (x: string) => Maybe<List<A>> =>
-    mapFixedListBindAfter (ensure (pipe (flength, inRange (Pair (l, u)))))
+    mapFixedListBindAfter (ensure (pipe (flength, inRangeN (l, u))))
 
 export const mensureMapListLengthInRange =
   (l: number) =>
@@ -126,7 +125,7 @@ export const mensureMapListLengthInRangeOptional =
   (type: string) =>
   <A> (f: (x: string) => Maybe<A>) =>
     mensureMap (Expect.Maybe (Expect.ListLengthRange (l) (u) (type)))
-              (bindOptional (mapListLengthInRange (l) (u) (del) (f)))
+               (bindOptional (mapListLengthInRange (l) (u) (del) (f)))
 
 const mapSet =
   (del: string) =>
@@ -230,7 +229,7 @@ export const mensureMapNaturalPred =
 export const mensureMapNaturalInRange =
   (l: number) =>
   (u: number) =>
-    mensureMapNaturalPred (inRange (Pair (l, u)))
+    mensureMapNaturalPred (inRangeN (l, u))
 
 export const mensureMapNaturalPredOptional =
   (pred: (x: number) => boolean) =>
@@ -286,6 +285,40 @@ export const mensureMapBoolean =
                fmap (x => x === "TRUE" || x === "true")
              ))
 
+export const mensureMapStrEnumOption =
+  (enum_name: string) =>
+  <A extends object> (enum_values: A) =>
+    mensureMap (Expect.Maybe (enum_name))
+               (bindOptional (ensure (isInStrEnum (enum_values))))
+
+export const mensureMapNumEnum =
+  (enum_name: string) =>
+  <A extends object> (enum_values: A) =>
+    mensureMap (enum_name)
+               (bindF (pipe (toInt, bindF (ensure (isInNumEnum (enum_values))))))
+
+export const mensureMapNumEnumOptional =
+  (enum_name: string) =>
+  <A extends object> (enum_values: A) =>
+    mensureMap (Expect.Maybe (enum_name))
+               (bindOptional (pipe (toInt, bindF (ensure (isInNumEnum (enum_values))))))
+
+export const mensureMapNumEnumList =
+  (enum_name: string) =>
+  <A extends object> (enum_values: A) =>
+  (del: string) =>
+    mensureMapList (del)
+                   (enum_name)
+                   (pipe (toInt, bindF (ensure (isInNumEnum (enum_values)))))
+
+export const mensureMapNumEnumListOptional =
+  (enum_name: string) =>
+  <A extends object> (enum_values: A) =>
+  (del: string) =>
+    mensureMapListOptional (del)
+                           (enum_name)
+                           (pipe (toInt, bindF (ensure (isInNumEnum (enum_values)))))
+
 const mapPairList =
   (delPair: string) =>
   <A> (toFst: (x: string) => Maybe<A>) =>
@@ -327,3 +360,36 @@ export const mensureMapPairListOptional =
                            (mapPairList (delPair)
                                         (toFst)
                                         (toSnd))
+
+type GenericEnumType<A> =
+  A[keyof A] extends string ? string : A[keyof A] extends number ? number : never
+
+type EnsureEnumType<A extends object> =
+  A[keyof A] extends string ? A[keyof A] : A[keyof A] extends number ? A[keyof A] : never
+
+export const isInEnum =
+  <A extends object> (enum_values: A) => {
+    const all_values = Object.values (enum_values)
+
+    return (x: GenericEnumType<A>): x is EnsureEnumType<A> => all_values .includes (x)
+  }
+
+type EnsureStrEnumType<A extends object> =
+  A[keyof A] extends string ? A[keyof A] : never
+
+export const isInStrEnum =
+  <A extends object> (enum_values: A) => {
+    const all_values = Object.values (enum_values)
+
+    return (x: string): x is EnsureStrEnumType<A> => all_values .includes (x)
+  }
+
+type EnsureNumEnumType<A extends object> =
+  A[keyof A] extends number ? A[keyof A] : never
+
+export const isInNumEnum =
+  <A extends object> (enum_values: A) => {
+    const all_values = Object.values (enum_values)
+
+    return (x: number): x is EnsureNumEnumType<A> => all_values .includes (x)
+  }

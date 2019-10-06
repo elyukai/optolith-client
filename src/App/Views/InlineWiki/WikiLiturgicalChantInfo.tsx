@@ -36,16 +36,6 @@ const LCA = LiturgicalChant.A
 export function WikiLiturgicalChantInfo (props: WikiLiturgicalChantInfoProps) {
   const { liturgicalChantExtensions, x } = props
 
-  // if (["nl-BE"].includes(l10n.id)) {
-  //   return (
-  //     <WikiBoxTemplate className="liturgicalchant" title={name}>
-  //       <WikiSkillCheck {...props} />
-  //       <WikiLiturgicalChantTraditions {...props} />
-  //       <WikiImprovementCost {...props} />
-  //     </WikiBoxTemplate>
-  //   )
-  // }
-
   const mextensions = getExtensionsForEntry (LCA.id (x)) (liturgicalChantExtensions)
 
   const add_srcs = pipe_ (mextensions, joinMaybeList, map (SelectOption.A.src))

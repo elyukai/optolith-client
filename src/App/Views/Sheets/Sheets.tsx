@@ -5,6 +5,7 @@ import { bindF, Maybe, maybeRNull } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
+import { DCId } from "../../Constants/Ids";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
@@ -28,7 +29,7 @@ import { MeleeWeapon } from "../../Models/View/MeleeWeapon";
 import { RangedWeapon } from "../../Models/View/RangedWeapon";
 import { ShieldOrParryingWeapon } from "../../Models/View/ShieldOrParryingWeapon";
 import { SkillCombined } from "../../Models/View/SkillCombined";
-import { SpellCombined } from "../../Models/View/SpellCombined";
+import { SpellWithRequirements } from "../../Models/View/SpellWithRequirements";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { Culture } from "../../Models/Wiki/Culture";
 import { Disadvantage } from "../../Models/Wiki/Disadvantage";
@@ -37,7 +38,6 @@ import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Race } from "../../Models/Wiki/Race";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModel } from "../../Models/Wiki/WikiModel";
-import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { isBookEnabled } from "../../Utilities/RulesUtils";
 import { Page } from "../Universal/Page";
@@ -96,7 +96,7 @@ export interface SheetsStateProps {
   magicalSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   magicalTradition: string
   properties: Maybe<string>
-  spells: Maybe<List<Record<SpellCombined>>>
+  spells: Maybe<List<Record<SpellWithRequirements>>>
   aspects: Maybe<string>
   blessedPrimary: Maybe<string>
   blessedSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
@@ -121,34 +121,188 @@ const HA = HeroModel.A
 const RA = Rules.A
 
 export function Sheets (props: SheetsProps) {
-  const maybeArcaneEnergy = find (pipe (DerivedCharacteristic.A.id, equals<DCIds> ("AE")))
-                                 (props.derivedCharacteristics)
+  const {
+    derivedCharacteristics,
+    books,
+    hero,
 
-  const maybeKarmaPoints = find (pipe (DerivedCharacteristic.A.id, equals<DCIds> ("KP")))
-                                (props.derivedCharacteristics)
+    advantagesActive,
+    ap,
+    attributes,
+    avatar,
+    culture,
+    disadvantagesActive,
+    el,
+    fatePointsModifier,
+    generalsaActive,
+    l10n,
+    name,
+    professionName,
+    profile,
+    race,
+    sex,
+    printToPDF,
+
+    checkAttributeValueVisibility,
+    languagesStateEntry,
+    languagesWikiEntry,
+    scriptsStateEntry,
+    scriptsWikiEntry,
+    skillsByGroup,
+    skillGroupPages,
+    switchAttributeValueVisibility,
+
+    armors,
+    combatSpecialAbilities,
+    combatTechniques,
+    meleeWeapons,
+    rangedWeapons,
+    shieldsAndParryingWeapons,
+    conditions,
+    states,
+
+    armorZones,
+
+    items,
+    pet,
+    purse,
+    totalPrice,
+    totalWeight,
+
+    cantrips,
+    magicalPrimary,
+    magicalSpecialAbilities,
+    magicalTradition,
+    properties,
+    spells,
+
+    aspects,
+    blessedPrimary,
+    blessedSpecialAbilities,
+    blessedTradition,
+    blessings,
+    liturgicalChants,
+  } = props
+
+  const maybeArcaneEnergy = find (pipe (DerivedCharacteristic.A.id, equals<DCId> (DCId.AE)))
+                                 (derivedCharacteristics)
+
+  const maybeKarmaPoints = find (pipe (DerivedCharacteristic.A.id, equals<DCId> (DCId.KP)))
+                                (derivedCharacteristics)
 
   return (
     <Page id="sheets">
       <Scroll className="sheet-wrapper">
-        <MainSheet {...props} />
-        <SkillsSheet {...props} />
-        <CombatSheet {...props} />
-        {isBookEnabled (props.books)
-                       (RA.enabledRuleBooks (HA.rules (props.hero)))
-                       (RA.enableAllRuleBooks (HA.rules (props.hero)))
+        <MainSheet
+          advantagesActive={advantagesActive}
+          ap={ap}
+          attributes={attributes}
+          avatar={avatar}
+          culture={culture}
+          derivedCharacteristics={derivedCharacteristics}
+          disadvantagesActive={disadvantagesActive}
+          el={el}
+          fatePointsModifier={fatePointsModifier}
+          generalsaActive={generalsaActive}
+          l10n={l10n}
+          name={name}
+          professionName={professionName}
+          profile={profile}
+          race={race}
+          sex={sex}
+          printToPDF={printToPDF}
+          />
+        <SkillsSheet
+          attributes={attributes}
+          checkAttributeValueVisibility={checkAttributeValueVisibility}
+          languagesStateEntry={languagesStateEntry}
+          languagesWikiEntry={languagesWikiEntry}
+          l10n={l10n}
+          scriptsStateEntry={scriptsStateEntry}
+          scriptsWikiEntry={scriptsWikiEntry}
+          skillsByGroup={skillsByGroup}
+          skillGroupPages={skillGroupPages}
+          switchAttributeValueVisibility={switchAttributeValueVisibility}
+          />
+        <CombatSheet
+          armors={armors}
+          attributes={attributes}
+          combatSpecialAbilities={combatSpecialAbilities}
+          combatTechniques={combatTechniques}
+          derivedCharacteristics={derivedCharacteristics}
+          l10n={l10n}
+          meleeWeapons={meleeWeapons}
+          rangedWeapons={rangedWeapons}
+          shieldsAndParryingWeapons={shieldsAndParryingWeapons}
+          conditions={conditions}
+          states={states}
+          />
+        {isBookEnabled (books)
+                       (RA.enabledRuleBooks (HA.rules (hero)))
+                       (RA.enableAllRuleBooks (HA.rules (hero)))
                        ("US25208")
-          ? <CombatSheetZones {...props} />
+          ? (
+            <CombatSheetZones
+              armorZones={armorZones}
+              attributes={attributes}
+              combatSpecialAbilities={combatSpecialAbilities}
+              combatTechniques={combatTechniques}
+              derivedCharacteristics={derivedCharacteristics}
+              l10n={l10n}
+              meleeWeapons={meleeWeapons}
+              rangedWeapons={rangedWeapons}
+              shieldsAndParryingWeapons={shieldsAndParryingWeapons}
+              conditions={conditions}
+              states={states}
+              />
+          )
           : null}
-        <BelongingsSheet {...props} />
+        <BelongingsSheet
+          attributes={attributes}
+          items={items}
+          l10n={l10n}
+          pet={pet}
+          purse={purse}
+          totalPrice={totalPrice}
+          totalWeight={totalWeight}
+          />
         {pipe_ (
           maybeArcaneEnergy,
           bindF (DerivedCharacteristic.A.value),
-          maybeRNull (() => <SpellsSheet {...props} />)
+          maybeRNull (() => (
+                       <SpellsSheet
+                         attributes={attributes}
+                         cantrips={cantrips}
+                         checkAttributeValueVisibility={checkAttributeValueVisibility}
+                         derivedCharacteristics={derivedCharacteristics}
+                         l10n={l10n}
+                         magicalPrimary={magicalPrimary}
+                         magicalSpecialAbilities={magicalSpecialAbilities}
+                         magicalTradition={magicalTradition}
+                         properties={properties}
+                         spells={spells}
+                         switchAttributeValueVisibility={switchAttributeValueVisibility}
+                         />
+                     ))
         )}
         {pipe_ (
           maybeKarmaPoints,
           bindF (DerivedCharacteristic.A.value),
-          maybeRNull (() => <LiturgicalChantsSheet {...props} />)
+          maybeRNull (() => (
+                       <LiturgicalChantsSheet
+                         aspects={aspects}
+                         attributes={attributes}
+                         blessedPrimary={blessedPrimary}
+                         blessedSpecialAbilities={blessedSpecialAbilities}
+                         blessedTradition={blessedTradition}
+                         blessings={blessings}
+                         checkAttributeValueVisibility={checkAttributeValueVisibility}
+                         derivedCharacteristics={derivedCharacteristics}
+                         liturgicalChants={liturgicalChants}
+                         l10n={l10n}
+                         switchAttributeValueVisibility={switchAttributeValueVisibility}
+                         />
+                     ))
         )}
       </Scroll>
     </Page>

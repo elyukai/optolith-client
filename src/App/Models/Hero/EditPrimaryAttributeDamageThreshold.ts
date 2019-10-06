@@ -3,6 +3,7 @@ import { fromDefault, makeLenses } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
 
 export interface EditPrimaryAttributeDamageThreshold {
+  "@@name": "EditPrimaryAttributeDamageThreshold"
   primary: Maybe<string>
   threshold: string | Pair<string, string>
 }

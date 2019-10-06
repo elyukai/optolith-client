@@ -1,7 +1,7 @@
 import * as React from "react";
 import { fmap } from "../../../../Data/Functor";
 import { imap, List, toArray } from "../../../../Data/List";
-import { fromMaybe, fromMaybeR, guardReplace, isNothing, Just, Maybe, maybeRNull, or } from "../../../../Data/Maybe";
+import { fromMaybe, guardReplace, isNothing, Just, Maybe, maybeRNull, or } from "../../../../Data/Maybe";
 import { ndash } from "../../../Utilities/Chars";
 import { classListMaybe } from "../../../Utilities/CSS";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
@@ -67,7 +67,7 @@ export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
             )),
             toArray
           )),
-          fromMaybeR (null)
+          fromMaybe (null as React.ReactNode)
         )}
       </div>
     </div>

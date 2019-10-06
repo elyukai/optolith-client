@@ -1,7 +1,8 @@
 import { List } from "../../../Data/List";
-import { fromDefault, Record } from "../../../Data/Record";
+import { fromDefault, OmitName, Record } from "../../../Data/Record";
 
 export interface L10n {
+  "@@name": "L10n"
   "id": string
   "lastchanges": string
   "heroes": string
@@ -374,7 +375,6 @@ export interface L10n {
   "mundaneprofessions": string
   "magicalprofessions": string
   "blessedprofessions": string
-  "alwaysshowprofessionsfromextensions": string
   "novariant": string
   "ownprofession": string
   "prerequisites": string
@@ -621,15 +621,34 @@ export interface L10n {
   "demontypes": List<string>
   "demontype": string
   "circleofdamnation": string
-  "lesserpact": string
+  "minorpact": string
   "tribaltraditions": string
   "tribes": List<string>
   "saveheroerror": string
   "brews": List<string>
   "brew": string
+  "all": string
+  "allmeleecombattechniques": string
+  "allrangedcombattechniques": string
+  "allmeleecombattechniqueswithparry": string
+  "allmeleecombattechniquesforonehandedweapons": string
+  "youcannotuseamodificationonthisspellscastingtime": string
+  "youcannotuseamodificationonthisspellsritualtime": string
+  "youcannotuseamodificationonthisspellscost": string
+  "youcannotuseamodificationonthisspellsrange": string
+  "youcannotuseamodificationonthisspellsduration": string
+  "youcannotuseamodificationonthischantsliturgicaltime": string
+  "youcannotuseamodificationonthischantsceremonialtime": string
+  "youcannotuseamodificationonthischantscost": string
+  "youcannotuseamodificationonthischantsrange": string
+  "youcannotuseamodificationonthischantsduration": string
+  "duplicatehero": string
+  "deletehero.novar": string
+  "openhero": string
+  "socialstatusxorhigher": string
 }
 
-export type L10nKey = keyof L10n
+export type L10nKey = keyof OmitName<L10n>
 
 export type L10nRecord = Record<L10n>
 
@@ -1008,7 +1027,6 @@ export const L10n =
                 "mundaneprofessions": "",
                 "magicalprofessions": "",
                 "blessedprofessions": "",
-                "alwaysshowprofessionsfromextensions": "",
                 "novariant": "",
                 "ownprofession": "",
                 "prerequisites": "",
@@ -1255,10 +1273,29 @@ export const L10n =
                 "demontypes": List.empty,
                 "demontype": "",
                 "circleofdamnation": "",
-                "lesserpact": "",
+                "minorpact": "",
                 "tribaltraditions": "",
                 "tribes": List.empty,
                 "saveheroerror": "",
                 "brews": List.empty,
                 "brew": "",
+                "all": "",
+                "allmeleecombattechniques": "",
+                "allrangedcombattechniques": "",
+                "allmeleecombattechniqueswithparry": "",
+                "allmeleecombattechniquesforonehandedweapons": "",
+                "youcannotuseamodificationonthisspellscastingtime": "",
+                "youcannotuseamodificationonthisspellsritualtime": "",
+                "youcannotuseamodificationonthisspellscost": "",
+                "youcannotuseamodificationonthisspellsrange": "",
+                "youcannotuseamodificationonthisspellsduration": "",
+                "youcannotuseamodificationonthischantsliturgicaltime": "",
+                "youcannotuseamodificationonthischantsceremonialtime": "",
+                "youcannotuseamodificationonthischantscost": "",
+                "youcannotuseamodificationonthischantsrange": "",
+                "youcannotuseamodificationonthischantsduration": "",
+                "duplicatehero": "",
+                "deletehero.novar": "",
+                "openhero": "",
+                "socialstatusxorhigher": "",
               })

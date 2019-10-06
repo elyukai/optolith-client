@@ -165,6 +165,7 @@ declare module "react-markdown" {
      * passed to the component varies based on the type of node.
      */
     plugins?: any[];
+    astPlugins?: any[];
   }
 
   class ReactMarkdown extends React.Component<MarkdownProps> {}
@@ -237,4 +238,10 @@ declare namespace Intl {
     type: "unit";
     style: "short" | "narrow";
   }
+}
+
+declare module 'react-markdown/plugins/html-parser' {
+  export = (options: {
+    isValidNode?: (node: any) => boolean
+  }) => any
 }

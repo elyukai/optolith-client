@@ -2,10 +2,11 @@ import * as React from "react";
 import { notEquals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybeR, guard, Just, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
+import { bindF, ensure, fromMaybe, guard, Just, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
 import { dec } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
+import { Property } from "../../Constants/Groups";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -32,9 +33,9 @@ import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
 import { RecommendedReference } from "../Universal/RecommendedReference";
 import { Scroll } from "../Universal/Scroll";
+import { SearchField } from "../Universal/SearchField";
 import { Slidein } from "../Universal/Slidein";
 import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { TextField } from "../Universal/TextField";
 
 export interface SpellsOwnProps {
   l10n: L10nRecord
@@ -104,7 +105,7 @@ const SCCA = {
           Just
         )
       : Nothing,
-  property: (x: Combined): number =>
+  property: (x: Combined): Property =>
     SpellWithRequirements.is (x)
       ? pipe_ (
           x,
@@ -165,10 +166,10 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
       <Page id="spells">
         <Slidein isOpen={showAddSlidein} close={this.hideAddSlidein} className="adding-spells">
           <Options>
-            <TextField
-              hint={translate (l10n) ("search")}
+            <SearchField
+              l10n={l10n}
               value={inactiveFilterText}
-              onChangeString={setInactiveFilterText}
+              onChange={setInactiveFilterText}
               fullWidth
               />
             <SortOptions
@@ -299,7 +300,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                     toArray,
                     arr => <>{arr}</>
                   )),
-                  fromMaybeR (
+                  fromMaybe (
                     <ListPlaceholder l10n={l10n} type="inactiveSpells" noResults />
                   )
                 )}
@@ -309,10 +310,10 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
           <WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
         </Slidein>
         <Options>
-          <TextField
-            hint={translate (l10n) ("search")}
+          <SearchField
+            l10n={l10n}
             value={filterText}
-            onChangeString={setFilterText}
+            onChange={setFilterText}
             fullWidth
             />
           <SortOptions
@@ -437,7 +438,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                   toArray,
                   arr => <>{arr}</>
                 )),
-                fromMaybeR (
+                fromMaybe (
                   <ListPlaceholder
                     l10n={l10n}
                     type="spells"

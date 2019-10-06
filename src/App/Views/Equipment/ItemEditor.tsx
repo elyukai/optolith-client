@@ -10,7 +10,7 @@ import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { ItemEditorInputValidation, validateItemEditorInput } from "../../Utilities/itemEditorInputValidationUtils";
-import { Dialog } from "../Universal/DialogNew";
+import { Dialog } from "../Universal/Dialog";
 import { ItemEditorArmorSection } from "./ItemEditorArmorSection";
 import { ItemEditorCommonSection } from "./ItemEditorCommonSection";
 import { ItemEditorMeleeSection } from "./ItemEditorMeleeSection";
@@ -81,10 +81,55 @@ const IEIVA = ItemEditorInputValidation.A
 
 export function ItemEditor (props: ItemEditorProps) {
   const {
-    closeEditor,
+    l10n,
+    attributes,
+    combatTechniques,
     isInCreation,
     item: mitem,
-    l10n,
+    templates,
+    closeEditor,
+    addToList,
+    saveItem,
+    setName,
+    setPrice,
+    setWeight,
+    setAmount,
+    setWhere,
+    setGroup,
+    setTemplate,
+    setCombatTechnique,
+    setDamageDiceNumber,
+    setDamageDiceSides,
+    setDamageFlat,
+    setPrimaryAttribute,
+    setDamageThreshold,
+    setFirstDamageThreshold,
+    setSecondDamageThreshold,
+    switchIsDamageThresholdSeparated,
+    setAttack,
+    setParry,
+    setReach,
+    setLength,
+    setStructurePoints,
+    setRange,
+    setReloadTime,
+    setAmmunition,
+    setProtection,
+    setEncumbrance,
+    setMovementModifier,
+    setInitiativeModifier,
+    setStabilityModifier,
+    switchIsParryingWeapon,
+    switchIsTwoHandedWeapon,
+    switchIsImprovisedWeapon,
+    setImprovisedWeaponGroup,
+    setLoss,
+    switchIsForArmorZonesOnly,
+    setHasAdditionalPenalties,
+    setArmorType,
+    applyTemplate,
+    lockTemplate,
+    unlockTemplate,
   } = props
 
   if (isJust (mitem)) {
@@ -104,22 +149,98 @@ export function ItemEditor (props: ItemEditorProps) {
         buttons={[
           {
             autoWidth: true,
-            disabled: !IEIVA.amount (inputValidation)
-              || !locked && (
-                typeof gr !== "number"
-                || gr === 1 && !IEIVA.melee (inputValidation)
-                || gr === 2 && !IEIVA.ranged (inputValidation)
-                || gr === 4 && !IEIVA.armor (inputValidation)
-                || !IEIVA.other (inputValidation)
+            disabled:
+              !IEIVA.amount (inputValidation)
+              || (
+                !locked
+                && (
+                  typeof gr !== "number"
+                  || (gr === 1 && !IEIVA.melee (inputValidation))
+                  || (gr === 2 && !IEIVA.ranged (inputValidation))
+                  || (gr === 4 && !IEIVA.armor (inputValidation))
+                  || !IEIVA.other (inputValidation)
+                )
               ),
             label: translate (l10n) ("save"),
-            onClick: or (isInCreation) ? props.addToList : props.saveItem,
+            onClick: or (isInCreation) ? addToList : saveItem,
           },
-        ]}>
-        <ItemEditorCommonSection {...props} item={item} inputValidation={inputValidation} />
-        <ItemEditorMeleeSection {...props} item={item} inputValidation={inputValidation} />
-        <ItemEditorRangedSection {...props} item={item} inputValidation={inputValidation} />
-        <ItemEditorArmorSection {...props} item={item} inputValidation={inputValidation} />
+        ]}
+        >
+        <ItemEditorCommonSection
+          item={item}
+          inputValidation={inputValidation}
+          isInCreation={isInCreation}
+          l10n={l10n}
+          templates={templates}
+          setName={setName}
+          setPrice={setPrice}
+          setWeight={setWeight}
+          setAmount={setAmount}
+          setWhere={setWhere}
+          setGroup={setGroup}
+          setTemplate={setTemplate}
+          switchIsImprovisedWeapon={switchIsImprovisedWeapon}
+          setImprovisedWeaponGroup={setImprovisedWeaponGroup}
+          applyTemplate={applyTemplate}
+          lockTemplate={lockTemplate}
+          unlockTemplate={unlockTemplate}
+          />
+        <ItemEditorMeleeSection
+          item={item}
+          inputValidation={inputValidation}
+          attributes={attributes}
+          combatTechniques={combatTechniques}
+          l10n={l10n}
+          setCombatTechnique={setCombatTechnique}
+          setDamageDiceNumber={setDamageDiceNumber}
+          setDamageDiceSides={setDamageDiceSides}
+          setDamageFlat={setDamageFlat}
+          setPrimaryAttribute={setPrimaryAttribute}
+          setDamageThreshold={setDamageThreshold}
+          setFirstDamageThreshold={setFirstDamageThreshold}
+          setSecondDamageThreshold={setSecondDamageThreshold}
+          switchIsDamageThresholdSeparated={switchIsDamageThresholdSeparated}
+          setAttack={setAttack}
+          setParry={setParry}
+          setReach={setReach}
+          setLength={setLength}
+          setStructurePoints={setStructurePoints}
+          setStabilityModifier={setStabilityModifier}
+          switchIsParryingWeapon={switchIsParryingWeapon}
+          switchIsTwoHandedWeapon={switchIsTwoHandedWeapon}
+          setLoss={setLoss}
+          />
+        <ItemEditorRangedSection
+          item={item}
+          inputValidation={inputValidation}
+          combatTechniques={combatTechniques}
+          l10n={l10n}
+          templates={templates}
+          setCombatTechnique={setCombatTechnique}
+          setDamageDiceNumber={setDamageDiceNumber}
+          setDamageDiceSides={setDamageDiceSides}
+          setDamageFlat={setDamageFlat}
+          setLength={setLength}
+          setRange={setRange}
+          setReloadTime={setReloadTime}
+          setAmmunition={setAmmunition}
+          setStabilityModifier={setStabilityModifier}
+          setLoss={setLoss}
+          />
+        <ItemEditorArmorSection
+          item={item}
+          inputValidation={inputValidation}
+          l10n={l10n}
+          setProtection={setProtection}
+          setEncumbrance={setEncumbrance}
+          setMovementModifier={setMovementModifier}
+          setInitiativeModifier={setInitiativeModifier}
+          setStabilityModifier={setStabilityModifier}
+          setLoss={setLoss}
+          switchIsForArmorZonesOnly={switchIsForArmorZonesOnly}
+          setHasAdditionalPenalties={setHasAdditionalPenalties}
+          setArmorType={setArmorType}
+          />
       </Dialog>
     )
   }

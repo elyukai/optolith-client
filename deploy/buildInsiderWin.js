@@ -1,0 +1,1 @@
+require ("./buildInsider.js") .buildWindows ()

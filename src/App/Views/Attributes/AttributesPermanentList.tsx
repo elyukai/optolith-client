@@ -3,9 +3,9 @@ import { equals } from "../../../Data/Eq";
 import { find, List } from "../../../Data/List";
 import { bindF, ensure, isJust, Maybe, maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
+import { DCId, EnergyId } from "../../Constants/Ids";
 import { DerivedCharacteristic, EnergyWithLoss } from "../../Models/View/DerivedCharacteristic";
 import { L10nRecord } from "../../Models/Wiki/L10n";
-import { DCIds, EnergyIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { AttributesPermanentListItem } from "./AttributesPermanentListItem";
@@ -15,8 +15,8 @@ export interface AttributesPermanentListProps {
   l10n: L10nRecord
   isInCharacterCreation: boolean
   isRemovingEnabled: boolean
-  getEditPermanentEnergy: Maybe<EnergyIds>
-  getAddPermanentEnergy: Maybe<EnergyIds>
+  getEditPermanentEnergy: Maybe<EnergyId>
+  getAddPermanentEnergy: Maybe<EnergyId>
   addLostLPPoint (): void
   removeLostLPPoint (): void
   addLostLPPoints (value: number): void
@@ -30,22 +30,22 @@ export interface AttributesPermanentListProps {
   addLostKPPoint (): void
   removeLostKPPoint (): void
   addLostKPPoints (value: number): void
-  openAddPermanentEnergyLoss (energy: EnergyIds): void
+  openAddPermanentEnergyLoss (energy: EnergyId): void
   closeAddPermanentEnergyLoss (): void
-  openEditPermanentEnergy (energy: EnergyIds): void
+  openEditPermanentEnergy (energy: EnergyId): void
   closeEditPermanentEnergy (): void
 }
 
 const DCA = DerivedCharacteristic.A
 
 export function AttributesPermanentList (props: AttributesPermanentListProps) {
-  const mlp = find (pipe (DCA.id, equals<DCIds> ("LP")))
+  const mlp = find (pipe (DCA.id, equals<DCId> (DCId.LP)))
                    (props.derived) as Maybe<Record<EnergyWithLoss>>
 
-  const mae = find (pipe (DCA.id, equals<DCIds> ("AE")))
+  const mae = find (pipe (DCA.id, equals<DCId> (DCId.AE)))
                    (props.derived) as Maybe<Record<EnergyWithLoss>>
 
-  const mkp = find (pipe (DCA.id, equals<DCIds> ("KP")))
+  const mkp = find (pipe (DCA.id, equals<DCId> (DCId.KP)))
                    (props.derived) as Maybe<Record<EnergyWithLoss>>
 
   return (
@@ -55,7 +55,7 @@ export function AttributesPermanentList (props: AttributesPermanentListProps) {
               ((lp: Record<EnergyWithLoss>) => (
                 <AttributesPermanentListItem
                   {...props}
-                  id="LP"
+                  id={EnergyId.LP}
                   label={translate (props.l10n) ("lifepointslostpermanently.short")}
                   name={translate (props.l10n) ("lifepointslostpermanently")}
                   lost={Maybe.sum (DCA.permanentLost (lp))}
@@ -73,7 +73,7 @@ export function AttributesPermanentList (props: AttributesPermanentListProps) {
               ((ae: Record<EnergyWithLoss>) => (
                 <AttributesPermanentListItem
                   {...props}
-                  id="AE"
+                  id={EnergyId.AE}
                   label={translate (props.l10n) ("arcaneenergylostpermanently.short")}
                   name={translate (props.l10n) ("arcaneenergylostpermanently")}
                   boughtBack={Maybe.sum (DCA.permanentRedeemed (ae))}
@@ -93,7 +93,7 @@ export function AttributesPermanentList (props: AttributesPermanentListProps) {
               ((kp: Record<EnergyWithLoss>) => (
                 <AttributesPermanentListItem
                   {...props}
-                  id="KP"
+                  id={EnergyId.KP}
                   label={translate (props.l10n) ("karmapointslostpermanently.short")}
                   name={translate (props.l10n) ("karmapointslostpermanently")}
                   boughtBack={Maybe.sum (DCA.permanentRedeemed (kp))}

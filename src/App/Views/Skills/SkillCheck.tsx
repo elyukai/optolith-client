@@ -2,7 +2,7 @@ import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { find, intercalate, List, map, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybeR, imapMaybe, Maybe } from "../../../Data/Maybe";
+import { bindF, ensure, fromMaybe, imapMaybe, Maybe } from "../../../Data/Maybe";
 import { gt } from "../../../Data/Num";
 import { elems, OrderedSet, size } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
@@ -60,7 +60,7 @@ export function SkillCheck (props: SkillCheckProps) {
             intercalate ("/"),
             characteristic => <div className="check mod">{minus}{characteristic}</div>
           )),
-          fromMaybeR (null)
+          fromMaybe (null as React.ReactNode)
         )}
       </>
     )

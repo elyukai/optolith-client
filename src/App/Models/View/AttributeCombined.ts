@@ -4,6 +4,7 @@ import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
 import { Attribute } from "../Wiki/Attribute";
 
 export interface AttributeCombined {
+  "@@name": "AttributeCombined"
   wikiEntry: Record<Attribute>
   stateEntry: Record<AttributeDependent>
 }

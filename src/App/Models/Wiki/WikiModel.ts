@@ -22,6 +22,7 @@ import { Spell } from "./Spell";
 export type WikiModelRecord = Record<WikiModel>
 
 export interface WikiModel {
+  "@@name": "Wiki"
   books: OrderedMap<string, Record<Book>>
   experienceLevels: OrderedMap<string, Record<ExperienceLevel>>
   races: OrderedMap<string, Record<Race>>

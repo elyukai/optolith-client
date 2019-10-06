@@ -3,13 +3,14 @@ import { equals } from "../../../Data/Eq";
 import { flip, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { append, cons, consF, deleteAt, find, findIndex, flength, foldr, imap, intercalate, intersperse, isList, List, ListI, map, NonEmptyList, notElem, notNull, reverse, snoc, sortBy, subscript, toArray, uncons, unconsSafe, unsafeIndex } from "../../../Data/List";
-import { alt_, any, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNull, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe";
-import { add, compare, dec, gt } from "../../../Data/Num";
+import { alt_, any, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe";
+import { compare, dec, gt } from "../../../Data/Num";
 import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet";
 import { fromDefault, Record } from "../../../Data/Record";
 import { show } from "../../../Data/Show";
 import { fst, isTuple, Pair, snd } from "../../../Data/Tuple";
+import { SpecialAbilityId } from "../../Constants/Ids";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ActivatableNameCostIsActive, ActivatableNameCostIsActiveA_ } from "../../Models/View/ActivatableNameCostIsActive";
 import { IncreasableForView } from "../../Models/View/IncreasableForView";
@@ -20,7 +21,7 @@ import { Attribute } from "../../Models/Wiki/Attribute";
 import { Blessing } from "../../Models/Wiki/Blessing";
 import { Book } from "../../Models/Wiki/Book";
 import { Cantrip } from "../../Models/Wiki/Cantrip";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { ProfessionRequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
@@ -47,7 +48,7 @@ import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers";
 import { getSelectOptionName } from "../../Utilities/Activatable/selectionUtils";
 import { ndash } from "../../Utilities/Chars";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
-import { getNumericId, prefixRace, prefixSA } from "../../Utilities/IDUtils";
+import { getNumericId, prefixRace } from "../../Utilities/IDUtils";
 import { signNeg } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils";
@@ -105,6 +106,7 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
     skills,
     spells,
     specialAbilities,
+    books,
   } = props
 
   const selections = PCA.mappedSelections (x)
@@ -141,43 +143,6 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
 
   const sexRequirement =
      pipe_ (x, PCA_.dependencies, find (isSexRequirement))
-
-  // if (["nl-BE"].includes(l10n.id)) {
-  //   return (
-  //     <WikiBoxTemplate className="profession" title={subname ? `${name} (${subname})` : name}>
-  //       <WikiProperty l10n={l10n} title="apvalue">
-  //         {x.ap} {translate(l10n, "aptext")}
-  //       </WikiProperty>
-  //       <CombatTechniques
-  //         combatTechniquesSelectionString={combatTechniquesSelectionString}
-  //         x={x}
-  //         l10n={l10n}
-  //         />
-  //       <WikiProperty l10n={l10n} title="skills" />
-  //       <SkillsList
-  //         profession={x}
-  //         l10n={l10n}
-  //         skillsSelection={skillsSelectionJoinedObject}
-  //         />
-  //       {typeof spellsString === "string" ? (
-  //         <WikiProperty l10n={l10n} title="spells">
-  //           {spellsString}
-  //         </WikiProperty>
-  //       ) : null}
-  //       {typeof liturgicalChantsString === "string" ? (
-  //         <WikiProperty l10n={l10n} title="liturgicalchants">
-  //           {liturgicalChantsString}
-  //         </WikiProperty>
-  //       ) : null}
-  //       <VariantList
-  //         {...props}
-  //         combatTechniquesSelectionString={combatTechniquesSelectionString}
-  //         profession={x}
-  //         specializationSelectionString={specializationSelectionString}
-  //         />
-  //     </WikiBoxTemplate>
-  //   )
-  // }
 
   const getRaceNameAP =
     (race: Record<Race>) =>
@@ -301,7 +266,9 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
       title={maybe (name) ((subname: string) => `${name} (${subname})`) (msubname)}
       >
       <WikiProperty l10n={l10n} title="apvalue">
-        {final_ap} {translate (l10n) ("adventurepoints")}
+        {final_ap}
+        {" "}
+        {translate (l10n) ("adventurepoints")}
       </WikiProperty>
       <WikiProperty l10n={l10n} title="prerequisites">
         {maybe (translate (l10n) ("none")) (intercalate (", ")) (ensure (notNull) (prerequisites))}
@@ -346,12 +313,22 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
         {fromMaybe (translate (l10n) ("none")) (PCA_.unsuitableDisadvantagesText (x))}
       </WikiProperty>
       <VariantList
-        {...props}
+        attributes={attributes}
         combatTechniquesSelectionString={combatTechniquesSelectionString}
+        liturgicalChants={liturgicalChants}
+        l10n={l10n}
         profession={x}
+        sex={sex}
+        skills={skills}
         specializationSelectionString={specializationSelectionString}
+        spells={spells}
         />
-      <WikiSource {...props} acc={PCA_} />
+      <WikiSource
+        books={books}
+        x={x}
+        l10n={l10n}
+        acc={PCA_}
+        />
     </WikiBoxTemplate>
   )
 }
@@ -417,6 +394,7 @@ function CombatTechniques (props: CombatTechniquesProps): JSX.Element {
 }
 
 interface SkillsSelectionJoined {
+  "@@name": "SkillsSelectionJoined"
   properties: Record<SkillsSelection>
   text: string
 }
@@ -522,7 +500,7 @@ const getTerrainKnowledgeSelection =
                  localizeOrList (l10n),
                  xs => `${SpecialAbility.A.name (terrain_knowledge)} (${xs})`
                ))
-             (lookup (prefixSA (12)) (specialAbilities))
+             (lookup<string> (SpecialAbilityId.TerrainKnowledge) (specialAbilities))
     )
 
 const getSpells =
@@ -593,8 +571,8 @@ const getLiturgicalChants =
   (l10n: L10nRecord) =>
   (blessings: OrderedMap<string, Record<Blessing>>) =>
   (liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>) =>
-  (profession: Record<ProfessionCombined>): Maybe<string> => {
-    return pipe_ (
+  (profession: Record<ProfessionCombined>): Maybe<string> =>
+    pipe_ (
       profession,
       PCA_.liturgicalChants,
       mapMaybe (x => {
@@ -646,7 +624,6 @@ const getLiturgicalChants =
       ensure (notNull),
       fmap (intercalate (", "))
     )
-  }
 
 interface SkillsListProps {
   profession: Record<ProfessionCombined>
@@ -726,7 +703,10 @@ function Skills (props: SkillProps) {
       intercalate (", "),
       joined_text => (
         <p className="skill-group">
-          <span>{renderMaybe (subscript (translate (l10n) ("skillgroups")) (groupIndex))}: </span>
+          <span>
+            {renderMaybe (subscript (translate (l10n) ("skillgroups")) (groupIndex))}
+            {": "}
+          </span>
           <span>{notNull (list) ? joined_text : ndash}</span>
         </p>
       )
@@ -761,8 +741,15 @@ interface VariantListProps {
 
 function VariantList (props: VariantListProps): JSX.Element | null {
   const {
+    attributes,
+    combatTechniquesSelectionString,
+    liturgicalChants,
     l10n,
     profession,
+    sex,
+    skills,
+    specializationSelectionString,
+    spells,
   } = props
 
   const variants = PCA.mappedVariants (profession)
@@ -777,8 +764,16 @@ function VariantList (props: VariantListProps): JSX.Element | null {
               variants,
               map (variant => (
                     <Variant
-                      {...props}
                       key={PVCA_.id (variant)}
+                      attributes={attributes}
+                      combatTechniquesSelectionString={combatTechniquesSelectionString}
+                      liturgicalChants={liturgicalChants}
+                      l10n={l10n}
+                      profession={profession}
+                      sex={sex}
+                      skills={skills}
+                      specializationSelectionString={specializationSelectionString}
+                      spells={spells}
                       variant={variant}
                       />
                   )),
@@ -808,9 +803,11 @@ interface VariantProps {
 
 function Variant (props: VariantProps) {
   const {
+    attributes,
     l10n,
     profession,
     sex: msex,
+    skills,
     variant,
   } = props
 
@@ -823,8 +820,15 @@ function Variant (props: VariantProps) {
   if (isJust (fullText)) {
     return (
       <li>
-        <span>{name} </span>
-        <span>({ap_sum} {translate (l10n) ("adventurepoints.short")}): </span>
+        <span>{name}</span>
+        {" "}
+        <span>
+          {"("}
+          {ap_sum}
+          {" "}
+          {translate (l10n) ("adventurepoints.short")}
+          {"): "}
+        </span>
         {fromJust (fullText)}
       </li>
     )
@@ -832,12 +836,24 @@ function Variant (props: VariantProps) {
 
   return (
     <li>
-      <span>{name} </span>
-      <span>({ap_sum} {translate (l10n) ("adventurepoints.short")}): </span>
+      <span>{name}</span>
+      {" "}
+      <span>
+        {"("}
+        {ap_sum}
+        {" "}
+        {translate (l10n) ("adventurepoints.short")}
+        {"): "}
+      </span>
       <span>
         {maybeRNullF (PVCA_.precedingText (variant))
                      (str => <span>{str}</span>)}
-        <VariantPrerequisites {...props} />
+        {maybe (<></>)
+               ((str: string) => (<>{str}</>))
+               (getVariantPrerequisites (l10n)
+                                        (attributes)
+                                        (skills)
+                                        (variant))}
         {pipe_ (
           List<Maybe<NonNullable<React.ReactNode>>> (
             ...getVariantSpecialAbilities (props),
@@ -856,14 +872,8 @@ function Variant (props: VariantProps) {
   )
 }
 
-interface VariantPrerequisitesProps {
-  attributes: OrderedMap<string, Record<Attribute>>
-  l10n: L10nRecord
-  skills: OrderedMap<string, Record<Skill>>
-  variant: Record<ProfessionVariantCombined>
-}
-
 interface VariantPrerequisiteIntermediate {
+  "@@name": "VariantPrerequisiteIntermediate"
   id: string
   name: string
   active: Maybe<boolean>
@@ -876,66 +886,62 @@ const VariantPrerequisiteIntermediate =
                 active: Nothing,
               })
 
-const VariantPrerequisites = (props: VariantPrerequisitesProps): JSX.Element | null => {
-  const {
-    attributes,
-    l10n,
-    skills,
-    variant,
-  } = props
+const getVariantPrerequisites =
+  (l10n: L10nRecord) =>
+  (attributes: OrderedMap<string, Record<Attribute>>) =>
+  (skills: OrderedMap<string, Record<Skill>>) =>
+  (variant: Record<ProfessionVariantCombined>) =>
+    pipe_ (
+      variant,
+      PVCA.mappedPrerequisites,
+      map (x => {
+            if (ProfessionRequireIncreasable.is (x)) {
+              const id = PRIA.id (x)
+              const value = PRIA.value (x)
 
-  return pipe_ (
-    variant,
-    PVCA.mappedPrerequisites,
-    map (x => {
-          if (ProfessionRequireIncreasable.is (x)) {
-            const id = PRIA.id (x)
-            const value = PRIA.value (x)
+              type wiki_entry = Record<Attribute> | Record<Skill>
 
-            type wiki_entry = Record<Attribute> | Record<Skill>
+              const wiki_entry =
+                alt_<wiki_entry> (lookup (id) (attributes)) (() => lookup (id) (skills))
 
-            const wiki_entry =
-              alt_<wiki_entry> (lookup (id) (attributes)) (() => lookup (id) (skills))
+              const mname = fmapF (wiki_entry)
+                                  (e => Attribute.is (e) ? Attribute.A.short (e) : Skill.A.name (e))
 
-            const mname = fmapF (wiki_entry)
-                                (e => Attribute.is (e) ? Attribute.A.short (e) : Skill.A.name (e))
+              return VariantPrerequisiteIntermediate ({
+                id,
+                name: `${renderMaybe (mname)} ${value}`,
+              })
+            }
+            else {
+              const id = ANCIAA_.id (x)
+              const active = ANCIAA.isActive (x)
+              const name = ANCIAA_.name (x)
+              const finalCost = ANCIAA_.finalCost (x)
 
-            return VariantPrerequisiteIntermediate ({
-              id,
-              name: `${renderMaybe (mname)} ${value}`,
-            })
-          }
-          else {
-            const id = ANCIAA_.id (x)
-            const active = ANCIAA.isActive (x)
-            const name = ANCIAA_.name (x)
-            const finalCost = ANCIAA_.finalCost (x)
-
-            return VariantPrerequisiteIntermediate ({
-              id,
-              name: `${name} (${finalCost} ${translate (l10n) ("adventurepoints.short")})`,
-              active: Just (active),
-            })
-          }
-        }),
-    sortRecordsByName (L10n.A.id (l10n)),
-    map (x => {
-          if (!Maybe.and (VariantPrerequisiteIntermediate.A.active (x))) {
-            return (
-              <span key={VariantPrerequisiteIntermediate.A.id (x)} className="disabled">
-                {VariantPrerequisiteIntermediate.A.name (x)}
-              </span>
-            )
-          }
-          else {
-            return VariantPrerequisiteIntermediate.A.name (x)
-          }
-        }),
-    intersperse<React.ReactNode> (", "),
-    ensure (notNull),
-    maybeRNull (xs => <>{translate (l10n) ("prerequisites")}: {xs}; </>)
-  )
-}
+              return VariantPrerequisiteIntermediate ({
+                id,
+                name: `${name} (${finalCost} ${translate (l10n) ("adventurepoints.short")})`,
+                active: Just (active),
+              })
+            }
+          }),
+      sortRecordsByName (l10n),
+      map (x => {
+            if (Maybe.and (VariantPrerequisiteIntermediate.A.active (x))) {
+              return VariantPrerequisiteIntermediate.A.name (x)
+            }
+            else {
+              return (
+                <span key={VariantPrerequisiteIntermediate.A.id (x)} className="disabled">
+                  {VariantPrerequisiteIntermediate.A.name (x)}
+                </span>
+              )
+            }
+          }),
+      intersperse<React.ReactNode> (", "),
+      ensure (notNull),
+      fmap (xs => `${translate (l10n) ("prerequisites")}: ${xs}; `)
+    )
 
 interface VariantSpecialAbilitiesProps {
   variant: Record<ProfessionVariantCombined>
@@ -953,8 +959,7 @@ const getVariantSpecialAbilities =
               <span key={ANCIAA_.id (e)} className="disabled">
                 {ANCIAA_.name (e)}
               </span>
-            )
-      )
+            ))
     )
 
 interface VariantLanguagesLiteracySelectionProps {
@@ -1233,7 +1238,7 @@ const mapVariantSkills =
   (l10n: L10nRecord) =>
   (base: number) =>
     map ((e: Record<IncreasableForView>) => {
-      const prev = maybe (base) (add (base)) (IFVA.previous (e))
+      const prev = fromMaybe (base) (IFVA.previous (e))
 
       return `${IFVA.name (e)} ${IFVA.value (e)} ${translate (l10n) ("insteadof")} ${prev}`
     })

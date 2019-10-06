@@ -98,7 +98,7 @@ export function SelectionsSkillSpecialization (props: SelectionsSkillSpecializat
                             <TextField
                               hint={applicationInput}
                               value={snd (active)}
-                              onChangeString={change}
+                              onChange={change}
                               />
                           )),
                      maybeToNullable

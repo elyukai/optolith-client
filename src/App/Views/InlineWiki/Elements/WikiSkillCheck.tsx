@@ -5,7 +5,7 @@ import { intercalate, List, map, notNull } from "../../../../Data/List";
 import { ensure, fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../../Data/OrderedMap";
 import { OrderedSet, toList } from "../../../../Data/OrderedSet";
-import { Record, RecordBase } from "../../../../Data/Record";
+import { Record, RecordIBase } from "../../../../Data/Record";
 import { Attribute } from "../../../Models/Wiki/Attribute";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { CheckModifier } from "../../../Models/Wiki/wikiTypeHelpers";
@@ -15,19 +15,19 @@ import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { WikiProperty } from "../WikiProperty";
 
-interface Accessors<A extends RecordBase> {
+interface Accessors<A extends RecordIBase<any>> {
   check: (r: Record<A>) => List<string>
   checkmod?: (r: Record<A>) => OrderedSet<CheckModifier>
 }
 
-export interface WikiSkillCheckProps<A extends RecordBase> {
+export interface WikiSkillCheckProps<A extends RecordIBase<any>> {
   attributes: OrderedMap<string, Record<Attribute>>
   x: Record<A>
   acc: Accessors<A>
   l10n: L10nRecord
 }
 
-export function WikiSkillCheck<A extends RecordBase> (props: WikiSkillCheckProps<A>) {
+export function WikiSkillCheck<A extends RecordIBase<any>> (props: WikiSkillCheckProps<A>) {
   const {
     attributes,
     x,

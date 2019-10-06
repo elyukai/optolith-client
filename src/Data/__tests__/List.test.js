@@ -657,6 +657,14 @@ test ('sortBy', () => {
     .toEqual (List (1, 2, 3, 4, 5))
 })
 
+test ('maximumBy', () => {
+  expect (List.maximumBy (Num.compare) (List (2, 3, 1, 5, 4))) .toEqual (5)
+})
+
+test ('minimumBy', () => {
+  expect (List.minimumBy (Num.compare) (List (2, 3, 1, 5, 4))) .toEqual (1)
+})
+
 // LIST.INDEX
 
 // Original functions

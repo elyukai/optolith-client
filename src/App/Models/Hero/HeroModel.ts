@@ -3,6 +3,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
+import { SocialStatusId } from "../../Constants/Ids";
 import { current_version } from "../../Selectors/envSelectors";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
@@ -22,6 +23,7 @@ import { StyleDependency } from "./StyleDependency";
 export type HeroModelRecord = Record<HeroModel>
 
 export interface HeroModel {
+  "@@name": "Hero"
   id: string
   clientVersion: string
   locale: string
@@ -35,6 +37,7 @@ export interface HeroModel {
   race: Maybe<string>
   raceVariant: Maybe<string>
   culture: Maybe<string>
+  isCulturalPackageActive: boolean
   profession: Maybe<string>
   professionName: Maybe<string>
   professionVariant: Maybe<string>
@@ -63,6 +66,7 @@ export interface HeroModel {
   magicalStyleDependencies: List<Record<StyleDependency>>
   blessedStyleDependencies: List<Record<StyleDependency>>
   skillStyleDependencies: List<Record<StyleDependency>>
+  socialStatusDependencies: List<SocialStatusId>
 }
 
 /**
@@ -85,6 +89,7 @@ export const HeroModel =
                 race: Nothing,
                 raceVariant: Nothing,
                 culture: Nothing,
+                isCulturalPackageActive: false,
                 profession: Nothing,
                 professionName: Nothing,
                 professionVariant: Nothing,
@@ -113,6 +118,7 @@ export const HeroModel =
                 magicalStyleDependencies: List (),
                 blessedStyleDependencies: List (),
                 skillStyleDependencies: List (),
+                socialStatusDependencies: List (),
               })
 
 export const HeroModelL = makeLenses (HeroModel)
@@ -139,6 +145,7 @@ export const getInitialHeroObject =
       phase: Nothing,
       name,
       adventurePointsTotal: totalAp,
+      isCulturalPackageActive: false,
       sex,
       experienceLevel,
       personalData: Nothing,
@@ -168,4 +175,5 @@ export const getInitialHeroObject =
       magicalStyleDependencies: Nothing,
       blessedStyleDependencies: Nothing,
       skillStyleDependencies: Nothing,
+      socialStatusDependencies: Nothing,
     })

@@ -1,6 +1,7 @@
 import { fromDefault, makeLenses } from "../../../Data/Record";
 
 export interface PermanentEnergyLoss {
+  "@@name": "PermanentEnergyLoss"
   lost: number
 }
 

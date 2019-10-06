@@ -5,6 +5,7 @@ import { ActivatableCombinedName } from "./ActivatableCombinedName";
 import { ActivatableNameCost, ActivatableNameCostSafeCost } from "./ActivatableNameCost";
 
 export interface ActivatableNameCostIsActive {
+  "@@name": "ActivatableNameCostIsActive"
   nameAndCost: Record<ActivatableNameCostSafeCost>
   isActive: boolean
 }

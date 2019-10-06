@@ -44,22 +44,22 @@ export function PurseAndTotals (props: PurseAndTotalsProps) {
           <TextField
             label={translate (l10n) ("ducats")}
             value={fmapF (purse) (PA.d)}
-            onChangeString={props.setDucates}
+            onChange={props.setDucates}
             />
           <TextField
             label={translate (l10n) ("silverthalers")}
             value={fmapF (purse) (PA.s)}
-            onChangeString={props.setSilverthalers}
+            onChange={props.setSilverthalers}
             />
           <TextField
             label={translate (l10n) ("halers")}
             value={fmapF (purse) (PA.h)}
-            onChangeString={props.setHellers}
+            onChange={props.setHellers}
             />
           <TextField
             label={translate (l10n) ("kreutzers")}
             value={fmapF (purse) (PA.k)}
-            onChangeString={props.setKreutzers}
+            onChange={props.setKreutzers}
             />
         </div>
       </div>

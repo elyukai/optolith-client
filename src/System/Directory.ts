@@ -9,22 +9,15 @@
 
 import * as fs from "fs";
 import { fromArray, List } from "../Data/List";
-import { IO } from "./IO";
-
 
 /**
  * `getDirectoryContents :: FilePath -> IO [FilePath]`
  *
  * `getDirectoryContents dir` returns a list of *all* entries in `dir`.
  */
-export const getDirectoryContents =
-  (path: string) =>
-    IO (async () => new Promise<List<String>> ((res, rej) =>
-                                                fs.readdir (path, (err, files) => {
-                                                  if (err !== null) {
-                                                    rej (err)
-                                                  }
-                                                  else {
-                                                    res (fromArray (files))
-                                                  }
-                                                })))
+export const getDirectoryContents: (path: string) => Promise<List<string>> =
+  async (path: string) => {
+    const res_array = await fs.promises.readdir (path)
+
+    return fromArray (res_array)
+  }

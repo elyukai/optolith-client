@@ -6,11 +6,11 @@ import { mapMaybe } from "../../../../Data/Maybe";
 import { lookup, OrderedMap } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
 import { fst, Pair, snd } from "../../../../Data/Tuple";
+import { AttrId } from "../../../Constants/Ids";
 import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { ndash } from "../../../Utilities/Chars";
 import { translate } from "../../../Utilities/I18n";
-import { prefixAttr } from "../../../Utilities/IDUtils";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybeWith } from "../../../Utilities/ReactUtils";
 
@@ -26,11 +26,11 @@ export const iterateGroupHeaders =
   (pages: OrderedMap<number, Pair<number, number>>) =>
   (attributes: List<Record<AttributeCombined>>) => {
     const groupChecksIds = List (
-      List (prefixAttr (1), prefixAttr (6), prefixAttr (8)),
-      List (prefixAttr (3), prefixAttr (4), prefixAttr (4)),
-      List (prefixAttr (1), prefixAttr (6), prefixAttr (7)),
-      List (prefixAttr (2), prefixAttr (2), prefixAttr (3)),
-      List (prefixAttr (5), prefixAttr (5), prefixAttr (7))
+      List (AttrId.Courage, AttrId.Agility, AttrId.Strength),
+      List (AttrId.Intuition, AttrId.Charisma, AttrId.Charisma),
+      List (AttrId.Courage, AttrId.Agility, AttrId.Constitution),
+      List (AttrId.Sagacity, AttrId.Sagacity, AttrId.Intuition),
+      List (AttrId.Dexterity, AttrId.Dexterity, AttrId.Constitution)
     )
 
     const groupNameKeys = List<GroupNameKeys> (
@@ -65,10 +65,10 @@ export const iterateGroupHeaders =
                                   )}
                                 </td>
                                 <td className="check">{check}</td>
-                                <td className="enc"></td>
-                                <td className="ic"></td>
-                                <td className="sr"></td>
-                                <td className="routine"></td>
+                                <td className="enc" />
+                                <td className="ic" />
+                                <td className="sr" />
+                                <td className="routine" />
                                 <td className="comment">
                                   {pipe_ (
                                     pages,

@@ -10,6 +10,7 @@ import { insert, OrderedSet, sdelete, toList, union } from "../../Data/OrderedSe
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { SetSelectionsAction } from "../Actions/ProfessionActions";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableDependent, ActivatableDependentL, createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, ActivatableSkillDependentL } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
@@ -37,13 +38,13 @@ import { addAllStyleRelatedDependencies } from "../Utilities/Activatable/Extende
 import { composeL } from "../Utilities/compose";
 import { addDependencies } from "../Utilities/Dependencies/dependencyUtils";
 import { getHeroStateItem, updateEntryDef } from "../Utilities/heroStateUtils";
-import { prefixSA } from "../Utilities/IDUtils";
 import { ifElse } from "../Utilities/ifElse";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { isString } from "../Utilities/typeCheckUtils";
 import { getWikiEntry, isActivatableWikiEntry } from "../Utilities/WikiUtils";
 
 interface ConcatenatedModifications {
+  "@@name": "ConcatenatedModifications"
   hero: HeroModelRecord
   skillRatingList: OrderedMap<string, number>
   skillActivateList: OrderedSet<string>
@@ -195,33 +196,19 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
 
               over (CML.activatable)
                    (flip (foldr ((sa: Record<ProfessionRequireActivatable>) => {
-                                  // Having an `active = True` on a special
+                                  // Having an `active = False` on a special
                                   // ability entry of a profession variant
                                   // should remove the entry of the SA added by
                                   // the profession
                                   if (!PRAA.active (sa)) {
-                                    type MSID = Maybe<string | number>
-
                                     const id = PRAA.id (sa)
                                     const msid = PRAA.sid (sa)
                                     const msid2 = PRAA.sid2 (sa)
 
                                     if (isJust (msid) || isJust (msid2)) {
-                                      return filter ((x: Record<ProfessionRequireActivatable>) => {
-                                                      const current_id = PRAA.id (x)
-                                                      const mcurrent_sid = PRAA.sid (x)
-                                                      const mcurrent_sid2 = PRAA.sid2 (x)
-
-                                                      return id !== current_id
-                                                        || (
-                                                          isNothing (msid)
-                                                          || notEquals<MSID> (msid) (mcurrent_sid)
-                                                        )
-                                                        && (
-                                                          isNothing (msid2)
-                                                          || notEquals<MSID> (msid2) (mcurrent_sid2)
-                                                        )
-                                                    })
+                                      return filter (shouldSABeRemovedByProfVariant (id)
+                                                                                    (msid)
+                                                                                    (msid2))
                                     }
                                     else {
                                       return filter (pipe (PRAA.id, notEquals (PRAA.id (sa))))
@@ -258,7 +245,8 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
                                   )))
                            (prof_var_spells_chants))
                      (cm)
-            )})
+            )
+          })
           (mprofession_variant)
   )
 }
@@ -281,7 +269,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
               if (isList (possible_skills) && isJust (mselected_app) && isJust (mselected_skill)) {
                 return over (CML.activatable)
                             (consF (ProfessionRequireActivatable ({
-                              id: prefixSA (9),
+                              id: SpecialAbilityId.SkillSpecialization,
                               active: true,
                               sid: mselected_skill,
                               sid2: mselected_app,
@@ -291,7 +279,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
               if (isString (possible_skills) && isJust (mselected_app)) {
                 return over (CML.activatable)
                             (consF (ProfessionRequireActivatable ({
-                              id: prefixSA (9),
+                              id: SpecialAbilityId.SkillSpecialization,
                               active: true,
                               sid: Just (possible_skills),
                               sid2: mselected_app,
@@ -313,7 +301,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
               if (isJust (mselected_terrain)) {
                 return over (CML.activatable)
                             (consF (ProfessionRequireActivatable ({
-                              id: prefixSA (12),
+                              id: SpecialAbilityId.TerrainKnowledge,
                               active: true,
                               sid: mselected_terrain,
                             })))
@@ -377,7 +365,8 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
     maybe (ident as ident<Record<ConcatenatedModifications>>)
           ((spell_id: string) => over (CML.professionPrerequisites)
                                       (map (x => ProfessionRequireActivatable.is (x)
-                                                 && PRAA.id (x) === prefixSA (70)
+                                                 && PRAA.id (x)
+                                                   === SpecialAbilityId.TraditionGuildMages
                                                  ? set (ProfessionRequireActivatableL.sid)
                                                        (Just (spell_id))
                                                        (x)
@@ -448,7 +437,8 @@ const applyModifications =
 
                                   return Nothing
                                 })
-                                (k))),
+                                (k)
+        )),
         over (CML.hero)
       )),
 
@@ -476,7 +466,9 @@ const applyModifications =
       // - Scripts additions
       join (acc => over (composeL (CML.hero, HL.specialAbilities))
                         (alter (pipe (
-                                 fromMaybe (createPlainActivatableDependent (prefixSA (27))),
+                                 fromMaybe (
+                                   createPlainActivatableDependent (SpecialAbilityId.Literacy)
+                                 ),
                                  over (ActivatableDependentL.active)
                                       (append (pipe_ (
                                         acc,
@@ -486,12 +478,14 @@ const applyModifications =
                                       ))),
                                  Just
                                ))
-                               (prefixSA (27)))),
+                               (SpecialAbilityId.Literacy as string))),
 
       // - Languages additions
       join (acc => over (composeL (CML.hero, HL.specialAbilities))
                         (alter (pipe (
-                                 fromMaybe (createPlainActivatableDependent (prefixSA (29))),
+                                 fromMaybe (
+                                   createPlainActivatableDependent (SpecialAbilityId.Language)
+                                 ),
                                  over (ActivatableDependentL.active)
                                       (append (pipe_ (
                                         acc,
@@ -506,7 +500,7 @@ const applyModifications =
                                       ))),
                                  Just
                                ))
-                               (prefixSA (29)))),
+                               (SpecialAbilityId.Language as string))),
 
       // - Profession prerequisites
       join (pipe (
@@ -563,6 +557,10 @@ const applyModifications =
         over (CML.hero)
       )),
 
+      // - Cultural Package activation
+      set (composeL (CML.hero, HL.isCulturalPackageActive))
+          (action .payload .useCulturePackage),
+
       // - Lower Combat Techniques with too high CTR
       join (acc => over (composeL (CML.hero, HL.combatTechniques))
                         (maybe (ident as ident<HeroModel["combatTechniques"]>)
@@ -618,3 +616,27 @@ const updateListToContainNewEntry =
         ? addAllStyleRelatedDependencies (wiki_entry)
         : ident
     )
+
+const shouldSABeRemovedByProfVariant =
+  (id: string) =>
+  (msid: Maybe<string | number>) =>
+  (msid2: Maybe<string | number>) =>
+  (x: Record<ProfessionRequireActivatable>) => {
+    type MSID = Maybe<string | number>
+
+    const current_id = PRAA.id (x)
+    const mcurrent_sid = PRAA.sid (x)
+    const mcurrent_sid2 = PRAA.sid2 (x)
+
+    return id !== current_id
+      || (
+        (
+          isNothing (msid)
+          || notEquals<MSID> (msid) (mcurrent_sid)
+        )
+        && (
+          isNothing (msid2)
+          || notEquals<MSID> (msid2) (mcurrent_sid2)
+        )
+      )
+  }

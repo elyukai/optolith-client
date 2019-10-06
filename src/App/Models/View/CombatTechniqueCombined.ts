@@ -3,6 +3,7 @@ import { SkillDependent } from "../ActiveEntries/SkillDependent";
 import { CombatTechnique } from "../Wiki/CombatTechnique";
 
 export interface CombatTechniqueCombined {
+  "@@name": "CombatTechniqueCombined"
   wikiEntry: Record<CombatTechnique>
   stateEntry: Record<SkillDependent>
 }

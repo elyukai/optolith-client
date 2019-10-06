@@ -1,6 +1,8 @@
-import { fromJust, fromMaybe, isJust, Just, Maybe, Nothing } from "../../Data/Maybe";
+import { fromJust, isJust, Just, Maybe, Nothing } from "../../Data/Maybe";
 import { ActionTypes } from "../Constants/ActionTypes";
-import { isAlbino } from "../Selectors/activatableSelectors";
+import { SocialStatusId } from "../Constants/Ids";
+import { HeroModelRecord } from "../Models/Hero/HeroModel";
+import { getAvailableEyeColorIds, getAvailableHairColorIds } from "../Selectors/personalDataSelectors";
 import { getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
 import { getSize, getWeight } from "../Selectors/stateSelectors";
 import * as RCPUtils from "../Utilities/rcpUtils";
@@ -172,31 +174,25 @@ export const setWeight = (weight: string) => (size: Maybe<string>): SetWeightAct
   },
 })
 
-export const rerollHairColor: ReduxAction =
+export const rerollHairColor =
+  (hero: HeroModelRecord): ReduxAction =>
   (dispatch, getState) => {
-    const state = getState ()
-    const race = getCurrentRace (state)
-    const raceVariant = getCurrentRaceVariant (state)
-
-    const mhair_color = RCPUtils.rerollHairColor (race) (raceVariant)
+    const mhair_color = RCPUtils.rerollColor (getAvailableHairColorIds (getState (), { hero }))
 
     if (isJust (mhair_color)) {
       dispatch (setHairColor (fromJust (mhair_color)))
     }
   }
 
-export const rerollEyeColor: ReduxAction = (dispatch, getState) => {
-  const state = getState ()
-  const race = getCurrentRace (state)
-  const raceVariant = getCurrentRaceVariant (state)
-  const isAlbinoVar = fromMaybe (false) (isAlbino (state))
+export const rerollEyeColor =
+  (hero: HeroModelRecord): ReduxAction =>
+  (dispatch, getState) => {
+    const meye_color = RCPUtils.rerollColor (getAvailableEyeColorIds (getState (), { hero }))
 
-  const meye_color = RCPUtils.rerollEyeColor (isAlbinoVar) (race) (raceVariant)
-
-  if (isJust (meye_color)) {
-    dispatch (setEyeColor (fromJust (meye_color)))
+    if (isJust (meye_color)) {
+      dispatch (setEyeColor (fromJust (meye_color)))
+    }
   }
-}
 
 export const rerollSize: ReduxAction =
   (dispatch, getState) => {
@@ -252,11 +248,11 @@ export const setTitle = (title: string): SetTitleAction => ({
 export interface SetSocialStatusAction {
   type: ActionTypes.SET_SOCIALSTATUS
   payload: {
-    socialstatus: number;
+    socialstatus: SocialStatusId;
   }
 }
 
-export const setSocialStatus = (socialstatus: number): SetSocialStatusAction => ({
+export const setSocialStatus = (socialstatus: SocialStatusId): SetSocialStatusAction => ({
   type: ActionTypes.SET_SOCIALSTATUS,
   payload: {
     socialstatus,

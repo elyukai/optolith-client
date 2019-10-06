@@ -1,6 +1,7 @@
 import { fromDefault } from "../../../../Data/Record";
 
 export interface Die {
+  "@@name": "Die"
   sides: number
   amount: number
 }

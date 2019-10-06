@@ -8,6 +8,7 @@ import { SelectOption } from "../Wiki/sub/SelectOption";
 import { Activatable } from "../Wiki/wikiTypeHelpers";
 
 export interface InactiveActivatable<T extends RecordI<Activatable> = RecordI<Activatable>> {
+  "@@name": "InactiveActivatable"
   id: string
   name: string
   cost: Maybe<string | number | List<number>>

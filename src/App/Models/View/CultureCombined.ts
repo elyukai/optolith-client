@@ -5,6 +5,7 @@ import { Culture } from "../Wiki/Culture";
 import { IncreasableForView } from "./IncreasableForView";
 
 export interface CultureCombined {
+  "@@name": "CultureCombined"
   wikiEntry: Record<Culture>
   mappedCulturalPackageSkills: List<Record<IncreasableForView>>
 }

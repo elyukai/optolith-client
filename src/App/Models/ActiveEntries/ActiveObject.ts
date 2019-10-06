@@ -2,6 +2,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses } from "../../../Data/Record";
 
 export interface ActiveObject {
+  "@@name": "ActiveObject"
   sid: Maybe<string | number>;
   sid2: Maybe<string | number>;
   sid3: Maybe<string | number>;

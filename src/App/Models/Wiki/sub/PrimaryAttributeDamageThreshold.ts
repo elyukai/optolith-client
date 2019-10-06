@@ -3,6 +3,7 @@ import { fromDefault } from "../../../../Data/Record";
 import { Pair } from "../../../../Data/Tuple";
 
 export interface PrimaryAttributeDamageThreshold {
+  "@@name": "PrimaryAttributeDamageThreshold"
   primary: Maybe<string>
   threshold: number | Pair<number, number>
 }

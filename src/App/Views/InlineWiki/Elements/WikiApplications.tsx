@@ -3,7 +3,7 @@ import { fmap } from "../../../../Data/Functor";
 import { fnull, intercalate, List, notNull } from "../../../../Data/List";
 import { bindF, ensure, isNothing, listToMaybe, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe";
 import { member, OrderedMap } from "../../../../Data/OrderedMap";
-import { Record, RecordBase } from "../../../../Data/Record";
+import { Record, RecordIBase } from "../../../../Data/Record";
 import { Advantage } from "../../../Models/Wiki/Advantage";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
@@ -14,12 +14,12 @@ import { sortStrings } from "../../../Utilities/sortBy";
 import { isString } from "../../../Utilities/typeCheckUtils";
 import { WikiProperty } from "../WikiProperty";
 
-interface Accessors<A extends RecordBase> {
+interface Accessors<A extends RecordIBase<any>> {
   applications: (r: Record<A>) => List<Record<Application>>
   applicationsInput: (r: Record<A>) => Maybe<string>
 }
 
-export interface WikiApplicationsProps<A extends RecordBase> {
+export interface WikiApplicationsProps<A extends RecordIBase<any>> {
   advantages: OrderedMap<string, Record<Advantage>>
   x: Record<A>
   acc: Accessors<A>
@@ -30,7 +30,7 @@ export interface WikiApplicationsProps<A extends RecordBase> {
 
 const AA = Application.A
 
-export function WikiApplications <A extends RecordBase> (props: WikiApplicationsProps<A>) {
+export function WikiApplications <A extends RecordIBase<any>> (props: WikiApplicationsProps<A>) {
   const {
     advantages,
     x,

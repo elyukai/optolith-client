@@ -28,19 +28,7 @@ export interface WikiCombatTechniqueInfoProps {
 const CTA = CombatTechnique.A
 
 export function WikiCombatTechniqueInfo (props: WikiCombatTechniqueInfoProps) {
-  const { attributes, x, l10n } = props
-
-  // if (["nl-BE"].includes(l10n.id)) {
-  //   return (
-  //     <WikiBoxTemplate className="combattechnique" title={x.name}>
-  //       <WikiProperty l10n={l10n} title="primaryattribute.long">
-  //         {x.primary.map(e => attributes.has(e)
-  //           ? attributes.get(e)!.name : "...").intercalate("/")}
-  //       </WikiProperty>
-  //       <WikiProperty l10n={l10n} title="info.improvementcost">{getICName(x.ic)}</WikiProperty>
-  //     </WikiBoxTemplate>
-  //   )
-  // }
+  const { attributes, x, l10n, books } = props
 
   return (
     <WikiBoxTemplate className="combattechnique" title={CTA.name (x)}>
@@ -57,7 +45,12 @@ export function WikiCombatTechniqueInfo (props: WikiCombatTechniqueInfoProps) {
         )}
       </WikiProperty>
       <WikiProperty l10n={l10n} title="improvementcost">{getICName (CTA.ic (x))}</WikiProperty>
-      <WikiSource {...props} acc={CTA} />
+      <WikiSource
+        books={books}
+        x={x}
+        l10n={l10n}
+        acc={CTA}
+        />
     </WikiBoxTemplate>
   )
 }

@@ -9,21 +9,11 @@
 .tooltip-small {
 	padding: 6px 8px;
 	font: 500 12px Alegreya Sans;
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	text-transform: none;
 	color: var(--text-color);
 
-	&.overlay-top::after, &.overlay-bottom::before {
-		height: 6px;
-		width: 6px;
-		left: calc(50% - 4px);
-	}
-
-	&.overlay-top::after {
-		bottom: -4.5px;
-	}
-
-	&.overlay-bottom::before {
-		top: -4.5px;
+	> div.markdown {
+		padding: 0;
 	}
 }

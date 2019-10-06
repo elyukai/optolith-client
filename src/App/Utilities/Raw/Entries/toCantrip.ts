@@ -1,10 +1,11 @@
 import { Nothing } from "../../../../Data/Maybe";
+import { Property } from "../../../Constants/Groups";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { Cantrip } from "../../../Models/Wiki/Cantrip";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { modifyNegIntNoBreak } from "../rawConversionUtils";
-import { mensureMapNatural, mensureMapNaturalList, mensureMapNonEmptyString } from "../validateMapValueUtils";
+import { mensureMapNaturalList, mensureMapNonEmptyString, mensureMapNumEnum } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
@@ -17,11 +18,14 @@ export const toCantrip =
       const checkL10nNonEmptyString =
         lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
-      const checkUnivNaturalNumber =
-        lookupKeyValid (mensureMapNatural) (TableType.Univ) (lookup_univ)
-
       const checkUnivNaturalNumberList =
         lookupKeyValid (mensureMapNaturalList ("&")) (TableType.Univ) (lookup_univ)
+
+      const checkProperty =
+        lookupKeyValid (mensureMapNumEnum ("Property")
+                                          (Property))
+                       (TableType.Univ)
+                       (lookup_univ)
 
       // Check and convert fields
 
@@ -29,7 +33,7 @@ export const toCantrip =
 
       const etraditions = checkUnivNaturalNumberList ("traditions")
 
-      const eproperty = checkUnivNaturalNumber ("property")
+      const eproperty = checkProperty ("property")
 
       const eeffect = checkL10nNonEmptyString ("effect")
 

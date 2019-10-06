@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List, subscriptF } from "../../../../Data/List";
-import { bindF, fromMaybeR, Maybe, maybeR } from "../../../../Data/Maybe";
+import { bindF, fromMaybe, Maybe, maybe } from "../../../../Data/Maybe";
 import { lookup, OrderedMap } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
 import { Pair } from "../../../../Data/Tuple";
@@ -71,25 +71,28 @@ export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
             </tr>
           </thead>
           <tbody>
-            {pipe_ (groupHeaders, subscriptF (0), fromMaybeR (null))}
+            {pipe_ (groupHeaders, subscriptF (0), fromMaybe (null as React.ReactNode))}
             {pipe_ (
               skillsByGroup,
               bindF (lookup (1)),
-              maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+              maybe (null as React.ReactNode)
+                    (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
             )}
             <EmptyRow />
-            {pipe_ (groupHeaders, subscriptF (1), fromMaybeR (null))}
+            {pipe_ (groupHeaders, subscriptF (1), fromMaybe (null as React.ReactNode))}
             {pipe_ (
               skillsByGroup,
               bindF (lookup (2)),
-              maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+              maybe (null as React.ReactNode)
+                    (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
             )}
             <EmptyRow />
-            {pipe_ (groupHeaders, subscriptF (2), fromMaybeR (null))}
+            {pipe_ (groupHeaders, subscriptF (2), fromMaybe (null as React.ReactNode))}
             {pipe_ (
               skillsByGroup,
               bindF (lookup (3)),
-              maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+              maybe (null as React.ReactNode)
+                    (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
             )}
           </tbody>
         </table>
@@ -120,18 +123,20 @@ export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
             </tr>
           </thead>
           <tbody>
-            {pipe_ (groupHeaders, subscriptF (3), fromMaybeR (null))}
+            {pipe_ (groupHeaders, subscriptF (3), fromMaybe (null as React.ReactNode))}
             {pipe_ (
               skillsByGroup,
               bindF (lookup (4)),
-              maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+              maybe (null as React.ReactNode)
+                    (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
             )}
             <EmptyRow />
-            {pipe_ (groupHeaders, subscriptF (4), fromMaybeR (null))}
+            {pipe_ (groupHeaders, subscriptF (4), fromMaybe (null as React.ReactNode))}
             {pipe_ (
               skillsByGroup,
               bindF (lookup (5)),
-              maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+              maybe (null as React.ReactNode)
+                    (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
             )}
           </tbody>
         </table>

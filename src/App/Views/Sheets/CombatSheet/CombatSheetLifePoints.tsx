@@ -3,9 +3,9 @@ import { equals } from "../../../../Data/Eq";
 import { find, List } from "../../../../Data/List";
 import { bindF, Just, Maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
+import { DCId } from "../../../Constants/Ids";
 import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { DCIds } from "../../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { Box } from "../../Universal/Box";
@@ -23,7 +23,7 @@ export function CombatSheetLifePoints (props: CombatSheetLifePointsProps) {
   const lifePoints =
     pipe_ (
       derivedCharacteristics,
-      find (pipe (DerivedCharacteristic.A.id, equals<DCIds> ("LP"))),
+      find (pipe (DerivedCharacteristic.A.id, equals<DCId> (DCId.LP))),
       bindF (DerivedCharacteristic.A.value),
       Maybe.sum
     )

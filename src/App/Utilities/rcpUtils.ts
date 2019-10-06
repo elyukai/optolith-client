@@ -1,10 +1,11 @@
-import { fmap, fmapF } from "../../Data/Functor";
-import { foldr, subscriptF } from "../../Data/List";
-import { altF, bindF, elem, fromMaybe, Just, liftM2, Maybe, sum } from "../../Data/Maybe";
-import { add, lt, odd, subtract, subtractBy } from "../../Data/Num";
+import { fmap } from "../../Data/Functor";
+import { flength, foldr, List, subscript } from "../../Data/List";
+import { altF, bindF, elem, fromMaybe, liftM2, Maybe, sum } from "../../Data/Maybe";
+import { add, dec, lt, odd, subtract, subtractBy } from "../../Data/Num";
 import { lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
+import { ProfessionId, RaceId } from "../Constants/Ids";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { Profession } from "../Models/Wiki/Profession";
@@ -19,38 +20,16 @@ import { ifElse } from "./ifElse";
 import { multiplyString, toInt } from "./NumberUtils";
 import { pipe, pipe_ } from "./pipe";
 
-const { id, hairColors, eyeColors, sizeBase, sizeRandom, weightBase, weightRandom } = Race.AL
+const { id, sizeBase, sizeRandom, weightBase, weightRandom } = Race.AL
 const { amount, sides } = Die.AL
 const { name, subname } = Profession.AL
 
 /**
- * Reroll the hair color based on the current race and race variant.
+ * Reroll the color.
  */
-export const rerollHairColor =
-  (race: Maybe<Record<Race>>) =>
-  (raceVariant: Maybe<Record<RaceVariant>>): Maybe<number> =>
-    pipe (
-           bindF (hairColors),
-           altF (bindF (hairColors) (raceVariant)),
-           bindF (subscriptF (rollDie (20) - 1))
-         )
-         (race)
-
-/**
- * Reroll the eye color based on the current race and race variant.
- */
-export const rerollEyeColor =
-  (isAlbino: boolean) =>
-  (race: Maybe<Record<Race>>) =>
-  (raceVariant: Maybe<Record<RaceVariant>>): Maybe<number> =>
-    isAlbino
-    ? Just (rollDie (2) + 18)
-    : pipe (
-             bindF (eyeColors),
-             altF (bindF (eyeColors) (raceVariant)),
-             bindF (subscriptF (rollDie (20) - 1))
-           )
-           (race)
+export const rerollColor =
+  <A> (colors: List<A>): Maybe<A> =>
+    pipe_ (colors, flength, rollDie, dec, subscript (colors))
 
 /**
  * Reroll the size based on the current race and race variant.
@@ -118,7 +97,7 @@ export const rerollWeight =
     const rerolled_weight =
       fmap (pipe (
              (race: Record<Race>) => {
-               const f = id (race) === "R_1"
+               const f = id (race) === RaceId.Humans
                  ? randomWeightRace (odd)
                  : randomWeightRace (lt (0))
 
@@ -155,7 +134,7 @@ export const getFullProfessionName =
   (professionId: Maybe<string>) =>
   (professionVariantId: Maybe<string>) =>
   (customProfessionName: Maybe<string>) => {
-    if (elem ("P_0") (professionId)) {
+    if (elem<string> (ProfessionId.CustomProfession) (professionId)) {
       return fromMaybe (translate (l10n) ("ownprofession"))
                        (customProfessionName)
     }
@@ -187,14 +166,9 @@ export const getFullProfessionName =
     )
   }
 
-export const getNameBySex =
-  (sex: Sex) =>
-  // tslint:disable-next-line: no-shadowed-variable
-  (name: string | Record<NameBySex>): string =>
-    NameBySex.is (name) ? NameBySex.A[sex] (name) : name
+export const getNameBySex: (sex: Sex) => (name: string | Record<NameBySex>) => string =
+  s => n => NameBySex.is (n) ? NameBySex.A[s] (n) : n
 
-export const getNameBySexM =
-  (sex: Sex) =>
-  (mname: Maybe<string | Record<NameBySex>>): Maybe<string> =>
-                  // tslint:disable-next-line: no-shadowed-variable
-    fmapF (mname) (name => NameBySex.is (name) ? NameBySex.A[sex] (name) : name)
+export const getNameBySexM: (sex: Sex) =>
+                            (mname: Maybe<string | Record<NameBySex>>) => Maybe<string> =
+  s => fmap (n => NameBySex.is (n) ? NameBySex.A[s] (n) : n)

@@ -10,6 +10,7 @@ import { NameBySex } from "./sub/NameBySex";
 import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite } from "./wikiTypeHelpers";
 
 export interface ProfessionVariant {
+  "@@name": "ProfessionVariant"
   id: string
   name: string | Record<NameBySex>
   ap: number

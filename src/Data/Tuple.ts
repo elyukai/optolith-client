@@ -72,6 +72,8 @@ export const Pair =
     return Tuple (args [0], args [1])
   }) as PairConstructor
 
+export const PairF = <B> (second: B) => <A> (first: A): Pair<A, B> => Tuple (first, second)
+
 
 // BIFUNCTOR
 

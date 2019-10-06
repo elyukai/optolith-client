@@ -1,6 +1,6 @@
 import { ident } from "../../Data/Function";
 import { over, set } from "../../Data/Lens";
-import { isJust, Just, Nothing } from "../../Data/Maybe";
+import { isJust, Just, maybe_, Nothing } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { snd } from "../../Data/Tuple";
 import * as DisAdvActions from "../Actions/DisAdvActions";
@@ -61,35 +61,29 @@ const personalDataReducer =
         return set (composeL (HeroModelL.personalData, PersonalDataL.eyeColor))
                    (Just (action.payload.eyecolor))
 
-      case ActionTypes.SET_SIZE: {
-        if (typeof action.payload.weight === "string") {
-          return over (HeroModelL.personalData)
-                      (pipe (
-                        set (PersonalDataL.size)
-                            (Just (action.payload.size)),
-                        set (PersonalDataL.weight)
-                            (Just (action.payload.weight))
-                      ))
-        }
+      case ActionTypes.SET_SIZE:
+        return maybe_ (() => set (composeL (HeroModelL.personalData, PersonalDataL.size))
+                                 (Just (action.payload.size)))
+                      ((weight: string) => over (HeroModelL.personalData)
+                                                (pipe (
+                                                  set (PersonalDataL.size)
+                                                      (Just (action.payload.size)),
+                                                  set (PersonalDataL.weight)
+                                                      (Just (weight))
+                                                )))
+                      (action.payload.weight)
 
-        return set (composeL (HeroModelL.personalData, PersonalDataL.size))
-                   (Just (action.payload.size))
-      }
-
-      case ActionTypes.SET_WEIGHT: {
-        if (typeof action.payload.size === "string") {
-          return over (HeroModelL.personalData)
-                      (pipe (
-                        set (PersonalDataL.size)
-                            (Just (action.payload.size)),
-                        set (PersonalDataL.weight)
-                            (Just (action.payload.weight))
-                      ))
-        }
-
-        return set (composeL (HeroModelL.personalData, PersonalDataL.weight))
-                   (Just (action.payload.weight))
-      }
+      case ActionTypes.SET_WEIGHT:
+          return maybe_ (() => set (composeL (HeroModelL.personalData, PersonalDataL.weight))
+                                   (Just (action.payload.weight)))
+                        ((size: string) => over (HeroModelL.personalData)
+                                                  (pipe (
+                                                    set (PersonalDataL.weight)
+                                                        (Just (action.payload.weight)),
+                                                    set (PersonalDataL.size)
+                                                        (Just (size))
+                                                  )))
+                        (action.payload.size)
 
       case ActionTypes.SET_TITLE:
         return set (composeL (HeroModelL.personalData, PersonalDataL.title))
@@ -126,12 +120,22 @@ const personalDataReducer =
                       ))
         }
 
+        if (isJust (eyeColor)) {
+          return over (HeroModelL.personalData)
+                      (set (PersonalDataL.eyeColor) (eyeColor))
+        }
+
+        if (isJust (hairColor)) {
+          return over (HeroModelL.personalData)
+                      (set (PersonalDataL.hairColor) (hairColor))
+        }
+
         return ident
       }
 
       case ActionTypes.SET_CULTURE_AREA_KNOWLEDGE:
-      return set (composeL (HeroModelL.personalData, PersonalDataL.cultureAreaKnowledge))
-                 (Just (action.payload.cultureAreaKnowledge))
+        return set (composeL (HeroModelL.personalData, PersonalDataL.cultureAreaKnowledge))
+                   (Just (action.payload.cultureAreaKnowledge))
 
       default:
         return ident

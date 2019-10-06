@@ -4,6 +4,7 @@ import { fromMaybe, maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { fst, Pair, snd } from "../../../../Data/Tuple";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
+import { SocialStatusId } from "../../../Constants/Ids";
 import { Culture } from "../../../Models/Wiki/Culture";
 import { CommonProfession } from "../../../Models/Wiki/sub/CommonProfession";
 import { IncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
@@ -13,12 +14,12 @@ import { exactR, isNaturalNumber, naturalNumberU } from "../../RegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix, modifyNegIntNoBreak } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
-import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapPairList, mensureMapStringPredListOptional } from "../validateMapValueUtils";
+import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapNumEnumList, mensureMapPairList, mensureMapStringPredListOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const exception =
-  new RegExp (exactR (`${naturalNumberU}|${prefixProf (naturalNumberU)}`))
+  new RegExp (exactR (`${naturalNumberU}|${prefixProf (naturalNumberU)}`), "u")
 
 const checkException =
   (x: string) => exception .test (x)
@@ -56,6 +57,13 @@ export const toCulture =
       const checkUnivBoolean =
         lookupKeyValid (mensureMapBoolean) (TableType.Univ) (lookup_univ)
 
+      const checkSocialStatuses =
+        lookupKeyValid (mensureMapNumEnumList ("SocialStatus")
+                                              (SocialStatusId)
+                                              ("&"))
+                       (TableType.Univ)
+                       (lookup_univ)
+
       // Check fields
 
       const ename =
@@ -74,7 +82,7 @@ export const toCulture =
         checkOptionalUnivNaturalNumberList ("literacy")
 
       const esocial =
-        checkUnivNaturalNumberList ("social")
+        checkSocialStatuses ("social")
 
       const ecommonMundaneProfessionsAll =
         checkUnivBoolean ("commonMundaneProfessionsAll")

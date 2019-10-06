@@ -4,6 +4,7 @@ import { fromDefault, makeLenses, member, notMember, Omit, Record } from "../../
 import { Dependent, SkillDependency } from "../Hero/heroTypeHelpers";
 
 export interface AttributeDependent {
+  "@@name": "AttributeDependent"
   id: string;
   value: number;
   mod: number;

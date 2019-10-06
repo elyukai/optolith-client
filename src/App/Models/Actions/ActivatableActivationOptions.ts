@@ -2,6 +2,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses } from "../../../Data/Record";
 
 export interface ActivatableActivationOptions {
+  "@@name": "ActivatableActivationOptions"
   id: string
   selectOptionId1: Maybe<string | number>
   selectOptionId2: Maybe<string | number>

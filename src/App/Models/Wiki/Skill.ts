@@ -7,6 +7,7 @@ import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Skill {
+  "@@name": "Skill"
   id: string
   name: string
   category: Categories

@@ -4,6 +4,7 @@ import { Cantrip } from "../Wiki/Cantrip";
 import { IsActive } from "./viewTypeHelpers";
 
 export interface CantripCombined extends IsActive {
+  "@@name": "CantripCombined"
   wikiEntry: Record<Cantrip>
   isUnfamiliar: boolean
 }

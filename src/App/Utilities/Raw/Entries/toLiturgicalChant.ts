@@ -2,20 +2,16 @@ import { fmap } from "../../../../Data/Functor";
 import { List, map } from "../../../../Data/List";
 import { fromMaybe, Nothing } from "../../../../Data/Maybe";
 import { OrderedSet } from "../../../../Data/OrderedSet";
+import { Aspect, BlessedGroup, BlessedTradition } from "../../../Constants/Groups";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { LiturgicalChant } from "../../../Models/Wiki/LiturgicalChant";
 import { CheckModifier } from "../../../Models/Wiki/wikiTypeHelpers";
-import { prefixId } from "../../IDUtils";
+import { isCheckMod, prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { modifyNegIntNoBreak } from "../rawConversionUtils";
-import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapStringPredSetOptional } from "../validateMapValueUtils";
+import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapNumEnum, mensureMapNumEnumList, mensureMapNumEnumListOptional, mensureMapStringPredSetOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
-
-const checkMod = /SPI|TOU/
-
-const checkCheckMod =
-  (x: string): x is CheckModifier => checkMod .test (x)
 
 export const toLiturgicalChant =
   mergeRowsById
@@ -32,7 +28,7 @@ export const toLiturgicalChant =
                        (lookup_univ)
 
       const checkCheckModifier =
-        lookupKeyValid (mensureMapStringPredSetOptional (checkCheckMod)
+        lookupKeyValid (mensureMapStringPredSetOptional (isCheckMod)
                                                         (`"SPI" | "TOU"`)
                                                         (","))
                        (TableType.Univ)
@@ -41,11 +37,28 @@ export const toLiturgicalChant =
       const checkUnivNaturalNumber =
         lookupKeyValid (mensureMapNatural) (TableType.Univ) (lookup_univ)
 
-      const checkUnivNaturalNumberList =
-        lookupKeyValid (mensureMapNaturalList ("&")) (TableType.Univ) (lookup_univ)
+      const checkUnivBoolean =
+        lookupKeyValid (mensureMapBoolean) (TableType.Univ) (lookup_univ)
 
-      const checkUnivNaturalNumberListOptional =
-        lookupKeyValid (mensureMapNaturalListOptional ("&")) (TableType.Univ) (lookup_univ)
+      const checkBlessedTraditions =
+        lookupKeyValid (mensureMapNumEnumList ("BlessedTradition")
+                                              (BlessedTradition)
+                                              ("&"))
+                       (TableType.Univ)
+                       (lookup_univ)
+
+      const checkBlessedGroup =
+        lookupKeyValid (mensureMapNumEnum ("BlessedGroup")
+                                          (BlessedGroup))
+                       (TableType.Univ)
+                       (lookup_univ)
+
+      const checkAspects =
+        lookupKeyValid (mensureMapNumEnumListOptional ("Aspect")
+                                                      (Aspect)
+                                                      ("&"))
+                       (TableType.Univ)
+                       (lookup_univ)
 
       // Check and convert fields
 
@@ -60,9 +73,9 @@ export const toLiturgicalChant =
 
       const eic = checkUnivNaturalNumber ("ic")
 
-      const etraditions = checkUnivNaturalNumberList ("traditions")
+      const etraditions = checkBlessedTraditions ("traditions")
 
-      const easpects = checkUnivNaturalNumberListOptional ("aspects")
+      const easpects = checkAspects ("aspects")
 
       const eeffect = checkL10nNonEmptyString ("effect")
 
@@ -70,21 +83,29 @@ export const toLiturgicalChant =
 
       const ecastingTimeShort = checkL10nNonEmptyString ("castingTimeShort")
 
+      const ecastingTimeNoMod = checkUnivBoolean ("castingTimeNoMod")
+
       const ekpCost = checkL10nNonEmptyString ("kpCost")
 
       const ekpCostShort = checkL10nNonEmptyString ("kpCostShort")
+
+      const ekpCostNoMod = checkUnivBoolean ("kpCostNoMod")
 
       const range = lookup_l10n ("range")
 
       const erangeShort = checkL10nNonEmptyString ("rangeShort")
 
+      const erangeNoMod = checkUnivBoolean ("rangeNoMod")
+
       const duration = lookup_l10n ("duration")
 
       const durationShort = lookup_l10n ("durationShort")
 
+      const edurationNoMod = checkUnivBoolean ("durationNoMod")
+
       const target = lookup_l10n ("target")
 
-      const egr = checkUnivNaturalNumber ("gr")
+      const egr = checkBlessedGroup ("gr")
 
       const esrc = toSourceLinks (lookup_l10n)
 
@@ -101,9 +122,13 @@ export const toLiturgicalChant =
           eeffect,
           ecastingTime,
           ecastingTimeShort,
+          ecastingTimeNoMod,
           ekpCost,
           ekpCostShort,
+          ekpCostNoMod,
           erangeShort,
+          erangeNoMod,
+          edurationNoMod,
           egr,
           esrc,
         })
@@ -118,12 +143,16 @@ export const toLiturgicalChant =
           effect: modifyNegIntNoBreak (rs.eeffect),
           castingTime: rs.ecastingTime,
           castingTimeShort: rs.ecastingTimeShort,
+          castingTimeNoMod: rs.ecastingTimeNoMod,
           cost: rs.ekpCost,
           costShort: rs.ekpCostShort,
+          costNoMod: rs.ekpCostNoMod,
           range: fromMaybe ("") (range),
           rangeShort: rs.erangeShort,
+          rangeNoMod: rs.erangeNoMod,
           duration: fromMaybe ("") (duration),
           durationShort: fromMaybe ("") (durationShort),
+          durationNoMod: rs.edurationNoMod,
           target: fromMaybe ("") (target),
           gr: rs.egr,
           src: rs.esrc,

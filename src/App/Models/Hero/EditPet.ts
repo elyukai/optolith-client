@@ -3,6 +3,7 @@ import { fromDefault, makeLenses } from "../../../Data/Record";
 import { PetBase } from "./Pet";
 
 export interface EditPet extends PetBase {
+  "@@name": "EditPet"
   id: Maybe<string>;
   size: string;
   type: string;

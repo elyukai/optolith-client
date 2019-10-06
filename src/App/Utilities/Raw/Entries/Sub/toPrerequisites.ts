@@ -29,6 +29,8 @@ import { isRawPactRequirement } from "../Prerequisites/RawPactRequirement";
 import { isRawRequiringPrimaryAttribute } from "../Prerequisites/RawPrimaryAttributeRequirement";
 import { isRawRaceRequirement, toRaceRequirement } from "../Prerequisites/RawRaceRequirement";
 import { isRawSexRequirement } from "../Prerequisites/RawSexRequirement";
+import { fromRawSocialPrerequisiteToRecord, isRawSocialPrerequisite } from "../Prerequisites/RawSocialPrerequisite";
+
 const parseJSONAndRCP = (x: string) => x === "RCP" ? Just (x) : parseJSON (x)
 
 const toLevelAwarePrerequisites =
@@ -50,7 +52,7 @@ const toLevelAwarePrerequisites =
             Maybe.mapM<string, AllRequirements>
               (pipe (
                 parseJSONAndRCP,
-                bindF (ensure (x => typeof x === "object" && x !== null || x === "RCP")),
+                bindF (ensure (x => (typeof x === "object" && x !== null) || x === "RCP")),
                 bindF<any, AllRequirements> (
                   x => x === "RCP"
                     ? Just<"RCP"> ("RCP")
@@ -102,6 +104,8 @@ const toLevelAwarePrerequisites =
                           : Maybe (x .domain),
                         level: Maybe (x .level),
                       }))
+                    : isRawSocialPrerequisite (x)
+                    ? Just (fromRawSocialPrerequisiteToRecord (x))
                     : (traceShowBoth ("Invalid prerequisite: ") (x), Nothing)
                 )
               ))
@@ -131,7 +135,7 @@ const toFlatPrerequisites =
            Maybe.mapM<string, AllRequirements>
              (pipe (
                parseJSONAndRCP,
-               bindF (ensure (x => typeof x === "object" && x !== null || x === "RCP")),
+               bindF (ensure (x => (typeof x === "object" && x !== null) || x === "RCP")),
                bindF<any, AllRequirements> (
                  x => x === "RCP"
                    ? Just<"RCP"> ("RCP")
@@ -189,6 +193,8 @@ const toFlatPrerequisites =
                          : Maybe (x .domain),
                        level: Maybe (x .level),
                      }))
+                   : isRawSocialPrerequisite (x)
+                   ? Just (fromRawSocialPrerequisiteToRecord (x))
                    : (traceShowBoth ("Invalid prerequisite: ") (x), Nothing)
                )
              )),
@@ -260,6 +266,8 @@ const toFlatSpellPrerequisites =
                          : Maybe (x .domain),
                        level: Maybe (x .level),
                      }))
+                   : isRawSocialPrerequisite (x)
+                   ? Just (fromRawSocialPrerequisiteToRecord (x))
                    : (traceShowBoth ("Invalid prerequisite: ") (x), Nothing)
                )
              )),

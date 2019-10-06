@@ -1,11 +1,13 @@
-import { fromDefault, makeLenses } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { pipe } from "../../Utilities/pipe";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
 import { Spell } from "../Wiki/Spell";
-import { SpellCombined } from "./SpellCombined";
 import { IncreasableWithRequirements } from "./viewTypeHelpers";
 
-export interface SpellWithRequirements extends SpellCombined, IncreasableWithRequirements {
+export interface SpellWithRequirements extends IncreasableWithRequirements {
+  "@@name": "SpellWithRequirements"
+  wikiEntry: Record<Spell>
+  stateEntry: Record<ActivatableSkillDependent>
   isUnfamiliar: boolean
 }
 
@@ -36,6 +38,7 @@ export const SpellWithRequirementsA_ = {
   rangeShort: pipe (SWRA.wikiEntry, SA.rangeShort),
   durationShort: pipe (SWRA.wikiEntry, SA.durationShort),
   property: pipe (SWRA.wikiEntry, SA.property),
+  tradition: pipe (SWRA.wikiEntry, SA.tradition),
 }
 
 export const SpellWithRequirementsL = makeLenses (SpellWithRequirements)

@@ -10,6 +10,7 @@ const { set } = require ("../../../../Data/Lens")
 const { Just, Nothing } = require ("../../../../Data/Maybe")
 const { List } = require ("../../../../Data/List")
 const { compressList } = require ("../activatableNameUtils")
+const { DisadvantageId } = require ("../../../Constants/Ids")
 
 const L10nL = makeLenses (L10n)
 
@@ -20,7 +21,7 @@ test ('compressList', () => {
                        (List ( ActiveActivatable ({
                                  nameAndCost: ActivatableNameCost ({
                                    active: ActiveObjectWithId ({
-                                     id: "DISADV_47",
+                                     id: DisadvantageId.PersonalityFlaw,
                                      index: Nothing,
                                    }),
                                    finalCost: Nothing,
@@ -28,7 +29,8 @@ test ('compressList', () => {
                                      addName: Just ("Arroganz"),
                                      baseName: "Persönlichkeitsschwäche",
                                      name: "Persönlichkeitsschwäche (Arroganz)"
-                                   })
+                                   }),
+                                   isAutomatic: false,
                                  }),
                                  validation: ActivatableActivationValidation ({
                                    disabled: Nothing
@@ -39,7 +41,7 @@ test ('compressList', () => {
                              , ActiveActivatable ({
                                  nameAndCost: ActivatableNameCost ({
                                    active: ActiveObjectWithId ({
-                                     id: "DISADV_47",
+                                     id: DisadvantageId.PersonalityFlaw,
                                      index: Nothing,
                                    }),
                                    finalCost: Nothing,
@@ -47,7 +49,8 @@ test ('compressList', () => {
                                      addName: Just ("Weltfremd"),
                                      baseName: "Persönlichkeitsschwäche",
                                      name: "Persönlichkeitsschwäche (Weltfremd)"
-                                   })
+                                   }),
+                                   isAutomatic: false,
                                  }),
                                  validation: ActivatableActivationValidation ({
                                    disabled: Nothing

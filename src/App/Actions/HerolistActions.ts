@@ -1,11 +1,10 @@
 import { tryIO } from "../../Control/Exception";
 import { bimap } from "../../Data/Either";
-import { fmap } from "../../Data/Functor";
+import { fmap, fmapF } from "../../Data/Functor";
 import { List } from "../../Data/List";
 import { fromJust, isJust, Maybe } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { OrderedSet } from "../../Data/OrderedSet";
-import { runIO } from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
@@ -17,7 +16,7 @@ import { getNewIdByDate } from "../Utilities/IDUtils";
 import { pipe_ } from "../Utilities/pipe";
 import { SortNames } from "../Views/Universal/SortOptions";
 import { ReduxAction } from "./Actions";
-import { addAlert, AddAlertAction, addErrorAlert } from "./AlertActions";
+import { addAlert, addErrorAlert } from "./AlertActions";
 import { requestAllHeroesSave, requestHeroDeletion, requestHeroExport, requestHeroSave } from "./IOActions";
 
 export interface SetHerolistSortOrderAction {
@@ -125,15 +124,11 @@ export const loadHero = (id: string): LoadHeroAction => ({
 
 export const saveHeroes =
   (l10n: L10nRecord): ReduxAction =>
-  dispatch => {
-    pipe_ (
-      dispatch (requestAllHeroesSave (l10n)),
-      tryIO,
-      fmap (fmap (() => dispatch (addAlert ({
-                                   message: translate (l10n) ("allsaved"),
-                                 })))),
-      runIO
-    )
+  async dispatch => {
+    await fmapF (dispatch (tryIO (requestAllHeroesSave (l10n))))
+                (fmap (() => dispatch (addAlert ({
+                               message: translate (l10n) ("allsaved"),
+                             }))))
   }
 
 export interface SaveHeroAction {
@@ -146,23 +141,19 @@ export interface SaveHeroAction {
 export const saveHero =
   (l10n: L10nRecord) =>
   (id: Maybe<string>): ReduxAction =>
-    dispatch => {
-      pipe_ (
-        dispatch (requestHeroSave (l10n) (id)),
-        tryIO,
-        fmap (bimap <Error, AddAlertAction, Maybe<string>, Maybe<SaveHeroAction>>
-                    (err => dispatch (addErrorAlert (l10n) ({
-                                       title: translate (l10n) ("saveheroerror"),
-                                       message: err .toString (),
-                                     })))
-                    (fmap (save_id => dispatch<SaveHeroAction> ({
-                                        type: ActionTypes.SAVE_HERO,
-                                        payload: {
-                                          id: save_id, // specified by param or currently open
-                                        },
-                                      })))),
-        runIO
-      )
+    async dispatch => {
+      await fmapF (dispatch (tryIO (requestHeroSave (l10n) (id))))
+                  (bimap ((err: Error) => dispatch (addErrorAlert (l10n) ({
+                                           title: translate (l10n) ("saveheroerror"),
+                                           message: err .toString (),
+                                         })))
+                         (fmap ((save_id: string) => dispatch<SaveHeroAction> ({
+                                                       type: ActionTypes.SAVE_HERO,
+                                                       payload: {
+                                                         // specified by param or currently open
+                                                         id: save_id,
+                                                       },
+                                                     }))))
     }
 
 export const exportHeroValidate =
@@ -196,9 +187,9 @@ export const deleteHeroValidate =
     if (isJust (mhero)) {
       const hero = fromJust (mhero)
 
-      const resolve: ReduxAction = futureDispatch => {
+      const resolve: ReduxAction = async futureDispatch => {
         futureDispatch (deleteHero (id))
-        runIO (tryIO (futureDispatch (requestHeroDeletion (l10n) (id))))
+        await futureDispatch (tryIO (requestHeroDeletion (l10n) (id)))
       }
 
       // @ts-ignore

@@ -125,6 +125,7 @@ export interface ItemEditorSpecific {
 }
 
 export interface HistoryPayload {
+  "@@name": "HistoryPayload"
   id: Maybe<string | number>
   activeObject: Maybe<Record<ActiveObject>>
   index: Maybe<number>
@@ -140,7 +141,7 @@ export interface HistoryObject {
 }
 
 export interface HistoryPrevState {
-
+  "@@name": "HistoryPrevState"
 }
 
 export type InputTextEvent = React.ChangeEvent<HTMLInputElement>

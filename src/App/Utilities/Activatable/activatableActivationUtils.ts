@@ -173,7 +173,6 @@ export const setLevel =
       else {
         return hero_modified
       }
-
     }
     else {
       return hero

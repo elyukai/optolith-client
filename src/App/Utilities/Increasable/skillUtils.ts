@@ -7,6 +7,7 @@ import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
+import { SkillId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
@@ -97,21 +98,20 @@ export const isSkillDecreasable =
   (wiki: WikiModelRecord) =>
   (state: HeroModelRecord) =>
   (skill: Record<SkillCombined>): boolean => {
-    /**
-     * Craft Instruments
-     * => sum of Woodworking and Metalworking must be at least 12.
-     */
     if (
-      ["TAL_51", "TAL_55"].includes (id (skill))
-      && isMaybeActive (lookupF (specialAbilities (state)) ("SA_17"))
+      (SkillId.Woodworking === id (skill) || SkillId.Metalworking === id (skill))
+      && isMaybeActive (lookupF (specialAbilities (state)) (SpecialAbilityId.CraftInstruments))
     ) {
       const woodworkingRating =
-        sum (fmap (SkillDependent.AL.value) (lookupF (skills (state)) ("TAL_51")))
+        sum (fmap (SkillDependent.AL.value) (lookupF (skills (state)) (SkillId.Woodworking)))
 
       const metalworkingRating =
-        sum (fmap (SkillDependent.AL.value) (lookupF (skills (state)) ("TAL_55")))
+        sum (fmap (SkillDependent.AL.value) (lookupF (skills (state)) (SkillId.Metalworking)))
 
-      if (woodworkingRating + metalworkingRating < 12) {
+      const MINIMUM_SUM = 12
+
+      // Sum of Woodworking and Metalworking must be at least 12.
+      if (woodworkingRating + metalworkingRating < MINIMUM_SUM) {
         return false
       }
     }

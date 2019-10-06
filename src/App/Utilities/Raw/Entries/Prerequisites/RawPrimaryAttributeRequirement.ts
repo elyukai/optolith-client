@@ -1,9 +1,10 @@
+import { PrimaryAttributeType } from "../../../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
 import { AllRawRequirementObjects } from "../rawTypeHelpers";
 
 export interface RawRequirePrimaryAttribute {
   id: "ATTR_PRIMARY"
   value: number
-  type: 1 | 2
+  type: PrimaryAttributeType
 }
 
 export const isRawRequiringPrimaryAttribute =

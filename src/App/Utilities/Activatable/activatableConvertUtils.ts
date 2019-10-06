@@ -10,7 +10,8 @@ import { fmap } from "../../../Data/Functor";
 import { append, elemF, empty, imap, List } from "../../../Data/List";
 import { alt, guard, isJust, Nothing, or, then } from "../../../Data/Maybe";
 import { foldr } from "../../../Data/OrderedMap";
-import { mergeSafeR2, Record } from "../../../Data/Record";
+import { Record } from "../../../Data/Record";
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -28,13 +29,13 @@ const AAOA = ActivatableActivationOptions.A
  */
 export const convertUIStateToActiveObject =
   (activate: Record<ActivatableActivationOptions>): Record<ActiveObject> =>
-    AAOA.id (activate) === "ADV_68"
+    AAOA.id (activate) === AdvantageId.HatredOf
     ? ActiveObject ({
         sid: AAOA.selectOptionId1 (activate),
         sid2: AAOA.input (activate),
         cost: AAOA.customCost (activate),
       })
-    : AAOA.id (activate) === "DISADV_33"
+    : AAOA.id (activate) === DisadvantageId.PersonalityFlaw
     ? ActiveObject ({
         sid: AAOA.selectOptionId1 (activate),
         sid2: or (fmap (elemF (List<number | string> (7, 8)))
@@ -43,7 +44,7 @@ export const convertUIStateToActiveObject =
           : Nothing,
         cost: AAOA.customCost (activate),
       })
-    : AAOA.id (activate) === "SA_9"
+    : AAOA.id (activate) === SpecialAbilityId.SkillSpecialization
     ? ActiveObject ({
         sid: AAOA.selectOptionId1 (activate),
         sid2: alt<number | string> (AAOA.input (activate))
@@ -81,11 +82,3 @@ export const getActiveFromState =
 export interface ActiveObjectAny extends ActiveObject {
   [key: string]: any
 }
-
-/**
- * Returns only `sid`, `sid2` and `tier` property of passed `ActiveObject`.
- * @param activeObject
- */
-export const getActiveObjectCore =
-  (x: Record<ActiveObjectAny>): Record<ActiveObject> =>
-    mergeSafeR2<ActiveObject> (x) (ActiveObject.default)

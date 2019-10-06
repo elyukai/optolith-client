@@ -3,11 +3,20 @@
  *
  * Simple `Lens` implementation.
  *
+ * A `Lens` is a function that is used to "zoom" into a data structure and do
+ * something with the value you zoom at. For example, you can "get" (`view`) the
+ * value, "set" (`set`) the value to a new one or transform the value with a
+ * function (`over`).
+ *
+ * A common use case are `Record`s, where lenses are used to get, set and
+ * transform it's attributes.
+ *
  * @author Lukas Obermann
  */
 
 import { pipe } from "../App/Utilities/pipe";
 import { Identity, runIdentity } from "../Control/Monad/Identity";
+import { cnst } from "./Function";
 import { fmap } from "./Functor";
 import { Const, getConst } from "./Functor/Const";
 // import { List } from "./List";
@@ -35,6 +44,11 @@ type Setter_ <S, A> = Setter<S, S, A, A>
  * `Lens s t a b = Functor f => (a -> f b) -> s -> f t`
  *
  * A getter and setter combined. Can be used by `Lens` functions.
+ *
+ * A `Lens` focuses on one part of `s`, which is of type `a`. It can transform
+ * `a` into the type `b`, which leads to `s` being transformed into `t`. The
+ * actual behaviour is defined by each lens in combination with the function
+ * that consumes the lens.
  */
 export interface Lens <S, T, A, B>
   extends Setter<S, T, A, B>, Getter<S, T, A, B> {
@@ -97,7 +111,7 @@ export const lens =
   (setter: (m: S) => (x: A) => S): Lens_<S, A> =>
   (lift: (x: A) => any) =>
   (m: S) =>
-    fmap (setter (m)) (lift (getter (m))) as any
+    fmap (setter (m)) (lift (getter (m)))
 
 /**
  * `lens' :: (s -> (a, a -> s)) -> Lens s a`
@@ -157,14 +171,14 @@ export const lens_ =
 /**
  * `view :: Lens' s a -> s -> a`
  */
-export const view = <S, A> (l: Getter_<S, A>) => (m: S): A =>
-  getConst (l (Const) (m))
+export const view: <S, A> (l: Getter_<S, A>) => (m: S) => A =
+  l => pipe (l (Const), getConst)
 
 /**
  * `over :: Lens' s a -> (a -> a) -> s -> s`
  */
-export const over = <S, A> (l: Setter_<S, A>) => (f: (x: A) => A) => (m: S): S =>
-  runIdentity (l (pipe (f, Identity)) (m))
+export const over: <S, A> (l: Setter_<S, A>) => (f: (x: A) => A) => (m: S) => S =
+  l => f => pipe (l (pipe (f, Identity)), runIdentity)
 
 // /**
 //  * `overP :: Prism s t a b -> (a -> b) -> s -> t`
@@ -176,7 +190,8 @@ export const over = <S, A> (l: Setter_<S, A>) => (f: (x: A) => A) => (m: S): S =
 /**
  * `set :: Lens' s a -> a -> s -> s`
  */
-export const set = <S, A> (l: Setter_<S, A>) => (x: A) => over (l) (_ => x)
+export const set: <S, A> (l: Setter<S, S, A, A>) => (x: A) => (m: S) => S =
+  l => pipe (cnst, over (l))
 
 // /**
 //  * `setP :: Prism s t a b -> a -> s -> s`
