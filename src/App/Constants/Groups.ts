@@ -212,6 +212,7 @@ export enum Aspect {
   UnendlicheTiefe = 37,
   Begierde = 38,
   Rausch = 39,
+  Namenloser = 40,
 }
 
 export enum EquipmentGroup {
