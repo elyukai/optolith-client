@@ -61,7 +61,7 @@ export function LiturgicalChantsSheetLiturgicalChants (
               {translate (l10n) ("cost")}
             </th>
             <th className="cast-time">
-              {translate (l10n) ("castingtime")}
+              {translate (l10n) ("liturgicaltime")}
             </th>
             <th className="range">
               {translate (l10n) ("range")}
@@ -70,7 +70,7 @@ export function LiturgicalChantsSheetLiturgicalChants (
               {translate (l10n) ("duration")}
             </th>
             <th className="aspect">
-              {translate (l10n) ("property")}
+              {translate (l10n) ("aspect")}
             </th>
             <th className="ic">
               {translate (l10n) ("improvementcost.short")}
