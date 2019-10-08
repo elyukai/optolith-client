@@ -44,7 +44,7 @@ export const SearchField: React.FC<SearchFieldProps> = props => {
       valid={valid}
       value={value}
       everyKeyDown
-      label={translate (l10n) ("search")}
+      hint={translate (l10n) ("search")}
       />
   )
 }

@@ -154,17 +154,17 @@ export function LiturgicalChantsSheetLiturgicalChants (
           {replicateR (21 - Maybe.sum (fmapF (maybeLiturgicalChants) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
-                          <td className="name"></td>
-                          <td className="check"></td>
-                          <td className="value"></td>
-                          <td className="cost"></td>
-                          <td className="cast-time"></td>
-                          <td className="range"></td>
-                          <td className="duration"></td>
-                          <td className="aspect"></td>
-                          <td className="ic"></td>
-                          <td className="effect"></td>
-                          <td className="ref"></td>
+                          <td className="name" />
+                          <td className="check" />
+                          <td className="value" />
+                          <td className="cost" />
+                          <td className="cast-time" />
+                          <td className="range" />
+                          <td className="duration" />
+                          <td className="aspect" />
+                          <td className="ic" />
+                          <td className="effect" />
+                          <td className="ref" />
                         </tr>
                       ))}
         </tbody>
