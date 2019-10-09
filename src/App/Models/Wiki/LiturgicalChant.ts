@@ -1,4 +1,5 @@
 import { List } from "../../../Data/List";
+import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
@@ -10,6 +11,7 @@ export interface LiturgicalChant {
   "@@name": "LiturgicalChant"
   id: string
   name: string
+  nameShort: Maybe<string>
   aspects: List<Aspect>
   category: Categories
   check: List<string>
@@ -39,6 +41,7 @@ export const LiturgicalChant =
               <LiturgicalChant> ({
                 id: "",
                 name: "",
+                nameShort: Nothing,
                 aspects: List.empty,
                 category: Categories.LITURGIES,
                 check: List.empty,

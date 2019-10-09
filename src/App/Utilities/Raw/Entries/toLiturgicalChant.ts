@@ -64,6 +64,8 @@ export const toLiturgicalChant =
 
       const ename = checkL10nNonEmptyString ("name")
 
+      const nameShort = lookup_l10n ("nameShort")
+
       const echeck =
         fmap<List<string | number>, List<string>>
           (map (prefixId (IdPrefixes.ATTRIBUTES)))
@@ -135,6 +137,7 @@ export const toLiturgicalChant =
         (rs => LiturgicalChant ({
           id: prefixId (IdPrefixes.LITURGICAL_CHANTS) (id),
           name: rs.ename,
+          nameShort,
           check: rs.echeck,
           checkmod: fromMaybe<OrderedSet<CheckModifier>> (OrderedSet.empty) (rs.echeckMod),
           ic: rs.eic,

@@ -26,6 +26,7 @@ const ASDA = ActivatableSkillDependent.A
 export const LiturgicalChantWithRequirementsA_ = {
   id: pipe (LCWRA.wikiEntry, LCA.id),
   name: pipe (LCWRA.wikiEntry, LCA.name),
+  nameShort: pipe (LCWRA.wikiEntry, LCA.nameShort),
   check: pipe (LCWRA.wikiEntry, LCA.check),
   checkmod: pipe (LCWRA.wikiEntry, LCA.checkmod),
   ic: pipe (LCWRA.wikiEntry, LCA.ic),

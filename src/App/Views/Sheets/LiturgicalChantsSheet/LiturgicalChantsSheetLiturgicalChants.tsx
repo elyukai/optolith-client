@@ -97,7 +97,9 @@ export function LiturgicalChantsSheetLiturgicalChants (
                 return (
                   <tr key={LCWRA_.id (e)}>
                     <td className="name">
-                      <Textfit max={11} min={7} mode="single">{LCWRA_.name (e)}</Textfit>
+                      <Textfit max={11} min={7} mode="single">
+                        {fromMaybe (LCWRA_.name (e)) (LCWRA_.nameShort (e))}
+                      </Textfit>
                     </td>
                     <td className="check">
                       <Textfit max={11} min={7} mode="single">
