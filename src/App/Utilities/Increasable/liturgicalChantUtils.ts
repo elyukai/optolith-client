@@ -246,7 +246,6 @@ const traditionsByAspect = fromArray<Aspect, BlessedTradition> ([
   [Aspect.UnendlicheTiefe, BlessedTradition.CultOfNuminoru],
   [Aspect.Begierde, BlessedTradition.Levthankult],
   [Aspect.Rausch, BlessedTradition.Levthankult],
-  [Aspect.Namenloser, BlessedTradition.CultOfTheNamelessOne],
 ])
 
 /**
@@ -282,7 +281,6 @@ const aspectsByTradition = fromArray<BlessedTradition, List<Aspect>> ([
   [BlessedTradition.ChurchOfSwafnir, List (Aspect.Kraft, Aspect.Tapferkeit)],
   [BlessedTradition.CultOfNuminoru, List (Aspect.ReissenderStrudel, Aspect.UnendlicheTiefe)],
   [BlessedTradition.Levthankult, List (Aspect.Begierde, Aspect.Rausch)],
-  [BlessedTradition.CultOfTheNamelessOne, List (Aspect.Namenloser)],
 ])
 
 /**
