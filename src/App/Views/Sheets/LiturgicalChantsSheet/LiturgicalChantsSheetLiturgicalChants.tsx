@@ -1,11 +1,13 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
+import { ident } from "../../../../Data/Function";
 import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
-import { ensure, fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { consF, elem, flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
+import { ensure, fromMaybe, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe";
 import { dec } from "../../../../Data/Num";
 import { elems } from "../../../../Data/OrderedSet";
 import { Record } from "../../../../Data/Record";
+import { BlessedTradition } from "../../../Constants/Groups";
 import { AttributeCombined } from "../../../Models/View/AttributeCombined";
 import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../../Models/View/LiturgicalChantWithRequirements";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
@@ -39,6 +41,7 @@ export function LiturgicalChantsSheetLiturgicalChants (
   } = props
 
   const aspectNames = translate (l10n) ("aspectlist")
+  const traditionNames = translate (l10n) ("blessedtraditions")
 
   return (
     <TextBox
@@ -138,6 +141,12 @@ export function LiturgicalChantsSheetLiturgicalChants (
                           e,
                           LCWRA_.aspects,
                           mapMaybe (pipe (dec, subscript (aspectNames))),
+                          elem (BlessedTradition.CultOfTheNamelessOne) (LCWRA_.tradition (e))
+                            ? maybe (ident as ident<List<string>>)
+                                    (consF as (x: string) => ident<List<string>>)
+                                    (subscript (traditionNames)
+                                               (BlessedTradition.CultOfTheNamelessOne - 1))
+                            : ident,
                           sortStrings (l10n),
                           intercalate (", ")
                         )}

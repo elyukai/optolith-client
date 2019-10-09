@@ -36,6 +36,7 @@ export const LiturgicalChantWithRequirementsA_ = {
   castingTimeShort: pipe (LCWRA.wikiEntry, LCA.castingTimeShort),
   rangeShort: pipe (LCWRA.wikiEntry, LCA.rangeShort),
   durationShort: pipe (LCWRA.wikiEntry, LCA.durationShort),
+  tradition: pipe (LCWRA.wikiEntry, LCA.tradition),
   aspects: pipe (LCWRA.wikiEntry, LCA.aspects),
 }
 
