@@ -734,6 +734,7 @@ export const toL10n =
         "deletehero.novar": checkL10nNonEmptyString ("deletehero.novar"),
         "openhero": checkL10nNonEmptyString ("openhero"),
         "socialstatusxorhigher": checkL10nNonEmptyString ("socialstatusxorhigher"),
+        "sixblessings": checkL10nNonEmptyString ("sixblessings"),
       }
 
       return mapMNamed
@@ -1398,6 +1399,7 @@ export const toL10n =
           "deletehero.novar": res ["deletehero.novar"],
           "openhero": res ["openhero"],
           "socialstatusxorhigher": res ["socialstatusxorhigher"],
+          "sixblessings": res ["sixblessings"],
           // tslint:enable: no-string-literal
         }))
     }

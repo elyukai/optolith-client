@@ -646,6 +646,7 @@ export interface L10n {
   "deletehero.novar": string
   "openhero": string
   "socialstatusxorhigher": string
+  "sixblessings": string
 }
 
 export type L10nKey = keyof OmitName<L10n>
@@ -1298,4 +1299,5 @@ export const L10n =
                 "deletehero.novar": "",
                 "openhero": "",
                 "socialstatusxorhigher": "",
+                "sixblessings": "",
               })

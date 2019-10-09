@@ -375,7 +375,7 @@ const sdeleteMaybe =
       : isTip (mp .right)
       ? Just (mp .left)
       : (() => {
-          const keyValue_ = minKeyValue (mp .right as IntBin<A>)
+          const keyValue_ = minKeyValue (mp .right)
           const right_ = sdelete (fst (keyValue_)) (mp .right)
 
           return Just (rebalance (Bin (calcSize (mp .left) (right_))
@@ -534,7 +534,7 @@ const updateLookupWithKeyMaybe =
           : isTip (mp .right)
           ? Just (Pair (Just (mp .value), mp .left))
           : (() => {
-              const keyValue_ = minKeyValue (mp .right as IntBin<A>)
+              const keyValue_ = minKeyValue (mp .right)
               const right_ = sdelete (fst (keyValue_)) (mp .right)
 
               return Just (Pair (Just (mp .value), rebalance (Bin (calcSize (mp .left) (right_))
@@ -709,7 +709,8 @@ const showBranch =
     const dls = fromMaybe (depth) (depthLinesStart)
     const with_line = depth - dls
     const without_line = depth - with_line
-    const dws = "   " .repeat (without_line) + "|  " .repeat (with_line) // depth whitespace
+    // depth whitespace
+    const dws = "   " .repeat (without_line) + "|  " .repeat (with_line)
     const elem_dws = dws .slice (0, -3) + (start ? "" : "+--")
 
     if (isTip (mp)) {
@@ -834,7 +835,9 @@ const rebalance =
                                (mp .left)
                                (new_right))
       }) ()
-    : (() => { throw new TypeError ("rebalance: BST was not balanced before") }) ()
+    : (() => {
+        throw new TypeError ("rebalance: BST was not balanced before")
+      }) ()
   }
 
 // "Slope" = difference in heights between the left and right subtrees of a node

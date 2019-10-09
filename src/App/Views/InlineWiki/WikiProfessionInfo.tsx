@@ -617,6 +617,9 @@ const getLiturgicalChants =
             str => cons (xs) (str)
           )
         }
+        else if (flength (incl_blessings) === 6) {
+          return cons (xs) (translate (l10n) ("sixblessings"))
+        }
 
         return xs
       },
