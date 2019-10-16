@@ -343,7 +343,7 @@ export const getMOV = createMaybeSelector (
                             : base
                         ))
 
-    const mod = getModifierByIsActives (Just (0)) (List (mnimble)) (List (mslow, mleichter_gang))
+    const mod = getModifierByIsActives (Just (0)) (List (mnimble, mleichter_gang)) (List (mslow))
 
     const value = fmapF (mbase) (add (mod))
 
