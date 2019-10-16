@@ -3,7 +3,7 @@ import { equals } from "../../../Data/Eq";
 import { cnst, ident, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { any, cons, consF, find, intersecting, List, minimum, notElem } from "../../../Data/List";
-import { and, bindF, elem, ensure, fromJust, isJust, Just, listToMaybe, mapMaybe, Maybe, maybe, sum } from "../../../Data/Maybe";
+import { and, bindF, elem, ensure, isJust, Just, mapMaybe, Maybe, maybe, sum } from "../../../Data/Maybe";
 import { gte, inc } from "../../../Data/Num";
 import { alter, empty, filter, foldl, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
@@ -14,6 +14,7 @@ import { ActivatableSkillDependent } from "../../Models/ActiveEntries/Activatabl
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { TransferUnfamiliar, UnfamiliarGroup } from "../../Models/Hero/TransferUnfamiliar";
 import { Cantrip } from "../../Models/Wiki/Cantrip";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
@@ -23,7 +24,7 @@ import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
 import { mapMagicalTradIdToNumId } from "../Activatable/traditionUtils";
 import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies";
 import { ifElse } from "../ifElse";
-import { pipe, pipe_ } from "../pipe";
+import { pipe } from "../pipe";
 import { isNumber } from "../typeCheckUtils";
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
 
@@ -34,6 +35,7 @@ const ASDA = ActivatableSkillDependent.A
 const ADA = ActivatableDependent.A
 const SAA = SpecialAbility.A
 const AOA = ActiveObject.A
+const TUA = TransferUnfamiliar.A
 
 /**
  * `isActiveTradition id xs` checks if `id` is a tradition contained in the list
@@ -190,20 +192,13 @@ export const isSpellDecreasable =
                                               (hero_entry)
 
 export const isUnfamiliarSpell:
+  (transferred_unfamiliar: List<Record<TransferUnfamiliar>>) =>
   (trad_hero_entries: List<Record<ActivatableDependent>>) =>
   (spell: Record<Spell> | Record<Cantrip>) => boolean =
-  trads => {
+  transferred_unfamiliar => trads => {
     if (any (pipe (ADA.id, equals<string> (SpecialAbilityId.TraditionIntuitiveZauberer))) (trads)) {
       return cnst (false)
     }
-
-    const mguild_mage_sel =
-      pipe_ (
-        trads,
-        find (pipe (ADA.id, equals<string> (SpecialAbilityId.TraditionGuildMages))),
-        bindF (pipe (ADA.active, listToMaybe)),
-        bindF (AOA.sid)
-      )
 
     const active_trad_num_ids =
       cons (mapMaybe (pipe (ADA.id, mapMagicalTradIdToNumId))
@@ -213,14 +208,11 @@ export const isUnfamiliarSpell:
     const isNoTraditionActive = notP (intersecting (active_trad_num_ids))
 
     return x => {
-      if (isJust (mguild_mage_sel)) {
-        const guild_mage_sel = fromJust (mguild_mage_sel)
+      const id = SAL.id (x)
+      const gr = Spell.is (x) ? UnfamiliarGroup.Spells : UnfamiliarGroup.Chants
 
-        if (guild_mage_sel === SAL.id (x)) {
-          return false
-        }
-      }
-
-      return isNoTraditionActive (SAL.tradition (x))
+      return any (pipe (TUA.id, trans_id => trans_id === id || trans_id === gr))
+                 (transferred_unfamiliar)
+        || isNoTraditionActive (SAL.tradition (x))
     }
   }

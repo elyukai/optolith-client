@@ -2,6 +2,12 @@
  * Please keep enum members sorted by value and not by key!
  */
 
+export enum Phase {
+  RCP = 1,
+  Creation = 2,
+  InGame = 3,
+}
+
 export enum ExperienceLevelId {
   Inexperienced = "EL_1",
   Ordinary = "EL_2",
