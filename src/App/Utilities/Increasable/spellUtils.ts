@@ -11,7 +11,6 @@ import { MagicalTradition, Property } from "../../Constants/Groups";
 import { SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { TransferUnfamiliar, UnfamiliarGroup } from "../../Models/Hero/TransferUnfamiliar";
@@ -34,7 +33,6 @@ const SAL = Spell.AL
 const ASDA = ActivatableSkillDependent.A
 const ADA = ActivatableDependent.A
 const SAA = SpecialAbility.A
-const AOA = ActiveObject.A
 const TUA = TransferUnfamiliar.A
 
 /**

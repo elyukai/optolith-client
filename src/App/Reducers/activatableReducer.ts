@@ -16,7 +16,7 @@ import { ActiveObjectL } from "../Models/ActiveEntries/ActiveObject";
 import { SkillDependentL } from "../Models/ActiveEntries/SkillDependent";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { activate, deactivate, setLevel } from "../Utilities/Activatable/activatableActivationUtils";
-import { addAllStyleRelatedDependencies, removeAllStyleRelatedDependencies } from "../Utilities/Activatable/ExtendedStyleUtils";
+import { addOtherSpecialAbilityDependenciesOnActivation, removeOtherSpecialAbilityDependenciesOnDeletion } from "../Utilities/Activatable/SpecialAbilityUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 
 type Action = DisAdvActions.ActivateDisAdvAction
@@ -43,7 +43,7 @@ export const activatableReducer =
 
       case ActionTypes.ACTIVATE_SPECIALABILITY: {
         return pipe (
-          addAllStyleRelatedDependencies (pipe_ (action.payload, snd, fst)),
+          addOtherSpecialAbilityDependenciesOnActivation (action),
           activate (fst (action.payload))
                    (pipe_ (action.payload, snd, fst))
                    (pipe_ (action.payload, snd, snd))
@@ -58,7 +58,7 @@ export const activatableReducer =
 
       case ActionTypes.DEACTIVATE_SPECIALABILITY: {
         return pipe (
-          removeAllStyleRelatedDependencies (pipe_ (action.payload, snd, fst)),
+          removeOtherSpecialAbilityDependenciesOnDeletion (action),
           deactivate (pipe_ (action.payload, fst, ADOA.index))
                      (pipe_ (action.payload, snd, fst))
                      (pipe_ (action.payload, snd, snd)),

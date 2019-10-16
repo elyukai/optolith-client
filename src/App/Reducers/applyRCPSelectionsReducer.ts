@@ -34,7 +34,7 @@ import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { Activatable, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
 import { getCombinedPrerequisites } from "../Utilities/Activatable/activatableActivationUtils";
-import { addAllStyleRelatedDependencies } from "../Utilities/Activatable/ExtendedStyleUtils";
+import { addOtherSpecialAbilityDependenciesOnRCPApplication } from "../Utilities/Activatable/SpecialAbilityUtils";
 import { composeL } from "../Utilities/compose";
 import { addDependencies } from "../Utilities/Dependencies/dependencyUtils";
 import { getHeroStateItem, updateEntryDef } from "../Utilities/heroStateUtils";
@@ -613,7 +613,7 @@ const updateListToContainNewEntry =
                                                 (mhero_entry)
                                                 (active)),
       SpecialAbility.is (wiki_entry)
-        ? addAllStyleRelatedDependencies (wiki_entry)
+        ? addOtherSpecialAbilityDependenciesOnRCPApplication (wiki_entry) (active)
         : ident
     )
 
