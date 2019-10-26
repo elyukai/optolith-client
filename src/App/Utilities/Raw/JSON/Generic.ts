@@ -148,32 +148,21 @@ export const fromJSRecord =
   (expected: string): GetJSON<Record<A>> =>
   x => {
     if (typeof x === "object" && x !== null) {
-      const actual_keys = Object.keys (x)
       const validator_assocs = Object.entries (validators)
+      const validated: A = {} as A
 
-      const unknown_key =
-        actual_keys .find (key => validator_assocs .every (([valid_key]) => valid_key !== key))
+      for (const [key, validator] of validator_assocs) {
+        const res = validator ((x as any) [key] as unknown)
 
-      if (unknown_key === undefined) {
-        const validated: A = {} as A
-
-        for (const [key, validator] of validator_assocs) {
-          const res = validator ((x as any) [key] as unknown)
-
-          if (isLeft (res)) {
-            return Left (`In object at key "${key}":\n${fromLeft_ (res)}`)
-          }
-          else {
-            validated [key] = fromRight_ (res)
-          }
+        if (isLeft (res)) {
+          return Left (`In object at key "${key}":\n${fromLeft_ (res)}`)
         }
-
-        return Right (toRecord (validated))
+        else {
+          validated [key] = fromRight_ (res)
+        }
       }
 
-      return Left (
-        `Expected: ${expected}, Received: unknown key "${unknown_key}" of object "${JSON.stringify (x)}"`
-      )
+      return Right (toRecord (validated))
     }
 
     return Left (`Expected: ${expected}, Received: not an object: ${JSON.stringify (x)}`)
