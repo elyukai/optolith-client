@@ -392,7 +392,9 @@ const modifySelectOptions =
       }
 
       case SpecialAbilityId.AdaptionZauber: {
-        const isWikiEntryFromUnfamiliarTrad = isUnfamiliarSpell (hero_magical_traditions)
+        const isWikiEntryFromUnfamiliarTrad =
+          isUnfamiliarSpell (HA.transferredUnfamiliarSpells (hero))
+                            (hero_magical_traditions)
 
         const isSpellAbove10 =
           pipe (
@@ -431,7 +433,10 @@ const modifySelectOptions =
 
         const isNotUnfamiliar =
           (x: Record<Spell> | Record<LiturgicalChant>) =>
-            LiturgicalChant.is (x) || !isUnfamiliarSpell (hero_magical_traditions) (x)
+            LiturgicalChant.is (x)
+            || !isUnfamiliarSpell (HA.transferredUnfamiliarSpells (hero))
+                                  (hero_magical_traditions)
+                                  (x)
 
         return fmap (foldr (isNoRequiredOrActiveSelection (e => {
                              const mtarget_hero_entry = getTargetHeroEntry (SOA.target (e))

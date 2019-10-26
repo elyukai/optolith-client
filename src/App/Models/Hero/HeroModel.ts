@@ -19,6 +19,7 @@ import { PersonalData } from "./PersonalData";
 import { Pet } from "./Pet";
 import { Rules } from "./Rules";
 import { StyleDependency } from "./StyleDependency";
+import { TransferUnfamiliar } from "./TransferUnfamiliar";
 
 export type HeroModelRecord = Record<HeroModel>
 
@@ -67,6 +68,7 @@ export interface HeroModel {
   blessedStyleDependencies: List<Record<StyleDependency>>
   skillStyleDependencies: List<Record<StyleDependency>>
   socialStatusDependencies: List<SocialStatusId>
+  transferredUnfamiliarSpells: List<Record<TransferUnfamiliar>>
 }
 
 /**
@@ -119,6 +121,7 @@ export const HeroModel =
                 blessedStyleDependencies: List (),
                 skillStyleDependencies: List (),
                 socialStatusDependencies: List (),
+                transferredUnfamiliarSpells: List (),
               })
 
 export const HeroModelL = makeLenses (HeroModel)
@@ -176,4 +179,5 @@ export const getInitialHeroObject =
       blessedStyleDependencies: Nothing,
       skillStyleDependencies: Nothing,
       socialStatusDependencies: Nothing,
+      transferredUnfamiliarSpells: Nothing,
     })

@@ -2,6 +2,12 @@
  * Please keep enum members sorted by value and not by key!
  */
 
+export enum Phase {
+  RCP = 1,
+  Creation = 2,
+  InGame = 3,
+}
+
 export enum ExperienceLevelId {
   Inexperienced = "EL_1",
   Ordinary = "EL_2",
@@ -269,6 +275,9 @@ export enum SpecialAbilityId {
   TraditionSchelme = "SA_726",
   TraditionZauberalchimisten = "SA_750",
   GrosseMeditation = "SA_772",
+  ScholarDerHalleDesLebensZuNorburg = "SA_802",
+  ScholarDesKreisesDerEinfuehlung = "SA_808",
+  MadaschwesternStil = "SA_821",
   GaretherGossenStil = "SA_901",
   WegDerGelehrten = "SA_1040",
   TraditionCultOfNuminoru = "SA_1049",
@@ -279,9 +288,11 @@ export enum SpecialAbilityId {
   KoerperlichesGeschick = "SA_1112",
   SozialeKompetenz = "SA_1123",
   Universalgenie = "SA_1127",
+  ScholarDesMagierkollegsZuHoningen = "SA_1147",
   TraditionAnimisten = "SA_1221",
   TraditionGeoden = "SA_1255",
   TraditionZibilijas = "SA_1293",
+  Zaubervariabilitaet = "SA_1391",
   TraditionBrobimGeoden = "SA_1438",
   TraditionKristallomanten = "",
 }

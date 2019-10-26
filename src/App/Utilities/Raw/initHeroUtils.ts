@@ -31,7 +31,7 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { getCombinedPrerequisites } from "../Activatable/activatableActivationUtils";
 import { getActiveFromState } from "../Activatable/activatableConvertUtils";
-import { addAllStyleRelatedDependencies } from "../Activatable/ExtendedStyleUtils";
+import { addOtherSpecialAbilityDependenciesOnHeroInit } from "../Activatable/SpecialAbilityUtils";
 import { addDependencies } from "../Dependencies/dependencyUtils";
 import { getCategoryById } from "../IDUtils";
 import { pipe, pipe_ } from "../pipe";
@@ -261,6 +261,7 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
     magicalStyleDependencies: Nothing,
     skillStyleDependencies: Nothing,
     socialStatusDependencies: Nothing,
+    transferredUnfamiliarSpells: Nothing,
   })
 
 const getActivatableDependent =
@@ -345,7 +346,8 @@ const addDependenciesForReq =
 
 const addDependenciesForSlice =
   <A extends Activatable>
-  (add_entry_mod: (x: A) => ident<HeroModelRecord>) =>
+  (add_entry_mod: (wiki_entry: A) =>
+                  (active: Record<ActiveObjectWithId>) => ident<HeroModelRecord>) =>
   (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
   (wiki_slice: OrderedMap<string, A>) => {
     const lookupWiki = lookupF (wiki_slice)
@@ -356,7 +358,7 @@ const addDependenciesForSlice =
                          return maybe (ident as ident<HeroModelRecord>)
                                       ((y: A) => pipe (
                                         addDependenciesForReq (hero_slice) (x) (id) (y),
-                                        add_entry_mod (y)
+                                        add_entry_mod (y) (x)
                                       ))
                                       (lookupWiki (id))
                        }))
@@ -383,17 +385,17 @@ export const convertFromRawHero =
     return pipe_ (
       intermediateState,
 
-      join ((s: HeroModelRecord) => addDependenciesForSlice (cnst (ident))
+      join ((s: HeroModelRecord) => addDependenciesForSlice (cnst (cnst (ident)))
                                                             (HeroModel.A.advantages (s))
                                                             (WikiModel.A.advantages (wiki))
                                                             (activeAdvantages)),
 
-      join (s => addDependenciesForSlice (cnst (ident))
+      join (s => addDependenciesForSlice (cnst (cnst (ident)))
                                          (HeroModel.A.disadvantages (s))
                                          (WikiModel.A.disadvantages (wiki))
                                          (activeDisadvantages)),
 
-      join (s => addDependenciesForSlice (addAllStyleRelatedDependencies)
+      join (s => addDependenciesForSlice (addOtherSpecialAbilityDependenciesOnHeroInit)
                                          (HeroModel.A.specialAbilities (s))
                                          (WikiModel.A.specialAbilities (wiki))
                                          (activeSpecialAbilities)),
