@@ -7,8 +7,8 @@ import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
 import { getFilteredSkills, getSkillRating } from "../Selectors/skillsSelectors";
 import { getSkillsFilterText } from "../Selectors/stateSelectors";
 import { getSkillsCultureRatingVisibility, getSkillsSortOrder } from "../Selectors/uisettingsSelectors";
+import { SkillsSortOptions } from "../Utilities/Raw/JSON/Config";
 import { Skills, SkillsDispatchProps, SkillsOwnProps, SkillsStateProps } from "../Views/Skills/Skills";
-import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (state: AppStateRecord, ownProps: SkillsOwnProps): SkillsStateProps => ({
   attributes: getAttributesForSheet (state, ownProps),
@@ -28,7 +28,7 @@ const mapDispatchToProps =
     removePoint (id: string) {
       dispatch (SkillActions.removeSkillPoint (id))
     },
-    setSortOrder (sortOrder: SortNames) {
+    setSortOrder (sortOrder: SkillsSortOptions) {
       dispatch (SkillActions.setSkillsSortOrder (sortOrder))
     },
     switchRatingVisibility () {

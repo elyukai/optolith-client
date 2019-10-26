@@ -124,7 +124,7 @@ export const SpecialAbilities: React.FC<SpecialAbilitiesProps> = props => {
           <SortOptions
             sortOrder={sortOrder}
             sort={setSortOrder}
-            options={List<SortNames> ("name", "groupname")}
+            options={List (SortNames.Name, SortNames.GroupName)}
             l10n={l10n}
             />
           <Checkbox
@@ -168,7 +168,7 @@ export const SpecialAbilities: React.FC<SpecialAbilitiesProps> = props => {
         <SortOptions
           sortOrder={sortOrder}
           sort={setSortOrder}
-          options={List<SortNames> ("name", "groupname")}
+          options={List (SortNames.Name, SortNames.GroupName)}
           l10n={l10n}
           />
         <BorderButton

@@ -1,4 +1,5 @@
 import { ActionTypes } from "../Constants/ActionTypes";
+import { Theme } from "../Utilities/Raw/JSON/Config";
 
 export interface SwitchEnableActiveItemHintsAction {
   type: ActionTypes.SWITCH_ENABLE_ACTIVE_ITEM_HINTS
@@ -11,11 +12,11 @@ export const switchEnableActiveItemHints = (): SwitchEnableActiveItemHintsAction
 export interface SetThemeAction {
   type: ActionTypes.SET_THEME
   payload: {
-    theme: string;
+    theme: Theme;
   }
 }
 
-export const setTheme = (theme: string): SetThemeAction => ({
+export const setTheme = (theme: Theme): SetThemeAction => ({
   type: ActionTypes.SET_THEME,
   payload: {
     theme,

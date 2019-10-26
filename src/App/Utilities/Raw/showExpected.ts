@@ -1,8 +1,10 @@
 export const Expect = Object.freeze ({
+  String: "String",
   NonEmptyString: "String (non-empty)",
   NaturalNumber: "Natural",
   Integer: "Int",
   Float: "Float",
+  Rational: "Rational",
   Boolean: "Bool",
   Maybe: (x: string) => `Maybe ${x}`,
   List: (x: string) => `[${x}]`,
@@ -12,6 +14,7 @@ export const Expect = Object.freeze ({
   ListLengthRange: (l: number) => (u: number) => (x: string) => `[${x}] { ${l} <= length <= ${u} }`,
   Pair: (x: string) => (y: string) => `(${x}, ${y})`,
   Union: (...xs: string[]) => xs .join (" | "),
+
   /** Group with `(` ...` )` */
   G: (x: string) => `(${x})`,
   Set: (x: string) => `Set ${x}`,

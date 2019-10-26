@@ -67,7 +67,7 @@ export function Races (props: RacesProps) {
         <SortOptions
           sortOrder={sortOrder}
           sort={setSortOrder}
-          options={List<SortNames> ("name", "cost")}
+          options={List (SortNames.Name, SortNames.Cost)}
           l10n={l10n}
           />
       </Options>

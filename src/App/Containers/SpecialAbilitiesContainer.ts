@@ -13,8 +13,8 @@ import { getFilteredInactiveSpecialAbilities } from "../Selectors/combinedActiva
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
 import { getInactiveSpecialAbilitiesFilterText, getSpecialAbilitiesFilterText, getWikiSpecialAbilities } from "../Selectors/stateSelectors";
 import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from "../Selectors/uisettingsSelectors";
+import { SpecialAbilitiesSortOptions } from "../Utilities/Raw/JSON/Config";
 import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnProps, SpecialAbilitiesStateProps } from "../Views/SpecialAbilities/SpecialAbilities";
-import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (
   state: AppStateRecord,
@@ -35,7 +35,7 @@ const mapDispatchToProps = (
   dispatch: ReduxDispatch,
   { l10n }: SpecialAbilitiesOwnProps
 ): SpecialAbilitiesDispatchProps => ({
-  setSortOrder (sortOrder: SortNames) {
+  setSortOrder (sortOrder: SpecialAbilitiesSortOptions) {
     dispatch (SpecialAbilitiesActions.setSpecialAbilitiesSortOrder (sortOrder))
   },
   switchActiveItemHints () {

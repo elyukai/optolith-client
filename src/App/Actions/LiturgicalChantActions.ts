@@ -14,7 +14,7 @@ import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUti
 import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { ChantsSortOptions } from "../Utilities/Raw/JSON/Config";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 
@@ -188,12 +188,12 @@ export const removeLiturgicalChantPoint = (id: string): RemoveLiturgicalChantPoi
 export interface SetLiturgicalChantsSortOrderAction {
   type: ActionTypes.SET_LITURGIES_SORT_ORDER
   payload: {
-    sortOrder: SortNames;
+    sortOrder: ChantsSortOptions;
   }
 }
 
 export const setLiturgicalChantsSortOrder =
-  (sortOrder: SortNames): SetLiturgicalChantsSortOrderAction => ({
+  (sortOrder: ChantsSortOptions): SetLiturgicalChantsSortOrderAction => ({
     type: ActionTypes.SET_LITURGIES_SORT_ORDER,
     payload: {
       sortOrder,

@@ -7,6 +7,7 @@ import { bindF, ensure, fromMaybe, Just, liftM2, mapM, Maybe, maybe, Nothing } f
 import { fromList, OrderedSet } from "../../../Data/OrderedSet";
 import { show } from "../../../Data/Show";
 import { Pair } from "../../../Data/Tuple";
+import { isInNumEnum, isInStrEnum } from "../Enum";
 import { toFloat, toInt, toNatural } from "../NumberUtils";
 import { pipe } from "../pipe";
 import { Expect } from "./showExpected";
@@ -360,36 +361,3 @@ export const mensureMapPairListOptional =
                            (mapPairList (delPair)
                                         (toFst)
                                         (toSnd))
-
-type GenericEnumType<A> =
-  A[keyof A] extends string ? string : A[keyof A] extends number ? number : never
-
-type EnsureEnumType<A extends object> =
-  A[keyof A] extends string ? A[keyof A] : A[keyof A] extends number ? A[keyof A] : never
-
-export const isInEnum =
-  <A extends object> (enum_values: A) => {
-    const all_values = Object.values (enum_values)
-
-    return (x: GenericEnumType<A>): x is EnsureEnumType<A> => all_values .includes (x)
-  }
-
-type EnsureStrEnumType<A extends object> =
-  A[keyof A] extends string ? A[keyof A] : never
-
-export const isInStrEnum =
-  <A extends object> (enum_values: A) => {
-    const all_values = Object.values (enum_values)
-
-    return (x: string): x is EnsureStrEnumType<A> => all_values .includes (x)
-  }
-
-type EnsureNumEnumType<A extends object> =
-  A[keyof A] extends number ? A[keyof A] : never
-
-export const isInNumEnum =
-  <A extends object> (enum_values: A) => {
-    const all_values = Object.values (enum_values)
-
-    return (x: number): x is EnsureNumEnumType<A> => all_values .includes (x)
-  }

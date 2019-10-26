@@ -11,6 +11,7 @@ import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { pipe_ } from "../../Utilities/pipe";
+import { HeroListVisibilityFilter } from "../../Utilities/Raw/JSON/Config";
 import { BorderButton } from "../Universal/BorderButton";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { ListView } from "../Universal/List";
@@ -102,15 +103,15 @@ export const Herolist: React.FC<HerolistProps> = props => {
           onChange={setVisibilityFilter}
           options={List (
             DropdownOption ({
-              id: Just ("all"),
+              id: Just (HeroListVisibilityFilter.All),
               name: translate (l10n) ("allheroes"),
             }),
             DropdownOption ({
-              id: Just ("own"),
+              id: Just (HeroListVisibilityFilter.Own),
               name: translate (l10n) ("ownheroes"),
             }),
             DropdownOption ({
-              id: Just ("shared"),
+              id: Just (HeroListVisibilityFilter.Shared),
               name: translate (l10n) ("sharedheroes"),
             })
           )}
@@ -119,7 +120,7 @@ export const Herolist: React.FC<HerolistProps> = props => {
           />
         <SortOptions
           l10n={l10n}
-          options={List<SortNames> ("name", "dateModified")}
+          options={List (SortNames.Name, SortNames.DateModified)}
           sort={setSortOrder}
           sortOrder={sortOrder}
           />

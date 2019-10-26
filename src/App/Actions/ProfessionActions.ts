@@ -12,7 +12,7 @@ import { AppState } from "../Reducers/appReducer";
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from "../Selectors/rcpSelectors";
 import { getWiki } from "../Selectors/stateSelectors";
 import { pipe_ } from "../Utilities/pipe";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter } from "../Utilities/Raw/JSON/Config";
 import { ReduxAction } from "./Actions";
 
 export interface SelectProfessionAction {
@@ -84,26 +84,27 @@ export const setSelections =
 export interface SetProfessionsSortOrderAction {
   type: ActionTypes.SET_PROFESSIONS_SORT_ORDER
   payload: {
-    sortOrder: SortNames;
+    sortOrder: ProfessionsSortOptions;
   }
 }
 
-export const setProfessionsSortOrder = (sortOrder: SortNames): SetProfessionsSortOrderAction => ({
-  type: ActionTypes.SET_PROFESSIONS_SORT_ORDER,
-  payload: {
-    sortOrder,
-  },
-})
+export const setProfessionsSortOrder =
+  (sortOrder: ProfessionsSortOptions): SetProfessionsSortOrderAction => ({
+    type: ActionTypes.SET_PROFESSIONS_SORT_ORDER,
+    payload: {
+      sortOrder,
+    },
+  })
 
 export interface SetProfessionsVisibilityFilterAction {
   type: ActionTypes.SET_PROFESSIONS_VISIBILITY_FILTER
   payload: {
-    filter: string;
+    filter: ProfessionsVisibilityFilter;
   }
 }
 
 export const setProfessionsVisibilityFilter =
-  (filter: string): SetProfessionsVisibilityFilterAction => ({
+  (filter: ProfessionsVisibilityFilter): SetProfessionsVisibilityFilterAction => ({
     type: ActionTypes.SET_PROFESSIONS_VISIBILITY_FILTER,
     payload: {
       filter,
@@ -113,12 +114,12 @@ export const setProfessionsVisibilityFilter =
 export interface SetProfessionsGroupVisibilityFilterAction {
   type: ActionTypes.SET_PROFESSIONS_GROUP_VISIBILITY_FILTER
   payload: {
-    filter: number;
+    filter: ProfessionsGroupVisibilityFilter;
   }
 }
 
 export const setProfessionsGroupVisibilityFilter =
-  (filter: number): SetProfessionsGroupVisibilityFilterAction => ({
+  (filter: ProfessionsGroupVisibilityFilter): SetProfessionsGroupVisibilityFilterAction => ({
     type: ActionTypes.SET_PROFESSIONS_GROUP_VISIBILITY_FILTER,
     payload: {
       filter,

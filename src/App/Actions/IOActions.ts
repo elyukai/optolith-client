@@ -11,7 +11,7 @@ import { flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { List, notNull } from "../../Data/List";
-import { alt_, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
+import { alt_, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
 import { any, filter, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap";
 import { notMember } from "../../Data/OrderedSet";
 import { Record, toObject } from "../../Data/Record";
@@ -38,8 +38,9 @@ import { getNewIdByDate, prefixId } from "../Utilities/IDUtils";
 import { bytify, getSystemLocale, showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { convertHeroesForSave, convertHeroForSave } from "../Utilities/Raw/convertHeroForSave";
+import { Config, Locale, readConfig } from "../Utilities/Raw/JSON/Config";
 import { parseTables, TableParseRes } from "../Utilities/Raw/parseTable";
-import { RawConfig, RawHero, RawHerolist } from "../Utilities/Raw/RawData";
+import { RawHero, RawHerolist } from "../Utilities/Raw/RawData";
 import { isBase64Image } from "../Utilities/RegexUtils";
 import { UndoState } from "../Utilities/undo";
 import { readUpdate, writeUpdate } from "../Utilities/Update";
@@ -53,7 +54,7 @@ const loadConfig = async () =>
   pipe_ (
     join (user_data_path, "config.json"),
     tryIO (readFile),
-    fmap (pipe (eitherToMaybe, bindF (parseJSON as (x: string) => Maybe<RawConfig>)))
+    fmap (pipe (first (err => err .message), Either.bindF (readConfig)))
   )
 
 const loadHeroes = async () =>
@@ -66,8 +67,8 @@ const loadHeroes = async () =>
 interface InitialData {
   tables: Pair<Record<L10n>, Record<WikiModel>>
   heroes: Maybe<RawHerolist>
-  defaultLocale: string
-  config: Maybe<RawConfig>
+  defaultLocale: Locale
+  config: Maybe<Record<Config>>
   cache: Maybe<OrderedMap<string, APCache>>
 }
 
@@ -141,13 +142,13 @@ export const getInitialData: ReduxAction<Promise<Either<string, InitialData>>> =
       return first (toMsg) (update_written)
     }
 
-    const mconfig = await loadConfig ()
+    const mconfig = eitherToMaybe (await loadConfig ())
     const mheroes = await loadHeroes ()
     const mcache = await readCache ()
 
     const eres = await dispatch (parseTables (pipe_ (
       mconfig,
-      bindF (c => Maybe (c.locale)),
+      bindF (Config.A.locale),
       fromMaybe (defaultLocale)
     )))
 
@@ -186,14 +187,16 @@ export const requestConfigSave =
 
     const uiSettingsState = getUISettingsState (state)
 
-    const data: RawConfig = {
+    const data = Config ({
       ...toObject (uiSettingsState),
-      meleeItemTemplatesCombatTechniqueFilter:
-        maybeToUndefined (UISSA.meleeItemTemplatesCombatTechniqueFilter (uiSettingsState)),
-      rangedItemTemplatesCombatTechniqueFilter:
-        maybeToUndefined (UISSA.rangedItemTemplatesCombatTechniqueFilter (uiSettingsState)),
-      locale: maybeToUndefined (getLocaleId (state)),
-    }
+      sheetCheckAttributeValueVisibility:
+        Just (UISSA.sheetCheckAttributeValueVisibility (uiSettingsState)),
+      theme: Just (UISSA.theme (uiSettingsState)),
+      enableEditingHeroAfterCreationPhase:
+        Just (UISSA.enableEditingHeroAfterCreationPhase (uiSettingsState)),
+      enableAnimations: Just (UISSA.enableAnimations (uiSettingsState)),
+      locale: getLocaleId (state),
+    })
 
     return pipe_ (
       join (user_data_path, "config.json"),

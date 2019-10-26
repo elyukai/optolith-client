@@ -7,6 +7,7 @@ import * as LocaleActions from "../Actions/LocaleActions";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getLocaleId, getLocaleType } from "../Selectors/stateSelectors";
 import { areAnimationsEnabled, getIsEditingHeroAfterCreationPhaseEnabled, getTheme } from "../Selectors/uisettingsSelectors";
+import { Locale, Theme } from "../Utilities/Raw/JSON/Config";
 import { Settings, SettingsDispatchProps, SettingsOwnProps, SettingsStateProps } from "../Views/Settings/Settings";
 
 const mapStateToProps = (state: AppStateRecord): SettingsStateProps => ({
@@ -19,7 +20,7 @@ const mapStateToProps = (state: AppStateRecord): SettingsStateProps => ({
 
 const mapDispatchToProps =
   (dispatch: ReduxDispatch, ownProps: SettingsOwnProps): SettingsDispatchProps => ({
-    setTheme (theme: Maybe<string>) {
+    setTheme (theme: Maybe<Theme>) {
       if (isJust (theme)) {
         dispatch (ConfigActions.setTheme (fromJust (theme)))
       }
@@ -30,7 +31,7 @@ const mapDispatchToProps =
     async saveConfig () {
       await dispatch (IOActions.requestConfigSave (ownProps.l10n))
     },
-    setLocale (id: Maybe<string>) {
+    setLocale (id: Maybe<Locale>) {
       dispatch (LocaleActions.setLocale (id))
     },
     switchEnableAnimations () {

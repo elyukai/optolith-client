@@ -2,6 +2,7 @@ import { connect } from "react-redux";
 import { Maybe } from "../../Data/Maybe";
 import { ReduxDispatch } from "../Actions/Actions";
 import * as EquipmentActions from "../Actions/EquipmentActions";
+import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getInitialStartingWealth } from "../Selectors/activatableSelectors";
 import { getHasCurrentNoAddedAP } from "../Selectors/adventurePointsSelectors";
@@ -10,8 +11,8 @@ import { getFilteredCombatTechniques } from "../Selectors/combatTechniquesSelect
 import { getAvailableSortedEquipmentGroups, getFilteredItems, getFilteredItemTemplates, getTotalPrice, getTotalWeight } from "../Selectors/equipmentSelectors";
 import { getEquipmentFilterText, getItemTemplatesFilterText, getPurse } from "../Selectors/stateSelectors";
 import { getEquipmentSortOrder, getMeleeItemTemplateCombatTechniqueFilter, getRangedItemTemplateCombatTechniqueFilter } from "../Selectors/uisettingsSelectors";
+import { EquipmentSortOptions } from "../Utilities/Raw/JSON/Config";
 import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStateProps } from "../Views/Equipment/Equipment";
-import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: EquipmentOwnProps): EquipmentStateProps => ({
@@ -45,7 +46,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): EquipmentDispatchProps => 
   deleteItem (id: string) {
     dispatch (EquipmentActions.removeItem (id))
   },
-  setSortOrder (option: SortNames) {
+  setSortOrder (option: EquipmentSortOptions) {
     dispatch (EquipmentActions.setItemsSortOrder (option))
   },
   setDucates (value: string) {
@@ -60,10 +61,10 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): EquipmentDispatchProps => 
   setKreutzers (value: string) {
     dispatch (EquipmentActions.setKreutzers (value))
   },
-  setMeleeItemTemplatesCombatTechniqueFilter (filterOption: Maybe<string>) {
+  setMeleeItemTemplatesCombatTechniqueFilter (filterOption: Maybe<MeleeCombatTechniqueId>) {
     dispatch (EquipmentActions.setMeleeItemTemplatesCombatTechniqueFilter (filterOption))
   },
-  setRangedItemTemplatesCombatTechniqueFilter (filterOption: Maybe<string>) {
+  setRangedItemTemplatesCombatTechniqueFilter (filterOption: Maybe<RangedCombatTechniqueId>) {
     dispatch (EquipmentActions.setRangedItemTemplatesCombatTechniqueFilter (filterOption))
   },
   setFilterText (filterText: string) {

@@ -193,7 +193,7 @@ export class LiturgicalChants
             <SortOptions
               sortOrder={sortOrder}
               sort={setSortOrder}
-              options={List<SortNames> ("name", "group", "ic")}
+              options={List (SortNames.Name, SortNames.Group, SortNames.IC)}
               l10n={l10n}
               />
             <Checkbox
@@ -328,7 +328,7 @@ export class LiturgicalChants
           <SortOptions
             sortOrder={sortOrder}
             sort={setSortOrder}
-            options={List<SortNames> ("name", "group", "ic")}
+            options={List (SortNames.Name, SortNames.Group, SortNames.IC)}
             l10n={l10n}
             />
           <BorderButton

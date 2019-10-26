@@ -5,8 +5,8 @@ import { AppStateRecord } from "../Reducers/appReducer";
 import { getFilteredRaces } from "../Selectors/rcpSelectors";
 import { getCurrentRaceVariantId, getRaceId, getRacesFilterText } from "../Selectors/stateSelectors";
 import { getRacesSortOrder } from "../Selectors/uisettingsSelectors";
+import { RacesSortOptions } from "../Utilities/Raw/JSON/Config";
 import { Races, RacesDispatchProps, RacesOwnProps, RacesStateProps } from "../Views/Races/Races";
-import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (state: AppStateRecord, ownProps: RacesOwnProps): RacesStateProps => ({
   currentId: getRaceId (state, ownProps),
@@ -17,7 +17,7 @@ const mapStateToProps = (state: AppStateRecord, ownProps: RacesOwnProps): RacesS
 })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): RacesDispatchProps => ({
-  setSortOrder (sortOrder: SortNames) {
+  setSortOrder (sortOrder: RacesSortOptions) {
     dispatch (RaceActions.setRacesSortOrder (sortOrder))
   },
   switchValueVisibilityFilter () {

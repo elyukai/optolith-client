@@ -14,7 +14,7 @@ import { getHeroes, getWikiExperienceLevels } from "../Selectors/stateSelectors"
 import { translate, translateP } from "../Utilities/I18n";
 import { getNewIdByDate } from "../Utilities/IDUtils";
 import { pipe_ } from "../Utilities/pipe";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { HeroListSortOptions, HeroListVisibilityFilter } from "../Utilities/Raw/JSON/Config";
 import { ReduxAction } from "./Actions";
 import { addAlert, addErrorAlert } from "./AlertActions";
 import { requestAllHeroesSave, requestHeroDeletion, requestHeroExport, requestHeroSave } from "./IOActions";
@@ -22,16 +22,17 @@ import { requestAllHeroesSave, requestHeroDeletion, requestHeroExport, requestHe
 export interface SetHerolistSortOrderAction {
   type: ActionTypes.SET_HEROLIST_SORT_ORDER
   payload: {
-    sortOrder: SortNames;
+    sortOrder: HeroListSortOptions;
   }
 }
 
-export const setHerolistSortOrder = (sortOrder: SortNames): SetHerolistSortOrderAction => ({
-  type: ActionTypes.SET_HEROLIST_SORT_ORDER,
-  payload: {
-    sortOrder,
-  },
-})
+export const setHerolistSortOrder =
+  (sortOrder: HeroListSortOptions): SetHerolistSortOrderAction => ({
+    type: ActionTypes.SET_HEROLIST_SORT_ORDER,
+    payload: {
+      sortOrder,
+    },
+  })
 
 export interface SetHerolistFilterTextAction {
   type: ActionTypes.SET_HEROLIST_FILTER_TEXT
@@ -50,12 +51,12 @@ export const setHerolistFilterText = (filterText: string): SetHerolistFilterText
 export interface SetHerolistVisibilityFilterAction {
   type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER
   payload: {
-    filterOption: string;
+    filterOption: HeroListVisibilityFilter;
   }
 }
 
 export const setHerolistVisibilityFilter =
-  (filterOption: string): SetHerolistVisibilityFilterAction => ({
+  (filterOption: HeroListVisibilityFilter): SetHerolistVisibilityFilterAction => ({
     type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER,
     payload: {
       filterOption,
