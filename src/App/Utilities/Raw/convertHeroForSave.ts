@@ -25,26 +25,10 @@ import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAt
 import { current_version } from "../../Selectors/envSelectors";
 import { HeroStateMapKey } from "../heroStateUtils";
 import { ifElse } from "../ifElse";
-import { pipe } from "../pipe";
+import { pipe, pipe_ } from "../pipe";
 import { RawActiveObject, RawArmorZone, RawCustomItem, RawHero, RawPet, RawPrimaryAttributeDamageThreshold } from "./RawData";
 
-const {
-  attributes,
-  attributeAdjustmentSelected,
-  energies,
-  advantages,
-  disadvantages,
-  specialAbilities,
-  skills,
-  combatTechniques,
-  spells,
-  cantrips,
-  liturgicalChants,
-  blessings,
-  belongings,
-  pets,
-  player,
-} = HeroModel.AL
+const HA = HeroModel.A
 
 const { id, value } = AttributeDependent.AL
 const { active } = ActivatableSkillDependent.AL
@@ -68,14 +52,14 @@ const getAttributesForSave = (hero: HeroModelRecord): RawHero["attr"] =>
     values: foldl<Record<AttributeDependent>, { id: string; value: number }[]>
       (acc => e => [...acc, { id: id (e), value: value (e) }])
       ([])
-      (attributes (hero)),
-    attributeAdjustmentSelected: attributeAdjustmentSelected (hero),
-    ae: addedArcaneEnergyPoints (energies (hero)),
-    kp: addedKarmaPoints (energies (hero)),
-    lp: addedLifePoints (energies (hero)),
-    permanentAE: toObject (permanentArcaneEnergyPoints (energies (hero))),
-    permanentKP: toObject (permanentKarmaPoints (energies (hero))),
-    permanentLP: toObject (permanentLifePoints (energies (hero))),
+      (HA.attributes (hero)),
+    attributeAdjustmentSelected: HA.attributeAdjustmentSelected (hero),
+    ae: addedArcaneEnergyPoints (HA.energies (hero)),
+    kp: addedKarmaPoints (HA.energies (hero)),
+    lp: addedLifePoints (HA.energies (hero)),
+    permanentAE: toObject (permanentArcaneEnergyPoints (HA.energies (hero))),
+    permanentKP: toObject (permanentKarmaPoints (HA.energies (hero))),
+    permanentLP: toObject (permanentLifePoints (HA.energies (hero))),
   })
 
 const getActivatablesForSave =
@@ -98,8 +82,8 @@ const getActivatablesForSave =
                       (activeList (obj)),
                   }))
                  ({})
-                 (union (advantages (hero))
-                        (union (disadvantages (hero)) (specialAbilities (hero))))
+                 (union (HA.advantages (hero))
+                        (union (HA.disadvantages (hero)) (HA.specialAbilities (hero))))
 
 const getValuesForSave =
   <T extends HeroModel[HeroStateMapKey]>
@@ -120,17 +104,17 @@ const getValuesForSave =
       ({})
       (sliceGetter (hero) as OrderedMap<string, ExtendedSkillDependent>)
 
-const getSkillsForSave = getValuesForSave (skills) (pipe (value, gt (0)))
+const getSkillsForSave = getValuesForSave (HA.skills) (pipe (value, gt (0)))
 
-const getCombatTechniquesForSave = getValuesForSave (combatTechniques) (pipe (value, gt (6)))
+const getCombatTechniquesForSave = getValuesForSave (HA.combatTechniques) (pipe (value, gt (6)))
 
-const getSpellsForSave = getValuesForSave (spells) (active)
+const getSpellsForSave = getValuesForSave (HA.spells) (active)
 
-const getCantripsForSave = pipe (cantrips, toArray)
+const getCantripsForSave = pipe (HA.cantrips, toArray)
 
-const getLiturgicalChantsForSave = getValuesForSave (liturgicalChants) (active)
+const getLiturgicalChantsForSave = getValuesForSave (HA.liturgicalChants) (active)
 
-const getBlessingsForSave = pipe (blessings, toArray)
+const getBlessingsForSave = pipe (HA.blessings, toArray)
 
 const { primary, threshold } = PrimaryAttributeDamageThreshold.AL
 
@@ -216,7 +200,7 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
           range: maybeToUndefined (fmap<List<number>, number[]> (List.toArray) (range)),
         }
       })
-      (items (belongings (hero))),
+      (items (HA.belongings (hero))),
     armorZones:
       toObjectWith ((obj: Record<HitZoneArmor>): RawArmorZone => ({
                      id: HitZoneArmor.AL.id (obj),
@@ -234,12 +218,12 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
                      rightLeg: maybeToUndefined (HitZoneArmor.AL.rightLeg (obj)),
                      rightLegLoss: maybeToUndefined (HitZoneArmor.AL.rightLegLoss (obj)),
                    }))
-                   (armorZones (belongings (hero))),
-    purse: toObject (purse (belongings (hero))),
+                   (armorZones (HA.belongings (hero))),
+    purse: toObject (purse (HA.belongings (hero))),
   })
 
 const getPetsForSave = pipe (
-  pets,
+  HA.pets,
   toObjectWith (
     (r): RawPet => {
       const obj = toObject (r)
@@ -301,10 +285,11 @@ export const convertHeroForSave =
       sex,
       personalData,
       rules,
+      pact,
     } = toObject (hero)
 
-    const maybeUser = bind (player (hero))
-                                              (OrderedMap.lookupF<string, User> (users))
+    const maybeUser = bind (HA.player (hero))
+                           (OrderedMap.lookupF<string, User> (users))
 
     const obj: RawHero = {
       clientVersion: current_version,
@@ -358,6 +343,7 @@ export const convertHeroForSave =
         enabledRuleBooks: toArray (Rules.AL.enabledRuleBooks (rules)),
       },
       pets: getPetsForSave (hero),
+      pact: pipe_ (pact, fmap (toObject), maybeToUndefined),
     }
 
     return obj

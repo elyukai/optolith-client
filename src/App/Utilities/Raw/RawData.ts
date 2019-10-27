@@ -80,6 +80,7 @@ export interface RawHero {
     };
   }
   readonly pets?: StringKeyObject<RawPet>
+  readonly pact?: RawPact
 }
 
 export interface RawActiveObject {
@@ -247,4 +248,12 @@ export interface ActiveDependency {
 
 export interface ActiveOptionalDependency extends ActiveDependency {
   origin: string
+}
+
+export interface RawPact {
+  category: number
+  level: number
+  type: number
+  domain: number | string
+  name: string
 }

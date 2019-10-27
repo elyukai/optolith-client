@@ -1,5 +1,5 @@
 import { cnst, flip, ident, join } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
+import { fmap, fmapF } from "../../../Data/Functor";
 import { foldr, fromArray, List } from "../../../Data/List";
 import { elem, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { foldlWithKey, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
@@ -18,6 +18,7 @@ import { Energies } from "../../Models/Hero/Energies";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { HitZoneArmor } from "../../Models/Hero/HitZoneArmor";
 import { Item } from "../../Models/Hero/Item";
+import { Pact } from "../../Models/Hero/Pact";
 import { PermanentEnergyLoss } from "../../Models/Hero/PermanentEnergyLoss";
 import { PermanentEnergyLossAndBoughtBack } from "../../Models/Hero/PermanentEnergyLossAndBoughtBack";
 import { PersonalData } from "../../Models/Hero/PersonalData";
@@ -254,6 +255,8 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
           )
       )
       : OrderedMap.empty,
+
+    pact: fmapF (Maybe (hero .pact)) (Pact),
 
     isInPetCreation: false,
     blessedStyleDependencies: Nothing,
