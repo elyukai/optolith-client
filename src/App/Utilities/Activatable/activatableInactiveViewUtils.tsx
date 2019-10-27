@@ -35,6 +35,7 @@ import { pipe, pipe_ } from "../pipe";
 import { isNumber, misNumberM, misStringM } from "../typeCheckUtils";
 import { getWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
 import { getActiveSelectionsMaybe, getSelectOptionCost } from "./selectionUtils";
+import { Categories } from "../../Constants/Categories";
 
 interface PropertiesAffectedByState {
   "@@name": "PropertiesAffectedByState"
@@ -577,7 +578,14 @@ export const getIdSpecificAffectedAndDispatchProps =
                                             && (isNumber (c) || isList (c)))),
                             fmap (cost => second (set (PABYL.currentCost)
                                                       (Just (isList (cost)
-                                                        ? pipe_ (cost, take (selectedLevel), sum)
+                                                        ? SAAL.category (IAA.wikiEntry (entry))
+                                                          === Categories.SPECIAL_ABILITIES
+                                                          ? pipe_ (cost, take (selectedLevel), sum)
+                                                          : pipe_ (
+                                                              cost,
+                                                              subscriptF (selectedLevel - 1),
+                                                              fromMaybe (0)
+                                                            )
                                                         : cost * selectedLevel)))
                                                  (pair))
                           )),

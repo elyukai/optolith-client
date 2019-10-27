@@ -9,7 +9,7 @@ import { selectProfessionVariant } from "../../Actions/ProfessionVariantActions"
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
 import { ProfessionVariantCombinedA_ } from "../../Models/View/ProfessionVariantCombined";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { getNameBySex } from "../../Utilities/rcpUtils";
@@ -62,7 +62,7 @@ export const ProfessionVariants: React.FC<ProfessionVariantsProps> = props => {
                      value: Just (PVCA_.id (prof_var)),
                    })
                  }),
-                 sortRecordsByName (L10n.A.id (l10n)),
+                 sortRecordsByName (l10n),
                  PCA_.isVariantRequired (prof)
                    ? ident
                    : consF (Option ({ name: translate (l10n) ("novariant") }))

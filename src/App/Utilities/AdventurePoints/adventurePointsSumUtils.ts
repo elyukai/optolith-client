@@ -1,14 +1,15 @@
 import { equals } from "../../../Data/Eq";
 import { cnst, ident, join } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
-import { filter, List, sum } from "../../../Data/List";
+import { elem, filter, List, sum } from "../../../Data/List";
 import { bindF, ensure, maybe, Maybe, thenF } from "../../../Data/Maybe";
 import { add, multiply } from "../../../Data/Num";
 import { foldr, lookupF } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
-import { bimap, first, fst, Pair, snd, Tuple } from "../../../Data/Tuple";
+import { bimap, first, fst, Pair, second, snd, Tuple } from "../../../Data/Tuple";
 import { Categories } from "../../Constants/Categories";
+import { AdvantageIdsNoMaxInfl } from "../../Constants/Ids";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
@@ -54,7 +55,8 @@ export const getAPSpentForSkills =
                         SkillDependent.A.id,
                         lookupF (xmap),
                         maybe<skillsFold> (cnst (ident))
-                                          (x => pipe (getAPForSkill (x), add)))))
+                                          (x => pipe (getAPForSkill (x), add))
+                      )))
           (0)
 
 // Combat Techniques
@@ -69,7 +71,8 @@ export const getAPSpentForCombatTechniques =
                         SkillDependent.A.id,
                         lookupF (xmap),
                         maybe<skillsFold> (cnst (ident))
-                                          (x => pipe (getAPForCombatTechnique (x), add)))))
+                                          (x => pipe (getAPForCombatTechnique (x), add))
+                      )))
           (0)
 
 // Spells / Liturgical Chants
@@ -94,7 +97,8 @@ export const getAPSpentForSpells =
                         ActivatableSkillDependent.A.id,
                         lookupF (xmap),
                         maybe<actSkillsFold> (cnst (ident))
-                                             (x => pipe (getAPForSpellOrChant (x), add)))))
+                                             (x => pipe (getAPForSpellOrChant (x), add))
+                      )))
           (0)
 
 export const getAPSpentForLiturgicalChants =
@@ -103,7 +107,8 @@ export const getAPSpentForLiturgicalChants =
                         ActivatableSkillDependent.A.id,
                         lookupF (xmap),
                         maybe<actSkillsFold> (cnst (ident))
-                                             (x => pipe (getAPForSpellOrChant (x), add)))))
+                                             (x => pipe (getAPForSpellOrChant (x), add))
+                      )))
           (0)
 
 // Cantrips / Blessings
@@ -119,6 +124,15 @@ type ActiveSpecialAbility = Record<ActiveActivatable<SpecialAbility>>
 
 const AAA_ = ActiveActivatableA_
 
+/**
+ * The return value is a triple:
+ *
+ * - The second value is the simple AP cost sum that needs to be subtracted from
+ *   the amount of total AP. Automatic advantage costs are exluded here.
+ * - The first value is like the first, but it is the value that needs to be
+ *   compared with the AP max for advantages. Some entries do not count towards
+ *   this max. But automatic advantages are relevant here.
+ */
 export const getAPSpentForAdvantages =
   (wiki: WikiModelRecord) =>
   (xmap: HeroModel["advantages"]) =>
@@ -128,14 +142,14 @@ export const getAPSpentForAdvantages =
       List.foldr ((e: Record<ActiveActivatable<Advantage>>): ident<Pair<number, number>> =>
                    AAA_.isAutomatic (e)
                    ? first (add (AAA_.finalCost (e)))
+                   : elem (AAA_.id (e)) (AdvantageIdsNoMaxInfl)
+                   ? second (add (AAA_.finalCost (e)))
                    : bimap (add (AAA_.finalCost (e)))
                            (add (AAA_.finalCost (e))))
                  (Pair (0, 0)),
-      p => {
-        const addDiff = add (getAdventurePointsSpentDifference (wiki) (xmap) (active))
-
-        return bimap (addDiff) (addDiff) (p)
-      }
+      join <ident<number>, ident<Pair<number, number>>>
+           (bimap)
+           (add (getAdventurePointsSpentDifference (wiki) (xmap) (active)))
     )
 
 export const getAPSpentForMagicalAdvantages =
@@ -145,7 +159,8 @@ export const getAPSpentForMagicalAdvantages =
       filter<ActiveAdvantage> (pipe (
                                 ActiveActivatable.A.wikiEntry,
                                 Advantage.AL.gr,
-                                equals (2))) as ident<List<ActiveAdvantage>>,
+                                equals (2)
+                              )) as ident<List<ActiveAdvantage>>,
       getAPSpentForAdvantages (wiki) (xmap)
     )
 
@@ -156,7 +171,8 @@ export const getAPSpentForBlessedAdvantages =
       filter<ActiveAdvantage> (pipe (
                                 ActiveActivatable.A.wikiEntry,
                                 Advantage.AL.gr,
-                                equals (3))) as ident<List<ActiveAdvantage>>,
+                                equals (3)
+                              )) as ident<List<ActiveAdvantage>>,
       getAPSpentForAdvantages (wiki) (xmap)
     )
 
@@ -175,11 +191,9 @@ export const getAPSpentForDisadvantages =
                    : bimap (add (AAA_.finalCost (e)))
                            (add (AAA_.finalCost (e))))
                  (Pair (0, 0)),
-      p => {
-        const addDiff = add (getAdventurePointsSpentDifference (wiki) (xmap) (active))
-
-        return bimap (addDiff) (addDiff) (p)
-      }
+      join <ident<number>, ident<Pair<number, number>>>
+           (bimap)
+           (add (getAdventurePointsSpentDifference (wiki) (xmap) (active)))
     )
 
 export const getAPSpentForMagicalDisadvantages =
@@ -189,7 +203,8 @@ export const getAPSpentForMagicalDisadvantages =
       filter<ActiveDisadvantage> (pipe (
                                    ActiveActivatable.A.wikiEntry,
                                    Disadvantage.AL.gr,
-                                   equals (2))) as ident<List<ActiveDisadvantage>>,
+                                   equals (2)
+                                 )) as ident<List<ActiveDisadvantage>>,
       getAPSpentForDisadvantages (wiki) (xmap)
     )
 
@@ -200,7 +215,8 @@ export const getAPSpentForBlessedDisadvantages =
       filter<ActiveDisadvantage> (pipe (
                                    ActiveActivatable.A.wikiEntry,
                                    Disadvantage.AL.gr,
-                                   equals (3))) as ident<List<ActiveDisadvantage>>,
+                                   equals (3)
+                                 )) as ident<List<ActiveDisadvantage>>,
       getAPSpentForDisadvantages (wiki) (xmap)
     )
 

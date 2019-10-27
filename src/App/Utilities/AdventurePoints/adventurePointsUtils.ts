@@ -2,13 +2,13 @@ import { bool_ } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
 import { ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
-import { any, countWith, countWithByKeyMaybe, elemF, find, flength, foldl, foldr, isList, lastS, List, take } from "../../../Data/List";
+import { any, countWith, countWithByKeyMaybe, elemF, find, flength, foldl, foldr, isList, lastS, List, notElem, take } from "../../../Data/List";
 import { all, altF, bind, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, Nothing, or, sum } from "../../../Data/Maybe";
 import { add, gt, inc, lt, multiply, negate, subtractBy } from "../../../Data/Num";
 import { alter, empty, findWithDefault, lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, Record } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
-import { DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
+import { AdvantageIdsNoMaxInfl, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -135,6 +135,7 @@ export const getMissingAPForDisAdvantage =
   (isDisadvantage: boolean) =>
   (hero: HeroModelRecord) =>
   (ap: Record<AdventurePointsCategories>) =>
+  (id: string) =>
   (cost: number): Record<MissingAPForDisAdvantage> => {
     const currentAPSpent =
       isDisadvantage
@@ -154,21 +155,22 @@ export const getMissingAPForDisAdvantage =
     // checks if there are enough AP below the max for the subtype
     // (magical/blessed)
     const subMissing =
-      !isInCharacterCreation
-        ? Nothing
-        : bind (subCurrentAPSpent)
+      isInCharacterCreation && notElem (id) (AdvantageIdsNoMaxInfl)
+        // (current + spent) - max > 0 => invalid
+        ? bind (subCurrentAPSpent)
                (pipe (
                  add (normalizedCost),
                  subtractBy (smallMax),
-                 ensure (gt (0)) // (current + spent) - max > 0 => invalid
+                 ensure (gt (0))
                ))
+        : Nothing
 
     // Checks if there are enough AP below the max for advantages/disadvantages
     const mainMissing =
-      !isInCharacterCreation
-        ? Nothing
+      isInCharacterCreation && notElem (id) (AdvantageIdsNoMaxInfl)
         // (current + spent) - max > 0 => invalid
-        : ensure (gt (0)) (currentAPSpent + normalizedCost - 80)
+        ? ensure (gt (0)) (currentAPSpent + normalizedCost - 80)
+        : Nothing
 
     // Checks if there are enough AP available in total
     const totalMissing = getMissingAP (isInCharacterCreation)

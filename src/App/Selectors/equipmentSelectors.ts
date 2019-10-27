@@ -144,7 +144,7 @@ export const getFilteredHitZoneArmors = createMaybeSelector (
   getLocaleAsProp,
   (mhitZoneArmors, filterText, l10n) =>
     fmapF (mhitZoneArmors)
-          (filterAndSortRecordsByName (L10n.A.id (l10n))
+          (filterAndSortRecordsByName (l10n)
                                       (filterText))
 )
 
@@ -240,7 +240,7 @@ export const getAllItems = createMaybeSelector (
                         })
                       }))
 
-             return sortRecordsByName (L10n.A.id (l10n))
+             return sortRecordsByName (l10n)
                                       (append (mappedArmorZones) (mappedItems))
            })
            (mitems)

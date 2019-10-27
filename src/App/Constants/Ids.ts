@@ -1,3 +1,5 @@
+import { List } from "../../Data/List";
+
 /**
  * Please keep enum members sorted by value and not by key!
  */
@@ -96,7 +98,13 @@ export enum AdvantageId {
   ZahlreichePredigten = "ADV_79",
   ZahlreicheVisionen = "ADV_80",
   LeichterGang = "ADV_92",
+  Einkommen = "ADV_99",
 }
+
+/**
+ * Lists advantage IDs that have no influence on the AP maximum for advantages.
+ */
+export const AdvantageIdsNoMaxInfl = List<AdvantageId> (AdvantageId.Einkommen)
 
 export enum DisadvantageId {
   AfraidOf = "DISADV_1",

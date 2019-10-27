@@ -87,8 +87,6 @@ export const AvatarChange: React.FC<AvatarChangeProps> = props => {
     setPrevIsOpen (false)
   }
 
-  console.log (fileValid, url)
-
   return (
     <Dialog
       id="avatar-change"

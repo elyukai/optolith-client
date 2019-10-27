@@ -2,9 +2,9 @@ import { flip, on } from "../../Data/Function";
 import { flength, List, sortBy } from "../../Data/List";
 import { EQ, Ordering } from "../../Data/Ord";
 import { fromDefault, Record, RecordIBase } from "../../Data/Record";
-import { L10n, L10nRecord } from "../Models/Wiki/L10n";
+import { L10nRecord } from "../Models/Wiki/L10n";
 import { compareLocale } from "./I18n";
-import { pipe } from "./pipe";
+import { pipe_ } from "./pipe";
 
 export type CompareR<A extends RecordIBase<any>> = (x: Record<A>) => (y: Record<A>) => Ordering
 
@@ -62,17 +62,15 @@ export const RecordWithName = fromDefault ("RecordWithName")
 
 const { name } = RecordWithName.AL
 
-const getLocaleId = (locale: string | L10nRecord) => L10n.is (locale) ? L10n.A.id (locale) : locale
-
 /**
  * Sort the list of passed records by their `name` property in ascending order.
  */
 export const sortRecordsByName = (
-  (locale: string | L10nRecord) =>
+  (locale: L10nRecord) =>
     sortRecordsBy<RecordWithName> ([
-      comparingR<RecordWithName, string> (name) (compareLocale (getLocaleId (locale))),
+      comparingR<RecordWithName, string> (name) (compareLocale (locale)),
     ])
-) as (locale: string | L10nRecord) =>
+) as (locale: L10nRecord) =>
   <A extends RecordWithName> (xs: List<Record<A>>) => List<Record<A>>
 
 /**
@@ -93,4 +91,4 @@ export const comparingR =
  * `sortStrings locale xs` sorts a list of strings with respect to the passed
  * locale.
  */
-export const sortStrings = pipe (compareLocale, sortBy)
+export const sortStrings = (locale: L10nRecord) => pipe_ (locale, compareLocale, sortBy)

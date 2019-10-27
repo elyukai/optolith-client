@@ -437,17 +437,24 @@ const putCurrentCost =
     over (ActivatableNameCostL.finalCost)
          ((current_cost): number => {
            const current_id = ActivatableNameCostA_.id (entry)
+           const category = getCategoryById (current_id)
            const mcurrent_level = ActivatableNameCostA_.tier (entry)
 
-           // If the AP cost is still a List, it must be a list that represents
-           // the cost for each level separate, thus all relevant values must
-           // be summed up.
+           // If the AP cost is still a List, and it is a Special Ability, it
+           // must be a list that represents the cost *for* each level separate,
+           // thus all relevant values must be summed up. In case of an
+           // advantage or disadvantage, it represents the cost *at* each level,
+           // so it does not need to be accumulated.
            if (isList (current_cost)) {
-             const current_level = fromMaybe (1) (mcurrent_level)
+            const current_level = fromMaybe (1) (mcurrent_level)
 
-             return ifoldr (i => i <= (current_level - 1) ? add : cnst (ident as ident<number>))
-                           (0)
-                           (current_cost)
+             if (elem (Categories.SPECIAL_ABILITIES) (category)) {
+               return ifoldr (i => i <= (current_level - 1) ? add : cnst (ident as ident<number>))
+                             (0)
+                             (current_cost)
+             }
+
+             return fromMaybe (0) (subscript (current_cost) (current_level - 1))
            }
 
            // Usually, a single AP value represents the value has to be

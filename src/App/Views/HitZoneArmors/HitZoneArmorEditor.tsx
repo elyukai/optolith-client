@@ -8,7 +8,7 @@ import { Record } from "../../../Data/Record";
 import { EditHitZoneArmor } from "../../Models/Hero/EditHitZoneArmor";
 import { Item, itemToDropdown } from "../../Models/Hero/Item";
 import { ItemTemplate, itemTemplateToDropdown } from "../../Models/Wiki/ItemTemplate";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { getLossLevelElements } from "../../Utilities/ItemUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
@@ -69,7 +69,7 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
               append
             ))
             (mitems),
-      sortRecordsByName (L10n.A.id (l10n)),
+      sortRecordsByName (l10n),
       consF (DropdownOption ({ name: translate (l10n) ("none") }))
     )
 

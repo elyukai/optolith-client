@@ -25,14 +25,12 @@ export const translateP =
 
     if (!fnull (params) && typeof message === "string") {
       return message.replace (
-        /\{(\d+)\}/g,
-        (_, p1) => {
-          return maybe (`{${p1}}`)
-                       ((param: number | string) => typeof param === "number"
-                         ? param.toString ()
-                         : param)
-                       (subscript (params) (Number.parseInt (p1, 10)))
-        }
+        /\{(?<index>\d+)\}/gu,
+        (_match, _p1, _offset, _s, { index }) => maybe (`{${index}}`)
+                         ((param: number | string) => typeof param === "number"
+                           ? param.toString ()
+                           : param)
+                         (subscript (params) (Number.parseInt (index, 10)))
       ) as L10n [K]
     }
 
@@ -122,11 +120,9 @@ export const localizeWeight =
  * Takes a locale and returns a locale-aware string compare function.
  */
 export const compareLocale =
-  (locale: string | L10nRecord) => {
+  (locale: L10nRecord) => {
     const coll = Intl.Collator (
-      isString (locale)
-        ? locale
-        : L10n.A.id (locale),
+      L10n.A.id (locale),
       { numeric: true }
     )
 

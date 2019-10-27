@@ -39,7 +39,7 @@ export const filterEAndSortRecordsBy =
  * A combination of `filterRecordsByE` and `sortRecordsBy`.
  */
 export const filterAndSortRecordsByName =
-  (locale: string | L10nRecord) =>
+  (locale: L10nRecord) =>
   (filterText: string) =>
   <A extends RecordWithName>
   (xs: List<Record<A>>) =>
