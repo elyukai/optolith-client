@@ -503,6 +503,10 @@ export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => 
             title={header_name}
             subtitle={header_sub_name}
             >
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
+                         ))}
             {maybeRNullF (SAA.effect (x))
                          (str => (
                            <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
