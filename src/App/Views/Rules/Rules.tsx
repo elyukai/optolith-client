@@ -7,6 +7,7 @@ import { Rules } from "../../Models/Hero/Rules";
 import { Book } from "../../Models/Wiki/Book";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
+import { Locale } from "../../Utilities/Raw/JSON/Config";
 import { Checkbox } from "../Universal/Checkbox";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { Scroll } from "../Universal/Scroll";
@@ -20,7 +21,7 @@ export interface RulesOwnProps {
 export interface RulesStateProps {
   sortedBooks: List<Record<Book>>
   isEnableLanguageSpecializationsDeactivatable: boolean
-  hero_locale: string
+  hero_locale: Locale
   mcurrent_guild_mage_spell: Maybe<Maybe<string>>
   all_spells_select_options: Maybe<List<Record<DropdownOption>>>
 }
@@ -31,13 +32,13 @@ export interface RulesDispatchProps {
   switchEnableAllRuleBooks (): void
   switchEnableRuleBook (id: string): void
   switchEnableLanguageSpecializations (): void
-  setHeroLocale (locale: string): void
+  setHeroLocale (locale: Locale): void
   setGuildMageSpell (spellId: string): void
 }
 
 export type RulesProps = RulesStateProps & RulesDispatchProps & RulesOwnProps
 
-export function RulesView (props: RulesProps) {
+export const RulesView: React.FC<RulesProps> = props => {
   const {
     sortedBooks,
     changeAttributeValueLimit,
@@ -67,6 +68,12 @@ export function RulesView (props: RulesProps) {
 
   const enableLanguageSpecializations = Rules.A.enableLanguageSpecializations (rules)
 
+  const handleHigherParadeValues =
+    React.useCallback (
+      () => changeHigherParadeValues (Just (areHigherParadeValuesEnabled ? 0 : 2)),
+      [changeHigherParadeValues, areHigherParadeValuesEnabled]
+    )
+
   return (
     <div className="page" id="optional-rules">
       <Scroll>
@@ -83,7 +90,7 @@ export function RulesView (props: RulesProps) {
         <div className="extended">
           <Checkbox
             checked={areHigherParadeValuesEnabled}
-            onClick={() => changeHigherParadeValues (Just (areHigherParadeValuesEnabled ? 0 : 2))}
+            onClick={handleHigherParadeValues}
             label={translate (l10n) ("higherdefensestats")}
             />
           <Dropdown
@@ -113,19 +120,19 @@ export function RulesView (props: RulesProps) {
           <Dropdown
             options={List (
               DropdownOption ({
-                id: Just ("de-DE"),
+                id: Just (Locale.German),
                 name: "Deutsch (Deutschland)",
               }),
               DropdownOption ({
-                id: Just ("en-US"),
+                id: Just (Locale.English),
                 name: "English (United States)",
               }),
               DropdownOption ({
-                id: Just ("nl-BE"),
+                id: Just (Locale.Dutch),
                 name: "Nederlands (België)",
               }),
               DropdownOption ({
-                id: Just ("fr-FR"),
+                id: Just (Locale.French),
                 name: "Français (France)",
               })
             )}

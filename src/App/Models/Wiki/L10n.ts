@@ -1,9 +1,10 @@
 import { List } from "../../../Data/List";
 import { fromDefault, OmitName, Record } from "../../../Data/Record";
+import { Locale } from "../../Utilities/Raw/JSON/Config";
 
 export interface L10n {
   "@@name": "L10n"
-  "id": string
+  "id": Locale
   "lastchanges": string
   "heroes": string
   "groups": string
@@ -656,7 +657,7 @@ export type L10nRecord = Record<L10n>
 export const L10n =
   fromDefault ("L10n")
               <L10n> ({
-                "id": "",
+                "id": Locale.German,
                 "lastchanges": "",
                 "heroes": "",
                 "groups": "",

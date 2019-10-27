@@ -1,7 +1,7 @@
 import { cnst, flip, ident, join } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { foldr, fromArray, List } from "../../../Data/List";
-import { elem, Maybe, maybe, Nothing } from "../../../Data/Maybe";
+import { elem, fromMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { foldlWithKey, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { insert, OrderedSet } from "../../../Data/OrderedSet";
 import { Record, StringKeyObject } from "../../../Data/Record";
@@ -42,7 +42,7 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
   HeroModel ({
     id: hero .id,
     clientVersion: hero .clientVersion,
-    locale: L10n.A.id (l10n),
+    locale: fromMaybe (L10n.A.id (l10n)) (Maybe (hero .locale)),
     phase: hero .phase,
     name: hero .name,
     avatar: Maybe (hero .avatar),

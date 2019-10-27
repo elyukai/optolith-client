@@ -286,6 +286,7 @@ export const convertHeroForSave =
       personalData,
       rules,
       pact,
+      locale,
     } = toObject (hero)
 
     const maybeUser = bind (HA.player (hero))
@@ -297,6 +298,7 @@ export const convertHeroForSave =
       dateModified: dateModified .toJSON (),
       id: id (hero),
       phase,
+      locale,
       player: maybeToUndefined (maybeUser),
       name,
       avatar: maybeToUndefined (avatar),

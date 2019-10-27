@@ -286,6 +286,12 @@ export const mensureMapBoolean =
                fmap (x => x === "TRUE" || x === "true")
              ))
 
+export const mensureMapStrEnum =
+  (enum_name: string) =>
+  <A extends object> (enum_values: A) =>
+    mensureMap (Expect.Maybe (enum_name))
+               (bindF (ensure (isInStrEnum (enum_values))))
+
 export const mensureMapStrEnumOption =
   (enum_name: string) =>
   <A extends object> (enum_values: A) =>

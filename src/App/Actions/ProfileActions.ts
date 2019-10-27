@@ -5,6 +5,7 @@ import { HeroModelRecord } from "../Models/Hero/HeroModel";
 import { getAvailableEyeColorIds, getAvailableHairColorIds } from "../Selectors/personalDataSelectors";
 import { getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
 import { getSize, getWeight } from "../Selectors/stateSelectors";
+import { Locale } from "../Utilities/Raw/JSON/Config";
 import * as RCPUtils from "../Utilities/rcpUtils";
 import { ReduxAction } from "./Actions";
 
@@ -326,11 +327,11 @@ export const addAdventurePoints = (amount: number): AddAdventurePointsAction => 
 export interface SetHeroLocaleAction {
   type: ActionTypes.SET_HERO_LOCALE
   payload: {
-    locale: string;
+    locale: Locale;
   }
 }
 
-export const setHeroLocale = (locale: string): SetHeroLocaleAction => ({
+export const setHeroLocale = (locale: Locale): SetHeroLocaleAction => ({
   type: ActionTypes.SET_HERO_LOCALE,
   payload: {
     locale,

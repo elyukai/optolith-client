@@ -1,18 +1,13 @@
-import { Either, fromRight_, isLeft, mapM, maybeToEither, maybeToEither_ } from "../../../../Data/Either";
+import { Either, fromRight_, isLeft, mapM, maybeToEither } from "../../../../Data/Either";
 import { List } from "../../../../Data/List";
-import { ensure, liftM2 } from "../../../../Data/Maybe";
+import { Just, liftM2 } from "../../../../Data/Maybe";
 import { fromList, lookupF, OrderedMap } from "../../../../Data/OrderedMap";
 import { OmitName } from "../../../../Data/Record";
-import { show } from "../../../../Data/Show";
 import { Pair } from "../../../../Data/Tuple";
 import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
-import { mensureMapNonEmptyString, mensureMapNonEmptyStringList } from "../validateMapValueUtils";
+import { Locale } from "../JSON/Config";
+import { mensureMapNonEmptyString, mensureMapNonEmptyStringList, mensureMapStrEnum } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
-
-const localeRx = /[a-z]{2}-[A-Z]{2}/u
-
-const isLocale =
-  (x: string) => localeRx .test (x)
 
 export const toL10n =
   (id: string) =>
@@ -48,8 +43,7 @@ export const toL10n =
       type MapWithEither<A> = { [K in keyof A]: Either<string, A[K]>}
 
       const mappedL10n: MapWithEither<OmitName<L10n>> = {
-        "id": maybeToEither_ (() => `Expected: Locale, Received: ${show (id)}`)
-                             (ensure (isLocale) (id)),
+        "id": mensureMapStrEnum ("Locale") (Locale) (Just (id)),
         "lastchanges": checkL10nNonEmptyString ("lastchanges"),
         "heroes": checkL10nNonEmptyString ("heroes"),
         "groups": checkL10nNonEmptyString ("groups"),

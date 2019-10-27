@@ -5,6 +5,7 @@ import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { SocialStatusId } from "../../Constants/Ids";
 import { current_version } from "../../Selectors/envSelectors";
+import { Locale } from "../../Utilities/Raw/JSON/Config";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
@@ -27,7 +28,7 @@ export interface HeroModel {
   "@@name": "Hero"
   id: string
   clientVersion: string
-  locale: string
+  locale: Locale
   player: Maybe<string>
   dateCreated: Date
   dateModified: Date
@@ -80,7 +81,7 @@ export const HeroModel =
               <HeroModel> ({
                 id: "",
                 clientVersion: current_version,
-                locale: "",
+                locale: Locale.German,
                 player: Nothing,
                 dateCreated: new Date (),
                 dateModified: new Date (),

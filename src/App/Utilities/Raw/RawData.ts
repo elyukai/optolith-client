@@ -1,6 +1,7 @@
 import { StringKeyObject } from "../../../Data/Record";
 import { SID } from "../../Models/Wiki/wikiTypeHelpers";
 import { SortNames } from "../../Views/Universal/SortOptions";
+import { Locale } from "./JSON/Config";
 
 export interface RawUser {
   id: string
@@ -10,6 +11,7 @@ export interface RawUser {
 export interface RawHero {
   readonly id: string
   readonly name: string
+  readonly locale?: Locale
   readonly avatar?: string
   readonly ap: {
     total: number;
