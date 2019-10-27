@@ -19,8 +19,8 @@ import { PHASE_1_PROFILE_TABS, PHASE_1_RCP_TABS } from "../Selectors/uilocationS
 import { composeL } from "../Utilities/compose";
 import { TabId } from "../Utilities/LocationUtils";
 import { pipe } from "../Utilities/pipe";
-import { convertHero } from "../Utilities/Raw/compatibilityUtils";
-import { convertFromRawHero } from "../Utilities/Raw/initHeroUtils";
+import { convertHero } from "../Utilities/Raw/JSON/Hero/Compat";
+import { convertFromRawHero } from "../Utilities/Raw/JSON/Hero/HeroFromJSON";
 import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils";
 import { UndoState } from "../Utilities/undo";
 import { AppState, AppStateRecord } from "./appReducer";

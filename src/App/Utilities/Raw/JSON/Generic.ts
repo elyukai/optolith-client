@@ -14,7 +14,7 @@ import { OmitName, Record, RecordBase, RecordIBase } from "../../../../Data/Reco
 import { EnsureEnumType, GenericEnumType, isInEnum } from "../../Enum";
 import { pipe } from "../../pipe";
 import { isBoolean, isNumber, isString } from "../../typeCheckUtils";
-import { Expect } from "../showExpected";
+import { Expect } from "../Expect";
 
 /**
  * `type GetJSON a = Unknown -> Either String a`
