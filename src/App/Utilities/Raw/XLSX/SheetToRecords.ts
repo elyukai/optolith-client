@@ -1,4 +1,4 @@
-import { bindF, Either, mapM } from "../../../../Data/Either";
+import { bindF, Either, isRight, mapM } from "../../../../Data/Either";
 import { fmap, fmapF } from "../../../../Data/Functor";
 import { List, map } from "../../../../Data/List";
 import { catMaybes, Maybe } from "../../../../Data/Maybe";
@@ -8,150 +8,171 @@ import { Pair } from "../../../../Data/Tuple";
 import { ReduxAction } from "../../../Actions/Actions";
 import { setLoadingPhase } from "../../../Actions/IOActions";
 import { Book } from "../../../Models/Wiki/Book";
-import { pipe } from "../../pipe";
+import { pipe, pipe_ } from "../../pipe";
 
 interface RecordWithId extends RecordIBase<any> {
   id: string
 }
 
-const { id } = Book.AL
-
-const listToMap =
-  pipe (map ((x: Record<RecordWithId>) => Pair (id (x), x)), fromList) as
+/**
+ * `listToMapById :: RecordWithId a => [a] -> Map String a`
+ *
+ * Converts a list of Records with an `id` prop to a Map, where the keys are the
+ * IDs and the values are the corresponding Records.
+ */
+const listToMapById =
+  pipe (map ((x: Record<RecordWithId>) => Pair (Book.AL.id (x), x)), fromList) as
     <A extends RecordWithId> (x0: List<Record<A>>) => OrderedMap<string, Record<A>>
 
-type Convert<A> =
+/**
+ * `type JoinL10nRow :: Map String String -> Either String a`
+ *
+ * A converting function that takes a row from the current L10n sheet and
+ * converts into a `Right` Record. In case of any error, a `Left` is returned,
+ * containing the error message.
+ */
+type JoinL10nRow<A> =
+  (l10n_row: OrderedMap<string, string>) => Either<string, A>
+
+/**
+ * `type JoinUnivRowWithMatching :: [Map String String] -> Map String String -> Either String a`
+ *
+ * A converting function that takes a row from the current universal sheet and
+ * all rows from the corresponding L10n sheet and converts into a `Right`
+ * Record. In case of any error, a `Left` is returned, containing the error
+ * message.
+ */
+type JoinUnivRowWithMatchingL10n<A> =
   (l10n: List<OrderedMap<string, string>>) =>
   (univ_row: OrderedMap<string, string>) => Either<string, Maybe<A>>
 
-type LookupSheet = (x0: string) => Either<string, List<OrderedMap<string, string>>>
+/**
+ * `type JoinUnivRowWithMatching :: [Map String String] -> Map String String -> Either String a`
+ *
+ * A converting function that takes a row from the current universal sheet and
+ * all rows from the corresponding L10n sheet and converts into a `Right`
+ * Record. In case of any error, a `Left` is returned, containing the error
+ * message.
+ */
+type JoinL10nRowWithMatchingUniv<A> =
+  (univ: List<OrderedMap<string, string>>) =>
+  (l10n_row: OrderedMap<string, string>) => Either<string, Maybe<A>>
 
-export const lookupL10nToRecordFromSheet =
+/**
+ * `type LookupSheet :: String -> Either String [OrderedMap String String]`
+ *
+ * Looks up a worksheet from an XLSX file. Returns a `Left` with the error
+ * message if not found or a `Right` with the worksheet, represented as a list
+ * of maps.
+ */
+type LookupSheet = (sheet_id: string) => Either<string, List<OrderedMap<string, string>>>
+
+/**
+ * `l10nRowToRecord :: RecordWithId a => LookupSheet -> JoinL10nRow a -> String -> Int -> Action (Either String (OrderedMap String a))`
+ *
+ * `l10nRowToRecord lookup_l10n make sheet_name phase` takes a
+ * function to lookup a sheet from l10n table, a conversion function, the
+ * required sheet's name and the phase. If any error occurs, which
+ * is represented by a returned `Left` from `make`, the `Left` is returned by
+ * this function, too. Otherwise, the loading phase is set to `phase` and the
+ * `Right` of the map of created records is returned. It is used to make records
+ * that only depend on l10n values, no universal values.
+ */
+export const l10nRowsToMap =
   (lookup_l10n: LookupSheet) =>
   <A extends RecordWithId>
-  (f: (l10n_row: OrderedMap<string, string>) => Either<string, Record<A>>) =>
-  async (sheet_name: string) => new Promise<Either<string, OrderedMap<string, Record<A>>>> (
-    resolve => {
-      const res = fmapF (bindF (mapM (f)) (lookup_l10n (sheet_name)))
-                        (listToMap)
-
-      resolve (res)
-    }
-  )
-
-export const lookupL10nToRecordFromSheetLoading =
-  (lookup_l10n: LookupSheet) =>
-  <A extends RecordWithId>
-  (f: (l10n_row: OrderedMap<string, string>) => Either<string, Record<A>>) =>
+  (f: JoinL10nRow<Record<A>>) =>
   (sheet_name: string) =>
-  (phase: number): ReduxAction<Promise<Either<string, OrderedMap<string, Record<A>>>>> =>
-  async dispatch => {
-    const res = await lookupL10nToRecordFromSheet (lookup_l10n)
-                                                  (f)
-                                                  (sheet_name)
+  (phase: number): ReduxAction<Either<string, OrderedMap<string, Record<A>>>> =>
+  dispatch => {
+    const res =
+      pipe_ (
+        sheet_name,
+        lookup_l10n,
+        bindF (mapM (f)),
+        fmap (listToMapById)
+      )
 
-    dispatch (setLoadingPhase (phase))
+    if (isRight (res)) {
+      dispatch (setLoadingPhase (phase))
+    }
 
     return res
   }
 
-const lookupNoRequiredToRecordFromSheet =
+export const univRowsMatchL10nToList =
   (lookup_l10n: LookupSheet) =>
   (lookup_univ: LookupSheet) =>
   <A>
-  (f: Convert<A>) =>
-  async (sheet_name: string) => new Promise<Either<string, List<A>>> (
-    resolve => {
-      const res = bindF ((l10n: List<OrderedMap<string, string>>) =>
-                          fmap<List<Maybe<A>>, List<A>> (catMaybes)
-                                                        (bindF (mapM (f (l10n)))
-                                                               (lookup_univ (sheet_name))))
-                        (lookup_l10n (sheet_name))
-
-      resolve (res)
-    }
-  )
-
-export const lookupNoRequiredToRecordFromSheetLoading =
-  (lookup_l10n: LookupSheet) =>
-  (lookup_univ: LookupSheet) =>
-  <A>
-  (f: Convert<A>) =>
+  (f: JoinUnivRowWithMatchingL10n<A>) =>
   (sheet_name: string) =>
-  (phase: number): ReduxAction<Promise<Either<string, List<A>>>> =>
-  async dispatch => {
-    const res = await lookupNoRequiredToRecordFromSheet (lookup_l10n)
-                                                        (lookup_univ)
-                                                        (f)
-                                                        (sheet_name)
+  (phase: number): ReduxAction<Either<string, List<A>>> =>
+  dispatch => {
+    const res =
+      pipe_ (
+        sheet_name,
+        lookup_l10n,
+        bindF (l10n => pipe_ (
+                         sheet_name,
+                         lookup_univ,
+                         bindF (mapM (f (l10n)))
+                       )),
+        fmap (catMaybes)
+      )
 
-    dispatch (setLoadingPhase (phase))
+    if (isRight (res)) {
+      dispatch (setLoadingPhase (phase))
+    }
 
     return res
   }
 
-const lookupL10nRequiredToRecordFromSheet =
+export const l10nRowsMatchUnivToList =
   (lookup_l10n: LookupSheet) =>
   (lookup_univ: LookupSheet) =>
   <A>
-  (f: Convert<A>) =>
-  async (sheet_name: string) => new Promise<Either<string, List<A>>> (
-    resolve => {
-      const res = bindF ((univ: List<OrderedMap<string, string>>) =>
-                          fmap<List<Maybe<A>>, List<A>> (catMaybes)
-                                                        (bindF (mapM (f (univ)))
-                                                               (lookup_l10n (sheet_name))))
-                        (lookup_univ (sheet_name))
-
-      resolve (res)
-    }
-  )
-
-export const lookupL10nRequiredToRecordFromSheetLoading =
-  (lookup_l10n: LookupSheet) =>
-  (lookup_univ: LookupSheet) =>
-  <A>
-  (f: Convert<A>) =>
+  (f: JoinL10nRowWithMatchingUniv<A>) =>
   (sheet_name: string) =>
-  (phase: number): ReduxAction<Promise<Either<string, List<A>>>> =>
-  async dispatch => {
-    const res = await lookupL10nRequiredToRecordFromSheet (lookup_l10n)
-                                                          (lookup_univ)
-                                                          (f)
-                                                          (sheet_name)
+  (phase: number): ReduxAction<Either<string, List<A>>> =>
+  dispatch => {
+    const res =
+      pipe_ (
+        sheet_name,
+        lookup_univ,
+        bindF (univ => pipe_ (
+                         sheet_name,
+                         lookup_l10n,
+                         bindF (mapM (f (univ)))
+                       )),
+        fmap (catMaybes)
+      )
 
-    dispatch (setLoadingPhase (phase))
+    if (isRight (res)) {
+      dispatch (setLoadingPhase (phase))
+    }
 
     return res
   }
 
-export type ConvertL10nRequiredToRecordFromSheet =
-  <A> (f: Convert<A>) => (sheet_name: string) => Promise<Either<string, List<A>>>
-
-const lookupBothRequiredToRecordFromSheet =
+export const univRowsMatchL10nToMap =
   (lookup_l10n: LookupSheet) =>
   (lookup_univ: LookupSheet) =>
   <A extends RecordWithId>
-  (f: Convert<Record<A>>) =>
-  async (sheet_name: string): Promise<Either<string, OrderedMap<string, Record<A>>>> =>
-    fmap<List<Record<A>>, OrderedMap<string, Record<A>>>
-      (listToMap)
-      (await lookupNoRequiredToRecordFromSheet (lookup_l10n) (lookup_univ) (f) (sheet_name))
-
-export const lookupBothRequiredToRecordFromSheetLoading =
-  (lookup_l10n: LookupSheet) =>
-  (lookup_univ: LookupSheet) =>
-  <A extends RecordWithId>
-  (f: Convert<Record<A>>) =>
+  (f: JoinUnivRowWithMatchingL10n<Record<A>>) =>
   (sheet_name: string) =>
-  (phase: number): ReduxAction<Promise<Either<string, OrderedMap<string, Record<A>>>>> =>
-  async dispatch => {
-    const res = await lookupBothRequiredToRecordFromSheet (lookup_l10n)
-                                                          (lookup_univ)
-                                                          (f)
-                                                          (sheet_name)
+  (phase: number): ReduxAction<Either<string, OrderedMap<string, Record<A>>>> =>
+  dispatch => {
+    const res = fmapF (dispatch (univRowsMatchL10nToList (lookup_l10n)
+                                                         (lookup_univ)
+                                                         (f)
+                                                         (sheet_name)
+                                                         (phase - 1)))
+                      (listToMapById)
 
-    dispatch (setLoadingPhase (phase))
+
+    if (isRight (res)) {
+      dispatch (setLoadingPhase (phase))
+    }
 
     return res
   }

@@ -52,7 +52,7 @@ import { toSpecialAbility } from "./XLSX/Entries/toSpecialAbility";
 import { toSpecialAbilitySelectOption } from "./XLSX/Entries/toSpecialAbilitySelectOption";
 import { toSpell } from "./XLSX/Entries/toSpell";
 import { toSpellExtension } from "./XLSX/Entries/toSpellExtension";
-import { lookupBothRequiredToRecordFromSheetLoading, lookupL10nRequiredToRecordFromSheetLoading, lookupL10nToRecordFromSheetLoading, lookupNoRequiredToRecordFromSheetLoading } from "./XLSX/SheetToRecords";
+import { l10nRowsMatchUnivToList, l10nRowsToMap, univRowsMatchL10nToList, univRowsMatchL10nToMap } from "./XLSX/SheetToRecords";
 import { mapMNamed } from "./XLSX/Validators/Generic";
 import { readXLSX } from "./XLSX/XLSXtoCSV";
 
@@ -147,92 +147,142 @@ const parseWorkbooks =
           maybeToEither (`l10n.xlsx: "${sheet}" sheet not found.`)
         )
 
-    const convertRecordNoRequiredFromSheet =
-      lookupNoRequiredToRecordFromSheetLoading (lookup_l10n) (lookup_univ)
-
-    const convertRecordL10nRequiredFromSheet =
-      lookupL10nRequiredToRecordFromSheetLoading (lookup_l10n) (lookup_univ)
-
-    const convertRecordL10nOnlyFromSheet =
-      lookupL10nToRecordFromSheetLoading (lookup_l10n)
-
-    const convertRecordFromSheet =
-      lookupBothRequiredToRecordFromSheetLoading (lookup_l10n) (lookup_univ)
-
     const l10n = bind (lookup_l10n ("UI")) <L10nRecord> (toL10n (locale))
 
-    const books = await dispatch (convertRecordL10nOnlyFromSheet (toBook) ("BOOKS") (2))
+    const books = dispatch (l10nRowsToMap (lookup_l10n) (toBook) ("BOOKS") (2))
 
-    const experienceLevels = await dispatch (convertRecordFromSheet (toExperienceLevel)
-                                                                    ("EXPERIENCE_LEVELS")
-                                                                    (3))
+    const experienceLevels = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                              (lookup_univ)
+                                                              (toExperienceLevel)
+                                                              ("EXPERIENCE_LEVELS")
+                                                              (3))
 
-    const races = await dispatch (convertRecordFromSheet (toRace) ("RACES") (4))
+    const races = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                   (lookup_univ)
+                                                   (toRace)
+                                                   ("RACES")
+                                                   (4))
 
-    const raceVariants = await dispatch (convertRecordFromSheet (toRaceVariant)
-                                                                ("RACE_VARIANTS")
-                                                                (5))
+    const raceVariants = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                          (lookup_univ)
+                                                          (toRaceVariant)
+                                                          ("RACE_VARIANTS")
+                                                          (5))
 
-    const cultures = await dispatch (convertRecordFromSheet (toCulture) ("CULTURES") (6))
+    const cultures = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                      (lookup_univ)
+                                                      (toCulture)
+                                                      ("CULTURES")
+                                                      (6))
 
-    const professions = await dispatch (convertRecordFromSheet (toProfession) ("PROFESSIONS") (7))
+    const professions = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                         (lookup_univ)
+                                                         (toProfession)
+                                                         ("PROFESSIONS")
+                                                         (7))
 
-    const professionVariants = await dispatch (convertRecordFromSheet (toProfessionVariant)
-                                                                      ("PROFESSION_VARIANTS")
-                                                                      (8))
+    const professionVariants = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                                (lookup_univ)
+                                                                (toProfessionVariant)
+                                                                ("PROFESSION_VARIANTS")
+                                                                (8))
 
-    const attributes = await dispatch (convertRecordFromSheet (toAttribute) ("ATTRIBUTES") (9))
+    const attributes = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                        (lookup_univ)
+                                                        (toAttribute)
+                                                        ("ATTRIBUTES")
+                                                        (9))
 
-    const advantages = await dispatch (convertRecordFromSheet (toAdvantage) ("ADVANTAGES") (10))
+    const advantages = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                        (lookup_univ)
+                                                        (toAdvantage)
+                                                        ("ADVANTAGES")
+                                                        (10))
 
-    const advantageSelectOptions =
-      await dispatch (convertRecordL10nRequiredFromSheet (toAdvantageSelectOption)
-                                                         ("AdvantagesSelections")
-                                                         (11))
+    const advantageSelectOptions = dispatch (l10nRowsMatchUnivToList (lookup_l10n)
+                                                                     (lookup_univ)
+                                                                     (toAdvantageSelectOption)
+                                                                     ("AdvantagesSelections")
+                                                                     (11))
 
-    const disadvantages = await dispatch (convertRecordFromSheet (toDisadvantage)
-                                                                 ("DISADVANTAGES")
-                                                                 (12))
+    const disadvantages = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                           (lookup_univ)
+                                                           (toDisadvantage)
+                                                           ("DISADVANTAGES")
+                                                           (12))
 
-    const disadvantageSelectOptions =
-      await dispatch (convertRecordL10nRequiredFromSheet (toDisadvantageSelectOption)
-                                                         ("DisadvantagesSelections") (13))
+    const disadvantageSelectOptions = dispatch (l10nRowsMatchUnivToList (lookup_l10n)
+                                                                        (lookup_univ)
+                                                                        (toDisadvantageSelectOption)
+                                                                        ("DisadvantagesSelections")
+                                                                        (13))
 
-    const skills = await dispatch (convertRecordFromSheet (toSkill) ("SKILLS") (14))
+    const skills = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                    (lookup_univ)
+                                                    (toSkill)
+                                                    ("SKILLS")
+                                                    (14))
 
-    const combatTechniques = await dispatch (convertRecordFromSheet (toCombatTechnique)
-                                                                    ("COMBAT_TECHNIQUES")
-                                                                    (15))
+    const combatTechniques = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                              (lookup_univ)
+                                                              (toCombatTechnique)
+                                                              ("COMBAT_TECHNIQUES")
+                                                              (15))
 
-    const spells = await dispatch (convertRecordFromSheet (toSpell) ("SPELLS") (16))
+    const spells = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                    (lookup_univ)
+                                                    (toSpell)
+                                                    ("SPELLS")
+                                                    (16))
 
-    const spellExtensions = await dispatch (convertRecordNoRequiredFromSheet (toSpellExtension)
-                                                                             ("SpellX")
-                                                                             (17))
+    const spellExtensions = dispatch (univRowsMatchL10nToList (lookup_l10n)
+                                                              (lookup_univ)
+                                                              (toSpellExtension)
+                                                              ("SpellX")
+                                                              (17))
 
-    const cantrips = await dispatch (convertRecordFromSheet (toCantrip) ("CANTRIPS") (18))
+    const cantrips = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                      (lookup_univ)
+                                                      (toCantrip)
+                                                      ("CANTRIPS")
+                                                      (18))
 
-    const liturgicalChants = await dispatch (convertRecordFromSheet (toLiturgicalChant)
-                                                                    ("CHANTS")
-                                                                    (19))
+    const liturgicalChants = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                              (lookup_univ)
+                                                              (toLiturgicalChant)
+                                                              ("CHANTS")
+                                                              (19))
 
-    const liturgicalChantExtensions =
-      await dispatch (convertRecordNoRequiredFromSheet (toLiturgicalChantExtension) ("ChantX") (20))
+    const liturgicalChantExtensions = dispatch (univRowsMatchL10nToList (lookup_l10n)
+                                                                        (lookup_univ)
+                                                                        (toLiturgicalChantExtension)
+                                                                        ("ChantX")
+                                                                        (20))
 
-    const blessings = await dispatch (convertRecordFromSheet (toBlessing) ("BLESSINGS") (21))
+    const blessings = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                       (lookup_univ)
+                                                       (toBlessing)
+                                                       ("BLESSINGS")
+                                                       (21))
 
-    const specialAbilities = await dispatch (convertRecordFromSheet (toSpecialAbility)
-                                                                    ("SPECIAL_ABILITIES")
-                                                                    (22))
+    const specialAbilities = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                              (lookup_univ)
+                                                              (toSpecialAbility)
+                                                              ("SPECIAL_ABILITIES")
+                                                              (22))
 
     const specialAbilitySelectOptions =
-      await dispatch (convertRecordL10nRequiredFromSheet (toSpecialAbilitySelectOption)
-                                                         ("SpecialAbilitiesSelections")
-                                                         (23))
+      dispatch (l10nRowsMatchUnivToList (lookup_l10n)
+                                        (lookup_univ)
+                                        (toSpecialAbilitySelectOption)
+                                        ("SpecialAbilitiesSelections")
+                                        (23))
 
-    const itemTemplates = await dispatch (convertRecordFromSheet (toItemTemplate)
-                                                                 ("EQUIPMENT")
-                                                                 (24))
+    const itemTemplates = dispatch (univRowsMatchL10nToMap (lookup_l10n)
+                                                           (lookup_univ)
+                                                           (toItemTemplate)
+                                                           ("EQUIPMENT")
+                                                           (24))
 
     return mapMNamed
       ({
