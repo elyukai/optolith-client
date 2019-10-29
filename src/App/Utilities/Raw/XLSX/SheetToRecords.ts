@@ -100,6 +100,25 @@ export const l10nRowsToMap =
     return res
   }
 
+const joinSheetsWithMatch =
+  (lookup_other: LookupSheet) =>
+  (lookup_main: LookupSheet) =>
+  <A>
+  (f: (other_sheet: List<OrderedMap<string, string>>) =>
+      (main_sheet: OrderedMap<string, string>) => Either<string, Maybe<A>>) =>
+  (sheet_name: string) =>
+    pipe_ (
+      sheet_name,
+      lookup_other,
+      bindF (other_sheet => pipe_ (
+                              sheet_name,
+                              lookup_main,
+                              bindF (mapM (f (other_sheet)))
+                            )),
+      fmap (catMaybes)
+    )
+
+
 export const univRowsMatchL10nToList =
   (lookup_l10n: LookupSheet) =>
   (lookup_univ: LookupSheet) =>
@@ -108,17 +127,7 @@ export const univRowsMatchL10nToList =
   (sheet_name: string) =>
   (phase: number): ReduxAction<Either<string, List<A>>> =>
   dispatch => {
-    const res =
-      pipe_ (
-        sheet_name,
-        lookup_l10n,
-        bindF (l10n => pipe_ (
-                         sheet_name,
-                         lookup_univ,
-                         bindF (mapM (f (l10n)))
-                       )),
-        fmap (catMaybes)
-      )
+    const res = joinSheetsWithMatch (lookup_l10n) (lookup_univ) (f) (sheet_name)
 
     if (isRight (res)) {
       dispatch (setLoadingPhase (phase))
@@ -135,17 +144,7 @@ export const l10nRowsMatchUnivToList =
   (sheet_name: string) =>
   (phase: number): ReduxAction<Either<string, List<A>>> =>
   dispatch => {
-    const res =
-      pipe_ (
-        sheet_name,
-        lookup_univ,
-        bindF (univ => pipe_ (
-                         sheet_name,
-                         lookup_l10n,
-                         bindF (mapM (f (univ)))
-                       )),
-        fmap (catMaybes)
-      )
+    const res = joinSheetsWithMatch (lookup_univ) (lookup_l10n) (f) (sheet_name)
 
     if (isRight (res)) {
       dispatch (setLoadingPhase (phase))
@@ -162,13 +161,8 @@ export const univRowsMatchL10nToMap =
   (sheet_name: string) =>
   (phase: number): ReduxAction<Either<string, OrderedMap<string, Record<A>>>> =>
   dispatch => {
-    const res = fmapF (dispatch (univRowsMatchL10nToList (lookup_l10n)
-                                                         (lookup_univ)
-                                                         (f)
-                                                         (sheet_name)
-                                                         (phase - 1)))
+    const res = fmapF (joinSheetsWithMatch (lookup_l10n) (lookup_univ) (f) (sheet_name))
                       (listToMapById)
-
 
     if (isRight (res)) {
       dispatch (setLoadingPhase (phase))
