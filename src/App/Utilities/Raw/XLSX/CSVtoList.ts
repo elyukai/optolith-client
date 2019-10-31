@@ -53,7 +53,7 @@ export const csvToList =
               pipe_ (
                 header,
                 imap<string, Pair<number, string>> (Pair),
-                filter (x => emptyColRegex .test (snd (x)))
+                filter (x => !emptyColRegex .test (snd (x)))
               )
 
             if (flength (valid_headers) === 0) {

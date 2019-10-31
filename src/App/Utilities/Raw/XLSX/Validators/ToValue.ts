@@ -150,6 +150,12 @@ export const mensureMapStringPred =
     mensureMap (Expect.Maybe (type))
                (bindF<string, string> (ensure (pred)))
 
+export const mensureMapStringRegexp =
+  (r: RegExp) =>
+  (type: string) =>
+    mensureMap (Expect.Maybe (type))
+               (bindF<string, string> (ensure (x => r .test (x))))
+
 export const mensureMapNonEmptyStringList =
   (del: string) =>
     mensureMapList (del)

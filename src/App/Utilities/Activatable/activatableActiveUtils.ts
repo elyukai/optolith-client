@@ -21,9 +21,12 @@ import { ActivatableActivationValidation } from "../../Models/View/ActivatableAc
 import { ActivatableCombinedName } from "../../Models/View/ActivatableCombinedName";
 import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../../Models/View/ActivatableNameCost";
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
+import { Advantage } from "../../Models/Wiki/Advantage";
+import { Disadvantage } from "../../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable, WikiEntryByCategory, WikiEntryRecordByCategory } from "../../Models/Wiki/wikiTypeHelpers";
+import { WikiEntryByCategory, WikiEntryRecordByCategory } from "../../Models/Wiki/wikiTypeHelpers";
 import { convertPerTierCostToFinalCost, getCost } from "../AdventurePoints/activatableCostUtils";
 import { pipe_ } from "../pipe";
 import { getIsRemovalOrChangeDisabled } from "./activatableActiveValidationUtils";
@@ -43,18 +46,26 @@ export const getActivatableHeroSliceByCategory =
     ? HeroModel.A.disadvantages (hero)
     : HeroModel.A.specialAbilities (hero)
 
+type ActivatableWikiSliceByCategory<A extends ActivatableCategory> =
+  A extends Categories.ADVANTAGES
+  ? Record<Advantage>
+  : A extends Categories.ADVANTAGES
+  ? Record<Disadvantage>
+  : Record<SpecialAbility>
+
 /**
  * Takes an Activatable category and a hero and returns the state slice matching
  * the passed category.
  */
 export const getActivatableWikiSliceByCategory =
-  (category: ActivatableCategory) =>
-  (wiki: WikiModelRecord): OrderedMap<string, Activatable> =>
+  <A extends ActivatableCategory>
+  (category: A) =>
+  (wiki: WikiModelRecord): OrderedMap<string, ActivatableWikiSliceByCategory<A>> =>
     category === Categories.ADVANTAGES
-    ? WikiModel.A.advantages (wiki)
+    ? WikiModel.A.advantages (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
     : category === Categories.DISADVANTAGES
-    ? WikiModel.A.disadvantages (wiki)
-    : WikiModel.A.specialAbilities (wiki)
+    ? WikiModel.A.disadvantages (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
+    : WikiModel.A.specialAbilities (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
 
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing

@@ -43,6 +43,7 @@ import { toItemTemplate } from "./XLSX/Entries/toItemTemplate";
 import { toL10n } from "./XLSX/Entries/toL10n";
 import { toLiturgicalChant } from "./XLSX/Entries/toLiturgicalChant";
 import { toLiturgicalChantExtension } from "./XLSX/Entries/toLiturgicalChantExtension";
+import { toMagicalTradition } from "./XLSX/Entries/toMagicalTradition";
 import { toProfession } from "./XLSX/Entries/toProfession";
 import { toProfessionVariant } from "./XLSX/Entries/toProfessionVariant";
 import { toRace } from "./XLSX/Entries/toRace";
@@ -52,7 +53,7 @@ import { toSpecialAbility } from "./XLSX/Entries/toSpecialAbility";
 import { toSpecialAbilitySelectOption } from "./XLSX/Entries/toSpecialAbilitySelectOption";
 import { toSpell } from "./XLSX/Entries/toSpell";
 import { toSpellExtension } from "./XLSX/Entries/toSpellExtension";
-import { l10nRowsMatchUnivToList, l10nRowsToMap, univRowsMatchL10nToList, univRowsMatchL10nToMap } from "./XLSX/SheetToRecords";
+import { l10nRowsMatchUnivToList, l10nRowsToMap, univRowsMatchL10nToList, univRowsMatchL10nToMap, univRowsToMap } from "./XLSX/SheetToRecords";
 import { mapMNamed } from "./XLSX/Validators/Generic";
 import { readXLSX } from "./XLSX/XLSXtoCSV";
 
@@ -151,143 +152,154 @@ const parseWorkbooks =
 
     const books = dispatch (l10nRowsToMap (lookup_l10n) (toBook) ("BOOKS") (2))
 
+    const magicalTraditions = dispatch (univRowsToMap (lookup_univ)
+                                                      (toMagicalTradition)
+                                                      ("MagicalTraditions")
+                                                      (3))
+
+    // const blessedTraditions = dispatch (univRowsToMap (lookup_univ)
+    //                                                   (toMagicalTradition)
+    //                                                   ("BlessedTraditions")
+    //                                                   (4))
+
     const experienceLevels = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                               (lookup_univ)
                                                               (toExperienceLevel)
                                                               ("EXPERIENCE_LEVELS")
-                                                              (3))
+                                                              (5))
 
     const races = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                    (lookup_univ)
                                                    (toRace)
                                                    ("RACES")
-                                                   (4))
+                                                   (6))
 
     const raceVariants = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                           (lookup_univ)
                                                           (toRaceVariant)
                                                           ("RACE_VARIANTS")
-                                                          (5))
+                                                          (7))
 
     const cultures = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                       (lookup_univ)
                                                       (toCulture)
                                                       ("CULTURES")
-                                                      (6))
+                                                      (8))
 
     const professions = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                          (lookup_univ)
                                                          (toProfession)
                                                          ("PROFESSIONS")
-                                                         (7))
+                                                         (9))
 
     const professionVariants = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                                 (lookup_univ)
                                                                 (toProfessionVariant)
                                                                 ("PROFESSION_VARIANTS")
-                                                                (8))
+                                                                (10))
 
     const attributes = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                         (lookup_univ)
                                                         (toAttribute)
                                                         ("ATTRIBUTES")
-                                                        (9))
+                                                        (11))
 
     const advantages = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                         (lookup_univ)
                                                         (toAdvantage)
                                                         ("ADVANTAGES")
-                                                        (10))
+                                                        (12))
 
     const advantageSelectOptions = dispatch (l10nRowsMatchUnivToList (lookup_l10n)
                                                                      (lookup_univ)
                                                                      (toAdvantageSelectOption)
                                                                      ("AdvantagesSelections")
-                                                                     (11))
+                                                                     (13))
 
     const disadvantages = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                            (lookup_univ)
                                                            (toDisadvantage)
                                                            ("DISADVANTAGES")
-                                                           (12))
+                                                           (14))
 
     const disadvantageSelectOptions = dispatch (l10nRowsMatchUnivToList (lookup_l10n)
                                                                         (lookup_univ)
                                                                         (toDisadvantageSelectOption)
                                                                         ("DisadvantagesSelections")
-                                                                        (13))
+                                                                        (15))
 
     const skills = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                     (lookup_univ)
                                                     (toSkill)
                                                     ("SKILLS")
-                                                    (14))
+                                                    (16))
 
     const combatTechniques = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                               (lookup_univ)
                                                               (toCombatTechnique)
                                                               ("COMBAT_TECHNIQUES")
-                                                              (15))
+                                                              (17))
 
     const spells = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                     (lookup_univ)
                                                     (toSpell)
                                                     ("SPELLS")
-                                                    (16))
+                                                    (18))
 
     const spellExtensions = dispatch (univRowsMatchL10nToList (lookup_l10n)
                                                               (lookup_univ)
                                                               (toSpellExtension)
                                                               ("SpellX")
-                                                              (17))
+                                                              (19))
 
     const cantrips = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                       (lookup_univ)
                                                       (toCantrip)
                                                       ("CANTRIPS")
-                                                      (18))
+                                                      (20))
 
     const liturgicalChants = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                               (lookup_univ)
                                                               (toLiturgicalChant)
                                                               ("CHANTS")
-                                                              (19))
+                                                              (21))
 
     const liturgicalChantExtensions = dispatch (univRowsMatchL10nToList (lookup_l10n)
                                                                         (lookup_univ)
                                                                         (toLiturgicalChantExtension)
                                                                         ("ChantX")
-                                                                        (20))
+                                                                        (22))
 
     const blessings = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                        (lookup_univ)
                                                        (toBlessing)
                                                        ("BLESSINGS")
-                                                       (21))
+                                                       (23))
 
     const specialAbilities = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                               (lookup_univ)
                                                               (toSpecialAbility)
                                                               ("SPECIAL_ABILITIES")
-                                                              (22))
+                                                              (24))
 
     const specialAbilitySelectOptions =
       dispatch (l10nRowsMatchUnivToList (lookup_l10n)
                                         (lookup_univ)
                                         (toSpecialAbilitySelectOption)
                                         ("SpecialAbilitiesSelections")
-                                        (23))
+                                        (25))
 
     const itemTemplates = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                            (lookup_univ)
                                                            (toItemTemplate)
                                                            ("EQUIPMENT")
-                                                           (24))
+                                                           (26))
 
     return mapMNamed
       ({
         l10n,
         books,
+        magicalTraditions,
         experienceLevels,
         races,
         raceVariants,
@@ -335,6 +347,7 @@ const parseWorkbooks =
                     liturgicalChants: rs.liturgicalChants,
                     blessings: rs.blessings,
                     itemTemplates: rs.itemTemplates,
+                    magicalTraditions: rs.magicalTraditions,
                   }),
                   over (WikiModelL.professions)
                       (insert<string> (ProfessionId.CustomProfession)

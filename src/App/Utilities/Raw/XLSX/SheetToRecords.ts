@@ -35,6 +35,16 @@ type JoinL10nRow<A> =
   (l10n_row: OrderedMap<string, string>) => Either<string, A>
 
 /**
+ * `type JoinUnivRow :: Map String String -> Either String a`
+ *
+ * A converting function that takes a row from the current L10n sheet and
+ * converts into a `Right` Record. In case of any error, a `Left` is returned,
+ * containing the error message.
+ */
+type JoinUnivRow<A> =
+  (univ_row: OrderedMap<string, string>) => Either<string, A>
+
+/**
  * `type JoinUnivRowWithMatching :: [Map String String] -> Map String String -> Either String a`
  *
  * A converting function that takes a row from the current universal sheet and
@@ -67,10 +77,22 @@ type JoinL10nRowWithMatchingUniv<A> =
  */
 type LookupSheet = (sheet_id: string) => Either<string, List<OrderedMap<string, string>>>
 
+const joinSheet =
+  (lookup_sheet: LookupSheet) =>
+  <A extends RecordWithId>
+  (f: (row: OrderedMap<string, string>) => Either<string, Record<A>>) =>
+  (sheet_name: string) =>
+    pipe_ (
+      sheet_name,
+      lookup_sheet,
+      bindF (mapM (f)),
+      fmap (listToMapById)
+    )
+
 /**
- * `l10nRowToRecord :: RecordWithId a => LookupSheet -> JoinL10nRow a -> String -> Int -> Action (Either String (OrderedMap String a))`
+ * `l10nRowsToMap :: RecordWithId a => LookupSheet -> JoinL10nRow a -> String -> Int -> Action (Either String (OrderedMap String a))`
  *
- * `l10nRowToRecord lookup_l10n make sheet_name phase` takes a
+ * `l10nRowsToMap lookup_l10n make sheet_name phase` takes a
  * function to lookup a sheet from l10n table, a conversion function, the
  * required sheet's name and the phase. If any error occurs, which
  * is represented by a returned `Left` from `make`, the `Left` is returned by
@@ -85,13 +107,34 @@ export const l10nRowsToMap =
   (sheet_name: string) =>
   (phase: number): ReduxAction<Either<string, OrderedMap<string, Record<A>>>> =>
   dispatch => {
-    const res =
-      pipe_ (
-        sheet_name,
-        lookup_l10n,
-        bindF (mapM (f)),
-        fmap (listToMapById)
-      )
+    const res = joinSheet (lookup_l10n) (f) (sheet_name)
+
+    if (isRight (res)) {
+      dispatch (setLoadingPhase (phase))
+    }
+
+    return res
+  }
+
+/**
+ * `univRowsToMap :: RecordWithId a => LookupSheet -> JoinUnivRow a -> String -> Int -> Action (Either String (OrderedMap String a))`
+ *
+ * `univRowsToMap lookup_univ make sheet_name phase` takes a
+ * function to lookup a sheet from univ table, a conversion function, the
+ * required sheet's name and the phase. If any error occurs, which
+ * is represented by a returned `Left` from `make`, the `Left` is returned by
+ * this function, too. Otherwise, the loading phase is set to `phase` and the
+ * `Right` of the map of created records is returned. It is used to make records
+ * that only depend on univ values, no language-specific values.
+ */
+export const univRowsToMap =
+  (lookup_univ: LookupSheet) =>
+  <A extends RecordWithId>
+  (f: JoinUnivRow<Record<A>>) =>
+  (sheet_name: string) =>
+  (phase: number): ReduxAction<Either<string, OrderedMap<string, Record<A>>>> =>
+  dispatch => {
+    const res = joinSheet (lookup_univ) (f) (sheet_name)
 
     if (isRight (res)) {
       dispatch (setLoadingPhase (phase))

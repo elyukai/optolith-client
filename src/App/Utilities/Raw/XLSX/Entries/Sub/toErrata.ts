@@ -12,7 +12,8 @@ import { lookupKeyValid, TableType } from "../../Validators/Generic";
 import { mensureMapPairListOptional } from "../../Validators/ToValue";
 
 const isISODate =
-  (x: string) => /[1-9]\d{3}-(?:0[1-9]|1[0-2])-\d(?:0[1-9]|[12][0-9]|3[01])/u .test (x)
+  (x: string) => /\d{4}-\d{2}-\d{2}/u .test (x)
+  // (x: string) => /[1-9]\d{3}-(?:0[1-9]|1[0-2])-\d(?:0[1-9]|[12][0-9]|3[01])/u .test (x)
 
 export const toErrata: (lookup_l10n: (key: string) => Maybe<string>) =>
                        Either<string, List<Record<Erratum>>> =
