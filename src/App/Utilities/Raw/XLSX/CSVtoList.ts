@@ -1,11 +1,13 @@
 import { bindF, Either, Left, maybeToEither, Right } from "../../../../Data/Either";
+import { equals } from "../../../../Data/Eq";
+import { ident } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
-import { cons, empty, filter, findIndex, flength, head, ifoldr, lines, List, map, notNull, notNullStr, replaceStr, splitOn, take, uncons, zip } from "../../../../Data/List";
-import { ensure, fromMaybe_, mapMaybe } from "../../../../Data/Maybe";
+import { any, cons, empty, filter, flength, head, ifilter, ifoldr, imap, lines, List, map, notNull, notNullStr, replaceStr, splitOn, uncons, zip } from "../../../../Data/List";
+import { ensure, mapMaybe } from "../../../../Data/Maybe";
 import { fromList, OrderedMap } from "../../../../Data/OrderedMap";
 import { show } from "../../../../Data/Show";
 import { fst, Pair, second, snd } from "../../../../Data/Tuple";
-import { pipe } from "../../pipe";
+import { pipe, pipe_ } from "../../pipe";
 
 // const file = xlsx.readFile(`${dataSrcPath}TDE5.xlsx`);
 // const allWorksheets = file.SheetNames.reduce((m, name) => {
@@ -17,7 +19,7 @@ type Data = List<OrderedMap<string, string>>
 
 export const CsvColumnDelimiter = ";;"
 
-const emptyColRegex = /(?:^(?:Spalte|Column)\d+$)|(?:^_)/u
+const emptyColRegex = /(?:^(?:Spalte|Column)\d+$)|(?:^_)|(?:^$)/u
 
 /**
  * Converts a CSV string into a list of entries. If `check` is `True`, the line
@@ -47,30 +49,36 @@ export const csvToList =
 
             const header_length = flength (header)
 
-            const valid_header_length =
-              fromMaybe_ (() => flength (header))
-                         (findIndex ((x: string) => x .length === 0 || emptyColRegex .test (x))
-                                    (header))
+            const valid_headers =
+              pipe_ (
+                header,
+                imap<string, Pair<number, string>> (Pair),
+                filter (x => emptyColRegex .test (snd (x)))
+              )
 
-            const valid_header = take (valid_header_length) (header)
-
-            if (valid_header_length === 0) {
+            if (flength (valid_headers) === 0) {
               return Left (`csvToList: empty worksheet, table header: \n${show (header)}`)
             }
 
             const body = snd (headerAndBody)
 
-            return ifoldr<List<string>, Either<string, Data>>
-              (i => l =>
-                bindF (
-                  acc => flength (l) === header_length
-                    ? Right (cons (acc)
-                                  (fromList (mapMaybe (decode)
-                                                      (zip (valid_header) (l)))))
-                    : Left (`csvToList: Line ${i + 1} has different length than header. Check if there are any newline characters ("\\n") on that line. Source: ${show (l)}`)
-                ))
-              (Right (empty))
-              (body)
+            const filterValues =
+              ifilter (i => (_: string) => any<Pair<number, string>> (pipe (fst, equals (i)))
+                                                                     (valid_headers))
+
+            const valid_header = map (snd) (valid_headers)
+
+            return ifoldr (i => (values: List<string>): ident<Either<string, Data>> =>
+                            bindF (
+                              acc => flength (values) === header_length
+                                ? Right (cons (acc)
+                                              (fromList (mapMaybe (decode)
+                                                                  (zip (valid_header)
+                                                                       (filterValues (values))))))
+                                : Left (`csvToList: Line ${i + 1} has different length than header. Check if there are any newline characters ("\\n") on that line. Source: ${show (values)}`)
+                            ))
+                          (Right (empty))
+                          (body)
           })
   )
 
