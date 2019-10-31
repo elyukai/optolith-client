@@ -118,7 +118,18 @@ const joinSheetsWithMatch =
       fmap (catMaybes)
     )
 
-
+/**
+ * `univRowsMatchL10nToList :: LookupSheet -> LookupSheet -> JoinUnivRowWithMatchingL10n a -> String -> Int -> Action (Either String [a])`
+ *
+ * `l10nRowToRecord lookup_l10n lookup_univ make sheet_name phase` takes a
+ * function to lookup a sheet from l10n table, a function to lookup a sheet from
+ * univ table, a conversion function, the required sheet's name and the phase.
+ * If any error occurs, which is represented by a returned `Left` from `make`,
+ * the `Left` is returned by this function, too. Otherwise, the loading phase is
+ * set to `phase` and the `Right` of the list of created elements is returned.
+ * It is used to make elements that require a row in univ table to work, like
+ * spell extensions.
+ */
 export const univRowsMatchL10nToList =
   (lookup_l10n: LookupSheet) =>
   (lookup_univ: LookupSheet) =>
@@ -136,23 +147,18 @@ export const univRowsMatchL10nToList =
     return res
   }
 
-export const l10nRowsMatchUnivToList =
-  (lookup_l10n: LookupSheet) =>
-  (lookup_univ: LookupSheet) =>
-  <A>
-  (f: JoinL10nRowWithMatchingUniv<A>) =>
-  (sheet_name: string) =>
-  (phase: number): ReduxAction<Either<string, List<A>>> =>
-  dispatch => {
-    const res = joinSheetsWithMatch (lookup_univ) (lookup_l10n) (f) (sheet_name)
-
-    if (isRight (res)) {
-      dispatch (setLoadingPhase (phase))
-    }
-
-    return res
-  }
-
+/**
+ * `univRowsMatchL10nToList :: RecordWithId a => LookupSheet -> LookupSheet -> JoinUnivRowWithMatchingL10n a -> String -> Int -> Action (Either String (OrderedMap String a))`
+ *
+ * `l10nRowToRecord lookup_l10n lookup_univ make sheet_name phase` takes a
+ * function to lookup a sheet from l10n table, a function to lookup a sheet from
+ * univ table, a conversion function, the required sheet's name and the phase.
+ * If any error occurs, which is represented by a returned `Left` from `make`,
+ * the `Left` is returned by this function, too. Otherwise, the loading phase is
+ * set to `phase` and the `Right` of the map of created records is returned. It
+ * is used to make records that require a row in univ table to work, like
+ * special abilities or skills.
+ */
 export const univRowsMatchL10nToMap =
   (lookup_l10n: LookupSheet) =>
   (lookup_univ: LookupSheet) =>
@@ -163,6 +169,35 @@ export const univRowsMatchL10nToMap =
   dispatch => {
     const res = fmapF (joinSheetsWithMatch (lookup_l10n) (lookup_univ) (f) (sheet_name))
                       (listToMapById)
+
+    if (isRight (res)) {
+      dispatch (setLoadingPhase (phase))
+    }
+
+    return res
+  }
+
+/**
+ * `univRowsMatchL10nToList :: LookupSheet -> LookupSheet -> JoinUnivRowWithMatchingL10n a -> String -> Int -> Action (Either String [a])`
+ *
+ * `l10nRowToRecord lookup_l10n lookup_univ make sheet_name phase` takes a
+ * function to lookup a sheet from l10n table, a function to lookup a sheet from
+ * univ table, a conversion function, the required sheet's name and the phase.
+ * If any error occurs, which is represented by a returned `Left` from `make`,
+ * the `Left` is returned by this function, too. Otherwise, the loading phase is
+ * set to `phase` and the `Right` of the list of created elements is returned.
+ * It is used to make elements that require a row in l10n table to work, where
+ * the univ part is optional, like for advantage selections.
+ */
+export const l10nRowsMatchUnivToList =
+  (lookup_l10n: LookupSheet) =>
+  (lookup_univ: LookupSheet) =>
+  <A>
+  (f: JoinL10nRowWithMatchingUniv<A>) =>
+  (sheet_name: string) =>
+  (phase: number): ReduxAction<Either<string, List<A>>> =>
+  dispatch => {
+    const res = joinSheetsWithMatch (lookup_univ) (lookup_l10n) (f) (sheet_name)
 
     if (isRight (res)) {
       dispatch (setLoadingPhase (phase))
