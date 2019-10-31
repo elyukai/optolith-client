@@ -362,6 +362,7 @@ const parseWorkbooks =
                                               name: Skill.A.name (x),
                                               cost: Just (Skill.A.ic (x)),
                                               src: Skill.A.src (x),
+                                              errata: Nothing,
                                             }))
                               ))
                               (elems (WikiModel.A.skills (w)))
@@ -374,6 +375,7 @@ const parseWorkbooks =
                                                   applications: Just (Skill.A.applications (x)),
                                                   applicationInput: Skill.A.applicationsInput (x),
                                                   src: Skill.A.src (x),
+                                                  errata: Nothing,
                                                 }))
                           (elems (WikiModel.A.skills (w)))
 
@@ -452,6 +454,7 @@ const skillishToSelectOption =
       name: Skill.AL.name (r),
       cost: member ("ic") (r) ? Just (Skill.AL.ic (r)) : Nothing,
       src: Skill.AL.src (r),
+      errata: Nothing,
     })
 
 const mapCatToSelectOptionsPred =
@@ -471,6 +474,7 @@ const mapCatToSelectOptionsPred =
                   name: Skill.AL.name (r),
                   cost: member ("ic") (r) ? Just (Skill.AL.ic (r)) : Nothing,
                   src: Skill.AL.src (r),
+                  errata: Nothing,
                 }))
               )),
               append

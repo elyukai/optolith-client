@@ -16,6 +16,7 @@ import { mergeRowsById } from "../MergeRows";
 import { maybePrefix, modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
 import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapNumEnumList, mensureMapPairList, mensureMapStringPredListOptional } from "../Validators/ToValue";
+import { toErrata } from "./Sub/toErrata";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const exception =
@@ -160,6 +161,8 @@ export const toCulture =
 
       const esrc = toSourceLinks (lookup_l10n)
 
+      const eerrata = toErrata (lookup_l10n)
+
       // Return error or result
 
       return mapMNamed
@@ -185,6 +188,7 @@ export const toCulture =
           eculturalPackageCost,
           eculturalPackageSkills,
           esrc,
+          eerrata,
         })
         (rs => {
           const mundaneAll = rs.ecommonMundaneProfessionsAll
@@ -263,6 +267,7 @@ export const toCulture =
                 (rs.eculturalPackageSkills),
 
             src: rs.esrc,
+            errata: rs.eerrata,
 
             category: Nothing,
           })

@@ -10,6 +10,7 @@ import { mergeRowsByIdAndMainIdUnivOpt } from "../MergeRows";
 import { modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
 import { mensureMapBoolean, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional } from "../Validators/ToValue";
+import { toErrata } from "./Sub/toErrata";
 import { toSpellPrerequisites } from "./Sub/toPrerequisites";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
@@ -51,6 +52,8 @@ export const toActivatableSelectOption =
 
         const esrc = toSourceLinks (lookup_l10n)
 
+        const eerrata = toErrata (lookup_l10n)
+
         const eisSecret = checkUnivBoolean ("isSecret")
 
         const elanguages = checkUnivNaturalNumberListOptional ("languages")
@@ -79,6 +82,7 @@ export const toActivatableSelectOption =
             ecost,
             eprerequisites,
             esrc,
+            eerrata,
             eisSecret,
             elanguages,
             econtinent,
@@ -104,6 +108,7 @@ export const toActivatableSelectOption =
               gr: rs.egr,
               level: rs.elevel,
               src: rs.esrc,
+              errata: rs.eerrata,
             })
           ))
       })

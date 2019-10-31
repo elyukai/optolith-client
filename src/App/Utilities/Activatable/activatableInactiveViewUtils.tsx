@@ -10,6 +10,7 @@ import { dec, gte, max, min, multiply, negate } from "../../../Data/Num";
 import { lookupF } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple";
+import { Categories } from "../../Constants/Categories";
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -35,7 +36,6 @@ import { pipe, pipe_ } from "../pipe";
 import { isNumber, misNumberM, misStringM } from "../typeCheckUtils";
 import { getWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
 import { getActiveSelectionsMaybe, getSelectOptionCost } from "./selectionUtils";
-import { Categories } from "../../Constants/Categories";
 
 interface PropertiesAffectedByState {
   "@@name": "PropertiesAffectedByState"
@@ -133,6 +133,7 @@ const getIdSpecificAffectedAndDispatchPropsForMusicTraditions =
                                     id,
                                     name,
                                     src: pipe_ (inactive_entry, IAA.wikiEntry, SAAL.src),
+                                    errata: Nothing,
                                   }))
                          ))
                          (music_tradition_ids)),
@@ -428,6 +429,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                                   id: AA.id (a),
                                   name: AA.name (a),
                                   src,
+                                  errata: Nothing,
                                 })))
               ),
             inputDescription: bind (x) (SOA.applicationInput),
@@ -498,6 +500,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                                            id: i + 1,
                                            name,
                                            src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
+                                           errata: Nothing,
                                          })))
               ),
           })
@@ -523,6 +526,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                                 id: AA.id (e),
                                 name: AA.name (e),
                                 src: IAA_.src (entry),
+                                errata: Nothing,
                               })))
             )
 

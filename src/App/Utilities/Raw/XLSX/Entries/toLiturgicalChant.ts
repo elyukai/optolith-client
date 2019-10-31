@@ -11,6 +11,7 @@ import { mergeRowsById } from "../MergeRows";
 import { modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
 import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapNumEnum, mensureMapNumEnumList, mensureMapNumEnumListOptional, mensureMapStringPredSetOptional } from "../Validators/ToValue";
+import { toErrata } from "./Sub/toErrata";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 export const toLiturgicalChant =
@@ -111,6 +112,8 @@ export const toLiturgicalChant =
 
       const esrc = toSourceLinks (lookup_l10n)
 
+      const eerrata = toErrata (lookup_l10n)
+
       // Return error or result
 
       return mapMNamed
@@ -133,6 +136,7 @@ export const toLiturgicalChant =
           edurationNoMod,
           egr,
           esrc,
+          eerrata,
         })
         (rs => LiturgicalChant ({
           id: prefixId (IdPrefixes.LITURGICAL_CHANTS) (id),
@@ -159,6 +163,7 @@ export const toLiturgicalChant =
           target: fromMaybe ("") (target),
           gr: rs.egr,
           src: rs.esrc,
+          errata: rs.eerrata,
           category: Nothing,
         }))
     })

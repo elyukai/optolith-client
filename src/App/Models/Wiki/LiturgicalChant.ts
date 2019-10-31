@@ -4,6 +4,7 @@ import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { Aspect, BlessedGroup, BlessedTradition } from "../../Constants/Groups";
+import { Erratum } from "./sub/Errata";
 import { SourceLink } from "./sub/SourceLink";
 import { CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
 
@@ -34,6 +35,7 @@ export interface LiturgicalChant {
   durationNoMod: boolean
   target: string
   src: List<Record<SourceLink>>
+  errata: List<Record<Erratum>>
 }
 
 export const LiturgicalChant =
@@ -64,6 +66,7 @@ export const LiturgicalChant =
                 durationNoMod: false,
                 target: "",
                 src: List.empty,
+                errata: List (),
               })
 
 export const LiturgicalChantL = makeLenses (LiturgicalChant)

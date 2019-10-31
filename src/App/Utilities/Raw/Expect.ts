@@ -6,6 +6,7 @@ export const Expect = Object.freeze ({
   Float: "Float",
   Rational: "Rational",
   Boolean: "Bool",
+  Date: "Date",
   Maybe: (x: string) => `Maybe ${x}`,
   List: (x: string) => `[${x}]`,
   Array: (x: string) => `[${x}]`,

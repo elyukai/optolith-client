@@ -8,6 +8,7 @@ import { mergeRowsById } from "../MergeRows";
 import { modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
 import { mensureMapNatural, mensureMapNaturalList, mensureMapNonEmptyString } from "../Validators/ToValue";
+import { toErrata } from "./Sub/toErrata";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 export const toCombatTechnique =
@@ -41,6 +42,8 @@ export const toCombatTechnique =
 
       const esrc = toSourceLinks (lookup_l10n)
 
+      const eerrata = toErrata (lookup_l10n)
+
       // Return error or result
 
       return mapMNamed
@@ -51,6 +54,7 @@ export const toCombatTechnique =
           ebpr,
           egr,
           esrc,
+          eerrata,
         })
         (rs => CombatTechnique ({
           id: prefixId (IdPrefixes.COMBAT_TECHNIQUES) (id),
@@ -60,6 +64,7 @@ export const toCombatTechnique =
           bpr: rs.ebpr,
           special: fmap (modifyNegIntNoBreak) (special),
           src: rs.esrc,
+          errata: rs.eerrata,
           gr: rs.egr,
           category: Nothing,
         }))

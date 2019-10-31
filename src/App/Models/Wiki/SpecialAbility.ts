@@ -26,7 +26,7 @@ export const SpecialAbilityCombatTechniques =
               <SpecialAbilityCombatTechniques> ({
                 group: SpecialAbilityCombatTechniqueGroup.None,
                 explicitIds: List.empty,
-                customText: Nothing
+                customText: Nothing,
               })
 
 export interface SpecialAbility extends ActivatableBase {
@@ -67,6 +67,7 @@ export const SpecialAbility =
                 select: Nothing,
                 gr: 0,
                 src: List.empty,
+                errata: List (),
                 extended: Nothing,
                 nameInWiki: Nothing,
                 subgr: Nothing,

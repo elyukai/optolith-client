@@ -11,6 +11,7 @@ import { maybePrefix, modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
 import { mensureMapIntegerOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalListOptional, mensureMapNonEmptyString } from "../Validators/ToValue";
 import { stringToDiceList } from "./toRace";
+import { toErrata } from "./Sub/toErrata";
 
 export const toRaceVariant =
   mergeRowsById
@@ -79,6 +80,8 @@ export const toRaceVariant =
                        (lookup_univ)
                        ("sizeRandom")
 
+      const eerrata = toErrata (lookup_l10n)
+
       // Return error or result
 
       return mapMNamed
@@ -93,6 +96,7 @@ export const toRaceVariant =
           eeyeColors,
           esizeBase,
           esizeRandom,
+          eerrata,
         })
         (rs => RaceVariant ({
           id: prefixId (IdPrefixes.RACE_VARIANTS) (id),
@@ -134,6 +138,8 @@ export const toRaceVariant =
                       sides: snd (p),
                     })))
                   (rs.esizeRandom),
+
+          errata: rs.eerrata,
 
           category: Nothing,
         }))

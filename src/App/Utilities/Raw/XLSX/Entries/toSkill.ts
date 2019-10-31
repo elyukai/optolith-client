@@ -17,9 +17,10 @@ import { modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
 import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapPairList, mensureMapPairListOptional, mensureMapStringPred } from "../Validators/ToValue";
 import { isRawRequiringActivatable } from "./Prerequisites/RawActivatableRequirement";
+import { toErrata } from "./Sub/toErrata";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
-const encumbrance = /true|false|maybe/
+const encumbrance = /true|false|maybe/u
 
 const checkEncumbrance =
   (x: string) => encumbrance .test (x)
@@ -197,6 +198,8 @@ export const toSkill =
 
       const esrc = toSourceLinks (lookup_l10n)
 
+      const eerrata = toErrata (lookup_l10n)
+
       // Return error or result
 
       return mapMNamed
@@ -213,6 +216,7 @@ export const toSkill =
           ebotch,
           egr,
           esrc,
+          eerrata,
         })
         (rs => Skill ({
           id: prefixId (IdPrefixes.SKILLS) (id),
@@ -231,6 +235,7 @@ export const toSkill =
           botch: modifyNegIntNoBreak (rs.ebotch),
           gr: rs.egr,
           src: rs.esrc,
+          errata: rs.eerrata,
           category: Nothing,
         }))
     })

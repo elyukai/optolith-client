@@ -7,6 +7,7 @@ import { mergeRowsById } from "../MergeRows";
 import { modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
 import { mensureMapNonEmptyString, mensureMapNumEnumList } from "../Validators/ToValue";
+import { toErrata } from "./Sub/toErrata";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 export const toBlessing =
@@ -41,6 +42,8 @@ export const toBlessing =
 
       const esrc = toSourceLinks (lookup_l10n)
 
+      const eerrata = toErrata (lookup_l10n)
+
       // Return error or result
 
       return mapMNamed
@@ -52,6 +55,7 @@ export const toBlessing =
           eduration,
           etarget,
           esrc,
+          eerrata,
         })
         (rs => Blessing ({
           id: prefixId (IdPrefixes.BLESSINGS) (id),
@@ -62,6 +66,7 @@ export const toBlessing =
           duration: rs.eduration,
           target: rs.etarget,
           src: rs.esrc,
+          errata: rs.eerrata,
           category: Nothing,
         }))
     })

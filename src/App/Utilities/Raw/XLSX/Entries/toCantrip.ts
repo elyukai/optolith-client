@@ -7,6 +7,7 @@ import { mergeRowsById } from "../MergeRows";
 import { modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
 import { mensureMapNaturalList, mensureMapNonEmptyString, mensureMapNumEnum } from "../Validators/ToValue";
+import { toErrata } from "./Sub/toErrata";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 export const toCantrip =
@@ -47,6 +48,8 @@ export const toCantrip =
 
       const esrc = toSourceLinks (lookup_l10n)
 
+      const eerrata = toErrata (lookup_l10n)
+
       // Return error or result
 
       return mapMNamed
@@ -59,6 +62,7 @@ export const toCantrip =
           eduration,
           etarget,
           esrc,
+          eerrata,
         })
         (rs => Cantrip ({
           id: prefixId (IdPrefixes.CANTRIPS) (id),
@@ -71,6 +75,7 @@ export const toCantrip =
           target: rs.etarget,
           note,
           src: rs.esrc,
+          errata: rs.eerrata,
           category: Nothing,
         }))
     })

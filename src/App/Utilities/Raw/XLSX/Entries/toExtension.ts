@@ -8,6 +8,7 @@ import { mergeRowsById } from "../MergeRows";
 import { modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
 import { mensureMapNatural, mensureMapNaturalInRange, mensureMapNonEmptyString } from "../Validators/ToValue";
+import { toErrata } from "./Sub/toErrata";
 import { toSpellPrerequisites } from "./Sub/toPrerequisites";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
@@ -44,6 +45,8 @@ export const toExtension =
 
         const esrc = toSourceLinks (lookup_l10n)
 
+        const eerrata = toErrata (lookup_l10n)
+
         // Return error or result
 
         return mapMNamed
@@ -55,6 +58,7 @@ export const toExtension =
             eprerequisites,
             ecost,
             esrc,
+            eerrata,
           })
           (rs => SelectOption ({
             id,
@@ -65,5 +69,6 @@ export const toExtension =
             prerequisites: notNull (rs.eprerequisites) ? Just (rs.eprerequisites) : Nothing,
             cost: Just (rs.ecost),
             src: rs.esrc,
+            errata: rs.eerrata,
           }))
       })

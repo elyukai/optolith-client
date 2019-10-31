@@ -14,10 +14,11 @@ import { mergeRowsById } from "../MergeRows";
 import { modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
 import { mensureMapBoolean, mensureMapFloatOptional, mensureMapIntegerOptional, mensureMapListBindAfterOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalInRange, mensureMapNaturalInRangeOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredOptional } from "../Validators/ToValue";
+import { toErrata } from "./Sub/toErrata";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const primaryAttributeRx =
-  new RegExp (exactR (`${prefixAttr ("[1-8]")}|${prefixAttr ("6_8")}`))
+  new RegExp (exactR (`${prefixAttr ("[1-8]")}|${prefixAttr ("6_8")}`), "u")
 
 const isPrimaryAttributeString = (x: string) => primaryAttributeRx .test (x)
 
@@ -139,6 +140,8 @@ export const toItemTemplate =
 
       const esrc = toSourceLinks (lookup_l10n)
 
+      const eerrata = toErrata (lookup_l10n)
+
       // Return error or result
 
       return mapMNamed
@@ -167,6 +170,7 @@ export const toItemTemplate =
           eadditionalPenalties,
           earmorType,
           esrc,
+          eerrata,
         })
         (rs => ItemTemplate ({
           id: prefixId (IdPrefixes.ITEM_TEMPLATE) (id),
@@ -211,6 +215,7 @@ export const toItemTemplate =
           armorType: rs.earmorType,
           isTemplateLocked: Nothing,
           src: rs.esrc,
+          errata: rs.eerrata,
           forArmorZoneOnly: Nothing,
         }))
     })

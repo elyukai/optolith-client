@@ -14,6 +14,7 @@ import { modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
 import { mensureMapListLengthInRangeOptional, mensureMapNatural, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapNumEnumOptional, mensureMapStringPredListOptional } from "../Validators/ToValue";
 import { toActivatableCost } from "./Sub/toActivatableCost";
+import { toErrata } from "./Sub/toErrata";
 import { toPrerequisites } from "./Sub/toPrerequisites";
 import { toPrerequisitesIndex } from "./Sub/toPrerequisitesIndex";
 import { toSourceLinks } from "./Sub/toSourceLinks";
@@ -142,6 +143,8 @@ export const toSpecialAbility =
 
       const esrc = toSourceLinks (lookup_l10n)
 
+      const eerrata = toErrata (lookup_l10n)
+
       // Return error or result
 
       return mapMNamed
@@ -162,6 +165,7 @@ export const toSpecialAbility =
           eprerequisitesIndex,
           ebrew,
           esrc,
+          eerrata,
         })
         (rs => SpecialAbility ({
           id: prefixId (IdPrefixes.SPECIAL_ABILITIES) (id),
@@ -185,6 +189,7 @@ export const toSpecialAbility =
                                                       applicationInput: Nothing,
                                                       gr: Nothing,
                                                       src: Nothing,
+                                                      errata: Nothing,
                                                     })))
                                                     (rs.eselect),
 
@@ -221,6 +226,7 @@ export const toSpecialAbility =
           brew: rs.ebrew,
 
           src: rs.esrc,
+          errata: rs.eerrata,
 
           category: Nothing,
         }))

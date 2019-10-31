@@ -48,6 +48,7 @@ import { isRawSecondCombatTechniquesSelection } from "./ProfessionSelections/Raw
 import { isRawSkillsSelection } from "./ProfessionSelections/RawSkillsSelection";
 import { isRawSpecializationSelection } from "./ProfessionSelections/RawSpecializationSelection";
 import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrainKnowledgeSelection";
+import { toErrata } from "./Sub/toErrata";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const isNotNullObject = (x: Some): x is object => typeof x === "object" && x !== null
@@ -444,13 +445,15 @@ export const toProfession =
 
       const esrc = toSourceLinks (lookup_l10n)
 
+      const eerrata = toErrata (lookup_l10n)
+
       // Return error or result
 
       return mapMNamedPred
         <Record<Profession>>
         (mapTotalPred ("Either ap must be set or isVariantRequired must be true.")
                       (x => isJust (PA.ap (x))
-                            || PA.isVariantRequired (x) && notNull (PA.variants (x))))
+                            || (PA.isVariantRequired (x) && notNull (PA.variants (x)))))
         ({
           ename,
           ecost,
@@ -473,6 +476,7 @@ export const toProfession =
           egr,
           esgr,
           esrc,
+          eerrata,
         })
         (rs => {
           const prerequisites = append (joinMaybeList (rs.eprerequisites))
@@ -584,6 +588,7 @@ export const toProfession =
             subgr: rs.esgr,
 
             src: rs.esrc,
+            errata: rs.eerrata,
 
             category: Nothing,
           })

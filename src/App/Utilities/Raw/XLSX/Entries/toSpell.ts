@@ -11,6 +11,7 @@ import { mergeRowsById } from "../MergeRows";
 import { modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
 import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalFixedList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapNumEnum, mensureMapNumEnumList, mensureMapStringPredSetOptional } from "../Validators/ToValue";
+import { toErrata } from "./Sub/toErrata";
 import { toSpellPrerequisites } from "./Sub/toPrerequisites";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
@@ -116,6 +117,8 @@ export const toSpell =
 
       const esrc = toSourceLinks (lookup_l10n)
 
+      const eerrata = toErrata (lookup_l10n)
+
       // Return error or result
 
       return mapMNamed
@@ -139,6 +142,7 @@ export const toSpell =
           egr,
           eprerequisites,
           esrc,
+          eerrata,
         })
         (rs => Spell ({
           id: prefixId (IdPrefixes.SPELLS) (id),
@@ -166,6 +170,7 @@ export const toSpell =
           gr: rs.egr,
           prerequisites: rs.eprerequisites,
           src: rs.esrc,
+          errata: rs.eerrata,
           category: Nothing,
         }))
     })

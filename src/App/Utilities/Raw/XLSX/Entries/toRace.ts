@@ -12,6 +12,7 @@ import { mergeRowsById } from "../MergeRows";
 import { maybePrefix, modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyMapValidNatural, lookupKeyMapValidNonEmptyString, lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
 import { mensureMapInteger, mensureMapIntegerOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapPairList, mensureMapPairListOptional } from "../Validators/ToValue";
+import { toErrata } from "./Sub/toErrata";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const stringToAttributeAdjustments =
@@ -176,6 +177,8 @@ export const toRace =
 
       const esrc = toSourceLinks (lookup_l10n)
 
+      const eerrata = toErrata (lookup_l10n)
+
       // Return error or result
 
       return mapMNamed
@@ -206,6 +209,7 @@ export const toRace =
           eweightRandom,
           evariants,
           esrc,
+          eerrata,
         })
         (rs => Race ({
           id: prefixId (IdPrefixes.RACES) (id),
@@ -309,6 +313,7 @@ export const toRace =
             maybePrefix (IdPrefixes.RACE_VARIANTS) (rs.evariants),
 
           src: rs.esrc,
+          errata: rs.eerrata,
 
           category: Nothing,
         }))

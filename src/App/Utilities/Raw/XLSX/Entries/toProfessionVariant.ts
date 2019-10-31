@@ -45,6 +45,7 @@ import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrai
 import { isRemoveRawCombatTechniquesSelection } from "./ProfessionSelections/RemoveRawCombatTechniquesSelection";
 import { isRemoveRawCombatTechniquesSecondSelection } from "./ProfessionSelections/RemoveRawSecondCombatTechniquesSelection";
 import { isRemoveRawSpecializationSelection } from "./ProfessionSelections/RemoveRawSpecializationSelection";
+import { toErrata } from "./Sub/toErrata";
 import { stringToBlessings, stringToDependencies, stringToPrerequisites, stringToSpecialAbilities } from "./toProfession";
 
 const PVSL = ProfessionVariantSelectionsL
@@ -290,6 +291,8 @@ export const toProfessionVariant =
       const concludingText =
         lookup_l10n ("concludingText")
 
+      const eerrata = toErrata (lookup_l10n)
+
       // Return error or result
 
       return mapMNamed
@@ -305,6 +308,7 @@ export const toProfessionVariant =
           espells,
           eliturgicalChants,
           eblessings,
+          eerrata,
         })
         (rs => {
           const is_guild_mage_tradition_add =
@@ -378,6 +382,8 @@ export const toProfessionVariant =
             precedingText: fmap (modifyNegIntNoBreak) (precedingText),
             fullText: fmap (modifyNegIntNoBreak) (fullText),
             concludingText: fmap (modifyNegIntNoBreak) (concludingText),
+
+            errata: rs.eerrata,
 
             category: Nothing,
           })

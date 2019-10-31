@@ -12,11 +12,12 @@ import { modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
 import { mensureMapNatural, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional } from "../Validators/ToValue";
 import { toActivatableCost } from "./Sub/toActivatableCost";
+import { toErrata } from "./Sub/toErrata";
 import { toPrerequisites } from "./Sub/toPrerequisites";
 import { toPrerequisitesIndex } from "./Sub/toPrerequisitesIndex";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
-const category = /[A-Z_]+/
+const category = /[A-Z_]+/u
 
 const checkCategory =
   (x: string) => category .test (x)
@@ -81,6 +82,8 @@ export const toDisadvantage =
 
       const esrc = toSourceLinks (lookup_l10n)
 
+      const eerrata = toErrata (lookup_l10n)
+
       // Return error or result
 
       return mapMNamed
@@ -95,6 +98,7 @@ export const toDisadvantage =
           eprerequisitesIndex,
           egr,
           esrc,
+          eerrata,
         })
         (rs => Disadvantage ({
           id: prefixId (IdPrefixes.DISADVANTAGES) (id),
@@ -117,6 +121,7 @@ export const toDisadvantage =
                                                       applicationInput: Nothing,
                                                       gr: Nothing,
                                                       src: Nothing,
+                                                      errata: Nothing,
                                                     })))
                                                     (rs.eselect),
 
@@ -137,6 +142,7 @@ export const toDisadvantage =
           gr: rs.egr,
 
           src: rs.esrc,
+          errata: rs.eerrata,
 
           category: Nothing,
         }))
