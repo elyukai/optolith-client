@@ -14,6 +14,7 @@ import { SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableDependent, ActivatableDependentL, createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, ActivatableSkillDependentL } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
+import { AttributeDependent, AttributeDependentL } from "../Models/ActiveEntries/AttributeDependent";
 import { SkillDependent, SkillDependentL } from "../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { Advantage } from "../Models/Wiki/Advantage";
@@ -509,6 +510,17 @@ const applyModifications =
                       ProfessionRequireIncreasable.is (r)
                         ? updateEntryDef (x => {
                                            const v = PRIA.value (r)
+
+                                           if (AttributeDependent.is (x)) {
+                                             return pipe_ (
+                                               x,
+                                               over (AttributeDependentL.value)
+                                                    // If the value is already valid for the
+                                                    // prerequisite, do not change it
+                                                    (max (v)),
+                                               Just
+                                             )
+                                           }
 
                                            if (SkillDependent.is (x)) {
                                              return pipe_ (
