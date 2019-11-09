@@ -13,7 +13,7 @@ import { cnst, flip, ident, thrush } from "../../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
 import * as IntMap from "../../../Data/IntMap";
 import { over, set } from "../../../Data/Lens";
-import { consF, countWith, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, subscript } from "../../../Data/List";
+import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, nub, subscript } from "../../../Data/List";
 import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
 import { add, gt, gte, inc, multiply } from "../../../Data/Num";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
@@ -55,7 +55,7 @@ import { isAdditionDisabled } from "./activatableInactiveValidationUtils";
 import { getModifierByActiveLevel } from "./activatableModifierUtils";
 import { countActiveSkillEntries } from "./activatableSkillUtils";
 import { isMaybeActive } from "./isActive";
-import { getActiveSecondarySelections, getActiveSelectionsMaybe, getRequiredSelections } from "./selectionUtils";
+import { getActiveSecondarySelections, getActiveSelections, getActiveSelectionsMaybe, getRequiredSelections } from "./selectionUtils";
 import { getBlessedTradition, getMagicalTraditionsHeroEntries, mapBlessedNumIdToTradId } from "./traditionUtils";
 
 const WA = WikiModel.A
@@ -198,8 +198,6 @@ const getAspectsWith3Gte10 =
                                                 (List.empty)
     )
 
-const is7or8 = elemF<string | number> (List (7, 8))
-
 /**
  * Modifies the select options of specific entries to match current conditions.
  */
@@ -233,9 +231,6 @@ const modifySelectOptions =
     const isNoRequiredSelection =
       composeT (isAvailable, filterT (isNotRequired (mhero_entry)))
 
-    const isNoActiveSelection =
-      isNotActive (mhero_entry)
-
     switch (current_id) {
       case AdvantageId.ExceptionalSkill: {
         const hasLessThanTwoSameIdActiveSelections = filterT (areNoSameActive (mhero_entry))
@@ -247,19 +242,32 @@ const modifySelectOptions =
       }
 
       case DisadvantageId.PersonalityFlaw:
+        return liftM2 ((hero_entry: Record<ActivatableDependent>) =>
+                       (as: List<Record<SelectOption>>) => {
+                         const actives = pipe_ (
+                           getActiveSelections (hero_entry),
+                           filter (isNumber),
+                           nub
+                         )
+
+                         const actives_amount = flength (actives)
+
+                         return actives_amount >= 2
+                           ? List<Record<SelectOption>> ()
+                           : filter ((a: Record<SelectOption>) =>
+                                      (SOA.id (a) === 7 && elem (7) (actives))
+                                      || (SOA.id (a) === 8 && elem (8) (actives))
+                                      || (
+                                        isNotActive (mhero_entry) (a)
+                                        && isNotRequired (mhero_entry) (a)
+                                      ))
+                                    (as)
+                       })
+                      (mhero_entry)
+
       case DisadvantageId.NegativeTrait:
-      case DisadvantageId.Maimed: {
-        if (current_id === DisadvantageId.PersonalityFlaw) {
-          return fmap (filterMapListT (composeT (
-                                        isNoRequiredSelection,
-                                        filterT (e => is7or8 (SOA.id (e))
-                                                      || isNoActiveSelection (e))
-                                      )))
-        }
-        else {
-          return fmap (filterMapListT (isNoRequiredOrActiveSelection))
-        }
-      }
+      case DisadvantageId.Maimed:
+        return fmap (filterMapListT (isNoRequiredOrActiveSelection))
 
       case DisadvantageId.Incompetent: {
         const isAdvActive =

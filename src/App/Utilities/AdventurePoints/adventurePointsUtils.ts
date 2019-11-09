@@ -3,8 +3,8 @@ import { equals } from "../../../Data/Eq";
 import { ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { any, countWith, countWithByKeyMaybe, elemF, find, flength, foldl, foldr, isList, lastS, List, notElem, take } from "../../../Data/List";
-import { all, altF, bind, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, Nothing, or, sum } from "../../../Data/Maybe";
-import { add, gt, inc, lt, multiply, negate, subtractBy } from "../../../Data/Num";
+import { all, altF, bind, bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing, or, sum, then } from "../../../Data/Maybe";
+import { add, gt, inc, lt, multiply, subtractBy } from "../../../Data/Num";
 import { alter, empty, findWithDefault, lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, Record } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
@@ -16,14 +16,17 @@ import { ActiveActivatable, ActiveActivatableAL_, ActiveActivatableA_ } from "..
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
 import { Disadvantage } from "../../Models/Wiki/Disadvantage";
 import { Skill } from "../../Models/Wiki/Skill";
-import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
+import { getSelectOptionCost } from "../Activatable/selectionUtils";
 import { getMagicalTraditionsHeroEntries } from "../Activatable/traditionUtils";
 import { pipe, pipe_ } from "../pipe";
 import { misNumberM, misStringM } from "../typeCheckUtils";
 import { compareMaxLevel, compareSubMaxLevel, getActiveWithNoCustomCost } from "./activatableCostUtils";
 
 const AP = AdventurePointsCategories.AL
+const AAA = ActiveActivatable.A
+const AOA = ActiveObject.A
 
 /**
  * Checks if there are enough AP available. If there are, returns `Nothing`.
@@ -252,38 +255,60 @@ const getPropertyOrAspectKnowledgeDiff =
       sum
     )
 
+/**
+ * `getSinglePersFlawDiff :: Int -> Int -> ActiveActivatable -> SID -> Int -> Int`
+ *
+ * `getSinglePersFlawDiff sid paid_entries entry current_sid current_entries`
+ *
+ * @param sid SID the diff is for.
+ * @param paid_entries Amount of active entries of the same SID that you get AP
+ * for.
+ * @param entry An entry of Personality Flaw.
+ * @param current_sid The current SID to check.
+ * @param current_entries The current amount of active entries of the current
+ * SID.
+ */
+const getSinglePersFlawDiff =
+  (sid: number) =>
+  (paid_entries: number) =>
+  (entry: Record<ActiveActivatable>) =>
+  (current_sid: number | string) =>
+  (current_entries: number): number =>
+    current_sid === sid && current_entries > paid_entries
+    ? maybe (0)
+            (multiply (paid_entries))
+            (getSelectOptionCost (AAA.wikiEntry (entry) as Activatable)
+                                 (Just (sid)))
+    : 0
+
 const getPersonalityFlawsDiff =
-  (wiki: WikiModelRecord) =>
-  (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
   (entries: List<Record<ActiveActivatable>>): number =>
-    any (pipe (ActiveActivatableAL_.id, equals<string> (DisadvantageId.PersonalityFlaw)))
-        (entries)
-      ? sum (pipe_ (
-        hero_slice,
-        lookup<string> (DisadvantageId.PersonalityFlaw),
-        fmap (pipe (
-          // get current active
-          ActivatableDependent.A.active,
+    pipe_ (
+      entries,
 
-          // number of entries with multiple entries of the same sid possible
-          countWith ((e: Record<ActiveObject>) => elem<string | number> (7) (ActiveObject.A.sid (e))
-                                                  && isNothing (ActiveObject.A.cost (e))),
+      // Find any Personality Flaw entry, as all of them have the same list of
+      // active objects
+      find (pipe (ActiveActivatableA_.id, equals<string> (DisadvantageId.PersonalityFlaw))),
+      fmap (entry => pipe_ (
+        entry,
+        ActiveActivatableA_.active,
+        countWithByKeyMaybe (e => then (guard (isNothing (AOA.cost (e))))
+                                       (AOA.sid (e))),
+        OrderedMap.foldrWithKey ((sid: string | number) => (val: number) =>
+                                  pipe_ (
+                                    List (
+                                      getSinglePersFlawDiff (7) (1) (entry) (sid) (val),
+                                      getSinglePersFlawDiff (8) (2) (entry) (sid) (val)
+                                    ),
+                                    List.sum,
+                                    add
+                                  ))
+                                (0)
+      )),
 
-          gt (1),
-          bool_ (() => 0)
-                (() => pipe_ (
-                  wiki,
-                  WikiModel.A.disadvantages,
-                  lookup<string> (DisadvantageId.PersonalityFlaw),
-                  bindF (Disadvantage.A.select),
-                  bindF (find (pipe (SelectOption.A.id, equals<string | number> (7)))),
-                  bindF (SelectOption.A.cost),
-                  fmap (negate),
-                  sum
-                ))
-        ))
-      ))
-      : 0
+      // If no Personality Flaw was found, there's no diff.
+      Maybe.sum
+    )
 
 const getBadHabitsDiff =
   (wiki: WikiModelRecord) =>
@@ -405,7 +430,7 @@ export const getAdventurePointsSpentDifference =
     const adventurePointsSpentDifferences = List (
       getPrinciplesObligationsDiff (DisadvantageId.Principles) (wiki) (hero_slice) (entries),
       getPrinciplesObligationsDiff (DisadvantageId.Obligations) (wiki) (hero_slice) (entries),
-      getPersonalityFlawsDiff (wiki) (hero_slice) (entries),
+      getPersonalityFlawsDiff (entries),
       getBadHabitsDiff (wiki) (hero_slice) (entries),
       getSkillSpecializationsDiff (wiki) (hero_slice) (entries),
       getPropertyKnowledgeDiff (entries),
