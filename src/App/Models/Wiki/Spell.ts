@@ -3,6 +3,7 @@ import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups";
+import { Erratum } from "./sub/Errata";
 import { SourceLink } from "./sub/SourceLink";
 import { AllRequirementObjects, CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
 
@@ -34,6 +35,7 @@ export interface Spell {
   durationNoMod: boolean
   target: string
   src: List<Record<SourceLink>>
+  errata: List<Record<Erratum>>
 }
 
 export const Spell =
@@ -65,6 +67,7 @@ export const Spell =
                 durationNoMod: false,
                 target: "",
                 src: List.empty,
+                errata: List (),
               })
 
 export const SpellL = makeLenses (Spell)

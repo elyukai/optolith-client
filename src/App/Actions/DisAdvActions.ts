@@ -148,6 +148,7 @@ export const addDisAdvantage =
                                                    (is_disadvantage)
                                                    (hero)
                                                    (ap)
+                                                   (Advantage.AL.id (wiki_entry))
                                                    (current_cost))
 
         const successFn = () => {
@@ -247,6 +248,7 @@ export const removeDisAdvantage =
                                                    (is_disadvantage)
                                                    (hero)
                                                    (ap)
+                                                   (Advantage.AL.id (wiki_entry))
                                                    (negativeCost))
 
         const successFn = () => {
@@ -407,6 +409,7 @@ export const setDisAdvantageLevel =
                                                      (is_disadvantage)
                                                      (hero)
                                                      (ap)
+                                                     (Advantage.AL.id (wiki_entry))
                                                      (diff_cost))
 
           const successFn = () => {

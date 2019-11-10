@@ -26,6 +26,7 @@ export const Disadvantage =
                 select: Nothing,
                 gr: 0,
                 src: List.empty,
+                errata: List (),
                 rules: "",
                 range: Nothing,
                 actions: Nothing,

@@ -7,6 +7,7 @@ import { translate } from "../../Utilities/I18n";
 import { L10nRecord } from "./L10n";
 import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement";
 import { ProfessionSelections } from "./professionSelections/ProfessionAdjustmentSelections";
+import { Erratum } from "./sub/Errata";
 import { IncreaseSkill } from "./sub/IncreaseSkill";
 import { IncreaseSkillList } from "./sub/IncreaseSkillList";
 import { NameBySex } from "./sub/NameBySex";
@@ -49,6 +50,7 @@ export interface Profession {
    */
   subgr: number
   src: List<Record<SourceLink>>
+  errata: List<Record<Erratum>>
 }
 
 export const Profession =
@@ -83,6 +85,7 @@ export const Profession =
                 gr: 0,
                 subgr: 0,
                 src: List.empty,
+                errata: List (),
               })
 
 export const ProfessionL = makeLenses (Profession)
@@ -122,4 +125,5 @@ export const getCustomProfession =
       gr: 0,
       subgr: 0,
       src: List (),
+      errata: List (),
     })

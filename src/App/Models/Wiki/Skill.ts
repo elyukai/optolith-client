@@ -3,6 +3,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { Application } from "./sub/Application";
+import { Erratum } from "./sub/Errata";
 import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
@@ -25,6 +26,7 @@ export interface Skill {
   critical: string
   botch: string
   src: List<Record<SourceLink>>
+  errata: List<Record<Erratum>>
 }
 
 export const Skill =
@@ -47,6 +49,7 @@ export const Skill =
                 critical: "",
                 botch: "",
                 src: List.empty,
+                errata: List (),
               })
 
 export const isSkill =

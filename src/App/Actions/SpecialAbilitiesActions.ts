@@ -24,8 +24,8 @@ import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/acti
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";
 import { translate, translateP } from "../Utilities/I18n";
 import { pipe, pipe_ } from "../Utilities/pipe";
+import { SpecialAbilitiesSortOptions } from "../Utilities/Raw/JSON/Config";
 import { getWikiEntry } from "../Utilities/WikiUtils";
-import { SortNames } from "../Views/Universal/SortOptions";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 
@@ -244,12 +244,12 @@ export const setSpecialAbilityLevel =
 export interface SetSpecialAbilitiesSortOrderAction {
   type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER
   payload: {
-    sortOrder: SortNames;
+    sortOrder: SpecialAbilitiesSortOptions;
   }
 }
 
 export const setSpecialAbilitiesSortOrder =
-  (sortOrder: SortNames): SetSpecialAbilitiesSortOrderAction => ({
+  (sortOrder: SpecialAbilitiesSortOptions): SetSpecialAbilitiesSortOrderAction => ({
     type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER,
     payload: {
       sortOrder,

@@ -1,8 +1,10 @@
 import { List } from "../../../Data/List";
+import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { Aspect, BlessedGroup, BlessedTradition } from "../../Constants/Groups";
+import { Erratum } from "./sub/Errata";
 import { SourceLink } from "./sub/SourceLink";
 import { CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
 
@@ -10,6 +12,7 @@ export interface LiturgicalChant {
   "@@name": "LiturgicalChant"
   id: string
   name: string
+  nameShort: Maybe<string>
   aspects: List<Aspect>
   category: Categories
   check: List<string>
@@ -32,6 +35,7 @@ export interface LiturgicalChant {
   durationNoMod: boolean
   target: string
   src: List<Record<SourceLink>>
+  errata: List<Record<Erratum>>
 }
 
 export const LiturgicalChant =
@@ -39,6 +43,7 @@ export const LiturgicalChant =
               <LiturgicalChant> ({
                 id: "",
                 name: "",
+                nameShort: Nothing,
                 aspects: List.empty,
                 category: Categories.LITURGIES,
                 check: List.empty,
@@ -61,6 +66,7 @@ export const LiturgicalChant =
                 durationNoMod: false,
                 target: "",
                 src: List.empty,
+                errata: List (),
               })
 
 export const LiturgicalChantL = makeLenses (LiturgicalChant)

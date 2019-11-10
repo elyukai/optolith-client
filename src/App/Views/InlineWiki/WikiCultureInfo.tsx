@@ -10,7 +10,7 @@ import { CultureId } from "../../Constants/Ids";
 import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
 import { IncreasableForView } from "../../Models/View/IncreasableForView";
 import { Book } from "../../Models/Wiki/Book";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Skill } from "../../Models/Wiki/Skill";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
@@ -83,7 +83,7 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
                         bindF (find (pipe (SOA.id, equals<string | number> (id)))),
                         fmap (SOA.name)
                       )),
-      sortStrings (L10n.A.id (l10n)),
+      sortStrings (l10n),
       localizeOrList (l10n)
     )
 
@@ -101,7 +101,7 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
                                   bindF (find (pipe (SOA.id, equals<string | number> (id)))),
                                   fmap (SOA.name)
                                 )),
-                sortStrings (L10n.A.id (l10n)),
+                sortStrings (l10n),
                 localizeOrList (l10n)
               )
 
@@ -199,7 +199,7 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
           x,
           CCA_.commonSkills,
           mapMaybe (pipe (lookupF (skills), fmap (Skill.A.name))),
-          sortStrings (L10n.A.id (l10n)),
+          sortStrings (l10n),
           intercalate (", ")
         )}
       </WikiProperty>
@@ -208,7 +208,7 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
           x,
           CCA_.uncommonSkills,
           mapMaybe (pipe (lookupF (skills), fmap (Skill.A.name))),
-          sortStrings (L10n.A.id (l10n)),
+          sortStrings (l10n),
           intercalate (", ")
         )}
       </WikiProperty>
@@ -225,7 +225,7 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
         <span>
           {pipe_ (
             culturalPackageSkills,
-            sortRecordsByName (L10n.A.id (l10n)),
+            sortRecordsByName (l10n),
             map (skill => `${IFVA.name (skill)} +${IFVA.value (skill)}`),
             intercalate (", ")
           )}

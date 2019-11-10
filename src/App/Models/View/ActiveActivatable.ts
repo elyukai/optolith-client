@@ -63,6 +63,7 @@ export const ActiveActivatableA_ = {
   maxLevel: pipe (AAA.validation, AAVA.maxLevel),
   minLevel: pipe (AAA.validation, AAVA.minLevel),
   disabled: pipe (AAA.validation, AAVA.disabled),
+  active: pipe (AAA.heroEntry, ActivatableDependent.A.active),
 }
 
 export const ActiveActivatableAL_ = {

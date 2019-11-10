@@ -4,6 +4,7 @@ import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
 import { Categories } from "../../Constants/Categories";
 import { Die } from "./sub/Die";
+import { Erratum } from "./sub/Errata";
 import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
@@ -43,6 +44,7 @@ export interface Race {
   variants: List<string>
   category: Categories
   src: List<Record<SourceLink>>
+  errata: List<Record<Erratum>>
 }
 
 export const Race =
@@ -82,6 +84,7 @@ export const Race =
                 variants: List.empty,
                 category: Categories.RACES,
                 src: List.empty,
+                errata: List (),
               })
 
 export const RaceL = makeLenses (Race)

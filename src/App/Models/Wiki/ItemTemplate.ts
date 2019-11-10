@@ -2,6 +2,7 @@ import { List } from "../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, Record } from "../../../Data/Record";
 import { DropdownOption } from "../../Views/Universal/Dropdown";
+import { Erratum } from "./sub/Errata";
 import { PrimaryAttributeDamageThreshold } from "./sub/PrimaryAttributeDamageThreshold";
 import { SourceLink } from "./sub/SourceLink";
 
@@ -45,6 +46,7 @@ export interface ItemTemplate {
   advantage: Maybe<string>
   disadvantage: Maybe<string>
   src: List<Record<SourceLink>>
+  errata: List<Record<Erratum>>
 }
 
 export const ItemTemplate =
@@ -88,6 +90,7 @@ export const ItemTemplate =
                 advantage: Nothing,
                 disadvantage: Nothing,
                 src: List.empty,
+                errata: List (),
               })
 
 const ITA = ItemTemplate.A

@@ -111,13 +111,12 @@ const getEntrySpecificCost =
       case DisadvantageId.PersonalityFlaw: {
         if (
           // 7 = "Prejudice" => more than one entry possible
-          elemF (mcurrent_sid) (7)
-          // more than one entry of Prejudice does contribute to AP spent
-          && countWith ((e: Record<ActiveObject>) =>
-                         pipe (ActiveObject.AL.sid, elem<string | number> (7)) (e)
-                         // Entries with custom cost are ignored for the rule
-                         && isNothing (ActiveObject.AL.cost (e)))
-                       (all_active) > (isEntryToAdd ? 0 : 1)
+          // more than one entry of Prejudice does not contribute to AP spent
+          isPersonalityFlawNotPaid (7) (1) (isEntryToAdd) (all_active) (mcurrent_sid)
+
+          // 8 = "Unworldly" => more than one entry possible
+          // more than two entries of Unworldly do not contribute to AP spent
+          || isPersonalityFlawNotPaid (8) (2) (isEntryToAdd) (all_active) (mcurrent_sid)
         ) {
           return Nothing
         }
@@ -313,6 +312,19 @@ const getEntrySpecificCost =
     }
   }
 
+const isPersonalityFlawNotPaid =
+  (sid: number) =>
+  (paid_entries_max: number) =>
+  (isEntryToAdd: boolean) =>
+  (all_active: List<Record<ActiveObject>>) =>
+  (mcurrent_sid: Maybe<string | number>) =>
+    elemF (mcurrent_sid) (sid)
+    && countWith ((e: Record<ActiveObject>) =>
+                   pipe (ActiveObject.AL.sid, elem<string | number> (sid)) (e)
+                   // Entries with custom cost are ignored for the rule
+                   && isNothing (ActiveObject.AL.cost (e)))
+                 (all_active) > (isEntryToAdd ? paid_entries_max - 1 : paid_entries_max)
+
 /**
  * A function for folding over a list of `ActiveObject`s to get the highest
  * level. Ignores entries with custom cost.
@@ -437,17 +449,24 @@ const putCurrentCost =
     over (ActivatableNameCostL.finalCost)
          ((current_cost): number => {
            const current_id = ActivatableNameCostA_.id (entry)
+           const category = getCategoryById (current_id)
            const mcurrent_level = ActivatableNameCostA_.tier (entry)
 
-           // If the AP cost is still a List, it must be a list that represents
-           // the cost for each level separate, thus all relevant values must
-           // be summed up.
+           // If the AP cost is still a List, and it is a Special Ability, it
+           // must be a list that represents the cost *for* each level separate,
+           // thus all relevant values must be summed up. In case of an
+           // advantage or disadvantage, it represents the cost *at* each level,
+           // so it does not need to be accumulated.
            if (isList (current_cost)) {
-             const current_level = fromMaybe (1) (mcurrent_level)
+            const current_level = fromMaybe (1) (mcurrent_level)
 
-             return ifoldr (i => i <= (current_level - 1) ? add : cnst (ident as ident<number>))
-                           (0)
-                           (current_cost)
+             if (elem (Categories.SPECIAL_ABILITIES) (category)) {
+               return ifoldr (i => i <= (current_level - 1) ? add : cnst (ident as ident<number>))
+                             (0)
+                             (current_cost)
+             }
+
+             return fromMaybe (0) (subscript (current_cost) (current_level - 1))
            }
 
            // Usually, a single AP value represents the value has to be

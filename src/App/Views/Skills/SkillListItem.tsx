@@ -43,8 +43,8 @@ export interface SkillListItemProps {
   selectedForInfo: Maybe<string>
   l10n: L10nRecord
   activate? (): void
-  addPoint? (): void
-  removePoint? (): void
+  addPoint? (id: string): void
+  removePoint? (id: string): void
   selectForInfo (id: string): void
 }
 

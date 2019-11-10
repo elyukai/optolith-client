@@ -14,6 +14,7 @@ import { SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableDependent, ActivatableDependentL, createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, ActivatableSkillDependentL } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
+import { AttributeDependent, AttributeDependentL } from "../Models/ActiveEntries/AttributeDependent";
 import { SkillDependent, SkillDependentL } from "../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { Advantage } from "../Models/Wiki/Advantage";
@@ -34,7 +35,7 @@ import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { Activatable, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
 import { getCombinedPrerequisites } from "../Utilities/Activatable/activatableActivationUtils";
-import { addAllStyleRelatedDependencies } from "../Utilities/Activatable/ExtendedStyleUtils";
+import { addOtherSpecialAbilityDependenciesOnRCPApplication } from "../Utilities/Activatable/SpecialAbilityUtils";
 import { composeL } from "../Utilities/compose";
 import { addDependencies } from "../Utilities/Dependencies/dependencyUtils";
 import { getHeroStateItem, updateEntryDef } from "../Utilities/heroStateUtils";
@@ -510,6 +511,17 @@ const applyModifications =
                         ? updateEntryDef (x => {
                                            const v = PRIA.value (r)
 
+                                           if (AttributeDependent.is (x)) {
+                                             return pipe_ (
+                                               x,
+                                               over (AttributeDependentL.value)
+                                                    // If the value is already valid for the
+                                                    // prerequisite, do not change it
+                                                    (max (v)),
+                                               Just
+                                             )
+                                           }
+
                                            if (SkillDependent.is (x)) {
                                              return pipe_ (
                                                x,
@@ -613,7 +625,7 @@ const updateListToContainNewEntry =
                                                 (mhero_entry)
                                                 (active)),
       SpecialAbility.is (wiki_entry)
-        ? addAllStyleRelatedDependencies (wiki_entry)
+        ? addOtherSpecialAbilityDependenciesOnRCPApplication (wiki_entry) (active)
         : ident
     )
 

@@ -277,6 +277,9 @@ export const getIsInPetCreation =
   pipe (getCurrentHeroPresent, fmap (Hero.isInPetCreation))
 
 
+export const getTransferredUnfamiliarSpells = pipe (getHeroProp, Hero.transferredUnfamiliarSpells)
+
+
 export const getAlerts = pipe (App.ui, UI.alerts)
 
 export const getCurrentAlert = pipe (App.ui, UI.alerts, listToMaybe)

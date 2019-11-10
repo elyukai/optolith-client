@@ -242,6 +242,9 @@ export enum EquipmentGroup {
   Animals = 25,
   AnimalCare = 26,
   Vehicles = 27,
+  AusruestungDerGeweihtenschaft = 28,
+  Zeremonialgegenstaende = 29,
+  Liebesspielzeug = 30,
 }
 
 export enum ArmorType {

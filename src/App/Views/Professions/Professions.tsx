@@ -11,6 +11,7 @@ import { L10nRecord } from "../../Models/Wiki/L10n";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { ProfessionsGroupVisibilityFilter, ProfessionsVisibilityFilter } from "../../Utilities/Raw/JSON/Config";
 import { Aside } from "../Universal/Aside";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { ListView } from "../Universal/List";
@@ -44,9 +45,9 @@ export interface ProfessionsStateProps {
 }
 
 export interface ProfessionsDispatchProps {
-  setGroupVisibilityFilter (filter: number): void
+  setGroupVisibilityFilter (filter: ProfessionsGroupVisibilityFilter): void
   setSortOrder (sortOrder: SortNames): void
-  setVisibilityFilter (filter: string): void
+  setVisibilityFilter (filter: ProfessionsVisibilityFilter): void
   switchExpansionVisibilityFilter (): void
   setFilterText (filterText: string): void
 }
@@ -101,11 +102,11 @@ export const Professions: React.FC<ProfessionsProps> = props => {
           onChangeJust={setVisibilityFilter}
           options={List (
             DropdownOption ({
-              id: Just ("all"),
+              id: Just (ProfessionsVisibilityFilter.All),
               name: translate (l10n) ("allprofessions"),
             }),
             DropdownOption ({
-              id: Just ("common"),
+              id: Just (ProfessionsVisibilityFilter.Common),
               name: translate (l10n) ("commonprofessions"),
             })
           )}
@@ -116,19 +117,19 @@ export const Professions: React.FC<ProfessionsProps> = props => {
           onChangeJust={setGroupVisibilityFilter}
           options={List (
             DropdownOption ({
-              id: Just (0),
+              id: Just (ProfessionsGroupVisibilityFilter.All),
               name: translate (l10n) ("allprofessiongroups"),
             }),
             DropdownOption ({
-              id: Just (1),
+              id: Just (ProfessionsGroupVisibilityFilter.Mundane),
               name: translate (l10n) ("mundaneprofessions"),
             }),
             DropdownOption ({
-              id: Just (2),
+              id: Just (ProfessionsGroupVisibilityFilter.Magical),
               name: translate (l10n) ("magicalprofessions"),
             }),
             DropdownOption ({
-              id: Just (3),
+              id: Just (ProfessionsGroupVisibilityFilter.Blessed),
               name: translate (l10n) ("blessedprofessions"),
             })
           )}
@@ -137,7 +138,7 @@ export const Professions: React.FC<ProfessionsProps> = props => {
         <SortOptions
           sortOrder={sortOrder}
           sort={setSortOrder}
-          options={List<SortNames> ("name", "cost")}
+          options={List (SortNames.Name, SortNames.Cost)}
           l10n={l10n}
           />
       </Options>

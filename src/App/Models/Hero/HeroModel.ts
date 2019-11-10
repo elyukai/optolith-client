@@ -5,6 +5,7 @@ import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { SocialStatusId } from "../../Constants/Ids";
 import { current_version } from "../../Selectors/envSelectors";
+import { Locale } from "../../Utilities/Raw/JSON/Config";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
@@ -19,6 +20,7 @@ import { PersonalData } from "./PersonalData";
 import { Pet } from "./Pet";
 import { Rules } from "./Rules";
 import { StyleDependency } from "./StyleDependency";
+import { TransferUnfamiliar } from "./TransferUnfamiliar";
 
 export type HeroModelRecord = Record<HeroModel>
 
@@ -26,7 +28,7 @@ export interface HeroModel {
   "@@name": "Hero"
   id: string
   clientVersion: string
-  locale: string
+  locale: Locale
   player: Maybe<string>
   dateCreated: Date
   dateModified: Date
@@ -67,6 +69,7 @@ export interface HeroModel {
   blessedStyleDependencies: List<Record<StyleDependency>>
   skillStyleDependencies: List<Record<StyleDependency>>
   socialStatusDependencies: List<SocialStatusId>
+  transferredUnfamiliarSpells: List<Record<TransferUnfamiliar>>
 }
 
 /**
@@ -78,7 +81,7 @@ export const HeroModel =
               <HeroModel> ({
                 id: "",
                 clientVersion: current_version,
-                locale: "",
+                locale: Locale.German,
                 player: Nothing,
                 dateCreated: new Date (),
                 dateModified: new Date (),
@@ -119,6 +122,7 @@ export const HeroModel =
                 blessedStyleDependencies: List (),
                 skillStyleDependencies: List (),
                 socialStatusDependencies: List (),
+                transferredUnfamiliarSpells: List (),
               })
 
 export const HeroModelL = makeLenses (HeroModel)
@@ -176,4 +180,5 @@ export const getInitialHeroObject =
       blessedStyleDependencies: Nothing,
       skillStyleDependencies: Nothing,
       socialStatusDependencies: Nothing,
+      transferredUnfamiliarSpells: Nothing,
     })

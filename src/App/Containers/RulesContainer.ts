@@ -10,6 +10,7 @@ import { getSortedBooks } from "../Selectors/bookSelectors";
 import { isEnableLanguageSpecializationsDeactivatable } from "../Selectors/rulesSelectors";
 import { getAllSpellsForManualGuildMageSelect } from "../Selectors/spellsSelectors";
 import { getHeroLocale } from "../Selectors/stateSelectors";
+import { Locale } from "../Utilities/Raw/JSON/Config";
 import { RulesDispatchProps, RulesOwnProps, RulesStateProps, RulesView } from "../Views/Rules/Rules";
 
 const mapStateToProps =
@@ -43,7 +44,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch) => ({
   setGuildMageSpell (spellId: string) {
     dispatch (setGuildMageUnfamiliarSpellId (spellId))
   },
-  setHeroLocale (locale: string) {
+  setHeroLocale (locale: Locale) {
     dispatch (setHeroLocale (locale))
   },
 })

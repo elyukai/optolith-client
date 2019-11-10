@@ -4,6 +4,7 @@ import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { SocialStatusId } from "../../Constants/Ids";
 import { CommonProfession } from "./sub/CommonProfession";
+import { Erratum } from "./sub/Errata";
 import { IncreaseSkill } from "./sub/IncreaseSkill";
 import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
@@ -40,6 +41,7 @@ export interface Culture {
   culturalPackageSkills: List<Record<IncreaseSkill>>
   category: Categories
   src: List<Record<SourceLink>>
+  errata: List<Record<Erratum>>
 }
 
 export const Culture =
@@ -71,6 +73,7 @@ export const Culture =
                 culturalPackageSkills: List.empty,
                 category: Categories.CULTURES,
                 src: List.empty,
+                errata: List (),
               })
 
 export const CultureL = makeLenses (Culture)

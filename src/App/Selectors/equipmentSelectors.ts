@@ -144,7 +144,7 @@ export const getFilteredHitZoneArmors = createMaybeSelector (
   getLocaleAsProp,
   (mhitZoneArmors, filterText, l10n) =>
     fmapF (mhitZoneArmors)
-          (filterAndSortRecordsByName (L10n.A.id (l10n))
+          (filterAndSortRecordsByName (l10n)
                                       (filterText))
 )
 
@@ -240,7 +240,7 @@ export const getAllItems = createMaybeSelector (
                         })
                       }))
 
-             return sortRecordsByName (L10n.A.id (l10n))
+             return sortRecordsByName (l10n)
                                       (append (mappedArmorZones) (mappedItems))
            })
            (mitems)
@@ -297,11 +297,14 @@ export const getMeleeWeapons = createMaybeSelector (
                         const atBase = getAttack (hero) (wiki_entry) (hero_entry)
                         const at = atBase + Maybe.sum (IA.at (full_item))
 
+                        const doublePAIfShield: (pa: number) => number =
+                          pa => CTA.id (wiki_entry) === CombatTechniqueId.Shields ? pa * 2 : pa
+
                         const paBase = getParry (hero) (wiki_entry) (hero_entry)
                         const pa =
                           fmapF (paBase)
                                 (pipe (
-                                  add (Maybe.sum (IA.pa (full_item))),
+                                  add (doublePAIfShield (Maybe.sum (IA.pa (full_item)))),
                                   add (Maybe.sum (higherParadeValues))
                                 ))
 

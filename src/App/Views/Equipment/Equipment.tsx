@@ -5,6 +5,7 @@ import { fmap } from "../../../Data/Functor";
 import { any, cons, filter, List, map, notNull, toArray } from "../../../Data/List";
 import { bindF, elem, ensure, fromJust, fromMaybe, isJust, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
+import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../../Constants/Ids";
 import { ItemEditorContainer } from "../../Containers/ItemEditorContainer";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -48,8 +49,8 @@ export interface EquipmentStateProps {
   templates: List<Record<ItemTemplate>>
   totalPrice: Maybe<number>
   totalWeight: Maybe<number>
-  meleeItemTemplateCombatTechniqueFilter: Maybe<string>
-  rangedItemTemplateCombatTechniqueFilter: Maybe<string>
+  meleeItemTemplateCombatTechniqueFilter: Maybe<MeleeCombatTechniqueId>
+  rangedItemTemplateCombatTechniqueFilter: Maybe<RangedCombatTechniqueId>
   filterText: string
   templatesFilterText: string
   filteredEquipmentGroups: List<Record<DropdownOption>>
@@ -65,8 +66,8 @@ export interface EquipmentDispatchProps {
   createItem (): void
   deleteItem (id: string): void
   editItem (id: string): void
-  setMeleeItemTemplatesCombatTechniqueFilter (filterOption: Maybe<string>): void
-  setRangedItemTemplatesCombatTechniqueFilter (filterOption: Maybe<string>): void
+  setMeleeItemTemplatesCombatTechniqueFilter (filterOption: Maybe<MeleeCombatTechniqueId>): void
+  setRangedItemTemplatesCombatTechniqueFilter (filterOption: Maybe<RangedCombatTechniqueId>): void
   setFilterText (filterText: string): void
   setTemplatesFilterText (filterText: string): void
 }
@@ -90,11 +91,12 @@ const prepareCombatTechniquesForSelection =
     pipe_ (
       mxs,
       fmap (mapMaybe (pipe (
-                            ensure (pipe (CTWRA_.gr, equals (gr))),
-                            fmap (x => DropdownOption ({
+                             ensure (pipe (CTWRA_.gr, equals (gr))),
+                             fmap (x => DropdownOption ({
                                           id: Just (CTWRA_.id (x)),
                                           name: CTWRA_.name (x),
-                                        }))))),
+                                        }))
+                           ))),
       fromMaybe (List ())
     )
 
@@ -138,10 +140,10 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
     const getHasValidCombatTechnique = (e: Record<ItemTemplate>) =>
       isJust (meleeItemTemplateCombatTechniqueFilter) && ITA.gr (e) === 1
         ? elem (fromJust (meleeItemTemplateCombatTechniqueFilter))
-               (ITA.combatTechnique (e))
+               (ITA.combatTechnique (e) as Maybe<MeleeCombatTechniqueId>)
         : isJust (rangedItemTemplateCombatTechniqueFilter) && ITA.gr (e) === 2
         ? elem (fromJust (rangedItemTemplateCombatTechniqueFilter))
-               (ITA.combatTechnique (e))
+               (ITA.combatTechnique (e) as Maybe<RangedCombatTechniqueId>)
         : true
 
     const filterTemplatesByIsActive = (e: Record<ItemTemplate>): boolean =>
@@ -191,7 +193,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
                     cons (meleeCombatTechniques)
                          (DropdownOption ({
                            name: translate (l10n) ("allcombattechniques"),
-                         }))
+                         })) as List<Record<DropdownOption<MeleeCombatTechniqueId>>>
                   }
                   fullWidth
                   />
@@ -204,7 +206,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
                     cons (rangedCombatTechniques)
                          (DropdownOption ({
                            name: translate (l10n) ("allcombattechniques"),
-                         }))
+                         })) as List<Record<DropdownOption<RangedCombatTechniqueId>>>
                   }
                   fullWidth
                   />
@@ -253,7 +255,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
             fullWidth
             />
           <SortOptions
-            options={List<SortNames> ("name", "groupname", "where", "weight")}
+            options={List (SortNames.Name, SortNames.GroupName, SortNames.Where, SortNames.Weight)}
             sortOrder={sortOrder}
             sort={this.props.setSortOrder}
             l10n={l10n}

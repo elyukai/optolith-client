@@ -1,18 +1,15 @@
 import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { fmapF } from "../../../Data/Functor";
-import { find, flength, intercalate, List, map, notNull, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, Just, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe";
+import { List, map, notNull, toArray } from "../../../Data/List";
+import { bindF, ensure, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
+import { AttributeCombined } from "../../Models/View/AttributeCombined";
 import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements";
 import { L10nRecord } from "../../Models/Wiki/L10n";
-import { ndash } from "../../Utilities/Chars";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
-import { SkillListItem } from "../Skills/SkillListItem";
+import { CombatTechniquesSortOptions } from "../../Utilities/Raw/JSON/Config";
 import { ListView } from "../Universal/List";
 import { ListHeader } from "../Universal/ListHeader";
 import { ListHeaderTag } from "../Universal/ListHeaderTag";
@@ -23,6 +20,7 @@ import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
 import { SearchField } from "../Universal/SearchField";
 import { SortNames, SortOptions } from "../Universal/SortOptions";
+import { CombatTechniqueListItem } from "./CombatTechniquesListItem";
 
 export interface CombatTechniquesOwnProps {
   l10n: L10nRecord
@@ -33,7 +31,7 @@ export interface CombatTechniquesStateProps {
   attributes: List<Record<AttributeCombined>>
   list: Maybe<List<Record<CombatTechniqueWithRequirements>>>
   isRemovingEnabled: boolean
-  sortOrder: SortNames
+  sortOrder: CombatTechniquesSortOptions
   filterText: string
 }
 
@@ -53,8 +51,6 @@ export interface CombatTechniquesState {
   infoId: Maybe<string>
 }
 
-const ACA_ = AttributeCombinedA_
-const CTWRA = CombatTechniqueWithRequirements.A
 const CTWRA_ = CombatTechniqueWithRequirementsA_
 
 export class CombatTechniques
@@ -94,7 +90,7 @@ export class CombatTechniques
             sortOrder={sortOrder}
             sort={setSortOrder}
             l10n={l10n}
-            options={List<SortNames> ("name", "group", "ic")}
+            options={List (SortNames.Name, SortNames.Group, SortNames.IC)}
             />
         </Options>
         <MainContent>
@@ -104,7 +100,7 @@ export class CombatTechniques
             </ListHeaderTag>
             <ListHeaderTag className="group">
               {translate (l10n) ("group")}
-              </ListHeaderTag>
+            </ListHeaderTag>
             <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
               {translate (l10n) ("skillrating.short")}
             </ListHeaderTag>
@@ -133,57 +129,19 @@ export class CombatTechniques
                   (<ListPlaceholder l10n={l10n} type="combatTechniques" noResults />)
                   (pipe (
                     map (
-                      (x: Record<CombatTechniqueWithRequirements>) => {
-                        const primary =
-                          pipe_ (
-                            CTWRA_.primary (x),
-                            mapMaybe ((id: string) => fmapF (find (pipe (ACA_.id, equals (id)))
-                                                                  (attributes))
-                                                            (ACA_.short)),
-                            intercalate ("/")
-                          )
-
-                        const customClassName =
-                          flength (CTWRA_.primary (x)) > 1
-                            ? "ATTR_6_8"
-                            : fromMaybe ("") (listToMaybe (CTWRA_.primary (x)))
-
-                        const primaryClassName = `primary ${customClassName}`
-
-                        return (
-                          <SkillListItem
-                            key={CTWRA_.id (x)}
-                            id={CTWRA_.id (x)}
-                            name={CTWRA_.name (x)}
-                            sr={CTWRA_.value (x)}
-                            ic={CTWRA_.ic (x)}
-                            checkDisabled
-                            addPoint={addPoint.bind (null, CTWRA_.id (x))}
-                            addDisabled={CTWRA_.value (x) >= CTWRA.max (x)}
-                            removePoint={
-                              isRemovingEnabled
-                                ? removePoint.bind (null, CTWRA_.id (x))
-                                : undefined
-                            }
-                            removeDisabled={CTWRA_.value (x) <= CTWRA.min (x)}
-                            addValues={List (
-                              { className: primaryClassName, value: primary },
-                              { className: "at", value: CTWRA.at (x) },
-                              { className: "atpa" },
-                              {
-                                className: "pa",
-                                value: fromMaybe<string | number> (ndash) (CTWRA.pa (x)),
-                              }
-                            )}
-                            attributes={attributes}
-                            l10n={l10n}
-                            selectForInfo={this.showInfo}
-                            groupIndex={CTWRA_.gr (x)}
-                            groupList={translate (l10n) ("combattechniquegroups")}
-                            selectedForInfo={infoId}
-                            />
-                        )
-                      }
+                      (x: Record<CombatTechniqueWithRequirements>) => (
+                        <CombatTechniqueListItem
+                          key={CTWRA_.id (x)}
+                          attributes={attributes}
+                          combatTechnique={x}
+                          currentInfoId={infoId}
+                          selectForInfo={this.showInfo}
+                          l10n={l10n}
+                          addPoint={addPoint}
+                          removePoint={removePoint}
+                          isRemovingEnabled={isRemovingEnabled}
+                          />
+                      )
                     ),
                     toArray
                   ))
@@ -191,7 +149,10 @@ export class CombatTechniques
             </ListView>
           </Scroll>
         </MainContent>
-        <WikiInfoContainer {...this.props} currentId={infoId}/>
+        <WikiInfoContainer
+          l10n={l10n}
+          currentId={infoId}
+          />
       </Page>
     )
   }

@@ -88,16 +88,22 @@ export const getAE = createMaybeSelector (
   mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.DecreasedArcanePower),
   getAddedArcaneEnergyPoints,
   getLocaleAsProp,
-  (trads, mprimary_value, paep, minc, mdec, added, l10n) => {
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.GrosseMeditation),
+  (trads, mprimary_value, paep, minc, mdec, added, l10n, mgreat_meditation) => {
     const mlast_trad = listToMaybe (trads)
 
     const mredeemed = fmap (PermanentEnergyLossAndBoughtBack.A.redeemed) (paep)
 
     const mlost = fmap (PermanentEnergyLossAndBoughtBack.A.lost) (paep)
 
-    const mod = getModifierByActiveLevel (liftM2 (subtract) (mredeemed) (mlost))
-                                         (minc)
-                                         (mdec)
+    const great_meditation_level = getFirstLevel (mgreat_meditation)
+
+    const great_meditation_mod = maybe (0) (multiply (6)) (great_meditation_level)
+
+    const mod = great_meditation_mod
+      + getModifierByActiveLevel (liftM2 (subtract) (mredeemed) (mlost))
+                                 (minc)
+                                 (mdec)
 
     /**
      * `Maybe (base, maxAdd)`

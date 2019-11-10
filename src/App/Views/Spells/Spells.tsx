@@ -175,7 +175,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
             <SortOptions
               sortOrder={sortOrder}
               sort={setSortOrder}
-              options={List<SortNames> ("name", "group", "property", "ic")}
+              options={List (SortNames.Name, SortNames.Group, SortNames.Property, SortNames.IC)}
               l10n={l10n}
               />
             <Checkbox
@@ -319,7 +319,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
           <SortOptions
             sortOrder={sortOrder}
             sort={setSortOrder}
-            options={List<SortNames> ("name", "group", "property", "ic")}
+            options={List (SortNames.Name, SortNames.Group, SortNames.Property, SortNames.IC)}
             l10n={l10n}
             />
           <BorderButton
@@ -372,10 +372,8 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                       key={SCCA.id (curr)}
                                       id={SCCA.id (curr)}
                                       name={SCCA.name (curr)}
-                                      removePoint={
-                                        isRemovingEnabled
-                                          ? removeCantripFromList.bind (null, SCCA.id (curr))
-                                          : undefined}
+                                      removePoint={removeCantripFromList}
+                                      removeDisabled={isRemovingEnabled}
                                       addFillElement
                                       noIncrease
                                       insertTopMargin={insertTopMargin}
@@ -407,14 +405,12 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                       id={SWRA_.id (curr)}
                                       name={SWRA_.name (curr)}
                                       addDisabled={!SWRA.isIncreasable (curr)}
-                                      addPoint={addPoint.bind (null, SWRA_.id (curr))}
-                                      removeDisabled={!SWRA.isDecreasable (curr)}
+                                      addPoint={addPoint}
+                                      removeDisabled={
+                                        isRemovingEnabled || !SWRA.isDecreasable (curr)
+                                      }
                                       removePoint={
-                                        isRemovingEnabled
-                                          ? SWRA_.value (curr) === 0
-                                            ? removeFromList.bind (null, SWRA_.id (curr))
-                                            : removePoint.bind (null, SWRA_.id (curr))
-                                          : undefined
+                                        SWRA_.value (curr) === 0 ? removeFromList : removePoint
                                       }
                                       addFillElement
                                       check={SWRA_.check (curr)}

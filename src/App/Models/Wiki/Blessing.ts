@@ -2,6 +2,7 @@ import { List } from "../../../Data/List";
 import { fromDefault, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { BlessedTradition } from "../../Constants/Groups";
+import { Erratum } from "./sub/Errata";
 import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
@@ -16,6 +17,7 @@ export interface Blessing {
   duration: string
   target: string
   src: List<Record<SourceLink>>
+  errata: List<Record<Erratum>>
 }
 
 export const Blessing =
@@ -30,6 +32,7 @@ export const Blessing =
                 duration: "",
                 target: "",
                 src: List.empty,
+                errata: List (),
               })
 
 export const isBlessing =

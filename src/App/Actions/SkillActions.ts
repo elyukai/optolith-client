@@ -10,7 +10,7 @@ import { getCurrentHeroPresent, getSkills, getWikiSkills } from "../Selectors/st
 import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
 import { pipe_ } from "../Utilities/pipe";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { SkillsSortOptions } from "../Utilities/Raw/JSON/Config";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 
@@ -75,11 +75,11 @@ export const removeSkillPoint = (id: string): RemoveSkillPointAction => ({
 export interface SetSkillsSortOrderAction {
   type: ActionTypes.SET_TALENTS_SORT_ORDER
   payload: {
-    sortOrder: SortNames;
+    sortOrder: SkillsSortOptions;
   }
 }
 
-export const setSkillsSortOrder = (sortOrder: SortNames): SetSkillsSortOrderAction => ({
+export const setSkillsSortOrder = (sortOrder: SkillsSortOptions): SetSkillsSortOrderAction => ({
   type: ActionTypes.SET_TALENTS_SORT_ORDER,
   payload: {
     sortOrder,

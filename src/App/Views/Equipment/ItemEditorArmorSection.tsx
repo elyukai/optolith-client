@@ -3,7 +3,7 @@ import { imap } from "../../../Data/List";
 import { Just, Maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { EditItem } from "../../Models/Hero/EditItem";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils";
 import { getLossLevelElements } from "../../Utilities/ItemUtils";
@@ -51,7 +51,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
   const locked = EIA.isTemplateLocked (item)
 
   const armorTypes =
-    sortRecordsByName (L10n.A.id (l10n))
+    sortRecordsByName (l10n)
                       (imap (index => (e: string) => DropdownOption ({
                                                                        id: Just (index + 1),
                                                                        name: e,

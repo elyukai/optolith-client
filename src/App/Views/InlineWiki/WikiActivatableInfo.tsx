@@ -22,6 +22,7 @@ import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableR
 import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
 import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
+import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite";
 import { Profession } from "../../Models/Wiki/Profession";
 import { Race } from "../../Models/Wiki/Race";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
@@ -47,7 +48,6 @@ import { WikiCombatTechniques } from "./Elements/WikiCombatTechniques";
 import { WikiSource } from "./Elements/WikiSource";
 import { WikiBoxTemplate } from "./WikiBoxTemplate";
 import { WikiProperty } from "./WikiProperty";
-import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite";
 
 export interface WikiActivatableInfoProps {
   attributes: OrderedMap<string, Record<Attribute>>
@@ -260,7 +260,7 @@ export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => 
                               bindF (lookupF (specialAbilities)),
                               fmap (SAA.name)
                             )),
-                            sortStrings (L10n.A.id (l10n)),
+                            sortStrings (l10n),
                             intercalate (", ")
                            )
 
@@ -310,7 +310,7 @@ export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => 
                               bindF (lookupF (specialAbilities)),
                               fmap (SAA.name)
                             )),
-                            sortStrings (L10n.A.id (l10n)),
+                            sortStrings (l10n),
                             intercalate (", ")
                            )
 
@@ -380,7 +380,7 @@ export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => 
                                               fmap (ActivatableNameCostA_.name)
                                             ))
                                             (add_extended)),
-                           sortStrings (L10n.A.id (l10n)),
+                           sortStrings (l10n),
                            intercalate (", "),
                            str => {
                              const tag = translate (l10n) ("extendedblessedtspecialabilities")
@@ -503,6 +503,10 @@ export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => 
             title={header_name}
             subtitle={header_sub_name}
             >
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
+                         ))}
             {maybeRNullF (SAA.effect (x))
                          (str => (
                            <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />

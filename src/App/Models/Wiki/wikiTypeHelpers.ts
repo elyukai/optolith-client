@@ -42,6 +42,7 @@ import { RaceVariant } from "./RaceVariant";
 import { Skill } from "./Skill";
 import { SpecialAbility } from "./SpecialAbility";
 import { Spell } from "./Spell";
+import { Erratum } from "./sub/Errata";
 import { SelectOption } from "./sub/SelectOption";
 import { SourceLink } from "./sub/SourceLink";
 
@@ -194,6 +195,7 @@ export interface ActivatableBase {
   gr: number
   category: Categories
   src: List<Record<SourceLink>>
+  errata: List<Record<Erratum>>
 }
 
 export interface AdvantageDisadvantageBase extends ActivatableBase {

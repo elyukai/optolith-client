@@ -15,17 +15,11 @@ export const getHerolistVisibilityFilter =
 export const getRacesSortOrder =
   pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.racesSortOrder)
 
-export const getRacesValueVisibility =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.racesValueVisibility)
-
 export const getCulturesSortOrder =
   pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.culturesSortOrder)
 
 export const getCulturesVisibilityFilter =
   pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.culturesVisibilityFilter)
-
-export const getCulturesValueVisibility =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.culturesValueVisibility)
 
 export const getProfessionsSortOrder =
   pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.professionsSortOrder)
@@ -35,13 +29,6 @@ export const getProfessionsVisibilityFilter =
 
 export const getProfessionsGroupVisibilityFilter =
   pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.professionsGroupVisibilityFilter)
-
-export const getProfessionsFromExpansionsVisibility =
-  pipe (
-    AppState.A_.ui,
-    uiReducer.A_.settings,
-    UISettingsState.A.professionsFromExpansionsVisibility
-  )
 
 export const getAdvantagesDisadvantagesCultureRatingVisibility =
   pipe (

@@ -4,7 +4,7 @@ export interface SkillRatingProps {
   isNotActive?: boolean
   noIncrease?: boolean
   sr?: number
-  addPoint? (): void
+  addPoint? (id: string): void
 }
 
 export function SkillRating (props: SkillRatingProps) {
@@ -22,7 +22,7 @@ export function SkillRating (props: SkillRatingProps) {
       </div>
     )
   }
-  else if (!addPoint && isNotActive !== true && noIncrease !== true) {
+  else if (addPoint === undefined && isNotActive !== true && noIncrease !== true) {
     return (
       <div className="sr empty" />
     )

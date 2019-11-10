@@ -1,6 +1,14 @@
+import { List } from "../../Data/List";
+
 /**
  * Please keep enum members sorted by value and not by key!
  */
+
+export enum Phase {
+  RCP = 1,
+  Creation = 2,
+  InGame = 3,
+}
 
 export enum ExperienceLevelId {
   Inexperienced = "EL_1",
@@ -90,7 +98,13 @@ export enum AdvantageId {
   ZahlreichePredigten = "ADV_79",
   ZahlreicheVisionen = "ADV_80",
   LeichterGang = "ADV_92",
+  Einkommen = "ADV_99",
 }
+
+/**
+ * Lists advantage IDs that have no influence on the AP maximum for advantages.
+ */
+export const AdvantageIdsNoMaxInfl = List<AdvantageId> (AdvantageId.Einkommen)
 
 export enum DisadvantageId {
   AfraidOf = "DISADV_1",
@@ -188,11 +202,50 @@ export enum SkillId {
 }
 
 export enum CombatTechniqueId {
+  Crossbows = "CT_1",
+  Bows = "CT_2",
+  Daggers = "CT_3",
+  FencingWeapons = "CT_4",
+  ImpactWeapons = "CT_5",
   ChainWeapons = "CT_6",
   Lances = "CT_7",
-  Brawling = "CT_8",
+  Brawling = "CT_9",
   Shields = "CT_10",
+  Swords = "CT_12",
+  Polearms = "CT_13",
+  ThrownWeapons = "CT_14",
+  TwoHandedImpactWeapons = "CT_15",
+  TwoHandedSwords = "CT_16",
   Feuerspeien = "CT_17",
+  Blasrohre = "CT_18",
+  Diskusse = "CT_19",
+  Faecher = "CT_20",
+  Spiesswaffen = "CT_21",
+}
+
+export enum MeleeCombatTechniqueId {
+  Daggers = CombatTechniqueId.Daggers,
+  FencingWeapons = CombatTechniqueId.FencingWeapons,
+  ImpactWeapons = CombatTechniqueId.ImpactWeapons,
+  ChainWeapons = CombatTechniqueId.ChainWeapons,
+  Lances = CombatTechniqueId.Lances,
+  Brawling = CombatTechniqueId.Brawling,
+  Shields = CombatTechniqueId.Shields,
+  Swords = CombatTechniqueId.Swords,
+  Polearms = CombatTechniqueId.Polearms,
+  TwoHandedImpactWeapons = CombatTechniqueId.TwoHandedImpactWeapons,
+  TwoHandedSwords = CombatTechniqueId.TwoHandedSwords,
+  Faecher = CombatTechniqueId.Faecher,
+  Spiesswaffen = CombatTechniqueId.Spiesswaffen,
+}
+
+export enum RangedCombatTechniqueId {
+  Crossbows = CombatTechniqueId.Crossbows,
+  Bows = CombatTechniqueId.Bows,
+  ThrownWeapons = CombatTechniqueId.ThrownWeapons,
+  Feuerspeien = CombatTechniqueId.Feuerspeien,
+  Blasrohre = CombatTechniqueId.Blasrohre,
+  Diskusse = CombatTechniqueId.Diskusse,
 }
 
 export enum SpecialAbilityId {
@@ -268,6 +321,10 @@ export enum SpecialAbilityId {
   LanguageSpecializations = "SA_699",
   TraditionSchelme = "SA_726",
   TraditionZauberalchimisten = "SA_750",
+  GrosseMeditation = "SA_772",
+  ScholarDerHalleDesLebensZuNorburg = "SA_802",
+  ScholarDesKreisesDerEinfuehlung = "SA_808",
+  MadaschwesternStil = "SA_821",
   GaretherGossenStil = "SA_901",
   WegDerGelehrten = "SA_1040",
   TraditionCultOfNuminoru = "SA_1049",
@@ -278,9 +335,11 @@ export enum SpecialAbilityId {
   KoerperlichesGeschick = "SA_1112",
   SozialeKompetenz = "SA_1123",
   Universalgenie = "SA_1127",
+  ScholarDesMagierkollegsZuHoningen = "SA_1147",
   TraditionAnimisten = "SA_1221",
   TraditionGeoden = "SA_1255",
   TraditionZibilijas = "SA_1293",
+  Zaubervariabilitaet = "SA_1391",
   TraditionBrobimGeoden = "SA_1438",
   TraditionKristallomanten = "",
 }

@@ -14,5 +14,5 @@
         "typescript",
         "typescriptreact"
     ],
-    "python.pythonPath": "C:\\Program Files\\Python37\\python.exe"
+    "editor.tabSize": 2
 }

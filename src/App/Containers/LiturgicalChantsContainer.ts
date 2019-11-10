@@ -8,8 +8,8 @@ import { getBlessedTraditionNumericId, getFilteredActiveLiturgicalChantsAndBless
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
 import { getInactiveLiturgicalChantsFilterText, getLiturgicalChantsFilterText } from "../Selectors/stateSelectors";
 import { getEnableActiveItemHints, getLiturgiesSortOrder } from "../Selectors/uisettingsSelectors";
+import { ChantsSortOptions } from "../Utilities/Raw/JSON/Config";
 import { LiturgicalChants, LiturgicalChantsDispatchProps, LiturgicalChantsOwnProps, LiturgicalChantsStateProps } from "../Views/LiturgicalChants/LiturgicalChants";
-import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (
   state: AppStateRecord,
@@ -47,7 +47,7 @@ const mapDispatchToProps =
     removeBlessingFromList (id: string) {
       dispatch (LiturgicalChantActions.removeBlessing (id))
     },
-    setSortOrder (sortOrder: SortNames) {
+    setSortOrder (sortOrder: ChantsSortOptions) {
       dispatch (LiturgicalChantActions.setLiturgicalChantsSortOrder (sortOrder))
     },
     switchActiveItemHints () {

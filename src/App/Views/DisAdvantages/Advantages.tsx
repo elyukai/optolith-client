@@ -180,6 +180,15 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
             onClick={this.showAddSlidein}
             />
           {showRating ? <RecommendedReference l10n={l10n} strongly /> : null}
+          {fromMaybe (null as React.ReactNode)
+                     (fmapF (m_ap)
+                            (ap => (
+                              <AdvantagesDisadvantagesAdventurePoints
+                                ap={ap}
+                                magicalMax={magicalMax}
+                                l10n={l10n}
+                                />
+                            )))}
         </Options>
         <MainContent>
           <ListHeader>

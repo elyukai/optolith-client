@@ -8,12 +8,13 @@ import { SetLocaleAction } from "../Actions/LocaleActions";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { pipe } from "../Utilities/pipe";
+import { Config, Locale } from "../Utilities/Raw/JSON/Config";
 
 type Action = ReceiveInitialDataAction | SetLocaleAction
 
 export interface LocaleState {
   "@@name": "LocaleState"
-  id: Maybe<string>
+  id: Maybe<Locale>
   type: "default" | "set"
   messages: Maybe<L10nRecord>
 }
@@ -32,7 +33,7 @@ export const localeReducer =
   (action: Action): ident<Record<LocaleState>> => {
     switch (action.type) {
       case ActionTypes.RECEIVE_INITIAL_DATA: {
-        const mset_locale = bind (action.payload.config) (x => Maybe (x.locale))
+        const mset_locale = bind (action.payload.config) (Config.A.locale)
 
         const id = fromMaybe (action.payload.defaultLocale) (mset_locale)
 

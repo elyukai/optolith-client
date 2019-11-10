@@ -7,8 +7,8 @@ import { getFilteredCombatTechniques } from "../Selectors/combatTechniquesSelect
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
 import { getCombatTechniquesFilterText } from "../Selectors/stateSelectors";
 import { getCombatTechniquesSortOrder } from "../Selectors/uisettingsSelectors";
+import { CombatTechniquesSortOptions } from "../Utilities/Raw/JSON/Config";
 import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnProps, CombatTechniquesStateProps } from "../Views/CombatTechniques/CombatTechniques";
-import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (
   state: AppStateRecord,
@@ -31,7 +31,7 @@ const mapDispatchToProps = (
   removePoint (id: string) {
     dispatch (CombatTechniquesActions.removeCombatTechniquePoint (id))
   },
-  setSortOrder (sortOrder: SortNames) {
+  setSortOrder (sortOrder: CombatTechniquesSortOptions) {
     dispatch (CombatTechniquesActions.setCombatTechniquesSortOrder (sortOrder))
   },
   setFilterText (filterText: string) {

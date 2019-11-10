@@ -3,6 +3,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { Die } from "./sub/Die";
+import { Erratum } from "./sub/Errata";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface RaceVariant {
@@ -23,6 +24,7 @@ export interface RaceVariant {
   sizeBase: Maybe<number>
   sizeRandom: Maybe<List<Record<Die>>>
   category: Categories
+  errata: List<Record<Erratum>>
 }
 
 export const RaceVariant =
@@ -44,6 +46,7 @@ export const RaceVariant =
                 sizeBase: Nothing,
                 sizeRandom: Nothing,
                 category: Categories.RACE_VARIANTS,
+                errata: List (),
               })
 
 export const RaceVariantL = makeLenses (RaceVariant)
