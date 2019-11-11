@@ -200,14 +200,11 @@ export interface RawConfig {
   herolistSortOrder: SortNames
   herolistVisibilityFilter: string
   racesSortOrder: SortNames
-  racesValueVisibility: boolean
   culturesSortOrder: SortNames
   culturesVisibilityFilter: string
-  culturesValueVisibility: boolean
   professionsSortOrder: SortNames
   professionsVisibilityFilter: string
   professionsGroupVisibilityFilter: number
-  professionsFromExpansionsVisibility: boolean
   advantagesDisadvantagesCultureRatingVisibility: boolean
   talentsSortOrder: SortNames
   talentsCultureRatingVisibility: boolean

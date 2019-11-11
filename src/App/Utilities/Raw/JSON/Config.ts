@@ -1,9 +1,11 @@
 import { List } from "../../../../Data/List";
-import { Just, Maybe, Nothing } from "../../../../Data/Maybe";
-import { fromDefault } from "../../../../Data/Record";
+import { Just, Maybe, maybeToUndefined, Nothing } from "../../../../Data/Maybe";
+import { fromDefault, Record, toObject } from "../../../../Data/Record";
 import { EquipmentGroup } from "../../../Constants/Groups";
 import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../../../Constants/Ids";
 import { SortNames } from "../../../Views/Universal/SortOptions";
+import { pipe } from "../../pipe";
+import { RawConfig } from "../XLSX/RawData";
 import { fromJSBool, fromJSBoolM, fromJSEnum, fromJSEnumM, fromJSInArray, fromJSRecord } from "./Generic";
 
 export type HeroListSortOptions = SortNames.Name
@@ -197,54 +199,78 @@ export const Config =
               })
 
 export const readConfig =
-  fromJSRecord <Config> ({
-                          herolistSortOrder: fromJSInArray (HeroListSortOptions)
-                                                           ("HeroListSortOptions"),
-                          herolistVisibilityFilter: fromJSEnum ("HeroListVisibilityFilter")
-                                                               (HeroListVisibilityFilter),
-                          racesSortOrder: fromJSInArray (RacesSortOptions)
-                                                        ("RacesSortOptions"),
-                          culturesSortOrder: fromJSInArray (CulturesSortOptions)
-                                                           ("CulturesSortOptions"),
-                          culturesVisibilityFilter: fromJSEnum ("CulturesVisibilityFilter")
-                                                               (CulturesVisibilityFilter),
-                          professionsSortOrder: fromJSInArray (ProfessionsSortOptions)
-                                                              ("ProfessionsSortOptions"),
-                          professionsVisibilityFilter:
-                            fromJSEnum ("ProfessionsVisibilityFilter")
-                                       (ProfessionsVisibilityFilter),
-                          professionsGroupVisibilityFilter:
-                            fromJSEnum ("ProfessionsGroupVisibilityFilter")
-                                       (ProfessionsGroupVisibilityFilter),
-                          advantagesDisadvantagesCultureRatingVisibility: fromJSBool,
-                          talentsSortOrder: fromJSInArray (SkillsSortOptions)
-                                                          ("SkillsSortOptions"),
-                          talentsCultureRatingVisibility: fromJSBool,
-                          combatTechniquesSortOrder: fromJSInArray (CombatTechniquesSortOptions)
-                                                                   ("CombatTechniquesSortOptions"),
-                          specialAbilitiesSortOrder: fromJSInArray (SpecialAbilitiesSortOptions)
-                                                                   ("SpecialAbilitiesSortOptions"),
-                          spellsSortOrder: fromJSInArray (SpellsSortOptions)
-                                                         ("SpellsSortOptions"),
-                          spellsUnfamiliarVisibility: fromJSBool,
-                          liturgiesSortOrder: fromJSInArray (ChantsSortOptions)
-                                                            ("ChantsSortOptions"),
-                          equipmentSortOrder: fromJSInArray (EquipmentSortOptions)
-                                                            ("EquipmentSortOptions"),
-                          equipmentGroupVisibilityFilter: fromJSEnum ("EquipmentGroup")
-                                                                     (EquipmentGroup),
-                          sheetCheckAttributeValueVisibility: fromJSBoolM,
-                          enableActiveItemHints: fromJSBool,
-                          locale: fromJSEnumM ("Locale") (Locale),
-                          theme: fromJSEnumM ("Theme") (Theme),
-                          enableEditingHeroAfterCreationPhase: fromJSBoolM,
-                          meleeItemTemplatesCombatTechniqueFilter:
-                            fromJSEnumM ("MeleeCombatTechniqueId")
-                                        (MeleeCombatTechniqueId),
-                          rangedItemTemplatesCombatTechniqueFilter:
-                            fromJSEnumM ("RangedCombatTechniqueId")
-                                        (RangedCombatTechniqueId),
-                          enableAnimations: fromJSBoolM,
-                        })
-                        (Config)
-                        ("Config")
+  pipe (
+    JSON.parse,
+    fromJSRecord <Config> ({
+                            herolistSortOrder: fromJSInArray (HeroListSortOptions)
+                                                             ("HeroListSortOptions"),
+                            herolistVisibilityFilter: fromJSEnum ("HeroListVisibilityFilter")
+                                                                 (HeroListVisibilityFilter),
+                            racesSortOrder: fromJSInArray (RacesSortOptions)
+                                                          ("RacesSortOptions"),
+                            culturesSortOrder: fromJSInArray (CulturesSortOptions)
+                                                             ("CulturesSortOptions"),
+                            culturesVisibilityFilter: fromJSEnum ("CulturesVisibilityFilter")
+                                                                 (CulturesVisibilityFilter),
+                            professionsSortOrder: fromJSInArray (ProfessionsSortOptions)
+                                                                ("ProfessionsSortOptions"),
+                            professionsVisibilityFilter:
+                              fromJSEnum ("ProfessionsVisibilityFilter")
+                                         (ProfessionsVisibilityFilter),
+                            professionsGroupVisibilityFilter:
+                              fromJSEnum ("ProfessionsGroupVisibilityFilter")
+                                         (ProfessionsGroupVisibilityFilter),
+                            advantagesDisadvantagesCultureRatingVisibility: fromJSBool,
+                            talentsSortOrder: fromJSInArray (SkillsSortOptions)
+                                                            ("SkillsSortOptions"),
+                            talentsCultureRatingVisibility: fromJSBool,
+                            combatTechniquesSortOrder:
+                              fromJSInArray (CombatTechniquesSortOptions)
+                                            ("CombatTechniquesSortOptions"),
+                            specialAbilitiesSortOrder:
+                              fromJSInArray (SpecialAbilitiesSortOptions)
+                                            ("SpecialAbilitiesSortOptions"),
+                            spellsSortOrder: fromJSInArray (SpellsSortOptions)
+                                                           ("SpellsSortOptions"),
+                            spellsUnfamiliarVisibility: fromJSBool,
+                            liturgiesSortOrder: fromJSInArray (ChantsSortOptions)
+                                                              ("ChantsSortOptions"),
+                            equipmentSortOrder: fromJSInArray (EquipmentSortOptions)
+                                                              ("EquipmentSortOptions"),
+                            equipmentGroupVisibilityFilter: fromJSEnum ("EquipmentGroup")
+                                                                       (EquipmentGroup),
+                            sheetCheckAttributeValueVisibility: fromJSBoolM,
+                            enableActiveItemHints: fromJSBool,
+                            locale: fromJSEnumM ("Locale") (Locale),
+                            theme: fromJSEnumM ("Theme") (Theme),
+                            enableEditingHeroAfterCreationPhase: fromJSBoolM,
+                            meleeItemTemplatesCombatTechniqueFilter:
+                              fromJSEnumM ("MeleeCombatTechniqueId")
+                                          (MeleeCombatTechniqueId),
+                            rangedItemTemplatesCombatTechniqueFilter:
+                              fromJSEnumM ("RangedCombatTechniqueId")
+                                          (RangedCombatTechniqueId),
+                            enableAnimations: fromJSBoolM,
+                          })
+                          (Config)
+                          ("Config")
+  )
+
+export const writeConfig = (x: Record<Config>): string => {
+  const obj = toObject (x)
+
+  const serialized_obj: RawConfig = {
+    ...obj,
+    sheetCheckAttributeValueVisibility: maybeToUndefined (obj.sheetCheckAttributeValueVisibility),
+    locale: maybeToUndefined (obj.locale),
+    theme: maybeToUndefined (obj.theme),
+    enableEditingHeroAfterCreationPhase: maybeToUndefined (obj.enableEditingHeroAfterCreationPhase),
+    enableAnimations: maybeToUndefined (obj.enableAnimations),
+    meleeItemTemplatesCombatTechniqueFilter:
+      maybeToUndefined (obj.meleeItemTemplatesCombatTechniqueFilter as Maybe<string>),
+    rangedItemTemplatesCombatTechniqueFilter:
+      maybeToUndefined (obj.rangedItemTemplatesCombatTechniqueFilter as Maybe<string>),
+  }
+
+  return JSON.stringify (serialized_obj)
+}
