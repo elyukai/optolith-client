@@ -97,9 +97,12 @@ export const fromJSEnum =
 export const fromJSEnumM =
   (enum_name: string) =>
   <A extends object> (enum_values: A) =>
-    fromJS ((x): x is EnsureEnumType<A> | undefined => (isString (x) || isNumber (x))
-                                                       && isInEnum (enum_values)
-                                                                   (x as GenericEnumType<A>))
+    fromJS ((x): x is EnsureEnumType<A> | undefined => (
+                                                         (isString (x) || isNumber (x))
+                                                         && isInEnum (enum_values)
+                                                                     (x as GenericEnumType<A>)
+                                                       )
+                                                       || x === undefined)
            <Maybe<EnsureEnumType<A>>> (Maybe)
            (enum_name)
 

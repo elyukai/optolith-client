@@ -6,7 +6,7 @@ import { UpdateInfo } from "electron-updater";
 import * as fs from "fs";
 import { extname, join } from "path";
 import { toMsg, tryIO } from "../../Control/Exception";
-import { bimap, Either, either, eitherToMaybe, first, fromLeft, fromLeft_, fromRight_, isLeft, isRight, Left, Right } from "../../Data/Either";
+import { bimap, Either, either, eitherToMaybe, first, fromLeft_, fromRight_, isLeft, isRight, Left, Right } from "../../Data/Either";
 import { flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
@@ -119,8 +119,8 @@ export const requestInitialData: ReduxAction<Promise<void>> = async dispatch =>
           }
           else {
             dispatch (addAlert ({
-              title: fst (data),
-              message: fromLeft ("") (snd (data)),
+              title: fst (fromLeft_ (data)),
+              message: snd (fromLeft_ (data)),
             }))
           }
         })
@@ -135,14 +135,14 @@ export const getInitialData: ReduxAction<Promise<Either<Pair<string, string>, In
       const deleted = await deleteCache ()
 
       if (isLeft (deleted)) {
-        return first (toMsg) (deleted)
+        return first (pipe (toMsg, Pair ("Error"))) (deleted)
       }
     }
 
     const update_written = await writeUpdate (false)
 
     if (isLeft (update_written)) {
-      return first (toMsg) (update_written)
+      return first (pipe (toMsg, Pair ("Error"))) (update_written)
     }
 
     // parsing error inside, missing file outside
@@ -160,12 +160,7 @@ export const getInitialData: ReduxAction<Promise<Either<Pair<string, string>, In
 
       console.error (`Config parse error: ${msg}`)
 
-      dispatch (addAlert ({
-        message: msg,
-        title: "Error",
-      }))
-
-      return Left (msg)
+      return Left (Pair ("Config Error", msg))
     }
 
     const mconfig = eitherToMaybe (fromRight_ (eeconfig_flipped))
@@ -181,12 +176,7 @@ export const getInitialData: ReduxAction<Promise<Either<Pair<string, string>, In
     return bimap ((msg: string) => {
                    console.error (`Table parse error: ${msg}`)
 
-                   dispatch (addAlert ({
-                     message: msg,
-                     title: "Error",
-                   }))
-
-                   return msg
+                   return Pair ("Database Error", msg)
                  })
                  ((tables: TableParseRes): InitialData =>
                    ({
