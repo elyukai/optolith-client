@@ -83,12 +83,6 @@ export function WikiRaceInfo (props: WikiRaceInfoProps) {
                        {str}
                      </WikiProperty>
                    ))}
-      {maybeRNullF (RCA_.stronglyRecommendedDisadvantagesText (x))
-                   (str => (
-                     <WikiProperty l10n={l10n} title="stronglyrecommendeddisadvantages">
-                       {str}
-                     </WikiProperty>
-                   ))}
       <WikiProperty l10n={l10n} title="commoncultures">
         {sameCommonCultures
           ? (
