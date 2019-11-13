@@ -6,7 +6,7 @@ import { UpdateInfo } from "electron-updater";
 import * as fs from "fs";
 import { extname, join } from "path";
 import { toMsg, tryIO } from "../../Control/Exception";
-import { bimap, Either, eitherToMaybe, first, fromLeft, fromLeft_, fromRight_, isLeft, isRight, Right } from "../../Data/Either";
+import { bimap, Either, eitherToMaybe, first, fromLeft, fromLeft_, fromRight_, isLeft, isRight, Right, } from "../../Data/Either";
 import { flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
@@ -450,37 +450,40 @@ export const requestHeroExport =
 
     if (isJust (mhero)) {
       const hero = fromJust (mhero)
+      
+      const pmfilepath = await showSaveDialog ({
+        title: translate (l10n) ("exportheroasjson"),
+        filters: [
+          { name: "JSON", extensions: ["json"] },
+        ],
+        defaultPath: hero.name.replace (/\//u, "/"),
+      })
 
-      await pipe_ (
-        await showSaveDialog ({
-          title: translate (l10n) ("exportheroasjson"),
-          filters: [
-            { name: "JSON", extensions: ["json"] },
-          ],
-          defaultPath: hero.name.replace (/\//u, "/"),
-        }),
-        tryIO (maybe (Promise.resolve ())
-                     (flip (writeFile) (JSON.stringify (hero)))),
-        fmap (res => {
-          if (isRight (res)) {
-            dispatch (addAlert ({
-              message: translate (l10n) ("herosaved"),
-            }))
-          }
-          else {
-            dispatch (addAlert ({
-              message: `${
-                translate (l10n) ("exportheroerror")
-              } (${
-                translate (l10n) ("errorcode")
-              }: ${
-                JSON.stringify (fromLeft_ (res))
-              })`,
-              title: translate (l10n) ("error"),
-            }))
-          }
-        })
-      )
+      if (isJust (pmfilepath)) { 
+        const res = await tryIO (maybe (Promise.resolve ())
+        (flip (writeFile) (JSON.stringify (hero)))) (pmfilepath)
+
+        if (isRight (res)) { 
+          dispatch (addAlert ({
+            message: translate (l10n) ("herosaved"),
+          }))
+        } else {
+          dispatch (addAlert ({
+          message: `${
+            translate (l10n) ("exportheroerror")
+          } (${
+            translate (l10n) ("errorcode")
+          }: ${
+            JSON.stringify (fromLeft_ (res))
+          })`,
+            title: translate (l10n) ("error"),
+          }))
+        }
+      } else { // Der Benutzer hat den Dialog abgebrochen
+        dispatch (addAlert ({
+          message: translate (l10n) ("exportcanceled"),
+        }))
+      }
     }
   }
 

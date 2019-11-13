@@ -648,6 +648,7 @@ export interface L10n {
   "openhero": string
   "socialstatusxorhigher": string
   "sixblessings": string
+  "exportcanceled": string
 }
 
 export type L10nKey = keyof OmitName<L10n>
@@ -1301,4 +1302,5 @@ export const L10n =
                 "openhero": "",
                 "socialstatusxorhigher": "",
                 "sixblessings": "",
+                "exportcanceled": "",
               })

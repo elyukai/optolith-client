@@ -729,6 +729,7 @@ export const toL10n =
         "openhero": checkL10nNonEmptyString ("openhero"),
         "socialstatusxorhigher": checkL10nNonEmptyString ("socialstatusxorhigher"),
         "sixblessings": checkL10nNonEmptyString ("sixblessings"),
+        "exportcanceled": checkL10nNonEmptyString ("exportcanceled"),
       }
 
       return mapMNamed
@@ -1394,6 +1395,7 @@ export const toL10n =
           "openhero": res ["openhero"],
           "socialstatusxorhigher": res ["socialstatusxorhigher"],
           "sixblessings": res ["sixblessings"],
+          "exportcanceled": res ["exportcanceled"],
           // tslint:enable: no-string-literal
         }))
     }
