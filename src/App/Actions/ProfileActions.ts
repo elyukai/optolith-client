@@ -8,6 +8,7 @@ import { getSize, getWeight } from "../Selectors/stateSelectors";
 import { Locale } from "../Utilities/Raw/JSON/Config";
 import * as RCPUtils from "../Utilities/rcpUtils";
 import { ReduxAction } from "./Actions";
+import { traceId } from "../../Debug/Trace";
 
 export interface SetHeroNameAction {
   type: ActionTypes.SET_HERO_NAME
@@ -225,10 +226,22 @@ export const rerollWeight: ReduxAction =
     const race = getCurrentRace (state)
     const prevSize = getSize (state)
 
-    const { weight, size } = RCPUtils.rerollWeight (prevSize) (race)
+    isJust (prevSize) ? traceId (fromJust (prevSize) + ", " + fromJust (prevSize).length) : traceId ("if-condition should apply")
 
-    if (isJust (weight)) {
-      dispatch (setWeight (fromJust (weight)) (size))
+    // Falls die Größe des Helden noch nicht vom Benutzer gesetzt wurde:
+    if (!isJust (prevSize) || (isJust (prevSize) && fromJust(prevSize).length === 0)) {
+
+      const race_variant = getCurrentRaceVariant (state)
+      const initialWeightAndSize = RCPUtils.rerollWeightAndSize (race) (race_variant)
+      if (isJust (initialWeightAndSize.weight)) {
+        dispatch (setWeight (fromJust(initialWeightAndSize.weight)) (initialWeightAndSize.size))
+      }
+    } else {
+      const { weight, size } = RCPUtils.rerollWeight (prevSize) (race)
+
+      if (isJust (weight)) {
+        dispatch (setWeight (fromJust (weight)) (size))
+      }
     }
   }
 
