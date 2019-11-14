@@ -62,7 +62,7 @@
     "ts-loader": "6.0.4",
     "tslint": "5.14.0",
     "tslint-eslint-rules": "5.4.0",
-    "typescript": "3.4.5",
+    "typescript": "3.7.2",
     "typescript-eslint-parser": "16.0.0",
     "typescript-tslint-plugin": "0.3.1"
   },

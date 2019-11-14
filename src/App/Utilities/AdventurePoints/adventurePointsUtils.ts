@@ -404,7 +404,7 @@ const getSkillSpecializationsDiff =
 
                                     return p
                                   })),
-                    fromMaybe (ident)
+                    fromMaybe<ident<TrackingPair>> (ident)
                   ))
                   (Pair (0, empty))
                   (current_active)

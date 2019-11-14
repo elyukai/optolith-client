@@ -233,7 +233,7 @@ rules:
   prefer-object-spread: 2
   quote-props:
     - 2
-    - consistent
+    - as-needed
   quotes:
     - 2
     - double

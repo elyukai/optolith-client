@@ -399,11 +399,12 @@ const itemDetailsReducer =
       case ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD:
       case ActionTypes.SET_ITEM_SECOND_DAMAGE_THRESHOLD: {
         const isFirst = action.type === ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD
-        const upd = isFirst ? upd1 : upd2
 
         return modifyEditItem (over (composeL (damageBonus, threshold))
                                     (xs => isTuple (xs)
-                                      ? upd (action.payload.value) (xs)
+                                      ? isFirst
+                                        ? upd1 (action.payload.value) (xs)
+                                        : upd2 (action.payload.value) (xs)
                                       : xs))
       }
 

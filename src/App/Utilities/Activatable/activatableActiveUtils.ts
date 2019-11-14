@@ -132,10 +132,12 @@ export const getAllActiveByCategory =
     const wiki_slice = getActivatableWikiSliceByCategory (category) (wiki)
     const hero_slice = getActivatableHeroSliceByCategory (category) (hero)
 
+    type Entry = Maybe<Record<ActiveActivatable<WikiEntryByCategory[T]>>>
+
     return pipe_ (
       hero_slice,
       getActiveFromState,
-      mapMaybe ((active: Record<ActiveObjectWithId>) => {
+      mapMaybe ((active: Record<ActiveObjectWithId>): Entry => {
                  const current_id = ActiveObjectWithId.A.id (active)
 
                  return liftM4 ((nameAndCost: Record<ActivatableNameCostSafeCost>) =>
@@ -160,7 +162,7 @@ export const getAllActiveByCategory =
                                (getIsRemovalOrChangeDisabled (wiki)
                                                              (hero)
                                                              (matching_script_and_lang_related)
-                                                             (active))
+                                                             (active)) as Entry
                })
     )
   }

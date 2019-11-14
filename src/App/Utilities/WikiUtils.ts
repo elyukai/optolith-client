@@ -42,27 +42,28 @@ interface WikiKeyByCategory {
   [Categories.TALENTS]: "skills"
 }
 
-export const getWikiSliceGetterByCategory =
-  <T extends Categories> (x: T): typeof WikiModel.AL[WikiKeyByCategory[T]] => {
-    switch (x) {
-      case Categories.ADVANTAGES: return WikiModel.AL.advantages
-      case Categories.ATTRIBUTES: return WikiModel.AL.attributes
-      case Categories.BLESSINGS: return WikiModel.AL.blessings
-      case Categories.CANTRIPS: return WikiModel.AL.cantrips
-      case Categories.COMBAT_TECHNIQUES: return WikiModel.AL.combatTechniques
-      case Categories.CULTURES: return WikiModel.AL.cultures
-      case Categories.DISADVANTAGES: return WikiModel.AL.disadvantages
-      case Categories.LITURGIES: return WikiModel.AL.liturgicalChants
-      case Categories.PROFESSIONS: return WikiModel.AL.professions
-      case Categories.PROFESSION_VARIANTS: return WikiModel.AL.professionVariants
-      case Categories.RACES: return WikiModel.AL.races
-      case Categories.RACE_VARIANTS: return WikiModel.AL.raceVariants
-      case Categories.SPECIAL_ABILITIES: return WikiModel.AL.specialAbilities
-      case Categories.SPELLS: return WikiModel.AL.spells
-      case Categories.TALENTS: return WikiModel.AL.skills
-    }
+type GetWikiSlice<C extends Categories> = typeof WikiModel.A[WikiKeyByCategory[C]]
 
-    throw new TypeError (`${show (x)} is no valid wiki category!`)
+export const getWikiSliceGetterByCategory =
+  <C extends Categories> (x: C): GetWikiSlice<C> => {
+    switch (x) {
+      case Categories.ADVANTAGES: return WikiModel.A.advantages as GetWikiSlice<C>
+      case Categories.ATTRIBUTES: return WikiModel.A.attributes as GetWikiSlice<C>
+      case Categories.BLESSINGS: return WikiModel.A.blessings as GetWikiSlice<C>
+      case Categories.CANTRIPS: return WikiModel.A.cantrips as GetWikiSlice<C>
+      case Categories.COMBAT_TECHNIQUES: return WikiModel.A.combatTechniques as GetWikiSlice<C>
+      case Categories.CULTURES: return WikiModel.A.cultures as GetWikiSlice<C>
+      case Categories.DISADVANTAGES: return WikiModel.A.disadvantages as GetWikiSlice<C>
+      case Categories.LITURGIES: return WikiModel.A.liturgicalChants as GetWikiSlice<C>
+      case Categories.PROFESSIONS: return WikiModel.A.professions as GetWikiSlice<C>
+      case Categories.PROFESSION_VARIANTS: return WikiModel.A.professionVariants as GetWikiSlice<C>
+      case Categories.RACES: return WikiModel.A.races as GetWikiSlice<C>
+      case Categories.RACE_VARIANTS: return WikiModel.A.raceVariants as GetWikiSlice<C>
+      case Categories.SPECIAL_ABILITIES: return WikiModel.A.specialAbilities as GetWikiSlice<C>
+      case Categories.SPELLS: return WikiModel.A.spells as GetWikiSlice<C>
+      case Categories.TALENTS: return WikiModel.A.skills as GetWikiSlice<C>
+      default: throw new TypeError (`${show (x)} is no valid wiki category!`)
+    }
   }
 
 export const getWikiEntryWithGetter =

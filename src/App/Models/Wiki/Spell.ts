@@ -2,7 +2,7 @@ import { List } from "../../../Data/List";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
-import { MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups";
+import { MagicalTradition, Property } from "../../Constants/Groups";
 import { Erratum } from "./sub/Errata";
 import { SourceLink } from "./sub/SourceLink";
 import { AllRequirementObjects, CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
@@ -14,7 +14,7 @@ export interface Spell {
   category: Categories
   check: List<string>
   checkmod: OrderedSet<CheckModifier>
-  gr: MagicalGroup
+  gr: number
   ic: number
   property: Property
   tradition: List<MagicalTradition>
