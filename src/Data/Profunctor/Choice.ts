@@ -33,8 +33,8 @@ export const left_: ChoiceLeft_ =
     if (isMarket (x)) {
       return Market<any, Either<any, any>>
         (pipe (x.to, Left))
-        (either<any, any, Either<Either<any, any>, any>> (pipe (x.fro, bimap (Left) (ident)))
-                                                         (pipe (Right, Left)))
+        (either <any, Either<Either<any, any>, any>> (pipe (x.fro, bimap (Left) (ident)))
+                (pipe (Right, Left)))
     }
 
     if (isTagged (x)) {
@@ -66,8 +66,8 @@ export const right_: ChoiceRight_ =
     if (isMarket (x)) {
       return Market<any, Either<any, any>>
         (pipe (x.to, Right))
-        (either<any, any, Either<Either<any, any>, any>> (pipe (Left, Left))
-                                                         (pipe (x.fro, bimap (Right) (ident))))
+        (either <any, Either<Either<any, any>, any>> (pipe (Left, Left))
+                (pipe (x.fro, bimap (Right) (ident))))
     }
 
     if (isTagged (x)) {
