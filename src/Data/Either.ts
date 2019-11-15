@@ -624,8 +624,9 @@ export const lte =
  * first function to `a` if it is `Right b`, apply the second function to `b`.
  */
 export const either =
-  <A, B, C>
+  <A, C>
   (fLeft: (l: A) => C) =>
+  <B>
   (fRight: (r: B) => C) =>
   (x: Either<A, B>): C =>
     isRight (x) ? fRight (x .value) : fLeft (x .value)

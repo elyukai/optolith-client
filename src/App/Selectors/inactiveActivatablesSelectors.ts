@@ -92,8 +92,10 @@ export const getInactiveForView =
                                                                    (hero_magical_traditions)
                                                                    (wiki_entry)
                                                                    (lookup (getId (wiki_entry))
-                                                                             (stateSlice)))
-                                                 (elems<Activatable> (wikiSlice))
+                                                                           (stateSlice)) as
+                                                                     Maybe<Inactive<T>>)
+                                                 (elems<Activatable> (wikiSlice) as
+                                                   List<WikiEntryRecordByCategory[T]>)
                                }))
 
 const getInactiveAdvantagesForView = getInactiveForView (Categories.ADVANTAGES)

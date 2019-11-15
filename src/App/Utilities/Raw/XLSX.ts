@@ -13,6 +13,7 @@ import { fst, Pair, snd } from "../../../Data/Tuple";
 import { trace, traceId } from "../../../Debug/Trace";
 import { ReduxAction } from "../../Actions/Actions";
 import { Categories } from "../../Constants/Categories";
+import { SkillGroup } from "../../Constants/Groups";
 import { ProfessionId, SpecialAbilityId } from "../../Constants/Ids";
 import { AdvantageL } from "../../Models/Wiki/Advantage";
 import { DisadvantageL } from "../../Models/Wiki/Disadvantage";
@@ -369,7 +370,7 @@ const parseWorkbooks =
                   w => {
                     const knowledge_skills =
                       mapMaybe (pipe (
-                                ensure (pipe (Skill.A.gr, equals (4))),
+                                ensure (pipe (Skill.A.gr, equals (SkillGroup.Knowledge))),
                                 fmap (x => SelectOption ({
                                               id: Skill.A.id (x),
                                               name: Skill.A.name (x),

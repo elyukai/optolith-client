@@ -8,7 +8,7 @@
 import { bimap, bindF, Either, fromLeft_, fromRight_, isLeft, Left, Right } from "../../../../Data/Either";
 import { ident } from "../../../../Data/Function";
 import { elem, fromArray, List } from "../../../../Data/List";
-import { Maybe } from "../../../../Data/Maybe";
+import { Maybe, Nothing } from "../../../../Data/Maybe";
 import { empty, insert, OrderedMap } from "../../../../Data/OrderedMap";
 import { OmitName, Record, RecordBase, RecordIBase } from "../../../../Data/Record";
 import { EnsureEnumType, GenericEnumType, isInEnum } from "../../Enum";
@@ -29,7 +29,7 @@ export type GetJSON<A> = (x: unknown) => Either<string, A>
  * Read a value parsed from a JSON.
  */
 export type GetJSONRecord<A extends RecordBase> = {
-  [K in keyof A]: GetJSON<A[K]>
+  [K in keyof A]: GetJSON<A[K] | Nothing>
 }
 
 /**
@@ -97,15 +97,23 @@ export const fromJSEnum =
 export const fromJSEnumM =
   (enum_name: string) =>
   <A extends object> (enum_values: A) =>
-    fromJS ((x): x is EnsureEnumType<A> | undefined => (isString (x) || isNumber (x))
-                                                       && isInEnum (enum_values)
-                                                                   (x as GenericEnumType<A>))
+    fromJS ((x): x is EnsureEnumType<A> | undefined => (
+                                                         (isString (x) || isNumber (x))
+                                                         && isInEnum (enum_values)
+                                                                     (x as GenericEnumType<A>)
+                                                       )
+                                                       || x === undefined)
            <Maybe<EnsureEnumType<A>>> (Maybe)
            (enum_name)
 
 export const fromJSInArray =
   <A> (possible_values: List<A>) =>
     fromJSId ((x): x is A => elem (x) (possible_values))
+
+export const fromJSInArrayNothing =
+  <A> (possible_values: List<A>) =>
+    fromJS (orUndefined ((x): x is A => elem (x) (possible_values)))
+           (res => res === undefined ? Nothing : res)
 
 /**
  * `fromJSArray :: (Unknown -> Bool) -> (a -> b) -> String -> GetJSON [b]`
@@ -158,7 +166,7 @@ export const fromJSRecord =
           return Left (`In object at key "${key}":\n${fromLeft_ (res)}`)
         }
         else {
-          validated [key] = fromRight_ (res)
+          (validated as RecordBase) [key] = fromRight_ (res)
         }
       }
 

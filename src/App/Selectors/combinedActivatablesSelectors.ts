@@ -21,6 +21,7 @@ import { getHeroes, getInactiveAdvantagesFilterText, getInactiveDisadvantagesFil
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
 
 const getName = pipe (InactiveActivatable.AL.wikiEntry, Advantage.AL.name)
+
 const getNameInWiki =
   pipe (
     InactiveActivatable.AL.wikiEntry as Accessor<InactiveActivatable<SpecialAbility>, "wikiEntry">,
@@ -51,7 +52,8 @@ const getFilteredInactives =
                                        List<InactiveOrActive<A>>
             : filterAndSortRecordsBy (0)
                                      <InactiveActivatable<A>>
-                                     ([getName])
+                                     ([getName as unknown as
+                                       FilterAccessor<InactiveActivatable<A>>])
                                      (sortOptions)
                                      (filterText)
                                      (inactive))

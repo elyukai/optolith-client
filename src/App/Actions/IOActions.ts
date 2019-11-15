@@ -6,7 +6,7 @@ import { UpdateInfo } from "electron-updater";
 import * as fs from "fs";
 import { extname, join } from "path";
 import { toMsg, tryIO } from "../../Control/Exception";
-import { bimap, Either, eitherToMaybe, first, fromLeft, fromLeft_, fromRight_, isLeft, isRight, Right, } from "../../Data/Either";
+import { bimap, Either, either, eitherToMaybe, first, fromLeft, fromLeft_, fromRight_, isLeft, isRight, Left, Right } from "../../Data/Either";
 import { flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
@@ -16,7 +16,7 @@ import { any, filter, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../
 import { notMember } from "../../Data/OrderedSet";
 import { Record, toObject } from "../../Data/Record";
 import { parseJSON } from "../../Data/String/JSON";
-import { fst, Pair } from "../../Data/Tuple";
+import { fst, Pair, snd } from "../../Data/Tuple";
 import { readFile, writeFile } from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
@@ -37,7 +37,7 @@ import { translate, translateP } from "../Utilities/I18n";
 import { getNewIdByDate, prefixId } from "../Utilities/IDUtils";
 import { bytify, getSystemLocale, showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
-import { Config, Locale, readConfig } from "../Utilities/Raw/JSON/Config";
+import { Config, Locale, readConfig, writeConfig } from "../Utilities/Raw/JSON/Config";
 import { convertHeroesForSave, convertHeroForSave } from "../Utilities/Raw/JSON/Hero/HeroToJSON";
 import { parseTables, TableParseRes } from "../Utilities/Raw/XLSX";
 import { RawHero, RawHerolist } from "../Utilities/Raw/XLSX/RawData";
@@ -54,7 +54,10 @@ const loadConfig = async () =>
   pipe_ (
     join (user_data_path, "config.json"),
     tryIO (readFile),
-    fmap (pipe (first (err => err .message), Either.bindF (readConfig)))
+    fmap (pipe (
+      first (err => err .message),
+      fmap (readConfig)
+    ))
   )
 
 const loadHeroes = async () =>
@@ -116,13 +119,13 @@ export const requestInitialData: ReduxAction<Promise<void>> = async dispatch =>
           }
           else {
             dispatch (addAlert ({
-              title: "Error loading database",
-              message: fromLeft ("") (data),
+              title: fst (fromLeft_ (data)),
+              message: snd (fromLeft_ (data)),
             }))
           }
         })
 
-export const getInitialData: ReduxAction<Promise<Either<string, InitialData>>> =
+export const getInitialData: ReduxAction<Promise<Either<Pair<string, string>, InitialData>>> =
   async dispatch => {
     const defaultLocale = getSystemLocale ()
 
@@ -132,17 +135,35 @@ export const getInitialData: ReduxAction<Promise<Either<string, InitialData>>> =
       const deleted = await deleteCache ()
 
       if (isLeft (deleted)) {
-        return first (toMsg) (deleted)
+        return first (pipe (toMsg, Pair ("Error"))) (deleted)
       }
     }
 
     const update_written = await writeUpdate (false)
 
     if (isLeft (update_written)) {
-      return first (toMsg) (update_written)
+      return first (pipe (toMsg, Pair ("Error"))) (update_written)
     }
 
-    const mconfig = eitherToMaybe (await loadConfig ())
+    // parsing error inside, missing file outside
+    const eeconfig = await loadConfig ()
+
+    // parsing error outside, missing file inside
+    const eeconfig_flipped = either ((file_err: string): typeof eeconfig => Right (Left (file_err)))
+                                    (either ((parse_err: string): typeof eeconfig =>
+                                              Left (parse_err))
+                                            ((c: Record<Config>) => Right (Right (c))))
+                                    (eeconfig)
+
+    if (isLeft (eeconfig_flipped)) {
+      const msg = fromLeft_ (eeconfig_flipped)
+
+      console.error (`Config parse error: ${msg}`)
+
+      return Left (Pair ("Config Error", msg))
+    }
+
+    const mconfig = eitherToMaybe (fromRight_ (eeconfig_flipped))
     const mheroes = await loadHeroes ()
     const mcache = await readCache ()
 
@@ -155,12 +176,7 @@ export const getInitialData: ReduxAction<Promise<Either<string, InitialData>>> =
     return bimap ((msg: string) => {
                    console.error (`Table parse error: ${msg}`)
 
-                   dispatch (addAlert ({
-                     message: msg,
-                     title: "Error",
-                   }))
-
-                   return msg
+                   return Pair ("Database Error", msg)
                  })
                  ((tables: TableParseRes): InitialData =>
                    ({
@@ -200,8 +216,10 @@ export const requestConfigSave =
 
     return pipe_ (
       join (user_data_path, "config.json"),
-      tryIO (flip (writeFile) (JSON.stringify (data))),
+      tryIO (flip (writeFile) (writeConfig (data))),
       fmap (res => {
+        console.log (res)
+
         if (isLeft (res)) {
           dispatch (addAlert ({
             message: `${

@@ -189,7 +189,10 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
           <MainContent>
             <ListHeader>
               <ListHeaderTag className="name">
-                {translate (l10n) ("name")} ({translate (l10n) ("unfamiliartraditions")})
+                {translate (l10n) ("name")}
+                {" ("}
+                {translate (l10n) ("unfamiliartraditions")}
+                {")"}
               </ListHeaderTag>
               <ListHeaderTag className="group">
                 {translate (l10n) ("property")}
@@ -487,6 +490,6 @@ const getSpellAddText =
   (curr: Record<SpellWithRequirements>) =>
     pipe_ (
       guard (sortOrder === "group"),
-      thenF (subscript (translate (l10n) ("spellgroups")) (SWRA_.gr (curr) - 1)),
+      thenF (subscript (translate (l10n) ("spellgroups")) (dec (SWRA_.gr (curr)))),
       maybe (property_str) (gr_str => `${property_str} / ${gr_str}`)
     )

@@ -10,6 +10,7 @@ import { isTuple, Pair } from "../../Data/Tuple";
 import { upd1, upd2 } from "../../Data/Tuple/Update";
 import * as EquipmentActions from "../Actions/EquipmentActions";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { CombatTechniqueId } from "../Constants/Ids";
 import { BelongingsL } from "../Models/Hero/Belongings";
 import { EditHitZoneArmor, EditHitZoneArmorL, EditHitZoneArmorSafe, ensureHitZoneArmorId } from "../Models/Hero/EditHitZoneArmor";
 import { EditItem, EditItemL, EditItemSafe, ensureEditId } from "../Models/Hero/EditItem";
@@ -21,7 +22,6 @@ import { PurseL } from "../Models/Hero/Purse";
 import { composeL } from "../Utilities/compose";
 import { editableToHitZoneArmor, editableToItem, fromItemTemplateEdit, hitZoneArmorToEditable, itemToEditable } from "../Utilities/ItemUtils";
 import { pipe } from "../Utilities/pipe";
-import { CombatTechniqueId } from "../Constants/Ids";
 
 type Action = EquipmentActions.AddItemAction
             | EquipmentActions.AddItemTemplateAction
@@ -245,8 +245,7 @@ const equipmentManagingReducer =
                                         editableToItem (edit_item)
                                         // TODO: does not handle locked
                                         // templated anymore
-                                      )
-                              ),
+                                      )),
                          set (itemInEditor) (Nothing)
                        ))
                        (hero))
@@ -399,11 +398,12 @@ const itemDetailsReducer =
       case ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD:
       case ActionTypes.SET_ITEM_SECOND_DAMAGE_THRESHOLD: {
         const isFirst = action.type === ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD
-        const upd = isFirst ? upd1 : upd2
 
         return modifyEditItem (over (composeL (damageBonus, threshold))
                                     (xs => isTuple (xs)
-                                      ? upd (action.payload.value) (xs)
+                                      ? isFirst
+                                        ? upd1 (action.payload.value) (xs)
+                                        : upd2 (action.payload.value) (xs)
                                       : xs))
       }
 

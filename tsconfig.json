@@ -20,7 +20,7 @@
     "inlineSourceMap": true,
     "strict": true,
     "skipLibCheck": true,
-    "target": "es2017"
+    "target": "esnext"
   },
   "include": [
     "src/**/*",
