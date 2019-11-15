@@ -6,7 +6,7 @@ import { UpdateInfo } from "electron-updater";
 import * as fs from "fs";
 import { extname, join } from "path";
 import { toMsg, tryIO } from "../../Control/Exception";
-import { bimap, Either, either, eitherToMaybe, first, fromLeft, fromLeft_, fromRight_, isLeft, isRight, Left, Right } from "../../Data/Either";
+import { bimap, Either, either, eitherToMaybe, first, fromLeft_, fromRight_, isLeft, isRight, Left, Right } from "../../Data/Either";
 import { flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
@@ -468,7 +468,7 @@ export const requestHeroExport =
 
     if (isJust (mhero)) {
       const hero = fromJust (mhero)
-      
+
       const pmfilepath = await showSaveDialog ({
         title: translate (l10n) ("exportheroasjson"),
         filters: [
@@ -477,16 +477,16 @@ export const requestHeroExport =
         defaultPath: hero.name.replace (/\//u, "/"),
       })
 
-      if (isJust (pmfilepath)) { 
+      if (isJust (pmfilepath)) {
         const res = await tryIO (maybe (Promise.resolve ())
-                                (flip (writeFile) (JSON.stringify (hero)))) 
-                          (pmfilepath)
+                                      (flip (writeFile) (JSON.stringify (hero))))
+                                (pmfilepath)
 
-        if (isRight (res)) { 
+        if (isRight (res)) {
           dispatch (addAlert ({
             message: translate (l10n) ("herosaved"),
           }))
-        } 
+        }
         else {
           dispatch (addAlert ({
             message: `${
@@ -499,8 +499,9 @@ export const requestHeroExport =
             title: translate (l10n) ("error"),
           }))
         }
-      } 
-      else { // The user canceled the SaveDialog
+      }
+      else {
+        // The user canceled the SaveDialog
         dispatch (addAlert ({
           message: translate (l10n) ("exportcanceled"),
         }))

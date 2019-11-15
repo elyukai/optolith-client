@@ -1,14 +1,15 @@
 import base64
-import sys
 import os
 import os.path
+import sys
 import zipfile
 
 import cryptography
+from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.fernet import Fernet
+
 
 def encryptTables(tableFolder):
     # Zip files into project
@@ -27,7 +28,7 @@ def encryptTables(tableFolder):
     salt=salt,
     iterations=100000,
     backend=default_backend())
-    cryptoKey = base64.urlsafe_b64encode(kdf.derive(key.encode(encoding='UTF-8'))) 
+    cryptoKey = base64.urlsafe_b64encode(kdf.derive(key.encode(encoding='UTF-8')))
 
     # Encrypt file
     f = Fernet(cryptoKey)
