@@ -461,25 +461,28 @@ export const requestHeroExport =
 
       if (isJust (pmfilepath)) { 
         const res = await tryIO (maybe (Promise.resolve ())
-        (flip (writeFile) (JSON.stringify (hero)))) (pmfilepath)
+                                (flip (writeFile) (JSON.stringify (hero)))) 
+                          (pmfilepath)
 
         if (isRight (res)) { 
           dispatch (addAlert ({
             message: translate (l10n) ("herosaved"),
           }))
-        } else {
+        } 
+        else {
           dispatch (addAlert ({
-          message: `${
-            translate (l10n) ("exportheroerror")
-          } (${
-            translate (l10n) ("errorcode")
-          }: ${
-            JSON.stringify (fromLeft_ (res))
-          })`,
+            message: `${
+              translate (l10n) ("exportheroerror")
+            } (${
+              translate (l10n) ("errorcode")
+            }: ${
+              JSON.stringify (fromLeft_ (res))
+            })`,
             title: translate (l10n) ("error"),
           }))
         }
-      } else { // Der Benutzer hat den Dialog abgebrochen
+      } 
+      else { // The user canceled the SaveDialog
         dispatch (addAlert ({
           message: translate (l10n) ("exportcanceled"),
         }))

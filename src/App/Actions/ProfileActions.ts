@@ -225,7 +225,7 @@ export const rerollWeight: ReduxAction =
     const race = getCurrentRace (state)
     const prevSize = getSize (state)
 
-    // Falls die Größe des Helden noch nicht vom Benutzer gesetzt wurde:
+    // If the heroes size hasn't been set by the user:
     if (!isJust (prevSize) || (isJust (prevSize) && fromJust(prevSize).length === 0)) {
 
       const race_variant = getCurrentRaceVariant (state)
@@ -233,7 +233,8 @@ export const rerollWeight: ReduxAction =
       if (isJust (initialWeightAndSize.weight)) {
         dispatch (setWeight (fromJust(initialWeightAndSize.weight)) (initialWeightAndSize.size))
       }
-    } else {
+    } 
+    else {
       const { weight, size } = RCPUtils.rerollWeight (prevSize) (race)
 
       if (isJust (weight)) {
