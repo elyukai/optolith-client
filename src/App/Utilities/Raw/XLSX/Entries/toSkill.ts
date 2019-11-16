@@ -1,7 +1,7 @@
 import { liftM2 } from "../../../../../Data/Either";
 import { fmap } from "../../../../../Data/Functor";
 import { fromArray, List, lookup, map, NonEmptyList, notNullStr } from "../../../../../Data/List";
-import { any, ensure, fromJust, joinMaybeList, Just, Maybe, maybe_, Nothing, Some } from "../../../../../Data/Maybe";
+import { any, ensure, fromJust, joinMaybeList, Just, Maybe, maybe_, Nothing } from "../../../../../Data/Maybe";
 import { Record } from "../../../../../Data/Record";
 import { parseJSON } from "../../../../../Data/String/JSON";
 import { fst, Pair, snd } from "../../../../../Data/Tuple";
@@ -30,7 +30,7 @@ export const stringToPrerequisite =
     try {
       const mobj = parseJSON (x)
 
-      if (any ((y: Some): y is object => typeof y === "object" && y !== null) (mobj)) {
+      if (any ((y: unknown): y is object => typeof y === "object" && y !== null) (mobj)) {
         const obj = fromJust<any> (mobj)
 
         return isRawRequiringActivatable (obj)

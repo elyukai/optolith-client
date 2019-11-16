@@ -2,11 +2,12 @@ import { join } from "path";
 import { tryIO } from "../../Control/Exception";
 import { eitherToMaybe } from "../../Data/Either";
 import { fmap } from "../../Data/Functor";
-import { and, bindF } from "../../Data/Maybe";
+import { and, bindF, ensure } from "../../Data/Maybe";
 import { parseJSON } from "../../Data/String/JSON";
 import { readFile, writeFile } from "../../System/IO";
 import { user_data_path } from "../Selectors/envSelectors";
 import { pipe, pipe_ } from "./pipe";
+import { isObject } from "./typeCheckUtils";
 
 const property_name = "update"
 
@@ -22,7 +23,13 @@ export const readUpdate =
     pipe_ (
       file_path,
       tryIO (readFile),
-      fmap (pipe (eitherToMaybe, bindF (parseJSON), fmap (x => x[property_name] === true), and))
+      fmap (pipe (
+        eitherToMaybe,
+        bindF (parseJSON),
+        bindF (ensure (isObject)),
+        fmap (x => (x as any) [property_name] === true),
+        and
+      ))
     )
 
 /**

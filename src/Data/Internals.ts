@@ -30,11 +30,6 @@ export namespace Internals {
     readonly prototype: RecordPrototype
   }
 
-  // eslint-disable-next-line @typescript-eslint/interface-name-prefix
-  export interface IO<A> extends IOPrototype {
-    readonly f: () => Promise<A>
-  }
-
   export interface Tuple<A extends any[]> extends Internals.TuplePrototype {
     readonly phantom: A
     readonly values: { [index: number]: any }
@@ -177,16 +172,6 @@ export namespace Internals {
     Object.freeze<RecordPrototype> ({
       isRecord: true,
       "@@type": DataStructureType.Record,
-    })
-
-  // eslint-disable-next-line @typescript-eslint/interface-name-prefix
-  export interface IOPrototype {
-    readonly isIO: true
-  }
-
-  export const IOPrototype =
-    Object.freeze<IOPrototype> ({
-      isIO: true,
     })
 
   export interface TuplePrototype extends DataStructure<DataStructureType.Tuple> {
@@ -457,21 +442,6 @@ export namespace Internals {
         }
       )
 
-  export const IO = <A> (f: () => Promise<A>): IO<A> => {
-    if (typeof f === "function") {
-      return Object.create (
-        Internals.IOPrototype,
-        {
-          f: {
-            value: f,
-          },
-        }
-      )
-    }
-
-    throw new TypeError ("Cannot create an IO action from a value that is not a function.")
-  }
-
   export const _Tuple =
     <A extends any[]> (...values: A): Tuple<A> => {
       const obj: { [index: number]: any } = {}
@@ -613,15 +583,6 @@ export namespace Internals {
   export const isRecord =
     <A, I extends RecordIBase<any>>(x: A | Record<I>): x is Record<I> =>
       typeof x === "object" && x !== null && Object.getPrototypeOf (x) === RecordPrototype
-
-  /**
-   * `isIO :: a -> Bool`
-   *
-   * The `isIO` function returns `True` if its argument is an `IO`.
-   */
-  export const isIO =
-    (x: any): x is IO<any> =>
-      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === IOPrototype
 
   /**
    * `isTuple :: a -> Bool`

@@ -14,4 +14,5 @@ export enum DataStructureType {
   OrderedSet = "OrderedSet",
   Record = "Record",
   Tuple = "Tuple",
+  Queue = "Queue",
 }
