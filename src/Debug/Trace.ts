@@ -1,5 +1,4 @@
 import { pipe } from "../App/Utilities/pipe";
-import { Internals } from "../Data/Internals";
 import { showP } from "../Data/Show";
 
 /**
@@ -108,7 +107,7 @@ export const traceShowOn =
 export const traceShowIO =
   (msg: string) =>
   <A> (x: A) =>
-    Internals.IO (async () => (console.log (concatMsgValue (msg) (x)), Promise.resolve (x)))
+    async () => (console.log (concatMsgValue (msg) (x)), Promise.resolve (x))
 
 const concatMsgValue = (msg: string) => (x: any) => `${insertSpaceNotNull (msg)}${showP (x)}`
 
