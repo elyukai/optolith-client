@@ -1,9 +1,8 @@
 import { ident } from "../../Data/Function";
 import { consF, List, tailS } from "../../Data/List";
 import { fromMaybe } from "../../Data/Maybe";
-import { AddAlertAction, RemoveAlertAction } from "../Actions/AlertActions";
+import { AddAlertAction, Alert, RemoveAlertAction } from "../Actions/AlertActions";
 import { ActionTypes } from "../Constants/ActionTypes";
-import { Alert } from "../Models/Hero/heroTypeHelpers";
 import { pipe } from "../Utilities/pipe";
 
 type Action = AddAlertAction | RemoveAlertAction

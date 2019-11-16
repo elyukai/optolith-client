@@ -4,7 +4,6 @@ import { OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record, RecordI } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
-import { ReduxActions } from "../../Actions/Actions";
 import { TabId } from "../../Utilities/LocationUtils";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
@@ -152,37 +151,4 @@ export interface SubTab {
   label: string
   disabled: boolean
   // element: JSX.Element
-}
-
-export interface AlertButtonCore {
-  autoWidth?: boolean
-  children?: React.ReactNode
-  className?: string
-  disabled?: boolean
-  flat?: boolean
-  fullWidth?: boolean
-  label: string | undefined
-  primary?: boolean
-}
-
-export interface AlertButton extends AlertButtonCore {
-  dispatchOnClick?: ReduxActions
-}
-
-export interface ViewAlertButton extends AlertButtonCore {
-  onClick? (): void
-}
-
-interface AlertConfirm {
-  resolve?: ReduxActions
-  reject?: ReduxActions
-}
-
-export interface Alert {
-  message: string
-  title?: string
-  buttons?: AlertButton[]
-  confirm?: AlertConfirm
-  confirmYesNo?: boolean
-  onClose? (): void
 }

@@ -3,7 +3,7 @@ import * as localShortcut from "electron-localshortcut";
 import * as React from "react";
 import { Maybe, orN } from "../../../Data/Maybe";
 import { ReduxDispatch } from "../../Actions/Actions";
-import { Alert as AlertOptions, AlertButton, ViewAlertButton } from "../../Models/Hero/heroTypeHelpers";
+import { Alert as AlertOptions, AlertButton, ViewAlertButton } from "../../Actions/AlertActions";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { Dialog } from "./Dialog";

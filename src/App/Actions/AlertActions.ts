@@ -1,8 +1,41 @@
 import { clipboard } from "electron";
 import { ActionTypes } from "../Constants/ActionTypes";
-import { Alert } from "../Models/Hero/heroTypeHelpers";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { translate } from "../Utilities/I18n";
+import { ReduxActions } from "./Actions";
+
+export interface Alert {
+  message: string
+  title?: string
+  buttons?: AlertButton[]
+  confirm?: AlertConfirm
+  confirmYesNo?: boolean
+  onClose? (): void
+}
+
+export interface AlertButtonCore {
+  autoWidth?: boolean
+  children?: React.ReactNode
+  className?: string
+  disabled?: boolean
+  flat?: boolean
+  fullWidth?: boolean
+  label: string | undefined
+  primary?: boolean
+}
+
+export interface AlertButton extends AlertButtonCore {
+  dispatchOnClick?: ReduxActions
+}
+
+export interface ViewAlertButton extends AlertButtonCore {
+  onClick? (): void
+}
+
+interface AlertConfirm {
+  resolve?: ReduxActions
+  reject?: ReduxActions
+}
 
 export interface AddAlertAction {
   type: ActionTypes.ADD_ALERT
