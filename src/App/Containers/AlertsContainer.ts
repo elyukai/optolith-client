@@ -13,7 +13,6 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
   close () {
     dispatch (AlertActions.removeAlert ())
   },
-  dispatch,
 })
 
 const connectAlertsContainer =

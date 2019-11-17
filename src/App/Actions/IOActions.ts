@@ -11,13 +11,13 @@ import { flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { List, notNull } from "../../Data/List";
-import { alt_, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
+import { alt_, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
 import { any, filter, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap";
 import { notMember } from "../../Data/OrderedSet";
 import { Record, toObject } from "../../Data/Record";
 import { parseJSON } from "../../Data/String/JSON";
 import { fst, Pair, snd } from "../../Data/Tuple";
-import { readFile, writeFile } from "../../System/IO";
+import * as IO from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { HeroModel, HeroModelL } from "../Models/Hero/HeroModel";
@@ -45,7 +45,7 @@ import { isBase64Image } from "../Utilities/RegexUtils";
 import { UndoState } from "../Utilities/undo";
 import { readUpdate, writeUpdate } from "../Utilities/Update";
 import { ReduxAction } from "./Actions";
-import { addAlert } from "./AlertActions";
+import { addAlert, addDefaultErrorAlert, addErrorAlert, addPrompt, AlertOptions, CustomPromptOptions, PromptButton } from "./AlertActions";
 import { updateDateModified } from "./HerolistActions";
 
 // const getInstalledResourcesPath = (): string => remote.app.getAppPath ()
@@ -53,7 +53,7 @@ import { updateDateModified } from "./HerolistActions";
 const loadConfig = async () =>
   pipe_ (
     join (user_data_path, "config.json"),
-    tryIO (readFile),
+    tryIO (IO.readFile),
     fmap (pipe (
       first (err => err .message),
       fmap (readConfig)
@@ -63,7 +63,7 @@ const loadConfig = async () =>
 const loadHeroes = async () =>
   pipe_ (
     join (user_data_path, "heroes.json"),
-    tryIO (readFile),
+    tryIO (IO.readFile),
     fmap (pipe (eitherToMaybe, bindF (parseJSON as (x: string) => Maybe<RawHerolist>)))
   )
 
@@ -81,49 +81,54 @@ export interface ReceiveInitialDataAction {
 }
 
 export const requestInitialData: ReduxAction<Promise<void>> = async dispatch =>
-  fmapF (dispatch (getInitialData))
-        (data => {
-          if (isRight (data)) {
-            dispatch (receiveInitialData (fromRight_ (data)))
-            dispatch ((dispatch2, getState) => {
-              insertAppStateCache (getState ())
-              insertHeroesCache (getHeroes (getState ()))
-              const mcache = fromRight_ (data) .cache
+  IO.bind (dispatch (getInitialData))
+       (async data => {
+         if (isRight (data)) {
+           dispatch (receiveInitialData (fromRight_ (data)))
+           dispatch ((dispatch2, getState) => {
+             insertAppStateCache (getState ())
+             insertHeroesCache (getHeroes (getState ()))
+             const mcache = fromRight_ (data) .cache
 
-              if (isJust (mcache)) {
-                const cache = fromJust (mcache)
-                insertCacheMap (cache)
+             if (isJust (mcache)) {
+               const cache = fromJust (mcache)
+               insertCacheMap (cache)
 
-                pipe_ (
-                  getHeroes (getState ()),
-                  filter (pipe (
-                    heroReducer.A.present,
-                    HeroModel.A.id,
-                    flip (notMember) (keysSet (cache))
-                  )),
-                  OrderedMap.map (pipe (
-                    heroReducer.A.present,
-                    hero => {
-                      forceCacheIsAvailable (HeroModel.A.id (hero))
-                                            (getState ())
-                                            ({ l10n: fst (fromRight_ (data) .tables), hero })
+               pipe_ (
+                 getHeroes (getState ()),
+                 filter (pipe (
+                   heroReducer.A.present,
+                   HeroModel.A.id,
+                   flip (notMember) (keysSet (cache))
+                 )),
+                 OrderedMap.map (pipe (
+                   heroReducer.A.present,
+                   hero => {
+                     forceCacheIsAvailable (HeroModel.A.id (hero))
+                                           (getState ())
+                                           ({ l10n: fst (fromRight_ (data) .tables), hero })
 
-                      return hero
-                    }
-                  ))
-                )
-              }
+                     return hero
+                   }
+                 ))
+               )
+             }
 
-              dispatch2 (setLoadingPhase (LAST_LOADING_PHASE))
-            })
-          }
-          else {
-            dispatch (addAlert ({
-              title: fst (fromLeft_ (data)),
-              message: snd (fromLeft_ (data)),
-            }))
-          }
-        })
+             dispatch2 (setLoadingPhase (LAST_LOADING_PHASE))
+           })
+
+           return Promise.resolve ()
+         }
+         else {
+           await dispatch (addErrorAlert (L10n.default)
+                                         (AlertOptions ({
+                                           title: Just (fst (fromLeft_ (data))),
+                                           message: snd (fromLeft_ (data)),
+                                         })))
+
+           return Promise.resolve ()
+         }
+       })
 
 export const getInitialData: ReduxAction<Promise<Either<Pair<string, string>, InitialData>>> =
   async dispatch => {
@@ -216,21 +221,14 @@ export const requestConfigSave =
 
     return pipe_ (
       join (user_data_path, "config.json"),
-      tryIO (flip (writeFile) (writeConfig (data))),
-      fmap (res => {
+      tryIO (flip (IO.writeFile) (writeConfig (data))),
+      IO.bindF (async res => {
         console.log (res)
 
         if (isLeft (res)) {
-          dispatch (addAlert ({
-            message: `${
-              translate (l10n) ("saveconfigerror")
-            } (${
-              translate (l10n) ("errorcode")
-            }: ${
-              JSON.stringify (fromLeft_ (res))
-            })`,
-            title: translate (l10n) ("error"),
-          }))
+          await dispatch (addDefaultErrorAlert (l10n)
+                                               (translate (l10n) ("saveconfigerror"))
+                                               (res))
 
           return false
         }
@@ -262,19 +260,12 @@ export const requestAllHeroesSave =
 
     return pipe_ (
       join (user_data_path, "heroes.json"),
-      tryIO (flip (writeFile) (JSON.stringify (data))),
-      fmap (res => {
+      tryIO (flip (IO.writeFile) (JSON.stringify (data))),
+      IO.bindF (async res => {
         if (isLeft (res)) {
-          dispatch (addAlert ({
-            message: `${
-              translate (l10n) ("saveheroeserror")
-            } (${
-              translate (l10n) ("errorcode")
-            }: ${
-              JSON.stringify (fromLeft_ (res))
-            })`,
-            title: translate (l10n) ("error"),
-          }))
+          await dispatch (addDefaultErrorAlert (l10n)
+                                               (translate (l10n) ("saveheroeserror"))
+                                               (res))
 
           return false
         }
@@ -343,32 +334,25 @@ export const requestHeroSave =
 
       return pipe_ (
         join (user_data_path, "heroes.json"),
-        tryIO (flip (writeFile) (JSON.stringify (maybe ({ [hero.id]: hero })
+        tryIO (flip (IO.writeFile) (JSON.stringify (maybe ({ [hero.id]: hero })
                                                        ((savedHeroes: RawHerolist) => ({
                                                          ...savedHeroes,
                                                          [hero.id]: hero,
                                                        }))
                                                        (msaved_heroes)))),
-        fmap (res => {
+        IO.bindF (async res => {
           if (isLeft (res)) {
-            dispatch (addAlert ({
-              message: `${
-                translate (l10n) ("saveheroeserror")
-              } (${
-                translate (l10n) ("errorcode")
-              }: ${
-                JSON.stringify (fromLeft_ (res))
-              })`,
-              title: translate (l10n) ("error"),
-            }))
+            await dispatch (addDefaultErrorAlert (l10n)
+                                                 (translate (l10n) ("saveheroeserror"))
+                                                 (res))
 
             return Nothing
           }
           else {
-            dispatch (addAlert ({
-              title: translate (l10n) ("herosaved"),
-              message: "",
-            }))
+            await dispatch (addAlert (l10n)
+                                     (AlertOptions ({
+                                       message: translate (l10n) ("herosaved"),
+                                     })))
 
             return Just (hero .id)
           }
@@ -387,7 +371,7 @@ export const requestHeroDeletion =
 
     return pipe_ (
       join (user_data_path, "heroes.json"),
-      tryIO (flip (writeFile) (JSON.stringify (
+      tryIO (flip (IO.writeFile) (JSON.stringify (
                                  maybe<RawHerolist> ({})
                                                     ((savedHeroes: RawHerolist) => {
                                                       const {
@@ -399,18 +383,11 @@ export const requestHeroDeletion =
                                                     })
                                                     (msaved_heroes)
                               ))),
-      fmap (res => {
+      IO.bindF (async res => {
         if (isLeft (res)) {
-          dispatch (addAlert ({
-            message: `${
-              translate (l10n) ("saveheroeserror")
-            } (${
-              translate (l10n) ("errorcode")
-            }: ${
-              JSON.stringify (fromLeft_ (res))
-            })`,
-            title: translate (l10n) ("error"),
-          }))
+          await dispatch (addDefaultErrorAlert (l10n)
+                                               (translate (l10n) ("saveheroeserror"))
+                                               (res))
 
           return false
         }
@@ -479,32 +456,27 @@ export const requestHeroExport =
 
       if (isJust (pmfilepath)) {
         const res = await tryIO (maybe (Promise.resolve ())
-                                      (flip (writeFile) (JSON.stringify (hero))))
+                                      (flip (IO.writeFile) (JSON.stringify (hero))))
                                 (pmfilepath)
 
         if (isRight (res)) {
-          dispatch (addAlert ({
-            message: translate (l10n) ("herosaved"),
-          }))
+          await dispatch (addAlert (l10n)
+                                   (AlertOptions ({
+                                     message: translate (l10n) ("herosaved"),
+                                   })))
         }
         else {
-          dispatch (addAlert ({
-            message: `${
-              translate (l10n) ("exportheroerror")
-            } (${
-              translate (l10n) ("errorcode")
-            }: ${
-              JSON.stringify (fromLeft_ (res))
-            })`,
-            title: translate (l10n) ("error"),
-          }))
+          await dispatch (addDefaultErrorAlert (l10n)
+                                               (translate (l10n) ("saveheroeserror"))
+                                               (res))
         }
       }
       else {
         // The user canceled the SaveDialog
-        dispatch (addAlert ({
-          message: translate (l10n) ("exportcanceled"),
-        }))
+        await dispatch (addAlert (l10n)
+                                 (AlertOptions ({
+                                   message: translate (l10n) ("exportcanceled"),
+                                 })))
       }
     }
   }
@@ -514,6 +486,7 @@ export interface ReceiveImportedHeroAction {
   payload: {
     data: RawHero;
     player?: User;
+    l10n: L10nRecord;
   }
 }
 
@@ -525,77 +498,76 @@ export const loadImportedHero =
       listToMaybe,
       bindF (ensure (x => extname (x) === ".json")),
       maybe<Promise<Maybe<Either<Error, string>>>> (Promise.resolve (Nothing))
-                                                   (pipe (tryIO (readFile), fmap (Just))),
-      fmap (bindF (res => {
+                                                   (pipe (tryIO (IO.readFile), fmap (Just))),
+      IO.bindF (async mres => {
+        if (isNothing (mres)) {
+          return Nothing
+        }
+
+        const res = fromJust (mres)
+
         if (isRight (res)) {
           return Just ((JSON.parse as (x: string) => RawHero) (fromRight_ (res)))
         }
 
-        dispatch (addAlert ({
-          message: `${
-            translate (l10n) ("importheroerror")
-          } (${
-            translate (l10n) ("errorcode")
-          }: ${
-            JSON.stringify (fromLeft_ (res))
-          })`,
-          title: translate (l10n) ("error"),
-        }))
+        await dispatch (addDefaultErrorAlert (l10n)
+                                             (translate (l10n) ("importheroerror"))
+                                             (res))
 
         return Nothing
-      }))
+      })
     )
 
 export const requestHeroImport =
   (l10n: L10nRecord): ReduxAction =>
   async dispatch => fmapF (await dispatch (loadImportedHero (l10n)))
-                          (x => dispatch (receiveHeroImport (x)))
+                          (x => dispatch (receiveHeroImport (l10n) (x)))
 
-export const receiveHeroImport = (raw: RawHero): ReceiveImportedHeroAction => {
-  const newId = prefixId (IdPrefixes.HERO) (getNewIdByDate ())
-  const { player, avatar, ...other } = raw
+export const receiveHeroImport =
+  (l10n: L10nRecord) =>
+  (raw: RawHero): ReceiveImportedHeroAction => {
+    const newId = prefixId (IdPrefixes.HERO) (getNewIdByDate ())
+    const { player, avatar, ...other } = raw
 
-  const data: RawHero = {
-    ...other,
-    id: newId,
-    avatar: avatar !== undefined
-      && avatar.length > 0
-      && (isBase64Image (avatar) || fs.existsSync (avatar.replace (/file:[\\/]+/u, "")))
-      ? avatar
-      : undefined,
+    const data: RawHero = {
+      ...other,
+      id: newId,
+      avatar: avatar !== undefined
+        && avatar.length > 0
+        && (isBase64Image (avatar) || fs.existsSync (avatar.replace (/file:[\\/]+/u, "")))
+        ? avatar
+        : undefined,
+    }
+
+    return {
+      type: ActionTypes.RECEIVE_IMPORTED_HERO,
+      payload: {
+        data,
+        player,
+        l10n,
+      },
+    }
   }
-
-  return {
-    type: ActionTypes.RECEIVE_IMPORTED_HERO,
-    payload: {
-      data,
-      player,
-    },
-  }
-}
 
 const isAnyHeroUnsaved = pipe (getHeroes, any (pipe (heroReducer.A.past, notNull)))
 
 const close =
   (l10n: L10nRecord) =>
   (save_heroes: boolean) =>
-  (f: Maybe<() => void>): ReduxAction =>
+  (f: Maybe<() => void>): ReduxAction<Promise<void>> =>
   async dispatch => {
     await dispatch (requestSaveCache (l10n))
 
     const all_saved = await dispatch (requestSaveAll (save_heroes) (l10n))
 
     if (all_saved && save_heroes) {
-      dispatch (addAlert ({
-        message: translate (l10n) ("allsaved"),
-        onClose () {
-          if (isJust (f)) {
-            fromJust (f) ()
-          }
+      await dispatch (addAlert (l10n) (AlertOptions ({ message: translate (l10n) ("allsaved") })))
 
-          remote .getCurrentWindow () .close ()
-        },
-      }))
+      if (isJust (f)) {
+        fromJust (f) ()
+      }
+
+      remote .getCurrentWindow () .close ()
     }
     else {
       remote .getCurrentWindow () .close ()
@@ -603,9 +575,11 @@ const close =
   }
 
 
+enum UnsavedActionsResponse { Quit, Cancel, SaveAndQuit }
+
 export const requestClose =
   (optionalCall: Maybe<() => void>): ReduxAction =>
-  (dispatch, getState) => {
+  async (dispatch, getState) => {
     const state = getState ()
     const safeToExit = !isAnyHeroUnsaved (state)
 
@@ -615,26 +589,34 @@ export const requestClose =
       const l10n = fromJust (ml10n)
 
       if (safeToExit) {
-        dispatch (close (l10n) (false) (optionalCall))
+        await dispatch (close (l10n) (false) (optionalCall))
       }
       else {
-        dispatch (addAlert ({
-          title: translate (l10n) ("unsavedactions"),
-          message: translate (l10n) ("unsavedactions.text"),
-          buttons: [
-            {
-              label: translate (l10n) ("quit"),
-              dispatchOnClick: close (l10n) (false) (optionalCall),
-            },
-            {
-              label: translate (l10n) ("cancel"),
-            },
-            {
-              label: translate (l10n) ("saveandquit"),
-              dispatchOnClick: close (l10n) (true) (optionalCall),
-            },
-          ],
-        }))
+        const res = await dispatch (addPrompt (CustomPromptOptions ({
+                                                title: Just (translate (l10n) ("unsavedactions")),
+                                                message: translate (l10n) ("unsavedactions.text"),
+                                                buttons: List (
+                                                  PromptButton<UnsavedActionsResponse> ({
+                                                    label: translate (l10n) ("quit"),
+                                                    response: UnsavedActionsResponse.Quit,
+                                                  }),
+                                                  PromptButton<UnsavedActionsResponse> ({
+                                                    label: translate (l10n) ("cancel"),
+                                                    response: UnsavedActionsResponse.Cancel,
+                                                  }),
+                                                  PromptButton<UnsavedActionsResponse> ({
+                                                    label: translate (l10n) ("saveandquit"),
+                                                    response: UnsavedActionsResponse.SaveAndQuit,
+                                                  })
+                                                ),
+                                              })))
+
+        if (elem (UnsavedActionsResponse.Quit) (res)) {
+          await dispatch (close (l10n) (false) (optionalCall))
+        }
+        else if (elem (UnsavedActionsResponse.SaveAndQuit) (res)) {
+          await dispatch (close (l10n) (true) (optionalCall))
+        }
       }
     }
   }
@@ -648,7 +630,7 @@ export const requestPrintHeroToPDF =
         pageSize: "A4",
         printBackground: true,
       }),
-      flip (writeFile),
+      flip (IO.writeFile),
       async f => maybe (Promise.resolve<Either<Error, void>> (Right (undefined)))
                        (tryIO (f))
                        (await showSaveDialog ({
@@ -657,20 +639,15 @@ export const requestPrintHeroToPDF =
                            { name: "PDF", extensions: ["pdf"] },
                          ],
                        })),
-      fmap (res => {
+      IO.bindF (async res => {
         if (isRight (res)) {
-          dispatch (addAlert ({
-            message: translate (l10n) ("pdfsaved"),
-          }))
+          await dispatch (addAlert (l10n)
+                                   (AlertOptions ({ message: translate (l10n) ("pdfsaved") })))
         }
         else {
-          dispatch (addAlert ({
-            message:
-              `${translate (l10n) ("printcharactersheettopdf")}`
-              + ` (${translate (l10n) ("errorcode")}: `
-              + `${JSON.stringify (fromLeft_ (res))})`,
-            title: translate (l10n) ("error"),
-          }))
+          await dispatch (addDefaultErrorAlert (l10n)
+                                               (translate (l10n) ("printcharactersheettopdf"))
+                                               (res))
         }
       })
     )
@@ -685,6 +662,8 @@ export const setUpdateDownloadProgress =
     type: ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS,
     payload: info,
   })
+
+enum UpdateAvailableResponse { UpdateAndRestart, Cancel }
 
 export const updateAvailable =
   (l10n: L10nRecord) =>
@@ -703,32 +682,40 @@ export const updateAvailable =
 
     const size = info.files.reduce ((sum, { size: fileSize = 0 }) => sum + fileSize, 0)
 
-    // @ts-ignore
-    dispatch (addAlert ({
-      message: size > 0
-        ? translateP (l10n)
-                     ("newversionavailable.textwithsize")
-                     (List (info.version, bytify (L10n.A.id (l10n)) (size)))
-        : translateP (l10n) ("newversionavailable.text") (List (info.version)),
-      title: translate (l10n) ("newversionavailable"),
-      buttons: [
-        {
-          label: translate (l10n) ("update"),
-          dispatchOnClick: startDownloadingUpdate,
-        },
-        {
-          label: translate (l10n) ("cancel"),
-        },
-      ],
-    }))
+    const opts = CustomPromptOptions<UpdateAvailableResponse> ({
+                   title: Just (translate (l10n) ("newversionavailable")),
+                   message: size > 0
+                     ? translateP (l10n)
+                                  ("newversionavailable.textwithsize")
+                                  (List (info.version, bytify (L10n.A.id (l10n)) (size)))
+                     : translateP (l10n)
+                                  ("newversionavailable.text")
+                                  (List (info.version)),
+                   buttons: List (
+                     PromptButton ({
+                       label: translate (l10n) ("update"),
+                       response: UpdateAvailableResponse.UpdateAndRestart,
+                     }),
+                     PromptButton ({
+                       label: translate (l10n) ("cancel"),
+                       response: UpdateAvailableResponse.Cancel,
+                     })
+                   ),
+                 })
+
+    const res = await dispatch (addPrompt (opts))
+
+    if (elem (UpdateAvailableResponse.UpdateAndRestart) (res)) {
+      dispatch (startDownloadingUpdate)
+    }
   }
 
-export const updateNotAvailable = (l10n: L10nRecord): ReduxAction => async dispatch => {
-  dispatch (addAlert ({
-    message: translate (l10n) ("nonewversionavailable.text"),
-    title: translate (l10n) ("nonewversionavailable"),
-  }))
-}
+export const updateNotAvailable = (l10n: L10nRecord): ReduxAction => async dispatch =>
+  dispatch (addAlert (l10n)
+                     (AlertOptions ({
+                       title: Just (translate (l10n) ("nonewversionavailable")),
+                       message: translate (l10n) ("nonewversionavailable.text"),
+                     })))
 
 export interface SetLoadingPhase {
   type: ActionTypes.SET_LOADING_PHASE,

@@ -411,14 +411,10 @@ export class LiturgicalChants
                                       id={LCBCA.id (curr)}
                                       name={LCBCA.name (curr)}
                                       addDisabled={!LCWRA.isIncreasable (curr)}
-                                      addPoint={addPoint.bind (null, LCBCA.id (curr))}
-                                      removeDisabled={!LCWRA.isDecreasable (curr)}
+                                      addPoint={addPoint}
+                                      removeDisabled={!isRemovingEnabled || !LCWRA.isDecreasable (curr)}
                                       removePoint={
-                                        isRemovingEnabled
-                                          ? LCWRA_.value (curr) === 0
-                                            ? removeFromList.bind (null, LCBCA.id (curr))
-                                            : removePoint.bind (null, LCBCA.id (curr))
-                                          : undefined
+                                        LCWRA_.value (curr) === 0 ? removeFromList : removePoint
                                       }
                                       addFillElement
                                       check={LCWRA_.check (curr)}

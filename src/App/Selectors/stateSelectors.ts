@@ -1,6 +1,7 @@
 import { fmap } from "../../Data/Functor";
-import { bind, bindF, listToMaybe, Maybe } from "../../Data/Maybe";
+import { bind, bindF, Maybe } from "../../Data/Maybe";
 import { lookupF } from "../../Data/OrderedMap";
+import { peekFst } from "../../Data/Queue";
 import { Belongings } from "../Models/Hero/Belongings";
 import { Energies } from "../Models/Hero/Energies";
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
@@ -282,7 +283,7 @@ export const getTransferredUnfamiliarSpells = pipe (getHeroProp, Hero.transferre
 
 export const getAlerts = pipe (App.ui, UI.alerts)
 
-export const getCurrentAlert = pipe (App.ui, UI.alerts, listToMaybe)
+export const getCurrentAlert = pipe (App.ui, UI.alerts, peekFst)
 
 
 const SubW = SubWindowsState.A

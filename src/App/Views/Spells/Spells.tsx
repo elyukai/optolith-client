@@ -376,7 +376,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                       id={SCCA.id (curr)}
                                       name={SCCA.name (curr)}
                                       removePoint={removeCantripFromList}
-                                      removeDisabled={isRemovingEnabled}
+                                      removeDisabled={!isRemovingEnabled}
                                       addFillElement
                                       noIncrease
                                       insertTopMargin={insertTopMargin}
@@ -410,7 +410,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                       addDisabled={!SWRA.isIncreasable (curr)}
                                       addPoint={addPoint}
                                       removeDisabled={
-                                        isRemovingEnabled || !SWRA.isDecreasable (curr)
+                                        !isRemovingEnabled || !SWRA.isDecreasable (curr)
                                       }
                                       removePoint={
                                         SWRA_.value (curr) === 0 ? removeFromList : removePoint

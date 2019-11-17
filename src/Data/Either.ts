@@ -470,13 +470,34 @@ export const and = fromRight (true)
  */
 export const or = fromRight (false)
 
+interface Any {
+
+  /**
+   * `any :: (a0 -> Bool) -> Either a a0 -> Bool`
+   *
+   * Determines whether any element of the structure satisfies the predicate.
+   */
+  <A, A1 extends A>
+  (f: (x: A) => x is A1):
+  (x: Either<any, A>) => x is Right<A1>
+
+  /**
+   * `any :: (a0 -> Bool) -> Either a a0 -> Bool`
+   *
+   * Determines whether any element of the structure satisfies the predicate.
+   */
+  <A>
+  (f: (x: A) => boolean):
+  (x: Either<any, A>) => x is Right<A>
+}
+
 /**
  * `any :: (a0 -> Bool) -> Either a a0 -> Bool`
  *
  * Determines whether any element of the structure satisfies the predicate.
  */
-export const any =
-  <A0>(f: (x: A0) => boolean) => (x: Either<any, A0>): boolean =>
+export const any: Any =
+  <A0>(f: (x: A0) => boolean) => (x: Either<any, A0>): x is Right<A0> =>
     fromRight (false) (fmap (f) (x))
 
 /**

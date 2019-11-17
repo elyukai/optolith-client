@@ -22,8 +22,8 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SkillsOwnProps): Skill
 
 const mapDispatchToProps =
   (dispatch: ReduxDispatch, { l10n }: SkillsOwnProps): SkillsDispatchProps => ({
-    addPoint (id: string) {
-      dispatch (SkillActions.addSkillPoint (l10n) (id))
+    async addPoint (id: string) {
+      await dispatch (SkillActions.addSkillPoint (l10n) (id))
     },
     removePoint (id: string) {
       dispatch (SkillActions.removeSkillPoint (id))

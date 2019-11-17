@@ -2,20 +2,19 @@ import { notP } from "../../Data/Bool";
 import { flip, ident, join } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
 import { over, set } from "../../Data/Lens";
-import { consF, List, notElem } from "../../Data/List";
+import { List, notElem } from "../../Data/List";
 import { and, elem, fromJust, isJust, isNothing, Just, or } from "../../Data/Maybe";
 import { insert, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { fst, snd, uncurry } from "../../Data/Tuple";
 import { uncurry3 } from "../../Data/Tuple/Curry";
-import { Alert } from "../Actions/AlertActions";
 import { RedoAction, UndoAction } from "../Actions/HistoryActions";
 import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from "../Actions/IOActions";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { User } from "../Models/Hero/heroTypeHelpers";
 import { getRuleBooksEnabledM } from "../Selectors/rulesSelectors";
-import { getCurrentCultureId, getCurrentHeroPresent, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase, getWiki } from "../Selectors/stateSelectors";
+import { getCurrentCultureId, getCurrentHeroPresent, getCurrentRaceId, getCurrentTab, getPhase, getWiki } from "../Selectors/stateSelectors";
 import { PHASE_1_PROFILE_TABS, PHASE_1_RCP_TABS } from "../Selectors/uilocationSelectors";
 import { composeL } from "../Utilities/compose";
 import { TabId } from "../Utilities/LocationUtils";
@@ -24,7 +23,7 @@ import { convertHero } from "../Utilities/Raw/JSON/Hero/Compat";
 import { convertFromRawHero } from "../Utilities/Raw/JSON/Hero/HeroFromJSON";
 import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils";
 import { UndoState } from "../Utilities/undo";
-import { AppState, AppStateRecord } from "./appReducer";
+import { AppStateRecord } from "./appReducer";
 import { appSlicesReducer } from "./appSlicesReducer";
 import { HeroesStateL } from "./herolistReducer";
 import { toHeroWithHistory } from "./heroReducer";
@@ -86,21 +85,9 @@ const prepareHerolist =
 const prepareImportedHero =
   (action: ReceiveImportedHeroAction) =>
   (state: AppStateRecord): AppStateRecord => {
-    const { data, player } = action.payload
+    const { data, player, l10n } = action.payload
 
-    const ml10n = getLocaleMessages (state)
     const wiki = getWiki (state)
-
-    if (isNothing (ml10n)) {
-      return over (composeL (AppState.L.ui, uiReducer.L.alerts))
-                  (consF<Alert> ({
-                    title: "No localization loaded!",
-                    message: "Could not prepare imported hero for integration.",
-                  }))
-                  (state)
-    }
-
-    const l10n = fromJust (ml10n)
 
     const updatedHero = convertHero (l10n) (wiki) (data)
     const heroInstance = convertFromRawHero (l10n)

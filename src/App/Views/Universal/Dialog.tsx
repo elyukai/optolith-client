@@ -15,7 +15,7 @@ export interface DialogProps {
   id?: string
   noCloseButton?: boolean
   title?: string
-  close (): void
+  close (canceled: boolean): void
   onClose? (): void
 }
 
@@ -29,7 +29,7 @@ export const Dialog: React.FC<DialogProps> = props => {
     onClose,
     children,
     isOpen,
-    id
+    id,
   } = props
 
   const element = React.useMemo (() => document.createElement ("div"), [])
@@ -59,7 +59,7 @@ export const Dialog: React.FC<DialogProps> = props => {
         onClose ()
       }
 
-      close ()
+      close (false)
     },
     [close, onClose]
   )
@@ -74,6 +74,11 @@ export const Dialog: React.FC<DialogProps> = props => {
   const height_diff_abs = abs (height_diff)
   const height_diff_sign = height_diff < 0 ? "+" : "-"
   contentStyle.paddingBottom = button_count > 2 ? padding_base + more_button_space : padding_base
+
+  const handleCloseClick = React.useCallback (
+    () => close (true),
+    [close]
+  )
 
   return isOpen
     ? ReactDOM.createPortal (
@@ -91,7 +96,7 @@ export const Dialog: React.FC<DialogProps> = props => {
             >
             {noCloseButton === true
               ? null
-              : <div className="modal-close" onClick={close}><div>{"\uE5CD"}</div></div>}
+              : <div className="modal-close" onClick={handleCloseClick}><div>{"\uE5CD"}</div></div>}
             {notNullStrUndef (title)
               ? (
                 <div className="modal-header">

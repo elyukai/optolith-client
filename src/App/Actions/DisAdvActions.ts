@@ -35,7 +35,7 @@ import { pipe, pipe_ } from "../Utilities/pipe";
 import { misNumberM } from "../Utilities/typeCheckUtils";
 import { getWikiEntry } from "../Utilities/WikiUtils";
 import { ReduxAction, ReduxDispatch } from "./Actions";
-import { addAlert } from "./AlertActions";
+import { addAlert, AlertOptions } from "./AlertActions";
 
 /**
  * Advantages and disadvantages might not only be added or removed due to not
@@ -53,28 +53,32 @@ const handleMissingAPForDisAdvantage =
   (missing_ap: Record<MissingAPForDisAdvantage>) =>
   (is_blessed_or_magical: Pair<boolean, boolean>) =>
   (is_disadvantage: boolean) =>
-  (dispatch: ReduxDispatch) => {
+  async (dispatch: ReduxDispatch) => {
     const totalMissing = MissingAPForDisAdvantage.AL.totalMissing (missing_ap)
     const mainMissing = MissingAPForDisAdvantage.AL.mainMissing (missing_ap)
     const subMissing = MissingAPForDisAdvantage.AL.subMissing (missing_ap)
 
     if (isJust (totalMissing)) {
-      dispatch (addAlert ({
-        title: translate (l10n) ("notenoughap"),
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
         message: translateP (l10n) ("notenoughap.text") (List (fromJust (totalMissing))),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
     else if (isJust (mainMissing)) {
       const type = is_disadvantage
         ? translate (l10n) ("disadvantages")
         : translate (l10n) ("advantages")
 
-      dispatch (addAlert ({
-        title: translateP (l10n) ("reachedlimit") (List (type)),
+      const opts = AlertOptions ({
+        title: Just (translateP (l10n) ("reachedlimit") (List (type))),
         message: translateP (l10n)
                             ("reachedaplimit")
                             (List<string | number> (fromJust (mainMissing), 80, type)),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
     else if (isJust (subMissing)) {
       const ap = getDisAdvantagesSubtypeMax (snd (is_blessed_or_magical)) (hero)
@@ -87,12 +91,14 @@ const handleMissingAPForDisAdvantage =
           ? translate (l10n) ("blessedadvantages")
           : translate (l10n) ("magicaladvantages")
 
-      dispatch (addAlert ({
-        title: translateP (l10n) ("reachedlimit") (List (type)),
+      const opts = AlertOptions ({
+        title: Just (translateP (l10n) ("reachedlimit") (List (type))),
         message: translateP (l10n)
                             ("reachedaplimit")
                             (List<string | number> (fromJust (subMissing), ap, type)),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
     else {
       success ()
@@ -110,8 +116,8 @@ export interface ActivateDisAdvAction {
  */
 export const addDisAdvantage =
   (l10n: L10nRecord) =>
-  (args: Record<ActivatableActivationOptions>): ReduxAction =>
-  (dispatch, getState) => {
+  (args: Record<ActivatableActivationOptions>): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
 
     const mhero = getCurrentHeroPresent (state)
@@ -182,13 +188,13 @@ export const addDisAdvantage =
         }
 
         if (isJust (mmissingAPForDisAdvantage)) {
-          handleMissingAPForDisAdvantage (l10n)
-                                         (successFn)
-                                         (hero)
-                                         (fromJust (mmissingAPForDisAdvantage))
-                                         (entryType)
-                                         (is_disadvantage)
-                                         (dispatch)
+          await handleMissingAPForDisAdvantage (l10n)
+                                               (successFn)
+                                               (hero)
+                                               (fromJust (mmissingAPForDisAdvantage))
+                                               (entryType)
+                                               (is_disadvantage)
+                                               (dispatch)
         }
       }
     }
@@ -205,8 +211,8 @@ export interface DeactivateDisAdvAction {
  */
 export const removeDisAdvantage =
   (l10n: L10nRecord) =>
-  (args: Record<ActivatableDeactivationOptions>): ReduxAction =>
-  (dispatch, getState) => {
+  (args: Record<ActivatableDeactivationOptions>): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
 
     const mhero = getCurrentHeroPresent (state)
@@ -306,13 +312,13 @@ export const removeDisAdvantage =
         }
 
         if (isJust (mmissingAPForDisAdvantage)) {
-          handleMissingAPForDisAdvantage (l10n)
-                                         (successFn)
-                                         (hero)
-                                         (fromJust (mmissingAPForDisAdvantage))
-                                         (entryType)
-                                         (is_disadvantage)
-                                         (dispatch)
+          await handleMissingAPForDisAdvantage (l10n)
+                                               (successFn)
+                                               (hero)
+                                               (fromJust (mmissingAPForDisAdvantage))
+                                               (entryType)
+                                               (is_disadvantage)
+                                               (dispatch)
         }
       }
     }
@@ -333,8 +339,8 @@ export const setDisAdvantageLevel =
   (l10n: L10nRecord) =>
   (current_id: string) =>
   (current_index: number) =>
-  (next_level: number): ReduxAction =>
-  (dispatch, getState) => {
+  (next_level: number): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
 
     const mhero = getCurrentHeroPresent (state)
@@ -436,13 +442,13 @@ export const setDisAdvantageLevel =
           }
 
           if (isJust (mmissingAPForDisAdvantage)) {
-            handleMissingAPForDisAdvantage (l10n)
-                                           (successFn)
-                                           (hero)
-                                           (fromJust (mmissingAPForDisAdvantage))
-                                           (entryType)
-                                           (is_disadvantage)
-                                           (dispatch)
+            await handleMissingAPForDisAdvantage (l10n)
+                                                 (successFn)
+                                                 (hero)
+                                                 (fromJust (mmissingAPForDisAdvantage))
+                                                 (entryType)
+                                                 (is_disadvantage)
+                                                 (dispatch)
           }
         }
       }

@@ -11,7 +11,7 @@ import { Action, applyMiddleware, createStore, Store } from "redux";
 import thunk from "redux-thunk";
 import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from "./App/Actions/AcceleratorActions";
 import { ReduxDispatch } from "./App/Actions/Actions";
-import { addErrorAlert } from "./App/Actions/AlertActions";
+import { addErrorAlert, AlertOptions } from "./App/Actions/AlertActions";
 import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from "./App/Actions/IOActions";
 import { showAbout } from "./App/Actions/LocationActions";
 import { AppContainer } from "./App/Containers/AppContainer";
@@ -175,10 +175,11 @@ ipcRenderer.addListener ("auto-updater-error", (_event: Event, err: Error) => {
   if (isJust (maybeLocale)) {
     dispatch (setUpdateDownloadProgress ())
     dispatch (addErrorAlert (fromJust (maybeLocale))
-                            ({
-                              title: "Auto Update Error",
+                            (AlertOptions ({
+                              title: Just ("Auto Update Error"),
                               message: `An error occured during auto-update.`
                                 + ` (${JSON.stringify (err)})`,
-                            }))
+                            })))
+      .catch (() => undefined)
   }
 })

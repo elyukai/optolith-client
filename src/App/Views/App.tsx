@@ -110,7 +110,7 @@ export class App extends React.Component<AppProps, AppState> {
             </div>
           </div>
 
-          <AlertsContainer l10n={L10n.default} />
+          <AlertsContainer />
           <TitleBar
             close={close}
             closeDuringLoad={closeDuringLoad}
@@ -138,7 +138,7 @@ export class App extends React.Component<AppProps, AppState> {
             <img src="images/background.svg" alt="" />
           </div>
 
-          <AlertsContainer l10n={l10n} />
+          <AlertsContainer />
           <DownloaderContainer l10n={l10n} />
           <TitleBar
             close={close}
