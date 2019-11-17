@@ -1,8 +1,8 @@
 import { cnst, ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { consF, countWith, foldr, List, maximum, maximumNonNegative, minimum } from "../../../Data/List";
-import { elem, Just, maybe, Maybe, Nothing, sum } from "../../../Data/Maybe";
-import { add } from "../../../Data/Num";
+import { bindF, elem, ensure, Just, maybe, Maybe, Nothing, sum } from "../../../Data/Maybe";
+import { add, gt } from "../../../Data/Num";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
@@ -98,6 +98,8 @@ export const isSkillDecreasable =
   (wiki: WikiModelRecord) =>
   (state: HeroModelRecord) =>
   (skill: Record<SkillCombined>): boolean => {
+    // prerequisites of SA Craft Instruments:
+    // Sum of Woodworking and Metalworking must be at least 12.
     if (
       (SkillId.Woodworking === id (skill) || SkillId.Metalworking === id (skill))
       && isMaybeActive (lookupF (specialAbilities (state)) (SpecialAbilityId.CraftInstruments))
@@ -110,7 +112,6 @@ export const isSkillDecreasable =
 
       const MINIMUM_SUM = 12
 
-      // Sum of Woodworking and Metalworking must be at least 12.
       if (woodworkingRating + metalworkingRating < MINIMUM_SUM) {
         return false
       }
@@ -131,21 +132,22 @@ export const isUncommon =
   (rating: OrderedMap<string, EntryRating>) =>
     pipe (Skill.AL.id, lookupF (rating), elem<EntryRating> (EntryRating.Uncommon))
 
-export const getRoutineValue =
-  (checkAttributeValues: List<number>) =>
-  (sr: number): (Maybe<Pair<number, boolean>>) => {
-    if (sr > 0) {
-      const tooLessAttributePoints =
-        foldr<number, number> (e => e < 13 ? add (13 - e) : ident) (0) (checkAttributeValues)
+export const getRoutineValue: (checkAttributeValues: List<number>) =>
+                              (sr: number) => Maybe<Pair<number, boolean>> =
+  checkAttributeValues =>
+    pipe (
+      // Routine checks do only work if the SR is larger than 0
+      ensure (gt (0)),
+      bindF (sr => {
+        const tooLessAttributePoints =
+          foldr<number, number> (e => e < 13 ? add (13 - e) : ident) (0) (checkAttributeValues)
 
-      const flatRoutineLevel = Math.floor ((sr - 1) / 3)
-      const checkModThreshold = flatRoutineLevel * -1 + 3
-      const dependentCheckMod = checkModThreshold + tooLessAttributePoints
+        const flatRoutineLevel = Math.floor ((sr - 1) / 3)
+        const checkModThreshold = flatRoutineLevel * -1 + 3
+        const dependentCheckMod = checkModThreshold + tooLessAttributePoints
 
-      return dependentCheckMod < 4
-        ? Just (Pair (dependentCheckMod, tooLessAttributePoints > 0))
-        : Nothing
-    }
-
-    return Nothing
-  }
+        return dependentCheckMod < 4
+          ? Just (Pair (dependentCheckMod, tooLessAttributePoints > 0))
+          : Nothing
+      })
+    )

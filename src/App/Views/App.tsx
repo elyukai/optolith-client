@@ -10,6 +10,7 @@ import { LAST_LOADING_PHASE } from "../Reducers/isReadyReducer";
 import { classListMaybe } from "../Utilities/CSS";
 import { getSystemLocale } from "../Utilities/IOUtils";
 import { TabId } from "../Utilities/LocationUtils";
+import { Theme } from "../Utilities/Raw/JSON/Config";
 import { Router } from "./Router/Router";
 import { Scroll } from "./Universal/Scroll";
 import { TitleBar } from "./Universal/TitleBar";
@@ -21,7 +22,7 @@ export interface AppStateProps {
   l10n: Maybe<L10nRecord>
   mhero: Maybe<HeroModelRecord>
   platform: string
-  theme: string
+  theme: Theme
   areAnimationsEnabled: boolean
   loading_phase: number
 }
