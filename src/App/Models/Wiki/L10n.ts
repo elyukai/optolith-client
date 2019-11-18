@@ -733,7 +733,7 @@ export const L10n =
                 no: "",
                 ok: "Ok",
                 cancel: "Cancel",
-                copy: "",
+                copy: "Copy",
                 create: "",
                 import: "",
                 allheroes: "",
