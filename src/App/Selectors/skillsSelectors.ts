@@ -4,12 +4,11 @@ import { foldr, map } from "../../Data/List";
 import { fromMaybe, liftM3, maybe } from "../../Data/Maybe";
 import { elems, insertF, lookup, OrderedMap } from "../../Data/OrderedMap";
 import { uncurryN, uncurryN3, uncurryN4 } from "../../Data/Tuple/Curry";
-import { traceShowBoth } from "../../Debug/Trace";
 import { AdvantageId } from "../Constants/Ids";
 import { createPlainSkillDependent } from "../Models/ActiveEntries/SkillDependent";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { EntryRating } from "../Models/Hero/heroTypeHelpers";
-import { SkillCombined, SkillCombinedA_ } from "../Models/View/SkillCombined";
+import { SkillCombined } from "../Models/View/SkillCombined";
 import { SkillWithRequirements } from "../Models/View/SkillWithRequirements";
 import { Culture } from "../Models/Wiki/Culture";
 import { Skill } from "../Models/Wiki/Skill";
@@ -57,10 +56,9 @@ export const getSkillsWithRequirements = createMaybeSelector (
                         map (x =>
                               SkillWithRequirements ({
                                 isDecreasable:
-                                  traceShowBoth (SkillCombinedA_.name (x))
-                                                (isSkillDecreasable (wiki)
+                                  isSkillDecreasable (wiki)
                                                      (hero)
-                                                     (x)),
+                                                     (x),
                                 isIncreasable:
                                   isSkillIncreasable (start_el)
                                                      (HA.phase (hero))

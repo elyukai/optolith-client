@@ -7,7 +7,6 @@ import { alt_, and, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, Maybe,
 import { gt } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
 import { fst, Pair, snd, uncurry } from "../../../Data/Tuple";
-import { traceShowId } from "../../../Debug/Trace";
 import { SpecialAbilityGroup } from "../../Constants/Groups";
 import { HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { StyleDependency, StyleDependencyL } from "../../Models/Hero/StyleDependency";
@@ -251,8 +250,9 @@ const removeStyleExtendedSpecialAbilityDependencies =
               over (l)
                    (xs => {
                      const splitted =
-                       traceShowId (getSplittedRemainingAndToRemove (SAA.id (wiki_entry))
-                                                                    (xs))
+                       getSplittedRemainingAndToRemove (SAA.id (wiki_entry))
+                                                       (xs)
+
                      const itemsToRemove = fst (splitted)
                      const leftItems = snd (splitted)
 

@@ -118,7 +118,7 @@ const getEntrySpecificCost =
           // more than two entries of Unworldly do not contribute to AP spent
           || isPersonalityFlawNotPaid (8) (2) (isEntryToAdd) (all_active) (mcurrent_sid)
         ) {
-          return Nothing
+          return Just (0)
         }
 
         return getSelectOptionCost (wiki_entry) (mcurrent_sid)

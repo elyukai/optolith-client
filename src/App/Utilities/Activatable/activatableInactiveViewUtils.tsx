@@ -35,7 +35,7 @@ import { toInt } from "../NumberUtils";
 import { pipe, pipe_ } from "../pipe";
 import { isNumber, misNumberM, misStringM } from "../typeCheckUtils";
 import { getWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
-import { getActiveSelectionsMaybe, getSelectOptionCost } from "./selectionUtils";
+import { getActiveSelectionsMaybe, getSelectOptionCost, getSelectOptionName } from "./selectionUtils";
 
 interface PropertiesAffectedByState {
   "@@name": "PropertiesAffectedByState"
@@ -350,6 +350,9 @@ export const getIdSpecificAffectedAndDispatchProps =
                             gte (max_count)
                           )))
 
+        const name = getSelectOptionName (IAA.wikiEntry (entry) as Activatable)
+                                         (mselected)
+
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -367,11 +370,14 @@ export const getIdSpecificAffectedAndDispatchProps =
             inputElement:
               Just (
                 <TextField
+                  hint={then (guard (is_text_input_required)) (name)}
                   value={minput_text}
                   onChange={inputHandlers.handleInput}
                   disabled={!is_text_input_required}
+                  everyKeyDown
                   />
               ),
+            disabled: Just (is_text_input_required && isNothing (minput_text)),
           })
         )
       }
@@ -823,6 +829,7 @@ export const getInactiveActivatableControlElements =
                         hint={input}
                         value={minput_text}
                         onChange={inputHandlers.handleInput}
+                        everyKeyDown
                         />
                     )
                   )
@@ -837,6 +844,7 @@ export const getInactiveActivatableControlElements =
                     value={minput_text}
                     onChange={inputHandlers.handleInput}
                     disabled={isNothing (minput_desc)}
+                    everyKeyDown
                     />
                 )),
             set (IACEL.secondSelectElement)

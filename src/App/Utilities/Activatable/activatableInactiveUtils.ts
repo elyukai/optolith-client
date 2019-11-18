@@ -241,29 +241,23 @@ const modifySelectOptions =
                                     )))
       }
 
-      case DisadvantageId.PersonalityFlaw:
-        return liftM2 ((hero_entry: Record<ActivatableDependent>) =>
-                       (as: List<Record<SelectOption>>) => {
-                         const actives = pipe_ (
-                           getActiveSelections (hero_entry),
-                           filter (isNumber),
-                           nub
-                         )
+      case DisadvantageId.PersonalityFlaw: {
+        const unique_selections = maybe (List<number> ())
+                                        (pipe (
+                                          getActiveSelections,
+                                          filter (isNumber),
+                                          nub
+                                        ))
+                                        (mhero_entry)
 
-                         const actives_amount = flength (actives)
-
-                         return actives_amount >= 2
-                           ? List<Record<SelectOption>> ()
-                           : filter ((a: Record<SelectOption>) =>
-                                      (SOA.id (a) === 7 && elem (7) (actives))
-                                      || (SOA.id (a) === 8 && elem (8) (actives))
-                                      || (
-                                        isNotActive (mhero_entry) (a)
-                                        && isNotRequired (mhero_entry) (a)
-                                      ))
-                                    (as)
-                       })
-                      (mhero_entry)
+        return fmap (filter (a => (SOA.id (a) === 7 && elem (7) (unique_selections))
+                                  || (SOA.id (a) === 8 && elem (8) (unique_selections))
+                                  || (
+                                    isNotActive (mhero_entry) (a)
+                                    && isNotRequired (mhero_entry) (a)
+                                    && flength (unique_selections) < 2
+                                  )))
+      }
 
       case DisadvantageId.NegativeTrait:
       case DisadvantageId.Maimed:

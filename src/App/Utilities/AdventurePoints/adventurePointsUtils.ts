@@ -4,7 +4,7 @@ import { ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { any, countWith, countWithByKeyMaybe, elemF, find, flength, foldl, foldr, isList, lastS, List, notElem, take } from "../../../Data/List";
 import { all, altF, bind, bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing, or, sum, then } from "../../../Data/Maybe";
-import { add, gt, inc, lt, multiply, subtractBy } from "../../../Data/Num";
+import { add, gt, inc, lt, multiply, negate, subtractBy } from "../../../Data/Num";
 import { alter, empty, findWithDefault, lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, Record } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
@@ -276,7 +276,7 @@ const getSinglePersFlawDiff =
   (current_entries: number): number =>
     current_sid === sid && current_entries > paid_entries
     ? maybe (0)
-            (multiply (paid_entries))
+            (pipe (multiply (paid_entries), negate))
             (getSelectOptionCost (AAA.wikiEntry (entry) as Activatable)
                                  (Just (sid)))
     : 0
