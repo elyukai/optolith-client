@@ -22,5 +22,19 @@
 			"console.log (showP ($1))"
 		],
 		"description": "Print the result of passing a value to `showP`, which properly indents the stringified value, to the console."
-	}
+	},
+	"TypeScript FP JSDoc template": {
+		"scope": "javascript,typescript,javascriptreact,typescriptreact",
+		"prefix": "fpdoc",
+		"body": [
+			"/**",
+			" * ```haskell",
+			" * $1",
+			" * ```",
+			" *",
+			" * $2",
+			" */$0"
+		],
+		"description": "Generates a FP JSDoc template."
+	},
 }
