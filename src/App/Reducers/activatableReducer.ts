@@ -65,7 +65,7 @@ export const activatableReducer =
           pipe_ (action.payload, fst, ADOA.id) === SpecialAbilityId.Feuerschlucker
             ? over (HeroModelL.combatTechniques)
                    (adjust (set (SkillDependentL.value) (6))
-                           (CombatTechniqueId.Feuerspeien as string))
+                           (CombatTechniqueId.SpittingFire as string))
             : ident
         )
       }

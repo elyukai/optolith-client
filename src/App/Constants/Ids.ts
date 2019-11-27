@@ -211,14 +211,15 @@ export enum CombatTechniqueId {
   Lances = "CT_7",
   Brawling = "CT_9",
   Shields = "CT_10",
+  Slings = "CT_11",
   Swords = "CT_12",
   Polearms = "CT_13",
   ThrownWeapons = "CT_14",
   TwoHandedImpactWeapons = "CT_15",
   TwoHandedSwords = "CT_16",
-  Feuerspeien = "CT_17",
-  Blasrohre = "CT_18",
-  Diskusse = "CT_19",
+  SpittingFire = "CT_17",
+  Blowguns = "CT_18",
+  Discuses = "CT_19",
   Faecher = "CT_20",
   Spiesswaffen = "CT_21",
 }
@@ -242,10 +243,11 @@ export enum MeleeCombatTechniqueId {
 export enum RangedCombatTechniqueId {
   Crossbows = CombatTechniqueId.Crossbows,
   Bows = CombatTechniqueId.Bows,
+  Slings = CombatTechniqueId.Slings,
   ThrownWeapons = CombatTechniqueId.ThrownWeapons,
-  Feuerspeien = CombatTechniqueId.Feuerspeien,
-  Blasrohre = CombatTechniqueId.Blasrohre,
-  Diskusse = CombatTechniqueId.Diskusse,
+  SpittingFire = CombatTechniqueId.SpittingFire,
+  Blowguns = CombatTechniqueId.Blowguns,
+  Discuses = CombatTechniqueId.Discuses,
 }
 
 export enum SpecialAbilityId {
