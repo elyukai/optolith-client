@@ -334,9 +334,7 @@ export type PartialMaybeOrNothing<A extends RecordBase> = {
   [K in PartialMaybePartialKeys<A>]?: A[K] extends Maybe<any> ? A[K] : never
 }
 
-export interface RecordIBase<Name extends string> extends RecordBase {
-  "@@name": Name;
-}
+export type RecordIBase<Name extends string> = RecordBase & { "@@name": Name }
 
 export type OmitName<A extends RecordIBase<any>> = Omit<A, "@@name">
 
