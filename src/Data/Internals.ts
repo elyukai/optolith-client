@@ -1,4 +1,4 @@
-import { DataStructure, DataStructureType } from "./Data";
+import { Type, TypeName } from "./Data";
 import { RecordIBase } from "./Record";
 
 export namespace Internals {
@@ -39,27 +39,27 @@ export namespace Internals {
 
   // Prototypes
 
-  interface ConstPrototype extends DataStructure<DataStructureType.Const> {
+  interface ConstPrototype extends Type<TypeName.Const> {
     readonly isConst: true
   }
 
   const ConstPrototype =
     Object.freeze<ConstPrototype> ({
       isConst: true,
-      "@@type": DataStructureType.Const,
+      "@@type": TypeName.Const,
     })
 
-  interface IdentityPrototype extends DataStructure<DataStructureType.Identity> {
+  interface IdentityPrototype extends Type<TypeName.Identity> {
     readonly isIdentity: true
   }
 
   const IdentityPrototype =
     Object.freeze<IdentityPrototype> ({
       isIdentity: true,
-      "@@type": DataStructureType.Identity,
+      "@@type": TypeName.Identity,
     })
 
-  interface LeftPrototype extends DataStructure<DataStructureType.Left> {
+  interface LeftPrototype extends Type<TypeName.Left> {
     readonly isLeft: true
     readonly isRight: false
   }
@@ -68,10 +68,10 @@ export namespace Internals {
     Object.freeze<LeftPrototype> ({
       isLeft: true,
       isRight: false,
-      "@@type": DataStructureType.Left,
+      "@@type": TypeName.Left,
     })
 
-  interface RightPrototype extends DataStructure<DataStructureType.Right> {
+  interface RightPrototype extends Type<TypeName.Right> {
     readonly isLeft: false
     readonly isRight: true
   }
@@ -80,10 +80,10 @@ export namespace Internals {
     Object.freeze<RightPrototype> ({
       isLeft: false,
       isRight: true,
-      "@@type": DataStructureType.Right,
+      "@@type": TypeName.Right,
     })
 
-  interface ListPrototype<A> extends DataStructure<DataStructureType.List> {
+  interface ListPrototype<A> extends Type<TypeName.List> {
     readonly isList: true
     [Symbol.iterator] (): IterableIterator<A>
   }
@@ -100,10 +100,10 @@ export namespace Internals {
           current = current .xs
         }
       },
-      "@@type": DataStructureType.List,
+      "@@type": TypeName.List,
     })
 
-  interface JustPrototype extends DataStructure<DataStructureType.Just> {
+  interface JustPrototype extends Type<TypeName.Just> {
     readonly isJust: true
     readonly isNothing: false
   }
@@ -112,10 +112,10 @@ export namespace Internals {
     Object.freeze<JustPrototype> ({
       isJust: true,
       isNothing: false,
-      "@@type": DataStructureType.Just,
+      "@@type": TypeName.Just,
     })
 
-  interface NothingPrototype extends DataStructure<DataStructureType.Nothing> {
+  interface NothingPrototype extends Type<TypeName.Nothing> {
     readonly isJust: false
     readonly isNothing: true
   }
@@ -124,10 +124,10 @@ export namespace Internals {
     Object.freeze<NothingPrototype> ({
       isJust: false,
       isNothing: true,
-      "@@type": DataStructureType.Nothing,
+      "@@type": TypeName.Nothing,
     })
 
-  export interface OrderedMapPrototype<K, A> extends DataStructure<DataStructureType.OrderedMap> {
+  export interface OrderedMapPrototype<K, A> extends Type<TypeName.OrderedMap> {
     [Symbol.iterator] (): IterableIterator<[K, A]>
     readonly isOrderedMap: true
   }
@@ -138,10 +138,10 @@ export namespace Internals {
           return this .value [Symbol.iterator] ()
         },
         isOrderedMap: true,
-        "@@type": DataStructureType.OrderedMap,
+        "@@type": TypeName.OrderedMap,
     })
 
-  export interface OrderedSetPrototype<A> extends DataStructure<DataStructureType.OrderedSet> {
+  export interface OrderedSetPrototype<A> extends Type<TypeName.OrderedSet> {
     [Symbol.iterator] (): IterableIterator<A>
     readonly isOrderedSet: true
   }
@@ -152,7 +152,7 @@ export namespace Internals {
         return this .value [Symbol.iterator] ()
       },
       isOrderedSet: true,
-      "@@type": DataStructureType.OrderedSet,
+      "@@type": TypeName.OrderedSet,
     })
 
   export interface PairPrototype {
@@ -164,24 +164,24 @@ export namespace Internals {
       isPair: true,
     })
 
-  export interface RecordPrototype extends DataStructure<DataStructureType.Record> {
+  export interface RecordPrototype extends Type<TypeName.Record> {
     readonly isRecord: true
   }
 
   export const RecordPrototype =
     Object.freeze<RecordPrototype> ({
       isRecord: true,
-      "@@type": DataStructureType.Record,
+      "@@type": TypeName.Record,
     })
 
-  export interface TuplePrototype extends DataStructure<DataStructureType.Tuple> {
+  export interface TuplePrototype extends Type<TypeName.Tuple> {
     readonly isTuple: true
   }
 
   const TuplePrototype =
     Object.freeze<TuplePrototype> ({
       isTuple: true,
-      "@@type": DataStructureType.Tuple,
+      "@@type": TypeName.Tuple,
     })
 
 

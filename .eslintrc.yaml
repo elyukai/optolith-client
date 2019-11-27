@@ -126,7 +126,7 @@ rules:
   no-label-var: 2
   no-shadow: 2
   no-shadow-restricted-names: 2
-  no-undef: 2
+  # no-undef: 2
 
   # Stylistic Issues
   array-bracket-spacing: 2
