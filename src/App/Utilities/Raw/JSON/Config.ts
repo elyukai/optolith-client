@@ -5,6 +5,7 @@ import { fromJSBool, fromJSBoolM, fromJSEnum, fromJSEnumM, fromJSInArray, tryPar
 import { EquipmentGroup } from "../../../Constants/Groups";
 import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../../../Constants/Ids";
 import { SortNames } from "../../../Views/Universal/SortOptions";
+import { pipe } from "../../pipe";
 import { RawConfig } from "../XLSX/RawData";
 
 export type HeroListSortOptions = SortNames.Name
@@ -225,8 +226,11 @@ export const readConfig =
                                   fromJSInArray (CombatTechniquesSortOptions)
                                                 ("CombatTechniquesSortOptions"),
                                 specialAbilitiesSortOrder:
-                                  fromJSInArray (SpecialAbilitiesSortOptions)
-                                                ("SpecialAbilitiesSortOptions"),
+                                  pipe (
+                                    x => x === "group" ? SortNames.GroupName : x,
+                                    fromJSInArray (SpecialAbilitiesSortOptions)
+                                                  ("SpecialAbilitiesSortOptions")
+                                  ),
                                 spellsSortOrder: fromJSInArray (SpellsSortOptions)
                                                                ("SpellsSortOptions"),
                                 spellsUnfamiliarVisibility: fromJSBool,
