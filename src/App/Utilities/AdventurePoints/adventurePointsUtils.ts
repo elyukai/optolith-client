@@ -2,7 +2,7 @@ import { bool_ } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
 import { ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
-import { any, countWith, countWithByKeyMaybe, elemF, find, flength, foldl, foldr, isList, lastS, List, notElem, take } from "../../../Data/List";
+import { any, countWith, countWithByKeyMaybe, elemF, find, flength, foldl, foldr, isList, List, notElem, subscript, take } from "../../../Data/List";
 import { all, altF, bind, bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing, or, sum, then } from "../../../Data/Maybe";
 import { add, gt, inc, lt, multiply, negate, subtractBy } from "../../../Data/Num";
 import { alter, empty, findWithDefault, lookup, OrderedMap } from "../../../Data/OrderedMap";
@@ -243,10 +243,11 @@ const getPropertyOrAspectKnowledgeDiff =
           if (isList (cost)) {
             const actualAPSum = pipe_ (cost, take (current_active_length), List.sum)
 
-            // Sum of displayed AP values for entries (not actual sum)
-            const displayedAPSumForAll = sum (lastS (cost)) * (current_active_length - 1)
+            // Sum of *displayed* AP values for entries
+            const current_cost_sum =
+              sum (subscript (cost) (current_active_length - 1)) * current_active_length
 
-            return actualAPSum - displayedAPSumForAll
+            return actualAPSum - current_cost_sum
           }
         }
 
@@ -423,6 +424,9 @@ const getPropertyKnowledgeDiff =
 const getAspectKnowledgeDiff =
   getPropertyOrAspectKnowledgeDiff (SpecialAbilityId.AspectKnowledge)
 
+/**
+ * The returned number modifies the current AP spent.
+ */
 export const getAdventurePointsSpentDifference =
   (wiki: WikiModelRecord) =>
   (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
