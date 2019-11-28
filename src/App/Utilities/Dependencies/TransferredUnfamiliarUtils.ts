@@ -164,7 +164,7 @@ const getUnfamiliarCountAfter: (wiki: WikiModelRecord) =>
   src_id =>
     getUnfamiliarCount (wiki)
                        (removeUnfamiliarDepsById (src_id) (transferred_unfamiliar))
-                       (removeTraditionById (src_id) (trad_hero_entries))
+                       (removeTradById (src_id) (trad_hero_entries))
 
 const getUnfamiliarCount: (wiki: WikiModelRecord) =>
                           (transferred_unfamiliar: List<Record<TransferUnfamiliar>>) =>
@@ -183,7 +183,7 @@ const getUnfamiliarCount: (wiki: WikiModelRecord) =>
                                            (trad_hero_entries))
                 ))
 
-const removeTraditionById = (id: string) => filter (pipe (ADA.id, equals (id)))
+const removeTradById = (id: string) => filter (pipe (ADA.id, equals (id)))
 
 /**
  * Remove all unfamiliar deps by the specified entry.

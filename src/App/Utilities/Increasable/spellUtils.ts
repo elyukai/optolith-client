@@ -2,11 +2,12 @@ import { notP } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
 import { cnst, ident, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
-import { any, cons, consF, find, intersecting, List, minimum, notElem } from "../../../Data/List";
+import { all, any, consF, find, intersecting, List, minimum, notElem } from "../../../Data/List";
 import { and, bindF, elem, ensure, isJust, Just, mapMaybe, Maybe, maybe, sum } from "../../../Data/Maybe";
 import { gte, inc } from "../../../Data/Num";
 import { alter, empty, filter, foldl, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { traceShowId } from "../../../Debug/Trace";
 import { MagicalTradition, Property } from "../../Constants/Groups";
 import { SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -23,7 +24,7 @@ import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
 import { mapMagicalTradIdToNumId } from "../Activatable/traditionUtils";
 import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies";
 import { ifElse } from "../ifElse";
-import { pipe } from "../pipe";
+import { pipe, pipe_ } from "../pipe";
 import { isNumber } from "../typeCheckUtils";
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
 
@@ -189,28 +190,35 @@ export const isSpellDecreasable =
                                               (wiki_entry)
                                               (hero_entry)
 
-export const isUnfamiliarSpell:
-  (transferred_unfamiliar: List<Record<TransferUnfamiliar>>) =>
-  (trad_hero_entries: List<Record<ActivatableDependent>>) =>
-  (spell: Record<Spell> | Record<Cantrip>) => boolean =
-  transferred_unfamiliar => trads => {
+export const isUnfamiliarSpell: (transferred_unfamiliar: List<Record<TransferUnfamiliar>>) =>
+                                (trad_hero_entries: List<Record<ActivatableDependent>>) =>
+                                (spell_or_cantrip: Record<Spell> | Record<Cantrip>) => boolean =
+  transferred_unfamiliar =>
+  trads => {
+    traceShowId (transferred_unfamiliar)
+
     if (any (pipe (ADA.id, equals<string> (SpecialAbilityId.TraditionIntuitiveZauberer))) (trads)) {
       return cnst (false)
     }
 
     const active_trad_num_ids =
-      cons (mapMaybe (pipe (ADA.id, mapMagicalTradIdToNumId))
-                     (trads))
-           (MagicalTradition.General)
+      pipe_ (
+        trads,
+        mapMaybe (pipe (ADA.id, mapMagicalTradIdToNumId)),
+        consF (MagicalTradition.General),
+        ifElse (List.elem (MagicalTradition.Qabalyamagier))
+               (consF<MagicalTradition> (MagicalTradition.GuildMages))
+               (ident)
+      )
 
     const isNoTraditionActive = notP (intersecting (active_trad_num_ids))
 
     return x => {
       const id = SAL.id (x)
-      const gr = Spell.is (x) ? UnfamiliarGroup.Spells : UnfamiliarGroup.Chants
+      const possible_traditions = SAL.tradition (x)
 
-      return any (pipe (TUA.id, trans_id => trans_id === id || trans_id === gr))
+      return all (pipe (TUA.id, trans_id => trans_id !== id && trans_id !== UnfamiliarGroup.Spells))
                  (transferred_unfamiliar)
-        || isNoTraditionActive (SAL.tradition (x))
+        && isNoTraditionActive (possible_traditions)
     }
   }

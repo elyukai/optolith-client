@@ -18,6 +18,7 @@ import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Spell } from "../../Models/Wiki/Spell";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { SpellsSortOptions } from "../../Utilities/Raw/JSON/Config";
 import { renderMaybe } from "../../Utilities/ReactUtils";
 import { SkillListItem } from "../Skills/SkillListItem";
 import { BorderButton } from "../Universal/BorderButton";
@@ -119,229 +120,93 @@ const SCCA = {
 
 const isCantrip = CantripCombined.is
 
-export class Spells extends React.Component<SpellsProps, SpellsState> {
-  state: SpellsState = {
-    showAddSlidein: false,
-    currentId: Nothing,
-    currentSlideinId: Nothing,
-  }
+export const Spells: React.FC<SpellsProps> = props => {
+  const {
+    addSpellsDisabled,
+    addPoint,
+    addToList,
+    addCantripToList,
+    enableActiveItemHints,
+    attributes,
+    inactiveList,
+    activeList,
+    l10n,
+    isRemovingEnabled,
+    removeFromList,
+    removeCantripFromList,
+    removePoint,
+    setSortOrder,
+    sortOrder,
+    switchActiveItemHints,
+    filterText,
+    inactiveFilterText,
+    setFilterText,
+    setInactiveFilterText,
+  } = props
 
-  showAddSlidein = () => this.setState ({ showAddSlidein: true })
+  const [showAddSlidein, setShowAddSlidein] = React.useState (false)
+  const [currentId, setCurrenId] = React.useState<Maybe<string>> (Nothing)
+  const [currentSlideinId, setCurrentSlideinId] = React.useState<Maybe<string>> (Nothing)
 
-  hideAddSlidein = () => {
-    this.props.setInactiveFilterText ("")
-    this.setState ({ showAddSlidein: false, currentSlideinId: Nothing })
-  }
+  const handleShowSlidein = React.useCallback (
+    () => setShowAddSlidein (true),
+    [setShowAddSlidein]
+  )
 
-  showInfo = (id: string) => this.setState ({ currentId: Just (id) })
-  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: Just (id) })
+  const handleHideSlidein = React.useCallback (
+    () => {
+      setInactiveFilterText ("")
+      setCurrentSlideinId (Nothing)
+      setShowAddSlidein (false)
+    },
+    [setInactiveFilterText, setCurrentSlideinId, setShowAddSlidein]
+  )
 
-  render () {
-    const {
-      addSpellsDisabled,
-      addPoint,
-      addToList,
-      addCantripToList,
-      enableActiveItemHints,
-      attributes,
-      inactiveList,
-      activeList,
-      l10n,
-      isRemovingEnabled,
-      removeFromList,
-      removeCantripFromList,
-      removePoint,
-      setSortOrder,
-      sortOrder,
-      switchActiveItemHints,
-      filterText,
-      inactiveFilterText,
-      setFilterText,
-      setInactiveFilterText,
-    } = this.props
+  const handleShowInfo = React.useCallback (
+    (id: string) => setCurrenId (Just (id)),
+    [setCurrenId]
+  )
 
-    const { showAddSlidein } = this.state
+  const handleShowSlideinInfo = React.useCallback (
+    (id: string) => setCurrentSlideinId (Just (id)),
+    [setCurrentSlideinId]
+  )
 
-    return (
-      <Page id="spells">
-        <Slidein isOpen={showAddSlidein} close={this.hideAddSlidein} className="adding-spells">
-          <Options>
-            <SearchField
-              l10n={l10n}
-              value={inactiveFilterText}
-              onChange={setInactiveFilterText}
-              fullWidth
-              />
-            <SortOptions
-              sortOrder={sortOrder}
-              sort={setSortOrder}
-              options={List (SortNames.Name, SortNames.Group, SortNames.Property, SortNames.IC)}
-              l10n={l10n}
-              />
-            <Checkbox
-              checked={enableActiveItemHints}
-              onClick={switchActiveItemHints}
-              >
-              {translate (l10n) ("showactivated")}
-            </Checkbox>
-            <RecommendedReference l10n={l10n} unfamiliarSpells />
-          </Options>
-          <MainContent>
-            <ListHeader>
-              <ListHeaderTag className="name">
-                {translate (l10n) ("name")}
-                {" ("}
-                {translate (l10n) ("unfamiliartraditions")}
-                {")"}
-              </ListHeaderTag>
-              <ListHeaderTag className="group">
-                {translate (l10n) ("property")}
-                {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
-              </ListHeaderTag>
-              <ListHeaderTag className="check">
-                {translate (l10n) ("check")}
-              </ListHeaderTag>
-              <ListHeaderTag className="mod" hint={translate (l10n) ("checkmodifier")}>
-                {translate (l10n) ("checkmodifier.short")}
-              </ListHeaderTag>
-              <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
-                {translate (l10n) ("improvementcost.short")}
-              </ListHeaderTag>
-              {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
-              <ListHeaderTag className="btn-placeholder" />
-            </ListHeader>
-            <Scroll>
-              <ListView>
-                {pipe_ (
-                  inactiveList,
-                  bindF (ensure (notNull)),
-                  fmap (pipe (
-                    mapAccumL ((mprev: Maybe<Combined>) => (curr: Combined) => {
-                                const insertTopMargin = isTopMarginNeeded (sortOrder) (curr) (mprev)
-
-                                const propertyName = getPropertyStr (l10n) (curr)
-
-                                if (SCCA.active (curr)) {
-                                  return Pair<Maybe<Combined>, JSX.Element> (
-                                    Just (curr),
-                                    (
-                                      <ListItem
-                                        key={SCCA.id (curr)}
-                                        disabled
-                                        insertTopMargin={insertTopMargin}
-                                        >
-                                        <ListItemName name={SCCA.name (curr)} />
-                                      </ListItem>
-                                    )
-                                  )
-                                }
-                                else if (isCantrip (curr)) {
-                                  return Pair<Maybe<Combined>, JSX.Element> (
-                                    Just (curr),
-                                    (
-                                      <SkillListItem
-                                        key={SCCA.id (curr)}
-                                        id={SCCA.id (curr)}
-                                        name={SCCA.name (curr)}
-                                        isNotActive
-                                        activate={
-                                          addCantripToList .bind (null, SCCA.id (curr))
-                                        }
-                                        addFillElement
-                                        insertTopMargin={insertTopMargin}
-                                        attributes={attributes}
-                                        l10n={l10n}
-                                        selectForInfo={this.showSlideinInfo}
-                                        addText={
-                                          sortOrder === "group"
-                                            ? `${propertyName} / ${translate (l10n) ("cantrip")}`
-                                            : propertyName
-                                        }
-                                        untyp={SWRAL.isUnfamiliar (curr)}
-                                        selectedForInfo={this.state.currentSlideinId}
-                                        />
-                                    )
-                                  )
-                                }
-                                else {
-                                  const add_text = getSpellAddText (l10n)
-                                                                   (sortOrder)
-                                                                   (propertyName)
-                                                                   (curr)
-
-                                  return Pair<Maybe<Combined>, JSX.Element> (
-                                    Just (curr),
-                                    (
-                                      <SkillListItem
-                                        key={SCCA.id (curr)}
-                                        id={SCCA.id (curr)}
-                                        name={SCCA.name (curr)}
-                                        isNotActive
-                                        activate={addToList .bind (null, SCCA.id (curr))}
-                                        activateDisabled={
-                                          or (addSpellsDisabled)
-                                          && SWRA_.gr (curr) < 3
-                                        }
-                                        addFillElement
-                                        check={SWRA_.check (curr)}
-                                        checkmod={SWRA_.checkmod (curr)}
-                                        ic={SWRA_.ic (curr)}
-                                        insertTopMargin={insertTopMargin}
-                                        attributes={attributes}
-                                        l10n={l10n}
-                                        selectForInfo={this.showSlideinInfo}
-                                        addText={add_text}
-                                        untyp={SWRAL.isUnfamiliar (curr)}
-                                        selectedForInfo={this.state.currentSlideinId}
-                                        />
-                                    )
-                                  )
-                                }
-                              })
-                              (Nothing),
-                    snd,
-                    toArray,
-                    arr => <>{arr}</>
-                  )),
-                  fromMaybe (
-                    <ListPlaceholder l10n={l10n} type="inactiveSpells" noResults />
-                  )
-                )}
-              </ListView>
-            </Scroll>
-          </MainContent>
-          <WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
-        </Slidein>
+  return (
+    <Page id="spells">
+      <Slidein isOpen={showAddSlidein} close={handleHideSlidein} className="adding-spells">
         <Options>
           <SearchField
             l10n={l10n}
-            value={filterText}
-            onChange={setFilterText}
+            value={inactiveFilterText}
+            onChange={setInactiveFilterText}
             fullWidth
             />
           <SortOptions
             sortOrder={sortOrder}
             sort={setSortOrder}
-            options={List (SortNames.Name, SortNames.Group, SortNames.Property, SortNames.IC)}
+            options={SpellsSortOptions}
             l10n={l10n}
             />
-          <BorderButton
-            label={translate (l10n) ("add")}
-            onClick={this.showAddSlidein}
-            />
+          <Checkbox
+            checked={enableActiveItemHints}
+            onClick={switchActiveItemHints}
+            >
+            {translate (l10n) ("showactivated")}
+          </Checkbox>
           <RecommendedReference l10n={l10n} unfamiliarSpells />
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (l10n) ("name")} ({translate (l10n) ("unfamiliartraditions")})
+              {translate (l10n) ("name")}
+              {" ("}
+              {translate (l10n) ("unfamiliartraditions")}
+              {")"}
             </ListHeaderTag>
             <ListHeaderTag className="group">
               {translate (l10n) ("property")}
               {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
-            </ListHeaderTag>
-            <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
-              {translate (l10n) ("skillrating.short")}
             </ListHeaderTag>
             <ListHeaderTag className="check">
               {translate (l10n) ("check")}
@@ -354,12 +219,11 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
             </ListHeaderTag>
             {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
             <ListHeaderTag className="btn-placeholder" />
-            <ListHeaderTag className="btn-placeholder" />
           </ListHeader>
           <Scroll>
             <ListView>
               {pipe_ (
-                activeList,
+                inactiveList,
                 bindF (ensure (notNull)),
                 fmap (pipe (
                   mapAccumL ((mprev: Maybe<Combined>) => (curr: Combined) => {
@@ -367,7 +231,21 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 
                               const propertyName = getPropertyStr (l10n) (curr)
 
-                              if (isCantrip (curr)) {
+                              if (SCCA.active (curr)) {
+                                return Pair<Maybe<Combined>, JSX.Element> (
+                                  Just (curr),
+                                  (
+                                    <ListItem
+                                      key={SCCA.id (curr)}
+                                      disabled
+                                      insertTopMargin={insertTopMargin}
+                                      >
+                                      <ListItemName name={SCCA.name (curr)} />
+                                    </ListItem>
+                                  )
+                                )
+                              }
+                              else if (isCantrip (curr)) {
                                 return Pair<Maybe<Combined>, JSX.Element> (
                                   Just (curr),
                                   (
@@ -375,21 +253,20 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                       key={SCCA.id (curr)}
                                       id={SCCA.id (curr)}
                                       name={SCCA.name (curr)}
-                                      removePoint={removeCantripFromList}
-                                      removeDisabled={!isRemovingEnabled}
+                                      isNotActive
+                                      activate={addCantripToList}
                                       addFillElement
-                                      noIncrease
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
                                       l10n={l10n}
-                                      selectForInfo={this.showInfo}
+                                      selectForInfo={handleShowSlideinInfo}
                                       addText={
                                         sortOrder === "group"
                                           ? `${propertyName} / ${translate (l10n) ("cantrip")}`
                                           : propertyName
                                       }
                                       untyp={SWRAL.isUnfamiliar (curr)}
-                                      selectedForInfo={this.state.currentId}
+                                      selectedForInfo={currentSlideinId}
                                       />
                                   )
                                 )
@@ -404,29 +281,26 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                   Just (curr),
                                   (
                                     <SkillListItem
-                                      key={SWRA_.id (curr)}
-                                      id={SWRA_.id (curr)}
-                                      name={SWRA_.name (curr)}
-                                      addDisabled={!SWRA.isIncreasable (curr)}
-                                      addPoint={addPoint}
-                                      removeDisabled={
-                                        !isRemovingEnabled || !SWRA.isDecreasable (curr)
-                                      }
-                                      removePoint={
-                                        SWRA_.value (curr) === 0 ? removeFromList : removePoint
+                                      key={SCCA.id (curr)}
+                                      id={SCCA.id (curr)}
+                                      name={SCCA.name (curr)}
+                                      isNotActive
+                                      activate={addToList}
+                                      activateDisabled={
+                                        or (addSpellsDisabled)
+                                        && SWRA_.gr (curr) < 3
                                       }
                                       addFillElement
                                       check={SWRA_.check (curr)}
                                       checkmod={SWRA_.checkmod (curr)}
                                       ic={SWRA_.ic (curr)}
-                                      sr={SWRA_.value (curr)}
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
                                       l10n={l10n}
-                                      selectForInfo={this.showInfo}
+                                      selectForInfo={handleShowSlideinInfo}
                                       addText={add_text}
                                       untyp={SWRAL.isUnfamiliar (curr)}
-                                      selectedForInfo={this.state.currentId}
+                                      selectedForInfo={currentSlideinId}
                                       />
                                   )
                                 )
@@ -438,20 +312,156 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                   arr => <>{arr}</>
                 )),
                 fromMaybe (
-                  <ListPlaceholder
-                    l10n={l10n}
-                    type="spells"
-                    noResults={notNullStr (filterText)}
-                    />
+                  <ListPlaceholder l10n={l10n} type="inactiveSpells" noResults />
                 )
               )}
             </ListView>
           </Scroll>
         </MainContent>
-        <WikiInfoContainer {...this.props} {...this.state} />
-      </Page>
-    )
-  }
+       <WikiInfoContainer currentId={currentSlideinId} l10n={l10n} />
+      </Slidein>
+      <Options>
+        <SearchField
+          l10n={l10n}
+          value={filterText}
+          onChange={setFilterText}
+          fullWidth
+          />
+        <SortOptions
+          sortOrder={sortOrder}
+          sort={setSortOrder}
+          options={SpellsSortOptions}
+          l10n={l10n}
+          />
+        <BorderButton
+          label={translate (l10n) ("add")}
+          onClick={handleShowSlidein}
+          />
+        <RecommendedReference l10n={l10n} unfamiliarSpells />
+      </Options>
+      <MainContent>
+        <ListHeader>
+          <ListHeaderTag className="name">
+            {translate (l10n) ("name")}
+            {" ("}
+            {translate (l10n) ("unfamiliartraditions")}
+            {")"}
+          </ListHeaderTag>
+          <ListHeaderTag className="group">
+            {translate (l10n) ("property")}
+            {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
+          </ListHeaderTag>
+          <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
+            {translate (l10n) ("skillrating.short")}
+          </ListHeaderTag>
+          <ListHeaderTag className="check">
+            {translate (l10n) ("check")}
+          </ListHeaderTag>
+          <ListHeaderTag className="mod" hint={translate (l10n) ("checkmodifier")}>
+            {translate (l10n) ("checkmodifier.short")}
+          </ListHeaderTag>
+          <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
+            {translate (l10n) ("improvementcost.short")}
+          </ListHeaderTag>
+          {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
+          <ListHeaderTag className="btn-placeholder" />
+          <ListHeaderTag className="btn-placeholder" />
+        </ListHeader>
+        <Scroll>
+          <ListView>
+            {pipe_ (
+              activeList,
+              bindF (ensure (notNull)),
+              fmap (pipe (
+                mapAccumL ((mprev: Maybe<Combined>) => (curr: Combined) => {
+                            const insertTopMargin = isTopMarginNeeded (sortOrder) (curr) (mprev)
+
+                            const propertyName = getPropertyStr (l10n) (curr)
+
+                            if (isCantrip (curr)) {
+                              return Pair<Maybe<Combined>, JSX.Element> (
+                                Just (curr),
+                                (
+                                  <SkillListItem
+                                    key={SCCA.id (curr)}
+                                    id={SCCA.id (curr)}
+                                    name={SCCA.name (curr)}
+                                    removePoint={removeCantripFromList}
+                                    removeDisabled={!isRemovingEnabled}
+                                    addFillElement
+                                    noIncrease
+                                    insertTopMargin={insertTopMargin}
+                                    attributes={attributes}
+                                    l10n={l10n}
+                                    selectForInfo={handleShowInfo}
+                                    addText={
+                                      sortOrder === "group"
+                                        ? `${propertyName} / ${translate (l10n) ("cantrip")}`
+                                        : propertyName
+                                    }
+                                    untyp={SWRAL.isUnfamiliar (curr)}
+                                    selectedForInfo={currentId}
+                                    />
+                                )
+                              )
+                            }
+                            else {
+                              const add_text = getSpellAddText (l10n)
+                                                               (sortOrder)
+                                                               (propertyName)
+                                                               (curr)
+
+                              return Pair<Maybe<Combined>, JSX.Element> (
+                                Just (curr),
+                                (
+                                  <SkillListItem
+                                    key={SWRA_.id (curr)}
+                                    id={SWRA_.id (curr)}
+                                    name={SWRA_.name (curr)}
+                                    addDisabled={!SWRA.isIncreasable (curr)}
+                                    addPoint={addPoint}
+                                    removeDisabled={
+                                      !isRemovingEnabled || !SWRA.isDecreasable (curr)
+                                    }
+                                    removePoint={
+                                      SWRA_.value (curr) === 0 ? removeFromList : removePoint
+                                    }
+                                    addFillElement
+                                    check={SWRA_.check (curr)}
+                                    checkmod={SWRA_.checkmod (curr)}
+                                    ic={SWRA_.ic (curr)}
+                                    sr={SWRA_.value (curr)}
+                                    insertTopMargin={insertTopMargin}
+                                    attributes={attributes}
+                                    l10n={l10n}
+                                    selectForInfo={handleShowInfo}
+                                    addText={add_text}
+                                    untyp={SWRAL.isUnfamiliar (curr)}
+                                    selectedForInfo={currentId}
+                                    />
+                                )
+                              )
+                            }
+                          })
+                          (Nothing),
+                snd,
+                toArray,
+                arr => <>{arr}</>
+              )),
+              fromMaybe (
+                <ListPlaceholder
+                  l10n={l10n}
+                  type="spells"
+                  noResults={notNullStr (filterText)}
+                  />
+              )
+            )}
+          </ListView>
+        </Scroll>
+      </MainContent>
+      <WikiInfoContainer currentId={currentId} l10n={l10n} />
+    </Page>
+  )
 }
 
 const isTopMarginNeeded =
@@ -464,11 +474,11 @@ const isTopMarginNeeded =
         () => sortOrder === "group" && SCCA.active (curr)
       )),
       fmap (prev =>
-             !isCantrip (prev) && isCantrip (curr)
-             || isCantrip (prev) && !isCantrip (curr)
-             || !isCantrip (prev)
-               && !isCantrip (curr)
-               && notEquals (SCCA.gr (prev)) (SCCA.gr (curr))),
+             (!isCantrip (prev) && isCantrip (curr))
+             || (isCantrip (prev) && !isCantrip (curr))
+             || (!isCantrip (prev)
+                 && !isCantrip (curr)
+                 && notEquals (SCCA.gr (prev)) (SCCA.gr (curr)))),
       or
     )
 
