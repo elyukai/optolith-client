@@ -219,9 +219,9 @@ const modifySelectOptions =
         filterT (pipe (
           SOA.prerequisites,
           Maybe.all (reqs => validatePrerequisites (wiki)
-                                                  (hero)
-                                                  (reqs)
-                                                  (current_id))
+                                                   (hero)
+                                                   (reqs)
+                                                   (current_id))
         ))
       )
 
@@ -250,13 +250,26 @@ const modifySelectOptions =
                                         ))
                                         (mhero_entry)
 
-        return fmap (filter (a => (SOA.id (a) === 7 && elem (7) (unique_selections))
-                                  || (SOA.id (a) === 8 && elem (8) (unique_selections))
-                                  || (
-                                    isNotActive (mhero_entry) (a)
-                                    && isNotRequired (mhero_entry) (a)
-                                    && flength (unique_selections) < 2
-                                  )))
+        const isPrejudiceAndActive: (x: Record<SelectOption>) => boolean =
+          x => SOA.id (x) === 7 && elem (7) (unique_selections)
+
+        const isUnworldlyAndActive: (x: Record<SelectOption>) => boolean =
+          x => SOA.id (x) === 8 && elem (8) (unique_selections)
+
+        const isNotActiveAndMaxNotReached: (x: Record<SelectOption>) => boolean =
+          x => isNotActive (mhero_entry) (x)
+               && isNotRequired (mhero_entry) (x)
+               && flength (unique_selections) < 2
+
+        const filterOptions =
+          composeT (
+            isAvailable,
+            filterT (a => isPrejudiceAndActive (a)
+                          || isUnworldlyAndActive (a)
+                          || isNotActiveAndMaxNotReached (a))
+          )
+
+        return fmap (filterMapListT (filterOptions))
       }
 
       case DisadvantageId.NegativeTrait:
