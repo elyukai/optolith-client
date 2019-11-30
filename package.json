@@ -1,13 +1,13 @@
 {
   "name": "optolith",
   "productName": "Optolith",
-  "version": "1.2.0-alpha.7",
+  "version": "1.2.0-alpha.10",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'.",
   "author": {
     "name": "Lukas Obermann",
     "email": "support@optolith.app"
   },
-  "homepage": "https://github.com/Elytherion/optolith-client",
+  "homepage": "https://github.com/elyukai/optolith-client",
   "license": "MPL-2.0",
   "main": "app/main.js",
   "dependencies": {
@@ -17,6 +17,7 @@
     "electron-updater": "4.0.6",
     "electron-window-state": "5.0.3",
     "esm": "3.2.25",
+    "moment": "2.24.0",
     "react": "16.9.0",
     "react-custom-scrollbars": "4.2.1",
     "react-dom": "16.9.0",
@@ -49,7 +50,7 @@
     "@typescript-eslint/parser": "2.0.0",
     "basic-ftp": "3.8.1",
     "custom-env": "1.0.2",
-    "electron": "7.0.1",
+    "electron": "7.1.1",
     "electron-builder": "21.2.0",
     "eslint": "6.2.2",
     "eslint-plugin-react": "7.14.3",
@@ -76,8 +77,8 @@
     "buildCss": "node --experimental-modules ./deploy/buildSass.mjs",
     "copyTables": "node ./deploy/copyTablesOnly.js",
     "copyTablesInsider": "node ./deploy/copyTablesInsiderOnly.js",
-    "encrypt:stable": "@powershell ./encryptTables.ps1",
-    "encrypt:insider": "@powershell ./encryptTables.ps1 -insider",
+    "encrypt:stable": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./encryptTables.ps1",
+    "encrypt:insider": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./encryptTables.ps1 -insider",
     "compile": "tsc",
     "cti": "node ./deploy/copyTablesOnly.js",
     "watch": "tsc --watch",

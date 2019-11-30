@@ -40,7 +40,15 @@ const ANCA = ActivatableNameCost.A
 const AOWIA = ActiveObjectWithId.A
 
 export function ActivatableAddList (props: ActivatableAddListProps) {
-  const { inactiveList: minactives, l10n, rating, showRating: mshow_rating } = props
+  const {
+    inactiveList: minactives,
+    l10n,
+    rating,
+    showRating: mshow_rating,
+    selectedForInfo,
+    addToList,
+    selectForInfo,
+  } = props
 
   if (all (fnull) (minactives)) {
     return <ListPlaceholder l10n={l10n} noResults type="inactiveSpecialAbilities" />
@@ -73,12 +81,15 @@ export function ActivatableAddList (props: ActivatableAddListProps) {
 
             return (
               <ActivatableAddListItemContainer
-                {...props}
                 key={IAA.id (item)}
                 item={item}
                 isImportant={or (fmapF (isRatedForItem) (thrush (EntryRating.Essential)))}
                 isTypical={or (fmapF (isRatedForItem) (thrush (EntryRating.Common)))}
                 isUntypical={or (fmapF (isRatedForItem) (thrush (EntryRating.Uncommon)))}
+                l10n={l10n}
+                selectedForInfo={selectedForInfo}
+                addToList={addToList}
+                selectForInfo={selectForInfo}
                 />
             )
           }),

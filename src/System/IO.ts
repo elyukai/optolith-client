@@ -13,17 +13,15 @@
 import * as fs from "fs";
 import { showP } from "../Data/Show";
 
-export const IO: IO = {} as IO
 
-// eslint-disable-next-line @typescript-eslint/interface-name-prefix
-export interface IO {
-  readFile: (path: string) => Promise<string>
-  writeFile: (path: string) => (data: string | Buffer) => Promise<void>
-  deleteFile: (path: string) => Promise<void>
-  existsFile: (path: string) => Promise<boolean>
-  copyFile: (origin: string) => (dest: string) => Promise<void>
-  print: (x: any) => Promise<void>
-}
+// MONAD
+
+export const bind: <A> (x: Promise<A>) => <B> (f: (x: A) => Promise<B>) => Promise<B> =
+  x => async f => x .then (f)
+
+export const bindF: <A, B> (f: (x: A) => Promise<B>) => (x: Promise<A>) => Promise<B> =
+  f => async x => x .then (f)
+
 
 // OPENING AND CLOSING FILES
 
@@ -38,8 +36,6 @@ type FilePath = string
 export const readFile: (path: FilePath) => Promise<string> =
   async path => fs.promises.readFile (path, "utf-8")
 
-IO.readFile = readFile
-
 /**
  * `writeFile :: FilePath -> String -> IO ()`
  *
@@ -49,8 +45,6 @@ IO.readFile = readFile
 export const writeFile: (path: FilePath) => (data: string | Buffer) => Promise<void> =
   path => async data => fs.promises.writeFile (path, data, "utf-8")
 
-IO.writeFile = writeFile
-
 /**
  * `deleteFile :: FilePath -> IO ()`
  *
@@ -58,8 +52,6 @@ IO.writeFile = writeFile
  */
 export const deleteFile: (path: FilePath) => Promise<void> =
   async path => fs.promises.unlink (path)
-
-IO.deleteFile = deleteFile
 
 /**
  * `existsFile :: FilePath -> IO Bool`
@@ -78,8 +70,6 @@ export const existsFile: (path: FilePath) => Promise<boolean> =
     }
   }
 
-IO.existsFile = existsFile
-
 /**
  * `copyFile :: FilePath -> FilePath -> IO Bool`
  *
@@ -88,8 +78,6 @@ IO.existsFile = existsFile
  */
 export const copyFile: (origin: FilePath) => (dest: FilePath) => Promise<void> =
   origin => async dest => fs.promises.copyFile (origin, dest)
-
-IO.copyFile = copyFile
 
 
 // TEXT OUTPUT
@@ -104,5 +92,3 @@ IO.copyFile = copyFile
  */
 export const print: (x: any) => Promise<void> =
   async x => Promise.resolve (console.log (showP (x)))
-
-IO.print = print

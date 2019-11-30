@@ -3,7 +3,7 @@ import { ident } from "../../../../../Data/Function";
 import { fmap } from "../../../../../Data/Functor";
 import { set } from "../../../../../Data/Lens";
 import { append, empty, flength, foldr, fromArray, List, map, notNull, splitOn } from "../../../../../Data/List";
-import { altF_, any, bindF, ensure, fromJust, fromMaybe, isJust, joinMaybeList, Just, mapM, maybe, Maybe, Nothing, Some } from "../../../../../Data/Maybe";
+import { altF_, any, bindF, ensure, fromJust, fromMaybe, isJust, joinMaybeList, Just, mapM, maybe, Maybe, Nothing } from "../../../../../Data/Maybe";
 import { Record } from "../../../../../Data/Record";
 import { parseJSON } from "../../../../../Data/String/JSON";
 import { traceShowBoth } from "../../../../../Debug/Trace";
@@ -51,7 +51,7 @@ import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrai
 import { toErrata } from "./Sub/toErrata";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
-const isNotNullObject = (x: Some): x is object => typeof x === "object" && x !== null
+const isNotNullObject = (x: unknown): x is object => typeof x === "object" && x !== null
 
 export const stringToDependencies =
   mensureMapListOptional

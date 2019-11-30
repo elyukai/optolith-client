@@ -1,5 +1,4 @@
 import { Identity } from "../../Control/Monad/Identity";
-import { IO } from "../../System/IO";
 import { Either, Right } from "../Either";
 import { flip } from "../Function";
 import { fmap, Functor } from "../Functor";
@@ -17,7 +16,7 @@ type FunctorMap2<A, B, C> =
     F extends Const<infer A0, A> ? Const<A0, C> :
     F extends Either<any, A> ? Exclude<F, Right<any>> | Right<C> :
     F extends Identity<A> ? Identity<C> :
-    F extends IO<A> ? IO<C> :
+    F extends Promise<A> ? Promise<C> :
     F extends List<A> ? List<C> :
     F extends Maybe<A> ? Maybe<C> :
     F extends OrderedMap<infer K, A> ? OrderedMap<K, C> :

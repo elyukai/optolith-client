@@ -3,17 +3,18 @@ import { Action, Dispatch } from "redux";
 import * as AlertActions from "../Actions/AlertActions";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getCurrentAlert } from "../Selectors/stateSelectors";
+import { getTheme } from "../Selectors/uisettingsSelectors";
 import { Alerts, AlertsDispatchProps, AlertsOwnProps, AlertsStateProps } from "../Views/Alerts/Alerts";
 
 const mapStateToProps = (state: AppStateRecord) => ({
   options: getCurrentAlert (state),
+  theme: getTheme (state),
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
   close () {
     dispatch (AlertActions.removeAlert ())
   },
-  dispatch,
 })
 
 const connectAlertsContainer =

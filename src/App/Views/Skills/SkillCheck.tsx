@@ -58,7 +58,12 @@ export function SkillCheck (props: SkillCheckProps) {
             elems,
             map (getCheckModStr (l10n)),
             intercalate ("/"),
-            characteristic => <div className="check mod">{minus}{characteristic}</div>
+            characteristic => (
+              <div className="check mod">
+                {minus}
+                {characteristic}
+              </div>
+            )
           )),
           fromMaybe (null as React.ReactNode)
         )}

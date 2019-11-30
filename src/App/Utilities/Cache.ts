@@ -82,7 +82,8 @@ export const readCache =
       fmap (pipe (
         eitherToMaybe,
         bindF (parseJSON),
-        bindF (x => Maybe (x [AP_KEY])),
+        bindF (ensure (isObject)),
+        bindF (x => Maybe ((x as any) [AP_KEY])),
         bindF (ensure (isObject)),
         bindF (pipe (
           Object.entries,

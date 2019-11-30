@@ -158,7 +158,7 @@ export const Skills: React.FC<SkillsProps> = props => {
                                   ic={SWRA_.ic (curr)}
                                   addDisabled={!SWRA.isIncreasable (curr)}
                                   addPoint={addPoint}
-                                  removeDisabled={isRemovingEnabled || !SWRA.isDecreasable (curr)}
+                                  removeDisabled={!isRemovingEnabled || !SWRA.isDecreasable (curr)}
                                   removePoint={removePoint}
                                   addFillElement
                                   insertTopMargin={isTopMarginNeeded (sortOrder) (curr) (mprev)}

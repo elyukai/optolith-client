@@ -3,7 +3,7 @@ import { ident } from "../../../../../Data/Function";
 import { fmap } from "../../../../../Data/Functor";
 import { set } from "../../../../../Data/Lens";
 import { empty, foldr, fromArray, List, map, notNull, splitOn } from "../../../../../Data/List";
-import { altF_, any, bindF, ensure, fromJust, fromMaybe, Just, mapM, maybe, Maybe, Nothing, Some } from "../../../../../Data/Maybe";
+import { altF_, any, bindF, ensure, fromJust, fromMaybe, Just, mapM, maybe, Maybe, Nothing } from "../../../../../Data/Maybe";
 import { Record } from "../../../../../Data/Record";
 import { parseJSON } from "../../../../../Data/String/JSON";
 import { IdPrefixes } from "../../../../Constants/IdPrefixes";
@@ -69,7 +69,7 @@ const stringToVariantSelections =
         try {
           const mobj = parseJSON (x)
 
-          if (any ((y: Some): y is object => typeof y === "object" && y !== null) (mobj)) {
+          if (any ((y: unknown): y is object => typeof y === "object" && y !== null) (mobj)) {
             const obj = fromJust<any> (mobj)
 
             return isRawSpecializationSelection (obj)

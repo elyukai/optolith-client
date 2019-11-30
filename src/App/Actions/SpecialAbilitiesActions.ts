@@ -27,7 +27,7 @@ import { pipe, pipe_ } from "../Utilities/pipe";
 import { SpecialAbilitiesSortOptions } from "../Utilities/Raw/JSON/Config";
 import { getWikiEntry } from "../Utilities/WikiUtils";
 import { ReduxAction } from "./Actions";
-import { addAlert } from "./AlertActions";
+import { addAlert, AlertOptions } from "./AlertActions";
 
 export interface ActivateSpecialAbilityAction {
   type: ActionTypes.ACTIVATE_SPECIALABILITY
@@ -42,8 +42,8 @@ export interface ActivateSpecialAbilityAction {
  */
 export const addSpecialAbility =
   (l10n: L10nRecord) =>
-  (args: Record<ActivatableActivationOptions>): ReduxAction =>
-  (dispatch, getState) => {
+  (args: Record<ActivatableActivationOptions>): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
 
     const mhero = getCurrentHeroPresent (state)
@@ -79,10 +79,12 @@ export const addSpecialAbility =
           })
         }
         else {
-          dispatch (addAlert ({
-            title: translate (l10n) ("notenoughap"),
+          const opts = AlertOptions ({
+            title: Just (translate (l10n) ("notenoughap")),
             message: translateP (l10n) ("notenoughap.text") (List (fromJust (mmissingAP))),
-          }))
+          })
+
+          await dispatch (addAlert (l10n) (opts))
         }
       }
     }
@@ -147,8 +149,8 @@ export const setSpecialAbilityLevel =
   (l10n: L10nRecord) =>
   (current_id: string) =>
   (current_index: number) =>
-  (next_level: number): ReduxAction =>
-  (dispatch, getState) => {
+  (next_level: number): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
 
     const mhero = getCurrentHeroPresent (state)
@@ -231,10 +233,12 @@ export const setSpecialAbilityLevel =
             })
           }
           else {
-            dispatch (addAlert ({
-              title: translate (l10n) ("notenoughap"),
+            const opts = AlertOptions ({
+              title: Just (translate (l10n) ("notenoughap")),
               message: translateP (l10n) ("notenoughap.text") (List (fromJust (mmissingAP))),
-            }))
+            })
+
+            await dispatch (addAlert (l10n) (opts))
           }
         }
       }

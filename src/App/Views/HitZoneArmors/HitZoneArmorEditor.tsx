@@ -54,6 +54,21 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
     items: mitems,
     l10n,
     templates,
+    addToList,
+    saveItem,
+    setHead,
+    setHeadLoss,
+    setLeftArm,
+    setLeftArmLoss,
+    setLeftLeg,
+    setLeftLegLoss,
+    setName,
+    setRightArm,
+    setRightArmLoss,
+    setRightLeg,
+    setRightLegLoss,
+    setTorso,
+    setTorsoLoss,
   } = props
 
   const armorList =
@@ -90,7 +105,7 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
           autoWidth: true,
           disabled: EHZAA.name (armorZonesEditor) === "",
           label: translate (l10n) ("save"),
-          onClick: Maybe.elem (true) (isInHitZoneArmorCreation) ? props.addToList : props.saveItem,
+          onClick: Maybe.elem (true) (isInHitZoneArmorCreation) ? addToList : saveItem,
         },
       ]}
       >
@@ -100,7 +115,7 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
             className="name"
             label={translate (l10n) ("name")}
             value={EHZAA.name (armorZonesEditor)}
-            onChange={props.setName}
+            onChange={setName}
             autoFocus={Maybe.elem (true) (isInHitZoneArmorCreation)}
             />
         </div>
@@ -111,8 +126,8 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
           l10n={l10n}
           lossLevels={lossLevels}
           name="head"
-          setComponent={props.setHead}
-          setComponentLoss={props.setHeadLoss}
+          setComponent={setHead}
+          setComponentLoss={setHeadLoss}
           />
         <HitZoneArmorEditorRow
           armorList={armorList}
@@ -121,8 +136,8 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
           l10n={l10n}
           lossLevels={lossLevels}
           name="torso"
-          setComponent={props.setTorso}
-          setComponentLoss={props.setTorsoLoss}
+          setComponent={setTorso}
+          setComponentLoss={setTorsoLoss}
           />
         <HitZoneArmorEditorRow
           armorList={armorList}
@@ -131,8 +146,8 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
           l10n={l10n}
           lossLevels={lossLevels}
           name="leftarm"
-          setComponent={props.setLeftArm}
-          setComponentLoss={props.setLeftArmLoss}
+          setComponent={setLeftArm}
+          setComponentLoss={setLeftArmLoss}
           />
         <HitZoneArmorEditorRow
           armorList={armorList}
@@ -141,8 +156,8 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
           l10n={l10n}
           lossLevels={lossLevels}
           name="rightarm"
-          setComponent={props.setRightArm}
-          setComponentLoss={props.setRightArmLoss}
+          setComponent={setRightArm}
+          setComponentLoss={setRightArmLoss}
           />
         <HitZoneArmorEditorRow
           armorList={armorList}
@@ -151,8 +166,8 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
           l10n={l10n}
           lossLevels={lossLevels}
           name="leftleg"
-          setComponent={props.setLeftLeg}
-          setComponentLoss={props.setLeftLegLoss}
+          setComponent={setLeftLeg}
+          setComponentLoss={setLeftLegLoss}
           />
         <HitZoneArmorEditorRow
           armorList={armorList}
@@ -161,8 +176,8 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
           l10n={l10n}
           lossLevels={lossLevels}
           name="rightleg"
-          setComponent={props.setRightLeg}
-          setComponentLoss={props.setRightLegLoss}
+          setComponent={setRightLeg}
+          setComponentLoss={setRightLegLoss}
           />
       </div>
     </Dialog>

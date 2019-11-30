@@ -3,6 +3,7 @@ import { List } from "../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
+import { Theme } from "../../Utilities/Raw/JSON/Config";
 import { BorderButton } from "../Universal/BorderButton";
 import { Checkbox } from "../Universal/Checkbox";
 import { Dialog } from "../Universal/Dialog";
@@ -20,7 +21,7 @@ export interface SettingsOwnProps {
 export interface SettingsStateProps {
   localeString: Maybe<string>
   localeType: "default" | "set"
-  theme: string
+  theme: Theme
   isEditingHeroAfterCreationPhaseEnabled: boolean
   areAnimationsEnabled: boolean
 }
@@ -100,11 +101,11 @@ export function Settings (props: SettingsProps) {
         options={List (
           Option ({
             name: translate (l10n) ("dark"),
-            value: Just ("dark"),
+            value: Just (Theme.Dark),
           }),
           Option ({
             name: translate (l10n) ("light"),
-            value: Just ("light"),
+            value: Just (Theme.Light),
           })
         )}
         active={Just (theme)}

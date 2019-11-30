@@ -219,9 +219,9 @@ const modifySelectOptions =
         filterT (pipe (
           SOA.prerequisites,
           Maybe.all (reqs => validatePrerequisites (wiki)
-                                                  (hero)
-                                                  (reqs)
-                                                  (current_id))
+                                                   (hero)
+                                                   (reqs)
+                                                   (current_id))
         ))
       )
 
@@ -241,29 +241,36 @@ const modifySelectOptions =
                                     )))
       }
 
-      case DisadvantageId.PersonalityFlaw:
-        return liftM2 ((hero_entry: Record<ActivatableDependent>) =>
-                       (as: List<Record<SelectOption>>) => {
-                         const actives = pipe_ (
-                           getActiveSelections (hero_entry),
-                           filter (isNumber),
-                           nub
-                         )
+      case DisadvantageId.PersonalityFlaw: {
+        const unique_selections = maybe (List<number> ())
+                                        (pipe (
+                                          getActiveSelections,
+                                          filter (isNumber),
+                                          nub
+                                        ))
+                                        (mhero_entry)
 
-                         const actives_amount = flength (actives)
+        const isPrejudiceAndActive: (x: Record<SelectOption>) => boolean =
+          x => SOA.id (x) === 7 && elem (7) (unique_selections)
 
-                         return actives_amount >= 2
-                           ? List<Record<SelectOption>> ()
-                           : filter ((a: Record<SelectOption>) =>
-                                      (SOA.id (a) === 7 && elem (7) (actives))
-                                      || (SOA.id (a) === 8 && elem (8) (actives))
-                                      || (
-                                        isNotActive (mhero_entry) (a)
-                                        && isNotRequired (mhero_entry) (a)
-                                      ))
-                                    (as)
-                       })
-                      (mhero_entry)
+        const isUnworldlyAndActive: (x: Record<SelectOption>) => boolean =
+          x => SOA.id (x) === 8 && elem (8) (unique_selections)
+
+        const isNotActiveAndMaxNotReached: (x: Record<SelectOption>) => boolean =
+          x => isNotActive (mhero_entry) (x)
+               && isNotRequired (mhero_entry) (x)
+               && flength (unique_selections) < 2
+
+        const filterOptions =
+          composeT (
+            isAvailable,
+            filterT (a => isPrejudiceAndActive (a)
+                          || isUnworldlyAndActive (a)
+                          || isNotActiveAndMaxNotReached (a))
+          )
+
+        return fmap (filterMapListT (filterOptions))
+      }
 
       case DisadvantageId.NegativeTrait:
       case DisadvantageId.Maimed:

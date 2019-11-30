@@ -1,25 +1,37 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { connect } from "react-redux";
 import { List, notNullStrUndef } from "../../../Data/List";
 import { guardReplace, Just, Maybe } from "../../../Data/Maybe";
 import { abs, max } from "../../../Data/Num";
+import { AppStateRecord } from "../../Reducers/appReducer";
+import { getTheme } from "../../Selectors/uisettingsSelectors";
 import { classListMaybe } from "../../Utilities/CSS";
+import { Theme } from "../../Utilities/Raw/JSON/Config";
 import { ButtonProps, DialogButtons } from "./DialogButtons";
 
 const modals_root = document.querySelector ("#modals-root")
 
-export interface DialogProps {
+export interface DialogOwnProps {
   isOpen: boolean
   buttons?: ButtonProps[]
   className?: string
   id?: string
   noCloseButton?: boolean
   title?: string
-  close (): void
+  close (canceled: boolean): void
   onClose? (): void
 }
 
-export const Dialog: React.FC<DialogProps> = props => {
+export interface DialogDispatchProps { }
+
+export interface DialogStateProps {
+  theme: Theme
+}
+
+export type DialogProps = DialogOwnProps & DialogDispatchProps & DialogStateProps
+
+export const DialogComp: React.FC<DialogProps> = props => {
   const {
     buttons = [],
     className,
@@ -29,7 +41,8 @@ export const Dialog: React.FC<DialogProps> = props => {
     onClose,
     children,
     isOpen,
-    id
+    id,
+    theme,
   } = props
 
   const element = React.useMemo (() => document.createElement ("div"), [])
@@ -59,7 +72,7 @@ export const Dialog: React.FC<DialogProps> = props => {
         onClose ()
       }
 
-      close ()
+      close (false)
     },
     [close, onClose]
   )
@@ -75,10 +88,21 @@ export const Dialog: React.FC<DialogProps> = props => {
   const height_diff_sign = height_diff < 0 ? "+" : "-"
   contentStyle.paddingBottom = button_count > 2 ? padding_base + more_button_space : padding_base
 
+  const handleCloseClick = React.useCallback (
+    () => close (true),
+    [close]
+  )
+
   return isOpen
     ? ReactDOM.createPortal (
         <div
-          className={classListMaybe (List (Just ("modal modal-backdrop"), Maybe (className)))}
+          className={
+            classListMaybe (List (
+              Just ("modal modal-backdrop"),
+              Just (`theme-${theme}`),
+              Maybe (className)
+            ))
+          }
           id={id}
           >
           <div
@@ -91,7 +115,7 @@ export const Dialog: React.FC<DialogProps> = props => {
             >
             {noCloseButton === true
               ? null
-              : <div className="modal-close" onClick={close}><div>{"\uE5CD"}</div></div>}
+              : <div className="modal-close" onClick={handleCloseClick}><div>{"\uE5CD"}</div></div>}
             {notNullStrUndef (title)
               ? (
                 <div className="modal-header">
@@ -116,3 +140,14 @@ export const Dialog: React.FC<DialogProps> = props => {
       )
     : null
 }
+
+const mapStateToProps = (state: AppStateRecord) => ({
+  theme: getTheme (state),
+})
+
+const connectDialog =
+  connect<DialogStateProps, DialogDispatchProps, DialogOwnProps, AppStateRecord> (
+    mapStateToProps
+  )
+
+export const Dialog = connectDialog (DialogComp)

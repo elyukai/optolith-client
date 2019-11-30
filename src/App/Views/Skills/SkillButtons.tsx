@@ -12,7 +12,7 @@ export interface SkillButtonsProps {
   isNotActive?: boolean
   removeDisabled?: boolean
   sr?: number
-  activate? (): void
+  activate? (id: string): void
   addPoint? (id: string): void
   removePoint? (id: string): void
   selectForInfo (id: string): void
@@ -44,6 +44,14 @@ export const SkillButtons: React.FC<SkillButtonsProps> = props => {
       ? "\uE90b"
       : "\uE909"
 
+  const handleActivation =
+    React.useCallback (
+      () => typeof activate === "function"
+            ? activate (id)
+            : undefined,
+      [activate, id]
+    )
+
   const handleAddPoint =
     React.useCallback (
       () => addDisabled !== true && typeof addPoint === "function"
@@ -66,7 +74,7 @@ export const SkillButtons: React.FC<SkillButtonsProps> = props => {
         ? (
           <IconButton
             icon="&#xE916;"
-            onClick={activate}
+            onClick={handleActivation}
             disabled={activateDisabled}
             flat
             />

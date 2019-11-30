@@ -8,18 +8,18 @@ export interface SkillListItemProps {
   groupIndex?: number
 }
 
-export function SkillGroup (props: SkillListItemProps) {
+export const SkillGroup: React.FC<SkillListItemProps> = props => {
   const {
     addText,
     groupIndex,
     groupList,
   } = props
 
-  if (addText !== undefined || groupIndex !== undefined && groupList) {
-    return (
-      <ListItemGroup index={groupIndex} list={groupList} text={addText}/>
-    )
+  if (addText === undefined && (groupIndex === undefined || groupList === undefined)) {
+    return null
   }
 
-  return null
+  return (
+    <ListItemGroup index={groupIndex} list={groupList} text={addText} />
+  )
 }

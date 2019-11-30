@@ -271,7 +271,8 @@ export const getInactiveSpells = createMaybeSelector (
                                   (SA.prerequisites (entry))
                                   (SA.id (entry))
 
-        const isUnfamiliar = isUnfamiliarSpell (HA.transferredUnfamiliarSpells (hero)) (trads_hero)
+        const isUnfamiliar = isUnfamiliarSpell (HA.transferredUnfamiliarSpells (hero))
+                                               (trads_hero)
 
         // Intuitive Magier/Animisten können nur max. 1 C-Zauber,
         // keine D-Zauber und keine Rituale erlernen

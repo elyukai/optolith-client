@@ -10,7 +10,7 @@ import { lt } from "../../../Data/Num";
 import { adjust, elems, insert, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { makeLenses, member, Record } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
-import { trace, traceId } from "../../../Debug/Trace";
+import { trace } from "../../../Debug/Trace";
 import { ReduxAction } from "../../Actions/Actions";
 import { Categories } from "../../Constants/Categories";
 import { SkillGroup } from "../../Constants/Groups";
@@ -96,7 +96,7 @@ export type TableParseRes = Pair<L10nRecord, WikiModelRecord>
 export const parseTables =
   (locale: string): ReduxAction<Promise<Either<string, TableParseRes>>> =>
   async dispatch => {
-    traceId ("Parsing tables...")
+    trace ("Parsing tables...")
 
     const l10n_path = path.join (app_path, "app", "Database", locale, "l10n.xlsx")
 

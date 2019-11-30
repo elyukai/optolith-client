@@ -1,6 +1,6 @@
 import { fmapF } from "../../Data/Functor";
 import { List } from "../../Data/List";
-import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe";
+import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModel } from "../Models/Hero/HeroModel";
@@ -14,7 +14,7 @@ import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { ReduxAction } from "./Actions";
-import { addAlert } from "./AlertActions";
+import { addAlert, AlertOptions } from "./AlertActions";
 
 export interface AddAttributePointAction {
   type: ActionTypes.ADD_ATTRIBUTE_POINT
@@ -23,8 +23,8 @@ export interface AddAttributePointAction {
   }
 }
 
-export const addAttributePoint = (l10n: L10nRecord) => (id: string): ReduxAction =>
-  (dispatch, getState) => {
+export const addAttributePoint = (l10n: L10nRecord) => (id: string): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
     const wiki_attributes = getWikiAttributes (state)
     const mhero = getCurrentHeroPresent (state)
@@ -51,10 +51,12 @@ export const addAttributePoint = (l10n: L10nRecord) => (id: string): ReduxAction
       })
     }
     else {
-      dispatch (addAlert ({
-        title: translate (l10n) ("notenoughap"),
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
         message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
   }
 
@@ -76,44 +78,9 @@ export interface AddLifePointAction {
   type: ActionTypes.ADD_LIFE_POINT
 }
 
-export const addLifePoint = (l10n: L10nRecord): ReduxAction => (dispatch, getState) => {
-  const state = getState ()
-  const mhero = getCurrentHeroPresent (state)
-
-  const missingAP =
-    pipe_ (
-      mhero,
-      bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
-      join,
-      liftM2 (pipe (
-               // get AP for added points
-               getIncreaseAP (4),
-
-               // AP are passed to result and result finally gets the available AP
-               getMissingAP (getIsInCharacterCreation (state))))
-             (getAddedLifePoints (state)),
-      join
-    )
-
-  if (isNothing (missingAP)) {
-    dispatch<AddLifePointAction> ({
-      type: ActionTypes.ADD_LIFE_POINT,
-    })
-  }
-  else {
-    dispatch (addAlert ({
-      title: translate (l10n) ("notenoughap"),
-      message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAP))),
-    }))
-  }
-}
-
-export interface AddArcaneEnergyPointAction {
-  type: ActionTypes.ADD_ARCANE_ENERGY_POINT
-}
-
-export const addArcaneEnergyPoint = (l10n: L10nRecord): ReduxAction =>
-  (dispatch, getState) => {
+export const addLifePoint =
+  (l10n: L10nRecord): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
     const mhero = getCurrentHeroPresent (state)
 
@@ -127,7 +94,48 @@ export const addArcaneEnergyPoint = (l10n: L10nRecord): ReduxAction =>
                  getIncreaseAP (4),
 
                  // AP are passed to result and result finally gets the available AP
-                 getMissingAP (getIsInCharacterCreation (state))))
+                 getMissingAP (getIsInCharacterCreation (state))
+               ))
+               (getAddedLifePoints (state)),
+        join
+      )
+
+    if (isNothing (missingAP)) {
+      dispatch<AddLifePointAction> ({
+        type: ActionTypes.ADD_LIFE_POINT,
+      })
+    }
+    else {
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
+        message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAP))),
+      })
+
+      await dispatch (addAlert (l10n) (opts))
+    }
+  }
+
+export interface AddArcaneEnergyPointAction {
+  type: ActionTypes.ADD_ARCANE_ENERGY_POINT
+}
+
+export const addArcaneEnergyPoint = (l10n: L10nRecord): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
+    const state = getState ()
+    const mhero = getCurrentHeroPresent (state)
+
+    const missingAP =
+      pipe_ (
+        mhero,
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
+        join,
+        liftM2 (pipe (
+                 // get AP for added points
+                 getIncreaseAP (4),
+
+                 // AP are passed to result and result finally gets the available AP
+                 getMissingAP (getIsInCharacterCreation (state))
+               ))
                (getAddedArcaneEnergyPoints (state)),
         join
       )
@@ -138,10 +146,12 @@ export const addArcaneEnergyPoint = (l10n: L10nRecord): ReduxAction =>
       })
     }
     else {
-      dispatch (addAlert ({
-        title: translate (l10n) ("notenoughap"),
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
         message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAP))),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
   }
 
@@ -149,37 +159,42 @@ export interface AddKarmaPointAction {
   type: ActionTypes.ADD_KARMA_POINT
 }
 
-export const addKarmaPoint = (l10n: L10nRecord): ReduxAction => (dispatch, getState) => {
-  const state = getState ()
-  const mhero = getCurrentHeroPresent (state)
+export const addKarmaPoint =
+  (l10n: L10nRecord): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
+    const state = getState ()
+    const mhero = getCurrentHeroPresent (state)
 
-  const missingAP =
-    pipe_ (
-      mhero,
-      bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
-      join,
-      liftM2 (pipe (
-               // get AP for added points
-               getIncreaseAP (4),
+    const missingAP =
+      pipe_ (
+        mhero,
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
+        join,
+        liftM2 (pipe (
+                 // get AP for added points
+                 getIncreaseAP (4),
 
-               // AP are passed to result and result finally gets the available AP
-               getMissingAP (getIsInCharacterCreation (state))))
-             (getAddedKarmaPoints (state)),
-      join
-    )
+                 // AP are passed to result and result finally gets the available AP
+                 getMissingAP (getIsInCharacterCreation (state))
+               ))
+               (getAddedKarmaPoints (state)),
+        join
+      )
 
-  if (isNothing (missingAP)) {
-    dispatch<AddKarmaPointAction> ({
-      type: ActionTypes.ADD_KARMA_POINT,
-    })
+    if (isNothing (missingAP)) {
+      dispatch<AddKarmaPointAction> ({
+        type: ActionTypes.ADD_KARMA_POINT,
+      })
+    }
+    else {
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
+        message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAP))),
+      })
+
+      await dispatch (addAlert (l10n) (opts))
+    }
   }
-  else {
-    dispatch (addAlert ({
-      title: translate (l10n) ("notenoughap"),
-      message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAP))),
-    }))
-  }
-}
 
 export interface RemoveLifePointAction {
   type: ActionTypes.REMOVE_LIFE_POINT
@@ -193,7 +208,7 @@ export interface RemoveArcaneEnergyPointAction {
   type: ActionTypes.REMOVE_ARCANE_ENERGY_POINT
 }
 
-export const removeArcaneEnergyPoint = (): RemoveArcaneEnergyPointAction =>  ({
+export const removeArcaneEnergyPoint = (): RemoveArcaneEnergyPointAction => ({
   type: ActionTypes.REMOVE_ARCANE_ENERGY_POINT,
 })
 
@@ -209,8 +224,8 @@ export interface AddBoughtBackAEPointAction {
   type: ActionTypes.ADD_BOUGHT_BACK_AE_POINT
 }
 
-export const addBoughtBackAEPoint = (l10n: L10nRecord): ReduxAction =>
-  (dispatch, getState) => {
+export const addBoughtBackAEPoint = (l10n: L10nRecord): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
     const mhero = getCurrentHeroPresent (state)
 
@@ -229,10 +244,12 @@ export const addBoughtBackAEPoint = (l10n: L10nRecord): ReduxAction =>
       })
     }
     else {
-      dispatch (addAlert ({
-        title: translate (l10n) ("notenoughap"),
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
         message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAP))),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
   }
 
@@ -308,8 +325,9 @@ export interface AddBoughtBackKPPointAction {
   type: ActionTypes.ADD_BOUGHT_BACK_KP_POINT
 }
 
-export const addBoughtBackKPPoint = (l10n: L10nRecord): ReduxAction =>
-  (dispatch, getState) => {
+export const addBoughtBackKPPoint =
+  (l10n: L10nRecord): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
     const mhero = getCurrentHeroPresent (state)
 
@@ -328,10 +346,12 @@ export const addBoughtBackKPPoint = (l10n: L10nRecord): ReduxAction =>
       })
     }
     else {
-      dispatch (addAlert ({
-        title: translate (l10n) ("notenoughap"),
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
         message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAP))),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
   }
 
