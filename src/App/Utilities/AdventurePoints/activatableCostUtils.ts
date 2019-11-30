@@ -35,7 +35,7 @@ import { getSelectOptionCost } from "../Activatable/selectionUtils";
 import { nbsp, nobr } from "../Chars";
 import { getHeroStateItem } from "../heroStateUtils";
 import { translate } from "../I18n";
-import { getCategoryById, prefixSkill } from "../IDUtils";
+import { getCategoryById } from "../IDUtils";
 import { toRoman } from "../NumberUtils";
 import { pipe, pipe_ } from "../pipe";
 import { isNumber, misNumberM, misStringM } from "../typeCheckUtils";
@@ -77,7 +77,7 @@ const getEntrySpecificCost =
     const all_active = joinMaybeList (fmap (ActivatableDependent.A.active) (hero_entry))
 
     switch (current_id) {
-      // Entry with Skill selection (string id)
+      // Entry with Skill selection
       case AdvantageId.Aptitude:
       case AdvantageId.ExceptionalSkill:
       case AdvantageId.ExceptionalCombatTechnique:
@@ -88,21 +88,16 @@ const getEntrySpecificCost =
       case SpecialAbilityId.Forschungsgebiet:
       case SpecialAbilityId.Expertenwissen:
       case SpecialAbilityId.Wissensdurst:
-      case SpecialAbilityId.Lieblingsliturgie: {
-        return getCostForEntryWithSkillSel (misStringM)
-                                           (wiki)
-                                           (mcurrent_sid)
-                                           (mcurrent_cost)
-      }
-
-      // Entry with Skill selection (numeric id)
+      case SpecialAbilityId.Lieblingsliturgie:
       case SpecialAbilityId.WegDerGelehrten:
+      case SpecialAbilityId.WegDerKuenstlerin:
+      case SpecialAbilityId.Fachwissen:
       case SpecialAbilityId.Handwerkskunst:
       case SpecialAbilityId.KindDerNatur:
       case SpecialAbilityId.KoerperlichesGeschick:
       case SpecialAbilityId.SozialeKompetenz:
       case SpecialAbilityId.Universalgenie: {
-        return getCostForEntryWithSkillSel (pipe (misNumberM, fmap (prefixSkill)))
+        return getCostForEntryWithSkillSel (misStringM)
                                            (wiki)
                                            (mcurrent_sid)
                                            (mcurrent_cost)
