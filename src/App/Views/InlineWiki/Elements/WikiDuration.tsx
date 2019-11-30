@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Record, RecordIBase } from "../../../../Data/Record";
-import { Categories } from "../../../Constants/Categories";
+import { Category } from "../../../Constants/Categories";
 import { MagicalGroup } from "../../../Constants/Groups";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
@@ -9,7 +9,7 @@ import { WikiProperty } from "../WikiProperty";
 interface Accessors<A extends RecordIBase<any>> {
   duration: (r: Record<A>) => string
   durationNoMod: (r: Record<A>) => boolean
-  category: (r: Record<A>) => Categories
+  category: (r: Record<A>) => Category
   gr: (r: Record<A>) => number
 }
 
@@ -31,13 +31,13 @@ export function WikiDuration<A extends RecordIBase<any>> (props: WikiDurationPro
   const isNoModAllowed = acc.durationNoMod (x)
 
   const key =
-    category === Categories.SPELLS
+    category === Category.SPELLS
     && (gr === MagicalGroup.ElvenMagicalSongs || gr === MagicalGroup.Zaubermelodien)
     ? "skill"
     : "duration"
 
   const modKey =
-    category === Categories.LITURGIES
+    category === Category.LITURGICAL_CHANTS
     ? "youcannotuseamodificationonthischantsduration"
     : "youcannotuseamodificationonthisspellsduration"
 

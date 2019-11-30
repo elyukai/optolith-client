@@ -296,6 +296,7 @@ export const all =
 export const notElem = <A> (e: A) => pipe (elem<A> (e), not)
 
 interface Find {
+
   /**
    * `find :: (a -> Bool) -> Map k a -> Maybe a`
    *
@@ -306,6 +307,7 @@ interface Find {
   <A, A1 extends A>
   (pred: (x: A) => x is A1):
   (xs: OrderedMap<any, A>) => Maybe<A1>
+
   /**
    * `find :: (a -> Bool) -> Map k a -> Maybe a`
    *
@@ -507,9 +509,8 @@ export const insertF =
  * will insert the pair `(key, f new_value old_value)`.
  */
 export const insertWith =
-  <K, A>
-  (f: (new_value: A) => (old_value: A) => A) =>
-  (key: K) =>
+  <A> (f: (new_value: A) => (old_value: A) => A) =>
+  <K> (key: K) =>
   (value: A) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     insert (key)
@@ -857,6 +858,7 @@ export const fromList =
 // FILTER
 
 interface Filter {
+
   /**
    * `filter :: (a -> Bool) -> Map k a -> Map k a`
    *
@@ -884,6 +886,7 @@ export const filter: Filter =
     fromArray ([...xs .value] .filter (([_, value]) => pred (value)))
 
 interface FilterWithKey {
+
   /**
    * `filterWithKey :: (k -> a -> Bool) -> Map k a -> Map k a`
    *

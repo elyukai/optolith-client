@@ -621,6 +621,8 @@ export const append =
   <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
     isNil (xs2) ? xs1 : isNil (xs1) ? xs2 : appendSafe (xs1) (xs2)
 
+export type append<A> = (xs1: List<A>) => (xs2: List<A>) => List<A>
+
 const appendSafe =
   <A> (xs1: List<A>) => (xs2: Cons<A>): Cons<A> =>
     isNil (xs1) ? xs2 : Cons (xs1 .x, appendSafe (xs1 .xs) (xs2))
@@ -1533,6 +1535,28 @@ export const deleteAt =
     : Cons (xs .x, deleteAt (index - 1) (xs .xs))
 
 List.deleteAt = deleteAt
+
+/**
+ * `deleteAtPair :: Int -> [a] -> (Maybe a, [a])`
+ *
+ * `deleteAtPair` deletes the element at an index and returns a `Just` of the
+ * deleted element together with the remaining list.
+ *
+ * If the index is negative or exceeds list length, the original list will be
+ * returned, together with `Nothing` representing the deleted element.
+ */
+export const deleteAtPair =
+  (index: number) => <A> (xs: List<A>): Pair<Maybe<A>, List<A>> =>
+    index < 0
+    ? Pair (Nothing, xs)
+    : isNil (xs)
+    ? Pair (Nothing, Nil)
+    : index === 0
+    ? Pair (Just (xs .x), xs .xs)
+    : second (consF (xs .x))
+             (deleteAtPair (index - 1) (xs .xs))
+
+List.deleteAtPair = deleteAtPair
 
 /**
  * `setAt :: Int -> a -> [a] -> [a]`

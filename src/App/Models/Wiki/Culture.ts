@@ -1,7 +1,7 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { SocialStatusId } from "../../Constants/Ids";
 import { CommonProfession } from "./sub/CommonProfession";
 import { Erratum } from "./sub/Errata";
@@ -39,7 +39,7 @@ export interface Culture {
    */
   commonNames: string
   culturalPackageSkills: List<Record<IncreaseSkill>>
-  category: Categories
+  category: Category
   src: List<Record<SourceLink>>
   errata: List<Record<Erratum>>
 }
@@ -71,7 +71,7 @@ export const Culture =
                 uncommonSkills: List.empty,
                 commonNames: "",
                 culturalPackageSkills: List.empty,
-                category: Categories.CULTURES,
+                category: Category.CULTURES,
                 src: List.empty,
                 errata: List (),
               })
@@ -79,4 +79,4 @@ export const Culture =
 export const CultureL = makeLenses (Culture)
 
 export const isCulture =
-  (r: EntryWithCategory) => Culture.AL.category (r) === Categories.CULTURES
+  (r: EntryWithCategory) => Culture.AL.category (r) === Category.CULTURES

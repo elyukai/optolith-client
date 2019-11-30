@@ -2,7 +2,7 @@ import { fmap } from "../../../../Data/Functor";
 import { elemF, NonEmptyList } from "../../../../Data/List";
 import { or } from "../../../../Data/Maybe";
 import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record";
-import { Categories, IncreasableCategories } from "../../../Constants/Categories";
+import { Category, IncreasableCategories } from "../../../Constants/Categories";
 import { getCategoryById } from "../../../Utilities/IDUtils";
 import { ProfessionPrerequisite } from "../wikiTypeHelpers";
 
@@ -39,6 +39,6 @@ export const isProfessionRequiringIncreasable =
     const id = RequireIncreasable.AL.id (req) as string
 
     return member ("value") (req)
-      && or (fmap (elemF<Categories> (IncreasableCategories))
+      && or (fmap (elemF<Category> (IncreasableCategories))
                   (getCategoryById (id)))
   }

@@ -1,7 +1,7 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement";
 import { ProfessionVariantSelections } from "./professionSelections/ProfessionVariantAdjustmentSelections";
 import { Erratum } from "./sub/Errata";
@@ -27,7 +27,7 @@ export interface ProfessionVariant {
   precedingText: Maybe<string>
   fullText: Maybe<string>
   concludingText: Maybe<string>
-  category: Categories
+  category: Category
   errata: List<Record<Erratum>>
 }
 
@@ -49,11 +49,11 @@ export const ProfessionVariant =
                 precedingText: Nothing,
                 fullText: Nothing,
                 concludingText: Nothing,
-                category: Categories.PROFESSION_VARIANTS,
+                category: Category.PROFESSION_VARIANTS,
                 errata: List (),
               })
 
 export const ProfessionVariantL = makeLenses (ProfessionVariant)
 
 export const isProfessionVariant =
-  (r: EntryWithCategory) => ProfessionVariant.AL.category (r) === Categories.PROFESSION_VARIANTS
+  (r: EntryWithCategory) => ProfessionVariant.AL.category (r) === Category.PROFESSION_VARIANTS

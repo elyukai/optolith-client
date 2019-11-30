@@ -1,7 +1,7 @@
 import { List } from "../../../Data/List";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { MagicalTradition, Property } from "../../Constants/Groups";
 import { Erratum } from "./sub/Errata";
 import { SourceLink } from "./sub/SourceLink";
@@ -11,7 +11,7 @@ export interface Spell {
   "@@name": "Spell"
   id: string
   name: string
-  category: Categories
+  category: Category
   check: List<string>
   checkmod: OrderedSet<CheckModifier>
   gr: number
@@ -43,7 +43,7 @@ export const Spell =
               <Spell> ({
                 id: "",
                 name: "",
-                category: Categories.SPELLS,
+                category: Category.SPELLS,
                 check: List.empty,
                 checkmod: OrderedSet.empty,
                 gr: 0,
@@ -73,4 +73,4 @@ export const Spell =
 export const SpellL = makeLenses (Spell)
 
 export const isSpell =
-  (r: EntryWithCategory) => Spell.AL.category (r) === Categories.SPELLS
+  (r: EntryWithCategory) => Spell.AL.category (r) === Category.SPELLS

@@ -1,7 +1,7 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { Erratum } from "./sub/Errata";
 import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
@@ -10,7 +10,7 @@ export interface CombatTechnique {
   "@@name": "CombatTechnique"
   id: string
   name: string
-  category: Categories
+  category: Category
   gr: number
   ic: number
   bpr: number
@@ -25,7 +25,7 @@ export const CombatTechnique =
               <CombatTechnique> ({
                 id: "",
                 name: "",
-                category: Categories.COMBAT_TECHNIQUES,
+                category: Category.COMBAT_TECHNIQUES,
                 gr: 0,
                 ic: 0,
                 bpr: 0,
@@ -36,4 +36,4 @@ export const CombatTechnique =
               })
 
 export const isCombatTechnique =
-  (r: EntryWithCategory) => CombatTechnique.AL.category (r) === Categories.COMBAT_TECHNIQUES
+  (r: EntryWithCategory) => CombatTechnique.AL.category (r) === Category.COMBAT_TECHNIQUES

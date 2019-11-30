@@ -15,7 +15,8 @@ import { pipe, pipe_ } from "../../pipe";
 // RS: '\n', blankrows: false }));
 // }, new Map());
 
-type Data = List<OrderedMap<string, string>>
+export type Row = OrderedMap<string, string>
+export type Sheet = List<Row>
 
 export const CsvColumnDelimiter = ";;"
 
@@ -68,7 +69,7 @@ export const csvToList =
 
             const valid_header = map (snd) (valid_headers)
 
-            return ifoldr (i => (values: List<string>): ident<Either<string, Data>> =>
+            return ifoldr (i => (values: List<string>): ident<Either<string, Sheet>> =>
                             bindF (
                               acc => flength (values) === header_length
                                 ? Right (cons (acc)

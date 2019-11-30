@@ -140,7 +140,11 @@ rules:
   # capitalized-comments: 2
   comma-dangle:
     - 2
-    - always-multiline
+    - arrays: always-multiline
+      objects: always-multiline
+      imports: always-multiline
+      exports: always-multiline
+      functions: only-multiline
   comma-spacing: 2
   comma-style: 2
   computed-property-spacing: 2

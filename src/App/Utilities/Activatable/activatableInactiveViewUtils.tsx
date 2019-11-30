@@ -10,7 +10,7 @@ import { dec, gte, max, min, multiply, negate } from "../../../Data/Num";
 import { lookupF } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -589,7 +589,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                             fmap (cost => second (set (PABYL.currentCost)
                                                       (Just (isList (cost)
                                                         ? SAAL.category (IAA.wikiEntry (entry))
-                                                          === Categories.SPECIAL_ABILITIES
+                                                          === Category.SPECIAL_ABILITIES
                                                           ? pipe_ (cost, take (selectedLevel), sum)
                                                           : pipe_ (
                                                               cost,

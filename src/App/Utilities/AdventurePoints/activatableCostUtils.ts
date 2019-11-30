@@ -17,7 +17,7 @@ import { add, dec, multiply, negate } from "../../../Data/Num";
 import { lookup, lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -460,7 +460,7 @@ const putCurrentCost =
            if (isList (current_cost)) {
             const current_level = fromMaybe (1) (mcurrent_level)
 
-             if (elem (Categories.SPECIAL_ABILITIES) (category)) {
+             if (elem (Category.SPECIAL_ABILITIES) (category)) {
                return ifoldr (i => i <= (current_level - 1) ? add : cnst (ident as ident<number>))
                              (0)
                              (current_cost)
@@ -502,7 +502,7 @@ const getSpecialAbilityLevel =
  * Id-based check if the entry is a special ability.
  */
 const isSpecialAbilityById =
-  pipe (getCategoryById, elem<Categories> (Categories.SPECIAL_ABILITIES))
+  pipe (getCategoryById, elem<Category> (Category.SPECIAL_ABILITIES))
 
 /**
  * Gets the level string that hast to be appended to the name. This string is

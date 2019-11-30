@@ -4,7 +4,7 @@ import { filter, flength, List, map, toArray } from "../../../../Data/List";
 import { bindF, elem, ensure, Maybe, maybe, sum } from "../../../../Data/Maybe";
 import { compare } from "../../../../Data/Num";
 import { Record, RecordIBase } from "../../../../Data/Record";
-import { Categories } from "../../../Constants/Categories";
+import { Category } from "../../../Constants/Categories";
 import { L10nKey, L10nRecord } from "../../../Models/Wiki/L10n";
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
@@ -16,7 +16,7 @@ import { Markdown } from "../../Universal/Markdown";
 
 interface Accessors<A extends RecordIBase<any>> {
   id: (r: Record<A>) => string
-  category: (r: Record<A>) => Categories
+  category: (r: Record<A>) => Category
 }
 
 export interface WikiExtensionsProps<A extends RecordIBase<any>> {
@@ -41,7 +41,7 @@ export const WikiExtensions =
 
     let key: L10nKey = "spellextensions"
 
-    if (category === Categories.LITURGIES) {
+    if (category === Category.LITURGICAL_CHANTS) {
       key = "liturgicalchantextensions"
     }
 

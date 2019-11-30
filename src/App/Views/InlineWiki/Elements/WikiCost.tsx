@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Record, RecordIBase } from "../../../../Data/Record";
-import { Categories } from "../../../Constants/Categories";
+import { Category } from "../../../Constants/Categories";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
 import { WikiProperty } from "../WikiProperty";
@@ -8,7 +8,7 @@ import { WikiProperty } from "../WikiProperty";
 interface Accessors<A extends RecordIBase<any>> {
   cost: (r: Record<A>) => string
   costNoMod: (r: Record<A>) => boolean
-  category: (r: Record<A>) => Categories
+  category: (r: Record<A>) => Category
 }
 
 export interface WikiCostProps<A extends RecordIBase<any>> {
@@ -27,9 +27,9 @@ export function WikiCost<A extends RecordIBase<any>> (props: WikiCostProps<A>) {
   const category = acc.category (x)
   const isNoModAllowed = acc.costNoMod (x)
 
-  const key = category === Categories.LITURGIES ? "kpcost" : "aecost"
+  const key = category === Category.LITURGICAL_CHANTS ? "kpcost" : "aecost"
   const modKey =
-    category === Categories.LITURGIES
+    category === Category.LITURGICAL_CHANTS
     ? "youcannotuseamodificationonthischantscost"
     : "youcannotuseamodificationonthisspellscost"
 

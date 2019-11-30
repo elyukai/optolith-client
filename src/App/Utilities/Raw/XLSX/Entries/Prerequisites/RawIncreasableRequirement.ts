@@ -1,5 +1,5 @@
 import { intercalate, map } from "../../../../../../Data/List";
-import { Categories, IncreasableCategories } from "../../../../../Constants/Categories";
+import { Category, IncreasableCategories } from "../../../../../Constants/Categories";
 import { IdPrefixes, IdPrefixesByCategory } from "../../../../../Constants/IdPrefixes";
 import { prefixId } from "../../../../IDUtils";
 import { exactR, naturalNumberU } from "../../../../RegexUtils";
@@ -15,7 +15,7 @@ export interface RawProfessionRequireIncreasable extends RawRequireIncreasable {
 }
 
 const availablePrefixes =
-  map<Categories, IdPrefixes> (e => IdPrefixesByCategory [e])
+  map<Category, IdPrefixes> (e => IdPrefixesByCategory [e])
                               (IncreasableCategories)
 
 const prefixesRx = `(${intercalate ("|") (availablePrefixes)})`

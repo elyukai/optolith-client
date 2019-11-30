@@ -6,7 +6,7 @@ import { foldlWithKey, lookup, lookupF, OrderedMap } from "../../../../../Data/O
 import { insert, OrderedSet } from "../../../../../Data/OrderedSet";
 import { Record, StringKeyObject } from "../../../../../Data/Record";
 import { Tuple } from "../../../../../Data/Tuple";
-import { Categories } from "../../../../Constants/Categories";
+import { Category } from "../../../../Constants/Categories";
 import { ActivatableDependent, createActivatableDependentWithActive } from "../../../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createActivatableSkillDependentWithValue } from "../../../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../../../Models/ActiveEntries/ActiveObject";
@@ -299,9 +299,9 @@ const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
       const category = getCategoryById (id)
 
       const key: keyof ActivatableMaps =
-        elem (Categories.ADVANTAGES) (category)
+        elem (Category.ADVANTAGES) (category)
           ? "advantages"
-          : elem (Categories.DISADVANTAGES) (category)
+          : elem (Category.DISADVANTAGES) (category)
           ? "disadvantages"
           : "specialAbilities"
 

@@ -3,7 +3,7 @@ import { foldl } from "../../Data/List";
 import { Just, Maybe, Nothing } from "../../Data/Maybe";
 import { inc, max } from "../../Data/Num";
 import { lookupF, OrderedMap } from "../../Data/OrderedMap";
-import { Categories } from "../Constants/Categories";
+import { Category } from "../Constants/Categories";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { DCId, SpecialAbilityId } from "../Constants/Ids";
 import { CheckModifier } from "../Models/Wiki/wikiTypeHelpers";
@@ -62,23 +62,23 @@ export const getNewId = pipe (foldl<string, number> (n => pipe (getNumericId, ma
 export const getNewIdByDate = (): number => Date.now () .valueOf ();
 
 export const getCategoryByIdPrefix =
-  (id: IdPrefixes): Maybe<Categories> =>
-    match<IdPrefixes, Maybe<Categories>> (id)
-      .on (IdPrefixes.ADVANTAGES, () => Just (Categories.ADVANTAGES))
-      .on (IdPrefixes.ATTRIBUTES, () => Just (Categories.ATTRIBUTES))
-      .on (IdPrefixes.BLESSINGS, () => Just (Categories.BLESSINGS))
-      .on (IdPrefixes.CANTRIPS, () => Just (Categories.CANTRIPS))
-      .on (IdPrefixes.COMBAT_TECHNIQUES, () => Just (Categories.COMBAT_TECHNIQUES))
-      .on (IdPrefixes.CULTURES, () => Just (Categories.CULTURES))
-      .on (IdPrefixes.DISADVANTAGES, () => Just (Categories.DISADVANTAGES))
-      .on (IdPrefixes.LITURGICAL_CHANTS, () => Just (Categories.LITURGIES))
-      .on (IdPrefixes.PROFESSIONS, () => Just (Categories.PROFESSIONS))
-      .on (IdPrefixes.PROFESSION_VARIANTS, () => Just (Categories.PROFESSION_VARIANTS))
-      .on (IdPrefixes.RACES, () => Just (Categories.RACES))
-      .on (IdPrefixes.RACE_VARIANTS, () => Just (Categories.RACE_VARIANTS))
-      .on (IdPrefixes.SPECIAL_ABILITIES, () => Just (Categories.SPECIAL_ABILITIES))
-      .on (IdPrefixes.SPELLS, () => Just (Categories.SPELLS))
-      .on (IdPrefixes.SKILLS, () => Just (Categories.TALENTS))
+  (id: IdPrefixes): Maybe<Category> =>
+    match<IdPrefixes, Maybe<Category>> (id)
+      .on (IdPrefixes.ADVANTAGES, () => Just (Category.ADVANTAGES))
+      .on (IdPrefixes.ATTRIBUTES, () => Just (Category.ATTRIBUTES))
+      .on (IdPrefixes.BLESSINGS, () => Just (Category.BLESSINGS))
+      .on (IdPrefixes.CANTRIPS, () => Just (Category.CANTRIPS))
+      .on (IdPrefixes.COMBAT_TECHNIQUES, () => Just (Category.COMBAT_TECHNIQUES))
+      .on (IdPrefixes.CULTURES, () => Just (Category.CULTURES))
+      .on (IdPrefixes.DISADVANTAGES, () => Just (Category.DISADVANTAGES))
+      .on (IdPrefixes.LITURGICAL_CHANTS, () => Just (Category.LITURGICAL_CHANTS))
+      .on (IdPrefixes.PROFESSIONS, () => Just (Category.PROFESSIONS))
+      .on (IdPrefixes.PROFESSION_VARIANTS, () => Just (Category.PROFESSION_VARIANTS))
+      .on (IdPrefixes.RACES, () => Just (Category.RACES))
+      .on (IdPrefixes.RACE_VARIANTS, () => Just (Category.RACE_VARIANTS))
+      .on (IdPrefixes.SPECIAL_ABILITIES, () => Just (Category.SPECIAL_ABILITIES))
+      .on (IdPrefixes.SPELLS, () => Just (Category.SPELLS))
+      .on (IdPrefixes.SKILLS, () => Just (Category.SKILLS))
       .otherwise (cnst (Nothing))
 
 export const getCategoryById = pipe (

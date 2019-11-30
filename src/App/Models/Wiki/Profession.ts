@@ -1,7 +1,7 @@
 import { List } from "../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { ProfessionId } from "../../Constants/Ids";
 import { translate } from "../../Utilities/I18n";
 import { L10nRecord } from "./L10n";
@@ -41,7 +41,7 @@ export interface Profession {
   unsuitableDisadvantagesText: Maybe<string>
   isVariantRequired: boolean
   variants: List<string>
-  category: Categories
+  category: Category
   gr: number
 
   /**
@@ -81,7 +81,7 @@ export const Profession =
                 unsuitableDisadvantagesText: Nothing,
                 isVariantRequired: false,
                 variants: List.empty,
-                category: Categories.PROFESSIONS,
+                category: Category.PROFESSIONS,
                 gr: 0,
                 subgr: 0,
                 src: List.empty,
@@ -91,7 +91,7 @@ export const Profession =
 export const ProfessionL = makeLenses (Profession)
 
 export const isProfession =
-  (r: EntryWithCategory) => Profession.AL.category (r) === Categories.PROFESSIONS
+  (r: EntryWithCategory) => Profession.AL.category (r) === Category.PROFESSIONS
 
 export const getCustomProfession =
   (l10n: L10nRecord) =>

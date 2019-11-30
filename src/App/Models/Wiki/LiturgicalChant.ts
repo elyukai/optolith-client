@@ -2,7 +2,7 @@ import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { Aspect, BlessedGroup, BlessedTradition } from "../../Constants/Groups";
 import { Erratum } from "./sub/Errata";
 import { SourceLink } from "./sub/SourceLink";
@@ -14,7 +14,7 @@ export interface LiturgicalChant {
   name: string
   nameShort: Maybe<string>
   aspects: List<Aspect>
-  category: Categories
+  category: Category
   check: List<string>
   checkmod: OrderedSet<CheckModifier>
   gr: BlessedGroup
@@ -45,7 +45,7 @@ export const LiturgicalChant =
                 name: "",
                 nameShort: Nothing,
                 aspects: List.empty,
-                category: Categories.LITURGIES,
+                category: Category.LITURGICAL_CHANTS,
                 check: List.empty,
                 checkmod: OrderedSet.empty,
                 gr: 0,
@@ -72,4 +72,4 @@ export const LiturgicalChant =
 export const LiturgicalChantL = makeLenses (LiturgicalChant)
 
 export const isLiturgicalChant =
-  (r: EntryWithCategory) => LiturgicalChant.AL.category (r) === Categories.LITURGIES
+  (r: EntryWithCategory) => LiturgicalChant.AL.category (r) === Category.LITURGICAL_CHANTS

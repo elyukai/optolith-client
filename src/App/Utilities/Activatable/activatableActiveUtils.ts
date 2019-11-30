@@ -13,7 +13,7 @@ import { liftM2, liftM4, mapMaybe, Maybe } from "../../../Data/Maybe";
 import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { fst, Pair, snd, Tuple } from "../../../Data/Tuple";
-import { ActivatableCategory, Categories } from "../../Constants/Categories";
+import { ActivatableCategory, Category } from "../../Constants/Categories";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -40,16 +40,16 @@ import { getName } from "./activatableNameUtils";
 export const getActivatableHeroSliceByCategory =
   (category: ActivatableCategory) =>
   (hero: HeroModelRecord): OrderedMap<string, Record<ActivatableDependent>> =>
-    category === Categories.ADVANTAGES
+    category === Category.ADVANTAGES
     ? HeroModel.A.advantages (hero)
-    : category === Categories.DISADVANTAGES
+    : category === Category.DISADVANTAGES
     ? HeroModel.A.disadvantages (hero)
     : HeroModel.A.specialAbilities (hero)
 
 type ActivatableWikiSliceByCategory<A extends ActivatableCategory> =
-  A extends Categories.ADVANTAGES
+  A extends Category.ADVANTAGES
   ? Record<Advantage>
-  : A extends Categories.ADVANTAGES
+  : A extends Category.ADVANTAGES
   ? Record<Disadvantage>
   : Record<SpecialAbility>
 
@@ -61,9 +61,9 @@ export const getActivatableWikiSliceByCategory =
   <A extends ActivatableCategory>
   (category: A) =>
   (wiki: WikiModelRecord): OrderedMap<string, ActivatableWikiSliceByCategory<A>> =>
-    category === Categories.ADVANTAGES
+    category === Category.ADVANTAGES
     ? WikiModel.A.advantages (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
-    : category === Categories.DISADVANTAGES
+    : category === Category.DISADVANTAGES
     ? WikiModel.A.disadvantages (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
     : WikiModel.A.specialAbilities (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
 

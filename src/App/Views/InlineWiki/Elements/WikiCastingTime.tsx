@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Record, RecordIBase } from "../../../../Data/Record";
-import { Categories } from "../../../Constants/Categories";
+import { Category } from "../../../Constants/Categories";
 import { BlessedGroup, MagicalGroup } from "../../../Constants/Groups";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
@@ -9,7 +9,7 @@ import { WikiProperty } from "../WikiProperty";
 interface Accessors<A extends RecordIBase<any>> {
   castingTime: (r: Record<A>) => string
   castingTimeNoMod: (r: Record<A>) => boolean
-  category: (r: Record<A>) => Categories
+  category: (r: Record<A>) => Category
   gr: (r: Record<A>) => number
 }
 
@@ -35,7 +35,8 @@ export function WikiCastingTime<A extends RecordIBase<any>> (props: WikiCastingT
 
   return (
     <WikiProperty l10n={l10n} title={key}>
-      {acc.castingTime (x)}{isNoModAllowed ? ` (${translate (l10n) (keyNoMod)})` : ""}
+      {acc.castingTime (x)}
+      {isNoModAllowed ? ` (${translate (l10n) (keyNoMod)})` : ""}
     </WikiProperty>
   )
 }
@@ -52,20 +53,20 @@ type ModKey = "youcannotuseamodificationonthisspellscastingtime"
             | "youcannotuseamodificationonthischantsceremonialtime"
 
 const getNameKey =
-  (category: Categories) =>
+  (category: Category) =>
   (gr: number): NameKey =>
-    (category === Categories.SPELLS
+    (category === Category.SPELLS
      && (gr === MagicalGroup.Rituals
          || gr === MagicalGroup.Herrschaftsrituale
          || gr === MagicalGroup.Geodenrituale
          || gr === MagicalGroup.Zibiljarituale))
     ? "ritualtime"
-    : (category === Categories.SPELLS
+    : (category === Category.SPELLS
        && (gr === MagicalGroup.Zaubermelodien || gr === MagicalGroup.Zaubertaenze))
     ? "lengthoftime"
-    : category === Categories.LITURGIES && gr === BlessedGroup.LiturgicalChants
+    : category === Category.LITURGICAL_CHANTS && gr === BlessedGroup.LiturgicalChants
     ? "liturgicaltime"
-    : category === Categories.LITURGIES && gr === BlessedGroup.Ceremonies
+    : category === Category.LITURGICAL_CHANTS && gr === BlessedGroup.Ceremonies
     ? "ceremonialtime"
     : "castingtime"
 
