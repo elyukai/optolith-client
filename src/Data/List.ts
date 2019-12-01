@@ -895,7 +895,7 @@ List.scanl = scanl
 /**
  * `mapAccumL :: (a -> b -> (a, c)) -> a -> [b] -> (a, [c])`
  *
- * The `mapAccumL` function behaves like a combination of `fmap` and `foldl`
+ * The `mapAccumL` function behaves like a combination of `fmap` and `foldl`;
  * it applies a function to each element of a structure, passing an
  * accumulating parameter from left to right, and returning a final value of
  * this accumulator together with the new structure.
@@ -917,6 +917,34 @@ export const mapAccumL =
   }
 
 List.mapAccumL = mapAccumL
+
+/**
+ * `mapAccumR :: (a -> b -> (a, c)) -> a -> [b] -> (a, [c])`
+ *
+ * The `mapAccumR` function behaves like a combination of `fmap` and `foldr`;
+ * it applies a function to each element of a structure, passing an
+ * accumulating parameter from right to left, and returning a final value of
+ * this accumulator together with the new structure.
+ */
+export const mapAccumR =
+  <A, B, C>
+  (f: (acc: A) => (x: B) => Pair<A, C>) =>
+  (initial: A) =>
+  (xs: List<B>): Pair<A, List<C>> => {
+    if (!isNil (xs)) {
+      const res = mapAccumR<A, B, C> (f) (initial) (xs .xs)
+      const new_xs = snd (res)
+      const p = f (fst (res)) (xs .x)
+      const acc = fst (p)
+      const new_x = snd (p)
+
+      return Pair (acc, Cons (new_x, new_xs))
+    }
+
+    return Pair (initial, Nil)
+  }
+
+List.mapAccumR = mapAccumR
 
 
 // INFINITE LISTS
