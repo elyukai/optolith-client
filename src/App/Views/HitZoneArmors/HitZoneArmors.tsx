@@ -34,7 +34,7 @@ export interface HitZoneArmorsOwnProps {
 
 export interface HitZoneArmorsStateProps {
   armorZones: Maybe<List<Record<HitZoneArmor>>>
-  carryingCapacity: Maybe<number>
+  carryingCapacity: number
   initialStartingWealth: number
   items: Maybe<List<Record<Item>>>
   isInHitZoneArmorCreation: Maybe<boolean>
@@ -81,13 +81,45 @@ export type HitZoneArmorsProps =
 
 const HZAA = HitZoneArmor.A
 
-export function HitZoneArmors (props: HitZoneArmorsProps) {
+export const HitZoneArmors: React.FC<HitZoneArmorsProps> = props => {
   const {
-    armorZonesEditor,
-    armorZones,
-    isInHitZoneArmorCreation,
     l10n,
+    armorZones,
+    carryingCapacity,
+    initialStartingWealth,
+    items,
+    isInHitZoneArmorCreation,
+    armorZonesEditor,
+    hasNoAddedAP,
+    purse,
+    templates,
+    totalPrice,
+    totalWeight,
     filterText,
+    addToList,
+    createItem,
+    editItem,
+    deleteItem,
+    closeEditor,
+    saveItem,
+    setDucates,
+    setSilverthalers,
+    setHellers,
+    setKreutzers,
+    setName,
+    setHead,
+    setHeadLoss,
+    setLeftArm,
+    setLeftArmLoss,
+    setLeftLeg,
+    setLeftLegLoss,
+    setTorso,
+    setTorsoLoss,
+    setRightArm,
+    setRightArmLoss,
+    setRightLeg,
+    setRightLegLoss,
+    setFilterText,
   } = props
 
   return (
@@ -96,12 +128,12 @@ export function HitZoneArmors (props: HitZoneArmorsProps) {
         <SearchField
           l10n={l10n}
           value={filterText}
-          onChange={props.setFilterText}
+          onChange={setFilterText}
           fullWidth
           />
         <BorderButton
           label={translate (l10n) ("create")}
-          onClick={props.createItem}
+          onClick={createItem}
           />
       </Options>
       <MainContent>
@@ -127,7 +159,16 @@ export function HitZoneArmors (props: HitZoneArmorsProps) {
                   armorZones,
                   bindF (ensure (notNull)),
                   fmap (pipe (
-                    map (x => <HitZoneArmorsListItem {...props} key={HZAA.id (x)} data={x} />),
+                    map (x => (
+                      <HitZoneArmorsListItem
+                        key={HZAA.id (x)}
+                        data={x}
+                        items={items}
+                        templates={templates}
+                        editItem={editItem}
+                        deleteItem={deleteItem}
+                        />
+                    )),
                     toArray
                   ))
                 ))
@@ -136,15 +177,45 @@ export function HitZoneArmors (props: HitZoneArmorsProps) {
         </Scroll>
       </MainContent>
       <Aside>
-        <PurseAndTotals {...props} />
+        <PurseAndTotals
+          carryingCapacity={carryingCapacity}
+          hasNoAddedAP={hasNoAddedAP}
+          initialStartingWealth={initialStartingWealth}
+          l10n={l10n}
+          purse={purse}
+          totalPrice={totalPrice}
+          totalWeight={totalWeight}
+          setDucates={setDucates}
+          setSilverthalers={setSilverthalers}
+          setHellers={setHellers}
+          setKreutzers={setKreutzers}
+          />
       </Aside>
       {
         isJust (armorZonesEditor)
           ? (
             <HitZoneArmorEditor
-              {...props}
               armorZonesEditor={Maybe.fromJust (armorZonesEditor)}
               isInHitZoneArmorCreation={isInHitZoneArmorCreation}
+              l10n={l10n}
+              items={items}
+              templates={templates}
+              addToList={addToList}
+              closeEditor={closeEditor}
+              saveItem={saveItem}
+              setName={setName}
+              setHead={setHead}
+              setHeadLoss={setHeadLoss}
+              setLeftArm={setLeftArm}
+              setLeftArmLoss={setLeftArmLoss}
+              setLeftLeg={setLeftLeg}
+              setLeftLegLoss={setLeftLegLoss}
+              setTorso={setTorso}
+              setTorsoLoss={setTorsoLoss}
+              setRightArm={setRightArm}
+              setRightArmLoss={setRightArmLoss}
+              setRightLeg={setRightLeg}
+              setRightLegLoss={setRightLegLoss}
               />
           )
           : null
