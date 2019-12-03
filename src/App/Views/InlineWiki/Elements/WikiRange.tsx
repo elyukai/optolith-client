@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Record, RecordIBase } from "../../../../Data/Record";
-import { Categories } from "../../../Constants/Categories";
+import { Category } from "../../../Constants/Categories";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
 import { WikiProperty } from "../WikiProperty";
@@ -8,7 +8,7 @@ import { WikiProperty } from "../WikiProperty";
 interface Accessors<A extends RecordIBase<any>> {
   range: (r: Record<A>) => string
   rangeNoMod: (r: Record<A>) => boolean
-  category: (r: Record<A>) => Categories
+  category: (r: Record<A>) => Category
 }
 
 export interface WikiRangeProps<A extends RecordIBase<any>> {
@@ -28,7 +28,7 @@ export function WikiRange<A extends RecordIBase<any>> (props: WikiRangeProps<A>)
   const isNoModAllowed = acc.rangeNoMod (x)
 
   const modKey =
-    category === Categories.LITURGIES
+    category === Category.LITURGICAL_CHANTS
     ? "youcannotuseamodificationonthischantsrange"
     : "youcannotuseamodificationonthisspellsrange"
 

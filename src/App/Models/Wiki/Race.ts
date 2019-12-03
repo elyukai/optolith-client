@@ -2,7 +2,7 @@ import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { Die } from "./sub/Die";
 import { Erratum } from "./sub/Errata";
 import { SourceLink } from "./sub/SourceLink";
@@ -42,7 +42,7 @@ export interface Race {
   weightBase: number
   weightRandom: List<Record<Die>>
   variants: List<string>
-  category: Categories
+  category: Category
   src: List<Record<SourceLink>>
   errata: List<Record<Erratum>>
 }
@@ -82,7 +82,7 @@ export const Race =
                 weightBase: 0,
                 weightRandom: List.empty,
                 variants: List.empty,
-                category: Categories.RACES,
+                category: Category.RACES,
                 src: List.empty,
                 errata: List (),
               })
@@ -90,4 +90,4 @@ export const Race =
 export const RaceL = makeLenses (Race)
 
 export const isRace =
-  (r: EntryWithCategory) => Race.AL.category (r) === Categories.RACES
+  (r: EntryWithCategory) => Race.AL.category (r) === Category.RACES

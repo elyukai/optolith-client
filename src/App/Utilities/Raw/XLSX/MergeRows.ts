@@ -1,9 +1,10 @@
 import { bimap, Either, first, fromRight_, isLeft, maybeToEither, Right } from "../../../../Data/Either";
 import { appendStr, find, List, notNullStr } from "../../../../Data/List";
-import { bind, bindF, elem, ensure, fromJust, isJust, Just, Maybe, Nothing } from "../../../../Data/Maybe";
-import { lookup, lookupF, OrderedMap } from "../../../../Data/OrderedMap";
+import { bindF, elem, ensure, fromJust, isJust, Just, Maybe, Nothing } from "../../../../Data/Maybe";
+import { lookup, lookupF, OrderedMap, union } from "../../../../Data/OrderedMap";
 import { Record, RecordIBase } from "../../../../Data/Record";
 import { show } from "../../../../Data/Show";
+import { fst, isTuple, Pair, uncurry } from "../../../../Data/Tuple";
 import { toInt, toNatural, unsafeToInt } from "../../NumberUtils";
 import { pipe, pipe_ } from "../../pipe";
 import { id_rx, isNaturalNumber } from "../../RegexUtils";
@@ -140,18 +141,30 @@ export const mergeRowsByIdAndMainId =
   }
 
 /**
+ * If a `Pair`, the `l10n` row MUST BE THE FIRST.
+ */
+export type BothOptionalRows = OrderedMap<string, string>
+                             | Pair<OrderedMap<string, string>, OrderedMap<string, string>>
+
+type MergeOptRowsByIdAndMainIdFunction<A> =
+  (mainId: number) =>
+  (id: number | string) =>
+  (lookup_row: (key: string) => Maybe<string>) => Either<string, A>
+
+/**
  * Receives the name of the origin function (how it would be called), a function
- * that takes the id, the l10n row and the optional universal row from the
+ * that takes the id, the l10n row, the univ row or both from the
  * tables and returns the built record wrapped in `Right (Just)`,
  * `Right Nothing` if no matching l10n row could be found or a `Left`
  * containing an error message.
  */
-export const mergeRowsByIdAndMainIdUnivOpt =
+export const mergeRowsByIdAndMainIdBothOpt =
   (origin: string) =>
-  <A> (f: MergeRowsByIdAndMainIdFunction<A>) =>
-  (univ: List<OrderedMap<string, string>>) =>
-  (l10n_row: OrderedMap<string, string>): Either<string, Maybe<A>> => {
-    const either_main_id = lookupId (origin) (toNatural) ("mainId") (l10n_row)
+  <A> (f: MergeOptRowsByIdAndMainIdFunction<A>) =>
+  (rows: BothOptionalRows): Either<string, A> => {
+    const main_row = isTuple (rows) ? fst (rows) : rows
+
+    const either_main_id = lookupId (origin) (toNatural) ("mainId") (main_row)
     const either_id = lookupId (origin)
                                <string | number>
                                (x =>
@@ -161,7 +174,7 @@ export const mergeRowsByIdAndMainIdUnivOpt =
                                  ? Just (x)
                                  : Nothing)
                                ("id")
-                               (l10n_row)
+                               (main_row)
 
     if (isLeft (either_main_id)) {
       return either_main_id
@@ -174,29 +187,12 @@ export const mergeRowsByIdAndMainIdUnivOpt =
     const mainId = fromRight_ (either_main_id)
     const id = fromRight_ (either_id)
 
-    const sameMainId =
-      pipe (
-        lookup ("mainId") as (x: OrderedMap<string, string>) => Maybe<string>,
-        elem (show (mainId))
-      )
+    const merged_rows = isTuple (rows) ? uncurry (union) (rows) : rows
 
-    const sameId =
-      pipe (
-        lookup ("id") as (x: OrderedMap<string, string>) => Maybe<string>,
-        elem (isNumber (id) ? show (id) : id)
-      )
-
-    const muniv_row =
-      find<OrderedMap<string, string>> (e => sameMainId (e) && sameId (e))
-                                       (univ)
-
-    return bimap (appendStr (`${origin} at main_id ${mainId} at id ${id}: `))
-                 <A, Maybe<A>>
-                 (Just)
+    return first (appendStr (`${origin} at main_id ${mainId} at id ${id}: `))
                  (f (mainId)
                     (id)
-                    (lookupF (l10n_row))
-                    (curr_id => bind (muniv_row) (lookup (curr_id))))
+                    (lookupF (merged_rows)))
   }
 
 type FromRowFunction<A extends RecordIBase<any>> =

@@ -8,7 +8,7 @@ import { foldr, lookupF } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
 import { bimap, first, fst, Pair, second, snd, Tuple } from "../../../Data/Tuple";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { AdvantageIdsNoMaxInfl } from "../../Constants/Ids";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
@@ -340,7 +340,7 @@ export const getAPObject =
     const spentOnSpecialAbilities =
       getAPSpentForSpecialAbilities (wiki)
                                     (HeroModel.A.specialAbilities (hero))
-                                    (getAllActiveByCategory (Categories.SPECIAL_ABILITIES)
+                                    (getAllActiveByCategory (Category.SPECIAL_ABILITIES)
                                                             (false)
                                                             (automatic_advantages)
                                                             (matching_script_and_lang_related)
@@ -350,7 +350,7 @@ export const getAPObject =
     const spentOnAdvantages =
         getAPSpentForAdvantages (wiki)
                                 (HeroModel.A.advantages (hero))
-                                (getAllActiveByCategory (Categories.ADVANTAGES)
+                                (getAllActiveByCategory (Category.ADVANTAGES)
                                                         (false)
                                                         (automatic_advantages)
                                                         (matching_script_and_lang_related)
@@ -360,7 +360,7 @@ export const getAPObject =
     const spentOnMagicalAdvantages =
         getAPSpentForMagicalAdvantages (wiki)
                                         (HeroModel.A.advantages (hero))
-                                        (getAllActiveByCategory (Categories.ADVANTAGES)
+                                        (getAllActiveByCategory (Category.ADVANTAGES)
                                                                 (false)
                                                                 (automatic_advantages)
                                                                 (matching_script_and_lang_related)
@@ -370,7 +370,7 @@ export const getAPObject =
     const spentOnBlessedAdvantages =
         getAPSpentForBlessedAdvantages (wiki)
                                         (HeroModel.A.advantages (hero))
-                                        (getAllActiveByCategory (Categories.ADVANTAGES)
+                                        (getAllActiveByCategory (Category.ADVANTAGES)
                                                                 (false)
                                                                 (automatic_advantages)
                                                                 (matching_script_and_lang_related)
@@ -380,7 +380,7 @@ export const getAPObject =
     const spentOnDisadvantages =
         getAPSpentForDisadvantages (wiki)
                                     (HeroModel.A.disadvantages (hero))
-                                    (getAllActiveByCategory (Categories.DISADVANTAGES)
+                                    (getAllActiveByCategory (Category.DISADVANTAGES)
                                                             (false)
                                                             (automatic_advantages)
                                                             (matching_script_and_lang_related)
@@ -390,7 +390,7 @@ export const getAPObject =
     const spentOnMagicalDisadvantages =
         getAPSpentForMagicalDisadvantages (wiki)
                                           (HeroModel.A.disadvantages (hero))
-                                          (getAllActiveByCategory (Categories.DISADVANTAGES)
+                                          (getAllActiveByCategory (Category.DISADVANTAGES)
                                                                   (false)
                                                                   (automatic_advantages)
                                                                   (matching_script_and_lang_related)
@@ -400,7 +400,7 @@ export const getAPObject =
     const spentOnBlessedDisadvantages =
         getAPSpentForBlessedDisadvantages (wiki)
                                           (HeroModel.A.disadvantages (hero))
-                                          (getAllActiveByCategory (Categories.DISADVANTAGES)
+                                          (getAllActiveByCategory (Category.DISADVANTAGES)
                                                                   (false)
                                                                   (automatic_advantages)
                                                                   (matching_script_and_lang_related)

@@ -370,10 +370,19 @@ test ('scanl', () => {
 test ('mapAccumL', () => {
   expect (
     List.mapAccumL (acc => current => Pair (acc + current) (current * 2))
-                   (0)
+                   ("0")
                    (List (1, 2, 3))
   )
-    .toEqual (Pair (6, List (2, 4, 6)))
+    .toEqual (Pair ("0123", List (2, 4, 6)))
+})
+
+test ('mapAccumR', () => {
+  expect (
+    List.mapAccumR (acc => current => Pair (acc + current) (current * 2))
+                   ("0")
+                   (List (1, 2, 3))
+  )
+    .toEqual (Pair ("0321", List (2, 4, 6)))
 })
 
 // INFINITE LISTS

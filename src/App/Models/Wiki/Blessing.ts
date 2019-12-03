@@ -1,6 +1,6 @@
 import { List } from "../../../Data/List";
 import { fromDefault, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { BlessedTradition } from "../../Constants/Groups";
 import { Erratum } from "./sub/Errata";
 import { SourceLink } from "./sub/SourceLink";
@@ -11,7 +11,7 @@ export interface Blessing {
   id: string
   name: string
   tradition: List<BlessedTradition>
-  category: Categories
+  category: Category
   effect: string
   range: string
   duration: string
@@ -26,7 +26,7 @@ export const Blessing =
                 id: "",
                 name: "",
                 tradition: List.empty,
-                category: Categories.BLESSINGS,
+                category: Category.BLESSINGS,
                 effect: "",
                 range: "",
                 duration: "",
@@ -36,4 +36,4 @@ export const Blessing =
               })
 
 export const isBlessing =
-  (r: EntryWithCategory) => Blessing.AL.category (r) === Categories.BLESSINGS
+  (r: EntryWithCategory) => Blessing.AL.category (r) === Category.BLESSINGS

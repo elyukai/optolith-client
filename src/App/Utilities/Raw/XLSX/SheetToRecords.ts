@@ -1,14 +1,16 @@
-import { bindF, Either, isRight, mapM } from "../../../../Data/Either";
+import { bind, bindF, Either, isRight, liftM2, mapM } from "../../../../Data/Either";
 import { fmap, fmapF } from "../../../../Data/Functor";
-import { List, map } from "../../../../Data/List";
-import { catMaybes, Maybe } from "../../../../Data/Maybe";
-import { fromList, OrderedMap } from "../../../../Data/OrderedMap";
+import { append, deleteAtPair, findIndex, List, map, mapAccumL } from "../../../../Data/List";
+import { catMaybes, elem, fromJust, isNothing, Maybe, maybe } from "../../../../Data/Maybe";
+import { fromList, lookup, OrderedMap } from "../../../../Data/OrderedMap";
 import { Record, RecordIBase } from "../../../../Data/Record";
-import { Pair } from "../../../../Data/Tuple";
+import { fst, Pair, snd, uncurry } from "../../../../Data/Tuple";
 import { ReduxAction } from "../../../Actions/Actions";
 import { setLoadingPhase } from "../../../Actions/IOActions";
 import { Book } from "../../../Models/Wiki/Book";
 import { pipe, pipe_ } from "../../pipe";
+import { Row, Sheet } from "./CSVtoList";
+import { BothOptionalRows } from "./MergeRows";
 
 interface RecordWithId extends RecordIBase<any> {
   id: string
@@ -53,7 +55,7 @@ type JoinUnivRow<A> =
  * message.
  */
 type JoinUnivRowWithMatchingL10n<A> =
-  (l10n: List<OrderedMap<string, string>>) =>
+  (l10n: Sheet) =>
   (univ_row: OrderedMap<string, string>) => Either<string, Maybe<A>>
 
 /**
@@ -64,9 +66,7 @@ type JoinUnivRowWithMatchingL10n<A> =
  * Record. In case of any error, a `Left` is returned, containing the error
  * message.
  */
-type JoinL10nRowWithMatchingUniv<A> =
-  (univ: List<OrderedMap<string, string>>) =>
-  (l10n_row: OrderedMap<string, string>) => Either<string, Maybe<A>>
+type JoinBothOptRows<A> = (rows: BothOptionalRows) => Either<string, A>
 
 /**
  * `type LookupSheet :: String -> Either String [OrderedMap String String]`
@@ -75,7 +75,7 @@ type JoinL10nRowWithMatchingUniv<A> =
  * message if not found or a `Right` with the worksheet, represented as a list
  * of maps.
  */
-type LookupSheet = (sheet_id: string) => Either<string, List<OrderedMap<string, string>>>
+type LookupSheet = (sheet_id: string) => Either<string, Sheet>
 
 const joinSheet =
   (lookup_sheet: LookupSheet) =>
@@ -232,15 +232,19 @@ export const univRowsMatchL10nToMap =
  * It is used to make elements that require a row in l10n table to work, where
  * the univ part is optional, like for advantage selections.
  */
-export const l10nRowsMatchUnivToList =
+export const bothOptRowsByIdAndMainIdToList =
   (lookup_l10n: LookupSheet) =>
   (lookup_univ: LookupSheet) =>
   <A>
-  (f: JoinL10nRowWithMatchingUniv<A>) =>
+  (f: JoinBothOptRows<A>) =>
   (sheet_name: string) =>
   (phase: number): ReduxAction<Either<string, List<A>>> =>
   dispatch => {
-    const res = joinSheetsWithMatch (lookup_univ) (lookup_l10n) (f) (sheet_name)
+    const res =
+      bind (liftM2 (joinBothOpt)
+                   (lookup_univ (sheet_name))
+                   (lookup_l10n (sheet_name)))
+           (mapM (f))
 
     if (isRight (res)) {
       dispatch (setLoadingPhase (phase))
@@ -248,3 +252,38 @@ export const l10nRowsMatchUnivToList =
 
     return res
   }
+
+const joinBothOpt: (univ_sheet: List<Row>) => (l10n_sheet: List<Row>) => List<BothOptionalRows> =
+  (univ_sheet: Sheet) =>
+    pipe (
+      mapAccumL ((rem_univ_sheet: Sheet) =>
+                 (l10n: Row): Pair<Sheet, BothOptionalRows> => {
+                   const mmainId = lookup ("mainId") (l10n)
+                   const mid = lookup ("id") (l10n)
+
+                   if (isNothing (mmainId) || isNothing (mid)) {
+                     return Pair (rem_univ_sheet, l10n)
+                   }
+
+                   const mainId = fromJust (mmainId)
+                   const id = fromJust (mid)
+
+                   return maybe <Pair<Sheet, BothOptionalRows>>
+                                (Pair (rem_univ_sheet, l10n))
+                                ((i: number) => pipe_ (
+                                  rem_univ_sheet,
+                                  deleteAtPair (i),
+                                  p => maybe <Pair<Sheet, BothOptionalRows>>
+                                             (Pair (rem_univ_sheet, l10n))
+                                             // l10n row must come first as required in type
+                                             // BothOptionalRows
+                                             ((univ: Row) => Pair (snd (p), Pair (l10n, univ)))
+                                             (fst (p))
+                                ))
+                                (findIndex ((univ: Row) => elem (mainId) (lookup ("mainid") (univ))
+                                                           || elem (id) (lookup ("id") (univ)))
+                                           (rem_univ_sheet))
+                 })
+                 (univ_sheet),
+       uncurry (append as append<BothOptionalRows>)
+    )

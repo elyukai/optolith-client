@@ -4,7 +4,7 @@ import { find, List } from "../../../Data/List";
 import { bind, fromJust, isJust, Maybe, maybe_, Nothing } from "../../../Data/Maybe";
 import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { IdPrefixes } from "../../Constants/IdPrefixes";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { Item } from "../../Models/Hero/Item";
@@ -183,45 +183,45 @@ const getEntry =
                              return Nothing
                            }
                          })
-                         ((category: Categories) => {
+                         ((category: Category) => {
                            switch (category) {
-                             case Categories.ADVANTAGES:
+                             case Category.ADVANTAGES:
                                return lookup (id) (props.advantages)
 
-                             case Categories.BLESSINGS:
+                             case Category.BLESSINGS:
                                return lookup (id) (props.blessings)
 
-                             case Categories.CANTRIPS:
+                             case Category.CANTRIPS:
                                return lookup (id) (props.cantrips)
 
-                             case Categories.COMBAT_TECHNIQUES:
+                             case Category.COMBAT_TECHNIQUES:
                                return lookup (id) (props.combatTechniques)
 
-                             case Categories.CULTURES:
+                             case Category.CULTURES:
                                return find (pipe (CultureCombinedA_.id, equals (id)))
                                            (props.combinedCultures)
 
-                             case Categories.DISADVANTAGES:
+                             case Category.DISADVANTAGES:
                                return lookup (id) (props.disadvantages)
 
-                             case Categories.LITURGIES:
+                             case Category.LITURGICAL_CHANTS:
                                return lookup (id) (props.liturgicalChants)
 
-                             case Categories.PROFESSIONS:
+                             case Category.PROFESSIONS:
                                return find (pipe (ProfessionCombinedA_.id, equals (id)))
                                            (props.combinedProfessions)
 
-                             case Categories.RACES:
+                             case Category.RACES:
                                return find (pipe (RaceCombinedA_.id, equals (id)))
                                            (props.combinedRaces)
 
-                             case Categories.SPECIAL_ABILITIES:
+                             case Category.SPECIAL_ABILITIES:
                                return lookup (id) (props.specialAbilities)
 
-                             case Categories.SPELLS:
+                             case Category.SPELLS:
                                return lookup (id) (props.spells)
 
-                             case Categories.TALENTS:
+                             case Category.SKILLS:
                                return lookup (id) (props.skills)
 
                              default:

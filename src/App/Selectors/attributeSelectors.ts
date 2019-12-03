@@ -285,7 +285,7 @@ export const getAttributesForView = createMaybeSelector (
 
 export const getCarryingCapacity = createMaybeSelector (
   getAttributes,
-  pipe (lookup<string> (AttrId.Strength), fmap (pipe (AtDA.value, multiply (2))))
+  pipe (lookup<string> (AttrId.Strength), maybe (8) (AtDA.value), multiply (2))
 )
 
 export const getAdjustmentValue = createMaybeSelector (

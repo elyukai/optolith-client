@@ -5,7 +5,7 @@ import { over } from "../../../Data/Lens";
 import { consF, foldr, isList, sdelete } from "../../../Data/List";
 import { elemF, fromMaybe, isNothing, Just, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
 import { HeroModel, HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { ActivatableDependency, ExtendedSkillDependency, SkillDependency } from "../../Models/Hero/heroTypeHelpers";
@@ -104,11 +104,11 @@ const getMatchingIncreasableModifier =
   (id: string): ModifySkillDependency => {
     const isOfCategory = elemF (getCategoryById (id))
 
-    if (isOfCategory (Categories.ATTRIBUTES)) {
+    if (isOfCategory (Category.ATTRIBUTES)) {
       return f
     }
 
-    if (isOfCategory (Categories.LITURGIES) || isOfCategory (Categories.SPELLS)) {
+    if (isOfCategory (Category.LITURGICAL_CHANTS) || isOfCategory (Category.SPELLS)) {
       return h
     }
 

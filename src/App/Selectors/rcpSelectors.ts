@@ -8,7 +8,7 @@ import { abs, add } from "../../Data/Num";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Tuple/Curry";
-import { Categories } from "../Constants/Categories";
+import { Category } from "../Constants/Categories";
 import { ProfessionId, RaceId } from "../Constants/Ids";
 import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
@@ -634,7 +634,7 @@ const areProfessionOrVariantPrerequisitesValid =
                   if (ProfessionRequireIncreasable.is (d)) {
                     const category = getCategoryById (PRIA.id (d))
 
-                    const isAttribute = Maybe.elemF (category) (Categories.ATTRIBUTES)
+                    const isAttribute = Maybe.elemF (category) (Category.ATTRIBUTES)
                     const isGreaterThanMax = PRIA.value (d) > ELA.maxAttributeValue (start_el)
 
                     return isAttribute && isGreaterThanMax

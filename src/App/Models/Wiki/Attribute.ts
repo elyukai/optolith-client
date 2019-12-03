@@ -1,12 +1,12 @@
 import { fromDefault, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Attribute {
   "@@name": "Attribute"
   id: string
   name: string
-  category: Categories
+  category: Category
   short: string
 }
 
@@ -16,9 +16,9 @@ export const Attribute =
                 id: "",
                 name: "",
                 short: "",
-                category: Categories.ATTRIBUTES,
+                category: Category.ATTRIBUTES,
               })
 
 export const isAttribute =
   (r: EntryWithCategory): r is Record<Attribute> =>
-    Attribute.AL.category (r) === Categories.ATTRIBUTES
+    Attribute.AL.category (r) === Category.ATTRIBUTES

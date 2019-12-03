@@ -9,7 +9,7 @@ import { bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing,
 import { dec, negate } from "../../../Data/Num";
 import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record, RecordI, RecordIBase } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { SpecialAbilityGroup } from "../../Constants/Groups";
 import { AdvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
@@ -666,7 +666,7 @@ const getCost =
 
           if (isList (cost)) {
             const abs_cost =
-              AcA.category (x) === Categories.DISADVANTAGES
+              AcA.category (x) === Category.DISADVANTAGES
                 ? map (negate) (cost)
                 : cost
 
@@ -680,7 +680,7 @@ const getCost =
             return `${str}${level_str} ${level_nums}: ${level_costs} ${ap_str}`
           }
 
-          const abs_cost = AcA.category (x) === Categories.DISADVANTAGES ? -cost : cost
+          const abs_cost = AcA.category (x) === Category.DISADVANTAGES ? -cost : cost
 
           const plain_str = `${str}${abs_cost} ${ap_str}`
 
@@ -881,7 +881,7 @@ const getPrerequisites =
       ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveDisadvantages),
       fmap (getPrerequisitesRaceText (l10n) (WikiModel.A.races (wiki))) (race),
       fmap (getSocialPrerequisiteText (l10n)) (social),
-      category === Categories.SPECIAL_ABILITIES
+      category === Category.SPECIAL_ABILITIES
         ? (gr === 11
           ? Just (translate (l10n) ("appropriatecombatstylespecialability"))
           : gr === 14
@@ -920,7 +920,7 @@ const getPrerequisitesRCPText =
                               ("racecultureorprofessionrequiresautomaticorsuggested")
                               (List (
                                 AAL.name (x),
-                                category === Categories.ADVANTAGES
+                                category === Category.ADVANTAGES
                                   ? translate (l10n) ("advantage")
                                   : translate (l10n) ("disadvantage")
                               ))
@@ -1009,7 +1009,7 @@ const getPrerequisitesActivatedSkillsTextCategoryAdd =
   (id: string) => {
     const isCategory = Maybe.elemF (getCategoryById (id))
 
-    return isCategory (Categories.LITURGIES)
+    return isCategory (Category.LITURGICAL_CHANTS)
       ? translate (l10n) ("knowledgeofliturgicalchant")
       : translate (l10n) ("knowledgeofspell")
   }
@@ -1076,9 +1076,9 @@ const getPrerequisitesActivatablesCategoryAdd =
       getCategoryById,
       Maybe.elemF,
       isCategory =>
-        isCategory (Categories.ADVANTAGES)
+        isCategory (Category.ADVANTAGES)
           ? `${translate (l10n) ("advantage")} `
-          : isCategory (Categories.DISADVANTAGES)
+          : isCategory (Category.DISADVANTAGES)
           ? `${translate (l10n) ("disadvantage")} `
           : ""
     )
@@ -1335,7 +1335,7 @@ export const getCategorizedItems =
              const mcategory = isList (id) ? getCategoryById (head (id)) : getCategoryById (id)
              const isCategory = Maybe.elemF (mcategory)
 
-             return over (isCategory (Categories.ATTRIBUTES) ? CIL.attributes : CIL.skills)
+             return over (isCategory (Category.ATTRIBUTES) ? CIL.attributes : CIL.skills)
                          (consF (fromMaybe<InRecord> (e) (misStringM (index_special))))
            }
 
@@ -1345,7 +1345,7 @@ export const getCategorizedItems =
              const isCategory = Maybe.elemF (mcategory)
              const addEntry = consF (getActivatablePrerequisite (index_special) (e))
 
-             if (isCategory (Categories.LITURGIES) || isCategory (Categories.SPELLS)) {
+             if (isCategory (Category.LITURGICAL_CHANTS) || isCategory (Category.SPELLS)) {
                return over (CIL.activeSkills) (addEntry)
              }
 
@@ -1359,19 +1359,19 @@ export const getCategorizedItems =
 
              const isActive = RAA.active (e)
 
-             if (isCategory (Categories.SPECIAL_ABILITIES)) {
+             if (isCategory (Category.SPECIAL_ABILITIES)) {
                return over (isActive
                              ? CIL.otherActiveSpecialAbilities
                              : CIL.inactiveSpecialAbilities)
                            (addEntry)
              }
 
-             if (isCategory (Categories.ADVANTAGES)) {
+             if (isCategory (Category.ADVANTAGES)) {
                return over (isActive ? CIL.otherActiveAdvantages : CIL.inactiveAdvantages)
                            (addEntry)
              }
 
-             if (isCategory (Categories.DISADVANTAGES)) {
+             if (isCategory (Category.DISADVANTAGES)) {
                return over (isActive ? CIL.activeDisadvantages : CIL.inactiveDisadvantages)
                            (addEntry)
              }

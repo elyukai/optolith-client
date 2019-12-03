@@ -17,7 +17,7 @@ import { add, dec, multiply, negate } from "../../../Data/Num";
 import { lookup, lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -35,7 +35,7 @@ import { getSelectOptionCost } from "../Activatable/selectionUtils";
 import { nbsp, nobr } from "../Chars";
 import { getHeroStateItem } from "../heroStateUtils";
 import { translate } from "../I18n";
-import { getCategoryById, prefixSkill } from "../IDUtils";
+import { getCategoryById } from "../IDUtils";
 import { toRoman } from "../NumberUtils";
 import { pipe, pipe_ } from "../pipe";
 import { isNumber, misNumberM, misStringM } from "../typeCheckUtils";
@@ -77,7 +77,7 @@ const getEntrySpecificCost =
     const all_active = joinMaybeList (fmap (ActivatableDependent.A.active) (hero_entry))
 
     switch (current_id) {
-      // Entry with Skill selection (string id)
+      // Entry with Skill selection
       case AdvantageId.Aptitude:
       case AdvantageId.ExceptionalSkill:
       case AdvantageId.ExceptionalCombatTechnique:
@@ -88,21 +88,16 @@ const getEntrySpecificCost =
       case SpecialAbilityId.Forschungsgebiet:
       case SpecialAbilityId.Expertenwissen:
       case SpecialAbilityId.Wissensdurst:
-      case SpecialAbilityId.Lieblingsliturgie: {
-        return getCostForEntryWithSkillSel (misStringM)
-                                           (wiki)
-                                           (mcurrent_sid)
-                                           (mcurrent_cost)
-      }
-
-      // Entry with Skill selection (numeric id)
+      case SpecialAbilityId.Lieblingsliturgie:
       case SpecialAbilityId.WegDerGelehrten:
+      case SpecialAbilityId.WegDerKuenstlerin:
+      case SpecialAbilityId.Fachwissen:
       case SpecialAbilityId.Handwerkskunst:
       case SpecialAbilityId.KindDerNatur:
       case SpecialAbilityId.KoerperlichesGeschick:
       case SpecialAbilityId.SozialeKompetenz:
       case SpecialAbilityId.Universalgenie: {
-        return getCostForEntryWithSkillSel (pipe (misNumberM, fmap (prefixSkill)))
+        return getCostForEntryWithSkillSel (misStringM)
                                            (wiki)
                                            (mcurrent_sid)
                                            (mcurrent_cost)
@@ -460,7 +455,7 @@ const putCurrentCost =
            if (isList (current_cost)) {
             const current_level = fromMaybe (1) (mcurrent_level)
 
-             if (elem (Categories.SPECIAL_ABILITIES) (category)) {
+             if (elem (Category.SPECIAL_ABILITIES) (category)) {
                return ifoldr (i => i <= (current_level - 1) ? add : cnst (ident as ident<number>))
                              (0)
                              (current_cost)
@@ -502,7 +497,7 @@ const getSpecialAbilityLevel =
  * Id-based check if the entry is a special ability.
  */
 const isSpecialAbilityById =
-  pipe (getCategoryById, elem<Categories> (Categories.SPECIAL_ABILITIES))
+  pipe (getCategoryById, elem<Category> (Category.SPECIAL_ABILITIES))
 
 /**
  * Gets the level string that hast to be appended to the name. This string is

@@ -107,7 +107,7 @@ const toLevelAwarePrerequisites =
                     : isRawSocialPrerequisite (x)
                     ? Just (fromRawSocialPrerequisiteToRecord (x))
                     : (traceShowBoth ("Invalid prerequisite: ") (x), Nothing)
-                )
+                ),
               ))
               (snd (p))
 
@@ -120,12 +120,12 @@ const toLevelAwarePrerequisites =
             (fmap<List<AllRequirements>, Pair<number, List<AllRequirements>>>
               (Pair (fromJust (level)))
               (levelAwarePrerequisites))
-        }
+        },
       ),
       fromMaybe<Either<string, Pair<number, List<AllRequirements>>>>
         (Left ("Invalid list definition for level."))
     )),
-    second (fromList)
+    second (fromList),
   )
 
 const toFlatPrerequisites =

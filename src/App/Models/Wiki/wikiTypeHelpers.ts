@@ -2,7 +2,7 @@ import { List, NonEmptyList } from "../../../Data/List";
 import { Just, Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { Item } from "../Hero/Item";
 import { CultureCombined } from "../View/CultureCombined";
 import { ProfessionCombined } from "../View/ProfessionCombined";
@@ -193,7 +193,7 @@ export interface ActivatableBase {
   tiers: Maybe<number>
   select: Maybe<List<Record<SelectOption>>>
   gr: number
-  category: Categories
+  category: Category
   src: List<Record<SourceLink>>
   errata: List<Record<Erratum>>
 }

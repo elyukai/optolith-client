@@ -2,7 +2,7 @@ import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { ActivatableBase } from "./wikiTypeHelpers";
 
 export enum SpecialAbilityCombatTechniqueGroup {
@@ -85,7 +85,7 @@ export const SpecialAbility =
                 apValue: Nothing,
                 apValueAppend: Nothing,
                 brew: Nothing,
-                category: Categories.SPECIAL_ABILITIES,
+                category: Category.SPECIAL_ABILITIES,
               })
 
 export const SpecialAbilityL = makeLenses (SpecialAbility)

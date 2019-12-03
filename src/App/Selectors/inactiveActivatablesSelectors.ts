@@ -4,7 +4,7 @@ import { cons, fromArray, List } from "../../Data/List";
 import { join, mapMaybe, Maybe } from "../../Data/Maybe";
 import { elems, lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
-import { ActivatableCategory, Categories } from "../Constants/Categories";
+import { ActivatableCategory, Category } from "../Constants/Categories";
 import { SpecialAbilityId } from "../Constants/Ids";
 import { InactiveActivatable } from "../Models/View/InactiveActivatable";
 import { Advantage } from "../Models/Wiki/Advantage";
@@ -98,9 +98,9 @@ export const getInactiveForView =
                                                    List<WikiEntryRecordByCategory[T]>)
                                }))
 
-const getInactiveAdvantagesForView = getInactiveForView (Categories.ADVANTAGES)
-const getInactiveDisadvantagesForView = getInactiveForView (Categories.DISADVANTAGES)
-const getInactiveSpecialAbilitiesForView = getInactiveForView (Categories.SPECIAL_ABILITIES)
+const getInactiveAdvantagesForView = getInactiveForView (Category.ADVANTAGES)
+const getInactiveDisadvantagesForView = getInactiveForView (Category.DISADVANTAGES)
+const getInactiveSpecialAbilitiesForView = getInactiveForView (Category.SPECIAL_ABILITIES)
 
 type Av = EnabledSourceBooks
 type listAdv = List<Record<InactiveActivatable<Advantage>>>
@@ -118,7 +118,7 @@ const getSrc = pipe (getWikiEntry, Advantage.AL.src) as
 const filterDeactiveAdv =
   ignore3rd (flip ((a: Av) =>
                     fmap<listAdv, listAdv> (filterByAvailability (getSrc)
-                                                                 <Categories.ADVANTAGES> (a))))
+                                                                 <Category.ADVANTAGES> (a))))
 
 const filterDeactiveDis =
   filterDeactiveAdv as (a: Maybe<listDis>) => (b: Av) => () => Maybe<listDis>
@@ -137,7 +137,7 @@ export const getDeactiveDisadvantages =
                          ()
                          (filterDeactiveDis)
 
-type CatSA = Categories.SPECIAL_ABILITIES
+type CatSA = Category.SPECIAL_ABILITIES
 type InAcSA = InactiveActivatable<SpecialAbility>
 
 export const getDeactiveSpecialAbilities =

@@ -2,7 +2,7 @@ import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record, RecordCreator } from "../../../Data/Record";
 import { SocialStatusId } from "../../Constants/Ids";
 import { current_version } from "../../Selectors/envSelectors";
 import { Locale } from "../../Utilities/Raw/JSON/Config";
@@ -76,7 +76,7 @@ export interface HeroModel {
  * Create a new `Hero` object from scratch. Does not handle special semantic
  * rules, so you need to take of them on your own.
  */
-export const HeroModel =
+export const HeroModel: RecordCreator<HeroModel> =
   fromDefault ("Hero")
               <HeroModel> ({
                 id: "",

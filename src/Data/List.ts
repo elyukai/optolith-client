@@ -621,6 +621,8 @@ export const append =
   <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
     isNil (xs2) ? xs1 : isNil (xs1) ? xs2 : appendSafe (xs1) (xs2)
 
+export type append<A> = (xs1: List<A>) => (xs2: List<A>) => List<A>
+
 const appendSafe =
   <A> (xs1: List<A>) => (xs2: Cons<A>): Cons<A> =>
     isNil (xs1) ? xs2 : Cons (xs1 .x, appendSafe (xs1 .xs) (xs2))
@@ -893,7 +895,7 @@ List.scanl = scanl
 /**
  * `mapAccumL :: (a -> b -> (a, c)) -> a -> [b] -> (a, [c])`
  *
- * The `mapAccumL` function behaves like a combination of `fmap` and `foldl`
+ * The `mapAccumL` function behaves like a combination of `fmap` and `foldl`;
  * it applies a function to each element of a structure, passing an
  * accumulating parameter from left to right, and returning a final value of
  * this accumulator together with the new structure.
@@ -915,6 +917,34 @@ export const mapAccumL =
   }
 
 List.mapAccumL = mapAccumL
+
+/**
+ * `mapAccumR :: (a -> b -> (a, c)) -> a -> [b] -> (a, [c])`
+ *
+ * The `mapAccumR` function behaves like a combination of `fmap` and `foldr`;
+ * it applies a function to each element of a structure, passing an
+ * accumulating parameter from right to left, and returning a final value of
+ * this accumulator together with the new structure.
+ */
+export const mapAccumR =
+  <A, B, C>
+  (f: (acc: A) => (x: B) => Pair<A, C>) =>
+  (initial: A) =>
+  (xs: List<B>): Pair<A, List<C>> => {
+    if (!isNil (xs)) {
+      const res = mapAccumR<A, B, C> (f) (initial) (xs .xs)
+      const new_xs = snd (res)
+      const p = f (fst (res)) (xs .x)
+      const acc = fst (p)
+      const new_x = snd (p)
+
+      return Pair (acc, Cons (new_x, new_xs))
+    }
+
+    return Pair (initial, Nil)
+  }
+
+List.mapAccumR = mapAccumR
 
 
 // INFINITE LISTS
@@ -1533,6 +1563,28 @@ export const deleteAt =
     : Cons (xs .x, deleteAt (index - 1) (xs .xs))
 
 List.deleteAt = deleteAt
+
+/**
+ * `deleteAtPair :: Int -> [a] -> (Maybe a, [a])`
+ *
+ * `deleteAtPair` deletes the element at an index and returns a `Just` of the
+ * deleted element together with the remaining list.
+ *
+ * If the index is negative or exceeds list length, the original list will be
+ * returned, together with `Nothing` representing the deleted element.
+ */
+export const deleteAtPair =
+  (index: number) => <A> (xs: List<A>): Pair<Maybe<A>, List<A>> =>
+    index < 0
+    ? Pair (Nothing, xs)
+    : isNil (xs)
+    ? Pair (Nothing, Nil)
+    : index === 0
+    ? Pair (Just (xs .x), xs .xs)
+    : second (consF (xs .x))
+             (deleteAtPair (index - 1) (xs .xs))
+
+List.deleteAtPair = deleteAtPair
 
 /**
  * `setAt :: Int -> a -> [a] -> [a]`

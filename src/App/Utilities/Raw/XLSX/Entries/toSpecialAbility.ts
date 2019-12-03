@@ -1,28 +1,22 @@
 import { fmap, fmapF } from "../../../../../Data/Functor";
-import { map } from "../../../../../Data/List";
+import { concatMap, map } from "../../../../../Data/List";
 import { alt, joinMaybeList, Nothing } from "../../../../../Data/Maybe";
 import { OrderedMap } from "../../../../../Data/OrderedMap";
-import { Record } from "../../../../../Data/Record";
 import { IdPrefixes } from "../../../../Constants/IdPrefixes";
 import { SpecialAbility, SpecialAbilityCombatTechniqueGroup, SpecialAbilityCombatTechniques } from "../../../../Models/Wiki/SpecialAbility";
-import { SelectOption } from "../../../../Models/Wiki/sub/SelectOption";
 import { prefixCT, prefixId } from "../../../IDUtils";
 import { toNatural } from "../../../NumberUtils";
 import { Expect } from "../../Expect";
 import { mergeRowsById } from "../MergeRows";
 import { modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapListLengthInRangeOptional, mensureMapNatural, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapNumEnumOptional, mensureMapStringPredListOptional } from "../Validators/ToValue";
+import { mensureMapListLengthInRangeOptional, mensureMapNatural, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapNumEnumOptional } from "../Validators/ToValue";
 import { toActivatableCost } from "./Sub/toActivatableCost";
 import { toErrata } from "./Sub/toErrata";
+import { categoryToSelectOptions, toOptionalCategoryList } from "./Sub/toOptionalCategoryList";
 import { toPrerequisites } from "./Sub/toPrerequisites";
 import { toPrerequisitesIndex } from "./Sub/toPrerequisitesIndex";
 import { toSourceLinks } from "./Sub/toSourceLinks";
-
-const category = /[A-Z_]+/u
-
-const checkCategory =
-  (x: string) => category .test (x)
 
 export const toSpecialAbility =
   mergeRowsById
@@ -32,13 +26,6 @@ export const toSpecialAbility =
 
       const checkL10nNonEmptyString =
         lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
-
-      const checkOptionalCategoryList =
-        lookupKeyValid (mensureMapStringPredListOptional (checkCategory)
-                                                         ("Category")
-                                                         ("&"))
-                       (TableType.Univ)
-                       (lookup_univ)
 
       const checkExtendedSpecialAbilitiesList =
         lookupKeyValid (mensureMapListLengthInRangeOptional (1)
@@ -87,7 +74,7 @@ export const toSpecialAbility =
 
       const emax = checkOptionalUnivNaturalNumber ("max")
 
-      const eselect = checkOptionalCategoryList ("select")
+      const eselect = toOptionalCategoryList (lookup_univ) ("select")
 
       const input = lookup_l10n ("input")
 
@@ -174,25 +161,7 @@ export const toSpecialAbility =
           cost: rs.ecost,
           tiers: rs.etiers,
           max: rs.emax,
-
-          select:
-            fmap (map<string, Record<SelectOption>> (x => SelectOption ({
-                                                      id: x,
-                                                      name: Nothing,
-                                                      cost: Nothing,
-                                                      prerequisites: Nothing,
-                                                      target: Nothing,
-                                                      level: Nothing,
-                                                      specializations: Nothing,
-                                                      specializationInput: Nothing,
-                                                      applications: Nothing,
-                                                      applicationInput: Nothing,
-                                                      gr: Nothing,
-                                                      src: Nothing,
-                                                      errata: Nothing,
-                                                    })))
-                                                    (rs.eselect),
-
+          select: fmap (concatMap (categoryToSelectOptions)) (rs.eselect),
           input,
           gr: rs.egr,
           subgr: rs.esubgr,

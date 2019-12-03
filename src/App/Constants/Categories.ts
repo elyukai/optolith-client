@@ -1,6 +1,6 @@
 import { List } from "../../Data/List";
 
-export enum Categories {
+export enum Category {
   ADVANTAGES = "ADVANTAGES",
   ATTRIBUTES = "ATTRIBUTES",
   BLESSINGS = "BLESSINGS",
@@ -8,75 +8,75 @@ export enum Categories {
   COMBAT_TECHNIQUES = "COMBAT_TECHNIQUES",
   CULTURES = "CULTURES",
   DISADVANTAGES = "DISADVANTAGES",
-  LITURGIES = "LITURGIES",
+  LITURGICAL_CHANTS = "LITURGIES",
   PROFESSION_VARIANTS = "PROFESSION_VARIANTS",
   PROFESSIONS = "PROFESSIONS",
   RACE_VARIANTS = "RACE_VARIANTS",
   RACES = "RACES",
+  SKILLS = "TALENTS",
   SPECIAL_ABILITIES = "SPECIAL_ABILITIES",
   SPELLS = "SPELLS",
-  TALENTS = "TALENTS",
 }
 
-export type ActivatableCategory = Categories.ADVANTAGES
-                                | Categories.DISADVANTAGES
-                                | Categories.SPECIAL_ABILITIES
+export type ActivatableCategory = Category.ADVANTAGES
+                                | Category.DISADVANTAGES
+                                | Category.SPECIAL_ABILITIES
 
-export type CategoryWithGroups = Categories.COMBAT_TECHNIQUES
-                               | Categories.LITURGIES
-                               | Categories.SPECIAL_ABILITIES
-                               | Categories.SPELLS
-                               | Categories.TALENTS
+export type CategoryWithGroups = Category.COMBAT_TECHNIQUES
+                               | Category.LITURGICAL_CHANTS
+                               | Category.SPECIAL_ABILITIES
+                               | Category.SPELLS
+                               | Category.SKILLS
 
-export type IncreasableCategory = Categories.ATTRIBUTES
-                                | Categories.COMBAT_TECHNIQUES
-                                | Categories.LITURGIES
-                                | Categories.SPELLS
-                                | Categories.TALENTS
+export type IncreasableCategory = Category.ATTRIBUTES
+                                | Category.COMBAT_TECHNIQUES
+                                | Category.LITURGICAL_CHANTS
+                                | Category.SPELLS
+                                | Category.SKILLS
 
-export type SkillishCategory = Categories.COMBAT_TECHNIQUES
-                             | Categories.LITURGIES
-                             | Categories.SPELLS
-                             | Categories.TALENTS
+export type SkillishCategory = Category.COMBAT_TECHNIQUES
+                             | Category.LITURGICAL_CHANTS
+                             | Category.SPELLS
+                             | Category.SKILLS
 
-export type ActivatableLikeCategory = Categories.ADVANTAGES
-                                    | Categories.DISADVANTAGES
-                                    | Categories.SPECIAL_ABILITIES
-                                    | Categories.LITURGIES
-                                    | Categories.SPELLS
+export type ActivatableLikeCategory = Category.ADVANTAGES
+                                    | Category.DISADVANTAGES
+                                    | Category.SPECIAL_ABILITIES
+                                    | Category.LITURGICAL_CHANTS
+                                    | Category.SPELLS
 
-export type ActivatableSkillCategory = Categories.LITURGIES | Categories.SPELLS
+export type ActivatableSkillCategory = Category.LITURGICAL_CHANTS | Category.SPELLS
 
 export const ActivatableCategories = List<ActivatableCategory> (
-  Categories.ADVANTAGES,
-  Categories.DISADVANTAGES,
-  Categories.SPECIAL_ABILITIES
+  Category.ADVANTAGES,
+  Category.DISADVANTAGES,
+  Category.SPECIAL_ABILITIES
 )
 
 export const IncreasableCategories = List (
-  Categories.ATTRIBUTES,
-  Categories.COMBAT_TECHNIQUES,
-  Categories.LITURGIES,
-  Categories.SPELLS,
-  Categories.TALENTS
+  Category.ATTRIBUTES,
+  Category.COMBAT_TECHNIQUES,
+  Category.LITURGICAL_CHANTS,
+  Category.SPELLS,
+  Category.SKILLS
 )
 
 export const SkillishCategories = List (
-  Categories.COMBAT_TECHNIQUES,
-  Categories.LITURGIES,
-  Categories.SPELLS,
-  Categories.TALENTS
+  Category.COMBAT_TECHNIQUES,
+  Category.LITURGICAL_CHANTS,
+  Category.SPELLS,
+  Category.SKILLS
 )
 
 export const ActivatableLikeCategories = List<ActivatableLikeCategory> (
-  Categories.ADVANTAGES,
-  Categories.DISADVANTAGES,
-  Categories.SPECIAL_ABILITIES,
-  Categories.LITURGIES,
-  Categories.SPELLS
+  Category.ADVANTAGES,
+  Category.DISADVANTAGES,
+  Category.SPECIAL_ABILITIES,
+  Category.LITURGICAL_CHANTS,
+  Category.SPELLS
 )
 
 export const ActivatableSkillCategories = List<ActivatableSkillCategory> (
-  Categories.LITURGIES,
-  Categories.SPELLS
+  Category.LITURGICAL_CHANTS,
+  Category.SPELLS
 )

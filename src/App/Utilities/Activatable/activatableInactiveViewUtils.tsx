@@ -10,7 +10,7 @@ import { dec, gte, max, min, multiply, negate } from "../../../Data/Num";
 import { lookupF } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -189,23 +189,15 @@ export const getIdSpecificAffectedAndDispatchProps =
       case SpecialAbilityId.Forschungsgebiet:
       case SpecialAbilityId.Expertenwissen:
       case SpecialAbilityId.Wissensdurst:
-      case SpecialAbilityId.Recherchegespuer:
-      case SpecialAbilityId.Lieblingsliturgie: {
-        return getPropsForEntryWithSkillSel (misStringM)
-                                            (wiki)
-                                            (mselected)
-                                            (entry)
-                                            (id)
-      }
-
-      // Entry with Skill selection (numeric id)
+      case SpecialAbilityId.Lieblingsliturgie:
       case SpecialAbilityId.WegDerGelehrten:
+      case SpecialAbilityId.WegDerKuenstlerin:
       case SpecialAbilityId.Handwerkskunst:
       case SpecialAbilityId.KindDerNatur:
       case SpecialAbilityId.KoerperlichesGeschick:
       case SpecialAbilityId.SozialeKompetenz:
       case SpecialAbilityId.Universalgenie: {
-        return getPropsForEntryWithSkillSel (pipe (misNumberM, fmap (prefixSkill)))
+        return getPropsForEntryWithSkillSel (misStringM)
                                             (wiki)
                                             (mselected)
                                             (entry)
@@ -545,18 +537,10 @@ export const getIdSpecificAffectedAndDispatchProps =
             cost: Nothing,
           }),
           PropertiesAffectedByState ({
-            currentCost:
-              pipe_ (
-                mselected,
-                misStringM,
-                bindF (getWikiEntry (wiki)),
-                bindF (ensure (isSkillishWikiEntry)),
-                bindF (pipe (
-                  SkAL.ic,
-                  dec,
-                  i => pipe_ (entry, IAA.cost, bindF (ensure (isList)), bindF (subscriptF (i)))
-                ))
-              ),
+            currentCost: getCostForEntryWithSkillSel (misStringM)
+                                                     (wiki)
+                                                     (entry)
+                                                     (mselected),
             secondSelectOptions: getApps (mselected3),
             thirdSelectOptions: getApps (mselected2),
           })
@@ -589,7 +573,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                             fmap (cost => second (set (PABYL.currentCost)
                                                       (Just (isList (cost)
                                                         ? SAAL.category (IAA.wikiEntry (entry))
-                                                          === Categories.SPECIAL_ABILITIES
+                                                          === Category.SPECIAL_ABILITIES
                                                           ? pipe_ (cost, take (selectedLevel), sum)
                                                           : pipe_ (
                                                               cost,
@@ -899,17 +883,24 @@ const getPropsForEntryWithSkillSel =
         cost: Nothing,
       }),
       PropertiesAffectedByState ({
-        currentCost:
-          pipe_ (
-            mselected,
-            ensureId,
-            bindF (getWikiEntry (wiki)),
-            bindF (ensure (isSkillishWikiEntry)),
-            bindF (pipe (
-              SkAL.ic,
-              dec,
-              i => pipe_ (entry, IAA.cost, bindF (ensure (isList)), bindF (subscriptF (i)))
-            ))
-          ),
+        currentCost: getCostForEntryWithSkillSel (ensureId)
+                                                 (wiki)
+                                                 (entry)
+                                                 (mselected),
       })
+    )
+
+const getCostForEntryWithSkillSel =
+  (ensureId: (x: Maybe<number | string>) => Maybe<string>) =>
+  (wiki: WikiModelRecord) =>
+  (entry: Record<InactiveActivatable>) =>
+    pipe (
+      ensureId,
+      bindF (getWikiEntry (wiki)),
+      bindF (ensure (isSkillishWikiEntry)),
+      bindF (pipe (
+        SkAL.ic,
+        dec,
+        i => pipe_ (entry, IAA.cost, bindF (ensure (isList)), bindF (subscriptF (i)))
+      ))
     )

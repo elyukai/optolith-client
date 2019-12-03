@@ -1,58 +1,55 @@
 import { fmap } from "../../../../../Data/Functor";
 import { notNull, notNullStr } from "../../../../../Data/List";
-import { Just, Nothing } from "../../../../../Data/Maybe";
+import { fromMaybe, joinMaybeList, Just, Nothing } from "../../../../../Data/Maybe";
 import { Pair } from "../../../../../Data/Tuple";
 import { IdPrefixes } from "../../../../Constants/IdPrefixes";
 import { SelectOption } from "../../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../../IDUtils";
 import { Expect } from "../../Expect";
-import { mergeRowsByIdAndMainIdUnivOpt } from "../MergeRows";
+import { mergeRowsByIdAndMainIdBothOpt } from "../MergeRows";
 import { modifyNegIntNoBreak } from "../SourceHelpers";
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapBoolean, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional } from "../Validators/ToValue";
+import { mensureMapBoolean, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapStringPredListOptional } from "../Validators/ToValue";
 import { toErrata } from "./Sub/toErrata";
 import { toSpellPrerequisites } from "./Sub/toPrerequisites";
-import { toSourceLinks } from "./Sub/toSourceLinks";
+import { toSourceLinksOpt } from "./Sub/toSourceLinks";
 
 export const toActivatableSelectOption =
   (prefix: IdPrefixes) =>
-    mergeRowsByIdAndMainIdUnivOpt
+    mergeRowsByIdAndMainIdBothOpt
       ("toActivatableSelectOption")
-      (mainId => id => lookup_l10n => lookup_univ => {
+      (mainId => id => lookup_row => {
         // Shortcuts
-
-        const checkL10nNonEmptyString =
-          lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
         const checkL10nNonEmptyStringList =
           lookupKeyValid (mensureMapStringPredListOptional (notNullStr)
                                                            (Expect.NonEmptyString)
                                                            ("&"))
                          (TableType.L10n)
-                         (lookup_l10n)
+                         (lookup_row)
 
         const checkUnivNaturalNumberListOptional =
-          lookupKeyValid (mensureMapNaturalListOptional ("&")) (TableType.Univ) (lookup_univ)
+          lookupKeyValid (mensureMapNaturalListOptional ("&")) (TableType.Univ) (lookup_row)
 
         const checkOptionalUnivNaturalNumber =
-          lookupKeyValid (mensureMapNaturalOptional) (TableType.Univ) (lookup_univ)
+          lookupKeyValid (mensureMapNaturalOptional) (TableType.Univ) (lookup_row)
 
         const checkUnivBoolean =
-          lookupKeyValid (mensureMapBoolean) (TableType.Univ) (lookup_univ)
+          lookupKeyValid (mensureMapBoolean) (TableType.Univ) (lookup_row)
 
         // Check and convert fields
 
-        const ename = checkL10nNonEmptyString ("name")
+        const name = lookup_row ("name")
 
         const ecost = checkOptionalUnivNaturalNumber ("cost")
 
-        const eprerequisites = toSpellPrerequisites (lookup_univ)
+        const eprerequisites = toSpellPrerequisites (lookup_row)
 
-        const description = lookup_l10n ("description")
+        const description = lookup_row ("description")
 
-        const esrc = toSourceLinks (lookup_l10n)
+        const esrc = toSourceLinksOpt (lookup_row)
 
-        const eerrata = toErrata (lookup_l10n)
+        const eerrata = toErrata (lookup_row)
 
         const eisSecret = checkUnivBoolean ("isSecret")
 
@@ -61,14 +58,14 @@ export const toActivatableSelectOption =
         const econtinent =
           lookupKeyValid (mensureMapNaturalInRangeOptional (1) (3))
                          (TableType.Univ)
-                         (lookup_univ)
+                         (lookup_row)
                          ("continent")
 
         const eisExtinct = checkUnivBoolean ("isExtinct")
 
         const especializations = checkL10nNonEmptyStringList ("specializations")
 
-        const specializationInput = lookup_l10n ("specializationInput")
+        const specializationInput = lookup_row ("specializationInput")
 
         const egr = checkOptionalUnivNaturalNumber ("gr")
 
@@ -78,7 +75,6 @@ export const toActivatableSelectOption =
 
         return mapMNamed
           ({
-            ename,
             ecost,
             eprerequisites,
             esrc,
@@ -95,7 +91,7 @@ export const toActivatableSelectOption =
             prefixId (prefix) (mainId),
             SelectOption ({
               id,
-              name: rs.ename,
+              name: fromMaybe ("") (name),
               cost: rs.ecost,
               prerequisites: notNull (rs.eprerequisites) ? Just (rs.eprerequisites) : Nothing,
               description: fmap (modifyNegIntNoBreak) (description),
@@ -107,7 +103,7 @@ export const toActivatableSelectOption =
               specializationInput,
               gr: rs.egr,
               level: rs.elevel,
-              src: rs.esrc,
+              src: joinMaybeList (rs.esrc),
               errata: rs.eerrata,
             })
           ))

@@ -8,7 +8,7 @@ import { member, OrderedSet } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
 import { fst, Pair, snd, Tuple } from "../../Data/Tuple";
 import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
-import { ActivatableCategory, Categories } from "../Constants/Categories";
+import { ActivatableCategory, Category } from "../Constants/Categories";
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
@@ -250,11 +250,11 @@ export const getDisadvantagesRating = createMaybeSelector (
 )
 
 export const getAdvantagesForSheet = createMaybeSelector (
-  getActiveForView (Categories.ADVANTAGES),
+  getActiveForView (Category.ADVANTAGES),
   ident
 )
 
-export const getAdvantagesForEditMap = getActiveForViewMap (Categories.ADVANTAGES)
+export const getAdvantagesForEditMap = getActiveForViewMap (Category.ADVANTAGES)
 
 export const getAdvantagesForEdit = mapCurrentHero (getAdvantagesForEditMap)
 
@@ -273,11 +273,11 @@ export const getFilteredActiveAdvantages = createMaybeSelector (
 )
 
 export const getDisadvantagesForSheet = createMaybeSelector (
-  getActiveForView (Categories.DISADVANTAGES),
+  getActiveForView (Category.DISADVANTAGES),
   ident
 )
 
-export const getDisadvantagesForEditMap = getActiveForViewMap (Categories.DISADVANTAGES)
+export const getDisadvantagesForEditMap = getActiveForViewMap (Category.DISADVANTAGES)
 
 export const getDisadvantagesForEdit = mapCurrentHero (getDisadvantagesForEditMap)
 
@@ -296,11 +296,11 @@ export const getFilteredActiveDisadvantages = createMaybeSelector (
 )
 
 export const getSpecialAbilitiesForSheet = createMaybeSelector (
-  getActiveForView (Categories.SPECIAL_ABILITIES),
+  getActiveForView (Category.SPECIAL_ABILITIES),
   ident
 )
 
-export const getSpecialAbilitiesForEditMap = getActiveForViewMap (Categories.SPECIAL_ABILITIES)
+export const getSpecialAbilitiesForEditMap = getActiveForViewMap (Category.SPECIAL_ABILITIES)
 
 export const getSpecialAbilitiesForEdit = mapCurrentHero (getSpecialAbilitiesForEditMap)
 

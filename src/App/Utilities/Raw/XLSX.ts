@@ -1,21 +1,21 @@
 import * as path from "path";
 import { bind, Either, first, fromRight_, isLeft, Left, maybeToEither } from "../../../Data/Either";
 import { equals } from "../../../Data/Eq";
-import { flip, thrush } from "../../../Data/Function";
+import { flip, ident, on, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { Lens_, over, set } from "../../../Data/Lens";
-import { all, append, consF, elemF, empty, foldr, List, map, notElemF } from "../../../Data/List";
-import { ensure, fromMaybe, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
+import { all, append, consF, elemF, findIndex, foldr, List, map, modifyAt, notElemF, notNull } from "../../../Data/List";
+import { alt, ensure, fromMaybe, joinMaybeList, Just, mapMaybe, Maybe, maybe, maybe_, Nothing } from "../../../Data/Maybe";
 import { lt } from "../../../Data/Num";
-import { adjust, elems, insert, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
-import { makeLenses, member, Record } from "../../../Data/Record";
+import { adjust, elems, foldrWithKey, insert, insertWith, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
+import { member, Record } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
+import { curryN, uncurryN } from "../../../Data/Tuple/Curry";
 import { trace } from "../../../Debug/Trace";
 import { ReduxAction } from "../../Actions/Actions";
-import { Categories } from "../../Constants/Categories";
-import { SkillGroup } from "../../Constants/Groups";
+import { Category } from "../../Constants/Categories";
 import { ProfessionId, SpecialAbilityId } from "../../Constants/Ids";
-import { AdvantageL } from "../../Models/Wiki/Advantage";
+import { Advantage, AdvantageL } from "../../Models/Wiki/Advantage";
 import { DisadvantageL } from "../../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { getCustomProfession } from "../../Models/Wiki/Profession";
@@ -29,6 +29,7 @@ import { app_path } from "../../Selectors/envSelectors";
 import { pipe, pipe_ } from "../pipe";
 import { getWikiSliceGetterByCategory } from "../WikiUtils";
 import { csvToList } from "./XLSX/CSVtoList";
+import { AutomatedCategory } from "./XLSX/Entries/Sub/toOptionalCategoryList";
 import { toAdvantage } from "./XLSX/Entries/toAdvantage";
 import { toAdvantageSelectOption } from "./XLSX/Entries/toAdvantageSelectOption";
 import { toAttribute } from "./XLSX/Entries/toAttribute";
@@ -54,31 +55,15 @@ import { toSpecialAbility } from "./XLSX/Entries/toSpecialAbility";
 import { toSpecialAbilitySelectOption } from "./XLSX/Entries/toSpecialAbilitySelectOption";
 import { toSpell } from "./XLSX/Entries/toSpell";
 import { toSpellExtension } from "./XLSX/Entries/toSpellExtension";
-import { l10nRowsMatchUnivToList, l10nRowsToMap, univRowsMatchL10nToList, univRowsMatchL10nToMap, univRowsToMap } from "./XLSX/SheetToRecords";
+import { bothOptRowsByIdAndMainIdToList, l10nRowsToMap, univRowsMatchL10nToList, univRowsMatchL10nToMap, univRowsToMap } from "./XLSX/SheetToRecords";
 import { mapMNamed } from "./XLSX/Validators/Generic";
 import { readXLSX } from "./XLSX/XLSXtoCSV";
 
-const { select } = makeLenses (SpecialAbility)
-
-const matchSelectOptionsToBaseRecords =
-  flip (foldr ((p: Pair<string, Record<SelectOption>>) =>
-                 adjust (over (select as Lens_<Activatable, Maybe<List<Record<SelectOption>>>>)
-                              (pipe (
-                                fromMaybe<List<Record<SelectOption>>> (empty),
-                                consF (snd (p)),
-                                Just
-                              )))
-                        (fst (p)))) as
-    (xs: List<Pair<string, Record<SelectOption>>>) =>
-    <A extends Activatable>
-    (initial: OrderedMap<string, A>) => OrderedMap<string, A>
-
-const matchExtensionsToBaseRecord: (extensions: List<Record<SelectOption>>) =>
-                                   (key: string) =>
-                                   (mp: OrderedMap<string, Record<SpecialAbility>>) =>
-                                   OrderedMap<string, Record<SpecialAbility>> =
-  (extensions: List<Record<SelectOption>>) =>
-    adjust (set (select) (Just (extensions)))
+const AAL = Advantage.AL
+const AL = AdvantageL
+const DL = DisadvantageL
+const SAL = SpecialAbilityL
+const SOA = SelectOption.A
 
 const univ_path = path.join (app_path, "app", "Database", "univ.xlsx")
 
@@ -211,11 +196,11 @@ const parseWorkbooks =
                                                         ("ADVANTAGES")
                                                         (12))
 
-    const advantageSelectOptions = dispatch (l10nRowsMatchUnivToList (lookup_l10n)
-                                                                     (lookup_univ)
-                                                                     (toAdvantageSelectOption)
-                                                                     ("AdvantagesSelections")
-                                                                     (13))
+    const advantageSelectOptions = dispatch (bothOptRowsByIdAndMainIdToList (lookup_l10n)
+                                                               (lookup_univ)
+                                                               (toAdvantageSelectOption)
+                                                               ("AdvantagesSelections")
+                                                               (13))
 
     const disadvantages = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                            (lookup_univ)
@@ -223,11 +208,11 @@ const parseWorkbooks =
                                                            ("DISADVANTAGES")
                                                            (14))
 
-    const disadvantageSelectOptions = dispatch (l10nRowsMatchUnivToList (lookup_l10n)
-                                                                        (lookup_univ)
-                                                                        (toDisadvantageSelectOption)
-                                                                        ("DisadvantagesSelections")
-                                                                        (15))
+    const disadvantageSelectOptions = dispatch (bothOptRowsByIdAndMainIdToList (lookup_l10n)
+                                                                  (lookup_univ)
+                                                                  (toDisadvantageSelectOption)
+                                                                  ("DisadvantagesSelections")
+                                                                  (15))
 
     const skills = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                     (lookup_univ)
@@ -284,11 +269,11 @@ const parseWorkbooks =
                                                               (24))
 
     const specialAbilitySelectOptions =
-      dispatch (l10nRowsMatchUnivToList (lookup_l10n)
-                                        (lookup_univ)
-                                        (toSpecialAbilitySelectOption)
-                                        ("SpecialAbilitiesSelections")
-                                        (25))
+      dispatch (bothOptRowsByIdAndMainIdToList (lookup_l10n)
+                                  (lookup_univ)
+                                  (toSpecialAbilitySelectOption)
+                                  ("SpecialAbilitiesSelections")
+                                  (25))
 
     const itemTemplates = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                            (lookup_univ)
@@ -355,32 +340,19 @@ const parseWorkbooks =
                                       (getCustomProfession (rs.l10n))),
                   w => over (WikiModelL.advantages)
                             (pipe (
-                              OrderedMap.map (over (AdvantageL.select)
-                                                  (fmap (mapCatToSelectOptions (w)))),
+                              OrderedMap.map (over (AL.select)
+                                                   (fmap (mapCatToSelectOptions (w)))),
                               matchSelectOptionsToBaseRecords (rs.advantageSelectOptions)
                             ))
                             (w),
                   w => over (WikiModelL.disadvantages)
                             (pipe (
-                              OrderedMap.map (over (DisadvantageL.select)
-                                                  (fmap (mapCatToSelectOptions (w)))),
+                              OrderedMap.map (over (DL.select)
+                                                   (fmap (mapCatToSelectOptions (w)))),
                               matchSelectOptionsToBaseRecords (rs.disadvantageSelectOptions)
                             ))
                             (w),
                   w => {
-                    const knowledge_skills =
-                      mapMaybe (pipe (
-                                ensure (pipe (Skill.A.gr, equals (SkillGroup.Knowledge))),
-                                fmap (x => SelectOption ({
-                                              id: Skill.A.id (x),
-                                              name: Skill.A.name (x),
-                                              cost: Just (Skill.A.ic (x)),
-                                              src: Skill.A.src (x),
-                                              errata: Nothing,
-                                            }))
-                              ))
-                              (elems (WikiModel.A.skills (w)))
-
                     const skills_with_apps =
                       map ((x: Record<Skill>) => SelectOption ({
                                                   id: Skill.A.id (x),
@@ -397,23 +369,14 @@ const parseWorkbooks =
                                 (pipe (
                                   OrderedMap.map (x => {
                                     switch (SpecialAbility.A.id (x)) {
-                                      case SpecialAbilityId.Forschungsgebiet:
-                                      case SpecialAbilityId.Expertenwissen:
-                                      case SpecialAbilityId.Wissensdurst:
-                                      case SpecialAbilityId.Recherchegespuer: {
-                                        return set (SpecialAbilityL.select)
-                                                   (Just (knowledge_skills))
-                                                   (x)
-                                      }
-
                                       case SpecialAbilityId.SkillSpecialization: {
-                                        return set (SpecialAbilityL.select)
+                                        return set (SAL.select)
                                                    (Just (skills_with_apps))
                                                    (x)
                                       }
 
                                       case SpecialAbilityId.TraditionGuildMages: {
-                                        return over (SpecialAbilityL.select)
+                                        return over (SAL.select)
                                                     (fmap (mapCatToSelectOptionsPred
                                                             (noGuildMageSkill)
                                                             (w)))
@@ -421,7 +384,7 @@ const parseWorkbooks =
                                       }
 
                                       default:
-                                        return over (SpecialAbilityL.select)
+                                        return over (SAL.select)
                                                     (fmap (mapCatToSelectOptions (w)))
                                                     (x)
                                     }
@@ -438,28 +401,131 @@ const parseWorkbooks =
               )))
   }
 
+const mergeSelectOptions: (old_entry: Activatable) =>
+                          (custom_sel: Record<SelectOption>) =>
+                          (sel_from_wiki_entry: Record<SelectOption>) => Record<SelectOption> =
+  old_entry => custom_sel => sel_from_wiki_entry =>
+    SelectOption ({
+      id: SOA.id (sel_from_wiki_entry),
+      name: SOA.name (sel_from_wiki_entry),
+      cost: alt (SOA.cost (sel_from_wiki_entry)) (SOA.cost (custom_sel)),
+      src: fromMaybe (AAL.src (old_entry)) (ensure (notNull) (SOA.src (custom_sel))),
+      errata: SOA.errata (custom_sel),
+      prerequisites: SOA.prerequisites (custom_sel),
+      description: alt (SOA.description (sel_from_wiki_entry))
+                       (SOA.description (custom_sel)),
+      isSecret: alt (SOA.isSecret (sel_from_wiki_entry))
+                    (SOA.isSecret (custom_sel)),
+      languages: alt (SOA.languages (sel_from_wiki_entry))
+                     (SOA.languages (custom_sel)),
+      continent: alt (SOA.continent (sel_from_wiki_entry))
+                     (SOA.continent (custom_sel)),
+      isExtinct: alt (SOA.isExtinct (sel_from_wiki_entry))
+                     (SOA.isExtinct (custom_sel)),
+      specializations: alt (SOA.specializations (sel_from_wiki_entry))
+                           (SOA.specializations (custom_sel)),
+      specializationInput: alt (SOA.specializationInput (sel_from_wiki_entry))
+                               (SOA.specializationInput (custom_sel)),
+      gr: alt (SOA.gr (sel_from_wiki_entry))
+              (SOA.gr (custom_sel)),
+      level: alt (SOA.level (sel_from_wiki_entry))
+                 (SOA.level (custom_sel)),
+      target: alt (SOA.target (sel_from_wiki_entry))
+                  (SOA.target (custom_sel)),
+      applications: alt (SOA.applications (sel_from_wiki_entry))
+                        (SOA.applications (custom_sel)),
+      applicationInput: alt (SOA.applicationInput (sel_from_wiki_entry))
+                            (SOA.applicationInput (custom_sel)),
+    })
+
+const addSelectOptionToList: (old_entry: Activatable) =>
+                             (new_sel: Record<SelectOption>) => ident<List<Record<SelectOption>>> =
+  entry => sel => sels => maybe_ (() => consF (sel))
+                                 ((i: number) => modifyAt (i) (mergeSelectOptions (entry) (sel)))
+                                 (findIndex (pipe (SOA.id, equals (SOA.id (sel)))) (sels))
+                                 (sels)
+
+const matchSelectOptionsToBaseRecords =
+  flip (foldr ((p: Pair<string, Record<SelectOption>>) =>
+                 adjust ((x: Activatable) =>
+                          over (SAL.select as Lens_<Activatable, Maybe<List<Record<SelectOption>>>>)
+                               (pipe (
+                                 fromMaybe<List<Record<SelectOption>>> (List ()),
+                                 addSelectOptionToList (x) (snd (p)),
+                                 Just
+                               ))
+                               (x))
+                        (fst (p)))) as
+    (xs: List<Pair<string, Record<SelectOption>>>) =>
+    <A extends Activatable>
+    (initial: OrderedMap<string, A>) => OrderedMap<string, A>
+
+const matchExtensionsToBaseRecord: (extensions: List<Record<SelectOption>>) =>
+                                   (key: string) =>
+                                   (mp: OrderedMap<string, Record<SpecialAbility>>) =>
+                                   OrderedMap<string, Record<SpecialAbility>> =
+  (extensions: List<Record<SelectOption>>) =>
+    adjust (set (SAL.select) (Just (extensions)))
+
+type CategoryGroups = Maybe<List<number>>
+type CategoryMap = OrderedMap<AutomatedCategory, CategoryGroups>
+
 const mapCatToSelectOptions =
   (wiki: WikiModelRecord) =>
-    foldr ((x: Record<SelectOption>) => {
-            const cat = (SelectOption.A.id as (x: Record<SelectOption>) => Categories) (x)
+    pipe (
+      selectOptionsToCategories,
+      foldrWithKey ((cat: AutomatedCategory) => (mgrs: CategoryGroups) =>
+                     pipe_ (
+                       wiki,
+                       getWikiSliceGetterByCategory (cat) as
+                         (w: WikiModelRecord) => OrderedMap<string, Skillish>,
+                       maybe (addAllForCategory (cat))
+                             (addGroupsOfCategory)
+                             (mgrs)
+                     ))
+                   (List ())
+    )
 
-            return pipe_ (
-              cat,
-              getWikiSliceGetterByCategory as
-                (c: Categories) =>
-                  (x: Record<WikiModel>) => OrderedMap<string, Skillish>,
-              thrush (wiki),
-              elems,
-              cat === Categories.SPELLS
-                ? mapMaybe (pipe (
-                    ensure<Skillish> (pipe (Skill.AL.gr, lt (3))),
-                    fmap (skillishToSelectOption)
-                  ))
-                : map (skillishToSelectOption),
-              append
-            )
-          })
-          (List ())
+
+const selectOptionsToCategories =
+  foldr ((x: Record<SelectOption>) =>
+          maybe <ident<CategoryMap>>
+                (insert (SOA.id (x) as AutomatedCategory)
+                        <CategoryGroups> (Nothing))
+                ((gr: number) => insertWith <CategoryGroups>
+                                            (curryN (pipe (
+                                              uncurryN (on (append as append<number>)
+                                                           (joinMaybeList)),
+                                              ensure (notNull)
+                                            )))
+                                            (SOA.id (x) as AutomatedCategory)
+                                            (Just (List (gr))))
+                (SOA.gr (x)))
+        (OrderedMap.empty)
+
+const addGroupsOfCategory: (grs: List<number>) =>
+                           (mp: OrderedMap<string, Skillish>) => ident<List<Record<SelectOption>>> =
+  grs => pipe (
+    elems,
+    mapMaybe (pipe (
+      ensure<Skillish> (pipe (Skill.AL.gr, elemF (grs))),
+      fmap (skillishToSelectOption)
+    )),
+    append
+  )
+
+const addAllForCategory: (category: AutomatedCategory) =>
+                         (mp: OrderedMap<string, Skillish>) => ident<List<Record<SelectOption>>> =
+  cat => pipe (
+    elems,
+    cat === Category.SPELLS
+      ? mapMaybe (pipe (
+          ensure<Skillish> (pipe (Skill.AL.gr, lt (3))),
+          fmap (skillishToSelectOption)
+        ))
+      : map (skillishToSelectOption),
+    append
+  )
 
 const skillishToSelectOption =
   (r: Skillish) =>
@@ -475,9 +541,9 @@ const mapCatToSelectOptionsPred =
   (pred: (x: Skillish) => boolean) =>
   (wiki: WikiModelRecord) =>
     foldr (pipe (
-              SelectOption.A.id as (x: Record<SelectOption>) => Categories,
+              SelectOption.A.id as (x: Record<SelectOption>) => Category,
               getWikiSliceGetterByCategory as
-                (c: Categories) =>
+                (c: Category) =>
                   (x: Record<WikiModel>) => OrderedMap<string, Skillish>,
               thrush (wiki),
               elems,

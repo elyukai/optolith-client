@@ -1,7 +1,7 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { Application } from "./sub/Application";
 import { Erratum } from "./sub/Errata";
 import { SourceLink } from "./sub/SourceLink";
@@ -11,7 +11,7 @@ export interface Skill {
   "@@name": "Skill"
   id: string
   name: string
-  category: Categories
+  category: Category
   check: List<string>
   encumbrance: string
   encumbranceDescription: Maybe<string>
@@ -34,7 +34,7 @@ export const Skill =
               <Skill> ({
                 id: "",
                 name: "",
-                category: Categories.TALENTS,
+                category: Category.SKILLS,
                 check: List.empty,
                 encumbrance: "",
                 encumbranceDescription: Nothing,
@@ -53,4 +53,4 @@ export const Skill =
               })
 
 export const isSkill =
-  (r: EntryWithCategory) => Skill.AL.category (r) === Categories.TALENTS
+  (r: EntryWithCategory) => Skill.AL.category (r) === Category.SKILLS

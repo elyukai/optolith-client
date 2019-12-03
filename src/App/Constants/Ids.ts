@@ -330,6 +330,7 @@ export enum SpecialAbilityId {
   GaretherGossenStil = "SA_901",
   WegDerGelehrten = "SA_1040",
   TraditionCultOfNuminoru = "SA_1049",
+  WegDerKuenstlerin = "SA_1069",
   WegDerSchreiberin = "SA_1075",
   Fachwissen = "SA_1100",
   Handwerkskunst = "SA_1108",
