@@ -8,7 +8,7 @@ import { localizeNumber, localizeWeight, translate } from "../../Utilities/I18n"
 import { TextField } from "../Universal/TextField";
 
 export interface PurseAndTotalsProps {
-  carryingCapacity: Maybe<number>
+  carryingCapacity: number
   hasNoAddedAP: boolean
   initialStartingWealth: number
   l10n: L10nRecord
@@ -23,7 +23,7 @@ export interface PurseAndTotalsProps {
 
 const PA = Purse.A
 
-export function PurseAndTotals (props: PurseAndTotalsProps) {
+export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
   const {
     carryingCapacity,
     hasNoAddedAP,
@@ -32,6 +32,10 @@ export function PurseAndTotals (props: PurseAndTotalsProps) {
     purse,
     totalPrice,
     totalWeight,
+    setDucates,
+    setSilverthalers,
+    setHellers,
+    setKreutzers,
   } = props
 
   const l10n_id = L10n.A.id (l10n)
@@ -44,22 +48,22 @@ export function PurseAndTotals (props: PurseAndTotalsProps) {
           <TextField
             label={translate (l10n) ("ducats")}
             value={fmapF (purse) (PA.d)}
-            onChange={props.setDucates}
+            onChange={setDucates}
             />
           <TextField
             label={translate (l10n) ("silverthalers")}
             value={fmapF (purse) (PA.s)}
-            onChange={props.setSilverthalers}
+            onChange={setSilverthalers}
             />
           <TextField
             label={translate (l10n) ("halers")}
             value={fmapF (purse) (PA.h)}
-            onChange={props.setHellers}
+            onChange={setHellers}
             />
           <TextField
             label={translate (l10n) ("kreutzers")}
             value={fmapF (purse) (PA.k)}
-            onChange={props.setKreutzers}
+            onChange={setKreutzers}
             />
         </div>
       </div>

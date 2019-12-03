@@ -40,7 +40,7 @@ export interface EquipmentOwnProps {
 
 export interface EquipmentStateProps {
   combatTechniques: Maybe<List<Record<CombatTechniqueWithRequirements>>>
-  carryingCapacity: Maybe<number>
+  carryingCapacity: number
   initialStartingWealth: number
   items: Maybe<List<Record<Item>>>
   hasNoAddedAP: boolean
@@ -53,7 +53,7 @@ export interface EquipmentStateProps {
   rangedItemTemplateCombatTechniqueFilter: Maybe<RangedCombatTechniqueId>
   filterText: string
   templatesFilterText: string
-  filteredEquipmentGroups: List<Record<DropdownOption>>
+  filteredEquipmentGroups: List<Record<DropdownOption<number>>>
 }
 
 export interface EquipmentDispatchProps {
@@ -100,222 +100,266 @@ const prepareCombatTechniquesForSelection =
       fromMaybe (List ())
     )
 
-export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
-  state = {
-    filterGroupSlidein: 1,
-    showAddSlidein: false,
-    currentId: Nothing,
-    currentSlideinId: Nothing,
+export const Equipment: React.FC<EquipmentProps> = props => {
+  const [filterGroupSlidein, setFilterGroupSlidein] = React.useState (1)
+  const [showAddSlidein, setShowAddSlidein] = React.useState (false)
+  const [infoId, setInfoId] = React.useState<Maybe<string>> (Nothing)
+  const [slideinInfoId, setSlideinInfoId] = React.useState<Maybe<string>> (Nothing)
+
+  const handleShowInfo = React.useCallback (
+    (id: string) => setInfoId (Just (id)),
+    [setInfoId]
+  )
+
+  const handleShowSlideinInfo = React.useCallback (
+    (id: string) => setSlideinInfoId (Just (id)),
+    [setSlideinInfoId]
+  )
+
+  const handleShowSlidein = React.useCallback (
+    () => setShowAddSlidein (true),
+    [setShowAddSlidein]
+  )
+
+  const handleHideSlidein = React.useCallback (
+    () => setShowAddSlidein (false),
+    [setShowAddSlidein]
+  )
+
+  const {
+    l10n,
+    combatTechniques: maybeCombatTechniques,
+    carryingCapacity,
+    initialStartingWealth,
+    items: mitems,
+    hasNoAddedAP,
+    purse,
+    sortOrder,
+    templates,
+    totalPrice,
+    totalWeight,
+    meleeItemTemplateCombatTechniqueFilter,
+    rangedItemTemplateCombatTechniqueFilter,
+    filterText,
+    templatesFilterText,
+    filteredEquipmentGroups,
+    setSortOrder,
+    setDucates,
+    setSilverthalers,
+    setHellers,
+    setKreutzers,
+    addTemplateToList,
+    createItem,
+    deleteItem,
+    editItem,
+    setMeleeItemTemplatesCombatTechniqueFilter,
+    setRangedItemTemplatesCombatTechniqueFilter,
+    setFilterText,
+    setTemplatesFilterText,
+  } = props
+
+  const getHasValidCombatTechnique = (e: Record<ItemTemplate>) =>
+    isJust (meleeItemTemplateCombatTechniqueFilter) && ITA.gr (e) === 1
+      ? elem (fromJust (meleeItemTemplateCombatTechniqueFilter))
+             (ITA.combatTechnique (e) as Maybe<MeleeCombatTechniqueId>)
+      : isJust (rangedItemTemplateCombatTechniqueFilter) && ITA.gr (e) === 2
+      ? elem (fromJust (rangedItemTemplateCombatTechniqueFilter))
+             (ITA.combatTechnique (e) as Maybe<RangedCombatTechniqueId>)
+      : true
+
+  const filterTemplatesByIsActive = (e: Record<ItemTemplate>): boolean =>
+      Maybe.any (notP (any (
+             (item: Record<Item>) => elem (ITA.template (e)) (IA.template (item))
+                                     && IA.isTemplateLocked (item)
+           )))
+           (mitems)
+
+  const filterTemplatesByIsActiveAndInGroup = (e: Record<ItemTemplate>): boolean => {
+    const isGroup = ITA.gr (e) === filterGroupSlidein
+    const hasValidCombatTechnique = getHasValidCombatTechnique (e)
+    const isNotInList = filterTemplatesByIsActive (e)
+
+    return isGroup && hasValidCombatTechnique && isNotInList
   }
 
-  filterGroupSlidein = (gr: Maybe<number>) => {
-    if (isJust (gr)) {
-      this.setState ({ filterGroupSlidein: fromJust (gr) })
-    }
-  }
-  showInfo = (id: string) => this.setState ({ currentId: Just (id) })
-  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: Just (id) })
+  const meleeCombatTechniques = prepareCombatTechniquesForSelection (1) (maybeCombatTechniques)
+  const rangedCombatTechniques = prepareCombatTechniquesForSelection (2) (maybeCombatTechniques)
 
-  showAddSlidein = () => this.setState ({ showAddSlidein: true })
-  hideAddSlidein = () => this.setState ({ showAddSlidein: false })
+  const templateList =
+    templatesFilterText.length === 0
+      ? filter (filterTemplatesByIsActiveAndInGroup) (templates)
+      : filter (filterTemplatesByIsActive) (templates)
 
-  render () {
-    const {
-      combatTechniques: maybeCombatTechniques,
-      items: mitems,
-      l10n,
-      sortOrder,
-      templates,
-      meleeItemTemplateCombatTechniqueFilter,
-      rangedItemTemplateCombatTechniqueFilter,
-      setMeleeItemTemplatesCombatTechniqueFilter,
-      setRangedItemTemplatesCombatTechniqueFilter,
-      filterText,
-      templatesFilterText,
-      filteredEquipmentGroups,
-    } = this.props
-
-    const { filterGroupSlidein, showAddSlidein } = this.state
-
-    const getHasValidCombatTechnique = (e: Record<ItemTemplate>) =>
-      isJust (meleeItemTemplateCombatTechniqueFilter) && ITA.gr (e) === 1
-        ? elem (fromJust (meleeItemTemplateCombatTechniqueFilter))
-               (ITA.combatTechnique (e) as Maybe<MeleeCombatTechniqueId>)
-        : isJust (rangedItemTemplateCombatTechniqueFilter) && ITA.gr (e) === 2
-        ? elem (fromJust (rangedItemTemplateCombatTechniqueFilter))
-               (ITA.combatTechnique (e) as Maybe<RangedCombatTechniqueId>)
-        : true
-
-    const filterTemplatesByIsActive = (e: Record<ItemTemplate>): boolean =>
-        Maybe.any (notP (any (
-               (item: Record<Item>) => elem (ITA.template (e)) (IA.template (item))
-                                       && IA.isTemplateLocked (item)
-             )))
-             (mitems)
-
-    const filterTemplatesByIsActiveAndInGroup = (e: Record<ItemTemplate>): boolean => {
-      const isGroup = ITA.gr (e) === filterGroupSlidein
-      const hasValidCombatTechnique = getHasValidCombatTechnique (e)
-      const isNotInList = filterTemplatesByIsActive (e)
-
-      return isGroup && hasValidCombatTechnique && isNotInList
-    }
-
-    const meleeCombatTechniques = prepareCombatTechniquesForSelection (1) (maybeCombatTechniques)
-    const rangedCombatTechniques = prepareCombatTechniquesForSelection (2) (maybeCombatTechniques)
-
-    const templateList =
-      templatesFilterText.length === 0
-        ? filter (filterTemplatesByIsActiveAndInGroup) (templates)
-        : filter (filterTemplatesByIsActive) (templates)
-
-    return (
-      <Page id="equipment">
-        <Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
-          <Options>
-            <SearchField
-              l10n={l10n}
-              value={templatesFilterText}
-              onChange={this.props.setTemplatesFilterText}
-              fullWidth
-              />
-            <Dropdown
-              value={Just (filterGroupSlidein)}
-              onChange={this.filterGroupSlidein}
-              options={filteredEquipmentGroups}
-              fullWidth
-              />
-            {filterGroupSlidein === 1
-              ? <Dropdown
-                  value={meleeItemTemplateCombatTechniqueFilter}
-                  onChange={setMeleeItemTemplatesCombatTechniqueFilter}
-                  options={
-                    cons (meleeCombatTechniques)
-                         (DropdownOption ({
-                           name: translate (l10n) ("allcombattechniques"),
-                         })) as List<Record<DropdownOption<MeleeCombatTechniqueId>>>
-                  }
-                  fullWidth
-                  />
-              : null}
-            {filterGroupSlidein === 2
-              ? <Dropdown
-                  value={rangedItemTemplateCombatTechniqueFilter}
-                  onChange={setRangedItemTemplatesCombatTechniqueFilter}
-                  options={
-                    cons (rangedCombatTechniques)
-                         (DropdownOption ({
-                           name: translate (l10n) ("allcombattechniques"),
-                         })) as List<Record<DropdownOption<RangedCombatTechniqueId>>>
-                  }
-                  fullWidth
-                  />
-              : null}
-          </Options>
-          <MainContent>
-            <ListHeader>
-              <ListHeaderTag className="name">
-                {translate (l10n) ("name")}
-              </ListHeaderTag>
-              <ListHeaderTag className="btn-placeholder" />
-            </ListHeader>
-            <Scroll>
-              <ListView>
-                {pipe_ (
-                  templateList,
-                  ensure (notNull),
-                  fmap (pipe (
-                    map (
-                      obj => (
-                        <EquipmentListItem
-                          {...this.props}
-                          key={ITA.id (obj)}
-                          data={fromItemTemplate (ITA.id (obj)) (obj)}
-                          selectForInfo={this.showSlideinInfo}
-                          selectedForInfo={this.state.currentSlideinId}
-                          add
-                          />
-                      )
-                    ),
-                    toArray,
-                    arr => <>{arr}</>
-                  )),
-                  fromMaybe (<ListPlaceholder l10n={l10n} type="itemTemplates" noResults />)
-                )}
-              </ListView>
-            </Scroll>
-          </MainContent>
-          <WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
-        </Slidein>
+  return (
+    <Page id="equipment">
+      <Slidein isOpen={showAddSlidein} close={handleHideSlidein}>
         <Options>
           <SearchField
             l10n={l10n}
-            value={filterText}
-            onChange={this.props.setFilterText}
+            value={templatesFilterText}
+            onChange={setTemplatesFilterText}
             fullWidth
             />
-          <SortOptions
-            options={List (SortNames.Name, SortNames.GroupName, SortNames.Where, SortNames.Weight)}
-            sortOrder={sortOrder}
-            sort={this.props.setSortOrder}
-            l10n={l10n}
+          <Dropdown<number>
+            value={Just (filterGroupSlidein)}
+            onChangeJust={setFilterGroupSlidein}
+            options={filteredEquipmentGroups}
+            fullWidth
             />
-          <BorderButton
-            label={translate (l10n) ("add")}
-            onClick={this.showAddSlidein}
-            />
-          <BorderButton
-            label={translate (l10n) ("create")}
-            onClick={this.props.createItem}
-            />
+          {filterGroupSlidein === 1
+            ? (
+              <Dropdown
+                value={meleeItemTemplateCombatTechniqueFilter}
+                onChange={setMeleeItemTemplatesCombatTechniqueFilter}
+                options={
+                  cons (meleeCombatTechniques)
+                       (DropdownOption ({
+                         name: translate (l10n) ("allcombattechniques"),
+                       })) as List<Record<DropdownOption<MeleeCombatTechniqueId>>>
+                }
+                fullWidth
+                />
+              )
+            : null}
+          {filterGroupSlidein === 2
+            ? (
+              <Dropdown
+                value={rangedItemTemplateCombatTechniqueFilter}
+                onChange={setRangedItemTemplatesCombatTechniqueFilter}
+                options={
+                  cons (rangedCombatTechniques)
+                       (DropdownOption ({
+                         name: translate (l10n) ("allcombattechniques"),
+                       })) as List<Record<DropdownOption<RangedCombatTechniqueId>>>
+                }
+                fullWidth
+                />
+              )
+            : null}
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
               {translate (l10n) ("name")}
             </ListHeaderTag>
-            <ListHeaderTag className="group">
-              {translate (l10n) ("group")}
-              </ListHeaderTag>
-            <ListHeaderTag className="btn-placeholder" />
-            <ListHeaderTag className="btn-placeholder" />
             <ListHeaderTag className="btn-placeholder" />
           </ListHeader>
           <Scroll>
             <ListView>
               {pipe_ (
-                mitems,
-                bindF (ensure (notNull)),
+                templateList,
+                ensure (notNull),
                 fmap (pipe (
                   map (
                     obj => (
                       <EquipmentListItem
-                        {...this.props}
-                        key={IA.id (obj)}
-                        data={obj}
-                        selectForInfo={this.showInfo}
-                        selectedForInfo={this.state.currentId}
+                        key={ITA.id (obj)}
+                        data={fromItemTemplate (ITA.id (obj)) (obj)}
+                        l10n={l10n}
+                        selectedForInfo={slideinInfoId}
+                        addTemplateToList={addTemplateToList}
+                        deleteItem={deleteItem}
+                        editItem={editItem}
+                        selectForInfo={handleShowSlideinInfo}
+                        add
                         />
                     )
                   ),
                   toArray,
                   arr => <>{arr}</>
                 )),
-                fromMaybe (<ListPlaceholder
-                              l10n={l10n}
-                              type="equipment"
-                              noResults={filterText.length > 0}
-                              />)
+                fromMaybe (<ListPlaceholder l10n={l10n} type="itemTemplates" noResults />)
               )}
             </ListView>
           </Scroll>
         </MainContent>
-        <Aside>
-          <PurseAndTotals {...this.props} />
-          <WikiInfoContainer {...this.props} {...this.state} noWrapper />
-        </Aside>
-        <ItemEditorContainer l10n={l10n} />
-      </Page>
-    )
-  }
+        <WikiInfoContainer l10n={l10n} currentId={slideinInfoId} />
+      </Slidein>
+      <Options>
+        <SearchField
+          l10n={l10n}
+          value={filterText}
+          onChange={setFilterText}
+          fullWidth
+          />
+        <SortOptions
+          options={List (SortNames.Name, SortNames.GroupName, SortNames.Where, SortNames.Weight)}
+          sortOrder={sortOrder}
+          sort={setSortOrder}
+          l10n={l10n}
+          />
+        <BorderButton
+          label={translate (l10n) ("add")}
+          onClick={handleShowSlidein}
+          />
+        <BorderButton
+          label={translate (l10n) ("create")}
+          onClick={createItem}
+          />
+      </Options>
+      <MainContent>
+        <ListHeader>
+          <ListHeaderTag className="name">
+            {translate (l10n) ("name")}
+          </ListHeaderTag>
+          <ListHeaderTag className="group">
+            {translate (l10n) ("group")}
+          </ListHeaderTag>
+          <ListHeaderTag className="btn-placeholder" />
+          <ListHeaderTag className="btn-placeholder" />
+          <ListHeaderTag className="btn-placeholder" />
+        </ListHeader>
+        <Scroll>
+          <ListView>
+            {pipe_ (
+              mitems,
+              bindF (ensure (notNull)),
+              fmap (pipe (
+                map (
+                  obj => (
+                    <EquipmentListItem
+                      key={IA.id (obj)}
+                      data={obj}
+                      l10n={l10n}
+                      selectedForInfo={infoId}
+                      addTemplateToList={addTemplateToList}
+                      deleteItem={deleteItem}
+                      editItem={editItem}
+                      selectForInfo={handleShowInfo}
+                      />
+                  )
+                ),
+                toArray,
+                arr => <>{arr}</>
+              )),
+              fromMaybe (
+                <ListPlaceholder
+                  l10n={l10n}
+                  type="equipment"
+                  noResults={filterText.length > 0}
+                  />
+              )
+            )}
+          </ListView>
+        </Scroll>
+      </MainContent>
+      <Aside>
+        <PurseAndTotals
+          carryingCapacity={carryingCapacity}
+          hasNoAddedAP={hasNoAddedAP}
+          initialStartingWealth={initialStartingWealth}
+          l10n={l10n}
+          purse={purse}
+          totalPrice={totalPrice}
+          totalWeight={totalWeight}
+          setDucates={setDucates}
+          setSilverthalers={setSilverthalers}
+          setHellers={setHellers}
+          setKreutzers={setKreutzers}
+          />
+        <WikiInfoContainer l10n={l10n} currentId={infoId} noWrapper />
+      </Aside>
+      <ItemEditorContainer l10n={l10n} />
+    </Page>
+  )
 }
