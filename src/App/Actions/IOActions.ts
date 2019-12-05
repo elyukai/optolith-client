@@ -10,7 +10,7 @@ import { bimap, Either, either, eitherToMaybe, first, fromLeft_, fromRight_, isL
 import { flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
-import { List, notNull } from "../../Data/List";
+import { appendStr, List, notNull } from "../../Data/List";
 import { alt_, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
 import { any, filter, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap";
 import { notMember } from "../../Data/OrderedSet";
@@ -30,7 +30,7 @@ import { LAST_LOADING_PHASE } from "../Reducers/isReadyReducer";
 import { UISettingsState } from "../Reducers/uiSettingsReducer";
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors";
 import { user_data_path } from "../Selectors/envSelectors";
-import { getCurrentHeroId, getHeroes, getLocaleId, getLocaleMessages, getUsers } from "../Selectors/stateSelectors";
+import { getCurrentHeroId, getCurrentHeroName, getHeroes, getLocaleId, getLocaleMessages, getUsers } from "../Selectors/stateSelectors";
 import { getUISettingsState } from "../Selectors/uisettingsSelectors";
 import { APCache, deleteCache, forceCacheIsAvailable, insertAppStateCache, insertCacheMap, insertHeroesCache, readCache, toAPCache, writeCache } from "../Utilities/Cache";
 import { translate, translateP } from "../Utilities/I18n";
@@ -622,8 +622,8 @@ export const requestClose =
   }
 
 export const requestPrintHeroToPDF =
-  (l10n: L10nRecord): ReduxAction =>
-  async dispatch =>
+  (l10n: L10nRecord): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) =>
     pipe_ (
       await windowPrintToPDF ({
         marginsType: 1,
@@ -635,6 +635,7 @@ export const requestPrintHeroToPDF =
                        (tryIO (f))
                        (await showSaveDialog ({
                          title: translate (l10n) ("printcharactersheettopdf"),
+                         defaultPath: getDefaultPDFName (getState ()),
                          filters: [
                            { name: "PDF", extensions: ["pdf"] },
                          ],
@@ -651,6 +652,12 @@ export const requestPrintHeroToPDF =
         }
       })
     )
+
+const getDefaultPDFName = pipe (
+  getCurrentHeroName,
+  maybe ("")
+        (flip (appendStr) (".pdf"))
+)
 
 export interface SetUpdateDownloadProgressAction {
   type: ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS
