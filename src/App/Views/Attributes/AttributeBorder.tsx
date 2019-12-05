@@ -13,7 +13,7 @@ export interface AttributeBorderProps {
   value: number | string
 }
 
-export function AttributeBorder (props: AttributeBorderProps) {
+export const AttributeBorder: React.FC<AttributeBorderProps> = props => {
   const { children, className, label, tooltip, tooltipMargin, value } = props
 
   const valueElement =

@@ -66,7 +66,46 @@ export interface AttributesDispatchProps {
 export type AttributesProps = AttributesStateProps & AttributesDispatchProps & AttributesOwnProps
 
 export function Attributes (props: AttributesProps) {
-  const { l10n, isInCharacterCreation, maxTotalAttributeValues, sum } = props
+  const {
+    l10n,
+    attributes,
+    derived,
+    isInCharacterCreation,
+    isRemovingEnabled,
+    maxTotalAttributeValues,
+    sum,
+    adjustmentValue,
+    availableAttributeIds,
+    currentAttributeId,
+    getEditPermanentEnergy,
+    getAddPermanentEnergy,
+    addPoint,
+    removePoint,
+    addLifePoint,
+    addArcaneEnergyPoint,
+    addKarmaPoint,
+    removeLifePoint,
+    removeArcaneEnergyPoint,
+    removeKarmaPoint,
+    addLostLPPoint,
+    removeLostLPPoint,
+    addLostLPPoints,
+    addBoughtBackAEPoint,
+    removeBoughtBackAEPoint,
+    addLostAEPoint,
+    removeLostAEPoint,
+    addLostAEPoints,
+    addBoughtBackKPPoint,
+    removeBoughtBackKPPoint,
+    addLostKPPoint,
+    removeLostKPPoint,
+    addLostKPPoints,
+    setAdjustmentId,
+    openAddPermanentEnergyLoss,
+    closeAddPermanentEnergyLoss,
+    openEditPermanentEnergy,
+    closeEditPermanentEnergy,
+  } = props
 
   return (
     <Page id="attribute">
@@ -77,11 +116,65 @@ export function Attributes (props: AttributesProps) {
           {sum}
           {isInCharacterCreation ? ` / ${Maybe.sum (maxTotalAttributeValues)}` : ""}
         </div>
-        <AttributeList {...props} />
+        <AttributeList
+          attributes={attributes}
+          isInCharacterCreation={isInCharacterCreation}
+          isRemovingEnabled={isRemovingEnabled}
+          maxTotalAttributeValues={maxTotalAttributeValues}
+          sum={sum}
+          addPoint={addPoint}
+          removePoint={removePoint}
+          />
         <div className="secondary">
-          {isInCharacterCreation ? <AttributesAdjustment {...props} /> : null}
-          <AttributeCalc {...props} l10n={l10n} />
-          <AttributesPermanentList {...props} l10n={l10n} />
+          {isInCharacterCreation
+            ? (
+              <AttributesAdjustment
+                adjustmentValue={adjustmentValue}
+                attributes={attributes}
+                availableAttributeIds={availableAttributeIds}
+                currentAttributeId={currentAttributeId}
+                l10n={l10n}
+                setAdjustmentId={setAdjustmentId}
+                />
+            )
+            : null}
+          <AttributeCalc
+            derived={derived}
+            l10n={l10n}
+            isInCharacterCreation={isInCharacterCreation}
+            isRemovingEnabled={isRemovingEnabled}
+            addLifePoint={addLifePoint}
+            addArcaneEnergyPoint={addArcaneEnergyPoint}
+            addKarmaPoint={addKarmaPoint}
+            removeLifePoint={removeLifePoint}
+            removeArcaneEnergyPoint={removeArcaneEnergyPoint}
+            removeKarmaPoint={removeKarmaPoint}
+            />
+          <AttributesPermanentList
+            derived={derived}
+            l10n={l10n}
+            isInCharacterCreation={isInCharacterCreation}
+            isRemovingEnabled={isRemovingEnabled}
+            getEditPermanentEnergy={getEditPermanentEnergy}
+            getAddPermanentEnergy={getAddPermanentEnergy}
+            addLostLPPoint={addLostLPPoint}
+            removeLostLPPoint={removeLostLPPoint}
+            addLostLPPoints={addLostLPPoints}
+            addBoughtBackAEPoint={addBoughtBackAEPoint}
+            removeBoughtBackAEPoint={removeBoughtBackAEPoint}
+            addLostAEPoint={addLostAEPoint}
+            removeLostAEPoint={removeLostAEPoint}
+            addLostAEPoints={addLostAEPoints}
+            addBoughtBackKPPoint={addBoughtBackKPPoint}
+            removeBoughtBackKPPoint={removeBoughtBackKPPoint}
+            addLostKPPoint={addLostKPPoint}
+            removeLostKPPoint={removeLostKPPoint}
+            addLostKPPoints={addLostKPPoints}
+            openAddPermanentEnergyLoss={openAddPermanentEnergyLoss}
+            closeAddPermanentEnergyLoss={closeAddPermanentEnergyLoss}
+            openEditPermanentEnergy={openEditPermanentEnergy}
+            closeEditPermanentEnergy={closeEditPermanentEnergy}
+            />
         </div>
       </Scroll>
     </Page>

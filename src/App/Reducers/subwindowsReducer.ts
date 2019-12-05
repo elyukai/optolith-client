@@ -73,7 +73,7 @@ export const subwindowsReducer =
                    (Just (action.payload.energy))
 
       case ActionTypes.CLOSE_ADD_PERMANENT_ENERGY_LOSS:
-        return set (SubWindowsStateL.editPermanentEnergy)
+        return set (SubWindowsStateL.addPermanentEnergy)
                    (Nothing)
 
       case ActionTypes.OPEN_CHARACTER_CREATOR:

@@ -13,7 +13,7 @@ interface BasicInputDialog {
   title: string
   description: string
   value: string | Maybe<string>
-  invalidMsg?: Maybe<string>
+  invalid?: Maybe<string>
   acceptLabel: string
   rejectLabel: string
   rejectDisabled?: boolean
@@ -30,7 +30,7 @@ export const BasicInputDialog: React.FC<BasicInputDialog> = props => {
     title,
     description,
     value,
-    invalidMsg = Nothing,
+    invalid = Nothing,
     acceptLabel,
     rejectLabel,
     rejectDisabled = false,
@@ -42,7 +42,7 @@ export const BasicInputDialog: React.FC<BasicInputDialog> = props => {
 
   const input_empty = pipe_ (value, normalize, bindF (ensure (notNullStr)), isNothing)
 
-  const accept_disabled = input_empty || isJust (invalidMsg)
+  const accept_disabled = input_empty || isJust (invalid)
 
   const handleKeyUp = React.useCallback (
     (event: InputKeyEvent) => {
@@ -99,7 +99,7 @@ export const BasicInputDialog: React.FC<BasicInputDialog> = props => {
         fullWidth
         autoFocus
         everyKeyDown
-        error={invalidMsg}
+        error={invalid}
         onKeyUp={handleKeyUp}
         />
     </Dialog>

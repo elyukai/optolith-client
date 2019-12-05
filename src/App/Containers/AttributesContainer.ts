@@ -31,20 +31,20 @@ const mapDispatchToProps = (
   dispatch: ReduxDispatch,
   { l10n }: AttributesOwnProps
 ): AttributesDispatchProps => ({
-  addPoint: (id: string) => {
-    dispatch (AttributesActions.addAttributePoint (l10n) (id))
+  addPoint: async (id: string) => {
+    await dispatch (AttributesActions.addAttributePoint (l10n) (id))
   },
   removePoint: (id: string) => {
     dispatch (AttributesActions.removeAttributePoint (id))
   },
-  addLifePoint: () => {
-    dispatch (AttributesActions.addLifePoint (l10n))
+  addLifePoint: async () => {
+    await dispatch (AttributesActions.addLifePoint (l10n))
   },
-  addArcaneEnergyPoint: () => {
-    dispatch (AttributesActions.addArcaneEnergyPoint (l10n))
+  addArcaneEnergyPoint: async () => {
+    await dispatch (AttributesActions.addArcaneEnergyPoint (l10n))
   },
-  addKarmaPoint: () => {
-    dispatch (AttributesActions.addKarmaPoint (l10n))
+  addKarmaPoint: async () => {
+    await dispatch (AttributesActions.addKarmaPoint (l10n))
   },
   removeLifePoint: () => {
     dispatch (AttributesActions.removeLifePoint ())
@@ -64,8 +64,8 @@ const mapDispatchToProps = (
   addLostLPPoints: (value: number) => {
     dispatch (AttributesActions.addLostLPPoints (value))
   },
-  addBoughtBackAEPoint: () => {
-    dispatch (AttributesActions.addBoughtBackAEPoint (l10n))
+  addBoughtBackAEPoint: async () => {
+    await dispatch (AttributesActions.addBoughtBackAEPoint (l10n))
   },
   removeBoughtBackAEPoint: () => {
     dispatch (AttributesActions.removeBoughtBackAEPoint ())
@@ -79,8 +79,8 @@ const mapDispatchToProps = (
   addLostAEPoints: (value: number) => {
     dispatch (AttributesActions.addLostAEPoints (value))
   },
-  addBoughtBackKPPoint: () => {
-    dispatch (AttributesActions.addBoughtBackKPPoint (l10n))
+  addBoughtBackKPPoint: async () => {
+    await dispatch (AttributesActions.addBoughtBackKPPoint (l10n))
   },
   removeBoughtBackKPPoint: () => {
     dispatch (AttributesActions.removeBoughtBackKPPoint ())
@@ -95,15 +95,19 @@ const mapDispatchToProps = (
     dispatch (AttributesActions.addLostKPPoints (value))
   },
   openAddPermanentEnergyLoss: (energy: EnergyId) => {
+    console.log (`openAddPermanentEnergyLoss (${energy})`)
     dispatch (SubwindowsActions.openAddPermanentEnergyLoss (energy))
   },
   closeAddPermanentEnergyLoss: () => {
+    console.log (`closeAddPermanentEnergyLoss ()`)
     dispatch (SubwindowsActions.closeAddPermanentEnergyLoss ())
   },
   openEditPermanentEnergy: (energy: EnergyId) => {
+    console.log (`openEditPermanentEnergy (${energy})`)
     dispatch (SubwindowsActions.openEditPermanentEnergy (energy))
   },
   closeEditPermanentEnergy: () => {
+    console.log (`closeEditPermanentEnergy ()`)
     dispatch (SubwindowsActions.closeEditPermanentEnergy ())
   },
   setAdjustmentId: (id: Maybe<string>) => {

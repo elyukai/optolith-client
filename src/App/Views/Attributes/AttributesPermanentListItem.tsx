@@ -32,23 +32,24 @@ export interface AttributesPermanentListItemProps {
 
 export const AttributesPermanentListItem: React.FC<AttributesPermanentListItemProps> = props => {
   const {
+    l10n,
     id,
     label,
-    l10n,
     name,
-    isRemovingEnabled,
-    addBoughtBackPoint,
-    addLostPoints,
     boughtBack,
     lost,
+    isRemovingEnabled,
     getEditPermanentEnergy,
     getAddPermanentEnergy,
-    openEditPermanentEnergy,
+    addBoughtBackPoint,
+    addLostPoint,
+    addLostPoints,
+    removeBoughtBackPoint,
+    removeLostPoint,
     openAddPermanentEnergyLoss,
     closeAddPermanentEnergyLoss,
+    openEditPermanentEnergy,
     closeEditPermanentEnergy,
-    addLostPoint,
-    removeLostPoint,
   } = props
 
   const available = typeof boughtBack === "number" ? lost - boughtBack : lost
@@ -110,13 +111,15 @@ export const AttributesPermanentListItem: React.FC<AttributesPermanentListItemPr
       <PermanentPoints
         id={String (id)}
         eid={id}
-        isOpen={Maybe.elem (id) (getEditPermanentEnergy)}
-        close={closeEditPermanentEnergy}
+        l10n={l10n}
         permanentBoughtBack={Maybe (boughtBack)}
         permanentSpent={lost}
-        l10n={l10n}
+        isOpen={Maybe.elem (id) (getEditPermanentEnergy)}
+        addBoughtBackPoint={addBoughtBackPoint}
         addLostPoint={addLostPoint}
+        removeBoughtBackPoint={removeBoughtBackPoint}
         removeLostPoint={removeLostPoint}
+        close={closeEditPermanentEnergy}
         />
       {isRemovingEnabled
         ? null

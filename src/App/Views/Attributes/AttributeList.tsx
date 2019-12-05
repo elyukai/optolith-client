@@ -18,8 +18,16 @@ export interface AttributeListProps {
   removePoint (id: string): void
 }
 
-export function AttributeList (props: AttributeListProps) {
-  const { attributes, ...other } = props
+export const AttributeList: React.FC<AttributeListProps> = props => {
+  const {
+    attributes,
+    isInCharacterCreation,
+    isRemovingEnabled,
+    maxTotalAttributeValues,
+    sum,
+    addPoint,
+    removePoint,
+  } = props
 
   return (
     <div className="main">
@@ -28,9 +36,14 @@ export function AttributeList (props: AttributeListProps) {
         fmap (map (
           attr => (
             <AttributeListItem
-              {...other}
               key={pipe_ (attr, AttributeWithRequirements.A.wikiEntry, Attribute.A.id)}
               attribute={attr}
+              isInCharacterCreation={isInCharacterCreation}
+              isRemovingEnabled={isRemovingEnabled}
+              maxTotalAttributeValues={maxTotalAttributeValues}
+              sum={sum}
+              addPoint={addPoint}
+              removePoint={removePoint}
               />
           )
         )),
