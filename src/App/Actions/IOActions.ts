@@ -623,35 +623,35 @@ export const requestClose =
 
 export const requestPrintHeroToPDF =
   (l10n: L10nRecord): ReduxAction<Promise<void>> =>
-  async (dispatch, getState) =>
-    pipe_ (
-      await windowPrintToPDF ({
-        marginsType: 1,
-        pageSize: "A4",
-        printBackground: true,
-      }),
-      flip (IO.writeFile),
-      async f => maybe (Promise.resolve<Either<Error, void>> (Right (undefined)))
-                       (tryIO (f))
-                       (await showSaveDialog ({
-                         title: translate (l10n) ("printcharactersheettopdf"),
-                         defaultPath: getDefaultPDFName (getState ()),
-                         filters: [
-                           { name: "PDF", extensions: ["pdf"] },
-                         ],
-                       })),
-      IO.bindF (async res => {
-        if (isRight (res)) {
-          await dispatch (addAlert (l10n)
-                                   (AlertOptions ({ message: translate (l10n) ("pdfsaved") })))
-        }
-        else {
-          await dispatch (addDefaultErrorAlert (l10n)
-                                               (translate (l10n) ("printcharactersheettopdf"))
-                                               (res))
-        }
-      })
-    )
+  async (dispatch, getState) => {
+    const data = await windowPrintToPDF ({
+                         marginsType: 1,
+                         pageSize: "A4",
+                         printBackground: true,
+                       })
+
+    const path = await showSaveDialog ({
+                   title: translate (l10n) ("printcharactersheettopdf"),
+                   defaultPath: getDefaultPDFName (getState ()),
+                   filters: [
+                     { name: "PDF", extensions: ["pdf"] },
+                   ],
+                 })
+
+    const res = await maybe (Promise.resolve<Either<Error, void>> (Right (undefined)))
+                            (tryIO (flip (IO.writeFile) (data)))
+                            (path)
+
+    if (isRight (res) && isJust (path)) {
+      await dispatch (addAlert (l10n)
+                               (AlertOptions ({ message: translate (l10n) ("pdfsaved") })))
+    }
+    else if (isLeft (res)) {
+      await dispatch (addDefaultErrorAlert (l10n)
+                                           (translate (l10n) ("printcharactersheettopdf"))
+                                           (res))
+    }
+  }
 
 const getDefaultPDFName = pipe (
   getCurrentHeroName,
