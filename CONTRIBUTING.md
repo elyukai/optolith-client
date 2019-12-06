@@ -27,7 +27,7 @@ You can suggest features either in the issues tracker or in one of the [listed f
 ## Contributing code
 
 - Due to licensing, the tables containing the crunch elements from the books is not included in this repository. Please join my [Discord Server](https://discord.gg/uDyR4yr) if you need access to them. Just text me in a channel on the server or PN me (@elyukai).
-- Braches (mostly) follow Git Flow. Please try to follow Git Flow as well if you edit this repository.
+- Branches (mostly) follow Git Flow. Please try to follow Git Flow as well if you edit this repository.
 - Please check out the [Style Guide](https://github.com/elyukai/optolith-client/wiki/Code-Style-Guide) for more information on that topic! Sadly, TSLint cannot ensure the whole style so you partially need to take care of that on your own!
 - There is a page covering [Naming Conventions](https://github.com/elyukai/optolith-client/wiki/Naming-Conventions) as well!
 - The key criteria for the project are mentioned in the [README](README.md). They also apply to pull requests. A feature usually does not consist of the technical part only. Much more important is how the feature presents itself to the user. And that must be planned and discussed.
