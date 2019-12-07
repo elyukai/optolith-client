@@ -52,7 +52,7 @@ import { sortRecordsByName } from "../sortBy";
 import { isNumber, isString, misNumberM, misStringM } from "../typeCheckUtils";
 import { getMaxLevelForDecreaseEntry, getSermonsAndVisionsCount } from "./activatableActiveValidationUtils";
 import { isAdditionDisabled } from "./activatableInactiveValidationUtils";
-import { getModifierByActiveLevel } from "./activatableModifierUtils";
+import { modifyByLevel } from "./activatableModifierUtils";
 import { countActiveSkillEntries } from "./activatableSkillUtils";
 import { isMaybeActive } from "./isActive";
 import { getActiveSecondarySelections, getActiveSelections, getActiveSelectionsMaybe, getRequiredSelections } from "./selectionUtils";
@@ -620,7 +620,7 @@ const modifyOtherOptions =
           Just
         )
 
-      case DisadvantageId.KleineZauberauswahl: {
+      case DisadvantageId.SmallSpellSelection: {
         return pipe_ (
           hero,
           countActiveSkillEntries ("spells"),
@@ -658,8 +658,8 @@ const modifyOtherOptions =
       case SpecialAbilityId.TraditionWitches:
       case SpecialAbilityId.TraditionElves:
       case SpecialAbilityId.TraditionDruids:
-      case SpecialAbilityId.TraditionScharlatane:
-      case SpecialAbilityId.TraditionQabalyamagier:
+      case SpecialAbilityId.TraditionIllusionist:
+      case SpecialAbilityId.TraditionQabalyaMage:
       case SpecialAbilityId.TraditionGeoden:
       case SpecialAbilityId.TraditionZauberalchimisten:
       case SpecialAbilityId.TraditionSchelme:
@@ -746,12 +746,9 @@ const modifyOtherOptions =
                                       pipe (lookupF (HA.advantages (hero)), isMaybeActive)
 
                                     const max =
-                                      getModifierByActiveLevel
-                                        (Just (3))
-                                        (lookup<string> (AdvantageId.ZahlreichePredigten)
-                                                        (HA.advantages (hero)))
-                                        (lookup<string> (DisadvantageId.WenigePredigten)
-                                                        (HA.disadvantages (hero)))
+                                      getSermonOrVisionCountMax (hero)
+                                                                (AdvantageId.ZahlreichePredigten)
+                                                                (DisadvantageId.WenigePredigten)
 
                                     const isLessThanMax =
                                       countActiveGroupEntries (wiki)
@@ -774,12 +771,9 @@ const modifyOtherOptions =
                                       pipe (lookupF (HA.advantages (hero)), isMaybeActive)
 
                                     const max =
-                                      getModifierByActiveLevel
-                                        (Just (3))
-                                        (lookup<string> (AdvantageId.ZahlreicheVisionen)
-                                                        (HA.advantages (hero)))
-                                        (lookup<string> (DisadvantageId.WenigeVisionen)
-                                                        (HA.disadvantages (hero)))
+                                      getSermonOrVisionCountMax (hero)
+                                                                (AdvantageId.ZahlreicheVisionen)
+                                                                (DisadvantageId.WenigeVisionen)
 
                                     const isLessThanMax =
                                       countActiveGroupEntries (wiki)
@@ -799,10 +793,10 @@ const modifyOtherOptions =
                     (hero)
       }
 
-      case SpecialAbilityId.TraditionZauberbarden:
-      case SpecialAbilityId.TraditionZaubertaenzer:
-      case SpecialAbilityId.TraditionIntuitiveZauberer:
-      case SpecialAbilityId.TraditionMeistertalentierte:
+      case SpecialAbilityId.TraditionArcaneBard:
+      case SpecialAbilityId.TraditionArcaneDancer:
+      case SpecialAbilityId.TraditionIntuitiveMage:
+      case SpecialAbilityId.TraditionSavant:
       case SpecialAbilityId.TraditionAnimisten: {
         return mapReplace (ident)
                           (guard (spentOnMagicalAdvantages (ap) <= 25
@@ -819,6 +813,14 @@ const modifyOtherOptions =
         return Just (ident)
     }
   }
+
+const getSermonOrVisionCountMax =
+  (hero: HeroModelRecord) =>
+  (adv_id: string) =>
+  (disadv_id: string) =>
+    modifyByLevel (3)
+                  (lookup (adv_id) (HA.advantages (hero)))
+                  (lookup (disadv_id) (HA.disadvantages (hero)))
 
 /**
  * Calculates whether an Activatable is valid to add or not and, if valid,

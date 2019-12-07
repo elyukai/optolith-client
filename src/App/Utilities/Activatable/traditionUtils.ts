@@ -62,12 +62,12 @@ export const isMagicalTradId =
       case SpecialAbilityId.TraditionWitches:
       case SpecialAbilityId.TraditionElves:
       case SpecialAbilityId.TraditionDruids:
-      case SpecialAbilityId.TraditionScharlatane:
-      case SpecialAbilityId.TraditionZauberbarden:
-      case SpecialAbilityId.TraditionZaubertaenzer:
-      case SpecialAbilityId.TraditionIntuitiveZauberer:
-      case SpecialAbilityId.TraditionMeistertalentierte:
-      case SpecialAbilityId.TraditionQabalyamagier:
+      case SpecialAbilityId.TraditionIllusionist:
+      case SpecialAbilityId.TraditionArcaneBard:
+      case SpecialAbilityId.TraditionArcaneDancer:
+      case SpecialAbilityId.TraditionIntuitiveMage:
+      case SpecialAbilityId.TraditionSavant:
+      case SpecialAbilityId.TraditionQabalyaMage:
       case SpecialAbilityId.TraditionZauberalchimisten:
       case SpecialAbilityId.TraditionKristallomanten:
       case SpecialAbilityId.TraditionGeoden:
@@ -104,22 +104,22 @@ export const mapMagicalTradIdToNumId =
       case SpecialAbilityId.TraditionDruids:
         return Just (MagicalTradition.Druids)
 
-      case SpecialAbilityId.TraditionScharlatane:
+      case SpecialAbilityId.TraditionIllusionist:
         return Just (MagicalTradition.Scharlatane)
 
-      case SpecialAbilityId.TraditionZauberbarden:
+      case SpecialAbilityId.TraditionArcaneBard:
         return Just (MagicalTradition.Zauberbarden)
 
-      case SpecialAbilityId.TraditionZaubertaenzer:
+      case SpecialAbilityId.TraditionArcaneDancer:
         return Just (MagicalTradition.Zaubertaenzer)
 
-      case SpecialAbilityId.TraditionIntuitiveZauberer:
+      case SpecialAbilityId.TraditionIntuitiveMage:
         return Just (MagicalTradition.IntuitiveZauberer)
 
-      case SpecialAbilityId.TraditionMeistertalentierte:
+      case SpecialAbilityId.TraditionSavant:
         return Just (MagicalTradition.Meistertalentierte)
 
-      case SpecialAbilityId.TraditionQabalyamagier:
+      case SpecialAbilityId.TraditionQabalyaMage:
         return Just (MagicalTradition.Qabalyamagier)
 
       case SpecialAbilityId.TraditionKristallomanten:
@@ -165,22 +165,22 @@ export const mapMagicalNumIdToTradId =
         return Just (SpecialAbilityId.TraditionDruids)
 
       case MagicalTradition.Scharlatane:
-        return Just (SpecialAbilityId.TraditionScharlatane)
+        return Just (SpecialAbilityId.TraditionIllusionist)
 
       case MagicalTradition.Zauberbarden:
-        return Just (SpecialAbilityId.TraditionZauberbarden)
+        return Just (SpecialAbilityId.TraditionArcaneBard)
 
       case MagicalTradition.Zaubertaenzer:
-        return Just (SpecialAbilityId.TraditionZaubertaenzer)
+        return Just (SpecialAbilityId.TraditionArcaneDancer)
 
       case MagicalTradition.IntuitiveZauberer:
-        return Just (SpecialAbilityId.TraditionIntuitiveZauberer)
+        return Just (SpecialAbilityId.TraditionIntuitiveMage)
 
       case MagicalTradition.Meistertalentierte:
-        return Just (SpecialAbilityId.TraditionMeistertalentierte)
+        return Just (SpecialAbilityId.TraditionSavant)
 
       case MagicalTradition.Qabalyamagier:
-        return Just (SpecialAbilityId.TraditionQabalyamagier)
+        return Just (SpecialAbilityId.TraditionQabalyaMage)
 
       case MagicalTradition.Kristallomanten:
         return Just (SpecialAbilityId.TraditionKristallomanten)

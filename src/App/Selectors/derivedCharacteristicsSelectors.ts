@@ -18,7 +18,7 @@ import { Rules } from "../Models/Hero/Rules";
 import { AttributeCombined } from "../Models/View/AttributeCombined";
 import { DerivedCharacteristic } from "../Models/View/DerivedCharacteristic";
 import { Race } from "../Models/Wiki/Race";
-import { getModifierByActiveLevel, getModifierByIsActive, getModifierByIsActives } from "../Utilities/Activatable/activatableModifierUtils";
+import { getModifierByIsActive, getModifierByIsActives, modifyByLevelM } from "../Utilities/Activatable/activatableModifierUtils";
 import { getActiveSelections } from "../Utilities/Activatable/selectionUtils";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { translate } from "../Utilities/I18n";
@@ -59,7 +59,7 @@ export const getLP = createMaybeSelector (
                        (mrace)
 
     const lost = fmap (PermanentEnergyLoss.A.lost) (plp)
-    const mod = getModifierByActiveLevel (fmap (negate) (lost)) (minc) (mdec)
+    const mod = modifyByLevelM (fmap (negate) (lost)) (minc) (mdec)
 
     const value = Just (base + mod + Maybe.sum (added))
 
@@ -101,9 +101,9 @@ export const getAE = createMaybeSelector (
     const great_meditation_mod = maybe (0) (multiply (6)) (great_meditation_level)
 
     const mod = great_meditation_mod
-      + getModifierByActiveLevel (liftM2 (subtract) (mredeemed) (mlost))
-                                 (minc)
-                                 (mdec)
+      + modifyByLevelM (liftM2 (subtract) (mredeemed) (mlost))
+                       (minc)
+                       (mdec)
 
     /**
      * `Maybe (base, maxAdd)`
@@ -156,16 +156,16 @@ const getPrimaryAEMod =
   (last_trad: Record<ActivatableDependent>): number =>
     elem (ActivatableDependent.A.id (last_trad))
         (List (
-          SpecialAbilityId.TraditionZauberbarden,
-          SpecialAbilityId.TraditionZaubertaenzer,
+          SpecialAbilityId.TraditionArcaneBard,
+          SpecialAbilityId.TraditionArcaneDancer,
           SpecialAbilityId.TraditionZauberalchimisten,
           SpecialAbilityId.TraditionAnimisten
         ))
     ? 0.5
     : elem (ActivatableDependent.A.id (last_trad))
            (List (
-             SpecialAbilityId.TraditionIntuitiveZauberer,
-             SpecialAbilityId.TraditionMeistertalentierte
+             SpecialAbilityId.TraditionIntuitiveMage,
+             SpecialAbilityId.TraditionSavant
            ))
     ? 0
     : 1
@@ -188,9 +188,9 @@ export const getKP = createMaybeSelector (
     const highConsecrationMod = maybe (0) (multiply (6)) (highConsecrationLevel)
 
     const mod = highConsecrationMod
-      + getModifierByActiveLevel (liftM2 (subtract) (mredeemed) (mlost))
-                                 (minc)
-                                 (mdec)
+      + modifyByLevelM (liftM2 (subtract) (mredeemed) (mlost))
+                       (minc)
+                       (mdec)
 
     const mbase = fmapF (mprimary) (pipe (ACA.stateEntry, ADA.value, add (20)))
 

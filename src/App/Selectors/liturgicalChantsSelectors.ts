@@ -36,7 +36,7 @@ import { sortRecordsBy } from "../Utilities/sortBy";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getBlessingsSortOptions, getLiturgicalChantsCombinedSortOptions, getLiturgicalChantsSortOptions } from "./sortOptionsSelectors";
-import { getAdvantages, getBlessings, getCurrentHeroPresent, getInactiveLiturgicalChantsFilterText, getLiturgicalChants, getLiturgicalChantsFilterText, getMaybeSpecialAbilities, getPhase, getSpecialAbilities, getWiki, getWikiBlessings, getWikiLiturgicalChants, getWikiSpecialAbilities } from "./stateSelectors";
+import { getAdvantages, getBlessings, getCurrentHeroPresent, getCurrentPhase, getInactiveLiturgicalChantsFilterText, getLiturgicalChants, getLiturgicalChantsFilterText, getMaybeSpecialAbilities, getSpecialAbilities, getWiki, getWikiBlessings, getWikiLiturgicalChants, getWikiSpecialAbilities } from "./stateSelectors";
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
 
 const HA = HeroModel.A
@@ -167,7 +167,7 @@ export const getActiveLiturgicalChantsCounter = createMaybeSelector (
 
 export const getIsMaximumOfLiturgicalChantsReached = createMaybeSelector (
   getActiveLiturgicalChantsCounter,
-  getPhase,
+  getCurrentPhase,
   getStartEl,
   uncurryN3 (active =>
              liftM2 (phase =>
@@ -393,7 +393,7 @@ export const getFilteredInactiveLiturgicalChantsAndBlessings = createMaybeSelect
 
 export const isActivationDisabled = createMaybeSelector (
   getStartEl,
-  getPhase,
+  getCurrentPhase,
   getActiveLiturgicalChantsCounter,
   (mstart_el, mphase, active_chants) =>
     or (fmap (lt (3)) (mphase))

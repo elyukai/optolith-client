@@ -14,7 +14,7 @@ import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { User } from "../Models/Hero/heroTypeHelpers";
 import { getRuleBooksEnabledM } from "../Selectors/rulesSelectors";
-import { getCurrentCultureId, getCurrentHeroPresent, getCurrentRaceId, getCurrentTab, getPhase, getWiki } from "../Selectors/stateSelectors";
+import { getCurrentCultureId, getCurrentHeroPresent, getCurrentPhase, getCurrentRaceId, getCurrentTab, getWiki } from "../Selectors/stateSelectors";
 import { PHASE_1_PROFILE_TABS, PHASE_1_RCP_TABS } from "../Selectors/uilocationSelectors";
 import { composeL } from "../Utilities/compose";
 import { TabId } from "../Utilities/LocationUtils";
@@ -137,7 +137,7 @@ export const appPostReducer =
             return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
                        (TabId.Races)
           }
-          else if (elem (1) (getPhase (state))
+          else if (elem (1) (getCurrentPhase (state))
                    && notElem (current_tab) (PHASE_1_PROFILE_TABS)
                    && notElem (current_tab) (PHASE_1_RCP_TABS)) {
             return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
@@ -170,13 +170,13 @@ export const appPostReducer =
         return join (state => {
           const current_tab = getCurrentTab (state)
 
-          if (elem (2) (getPhase (previousState))
-              && elem (3) (getPhase (state))
+          if (elem (2) (getCurrentPhase (previousState))
+              && elem (3) (getCurrentPhase (state))
               && List.elem (current_tab) (List (TabId.Advantages, TabId.Disadvantages))) {
             return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
                        (TabId.Profile)
           }
-          else if (elem (2) (getPhase (state))
+          else if (elem (2) (getCurrentPhase (state))
                    && List.elem (current_tab) (PHASE_1_RCP_TABS)) {
             return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
                        (TabId.Attributes)

@@ -456,14 +456,14 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.TraditionZauberbarden: {
+      case SpecialAbilityId.TraditionArcaneBard: {
         return getIdSpecificAffectedAndDispatchPropsForMusicTraditions (l10n)
                                                                        (entry)
                                                                        (List (1, 2, 3))
                                                                        (mselected)
       }
 
-      case SpecialAbilityId.TraditionZaubertaenzer: {
+      case SpecialAbilityId.TraditionArcaneDancer: {
         return getIdSpecificAffectedAndDispatchPropsForMusicTraditions (l10n)
                                                                        (entry)
                                                                        (List (4, 5, 6, 7))

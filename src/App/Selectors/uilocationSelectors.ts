@@ -14,7 +14,7 @@ import { getIsLiturgicalChantsTabAvailable } from "./liturgicalChantsSelectors";
 import { getIsRemovingEnabled } from "./phaseSelectors";
 import { getRuleBooksEnabledM } from "./rulesSelectors";
 import { getIsSpellsTabAvailable } from "./spellsSelectors";
-import { getCurrentCultureId, getCurrentTab, getLocaleAsProp, getPhase, getRaceIdM } from "./stateSelectors";
+import { getCurrentCultureId, getCurrentPhase, getCurrentTab, getLocaleAsProp, getRaceIdM } from "./stateSelectors";
 
 export const getIsMainSection = createMaybeSelector (
   getCurrentTab,
@@ -36,7 +36,7 @@ export const getTabs = createMaybeSelector (
   getIsMainSection,
   getIsHeroSection,
   getLocaleAsProp,
-  getPhase,
+  getCurrentPhase,
   getIsRemovingEnabled,
   (isMainSection, isHeroSection, l10n, phase, isRemovingEnabled): List<NavigationBarTabProps> => {
     if (isMainSection) {
@@ -167,7 +167,7 @@ export const getSubtabs = createMaybeSelector (
   getIsMainSection,
   getIsHeroSection,
   getLocaleAsProp,
-  getPhase,
+  getCurrentPhase,
   getRaceIdM,
   getCurrentCultureId,
   getIsSpellsTabAvailable,
