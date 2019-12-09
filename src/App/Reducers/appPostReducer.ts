@@ -3,22 +3,22 @@ import { flip, ident, join } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
 import { over, set } from "../../Data/Lens";
 import { List, notElem } from "../../Data/List";
-import { and, elem, fromJust, isJust, isNothing, Just, or } from "../../Data/Maybe";
+import { and, elem, fromJust, isJust, isNothing, Just, maybe, or } from "../../Data/Maybe";
 import { insert, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
-import { fst, snd, uncurry } from "../../Data/Tuple";
+import { uncurry } from "../../Data/Tuple";
 import { uncurry3 } from "../../Data/Tuple/Curry";
 import { RedoAction, UndoAction } from "../Actions/HistoryActions";
 import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from "../Actions/IOActions";
 import { ActionTypes } from "../Constants/ActionTypes";
-import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
+import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { User } from "../Models/Hero/heroTypeHelpers";
 import { getRuleBooksEnabledM } from "../Selectors/rulesSelectors";
-import { getCurrentCultureId, getCurrentHeroPresent, getCurrentPhase, getCurrentRaceId, getCurrentTab, getWiki } from "../Selectors/stateSelectors";
+import { getCurrentCultureId, getCurrentHeroPresent, getCurrentPhase, getCurrentRaceId, getCurrentTab } from "../Selectors/stateSelectors";
 import { PHASE_1_PROFILE_TABS, PHASE_1_RCP_TABS } from "../Selectors/uilocationSelectors";
 import { composeL } from "../Utilities/compose";
 import { TabId } from "../Utilities/LocationUtils";
-import { pipe } from "../Utilities/pipe";
+import { pipe, pipe_ } from "../Utilities/pipe";
 import { convertHero } from "../Utilities/Raw/JSON/Hero/Compat";
 import { convertFromRawHero } from "../Utilities/Raw/JSON/Hero/HeroFromJSON";
 import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils";
@@ -45,27 +45,25 @@ const prepareHerolist =
 
     if (isJust (rawHeroes)) {
       const hs = Object.entries (fromJust (rawHeroes)).reduce<Reduced> (
-        ({ heroes, users }, [key, hero]) => {
-          const updatedHero = uncurry (convertHero) (action.payload.tables) (hero)
-          const heroInstance = convertFromRawHero (fst (action.payload.tables))
-                                                  (snd (action.payload.tables))
-                                                  (updatedHero)
-
-          const undoState = toHeroWithHistory (heroInstance)
-
-          if (typeof updatedHero.player === "object") {
-            return {
-              users: insert (updatedHero.player.id) (updatedHero.player) (users),
-              heroes: insert (key) (undoState) (heroes),
-            }
-          }
-          else {
-            return {
-              users,
-              heroes: insert (key) (undoState) (heroes),
-            }
-          }
-        },
+        ({ heroes, users }, [key, hero]) => pipe_ (
+          hero,
+          uncurry (convertHero) (action.payload.tables),
+          maybe ({ heroes, users })
+                (compat_hero => pipe_ (
+                  compat_hero,
+                  uncurry (convertFromRawHero) (action.payload.tables),
+                  toHeroWithHistory,
+                  hero_record => typeof compat_hero .player === "object"
+                          ? {
+                            users: insert (compat_hero.player.id) (compat_hero.player) (users),
+                            heroes: insert (key) (hero_record) (heroes),
+                          }
+                          : {
+                            users,
+                            heroes: insert (key) (hero_record) (heroes),
+                          }
+                ))
+        ),
         {
           heroes: OrderedMap.empty,
           users: OrderedMap.empty,
@@ -85,33 +83,27 @@ const prepareHerolist =
 const prepareImportedHero =
   (action: ReceiveImportedHeroAction) =>
   (state: AppStateRecord): AppStateRecord => {
-    const { data, player, l10n } = action.payload
-
-    const wiki = getWiki (state)
-
-    const updatedHero = convertHero (l10n) (wiki) (data)
-    const heroInstance = convertFromRawHero (l10n)
-                                            (appSlicesReducer.A.wiki (state))
-                                            (updatedHero)
-
+    const { hero, player } = action.payload
 
     if (typeof player === "object") {
       const undoStateWithPlayer = toHeroWithHistory (set (HeroModelL.player)
                                                     (Just (player.id))
-                                                    (heroInstance))
+                                                    (hero))
 
       return over (appSlicesReducer.L.herolist)
                   (pipe (
-                    over (HeroesStateL.heroes) (insert (data.id) (undoStateWithPlayer)),
-                    over (HeroesStateL.users) (insert (player.id) (player))
+                    over (HeroesStateL.heroes)
+                         (insert (HeroModel.A.id (hero)) (undoStateWithPlayer)),
+                    over (HeroesStateL.users)
+                         (insert (player.id) (player))
                   ))
                   (state)
     }
 
-    const undoState = toHeroWithHistory (heroInstance)
+    const undoState = toHeroWithHistory (hero)
 
     return over (composeL (appSlicesReducer.L.herolist, HeroesStateL.heroes))
-                (insert (data.id) (undoState))
+                (insert (HeroModel.A.id (hero)) (undoState))
                 (state)
   }
 

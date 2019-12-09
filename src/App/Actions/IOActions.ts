@@ -20,7 +20,7 @@ import { fst, Pair, snd } from "../../Data/Tuple";
 import * as IO from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
-import { HeroModel, HeroModelL } from "../Models/Hero/HeroModel";
+import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { User } from "../Models/Hero/heroTypeHelpers";
 import { PetL } from "../Models/Hero/Pet";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
@@ -30,7 +30,7 @@ import { LAST_LOADING_PHASE } from "../Reducers/isReadyReducer";
 import { UISettingsState } from "../Reducers/uiSettingsReducer";
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors";
 import { user_data_path } from "../Selectors/envSelectors";
-import { getCurrentHeroId, getCurrentHeroName, getHeroes, getLocaleId, getLocaleMessages, getUsers } from "../Selectors/stateSelectors";
+import { getCurrentHeroId, getCurrentHeroName, getHeroes, getLocaleId, getLocaleMessages, getUsers, getWiki } from "../Selectors/stateSelectors";
 import { getUISettingsState } from "../Selectors/uisettingsSelectors";
 import { APCache, deleteCache, forceCacheIsAvailable, insertAppStateCache, insertCacheMap, insertHeroesCache, readCache, toAPCache, writeCache } from "../Utilities/Cache";
 import { translate, translateP } from "../Utilities/I18n";
@@ -38,6 +38,8 @@ import { getNewIdByDate, prefixId } from "../Utilities/IDUtils";
 import { bytify, getSystemLocale, showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { Config, Locale, readConfig, writeConfig } from "../Utilities/Raw/JSON/Config";
+import { convertHero } from "../Utilities/Raw/JSON/Hero/Compat";
+import { convertFromRawHero } from "../Utilities/Raw/JSON/Hero/HeroFromJSON";
 import { convertHeroesForSave, convertHeroForSave } from "../Utilities/Raw/JSON/Hero/HeroToJSON";
 import { parseTables, TableParseRes } from "../Utilities/Raw/XLSX";
 import { RawHero, RawHerolist } from "../Utilities/Raw/XLSX/RawData";
@@ -481,15 +483,6 @@ export const requestHeroExport =
     }
   }
 
-export interface ReceiveImportedHeroAction {
-  type: ActionTypes.RECEIVE_IMPORTED_HERO
-  payload: {
-    data: RawHero;
-    player?: User;
-    l10n: L10nRecord;
-  }
-}
-
 export const loadImportedHero =
   (l10n: L10nRecord): ReduxAction<Promise<Maybe<RawHero>>> =>
   async dispatch =>
@@ -523,9 +516,18 @@ export const requestHeroImport =
   async dispatch => fmapF (await dispatch (loadImportedHero (l10n)))
                           (x => dispatch (receiveHeroImport (l10n) (x)))
 
+export interface ReceiveImportedHeroAction {
+  type: ActionTypes.RECEIVE_IMPORTED_HERO
+  payload: {
+    hero: HeroModelRecord;
+    player?: User;
+  }
+}
+
 export const receiveHeroImport =
   (l10n: L10nRecord) =>
-  (raw: RawHero): ReceiveImportedHeroAction => {
+  (raw: RawHero): ReduxAction =>
+  (dispatch, getState) => {
     const newId = prefixId (IdPrefixes.HERO) (getNewIdByDate ())
     const { player, avatar, ...other } = raw
 
@@ -539,13 +541,22 @@ export const receiveHeroImport =
         : undefined,
     }
 
-    return {
-      type: ActionTypes.RECEIVE_IMPORTED_HERO,
-      payload: {
-        data,
-        player,
-        l10n,
-      },
+    const wiki = getWiki (getState ())
+
+    const mhero = pipe_ (
+      data,
+      convertHero (l10n) (wiki),
+      fmap (convertFromRawHero (l10n) (wiki)),
+    )
+
+    if (isJust (mhero)) {
+      dispatch<ReceiveImportedHeroAction> ({
+        type: ActionTypes.RECEIVE_IMPORTED_HERO,
+        payload: {
+          hero: fromJust (mhero),
+          player,
+        },
+      })
     }
   }
 
