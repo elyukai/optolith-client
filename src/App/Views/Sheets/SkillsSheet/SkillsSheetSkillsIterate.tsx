@@ -14,7 +14,7 @@ import { compareLocale, translate } from "../../../Utilities/I18n";
 import { getRoutineValue } from "../../../Utilities/Increasable/skillUtils";
 import { sign } from "../../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { comparingR, sortRecordsBy } from "../../../Utilities/sortBy";
+import { comparingR, sortByMulti } from "../../../Utilities/sortBy";
 
 export const iterateList =
   (l10n: L10nRecord) =>
@@ -23,7 +23,7 @@ export const iterateList =
   (skills: List<Record<SkillCombined>>): JSX.Element[] =>
     pipe_ (
       skills,
-      sortRecordsBy ([comparingR (SkillCombinedA_.name) (compareLocale (l10n))]),
+      sortByMulti ([ comparingR (SkillCombinedA_.name) (compareLocale (l10n)) ]),
       map (obj => {
         const check_vals = mapMaybe (pipe (
                                       (id: string) => find (pipe (
@@ -72,7 +72,7 @@ export const iterateList =
                        `${sign (fst (routine))}${snd (routine) ? "!" : ""}`)
                      (mroutine)}
             </td>
-            <td className="comment"></td>
+            <td className="comment" />
           </tr>
         )
       }),

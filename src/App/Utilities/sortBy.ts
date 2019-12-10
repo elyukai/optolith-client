@@ -1,19 +1,17 @@
 import { flip, on } from "../../Data/Function";
 import { flength, List, sortBy } from "../../Data/List";
-import { EQ, Ordering } from "../../Data/Ord";
+import { Compare, EQ, Ordering } from "../../Data/Ord";
 import { fromDefault, Record, RecordIBase } from "../../Data/Record";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { compareLocale } from "./I18n";
 import { pipe_ } from "./pipe";
 
-export type CompareR<A extends RecordIBase<any>> = (x: Record<A>) => (y: Record<A>) => Ordering
-
-export interface SortOption<A extends RecordIBase<any>> {
-  compare: CompareR<A>
+export interface SortOption<A> {
+  compare: Compare<A>
   reverse: boolean
 }
 
-export type SortOptions<A extends RecordIBase<any>> = (CompareR<A> | SortOption<A>)[]
+export type SortOptions<A> = (Compare<A> | SortOption<A>)[]
 
 /**
  * Sort a list based on the passed sort options array. A sort option can either
@@ -21,10 +19,10 @@ export type SortOptions<A extends RecordIBase<any>> = (CompareR<A> | SortOption<
  * sort order should be reversed for the compare function. The first sort option
  * takes precedence over the second sort option and so on.
  */
-export const sortRecordsBy =
-  <A extends RecordIBase<any>>
+export const sortByMulti =
+  <A>
   (sortOptions: SortOptions<A>) =>
-  (xs: List<Record<A>>): List<Record<A>> => {
+  (xs: List<A>): List<A> => {
     if (flength (xs) < 2 || sortOptions .length === 0) {
       return xs
     }
@@ -39,18 +37,18 @@ export const sortRecordsBy =
           : x .compare
       )
 
-    return sortBy<Record<A>> (a => b => {
-                               for (const compare of sortFunctions) {
-                                 const result = compare (a) (b)
+    return sortBy<A> (a => b => {
+                       for (const compare of sortFunctions) {
+                         const result = compare (a) (b)
 
-                                 if (result !== EQ) {
-                                   return result
-                                 }
-                               }
+                         if (result !== EQ) {
+                           return result
+                         }
+                       }
 
-                               return EQ
-                             })
-                             (xs)
+                       return EQ
+                     })
+                     (xs)
   }
 
 export interface RecordWithName extends RecordIBase<any> {
@@ -67,7 +65,7 @@ const { name } = RecordWithName.AL
  */
 export const sortRecordsByName = (
   (locale: L10nRecord) =>
-    sortRecordsBy<RecordWithName> ([
+    sortByMulti<Record<RecordWithName>> ([
       comparingR<RecordWithName, string> (name) (compareLocale (locale)),
     ])
 ) as (locale: L10nRecord) =>

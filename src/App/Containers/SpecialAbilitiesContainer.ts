@@ -41,14 +41,14 @@ const mapDispatchToProps = (
   switchActiveItemHints () {
     dispatch (ConfigActions.switchEnableActiveItemHints ())
   },
-  addToList (args: Record<ActivatableActivationOptions>) {
-    dispatch (SpecialAbilitiesActions.addSpecialAbility (l10n) (args))
+  async addToList (args: Record<ActivatableActivationOptions>) {
+    await dispatch (SpecialAbilitiesActions.addSpecialAbility (l10n) (args))
   },
   removeFromList (args: Record<ActivatableDeactivationOptions>) {
     dispatch (SpecialAbilitiesActions.removeSpecialAbility (args))
   },
-  setLevel (id: string, index: number, level: number) {
-    dispatch (SpecialAbilitiesActions.setSpecialAbilityLevel (l10n) (id) (index) (level))
+  async setLevel (id: string, index: number, level: number) {
+    await dispatch (SpecialAbilitiesActions.setSpecialAbilityLevel (l10n) (id) (index) (level))
   },
   setFilterText (filterText: string) {
     dispatch (SpecialAbilitiesActions.setActiveSpecialAbilitiesFilterText (filterText))

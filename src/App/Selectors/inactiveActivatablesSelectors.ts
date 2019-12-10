@@ -21,7 +21,7 @@ import { createMapSelector, ignore3rd } from "../Utilities/createMapSelector";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { pipe } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
-import { sortRecordsBy } from "../Utilities/sortBy";
+import { sortByMulti } from "../Utilities/sortBy";
 import { getWikiSliceGetterByCategory } from "../Utilities/WikiUtils";
 import { getMatchingScriptAndLangRelated } from "./activatableSelectors";
 import { getAPObjectMap } from "./adventurePointsSelectors";
@@ -149,6 +149,6 @@ export const getDeactiveSpecialAbilities =
                            fmap<listSA, listSA> (pipe (
                                                   filterByAvailability (getSrc)
                                                                        <CatSA> (availability),
-                                                  sortRecordsBy<InAcSA> (sort_options)
+                                                  sortByMulti<Record<InAcSA>> (sort_options)
                                                 ))
                                                 (mxs))

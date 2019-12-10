@@ -265,10 +265,10 @@ export const getFilteredActiveAdvantages = createMaybeSelector (
   (madvantages, filterText, l10n) =>
     fmapF (madvantages)
           (filterAndSortRecordsBy (0)
-                                  <ActiveActivatable<Advantage>>
-                                  ([ActiveActivatableA_.name])
-                                  ([comparingR (ActiveActivatableA_.name)
-                                               (compareLocale (l10n))])
+                                  <Record<ActiveActivatable<Advantage>>>
+                                  ([ ActiveActivatableA_.name ])
+                                  ([ comparingR (ActiveActivatableA_.name)
+                                                (compareLocale (l10n)) ])
                                   (filterText))
 )
 
@@ -288,10 +288,10 @@ export const getFilteredActiveDisadvantages = createMaybeSelector (
   (mdisadvantages, filterText, l10n) =>
     fmapF (mdisadvantages)
           (filterAndSortRecordsBy (0)
-                                  <ActiveActivatable<Disadvantage>>
-                                  ([ActiveActivatableA_.name])
-                                  ([comparingR (ActiveActivatableA_.name)
-                                               (compareLocale (l10n))])
+                                  <Record<ActiveActivatable<Disadvantage>>>
+                                  ([ ActiveActivatableA_.name ])
+                                  ([ comparingR (ActiveActivatableA_.name)
+                                                (compareLocale (l10n)) ])
                                   (filterText))
 )
 
@@ -311,8 +311,8 @@ export const getFilteredActiveSpecialAbilities = createMaybeSelector (
   (mspecial_abilities, sortOptions, filterText) =>
     fmapF (mspecial_abilities)
           (filterAndSortRecordsBy (0)
-                                  <ActiveActivatable<SpecialAbility>>
-                                  ([AAA_.name, pipe (AAA_.nameInWiki, fromMaybe (""))])
+                                  <Record<ActiveActivatable<SpecialAbility>>>
+                                  ([ AAA_.name, pipe (AAA_.nameInWiki, fromMaybe ("")) ])
                                   (sortOptions)
                                   (filterText))
 )
