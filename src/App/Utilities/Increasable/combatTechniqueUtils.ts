@@ -66,6 +66,7 @@ export const isIncreaseDisabled =
   (wikiEntry: Record<CombatTechnique>) =>
   (instance: Record<SkillDependent>): boolean => {
     const max_by_primary = getMaxPrimaryAttributeValueById (state) (primary (wikiEntry)) + 2
+
     const mmax_by_el = then (guard (phase (state) < 3))
                             (fmap (maxCombatTechniqueRating)
                                   (lookupF (experienceLevels (wiki)) (experienceLevel (state))))
