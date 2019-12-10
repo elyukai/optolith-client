@@ -1,10 +1,10 @@
 // @ts-check
-const { sortRecordsBy, comparingR, sortRecordsByName, sortStrings } = require ("../sortBy")
+const { sortByMulti, comparingR, sortRecordsByName, sortStrings } = require ("../sortBy")
 const { compare } = require ("../../../Data/Num")
 const { List } = require ("../../../Data/List")
 const { fromDefault } = require ("../../../Data/Record")
 
-describe ("sortRecordsBy", () => {
+describe ("sortByMulti", () => {
   it ("sorts a list of record by one comparing factor", () => {
     const X = fromDefault ("X") ({ x: 0 })
 
@@ -32,7 +32,7 @@ describe ("sortRecordsBy", () => {
         X ({ x: 6 }),
       )
 
-    expect (sortRecordsBy ([ comparingR (X.A.x) (compare) ]) (xs))
+    expect (sortByMulti ([ comparingR (X.A.x) (compare) ]) (xs))
       .toEqual (exs)
   })
 
@@ -63,7 +63,7 @@ describe ("sortRecordsBy", () => {
         X ({ x: 5, y: 0 }),
       )
 
-    expect (sortRecordsBy ([ comparingR (X.A.x) (compare), comparingR (X.A.y) (compare) ]) (xs))
+    expect (sortByMulti ([ comparingR (X.A.x) (compare), comparingR (X.A.y) (compare) ]) (xs))
       .toEqual (exs)
   })
   it ("sorts a list of record by two comparing factors reversed", () => {
@@ -93,7 +93,7 @@ describe ("sortRecordsBy", () => {
         X ({ x: 3, y: 3 }),
       )
 
-    expect (sortRecordsBy ([ comparingR (X.A.y) (compare), comparingR (X.A.x) (compare) ]) (xs))
+    expect (sortByMulti ([ comparingR (X.A.y) (compare), comparingR (X.A.x) (compare) ]) (xs))
       .toEqual (exs)
   })
 })
