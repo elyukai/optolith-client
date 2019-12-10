@@ -27,7 +27,7 @@ import { filterRecordsByA, filterRecordsByName } from "../Utilities/filterBy";
 import { compareLocale, translate } from "../Utilities/I18n";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailabilityF } from "../Utilities/RulesUtils";
-import { comparingR, sortRecordsBy, sortRecordsByName } from "../Utilities/sortBy";
+import { comparingR, sortByMulti, sortRecordsByName } from "../Utilities/sortBy";
 import { DropdownOption } from "../Views/Universal/Dropdown";
 import { getAllCultures, getAllProfessions, getAllRaces } from "./rcpSelectors";
 import { getWikiProfessionsCombinedSortOptions } from "./sortOptionsSelectors";
@@ -46,7 +46,7 @@ export const filterByWikiAvailablilty = createMaybeSelector (
 export const getRacesSortedByName = createMaybeSelector (
   getLocaleAsProp,
   getAllRaces,
-  uncurryN (l10n => sortRecordsBy ([comparingR (RaceCombinedA_.name) (compareLocale (l10n))]))
+  uncurryN (l10n => sortByMulti ([ comparingR (RaceCombinedA_.name) (compareLocale (l10n)) ]))
 )
 
 export const getPreparedRaces = createMaybeSelector (
@@ -55,7 +55,7 @@ export const getPreparedRaces = createMaybeSelector (
   getRacesSortedByName,
   uncurryN3 (filterWiki => filter_text =>
               pipe (
-                filterRecordsByA ([RaceCombinedA_.name]) (filter_text),
+                filterRecordsByA ([ RaceCombinedA_.name ]) (filter_text),
                 filterWiki (RaceCombinedA_.src)
               ))
 )
@@ -63,7 +63,7 @@ export const getPreparedRaces = createMaybeSelector (
 export const getCulturesSortedByName = createMaybeSelector (
   getLocaleAsProp,
   getAllCultures,
-  uncurryN (l10n => sortRecordsBy ([comparingR (CultureCombinedA_.name) (compareLocale (l10n))]))
+  uncurryN (l10n => sortByMulti ([ comparingR (CultureCombinedA_.name) (compareLocale (l10n)) ]))
 )
 
 export const getPreparedCultures = createMaybeSelector (
@@ -72,7 +72,7 @@ export const getPreparedCultures = createMaybeSelector (
   getCulturesSortedByName,
   uncurryN3 (filterWiki => filter_text =>
               pipe (
-                filterRecordsByA ([CultureCombinedA_.name]) (filter_text),
+                filterRecordsByA ([ CultureCombinedA_.name ]) (filter_text),
                 filterWiki (CultureCombinedA_.src)
               ))
 )
@@ -80,7 +80,7 @@ export const getPreparedCultures = createMaybeSelector (
 export const getProfessionsSortedByName = createMaybeSelector (
   getWikiProfessionsCombinedSortOptions,
   getAllProfessions,
-  uncurryN (sortRecordsBy)
+  uncurryN (sortByMulti)
 )
 
 const isProfessionIncludedInFilter =

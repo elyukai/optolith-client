@@ -14,7 +14,7 @@ import { findSelectOption } from "../../../Utilities/Activatable/selectionUtils"
 import { compareLocale, translate } from "../../../Utilities/I18n";
 import { toRoman } from "../../../Utilities/NumberUtils";
 import { pipe_ } from "../../../Utilities/pipe";
-import { comparingR, sortRecordsBy } from "../../../Utilities/sortBy";
+import { comparingR, sortByMulti } from "../../../Utilities/sortBy";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface SkillsSheetLanguagesProps {
@@ -57,7 +57,7 @@ export function SkillsSheetLanguages (props: SkillsSheetLanguagesProps) {
                                level: Maybe.sum (ActiveObject.A.tier (activeObject)),
                              }))
     )),
-    sortRecordsBy ([
+    sortByMulti ([
                     comparingR (IdNameLevel.A.level) (flip (compare)),
                     comparingR (IdNameLevel.A.name) (compareLocale (l10n)),
                   ])
@@ -83,8 +83,8 @@ export function SkillsSheetLanguages (props: SkillsSheetLanguagesProps) {
         {replicateR (8 - flength (languages))
                     (index => (
                       <li key={`undefined-${index}`}>
-                        <span></span>
-                        <span></span>
+                        <span />
+                        <span />
                       </li>
                     ))}
       </ul>

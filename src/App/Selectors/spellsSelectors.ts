@@ -31,7 +31,7 @@ import { getInactiveSpellsForAnimist, getInactiveSpellsForArcaneBardOrDancer, ge
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
-import { sortRecordsBy, sortRecordsByName } from "../Utilities/sortBy";
+import { sortByMulti, sortRecordsByName } from "../Utilities/sortBy";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCantripsSortOptions, getSpellsCombinedSortOptions, getSpellsSortOptions } from "./sortOptionsSelectors";
@@ -302,7 +302,7 @@ export const getFilteredActiveSpellsAndCantrips = createMaybeSelector (
   (mcombineds, sort_options, filter_text) =>
     fmapF (mcombineds)
           (filterAndSortRecordsBy (0)
-                                  ([getNameFromSpellOrCantrip as getNameFromSpellOrCantrip])
+                                  ([ getNameFromSpellOrCantrip as getNameFromSpellOrCantrip ])
                                   (sort_options)
                                   (filter_text)) as Maybe<ListCombined>
 )
@@ -320,8 +320,8 @@ export const getFilteredInactiveSpellsAndCantrips = createMaybeSelector (
              liftM2 (inactive =>
                      active =>
                        filterAndSortRecordsBy (0)
-                                              ([getNameFromSpellOrCantrip as
-                                                getNameFromSpellOrCantrip])
+                                              ([ getNameFromSpellOrCantrip as
+                                                 getNameFromSpellOrCantrip ])
                                               (sort_options)
                                               (filter_text)
                                               (areActiveItemHintsEnabled
@@ -333,7 +333,7 @@ export const getFilteredInactiveSpellsAndCantrips = createMaybeSelector (
 export const getCantripsForSheet = createMaybeSelector (
   getCantripsSortOptions,
   getActiveCantrips,
-  uncurryN (sort_options => fmap (sortRecordsBy (sort_options)))
+  uncurryN (sort_options => fmap (sortByMulti (sort_options)))
 )
 
 
@@ -348,7 +348,7 @@ export const getSpellsForSheet = createMaybeSelector (
                                                 : set (composeL (SWRL.wikiEntry, SL.tradition))
                                                       (List ())
                                                       (s)),
-                                    sortRecordsBy (sort_options)
+                                    sortByMulti (sort_options)
                                   )))
 )
 

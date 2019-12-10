@@ -129,7 +129,9 @@ rules:
   # no-undef: 2
 
   # Stylistic Issues
-  array-bracket-spacing: 2
+  array-bracket-spacing:
+    - 2
+    - always
   array-element-newline:
     - 2
     - consistent
