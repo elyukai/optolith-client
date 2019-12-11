@@ -1,5 +1,5 @@
 import { Identity, isIdentity } from "../Control/Monad/Identity";
-import { DataStructure, DataStructureType } from "./Data";
+import { Type, TypeName } from "./Data";
 import { isEither, isLeft, Left, Right } from "./Either";
 import { Const, isConst } from "./Functor/Const";
 import { Internals } from "./Internals";
@@ -46,122 +46,122 @@ export type Serialized = string
                        | TupleS<Serialized[]>
 
 
-export interface ConstS<A> extends DataStructure<DataStructureType.Identity> {
+export interface ConstS<A> extends Type<TypeName.Identity> {
   value: A
 }
 
 const isConstS = (x: any): x is ConstS<any> => typeof x === "object"
                                                && x !== null
-                                               && x ["@@type"] === DataStructureType.Const
+                                               && x ["@@type"] === TypeName.Const
                                                && x .hasOwnProperty ("value")
 
-export interface IdentityS<A> extends DataStructure<DataStructureType.Identity> {
+export interface IdentityS<A> extends Type<TypeName.Identity> {
   value: A
 }
 
 const isIdentityS = (x: any): x is IdentityS<any> => typeof x === "object"
                                                      && x !== null
-                                                     && x ["@@type"] === DataStructureType.Identity
+                                                     && x ["@@type"] === TypeName.Identity
                                                      && x .hasOwnProperty ("value")
 
-export interface LeftS<A> extends DataStructure<DataStructureType.Left> {
+export interface LeftS<A> extends Type<TypeName.Left> {
   value: A
 }
 
 const isLeftS = (x: any): x is LeftS<any> => typeof x === "object"
                                              && x !== null
-                                             && x ["@@type"] === DataStructureType.Left
+                                             && x ["@@type"] === TypeName.Left
                                              && x .hasOwnProperty ("value")
 
-export interface RightS<A> extends DataStructure<DataStructureType.Right> {
+export interface RightS<A> extends Type<TypeName.Right> {
   value: A
 }
 
 const isRightS = (x: any): x is RightS<any> => typeof x === "object"
                                                && x !== null
-                                               && x ["@@type"] === DataStructureType.Right
+                                               && x ["@@type"] === TypeName.Right
                                                && x .hasOwnProperty ("value")
 
 export type EitherS<L, R> = LeftS<L> | RightS<R>
 
-export interface ListS<A> extends DataStructure<DataStructureType.List> {
+export interface ListS<A> extends Type<TypeName.List> {
   values: A[]
 }
 
 const isListS = (x: any): x is ListS<any> => typeof x === "object"
                                              && x !== null
-                                             && x ["@@type"] === DataStructureType.List
+                                             && x ["@@type"] === TypeName.List
                                              && x .hasOwnProperty ("value")
 
-export interface JustS<A> extends DataStructure<DataStructureType.Just> {
+export interface JustS<A> extends Type<TypeName.Just> {
   value: A
 }
 
 const isJustS = (x: any): x is JustS<any> => typeof x === "object"
                                              && x !== null
-                                             && x ["@@type"] === DataStructureType.Just
+                                             && x ["@@type"] === TypeName.Just
                                              && x .hasOwnProperty ("value")
 
-export interface NothingS extends DataStructure<DataStructureType.Right> { }
+export interface NothingS extends Type<TypeName.Right> { }
 
 const isNothingS = (x: any): x is NothingS => typeof x === "object"
                                               && x !== null
-                                              && x ["@@type"] === DataStructureType.Nothing
+                                              && x ["@@type"] === TypeName.Nothing
 
 export type MaybeS<L, R> = LeftS<L> | RightS<R>
 
-export interface OrderedMapS<K, A> extends DataStructure<DataStructureType.OrderedMap> {
+export interface OrderedMapS<K, A> extends Type<TypeName.OrderedMap> {
   values: [K, A][]
 }
 
 const isOrderedMapS = (x: any): x is OrderedMapS<any, any> => typeof x === "object"
                                                               && x !== null
                                                               && x ["@@type"] ===
-                                                                DataStructureType.OrderedMap
+                                                                TypeName.OrderedMap
                                                               && x .hasOwnProperty ("values")
 
-export interface OrderedSetS<A> extends DataStructure<DataStructureType.OrderedSet> {
+export interface OrderedSetS<A> extends Type<TypeName.OrderedSet> {
   values: A[]
 }
 
 const isOrderedSetS = (x: any): x is OrderedSetS<any> => typeof x === "object"
                                                          && x !== null
                                                          && x ["@@type"] ===
-                                                           DataStructureType.OrderedSet
+                                                           TypeName.OrderedSet
                                                          && x .hasOwnProperty ("value")
 
 export interface RecordS<A extends RecordBase, N extends string>
-  extends DataStructure<DataStructureType.Record> {
+  extends Type<TypeName.Record> {
     name: N
     values: A
   }
 
 const isRecordS = (x: any): x is RecordS<any, any> => typeof x === "object"
                                                       && x !== null
-                                                      && x ["@@type"] === DataStructureType.Record
+                                                      && x ["@@type"] === TypeName.Record
                                                       && x .hasOwnProperty ("name")
                                                       && x .hasOwnProperty ("values")
 
-export interface TupleS<A extends any[]> extends DataStructure<DataStructureType.Tuple> {
+export interface TupleS<A extends any[]> extends Type<TypeName.Tuple> {
   values: A
 }
 
 const isTupleS = (x: any): x is TupleS<any> => typeof x === "object"
                                                && x !== null
-                                               && x ["@@type"] === DataStructureType.Tuple
+                                               && x ["@@type"] === TypeName.Tuple
                                                && x .hasOwnProperty ("values")
 
 export const serialize = (x: Serializable): Serialized => {
   if (isConst (x)) {
     return {
-      "@@type": DataStructureType.Const,
+      "@@type": TypeName.Const,
       value: serialize (x .value),
     }
   }
 
   if (isIdentity (x)) {
     return {
-      "@@type": DataStructureType.Identity,
+      "@@type": TypeName.Identity,
       value: serialize (x .value),
     }
   }
@@ -169,20 +169,20 @@ export const serialize = (x: Serializable): Serialized => {
   if (isEither (x)) {
     if (isLeft (x)) {
       return {
-        "@@type": DataStructureType.Left,
+        "@@type": TypeName.Left,
         value: serialize (x .value),
       }
     }
 
     return {
-      "@@type": DataStructureType.Right,
+      "@@type": TypeName.Right,
       value: serialize (x .value),
     }
   }
 
   if (isList (x)) {
     return {
-      "@@type": DataStructureType.List,
+      "@@type": TypeName.List,
       values: [...x] .map (serialize),
     }
   }
@@ -190,33 +190,33 @@ export const serialize = (x: Serializable): Serialized => {
   if (isMaybe (x)) {
     if (isJust (x)) {
       return {
-        "@@type": DataStructureType.Just,
+        "@@type": TypeName.Just,
         value: serialize (x .value),
       }
     }
 
     return {
-      "@@type": DataStructureType.Nothing,
+      "@@type": TypeName.Nothing,
     }
   }
 
   if (Internals.isOrderedMap (x)) {
     return {
-      "@@type": DataStructureType.OrderedMap,
+      "@@type": TypeName.OrderedMap,
       values: [...assocs (x)] .map (p => [serialize (fst (p)), serialize (snd (p))]),
     }
   }
 
   if (Internals.isOrderedSet (x)) {
     return {
-      "@@type": DataStructureType.List,
+      "@@type": TypeName.List,
       values: [...x] .map (serialize),
     }
   }
 
   if (isRecord (x)) {
     return {
-      "@@type": DataStructureType.Record,
+      "@@type": TypeName.Record,
       name: x .name,
       values: Object.entries (x .values)
         .reduce<{ [key: string]: Serialized }> (
