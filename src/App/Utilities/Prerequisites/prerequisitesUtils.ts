@@ -158,7 +158,7 @@ export const getGeneratedPrerequisites =
                             })))
         )
 
-      case SpecialAbilityId.Lieblingszauber:
+      case SpecialAbilityId.FavoriteSpellwork:
         return pipe_ (
           sid,
           misStringM,
@@ -168,8 +168,8 @@ export const getGeneratedPrerequisites =
                             })))
         )
 
-      case SpecialAbilityId.SpellExtensions:
-      case SpecialAbilityId.ChantExtensions:
+      case SpecialAbilityId.SpellEnhancement:
+      case SpecialAbilityId.ChantEnhancement:
         return addToSelectOptionReqs (bindF ((option: Record<SelectOption>) =>
                                               liftM2 ((target: string) => (level: number) =>
                                                        List (

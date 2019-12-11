@@ -268,7 +268,7 @@ const isRemovalDisabledEntrySpecific =
           || unarmedStyleActive >= 2
       }
 
-      case SpecialAbilityId.MagicalStyleCombination: {
+      case SpecialAbilityId.MagicStyleCombination: {
         const totalActive = countActiveGroupEntries (wiki) (hero) (13)
 
         // default is 1, but with this SA its 2. If it's 2 this SA is neccessary

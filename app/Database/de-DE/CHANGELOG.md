@@ -1,11 +1,70 @@
-# 1.1.2
+## 1.2.0
 
-## Verbesserungen
+Diese Release ist hauptsächlich für andere Sprachen, da es Optolith jetzt auch auf Niederländisch gibt und English an Büchern aufgeholt hat. Allerdings gibt es auch viele relevante Fehlerbehebungen und kleine Verbesserungen.
+
+### Neue Features
+
+- Niederländische Version (inkl. Regelwerk)
+- Neue Bücher auf Englisch
+
+### Verbesserungen
+
+- Schilde werden normalerweise nicht als Primärwaffe genutzt, weshalb der doppelte Paradebonus nun standardmäßig auf dem Heldenbogen eingerechnet wird und nicht mehr der einfache.
+- Verbessertes Ausweichen I–III erhöht AW nicht mehr, da dies nur passieren darf, wenn man keine Rüstung trägt.
+- *Saga-Thorwalsch* in *Hjaldinsch/Saga-Thorwalsch* umbenannt.
+- SF Variante (beide) in *Zaubererweiterung* und *Liturgieerweiterung* umbenannt.
+
+### Fehlerbehebungen
+
+- Die Optionalregel *Höhere Paradewerte* erhöhte AW um 2 bzw. 4, obwohl es eigentlich nur 1 bzw. 2 sind.
+- Eine Zauber der Tradition (Scharlatan) hatten diese nicht als Tradition eingetragen.
+- Vorteil *Leichter Gang* hat die GS nicht erhöht.
+- Nachteil *Pech I-III* hat die maximalen SchiPs auf dem Heldenbogen nicht verringert.
+- Das Fenster für permanent ausgegebene Astralenegie und Karmaenergie war nicht schließbar.
+- Nachteil *Stigma (Grüne Haare)* ändert die Haarfarbe jetzt auf Grün.
+- Die Bildvorschau zeigt jetzt auch PNGs und nicht mehr nur JPEGs an.
+- Muttersprache (MS) konnte nicht als Stufe für Sprachen selektiert werden.
+- Der Schließen-Button des App-Fensters funktionierte nicht.
+- Fehlermeldungen beim Import-/Export-Abbruch entfernt.
+- SERPENTIALIS ist jetzt für Hexen und nicht mehr für Elfen.
+- Feenpaktgeschenke haben jetzt Beschreibungen.
+- Persönlichkeitsschwäche: Es ist jetzt möglich, so viele Vorurteil/Weltfremd-Einträge zu kaufen wie man möchte.
+- Für Professionen erforderliche Eigenschaftswerte werden jetzt auch so eingetragen.
+- SF Merkmalskenntnis funktionierte nicht und hatte eine falsche Kostenberechnung.
+- Halbgötter waren nicht als Anwendungsgebiete für *Götter & Kulte* verfügbar.
+- Fehlende Heilkräuter hinzugefügt.
+- Das Neuauswürfeln des Gewichts ohne eine bereits eingetragene Größe geht nun nicht mehr von einer Größe von 0 aus, sondern würfelt erst die Größe neu aus und lässt diesen Wert dann in das Gewicht einfließen.
+- Wenn die KK 8 ist, ist die Tragkraft nicht mehr 0 sondern 16.
+- Kampftechnikanpassungen in Professionsvarianten wurden nicht korrekt dargestellt.
+- Der Standardname für einen exportierten Heldenbogen ist jetzt der Name des Helden.
+- Das Maximum für Fremdzauber griff auch noch nach der Heldenerstellung.
+- Helden, die von der aktuell ausgeführten Optolith-Version nicht unterstützt werden, werden nicht mehr geladen bzw. angezeigt.
+- SF Athlet: Falsche Voraussetzungen
+- SF Buchdrucker: Falsche Voraussetzungen
+- Wenn ein Zauber für die Tradition Gildenmagier ausgewählt werden soll, werden Zauber der Tradition Allgemein ausgeblendet.
+- Umlautzeichen in Listenelementen werden jetzt nicht mehr abgeschnitten.
+- Die gewählte Sprache eines Helden wurde nicht gespeichert.
+- Pakte wurden nicht gespeichert.
+- SF Kupferstich: Falsche Voraussetzungen
+- Das Feld *Verbreitung* hat die Tradition (Namenloser) nicht aufgeführt.
+- Zu lange Liturgienamen werden auf dem Heldenbogen jetzt als Abkürzung dargestellt.
+- Die Liturgietabelle auf dem Liturgiebogen hatte teilweise falsche Überschriften.
+- Bann-/Schutzkreise werden auf dem Heldenbogen jetzt korrekt angezeigt.
+- Erweiterte Liturgiesonderfertigkeiten wurden häufig nicht durch Liturgiestile freigeschaltet.
+- Nachteil *Unfähig* hatte den Vorteil *Begabung* als Ganzes verboten und nicht nur das jeweilige Talent.
+- Das Maximum von Kampftechniken durch die Leiteigenschaft greift jetzt auch während der Heldenerstellung.
+- Hat man die Tradition Meistertalentierte ausgewählt, wurden die in Vorteile und Nachteile ausgegebenen AP nicht angezeigt.
+- SF Lieblichzauber erlaubt jetzt das Auswählen inaktiver Zauber nicht mehr.
+- Der Anteil der Kopfrüstung und der Torsorüstung bei Zonenrüstung war vertauscht.
+
+## 1.1.2
+
+### Verbesserungen
 
 - Die Meldung beim Laden ist jetzt auf Deutsch.
 - Das Abschließen der SKP-Auswahl kann jetzt rückgängig gemacht werden.
 
-## Fehlerbehebungen
+### Fehlerbehebungen
 
 - Kampfsonderfertigkeiten zeigen jetzt wieder ihren Typ (passiv/Basismanöver/Spezialmanöver) im Wiki an.
 - Zauber nach Gruppe zu sortieren sortiert die Gruppen jetzt alphabetisch.
@@ -14,7 +73,7 @@
 - Das englische User Interface lädt jetzt wieder ohne Probleme.
 - Profession *Akademie von Licht und Dunkelheit* kann jetzt wieder ohne UI-Fehler ausgewählt werden.
 
-# 1.1.0/1.1.1
+## 1.1.0/1.1.1
 
 *Die genaue Versionsnummer der App ist 1.1.1.*
 
@@ -26,12 +85,12 @@ Nicht zuletzt aber auch ein bereits an anderer Stelle erwähntes großes Dankesc
 
 Aber nun zum Changelog dieser Version:
 
-## Neue Features
+### Neue Features
 
 - Helden können über die Heldenliste nun direkt gespeichert werden.
 - Portraits von Helden und Begleitern können jetzt auch wieder gelöscht werden.
 
-## Verbesserungen
+### Verbesserungen
 
 - Auswahllisten werden nach aktivierten Regelwerken gefiltert. Das funktionierte vorher nur für die Hauptlisten wie Sonderfertigkeiten, jetzt aber eben auch für z. B. die Liste von Berufsgeheimnissen.
   - Wikieinträge können nicht nach bestimmten Regelwerken gefiltert werden; ebenso wenig wie diese bei geöffneten Helden nach den dort gewählten Regelwerken gefiltert werden. Dies wird noch nachgereicht!
@@ -58,7 +117,7 @@ Aber nun zum Changelog dieser Version:
 - Die dargstellte Formel zur Berechnung der Astralenergie passt sich jetzt entsprechend der Tradition an. Denn bei einigen Traditionen fließt nur die Hälfte der Leiteigenschaft ein und einige haben keine Leiteigenschaft, die einfließen könnte.
 - Bei Stabzaubern wird *Bindung des Stabes* als Voraussetzung ausgeblendet.
 
-## Fehlerbehebungen
+### Fehlerbehebungen
 
 - Nach einem Wechsel von Deutsch zu Englisch konnten Charaktere nicht mehr bearbeitet werden.
 - Sonderfertigkeiten können wieder nach Gruppen sortiert werden.

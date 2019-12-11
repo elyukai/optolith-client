@@ -9,12 +9,16 @@ import { Scroll } from "../Universal/Scroll";
 
 const getPath =
   (l10n: L10nRecord) =>
-    path.join (app_path, "app", "Database", L10n.A.id (l10n),  "CHANGELOG.md")
+    path.join (app_path, "app", "Database", L10n.A.id (l10n), "CHANGELOG.md")
 
-export const LastChanges = (props: { l10n: L10nRecord }) => (
+interface LastChangesProps {
+  l10n: L10nRecord
+}
+
+export const LastChanges: React.FC<LastChangesProps> = ({ l10n }) => (
   <Page id="last-changes">
     <Scroll className="text">
-      <Markdown source={fs.readFileSync (getPath (props.l10n), "UTF-8")} />
+      <Markdown source={fs.readFileSync (getPath (l10n), "UTF-8")} />
     </Scroll>
   </Page>
 )

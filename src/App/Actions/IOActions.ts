@@ -8,14 +8,14 @@ import { extname, join } from "path";
 import { toMsg, tryIO } from "../../Control/Exception";
 import { bimap, Either, either, eitherToMaybe, first, fromLeft_, fromRight_, isLeft, isRight, Left, Right } from "../../Data/Either";
 import { flip } from "../../Data/Function";
-import { fmap, fmapF } from "../../Data/Functor";
+import { fmap } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { appendStr, List, notNull } from "../../Data/List";
 import { alt_, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
 import { any, filter, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap";
 import { notMember } from "../../Data/OrderedSet";
 import { Record, toObject } from "../../Data/Record";
-import { parseJSON } from "../../Data/String/JSON";
+import { parseJSON, tryParseJSON } from "../../Data/String/JSON";
 import { fst, Pair, snd } from "../../Data/Tuple";
 import * as IO from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
@@ -451,7 +451,7 @@ export const requestHeroExport =
       const pmfilepath = await showSaveDialog ({
         title: translate (l10n) ("exportheroasjson"),
         filters: [
-          { name: "JSON", extensions: ["json"] },
+          { name: "JSON", extensions: [ "json" ] },
         ],
         defaultPath: hero.name.replace (/\//u, "/"),
       })
@@ -487,34 +487,42 @@ export const loadImportedHero =
   (l10n: L10nRecord): ReduxAction<Promise<Maybe<RawHero>>> =>
   async dispatch =>
     pipe_ (
-      await showOpenDialog ({ filters: [{ name: "JSON", extensions: ["json"] }] }),
+      await showOpenDialog ({ filters: [ { name: "JSON", extensions: [ "json" ] } ] }),
       listToMaybe,
       bindF (ensure (x => extname (x) === ".json")),
       maybe<Promise<Maybe<Either<Error, string>>>> (Promise.resolve (Nothing))
                                                    (pipe (tryIO (IO.readFile), fmap (Just))),
-      IO.bindF (async mres => {
-        if (isNothing (mres)) {
+      IO.bindF (pipe (
+        fmap (Either.bindF (tryParseJSON)),
+        async mres => {
+          if (isNothing (mres)) {
+            return Nothing
+          }
+
+          const res = fromJust (mres)
+
+          if (isRight (res)) {
+            return Just (fromRight_ (res) as RawHero)
+          }
+
+          await dispatch (addDefaultErrorAlert (l10n)
+                                              (translate (l10n) ("importheroerror"))
+                                              (res))
+
           return Nothing
         }
-
-        const res = fromJust (mres)
-
-        if (isRight (res)) {
-          return Just ((JSON.parse as (x: string) => RawHero) (fromRight_ (res)))
-        }
-
-        await dispatch (addDefaultErrorAlert (l10n)
-                                             (translate (l10n) ("importheroerror"))
-                                             (res))
-
-        return Nothing
-      })
+      ))
     )
 
 export const requestHeroImport =
-  (l10n: L10nRecord): ReduxAction =>
-  async dispatch => fmapF (await dispatch (loadImportedHero (l10n)))
-                          (x => dispatch (receiveHeroImport (l10n) (x)))
+  (l10n: L10nRecord): ReduxAction<Promise<void>> =>
+  async dispatch => {
+    const mhero = await dispatch (loadImportedHero (l10n))
+
+    if (isJust (mhero)) {
+      await dispatch (receiveHeroImport (l10n) (fromJust (mhero)))
+    }
+  }
 
 export interface ReceiveImportedHeroAction {
   type: ActionTypes.RECEIVE_IMPORTED_HERO
@@ -526,8 +534,8 @@ export interface ReceiveImportedHeroAction {
 
 export const receiveHeroImport =
   (l10n: L10nRecord) =>
-  (raw: RawHero): ReduxAction =>
-  (dispatch, getState) => {
+  (raw: RawHero): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const newId = prefixId (IdPrefixes.HERO) (getNewIdByDate ())
     const { player, avatar, ...other } = raw
 
@@ -536,7 +544,7 @@ export const receiveHeroImport =
       id: newId,
       avatar: avatar !== undefined
         && avatar.length > 0
-        && (isBase64Image (avatar) || fs.existsSync (avatar.replace (/file:[\\/]+/u, "")))
+        && (isBase64Image (avatar) || await IO.existsFile (avatar.replace (/file:[\\/]+/u, "")))
         ? avatar
         : undefined,
     }
@@ -645,7 +653,7 @@ export const requestPrintHeroToPDF =
                    title: translate (l10n) ("printcharactersheettopdf"),
                    defaultPath: getDefaultPDFName (getState ()),
                    filters: [
-                     { name: "PDF", extensions: ["pdf"] },
+                     { name: "PDF", extensions: [ "pdf" ] },
                    ],
                  })
 
