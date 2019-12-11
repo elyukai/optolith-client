@@ -12,6 +12,12 @@ process.on ('unhandledRejection', error => {
 module.exports = {
   buildWindows:
     async () => {
+      console.log ("Deleting macOS env variables")
+      delete process.env.CSC_LINK
+      delete process.env.CSC_KEY_PASSWORD
+      delete process.env.APPLEID
+      delete process.env.APPLEIDPASS
+
       console.log ("Copy tables to directories...")
       await copyTables ()
 
@@ -24,6 +30,12 @@ module.exports = {
     },
   buildLinux:
     async () => {
+      console.log ("Deleting macOS env variables")
+      delete process.env.CSC_LINK
+      delete process.env.CSC_KEY_PASSWORD
+      delete process.env.APPLEID
+      delete process.env.APPLEIDPASS
+
       console.log ("Copy tables to directories...")
       await copyTables ()
 
@@ -77,7 +89,8 @@ const config = {
   },
   nsis: {
     perMachine: true,
-    differentialPackage: true
+    differentialPackage: true,
+    deleteAppDataOnUninstall: false,
   },
   linux: {
     category: "RolePlaying",
