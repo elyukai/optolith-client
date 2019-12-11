@@ -5,6 +5,7 @@ import { lookup, lookupF, OrderedMap, union } from "../../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../../Data/Record";
 import { show } from "../../../../Data/Show";
 import { fst, isTuple, Pair, uncurry } from "../../../../Data/Tuple";
+import { traceShowIdWhen } from "../../../../Debug/Trace";
 import { toInt, toNatural, unsafeToInt } from "../../NumberUtils";
 import { pipe, pipe_ } from "../../pipe";
 import { id_rx, isNaturalNumber } from "../../RegexUtils";
@@ -161,7 +162,10 @@ type MergeOptRowsByIdAndMainIdFunction<A> =
 export const mergeRowsByIdAndMainIdBothOpt =
   (origin: string) =>
   <A> (f: MergeOptRowsByIdAndMainIdFunction<A>) =>
+  (debug: boolean) =>
   (rows: BothOptionalRows): Either<string, A> => {
+    traceShowIdWhen (debug) (rows)
+
     const main_row = isTuple (rows) ? fst (rows) : rows
 
     const either_main_id = lookupId (origin) (toNatural) ("mainId") (main_row)

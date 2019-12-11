@@ -15,7 +15,7 @@ import { alt_, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNothing, Just
 import { any, filter, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap";
 import { notMember } from "../../Data/OrderedSet";
 import { Record, toObject } from "../../Data/Record";
-import { parseJSON } from "../../Data/String/JSON";
+import { parseJSON, tryParseJSON } from "../../Data/String/JSON";
 import { fst, Pair, snd } from "../../Data/Tuple";
 import * as IO from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
@@ -451,7 +451,7 @@ export const requestHeroExport =
       const pmfilepath = await showSaveDialog ({
         title: translate (l10n) ("exportheroasjson"),
         filters: [
-          { name: "JSON", extensions: ["json"] },
+          { name: "JSON", extensions: [ "json" ] },
         ],
         defaultPath: hero.name.replace (/\//u, "/"),
       })
@@ -487,28 +487,31 @@ export const loadImportedHero =
   (l10n: L10nRecord): ReduxAction<Promise<Maybe<RawHero>>> =>
   async dispatch =>
     pipe_ (
-      await showOpenDialog ({ filters: [{ name: "JSON", extensions: ["json"] }] }),
+      await showOpenDialog ({ filters: [ { name: "JSON", extensions: [ "json" ] } ] }),
       listToMaybe,
       bindF (ensure (x => extname (x) === ".json")),
       maybe<Promise<Maybe<Either<Error, string>>>> (Promise.resolve (Nothing))
                                                    (pipe (tryIO (IO.readFile), fmap (Just))),
-      IO.bindF (async mres => {
-        if (isNothing (mres)) {
+      IO.bindF (pipe (
+        fmap (Either.bindF (tryParseJSON)),
+        async mres => {
+          if (isNothing (mres)) {
+            return Nothing
+          }
+
+          const res = fromJust (mres)
+
+          if (isRight (res)) {
+            return Just (fromRight_ (res) as RawHero)
+          }
+
+          await dispatch (addDefaultErrorAlert (l10n)
+                                              (translate (l10n) ("importheroerror"))
+                                              (res))
+
           return Nothing
         }
-
-        const res = fromJust (mres)
-
-        if (isRight (res)) {
-          return Just ((JSON.parse as (x: string) => RawHero) (fromRight_ (res)))
-        }
-
-        await dispatch (addDefaultErrorAlert (l10n)
-                                             (translate (l10n) ("importheroerror"))
-                                             (res))
-
-        return Nothing
-      })
+      ))
     )
 
 export const requestHeroImport =
@@ -645,7 +648,7 @@ export const requestPrintHeroToPDF =
                    title: translate (l10n) ("printcharactersheettopdf"),
                    defaultPath: getDefaultPDFName (getState ()),
                    filters: [
-                     { name: "PDF", extensions: ["pdf"] },
+                     { name: "PDF", extensions: [ "pdf" ] },
                    ],
                  })
 

@@ -339,21 +339,16 @@ export namespace Internals {
    *
    * Creates a new `Just` from the passed value.
    */
-  export const Just = <A> (x: A): Just<A> => {
-    if (x !== null && x !== undefined) {
-      return Object.create (
-        JustPrototype,
-        {
-          value: {
-            value: x,
-            enumerable: true,
-          },
-        }
-      )
-    }
-
-    throw new TypeError ("Cannot create a Just from a nullable value.")
-  }
+  export const Just = <A> (x: A): Just<A> =>
+    Object.create (
+      JustPrototype,
+      {
+        value: {
+          value: x,
+          enumerable: true,
+        },
+      }
+    )
 
   export interface Nothing extends NothingPrototype { }
 
