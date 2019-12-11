@@ -8,7 +8,7 @@ import { extname, join } from "path";
 import { toMsg, tryIO } from "../../Control/Exception";
 import { bimap, Either, either, eitherToMaybe, first, fromLeft_, fromRight_, isLeft, isRight, Left, Right } from "../../Data/Either";
 import { flip } from "../../Data/Function";
-import { fmap, fmapF } from "../../Data/Functor";
+import { fmap } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { appendStr, List, notNull } from "../../Data/List";
 import { alt_, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
@@ -515,9 +515,14 @@ export const loadImportedHero =
     )
 
 export const requestHeroImport =
-  (l10n: L10nRecord): ReduxAction =>
-  async dispatch => fmapF (await dispatch (loadImportedHero (l10n)))
-                          (x => dispatch (receiveHeroImport (l10n) (x)))
+  (l10n: L10nRecord): ReduxAction<Promise<void>> =>
+  async dispatch => {
+    const mhero = await dispatch (loadImportedHero (l10n))
+
+    if (isJust (mhero)) {
+      await dispatch (receiveHeroImport (l10n) (fromJust (mhero)))
+    }
+  }
 
 export interface ReceiveImportedHeroAction {
   type: ActionTypes.RECEIVE_IMPORTED_HERO
@@ -529,8 +534,8 @@ export interface ReceiveImportedHeroAction {
 
 export const receiveHeroImport =
   (l10n: L10nRecord) =>
-  (raw: RawHero): ReduxAction =>
-  (dispatch, getState) => {
+  (raw: RawHero): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const newId = prefixId (IdPrefixes.HERO) (getNewIdByDate ())
     const { player, avatar, ...other } = raw
 
@@ -539,7 +544,7 @@ export const receiveHeroImport =
       id: newId,
       avatar: avatar !== undefined
         && avatar.length > 0
-        && (isBase64Image (avatar) || fs.existsSync (avatar.replace (/file:[\\/]+/u, "")))
+        && (isBase64Image (avatar) || await IO.existsFile (avatar.replace (/file:[\\/]+/u, "")))
         ? avatar
         : undefined,
     }
