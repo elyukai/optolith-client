@@ -446,9 +446,9 @@ const parseWorkbooks =
                                   }),
                                   matchSelectOptionsToBaseRecords (rs.specialAbilitySelectOptions),
                                   matchExtensionsToBaseRecord (rs.spellExtensions)
-                                                              (SpecialAbilityId.SpellExtensions),
+                                                              (SpecialAbilityId.SpellEnhancement),
                                   matchExtensionsToBaseRecord (rs.liturgicalChantExtensions)
-                                                              (SpecialAbilityId.ChantExtensions)
+                                                              (SpecialAbilityId.ChantEnhancement)
                                 ))
                                 (w)
                   }

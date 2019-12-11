@@ -91,7 +91,7 @@ const getEntrySpecificNameAddition =
       case AdvantageId.WeaponAptitude:
       case DisadvantageId.Incompetent:
       case SpecialAbilityId.AdaptionZauber:
-      case SpecialAbilityId.Lieblingszauber:
+      case SpecialAbilityId.FavoriteSpellwork:
       case SpecialAbilityId.Forschungsgebiet:
       case SpecialAbilityId.Expertenwissen:
       case SpecialAbilityId.Wissensdurst:
@@ -182,8 +182,8 @@ const getEntrySpecificNameAddition =
           fmap (SOA.name)
         )
 
-      case SpecialAbilityId.SpellExtensions:
-      case SpecialAbilityId.ChantExtensions:
+      case SpecialAbilityId.SpellEnhancement:
+      case SpecialAbilityId.ChantEnhancement:
         return pipe (
                       AOWIA.sid,
                       findSelectOption (wiki_entry),
@@ -191,7 +191,7 @@ const getEntrySpecificNameAddition =
                                            bindF ((target_id: string) => {
                                              const acc =
                                                AOWIA.id (hero_entry)
-                                               === SpecialAbilityId.SpellExtensions
+                                               === SpecialAbilityId.SpellEnhancement
                                                  ? WA.spells
                                                  : WA.liturgicalChants
 

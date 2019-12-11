@@ -125,7 +125,7 @@ export const convertHero =
                     if (hasOwnProperty ("SA_344") (entry.activatable)) {
                       entry.activatable = {
                         ...entry.activatable,
-                        SA_344: [{ sid: "CT_3" }],
+                        SA_344: [ { sid: "CT_3" } ],
                       }
                     }
 
@@ -134,13 +134,13 @@ export const convertHero =
                       if (Array.isArray (arr)) {
                         entry.activatable = {
                           ...other,
-                          SA_344: [...arr, { sid: "CT_12" }],
+                          SA_344: [ ...arr, { sid: "CT_12" } ],
                         }
                       }
                       else {
                         entry.activatable = {
                           ...other,
-                          SA_344: [{ sid: "CT_12" }],
+                          SA_344: [ { sid: "CT_12" } ],
                         }
                       }
                     }
@@ -150,13 +150,13 @@ export const convertHero =
                       if (Array.isArray (arr)) {
                         entry.activatable = {
                           ...other,
-                          SA_344: [...arr, { sid: "CT_16" }],
+                          SA_344: [ ...arr, { sid: "CT_16" } ],
                         }
                       }
                       else {
                         entry.activatable = {
                           ...other,
-                          SA_344: [{ sid: "CT_16" }],
+                          SA_344: [ { sid: "CT_16" } ],
                         }
                       }
                     }
@@ -168,7 +168,7 @@ export const convertHero =
                         const { sid, sid2 } = active
                         const id = getMagicalTraditionInstanceIdByNumericId (sid as number)
                         // @ts-ignore
-                        entry.activatable[fromMaybe ("SA_70") (id)] = [{ sid: sid2 }]
+                        entry.activatable[fromMaybe ("SA_70") (id)] = [ { sid: sid2 } ]
                       }
                     }
 
@@ -179,7 +179,7 @@ export const convertHero =
                         const { sid, sid2 } = active
                         const id = getBlessedTradStrIdFromNumId (sid as number)
                         // @ts-ignore
-                        entry.activatable[fromMaybe ("SA_86") (id)] = [{ sid: sid2 }]
+                        entry.activatable[fromMaybe ("SA_86") (id)] = [ { sid: sid2 } ]
                       }
                     }
 
@@ -255,7 +255,7 @@ export const convertHero =
                         ...hero.attr,
                         values: hero.attr.values.map ((e, i) => {
                           // @ts-ignore
-                          const inter = [...e] as [string, number, number];
+                          const inter = [ ...e ] as [string, number, number];
                           inter[2] = i === index ? adjValue : 0;
 
                           return inter;
@@ -271,7 +271,7 @@ export const convertHero =
                       ...hero.attr,
                       // @ts-ignore
                       values: hero .attr .values .map (e => ({ id: e[0], value: e[1] })),
-                      attributeAdjustmentSelected: ["R_1", "R_3"] .includes (hero .r!)
+                      attributeAdjustmentSelected: [ "R_1", "R_3" ] .includes (hero .r!)
                         ? hero .attr .values .reduce (
                           // @ts-ignore
                           (acc, e) => e[2] === 1 ? e[0] : acc,
@@ -342,7 +342,7 @@ export const convertHero =
                       if (activatable [base] !== undefined && activatable [base] .length === 1) {
                         activatable = {
                           ...activatable,
-                          [base]: [{ sid: 1 }],
+                          [base]: [ { sid: 1 } ],
                         }
                       }
                     }
@@ -352,8 +352,8 @@ export const convertHero =
                         activatable = {
                           ...activatable,
                           [base]: activatable [base] === undefined
-                            ? [{ sid }]
-                            : [...activatable [base], { sid }],
+                            ? [ { sid } ]
+                            : [ ...activatable [base], { sid } ],
                         }
                       }
                     }
@@ -405,6 +405,19 @@ export const convertHero =
                       pers: {
                         ...hero.pers,
                         haircolor: 25,
+                      },
+                    }
+                    : hero),
+        convertLT ("1.2.0-alpha.11")
+                  // Fix Stigma (Green Hair) actually allow green hair in
+                  // personal data
+                  (hero => hasOwnProperty ("SA_250") (hero .activatable)
+                    && hero .activatable .SA_250
+                      .some (e => Object.keys (hero .spells) .every (id => id !== e.sid))
+                    ? {
+                      ...hero,
+                      activatable: {
+                        SA_250: [],
                       },
                     }
                     : hero)
