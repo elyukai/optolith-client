@@ -56,6 +56,7 @@ Diese Release ist hauptsächlich für andere Sprachen, da es Optolith jetzt auch
 - Hat man die Tradition Meistertalentierte ausgewählt, wurden die in Vorteile und Nachteile ausgegebenen AP nicht angezeigt.
 - SF Lieblichzauber erlaubt jetzt das Auswählen inaktiver Zauber nicht mehr.
 - Der Anteil der Kopfrüstung und der Torsorüstung bei Zonenrüstung war vertauscht.
+- SF Baliho-Stil hatte Schilddeckung als mögliche erweiterte Kampfsonderfertigkeit aufgezählt, obwohl es Schildstoß hätte sein müssen.
 
 ## 1.1.2
 
