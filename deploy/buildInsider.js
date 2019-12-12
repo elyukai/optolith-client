@@ -12,11 +12,11 @@ process.on ('unhandledRejection', error => {
 module.exports = {
   buildWindows:
     async () => {
-      console.log ("Deleting macOS env variables")
-      delete process.env.CSC_LINK
-      delete process.env.CSC_KEY_PASSWORD
-      delete process.env.APPLEID
-      delete process.env.APPLEIDPASS
+      // console.log ("Deleting macOS env variables")
+      // delete process.env.CSC_LINK
+      // delete process.env.CSC_KEY_PASSWORD
+      // delete process.env.APPLEID
+      // delete process.env.APPLEIDPASS
 
       console.log ("Copy tables to directories...")
       await copyTables ()
@@ -30,11 +30,11 @@ module.exports = {
     },
   buildLinux:
     async () => {
-      console.log ("Deleting macOS env variables")
-      delete process.env.CSC_LINK
-      delete process.env.CSC_KEY_PASSWORD
-      delete process.env.APPLEID
-      delete process.env.APPLEIDPASS
+      // console.log ("Deleting macOS env variables")
+      // delete process.env.CSC_LINK
+      // delete process.env.CSC_KEY_PASSWORD
+      // delete process.env.APPLEID
+      // delete process.env.APPLEIDPASS
 
       console.log ("Copy tables to directories...")
       await copyTables ()
@@ -119,8 +119,8 @@ const config = {
     target: "default",
     artifactName: "OptolithInsider_${version}.${ext}",
     hardenedRuntime: true,
-    entitlements: "deploy/entitlements.mac.plist",
-    entitlementsInherit: "deploy/entitlements.mac.plist",
+    // entitlements: "deploy/entitlements.mac.plist",
+    // entitlementsInherit: "deploy/entitlements.mac.plist",
     gatekeeperAssess: false,
   },
   dmg: {
@@ -131,5 +131,5 @@ const config = {
     "url": process.env.PUBLISH_URL_INSIDER,
     "channel": "latest"
   },
-  afterSign: notarize,
+  // afterSign: notarize,
 }
