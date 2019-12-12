@@ -37,13 +37,17 @@ export type PortalWrappedProps =
   & PortalWrappedOwnProps
 
 export function PortalWrapped (props: PortalWrappedProps) {
-  const { children, className, theme, id, ...other } = props
-
-  const { isOpen = false } = other
+  const {
+    children,
+    className,
+    theme,
+    id,
+    isOpen = false,
+  } = props
 
   return isOpen
     ? (
-      <Portal {...other}>
+      <Portal>
         <div className={classListMaybe (List (Just (`theme-${theme}`), Maybe (className)))} id={id}>
           {children}
         </div>

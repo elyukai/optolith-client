@@ -11,6 +11,7 @@ import { ActivatableActivationValidation } from "./ActivatableActivationValidati
 import { ActivatableNameCost, ActivatableNameCostA_, ActivatableNameCostSafeCost } from "./ActivatableNameCost";
 
 export interface ActiveActivatable<A extends RecordI<Activatable> = RecordI<Activatable>> {
+  "@@name": "ActiveActivatable"
   nameAndCost: Record<ActivatableNameCostSafeCost>
   validation: Record<ActivatableActivationValidation>
   wikiEntry: Record<A>
@@ -20,7 +21,7 @@ export interface ActiveActivatable<A extends RecordI<Activatable> = RecordI<Acti
 export const ActiveActivatable =
   fromDefault ("ActiveActivatable")
               <ActiveActivatable> ({
-                nameAndCost: ActivatableNameCost.default as Record<ActivatableNameCostSafeCost>,
+                nameAndCost: ActivatableNameCost.default,
                 validation: ActivatableActivationValidation.default,
                 heroEntry: ActivatableDependent.default,
                 wikiEntry: Advantage.default,
@@ -62,6 +63,7 @@ export const ActiveActivatableA_ = {
   maxLevel: pipe (AAA.validation, AAVA.maxLevel),
   minLevel: pipe (AAA.validation, AAVA.minLevel),
   disabled: pipe (AAA.validation, AAVA.disabled),
+  active: pipe (AAA.heroEntry, ActivatableDependent.A.active),
 }
 
 export const ActiveActivatableAL_ = {

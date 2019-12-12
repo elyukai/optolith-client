@@ -3,12 +3,14 @@ import { ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { all, cons, Cons, consF, elemF, filter, find, foldr, intercalate, List, ListI, map, subscriptF } from "../../Data/List";
-import { alt, bind, bindF, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe";
+import { alt, any, bind, bindF, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe";
 import { abs, add } from "../../Data/Num";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
+import { PairF } from "../../Data/Tuple";
 import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Tuple/Curry";
-import { Categories } from "../Constants/Categories";
+import { Category } from "../Constants/Categories";
+import { ProfessionId, RaceId } from "../Constants/Ids";
 import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
 import { ActivatableNameCostIsActive } from "../Models/View/ActivatableNameCostIsActive";
@@ -43,7 +45,7 @@ import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
 import { getNameCostForWiki } from "../Utilities/Activatable/activatableActiveUtils";
 import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils";
-import { minus } from "../Utilities/Chars";
+import { minus, plusmn } from "../Utilities/Chars";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { translate } from "../Utilities/I18n";
@@ -55,7 +57,7 @@ import { filterByAvailability, filterByAvailabilityAndPred, isEntryFromCoreBook 
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCulturesCombinedSortOptions, getProfessionsCombinedSortOptions, getRacesCombinedSortOptions } from "./sortOptionsSelectors";
-import { getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getProfessionsFilterText, getRaceId, getRacesFilterText, getSex, getWiki, getWikiBooks, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors";
+import { getCultureId, getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getProfessionsFilterText, getRaceId, getRacesFilterText, getRaceVariantId, getSex, getWiki, getWikiBooks, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors";
 import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from "./uisettingsSelectors";
 
 const WA = WikiModel.A
@@ -96,11 +98,25 @@ export const getCurrentRace = createMaybeSelector (
                           (lookupF (races))
 )
 
+export const getRaceVariant = createMaybeSelector (
+  getWikiRaceVariants,
+  getRaceVariantId,
+  (raceVariants, raceVariantId) => bind (raceVariantId)
+                                        (lookupF (raceVariants))
+)
+
 export const getCurrentRaceVariant = createMaybeSelector (
   getWikiRaceVariants,
   getCurrentRaceVariantId,
   (raceVariants, raceVariantId) => bind (raceVariantId)
                                         (lookupF (raceVariants))
+)
+
+export const getCulture = createMaybeSelector (
+  getWikiCultures,
+  getCultureId,
+  (cultures, cultureId) => bind (cultureId)
+                                (lookupF (cultures))
 )
 
 export const getCurrentCulture = createMaybeSelector (
@@ -162,7 +178,7 @@ export const getFilteredRaces = createMaybeSelector (
   getRacesCombinedSortOptions,
   getRacesFilterText,
   getAvailableRaces,
-  uncurryN3 (filterAndSortRecordsBy (0) ([pipe (RCA.wikiEntry, RA.name)]))
+  uncurryN3 (filterAndSortRecordsBy (0) ([ pipe (RCA.wikiEntry, RA.name) ]))
 )
 
 export const getAllCultures = createMaybeSelector (
@@ -173,17 +189,13 @@ export const getAllCultures = createMaybeSelector (
                         map (wiki_entry =>
                               CultureCombined ({
                                 mappedCulturalPackageSkills:
-                                  mapMaybe  ((x: Record<IncreaseSkill>) => pipe_ (
-                                              x,
-                                              ISA.id,
-                                              lookupF (skills),
-                                              fmap (y => IncreasableForView ({
-                                                           id: ISA.id (x),
-                                                           name: SA.name (y),
-                                                           value: ISA.value (x),
-                                                         }))
-                                            ))
-                                            (CA.culturalPackageSkills (wiki_entry)),
+                                  mapMaybe ((x: Record<IncreaseSkill>) => pipe_ (
+                                             x,
+                                             ISA.id,
+                                             lookupF (skills),
+                                             fmap (PairF (ISA.value (x)))
+                                           ))
+                                           (CA.culturalPackageSkills (wiki_entry)),
                                 wikiEntry: wiki_entry,
                               }))
                       ))
@@ -231,7 +243,7 @@ export const getFilteredCultures = createMaybeSelector (
   getCulturesCombinedSortOptions,
   getCulturesFilterText,
   getAvailableCultures,
-  uncurryN3 (filterAndSortRecordsBy (0) ([pipe (CCA.wikiEntry, CA.name)]))
+  uncurryN3 (filterAndSortRecordsBy (0) ([ pipe (CCA.wikiEntry, CA.name) ]))
 )
 
 interface SkillGroupLists {
@@ -299,8 +311,7 @@ export const getAllProfessions = createMaybeSelector (
                                                         })),
                                           }
                                         })
-                                )
-                              )
+                                ))
                               ({
                                 physicalSkills: List (),
                                 socialSkills: List (),
@@ -360,10 +371,9 @@ export const getAllProfessions = createMaybeSelector (
                             thrush (PVA.selections (v))
                                    (mapProfessionVariantSelection (wiki)),
                           mappedCombatTechniques:
-                            thrush (PVA.combatTechniques (v))
-                                   (mapMaybe (mapCombatTechniquePrevious (wiki)
-                                                                         (PA.combatTechniques (p))
-                                             )),
+                            mapMaybe (mapCombatTechniquePrevious (wiki)
+                                                                 (PA.combatTechniques (p)))
+                                     (PVA.combatTechniques (v)),
                           mappedSkills:
                             thrush (PVA.skills (v))
                                    (mapMaybe (mapSkillPrevious (wiki)
@@ -600,7 +610,8 @@ const mapSpellPrevious = mapIncreaseSkillListPrevious (0) (WA.spells) (SPA.name)
 
 const mapLiturgicalChantPrevious = mapIncreaseSkillListPrevious (0) (WA.liturgicalChants) (LCA.name)
 
-const isCustomProfession = (e: Record<ProfessionCombined>) => ProfessionCombinedA_.id (e) === "P_0"
+const isCustomProfession = (e: Record<ProfessionCombined>) => ProfessionCombinedA_.id (e)
+                                                              === ProfessionId.CustomProfession
 
 const areProfessionOrVariantPrerequisitesValid =
   (current_sex: Sex) =>
@@ -620,7 +631,7 @@ const areProfessionOrVariantPrerequisitesValid =
                   if (ProfessionRequireIncreasable.is (d)) {
                     const category = getCategoryById (PRIA.id (d))
 
-                    const isAttribute = Maybe.elemF (category) (Categories.ATTRIBUTES)
+                    const isAttribute = Maybe.elemF (category) (Category.ATTRIBUTES)
                     const isGreaterThanMax = PRIA.value (d) > ELA.maxAttributeValue (start_el)
 
                     return isAttribute && isGreaterThanMax
@@ -748,9 +759,7 @@ export const getCommonProfessions = createMaybeSelector (
                                                                                 (CA.id (culture))
                                                                                 (start_el))))
                                   ))
-                                (professions)
-
-                       ))
+                                (professions)))
 )
 
 export const getAvailableProfessions = createMaybeSelector (
@@ -807,8 +816,7 @@ export const getFilteredProfessions = createMaybeSelector (
                                                  ),
                                                ])
                                                (sort_options)
-                                               (filter_text)
-                       ))
+                                               (filter_text)))
 )
 
 export const getCurrentFullProfessionName = createMaybeSelector (
@@ -869,6 +877,7 @@ export const getRandomWeightCalcStr = createMaybeSelector (
   (l10n, mrace) => {
     const mweight_base = fmap (RA.weightBase) (mrace)
     const mweight_randoms = fmap (RA.weightRandom) (mrace)
+    const is_humans = any (pipe (RA.id, equals<string> (RaceId.Humans))) (mrace)
 
     return liftM2 ((base: number) => (randoms: List<Record<Die>>) => {
                     const size_tag = translate (l10n) ("size")
@@ -879,7 +888,7 @@ export const getRandomWeightCalcStr = createMaybeSelector (
                       map (die => {
                         const sides = Die.A.sides (die)
                         const amount = Die.A.amount (die)
-                        const sign = getSign (sides)
+                        const sign = is_humans ? plusmn : getSign (sides)
 
                         return `${sign} ${amount}${dice_tag}${abs (sides)}`
                       }),

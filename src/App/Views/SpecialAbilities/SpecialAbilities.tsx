@@ -21,9 +21,9 @@ import { ListHeaderTag } from "../Universal/ListHeaderTag";
 import { MainContent } from "../Universal/MainContent";
 import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
+import { SearchField } from "../Universal/SearchField";
 import { Slidein } from "../Universal/Slidein";
 import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { TextField } from "../Universal/TextField";
 
 export interface SpecialAbilitiesOwnProps {
   l10n: L10nRecord
@@ -65,106 +65,74 @@ export interface SpecialAbilitiesState {
   currentSlideinId: Maybe<string>
 }
 
-export class SpecialAbilities
-  extends React.Component<SpecialAbilitiesProps, SpecialAbilitiesState> {
-  state: SpecialAbilitiesState = {
-    showAddSlidein: false,
-    currentId: Nothing,
-    currentSlideinId: Nothing,
-  }
+export const SpecialAbilities: React.FC<SpecialAbilitiesProps> = props => {
+  const {
+    activeList,
+    addToList,
+    deactiveList,
+    enableActiveItemHints,
+    l10n,
+    isRemovingEnabled,
+    removeFromList,
+    setSortOrder,
+    setLevel,
+    sortOrder,
+    switchActiveItemHints,
+    filterText,
+    inactiveFilterText,
+    setInactiveFilterText,
+    setFilterText,
+  } = props
 
-  showAddSlidein = () => this.setState ({ showAddSlidein: true })
+  const [ isSlideinOpen, setIsSlideinOpen ] = React.useState (false)
+  const [ currentId, setCurrentId ] = React.useState<Maybe<string>> (Nothing)
+  const [ currentSlideinId, setCurrentSlideinId ] = React.useState<Maybe<string>> (Nothing)
 
-  hideAddSlidein = () => {
-    this.props.setInactiveFilterText ("")
-    this.setState ({ showAddSlidein: false })
-  }
+  const handleShowSlidein = React.useCallback (
+    () => setIsSlideinOpen (true),
+    [ setIsSlideinOpen ]
+  )
 
-  showInfo = (id: string) => this.setState ({ currentId: Just (id) })
-  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: Just (id) })
+  const handleHideSlidein = React.useCallback (
+    () => {
+      setInactiveFilterText ("")
+      setIsSlideinOpen (false)
+    },
+    [ setIsSlideinOpen, setInactiveFilterText ]
+  )
 
-  render () {
-    const {
-      activeList,
-      addToList,
-      deactiveList,
-      enableActiveItemHints,
-      l10n,
-      isRemovingEnabled,
-      removeFromList,
-      setSortOrder,
-      setLevel,
-      sortOrder,
-      switchActiveItemHints,
-      filterText,
-      inactiveFilterText,
-    } = this.props
+  const handleInfo = React.useCallback (
+    (id: string) => setCurrentId (Just (id)),
+    [ setCurrentId ]
+  )
 
-    const { showAddSlidein } = this.state
+  const handleSlideinInfo = React.useCallback (
+    (id: string) => setCurrentSlideinId (Just (id)),
+    [ setCurrentSlideinId ]
+  )
 
-    return (
-      <Page id="specialabilities">
-        <Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
-          <Options>
-            <TextField
-              hint={translate (l10n) ("search")}
-              value={inactiveFilterText}
-              onChangeString={this.props.setInactiveFilterText}
-              fullWidth />
-            <SortOptions
-              sortOrder={sortOrder}
-              sort={setSortOrder}
-              options={List<SortNames> ("name", "groupname")}
-              l10n={l10n}
-              />
-            <Checkbox
-              checked={enableActiveItemHints}
-              onClick={switchActiveItemHints}
-              >
-              {translate (l10n) ("showactivated")}
-            </Checkbox>
-          </Options>
-          <MainContent>
-            <ListHeader>
-              <ListHeaderTag className="name">
-                {translate (l10n) ("name")}
-              </ListHeaderTag>
-              <ListHeaderTag className="group">
-                {translate (l10n) ("group")}
-                </ListHeaderTag>
-              <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
-                {translate (l10n) ("adventurepoints.short")}
-              </ListHeaderTag>
-              <ListHeaderTag className="btn-placeholder" />
-              <ListHeaderTag className="btn-placeholder" />
-            </ListHeader>
-            <ActivatableAddList
-              addToList={addToList}
-              inactiveList={deactiveList}
-              l10n={l10n}
-              selectForInfo={this.showSlideinInfo}
-              selectedForInfo={this.state.currentSlideinId}
-              />
-          </MainContent>
-          <WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId}/>
-        </Slidein>
+  return (
+    <Page id="specialabilities">
+      <Slidein isOpen={isSlideinOpen} close={handleHideSlidein}>
         <Options>
-          <TextField
-            hint={translate (l10n) ("search")}
-            value={filterText}
-            onChangeString={this.props.setFilterText}
+          <SearchField
+            l10n={l10n}
+            value={inactiveFilterText}
+            onChange={setInactiveFilterText}
             fullWidth
             />
           <SortOptions
             sortOrder={sortOrder}
             sort={setSortOrder}
-            options={List<SortNames> ("name", "groupname")}
+            options={List (SortNames.Name, SortNames.GroupName)}
             l10n={l10n}
             />
-          <BorderButton
-            label={translate (l10n) ("add")}
-            onClick={this.showAddSlidein}
-            />
+          <Checkbox
+            checked={enableActiveItemHints}
+            onClick={switchActiveItemHints}
+            >
+            {translate (l10n) ("showactivated")}
+          </Checkbox>
         </Options>
         <MainContent>
           <ListHeader>
@@ -173,26 +141,67 @@ export class SpecialAbilities
             </ListHeaderTag>
             <ListHeaderTag className="group">
               {translate (l10n) ("group")}
-              </ListHeaderTag>
+            </ListHeaderTag>
             <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
               {translate (l10n) ("adventurepoints.short")}
             </ListHeaderTag>
-            {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
+            <ListHeaderTag className="btn-placeholder" />
             <ListHeaderTag className="btn-placeholder" />
           </ListHeader>
-          <ActivatableRemoveList
-            filterText={filterText}
-            list={activeList}
+          <ActivatableAddList
+            addToList={addToList}
+            inactiveList={deactiveList}
             l10n={l10n}
-            isRemovingEnabled={isRemovingEnabled}
-            removeFromList={removeFromList}
-            setLevel={setLevel}
-            selectForInfo={this.showInfo}
-            selectedForInfo={this.state.currentId}
+            selectForInfo={handleSlideinInfo}
+            selectedForInfo={currentSlideinId}
             />
         </MainContent>
-        <WikiInfoContainer {...this.props} {...this.state} />
-      </Page>
-    )
-  }
+        <WikiInfoContainer l10n={l10n} currentId={currentSlideinId} />
+      </Slidein>
+      <Options>
+        <SearchField
+          l10n={l10n}
+          value={filterText}
+          onChange={setFilterText}
+          fullWidth
+          />
+        <SortOptions
+          sortOrder={sortOrder}
+          sort={setSortOrder}
+          options={List (SortNames.Name, SortNames.GroupName)}
+          l10n={l10n}
+          />
+        <BorderButton
+          label={translate (l10n) ("add")}
+          onClick={handleShowSlidein}
+          />
+      </Options>
+      <MainContent>
+        <ListHeader>
+          <ListHeaderTag className="name">
+            {translate (l10n) ("name")}
+          </ListHeaderTag>
+          <ListHeaderTag className="group">
+            {translate (l10n) ("group")}
+          </ListHeaderTag>
+          <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
+            {translate (l10n) ("adventurepoints.short")}
+          </ListHeaderTag>
+          {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
+          <ListHeaderTag className="btn-placeholder" />
+        </ListHeader>
+        <ActivatableRemoveList
+          filterText={filterText}
+          list={activeList}
+          l10n={l10n}
+          isRemovingEnabled={isRemovingEnabled}
+          removeFromList={removeFromList}
+          setLevel={setLevel}
+          selectForInfo={handleInfo}
+          selectedForInfo={currentId}
+          />
+      </MainContent>
+      <WikiInfoContainer currentId={currentId} l10n={l10n} />
+    </Page>
+  )
 }

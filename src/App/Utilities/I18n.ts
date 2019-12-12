@@ -1,4 +1,3 @@
-import { thrush } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { fnull, intercalate, List, subscript, unsnoc } from "../../Data/List";
 import { maybe, Maybe, normalize, sum } from "../../Data/Maybe";
@@ -22,18 +21,16 @@ export const translateP =
   <K extends keyof typeof L10n.AL>
   (key: K) =>
   (params: List<string | number>): L10n [K] => {
-    const message = L10n.AL [key] (messages)
+    const message = L10n.A [key] (messages) as L10n [K]
 
     if (!fnull (params) && typeof message === "string") {
       return message.replace (
-        /\{(\d+)\}/g,
-        (_, p1) => {
-          return maybe (`{${p1}}`)
-                       ((param: number | string) => typeof param === "number"
-                         ? param.toString ()
-                         : param)
-                       (subscript (params) (Number.parseInt (p1, 10)))
-        }
+        /\{(?<index>\d+)\}/gu,
+        (_match, _p1, _offset, _s, { index }) => maybe (`{${index}}`)
+                         ((param: number | string) => typeof param === "number"
+                           ? param.toString ()
+                           : param)
+                         (subscript (params) (Number.parseInt (index, 10)))
       ) as L10n [K]
     }
 
@@ -65,7 +62,7 @@ export const translateMP =
   (key: K) =>
   (params: List<string | number>): Maybe<L10n [K]> =>
     fmap<L10nRecord, L10n [K]>
-      (pipe (translateP, thrush (key), (thrush (params))))
+      (msg => translateP (msg) (key) (params))
       (messages)
 
 /**
@@ -123,26 +120,14 @@ export const localizeWeight =
  * Takes a locale and returns a locale-aware string compare function.
  */
 export const compareLocale =
-  (locale: string | L10nRecord) => {
+  (locale: L10nRecord) => {
     const coll = Intl.Collator (
-      isString (locale)
-        ? locale
-        : L10n.A.id (locale),
+      L10n.A.id (locale),
       { numeric: true }
     )
 
     return (a: string) => (b: string) => toOrdering (coll .compare (a, b))
   }
-
-export const localizeList: (sepWord: string) => (xs: List<string | number>) => string =
-  sepWord =>
-    pipe (
-      unsnoc,
-      maybe ("")
-            (x => fnull (fst (x))
-                    ? `${snd (x)}`
-                    : `${intercalate (", ") (fst (x))} ${sepWord} ${snd (x)}`)
-    )
 
 /**
  * `localizeOrList :: L10n -> [String | Int] -> String`
@@ -159,5 +144,17 @@ export const localizeList: (sepWord: string) => (xs: List<string | number>) => s
  * localizeOrList l10n [13, 14, 15, 24] == "13, 14, 15 or 24"
  * ```
  */
-export const localizeOrList =
-  (l10n: L10nRecord) => localizeList (translate (l10n) ("or"))
+export const localizeOrList: (l10n: L10nRecord) => (xs: List<string | number>) => string =
+// l10n => {
+//   const intl = new Intl.ListFormat (L10n.A.id (l10n), { type: "disjunction" })
+
+//   return pipe (map (e => isString (e) ? e : e .toString (10)), toArray, arr => intl.format (arr))
+// }
+  l10n =>
+    pipe (
+      unsnoc,
+      maybe ("")
+            (x => fnull (fst (x))
+                    ? `${snd (x)}`
+                    : `${intercalate (", ") (fst (x))} ${L10n.A.or (l10n)} ${snd (x)}`)
+    )

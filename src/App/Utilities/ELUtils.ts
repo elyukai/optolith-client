@@ -1,14 +1,21 @@
 import { fmap } from "../../Data/Functor";
-import { and } from "../../Data/Maybe";
+import { and, Maybe } from "../../Data/Maybe";
 import { inc, lt } from "../../Data/Num";
 import { foldlWithKey, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { IdPrefixes } from "../Constants/IdPrefixes";
+import { ExperienceLevelId } from "../Constants/Ids";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
 import { getNumericId, prefixId } from "./IDUtils";
 import { pipe } from "./pipe";
+import { WikiModelRecord, WikiModel } from "../Models/Wiki/WikiModel";
+import { HeroModel } from "../Models/Hero/HeroModel";
 
-const { ap } = ExperienceLevel.AL
+
+const WA = WikiModel.A
+const HA = HeroModel.A
+const ELA = ExperienceLevel.A
+
 
 /**
  * Returns the experience level that fits the given AP value.
@@ -20,15 +27,15 @@ export const getExperienceLevelIdByAp =
       (result => id => el => {
           const prev = lookupF (experience_levels) (result)
 
-          const threshold = ap (el)
+          const threshold = ELA.ap (el)
 
-          return current_ap >= threshold && and (fmap (pipe (ap, lt (threshold))) (prev))
+          return current_ap >= threshold && and (fmap (pipe (ELA.ap, lt (threshold))) (prev))
             ? id
             : result
-        }
-      )
-      ("EL_1")
+        })
+      (ExperienceLevelId.Inexperienced)
       (experience_levels)
+
 
 /**
  * Returns the experience level number id that fits the given AP value.
@@ -39,9 +46,22 @@ export const getExperienceLevelNumericIdByAp =
   (experienceLevels: OrderedMap<string, Record<ExperienceLevel>>) =>
     pipe (getExperienceLevelIdByAp (experienceLevels), getNumericId)
 
+
 /**
  * Returns the id of the closest higher EL (does not need to be valid!).
  * @param lowerId The lower EL's id.
  */
 export const getHigherExperienceLevelId =
   pipe (getNumericId, inc, prefixId (IdPrefixes.EXPERIENCE_LEVELS))
+
+
+/**
+ * ```haskell
+ * getExperienceLevelAtStart :: Wiki -> Hero -> Maybe ExperienceLevel
+ * ```
+ *
+ * Returns the experience level selected before or during hero creation.
+ */
+export const getExperienceLevelAtStart: (wiki: WikiModelRecord) =>
+                                        (r: Record<HeroModel>) => Maybe<Record<ExperienceLevel>> =
+  wiki => pipe (HA.experienceLevel, lookupF (WA.experienceLevels (wiki)))

@@ -1,20 +1,20 @@
 import * as React from "react";
-import { Record, RecordBase } from "../../../../Data/Record";
+import { Record, RecordIBase } from "../../../../Data/Record";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
 import { Markdown } from "../../Universal/Markdown";
 
-interface Accessors<A extends RecordBase> {
+interface Accessors<A extends RecordIBase<any>> {
   botch: (r: Record<A>) => string
 }
 
-export interface WikiBotchProps<A extends RecordBase> {
+export interface WikiBotchProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
   l10n: L10nRecord
 }
 
-export function WikiBotch<A extends RecordBase> (props: WikiBotchProps<A>) {
+export function WikiBotch<A extends RecordIBase<any>> (props: WikiBotchProps<A>) {
   const {
     x,
     acc,

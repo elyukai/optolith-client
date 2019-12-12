@@ -5,17 +5,17 @@ import * as SpellsActions from "../Actions/SpellsActions";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getAttributesForSheet } from "../Selectors/attributeSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
-import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrips, isActivationDisabled } from "../Selectors/spellsSelectors";
+import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrips, isNoSpellActivatable } from "../Selectors/spellsSelectors";
 import { getInactiveSpellsFilterText, getSpellsFilterText } from "../Selectors/stateSelectors";
 import { getEnableActiveItemHints, getSpellsSortOrder } from "../Selectors/uisettingsSelectors";
+import { SpellsSortOptions } from "../Utilities/Raw/JSON/Config";
 import { Spells, SpellsDispatchProps, SpellsOwnProps, SpellsStateProps } from "../Views/Spells/Spells";
-import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (state: AppStateRecord, ownProps: SpellsOwnProps): SpellsStateProps => ({
   activeList: getFilteredActiveSpellsAndCantrips (state, ownProps),
   inactiveList: getFilteredInactiveSpellsAndCantrips (state, ownProps),
   attributes: getAttributesForSheet (state, ownProps),
-  addSpellsDisabled: isActivationDisabled (state, ownProps),
+  addSpellsDisabled: isNoSpellActivatable (state, ownProps),
   enableActiveItemHints: getEnableActiveItemHints (state),
   isRemovingEnabled: getIsRemovingEnabled (state),
   sortOrder: getSpellsSortOrder (state),
@@ -25,14 +25,14 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SpellsOwnProps): Spell
 
 const mapDispatchToProps =
   (dispatch: ReduxDispatch, { l10n }: SpellsOwnProps): SpellsDispatchProps => ({
-    addPoint (id: string) {
-      dispatch (SpellsActions.addSpellPoint (l10n) (id))
+    async addPoint (id: string) {
+      await dispatch (SpellsActions.addSpellPoint (l10n) (id))
     },
-    addToList (id: string) {
-      dispatch (SpellsActions.addSpell (l10n) (id))
+    async addToList (id: string) {
+      await dispatch (SpellsActions.addSpell (l10n) (id))
     },
-    addCantripToList (id: string) {
-      dispatch (SpellsActions.addCantrip (l10n) (id))
+    async addCantripToList (id: string) {
+      await dispatch (SpellsActions.addCantrip (l10n) (id))
     },
     removePoint (id: string) {
       dispatch (SpellsActions.removeSpellPoint (id))
@@ -43,7 +43,7 @@ const mapDispatchToProps =
     removeCantripFromList (id: string) {
       dispatch (SpellsActions.removeCantrip (id))
     },
-    setSortOrder (sortOrder: SortNames) {
+    setSortOrder (sortOrder: SpellsSortOptions) {
       dispatch (SpellsActions.setSpellsSortOrder (sortOrder))
     },
     switchActiveItemHints () {

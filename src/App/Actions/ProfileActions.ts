@@ -1,8 +1,11 @@
-import { fromJust, fromMaybe, isJust, Just, Maybe, Nothing } from "../../Data/Maybe";
+import { fromJust, isJust, Just, Maybe, Nothing } from "../../Data/Maybe";
 import { ActionTypes } from "../Constants/ActionTypes";
-import { isAlbino } from "../Selectors/activatableSelectors";
+import { SocialStatusId } from "../Constants/Ids";
+import { HeroModelRecord } from "../Models/Hero/HeroModel";
+import { getAvailableEyeColorIds, getAvailableHairColorIds } from "../Selectors/personalDataSelectors";
 import { getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
 import { getSize, getWeight } from "../Selectors/stateSelectors";
+import { Locale } from "../Utilities/Raw/JSON/Config";
 import * as RCPUtils from "../Utilities/rcpUtils";
 import { ReduxAction } from "./Actions";
 
@@ -172,31 +175,25 @@ export const setWeight = (weight: string) => (size: Maybe<string>): SetWeightAct
   },
 })
 
-export const rerollHairColor: ReduxAction =
+export const rerollHairColor =
+  (hero: HeroModelRecord): ReduxAction =>
   (dispatch, getState) => {
-    const state = getState ()
-    const race = getCurrentRace (state)
-    const raceVariant = getCurrentRaceVariant (state)
-
-    const mhair_color = RCPUtils.rerollHairColor (race) (raceVariant)
+    const mhair_color = RCPUtils.rerollColor (getAvailableHairColorIds (getState (), { hero }))
 
     if (isJust (mhair_color)) {
       dispatch (setHairColor (fromJust (mhair_color)))
     }
   }
 
-export const rerollEyeColor: ReduxAction = (dispatch, getState) => {
-  const state = getState ()
-  const race = getCurrentRace (state)
-  const raceVariant = getCurrentRaceVariant (state)
-  const isAlbinoVar = fromMaybe (false) (isAlbino (state))
+export const rerollEyeColor =
+  (hero: HeroModelRecord): ReduxAction =>
+  (dispatch, getState) => {
+    const meye_color = RCPUtils.rerollColor (getAvailableEyeColorIds (getState (), { hero }))
 
-  const meye_color = RCPUtils.rerollEyeColor (isAlbinoVar) (race) (raceVariant)
-
-  if (isJust (meye_color)) {
-    dispatch (setEyeColor (fromJust (meye_color)))
+    if (isJust (meye_color)) {
+      dispatch (setEyeColor (fromJust (meye_color)))
+    }
   }
-}
 
 export const rerollSize: ReduxAction =
   (dispatch, getState) => {
@@ -228,10 +225,21 @@ export const rerollWeight: ReduxAction =
     const race = getCurrentRace (state)
     const prevSize = getSize (state)
 
-    const { weight, size } = RCPUtils.rerollWeight (prevSize) (race)
+    // If the heroes size hasn't been set by the user:
+    if (!isJust (prevSize) || (isJust (prevSize) && fromJust(prevSize).length === 0)) {
 
-    if (isJust (weight)) {
-      dispatch (setWeight (fromJust (weight)) (size))
+      const race_variant = getCurrentRaceVariant (state)
+      const initialWeightAndSize = RCPUtils.rerollWeightAndSize (race) (race_variant)
+      if (isJust (initialWeightAndSize.weight)) {
+        dispatch (setWeight (fromJust(initialWeightAndSize.weight)) (initialWeightAndSize.size))
+      }
+    } 
+    else {
+      const { weight, size } = RCPUtils.rerollWeight (prevSize) (race)
+
+      if (isJust (weight)) {
+        dispatch (setWeight (fromJust (weight)) (size))
+      }
     }
   }
 
@@ -252,11 +260,11 @@ export const setTitle = (title: string): SetTitleAction => ({
 export interface SetSocialStatusAction {
   type: ActionTypes.SET_SOCIALSTATUS
   payload: {
-    socialstatus: number;
+    socialstatus: SocialStatusId;
   }
 }
 
-export const setSocialStatus = (socialstatus: number): SetSocialStatusAction => ({
+export const setSocialStatus = (socialstatus: SocialStatusId): SetSocialStatusAction => ({
   type: ActionTypes.SET_SOCIALSTATUS,
   payload: {
     socialstatus,
@@ -330,11 +338,11 @@ export const addAdventurePoints = (amount: number): AddAdventurePointsAction => 
 export interface SetHeroLocaleAction {
   type: ActionTypes.SET_HERO_LOCALE
   payload: {
-    locale: string;
+    locale: Locale;
   }
 }
 
-export const setHeroLocale = (locale: string): SetHeroLocaleAction => ({
+export const setHeroLocale = (locale: Locale): SetHeroLocaleAction => ({
   type: ActionTypes.SET_HERO_LOCALE,
   payload: {
     locale,

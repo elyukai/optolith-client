@@ -3,7 +3,7 @@ import { over, set } from "../../../Data/Lens";
 import { fromMaybe, Maybe } from "../../../Data/Maybe";
 import { dec, inc } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { ActivatableSkillDependentL, isActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependentL, isAttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 import { SkillDependent, SkillDependentL } from "../../Models/ActiveEntries/SkillDependent";
@@ -39,12 +39,12 @@ export const removePoint =
     : over (SkillDependentL.value) (dec) (instance as Record<SkillDependent>) as T
 
 export const getBaseValueByCategory =
-  (current_category: Categories) => {
+  (current_category: Category) => {
     switch (current_category) {
-      case Categories.ATTRIBUTES:
+      case Category.ATTRIBUTES:
         return 8
 
-      case Categories.COMBAT_TECHNIQUES:
+      case Category.COMBAT_TECHNIQUES:
         return 6
 
       default:

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { fmapF } from "../../../../Data/Functor";
+import { fmap, fmapF } from "../../../../Data/Functor";
 import { List, subscript } from "../../../../Data/List";
 import { bind, bindF, Maybe } from "../../../../Data/Maybe";
 import { dec } from "../../../../Data/Num";
@@ -11,11 +11,14 @@ import { Culture } from "../../../Models/Wiki/Culture";
 import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { Race } from "../../../Models/Wiki/Race";
-import { translate } from "../../../Utilities/I18n";
+import { localizeSize, localizeWeight, translate } from "../../../Utilities/I18n";
+import { toInt } from "../../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { Avatar } from "../../Universal/Avatar";
 import { LabelBox } from "../../Universal/LabelBox";
 import { Plain } from "../../Universal/Plain";
+
+const PDA = PersonalData.A
 
 export interface MainSheetPersonalDataProps {
   ap: Maybe<Record<AdventurePointsCategories>>
@@ -44,7 +47,7 @@ export function MainSheetPersonalData (props: MainSheetPersonalDataProps) {
     l10n,
     name,
     professionName,
-    profile: maybeProfile,
+    profile: mprofile,
     race: maybeRace,
     sex,
     socialstatusTags,
@@ -55,22 +58,22 @@ export function MainSheetPersonalData (props: MainSheetPersonalDataProps) {
 
   const haircolorName =
     pipe_ (
-      maybeProfile,
-      bindF (PersonalData.A.hairColor),
+      mprofile,
+      bindF (PDA.hairColor),
       bindF (pipe (dec, subscript (hairColorTags)))
     )
 
   const eyecolorName =
     pipe_ (
-      maybeProfile,
-      bindF (PersonalData.A.eyeColor),
+      mprofile,
+      bindF (PDA.eyeColor),
       bindF (pipe (dec, subscript (eyeColorTags)))
     )
 
   const socialstatusName =
     pipe_ (
-      maybeProfile,
-      bindF (PersonalData.A.socialStatus),
+      mprofile,
+      bindF (PDA.socialStatus),
       bindF (pipe (dec, subscript (socialstatusTags)))
     )
 
@@ -85,22 +88,22 @@ export function MainSheetPersonalData (props: MainSheetPersonalDataProps) {
         <Plain
           className="family"
           label={translate (l10n) ("family")}
-          value={bind (maybeProfile) (PersonalData.A.family)}
+          value={bind (mprofile) (PDA.family)}
           />
         <Plain
           className="placeofbirth"
           label={translate (l10n) ("placeofbirth")}
-          value={bind (maybeProfile) (PersonalData.A.placeOfBirth)}
+          value={bind (mprofile) (PDA.placeOfBirth)}
           />
         <Plain
           className="dateofbirth"
           label={translate (l10n) ("dateofbirth")}
-          value={bind (maybeProfile) (PersonalData.A.dateOfBirth)}
+          value={bind (mprofile) (PDA.dateOfBirth)}
           />
         <Plain
           className="age"
           label={translate (l10n) ("age")}
-          value={bind (maybeProfile) (PersonalData.A.age)}
+          value={bind (mprofile) (PDA.age)}
           />
         <Plain
           className="sex"
@@ -115,12 +118,12 @@ export function MainSheetPersonalData (props: MainSheetPersonalDataProps) {
         <Plain
           className="size"
           label={translate (l10n) ("size")}
-          value={bind (maybeProfile) (PersonalData.A.size)}
+          value={pipe_ (mprofile, bindF (PDA.size), bindF (toInt), fmap (localizeSize (l10n)))}
           />
         <Plain
           className="weight"
           label={translate (l10n) ("weight")}
-          value={bind (maybeProfile) (PersonalData.A.weight)}
+          value={pipe_ (mprofile, bindF (PDA.weight), bindF (toInt), fmap (localizeWeight (l10n)))}
           />
         <Plain
           className="haircolor"
@@ -150,18 +153,19 @@ export function MainSheetPersonalData (props: MainSheetPersonalDataProps) {
         <Plain
           className="title"
           label={translate (l10n) ("title")}
-          value={bind (maybeProfile) (PersonalData.A.title)}
+          value={bind (mprofile) (PDA.title)}
           />
         <Plain
           className="characteristics"
           label={translate (l10n) ("characteristics")}
-          value={bind (maybeProfile) (PersonalData.A.characteristics)}
+          value={bind (mprofile) (PDA.characteristics)}
           />
         <Plain
           className="otherinfo"
           label={translate (l10n) ("otherinfo")}
-          value={bind (maybeProfile) (PersonalData.A.otherInfo)}
-          multi />
+          value={bind (mprofile) (PDA.otherInfo)}
+          multi
+          />
       </div>
       <div className="ap-portrait">
         <LabelBox

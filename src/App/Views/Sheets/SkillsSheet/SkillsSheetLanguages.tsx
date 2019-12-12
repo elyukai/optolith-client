@@ -7,14 +7,14 @@ import { compare } from "../../../../Data/Num";
 import { fromDefault, Record } from "../../../../Data/Record";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
-import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { findSelectOption } from "../../../Utilities/Activatable/selectionUtils";
 import { compareLocale, translate } from "../../../Utilities/I18n";
 import { toRoman } from "../../../Utilities/NumberUtils";
 import { pipe_ } from "../../../Utilities/pipe";
-import { comparingR, sortRecordsBy } from "../../../Utilities/sortBy";
+import { comparingR, sortByMulti } from "../../../Utilities/sortBy";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface SkillsSheetLanguagesProps {
@@ -24,6 +24,7 @@ export interface SkillsSheetLanguagesProps {
 }
 
 interface IdNameLevel {
+  "@@name": "IdNameLevel"
   id: string | number
   name: string
   level: number
@@ -56,9 +57,9 @@ export function SkillsSheetLanguages (props: SkillsSheetLanguagesProps) {
                                level: Maybe.sum (ActiveObject.A.tier (activeObject)),
                              }))
     )),
-    sortRecordsBy ([
+    sortByMulti ([
                     comparingR (IdNameLevel.A.level) (flip (compare)),
-                    comparingR (IdNameLevel.A.name) (compareLocale (L10n.A.id (l10n))),
+                    comparingR (IdNameLevel.A.name) (compareLocale (l10n)),
                   ])
   )
 
@@ -82,8 +83,8 @@ export function SkillsSheetLanguages (props: SkillsSheetLanguagesProps) {
         {replicateR (8 - flength (languages))
                     (index => (
                       <li key={`undefined-${index}`}>
-                        <span></span>
-                        <span></span>
+                        <span />
+                        <span />
                       </li>
                     ))}
       </ul>

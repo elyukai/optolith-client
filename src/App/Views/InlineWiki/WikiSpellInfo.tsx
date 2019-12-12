@@ -3,6 +3,7 @@ import { map } from "../../../Data/List";
 import { joinMaybeList, Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { MagicalGroup } from "../../Constants/Groups";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Book } from "../../Models/Wiki/Book";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -40,23 +41,9 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
   const name = Spell.A.name (x)
   const gr = Spell.A.gr (x)
 
-  // if (["nl-BE"].includes(l10n.id)) {
-  //   return (
-  //     <WikiBoxTemplate className="spell" title={name}>
-  //       <WikiSkillCheck {...props} />
-  //       <WikiSpellProperty {...props} />
-  //       <WikiSpellTraditions {...props} />
-  //       <WikiImprovementCost {...props} />
-  //     </WikiBoxTemplate>
-  //   )
-  // }
-
-
   switch (gr) {
-    // Spells
-    case 1:
-    // Rituals
-    case 2: {
+    case MagicalGroup.Spells:
+    case MagicalGroup.Rituals: {
       const mextensions = getExtensionsForEntry (SpA.id (x)) (spellExtensions)
 
       const add_srcs = pipe_ (mextensions, joinMaybeList, map (SelectOption.A.src))
@@ -80,8 +67,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
       )
     }
 
-    // Curses
-    case 3:
+    case MagicalGroup.Curses:
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -93,8 +79,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
         </WikiBoxTemplate>
       )
 
-    // Elven Magical Songs
-    case 4:
+    case MagicalGroup.ElvenMagicalSongs:
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -107,8 +92,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
         </WikiBoxTemplate>
       )
 
-    // Zaubermelodien
-    case 5:
+    case MagicalGroup.Zaubermelodien:
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -123,8 +107,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
         </WikiBoxTemplate>
       )
 
-    // Zaubertänze
-    case 6:
+    case MagicalGroup.Zaubertaenze:
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -138,8 +121,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
         </WikiBoxTemplate>
       )
 
-    // Herrschaftsrituale
-    case 7:
+    case MagicalGroup.Herrschaftsrituale:
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -151,7 +133,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
         </WikiBoxTemplate>
       )
 
-    case 8: // Schelmenzauber
+    case MagicalGroup.Schelmenzauber:
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -165,7 +147,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
         </WikiBoxTemplate>
         )
 
-    case 9: // Animistenkräfte
+    case MagicalGroup.Animistenkräfte:
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -179,7 +161,8 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
         </WikiBoxTemplate>
       )
 
-    case 10: // Geodenrituale zw. Property und Source sollte prerequisites sein
+    case MagicalGroup.Geodenrituale:
+      // zw. Property und Source sollte prerequisites sein
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -194,7 +177,7 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
         </WikiBoxTemplate>
       )
 
-    case 11: // Zibiljarituale
+    case MagicalGroup.Zibiljarituale:
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck {...props} acc={SpA} />
@@ -209,7 +192,8 @@ export function WikiSpellInfo (props: WikiSpellInfoProps) {
           <WikiSource {...props} acc={SpA} />
         </WikiBoxTemplate>
       )
-  }
 
-  return null
+    default:
+      return null
+  }
 }

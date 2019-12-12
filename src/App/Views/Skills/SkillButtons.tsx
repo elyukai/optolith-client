@@ -12,13 +12,13 @@ export interface SkillButtonsProps {
   isNotActive?: boolean
   removeDisabled?: boolean
   sr?: number
-  activate? (): void
-  addPoint? (): void
-  removePoint? (): void
+  activate? (id: string): void
+  addPoint? (id: string): void
+  removePoint? (id: string): void
   selectForInfo (id: string): void
 }
 
-export function SkillButtons (props: SkillButtonsProps) {
+export const SkillButtons: React.FC<SkillButtonsProps> = props => {
   const {
     activateDisabled,
     addDisabled,
@@ -33,12 +33,40 @@ export function SkillButtons (props: SkillButtonsProps) {
     selectForInfo,
   } = props
 
-  const boundSelectForInfo = () => selectForInfo (id)
+  const boundSelectForInfo =
+    React.useCallback (
+      () => selectForInfo (id),
+      [selectForInfo, id]
+    )
 
   const getRemoveIcon =
-    () => isNumber (sr) && sr === 0 && removeDisabled !== true || ic === undefined
-            ? "\uE90b"
-            : "\uE909"
+    () => (isNumber (sr) && sr === 0 && removeDisabled !== true) || ic === undefined
+      ? "\uE90b"
+      : "\uE909"
+
+  const handleActivation =
+    React.useCallback (
+      () => typeof activate === "function"
+            ? activate (id)
+            : undefined,
+      [activate, id]
+    )
+
+  const handleAddPoint =
+    React.useCallback (
+      () => addDisabled !== true && typeof addPoint === "function"
+            ? addPoint (id)
+            : undefined,
+      [addPoint, id, addDisabled]
+    )
+
+  const handleRemovePoint =
+    React.useCallback (
+      () => removeDisabled !== true && typeof removePoint === "function"
+            ? removePoint (id)
+            : undefined,
+      [removePoint, id, removeDisabled]
+    )
 
   return (
     <ListItemButtons>
@@ -46,28 +74,28 @@ export function SkillButtons (props: SkillButtonsProps) {
         ? (
           <IconButton
             icon="&#xE916;"
-            onClick={activate}
+            onClick={handleActivation}
             disabled={activateDisabled}
             flat
             />
         )
         : (
             <>
-              {addPoint
+              {typeof addPoint === "function"
                 ? (
                   <IconButton
                     icon="&#xE908;"
-                    onClick={addPoint}
+                    onClick={handleAddPoint}
                     disabled={addDisabled}
                     flat
                     />
                 )
               : null}
-              {removePoint
+              {typeof removePoint === "function"
                 ? (
                   <IconButton
                     icon={getRemoveIcon ()}
-                    onClick={removePoint}
+                    onClick={handleRemovePoint}
                     disabled={removeDisabled}
                     flat
                     />

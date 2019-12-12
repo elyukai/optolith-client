@@ -12,8 +12,8 @@ import { List } from "../../../Data/List";
 import { liftM2, liftM4, mapMaybe, Maybe } from "../../../Data/Maybe";
 import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { fst, Pair, snd } from "../../../Data/Tuple";
-import { ActivatableCategory, Categories } from "../../Constants/Categories";
+import { fst, Pair, snd, Tuple } from "../../../Data/Tuple";
+import { ActivatableCategory, Category } from "../../Constants/Categories";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -21,9 +21,12 @@ import { ActivatableActivationValidation } from "../../Models/View/ActivatableAc
 import { ActivatableCombinedName } from "../../Models/View/ActivatableCombinedName";
 import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../../Models/View/ActivatableNameCost";
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
+import { Advantage } from "../../Models/Wiki/Advantage";
+import { Disadvantage } from "../../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable, WikiEntryByCategory, WikiEntryRecordByCategory } from "../../Models/Wiki/wikiTypeHelpers";
+import { WikiEntryByCategory, WikiEntryRecordByCategory } from "../../Models/Wiki/wikiTypeHelpers";
 import { convertPerTierCostToFinalCost, getCost } from "../AdventurePoints/activatableCostUtils";
 import { pipe_ } from "../pipe";
 import { getIsRemovalOrChangeDisabled } from "./activatableActiveValidationUtils";
@@ -37,24 +40,32 @@ import { getName } from "./activatableNameUtils";
 export const getActivatableHeroSliceByCategory =
   (category: ActivatableCategory) =>
   (hero: HeroModelRecord): OrderedMap<string, Record<ActivatableDependent>> =>
-    category === Categories.ADVANTAGES
+    category === Category.ADVANTAGES
     ? HeroModel.A.advantages (hero)
-    : category === Categories.DISADVANTAGES
+    : category === Category.DISADVANTAGES
     ? HeroModel.A.disadvantages (hero)
     : HeroModel.A.specialAbilities (hero)
+
+type ActivatableWikiSliceByCategory<A extends ActivatableCategory> =
+  A extends Category.ADVANTAGES
+  ? Record<Advantage>
+  : A extends Category.ADVANTAGES
+  ? Record<Disadvantage>
+  : Record<SpecialAbility>
 
 /**
  * Takes an Activatable category and a hero and returns the state slice matching
  * the passed category.
  */
 export const getActivatableWikiSliceByCategory =
-  (category: ActivatableCategory) =>
-  (wiki: WikiModelRecord): OrderedMap<string, Activatable> =>
-    category === Categories.ADVANTAGES
-    ? WikiModel.A.advantages (wiki)
-    : category === Categories.DISADVANTAGES
-    ? WikiModel.A.disadvantages (wiki)
-    : WikiModel.A.specialAbilities (wiki)
+  <A extends ActivatableCategory>
+  (category: A) =>
+  (wiki: WikiModelRecord): OrderedMap<string, ActivatableWikiSliceByCategory<A>> =>
+    category === Category.ADVANTAGES
+    ? WikiModel.A.advantages (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
+    : category === Category.DISADVANTAGES
+    ? WikiModel.A.disadvantages (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
+    : WikiModel.A.specialAbilities (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
 
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing
@@ -110,6 +121,7 @@ export const getAllActiveByCategory =
   (category: T) =>
   (addLevelToName: boolean) =>
   (automatic_advantages: List<string>) =>
+  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord): List<Record<ActiveActivatable<WikiEntryByCategory[T]>>> => {
@@ -120,10 +132,12 @@ export const getAllActiveByCategory =
     const wiki_slice = getActivatableWikiSliceByCategory (category) (wiki)
     const hero_slice = getActivatableHeroSliceByCategory (category) (hero)
 
+    type Entry = Maybe<Record<ActiveActivatable<WikiEntryByCategory[T]>>>
+
     return pipe_ (
       hero_slice,
       getActiveFromState,
-      mapMaybe ((active: Record<ActiveObjectWithId>) => {
+      mapMaybe ((active: Record<ActiveObjectWithId>): Entry => {
                  const current_id = ActiveObjectWithId.A.id (active)
 
                  return liftM4 ((nameAndCost: Record<ActivatableNameCostSafeCost>) =>
@@ -145,7 +159,10 @@ export const getAllActiveByCategory =
                                                   (active)))
                                (lookup (current_id) (wiki_slice) as Maybe<GenericWikiEntry>)
                                (lookup (current_id) (hero_slice))
-                               (getIsRemovalOrChangeDisabled (wiki) (hero) (active))
+                               (getIsRemovalOrChangeDisabled (wiki)
+                                                             (hero)
+                                                             (matching_script_and_lang_related)
+                                                             (active)) as Entry
                })
     )
   }

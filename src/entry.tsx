@@ -1,7 +1,6 @@
 // tslint:disable-next-line:no-implicit-dependencies
 import { ProgressInfo } from "builder-util-runtime";
 import { ipcRenderer, remote } from "electron";
-import * as localShortcut from "electron-localshortcut";
 // tslint:disable-next-line:no-implicit-dependencies
 import { UpdateInfo } from "electron-updater";
 import * as React from "react";
@@ -11,44 +10,40 @@ import { Action, applyMiddleware, createStore, Store } from "redux";
 import thunk from "redux-thunk";
 import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from "./App/Actions/AcceleratorActions";
 import { ReduxDispatch } from "./App/Actions/Actions";
-import { addErrorAlert } from "./App/Actions/AlertActions";
+import { addErrorAlert, AlertOptions } from "./App/Actions/AlertActions";
 import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from "./App/Actions/IOActions";
 import { showAbout } from "./App/Actions/LocationActions";
 import { AppContainer } from "./App/Containers/AppContainer";
 import { appReducer, AppState, AppStateRecord } from "./App/Reducers/appReducer";
 import { getLocaleMessages } from "./App/Selectors/stateSelectors";
 import { translate, translateP } from "./App/Utilities/I18n";
-import { pipe, pipe_ } from "./App/Utilities/pipe";
+import { addKeybinding } from "./App/Utilities/Keybindings";
+import { pipe } from "./App/Utilities/pipe";
 import { isDialogOpen } from "./App/Utilities/SubwindowsUtils";
 import { flip } from "./Data/Function";
-import { fmap } from "./Data/Functor";
 import { List } from "./Data/List";
 import { fromJust, isJust, Just } from "./Data/Maybe";
 import { uncurryN } from "./Data/Tuple/Curry";
 import { Unit } from "./Data/Unit";
-import { runIO } from "./System/IO";
 
 const nativeAppReducer =
   uncurryN (pipe ((x: AppStateRecord | undefined) => x === undefined ? AppState.default : x,
                   flip (appReducer)))
 
-const store: Store<AppStateRecord, Action<any>> & { dispatch: ReduxDispatch<Action> } =
+const store: Store<AppStateRecord, Action> & { dispatch: ReduxDispatch<Action> } =
   createStore (nativeAppReducer, applyMiddleware (thunk))
 
-pipe_ (
-  store .dispatch (requestInitialData),
-  fmap (() => {
-    const currentWindow = remote.getCurrentWindow ()
+store
+  .dispatch (requestInitialData)
+  .then (() => {
+    const { getState, dispatch } = store
 
-    const { getState } = store
-    const dispatch = store.dispatch
+    const maybeLocale = getLocaleMessages (getState ())
 
-    if (remote.process.platform === "darwin") {
-      const maybeLocale = getLocaleMessages (getState ())
+    if (isJust (maybeLocale)) {
+      const locale = fromJust (maybeLocale)
 
-      if (isJust (maybeLocale)) {
-        const locale = fromJust (maybeLocale)
-
+      if (remote.process.platform === "darwin") {
         const menuTemplate: Electron.MenuItemConstructorOptions[] = [
           {
             label: remote.app.getName (),
@@ -59,7 +54,7 @@ pipe_ (
               },
               { type: "separator" },
               { role: "hide" },
-              { role: "hideothers" },
+              { role: "hideOthers" },
               { role: "unhide" },
               { type: "separator" },
               {
@@ -75,7 +70,7 @@ pipe_ (
               { role: "copy" },
               { role: "paste" },
               { role: "delete" },
-              { role: "selectall" },
+              { role: "selectAll" },
             ],
           },
           {
@@ -106,42 +101,41 @@ pipe_ (
           remote.Menu.setApplicationMenu (currentMenu)
         })
 
-        localShortcut.register (currentWindow, "Cmd+Q", () => {
+        addKeybinding ("command+q", () => {
           dispatch (quitAccelerator)
         })
-
-        localShortcut.register (currentWindow, "CmdOrCtrl+S", () => {
-          dispatch (saveHeroAccelerator (locale))
-        })
       }
+
+      addKeybinding ("mod+s", async () => {
+        await dispatch (saveHeroAccelerator (locale))
+      })
     }
 
-    localShortcut.register (currentWindow, "CmdOrCtrl+Z", () => {
+    addKeybinding ("mod+z", () => {
       dispatch (undoAccelerator ())
     })
 
-    localShortcut.register (currentWindow, "CmdOrCtrl+Y", () => {
+    addKeybinding (["mod+y", "mod+shift+z"], () => {
       dispatch (redoAccelerator ())
     })
 
-    localShortcut.register (currentWindow, "CmdOrCtrl+Shift+Z", () => {
+    addKeybinding ("mod+shift+z", () => {
       dispatch (redoAccelerator ())
     })
 
-    localShortcut.register (currentWindow, "CmdOrCtrl+W", () => {
+    addKeybinding ("mod+w", () => {
       dispatch (backAccelerator ())
     })
 
-    localShortcut.register (currentWindow, "CmdOrCtrl+O", () => {
+    addKeybinding ("mod+o", () => {
       dispatch (openSettingsAccelerator ())
     })
 
     ipcRenderer.send ("loading-done")
 
     return Unit
-  }),
-  runIO
-)
+  })
+  .catch (() => undefined)
 
 render (
   <Provider store={store}>
@@ -179,10 +173,11 @@ ipcRenderer.addListener ("auto-updater-error", (_event: Event, err: Error) => {
   if (isJust (maybeLocale)) {
     dispatch (setUpdateDownloadProgress ())
     dispatch (addErrorAlert (fromJust (maybeLocale))
-                            ({
-                              title: "Auto Update Error",
+                            (AlertOptions ({
+                              title: Just ("Auto Update Error"),
                               message: `An error occured during auto-update.`
                                 + ` (${JSON.stringify (err)})`,
-                            }))
+                            })))
+      .catch (() => undefined)
   }
 })

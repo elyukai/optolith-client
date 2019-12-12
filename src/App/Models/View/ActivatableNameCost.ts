@@ -1,11 +1,12 @@
 import { List } from "../../../Data/List";
-import { fromDefault, makeLenses, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record";
+import { fromDefault, makeLenses, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record";
 import { composeL } from "../../Utilities/compose";
 import { pipe } from "../../Utilities/pipe";
 import { ActiveObjectWithId } from "../ActiveEntries/ActiveObjectWithId";
 import { ActivatableCombinedName, ActivatableCombinedNameL } from "./ActivatableCombinedName";
 
 export interface ActivatableNameCost {
+  "@@name": "ActivatableNameCost"
   naming: Record<ActivatableCombinedName>
   active: Record<ActiveObjectWithId>
   finalCost: number | List<number>
@@ -17,7 +18,9 @@ export interface ActivatableNameCostSafeCost extends ActivatableNameCost {
 }
 
 interface ActivatableNameCostConstructor extends RecordCreator<ActivatableNameCost> {
-  (x: PartialMaybeOrNothing<ActivatableNameCostSafeCost>): Record<ActivatableNameCostSafeCost>
+  (x: PartialMaybeOrNothing<OmitName<ActivatableNameCostSafeCost>>):
+  Record<ActivatableNameCostSafeCost>
+  default: Record<ActivatableNameCostSafeCost>
 }
 
 export const ActivatableNameCost =

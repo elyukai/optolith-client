@@ -1,6 +1,6 @@
 import * as React from "react";
 import { fmap } from "../../../Data/Functor";
-import { bindF, fromMaybe, Maybe } from "../../../Data/Maybe";
+import { bindF, fromMaybe, Just, Maybe } from "../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { notMember, OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
@@ -124,7 +124,7 @@ export function HerolistItem (props: HerolistItemProps) {
           </span>
         </VerticalList>
       </ListItemName>
-      <ListItemSeparator/>
+      <ListItemSeparator />
       <ListItemButtons>
         <BorderButton
           className="save"
@@ -132,10 +132,26 @@ export function HerolistItem (props: HerolistItemProps) {
           onClick={saveHero}
           disabled={notMember (id) (unsavedHeroesById)}
           />
-        <IconButton icon="&#xE907;" onClick={duplicateHero} />
-        <IconButton icon="&#xE914;" onClick={saveHeroAsJSON} />
-        <IconButton icon="&#xE90b;" onClick={deleteHero} />
-        <IconButton icon="&#xE90e;" onClick={loadHero} />
+        <IconButton
+          icon="&#xE907;"
+          onClick={duplicateHero}
+          hint={Just (translate (l10n) ("duplicatehero"))}
+          />
+        <IconButton
+          icon="&#xE914;"
+          onClick={saveHeroAsJSON}
+          hint={Just (translate (l10n) ("exportheroasjson"))}
+          />
+        <IconButton
+          icon="&#xE90b;"
+          onClick={deleteHero}
+          hint={Just (translate (l10n) ("deletehero.novar"))}
+          />
+        <IconButton
+          icon="&#xE90e;"
+          onClick={loadHero}
+          hint={Just (translate (l10n) ("openhero"))}
+          />
       </ListItemButtons>
     </ListItem>
   )

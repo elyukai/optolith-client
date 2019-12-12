@@ -1,7 +1,7 @@
 import * as React from "react";
 import { fmapF } from "../../../Data/Functor";
 import { List } from "../../../Data/List";
-import { fromMaybeR, Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { fromMaybe, Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
@@ -9,7 +9,7 @@ import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableAc
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { EntryRating, InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
+import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
@@ -24,8 +24,8 @@ import { MainContent } from "../Universal/MainContent";
 import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
 import { RecommendedReference } from "../Universal/RecommendedReference";
+import { SearchField } from "../Universal/SearchField";
 import { Slidein } from "../Universal/Slidein";
-import { TextField } from "../Universal/TextField";
 import { ActiveList } from "./ActiveList";
 import { AdvantagesDisadvantagesAdventurePoints } from "./AdvantagesDisadvantagesAdventurePoints";
 import { InactiveList } from "./DeactiveList";
@@ -81,8 +81,6 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
     currentSlideinId: Nothing,
   }
 
-  filter = (event: InputTextEvent) => this.props.setFilterText (event.target.value)
-  filterSlidein = (event: InputTextEvent) => this.props.setInactiveFilterText (event.target.value)
   showAddSlidein = () => this.setState ({ showAddSlidein: true })
   hideAddSlidein = () => {
     this.props.setInactiveFilterText ("")
@@ -106,16 +104,18 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
       switchRatingVisibility,
       filterText,
       inactiveFilterText,
+      setFilterText,
+      setInactiveFilterText,
     } = this.props
 
     return (
       <Page id="advantages">
         <Slidein isOpen={this.state.showAddSlidein} close={this.hideAddSlidein}>
           <Options>
-            <TextField
-              hint={translate (l10n) ("search")}
+            <SearchField
+              l10n={l10n}
               value={inactiveFilterText}
-              onChange={this.filterSlidein}
+              onChange={setInactiveFilterText}
               fullWidth
               />
             <Checkbox
@@ -130,15 +130,15 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
               >
               {translate (l10n) ("showactivated")}
             </Checkbox>
-            {fromMaybeR (null)
-                        (fmapF (m_ap)
-                               (ap => (
-                                 <AdvantagesDisadvantagesAdventurePoints
-                                   ap={ap}
-                                   magicalMax={magicalMax}
-                                   l10n={l10n}
-                                   />
-                               )))}
+            {fromMaybe (null as React.ReactNode)
+                       (fmapF (m_ap)
+                              (ap => (
+                                <AdvantagesDisadvantagesAdventurePoints
+                                  ap={ap}
+                                  magicalMax={magicalMax}
+                                  l10n={l10n}
+                                  />
+                              )))}
             {showRating ? <RecommendedReference l10n={l10n} strongly /> : null}
           </Options>
           <MainContent>
@@ -165,10 +165,10 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
           <WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
         </Slidein>
         <Options>
-          <TextField
-            hint={translate (l10n) ("search")}
+          <SearchField
+            l10n={l10n}
             value={filterText}
-            onChange={this.filter}
+            onChange={setFilterText}
             fullWidth
             />
           <Checkbox
@@ -182,6 +182,15 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
             onClick={this.showAddSlidein}
             />
           {showRating ? <RecommendedReference l10n={l10n} strongly /> : null}
+          {fromMaybe (null as React.ReactNode)
+                     (fmapF (m_ap)
+                            (ap => (
+                              <AdvantagesDisadvantagesAdventurePoints
+                                ap={ap}
+                                magicalMax={magicalMax}
+                                l10n={l10n}
+                                />
+                            )))}
         </Options>
         <MainContent>
           <ListHeader>

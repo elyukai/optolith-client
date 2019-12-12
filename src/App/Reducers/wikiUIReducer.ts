@@ -21,6 +21,7 @@ type Action = SetTabAction
             | WikiActions.SetWikiSpellsGroupAction
 
 export interface UIWikiState {
+  "@@name": "UIWikiState"
   filter: string
   filterAll: string
   category1: Maybe<string>

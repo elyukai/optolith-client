@@ -1,94 +1,54 @@
 import { remote } from "electron";
-import { tryIO } from "../../Control/Exception";
-import { Either, fromLeft_, fromRight_, isLeft, Left, Right } from "../../Data/Either";
-import { cnst } from "../../Data/Function";
-import { fmap, fmapF } from "../../Data/Functor";
-import { Internals } from "../../Data/Internals";
+import { fmap } from "../../Data/Functor";
 import { flength, fromArray, List, subscript } from "../../Data/List";
-import { fromMaybe, normalize, Nothing } from "../../Data/Maybe";
+import { fromMaybe, guard, joinMaybeList, Maybe, normalize, then } from "../../Data/Maybe";
 import { divideBy, inc } from "../../Data/Num";
 import { bimap, fst, Pair, snd } from "../../Data/Tuple";
-import { Unit } from "../../Data/Unit";
-import { bind, pure } from "../../System/IO";
-import { pipe } from "./pipe";
-
-import IO = Internals.IO
+import { pipe_ } from "./pipe";
+import { Locale } from "./Raw/JSON/Config";
 
 /**
  * Prints windows' web page as PDF with Chromium's preview printing custom settings.
  */
-export const windowPrintToPDF =
-  (options: Electron.PrintToPDFOptions) =>
-    IO (async () => new Promise<Buffer> ((res, rej) => remote
-                                                         .getCurrentWindow ()
-                                                         .webContents
-                                                         .printToPDF (
-                                                           options,
-                                                           (error, data) => error !== null
-                                                                              ? rej (error)
-                                                                              : res (data)
-                                                         )))
+export const windowPrintToPDF: (options: Electron.PrintToPDFOptions) => Promise<Buffer> =
+  async options => remote .getCurrentWindow () .webContents .printToPDF (options)
 
 /**
  * Shows a native save dialog.
  */
-export const showSaveDialog =
-  (options: Electron.SaveDialogOptions) =>
-    IO (async () => new Promise<string> (res => remote.dialog.showSaveDialog (
-                                                 remote .getCurrentWindow (),
-                                                 options,
-                                                 res
-                                               )))
+export const showSaveDialog: (options: Electron.SaveDialogOptions) => Promise<Maybe<string>> =
+  async options => {
+    const res = await remote.dialog.showSaveDialog (
+      remote .getCurrentWindow (),
+      options
+    )
+
+    return then (guard (!res .canceled)) (normalize (res .filePath))
+  }
 
 /**
  * Shows a native open dialog.
  */
-export const showOpenDialog =
-  (options: Electron.OpenDialogOptions) =>
-    IO (async () => new Promise<List<string>> (res => remote.dialog.showOpenDialog (
-                                                       remote .getCurrentWindow (),
-                                                       options,
-                                                       pipe (
-                                                         normalize,
-                                                         fmap (pipe (fromArray, res, cnst (Unit))
-                                                       ))
-                                                     )))
+export const showOpenDialog: (options: Electron.OpenDialogOptions) => Promise<List<string>> =
+  async options => pipe_ (
+    await remote.dialog.showOpenDialog (
+      remote .getCurrentWindow (),
+      options
+    ),
+    res => res .filePaths,
+    normalize,
+    fmap (fromArray),
+    joinMaybeList
+  )
 
-export const NothingIO = pure (Nothing)
-
-export const LeftIO = pipe (Left, pure)
-
-/**
- * `catchIOEither :: (a -> IO b) -> IO a -> IO (Either Error b)`
- *
- * `catchIOEither f x` executes `x` and maps `f` over the result, if no error
- * occured. The resulting `IO` will either return an error raised by the first
- * function or the result of the generated `IO`, when executed.
- */
-export const catchIOEither =
-  <A, B>
-  (f: (x: A) => IO<B>) =>
-  (x: IO<A>) =>
-    bindIOEither (f) (tryIO (x))
-
-export const bindIOEither =
-  <A, B>
-  (f: (x: A) => IO<B>) =>
-  <E>
-  (x: IO<Either<E, A>>) =>
-    bind (x)
-         ((e): IO<Either<E, B>> => isLeft (e)
-                 ? LeftIO (fromLeft_ (e))
-                 : fmapF (f (fromRight_ (e))) (Right))
-
-export const getSystemLocale = () => {
+export const getSystemLocale = (): Locale => {
   const systemLocale = remote.app.getLocale ()
 
-  return /^de/ .test (systemLocale)
-    ? "de-DE"
-    // : /^nl/ .test (systemLocale)
-    // ? "nl-BE"
-    : "en-US"
+  return /^de/u .test (systemLocale)
+    ? Locale.German
+    : /^nl/u .test (systemLocale)
+    ? Locale.Dutch
+    : Locale.English
 }
 
 const byteTags = List ("", "K", "M", "G", "T")

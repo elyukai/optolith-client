@@ -7,6 +7,7 @@ import { findWithDefault, foldrWithKey, lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { uncurryN, uncurryN4 } from "../../Data/Tuple/Curry";
 import { IdPrefixes } from "../Constants/IdPrefixes";
+import { AdvantageId, SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { createSkillDependentWithValue6, SkillDependent } from "../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
@@ -21,10 +22,10 @@ import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { compareLocale } from "../Utilities/I18n";
-import { prefixAdv, prefixId, prefixSA } from "../Utilities/IDUtils";
+import { prefixId } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailabilityAndPred } from "../Utilities/RulesUtils";
-import { comparingR, sortRecordsBy } from "../Utilities/sortBy";
+import { comparingR, sortByMulti } from "../Utilities/sortBy";
 import { getMaxAttributeValueByID } from "./attributeSelectors";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
@@ -102,8 +103,8 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
                                 }))
                               })
                               (List.empty),
-                   sortRecordsBy ([comparingR (CombatTechniqueWithAttackParryBaseA_.name)
-                                              (compareLocale (l10n))])
+                   sortByMulti ([ comparingR (CombatTechniqueWithAttackParryBaseA_.name)
+                                             (compareLocale (l10n)) ])
                  )))
 )
 
@@ -158,11 +159,12 @@ export const getAllCombatTechniques = createMaybeSelector (
   getWiki,
   (mcombat_techniques, mhero, mstartEl, wiki) =>
     liftM2 ((combatTechniques: List<Record<CTWAPB>>) => (hero: HeroModelRecord) => {
-             const exceptionalCombatTechnique = lookup (prefixAdv (17))
-                                                       (HeroModel.A.advantages (hero))
+             const exceptionalCombatTechnique =
+              lookup<string> (AdvantageId.ExceptionalCombatTechnique)
+                             (HeroModel.A.advantages (hero))
 
-             const hunter = lookup (prefixSA (18))
-                                   (HeroModel.A.specialAbilities (hero))
+             const hunter = lookup<string> (SpecialAbilityId.Hunter)
+                                           (HeroModel.A.specialAbilities (hero))
 
              const hunterRequiresMinimum =
                isMaybeActive (hunter)
@@ -205,7 +207,7 @@ export const getFilteredCombatTechniques = createMaybeSelector (
   (mcombat_techniques, sortOptions, filterText) =>
     fmapF (mcombat_techniques)
           (filterAndSortRecordsBy (0)
-                                  ([pipe (CTWRA.wikiEntry, CTA.name)])
+                                  ([ pipe (CTWRA.wikiEntry, CTA.name) ])
                                   (sortOptions)
                                   (filterText))
 )

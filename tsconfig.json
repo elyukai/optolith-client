@@ -14,18 +14,13 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "app/",
-    "plugins": [
-      {
-        "name": "typescript-tslint-plugin",
-        "alwaysShowRuleFailuresAsWarnings": false,
-      }
-    ],
     "removeComments": true,
+    "resolveJsonModule": true,
     "rootDir": "src/",
     "inlineSourceMap": true,
     "strict": true,
     "skipLibCheck": true,
-    "target": "es2017"
+    "target": "esnext"
   },
   "include": [
     "src/**/*",

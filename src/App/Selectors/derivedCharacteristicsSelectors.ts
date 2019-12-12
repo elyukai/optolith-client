@@ -8,6 +8,7 @@ import { Record } from "../../Data/Record";
 import { Pair, Tuple } from "../../Data/Tuple";
 import { uncurry3 } from "../../Data/Tuple/Curry";
 import { sel1, sel2, sel3 } from "../../Data/Tuple/Select";
+import { AdvantageId, AttrId, DCId, DisadvantageId, SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
 import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
@@ -17,11 +18,10 @@ import { Rules } from "../Models/Hero/Rules";
 import { AttributeCombined } from "../Models/View/AttributeCombined";
 import { DerivedCharacteristic } from "../Models/View/DerivedCharacteristic";
 import { Race } from "../Models/Wiki/Race";
-import { getModifierByActiveLevel, getModifierByIsActive } from "../Utilities/Activatable/activatableModifierUtils";
+import { getModifierByIsActive, getModifierByIsActives, modifyByLevelM } from "../Utilities/Activatable/activatableModifierUtils";
 import { getActiveSelections } from "../Utilities/Activatable/selectionUtils";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { translate } from "../Utilities/I18n";
-import { prefixAdv, prefixAttr, prefixDis, prefixSA } from "../Utilities/IDUtils";
 import { getAttributeValueWithDefault } from "../Utilities/Increasable/attributeUtils";
 import { pipe } from "../Utilities/pipe";
 import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils";
@@ -35,10 +35,6 @@ import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, ge
 const ACA = AttributeCombined.A
 const ADA = AttributeDependent.A
 
-export type DCIds = "LP" | "AE" | "KP" | "SPI" | "TOU" | "DO" | "INI" | "MOV" | "WT" | "SPI/2"
-export type DCIdsWithoutWT = "LP" | "AE" | "KP" | "SPI" | "TOU" | "DO" | "INI" | "MOV" | "SPI/2"
-export type EnergyIds = "LP" | "AE" | "KP"
-
 const divideByXAndRound = (x: number) => (a: number) => Math.round (a / x)
 const divideBy2AndRound = divideByXAndRound (2)
 const divideBy6AndRound = divideByXAndRound (6)
@@ -51,10 +47,10 @@ const getFirstLevel =
 
 export const getLP = createMaybeSelector (
   getRace,
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (7)),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Constitution),
   getPermanentLifePoints,
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (25)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (28)),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.IncreasedLifePoints),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.DecreasedLifePoints),
   getAddedLifePoints,
   getLocaleAsProp,
   (mrace, mcon, plp, minc, mdec, added, l10n) => {
@@ -63,16 +59,16 @@ export const getLP = createMaybeSelector (
                        (mrace)
 
     const lost = fmap (PermanentEnergyLoss.A.lost) (plp)
-    const mod = getModifierByActiveLevel (fmap (negate) (lost)) (minc) (mdec)
+    const mod = modifyByLevelM (fmap (negate) (lost)) (minc) (mdec)
 
     const value = Just (base + mod + Maybe.sum (added))
 
-    return DerivedCharacteristic<"LP"> ({
+    return DerivedCharacteristic<DCId.LP> ({
       add: Just (Maybe.sum (added)),
       base: Just (base),
       calc: translate (l10n) ("lifepointscalc"),
       currentAdd: Just (Maybe.sum (added)),
-      id: "LP",
+      id: DCId.LP,
       maxAdd: Just (Maybe.sum (fmap (AttributeDependent.A.value) (mcon))),
       mod: Just (mod),
       name: translate (l10n) ("lifepoints"),
@@ -88,20 +84,26 @@ export const getAE = createMaybeSelector (
   getMagicalTraditionsFromHero,
   getHighestPrimaryMagicalAttributeValue,
   getPermanentArcaneEnergyPoints,
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (23)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (26)),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.IncreasedAstralPower),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.DecreasedArcanePower),
   getAddedArcaneEnergyPoints,
   getLocaleAsProp,
-  (trads, mprimary_value, paep, minc, mdec, added, l10n) => {
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.GrosseMeditation),
+  (trads, mprimary_value, paep, minc, mdec, added, l10n, mgreat_meditation) => {
     const mlast_trad = listToMaybe (trads)
 
     const mredeemed = fmap (PermanentEnergyLossAndBoughtBack.A.redeemed) (paep)
 
     const mlost = fmap (PermanentEnergyLossAndBoughtBack.A.lost) (paep)
 
-    const mod = getModifierByActiveLevel (liftM2 (subtract) (mredeemed) (mlost))
-                                         (minc)
-                                         (mdec)
+    const great_meditation_level = getFirstLevel (mgreat_meditation)
+
+    const great_meditation_mod = maybe (0) (multiply (6)) (great_meditation_level)
+
+    const mod = great_meditation_mod
+      + modifyByLevelM (liftM2 (subtract) (mredeemed) (mlost))
+                       (minc)
+                       (mdec)
 
     /**
      * `Maybe (base, maxAdd)`
@@ -125,18 +127,20 @@ export const getAE = createMaybeSelector (
                        <Tuple<[number, number, number]>> (pipe (
                          sel3,
                          ae_mod =>
-                          ae_mod === 1 ? translate (l10n) ("arcaneenergycalc") :
-                          ae_mod === 0.5 ? translate (l10n) ("arcaneenergycalc.halfprimary") :
-                          translate (l10n) ("arcaneenergycalc.noprimary")
+                          ae_mod === 1
+                          ? translate (l10n) ("arcaneenergycalc")
+                          : ae_mod === 0.5
+                          ? translate (l10n) ("arcaneenergycalc.halfprimary")
+                          : translate (l10n) ("arcaneenergycalc.noprimary")
                        ))
                        (mbaseAndAdd)
 
-    return DerivedCharacteristic<"AE"> ({
+    return DerivedCharacteristic<DCId.AE> ({
       add: Just (Maybe.sum (added)),
       base: fmapF (mbaseAndAdd) (sel1),
       calc,
       currentAdd: Just (Maybe.sum (added)),
-      id: "AE",
+      id: DCId.AE,
       maxAdd: Just (Maybe.sum (fmapF (mbaseAndAdd) (sel2))),
       mod: Just (mod),
       name: translate (l10n) ("arcaneenergy"),
@@ -152,26 +156,28 @@ const getPrimaryAEMod =
   (last_trad: Record<ActivatableDependent>): number =>
     elem (ActivatableDependent.A.id (last_trad))
         (List (
-          prefixSA (677),
-          prefixSA (678),
-          prefixSA (750),
-          prefixSA (1221)))
+          SpecialAbilityId.TraditionArcaneBard,
+          SpecialAbilityId.TraditionArcaneDancer,
+          SpecialAbilityId.TraditionZauberalchimisten,
+          SpecialAbilityId.TraditionAnimisten
+        ))
     ? 0.5
     : elem (ActivatableDependent.A.id (last_trad))
            (List (
-             prefixSA (679),
-             prefixSA (680)))
+             SpecialAbilityId.TraditionIntuitiveMage,
+             SpecialAbilityId.TraditionSavant
+           ))
     ? 0
     : 1
 
 export const getKP = createMaybeSelector (
   getPrimaryBlessedAttribute,
   getPermanentKarmaPoints,
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (24)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (27)),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.IncreasedKarmaPoints),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.DecreasedKarmaPoints),
   getAddedKarmaPoints,
   getLocaleAsProp,
-  mapGetToSlice (getSpecialAbilities) (prefixSA (563)),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.HoheWeihe),
   (mprimary, pkp, minc, mdec, added, l10n, mhigh_consecration) => {
     const mredeemed = fmap (PermanentEnergyLossAndBoughtBack.A.redeemed) (pkp)
 
@@ -182,20 +188,20 @@ export const getKP = createMaybeSelector (
     const highConsecrationMod = maybe (0) (multiply (6)) (highConsecrationLevel)
 
     const mod = highConsecrationMod
-      + getModifierByActiveLevel (liftM2 (subtract) (mredeemed) (mlost))
-                                 (minc)
-                                 (mdec)
+      + modifyByLevelM (liftM2 (subtract) (mredeemed) (mlost))
+                       (minc)
+                       (mdec)
 
     const mbase = fmapF (mprimary) (pipe (ACA.stateEntry, ADA.value, add (20)))
 
     const value = fmapF (mbase) (base => base + mod + Maybe.sum (added))
 
-    return DerivedCharacteristic<"KP"> ({
+    return DerivedCharacteristic<DCId.KP> ({
       add: Just (Maybe.sum (added)),
       base: mbase,
       calc: translate (l10n) ("karmapointscalc"),
       currentAdd: Just (Maybe.sum (added)),
-      id: "KP",
+      id: DCId.KP,
       maxAdd: Just (Maybe.sum (fmapF (mprimary) (pipe (ACA.stateEntry, ADA.value)))),
       mod: Just (mod),
       name: translate (l10n) ("karmapoints"),
@@ -209,11 +215,11 @@ export const getKP = createMaybeSelector (
 
 export const getSPI = createMaybeSelector (
   getRace,
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (1)),
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (2)),
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (3)),
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (26)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (29)),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Courage),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Sagacity),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Intuition),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.IncreasedSpirit),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.DecreasedSpirit),
   getLocaleAsProp,
   (mrace, mcou, msgc, mint, minc, mdec, l10n) => {
     const mbase = fmapF (mrace)
@@ -228,10 +234,10 @@ export const getSPI = createMaybeSelector (
 
     const value = fmapF (mbase) (add (mod))
 
-    return DerivedCharacteristic<"SPI"> ({
+    return DerivedCharacteristic<DCId.SPI> ({
       base: Just (Maybe.sum (mbase)),
       calc: translate (l10n) ("spiritcalc"),
-      id: "SPI",
+      id: DCId.SPI,
       mod: Just (mod),
       name: translate (l10n) ("spirit"),
       short: translate (l10n) ("spirit.short"),
@@ -242,10 +248,10 @@ export const getSPI = createMaybeSelector (
 
 export const getTOU = createMaybeSelector (
   getRace,
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (7)),
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (8)),
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (27)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (30)),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Constitution),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Strength),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.IncreasedToughness),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.DecreasedToughness),
   getLocaleAsProp,
   (mrace, mcon, mstr, minc, mdec, l10n) => {
     const mbase = fmapF (mrace)
@@ -259,10 +265,10 @@ export const getTOU = createMaybeSelector (
 
     const value = fmapF (mbase) (add (mod))
 
-    return DerivedCharacteristic<"TOU"> ({
+    return DerivedCharacteristic<DCId.TOU> ({
       base: Just (Maybe.sum (mbase)),
       calc: translate (l10n) ("toughnesscalc"),
-      id: "TOU",
+      id: DCId.TOU,
       mod: Just (mod),
       name: translate (l10n) ("toughness"),
       short: translate (l10n) ("toughness.short"),
@@ -272,23 +278,21 @@ export const getTOU = createMaybeSelector (
 )
 
 export const getDO = createMaybeSelector (
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (6)),
-  mapGetToSlice (getSpecialAbilities) (prefixSA (64)),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Agility),
   getLocaleAsProp,
   getRules,
-  (magi, mimproved_dodge, l10n, rules) => {
+  (magi, l10n, rules) => {
     const base = divideBy2AndRound (getAttributeValueWithDefault (magi))
 
-    const higher_parade_values = Rules.A.higherParadeValues (rules)
+    const higher_parade_values = Rules.A.higherParadeValues (rules) / 2
 
-    const mod = ensure (notEquals (0))
-                       (Maybe.sum (getFirstLevel (mimproved_dodge)) + higher_parade_values)
+    const mod = ensure (notEquals (0)) (higher_parade_values)
 
     const value = base + Maybe.sum (mod)
 
-    return DerivedCharacteristic<"DO"> ({
+    return DerivedCharacteristic<DCId.DO> ({
       calc: translate (l10n) ("dodgecalc"),
-      id: "DO",
+      id: DCId.DO,
       name: translate (l10n) ("dodge"),
       short: translate (l10n) ("dodge.short"),
       base: Just (base),
@@ -299,9 +303,9 @@ export const getDO = createMaybeSelector (
 )
 
 export const getINI = createMaybeSelector (
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (1)),
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (6)),
-  mapGetToSlice (getSpecialAbilities) (prefixSA (51)),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Courage),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Agility),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.CombatReflexes),
   getLocaleAsProp,
   (mcou, magi, mcombat_reflexes, l10n) => {
     const base = divideBy2AndRound (
@@ -312,9 +316,9 @@ export const getINI = createMaybeSelector (
 
     const value = base + Maybe.sum (mod)
 
-    return DerivedCharacteristic<"INI"> ({
+    return DerivedCharacteristic<DCId.INI> ({
       calc: translate (l10n) ("initiativecalc"),
-      id: "INI",
+      id: DCId.INI,
       name: translate (l10n) ("initiative"),
       short: translate (l10n) ("initiative.short"),
       base: Just (base),
@@ -326,11 +330,12 @@ export const getINI = createMaybeSelector (
 
 export const getMOV = createMaybeSelector (
   getRace,
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (9)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (51)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (4)),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.Nimble),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.Maimed),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.Slow),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.LeichterGang),
   getLocaleAsProp,
-  (mrace, mnimble, mmaimed, mslow, l10n) => {
+  (mrace, mnimble, mmaimed, mslow, mleichter_gang, l10n) => {
     const mbase = fmapF (mrace)
                         (pipe (
                           Race.A.mov,
@@ -344,13 +349,13 @@ export const getMOV = createMaybeSelector (
                             : base
                         ))
 
-    const mod = getModifierByIsActive (Just (0)) (mnimble) (mslow)
+    const mod = getModifierByIsActives (Just (0)) (List (mnimble, mleichter_gang)) (List (mslow))
 
     const value = fmapF (mbase) (add (mod))
 
-    return DerivedCharacteristic<"MOV"> ({
+    return DerivedCharacteristic<DCId.MOV> ({
       calc: translate (l10n) ("movementcalc"),
-      id: "MOV",
+      id: DCId.MOV,
       name: translate (l10n) ("movement"),
       short: translate (l10n) ("movement.short"),
       base: Just (Maybe.sum (mbase)),
@@ -361,9 +366,9 @@ export const getMOV = createMaybeSelector (
 )
 
 export const getWT = createMaybeSelector (
-  mapGetToSliceWithProps (getAttributes) (prefixAttr (7)),
-  mapGetToMaybeSlice (getAdvantages) (prefixAdv (54)),
-  mapGetToMaybeSlice (getDisadvantages) (prefixDis (56)),
+  mapGetToSliceWithProps (getAttributes) (AttrId.Constitution),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.Unyielding),
+  mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.BrittleBones),
   getLocaleAsProp,
   (mcon, minc, mdec, l10n) => {
     const base = divideBy2AndRound (getAttributeValueWithDefault (mcon))
@@ -372,9 +377,9 @@ export const getWT = createMaybeSelector (
 
     const value = base + mod
 
-    return DerivedCharacteristic<"WT"> ({
+    return DerivedCharacteristic<DCId.WT> ({
       calc: translate (l10n) ("woundthresholdcalc"),
-      id: "WT",
+      id: DCId.WT,
       name: translate (l10n) ("woundthreshold"),
       short: translate (l10n) ("woundthreshold.short"),
       base: Just (base),
@@ -398,15 +403,15 @@ export const getDerivedCharacteristicsMap = createMaybeSelector (
   (LP, AE, KP, SPI, TOU, DO, INI, MOV, WT, rule_books_enabled) => {
     type BaseDerived = Record<DerivedCharacteristic>
 
-    const xs = List<(Pair<DCIds, BaseDerived>)> (
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (LP), LP),
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (AE), AE),
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (KP), KP),
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (SPI), SPI),
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (TOU), TOU),
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (DO), DO),
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (INI), INI),
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (MOV), MOV)
+    const xs = List<Pair<DCId, BaseDerived>> (
+      Pair (DerivedCharacteristic.A.id (LP), LP),
+      Pair (DerivedCharacteristic.A.id (AE), AE),
+      Pair (DerivedCharacteristic.A.id (KP), KP),
+      Pair (DerivedCharacteristic.A.id (SPI), SPI),
+      Pair (DerivedCharacteristic.A.id (TOU), TOU),
+      Pair (DerivedCharacteristic.A.id (DO), DO),
+      Pair (DerivedCharacteristic.A.id (INI), INI),
+      Pair (DerivedCharacteristic.A.id (MOV), MOV)
     )
 
     const isWoundThresholdEnabled = uncurry3 (isBookEnabled)
@@ -414,7 +419,7 @@ export const getDerivedCharacteristicsMap = createMaybeSelector (
                                              ("US25003")
 
     if (isWoundThresholdEnabled) {
-      return fromList (snoc (xs) (Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (WT), WT)))
+      return fromList (snoc (xs) (Pair (DerivedCharacteristic.A.id (WT), WT)))
     }
 
     return fromList (xs)

@@ -14,7 +14,7 @@ import { ActiveObjectWithIdL, toActiveObjectWithId } from "../Models/ActiveEntri
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../Models/View/ActivatableNameCost";
 import { L10nRecord } from "../Models/Wiki/L10n";
-import { isSpecialAbility, SpecialAbility } from "../Models/Wiki/SpecialAbility";
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
 import { getAutomaticAdvantages } from "../Selectors/rcpSelectors";
@@ -24,10 +24,10 @@ import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/acti
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";
 import { translate, translateP } from "../Utilities/I18n";
 import { pipe, pipe_ } from "../Utilities/pipe";
+import { SpecialAbilitiesSortOptions } from "../Utilities/Raw/JSON/Config";
 import { getWikiEntry } from "../Utilities/WikiUtils";
-import { SortNames } from "../Views/Universal/SortOptions";
 import { ReduxAction } from "./Actions";
-import { addAlert } from "./AlertActions";
+import { addAlert, AlertOptions } from "./AlertActions";
 
 export interface ActivateSpecialAbilityAction {
   type: ActionTypes.ACTIVATE_SPECIALABILITY
@@ -42,8 +42,8 @@ export interface ActivateSpecialAbilityAction {
  */
 export const addSpecialAbility =
   (l10n: L10nRecord) =>
-  (args: Record<ActivatableActivationOptions>): ReduxAction =>
-  (dispatch, getState) => {
+  (args: Record<ActivatableActivationOptions>): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
 
     const mhero = getCurrentHeroPresent (state)
@@ -54,7 +54,7 @@ export const addSpecialAbility =
 
       const mwiki_entry =
         bind (getWikiEntry (getWiki (state)) (current_id))
-             (ensure (isSpecialAbility))
+             (ensure (SpecialAbility.is))
 
       const mhero_entry =
         lookup (current_id)
@@ -79,10 +79,12 @@ export const addSpecialAbility =
           })
         }
         else {
-          dispatch (addAlert ({
-            title: translate (l10n) ("notenoughap"),
+          const opts = AlertOptions ({
+            title: Just (translate (l10n) ("notenoughap")),
             message: translateP (l10n) ("notenoughap.text") (List (fromJust (mmissingAP))),
-          }))
+          })
+
+          await dispatch (addAlert (l10n) (opts))
         }
       }
     }
@@ -114,7 +116,7 @@ export const removeSpecialAbility =
 
       const mwiki_entry =
         bind (getWikiEntry (getWiki (state)) (current_id))
-             (ensure (isSpecialAbility))
+             (ensure (SpecialAbility.is))
 
       const mhero_entry =
         lookup (current_id)
@@ -147,8 +149,8 @@ export const setSpecialAbilityLevel =
   (l10n: L10nRecord) =>
   (current_id: string) =>
   (current_index: number) =>
-  (next_level: number): ReduxAction =>
-  (dispatch, getState) => {
+  (next_level: number): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
 
     const mhero = getCurrentHeroPresent (state)
@@ -158,7 +160,7 @@ export const setSpecialAbilityLevel =
 
       const mwiki_entry =
         bind (getWikiEntry (getWiki (state)) (current_id))
-             (ensure (isSpecialAbility))
+             (ensure (SpecialAbility.is))
 
       const mhero_entry =
         lookup (current_id)
@@ -231,10 +233,12 @@ export const setSpecialAbilityLevel =
             })
           }
           else {
-            dispatch (addAlert ({
-              title: translate (l10n) ("notenoughap"),
+            const opts = AlertOptions ({
+              title: Just (translate (l10n) ("notenoughap")),
               message: translateP (l10n) ("notenoughap.text") (List (fromJust (mmissingAP))),
-            }))
+            })
+
+            await dispatch (addAlert (l10n) (opts))
           }
         }
       }
@@ -244,12 +248,12 @@ export const setSpecialAbilityLevel =
 export interface SetSpecialAbilitiesSortOrderAction {
   type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER
   payload: {
-    sortOrder: SortNames;
+    sortOrder: SpecialAbilitiesSortOptions;
   }
 }
 
 export const setSpecialAbilitiesSortOrder =
-  (sortOrder: SortNames): SetSpecialAbilitiesSortOrderAction => ({
+  (sortOrder: SpecialAbilitiesSortOptions): SetSpecialAbilitiesSortOrderAction => ({
     type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER,
     payload: {
       sortOrder,

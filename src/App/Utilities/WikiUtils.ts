@@ -5,7 +5,7 @@ import { bindF, Maybe } from "../../Data/Maybe";
 import { elems, lookupF, OrderedMap, OrderedMapValueElement } from "../../Data/OrderedMap";
 import { member, Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
-import { ActivatableCategories, Categories, SkillishCategories } from "../Constants/Categories";
+import { ActivatableCategories, Category, SkillishCategories } from "../Constants/Categories";
 import { ProfessionCombined } from "../Models/View/ProfessionCombined";
 import { Advantage } from "../Models/Wiki/Advantage";
 import { Blessing } from "../Models/Wiki/Blessing";
@@ -25,49 +25,50 @@ import { getCategoryById } from "./IDUtils";
 import { pipe } from "./pipe";
 
 interface WikiKeyByCategory {
-  [Categories.ADVANTAGES]: "advantages"
-  [Categories.ATTRIBUTES]: "attributes"
-  [Categories.BLESSINGS]: "blessings"
-  [Categories.CANTRIPS]: "cantrips"
-  [Categories.COMBAT_TECHNIQUES]: "combatTechniques"
-  [Categories.CULTURES]: "cultures"
-  [Categories.DISADVANTAGES]: "disadvantages"
-  [Categories.LITURGIES]: "liturgicalChants"
-  [Categories.PROFESSIONS]: "professions"
-  [Categories.PROFESSION_VARIANTS]: "professionVariants"
-  [Categories.RACES]: "races"
-  [Categories.RACE_VARIANTS]: "raceVariants"
-  [Categories.SPECIAL_ABILITIES]: "specialAbilities"
-  [Categories.SPELLS]: "spells"
-  [Categories.TALENTS]: "skills"
+  [Category.ADVANTAGES]: "advantages"
+  [Category.ATTRIBUTES]: "attributes"
+  [Category.BLESSINGS]: "blessings"
+  [Category.CANTRIPS]: "cantrips"
+  [Category.COMBAT_TECHNIQUES]: "combatTechniques"
+  [Category.CULTURES]: "cultures"
+  [Category.DISADVANTAGES]: "disadvantages"
+  [Category.LITURGICAL_CHANTS]: "liturgicalChants"
+  [Category.PROFESSIONS]: "professions"
+  [Category.PROFESSION_VARIANTS]: "professionVariants"
+  [Category.RACES]: "races"
+  [Category.RACE_VARIANTS]: "raceVariants"
+  [Category.SPECIAL_ABILITIES]: "specialAbilities"
+  [Category.SPELLS]: "spells"
+  [Category.SKILLS]: "skills"
 }
 
-export const getWikiSliceGetterByCategory =
-  <T extends Categories> (x: T): typeof WikiModel.AL[WikiKeyByCategory[T]] => {
-    switch (x) {
-      case Categories.ADVANTAGES: return WikiModel.AL.advantages
-      case Categories.ATTRIBUTES: return WikiModel.AL.attributes
-      case Categories.BLESSINGS: return WikiModel.AL.blessings
-      case Categories.CANTRIPS: return WikiModel.AL.cantrips
-      case Categories.COMBAT_TECHNIQUES: return WikiModel.AL.combatTechniques
-      case Categories.CULTURES: return WikiModel.AL.cultures
-      case Categories.DISADVANTAGES: return WikiModel.AL.disadvantages
-      case Categories.LITURGIES: return WikiModel.AL.liturgicalChants
-      case Categories.PROFESSIONS: return WikiModel.AL.professions
-      case Categories.PROFESSION_VARIANTS: return WikiModel.AL.professionVariants
-      case Categories.RACES: return WikiModel.AL.races
-      case Categories.RACE_VARIANTS: return WikiModel.AL.raceVariants
-      case Categories.SPECIAL_ABILITIES: return WikiModel.AL.specialAbilities
-      case Categories.SPELLS: return WikiModel.AL.spells
-      case Categories.TALENTS: return WikiModel.AL.skills
-    }
+type GetWikiSlice<C extends Category> = typeof WikiModel.A[WikiKeyByCategory[C]]
 
-    throw new TypeError (`${show (x)} is no valid wiki category!`)
+export const getWikiSliceGetterByCategory =
+  <C extends Category> (x: C): GetWikiSlice<C> => {
+    switch (x) {
+      case Category.ADVANTAGES: return WikiModel.A.advantages as GetWikiSlice<C>
+      case Category.ATTRIBUTES: return WikiModel.A.attributes as GetWikiSlice<C>
+      case Category.BLESSINGS: return WikiModel.A.blessings as GetWikiSlice<C>
+      case Category.CANTRIPS: return WikiModel.A.cantrips as GetWikiSlice<C>
+      case Category.COMBAT_TECHNIQUES: return WikiModel.A.combatTechniques as GetWikiSlice<C>
+      case Category.CULTURES: return WikiModel.A.cultures as GetWikiSlice<C>
+      case Category.DISADVANTAGES: return WikiModel.A.disadvantages as GetWikiSlice<C>
+      case Category.LITURGICAL_CHANTS: return WikiModel.A.liturgicalChants as GetWikiSlice<C>
+      case Category.PROFESSIONS: return WikiModel.A.professions as GetWikiSlice<C>
+      case Category.PROFESSION_VARIANTS: return WikiModel.A.professionVariants as GetWikiSlice<C>
+      case Category.RACES: return WikiModel.A.races as GetWikiSlice<C>
+      case Category.RACE_VARIANTS: return WikiModel.A.raceVariants as GetWikiSlice<C>
+      case Category.SPECIAL_ABILITIES: return WikiModel.A.specialAbilities as GetWikiSlice<C>
+      case Category.SPELLS: return WikiModel.A.spells as GetWikiSlice<C>
+      case Category.SKILLS: return WikiModel.A.skills as GetWikiSlice<C>
+      default: throw new TypeError (`${show (x)} is no valid wiki category!`)
+    }
   }
 
 export const getWikiEntryWithGetter =
   (wiki: WikiModelRecord) =>
-  <G extends typeof WikiModel.AL[WikiKeyByCategory[Categories]]> (getter: G) =>
+  <G extends typeof WikiModel.AL[WikiKeyByCategory[Category]]> (getter: G) =>
     lookupF ((getter as (wiki: WikiModelRecord) => OrderedMap<string, Entry>) (wiki)) as
       (id: string) => Maybe<OrderedMapValueElement<ReturnType<G>>>
 
@@ -76,7 +77,7 @@ export const getWikiEntry =
     pipe (
            getCategoryById,
            fmap (getWikiSliceGetterByCategory as
-                  (category: Categories) => (wiki: WikiModelRecord) =>
+                  (category: Category) => (wiki: WikiModelRecord) =>
                     OrderedMap<string, EntryWithCategory>),
            bindF (pipe (
                    getWikiEntryWithGetter (wiki) as
@@ -131,7 +132,7 @@ export const isItemTemplate =
 export const isActivatableWikiObj =
   (obj: Entry): obj is Activatable =>
     !isItemTemplate (obj)
-    && elemF<Categories> (ActivatableCategories)
+    && elemF<Category> (ActivatableCategories)
                          (SpecialAbility.AL.category (obj as Record<SpecialAbility>))
 
 const { category } = Skill.AL

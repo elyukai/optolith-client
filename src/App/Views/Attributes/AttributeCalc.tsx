@@ -19,16 +19,37 @@ export interface AttributesCalcProps {
   removeKarmaPoint (): void
 }
 
-export function AttributeCalc (props: AttributesCalcProps) {
+export const AttributeCalc: React.FC<AttributesCalcProps> = props => {
+  const {
+    derived,
+    l10n,
+    isInCharacterCreation,
+    isRemovingEnabled,
+    addLifePoint,
+    addArcaneEnergyPoint,
+    addKarmaPoint,
+    removeLifePoint,
+    removeArcaneEnergyPoint,
+    removeKarmaPoint,
+  } = props
+
   return (
     <div className="calculated">
       {pipe_ (
-        props.derived,
+        derived,
         map (attribute => (
           <AttributeCalcItem
-            {...props}
             key={DerivedCharacteristic.A.id (attribute)}
             attribute={attribute}
+            l10n={l10n}
+            isInCharacterCreation={isInCharacterCreation}
+            isRemovingEnabled={isRemovingEnabled}
+            addLifePoint={addLifePoint}
+            addArcaneEnergyPoint={addArcaneEnergyPoint}
+            addKarmaPoint={addKarmaPoint}
+            removeLifePoint={removeLifePoint}
+            removeArcaneEnergyPoint={removeArcaneEnergyPoint}
+            removeKarmaPoint={removeKarmaPoint}
             />
         )),
         toArray

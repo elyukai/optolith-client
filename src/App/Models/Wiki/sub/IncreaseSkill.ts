@@ -4,6 +4,7 @@ import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { prefixId } from "../../../Utilities/IDUtils";
 
 export interface IncreaseSkill {
+  "@@name": "IncreaseSkill"
   id: string
   value: number
 }

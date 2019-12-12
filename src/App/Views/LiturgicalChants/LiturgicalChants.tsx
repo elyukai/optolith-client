@@ -3,10 +3,11 @@ import { notEquals } from "../../../Data/Eq";
 import { ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { consF, elem, elemF, intercalate, List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, fromMaybeR, guard, Just, mapMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
+import { bindF, ensure, fromMaybe, guard, Just, mapMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
 import { dec } from "../../../Data/Num";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
+import { BlessedTradition } from "../../Constants/Groups";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -33,9 +34,9 @@ import { MainContent } from "../Universal/MainContent";
 import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
+import { SearchField } from "../Universal/SearchField";
 import { Slidein } from "../Universal/Slidein";
 import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { TextField } from "../Universal/TextField";
 
 export interface LiturgicalChantsOwnProps {
   l10n: L10nRecord
@@ -183,16 +184,16 @@ export class LiturgicalChants
           className="adding-liturgical-chants"
           >
           <Options>
-            <TextField
-              hint={translate (l10n) ("search")}
+            <SearchField
+              l10n={l10n}
               value={inactiveFilterText}
-              onChangeString={setInactiveFilterText}
+              onChange={setInactiveFilterText}
               fullWidth
               />
             <SortOptions
               sortOrder={sortOrder}
               sort={setSortOrder}
-              options={List<SortNames> ("name", "group", "ic")}
+              options={List (SortNames.Name, SortNames.Group, SortNames.IC)}
               l10n={l10n}
               />
             <Checkbox
@@ -308,7 +309,7 @@ export class LiturgicalChants
                     toArray,
                     arr => <>{arr}</>
                   )),
-                  fromMaybeR (
+                  fromMaybe (
                     <ListPlaceholder l10n={l10n} type="inactiveLiturgicalChants" noResults />
                   )
                 )}
@@ -318,16 +319,16 @@ export class LiturgicalChants
           <WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
         </Slidein>
         <Options>
-          <TextField
-            hint={translate (l10n) ("search")}
+          <SearchField
+            l10n={l10n}
             value={filterText}
-            onChangeString={setFilterText}
+            onChange={setFilterText}
             fullWidth
             />
           <SortOptions
             sortOrder={sortOrder}
             sort={setSortOrder}
-            options={List<SortNames> ("name", "group", "ic")}
+            options={List (SortNames.Name, SortNames.Group, SortNames.IC)}
             l10n={l10n}
             />
           <BorderButton
@@ -410,14 +411,10 @@ export class LiturgicalChants
                                       id={LCBCA.id (curr)}
                                       name={LCBCA.name (curr)}
                                       addDisabled={!LCWRA.isIncreasable (curr)}
-                                      addPoint={addPoint.bind (null, LCBCA.id (curr))}
-                                      removeDisabled={!LCWRA.isDecreasable (curr)}
+                                      addPoint={addPoint}
+                                      removeDisabled={!isRemovingEnabled || !LCWRA.isDecreasable (curr)}
                                       removePoint={
-                                        isRemovingEnabled
-                                          ? LCWRA_.value (curr) === 0
-                                            ? removeFromList.bind (null, LCBCA.id (curr))
-                                            : removePoint.bind (null, LCBCA.id (curr))
-                                          : undefined
+                                        LCWRA_.value (curr) === 0 ? removeFromList : removePoint
                                       }
                                       addFillElement
                                       check={LCWRA_.check (curr)}
@@ -440,7 +437,7 @@ export class LiturgicalChants
                   toArray,
                   arr => <>{arr}</>
                 )),
-                fromMaybeR (
+                fromMaybe (
                   <ListPlaceholder
                     l10n={l10n}
                     type="liturgicalChants"
@@ -478,15 +475,13 @@ const isTopMarginNeeded =
 const getAspectsStr =
   (l10n: L10nRecord) =>
   (curr: Combined) =>
-  (mtradition_id: Maybe<number>) =>
+  (mtradition_id: Maybe<BlessedTradition>) =>
     pipe_ (
       mtradition_id,
       fmap (pipe (
         tradition_id =>
           mapMaybe (pipe (
-                     ensure (elemF (
-                       getAspectsOfTradition (tradition_id + 1)
-                     )),
+                     ensure (elemF (getAspectsOfTradition (tradition_id))),
                      bindF (pipe (
                        dec,
                        subscript (translate (l10n) ("aspectlist"))

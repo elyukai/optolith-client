@@ -5,7 +5,9 @@ import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamag
 import { ItemEditorSpecific } from "./heroTypeHelpers";
 import { ItemBase } from "./Item";
 
-export interface EditItem extends ItemBase, ItemEditorSpecific { }
+export interface EditItem extends ItemBase, ItemEditorSpecific {
+  "@@name": "EditItem"
+}
 
 export interface EditItemSafe extends EditItem {
   id: Just<string>

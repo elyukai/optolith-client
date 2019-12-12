@@ -93,6 +93,22 @@ interface pipe {
     jk: (j: J) => K,
     kl: (k: L) => L
   ): (...a: A) => L
+
+  <A extends any[], B, C, D, E, F, G, H, I, J, K, L, M>
+  (
+    ab: (...a: A) => B,
+    bc: (b: B) => C,
+    cd: (c: C) => D,
+    de: (d: D) => E,
+    ef: (e: E) => F,
+    fg: (f: F) => G,
+    gh: (g: G) => H,
+    hi: (h: H) => I,
+    ij: (i: I) => J,
+    jk: (j: J) => K,
+    kl: (k: K) => L,
+    lm: (k: L) => M
+  ): (...a: A) => M
 }
 
 /**
@@ -110,6 +126,7 @@ export const pipe: pipe =
     : fs .slice (1) .reduce<any> ((y, f) => f (y), fs [0] (...x))
 
 interface pipe_ {
+  <A, B> (a: A, ab: (a: A) => B): B
   <A, B, C> (a: A, ab: (a: A) => B, bc: (b: B) => C): C
   <A, B, C, D> (a: A, ab: (a: A) => B, bc: (b: B) => C, cd: (c: C) => D): D
 

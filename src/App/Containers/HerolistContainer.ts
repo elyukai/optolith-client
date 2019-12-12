@@ -7,15 +7,14 @@ import * as HerolistActions from "../Actions/HerolistActions";
 import * as IOActions from "../Actions/IOActions";
 import * as LocationActions from "../Actions/LocationActions";
 import * as SubwindowsActions from "../Actions/SubwindowsActions";
-import { InputTextEvent } from "../Models/Hero/heroTypeHelpers";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getSortedBooks } from "../Selectors/bookSelectors";
 import { getSortedHerolist, getUnsavedHeroesById } from "../Selectors/herolistSelectors";
 import { getCurrentHeroPresent, getHerolistFilterText, getIsCharacterCreatorOpen, getUsers, getWiki, getWikiExperienceLevels } from "../Selectors/stateSelectors";
 import { getHerolistSortOrder, getHerolistVisibilityFilter } from "../Selectors/uisettingsSelectors";
 import { TabId } from "../Utilities/LocationUtils";
+import { HeroListSortOptions, HeroListVisibilityFilter } from "../Utilities/Raw/JSON/Config";
 import { Herolist, HerolistDispatchProps, HerolistOwnProps, HerolistStateProps } from "../Views/Heroes/Herolist";
-import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (state: AppStateRecord, props: HerolistOwnProps) => ({
   currentHero: getCurrentHeroPresent (state),
@@ -70,13 +69,13 @@ const mapDispatchToProps = (
   importHero () {
     dispatch (IOActions.requestHeroImport (l10n))
   },
-  setSortOrder (id: SortNames) {
+  setSortOrder (id: HeroListSortOptions) {
     dispatch (HerolistActions.setHerolistSortOrder (id))
   },
-  setFilterText (event: InputTextEvent) {
-    dispatch (HerolistActions.setHerolistFilterText (event.target.value))
+  setFilterText (newText: string) {
+    dispatch (HerolistActions.setHerolistFilterText (newText))
   },
-  setVisibilityFilter (id: Maybe<string>) {
+  setVisibilityFilter (id: Maybe<HeroListVisibilityFilter>) {
     if (isJust (id)) {
       dispatch (HerolistActions.setHerolistVisibilityFilter (fromJust (id)))
     }

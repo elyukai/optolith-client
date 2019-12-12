@@ -2,7 +2,7 @@ import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { cons, elemF, filter, find, flength, fnull, intercalate, List, map, notNull, toArray } from "../../../Data/List";
 import { any, ensure, fromJust, fromMaybe, guardReplace, isJust, Just, Maybe, maybe, maybeToList, normalize, Nothing, or, orN } from "../../../Data/Maybe";
-import { Accessors, fromDefault, PartialMaybeOrNothing, Record, RecordCreator, StrictAccessors } from "../../../Data/Record";
+import { Accessors, fromDefault, OmitName, PartialMaybeOrNothing, Record, RecordCreator, StrictAccessors } from "../../../Data/Record";
 import { classListMaybe } from "../../Utilities/CSS";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
@@ -12,23 +12,26 @@ import { Scroll } from "./Scroll";
 type DropdownKey = string | number
 
 export interface DropdownOption<A extends DropdownKey = DropdownKey> {
+  "@@name": "DropdownOption"
   id: Maybe<A>
   name: string
   disabled: Maybe<boolean>
 }
 
-interface DropdownOptionAccessors extends Accessors<DropdownOption<DropdownKey>> {
-  id: <A extends DropdownKey> (x: Record<Pick<DropdownOption<A>, "id">>) => Maybe<A>
+interface DropdownOptionAccessors extends Accessors<DropdownOption> {
+  id:
+  <A extends DropdownKey>
+  (x: Record<Pick<OmitName<DropdownOption<A>>, "id"> & { "@@name": string }>) => Maybe<A>
 }
 
-interface DropdownOptionStrictAccessors extends StrictAccessors<DropdownOption<DropdownKey>> {
+interface DropdownOptionStrictAccessors extends StrictAccessors<DropdownOption> {
   id: <A extends DropdownKey> (x: Record<DropdownOption<A>>) => Maybe<A>
 }
 
-interface DropdownOptionCreator extends RecordCreator<DropdownOption<DropdownKey>> {
+interface DropdownOptionCreator extends RecordCreator<DropdownOption> {
   <A extends DropdownKey = DropdownKey>
-  (x: PartialMaybeOrNothing<DropdownOption<A>>): Record<DropdownOption<A>>
-  readonly default: Record<DropdownOption<DropdownKey>>
+  (x: PartialMaybeOrNothing<OmitName<DropdownOption<A>>>): Record<DropdownOption<A>>
+  readonly default: Record<DropdownOption>
   readonly AL: DropdownOptionAccessors
   readonly A: DropdownOptionStrictAccessors
   readonly is:
@@ -73,6 +76,7 @@ export class Dropdown<A extends DropdownKey>
 
   // tslint:disable-next-line:no-null-keyword
   containerRef: HTMLDivElement | null = null
+
   clickInside = false
 
   switch = () => {

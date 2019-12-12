@@ -8,6 +8,7 @@ import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCom
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { CulturesSortOptions, CulturesVisibilityFilter } from "../../Utilities/Raw/JSON/Config";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { ListView } from "../Universal/List";
 import { ListHeader } from "../Universal/ListHeader";
@@ -17,8 +18,8 @@ import { MainContent } from "../Universal/MainContent";
 import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
+import { SearchField } from "../Universal/SearchField";
 import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { TextField } from "../Universal/TextField";
 import { CulturesListItem } from "./CulturesListItem";
 
 export interface CulturesOwnProps {
@@ -29,8 +30,8 @@ export interface CulturesOwnProps {
 export interface CulturesStateProps {
   cultures: List<Record<CultureCombined>>
   currentId: Maybe<string>
-  sortOrder: SortNames
-  visibilityFilter: string
+  sortOrder: CulturesSortOptions
+  visibilityFilter: CulturesVisibilityFilter
   filterText: string
 }
 
@@ -54,15 +55,19 @@ export function Cultures (props: CulturesProps) {
     sortOrder,
     visibilityFilter,
     filterText,
+    setFilterText,
+    currentId,
+    selectCulture,
+    switchToProfessions,
   } = props
 
   return (
     <Page id="cultures">
       <Options>
-        <TextField
-          hint={translate (l10n) ("search")}
+        <SearchField
+          l10n={l10n}
           value={filterText}
-          onChangeString={props.setFilterText}
+          onChange={setFilterText}
           fullWidth
           />
         <Dropdown
@@ -83,7 +88,7 @@ export function Cultures (props: CulturesProps) {
         <SortOptions
           sortOrder={sortOrder}
           sort={setSortOrder}
-          options={List<SortNames> ("name", "cost")}
+          options={List (SortNames.Name, SortNames.Cost)}
           l10n={l10n}
           />
       </Options>
@@ -105,9 +110,11 @@ export function Cultures (props: CulturesProps) {
                 (pipe (
                   map (culture => (
                     <CulturesListItem
-                      {...props}
                       key={CultureCombinedA_.id (culture)}
                       culture={culture}
+                      currentId={currentId}
+                      selectCulture={selectCulture}
+                      switchToProfessions={switchToProfessions}
                       />
                   )),
                   toArray
@@ -116,7 +123,7 @@ export function Cultures (props: CulturesProps) {
           </ListView>
         </Scroll>
       </MainContent>
-      <WikiInfoContainer {...props} />
+      <WikiInfoContainer currentId={currentId} l10n={l10n} />
     </Page>
   )
 }

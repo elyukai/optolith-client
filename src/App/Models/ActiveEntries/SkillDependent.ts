@@ -7,6 +7,7 @@ import { Dependent, ExtendedSkillDependent, SkillDependency } from "../Hero/hero
 import { ActivatableSkillDependent } from "./ActivatableSkillDependent";
 
 export interface SkillDependent {
+  "@@name": "SkillDependent"
   id: string;
   value: number;
   dependencies: List<SkillDependency>;

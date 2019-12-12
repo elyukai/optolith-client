@@ -3,6 +3,7 @@ import { fmap } from "../../../Data/Functor";
 import { append, consF, filter, find, flength, List } from "../../../Data/List";
 import { altF, ap, bindF, elemF, fromMaybe, joinMaybeList, Just, liftM2, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { Advantage } from "../../Models/Wiki/Advantage";
@@ -47,62 +48,57 @@ export const getGeneratedPrerequisites =
         )
 
     switch (AAL.id (wiki_entry)) {
-      // Begabung
-      case "ADV_4":
+      case AdvantageId.Aptitude:
         return Just (List (
           RequireActivatable ({
-            id: "DISADV_48",
+            id: DisadvantageId.Incompetent,
             active: false,
             sid,
           })
         ))
 
-      // Herausragende Fertigkeit
-      case "ADV_16":
+      case AdvantageId.ExceptionalSkill:
         return Just (List (
           RequireActivatable ({
-            id: "DISADV_48",
+            id: DisadvantageId.Incompetent,
             active: false,
             sid,
           })
         ))
 
-      // Magical Attunement
-      case "ADV_32":
+      case AdvantageId.MagicalAttunement:
         return Just (List (
           RequireActivatable ({
-            id: "DISADV_24",
+            id: DisadvantageId.MagicalRestriction,
             active: false,
             sid,
           })
         ))
 
-      // Magical Restriction
-      case "DISADV_24":
+      case DisadvantageId.MagicalRestriction:
         return Just (List (
           RequireActivatable ({
-            id: "ADV_32",
+            id: AdvantageId.MagicalAttunement,
             active: false,
             sid,
           })
         ))
 
-      // Incompetent
-      case "DISADV_48":
+      case DisadvantageId.Incompetent:
         return Just (List (
           RequireActivatable ({
-            id: "ADV_4",
+            id: AdvantageId.Aptitude,
             active: false,
             sid,
           }),
           RequireActivatable ({
-            id: "ADV_16",
+            id: AdvantageId.ExceptionalSkill,
             active: false,
             sid,
           })
         ))
 
-      case "SA_9": {
+      case SpecialAbilityId.SkillSpecialization: {
         const sameSkill = maybe (0)
                                 (pipe (
                                   ADA.active,
@@ -143,17 +139,16 @@ export const getGeneratedPrerequisites =
                     (findSelectOption (wiki_entry) (sid))
       }
 
-      case "SA_81":
+      case SpecialAbilityId.PropertyFocus:
         return addToSelectOptionReqs (Just (List (
           RequireActivatable ({
-            id: "SA_72",
+            id: SpecialAbilityId.PropertyKnowledge,
             active: true,
             sid,
           })
         )))
 
-      // Adaption (Zauber)
-      case "SA_231":
+      case SpecialAbilityId.AdaptionZauber:
         return pipe_ (
           sid,
           misStringM,
@@ -163,33 +158,44 @@ export const getGeneratedPrerequisites =
                             })))
         )
 
-      case "SA_414":
-      case "SA_663":
+      case SpecialAbilityId.FavoriteSpellwork:
+        return pipe_ (
+          sid,
+          misStringM,
+          fmap (id => List (RequireActivatable ({
+                              id,
+                              active: true,
+                            })))
+        )
+
+      case SpecialAbilityId.SpellEnhancement:
+      case SpecialAbilityId.ChantEnhancement:
         return addToSelectOptionReqs (bindF ((option: Record<SelectOption>) =>
                                               liftM2 ((target: string) => (level: number) =>
                                                        List (
                                                          RequireIncreasable ({
                                                            id: target,
                                                            value: level * 4 + 4,
-                                                         }))
-                                                       )
+                                                         })
+                                                       ))
                                                      (SOA.target (option))
                                                      (SOA.level (option)))
                                             (findSelectOption (wiki_entry) (sid)))
 
-      case "SA_699": {
+      case SpecialAbilityId.LanguageSpecializations: {
         return addToSelectOptionReqs (Just (List (
           RequireActivatable ({
-            id: "SA_29",
+            id: SpecialAbilityId.Language,
             active: true,
             sid,
             tier: Just (3),
           })
         )))
       }
-    }
 
-    return addToSelectOptionReqs (Nothing)
+      default:
+        return addToSelectOptionReqs (Nothing)
+    }
   }
 
 export const addDynamicPrerequisites =

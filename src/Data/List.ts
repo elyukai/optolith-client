@@ -13,7 +13,7 @@ import { ident, thrush } from "./Function";
 import { fmap, fmapF } from "./Functor";
 import { Internals } from "./Internals";
 import { add, inc, max, min, multiply } from "./Num";
-import { isLTorEQ, Ordering } from "./Ord";
+import { Compare, GT, isLTorEQ, LT, Ordering } from "./Ord";
 import { fromDefault, RecordBase } from "./Record";
 import { show } from "./Show";
 import { first, fst, Pair, second, snd } from "./Tuple";
@@ -28,11 +28,9 @@ import Nothing = Internals.Nothing
 import isJust = Internals.isJust
 import OrderedMap = Internals.OrderedMap
 import _OrderedMap = Internals._OrderedMap
-import Some = Internals.Some
-import Nullable = Internals.Nullable
 
 const fromJust =
-  <A extends Some> (x: Just<A>): A => {
+  <A> (x: Just<A>): A => {
     if (isJust (x)) {
       return x.value
     }
@@ -41,19 +39,20 @@ const fromJust =
   }
 
 const imapMaybe =
-  <A extends Some, B extends Some>
+  <A, B>
   (f: (index: number) => (x: A) => Maybe<B>) =>
     ifoldr<A, List<B>>
       (index => x => acc =>
-        pipe (
+        pipe_ (
+          x,
           f (index),
           maybe<List<B>> (acc)
-                         (cons (acc)))
-                         (x))
+                         (cons (acc))
+        ))
       (List.empty)
 
 const mapMaybe =
-  <A extends Some, B extends Some>
+  <A, B>
   (f: (x: A) => Maybe<B>) =>
     List.foldr<A, List<B>> (pipe (
                              f,
@@ -63,8 +62,8 @@ const mapMaybe =
                            (List.empty)
 
 const maybe =
-  <B extends Some> (def: B) =>
-  <A extends Some> (f: (x: A) => B) =>
+  <B> (def: B) =>
+  <A> (f: (x: A) => B) =>
   (x: Maybe<A>) =>
     isJust (x) ? f (x .value) : def
 
@@ -79,9 +78,9 @@ const fromMap =
     )
   }
 
-const Maybe =
-  <A extends Some> (x: A | Nullable): Maybe<A> =>
-    x !== null && x !== undefined ? Just (x) : Nothing
+// const Maybe =
+//   <A> (x: A | Nullable): Maybe<A> =>
+//     x !== null && x !== undefined ? Just (x) : Nothing
 
 const lookupF =
   <K, A>
@@ -221,8 +220,9 @@ List.guard = guard
  */
 export const bind =
   <A, B> (xs: List<A>) => (f: (x: A) => List<B>): List<B> =>
-    isNil (xs) ? Nil : append (f (xs .x))
-                              (bind<A, B> (xs .xs) (f))
+    isNil (xs)
+    ? Nil
+    : append (f (xs .x)) (bind<A, B> (xs .xs) (f))
 
 List.bind = bind
 
@@ -571,6 +571,7 @@ export const notElemF = <A> (xs: List<A>) => (x: A) => notElem (x) (xs)
 List.notElemF = notElemF
 
 interface Find {
+
   /**
    * `find :: (a -> Bool) -> [a] -> Maybe a`
    *
@@ -619,6 +620,8 @@ List.find = find
 export const append =
   <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
     isNil (xs2) ? xs1 : isNil (xs1) ? xs2 : appendSafe (xs1) (xs2)
+
+export type append<A> = (xs1: List<A>) => (xs2: List<A>) => List<A>
 
 const appendSafe =
   <A> (xs1: List<A>) => (xs2: Cons<A>): Cons<A> =>
@@ -892,7 +895,7 @@ List.scanl = scanl
 /**
  * `mapAccumL :: (a -> b -> (a, c)) -> a -> [b] -> (a, [c])`
  *
- * The `mapAccumL` function behaves like a combination of `fmap` and `foldl`
+ * The `mapAccumL` function behaves like a combination of `fmap` and `foldl`;
  * it applies a function to each element of a structure, passing an
  * accumulating parameter from left to right, and returning a final value of
  * this accumulator together with the new structure.
@@ -914,6 +917,34 @@ export const mapAccumL =
   }
 
 List.mapAccumL = mapAccumL
+
+/**
+ * `mapAccumR :: (a -> b -> (a, c)) -> a -> [b] -> (a, [c])`
+ *
+ * The `mapAccumR` function behaves like a combination of `fmap` and `foldr`;
+ * it applies a function to each element of a structure, passing an
+ * accumulating parameter from right to left, and returning a final value of
+ * this accumulator together with the new structure.
+ */
+export const mapAccumR =
+  <A, B, C>
+  (f: (acc: A) => (x: B) => Pair<A, C>) =>
+  (initial: A) =>
+  (xs: List<B>): Pair<A, List<C>> => {
+    if (!isNil (xs)) {
+      const res = mapAccumR<A, B, C> (f) (initial) (xs .xs)
+      const new_xs = snd (res)
+      const p = f (fst (res)) (xs .x)
+      const acc = fst (p)
+      const new_x = snd (p)
+
+      return Pair (acc, Cons (new_x, new_xs))
+    }
+
+    return Pair (initial, Nil)
+  }
+
+List.mapAccumR = mapAccumR
 
 
 // INFINITE LISTS
@@ -1093,6 +1124,7 @@ List.lookup = lookup
 // SEARCHING WITH A PREDICATE
 
 interface Filter {
+
   /**
    * `filter :: (a -> Bool) -> [a] -> [a]`
    *
@@ -1342,12 +1374,31 @@ export const lines =
   (x: string): List<string> =>
     x .length === 0
     ? empty
-    : fromArray (x .replace (/\n$/, "") .split (/\n/))
+    : fromArray (x .replace (lfEndRx, "") .split (lfRx))
+
+const lfEndRx = /\n$/u
+const lfRx = /\n/u
 
 List.lines = lines
 
 
 // "SET" OPERATIONS
+
+/**
+ * `nub :: Eq a => [a] -> [a]`
+ *
+ * The `nub` function removes duplicate elements from a list. In particular, it
+ * keeps only the first occurrence of each element. (The name `nub` means
+ * 'essence'.) It is a special case of `nubBy`, which allows the programmer to
+ * supply their own equality test.
+ */
+export const nub =
+  <A> (xs: List<A>) =>
+    foldr<A, List<A>> (x => acc => notElem (x) (acc) ? cons (acc) (x) : acc)
+                      (List ())
+                      (xs)
+
+List.nub = nub
 
 /**
  * `delete :: Eq a => a -> [a] -> [a]`
@@ -1430,7 +1481,7 @@ const sortBySortedMerge =
   <A>
   (f: (a: A) => (b: A) => Ordering) =>
   (a: List<A>, b: List<A>): List<A> => {
-    /* Base cases */
+    // Base cases
     if (isNil (a)) {
       return b
     }
@@ -1439,7 +1490,7 @@ const sortBySortedMerge =
       return a
     }
 
-    /* Pick either a or b, and recur */
+    // Pick either a or b, and recur
     return isLTorEQ (f (head (a)) (head (b)))
       ? Cons (head (a), sortBySortedMerge (f) (a .xs, b))
       : Cons (head (b), sortBySortedMerge (f) (a, b .xs))
@@ -1450,6 +1501,29 @@ const sortByGetMiddle = <A> (xs: List<A>): Pair<List<A>, List<A>> =>
 
 List.sortBy = sortBy
 
+/**
+ * `maximumBy :: Foldable t => (a -> a -> Ordering) -> t a -> a`
+ *
+ * The largest element of a non-empty structure with respect to the given
+ * comparison function.
+ */
+export const maximumBy = <A> (f: Compare<A>) => (xs: NonEmptyList<A>): A =>
+  foldr1Safe <A> (x => acc => f (x) (acc) === GT ? x : acc)
+                 (xs)
+
+List.maximumBy = maximumBy
+
+/**
+ * `minimumBy :: Foldable t => (a -> a -> Ordering) -> t a -> a`
+ *
+ * The least element of a non-empty structure with respect to the given
+ * comparison function.
+ */
+export const minimumBy = <A> (f: Compare<A>) => (xs: NonEmptyList<A>): A =>
+  foldr1Safe <A> (x => acc => f (x) (acc) === LT ? x : acc)
+                 (xs)
+
+List.minimumBy = minimumBy
 
 // LIST.INDEX
 
@@ -1489,6 +1563,28 @@ export const deleteAt =
     : Cons (xs .x, deleteAt (index - 1) (xs .xs))
 
 List.deleteAt = deleteAt
+
+/**
+ * `deleteAtPair :: Int -> [a] -> (Maybe a, [a])`
+ *
+ * `deleteAtPair` deletes the element at an index and returns a `Just` of the
+ * deleted element together with the remaining list.
+ *
+ * If the index is negative or exceeds list length, the original list will be
+ * returned, together with `Nothing` representing the deleted element.
+ */
+export const deleteAtPair =
+  (index: number) => <A> (xs: List<A>): Pair<Maybe<A>, List<A>> =>
+    index < 0
+    ? Pair (Nothing, xs)
+    : isNil (xs)
+    ? Pair (Nothing, Nil)
+    : index === 0
+    ? Pair (Just (xs .x), xs .xs)
+    : second (consF (xs .x))
+             (deleteAtPair (index - 1) (xs .xs))
+
+List.deleteAtPair = deleteAtPair
 
 /**
  * `setAt :: Int -> a -> [a] -> [a]`
@@ -1712,6 +1808,7 @@ List.iconcatMap = iconcatMap
 // Sublists
 
 interface Ifilter {
+
   /**
    * `ifilter :: (Int -> a -> Bool) -> [a] -> [a]`
    *
@@ -1768,6 +1865,7 @@ List.ipartition = ipartition
 // Search
 
 interface Ifind {
+
   /**
    * `ifind :: Foldable t => (Int -> a -> Bool) -> t a -> Maybe a`
    *
@@ -1883,7 +1981,9 @@ List.lower = lower
  *
  * Remove spaces from the start of a string, see `trim`.
  */
-export const trimStart = (str: string) => str .replace (/^\s+/, "")
+export const trimStart = (str: string) => str .replace (spacesStartRx, "")
+
+const spacesStartRx = /^\s+/u
 
 List.trimStart = trimStart
 
@@ -1892,7 +1992,9 @@ List.trimStart = trimStart
  *
  * Remove spaces from the end of a string, see `trim`.
  */
-export const trimEnd = (str: string) => str .replace (/\s+$/, "")
+export const trimEnd = (str: string) => str .replace (spacesEndRx, "")
+
+const spacesEndRx = /\s+$/u
 
 List.trimEnd = trimEnd
 
@@ -1909,7 +2011,9 @@ List.trimEnd = trimEnd
  */
 export const escapeRegex =
   // $& means the whole matched string
-  (x: string) => x .replace (/[.*+?^${}()|[\]\\]/g, "\\$&")
+  (x: string) => x .replace (regexRx, "\\$&")
+
+const regexRx = /[.*+?^${}()|[\]\\]/gu
 
 List.escapeRegex = escapeRegex
 
@@ -2115,7 +2219,7 @@ List.firstJust = firstJust
  */
 export const replaceStr =
   (old_subseq: string) => (new_subseq: string) => (x: string): string =>
-    x .replace (new RegExp (escapeRegex (old_subseq), "g"), new_subseq)
+    x .replace (new RegExp (escapeRegex (old_subseq), "gu"), new_subseq)
 
 List.replaceStr = replaceStr
 
@@ -2167,7 +2271,7 @@ List.unsafeIndex = unsafeIndex
 /**
  * Builds a new `List` from a native Array.
  */
-export const fromArray = <A> (xs: ReadonlyArray<A>): List<A> => {
+export const fromArray = <A> (xs: readonly A[]): List<A> => {
   if (Array.isArray (xs)) {
     return List (...xs)
   }
@@ -2211,7 +2315,7 @@ export const countWithByKey =
     // once OrderedMap has it's own performant implementation, the
     // implementationof `groupByKey` can be changed
 
-    let m = new Map<B, number> ()
+    const m = new Map<B, number> ()
 
     const arr = toArray (xs)
 
@@ -2243,7 +2347,7 @@ export const countWithByKeyMaybe =
     // once OrderedMap has it's own performant implementation, the
     // implementationof `groupByKey` can be changed
 
-    let m = new Map<B, number> ()
+    const m = new Map<B, number> ()
 
     const arr = toArray (xs)
 
@@ -2286,7 +2390,7 @@ export const groupByKey =
     // once OrderedMap has it's own performant implementation, the
     // implementationof `groupByKey` can be changed
 
-    let m = new Map<B, List<A>> ()
+    const m = new Map<B, List<A>> ()
 
     const arr = toArray (xs) .reverse ()
 
@@ -2304,8 +2408,10 @@ export const groupByKey =
 List.groupByKey = groupByKey
 
 interface RecordBaseWithId extends RecordBase {
+  "@@name": "RecordBaseWithId"
   id: string
 }
+
 const RecordBaseWithId = fromDefault ("RecordBaseWithId") <RecordBaseWithId> ({ id: "" })
 
 /**

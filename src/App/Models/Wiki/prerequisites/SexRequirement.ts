@@ -7,6 +7,7 @@ import { AllRequirementObjects } from "../wikiTypeHelpers";
 import { RequireActivatable } from "./ActivatableRequirement";
 
 export interface SexRequirement {
+  "@@name": "SexRequirement"
   id: "SEX"
   value: Sex
 }

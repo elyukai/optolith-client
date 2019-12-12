@@ -1,5 +1,5 @@
 import { List } from "../../Data/List";
-import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe";
+import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModel } from "../Models/Hero/HeroModel";
@@ -10,9 +10,9 @@ import { getCombatTechniques, getCurrentHeroPresent, getWikiCombatTechniques } f
 import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
 import { pipe_ } from "../Utilities/pipe";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { CombatTechniquesSortOptions } from "../Utilities/Raw/JSON/Config";
 import { ReduxAction } from "./Actions";
-import { addAlert } from "./AlertActions";
+import { addAlert, AlertOptions } from "./AlertActions";
 
 export interface AddCombatTechniquePointAction {
   type: ActionTypes.ADD_COMBATTECHNIQUE_POINT
@@ -21,8 +21,10 @@ export interface AddCombatTechniquePointAction {
   }
 }
 
-export const addCombatTechniquePoint = (l10n: L10nRecord) => (id: string): ReduxAction =>
-  (dispatch, getState) => {
+export const addCombatTechniquePoint =
+  (l10n: L10nRecord) =>
+  (id: string): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
     const mhero_combat_techniques = getCombatTechniques (state)
     const wiki_combat_techniques = getWikiCombatTechniques (state)
@@ -49,10 +51,12 @@ export const addCombatTechniquePoint = (l10n: L10nRecord) => (id: string): Redux
       })
     }
     else {
-      dispatch (addAlert ({
-        title: translate (l10n) ("notenoughap"),
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
         message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
   }
 
@@ -73,12 +77,12 @@ export const removeCombatTechniquePoint = (id: string): RemoveCombatTechniquePoi
 export interface SetCombatTechniquesSortOrderAction {
   type: ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER
   payload: {
-    sortOrder: SortNames;
+    sortOrder: CombatTechniquesSortOptions;
   }
 }
 
 export const setCombatTechniquesSortOrder =
-  (sortOrder: SortNames): SetCombatTechniquesSortOrderAction => ({
+  (sortOrder: CombatTechniquesSortOptions): SetCombatTechniquesSortOrderAction => ({
     type: ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER,
     payload: {
       sortOrder,

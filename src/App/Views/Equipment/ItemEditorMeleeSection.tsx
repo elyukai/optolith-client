@@ -6,6 +6,7 @@ import { bindF, elem, ensure, fromJust, isJust, isNothing, Just, mapMaybe, Maybe
 import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { fst, isTuple, snd } from "../../../Data/Tuple";
+import { AttrId, CombatTechniqueId } from "../../Constants/Ids";
 import { EditItem } from "../../Models/Hero/EditItem";
 import { EditPrimaryAttributeDamageThreshold } from "../../Models/Hero/EditPrimaryAttributeDamageThreshold";
 import { Attribute } from "../../Models/Wiki/Attribute";
@@ -75,7 +76,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
   const lockedByNoCombatTechniqueOrLances =
     locked
     || !isJust (combatTechnique)
-    || fromJust (combatTechnique) === "CT_7"
+    || fromJust (combatTechnique) === CombatTechniqueId.Lances
 
   return (gr === 1 || elem (1) (EIA.improvisedWeaponGroup (item)))
     ? (
@@ -122,24 +123,24 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                   })`,
                 }),
                 DropdownOption ({
-                  id: Just ("ATTR_5"),
-                  name: shortOrEmpty (attributes) ("ATTR_5"),
+                  id: Just (AttrId.Dexterity),
+                  name: shortOrEmpty (attributes) (AttrId.Dexterity),
                 }),
                 DropdownOption ({
-                  id: Just ("ATTR_6"),
-                  name: shortOrEmpty (attributes) ("ATTR_6"),
+                  id: Just (AttrId.Agility),
+                  name: shortOrEmpty (attributes) (AttrId.Agility),
                 }),
                 DropdownOption ({
                   id: Just ("ATTR_6_8"),
                   name: `${
-                    shortOrEmpty (attributes) ("ATTR_6")
+                    shortOrEmpty (attributes) (AttrId.Agility)
                   }/${
-                    shortOrEmpty (attributes) ("ATTR_8")
+                    shortOrEmpty (attributes) (AttrId.Strength)
                   }`,
                 }),
                 DropdownOption ({
-                  id: Just ("ATTR_8"),
-                  name: shortOrEmpty (attributes) ("ATTR_8"),
+                  id: Just (AttrId.Strength),
+                  name: shortOrEmpty (attributes) (AttrId.Strength),
                 })
               )}
               onChange={props.setPrimaryAttribute}
@@ -156,14 +157,14 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                     <TextField
                       className="damage-threshold-part"
                       value={fst (damageBonusThreshold)}
-                      onChangeString={props.setFirstDamageThreshold}
+                      onChange={props.setFirstDamageThreshold}
                       disabled={lockedByNoCombatTechniqueOrLances}
                       valid={IEIVA.firstDamageThreshold (inputValidation)}
                       />
                     <TextField
                       className="damage-threshold-part"
                       value={snd (damageBonusThreshold)}
-                      onChangeString={props.setSecondDamageThreshold}
+                      onChange={props.setSecondDamageThreshold}
                       disabled={lockedByNoCombatTechniqueOrLances}
                       valid={IEIVA.secondDamageThreshold (inputValidation)}
                       />
@@ -174,7 +175,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                     className="damage-threshold"
                     label={translate (l10n) ("damagethreshold")}
                     value={damageBonusThreshold}
-                    onChangeString={props.setDamageThreshold}
+                    onChange={props.setDamageThreshold}
                     disabled={lockedByNoCombatTechniqueOrLances}
                     valid={IEIVA.damageThreshold (inputValidation)}
                     />
@@ -204,7 +205,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                       or
                     )
                 )
-                || fromJust (combatTechnique) === "CT_7"
+                || fromJust (combatTechnique) === CombatTechniqueId.Lances
               }
               />
           </div>
@@ -214,7 +215,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               <TextField
                 className="damage-dice-number"
                 value={EIA.damageDiceNumber (item)}
-                onChangeString={props.setDamageDiceNumber}
+                onChange={props.setDamageDiceNumber}
                 disabled={locked}
                 valid={IEIVA.damageDiceNumber (inputValidation)}
                 />
@@ -229,7 +230,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               <TextField
                 className="damage-flat"
                 value={EIA.damageFlat (item)}
-                onChangeString={props.setDamageFlat}
+                onChange={props.setDamageFlat}
                 disabled={locked}
                 valid={IEIVA.damageFlat (inputValidation)}
                 />
@@ -238,7 +239,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               className="stabilitymod"
               label={translate (l10n) ("breakingpointratingmodifier.short")}
               value={EIA.stabilityMod (item)}
-              onChangeString={props.setStabilityModifier}
+              onChange={props.setStabilityModifier}
               disabled={locked}
               valid={IEIVA.stabilityMod (inputValidation)}
               />
@@ -259,41 +260,41 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               options={imap (i => (name: string) => DropdownOption ({ id: Just (i + 1), name }))
                             (translate (l10n) ("reachlabels"))}
               onChangeJust={props.setReach}
-              disabled={locked || elem ("CT_7") (combatTechnique)}
+              disabled={locked || elem<string> (CombatTechniqueId.Lances) (combatTechnique)}
               required
               />
             <div className="container">
               <Label
                 text={translate (l10n) ("attackparrymodifier.short")}
-                disabled={locked || elem ("CT_7") (combatTechnique)}
+                disabled={locked || elem<string> (CombatTechniqueId.Lances) (combatTechnique)}
                 />
               <TextField
                 className="at"
                 value={EIA.at (item)}
-                onChangeString={props.setAttack}
-                disabled={locked || elem ("CT_7") (combatTechnique)}
+                onChange={props.setAttack}
+                disabled={locked || elem<string> (CombatTechniqueId.Lances) (combatTechnique)}
                 valid={IEIVA.at (inputValidation)}
               />
             <TextField
               className="pa"
               value={EIA.pa (item)}
-              onChangeString={props.setParry}
+              onChange={props.setParry}
               disabled={
                 locked
-                || elem ("CT_6") (combatTechnique)
-                || elem ("CT_7") (combatTechnique)
+                || elem<string> (CombatTechniqueId.ChainWeapons) (combatTechnique)
+                || elem<string> (CombatTechniqueId.Lances) (combatTechnique)
               }
               valid={IEIVA.pa (inputValidation)}
               />
           </div>
           {
-            elem ("CT_10") (combatTechnique)
+            elem<string> (CombatTechniqueId.Shields) (combatTechnique)
               ? (
                 <TextField
                   className="stp"
                   label={translate (l10n) ("structurepoints.short")}
                   value={EIA.stp (item)}
-                  onChangeString={props.setStructurePoints}
+                  onChange={props.setStructurePoints}
                   disabled={locked}
                   />
               )
@@ -302,7 +303,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                   className="length"
                   label={translate (l10n) ("length")}
                   value={EIA.length (item)}
-                  onChangeString={props.setLength}
+                  onChange={props.setLength}
                   disabled={locked}
                   valid={IEIVA.length (inputValidation)}
                   />

@@ -4,6 +4,12 @@
  * A record is a simple data structure for key-value pairs where the keys must
  * be `String`s and all values can have different types.
  *
+ * Record automatically create accessor functions to access the values inside a
+ * record behind the `A` attribute of a record creator function. If you need to
+ * modify or set the values, you need to `makeLenses` from the record creator
+ * function. You can use the lenses with the `Data.Lens` module to view, set and
+ * modify values.
+ *
  * @author Lukas Obermann
  */
 
@@ -32,17 +38,17 @@ const foldl =
 
 // CONSTRUCTOR
 
-export interface Record<A extends RecordBase> extends RecordPrototype {
+export interface Record<A extends RecordIBase<any>> extends RecordPrototype {
   readonly values: Readonly<Required<A>>
   readonly defaultValues: Readonly<A>
   readonly keys: OrderedSet<string>
   readonly unique: symbol
-  readonly name?: string
+  readonly name: A["@@name"]
   readonly prototype: RecordPrototype
 }
 
-export interface RecordCreator<A extends RecordBase> {
-  (x: PartialMaybeOrNothing<A>): Record<A>
+export interface RecordCreator<A extends RecordIBase<any>> {
+  (x: PartialMaybeOrNothing<OmitName<A>>): Record<A>
   readonly keys: OrderedSet<string>
   readonly default: Record<A>
   readonly AL: Accessors<A>
@@ -51,12 +57,12 @@ export interface RecordCreator<A extends RecordBase> {
 }
 
 const _Record =
-  <A extends RecordBase>
-  (name?: string) =>
+  <A extends RecordIBase<Name>, Name extends string>
+  (name: Name) =>
   (unique: symbol) =>
   (keys: OrderedSet<string>) =>
-  (def: A) =>
-  (specified: PartialMaybeOrNothing<A>): Record<A> =>
+  (def: Omit<A, "@@name">) =>
+  (specified: PartialMaybeOrNothing<Omit<A, "@@name">>): Record<A> =>
     Object.create (
       RecordPrototype,
       {
@@ -84,8 +90,8 @@ const _Record =
     )
 
 export const fromDefault =
-  (name: string) =>
-  <A extends RecordBase> (def: Required<A>): RecordCreator<A> => {
+  <Name extends string>(name: Name) =>
+  <A extends RecordIBase<Name>> (def: Required<Omit<A, "@@name">>): RecordCreator<A> => {
     const defaultValues = Object.freeze (Object.entries (def) .reduce<Required<A>> (
       (acc, [key, value]) => {
         // tslint:disable-next-line: strict-type-predicates
@@ -115,15 +121,14 @@ export const fromDefault =
 
     const unique = Symbol ("Record")
 
-    const creator = (x: PartialMaybeOrNothing<A>) =>
-      _Record<A>
+    const creator = (x: PartialMaybeOrNothing<OmitName<A>>) =>
+      _Record<A, Name>
         (name)
         (unique)
         (keys)
         (defaultValues)
         (foldl<string, PartialMaybeOrNothing<A>>
-          (
-            acc => key => {
+          (acc => key => {
               // Maybe undefined!
               const value =
                 (x as Required<A>) [key] as MaybeOrPartialMaybe<A[string]> === undefined
@@ -134,7 +139,7 @@ export const fromDefault =
 
               return elem (key) (keys)
                 && (
-                  Internals.isMaybe (defaultValue) && Internals.isJust (value)
+                  (Internals.isMaybe (defaultValue) && Internals.isJust (value))
                   || (
                     !Internals.isMaybe (defaultValue)
                     && value !== null
@@ -146,8 +151,7 @@ export const fromDefault =
                 : acc
           })
           (defaultValues)
-          (keys)
-        )
+          (keys))
 
     creator.keys = keys
 
@@ -168,7 +172,7 @@ export const fromDefault =
  * Creates lenses for every key in the passed record creator.
  */
 export const makeLenses =
-  <A extends RecordBase>
+  <A extends RecordIBase<Name>, Name extends string = A["@@name"]>
   (record: RecordCreator<A>): Lenses<A> =>
     Object.freeze (
       foldl<string, Lenses<A>> (acc => key => ({
@@ -181,113 +185,43 @@ export const makeLenses =
     )
 
 
-// MERGING RECORDS
-
-const mergeSafe = <A extends RecordBase> (x: Partial<A>) => (r: Record<A>): Record<A> =>
-  _Record<A> (r .name)
-             (r .unique)
-             (r .keys)
-             (r .defaultValues)
-             (foldl<string, Required<A>> (acc => key => ({
-                                           ...acc,
-                                           // tslint:disable-next-line: strict-type-predicates
-                                           [key]: x [key] === null || x [key] === undefined
-                                             ? r .values [key]
-                                             : x [key],
-                                         }))
-                                         ({} as Required<A>)
-                                         (r .keys))
-
-/**
- * `mergeSafeR2 :: Record r => r a -> r a -> r a`
- *
- * `mergeSafeR2 x r` inserts properties from the passed records into `r`
- * that are part of `r`. It ignores all other properties in the other passed
- * records. Processes passed records in reverse order, so that `x` is being
- * merged into `r`. Returns the updated `Record`.
- */
-export const mergeSafeR2 =
-  <A extends RecordBase> (x: Record<Partial<A>>) => (r: Record<A>): Record<A> =>
-    mergeSafe<A> (x .values) (r)
-
-/**
- * `mergeSafeR3 :: Record r => r a -> r a -> r a -> r a`
- *
- * `mergeSafeR3 x2 x1 r` inserts properties from the passed records into `r`
- * that are part of `r`. It ignores all other properties in the other passed
- * records. Processes passed records in reverse order, so that `x1` is being
- * merged into `r` and so on. Returns the updated `Record`.
- */
-export const mergeSafeR3 =
-  <A extends RecordBase>
-  (x2: Record<Partial<A>>) =>
-  (x1: Record<Partial<A>>) =>
-  (r: Record<A>): Record<A> =>
-    mergeSafe<A> ({ ...x1 .values, ...x2 .values }) (r)
-
-/**
- * `mergeSafeR4 :: Record r => r a -> r a -> r a -> r a -> r a`
- *
- * `mergeSafeR4 x3 x2 x1 r` inserts properties from the passed records into `r`
- * that are part of `r`. It ignores all other properties in the other passed
- * records. Processes passed records in reverse order, so that `x1` is being
- * merged into `r` and so on. Returns the updated `Record`.
- */
-export const mergeSafeR4 =
-  <A extends RecordBase>
-  (x3: Record<Partial<A>>) =>
-  (x2: Record<Partial<A>>) =>
-  (x1: Record<Partial<A>>) =>
-  (r: Record<A>): Record<A> =>
-    mergeSafe<A> ({ ...x1 .values, ...x2 .values, ...x3 .values }) (r)
-
-/**
- * `mergeSafeR5 :: Record r => r a -> r a -> r a -> r a -> r a -> r a`
- *
- * `mergeSafeR5 x4 x3 x2 x1 r` inserts properties from the passed records into
- * `r` that are part of `r`. It ignores all other properties in the other passed
- * records. Processes passed records in reverse order, so that `x1` is being
- * merged into `r` and so on. Returns the updated `Record`.
- */
-export const mergeSafeR5 =
-  <A extends RecordBase>
-  (x4: Record<Partial<A>>) =>
-  (x3: Record<Partial<A>>) =>
-  (x2: Record<Partial<A>>) =>
-  (x1: Record<Partial<A>>) =>
-  (r: Record<A>): Record<A> =>
-    mergeSafe<A> ({ ...x1 .values, ...x2 .values, ...x3 .values, ...x4 .values }) (r)
-
-
 // CUSTOM FUNCTIONS
 
-const accessor = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => {
-  if (elem<keyof A> (key) (r .keys)) {
-    const x = r .values [key]
+const accessor =
+  <A extends RecordIBase<Name>, Name extends string = A["@@name"]>
+  (key: keyof A) =>
+  (r: Record<A>) => {
+    if (elem<keyof A> (key) (r .keys)) {
+      const x = r .values [key]
 
-    return Internals.isMaybe (x) && Internals.isNothing (x) ? r .defaultValues [key] : x
+      return Internals.isMaybe (x) && Internals.isNothing (x) ? r .defaultValues [key] : x
+    }
+
+    throw new TypeError (`Key ${show (key)} is not in Record ${show (r)}!`)
   }
 
-  throw new TypeError (`Key ${show (key)} is not in Record ${show (r)}!`)
-}
-
-const setter = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => (x: A[typeof key]) =>
-  r .values [key] === x
-  ? r
-  : _Record<A> (r .name)
-               (r .unique)
-               (r .keys)
-               (r .defaultValues)
-               ({
-                 ...r .values,
-                 [key]: x,
-               })
+const setter =
+  <A extends RecordIBase<Name>, Name extends string = A["@@name"]>
+  (key: keyof A) =>
+  (r: Record<A>) =>
+  (x: A[typeof key]) =>
+    r .values [key] === x
+    ? r
+    : _Record<A, Name> (r .name)
+                       (r .unique)
+                       (r .keys)
+                       (r .defaultValues)
+                       ({
+                         ...r .values,
+                         [key]: x,
+                       })
 
 /**
  * Creates accessor functions for every key in the passed record creator.
  */
 const makeAccessors =
-  <A extends RecordBase> (keys: OrderedSet<string>): Accessors<A> =>
+  <A extends RecordIBase<any>>
+  (keys: OrderedSet<string>): Accessors<A> =>
     Object.freeze (foldl<string, Accessors<A>> (acc => key => ({
                                                  ...acc,
                                                  [key]: accessor (key),
@@ -313,7 +247,7 @@ export const notMember = (key: string) => pipe (member (key), not)
 /**
  * Converts the passed record to a native object.
  */
-export const toObject = <A extends RecordBase> (r: Record<A>): A =>
+export const toObject = <A extends RecordIBase<any>> (r: Record<A>): Omit<A, "@@name"> =>
   ({ ...r .defaultValues, ...r .values })
 
 export import isRecord = Internals.isRecord
@@ -323,11 +257,6 @@ export import isRecord = Internals.isRecord
 
 export const Record = {
   fromDefault,
-
-  mergeSafeR2,
-  mergeSafeR3,
-  mergeSafeR4,
-  mergeSafeR5,
 
   makeLenses,
   member,
@@ -339,22 +268,22 @@ export const Record = {
 
 // TYPE HELPERS
 
-export type Accessor<A extends RecordBase, K extends keyof A> =
-  (r: Record<Pick<A, K>>) => A[K]
+export type Accessor<A extends RecordIBase<any>, K extends keyof A> =
+  (r: Record<Pick<A, K> & { "@@name": string }>) => A[K]
 
-export type Accessors<A extends RecordBase> = {
-  [K in keyof A]: Accessor<A, K>
+export type Accessors<A extends RecordIBase<any>> = {
+  [K in keyof OmitName<A>]: Accessor<A, K>
 }
 
-export type StrictAccessor<A extends RecordBase, K extends keyof A> =
+export type StrictAccessor<A extends RecordIBase<any>, K extends keyof A> =
   (r: Record<A>) => A[K]
 
-export type StrictAccessors<A extends RecordBase> = {
-  [K in keyof A]: StrictAccessor<A, K>
+export type StrictAccessors<A extends RecordIBase<any>> = {
+  [K in keyof OmitName<A>]: StrictAccessor<A, K>
 }
 
-export type Lenses<A extends RecordBase> = {
-  [K in keyof A]: Lens_<Record<A>, A[K]>
+export type Lenses<A extends RecordIBase<any>> = {
+  [K in keyof OmitName<A>]: Lens_<Record<A>, A[K]>
 }
 
 export interface UnsafeStringKeyObject<V> {
@@ -386,11 +315,11 @@ export type RequiredExcept<A extends RecordBase, K extends keyof A> = {
   [K1 in K]?: A[K1]
 }
 
-type PartialMaybeRequiredKeys<A> = {
+type PartialMaybeRequiredKeys<A extends RecordBase> = {
   [K in keyof A]: A[K] extends Maybe<any> ? never : K
 } [keyof A]
 
-type PartialMaybePartialKeys<A> = {
+type PartialMaybePartialKeys<A extends RecordBase> = {
   [K in keyof A]: A[K] extends Maybe<any> ? K : never
 } [keyof A]
 
@@ -399,11 +328,15 @@ type MaybeOrPartialMaybe<A> = A extends Maybe<any> ? A : A | Internals.Nothing
 /**
  * All `Maybe` properties will be optional and all others required.
  */
-export type PartialMaybeOrNothing<A> = {
+export type PartialMaybeOrNothing<A extends RecordBase> = {
   [K in PartialMaybeRequiredKeys<A>]-?: A[K] extends Maybe<any> ? never : (A[K] | Internals.Nothing)
 } & {
   [K in PartialMaybePartialKeys<A>]?: A[K] extends Maybe<any> ? A[K] : never
 }
+
+export type RecordIBase<Name extends string> = RecordBase & { "@@name": Name }
+
+export type OmitName<A extends RecordIBase<any>> = Omit<A, "@@name">
 
 export interface RecordBase {
   [key: string]: any

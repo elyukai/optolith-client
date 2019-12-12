@@ -1,14 +1,12 @@
 import { connect } from "react-redux";
-import { Maybe } from "../../Data/Maybe";
 import { ReduxDispatch } from "../Actions/Actions";
 import * as ProfessionActions from "../Actions/ProfessionActions";
-import * as ProfessionVariantActions from "../Actions/ProfessionVariantActions";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getFilteredProfessions } from "../Selectors/rcpSelectors";
 import { getCurrentProfessionId, getCurrentProfessionVariantId, getProfessionsFilterText, getSex, getWiki } from "../Selectors/stateSelectors";
 import { getProfessionsGroupVisibilityFilter, getProfessionsSortOrder, getProfessionsVisibilityFilter } from "../Selectors/uisettingsSelectors";
+import { ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter } from "../Utilities/Raw/JSON/Config";
 import { Professions, ProfessionsDispatchProps, ProfessionsOwnProps, ProfessionsStateProps } from "../Views/Professions/Professions";
-import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: ProfessionsOwnProps): ProfessionsStateProps => ({
@@ -24,19 +22,13 @@ const mapStateToProps =
   })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): ProfessionsDispatchProps => ({
-  selectProfession (id: string) {
-    dispatch (ProfessionActions.selectProfession (id))
-  },
-  selectProfessionVariant (id: Maybe<string>) {
-    dispatch (ProfessionVariantActions.selectProfessionVariant (id))
-  },
-  setSortOrder (sortOrder: SortNames) {
+  setSortOrder (sortOrder: ProfessionsSortOptions) {
     dispatch (ProfessionActions.setProfessionsSortOrder (sortOrder))
   },
-  setVisibilityFilter (filter: string) {
+  setVisibilityFilter (filter: ProfessionsVisibilityFilter) {
     dispatch (ProfessionActions.setProfessionsVisibilityFilter (filter))
   },
-  setGroupVisibilityFilter (filter: number) {
+  setGroupVisibilityFilter (filter: ProfessionsGroupVisibilityFilter) {
     dispatch (ProfessionActions.setProfessionsGroupVisibilityFilter (filter))
   },
   switchExpansionVisibilityFilter () {

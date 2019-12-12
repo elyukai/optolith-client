@@ -1,6 +1,7 @@
 import { any } from "../../../Data/List";
 import { member, Record } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
+import { AdvantageId } from "../../Constants/Ids";
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
 import { Advantage } from "../../Models/Wiki/Advantage";
@@ -12,7 +13,7 @@ const { id, active } = RequireActivatable.AL
 const AAL = Advantage.AL
 
 const getMagicalOrBlessedFilter =
-  (advantageId: "ADV_12" | "ADV_50") =>
+  (advantageId: AdvantageId.Blessed | AdvantageId.Spellcaster) =>
     (e: AllRequirements) =>
       e !== "RCP"
         && RequireActivatable.is (e)
@@ -27,8 +28,13 @@ export const isBlessedOrMagical =
   (obj: Activatable) => {
     const firstTier = getFirstLevelPrerequisites (AAL.prerequisites (obj))
 
-    const isBlessed = AAL.gr (obj) === 3 || any (getMagicalOrBlessedFilter ("ADV_12")) (firstTier)
-    const isMagical = AAL.gr (obj) === 2 || any (getMagicalOrBlessedFilter ("ADV_50")) (firstTier)
+    const isBlessed =
+      AAL.gr (obj) === 3
+      || any (getMagicalOrBlessedFilter (AdvantageId.Blessed)) (firstTier)
+
+    const isMagical =
+      AAL.gr (obj) === 2
+      || any (getMagicalOrBlessedFilter (AdvantageId.Spellcaster)) (firstTier)
 
     return Pair (isBlessed, isMagical)
   }

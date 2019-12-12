@@ -11,6 +11,7 @@ import { SkillsSelection } from "./SkillsSelection";
 import { TerrainKnowledgeSelection } from "./TerrainKnowledgeSelection";
 
 export interface ProfessionVariantSelections {
+  "@@name": "ProfessionVariantSelections"
   [ProfessionSelectionIds.CANTRIPS]: Maybe<Record<CantripsSelection>>
   [ProfessionSelectionIds.COMBAT_TECHNIQUES]: Maybe<VariantCombatTechniquesSelection>
   [ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND]: Maybe<VariantCombatTechniquesSecondSelection>

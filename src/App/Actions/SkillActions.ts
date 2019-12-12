@@ -1,5 +1,5 @@
 import { List } from "../../Data/List";
-import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe";
+import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModel } from "../Models/Hero/HeroModel";
@@ -10,9 +10,9 @@ import { getCurrentHeroPresent, getSkills, getWikiSkills } from "../Selectors/st
 import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
 import { pipe_ } from "../Utilities/pipe";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { SkillsSortOptions } from "../Utilities/Raw/JSON/Config";
 import { ReduxAction } from "./Actions";
-import { addAlert } from "./AlertActions";
+import { addAlert, AlertOptions } from "./AlertActions";
 
 export interface AddSkillPointAction {
   type: ActionTypes.ADD_TALENT_POINT
@@ -23,8 +23,8 @@ export interface AddSkillPointAction {
 
 export const addSkillPoint =
   (l10n: L10nRecord) =>
-  (id: string): ReduxAction =>
-  (dispatch, getState) => {
+  (id: string): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
     const mhero_skills = getSkills (state)
     const wiki_skills = getWikiSkills (state)
@@ -51,10 +51,12 @@ export const addSkillPoint =
       })
     }
     else {
-      dispatch (addAlert ({
-        title: translate (l10n) ("notenoughap"),
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
         message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
   }
 
@@ -75,11 +77,11 @@ export const removeSkillPoint = (id: string): RemoveSkillPointAction => ({
 export interface SetSkillsSortOrderAction {
   type: ActionTypes.SET_TALENTS_SORT_ORDER
   payload: {
-    sortOrder: SortNames;
+    sortOrder: SkillsSortOptions;
   }
 }
 
-export const setSkillsSortOrder = (sortOrder: SortNames): SetSkillsSortOrderAction => ({
+export const setSkillsSortOrder = (sortOrder: SkillsSortOptions): SetSkillsSortOrderAction => ({
   type: ActionTypes.SET_TALENTS_SORT_ORDER,
   payload: {
     sortOrder,

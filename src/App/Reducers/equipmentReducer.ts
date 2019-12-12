@@ -10,6 +10,7 @@ import { isTuple, Pair } from "../../Data/Tuple";
 import { upd1, upd2 } from "../../Data/Tuple/Update";
 import * as EquipmentActions from "../Actions/EquipmentActions";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { CombatTechniqueId } from "../Constants/Ids";
 import { BelongingsL } from "../Models/Hero/Belongings";
 import { EditHitZoneArmor, EditHitZoneArmorL, EditHitZoneArmorSafe, ensureHitZoneArmorId } from "../Models/Hero/EditHitZoneArmor";
 import { EditItem, EditItemL, EditItemSafe, ensureEditId } from "../Models/Hero/EditItem";
@@ -244,8 +245,7 @@ const equipmentManagingReducer =
                                         editableToItem (edit_item)
                                         // TODO: does not handle locked
                                         // templated anymore
-                                      )
-                              ),
+                                      )),
                          set (itemInEditor) (Nothing)
                        ))
                        (hero))
@@ -355,7 +355,7 @@ const itemDetailsReducer =
   (action: Action): ident<HeroModelRecord> => {
     switch (action.type) {
       case ActionTypes.SET_ITEM_COMBAT_TECHNIQUE: {
-        return modifyEditItem (action.payload.id === "CT_7"
+        return modifyEditItem (action.payload.id === CombatTechniqueId.Lances
                                 ? pipe (
                                   set (at) (""),
                                   set (pa) (""),
@@ -398,11 +398,12 @@ const itemDetailsReducer =
       case ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD:
       case ActionTypes.SET_ITEM_SECOND_DAMAGE_THRESHOLD: {
         const isFirst = action.type === ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD
-        const upd = isFirst ? upd1 : upd2
 
         return modifyEditItem (over (composeL (damageBonus, threshold))
                                     (xs => isTuple (xs)
-                                      ? upd (action.payload.value) (xs)
+                                      ? isFirst
+                                        ? upd1 (action.payload.value) (xs)
+                                        : upd2 (action.payload.value) (xs)
                                       : xs))
       }
 
@@ -616,8 +617,7 @@ const hitZoneArmorsReducer =
                               (insert (fromJust (view (ehza_id) (edit_hza) as Just<string>))
                                       (
                                         editableToHitZoneArmor (edit_hza)
-                                      )
-                              ),
+                                      )),
                          set (itemInEditor) (Nothing)
                        ))
                        (hero))

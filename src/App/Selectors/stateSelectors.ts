@@ -1,6 +1,7 @@
 import { fmap } from "../../Data/Functor";
-import { bind, bindF, listToMaybe, Maybe } from "../../Data/Maybe";
+import { bind, bindF, Maybe } from "../../Data/Maybe";
 import { lookupF } from "../../Data/OrderedMap";
+import { peekFst } from "../../Data/Queue";
 import { Belongings } from "../Models/Hero/Belongings";
 import { Energies } from "../Models/Hero/Energies";
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
@@ -26,6 +27,7 @@ const UI = uiReducer.A_
 
 export const getCurrentTab = pipe (App.ui, UI.location)
 
+export const getLoadingPhase = App.isReady
 
 export const getLocaleMessages = pipe (App.l10n, LocaleState.AL.messages)
 export const getLocaleId = pipe (App.l10n, LocaleState.AL.id)
@@ -109,13 +111,19 @@ export const getSpells =
 
 
 export const getBlessedStyleDependencies =
-  pipe (getCurrentHeroPresent, fmap (Hero.blessedStyleDependencies))
+  pipe (getHeroProp, Hero.blessedStyleDependencies)
 
 export const getCombatStyleDependencies =
-  pipe (getCurrentHeroPresent, fmap (Hero.combatStyleDependencies))
+  pipe (getHeroProp, Hero.combatStyleDependencies)
 
 export const getMagicalStyleDependencies =
-  pipe (getCurrentHeroPresent, fmap (Hero.magicalStyleDependencies))
+  pipe (getHeroProp, Hero.magicalStyleDependencies)
+
+export const getSkillStyleDependencies =
+  pipe (getHeroProp, Hero.skillStyleDependencies)
+
+export const getSocialDependencies =
+  pipe (getHeroProp, Hero.socialStatusDependencies)
 
 
 export const getCurrentHeroName =
@@ -141,6 +149,9 @@ export const getWeight =
 
 export const getAvatar =
   pipe (getCurrentHeroPresent, bindF (Hero.avatar))
+
+export const getSocialStatus =
+  pipe (getHeroProp, Hero.personalData, Pers.socialStatus)
 
 
 export const getPact =
@@ -177,8 +188,14 @@ export const getRaceIdM =
 export const getCurrentRaceId =
   pipe (getCurrentHeroPresent, bindF (Hero.race))
 
+export const getRaceVariantId =
+  pipe (getHeroProp, Hero.raceVariant)
+
 export const getCurrentRaceVariantId =
   pipe (getCurrentHeroPresent, bindF (Hero.raceVariant))
+
+export const getCultureId =
+  pipe (getHeroProp, Hero.culture)
 
 export const getCurrentCultureId =
   pipe (getCurrentHeroPresent, bindF (Hero.culture))
@@ -217,8 +234,11 @@ export const getPermanentKarmaPoints =
   pipe (getCurrentHeroPresent, fmap (pipe (Hero.energies, Ener.permanentKarmaPoints)))
 
 
-export const getPhase =
+export const getCurrentPhase =
   pipe (getCurrentHeroPresent, fmap (Hero.phase))
+
+export const getPhase =
+  pipe (getHeroProp, Hero.phase)
 
 
 export const getExperienceLevelStartId =
@@ -261,9 +281,12 @@ export const getIsInPetCreation =
   pipe (getCurrentHeroPresent, fmap (Hero.isInPetCreation))
 
 
+export const getTransferredUnfamiliarSpells = pipe (getHeroProp, Hero.transferredUnfamiliarSpells)
+
+
 export const getAlerts = pipe (App.ui, UI.alerts)
 
-export const getCurrentAlert = pipe (App.ui, UI.alerts, listToMaybe)
+export const getCurrentAlert = pipe (App.ui, UI.alerts, peekFst)
 
 
 const SubW = SubWindowsState.A

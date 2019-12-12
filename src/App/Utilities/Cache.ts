@@ -1,6 +1,6 @@
 import { join } from "path";
 import { tryIO } from "../../Control/Exception";
-import { eitherToMaybe } from "../../Data/Either";
+import { Either, eitherToMaybe, Right } from "../../Data/Either";
 import { ident } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { all, fromArray, List } from "../../Data/List";
@@ -9,7 +9,7 @@ import { fromList, OrderedMap, toObjectWith } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { parseJSON } from "../../Data/String/JSON";
 import { Pair, Tuple } from "../../Data/Tuple";
-import { deleteFile, readFile, writeFile } from "../../System/IO";
+import { deleteFile, existsFile, readFile, writeFile } from "../../System/IO";
 import { HeroModelRecord } from "../Models/Hero/HeroModel";
 import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories";
 import { L10nRecord } from "../Models/Wiki/L10n";
@@ -75,31 +75,32 @@ const ap_optional_cache_keys: List<keyof APCache> =
   )
 
 export const readCache =
-  pipe_ (
-    file_path,
-    readFile,
-    tryIO,
-    fmap (pipe (
-      eitherToMaybe,
-      bindF (parseJSON),
-      bindF (x => Maybe (x [AP_KEY])),
-      bindF (ensure (isObject)),
-      bindF (pipe (
-        Object.entries,
-        fromArray,
-        mapM (pipe (
-          ensure ((e): e is [string, APCache] =>
-                   all ((k: keyof APCache) => typeof e [1] [k] === "number")
-                       (ap_cache_keys)
-                   && all ((k: keyof APCache) => typeof e [1] [k] === "number"
-                                                 || e [1] [k] === undefined)
-                          (ap_optional_cache_keys)),
-          fmap (Tuple.fromArray)
-        ))
-      )),
-      fmap (fromList)
-    ))
-  )
+  async () =>
+    pipe_ (
+      file_path,
+      tryIO (readFile),
+      fmap (pipe (
+        eitherToMaybe,
+        bindF (parseJSON),
+        bindF (ensure (isObject)),
+        bindF (x => Maybe ((x as any) [AP_KEY])),
+        bindF (ensure (isObject)),
+        bindF (pipe (
+          Object.entries,
+          fromArray,
+          mapM (pipe (
+            ensure ((e): e is [string, APCache] =>
+                     all ((k: keyof APCache) => typeof e [1] [k] === "number")
+                         (ap_cache_keys)
+                     && all ((k: keyof APCache) => typeof e [1] [k] === "number"
+                                                   || e [1] [k] === undefined)
+                            (ap_optional_cache_keys)),
+            fmap (Tuple.fromArray)
+          ))
+        )),
+        fmap (fromList)
+      ))
+    )
 
 export const writeCache =
   pipe (
@@ -109,11 +110,13 @@ export const writeCache =
       [AP_KEY]: m,
     }),
     JSON.stringify,
-    writeFile (file_path),
-    tryIO
+    tryIO (writeFile (file_path))
   )
 
-export const deleteCache = () => tryIO (deleteFile (file_path))
+export const deleteCache: () => Promise<Either<Error, void>> =
+  async () => await existsFile (file_path)
+              ? tryIO (deleteFile) (file_path)
+              : Right<void> (undefined)
 
 export const insertCacheMap =
   (map: OrderedMap<string, APCache>) => {

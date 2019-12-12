@@ -10,7 +10,7 @@ import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { ActivatableAddList } from "../Activatable/ActivatableAddList";
 
-export interface InactiveListProps {
+interface InactiveListProps {
   inactiveList: Maybe<List<
     Record<ActiveActivatable>
     | Record<InactiveActivatable>
@@ -23,8 +23,27 @@ export interface InactiveListProps {
   selectForInfo (id: string): void
 }
 
-export function InactiveList (props: InactiveListProps) {
+export const InactiveList: React.FC<InactiveListProps> = props => {
+  const {
+    inactiveList,
+    l10n,
+    rating,
+    showRating,
+    selectedForInfo,
+    addToList,
+    selectForInfo,
+  } = props
+
   return (
-    <ActivatableAddList {...props} hideGroup />
+    <ActivatableAddList
+      inactiveList={inactiveList}
+      l10n={l10n}
+      rating={rating}
+      showRating={showRating}
+      selectedForInfo={selectedForInfo}
+      addToList={addToList}
+      selectForInfo={selectForInfo}
+      hideGroup
+      />
   )
 }

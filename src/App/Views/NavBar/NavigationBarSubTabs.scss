@@ -14,7 +14,7 @@
 		height: 1px;
 		background: var(--separator-color-transparent);
 		bottom: 0;
-		z-index: 799;
+		z-index: 1;
 	}
 
 	> .tab {
@@ -26,7 +26,7 @@
 		position: relative;
 		color: var(--accent-color);
 		min-width: 0;
-		z-index: 800;
+		z-index: 2;
 
 		&:hover {
 			color: var(--headings-color);

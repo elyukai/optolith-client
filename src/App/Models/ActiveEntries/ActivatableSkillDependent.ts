@@ -4,6 +4,7 @@ import { fromDefault, makeLenses, member, Omit, Record } from "../../../Data/Rec
 import { Dependent, ExtendedSkillDependency } from "../Hero/heroTypeHelpers";
 
 export interface ActivatableSkillDependent {
+  "@@name": "ActivatableSkillDependent"
   id: string;
   value: number;
   active: boolean;

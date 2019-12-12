@@ -1,38 +1,41 @@
 import * as React from "react";
-import { Record, RecordBase } from "../../../../Data/Record";
-import { Categories } from "../../../Constants/Categories";
-import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
+import { Record, RecordIBase } from "../../../../Data/Record";
+import { Category } from "../../../Constants/Categories";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
 import { WikiProperty } from "../WikiProperty";
 
-interface Accessors<A extends RecordBase> {
+interface Accessors<A extends RecordIBase<any>> {
   cost: (r: Record<A>) => string
-  category: (r: Record<A>) => Categories
+  costNoMod: (r: Record<A>) => boolean
+  category: (r: Record<A>) => Category
 }
 
-export interface WikiCostProps<A extends RecordBase> {
+export interface WikiCostProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
   l10n: L10nRecord
 }
 
-export function WikiCost<A extends RecordBase> (props: WikiCostProps<A>) {
+export function WikiCost<A extends RecordIBase<any>> (props: WikiCostProps<A>) {
   const {
     x,
     acc,
     l10n,
   } = props
 
-  let key: keyof L10n = "aecost"
-
   const category = acc.category (x)
+  const isNoModAllowed = acc.costNoMod (x)
 
-  if (category === Categories.LITURGIES) {
-    key = "kpcost"
-  }
+  const key = category === Category.LITURGICAL_CHANTS ? "kpcost" : "aecost"
+  const modKey =
+    category === Category.LITURGICAL_CHANTS
+    ? "youcannotuseamodificationonthischantscost"
+    : "youcannotuseamodificationonthisspellscost"
 
   return (
     <WikiProperty l10n={l10n} title={key}>
-      {acc.cost (x)}
+      {acc.cost (x)}{isNoModAllowed ? ` (${translate (l10n) (modKey)})` : ""}
     </WikiProperty>
   )
 }

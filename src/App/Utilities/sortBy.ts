@@ -1,19 +1,17 @@
 import { flip, on } from "../../Data/Function";
 import { flength, List, sortBy } from "../../Data/List";
-import { EQ, Ordering } from "../../Data/Ord";
-import { fromDefault, Record, RecordBase } from "../../Data/Record";
-import { L10n, L10nRecord } from "../Models/Wiki/L10n";
+import { Compare, EQ, Ordering } from "../../Data/Ord";
+import { fromDefault, Record, RecordIBase } from "../../Data/Record";
+import { L10nRecord } from "../Models/Wiki/L10n";
 import { compareLocale } from "./I18n";
-import { pipe } from "./pipe";
+import { pipe_ } from "./pipe";
 
-export type CompareR<A> = (x: Record<A>) => (y: Record<A>) => Ordering
-
-export interface SortOption<A extends RecordBase> {
-  compare: CompareR<A>
+export interface SortOption<A> {
+  compare: Compare<A>
   reverse: boolean
 }
 
-export type SortOptions<A extends RecordBase> = (CompareR<A> | SortOption<A>)[]
+export type SortOptions<A> = (Compare<A> | SortOption<A>)[]
 
 /**
  * Sort a list based on the passed sort options array. A sort option can either
@@ -21,10 +19,10 @@ export type SortOptions<A extends RecordBase> = (CompareR<A> | SortOption<A>)[]
  * sort order should be reversed for the compare function. The first sort option
  * takes precedence over the second sort option and so on.
  */
-export const sortRecordsBy =
-  <A extends RecordBase>
+export const sortByMulti =
+  <A>
   (sortOptions: SortOptions<A>) =>
-  (xs: List<Record<A>>): List<Record<A>> => {
+  (xs: List<A>): List<A> => {
     if (flength (xs) < 2 || sortOptions .length === 0) {
       return xs
     }
@@ -39,21 +37,21 @@ export const sortRecordsBy =
           : x .compare
       )
 
-    return sortBy<Record<A>> (a => b => {
-                               for (const compare of sortFunctions) {
-                                 const result = compare (a) (b)
+    return sortBy<A> (a => b => {
+                       for (const compare of sortFunctions) {
+                         const result = compare (a) (b)
 
-                                 if (result !== EQ) {
-                                   return result
-                                 }
-                               }
+                         if (result !== EQ) {
+                           return result
+                         }
+                       }
 
-                               return EQ
-                             })
-                             (xs)
+                       return EQ
+                     })
+                     (xs)
   }
 
-export interface RecordWithName extends RecordBase {
+export interface RecordWithName extends RecordIBase<any> {
   name: string
 }
 
@@ -62,17 +60,15 @@ export const RecordWithName = fromDefault ("RecordWithName")
 
 const { name } = RecordWithName.AL
 
-const getLocaleId = (locale: string | L10nRecord) => L10n.is (locale) ? L10n.A.id (locale) : locale
-
 /**
  * Sort the list of passed records by their `name` property in ascending order.
  */
 export const sortRecordsByName = (
-  (locale: string | L10nRecord) =>
-    sortRecordsBy<RecordWithName> ([
-      comparingR<RecordWithName, string> (name) (compareLocale (getLocaleId (locale))),
+  (locale: L10nRecord) =>
+    sortByMulti<Record<RecordWithName>> ([
+      comparingR<RecordWithName, string> (name) (compareLocale (locale)),
     ])
-) as (locale: string | L10nRecord) =>
+) as (locale: L10nRecord) =>
   <A extends RecordWithName> (xs: List<Record<A>>) => List<Record<A>>
 
 /**
@@ -84,7 +80,7 @@ export const sortRecordsByName = (
  * accessor.
  */
 export const comparingR =
-  <A extends RecordBase, B>
+  <A extends RecordIBase<any>, B>
   (accessor: (x: Record<A>) => B) =>
   (compare: (x: B) => (y: B) => Ordering) =>
     on (compare) (accessor)
@@ -93,4 +89,4 @@ export const comparingR =
  * `sortStrings locale xs` sorts a list of strings with respect to the passed
  * locale.
  */
-export const sortStrings = pipe (compareLocale, sortBy)
+export const sortStrings = (locale: L10nRecord) => pipe_ (locale, compareLocale, sortBy)

@@ -1,19 +1,22 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
+import { SocialStatusId } from "../../Constants/Ids";
 import { CommonProfession } from "./sub/CommonProfession";
+import { Erratum } from "./sub/Errata";
 import { IncreaseSkill } from "./sub/IncreaseSkill";
 import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Culture {
+  "@@name": "Culture"
   id: string
   name: string
   culturalPackageAdventurePoints: number
   languages: List<number>
   scripts: List<number>
-  socialStatus: List<number>
+  socialStatus: List<SocialStatusId>
   areaKnowledge: string
   areaKnowledgeShort: string
   commonProfessions: List<boolean | Record<CommonProfession>>
@@ -30,13 +33,15 @@ export interface Culture {
   uncommonDisadvantagesText: Maybe<string>
   commonSkills: List<string>
   uncommonSkills: List<string>
+
   /**
    * Markdown supported.
    */
   commonNames: string
   culturalPackageSkills: List<Record<IncreaseSkill>>
-  category: Categories
+  category: Category
   src: List<Record<SourceLink>>
+  errata: List<Record<Erratum>>
 }
 
 export const Culture =
@@ -66,11 +71,12 @@ export const Culture =
                 uncommonSkills: List.empty,
                 commonNames: "",
                 culturalPackageSkills: List.empty,
-                category: Categories.CULTURES,
+                category: Category.CULTURES,
                 src: List.empty,
+                errata: List (),
               })
 
 export const CultureL = makeLenses (Culture)
 
 export const isCulture =
-  (r: EntryWithCategory) => Culture.AL.category (r) === Categories.CULTURES
+  (r: EntryWithCategory) => Culture.AL.category (r) === Category.CULTURES

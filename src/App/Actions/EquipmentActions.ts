@@ -11,8 +11,9 @@ import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
 import { getHitZoneArmorsState, getItemEditorInstance, getItemsState, getWikiItemTemplates } from "../Selectors/stateSelectors";
 import { getNewId, prefixId } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { EquipmentSortOptions } from "../Utilities/Raw/JSON/Config";
 import { ReduxAction } from "./Actions";
+import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids";
 
 const getNewIdFromCurrentItems: (x: Just<OrderedMap<string, Record<Item>>>) => string =
   pipe (fromJust, keys, getNewId, prefixId (IdPrefixes.ITEM))
@@ -130,11 +131,11 @@ export const removeItem = (id: string): RemoveItemAction => ({
 export interface SetItemsSortOrderAction {
   type: ActionTypes.SET_ITEMS_SORT_ORDER
   payload: {
-    sortOrder: SortNames;
+    sortOrder: EquipmentSortOptions;
   }
 }
 
-export const setItemsSortOrder = (sortOrder: SortNames): SetItemsSortOrderAction => ({
+export const setItemsSortOrder = (sortOrder: EquipmentSortOptions): SetItemsSortOrderAction => ({
   type: ActionTypes.SET_ITEMS_SORT_ORDER,
   payload: {
     sortOrder,
@@ -997,12 +998,13 @@ export const setArmorZonesRightLegLoss = (id: Maybe<number>): SetArmorZonesRight
 export interface SetMeleeItemTemplatesCombatTechniqueFilterAction {
   type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER
   payload: {
-    filterOption: Maybe<string>;
+    filterOption: Maybe<MeleeCombatTechniqueId>;
   }
 }
 
 export const setMeleeItemTemplatesCombatTechniqueFilter =
-  (filterOption: Maybe<string>): SetMeleeItemTemplatesCombatTechniqueFilterAction => ({
+  (filterOption: Maybe<MeleeCombatTechniqueId>):
+  SetMeleeItemTemplatesCombatTechniqueFilterAction => ({
     type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER,
     payload: {
       filterOption,
@@ -1012,12 +1014,13 @@ export const setMeleeItemTemplatesCombatTechniqueFilter =
 export interface SetRangedItemTemplatesCombatTechniqueFilterAction {
   type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER
   payload: {
-    filterOption: Maybe<string>;
+    filterOption: Maybe<RangedCombatTechniqueId>;
   }
 }
 
 export const setRangedItemTemplatesCombatTechniqueFilter =
-  (filterOption: Maybe<string>): SetRangedItemTemplatesCombatTechniqueFilterAction => ({
+  (filterOption: Maybe<RangedCombatTechniqueId>):
+  SetRangedItemTemplatesCombatTechniqueFilterAction => ({
     type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER,
     payload: {
       filterOption,

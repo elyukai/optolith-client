@@ -22,7 +22,7 @@ const map =
   <A, B> (f: (x: A) => B) => (xs: Internals.List<A>): Internals.List<B> =>
   Internals.isNil (xs) ? Internals.Nil : Internals.Cons (f (xs .x), map (f) (xs .xs))
 
-const trimStart = (str: string) => str .replace (/^\s+/, "")
+const trimStart = (str: string) => str .replace (/^\s+/u, "")
 
 /**
  * `show :: a -> String`
@@ -30,7 +30,7 @@ const trimStart = (str: string) => str .replace (/^\s+/, "")
  * Convert a value to a readable `String`.
  */
 // tslint:disable-next-line: cyclomatic-complexity
-export const show = (x: any): string => {
+export const show = (x: unknown): string => {
   if (Internals.isMaybe (x)) {
     if (Internals.isJust (x)) {
       return `Just (${show (x.value)})`
@@ -90,10 +90,6 @@ export const show = (x: any): string => {
     } }`
   }
 
-  if (Internals.isIO (x)) {
-    return `IO`
-  }
-
   if (isOrdering (x)) {
     return x === GT ? "GT" : x === LT ? "LT" : "EQ";
   }
@@ -116,11 +112,11 @@ export const show = (x: any): string => {
   }
 
   if (typeof x === "symbol") {
-    if (x.description !== "") {
-      return `Symbol "${x.description}"`
+    if (x.description === "") {
+      return `Symbol`
     }
     else {
-      return `Symbol`
+      return `Symbol "${x.description}"`
     }
   }
 
@@ -140,8 +136,9 @@ export const show = (x: any): string => {
 }
 
 // tslint:disable-next-line: cyclomatic-complexity
-export const showPDepth = (depth: number) => (x: any): string => {
-  const dws = " " .repeat (depth * 2) // depth whitespace
+export const showPDepth = (depth: number) => (x: unknown): string => {
+  // depth whitespace
+  const dws = " " .repeat (depth * 2)
 
   if (Internals.isMaybe (x)) {
     if (Internals.isJust (x)) {
@@ -225,10 +222,6 @@ export const showPDepth = (depth: number) => (x: any): string => {
         )
         .join (`\n${" " .repeat (named .length)}${dws}, `)
     } }`
-  }
-
-  if (Internals.isIO (x)) {
-    return `${dws}IO`
   }
 
   if (isOrdering (x)) {

@@ -2,10 +2,12 @@ import { List } from "../../../Data/List";
 import { Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { AdvantageDisadvantageBase, EntryWithCategory } from "./wikiTypeHelpers";
 
-export interface Disadvantage extends AdvantageDisadvantageBase { }
+export interface Disadvantage extends AdvantageDisadvantageBase {
+  "@@name": "Disadvantage"
+}
 
 export const Disadvantage =
   fromDefault ("Disadvantage")
@@ -24,16 +26,17 @@ export const Disadvantage =
                 select: Nothing,
                 gr: 0,
                 src: List.empty,
+                errata: List (),
                 rules: "",
                 range: Nothing,
                 actions: Nothing,
                 apValue: Nothing,
                 apValueAppend: Nothing,
-                category: Categories.DISADVANTAGES,
+                category: Category.DISADVANTAGES,
               })
 
 export const isDisadvantage =
   (r: EntryWithCategory): r is Record<Disadvantage> =>
-    Disadvantage.AL.category (r) === Categories.DISADVANTAGES
+    Disadvantage.AL.category (r) === Category.DISADVANTAGES
 
 export const DisadvantageL = makeLenses (Disadvantage)

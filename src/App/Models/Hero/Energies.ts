@@ -3,6 +3,7 @@ import { PermanentEnergyLoss } from "./PermanentEnergyLoss";
 import { PermanentEnergyLossAndBoughtBack } from "./PermanentEnergyLossAndBoughtBack";
 
 export interface Energies {
+  "@@name": "Energies"
   addedLifePoints: number
   addedArcaneEnergyPoints: number
   addedKarmaPoints: number

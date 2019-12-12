@@ -19,17 +19,20 @@ import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { ActivatableDependency, Dependent, Sex } from "../../Models/Hero/heroTypeHelpers";
 import { Pact } from "../../Models/Hero/Pact";
+import { PersonalData } from "../../Models/Hero/PersonalData";
 import { Culture } from "../../Models/Wiki/Culture";
 import { RequireActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement, isCultureRequirement } from "../../Models/Wiki/prerequisites/CultureRequirement";
 import { RequireIncreasable, RequireIncreasableL } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { isPactRequirement, PactRequirement } from "../../Models/Wiki/prerequisites/PactRequirement";
-import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
+import { PactRequirement } from "../../Models/Wiki/prerequisites/PactRequirement";
+import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
 import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
 import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement";
+import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite";
 import { Profession } from "../../Models/Wiki/Profession";
 import { Race } from "../../Models/Wiki/Race";
 import { Skill } from "../../Models/Wiki/Skill";
+import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { AllRequirements, ProfessionDependency, SID } from "../../Models/Wiki/wikiTypeHelpers";
 import { isActive } from "../Activatable/isActive";
@@ -46,8 +49,10 @@ type Validator = (wiki: WikiModelRecord) =>
                  (req: AllRequirements) =>
                  (sourceId: string) => boolean
 
-const { races, cultures, professions, skills } = WikiModel.AL
-const { race, culture, profession, specialAbilities, attributes, sex, pact } = HeroModel.AL
+const WA = WikiModel.A
+const HA = HeroModel.A
+const PDA = PersonalData.A
+const SA = Spell.A
 
 const RIA = RequireIncreasable.A
 const RAA = RequireActivatable.A
@@ -57,8 +62,8 @@ const SDAL = SkillDependent.AL
 const getAllRaceEntries =
   (wiki: WikiModelRecord) =>
     pipe (
-      race,
-      bindF (lookupF (races (wiki))),
+      HA.race,
+      bindF (lookupF (WA.races (wiki))),
       fmap (
         selectedRace => concat (
           List (
@@ -76,8 +81,8 @@ const getAllRaceEntries =
 const getAllCultureEntries =
   (wiki: WikiModelRecord) =>
     pipe (
-      culture,
-      bindF (lookupF (cultures (wiki))),
+      HA.culture,
+      bindF (lookupF (WA.cultures (wiki))),
       fmap (
         selectedCulture => concat (
           List (
@@ -91,8 +96,8 @@ const getAllCultureEntries =
 const getAllProfessionEntries =
   (wiki: WikiModelRecord) =>
     pipe (
-      profession,
-      bindF (lookupF (professions (wiki))),
+      HA.profession,
+      bindF (lookupF (WA.professions (wiki))),
       fmap (
         selectedProfession => concat (
           List (
@@ -193,7 +198,13 @@ const hasNeededPactDomain =
   }
 
 const hasNeededPactLevel = (state: Record<Pact>) => (req: Record<PactRequirement>) =>
-  or (fmap (lte (Pact.AL.level (state))) (PactRequirement.AL.level (req)))
+  // Fulfills the level requirement
+  or (fmap (lte (Pact.A.level (state))) (PactRequirement.A.level (req)))
+  // Its a lesser Pact and the needed Pact-Level is "1"
+  || (
+    or (fmap (lte (1)) (PactRequirement.A.level (req)))
+    && (Pact.A.level (state) === 0)
+  )
 
 const isPactValid =
   (maybePact: Maybe<Record<Pact>>) => (req: Record<PactRequirement>): boolean =>
@@ -207,13 +218,21 @@ const isPactValid =
 const isPrimaryAttributeValid =
   (state: HeroModelRecord) => (req: Record<RequirePrimaryAttribute>): boolean =>
     or (fmap (pipe (
-               lookupF (attributes (state)),
+               lookupF (HA.attributes (state)),
                fmap (AttributeDependent.AL.value),
                fromMaybe (8),
                gte (RequirePrimaryAttribute.AL.value (req))
              ))
-             (getPrimaryAttributeId (specialAbilities (state))
+             (getPrimaryAttributeId (HA.specialAbilities (state))
                                     (RequirePrimaryAttribute.AL.type (req))))
+
+const isSocialPrerequisiteValid: (hero: Record<HeroModel>) =>
+                                 (req: Record<SocialPrerequisite>) => boolean =
+  hero =>
+    pipe (
+      SocialPrerequisite.A.value,
+      lte (pipe_ (hero, HA.personalData, PDA.socialStatus, Maybe.sum))
+    )
 
 const isIncreasableValid =
   (wiki: WikiModelRecord) =>
@@ -312,7 +331,7 @@ const isActivatableValid =
                                const arr =
                                  map (Skill.AL.id)
                                      (getAllWikiEntriesByGroup
-                                       (skills (wiki))
+                                       (WA.skills (wiki))
                                        (maybeToList (
                                          RAA.sid2 (req) as Maybe<number>
                                        )))
@@ -367,16 +386,18 @@ export const validateObject =
   (sourceId: string): boolean =>
     req === "RCP"
       ? isRCPValid (wiki) (hero) (sourceId)
-      : isSexRequirement (req)
-      ? isSexValid (sex (hero)) (req)
+      : SexRequirement.is (req)
+      ? isSexValid (HA.sex (hero)) (req)
       : RaceRequirement.is (req)
-      ? or (fmapF (race (hero)) (flip (isRaceValid) (req)))
-      : isCultureRequirement (req)
-      ? or (fmapF (culture (hero)) (flip (isCultureValid) (req)))
-      : isPactRequirement (req)
-      ? isPactValid (pact (hero)) (req)
-      : isPrimaryAttributeRequirement (req)
+      ? or (fmapF (HA.race (hero)) (flip (isRaceValid) (req)))
+      : CultureRequirement.is (req)
+      ? or (fmapF (HA.culture (hero)) (flip (isCultureValid) (req)))
+      : PactRequirement.is (req)
+      ? isPactValid (HA.pact (hero)) (req)
+      : RequirePrimaryAttribute.is (req)
       ? isPrimaryAttributeValid (hero) (req)
+      : SocialPrerequisite.is (req)
+      ? isSocialPrerequisiteValid (hero) (req)
       : RequireIncreasable.is (req)
       ? isIncreasableValid (wiki) (hero) (sourceId) (req) (validateObject)
       : isActivatableValid (wiki) (hero) (sourceId) (req) (validateObject)
@@ -395,6 +416,24 @@ export const validatePrerequisites =
   (sourceId: string): boolean =>
     all (pipe (validateObject (wiki) (state), thrush (sourceId)))
         (prerequisites)
+
+
+/**
+ * ```haskell
+ * areSpellPrereqisitesMet :: Wiki -> Hero -> Spell -> Bool
+ * ```
+ *
+ * Checks if all prerequisites of the passed spell are met.
+ */
+export const areSpellPrereqisitesMet =
+  (wiki: WikiModelRecord) =>
+  (hero: HeroModelRecord) =>
+  (entry: Record<Spell>) =>
+    validatePrerequisites (wiki)
+                          (hero)
+                          (SA.prerequisites (entry))
+                          (SA.id (entry))
+
 
 /**
  * Returns if the current index can be skipped because there is already a lower
@@ -430,7 +469,7 @@ export const validateLevel =
               !skipLevelCheck (entry) (max)
               // otherwise, validate them
               && !validatePrerequisites (wiki) (state) (snd (entry)) (sourceId)
-                // if *not* valid, set the max to be lower than the acutal
+                // if *not* valid, set the max to be lower than the actual
                 // current level (because it must not be reached)
                 ? Just (fst (entry) - 1)
                 // otherwise, just pass the previous max value
@@ -471,12 +510,11 @@ export const validateProfession =
   (current_race_id: string) =>
   (current_culture_id: string): boolean =>
     all<ProfessionDependency> (req =>
-                                     isSexRequirement (req)
-                                     ? isSexValid (current_sex) (req)
-                                     : RaceRequirement.is (req)
-                                     ? isRaceValid (current_race_id) (req)
-                                     : isCultureRequirement (req)
-                                     ? isCultureValid (current_culture_id) (req)
-                                     : false
-                                   )
-                                   (prerequisites)
+                                isSexRequirement (req)
+                                ? isSexValid (current_sex) (req)
+                                : RaceRequirement.is (req)
+                                ? isRaceValid (current_race_id) (req)
+                                : isCultureRequirement (req)
+                                ? isCultureValid (current_culture_id) (req)
+                                : false)
+                              (prerequisites)

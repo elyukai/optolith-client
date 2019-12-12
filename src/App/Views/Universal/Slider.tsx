@@ -28,7 +28,7 @@ export function Slider (props: SliderProps) {
         min={min}
         max={max}
         step={1}
-      />
+        />
     </div>
   )
 }

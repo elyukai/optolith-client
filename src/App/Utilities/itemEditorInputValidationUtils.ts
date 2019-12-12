@@ -3,12 +3,14 @@ import { subscriptF } from "../../Data/List";
 import { elem, isJust, Nothing } from "../../Data/Maybe";
 import { fromDefault, Record } from "../../Data/Record";
 import { fst, isTuple, snd } from "../../Data/Tuple";
+import { CombatTechniqueId } from "../Constants/Ids";
 import { EditItem } from "../Models/Hero/EditItem";
 import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold";
 import { pipe } from "./pipe";
 import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from "./RegexUtils";
 
 export interface ItemEditorInputValidation {
+  "@@name": "ItemEditorInputValidation"
   name: boolean
   amount: boolean
   at: boolean
@@ -191,7 +193,7 @@ export const validateItemEditorInput = (item: Record<EditItem>) => {
 const validateMeleeWeaponInput =
   (item: Record<EditItem>) =>
   (validSingle: Record<ItemEditorInputValidation>) =>
-    elem ("CT_7") (EIA.combatTechnique (item))
+    elem<string> (CombatTechniqueId.Lances) (EIA.combatTechnique (item))
     ? validateNoParryingWeapons (validSingle)
     : IEIVA.at (validSingle)
       && IEIVA.damageDiceNumber (validSingle)

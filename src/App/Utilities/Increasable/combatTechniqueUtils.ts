@@ -1,9 +1,11 @@
 import { fmap } from "../../../Data/Functor";
 import { cons, elem, foldl, List, maximum } from "../../../Data/List";
-import { guard, Just, Maybe, maybe, sum, then } from "../../../Data/Maybe";
+import { guard, Just, Maybe, maybe, then } from "../../../Data/Maybe";
 import { add, divideBy, max } from "../../../Data/Num";
 import { lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { CombatTechniqueGroup } from "../../Constants/Groups";
+import { AdvantageId, AttrId, CombatTechniqueId } from "../../Constants/Ids";
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
@@ -41,34 +43,37 @@ export const getAttack =
     pipe (
       getCombatTechniqueRating,
       add (getPrimaryAttributeMod (state)
-                                  (gr (wikiEntry) === 2
+                                  (gr (wikiEntry) === CombatTechniqueGroup.Ranged
                                     ? primary (wikiEntry)
-                                    : List ("ATTR_1")))
+                                    : List (AttrId.Courage)))
     )
 
 export const getParry =
   (state: HeroModelRecord) =>
   (wikiEntry: Record<CombatTechnique>) =>
   (maybeStateEntry: Maybe<Record<SkillDependent>>): Maybe<number> =>
-    then
-      (guard (gr (wikiEntry) !== 2 && id (wikiEntry) !== "CT_6" && id (wikiEntry) !== "CT_8"))
-      (Just (
-        Math.round (getCombatTechniqueRating (maybeStateEntry) / 2)
-        + getPrimaryAttributeMod (state) (primary (wikiEntry))
-      ))
+    then (guard (gr (wikiEntry) !== CombatTechniqueGroup.Ranged
+                 && id (wikiEntry) !== CombatTechniqueId.ChainWeapons
+                 && id (wikiEntry) !== CombatTechniqueId.Brawling))
+         (Just (
+           Math.round (getCombatTechniqueRating (maybeStateEntry) / 2)
+           + getPrimaryAttributeMod (state) (primary (wikiEntry))
+         ))
 
 export const isIncreaseDisabled =
   (wiki: WikiModelRecord) =>
   (state: HeroModelRecord) =>
   (wikiEntry: Record<CombatTechnique>) =>
   (instance: Record<SkillDependent>): boolean => {
-    const currentMax =
-      phase (state) < 3
-        ? sum (fmap (maxCombatTechniqueRating)
-                    (lookupF (experienceLevels (wiki)) (experienceLevel (state))))
-        : getMaxPrimaryAttributeValueById (state) (primary (wikiEntry)) + 2
+    const max_by_primary = getMaxPrimaryAttributeValueById (state) (primary (wikiEntry)) + 2
 
-    const exceptionalSkill = lookupF (advantages (state)) ("ADV_17")
+    const mmax_by_el = then (guard (phase (state) < 3))
+                            (fmap (maxCombatTechniqueRating)
+                                  (lookupF (experienceLevels (wiki)) (experienceLevel (state))))
+
+    const base_max = maybe (max_by_primary) (max (max_by_primary)) (mmax_by_el)
+
+    const exceptionalSkill = lookupF (advantages (state)) (AdvantageId.ExceptionalCombatTechnique)
 
     const bonus = pipe (
                          getActiveSelectionsMaybe,
@@ -78,7 +83,7 @@ export const isIncreaseDisabled =
                        )
                        (exceptionalSkill)
 
-    return value (instance) >= currentMax + bonus
+    return value (instance) >= base_max + bonus
   }
 
 export const isDecreaseDisabled =

@@ -1,6 +1,6 @@
 import { fmapF } from "../../Data/Functor";
 import { List } from "../../Data/List";
-import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe";
+import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModel } from "../Models/Hero/HeroModel";
@@ -14,9 +14,9 @@ import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUti
 import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { ChantsSortOptions } from "../Utilities/Raw/JSON/Config";
 import { ReduxAction } from "./Actions";
-import { addAlert } from "./AlertActions";
+import { addAlert, AlertOptions } from "./AlertActions";
 
 export interface ActivateLiturgicalChantAction {
   type: ActionTypes.ACTIVATE_LITURGY
@@ -27,8 +27,8 @@ export interface ActivateLiturgicalChantAction {
 
 export const addLiturgicalChant =
   (l10n: L10nRecord) =>
-  (id: string): ReduxAction =>
-  (dispatch, getState) => {
+  (id: string): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
     const wiki_liturgical_chants = getWikiLiturgicalChants (state)
     const mhero = getCurrentHeroPresent (state)
@@ -53,10 +53,12 @@ export const addLiturgicalChant =
       })
     }
     else {
-      dispatch (addAlert ({
-        title: translate (l10n) ("notenoughap"),
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
         message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
   }
 
@@ -69,8 +71,8 @@ export interface ActivateBlessingAction {
 
 export const addBlessing =
   (l10n: L10nRecord) =>
-  (id: string): ReduxAction =>
-  (dispatch, getState) => {
+  (id: string): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
     const mhero = getCurrentHeroPresent (state)
 
@@ -92,10 +94,12 @@ export const addBlessing =
       })
     }
     else {
-      dispatch (addAlert ({
-        title: translate (l10n) ("notenoughap"),
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
         message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAP))),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
   }
 
@@ -136,8 +140,8 @@ export interface AddLiturgicalChantPointAction {
 
 export const addLiturgicalChantPoint =
   (l10n: L10nRecord) =>
-  (id: string): ReduxAction =>
-  (dispatch, getState) => {
+  (id: string): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
     const mhero_liturgical_chants = getLiturgicalChants (state)
     const wiki_liturgical_chants = getWikiLiturgicalChants (state)
@@ -164,10 +168,12 @@ export const addLiturgicalChantPoint =
       })
     }
     else {
-      dispatch (addAlert ({
-        title: translate (l10n) ("notenoughap"),
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
         message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
   }
 
@@ -188,12 +194,12 @@ export const removeLiturgicalChantPoint = (id: string): RemoveLiturgicalChantPoi
 export interface SetLiturgicalChantsSortOrderAction {
   type: ActionTypes.SET_LITURGIES_SORT_ORDER
   payload: {
-    sortOrder: SortNames;
+    sortOrder: ChantsSortOptions;
   }
 }
 
 export const setLiturgicalChantsSortOrder =
-  (sortOrder: SortNames): SetLiturgicalChantsSortOrderAction => ({
+  (sortOrder: ChantsSortOptions): SetLiturgicalChantsSortOrderAction => ({
     type: ActionTypes.SET_LITURGIES_SORT_ORDER,
     payload: {
       sortOrder,

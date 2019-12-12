@@ -1,6 +1,6 @@
 import { Maybe } from "../../Data/Maybe";
 import { ActionTypes } from "../Constants/ActionTypes";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { RacesSortOptions } from "../Utilities/Raw/JSON/Config";
 
 export interface SelectRaceAction {
   type: ActionTypes.SELECT_RACE
@@ -25,7 +25,7 @@ export interface SetRaceVariantAction {
   }
 }
 
-export const setRaceVariant = (id: string): SetRaceVariantAction => ({
+export const selectRaceVariant = (id: string): SetRaceVariantAction => ({
   type: ActionTypes.SET_RACE_VARIANT,
   payload: {
     id,
@@ -35,11 +35,11 @@ export const setRaceVariant = (id: string): SetRaceVariantAction => ({
 export interface SetRacesSortOrderAction {
   type: ActionTypes.SET_RACES_SORT_ORDER
   payload: {
-    sortOrder: SortNames;
+    sortOrder: RacesSortOptions;
   }
 }
 
-export const setRacesSortOrder = (sortOrder: SortNames): SetRacesSortOrderAction => ({
+export const setRacesSortOrder = (sortOrder: RacesSortOptions): SetRacesSortOrderAction => ({
   type: ActionTypes.SET_RACES_SORT_ORDER,
   payload: {
     sortOrder,

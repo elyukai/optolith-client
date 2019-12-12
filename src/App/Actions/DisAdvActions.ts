@@ -7,6 +7,7 @@ import { lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { fst, Pair, PairP1_, snd } from "../../Data/Tuple";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { DisadvantageId } from "../Constants/Ids";
 import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
 import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType";
@@ -34,7 +35,7 @@ import { pipe, pipe_ } from "../Utilities/pipe";
 import { misNumberM } from "../Utilities/typeCheckUtils";
 import { getWikiEntry } from "../Utilities/WikiUtils";
 import { ReduxAction, ReduxDispatch } from "./Actions";
-import { addAlert } from "./AlertActions";
+import { addAlert, AlertOptions } from "./AlertActions";
 
 /**
  * Advantages and disadvantages might not only be added or removed due to not
@@ -52,28 +53,32 @@ const handleMissingAPForDisAdvantage =
   (missing_ap: Record<MissingAPForDisAdvantage>) =>
   (is_blessed_or_magical: Pair<boolean, boolean>) =>
   (is_disadvantage: boolean) =>
-  (dispatch: ReduxDispatch) => {
+  async (dispatch: ReduxDispatch) => {
     const totalMissing = MissingAPForDisAdvantage.AL.totalMissing (missing_ap)
     const mainMissing = MissingAPForDisAdvantage.AL.mainMissing (missing_ap)
     const subMissing = MissingAPForDisAdvantage.AL.subMissing (missing_ap)
 
     if (isJust (totalMissing)) {
-      dispatch (addAlert ({
-        title: translate (l10n) ("notenoughap"),
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
         message: translateP (l10n) ("notenoughap.text") (List (fromJust (totalMissing))),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
     else if (isJust (mainMissing)) {
       const type = is_disadvantage
         ? translate (l10n) ("disadvantages")
         : translate (l10n) ("advantages")
 
-      dispatch (addAlert ({
-        title: translateP (l10n) ("reachedlimit") (List (type)),
+      const opts = AlertOptions ({
+        title: Just (translateP (l10n) ("reachedlimit") (List (type))),
         message: translateP (l10n)
                             ("reachedaplimit")
                             (List<string | number> (fromJust (mainMissing), 80, type)),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
     else if (isJust (subMissing)) {
       const ap = getDisAdvantagesSubtypeMax (snd (is_blessed_or_magical)) (hero)
@@ -86,12 +91,14 @@ const handleMissingAPForDisAdvantage =
           ? translate (l10n) ("blessedadvantages")
           : translate (l10n) ("magicaladvantages")
 
-      dispatch (addAlert ({
-        title: translateP (l10n) ("reachedlimit") (List (type)),
+      const opts = AlertOptions ({
+        title: Just (translateP (l10n) ("reachedlimit") (List (type))),
         message: translateP (l10n)
                             ("reachedaplimit")
                             (List<string | number> (fromJust (subMissing), ap, type)),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
     else {
       success ()
@@ -109,8 +116,8 @@ export interface ActivateDisAdvAction {
  */
 export const addDisAdvantage =
   (l10n: L10nRecord) =>
-  (args: Record<ActivatableActivationOptions>): ReduxAction =>
-  (dispatch, getState) => {
+  (args: Record<ActivatableActivationOptions>): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
 
     const mhero = getCurrentHeroPresent (state)
@@ -147,14 +154,20 @@ export const addDisAdvantage =
                                                    (is_disadvantage)
                                                    (hero)
                                                    (ap)
+                                                   (Advantage.AL.id (wiki_entry))
                                                    (current_cost))
 
         const successFn = () => {
-          const color: Maybe<Pair<number, number>> =
-            current_id === "DISADV_45"
-            && elem<string | number> (1) (ActivatableActivationOptions.AL.selectOptionId1 (args))
-              ? Just (Pair (19, 24)) // (eyeColor, hairColor)
-              : Nothing
+          const color: Pair<Maybe<number>, Maybe<number>> =
+            current_id === DisadvantageId.Stigma
+              && elem<string | number> (1) (ActivatableActivationOptions.AL.selectOptionId1 (args))
+              // (eyeColor, hairColor)
+            ? Pair (Just (19), Just (24))
+            : current_id === DisadvantageId.Stigma
+              && elem<string | number> (3) (ActivatableActivationOptions.AL.selectOptionId1 (args))
+              // (eyeColor, hairColor)
+            ? Pair (Nothing, Just (25))
+            : Pair (Nothing, Nothing)
 
           dispatch<ActivateDisAdvAction> ({
             type: ActionTypes.ACTIVATE_DISADV,
@@ -162,8 +175,8 @@ export const addDisAdvantage =
               Pair (
                 args,
                 ActivatableActivationEntryType ({
-                  eyeColor: fmapF (color) (fst),
-                  hairColor: fmapF (color) (snd),
+                  eyeColor: fst (color),
+                  hairColor: snd (color),
                   isBlessed: fst (entryType),
                   isDisadvantage: is_disadvantage,
                   isMagical: snd (entryType),
@@ -175,13 +188,13 @@ export const addDisAdvantage =
         }
 
         if (isJust (mmissingAPForDisAdvantage)) {
-          handleMissingAPForDisAdvantage (l10n)
-                                         (successFn)
-                                         (hero)
-                                         (fromJust (mmissingAPForDisAdvantage))
-                                         (entryType)
-                                         (is_disadvantage)
-                                         (dispatch)
+          await handleMissingAPForDisAdvantage (l10n)
+                                               (successFn)
+                                               (hero)
+                                               (fromJust (mmissingAPForDisAdvantage))
+                                               (entryType)
+                                               (is_disadvantage)
+                                               (dispatch)
         }
       }
     }
@@ -198,8 +211,8 @@ export interface DeactivateDisAdvAction {
  */
 export const removeDisAdvantage =
   (l10n: L10nRecord) =>
-  (args: Record<ActivatableDeactivationOptions>): ReduxAction =>
-  (dispatch, getState) => {
+  (args: Record<ActivatableDeactivationOptions>): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
 
     const mhero = getCurrentHeroPresent (state)
@@ -211,7 +224,8 @@ export const removeDisAdvantage =
       const current_index = ActivatableDeactivationOptions.AL.index (args)
       const current_cost = ActivatableDeactivationOptions.AL.cost (args)
 
-      const negativeCost = current_cost * -1 // the entry should be removed
+      // the entry should be removed
+      const negativeCost = current_cost * -1
 
       const mwiki_entry =
         bind (getWikiEntry (getWiki (state)) (current_id))
@@ -240,19 +254,20 @@ export const removeDisAdvantage =
                                                    (is_disadvantage)
                                                    (hero)
                                                    (ap)
+                                                   (Advantage.AL.id (wiki_entry))
                                                    (negativeCost))
 
         const successFn = () => {
           const color: Maybe<Pair<number, number>> =
-            current_id === "DISADV_45"
-            && elem (1)
-                    (pipe_ (
-                      hero_entry,
-                      ActivatableDependent.A.active,
-                      subscriptF (current_index),
-                      bindF (ActiveObject.A.sid),
-                      misNumberM
-                    ))
+            current_id === DisadvantageId.Stigma
+            && Maybe.any (List.elemF (List (1, 3)))
+                         (pipe_ (
+                           hero_entry,
+                           ActivatableDependent.A.active,
+                           subscriptF (current_index),
+                           bindF (ActiveObject.A.sid),
+                           misNumberM
+                         ))
               ? bind (getRace (state, { hero }))
                      (race => {
                        const mrace_var = getCurrentRaceVariant (state)
@@ -297,13 +312,13 @@ export const removeDisAdvantage =
         }
 
         if (isJust (mmissingAPForDisAdvantage)) {
-          handleMissingAPForDisAdvantage (l10n)
-                                         (successFn)
-                                         (hero)
-                                         (fromJust (mmissingAPForDisAdvantage))
-                                         (entryType)
-                                         (is_disadvantage)
-                                         (dispatch)
+          await handleMissingAPForDisAdvantage (l10n)
+                                               (successFn)
+                                               (hero)
+                                               (fromJust (mmissingAPForDisAdvantage))
+                                               (entryType)
+                                               (is_disadvantage)
+                                               (dispatch)
         }
       }
     }
@@ -324,8 +339,8 @@ export const setDisAdvantageLevel =
   (l10n: L10nRecord) =>
   (current_id: string) =>
   (current_index: number) =>
-  (next_level: number): ReduxAction =>
-  (dispatch, getState) => {
+  (next_level: number): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
 
     const mhero = getCurrentHeroPresent (state)
@@ -400,6 +415,7 @@ export const setDisAdvantageLevel =
                                                      (is_disadvantage)
                                                      (hero)
                                                      (ap)
+                                                     (Advantage.AL.id (wiki_entry))
                                                      (diff_cost))
 
           const successFn = () => {
@@ -426,13 +442,13 @@ export const setDisAdvantageLevel =
           }
 
           if (isJust (mmissingAPForDisAdvantage)) {
-            handleMissingAPForDisAdvantage (l10n)
-                                           (successFn)
-                                           (hero)
-                                           (fromJust (mmissingAPForDisAdvantage))
-                                           (entryType)
-                                           (is_disadvantage)
-                                           (dispatch)
+            await handleMissingAPForDisAdvantage (l10n)
+                                                 (successFn)
+                                                 (hero)
+                                                 (fromJust (mmissingAPForDisAdvantage))
+                                                 (entryType)
+                                                 (is_disadvantage)
+                                                 (dispatch)
           }
         }
       }

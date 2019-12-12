@@ -6,17 +6,18 @@
 
 import { on } from "./Function";
 import { Internals } from "./Internals";
-import { consF, List } from "./List";
+import { RecordIBase } from "./Record";
 import { show } from "./Show";
 import { curry, Pair } from "./Tuple";
+import { curryN } from "./Tuple/Curry";
 
-import Some = Internals.Some
 import Maybe = Internals.Maybe
 import Record = Internals.Record
 import OrderedMap = Internals.OrderedMap
 import OrderedSet = Internals.OrderedSet
 import Map = Internals.Map
 import isTip = Internals.isTip
+import List = Internals.List
 
 const flengthMap = (xs: OrderedMap<any, any>): number => xs .value .size
 
@@ -114,15 +115,10 @@ export const equals =
     if (Internals.isRecord (x1)) {
       if (Internals.isRecord (x2)) {
         return flength (x1 .keys) === flength (x2 .keys)
-          && all
-            (key => elem (key) (x2 .keys)
-              && equals (getRecordField<typeof x1["defaultValues"]>
-                          (key as string)
-                          (x1))
-                        (getRecordField<typeof x2["defaultValues"]>
-                          (key as string)
-                          (x2)))
-            (x1 .keys)
+          && all (key => elem (key) (x2 .keys)
+                   && equals (getRecordField<any> (key as string) (x1 as Record<any>))
+                             (getRecordField<any> (key as string) (x2 as Record<any>)))
+                 (x1 .keys)
       }
 
       return false
@@ -201,7 +197,7 @@ const size = (mp: Map<any, any>) => isTip (mp) ? 0 : mp .size
  */
 const assocs =
   <K, A> (mp: Map<K, A>): List<Pair<K, A>> =>
-    foldrWithKey<K, A, List<Pair<K, A>>> (curry (consF)) (List ()) (mp)
+    foldrWithKey<K, A, List<Pair<K, A>>> (curry (curryN (Internals.Cons))) (List ()) (mp)
 
 // const equalsMap = (mp1: Map<any, any>) => (mp2: Map<any, any>): boolean =>
 //   isTip (mp1) === isTip (mp2)
@@ -222,10 +218,10 @@ export type equals<A> = (x1: A) => (x2: A) => boolean
  * Returns if both given values are not equal.
  */
 export const notEquals =
-  <A extends Some> (m1: A) => (m2: A): boolean =>
+  <A> (m1: A) => (m2: A): boolean =>
     !equals (m1) (m2)
 
-const getRecordField = <A> (key: keyof A) => (r: Record<A>) => {
+const getRecordField = <A extends RecordIBase<any>> (key: keyof A) => (r: Record<A>) => {
   if (elem (key as string) (r .keys)) {
     const specifiedValue = r .values [key]
 

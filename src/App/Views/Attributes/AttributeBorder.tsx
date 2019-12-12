@@ -13,16 +13,21 @@ export interface AttributeBorderProps {
   value: number | string
 }
 
-export function AttributeBorder (props: AttributeBorderProps) {
+export const AttributeBorder: React.FC<AttributeBorderProps> = props => {
   const { children, className, label, tooltip, tooltipMargin, value } = props
 
-  const valueElement = tooltip ? (
-    <TooltipToggle content={tooltip} margin={tooltipMargin}>
+  const valueElement =
+    tooltip === undefined
+    ? (
       <div className="value"><div className="value-inner"><div>{value}</div></div></div>
-    </TooltipToggle>
-  ) : (
-    <div className="value"><div className="value-inner"><div>{value}</div></div></div>
-  )
+    )
+    : (
+      <TooltipToggle
+        content={tooltip}
+        margin={tooltipMargin}
+        target={<div className="value"><div className="value-inner"><div>{value}</div></div></div>}
+        />
+    )
 
   return (
     <div className={classListMaybe (List (Just ("attr"), Maybe (className)))}>

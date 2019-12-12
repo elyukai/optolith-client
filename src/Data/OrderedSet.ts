@@ -284,6 +284,7 @@ export const all =
 export const notElem = <A> (e: A) => pipe (elem<A> (e), not)
 
 interface Find {
+
   /**
    * `find :: (a -> Bool) -> Set a -> Maybe a`
    *
@@ -292,6 +293,7 @@ interface Find {
    * there is no such element.
    */
   <A, A1 extends A> (pred: (x: A) => x is A1): (xs: OrderedSet<A>) => Maybe<A1>
+
   /**
    * `find :: (a -> Bool) -> Set a -> Maybe a`
    *
@@ -321,7 +323,7 @@ export const find: Find =
  *
  * The empty `Set`.
  */
-export const empty = _OrderedSet (new Set ())
+export const empty: OrderedSet<any> = _OrderedSet (new Set ())
 
 /**
  * `singleton :: a -> Set a`
@@ -441,6 +443,7 @@ export const differenceF =
 // FILTER
 
 interface Filter {
+
   /**
    * `filter :: (a -> Bool) -> Set a -> Set a`
    *

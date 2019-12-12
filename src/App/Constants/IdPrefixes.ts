@@ -1,4 +1,4 @@
-import { Categories } from "./Categories";
+import { Category } from "./Categories";
 
 export enum IdPrefixes {
   ADVANTAGES = "ADV",
@@ -25,23 +25,23 @@ export enum IdPrefixes {
 }
 
 type IdPrefixesByCategory = {
-  [K in Categories]: IdPrefixes
+  [K in Category]: IdPrefixes
 }
 
 export const IdPrefixesByCategory = Object.freeze<IdPrefixesByCategory> ({
-  [Categories.ADVANTAGES]: IdPrefixes.ADVANTAGES,
-  [Categories.ATTRIBUTES]: IdPrefixes.ATTRIBUTES,
-  [Categories.BLESSINGS]: IdPrefixes.BLESSINGS,
-  [Categories.CANTRIPS]: IdPrefixes.CANTRIPS,
-  [Categories.COMBAT_TECHNIQUES]: IdPrefixes.COMBAT_TECHNIQUES,
-  [Categories.CULTURES]: IdPrefixes.CULTURES,
-  [Categories.DISADVANTAGES]: IdPrefixes.DISADVANTAGES,
-  [Categories.LITURGIES]: IdPrefixes.LITURGICAL_CHANTS,
-  [Categories.PROFESSION_VARIANTS]: IdPrefixes.PROFESSION_VARIANTS,
-  [Categories.PROFESSIONS]: IdPrefixes.PROFESSIONS,
-  [Categories.RACE_VARIANTS]: IdPrefixes.RACE_VARIANTS,
-  [Categories.RACES]: IdPrefixes.RACES,
-  [Categories.SPECIAL_ABILITIES]: IdPrefixes.SPECIAL_ABILITIES,
-  [Categories.SPELLS]: IdPrefixes.SPELLS,
-  [Categories.TALENTS]: IdPrefixes.SKILLS,
+  [Category.ADVANTAGES]: IdPrefixes.ADVANTAGES,
+  [Category.ATTRIBUTES]: IdPrefixes.ATTRIBUTES,
+  [Category.BLESSINGS]: IdPrefixes.BLESSINGS,
+  [Category.CANTRIPS]: IdPrefixes.CANTRIPS,
+  [Category.COMBAT_TECHNIQUES]: IdPrefixes.COMBAT_TECHNIQUES,
+  [Category.CULTURES]: IdPrefixes.CULTURES,
+  [Category.DISADVANTAGES]: IdPrefixes.DISADVANTAGES,
+  [Category.LITURGICAL_CHANTS]: IdPrefixes.LITURGICAL_CHANTS,
+  [Category.PROFESSION_VARIANTS]: IdPrefixes.PROFESSION_VARIANTS,
+  [Category.PROFESSIONS]: IdPrefixes.PROFESSIONS,
+  [Category.RACE_VARIANTS]: IdPrefixes.RACE_VARIANTS,
+  [Category.RACES]: IdPrefixes.RACES,
+  [Category.SPECIAL_ABILITIES]: IdPrefixes.SPECIAL_ABILITIES,
+  [Category.SPELLS]: IdPrefixes.SPELLS,
+  [Category.SKILLS]: IdPrefixes.SKILLS,
 })

@@ -17,7 +17,13 @@ export interface ApTooltipProps {
 const APCA = AdventurePointsCategories.A
 
 export function ApTooltip (props: ApTooltipProps) {
-  const { l10n, adventurePoints: ap } = props
+  const {
+    l10n,
+    adventurePoints: ap,
+    maximumForMagicalAdvantagesDisadvantages,
+    isSpellcaster,
+    isBlessedOne,
+  } = props
 
   return (
     <div className="ap-details">
@@ -39,7 +45,7 @@ export function ApTooltip (props: ApTooltipProps) {
                          ("apspentonmagicadvantages")
                          (List (
                            APCA.spentOnMagicalAdvantages (ap),
-                           Maybe.sum (props.maximumForMagicalAdvantagesDisadvantages)
+                           Maybe.sum (maximumForMagicalAdvantagesDisadvantages)
                          ))
             : null}
         </span>
@@ -61,7 +67,7 @@ export function ApTooltip (props: ApTooltipProps) {
                          ("apspentonmagicdisadvantages")
                          (List (
                            APCA.spentOnMagicalDisadvantages (ap),
-                           Maybe.sum (props.maximumForMagicalAdvantagesDisadvantages)
+                           Maybe.sum (maximumForMagicalAdvantagesDisadvantages)
                          ))
             : null}
         </span>
@@ -79,11 +85,10 @@ export function ApTooltip (props: ApTooltipProps) {
           {translateP (l10n) ("apspentonrace") (List (APCA.spentOnRace (ap), 80))}
         </span>
         {maybeRNull ((spentOnProfession: number) => (
-                        <span>
-                          {translateP (l10n) ("apspentonprofession") (List (spentOnProfession, 80))}
-                        </span>
-                      )
-                    )
+                      <span>
+                        {translateP (l10n) ("apspentonprofession") (List (spentOnProfession, 80))}
+                      </span>
+                    ))
                     (APCA.spentOnProfession (ap))}
         <span>
           {translateP (l10n)
@@ -100,41 +105,41 @@ export function ApTooltip (props: ApTooltipProps) {
                       ("apspentoncombattechniques")
                       (List (APCA.spentOnCombatTechniques (ap)))}
         </span>
-        {props.isSpellcaster
+        {isSpellcaster
           ? (
             <span>
-                {translateP (l10n)
-                            ("apspentonspells")
-                            (List (APCA.spentOnSpells (ap)))}
-              </span>
-            )
+              {translateP (l10n)
+                          ("apspentonspells")
+                          (List (APCA.spentOnSpells (ap)))}
+            </span>
+          )
           : null}
-        {props.isSpellcaster
+        {isSpellcaster
           ? (
-              <span>
-                {translateP (l10n)
-                            ("apspentoncantrips")
-                            (List (APCA.spentOnCantrips (ap)))}
-              </span>
-            )
+            <span>
+              {translateP (l10n)
+                          ("apspentoncantrips")
+                          (List (APCA.spentOnCantrips (ap)))}
+            </span>
+          )
           : null}
-        {props.isBlessedOne
+        {isBlessedOne
           ? (
-              <span>
-                {translateP (l10n)
-                            ("apspentonliturgicalchants")
-                            (List (APCA.spentOnLiturgicalChants (ap)))}
-              </span>
-            )
+            <span>
+              {translateP (l10n)
+                          ("apspentonliturgicalchants")
+                          (List (APCA.spentOnLiturgicalChants (ap)))}
+            </span>
+          )
           : null}
-        {props.isBlessedOne
+        {isBlessedOne
           ? (
-              <span>
-                {translateP (l10n)
-                            ("apspentonblessings")
-                            (List (APCA.spentOnBlessings (ap)))}
-              </span>
-            )
+            <span>
+              {translateP (l10n)
+                          ("apspentonblessings")
+                          (List (APCA.spentOnBlessings (ap)))}
+            </span>
+          )
           : null}
         <span>
           {translateP (l10n)

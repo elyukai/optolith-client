@@ -1,11 +1,13 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
+import { ident } from "../../../../Data/Function";
 import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
-import { ensure, fromMaybeR, mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { consF, elem, flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
+import { ensure, fromMaybe, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe";
 import { dec } from "../../../../Data/Num";
 import { elems } from "../../../../Data/OrderedSet";
 import { Record } from "../../../../Data/Record";
+import { BlessedTradition } from "../../../Constants/Groups";
 import { AttributeCombined } from "../../../Models/View/AttributeCombined";
 import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../../Models/View/LiturgicalChantWithRequirements";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
@@ -39,6 +41,7 @@ export function LiturgicalChantsSheetLiturgicalChants (
   } = props
 
   const aspectNames = translate (l10n) ("aspectlist")
+  const traditionNames = translate (l10n) ("blessedtraditions")
 
   return (
     <TextBox
@@ -61,7 +64,7 @@ export function LiturgicalChantsSheetLiturgicalChants (
               {translate (l10n) ("cost")}
             </th>
             <th className="cast-time">
-              {translate (l10n) ("castingtime")}
+              {translate (l10n) ("liturgicaltime")}
             </th>
             <th className="range">
               {translate (l10n) ("range")}
@@ -70,7 +73,7 @@ export function LiturgicalChantsSheetLiturgicalChants (
               {translate (l10n) ("duration")}
             </th>
             <th className="aspect">
-              {translate (l10n) ("property")}
+              {translate (l10n) ("aspect")}
             </th>
             <th className="ic">
               {translate (l10n) ("improvementcost.short")}
@@ -97,7 +100,9 @@ export function LiturgicalChantsSheetLiturgicalChants (
                 return (
                   <tr key={LCWRA_.id (e)}>
                     <td className="name">
-                      <Textfit max={11} min={7} mode="single">{LCWRA_.name (e)}</Textfit>
+                      <Textfit max={11} min={7} mode="single">
+                        {fromMaybe (LCWRA_.name (e)) (LCWRA_.nameShort (e))}
+                      </Textfit>
                     </td>
                     <td className="check">
                       <Textfit max={11} min={7} mode="single">
@@ -136,35 +141,41 @@ export function LiturgicalChantsSheetLiturgicalChants (
                           e,
                           LCWRA_.aspects,
                           mapMaybe (pipe (dec, subscript (aspectNames))),
+                          elem (BlessedTradition.CultOfTheNamelessOne) (LCWRA_.tradition (e))
+                            ? maybe (ident as ident<List<string>>)
+                                    (consF as (x: string) => ident<List<string>>)
+                                    (subscript (traditionNames)
+                                               (BlessedTradition.CultOfTheNamelessOne - 1))
+                            : ident,
                           sortStrings (l10n),
                           intercalate (", ")
                         )}
                       </Textfit>
                     </td>
                     <td className="ic">{getICName (LCWRA_.ic (e))}</td>
-                    <td className="effect"></td>
-                    <td className="ref"></td>
+                    <td className="effect" />
+                    <td className="ref" />
                   </tr>
                 )
               }),
               toArray
             )),
-            fromMaybeR (null)
+            fromMaybe (null as React.ReactNode)
           )}
           {replicateR (21 - Maybe.sum (fmapF (maybeLiturgicalChants) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
-                          <td className="name"></td>
-                          <td className="check"></td>
-                          <td className="value"></td>
-                          <td className="cost"></td>
-                          <td className="cast-time"></td>
-                          <td className="range"></td>
-                          <td className="duration"></td>
-                          <td className="aspect"></td>
-                          <td className="ic"></td>
-                          <td className="effect"></td>
-                          <td className="ref"></td>
+                          <td className="name" />
+                          <td className="check" />
+                          <td className="value" />
+                          <td className="cost" />
+                          <td className="cast-time" />
+                          <td className="range" />
+                          <td className="duration" />
+                          <td className="aspect" />
+                          <td className="ic" />
+                          <td className="effect" />
+                          <td className="ref" />
                         </tr>
                       ))}
         </tbody>

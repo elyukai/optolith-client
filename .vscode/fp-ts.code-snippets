@@ -22,5 +22,35 @@
 			"console.log (showP ($1))"
 		],
 		"description": "Print the result of passing a value to `showP`, which properly indents the stringified value, to the console."
-	}
+	},
+	"TypeScript FP JSDoc template": {
+		"scope": "javascript,typescript,javascriptreact,typescriptreact",
+		"prefix": "fpdoc",
+		"body": [
+			"/**",
+			" * ```haskell",
+			" * $1",
+			" * ```",
+			" *",
+			" * $2",
+			" */$0"
+		],
+		"description": "Generates a FP JSDoc template."
+	},
+	"Maybe Type": {
+		"scope": "javascript,typescript,javascriptreact,typescriptreact",
+		"prefix": "myb",
+		"body": [
+			"Maybe<$1>$0"
+		],
+		"description": "Maybe Type"
+	},
+	"Record Type": {
+		"scope": "javascript,typescript,javascriptreact,typescriptreact",
+		"prefix": "rec",
+		"body": [
+			"Record<$1>$0"
+		],
+		"description": "Record Type"
+	},
 }

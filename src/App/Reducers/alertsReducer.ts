@@ -1,25 +1,25 @@
 import { ident } from "../../Data/Function";
-import { consF, List, tailS } from "../../Data/List";
-import { fromMaybe } from "../../Data/Maybe";
-import { AddAlertAction, RemoveAlertAction } from "../Actions/AlertActions";
+import { dequeue, empty, enqueue, Queue } from "../../Data/Queue";
+import { Record } from "../../Data/Record";
+import { snd } from "../../Data/Tuple";
+import { AddPromptAction, PromptOptions, RemoveAlertAction } from "../Actions/AlertActions";
 import { ActionTypes } from "../Constants/ActionTypes";
-import { Alert } from "../Models/Hero/heroTypeHelpers";
 import { pipe } from "../Utilities/pipe";
 
-type Action = AddAlertAction | RemoveAlertAction
+type Action = AddPromptAction | RemoveAlertAction
 
-export type AlertsState = List<Alert>
+export type AlertsState = Queue<Record<PromptOptions<any>>>
 
-export const AlertsStateDefault: AlertsState = List.empty
+export const AlertsStateDefault: AlertsState = empty
 
 export const alertsReducer =
   (action: Action): ident<AlertsState> => {
     switch (action.type) {
       case ActionTypes.ADD_ALERT:
-        return consF (action.payload)
+        return enqueue (action.payload)
 
       case ActionTypes.REMOVE_ALERT:
-        return pipe (tailS, fromMaybe<AlertsState> (List.empty))
+        return pipe (dequeue, snd)
 
       default:
         return ident

@@ -9,6 +9,7 @@ import { pipe_ } from "../../Utilities/pipe";
 import { SheetHeaderAttribute } from "./SheetHeaderAttribute";
 
 export interface HeaderValue {
+  "@@name": "HeaderValue"
   id: string
   short: string
   value: Maybe<number | string>

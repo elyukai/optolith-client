@@ -13,8 +13,8 @@ import { getFilteredInactiveSpecialAbilities } from "../Selectors/combinedActiva
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
 import { getInactiveSpecialAbilitiesFilterText, getSpecialAbilitiesFilterText, getWikiSpecialAbilities } from "../Selectors/stateSelectors";
 import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from "../Selectors/uisettingsSelectors";
+import { SpecialAbilitiesSortOptions } from "../Utilities/Raw/JSON/Config";
 import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnProps, SpecialAbilitiesStateProps } from "../Views/SpecialAbilities/SpecialAbilities";
-import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (
   state: AppStateRecord,
@@ -35,20 +35,20 @@ const mapDispatchToProps = (
   dispatch: ReduxDispatch,
   { l10n }: SpecialAbilitiesOwnProps
 ): SpecialAbilitiesDispatchProps => ({
-  setSortOrder (sortOrder: SortNames) {
+  setSortOrder (sortOrder: SpecialAbilitiesSortOptions) {
     dispatch (SpecialAbilitiesActions.setSpecialAbilitiesSortOrder (sortOrder))
   },
   switchActiveItemHints () {
     dispatch (ConfigActions.switchEnableActiveItemHints ())
   },
-  addToList (args: Record<ActivatableActivationOptions>) {
-    dispatch (SpecialAbilitiesActions.addSpecialAbility (l10n) (args))
+  async addToList (args: Record<ActivatableActivationOptions>) {
+    await dispatch (SpecialAbilitiesActions.addSpecialAbility (l10n) (args))
   },
   removeFromList (args: Record<ActivatableDeactivationOptions>) {
     dispatch (SpecialAbilitiesActions.removeSpecialAbility (args))
   },
-  setLevel (id: string, index: number, level: number) {
-    dispatch (SpecialAbilitiesActions.setSpecialAbilityLevel (l10n) (id) (index) (level))
+  async setLevel (id: string, index: number, level: number) {
+    await dispatch (SpecialAbilitiesActions.setSpecialAbilityLevel (l10n) (id) (index) (level))
   },
   setFilterText (filterText: string) {
     dispatch (SpecialAbilitiesActions.setActiveSpecialAbilitiesFilterText (filterText))

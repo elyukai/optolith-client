@@ -1,9 +1,10 @@
+import { Type, TypeName } from "./Data";
+import { RecordIBase } from "./Record";
+
 export namespace Internals {
   export type Either<A, B> = Left<A> | Right<B>
   export type List<A> = Internals.Nil | Internals.Cons<A>
-  export type Maybe<A extends Some> = Internals.Just<A> | Internals.Nothing
-  // tslint:disable-next-line: interface-over-type-literal
-  export type Some = {}
+  export type Maybe<A> = Internals.Just<A> | Internals.Nothing
   export type Nullable = null | undefined
 
   export interface OrderedMap<K, A> extends Internals.OrderedMapPrototype<K, A> {
@@ -20,17 +21,13 @@ export namespace Internals {
     [key: string]: any
   }
 
-  export interface Record<A extends RecordBase> extends RecordPrototype {
+  export interface Record<A extends RecordIBase<any>> extends RecordPrototype {
     readonly values: Readonly<Required<A>>
     readonly defaultValues: Readonly<A>
     readonly keys: OrderedSet<string>
     readonly unique: symbol
-    readonly name?: string
+    readonly name: A["@@name"]
     readonly prototype: RecordPrototype
-  }
-
-  export interface IO<A> extends IOPrototype {
-    readonly f: () => Promise<A>
   }
 
   export interface Tuple<A extends any[]> extends Internals.TuplePrototype {
@@ -42,25 +39,27 @@ export namespace Internals {
 
   // Prototypes
 
-  interface ConstPrototype {
+  interface ConstPrototype extends Type<TypeName.Const> {
     readonly isConst: true
   }
 
   const ConstPrototype =
     Object.freeze<ConstPrototype> ({
       isConst: true,
+      "@@type": TypeName.Const,
     })
 
-  interface IdentityPrototype {
+  interface IdentityPrototype extends Type<TypeName.Identity> {
     readonly isIdentity: true
   }
 
   const IdentityPrototype =
     Object.freeze<IdentityPrototype> ({
       isIdentity: true,
+      "@@type": TypeName.Identity,
     })
 
-  interface LeftPrototype {
+  interface LeftPrototype extends Type<TypeName.Left> {
     readonly isLeft: true
     readonly isRight: false
   }
@@ -69,9 +68,10 @@ export namespace Internals {
     Object.freeze<LeftPrototype> ({
       isLeft: true,
       isRight: false,
+      "@@type": TypeName.Left,
     })
 
-  interface RightPrototype {
+  interface RightPrototype extends Type<TypeName.Right> {
     readonly isLeft: false
     readonly isRight: true
   }
@@ -80,9 +80,10 @@ export namespace Internals {
     Object.freeze<RightPrototype> ({
       isLeft: false,
       isRight: true,
+      "@@type": TypeName.Right,
     })
 
-  interface ListPrototype<A> {
+  interface ListPrototype<A> extends Type<TypeName.List> {
     readonly isList: true
     [Symbol.iterator] (): IterableIterator<A>
   }
@@ -90,7 +91,7 @@ export namespace Internals {
   const ListPrototype =
     Object.freeze<ListPrototype<any>> ({
       isList: true,
-      *[Symbol.iterator] () {
+      * [Symbol.iterator] () {
         // tslint:disable-next-line: no-this-assignment
         let current = this as List<any>
 
@@ -99,9 +100,10 @@ export namespace Internals {
           current = current .xs
         }
       },
+      "@@type": TypeName.List,
     })
 
-  interface JustPrototype {
+  interface JustPrototype extends Type<TypeName.Just> {
     readonly isJust: true
     readonly isNothing: false
   }
@@ -110,9 +112,10 @@ export namespace Internals {
     Object.freeze<JustPrototype> ({
       isJust: true,
       isNothing: false,
+      "@@type": TypeName.Just,
     })
 
-  interface NothingPrototype extends Object {
+  interface NothingPrototype extends Type<TypeName.Nothing> {
     readonly isJust: false
     readonly isNothing: true
   }
@@ -121,9 +124,10 @@ export namespace Internals {
     Object.freeze<NothingPrototype> ({
       isJust: false,
       isNothing: true,
+      "@@type": TypeName.Nothing,
     })
 
-  export interface OrderedMapPrototype<K, A> {
+  export interface OrderedMapPrototype<K, A> extends Type<TypeName.OrderedMap> {
     [Symbol.iterator] (): IterableIterator<[K, A]>
     readonly isOrderedMap: true
   }
@@ -134,9 +138,10 @@ export namespace Internals {
           return this .value [Symbol.iterator] ()
         },
         isOrderedMap: true,
+        "@@type": TypeName.OrderedMap,
     })
 
-  export interface OrderedSetPrototype<A> {
+  export interface OrderedSetPrototype<A> extends Type<TypeName.OrderedSet> {
     [Symbol.iterator] (): IterableIterator<A>
     readonly isOrderedSet: true
   }
@@ -147,6 +152,7 @@ export namespace Internals {
         return this .value [Symbol.iterator] ()
       },
       isOrderedSet: true,
+      "@@type": TypeName.OrderedSet,
     })
 
   export interface PairPrototype {
@@ -158,31 +164,24 @@ export namespace Internals {
       isPair: true,
     })
 
-  export interface RecordPrototype {
+  export interface RecordPrototype extends Type<TypeName.Record> {
     readonly isRecord: true
   }
 
   export const RecordPrototype =
     Object.freeze<RecordPrototype> ({
       isRecord: true,
+      "@@type": TypeName.Record,
     })
 
-  export interface IOPrototype {
-    readonly isIO: true
-  }
-
-  export const IOPrototype =
-    Object.freeze<IOPrototype> ({
-      isIO: true,
-    })
-
-  export interface TuplePrototype {
+  export interface TuplePrototype extends Type<TypeName.Tuple> {
     readonly isTuple: true
   }
 
   const TuplePrototype =
     Object.freeze<TuplePrototype> ({
       isTuple: true,
+      "@@type": TypeName.Tuple,
     })
 
 
@@ -190,6 +189,7 @@ export namespace Internals {
 
   export interface Const<A, B> extends ConstPrototype {
     readonly value: A
+
     /**
      * No actual field!
      */
@@ -304,7 +304,33 @@ export namespace Internals {
         }
       )
 
-  export interface Just<A extends Some> extends JustPrototype {
+  /**
+   * `List :: (...a) -> [a]`
+   *
+   * Creates a new `List` instance from the passed arguments.
+   */
+  export const List =
+    <A> (...values: A[]): List<A> => {
+      if (values .length === 0) {
+        return Nil
+      }
+
+      let h: List<A> = Nil
+
+      for (let i = 0; i < values.length; i++) {
+        const x = values[values.length - 1 - i]
+
+        h = Cons (x, h)
+      }
+
+      return h
+
+      // const [_head, ..._tail] = values
+
+      // return Cons (_head, List (..._tail))
+    }
+
+  export interface Just<A> extends JustPrototype {
     readonly value: A
   }
 
@@ -313,21 +339,16 @@ export namespace Internals {
    *
    * Creates a new `Just` from the passed value.
    */
-  export const Just = <A extends Some> (x: A): Just<A> => {
-    if (x !== null && x !== undefined) {
-      return Object.create (
-        JustPrototype,
-        {
-          value: {
-            value: x,
-            enumerable: true,
-          },
-        }
-      )
-    }
-
-    throw new TypeError ("Cannot create a Just from a nullable value.")
-  }
+  export const Just = <A> (x: A): Just<A> =>
+    Object.create (
+      JustPrototype,
+      {
+        value: {
+          value: x,
+          enumerable: true,
+        },
+      }
+    )
 
   export interface Nothing extends NothingPrototype { }
 
@@ -337,6 +358,10 @@ export namespace Internals {
    * The empty `Maybe`.
    */
   export const Nothing: Nothing = Object.create (NothingPrototype)
+
+  export const Maybe =
+    <A> (x: A | Nullable): Maybe<A> =>
+      x !== null && x !== undefined ? Just (x) : Nothing
 
   export const _OrderedMap =
     <K, A> (x: ReadonlyMap<K, A>): OrderedMap<K, A> =>
@@ -357,7 +382,7 @@ export namespace Internals {
    */
   export const mapFromArray =
     (show: (x: any) => string) =>
-    <K, A> (xs: ReadonlyArray<[K, A]>): OrderedMap<K, A> => {
+    <K, A> (xs: readonly [K, A][]): OrderedMap<K, A> => {
       if (Array.isArray (xs)) {
         return _OrderedMap (new Map (xs))
       }
@@ -386,7 +411,7 @@ export namespace Internals {
    */
   export const setFromArray =
     (show: (x: any) => string) =>
-    <A> (xs: ReadonlyArray<A>): OrderedSet<A> => {
+    <A> (xs: readonly A[]): OrderedSet<A> => {
       if (Array.isArray (xs)) {
         return _OrderedSet (new Set (xs))
       }
@@ -411,21 +436,6 @@ export namespace Internals {
           },
         }
       )
-
-  export const IO = <A> (f: () => Promise<A>): IO<A> => {
-    if (typeof f === "function") {
-      return Object.create (
-        Internals.IOPrototype,
-        {
-          f: {
-            value: f,
-          },
-        }
-      )
-    }
-
-    throw new TypeError ("Cannot create an IO action from a value that is not a function.")
-  }
 
   export const _Tuple =
     <A extends any[]> (...values: A): Tuple<A> => {
@@ -515,7 +525,7 @@ export namespace Internals {
    * `Just _`.
    */
   export const isJust =
-    <A extends Some> (x: Maybe<A>): x is Just<A> =>
+    <A> (x: Maybe<A>): x is Just<A> =>
       Object.getPrototypeOf (x) === JustPrototype
 
   /**
@@ -523,7 +533,7 @@ export namespace Internals {
    *
    * The `isNothing` function returns `true` if its argument is `Nothing`.
    */
-  export const isNothing = (x: Maybe<Some>): x is Nothing => x === Nothing
+  export const isNothing = (x: Maybe<any>): x is Nothing => x === Nothing
 
   /**
    * `isMaybe :: a -> Bool`
@@ -531,7 +541,7 @@ export namespace Internals {
    * The `isMaybe` function returns `True` if its argument is a `Maybe`.
    */
   export const isMaybe =
-    <A, A0 extends Some>(x: A | Maybe<A0>): x is Maybe<A0> =>
+    <A, A0>(x: A | Maybe<A0>): x is Maybe<A0> =>
       typeof x === "object"
       && x !== null
       && (x === Nothing || Object.getPrototypeOf (x) === JustPrototype)
@@ -566,17 +576,8 @@ export namespace Internals {
    * @param x The value to test.
    */
   export const isRecord =
-    (x: any): x is Record<any> =>
+    <A, I extends RecordIBase<any>>(x: A | Record<I>): x is Record<I> =>
       typeof x === "object" && x !== null && Object.getPrototypeOf (x) === RecordPrototype
-
-  /**
-   * `isIO :: a -> Bool`
-   *
-   * The `isIO` function returns `True` if its argument is an `IO`.
-   */
-  export const isIO =
-    (x: any): x is IO<any> =>
-      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === IOPrototype
 
   /**
    * `isTuple :: a -> Bool`

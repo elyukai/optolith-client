@@ -2,7 +2,7 @@ import * as React from "react";
 import { equals } from "../../../../Data/Eq";
 import { fmap } from "../../../../Data/Functor";
 import { find, intercalate, List, map, toArray } from "../../../../Data/List";
-import { fromMaybeR, mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined";
 import { CombatTechniqueWithAttackParryBase, CombatTechniqueWithAttackParryBaseA_ } from "../../../Models/View/CombatTechniqueWithAttackParryBase";
@@ -82,7 +82,7 @@ export function CombatSheetTechniques (props: CombatSheetTechniquesProps) {
               )),
               toArray
             )),
-            fromMaybeR (null)
+            fromMaybe (null as React.ReactNode)
           )}
         </tbody>
       </table>

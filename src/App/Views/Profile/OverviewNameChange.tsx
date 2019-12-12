@@ -1,5 +1,5 @@
 import * as React from "react";
-import { InputKeyEvent, InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
+import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers";
 import { IconButton } from "../Universal/IconButton";
 import { TextField } from "../Universal/TextField";
 
@@ -9,44 +9,44 @@ interface Props {
   change (name: string): void
 }
 
-interface State {
-  name: string
-}
+export const OverviewNameChange: React.FC<Props> = props => {
+  const { name: defaultName, change, cancel } = props
 
-export class OverviewNameChange extends React.Component<Props, State> {
-  state = {
-    name: this.props.name,
-  }
+  const [name, setName] = React.useState (defaultName)
 
-  change = () => this.props.change (this.state.name)
-
-  handleEnter = (event: InputKeyEvent) => {
-    if (event.charCode === 13 && this.state.name !== "") {
-      this.change ()
-    }
-  }
-
-  handleInput = (event: InputTextEvent) => this.setState (() => ({ name: event.target.value }))
-
-  render () {
-    return (
-      <div className="change-name">
-        <TextField
-          value={this.state.name}
-          onChange={this.handleInput}
-          onKeyDown={this.handleEnter}
-          autoFocus
-          />
-        <IconButton
-          icon="&#xE90a;"
-          onClick={this.change}
-          disabled={this.state.name === ""}
-          />
-        <IconButton
-          icon="&#xE915;"
-          onClick={this.props.cancel}
-          />
-      </div>
+  const handleSubmit =
+    React.useCallback (
+      () => change (name),
+      [change, name]
     )
-  }
+
+  const handleEnter =
+    React.useCallback (
+      (event: InputKeyEvent) => {
+        if (event.charCode === 13 && name !== "") {
+          change (name)
+        }
+      },
+      [change, name]
+    )
+
+  return (
+    <div className="change-name">
+      <TextField
+        value={name}
+        onChange={setName}
+        onKeyDown={handleEnter}
+        autoFocus
+        />
+      <IconButton
+        icon="&#xE90a;"
+        onClick={handleSubmit}
+        disabled={name === ""}
+        />
+      <IconButton
+        icon="&#xE915;"
+        onClick={cancel}
+        />
+    </div>
+  )
 }

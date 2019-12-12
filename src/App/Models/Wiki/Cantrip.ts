@@ -1,22 +1,26 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
+import { Property } from "../../Constants/Groups";
+import { Erratum } from "./sub/Errata";
 import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Cantrip {
+  "@@name": "Cantrip"
   id: string
   name: string
-  property: number
+  property: Property
   tradition: List<number>
-  category: Categories
+  category: Category
   effect: string
   range: string
   duration: string
   target: string
   note: Maybe<string>
   src: List<Record<SourceLink>>
+  errata: List<Record<Erratum>>
 }
 
 export const Cantrip =
@@ -24,16 +28,17 @@ export const Cantrip =
               <Cantrip> ({
                 id: "",
                 name: "",
-                property: 0,
+                property: Property.AntiMagic,
                 tradition: List.empty,
-                category: Categories.CANTRIPS,
+                category: Category.CANTRIPS,
                 effect: "",
                 range: "",
                 duration: "",
                 target: "",
                 note: Nothing,
                 src: List.empty,
+                errata: List (),
               })
 
 export const isCantrip =
-  (r: EntryWithCategory) => Cantrip.AL.category (r) === Categories.CANTRIPS
+  (r: EntryWithCategory) => Cantrip.AL.category (r) === Category.CANTRIPS

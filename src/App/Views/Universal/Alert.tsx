@@ -1,94 +1,82 @@
-import { remote } from "electron";
-import * as localShortcut from "electron-localshortcut";
 import * as React from "react";
-import { AnyAction } from "redux";
-import { Maybe, orN } from "../../../Data/Maybe";
-import { ReduxDispatch } from "../../Actions/Actions";
-import { Alert as AlertOptions, AlertButton, ViewAlertButton } from "../../Models/Hero/heroTypeHelpers";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { Dialog } from "./DialogNew";
+import { flength, map, toArray } from "../../../Data/List";
+import { fromJust, isJust, Just, listToMaybe, Maybe, maybeToUndefined, Nothing } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
+import { PromptButton, PromptOptions } from "../../Actions/AlertActions";
+import { addKeybinding, removeKeybinding } from "../../Utilities/Keybindings";
+import { BorderButtonProps } from "./BorderButton";
+import { Dialog } from "./Dialog";
+
+const POA = PromptOptions.A
+const PBA = PromptButton.A
 
 export interface AlertProps {
-  l10n: L10nRecord
-  options: Maybe<AlertOptions>
+  options: Maybe<Record<PromptOptions<any>>>
   close (): void
-  dispatch: ReduxDispatch
 }
 
-export function Alert (props: AlertProps) {
-  const { close, dispatch, options: maybeOptions, l10n } = props
-  let buttons: ViewAlertButton[] | undefined
-  let message
-  let title
-  let onClose: (() => void) | undefined
+export const Alert: React.FC<AlertProps> = props => {
+  const { close, options: moptions } = props
 
-  if (!Maybe.isJust (maybeOptions)) {
+  if (!Maybe.isJust (moptions)) {
     return null
   }
 
-  const options = Maybe.fromJust (maybeOptions)
+  const options = Maybe.fromJust (moptions)
 
-  const {
-    buttons: buttonsOption = [{ label: "OK", autoWidth: true }],
-    message: messageOption,
-    title: titleOption,
-    confirm,
-    confirmYesNo,
-    onClose: onCloseOption,
-  } = options
+  const mtitle = POA.title (options)
+  const message = POA.message (options)
+  const buttons = POA.buttons (options)
+  const resolve = POA.resolve (options)
 
-  const buttonOptions: AlertButton[] = confirm ? [
-    {
-      label: orN (confirmYesNo) ? translate (l10n) ("yes") : translate (l10n) ("ok"),
-      dispatchOnClick: confirm.resolve,
-    },
-    {
-      label: orN (confirmYesNo) ? translate (l10n) ("no") : translate (l10n) ("cancel"),
-      dispatchOnClick: confirm.reject,
-    },
-  ] : buttonsOption
+  // const {
+  //   buttons: buttonsOption = [{ label: "OK", autoWidth: true }],
+  //   message,
+  //   title,
+  //   confirm,
+  //   confirmYesNo,
+  //   onClose,
+  // } = options
 
-  buttons = buttonOptions .map ((e): ViewAlertButton => {
-    const { dispatchOnClick, ...other } = e
+  const buttonOptions =
+    map ((x: Record<PromptButton<any>>): BorderButtonProps => ({
+          autoWidth: flength (buttons) === 1,
+          label: PBA.label (x),
+          onClick: () => resolve (Just (PBA.response (x))),
+        }))
+        (buttons)
 
-    return { ...other, onClick: () => {
-      if (dispatchOnClick) {
-        dispatch (dispatchOnClick as AnyAction)
-      }
-    }}
-  })
+  const closeEnhanced = (canceled: boolean) => {
+    removeKeybinding ("enter")
 
-  message = messageOption
-  title = titleOption
-  onClose = onCloseOption
-
-  const currentWindow = remote.getCurrentWindow ()
-
-  const closeEnhanced = () => {
-    if (localShortcut.isRegistered (currentWindow, "Enter")) {
-      localShortcut.unregister (currentWindow, "Enter")
+    if (canceled) {
+      resolve (Nothing)
     }
-    if (onClose) {
-      onClose ()
-    }
+
     close ()
   }
 
-  if (buttons.length === 1) {
-    localShortcut.register (currentWindow, "Enter", () => {
-      localShortcut.unregister (currentWindow, "Enter")
-      closeEnhanced ()
+  if (flength (buttons) === 1) {
+    addKeybinding ("enter", () => {
+      removeKeybinding ("enter")
+
+      const mresponse = listToMaybe (buttons)
+
+      if (isJust (mresponse)) {
+        resolve (Just (PBA.response (fromJust (mresponse))))
+      }
+
+      closeEnhanced (false)
     })
   }
 
   return (
     <Dialog
       close={closeEnhanced}
-      buttons={buttons}
+      buttons={toArray (buttonOptions)}
       isOpen={typeof options === "object"}
       className="alert"
-      title={title}
+      title={maybeToUndefined (mtitle)}
       >
       {message}
     </Dialog>

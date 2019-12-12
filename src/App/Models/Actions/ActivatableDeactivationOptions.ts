@@ -1,6 +1,7 @@
 import { fromDefault, makeLenses } from "../../../Data/Record";
 
 export interface ActivatableDeactivationOptions {
+  "@@name": "ActivatableDeactivationOptions"
   id: string
   index: number
   cost: number

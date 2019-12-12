@@ -2,7 +2,7 @@ import { List, NonEmptyList } from "../../../Data/List";
 import { Just, Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { Item } from "../Hero/Item";
 import { CultureCombined } from "../View/CultureCombined";
 import { ProfessionCombined } from "../View/ProfessionCombined";
@@ -23,6 +23,7 @@ import { PactRequirement } from "./prerequisites/PactRequirement";
 import { RequirePrimaryAttribute } from "./prerequisites/PrimaryAttributeRequirement";
 import { RaceRequirement } from "./prerequisites/RaceRequirement";
 import { SexRequirement } from "./prerequisites/SexRequirement";
+import { SocialPrerequisite } from "./prerequisites/SocialPrerequisite";
 import { Profession } from "./Profession";
 import { CantripsSelection } from "./professionSelections/CantripsSelection";
 import { CombatTechniquesSelection } from "./professionSelections/CombatTechniquesSelection";
@@ -41,6 +42,7 @@ import { RaceVariant } from "./RaceVariant";
 import { Skill } from "./Skill";
 import { SpecialAbility } from "./SpecialAbility";
 import { Spell } from "./Spell";
+import { Erratum } from "./sub/Errata";
 import { SelectOption } from "./sub/SelectOption";
 import { SourceLink } from "./sub/SourceLink";
 
@@ -181,6 +183,7 @@ export interface ActivatableBase {
   max: Maybe<number>
   prerequisites: LevelAwarePrerequisites
   prerequisitesText: Maybe<string>
+
   /**
    * 0-based index as key!
    */
@@ -190,8 +193,9 @@ export interface ActivatableBase {
   tiers: Maybe<number>
   select: Maybe<List<Record<SelectOption>>>
   gr: number
-  category: Categories
+  category: Category
   src: List<Record<SourceLink>>
+  errata: List<Record<Erratum>>
 }
 
 export interface AdvantageDisadvantageBase extends ActivatableBase {
@@ -224,10 +228,12 @@ export type Skillish =
 export type SID = string | number | NonEmptyList<number>
 
 export interface ValueOptionalDependency {
+
   /**
    * The skill/spell/chant rating or rather attribute value.
    */
   value: number
+
   /**
    * The entry that created this dependency.
    */
@@ -263,11 +269,19 @@ export type DependentPrerequisite =
   Record<RequireIncreasable> |
   Record<RequirePrimaryAttribute>
 
-export type AllRequirementObjects =
-  Record<RequireActivatable> |
-  Record<RequireIncreasable> |
-  Record<RequirePrimaryAttribute> |
-  Record<SexRequirement> |
-  Record<RaceRequirement> |
-  Record<CultureRequirement> |
-  Record<PactRequirement>
+export type PrerequisitesWithIds = Record<RequireActivatable>
+                                 | Record<RequireIncreasable>
+                                 | Record<RequirePrimaryAttribute>
+                                 | Record<SexRequirement>
+                                 | Record<RaceRequirement>
+                                 | Record<CultureRequirement>
+                                 | Record<PactRequirement>
+
+export type AllRequirementObjects = Record<RequireActivatable>
+                                  | Record<RequireIncreasable>
+                                  | Record<RequirePrimaryAttribute>
+                                  | Record<SexRequirement>
+                                  | Record<RaceRequirement>
+                                  | Record<CultureRequirement>
+                                  | Record<PactRequirement>
+                                  | Record<SocialPrerequisite>

@@ -4,9 +4,11 @@ import { fromDefault, makeLenses, Record } from "../../../../Data/Record";
 import { DropdownOption } from "../../../Views/Universal/Dropdown";
 import { AllRequirementObjects } from "../wikiTypeHelpers";
 import { Application } from "./Application";
+import { Erratum } from "./Errata";
 import { SourceLink } from "./SourceLink";
 
 export interface SelectOption {
+  "@@name": "SelectOption"
   id: string | number
   name: string
   cost: Maybe<number>
@@ -24,6 +26,7 @@ export interface SelectOption {
   applications: Maybe<List<Record<Application>>>
   applicationInput: Maybe<string>
   src: List<Record<SourceLink>>
+  errata: List<Record<Erratum>>
 }
 
 export const SelectOption =
@@ -46,6 +49,7 @@ export const SelectOption =
                 applications: Nothing,
                 applicationInput: Nothing,
                 src: List.empty,
+                errata: List (),
               })
 
 export const SelectOptionL = makeLenses (SelectOption)

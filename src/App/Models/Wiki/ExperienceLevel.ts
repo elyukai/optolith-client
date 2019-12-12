@@ -1,6 +1,7 @@
 import { fromDefault } from "../../../Data/Record";
 
 export interface ExperienceLevel {
+  "@@name": "ExperienceLevel"
   id: string
   name: string
   ap: number

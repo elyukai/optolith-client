@@ -7,8 +7,8 @@ import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
 import { getFilteredSkills, getSkillRating } from "../Selectors/skillsSelectors";
 import { getSkillsFilterText } from "../Selectors/stateSelectors";
 import { getSkillsCultureRatingVisibility, getSkillsSortOrder } from "../Selectors/uisettingsSelectors";
+import { SkillsSortOptions } from "../Utilities/Raw/JSON/Config";
 import { Skills, SkillsDispatchProps, SkillsOwnProps, SkillsStateProps } from "../Views/Skills/Skills";
-import { SortNames } from "../Views/Universal/SortOptions";
 
 const mapStateToProps = (state: AppStateRecord, ownProps: SkillsOwnProps): SkillsStateProps => ({
   attributes: getAttributesForSheet (state, ownProps),
@@ -22,13 +22,13 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SkillsOwnProps): Skill
 
 const mapDispatchToProps =
   (dispatch: ReduxDispatch, { l10n }: SkillsOwnProps): SkillsDispatchProps => ({
-    addPoint (id: string) {
-      dispatch (SkillActions.addSkillPoint (l10n) (id))
+    async addPoint (id: string) {
+      await dispatch (SkillActions.addSkillPoint (l10n) (id))
     },
     removePoint (id: string) {
       dispatch (SkillActions.removeSkillPoint (id))
     },
-    setSortOrder (sortOrder: SortNames) {
+    setSortOrder (sortOrder: SkillsSortOptions) {
       dispatch (SkillActions.setSkillsSortOrder (sortOrder))
     },
     switchRatingVisibility () {

@@ -3,6 +3,7 @@ import { fromDefault, makeLenses } from "../../../../Data/Record";
 import { Pair } from "../../../../Data/Tuple";
 
 export interface SourceLinks {
+  "@@name": "SourceLinks"
   id: string
   pages: List<number | Pair<number, number>>
 }

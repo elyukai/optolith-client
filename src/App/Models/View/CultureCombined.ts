@@ -1,12 +1,14 @@
 import { List } from "../../../Data/List";
 import { fromDefault, Record } from "../../../Data/Record";
+import { Pair } from "../../../Data/Tuple";
 import { pipe } from "../../Utilities/pipe";
 import { Culture } from "../Wiki/Culture";
-import { IncreasableForView } from "./IncreasableForView";
+import { Skill } from "../Wiki/Skill";
 
 export interface CultureCombined {
+  "@@name": "CultureCombined"
   wikiEntry: Record<Culture>
-  mappedCulturalPackageSkills: List<Record<IncreasableForView>>
+  mappedCulturalPackageSkills: List<Pair<Record<Skill>, number>>
 }
 
 export const CultureCombined =

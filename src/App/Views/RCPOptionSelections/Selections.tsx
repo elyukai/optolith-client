@@ -10,6 +10,7 @@ import { adjust, alter, lookup, lookupF, OrderedMap, size } from "../../../Data/
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
 import { first, fst, Pair, second, snd } from "../../../Data/Tuple";
+import { ProfessionId } from "../../Constants/Ids";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Selections as SelectionsInterface } from "../../Models/Hero/heroTypeHelpers";
 import { Rules } from "../../Models/Hero/Rules";
@@ -24,7 +25,6 @@ import { Skill } from "../../Models/Wiki/Skill";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers";
 import { translate } from "../../Utilities/I18n";
-import { prefixProf } from "../../Utilities/IDUtils";
 import { getAllAdjustmentSelections } from "../../Utilities/mergeRcpAdjustmentSelections";
 import { sign } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
@@ -58,7 +58,7 @@ export interface SelectionsDispatchProps {
 export type SelectionsProps = SelectionsStateProps & SelectionsDispatchProps & SelectionsOwnProps
 
 export interface SelectionsState {
-  attributeAdjustment: string
+  attributeAdjustment: Maybe<string>
   useCulturePackage: boolean
   motherTongue: number
   isBuyingMainScriptEnabled: boolean
@@ -70,7 +70,8 @@ export interface SelectionsState {
   languages: OrderedMap<number, number>
   scripts: OrderedMap<number, number>
   skills: OrderedMap<string, number>
-  specialization: Pair<Maybe<number>, string> // first: selection id second: user input
+  // first: selection id, second: user input
+  specialization: Pair<Maybe<number>, string>
   specializationSkillId: Maybe<string>
   terrainKnowledge: Maybe<number>
   selectedUnfamiliarSpell: Maybe<string>
@@ -81,7 +82,7 @@ const PSA = ProfessionSelections.A
 
 export class RCPOptionSelections extends React.Component<SelectionsProps, SelectionsState> {
   state: SelectionsState = {
-    attributeAdjustment: "ATTR_0",
+    attributeAdjustment: Nothing,
     isBuyingMainScriptEnabled: false,
     cantrips: OrderedSet.empty,
     combatTechniquesSecond: OrderedSet.empty,
@@ -99,7 +100,8 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
     selectedUnfamiliarSpell: Nothing,
   }
 
-  setAttributeAdjustment = (option: string) => this.setState ({ attributeAdjustment: option })
+  setAttributeAdjustment = (option: string) =>
+    this.setState ({ attributeAdjustment: Just (option) })
 
   switchIsCulturalPackageEnabled = () => this.setState (
     prevState => ({ useCulturePackage: !prevState .useCulturePackage })
@@ -215,15 +217,21 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
     this.setState ({ selectedUnfamiliarSpell: Just (id) })
 
   assignRCPEntries = (selMap: Record<ProfessionSelections>) => {
-    this.props.setSelections ({
-      ...this.state,
-      map: selMap,
-      specialization:
-        maybe_ <Maybe<string | number>> (() => fst (this.state.specialization))
-                                        (Just as (x: string) => Just<string>)
-                                        (ensure (notNullStr) (snd (this.state.specialization))),
-      unfamiliarSpell: this.state.selectedUnfamiliarSpell,
-    })
+    const { setSelections } = this.props
+    const { attributeAdjustment, specialization, selectedUnfamiliarSpell } = this.state
+
+    if (isJust (attributeAdjustment)) {
+      setSelections ({
+        ...this.state,
+        attributeAdjustment: fromJust (attributeAdjustment),
+        map: selMap,
+        specialization:
+          maybe_ <Maybe<string | number>> (() => fst (specialization))
+                                          (Just as (x: string) => Just<string>)
+                                          (ensure (notNullStr) (snd (specialization))),
+        unfamiliarSpell: selectedUnfamiliarSpell,
+      })
+    }
   }
 
   render () {
@@ -382,8 +390,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                                            fmap (attr => DropdownOption ({
                                                id: Just (AttrA.id (attr)),
                                                name: `${AttrA.name (attr)} ${signed_attr_ajst_val}`,
-                                             })
-                                           )
+                                             }))
                                          ))
                                          (snd (attributeAdjustmentSelection))}
                        />
@@ -414,7 +421,11 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                                                     (isAnyLanguageOrScriptSelected)
                                                     (isBuyingMainScriptEnabled)
                                                     (this.setMainCulturalLiteracy)}
-                     {pipe_ (profession, Profession.A.id, notEquals (prefixProf (0)))
+                     {pipe_ (
+                       profession,
+                       Profession.A.id,
+                       notEquals<string> (ProfessionId.CustomProfession)
+                     )
                        ? <h3>{translate (l10n) ("profession")}</h3>
                        : null}
                      {maybeToNullable (skillSpecialization)}
@@ -430,7 +441,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                        label={translate (l10n) ("complete")}
                        primary
                        disabled={
-                         attributeAdjustment === "ATTR_0"
+                         isNothing (attributeAdjustment)
                          || (isMotherTongueSelectionNeeded && motherTongue === 0)
                          || (
                            isBuyingMainScriptEnabled

@@ -1,11 +1,13 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { Category } from "../../Constants/Categories";
 import { Die } from "./sub/Die";
+import { Erratum } from "./sub/Errata";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface RaceVariant {
+  "@@name": "RaceVariant"
   id: string
   name: string
   commonCultures: List<string>
@@ -21,7 +23,8 @@ export interface RaceVariant {
   eyeColors: Maybe<List<number>>
   sizeBase: Maybe<number>
   sizeRandom: Maybe<List<Record<Die>>>
-  category: Categories
+  category: Category
+  errata: List<Record<Erratum>>
 }
 
 export const RaceVariant =
@@ -42,10 +45,11 @@ export const RaceVariant =
                 eyeColors: Nothing,
                 sizeBase: Nothing,
                 sizeRandom: Nothing,
-                category: Categories.RACE_VARIANTS,
+                category: Category.RACE_VARIANTS,
+                errata: List (),
               })
 
 export const RaceVariantL = makeLenses (RaceVariant)
 
 export const isRaceVariant =
-  (r: EntryWithCategory) => RaceVariant.AL.category (r) === Categories.RACE_VARIANTS
+  (r: EntryWithCategory) => RaceVariant.AL.category (r) === Category.RACE_VARIANTS

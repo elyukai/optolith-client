@@ -1,5 +1,5 @@
 import { List } from "../../Data/List";
-import { bind, bindF, fromJust, isJust, isNothing, join, liftM2 } from "../../Data/Maybe";
+import { bind, bindF, fromJust, isJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { ActionTypes } from "../Constants/ActionTypes";
@@ -14,9 +14,9 @@ import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUti
 import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
 import { pipe_ } from "../Utilities/pipe";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { SpellsSortOptions } from "../Utilities/Raw/JSON/Config";
 import { ReduxAction } from "./Actions";
-import { addAlert } from "./AlertActions";
+import { addAlert, AlertOptions } from "./AlertActions";
 
 export interface ActivateSpellAction {
   type: ActionTypes.ACTIVATE_SPELL
@@ -28,8 +28,8 @@ export interface ActivateSpellAction {
 
 export const addSpell =
   (l10n: L10nRecord) =>
-  (id: string): ReduxAction =>
-  (dispatch, getState) => {
+  (id: string): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
     const wiki_spells = getWikiSpells (state)
     const mhero = getCurrentHeroPresent (state)
@@ -58,10 +58,12 @@ export const addSpell =
         })
       }
       else {
-        dispatch (addAlert ({
-          title: translate (l10n) ("notenoughap"),
+        const opts = AlertOptions ({
+          title: Just (translate (l10n) ("notenoughap")),
           message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
-        }))
+        })
+
+        await dispatch (addAlert (l10n) (opts))
       }
     }
   }
@@ -75,8 +77,8 @@ export interface ActivateCantripAction {
 
 export const addCantrip =
   (l10n: L10nRecord) =>
-  (id: string): ReduxAction =>
-  (dispatch, getState) => {
+  (id: string): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
     const mhero = getCurrentHeroPresent (state)
 
@@ -98,10 +100,12 @@ export const addCantrip =
       })
     }
     else {
-      dispatch (addAlert ({
-        title: translate (l10n) ("notenoughap"),
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
         message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAP))),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
   }
 
@@ -157,8 +161,8 @@ export interface AddSpellPointAction {
 
 export const addSpellPoint =
   (l10n: L10nRecord) =>
-  (id: string): ReduxAction =>
-  (dispatch, getState) => {
+  (id: string): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
     const mhero_spells = getSpells (state)
     const wiki_spells = getWikiSpells (state)
@@ -185,10 +189,12 @@ export const addSpellPoint =
       })
     }
     else {
-      dispatch (addAlert ({
-        title: translate (l10n) ("notenoughap"),
+      const opts = AlertOptions ({
+        title: Just (translate (l10n) ("notenoughap")),
         message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
-      }))
+      })
+
+      await dispatch (addAlert (l10n) (opts))
     }
   }
 
@@ -209,11 +215,11 @@ export const removeSpellPoint = (id: string): RemoveSpellPointAction => ({
 export interface SetSpellsSortOrderAction {
   type: ActionTypes.SET_SPELLS_SORT_ORDER
   payload: {
-    sortOrder: SortNames;
+    sortOrder: SpellsSortOptions;
   }
 }
 
-export const setSpellsSortOrder = (sortOrder: SortNames): SetSpellsSortOrderAction => ({
+export const setSpellsSortOrder = (sortOrder: SpellsSortOptions): SetSpellsSortOrderAction => ({
   type: ActionTypes.SET_SPELLS_SORT_ORDER,
   payload: {
     sortOrder,

@@ -1,5 +1,5 @@
 import { ActionTypes } from "../Constants/ActionTypes";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { CulturesSortOptions, CulturesVisibilityFilter } from "../Utilities/Raw/JSON/Config";
 
 export interface SelectCultureAction {
   type: ActionTypes.SELECT_CULTURE
@@ -18,11 +18,11 @@ export const selectCulture = (id: string): SelectCultureAction => ({
 export interface SetCulturesSortOrderAction {
   type: ActionTypes.SET_CULTURES_SORT_ORDER
   payload: {
-    sortOrder: SortNames;
+    sortOrder: CulturesSortOptions;
   }
 }
 
-export const setSortOrder = (sortOrder: SortNames): SetCulturesSortOrderAction => ({
+export const setSortOrder = (sortOrder: CulturesSortOptions): SetCulturesSortOrderAction => ({
   type: ActionTypes.SET_CULTURES_SORT_ORDER,
   payload: {
     sortOrder,
@@ -32,16 +32,17 @@ export const setSortOrder = (sortOrder: SortNames): SetCulturesSortOrderAction =
 export interface SetCulturesVisibilityFilterAction {
   type: ActionTypes.SET_CULTURES_VISIBILITY_FILTER
   payload: {
-    filter: string;
+    filter: CulturesVisibilityFilter;
   }
 }
 
-export const setVisibilityFilter = (filter: string): SetCulturesVisibilityFilterAction => ({
-  type: ActionTypes.SET_CULTURES_VISIBILITY_FILTER,
-  payload: {
-    filter,
-  },
-})
+export const setVisibilityFilter =
+  (filter: CulturesVisibilityFilter): SetCulturesVisibilityFilterAction => ({
+    type: ActionTypes.SET_CULTURES_VISIBILITY_FILTER,
+    payload: {
+      filter,
+    },
+  })
 
 export interface SwitchCultureValueVisibilityAction {
   type: ActionTypes.SWITCH_CULTURE_VALUE_VISIBILITY

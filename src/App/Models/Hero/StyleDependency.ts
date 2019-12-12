@@ -3,6 +3,8 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses } from "../../../Data/Record";
 
 export interface StyleDependency {
+  "@@name": "StyleDependency"
+
   /**
    * The extended special ability or list of available special abilities.
    */

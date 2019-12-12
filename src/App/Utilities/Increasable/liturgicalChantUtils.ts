@@ -5,6 +5,8 @@ import { and, bindF, elem, ensure, fromJust, isJust, Just, Maybe, maybe, sum } f
 import { gte, inc, min } from "../../../Data/Num";
 import { alter, empty, filter, findWithDefault, foldl, fromArray, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { Aspect, BlessedTradition } from "../../Constants/Groups";
+import { SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
@@ -15,16 +17,18 @@ import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
+import { mapBlessedTradIdToNumId } from "../Activatable/traditionUtils";
 import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies";
-import { getNumericBlessedTraditionIdByInstanceId } from "../IDUtils";
 import { ifElse } from "../ifElse";
 import { pipe } from "../pipe";
 import { isNumber } from "../typeCheckUtils";
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
 
-const { liturgicalChants } = WikiModel.AL
-const { id, tradition, aspects } = LiturgicalChant.AL
-const { value, dependencies } = ActivatableSkillDependent.AL
+const WA = WikiModel.A
+const LCA = LiturgicalChant.A
+const LCAL = LiturgicalChant.AL
+const SAA = SpecialAbility.A
+const ASDA = ActivatableSkillDependent.A
 
 /**
  * Checks if the passed liturgical chant or blessing is valid for the current
@@ -33,10 +37,11 @@ const { value, dependencies } = ActivatableSkillDependent.AL
 export const isOwnTradition =
   (blessedTradition: Record<SpecialAbility>) =>
   (entry: Record<LiturgicalChant> | Record<Blessing>): boolean => {
-    const numeric_tradition_id =
-      fmap (inc) (getNumericBlessedTraditionIdByInstanceId (id (blessedTradition)))
+    const numeric_tradition_id = mapBlessedTradIdToNumId (SAA.id (blessedTradition))
 
-    return any<number> (e => e === 1 || elem (e) (numeric_tradition_id)) (tradition (entry))
+    return any<BlessedTradition> (e => e === BlessedTradition.General
+                                       || elem<BlessedTradition> (e) (numeric_tradition_id))
+                                 (LCAL.tradition (entry))
   }
 
 /**
@@ -50,10 +55,10 @@ const putAspectKnowledgeRestrictionMaximum =
     ifElse<List<number>>
       (cnst (
         // is not nameless tradition
-        id (currentTradition) !== "SA_693"
+        SAA.id (currentTradition) !== SpecialAbilityId.TraditionCultOfTheNamelessOne
 
         // no aspect knowledge active for the current chant
-        && and (fmap (all (notElemF<string | number> (aspects (wikiEntry))))
+        && and (fmap (all (notElemF<string | number> (LCA.aspects (wikiEntry))))
                      (getActiveSelectionsMaybe (aspectKnowledge)))
       ))
       <List<number>>
@@ -72,7 +77,7 @@ export const isLiturgicalChantIncreasable =
   (attributes: OrderedMap<string, Record<AttributeDependent>>) =>
   (exceptionalSkill: Maybe<Record<ActivatableDependent>>) =>
   (aspectKnowledge: Maybe<Record<ActivatableDependent>>): boolean => {
-    const bonus = getExceptionalSkillBonus (id (wikiEntry)) (exceptionalSkill)
+    const bonus = getExceptionalSkillBonus (LCA.id (wikiEntry)) (exceptionalSkill)
 
     const max = pipe (
                        getInitialMaximumList (attributes),
@@ -84,7 +89,7 @@ export const isLiturgicalChantIncreasable =
                      )
                      (wikiEntry)
 
-    return value (stateEntry) < max + bonus
+    return ASDA.value (stateEntry) < max + bonus
   }
 
 /**
@@ -93,22 +98,20 @@ export const isLiturgicalChantIncreasable =
  */
 export const countActiveLiturgicalChantsPerAspect =
   (wiki: OrderedMap<string, Record<LiturgicalChant>>):
-  (hero: OrderedMap<string, Record<ActivatableSkillDependent>>) => OrderedMap<number, number> =>
+  (hero: OrderedMap<string, Record<ActivatableSkillDependent>>) => OrderedMap<Aspect, number> =>
     pipe (
-      filter<Record<ActivatableSkillDependent>> (pipe (value, gte (10))),
-      foldl<Record<ActivatableSkillDependent>, OrderedMap<number, number>>
-        (acc => pipe (
-          id,
-          lookupF (wiki),
-          maybe
-            (acc)
-            (pipe (
-              aspects,
-              foldr<number, OrderedMap<number, number>> (alter (pipe (sum, inc, Just)))
-                                                        (acc)
+      filter (pipe (ASDA.value, gte (10))),
+      foldl ((acc: OrderedMap<Aspect, number>) => pipe (
+              ASDA.id,
+              lookupF (wiki),
+              maybe (acc)
+                    (pipe (
+                      LCA.aspects,
+                      foldr<number, OrderedMap<Aspect, number>> (alter (pipe (sum, inc, Just)))
+                                                                (acc)
+                    ))
             ))
-        ))
-        (empty)
+            (empty)
     )
 
 /**
@@ -119,11 +122,11 @@ const isLiturgicalChantDecreasableByDependencies =
   (state: HeroModelRecord) =>
   (stateEntry: Record<ActivatableSkillDependent>) => {
     const flattenedDependencies =
-      flattenDependencies (wiki) (state) (dependencies (stateEntry))
+      flattenDependencies (wiki) (state) (ASDA.dependencies (stateEntry))
 
-    return value (stateEntry) < 1
+    return ASDA.value (stateEntry) < 1
       ? notElem<number | boolean> (true) (flattenedDependencies)
-      : value (stateEntry) > filterAndMaximumNonNegative (flattenedDependencies)
+      : ASDA.value (stateEntry) > filterAndMaximumNonNegative (flattenedDependencies)
   }
 
 /**
@@ -143,15 +146,15 @@ const isLiturgicalChantDecreasableByAspectKnowledges =
 
         // Check if liturgical chant is part of dependencies of active Aspect Knowledge
         bindF<List<string | number>, List<string | number>>
-          (ensure (any (e => isNumber (e) && List.elem (e) (aspects (wikiEntry))))),
+          (ensure (any (e => isNumber (e) && List.elem (e) (LCA.aspects (wikiEntry))))),
 
         fmap (
           pipe (
             getLowestSumForMatchingAspectKnowledges,
-            thrush (countActiveLiturgicalChantsPerAspect (liturgicalChants (wiki))
+            thrush (countActiveLiturgicalChantsPerAspect (WA.liturgicalChants (wiki))
                                                          (liturgicalChantsStateEntries)),
             thrush (wikiEntry),
-            lowest => value (stateEntry) !== 10 || lowest > 3
+            lowest => ASDA.value (stateEntry) !== 10 || lowest > 3
           )
         )
       )
@@ -166,10 +169,10 @@ const isLiturgicalChantDecreasableByAspectKnowledges =
  */
 const getLowestSumForMatchingAspectKnowledges =
   (activeAspects: List<string | number>) =>
-  (counter: OrderedMap<number, number>) =>
+  (counter: OrderedMap<Aspect, number>) =>
     pipe (
-      aspects,
-      List.foldr<number, number>
+      LCA.aspects,
+      List.foldr<Aspect, number>
         (
           aspect => {
             const counted = lookupF (counter) (aspect)
@@ -203,46 +206,46 @@ export const isLiturgicalChantDecreasable =
 /**
  * Keys are aspects and their value is the respective tradition.
  */
-const traditionsByAspect = fromArray ([
-  [1, 1],
-  [2, 2],
-  [3, 2],
-  [4, 3],
-  [5, 3],
-  [6, 4],
-  [7, 4],
-  [8, 5],
-  [9, 5],
-  [10, 6],
-  [11, 6],
-  [12, 7],
-  [13, 7],
-  [14, 8],
-  [15, 8],
-  [16, 9],
-  [17, 9],
-  [18, 10],
-  [19, 10],
-  [20, 11],
-  [21, 11],
-  [22, 12],
-  [23, 12],
-  [24, 13],
-  [25, 13],
-  [26, 15],
-  [27, 15],
-  [28, 16],
-  [29, 16],
-  [30, 17],
-  [31, 17],
-  [32, 18],
-  [33, 18],
-  [34, 19],
-  [35, 19],
-  [36, 20],
-  [37, 20],
-  [38, 21],
-  [39, 21],
+const traditionsByAspect = fromArray<Aspect, BlessedTradition> ([
+  [Aspect.General, BlessedTradition.General],
+  [Aspect.AntiMagic, BlessedTradition.ChurchOfPraios],
+  [Aspect.Order, BlessedTradition.ChurchOfPraios],
+  [Aspect.Shield, BlessedTradition.ChurchOfRondra],
+  [Aspect.Storm, BlessedTradition.ChurchOfRondra],
+  [Aspect.Death, BlessedTradition.ChurchOfBoron],
+  [Aspect.Dream, BlessedTradition.ChurchOfBoron],
+  [Aspect.Magic, BlessedTradition.ChurchOfHesinde],
+  [Aspect.Knowledge, BlessedTradition.ChurchOfHesinde],
+  [Aspect.Commerce, BlessedTradition.ChurchOfPhex],
+  [Aspect.Shadow, BlessedTradition.ChurchOfPhex],
+  [Aspect.Healing, BlessedTradition.ChurchOfPeraine],
+  [Aspect.Agriculture, BlessedTradition.ChurchOfPeraine],
+  [Aspect.Wind, BlessedTradition.ChurchOfEfferd],
+  [Aspect.Wogen, BlessedTradition.ChurchOfEfferd],
+  [Aspect.Freundschaft, BlessedTradition.ChurchOfTravia],
+  [Aspect.Heim, BlessedTradition.ChurchOfTravia],
+  [Aspect.Jagd, BlessedTradition.ChurchOfFirun],
+  [Aspect.Kaelte, BlessedTradition.ChurchOfFirun],
+  [Aspect.Freiheit, BlessedTradition.ChurchOfTsa],
+  [Aspect.Wandel, BlessedTradition.ChurchOfTsa],
+  [Aspect.Feuer, BlessedTradition.ChurchOfIngerimm],
+  [Aspect.Handwerk, BlessedTradition.ChurchOfIngerimm],
+  [Aspect.Ekstase, BlessedTradition.ChurchOfRahja],
+  [Aspect.Harmonie, BlessedTradition.ChurchOfRahja],
+  [Aspect.Reise, BlessedTradition.ChurchOfAves],
+  [Aspect.Schicksal, BlessedTradition.ChurchOfAves],
+  [Aspect.Hilfsbereitschaft, BlessedTradition.ChurchOfIfirn],
+  [Aspect.Natur, BlessedTradition.ChurchOfIfirn],
+  [Aspect.GuterKampf, BlessedTradition.ChurchOfKor],
+  [Aspect.GutesGold, BlessedTradition.ChurchOfKor],
+  [Aspect.Bildung, BlessedTradition.ChurchOfNandus],
+  [Aspect.Erkenntnis, BlessedTradition.ChurchOfNandus],
+  [Aspect.Kraft, BlessedTradition.ChurchOfSwafnir],
+  [Aspect.Tapferkeit, BlessedTradition.ChurchOfSwafnir],
+  [Aspect.ReissenderStrudel, BlessedTradition.CultOfNuminoru],
+  [Aspect.UnendlicheTiefe, BlessedTradition.CultOfNuminoru],
+  [Aspect.Begierde, BlessedTradition.Levthankult],
+  [Aspect.Rausch, BlessedTradition.Levthankult],
 ])
 
 /**
@@ -251,33 +254,33 @@ const traditionsByAspect = fromArray ([
  * @param aspectId The id used for chants or Aspect Knowledge.
  */
 export const getTraditionOfAspect =
-  (key: number) => findWithDefault (1) (key) (traditionsByAspect)
+  (key: Aspect) => findWithDefault (BlessedTradition.General) (key) (traditionsByAspect)
 
 /**
  * Keys are traditions and their values are their respective aspects
  */
-const aspectsByTradition = fromArray<number, List<number>> ([
-  [1, List.empty],
-  [2, List (2, 3)],
-  [3, List (4, 5)],
-  [4, List (6, 7)],
-  [5, List (8, 9)],
-  [6, List (10, 11)],
-  [7, List (12, 13)],
-  [8, List (14, 15)],
-  [9, List (16, 17)],
-  [10, List (18, 19)],
-  [11, List (20, 21)],
-  [12, List (22, 23)],
-  [13, List (24, 25)],
-  [14, List.empty],
-  [15, List (26, 27)],
-  [16, List (28, 29)],
-  [17, List (30, 31)],
-  [18, List (32, 33)],
-  [19, List (34, 35)],
-  [20, List (36, 37)],
-  [21, List (38, 39)],
+const aspectsByTradition = fromArray<BlessedTradition, List<Aspect>> ([
+  [BlessedTradition.General, List ()],
+  [BlessedTradition.ChurchOfPraios, List (Aspect.AntiMagic, Aspect.Order)],
+  [BlessedTradition.ChurchOfRondra, List (Aspect.Shield, Aspect.Storm)],
+  [BlessedTradition.ChurchOfBoron, List (Aspect.Death, Aspect.Dream)],
+  [BlessedTradition.ChurchOfHesinde, List (Aspect.Magic, Aspect.Knowledge)],
+  [BlessedTradition.ChurchOfPhex, List (Aspect.Commerce, Aspect.Shadow)],
+  [BlessedTradition.ChurchOfPeraine, List (Aspect.Healing, Aspect.Agriculture)],
+  [BlessedTradition.ChurchOfEfferd, List (Aspect.Wind, Aspect.Wogen)],
+  [BlessedTradition.ChurchOfTravia, List (Aspect.Freundschaft, Aspect.Heim)],
+  [BlessedTradition.ChurchOfFirun, List (Aspect.Jagd, Aspect.Kaelte)],
+  [BlessedTradition.ChurchOfTsa, List (Aspect.Freiheit, Aspect.Wandel)],
+  [BlessedTradition.ChurchOfIngerimm, List (Aspect.Feuer, Aspect.Handwerk)],
+  [BlessedTradition.ChurchOfRahja, List (Aspect.Ekstase, Aspect.Harmonie)],
+  [BlessedTradition.CultOfTheNamelessOne, List ()],
+  [BlessedTradition.ChurchOfAves, List (Aspect.Reise, Aspect.Schicksal)],
+  [BlessedTradition.ChurchOfIfirn, List (Aspect.Hilfsbereitschaft, Aspect.Natur)],
+  [BlessedTradition.ChurchOfKor, List (Aspect.GuterKampf, Aspect.GutesGold)],
+  [BlessedTradition.ChurchOfNandus, List (Aspect.Bildung, Aspect.Erkenntnis)],
+  [BlessedTradition.ChurchOfSwafnir, List (Aspect.Kraft, Aspect.Tapferkeit)],
+  [BlessedTradition.CultOfNuminoru, List (Aspect.ReissenderStrudel, Aspect.UnendlicheTiefe)],
+  [BlessedTradition.Levthankult, List (Aspect.Begierde, Aspect.Rausch)],
 ])
 
 /**
@@ -287,6 +290,6 @@ const aspectsByTradition = fromArray<number, List<number>> ([
  * it.
  */
 export const getAspectsOfTradition = pipe (
-  (key: number) => findWithDefault<List<number>> (List.empty) (key) (aspectsByTradition),
-  consF (1)
+  (key: BlessedTradition) => findWithDefault (List<Aspect> ()) (key) (aspectsByTradition),
+  consF<Aspect> (Aspect.General)
 )

@@ -11,6 +11,7 @@ import { Disadvantage } from "./Disadvantage";
 import { ExperienceLevel } from "./ExperienceLevel";
 import { ItemTemplate } from "./ItemTemplate";
 import { LiturgicalChant } from "./LiturgicalChant";
+import { MagicalTradition } from "./MagicalTradition";
 import { Profession } from "./Profession";
 import { ProfessionVariant } from "./ProfessionVariant";
 import { Race } from "./Race";
@@ -22,6 +23,7 @@ import { Spell } from "./Spell";
 export type WikiModelRecord = Record<WikiModel>
 
 export interface WikiModel {
+  "@@name": "Wiki"
   books: OrderedMap<string, Record<Book>>
   experienceLevels: OrderedMap<string, Record<ExperienceLevel>>
   races: OrderedMap<string, Record<Race>>
@@ -40,6 +42,7 @@ export interface WikiModel {
   liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
   blessings: OrderedMap<string, Record<Blessing>>
   itemTemplates: OrderedMap<string, Record<ItemTemplate>>
+  magicalTraditions: OrderedMap<string, Record<MagicalTradition>>
 }
 
 export const WikiModel =
@@ -63,6 +66,7 @@ export const WikiModel =
                 liturgicalChants: OrderedMap.empty,
                 blessings: OrderedMap.empty,
                 itemTemplates: OrderedMap.empty,
+                magicalTraditions: OrderedMap.empty,
               })
 
 export const WikiModelL = makeLenses (WikiModel)

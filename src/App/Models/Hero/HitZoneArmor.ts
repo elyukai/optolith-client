@@ -18,6 +18,7 @@ export interface HitZoneArmorBase {
 }
 
 export interface HitZoneArmor extends HitZoneArmorBase {
+  "@@name": "HitZoneArmor"
   id: string
 }
 

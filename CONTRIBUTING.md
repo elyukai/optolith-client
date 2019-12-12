@@ -1,286 +1,113 @@
 # Contributing
 
-Es gibt ein paar Richtlinien fürs Helfen beim Coden:
+## Reporting bugs
 
-- Der Code steht unter der Lizenz des Scriptoriums, weshalb diese Repo auch privat ist. Wird dieses Repo geforkt, **muss** das geforkte Repo auch privat sein. Eine Verwendung außerhalb dessen ist nicht möglich.
-- Bitte schaut, dass der beigesteuerte Code dem Stil des bisherigen Codes entspricht. Ich habe mich für keinen verfügbaren Styleguide entscheiden können und mit Helfern wie Prettier konnte ich mich - bis jetzt - auh noch nicht anfreunden.
-- Der **develop**-Branch ist der Arbeitsbranch. Codeänderungen - also Pull Requests - führen meistens darauf zurück.
-- Der Masterbranch wird nur für Releases verwendet (das aber erst, nachdem die Beta fertig ist). Diese bekommen dann auch ihre eigenen temporären Branches, bei denen nur noch Bugfixes einfließen dürfen.
-- Es ließ sich nicht einstellen, daher hier noch einmal schriftlich: Ich möchte jede Pull Request, die als Zielbranch **master**, **develop** oder einen von mir erstellten Branch hat, reviewen.
-- Bitte schreibt nach Möglichkeit JSDoc Texte für neue Funktionen. Ich bin auch dabei, dass für alte Funktionen nachzuholen. Es ist jetzt nicht essenziell, wäre aber zum Verständnis besser! :)
-- Solange #1 (Use Redux instead of Flux) noch aktiv ist, solltet ihr von dem **electron-redux**-Branch abbranchen, so ihr denn in dieser Repo arbeitet.
+### 1. Does the issue is already reported?
 
-Ich habe das jetzt einfach etwas direkter formuliert, da ich bei solchen Geschichten ungern um den heißen Brei herum rede! ;)
+[Check](https://github.com/elyukai/optolith-client/issues) if the issue you want to report already exists.
 
-An dieser Stelle auch Vielen Dank an alle Helfer!
+### 2. Do you need help?
 
-P.S.: Ich sollte an dieser Stelle noch erwähnen, dass ich bis jetzt noch keine Erfahrung gesammelt habe, was kollaboratives Coden angeht. Ich bin auch bis zuletzt nicht davon ausgegangen, dass ich mal nicht der einzige sein werde, der an diesem Projekt arbeiten würde. Es mag daher sein, dass ihr Dateien findet, die etwas älter sind. Ich hoffe trotzdem, dass ihr euch zurechtfindet, da ich momentan nicht die Zeit habe, um alles durchzugehen (man kann ja schon am Switch zu Redux sehen, wie lange alles gedauert hat und wie viel Zeit ich entsprechend hatte). Erstellt bei Fragen/Unklarheiten einfach einen Issue! :)
+Feel free to create a new issue and someone will help you! Give as much details as you think is needed but don't include irrelevant details.
 
-## Coding Style
+### 3. Did you find a bug?
 
-Please follow the (AirBnb Style Guide)[https://github.com/airbnb/javascript]. There are, however, some exceptions. If you find any code does not follow the guidelines linked and specified below, please either create a new issue or fork and create a new pull request.
+Please include the following:
 
-### `if`-`else`
+- The version of the app you are using. You can find the version in the About > Third-party licenses section of the app.
+- A *detailed* description of what you have done.
+- What you expected to happen and what actually happened.
 
-`else if` or `else` must start on a new line.
+The Alpha version also provides access to the Chrome DevTools via the bug button in the top right corner. If you are not familiar with web development: Check if there are any errors shown in the Console tab. In that case please include the error message.
+
+### 4. Do you have a suggestion?
+
+You can suggest features either in the issues tracker or in one of the [listed forums](https://github.com/elyukai/optolith-client).
+
+## Contributing code
+
+- Due to licensing, the tables containing the crunch elements from the books is not included in this repository. Please join my [Discord Server](https://discord.gg/uDyR4yr) if you need access to them. Just text me in a channel on the server or PN me (@elyukai).
+- Branches (mostly) follow Git Flow. Please try to follow Git Flow as well if you edit this repository.
+- Please check out the [Style Guide](https://github.com/elyukai/optolith-client/wiki/Code-Style-Guide) for more information on that topic! Sadly, TSLint cannot ensure the whole style so you partially need to take care of that on your own!
+- There is a page covering [Naming Conventions](https://github.com/elyukai/optolith-client/wiki/Naming-Conventions) as well!
+- The key criteria for the project are mentioned in the [README](README.md). They also apply to pull requests. A feature usually does not consist of the technical part only. Much more important is how the feature presents itself to the user. And that must be planned and discussed.
+- Code should follow functional programming practices while maintaining readablilty &ndash; which can be an issue using JavaScript/TypeScript, which is why in certain circumstances imperative/OOP code is allowed.
+- The contribution has to be easy to understand not only for players using the app, but also for coders trying to further enhance the app: Please document module exports!
+
+### Prepare the repo
+
+Clone the repo.
+
+```
+$ git clone https://github.com/elyukai/optolith-client.git
+```
+
+Make sure Node.js (lastest version) is installed and run
+
+```
+$ npm i
+```
+
+This installs all necessary packages.
+
+Create a `tablesSrc.json` in the `/deploy` folder. The JSON consists of an object that has the following interface:
 
 ```ts
-// bad
-if (condition) {
-  expression;
-} else {
-  expression;
-}
-
-// bad
-if (condition)
 {
-  expression;
+  stable: string[];
+  insider: string[];
 }
-else
+```
+
+Both list an array of strings that represents the path to a folder that contains the tables for stable or insider version, repectively. The array is consumed by `path.join` from Node.js in the end.
+
+Example:
+
+```json
 {
-  expression;
-}
-
-// good
-if (condition) {
-  expression;
-}
-else {
-  expression;
+  "stable": ["..", "OneDrive", "Optolith", "Data"],
+  "insider": ["..", "OneDrive", "Optolith", "Data", "Insider"]
 }
 ```
 
-### Ternary Operator
+### First run
 
-`?` and `:` must start on a new line if the expression is too long to fit one line.
+Compile the source code&hellip;
 
-```ts
-// bad
-condition ?
-expression :
-expression
-
-// good
-condition
-? expression
-: expression
-
-// also good
-condition
-  ? expression
-  : expression
-
-// best (but requires the whole construct to fit one line)
-condition ? expression : expression
+```
+$ npm run compile
 ```
 
-### Logical operators
+&hellip;or watch it for better performance for subsequent compiling on save.
 
-```ts
-// bad
-condition &&
-condition ||
-condition
-
-// good (because && has a higher precedence, but it must fit one line then)
-condition && condition
-|| condition
-
-// good
-condition
-&& condition
-|| condition
-
-// also good (useful if conditions are so long that parenthesis would improve readability)
-(
-  condition
-  && condition
-)
-|| condition
-
-// good (but requires the whole construct to fit one line)
-condition && condition || condition
-
-// good (but requires the whole construct to fit one line)
-condition && (condition || condition) && condition
-
-// good
-condition
-&& (
-  condition
-  || condition
-)
-&& condition
-
-// also good
-condition
-&& (condition
-    || condition)
-&& condition
-
-// also good
-condition
-&& (condition || condition)
-&& condition
-
-// bad
-condition
-&& (condition
-|| condition)
-&& condition
-
-// bad
-condition
-&& (condition
-  || condition)
-&& condition
+```
+$ npm run watch
 ```
 
-### Curried functions
+Import stable or insider tables:
 
-Functions (and methods) have to be fully curried. There should not be partial function application, as this would cause different possibilities in calling functions. I want to enforce one style:
-
-```ts
-const add = (a: number) => (b: number) => a + b;
-
-// worst
-const addedNumbers = add(2)(3);
-
-// still bad
-const addedNumbers = add(2) (3);
-
-// still bad
-const addedNumbers = add (2)(3);
-
-// good
-const addedNumbers = add (2) (3);
-
-// multiline
-const addedNumbers = add (2)
-                         (3);
-
-// or
-const addedNumbers =
-  add (2)
-      (3);
-
-// or
-const addedNumbers =
-  add
-    (2)
-    (3);
+```
+$ npm run copyTables
 ```
 
-This style is readable while having curried functions. It's derived from the Haskell style of calling functions, where the arguments are separate by one whitespace as well:
+or
 
-```hs
-add :: Int -> Int -> Int
-
-add 2 3
+```
+$ npm run copyTablesInsider
 ```
 
-**Fun fact:** `add (2) (3)` is valid Haskell, it just contains unnecessary groupings.
+respectively.
 
-#### Function calls as a parameter
+Run the app:
 
-```ts
-// good
-const x = myFunction (otherFunc ("Hi")) (3);
-
-// good (such line breaks (compare to above) are usually needed either because of readability
-// or because the line would be too long otherwise)
-const x = myFunction (otherFunc ("Hi"))
-                     (3);
-
-// also good
-const x = myFunction (otherFunc ("Hi")
-                                ("Other string"))
-                     (3);
-
-// also good
-const x = myFunction (otherFunc ("Hi") ("Other string"))
-                     (3);
-
-// bad
-const x = myFunction (otherFunc ("Hi")
-                                ("Other string")) (3);
-
-// very bad ("Other string" seems to be a param of myFunction but its not)
-const x = myFunction (otherFunc ("Hi")
-                     ("Other string")) (3);
-
-// very bad ("Other string" seems to be a param of myFunction but its not, but 3 is)
-const x = myFunction (otherFunc ("Hi")
-                     ("Other string"))
-                     (3);
+```
+$ npm start
 ```
 
-### Methods
+### Stylesheets
 
-If you need to use a class (e.g. the custom data structures *Maybe*, *List* a.s.o. are implemented as classes, consider the following styistic rules for using methods:
+To compile the SCSS files, use
 
-```ts
-// bad
-maybeValue.fmap(R.inc)
-
-// still bad
-maybeValue.fmap (R.inc)
-
-// still bad
-maybeValue .fmap(R.inc)
-
-// good
-maybeValue .fmap (R.inc)
 ```
-
-This way, a method seems to be more like an infix function. Instance methods are always curried, too.
-
-```ts
-// very bad
-Maybe.fmap(R.inc)(maybeValue)
-
-// still bad
-Maybe.fmap (R.inc) (maybeValue)
-
-// still bad
-Maybe .fmap (R.inc) (maybeValue)
-
-// good
-Maybe.fmap (R.inc) (maybeValue)
+$ npm run buildCss
 ```
-
-Static methods do not need a space before the dot because `Maybe` is no value. So `Maybe.fmap` as a whole is the function (name).
-
-This way, you can also better differenciate between static and instance methods.
-
-### Function declarations
-
-Do not use named function expressions if using `function`, e.g. `const fn = function longFunctionName () { ... }`. Prefer arrow functions, which must be declared using `const fn = () => { ... }`, though.
-
-### Arrow functions
-
-Concerning (Arrow Functions 8.4)[https://github.com/airbnb/javascript#arrows--one-arg-parens]: Only use parentheses when there is more than one argument, do not use even if the function uses braces (actually you don't need parentheses at all, because all functions should be curried).
-
-### Modules
-
-Concerning (Modules 10.2)[https://github.com/airbnb/javascript#modules--no-wildcard]: Use wildcards when there are too many imports or for the sake of consistency across files (especially used for files in `src/types`, e.g. `* as Wiki`).
-
-Concerning (Modules 10.3)[https://github.com/airbnb/javascript#modules--no-export-from-import]: Prefer shorter syntax.
-
-Concerning (Modules 10.6)[https://github.com/airbnb/javascript#modules--prefer-default-export]: Do not use default exports, as possible renaming cannot benefit from TypeScript's ability to find all symbol references.
-
-Concerning (Arrow Functions 10.8)[https://github.com/airbnb/javascript#modules--multiline-imports-over-newlines]: Put everything on one line, as it is more compact. TypeScript warns when there are missing or unnecessary imports anyway.
-
-### Unimportant rules
-
-- (Object 3.5)[https://github.com/airbnb/javascript#objects--grouped-shorthand]: Group object shorthand properties
-- (Arrow Functions 8.3)[https://github.com/airbnb/javascript#arrows--paren-wrap]: Wrap expression in parentheses
-- (Arrow Functions 8.5)[https://github.com/airbnb/javascript#arrows--confusing]: Avoid confusing arrow function syntax with comparison operators
-- (Arrow Functions 8.6)[https://github.com/airbnb/javascript#whitespace--implicit-arrow-linebreak]: Enforce the location of arrow function bodies with implicit returns
-- (Variables 13.3)[https://github.com/airbnb/javascript#variables--const-let-group]: Group `const`s and `let`s
-- (Comparison 15.8)[https://github.com/airbnb/javascript#comparison--no-mixed-operators]: Enclose mixing operators in parentheses
-
-### TSLint
-
-A lot of areas are already covered by TSLint and it's plugins. Please use TSLint, it makes following the guidelines a lot easier!

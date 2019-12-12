@@ -8,6 +8,7 @@ import { elems, lookup, lookupF, OrderedMap, size, sum } from "../../Data/Ordere
 import { OrderedSet } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
 import { fst, Pair, snd } from "../../Data/Tuple";
+import { SpecialAbilityId } from "../Constants/Ids";
 import { LanguagesSelectionListItem } from "../Models/Hero/LanguagesSelectionListItem";
 import { Rules } from "../Models/Hero/Rules";
 import { ScriptsSelectionListItem } from "../Models/Hero/ScriptsSelectionListItem";
@@ -22,7 +23,6 @@ import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/C
 import { CursesSelection } from "../Models/Wiki/professionSelections/CursesSelection";
 import { LanguagesScriptsSelection } from "../Models/Wiki/professionSelections/LanguagesScriptsSelection";
 import { ProfessionSelections } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
-import { ProfessionVariantSelections } from "../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
 import { CombatTechniquesSecondSelection } from "../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
 import { SkillsSelection } from "../Models/Wiki/professionSelections/SkillsSelection";
 import { SpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection";
@@ -44,7 +44,6 @@ import { Checkbox } from "../Views/Universal/Checkbox";
 import { Dropdown, DropdownOption } from "../Views/Universal/Dropdown";
 import { findSelectOption } from "./Activatable/selectionUtils";
 import { translate } from "./I18n";
-import { prefixSA } from "./IDUtils";
 import { pipe, pipe_ } from "./pipe";
 import { filterByAvailability, isAvailable } from "./RulesUtils";
 import { sortRecordsByName } from "./sortBy";
@@ -77,7 +76,7 @@ export const getBuyScriptElement =
             const selectionItem =
               pipe (
                      WA.specialAbilities,
-                     lookup ("SA_27"),
+                     lookup<string> (SpecialAbilityId.Literacy),
                      bindF (flip (findSelectOption)
                                  (listToMaybe (Culture.AL.scripts (culture))))
                    )
@@ -264,8 +263,8 @@ export const getLanguagesAndScriptsElementAndValidation =
             (maybeLanguagesList)
         })
         (ProfessionSelections.AL[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (professionSelections))
-        (lookupF (WA.specialAbilities (wiki)) ("SA_27"))
-        (lookupF (WA.specialAbilities (wiki)) ("SA_29"))
+        (lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.Literacy))
+        (lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.Language))
     )
 
 export const getCursesElementAndValidation =
@@ -412,7 +411,7 @@ export const getSkillSpecializationElement =
   (setSpecialization: (value: string | number) => void) =>
   (setSpecializationSkill: (id: string) => void) =>
     pipe (
-      ProfessionVariantSelections.A[ProfessionSelectionIds.SPECIALIZATION],
+      ProfessionSelections.A[ProfessionSelectionIds.SPECIALIZATION],
       bindF (ensure (SpecializationSelection.is)),
       fmap (selection => (
              <SelectionsSkillSpecialization
@@ -483,7 +482,7 @@ export const getTerrainKnowledgeElement =
             active={terrainKnowledgeActive}
             />
         ))
-        (lookupF (WA.specialAbilities (wiki)) ("SA_12"))
+        (lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.TerrainKnowledge))
     )
 
 export const getMotherTongueSelectionElement =
@@ -495,7 +494,7 @@ export const getMotherTongueSelectionElement =
   (isAnyLanguageOrScriptSelected: boolean) =>
   (setMotherTongue: (option: number) => void) =>
     pipe (
-           bindF (() => lookupF (WA.specialAbilities (wiki)) ("SA_29")),
+           bindF (() => lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.Language)),
            fmap ((wikiEntry: Record<SpecialAbility>) => (
                   <Dropdown
                     hint={translate (locale) ("selectnativetongue")}
@@ -530,7 +529,7 @@ export const getMainScriptSelectionElement =
   (isBuyingMainScriptEnabled: boolean) =>
   (setMainCulturalLiteracy: (option: number) => void) =>
     pipe (
-           bindF (() => lookupF (WA.specialAbilities (wiki)) ("SA_27")),
+           bindF (() => lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.Literacy)),
            fmap ((wikiEntry: Record<SpecialAbility>) => (
                   <Dropdown
                     hint={translate (l10n) ("selectscript")}
@@ -566,7 +565,8 @@ export const getGuildMageUnfamiliarSpellSelectionElement =
   (setGuildMageUnfamiliarSpell: (id: string) => void) =>
   (profession: Record<Profession>) =>
     any ((x: ProfessionPrerequisite) => ProfessionRequireActivatable.is (x)
-                                        && ProfessionRequireActivatable.A.id (x) === prefixSA (70))
+                                        && ProfessionRequireActivatable.A.id (x)
+                                          === SpecialAbilityId.TraditionGuildMages)
         (PA.prerequisites (profession))
       ? fmapF (mspells)
               (spells => (

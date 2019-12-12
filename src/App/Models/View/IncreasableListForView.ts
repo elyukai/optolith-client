@@ -3,6 +3,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault } from "../../../Data/Record";
 
 export interface IncreasableListForView {
+  "@@name": "IncreasableListForView"
   id: NonEmptyList<string>
   name: List<string>
   value: number

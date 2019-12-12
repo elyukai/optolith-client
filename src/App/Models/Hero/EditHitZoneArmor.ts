@@ -3,6 +3,7 @@ import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { HitZoneArmorBase } from "./HitZoneArmor";
 
 export interface EditHitZoneArmor extends HitZoneArmorBase {
+  "@@name": "EditHitZoneArmor"
   id: Maybe<string>
 }
 

@@ -6,16 +6,22 @@ import { AllRequirementObjects } from "../wikiTypeHelpers";
 import { RequireActivatable } from "./ActivatableRequirement";
 
 export interface RequirePrimaryAttribute {
+  "@@name": "RequirePrimaryAttribute"
   id: "ATTR_PRIMARY"
   value: number
-  type: 1 | 2
+  type: PrimaryAttributeType
+}
+
+export enum PrimaryAttributeType {
+  Magical = 1,
+  Blessed = 2,
 }
 
 export const RequirePrimaryAttribute =
   fromDefault ("RequirePrimaryAttribute")
               <RequirePrimaryAttribute> ({
                 id: "ATTR_PRIMARY",
-                type: 1,
+                type: PrimaryAttributeType.Magical,
                 value: 0,
               })
 

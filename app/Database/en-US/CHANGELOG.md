@@ -1,4 +1,53 @@
-# 1.1.0/1.1.2
+## 1.2.0
+
+This release marks a big milestone for the English version as it includes all rule books released so far. This includes the **Compendium I**, **Magic of Aventuria** and more. Also, there are quite a few fixes.
+
+### New Features
+
+- Dutch localization (including Core Rules)
+- **Aventuria Compendium I** English localization
+- **Magic of Aventuria I** English localization
+- **The Warring Kingdoms** English localization
+- **Armory of The Warring Kingdoms** English localization
+- **Aventuria Armory I** English localization
+- **Aventuria Bestiary I** English localization
+- **Inns & Taverns** English localization
+
+### Enhancements
+
+- Shields are usually not used as the primary weapon, so the doubled PA bonus is now used on character sheet.
+- Improved Dodge I–III should not modify DO value as this should only happen when the hero does not wear armor.
+
+### Bug Fixes
+
+- Does not increase DO by 2 or 4 but 1 or 2 when optional rule *Higher Parade Values* is active.
+- Disadvantage *Bad Luck I-III* did not decrease FtP on character sheet.
+- Window for permanent loss of LP/AE/KP is now closable.
+- Disadvantage *Stigma (Green Hair)* now makes the hair color green.
+- Preview of images only displayed .jpg, no .png.
+- Native Tongue (NT) cannot be selected as a level for languages.
+- App close button did not work.
+- Removed error message on import/export cancellation.
+- *Personality Flaw*: It is now possible to buy as many Prejudices/Unworldly's as you like.
+- Required attribute values for professions were not ensured.
+- SA *Property Knowledge* did not work and had wrong AP cost.
+- Demigods were not available as applications for *Religions* skill.
+- Rerolling weight without a set size did not reroll both but instead used 0 as size.
+- Wrong carrying capacity when STR was 8.
+- CT adjustments in profession variants are not displayed correctly.
+- The default file name in the save dialog for the PDF now is the hero's name.
+- Unfamiliar Spells maximum was still active after finishing hero creation.
+- Hide characters where the version of them is not supported.
+- When selecting a spell for Tradition Guild Mage, General spells are now hidden.
+- The selected locale (of a hero) was not saved.
+- Pacts were not saved.
+- Wrong column names on chants sheet.
+- Protective/Wardings Circles are not correctly displayed.
+- Disadvantage *Incompetent* disallows Advantage *Aptitude* completely instead of only disallowing the corresponding skill option.
+- Primary Attribute maximum for Combat Techniques not working.
+- Weight Ratio of Head and Torso in Hit Zone Armor flipped.
+
+## 1.1.0/1.1.2
 
 *The exact version number of the app is 1.1.2.*
 
@@ -10,12 +59,12 @@ Last but not least a big thank you to you, for your patience and all your feedba
 
 But now it’s time for the changelog of this version:
 
-## New Features
+### New Features
 
 - Heroes can now be saved from the hero list.
 - Avatars of heroes and pets can now be deleted.
 
-## Enhancements
+### Enhancements
 
 - Select option lists are now filtered by activated books. Previously, that only worked for main lists like special abilities, but now it works for all list, for example the list of trade secrets.
   - Wiki entry lists cannot be filtered by specific books, neither can the wiki entry text in opened heroes. This will be implemented later!
@@ -41,7 +90,7 @@ But now it’s time for the changelog of this version:
 - For Staff Enchantments, *Binding of the Staff* as a prerequisite is now hidden (because it is hidden in Core Rules, too).
 - Finishing RCP selection can now be undone.
 
-## Bug Fixes
+### Bug Fixes
 
 - After switching from German to English, heroes could not be edited anymore.
 - Special Abilities can now be sorted by group again.
@@ -94,53 +143,53 @@ But now it’s time for the changelog of this version:
 - *Dog food, Horse feed, Pony feed*: Removed weight.
 - *Rope, climbing* now has a correct price.
 
-# 1.0.3
+## 1.0.3
 
 - Renamed Optolyth to Optolith to be in line with all other locations where the name occurs.
 
-## Linux
+### Linux
 
 - Fixed glibc-related issue.
 - Moved from tar.gz to AppImage to provide auto-update support.
 
-# 1.0.2
+## 1.0.2
 
 - Fixed issue with rendering list items of advantages/disadvantages/special abilities.
 - Fixed shortcuts being global.
 - Reloading a hero with `Stigma (Albino)` won’t change selected eye color anymore.
 
-## macOS
+### macOS
 
 - App now quits automatically on close.
 
-## English Specific
+### English Specific
 
 - Fixed list of professions.
 
-## German Specific
+### German Specific
 
 - Fixed typo in failed check description of skill "Driving".
 - Fixed attribute adjustment in attributes tab.
 - Fixed levels of required instances of `Principles` and `Obligations` of `Blessed One of Kor`.
 
-# 1.0.1
+## 1.0.1
 
 - Fixed special abilities tab.
 
-# 1.0.0
+## 1.0.0
 
-### New Features / Breaking Changes
+#### New Features / Breaking Changes
 
 - New app name: Optolyth (long version: Optolyth Character Generator)
 - Linux 32-bit build available.
 - Applications that can be purchased using advantages or special abilities can be used for a skill specialization. They are listed in the wiki below *New Applications*, too.
 
-### Rules/Crunch
+#### Rules/Crunch
 
 - Language Specializations can be activated as an Optional Rule in the Rules tab.
 - Added missing entries for *Immunity to [poison/disease]* from **Core Rules** and **Aventuria Almanach**.
 
-### Bug Fixes / Other
+#### Bug Fixes / Other
 
 - Multiline texts are now multiline on character sheet.
 - If advantage *Stigma (Albino)* is purchased the (lists of available) hair and eye colors change.
@@ -175,19 +224,19 @@ But now it’s time for the changelog of this version:
 - Fixed calculating AP total for *Obligations/Priciples*.
 - Fixed showing damage info for weapons in wiki (if a weapon has no flat damage 1W6 instead of 1W60 is shown now).
 
-## German Specific (in German)
+### German Specific (in German)
 
-### New Features / Breaking Changes
+#### New Features / Breaking Changes
 
 - Unter Profil > Pakt kann nun ein Feenpakt eingetragen werden. Die Eingabe richtet sich genau nach den Regeln aus **Die Siebenwindküste** zu Feenpakten. Die Eingabe dort schaltet auch unter erfüllten Voraussetzungen Paktgeschenke frei.
 
-### Rules/Crunch
+#### Rules/Crunch
 
 - Professionen aus **Aventurisches Götterwirken** und **Die Siebenwindküste** hinzugefügt.
 - Fehlende Berufsgeheimnisse aus **Rüstkammer der Streitenden Königreiche** und **Rüstkammer der Siebendwindküste** sowie **Aventurisches Bestiarium** hinzugefügt.
 - Fehlende Einträge für *Immunität gegen [Gift/Krankheit]* aus **Aventurisches Bestiarium**, **Aventurische Magie I** und **Kneipen & Tavernen** hinzugefügt.
 
-### Bug Fixes / Other
+#### Bug Fixes / Other
 
 - Die Profession *Sangara* funktioniert wieder ordnungsgemäß.
 - Die AP-Kosten für *Tradition (Zauberbarde)* und *Tradition (Zaubertänzer)* werden beim Hinzufügen wieder korrekt angezeigt.
@@ -201,7 +250,7 @@ But now it’s time for the changelog of this version:
 - Vor- und Nachteile für *Intuitive Zauberer* können wieder ordnungsgemäß erworben und verkauft werden.
 - Bei einigen Zaubern wurde die druidische oder scharlatanische Tradition ergänzt.
 
-# 0.51.9
+## 0.51.9
 
 - The AP tooltip (if you hover over the available AP of the currently opened character) now show how many AP you spent on which category of entries - how much you spent on spells, on special abilities, on disadvantages, on cantrips, on energies (LP, AE, KP) and so on.
 - I build a new AP system which dynamically calculates the AP. This means if there were or will be issues with calculated AP they will be fixed automatically by installing the patch that fixes this issue. (You still have to open the character and save it, though).
@@ -212,23 +261,23 @@ But now it’s time for the changelog of this version:
 - You can now activate or deactivate if you want to see animations or not throught the settings window.
 - Wiki lists now display levels if available (example: `Rich I-X` instead of `Rich`).
 
-## German Specific
+### German Specific
 
 - Fixed prerequisites of *Abrollen*.
 - Blessings are now tradition-aware: If you select a tradition of a demigod you will not be able to select the unavailable blessings (as specified by tradition special ability) anymore.
 
-## English Specific
+### English Specific
 
 - There are full wiki entries available for *all* currently implemented entries.
 
-# 0.51.8
+## 0.51.8
 
 - Fixed AP cost for languages.
 - Fixed generating random values for size and weight of a character.
 - Added error binding to content, so that if an error occurs you can still access the navigation bar.
 - Fixed crashes of wiki box in English version.
 
-# 0.51.7
+## 0.51.7
 
 - Tweaked some colors to improve UI readability.
 - Error messages (the ones that contain "error" and "component stack") can be selected and thus copied.
@@ -238,28 +287,28 @@ But now it’s time for the changelog of this version:
 - If race Elf is selected the app will no longer warn you to not use the selected profession because the calculated AP would be incorrect.
 - *Cendrash Style* is fixed and can be added to your character(s) again.
 
-## German Specific
+### German Specific
 
 - Zone armor tab will only be shown if *Aventuria Armory* or *All rule books* are activated in "rules" tab.
 - ENC is now correctly calculated for zone armor.
 - Fixed *Brevier der zwölfgöttlichen Unterweisung*.
 - Fixed magical styles.
 
-## English Specific
+### English Specific
 
 - App will no longer crash all the time.
 
-# 0.51.6
+## 0.51.6
 
 - Added sort option to inventory to sort by weight (in descending order).
 - *Slow* is now considered when calculating MOV value.
 - Fixed magical and blessed professions.
 
-# 0.51.5
+## 0.51.5
 
 - Fixed hidden liturgical chants tab.
 
-# 0.51.4
+## 0.51.4
 
 - Fixed MOV modificators.
 - Splitted tradition special abilties to be able to provide wiki texts for them.
@@ -268,18 +317,18 @@ But now it’s time for the changelog of this version:
 - Fixed resetting AP on changing race variant.
 - Selection lists for disadvantages *Principles* and *Obligations* are not filtered by selected level anymore. This means, you can select *Code of the Church of Peraine* for all three levels of *Principles* instead of typing in the optional input field.
 
-## German Specific
+### German Specific
 
 - Added **ALL** missing texts to complete the offline wiki.
 - Joined the different `Bindung des Bannschwerts` special abilties.
 - Additional item texts are only shown for templates and locked entries.
 - Added missing armory from regional armory books.
 
-## English/Dutch Specific
+### English/Dutch Specific
 
 - Wiki boxes will show the entries that can be generated safely. Their full functionality will be enabled once the needed texts are added.
 
-# 0.51.3
+## 0.51.3
 
 - Fixed issues with prerequisites for races.
 - Fixed profession list filter.
@@ -290,21 +339,21 @@ But now it’s time for the changelog of this version:
 - There are now additional infos about an update available in the download progress dialog.
 - The Enter key should work as usual after closing the app.
 
-## German Specific
+### German Specific
 
 - Added filtering by activated rule books and wiki entries for combat techniques, advantages, disadvantages and special abilities. Prerequisite texts for advantages, disadvantages and special abilities are missing, though.
 - Removed special ability *Magischer Gedankenschutz* as this the exact same special ability as *Gedankenschutz*, the only difference is the name and this seems to be a issue with consistent naming.
 
-# 0.51.2
+## 0.51.2
 
 - Fixed calculating AP for *activated* special ability entries where you have to buy each tier separately (e.g. *Feint I-III*). Previously, only the cost for the highest bought tier were shown.
 - Removing bought energy points now correctly lowers AP spent. Previously, it did not change the current AP spent.
 
-## German Specific
+### German Specific
 
 - Fixed *Lederüstung* typo.
 
-# 0.51.1
+## 0.51.1
 
 - Fixed Auto Updater.
 - Added FAQ page.
@@ -316,17 +365,17 @@ But now it’s time for the changelog of this version:
 - Displaying races now corresponds with the Core Rules.
 - Fixed inactive Advantages/Disadvantages/Special Abilities list’s layout (temporarily).
 
-## macOS
+### macOS
 
 - Added custom titlebar.
 - Added *About ...* app menu option.
 
-## German Specific
+### German Specific
 
 - Fixed *Visions* and *Sermons* for Blessed Ones.
 - Fixed profession *Graumagier (Schule der Verformungen zu Lowangen)*.
 
-# 0.51.0
+## 0.51.0
 
 - Auto-Updater for Windows and macOS.
 - Installer for Windows.
@@ -343,33 +392,33 @@ But now it’s time for the changelog of this version:
 - Added placeholder wiki boxes for advantages, disadvantages, special abilities and items.
 - Fixed available hair colors for some races.
 
-## German Specific
+### German Specific
 
 - Added spell and liturgical chant extensions to wiki boxes.
 - Fixed text of *magical professions* for culture *Ore Dwarf*.
 
-## Dutch Specific
+### Dutch Specific
 
 - Started localization work.
 
-# 0.50.0
+## 0.50.0
 
 - Custom AP cost possible for advantages and disadvantages.
 - Fixed ItemEditor’s and ArmorZonesEditor’s theming and layout.
 - Slightly brightened the color for disabled elements.
 
-# 0.49.6
+## 0.49.6
 
 - Fixed dis/advantages from **Aventurian Magic I**.
 - Fixed alerts after selecting RCP.
 - Alerts might be a bit more responsive (internal rework).
 - Fixed *Last Changes* page.
 
-## German Specific
+### German Specific
 
 - Added wiki info for cultures.
 
-# 0.49.5
+## 0.49.5
 
 - Special abilities with tiers do not have separate entries anymore.
 - RCP costs are now entirely calculated by the app.
@@ -389,12 +438,12 @@ But now it’s time for the changelog of this version:
 - Some further redesign work.
 - A short message is now shown in Settings dialog informing about you need to restart the app when changing the language.
 
-## German Specific
+### German Specific
 
 - Added (missing) wiki info for skills, cantrips, blessings, spells and liturgical chants (excluding extensions).
 - Added special abilities, liturgical chant extensions and dis-/advantages from **Aventurian Work of the Gods**.
 
-# 0.49.4
+## 0.49.4
 
 - Fixed character portrait selection.
 - Heaps of stuff for the new design.
@@ -405,12 +454,12 @@ But now it’s time for the changelog of this version:
 - Unified RCP views.
 - Added RCP info views, although a lot of text is still missing.
 
-## German Specific
+### German Specific
 
 - Fixed newer items.
 - Fixed combat technique values of newer professions.
 
-# 0.49.3
+## 0.49.3
 
 - Fixed AP limits for advantages/disadvantages.
 - Removes existing equipment from item templates search results.
@@ -418,16 +467,16 @@ But now it’s time for the changelog of this version:
 - New background.
 - Updated titlebar icons on Windows and Linux.
 
-## German Specific
+### German Specific
 
 - Fixed Skills selection for *Meistertalentierte*.
 
-## English Specific
+### English Specific
 
 - Fixed RCP view issue(s).
 - Fixed Equipment view.
 
-# 0.49.2
+## 0.49.2
 
 - Fixed the addition of adventure points.
 - Fixed second combat technique selection for professions.
@@ -435,15 +484,15 @@ But now it’s time for the changelog of this version:
 - Fixed small issue concerning `alert`s.
 - Item templates are no longer cleared after a new hero has been created.
 
-## German Specific
+### German Specific
 
 - Fixed problems with displaying AE for *Intuitiver Zauberer*.
 
-## English Specific
+### English Specific
 
 - Fixed race/professions list.
 
-# 0.49.1
+## 0.49.1
 
 - Fixed issue with lists for advantages, disadvantages and special abilities containing skills/spells/liturgical chants.
 - Fixed issue with RCP skill specialization selection.
@@ -451,11 +500,11 @@ But now it’s time for the changelog of this version:
 - Fixed equipment view.
 - Professions are now sorted by name and them by subname (e.g. the academy name). Previously, professions with subnames were sorted randomly (changing from render to render).
 
-## English Specific
+### English Specific
 
 - Added translation for skill name separation in RCP skill specialization selection.
 
-# 0.49.0
+## 0.49.0
 
 - *Smash* does not require *Rundumschlag I* anymore.
 - Protective/Warding Circles now require *Magical Signs*.
@@ -485,25 +534,25 @@ But now it’s time for the changelog of this version:
 - Fixed Languages and Scripts selection texts in RCP selections window.
 - Fixed loading characters with active Blessings.
 
-## German Specific
+### German Specific
 
 - Includes new traditions, aspects and liturgcal chants from **Aventurisches Götterwirken I**.
 - Added info for selected race in Races tab.
 - CON instead of COU now increases WS value.
 - Fixed *Intuitive Caster*’s spell limit and AE value.
 
-## English Specific
+### English Specific
 
 - Added info box for selected race in Races tab, but (most of the) texts are still missing.
 
-# 0.48.1
+## 0.48.1
 
 - Undo function is working again for advantages, disadvantages and special abilities.
 - Spells can now be de/activated as intended.
 - Cantrips/Blessing are now sorted on the character sheet.
 - The total attribute maximum is shown on the attribute page during character creation.
 
-# 0.48.0
+## 0.48.0
 
 - Heaps of bugs fixed. I lost sight of all bugs, so I won’t provide a detailed list this time.
 - Added a funtion to duplicate heroes.
@@ -512,28 +561,28 @@ But now it’s time for the changelog of this version:
 - Removed support for heroes created with app version lower than 0.45.0.
 - If advantage/disadvantage list is empty, a placeholder will be shown. This is to ensure that having an empty list is intentional - and not a bug.
 
-## German Specific
+### German Specific
 
 - Aventurian Names, Inns & Taverns, Aventurian Bestiary and The Warring Kingdoms are fully implemented (they should be). All entries from Aventurian Magic I are available. Optional Rules from AMI are not (yet) available.
 - AMI is now basically complete. During reworking the entries some issues occured that might cause your characters to not work properly.
   - Selecting *Meistertalentierte*, *Zauberbarden* or *Zaubertänzer* as your magical tradition requires a second selection. *Meistertalentierte* choose their *Meistertalent*, *Zauberbarden* or *Zaubertänzer* choose their music/dance tradition (Ceoladir etc). If the affected characters are in character creation phase, you will be able to remove the existing tradition special ability and reactivate it with the correct selection. If character creation is finished, you have to create the respective character(s) again.
   - *Exorzist I* and *Meistertrick I* were missing selection options. Now they are included. The selection options do not affect the AP cost, so you can try to fix it the same way as you did for the magical tradition above.
 
-# 0.47.3
+## 0.47.3
 
 - The requirement *Manifesto 10* for Elemental Servant referred to Wall of Fog instead of Manifesto.
 
-# 0.47.2
+## 0.47.2
 
 - The calculations of total weight and total price in equipment tab should work again. Armor is excluded from the total weight calculation, because armor is excluded from carrying capacity if its in use.
 - Character Sheet is working again.
 - The skills tab contains a pane on the right side. If you click on the "i" buttons, it will show you additional information about the respective skill. Well, it will show you in the future: Currently, there is not much data available to show.
 - The item list now properly resets for every new character.
 
-# 0.47.1
+## 0.47.1
 
 - Fixed an issue with a race or a culture as a requirement. This issue caused some professions to never appear in the list.
 
-# 0.47.0
+## 0.47.0
 
 Initial English release.

@@ -1,20 +1,30 @@
 import * as React from "react";
-import { classListMaybe } from "../../Utilities/CSS";
 import { List } from "../../../Data/List";
 import { Just, Maybe } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
+import { ChildrenProps } from "../../Utilities/ReactUtils";
 
-export interface TextProps {
-  children?: React.ReactNode
+export interface TextProps extends ChildrenProps {
   className?: string
-  [id: string]: any
+  onMouseOut?: () => void
+  onMouseOver?: () => void
+  onMouseDown?: () => void
 }
 
-export function Text (props: TextProps) {
-  const { children, className, ...other } = props
+const TextBase: React.RefForwardingComponent<HTMLDivElement, TextProps> = (props, ref) => {
+  const { children, className, onMouseOut, onMouseOver, onMouseDown } = props
 
   return (
-    <div {...other} className={classListMaybe (List (Just ("text"), Maybe (className)))}>
+    <div
+      ref={ref}
+      className={classListMaybe (List (Just ("text"), Maybe (className)))}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseDown={onMouseDown}
+      >
       {children}
     </div>
   )
 }
+
+export const Text = React.forwardRef (TextBase)

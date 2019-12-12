@@ -36,7 +36,7 @@ export class InGameEdit extends Component {
 								<TextField
 									labelText="Name"
 									value={this.props.fighters[this.props.editIndex].name}
-									onChange={this.editValue.bind(null, 'name')}
+									onChangeE={this.editValue.bind(null, 'name')}
 								/>
 								<Dropdown
 									label="Gesinnung"
@@ -47,69 +47,69 @@ export class InGameEdit extends Component {
 								<TextField
 									labelText="Aktionsmodifikator"
 									value={this.props.fighters[this.props.editIndex].aktm}
-									onChange={this.editValue.bind(null, 'aktm')}
+									onChangeE={this.editValue.bind(null, 'aktm')}
 								/>
 								<TextField
 									labelText="Verbrauchte Aktionen"
 									value={this.props.fighters[this.props.editIndex].aktv}
-									onChange={this.editValue.bind(null, 'aktv')}
+									onChangeE={this.editValue.bind(null, 'aktv')}
 								/>
 								<TextField
 									labelText="Verbrauchte Freie Aktionen"
 									value={this.props.fighters[this.props.editIndex].faktv}
-									onChange={this.editValue.bind(null, 'faktv')}
+									onChangeE={this.editValue.bind(null, 'faktv')}
 								/>
 							</div>
 							<div className="edit-health">
 								<TextField
 									labelText="INI"
 									value={this.props.fighters[this.props.editIndex].init}
-									onChange={this.editValue.bind(null, 'init')}
+									onChangeE={this.editValue.bind(null, 'init')}
 								/>
 								<TextField
 									labelText="IB"
 									value={this.props.fighters[this.props.editIndex].ib}
-									onChange={this.editValue.bind(null, 'ib')}
+									onChangeE={this.editValue.bind(null, 'ib')}
 								/>
 								<TextField
 									labelText="LeP"
 									value={this.props.fighters[this.props.editIndex].lec}
-									onChange={this.editValue.bind(null, 'lec')}
+									onChangeE={this.editValue.bind(null, 'lec')}
 								/>
 								<TextField
 									labelText="LE"
 									value={this.props.fighters[this.props.editIndex].le}
-									onChange={this.editValue.bind(null, 'le')}
+									onChangeE={this.editValue.bind(null, 'le')}
 								/>
 								<TextField
 									labelText="AuP"
 									value={this.props.fighters[this.props.editIndex].auc}
-									onChange={this.editValue.bind(null, 'auc')}
+									onChangeE={this.editValue.bind(null, 'auc')}
 								/>
 								<TextField
 									labelText="AU"
 									value={this.props.fighters[this.props.editIndex].au}
-									onChange={this.editValue.bind(null, 'au')}
+									onChangeE={this.editValue.bind(null, 'au')}
 								/>
 								<TextField
 									labelText="AsP"
 									value={this.props.fighters[this.props.editIndex].aec}
-									onChange={this.editValue.bind(null, 'aec')}
+									onChangeE={this.editValue.bind(null, 'aec')}
 								/>
 								<TextField
 									labelText="AE"
 									value={this.props.fighters[this.props.editIndex].ae}
-									onChange={this.editValue.bind(null, 'ae')}
+									onChangeE={this.editValue.bind(null, 'ae')}
 								/>
 								<TextField
 									labelText="KaP"
 									value={this.props.fighters[this.props.editIndex].kec}
-									onChange={this.editValue.bind(null, 'kec')}
+									onChangeE={this.editValue.bind(null, 'kec')}
 								/>
 								<TextField
 									labelText="KE"
 									value={this.props.fighters[this.props.editIndex].ke}
-									onChange={this.editValue.bind(null, 'ke')}
+									onChangeE={this.editValue.bind(null, 'ke')}
 								/>
 							</div>
 							<div className="edit-options">
@@ -123,14 +123,14 @@ export class InGameEdit extends Component {
 								<TextField
 									hint="Aktion(en) über Zeit"
 									value={this.props.editCast}
-									onChange={this.editCast}
+									onChangeE={this.editCast}
 								/>
 								<BorderButton label="Aktionen über Zeit addieren" onClick={this.cast} />
 								<BorderButton label="Aktion über Zeit abbrechen" onClick={this.stopCast} />
 								<TextField
 									hint="Duplikate"
 									value={this.props.editDuplicate}
-									onChange={this.editDuplicate}
+									onChangeE={this.editDuplicate}
 								/>
 								<BorderButton label="Kämpfer duplizieren" onClick={this.duplicateFighter} />
 								<BorderButton label="Kämpfer entfernen" onClick={this.removeFighter} />

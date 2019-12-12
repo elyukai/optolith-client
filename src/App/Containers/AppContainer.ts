@@ -5,7 +5,7 @@ import { Nothing } from "../../Data/Maybe";
 import { ReduxDispatch } from "../Actions/Actions";
 import * as IOActions from "../Actions/IOActions";
 import { AppStateRecord } from "../Reducers/appReducer";
-import { getCurrentHeroPresent, getCurrentTab, getLocaleMessages } from "../Selectors/stateSelectors";
+import { getCurrentHeroPresent, getCurrentTab, getLoadingPhase, getLocaleMessages } from "../Selectors/stateSelectors";
 import { areAnimationsEnabled, getTheme } from "../Selectors/uisettingsSelectors";
 import { App, AppDispatchProps, AppOwnProps, AppStateProps } from "../Views/App";
 
@@ -16,6 +16,7 @@ const mapStateToProps = (state: AppStateRecord): AppStateProps => ({
   theme: getTheme (state),
   areAnimationsEnabled: areAnimationsEnabled (state),
   platform: remote.process.platform,
+  loading_phase: getLoadingPhase (state),
 })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch<Action>) => ({
@@ -30,6 +31,9 @@ const mapDispatchToProps = (dispatch: ReduxDispatch<Action>) => ({
   },
   close () {
     dispatch (IOActions.requestClose (Nothing))
+  },
+  closeDuringLoad () {
+    remote .getCurrentWindow () .close ()
   },
   enterFullscreen () {
     remote.getCurrentWindow ().setFullScreen (true)

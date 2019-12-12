@@ -1,11 +1,10 @@
 import { tryIO } from "../../Control/Exception";
-import { bimap } from "../../Data/Either";
-import { fmap } from "../../Data/Functor";
+import { Either, fromLeft_, fromRight_, isLeft, isRight } from "../../Data/Either";
 import { List } from "../../Data/List";
-import { fromJust, isJust, Maybe } from "../../Data/Maybe";
+import { elem, fromJust, isJust, Just, Maybe } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { OrderedSet } from "../../Data/OrderedSet";
-import { runIO } from "../../System/IO";
+import { bind } from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
@@ -15,24 +14,25 @@ import { getHeroes, getWikiExperienceLevels } from "../Selectors/stateSelectors"
 import { translate, translateP } from "../Utilities/I18n";
 import { getNewIdByDate } from "../Utilities/IDUtils";
 import { pipe_ } from "../Utilities/pipe";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { HeroListSortOptions, HeroListVisibilityFilter } from "../Utilities/Raw/JSON/Config";
 import { ReduxAction } from "./Actions";
-import { addAlert, AddAlertAction, addErrorAlert } from "./AlertActions";
+import { addAlert, addConfirm, addErrorAlert, AlertOptions, ConfirmOptions, ConfirmResponse } from "./AlertActions";
 import { requestAllHeroesSave, requestHeroDeletion, requestHeroExport, requestHeroSave } from "./IOActions";
 
 export interface SetHerolistSortOrderAction {
   type: ActionTypes.SET_HEROLIST_SORT_ORDER
   payload: {
-    sortOrder: SortNames;
+    sortOrder: HeroListSortOptions;
   }
 }
 
-export const setHerolistSortOrder = (sortOrder: SortNames): SetHerolistSortOrderAction => ({
-  type: ActionTypes.SET_HEROLIST_SORT_ORDER,
-  payload: {
-    sortOrder,
-  },
-})
+export const setHerolistSortOrder =
+  (sortOrder: HeroListSortOptions): SetHerolistSortOrderAction => ({
+    type: ActionTypes.SET_HEROLIST_SORT_ORDER,
+    payload: {
+      sortOrder,
+    },
+  })
 
 export interface SetHerolistFilterTextAction {
   type: ActionTypes.SET_HEROLIST_FILTER_TEXT
@@ -51,12 +51,12 @@ export const setHerolistFilterText = (filterText: string): SetHerolistFilterText
 export interface SetHerolistVisibilityFilterAction {
   type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER
   payload: {
-    filterOption: string;
+    filterOption: HeroListVisibilityFilter;
   }
 }
 
 export const setHerolistVisibilityFilter =
-  (filterOption: string): SetHerolistVisibilityFilterAction => ({
+  (filterOption: HeroListVisibilityFilter): SetHerolistVisibilityFilterAction => ({
     type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER,
     payload: {
       filterOption,
@@ -125,15 +125,14 @@ export const loadHero = (id: string): LoadHeroAction => ({
 
 export const saveHeroes =
   (l10n: L10nRecord): ReduxAction =>
-  dispatch => {
-    pipe_ (
-      dispatch (requestAllHeroesSave (l10n)),
-      tryIO,
-      fmap (fmap (() => dispatch (addAlert ({
-                                   message: translate (l10n) ("allsaved"),
-                                 })))),
-      runIO
-    )
+  async dispatch => {
+    await bind (dispatch (tryIO (requestAllHeroesSave (l10n))))
+               (async res => isRight (res)
+                             ? dispatch (addAlert (l10n)
+                                                  (AlertOptions ({
+                                                    message: translate (l10n) ("allsaved"),
+                                                  })))
+                             : Promise.resolve ())
   }
 
 export interface SaveHeroAction {
@@ -145,24 +144,32 @@ export interface SaveHeroAction {
 
 export const saveHero =
   (l10n: L10nRecord) =>
-  (id: Maybe<string>): ReduxAction =>
-    dispatch => {
-      pipe_ (
-        dispatch (requestHeroSave (l10n) (id)),
-        tryIO,
-        fmap (bimap <Error, AddAlertAction, Maybe<string>, Maybe<SaveHeroAction>>
-                    (err => dispatch (addErrorAlert (l10n) ({
-                                       title: translate (l10n) ("saveheroerror"),
-                                       message: err .toString (),
-                                     })))
-                    (fmap (save_id => dispatch<SaveHeroAction> ({
-                                        type: ActionTypes.SAVE_HERO,
-                                        payload: {
-                                          id: save_id, // specified by param or currently open
-                                        },
-                                      })))),
-        runIO
-      )
+  (id: Maybe<string>): ReduxAction<Promise<void>> =>
+    async dispatch => {
+      await bind (dispatch (tryIO (requestHeroSave (l10n) (id))))
+                 (async res => {
+                   if (isLeft (res)) {
+                     const err = fromLeft_ (res)
+
+                     const opts = AlertOptions ({
+                                    title: Just (translate (l10n) ("saveheroerror")),
+                                    message: err .toString (),
+                                  })
+
+                     await dispatch (addErrorAlert (l10n) (opts))
+                   }
+                   else if (Either.any (isJust) (res)) {
+                     const save_id = fromJust (fromRight_ (res))
+
+                     dispatch<SaveHeroAction> ({
+                       type: ActionTypes.SAVE_HERO,
+                       payload: {
+                         // specified by param or currently open
+                         id: save_id,
+                       },
+                     })
+                   }
+                 })
     }
 
 export const exportHeroValidate =
@@ -187,8 +194,8 @@ const deleteHero = (id: string): DeleteHeroAction => ({
 
 export const deleteHeroValidate =
   (l10n: L10nRecord) =>
-  (id: string): ReduxAction =>
-  (dispatch, getState) => {
+  (id: string): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const state = getState ()
     const heroes = getHeroes (state)
     const mhero = lookup (id) (heroes)
@@ -196,22 +203,20 @@ export const deleteHeroValidate =
     if (isJust (mhero)) {
       const hero = fromJust (mhero)
 
-      const resolve: ReduxAction = futureDispatch => {
-        futureDispatch (deleteHero (id))
-        runIO (tryIO (futureDispatch (requestHeroDeletion (l10n) (id))))
-      }
-
-      // @ts-ignore
-      dispatch (addAlert ({
-        title: translateP (l10n)
-                          ("deletehero")
-                          (List (pipe_ (hero, heroReducer.A_.present, HeroModel.A.name))),
+      const opts = ConfirmOptions ({
+        title: Just (translateP (l10n)
+                                ("deletehero")
+                                (List (pipe_ (hero, heroReducer.A_.present, HeroModel.A.name)))),
         message: translate (l10n) ("deletehero.text"),
-        confirm: {
-          resolve,
-        },
-        confirmYesNo: true,
-      }))
+        useYesNo: true,
+      })
+
+      const res = await dispatch (addConfirm (l10n) (opts))
+
+      if (elem (ConfirmResponse.Accepted) (res)) {
+        dispatch (deleteHero (id))
+        await dispatch (tryIO (requestHeroDeletion (l10n) (id)))
+      }
     }
   }
 

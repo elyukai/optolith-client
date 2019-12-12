@@ -77,7 +77,8 @@ export const sign = signNullCustom ("0")
 export const signNeg = (x: number) => x < 0 ? `${minus}\u2060${Math.abs (x)}` : `${x}`
 
 /**
- * Forces signing on the given number, ignores 0.
+ * Forces signing on the given number, returns an empty string if the number is
+ * `0`.
  */
 export const signZero = signNullCustom ("")
 
@@ -85,8 +86,8 @@ export const signZero = signNullCustom ("")
  * Multiplies given string by 100 if it contains `,` o `.`.
  */
 export const multiplyString = (string: string): string => {
-  if (/^\d+[,\.]\d+$/.test (string)) {
-    const float = unsafeToFloat (string.replace (/,/, "."))
+  if (/^\d+[,.]\d+$/u.test (string)) {
+    const float = unsafeToFloat (string.replace (/,/u, "."))
     const multiplied = float * 100
 
     return String (multiplied)
@@ -130,7 +131,7 @@ export const toNatural =
  */
 export const toFloat =
   (e: string): Maybe<number> =>
-    e.length > 0 ? misNotNaN (Just (unsafeToFloat (e.replace (/\,/, ".")))) : Nothing
+    e.length > 0 ? misNotNaN (Just (unsafeToFloat (e.replace (/,/u, ".")))) : Nothing
 
 const isNotNaN = pipe (Number.isNaN, not)
 

@@ -1,6 +1,7 @@
 import { fromDefault } from "../../../Data/Record";
 
 export interface Book {
+  "@@name": "Book"
   id: string
   short: string
   name: string

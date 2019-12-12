@@ -5,11 +5,13 @@ import { fmap, fmapF } from "../../../Data/Functor";
 import { rangeN } from "../../../Data/Ix";
 import { over, set } from "../../../Data/Lens";
 import { any, append, appendStr, consF, elem, fnull, head, ifoldr, imap, intercalate, intersperse, isList, List, map, NonEmptyList, notNull, notNullStr, snoc, snocF, subscript, toArray } from "../../../Data/List";
-import { bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNull, maybeRNullF, Nothing } from "../../../Data/Maybe";
+import { bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, mapMaybe, maybe, Maybe, maybeRNull, maybeRNullF, Nothing } from "../../../Data/Maybe";
 import { dec, negate } from "../../../Data/Num";
 import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../Data/OrderedMap";
-import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
+import { fromDefault, makeLenses, Record, RecordI, RecordIBase } from "../../../Data/Record";
+import { Category } from "../../Constants/Categories";
+import { SpecialAbilityGroup } from "../../Constants/Groups";
+import { AdvantageId, SpecialAbilityId } from "../../Constants/Ids";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
 import { ActivatableNameCost, ActivatableNameCostA_ } from "../../Models/View/ActivatableNameCost";
 import { Advantage } from "../../Models/Wiki/Advantage";
@@ -20,6 +22,7 @@ import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableR
 import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
 import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
+import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite";
 import { Profession } from "../../Models/Wiki/Profession";
 import { Race } from "../../Models/Wiki/Race";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
@@ -29,10 +32,11 @@ import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
 import { getNameCostForWiki } from "../../Utilities/Activatable/activatableActiveUtils";
 import { getName } from "../../Utilities/Activatable/activatableNameUtils";
 import { isExtendedSpecialAbility } from "../../Utilities/Activatable/checkStyleUtils";
+import { isBlessedTradId, isMagicalTradId } from "../../Utilities/Activatable/traditionUtils";
 import { putLevelName } from "../../Utilities/AdventurePoints/activatableCostUtils";
 import { nbsp } from "../../Utilities/Chars";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
-import { getCategoryById, isBlessedTraditionId, isMagicalTraditionId, prefixRace, prefixSA } from "../../Utilities/IDUtils";
+import { getCategoryById, prefixRace } from "../../Utilities/IDUtils";
 import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
@@ -40,6 +44,7 @@ import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy";
 import { isNumber, isString, misNumberM, misStringM } from "../../Utilities/typeCheckUtils";
 import { getWikiEntry } from "../../Utilities/WikiUtils";
 import { Markdown } from "../Universal/Markdown";
+import { WikiCombatTechniques } from "./Elements/WikiCombatTechniques";
 import { WikiSource } from "./Elements/WikiSource";
 import { WikiBoxTemplate } from "./WikiBoxTemplate";
 import { WikiProperty } from "./WikiProperty";
@@ -60,15 +65,23 @@ const RAAL = RequireActivatable.AL
 const RIA = RequireIncreasable.A
 const RPAA = RequirePrimaryAttribute.A
 const AAL = Advantage.AL
+const WA = WikiModel.A
+const SPA = SocialPrerequisite.A
 
-// tslint:disable-next-line: cyclomatic-complexity
-export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
-  const { x, l10n, specialAbilities, wiki } = props
+export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => {
+  const { x, l10n, specialAbilities, wiki, books } = props
 
   const cost = getCost (l10n) (x)
   const cost_elem = <Markdown source={cost} />
 
-  const source_elem = <WikiSource<RecordI<Activatable>> {...props} acc={AcA} />
+  const source_elem = (
+    <WikiSource<RecordI<Activatable>>
+      books={books}
+      l10n={l10n}
+      x={x}
+      acc={AcA}
+      />
+  )
 
   if (SpecialAbility.is (x)) {
     const header_name_levels =
@@ -81,49 +94,31 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
     const header_name = `${header_full_name}${header_name_levels}`
 
     const header_sub_name =
-      maybeR (null)
-             ((subgr: string) => (
-               <p className="title">
-                 {subgr}
-               </p>
-             ))
-             (bind (SAA.subgr (x))
-                   (pipe (dec, subscript (translate (l10n) ("combatspecialabilitygroups")))))
-
-    // if (["nl-BE"].includes(l10n.id)) {
-    //   return (
-    //     <WikiBoxTemplate
-    //       className="specialability"
-    //       title={headerName}
-    //       subtitle={headerSubName}
-    //       />
-    //   )
-    // }
+      maybe (null as React.ReactNode)
+            ((subgr: string) => (
+              <p className="title">
+                {subgr}
+              </p>
+            ))
+            (bind (SAA.subgr (x))
+                  (pipe (dec, subscript (translate (l10n) ("combatspecialabilitygroups")))))
 
     switch (SAA.gr (x)) {
-      // Staff Enchantments
-      case 5:
-      // Bannschwert
-      case 15:
-      // Dolch
-      case 16:
-      // Instrument
-      case 17:
-      // Gewand
-      case 18:
-      // Kugel
-      case 19:
-      // Stecken
-      case 20:
-      case 35:
-      case 36:
-      case 37:
-      case 38:
-      case 39:
-      case 42:
-      case 43:
-      case 44:
-      case 45:
+      case SpecialAbilityGroup.StaffEnchantments:
+      case SpecialAbilityGroup.Bannschwert:
+      case SpecialAbilityGroup.Dolch:
+      case SpecialAbilityGroup.Instrument:
+      case SpecialAbilityGroup.Gewand:
+      case SpecialAbilityGroup.Kugel:
+      case SpecialAbilityGroup.Stecken:
+      case SpecialAbilityGroup.Magierkugel:
+      case SpecialAbilityGroup.Narrenkappe:
+      case SpecialAbilityGroup.Schelmenspielzeug:
+      case SpecialAbilityGroup.Alchimistenschale:
+      case SpecialAbilityGroup.WaffenzauberAnimisten:
+      case SpecialAbilityGroup.Sichelrituale:
+      case SpecialAbilityGroup.Ringzauber:
+      case SpecialAbilityGroup.Chronikzauber:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -162,14 +157,17 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                              {str}
                            </WikiProperty>
                          ))}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
 
-      // Zeremonialgegenstände
-      case 23:
+      case SpecialAbilityGroup.Zeremonialgegenstände:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -190,14 +188,17 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                                : aspect}
                            </WikiProperty>
                          ))}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
 
-      // Bann-/Schutzkreise
-      case 8:
+      case SpecialAbilityGroup.ProtectiveWardingCircles:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -218,10 +219,8 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
           </WikiBoxTemplate>
         )
 
-      // Magische Traditionen
-      case 28:
-      // Karmale Traditionen
-      case 29:
+      case SpecialAbilityGroup.MagicalTraditions:
+      case SpecialAbilityGroup.BlessedTraditions:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -229,16 +228,18 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             subtitle={header_sub_name}
             >
             <Markdown source={renderMaybe (SAA.rules (x))} />
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
 
-      // Combat Styles (armed)
-      case 9:
-      // Combat Styles (unarmed)
-      case 10:
+      case SpecialAbilityGroup.CombatStylesArmed:
+      case SpecialAbilityGroup.CombatStylesUnarmed: {
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -259,7 +260,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                               bindF (lookupF (specialAbilities)),
                               fmap (SAA.name)
                             )),
-                            sortStrings (L10n.A.id (l10n)),
+                            sortStrings (l10n),
                             intercalate (", ")
                            )
 
@@ -271,20 +272,24 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                          (str => (
                            <Markdown source={`**${translate (l10n) ("penalty")}:** ${str}`} />
                          ))}
-            {maybeRNullF (SAA.combatTechniques (x))
-                         (str => (
-                           <Markdown
-                             source={`**${translate (l10n) ("combattechniques")}:** ${str}`}
-                             />
-                         ))}
-            <PrerequisitesText {...props} />
+            <WikiCombatTechniques
+              acc={SAA}
+              combatTechniques={WA.combatTechniques (wiki)}
+              l10n={l10n}
+              x={x}
+              />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
+      }
 
-      // Zauberstile
-      case 13:
+      case SpecialAbilityGroup.MagicalStyles:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -305,7 +310,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                               bindF (lookupF (specialAbilities)),
                               fmap (SAA.name)
                             )),
-                            sortStrings (L10n.A.id (l10n)),
+                            sortStrings (l10n),
                             intercalate (", ")
                            )
 
@@ -313,16 +318,18 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                              <Markdown source={`**${tag}:** ${names}`} />
                            )
                          })}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
 
-      // Liturgiestile
-      case 25: {
-        const sa_id = prefixSA (639) // Gebieter des [Aspekts]
-        const SA_639 = lookup (sa_id) (specialAbilities)
+      case SpecialAbilityGroup.BlessedStyles: {
+        const SA_639 = lookup<string> (SpecialAbilityId.GebieterDesAspekts) (specialAbilities)
 
         const add_extended =
           pipe_ (
@@ -332,6 +339,10 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                                    pipe (
                                      SelectOption.A.prerequisites,
                                      bindF (ensure (any (e => {
+                                                     if (!RequireActivatable.is (e)) {
+                                                       return false
+                                                     }
+
                                                      const req_ids = RAAL.id (e)
 
                                                      return isString (req_ids)
@@ -339,7 +350,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                                                        : elem (SAA.id (x)) (req_ids)
                                                    }))),
                                      fmap (() => ActiveObjectWithId ({
-                                                   id: sa_id,
+                                                   id: SpecialAbilityId.GebieterDesAspekts,
                                                    index: 0,
                                                    sid: Just (SelectOption.A.id (option)),
                                                  }))
@@ -369,7 +380,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                                               fmap (ActivatableNameCostA_.name)
                                             ))
                                             (add_extended)),
-                           sortStrings (L10n.A.id (l10n)),
+                           sortStrings (l10n),
                            intercalate (", "),
                            str => {
                              const tag = translate (l10n) ("extendedblessedtspecialabilities")
@@ -379,24 +390,18 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                              )
                            }
                          ))}
-            {maybeRNullF (SAA.penalty (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("penalty")}:** ${str}`} />
-                         ))}
-            {maybeRNullF (SAA.combatTechniques (x))
-                         (str => (
-                           <Markdown
-                             source={`**${translate (l10n) ("combattechniques")}:** ${str}`}
-                             />
-                         ))}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
       }
 
-      case 33:
+      case SpecialAbilityGroup.SkillStyles:
         return (
           <WikiBoxTemplate
             className="specialability"
@@ -417,7 +422,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                               bindF (lookupF (specialAbilities)),
                               fmap (SAA.name)
                             )),
-                            sortStrings (L10n.A.id (l10n)),
+                            sortStrings (l10n),
                             intercalate (", ")
                            )
 
@@ -425,7 +430,134 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                              <Markdown source={`**${tag}:** ${names}`} />
                            )
                          })}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
+      case SpecialAbilityGroup.Hexenkessel:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.effect (x))
+                          (str => (
+                            <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
+                          ))}
+            {maybeRNullF (SAA.volume (x))
+                          (str => (
+                            <WikiProperty l10n={l10n} title="volume">
+                              {str}
+                            </WikiProperty>
+                          ))}
+            {maybeRNullF (bind (misNumberM (SAA.brew (x)))
+                                (pipe (dec, subscript (translate (l10n) ("brews")))))
+                          (str => (
+                            <WikiProperty l10n={l10n} title="brew">
+                              {str}
+                            </WikiProperty>
+                          ))}
+            {maybeRNullF (SAA.aeCost (x))
+                          (str => (
+                            <WikiProperty l10n={l10n} title="aecost">
+                              {str}
+                            </WikiProperty>
+                          ))}
+            {isNothing (SAA.aeCost (x)) && isNothing (SAA.bindingCost (x))
+              ? <WikiProperty l10n={l10n} title="aecost">{translate (l10n) ("none")}</WikiProperty>
+              : null}
+            {maybeRNullF (SAA.bindingCost (x))
+                          (str => (
+                            <WikiProperty l10n={l10n} title="bindingcost">
+                              {str}
+                            </WikiProperty>
+                          ))}
+            {maybeRNullF (bind (misNumberM (SAA.property (x)))
+                                (pipe (dec, subscript (translate (l10n) ("propertylist")))))
+                          (str => (
+                            <WikiProperty l10n={l10n} title="property">
+                              {str}
+                            </WikiProperty>
+                          ))}
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
+      case SpecialAbilityGroup.Paktgeschenke:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.effect (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
+                         ))}
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
+      case SpecialAbilityGroup.Combat:
+      case SpecialAbilityGroup.CombatExtended:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.effect (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.penalty (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("penalty")}:** ${str}`} />
+                         ))}
+            <WikiCombatTechniques
+              acc={SAA}
+              combatTechniques={WA.combatTechniques (wiki)}
+              l10n={l10n}
+              x={x}
+              />
+            {maybeRNullF (SAA.aeCost (x))
+                         (str => (
+                           <WikiProperty l10n={l10n} title="aecost">
+                             {str}
+                           </WikiProperty>
+                         ))}
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
@@ -450,19 +582,17 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                          (str => (
                            <Markdown source={`**${translate (l10n) ("penalty")}:** ${str}`} />
                          ))}
-            {maybeRNullF (SAA.combatTechniques (x))
-                         (str => (
-                           <Markdown
-                             source={`**${translate (l10n) ("combattechniques")}:** ${str}`}
-                             />
-                         ))}
             {maybeRNullF (SAA.aeCost (x))
                          (str => (
                            <WikiProperty l10n={l10n} title="aecost">
                              {str}
                            </WikiProperty>
                          ))}
-            <PrerequisitesText {...props} />
+            <PrerequisitesText
+              l10n={l10n}
+              wiki={wiki}
+              x={x}
+              />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
@@ -488,12 +618,6 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
 
     const header_name = `${header_full_name}${header_name_levels}${header_rcp}`
 
-    // if (["en-US", "nl-BE"].includes(l10n.id)) {
-    //   return (
-    //     <WikiBoxTemplate className="race" title={headerName} />
-    //   )
-    // }
-
     return (
       <WikiBoxTemplate className="disadv" title={header_name}>
         <Markdown source={`**${translate (l10n) ("rules")}:** ${AAL.rules (x)}`} />
@@ -509,7 +633,11 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                          {str}
                        </WikiProperty>
                      ))}
-        <PrerequisitesText {...props} />
+        <PrerequisitesText
+          l10n={l10n}
+          wiki={wiki}
+          x={x}
+          />
         {cost_elem}
         {source_elem}
       </WikiBoxTemplate>
@@ -538,7 +666,7 @@ const getCost =
 
           if (isList (cost)) {
             const abs_cost =
-              AcA.category (x) === Categories.DISADVANTAGES
+              AcA.category (x) === Category.DISADVANTAGES
                 ? map (negate) (cost)
                 : cost
 
@@ -551,15 +679,14 @@ const getCost =
 
             return `${str}${level_str} ${level_nums}: ${level_costs} ${ap_str}`
           }
-          else {
-            const abs_cost = AcA.category (x) === Categories.DISADVANTAGES ? -cost : cost
 
-            const plain_str = `${str}${abs_cost} ${ap_str}`
+          const abs_cost = AcA.category (x) === Category.DISADVANTAGES ? -cost : cost
 
-            return isJust (AcA.tiers (x))
-              ? `${plain_str} ${translate (l10n) ("perlevel")}`
-              : plain_str
-          }
+          const plain_str = `${str}${abs_cost} ${ap_str}`
+
+          return isJust (AcA.tiers (x))
+            ? `${plain_str} ${translate (l10n) ("perlevel")}`
+            : plain_str
         }
 
         return str
@@ -599,7 +726,7 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   type TypeofList = JSX.Element | string
 
   const mtext_before = fmapF (prerequisitesTextStart)
-                             (y => <Markdown key="before" source={y} oneLine="fragment" />)
+                             (y => <Markdown key="before" source={y} noWrapper />)
 
   /**
    * `Right`: Will need a comma before if there are elements before the text.
@@ -607,9 +734,9 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
    */
   const mtext_after = fmapF (prerequisitesTextEnd)
                             ((y): Either<JSX.Element, JSX.Element> =>
-                              /^(?: |,|\.)/ .test (y)
-                                ? Left (<Markdown key="after" source={y} oneLine="fragment" />)
-                                : Right (<Markdown key="after" source={y} oneLine="fragment" />))
+                              /^(?: |,|\.)/u .test (y)
+                                ? Left (<Markdown key="after" source={y} noWrapper />)
+                                : Right (<Markdown key="after" source={y} noWrapper />))
 
   const mtext_after_insidelist = bind (mtext_after) (eitherToMaybe)
   const mtext_after_outsidelist = bind (mtext_after) (pipe (invertEither, eitherToMaybe))
@@ -622,7 +749,10 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
 
     return (
       <p>
-        <span>{translate (l10n) ("prerequisites")}: </span>
+        <span>
+          {translate (l10n) ("prerequisites")}
+          {": "}
+        </span>
         <span>
           {pipe_ (
             List<Maybe<TypeofList>> (
@@ -631,31 +761,32 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
                 ? Just (`${translate (l10n) ("level")} I: ${translate (l10n) ("none")} `)
                 : Nothing,
               ...map ((lvl: number) => {
-                const prereqForLevel = lookup (lvl) (prerequisites)
-                const not_empty = Maybe.any (notNull) (prereqForLevel)
+                  const prereqForLevel = lookup (lvl) (prerequisites)
+                  const not_empty = Maybe.any (notNull) (prereqForLevel)
 
-                const level_num_str = `${translate (l10n) ("level")} ${toRoman (lvl)}: `
+                  const level_num_str = `${translate (l10n) ("level")} ${toRoman (lvl)}: `
 
-                const requires_last_str =
-                  lvl > 1
-                  ? `${not_empty ? ", " : ""}${AAL.name (x)}${nbsp}${toRoman (lvl - 1)}`
-                  : ""
+                  const requires_last_str =
+                    lvl > 1
+                    ? `${not_empty ? ", " : ""}${AAL.name (x)}${nbsp}${toRoman (lvl - 1)}`
+                    : ""
 
-                return Just (
-                  <React.Fragment key={lvl}>
-                    {level_num_str}
-                    {maybeRNull ((rs: List<AllRequirements>) =>
-                                  pipe_ (
-                                    getPrerequisites (rs) (prerequisitesTextIndex) (props),
-                                    catMaybes,
-                                    intersperse<TypeofList> (", "),
-                                    toArray,
-                                    e => <>{e}</>
-                                  ))
-                                (prereqForLevel)}
-                    {requires_last_str}
-                  </React.Fragment>
-                )})
+                  return Just (
+                    <React.Fragment key={lvl}>
+                      {level_num_str}
+                      {maybeRNull ((rs: List<AllRequirements>) =>
+                                    pipe_ (
+                                      getPrerequisites (rs) (prerequisitesTextIndex) (props),
+                                      catMaybes,
+                                      intersperse<TypeofList> (", "),
+                                      toArray,
+                                      e => <>{e}</>
+                                    ))
+                                  (prereqForLevel)}
+                      {requires_last_str}
+                    </React.Fragment>
+                  )
+                })
                 (levelList),
               mtext_after_insidelist
             ),
@@ -663,7 +794,7 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
             intersperse<TypeofList> ("; "),
             addTextAfterOutsideList,
             ensure (notNull),
-            maybeR (translate (l10n) ("none")) (toArray)
+            maybe<React.ReactNode> (translate (l10n) ("none")) (toArray)
           )}
         </span>
       </p>
@@ -672,7 +803,10 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   else {
     return (
       <p>
-        <span>{translate (l10n) ("prerequisites")}: </span>
+        <span>
+          {translate (l10n) ("prerequisites")}
+          {": "}
+        </span>
         <span>
           {pipe_ (
             getPrerequisites (prerequisites) (prerequisitesTextIndex) (props),
@@ -682,7 +816,7 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
             intersperse<JSX.Element | string> (", "),
             addTextAfterOutsideList,
             ensure (notNull),
-            maybeR (translate (l10n) ("none")) (toArray)
+            maybe<React.ReactNode> (translate (l10n) ("none")) (toArray)
           )}
         </span>
       </p>
@@ -724,6 +858,7 @@ const getPrerequisites =
     const activeDisadvantages = CIA.activeDisadvantages (items)
     const inactiveDisadvantages = CIA.inactiveDisadvantages (items)
     const race = CIA.race (items)
+    const social = CIA.social (items)
 
     const category = AAL.category (x)
     const gr = AAL.gr (x)
@@ -745,7 +880,8 @@ const getPrerequisites =
       ...getPrerequisitesActivatablesText (l10n) (wiki) (activeDisadvantages),
       ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveDisadvantages),
       fmap (getPrerequisitesRaceText (l10n) (WikiModel.A.races (wiki))) (race),
-      category === Categories.SPECIAL_ABILITIES
+      fmap (getSocialPrerequisiteText (l10n)) (social),
+      category === Category.SPECIAL_ABILITIES
         ? (gr === 11
           ? Just (translate (l10n) ("appropriatecombatstylespecialability"))
           : gr === 14
@@ -763,11 +899,12 @@ interface ActivatableStringObject {
   value: string
 }
 
-type ReplacedPrerequisite<T = RequireActivatable> = Record<T> | string
+type ReplacedPrerequisite<T extends RecordIBase<any> = RequireActivatable> = Record<T> | string
 type ActivatablePrerequisiteObjects = Record<RequireActivatable> | ActivatableStringObject
 type PrimaryAttributePrerequisiteObjects = Record<RequirePrimaryAttribute> | string
 type IncreasablePrerequisiteObjects = Record<RequireIncreasable> | string
 type RacePrerequisiteObjects = Record<RaceRequirement> | string
+type SocialPrerequisiteObjects = Record<SocialPrerequisite> | string
 type RCPPrerequisiteObjects = boolean | string
 
 const getPrerequisitesRCPText =
@@ -783,7 +920,7 @@ const getPrerequisitesRCPText =
                               ("racecultureorprofessionrequiresautomaticorsuggested")
                               (List (
                                 AAL.name (x),
-                                category === Categories.ADVANTAGES
+                                category === Category.ADVANTAGES
                                   ? translate (l10n) ("advantage")
                                   : translate (l10n) ("disadvantage")
                               ))
@@ -820,7 +957,7 @@ const getPrerequisitesAttributesText =
             return e
           }
         }),
-        sortStrings (L10n.A.id (l10n)),
+        sortStrings (l10n),
         intercalate (", ")
       ))
     )
@@ -862,7 +999,7 @@ const getPrerequisitesSkillsText =
             return e
           }
         }),
-        sortStrings (L10n.A.id (l10n)),
+        sortStrings (l10n),
         intercalate (", ")
       ))
     )
@@ -872,7 +1009,7 @@ const getPrerequisitesActivatedSkillsTextCategoryAdd =
   (id: string) => {
     const isCategory = Maybe.elemF (getCategoryById (id))
 
-    return isCategory (Categories.LITURGIES)
+    return isCategory (Category.LITURGICAL_CHANTS)
       ? translate (l10n) ("knowledgeofliturgicalchant")
       : translate (l10n) ("knowledgeofspell")
   }
@@ -912,12 +1049,13 @@ const getPrerequisitesActivatedSkillsText =
             return e .value
           }
         }),
-        sortStrings (L10n.A.id (l10n)),
+        sortStrings (l10n),
         intercalate (", ")
       ))
     )
 
 interface ActivatablePrerequisiteText {
+  "@@name": "ActivatablePrerequisiteText"
   id: string | NonEmptyList<string>
   active: boolean
   name: string
@@ -938,9 +1076,9 @@ const getPrerequisitesActivatablesCategoryAdd =
       getCategoryById,
       Maybe.elemF,
       isCategory =>
-        isCategory (Categories.ADVANTAGES)
+        isCategory (Category.ADVANTAGES)
           ? `${translate (l10n) ("advantage")} `
-          : isCategory (Categories.DISADVANTAGES)
+          : isCategory (Category.DISADVANTAGES)
           ? `${translate (l10n) ("disadvantage")} `
           : ""
     )
@@ -1041,7 +1179,10 @@ const getPrerequisitesActivatablesText =
         const name = APTA.name (x)
         const active = APTA.active (x)
 
-        if (!active) {
+        if (active) {
+          return Just (name)
+        }
+        else {
           return Just (
             <span
               key={notNullStr (name) ? name : isString (id) ? id : ""}
@@ -1050,9 +1191,6 @@ const getPrerequisitesActivatablesText =
               {name}
             </span>
           )
-        }
-        else {
-          return Just (name)
         }
       })
     )
@@ -1078,16 +1216,29 @@ const getPrerequisitesRaceText =
           localizeOrList (l10n)
         )
 
-      return <span className={!active ? "disabled" : ""}>{`${race_tag} ${curr_races}`}</span>
+      return <span className={active ? "" : "disabled"}>{`${race_tag} ${curr_races}`}</span>
     }
     else {
       const curr_race = pipe_ (value, prefixRace, lookupF (races), maybe ("") (Race.A.name))
 
-      return <span className={!active ? "disabled" : ""}>{`${race_tag} ${curr_race}`}</span>
+      return <span className={active ? "" : "disabled"}>{`${race_tag} ${curr_race}`}</span>
     }
   }
 
+const getSocialPrerequisiteText: (l10n: L10nRecord) =>
+                                 (x: SocialPrerequisiteObjects) => string =
+  l10n => x => isString (x)
+               ? x
+               : translateP (l10n)
+                            ("socialstatusxorhigher")
+                            (List (
+                              fromMaybe<string | number> (SPA.value (x))
+                                                         (subscript (L10n.A.socialstatuses (l10n))
+                                                                    (SPA.value (x) - 1))
+                            ))
+
 interface CategorizedItems {
+  "@@name": "CategorizedItems"
   rcp: RCPPrerequisiteObjects
   casterBlessedOne: List<ActivatablePrerequisiteObjects>
   traditions: List<ActivatablePrerequisiteObjects>
@@ -1102,6 +1253,7 @@ interface CategorizedItems {
   activeDisadvantages: List<ActivatablePrerequisiteObjects>
   inactiveDisadvantages: List<ActivatablePrerequisiteObjects>
   race: Maybe<RacePrerequisiteObjects>
+  social: Maybe<SocialPrerequisiteObjects>
 }
 
 const CategorizedItems =
@@ -1120,13 +1272,16 @@ const CategorizedItems =
                 activeDisadvantages: List (),
                 inactiveDisadvantages: List (),
                 race: Nothing,
+                social: Nothing,
               })
 
 const CIA = CategorizedItems.A
 const CIL = makeLenses (CategorizedItems)
 
-const isCasterOrBlessedOneId = (x: string) => x === "ADV_12" || x === "ADV_50"
-const isTraditionId = (x: string) => isMagicalTraditionId (x) || isBlessedTraditionId (x)
+const isCasterOrBlessedOneId =
+  (x: string) => x === AdvantageId.Blessed || x === AdvantageId.Spellcaster
+
+const isTraditionId = (x: string) => isMagicalTradId (x) || isBlessedTradId (x)
 
 const getActivatablePrerequisite =
   (index_special: Maybe<string | false>) =>
@@ -1145,7 +1300,6 @@ const getActivatablePrerequisite =
 
 export const getCategorizedItems =
   (req_text_index: OrderedMap<number, string | false>) =>
-  // tslint:disable-next-line: cyclomatic-complexity
   ifoldr (i => (e: AllRequirements): ident<Record<CategorizedItems>> => {
            const index_special = lookup (i) (req_text_index)
 
@@ -1162,6 +1316,12 @@ export const getCategorizedItems =
                         (Just (fromMaybe<RacePrerequisiteObjects> (e) (misStringM (index_special))))
            }
 
+           if (SocialPrerequisite.is (e)) {
+             return set (CIL.social)
+                        (Just (fromMaybe<SocialPrerequisiteObjects> (e)
+                                                                    (misStringM (index_special))))
+           }
+
            if (RequirePrimaryAttribute.is (e)) {
              type InRecord = ReplacedPrerequisite<RequirePrimaryAttribute>
 
@@ -1175,7 +1335,7 @@ export const getCategorizedItems =
              const mcategory = isList (id) ? getCategoryById (head (id)) : getCategoryById (id)
              const isCategory = Maybe.elemF (mcategory)
 
-             return over (isCategory (Categories.ATTRIBUTES) ? CIL.attributes : CIL.skills)
+             return over (isCategory (Category.ATTRIBUTES) ? CIL.attributes : CIL.skills)
                          (consF (fromMaybe<InRecord> (e) (misStringM (index_special))))
            }
 
@@ -1185,7 +1345,7 @@ export const getCategorizedItems =
              const isCategory = Maybe.elemF (mcategory)
              const addEntry = consF (getActivatablePrerequisite (index_special) (e))
 
-             if (isCategory (Categories.LITURGIES) || isCategory (Categories.SPELLS)) {
+             if (isCategory (Category.LITURGICAL_CHANTS) || isCategory (Category.SPELLS)) {
                return over (CIL.activeSkills) (addEntry)
              }
 
@@ -1199,19 +1359,19 @@ export const getCategorizedItems =
 
              const isActive = RAA.active (e)
 
-             if (isCategory (Categories.SPECIAL_ABILITIES)) {
+             if (isCategory (Category.SPECIAL_ABILITIES)) {
                return over (isActive
                              ? CIL.otherActiveSpecialAbilities
                              : CIL.inactiveSpecialAbilities)
                            (addEntry)
              }
 
-             if (isCategory (Categories.ADVANTAGES)) {
+             if (isCategory (Category.ADVANTAGES)) {
                return over (isActive ? CIL.otherActiveAdvantages : CIL.inactiveAdvantages)
                            (addEntry)
              }
 
-             if (isCategory (Categories.DISADVANTAGES)) {
+             if (isCategory (Category.DISADVANTAGES)) {
                return over (isActive ? CIL.activeDisadvantages : CIL.inactiveDisadvantages)
                            (addEntry)
              }

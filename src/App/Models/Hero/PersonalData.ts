@@ -2,6 +2,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses } from "../../../Data/Record";
 
 export interface PersonalData {
+  "@@name": "PersonalData"
   family: Maybe<string>
   placeOfBirth: Maybe<string>
   dateOfBirth: Maybe<string>

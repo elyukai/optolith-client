@@ -30,7 +30,7 @@ export function BelongingsSheetItemsColumn (props: BelongingsSheetItemsColumnPro
             {translate (l10n) ("item")}
           </th>
           <th className="amount">
-            {translate (l10n) ("number")}
+            {translate (l10n) ("number.short")}
           </th>
           <th className="price">
             {translate (l10n) ("price")}
@@ -83,11 +83,11 @@ export function BelongingsSheetItemsColumn (props: BelongingsSheetItemsColumnPro
         {replicateR (columnSize - flength (items))
                     (index => (
                       <tr key={`undefined-${index}`}>
-                        <td className="name"></td>
-                        <td className="amount"></td>
-                        <td className="price"></td>
-                        <td className="weight"></td>
-                        <td className="where"></td>
+                        <td className="name" />
+                        <td className="amount" />
+                        <td className="price" />
+                        <td className="weight" />
+                        <td className="where" />
                       </tr>
                     ))}
       </tbody>

@@ -3,9 +3,10 @@ import { List } from "../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
+import { Theme } from "../../Utilities/Raw/JSON/Config";
 import { BorderButton } from "../Universal/BorderButton";
 import { Checkbox } from "../Universal/Checkbox";
-import { Dialog } from "../Universal/DialogNew";
+import { Dialog } from "../Universal/Dialog";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { Option, SegmentedControls } from "../Universal/SegmentedControls";
 
@@ -20,7 +21,7 @@ export interface SettingsOwnProps {
 export interface SettingsStateProps {
   localeString: Maybe<string>
   localeType: "default" | "set"
-  theme: string
+  theme: Theme
   isEditingHeroAfterCreationPhaseEnabled: boolean
   areAnimationsEnabled: boolean
 }
@@ -83,12 +84,11 @@ export function Settings (props: SettingsProps) {
           DropdownOption ({
             id: Just ("nl-BE"),
             name: "Nederlands (België)",
-            disabled: Just (true),
           }),
           DropdownOption ({
             id: Just ("fr-FR"),
             name: "Français (France)",
-            // disabled: Just (true),
+            disabled: Just (true),
           })
         )}
         value={localeType === "default" ? Nothing : localeString}
@@ -100,11 +100,11 @@ export function Settings (props: SettingsProps) {
         options={List (
           Option ({
             name: translate (l10n) ("dark"),
-            value: Just ("dark"),
+            value: Just (Theme.Dark),
           }),
           Option ({
             name: translate (l10n) ("light"),
-            value: Just ("light"),
+            value: Just (Theme.Light),
           })
         )}
         active={Just (theme)}

@@ -2,7 +2,7 @@ import * as React from "react";
 import { Textfit } from "react-textfit";
 import { fmap, fmapF } from "../../../../Data/Functor";
 import { flength, intercalate, List, map, replicateR, subscript, subscriptF, toArray } from "../../../../Data/List";
-import { bindF, fromMaybeR, Maybe } from "../../../../Data/Maybe";
+import { bindF, fromMaybe, Maybe } from "../../../../Data/Maybe";
 import { dec } from "../../../../Data/Num";
 import { Record } from "../../../../Data/Record";
 import { bimap, fst, isTuple, snd } from "../../../../Data/Tuple";
@@ -107,7 +107,7 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
                     </td>
                     <td className="at">{MWA.at (e)}</td>
                     <td className="pa">
-                      {fromMaybeR (ndash) (MWA.pa (e))}
+                      {fromMaybe<string | number> (ndash) (MWA.pa (e))}
                     </td>
                     <td className="weight">
                       {pipe_ (
@@ -124,23 +124,23 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
               }),
               toArray
             )),
-            fromMaybeR (null)
+            fromMaybe (null as React.ReactNode)
           )}
           {replicateR (2 - Maybe.sum (fmapF (mmelee_weapons) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
-                          <td className="name"></td>
-                          <td className="combat-technique"></td>
-                          <td className="damage-bonus"></td>
-                          <td className="damage"></td>
-                          <td className="at-mod mod"></td>
-                          <td className="pa-mod mod"></td>
-                          <td className="reach"></td>
-                          <td className="bf"></td>
-                          <td className="loss"></td>
-                          <td className="at"></td>
-                          <td className="pa"></td>
-                          <td className="weight"></td>
+                          <td className="name" />
+                          <td className="combat-technique" />
+                          <td className="damage-bonus" />
+                          <td className="damage" />
+                          <td className="at-mod mod" />
+                          <td className="pa-mod mod" />
+                          <td className="reach" />
+                          <td className="bf" />
+                          <td className="loss" />
+                          <td className="at" />
+                          <td className="pa" />
+                          <td className="weight" />
                         </tr>
                       ))}
         </tbody>

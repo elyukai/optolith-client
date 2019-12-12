@@ -1,6 +1,6 @@
 import { thrush } from "../../Data/Function";
 import { any, filter, isInfixOf, List, lower } from "../../Data/List";
-import { Record, RecordBase } from "../../Data/Record";
+import { Record } from "../../Data/Record";
 import { pipe, pipe_ } from "./pipe";
 import { RecordWithName } from "./sortBy";
 import { isString } from "./typeCheckUtils";
@@ -11,7 +11,7 @@ import { isString } from "./typeCheckUtils";
  */
 const PERF_MIN = 3
 
-export type FilterAccessor<A> = (x: Record<A>) => string | List<string>
+export type FilterAccessor<A> = (x: A) => string | List<string>
 
 /**
  * `filterRecordsBy min accs text xs` filters a list of records `xs` by checking
@@ -19,12 +19,12 @@ export type FilterAccessor<A> = (x: Record<A>) => string | List<string>
  * functions (`accs`). If the provided filter text's length is lower than `min`,
  * the original list will be returned.
  */
-export const filterRecordsBy =
+export const filterByMulti =
   (minFilterTextLength: number) =>
-  <A extends RecordBase>
+  <A>
   (filterAccessors: FilterAccessor<A>[]) =>
   (filterText: string) =>
-  (xs: List<Record<A>>): List<Record<A>> => {
+  (xs: List<A>): List<A> => {
     if (
       filterText .length < minFilterTextLength
       || filterAccessors .length === 0
@@ -32,24 +32,28 @@ export const filterRecordsBy =
       return xs
     }
 
-    return filter<Record<A>>
-      (x => filterAccessors
-        .some (pipe (thrush (x), str => isString (str)
-                                          ? pipe_ (str, lower, isInfixOf (lower (filterText)))
-                                          : any (pipe (lower, isInfixOf (lower (filterText))))
-                                                (str))))
-      (xs)
+    const isIncluded =
+      (x: A) => filterAccessors .some (pipe (
+                                        thrush (x),
+                                        str => isString (str)
+                                               ? pipe_ (str, lower, isInfixOf (lower (filterText)))
+                                               : any (pipe (lower, isInfixOf (lower (filterText))))
+                                                     (str)
+                                      ))
+
+    return filter<A> (isIncluded) (xs)
   }
 
 /**
  * Same as `filterRecordsBy` but with a set minimum filter text length of `3`.
  */
-export const filterRecordsByE = filterRecordsBy (PERF_MIN)
+export const filterRecordsByE = filterByMulti (PERF_MIN)
 
 /**
  * Same as `filterRecordsBy` but with a set minimum filter text length of `0`.
  */
-export const filterRecordsByA = filterRecordsBy (0) // A => always
+export const filterRecordsByA = filterByMulti (0)
+// A => always
 
 const { name } = RecordWithName.AL
 
@@ -57,12 +61,12 @@ const { name } = RecordWithName.AL
  * Filters a list of records by their `name` property.
  */
 export const filterRecordsByName =
-  filterRecordsBy (0) ([name]) as
+  filterByMulti (0) ([ name ]) as
     (filterText: string) => <A extends RecordWithName> (xs: List<Record<A>>) => List<Record<A>>
 
 /**
  * Filters a long list of records by their `name` property.
  */
 export const filterRecordsByNameE =
-  filterRecordsBy (PERF_MIN) ([name]) as
+  filterByMulti (PERF_MIN) ([ name ]) as
     (filterText: string) => <A extends RecordWithName> (xs: List<Record<A>>) => List<Record<A>>

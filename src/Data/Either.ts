@@ -18,7 +18,7 @@ import { ident } from "./Function";
 import { fmap, fmapF } from "./Functor";
 import { Internals } from "./Internals";
 import { cons, consF, List } from "./List";
-import { fromJust, isJust, Just, Maybe, Nothing, Some } from "./Maybe";
+import { fromJust, isJust, Just, Maybe, Nothing } from "./Maybe";
 import { Pair, Tuple } from "./Tuple";
 
 export import Left = Internals.Left
@@ -176,8 +176,9 @@ export const maybeToEither_ =
  * `bimap :: (a -> b) -> (c -> d) -> Either a c -> Either b d`
  */
 export const bimap =
-  <A, B, C, D>
+  <A, B>
   (fLeft: (l: A) => B) =>
+  <C, D>
   (fRight: (r: C) => D) =>
   (x: Either<A, C>): Either<B, D> =>
     isRight (x)
@@ -188,9 +189,9 @@ export const bimap =
  * `first :: (a -> b) -> Either a c -> Either b c`
  */
 export const first =
-  <A, B, C>
+  <A, B>
   (f: (l: A) => B) =>
-  (x: Either<A, C>): Either<B, C> =>
+  <C> (x: Either<A, C>): Either<B, C> =>
     isLeft (x)
       ? Left (f (x .value))
       : x
@@ -316,11 +317,28 @@ export const mapM =
  * right.
  */
 export const liftM2 =
-  <A1 extends Some, A2 extends Some, B extends Some>
+  <A1, A2, B>
   (f: (a1: A1) => (a2: A2) => B) =>
   <E>
   (x1: Either<E, A1>) =>
   (x2: Either<E, A2>): Either<E, B> =>
+    bind (x1) (pipe (f, fmapF (x2)))
+
+/**
+ * `liftM2F :: Either e a1 -> Either e a2 -> (a1 -> a2 -> r) -> Either e r`
+ *
+ * Promote a function to a monad, scanning the monadic arguments from left to
+ * right.
+ *
+ * Flipped version of `liftM2`.
+ */
+export const liftM2F =
+  <E, A1>
+  (x1: Either<E, A1>) =>
+  <A2>
+  (x2: Either<E, A2>) =>
+  <B>
+  (f: (a1: A1) => (a2: A2) => B): Either<E, B> =>
     bind (x1) (pipe (f, fmapF (x2)))
 
 
@@ -452,14 +470,36 @@ export const and = fromRight (true)
  */
 export const or = fromRight (false)
 
+interface Any {
+
+  /**
+   * `any :: (a0 -> Bool) -> Either a a0 -> Bool`
+   *
+   * Determines whether any element of the structure satisfies the predicate.
+   */
+  <A, A1 extends A>
+  (f: (x: A) => x is A1):
+  (x: Either<any, A>) => x is Right<A1>
+
+  /**
+   * `any :: (a0 -> Bool) -> Either a a0 -> Bool`
+   *
+   * Determines whether any element of the structure satisfies the predicate.
+   */
+  <A>
+  (f: (x: A) => boolean):
+  (x: Either<any, A>) => x is Right<A>
+}
+
 /**
  * `any :: (a0 -> Bool) -> Either a a0 -> Bool`
  *
  * Determines whether any element of the structure satisfies the predicate.
  */
-export const any =
-  <A0>(f: (x: A0) => boolean) => (x: Either<any, A0>): boolean =>
+export const any: Any =
+  <A0>(f: (x: A0) => boolean) => (x: Either<any, A0>): x is Right<A0> =>
     fromRight (false) (fmap (f) (x))
+
 /**
  * `all :: (a0 -> Bool) -> Either a a0 -> Bool`
  *
@@ -481,6 +521,7 @@ export const notElem =
     !elem (x) (y)
 
 interface Find {
+
   /**
    * `find :: (a0 -> Bool) -> Either a a0 -> Maybe a0`
    *
@@ -531,9 +572,9 @@ export const gt =
   <A extends number | string, B extends number | string>
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
-    isRight (m2) && isLeft (m1)
-    || isRight (m1) && isRight (m2) && m2 .value > m1 .value
-    || isLeft (m1) && isLeft (m2) && m2 .value > m1 .value
+    (isRight (m2) && isLeft (m1))
+    || (isRight (m1) && isRight (m2) && m2 .value > m1 .value)
+    || (isLeft (m1) && isLeft (m2) && m2 .value > m1 .value)
 
 /**
  * `(<) :: Either a b -> Either a b -> Bool`
@@ -550,9 +591,9 @@ export const lt =
   <A extends number | string, B extends number | string>
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
-    isLeft (m2) && isRight (m1)
-    || isRight (m1) && isRight (m2) && m2 .value < m1 .value
-    || isLeft (m1) && isLeft (m2) && m2 .value < m1 .value
+    (isLeft (m2) && isRight (m1))
+    || (isRight (m1) && isRight (m2) && m2 .value < m1 .value)
+    || (isLeft (m1) && isLeft (m2) && m2 .value < m1 .value)
 
 /**
  * `(>=) :: Either a b -> Either a b -> Bool`
@@ -570,9 +611,9 @@ export const gte =
   <A extends number | string, B extends number | string>
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
-    isRight (m2) && isLeft (m1)
-    || isRight (m1) && isRight (m2) && m2 .value >= m1 .value
-    || isLeft (m1) && isLeft (m2) && m2 .value >= m1 .value
+    (isRight (m2) && isLeft (m1))
+    || (isRight (m1) && isRight (m2) && m2 .value >= m1 .value)
+    || (isLeft (m1) && isLeft (m2) && m2 .value >= m1 .value)
 
 /**
  * `(<=) :: Either a b -> Either a b -> Bool`
@@ -590,9 +631,9 @@ export const lte =
   <A extends number | string, B extends number | string>
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
-    isLeft (m2) && isRight (m1)
-    || isRight (m1) && isRight (m2) && m2 .value <= m1 .value
-    || isLeft (m1) && isLeft (m2) && m2 .value <= m1 .value
+    (isLeft (m2) && isRight (m1))
+    || (isRight (m1) && isRight (m2) && m2 .value <= m1 .value)
+    || (isLeft (m1) && isLeft (m2) && m2 .value <= m1 .value)
 
 
 // EITHER FUNCTIONS (PART 2)
@@ -604,8 +645,9 @@ export const lte =
  * first function to `a` if it is `Right b`, apply the second function to `b`.
  */
 export const either =
-  <A, B, C>
+  <A, C>
   (fLeft: (l: A) => C) =>
+  <B>
   (fRight: (r: B) => C) =>
   (x: Either<A, B>): C =>
     isRight (x) ? fRight (x .value) : fLeft (x .value)

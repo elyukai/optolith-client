@@ -3,6 +3,7 @@ import { fromDefault, Record } from "../../../../Data/Record";
 import { AnyProfessionSelection, ProfessionSelectionIds } from "../wikiTypeHelpers";
 
 export interface SpecializationSelection {
+  "@@name": "SpecializationSelection"
   id: ProfessionSelectionIds
   sid: string | List<string>
 }

@@ -7,6 +7,7 @@ import { fst, snd } from "../../Data/Tuple";
 import * as DisAdvActions from "../Actions/DisAdvActions";
 import * as SpecialAbilitiesActions from "../Actions/SpecialAbilitiesActions";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
 import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType";
 import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions";
@@ -15,8 +16,7 @@ import { ActiveObjectL } from "../Models/ActiveEntries/ActiveObject";
 import { SkillDependentL } from "../Models/ActiveEntries/SkillDependent";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { activate, deactivate, setLevel } from "../Utilities/Activatable/activatableActivationUtils";
-import { addAllStyleRelatedDependencies, removeAllStyleRelatedDependencies } from "../Utilities/Activatable/ExtendedStyleUtils";
-import { prefixCT, prefixSA } from "../Utilities/IDUtils";
+import { addOtherSpecialAbilityDependenciesOnActivation, removeOtherSpecialAbilityDependenciesOnDeletion } from "../Utilities/Activatable/SpecialAbilityUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 
 type Action = DisAdvActions.ActivateDisAdvAction
@@ -43,7 +43,7 @@ export const activatableReducer =
 
       case ActionTypes.ACTIVATE_SPECIALABILITY: {
         return pipe (
-          addAllStyleRelatedDependencies (pipe_ (action.payload, snd, fst)),
+          addOtherSpecialAbilityDependenciesOnActivation (action),
           activate (fst (action.payload))
                    (pipe_ (action.payload, snd, fst))
                    (pipe_ (action.payload, snd, snd))
@@ -58,14 +58,14 @@ export const activatableReducer =
 
       case ActionTypes.DEACTIVATE_SPECIALABILITY: {
         return pipe (
-          removeAllStyleRelatedDependencies (pipe_ (action.payload, snd, fst)),
+          removeOtherSpecialAbilityDependenciesOnDeletion (action),
           deactivate (pipe_ (action.payload, fst, ADOA.index))
                      (pipe_ (action.payload, snd, fst))
                      (pipe_ (action.payload, snd, snd)),
-          pipe_ (action.payload, fst, ADOA.id) === prefixSA (109)
+          pipe_ (action.payload, fst, ADOA.id) === SpecialAbilityId.Feuerschlucker
             ? over (HeroModelL.combatTechniques)
                    (adjust (set (SkillDependentL.value) (6))
-                           (prefixCT (17)))
+                           (CombatTechniqueId.SpittingFire as string))
             : ident
         )
       }
@@ -90,7 +90,7 @@ export const activatableReducer =
                                   (modifyAt (0)
                                             (set (ActiveObjectL.sid)
                                                  (Just (action.payload.id)))))
-                            (prefixSA (70)))
+                            (SpecialAbilityId.TraditionGuildMages as string))
       }
 
       default:

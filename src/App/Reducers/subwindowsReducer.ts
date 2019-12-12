@@ -8,6 +8,7 @@ import { SetUpdateDownloadProgressAction } from "../Actions/IOActions";
 import { SetTabAction } from "../Actions/LocationActions";
 import * as SubwindowsActions from "../Actions/SubwindowsActions";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { EnergyId } from "../Constants/Ids";
 
 type Action = SetTabAction
             | SetUpdateDownloadProgressAction
@@ -27,8 +28,9 @@ type Action = SetTabAction
             | SubwindowsActions.CloseEditPetAvatarAction
 
 export interface SubWindowsState {
-  editPermanentEnergy: Maybe<"LP" | "AE" | "KP">
-  addPermanentEnergy: Maybe<"LP" | "AE" | "KP">
+  "@@name": "SubWindowsState"
+  editPermanentEnergy: Maybe<EnergyId>
+  addPermanentEnergy: Maybe<EnergyId>
   updateDownloadProgress: Maybe<ProgressInfo>
   isCharacterCreatorOpen: boolean
   isAddAdventurePointsOpen: boolean
@@ -71,7 +73,7 @@ export const subwindowsReducer =
                    (Just (action.payload.energy))
 
       case ActionTypes.CLOSE_ADD_PERMANENT_ENERGY_LOSS:
-        return set (SubWindowsStateL.editPermanentEnergy)
+        return set (SubWindowsStateL.addPermanentEnergy)
                    (Nothing)
 
       case ActionTypes.OPEN_CHARACTER_CREATOR:
