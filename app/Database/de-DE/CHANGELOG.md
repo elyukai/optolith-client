@@ -54,7 +54,7 @@ Diese Release ist hauptsächlich für andere Sprachen, da es Optolith jetzt auch
 - Nachteil *Unfähig* hatte den Vorteil *Begabung* als Ganzes verboten und nicht nur das jeweilige Talent.
 - Das Maximum von Kampftechniken durch die Leiteigenschaft greift jetzt auch während der Heldenerstellung.
 - Hat man die Tradition Meistertalentierte ausgewählt, wurden die in Vorteile und Nachteile ausgegebenen AP nicht angezeigt.
-- SF Lieblichzauber erlaubt jetzt das Auswählen inaktiver Zauber nicht mehr.
+- SF Lieblingszauber erlaubt jetzt das Auswählen inaktiver Zauber nicht mehr.
 - Der Anteil der Kopfrüstung und der Torsorüstung bei Zonenrüstung war vertauscht.
 - SF Baliho-Stil hatte Schilddeckung als mögliche erweiterte Kampfsonderfertigkeit aufgezählt, obwohl es Schildstoß hätte sein müssen.
 
