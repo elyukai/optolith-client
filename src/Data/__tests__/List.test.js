@@ -7,6 +7,7 @@ const { Pair } = require('../Tuple')
 const { Num } = require('../Num')
 const { OrderedMap } = require('../OrderedMap')
 const { fromDefault } = require('../Record')
+const { show } = require('../Show')
 
 const Just = Internals.Just
 const Nothing = Internals.Nothing
@@ -354,6 +355,37 @@ test ('intersperse', () => {
 test ('intercalate', () => {
   expect (List.intercalate (', ') (List (3, 2, 1)))
     .toEqual ('3, 2, 1')
+})
+
+describe ("permutations", () => {
+  it ("returns an empty list if an empty list is given", () => {
+    console.log(show (List.permutations (List ())))
+
+    expect (List.permutations (List ()))
+      .toEqual (List ())
+  })
+
+  it ("returns a singleton list if a singleton list is given", () => {
+    expect (List.permutations (List (1)))
+      .toEqual (List (List (1)))
+  })
+
+  it ("returns 2 permutations on input length 2", () => {
+    expect (List.permutations (List (1, 2)))
+      .toEqual (List (List (1, 2), List (2, 1)))
+  })
+
+  it ("returns 6 permutations on input length 3", () => {
+    expect (List.permutations (List (1, 2, 3)))
+      .toEqual (List (
+        List (1, 2, 3),
+        List (1, 3, 2),
+        List (2, 1, 3),
+        List (2, 3, 1),
+        List (3, 1, 2),
+        List (3, 2, 1)
+      ))
+  })
 })
 
 // BUILDING LISTS
