@@ -19,6 +19,8 @@ Write-Output "Target: $(Resolve-Path -Path $target)"
 
 Get-ChildItem -Path $target -Include *.* -File | ForEach-Object { $_.Delete() }
 
+Write-Output "Target directory contents deleted"
+
 $allTables = Get-ChildItem -Path $source | Where-Object {$_.Name -match $filter}
 
 foreach ($item in $allTables) {

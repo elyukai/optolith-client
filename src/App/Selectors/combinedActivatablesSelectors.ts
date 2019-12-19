@@ -5,6 +5,7 @@ import { Accessor, Record, RecordI } from "../../Data/Record";
 import { ActiveActivatable } from "../Models/View/ActiveActivatable";
 import { InactiveActivatable } from "../Models/View/InactiveActivatable";
 import { Advantage } from "../Models/Wiki/Advantage";
+import { Disadvantage } from "../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { Activatable } from "../Models/Wiki/wikiTypeHelpers";
@@ -20,7 +21,9 @@ import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
 import { getHeroes, getInactiveAdvantagesFilterText, getInactiveDisadvantagesFilterText, getInactiveSpecialAbilitiesFilterText, getLocaleAsProp } from "./stateSelectors";
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
 
-const getName = pipe (InactiveActivatable.AL.wikiEntry, Advantage.AL.name)
+type getName = <A extends Advantage | Disadvantage | SpecialAbility>
+               (r: Record<{ "wikiEntry": Record<A>; "@@name": string; }>) => string
+const getName: getName = pipe (InactiveActivatable.AL.wikiEntry, Advantage.AL.name) as getName
 
 const getNameInWiki =
   pipe (
@@ -37,29 +40,25 @@ const getFilteredInactives =
   <A extends RecordI<Activatable>>
   (minactive: Maybe<List<Record<InactiveActivatable<A>>>>) =>
   (active: List<Record<ActiveActivatable<A>>>) =>
-  (filterAccessors: FilterAccessor<RecordI<InactiveOrActive<A>>>[]) =>
-  (sortOptions: SortOptions<RecordI<InactiveOrActive<A>>>) =>
+  (filterAccessors: FilterAccessor<InactiveOrActive<A>>[]) =>
+  (sortOptions: SortOptions<InactiveOrActive<A>>) =>
   (filterText: string) =>
   (areHintsEnabled: boolean): Maybe<List<InactiveOrActive<A>>> =>
     fmapF (minactive)
           (inactive => areHintsEnabled
             ? filterAndSortRecordsBy (0)
-                                     <RecordI<InactiveOrActive<A>>>
                                      (filterAccessors)
                                      (sortOptions)
                                      (filterText)
-                                     (append<InactiveOrActive<A>> (active) (inactive)) as
-                                       List<InactiveOrActive<A>>
+                                     (append<InactiveOrActive<A>> (active) (inactive))
             : filterAndSortRecordsBy (0)
-                                     <InactiveActivatable<A>>
-                                     ([getName as unknown as
-                                       FilterAccessor<InactiveActivatable<A>>])
+                                     <Record<InactiveActivatable<A>>>
+                                     ([ getName ])
                                      (sortOptions)
                                      (filterText)
                                      (inactive))
 
-const sortByName = (l10n: L10nRecord) => [comparingR (getName)
-                                                     (compareLocale (l10n))]
+const sortByName = (l10n: L10nRecord) => [ comparingR (getName) (compareLocale (l10n)) ]
 
 export const getFilteredInactiveAdvantages =
   createMapMaybeSelector (getHeroes)
@@ -73,7 +72,7 @@ export const getFilteredInactiveAdvantages =
                          ((minactive, mactive) => (filterText, l10n, areHintsEnabled) => () =>
                            getFilteredInactives (minactive)
                                                 (mactive)
-                                                ([getName])
+                                                ([ getName ])
                                                 (sortByName (l10n))
                                                 (filterText)
                                                 (areHintsEnabled))
@@ -90,7 +89,7 @@ export const getFilteredInactiveDisadvantages =
                          ((minactive, mactive) => (filterText, l10n, areHintsEnabled) => () =>
                            getFilteredInactives (minactive)
                                                 (mactive)
-                                                ([getName])
+                                                ([ getName ])
                                                 (sortByName (l10n))
                                                 (filterText)
                                                 (areHintsEnabled))
@@ -109,7 +108,7 @@ export const getFilteredInactiveSpecialAbilities =
                           () =>
                             getFilteredInactives (minactive)
                                                  (mactive)
-                                                 ([getName, getNameInWiki])
+                                                 ([ getName, getNameInWiki ])
                                                  (sort_options)
                                                  (filterText)
                                                  (areHintsEnabled))

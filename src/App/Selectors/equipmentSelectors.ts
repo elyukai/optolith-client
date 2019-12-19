@@ -128,7 +128,7 @@ export const getFilteredItems = createMaybeSelector (
   (mitems, filterText, sortOptions) =>
     fmapF (mitems)
           (filterAndSortRecordsBy (0)
-                                  ([IA.name])
+                                  ([ IA.name ])
                                   (sortOptions)
                                   (filterText))
 )
@@ -589,7 +589,7 @@ export const getArmorZones = createMaybeSelector (
                                       rightLeg: bind (rightLegArmor) (IA.pro),
                                       torso: bind (torsoArmor) (IA.pro),
                                       enc: Maybe.sum (getEncumbranceHitZoneLevel (proTotal)),
-                                      addPenalties: [1, 3, 5].includes (proTotal),
+                                      addPenalties: [ 1, 3, 5 ] .includes (proTotal),
                                       weight: weightTotal,
                                     })
                                   }))
@@ -678,8 +678,8 @@ const getWeightTotal =
   (torso: Maybe<Record<Item>>) => {
     const total =
       sum (List (
-        getWeight (head) * 0.5,
-        getWeight (torso) * 0.1,
+        getWeight (head) * 0.1,
+        getWeight (torso) * 0.5,
         getWeight (leftArm) * 0.1,
         getWeight (rightArm) * 0.1,
         getWeight (leftLeg) * 0.1,

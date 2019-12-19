@@ -67,7 +67,7 @@ const getPrimAttrIdByTradId =
 
       case SpecialAbilityId.TraditionGuildMages:
       case SpecialAbilityId.TraditionDruids:
-      case SpecialAbilityId.TraditionQabalyamagier:
+      case SpecialAbilityId.TraditionQabalyaMage:
       case SpecialAbilityId.TraditionZauberalchimisten:
       case SpecialAbilityId.TraditionChurchOfPraios:
       case SpecialAbilityId.TraditionChurchOfHesinde:
@@ -87,9 +87,9 @@ const getPrimAttrIdByTradId =
         return Just (AttrId.Intuition)
 
       case SpecialAbilityId.TraditionWitches:
-      case SpecialAbilityId.TraditionScharlatane:
-      case SpecialAbilityId.TraditionZauberbarden:
-      case SpecialAbilityId.TraditionZaubertaenzer:
+      case SpecialAbilityId.TraditionIllusionist:
+      case SpecialAbilityId.TraditionArcaneBard:
+      case SpecialAbilityId.TraditionArcaneDancer:
       case SpecialAbilityId.TraditionGeoden:
       case SpecialAbilityId.TraditionBrobimGeoden:
       case SpecialAbilityId.TraditionChurchOfEfferd:

@@ -41,6 +41,7 @@ const AOWIA = ActiveObjectWithId.A
 
 export function ActivatableAddList (props: ActivatableAddListProps) {
   const {
+    hideGroup,
     inactiveList: minactives,
     l10n,
     rating,
@@ -82,6 +83,7 @@ export function ActivatableAddList (props: ActivatableAddListProps) {
             return (
               <ActivatableAddListItemContainer
                 key={IAA.id (item)}
+                hideGroup={hideGroup}
                 item={item}
                 isImportant={or (fmapF (isRatedForItem) (thrush (EntryRating.Essential)))}
                 isTypical={or (fmapF (isRatedForItem) (thrush (EntryRating.Common)))}

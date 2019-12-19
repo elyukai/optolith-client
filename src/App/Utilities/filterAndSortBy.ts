@@ -1,24 +1,24 @@
 import { List } from "../../Data/List";
 import { Record, RecordIBase } from "../../Data/Record";
 import { L10nRecord } from "../Models/Wiki/L10n";
-import { FilterAccessor, filterRecordsBy, filterRecordsByE, filterRecordsByName } from "./filterBy";
+import { FilterAccessor, filterByMulti, filterRecordsByE, filterRecordsByName } from "./filterBy";
 import { pipe } from "./pipe";
-import { RecordWithName, SortOptions, sortRecordsBy, sortRecordsByName } from "./sortBy";
+import { RecordWithName, sortByMulti, SortOptions, sortRecordsByName } from "./sortBy";
 
 /**
  * A combination of `filterRecordsBy` and `sortRecordsBy`.
  */
 export const filterAndSortRecordsBy =
   (minFilterTextLength: number) =>
-  <A extends RecordIBase<any>>
+  <A>
   (filterAccessors: FilterAccessor<A>[]) =>
   (sortOptions: SortOptions<A>) =>
   (filterText: string) =>
     pipe (
-      filterRecordsBy (minFilterTextLength)
-                      (filterAccessors)
-                      (filterText),
-      sortRecordsBy (sortOptions)
+      filterByMulti (minFilterTextLength)
+                    (filterAccessors)
+                    (filterText),
+      sortByMulti (sortOptions)
     )
 
 /**
@@ -27,12 +27,12 @@ export const filterAndSortRecordsBy =
 export const filterEAndSortRecordsBy =
   <A extends RecordIBase<any>>
   (filterAccessors: ((x: Record<A>) => string)[]) =>
-  (sortOptions: SortOptions<A>) =>
+  (sortOptions: SortOptions<Record<A>>) =>
   (filterText: string) =>
     pipe (
       filterRecordsByE (filterAccessors)
                        (filterText),
-      sortRecordsBy (sortOptions)
+      sortByMulti (sortOptions)
     )
 
 /**

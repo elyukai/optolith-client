@@ -1,11 +1,10 @@
 import * as React from "react";
-import { fromJust, isJust } from "../../../Data/Maybe";
+import { fromJust, isJust, Just, Nothing } from "../../../Data/Maybe";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { toInt } from "../../Utilities/NumberUtils";
 import { isNaturalNumber } from "../../Utilities/RegexUtils";
-import { Dialog } from "../Universal/Dialog";
-import { TextField } from "../Universal/TextField";
+import { BasicInputDialog } from "../Universal/BasicInputDialog";
 
 export interface AttributesRemovePermanentProps {
   isOpen: boolean
@@ -35,29 +34,18 @@ export const AttributesRemovePermanent: React.FC<AttributesRemovePermanentProps>
   )
 
   return (
-    <Dialog
+    <BasicInputDialog
       id="overview-add-ap"
-      title={translate (l10n) ("removeenergypointslostpermanently")}
-      buttons={[
-        {
-          disabled: !isNaturalNumber (value),
-          label: translate (l10n) ("remove"),
-          onClick: handleRemove,
-        },
-        {
-          label: translate (l10n) ("cancel"),
-        },
-      ]}
       isOpen={isOpen}
-      close={close}
-      >
-      <TextField
-        hint={translate (l10n) ("removeenergypointslostpermanentlyinputhint")}
-        value={value}
-        onChange={setValue}
-        fullWidth
-        autoFocus
-        />
-    </Dialog>
+      title={translate (l10n) ("removeenergypointslostpermanently")}
+      description=""
+      value={value}
+      invalid={isNaturalNumber (value) ? Nothing : Just ("")}
+      acceptLabel={translate (l10n) ("remove")}
+      rejectLabel={translate (l10n) ("cancel")}
+      onClose={close}
+      onAccept={handleRemove}
+      onChange={setValue}
+      />
   )
 }

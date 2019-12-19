@@ -1,11 +1,11 @@
 import { connect } from "react-redux";
+import { SpecialAbilityId } from "../Constants/Ids";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getAllCultures, getAllProfessions, getAllRaces } from "../Selectors/rcpSelectors";
 import * as stateSelectors from "../Selectors/stateSelectors";
 import { mapGetToSlice } from "../Utilities/SelectorsUtils";
 import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps } from "../Views/InlineWiki/WikiInfo";
 import { WikiInfoContentStateProps } from "../Views/InlineWiki/WikiInfoContent";
-import { SpecialAbilityId } from "../Constants/Ids";
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: WikiInfoOwnProps): WikiInfoContentStateProps => ({
@@ -28,7 +28,7 @@ const mapStateToProps =
     professionVariants: stateSelectors.getWikiProfessionVariants (state),
     races: stateSelectors.getWikiRaces (state),
     liturgicalChantExtensions: mapGetToSlice (stateSelectors.getWikiSpecialAbilities)
-                                             (SpecialAbilityId.ChantExtensions)
+                                             (SpecialAbilityId.ChantEnhancement)
                                              (state),
     liturgicalChants: stateSelectors.getWikiLiturgicalChants (state),
     scripts: mapGetToSlice (stateSelectors.getWikiSpecialAbilities)
@@ -37,7 +37,7 @@ const mapStateToProps =
     sex: stateSelectors.getSex (state),
     skills: stateSelectors.getWikiSkills (state),
     spellExtensions: mapGetToSlice (stateSelectors.getWikiSpecialAbilities)
-                                   (SpecialAbilityId.SpellExtensions) (state),
+                                   (SpecialAbilityId.SpellEnhancement) (state),
     spells: stateSelectors.getWikiSpells (state),
     specialAbilities: stateSelectors.getWikiSpecialAbilities (state),
     wiki: stateSelectors.getWiki (state),

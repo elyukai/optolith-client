@@ -7,6 +7,7 @@ import { alt, any, bind, bindF, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, 
 import { abs, add } from "../../Data/Num";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
+import { PairF } from "../../Data/Tuple";
 import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Tuple/Curry";
 import { Category } from "../Constants/Categories";
 import { ProfessionId, RaceId } from "../Constants/Ids";
@@ -177,7 +178,7 @@ export const getFilteredRaces = createMaybeSelector (
   getRacesCombinedSortOptions,
   getRacesFilterText,
   getAvailableRaces,
-  uncurryN3 (filterAndSortRecordsBy (0) ([pipe (RCA.wikiEntry, RA.name)]))
+  uncurryN3 (filterAndSortRecordsBy (0) ([ pipe (RCA.wikiEntry, RA.name) ]))
 )
 
 export const getAllCultures = createMaybeSelector (
@@ -192,11 +193,7 @@ export const getAllCultures = createMaybeSelector (
                                              x,
                                              ISA.id,
                                              lookupF (skills),
-                                             fmap (y => IncreasableForView ({
-                                                          id: ISA.id (x),
-                                                          name: SA.name (y),
-                                                          value: ISA.value (x),
-                                                        }))
+                                             fmap (PairF (ISA.value (x)))
                                            ))
                                            (CA.culturalPackageSkills (wiki_entry)),
                                 wikiEntry: wiki_entry,
@@ -246,7 +243,7 @@ export const getFilteredCultures = createMaybeSelector (
   getCulturesCombinedSortOptions,
   getCulturesFilterText,
   getAvailableCultures,
-  uncurryN3 (filterAndSortRecordsBy (0) ([pipe (CCA.wikiEntry, CA.name)]))
+  uncurryN3 (filterAndSortRecordsBy (0) ([ pipe (CCA.wikiEntry, CA.name) ]))
 )
 
 interface SkillGroupLists {

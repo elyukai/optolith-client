@@ -28,7 +28,7 @@ import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../Models/Wiki/sub/SelectOption";
 import { heroReducer } from "../Reducers/heroReducer";
 import { getAllActiveByCategory } from "../Utilities/Activatable/activatableActiveUtils";
-import { getModifierByActiveLevel } from "../Utilities/Activatable/activatableModifierUtils";
+import { modifyByLevel } from "../Utilities/Activatable/activatableModifierUtils";
 import { getBracketedNameFromFullName } from "../Utilities/Activatable/activatableNameUtils";
 import { isMaybeActive } from "../Utilities/Activatable/isActive";
 import { getActiveSelections, getSelectOptionName } from "../Utilities/Activatable/selectionUtils";
@@ -265,10 +265,10 @@ export const getFilteredActiveAdvantages = createMaybeSelector (
   (madvantages, filterText, l10n) =>
     fmapF (madvantages)
           (filterAndSortRecordsBy (0)
-                                  <ActiveActivatable<Advantage>>
-                                  ([ActiveActivatableA_.name])
-                                  ([comparingR (ActiveActivatableA_.name)
-                                               (compareLocale (l10n))])
+                                  <Record<ActiveActivatable<Advantage>>>
+                                  ([ ActiveActivatableA_.name ])
+                                  ([ comparingR (ActiveActivatableA_.name)
+                                                (compareLocale (l10n)) ])
                                   (filterText))
 )
 
@@ -288,10 +288,10 @@ export const getFilteredActiveDisadvantages = createMaybeSelector (
   (mdisadvantages, filterText, l10n) =>
     fmapF (mdisadvantages)
           (filterAndSortRecordsBy (0)
-                                  <ActiveActivatable<Disadvantage>>
-                                  ([ActiveActivatableA_.name])
-                                  ([comparingR (ActiveActivatableA_.name)
-                                               (compareLocale (l10n))])
+                                  <Record<ActiveActivatable<Disadvantage>>>
+                                  ([ ActiveActivatableA_.name ])
+                                  ([ comparingR (ActiveActivatableA_.name)
+                                                (compareLocale (l10n)) ])
                                   (filterText))
 )
 
@@ -311,8 +311,8 @@ export const getFilteredActiveSpecialAbilities = createMaybeSelector (
   (mspecial_abilities, sortOptions, filterText) =>
     fmapF (mspecial_abilities)
           (filterAndSortRecordsBy (0)
-                                  <ActiveActivatable<SpecialAbility>>
-                                  ([AAA_.name, pipe (AAA_.nameInWiki, fromMaybe (""))])
+                                  <Record<ActiveActivatable<SpecialAbility>>>
+                                  ([ AAA_.name, pipe (AAA_.nameInWiki, fromMaybe ("")) ])
                                   (sortOptions)
                                   (filterText))
 )
@@ -399,7 +399,7 @@ export const getBlessedSpecialAbilitiesForSheet = createMaybeSelector (
 export const getFatePointsModifier = createMaybeSelector (
   mapGetToMaybeSlice (getAdvantages) (AdvantageId.Luck),
   mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.BadLuck),
-  uncurryN (getModifierByActiveLevel (Just (0)))
+  uncurryN (modifyByLevel (0))
 )
 
 export const getMagicalTraditionForSheet = createMaybeSelector (
@@ -444,7 +444,7 @@ export const getAspectKnowledgesForSheet = createMaybeSelector (
 export const getInitialStartingWealth = createMaybeSelector (
   mapGetToMaybeSlice (getAdvantages) (AdvantageId.Rich),
   mapGetToMaybeSlice (getDisadvantages) (DisadvantageId.Poor),
-  (rich, poor) => getModifierByActiveLevel (Just (0)) (rich) (poor) * 250 + 750
+  (rich, poor) => modifyByLevel (0) (rich) (poor) * 250 + 750
 )
 
 export const getGuildMageUnfamiliarSpellId = createMaybeSelector (

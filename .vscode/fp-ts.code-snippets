@@ -37,4 +37,20 @@
 		],
 		"description": "Generates a FP JSDoc template."
 	},
+	"Maybe Type": {
+		"scope": "javascript,typescript,javascriptreact,typescriptreact",
+		"prefix": "myb",
+		"body": [
+			"Maybe<$1>$0"
+		],
+		"description": "Maybe Type"
+	},
+	"Record Type": {
+		"scope": "javascript,typescript,javascriptreact,typescriptreact",
+		"prefix": "rec",
+		"body": [
+			"Record<$1>$0"
+		],
+		"description": "Record Type"
+	},
 }

@@ -268,7 +268,7 @@ const isRemovalDisabledEntrySpecific =
           || unarmedStyleActive >= 2
       }
 
-      case SpecialAbilityId.MagicalStyleCombination: {
+      case SpecialAbilityId.MagicStyleCombination: {
         const totalActive = countActiveGroupEntries (wiki) (hero) (13)
 
         // default is 1, but with this SA its 2. If it's 2 this SA is neccessary
@@ -446,7 +446,7 @@ const getEntrySpecificMinimumLevel =
   (hero: HeroModelRecord) =>
   (x: Record<ActiveObjectWithId>): Maybe<number> => {
     switch (AOWIA.id (x)) {
-      case AdvantageId.GrosseZauberauswahl:
+      case AdvantageId.LargeSpellSelection:
         return pipe_ (hero, countActiveSkillEntries ("spells"), getMinLevelForIncreaseEntry (3))
 
       case AdvantageId.ZahlreichePredigten:
@@ -465,7 +465,7 @@ const getEntrySpecificMaximumLevel =
   (hero: HeroModelRecord) =>
   (entry_id: string): Maybe<number> => {
     switch (entry_id) {
-      case DisadvantageId.KleineZauberauswahl:
+      case DisadvantageId.SmallSpellSelection:
         return pipe_ (hero, countActiveSkillEntries ("spells"), getMaxLevelForDecreaseEntry (3))
 
       case DisadvantageId.WenigePredigten:

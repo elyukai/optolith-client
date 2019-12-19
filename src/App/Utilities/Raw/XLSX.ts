@@ -11,7 +11,7 @@ import { adjust, elems, foldrWithKey, insert, insertWith, lookupF, mapMEitherWit
 import { member, Record } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
 import { curryN, uncurryN } from "../../../Data/Tuple/Curry";
-import { trace } from "../../../Debug/Trace";
+import { trace, traceShowId } from "../../../Debug/Trace";
 import { ReduxAction } from "../../Actions/Actions";
 import { Category } from "../../Constants/Categories";
 import { ProfessionId, SpecialAbilityId } from "../../Constants/Ids";
@@ -138,10 +138,14 @@ const parseWorkbooks =
 
     const books = dispatch (l10nRowsToMap (lookup_l10n) (toBook) ("BOOKS") (2))
 
+    console.log ("Books parsed")
+
     const magicalTraditions = dispatch (univRowsToMap (lookup_univ)
                                                       (toMagicalTradition)
                                                       ("MagicalTraditions")
                                                       (3))
+
+    console.log ("Magical traditions parsed")
 
     // const blessedTraditions = dispatch (univRowsToMap (lookup_univ)
     //                                                   (toMagicalTradition)
@@ -154,11 +158,15 @@ const parseWorkbooks =
                                                               ("EXPERIENCE_LEVELS")
                                                               (5))
 
+    console.log ("Experience levels parsed")
+
     const races = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                    (lookup_univ)
                                                    (toRace)
                                                    ("RACES")
                                                    (6))
+
+    console.log ("Races parsed")
 
     const raceVariants = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                           (lookup_univ)
@@ -166,11 +174,15 @@ const parseWorkbooks =
                                                           ("RACE_VARIANTS")
                                                           (7))
 
+    console.log ("Race variants parsed")
+
     const cultures = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                       (lookup_univ)
                                                       (toCulture)
                                                       ("CULTURES")
                                                       (8))
+
+    console.log ("Cultures parsed")
 
     const professions = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                          (lookup_univ)
@@ -178,11 +190,15 @@ const parseWorkbooks =
                                                          ("PROFESSIONS")
                                                          (9))
 
+    console.log ("Professions parsed")
+
     const professionVariants = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                                 (lookup_univ)
                                                                 (toProfessionVariant)
                                                                 ("PROFESSION_VARIANTS")
                                                                 (10))
+
+    console.log ("Profession variants parsed")
 
     const attributes = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                         (lookup_univ)
@@ -190,17 +206,25 @@ const parseWorkbooks =
                                                         ("ATTRIBUTES")
                                                         (11))
 
+    console.log ("Attributes parsed")
+
     const advantages = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                         (lookup_univ)
                                                         (toAdvantage)
                                                         ("ADVANTAGES")
                                                         (12))
 
-    const advantageSelectOptions = dispatch (bothOptRowsByIdAndMainIdToList (lookup_l10n)
-                                                               (lookup_univ)
-                                                               (toAdvantageSelectOption)
-                                                               ("AdvantagesSelections")
-                                                               (13))
+    console.log ("Advantages parsed")
+
+    const advantageSelectOptions =
+      dispatch (bothOptRowsByIdAndMainIdToList (false)
+                                               (lookup_l10n)
+                                               (lookup_univ)
+                                               (toAdvantageSelectOption)
+                                               ("AdvantagesSelections")
+                                               (13))
+
+    console.log ("Advantage select options parsed")
 
     const disadvantages = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                            (lookup_univ)
@@ -208,11 +232,19 @@ const parseWorkbooks =
                                                            ("DISADVANTAGES")
                                                            (14))
 
-    const disadvantageSelectOptions = dispatch (bothOptRowsByIdAndMainIdToList (lookup_l10n)
-                                                                  (lookup_univ)
-                                                                  (toDisadvantageSelectOption)
-                                                                  ("DisadvantagesSelections")
-                                                                  (15))
+    console.log ("Disadvantages parsed")
+
+    const disadvantageSelectOptions =
+      dispatch (bothOptRowsByIdAndMainIdToList (true)
+                                               (lookup_l10n)
+                                               (lookup_univ)
+                                               (toDisadvantageSelectOption)
+                                               ("DisadvantagesSelections")
+                                               (15))
+
+    console.log ("Disadvantage select options parsed")
+
+    traceShowId (disadvantageSelectOptions)
 
     const skills = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                     (lookup_univ)
@@ -220,11 +252,15 @@ const parseWorkbooks =
                                                     ("SKILLS")
                                                     (16))
 
+    console.log ("Skills parsed")
+
     const combatTechniques = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                               (lookup_univ)
                                                               (toCombatTechnique)
                                                               ("COMBAT_TECHNIQUES")
                                                               (17))
+
+    console.log ("Combat techniques parsed")
 
     const spells = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                     (lookup_univ)
@@ -232,11 +268,15 @@ const parseWorkbooks =
                                                     ("SPELLS")
                                                     (18))
 
+    console.log ("SPells parsed")
+
     const spellExtensions = dispatch (univRowsMatchL10nToList (lookup_l10n)
                                                               (lookup_univ)
                                                               (toSpellExtension)
                                                               ("SpellX")
                                                               (19))
+
+    console.log ("Spell extensions parsed")
 
     const cantrips = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                       (lookup_univ)
@@ -244,11 +284,15 @@ const parseWorkbooks =
                                                       ("CANTRIPS")
                                                       (20))
 
+    console.log ("Cantrips parsed")
+
     const liturgicalChants = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                               (lookup_univ)
                                                               (toLiturgicalChant)
                                                               ("CHANTS")
                                                               (21))
+
+    console.log ("Liturgical chants parsed")
 
     const liturgicalChantExtensions = dispatch (univRowsMatchL10nToList (lookup_l10n)
                                                                         (lookup_univ)
@@ -256,11 +300,15 @@ const parseWorkbooks =
                                                                         ("ChantX")
                                                                         (22))
 
+    console.log ("Liturgical chant extensions parsed")
+
     const blessings = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                        (lookup_univ)
                                                        (toBlessing)
                                                        ("BLESSINGS")
                                                        (23))
+
+    console.log ("Blessings parsed")
 
     const specialAbilities = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                               (lookup_univ)
@@ -268,18 +316,25 @@ const parseWorkbooks =
                                                               ("SPECIAL_ABILITIES")
                                                               (24))
 
+    console.log ("Special abilities parsed")
+
     const specialAbilitySelectOptions =
-      dispatch (bothOptRowsByIdAndMainIdToList (lookup_l10n)
-                                  (lookup_univ)
-                                  (toSpecialAbilitySelectOption)
-                                  ("SpecialAbilitiesSelections")
-                                  (25))
+      dispatch (bothOptRowsByIdAndMainIdToList (false)
+                                               (lookup_l10n)
+                                               (lookup_univ)
+                                               (toSpecialAbilitySelectOption)
+                                               ("SpecialAbilitiesSelections")
+                                               (25))
+
+    console.log ("Special ability select options parsed")
 
     const itemTemplates = dispatch (univRowsMatchL10nToMap (lookup_l10n)
                                                            (lookup_univ)
                                                            (toItemTemplate)
                                                            ("EQUIPMENT")
                                                            (26))
+
+    console.log ("Item templates parsed")
 
     return mapMNamed
       ({
@@ -391,9 +446,9 @@ const parseWorkbooks =
                                   }),
                                   matchSelectOptionsToBaseRecords (rs.specialAbilitySelectOptions),
                                   matchExtensionsToBaseRecord (rs.spellExtensions)
-                                                              (SpecialAbilityId.SpellExtensions),
+                                                              (SpecialAbilityId.SpellEnhancement),
                                   matchExtensionsToBaseRecord (rs.liturgicalChantExtensions)
-                                                              (SpecialAbilityId.ChantExtensions)
+                                                              (SpecialAbilityId.ChantEnhancement)
                                 ))
                                 (w)
                   }

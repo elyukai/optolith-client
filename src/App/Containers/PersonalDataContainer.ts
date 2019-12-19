@@ -13,7 +13,7 @@ import { getStartEl } from "../Selectors/elSelectors";
 import { getAvailableEyeColorOptions, getAvailableHairColorOptions, getAvailableSocialStatuses } from "../Selectors/personalDataSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
 import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentRaceVariant, getRace, getRandomSizeCalcStr, getRandomWeightCalcStr } from "../Selectors/rcpSelectors";
-import { getAvatar, getCurrentHeroName, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getPhase, getProfile, getSex, getTotalAdventurePoints } from "../Selectors/stateSelectors";
+import { getAvatar, getCurrentHeroName, getCurrentPhase, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getProfile, getSex, getTotalAdventurePoints } from "../Selectors/stateSelectors";
 import { PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps, PersonalDataView } from "../Views/Profile/PersonalData";
 
 const mapStateToProps =
@@ -27,7 +27,7 @@ const mapStateToProps =
     disadvantages: getDisadvantagesForSheet (state, ownProps),
     isRemovingEnabled: getIsRemovingEnabled (state),
     name: getCurrentHeroName (state),
-    phase: getPhase (state),
+    phase: getCurrentPhase (state),
     profession: getCurrentProfession (state),
     professionName: getCustomProfessionName (state),
     fullProfessionName: getCurrentFullProfessionName (state, ownProps),

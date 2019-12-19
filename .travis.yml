@@ -43,6 +43,7 @@ jobs:
 
   - name: Build OSX
     os: osx
+    osx_image: xcode11.2
     install:
       - sh ./.travis/InstallMac.sh
     script:
@@ -69,6 +70,7 @@ jobs:
 
   - name: Build OSX Insider
     os: osx
+    osx_image: xcode11.2
     install:
       - sh ./.travis/InstallMac.sh
     script:

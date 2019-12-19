@@ -8,19 +8,19 @@ import { extname, join } from "path";
 import { toMsg, tryIO } from "../../Control/Exception";
 import { bimap, Either, either, eitherToMaybe, first, fromLeft_, fromRight_, isLeft, isRight, Left, Right } from "../../Data/Either";
 import { flip } from "../../Data/Function";
-import { fmap, fmapF } from "../../Data/Functor";
+import { fmap } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
-import { List, notNull } from "../../Data/List";
+import { appendStr, List, notNull } from "../../Data/List";
 import { alt_, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
 import { any, filter, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap";
 import { notMember } from "../../Data/OrderedSet";
 import { Record, toObject } from "../../Data/Record";
-import { parseJSON } from "../../Data/String/JSON";
+import { parseJSON, tryParseJSON } from "../../Data/String/JSON";
 import { fst, Pair, snd } from "../../Data/Tuple";
 import * as IO from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
-import { HeroModel, HeroModelL } from "../Models/Hero/HeroModel";
+import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { User } from "../Models/Hero/heroTypeHelpers";
 import { PetL } from "../Models/Hero/Pet";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
@@ -30,7 +30,7 @@ import { LAST_LOADING_PHASE } from "../Reducers/isReadyReducer";
 import { UISettingsState } from "../Reducers/uiSettingsReducer";
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors";
 import { user_data_path } from "../Selectors/envSelectors";
-import { getCurrentHeroId, getHeroes, getLocaleId, getLocaleMessages, getUsers } from "../Selectors/stateSelectors";
+import { getCurrentHeroId, getCurrentHeroName, getHeroes, getLocaleId, getLocaleMessages, getUsers, getWiki } from "../Selectors/stateSelectors";
 import { getUISettingsState } from "../Selectors/uisettingsSelectors";
 import { APCache, deleteCache, forceCacheIsAvailable, insertAppStateCache, insertCacheMap, insertHeroesCache, readCache, toAPCache, writeCache } from "../Utilities/Cache";
 import { translate, translateP } from "../Utilities/I18n";
@@ -38,6 +38,8 @@ import { getNewIdByDate, prefixId } from "../Utilities/IDUtils";
 import { bytify, getSystemLocale, showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { Config, Locale, readConfig, writeConfig } from "../Utilities/Raw/JSON/Config";
+import { convertHero } from "../Utilities/Raw/JSON/Hero/Compat";
+import { convertFromRawHero } from "../Utilities/Raw/JSON/Hero/HeroFromJSON";
 import { convertHeroesForSave, convertHeroForSave } from "../Utilities/Raw/JSON/Hero/HeroToJSON";
 import { parseTables, TableParseRes } from "../Utilities/Raw/XLSX";
 import { RawHero, RawHerolist } from "../Utilities/Raw/XLSX/RawData";
@@ -449,7 +451,7 @@ export const requestHeroExport =
       const pmfilepath = await showSaveDialog ({
         title: translate (l10n) ("exportheroasjson"),
         filters: [
-          { name: "JSON", extensions: ["json"] },
+          { name: "JSON", extensions: [ "json" ] },
         ],
         defaultPath: hero.name.replace (/\//u, "/"),
       })
@@ -481,51 +483,59 @@ export const requestHeroExport =
     }
   }
 
-export interface ReceiveImportedHeroAction {
-  type: ActionTypes.RECEIVE_IMPORTED_HERO
-  payload: {
-    data: RawHero;
-    player?: User;
-    l10n: L10nRecord;
-  }
-}
-
 export const loadImportedHero =
   (l10n: L10nRecord): ReduxAction<Promise<Maybe<RawHero>>> =>
   async dispatch =>
     pipe_ (
-      await showOpenDialog ({ filters: [{ name: "JSON", extensions: ["json"] }] }),
+      await showOpenDialog ({ filters: [ { name: "JSON", extensions: [ "json" ] } ] }),
       listToMaybe,
       bindF (ensure (x => extname (x) === ".json")),
       maybe<Promise<Maybe<Either<Error, string>>>> (Promise.resolve (Nothing))
                                                    (pipe (tryIO (IO.readFile), fmap (Just))),
-      IO.bindF (async mres => {
-        if (isNothing (mres)) {
+      IO.bindF (pipe (
+        fmap (Either.bindF (tryParseJSON)),
+        async mres => {
+          if (isNothing (mres)) {
+            return Nothing
+          }
+
+          const res = fromJust (mres)
+
+          if (isRight (res)) {
+            return Just (fromRight_ (res) as RawHero)
+          }
+
+          await dispatch (addDefaultErrorAlert (l10n)
+                                              (translate (l10n) ("importheroerror"))
+                                              (res))
+
           return Nothing
         }
-
-        const res = fromJust (mres)
-
-        if (isRight (res)) {
-          return Just ((JSON.parse as (x: string) => RawHero) (fromRight_ (res)))
-        }
-
-        await dispatch (addDefaultErrorAlert (l10n)
-                                             (translate (l10n) ("importheroerror"))
-                                             (res))
-
-        return Nothing
-      })
+      ))
     )
 
 export const requestHeroImport =
-  (l10n: L10nRecord): ReduxAction =>
-  async dispatch => fmapF (await dispatch (loadImportedHero (l10n)))
-                          (x => dispatch (receiveHeroImport (l10n) (x)))
+  (l10n: L10nRecord): ReduxAction<Promise<void>> =>
+  async dispatch => {
+    const mhero = await dispatch (loadImportedHero (l10n))
+
+    if (isJust (mhero)) {
+      await dispatch (receiveHeroImport (l10n) (fromJust (mhero)))
+    }
+  }
+
+export interface ReceiveImportedHeroAction {
+  type: ActionTypes.RECEIVE_IMPORTED_HERO
+  payload: {
+    hero: HeroModelRecord;
+    player?: User;
+  }
+}
 
 export const receiveHeroImport =
   (l10n: L10nRecord) =>
-  (raw: RawHero): ReceiveImportedHeroAction => {
+  (raw: RawHero): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     const newId = prefixId (IdPrefixes.HERO) (getNewIdByDate ())
     const { player, avatar, ...other } = raw
 
@@ -534,18 +544,27 @@ export const receiveHeroImport =
       id: newId,
       avatar: avatar !== undefined
         && avatar.length > 0
-        && (isBase64Image (avatar) || fs.existsSync (avatar.replace (/file:[\\/]+/u, "")))
+        && (isBase64Image (avatar) || await IO.existsFile (avatar.replace (/file:[\\/]+/u, "")))
         ? avatar
         : undefined,
     }
 
-    return {
-      type: ActionTypes.RECEIVE_IMPORTED_HERO,
-      payload: {
-        data,
-        player,
-        l10n,
-      },
+    const wiki = getWiki (getState ())
+
+    const mhero = pipe_ (
+      data,
+      convertHero (l10n) (wiki),
+      fmap (convertFromRawHero (l10n) (wiki)),
+    )
+
+    if (isJust (mhero)) {
+      dispatch<ReceiveImportedHeroAction> ({
+        type: ActionTypes.RECEIVE_IMPORTED_HERO,
+        payload: {
+          hero: fromJust (mhero),
+          player,
+        },
+      })
     }
   }
 
@@ -622,35 +641,42 @@ export const requestClose =
   }
 
 export const requestPrintHeroToPDF =
-  (l10n: L10nRecord): ReduxAction =>
-  async dispatch =>
-    pipe_ (
-      await windowPrintToPDF ({
-        marginsType: 1,
-        pageSize: "A4",
-        printBackground: true,
-      }),
-      flip (IO.writeFile),
-      async f => maybe (Promise.resolve<Either<Error, void>> (Right (undefined)))
-                       (tryIO (f))
-                       (await showSaveDialog ({
-                         title: translate (l10n) ("printcharactersheettopdf"),
-                         filters: [
-                           { name: "PDF", extensions: ["pdf"] },
-                         ],
-                       })),
-      IO.bindF (async res => {
-        if (isRight (res)) {
-          await dispatch (addAlert (l10n)
-                                   (AlertOptions ({ message: translate (l10n) ("pdfsaved") })))
-        }
-        else {
-          await dispatch (addDefaultErrorAlert (l10n)
-                                               (translate (l10n) ("printcharactersheettopdf"))
-                                               (res))
-        }
-      })
-    )
+  (l10n: L10nRecord): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
+    const data = await windowPrintToPDF ({
+                         marginsType: 1,
+                         pageSize: "A4",
+                         printBackground: true,
+                       })
+
+    const path = await showSaveDialog ({
+                   title: translate (l10n) ("printcharactersheettopdf"),
+                   defaultPath: getDefaultPDFName (getState ()),
+                   filters: [
+                     { name: "PDF", extensions: [ "pdf" ] },
+                   ],
+                 })
+
+    const res = await maybe (Promise.resolve<Either<Error, void>> (Right (undefined)))
+                            (tryIO (flip (IO.writeFile) (data)))
+                            (path)
+
+    if (isRight (res) && isJust (path)) {
+      await dispatch (addAlert (l10n)
+                               (AlertOptions ({ message: translate (l10n) ("pdfsaved") })))
+    }
+    else if (isLeft (res)) {
+      await dispatch (addDefaultErrorAlert (l10n)
+                                           (translate (l10n) ("printcharactersheettopdf"))
+                                           (res))
+    }
+  }
+
+const getDefaultPDFName = pipe (
+  getCurrentHeroName,
+  maybe ("")
+        (flip (appendStr) (".pdf"))
+)
 
 export interface SetUpdateDownloadProgressAction {
   type: ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS

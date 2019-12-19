@@ -91,7 +91,7 @@ export enum AdvantageId {
   Spellcaster = "ADV_50",
   // Eisern
   Unyielding = "ADV_54",
-  GrosseZauberauswahl = "ADV_58",
+  LargeSpellSelection = "ADV_58",
   HatredOf = "ADV_68",
   Prediger = "ADV_77",
   Visionaer = "ADV_78",
@@ -134,7 +134,7 @@ export enum DisadvantageId {
   Maimed = "DISADV_51",
   // Gläsern
   BrittleBones = "DISADV_56",
-  KleineZauberauswahl = "DISADV_59",
+  SmallSpellSelection = "DISADV_59",
   WenigePredigten = "DISADV_72",
   WenigeVisionen = "DISADV_73",
 }
@@ -269,12 +269,13 @@ export enum SpecialAbilityId {
   CombatStyleCombination = "SA_164",
   AdaptionZauber = "SA_231",
   Exorzist = "SA_240",
-  Lieblingszauber = "SA_250",
+  // Lieblingszauber
+  FavoriteSpellwork = "SA_250",
   TraditionWitches = "SA_255",
-  MagicalStyleCombination = "SA_266",
+  MagicStyleCombination = "SA_266",
   TraditionElves = "SA_345",
   TraditionDruids = "SA_346",
-  SpellExtensions = "SA_414",
+  SpellEnhancement = "SA_414",
   Forschungsgebiet = "SA_472",
   Expertenwissen = "SA_473",
   Wissensdurst = "SA_531",
@@ -295,14 +296,18 @@ export enum SpecialAbilityId {
   JaegerinnenDerWeißenMaid = "SA_625",
   AnhaengerDesGueldenen = "SA_632",
   GebieterDesAspekts = "SA_639",
-  ChantExtensions = "SA_663",
+  ChantEnhancement = "SA_663",
   DunklesAbbildDerBuendnisgabe = "SA_667",
-  TraditionScharlatane = "SA_676",
-  TraditionZauberbarden = "SA_677",
-  TraditionZaubertaenzer = "SA_678",
-  TraditionIntuitiveZauberer = "SA_679",
-  TraditionMeistertalentierte = "SA_680",
-  TraditionQabalyamagier = "SA_681",
+  // Tradition (Scharlatane)
+  TraditionIllusionist = "SA_676",
+  // Tradition (Zauberbarden)
+  TraditionArcaneBard = "SA_677",
+  // Tradition (Zaubertaenzer)
+  TraditionArcaneDancer = "SA_678",
+  TraditionIntuitiveMage = "SA_679",
+  // Tradition (Meistertalentierte)
+  TraditionSavant = "SA_680",
+  TraditionQabalyaMage = "SA_681",
   TraditionChurchOfRondra = "SA_682",
   TraditionChurchOfBoron = "SA_683",
   TraditionChurchOfHesinde = "SA_684",

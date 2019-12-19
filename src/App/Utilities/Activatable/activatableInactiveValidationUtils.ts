@@ -85,7 +85,7 @@ const isAdditionDisabledSpecialAbilitySpecific =
     }
 
     if (CheckStyleUtils.isMagicalStyleSpecialAbility (wiki_entry)) {
-      const combination_hero_entry = lookup<string> (SpecialAbilityId.MagicalStyleCombination)
+      const combination_hero_entry = lookup<string> (SpecialAbilityId.MagicStyleCombination)
                                                     (hero_specialAbilities (hero))
       const total_active = countActiveGroupEntries (wiki) (hero) (SpecialAbilityGroup.MagicalStyles)
 
@@ -109,7 +109,7 @@ const isAdditionDisabledSpecialAbilitySpecific =
                                   )
     }
 
-    if (current_id === SpecialAbilityId.MagicalStyleCombination) {
+    if (current_id === SpecialAbilityId.MagicStyleCombination) {
       return !hasActiveGroupEntry (wiki) (hero) (SpecialAbilityGroup.MagicalStyles)
     }
 

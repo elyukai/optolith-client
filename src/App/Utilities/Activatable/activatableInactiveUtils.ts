@@ -8,13 +8,13 @@
  */
 
 import { notP } from "../../../Data/Bool";
-import { equals } from "../../../Data/Eq";
+import { equals, notEquals } from "../../../Data/Eq";
 import { cnst, flip, ident, thrush } from "../../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
 import * as IntMap from "../../../Data/IntMap";
 import { over, set } from "../../../Data/Lens";
 import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, nub, subscript } from "../../../Data/List";
-import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
+import { all, ap, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
 import { add, gt, gte, inc, multiply } from "../../../Data/Num";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { Record, RecordI } from "../../../Data/Record";
@@ -52,7 +52,7 @@ import { sortRecordsByName } from "../sortBy";
 import { isNumber, isString, misNumberM, misStringM } from "../typeCheckUtils";
 import { getMaxLevelForDecreaseEntry, getSermonsAndVisionsCount } from "./activatableActiveValidationUtils";
 import { isAdditionDisabled } from "./activatableInactiveValidationUtils";
-import { getModifierByActiveLevel } from "./activatableModifierUtils";
+import { modifyByLevel } from "./activatableModifierUtils";
 import { countActiveSkillEntries } from "./activatableSkillUtils";
 import { isMaybeActive } from "./isActive";
 import { getActiveSecondarySelections, getActiveSelections, getActiveSelectionsMaybe, getRequiredSelections } from "./selectionUtils";
@@ -76,6 +76,7 @@ const RA = Rules.A
 
 const { cost: select_costL, applications, name: nameL } = SelectOptionL
 const { sid } = ActiveObject.AL
+const IAA = InactiveActivatable.A
 const IAL = InactiveActivatableL
 const { level: pact_level } = Pact.AL
 const { spentOnMagicalAdvantages, spentOnMagicalDisadvantages } = AdventurePointsCategories.AL
@@ -434,15 +435,15 @@ const modifySelectOptions =
                                     )))
       }
 
-      case SpecialAbilityId.SpellExtensions:
-      case SpecialAbilityId.ChantExtensions: {
-        const getTargetHeroEntry = current_id === SpecialAbilityId.SpellExtensions
+      case SpecialAbilityId.SpellEnhancement:
+      case SpecialAbilityId.ChantEnhancement: {
+        const getTargetHeroEntry = current_id === SpecialAbilityId.SpellEnhancement
           ? bindF (lookupF (HA.spells (hero)))
           : bindF (lookupF (HA.liturgicalChants (hero)))
 
         const getTargetWikiEntry:
           ((x: Maybe<string>) => Maybe<Record<Spell> | Record<LiturgicalChant>>) =
-          current_id === SpecialAbilityId.SpellExtensions
+          current_id === SpecialAbilityId.SpellEnhancement
             ? bindF (lookupF (WA.spells (wiki)))
             : bindF (lookupF (WA.liturgicalChants (wiki)))
 
@@ -596,7 +597,7 @@ type OtherOptionsModifier = ident<Record<InactiveActivatable>>
 const modifyOtherOptions =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
-  (ap: Record<AdventurePointsCategories>) =>
+  (adventure_points: Record<AdventurePointsCategories>) =>
   (wiki_entry: Activatable) =>
   (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<OtherOptionsModifier> => {
     const current_id = AAL.id (wiki_entry)
@@ -620,7 +621,7 @@ const modifyOtherOptions =
           Just
         )
 
-      case DisadvantageId.KleineZauberauswahl: {
+      case DisadvantageId.SmallSpellSelection: {
         return pipe_ (
           hero,
           countActiveSkillEntries ("spells"),
@@ -658,8 +659,8 @@ const modifyOtherOptions =
       case SpecialAbilityId.TraditionWitches:
       case SpecialAbilityId.TraditionElves:
       case SpecialAbilityId.TraditionDruids:
-      case SpecialAbilityId.TraditionScharlatane:
-      case SpecialAbilityId.TraditionQabalyamagier:
+      case SpecialAbilityId.TraditionIllusionist:
+      case SpecialAbilityId.TraditionQabalyaMage:
       case SpecialAbilityId.TraditionGeoden:
       case SpecialAbilityId.TraditionZauberalchimisten:
       case SpecialAbilityId.TraditionSchelme:
@@ -746,12 +747,9 @@ const modifyOtherOptions =
                                       pipe (lookupF (HA.advantages (hero)), isMaybeActive)
 
                                     const max =
-                                      getModifierByActiveLevel
-                                        (Just (3))
-                                        (lookup<string> (AdvantageId.ZahlreichePredigten)
-                                                        (HA.advantages (hero)))
-                                        (lookup<string> (DisadvantageId.WenigePredigten)
-                                                        (HA.disadvantages (hero)))
+                                      getSermonOrVisionCountMax (hero)
+                                                                (AdvantageId.ZahlreichePredigten)
+                                                                (DisadvantageId.WenigePredigten)
 
                                     const isLessThanMax =
                                       countActiveGroupEntries (wiki)
@@ -774,12 +772,9 @@ const modifyOtherOptions =
                                       pipe (lookupF (HA.advantages (hero)), isMaybeActive)
 
                                     const max =
-                                      getModifierByActiveLevel
-                                        (Just (3))
-                                        (lookup<string> (AdvantageId.ZahlreicheVisionen)
-                                                        (HA.advantages (hero)))
-                                        (lookup<string> (DisadvantageId.WenigeVisionen)
-                                                        (HA.disadvantages (hero)))
+                                      getSermonOrVisionCountMax (hero)
+                                                                (AdvantageId.ZahlreicheVisionen)
+                                                                (DisadvantageId.WenigeVisionen)
 
                                     const isLessThanMax =
                                       countActiveGroupEntries (wiki)
@@ -799,14 +794,14 @@ const modifyOtherOptions =
                     (hero)
       }
 
-      case SpecialAbilityId.TraditionZauberbarden:
-      case SpecialAbilityId.TraditionZaubertaenzer:
-      case SpecialAbilityId.TraditionIntuitiveZauberer:
-      case SpecialAbilityId.TraditionMeistertalentierte:
+      case SpecialAbilityId.TraditionArcaneBard:
+      case SpecialAbilityId.TraditionArcaneDancer:
+      case SpecialAbilityId.TraditionIntuitiveMage:
+      case SpecialAbilityId.TraditionSavant:
       case SpecialAbilityId.TraditionAnimisten: {
         return mapReplace (ident)
-                          (guard (spentOnMagicalAdvantages (ap) <= 25
-                                  && spentOnMagicalDisadvantages (ap) <= 25
+                          (guard (spentOnMagicalAdvantages (adventure_points) <= 25
+                                  && spentOnMagicalDisadvantages (adventure_points) <= 25
                                   && pipe_ (
                                       hero,
                                       HA.specialAbilities,
@@ -819,6 +814,14 @@ const modifyOtherOptions =
         return Just (ident)
     }
   }
+
+const getSermonOrVisionCountMax =
+  (hero: HeroModelRecord) =>
+  (adv_id: string) =>
+  (disadv_id: string) =>
+    modifyByLevel (3)
+                  (lookup (adv_id) (HA.advantages (hero)))
+                  (lookup (disadv_id) (HA.disadvantages (hero)))
 
 /**
  * Calculates whether an Activatable is valid to add or not and, if valid,
@@ -858,34 +861,34 @@ export const getInactiveView =
                                           (max_level)
 
     if (!isNotValid) {
-      const specificSelections = modifySelectOptions (wiki)
-                                                     (hero)
-                                                     (hero_magical_traditions)
-                                                     (wiki_entry)
-                                                     (mhero_entry)
-                                                     (AAL.select (wiki_entry))
-
-      const mmodifyOtherOptions = modifyOtherOptions (wiki)
-                                                     (hero)
-                                                     (adventure_points)
-                                                     (wiki_entry)
-                                                     (mhero_entry)
-
-
-      return liftM2 ((modify: ident<Record<InactiveActivatable>>) =>
-                     (select_options: Maybe<List<Record<SelectOption>>>) =>
-                      modify (InactiveActivatable ({
-                        id: current_id,
-                        name: SpAL.name (wiki_entry),
-                        cost: AAL.cost (wiki_entry),
-                        maxLevel: max_level,
-                        heroEntry: mhero_entry,
-                        wikiEntry: wiki_entry as Record<RecordI<Activatable>>,
-                        selectOptions: fmapF (select_options) (sortRecordsByName (l10n)),
-                        isAutomatic: List.elem (AAL.id (wiki_entry)) (automatic_advantages),
-                      })))
-                    (mmodifyOtherOptions)
-                    (ensure (maybe (true) (notNull)) (specificSelections))
+      return pipe_ (
+        wiki_entry,
+        AAL.select,
+        modifySelectOptions (wiki)
+                            (hero)
+                            (hero_magical_traditions)
+                            (wiki_entry)
+                            (mhero_entry),
+        ensure (maybe (true) (notNull)),
+        fmap (select_options => InactiveActivatable ({
+                                  id: current_id,
+                                  name: SpAL.name (wiki_entry),
+                                  cost: AAL.cost (wiki_entry),
+                                  maxLevel: max_level,
+                                  heroEntry: mhero_entry,
+                                  wikiEntry: wiki_entry as Record<RecordI<Activatable>>,
+                                  selectOptions: fmapF (select_options)
+                                                       (sortRecordsByName (l10n)),
+                                  isAutomatic: List.elem (AAL.id (wiki_entry))
+                                                         (automatic_advantages),
+                                })),
+        ap (modifyOtherOptions (wiki)
+                               (hero)
+                               (adventure_points)
+                               (wiki_entry)
+                               (mhero_entry)),
+        bindF (ensure (pipe (IAA.maxLevel, maybe (true) (notEquals (0)))))
+      )
     }
 
     return Nothing

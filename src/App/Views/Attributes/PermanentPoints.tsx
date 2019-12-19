@@ -21,7 +21,7 @@ export interface PermanentPointsProps {
   close (): void
 }
 
-export function PermanentPoints (props: PermanentPointsProps) {
+export const PermanentPoints: React.FC<PermanentPointsProps> = props => {
   const {
     id,
     eid,
