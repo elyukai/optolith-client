@@ -359,8 +359,6 @@ test ('intercalate', () => {
 
 describe ("permutations", () => {
   it ("returns an empty list if an empty list is given", () => {
-    console.log(show (List.permutations (List ())))
-
     expect (List.permutations (List ()))
       .toEqual (List ())
   })
@@ -384,6 +382,38 @@ describe ("permutations", () => {
         List (2, 3, 1),
         List (3, 1, 2),
         List (3, 2, 1)
+      ))
+  })
+  it ("returns 24 permutations on input length 4", () => {
+    expect (List.permutations (List (1, 2, 3, 4)))
+      .toEqual (List (
+        List (1, 2, 3, 4),
+        List (1, 2, 4, 3),
+        List (1, 3, 2, 4),
+        List (1, 3, 4, 2),
+        List (1, 4, 2, 3),
+        List (1, 4, 3, 2),
+
+        List (2, 1, 3, 4),
+        List (2, 1, 4, 3),
+        List (2, 3, 1, 4),
+        List (2, 3, 4, 1),
+        List (2, 4, 1, 3),
+        List (2, 4, 3, 1),
+
+        List (3, 1, 2, 4),
+        List (3, 1, 4, 2),
+        List (3, 2, 1, 4),
+        List (3, 2, 4, 1),
+        List (3, 4, 1, 2),
+        List (3, 4, 2, 1),
+
+        List (4, 1, 2, 3),
+        List (4, 1, 3, 2),
+        List (4, 2, 1, 3),
+        List (4, 2, 3, 1),
+        List (4, 3, 1, 2),
+        List (4, 3, 2, 1),
       ))
   })
 })
