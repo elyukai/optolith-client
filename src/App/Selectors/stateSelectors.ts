@@ -234,8 +234,11 @@ export const getPermanentKarmaPoints =
   pipe (getCurrentHeroPresent, fmap (pipe (Hero.energies, Ener.permanentKarmaPoints)))
 
 
-export const getPhase =
+export const getCurrentPhase =
   pipe (getCurrentHeroPresent, fmap (Hero.phase))
+
+export const getPhase =
+  pipe (getHeroProp, Hero.phase)
 
 
 export const getExperienceLevelStartId =

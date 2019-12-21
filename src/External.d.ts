@@ -179,44 +179,6 @@ declare module "remark-breaks" {
   export = Ph;
 }
 
-declare module "electron-localshortcut" {
-  import { Accelerator, BrowserWindow } from "electron";
-
-  namespace LocalShortcut {
-
-    // Docs: http://electron.atom.io/docs/api/global-shortcut
-
-    /**
-     * When the accelerator is already taken by other applications, this call will
-     * still return false. This behavior is intended by operating systems, since they
-     * don't want applications to fight for global shortcuts.
-     */
-    export function isRegistered (window: BrowserWindow, accelerator: Accelerator): boolean;
-    /**
-     * Registers a global shortcut of accelerator. The callback is called when the
-     * registered shortcut is pressed by the user. When the accelerator is already
-     * taken by other applications, this call will silently fail. This behavior is
-     * intended by operating systems, since they don't want applications to fight for
-     * global shortcuts.
-     */
-    export function register (
-      window: BrowserWindow,
-      accelerator: Accelerator,
-      callback: Function
-    ): void;
-    /**
-     * Unregisters the global shortcut of accelerator.
-     */
-    export function unregister (window: BrowserWindow, accelerator: Accelerator): void;
-    /**
-     * Unregisters all of the global shortcuts.
-     */
-    export function unregisterAll (window: BrowserWindow): void;
-  }
-
-  export = LocalShortcut;
-}
-
 declare namespace Intl {
   function getCanonicalLocales(locales: string | string[]): string[];
 

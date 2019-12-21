@@ -11,7 +11,7 @@ import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { ReactReturn, renderMaybe } from "../../../Utilities/ReactUtils";
-import { comparingR, sortRecordsBy } from "../../../Utilities/sortBy";
+import { comparingR, sortByMulti } from "../../../Utilities/sortBy";
 import { Markdown } from "../../Universal/Markdown";
 
 interface Accessors<A extends RecordIBase<any>> {
@@ -79,7 +79,7 @@ export const WikiExtensions =
                  (extensions)
   }
 
-const sortExts = sortRecordsBy ([comparingR (pipe (SelectOption.A.cost, sum)) (compare)])
+const sortExts = sortByMulti ([ comparingR (pipe (SelectOption.A.cost, sum)) (compare) ])
 
 export const getExtensionsForEntry =
   (id: string) =>

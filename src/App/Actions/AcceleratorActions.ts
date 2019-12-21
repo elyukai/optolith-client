@@ -23,10 +23,10 @@ export const redoAccelerator = (): ReduxAction => (dispatch, getState) => {
   }
 }
 
-export const saveHeroAccelerator = (l10n: L10nRecord): ReduxAction =>
-  (dispatch, getState) => {
+export const saveHeroAccelerator = (l10n: L10nRecord): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
     if (!isDialogOpen () && getIsHeroSection (getState ())) {
-      dispatch (saveHero (l10n) (Nothing))
+      await dispatch (saveHero (l10n) (Nothing))
     }
   }
 

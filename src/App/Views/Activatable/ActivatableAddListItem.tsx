@@ -1,7 +1,6 @@
 import * as React from "react";
-import { notP } from "../../../Data/Bool";
 import { List, notNullStr } from "../../../Data/List";
-import { all, any, ensure, fromMaybe, guardReplace, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe";
+import { any, ensure, fromMaybe, guardReplace, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { fst, snd } from "../../../Data/Tuple";
 import { AdvantageId, DisadvantageId } from "../../Constants/Ids";
@@ -16,8 +15,7 @@ import { classListMaybe } from "../../Utilities/CSS";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybeWith } from "../../Utilities/ReactUtils";
-import { isInteger } from "../../Utilities/RegexUtils";
-import { Dialog } from "../Universal/Dialog";
+import { BasicInputDialog } from "../Universal/BasicInputDialog";
 import { IconButton } from "../Universal/IconButton";
 import { ListItem } from "../Universal/ListItem";
 import { ListItemButtons } from "../Universal/ListItemButtons";
@@ -26,7 +24,6 @@ import { ListItemLeft } from "../Universal/ListItemLeft";
 import { ListItemName } from "../Universal/ListItemName";
 import { ListItemSeparator } from "../Universal/ListItemSeparator";
 import { ListItemValues } from "../Universal/ListItemValues";
-import { TextField } from "../Universal/TextField";
 
 export interface ActivatableAddListItemOwnProps {
   item: Record<InactiveActivatable>
@@ -289,35 +286,20 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
           {renderMaybeWith ((x: number | string) => IAA.isAutomatic (item) ? `(${x})` : x)
                            (PABSA.currentCost (snd (finalProps)))}
         </div>
-        <Dialog
-          id="custom-cost-dialog"
-          close={handleCloseCustomCostDialog}
-          isOpen={showCustomCostDialog}
-          title={translate (l10n) ("customcost")}
-          buttons={[
-            {
-              autoWidth: true,
-              label: translate (l10n) ("done"),
-              disabled: all (notP (isInteger)) (mcustom_cost_preview),
-              onClick: handleSetCustomCost,
-            },
-            {
-              autoWidth: true,
-              label: translate (l10n) ("delete"),
-              disabled: isNothing (mcustom_cost),
-              onClick: handleDeleteCustomCost,
-            },
-          ]}
-          >
-          {translate (l10n) ("customcostfor")}
-          {IAA.name (item)}
-          <TextField
-            value={mcustom_cost_preview}
-            onChange={handleSetCustomCostPreview}
-            fullWidth
-            autoFocus
-            />
-        </Dialog>
+      <BasicInputDialog
+        id="custom-cost-dialog"
+        isOpen={showCustomCostDialog}
+        title={translate (l10n) ("customcost")}
+        description={`${translate (l10n) ("customcostfor")} ${IAA.name (item)}`}
+        value={mcustom_cost_preview}
+        acceptLabel={translate (l10n) ("done")}
+        rejectLabel={translate (l10n) ("delete")}
+        rejectDisabled={isNothing (mcustom_cost)}
+        onClose={handleCloseCustomCostDialog}
+        onAccept={handleSetCustomCost}
+        onReject={handleDeleteCustomCost}
+        onChange={handleSetCustomCostPreview}
+        />
       </ListItemValues>
       <ListItemButtons>
         <IconButton

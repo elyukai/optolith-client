@@ -1,10 +1,9 @@
-import { remote } from "electron";
-import * as localShortcut from "electron-localshortcut";
 import * as React from "react";
 import { flength, map, toArray } from "../../../Data/List";
 import { fromJust, isJust, Just, listToMaybe, Maybe, maybeToUndefined, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { PromptButton, PromptOptions } from "../../Actions/AlertActions";
+import { addKeybinding, removeKeybinding } from "../../Utilities/Keybindings";
 import { BorderButtonProps } from "./BorderButton";
 import { Dialog } from "./Dialog";
 
@@ -47,12 +46,8 @@ export const Alert: React.FC<AlertProps> = props => {
         }))
         (buttons)
 
-  const currentWindow = remote.getCurrentWindow ()
-
   const closeEnhanced = (canceled: boolean) => {
-    if (localShortcut.isRegistered (currentWindow, "Enter")) {
-      localShortcut.unregister (currentWindow, "Enter")
-    }
+    removeKeybinding ("enter")
 
     if (canceled) {
       resolve (Nothing)
@@ -62,8 +57,8 @@ export const Alert: React.FC<AlertProps> = props => {
   }
 
   if (flength (buttons) === 1) {
-    localShortcut.register (currentWindow, "Enter", () => {
-      localShortcut.unregister (currentWindow, "Enter")
+    addKeybinding ("enter", () => {
+      removeKeybinding ("enter")
 
       const mresponse = listToMaybe (buttons)
 

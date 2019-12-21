@@ -18,7 +18,7 @@ module.exports = {
   copyTables: async () => {
     console.log ("Copy most recent tables...")
 
-    const dest = join ("app", "Database", "TDE5.xlsx")
+    const dest = join ("app", "Database", "univ.xlsx")
     await copyFile (join (src_dir, `TDE5.xlsx`), dest)
     console.log (`"TDE5.xlsx" copied to "${dest}"!`)
 

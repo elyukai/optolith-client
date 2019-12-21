@@ -27,7 +27,7 @@ import { getCurrentEl, getStartEl } from "./elSelectors";
 import { getBlessedTraditionFromState } from "./liturgicalChantsSelectors";
 import { getRace } from "./rcpSelectors";
 import { getMagicalTraditionsFromHero } from "./spellsSelectors";
-import { getAttributes, getAttributeValueLimit, getCurrentAttributeAdjustmentId, getCurrentHeroPresent, getHeroProp, getPhase, getWiki, getWikiAttributes } from "./stateSelectors";
+import { getAttributes, getAttributeValueLimit, getCurrentAttributeAdjustmentId, getCurrentHeroPresent, getCurrentPhase, getHeroProp, getWiki, getWikiAttributes } from "./stateSelectors";
 
 const HA = HeroModel.A
 const EA = Energies.A
@@ -225,7 +225,7 @@ export const getAttributesForView = createMaybeSelector (
   getCurrentHeroPresent,
   getStartEl,
   getCurrentEl,
-  getPhase,
+  getCurrentPhase,
   getAttributeValueLimit,
   getWiki,
   getRace,

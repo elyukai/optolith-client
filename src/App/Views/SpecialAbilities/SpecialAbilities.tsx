@@ -84,13 +84,13 @@ export const SpecialAbilities: React.FC<SpecialAbilitiesProps> = props => {
     setFilterText,
   } = props
 
-  const [isSlideinOpen, setIsSlideinOpen] = React.useState (false)
-  const [currentId, setCurrentId] = React.useState<Maybe<string>> (Nothing)
-  const [currentSlideinId, setCurrentSlideinId] = React.useState<Maybe<string>> (Nothing)
+  const [ isSlideinOpen, setIsSlideinOpen ] = React.useState (false)
+  const [ currentId, setCurrentId ] = React.useState<Maybe<string>> (Nothing)
+  const [ currentSlideinId, setCurrentSlideinId ] = React.useState<Maybe<string>> (Nothing)
 
   const handleShowSlidein = React.useCallback (
     () => setIsSlideinOpen (true),
-    [setIsSlideinOpen]
+    [ setIsSlideinOpen ]
   )
 
   const handleHideSlidein = React.useCallback (
@@ -98,17 +98,17 @@ export const SpecialAbilities: React.FC<SpecialAbilitiesProps> = props => {
       setInactiveFilterText ("")
       setIsSlideinOpen (false)
     },
-    [setIsSlideinOpen, setInactiveFilterText]
+    [ setIsSlideinOpen, setInactiveFilterText ]
   )
 
   const handleInfo = React.useCallback (
     (id: string) => setCurrentId (Just (id)),
-    [setCurrentId]
+    [ setCurrentId ]
   )
 
   const handleSlideinInfo = React.useCallback (
     (id: string) => setCurrentSlideinId (Just (id)),
-    [setCurrentSlideinId]
+    [ setCurrentSlideinId ]
   )
 
   return (

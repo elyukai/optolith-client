@@ -91,7 +91,7 @@ const getEntrySpecificNameAddition =
       case AdvantageId.WeaponAptitude:
       case DisadvantageId.Incompetent:
       case SpecialAbilityId.AdaptionZauber:
-      case SpecialAbilityId.Lieblingszauber:
+      case SpecialAbilityId.FavoriteSpellwork:
       case SpecialAbilityId.Forschungsgebiet:
       case SpecialAbilityId.Expertenwissen:
       case SpecialAbilityId.Wissensdurst:
@@ -182,8 +182,8 @@ const getEntrySpecificNameAddition =
           fmap (SOA.name)
         )
 
-      case SpecialAbilityId.SpellExtensions:
-      case SpecialAbilityId.ChantExtensions:
+      case SpecialAbilityId.SpellEnhancement:
+      case SpecialAbilityId.ChantEnhancement:
         return pipe (
                       AOWIA.sid,
                       findSelectOption (wiki_entry),
@@ -191,7 +191,7 @@ const getEntrySpecificNameAddition =
                                            bindF ((target_id: string) => {
                                              const acc =
                                                AOWIA.id (hero_entry)
-                                               === SpecialAbilityId.SpellExtensions
+                                               === SpecialAbilityId.SpellEnhancement
                                                  ? WA.spells
                                                  : WA.liturgicalChants
 
@@ -208,8 +208,8 @@ const getEntrySpecificNameAddition =
                     )
                     (hero_entry)
 
-      case SpecialAbilityId.TraditionZauberbarden:
-      case SpecialAbilityId.TraditionZaubertaenzer: {
+      case SpecialAbilityId.TraditionArcaneBard:
+      case SpecialAbilityId.TraditionArcaneDancer: {
         return pipe (
                       AOWIA.sid2,
                       misNumberM,
@@ -218,7 +218,7 @@ const getEntrySpecificNameAddition =
                     (hero_entry)
       }
 
-      case SpecialAbilityId.TraditionMeistertalentierte:
+      case SpecialAbilityId.TraditionSavant:
         return pipe (
                       AOWIA.sid,
                       misStringM,
@@ -307,9 +307,9 @@ const getEntrySpecificNameReplacements =
       case SpecialAbilityId.GebieterDesAspekts:
         return maybeMap (name_add => `${AAL.name (wiki_entry)} ${name_add}`)
 
-      case SpecialAbilityId.TraditionZauberbarden:
-      case SpecialAbilityId.TraditionZaubertaenzer:
-      case SpecialAbilityId.TraditionMeistertalentierte: {
+      case SpecialAbilityId.TraditionArcaneBard:
+      case SpecialAbilityId.TraditionArcaneDancer:
+      case SpecialAbilityId.TraditionSavant: {
         return maybeMap (flip (addSndinParenthesis) (AAL.name (wiki_entry)))
       }
 

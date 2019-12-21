@@ -25,7 +25,7 @@ import { compareLocale } from "../Utilities/I18n";
 import { prefixId } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailabilityAndPred } from "../Utilities/RulesUtils";
-import { comparingR, sortRecordsBy } from "../Utilities/sortBy";
+import { comparingR, sortByMulti } from "../Utilities/sortBy";
 import { getMaxAttributeValueByID } from "./attributeSelectors";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
@@ -103,8 +103,8 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
                                 }))
                               })
                               (List.empty),
-                   sortRecordsBy ([comparingR (CombatTechniqueWithAttackParryBaseA_.name)
-                                              (compareLocale (l10n))])
+                   sortByMulti ([ comparingR (CombatTechniqueWithAttackParryBaseA_.name)
+                                             (compareLocale (l10n)) ])
                  )))
 )
 
@@ -207,7 +207,7 @@ export const getFilteredCombatTechniques = createMaybeSelector (
   (mcombat_techniques, sortOptions, filterText) =>
     fmapF (mcombat_techniques)
           (filterAndSortRecordsBy (0)
-                                  ([pipe (CTWRA.wikiEntry, CTA.name)])
+                                  ([ pipe (CTWRA.wikiEntry, CTA.name) ])
                                   (sortOptions)
                                   (filterText))
 )

@@ -21,55 +21,68 @@ export interface AttributeListItemProps {
 const AWRA = AttributeWithRequirements.A
 const AWRA_ = AttributeWithRequirementsA_
 
-export class AttributeListItem extends React.Component<AttributeListItemProps, {}> {
-  render () {
-    const {
-      attribute: attr,
-      maxTotalAttributeValues,
-      isInCharacterCreation,
-      isRemovingEnabled,
-      sum,
-    } = this.props
+export const AttributeListItem: React.FC<AttributeListItemProps> = props => {
+  const {
+    attribute: attr,
+    isInCharacterCreation,
+    isRemovingEnabled,
+    maxTotalAttributeValues,
+    sum,
+    addPoint,
+    removePoint,
+  } = props
 
-    const id = AWRA_.id (attr)
-    const value = AWRA_.value (attr)
-    const mmax = AWRA.max (attr)
+  const id = AWRA_.id (attr)
+  const value = AWRA_.value (attr)
+  const mmax = AWRA.max (attr)
 
-    const valueHeader = isInCharacterCreation ? `${value} / ${Maybe.sum (mmax)}` : value
+  const valueHeader = isInCharacterCreation ? `${value} / ${Maybe.sum (mmax)}` : value
 
-    return (
-      <AttributeBorder
-        className={id}
-        label={AWRA_.short (attr)}
-        value={value}
-        tooltip={
-          <div className="calc-attr-overlay">
-            <h4><span>{AWRA_.name (attr)}</span><span>{valueHeader}</span></h4>
-          </div>
+  const handleAdd = React.useCallback (
+    () => addPoint (id),
+    [addPoint, id]
+  )
+
+  const handleRemove = React.useCallback (
+    () => removePoint (id),
+    [removePoint, id]
+  )
+
+  return (
+    <AttributeBorder
+      className={id}
+      label={AWRA_.short (attr)}
+      value={value}
+      tooltip={
+        <div className="calc-attr-overlay">
+          <h4>
+            <span>{AWRA_.name (attr)}</span>
+            <span>{valueHeader}</span>
+          </h4>
+        </div>
+      }
+      tooltipMargin={11}
+      >
+      {isInCharacterCreation ? <NumberBox max={Maybe.sum (mmax)} /> : null}
+      <IconButton
+        className="add"
+        icon="&#xE908;"
+        onClick={handleAdd}
+        disabled={
+          (isInCharacterCreation && sum >= Maybe.sum (maxTotalAttributeValues))
+          || or (fmapF (mmax) (lte (value)))
         }
-        tooltipMargin={11}
-        >
-        {isInCharacterCreation ? <NumberBox max={Maybe.sum (mmax)} /> : null}
-        <IconButton
-          className="add"
-          icon="&#xE908;"
-          onClick={this.props.addPoint.bind (null, id)}
-          disabled={
-            isInCharacterCreation && sum >= Maybe.sum (maxTotalAttributeValues)
-            || or (fmapF (mmax) (lte (value)))
-          }
-          />
-        {isRemovingEnabled
-          ? (
-              <IconButton
-                className="remove"
-                icon="&#xE909;"
-                onClick={this.props.removePoint.bind (null, id)}
-                disabled={value <= AWRA.min (attr)}
-                />
-            )
-          : null}
-      </AttributeBorder>
-    )
-  }
+        />
+      {isRemovingEnabled
+        ? (
+            <IconButton
+              className="remove"
+              icon="&#xE909;"
+              onClick={handleRemove}
+              disabled={value <= AWRA.min (attr)}
+              />
+          )
+        : null}
+    </AttributeBorder>
+  )
 }

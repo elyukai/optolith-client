@@ -44,14 +44,14 @@ const mapDispatchToProps = (
   switchActiveItemHints () {
     dispatch (ConfigActions.switchEnableActiveItemHints ())
   },
-  addToList (args: Record<ActivatableActivationOptions>) {
-    dispatch (DisAdvActions.addDisAdvantage (l10n) (args))
+  async addToList (args: Record<ActivatableActivationOptions>) {
+    await dispatch (DisAdvActions.addDisAdvantage (l10n) (args))
   },
-  removeFromList (args: Record<ActivatableDeactivationOptions>) {
-    dispatch (DisAdvActions.removeDisAdvantage (l10n) (args))
+  async removeFromList (args: Record<ActivatableDeactivationOptions>) {
+    await dispatch (DisAdvActions.removeDisAdvantage (l10n) (args))
   },
-  setLevel (id: string, index: number, level: number) {
-    dispatch (DisAdvActions.setDisAdvantageLevel (l10n) (id) (index) (level))
+  async setLevel (id: string, index: number, level: number) {
+    await dispatch (DisAdvActions.setDisAdvantageLevel (l10n) (id) (index) (level))
   },
   setFilterText (filterText: string) {
     dispatch (DisAdvActions.setActiveDisadvantagesFilterText (filterText))

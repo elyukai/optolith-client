@@ -47,10 +47,10 @@ export const getMissingAP =
 
 const semiTraditionIds =
   List<string> (
-    SpecialAbilityId.TraditionZauberbarden,
-    SpecialAbilityId.TraditionZaubertaenzer,
-    SpecialAbilityId.TraditionIntuitiveZauberer,
-    SpecialAbilityId.TraditionMeistertalentierte,
+    SpecialAbilityId.TraditionArcaneBard,
+    SpecialAbilityId.TraditionArcaneDancer,
+    SpecialAbilityId.TraditionIntuitiveMage,
+    SpecialAbilityId.TraditionSavant,
     SpecialAbilityId.TraditionZauberalchimisten,
     SpecialAbilityId.TraditionAnimisten,
   )

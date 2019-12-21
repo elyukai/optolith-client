@@ -45,7 +45,7 @@ export interface SpellsOwnProps {
 
 export interface SpellsStateProps {
   activeList: Maybe<List<Record<SpellWithRequirements> | Record<CantripCombined>>>
-  addSpellsDisabled: Maybe<boolean>
+  addSpellsDisabled: boolean
   attributes: List<Record<AttributeCombined>>
   enableActiveItemHints: boolean
   filterText: string
@@ -286,10 +286,7 @@ export const Spells: React.FC<SpellsProps> = props => {
                                       name={SCCA.name (curr)}
                                       isNotActive
                                       activate={addToList}
-                                      activateDisabled={
-                                        or (addSpellsDisabled)
-                                        && SWRA_.gr (curr) < 3
-                                      }
+                                      activateDisabled={addSpellsDisabled && SWRA_.gr (curr) < 3}
                                       addFillElement
                                       check={SWRA_.check (curr)}
                                       checkmod={SWRA_.checkmod (curr)}

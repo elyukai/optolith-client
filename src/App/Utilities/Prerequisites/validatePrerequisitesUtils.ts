@@ -32,6 +32,7 @@ import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrereq
 import { Profession } from "../../Models/Wiki/Profession";
 import { Race } from "../../Models/Wiki/Race";
 import { Skill } from "../../Models/Wiki/Skill";
+import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { AllRequirements, ProfessionDependency, SID } from "../../Models/Wiki/wikiTypeHelpers";
 import { isActive } from "../Activatable/isActive";
@@ -48,10 +49,10 @@ type Validator = (wiki: WikiModelRecord) =>
                  (req: AllRequirements) =>
                  (sourceId: string) => boolean
 
-const { races, cultures, professions, skills } = WikiModel.AL
+const WA = WikiModel.A
 const HA = HeroModel.A
 const PDA = PersonalData.A
-const { race, culture, profession, specialAbilities, attributes, sex, pact } = HeroModel.AL
+const SA = Spell.A
 
 const RIA = RequireIncreasable.A
 const RAA = RequireActivatable.A
@@ -61,8 +62,8 @@ const SDAL = SkillDependent.AL
 const getAllRaceEntries =
   (wiki: WikiModelRecord) =>
     pipe (
-      race,
-      bindF (lookupF (races (wiki))),
+      HA.race,
+      bindF (lookupF (WA.races (wiki))),
       fmap (
         selectedRace => concat (
           List (
@@ -80,8 +81,8 @@ const getAllRaceEntries =
 const getAllCultureEntries =
   (wiki: WikiModelRecord) =>
     pipe (
-      culture,
-      bindF (lookupF (cultures (wiki))),
+      HA.culture,
+      bindF (lookupF (WA.cultures (wiki))),
       fmap (
         selectedCulture => concat (
           List (
@@ -95,8 +96,8 @@ const getAllCultureEntries =
 const getAllProfessionEntries =
   (wiki: WikiModelRecord) =>
     pipe (
-      profession,
-      bindF (lookupF (professions (wiki))),
+      HA.profession,
+      bindF (lookupF (WA.professions (wiki))),
       fmap (
         selectedProfession => concat (
           List (
@@ -217,12 +218,12 @@ const isPactValid =
 const isPrimaryAttributeValid =
   (state: HeroModelRecord) => (req: Record<RequirePrimaryAttribute>): boolean =>
     or (fmap (pipe (
-               lookupF (attributes (state)),
+               lookupF (HA.attributes (state)),
                fmap (AttributeDependent.AL.value),
                fromMaybe (8),
                gte (RequirePrimaryAttribute.AL.value (req))
              ))
-             (getPrimaryAttributeId (specialAbilities (state))
+             (getPrimaryAttributeId (HA.specialAbilities (state))
                                     (RequirePrimaryAttribute.AL.type (req))))
 
 const isSocialPrerequisiteValid: (hero: Record<HeroModel>) =>
@@ -330,7 +331,7 @@ const isActivatableValid =
                                const arr =
                                  map (Skill.AL.id)
                                      (getAllWikiEntriesByGroup
-                                       (skills (wiki))
+                                       (WA.skills (wiki))
                                        (maybeToList (
                                          RAA.sid2 (req) as Maybe<number>
                                        )))
@@ -386,13 +387,13 @@ export const validateObject =
     req === "RCP"
       ? isRCPValid (wiki) (hero) (sourceId)
       : SexRequirement.is (req)
-      ? isSexValid (sex (hero)) (req)
+      ? isSexValid (HA.sex (hero)) (req)
       : RaceRequirement.is (req)
-      ? or (fmapF (race (hero)) (flip (isRaceValid) (req)))
+      ? or (fmapF (HA.race (hero)) (flip (isRaceValid) (req)))
       : CultureRequirement.is (req)
-      ? or (fmapF (culture (hero)) (flip (isCultureValid) (req)))
+      ? or (fmapF (HA.culture (hero)) (flip (isCultureValid) (req)))
       : PactRequirement.is (req)
-      ? isPactValid (pact (hero)) (req)
+      ? isPactValid (HA.pact (hero)) (req)
       : RequirePrimaryAttribute.is (req)
       ? isPrimaryAttributeValid (hero) (req)
       : SocialPrerequisite.is (req)
@@ -415,6 +416,24 @@ export const validatePrerequisites =
   (sourceId: string): boolean =>
     all (pipe (validateObject (wiki) (state), thrush (sourceId)))
         (prerequisites)
+
+
+/**
+ * ```haskell
+ * areSpellPrereqisitesMet :: Wiki -> Hero -> Spell -> Bool
+ * ```
+ *
+ * Checks if all prerequisites of the passed spell are met.
+ */
+export const areSpellPrereqisitesMet =
+  (wiki: WikiModelRecord) =>
+  (hero: HeroModelRecord) =>
+  (entry: Record<Spell>) =>
+    validatePrerequisites (wiki)
+                          (hero)
+                          (SA.prerequisites (entry))
+                          (SA.id (entry))
+
 
 /**
  * Returns if the current index can be skipped because there is already a lower

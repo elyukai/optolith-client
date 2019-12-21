@@ -1,53 +1,48 @@
-import { fmap } from "../../../Data/Functor";
 import { countWith, List } from "../../../Data/List";
-import { bind, bindF, fromJust, isJust, listToMaybe, Maybe, maybe } from "../../../Data/Maybe";
+import { bindF, listToMaybe, Maybe, maybe, sum } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { pipe } from "../pipe";
 import { isMaybeActive } from "./isActive";
 
-const { active } = ActivatableDependent.A
-const { tier } = ActiveObject.A
+const ADA = ActivatableDependent.A
+const AOA = ActiveObject.A
 
-const getFirstActive =
-  pipe (
-    fmap (active) as (m: Maybe<Record<ActivatableDependent>>) => Maybe<List<Record<ActiveObject>>>,
-    bindF (listToMaybe)
-  )
+const getLevel = pipe (bindF (pipe (ADA.active, listToMaybe)), bindF (AOA.tier), sum)
 
 /**
- * `getModifierByActiveLevel mbase_mod mincrease mdecrease` adjusts the given
- * base `mbase_mod`. If the entry `mincrease`, that should increase the base, is
- * active, it adds the level to the base. If the entry `mdecrease`, that should
- * decrease the base, is active, it subtracts the level from the base. If the
- * passed base is `Nothing`, this function always returns `0`.
+ * ```haskell
+ * modifyByLevel :: Int -> ActivatableDependent -> ActivatableDependent -> Int
+ * ```
+ *
+ * `modifyByLevel value inc dec` modifies a base `value` by the active level of
+ * the passed entries. The `inc` entry's level increases the value while the
+ * `dec` entry's level decreases the value.
  */
-export const getModifierByActiveLevel =
-  (mbase_mod: Maybe<number>) =>
+export const modifyByLevel =
+  (value: number) =>
   (mincrease: Maybe<Record<ActivatableDependent>>) =>
-  (mdecrease: Maybe<Record<ActivatableDependent>>): number => {
-    const increaseObject = getFirstActive (mincrease)
-    const decreaseObject = getFirstActive (mdecrease)
+  (mdecrease: Maybe<Record<ActivatableDependent>>): number =>
+    value + getLevel (mincrease) - getLevel (mdecrease)
 
-    return maybe (0)
-                 ((base_mod: number) => {
-                   const increase_level = bind (increaseObject) (tier)
-
-                   if (isJust (increase_level)) {
-                     return base_mod + fromJust (increase_level)
-                   }
-
-                   const decrease_level = bind (decreaseObject) (tier)
-
-                   if (isJust (decrease_level)) {
-                     return base_mod - fromJust (decrease_level)
-                   }
-
-                   return base_mod
-                 })
-                 (mbase_mod)
-  }
+/**
+ * ```haskell
+ * modifyByLevelM :: Maybe Int -> ActivatableDependent -> ActivatableDependent -> Int
+ * ```
+ *
+ * `modifyByLevel value inc dec` modifies a base `value` by the active level of
+ * the passed entries. The `inc` entry's level increases the value while the
+ * `dec` entry's level decreases the value. If `value` is `Nothing`, this
+ * function always returns `0`.
+ */
+export const modifyByLevelM =
+  (mvalue: Maybe<number>) =>
+  (mincrease: Maybe<Record<ActivatableDependent>>) =>
+  (mdecrease: Maybe<Record<ActivatableDependent>>): number =>
+    maybe (0)
+          ((value: number) => modifyByLevel (value) (mincrease) (mdecrease))
+          (mvalue)
 
 /**
  * `getModifierByActiveLevel mbase_mod mincrease mdecrease` adjusts the given

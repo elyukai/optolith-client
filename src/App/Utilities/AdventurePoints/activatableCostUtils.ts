@@ -84,7 +84,7 @@ const getEntrySpecificCost =
       case AdvantageId.WeaponAptitude:
       case DisadvantageId.Incompetent:
       case SpecialAbilityId.AdaptionZauber:
-      case SpecialAbilityId.Lieblingszauber:
+      case SpecialAbilityId.FavoriteSpellwork:
       case SpecialAbilityId.Forschungsgebiet:
       case SpecialAbilityId.Expertenwissen:
       case SpecialAbilityId.Wissensdurst:

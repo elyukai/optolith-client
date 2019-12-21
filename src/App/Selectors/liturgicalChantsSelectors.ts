@@ -32,11 +32,11 @@ import { getAspectsOfTradition, isLiturgicalChantDecreasable, isLiturgicalChantI
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
-import { sortRecordsBy } from "../Utilities/sortBy";
+import { sortByMulti } from "../Utilities/sortBy";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getBlessingsSortOptions, getLiturgicalChantsCombinedSortOptions, getLiturgicalChantsSortOptions } from "./sortOptionsSelectors";
-import { getAdvantages, getBlessings, getCurrentHeroPresent, getInactiveLiturgicalChantsFilterText, getLiturgicalChants, getLiturgicalChantsFilterText, getMaybeSpecialAbilities, getPhase, getSpecialAbilities, getWiki, getWikiBlessings, getWikiLiturgicalChants, getWikiSpecialAbilities } from "./stateSelectors";
+import { getAdvantages, getBlessings, getCurrentHeroPresent, getCurrentPhase, getInactiveLiturgicalChantsFilterText, getLiturgicalChants, getLiturgicalChantsFilterText, getMaybeSpecialAbilities, getSpecialAbilities, getWiki, getWikiBlessings, getWikiLiturgicalChants, getWikiSpecialAbilities } from "./stateSelectors";
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
 
 const HA = HeroModel.A
@@ -167,7 +167,7 @@ export const getActiveLiturgicalChantsCounter = createMaybeSelector (
 
 export const getIsMaximumOfLiturgicalChantsReached = createMaybeSelector (
   getActiveLiturgicalChantsCounter,
-  getPhase,
+  getCurrentPhase,
   getStartEl,
   uncurryN3 (active =>
              liftM2 (phase =>
@@ -365,7 +365,7 @@ export const getFilteredActiveLiturgicalChantsAndBlessings = createMaybeSelector
   (mcombineds, sort_options, filter_text) =>
     fmapF (mcombineds)
           (filterAndSortRecordsBy (0)
-                                  ([getNameFromChantOrBlessing as getNameFromChantOrBlessing])
+                                  ([ getNameFromChantOrBlessing as getNameFromChantOrBlessing ])
                                   (sort_options)
                                   (filter_text)) as Maybe<ListCombined>
 )
@@ -382,8 +382,8 @@ export const getFilteredInactiveLiturgicalChantsAndBlessings = createMaybeSelect
              liftM2 (inactive =>
                      active =>
                        filterAndSortRecordsBy (0)
-                                              ([getNameFromChantOrBlessing as
-                                                getNameFromChantOrBlessing])
+                                              ([ getNameFromChantOrBlessing as
+                                                 getNameFromChantOrBlessing ])
                                               (sort_options)
                                               (filter_text)
                                               (areActiveItemHintsEnabled
@@ -393,7 +393,7 @@ export const getFilteredInactiveLiturgicalChantsAndBlessings = createMaybeSelect
 
 export const isActivationDisabled = createMaybeSelector (
   getStartEl,
-  getPhase,
+  getCurrentPhase,
   getActiveLiturgicalChantsCounter,
   (mstart_el, mphase, active_chants) =>
     or (fmap (lt (3)) (mphase))
@@ -405,7 +405,7 @@ export const isActivationDisabled = createMaybeSelector (
 export const getBlessingsForSheet = createMaybeSelector (
   getBlessingsSortOptions,
   getActiveBlessings,
-  uncurryN (sort_options => fmap (sortRecordsBy (sort_options)))
+  uncurryN (sort_options => fmap (sortByMulti (sort_options)))
 )
 
 export const getLiturgicalChantsForSheet = createMaybeSelector (
@@ -420,6 +420,6 @@ export const getLiturgicalChantsForSheet = createMaybeSelector (
                                         map (over (composeL (LCWRL.wikiEntry, LCL.aspects))
                                                   (filter (flip (elem) (available_aspects))))))
                                 (mchants),
-                         fmap (sortRecordsBy (sort_options))
+                         fmap (sortByMulti (sort_options))
                        ))
 )

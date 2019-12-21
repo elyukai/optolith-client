@@ -185,7 +185,7 @@ export const getIdSpecificAffectedAndDispatchProps =
       case AdvantageId.WeaponAptitude:
       case DisadvantageId.Incompetent:
       case SpecialAbilityId.AdaptionZauber:
-      case SpecialAbilityId.Lieblingszauber:
+      case SpecialAbilityId.FavoriteSpellwork:
       case SpecialAbilityId.Forschungsgebiet:
       case SpecialAbilityId.Expertenwissen:
       case SpecialAbilityId.Wissensdurst:
@@ -456,14 +456,14 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.TraditionZauberbarden: {
+      case SpecialAbilityId.TraditionArcaneBard: {
         return getIdSpecificAffectedAndDispatchPropsForMusicTraditions (l10n)
                                                                        (entry)
                                                                        (List (1, 2, 3))
                                                                        (mselected)
       }
 
-      case SpecialAbilityId.TraditionZaubertaenzer: {
+      case SpecialAbilityId.TraditionArcaneDancer: {
         return getIdSpecificAffectedAndDispatchPropsForMusicTraditions (l10n)
                                                                        (entry)
                                                                        (List (4, 5, 6, 7))
@@ -742,7 +742,7 @@ export const getInactiveActivatableControlElements =
 
                 return pipe_ (
                   elements,
-                  set (([DisadvantageId.Principles, DisadvantageId.Obligations] as string[])
+                  set (([ DisadvantageId.Principles, DisadvantageId.Obligations ] as string[])
                         .includes (IAA.id (entry))
                         ? IACEL.levelElementBefore
                         : IACEL.levelElementAfter)
