@@ -28,14 +28,16 @@ export import isRight = Internals.isRight
 
 export type Either<A, B> = Left<A> | Right<B>
 
-// @module Data.Either.Extra
-//
-// This module extends `Data.Either` with extra operations, particularly to
-// quickly extract from inside an `Either`. Some of these operations are
-// partial, and should be used with care in production-quality code.
-//
-// @author Lukas Obermann
-// @see Data.Either
+/**
+ * @module Data.Either.Extra
+ *
+ * This module extends `Data.Either` with extra operations, particularly to
+ * quickly extract from inside an `Either`. Some of these operations are
+ * partial, and should be used with care in production-quality code.
+ *
+ * @author Lukas Obermann
+ * @see Data.Either
+ */
 
 /**
  * `fromLeft :: a -> Either a b -> a`
