@@ -339,6 +339,7 @@ export enum SpecialAbilityId {
   SozialeKompetenz = "SA_1123",
   Universalgenie = "SA_1127",
   ScholarDesMagierkollegsZuHoningen = "SA_1147",
+  TrueName = "SA_1209",
   TraditionAnimisten = "SA_1221",
   TraditionGeoden = "SA_1255",
   TraditionZibilijas = "SA_1293",

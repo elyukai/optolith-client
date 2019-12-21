@@ -548,6 +548,10 @@ const modifySelectOptions =
         )
       }
 
+      case SpecialAbilityId.TrueName: {
+          // TODO: Fix elyukai#331 here
+      } 
+
       default:
         return fmap (filterMapListT (isNoRequiredOrActiveSelection))
     }
