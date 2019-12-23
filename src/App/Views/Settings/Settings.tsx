@@ -2,8 +2,9 @@ import * as React from "react";
 import { List } from "../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { L10nRecord } from "../../Models/Wiki/L10n";
+import { isStable } from "../../Selectors/envSelectors";
 import { translate } from "../../Utilities/I18n";
-import { Theme } from "../../Utilities/Raw/JSON/Config";
+import { Locale, Theme } from "../../Utilities/Raw/JSON/Config";
 import { BorderButton } from "../Universal/BorderButton";
 import { Checkbox } from "../Universal/Checkbox";
 import { Dialog } from "../Universal/Dialog";
@@ -74,21 +75,26 @@ export function Settings (props: SettingsProps) {
             name: translate (l10n) ("systemlanguage"),
           }),
           DropdownOption ({
-            id: Just ("de-DE"),
+            id: Just (Locale.German),
             name: "Deutsch (Deutschland)",
           }),
           DropdownOption ({
-            id: Just ("en-US"),
+            id: Just (Locale.English),
             name: "English (United States)",
           }),
           DropdownOption ({
-            id: Just ("nl-BE"),
+            id: Just (Locale.Dutch),
             name: "Nederlands (België)",
           }),
           DropdownOption ({
-            id: Just ("fr-FR"),
+            id: Just (Locale.French),
             name: "Français (France)",
-            // disabled: Just (true),
+            disabled: Just (isStable),
+          }),
+          DropdownOption ({
+            id: Just (Locale.Italian),
+            name: "Italiano (Italia)",
+            disabled: Just (isStable),
           })
         )}
         value={localeType === "default" ? Nothing : localeString}
