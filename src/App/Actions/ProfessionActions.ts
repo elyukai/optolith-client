@@ -1,7 +1,7 @@
 import { fromJust, isJust, liftM3, listToMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { Selections } from "../Models/Hero/heroTypeHelpers";
 import { Culture } from "../Models/Wiki/Culture";
 import { Profession } from "../Models/Wiki/Profession";
@@ -112,7 +112,7 @@ export const setProfessionsVisibilityFilter =
   })
 
 export interface SetProfessionsGroupVisibilityFilterAction {
-  type: ActionTypes.SET_PROFESSIONS_GROUP_VISIBILITY_FILTER
+  type: ActionTypes.SET_PROFESSIONS_GR_VISIBILITY_FILTER
   payload: {
     filter: ProfessionsGroupVisibilityFilter;
   }
@@ -120,19 +120,10 @@ export interface SetProfessionsGroupVisibilityFilterAction {
 
 export const setProfessionsGroupVisibilityFilter =
   (filter: ProfessionsGroupVisibilityFilter): SetProfessionsGroupVisibilityFilterAction => ({
-    type: ActionTypes.SET_PROFESSIONS_GROUP_VISIBILITY_FILTER,
+    type: ActionTypes.SET_PROFESSIONS_GR_VISIBILITY_FILTER,
     payload: {
       filter,
     },
-  })
-
-export interface SwitchProfessionsExpansionVisibilityFilterAction {
-  type: ActionTypes.SWITCH_PROFESSIONS_EXPANSION_VISIBILITY_FILTER
-}
-
-export const switchProfessionsExpansionVisibilityFilter =
-  (): SwitchProfessionsExpansionVisibilityFilterAction => ({
-    type: ActionTypes.SWITCH_PROFESSIONS_EXPANSION_VISIBILITY_FILTER,
   })
 
 export interface SetProfessionsFilterTextAction {

@@ -9,7 +9,7 @@ import { alter, foldrWithKey, insertF, keys, lookup, member, OrderedMap } from "
 import { insert, OrderedSet, sdelete, toList, union } from "../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { SetSelectionsAction } from "../Actions/ProfessionActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableDependent, ActivatableDependentL, createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, ActivatableSkillDependentL } from "../Models/ActiveEntries/ActivatableSkillDependent";

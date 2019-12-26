@@ -6,7 +6,7 @@ import { subtract } from "../../Data/Num";
 import { lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { Pair } from "../../Data/Tuple";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
@@ -276,7 +276,7 @@ export const setActiveSpecialAbilitiesFilterText =
   })
 
 export interface SetInactiveSpecialAbilitiesFilterTextAction {
-  type: ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT
+  type: ActionTypes.SET_INAC_SAS_FILTER_TEXT
   payload: {
     filterText: string;
   }
@@ -284,21 +284,21 @@ export interface SetInactiveSpecialAbilitiesFilterTextAction {
 
 export const setInactiveSpecialAbilitiesFilterText =
   (filterText: string): SetInactiveSpecialAbilitiesFilterTextAction => ({
-    type: ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT,
+    type: ActionTypes.SET_INAC_SAS_FILTER_TEXT,
     payload: {
       filterText,
     },
   })
 
 export interface SetGuildMageUnfamiliarSpellIdAction {
-  type: ActionTypes.SET_TRADITION_GUILD_MAGE_UNFAMILIAR_SPELL_ID
+  type: ActionTypes.SET_TRAD_GUILD_MAGE_UNFAM_SPELL_ID
   payload: {
     id: string;
   }
 }
 
 export const setGuildMageUnfamiliarSpellId = (id: string): SetGuildMageUnfamiliarSpellIdAction => ({
-  type: ActionTypes.SET_TRADITION_GUILD_MAGE_UNFAMILIAR_SPELL_ID,
+  type: ActionTypes.SET_TRAD_GUILD_MAGE_UNFAM_SPELL_ID,
   payload: {
     id,
   },

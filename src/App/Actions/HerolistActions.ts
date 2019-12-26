@@ -5,7 +5,7 @@ import { elem, fromJust, isJust, Just, Maybe } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { OrderedSet } from "../../Data/OrderedSet";
 import { bind } from "../../System/IO";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
 import { L10nRecord } from "../Models/Wiki/L10n";

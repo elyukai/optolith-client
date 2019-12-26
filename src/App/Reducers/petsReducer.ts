@@ -5,7 +5,7 @@ import { bind, ensure, fromJust, Just, maybe, Nothing } from "../../Data/Maybe";
 import { insert, lookup, sdelete } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import * as PetActions from "../Actions/PetActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { EditPet, EditPetL, EditPetSafe } from "../Models/Hero/EditPet";
 import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { Pet } from "../Models/Hero/Pet";

@@ -9,7 +9,7 @@ import { Record } from "../../Data/Record";
 import { isTuple, Pair } from "../../Data/Tuple";
 import { upd1, upd2 } from "../../Data/Tuple/Update";
 import * as EquipmentActions from "../Actions/EquipmentActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { CombatTechniqueId } from "../Constants/Ids";
 import { BelongingsL } from "../Models/Hero/Belongings";
 import { EditHitZoneArmor, EditHitZoneArmorL, EditHitZoneArmorSafe, ensureHitZoneArmorId } from "../Models/Hero/EditHitZoneArmor";
@@ -467,7 +467,7 @@ const itemDetailsReducer =
 const itemOptionsReducer =
   (action: Action): ident<HeroModelRecord> => {
     switch (action.type) {
-      case ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED: {
+      case ActionTypes.SWITCH_IS_ITEM_DT_SEPARATED: {
         return modifyEditItem (over (composeL (damageBonus, threshold))
                                     (xs => isTuple (xs) ? "" : Pair ("", "")))
       }
@@ -768,7 +768,7 @@ export const equipmentReducer =
       case ActionTypes.SET_ITEM_LOSS:
         return itemDetailsReducer (action)
 
-      case ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED:
+      case ActionTypes.SWITCH_IS_ITEM_DT_SEPARATED:
       case ActionTypes.SWITCH_IS_ITEM_PARRYING_WEAPON:
       case ActionTypes.SWITCH_IS_ITEM_TWO_HANDED_WEAPON:
       case ActionTypes.SWITCH_IS_ITEM_IMPROVISED_WEAPON:

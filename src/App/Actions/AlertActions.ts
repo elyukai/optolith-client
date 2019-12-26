@@ -4,7 +4,7 @@ import { fmapF } from "../../Data/Functor";
 import { List } from "../../Data/List";
 import { Just, Maybe, Nothing } from "../../Data/Maybe";
 import { fromDefault, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../Data/Record";
-import { ActionTypes } from "../Constants/ActionTypes";
+import { ADD_ALERT, REMOVE_ALERT } from "../Constants/ActionTypes";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { translate } from "../Utilities/I18n";
 import { ReduxAction } from "./Actions";
@@ -53,7 +53,7 @@ export const PromptButton: PromptButtonCreator =
               })
 
 export interface AddPromptAction {
-  type: ActionTypes.ADD_ALERT
+  type: ADD_ALERT
   payload: Record<PromptOptions<any>>
 }
 
@@ -84,7 +84,7 @@ export const addPrompt =
   async dispatch =>
     new Promise<Maybe<A>> (resolve => {
       dispatch<AddPromptAction> ({
-        type: ActionTypes.ADD_ALERT,
+        type: ADD_ALERT,
         payload: PromptOptions<A> ({
           title: CustomPromptOptions.A.title (opts),
           message: CustomPromptOptions.A.message (opts),
@@ -116,7 +116,7 @@ export const addAlert =
   async dispatch =>
     new Promise<Maybe<void>> (resolve => {
       dispatch<AddPromptAction> ({
-        type: ActionTypes.ADD_ALERT,
+        type: ADD_ALERT,
         payload: PromptOptions ({
           title: AlertOptions.A.title (opts),
           message: AlertOptions.A.message (opts),
@@ -142,7 +142,7 @@ export const addErrorAlert =
   async dispatch => {
     const response = await new Promise<Maybe<ErrorAlertResponse>> (resolve => {
       dispatch<AddPromptAction> ({
-        type: ActionTypes.ADD_ALERT,
+        type: ADD_ALERT,
         payload: PromptOptions ({
           title: AlertOptions.A.title (opts),
           message: AlertOptions.A.message (opts),
@@ -210,7 +210,7 @@ export const addConfirm =
   async dispatch =>
     new Promise<Maybe<ConfirmResponse>> (resolve => {
       dispatch<AddPromptAction> ({
-        type: ActionTypes.ADD_ALERT,
+        type: ADD_ALERT,
         payload: PromptOptions ({
           title: ConfirmOptions.A.title (opts),
           message: ConfirmOptions.A.message (opts),
@@ -244,9 +244,9 @@ export const addConfirm =
 // REMOVE CURRENT ALERT
 
 export interface RemoveAlertAction {
-  type: ActionTypes.REMOVE_ALERT
+  type: REMOVE_ALERT
 }
 
 export const removeAlert = (): RemoveAlertAction => ({
-  type: ActionTypes.REMOVE_ALERT,
+  type: REMOVE_ALERT,
 })

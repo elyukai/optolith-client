@@ -3,7 +3,7 @@ import { fmap } from "../../Data/Functor";
 import { over, set } from "../../Data/Lens";
 import { fromJust, isJust, Just, Nothing } from "../../Data/Maybe";
 import * as PactActions from "../Actions/PactActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { Pact, PactL } from "../Models/Hero/Pact";
 

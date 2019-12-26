@@ -1,5 +1,5 @@
 import { Maybe } from "../../Data/Maybe";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { RacesSortOptions } from "../Utilities/Raw/JSON/Config";
 
 export interface SelectRaceAction {

@@ -1,7 +1,7 @@
 import { flip } from "../../Data/Function";
 import { set } from "../../Data/Lens";
 import { List } from "../../Data/List";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { reduceReducersC } from "../Utilities/reduceReducers";
 import { undo } from "../Utilities/undo";
@@ -21,7 +21,7 @@ export const heroReducer =
   undo (List (
          ActionTypes.SAVE_HERO
        ))
-       (List (
+       (List<symbol> (
          ActionTypes.CREATE_ITEM,
          ActionTypes.CLOSE_ITEM_EDITOR,
          ActionTypes.EDIT_ITEM,
@@ -40,7 +40,7 @@ export const heroReducer =
          ActionTypes.SET_ITEM_DAMAGE_THRESHOLD,
          ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD,
          ActionTypes.SET_ITEM_SECOND_DAMAGE_THRESHOLD,
-         ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED,
+         ActionTypes.SWITCH_IS_ITEM_DT_SEPARATED,
          ActionTypes.SET_ITEM_ATTACK,
          ActionTypes.SET_ITEM_PARRY,
          ActionTypes.SET_ITEM_REACH,

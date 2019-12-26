@@ -1,6 +1,10 @@
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 
-const AppDispatcher = { dispatch (obj: any) { return obj } }
+const AppDispatcher = {
+  dispatch (obj: any) {
+    return obj
+  },
+}
 
 export function load () {
   AppDispatcher.dispatch ({

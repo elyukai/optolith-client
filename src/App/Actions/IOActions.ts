@@ -18,7 +18,7 @@ import { Record, toObject } from "../../Data/Record";
 import { parseJSON, tryParseJSON } from "../../Data/String/JSON";
 import { fst, Pair, snd } from "../../Data/Tuple";
 import * as IO from "../../System/IO";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { User } from "../Models/Hero/heroTypeHelpers";

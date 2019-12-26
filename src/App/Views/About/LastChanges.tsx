@@ -15,10 +15,26 @@ interface LastChangesProps {
   l10n: L10nRecord
 }
 
-export const LastChanges: React.FC<LastChangesProps> = ({ l10n }) => (
-  <Page id="last-changes">
-    <Scroll className="text">
-      <Markdown source={fs.readFileSync (getPath (l10n), "UTF-8")} />
-    </Scroll>
-  </Page>
-)
+export const LastChanges: React.FC<LastChangesProps> = ({ l10n }) => {
+  const [ text, setText ] = React.useState<string> ("...")
+
+  React.useEffect (
+    () => {
+      fs.promises.readFile (getPath (l10n), "utf-8")
+        .then (setText)
+        .catch (err => {
+          console.error (err)
+          setText ("Last Changes could not be loaded")
+        })
+    },
+    [ l10n ]
+  )
+
+  return (
+    <Page id="last-changes">
+      <Scroll className="text">
+        <Markdown source={text} />
+      </Scroll>
+    </Page>
+  )
+}

@@ -1,9 +1,9 @@
-import { ActionTypes } from "../Constants/ActionTypes";
+import { SWITCH_SHEET_ATTR_VALUE_VISIBILITY } from "../Constants/ActionTypes";
 
 export interface SwitchSheetAttributeValueVisibilityAction {
-  type: ActionTypes.SWITCH_SHEET_ATTRIBUTE_VALUE_VISIBILITY
+  type: SWITCH_SHEET_ATTR_VALUE_VISIBILITY
 }
 
 export const switchAttributeValueVisibility = (): SwitchSheetAttributeValueVisibilityAction => ({
-  type: ActionTypes.SWITCH_SHEET_ATTRIBUTE_VALUE_VISIBILITY,
+  type: SWITCH_SHEET_ATTR_VALUE_VISIBILITY,
 })

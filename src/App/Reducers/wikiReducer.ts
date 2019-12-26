@@ -1,7 +1,7 @@
 import { cnst, ident } from "../../Data/Function";
 import { snd } from "../../Data/Tuple";
 import { ReceiveInitialDataAction } from "../Actions/IOActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { WikiModelRecord } from "../Models/Wiki/WikiModel";
 
 type Action = ReceiveInitialDataAction

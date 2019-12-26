@@ -6,7 +6,7 @@ import { adjust } from "../../Data/OrderedMap";
 import { fst, snd } from "../../Data/Tuple";
 import * as DisAdvActions from "../Actions/DisAdvActions";
 import * as SpecialAbilitiesActions from "../Actions/SpecialAbilitiesActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids";
 import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
 import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType";
@@ -84,7 +84,7 @@ export const activatableReducer =
                         (pipe_ (action.payload, snd, snd))
       }
 
-      case ActionTypes.SET_TRADITION_GUILD_MAGE_UNFAMILIAR_SPELL_ID: {
+      case ActionTypes.SET_TRAD_GUILD_MAGE_UNFAM_SPELL_ID: {
         return over (HL.specialAbilities)
                     (adjust (over (ActivatableDependentL.active)
                                   (modifyAt (0)

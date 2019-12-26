@@ -1,17 +1,17 @@
-import { ActionTypes } from "../Constants/ActionTypes";
+import { SET_TAB } from "../Constants/ActionTypes";
 import { isDialogOpen } from "../Selectors/subwindowsSelectors";
 import { TabId } from "../Utilities/LocationUtils";
 import { ReduxAction } from "./Actions";
 
 export interface SetTabAction {
-  type: ActionTypes.SET_TAB
+  type: SET_TAB
   payload: {
     tab: TabId;
   }
 }
 
 export const setTab = (tab: TabId): SetTabAction => ({
-  type: ActionTypes.SET_TAB,
+  type: SET_TAB,
   payload: {
     tab,
   },

@@ -5,7 +5,7 @@ import { SelectCultureAction } from "../Actions/CultureActions";
 import { SelectProfessionAction } from "../Actions/ProfessionActions";
 import { SelectProfessionVariantAction } from "../Actions/ProfessionVariantActions";
 import { SelectRaceAction, SetRaceVariantAction } from "../Actions/RaceActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { pipe } from "../Utilities/pipe";
 

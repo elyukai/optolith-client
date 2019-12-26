@@ -8,7 +8,7 @@ import * as LiturgicalChantActions from "../Actions/LiturgicalChantActions";
 import * as SkillActions from "../Actions/SkillActions";
 import * as SpecialAbilitiesActions from "../Actions/SpecialAbilitiesActions";
 import * as SpellsActions from "../Actions/SpellsActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { activatableReducer } from "./activatableReducer";
 import { increasableReducer } from "./increasableReducer";
@@ -73,10 +73,10 @@ export const dependentReducer =
       case ActionTypes.DEACTIVATE_SPECIALABILITY:
       case ActionTypes.SET_DISADV_TIER:
       case ActionTypes.SET_SPECIALABILITY_TIER:
-      case ActionTypes.SET_TRADITION_GUILD_MAGE_UNFAMILIAR_SPELL_ID:
+      case ActionTypes.SET_TRAD_GUILD_MAGE_UNFAM_SPELL_ID:
         return activatableReducer (action)
 
-      case ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID:
+      case ActionTypes.SET_ATTR_ADJUSTMENT_SID:
         return set (attributeAdjustmentSelected) (action.payload.id)
 
       default:

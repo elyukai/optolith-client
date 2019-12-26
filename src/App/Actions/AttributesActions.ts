@@ -2,7 +2,7 @@ import { fmapF } from "../../Data/Functor";
 import { List } from "../../Data/List";
 import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
@@ -394,14 +394,14 @@ export const addLostKPPoints = (value: number): AddLostKPPointsAction => ({
 })
 
 export interface SetAdjustmentIdAction {
-  type: ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID
+  type: ActionTypes.SET_ATTR_ADJUSTMENT_SID
   payload: {
     id: string;
   }
 }
 
 export const setAdjustmentId = (id: string): SetAdjustmentIdAction => ({
-  type: ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID,
+  type: ActionTypes.SET_ATTR_ADJUSTMENT_SID,
   payload: {
     id,
   },

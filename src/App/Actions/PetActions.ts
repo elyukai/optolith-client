@@ -1,7 +1,7 @@
 import { fromJust, isJust, Just } from "../../Data/Maybe";
 import { keys, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { Pet } from "../Models/Hero/Pet";
 import { getPets } from "../Selectors/stateSelectors";

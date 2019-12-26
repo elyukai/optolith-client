@@ -3,7 +3,7 @@ import { over, view } from "../../Data/Lens";
 import { add, dec, inc } from "../../Data/Num";
 import * as AttributesActions from "../Actions/AttributesActions";
 import * as ProfessionActions from "../Actions/ProfessionActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { EnergiesL } from "../Models/Hero/Energies";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { PermanentEnergyLossL } from "../Models/Hero/PermanentEnergyLoss";

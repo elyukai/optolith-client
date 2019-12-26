@@ -5,7 +5,7 @@ import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { fst } from "../../Data/Tuple";
 import { ReceiveInitialDataAction } from "../Actions/IOActions";
 import { SetLocaleAction } from "../Actions/LocaleActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { pipe } from "../Utilities/pipe";
 import { Config, Locale } from "../Utilities/Raw/JSON/Config";

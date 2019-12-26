@@ -1,10 +1,10 @@
-import { ActionTypes } from "../Constants/ActionTypes";
+import { REDO, UNDO } from "../Constants/ActionTypes";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { getWikiBooks } from "../Selectors/stateSelectors";
 import { ReduxAction } from "./Actions";
 
 export interface UndoAction {
-  type: ActionTypes.UNDO
+  type: UNDO
   payload: {
     books: WikiModel["books"];
   }
@@ -12,7 +12,7 @@ export interface UndoAction {
 
 export const undo = (): ReduxAction => (dispatch, getState) => {
   dispatch ({
-    type: ActionTypes.UNDO,
+    type: UNDO,
     payload: {
       books: getWikiBooks (getState ()),
     },
@@ -20,9 +20,9 @@ export const undo = (): ReduxAction => (dispatch, getState) => {
 }
 
 export interface RedoAction {
-  type: ActionTypes.REDO
+  type: REDO
 }
 
 export const redo = (): RedoAction => ({
-  type: ActionTypes.REDO,
+  type: REDO,
 })

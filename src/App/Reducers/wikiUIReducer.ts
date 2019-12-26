@@ -4,7 +4,7 @@ import { Just, Maybe, Nothing } from "../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { SetTabAction } from "../Actions/LocationActions";
 import * as WikiActions from "../Actions/WikiActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { pipe } from "../Utilities/pipe";
 
 type Action = SetTabAction

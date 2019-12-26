@@ -1,4 +1,4 @@
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { CulturesSortOptions, CulturesVisibilityFilter } from "../Utilities/Raw/JSON/Config";
 
 export interface SelectCultureAction {

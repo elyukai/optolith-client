@@ -2,7 +2,7 @@ import { fmapF } from "../../Data/Functor";
 import { List } from "../../Data/List";
 import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
@@ -222,7 +222,7 @@ export const setActiveLiturgicalChantsFilterText =
   })
 
 export interface SetInactiveLiturgicalChantsFilterTextAction {
-  type: ActionTypes.SET_INACTIVE_LITURGICAL_CHANTS_FILTER_TEXT
+  type: ActionTypes.SET_INAC_LCS_FILTER_TEXT
   payload: {
     filterText: string;
   }
@@ -230,7 +230,7 @@ export interface SetInactiveLiturgicalChantsFilterTextAction {
 
 export const setInactiveLiturgicalChantsFilterText =
   (filterText: string): SetInactiveLiturgicalChantsFilterTextAction => ({
-    type: ActionTypes.SET_INACTIVE_LITURGICAL_CHANTS_FILTER_TEXT,
+    type: ActionTypes.SET_INAC_LCS_FILTER_TEXT,
     payload: {
       filterText,
     },

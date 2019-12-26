@@ -6,7 +6,7 @@ import * as CombatTechniquesActions from "../Actions/CombatTechniquesActions";
 import * as LiturgicalChantActions from "../Actions/LiturgicalChantActions";
 import * as SkillActions from "../Actions/SkillActions";
 import * as SpellsActions from "../Actions/SpellsActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { ActivatableSkillDependentL, isActivatableSkillDependentUnused } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { isAttributeDependentUnused } from "../Models/ActiveEntries/AttributeDependent";
 import { isCombatTechniqueSkillDependentUnused, isSkillDependentUnused } from "../Models/ActiveEntries/SkillDependent";

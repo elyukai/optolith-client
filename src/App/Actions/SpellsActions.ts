@@ -2,7 +2,7 @@ import { List } from "../../Data/List";
 import { bind, bindF, fromJust, isJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { Spell } from "../Models/Wiki/Spell";

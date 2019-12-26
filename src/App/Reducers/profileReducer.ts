@@ -5,7 +5,7 @@ import { Record } from "../../Data/Record";
 import { snd } from "../../Data/Tuple";
 import * as DisAdvActions from "../Actions/DisAdvActions";
 import * as ProfileActions from "../Actions/ProfileActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
 import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";

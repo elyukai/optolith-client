@@ -1,4 +1,4 @@
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { EnergyId } from "../Constants/Ids";
 
 export interface OpenEditPermanentEnergyAction {

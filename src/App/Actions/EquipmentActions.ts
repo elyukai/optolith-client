@@ -2,8 +2,9 @@ import { fmap } from "../../Data/Functor";
 import { bindF, fromJust, isJust, Just, Maybe } from "../../Data/Maybe";
 import { keys, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
+import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids";
 import { EditItem } from "../Models/Hero/EditItem";
 import { HitZoneArmor } from "../Models/Hero/HitZoneArmor";
 import { Item } from "../Models/Hero/Item";
@@ -13,7 +14,6 @@ import { getNewId, prefixId } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { EquipmentSortOptions } from "../Utilities/Raw/JSON/Config";
 import { ReduxAction } from "./Actions";
-import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids";
 
 const getNewIdFromCurrentItems: (x: Just<OrderedMap<string, Record<Item>>>) => string =
   pipe (fromJust, keys, getNewId, prefixId (IdPrefixes.ITEM))
@@ -409,11 +409,11 @@ export const setSecondDamageThreshold = (value: string): SetSecondDamageThreshol
 })
 
 export interface SwitchIsDamageThresholdSeparatedAction {
-  type: ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED
+  type: ActionTypes.SWITCH_IS_ITEM_DT_SEPARATED
 }
 
 export const switchIsDamageThresholdSeparated = (): SwitchIsDamageThresholdSeparatedAction => ({
-  type: ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED,
+  type: ActionTypes.SWITCH_IS_ITEM_DT_SEPARATED,
 })
 
 export interface SetAttackAction {
@@ -996,7 +996,7 @@ export const setArmorZonesRightLegLoss = (id: Maybe<number>): SetArmorZonesRight
 })
 
 export interface SetMeleeItemTemplatesCombatTechniqueFilterAction {
-  type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER
+  type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_CT_FILTER
   payload: {
     filterOption: Maybe<MeleeCombatTechniqueId>;
   }
@@ -1005,14 +1005,14 @@ export interface SetMeleeItemTemplatesCombatTechniqueFilterAction {
 export const setMeleeItemTemplatesCombatTechniqueFilter =
   (filterOption: Maybe<MeleeCombatTechniqueId>):
   SetMeleeItemTemplatesCombatTechniqueFilterAction => ({
-    type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER,
+    type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_CT_FILTER,
     payload: {
       filterOption,
     },
   })
 
 export interface SetRangedItemTemplatesCombatTechniqueFilterAction {
-  type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER
+  type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_CT_FILTER
   payload: {
     filterOption: Maybe<RangedCombatTechniqueId>;
   }
@@ -1021,7 +1021,7 @@ export interface SetRangedItemTemplatesCombatTechniqueFilterAction {
 export const setRangedItemTemplatesCombatTechniqueFilter =
   (filterOption: Maybe<RangedCombatTechniqueId>):
   SetRangedItemTemplatesCombatTechniqueFilterAction => ({
-    type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER,
+    type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_CT_FILTER,
     payload: {
       filterOption,
     },

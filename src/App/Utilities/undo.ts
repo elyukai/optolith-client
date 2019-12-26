@@ -5,7 +5,7 @@ import { cons, elem, empty, List, uncons } from "../../Data/List";
 import { maybe } from "../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { fst, Pair, snd } from "../../Data/Tuple";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 
 export interface UndoState<S> {
   "@@name": "UndoState"
@@ -40,8 +40,8 @@ export type UndoReducer<S, A> =
  * action.
  */
 export const undo =
-  (resetActionTypes: List<ActionTypes>) =>
-  (ignoreActionTypes: List<ActionTypes>) =>
+  (resetActionTypes: List<symbol>) =>
+  (ignoreActionTypes: List<symbol>) =>
   <S>
   (defaultState: S) =>
   <A extends Action = AnyAction>

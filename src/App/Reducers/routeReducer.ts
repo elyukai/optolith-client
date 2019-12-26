@@ -3,7 +3,7 @@ import { SwitchEnableEditingHeroAfterCreationPhaseAction } from "../Actions/Conf
 import { CreateHeroAction, LoadHeroAction } from "../Actions/HerolistActions";
 import { SetTabAction } from "../Actions/LocationActions";
 import { SetSelectionsAction } from "../Actions/ProfessionActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { TabId } from "../Utilities/LocationUtils";
 
 type Action = SetTabAction
@@ -29,7 +29,7 @@ export const routeReducer =
       case ActionTypes.ASSIGN_RCP_OPTIONS:
         return cnst (TabId.Attributes)
 
-      case ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE:
+      case ActionTypes.SWITCH_ENABLE_EDIT_AFTER_CREATION:
         return x => x === TabId.Advantages || x === TabId.Disadvantages ? TabId.Profile : x
 
       default:

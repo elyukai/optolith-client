@@ -7,7 +7,7 @@ import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { fst, snd } from "../../Data/Tuple";
 import * as HerolistActions from "../Actions/HerolistActions";
 import * as IOActions from "../Actions/IOActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { getInitialHeroObject, HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { User } from "../Models/Hero/heroTypeHelpers";
 import { composeL } from "../Utilities/compose";

@@ -7,7 +7,7 @@ import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { SetUpdateDownloadProgressAction } from "../Actions/IOActions";
 import { SetTabAction } from "../Actions/LocationActions";
 import * as SubwindowsActions from "../Actions/SubwindowsActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { EnergyId } from "../Constants/Ids";
 
 type Action = SetTabAction

@@ -1,5 +1,6 @@
+import { fnullStr } from "../../Data/List";
 import { fromJust, isJust, Just, Maybe, Nothing } from "../../Data/Maybe";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { SocialStatusId } from "../Constants/Ids";
 import { HeroModelRecord } from "../Models/Hero/HeroModel";
 import { getAvailableEyeColorIds, getAvailableHairColorIds } from "../Selectors/personalDataSelectors";
@@ -226,14 +227,13 @@ export const rerollWeight: ReduxAction =
     const prevSize = getSize (state)
 
     // If the heroes size hasn't been set by the user:
-    if (!isJust (prevSize) || (isJust (prevSize) && fromJust(prevSize).length === 0)) {
-
+    if (!isJust (prevSize) || (isJust (prevSize) && fnullStr (fromJust (prevSize)))) {
       const race_variant = getCurrentRaceVariant (state)
       const initialWeightAndSize = RCPUtils.rerollWeightAndSize (race) (race_variant)
       if (isJust (initialWeightAndSize.weight)) {
-        dispatch (setWeight (fromJust(initialWeightAndSize.weight)) (initialWeightAndSize.size))
+        dispatch (setWeight (fromJust (initialWeightAndSize.weight)) (initialWeightAndSize.size))
       }
-    } 
+    }
     else {
       const { weight, size } = RCPUtils.rerollWeight (prevSize) (race)
 

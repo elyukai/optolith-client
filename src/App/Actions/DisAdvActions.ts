@@ -6,7 +6,7 @@ import { negate, subtract } from "../../Data/Num";
 import { lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { fst, Pair, PairP1_, snd } from "../../Data/Tuple";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { DisadvantageId } from "../Constants/Ids";
 import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
 import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
@@ -479,7 +479,7 @@ export const setActiveAdvantagesFilterText =
   })
 
 export interface SetInactiveAdvantagesFilterTextAction {
-  type: ActionTypes.SET_INACTIVE_ADVANTAGES_FILTER_TEXT
+  type: ActionTypes.SET_INAC_ADVANTAGES_FILTER_TEXT
   payload: {
     filterText: string;
   }
@@ -487,7 +487,7 @@ export interface SetInactiveAdvantagesFilterTextAction {
 
 export const setInactiveAdvantagesFilterText =
   (filterText: string): SetInactiveAdvantagesFilterTextAction => ({
-    type: ActionTypes.SET_INACTIVE_ADVANTAGES_FILTER_TEXT,
+    type: ActionTypes.SET_INAC_ADVANTAGES_FILTER_TEXT,
     payload: {
       filterText,
     },
@@ -509,7 +509,7 @@ export const setActiveDisadvantagesFilterText =
   })
 
 export interface SetInactiveDisadvantagesFilterTextAction {
-  type: ActionTypes.SET_INACTIVE_DISADVANTAGES_FILTER_TEXT
+  type: ActionTypes.SET_INAC_DISADVANTAGES_FILTER_TEXT
   payload: {
     filterText: string;
   }
@@ -517,7 +517,7 @@ export interface SetInactiveDisadvantagesFilterTextAction {
 
 export const setInactiveDisadvantagesFilterText =
   (filterText: string): SetInactiveDisadvantagesFilterTextAction => ({
-    type: ActionTypes.SET_INACTIVE_DISADVANTAGES_FILTER_TEXT,
+    type: ActionTypes.SET_INAC_DISADVANTAGES_FILTER_TEXT,
     payload: {
       filterText,
     },

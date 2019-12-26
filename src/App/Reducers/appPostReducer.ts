@@ -10,7 +10,7 @@ import { uncurry } from "../../Data/Tuple";
 import { uncurry3 } from "../../Data/Tuple/Curry";
 import { RedoAction, UndoAction } from "../Actions/HistoryActions";
 import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from "../Actions/IOActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { User } from "../Models/Hero/heroTypeHelpers";
 import { getRuleBooksEnabledM } from "../Selectors/rulesSelectors";
@@ -45,7 +45,7 @@ const prepareHerolist =
 
     if (isJust (rawHeroes)) {
       const hs = Object.entries (fromJust (rawHeroes)).reduce<Reduced> (
-        ({ heroes, users }, [key, hero]) => pipe_ (
+        ({ heroes, users }, [ key, hero ]) => pipe_ (
           hero,
           uncurry (convertHero) (action.payload.tables),
           maybe ({ heroes, users })

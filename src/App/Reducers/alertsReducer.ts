@@ -3,7 +3,7 @@ import { dequeue, empty, enqueue, Queue } from "../../Data/Queue";
 import { Record } from "../../Data/Record";
 import { snd } from "../../Data/Tuple";
 import { AddPromptAction, PromptOptions, RemoveAlertAction } from "../Actions/AlertActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes";
 import { pipe } from "../Utilities/pipe";
 
 type Action = AddPromptAction | RemoveAlertAction
