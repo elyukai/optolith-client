@@ -144,13 +144,13 @@ export const Spells: React.FC<SpellsProps> = props => {
     setInactiveFilterText,
   } = props
 
-  const [showAddSlidein, setShowAddSlidein] = React.useState (false)
-  const [currentId, setCurrenId] = React.useState<Maybe<string>> (Nothing)
-  const [currentSlideinId, setCurrentSlideinId] = React.useState<Maybe<string>> (Nothing)
+  const [ showAddSlidein, setShowAddSlidein ] = React.useState (false)
+  const [ currentId, setCurrenId ] = React.useState<Maybe<string>> (Nothing)
+  const [ currentSlideinId, setCurrentSlideinId ] = React.useState<Maybe<string>> (Nothing)
 
   const handleShowSlidein = React.useCallback (
     () => setShowAddSlidein (true),
-    [setShowAddSlidein]
+    [ setShowAddSlidein ]
   )
 
   const handleHideSlidein = React.useCallback (
@@ -159,17 +159,17 @@ export const Spells: React.FC<SpellsProps> = props => {
       setCurrentSlideinId (Nothing)
       setShowAddSlidein (false)
     },
-    [setInactiveFilterText, setCurrentSlideinId, setShowAddSlidein]
+    [ setInactiveFilterText, setCurrentSlideinId, setShowAddSlidein ]
   )
 
   const handleShowInfo = React.useCallback (
     (id: string) => setCurrenId (Just (id)),
-    [setCurrenId]
+    [ setCurrenId ]
   )
 
   const handleShowSlideinInfo = React.useCallback (
     (id: string) => setCurrentSlideinId (Just (id)),
-    [setCurrentSlideinId]
+    [ setCurrentSlideinId ]
   )
 
   return (

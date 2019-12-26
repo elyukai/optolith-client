@@ -63,11 +63,11 @@ const SWRA = SkillWithRequirements.A
 const SWRA_ = SkillWithRequirementsA_
 
 export const Skills: React.FC<SkillsProps> = props => {
-  const [infoId, setInfoId] = React.useState<Maybe<string>> (Nothing)
+  const [ infoId, setInfoId ] = React.useState<Maybe<string>> (Nothing)
 
   const showInfo = React.useCallback (
     (id: string) => setInfoId (Just (id)),
-    [setInfoId]
+    [ setInfoId ]
   )
 
   const {

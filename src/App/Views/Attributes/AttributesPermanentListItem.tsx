@@ -56,12 +56,12 @@ export const AttributesPermanentListItem: React.FC<AttributesPermanentListItemPr
 
   const handleOpenEditPermanentEnergy = React.useCallback (
     () => openEditPermanentEnergy (id),
-    [openEditPermanentEnergy, id]
+    [ openEditPermanentEnergy, id ]
   )
 
   const handleOpenAddPermanentEnergyLoss = React.useCallback (
     () => openAddPermanentEnergyLoss (id),
-    [openAddPermanentEnergyLoss, id]
+    [ openAddPermanentEnergyLoss, id ]
   )
 
   return (

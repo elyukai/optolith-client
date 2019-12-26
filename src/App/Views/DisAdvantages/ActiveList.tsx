@@ -22,8 +22,33 @@ export interface ActiveListProps {
   selectForInfo (id: string): void
 }
 
-export function ActiveList (props: ActiveListProps) {
+export const ActiveList: React.FC<ActiveListProps> = props => {
+  const {
+    filterText,
+    list,
+    l10n,
+    rating,
+    showRating,
+    isRemovingEnabled,
+    selectedForInfo,
+    removeFromList,
+    setLevel,
+    selectForInfo,
+  } = props
+
   return (
-    <ActivatableRemoveList {...props} hideGroup />
+    <ActivatableRemoveList
+      filterText={filterText}
+      list={list}
+      l10n={l10n}
+      rating={rating}
+      showRating={showRating}
+      isRemovingEnabled={isRemovingEnabled}
+      selectedForInfo={selectedForInfo}
+      removeFromList={removeFromList}
+      setLevel={setLevel}
+      selectForInfo={selectForInfo}
+      hideGroup
+      />
   )
 }

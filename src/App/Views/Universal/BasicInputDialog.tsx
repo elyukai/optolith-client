@@ -58,7 +58,7 @@ export const BasicInputDialog: React.FC<BasicInputDialog> = props => {
         onClose ()
       }
     },
-    [accept_disabled, input_empty, rejectDisabled, onAccept, onReject, onClose]
+    [ accept_disabled, input_empty, rejectDisabled, onAccept, onReject, onClose ]
   )
 
   React.useEffect (() => {

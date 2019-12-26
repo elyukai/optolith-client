@@ -60,7 +60,7 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
           break
       }
     },
-    [addArcaneEnergyPoint, addKarmaPoint, addLifePoint, attribute]
+    [ addArcaneEnergyPoint, addKarmaPoint, addLifePoint, attribute ]
   )
 
   const handleRemoveMaxEnergyPoint = React.useCallback (
@@ -82,7 +82,7 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
           break
       }
     },
-    [removeArcaneEnergyPoint, removeKarmaPoint, removeLifePoint, attribute]
+    [ removeArcaneEnergyPoint, removeKarmaPoint, removeLifePoint, attribute ]
   )
 
   const base = DCA.base (attribute)

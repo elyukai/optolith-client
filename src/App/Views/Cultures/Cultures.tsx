@@ -46,7 +46,7 @@ export interface CulturesDispatchProps {
 
 export type CulturesProps = CulturesStateProps & CulturesDispatchProps & CulturesOwnProps
 
-export function Cultures (props: CulturesProps) {
+export const Cultures: React.FC<CulturesProps> = props => {
   const {
     cultures: mcultures,
     l10n,
@@ -75,11 +75,11 @@ export function Cultures (props: CulturesProps) {
           onChangeJust={setVisibilityFilter}
           options={List (
             DropdownOption ({
-              id: Just ("all"),
+              id: Just (CulturesVisibilityFilter.All),
               name: translate (l10n) ("allcultures"),
             }),
             DropdownOption ({
-              id: Just ("common"),
+              id: Just (CulturesVisibilityFilter.Common),
               name: translate (l10n) ("commoncultures"),
             })
           )}

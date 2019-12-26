@@ -65,7 +65,7 @@ export interface AttributesDispatchProps {
 
 export type AttributesProps = AttributesStateProps & AttributesDispatchProps & AttributesOwnProps
 
-export function Attributes (props: AttributesProps) {
+export const Attributes: React.FC<AttributesProps> = props => {
   const {
     l10n,
     attributes,
@@ -153,7 +153,6 @@ export function Attributes (props: AttributesProps) {
           <AttributesPermanentList
             derived={derived}
             l10n={l10n}
-            isInCharacterCreation={isInCharacterCreation}
             isRemovingEnabled={isRemovingEnabled}
             getEditPermanentEnergy={getEditPermanentEnergy}
             getAddPermanentEnergy={getAddPermanentEnergy}

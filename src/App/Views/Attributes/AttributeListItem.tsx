@@ -40,12 +40,12 @@ export const AttributeListItem: React.FC<AttributeListItemProps> = props => {
 
   const handleAdd = React.useCallback (
     () => addPoint (id),
-    [addPoint, id]
+    [ addPoint, id ]
   )
 
   const handleRemove = React.useCallback (
     () => removePoint (id),
-    [removePoint, id]
+    [ removePoint, id ]
   )
 
   return (

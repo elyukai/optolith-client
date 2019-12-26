@@ -13,7 +13,6 @@ import { AttributesPermanentListItem } from "./AttributesPermanentListItem";
 export interface AttributesPermanentListProps {
   derived: List<Record<DerivedCharacteristic>>
   l10n: L10nRecord
-  isInCharacterCreation: boolean
   isRemovingEnabled: boolean
   getEditPermanentEnergy: Maybe<EnergyId>
   getAddPermanentEnergy: Maybe<EnergyId>
@@ -38,15 +37,40 @@ export interface AttributesPermanentListProps {
 
 const DCA = DerivedCharacteristic.A
 
-export function AttributesPermanentList (props: AttributesPermanentListProps) {
+export const AttributesPermanentList: React.FC<AttributesPermanentListProps> = props => {
+  const {
+    derived,
+    l10n,
+    isRemovingEnabled,
+    getEditPermanentEnergy,
+    getAddPermanentEnergy,
+    addLostLPPoint,
+    removeLostLPPoint,
+    addLostLPPoints,
+    addBoughtBackAEPoint,
+    removeBoughtBackAEPoint,
+    addLostAEPoint,
+    removeLostAEPoint,
+    addLostAEPoints,
+    addBoughtBackKPPoint,
+    removeBoughtBackKPPoint,
+    addLostKPPoint,
+    removeLostKPPoint,
+    addLostKPPoints,
+    openAddPermanentEnergyLoss,
+    closeAddPermanentEnergyLoss,
+    openEditPermanentEnergy,
+    closeEditPermanentEnergy,
+  } = props
+
   const mlp = find (pipe (DCA.id, equals<DCId> (DCId.LP)))
-                   (props.derived) as Maybe<Record<EnergyWithLoss>>
+                   (derived) as Maybe<Record<EnergyWithLoss>>
 
   const mae = find (pipe (DCA.id, equals<DCId> (DCId.AE)))
-                   (props.derived) as Maybe<Record<EnergyWithLoss>>
+                   (derived) as Maybe<Record<EnergyWithLoss>>
 
   const mkp = find (pipe (DCA.id, equals<DCId> (DCId.KP)))
-                   (props.derived) as Maybe<Record<EnergyWithLoss>>
+                   (derived) as Maybe<Record<EnergyWithLoss>>
 
   return (
     <div className="permanent">
@@ -54,14 +78,21 @@ export function AttributesPermanentList (props: AttributesPermanentListProps) {
         maybe (<></>)
               ((lp: Record<EnergyWithLoss>) => (
                 <AttributesPermanentListItem
-                  {...props}
+                  l10n={l10n}
                   id={EnergyId.LP}
-                  label={translate (props.l10n) ("lifepointslostpermanently.short")}
-                  name={translate (props.l10n) ("lifepointslostpermanently")}
+                  label={translate (l10n) ("lifepointslostpermanently.short")}
+                  name={translate (l10n) ("lifepointslostpermanently")}
                   lost={Maybe.sum (DCA.permanentLost (lp))}
-                  addLostPoint={props.addLostLPPoint}
-                  addLostPoints={props.addLostLPPoints}
-                  removeLostPoint={props.removeLostLPPoint}
+                  isRemovingEnabled={isRemovingEnabled}
+                  getEditPermanentEnergy={getEditPermanentEnergy}
+                  getAddPermanentEnergy={getAddPermanentEnergy}
+                  addLostPoint={addLostLPPoint}
+                  addLostPoints={addLostLPPoints}
+                  removeLostPoint={removeLostLPPoint}
+                  openAddPermanentEnergyLoss={openAddPermanentEnergyLoss}
+                  closeAddPermanentEnergyLoss={closeAddPermanentEnergyLoss}
+                  openEditPermanentEnergy={openEditPermanentEnergy}
+                  closeEditPermanentEnergy={closeEditPermanentEnergy}
                   />
               ))
               (mlp)
@@ -72,17 +103,24 @@ export function AttributesPermanentList (props: AttributesPermanentListProps) {
         maybe (<></>)
               ((ae: Record<EnergyWithLoss>) => (
                 <AttributesPermanentListItem
-                  {...props}
+                  l10n={l10n}
                   id={EnergyId.AE}
-                  label={translate (props.l10n) ("arcaneenergylostpermanently.short")}
-                  name={translate (props.l10n) ("arcaneenergylostpermanently")}
+                  label={translate (l10n) ("arcaneenergylostpermanently.short")}
+                  name={translate (l10n) ("arcaneenergylostpermanently")}
                   boughtBack={Maybe.sum (DCA.permanentRedeemed (ae))}
                   lost={Maybe.sum (DCA.permanentLost (ae))}
-                  addBoughtBackPoint={props.addBoughtBackAEPoint}
-                  addLostPoint={props.addLostAEPoint}
-                  addLostPoints={props.addLostAEPoints}
-                  removeBoughtBackPoint={props.removeBoughtBackAEPoint}
-                  removeLostPoint={props.removeLostAEPoint}
+                  isRemovingEnabled={isRemovingEnabled}
+                  getEditPermanentEnergy={getEditPermanentEnergy}
+                  getAddPermanentEnergy={getAddPermanentEnergy}
+                  addBoughtBackPoint={addBoughtBackAEPoint}
+                  addLostPoint={addLostAEPoint}
+                  addLostPoints={addLostAEPoints}
+                  removeBoughtBackPoint={removeBoughtBackAEPoint}
+                  removeLostPoint={removeLostAEPoint}
+                  openAddPermanentEnergyLoss={openAddPermanentEnergyLoss}
+                  closeAddPermanentEnergyLoss={closeAddPermanentEnergyLoss}
+                  openEditPermanentEnergy={openEditPermanentEnergy}
+                  closeEditPermanentEnergy={closeEditPermanentEnergy}
                   />
               ))
       )}
@@ -92,17 +130,24 @@ export function AttributesPermanentList (props: AttributesPermanentListProps) {
         maybe (<></>)
               ((kp: Record<EnergyWithLoss>) => (
                 <AttributesPermanentListItem
-                  {...props}
+                  l10n={l10n}
                   id={EnergyId.KP}
-                  label={translate (props.l10n) ("karmapointslostpermanently.short")}
-                  name={translate (props.l10n) ("karmapointslostpermanently")}
+                  label={translate (l10n) ("karmapointslostpermanently.short")}
+                  name={translate (l10n) ("karmapointslostpermanently")}
                   boughtBack={Maybe.sum (DCA.permanentRedeemed (kp))}
                   lost={Maybe.sum (DCA.permanentLost (kp))}
-                  addBoughtBackPoint={props.addBoughtBackKPPoint}
-                  addLostPoint={props.addLostKPPoint}
-                  addLostPoints={props.addLostKPPoints}
-                  removeBoughtBackPoint={props.removeBoughtBackKPPoint}
-                  removeLostPoint={props.removeLostKPPoint}
+                  isRemovingEnabled={isRemovingEnabled}
+                  getEditPermanentEnergy={getEditPermanentEnergy}
+                  getAddPermanentEnergy={getAddPermanentEnergy}
+                  addBoughtBackPoint={addBoughtBackKPPoint}
+                  addLostPoint={addLostKPPoint}
+                  addLostPoints={addLostKPPoints}
+                  removeBoughtBackPoint={removeBoughtBackKPPoint}
+                  removeLostPoint={removeLostKPPoint}
+                  openAddPermanentEnergyLoss={openAddPermanentEnergyLoss}
+                  closeAddPermanentEnergyLoss={closeAddPermanentEnergyLoss}
+                  openEditPermanentEnergy={openEditPermanentEnergy}
+                  closeEditPermanentEnergy={closeEditPermanentEnergy}
                   />
               ))
       )}

@@ -20,7 +20,7 @@ export interface AttributesRemovePermanentState {
 export const AttributesRemovePermanent: React.FC<AttributesRemovePermanentProps> = props => {
   const { l10n, remove, isOpen, close } = props
 
-  const [value, setValue] = React.useState ("")
+  const [ value, setValue ] = React.useState ("")
 
   const handleRemove = React.useCallback (
     () => {
@@ -30,7 +30,7 @@ export const AttributesRemovePermanent: React.FC<AttributesRemovePermanentProps>
         remove (fromJust (mvalue))
       }
     },
-    [remove, value]
+    [ remove, value ]
   )
 
   return (

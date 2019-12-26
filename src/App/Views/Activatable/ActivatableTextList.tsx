@@ -10,8 +10,8 @@ interface ActivatableTextListProps {
   l10n: L10nRecord
 }
 
-export const ActivatableTextList = (props: ActivatableTextListProps) => (
+export const ActivatableTextList: React.FC<ActivatableTextListProps> = ({ l10n, list }) => (
   <div className="list">
-    {compressList (props.l10n) (props.list)}
+    {compressList (l10n) (list)}
   </div>
 )

@@ -17,8 +17,13 @@ export interface CulturesListItemProps {
 
 const CCA_ = CultureCombinedA_
 
-export function CulturesListItem (props: CulturesListItemProps) {
+export const CulturesListItem: React.FC<CulturesListItemProps> = props => {
   const { currentId, culture, selectCulture, switchToProfessions } = props
+
+  const handleSelect = React.useCallback (
+    () => selectCulture (CCA_.id (culture)),
+    [ selectCulture, culture ]
+  )
 
   return (
     <ListItem active={Maybe.elem (CCA_.id (culture)) (currentId)}>
@@ -27,7 +32,7 @@ export function CulturesListItem (props: CulturesListItemProps) {
       <ListItemButtons>
         <IconButton
           icon="&#xE90a;"
-          onClick={selectCulture .bind (null, CCA_.id (culture))}
+          onClick={handleSelect}
           disabled={Maybe.elem (CCA_.id (culture)) (currentId)}
           />
         <IconButton

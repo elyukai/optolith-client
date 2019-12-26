@@ -33,7 +33,7 @@ export const CombatTechniqueListItem: React.FC<CombatTechniqueListItemProps> = p
     currentInfoId,
     isRemovingEnabled,
     l10n,
-    combatTechnique: x,
+    combatTechnique: ct,
     selectForInfo,
     addPoint,
     removePoint,
@@ -41,7 +41,7 @@ export const CombatTechniqueListItem: React.FC<CombatTechniqueListItemProps> = p
 
   const primary =
     pipe_ (
-      CTWRA_.primary (x),
+      CTWRA_.primary (ct),
       mapMaybe ((id: string) => fmapF (find (pipe (ACA_.id, equals (id)))
                                             (attributes))
                                       (ACA_.short)),
@@ -49,36 +49,36 @@ export const CombatTechniqueListItem: React.FC<CombatTechniqueListItemProps> = p
     )
 
   const customClassName =
-    flength (CTWRA_.primary (x)) > 1
+    flength (CTWRA_.primary (ct)) > 1
       ? "ATTR_6_8"
-      : fromMaybe ("") (listToMaybe (CTWRA_.primary (x)))
+      : fromMaybe ("") (listToMaybe (CTWRA_.primary (ct)))
 
   const primaryClassName = `primary ${customClassName}`
 
   return (
     <SkillListItem
-      id={CTWRA_.id (x)}
-      name={CTWRA_.name (x)}
-      sr={CTWRA_.value (x)}
-      ic={CTWRA_.ic (x)}
+      id={CTWRA_.id (ct)}
+      name={CTWRA_.name (ct)}
+      sr={CTWRA_.value (ct)}
+      ic={CTWRA_.ic (ct)}
       checkDisabled
       addPoint={addPoint}
-      addDisabled={CTWRA_.value (x) >= CTWRA.max (x)}
+      addDisabled={CTWRA_.value (ct) >= CTWRA.max (ct)}
       removePoint={removePoint}
-      removeDisabled={!isRemovingEnabled || CTWRA_.value (x) <= CTWRA.min (x)}
+      removeDisabled={!isRemovingEnabled || CTWRA_.value (ct) <= CTWRA.min (ct)}
       addValues={List (
         { className: primaryClassName, value: primary },
-        { className: "at", value: CTWRA.at (x) },
+        { className: "at", value: CTWRA.at (ct) },
         { className: "atpa" },
         {
           className: "pa",
-          value: fromMaybe<string | number> (ndash) (CTWRA.pa (x)),
+          value: fromMaybe<string | number> (ndash) (CTWRA.pa (ct)),
         }
       )}
       attributes={attributes}
       l10n={l10n}
       selectForInfo={selectForInfo}
-      groupIndex={CTWRA_.gr (x)}
+      groupIndex={CTWRA_.gr (ct)}
       groupList={translate (l10n) ("combattechniquegroups")}
       selectedForInfo={currentInfoId}
       />

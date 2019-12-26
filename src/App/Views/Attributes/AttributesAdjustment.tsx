@@ -20,7 +20,7 @@ export interface AttributesAdjustmentProps {
 
 const AWRA_ = AttributeWithRequirementsA_
 
-export function AttributesAdjustment (props: AttributesAdjustmentProps) {
+export const AttributesAdjustment: React.FC<AttributesAdjustmentProps> = props => {
   const {
     attributes: mattributes,
     l10n,
