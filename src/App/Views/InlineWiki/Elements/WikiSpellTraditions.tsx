@@ -21,9 +21,9 @@ export interface WikiSpellTraditionsProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiSpellTraditions<A extends RecordIBase<any>> (
-  props: WikiSpellTraditionsProps<A>
-) {
+type FC = <A extends RecordIBase<any>> (props: WikiSpellTraditionsProps<A>) => ReturnType<React.FC>
+
+export const WikiSpellTraditions: FC = props => {
   const {
     x,
     acc,

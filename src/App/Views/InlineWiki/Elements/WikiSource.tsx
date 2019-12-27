@@ -26,7 +26,9 @@ export interface WikiSourceProps<A extends RecordIBase<any>> {
   addSrcs?: List<List<Record<SourceLink>>>
 }
 
-export function WikiSource<A extends RecordIBase<any>> (props: WikiSourceProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiSourceProps<A>) => ReturnType<React.FC>
+
+export const WikiSource: FC = props => {
   const {
     books,
     x,
@@ -73,7 +75,12 @@ export function WikiSource<A extends RecordIBase<any>> (props: WikiSourceProps<A
                </p>
                <p className="source">
                  <span>
-                   <strong>{translate (l10n) ("complementarysources")}:</strong> {compl_src}
+                   <strong>
+                     {translate (l10n) ("complementarysources")}
+                     {":"}
+                   </strong>
+                   {" "}
+                   {compl_src}
                  </span>
                </p>
              </>

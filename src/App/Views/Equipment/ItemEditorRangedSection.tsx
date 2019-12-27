@@ -42,7 +42,23 @@ const CTA = CombatTechnique.A
 const IEIVA = ItemEditorInputValidation.A
 
 export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
-  const { combatTechniques, inputValidation, item, l10n, templates } = props
+  const {
+    combatTechniques,
+    item,
+    l10n,
+    templates,
+    inputValidation,
+    setCombatTechnique,
+    setDamageDiceNumber,
+    setDamageDiceSides,
+    setDamageFlat,
+    setLength,
+    setRange,
+    setReloadTime,
+    setAmmunition,
+    setStabilityModifier,
+    setLoss,
+  } = props
 
   const dice =
     map ((id: number) => DropdownOption ({
@@ -84,7 +100,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                   fmap (x => DropdownOption ({ id: Just (CTA.id (x)), name: CTA.name (x) }))
                 ))
               )}
-              onChangeJust={props.setCombatTechnique}
+              onChangeJust={setCombatTechnique}
               disabled={locked}
               required
               />
@@ -92,7 +108,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               className="reloadtime"
               label={translate (l10n) ("reloadtime")}
               value={EIA.reloadTime (item)}
-              onChange={props.setReloadTime}
+              onChange={setReloadTime}
               disabled={locked}
               />
           </div>
@@ -102,7 +118,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               <TextField
                 className="damage-dice-number"
                 value={EIA.damageDiceNumber (item)}
-                onChange={props.setDamageDiceNumber}
+                onChange={setDamageDiceNumber}
                 disabled={locked}
                 valid={IEIVA.damageDiceNumber (inputValidation)}
                 />
@@ -111,13 +127,13 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 hint={translate (l10n) ("dice.short")}
                 value={EIA.damageDiceSides (item)}
                 options={dice}
-                onChangeJust={props.setDamageDiceSides}
+                onChangeJust={setDamageDiceSides}
                 disabled={locked}
                 />
               <TextField
                 className="damage-flat"
                 value={EIA.damageFlat (item)}
-                onChange={props.setDamageFlat}
+                onChange={setDamageFlat}
                 disabled={locked}
                 valid={IEIVA.damageFlat (inputValidation)}
                 />
@@ -126,7 +142,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               className="stabilitymod"
               label={translate (l10n) ("breakingpointratingmodifier.short")}
               value={EIA.stabilityMod (item)}
-              onChange={props.setStabilityModifier}
+              onChange={setStabilityModifier}
               disabled={locked}
               valid={IEIVA.stabilityMod (inputValidation)}
               />
@@ -135,7 +151,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               label={translate (l10n) ("damaged.short")}
               value={EIA.loss (item)}
               options={getLossLevelElements ()}
-              onChange={props.setLoss}
+              onChange={setLoss}
               />
           </div>
           <div className="row">
@@ -144,7 +160,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 className="range1"
                 label={translate (l10n) ("rangeclose")}
                 value={subscript (EIA.range (item)) (0)}
-                onChange={props.setRange (1)}
+                onChange={setRange (1)}
                 disabled={locked}
                 valid={IEIVA.range1 (inputValidation)}
                 />
@@ -152,7 +168,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 className="range2"
                 label={translate (l10n) ("rangemedium")}
                 value={subscript (EIA.range (item)) (1)}
-                onChange={props.setRange (2)}
+                onChange={setRange (2)}
                 disabled={locked}
                 valid={IEIVA.range2 (inputValidation)}
                 />
@@ -160,7 +176,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 className="range3"
                 label={translate (l10n) ("rangefar")}
                 value={subscript (EIA.range (item)) (2)}
-                onChange={props.setRange (3)}
+                onChange={setRange (3)}
                 disabled={locked}
                 valid={IEIVA.range3 (inputValidation)}
                 />
@@ -171,20 +187,20 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               hint={translate (l10n) ("none")}
               value={EIA.ammunition (item)}
               options={AMMUNITION}
-              onChangeJust={props.setAmmunition}
+              onChangeJust={setAmmunition}
               disabled={locked}
               />
             <TextField
               className="length"
               label={translate (l10n) ("length")}
               value={EIA.length (item)}
-              onChange={props.setLength}
+              onChange={setLength}
               disabled={locked}
               valid={IEIVA.length (inputValidation)}
               />
           </div>
         </div>
-    </>
-  )
-  : null
+      </>
+    )
+    : null
 }

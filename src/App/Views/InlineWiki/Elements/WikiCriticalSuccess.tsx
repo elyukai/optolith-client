@@ -14,7 +14,9 @@ export interface WikiCriticalSuccessProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiCriticalSuccess<A extends RecordIBase<any>> (props: WikiCriticalSuccessProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiCriticalSuccessProps<A>) => ReturnType<React.FC>
+
+export const WikiCriticalSuccess: FC = props => {
   const {
     x,
     acc,

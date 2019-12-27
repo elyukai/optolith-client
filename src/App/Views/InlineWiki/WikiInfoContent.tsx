@@ -12,22 +12,17 @@ import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCom
 import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
 import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
 import { Advantage } from "../../Models/Wiki/Advantage";
-import { Attribute } from "../../Models/Wiki/Attribute";
 import { Blessing } from "../../Models/Wiki/Blessing";
-import { Book } from "../../Models/Wiki/Book";
 import { Cantrip } from "../../Models/Wiki/Cantrip";
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { Culture } from "../../Models/Wiki/Culture";
 import { Disadvantage } from "../../Models/Wiki/Disadvantage";
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { ProfessionVariant } from "../../Models/Wiki/ProfessionVariant";
-import { Race } from "../../Models/Wiki/Race";
 import { Skill } from "../../Models/Wiki/Skill";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { InlineWikiEntry } from "../../Models/Wiki/wikiTypeHelpers";
 import { getCategoryById, getIdPrefix } from "../../Utilities/IDUtils";
 import { pipe } from "../../Utilities/pipe";
@@ -51,30 +46,15 @@ export interface WikiInfoContentOwnProps {
 }
 
 export interface WikiInfoContentStateProps {
-  attributes: OrderedMap<string, Record<Attribute>>
-  advantages: OrderedMap<string, Record<Advantage>>
-  books: OrderedMap<string, Record<Book>>
-  blessings: OrderedMap<string, Record<Blessing>>
-  cantrips: OrderedMap<string, Record<Cantrip>>
-  combatTechniques: OrderedMap<string, Record<CombatTechnique>>
-  cultures: OrderedMap<string, Record<Culture>>
   combinedRaces: List<Record<RaceCombined>>
   combinedCultures: List<Record<CultureCombined>>
   combinedProfessions: List<Record<ProfessionCombined>>
-  disadvantages: OrderedMap<string, Record<Disadvantage>>
   items: Maybe<OrderedMap<string, Record<Item>>>
-  itemTemplates: OrderedMap<string, Record<ItemTemplate>>
   languages: Maybe<Record<SpecialAbility>>
   liturgicalChantExtensions: Maybe<Record<SpecialAbility>>
-  liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
-  professionVariants: OrderedMap<string, Record<ProfessionVariant>>
-  races: OrderedMap<string, Record<Race>>
   scripts: Maybe<Record<SpecialAbility>>
   sex: Maybe<Sex>
-  skills: OrderedMap<string, Record<Skill>>
   spellExtensions: Maybe<Record<SpecialAbility>>
-  spells: OrderedMap<string, Record<Spell>>
-  specialAbilities: OrderedMap<string, Record<SpecialAbility>>
   wiki: WikiModelRecord
 }
 
@@ -85,8 +65,20 @@ export type WikiInfoContentProps =
   & WikiInfoContentDispatchProps
   & WikiInfoContentOwnProps
 
-export function WikiInfoContent (props: WikiInfoContentProps) {
-  const { currentId: mid } = props
+const WA = WikiModel.A
+
+export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
+  const {
+    l10n,
+    currentId: mid,
+    noWrapper,
+    languages,
+    liturgicalChantExtensions,
+    scripts,
+    sex,
+    spellExtensions,
+    wiki,
+  } = props
 
   const mx = getEntry (props) (mid)
 
@@ -94,73 +86,145 @@ export function WikiInfoContent (props: WikiInfoContentProps) {
     const x = fromJust (mx)
 
     if (Item.is (x) || ItemTemplate.is (x)) {
-      return <WikiInfoContentWrapper {...props}>
-        <WikiEquipmentInfo {...props} x={x} />
-      </WikiInfoContentWrapper>
+      return (
+        <WikiInfoContentWrapper noWrapper={noWrapper}>
+          <WikiEquipmentInfo
+            wiki={wiki}
+            l10n={l10n}
+            x={x}
+            />
+        </WikiInfoContentWrapper>
+      )
     }
 
     if (Advantage.is (x) || Disadvantage.is (x) || SpecialAbility.is (x)) {
-      return <WikiInfoContentWrapper {...props}>
-        <WikiActivatableInfo {...props} x={x} />
-      </WikiInfoContentWrapper>
+      return (
+        <WikiInfoContentWrapper noWrapper={noWrapper}>
+          <WikiActivatableInfo
+            l10n={l10n}
+            wiki={wiki}
+            x={x}
+            />
+        </WikiInfoContentWrapper>
+      )
     }
 
     if (Blessing.is (x)) {
-      return <WikiInfoContentWrapper {...props}>
-        <WikiBlessingInfo {...props} x={x} />
-      </WikiInfoContentWrapper>
+      return (
+        <WikiInfoContentWrapper noWrapper={noWrapper}>
+          <WikiBlessingInfo
+            wiki={wiki}
+            l10n={l10n}
+            x={x}
+            />
+        </WikiInfoContentWrapper>
+      )
     }
 
     if (Cantrip.is (x)) {
-      return <WikiInfoContentWrapper {...props}>
-        <WikiCantripInfo {...props} x={x} />
-      </WikiInfoContentWrapper>
+      return (
+        <WikiInfoContentWrapper noWrapper={noWrapper}>
+          <WikiCantripInfo
+            wiki={wiki}
+            l10n={l10n}
+            x={x}
+            />
+        </WikiInfoContentWrapper>
+      )
     }
 
     if (CombatTechnique.is (x)) {
-      return <WikiInfoContentWrapper {...props}>
-        <WikiCombatTechniqueInfo {...props} x={x} />
-      </WikiInfoContentWrapper>
+      return (
+        <WikiInfoContentWrapper noWrapper={noWrapper}>
+          <WikiCombatTechniqueInfo
+            wiki={wiki}
+            l10n={l10n}
+            x={x}
+            sex={sex}
+            />
+        </WikiInfoContentWrapper>
+      )
     }
 
     if (CultureCombined.is (x)) {
-      return <WikiInfoContentWrapper {...props}>
-        <WikiCultureInfo {...props} x={x} />
-      </WikiInfoContentWrapper>
+      return (
+        <WikiInfoContentWrapper noWrapper={noWrapper}>
+          <WikiCultureInfo
+            wiki={wiki}
+            l10n={l10n}
+            x={x}
+            languages={languages}
+            scripts={scripts}
+            />
+        </WikiInfoContentWrapper>
+      )
     }
 
     if (LiturgicalChant.is (x)) {
-      return <WikiInfoContentWrapper {...props}>
-        <WikiLiturgicalChantInfo {...props} x={x} />
-      </WikiInfoContentWrapper>
+      return (
+        <WikiInfoContentWrapper noWrapper={noWrapper}>
+          <WikiLiturgicalChantInfo
+            wiki={wiki}
+            l10n={l10n}
+            x={x}
+            liturgicalChantExtensions={liturgicalChantExtensions}
+            />
+        </WikiInfoContentWrapper>
+      )
     }
 
     if (ProfessionCombined.is (x)) {
-      return <WikiInfoContentWrapper {...props}>
-        <WikiProfessionInfo {...props} x={x} />
-      </WikiInfoContentWrapper>
+      return (
+        <WikiInfoContentWrapper noWrapper={noWrapper}>
+          <WikiProfessionInfo
+            wiki={wiki}
+            l10n={l10n}
+            x={x}
+            sex={sex}
+            />
+        </WikiInfoContentWrapper>
+      )
     }
 
     if (RaceCombined.is (x)) {
-      return <WikiInfoContentWrapper {...props}>
-        <WikiRaceInfo {...props} x={x} />
-      </WikiInfoContentWrapper>
+      return (
+        <WikiInfoContentWrapper noWrapper={noWrapper}>
+          <WikiRaceInfo
+            wiki={wiki}
+            l10n={l10n}
+            x={x}
+            />
+        </WikiInfoContentWrapper>
+      )
     }
 
     if (Spell.is (x)) {
-      return <WikiInfoContentWrapper {...props}>
-        <WikiSpellInfo {...props} x={x} />
-      </WikiInfoContentWrapper>
+      return (
+        <WikiInfoContentWrapper noWrapper={noWrapper}>
+          <WikiSpellInfo
+            wiki={wiki}
+            l10n={l10n}
+            x={x}
+            spellExtensions={spellExtensions}
+            />
+        </WikiInfoContentWrapper>
+      )
     }
 
     if (Skill.is (x)) {
-      return <WikiInfoContentWrapper {...props}>
-        <WikiSkillInfo {...props} x={x} />
-      </WikiInfoContentWrapper>
+      return (
+        <WikiInfoContentWrapper noWrapper={noWrapper}>
+          <WikiSkillInfo
+            wiki={wiki}
+            l10n={l10n}
+            x={x}
+            />
+        </WikiInfoContentWrapper>
+      )
     }
   }
 
-  return <WikiInfoContentWrapper {...props} />
+  return <WikiInfoContentWrapper noWrapper={noWrapper} />
 }
 
 const getEntry =
@@ -177,7 +241,7 @@ const getEntry =
                              return bind (props.items) (lookup (id))
                            }
                            else if (prefix === IdPrefixes.ITEM_TEMPLATE) {
-                             return lookup (id) (props.itemTemplates)
+                             return lookup (id) (WA.itemTemplates (props.wiki))
                            }
                            else {
                              return Nothing
@@ -186,26 +250,26 @@ const getEntry =
                          ((category: Category) => {
                            switch (category) {
                              case Category.ADVANTAGES:
-                               return lookup (id) (props.advantages)
+                               return lookup (id) (WA.advantages (props.wiki))
 
                              case Category.BLESSINGS:
-                               return lookup (id) (props.blessings)
+                               return lookup (id) (WA.blessings (props.wiki))
 
                              case Category.CANTRIPS:
-                               return lookup (id) (props.cantrips)
+                               return lookup (id) (WA.cantrips (props.wiki))
 
                              case Category.COMBAT_TECHNIQUES:
-                               return lookup (id) (props.combatTechniques)
+                               return lookup (id) (WA.combatTechniques (props.wiki))
 
                              case Category.CULTURES:
                                return find (pipe (CultureCombinedA_.id, equals (id)))
                                            (props.combinedCultures)
 
                              case Category.DISADVANTAGES:
-                               return lookup (id) (props.disadvantages)
+                               return lookup (id) (WA.disadvantages (props.wiki))
 
                              case Category.LITURGICAL_CHANTS:
-                               return lookup (id) (props.liturgicalChants)
+                               return lookup (id) (WA.liturgicalChants (props.wiki))
 
                              case Category.PROFESSIONS:
                                return find (pipe (ProfessionCombinedA_.id, equals (id)))
@@ -216,13 +280,13 @@ const getEntry =
                                            (props.combinedRaces)
 
                              case Category.SPECIAL_ABILITIES:
-                               return lookup (id) (props.specialAbilities)
+                               return lookup (id) (WA.specialAbilities (props.wiki))
 
                              case Category.SPELLS:
-                               return lookup (id) (props.spells)
+                               return lookup (id) (WA.spells (props.wiki))
 
                              case Category.SKILLS:
-                               return lookup (id) (props.skills)
+                               return lookup (id) (WA.skills (props.wiki))
 
                              default:
                                return Nothing

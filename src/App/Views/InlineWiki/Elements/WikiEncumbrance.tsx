@@ -17,7 +17,9 @@ export interface WikiEncumbranceProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiEncumbrance<A extends RecordIBase<any>> (props: WikiEncumbranceProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiEncumbranceProps<A>) => ReturnType<React.FC>
+
+export const WikiEncumbrance: FC = props => {
   const {
     x,
     acc,

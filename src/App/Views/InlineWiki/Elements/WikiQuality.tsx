@@ -14,7 +14,9 @@ export interface WikiQualityProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiQuality<A extends RecordIBase<any>> (props: WikiQualityProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiQualityProps<A>) => ReturnType<React.FC>
+
+export const WikiQuality: FC = props => {
   const {
     x,
     acc,

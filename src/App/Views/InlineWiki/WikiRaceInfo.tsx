@@ -3,12 +3,11 @@ import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { all, flength, fnull, intercalate, List, map, notNull, toArray } from "../../../Data/List";
 import { ensure, fromMaybe, fromMaybe_, isNothing, mapMaybe, Maybe, maybeRNullF } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
-import { Book } from "../../Models/Wiki/Book";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { RaceVariant } from "../../Models/Wiki/RaceVariant";
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { translate } from "../../Utilities/I18n";
 import { signNeg } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
@@ -18,17 +17,20 @@ import { WikiBoxTemplate } from "./WikiBoxTemplate";
 import { WikiProperty } from "./WikiProperty";
 
 export interface WikiRaceInfoProps {
-  books: OrderedMap<string, Record<Book>>
-  x: Record<RaceCombined>
   l10n: L10nRecord
+  wiki: WikiModelRecord
+  x: Record<RaceCombined>
 }
 
+const WA = WikiModel.A
 const RCA = RaceCombined.A
 const RVA = RaceVariant.A
 const RCA_ = RaceCombinedA_
 
-export function WikiRaceInfo (props: WikiRaceInfoProps) {
-  const { x, l10n, books } = props
+export const WikiRaceInfo: React.FC<WikiRaceInfoProps> = props => {
+  const { x, l10n, wiki } = props
+
+  const books = WA.books (wiki)
 
   const name = RCA_.name (x)
 

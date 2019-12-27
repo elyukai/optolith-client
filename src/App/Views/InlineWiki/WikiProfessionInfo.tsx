@@ -19,7 +19,6 @@ import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/Prof
 import { ProfessionVariantCombined, ProfessionVariantCombinedA_ } from "../../Models/View/ProfessionVariantCombined";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Blessing } from "../../Models/Wiki/Blessing";
-import { Book } from "../../Models/Wiki/Book";
 import { Cantrip } from "../../Models/Wiki/Cantrip";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
@@ -44,6 +43,7 @@ import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { IncreaseSkill } from "../../Models/Wiki/sub/IncreaseSkill";
 import { IncreaseSkillList } from "../../Models/Wiki/sub/IncreaseSkillList";
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers";
 import { getSelectOptionName } from "../../Utilities/Activatable/selectionUtils";
 import { ndash } from "../../Utilities/Chars";
@@ -60,20 +60,13 @@ import { WikiBoxTemplate } from "./WikiBoxTemplate";
 import { WikiProperty } from "./WikiProperty";
 
 export interface WikiProfessionInfoProps {
-  attributes: OrderedMap<string, Record<Attribute>>
-  blessings: OrderedMap<string, Record<Blessing>>
-  books: OrderedMap<string, Record<Book>>
-  cantrips: OrderedMap<string, Record<Cantrip>>
-  x: Record<ProfessionCombined>
-  liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
   l10n: L10nRecord
+  wiki: WikiModelRecord
+  x: Record<ProfessionCombined>
   sex: Maybe<Sex>
-  races: OrderedMap<string, Record<Race>>
-  skills: OrderedMap<string, Record<Skill>>
-  spells: OrderedMap<string, Record<Spell>>
-  specialAbilities: OrderedMap<string, Record<SpecialAbility>>
 }
 
+const WA = WikiModel.A
 const PCA = ProfessionCombined.A
 const PCA_ = ProfessionCombinedA_
 const PSA = ProfessionSelections.A
@@ -93,21 +86,18 @@ const CTSSA = CombatTechniquesSecondSelection.A
 const LCA = LiturgicalChant.A
 
 // tslint:disable-next-line: cyclomatic-complexity
-export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element {
-  const {
-    attributes,
-    blessings,
-    cantrips,
-    x,
-    liturgicalChants,
-    l10n,
-    races,
-    sex,
-    skills,
-    spells,
-    specialAbilities,
-    books,
-  } = props
+export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
+  const { x, l10n, sex, wiki } = props
+
+  const attributes = WA.attributes (wiki)
+  const blessings = WA.blessings (wiki)
+  const books = WA.books (wiki)
+  const cantrips = WA.cantrips (wiki)
+  const liturgicalChants = WA.liturgicalChants (wiki)
+  const races = WA.races (wiki)
+  const skills = WA.skills (wiki)
+  const spells = WA.spells (wiki)
+  const specialAbilities = WA.specialAbilities (wiki)
 
   const selections = PCA.mappedSelections (x)
 

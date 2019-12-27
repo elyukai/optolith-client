@@ -19,7 +19,9 @@ export interface WikiCastingTimeProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiCastingTime<A extends RecordIBase<any>> (props: WikiCastingTimeProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiCastingTimeProps<A>) => ReturnType<React.FC>
+
+export const WikiCastingTime: FC = props => {
   const {
     x,
     acc,

@@ -23,7 +23,9 @@ export interface WikiUsesProps<A extends RecordIBase<any>> {
 
 const AA = Application.A
 
-export function WikiUses <A extends RecordIBase<any>> (props: WikiUsesProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiUsesProps<A>) => ReturnType<React.FC>
+
+export const WikiUses: FC = props => {
   const {
     x,
     acc,

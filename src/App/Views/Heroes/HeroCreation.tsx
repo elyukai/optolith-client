@@ -53,13 +53,13 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
     close,
   } = props
 
-  const [name, setName] = React.useState ("")
-  const [enableAllRuleBooks, setEnableAllRuleBooks] = React.useState (false)
-  const [enabledRuleBooks, setEnabledRuleBooks] =
+  const [ name, setName ] = React.useState ("")
+  const [ enableAllRuleBooks, setEnableAllRuleBooks ] = React.useState (false)
+  const [ enabledRuleBooks, setEnabledRuleBooks ] =
     React.useState<OrderedSet<string>> (OrderedSet.empty)
-  const [msex, setSex] = React.useState<Maybe<Sex>> (Nothing)
-  const [mel, setEL] = React.useState<Maybe<string>> (Nothing)
-  const [prevIsOpen, setPrevIsOpen] = React.useState (isOpen)
+  const [ msex, setSex ] = React.useState<Maybe<Sex>> (Nothing)
+  const [ mel, setEL ] = React.useState<Maybe<string>> (Nothing)
+  const [ prevIsOpen, setPrevIsOpen ] = React.useState (isOpen)
 
   const handleSubmit = React.useCallback (
     () => {
@@ -73,7 +73,7 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
         )
       }
     },
-    [createHero, enableAllRuleBooks, enabledRuleBooks, mel, msex, name]
+    [ createHero, enableAllRuleBooks, enabledRuleBooks, mel, msex, name ]
   )
 
   const handleClear = React.useCallback (
@@ -90,21 +90,21 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
       close ()
       handleClear ()
     },
-    [handleClear, close]
+    [ handleClear, close ]
   )
 
   const handleSwitchEnableAllRuleBooks = React.useCallback (
     () => {
       setEnableAllRuleBooks (!enableAllRuleBooks)
     },
-    [setEnableAllRuleBooks, enableAllRuleBooks]
+    [ setEnableAllRuleBooks, enableAllRuleBooks ]
   )
 
   const handleSwitchEnableRuleBook = React.useCallback (
     (id: string) => {
       setEnabledRuleBooks (toggle (id) (enabledRuleBooks))
     },
-    [setEnabledRuleBooks, enabledRuleBooks]
+    [ setEnabledRuleBooks, enabledRuleBooks ]
   )
 
   if (!isOpen && orN (prevIsOpen)) {

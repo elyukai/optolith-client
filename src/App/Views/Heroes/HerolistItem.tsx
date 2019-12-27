@@ -50,7 +50,7 @@ export type HerolistItemProps = HerolistItemStateProps
                               & HerolistItemDispatchProps
                               & HerolistItemOwnProps
 
-export function HerolistItem (props: HerolistItemProps) {
+export const HerolistItem: React.FC<HerolistItemProps> = props => {
   const {
     ap: map,
     hero,

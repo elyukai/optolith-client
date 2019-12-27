@@ -14,7 +14,9 @@ export interface WikiEffectProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiEffect<A extends RecordIBase<any>> (props: WikiEffectProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiEffectProps<A>) => ReturnType<React.FC>
+
+export const WikiEffect: FC = props => {
   const {
     x,
     acc,

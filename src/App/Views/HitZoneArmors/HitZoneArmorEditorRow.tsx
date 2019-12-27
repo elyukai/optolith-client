@@ -25,7 +25,7 @@ export interface ArmorZonesEditorProps {
   setComponentLoss (id: Maybe<number>): void
 }
 
-export function HitZoneArmorEditorRow (props: ArmorZonesEditorProps) {
+export const HitZoneArmorEditorRow: React.FC<ArmorZonesEditorProps> = props => {
   const {
     armorList,
     component,

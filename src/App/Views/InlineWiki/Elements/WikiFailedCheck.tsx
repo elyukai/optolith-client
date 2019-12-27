@@ -14,7 +14,9 @@ export interface WikiFailedCheckProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiFailedCheck<A extends RecordIBase<any>> (props: WikiFailedCheckProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiFailedCheckProps<A>) => ReturnType<React.FC>
+
+export const WikiFailedCheck: FC = props => {
   const {
     x,
     acc,

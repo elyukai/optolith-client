@@ -16,7 +16,6 @@ import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithI
 import { ActivatableNameCost, ActivatableNameCostA_ } from "../../Models/View/ActivatableNameCost";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { Attribute } from "../../Models/Wiki/Attribute";
-import { Book } from "../../Models/Wiki/Book";
 import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
@@ -50,14 +49,12 @@ import { WikiBoxTemplate } from "./WikiBoxTemplate";
 import { WikiProperty } from "./WikiProperty";
 
 export interface WikiActivatableInfoProps {
-  attributes: OrderedMap<string, Record<Attribute>>
-  books: OrderedMap<string, Record<Book>>
+  l10n: L10nRecord
   wiki: WikiModelRecord
   x: Activatable
-  l10n: L10nRecord
-  specialAbilities: OrderedMap<string, Record<SpecialAbility>>
 }
 
+const WA = WikiModel.A
 const AcA = { ...Advantage.AL, ...SpecialAbility.AL }
 const SAA = SpecialAbility.A
 const RAA = RequireActivatable.A
@@ -65,11 +62,13 @@ const RAAL = RequireActivatable.AL
 const RIA = RequireIncreasable.A
 const RPAA = RequirePrimaryAttribute.A
 const AAL = Advantage.AL
-const WA = WikiModel.A
 const SPA = SocialPrerequisite.A
 
 export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => {
-  const { x, l10n, specialAbilities, wiki, books } = props
+  const { x, l10n, wiki } = props
+
+  const books = WA.books (wiki)
+  const specialAbilities = WA.specialAbilities (wiki)
 
   const cost = getCost (l10n) (x)
   const cost_elem = <Markdown source={cost} />

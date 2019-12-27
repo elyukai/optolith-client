@@ -1,11 +1,10 @@
 import * as React from "react";
 import { subscript } from "../../../Data/List";
 import { maybeRNullF } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { Book } from "../../Models/Wiki/Book";
 import { Cantrip } from "../../Models/Wiki/Cantrip";
 import { L10nRecord } from "../../Models/Wiki/L10n";
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { translate } from "../../Utilities/I18n";
 import { Markdown } from "../Universal/Markdown";
 import { WikiSource } from "./Elements/WikiSource";
@@ -13,15 +12,18 @@ import { WikiBoxTemplate } from "./WikiBoxTemplate";
 import { WikiProperty } from "./WikiProperty";
 
 export interface WikiCantripInfoProps {
-  books: OrderedMap<string, Record<Book>>
-  x: Record<Cantrip>
   l10n: L10nRecord
+  wiki: WikiModelRecord
+  x: Record<Cantrip>
 }
 
+const WA = WikiModel.A
 const CA = Cantrip.A
 
-export function WikiCantripInfo (props: WikiCantripInfoProps) {
-  const { x, l10n, books } = props
+export const WikiCantripInfo: React.FC<WikiCantripInfoProps> = props => {
+  const { x, l10n, wiki } = props
+
+  const books = WA.books (wiki)
 
   return (
     <WikiBoxTemplate className="cantrip" title={CA.name (x)}>

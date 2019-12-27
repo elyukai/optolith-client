@@ -27,7 +27,9 @@ export interface WikiCombatTechniquesProps<A extends RecordIBase<any>> {
 const CTA = CombatTechnique.A
 const SACTA = SpecialAbilityCombatTechniques.A
 
-export function WikiCombatTechniques <A extends RecordIBase<any>> (props: WikiCombatTechniquesProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiCombatTechniquesProps<A>) => ReturnType<React.FC>
+
+export const WikiCombatTechniques: FC = props => {
   const {
     combatTechniques,
     x,

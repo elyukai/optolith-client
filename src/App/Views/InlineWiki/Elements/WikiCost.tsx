@@ -17,7 +17,9 @@ export interface WikiCostProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiCost<A extends RecordIBase<any>> (props: WikiCostProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiCostProps<A>) => ReturnType<React.FC>
+
+export const WikiCost: FC = props => {
   const {
     x,
     acc,
@@ -35,7 +37,8 @@ export function WikiCost<A extends RecordIBase<any>> (props: WikiCostProps<A>) {
 
   return (
     <WikiProperty l10n={l10n} title={key}>
-      {acc.cost (x)}{isNoModAllowed ? ` (${translate (l10n) (modKey)})` : ""}
+      {acc.cost (x)}
+      {isNoModAllowed ? ` (${translate (l10n) (modKey)})` : ""}
     </WikiProperty>
   )
 }

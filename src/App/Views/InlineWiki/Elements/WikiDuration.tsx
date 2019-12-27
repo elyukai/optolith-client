@@ -19,7 +19,9 @@ export interface WikiDurationProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiDuration<A extends RecordIBase<any>> (props: WikiDurationProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiDurationProps<A>) => ReturnType<React.FC>
+
+export const WikiDuration: FC = props => {
   const {
     x,
     acc,
@@ -43,7 +45,8 @@ export function WikiDuration<A extends RecordIBase<any>> (props: WikiDurationPro
 
   return (
     <WikiProperty l10n={l10n} title={key}>
-      {acc.duration (x)}{isNoModAllowed ? ` (${translate (l10n) (modKey)})` : ""}
+      {acc.duration (x)}
+{isNoModAllowed ? ` (${translate (l10n) (modKey)})` : ""}
     </WikiProperty>
   )
 }

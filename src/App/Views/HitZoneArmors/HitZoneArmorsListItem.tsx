@@ -22,19 +22,19 @@ export interface HitZoneArmorsListItemProps {
 
 const HZAA = HitZoneArmor.A
 
-export function HitZoneArmorsListItem (props: HitZoneArmorsListItemProps) {
+export const HitZoneArmorsListItem: React.FC<HitZoneArmorsListItemProps> = props => {
   const { data: item, editItem, deleteItem } = props
 
   const handleEdit =
     React.useCallback (
       () => editItem (HZAA.id (item)),
-      [editItem, item]
+      [ editItem, item ]
     )
 
   const handleDelete =
     React.useCallback (
       () => deleteItem (HZAA.id (item)),
-      [deleteItem, item]
+      [ deleteItem, item ]
     )
 
   return (

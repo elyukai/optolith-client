@@ -13,7 +13,9 @@ export interface WikiTargetCategoryProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiTargetCategory<A extends RecordIBase<any>> (props: WikiTargetCategoryProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiTargetCategoryProps<A>) => ReturnType<React.FC>
+
+export const WikiTargetCategory: FC = props => {
   const {
     x,
     acc,

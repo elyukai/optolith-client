@@ -16,7 +16,9 @@ export interface WikiToolsProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export const WikiTools = <A extends RecordIBase<any>> (props: WikiToolsProps<A>): ReactReturn => {
+type FC = <A extends RecordIBase<any>> (props: WikiToolsProps<A>) => ReturnType<React.FC>
+
+export const WikiTools: FC = props => {
   const {
     x,
     acc,

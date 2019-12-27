@@ -24,8 +24,10 @@ export interface WikiLiturgicalChantTraditionsProps<A extends RecordIBase<any>> 
   l10n: L10nRecord
 }
 
-export function WikiLiturgicalChantTraditions<A extends RecordIBase<any>>
-  (props: WikiLiturgicalChantTraditionsProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiLiturgicalChantTraditionsProps<A>) =>
+  ReturnType<React.FC>
+
+export const WikiLiturgicalChantTraditions: FC = props => {
   const {
     x,
     acc,

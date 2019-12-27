@@ -101,29 +101,29 @@ const prepareCombatTechniquesForSelection =
     )
 
 export const Equipment: React.FC<EquipmentProps> = props => {
-  const [filterGroupSlidein, setFilterGroupSlidein] = React.useState (1)
-  const [showAddSlidein, setShowAddSlidein] = React.useState (false)
-  const [infoId, setInfoId] = React.useState<Maybe<string>> (Nothing)
-  const [slideinInfoId, setSlideinInfoId] = React.useState<Maybe<string>> (Nothing)
+  const [ filterGroupSlidein, setFilterGroupSlidein ] = React.useState (1)
+  const [ showAddSlidein, setShowAddSlidein ] = React.useState (false)
+  const [ infoId, setInfoId ] = React.useState<Maybe<string>> (Nothing)
+  const [ slideinInfoId, setSlideinInfoId ] = React.useState<Maybe<string>> (Nothing)
 
   const handleShowInfo = React.useCallback (
     (id: string) => setInfoId (Just (id)),
-    [setInfoId]
+    [ setInfoId ]
   )
 
   const handleShowSlideinInfo = React.useCallback (
     (id: string) => setSlideinInfoId (Just (id)),
-    [setSlideinInfoId]
+    [ setSlideinInfoId ]
   )
 
   const handleShowSlidein = React.useCallback (
     () => setShowAddSlidein (true),
-    [setShowAddSlidein]
+    [ setShowAddSlidein ]
   )
 
   const handleHideSlidein = React.useCallback (
     () => setShowAddSlidein (false),
-    [setShowAddSlidein]
+    [ setShowAddSlidein ]
   )
 
   const {

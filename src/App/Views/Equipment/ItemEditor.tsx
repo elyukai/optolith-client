@@ -79,7 +79,7 @@ export type ItemEditorProps = ItemEditorStateProps & ItemEditorDispatchProps & I
 const EIA = EditItem.A
 const IEIVA = ItemEditorInputValidation.A
 
-export function ItemEditor (props: ItemEditorProps) {
+export const ItemEditor: React.FC<ItemEditorProps> = props => {
   const {
     l10n,
     attributes,

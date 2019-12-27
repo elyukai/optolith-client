@@ -27,7 +27,9 @@ export interface WikiSkillCheckProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiSkillCheck<A extends RecordIBase<any>> (props: WikiSkillCheckProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiSkillCheckProps<A>) => ReturnType<React.FC>
+
+export const WikiSkillCheck: FC = props => {
   const {
     attributes,
     x,

@@ -14,7 +14,9 @@ export interface WikiImprovementCostProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiImprovementCost<A extends RecordIBase<any>> (props: WikiImprovementCostProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiImprovementCostProps<A>) => ReturnType<React.FC>
+
+export const WikiImprovementCost: FC = props => {
   const {
     x,
     acc,

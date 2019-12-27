@@ -8,7 +8,7 @@ export interface WikiBoxTemplateProps {
   title: string
 }
 
-export function WikiBoxTemplate (props: WikiBoxTemplateProps) {
+export const WikiBoxTemplate: React.FC<WikiBoxTemplateProps> = props => {
   const {
     children,
     className,

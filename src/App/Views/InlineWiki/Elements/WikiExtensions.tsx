@@ -28,56 +28,55 @@ export interface WikiExtensionsProps<A extends RecordIBase<any>> {
 
 const SOA = SelectOption.A
 
-export const WikiExtensions =
-  <A extends RecordIBase<any>> (props: WikiExtensionsProps<A>): ReactReturn => {
-    const {
-      x,
-      acc,
-      extensions,
-      l10n,
-    } = props
+type FC = <A extends RecordIBase<any>> (props: WikiExtensionsProps<A>) => ReturnType<React.FC>
 
-    const category = acc.category (x)
+export const WikiExtensions: FC = props => {
+  const {
+    x,
+    acc,
+    extensions,
+    l10n,
+  } = props
 
-    let key: L10nKey = "spellextensions"
+  const category = acc.category (x)
 
-    if (category === Category.LITURGICAL_CHANTS) {
-      key = "liturgicalchantextensions"
-    }
+  let key: L10nKey = "spellextensions"
 
-    return maybe (null as ReactReturn)
-                 ((exs: List<Record<SelectOption>>) => (
-                   <>
-                     <p className="extensions-title">
-                       <span>{translate (l10n) (key)}</span>
-                     </p>
-                     <ul className="extensions">
-                       {pipe_ (
-                         exs,
-                         map (e => {
-                           const requiredSR = Maybe.product (SOA.level (e)) * 4 + 4
-                           const srText = `${translate (l10n) ("skillrating.short")} ${requiredSR}`
-
-                           const ap = Maybe.sum (SOA.cost (e))
-                           const apText = `${ap} ${translate (l10n) ("adventurepoints.short")}`
-
-                           const desc = renderMaybe (SOA.description (e))
-
-                           return (
-                             <Markdown
-                               key={SOA.id (e)}
-                               source={`*${SOA.name (e)}* (${srText}, ${apText}): ${desc}`}
-                               isListElement
-                               />
-                           )
-                         }),
-                         toArray
-                       )}
-                     </ul>
-                   </>
-                 ))
-                 (extensions)
+  if (category === Category.LITURGICAL_CHANTS) {
+    key = "liturgicalchantextensions"
   }
+
+  return maybe (null as ReactReturn)
+               ((exs: List<Record<SelectOption>>) => (
+                 <>
+                   <p className="extensions-title">
+                     <span>{translate (l10n) (key)}</span>
+                   </p>
+                   <ul className="extensions">
+                     {pipe_ (
+                       exs,
+                       map (e => {
+                         const requiredSR = Maybe.product (SOA.level (e)) * 4 + 4
+                         const srText = `${translate (l10n) ("skillrating.short")} ${requiredSR}`
+                         const ap = Maybe.sum (SOA.cost (e))
+                         const apText = `${ap} ${translate (l10n) ("adventurepoints.short")}`
+                         const desc = renderMaybe (SOA.description (e))
+
+                         return (
+                           <Markdown
+                             key={SOA.id (e)}
+                             source={`*${SOA.name (e)}* (${srText}, ${apText}): ${desc}`}
+                             isListElement
+                             />
+                         )
+                       }),
+                       toArray
+                     )}
+                   </ul>
+                 </>
+               ))
+               (extensions)
+}
 
 const sortExts = sortByMulti ([ comparingR (pipe (SelectOption.A.cost, sum)) (compare) ])
 

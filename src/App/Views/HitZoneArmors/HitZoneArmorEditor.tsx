@@ -46,7 +46,7 @@ const IA = Item.A
 const ITA = ItemTemplate.A
 const EHZAA = EditHitZoneArmor.A
 
-export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
+export const HitZoneArmorEditor: React.FC<HitZoneArmorEditorProps> = props => {
   const {
     armorZonesEditor,
     closeEditor,

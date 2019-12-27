@@ -37,8 +37,26 @@ export interface ItemEditorCommonSectionProps {
 const EIA = EditItem.A
 const IEIVA = ItemEditorInputValidation.A
 
-export function ItemEditorCommonSection (props: ItemEditorCommonSectionProps) {
-  const { inputValidation, item, l10n } = props
+export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = props => {
+  const {
+    isInCreation,
+    item,
+    l10n,
+    templates,
+    inputValidation,
+    setName,
+    setPrice,
+    setWeight,
+    setAmount,
+    setWhere,
+    setGroup,
+    setTemplate,
+    switchIsImprovisedWeapon,
+    setImprovisedWeaponGroup,
+    applyTemplate,
+    lockTemplate,
+    unlockTemplate,
+  } = props
 
   const gr = EIA.gr (item)
   const locked = EIA.isTemplateLocked (item)
@@ -53,118 +71,121 @@ export function ItemEditorCommonSection (props: ItemEditorCommonSectionProps) {
 
   const TEMPLATES =
     pipe_ (
-      props.templates,
+      templates,
       map (itemTemplateToDropdown),
       consF (
         DropdownOption ({ name: translate (l10n) ("none") })
       )
     )
 
-
-  return <>
-    <div className="main">
-      <div className="row">
-        <TextField
-          className="number"
-          label={translate (l10n) ("number")}
-          value={EIA.amount (item)}
-          onChange={props.setAmount}
-          valid={IEIVA.amount (inputValidation)}
-          />
-        <TextField
-          className="name"
-          label={translate (l10n) ("name")}
-          value={EIA.name (item)}
-          onChange={props.setName}
-          autoFocus={props.isInCreation}
-          disabled={locked}
-          valid={IEIVA.name (inputValidation)}
-          />
-      </div>
-      <div className="row">
-        <TextField
-          className="price"
-          label={translate (l10n) ("price")}
-          value={EIA.price (item)}
-          onChange={props.setPrice}
-          disabled={locked}
-          valid={IEIVA.price (inputValidation)}
-          />
-        <TextField
-          className="weight"
-          label={translate (l10n) ("weight")}
-          value={EIA.weight (item)}
-          onChange={props.setWeight}
-          disabled={locked}
-          valid={IEIVA.weight (inputValidation)}
-          />
-        <TextField
-          className="where"
-          label={translate (l10n) ("carriedwhere")}
-          value={EIA.where (item)}
-          onChange={props.setWhere}
-          />
-      </div>
-      <div className="row">
-        <Dropdown
-          className="gr"
-          label={translate (l10n) ("itemgroup")}
-          hint={translate (l10n) ("itemgrouphint")}
-          value={Just (gr)}
-          options={GROUPS_SELECTION}
-          onChangeJust={props.setGroup}
-          disabled={locked}
-          required
-          />
-      </div>
-      {gr > 4
-        ? <div className="row">
-            <Checkbox
-              className="improvised-weapon"
-              label={translate (l10n) ("improvisedweapon")}
-              checked={isJust (EIA.improvisedWeaponGroup (item))}
-              onClick={props.switchIsImprovisedWeapon}
-              disabled={locked}
-              />
-            <Dropdown
-              className="gr imp-gr"
-              hint={translate (l10n) ("improvisedweapongroup")}
-              value={EIA.improvisedWeaponGroup (item)}
-              options={IMP_GROUPS_SELECTION}
-              onChangeJust={props.setImprovisedWeaponGroup}
-              disabled={locked || isNothing (EIA.improvisedWeaponGroup (item))}
-              />
-          </div>
-        : null}
-      <Hr />
-      <div className="row">
-        <Dropdown
-          className="template"
-          label={translate (l10n) ("template")}
-          hint={translate (l10n) ("none")}
-          value={EIA.template (item)}
-          options={TEMPLATES}
-          onChangeJust={props.setTemplate}
-          disabled={locked}
-          />
-        <IconButton
-          icon="&#xE90a;"
-          onClick={props.applyTemplate}
-          disabled={isNothing (EIA.template (item)) || locked}
-          />
-        {locked ? (
-          <IconButton
-            icon="&#xE918;"
-            onClick={props.unlockTemplate}
+  return (
+    <>
+      <div className="main">
+        <div className="row">
+          <TextField
+            className="number"
+            label={translate (l10n) ("number")}
+            value={EIA.amount (item)}
+            onChange={setAmount}
+            valid={IEIVA.amount (inputValidation)}
             />
-        ) : (
-          <IconButton
-            icon="&#xE917;"
-            onClick={props.lockTemplate}
-            disabled={isNothing (EIA.template (item))}
+          <TextField
+            className="name"
+            label={translate (l10n) ("name")}
+            value={EIA.name (item)}
+            onChange={setName}
+            autoFocus={isInCreation}
+            disabled={locked}
+            valid={IEIVA.name (inputValidation)}
             />
-        )}
+        </div>
+        <div className="row">
+          <TextField
+            className="price"
+            label={translate (l10n) ("price")}
+            value={EIA.price (item)}
+            onChange={setPrice}
+            disabled={locked}
+            valid={IEIVA.price (inputValidation)}
+            />
+          <TextField
+            className="weight"
+            label={translate (l10n) ("weight")}
+            value={EIA.weight (item)}
+            onChange={setWeight}
+            disabled={locked}
+            valid={IEIVA.weight (inputValidation)}
+            />
+          <TextField
+            className="where"
+            label={translate (l10n) ("carriedwhere")}
+            value={EIA.where (item)}
+            onChange={setWhere}
+            />
+        </div>
+        <div className="row">
+          <Dropdown
+            className="gr"
+            label={translate (l10n) ("itemgroup")}
+            hint={translate (l10n) ("itemgrouphint")}
+            value={Just (gr)}
+            options={GROUPS_SELECTION}
+            onChangeJust={setGroup}
+            disabled={locked}
+            required
+            />
+        </div>
+        {gr > 4
+          ? (
+            <div className="row">
+              <Checkbox
+                className="improvised-weapon"
+                label={translate (l10n) ("improvisedweapon")}
+                checked={isJust (EIA.improvisedWeaponGroup (item))}
+                onClick={switchIsImprovisedWeapon}
+                disabled={locked}
+                />
+              <Dropdown
+                className="gr imp-gr"
+                hint={translate (l10n) ("improvisedweapongroup")}
+                value={EIA.improvisedWeaponGroup (item)}
+                options={IMP_GROUPS_SELECTION}
+                onChangeJust={setImprovisedWeaponGroup}
+                disabled={locked || isNothing (EIA.improvisedWeaponGroup (item))}
+                />
+            </div>
+          )
+          : null}
+        <Hr />
+        <div className="row">
+          <Dropdown
+            className="template"
+            label={translate (l10n) ("template")}
+            hint={translate (l10n) ("none")}
+            value={EIA.template (item)}
+            options={TEMPLATES}
+            onChangeJust={setTemplate}
+            disabled={locked}
+            />
+          <IconButton
+            icon="&#xE90a;"
+            onClick={applyTemplate}
+            disabled={isNothing (EIA.template (item)) || locked}
+            />
+          {locked ? (
+            <IconButton
+              icon="&#xE918;"
+              onClick={unlockTemplate}
+              />
+          ) : (
+            <IconButton
+              icon="&#xE917;"
+              onClick={lockTemplate}
+              disabled={isNothing (EIA.template (item))}
+              />
+          )}
+        </div>
       </div>
-    </div>
-</>
+    </>
+  )
 }

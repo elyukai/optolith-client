@@ -14,7 +14,9 @@ export interface WikiBotchProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiBotch<A extends RecordIBase<any>> (props: WikiBotchProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiBotchProps<A>) => ReturnType<React.FC>
+
+export const WikiBotch: FC = props => {
   const {
     x,
     acc,

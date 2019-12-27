@@ -5,16 +5,16 @@ import { fmap, fmapF } from "../../../Data/Functor";
 import { elemF, find, head, intercalate, List, map, notNull, subscript } from "../../../Data/List";
 import { bindF, ensure, fromMaybe, mapMaybe, maybe, Maybe } from "../../../Data/Maybe";
 import { compare, dec } from "../../../Data/Num";
-import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
+import { lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
 import { CultureId } from "../../Constants/Ids";
 import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
-import { Book } from "../../Models/Wiki/Book";
 import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
 import { Skill } from "../../Models/Wiki/Skill";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { ndash } from "../../Utilities/Chars";
 import { compareLocale, localizeOrList, translate, translateP } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
@@ -29,12 +29,11 @@ import { WikiProperty } from "./WikiProperty";
 type ValueSkill = Pair<Record<Skill>, number>
 
 export interface WikiCultureInfoProps {
-  books: OrderedMap<string, Record<Book>>
+  l10n: L10nRecord
+  wiki: WikiModelRecord
   x: Record<CultureCombined>
   languages: Maybe<Record<SpecialAbility>>
-  l10n: L10nRecord
   scripts: Maybe<Record<SpecialAbility>>
-  skills: OrderedMap<string, Record<Skill>>
 }
 
 const CCA = CultureCombined.A
@@ -42,6 +41,7 @@ const CCA_ = CultureCombinedA_
 const SA = Skill.A
 const SAA = SpecialAbility.A
 const SOA = SelectOption.A
+const WA = WikiModel.A
 
 const isElvenCulture =
   elemF (List<string> (
@@ -51,8 +51,11 @@ const isElvenCulture =
     CultureId.Steppenelfen
   ))
 
-export function WikiCultureInfo (props: WikiCultureInfoProps) {
-  const { x, languages, l10n, scripts, skills, books } = props
+export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
+  const { x, languages, l10n, scripts, wiki } = props
+
+  const books = WA.books (wiki)
+  const skills = WA.skills (wiki)
 
   const culturalPackageSkills = CCA.mappedCulturalPackageSkills (x)
 

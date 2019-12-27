@@ -58,8 +58,32 @@ const AA = Attribute.A
 const shortOrEmpty =
   (attrs: OrderedMap<string, Record<Attribute>>) => pipe (lookupF (attrs), maybe ("") (AA.short))
 
-export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
-  const { attributes, combatTechniques, inputValidation, item, l10n } = props
+export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = props => {
+  const {
+    attributes,
+    combatTechniques,
+    item,
+    l10n,
+    inputValidation,
+    setCombatTechnique,
+    setDamageDiceNumber,
+    setDamageDiceSides,
+    setDamageFlat,
+    setPrimaryAttribute,
+    setDamageThreshold,
+    setFirstDamageThreshold,
+    setSecondDamageThreshold,
+    switchIsDamageThresholdSeparated,
+    setAttack,
+    setParry,
+    setReach,
+    setLength,
+    setStructurePoints,
+    setStabilityModifier,
+    switchIsParryingWeapon,
+    switchIsTwoHandedWeapon,
+    setLoss,
+  } = props
 
   const dice =
     map ((id: number) => DropdownOption ({
@@ -97,7 +121,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                   fmap (x => DropdownOption ({ id: Just (CTA.id (x)), name: CTA.name (x) }))
                 ))
               )}
-              onChangeJust={props.setCombatTechnique}
+              onChangeJust={setCombatTechnique}
               disabled={locked}
               required
               />
@@ -143,7 +167,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                   name: shortOrEmpty (attributes) (AttrId.Strength),
                 })
               )}
-              onChange={props.setPrimaryAttribute}
+              onChange={setPrimaryAttribute}
               disabled={lockedByNoCombatTechniqueOrLances}
               />
             {
@@ -157,14 +181,14 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                     <TextField
                       className="damage-threshold-part"
                       value={fst (damageBonusThreshold)}
-                      onChange={props.setFirstDamageThreshold}
+                      onChange={setFirstDamageThreshold}
                       disabled={lockedByNoCombatTechniqueOrLances}
                       valid={IEIVA.firstDamageThreshold (inputValidation)}
                       />
                     <TextField
                       className="damage-threshold-part"
                       value={snd (damageBonusThreshold)}
-                      onChange={props.setSecondDamageThreshold}
+                      onChange={setSecondDamageThreshold}
                       disabled={lockedByNoCombatTechniqueOrLances}
                       valid={IEIVA.secondDamageThreshold (inputValidation)}
                       />
@@ -175,7 +199,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                     className="damage-threshold"
                     label={translate (l10n) ("damagethreshold")}
                     value={damageBonusThreshold}
-                    onChange={props.setDamageThreshold}
+                    onChange={setDamageThreshold}
                     disabled={lockedByNoCombatTechniqueOrLances}
                     valid={IEIVA.damageThreshold (inputValidation)}
                     />
@@ -187,13 +211,12 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               className="damage-threshold-separated"
               label={translate (l10n) ("separatedamagethresholds")}
               checked={isList (damageBonusThreshold)}
-              onClick={props.switchIsDamageThresholdSeparated}
+              onClick={switchIsDamageThresholdSeparated}
               disabled={
                 locked
                 || isNothing (combatTechnique)
                 || !(
-                  isString (damageBonusThreshold)
-                  && damageBonusThreshold === "ATTR_6_8"
+                  (isString (damageBonusThreshold) && damageBonusThreshold === "ATTR_6_8")
                   || pipe_ (
                       combatTechniques,
                       lookup (fromJust (combatTechnique)),
@@ -215,7 +238,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               <TextField
                 className="damage-dice-number"
                 value={EIA.damageDiceNumber (item)}
-                onChange={props.setDamageDiceNumber}
+                onChange={setDamageDiceNumber}
                 disabled={locked}
                 valid={IEIVA.damageDiceNumber (inputValidation)}
                 />
@@ -224,13 +247,13 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                 hint={translate (l10n) ("dice.short")}
                 value={EIA.damageDiceSides (item)}
                 options={dice}
-                onChangeJust={props.setDamageDiceSides}
+                onChangeJust={setDamageDiceSides}
                 disabled={locked}
                 />
               <TextField
                 className="damage-flat"
                 value={EIA.damageFlat (item)}
-                onChange={props.setDamageFlat}
+                onChange={setDamageFlat}
                 disabled={locked}
                 valid={IEIVA.damageFlat (inputValidation)}
                 />
@@ -239,7 +262,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               className="stabilitymod"
               label={translate (l10n) ("breakingpointratingmodifier.short")}
               value={EIA.stabilityMod (item)}
-              onChange={props.setStabilityModifier}
+              onChange={setStabilityModifier}
               disabled={locked}
               valid={IEIVA.stabilityMod (inputValidation)}
               />
@@ -248,7 +271,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               label={translate (l10n) ("damaged.short")}
               value={EIA.loss (item)}
               options={getLossLevelElements ()}
-              onChange={props.setLoss}
+              onChange={setLoss}
               />
           </div>
           <div className="row">
@@ -259,7 +282,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               value={EIA.reach (item)}
               options={imap (i => (name: string) => DropdownOption ({ id: Just (i + 1), name }))
                             (translate (l10n) ("reachlabels"))}
-              onChangeJust={props.setReach}
+              onChangeJust={setReach}
               disabled={locked || elem<string> (CombatTechniqueId.Lances) (combatTechnique)}
               required
               />
@@ -271,22 +294,22 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               <TextField
                 className="at"
                 value={EIA.at (item)}
-                onChange={props.setAttack}
+                onChange={setAttack}
                 disabled={locked || elem<string> (CombatTechniqueId.Lances) (combatTechnique)}
                 valid={IEIVA.at (inputValidation)}
-              />
-            <TextField
-              className="pa"
-              value={EIA.pa (item)}
-              onChange={props.setParry}
-              disabled={
-                locked
-                || elem<string> (CombatTechniqueId.ChainWeapons) (combatTechnique)
-                || elem<string> (CombatTechniqueId.Lances) (combatTechnique)
-              }
-              valid={IEIVA.pa (inputValidation)}
-              />
-          </div>
+                />
+              <TextField
+                className="pa"
+                value={EIA.pa (item)}
+                onChange={setParry}
+                disabled={
+                  locked
+                  || elem<string> (CombatTechniqueId.ChainWeapons) (combatTechnique)
+                  || elem<string> (CombatTechniqueId.Lances) (combatTechnique)
+                }
+                valid={IEIVA.pa (inputValidation)}
+                />
+            </div>
           {
             elem<string> (CombatTechniqueId.Shields) (combatTechnique)
               ? (
@@ -294,7 +317,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                   className="stp"
                   label={translate (l10n) ("structurepoints.short")}
                   value={EIA.stp (item)}
-                  onChange={props.setStructurePoints}
+                  onChange={setStructurePoints}
                   disabled={locked}
                   />
               )
@@ -303,31 +326,31 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                   className="length"
                   label={translate (l10n) ("length")}
                   value={EIA.length (item)}
-                  onChange={props.setLength}
+                  onChange={setLength}
                   disabled={locked}
                   valid={IEIVA.length (inputValidation)}
                   />
               )
           }
+          </div>
+          <div className="row">
+            <Checkbox
+              className="parrying-weapon"
+              label={translate (l10n) ("parryingweapon")}
+              checked={EIA.isParryingWeapon (item)}
+              onClick={switchIsParryingWeapon}
+              disabled={locked}
+              />
+            <Checkbox
+              className="twohanded-weapon"
+              label={translate (l10n) ("twohandedweapon")}
+              checked={!EIA.isTwoHandedWeapon (item)}
+              onClick={switchIsTwoHandedWeapon}
+              disabled={locked}
+              />
+          </div>
         </div>
-        <div className="row">
-          <Checkbox
-            className="parrying-weapon"
-            label={translate (l10n) ("parryingweapon")}
-            checked={EIA.isParryingWeapon (item)}
-            onClick={props.switchIsParryingWeapon}
-            disabled={locked}
-            />
-          <Checkbox
-            className="twohanded-weapon"
-            label={translate (l10n) ("twohandedweapon")}
-            checked={!EIA.isTwoHandedWeapon (item)}
-            onClick={props.switchIsTwoHandedWeapon}
-            disabled={locked}
-            />
-        </div>
-      </div>
-    </>
-  )
-  : null
+      </>
+    )
+    : null
 }
