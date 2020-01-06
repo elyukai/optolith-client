@@ -12,7 +12,7 @@ import { getAdvantagesRating, getFilteredActiveAdvantages } from "../Selectors/a
 import { getAPObjectMap, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from "../Selectors/adventurePointsSelectors";
 import { getFilteredInactiveAdvantages } from "../Selectors/combinedActivatablesSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
-import { getAdvantages, getAdvantagesFilterText, getInactiveAdvantagesFilterText, getWikiAdvantages } from "../Selectors/stateSelectors";
+import { getAdvantagesFilterText, getInactiveAdvantagesFilterText } from "../Selectors/stateSelectors";
 import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from "../Selectors/uisettingsSelectors";
 import { Advantages, AdvantagesDispatchProps, AdvantagesOwnProps, AdvantagesStateProps } from "../Views/DisAdvantages/Advantages";
 
@@ -24,8 +24,6 @@ const mapStateToProps =
       join (getFilteredInactiveAdvantages (HeroModel.A.id (ownProps.hero)) (state, ownProps)),
     enableActiveItemHints: getEnableActiveItemHints (state),
     isRemovingEnabled: getIsRemovingEnabled (state),
-    stateEntries: getAdvantages (state),
-    wikiEntries: getWikiAdvantages (state),
     magicalMax: getMagicalAdvantagesDisadvantagesAdventurePointsMaximum (state),
     rating: getAdvantagesRating (state, ownProps),
     showRating: getAdvantagesDisadvantagesCultureRatingVisibility (state),
@@ -43,14 +41,14 @@ const mapDispatchToProps = (
   switchActiveItemHints () {
     dispatch (ConfigActions.switchEnableActiveItemHints ())
   },
-  addToList (args: Record<ActivatableActivationOptions>) {
-    dispatch (DisAdvActions.addDisAdvantage (locale) (args))
+  async addToList (args: Record<ActivatableActivationOptions>) {
+    await dispatch (DisAdvActions.addDisAdvantage (locale) (args))
   },
-  removeFromList (args: Record<ActivatableDeactivationOptions>) {
-    dispatch (DisAdvActions.removeDisAdvantage (locale) (args))
+  async removeFromList (args: Record<ActivatableDeactivationOptions>) {
+    await dispatch (DisAdvActions.removeDisAdvantage (locale) (args))
   },
-  setLevel (id: string, index: number, level: number) {
-    dispatch (DisAdvActions.setDisAdvantageLevel (locale) (id) (index) (level))
+  async setLevel (id: string, index: number, level: number) {
+    await dispatch (DisAdvActions.setDisAdvantageLevel (locale) (id) (index) (level))
   },
   setFilterText (filterText: string) {
     dispatch (DisAdvActions.setActiveAdvantagesFilterText (filterText))

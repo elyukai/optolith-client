@@ -31,9 +31,6 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): ProfessionsDispatchProps =
   setGroupVisibilityFilter (filter: ProfessionsGroupVisibilityFilter) {
     dispatch (ProfessionActions.setProfessionsGroupVisibilityFilter (filter))
   },
-  switchExpansionVisibilityFilter () {
-    dispatch (ProfessionActions.switchProfessionsExpansionVisibilityFilter ())
-  },
   setFilterText (filterText: string) {
     dispatch (ProfessionActions.setProfessionsFilterText (filterText))
   },

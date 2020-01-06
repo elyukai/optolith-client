@@ -48,7 +48,6 @@ export interface ProfessionsDispatchProps {
   setGroupVisibilityFilter (filter: ProfessionsGroupVisibilityFilter): void
   setSortOrder (sortOrder: SortNames): void
   setVisibilityFilter (filter: ProfessionsVisibilityFilter): void
-  switchExpansionVisibilityFilter (): void
   setFilterText (filterText: string): void
 }
 
@@ -80,10 +79,17 @@ export const Professions: React.FC<ProfessionsProps> = props => {
     wiki,
   } = props
 
-  const [showAddSlidein, switchAddSlidein] = React.useState (false)
+  const [ showAddSlidein, switchAddSlidein ] = React.useState (false)
 
-  const handleCloseSlidein = React.useCallback (() => switchAddSlidein (false), [switchAddSlidein])
-  const handleShowSlidein = React.useCallback (() => switchAddSlidein (true), [switchAddSlidein])
+  const handleCloseSlidein = React.useCallback (
+    () => switchAddSlidein (false),
+    [ switchAddSlidein ]
+  )
+
+  const handleShowSlidein = React.useCallback (
+    () => switchAddSlidein (true),
+    [ switchAddSlidein ]
+  )
 
   return (
     <Page id="professions">
