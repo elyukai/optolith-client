@@ -849,6 +849,40 @@ export const intercalate =
 List.intercalate = intercalate
 
 
+/**
+ * ```haskell
+ * permutations :: [a] -> [[a]]
+ * ```
+ *
+ * The `permutations` function returns the list of all permutations of the
+ * argument.
+ *
+ * ```haskell
+ * >>> permutations "abc"
+ * ["abc","bac","cba","bca","cab","acb"]
+ * ```
+ *
+ * If the given list is empty, an empty list is returned by this function.
+ */
+export const permutations: <A> (xs: List<A>) => List<List<A>> =
+  <A> (xs: List<A>) => isNil (xs)
+                       ? List ()
+                       : isNil (xs .xs)
+                       ? List (xs)
+                       : pipe_ (
+                           xs,
+                           pick,
+                           concatMap (p => map (consF (fst (p)))
+                                               (permutations (snd (p))))
+                         )
+
+List.permutations = permutations
+
+const pick = <A> (xs: List<A>): List<Pair<A, List<A>>> =>
+  imap (i => (x: A) => Pair (x, deleteAt (i) (xs)))
+       (xs)
+
+
 // BUILDING LISTS
 
 
@@ -2287,7 +2321,7 @@ List.fromArray = fromArray
  * Converts a `List` to a native Array.
  */
 export const toArray = <A> (xs: List<A>): A[] =>
-  foldl<A, A[]> (arr => x => [...arr, x]) ([]) (xs)
+  foldl<A, A[]> (arr => x => [ ...arr, x ]) ([]) (xs)
 
 List.toArray = toArray
 
