@@ -5,7 +5,6 @@ import { classListMaybe } from "../../Utilities/CSS";
 import { Text } from "./Text";
 
 export interface TabBaseProps {
-  children?: React.ReactNode
   className?: string
   disabled?: boolean
   label: string | undefined
@@ -16,7 +15,7 @@ export interface TabProps extends TabBaseProps {
   onClick (): void
 }
 
-export function Tab (props: TabProps) {
+export const Tab: React.FC<TabProps> = props => {
   const { active, children, className, disabled, label, onClick } = props
 
   return (

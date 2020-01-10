@@ -1,13 +1,9 @@
 import * as React from "react";
 
-export interface NavigationBarLeftProps {
-  children?: React.ReactNode
-}
+export interface NavigationBarLeftProps { }
 
-export function NavigationBarLeft (props: NavigationBarLeftProps) {
-  return (
-    <div className="navigationbar-left">
-      {props.children}
-    </div>
-  )
-}
+export const NavigationBarLeft: React.FC<NavigationBarLeftProps> = ({ children }) => (
+  <div className="navigationbar-left">
+    {children}
+  </div>
+)

@@ -22,7 +22,8 @@ import { NavigationBarBack } from "./NavigationBarBack";
 import { NavigationBarLeft } from "./NavigationBarLeft";
 import { NavigationBarRight } from "./NavigationBarRight";
 import { NavigationBarSubTabs } from "./NavigationBarSubTabs";
-import { NavigationBarTabProps, NavigationBarTabs } from "./NavigationBarTabs";
+import { NavigationBarTabProps } from "./NavigationBarTab";
+import { NavigationBarTabs } from "./NavigationBarTabs";
 import { NavigationBarWrapper } from "./NavigationBarWrapper";
 
 export interface NavigationBarOwnProps {
@@ -86,7 +87,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
     checkForUpdates,
   } = props
 
-  const handleHerolistTab = React.useCallback (() => setTab (TabId.Herolist), [setTab])
+  const handleHerolistTab = React.useCallback (() => setTab (TabId.Herolist), [ setTab ])
 
   return (
     <>
@@ -95,7 +96,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
           {isHeroSection
             ? (
               <>
-                <NavigationBarBack setTab={handleHerolistTab} />
+                <NavigationBarBack handleSetTab={handleHerolistTab} />
                 <AvatarWrapper src={avatar} />
               </>
             )
@@ -103,7 +104,6 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
           <NavigationBarTabs
             currentTab={currentTab}
             tabs={tabs}
-            setTab={setTab}
             />
         </NavigationBarLeft>
         <NavigationBarRight>

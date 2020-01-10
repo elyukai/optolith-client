@@ -16,7 +16,7 @@ export const NavigationBarSubTab: React.FC<NavigationBarSubTabProps> = props => 
 
   const is_active = currentTab === id
 
-  const handleTab = React.useCallback (() => setTab (id), [tab, setTab])
+  const handleTab = React.useCallback (() => setTab (id), [ setTab, id ])
 
   return (
     <Tab

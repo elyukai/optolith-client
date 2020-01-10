@@ -11,7 +11,7 @@ export interface NavigationBarSubTabsProps {
   setTab (tab: TabId): void
 }
 
-export function NavigationBarSubTabs (props: NavigationBarSubTabsProps) {
+export const NavigationBarSubTabs: React.FC<NavigationBarSubTabsProps> = props => {
   const { currentTab, tabs, setTab } = props
 
   return (

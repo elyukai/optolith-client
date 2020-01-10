@@ -1,5 +1,7 @@
 import { remote } from "electron";
 import * as React from "react";
+import { useDispatch } from "react-redux";
+import { setTab } from "../../Actions/LocationActions";
 import { SettingsContainer } from "../../Containers/SettingsContainer";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
@@ -20,19 +22,34 @@ export interface NavigationBarForGroupProps {
   closeSettings (): void
   openSettings (): void
   saveGroup (): void
-  setTab (id: TabId): void
   checkForUpdates (): void
 }
 
 const toggleDevtools = remote.getCurrentWindow ().webContents.toggleDevTools
 
-export function NavigationBarForGroup (props: NavigationBarForGroupProps) {
-  const { closeSettings, groupName, l10n, openSettings, saveGroup, setTab } = props
+export const NavigationBarForGroup: React.FC<NavigationBarForGroupProps> = props => {
+  const {
+    l10n,
+    groupName,
+    platform,
+    isSettingsOpen,
+    closeSettings,
+    openSettings,
+    saveGroup,
+    checkForUpdates,
+  } = props
+
+  const dispatch = useDispatch ()
+
+  const handleSetTab = React.useCallback (
+    () => dispatch (setTab (TabId.Grouplist)),
+    [ dispatch ]
+  )
 
   return (
     <NavigationBarWrapper>
       <NavigationBarLeft>
-        <NavigationBarBack setTab={() => setTab (TabId.Grouplist)} />
+        <NavigationBarBack handleSetTab={handleSetTab} />
         <Text>{groupName}</Text>
       </NavigationBarLeft>
       <NavigationBarRight>
@@ -44,7 +61,13 @@ export function NavigationBarForGroup (props: NavigationBarForGroupProps) {
           icon="&#xE906;"
           onClick={openSettings}
           />
-        <SettingsContainer {...props} close={closeSettings} />
+        <SettingsContainer
+          l10n={l10n}
+          isSettingsOpen={isSettingsOpen}
+          platform={platform}
+          close={closeSettings}
+          checkForUpdates={checkForUpdates}
+          />
         <IconButton
           icon="&#xE911;"
           onClick={toggleDevtools}
