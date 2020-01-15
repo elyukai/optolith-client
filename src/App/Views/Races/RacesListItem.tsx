@@ -20,7 +20,7 @@ export interface RacesListItemProps {
   race: Record<RaceCombined>
 }
 
-export function RacesListItem (props: RacesListItemProps) {
+export const RacesListItem: React.FC<RacesListItemProps> = props => {
   const { currentId, race } = props
 
   const race_id = RaceCombinedA_.id (race)
@@ -30,13 +30,13 @@ export function RacesListItem (props: RacesListItemProps) {
   const handleRaceSelect =
     React.useCallback (
       () => dispatch (selectRace (race_id) (listToMaybe (RaceCombinedA_.variants (race)))),
-      [dispatch]
+      [ dispatch, race, race_id ]
     )
 
   const switchToCultures =
     React.useCallback (
       () => dispatch (setTab (TabId.Cultures)),
-      [dispatch]
+      [ dispatch ]
     )
 
   return (

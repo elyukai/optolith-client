@@ -14,6 +14,7 @@
  * @see Either
  */
 
+import { ReactNode } from "react";
 import { ifElse } from "../App/Utilities/ifElse";
 import { pipe } from "../App/Utilities/pipe";
 import { cnst, flip, ident } from "./Function";
@@ -843,27 +844,27 @@ export const INTERNAL_shallowEquals =
     (isNothing (x) && isNothing (y))
     || (isJust (x) && isJust (y) && x .value === y .value)
 
-type ReactElement = JSX.Element | null | string | number | (string | JSX.Element)[]
+// REACT-SPECIFIC FUNCTIONS
 
 /**
- * `maybeRNull :: (a -> b) -> Maybe a -> b`
+ * `maybeR :: (a -> b) -> Maybe a -> b | Null`
  *
- * ```haskell
- * maybeRNull == maybeR null
- * ```
+ * The function `maybeR f x` maps the function `f` over the inner value of `x`
+ * if `x` is a `Just` and then returns the result, otherwise it returns `null`.
  */
-export const maybeRNull = maybe<ReactElement> (null)
+export const maybeRNull = <A, B extends ReactNode> (f: (x: A) => B) => (x: Maybe<A>): B | null =>
+  maybe<B | null> (null) (f) (x)
 
 Maybe.maybeRNull = maybeRNull
 
 /**
- * `maybeRNullF :: Maybe a -> (a -> b) -> b`
+ * `maybeRF :: Maybe a -> (a -> b) -> b | Null`
  *
- * ```haskell
- * maybeRNull == flip (maybeR null)
- * ```
+ * The function `maybeRF x f` maps the function `f` over the inner value of `x`
+ * if `x` is a `Just` and then returns the result, otherwise it returns `null`.
  */
-export const maybeRNullF = flip (maybe<ReactElement> (null))
+export const maybeRNullF = <A> (x: Maybe<A>) => <B extends ReactNode> (f: (x: A) => B): B | null =>
+  maybe<B | null> (null) (f) (x)
 
 Maybe.maybeRNullF = maybeRNullF
 

@@ -42,7 +42,7 @@ export const ProfessionVariants: React.FC<ProfessionVariantsProps> = props => {
   const handleProfessionVariantSelect =
     React.useCallback (
       (id: Maybe<string>) => dispatch (selectProfessionVariant (id)),
-      [dispatch]
+      [ dispatch ]
     )
 
   const mvars =

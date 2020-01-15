@@ -89,7 +89,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
   const is_hcsel_disabled = React.useMemo (
     () => flength (hairColors) === 1
           && equals (hair_color) (bind (listToMaybe (hairColors)) (DOA.id)),
-    [hairColors, hair_color]
+    [ hairColors, hair_color ]
   )
 
   return (

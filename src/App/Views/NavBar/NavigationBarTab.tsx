@@ -1,25 +1,30 @@
 import * as React from "react";
 import { useDispatch } from "react-redux";
-import { elem, List } from "../../../Data/List";
+import { elem } from "../../../Data/List";
+import { Record } from "../../../Data/Record";
 import { setTab } from "../../Actions/LocationActions";
+import { NavigationBarTabOptions } from "../../Models/View/NavigationBarTabOptions";
 import { TabId } from "../../Utilities/LocationUtils";
-import { Tab, TabBaseProps } from "../Universal/Tab";
+import { Tab } from "../Universal/Tab";
 
-export interface NavigationBarTabProps extends TabBaseProps {
+const NBTOA = NavigationBarTabOptions.A
+
+interface Props {
+  className?: string
   currentTab: TabId
-  id: TabId
-  subTabs?: List<TabId>
+  options: Record<NavigationBarTabOptions>
 }
 
-export const NavigationBarTab: React.FC<NavigationBarTabProps> = props => {
+export const NavigationBarTab: React.FC<Props> = props => {
   const {
     className,
     currentTab,
-    disabled,
-    label,
-    id,
-    subTabs,
+    options,
   } = props
+
+  const id = NBTOA.id (options)
+  const label = NBTOA.label (options)
+  const subTabs = NBTOA.subTabs (options)
 
   const dispatch = useDispatch ()
 
@@ -36,7 +41,6 @@ export const NavigationBarTab: React.FC<NavigationBarTabProps> = props => {
       active={isActive}
       onClick={handleSetTab}
       className={className}
-      disabled={disabled}
       label={label}
       />
   )

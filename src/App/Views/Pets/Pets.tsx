@@ -10,6 +10,7 @@ import { Attribute } from "../../Models/Wiki/Attribute";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { ReactReturn } from "../../Utilities/ReactUtils";
 import { BorderButton } from "../Universal/BorderButton";
 import { ListView } from "../Universal/List";
 import { Options } from "../Universal/Options";
@@ -17,7 +18,6 @@ import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
 import { PetEditor } from "./PetEditor";
 import { PetsListItem } from "./PetsListItem";
-import { ReactReturn } from "../../Utilities/ReactUtils";
 
 export interface PetsOwnProps {
   l10n: L10nRecord
@@ -77,11 +77,102 @@ export interface PetsDispatchProps {
 export type PetsProps = PetsStateProps & PetsDispatchProps & PetsOwnProps
 
 export function Pets (props: PetsProps) {
-  const { createPet, l10n, pets } = props
+  const {
+    l10n,
+
+    attributes,
+    pets,
+    petInEditor,
+    isEditPetAvatarOpen,
+    isInCreation,
+
+    addPet,
+    createPet,
+    editPet,
+    closePetEditor,
+    savePet,
+    deletePet,
+    openEditPetAvatar,
+    closeEditPetAvatar,
+
+    setAvatar,
+    deleteAvatar,
+    setName,
+    setSize,
+    setType,
+    setSpentAp,
+    setTotalAp,
+    setCourage,
+    setSagacity,
+    setIntuition,
+    setCharisma,
+    setDexterity,
+    setAgility,
+    setConstitution,
+    setStrength,
+    setLp,
+    setAe,
+    setSpi,
+    setTou,
+    setPro,
+    setIni,
+    setMov,
+    setAttack,
+    setAt,
+    setPa,
+    setDp,
+    setReach,
+    setActions,
+    setSkills,
+    setAbilities,
+    setNotes,
+  } = props
 
   return (
     <Page id="pets">
-      <PetEditor {...props} />
+      <PetEditor
+        attributes={attributes}
+        petInEditor={petInEditor}
+        l10n={l10n}
+        isEditPetAvatarOpen={isEditPetAvatarOpen}
+        isInCreation={isInCreation}
+        closePetEditor={closePetEditor}
+        addPet={addPet}
+        savePet={savePet}
+        openEditPetAvatar={openEditPetAvatar}
+        closeEditPetAvatar={closeEditPetAvatar}
+        setAvatar={setAvatar}
+        deleteAvatar={deleteAvatar}
+        setName={setName}
+        setSize={setSize}
+        setType={setType}
+        setSpentAp={setSpentAp}
+        setTotalAp={setTotalAp}
+        setCourage={setCourage}
+        setSagacity={setSagacity}
+        setIntuition={setIntuition}
+        setCharisma={setCharisma}
+        setDexterity={setDexterity}
+        setAgility={setAgility}
+        setConstitution={setConstitution}
+        setStrength={setStrength}
+        setLp={setLp}
+        setAe={setAe}
+        setSpi={setSpi}
+        setTou={setTou}
+        setPro={setPro}
+        setIni={setIni}
+        setMov={setMov}
+        setAttack={setAttack}
+        setAt={setAt}
+        setPa={setPa}
+        setDp={setDp}
+        setReach={setReach}
+        setActions={setActions}
+        setSkills={setSkills}
+        setAbilities={setAbilities}
+        setNotes={setNotes}
+        />
       {
         Maybe.elem (0) (fmap (size) (pets))
           ? (
@@ -100,7 +191,14 @@ export function Pets (props: PetsProps) {
             pets,
             fmap (pipe (
               elems,
-              map (e => <PetsListItem {...props} pet={e} key={Pet.A.id (e)} />),
+              map (e => (
+                <PetsListItem
+                  key={Pet.A.id (e)}
+                  pet={e}
+                  editPet={editPet}
+                  deletePet={deletePet}
+                  />
+              )),
               toArray,
               x => <>{x}</>
             )),

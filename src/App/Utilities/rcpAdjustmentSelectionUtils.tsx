@@ -2,28 +2,22 @@ import * as React from "react";
 import { equals } from "../../Data/Eq";
 import { flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
-import { any, elemF, filter, List } from "../../Data/List";
+import { any, filter, List } from "../../Data/List";
 import { bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, join, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, maybe, maybeToNullable, Nothing } from "../../Data/Maybe";
-import { elems, lookup, lookupF, OrderedMap, size, sum } from "../../Data/OrderedMap";
-import { OrderedSet } from "../../Data/OrderedSet";
+import { elems, lookup, lookupF, OrderedMap, sum } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { fst, Pair, snd } from "../../Data/Tuple";
 import { SpecialAbilityId } from "../Constants/Ids";
-import { LanguagesSelectionListItem } from "../Models/Hero/LanguagesSelectionListItem";
+import { LanguagesSelectionListItemOptions } from "../Models/Hero/LanguagesSelectionListItem";
 import { Rules } from "../Models/Hero/Rules";
 import { ScriptsSelectionListItem } from "../Models/Hero/ScriptsSelectionListItem";
-import { Cantrip } from "../Models/Wiki/Cantrip";
-import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
 import { Culture } from "../Models/Wiki/Culture";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement";
 import { Profession } from "../Models/Wiki/Profession";
-import { CantripsSelection } from "../Models/Wiki/professionSelections/CantripsSelection";
-import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
 import { CursesSelection } from "../Models/Wiki/professionSelections/CursesSelection";
 import { LanguagesScriptsSelection } from "../Models/Wiki/professionSelections/LanguagesScriptsSelection";
 import { ProfessionSelections } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
-import { CombatTechniquesSecondSelection } from "../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
 import { SkillsSelection } from "../Models/Wiki/professionSelections/SkillsSelection";
 import { SpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection";
 import { TerrainKnowledgeSelection } from "../Models/Wiki/professionSelections/TerrainKnowledgeSelection";
@@ -33,9 +27,6 @@ import { Spell } from "../Models/Wiki/Spell";
 import { SelectOption } from "../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
-import { SelectionsCantrips } from "../Views/RCPOptionSelections/SelectionsCantrips";
-import { SelectionsCombatTechniques } from "../Views/RCPOptionSelections/SelectionsCombatTechniques";
-import { SelectionsCurses } from "../Views/RCPOptionSelections/SelectionsCurses";
 import { SelectionsLanguagesAndScripts } from "../Views/RCPOptionSelections/SelectionsLanguagesAndScripts";
 import { SelectionsSkills } from "../Views/RCPOptionSelections/SelectionsSkills";
 import { SelectionsSkillSpecialization } from "../Views/RCPOptionSelections/SelectionsSkillSpecialization";
@@ -44,10 +35,9 @@ import { Checkbox } from "../Views/Universal/Checkbox";
 import { Dropdown, DropdownOption } from "../Views/Universal/Dropdown";
 import { findSelectOption } from "./Activatable/selectionUtils";
 import { translate } from "./I18n";
-import { pipe, pipe_ } from "./pipe";
-import { filterByAvailability, isAvailable } from "./RulesUtils";
+import { pipe } from "./pipe";
+import { isAvailable } from "./RulesUtils";
 import { sortRecordsByName } from "./sortBy";
-import { getAllWikiEntriesByGroup } from "./WikiUtils";
 
 const WA = WikiModel.A
 const SAA = SpecialAbility.A
@@ -56,10 +46,7 @@ const PA = Profession.A
 const SA = Spell.A
 const SOA = SelectOption.A
 const LSSA = LanguagesScriptsSelection.A
-const CTSA = CombatTechniquesSelection.A
-const CTSSA = CombatTechniquesSecondSelection.A
 const CSA = CursesSelection.A
-const CaSA = CantripsSelection.A
 const SSA = SkillsSelection.A
 
 export const getBuyScriptElement =
@@ -235,7 +222,7 @@ export const getLanguagesAndScriptsElementAndValidation =
 
           return liftM2<
             List<Record<ScriptsSelectionListItem>>,
-            List<Record<LanguagesSelectionListItem>>,
+            List<Record<LanguagesSelectionListItemOptions>>,
             Pair<number, JSX.Element>
           >
             (scriptsList => languagesList => {
@@ -265,142 +252,6 @@ export const getLanguagesAndScriptsElementAndValidation =
         (ProfessionSelections.AL[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (professionSelections))
         (lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.Literacy))
         (lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.Language))
-    )
-
-export const getCursesElementAndValidation =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
-  (rules: Record<Rules>) =>
-  (cursesActive: OrderedMap<string, number>) =>
-  (adjustCurse: (id: string) => (maybeOption: Maybe<"add" | "remove">) => void) =>
-    pipe (
-      ProfessionSelections.AL[ProfessionSelectionIds.CURSES],
-      fmap (selection => {
-             const list =
-               pipe_ (
-                 getAllWikiEntriesByGroup (WA.spells (wiki)) (List (3)),
-                 filterByAvailability (SA.src) (Pair (WA.books (wiki), rules)),
-                 sortRecordsByName (l10n)
-               )
-
-             const apLeft = CSA.value (selection) - (size (cursesActive) + sum (cursesActive)) * 2
-
-             return Pair (
-               apLeft,
-               (
-                 <SelectionsCurses
-                   list={list}
-                   active={cursesActive}
-                   apTotal={CSA.value (selection)}
-                   apLeft={apLeft}
-                   change={adjustCurse}
-                   l10n={l10n}
-                   />
-               )
-             )
-           })
-    )
-
-export const getCombatTechniquesElementAndValidation =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
-  (combatTechniquesActive: OrderedSet<string>) =>
-  (combatTechniquesSecondActive: OrderedSet<string>) =>
-  (switchCombatTechnique: (id: string) => void) =>
-    pipe (
-      ProfessionSelections.A[ProfessionSelectionIds.COMBAT_TECHNIQUES],
-      fmap (selection => {
-             const list =
-               pipe (
-                      WA.combatTechniques,
-                      elems,
-                      filter (pipe (CombatTechnique.A.id, elemF (CTSA.sid (selection))))
-                    )
-                    (wiki)
-
-             // fst: isValidSelection
-             return Pair (
-               OrderedSet.size (combatTechniquesActive) === CTSA.amount (selection),
-               (
-                 <SelectionsCombatTechniques
-                   list={list}
-                   active={combatTechniquesActive}
-                   value={CTSA.value (selection)}
-                   amount={CTSA.amount (selection)}
-                   disabled={combatTechniquesSecondActive}
-                   change={switchCombatTechnique}
-                   l10n={l10n}
-                   />
-               )
-             )
-           })
-    )
-
-export const getCombatTechniquesSecondElementAndValidation =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
-  (combatTechniquesActive: OrderedSet<string>) =>
-  (combatTechniquesSecondActive: OrderedSet<string>) =>
-  (switchSecondCombatTechnique: (id: string) => void) =>
-    pipe (
-      ProfessionSelections.AL[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND],
-      fmap (selection => {
-            const list =
-              pipe (
-                     WA.combatTechniques,
-                     elems,
-                     filter (pipe (CombatTechnique.A.id, elemF (CTSSA.sid (selection))))
-                   )
-                   (wiki)
-
-            // fst: isValidSelection
-            return Pair (
-              OrderedSet.size (combatTechniquesSecondActive) === CTSSA.amount (selection),
-              (
-                <SelectionsCombatTechniques
-                  list={list}
-                  active={combatTechniquesSecondActive}
-                  value={CTSSA.value (selection)}
-                  amount={CTSSA.amount (selection)}
-                  disabled={combatTechniquesActive}
-                  change={switchSecondCombatTechnique}
-                  l10n={l10n}
-                  />
-              )
-            )
-          })
-    )
-
-export const getCantripsElementAndValidation =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
-  (cantripsActive: OrderedSet<string>) =>
-  (switchCantrip: (id: string) => void) =>
-    pipe (
-      ProfessionSelections.A[ProfessionSelectionIds.CANTRIPS],
-      fmap (selection => {
-            const list =
-              pipe_ (
-                wiki,
-                WA.cantrips,
-                elems,
-                filter (pipe (Cantrip.A.id, elemF (CaSA.sid (selection))))
-              )
-
-            // fst: isValidSelection
-            return Pair (
-              OrderedSet.size (cantripsActive) === CaSA.amount (selection),
-              (
-                <SelectionsCantrips
-                  list={list}
-                  active={cantripsActive}
-                  num={CaSA.amount (selection)}
-                  change={switchCantrip}
-                  l10n={l10n}
-                  />
-              )
-            )
-          })
     )
 
 export const getSkillSpecializationElement =

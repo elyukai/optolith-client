@@ -12,12 +12,12 @@ interface Props {
 export const OverviewNameChange: React.FC<Props> = props => {
   const { name: defaultName, change, cancel } = props
 
-  const [name, setName] = React.useState (defaultName)
+  const [ name, setName ] = React.useState (defaultName)
 
   const handleSubmit =
     React.useCallback (
       () => change (name),
-      [change, name]
+      [ change, name ]
     )
 
   const handleEnter =
@@ -27,7 +27,7 @@ export const OverviewNameChange: React.FC<Props> = props => {
           change (name)
         }
       },
-      [change, name]
+      [ change, name ]
     )
 
   return (

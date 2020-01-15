@@ -26,7 +26,7 @@ export const RaceVariants: React.FC<RaceVariantsProps> = props => {
   const handleSelectRaceVariant =
     React.useCallback (
       (id: string) => dispatch (selectRaceVariant (id)),
-      [dispatch]
+      [ dispatch ]
     )
 
   return pipe_ (

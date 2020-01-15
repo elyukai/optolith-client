@@ -18,8 +18,8 @@ interface OverviewAddAPProps {
 export const OverviewAddAP: React.FC<OverviewAddAPProps> = props => {
   const { addAdventurePoints, isRemovingEnabled, l10n, isOpen, close } = props
 
-  const [value, setValue] = React.useState ("")
-  const [prevIsOpen, setPrevIsOpen] = React.useState (false)
+  const [ value, setValue ] = React.useState ("")
+  const [ prevIsOpen, setPrevIsOpen ] = React.useState (false)
 
   if (prevIsOpen !== isOpen) {
     setValue ("")
@@ -35,7 +35,7 @@ export const OverviewAddAP: React.FC<OverviewAddAPProps> = props => {
           addAdventurePoints (fromJust (mvalue))
         }
       },
-      [addAdventurePoints, value]
+      [ addAdventurePoints, value ]
     )
 
   return (

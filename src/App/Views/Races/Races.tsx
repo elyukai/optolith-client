@@ -43,7 +43,7 @@ export interface RacesDispatchProps {
 
 export type RacesProps = RacesStateProps & RacesDispatchProps & RacesOwnProps
 
-export function Races (props: RacesProps) {
+export const Races: React.FC<RacesProps> = props => {
   const {
     currentId,
     currentVariantId,

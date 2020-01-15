@@ -61,13 +61,13 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
   const setCustomTargetDomain =
     React.useCallback (
       (text: string) => pipe_ (text, Just, setTargetDomain),
-      [setTargetDomain]
+      [ setTargetDomain ]
     )
 
   const setLesserPactLevel =
     React.useCallback (
       () => checked ? setPactLevel (Just (1)) : setPactLevel (Just (0)),
-      [checked, setPactLevel]
+      [ checked, setPactLevel ]
     )
 
   return (

@@ -33,7 +33,7 @@ export interface ProfessionsListItemProps {
 
 const PCA_ = ProfessionCombinedA_
 
-export function ProfessionsListItem (props: ProfessionsListItemProps) {
+export const ProfessionsListItem: React.FC<ProfessionsListItemProps> = props => {
   const {
     showAddSlidein,
     currentProfessionId,
@@ -59,7 +59,7 @@ export function ProfessionsListItem (props: ProfessionsListItemProps) {
   const handleProfessionSelect =
     React.useCallback (
       () => dispatch (selectProfession (id)),
-      [dispatch]
+      [ dispatch, id ]
     )
 
   return (

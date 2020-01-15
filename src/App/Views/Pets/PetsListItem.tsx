@@ -16,8 +16,18 @@ export interface PetsListItemProps {
   deletePet (id: string): void
 }
 
-export function PetsListItem (props: PetsListItemProps) {
+export const PetsListItem: React.FC<PetsListItemProps> = props => {
   const { deletePet, editPet, pet } = props
+
+  const handleEditPet = React.useCallback (
+    () => editPet (Pet.A.id (pet)),
+    [ editPet, pet ]
+  )
+
+  const handleDeletePet = React.useCallback (
+    () => deletePet (Pet.A.id (pet)),
+    [ deletePet, pet ]
+  )
 
   return (
     <ListItem>
@@ -27,10 +37,10 @@ export function PetsListItem (props: PetsListItemProps) {
           <span>{renderMaybe (Pet.A.type (pet))}</span>
         </VerticalList>
       </ListItemName>
-      <ListItemSeparator/>
+      <ListItemSeparator />
       <ListItemButtons>
-        <IconButton icon="&#xE90b;" onClick={() => deletePet (Pet.A.id (pet))} />
-        <IconButton icon="&#xE90c;" onClick={() => editPet (Pet.A.id (pet))} />
+        <IconButton icon="&#xE90b;" onClick={handleDeletePet} />
+        <IconButton icon="&#xE90c;" onClick={handleEditPet} />
       </ListItemButtons>
     </ListItem>
   )

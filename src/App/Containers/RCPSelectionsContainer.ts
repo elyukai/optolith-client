@@ -1,34 +1,63 @@
 import { connect } from "react-redux";
+import { List } from "../../Data/List";
+import { Maybe } from "../../Data/Maybe";
+import { Record } from "../../Data/Record";
 import { ReduxDispatch } from "../Actions/Actions";
 import * as ProfessionActions from "../Actions/ProfessionActions";
+import { HeroModelRecord } from "../Models/Hero/HeroModel";
 import { Selections as SelectionsInterface } from "../Models/Hero/heroTypeHelpers";
+import { Culture } from "../Models/Wiki/Culture";
+import { L10nRecord } from "../Models/Wiki/L10n";
+import { Profession } from "../Models/Wiki/Profession";
+import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
+import { Race } from "../Models/Wiki/Race";
+import { WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getRace } from "../Selectors/rcpSelectors";
 import { getAllSpellsForManualGuildMageSelect } from "../Selectors/spellsSelectors";
-import { getRules, getWiki } from "../Selectors/stateSelectors";
-import { RCPOptionSelections, SelectionsDispatchProps, SelectionsOwnProps, SelectionsStateProps } from "../Views/RCPOptionSelections/Selections";
+import { getWiki } from "../Selectors/stateSelectors";
+import { RCPOptionSelectionsEnsure } from "../Views/RCPOptionSelections/RCPOptionSelectionsEnsure";
+import { DropdownOption } from "../Views/Universal/Dropdown";
+
+interface OwnProps {
+  hero: HeroModelRecord
+  l10n: L10nRecord
+  close (): void
+}
+
+interface StateProps {
+  wiki: WikiModelRecord
+  race: Maybe<Record<Race>>
+  culture: Maybe<Record<Culture>>
+  profession: Maybe<Record<Profession>>
+  professionVariant: Maybe<Record<ProfessionVariant>>
+  munfamiliar_spells: Maybe<List<Record<DropdownOption>>>
+}
+
+interface DispatchProps {
+  setSelections (selections: SelectionsInterface): void
+}
 
 const mapStateToProps =
-  (state: AppStateRecord, ownProps: SelectionsOwnProps): SelectionsStateProps => ({
-    currentRace: getRace (state, ownProps),
-    currentCulture: getCurrentCulture (state),
-    currentProfession: getCurrentProfession (state),
-    currentProfessionVariant: getCurrentProfessionVariant (state),
+  (state: AppStateRecord, ownProps: OwnProps): StateProps => ({
+    race: getRace (state, ownProps),
+    culture: getCurrentCulture (state),
+    profession: getCurrentProfession (state),
+    professionVariant: getCurrentProfessionVariant (state),
     wiki: getWiki (state),
     munfamiliar_spells: getAllSpellsForManualGuildMageSelect (state, ownProps),
-    rules: getRules (state, ownProps),
   })
 
-const mapDispatchToProps = (dispatch: ReduxDispatch): SelectionsDispatchProps => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch): DispatchProps => ({
   setSelections (selections: SelectionsInterface) {
     dispatch (ProfessionActions.setSelections (selections))
   },
 })
 
 export const connectSelections =
-  connect<SelectionsStateProps, SelectionsDispatchProps, SelectionsOwnProps, AppStateRecord> (
+  connect<StateProps, DispatchProps, OwnProps, AppStateRecord> (
     mapStateToProps,
     mapDispatchToProps
   )
 
-export const SelectionsContainer = connectSelections (RCPOptionSelections)
+export const SelectionsContainer = connectSelections (RCPOptionSelectionsEnsure)

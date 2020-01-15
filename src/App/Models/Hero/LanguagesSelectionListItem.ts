@@ -1,7 +1,7 @@
 import { fromDefault } from "../../../Data/Record";
 
-export interface LanguagesSelectionListItem {
-  "@@name": "LanguagesSelectionListItem"
+export interface LanguagesSelectionListItemOptions {
+  "@@name": "LanguagesSelectionListItemOptions"
   id: number
   name: string
   native: boolean
@@ -10,9 +10,9 @@ export interface LanguagesSelectionListItem {
 /**
  * Create a new `LanguagesSelectionListItem` object.
  */
-export const LanguagesSelectionListItem =
-  fromDefault ("LanguagesSelectionListItem")
-              <LanguagesSelectionListItem> ({
+export const LanguagesSelectionListItemOptions =
+  fromDefault ("LanguagesSelectionListItemOptions")
+              <LanguagesSelectionListItemOptions> ({
                 id: 0,
                 name: "",
                 native: false,

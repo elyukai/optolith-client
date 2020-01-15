@@ -26,14 +26,14 @@ import Maybe = Internals.Maybe
 
 const elem =
   <A> (e: A) => (xs: OrderedSet<A>): boolean =>
-    [...xs .value] .some (equals (e))
+    [ ...xs .value ] .some (equals (e))
 
 const foldl =
   <A, B>
   (f: (acc: B) => (current: A) => B) =>
   (initial: B) =>
   (xs: OrderedSet<A>): B =>
-    [...xs .value] .reduce<B> ((acc, e) => f (acc) (e), initial)
+    [ ...xs .value ] .reduce<B> ((acc, e) => f (acc) (e), initial)
 
 
 // CONSTRUCTOR
@@ -93,7 +93,7 @@ export const fromDefault =
   <Name extends string>(name: Name) =>
   <A extends RecordIBase<Name>> (def: Required<Omit<A, "@@name">>): RecordCreator<A> => {
     const defaultValues = Object.freeze (Object.entries (def) .reduce<Required<A>> (
-      (acc, [key, value]) => {
+      (acc, [ key, value ]) => {
         // tslint:disable-next-line: strict-type-predicates
         if (typeof key !== "string") {
           throw new TypeError (
