@@ -4,6 +4,7 @@ import { Maybe } from "../../../Data/Maybe";
 import { elems } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
+import { Tuple } from "../../../Data/Tuple";
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { CombatTechniquesSelection } from "../../Models/Wiki/professionSelections/CombatTechniquesSelection";
@@ -21,13 +22,13 @@ const CTSSA = CombatTechniquesSecondSelection.A
 
 export const isFirstCombatTechniqueSelectionValid =
   (actives: OrderedSet<string>) =>
-  (selection: Record<CombatTechniquesSelection>): boolean =>
-    OrderedSet.size (actives) === CTSA.amount (selection)
+  (selection: Record<CombatTechniquesSelection>): Tuple<[boolean]> =>
+    Tuple (OrderedSet.size (actives) === CTSA.amount (selection))
 
 export const isSecondCombatTechniqueSelectionValid =
   (actives: OrderedSet<string>) =>
-  (selection: Record<CombatTechniquesSecondSelection>): boolean =>
-    OrderedSet.size (actives) === CTSSA.amount (selection)
+  (selection: Record<CombatTechniquesSecondSelection>): Tuple<[boolean]> =>
+    Tuple (OrderedSet.size (actives) === CTSSA.amount (selection))
 
 export const getFirstCombatTechniques =
   (wiki: WikiModelRecord) =>

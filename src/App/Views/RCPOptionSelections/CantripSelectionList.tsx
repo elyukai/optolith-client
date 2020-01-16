@@ -3,6 +3,7 @@ import { elemF, filter, List, map, subscript, toArray } from "../../../Data/List
 import { elems } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
+import { Tuple } from "../../../Data/Tuple";
 import { Cantrip } from "../../Models/Wiki/Cantrip";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { CantripsSelection } from "../../Models/Wiki/professionSelections/CantripsSelection";
@@ -18,8 +19,8 @@ const CA = Cantrip.A
 
 export const isCantripsSelectionValid =
   (actives: OrderedSet<string>) =>
-  (selection: Record<CantripsSelection>): boolean =>
-    OrderedSet.size (actives) === CSA.amount (selection)
+  (selection: Record<CantripsSelection>): Tuple<[boolean]> =>
+    Tuple (OrderedSet.size (actives) === CSA.amount (selection))
 
 const getCantrips =
   (wiki: WikiModelRecord) =>

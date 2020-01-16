@@ -1,14 +1,16 @@
 import * as React from "react";
+import { not } from "../../../Data/Bool";
 import { notEquals } from "../../../Data/Eq";
 import { cnst } from "../../../Data/Function";
-import { fmap, fmapF } from "../../../Data/Functor";
+import { fmap } from "../../../Data/Functor";
 import { flength, List, notNullStr } from "../../../Data/List";
-import { bindF, ensure, fromJust, isJust, isNothing, Just, mapMaybe, Maybe, maybe, maybeToNullable, maybe_, Nothing, or } from "../../../Data/Maybe";
-import { add, dec, gt, inc, lt, subtract } from "../../../Data/Num";
+import { bindF, ensure, fromJust, isJust, isNothing, Just, mapMaybe, Maybe, maybe, maybeToNullable, maybe_, Nothing } from "../../../Data/Maybe";
+import { add, dec, gt, inc, subtract } from "../../../Data/Num";
 import { adjust, alter, lookup, lookupF, OrderedMap, size } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
 import { first, fst, Pair, second, snd } from "../../../Data/Tuple";
+import { sel2 } from "../../../Data/Tuple/Select";
 import { ProfessionId } from "../../Constants/Ids";
 import { Selections as SelectionsInterface } from "../../Models/Hero/heroTypeHelpers";
 import { Rules } from "../../Models/Hero/Rules";
@@ -28,7 +30,7 @@ import { translate } from "../../Utilities/I18n";
 import { getAllAdjustmentSelections } from "../../Utilities/mergeRcpAdjustmentSelections";
 import { sign } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
-import { getBuyScriptElement, getGuildMageUnfamiliarSpellSelectionElement, getLanguagesAndScriptsElementAndValidation, getMainScriptSelectionElement, getMotherTongueSelectionElement, getSkillsElementAndValidation, getSkillSpecializationElement, getTerrainKnowledgeElement } from "../../Utilities/rcpAdjustmentSelectionUtils";
+import { getBuyScriptElement, getGuildMageUnfamiliarSpellSelectionElement, getMainScriptSelectionElement, getMotherTongueSelectionElement, getTerrainKnowledgeElement } from "../../Utilities/rcpAdjustmentSelectionUtils";
 import { getSelPair } from "../../Utilities/RCPSelectionsUtils";
 import { BorderButton } from "../Universal/BorderButton";
 import { Checkbox } from "../Universal/Checkbox";
@@ -38,6 +40,9 @@ import { Slidein } from "../Universal/Slidein";
 import { CantripSelectionList, isCantripsSelectionValid } from "./CantripSelectionList";
 import { CombatTechniqueSelectionList, getFirstCombatTechniques, getSecondCombatTechniques, isFirstCombatTechniqueSelectionValid, isSecondCombatTechniqueSelectionValid } from "./CombatTechniqueSelectionList";
 import { CursesSelectionList, isCursesSelectionValid } from "./CursesSelectionList";
+import { isLanguagesScriptsSelectionValid, LanguagesScriptsSelectionLists } from "./LanguagesScriptsSelectionLists";
+import { isSkillSelectionValid, SkillSelectionList } from "./SkillSelectionList";
+import { isSkillSpecializationSelectionValid, SkillSpecializationSelectionList } from "./SkillSpecializationSelectionList";
 
 export interface RCPOptionSelectionsProps {
   l10n: L10nRecord
@@ -81,8 +86,10 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
   const [ combatTechniquesSecondActive, setCombatTechniquesSecond ] =
     React.useState<OrderedSet<string>> (OrderedSet.empty)
   const [ cursesActive, setCurses ] = React.useState<OrderedMap<string, number>> (OrderedMap.empty)
-  const [ languages, setLanguages ] = React.useState<OrderedMap<number, number>> (OrderedMap.empty)
-  const [ scripts, setScripts ] = React.useState<OrderedMap<number, number>> (OrderedMap.empty)
+  const [ languagesActive, setLanguages ] =
+    React.useState<OrderedMap<number, number>> (OrderedMap.empty)
+  const [ scriptsActive, setScripts ] =
+    React.useState<OrderedMap<number, number>> (OrderedMap.empty)
   const [ skillsActive, setSkills ] = React.useState<OrderedMap<string, number>> (OrderedMap.empty)
   // first: selection id, second: user input
   const [ specialization, setSpecialization ] =
@@ -99,29 +106,28 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
   )
 
   const handleSwitchIsCulturalPackageEnabled = React.useCallback (
-    () => setUseCulturePackage (!useCulturePackage),
-    [ useCulturePackage ]
+    () => setUseCulturePackage (not),
+    []
   )
 
   const handleSwitchIsBuyingMainScriptEnabled = React.useCallback (
-    () => setIsBuyingMainScriptEnabled (!isBuyingMainScriptEnabled),
-    [ isBuyingMainScriptEnabled ]
+    () => setIsBuyingMainScriptEnabled (not),
+    []
   )
 
   const handleSwitchCantrip = React.useCallback (
-    (id: string) => setCantrips (OrderedSet.toggle (id) (cantripsActive)),
-    [ cantripsActive ]
+    (id: string) => setCantrips (OrderedSet.toggle (id)),
+    []
   )
 
   const handleSwitchCombatTechnique = React.useCallback (
-    (id: string) => setCombatTechniques (OrderedSet.toggle (id) (combatTechniquesActive)),
-    [ combatTechniquesActive ]
+    (id: string) => setCombatTechniques (OrderedSet.toggle (id)),
+    []
   )
 
   const handleSwitchSecondCombatTechnique = React.useCallback (
-    (id: string) => setCombatTechniquesSecond (OrderedSet.toggle (id)
-                                                                 (combatTechniquesSecondActive)),
-    [ combatTechniquesSecondActive ]
+    (id: string) => setCombatTechniquesSecond (OrderedSet.toggle (id)),
+    []
   )
 
   const handleAdjustCurse = React.useCallback (
@@ -130,35 +136,33 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
         const option = fromJust (moption)
 
         if (option === "add") {
-          setCurses (adjust (inc) (id) (cursesActive))
+          setCurses (adjust (inc) (id))
         }
         else {
-          setCurses (adjust (dec) (id) (cursesActive))
+          setCurses (adjust (dec) (id))
         }
       }
       else {
         setCurses (alter (maybe<Maybe<number>> (Just (0)) (cnst (Nothing)))
-                         (id)
-                         (cursesActive))
+                         (id))
       }
     },
-    [ cursesActive ]
+    []
   )
 
   const handleAdjustLanguage = React.useCallback (
     (id: number) => (level: Maybe<number>) => {
-      setLanguages (alter (cnst (level)) (id) (languages))
+      setLanguages (alter (cnst (level)) (id))
     },
-    [ languages ]
+    []
   )
 
-  const handleAdjustScript = React.useCallback (
+  const handleToggleScript = React.useCallback (
     (id: number) => (ap: number) => {
       setScripts (alter (maybe<Maybe<number>> (Just (ap)) (cnst (Nothing)))
-                        (id)
-                        (scripts))
+                        (id))
     },
-    [ scripts ]
+    []
   )
 
   const handleSetSpecializationSkill = React.useCallback (
@@ -169,13 +173,18 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
     []
   )
 
-  const handleSetSpecialization = React.useCallback (
-    (value: number | string) => {
-      setSpecialization (typeof value === "number"
-                         ? first (() => Just (value)) (specialization)
-                         : second (() => value) (specialization))
+  const handleSetSpecializationApplicationId = React.useCallback (
+    (value: number) => {
+      setSpecialization (first (() => Just (value)))
     },
-    [ specialization ]
+    []
+  )
+
+  const handleSetSpecializationApplicationString = React.useCallback (
+    (value: string) => {
+      setSpecialization (second (() => value))
+    },
+    []
   )
 
   const handleAddSkillPoint = React.useCallback (
@@ -187,10 +196,9 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                            lookup (id),
                            fmap (pipe (Skill.A.ic, add (Maybe.sum (skill))))
                          ))
-                       (id)
-                       (skillsActive))
+                       (id))
     },
-    [ skillsActive, wiki ]
+    [ wiki ]
   )
 
   const handleRemoveSkillPoint = React.useCallback (
@@ -202,10 +210,9 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                            lookup (id),
                            bindF (pipe (Skill.A.ic, subtract (Maybe.sum (skill)), ensure (gt (0))))
                          ))
-                       (id)
-                       (skillsActive))
+                       (id))
     },
-    [ skillsActive, wiki ]
+    [ wiki ]
   )
 
   const handleSetTerrainKnowledge = React.useCallback (
@@ -233,8 +240,8 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
           combatTechniques: combatTechniquesActive,
           combatTechniquesSecond: combatTechniquesSecondActive,
           curses: cursesActive,
-          languages,
-          scripts,
+          languages: languagesActive,
+          scripts: scriptsActive,
           skills: skillsActive,
           specializationSkillId,
           terrainKnowledge: terrainKnowledgeActive,
@@ -254,11 +261,11 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
       combatTechniquesSecondActive,
       cursesActive,
       isBuyingMainScriptEnabled,
-      languages,
+      languagesActive,
       mainScript,
       motherTongue,
       prof_sels,
-      scripts,
+      scriptsActive,
       selectedUnfamiliarSpell,
       setSelections,
       skillsActive,
@@ -284,7 +291,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
    */
   const isScriptSelectionNeeded = Pair (scriptsListLength > 0, scriptsListLength > 1)
 
-  const isAnyLanguageOrScriptSelected = size (languages) > 0 || size (scripts) > 0
+  const isAnyLanguageOrScriptSelected = size (languagesActive) > 0 || size (scriptsActive) > 0
 
   const buyScriptElement = getBuyScriptElement (l10n)
                                                (wiki)
@@ -295,29 +302,38 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                                                (handleSwitchIsBuyingMainScriptEnabled)
 
   const languagesAndScripts =
-    getLanguagesAndScriptsElementAndValidation (l10n)
-                                               (wiki)
-                                               (rules)
-                                               (culture)
-                                               (languages)
-                                               (scripts)
-                                               (prof_sels)
-                                               (mainScript)
-                                               (motherTongue)
-                                               (isBuyingMainScriptEnabled)
-                                               (isMotherTongueSelectionNeeded)
-                                               (isScriptSelectionNeeded)
-                                               (handleAdjustLanguage)
-                                               (handleAdjustScript)
+    getSelPair (isLanguagesScriptsSelectionValid (languagesActive) (scriptsActive))
+               ((selection, res) => (
+                 <LanguagesScriptsSelectionLists
+                   l10n={l10n}
+                   wiki={wiki}
+                   rules={rules}
+                   ap_left={sel2 (res)}
+                   culture={culture}
+                   isBuyingMainScriptEnabled={isBuyingMainScriptEnabled}
+                   isMotherTongueSelectionNeeded={isMotherTongueSelectionNeeded}
+                   isScriptSelectionNeeded={isScriptSelectionNeeded}
+                   languagesActive={languagesActive}
+                   mainScript={mainScript}
+                   motherTongue={motherTongue}
+                   scriptsActive={scriptsActive}
+                   selection={selection}
+                   toggleScript={handleToggleScript}
+                   adjustLanguage={handleAdjustLanguage}
+                   />
+               ))
+               (PSA[ProfessionSelectionIds.LANGUAGES_SCRIPTS])
+               (prof_sels)
 
   const curses =
     getSelPair (isCursesSelectionValid (cursesActive))
-               (selection => (
+               ((selection, res) => (
                  <CursesSelectionList
                    l10n={l10n}
                    wiki={wiki}
                    rules={rules}
                    active={cursesActive}
+                   ap_left={sel2 (res)}
                    selection={selection}
                    adjustCurseValue={handleAdjustCurse}
                    />
@@ -372,20 +388,38 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                (prof_sels)
 
   const skillSpecialization =
-   getSkillSpecializationElement (l10n)
-                                 (wiki)
-                                 (specialization)
-                                 (specializationSkillId)
-                                 (handleSetSpecialization)
-                                 (handleSetSpecializationSkill)
-                                 (prof_sels)
+    getSelPair (isSkillSpecializationSelectionValid (specialization)
+                                                    (specializationSkillId))
+               (selection => (
+                 <SkillSpecializationSelectionList
+                   activeApplication={specialization}
+                   activeSkillId={specializationSkillId}
+                   l10n={l10n}
+                   selection={selection}
+                   setApplicationId={handleSetSpecializationApplicationId}
+                   setApplicationString={handleSetSpecializationApplicationString}
+                   setSkillId={handleSetSpecializationSkill}
+                   wiki={wiki}
+                   />
+               ))
+               (PSA[ProfessionSelectionIds.SPECIALIZATION])
+               (prof_sels)
 
-  const skills = getSkillsElementAndValidation (l10n)
-                                               (wiki)
-                                               (skillsActive)
-                                               (handleAddSkillPoint)
-                                               (handleRemoveSkillPoint)
-                                               (prof_sels)
+  const skills =
+    getSelPair (isSkillSelectionValid (skillsActive))
+               ((selection, res) => (
+                 <SkillSelectionList
+                   l10n={l10n}
+                   wiki={wiki}
+                   active={skillsActive}
+                   ap_left={sel2 (res)}
+                   selection={selection}
+                   addSkillPoint={handleAddSkillPoint}
+                   removeSkillPoint={handleRemoveSkillPoint}
+                   />
+               ))
+               (PSA[ProfessionSelectionIds.SKILLS])
+               (prof_sels)
 
   const terrainKnowledge = getTerrainKnowledgeElement (wiki)
                                                       (terrainKnowledgeActive)
@@ -398,6 +432,35 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                                                 (selectedUnfamiliarSpell)
                                                 (handleSetGuildMageUnfamiliarSpellId)
                                                 (profession)
+
+  const isConfirmingSelectionsDisabled =
+    !fst (skillSpecialization)
+    || !fst (languagesAndScripts)
+    || !fst (combatTechniques)
+    || !fst (combatTechniquesSecond)
+    || !fst (cantrips)
+    || !fst (curses)
+    || !fst (skills)
+    || isNothing (attributeAdjustment)
+    || (isMotherTongueSelectionNeeded && motherTongue === 0)
+    || (
+      isBuyingMainScriptEnabled
+      && snd (isScriptSelectionNeeded)
+      && mainScript === 0
+    )
+    || (
+      isJust (PSA[ProfessionSelectionIds.SPECIALIZATION] (prof_sels))
+      && snd (specialization) === ""
+      && isNothing (fst (specialization))
+    )
+    || (
+    isJust (PSA[ProfessionSelectionIds.TERRAIN_KNOWLEDGE] (prof_sels))
+      && isNothing (terrainKnowledgeActive)
+    )
+    || (
+      PSA[ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL] (prof_sels)
+      && isNothing (selectedUnfamiliarSpell)
+    )
 
   return (
     <Slidein isOpen close={close} className="rcp-selections">
@@ -450,46 +513,19 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
         )
           ? <h3>{translate (l10n) ("profession")}</h3>
           : null}
-        {maybeToNullable (skillSpecialization)}
-        {maybeToNullable (fmapF (languagesAndScripts) (snd))}
+        {maybeToNullable (snd (skillSpecialization))}
+        {maybeToNullable (snd (languagesAndScripts))}
         {maybeToNullable (snd (combatTechniques))}
         {maybeToNullable (snd (combatTechniquesSecond))}
         {maybeToNullable (snd (curses))}
         {maybeToNullable (guildMageUnfamiliarSpell)}
         {maybeToNullable (snd (cantrips))}
-        {maybeToNullable (fmapF (skills) (snd))}
+        {maybeToNullable (snd (skills))}
         {maybeToNullable (terrainKnowledge)}
         <BorderButton
           label={translate (l10n) ("complete")}
           primary
-          disabled={
-            !fst (combatTechniques)
-            || !fst (combatTechniquesSecond)
-            || !fst (cantrips)
-            || !fst (curses)
-            || isNothing (attributeAdjustment)
-            || (isMotherTongueSelectionNeeded && motherTongue === 0)
-            || (
-              isBuyingMainScriptEnabled
-              && snd (isScriptSelectionNeeded)
-              && mainScript === 0
-            )
-            || (
-              isJust (PSA[ProfessionSelectionIds.SPECIALIZATION] (prof_sels))
-              && snd (specialization) === ""
-              && isNothing (fst (specialization))
-            )
-            || or (fmapF (languagesAndScripts) (pipe (fst, lt (0))))
-            || or (fmapF (skills) (pipe (fst, lt (0))))
-            || (
-             isJust (PSA[ProfessionSelectionIds.TERRAIN_KNOWLEDGE] (prof_sels))
-              && isNothing (terrainKnowledgeActive)
-            )
-            || (
-              PSA[ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL] (prof_sels)
-              && isNothing (selectedUnfamiliarSpell)
-            )
-          }
+          disabled={isConfirmingSelectionsDisabled}
           onClick={handleConfirmSelections}
           />
       </Scroll>

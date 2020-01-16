@@ -1,11 +1,14 @@
 import * as React from "react";
+import { Functn } from "../../../Data/Function";
+import { fmap } from "../../../Data/Functor";
 import { List, map, toArray } from "../../../Data/List";
-import { bindF, elem, Just, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe";
-import { OrderedMap, sum } from "../../../Data/OrderedMap";
+import { bindF, elem, fromMaybe, Just, listToMaybe, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
+import { lookup, OrderedMap, sum } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
-import { LanguagesSelectionListItemOptions } from "../../Models/Hero/LanguagesSelectionListItem";
+import { SpecialAbilityId } from "../../Constants/Ids";
 import { Rules } from "../../Models/Hero/Rules";
+import { LanguagesSelectionListItemOptions } from "../../Models/View/LanguagesSelectionListItemOptions";
 import { Culture } from "../../Models/Wiki/Culture";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
@@ -30,42 +33,45 @@ const getLanguages =
   (wiki: WikiModelRecord) =>
   (rules: Record<Rules>) =>
   (culture: Record<Culture>) =>
-  (wiki_languages: Record<SpecialAbility>) =>
   (motherTongue: number) =>
   (isMotherTongueSelectionNeeded: boolean) =>
     pipe_ (
-      wiki_languages,
-      SAA.select,
-      maybe (List<Record<LanguagesSelectionListItemOptions>> ())
-            (pipe (
-              mapMaybe (pipe (
-                SOA.id,
-                Just,
-                findSelectOption (wiki_languages),
-                bindF (option => {
-                        const optionId = SOA.id (option)
+      wiki,
+      WA.specialAbilities,
+      lookup (SpecialAbilityId.Language as string),
+      bindF (Functn.join (wiki_languages => pipe (
+        SAA.select,
+        fmap (pipe (
+          mapMaybe (pipe (
+            SOA.id,
+            Just,
+            findSelectOption (wiki_languages),
+            bindF (option => {
+                    const optionId = SOA.id (option)
 
-                        if (typeof optionId === "number" && isSOAvailable (wiki) (rules) (option)) {
-                          const native =
-                            (
-                              !isMotherTongueSelectionNeeded
-                              && pipe (CA.languages, listToMaybe, elem (optionId))
-                                      (culture)
-                            )
-                            || optionId === motherTongue
+                    if (typeof optionId === "number" && isSOAvailable (wiki) (rules) (option)) {
+                      const native =
+                        (
+                          !isMotherTongueSelectionNeeded
+                          && pipe (CA.languages, listToMaybe, elem (optionId))
+                                  (culture)
+                        )
+                        || optionId === motherTongue
 
-                          return Just (LanguagesSelectionListItemOptions ({
-                            id: optionId,
-                            name: SOA.name (option),
-                            native,
-                          }))
-                        }
+                      return Just (LanguagesSelectionListItemOptions ({
+                        id: optionId,
+                        name: SOA.name (option),
+                        native,
+                      }))
+                    }
 
-                        return Nothing
-                      })
-              )),
-              sortRecordsByName (l10n)
-            ))
+                    return Nothing
+                  })
+          )),
+          sortRecordsByName (l10n)
+        )),
+      ))),
+      fromMaybe (List ())
     )
 
 export const getLanguageSelectionAPSpent = (selected_languages: OrderedMap<number, number>) =>
@@ -80,11 +86,10 @@ interface Props {
   culture: Record<Culture>
   isMotherTongueSelectionNeeded: boolean
   motherTongue: number
-  wiki_languages: Record<SpecialAbility>
   adjustLanguage: (id: number) => (mlevel: Maybe<number>) => void
 }
 
-export const CursesSelectionList: React.FC<Props> = props => {
+export const LanguageSelectionList: React.FC<Props> = props => {
   const {
     active,
     ap_left,
@@ -94,17 +99,18 @@ export const CursesSelectionList: React.FC<Props> = props => {
     motherTongue,
     rules,
     wiki,
-    wiki_languages,
     adjustLanguage,
   } = props
 
-  const languages = getLanguages (l10n)
-                                 (wiki)
-                                 (rules)
-                                 (culture)
-                                 (wiki_languages)
-                                 (motherTongue)
-                                 (isMotherTongueSelectionNeeded)
+  const languages = React.useMemo (
+    () => getLanguages (l10n)
+                       (wiki)
+                       (rules)
+                       (culture)
+                       (motherTongue)
+                       (isMotherTongueSelectionNeeded),
+    [ culture, isMotherTongueSelectionNeeded, l10n, motherTongue, rules, wiki ]
+  )
 
   return (
     <ul className="languages">

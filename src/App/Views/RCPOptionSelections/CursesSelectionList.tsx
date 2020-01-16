@@ -22,8 +22,13 @@ const SA = Spell.A
 
 export const isCursesSelectionValid =
   (actives: OrderedMap<string, number>) =>
-  (selection: Record<CursesSelection>): boolean =>
-    CSA.value (selection) === (size (actives) + sum (actives)) * 2
+  (selection: Record<CursesSelection>): Pair<boolean, number> => {
+    const ap_total = CSA.value (selection)
+    const ap_spent = (size (actives) + sum (actives)) * 2
+    const ap_left = ap_total - ap_spent
+
+    return Pair (ap_left === 0, ap_left)
+  }
 
 const getCurses =
   (l10n: L10nRecord) =>
@@ -40,34 +45,35 @@ interface Props {
   wiki: WikiModelRecord
   rules: Record<Rules>
   active: OrderedMap<string, number>
+  ap_left: number
   selection: Record<CursesSelection>
   adjustCurseValue: (id: string) => (method: Maybe<"add" | "remove">) => void
 }
 
 export const CursesSelectionList: React.FC<Props> = props => {
-  const { active, l10n, rules, selection, adjustCurseValue, wiki } = props
+  const { active, ap_left, l10n, rules, selection, adjustCurseValue, wiki } = props
 
   const ap_total = CSA.value (selection)
-
-  const ap_left = CSA.value (selection) - (size (active) + sum (active)) * 2
 
   const curses = getCurses (l10n) (wiki) (rules)
 
   return (
     <div className="curses list">
       <h4>{translateP (l10n) ("cursestotalingapleft") (List (ap_total, ap_left))}</h4>
-      {pipe_ (
-        curses,
-        map (curse => (
-          <CursesSelectionListItem
-            apLeft={ap_left}
-            curse={curse}
-            active={active}
-            adjustCurseValue={adjustCurseValue}
-            />
-        )),
-        toArray
-      )}
+      <ul>
+        {pipe_ (
+          curses,
+          map (curse => (
+            <CursesSelectionListItem
+              apLeft={ap_left}
+              curse={curse}
+              active={active}
+              adjustCurseValue={adjustCurseValue}
+              />
+          )),
+          toArray
+        )}
+      </ul>
     </div>
   )
 }

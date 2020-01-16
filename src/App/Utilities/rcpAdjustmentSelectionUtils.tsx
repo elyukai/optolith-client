@@ -1,53 +1,33 @@
 import * as React from "react";
-import { equals } from "../../Data/Eq";
 import { flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
-import { any, filter, List } from "../../Data/List";
-import { bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, join, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, maybe, maybeToNullable, Nothing } from "../../Data/Maybe";
-import { elems, lookup, lookupF, OrderedMap, sum } from "../../Data/OrderedMap";
+import { any, List } from "../../Data/List";
+import { bindF, fromMaybe, guard, Just, listToMaybe, mapMaybe, Maybe, maybeToNullable, Nothing } from "../../Data/Maybe";
+import { lookup, lookupF } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { fst, Pair, snd } from "../../Data/Tuple";
 import { SpecialAbilityId } from "../Constants/Ids";
-import { LanguagesSelectionListItemOptions } from "../Models/Hero/LanguagesSelectionListItem";
-import { Rules } from "../Models/Hero/Rules";
-import { ScriptsSelectionListItem } from "../Models/Hero/ScriptsSelectionListItem";
 import { Culture } from "../Models/Wiki/Culture";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement";
 import { Profession } from "../Models/Wiki/Profession";
-import { CursesSelection } from "../Models/Wiki/professionSelections/CursesSelection";
-import { LanguagesScriptsSelection } from "../Models/Wiki/professionSelections/LanguagesScriptsSelection";
 import { ProfessionSelections } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
-import { SkillsSelection } from "../Models/Wiki/professionSelections/SkillsSelection";
-import { SpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection";
 import { TerrainKnowledgeSelection } from "../Models/Wiki/professionSelections/TerrainKnowledgeSelection";
-import { Skill } from "../Models/Wiki/Skill";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { Spell } from "../Models/Wiki/Spell";
 import { SelectOption } from "../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
-import { SelectionsLanguagesAndScripts } from "../Views/RCPOptionSelections/SelectionsLanguagesAndScripts";
-import { SelectionsSkills } from "../Views/RCPOptionSelections/SelectionsSkills";
-import { SelectionsSkillSpecialization } from "../Views/RCPOptionSelections/SelectionsSkillSpecialization";
-import { TerrainKnowledge } from "../Views/RCPOptionSelections/SelectionsTerrainKnowledge";
+import { TerrainKnowledge } from "../Views/RCPOptionSelections/TerrainKnowledgeSelectionList";
 import { Checkbox } from "../Views/Universal/Checkbox";
 import { Dropdown, DropdownOption } from "../Views/Universal/Dropdown";
 import { findSelectOption } from "./Activatable/selectionUtils";
 import { translate } from "./I18n";
 import { pipe } from "./pipe";
-import { isAvailable } from "./RulesUtils";
-import { sortRecordsByName } from "./sortBy";
 
 const WA = WikiModel.A
-const SAA = SpecialAbility.A
 const CA = Culture.A
 const PA = Profession.A
-const SA = Spell.A
 const SOA = SelectOption.A
-const LSSA = LanguagesScriptsSelection.A
-const CSA = CursesSelection.A
-const SSA = SkillsSelection.A
 
 export const getBuyScriptElement =
   (l10n: L10nRecord) =>
@@ -93,230 +73,6 @@ export const getBuyScriptElement =
           }) ()
         )
       : Nothing
-
-const getScripts =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
-  (rules: Record<Rules>) =>
-  (culture: Record<Culture>) =>
-  (mainScript: number) =>
-  (isBuyingMainScriptEnabled: boolean) =>
-  (isScriptSelectionNeeded: Pair<boolean, boolean>) =>
-  (wikiEntryScripts: Record<SpecialAbility>) => {
-    const isSOAvailable = isAvailable (SOA.src) (Pair (WA.books (wiki), rules))
-
-    return fmap (pipe (
-                  mapMaybe (
-                    pipe (
-                      SOA.id,
-                      Just,
-                      findSelectOption (wikiEntryScripts),
-                      bindF (option => {
-                              const optionId = SOA.id (option)
-
-                              if (typeof optionId === "number" && isSOAvailable (option)) {
-                                const maybeCost = SOA.cost (option)
-
-                                if (isJust (maybeCost)) {
-                                  const native =
-                                    isBuyingMainScriptEnabled
-                                    && (
-                                      !snd (isScriptSelectionNeeded)
-                                      && pipe (CA.scripts, listToMaybe, elem (optionId))
-                                              (culture)
-                                      || optionId === mainScript
-                                    )
-
-                                  return Just (ScriptsSelectionListItem ({
-                                    id: optionId,
-                                    name: SOA.name (option),
-                                    cost: fromJust (maybeCost),
-                                    native,
-                                  }))
-                                }
-                              }
-
-                              return Nothing
-                            })
-                    )
-                  ),
-                  sortRecordsByName (l10n)
-                ))
-                (SAA.select (wikiEntryScripts))
-  }
-
-const getLanguages =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
-  (rules: Record<Rules>) =>
-  (culture: Record<Culture>) =>
-  (motherTongue: number) =>
-  (isMotherTongueSelectionNeeded: boolean) =>
-  (wikiEntryLanguages: Record<SpecialAbility>) => {
-    const isSOAvailable = isAvailable (SOA.src) (Pair (WA.books (wiki), rules))
-
-    return fmapF (SAA.select (wikiEntryLanguages))
-                 (pipe (
-                   mapMaybe (option => {
-                              const optionId = SOA.id (option)
-
-                              if (typeof optionId === "number" && isSOAvailable (option)) {
-                                const native =
-                                  !isMotherTongueSelectionNeeded
-                                  && pipe (CA.languages, listToMaybe, elem (optionId))
-                                          (culture)
-                                  || optionId === motherTongue
-
-                                return Just (LanguagesSelectionListItem ({
-                                  id: optionId,
-                                  name: SOA.name (option),
-                                  native,
-                                }))
-                              }
-
-                              return Nothing
-                            }),
-                   sortRecordsByName (l10n)
-                 ))
-  }
-
-export const getLanguagesAndScriptsElementAndValidation =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
-  (rules: Record<Rules>) =>
-  (culture: Record<Culture>) =>
-  (selected_languages: OrderedMap<number, number>) =>
-  (selected_scripts: OrderedMap<number, number>) =>
-  (professionSelections: Record<ProfessionSelections>) =>
-  (mainScript: number) =>
-  (motherTongue: number) =>
-  (isBuyingMainScriptEnabled: boolean) =>
-  (isMotherTongueSelectionNeeded: boolean) =>
-  (isScriptSelectionNeeded: Pair<boolean, boolean>) =>
-  (adjustLanguage: (id: number) => (level: Maybe<number>) => void) =>
-  (adjustScript: (id: number) => (ap: number) => void) =>
-    join (
-      liftM3<
-        Record<LanguagesScriptsSelection>,
-        Record<SpecialAbility>,
-        Record<SpecialAbility>,
-        Maybe<Pair<number, JSX.Element>>
-      >
-        (selection => wikiEntryScripts => wikiEntryLanguages => {
-          const maybeScriptsList = getScripts (l10n)
-                                              (wiki)
-                                              (rules)
-                                              (culture)
-                                              (mainScript)
-                                              (isBuyingMainScriptEnabled)
-                                              (isScriptSelectionNeeded)
-                                              (wikiEntryScripts)
-
-          const maybeLanguagesList = getLanguages (l10n)
-                                                  (wiki)
-                                                  (rules)
-                                                  (culture)
-                                                  (motherTongue)
-                                                  (isMotherTongueSelectionNeeded)
-                                                  (wikiEntryLanguages)
-
-          return liftM2<
-            List<Record<ScriptsSelectionListItem>>,
-            List<Record<LanguagesSelectionListItemOptions>>,
-            Pair<number, JSX.Element>
-          >
-            (scriptsList => languagesList => {
-              const apLeft =
-                LSSA.value (selection) - sum (selected_languages) * 2 - sum (selected_scripts)
-
-              return Pair (
-                apLeft,
-                (
-                  <SelectionsLanguagesAndScripts
-                    scripts={scriptsList}
-                    languages={languagesList}
-                    scriptsActive={selected_scripts}
-                    languagesActive={selected_languages}
-                    apTotal={LSSA.value (selection)}
-                    apLeft={apLeft}
-                    adjustScript={adjustScript}
-                    adjustLanguage={adjustLanguage}
-                    l10n={l10n}
-                    />
-                )
-              )
-            })
-            (maybeScriptsList)
-            (maybeLanguagesList)
-        })
-        (ProfessionSelections.AL[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (professionSelections))
-        (lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.Literacy))
-        (lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.Language))
-    )
-
-export const getSkillSpecializationElement =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
-  (specialization: Pair<Maybe<number>, string>) =>
-  (specializationSkillId: Maybe<string>) =>
-  (setSpecialization: (value: string | number) => void) =>
-  (setSpecializationSkill: (id: string) => void) =>
-    pipe (
-      ProfessionSelections.A[ProfessionSelectionIds.SPECIALIZATION],
-      bindF (ensure (SpecializationSelection.is)),
-      fmap (selection => (
-             <SelectionsSkillSpecialization
-               options={selection}
-               active={specialization}
-               activeId={specializationSkillId}
-               change={setSpecialization}
-               changeId={setSpecializationSkill}
-               l10n={l10n}
-               skills={WA.skills (wiki)}
-               />
-           ))
-    )
-
-export const getSkillsElementAndValidation =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
-  (skillsActive: OrderedMap<string, number>) =>
-  (addSkillPoint: (id: string) => void) =>
-  (removeSkillPoint: (id: string) => void) =>
-    pipe (
-      ProfessionSelections.AL[ProfessionSelectionIds.SKILLS],
-      fmap (selection => {
-            const list =
-              maybe (elems (WA.skills (wiki)))
-                    ((group: number) =>
-                      pipe (
-                        WA.skills,
-                        elems,
-                        filter<Record<Skill>>
-                          (pipe (Skill.AL.gr, equals (group)))
-                      )
-                      (wiki))
-                    (SSA.gr (selection))
-
-            const apLeft = SSA.value (selection) - sum (skillsActive)
-
-            return Pair (
-              apLeft,
-              (
-                <SelectionsSkills
-                  active={skillsActive}
-                  add={addSkillPoint}
-                  gr={SSA.gr (selection)}
-                  left={apLeft}
-                  list={list}
-                  remove={removeSkillPoint}
-                  value={SSA.value (selection)}
-                  l10n={l10n}
-                  />
-              )
-            )
-          })
-    )
 
 export const getTerrainKnowledgeElement =
   (wiki: WikiModelRecord) =>

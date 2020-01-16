@@ -64,7 +64,7 @@ export function RadioButtonGroup<T extends OptionValue = OptionValue>
               active={equals (normalizedActive) (Option.A.value (e))}
               onClick={onClickCombined (Option.A.value (e))}
               disabled={elem (true) (Option.A.disabled (e)) || elem (true) (normalize (disabled))}
-            >
+              >
               {Option.A.name (e)}
             </RadioButton>
           )),

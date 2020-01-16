@@ -1,7 +1,7 @@
 import * as React from "react";
 import { member, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { ScriptsSelectionListItemOptions } from "../../Models/Hero/ScriptsSelectionListItem";
+import { ScriptsSelectionListItemOptions } from "../../Models/View/ScriptsSelectionListItemOptions";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { Checkbox } from "../Universal/Checkbox";

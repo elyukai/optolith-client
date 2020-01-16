@@ -27,15 +27,17 @@ export const CombatTechniqueSelectionListItem: React.FC<Props> = props => {
   )
 
   return (
-    <Checkbox
-      key={id}
-      checked={member (id) (active)}
-      disabled={
-        (notMember (id) (active) && size (active) >= amount)
-        || maybe (false) (member (id)) (disabled)
-      }
-      label={name}
-      onClick={handleSetCombatTechniqueId}
-      />
+    <li>
+      <Checkbox
+        key={id}
+        checked={member (id) (active)}
+        disabled={
+          (notMember (id) (active) && size (active) >= amount)
+          || maybe (false) (member (id)) (disabled)
+        }
+        label={name}
+        onClick={handleSetCombatTechniqueId}
+        />
+    </li>
   )
 }

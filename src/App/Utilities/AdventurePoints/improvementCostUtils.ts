@@ -103,7 +103,7 @@ export const getAPRange = (ic: number) => (fromValue: number) => (toValue: numbe
   return getSignedAPRange (ic) (fromValue) (toValue)
 }
 
-const improvementCostNames = ["A", "B", "C", "D", "E"]
+const improvementCostNames = [ "A", "B", "C", "D", "E" ]
 
 /**
  * `getICName :: Int -> String`

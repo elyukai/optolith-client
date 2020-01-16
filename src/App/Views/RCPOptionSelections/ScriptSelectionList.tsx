@@ -1,11 +1,14 @@
 import * as React from "react";
+import { Functn } from "../../../Data/Function";
+import { fmap } from "../../../Data/Functor";
 import { List, map, toArray } from "../../../Data/List";
-import { bindF, elem, fromJust, isJust, Just, listToMaybe, mapMaybe, maybe, Nothing } from "../../../Data/Maybe";
-import { OrderedMap, sum } from "../../../Data/OrderedMap";
+import { bindF, elem, fromJust, fromMaybe, isJust, Just, listToMaybe, mapMaybe, Nothing } from "../../../Data/Maybe";
+import { lookup, OrderedMap, sum } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
+import { SpecialAbilityId } from "../../Constants/Ids";
 import { Rules } from "../../Models/Hero/Rules";
-import { ScriptsSelectionListItemOptions } from "../../Models/Hero/ScriptsSelectionListItem";
+import { ScriptsSelectionListItemOptions } from "../../Models/View/ScriptsSelectionListItemOptions";
 import { Culture } from "../../Models/Wiki/Culture";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
@@ -30,55 +33,58 @@ const getScripts =
   (wiki: WikiModelRecord) =>
   (rules: Record<Rules>) =>
   (culture: Record<Culture>) =>
-  (wiki_scripts: Record<SpecialAbility>) =>
   (mainScript: number) =>
   (isBuyingMainScriptEnabled: boolean) =>
   (isScriptSelectionNeeded: Pair<boolean, boolean>) =>
     pipe_ (
-      wiki_scripts,
-      SAA.select,
-      maybe (List<Record<ScriptsSelectionListItemOptions>> ())
-            (pipe (
-              mapMaybe (pipe (
-                SOA.id,
-                Just,
-                findSelectOption (wiki_scripts),
-                bindF (option => {
-                        const optionId = SOA.id (option)
+      wiki,
+      WA.specialAbilities,
+      lookup (SpecialAbilityId.Literacy as string),
+      bindF (Functn.join (wiki_scripts => pipe (
+        SAA.select,
+        fmap (pipe (
+          mapMaybe (pipe (
+            SOA.id,
+            Just,
+            findSelectOption (wiki_scripts),
+            bindF (option => {
+                    const optionId = SOA.id (option)
 
-                        if (typeof optionId === "number" && isSOAvailable (wiki) (rules) (option)) {
-                          const maybeCost = SOA.cost (option)
+                    if (typeof optionId === "number" && isSOAvailable (wiki) (rules) (option)) {
+                      const maybeCost = SOA.cost (option)
 
-                          if (isJust (maybeCost)) {
-                            const native =
-                              isBuyingMainScriptEnabled
-                              && (
-                                (
-                                  !snd (isScriptSelectionNeeded)
-                                  && pipe (CA.scripts, listToMaybe, elem (optionId))
-                                          (culture)
-                                )
-                                || optionId === mainScript
-                              )
+                      if (isJust (maybeCost)) {
+                        const native =
+                          isBuyingMainScriptEnabled
+                          && (
+                            (
+                              !snd (isScriptSelectionNeeded)
+                              && pipe (CA.scripts, listToMaybe, elem (optionId))
+                                      (culture)
+                            )
+                            || optionId === mainScript
+                          )
 
-                            return Just (ScriptsSelectionListItemOptions ({
-                              id: optionId,
-                              name: SOA.name (option),
-                              cost: fromJust (maybeCost),
-                              native,
-                            }))
-                          }
-                        }
+                        return Just (ScriptsSelectionListItemOptions ({
+                          id: optionId,
+                          name: SOA.name (option),
+                          cost: fromJust (maybeCost),
+                          native,
+                        }))
+                      }
+                    }
 
-                        return Nothing
-                      })
-              )),
-              sortRecordsByName (l10n)
-            ))
+                    return Nothing
+                  })
+          )),
+          sortRecordsByName (l10n)
+        ))
+      ))),
+      fromMaybe (List ())
     )
 
-export const getScriptSelectionAPSpent = (selected_languages: OrderedMap<number, number>) =>
-  sum (selected_languages)
+export const getScriptSelectionAPSpent = (selected_scripts: OrderedMap<number, number>) =>
+  sum (selected_scripts)
 
 interface Props {
   l10n: L10nRecord
@@ -90,11 +96,10 @@ interface Props {
   isBuyingMainScriptEnabled: boolean
   isScriptSelectionNeeded: Pair<boolean, boolean>
   mainScript: number
-  wiki_scripts: Record<SpecialAbility>
   toggleScript: (id: number) => (cost: number) => void
 }
 
-export const CursesSelectionList: React.FC<Props> = props => {
+export const ScriptSelectionList: React.FC<Props> = props => {
   const {
     active,
     ap_left,
@@ -105,21 +110,30 @@ export const CursesSelectionList: React.FC<Props> = props => {
     mainScript,
     rules,
     wiki,
-    wiki_scripts,
     toggleScript,
   } = props
 
-  const scripts = getScripts (l10n)
-                             (wiki)
-                             (rules)
-                             (culture)
-                             (wiki_scripts)
-                             (mainScript)
-                             (isBuyingMainScriptEnabled)
-                             (isScriptSelectionNeeded)
+  const scripts = React.useMemo (
+    () => getScripts (l10n)
+                     (wiki)
+                     (rules)
+                     (culture)
+                     (mainScript)
+                     (isBuyingMainScriptEnabled)
+                     (isScriptSelectionNeeded),
+    [
+      culture,
+      isBuyingMainScriptEnabled,
+      isScriptSelectionNeeded,
+      l10n,
+      mainScript,
+      rules,
+      wiki,
+    ]
+  )
 
   return (
-    <div className="scripts">
+    <ul className="scripts">
       {pipe_ (
         scripts,
         map (options => (
@@ -133,6 +147,6 @@ export const CursesSelectionList: React.FC<Props> = props => {
         )),
         toArray
       )}
-    </div>
+    </ul>
   )
 }

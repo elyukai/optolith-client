@@ -3,7 +3,7 @@ import { List } from "../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { findWithDefault, member, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { LanguagesSelectionListItemOptions } from "../../Models/Hero/LanguagesSelectionListItem";
+import { LanguagesSelectionListItemOptions } from "../../Models/View/LanguagesSelectionListItemOptions";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { getLevelElements } from "../../Utilities/levelUtils";
