@@ -130,6 +130,7 @@ export enum Locale {
   English = "en-US",
   French = "fr-FR",
   Dutch = "nl-BE",
+  Italian = "it-IT",
 }
 
 export enum Theme {
