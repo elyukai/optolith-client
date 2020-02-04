@@ -31,12 +31,9 @@ export interface PortalWrappedStateProps {
 
 export interface PortalWrappedDispatchProps {}
 
-export type PortalWrappedProps =
-  PortalWrappedStateProps
-  & PortalWrappedDispatchProps
-  & PortalWrappedOwnProps
+type Props = PortalWrappedStateProps & PortalWrappedDispatchProps & PortalWrappedOwnProps
 
-export function PortalWrapped (props: PortalWrappedProps) {
+export const PortalWrapped: React.FC<Props> = props => {
   const {
     children,
     className,

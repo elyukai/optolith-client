@@ -12,7 +12,7 @@ import { pipe_ } from "../../../Utilities/pipe";
 import { MainSheetAttributesItem } from "./MainSheetAttributesItem";
 import { MainSheetFatePoints } from "./MainSheetFatePoints";
 
-export interface MainSheetAttributesProps {
+interface Props {
   attributes: List<Record<DerivedCharacteristic>>
   fatePointsModifier: number
   l10n: L10nRecord
@@ -21,7 +21,7 @@ export interface MainSheetAttributesProps {
 
 const DCA = DerivedCharacteristic.A
 
-export function MainSheetAttributes (props: MainSheetAttributesProps) {
+export const MainSheetAttributes: React.FC<Props> = props => {
   const { attributes, fatePointsModifier, race, l10n } = props
 
   return (

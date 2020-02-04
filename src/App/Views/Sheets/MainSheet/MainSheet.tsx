@@ -27,7 +27,7 @@ import { SheetWrapper } from "../SheetWrapper";
 import { MainSheetAttributes } from "./MainSheetAttributes";
 import { MainSheetPersonalData } from "./MainSheetPersonalData";
 
-export interface MainSheetProps {
+interface Props {
   advantagesActive: Maybe<List<Record<ActiveActivatable<Advantage>>>>
   ap: Maybe<Record<AdventurePointsCategories>>
   attributes: List<Record<AttributeCombined>>
@@ -47,7 +47,7 @@ export interface MainSheetProps {
   printToPDF (): void
 }
 
-export function MainSheet (props: MainSheetProps) {
+export const MainSheet: React.FC<Props> = props => {
   const {
     advantagesActive: maybeAdvantagesActive,
     ap,

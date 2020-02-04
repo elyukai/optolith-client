@@ -6,6 +6,7 @@ import { dec } from "../../Data/Num";
 import { fst, Pair, snd } from "../../Data/Tuple";
 import { curryN, uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
 import { DisadvantageId, SocialStatusId } from "../Constants/Ids";
+import { DropdownOption } from "../Models/View/DropdownOption";
 import { Culture } from "../Models/Wiki/Culture";
 import { Race } from "../Models/Wiki/Race";
 import { RaceVariant } from "../Models/Wiki/RaceVariant";
@@ -15,7 +16,6 @@ import { translate } from "../Utilities/I18n";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
 import { sortRecordsByName } from "../Utilities/sortBy";
-import { DropdownOption } from "../Views/Universal/Dropdown";
 import { getCulture, getRace, getRaceVariant } from "./rcpSelectors";
 import { getDisadvantages, getLocaleAsProp, getSocialDependencies } from "./stateSelectors";
 

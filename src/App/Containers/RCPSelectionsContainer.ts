@@ -6,6 +6,7 @@ import { ReduxDispatch } from "../Actions/Actions";
 import * as ProfessionActions from "../Actions/ProfessionActions";
 import { HeroModelRecord } from "../Models/Hero/HeroModel";
 import { Selections as SelectionsInterface } from "../Models/Hero/heroTypeHelpers";
+import { DropdownOption } from "../Models/View/DropdownOption";
 import { Culture } from "../Models/Wiki/Culture";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { Profession } from "../Models/Wiki/Profession";
@@ -17,7 +18,6 @@ import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, g
 import { getAllSpellsForManualGuildMageSelect } from "../Selectors/spellsSelectors";
 import { getWiki } from "../Selectors/stateSelectors";
 import { RCPOptionSelectionsEnsure } from "../Views/RCPOptionSelections/RCPOptionSelectionsEnsure";
-import { DropdownOption } from "../Views/Universal/Dropdown";
 
 interface OwnProps {
   hero: HeroModelRecord

@@ -8,13 +8,14 @@ import { AppStateRecord } from "../../Reducers/appReducer";
 import { getTheme } from "../../Selectors/uisettingsSelectors";
 import { classListMaybe } from "../../Utilities/CSS";
 import { Theme } from "../../Utilities/Raw/JSON/Config";
-import { ButtonProps, DialogButtons } from "./DialogButtons";
+import { DialogButtonProps } from "./DialogButton";
+import { DialogButtons } from "./DialogButtons";
 
 const modals_root = document.querySelector ("#modals-root")
 
 export interface DialogOwnProps {
   isOpen: boolean
-  buttons?: ButtonProps[]
+  buttons?: DialogButtonProps[]
   className?: string
   id?: string
   noCloseButton?: boolean
@@ -29,9 +30,9 @@ export interface DialogStateProps {
   theme: Theme
 }
 
-export type DialogProps = DialogOwnProps & DialogDispatchProps & DialogStateProps
+type Props = DialogOwnProps & DialogDispatchProps & DialogStateProps
 
-export const DialogComp: React.FC<DialogProps> = props => {
+export const DialogComp: React.FC<Props> = props => {
   const {
     buttons = [],
     className,
@@ -59,7 +60,7 @@ export const DialogComp: React.FC<DialogProps> = props => {
 
       return undefined
     },
-    [element]
+    [ element ]
   )
 
   const handleButtonClick = React.useCallback (
@@ -74,7 +75,7 @@ export const DialogComp: React.FC<DialogProps> = props => {
 
       close (false)
     },
-    [close, onClose]
+    [ close, onClose ]
   )
 
   const contentStyle: React.CSSProperties = buttons.length === 0 ? { paddingBottom: 26 } : {}
@@ -90,7 +91,7 @@ export const DialogComp: React.FC<DialogProps> = props => {
 
   const handleCloseClick = React.useCallback (
     () => close (true),
-    [close]
+    [ close ]
   )
 
   return isOpen

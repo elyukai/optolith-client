@@ -17,7 +17,7 @@ import { pipe_ } from "../../../Utilities/pipe";
 import { comparingR, sortByMulti } from "../../../Utilities/sortBy";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface SkillsSheetLanguagesProps {
+interface Props {
   languagesStateEntry: Maybe<Record<ActivatableDependent>>
   languagesWikiEntry: Maybe<Record<SpecialAbility>>
   l10n: L10nRecord
@@ -37,7 +37,7 @@ const IdNameLevel =
                 level: 0,
               })
 
-export function SkillsSheetLanguages (props: SkillsSheetLanguagesProps) {
+export const SkillsSheetLanguages: React.FC<Props> = props => {
   const {
     languagesStateEntry: maybeLanguagesStateEntry,
     languagesWikiEntry: maybeLanguagesWikiEntry,

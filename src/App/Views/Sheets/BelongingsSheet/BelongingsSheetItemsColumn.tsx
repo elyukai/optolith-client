@@ -11,7 +11,7 @@ import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I1
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 
-export interface BelongingsSheetItemsColumnProps {
+interface Props {
   columnSize: number
   items: List<Record<ItemForView>>
   l10n: L10nRecord
@@ -19,7 +19,7 @@ export interface BelongingsSheetItemsColumnProps {
 
 const IFVA = ItemForView.A
 
-export function BelongingsSheetItemsColumn (props: BelongingsSheetItemsColumnProps) {
+export const BelongingsSheetItemsColumn: React.FC<Props> = props => {
   const { columnSize, l10n, items } = props
 
   return (

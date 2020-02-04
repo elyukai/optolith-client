@@ -1,10 +1,8 @@
 import * as React from "react";
 
-export interface OptionsProps {
-  children?: React.ReactNode
-}
+interface Props { }
 
-export function Options (props: OptionsProps) {
+export const Options: React.FC<Props> = props => {
   const { children } = props
 
   return (

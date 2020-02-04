@@ -5,6 +5,7 @@ import { bind, ensure, fromJust, fromMaybe, isJust, isNothing, Just, mapMaybe, M
 import { lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { fst, Pair, snd, Tuple } from "../../../Data/Tuple";
+import { DropdownOption } from "../../Models/View/DropdownOption";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { SpecializationSelection } from "../../Models/Wiki/professionSelections/SpecializationSelection";
 import { Skill } from "../../Models/Wiki/Skill";
@@ -12,7 +13,7 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { localizeOrList, translateP } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { isString } from "../../Utilities/typeCheckUtils";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { Dropdown } from "../Universal/Dropdown";
 import { SkillSpecializationSelectionApplications } from "./SkillSpecializationSelectionApplications";
 
 const WA = WikiModel.A

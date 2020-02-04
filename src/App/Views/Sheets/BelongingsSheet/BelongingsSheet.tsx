@@ -23,7 +23,7 @@ import { SheetWrapper } from "../SheetWrapper";
 import { BelongingsSheetItemsColumn } from "./BelongingsSheetItemsColumn";
 import { BelongingsSheetPet } from "./BelongingsSheetPet";
 
-export interface BelongingsSheetProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   items: Maybe<List<Record<ItemForView>>>
   l10n: L10nRecord
@@ -33,7 +33,7 @@ export interface BelongingsSheetProps {
   totalWeight: Maybe<number>
 }
 
-export function BelongingsSheet (props: BelongingsSheetProps) {
+export const BelongingsSheet: React.FC<Props> = props => {
   const {
     attributes,
     items: mitems,
@@ -41,6 +41,7 @@ export function BelongingsSheet (props: BelongingsSheetProps) {
     purse,
     totalPrice: maybeTotalPrice,
     totalWeight: maybeTotalWeight,
+    pet,
   } = props
 
   const strength =
@@ -193,7 +194,11 @@ export function BelongingsSheet (props: BelongingsSheetProps) {
           </TextBox>
         </div>
         <div className="fill" />
-        <BelongingsSheetPet {...props} />
+        <BelongingsSheetPet
+          attributes={attributes}
+          l10n={l10n}
+          pet={pet}
+          />
       </Sheet>
     </SheetWrapper>
   )

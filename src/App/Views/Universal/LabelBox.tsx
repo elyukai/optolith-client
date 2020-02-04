@@ -4,14 +4,13 @@ import { fromMaybe, Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { classListMaybe } from "../../Utilities/CSS";
 import { Box } from "./Box";
 
-export interface LabelBoxProps {
-  children?: React.ReactNode
+interface Props {
   className?: string
   label: string
   value?: Maybe<string | number>
 }
 
-export function LabelBox (props: LabelBoxProps) {
+export const LabelBox: React.FC<Props> = props => {
   const { className, children, label, value = Nothing } = props
 
   return (

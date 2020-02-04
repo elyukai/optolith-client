@@ -1,25 +1,36 @@
 import * as React from "react";
 import { notNullStrUndef } from "../../../Data/List";
-import { Activate, ActivateProps } from "./Activate";
+import { Maybe } from "../../../Data/Maybe";
+import { Activate } from "./Activate";
 import { Icon } from "./Icon";
 import { Text } from "./Text";
 
-export interface RadioButtonProps extends ActivateProps {
-  label?: string;
+interface Props {
+  active: boolean
+  disabled?: boolean
+  label?: string
+  value?: Maybe<string | number> | string | number
+  onClick (value: Maybe<string | number>): void
 }
 
-export function RadioButton (props: RadioButtonProps) {
-  const { children, label, onClick, ...other } = props;
+export const RadioButton: React.FC<Props> = props => {
+  const { active, children, disabled, label, onClick, value } = props
 
   return (
-    <Activate {...other} className="radio" onClick={onClick}>
+    <Activate
+      className="radio"
+      active={active}
+      onClick={onClick}
+      disabled={disabled}
+      value={value}
+      >
       <Icon>
-        <div className="border"></div>
-        <div className="dot"></div>
+        <div className="border" />
+        <div className="dot" />
       </Icon>
       <Text>
         {notNullStrUndef (label) ? label : children}
       </Text>
     </Activate>
-  );
+  )
 }

@@ -1,8 +1,8 @@
 import * as React from "react";
 
-export interface NavigationBarRightProps { }
+interface Props { }
 
-export const NavigationBarRight: React.FC<NavigationBarRightProps> = ({ children }) => (
+export const NavigationBarRight: React.FC<Props> = ({ children }) => (
   <div className="navigationbar-right">
     {children}
   </div>

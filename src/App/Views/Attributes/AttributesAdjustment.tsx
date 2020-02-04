@@ -3,11 +3,12 @@ import { elem, flength, List } from "../../../Data/List";
 import { fromMaybe, isNothing, joinMaybeList, Just, liftM2, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { AttributeWithRequirements, AttributeWithRequirementsA_ } from "../../Models/View/AttributeWithRequirements";
+import { DropdownOption } from "../../Models/View/DropdownOption";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { sign } from "../../Utilities/NumberUtils";
 import { pipe_ } from "../../Utilities/pipe";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { Dropdown } from "../Universal/Dropdown";
 
 export interface AttributesAdjustmentProps {
   adjustmentValue: Maybe<number>

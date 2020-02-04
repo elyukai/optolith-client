@@ -2,13 +2,14 @@ import * as React from "react";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { minus } from "../../../Utilities/Chars";
 import { translate } from "../../../Utilities/I18n";
+import { sign, signNeg } from "../../../Utilities/NumberUtils";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface SkillsSheetRoutineChecksProps {
+interface Props {
   l10n: L10nRecord
 }
 
-export const SkillsSheetRoutineChecks = ({ l10n }: SkillsSheetRoutineChecksProps) => (
+export const SkillsSheetRoutineChecks: React.FC<Props> = ({ l10n }) => (
   <TextBox
     className="routine-checks"
     label={translate (l10n) ("routinechecks")}
@@ -44,28 +45,28 @@ export const SkillsSheetRoutineChecks = ({ l10n }: SkillsSheetRoutineChecksProps
       </thead>
       <tbody>
         <tr>
-          <td>{translate (l10n) ("from")} +3</td>
-          <td>1</td>
-          <td>{minus}1</td>
-          <td>13</td>
+          <td>{translate (l10n) ("from")}</td>
+          <td>{1}</td>
+          <td>{signNeg (-1)}</td>
+          <td>{13}</td>
         </tr>
         <tr>
-          <td>+2</td>
-          <td>4</td>
-          <td>{minus}2</td>
-          <td>16</td>
+          <td>{sign (2)}</td>
+          <td>{4}</td>
+          <td>{sign (-2)}</td>
+          <td>{16}</td>
         </tr>
         <tr>
-          <td>+1</td>
-          <td>7</td>
-          <td>{minus}3</td>
-          <td>19</td>
+          <td>{sign (1)}</td>
+          <td>{7}</td>
+          <td>{sign (-3)}</td>
+          <td>{19}</td>
         </tr>
         <tr>
-          <td>+/{minus}0</td>
-          <td>10</td>
-          <td></td>
-          <td></td>
+          <td>{`+/${minus}0`}</td>
+          <td>{10}</td>
+          <td />
+          <td />
         </tr>
       </tbody>
     </table>

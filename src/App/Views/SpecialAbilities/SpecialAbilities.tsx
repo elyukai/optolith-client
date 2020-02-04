@@ -54,18 +54,9 @@ export interface SpecialAbilitiesDispatchProps {
   setInactiveFilterText (filterText: string): void
 }
 
-export type SpecialAbilitiesProps =
-  SpecialAbilitiesStateProps
-  & SpecialAbilitiesDispatchProps
-  & SpecialAbilitiesOwnProps
+type Props = SpecialAbilitiesStateProps & SpecialAbilitiesDispatchProps & SpecialAbilitiesOwnProps
 
-export interface SpecialAbilitiesState {
-  showAddSlidein: boolean
-  currentId: Maybe<string>
-  currentSlideinId: Maybe<string>
-}
-
-export const SpecialAbilities: React.FC<SpecialAbilitiesProps> = props => {
+export const SpecialAbilities: React.FC<Props> = props => {
   const {
     activeList,
     addToList,

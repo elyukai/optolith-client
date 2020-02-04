@@ -9,12 +9,12 @@ import { compressList } from "../../../Utilities/Activatable/activatableNameUtil
 import { translate } from "../../../Utilities/I18n";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface CombatSheetSpecialAbilitiesProps {
+interface Props {
   combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   l10n: L10nRecord
 }
 
-export function CombatSheetSpecialAbilities (props: CombatSheetSpecialAbilitiesProps) {
+export const CombatSheetSpecialAbilities: React.FC<Props> = props => {
   const { combatSpecialAbilities: maybeCombatSpecialAbilities, l10n } = props
 
   return (

@@ -7,7 +7,7 @@ import { classListMaybe } from "../../../Utilities/CSS";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybeWith } from "../../../Utilities/ReactUtils";
 
-export interface MainSheetAttributesItemProps {
+interface Props {
   add: Maybe<number>
   calc: string
   empty: Maybe<boolean>
@@ -19,7 +19,7 @@ export interface MainSheetAttributesItemProps {
   subLabel: Maybe<string>
 }
 
-export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
+export const MainSheetAttributesItem: React.FC<Props> = props => {
   const {
     add,
     base,
@@ -37,7 +37,13 @@ export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
       <div className="label">
         <h3>{label}</h3>
         <span className="calc">{calc}</span>
-        {maybeRNull ((str: string) => <span className="sub">{str}:</span>) (subLabel)}
+        {maybeRNull ((str: string) => (
+                      <span className="sub">
+                        {str}
+                        {":"}
+                      </span>
+                    ))
+                    (subLabel)}
       </div>
       <div className="values">
         <div className="base">

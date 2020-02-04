@@ -10,13 +10,14 @@ import { Record } from "../../../Data/Record";
 import { SpecialAbilityId } from "../../Constants/Ids";
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
 import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
+import { DropdownOption } from "../../Models/View/DropdownOption";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { classListMaybe } from "../../Utilities/CSS";
 import { translate } from "../../Utilities/I18n";
 import { getLevelElementsWithMin } from "../../Utilities/levelUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { Dropdown } from "../Universal/Dropdown";
 import { IconButton } from "../Universal/IconButton";
 import { ListItem } from "../Universal/ListItem";
 import { ListItemButtons } from "../Universal/ListItemButtons";
@@ -212,3 +213,4 @@ const ActivatableRemoveListItemM =
   )
 
 export { ActivatableRemoveListItemM as ActivatableRemoveListItem };
+

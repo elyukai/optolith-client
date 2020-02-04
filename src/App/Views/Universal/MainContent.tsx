@@ -1,10 +1,8 @@
 import * as React from "react";
 
-export interface MainContentProps {
-  children?: React.ReactNode
-}
+interface Props { }
 
-export function MainContent (props: MainContentProps) {
+export const MainContent: React.FC<Props> = props => {
   const { children } = props
 
   return (

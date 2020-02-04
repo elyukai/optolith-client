@@ -3,7 +3,7 @@ import * as React from "react";
 import { TitleBarButton } from "./TitleBarButton";
 import { TitleBarWrapper } from "./TitleBarWrapper";
 
-export interface TitleBarProps {
+interface Props {
   platform: string
   isLoading?: boolean
   minimize (): void
@@ -17,7 +17,7 @@ export interface TitleBarProps {
 
 const win = remote.getCurrentWindow ()
 
-export const TitleBar: React.FC<TitleBarProps> = props => {
+export const TitleBar: React.FC<Props> = props => {
   const {
     platform,
     maximize,
@@ -30,9 +30,9 @@ export const TitleBar: React.FC<TitleBarProps> = props => {
     closeDuringLoad,
   } = props
 
-  const [isMaximized, setIsMaximized] = React.useState (win .isMaximized ())
-  const [isFullScreen, setIsFullScreen] = React.useState (win .isFullScreen ())
-  const [isFocused, setIsFocused] = React.useState (win .isFocused ())
+  const [ isMaximized, setIsMaximized ] = React.useState (win .isMaximized ())
+  const [ isFullScreen, setIsFullScreen ] = React.useState (win .isFullScreen ())
+  const [ isFocused, setIsFocused ] = React.useState (win .isFocused ())
 
   const handleMaximized = React.useCallback (
     () => setIsMaximized (remote.getCurrentWindow () .isMaximized ()),
@@ -69,7 +69,7 @@ export const TitleBar: React.FC<TitleBarProps> = props => {
           .removeListener ("focus", handleFocused)
       }
     },
-    [handleMaximized, handleFullScreen, handleFocused]
+    [ handleMaximized, handleFullScreen, handleFocused ]
   )
 
   const handleClose = React.useCallback (
@@ -81,7 +81,7 @@ export const TitleBar: React.FC<TitleBarProps> = props => {
         close ()
       }
     },
-    [isLoading, close, closeDuringLoad]
+    [ isLoading, close, closeDuringLoad ]
   )
 
   if (platform === "darwin") {

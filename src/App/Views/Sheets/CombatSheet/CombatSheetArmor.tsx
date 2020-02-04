@@ -14,14 +14,14 @@ import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface CombatSheetArmorProps {
+interface Props {
   armors: Maybe<List<Record<Armor>>>
   l10n: L10nRecord
 }
 
 const AA = Armor.A
 
-export function CombatSheetArmor (props: CombatSheetArmorProps) {
+export const CombatSheetArmor: React.FC<Props> = props => {
   const { l10n, armors: marmors } = props
 
   const movement_tag = translate (l10n) ("movement.short")

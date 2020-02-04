@@ -68,13 +68,7 @@ export interface SpellsDispatchProps {
   setInactiveFilterText (filterText: string): void
 }
 
-export type SpellsProps = SpellsStateProps & SpellsDispatchProps & SpellsOwnProps
-
-export interface SpellsState {
-  showAddSlidein: boolean
-  currentId: Maybe<string>
-  currentSlideinId: Maybe<string>
-}
+type Props = SpellsStateProps & SpellsDispatchProps & SpellsOwnProps
 
 const SWRA = SpellWithRequirements.A
 const SWRAL = SpellWithRequirements.AL
@@ -120,7 +114,7 @@ const SCCA = {
 
 const isCantrip = CantripCombined.is
 
-export const Spells: React.FC<SpellsProps> = props => {
+export const Spells: React.FC<Props> = props => {
   const {
     addSpellsDisabled,
     addPoint,

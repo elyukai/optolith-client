@@ -22,14 +22,14 @@ export const HeaderValue =
                 value: Nothing,
               })
 
-export interface SheetHeaderProps {
+interface Props {
   add?: List<Record<HeaderValue>>
   attributes: List<Record<AttributeCombined>>
   l10n: L10nRecord
   title: string
 }
 
-export function SheetHeader (props: SheetHeaderProps) {
+export const SheetHeader: React.FC<Props> = props => {
   const { add = List<Record<HeaderValue>> (), attributes, l10n, title } = props
 
   const list: List<Record<HeaderValue>> =

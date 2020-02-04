@@ -3,12 +3,11 @@ import { List } from "../../../Data/List";
 import { Just, Maybe } from "../../../Data/Maybe";
 import { classListMaybe } from "../../Utilities/CSS";
 
-export interface ListProps {
-  children?: React.ReactNode
+interface Props {
   className?: string
 }
 
-export function ListView (props: ListProps) {
+export const ListView: React.FC<Props> = props => {
   const { children, className } = props
 
   return (

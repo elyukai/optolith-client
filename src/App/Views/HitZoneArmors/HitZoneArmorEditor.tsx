@@ -7,6 +7,7 @@ import { ensure, mapMaybe, Maybe, maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { EditHitZoneArmor } from "../../Models/Hero/EditHitZoneArmor";
 import { Item, itemToDropdown } from "../../Models/Hero/Item";
+import { DropdownOption } from "../../Models/View/DropdownOption";
 import { ItemTemplate, itemTemplateToDropdown } from "../../Models/Wiki/ItemTemplate";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
@@ -14,7 +15,6 @@ import { getLossLevelElements } from "../../Utilities/ItemUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { sortRecordsByName } from "../../Utilities/sortBy";
 import { Dialog } from "../Universal/Dialog";
-import { DropdownOption } from "../Universal/Dropdown";
 import { TextField } from "../Universal/TextField";
 import { HitZoneArmorEditorRow } from "./HitZoneArmorEditorRow";
 

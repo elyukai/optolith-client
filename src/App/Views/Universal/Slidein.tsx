@@ -4,23 +4,23 @@ import { Just, Maybe } from "../../../Data/Maybe";
 import { classListMaybe } from "../../Utilities/CSS";
 import { Portal } from "./Portal";
 
-export interface SlideinProps {
+interface Props {
   children?: React.ReactNode
   className?: string
   isOpen: boolean
   close (): void
 }
 
-export function Slidein (props: SlideinProps) {
-  const { children, className, close, ...other } = props
+export const Slidein: React.FC<Props> = props => {
+  const { children, className, close, isOpen } = props
 
   return (
     <Portal
-      {...other}
+      isOpen={isOpen}
       className={classListMaybe (List (Just ("slidein-backdrop"), Maybe (className)))}
       >
       <div className="slidein">
-        <div className="slidein-close" onClick={close}><div>&#xE5CD;</div></div>
+        <div className="slidein-close" onClick={close}><div>{"&#xE5CD;"}</div></div>
           <div className="slidein-content">
             {children}
           </div>

@@ -7,6 +7,7 @@ import { SettingsContainer } from "../../Containers/SettingsContainer";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { SubTab } from "../../Models/Hero/heroTypeHelpers";
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
+import { NavigationBarTabOptions } from "../../Models/View/NavigationBarTabOptions";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { TabId } from "../../Utilities/LocationUtils";
@@ -22,7 +23,6 @@ import { NavigationBarBack } from "./NavigationBarBack";
 import { NavigationBarLeft } from "./NavigationBarLeft";
 import { NavigationBarRight } from "./NavigationBarRight";
 import { NavigationBarSubTabs } from "./NavigationBarSubTabs";
-import { NavigationBarTabProps } from "./NavigationBarTab";
 import { NavigationBarTabs } from "./NavigationBarTabs";
 import { NavigationBarWrapper } from "./NavigationBarWrapper";
 
@@ -41,7 +41,7 @@ export interface NavigationBarStateProps {
   isUndoAvailable: boolean
   isSettingsOpen: boolean
   isHeroSection: boolean
-  tabs: List<NavigationBarTabProps>
+  tabs: List<Record<NavigationBarTabOptions>>
   subtabs: Maybe<List<SubTab>>
   adventurePoints: Maybe<Record<AdventurePointsCategories>>
   maximumForMagicalAdvantagesDisadvantages: Maybe<number>

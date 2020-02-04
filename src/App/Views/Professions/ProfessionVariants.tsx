@@ -9,12 +9,13 @@ import { selectProfessionVariant } from "../../Actions/ProfessionVariantActions"
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
 import { ProfessionVariantCombinedA_ } from "../../Models/View/ProfessionVariantCombined";
+import { RadioOption } from "../../Models/View/RadioOption";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { getNameBySex } from "../../Utilities/rcpUtils";
 import { sortRecordsByName } from "../../Utilities/sortBy";
-import { Option, RadioButtonGroup } from "../Universal/RadioButtonGroup";
+import { RadioButtonGroup } from "../Universal/RadioButtonGroup";
 
 export interface ProfessionVariantsProps {
   currentProfessionId: Maybe<string>
@@ -57,7 +58,7 @@ export const ProfessionVariants: React.FC<ProfessionVariantsProps> = props => {
                    const ap_tag = translate (l10n) ("adventurepoints.short")
                    const ap = Maybe.sum (PCA_.ap (prof)) + PVCA_.ap (prof_var)
 
-                   return Option ({
+                   return RadioOption ({
                      name: `${name} (${ap} ${ap_tag})`,
                      value: Just (PVCA_.id (prof_var)),
                    })
@@ -65,14 +66,14 @@ export const ProfessionVariants: React.FC<ProfessionVariantsProps> = props => {
                  sortRecordsByName (l10n),
                  PCA_.isVariantRequired (prof)
                    ? ident
-                   : consF (Option ({ name: translate (l10n) ("novariant") }))
+                   : consF (RadioOption ({ name: translate (l10n) ("novariant") }))
                ))
              ))
            (msex)
            (bind (professions) (find (pipe (PCA_.id, Maybe.elemF (currentProfessionId)))))
 
   return maybe (<></>)
-               ((vars: List<Record<Option<string>>>) => (
+               ((vars: List<Record<RadioOption<string>>>) => (
                  <RadioButtonGroup
                    active={currentProfessionVariantId}
                    onClick={handleProfessionVariantSelect}

@@ -14,6 +14,7 @@ import { sel2 } from "../../../Data/Tuple/Select";
 import { ProfessionId } from "../../Constants/Ids";
 import { Selections as SelectionsInterface } from "../../Models/Hero/heroTypeHelpers";
 import { Rules } from "../../Models/Hero/Rules";
+import { DropdownOption } from "../../Models/View/DropdownOption";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Culture } from "../../Models/Wiki/Culture";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -30,11 +31,11 @@ import { translate } from "../../Utilities/I18n";
 import { getAllAdjustmentSelections } from "../../Utilities/mergeRcpAdjustmentSelections";
 import { sign } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
-import { getBuyScriptElement, getGuildMageUnfamiliarSpellSelectionElement, getMainScriptSelectionElement, getMotherTongueSelectionElement, getTerrainKnowledgeElement } from "../../Utilities/rcpAdjustmentSelectionUtils";
+import { getBuyScriptElement, getGuildMageUnfamiliarSpellSelectionElement, getMainScriptSelectionElement, getMotherTongueSelectionElement } from "../../Utilities/rcpAdjustmentSelectionUtils";
 import { getSelPair } from "../../Utilities/RCPSelectionsUtils";
 import { BorderButton } from "../Universal/BorderButton";
 import { Checkbox } from "../Universal/Checkbox";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { Dropdown } from "../Universal/Dropdown";
 import { Scroll } from "../Universal/Scroll";
 import { Slidein } from "../Universal/Slidein";
 import { CantripSelectionList, isCantripsSelectionValid } from "./CantripSelectionList";
@@ -43,6 +44,7 @@ import { CursesSelectionList, isCursesSelectionValid } from "./CursesSelectionLi
 import { isLanguagesScriptsSelectionValid, LanguagesScriptsSelectionLists } from "./LanguagesScriptsSelectionLists";
 import { isSkillSelectionValid, SkillSelectionList } from "./SkillSelectionList";
 import { isSkillSpecializationSelectionValid, SkillSpecializationSelectionList } from "./SkillSpecializationSelectionList";
+import { isTerrainKnowledgeSelectionValid, TerrainKnowledgeSelectionList } from "./TerrainKnowledgeSelectionList";
 
 export interface RCPOptionSelectionsProps {
   l10n: L10nRecord
@@ -421,10 +423,18 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                (PSA[ProfessionSelectionIds.SKILLS])
                (prof_sels)
 
-  const terrainKnowledge = getTerrainKnowledgeElement (wiki)
-                                                      (terrainKnowledgeActive)
-                                                      (handleSetTerrainKnowledge)
-                                                      (prof_sels)
+  const terrainKnowledge =
+    getSelPair (isTerrainKnowledgeSelectionValid (terrainKnowledgeActive))
+               (selection => (
+                 <TerrainKnowledgeSelectionList
+                   wiki={wiki}
+                   active={terrainKnowledgeActive}
+                   selection={selection}
+                   setTerrainId={handleSetTerrainKnowledge}
+                   />
+               ))
+               (PSA[ProfessionSelectionIds.TERRAIN_KNOWLEDGE])
+               (prof_sels)
 
   const guildMageUnfamiliarSpell =
     getGuildMageUnfamiliarSpellSelectionElement (l10n)
@@ -441,21 +451,13 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
     || !fst (cantrips)
     || !fst (curses)
     || !fst (skills)
+    || !fst (terrainKnowledge)
     || isNothing (attributeAdjustment)
     || (isMotherTongueSelectionNeeded && motherTongue === 0)
     || (
       isBuyingMainScriptEnabled
       && snd (isScriptSelectionNeeded)
       && mainScript === 0
-    )
-    || (
-      isJust (PSA[ProfessionSelectionIds.SPECIALIZATION] (prof_sels))
-      && snd (specialization) === ""
-      && isNothing (fst (specialization))
-    )
-    || (
-    isJust (PSA[ProfessionSelectionIds.TERRAIN_KNOWLEDGE] (prof_sels))
-      && isNothing (terrainKnowledgeActive)
     )
     || (
       PSA[ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL] (prof_sels)
@@ -521,7 +523,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
         {maybeToNullable (guildMageUnfamiliarSpell)}
         {maybeToNullable (snd (cantrips))}
         {maybeToNullable (snd (skills))}
-        {maybeToNullable (terrainKnowledge)}
+        {maybeToNullable (snd (terrainKnowledge))}
         <BorderButton
           label={translate (l10n) ("complete")}
           primary

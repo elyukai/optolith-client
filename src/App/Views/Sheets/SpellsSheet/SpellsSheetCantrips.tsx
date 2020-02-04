@@ -10,12 +10,12 @@ import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { sortStrings } from "../../../Utilities/sortBy";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface SpellsSheetCantripsProps {
+interface Props {
   cantrips: Maybe<List<Record<CantripCombined>>>
   l10n: L10nRecord
 }
 
-export function SpellsSheetCantrips (props: SpellsSheetCantripsProps) {
+export const SpellsSheetCantrips: React.FC<Props> = props => {
   const { cantrips, l10n } = props
 
   return (

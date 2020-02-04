@@ -10,12 +10,12 @@ import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { sortStrings } from "../../../Utilities/sortBy";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface LiturgicalChantSheetBlessingsProps {
-  blessings: Maybe<List<Record<BlessingCombined>>>
+interface Props {
   l10n: L10nRecord
+  blessings: Maybe<List<Record<BlessingCombined>>>
 }
 
-export function LiturgicalChantsSheetBlessings (props: LiturgicalChantSheetBlessingsProps) {
+export const LiturgicalChantsSheetBlessings: React.FC<Props> = props => {
   const { blessings, l10n } = props
 
   return (

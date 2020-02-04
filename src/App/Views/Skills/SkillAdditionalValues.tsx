@@ -7,11 +7,11 @@ export interface AdditionalValue {
   value?: string | number
 }
 
-export interface SkillAdditionalValuesProps {
+interface Props {
   addValues?: List<AdditionalValue>
 }
 
-export function SkillAdditionalValues (props: SkillAdditionalValuesProps) {
+export const SkillAdditionalValues: React.FC<Props> = props => {
   const { addValues } = props
 
   if (typeof addValues === "object") {

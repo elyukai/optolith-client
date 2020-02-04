@@ -2,13 +2,13 @@ import * as React from "react";
 import { List } from "../../../Data/List";
 import { ListItemGroup } from "../Universal/ListItemGroup";
 
-export interface SkillListItemProps {
+interface Props {
   addText?: string
   groupList?: List<string>
   groupIndex?: number
 }
 
-export const SkillGroup: React.FC<SkillListItemProps> = props => {
+export const SkillGroup: React.FC<Props> = props => {
   const {
     addText,
     groupIndex,

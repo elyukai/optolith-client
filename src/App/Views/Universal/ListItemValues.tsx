@@ -1,10 +1,8 @@
 import * as React from "react";
 
-export interface ListItemValuesProps {
-  children?: React.ReactNode
-}
+interface Props { }
 
-export function ListItemValues (props: ListItemValuesProps) {
+export const ListItemValues: React.FC<Props> = props => {
   const { children } = props
 
   return (

@@ -5,6 +5,8 @@ import { elems, OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet, toggle } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
+import { DropdownOption } from "../../Models/View/DropdownOption";
+import { RadioOption } from "../../Models/View/RadioOption";
 import { Book } from "../../Models/Wiki/Book";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -12,10 +14,10 @@ import { translate } from "../../Utilities/I18n";
 import { pipe_ } from "../../Utilities/pipe";
 import { BookSelection } from "../Rules/BookSelection";
 import { Dialog } from "../Universal/Dialog";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { Dropdown } from "../Universal/Dropdown";
 import { Hr } from "../Universal/Hr";
 import { Scroll } from "../Universal/Scroll";
-import { Option, SegmentedControls } from "../Universal/SegmentedControls";
+import { SegmentedControls } from "../Universal/SegmentedControls";
 import { TextField } from "../Universal/TextField";
 
 const ELA = ExperienceLevel.A
@@ -150,11 +152,11 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
         active={msex}
         onClick={setSex}
         options={List (
-          Option<Sex> ({
+          RadioOption<Sex> ({
             value: Just<Sex> ("m"),
             name: translate (l10n) ("male"),
           }),
-          Option<Sex> ({
+          RadioOption<Sex> ({
             value: Just<Sex> ("f"),
             name: translate (l10n) ("female"),
           })

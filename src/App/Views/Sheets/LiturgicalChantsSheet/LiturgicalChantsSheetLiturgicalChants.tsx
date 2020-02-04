@@ -21,7 +21,7 @@ import { sortStrings } from "../../../Utilities/sortBy";
 import { getCheckModStr } from "../../InlineWiki/Elements/WikiSkillCheck";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface LiturgicalChantsSheetLiturgicalChantsProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
   liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
@@ -30,9 +30,7 @@ export interface LiturgicalChantsSheetLiturgicalChantsProps {
 
 const LCWRA_ = LiturgicalChantWithRequirementsA_
 
-export function LiturgicalChantsSheetLiturgicalChants (
-  props: LiturgicalChantsSheetLiturgicalChantsProps
-) {
+export const LiturgicalChantsSheetLiturgicalChants: React.FC<Props> = props => {
   const {
     attributes,
     checkAttributeValueVisibility,

@@ -1,8 +1,7 @@
-import * as React from "react";
 import { Maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { PromptOptions } from "../../Actions/AlertActions";
-import { Alert, AlertProps } from "../Universal/Alert";
+import { Alert } from "../Universal/Alert";
 
 export interface AlertsOwnProps { }
 
@@ -16,9 +15,4 @@ export interface AlertsDispatchProps {
 
 export type AlertsProps = AlertsStateProps & AlertsDispatchProps & AlertsOwnProps
 
-export const Alerts: React.FC<AlertProps> = ({ options, close }) => (
-  <Alert
-    options={options}
-    close={close}
-    />
-)
+export const Alerts = Alert

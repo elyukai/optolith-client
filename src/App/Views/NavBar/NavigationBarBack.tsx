@@ -1,10 +1,10 @@
 import * as React from "react";
 
-export interface NavigationBarBackProps {
+interface Props {
   handleSetTab (): void
 }
 
-export function NavigationBarBack (props: NavigationBarBackProps) {
+export const NavigationBarBack: React.FC<Props> = props => {
   const { handleSetTab } = props
 
   return (

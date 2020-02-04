@@ -1,7 +1,7 @@
 import { List } from "../../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../../Data/Record";
-import { DropdownOption } from "../../../Views/Universal/Dropdown";
+import { DropdownOption } from "../../View/DropdownOption";
 import { AllRequirementObjects } from "../wikiTypeHelpers";
 import { Application } from "./Application";
 import { Erratum } from "./Errata";

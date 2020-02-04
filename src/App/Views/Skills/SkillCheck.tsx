@@ -13,7 +13,7 @@ import { minus } from "../../Utilities/Chars";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { getCheckModStr } from "../InlineWiki/Elements/WikiSkillCheck";
 
-export interface SkillCheckProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   check?: List<string>
   checkDisabled?: boolean
@@ -21,7 +21,7 @@ export interface SkillCheckProps {
   l10n: L10nRecord
 }
 
-export function SkillCheck (props: SkillCheckProps) {
+export const SkillCheck: React.FC<Props> = props => {
   const {
     attributes,
     check,

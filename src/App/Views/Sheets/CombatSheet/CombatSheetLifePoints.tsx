@@ -12,12 +12,12 @@ import { Box } from "../../Universal/Box";
 import { LabelBox } from "../../Universal/LabelBox";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface CombatSheetLifePointsProps {
+interface Props {
   derivedCharacteristics: List<Record<DerivedCharacteristic>>
   l10n: L10nRecord
 }
 
-export function CombatSheetLifePoints (props: CombatSheetLifePointsProps) {
+export const CombatSheetLifePoints: React.FC<Props> = props => {
   const { derivedCharacteristics, l10n } = props
 
   const lifePoints =
@@ -59,11 +59,11 @@ export function CombatSheetLifePoints (props: CombatSheetLifePointsProps) {
         {translate (l10n) ("pain3")}
       </div>
       <div className="tiers">
-        <Box>5</Box>
+        <Box>{5}</Box>
         {translate (l10n) ("pain4")}
       </div>
       <div className="tiers">
-        <Box>0</Box>
+        <Box>{0}</Box>
         {translate (l10n) ("dying")}
       </div>
     </TextBox>

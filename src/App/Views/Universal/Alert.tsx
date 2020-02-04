@@ -4,18 +4,17 @@ import { fromJust, isJust, Just, listToMaybe, Maybe, maybeToUndefined, Nothing }
 import { Record } from "../../../Data/Record";
 import { PromptButton, PromptOptions } from "../../Actions/AlertActions";
 import { addKeybinding, removeKeybinding } from "../../Utilities/Keybindings";
-import { BorderButtonProps } from "./BorderButton";
 import { Dialog } from "./Dialog";
 
 const POA = PromptOptions.A
 const PBA = PromptButton.A
 
-export interface AlertProps {
+interface Props {
   options: Maybe<Record<PromptOptions<any>>>
   close (): void
 }
 
-export const Alert: React.FC<AlertProps> = props => {
+export const Alert: React.FC<Props> = props => {
   const { close, options: moptions } = props
 
   if (!Maybe.isJust (moptions)) {
@@ -29,17 +28,8 @@ export const Alert: React.FC<AlertProps> = props => {
   const buttons = POA.buttons (options)
   const resolve = POA.resolve (options)
 
-  // const {
-  //   buttons: buttonsOption = [{ label: "OK", autoWidth: true }],
-  //   message,
-  //   title,
-  //   confirm,
-  //   confirmYesNo,
-  //   onClose,
-  // } = options
-
   const buttonOptions =
-    map ((x: Record<PromptButton<any>>): BorderButtonProps => ({
+    map ((x: Record<PromptButton<any>>) => ({
           autoWidth: flength (buttons) === 1,
           label: PBA.label (x),
           onClick: () => resolve (Just (PBA.response (x))),

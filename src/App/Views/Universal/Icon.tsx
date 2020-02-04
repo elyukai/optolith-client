@@ -1,17 +1,18 @@
 import * as React from "react";
-import { classListMaybe } from "../../Utilities/CSS";
 import { List } from "../../../Data/List";
 import { Just, Maybe } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
-export interface IconProps {
+interface Props {
   className?: string
-  [id: string]: any
 }
 
-export function Icon (props: IconProps) {
-  const { className, ...other } = props
+export const Icon: React.FC<Props> = props => {
+  const { className } = props
 
   return (
-    <div className={classListMaybe (List (Just ("icon"), Maybe (className)))} {...other} />
+    <div
+      className={classListMaybe (List (Just ("icon"), Maybe (className)))}
+      />
   )
 }

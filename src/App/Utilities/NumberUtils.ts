@@ -65,14 +65,8 @@ export const sign = signNullCustom ("0")
 /**
  * `signNeg :: Int -> String`
  *
- * Correctly signs numbers. Basically, this makes negative numbers use the
- * typographically correct minus sign instead of the default hyphen.
- *
- * ```haskell
- * signNeg -1 === "−1"
- * signNeg 0 === "0"
- * signNeg 1 === "1"
- * ```
+ * Forces signing on the given number, but it does not add a `+` if the number
+ * is positive. Only a proper minus sign is added.
  */
 export const signNeg = (x: number) => x < 0 ? `${minus}\u2060${Math.abs (x)}` : `${x}`
 

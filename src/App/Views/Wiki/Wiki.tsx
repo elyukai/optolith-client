@@ -5,6 +5,7 @@ import { Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { CultureCombined } from "../../Models/View/CultureCombined";
+import { DropdownOption } from "../../Models/View/DropdownOption";
 import { ProfessionCombined } from "../../Models/View/ProfessionCombined";
 import { RaceCombined } from "../../Models/View/RaceCombined";
 import { Advantage } from "../../Models/Wiki/Advantage";
@@ -22,7 +23,7 @@ import { InlineWikiEntry } from "../../Models/Wiki/wikiTypeHelpers";
 import { translate } from "../../Utilities/I18n";
 import { pipe } from "../../Utilities/pipe";
 import { sortRecordsByName } from "../../Utilities/sortBy";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { Dropdown } from "../Universal/Dropdown";
 import { ListPlaceholder } from "../Universal/ListPlaceholder";
 import { MainContent } from "../Universal/MainContent";
 import { Options } from "../Universal/Options";
@@ -77,13 +78,13 @@ export interface WikiDispatchProps {
   setItemTemplatesGroup (group: Maybe<number>): void
 }
 
-export type WikiProps = WikiStateProps & WikiDispatchProps & WikiOwnProps
+type Props = WikiStateProps & WikiDispatchProps & WikiOwnProps
 
 export interface WikiState {
   infoId: Maybe<string>
 }
 
-export const Wiki: React.FC<WikiProps> = props => {
+export const Wiki: React.FC<Props> = props => {
   const {
     category: maybeCategory,
     filterText,
@@ -109,7 +110,7 @@ export const Wiki: React.FC<WikiProps> = props => {
     ...other
   } = props
 
-  const [infoId, setInfoId] = React.useState<Maybe<string>> (Nothing)
+  const [ infoId, setInfoId ] = React.useState<Maybe<string>> (Nothing)
 
   const mxs: Maybe<List<InlineWikiEntry>> =
     fmapF (maybeCategory) (category => other[category as keyof WikiTabLists])
@@ -117,7 +118,7 @@ export const Wiki: React.FC<WikiProps> = props => {
   const handleShowInfo =
     React.useCallback (
       (id: string) => setInfoId (Just (id)),
-      [setInfoId]
+      [ setInfoId ]
     )
 
   return (

@@ -7,19 +7,17 @@ import { lookup, lookupF } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { fst, Pair, snd } from "../../Data/Tuple";
 import { SpecialAbilityId } from "../Constants/Ids";
+import { DropdownOption } from "../Models/View/DropdownOption";
 import { Culture } from "../Models/Wiki/Culture";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement";
 import { Profession } from "../Models/Wiki/Profession";
-import { ProfessionSelections } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
-import { TerrainKnowledgeSelection } from "../Models/Wiki/professionSelections/TerrainKnowledgeSelection";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
-import { TerrainKnowledge } from "../Views/RCPOptionSelections/TerrainKnowledgeSelectionList";
+import { ProfessionPrerequisite } from "../Models/Wiki/wikiTypeHelpers";
 import { Checkbox } from "../Views/Universal/Checkbox";
-import { Dropdown, DropdownOption } from "../Views/Universal/Dropdown";
+import { Dropdown } from "../Views/Universal/Dropdown";
 import { findSelectOption } from "./Activatable/selectionUtils";
 import { translate } from "./I18n";
 import { pipe } from "./pipe";
@@ -73,24 +71,6 @@ export const getBuyScriptElement =
           }) ()
         )
       : Nothing
-
-export const getTerrainKnowledgeElement =
-  (wiki: WikiModelRecord) =>
-  (terrainKnowledgeActive: Maybe<number>) =>
-  (setTerrainKnowledge: (terrainKnowledge: number) => void) =>
-    pipe (
-      ProfessionSelections.AL[ProfessionSelectionIds.TERRAIN_KNOWLEDGE],
-      Maybe.liftM2<Record<SpecialAbility>, Record<TerrainKnowledgeSelection>, JSX.Element>
-        (wikiEntry => selection => (
-          <TerrainKnowledge
-            available={TerrainKnowledgeSelection.AL.sid (selection)}
-            terrainKnowledge={wikiEntry}
-            set={setTerrainKnowledge}
-            active={terrainKnowledgeActive}
-            />
-        ))
-        (lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.TerrainKnowledge))
-    )
 
 export const getMotherTongueSelectionElement =
   (locale: L10nRecord) =>

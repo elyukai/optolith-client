@@ -12,14 +12,14 @@ import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface CombatSheetRangedWeaponProps {
+interface Props {
   l10n: L10nRecord
   rangedWeapons: Maybe<List<Record<RangedWeapon>>>
 }
 
 const RWA = RangedWeapon.A
 
-export function CombatSheetRangedWeapons (props: CombatSheetRangedWeaponProps) {
+export const CombatSheetRangedWeapons: React.FC<Props> = props => {
   const { l10n, rangedWeapons: mranged_weapons } = props
 
   return (
@@ -103,16 +103,16 @@ export function CombatSheetRangedWeapons (props: CombatSheetRangedWeaponProps) {
           {replicateR (2 - Maybe.sum (fmapF (mranged_weapons) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
-                          <td className="name"></td>
-                          <td className="combat-technique"></td>
-                          <td className="reload-time"></td>
-                          <td className="damage"></td>
-                          <td className="ammunition"></td>
-                          <td className="range"></td>
-                          <td className="bf"></td>
-                          <td className="loss"></td>
-                          <td className="ranged"></td>
-                          <td className="weight"></td>
+                          <td className="name" />
+                          <td className="combat-technique" />
+                          <td className="reload-time" />
+                          <td className="damage" />
+                          <td className="ammunition" />
+                          <td className="range" />
+                          <td className="bf" />
+                          <td className="loss" />
+                          <td className="ranged" />
+                          <td className="weight" />
                         </tr>
                       ))}
         </tbody>

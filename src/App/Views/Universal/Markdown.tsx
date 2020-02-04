@@ -10,20 +10,16 @@ const parseHtml = HTMLParser ({
   isValidNode: (node: any) => node.type !== "script",
 })
 
-export interface MarkdownProps {
+interface Props {
   className?: string
   isListElement?: boolean
   noWrapper?: boolean
   source: string
 }
 
-export interface MarkdownRootProps {
-  children?: React.ReactNode
-}
-
 type Renderer<A> = (props: A) => React.ReactElement<A>
 
-export function Markdown (props: MarkdownProps) {
+export const Markdown: React.FC<Props> = props => {
   const { className, source = "...", isListElement, noWrapper } = props
 
   const root: string | Renderer<{ children?: React.ReactNode }> =
@@ -50,10 +46,10 @@ export function Markdown (props: MarkdownProps) {
         link,
         linkReference: link,
       }}
-      plugins={[Ph]}
-      disallowedTypes={noWrapper === true ? ["paragraph"] : undefined}
+      plugins={[ Ph ]}
+      disallowedTypes={noWrapper === true ? [ "paragraph" ] : undefined}
       escapeHtml={false}
-      astPlugins={[parseHtml]}
+      astPlugins={[ parseHtml ]}
       />
   )
 }

@@ -11,14 +11,14 @@ import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I1
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface CombatSheetArmorZonesProps {
+interface Props {
   armorZones: Maybe<List<Record<HitZoneArmorForView>>>
   l10n: L10nRecord
 }
 
 const HZAFVA = HitZoneArmorForView.A
 
-export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
+export const CombatSheetArmorZones: React.FC<Props> = props => {
   const { l10n, armorZones: mhit_zone_armors } = props
 
   return (
@@ -81,16 +81,16 @@ export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
           {replicateR (2 - Maybe.sum (fmapF (mhit_zone_armors) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
-                          <td className="name"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="enc"></td>
-                          <td className="add-penalties"></td>
-                          <td className="weight"></td>
+                          <td className="name" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="enc" />
+                          <td className="add-penalties" />
+                          <td className="weight" />
                         </tr>
                       ))}
         </tbody>

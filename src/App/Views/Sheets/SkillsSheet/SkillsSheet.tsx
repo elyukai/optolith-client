@@ -21,7 +21,7 @@ import { SkillsSheetRoutineChecks } from "./SkillsSheetRoutineChecks";
 import { SkillsSheetScripts } from "./SkillsSheetScripts";
 import { SkillsSheetSkills } from "./SkillsSheetSkills";
 
-export interface SkillsSheetProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
   languagesStateEntry: Maybe<Record<ActivatableDependent>>
@@ -34,7 +34,7 @@ export interface SkillsSheetProps {
   switchAttributeValueVisibility (): void
 }
 
-export function SkillsSheet (props: SkillsSheetProps) {
+export const SkillsSheet: React.FC<Props> = props => {
   const {
     attributes,
     checkAttributeValueVisibility,

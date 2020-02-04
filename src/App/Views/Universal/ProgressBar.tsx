@@ -2,15 +2,18 @@ import * as React from "react";
 import { List } from "../../../Data/List";
 import { guardReplace, Just, Maybe, orN } from "../../../Data/Maybe";
 import { classListMaybe } from "../../Utilities/CSS";
-import { ProgressBarOverlay, ProgressBarOverlayProps } from "./ProgressBarOverlay";
+import { ProgressBarOverlay } from "./ProgressBarOverlay";
 
-export interface ProgressBarProps extends ProgressBarOverlayProps {
+interface Props {
   className?: string
+  current: number
   fullWidth?: boolean
+  horizontal?: boolean
+  max: number
 }
 
-export function ProgressBar (props: ProgressBarProps) {
-  const { className, fullWidth, horizontal, ...other } = props
+export const ProgressBar: React.FC<Props> = props => {
+  const { className, current, fullWidth, horizontal, max } = props
 
   return (
     <div
@@ -23,7 +26,11 @@ export function ProgressBar (props: ProgressBarProps) {
         ))
       }
       >
-      <ProgressBarOverlay horizontal={horizontal} {...other} />
+      <ProgressBarOverlay
+        current={current}
+        horizontal={horizontal}
+        max={max}
+        />
     </div>
   )
 }

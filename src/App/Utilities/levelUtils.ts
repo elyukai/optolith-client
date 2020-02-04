@@ -2,7 +2,7 @@ import { unfoldr } from "../../Data/List";
 import { Just, Nothing } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { Pair } from "../../Data/Tuple";
-import { DropdownOption } from "../Views/Universal/Dropdown";
+import { DropdownOption } from "../Models/View/DropdownOption";
 import { toRoman } from "./NumberUtils";
 
 const getElements =

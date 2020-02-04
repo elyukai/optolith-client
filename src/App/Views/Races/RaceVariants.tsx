@@ -5,11 +5,12 @@ import { bindF, ensure, Just, Maybe, maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { selectRaceVariant } from "../../Actions/RaceActions";
 import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
+import { RadioOption } from "../../Models/View/RadioOption";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { RaceVariant } from "../../Models/Wiki/RaceVariant";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { sortRecordsByName } from "../../Utilities/sortBy";
-import { Option, RadioButtonGroup } from "../Universal/RadioButtonGroup";
+import { RadioButtonGroup } from "../Universal/RadioButtonGroup";
 
 export interface RaceVariantsProps {
   currentId: Maybe<string>
@@ -34,7 +35,7 @@ export const RaceVariants: React.FC<RaceVariantsProps> = props => {
     find (pipe (RaceCombinedA_.id, Maybe.elemF (currentId))),
     bindF (pipe (
       RaceCombined.A.mappedVariants,
-      map (e => Option ({
+      map (e => RadioOption ({
         name: RaceVariant.A.name (e),
         value: Just (RaceVariant.A.id (e)),
       })),

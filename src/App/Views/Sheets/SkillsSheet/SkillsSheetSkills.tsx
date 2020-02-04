@@ -13,7 +13,7 @@ import { TextBox } from "../../Universal/TextBox";
 import { iterateGroupHeaders } from "./SkillsSheetSkillsGroups";
 import { iterateList } from "./SkillsSheetSkillsIterate";
 
-export interface SkillsSheetSkillsProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
   l10n: L10nRecord
@@ -23,17 +23,17 @@ export interface SkillsSheetSkillsProps {
 
 const EmptyRow = () => (
   <tr>
-    <td/>
-    <td/>
-    <td/>
-    <td/>
-    <td/>
-    <td/>
-    <td/>
+    <td />
+    <td />
+    <td />
+    <td />
+    <td />
+    <td />
+    <td />
   </tr>
 )
 
-export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
+export const SkillsSheetSkills: React.FC<Props> = props => {
   const { attributes, checkAttributeValueVisibility, l10n, skillsByGroup, skillGroupPages } = props
 
   const groupHeaders = iterateGroupHeaders (l10n)

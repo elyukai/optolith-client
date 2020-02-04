@@ -67,12 +67,6 @@ export type LiturgicalChantsProps =
   & LiturgicalChantsDispatchProps
   & LiturgicalChantsOwnProps
 
-export interface LiturgicalChantsState {
-  showAddSlidein: boolean
-  currentId: Maybe<string>
-  currentSlideinId: Maybe<string>
-}
-
 type Combined = Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>
 
 export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {

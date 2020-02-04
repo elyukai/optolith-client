@@ -3,13 +3,13 @@ import { SubTab } from "../../Models/Hero/heroTypeHelpers";
 import { TabId } from "../../Utilities/LocationUtils";
 import { Tab } from "../Universal/Tab";
 
-export interface NavigationBarSubTabProps {
+interface Props {
   currentTab: TabId
   tab: SubTab
   setTab (tab: TabId): void
 }
 
-export const NavigationBarSubTab: React.FC<NavigationBarSubTabProps> = props => {
+export const NavigationBarSubTab: React.FC<Props> = props => {
   const { currentTab, tab, setTab } = props
 
   const { id, label, disabled } = tab

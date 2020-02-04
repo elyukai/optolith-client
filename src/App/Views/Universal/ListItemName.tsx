@@ -3,14 +3,14 @@ import { List } from "../../../Data/List";
 import { guardReplace, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { classListMaybe } from "../../Utilities/CSS";
 
-export interface ListItemNameProps {
+interface Props {
   addName?: Maybe<string>
   children?: React.ReactNode
   large?: boolean | JSX.Element
   name: string
 }
 
-export function ListItemName (props: ListItemNameProps) {
+export const ListItemName: React.FC<Props> = props => {
   const { addName: madd_name = Nothing, children, large, name } = props
 
   const titleElement = maybe (<p className="title">{name}</p>)

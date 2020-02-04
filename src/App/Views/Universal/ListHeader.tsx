@@ -1,10 +1,8 @@
 import * as React from "react";
 
-export interface ListHeaderProps {
-  children?: React.ReactNode
-}
+interface Props { }
 
-export function ListHeader (props: ListHeaderProps) {
+export const ListHeader: React.FC<Props> = props => {
   const { children } = props
 
   return (

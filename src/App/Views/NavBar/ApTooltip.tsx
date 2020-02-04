@@ -6,7 +6,7 @@ import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCate
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate, translateP } from "../../Utilities/I18n";
 
-export interface ApTooltipProps {
+interface Props {
   l10n: L10nRecord
   adventurePoints: Record<AdventurePointsCategories>
   maximumForMagicalAdvantagesDisadvantages: Maybe<number>
@@ -16,7 +16,7 @@ export interface ApTooltipProps {
 
 const APCA = AdventurePointsCategories.A
 
-export function ApTooltip (props: ApTooltipProps) {
+export const ApTooltip: React.FC<Props> = props => {
   const {
     l10n,
     adventurePoints: ap,

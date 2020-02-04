@@ -4,7 +4,7 @@ import { guardReplace, Just, Maybe, maybe, normalize, or, orN } from "../../../D
 import { classListMaybe } from "../../Utilities/CSS";
 import { TooltipHint } from "./TooltipHint";
 
-export interface ButtonProps {
+interface Props {
   active?: boolean
   autoWidth?: boolean
   className?: string
@@ -17,7 +17,7 @@ export interface ButtonProps {
   onClick? (): void
 }
 
-export const Button: React.FC<ButtonProps> = props => {
+export const Button: React.FC<Props> = props => {
   const {
     active,
     autoWidth,

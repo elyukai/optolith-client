@@ -18,7 +18,7 @@ import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils";
 import { getCheckModStr } from "../../InlineWiki/Elements/WikiSkillCheck";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface SpellsSheetSpellsProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
   l10n: L10nRecord
@@ -27,7 +27,7 @@ export interface SpellsSheetSpellsProps {
 
 const SWRA_ = SpellWithRequirementsA_
 
-export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
+export const SpellsSheetSpells: React.FC<Props> = props => {
   const {
     attributes,
     checkAttributeValueVisibility,
@@ -145,8 +145,8 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
                       </Textfit>
                     </td>
                     <td className="ic">{getICName (SWRA_.ic (e))}</td>
-                    <td className="effect"></td>
-                    <td className="ref"></td>
+                    <td className="effect" />
+                    <td className="ref" />
                   </tr>
                 )
               }),
@@ -157,17 +157,17 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
           {replicateR (21 - Maybe.sum (fmapF (maybeSpells) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
-                          <td className="name"></td>
-                          <td className="check"></td>
-                          <td className="value"></td>
-                          <td className="cost"></td>
-                          <td className="cast-time"></td>
-                          <td className="range"></td>
-                          <td className="duration"></td>
-                          <td className="aspect"></td>
-                          <td className="ic"></td>
-                          <td className="effect"></td>
-                          <td className="ref"></td>
+                          <td className="name" />
+                          <td className="check" />
+                          <td className="value" />
+                          <td className="cost" />
+                          <td className="cast-time" />
+                          <td className="range" />
+                          <td className="duration" />
+                          <td className="aspect" />
+                          <td className="ic" />
+                          <td className="effect" />
+                          <td className="ref" />
                         </tr>
                       ))}
         </tbody>

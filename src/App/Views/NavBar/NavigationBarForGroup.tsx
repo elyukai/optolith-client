@@ -14,7 +14,7 @@ import { NavigationBarLeft } from "./NavigationBarLeft";
 import { NavigationBarRight } from "./NavigationBarRight";
 import { NavigationBarWrapper } from "./NavigationBarWrapper";
 
-export interface NavigationBarForGroupProps {
+interface Props {
   l10n: L10nRecord
   groupName: string
   platform: string
@@ -27,7 +27,7 @@ export interface NavigationBarForGroupProps {
 
 const toggleDevtools = remote.getCurrentWindow ().webContents.toggleDevTools
 
-export const NavigationBarForGroup: React.FC<NavigationBarForGroupProps> = props => {
+export const NavigationBarForGroup: React.FC<Props> = props => {
   const {
     l10n,
     groupName,

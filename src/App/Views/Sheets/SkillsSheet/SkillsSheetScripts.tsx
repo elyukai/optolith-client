@@ -14,13 +14,13 @@ import { pipe_ } from "../../../Utilities/pipe";
 import { sortStrings } from "../../../Utilities/sortBy";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface SkillsSheetScriptsProps {
+interface Props {
   l10n: L10nRecord
   scriptsStateEntry: Maybe<Record<ActivatableDependent>>
   scriptsWikiEntry: Maybe<Record<SpecialAbility>>
 }
 
-export function SkillsSheetScripts (props: SkillsSheetScriptsProps) {
+export const SkillsSheetScripts: React.FC<Props> = props => {
   const {
     l10n,
     scriptsStateEntry: maybeScriptsStateEntry,

@@ -9,13 +9,14 @@ import { Record } from "../../../Data/Record";
 import { Pair } from "../../../Data/Tuple";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Pact } from "../../Models/Hero/Pact";
+import { DropdownOption } from "../../Models/View/DropdownOption";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { toRoman } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { misNumberM, misStringM } from "../../Utilities/typeCheckUtils";
 import { Checkbox } from "../Universal/Checkbox";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { Dropdown } from "../Universal/Dropdown";
 import { Page } from "../Universal/Page";
 import { TextField } from "../Universal/TextField";
 
@@ -83,12 +84,12 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
           options={pipe_ (
                           translate (l10n) ("pactcategories"),
                           imap (i => (name: string) => DropdownOption ({
-                          id: Just (i + 1),
-                          name,
-                        })),
+                            id: Just (i + 1),
+                            name,
+                          })),
                           consF (DropdownOption ({
-                          name: translate (l10n) ("nopact"),
-                        }))
+                            name: translate (l10n) ("nopact"),
+                          }))
                       )}
           onChange={setPactCategory}
           value={fmapF (mpact) (Pact.A.category)}

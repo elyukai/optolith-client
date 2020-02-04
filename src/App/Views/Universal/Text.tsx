@@ -11,7 +11,7 @@ export interface TextProps extends ChildrenProps {
   onMouseDown?: () => void
 }
 
-const TextBase: React.RefForwardingComponent<HTMLDivElement, TextProps> = (props, ref) => {
+const Text: React.RefForwardingComponent<HTMLDivElement, TextProps> = (props, ref) => {
   const { children, className, onMouseOut, onMouseOver, onMouseDown } = props
 
   return (
@@ -27,4 +27,6 @@ const TextBase: React.RefForwardingComponent<HTMLDivElement, TextProps> = (props
   )
 }
 
-export const Text = React.forwardRef (TextBase)
+const TextRef = React.forwardRef (Text)
+
+export { TextRef as Text };

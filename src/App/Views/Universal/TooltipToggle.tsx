@@ -4,7 +4,7 @@ import { guardReplace, Just, orN } from "../../../Data/Maybe";
 import { classListMaybe } from "../../Utilities/CSS";
 import { Overlay } from "./Overlay";
 
-export interface TooltipToggleProps {
+interface Props {
   content: React.ReactNode
   margin?: number
   small?: boolean
@@ -12,23 +12,23 @@ export interface TooltipToggleProps {
   target: JSX.Element
 }
 
-export const TooltipToggle: React.FC<TooltipToggleProps> = props => {
+export const TooltipToggle: React.FC<Props> = props => {
   const { content, margin, position = "top", small, target } = props
 
-  const [isOpen, setIsOpen] = React.useState (false)
+  const [ isOpen, setIsOpen ] = React.useState (false)
 
   const targetRef = React.useRef<Element> (null)
 
   const handleMouseOver =
     React.useCallback (
       () => setIsOpen (true),
-      [setIsOpen]
+      [ setIsOpen ]
     )
 
   const handleMouseOut =
     React.useCallback (
       () => setIsOpen (false),
-      [setIsOpen]
+      [ setIsOpen ]
     )
 
   return (

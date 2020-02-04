@@ -1,20 +1,19 @@
 import * as React from "react";
-import { orN, Maybe, guardReplace } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
 import { List } from "../../../Data/List";
+import { guardReplace, Maybe, orN } from "../../../Data/Maybe";
+import { classListMaybe } from "../../Utilities/CSS";
 
-export interface LabelProps {
+interface Props {
   className?: string
   disabled?: boolean
   text?: string
 }
 
-export function Label (props: LabelProps) {
-  const { className, disabled, text, ...other } = props
+export const Label: React.FC<Props> = props => {
+  const { className, disabled, text } = props
 
   return (
     <label
-      {...other}
       className={
         classListMaybe (List (
           Maybe (className),

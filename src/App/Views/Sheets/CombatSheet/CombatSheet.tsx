@@ -27,7 +27,7 @@ import { CombatSheetSpecialAbilities } from "./CombatSheetSpecialAbilities";
 import { CombatSheetStates } from "./CombatSheetStates";
 import { CombatSheetTechniques } from "./CombatSheetTechniques";
 
-export interface CombatSheetProps {
+interface Props {
   armors: Maybe<List<Record<Armor>>>
   attributes: List<Record<AttributeCombined>>
   combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
@@ -41,7 +41,7 @@ export interface CombatSheetProps {
   states: List<Record<NumIdName>>
 }
 
-export function CombatSheet (props: CombatSheetProps) {
+export const CombatSheet: React.FC<Props> = props => {
   const {
     armors,
     attributes,
@@ -60,7 +60,7 @@ export function CombatSheet (props: CombatSheetProps) {
 
   return (
     <SheetWrapper>
-      <Options/>
+      <Options />
       <Sheet
         id="combat-sheet"
         title={translate (l10n) ("combat")}

@@ -4,11 +4,11 @@ import { ndash } from "../../../Utilities/Chars";
 import { translate } from "../../../Utilities/I18n";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface SkillsSheetQualityLevelsProps {
+interface Props {
   l10n: L10nRecord
 }
 
-export const SkillsSheetQualityLevels = ({ l10n }: SkillsSheetQualityLevelsProps) => (
+export const SkillsSheetQualityLevels: React.FC<Props> = ({ l10n }) => (
   <TextBox
     className="quality-levels"
     label={translate (l10n) ("qualitylevels")}

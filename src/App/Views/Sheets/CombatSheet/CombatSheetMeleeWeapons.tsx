@@ -15,14 +15,14 @@ import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface CombatSheetMeleeWeaponsProps {
+interface Props {
   l10n: L10nRecord
   meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
 }
 
 const MWA = MeleeWeapon.A
 
-export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
+export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
   const { l10n, meleeWeapons: mmelee_weapons } = props
 
   return (

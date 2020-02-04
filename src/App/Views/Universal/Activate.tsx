@@ -3,31 +3,33 @@ import { List } from "../../../Data/List";
 import { guardReplace, Maybe, normalize, orN } from "../../../Data/Maybe";
 import { classListMaybe } from "../../Utilities/CSS";
 
-export interface ActivateProps {
-  active: boolean;
-  children?: React.ReactNode;
-  className?: string;
-  disabled?: boolean;
-  value?: Maybe<string | number> | string | number;
-  onClick (value: Maybe<string | number>): void;
+interface Props {
+  active: boolean
+  children?: React.ReactNode
+  className?: string
+  disabled?: boolean
+  value?: Maybe<string | number> | string | number
+  onClick (value: Maybe<string | number>): void
 }
 
-export function Activate (props: ActivateProps) {
-  const { active, className, disabled, onClick, value, ...other } = props;
+export const Activate: React.FC<Props> = props => {
+  const { active, className, disabled, onClick, value, children } = props
 
-  const normalizedValue = normalize (value);
-
-  const onClickEval = orN (disabled) ? undefined : () => onClick (normalizedValue);
+  const onClickEval = React.useCallback (
+    () => orN (disabled) ? undefined : onClick (normalize (value)),
+    [ disabled, onClick, value ]
+  )
 
   return (
     <div
-      {...other}
       className={classListMaybe (List (
         Maybe (className),
         guardReplace (active) ("active"),
         guardReplace (orN (disabled)) ("disabled")
       ))}
       onClick={onClickEval}
-      />
-  );
+      >
+      {children}
+    </div>
+  )
 }

@@ -52,7 +52,7 @@ export interface SkillsDispatchProps {
   removePoint (id: string): void
 }
 
-export type SkillsProps = SkillsStateProps & SkillsDispatchProps & SkillsOwnProps
+type Props = SkillsStateProps & SkillsDispatchProps & SkillsOwnProps
 
 export interface SkillsState {
   infoId: Maybe<string>
@@ -62,7 +62,7 @@ type Element = Record<SkillWithRequirements>
 const SWRA = SkillWithRequirements.A
 const SWRA_ = SkillWithRequirementsA_
 
-export const Skills: React.FC<SkillsProps> = props => {
+export const Skills: React.FC<Props> = props => {
   const [ infoId, setInfoId ] = React.useState<Maybe<string>> (Nothing)
 
   const showInfo = React.useCallback (

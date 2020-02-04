@@ -5,11 +5,11 @@ import { notNullStr } from "../../../Data/List";
 import { bindF, ensure, Maybe, maybeToNullable, normalize } from "../../../Data/Maybe";
 import { pipe_ } from "../../Utilities/pipe";
 
-interface TextFieldErrorProps {
+interface Props {
   error: Maybe<string> | Either<string, any> | undefined
 }
 
-export const TextFieldError: React.FC<TextFieldErrorProps> =
+export const TextFieldError: React.FC<Props> =
   ({ error }) => pipe_ (
     error,
     x => isEither (x) ? eitherToMaybe (invertEither (x)) : x,

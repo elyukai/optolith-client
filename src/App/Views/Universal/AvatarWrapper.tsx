@@ -5,15 +5,15 @@ import { classListMaybe } from "../../Utilities/CSS";
 import { isURLValidM } from "../../Utilities/RegexUtils";
 import { Avatar } from "./Avatar";
 
-export interface AvatarWrapperProps {
+interface Props {
   className?: string
   children?: React.ReactNode
   img?: boolean
   src: Maybe<string>
-  onClick? (): void
+  onClick?: () => void
 }
 
-export function AvatarWrapper (props: AvatarWrapperProps) {
+export const AvatarWrapper: React.FC<Props> = props => {
   const { children, img, onClick, src: msrc } = props
   let { className } = props
 
@@ -27,7 +27,12 @@ export function AvatarWrapper (props: AvatarWrapperProps) {
   return (
     <div className={className} onClick={onClick}>
       {children}
-      <Avatar img={img} src={msrc} hasWrapper validPath={validPath} />
+      <Avatar
+        img={img}
+        src={msrc}
+        hasWrapper
+        validPath={validPath}
+        />
     </div>
   )
 }

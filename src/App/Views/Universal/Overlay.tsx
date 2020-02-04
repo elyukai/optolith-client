@@ -40,7 +40,7 @@ const OverlayPosition = fromDefault ("OverlayPosition") <OverlayPosition> ({ top
 const OPA = OverlayPosition.A
 const OPL = makeLenses (OverlayPosition)
 
-export interface OverlayProps {
+interface Props {
   className?: string
   margin?: number
   position?: Position
@@ -48,7 +48,7 @@ export interface OverlayProps {
   trigger: Element
 }
 
-export const Overlay: React.FC<OverlayProps> = props => {
+export const Overlay: React.FC<Props> = props => {
   const {
     children,
     className,
@@ -58,23 +58,23 @@ export const Overlay: React.FC<OverlayProps> = props => {
     trigger,
   } = props
 
-  const [position, setPosition] = React.useState<Position> (defPosition)
-  const [style, setStyle] = React.useState<React.CSSProperties> ({ visibility: "hidden" })
-  const [arrowStyle, setArrowStyle] = React.useState<React.CSSProperties> ({})
+  const [ position, setPosition ] = React.useState<Position> (defPosition)
+  const [ style, setStyle ] = React.useState<React.CSSProperties> ({ visibility: "hidden" })
+  const [ arrowStyle, setArrowStyle ] = React.useState<React.CSSProperties> ({})
   const overlayRef = React.useRef<HTMLDivElement> (null)
 
   const arrow_size = small === true ? 6 : 12
 
   React.useEffect (
     () => {
-      const [new_pos, new_coords, new_arrow_coords] =
+      const [ new_pos, new_coords, new_arrow_coords ] =
         alignToElement (arrow_size) (overlayRef) (trigger) (defPosition) (margin)
 
       setPosition (new_pos)
       setArrowStyle ({ height: arrow_size, width: arrow_size, ...new_arrow_coords })
       setStyle (new_coords)
     },
-    [setPosition, setStyle, defPosition, margin, trigger, setArrowStyle, arrow_size]
+    [ setPosition, setStyle, defPosition, margin, trigger, setArrowStyle, arrow_size ]
   )
 
   return (
@@ -268,8 +268,8 @@ const alignToElement: (arrow_size: number) =>
                                               (centered_coords)
                                               (adjusted_coords)
 
-      return [pos, toObject (adjusted_coords), toObject (arrow_position)]
+      return [ pos, toObject (adjusted_coords), toObject (arrow_position) ]
     }
 
-    return [def_pos, {}, {}]
+    return [ def_pos, {}, {} ]
   }

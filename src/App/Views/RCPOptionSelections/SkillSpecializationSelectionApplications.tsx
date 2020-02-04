@@ -5,11 +5,13 @@ import { flength, map } from "../../../Data/List";
 import { Just, Maybe, maybeToNullable } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { fst, Pair, snd } from "../../../Data/Tuple";
+import { DropdownOption } from "../../Models/View/DropdownOption";
+import { RadioOption } from "../../Models/View/RadioOption";
 import { Skill } from "../../Models/Wiki/Skill";
 import { Application } from "../../Models/Wiki/sub/Application";
 import { pipe_ } from "../../Utilities/pipe";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
-import { Option, RadioButtonGroup } from "../Universal/RadioButtonGroup";
+import { Dropdown } from "../Universal/Dropdown";
+import { RadioButtonGroup } from "../Universal/RadioButtonGroup";
 import { TextField } from "../Universal/TextField";
 
 const SA = Skill.A
@@ -79,7 +81,7 @@ const applicationsToDropdown = map ((e: Record<Application>) => DropdownOption (
   name: Application.A.name (e),
 }))
 
-const applicationsToRadio = map ((e: Record<Application>) => Option ({
+const applicationsToRadio = map ((e: Record<Application>) => RadioOption ({
   name: Application.A.name (e),
   value: Just (Application.A.id (e)),
 }))

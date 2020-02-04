@@ -27,7 +27,7 @@ import { CombatSheetSpecialAbilities } from "./CombatSheetSpecialAbilities";
 import { CombatSheetStates } from "./CombatSheetStates";
 import { CombatSheetTechniques } from "./CombatSheetTechniques";
 
-export interface CombatSheetZonesProps {
+interface Props {
   armorZones: Maybe<List<Record<HitZoneArmorForView>>>
   attributes: List<Record<AttributeCombined>>
   combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
@@ -41,7 +41,7 @@ export interface CombatSheetZonesProps {
   states: List<Record<NumIdName>>
 }
 
-export function CombatSheetZones (props: CombatSheetZonesProps) {
+export const CombatSheetZones: React.FC<Props> = props => {
   const {
     armorZones,
     attributes,
@@ -60,7 +60,7 @@ export function CombatSheetZones (props: CombatSheetZonesProps) {
 
   return (
     <SheetWrapper>
-      <Options/>
+      <Options />
       <Sheet
         id="combat-sheet-zones"
         title={translate (l10n) ("combat")}

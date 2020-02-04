@@ -1,10 +1,8 @@
 import * as React from "react";
 
-export interface ListItemLeftProps {
-  children?: React.ReactNode
-}
+interface Props { }
 
-export function ListItemLeft (props: ListItemLeftProps) {
+export const ListItemLeft: React.FC<Props> = props => {
   const { children } = props
 
   return (

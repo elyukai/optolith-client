@@ -1,8 +1,8 @@
 import * as React from "react";
 
-export interface NavigationBarWrapperProps { }
+interface Props { }
 
-export const NavigationBarWrapper: React.FC<NavigationBarWrapperProps> = ({ children }) => (
+export const NavigationBarWrapper: React.FC<Props> = ({ children }) => (
   <div className="navigationbar">
     <div className="navigationbar-inner">
       {children}

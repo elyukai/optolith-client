@@ -20,7 +20,7 @@ import { Plain } from "../../Universal/Plain";
 
 const PDA = PersonalData.A
 
-export interface MainSheetPersonalDataProps {
+interface Props {
   ap: Maybe<Record<AdventurePointsCategories>>
   avatar: Maybe<string>
   culture: Maybe<Record<Culture>>
@@ -36,7 +36,7 @@ export interface MainSheetPersonalDataProps {
   socialstatusTags: List<string>
 }
 
-export function MainSheetPersonalData (props: MainSheetPersonalDataProps) {
+export const MainSheetPersonalData: React.FC<Props> = props => {
   const {
     ap,
     avatar,

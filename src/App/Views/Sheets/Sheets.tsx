@@ -115,12 +115,12 @@ export interface SheetsDispatchProps {
   switchAttributeValueVisibility (): void
 }
 
-export type SheetsProps = SheetsStateProps & SheetsDispatchProps & SheetsOwnProps
+type Props = SheetsStateProps & SheetsDispatchProps & SheetsOwnProps
 
 const HA = HeroModel.A
 const RA = Rules.A
 
-export function Sheets (props: SheetsProps) {
+export const Sheets: React.FC<Props> = props => {
   const {
     derivedCharacteristics,
     books,

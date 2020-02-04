@@ -1,7 +1,7 @@
 import { List } from "../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, Record } from "../../../Data/Record";
-import { DropdownOption } from "../../Views/Universal/Dropdown";
+import { DropdownOption } from "../View/DropdownOption";
 import { Erratum } from "./sub/Errata";
 import { PrimaryAttributeDamageThreshold } from "./sub/PrimaryAttributeDamageThreshold";
 import { SourceLink } from "./sub/SourceLink";

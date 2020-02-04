@@ -1,10 +1,10 @@
 import * as React from "react";
 
-export interface SheetWrapperProps {
+interface Props {
   children?: React.ReactNode
 }
 
-export function SheetWrapper (props: SheetWrapperProps) {
+export const SheetWrapper: React.FC<Props> = props => {
   const { children } = props
 
   return (

@@ -15,6 +15,7 @@ import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/I
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
+import { DropdownOption } from "../../Models/View/DropdownOption";
 import { InactiveActivatable, InactiveActivatableA_ } from "../../Models/View/InactiveActivatable";
 import { Disadvantage } from "../../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -25,7 +26,7 @@ import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { ActivatableAddListItemSelectedOptions } from "../../Views/Activatable/ActivatableAddListItem";
-import { Dropdown, DropdownOption } from "../../Views/Universal/Dropdown";
+import { Dropdown } from "../../Views/Universal/Dropdown";
 import { TextField } from "../../Views/Universal/TextField";
 import { getActiveWithNoCustomCost } from "../AdventurePoints/activatableCostUtils";
 import { translate } from "../I18n";

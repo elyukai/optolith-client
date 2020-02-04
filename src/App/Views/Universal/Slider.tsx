@@ -3,7 +3,7 @@ import { List } from "../../../Data/List";
 import { Just, Maybe } from "../../../Data/Maybe";
 import { classListMaybe } from "../../Utilities/CSS";
 
-export interface SliderProps {
+interface Props {
   className?: string
   label: string
   max: number
@@ -12,7 +12,7 @@ export interface SliderProps {
   value: number
 }
 
-export function Slider (props: SliderProps) {
+export const Slider: React.FC<Props> = props => {
   const { className, label, max, min, onChange, value } = props
 
   return (

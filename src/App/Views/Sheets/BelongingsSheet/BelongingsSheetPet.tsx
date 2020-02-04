@@ -15,13 +15,13 @@ import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { AvatarWrapper } from "../../Universal/AvatarWrapper";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface BelongingsSheetPetProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   l10n: L10nRecord
   pet: Maybe<Record<Pet>>
 }
 
-export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
+export const BelongingsSheetPet: React.FC<Props> = props => {
   const { attributes, l10n, pet: mpet } = props
 
   return (

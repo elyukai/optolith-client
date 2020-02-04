@@ -1,26 +1,45 @@
-import * as React from "react";
-import { BorderButtonProps } from "./BorderButton";
-import { DialogButton } from "./DialogButton";
+import * as React from "react"
+import { DialogButton, DialogButtonProps } from "./DialogButton"
 
-export { BorderButtonProps as ButtonProps };
-
-export interface DialogButtonsProps {
-  list: BorderButtonProps[]
+interface Props {
+  list: DialogButtonProps[]
   onClickDefault? (f?: () => void): void
 }
 
-export function DialogButtons (props: DialogButtonsProps) {
+export const DialogButtons: React.FC<Props> = props => {
   const { list, onClickDefault } = props
 
   const buttons =
     Array.isArray (list) && list.length > 0
-      ? list.map (e => (
-                   <DialogButton
-                     key={e.label}
-                     buttonProps={e}
-                     onClickDefault={onClickDefault}
-                     />
-                 ))
+      ? list.map (
+          ({
+            active,
+            autoWidth,
+            className,
+            disabled,
+            flat,
+            fullWidth,
+            hint,
+            label,
+            primary,
+            onClick,
+          }) => (
+            <DialogButton
+              key={label}
+              active={active}
+              autoWidth={autoWidth}
+              className={className}
+              disabled={disabled}
+              flat={flat}
+              fullWidth={fullWidth}
+              hint={hint}
+              label={label}
+              primary={primary}
+              onClick={onClick}
+              onClickDefault={onClickDefault}
+              />
+          )
+        )
       : []
 
   return (

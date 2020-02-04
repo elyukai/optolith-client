@@ -32,21 +32,21 @@ import { MainContent } from "../Universal/MainContent";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
 
-export interface RouterProps {
+interface Props {
   id: TabId
   l10n: L10nRecord
   mhero: Maybe<HeroModelRecord>
 }
 
-export interface RouterState {
+interface State {
   hasError?: {
     error: Error;
     info: any;
   }
 }
 
-export class Router extends React.Component<RouterProps> {
-  state: RouterState = {}
+export class Router extends React.Component<Props> {
+  state: State = {}
 
   componentDidCatch (error: any, info: any) {
     this.setState (() => ({ hasError: { error, info } }))

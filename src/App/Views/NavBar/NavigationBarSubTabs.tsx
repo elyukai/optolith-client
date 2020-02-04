@@ -5,13 +5,13 @@ import { TabId } from "../../Utilities/LocationUtils";
 import { pipe_ } from "../../Utilities/pipe";
 import { NavigationBarSubTab } from "./NavigationBarSubTab";
 
-export interface NavigationBarSubTabsProps {
+interface Props {
   currentTab: TabId
   tabs: List<SubTab>
   setTab (tab: TabId): void
 }
 
-export const NavigationBarSubTabs: React.FC<NavigationBarSubTabsProps> = props => {
+export const NavigationBarSubTabs: React.FC<Props> = props => {
   const { currentTab, tabs, setTab } = props
 
   return (

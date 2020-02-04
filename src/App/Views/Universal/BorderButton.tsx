@@ -1,13 +1,24 @@
 import * as React from "react";
 import { notNullStrUndef } from "../../../Data/List";
-import { Button, ButtonProps } from "./Button";
+import { Maybe } from "../../../Data/Maybe";
+import { Button } from "./Button";
 import { Text } from "./Text";
 
-export interface BorderButtonProps extends ButtonProps {
+interface Props {
+  active?: boolean
+  autoWidth?: boolean
+  className?: string
+  disabled?: boolean | Maybe<boolean>
+  flat?: boolean
+  fullWidth?: boolean
+  hint?: Maybe<string>
   label: string | undefined
+  primary?: boolean
+  round?: boolean
+  onClick? (): void
 }
 
-export const BorderButton: React.FC<BorderButtonProps> = props => {
+export const BorderButton: React.FC<Props> = props => {
   const {
     autoWidth,
     children,

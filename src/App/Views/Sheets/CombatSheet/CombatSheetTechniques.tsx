@@ -13,7 +13,7 @@ import { translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { TextBox } from "../../Universal/TextBox";
 
-export interface CombatSheetTechniquesProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   combatTechniques: Maybe<List<Record<CombatTechniqueWithAttackParryBase>>>
   l10n: L10nRecord
@@ -22,7 +22,7 @@ export interface CombatSheetTechniquesProps {
 const CTWAPBA = CombatTechniqueWithAttackParryBase.A
 const CTWAPBA_ = CombatTechniqueWithAttackParryBaseA_
 
-export function CombatSheetTechniques (props: CombatSheetTechniquesProps) {
+export const CombatSheetTechniques: React.FC<Props> = props => {
   const { attributes, combatTechniques: mcombat_techniques, l10n } = props
 
   return (

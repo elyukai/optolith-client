@@ -1,14 +1,16 @@
 import * as React from "react";
 import { List } from "../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { DropdownOption } from "../../Models/View/DropdownOption";
+import { RadioOption } from "../../Models/View/RadioOption";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { Theme } from "../../Utilities/Raw/JSON/Config";
 import { BorderButton } from "../Universal/BorderButton";
 import { Checkbox } from "../Universal/Checkbox";
 import { Dialog } from "../Universal/Dialog";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
-import { Option, SegmentedControls } from "../Universal/SegmentedControls";
+import { Dropdown } from "../Universal/Dropdown";
+import { SegmentedControls } from "../Universal/SegmentedControls";
 
 export interface SettingsOwnProps {
   l10n: L10nRecord
@@ -34,9 +36,9 @@ export interface SettingsDispatchProps {
   switchEnableAnimations (): void
 }
 
-export type SettingsProps = SettingsStateProps & SettingsDispatchProps & SettingsOwnProps
+type Props = SettingsStateProps & SettingsDispatchProps & SettingsOwnProps
 
-export function Settings (props: SettingsProps) {
+export const Settings: React.FC<Props> = props => {
   const {
     close,
     isEditingHeroAfterCreationPhaseEnabled,
@@ -98,11 +100,11 @@ export function Settings (props: SettingsProps) {
       <p>{translate (l10n) ("languagehint")}</p>
       <SegmentedControls
         options={List (
-          Option ({
+          RadioOption ({
             name: translate (l10n) ("dark"),
             value: Just (Theme.Dark),
           }),
-          Option ({
+          RadioOption ({
             name: translate (l10n) ("light"),
             value: Just (Theme.Light),
           })

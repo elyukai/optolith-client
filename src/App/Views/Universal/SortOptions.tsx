@@ -1,10 +1,11 @@
 import * as React from "react";
 import { List, map } from "../../../Data/List";
 import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe";
+import { RadioOption } from "../../Models/View/RadioOption";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { sortRecordsByName } from "../../Utilities/sortBy";
-import { Option, RadioButtonGroup } from "./RadioButtonGroup";
+import { RadioButtonGroup } from "./RadioButtonGroup";
 
 export enum SortNames {
   Name = "name",
@@ -18,14 +19,14 @@ export enum SortNames {
   Weight = "weight",
 }
 
-export interface SortOptionsProps<A extends SortNames> {
+interface Props<A extends SortNames> {
   l10n: L10nRecord
   options: List<A>
   sortOrder: A
   sort (option: A): void
 }
 
-export function SortOptions <A extends SortNames> (props: SortOptionsProps<A>) {
+export const SortOptions = <A extends SortNames> (props: Props<A>): React.ReactElement => {
   const { l10n, options, sort, sortOrder } = props
 
   const SORT_NAMES = {
@@ -47,7 +48,7 @@ export function SortOptions <A extends SortNames> (props: SortOptionsProps<A>) {
           sort (fromJust (option))
         }
       },
-      [sort]
+      [ sort ]
     )
 
   return (
@@ -56,7 +57,7 @@ export function SortOptions <A extends SortNames> (props: SortOptionsProps<A>) {
       onClick={handleClick}
       array={
         sortRecordsByName (l10n)
-                          (map ((e: A) => Option ({ name: SORT_NAMES [e], value: Just (e) }))
+                          (map ((e: A) => RadioOption ({ name: SORT_NAMES [e], value: Just (e) }))
                                (options))
       }
       />
