@@ -197,13 +197,13 @@ const openMainWindow = () => {
 const copyAllFiles =
   async (copy: (fileName: string) => Promise<void>) => {
     await fmapF (tryIO (copy) ("window.json"))
-                (x => isLeft (x) ? (console.warn (fromLeft_ (x)), undefined) : undefined)
+                (x => isLeft (x) ? console.warn (fromLeft_ (x)) : undefined)
 
     await fmapF (tryIO (copy) ("heroes.json"))
-                (x => isLeft (x) ? (console.warn (fromLeft_ (x)), undefined) : undefined)
+                (x => isLeft (x) ? console.warn (fromLeft_ (x)) : undefined)
 
     await fmapF (tryIO (copy) ("config.json"))
-                (x => isLeft (x) ? (console.warn (fromLeft_ (x)), undefined) : undefined)
+                (x => isLeft (x) ? console.warn (fromLeft_ (x)) : undefined)
   }
 
 const main = () => {
