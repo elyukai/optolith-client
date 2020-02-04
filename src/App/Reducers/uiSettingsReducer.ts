@@ -1,27 +1,27 @@
-import { not } from "../../Data/Bool";
-import { cnst, ident } from "../../Data/Function";
-import { over, set } from "../../Data/Lens";
-import { fromJust, fromMaybe, isJust, Maybe, Nothing } from "../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../Data/Record";
-import { SetCombatTechniquesSortOrderAction } from "../Actions/CombatTechniquesActions";
-import { SetThemeAction, SwitchEnableActiveItemHintsAction, SwitchEnableAnimationsAction, SwitchEnableEditingHeroAfterCreationPhaseAction } from "../Actions/ConfigActions";
-import { SetCulturesSortOrderAction, SetCulturesVisibilityFilterAction } from "../Actions/CultureActions";
-import { SwitchDisAdvRatingVisibilityAction } from "../Actions/DisAdvActions";
-import { SetItemsSortOrderAction, SetMeleeItemTemplatesCombatTechniqueFilterAction, SetRangedItemTemplatesCombatTechniqueFilterAction } from "../Actions/EquipmentActions";
-import { SetHerolistSortOrderAction, SetHerolistVisibilityFilterAction } from "../Actions/HerolistActions";
-import { ReceiveInitialDataAction } from "../Actions/IOActions";
-import { SetLiturgicalChantsSortOrderAction } from "../Actions/LiturgicalChantActions";
-import { SetProfessionsGroupVisibilityFilterAction, SetProfessionsSortOrderAction, SetProfessionsVisibilityFilterAction } from "../Actions/ProfessionActions";
-import { SetRacesSortOrderAction } from "../Actions/RaceActions";
-import { SwitchSheetAttributeValueVisibilityAction } from "../Actions/SheetActions";
-import { SetSkillsSortOrderAction, SwitchSkillRatingVisibilityAction } from "../Actions/SkillActions";
-import { SetSpecialAbilitiesSortOrderAction } from "../Actions/SpecialAbilitiesActions";
-import { SetSpellsSortOrderAction } from "../Actions/SpellsActions";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { EquipmentGroup } from "../Constants/Groups";
-import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids";
-import { ChantsSortOptions, CombatTechniquesSortOptions, Config, CulturesSortOptions, CulturesVisibilityFilter, EquipmentSortOptions, HeroListSortOptions, HeroListVisibilityFilter, ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter, RacesSortOptions, SkillsSortOptions, SpecialAbilitiesSortOptions, SpellsSortOptions, Theme } from "../Utilities/Raw/JSON/Config";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { not } from "../../Data/Bool"
+import { cnst, ident } from "../../Data/Function"
+import { over, set } from "../../Data/Lens"
+import { fromJust, fromMaybe, isJust, Maybe, Nothing } from "../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../Data/Record"
+import { SetCombatTechniquesSortOrderAction } from "../Actions/CombatTechniquesActions"
+import { SetThemeAction, SwitchEnableActiveItemHintsAction, SwitchEnableAnimationsAction, SwitchEnableEditingHeroAfterCreationPhaseAction } from "../Actions/ConfigActions"
+import { SetCulturesSortOrderAction, SetCulturesVisibilityFilterAction } from "../Actions/CultureActions"
+import { SwitchDisAdvRatingVisibilityAction } from "../Actions/DisAdvActions"
+import { SetItemsSortOrderAction, SetMeleeItemTemplatesCombatTechniqueFilterAction, SetRangedItemTemplatesCombatTechniqueFilterAction } from "../Actions/EquipmentActions"
+import { SetHerolistSortOrderAction, SetHerolistVisibilityFilterAction } from "../Actions/HerolistActions"
+import { ReceiveInitialDataAction } from "../Actions/IOActions"
+import { SetLiturgicalChantsSortOrderAction } from "../Actions/LiturgicalChantActions"
+import { SetProfessionsGroupVisibilityFilterAction, SetProfessionsSortOrderAction, SetProfessionsVisibilityFilterAction } from "../Actions/ProfessionActions"
+import { SetRacesSortOrderAction } from "../Actions/RaceActions"
+import { SwitchSheetAttributeValueVisibilityAction } from "../Actions/SheetActions"
+import { SetSkillsSortOrderAction, SwitchSkillRatingVisibilityAction } from "../Actions/SkillActions"
+import { SetSpecialAbilitiesSortOrderAction } from "../Actions/SpecialAbilitiesActions"
+import { SetSpellsSortOrderAction } from "../Actions/SpellsActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { EquipmentGroup } from "../Constants/Groups"
+import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids"
+import { ChantsSortOptions, CombatTechniquesSortOptions, Config, CulturesSortOptions, CulturesVisibilityFilter, EquipmentSortOptions, HeroListSortOptions, HeroListVisibilityFilter, ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter, RacesSortOptions, SkillsSortOptions, SpecialAbilitiesSortOptions, SpellsSortOptions, Theme } from "../Utilities/Raw/JSON/Config"
+import { SortNames } from "../Views/Universal/SortOptions"
 
 type Action = ReceiveInitialDataAction
             | SetCombatTechniquesSortOrderAction
@@ -193,7 +193,7 @@ export const uiSettingsReducer =
         return ident
       }
 
-      case ActionTypes.SWITCH_SHEET_ATTRIBUTE_VALUE_VISIBILITY:
+      case ActionTypes.SWITCH_SHEET_ATTR_VALUE_VISIBILITY:
         return over (L.sheetCheckAttributeValueVisibility) (not)
 
       case ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER:
@@ -223,7 +223,7 @@ export const uiSettingsReducer =
       case ActionTypes.SET_PROFESSIONS_VISIBILITY_FILTER:
         return set (L.professionsVisibilityFilter) (action.payload.filter)
 
-      case ActionTypes.SET_PROFESSIONS_GROUP_VISIBILITY_FILTER:
+      case ActionTypes.SET_PROFESSIONS_GR_VISIBILITY_FILTER:
         return set (L.professionsGroupVisibilityFilter) (action.payload.filter)
 
       case ActionTypes.SWITCH_TALENT_RATING_VISIBILITY:
@@ -232,13 +232,13 @@ export const uiSettingsReducer =
       case ActionTypes.SET_THEME:
         return set (L.theme) (action.payload.theme)
 
-      case ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE:
+      case ActionTypes.SWITCH_ENABLE_EDIT_AFTER_CREATION:
         return over (L.enableEditingHeroAfterCreationPhase) (not)
 
-      case ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER:
+      case ActionTypes.SET_MELEE_ITEM_TEMPLATES_CT_FILTER:
         return set (L.meleeItemTemplatesCombatTechniqueFilter) (action.payload.filterOption)
 
-      case ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER:
+      case ActionTypes.SET_RANGED_ITEM_TEMPLATES_CT_FILTER:
         return set (L.rangedItemTemplatesCombatTechniqueFilter) (action.payload.filterOption)
 
       case ActionTypes.SWITCH_ENABLE_ANIMATIONS:

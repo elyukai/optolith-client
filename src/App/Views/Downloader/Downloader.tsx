@@ -1,12 +1,12 @@
 // tslint:disable-next-line:no-implicit-dependencies
-import { ProgressInfo } from "builder-util-runtime";
-import * as React from "react";
-import { Maybe, maybe } from "../../../Data/Maybe";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { bytify } from "../../Utilities/IOUtils";
-import { Dialog } from "../Universal/Dialog";
-import { ProgressBar } from "../Universal/ProgressBar";
+import { ProgressInfo } from "builder-util-runtime"
+import * as React from "react"
+import { Maybe, maybe } from "../../../Data/Maybe"
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { bytify } from "../../Utilities/IOUtils"
+import { Dialog } from "../Universal/Dialog"
+import { ProgressBar } from "../Universal/ProgressBar"
 
 export interface DownloaderOwnProps {
   l10n: L10nRecord

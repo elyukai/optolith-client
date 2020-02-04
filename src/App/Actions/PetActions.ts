@@ -1,13 +1,13 @@
-import { fromJust, isJust, Just } from "../../Data/Maybe";
-import { keys, OrderedMap } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { IdPrefixes } from "../Constants/IdPrefixes";
-import { Pet } from "../Models/Hero/Pet";
-import { getPets } from "../Selectors/stateSelectors";
-import { getNewId, prefixId } from "../Utilities/IDUtils";
-import { pipe } from "../Utilities/pipe";
-import { ReduxAction } from "./Actions";
+import { fromJust, isJust, Just } from "../../Data/Maybe"
+import { keys, OrderedMap } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { IdPrefixes } from "../Constants/IdPrefixes"
+import { Pet } from "../Models/Hero/Pet"
+import { getPets } from "../Selectors/stateSelectors"
+import { getNewId, prefixId } from "../Utilities/IDUtils"
+import { pipe } from "../Utilities/pipe"
+import { ReduxAction } from "./Actions"
 
 const getNewIdFromCurrentPets: (x: Just<OrderedMap<string, Record<Pet>>>) => string =
   pipe (fromJust, keys, getNewId, prefixId (IdPrefixes.PET))
@@ -15,7 +15,7 @@ const getNewIdFromCurrentPets: (x: Just<OrderedMap<string, Record<Pet>>>) => str
 export interface AddPetAction {
   type: ActionTypes.ADD_PET
   payload: {
-    newId: string;
+    newId: string
   }
 }
 
@@ -64,7 +64,7 @@ export const savePet = (): SavePetAction => ({
 export interface EditPetAction {
   type: ActionTypes.EDIT_PET
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -78,7 +78,7 @@ export const editPet = (id: string): EditPetAction => ({
 export interface RemovePetAction {
   type: ActionTypes.REMOVE_PET
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -92,7 +92,7 @@ export const removePet = (id: string): RemovePetAction => ({
 export interface SetPetsSortOrderAction {
   type: ActionTypes.SET_PETS_SORT_ORDER
   payload: {
-    sortOrder: string;
+    sortOrder: string
   }
 }
 
@@ -106,7 +106,7 @@ export const setPetsSortOrder = (sortOrder: string): SetPetsSortOrderAction => (
 export interface SetPetAvatarAction {
   type: ActionTypes.SET_PET_AVATAR
   payload: {
-    path: string;
+    path: string
   }
 }
 
@@ -128,7 +128,7 @@ export const deletePetAvatar = (): DeletePetAvatarAction => ({
 export interface SetPetNameAction {
   type: ActionTypes.SET_PET_NAME
   payload: {
-    name: string;
+    name: string
   }
 }
 
@@ -142,7 +142,7 @@ export const setPetName = (name: string): SetPetNameAction => ({
 export interface SetPetSizeAction {
   type: ActionTypes.SET_PET_SIZE
   payload: {
-    size: string;
+    size: string
   }
 }
 
@@ -156,7 +156,7 @@ export const setPetSize = (size: string): SetPetSizeAction => ({
 export interface SetPetTypeAction {
   type: ActionTypes.SET_PET_TYPE
   payload: {
-    type: string;
+    type: string
   }
 }
 
@@ -170,7 +170,7 @@ export const setPetType = (type: string): SetPetTypeAction => ({
 export interface SetPetSpentApAction {
   type: ActionTypes.SET_PET_SPENT_AP
   payload: {
-    spentAp: string;
+    spentAp: string
   }
 }
 
@@ -184,7 +184,7 @@ export const setPetSpentAp = (spentAp: string): SetPetSpentApAction => ({
 export interface SetPetTotalApAction {
   type: ActionTypes.SET_PET_TOTAL_AP
   payload: {
-    totalAp: string;
+    totalAp: string
   }
 }
 
@@ -198,7 +198,7 @@ export const setPetTotalAp = (totalAp: string): SetPetTotalApAction => ({
 export interface SetPetCourageAction {
   type: ActionTypes.SET_PET_COURAGE
   payload: {
-    courage: string;
+    courage: string
   }
 }
 
@@ -212,7 +212,7 @@ export const setPetCourage = (courage: string): SetPetCourageAction => ({
 export interface SetPetSagacityAction {
   type: ActionTypes.SET_PET_SAGACITY
   payload: {
-    sagacity: string;
+    sagacity: string
   }
 }
 
@@ -226,7 +226,7 @@ export const setPetSagacity = (sagacity: string): SetPetSagacityAction => ({
 export interface SetPetIntuitionAction {
   type: ActionTypes.SET_PET_INTUITION
   payload: {
-    intuition: string;
+    intuition: string
   }
 }
 
@@ -240,7 +240,7 @@ export const setPetIntuition = (intuition: string): SetPetIntuitionAction => ({
 export interface SetPetCharismaAction {
   type: ActionTypes.SET_PET_CHARISMA
   payload: {
-    charisma: string;
+    charisma: string
   }
 }
 
@@ -254,7 +254,7 @@ export const setPetCharisma = (charisma: string): SetPetCharismaAction => ({
 export interface SetPetDexterityAction {
   type: ActionTypes.SET_PET_DEXTERITY
   payload: {
-    dexterity: string;
+    dexterity: string
   }
 }
 
@@ -268,7 +268,7 @@ export const setPetDexterity = (dexterity: string): SetPetDexterityAction => ({
 export interface SetPetAgilityAction {
   type: ActionTypes.SET_PET_AGILITY
   payload: {
-    agility: string;
+    agility: string
   }
 }
 
@@ -282,7 +282,7 @@ export const setPetAgility = (agility: string): SetPetAgilityAction => ({
 export interface SetPetConstitutionAction {
   type: ActionTypes.SET_PET_CONSTITUTION
   payload: {
-    constitution: string;
+    constitution: string
   }
 }
 
@@ -296,7 +296,7 @@ export const setPetConstitution = (constitution: string): SetPetConstitutionActi
 export interface SetPetStrengthAction {
   type: ActionTypes.SET_PET_STRENGTH
   payload: {
-    strength: string;
+    strength: string
   }
 }
 
@@ -310,7 +310,7 @@ export const setPetStrength = (strength: string): SetPetStrengthAction => ({
 export interface SetPetLpAction {
   type: ActionTypes.SET_PET_LP
   payload: {
-    lp: string;
+    lp: string
   }
 }
 
@@ -324,7 +324,7 @@ export const setPetLp = (lp: string): SetPetLpAction => ({
 export interface SetPetAeAction {
   type: ActionTypes.SET_PET_AE
   payload: {
-    ae: string;
+    ae: string
   }
 }
 
@@ -338,7 +338,7 @@ export const setPetAe = (ae: string): SetPetAeAction => ({
 export interface SetPetSpiAction {
   type: ActionTypes.SET_PET_SPI
   payload: {
-    spi: string;
+    spi: string
   }
 }
 
@@ -352,7 +352,7 @@ export const setPetSpi = (spi: string): SetPetSpiAction => ({
 export interface SetPetTouAction {
   type: ActionTypes.SET_PET_TOU
   payload: {
-    tou: string;
+    tou: string
   }
 }
 
@@ -366,7 +366,7 @@ export const setPetTou = (tou: string): SetPetTouAction => ({
 export interface SetPetProAction {
   type: ActionTypes.SET_PET_PRO
   payload: {
-    pro: string;
+    pro: string
   }
 }
 
@@ -380,7 +380,7 @@ export const setPetPro = (pro: string): SetPetProAction => ({
 export interface SetPetIniAction {
   type: ActionTypes.SET_PET_INI
   payload: {
-    ini: string;
+    ini: string
   }
 }
 
@@ -394,7 +394,7 @@ export const setPetIni = (ini: string): SetPetIniAction => ({
 export interface SetPetMovAction {
   type: ActionTypes.SET_PET_MOV
   payload: {
-    mov: string;
+    mov: string
   }
 }
 
@@ -408,7 +408,7 @@ export const setPetMov = (mov: string): SetPetMovAction => ({
 export interface SetPetAttackAction {
   type: ActionTypes.SET_PET_ATTACK
   payload: {
-    attack: string;
+    attack: string
   }
 }
 
@@ -422,7 +422,7 @@ export const setPetAttack = (attack: string): SetPetAttackAction => ({
 export interface SetPetAtAction {
   type: ActionTypes.SET_PET_AT
   payload: {
-    at: string;
+    at: string
   }
 }
 
@@ -436,7 +436,7 @@ export const setPetAt = (at: string): SetPetAtAction => ({
 export interface SetPetPaAction {
   type: ActionTypes.SET_PET_PA
   payload: {
-    pa: string;
+    pa: string
   }
 }
 
@@ -450,7 +450,7 @@ export const setPetPa = (pa: string): SetPetPaAction => ({
 export interface SetPetDpAction {
   type: ActionTypes.SET_PET_DP
   payload: {
-    dp: string;
+    dp: string
   }
 }
 
@@ -464,7 +464,7 @@ export const setPetDp = (dp: string): SetPetDpAction => ({
 export interface SetPetReachAction {
   type: ActionTypes.SET_PET_REACH
   payload: {
-    reach: string;
+    reach: string
   }
 }
 
@@ -478,7 +478,7 @@ export const setPetReach = (reach: string): SetPetReachAction => ({
 export interface SetPetActionsAction {
   type: ActionTypes.SET_PET_ACTIONS
   payload: {
-    actions: string;
+    actions: string
   }
 }
 
@@ -492,7 +492,7 @@ export const setPetActions = (actions: string): SetPetActionsAction => ({
 export interface SetPetSkillsAction {
   type: ActionTypes.SET_PET_SKILLS
   payload: {
-    skills: string;
+    skills: string
   }
 }
 
@@ -506,7 +506,7 @@ export const setPetSkills = (skills: string): SetPetSkillsAction => ({
 export interface SetPetAbilitiesAction {
   type: ActionTypes.SET_PET_ABILITIES
   payload: {
-    abilities: string;
+    abilities: string
   }
 }
 
@@ -520,7 +520,7 @@ export const setPetAbilities = (abilities: string): SetPetAbilitiesAction => ({
 export interface SetPetNotesAction {
   type: ActionTypes.SET_PET_NOTES
   payload: {
-    notes: string;
+    notes: string
   }
 }
 

@@ -1,10 +1,10 @@
-import { fmap } from "../../../../Data/Functor";
-import { elemF, NonEmptyList } from "../../../../Data/List";
-import { or } from "../../../../Data/Maybe";
-import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record";
-import { Category, IncreasableCategories } from "../../../Constants/Categories";
-import { getCategoryById } from "../../../Utilities/IDUtils";
-import { ProfessionPrerequisite } from "../wikiTypeHelpers";
+import { fmap } from "../../../../Data/Functor"
+import { elemF, NonEmptyList } from "../../../../Data/List"
+import { or } from "../../../../Data/Maybe"
+import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record"
+import { Category, IncreasableCategories } from "../../../Constants/Categories"
+import { getCategoryById } from "../../../Utilities/IDUtils"
+import { ProfessionPrerequisite } from "../wikiTypeHelpers"
 
 export interface RequireIncreasable {
   "@@name": "RequireIncreasable"

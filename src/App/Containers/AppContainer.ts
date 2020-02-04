@@ -1,13 +1,13 @@
-import { ipcRenderer, remote } from "electron";
-import { connect } from "react-redux";
-import { Action } from "redux";
-import { Nothing } from "../../Data/Maybe";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as IOActions from "../Actions/IOActions";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getCurrentHeroPresent, getCurrentTab, getLoadingPhase, getLocaleMessages } from "../Selectors/stateSelectors";
-import { areAnimationsEnabled, getTheme } from "../Selectors/uisettingsSelectors";
-import { App, AppDispatchProps, AppOwnProps, AppStateProps } from "../Views/App";
+import { ipcRenderer, remote } from "electron"
+import { connect } from "react-redux"
+import { Action } from "redux"
+import { Nothing } from "../../Data/Maybe"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as IOActions from "../Actions/IOActions"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getCurrentHeroPresent, getCurrentTab, getLoadingPhase, getLocaleMessages } from "../Selectors/stateSelectors"
+import { areAnimationsEnabled, getTheme } from "../Selectors/uisettingsSelectors"
+import { App, AppDispatchProps, AppOwnProps, AppStateProps } from "../Views/App"
 
 const mapStateToProps = (state: AppStateRecord): AppStateProps => ({
   currentTab: getCurrentTab (state),

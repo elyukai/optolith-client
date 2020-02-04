@@ -1,9 +1,9 @@
-import { elem, OrderedSet } from "../../../Data/OrderedSet";
-import { fromDefault, Record } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
-import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
-import { Cantrip } from "../Wiki/Cantrip";
-import { Spell } from "../Wiki/Spell";
+import { elem, OrderedSet } from "../../../Data/OrderedSet"
+import { fromDefault, Record } from "../../../Data/Record"
+import { pipe } from "../../Utilities/pipe"
+import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent"
+import { Cantrip } from "../Wiki/Cantrip"
+import { Spell } from "../Wiki/Spell"
 
 export interface SpellCombined {
   "@@name": "SpellCombined"

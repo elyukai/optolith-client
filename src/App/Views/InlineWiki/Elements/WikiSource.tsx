@@ -1,17 +1,17 @@
-import * as React from "react";
-import { thrush } from "../../../../Data/Function";
-import { fmap } from "../../../../Data/Functor";
-import { append, List, map, notNull, notNullStr } from "../../../../Data/List";
-import { bindF, ensure, joinMaybeList, Maybe, maybe_, normalize, Nothing } from "../../../../Data/Maybe";
-import { OrderedMap } from "../../../../Data/OrderedMap";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { Book } from "../../../Models/Wiki/Book";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
-import { SourceLink } from "../../../Models/Wiki/sub/SourceLink";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { combineShowSources, combineShowSourcesWithout } from "../../../Utilities/SourceUtils";
+import * as React from "react"
+import { thrush } from "../../../../Data/Function"
+import { fmap } from "../../../../Data/Functor"
+import { append, List, map, notNull, notNullStr } from "../../../../Data/List"
+import { bindF, ensure, joinMaybeList, Maybe, maybe_, normalize, Nothing } from "../../../../Data/Maybe"
+import { OrderedMap } from "../../../../Data/OrderedMap"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { Book } from "../../../Models/Wiki/Book"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { SelectOption } from "../../../Models/Wiki/sub/SelectOption"
+import { SourceLink } from "../../../Models/Wiki/sub/SourceLink"
+import { translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { combineShowSources, combineShowSourcesWithout } from "../../../Utilities/SourceUtils"
 
 interface Accessors<A extends RecordIBase<any>> {
   select?: (r: Record<A>) => Maybe<List<Record<SelectOption>>>
@@ -26,7 +26,9 @@ export interface WikiSourceProps<A extends RecordIBase<any>> {
   addSrcs?: List<List<Record<SourceLink>>>
 }
 
-export function WikiSource<A extends RecordIBase<any>> (props: WikiSourceProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiSourceProps<A>) => ReturnType<React.FC>
+
+export const WikiSource: FC = props => {
   const {
     books,
     x,
@@ -73,7 +75,12 @@ export function WikiSource<A extends RecordIBase<any>> (props: WikiSourceProps<A
                </p>
                <p className="source">
                  <span>
-                   <strong>{translate (l10n) ("complementarysources")}:</strong> {compl_src}
+                   <strong>
+                     {translate (l10n) ("complementarysources")}
+                     {":"}
+                   </strong>
+                   {" "}
+                   {compl_src}
                  </span>
                </p>
              </>

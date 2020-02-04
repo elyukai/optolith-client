@@ -1,17 +1,18 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { fromMaybe, isJust, Just, liftM2, Maybe, Nothing } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { Rules } from "../../Models/Hero/Rules";
-import { Book } from "../../Models/Wiki/Book";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { Locale } from "../../Utilities/Raw/JSON/Config";
-import { Checkbox } from "../Universal/Checkbox";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
-import { Scroll } from "../Universal/Scroll";
-import { BookSelection } from "./BookSelection";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { fromMaybe, isJust, Just, liftM2, Maybe, Nothing } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Rules } from "../../Models/Hero/Rules"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { Book } from "../../Models/Wiki/Book"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { Locale } from "../../Utilities/Raw/JSON/Config"
+import { Checkbox } from "../Universal/Checkbox"
+import { Dropdown } from "../Universal/Dropdown"
+import { Scroll } from "../Universal/Scroll"
+import { BookSelection } from "./BookSelection"
 
 export interface RulesOwnProps {
   l10n: L10nRecord
@@ -36,9 +37,9 @@ export interface RulesDispatchProps {
   setGuildMageSpell (spellId: string): void
 }
 
-export type RulesProps = RulesStateProps & RulesDispatchProps & RulesOwnProps
+type Props = RulesStateProps & RulesDispatchProps & RulesOwnProps
 
-export const RulesView: React.FC<RulesProps> = props => {
+export const RulesView: React.FC<Props> = props => {
   const {
     sortedBooks,
     changeAttributeValueLimit,
@@ -71,7 +72,7 @@ export const RulesView: React.FC<RulesProps> = props => {
   const handleHigherParadeValues =
     React.useCallback (
       () => changeHigherParadeValues (Just (areHigherParadeValuesEnabled ? 0 : 2)),
-      [changeHigherParadeValues, areHigherParadeValuesEnabled]
+      [ changeHigherParadeValues, areHigherParadeValuesEnabled ]
     )
 
   return (

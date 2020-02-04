@@ -1,6 +1,6 @@
-import { ProfessionSelectionIds } from "../../../../../Models/Wiki/wikiTypeHelpers";
-import { isNumber } from "../../../../typeCheckUtils";
-import { AnyRawProfessionSelection } from "../rawTypeHelpers";
+import { ProfessionSelectionIds } from "../../../../../Models/Wiki/wikiTypeHelpers"
+import { isNumber } from "../../../../typeCheckUtils"
+import { AnyRawProfessionSelection } from "../rawTypeHelpers"
 
 export interface RawTerrainKnowledgeSelection {
   id: ProfessionSelectionIds
@@ -11,4 +11,4 @@ export const isRawTerrainKnowledgeSelection =
   (obj: AnyRawProfessionSelection): obj is RawTerrainKnowledgeSelection =>
     obj.id === ProfessionSelectionIds.TERRAIN_KNOWLEDGE
     // @ts-ignore
-    && Array.isArray (obj.sid) && obj .sid .every (isNumber)
+    && Array.isArray (obj.sid) && (obj .sid as any[]) .every (isNumber)

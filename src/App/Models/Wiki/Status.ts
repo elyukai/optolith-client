@@ -1,7 +1,7 @@
-import { List } from "../../../Data/List";
-import { fromDefault, Record } from "../../../Data/Record";
-import { Erratum } from "./sub/Errata";
-import { SourceLink } from "./sub/SourceLink";
+import { List } from "../../../Data/List"
+import { fromDefault, Record } from "../../../Data/Record"
+import { Erratum } from "./sub/Errata"
+import { SourceLink } from "./sub/SourceLink"
 
 export interface Status {
   "@@name": "Status"

@@ -1,12 +1,12 @@
-import * as React from "react";
-import { append, List, map, toArray } from "../../../Data/List";
-import { Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
-import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe_ } from "../../Utilities/pipe";
-import { SheetHeaderAttribute } from "./SheetHeaderAttribute";
+import * as React from "react"
+import { append, List, map, toArray } from "../../../Data/List"
+import { Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, Record } from "../../../Data/Record"
+import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { pipe_ } from "../../Utilities/pipe"
+import { SheetHeaderAttribute } from "./SheetHeaderAttribute"
 
 export interface HeaderValue {
   "@@name": "HeaderValue"
@@ -22,14 +22,14 @@ export const HeaderValue =
                 value: Nothing,
               })
 
-export interface SheetHeaderProps {
+interface Props {
   add?: List<Record<HeaderValue>>
   attributes: List<Record<AttributeCombined>>
   l10n: L10nRecord
   title: string
 }
 
-export function SheetHeader (props: SheetHeaderProps) {
+export const SheetHeader: React.FC<Props> = props => {
   const { add = List<Record<HeaderValue>> (), attributes, l10n, title } = props
 
   const list: List<Record<HeaderValue>> =

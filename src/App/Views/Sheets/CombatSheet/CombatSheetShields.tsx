@@ -1,25 +1,25 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, List, map, replicateR, toArray } from "../../../../Data/List";
-import { fromMaybe, Maybe } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { ShieldOrParryingWeapon } from "../../../Models/View/ShieldOrParryingWeapon";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
-import { sign, toRoman } from "../../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybeWith } from "../../../Utilities/ReactUtils";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { flength, List, map, replicateR, toArray } from "../../../../Data/List"
+import { fromMaybe, Maybe } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { ShieldOrParryingWeapon } from "../../../Models/View/ShieldOrParryingWeapon"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
+import { sign, toRoman } from "../../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { renderMaybeWith } from "../../../Utilities/ReactUtils"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface CombatSheetShieldsProps {
+interface Props {
   l10n: L10nRecord
   shieldsAndParryingWeapons: Maybe<List<Record<ShieldOrParryingWeapon>>>
 }
 
 const SOPWA = ShieldOrParryingWeapon.A
 
-export function CombatSheetShields (props: CombatSheetShieldsProps) {
+export const CombatSheetShields: React.FC<Props> = props => {
   const { l10n, shieldsAndParryingWeapons: msh_or_parry_weapons } = props
 
   return (
@@ -59,7 +59,9 @@ export function CombatSheetShields (props: CombatSheetShieldsProps) {
                     {renderMaybeWith (toRoman) (SOPWA.loss (e))}
                   </td>
                   <td className="mod">
-                    {sign (Maybe.sum (SOPWA.atMod (e)))}/{sign (Maybe.sum (SOPWA.paMod (e)))}
+                    {sign (Maybe.sum (SOPWA.atMod (e)))}
+                    {"/"}
+                    {sign (Maybe.sum (SOPWA.paMod (e)))}
                   </td>
                   <td className="weight">
                     {pipe_ (
@@ -80,12 +82,12 @@ export function CombatSheetShields (props: CombatSheetShieldsProps) {
           {replicateR (2 - Maybe.sum (fmapF (msh_or_parry_weapons) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
-                          <td className="name"></td>
-                          <td className="str"></td>
-                          <td className="bf"></td>
-                          <td className="loss"></td>
-                          <td className="mod"></td>
-                          <td className="weight"></td>
+                          <td className="name" />
+                          <td className="str" />
+                          <td className="bf" />
+                          <td className="loss" />
+                          <td className="mod" />
+                          <td className="weight" />
                         </tr>
                       ))}
         </tbody>

@@ -1,5 +1,5 @@
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { fromDefault, makeLenses } from "../../../Data/Record";
+import { OrderedSet } from "../../../Data/OrderedSet"
+import { fromDefault, makeLenses } from "../../../Data/Record"
 
 export interface Rules {
   "@@name": "Rules"

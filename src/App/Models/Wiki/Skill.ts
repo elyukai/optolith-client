@@ -1,11 +1,11 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { Application } from "./sub/Application";
-import { Erratum } from "./sub/Errata";
-import { SourceLink } from "./sub/SourceLink";
-import { EntryWithCategory } from "./wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { Application } from "./sub/Application"
+import { Erratum } from "./sub/Errata"
+import { SourceLink } from "./sub/SourceLink"
+import { EntryWithCategory } from "./wikiTypeHelpers"
 
 export interface Skill {
   "@@name": "Skill"

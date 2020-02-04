@@ -1,12 +1,23 @@
-import * as React from "react";
-import { Button, ButtonProps } from "./Button";
-import { Icon } from "./Icon";
+import * as React from "react"
+import { Maybe } from "../../../Data/Maybe"
+import { Button } from "./Button"
+import { Icon } from "./Icon"
 
-export interface IconButtonProps extends ButtonProps {
+interface Props {
+  active?: boolean
+  autoWidth?: boolean
+  className?: string
+  disabled?: boolean | Maybe<boolean>
+  flat?: boolean
+  fullWidth?: boolean
+  hint?: Maybe<string>
+  primary?: boolean
+  round?: boolean
+  onClick? (): void
   icon: string
 }
 
-export const IconButton = (props: IconButtonProps) => {
+export const IconButton: React.FC<Props> = props => {
   const {
     autoWidth,
     icon,

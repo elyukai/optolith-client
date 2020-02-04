@@ -1,7 +1,7 @@
-import { fromDefault, Record } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
-import { Blessing } from "../Wiki/Blessing";
-import { IsActive } from "./viewTypeHelpers";
+import { fromDefault, Record } from "../../../Data/Record"
+import { pipe } from "../../Utilities/pipe"
+import { Blessing } from "../Wiki/Blessing"
+import { IsActive } from "./viewTypeHelpers"
 
 export interface BlessingCombined extends IsActive {
   "@@name": "BlessingCombined"

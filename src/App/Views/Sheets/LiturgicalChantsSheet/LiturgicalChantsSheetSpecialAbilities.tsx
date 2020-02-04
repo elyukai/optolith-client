@@ -1,22 +1,20 @@
-import * as React from "react";
-import { List } from "../../../../Data/List";
-import { fromMaybe, Maybe } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { ActiveActivatable } from "../../../Models/View/ActiveActivatable";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
-import { compressList } from "../../../Utilities/Activatable/activatableNameUtils";
-import { translate } from "../../../Utilities/I18n";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { List } from "../../../../Data/List"
+import { fromMaybe, Maybe } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { ActiveActivatable } from "../../../Models/View/ActiveActivatable"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { compressList } from "../../../Utilities/Activatable/activatableNameUtils"
+import { translate } from "../../../Utilities/I18n"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface LiturgicalChantsSheetSpecialAbilitiesProps {
-  blessedSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
+interface Props {
   l10n: L10nRecord
+  blessedSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
 }
 
-export function LiturgicalChantsSheetSpecialAbilities (
-  props: LiturgicalChantsSheetSpecialAbilitiesProps
-) {
+export const LiturgicalChantsSheetSpecialAbilities: React.FC<Props> = props => {
   const { l10n, blessedSpecialAbilities: maybeBlessedSpecialAbilities } = props
 
   return (

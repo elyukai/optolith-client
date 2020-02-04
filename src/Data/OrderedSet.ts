@@ -6,15 +6,15 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "../App/Utilities/pipe";
-import { not } from "./Bool";
-import { equals, notEquals } from "./Eq";
-import { ident } from "./Function";
-import { Internals } from "./Internals";
-import { append, List } from "./List";
-import { Maybe } from "./Maybe";
-import { add, multiply } from "./Num";
-import { show } from "./Show";
+import { pipe } from "../App/Utilities/pipe"
+import { not } from "./Bool"
+import { equals, notEquals } from "./Eq"
+import { ident } from "./Function"
+import { Internals } from "./Internals"
+import { append, List } from "./List"
+import { Maybe } from "./Maybe"
+import { add, multiply } from "./Num"
+import { show } from "./Show"
 
 import isList = Internals.isList
 import _OrderedSet = Internals._OrderedSet
@@ -70,7 +70,7 @@ export const foldr =
   (f: (current: A) => (acc: B) => B) =>
   (initial: B) =>
   (xs: OrderedSet<A>): B =>
-    [...xs .value] .reduceRight<B> ((acc, e) => f (e) (acc), initial)
+    [ ...xs .value ] .reduceRight<B> ((acc, e) => f (e) (acc), initial)
 
 /**
  * `foldl :: (b -> a -> b) -> b -> Set a -> b`
@@ -88,7 +88,7 @@ export const foldl =
   (f: (acc: B) => (current: A) => B) =>
   (initial: B) =>
   (xs: OrderedSet<A>): B =>
-    [...xs .value] .reduce<B> ((acc, e) => f (acc) (e), initial)
+    [ ...xs .value ] .reduce<B> ((acc, e) => f (acc) (e), initial)
 
 /**
  * `foldr1 :: (a -> a -> a) -> Set a -> a`
@@ -103,7 +103,7 @@ export const foldr1 =
   (f: (current: A) => (acc: A) => A) =>
   (xs: OrderedSet<A>): A => {
     if (xs .value .size > 0) {
-      const arr = [...xs .value]
+      const arr = [ ...xs .value ]
       const _init = arr .slice (0, -1)
       const _last = arr [arr .length - 1]
 
@@ -126,7 +126,7 @@ export const foldl1 =
   (f: (acc: A) => (current: A) => A) =>
   (xs: OrderedSet<A>): A => {
     if (xs .value .size > 0) {
-      const [_head, ..._tail] = xs
+      const [ _head, ..._tail ] = xs
 
       return _tail .reduce<A> ((acc, e) => f (acc) (e), _head)
     }
@@ -166,7 +166,7 @@ export const flength = (xs: OrderedSet<any>): number => xs .value .size
  */
 export const elem =
   <A> (e: A) => (xs: OrderedSet<A>): boolean =>
-    [...xs .value] .some (equals (e))
+    [ ...xs .value ] .some (equals (e))
 
 /**
  * `elemF :: Eq a => Set a -> a -> Bool`
@@ -227,9 +227,10 @@ export const concatMap =
   <A, B>
   (f: (value: A) => OrderedSet<B>) =>
   (xs: OrderedSet<A>): OrderedSet<B> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fromArray (
-      [...xs .value] .reduce<B[]> (
-        (acc, e) => [...acc, ...f (e)],
+      [ ...xs .value ] .reduce<B[]> (
+        (acc, e) => [ ...acc, ...f (e) ],
         []
       )
     )
@@ -243,7 +244,7 @@ export const concatMap =
  */
 export const and =
   (xs: OrderedSet<boolean>): boolean =>
-    [...xs .value] .every (ident)
+    [ ...xs .value ] .every (ident)
 
 /**
  * `or :: Set Bool -> Bool`
@@ -254,7 +255,7 @@ export const and =
  */
 export const or =
   (xs: OrderedSet<boolean>): boolean =>
-    [...xs .value] .some (ident)
+    [ ...xs .value ] .some (ident)
 
 /**
  * `any :: (a -> Bool) -> Set a -> Bool`
@@ -263,7 +264,7 @@ export const or =
  */
 export const any =
   <A> (f: (x: A) => boolean) => (xs: OrderedSet<A>): boolean =>
-    [...xs .value] .some (f)
+    [ ...xs .value ] .some (f)
 
 /**
  * `all :: (a -> Bool) -> Set a -> Bool`
@@ -272,7 +273,7 @@ export const any =
  */
 export const all =
   <A> (f: (x: A) => boolean) => (xs: OrderedSet<A>): boolean =>
-    [...xs .value] .every (f)
+    [ ...xs .value ] .every (f)
 
 // Searches
 
@@ -313,7 +314,7 @@ interface Find {
  */
 export const find: Find =
   <A> (pred: (x: A) => boolean) => (xs: OrderedSet<A>): Maybe<A> =>
-    Maybe ([...xs .value] .find (pred))
+    Maybe ([ ...xs .value ] .find (pred))
 
 
 // CONSTRUCTION
@@ -330,7 +331,8 @@ export const empty: OrderedSet<any> = _OrderedSet (new Set ())
  *
  * Create a singleton set.
  */
-export const singleton = <A> (x: A) => fromArray ([x])
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
+export const singleton = <A> (x: A) => fromArray ([ x ])
 
 /**
  * `fromList :: [a] -> Set a`
@@ -358,7 +360,8 @@ export const fromList = <A> (xs: List<A>): OrderedSet<A> => {
  */
 export const insert =
   <A> (x: A) => (xs: OrderedSet<A>): OrderedSet<A> =>
-    fromArray ([...xs .value, x])
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...xs .value, x ])
 
 export type insert<A> = (x: A) => (s: OrderedSet<A>) => OrderedSet<A>
 
@@ -372,7 +375,8 @@ export type insert<A> = (x: A) => (s: OrderedSet<A>) => OrderedSet<A>
  */
 export const sdelete =
   <A> (x: A) => (xs: OrderedSet<A>): OrderedSet<A> =>
-    fromArray ([...xs .value] .filter (notEquals (x)))
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...xs .value ] .filter (notEquals (x)))
 
 
 // QUERY
@@ -409,7 +413,8 @@ export const size = flength
  */
 export const union =
   <A> (xs1: OrderedSet<A>) => (xs2: OrderedSet<A>): OrderedSet<A> =>
-    fromArray ([...xs1, ...xs2])
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...xs1, ...xs2 ])
 
 /**
  * `difference :: Ord a => Set a -> Set a -> Set a`
@@ -422,6 +427,7 @@ export const union =
  */
 export const difference =
   <A> (xs: OrderedSet<A>) => (excludes: OrderedSet<A>): OrderedSet<A> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     filter (pipe (elemF (excludes), not)) (xs)
 
 /**
@@ -470,7 +476,8 @@ interface Filter {
  */
 export const filter: Filter =
   <A> (pred: (x: A) => boolean) => (xs: OrderedSet<A>): OrderedSet<A> =>
-    fromArray ([...xs .value] .filter (pred))
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...xs .value ] .filter (pred))
 
 
 // MAP
@@ -485,7 +492,8 @@ export const filter: Filter =
  */
 export const map =
   <A, B> (f: (value: A) => B) => (xs: OrderedSet<A>): OrderedSet<B> =>
-    fromArray ([...xs .value] .map (f))
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...xs .value ] .map (f))
 
 
 // CONVERSION LIST
@@ -509,7 +517,7 @@ export const toSet = <A> (xs: OrderedSet<A>): ReadonlySet<A> => xs .value
 /**
  * Converts the `OrderedSet` into a native array instance.
  */
-export const toArray = <A> (xs: OrderedSet<A>): A[] => [...xs]
+export const toArray = <A> (xs: OrderedSet<A>): A[] => [ ...xs ]
 
 /**
  * `toggle :: Ord a => a -> Set a -> Set a`

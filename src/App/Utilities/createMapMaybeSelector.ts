@@ -1,8 +1,14 @@
-import { ParametricSelector, Selector } from "reselect";
-import { cnst } from "../../Data/Function";
-import { notNullStrUndef } from "../../Data/List";
-import { fromJust, INTERNAL_shallowEquals, isMaybe, isNothing, Just, Maybe, Nothing, Some } from "../../Data/Maybe";
-import { fromMap, lookup, OrderedMap, toMap } from "../../Data/OrderedMap";
+import { ParametricSelector, Selector } from "reselect"
+import { cnst } from "../../Data/Function"
+import { notNullStrUndef } from "../../Data/List"
+import { fromJust, INTERNAL_shallowEquals, isMaybe, isNothing, Just, Maybe, Nothing, Some } from "../../Data/Maybe"
+import { fromMap, lookup, OrderedMap, toMap } from "../../Data/OrderedMap"
+
+const maybeEquals =
+  (x: any, y: any) =>
+    isMaybe (x) && isMaybe (y)
+      ? INTERNAL_shallowEquals (x) (y)
+      : x === y
 
 /**
  * ```haskell
@@ -44,7 +50,7 @@ export const createMapMaybeSelectorDebug =
       console.log (`createMapMaybeSelector: "${debug_origin}"`)
     }
 
-    let prevState: S | undefined
+    let prevState: S | undefined = undefined
 
     // let prevMap: OrderedMap<string, V> | undefined
 
@@ -57,7 +63,7 @@ export const createMapMaybeSelectorDebug =
       new Map ()
 
     let resMap: Map<string, R> = new Map ()
-    let justResMap: Map<string, Just<R>> = new Map ()
+    const justResMap: Map<string, Just<R>> = new Map ()
 
     const g = (key_str: string) => (state: S, props: P): Maybe<R> => {
       let res = resMap .get (key_str)
@@ -115,7 +121,7 @@ export const createMapMaybeSelectorDebug =
       if (
         mres !== undefined
         && (
-          state === prevState && keyMap .has (key_str)
+          (state === prevState && keyMap .has (key_str))
           || (
             maybeEquals (value, prevMapValue)
             && prevGlobalKeyAndGlobalValues !== undefined
@@ -140,9 +146,9 @@ export const createMapMaybeSelectorDebug =
 
           console.log (
             "prev filterText = ",
-            prevGlobalKeyAndGlobalValues !== undefined
-              ? prevGlobalKeyAndGlobalValues [1] [0]
-              : undefined
+            prevGlobalKeyAndGlobalValues === undefined
+              ? undefined
+              : prevGlobalKeyAndGlobalValues [1] [0]
           )
 
           console.log ("createMapMaybeSelector: equal substate, no recalc")
@@ -160,7 +166,7 @@ export const createMapMaybeSelectorDebug =
 
       // prevMap = map
       prevValues .set (key_str, value)
-      keyMap .set (key_str, [newGlobalValuesWithKeyMaybe, newGlobalValues, newMapValueValues])
+      keyMap .set (key_str, [ newGlobalValuesWithKeyMaybe, newGlobalValues, newMapValueValues ])
 
       res = fold (...newGlobalValuesWithKey as any)
                  (...newGlobalValues as any)
@@ -189,8 +195,11 @@ export const createMapMaybeSelectorDebug =
         resMap = toMap (m) as Map<string, R>
         resMap .forEach ((v, k) => justResMap .set (k, Just (v)))
       }
+
     // g.setBaseMap = (m: OrderedMap<string, V>) => { prevMap = m }
-    g.setState = (s: S) => { prevState = s }
+    g.setState = (s: S) => {
+ prevState = s
+}
 
     return g
   }
@@ -269,12 +278,6 @@ export const createMapMaybeSelectorSWithProps =
                            (...valueSelectors)
                            (cnst (fold))
 
-const maybeEquals =
-  (x: any, y: any) =>
-    isMaybe (x) && isMaybe (y)
-      ? INTERNAL_shallowEquals (x) (y)
-      : x === y
-
 // Type inference test:
 //
 // const test = createMapSelector (() => OrderedMap.fromUniquePairs<string, { value: number }>())
@@ -326,16 +329,17 @@ interface Cache<S, R> {
   setCacheAt (key_str: string): (x: R) => void
   getCache (): OrderedMap<string, R>
   setCache (m: OrderedMap<string, R>): void
+
   // setBaseMap (m: OrderedMap<string, V>): void
   setState (s: S): void
 }
 
 interface CreatedSelector<S, R> extends Cache<S, R> {
-  (key_str: string): (state: S) => Maybe<R>;
+  (key_str: string): (state: S) => Maybe<R>
 }
 
 interface CreatedParametricSelector<S, P, R> extends Cache<S, R> {
-  (key_str: string): (state: S, props: P) => Maybe<R>;
+  (key_str: string): (state: S, props: P) => Maybe<R>
 }
 
 type PSelector<S, P, R> = ParametricSelector<S, P, R>

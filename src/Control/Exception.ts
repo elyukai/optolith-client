@@ -7,7 +7,7 @@
  * @see IO
  */
 
-import { Either, Left, Right } from "../Data/Either";
+import { Either, Left, Right } from "../Data/Either"
 
 export const toMsg = (err: Error) => err .message
 
@@ -22,10 +22,10 @@ export const toMsg = (err: Error) => err .message
 export const catchIO: <A> (x: () => Promise<A>) => (f: (err: Error) => Promise<A>) => Promise<A> =
   x => async f => {
     try {
-      return x ()
+      return await x ()
     }
     catch (err) {
-      return f (err)
+      return await f (err)
     }
   }
 

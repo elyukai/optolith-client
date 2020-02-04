@@ -7,10 +7,18 @@
  * @author Lukas Obermann
  */
 
-import { cons, List } from "./List";
-import { inc } from "./Num";
-import { show } from "./Show";
-import { fst, Pair, snd } from "./Tuple";
+import { cons, List } from "./List"
+import { inc } from "./Num"
+import { show } from "./Show"
+import { fst, Pair, snd } from "./Tuple"
+
+
+// MODULE HELPER FUNCTIONS
+
+const buildRangeList =
+  (u: number) => (x: number) => (xs: List<number>): List<number> =>
+    x > u ? xs : cons (buildRangeList (u) (inc (x)) (xs)) (x)
+
 
 /**
  * `range :: Int a => (a, a) -> [a]`
@@ -23,6 +31,7 @@ import { fst, Pair, snd } from "./Tuple";
 export const range =
   (b: Pair<number, number>): List<number> =>
     buildRangeList (snd (b)) (fst (b)) (List.empty)
+
 
 /**
  * `rangeN :: Int a => (a, a) -> [a]`
@@ -37,6 +46,21 @@ export const range =
 export const rangeN =
   (l: number, u: number): List<number> =>
     buildRangeList (u) (l) (List.empty)
+
+
+/**
+ * `inRange :: Int a => (a, a) -> a -> Bool`
+ *
+ * Returns `True` the given subscript lies in the range defined the bounding
+ * pair.
+ *
+ * The first argument `(l,u)` is a pair specifying the lower and upper bounds of
+ * a contiguous subrange of values.
+ */
+export const inRange =
+  (b: Pair<number, number>) => (x: number): boolean =>
+    x >= fst (b) && x <= snd (b)
+
 
 /**
  * `index :: Int a => (a, a) -> a -> Int`
@@ -57,18 +81,6 @@ export const index =
     )
   }
 
-/**
- * `inRange :: Int a => (a, a) -> a -> Bool`
- *
- * Returns `True` the given subscript lies in the range defined the bounding
- * pair.
- *
- * The first argument `(l,u)` is a pair specifying the lower and upper bounds of
- * a contiguous subrange of values.
- */
-export const inRange =
-  (b: Pair<number, number>) => (x: number): boolean =>
-    x >= fst (b) && x <= snd (b)
 
 /**
  * `inRangeN :: Int a => (a, a) -> a -> Bool`
@@ -85,6 +97,7 @@ export const inRangeN =
   (l: number, u: number) => (x: number): boolean =>
     x >= l && x <= u
 
+
 /**
  * `rangeSize :: Int a => (a, a) -> Int`
  *
@@ -96,13 +109,6 @@ export const inRangeN =
 export const rangeSize =
   (b: Pair<number, number>): number =>
     fst (b) <= snd (b) ? snd (b) - fst (b) + 1 : 0
-
-
-// MODULE HELPER FUNCTIONS
-
-const buildRangeList =
-  (u: number) => (x: number) => (xs: List<number>): List<number> =>
-    x > u ? xs : cons (buildRangeList (u) (inc (x)) (xs)) (x)
 
 
 // NAMESPACED FUNCTIONS

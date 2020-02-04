@@ -1,13 +1,18 @@
-import * as React from "react";
-import { Icon } from "./Icon";
-import { Text } from "./Text";
+import * as React from "react"
+import { Icon } from "./Icon"
+import { Text } from "./Text"
 
-export interface LoaderProps {
+interface Props {
   text?: string
 }
 
-export function Loader (props: LoaderProps) {
+export const Loader: React.FC<Props> = props => {
   const { text } = props
 
-  return <div id="loader"><Icon/><Text>{text}</Text></div>
+  return (
+    <div id="loader">
+      <Icon />
+      <Text>{text}</Text>
+    </div>
+  )
 }

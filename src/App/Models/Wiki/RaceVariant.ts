@@ -1,10 +1,10 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { Die } from "./sub/Die";
-import { Erratum } from "./sub/Errata";
-import { EntryWithCategory } from "./wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { Die } from "./sub/Die"
+import { Erratum } from "./sub/Errata"
+import { EntryWithCategory } from "./wikiTypeHelpers"
 
 export interface RaceVariant {
   "@@name": "RaceVariant"

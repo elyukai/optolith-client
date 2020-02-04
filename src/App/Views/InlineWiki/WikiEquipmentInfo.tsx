@@ -1,39 +1,41 @@
-import * as React from "react";
-import { fmap, fmapF } from "../../../Data/Functor";
-import { elemF, intercalate, List, notElem, notNull, subscript } from "../../../Data/List";
-import { alt_, bind, bindF, ensure, fromMaybe, imapMaybe, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNullF, Nothing } from "../../../Data/Maybe";
-import { dec, gt } from "../../../Data/Num";
-import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { fromDefault, Record } from "../../../Data/Record";
-import { fst, isTuple, snd } from "../../../Data/Tuple";
-import { CombatTechniqueId } from "../../Constants/Ids";
-import { Item } from "../../Models/Hero/Item";
-import { Attribute } from "../../Models/Wiki/Attribute";
-import { Book } from "../../Models/Wiki/Book";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
-import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
-import { SourceLink } from "../../Models/Wiki/sub/SourceLink";
-import { minus, ndash } from "../../Utilities/Chars";
-import { localizeNumber, localizeSize, localizeWeight, translate } from "../../Utilities/I18n";
-import { convertPrimaryAttributeToArray } from "../../Utilities/ItemUtils";
-import { sign, signZero } from "../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils";
-import { Markdown } from "../Universal/Markdown";
-import { WikiSource } from "./Elements/WikiSource";
-import { WikiBoxTemplate } from "./WikiBoxTemplate";
+import * as React from "react"
+import { fmap, fmapF } from "../../../Data/Functor"
+import { elemF, intercalate, List, notElem, notNull, subscript } from "../../../Data/List"
+import { alt_, bind, bindF, ensure, fromMaybe, imapMaybe, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNullF, Nothing } from "../../../Data/Maybe"
+import { dec, gt } from "../../../Data/Num"
+import { lookupF } from "../../../Data/OrderedMap"
+import { fromDefault, Record } from "../../../Data/Record"
+import { fst, isTuple, snd } from "../../../Data/Tuple"
+import { CombatTechniqueId } from "../../Constants/Ids"
+import { Item } from "../../Models/Hero/Item"
+import { Attribute } from "../../Models/Wiki/Attribute"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n"
+import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
+import { SourceLink } from "../../Models/Wiki/sub/SourceLink"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { minus, ndash } from "../../Utilities/Chars"
+import { localizeNumber, localizeSize, localizeWeight, translate } from "../../Utilities/I18n"
+import { convertPrimaryAttributeToArray } from "../../Utilities/ItemUtils"
+import { sign, signZero } from "../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils"
+import { Markdown } from "../Universal/Markdown"
+import { WikiSource } from "./Elements/WikiSource"
+import { WikiBoxTemplate } from "./WikiBoxTemplate"
 
-export interface WikiEquipmentInfoProps {
-  attributes: OrderedMap<string, Record<Attribute>>
-  books: OrderedMap<string, Record<Book>>
-  combatTechniques: OrderedMap<string, Record<CombatTechnique>>
-  x: Record<ItemTemplate> | Record<Item>
-  l10n: L10nRecord
-  itemTemplates: OrderedMap<string, Record<ItemTemplate>>
+interface SrcObj {
+  "@@name": "SrcObj"
+  src: List<Record<SourceLink>>
 }
 
+const SrcObj = fromDefault ("SrcObj")
+                           <SrcObj> ({
+                             src: List<Record<SourceLink>> (),
+                           })
+
+const WA = WikiModel.A
 const ITAL = ItemTemplate.AL
 const ITA = ItemTemplate.A
 const IA = Item.A
@@ -41,9 +43,23 @@ const PADTA = PrimaryAttributeDamageThreshold.A
 const CTA = CombatTechnique.A
 const AA = Attribute.A
 
+const ensureNatural = bindF (ensure (gt (0)))
+
+export interface WikiEquipmentInfoProps {
+  x: Record<ItemTemplate> | Record<Item>
+  l10n: L10nRecord
+  wiki: WikiModelRecord
+}
+
 // tslint:disable-next-line: cyclomatic-complexity
-export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
-  const { attributes, x, l10n, combatTechniques, itemTemplates, books } = props
+export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
+  const { x, l10n, wiki } = props
+
+  const attributes = WA.attributes (wiki)
+  const books = WA.books (wiki)
+  const combatTechniques = WA.combatTechniques (wiki)
+  const itemTemplates = WA.itemTemplates (wiki)
+
   const locale = L10n.A.id (l10n)
   const gr = ITAL.gr (x)
   const name = ITAL.name (x)
@@ -350,15 +366,3 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
     </WikiBoxTemplate>
   )
 }
-
-interface SrcObj {
-  "@@name": "SrcObj"
-  src: List<Record<SourceLink>>
-}
-
-const SrcObj = fromDefault ("SrcObj")
-                           <SrcObj> ({
-                             src: List<Record<SourceLink>> (),
-                           })
-
-const ensureNatural = bindF (ensure (gt (0)))

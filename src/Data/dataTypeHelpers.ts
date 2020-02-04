@@ -1,10 +1,10 @@
-import { Identity } from "../Control/Monad/Identity";
-import { Either } from "./Either";
-import { Const } from "./Functor/Const";
-import { List } from "./List";
-import { Maybe } from "./Maybe";
-import { OrderedMap } from "./OrderedMap";
-import { OrderedSet } from "./OrderedSet";
+import { Identity } from "../Control/Monad/Identity"
+import { Either } from "./Either"
+import { Const } from "./Functor/Const"
+import { List } from "./List"
+import { Maybe } from "./Maybe"
+import { OrderedMap } from "./OrderedMap"
+import { OrderedSet } from "./OrderedSet"
 
 export type Data<A> = Const<A, any>
                     | Either<any, A>

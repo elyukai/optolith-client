@@ -1,18 +1,18 @@
-import { List } from "../../../Data/List";
-import { Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { ProfessionId } from "../../Constants/Ids";
-import { translate } from "../../Utilities/I18n";
-import { L10nRecord } from "./L10n";
-import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement";
-import { ProfessionSelections } from "./professionSelections/ProfessionAdjustmentSelections";
-import { Erratum } from "./sub/Errata";
-import { IncreaseSkill } from "./sub/IncreaseSkill";
-import { IncreaseSkillList } from "./sub/IncreaseSkillList";
-import { NameBySex } from "./sub/NameBySex";
-import { SourceLink } from "./sub/SourceLink";
-import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite } from "./wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { ProfessionId } from "../../Constants/Ids"
+import { translate } from "../../Utilities/I18n"
+import { L10nRecord } from "./L10n"
+import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement"
+import { ProfessionSelections } from "./professionSelections/ProfessionAdjustmentSelections"
+import { Erratum } from "./sub/Errata"
+import { IncreaseSkill } from "./sub/IncreaseSkill"
+import { IncreaseSkillList } from "./sub/IncreaseSkillList"
+import { NameBySex } from "./sub/NameBySex"
+import { SourceLink } from "./sub/SourceLink"
+import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite } from "./wikiTypeHelpers"
 
 export interface Profession {
   "@@name": "Profession"

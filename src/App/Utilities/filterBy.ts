@@ -1,9 +1,9 @@
-import { thrush } from "../../Data/Function";
-import { any, filter, isInfixOf, List, lower } from "../../Data/List";
-import { Record } from "../../Data/Record";
-import { pipe, pipe_ } from "./pipe";
-import { RecordWithName } from "./sortBy";
-import { isString } from "./typeCheckUtils";
+import { thrush } from "../../Data/Function"
+import { any, filter, isInfixOf, List, lower } from "../../Data/List"
+import { Record } from "../../Data/Record"
+import { pipe, pipe_ } from "./pipe"
+import { RecordWithName } from "./sortBy"
+import { isString } from "./typeCheckUtils"
 
 /**
  * The default minimum filter text length for more efficient filtering of long
@@ -53,6 +53,7 @@ export const filterRecordsByE = filterByMulti (PERF_MIN)
  * Same as `filterRecordsBy` but with a set minimum filter text length of `0`.
  */
 export const filterRecordsByA = filterByMulti (0)
+
 // A => always
 
 const { name } = RecordWithName.AL

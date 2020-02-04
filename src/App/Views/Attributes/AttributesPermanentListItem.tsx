@@ -1,13 +1,13 @@
-import * as React from "react";
-import { Maybe } from "../../../Data/Maybe";
-import { EnergyId } from "../../Constants/Ids";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { isFunction } from "../../Utilities/typeCheckUtils";
-import { IconButton } from "../Universal/IconButton";
-import { AttributeBorder } from "./AttributeBorder";
-import { AttributesRemovePermanent } from "./AttributesRemovePermanent";
-import { PermanentPoints } from "./PermanentPoints";
+import * as React from "react"
+import { Maybe } from "../../../Data/Maybe"
+import { EnergyId } from "../../Constants/Ids"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { isFunction } from "../../Utilities/typeCheckUtils"
+import { IconButton } from "../Universal/IconButton"
+import { AttributeBorder } from "./AttributeBorder"
+import { AttributesRemovePermanent } from "./AttributesRemovePermanent"
+import { PermanentPoints } from "./PermanentPoints"
 
 export interface AttributesPermanentListItemProps {
   l10n: L10nRecord
@@ -56,12 +56,12 @@ export const AttributesPermanentListItem: React.FC<AttributesPermanentListItemPr
 
   const handleOpenEditPermanentEnergy = React.useCallback (
     () => openEditPermanentEnergy (id),
-    [openEditPermanentEnergy, id]
+    [ openEditPermanentEnergy, id ]
   )
 
   const handleOpenAddPermanentEnergyLoss = React.useCallback (
     () => openAddPermanentEnergyLoss (id),
-    [openAddPermanentEnergyLoss, id]
+    [ openAddPermanentEnergyLoss, id ]
   )
 
   return (

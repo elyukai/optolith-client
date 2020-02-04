@@ -1,4 +1,4 @@
-import { fromDefault, makeLenses } from "../../../Data/Record";
+import { fromDefault, makeLenses } from "../../../Data/Record"
 
 export interface PermanentEnergyLoss {
   "@@name": "PermanentEnergyLoss"

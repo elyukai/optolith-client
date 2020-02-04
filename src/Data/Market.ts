@@ -1,4 +1,4 @@
-import { Internals } from "./Internals";
+import { Internals } from "./Internals"
 
 import Either = Internals.Either
 

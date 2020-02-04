@@ -1,47 +1,39 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { on } from "../../../Data/Function";
-import { fmap, fmapF } from "../../../Data/Functor";
-import { elemF, find, head, intercalate, List, map, notNull, subscript } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, mapMaybe, maybe, Maybe } from "../../../Data/Maybe";
-import { compare, dec } from "../../../Data/Num";
-import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { fst, Pair, snd } from "../../../Data/Tuple";
-import { CultureId } from "../../Constants/Ids";
-import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
-import { Book } from "../../Models/Wiki/Book";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
-import { Skill } from "../../Models/Wiki/Skill";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
-import { ndash } from "../../Utilities/Chars";
-import { compareLocale, localizeOrList, translate, translateP } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { Locale } from "../../Utilities/Raw/JSON/Config";
-import { renderMaybe } from "../../Utilities/ReactUtils";
-import { comparingR, sortByMulti, sortStrings } from "../../Utilities/sortBy";
-import { Markdown } from "../Universal/Markdown";
-import { WikiSource } from "./Elements/WikiSource";
-import { WikiBoxTemplate } from "./WikiBoxTemplate";
-import { WikiProperty } from "./WikiProperty";
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { on } from "../../../Data/Function"
+import { fmap, fmapF } from "../../../Data/Functor"
+import { elemF, find, head, intercalate, List, map, notNull, subscript } from "../../../Data/List"
+import { bindF, ensure, fromMaybe, mapMaybe, maybe, Maybe } from "../../../Data/Maybe"
+import { compare, dec } from "../../../Data/Num"
+import { lookupF } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { fst, Pair, snd } from "../../../Data/Tuple"
+import { CultureId } from "../../Constants/Ids"
+import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined"
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n"
+import { Skill } from "../../Models/Wiki/Skill"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { ndash } from "../../Utilities/Chars"
+import { compareLocale, localizeOrList, translate, translateP } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { Locale } from "../../Utilities/Raw/JSON/Config"
+import { renderMaybe } from "../../Utilities/ReactUtils"
+import { comparingR, sortByMulti, sortStrings } from "../../Utilities/sortBy"
+import { Markdown } from "../Universal/Markdown"
+import { WikiSource } from "./Elements/WikiSource"
+import { WikiBoxTemplate } from "./WikiBoxTemplate"
+import { WikiProperty } from "./WikiProperty"
 
 type ValueSkill = Pair<Record<Skill>, number>
-
-export interface WikiCultureInfoProps {
-  books: OrderedMap<string, Record<Book>>
-  x: Record<CultureCombined>
-  languages: Maybe<Record<SpecialAbility>>
-  l10n: L10nRecord
-  scripts: Maybe<Record<SpecialAbility>>
-  skills: OrderedMap<string, Record<Skill>>
-}
 
 const CCA = CultureCombined.A
 const CCA_ = CultureCombinedA_
 const SA = Skill.A
 const SAA = SpecialAbility.A
 const SOA = SelectOption.A
+const WA = WikiModel.A
 
 const isElvenCulture =
   elemF (List<string> (
@@ -51,8 +43,92 @@ const isElvenCulture =
     CultureId.Steppenelfen
   ))
 
-export function WikiCultureInfo (props: WikiCultureInfoProps) {
-  const { x, languages, l10n, scripts, skills, books } = props
+const getNativeTongueStr =
+  (l10n: L10nRecord) =>
+  (languages_wiki_entry: Maybe<Record<SpecialAbility>>) => pipe (
+    CCA_.languages,
+    mapMaybe (id => pipe_ (
+                      languages_wiki_entry,
+                      bindF (SAA.select),
+                      bindF (find (pipe (SOA.id, equals<string | number> (id)))),
+                      fmap (SOA.name)
+                    )),
+    sortStrings (l10n),
+    localizeOrList (l10n)
+  )
+
+const getMainScriptStr =
+  (l10n: L10nRecord) =>
+  (scripts_wiki_entry: Maybe<Record<SpecialAbility>>) => pipe (
+    CCA_.scripts,
+    ensure (notNull),
+    bindF (script_ids => {
+            const names = pipe_ (
+              script_ids,
+              mapMaybe (id => pipe_ (
+                                scripts_wiki_entry,
+                                bindF (SAA.select),
+                                bindF (find (pipe (SOA.id, equals<string | number> (id)))),
+                                fmap (SOA.name)
+                              )),
+              sortStrings (l10n),
+              localizeOrList (l10n)
+            )
+
+            const mcost = pipe_ (
+              scripts_wiki_entry,
+              bindF (SAA.select),
+              bindF (find (pipe (SOA.id, equals<string | number> (head (script_ids))))),
+              bindF (SOA.cost)
+            )
+
+            return fmapF (mcost)
+                         ((cost: number) =>
+                            `${names} (${cost} ${translate (l10n) ("adventurepoints.short")})`)
+          }),
+    fromMaybe (translate (l10n) ("none"))
+  )
+
+const getSocialStatusStr =
+  (l10n: L10nRecord) => pipe (
+    CCA_.socialStatus,
+    ensure (notNull),
+    maybe (translate (l10n) ("none"))
+          (pipe (
+            mapMaybe (pipe (dec, subscript (translate (l10n) ("socialstatuses")))),
+            intercalate (", ")
+          ))
+  )
+
+const sortSkills =
+  (l10n: L10nRecord) =>
+    sortByMulti (L10n.A.id (l10n) === Locale.Dutch
+                  ? [ comparingR (SA.gr) (compare), comparingR (SA.name) (compareLocale (l10n)) ]
+                  : [ comparingR (SA.name) (compareLocale (l10n)) ])
+
+const sortValueSkills =
+  (l10n: L10nRecord) =>
+    sortByMulti <ValueSkill>
+                (L10n.A.id (l10n) === Locale.Dutch
+                 ? [
+                     on (compare) <ValueSkill> (pipe (fst, SA.gr)),
+                     on (compareLocale (l10n)) <ValueSkill> (pipe (fst, SA.name)),
+                   ]
+                 : [ on (compareLocale (l10n)) <ValueSkill> (pipe (fst, SA.name)) ])
+
+export interface WikiCultureInfoProps {
+  l10n: L10nRecord
+  wiki: WikiModelRecord
+  x: Record<CultureCombined>
+  languages: Maybe<Record<SpecialAbility>>
+  scripts: Maybe<Record<SpecialAbility>>
+}
+
+export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
+  const { x, languages, l10n, scripts, wiki } = props
+
+  const books = WA.books (wiki)
+  const skills = WA.skills (wiki)
 
   const culturalPackageSkills = CCA.mappedCulturalPackageSkills (x)
 
@@ -171,76 +247,3 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
     </WikiBoxTemplate>
   )
 }
-
-const getNativeTongueStr =
-  (l10n: L10nRecord) =>
-  (languages_wiki_entry: Maybe<Record<SpecialAbility>>) => pipe (
-    CCA_.languages,
-    mapMaybe (id => pipe_ (
-                      languages_wiki_entry,
-                      bindF (SAA.select),
-                      bindF (find (pipe (SOA.id, equals<string | number> (id)))),
-                      fmap (SOA.name)
-                    )),
-    sortStrings (l10n),
-    localizeOrList (l10n)
-  )
-
-const getMainScriptStr =
-  (l10n: L10nRecord) =>
-  (scripts_wiki_entry: Maybe<Record<SpecialAbility>>) => pipe (
-    CCA_.scripts,
-    ensure (notNull),
-    bindF (script_ids => {
-            const names = pipe_ (
-              script_ids,
-              mapMaybe (id => pipe_ (
-                                scripts_wiki_entry,
-                                bindF (SAA.select),
-                                bindF (find (pipe (SOA.id, equals<string | number> (id)))),
-                                fmap (SOA.name)
-                              )),
-              sortStrings (l10n),
-              localizeOrList (l10n)
-            )
-
-            const mcost = pipe_ (
-              scripts_wiki_entry,
-              bindF (SAA.select),
-              bindF (find (pipe (SOA.id, equals<string | number> (head (script_ids))))),
-              bindF (SOA.cost)
-            )
-
-            return fmapF (mcost)
-                         ((cost: number) =>
-                            `${names} (${cost} ${translate (l10n) ("adventurepoints.short")})`)
-          }),
-    fromMaybe (translate (l10n) ("none"))
-  )
-
-const getSocialStatusStr =
-  (l10n: L10nRecord) => pipe (
-    CCA_.socialStatus,
-    ensure (notNull),
-    maybe (translate (l10n) ("none"))
-          (pipe (
-            mapMaybe (pipe (dec, subscript (translate (l10n) ("socialstatuses")))),
-            intercalate (", ")
-          ))
-  )
-
-const sortSkills =
-  (l10n: L10nRecord) =>
-    sortByMulti (L10n.A.id (l10n) === Locale.Dutch
-                  ? [ comparingR (SA.gr) (compare), comparingR (SA.name) (compareLocale (l10n)) ]
-                  : [ comparingR (SA.name) (compareLocale (l10n)) ])
-
-const sortValueSkills =
-  (l10n: L10nRecord) =>
-    sortByMulti <ValueSkill>
-                (L10n.A.id (l10n) === Locale.Dutch
-                 ? [
-                     on (compare) <ValueSkill> (pipe (fst, SA.gr)),
-                     on (compareLocale (l10n)) <ValueSkill> (pipe (fst, SA.name)),
-                   ]
-                 : [ on (compareLocale (l10n)) <ValueSkill> (pipe (fst, SA.name)) ])

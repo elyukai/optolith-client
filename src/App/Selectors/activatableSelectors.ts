@@ -1,51 +1,51 @@
-import { equals } from "../../Data/Eq";
-import { flip, ident } from "../../Data/Function";
-import { fmap, fmapF } from "../../Data/Functor";
-import { any, consF, filter, filterMulti, find, foldr, intercalate, List, map, notElemF, nub } from "../../Data/List";
-import { bindF, elemF, ensure, fromMaybe, joinMaybeList, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
-import { insert, lookup, OrderedMap } from "../../Data/OrderedMap";
-import { member, OrderedSet } from "../../Data/OrderedSet";
-import { Record } from "../../Data/Record";
-import { fst, Pair, snd, Tuple } from "../../Data/Tuple";
-import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
-import { ActivatableCategory, Category } from "../Constants/Categories";
-import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../Constants/Ids";
-import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
-import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
-import { EntryRating } from "../Models/Hero/heroTypeHelpers";
-import { ActivatableActivationValidation } from "../Models/View/ActivatableActivationValidationObject";
-import { ActivatableCombinedName } from "../Models/View/ActivatableCombinedName";
-import { ActivatableNameCost } from "../Models/View/ActivatableNameCost";
-import { ActiveActivatable, ActiveActivatableA_ } from "../Models/View/ActiveActivatable";
-import { Advantage } from "../Models/Wiki/Advantage";
-import { Culture } from "../Models/Wiki/Culture";
-import { Disadvantage } from "../Models/Wiki/Disadvantage";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { Profession } from "../Models/Wiki/Profession";
-import { Race } from "../Models/Wiki/Race";
-import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { SelectOption } from "../Models/Wiki/sub/SelectOption";
-import { heroReducer } from "../Reducers/heroReducer";
-import { getAllActiveByCategory } from "../Utilities/Activatable/activatableActiveUtils";
-import { modifyByLevel } from "../Utilities/Activatable/activatableModifierUtils";
-import { getBracketedNameFromFullName } from "../Utilities/Activatable/activatableNameUtils";
-import { isMaybeActive } from "../Utilities/Activatable/isActive";
-import { getActiveSelections, getSelectOptionName } from "../Utilities/Activatable/selectionUtils";
-import { createMapSelectorP } from "../Utilities/createMapSelector";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
-import { compareLocale } from "../Utilities/I18n";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { mapCurrentHero, mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
-import { blessedSpecialAbilityGroups, combatSpecialAbilityGroups, generalSpecialAbilityGroups, magicalSpecialAbilityGroups } from "../Utilities/sheetUtils";
-import { comparingR, sortStrings } from "../Utilities/sortBy";
-import { misNumberM, misStringM } from "../Utilities/typeCheckUtils";
-import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors";
-import { getAutomaticAdvantages, getCurrentCulture, getCurrentProfession, getRace } from "./rcpSelectors";
-import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
-import { getMagicalTraditionsFromWiki } from "./spellsSelectors";
-import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getHeroes, getLocaleAsProp, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from "./stateSelectors";
+import { equals } from "../../Data/Eq"
+import { flip, ident } from "../../Data/Function"
+import { fmap, fmapF } from "../../Data/Functor"
+import { any, consF, filter, filterMulti, find, foldr, intercalate, List, map, notElemF, nub } from "../../Data/List"
+import { bindF, elemF, ensure, fromMaybe, joinMaybeList, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe"
+import { insert, lookup, OrderedMap } from "../../Data/OrderedMap"
+import { member, OrderedSet } from "../../Data/OrderedSet"
+import { Record } from "../../Data/Record"
+import { fst, Pair, snd, Tuple } from "../../Data/Tuple"
+import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry"
+import { ActivatableCategory, Category } from "../Constants/Categories"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../Constants/Ids"
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../Models/ActiveEntries/ActiveObject"
+import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId"
+import { EntryRating } from "../Models/Hero/heroTypeHelpers"
+import { ActivatableActivationValidation } from "../Models/View/ActivatableActivationValidationObject"
+import { ActivatableCombinedName } from "../Models/View/ActivatableCombinedName"
+import { ActivatableNameCost } from "../Models/View/ActivatableNameCost"
+import { ActiveActivatable, ActiveActivatableA_ } from "../Models/View/ActiveActivatable"
+import { Advantage } from "../Models/Wiki/Advantage"
+import { Culture } from "../Models/Wiki/Culture"
+import { Disadvantage } from "../Models/Wiki/Disadvantage"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { Profession } from "../Models/Wiki/Profession"
+import { Race } from "../Models/Wiki/Race"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { SelectOption } from "../Models/Wiki/sub/SelectOption"
+import { heroReducer } from "../Reducers/heroReducer"
+import { getAllActiveByCategory } from "../Utilities/Activatable/activatableActiveUtils"
+import { modifyByLevel } from "../Utilities/Activatable/activatableModifierUtils"
+import { getBracketedNameFromFullName } from "../Utilities/Activatable/activatableNameUtils"
+import { isMaybeActive } from "../Utilities/Activatable/isActive"
+import { getActiveSelections, getSelectOptionName } from "../Utilities/Activatable/selectionUtils"
+import { createMapSelectorP } from "../Utilities/createMapSelector"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
+import { compareLocale } from "../Utilities/I18n"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { mapCurrentHero, mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils"
+import { blessedSpecialAbilityGroups, combatSpecialAbilityGroups, generalSpecialAbilityGroups, magicalSpecialAbilityGroups } from "../Utilities/sheetUtils"
+import { comparingR, sortStrings } from "../Utilities/sortBy"
+import { misNumberM, misStringM } from "../Utilities/typeCheckUtils"
+import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors"
+import { getAutomaticAdvantages, getCurrentCulture, getCurrentProfession, getRace } from "./rcpSelectors"
+import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors"
+import { getMagicalTraditionsFromWiki } from "./spellsSelectors"
+import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getHeroes, getLocaleAsProp, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from "./stateSelectors"
 
 const AAA_ = ActiveActivatableA_
 const SAA = SpecialAbility.A
@@ -127,6 +127,7 @@ export const getMatchingScriptAndLangRelated = createMaybeSelector (
   isEntryRequiringMatchingScriptAndLangActive,
   getScriptsWithMatchingLanguages,
   getLanguagesWithMatchingScripts,
+
   // tslint:disable-next-line: no-unnecessary-callback-wrapper
   (is, scripts, langs) => Tuple (is, scripts, langs)
 )

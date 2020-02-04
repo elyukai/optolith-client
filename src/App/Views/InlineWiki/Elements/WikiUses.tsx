@@ -1,13 +1,13 @@
-import * as React from "react";
-import { intercalate, List, map, notNull } from "../../../../Data/List";
-import { OrderedMap } from "../../../../Data/OrderedMap";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { Advantage } from "../../../Models/Wiki/Advantage";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
-import { Application } from "../../../Models/Wiki/sub/Application";
-import { sortStrings } from "../../../Utilities/sortBy";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { intercalate, List, map, notNull } from "../../../../Data/List"
+import { OrderedMap } from "../../../../Data/OrderedMap"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { Advantage } from "../../../Models/Wiki/Advantage"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { Application } from "../../../Models/Wiki/sub/Application"
+import { sortStrings } from "../../../Utilities/sortBy"
+import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
   uses: (r: Record<A>) => List<Record<Application>>
@@ -23,7 +23,9 @@ export interface WikiUsesProps<A extends RecordIBase<any>> {
 
 const AA = Application.A
 
-export function WikiUses <A extends RecordIBase<any>> (props: WikiUsesProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiUsesProps<A>) => ReturnType<React.FC>
+
+export const WikiUses: FC = props => {
   const {
     x,
     acc,

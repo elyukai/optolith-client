@@ -1,19 +1,19 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { fmap } from "../../../Data/Functor";
-import { find, intercalate, List, map, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, imapMaybe, Maybe } from "../../../Data/Maybe";
-import { gt } from "../../../Data/Num";
-import { elems, OrderedSet, size } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { CheckModifier } from "../../Models/Wiki/wikiTypeHelpers";
-import { minus } from "../../Utilities/Chars";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { getCheckModStr } from "../InlineWiki/Elements/WikiSkillCheck";
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { fmap } from "../../../Data/Functor"
+import { find, intercalate, List, map, toArray } from "../../../Data/List"
+import { bindF, ensure, fromMaybe, imapMaybe, Maybe } from "../../../Data/Maybe"
+import { gt } from "../../../Data/Num"
+import { elems, OrderedSet, size } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { CheckModifier } from "../../Models/Wiki/wikiTypeHelpers"
+import { minus } from "../../Utilities/Chars"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { getCheckModStr } from "../InlineWiki/Elements/WikiSkillCheck"
 
-export interface SkillCheckProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   check?: List<string>
   checkDisabled?: boolean
@@ -21,7 +21,7 @@ export interface SkillCheckProps {
   l10n: L10nRecord
 }
 
-export function SkillCheck (props: SkillCheckProps) {
+export const SkillCheck: React.FC<Props> = props => {
   const {
     attributes,
     check,

@@ -1,6 +1,6 @@
-import { fromDefault, Record } from "../../../../Data/Record";
-import { AnyProfessionVariantSelection, ProfessionSelectionIds } from "../wikiTypeHelpers";
-import { SpecializationSelection } from "./SpecializationSelection";
+import { fromDefault, Record } from "../../../../Data/Record"
+import { AnyProfessionVariantSelection, ProfessionSelectionIds } from "../wikiTypeHelpers"
+import { SpecializationSelection } from "./SpecializationSelection"
 
 export interface RemoveSpecializationSelection {
   "@@name": "RemoveSpecializationSelection"

@@ -7,31 +7,31 @@
  * @since 1.1.0
  */
 
-import { fmap } from "../../../Data/Functor";
-import { List } from "../../../Data/List";
-import { liftM2, liftM4, mapMaybe, Maybe } from "../../../Data/Maybe";
-import { lookup, OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { fst, Pair, snd, Tuple } from "../../../Data/Tuple";
-import { ActivatableCategory, Category } from "../../Constants/Categories";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { ActivatableActivationValidation } from "../../Models/View/ActivatableActivationValidationObject";
-import { ActivatableCombinedName } from "../../Models/View/ActivatableCombinedName";
-import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../../Models/View/ActivatableNameCost";
-import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { Disadvantage } from "../../Models/Wiki/Disadvantage";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { WikiEntryByCategory, WikiEntryRecordByCategory } from "../../Models/Wiki/wikiTypeHelpers";
-import { convertPerTierCostToFinalCost, getCost } from "../AdventurePoints/activatableCostUtils";
-import { pipe_ } from "../pipe";
-import { getIsRemovalOrChangeDisabled } from "./activatableActiveValidationUtils";
-import { getActiveFromState } from "./activatableConvertUtils";
-import { getName } from "./activatableNameUtils";
+import { fmap } from "../../../Data/Functor"
+import { List } from "../../../Data/List"
+import { liftM2, liftM4, mapMaybe, Maybe } from "../../../Data/Maybe"
+import { lookup, OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { fst, Pair, snd, Tuple } from "../../../Data/Tuple"
+import { ActivatableCategory, Category } from "../../Constants/Categories"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { ActivatableActivationValidation } from "../../Models/View/ActivatableActivationValidationObject"
+import { ActivatableCombinedName } from "../../Models/View/ActivatableCombinedName"
+import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../../Models/View/ActivatableNameCost"
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { Disadvantage } from "../../Models/Wiki/Disadvantage"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { WikiEntryByCategory, WikiEntryRecordByCategory } from "../../Models/Wiki/wikiTypeHelpers"
+import { convertPerTierCostToFinalCost, getCost } from "../AdventurePoints/activatableCostUtils"
+import { pipe_ } from "../pipe"
+import { getIsRemovalOrChangeDisabled } from "./activatableActiveValidationUtils"
+import { getActiveFromState } from "./activatableConvertUtils"
+import { getName } from "./activatableNameUtils"
 
 /**
  * Takes an Activatable category and a hero and returns the state slice matching

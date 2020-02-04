@@ -1,80 +1,42 @@
-import * as React from "react";
-import { notEquals } from "../../../Data/Eq";
-import { fmap } from "../../../Data/Functor";
-import { List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, guard, Just, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
-import { dec } from "../../../Data/Num";
-import { Record } from "../../../Data/Record";
-import { Pair, snd } from "../../../Data/Tuple";
-import { Property } from "../../Constants/Groups";
-import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { AttributeCombined } from "../../Models/View/AttributeCombined";
-import { CantripCombined, CantripCombinedA_ } from "../../Models/View/CantripCombined";
-import { SpellWithRequirements, SpellWithRequirementsA_ } from "../../Models/View/SpellWithRequirements";
-import { Cantrip } from "../../Models/Wiki/Cantrip";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Spell } from "../../Models/Wiki/Spell";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { SpellsSortOptions } from "../../Utilities/Raw/JSON/Config";
-import { renderMaybe } from "../../Utilities/ReactUtils";
-import { SkillListItem } from "../Skills/SkillListItem";
-import { BorderButton } from "../Universal/BorderButton";
-import { Checkbox } from "../Universal/Checkbox";
-import { ListView } from "../Universal/List";
-import { ListHeader } from "../Universal/ListHeader";
-import { ListHeaderTag } from "../Universal/ListHeaderTag";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { RecommendedReference } from "../Universal/RecommendedReference";
-import { Scroll } from "../Universal/Scroll";
-import { SearchField } from "../Universal/SearchField";
-import { Slidein } from "../Universal/Slidein";
-import { SortNames, SortOptions } from "../Universal/SortOptions";
-
-export interface SpellsOwnProps {
-  l10n: L10nRecord
-  hero: HeroModelRecord
-}
-
-export interface SpellsStateProps {
-  activeList: Maybe<List<Record<SpellWithRequirements> | Record<CantripCombined>>>
-  addSpellsDisabled: boolean
-  attributes: List<Record<AttributeCombined>>
-  enableActiveItemHints: boolean
-  filterText: string
-  inactiveFilterText: string
-  inactiveList: Maybe<List<Record<SpellWithRequirements> | Record<CantripCombined>>>
-  isRemovingEnabled: boolean
-  sortOrder: SortNames
-}
-
-export interface SpellsDispatchProps {
-  setSortOrder (sortOrder: SortNames): void
-  switchActiveItemHints (): void
-  addPoint (id: string): void
-  addToList (id: string): void
-  addCantripToList (id: string): void
-  removePoint (id: string): void
-  removeFromList (id: string): void
-  removeCantripFromList (id: string): void
-  setFilterText (filterText: string): void
-  setInactiveFilterText (filterText: string): void
-}
-
-export type SpellsProps = SpellsStateProps & SpellsDispatchProps & SpellsOwnProps
-
-export interface SpellsState {
-  showAddSlidein: boolean
-  currentId: Maybe<string>
-  currentSlideinId: Maybe<string>
-}
+import * as React from "react"
+import { notEquals } from "../../../Data/Eq"
+import { fmap } from "../../../Data/Functor"
+import { List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List"
+import { bindF, ensure, fromMaybe, guard, Just, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe"
+import { dec } from "../../../Data/Num"
+import { Record } from "../../../Data/Record"
+import { Pair, snd } from "../../../Data/Tuple"
+import { Property } from "../../Constants/Groups"
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { AttributeCombined } from "../../Models/View/AttributeCombined"
+import { CantripCombined, CantripCombinedA_ } from "../../Models/View/CantripCombined"
+import { SpellWithRequirements, SpellWithRequirementsA_ } from "../../Models/View/SpellWithRequirements"
+import { Cantrip } from "../../Models/Wiki/Cantrip"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { Spell } from "../../Models/Wiki/Spell"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { SpellsSortOptions } from "../../Utilities/Raw/JSON/Config"
+import { renderMaybe } from "../../Utilities/ReactUtils"
+import { SkillListItem } from "../Skills/SkillListItem"
+import { BorderButton } from "../Universal/BorderButton"
+import { Checkbox } from "../Universal/Checkbox"
+import { ListView } from "../Universal/List"
+import { ListHeader } from "../Universal/ListHeader"
+import { ListHeaderTag } from "../Universal/ListHeaderTag"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { RecommendedReference } from "../Universal/RecommendedReference"
+import { Scroll } from "../Universal/Scroll"
+import { SearchField } from "../Universal/SearchField"
+import { Slidein } from "../Universal/Slidein"
+import { SortNames, SortOptions } from "../Universal/SortOptions"
 
 const SWRA = SpellWithRequirements.A
 const SWRAL = SpellWithRequirements.AL
@@ -120,7 +82,79 @@ const SCCA = {
 
 const isCantrip = CantripCombined.is
 
-export const Spells: React.FC<SpellsProps> = props => {
+const isTopMarginNeeded =
+  (sortOrder: string) =>
+  (curr: Combined) =>
+  (mprev: Maybe<Combined>) =>
+    pipe_ (
+      mprev,
+      bindF (ensure (
+        () => sortOrder === "group" && SCCA.active (curr)
+      )),
+      fmap (prev =>
+             (!isCantrip (prev) && isCantrip (curr))
+             || (isCantrip (prev) && !isCantrip (curr))
+             || (!isCantrip (prev)
+                 && !isCantrip (curr)
+                 && notEquals (SCCA.gr (prev)) (SCCA.gr (curr)))),
+      or
+    )
+
+const getPropertyStr =
+  (l10n: L10nRecord) =>
+  (curr: Combined) =>
+    pipe_ (
+      curr,
+      SCCA.property,
+      dec,
+      subscript (translate (l10n) ("propertylist")),
+      renderMaybe
+    )
+
+const getSpellAddText =
+  (l10n: L10nRecord) =>
+  (sortOrder: string) =>
+  (property_str: string) =>
+  (curr: Record<SpellWithRequirements>) =>
+    pipe_ (
+      guard (sortOrder === "group"),
+      thenF (subscript (translate (l10n) ("spellgroups")) (dec (SWRA_.gr (curr)))),
+      maybe (property_str) (gr_str => `${property_str} / ${gr_str}`)
+    )
+
+export interface SpellsOwnProps {
+  l10n: L10nRecord
+  hero: HeroModelRecord
+}
+
+export interface SpellsStateProps {
+  activeList: Maybe<List<Record<SpellWithRequirements> | Record<CantripCombined>>>
+  addSpellsDisabled: boolean
+  attributes: List<Record<AttributeCombined>>
+  enableActiveItemHints: boolean
+  filterText: string
+  inactiveFilterText: string
+  inactiveList: Maybe<List<Record<SpellWithRequirements> | Record<CantripCombined>>>
+  isRemovingEnabled: boolean
+  sortOrder: SortNames
+}
+
+export interface SpellsDispatchProps {
+  setSortOrder (sortOrder: SortNames): void
+  switchActiveItemHints (): void
+  addPoint (id: string): void
+  addToList (id: string): void
+  addCantripToList (id: string): void
+  removePoint (id: string): void
+  removeFromList (id: string): void
+  removeCantripFromList (id: string): void
+  setFilterText (filterText: string): void
+  setInactiveFilterText (filterText: string): void
+}
+
+type Props = SpellsStateProps & SpellsDispatchProps & SpellsOwnProps
+
+export const Spells: React.FC<Props> = props => {
   const {
     addSpellsDisabled,
     addPoint,
@@ -144,13 +178,13 @@ export const Spells: React.FC<SpellsProps> = props => {
     setInactiveFilterText,
   } = props
 
-  const [showAddSlidein, setShowAddSlidein] = React.useState (false)
-  const [currentId, setCurrenId] = React.useState<Maybe<string>> (Nothing)
-  const [currentSlideinId, setCurrentSlideinId] = React.useState<Maybe<string>> (Nothing)
+  const [ showAddSlidein, setShowAddSlidein ] = React.useState (false)
+  const [ currentId, setCurrenId ] = React.useState<Maybe<string>> (Nothing)
+  const [ currentSlideinId, setCurrentSlideinId ] = React.useState<Maybe<string>> (Nothing)
 
   const handleShowSlidein = React.useCallback (
     () => setShowAddSlidein (true),
-    [setShowAddSlidein]
+    [ setShowAddSlidein ]
   )
 
   const handleHideSlidein = React.useCallback (
@@ -159,17 +193,17 @@ export const Spells: React.FC<SpellsProps> = props => {
       setCurrentSlideinId (Nothing)
       setShowAddSlidein (false)
     },
-    [setInactiveFilterText, setCurrentSlideinId, setShowAddSlidein]
+    [ setInactiveFilterText, setCurrentSlideinId, setShowAddSlidein ]
   )
 
   const handleShowInfo = React.useCallback (
     (id: string) => setCurrenId (Just (id)),
-    [setCurrenId]
+    [ setCurrenId ]
   )
 
   const handleShowSlideinInfo = React.useCallback (
     (id: string) => setCurrentSlideinId (Just (id)),
-    [setCurrentSlideinId]
+    [ setCurrentSlideinId ]
   )
 
   return (
@@ -460,43 +494,3 @@ export const Spells: React.FC<SpellsProps> = props => {
     </Page>
   )
 }
-
-const isTopMarginNeeded =
-  (sortOrder: string) =>
-  (curr: Combined) =>
-  (mprev: Maybe<Combined>) =>
-    pipe_ (
-      mprev,
-      bindF (ensure (
-        () => sortOrder === "group" && SCCA.active (curr)
-      )),
-      fmap (prev =>
-             (!isCantrip (prev) && isCantrip (curr))
-             || (isCantrip (prev) && !isCantrip (curr))
-             || (!isCantrip (prev)
-                 && !isCantrip (curr)
-                 && notEquals (SCCA.gr (prev)) (SCCA.gr (curr)))),
-      or
-    )
-
-const getPropertyStr =
-  (l10n: L10nRecord) =>
-  (curr: Combined) =>
-    pipe_ (
-      curr,
-      SCCA.property,
-      dec,
-      subscript (translate (l10n) ("propertylist")),
-      renderMaybe
-    )
-
-const getSpellAddText =
-  (l10n: L10nRecord) =>
-  (sortOrder: string) =>
-  (property_str: string) =>
-  (curr: Record<SpellWithRequirements>) =>
-    pipe_ (
-      guard (sortOrder === "group"),
-      thenF (subscript (translate (l10n) ("spellgroups")) (dec (SWRA_.gr (curr)))),
-      maybe (property_str) (gr_str => `${property_str} / ${gr_str}`)
-    )

@@ -1,5 +1,5 @@
-import { ProfessionSelectionIds } from "../../../../../Models/Wiki/wikiTypeHelpers";
-import { AnyRawProfessionSelection } from "../rawTypeHelpers";
+import { ProfessionSelectionIds } from "../../../../../Models/Wiki/wikiTypeHelpers"
+import { AnyRawProfessionSelection } from "../rawTypeHelpers"
 
 export interface RawLanguagesScriptsSelection {
   id: ProfessionSelectionIds

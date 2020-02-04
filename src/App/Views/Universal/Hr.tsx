@@ -1,7 +1,9 @@
-import * as React from "react";
+import * as React from "react"
 
-export function Hr (props: any) {
-  return (
-    <hr {...props} />
-  )
+interface Props {
+  className?: string
 }
+
+export const Hr: React.FC<Props> = ({ className }) => (
+  <hr className={className} />
+)

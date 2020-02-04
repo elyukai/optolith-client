@@ -1,20 +1,20 @@
-import { connect } from "react-redux";
-import { fmapF } from "../../Data/Functor";
-import { join, Maybe, Nothing } from "../../Data/Maybe";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as ProfileActions from "../Actions/ProfileActions";
-import * as SubwindowsActions from "../Actions/SubwindowsActions";
-import { SocialStatusId } from "../Constants/Ids";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getAdvantagesForSheet, getDisadvantagesForSheet } from "../Selectors/activatableSelectors";
-import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
-import { getStartEl } from "../Selectors/elSelectors";
-import { getAvailableEyeColorOptions, getAvailableHairColorOptions, getAvailableSocialStatuses } from "../Selectors/personalDataSelectors";
-import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
-import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentRaceVariant, getRace, getRandomSizeCalcStr, getRandomWeightCalcStr } from "../Selectors/rcpSelectors";
-import { getAvatar, getCurrentHeroName, getCurrentPhase, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getProfile, getSex, getTotalAdventurePoints } from "../Selectors/stateSelectors";
-import { PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps, PersonalDataView } from "../Views/Profile/PersonalData";
+import { connect } from "react-redux"
+import { fmapF } from "../../Data/Functor"
+import { join, Maybe, Nothing } from "../../Data/Maybe"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as ProfileActions from "../Actions/ProfileActions"
+import * as SubwindowsActions from "../Actions/SubwindowsActions"
+import { SocialStatusId } from "../Constants/Ids"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getAdvantagesForSheet, getDisadvantagesForSheet } from "../Selectors/activatableSelectors"
+import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
+import { getStartEl } from "../Selectors/elSelectors"
+import { getAvailableEyeColorOptions, getAvailableHairColorOptions, getAvailableSocialStatuses } from "../Selectors/personalDataSelectors"
+import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"
+import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentRaceVariant, getRace, getRandomSizeCalcStr, getRandomWeightCalcStr } from "../Selectors/rcpSelectors"
+import { getAvatar, getCurrentHeroName, getCurrentPhase, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getProfile, getSex, getTotalAdventurePoints } from "../Selectors/stateSelectors"
+import { PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps, PersonalDataView } from "../Views/Profile/PersonalData"
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: PersonalDataOwnProps): PersonalDataStateProps => ({

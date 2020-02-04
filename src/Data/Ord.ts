@@ -20,14 +20,14 @@ export type Ordering = LT | EQ | GT
  */
 export type Compare<A> = (x: A) => (y: A) => Ordering
 
-export type LT = typeof LT
 export const LT = Symbol ("LT")
+export type LT = typeof LT
 
-export type EQ = typeof EQ
 export const EQ = Symbol ("EQ")
+export type EQ = typeof EQ
 
-export type GT = typeof GT
 export const GT = Symbol ("GT")
+export type GT = typeof GT
 
 export const isLTorEQ = (x: Ordering): x is LT | EQ => x === LT || x === EQ
 
@@ -42,4 +42,4 @@ export const isLTorEQ = (x: Ordering): x is LT | EQ => x === LT || x === EQ
  */
 export const toOrdering: (n: number) => Ordering = n => n < 0 ? LT : n > 0 ? GT : EQ
 
-export const isOrdering = (x: any) => [LT, EQ, GT] .includes (x)
+export const isOrdering = (x: any) => [ LT, EQ, GT ] .includes (x)

@@ -1,20 +1,20 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { fromJust, isJust, Maybe, or } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { EditItem } from "../../Models/Hero/EditItem";
-import { Attribute } from "../../Models/Wiki/Attribute";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { ItemEditorInputValidation, validateItemEditorInput } from "../../Utilities/itemEditorInputValidationUtils";
-import { Dialog } from "../Universal/Dialog";
-import { ItemEditorArmorSection } from "./ItemEditorArmorSection";
-import { ItemEditorCommonSection } from "./ItemEditorCommonSection";
-import { ItemEditorMeleeSection } from "./ItemEditorMeleeSection";
-import { ItemEditorRangedSection } from "./ItemEditorRangedSection";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { fromJust, isJust, Maybe, or } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { EditItem } from "../../Models/Hero/EditItem"
+import { Attribute } from "../../Models/Wiki/Attribute"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { ItemEditorInputValidation, validateItemEditorInput } from "../../Utilities/itemEditorInputValidationUtils"
+import { Dialog } from "../Universal/Dialog"
+import { ItemEditorArmorSection } from "./ItemEditorArmorSection"
+import { ItemEditorCommonSection } from "./ItemEditorCommonSection"
+import { ItemEditorMeleeSection } from "./ItemEditorMeleeSection"
+import { ItemEditorRangedSection } from "./ItemEditorRangedSection"
 
 export interface ItemEditorOwnProps {
   l10n: L10nRecord
@@ -79,7 +79,7 @@ export type ItemEditorProps = ItemEditorStateProps & ItemEditorDispatchProps & I
 const EIA = EditItem.A
 const IEIVA = ItemEditorInputValidation.A
 
-export function ItemEditor (props: ItemEditorProps) {
+export const ItemEditor: React.FC<ItemEditorProps> = props => {
   const {
     l10n,
     attributes,

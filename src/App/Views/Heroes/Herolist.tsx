@@ -1,26 +1,27 @@
-import * as React from "react";
-import { List, map, toArray } from "../../../Data/List";
-import { Just, Maybe } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { HerolistItemContainer } from "../../Containers/HerolistItemContainer";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { Book } from "../../Models/Wiki/Book";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe_ } from "../../Utilities/pipe";
-import { HeroListVisibilityFilter } from "../../Utilities/Raw/JSON/Config";
-import { BorderButton } from "../Universal/BorderButton";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
-import { ListView } from "../Universal/List";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { SearchField } from "../Universal/SearchField";
-import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { HeroCreation } from "./HeroCreation";
+import * as React from "react"
+import { List, map, toArray } from "../../../Data/List"
+import { Just, Maybe } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { OrderedSet } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { HerolistItemContainer } from "../../Containers/HerolistItemContainer"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { Book } from "../../Models/Wiki/Book"
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { pipe_ } from "../../Utilities/pipe"
+import { HeroListVisibilityFilter } from "../../Utilities/Raw/JSON/Config"
+import { BorderButton } from "../Universal/BorderButton"
+import { Dropdown } from "../Universal/Dropdown"
+import { ListView } from "../Universal/List"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { SearchField } from "../Universal/SearchField"
+import { SortNames, SortOptions } from "../Universal/SortOptions"
+import { HeroCreation } from "./HeroCreation"
 
 export interface HerolistOwnProps {
   l10n: L10nRecord

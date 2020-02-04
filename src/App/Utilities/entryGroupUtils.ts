@@ -1,10 +1,10 @@
-import { any, filter, flength, List } from "../../Data/List";
-import { Record } from "../../Data/Record";
-import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { isActive } from "./Activatable/isActive";
-import { getAllEntriesByGroup } from "./heroStateUtils";
+import { any, filter, flength, List } from "../../Data/List"
+import { Record } from "../../Data/Record"
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { isActive } from "./Activatable/isActive"
+import { getAllEntriesByGroup } from "./heroStateUtils"
 
 const { specialAbilities: wikiSpecialAbilities } = WikiModel.AL
 const { specialAbilities } = HeroModel.AL

@@ -1,15 +1,15 @@
-import * as React from "react";
-import { Record } from "../../../Data/Record";
-import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
+import * as React from "react"
+import { Record } from "../../../Data/Record"
+import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined"
 
-interface AttributeModsListItemProps {
+interface Props {
   attribute: Record<AttributeCombined>
 }
 
-export function AttributeModsListItem (props: AttributeModsListItemProps) {
-  const id = AttributeCombinedA_.id (props.attribute)
-  const short = AttributeCombinedA_.short (props.attribute)
-  const value = AttributeCombinedA_.value (props.attribute)
+export const AttributeModsListItem: React.FC<Props> = ({ attribute }) => {
+  const id = AttributeCombinedA_.id (attribute)
+  const short = AttributeCombinedA_.short (attribute)
+  const value = AttributeCombinedA_.value (attribute)
 
   return (
     <tr className={id}>

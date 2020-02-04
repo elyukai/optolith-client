@@ -1,41 +1,42 @@
-import * as React from "react";
-import { bool_ } from "../../../Data/Bool";
-import { equals, notEquals } from "../../../Data/Eq";
-import { Functn, ident } from "../../../Data/Function";
-import { fmap, fmapF } from "../../../Data/Functor";
-import { over, set } from "../../../Data/Lens";
-import { cons, countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, notNull, subscript, subscriptF, sum, take } from "../../../Data/List";
-import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, or, then, thenF } from "../../../Data/Maybe";
-import { dec, gte, max, min, multiply, negate } from "../../../Data/Num";
-import { lookupF } from "../../../Data/OrderedMap";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { bimap, first, Pair, second, snd } from "../../../Data/Tuple";
-import { Category } from "../../Constants/Categories";
-import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { InactiveActivatable, InactiveActivatableA_ } from "../../Models/View/InactiveActivatable";
-import { Disadvantage } from "../../Models/Wiki/Disadvantage";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Skill } from "../../Models/Wiki/Skill";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { Application } from "../../Models/Wiki/sub/Application";
-import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
-import { ActivatableAddListItemSelectedOptions } from "../../Views/Activatable/ActivatableAddListItem";
-import { Dropdown, DropdownOption } from "../../Views/Universal/Dropdown";
-import { TextField } from "../../Views/Universal/TextField";
-import { getActiveWithNoCustomCost } from "../AdventurePoints/activatableCostUtils";
-import { translate } from "../I18n";
-import { prefixSkill } from "../IDUtils";
-import { getLevelElementsWithMin } from "../levelUtils";
-import { toInt } from "../NumberUtils";
-import { pipe, pipe_ } from "../pipe";
-import { isNumber, misNumberM, misStringM } from "../typeCheckUtils";
-import { getWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
-import { getActiveSelectionsMaybe, getSelectOptionCost, getSelectOptionName } from "./selectionUtils";
+import * as React from "react"
+import { bool_ } from "../../../Data/Bool"
+import { equals, notEquals } from "../../../Data/Eq"
+import { Functn, ident } from "../../../Data/Function"
+import { fmap, fmapF } from "../../../Data/Functor"
+import { over, set } from "../../../Data/Lens"
+import { cons, countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, notNull, subscript, subscriptF, sum, take } from "../../../Data/List"
+import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, or, then, thenF } from "../../../Data/Maybe"
+import { dec, gte, max, min, multiply, negate } from "../../../Data/Num"
+import { lookupF } from "../../../Data/OrderedMap"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { bimap, first, Pair, second, snd } from "../../../Data/Tuple"
+import { Category } from "../../Constants/Categories"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { InactiveActivatable, InactiveActivatableA_ } from "../../Models/View/InactiveActivatable"
+import { Disadvantage } from "../../Models/Wiki/Disadvantage"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { Skill } from "../../Models/Wiki/Skill"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { Application } from "../../Models/Wiki/sub/Application"
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
+import { ActivatableAddListItemSelectedOptions } from "../../Views/Activatable/ActivatableAddListItem"
+import { Dropdown } from "../../Views/Universal/Dropdown"
+import { TextField } from "../../Views/Universal/TextField"
+import { getActiveWithNoCustomCost } from "../AdventurePoints/activatableCostUtils"
+import { translate } from "../I18n"
+import { prefixSkill } from "../IDUtils"
+import { getLevelElementsWithMin } from "../levelUtils"
+import { toInt } from "../NumberUtils"
+import { pipe, pipe_ } from "../pipe"
+import { isNumber, misNumberM, misStringM } from "../typeCheckUtils"
+import { getWikiEntry, isSkillishWikiEntry } from "../WikiUtils"
+import { getActiveSelectionsMaybe, getSelectOptionCost, getSelectOptionName } from "./selectionUtils"
 
 interface PropertiesAffectedByState {
   "@@name": "PropertiesAffectedByState"
@@ -157,6 +158,41 @@ const selectToDropdownOption =
       name: SOA.name (x),
     })
 
+const getCostForEntryWithSkillSel =
+  (ensureId: (x: Maybe<number | string>) => Maybe<string>) =>
+  (wiki: WikiModelRecord) =>
+  (entry: Record<InactiveActivatable>) =>
+    pipe (
+      ensureId,
+      bindF (getWikiEntry (wiki)),
+      bindF (ensure (isSkillishWikiEntry)),
+      bindF (pipe (
+        SkAL.ic,
+        dec,
+        i => pipe_ (entry, IAA.cost, bindF (ensure (isList)), bindF (subscriptF (i)))
+      ))
+    )
+
+const getPropsForEntryWithSkillSel =
+  (ensureId: (x: Maybe<number | string>) => Maybe<string>) =>
+  (wiki: WikiModelRecord) =>
+  (mselected: Maybe<string | number>) =>
+  (entry: Record<InactiveActivatable>) =>
+  (id: string) =>
+    Pair (
+      ActivatableActivationOptions ({
+        id,
+        selectOptionId1: mselected,
+        cost: Nothing,
+      }),
+      PropertiesAffectedByState ({
+        currentCost: getCostForEntryWithSkillSel (ensureId)
+                                                 (wiki)
+                                                 (entry)
+                                                 (mselected),
+      })
+    )
+
 interface IdSpecificAffectedAndDispatchPropsInputHandlers {
   handleSelect (option: Maybe<string | number>): void
   handleInput (text: string): void
@@ -168,6 +204,7 @@ export const getIdSpecificAffectedAndDispatchProps =
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
   (entry: Record<InactiveActivatable>) =>
+
   // tslint:disable-next-line: cyclomatic-complexity
   (selectedOptions: ActivatableAddListItemSelectedOptions): IdSpecificAffectedAndDispatchProps => {
     const id = IAA.id (entry)
@@ -869,38 +906,3 @@ export const getInactiveActivatableControlElements =
                 (msels2)
     )
   }
-
-const getPropsForEntryWithSkillSel =
-  (ensureId: (x: Maybe<number | string>) => Maybe<string>) =>
-  (wiki: WikiModelRecord) =>
-  (mselected: Maybe<string | number>) =>
-  (entry: Record<InactiveActivatable>) =>
-  (id: string) =>
-    Pair (
-      ActivatableActivationOptions ({
-        id,
-        selectOptionId1: mselected,
-        cost: Nothing,
-      }),
-      PropertiesAffectedByState ({
-        currentCost: getCostForEntryWithSkillSel (ensureId)
-                                                 (wiki)
-                                                 (entry)
-                                                 (mselected),
-      })
-    )
-
-const getCostForEntryWithSkillSel =
-  (ensureId: (x: Maybe<number | string>) => Maybe<string>) =>
-  (wiki: WikiModelRecord) =>
-  (entry: Record<InactiveActivatable>) =>
-    pipe (
-      ensureId,
-      bindF (getWikiEntry (wiki)),
-      bindF (ensure (isSkillishWikiEntry)),
-      bindF (pipe (
-        SkAL.ic,
-        dec,
-        i => pipe_ (entry, IAA.cost, bindF (ensure (isList)), bindF (subscriptF (i)))
-      ))
-    )

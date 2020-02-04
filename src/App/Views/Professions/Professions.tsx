@@ -1,31 +1,32 @@
-import * as React from "react";
-import { List, map, notNull, toArray } from "../../../Data/List";
-import { bindF, ensure, Just, Maybe, maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { SelectionsContainer } from "../../Containers/RCPSelectionsContainer";
-import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { ProfessionsGroupVisibilityFilter, ProfessionsVisibilityFilter } from "../../Utilities/Raw/JSON/Config";
-import { Aside } from "../Universal/Aside";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
-import { ListView } from "../Universal/List";
-import { ListHeader } from "../Universal/ListHeader";
-import { ListHeaderTag } from "../Universal/ListHeaderTag";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { SearchField } from "../Universal/SearchField";
-import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { ProfessionsListItem } from "./ProfessionsListItem";
-import { ProfessionVariants } from "./ProfessionVariants";
+import * as React from "react"
+import { List, map, notNull, toArray } from "../../../Data/List"
+import { bindF, ensure, Just, Maybe, maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { SelectionsContainer } from "../../Containers/RCPSelectionsContainer"
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Sex } from "../../Models/Hero/heroTypeHelpers"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { ProfessionsGroupVisibilityFilter, ProfessionsVisibilityFilter } from "../../Utilities/Raw/JSON/Config"
+import { Aside } from "../Universal/Aside"
+import { Dropdown } from "../Universal/Dropdown"
+import { ListView } from "../Universal/List"
+import { ListHeader } from "../Universal/ListHeader"
+import { ListHeaderTag } from "../Universal/ListHeaderTag"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { SearchField } from "../Universal/SearchField"
+import { SortNames, SortOptions } from "../Universal/SortOptions"
+import { ProfessionsListItem } from "./ProfessionsListItem"
+import { ProfessionVariants } from "./ProfessionVariants"
 
 export interface ProfessionsOwnProps {
   hero: HeroModelRecord
@@ -48,7 +49,6 @@ export interface ProfessionsDispatchProps {
   setGroupVisibilityFilter (filter: ProfessionsGroupVisibilityFilter): void
   setSortOrder (sortOrder: SortNames): void
   setVisibilityFilter (filter: ProfessionsVisibilityFilter): void
-  switchExpansionVisibilityFilter (): void
   setFilterText (filterText: string): void
 }
 
@@ -80,10 +80,17 @@ export const Professions: React.FC<ProfessionsProps> = props => {
     wiki,
   } = props
 
-  const [showAddSlidein, switchAddSlidein] = React.useState (false)
+  const [ showAddSlidein, switchAddSlidein ] = React.useState (false)
 
-  const handleCloseSlidein = React.useCallback (() => switchAddSlidein (false), [switchAddSlidein])
-  const handleShowSlidein = React.useCallback (() => switchAddSlidein (true), [switchAddSlidein])
+  const handleCloseSlidein = React.useCallback (
+    () => switchAddSlidein (false),
+    [ switchAddSlidein ]
+  )
+
+  const handleShowSlidein = React.useCallback (
+    () => switchAddSlidein (true),
+    [ switchAddSlidein ]
+  )
 
   return (
     <Page id="professions">

@@ -1,6 +1,6 @@
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses } from "../../../Data/Record";
-import { Pair } from "../../../Data/Tuple";
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses } from "../../../Data/Record"
+import { Pair } from "../../../Data/Tuple"
 
 export interface EditPrimaryAttributeDamageThreshold {
   "@@name": "EditPrimaryAttributeDamageThreshold"

@@ -1,13 +1,13 @@
-import { fmap } from "../../Data/Functor";
-import { subscriptF } from "../../Data/List";
-import { elem, isJust, Nothing } from "../../Data/Maybe";
-import { fromDefault, Record } from "../../Data/Record";
-import { fst, isTuple, snd } from "../../Data/Tuple";
-import { CombatTechniqueId } from "../Constants/Ids";
-import { EditItem } from "../Models/Hero/EditItem";
-import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold";
-import { pipe } from "./pipe";
-import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from "./RegexUtils";
+import { fmap } from "../../Data/Functor"
+import { subscriptF } from "../../Data/List"
+import { elem, isJust, Nothing } from "../../Data/Maybe"
+import { fromDefault, Record } from "../../Data/Record"
+import { fst, isTuple, snd } from "../../Data/Tuple"
+import { CombatTechniqueId } from "../Constants/Ids"
+import { EditItem } from "../Models/Hero/EditItem"
+import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold"
+import { pipe } from "./pipe"
+import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from "./RegexUtils"
 
 export interface ItemEditorInputValidation {
   "@@name": "ItemEditorInputValidation"
@@ -78,6 +78,63 @@ const validateRange = (index: 0 | 1 | 2) => pipe (
   fmap (isEmptyOr (isNaturalNumber)),
   elem<boolean> (true)
 )
+
+// Lances
+const validateNoParryingWeapons =
+  (validSingle: Record<ItemEditorInputValidation>) =>
+    IEIVA.damageDiceNumber (validSingle)
+    && IEIVA.damageFlat (validSingle)
+    && IEIVA.length (validSingle)
+    && IEIVA.amount (validSingle)
+    && IEIVA.price (validSingle)
+    && IEIVA.stabilityMod (validSingle)
+    && IEIVA.weight (validSingle)
+
+const validateMeleeWeaponInput =
+  (item: Record<EditItem>) =>
+  (validSingle: Record<ItemEditorInputValidation>) =>
+    elem<string> (CombatTechniqueId.Lances) (EIA.combatTechnique (item))
+    ? validateNoParryingWeapons (validSingle)
+    : IEIVA.at (validSingle)
+      && IEIVA.damageDiceNumber (validSingle)
+      && IEIVA.damageFlat (validSingle)
+      && IEIVA.damageThreshold (validSingle)
+      && IEIVA.length (validSingle)
+      && IEIVA.amount (validSingle)
+      && IEIVA.pa (validSingle)
+      && IEIVA.price (validSingle)
+      && IEIVA.stabilityMod (validSingle)
+      && IEIVA.weight (validSingle)
+      && isJust (EIA.combatTechnique (item))
+      && isJust (EIA.reach (item))
+
+const validateRangedWeaponInput =
+  (item: Record<EditItem>) =>
+  (validSingle: Record<ItemEditorInputValidation>) =>
+    IEIVA.damageDiceNumber (validSingle)
+    && IEIVA.damageFlat (validSingle)
+    && IEIVA.length (validSingle)
+    && IEIVA.amount (validSingle)
+    && IEIVA.price (validSingle)
+    && IEIVA.range1 (validSingle)
+    && IEIVA.range2 (validSingle)
+    && IEIVA.range3 (validSingle)
+    && IEIVA.stabilityMod (validSingle)
+    && IEIVA.weight (validSingle)
+    && isJust (EIA.combatTechnique (item))
+
+const validateArmorInput =
+  (item: Record<EditItem>) =>
+  (validSingle: Record<ItemEditorInputValidation>) =>
+    IEIVA.enc (validSingle)
+    && IEIVA.ini (validSingle)
+    && IEIVA.mov (validSingle)
+    && IEIVA.amount (validSingle)
+    && IEIVA.price (validSingle)
+    && IEIVA.pro (validSingle)
+    && IEIVA.stabilityMod (validSingle)
+    && IEIVA.weight (validSingle)
+    && isJust (EIA.armorType (item))
 
 /**
  * Is the user input in item editor valid?
@@ -189,60 +246,3 @@ export const validateItemEditorInput = (item: Record<EditItem>) => {
     other: validOther,
   })
 }
-
-const validateMeleeWeaponInput =
-  (item: Record<EditItem>) =>
-  (validSingle: Record<ItemEditorInputValidation>) =>
-    elem<string> (CombatTechniqueId.Lances) (EIA.combatTechnique (item))
-    ? validateNoParryingWeapons (validSingle)
-    : IEIVA.at (validSingle)
-      && IEIVA.damageDiceNumber (validSingle)
-      && IEIVA.damageFlat (validSingle)
-      && IEIVA.damageThreshold (validSingle)
-      && IEIVA.length (validSingle)
-      && IEIVA.amount (validSingle)
-      && IEIVA.pa (validSingle)
-      && IEIVA.price (validSingle)
-      && IEIVA.stabilityMod (validSingle)
-      && IEIVA.weight (validSingle)
-      && isJust (EIA.combatTechnique (item))
-      && isJust (EIA.reach (item))
-
-// Lances
-const validateNoParryingWeapons =
-  (validSingle: Record<ItemEditorInputValidation>) =>
-    IEIVA.damageDiceNumber (validSingle)
-    && IEIVA.damageFlat (validSingle)
-    && IEIVA.length (validSingle)
-    && IEIVA.amount (validSingle)
-    && IEIVA.price (validSingle)
-    && IEIVA.stabilityMod (validSingle)
-    && IEIVA.weight (validSingle)
-
-const validateRangedWeaponInput =
-  (item: Record<EditItem>) =>
-  (validSingle: Record<ItemEditorInputValidation>) =>
-    IEIVA.damageDiceNumber (validSingle)
-    && IEIVA.damageFlat (validSingle)
-    && IEIVA.length (validSingle)
-    && IEIVA.amount (validSingle)
-    && IEIVA.price (validSingle)
-    && IEIVA.range1 (validSingle)
-    && IEIVA.range2 (validSingle)
-    && IEIVA.range3 (validSingle)
-    && IEIVA.stabilityMod (validSingle)
-    && IEIVA.weight (validSingle)
-    && isJust (EIA.combatTechnique (item))
-
-const validateArmorInput =
-  (item: Record<EditItem>) =>
-  (validSingle: Record<ItemEditorInputValidation>) =>
-    IEIVA.enc (validSingle)
-    && IEIVA.ini (validSingle)
-    && IEIVA.mov (validSingle)
-    && IEIVA.amount (validSingle)
-    && IEIVA.price (validSingle)
-    && IEIVA.pro (validSingle)
-    && IEIVA.stabilityMod (validSingle)
-    && IEIVA.weight (validSingle)
-    && isJust (EIA.armorType (item))

@@ -1,14 +1,14 @@
-import { Maybe, Nothing } from "../../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../../Data/Record";
-import { ProfessionSelectionIds } from "../wikiTypeHelpers";
-import { CantripsSelection } from "./CantripsSelection";
-import { CursesSelection } from "./CursesSelection";
-import { LanguagesScriptsSelection } from "./LanguagesScriptsSelection";
-import { VariantCombatTechniquesSelection } from "./RemoveCombatTechniquesSelection";
-import { VariantCombatTechniquesSecondSelection } from "./RemoveSecondCombatTechniquesSelection";
-import { VariantSpecializationSelection } from "./RemoveSpecializationSelection";
-import { SkillsSelection } from "./SkillsSelection";
-import { TerrainKnowledgeSelection } from "./TerrainKnowledgeSelection";
+import { Maybe, Nothing } from "../../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../../Data/Record"
+import { ProfessionSelectionIds } from "../wikiTypeHelpers"
+import { CantripsSelection } from "./CantripsSelection"
+import { CursesSelection } from "./CursesSelection"
+import { LanguagesScriptsSelection } from "./LanguagesScriptsSelection"
+import { VariantCombatTechniquesSelection } from "./RemoveCombatTechniquesSelection"
+import { VariantCombatTechniquesSecondSelection } from "./RemoveSecondCombatTechniquesSelection"
+import { VariantSpecializationSelection } from "./RemoveSpecializationSelection"
+import { SkillsSelection } from "./SkillsSelection"
+import { TerrainKnowledgeSelection } from "./TerrainKnowledgeSelection"
 
 export interface ProfessionVariantSelections {
   "@@name": "ProfessionVariantSelections"
@@ -21,6 +21,7 @@ export interface ProfessionVariantSelections {
   [ProfessionSelectionIds.SKILLS]: Maybe<Record<SkillsSelection>>
   [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]: Maybe<Record<TerrainKnowledgeSelection>>
   [ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL]: boolean
+
   // [ProfessionSelectionIds.SPECIAL_ABILITY]: Maybe<Record<SpecialAbilitySelection>>
 }
 
@@ -36,6 +37,7 @@ export const ProfessionVariantSelections =
                 [ProfessionSelectionIds.SKILLS]: Nothing,
                 [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]: Nothing,
                 [ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL]: false,
+
                 // [ProfessionSelectionIds.SPECIAL_ABILITY]: Nothing,
               })
 

@@ -1,4 +1,4 @@
-import { elemF, filter, List, notElemF } from "../../Data/List";
+import { elemF, filter, List, notElemF } from "../../Data/List"
 
 export enum TabId {
   Herolist,

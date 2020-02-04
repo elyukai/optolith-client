@@ -1,7 +1,7 @@
-import * as React from "react";
+import * as React from "react"
 
-export function Aside (props?: object) {
-  return (
-    <aside {...props} />
-  )
-}
+interface Props { }
+
+export const Aside: React.FC<Props> = () => (
+  <aside />
+)

@@ -10,8 +10,8 @@
  * @author Lukas Obermann
  */
 
-import * as fs from "fs";
-import { showP } from "../Data/Show";
+import * as fs from "fs"
+import { showP } from "../Data/Show"
 
 
 // MONAD

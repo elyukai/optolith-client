@@ -5,54 +5,54 @@
  * @author Lukas Obermann
  */
 
-import { notP } from "../../../Data/Bool";
-import { equals } from "../../../Data/Eq";
-import { flip, thrush } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { all, any, countWith, elem, elemF, filter, find, flength, foldl, intersect, isList, List, mapByIdKeyMap, notElem, notElemF, sdelete } from "../../../Data/List";
-import { alt, bind, bindF, ensure, fromJust, isJust, isNothing, Just, liftM2, Maybe, maybe, Nothing, or, sum } from "../../../Data/Maybe";
-import { add, gt, gte, inc, lte, max, min, subtract, subtractBy } from "../../../Data/Num";
-import { elems, isOrderedMap, lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { size } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { Tuple } from "../../../Data/Tuple";
-import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select";
-import { SpecialAbilityGroup } from "../../Constants/Groups";
-import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
-import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
-import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { ActivatableDependency, Dependent } from "../../Models/Hero/heroTypeHelpers";
-import { Pact } from "../../Models/Hero/Pact";
-import { ActivatableActivationValidation } from "../../Models/View/ActivatableActivationValidationObject";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
-import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { Spell } from "../../Models/Wiki/Spell";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable, EntryWithCategory, LevelAwarePrerequisites, PrerequisitesWithIds } from "../../Models/Wiki/wikiTypeHelpers";
-import { countActiveGroupEntries } from "../entryGroupUtils";
-import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils";
-import { ifElse } from "../ifElse";
-import { isOwnTradition } from "../Increasable/liturgicalChantUtils";
-import { pipe, pipe_ } from "../pipe";
-import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites";
-import { setPrerequisiteId } from "../Prerequisites/setPrerequisiteId";
-import { validateLevel, validateObject } from "../Prerequisites/validatePrerequisitesUtils";
-import { isBoolean, misNumberM, misStringM } from "../typeCheckUtils";
-import { getWikiEntry, isActivatableWikiEntry } from "../WikiUtils";
-import { countActiveSkillEntries } from "./activatableSkillUtils";
-import { isStyleValidToRemove } from "./ExtendedStyleUtils";
-import { isActive } from "./isActive";
-import { getActiveSelections } from "./selectionUtils";
-import { getBlessedTraditionFromWiki, getMagicalTraditionsHeroEntries, isBlessedTradId, isMagicalTradId } from "./traditionUtils";
+import { notP } from "../../../Data/Bool"
+import { equals } from "../../../Data/Eq"
+import { flip, thrush } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { all, any, countWith, elem, elemF, filter, find, flength, foldl, intersect, isList, List, mapByIdKeyMap, notElem, notElemF, sdelete } from "../../../Data/List"
+import { alt, bind, bindF, ensure, fromJust, isJust, isNothing, Just, liftM2, Maybe, maybe, Nothing, or, sum } from "../../../Data/Maybe"
+import { add, gt, gte, inc, lte, max, min, subtract, subtractBy } from "../../../Data/Num"
+import { elems, isOrderedMap, lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { size } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { Tuple } from "../../../Data/Tuple"
+import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select"
+import { SpecialAbilityGroup } from "../../Constants/Groups"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
+import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject"
+import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { ActivatableDependency, Dependent } from "../../Models/Hero/heroTypeHelpers"
+import { Pact } from "../../Models/Hero/Pact"
+import { ActivatableActivationValidation } from "../../Models/View/ActivatableActivationValidationObject"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
+import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement"
+import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { Spell } from "../../Models/Wiki/Spell"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { Activatable, EntryWithCategory, LevelAwarePrerequisites, PrerequisitesWithIds } from "../../Models/Wiki/wikiTypeHelpers"
+import { countActiveGroupEntries } from "../entryGroupUtils"
+import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils"
+import { ifElse } from "../ifElse"
+import { isOwnTradition } from "../Increasable/liturgicalChantUtils"
+import { pipe, pipe_ } from "../pipe"
+import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites"
+import { setPrerequisiteId } from "../Prerequisites/setPrerequisiteId"
+import { validateLevel, validateObject } from "../Prerequisites/validatePrerequisitesUtils"
+import { isBoolean, misNumberM, misStringM } from "../typeCheckUtils"
+import { getWikiEntry, isActivatableWikiEntry } from "../WikiUtils"
+import { countActiveSkillEntries } from "./activatableSkillUtils"
+import { isStyleValidToRemove } from "./ExtendedStyleUtils"
+import { isActive } from "./isActive"
+import { getActiveSelections } from "./selectionUtils"
+import { getBlessedTraditionFromWiki, getMagicalTraditionsHeroEntries, isBlessedTradId, isMagicalTradId } from "./traditionUtils"
 
 const hasRequiredMinimumLevel =
   (min_level: Maybe<number>) => (max_level: Maybe<number>): boolean =>
@@ -106,6 +106,7 @@ const isRemovalDisabledEntrySpecific =
   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (wiki_entry: Activatable) =>
   (hero_entry: Record<ActivatableDependent>) =>
+
   // tslint:disable-next-line: cyclomatic-complexity
   (active: Record<ActiveObjectWithId>): boolean => {
     const mstart_el =
@@ -314,6 +315,7 @@ const isEntryDisabledByDependencies =
   (wiki_entry: Activatable) =>
   (hero_entry: Record<ActivatableDependent>) =>
   (active: Record<ActiveObjectWithId>) =>
+
     // if there is any dependency that disables the possibility to remove
     // the entry
     any ((dep: ActivatableDependency) => {
@@ -356,6 +358,7 @@ const isEntryDisabledByDependencies =
                         // terms of fulfilling the
                         // prerequisite would be possible
                         return isList (current_id)
+
                           // check if the current entry's
                           // id is actually a member of
                           // the prerequisite
@@ -417,6 +420,7 @@ const isStyleSpecialAbilityRemovalDisabled =
                              (Just (wiki_entry))
 
 export const getMinLevelForIncreaseEntry: (def: number) => (count: number) => Maybe<number> =
+
   // the entry allows to have more entries, which would not be possible without.
   // The minimum is simply the count - def, because if there are def + 1
   // entries, it must be at least 1, if there are def + 2 entries,
@@ -425,6 +429,7 @@ export const getMinLevelForIncreaseEntry: (def: number) => (count: number) => Ma
   def => pipe (ensure (gt (def)), fmap (subtractBy (def)))
 
 export const getMaxLevelForDecreaseEntry: (def: number) => (count: number) => Maybe<number> =
+
   // the more entries the user buys, the less levels are
   // possible. If the user has 3 or more entries, the decrease entry cannot
   // be used at all. In those cases (which should not happen), the maximum
@@ -488,15 +493,19 @@ const adjustMinimumLevelByDependencies =
   (entry: Record<ActiveObjectWithId>) =>
     flip (foldl ((min_level: Maybe<number>): (dep: ActivatableDependency) => Maybe<number> =>
                   pipe (
+
                     // dependency must include a minimum level, which only occurs
                     // in a DependencyObject
                     ensure (DependencyObject.is),
+
                     // get the level dependency from the object and ensure it's
                     // greater than the current minimum level and that
                     bindF (dep => bind (DOA.tier (dep))
+
                                                              // new min must be lower than current
                                                              // min level
                                        (ensure (dep_level => sum (min_level) < dep_level
+
                                                              // if the DependencyObject defines a
                                                              // sid, too, the entry must match the
                                                              // sid as well. A DependencyObject
@@ -508,6 +517,7 @@ const adjustMinimumLevelByDependencies =
                                                                             <MinLevelDepSid>
                                                                             (AOWIA.sid (entry)))
                                                                       (DOA.sid (dep))))),
+
                     // if the current dependency's level is not valid, return
                     // the current minimum
                     flip (alt) (min_level)
@@ -582,6 +592,7 @@ export const getIsRemovalOrChangeDisabled =
 
                    return ActivatableActivationValidation ({
                      disabled:
+
                        // Disable if a minimum level is required
                        hasRequiredMinimumLevel (minimum_level)
                                                (AAL.tiers (wiki_entry))

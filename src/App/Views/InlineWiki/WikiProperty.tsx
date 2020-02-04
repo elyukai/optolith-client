@@ -1,6 +1,6 @@
-import * as React from "react";
-import { L10nKey, L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
+import * as React from "react"
+import { L10nKey, L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
 
 export interface WikiPropertyProps {
   children?: React.ReactNode

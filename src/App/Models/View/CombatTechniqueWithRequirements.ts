@@ -1,8 +1,8 @@
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
-import { SkillDependent } from "../ActiveEntries/SkillDependent";
-import { CombatTechnique } from "../Wiki/CombatTechnique";
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, Record } from "../../../Data/Record"
+import { pipe } from "../../Utilities/pipe"
+import { SkillDependent } from "../ActiveEntries/SkillDependent"
+import { CombatTechnique } from "../Wiki/CombatTechnique"
 
 export interface CombatTechniqueWithRequirements {
   "@@name": "CombatTechniqueWithRequirements"

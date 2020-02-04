@@ -1,30 +1,28 @@
-// tslint:disable-next-line:no-implicit-dependencies
-import { ProgressInfo } from "builder-util-runtime";
-import { ipcRenderer, remote } from "electron";
-// tslint:disable-next-line:no-implicit-dependencies
-import { UpdateInfo } from "electron-updater";
-import * as React from "react";
-import { render } from "react-dom";
-import { Provider } from "react-redux";
-import { Action, applyMiddleware, createStore, Store } from "redux";
-import thunk from "redux-thunk";
-import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from "./App/Actions/AcceleratorActions";
-import { ReduxDispatch } from "./App/Actions/Actions";
-import { addErrorAlert, AlertOptions } from "./App/Actions/AlertActions";
-import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from "./App/Actions/IOActions";
-import { showAbout } from "./App/Actions/LocationActions";
-import { AppContainer } from "./App/Containers/AppContainer";
-import { appReducer, AppState, AppStateRecord } from "./App/Reducers/appReducer";
-import { getLocaleMessages } from "./App/Selectors/stateSelectors";
-import { translate, translateP } from "./App/Utilities/I18n";
-import { addKeybinding } from "./App/Utilities/Keybindings";
-import { pipe } from "./App/Utilities/pipe";
-import { isDialogOpen } from "./App/Utilities/SubwindowsUtils";
-import { flip } from "./Data/Function";
-import { List } from "./Data/List";
-import { fromJust, isJust, Just } from "./Data/Maybe";
-import { uncurryN } from "./Data/Tuple/Curry";
-import { Unit } from "./Data/Unit";
+import { ProgressInfo } from "builder-util-runtime"
+import { ipcRenderer, remote } from "electron"
+import { UpdateInfo } from "electron-updater"
+import * as React from "react"
+import { render } from "react-dom"
+import { Provider } from "react-redux"
+import { Action, applyMiddleware, createStore, Store } from "redux"
+import thunk from "redux-thunk"
+import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from "./App/Actions/AcceleratorActions"
+import { ReduxDispatch } from "./App/Actions/Actions"
+import { addErrorAlert, AlertOptions } from "./App/Actions/AlertActions"
+import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from "./App/Actions/IOActions"
+import { showAbout } from "./App/Actions/LocationActions"
+import { AppContainer } from "./App/Containers/AppContainer"
+import { appReducer, AppState, AppStateRecord } from "./App/Reducers/appReducer"
+import { getLocaleMessages } from "./App/Selectors/stateSelectors"
+import { translate, translateP } from "./App/Utilities/I18n"
+import { addKeybinding } from "./App/Utilities/Keybindings"
+import { pipe } from "./App/Utilities/pipe"
+import { isDialogOpen } from "./App/Utilities/SubwindowsUtils"
+import { flip } from "./Data/Function"
+import { List } from "./Data/List"
+import { fromJust, isJust, Just } from "./Data/Maybe"
+import { uncurryN } from "./Data/Tuple/Curry"
+import { Unit } from "./Data/Unit"
 
 const nativeAppReducer =
   uncurryN (pipe ((x: AppStateRecord | undefined) => x === undefined ? AppState.default : x,
@@ -115,7 +113,7 @@ store
       dispatch (undoAccelerator ())
     })
 
-    addKeybinding (["mod+y", "mod+shift+z"], () => {
+    addKeybinding ([ "mod+y", "mod+shift+z" ], () => {
       dispatch (redoAccelerator ())
     })
 

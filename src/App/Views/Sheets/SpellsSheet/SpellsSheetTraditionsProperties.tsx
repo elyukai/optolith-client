@@ -1,18 +1,18 @@
-import * as React from "react";
-import { intercalate, List } from "../../../../Data/List";
-import { Maybe } from "../../../../Data/Maybe";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { renderMaybe } from "../../../Utilities/ReactUtils";
+import * as React from "react"
+import { intercalate, List } from "../../../../Data/List"
+import { Maybe } from "../../../../Data/Maybe"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { renderMaybe } from "../../../Utilities/ReactUtils"
 
-export interface SpellsSheetTraditionsPropertiesProps {
+interface Props {
   l10n: L10nRecord
   magicalPrimary: List<string>
   magicalTradition: string
   properties: Maybe<string>
 }
 
-export function SpellsSheetTraditionsProperties (props: SpellsSheetTraditionsPropertiesProps) {
+export const SpellsSheetTraditionsProperties: React.FC<Props> = props => {
   const { magicalPrimary, magicalTradition, properties, l10n } = props
 
   return (

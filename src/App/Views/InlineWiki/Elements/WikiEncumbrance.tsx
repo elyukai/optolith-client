@@ -1,10 +1,10 @@
-import * as React from "react";
-import { lower } from "../../../../Data/List";
-import { fromMaybe, Maybe } from "../../../../Data/Maybe";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { lower } from "../../../../Data/List"
+import { fromMaybe, Maybe } from "../../../../Data/Maybe"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
   encumbrance: (r: Record<A>) => string
@@ -17,7 +17,9 @@ export interface WikiEncumbranceProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiEncumbrance<A extends RecordIBase<any>> (props: WikiEncumbranceProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiEncumbranceProps<A>) => ReturnType<React.FC>
+
+export const WikiEncumbrance: FC = props => {
   const {
     x,
     acc,

@@ -7,7 +7,7 @@
  * @author Lukas Obermann
  */
 
-import { Internals } from "../Internals";
+import { Internals } from "../Internals"
 
 // CONSTRUCTOR
 

@@ -1,7 +1,7 @@
-import * as React from "react";
-import { orN } from "../../../Data/Maybe";
-import { Aside } from "../Universal/Aside";
-import { WikiInfoEmpty } from "./WikiInfoEmpty";
+import * as React from "react"
+import { orN } from "../../../Data/Maybe"
+import { Aside } from "../Universal/Aside"
+import { WikiInfoEmpty } from "./WikiInfoEmpty"
 
 export interface WikiInfoContentWrapperProps {
   children?: JSX.Element | null

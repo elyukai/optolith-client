@@ -1,20 +1,20 @@
-import { equals } from "../../../Data/Eq";
-import { fmap } from "../../../Data/Functor";
-import { append, consF, filter, find, flength, List } from "../../../Data/List";
-import { altF, ap, bindF, elemF, fromMaybe, joinMaybeList, Just, liftM2, Maybe, maybe, Nothing } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { Application } from "../../Models/Wiki/sub/Application";
-import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
-import { Activatable, AllRequirementObjects, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
-import { findSelectOption } from "../Activatable/selectionUtils";
-import { pipe, pipe_ } from "../pipe";
-import { misStringM } from "../typeCheckUtils";
+import { equals } from "../../../Data/Eq"
+import { fmap } from "../../../Data/Functor"
+import { append, consF, filter, find, flength, List } from "../../../Data/List"
+import { altF, ap, bindF, elemF, fromMaybe, joinMaybeList, Just, liftM2, Maybe, maybe, Nothing } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement"
+import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement"
+import { Application } from "../../Models/Wiki/sub/Application"
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
+import { Activatable, AllRequirementObjects, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
+import { findSelectOption } from "../Activatable/selectionUtils"
+import { pipe, pipe_ } from "../pipe"
+import { misStringM } from "../typeCheckUtils"
 
 const AAL = Advantage.AL
 const AOA = ActiveObject.A

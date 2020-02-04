@@ -1,6 +1,6 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault } from "../../../Data/Record";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault } from "../../../Data/Record"
 
 export interface RangedWeapon {
   "@@name": "RangedWeapon"

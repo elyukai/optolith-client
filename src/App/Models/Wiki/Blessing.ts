@@ -1,10 +1,10 @@
-import { List } from "../../../Data/List";
-import { fromDefault, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { BlessedTradition } from "../../Constants/Groups";
-import { Erratum } from "./sub/Errata";
-import { SourceLink } from "./sub/SourceLink";
-import { EntryWithCategory } from "./wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { fromDefault, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { BlessedTradition } from "../../Constants/Groups"
+import { Erratum } from "./sub/Errata"
+import { SourceLink } from "./sub/SourceLink"
+import { EntryWithCategory } from "./wikiTypeHelpers"
 
 export interface Blessing {
   "@@name": "Blessing"

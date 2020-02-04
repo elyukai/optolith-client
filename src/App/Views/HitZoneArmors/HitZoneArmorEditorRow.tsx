@@ -1,10 +1,11 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { Dropdown } from "../Universal/Dropdown"
 
 export type HitZoneNames =
   "head"
@@ -25,7 +26,7 @@ export interface ArmorZonesEditorProps {
   setComponentLoss (id: Maybe<number>): void
 }
 
-export function HitZoneArmorEditorRow (props: ArmorZonesEditorProps) {
+export const HitZoneArmorEditorRow: React.FC<ArmorZonesEditorProps> = props => {
   const {
     armorList,
     component,

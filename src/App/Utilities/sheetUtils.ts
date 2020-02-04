@@ -1,17 +1,35 @@
-import { equals } from "../../Data/Eq";
-import { fmap } from "../../Data/Functor";
-import { find, List, map } from "../../Data/List";
-import { Maybe, maybe, sum } from "../../Data/Maybe";
-import { OrderedSet } from "../../Data/OrderedSet";
-import { Record } from "../../Data/Record";
-import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
-import { AttributeCombined } from "../Models/View/AttributeCombined";
-import { Attribute } from "../Models/Wiki/Attribute";
-import { pipe } from "./pipe";
+import { equals } from "../../Data/Eq"
+import { fmap } from "../../Data/Functor"
+import { find, List, map } from "../../Data/List"
+import { Maybe, maybe, sum } from "../../Data/Maybe"
+import { OrderedSet } from "../../Data/OrderedSet"
+import { Record } from "../../Data/Record"
+import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
+import { AttributeCombined } from "../Models/View/AttributeCombined"
+import { Attribute } from "../Models/Wiki/Attribute"
+import { pipe } from "./pipe"
 
-const { stateEntry, wikiEntry } = AttributeCombined.AL
-const { id, short } = Attribute.AL
-const { value } = AttributeDependent.AL
+const { stateEntry, wikiEntry } = AttributeCombined.A
+const { id, short } = Attribute.A
+const { value } = AttributeDependent.A
+
+type ValuesOrShorts = (x: Maybe<Record<AttributeCombined>>) => string | number
+
+/**
+ * Returns list of values (`True`) or list of abbreviations (`False`) based on
+ * the passed boolean.
+ */
+const getValuesOrShorts =
+  (attributeValueVisibility: boolean): ValuesOrShorts =>
+    attributeValueVisibility
+      ? pipe (fmap (pipe (stateEntry, value)), sum)
+      : maybe ("") (pipe (wikiEntry, short))
+
+const findAttribute =
+  (attributes: List<Record<AttributeCombined>>) =>
+  (x: string) =>
+    find<Record<AttributeCombined>> (pipe (wikiEntry, id, equals (x)))
+                                    (attributes)
 
 /**
  * If `attributeValueVisibility` is `True`, this function returns a string of
@@ -33,31 +51,13 @@ export const getAttributeStringByIdList =
       List.intercalate ("/")
     )
 
-const findAttribute =
-  (attributes: List<Record<AttributeCombined>>) =>
-  (x: string) =>
-    find<Record<AttributeCombined>> (pipe (wikiEntry, id, equals (x)))
-                                    (attributes)
-
-type ValuesOrShorts = (x: Maybe<Record<AttributeCombined>>) => string | number
-
-/**
- * Returns list of values (`True`) or list of abbreviations (`False`) based on
- * the passed boolean.
- */
-const getValuesOrShorts =
-  (attributeValueVisibility: boolean): ValuesOrShorts =>
-    attributeValueVisibility
-      ? pipe (fmap (pipe (stateEntry, value)), sum)
-      : maybe ("") (pipe (wikiEntry, short))
-
 export const generalSpecialAbilityGroups =
   OrderedSet.fromArray ([
     1, 2, 8, 22, 30, 22, 24, 27, 30, 31, 32, 33, 34, 40, 41,
   ])
 
 export const combatSpecialAbilityGroups =
-  OrderedSet.fromArray ([3, 9, 10, 11, 12, 21])
+  OrderedSet.fromArray ([ 3, 9, 10, 11, 12, 21 ])
 
 export const magicalSpecialAbilityGroups =
   OrderedSet.fromArray ([
@@ -65,4 +65,4 @@ export const magicalSpecialAbilityGroups =
   ])
 
 export const blessedSpecialAbilityGroups =
-  OrderedSet.fromArray ([7, 23, 25, 26, 29])
+  OrderedSet.fromArray ([ 7, 23, 25, 26, 29 ])

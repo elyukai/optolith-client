@@ -1,17 +1,17 @@
-import * as React from "react";
-import { List, map, toArray } from "../../../Data/List";
-import { pipe_ } from "../../Utilities/pipe";
+import * as React from "react"
+import { List, map, toArray } from "../../../Data/List"
+import { pipe_ } from "../../Utilities/pipe"
 
 export interface AdditionalValue {
   className: string
   value?: string | number
 }
 
-export interface SkillAdditionalValuesProps {
+interface Props {
   addValues?: List<AdditionalValue>
 }
 
-export function SkillAdditionalValues (props: SkillAdditionalValuesProps) {
+export const SkillAdditionalValues: React.FC<Props> = props => {
   const { addValues } = props
 
   if (typeof addValues === "object") {

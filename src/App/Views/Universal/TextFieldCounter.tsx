@@ -1,12 +1,12 @@
-import * as React from "react";
-import { isNumber } from "../../Utilities/typeCheckUtils";
+import * as React from "react"
+import { isNumber } from "../../Utilities/typeCheckUtils"
 
-interface TextFieldCounterProps {
+interface Props {
   current: number | undefined
   max: number | undefined
 }
 
-export const TextFieldCounter: React.FC<TextFieldCounterProps> = ({ current, max }) =>
+export const TextFieldCounter: React.FC<Props> = ({ current, max }) =>
   isNumber (max)
     ? (
       <div>

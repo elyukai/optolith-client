@@ -1,20 +1,21 @@
-import { ident } from "../../Data/Function";
-import { fmapF } from "../../Data/Functor";
-import { any, elem, insertAt, List, snocF } from "../../Data/List";
-import { Just, Maybe, maybe, Nothing } from "../../Data/Maybe";
-import { uncurry3 } from "../../Data/Tuple/Curry";
-import { SubTab } from "../Models/Hero/heroTypeHelpers";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { translate } from "../Utilities/I18n";
-import { isHeroSectionTab, isMainSectionTab, TabId } from "../Utilities/LocationUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils";
-import { NavigationBarTabProps } from "../Views/NavBar/NavigationBarTabs";
-import { getIsLiturgicalChantsTabAvailable } from "./liturgicalChantsSelectors";
-import { getIsRemovingEnabled } from "./phaseSelectors";
-import { getRuleBooksEnabledM } from "./rulesSelectors";
-import { getIsSpellsTabAvailable } from "./spellsSelectors";
-import { getCurrentCultureId, getCurrentPhase, getCurrentTab, getLocaleAsProp, getRaceIdM } from "./stateSelectors";
+import { ident } from "../../Data/Function"
+import { fmapF } from "../../Data/Functor"
+import { any, elem, insertAt, List, snocF } from "../../Data/List"
+import { Just, Maybe, maybe, Nothing } from "../../Data/Maybe"
+import { Record } from "../../Data/Record"
+import { uncurry3 } from "../../Data/Tuple/Curry"
+import { SubTab } from "../Models/Hero/heroTypeHelpers"
+import { NavigationBarTabOptions } from "../Models/View/NavigationBarTabOptions"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { translate } from "../Utilities/I18n"
+import { isHeroSectionTab, isMainSectionTab, TabId } from "../Utilities/LocationUtils"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils"
+import { getIsLiturgicalChantsTabAvailable } from "./liturgicalChantsSelectors"
+import { getIsRemovingEnabled } from "./phaseSelectors"
+import { getRuleBooksEnabledM } from "./rulesSelectors"
+import { getIsSpellsTabAvailable } from "./spellsSelectors"
+import { getCurrentCultureId, getCurrentPhase, getCurrentTab, getLocaleAsProp, getRaceIdM } from "./stateSelectors"
 
 export const getIsMainSection = createMaybeSelector (
   getCurrentTab,
@@ -38,53 +39,62 @@ export const getTabs = createMaybeSelector (
   getLocaleAsProp,
   getCurrentPhase,
   getIsRemovingEnabled,
-  (isMainSection, isHeroSection, l10n, phase, isRemovingEnabled): List<NavigationBarTabProps> => {
+  (
+    isMainSection,
+    isHeroSection,
+    l10n,
+    phase,
+    isRemovingEnabled
+  ): List<Record<NavigationBarTabOptions>> => {
     if (isMainSection) {
-      return List<NavigationBarTabProps> (
-        {
+      return List<Record<NavigationBarTabOptions>> (
+        NavigationBarTabOptions ({
           id: TabId.Herolist,
           label: translate (l10n) ("heroes"),
-        },
-        {
+          subTabs: List (),
+        }),
+        NavigationBarTabOptions ({
           id: TabId.Grouplist,
           label: translate (l10n) ("groups"),
-          disabled: true,
-        },
-        {
+          subTabs: List (),
+        }),
+        NavigationBarTabOptions ({
           id: TabId.Wiki,
           label: translate (l10n) ("wiki"),
-        },
-        {
+          subTabs: List (),
+        }),
+        NavigationBarTabOptions ({
           id: TabId.Faq,
           label: translate (l10n) ("faq"),
-        },
-        {
+          subTabs: List (),
+        }),
+        NavigationBarTabOptions ({
           id: TabId.Imprint,
           label: translate (l10n) ("about"),
           subTabs: List (TabId.Imprint, TabId.ThirdPartyLicenses, TabId.LastChanges),
-        }
+        })
       )
     }
 
     if (isHeroSection) {
       if (Maybe.elem (1) (phase)) {
-        return List<NavigationBarTabProps> (
-          {
+        return List<Record<NavigationBarTabOptions>> (
+          NavigationBarTabOptions ({
             id: TabId.Profile,
             label: translate (l10n) ("profile"),
             subTabs: PHASE_1_PROFILE_TABS,
-          },
-          {
+          }),
+          NavigationBarTabOptions ({
             id: TabId.Races,
             label: translate (l10n) ("racecultureandprofession"),
             subTabs: PHASE_1_RCP_TABS,
-          }
+          })
         )
       }
 
       if (isRemovingEnabled) {
-        return List<NavigationBarTabProps> (
-          {
+        return List<Record<NavigationBarTabOptions>> (
+          NavigationBarTabOptions ({
             id: TabId.Profile,
             label: translate (l10n) ("profile"),
             subTabs: List (
@@ -94,17 +104,18 @@ export const getTabs = createMaybeSelector (
               TabId.Pact,
               TabId.Rules
             ),
-          },
-          {
+          }),
+          NavigationBarTabOptions ({
             id: TabId.Attributes,
             label: translate (l10n) ("attributes"),
-          },
-          {
+            subTabs: List (),
+          }),
+          NavigationBarTabOptions ({
             id: TabId.Advantages,
             label: translate (l10n) ("advantagesanddisadvantages"),
             subTabs: List (TabId.Advantages, TabId.Disadvantages),
-          },
-          {
+          }),
+          NavigationBarTabOptions ({
             id: TabId.Skills,
             label: translate (l10n) ("abilities"),
             subTabs: List (
@@ -114,17 +125,17 @@ export const getTabs = createMaybeSelector (
               TabId.Spells,
               TabId.LiturgicalChants
             ),
-          },
-          {
+          }),
+          NavigationBarTabOptions ({
             id: TabId.Equipment,
             label: translate (l10n) ("belongings"),
             subTabs: List (TabId.Equipment, TabId.ZoneArmor, TabId.Pets),
-          }
+          })
         )
       }
 
-      return List<NavigationBarTabProps> (
-        {
+      return List<Record<NavigationBarTabOptions>> (
+        NavigationBarTabOptions ({
           id: TabId.Profile,
           label: translate (l10n) ("profile"),
           subTabs: List (
@@ -134,12 +145,13 @@ export const getTabs = createMaybeSelector (
             TabId.Pact,
             TabId.Rules
           ),
-        },
-        {
+        }),
+        NavigationBarTabOptions ({
           id: TabId.Attributes,
           label: translate (l10n) ("attributes"),
-        },
-        {
+          subTabs: List (),
+        }),
+        NavigationBarTabOptions ({
           id: TabId.Skills,
           label: translate (l10n) ("abilities"),
           subTabs: List (
@@ -149,16 +161,16 @@ export const getTabs = createMaybeSelector (
             TabId.Spells,
             TabId.LiturgicalChants
           ),
-        },
-        {
+        }),
+        NavigationBarTabOptions ({
           id: TabId.Equipment,
           label: translate (l10n) ("belongings"),
           subTabs: List (TabId.Equipment, TabId.ZoneArmor, TabId.Pets),
-        }
+        })
       )
     }
 
-    return List<NavigationBarTabProps> ()
+    return List<Record<NavigationBarTabOptions>> ()
   }
 )
 

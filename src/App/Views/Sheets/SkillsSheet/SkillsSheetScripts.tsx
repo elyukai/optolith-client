@@ -1,26 +1,26 @@
-import * as React from "react";
-import { flip } from "../../../../Data/Function";
-import { fmap } from "../../../../Data/Functor";
-import { intercalate, List } from "../../../../Data/List";
-import { bindF, fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
-import { getSelectOptionName } from "../../../Utilities/Activatable/selectionUtils";
-import { translate } from "../../../Utilities/I18n";
-import { pipe_ } from "../../../Utilities/pipe";
-import { sortStrings } from "../../../Utilities/sortBy";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { flip } from "../../../../Data/Function"
+import { fmap } from "../../../../Data/Functor"
+import { intercalate, List } from "../../../../Data/List"
+import { bindF, fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { getSelectOptionName } from "../../../Utilities/Activatable/selectionUtils"
+import { translate } from "../../../Utilities/I18n"
+import { pipe_ } from "../../../Utilities/pipe"
+import { sortStrings } from "../../../Utilities/sortBy"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface SkillsSheetScriptsProps {
+interface Props {
   l10n: L10nRecord
   scriptsStateEntry: Maybe<Record<ActivatableDependent>>
   scriptsWikiEntry: Maybe<Record<SpecialAbility>>
 }
 
-export function SkillsSheetScripts (props: SkillsSheetScriptsProps) {
+export const SkillsSheetScripts: React.FC<Props> = props => {
   const {
     l10n,
     scriptsStateEntry: maybeScriptsStateEntry,

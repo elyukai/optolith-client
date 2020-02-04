@@ -1,9 +1,9 @@
-import { ident } from "../../Data/Function";
-import { set } from "../../Data/Lens";
-import { SetSelectionsAction } from "../Actions/ProfessionActions";
-import { EndHeroCreationAction } from "../Actions/ProfileActions";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
+import { ident } from "../../Data/Function"
+import { set } from "../../Data/Lens"
+import { SetSelectionsAction } from "../Actions/ProfessionActions"
+import { EndHeroCreationAction } from "../Actions/ProfileActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
 
 type Action =
   SetSelectionsAction |

@@ -1,24 +1,24 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, List, map, replicateR, toArray } from "../../../../Data/List";
-import { fromMaybe, Maybe } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { HitZoneArmorForView } from "../../../Models/View/HitZoneArmorForView";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { minus, ndash } from "../../../Utilities/Chars";
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { flength, List, map, replicateR, toArray } from "../../../../Data/List"
+import { fromMaybe, Maybe } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { HitZoneArmorForView } from "../../../Models/View/HitZoneArmorForView"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { minus, ndash } from "../../../Utilities/Chars"
+import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface CombatSheetArmorZonesProps {
+interface Props {
   armorZones: Maybe<List<Record<HitZoneArmorForView>>>
   l10n: L10nRecord
 }
 
 const HZAFVA = HitZoneArmorForView.A
 
-export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
+export const CombatSheetArmorZones: React.FC<Props> = props => {
   const { l10n, armorZones: mhit_zone_armors } = props
 
   return (
@@ -81,16 +81,16 @@ export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
           {replicateR (2 - Maybe.sum (fmapF (mhit_zone_armors) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
-                          <td className="name"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="enc"></td>
-                          <td className="add-penalties"></td>
-                          <td className="weight"></td>
+                          <td className="name" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="enc" />
+                          <td className="add-penalties" />
+                          <td className="weight" />
                         </tr>
                       ))}
         </tbody>

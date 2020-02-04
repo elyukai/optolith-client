@@ -1,14 +1,14 @@
-import { Maybe } from "../../../Data/Maybe";
-import { fromDefault, Record, RecordI, StrictAccessor } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
-import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
-import { ActiveObjectWithId } from "../ActiveEntries/ActiveObjectWithId";
-import { Advantage } from "../Wiki/Advantage";
-import { Disadvantage } from "../Wiki/Disadvantage";
-import { SpecialAbility } from "../Wiki/SpecialAbility";
-import { Activatable } from "../Wiki/wikiTypeHelpers";
-import { ActivatableActivationValidation } from "./ActivatableActivationValidationObject";
-import { ActivatableNameCost, ActivatableNameCostA_, ActivatableNameCostSafeCost } from "./ActivatableNameCost";
+import { Maybe } from "../../../Data/Maybe"
+import { fromDefault, Record, RecordI, StrictAccessor } from "../../../Data/Record"
+import { pipe } from "../../Utilities/pipe"
+import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent"
+import { ActiveObjectWithId } from "../ActiveEntries/ActiveObjectWithId"
+import { Advantage } from "../Wiki/Advantage"
+import { Disadvantage } from "../Wiki/Disadvantage"
+import { SpecialAbility } from "../Wiki/SpecialAbility"
+import { Activatable } from "../Wiki/wikiTypeHelpers"
+import { ActivatableActivationValidation } from "./ActivatableActivationValidationObject"
+import { ActivatableNameCost, ActivatableNameCostA_, ActivatableNameCostSafeCost } from "./ActivatableNameCost"
 
 export interface ActiveActivatable<A extends RecordI<Activatable> = RecordI<Activatable>> {
   "@@name": "ActiveActivatable"

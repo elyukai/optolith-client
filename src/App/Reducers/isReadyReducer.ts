@@ -1,6 +1,6 @@
-import { cnst, ident } from "../../Data/Function";
-import { SetLoadingPhase } from "../Actions/IOActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import { cnst, ident } from "../../Data/Function"
+import { SetLoadingPhase } from "../Actions/IOActions"
+import * as ActionTypes from "../Constants/ActionTypes"
 
 type Action = SetLoadingPhase
 

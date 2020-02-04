@@ -5,11 +5,11 @@ import { bindF, ensure, Maybe, maybeToNullable, normalize } from "../../../Data/
 import { pipe_ } from "../../Utilities/pipe"
 import { Label } from "./Label"
 
-interface TextFieldLabelProps {
+interface Props {
   label: Maybe<string> | string | undefined
 }
 
-export const TextFieldLabel: React.FC<TextFieldLabelProps> =
+export const TextFieldLabel: React.FC<Props> =
   ({ label }) => pipe_ (
     label,
     normalize,

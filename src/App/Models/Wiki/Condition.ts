@@ -1,9 +1,9 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
-import { Tuple } from "../../../Data/Tuple";
-import { Erratum } from "./sub/Errata";
-import { SourceLink } from "./sub/SourceLink";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, Record } from "../../../Data/Record"
+import { Tuple } from "../../../Data/Tuple"
+import { Erratum } from "./sub/Errata"
+import { SourceLink } from "./sub/SourceLink"
 
 export interface Condition {
   "@@name": "Condition"

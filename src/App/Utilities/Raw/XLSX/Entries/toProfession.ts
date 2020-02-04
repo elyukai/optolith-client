@@ -1,55 +1,55 @@
-import { equals } from "../../../../../Data/Eq";
-import { ident } from "../../../../../Data/Function";
-import { fmap } from "../../../../../Data/Functor";
-import { set } from "../../../../../Data/Lens";
-import { append, empty, flength, foldr, fromArray, List, map, notNull, splitOn } from "../../../../../Data/List";
-import { altF_, any, bindF, ensure, fromJust, fromMaybe, isJust, joinMaybeList, Just, mapM, maybe, Maybe, Nothing } from "../../../../../Data/Maybe";
-import { Record } from "../../../../../Data/Record";
-import { parseJSON } from "../../../../../Data/String/JSON";
-import { traceShowBoth } from "../../../../../Debug/Trace";
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { SpecialAbilityId } from "../../../../Constants/Ids";
-import { ProfessionRequireActivatable } from "../../../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { CultureRequirement } from "../../../../Models/Wiki/prerequisites/CultureRequirement";
-import { ProfessionRequireIncreasable } from "../../../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { SexRequirement } from "../../../../Models/Wiki/prerequisites/SexRequirement";
-import { Profession } from "../../../../Models/Wiki/Profession";
-import { CantripsSelection } from "../../../../Models/Wiki/professionSelections/CantripsSelection";
-import { CombatTechniquesSelection } from "../../../../Models/Wiki/professionSelections/CombatTechniquesSelection";
-import { CursesSelection } from "../../../../Models/Wiki/professionSelections/CursesSelection";
-import { LanguagesScriptsSelection } from "../../../../Models/Wiki/professionSelections/LanguagesScriptsSelection";
-import { ProfessionSelections, ProfessionSelectionsL } from "../../../../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
-import { CombatTechniquesSecondSelection } from "../../../../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
-import { SkillsSelection } from "../../../../Models/Wiki/professionSelections/SkillsSelection";
-import { SpecializationSelection } from "../../../../Models/Wiki/professionSelections/SpecializationSelection";
-import { TerrainKnowledgeSelection } from "../../../../Models/Wiki/professionSelections/TerrainKnowledgeSelection";
-import { pairToIncreaseSkill } from "../../../../Models/Wiki/sub/IncreaseSkill";
-import { pairToIncreaseSkillOrList } from "../../../../Models/Wiki/sub/IncreaseSkillList";
-import { NameBySex } from "../../../../Models/Wiki/sub/NameBySex";
-import { AnyProfessionSelection, ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../../../../Models/Wiki/wikiTypeHelpers";
-import { prefixCantrip, prefixCT, prefixId } from "../../../IDUtils";
-import { toNatural } from "../../../NumberUtils";
-import { pipe, pipe_ } from "../../../pipe";
-import { Expect } from "../../Expect";
-import { mergeRowsById } from "../MergeRows";
-import { maybePrefix, modifyNegIntNoBreak } from "../SourceHelpers";
-import { lookupKeyValid, mapMNamedPred, mapTotalPred, TableType } from "../Validators/Generic";
-import { mensureMapBoolean, mensureMapListBindAfterOptional, mensureMapListOptional, mensureMapNatural, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../Validators/ToValue";
-import { isRawProfessionRequiringActivatable } from "./Prerequisites/RawActivatableRequirement";
-import { isRawCultureRequirement } from "./Prerequisites/RawCultureRequirement";
-import { isRawProfessionRequiringIncreasable } from "./Prerequisites/RawIncreasableRequirement";
-import { isRawRaceRequirement, toRaceRequirement } from "./Prerequisites/RawRaceRequirement";
-import { isRawSexRequirement } from "./Prerequisites/RawSexRequirement";
-import { isRawCantripsSelection } from "./ProfessionSelections/RawCantripsSelection";
-import { isRawCombatTechniquesSelection } from "./ProfessionSelections/RawCombatTechniquesSelection";
-import { isRawCursesSelection } from "./ProfessionSelections/RawCursesSelection";
-import { isRawLanguagesScriptsSelection } from "./ProfessionSelections/RawLanguagesScriptsSelection";
-import { isRawSecondCombatTechniquesSelection } from "./ProfessionSelections/RawSecondCombatTechniquesSelection";
-import { isRawSkillsSelection } from "./ProfessionSelections/RawSkillsSelection";
-import { isRawSpecializationSelection } from "./ProfessionSelections/RawSpecializationSelection";
-import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrainKnowledgeSelection";
-import { toErrata } from "./Sub/toErrata";
-import { toSourceLinks } from "./Sub/toSourceLinks";
+import { equals } from "../../../../../Data/Eq"
+import { ident } from "../../../../../Data/Function"
+import { fmap } from "../../../../../Data/Functor"
+import { set } from "../../../../../Data/Lens"
+import { append, empty, flength, foldr, fromArray, List, map, notNull, splitOn } from "../../../../../Data/List"
+import { altF_, any, bindF, ensure, fromJust, fromMaybe, isJust, joinMaybeList, Just, mapM, maybe, Maybe, Nothing } from "../../../../../Data/Maybe"
+import { Record } from "../../../../../Data/Record"
+import { parseJSON } from "../../../../../Data/String/JSON"
+import { traceShowBoth } from "../../../../../Debug/Trace"
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { SpecialAbilityId } from "../../../../Constants/Ids"
+import { ProfessionRequireActivatable } from "../../../../Models/Wiki/prerequisites/ActivatableRequirement"
+import { CultureRequirement } from "../../../../Models/Wiki/prerequisites/CultureRequirement"
+import { ProfessionRequireIncreasable } from "../../../../Models/Wiki/prerequisites/IncreasableRequirement"
+import { SexRequirement } from "../../../../Models/Wiki/prerequisites/SexRequirement"
+import { Profession } from "../../../../Models/Wiki/Profession"
+import { CantripsSelection } from "../../../../Models/Wiki/professionSelections/CantripsSelection"
+import { CombatTechniquesSelection } from "../../../../Models/Wiki/professionSelections/CombatTechniquesSelection"
+import { CursesSelection } from "../../../../Models/Wiki/professionSelections/CursesSelection"
+import { LanguagesScriptsSelection } from "../../../../Models/Wiki/professionSelections/LanguagesScriptsSelection"
+import { ProfessionSelections, ProfessionSelectionsL } from "../../../../Models/Wiki/professionSelections/ProfessionAdjustmentSelections"
+import { CombatTechniquesSecondSelection } from "../../../../Models/Wiki/professionSelections/SecondCombatTechniquesSelection"
+import { SkillsSelection } from "../../../../Models/Wiki/professionSelections/SkillsSelection"
+import { SpecializationSelection } from "../../../../Models/Wiki/professionSelections/SpecializationSelection"
+import { TerrainKnowledgeSelection } from "../../../../Models/Wiki/professionSelections/TerrainKnowledgeSelection"
+import { pairToIncreaseSkill } from "../../../../Models/Wiki/sub/IncreaseSkill"
+import { pairToIncreaseSkillOrList } from "../../../../Models/Wiki/sub/IncreaseSkillList"
+import { NameBySex } from "../../../../Models/Wiki/sub/NameBySex"
+import { AnyProfessionSelection, ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../../../../Models/Wiki/wikiTypeHelpers"
+import { prefixCantrip, prefixCT, prefixId } from "../../../IDUtils"
+import { toNatural } from "../../../NumberUtils"
+import { pipe, pipe_ } from "../../../pipe"
+import { Expect } from "../../Expect"
+import { mergeRowsById } from "../MergeRows"
+import { maybePrefix, modifyNegIntNoBreak } from "../SourceHelpers"
+import { lookupKeyValid, mapMNamedPred, mapTotalPred, TableType } from "../Validators/Generic"
+import { mensureMapBoolean, mensureMapListBindAfterOptional, mensureMapListOptional, mensureMapNatural, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../Validators/ToValue"
+import { isRawProfessionRequiringActivatable } from "./Prerequisites/RawActivatableRequirement"
+import { isRawCultureRequirement } from "./Prerequisites/RawCultureRequirement"
+import { isRawProfessionRequiringIncreasable } from "./Prerequisites/RawIncreasableRequirement"
+import { isRawRaceRequirement, toRaceRequirement } from "./Prerequisites/RawRaceRequirement"
+import { isRawSexRequirement } from "./Prerequisites/RawSexRequirement"
+import { isRawCantripsSelection } from "./ProfessionSelections/RawCantripsSelection"
+import { isRawCombatTechniquesSelection } from "./ProfessionSelections/RawCombatTechniquesSelection"
+import { isRawCursesSelection } from "./ProfessionSelections/RawCursesSelection"
+import { isRawLanguagesScriptsSelection } from "./ProfessionSelections/RawLanguagesScriptsSelection"
+import { isRawSecondCombatTechniquesSelection } from "./ProfessionSelections/RawSecondCombatTechniquesSelection"
+import { isRawSkillsSelection } from "./ProfessionSelections/RawSkillsSelection"
+import { isRawSpecializationSelection } from "./ProfessionSelections/RawSpecializationSelection"
+import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrainKnowledgeSelection"
+import { toErrata } from "./Sub/toErrata"
+import { toSourceLinks } from "./Sub/toSourceLinks"
 
 const isNotNullObject = (x: unknown): x is object => typeof x === "object" && x !== null
 

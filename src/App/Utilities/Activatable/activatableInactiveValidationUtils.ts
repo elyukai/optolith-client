@@ -6,35 +6,35 @@
  * @since 1.1.0
  */
 
-import { not } from "../../../Data/Bool";
-import { ident } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { elem, flength, foldr, isList, List, notElem } from "../../../Data/List";
-import { all, any, bind, bindF, fromMaybe, isJust, listToMaybe, Maybe, sum } from "../../../Data/Maybe";
-import { add, inc, lte } from "../../../Data/Num";
-import { isOrderedMap, lookup } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Tuple } from "../../../Data/Tuple";
-import { sel2, sel3 } from "../../../Data/Tuple/Select";
-import { SpecialAbilityGroup } from "../../Constants/Groups";
-import { SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { ActivatableDependency } from "../../Models/Hero/heroTypeHelpers";
-import { Pact } from "../../Models/Hero/Pact";
-import { Rules } from "../../Models/Hero/Rules";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
-import { countActiveGroupEntries, hasActiveGroupEntry } from "../entryGroupUtils";
-import { getAllEntriesByGroup } from "../heroStateUtils";
-import { pipe, pipe_ } from "../pipe";
-import { getFirstLevelPrerequisites } from "../Prerequisites/flattenPrerequisites";
-import { validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
-import * as CheckStyleUtils from "./checkStyleUtils";
-import { isActive, isMaybeActive } from "./isActive";
+import { not } from "../../../Data/Bool"
+import { ident } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { elem, flength, foldr, isList, List, notElem } from "../../../Data/List"
+import { all, any, bind, bindF, fromMaybe, isJust, listToMaybe, Maybe, sum } from "../../../Data/Maybe"
+import { add, inc, lte } from "../../../Data/Num"
+import { isOrderedMap, lookup } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { Tuple } from "../../../Data/Tuple"
+import { sel2, sel3 } from "../../../Data/Tuple/Select"
+import { SpecialAbilityGroup } from "../../Constants/Groups"
+import { SpecialAbilityId } from "../../Constants/Ids"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { ActivatableDependency } from "../../Models/Hero/heroTypeHelpers"
+import { Pact } from "../../Models/Hero/Pact"
+import { Rules } from "../../Models/Hero/Rules"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
+import { countActiveGroupEntries, hasActiveGroupEntry } from "../entryGroupUtils"
+import { getAllEntriesByGroup } from "../heroStateUtils"
+import { pipe, pipe_ } from "../pipe"
+import { getFirstLevelPrerequisites } from "../Prerequisites/flattenPrerequisites"
+import { validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils"
+import * as CheckStyleUtils from "./checkStyleUtils"
+import { isActive, isMaybeActive } from "./isActive"
 
 const { specialAbilities } = WikiModel.AL
 const AAL = Advantage.AL
@@ -67,6 +67,7 @@ const isAdditionDisabledForCombatStyle =
 
       return totalActive >= 3 || equalTypeStylesActive >= 2
     }
+
     // Otherwise, only one of each type can be active.
     else {
       return pipe_ (wiki_entry, AAL.gr, hasActiveGroupEntry (wiki) (hero))
@@ -159,10 +160,13 @@ const isAdditionDisabledSpecialAbilitySpecific =
       const isDisabled = all (pipe (category, lte (1))) (pact (hero))
                          ? isMaybeActive (dunkles_abbild)
                            || all (pipe (level, lte (countPactPresents))) (pact (hero))
+
                          // is Lesser Pact?
                          : all (pipe (level, lte (0))) (pact (hero))
+
                          // Lesser Pact only provides 3 PactGifts
                          ? countPactPresents >= 3
+
                          // Normal DemonPact: KdV + 7 PactGifts
                          : all (pipe (level, lte (countPactPresents - 7))) (pact (hero))
 

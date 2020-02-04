@@ -1,33 +1,33 @@
-import { equals } from "../../Data/Eq";
-import { blackbirdF } from "../../Data/Function";
-import { fmap, fmapF, mapReplace } from "../../Data/Functor";
-import { consF, elem, filter, find, flength, head, List, map, maximum, NonEmptyList, notNull } from "../../Data/List";
-import { any, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, join, Just, liftM2, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
-import { add, gte, lt, max, multiply, subtractBy } from "../../Data/Num";
-import { elems, foldr, lookup, lookupF } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { fst, snd, Tuple } from "../../Data/Tuple";
-import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
-import { sel1, sel2, sel3 } from "../../Data/Tuple/Select";
-import { AttrId } from "../Constants/Ids";
-import { AttributeDependent, createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
-import { Energies } from "../Models/Hero/Energies";
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { AttributeCombined, AttributeCombinedA_ } from "../Models/View/AttributeCombined";
-import { AttributeWithRequirements } from "../Models/View/AttributeWithRequirements";
-import { Attribute } from "../Models/Wiki/Attribute";
-import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
-import { Race } from "../Models/Wiki/Race";
-import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { mapTradHeroEntryToAttrCombined } from "../Utilities/primaryAttributeUtils";
-import { getCurrentEl, getStartEl } from "./elSelectors";
-import { getBlessedTraditionFromState } from "./liturgicalChantsSelectors";
-import { getRace } from "./rcpSelectors";
-import { getMagicalTraditionsFromHero } from "./spellsSelectors";
-import { getAttributes, getAttributeValueLimit, getCurrentAttributeAdjustmentId, getCurrentHeroPresent, getCurrentPhase, getHeroProp, getWiki, getWikiAttributes } from "./stateSelectors";
+import { equals } from "../../Data/Eq"
+import { blackbirdF } from "../../Data/Function"
+import { fmap, fmapF, mapReplace } from "../../Data/Functor"
+import { consF, elem, filter, find, flength, head, List, map, maximum, NonEmptyList, notNull } from "../../Data/List"
+import { any, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, join, Just, liftM2, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe"
+import { add, gte, lt, max, multiply, subtractBy } from "../../Data/Num"
+import { elems, foldr, lookup, lookupF } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { fst, snd, Tuple } from "../../Data/Tuple"
+import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry"
+import { sel1, sel2, sel3 } from "../../Data/Tuple/Select"
+import { AttrId } from "../Constants/Ids"
+import { AttributeDependent, createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
+import { Energies } from "../Models/Hero/Energies"
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { AttributeCombined, AttributeCombinedA_ } from "../Models/View/AttributeCombined"
+import { AttributeWithRequirements } from "../Models/View/AttributeWithRequirements"
+import { Attribute } from "../Models/Wiki/Attribute"
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
+import { Race } from "../Models/Wiki/Race"
+import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { mapTradHeroEntryToAttrCombined } from "../Utilities/primaryAttributeUtils"
+import { getCurrentEl, getStartEl } from "./elSelectors"
+import { getBlessedTraditionFromState } from "./liturgicalChantsSelectors"
+import { getRace } from "./rcpSelectors"
+import { getMagicalTraditionsFromHero } from "./spellsSelectors"
+import { getAttributes, getAttributeValueLimit, getCurrentAttributeAdjustmentId, getCurrentHeroPresent, getCurrentPhase, getHeroProp, getWiki, getWikiAttributes } from "./stateSelectors"
 
 const HA = HeroModel.A
 const EA = Energies.A

@@ -7,24 +7,24 @@
  * @since 1.1.0
  */
 
-import { notEquals } from "../../../Data/Eq";
-import { ident } from "../../../Data/Function";
-import { over, set } from "../../../Data/Lens";
-import { append, consF, deleteAt, empty, List, modifyAt, subscriptF } from "../../../Data/List";
-import { alt, any, bindF, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
-import { isOrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { ActivatableDependent, ActivatableDependentL } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject, ActiveObjectL } from "../../Models/ActiveEntries/ActiveObject";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { Activatable, AllRequirementObjects, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
-import { addDependencies, removeDependencies } from "../Dependencies/dependencyUtils";
-import { adjustEntryDef } from "../heroStateUtils";
-import { pipe } from "../pipe";
-import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites";
-import { getGeneratedPrerequisites } from "../Prerequisites/prerequisitesUtils";
-import { convertUIStateToActiveObject } from "./activatableConvertUtils";
+import { notEquals } from "../../../Data/Eq"
+import { ident } from "../../../Data/Function"
+import { over, set } from "../../../Data/Lens"
+import { append, consF, deleteAt, empty, List, modifyAt, subscriptF } from "../../../Data/List"
+import { alt, any, bindF, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe"
+import { isOrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { ActivatableDependent, ActivatableDependentL } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject, ActiveObjectL } from "../../Models/ActiveEntries/ActiveObject"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { Activatable, AllRequirementObjects, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
+import { addDependencies, removeDependencies } from "../Dependencies/dependencyUtils"
+import { adjustEntryDef } from "../heroStateUtils"
+import { pipe } from "../pipe"
+import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites"
+import { getGeneratedPrerequisites } from "../Prerequisites/prerequisitesUtils"
+import { convertUIStateToActiveObject } from "./activatableConvertUtils"
 
 const { tier } = ActiveObject.AL
 const { id, prerequisites } = Advantage.AL
@@ -67,6 +67,7 @@ const changeActiveLength =
   (wiki_entry: Activatable) =>
   (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
   (hero: HeroModelRecord) =>
+
                        // Source id
     modifyDependencies (id (wiki_entry))
 

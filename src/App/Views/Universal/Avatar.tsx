@@ -1,11 +1,11 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { bind, guard, guardReplace, Just, Maybe, orN, then } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
-import { renderMaybe } from "../../Utilities/ReactUtils";
-import { isURLValidM } from "../../Utilities/RegexUtils";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { bind, guard, guardReplace, Just, Maybe, orN, then } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
+import { renderMaybe } from "../../Utilities/ReactUtils"
+import { isURLValidM } from "../../Utilities/RegexUtils"
 
-export interface AvatarProps {
+interface Props {
   className?: string
   hasWrapper?: boolean
   img?: boolean
@@ -14,7 +14,7 @@ export interface AvatarProps {
   onClick? (): void
 }
 
-export function Avatar (props: AvatarProps) {
+export const Avatar: React.FC<Props> = props => {
   const { className: inheritedClassName, hasWrapper, img, onClick, src: msrc } = props
 
   const {

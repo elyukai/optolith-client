@@ -1,29 +1,29 @@
-import * as React from "react";
-import { equals } from "../../../../Data/Eq";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { filter, find, flength, intercalate, List, map, splitAt } from "../../../../Data/List";
-import { fromMaybe, Just, Maybe, Nothing } from "../../../../Data/Maybe";
-import { divideBy, max, multiply } from "../../../../Data/Num";
-import { Record } from "../../../../Data/Record";
-import { fst, snd } from "../../../../Data/Tuple";
-import { AttrId } from "../../../Constants/Ids";
-import { Pet } from "../../../Models/Hero/Pet";
-import { Purse } from "../../../Models/Hero/Purse";
-import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined";
-import { ItemForView } from "../../../Models/View/ItemForView";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybe } from "../../../Utilities/ReactUtils";
-import { LabelBox } from "../../Universal/LabelBox";
-import { Options } from "../../Universal/Options";
-import { TextBox } from "../../Universal/TextBox";
-import { Sheet } from "../Sheet";
-import { SheetWrapper } from "../SheetWrapper";
-import { BelongingsSheetItemsColumn } from "./BelongingsSheetItemsColumn";
-import { BelongingsSheetPet } from "./BelongingsSheetPet";
+import * as React from "react"
+import { equals } from "../../../../Data/Eq"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { filter, find, flength, intercalate, List, map, splitAt } from "../../../../Data/List"
+import { fromMaybe, Just, Maybe, Nothing } from "../../../../Data/Maybe"
+import { divideBy, max, multiply } from "../../../../Data/Num"
+import { Record } from "../../../../Data/Record"
+import { fst, snd } from "../../../../Data/Tuple"
+import { AttrId } from "../../../Constants/Ids"
+import { Pet } from "../../../Models/Hero/Pet"
+import { Purse } from "../../../Models/Hero/Purse"
+import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined"
+import { ItemForView } from "../../../Models/View/ItemForView"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { renderMaybe } from "../../../Utilities/ReactUtils"
+import { LabelBox } from "../../Universal/LabelBox"
+import { Options } from "../../Universal/Options"
+import { TextBox } from "../../Universal/TextBox"
+import { Sheet } from "../Sheet"
+import { SheetWrapper } from "../SheetWrapper"
+import { BelongingsSheetItemsColumn } from "./BelongingsSheetItemsColumn"
+import { BelongingsSheetPet } from "./BelongingsSheetPet"
 
-export interface BelongingsSheetProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   items: Maybe<List<Record<ItemForView>>>
   l10n: L10nRecord
@@ -33,7 +33,7 @@ export interface BelongingsSheetProps {
   totalWeight: Maybe<number>
 }
 
-export function BelongingsSheet (props: BelongingsSheetProps) {
+export const BelongingsSheet: React.FC<Props> = props => {
   const {
     attributes,
     items: mitems,
@@ -41,6 +41,7 @@ export function BelongingsSheet (props: BelongingsSheetProps) {
     purse,
     totalPrice: maybeTotalPrice,
     totalWeight: maybeTotalWeight,
+    pet,
   } = props
 
   const strength =
@@ -193,7 +194,11 @@ export function BelongingsSheet (props: BelongingsSheetProps) {
           </TextBox>
         </div>
         <div className="fill" />
-        <BelongingsSheetPet {...props} />
+        <BelongingsSheetPet
+          attributes={attributes}
+          l10n={l10n}
+          pet={pet}
+          />
       </Sheet>
     </SheetWrapper>
   )

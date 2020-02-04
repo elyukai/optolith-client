@@ -1,6 +1,6 @@
-import { isJust, Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record";
-import { DCId } from "../../Constants/Ids";
+import { isJust, Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record"
+import { DCId } from "../../Constants/Ids"
 
 export interface DerivedCharacteristic<I extends DCId = DCId> {
   "@@name": "DerivedCharacteristic"

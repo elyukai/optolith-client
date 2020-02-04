@@ -1,6 +1,6 @@
-import { add, inc, max, multiply, negate, subtractBy } from "../../../Data/Num";
-import { bimap, fst, Pair, snd } from "../../../Data/Tuple";
-import { pipe } from "../pipe";
+import { add, inc, max, multiply, negate, subtractBy } from "../../../Data/Num"
+import { bimap, fst, Pair, snd } from "../../../Data/Tuple"
+import { pipe } from "../pipe"
 
 /**
  * `getICMultiplier :: Int -> Int`
@@ -103,7 +103,7 @@ export const getAPRange = (ic: number) => (fromValue: number) => (toValue: numbe
   return getSignedAPRange (ic) (fromValue) (toValue)
 }
 
-const improvementCostNames = ["A", "B", "C", "D", "E"]
+const improvementCostNames = [ "A", "B", "C", "D", "E" ]
 
 /**
  * `getICName :: Int -> String`

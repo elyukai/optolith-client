@@ -1,17 +1,16 @@
-import * as React from "react";
-import { isList, List, subscript } from "../../../Data/List";
-import { fromMaybe, guardReplace, isJust, Just, Maybe, normalize, Nothing, orN } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
+import * as React from "react"
+import { isList, List, subscript } from "../../../Data/List"
+import { fromMaybe, guardReplace, isJust, Just, Maybe, normalize, Nothing, orN } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
 
-export interface ListItemGroupProps {
-  children?: React.ReactNode
+interface Props {
   index?: number | Maybe<number>
   list?: List<string>
   small?: boolean
   text?: string
 }
 
-export function ListItemGroup (props: ListItemGroupProps) {
+export const ListItemGroup: React.FC<Props> = props => {
   const { children, index, list, small, text } = props
 
   const normalizedIndex = normalize (index)

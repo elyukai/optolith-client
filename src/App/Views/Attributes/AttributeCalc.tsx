@@ -1,10 +1,10 @@
-import * as React from "react";
-import { List, map, toArray } from "../../../Data/List";
-import { Record } from "../../../Data/Record";
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { pipe_ } from "../../Utilities/pipe";
-import { AttributeCalcItem } from "./AttributeCalcItem";
+import * as React from "react"
+import { List, map, toArray } from "../../../Data/List"
+import { Record } from "../../../Data/Record"
+import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { pipe_ } from "../../Utilities/pipe"
+import { AttributeCalcItem } from "./AttributeCalcItem"
 
 export interface AttributesCalcProps {
   derived: List<Record<DerivedCharacteristic>>

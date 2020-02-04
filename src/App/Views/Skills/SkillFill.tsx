@@ -1,11 +1,11 @@
-import * as React from "react";
-import { orN } from "../../../Data/Maybe";
+import * as React from "react"
+import { orN } from "../../../Data/Maybe"
 
-export interface SkillFillProps {
+interface Props {
   addFillElement?: boolean
 }
 
-export function SkillFill (props: SkillFillProps) {
+export const SkillFill: React.FC<Props> = props => {
   const { addFillElement } = props
 
   return orN (addFillElement) ? <div className="fill" /> : null

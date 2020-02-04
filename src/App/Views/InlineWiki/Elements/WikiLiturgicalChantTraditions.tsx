@@ -1,17 +1,17 @@
-import * as React from "react";
-import { ident } from "../../../../Data/Function";
-import { consF, elem, flength, foldr, intercalate, List, subscript } from "../../../../Data/List";
-import { fromJust, fromMaybe, isNothing, Just, mapMaybe } from "../../../../Data/Maybe";
-import { dec } from "../../../../Data/Num";
-import { alter, insert, OrderedMap } from "../../../../Data/OrderedMap";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { Aspect, BlessedTradition } from "../../../Constants/Groups";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { getAspectsOfTradition, getTraditionOfAspect } from "../../../Utilities/Increasable/liturgicalChantUtils";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { sortStrings } from "../../../Utilities/sortBy";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { ident } from "../../../../Data/Function"
+import { consF, elem, flength, foldr, intercalate, List, subscript } from "../../../../Data/List"
+import { fromJust, fromMaybe, isNothing, Just, mapMaybe } from "../../../../Data/Maybe"
+import { dec } from "../../../../Data/Num"
+import { alter, insert, OrderedMap } from "../../../../Data/OrderedMap"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { Aspect, BlessedTradition } from "../../../Constants/Groups"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { getAspectsOfTradition, getTraditionOfAspect } from "../../../Utilities/Increasable/liturgicalChantUtils"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { sortStrings } from "../../../Utilities/sortBy"
+import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
   aspects: (r: Record<A>) => List<Aspect>
@@ -24,8 +24,10 @@ export interface WikiLiturgicalChantTraditionsProps<A extends RecordIBase<any>> 
   l10n: L10nRecord
 }
 
-export function WikiLiturgicalChantTraditions<A extends RecordIBase<any>>
-  (props: WikiLiturgicalChantTraditionsProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiLiturgicalChantTraditionsProps<A>) =>
+  ReturnType<React.FC>
+
+export const WikiLiturgicalChantTraditions: FC = props => {
   const {
     x,
     acc,

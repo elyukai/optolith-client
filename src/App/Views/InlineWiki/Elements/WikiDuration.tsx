@@ -1,10 +1,10 @@
-import * as React from "react";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { Category } from "../../../Constants/Categories";
-import { MagicalGroup } from "../../../Constants/Groups";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { Category } from "../../../Constants/Categories"
+import { MagicalGroup } from "../../../Constants/Groups"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
   duration: (r: Record<A>) => string
@@ -19,7 +19,9 @@ export interface WikiDurationProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiDuration<A extends RecordIBase<any>> (props: WikiDurationProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiDurationProps<A>) => ReturnType<React.FC>
+
+export const WikiDuration: FC = props => {
   const {
     x,
     acc,
@@ -43,7 +45,8 @@ export function WikiDuration<A extends RecordIBase<any>> (props: WikiDurationPro
 
   return (
     <WikiProperty l10n={l10n} title={key}>
-      {acc.duration (x)}{isNoModAllowed ? ` (${translate (l10n) (modKey)})` : ""}
+      {acc.duration (x)}
+{isNoModAllowed ? ` (${translate (l10n) (modKey)})` : ""}
     </WikiProperty>
   )
 }

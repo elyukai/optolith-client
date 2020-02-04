@@ -22,6 +22,7 @@ jobs:
       - npm ci
     script:
       - npm test
+      - npm run lint
 
   # Normal build stage
   - stage: Build

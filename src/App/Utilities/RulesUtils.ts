@@ -1,16 +1,16 @@
-import { any, filter, fnull, List } from "../../Data/List";
-import { fromJust, isJust, Maybe } from "../../Data/Maybe";
-import { lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
-import { member, OrderedSet } from "../../Data/OrderedSet";
-import { Record } from "../../Data/Record";
-import { fst, snd, Tuple } from "../../Data/Tuple";
-import { uncurry3 } from "../../Data/Tuple/Curry";
-import { Rules } from "../Models/Hero/Rules";
-import { Book } from "../Models/Wiki/Book";
-import { SourceLink } from "../Models/Wiki/sub/SourceLink";
-import { WikiModel } from "../Models/Wiki/WikiModel";
-import { EnabledSourceBooks } from "../Selectors/rulesSelectors";
-import { pipe } from "./pipe";
+import { any, filter, fnull, List } from "../../Data/List"
+import { fromJust, isJust, Maybe } from "../../Data/Maybe"
+import { lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
+import { member, OrderedSet } from "../../Data/OrderedSet"
+import { Record } from "../../Data/Record"
+import { fst, snd, Tuple } from "../../Data/Tuple"
+import { uncurry3 } from "../../Data/Tuple/Curry"
+import { Rules } from "../Models/Hero/Rules"
+import { Book } from "../Models/Wiki/Book"
+import { SourceLink } from "../Models/Wiki/sub/SourceLink"
+import { WikiModel } from "../Models/Wiki/WikiModel"
+import { EnabledSourceBooks } from "../Selectors/rulesSelectors"
+import { pipe } from "./pipe"
 
 const RA = Rules.A
 const BA = Book.A
@@ -34,7 +34,7 @@ export const isBookEnabled =
       const b = fromJust (mb)
 
       return BA.isCore (b)
-        || areAllRuleBooksEnabled && !BA.isAdultContent (b)
+        || (areAllRuleBooksEnabled && !BA.isAdultContent (b))
         || member (id) (enabledRuleBooks)
     }
 

@@ -1,4 +1,4 @@
-import { List } from "../../Data/List";
+import { List } from "../../Data/List"
 
 export enum Category {
   ADVANTAGES = "ADVANTAGES",

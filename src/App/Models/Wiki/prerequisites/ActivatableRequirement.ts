@@ -1,9 +1,9 @@
-import { fmapF } from "../../../../Data/Functor";
-import { head, isList, NonEmptyList } from "../../../../Data/List";
-import { Maybe, Nothing } from "../../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../../Data/Record";
-import { ActiveObject } from "../../ActiveEntries/ActiveObject";
-import { SID } from "../wikiTypeHelpers";
+import { fmapF } from "../../../../Data/Functor"
+import { head, isList, NonEmptyList } from "../../../../Data/List"
+import { Maybe, Nothing } from "../../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../../Data/Record"
+import { ActiveObject } from "../../ActiveEntries/ActiveObject"
+import { SID } from "../wikiTypeHelpers"
 
 export interface RequireActivatable {
   "@@name": "RequireActivatable"

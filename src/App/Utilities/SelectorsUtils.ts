@@ -1,15 +1,15 @@
-import { ident } from "../../Data/Function";
-import { bindF, Maybe } from "../../Data/Maybe";
-import { lookup, OrderedMap } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { uncurryN3 } from "../../Data/Tuple/Curry";
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { AppState, AppStateRecord } from "../Reducers/appReducer";
-import { getHeroProp, getLocaleAsProp } from "../Selectors/stateSelectors";
-import { PSelectorWithKey } from "./createMapSelector";
-import { createMaybeSelector } from "./createMaybeSelector";
-import { pipe } from "./pipe";
+import { ident } from "../../Data/Function"
+import { bindF, Maybe } from "../../Data/Maybe"
+import { lookup, OrderedMap } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { uncurryN3 } from "../../Data/Tuple/Curry"
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { AppState, AppStateRecord } from "../Reducers/appReducer"
+import { getHeroProp, getLocaleAsProp } from "../Selectors/stateSelectors"
+import { PSelectorWithKey } from "./createMapSelector"
+import { createMaybeSelector } from "./createMaybeSelector"
+import { pipe } from "./pipe"
 
 export type MaybeSliceSelector<A> = (state: Record<AppState>) => Maybe<OrderedMap<string, A>>
 export type SliceSelector<A, B extends any[]> = (...args: B) => OrderedMap<string, A>

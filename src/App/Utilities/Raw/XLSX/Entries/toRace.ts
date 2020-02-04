@@ -1,19 +1,19 @@
-import { fmap } from "../../../../../Data/Functor";
-import { empty, List, map } from "../../../../../Data/List";
-import { fromMaybe, Nothing } from "../../../../../Data/Maybe";
-import { first, fst, Pair, snd } from "../../../../../Data/Tuple";
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { Race } from "../../../../Models/Wiki/Race";
-import { Die } from "../../../../Models/Wiki/sub/Die";
-import { prefixId } from "../../../IDUtils";
-import { toInt, toNatural } from "../../../NumberUtils";
-import { Expect } from "../../Expect";
-import { mergeRowsById } from "../MergeRows";
-import { maybePrefix, modifyNegIntNoBreak } from "../SourceHelpers";
-import { lookupKeyMapValidNatural, lookupKeyMapValidNonEmptyString, lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapInteger, mensureMapIntegerOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapPairList, mensureMapPairListOptional } from "../Validators/ToValue";
-import { toErrata } from "./Sub/toErrata";
-import { toSourceLinks } from "./Sub/toSourceLinks";
+import { fmap } from "../../../../../Data/Functor"
+import { empty, List, map } from "../../../../../Data/List"
+import { fromMaybe, Nothing } from "../../../../../Data/Maybe"
+import { first, fst, Pair, snd } from "../../../../../Data/Tuple"
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { Race } from "../../../../Models/Wiki/Race"
+import { Die } from "../../../../Models/Wiki/sub/Die"
+import { prefixId } from "../../../IDUtils"
+import { toInt, toNatural } from "../../../NumberUtils"
+import { Expect } from "../../Expect"
+import { mergeRowsById } from "../MergeRows"
+import { maybePrefix, modifyNegIntNoBreak } from "../SourceHelpers"
+import { lookupKeyMapValidNatural, lookupKeyMapValidNonEmptyString, lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapInteger, mensureMapIntegerOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapPairList, mensureMapPairListOptional } from "../Validators/ToValue"
+import { toErrata } from "./Sub/toErrata"
+import { toSourceLinks } from "./Sub/toSourceLinks"
 
 const stringToAttributeAdjustments =
   mensureMapPairListOptional ("&")

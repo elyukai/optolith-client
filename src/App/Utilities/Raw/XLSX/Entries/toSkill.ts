@@ -1,24 +1,24 @@
-import { liftM2 } from "../../../../../Data/Either";
-import { fmap } from "../../../../../Data/Functor";
-import { fromArray, List, lookup, map, NonEmptyList, notNullStr } from "../../../../../Data/List";
-import { any, ensure, fromJust, joinMaybeList, Just, Maybe, maybe_, Nothing } from "../../../../../Data/Maybe";
-import { Record } from "../../../../../Data/Record";
-import { parseJSON } from "../../../../../Data/String/JSON";
-import { fst, Pair, snd } from "../../../../../Data/Tuple";
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { RequireActivatable } from "../../../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { Skill } from "../../../../Models/Wiki/Skill";
-import { Application } from "../../../../Models/Wiki/sub/Application";
-import { prefixId } from "../../../IDUtils";
-import { toInt, toNatural } from "../../../NumberUtils";
-import { Expect } from "../../Expect";
-import { mergeRowsById } from "../MergeRows";
-import { modifyNegIntNoBreak } from "../SourceHelpers";
-import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapPairList, mensureMapPairListOptional, mensureMapStringPred } from "../Validators/ToValue";
-import { isRawRequiringActivatable } from "./Prerequisites/RawActivatableRequirement";
-import { toErrata } from "./Sub/toErrata";
-import { toSourceLinks } from "./Sub/toSourceLinks";
+import { liftM2 } from "../../../../../Data/Either"
+import { fmap } from "../../../../../Data/Functor"
+import { fromArray, List, lookup, map, NonEmptyList, notNullStr } from "../../../../../Data/List"
+import { any, ensure, fromJust, joinMaybeList, Just, Maybe, maybe_, Nothing } from "../../../../../Data/Maybe"
+import { Record } from "../../../../../Data/Record"
+import { parseJSON } from "../../../../../Data/String/JSON"
+import { fst, Pair, snd } from "../../../../../Data/Tuple"
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { RequireActivatable } from "../../../../Models/Wiki/prerequisites/ActivatableRequirement"
+import { Skill } from "../../../../Models/Wiki/Skill"
+import { Application } from "../../../../Models/Wiki/sub/Application"
+import { prefixId } from "../../../IDUtils"
+import { toInt, toNatural } from "../../../NumberUtils"
+import { Expect } from "../../Expect"
+import { mergeRowsById } from "../MergeRows"
+import { modifyNegIntNoBreak } from "../SourceHelpers"
+import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapPairList, mensureMapPairListOptional, mensureMapStringPred } from "../Validators/ToValue"
+import { isRawRequiringActivatable } from "./Prerequisites/RawActivatableRequirement"
+import { toErrata } from "./Sub/toErrata"
+import { toSourceLinks } from "./Sub/toSourceLinks"
 
 const encumbrance = /true|false|maybe/u
 

@@ -1,37 +1,37 @@
-import { equals } from "../../Data/Eq";
-import { ident } from "../../Data/Function";
-import { fmapF } from "../../Data/Functor";
-import { any, filter, isInfixOf, List, lower } from "../../Data/List";
-import { fromMaybe, guard, imapMaybe, Just, Maybe, maybe } from "../../Data/Maybe";
-import { elems, keysSet } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { uncurryN, uncurryN3, uncurryN4 } from "../../Data/Tuple/Curry";
-import { CultureCombinedA_ } from "../Models/View/CultureCombined";
-import { ProfessionCombined, ProfessionCombinedA_ } from "../Models/View/ProfessionCombined";
-import { ProfessionVariantCombined } from "../Models/View/ProfessionVariantCombined";
-import { RaceCombinedA_ } from "../Models/View/RaceCombined";
-import { Advantage } from "../Models/Wiki/Advantage";
-import { Blessing } from "../Models/Wiki/Blessing";
-import { Cantrip } from "../Models/Wiki/Cantrip";
-import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
-import { Disadvantage } from "../Models/Wiki/Disadvantage";
-import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
-import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
-import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
-import { Skill } from "../Models/Wiki/Skill";
-import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { Spell } from "../Models/Wiki/Spell";
-import { NameBySex } from "../Models/Wiki/sub/NameBySex";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { filterRecordsByA, filterRecordsByName } from "../Utilities/filterBy";
-import { compareLocale, translate } from "../Utilities/I18n";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { filterByAvailabilityF } from "../Utilities/RulesUtils";
-import { comparingR, sortByMulti, sortRecordsByName } from "../Utilities/sortBy";
-import { DropdownOption } from "../Views/Universal/Dropdown";
-import { getAllCultures, getAllProfessions, getAllRaces } from "./rcpSelectors";
-import { getWikiProfessionsCombinedSortOptions } from "./sortOptionsSelectors";
-import { getLocaleAsProp, getWikiAdvantages, getWikiBlessings, getWikiBooks, getWikiCantrips, getWikiCombatTechniques, getWikiCombatTechniquesGroup, getWikiDisadvantages, getWikiFilterText, getWikiItemTemplates, getWikiItemTemplatesGroup, getWikiLiturgicalChants, getWikiLiturgicalChantsGroup, getWikiProfessionsGroup, getWikiSkills, getWikiSkillsGroup, getWikiSpecialAbilities, getWikiSpecialAbilitiesGroup, getWikiSpells, getWikiSpellsGroup } from "./stateSelectors";
+import { equals } from "../../Data/Eq"
+import { ident } from "../../Data/Function"
+import { fmapF } from "../../Data/Functor"
+import { any, filter, isInfixOf, List, lower } from "../../Data/List"
+import { fromMaybe, guard, imapMaybe, Just, Maybe, maybe } from "../../Data/Maybe"
+import { elems, keysSet } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { uncurryN, uncurryN3, uncurryN4 } from "../../Data/Tuple/Curry"
+import { CultureCombinedA_ } from "../Models/View/CultureCombined"
+import { DropdownOption } from "../Models/View/DropdownOption"
+import { ProfessionCombined, ProfessionCombinedA_ } from "../Models/View/ProfessionCombined"
+import { ProfessionVariantCombined } from "../Models/View/ProfessionVariantCombined"
+import { RaceCombinedA_ } from "../Models/View/RaceCombined"
+import { Advantage } from "../Models/Wiki/Advantage"
+import { Blessing } from "../Models/Wiki/Blessing"
+import { Cantrip } from "../Models/Wiki/Cantrip"
+import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
+import { Disadvantage } from "../Models/Wiki/Disadvantage"
+import { ItemTemplate } from "../Models/Wiki/ItemTemplate"
+import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
+import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
+import { Skill } from "../Models/Wiki/Skill"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { Spell } from "../Models/Wiki/Spell"
+import { NameBySex } from "../Models/Wiki/sub/NameBySex"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { filterRecordsByA, filterRecordsByName } from "../Utilities/filterBy"
+import { compareLocale, translate } from "../Utilities/I18n"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { filterByAvailabilityF } from "../Utilities/RulesUtils"
+import { comparingR, sortByMulti, sortRecordsByName } from "../Utilities/sortBy"
+import { getAllCultures, getAllProfessions, getAllRaces } from "./rcpSelectors"
+import { getWikiProfessionsCombinedSortOptions } from "./sortOptionsSelectors"
+import { getLocaleAsProp, getWikiAdvantages, getWikiBlessings, getWikiBooks, getWikiCantrips, getWikiCombatTechniques, getWikiCombatTechniquesGroup, getWikiDisadvantages, getWikiFilterText, getWikiItemTemplates, getWikiItemTemplatesGroup, getWikiLiturgicalChants, getWikiLiturgicalChantsGroup, getWikiProfessionsGroup, getWikiSkills, getWikiSkillsGroup, getWikiSpecialAbilities, getWikiSpecialAbilitiesGroup, getWikiSpells, getWikiSpellsGroup } from "./stateSelectors"
 
 const PCA = ProfessionCombined.A
 const PCA_ = ProfessionCombinedA_
@@ -158,6 +158,7 @@ export const getAdvantagesSortedByName = createMaybeSelector (
 export const getPreparedAdvantages = createMaybeSelector (
   getWikiFilterText,
   getAdvantagesSortedByName,
+
   // tslint:disable-next-line: no-unnecessary-callback-wrapper
   uncurryN (filter_text => filterRecordsByName (filter_text))
 )
@@ -177,6 +178,7 @@ export const getDisadvantagesSortedByName = createMaybeSelector (
 export const getPreparedDisadvantages = createMaybeSelector (
   getWikiFilterText,
   getDisadvantagesSortedByName,
+
   // tslint:disable-next-line: no-unnecessary-callback-wrapper
   uncurryN (filter_text => filterRecordsByName (filter_text))
 )
@@ -204,6 +206,7 @@ export const getSkillsFilteredByOptions = createMaybeSelector (
 export const getPreparedSkills = createMaybeSelector (
   getWikiFilterText,
   getSkillsFilteredByOptions,
+
   // tslint:disable-next-line: no-unnecessary-callback-wrapper
   uncurryN (filter_text => filterRecordsByName (filter_text))
 )
@@ -231,6 +234,7 @@ export const getCombatTechniquesFilteredByOptions = createMaybeSelector (
 export const getPreparedCombatTechniques = createMaybeSelector (
   getWikiFilterText,
   getCombatTechniquesFilteredByOptions,
+
   // tslint:disable-next-line: no-unnecessary-callback-wrapper
   uncurryN (filter_text => filterRecordsByName (filter_text))
 )
@@ -287,6 +291,7 @@ export const getSpellsFilteredByOptions = createMaybeSelector (
 export const getPreparedSpells = createMaybeSelector (
   getWikiFilterText,
   getSpellsFilteredByOptions,
+
   // tslint:disable-next-line: no-unnecessary-callback-wrapper
   uncurryN (filter_text => filterRecordsByName (filter_text))
 )
@@ -306,6 +311,7 @@ export const getCantripsSortedByName = createMaybeSelector (
 export const getPreparedCantrips = createMaybeSelector (
   getWikiFilterText,
   getCantripsSortedByName,
+
   // tslint:disable-next-line: no-unnecessary-callback-wrapper
   uncurryN (filter_text => filterRecordsByName (filter_text))
 )
@@ -333,6 +339,7 @@ export const getLiturgicalChantsFilteredByOptions = createMaybeSelector (
 export const getPreparedLiturgicalChants = createMaybeSelector (
   getWikiFilterText,
   getLiturgicalChantsFilteredByOptions,
+
   // tslint:disable-next-line: no-unnecessary-callback-wrapper
   uncurryN (filter_text => filterRecordsByName (filter_text))
 )
@@ -352,6 +359,7 @@ export const getBlessingsSortedByName = createMaybeSelector (
 export const getPreparedBlessings = createMaybeSelector (
   getWikiFilterText,
   getBlessingsSortedByName,
+
   // tslint:disable-next-line: no-unnecessary-callback-wrapper
   uncurryN (filter_text => filterRecordsByName (filter_text))
 )
@@ -379,6 +387,7 @@ export const getItemTemplatesFilteredByOptions = createMaybeSelector (
 export const getPreparedItemTemplates = createMaybeSelector (
   getWikiFilterText,
   getItemTemplatesFilteredByOptions,
+
   // tslint:disable-next-line: no-unnecessary-callback-wrapper
   uncurryN (filter_text => filterRecordsByName (filter_text))
 )

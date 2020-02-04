@@ -1,16 +1,16 @@
-import { connect } from "react-redux";
-import { fromJust, isJust, Maybe } from "../../Data/Maybe";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as AttributesActions from "../Actions/AttributesActions";
-import * as SubwindowsActions from "../Actions/SubwindowsActions";
-import { EnergyId } from "../Constants/Ids";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getAdjustmentValue, getAttributesForView, getAttributeSum, getAvailableAdjustmentIds } from "../Selectors/attributeSelectors";
-import { getDerivedCharacteristics } from "../Selectors/derivedCharacteristicsSelectors";
-import { getMaxTotalAttributeValues } from "../Selectors/elSelectors";
-import { getIsInCharacterCreation, getIsRemovingEnabled } from "../Selectors/phaseSelectors";
-import { getAddPermanentEnergy, getCurrentAttributeAdjustmentId, getEditPermanentEnergy } from "../Selectors/stateSelectors";
-import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStateProps } from "../Views/Attributes/Attributes";
+import { connect } from "react-redux"
+import { fromJust, isJust, Maybe } from "../../Data/Maybe"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as AttributesActions from "../Actions/AttributesActions"
+import * as SubwindowsActions from "../Actions/SubwindowsActions"
+import { EnergyId } from "../Constants/Ids"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getAdjustmentValue, getAttributesForView, getAttributeSum, getAvailableAdjustmentIds } from "../Selectors/attributeSelectors"
+import { getDerivedCharacteristics } from "../Selectors/derivedCharacteristicsSelectors"
+import { getMaxTotalAttributeValues } from "../Selectors/elSelectors"
+import { getIsInCharacterCreation, getIsRemovingEnabled } from "../Selectors/phaseSelectors"
+import { getAddPermanentEnergy, getCurrentAttributeAdjustmentId, getEditPermanentEnergy } from "../Selectors/stateSelectors"
+import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStateProps } from "../Views/Attributes/Attributes"
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: AttributesOwnProps): AttributesStateProps => ({

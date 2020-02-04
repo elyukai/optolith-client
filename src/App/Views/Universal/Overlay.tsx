@@ -16,13 +16,13 @@
  * The cross axis is orthogonal to the main axis.
  */
 
-import * as React from "react";
-import { ident } from "../../../Data/Function";
-import { over } from "../../../Data/Lens";
-import { List } from "../../../Data/List";
-import { Just, Maybe } from "../../../Data/Maybe";
-import { fromDefault, makeLenses, Record, toObject } from "../../../Data/Record";
-import { classListMaybe } from "../../Utilities/CSS";
+import * as React from "react"
+import { ident } from "../../../Data/Function"
+import { over } from "../../../Data/Lens"
+import { List } from "../../../Data/List"
+import { Just, Maybe } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, Record, toObject } from "../../../Data/Record"
+import { classListMaybe } from "../../Utilities/CSS"
 
 type Position = "top" | "bottom" | "left" | "right"
 
@@ -39,60 +39,6 @@ const OverlayPosition = fromDefault ("OverlayPosition") <OverlayPosition> ({ top
 
 const OPA = OverlayPosition.A
 const OPL = makeLenses (OverlayPosition)
-
-export interface OverlayProps {
-  className?: string
-  margin?: number
-  position?: Position
-  small?: boolean
-  trigger: Element
-}
-
-export const Overlay: React.FC<OverlayProps> = props => {
-  const {
-    children,
-    className,
-    margin = 0,
-    position: defPosition = "top",
-    small,
-    trigger,
-  } = props
-
-  const [position, setPosition] = React.useState<Position> (defPosition)
-  const [style, setStyle] = React.useState<React.CSSProperties> ({ visibility: "hidden" })
-  const [arrowStyle, setArrowStyle] = React.useState<React.CSSProperties> ({})
-  const overlayRef = React.useRef<HTMLDivElement> (null)
-
-  const arrow_size = small === true ? 6 : 12
-
-  React.useEffect (
-    () => {
-      const [new_pos, new_coords, new_arrow_coords] =
-        alignToElement (arrow_size) (overlayRef) (trigger) (defPosition) (margin)
-
-      setPosition (new_pos)
-      setArrowStyle ({ height: arrow_size, width: arrow_size, ...new_arrow_coords })
-      setStyle (new_coords)
-    },
-    [setPosition, setStyle, defPosition, margin, trigger, setArrowStyle, arrow_size]
-  )
-
-  return (
-    <div
-      style={style}
-      className={
-        classListMaybe (List (
-          Just (`overlay overlay-${position}`),
-          Maybe (className)
-        ))
-      }
-      ref={overlayRef}
-      >
-      {children}
-      <div className="arrow" style={arrowStyle} />
-    </div>
-  )
-}
 
 const getTopGapMainAxis: (triggerCoord: ClientRect | DOMRect) =>
                          (overlayCoord: ClientRect | DOMRect) =>
@@ -268,8 +214,62 @@ const alignToElement: (arrow_size: number) =>
                                               (centered_coords)
                                               (adjusted_coords)
 
-      return [pos, toObject (adjusted_coords), toObject (arrow_position)]
+      return [ pos, toObject (adjusted_coords), toObject (arrow_position) ]
     }
 
-    return [def_pos, {}, {}]
+    return [ def_pos, {}, {} ]
   }
+
+interface Props {
+  className?: string
+  margin?: number
+  position?: Position
+  small?: boolean
+  trigger: Element
+}
+
+export const Overlay: React.FC<Props> = props => {
+  const {
+    children,
+    className,
+    margin = 0,
+    position: defPosition = "top",
+    small,
+    trigger,
+  } = props
+
+  const [ position, setPosition ] = React.useState<Position> (defPosition)
+  const [ style, setStyle ] = React.useState<React.CSSProperties> ({ visibility: "hidden" })
+  const [ arrowStyle, setArrowStyle ] = React.useState<React.CSSProperties> ({})
+  const overlayRef = React.useRef<HTMLDivElement> (null)
+
+  const arrow_size = small === true ? 6 : 12
+
+  React.useEffect (
+    () => {
+      const [ new_pos, new_coords, new_arrow_coords ] =
+        alignToElement (arrow_size) (overlayRef) (trigger) (defPosition) (margin)
+
+      setPosition (new_pos)
+      setArrowStyle ({ height: arrow_size, width: arrow_size, ...new_arrow_coords })
+      setStyle (new_coords)
+    },
+    [ setPosition, setStyle, defPosition, margin, trigger, setArrowStyle, arrow_size ]
+  )
+
+  return (
+    <div
+      style={style}
+      className={
+        classListMaybe (List (
+          Just (`overlay overlay-${position}`),
+          Maybe (className)
+        ))
+      }
+      ref={overlayRef}
+      >
+      {children}
+      <div className="arrow" style={arrowStyle} />
+    </div>
+  )
+}

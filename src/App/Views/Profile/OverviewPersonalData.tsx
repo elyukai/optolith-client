@@ -1,18 +1,19 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { flength, List } from "../../../Data/List";
-import { all, bind, listToMaybe, Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { SocialStatusId } from "../../Constants/Ids";
-import { PersonalData } from "../../Models/Hero/PersonalData";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { renderMaybeWith } from "../../Utilities/ReactUtils";
-import { isEmptyOr, isFloat, isNaturalNumber } from "../../Utilities/RegexUtils";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
-import { IconButton } from "../Universal/IconButton";
-import { InputButtonGroup } from "../Universal/InputButtonGroup";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { flength, List } from "../../../Data/List"
+import { all, bind, listToMaybe, Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { SocialStatusId } from "../../Constants/Ids"
+import { PersonalData } from "../../Models/Hero/PersonalData"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { renderMaybeWith } from "../../Utilities/ReactUtils"
+import { isEmptyOr, isFloat, isNaturalNumber } from "../../Utilities/RegexUtils"
+import { Dropdown } from "../Universal/Dropdown"
+import { IconButton } from "../Universal/IconButton"
+import { InputButtonGroup } from "../Universal/InputButtonGroup"
+import { TextField } from "../Universal/TextField"
 
 const PDA = PersonalData.A
 const DOA = DropdownOption.A
@@ -89,7 +90,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
   const is_hcsel_disabled = React.useMemo (
     () => flength (hairColors) === 1
           && equals (hair_color) (bind (listToMaybe (hairColors)) (DOA.id)),
-    [hairColors, hair_color]
+    [ hairColors, hair_color ]
   )
 
   return (

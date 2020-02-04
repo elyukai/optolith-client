@@ -1,26 +1,26 @@
-import * as React from "react";
-import { flip, thrush } from "../../../Data/Function";
-import { fmapF } from "../../../Data/Functor";
-import { fnull, List, map, toArray } from "../../../Data/List";
-import { all, fromJust, Maybe, normalize, or } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { ActivatableAddListItemContainer } from "../../Containers/InactiveActivatableContainer";
-import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
-import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
-import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
-import { ActivatableNameCost } from "../../Models/View/ActivatableNameCost";
-import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
-import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { getFullName } from "../../Utilities/Activatable/activatableNameUtils";
-import { pipe_ } from "../../Utilities/pipe";
-import { isInactiveRated } from "../../Utilities/ratingUtils";
-import { ListView } from "../Universal/List";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { Scroll } from "../Universal/Scroll";
+import * as React from "react"
+import { flip, thrush } from "../../../Data/Function"
+import { fmapF } from "../../../Data/Functor"
+import { fnull, List, map, toArray } from "../../../Data/List"
+import { all, fromJust, Maybe, normalize, or } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { ActivatableAddListItemContainer } from "../../Containers/InactiveActivatableContainer"
+import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
+import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
+import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
+import { ActivatableNameCost } from "../../Models/View/ActivatableNameCost"
+import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable"
+import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { getFullName } from "../../Utilities/Activatable/activatableNameUtils"
+import { pipe_ } from "../../Utilities/pipe"
+import { isInactiveRated } from "../../Utilities/ratingUtils"
+import { ListView } from "../Universal/List"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { Scroll } from "../Universal/Scroll"
 
 export interface ActivatableAddListProps {
   hideGroup?: boolean

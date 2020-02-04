@@ -1,42 +1,109 @@
-import { cnst, flip, ident, join } from "../../../../../Data/Function";
-import { fmap, fmapF } from "../../../../../Data/Functor";
-import { foldr, fromArray, List } from "../../../../../Data/List";
-import { elem, fromMaybe, Maybe, maybe, Nothing } from "../../../../../Data/Maybe";
-import { foldlWithKey, lookup, lookupF, OrderedMap } from "../../../../../Data/OrderedMap";
-import { insert, OrderedSet } from "../../../../../Data/OrderedSet";
-import { Record, StringKeyObject } from "../../../../../Data/Record";
-import { Tuple } from "../../../../../Data/Tuple";
-import { Category } from "../../../../Constants/Categories";
-import { ActivatableDependent, createActivatableDependentWithActive } from "../../../../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent, createActivatableSkillDependentWithValue } from "../../../../Models/ActiveEntries/ActivatableSkillDependent";
-import { ActiveObject } from "../../../../Models/ActiveEntries/ActiveObject";
-import { ActiveObjectWithId, fromActiveObjectWithId } from "../../../../Models/ActiveEntries/ActiveObjectWithId";
-import { AttributeDependent, createAttributeDependentWithValue } from "../../../../Models/ActiveEntries/AttributeDependent";
-import { createSkillDependentWithValue, SkillDependent } from "../../../../Models/ActiveEntries/SkillDependent";
-import { Belongings } from "../../../../Models/Hero/Belongings";
-import { Energies } from "../../../../Models/Hero/Energies";
-import { HeroModel, HeroModelRecord } from "../../../../Models/Hero/HeroModel";
-import { HitZoneArmor } from "../../../../Models/Hero/HitZoneArmor";
-import { Item } from "../../../../Models/Hero/Item";
-import { Pact } from "../../../../Models/Hero/Pact";
-import { PermanentEnergyLoss } from "../../../../Models/Hero/PermanentEnergyLoss";
-import { PermanentEnergyLossAndBoughtBack } from "../../../../Models/Hero/PermanentEnergyLossAndBoughtBack";
-import { PersonalData } from "../../../../Models/Hero/PersonalData";
-import { Pet } from "../../../../Models/Hero/Pet";
-import { Purse } from "../../../../Models/Hero/Purse";
-import { Rules } from "../../../../Models/Hero/Rules";
-import { L10n, L10nRecord } from "../../../../Models/Wiki/L10n";
-import { Spell } from "../../../../Models/Wiki/Spell";
-import { PrimaryAttributeDamageThreshold } from "../../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
-import { WikiModel, WikiModelRecord } from "../../../../Models/Wiki/WikiModel";
-import { Activatable } from "../../../../Models/Wiki/wikiTypeHelpers";
-import { getCombinedPrerequisites } from "../../../Activatable/activatableActivationUtils";
-import { getActiveFromState } from "../../../Activatable/activatableConvertUtils";
-import { addOtherSpecialAbilityDependenciesOnHeroInit } from "../../../Activatable/SpecialAbilityUtils";
-import { addDependencies } from "../../../Dependencies/dependencyUtils";
-import { getCategoryById } from "../../../IDUtils";
-import { pipe, pipe_ } from "../../../pipe";
-import * as Raw from "../../XLSX/RawData";
+import { cnst, flip, ident, join } from "../../../../../Data/Function"
+import { fmap, fmapF } from "../../../../../Data/Functor"
+import { foldr, fromArray, List } from "../../../../../Data/List"
+import { elem, fromMaybe, Maybe, maybe, Nothing } from "../../../../../Data/Maybe"
+import { foldlWithKey, lookup, lookupF, OrderedMap } from "../../../../../Data/OrderedMap"
+import { insert, OrderedSet } from "../../../../../Data/OrderedSet"
+import { Record, StringKeyObject } from "../../../../../Data/Record"
+import { Tuple } from "../../../../../Data/Tuple"
+import { Category } from "../../../../Constants/Categories"
+import { ActivatableDependent, createActivatableDependentWithActive } from "../../../../Models/ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent, createActivatableSkillDependentWithValue } from "../../../../Models/ActiveEntries/ActivatableSkillDependent"
+import { ActiveObject } from "../../../../Models/ActiveEntries/ActiveObject"
+import { ActiveObjectWithId, fromActiveObjectWithId } from "../../../../Models/ActiveEntries/ActiveObjectWithId"
+import { AttributeDependent, createAttributeDependentWithValue } from "../../../../Models/ActiveEntries/AttributeDependent"
+import { createSkillDependentWithValue, SkillDependent } from "../../../../Models/ActiveEntries/SkillDependent"
+import { Belongings } from "../../../../Models/Hero/Belongings"
+import { Energies } from "../../../../Models/Hero/Energies"
+import { HeroModel, HeroModelRecord } from "../../../../Models/Hero/HeroModel"
+import { HitZoneArmor } from "../../../../Models/Hero/HitZoneArmor"
+import { Item } from "../../../../Models/Hero/Item"
+import { Pact } from "../../../../Models/Hero/Pact"
+import { PermanentEnergyLoss } from "../../../../Models/Hero/PermanentEnergyLoss"
+import { PermanentEnergyLossAndBoughtBack } from "../../../../Models/Hero/PermanentEnergyLossAndBoughtBack"
+import { PersonalData } from "../../../../Models/Hero/PersonalData"
+import { Pet } from "../../../../Models/Hero/Pet"
+import { Purse } from "../../../../Models/Hero/Purse"
+import { Rules } from "../../../../Models/Hero/Rules"
+import { L10n, L10nRecord } from "../../../../Models/Wiki/L10n"
+import { Spell } from "../../../../Models/Wiki/Spell"
+import { PrimaryAttributeDamageThreshold } from "../../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
+import { WikiModel, WikiModelRecord } from "../../../../Models/Wiki/WikiModel"
+import { Activatable } from "../../../../Models/Wiki/wikiTypeHelpers"
+import { getCombinedPrerequisites } from "../../../Activatable/activatableActivationUtils"
+import { getActiveFromState } from "../../../Activatable/activatableConvertUtils"
+import { addOtherSpecialAbilityDependenciesOnHeroInit } from "../../../Activatable/SpecialAbilityUtils"
+import { addDependencies } from "../../../Dependencies/dependencyUtils"
+import { getCategoryById } from "../../../IDUtils"
+import { pipe, pipe_ } from "../../../pipe"
+import * as Raw from "../../XLSX/RawData"
+
+interface ActivatableMaps {
+  advantages: OrderedMap<string, Record<ActivatableDependent>>
+  disadvantages: OrderedMap<string, Record<ActivatableDependent>>
+  specialAbilities: OrderedMap<string, Record<ActivatableDependent>>
+}
+
+const getActivatableDependent =
+  (source: StringKeyObject<Raw.RawActiveObject[]>): HeroModel["advantages"] =>
+    OrderedMap.fromArray (
+      Object.entries (source) .map<[string, Record<ActivatableDependent>]> (
+        ([ id, active ]) => [
+          id,
+          createActivatableDependentWithActive (fromArray (active .map (e => ActiveObject ({
+                                                  cost: Maybe (e .cost),
+                                                  sid: Maybe (e .sid),
+                                                  sid2: Maybe (e .sid2),
+                                                  sid3: Maybe (e .sid3),
+                                                  tier: Maybe (e .tier),
+                                                }))))
+                                                (id),
+        ]
+      )
+    )
+
+const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
+  const objectsInMap = getActivatableDependent (hero .activatable)
+
+  return foldlWithKey<string, Record<ActivatableDependent>, ActivatableMaps>
+    (acc => id => obj => {
+      const category = getCategoryById (id)
+
+      const key: keyof ActivatableMaps =
+        elem (Category.ADVANTAGES) (category)
+          ? "advantages"
+          : elem (Category.DISADVANTAGES) (category)
+          ? "disadvantages"
+          : "specialAbilities"
+
+      return {
+        ...acc,
+        [key]: OrderedMap.insert (id) (obj) (acc [key]),
+      }
+    })
+    ({
+      advantages: OrderedMap.empty,
+      disadvantages: OrderedMap.empty,
+      specialAbilities: OrderedMap.empty,
+    })
+    (objectsInMap)
+}
+
+const getDependentSkills =
+  (source: StringKeyObject<number>): OrderedMap<string, Record<SkillDependent>> =>
+    OrderedMap.fromArray (
+      Object.entries (source) .map<[string, Record<SkillDependent>]> (
+        ([ id, value ]) => [ id, createSkillDependentWithValue (value) (id) ]
+      )
+    )
+
+const getActivatableDependentSkills =
+  (source: StringKeyObject<number>): OrderedMap<string, Record<ActivatableSkillDependent>> =>
+    OrderedMap.fromArray (
+      Object.entries (source) .map<[string, Record<ActivatableSkillDependent>]> (
+        ([ id, value ]) => [ id, createActivatableSkillDependentWithValue (value) (id) ]
+      )
+    )
 
 const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRecord =>
   HeroModel ({
@@ -84,7 +151,7 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
 
     attributes: OrderedMap.fromArray (
       hero .attr .values .map<[string, Record<AttributeDependent>]> (
-        ({ id, value }) => [id, createAttributeDependentWithValue (value) (id)]
+        ({ id, value }) => [ id, createAttributeDependentWithValue (value) (id) ]
       )
     ),
 
@@ -116,7 +183,7 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
     belongings: Belongings ({
       items: OrderedMap.fromArray (
         Object.entries (hero .belongings .items) .map<[string, Record<Item>]> (
-          ([id, obj]) => [
+          ([ id, obj ]) => [
             id,
             Item ({
               id,
@@ -178,7 +245,7 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
         ? OrderedMap.fromArray (
           Object.entries (hero .belongings .armorZones)
             .map<[string, Record<HitZoneArmor>]> (
-              ([id, obj]) => [
+              ([ id, obj ]) => [
                 id,
                 HitZoneArmor ({
                   id,
@@ -217,7 +284,7 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
       ? OrderedMap.fromArray (
         Object.entries (hero .pets)
           .map<[string, Record<Pet>]> (
-            ([id, obj]) => [
+            ([ id, obj ]) => [
               id,
               Pet ({
                 id,
@@ -251,7 +318,7 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
                 mov: Maybe (obj .mov),
                 at: Maybe (obj .at),
                 pa: Maybe (obj .pa),
-              })]
+              }) ]
           )
       )
       : OrderedMap.empty,
@@ -266,73 +333,6 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
     socialStatusDependencies: Nothing,
     transferredUnfamiliarSpells: Nothing,
   })
-
-const getActivatableDependent =
-  (source: StringKeyObject<Raw.RawActiveObject[]>): HeroModel["advantages"] =>
-    OrderedMap.fromArray (
-      Object.entries (source) .map<[string, Record<ActivatableDependent>]> (
-        ([id, active]) => [
-          id,
-          createActivatableDependentWithActive (fromArray (active .map (e => ActiveObject ({
-                                                  cost: Maybe (e .cost),
-                                                  sid: Maybe (e .sid),
-                                                  sid2: Maybe (e .sid2),
-                                                  sid3: Maybe (e .sid3),
-                                                  tier: Maybe (e .tier),
-                                                }))))
-                                                (id),
-        ]
-      )
-    )
-
-interface ActivatableMaps {
-  advantages: OrderedMap<string, Record<ActivatableDependent>>;
-  disadvantages: OrderedMap<string, Record<ActivatableDependent>>;
-  specialAbilities: OrderedMap<string, Record<ActivatableDependent>>;
-}
-
-const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
-  const objectsInMap = getActivatableDependent (hero .activatable)
-
-  return foldlWithKey<string, Record<ActivatableDependent>, ActivatableMaps>
-    (acc => id => obj => {
-      const category = getCategoryById (id)
-
-      const key: keyof ActivatableMaps =
-        elem (Category.ADVANTAGES) (category)
-          ? "advantages"
-          : elem (Category.DISADVANTAGES) (category)
-          ? "disadvantages"
-          : "specialAbilities"
-
-      return {
-        ...acc,
-        [key]: OrderedMap.insert (id) (obj) (acc [key]),
-      }
-    })
-    ({
-      advantages: OrderedMap.empty,
-      disadvantages: OrderedMap.empty,
-      specialAbilities: OrderedMap.empty,
-    })
-    (objectsInMap)
-}
-
-const getDependentSkills =
-  (source: StringKeyObject<number>): OrderedMap<string, Record<SkillDependent>> =>
-    OrderedMap.fromArray (
-      Object.entries (source) .map<[string, Record<SkillDependent>]> (
-        ([id, value]) => [id, createSkillDependentWithValue (value) (id)]
-      )
-    )
-
-const getActivatableDependentSkills =
-  (source: StringKeyObject<number>): OrderedMap<string, Record<ActivatableSkillDependent>> =>
-    OrderedMap.fromArray (
-      Object.entries (source) .map<[string, Record<ActivatableSkillDependent>]> (
-        ([id, value]) => [id, createActivatableSkillDependentWithValue (value) (id)]
-      )
-    )
 
 const { advantages, disadvantages, specialAbilities, spells } = HeroModel.AL
 

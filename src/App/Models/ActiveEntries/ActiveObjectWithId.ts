@@ -1,16 +1,16 @@
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { ActiveObject } from "./ActiveObject";
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { ActiveObject } from "./ActiveObject"
 
 export interface ActiveObjectWithId {
   "@@name": "ActiveObjectWithId"
   id: string
   index: number
-  sid: Maybe<string | number>;
-  sid2: Maybe<string | number>;
-  sid3: Maybe<string | number>;
-  tier: Maybe<number>;
-  cost: Maybe<number>;
+  sid: Maybe<string | number>
+  sid2: Maybe<string | number>
+  sid3: Maybe<string | number>
+  tier: Maybe<number>
+  cost: Maybe<number>
 }
 
 export const ActiveObjectWithId =

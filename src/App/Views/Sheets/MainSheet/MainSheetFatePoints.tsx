@@ -1,16 +1,16 @@
-import * as React from "react";
-import { Just, Nothing } from "../../../../Data/Maybe";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { LabelBox } from "../../Universal/LabelBox";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Just, Nothing } from "../../../../Data/Maybe"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { LabelBox } from "../../Universal/LabelBox"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface SkillsSheetLanguagesProps {
+interface Props {
   fatePointsModifier: number
   l10n: L10nRecord
 }
 
-export function MainSheetFatePoints (props: SkillsSheetLanguagesProps) {
+export const MainSheetFatePoints: React.FC<Props> = props => {
   const { fatePointsModifier, l10n } = props
 
   return (

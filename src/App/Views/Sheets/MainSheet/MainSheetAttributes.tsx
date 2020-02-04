@@ -1,18 +1,18 @@
-import * as React from "react";
-import { fmapF } from "../../../../Data/Functor";
-import { List, map, toArray } from "../../../../Data/List";
-import { Just, Maybe, Nothing } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { DCId } from "../../../Constants/Ids";
-import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { Race } from "../../../Models/Wiki/Race";
-import { translate } from "../../../Utilities/I18n";
-import { pipe_ } from "../../../Utilities/pipe";
-import { MainSheetAttributesItem } from "./MainSheetAttributesItem";
-import { MainSheetFatePoints } from "./MainSheetFatePoints";
+import * as React from "react"
+import { fmapF } from "../../../../Data/Functor"
+import { List, map, toArray } from "../../../../Data/List"
+import { Just, Maybe, Nothing } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { DCId } from "../../../Constants/Ids"
+import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { Race } from "../../../Models/Wiki/Race"
+import { translate } from "../../../Utilities/I18n"
+import { pipe_ } from "../../../Utilities/pipe"
+import { MainSheetAttributesItem } from "./MainSheetAttributesItem"
+import { MainSheetFatePoints } from "./MainSheetFatePoints"
 
-export interface MainSheetAttributesProps {
+interface Props {
   attributes: List<Record<DerivedCharacteristic>>
   fatePointsModifier: number
   l10n: L10nRecord
@@ -21,7 +21,7 @@ export interface MainSheetAttributesProps {
 
 const DCA = DerivedCharacteristic.A
 
-export function MainSheetAttributes (props: MainSheetAttributesProps) {
+export const MainSheetAttributes: React.FC<Props> = props => {
   const { attributes, fatePointsModifier, race, l10n } = props
 
   return (

@@ -1,14 +1,14 @@
-import { fnull, List } from "../../../Data/List";
-import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe";
-import { fromDefault, makeLenses, member, notMember, Omit, Record } from "../../../Data/Record";
-import { Dependent, SkillDependency } from "../Hero/heroTypeHelpers";
+import { fnull, List } from "../../../Data/List"
+import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, member, notMember, Omit, Record } from "../../../Data/Record"
+import { Dependent, SkillDependency } from "../Hero/heroTypeHelpers"
 
 export interface AttributeDependent {
   "@@name": "AttributeDependent"
-  id: string;
-  value: number;
-  mod: number;
-  dependencies: List<SkillDependency>;
+  id: string
+  value: number
+  mod: number
+  dependencies: List<SkillDependency>
 }
 
 export const AttributeDependent =

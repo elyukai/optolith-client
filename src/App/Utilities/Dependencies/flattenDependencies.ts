@@ -1,21 +1,21 @@
-import { fmap } from "../../../Data/Functor";
-import { elem, filter, find, foldl, isList, List, map, maximumNonNegative } from "../../../Data/List";
-import { bindF, Maybe, Nothing, or, sum } from "../../../Data/Maybe";
-import { gt, gte, inc } from "../../../Data/Num";
-import { isRecord, Record } from "../../../Data/Record";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { ValueBasedDependent } from "../../Models/Hero/heroTypeHelpers";
-import { SkillOptionalDependency } from "../../Models/Hero/SkillOptionalDependency";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite";
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { AbilityRequirement, Activatable } from "../../Models/Wiki/wikiTypeHelpers";
-import { getHeroStateItem } from "../heroStateUtils";
-import { pipe } from "../pipe";
-import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites";
-import { isNumber } from "../typeCheckUtils";
-import { getWikiEntry } from "../WikiUtils";
+import { fmap } from "../../../Data/Functor"
+import { elem, filter, find, foldl, isList, List, map, maximumNonNegative } from "../../../Data/List"
+import { bindF, Maybe, Nothing, or, sum } from "../../../Data/Maybe"
+import { gt, gte, inc } from "../../../Data/Num"
+import { isRecord, Record } from "../../../Data/Record"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { ValueBasedDependent } from "../../Models/Hero/heroTypeHelpers"
+import { SkillOptionalDependency } from "../../Models/Hero/SkillOptionalDependency"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement"
+import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite"
+import { WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { AbilityRequirement, Activatable } from "../../Models/Wiki/wikiTypeHelpers"
+import { getHeroStateItem } from "../heroStateUtils"
+import { pipe } from "../pipe"
+import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites"
+import { isNumber } from "../typeCheckUtils"
+import { getWikiEntry } from "../WikiUtils"
 
 const { prerequisites } = Advantage.AL
 const { origin, value } = SkillOptionalDependency.AL

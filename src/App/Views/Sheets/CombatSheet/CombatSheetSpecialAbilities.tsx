@@ -1,20 +1,20 @@
-import * as React from "react";
-import { List } from "../../../../Data/List";
-import { fromMaybe, Maybe } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { ActiveActivatable } from "../../../Models/View/ActiveActivatable";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
-import { compressList } from "../../../Utilities/Activatable/activatableNameUtils";
-import { translate } from "../../../Utilities/I18n";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { List } from "../../../../Data/List"
+import { fromMaybe, Maybe } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { ActiveActivatable } from "../../../Models/View/ActiveActivatable"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { compressList } from "../../../Utilities/Activatable/activatableNameUtils"
+import { translate } from "../../../Utilities/I18n"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface CombatSheetSpecialAbilitiesProps {
+interface Props {
   combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   l10n: L10nRecord
 }
 
-export function CombatSheetSpecialAbilities (props: CombatSheetSpecialAbilitiesProps) {
+export const CombatSheetSpecialAbilities: React.FC<Props> = props => {
   const { combatSpecialAbilities: maybeCombatSpecialAbilities, l10n } = props
 
   return (

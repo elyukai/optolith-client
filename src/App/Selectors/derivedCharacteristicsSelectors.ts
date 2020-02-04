@@ -1,36 +1,36 @@
-import { notEquals } from "../../Data/Eq";
-import { fmap, fmapF } from "../../Data/Functor";
-import { elem, foldr, List, snoc } from "../../Data/List";
-import { bindF, ensure, fromMaybe, Just, liftM2, listToMaybe, maybe, Maybe, Nothing } from "../../Data/Maybe";
-import { add, multiply, negate, subtract } from "../../Data/Num";
-import { elems, fromList } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { Pair, Tuple } from "../../Data/Tuple";
-import { uncurry3 } from "../../Data/Tuple/Curry";
-import { sel1, sel2, sel3 } from "../../Data/Tuple/Select";
-import { AdvantageId, AttrId, DCId, DisadvantageId, SpecialAbilityId } from "../Constants/Ids";
-import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
-import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
-import { PermanentEnergyLoss } from "../Models/Hero/PermanentEnergyLoss";
-import { PermanentEnergyLossAndBoughtBack } from "../Models/Hero/PermanentEnergyLossAndBoughtBack";
-import { Rules } from "../Models/Hero/Rules";
-import { AttributeCombined } from "../Models/View/AttributeCombined";
-import { DerivedCharacteristic } from "../Models/View/DerivedCharacteristic";
-import { Race } from "../Models/Wiki/Race";
-import { getModifierByIsActive, getModifierByIsActives, modifyByLevelM } from "../Utilities/Activatable/activatableModifierUtils";
-import { getActiveSelections } from "../Utilities/Activatable/selectionUtils";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { translate } from "../Utilities/I18n";
-import { getAttributeValueWithDefault } from "../Utilities/Increasable/attributeUtils";
-import { pipe } from "../Utilities/pipe";
-import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils";
-import { mapGetToMaybeSlice, mapGetToSlice, mapGetToSliceWithProps } from "../Utilities/SelectorsUtils";
-import { getHighestPrimaryMagicalAttributeValue, getPrimaryBlessedAttribute } from "./attributeSelectors";
-import { getRace } from "./rcpSelectors";
-import { getRuleBooksEnabled } from "./rulesSelectors";
-import { getMagicalTraditionsFromHero } from "./spellsSelectors";
-import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getDisadvantages, getLocaleAsProp, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getRules, getSpecialAbilities } from "./stateSelectors";
+import { notEquals } from "../../Data/Eq"
+import { fmap, fmapF } from "../../Data/Functor"
+import { elem, foldr, List, snoc } from "../../Data/List"
+import { bindF, ensure, fromMaybe, Just, liftM2, listToMaybe, maybe, Maybe, Nothing } from "../../Data/Maybe"
+import { add, multiply, negate, subtract } from "../../Data/Num"
+import { elems, fromList } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { Pair, Tuple } from "../../Data/Tuple"
+import { uncurry3 } from "../../Data/Tuple/Curry"
+import { sel1, sel2, sel3 } from "../../Data/Tuple/Select"
+import { AdvantageId, AttrId, DCId, DisadvantageId, SpecialAbilityId } from "../Constants/Ids"
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../Models/ActiveEntries/ActiveObject"
+import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
+import { PermanentEnergyLoss } from "../Models/Hero/PermanentEnergyLoss"
+import { PermanentEnergyLossAndBoughtBack } from "../Models/Hero/PermanentEnergyLossAndBoughtBack"
+import { Rules } from "../Models/Hero/Rules"
+import { AttributeCombined } from "../Models/View/AttributeCombined"
+import { DerivedCharacteristic } from "../Models/View/DerivedCharacteristic"
+import { Race } from "../Models/Wiki/Race"
+import { getModifierByIsActive, getModifierByIsActives, modifyByLevelM } from "../Utilities/Activatable/activatableModifierUtils"
+import { getActiveSelections } from "../Utilities/Activatable/selectionUtils"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { translate } from "../Utilities/I18n"
+import { getAttributeValueWithDefault } from "../Utilities/Increasable/attributeUtils"
+import { pipe } from "../Utilities/pipe"
+import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils"
+import { mapGetToMaybeSlice, mapGetToSlice, mapGetToSliceWithProps } from "../Utilities/SelectorsUtils"
+import { getHighestPrimaryMagicalAttributeValue, getPrimaryBlessedAttribute } from "./attributeSelectors"
+import { getRace } from "./rcpSelectors"
+import { getRuleBooksEnabled } from "./rulesSelectors"
+import { getMagicalTraditionsFromHero } from "./spellsSelectors"
+import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getDisadvantages, getLocaleAsProp, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getRules, getSpecialAbilities } from "./stateSelectors"
 
 const ACA = AttributeCombined.A
 const ADA = AttributeDependent.A
@@ -79,6 +79,24 @@ export const getLP = createMaybeSelector (
     })
   }
 )
+
+const getPrimaryAEMod =
+  (last_trad: Record<ActivatableDependent>): number =>
+    elem (ActivatableDependent.A.id (last_trad))
+        (List (
+          SpecialAbilityId.TraditionArcaneBard,
+          SpecialAbilityId.TraditionArcaneDancer,
+          SpecialAbilityId.TraditionZauberalchimisten,
+          SpecialAbilityId.TraditionAnimisten
+        ))
+    ? 0.5
+    : elem (ActivatableDependent.A.id (last_trad))
+           (List (
+             SpecialAbilityId.TraditionIntuitiveMage,
+             SpecialAbilityId.TraditionSavant
+           ))
+    ? 0
+    : 1
 
 export const getAE = createMaybeSelector (
   getMagicalTraditionsFromHero,
@@ -151,24 +169,6 @@ export const getAE = createMaybeSelector (
     })
   }
 )
-
-const getPrimaryAEMod =
-  (last_trad: Record<ActivatableDependent>): number =>
-    elem (ActivatableDependent.A.id (last_trad))
-        (List (
-          SpecialAbilityId.TraditionArcaneBard,
-          SpecialAbilityId.TraditionArcaneDancer,
-          SpecialAbilityId.TraditionZauberalchimisten,
-          SpecialAbilityId.TraditionAnimisten
-        ))
-    ? 0.5
-    : elem (ActivatableDependent.A.id (last_trad))
-           (List (
-             SpecialAbilityId.TraditionIntuitiveMage,
-             SpecialAbilityId.TraditionSavant
-           ))
-    ? 0
-    : 1
 
 export const getKP = createMaybeSelector (
   getPrimaryBlessedAttribute,

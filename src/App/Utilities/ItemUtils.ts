@@ -1,24 +1,24 @@
-import { equals } from "../../Data/Eq";
-import { fmap } from "../../Data/Functor";
-import { set } from "../../Data/Lens";
-import { flength, fromArray, List, map, notNullStr } from "../../Data/List";
-import { bindF, ensure, fromJust, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, product } from "../../Data/Maybe";
-import { gt } from "../../Data/Num";
-import { Record } from "../../Data/Record";
-import { show } from "../../Data/Show";
-import { bimap, fst, isTuple, Pair, snd } from "../../Data/Tuple";
-import { IdPrefixes } from "../Constants/IdPrefixes";
-import { EditHitZoneArmor, EditHitZoneArmorSafe } from "../Models/Hero/EditHitZoneArmor";
-import { EditItem, EditItemL, EditItemSafe } from "../Models/Hero/EditItem";
-import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold";
-import { HitZoneArmor } from "../Models/Hero/HitZoneArmor";
-import { fromItemTemplate, Item } from "../Models/Hero/Item";
-import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
-import { prefixId } from "./IDUtils";
-import { ifElse } from "./ifElse";
-import { getLevelElementsWithZero } from "./levelUtils";
-import { toFloat, toInt } from "./NumberUtils";
-import { pipe } from "./pipe";
+import { equals } from "../../Data/Eq"
+import { fmap } from "../../Data/Functor"
+import { set } from "../../Data/Lens"
+import { flength, fromArray, List, map, notNullStr } from "../../Data/List"
+import { bindF, ensure, fromJust, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, product } from "../../Data/Maybe"
+import { gt } from "../../Data/Num"
+import { Record } from "../../Data/Record"
+import { show } from "../../Data/Show"
+import { bimap, fst, isTuple, Pair, snd } from "../../Data/Tuple"
+import { IdPrefixes } from "../Constants/IdPrefixes"
+import { EditHitZoneArmor, EditHitZoneArmorSafe } from "../Models/Hero/EditHitZoneArmor"
+import { EditItem, EditItemL, EditItemSafe } from "../Models/Hero/EditItem"
+import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold"
+import { HitZoneArmor } from "../Models/Hero/HitZoneArmor"
+import { fromItemTemplate, Item } from "../Models/Hero/Item"
+import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
+import { prefixId } from "./IDUtils"
+import { ifElse } from "./ifElse"
+import { getLevelElementsWithZero } from "./levelUtils"
+import { toFloat, toInt } from "./NumberUtils"
+import { pipe } from "./pipe"
 
 const showMaybe = maybe ("") (show)
 
@@ -152,7 +152,8 @@ export const editableToItem =
 
 export const convertPrimaryAttributeToArray =
   (id: string): List<string> =>
-    fromArray (id .split (/_/) .slice (1) .map (prefixId (IdPrefixes.ATTRIBUTES)))
+    fromArray (id .split (/_/u) .slice (1)
+.map (prefixId (IdPrefixes.ATTRIBUTES)))
 
 export const getLossLevelElements = () => getLevelElementsWithZero (4)
 

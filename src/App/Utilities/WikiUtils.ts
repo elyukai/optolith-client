@@ -1,28 +1,28 @@
-import { thrush } from "../../Data/Function";
-import { fmap } from "../../Data/Functor";
-import { elem, elemF, filter, fromArray, List } from "../../Data/List";
-import { bindF, Maybe } from "../../Data/Maybe";
-import { elems, lookupF, OrderedMap, OrderedMapValueElement } from "../../Data/OrderedMap";
-import { member, Record } from "../../Data/Record";
-import { show } from "../../Data/Show";
-import { ActivatableCategories, Category, SkillishCategories } from "../Constants/Categories";
-import { ProfessionCombined } from "../Models/View/ProfessionCombined";
-import { Advantage } from "../Models/Wiki/Advantage";
-import { Blessing } from "../Models/Wiki/Blessing";
-import { Cantrip } from "../Models/Wiki/Cantrip";
-import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
-import { Culture } from "../Models/Wiki/Culture";
-import { Disadvantage } from "../Models/Wiki/Disadvantage";
-import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
-import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
-import { Race } from "../Models/Wiki/Race";
-import { Skill } from "../Models/Wiki/Skill";
-import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { Spell } from "../Models/Wiki/Spell";
-import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { Activatable, Entry, EntryWithCategory, EntryWithGroup, SkillishEntry } from "../Models/Wiki/wikiTypeHelpers";
-import { getCategoryById } from "./IDUtils";
-import { pipe } from "./pipe";
+import { thrush } from "../../Data/Function"
+import { fmap } from "../../Data/Functor"
+import { elem, elemF, filter, fromArray, List } from "../../Data/List"
+import { bindF, Maybe } from "../../Data/Maybe"
+import { elems, lookupF, OrderedMap, OrderedMapValueElement } from "../../Data/OrderedMap"
+import { member, Record } from "../../Data/Record"
+import { show } from "../../Data/Show"
+import { ActivatableCategories, Category, SkillishCategories } from "../Constants/Categories"
+import { ProfessionCombined } from "../Models/View/ProfessionCombined"
+import { Advantage } from "../Models/Wiki/Advantage"
+import { Blessing } from "../Models/Wiki/Blessing"
+import { Cantrip } from "../Models/Wiki/Cantrip"
+import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
+import { Culture } from "../Models/Wiki/Culture"
+import { Disadvantage } from "../Models/Wiki/Disadvantage"
+import { ItemTemplate } from "../Models/Wiki/ItemTemplate"
+import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
+import { Race } from "../Models/Wiki/Race"
+import { Skill } from "../Models/Wiki/Skill"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { Spell } from "../Models/Wiki/Spell"
+import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { Activatable, Entry, EntryWithCategory, EntryWithGroup, SkillishEntry } from "../Models/Wiki/wikiTypeHelpers"
+import { getCategoryById } from "./IDUtils"
+import { pipe } from "./pipe"
 
 interface WikiKeyByCategory {
   [Category.ADVANTAGES]: "advantages"
@@ -102,6 +102,7 @@ export const getAllWikiEntriesByVariadicGroups =
               (elems (wiki))
 
 type ElementMixed =
+
   // ActivatableInstance |
   Record<Race> |
   Record<Culture> |

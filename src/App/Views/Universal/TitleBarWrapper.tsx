@@ -1,13 +1,13 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { guardReplace, Just } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { guardReplace, Just } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
 
-export interface TitleBarWrapperProps {
+interface Props {
   isFocused: boolean
 }
 
-export const TitleBarWrapper: React.FC<TitleBarWrapperProps> = ({ isFocused, children }) => (
+export const TitleBarWrapper: React.FC<Props> = ({ isFocused, children }) => (
   <div
     className={
       classListMaybe (List (

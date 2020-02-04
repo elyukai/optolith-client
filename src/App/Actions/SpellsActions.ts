@@ -1,28 +1,28 @@
-import { List } from "../../Data/List";
-import { bind, bindF, fromJust, isJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe";
-import { lookup } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { Spell } from "../Models/Wiki/Spell";
-import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
-import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
-import { getCurrentHeroPresent, getSpells, getWikiSpells } from "../Selectors/stateSelectors";
-import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";
-import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUtils";
-import { translate, translateP } from "../Utilities/I18n";
-import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
-import { pipe_ } from "../Utilities/pipe";
-import { SpellsSortOptions } from "../Utilities/Raw/JSON/Config";
-import { ReduxAction } from "./Actions";
-import { addAlert, AlertOptions } from "./AlertActions";
+import { List } from "../../Data/List"
+import { bind, bindF, fromJust, isJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe"
+import { lookup } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { Spell } from "../Models/Wiki/Spell"
+import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
+import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
+import { getCurrentHeroPresent, getSpells, getWikiSpells } from "../Selectors/stateSelectors"
+import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
+import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUtils"
+import { translate, translateP } from "../Utilities/I18n"
+import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
+import { pipe_ } from "../Utilities/pipe"
+import { SpellsSortOptions } from "../Utilities/Raw/JSON/Config"
+import { ReduxAction } from "./Actions"
+import { addAlert, AlertOptions } from "./AlertActions"
 
 export interface ActivateSpellAction {
   type: ActionTypes.ACTIVATE_SPELL
   payload: {
-    id: string;
-    wikiEntry: Record<Spell>;
+    id: string
+    wikiEntry: Record<Spell>
   }
 }
 
@@ -71,7 +71,7 @@ export const addSpell =
 export interface ActivateCantripAction {
   type: ActionTypes.ACTIVATE_CANTRIP
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -112,8 +112,8 @@ export const addCantrip =
 export interface DeactivateSpellAction {
   type: ActionTypes.DEACTIVATE_SPELL
   payload: {
-    id: string;
-    wikiEntry: Record<Spell>;
+    id: string
+    wikiEntry: Record<Spell>
   }
 }
 
@@ -141,7 +141,7 @@ export const removeSpell =
 export interface DeactivateCantripAction {
   type: ActionTypes.DEACTIVATE_CANTRIP
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -155,7 +155,7 @@ export const removeCantrip = (id: string): DeactivateCantripAction => ({
 export interface AddSpellPointAction {
   type: ActionTypes.ADD_SPELL_POINT
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -201,7 +201,7 @@ export const addSpellPoint =
 export interface RemoveSpellPointAction {
   type: ActionTypes.REMOVE_SPELL_POINT
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -215,7 +215,7 @@ export const removeSpellPoint = (id: string): RemoveSpellPointAction => ({
 export interface SetSpellsSortOrderAction {
   type: ActionTypes.SET_SPELLS_SORT_ORDER
   payload: {
-    sortOrder: SpellsSortOptions;
+    sortOrder: SpellsSortOptions
   }
 }
 
@@ -229,7 +229,7 @@ export const setSpellsSortOrder = (sortOrder: SpellsSortOptions): SetSpellsSortO
 export interface SetActiveSpellsFilterTextAction {
   type: ActionTypes.SET_SPELLS_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 
@@ -243,7 +243,7 @@ export const setActiveSpellsFilterText = (filterText: string): SetActiveSpellsFi
 export interface SetInactiveSpellsFilterTextAction {
   type: ActionTypes.SET_INACTIVE_SPELLS_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 

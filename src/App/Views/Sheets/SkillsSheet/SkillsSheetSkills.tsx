@@ -1,19 +1,19 @@
-import * as React from "react";
-import { List, subscriptF } from "../../../../Data/List";
-import { bindF, fromMaybe, Maybe, maybe } from "../../../../Data/Maybe";
-import { lookup, OrderedMap } from "../../../../Data/OrderedMap";
-import { Record } from "../../../../Data/Record";
-import { Pair } from "../../../../Data/Tuple";
-import { AttributeCombined } from "../../../Models/View/AttributeCombined";
-import { SkillCombined } from "../../../Models/View/SkillCombined";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { pipe_ } from "../../../Utilities/pipe";
-import { TextBox } from "../../Universal/TextBox";
-import { iterateGroupHeaders } from "./SkillsSheetSkillsGroups";
-import { iterateList } from "./SkillsSheetSkillsIterate";
+import * as React from "react"
+import { List, subscriptF } from "../../../../Data/List"
+import { bindF, fromMaybe, Maybe, maybe } from "../../../../Data/Maybe"
+import { lookup, OrderedMap } from "../../../../Data/OrderedMap"
+import { Record } from "../../../../Data/Record"
+import { Pair } from "../../../../Data/Tuple"
+import { AttributeCombined } from "../../../Models/View/AttributeCombined"
+import { SkillCombined } from "../../../Models/View/SkillCombined"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { pipe_ } from "../../../Utilities/pipe"
+import { TextBox } from "../../Universal/TextBox"
+import { iterateGroupHeaders } from "./SkillsSheetSkillsGroups"
+import { iterateList } from "./SkillsSheetSkillsIterate"
 
-export interface SkillsSheetSkillsProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
   l10n: L10nRecord
@@ -23,17 +23,17 @@ export interface SkillsSheetSkillsProps {
 
 const EmptyRow = () => (
   <tr>
-    <td/>
-    <td/>
-    <td/>
-    <td/>
-    <td/>
-    <td/>
-    <td/>
+    <td />
+    <td />
+    <td />
+    <td />
+    <td />
+    <td />
+    <td />
   </tr>
 )
 
-export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
+export const SkillsSheetSkills: React.FC<Props> = props => {
   const { attributes, checkAttributeValueVisibility, l10n, skillsByGroup, skillGroupPages } = props
 
   const groupHeaders = iterateGroupHeaders (l10n)

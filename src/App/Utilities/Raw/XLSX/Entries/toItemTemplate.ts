@@ -1,21 +1,21 @@
-import { fmap, fmapF } from "../../../../../Data/Functor";
-import { Cons, flength, head, last, List } from "../../../../../Data/List";
-import { ensure, Nothing } from "../../../../../Data/Maybe";
-import { Pair } from "../../../../../Data/Tuple";
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { ItemTemplate } from "../../../../Models/Wiki/ItemTemplate";
-import { PrimaryAttributeDamageThreshold } from "../../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
-import { prefixAttr, prefixId, prefixItemTpl } from "../../../IDUtils";
-import { toNatural } from "../../../NumberUtils";
-import { pipe } from "../../../pipe";
-import { exactR } from "../../../RegexUtils";
-import { Expect } from "../../Expect";
-import { mergeRowsById } from "../MergeRows";
-import { modifyNegIntNoBreak } from "../SourceHelpers";
-import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapBoolean, mensureMapFloatOptional, mensureMapIntegerOptional, mensureMapListBindAfterOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalInRange, mensureMapNaturalInRangeOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredOptional } from "../Validators/ToValue";
-import { toErrata } from "./Sub/toErrata";
-import { toSourceLinks } from "./Sub/toSourceLinks";
+import { fmap, fmapF } from "../../../../../Data/Functor"
+import { Cons, flength, head, last, List } from "../../../../../Data/List"
+import { ensure, Nothing } from "../../../../../Data/Maybe"
+import { Pair } from "../../../../../Data/Tuple"
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { ItemTemplate } from "../../../../Models/Wiki/ItemTemplate"
+import { PrimaryAttributeDamageThreshold } from "../../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
+import { prefixAttr, prefixId, prefixItemTpl } from "../../../IDUtils"
+import { toNatural } from "../../../NumberUtils"
+import { pipe } from "../../../pipe"
+import { exactR } from "../../../RegexUtils"
+import { Expect } from "../../Expect"
+import { mergeRowsById } from "../MergeRows"
+import { modifyNegIntNoBreak } from "../SourceHelpers"
+import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapBoolean, mensureMapFloatOptional, mensureMapIntegerOptional, mensureMapListBindAfterOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalInRange, mensureMapNaturalInRangeOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredOptional } from "../Validators/ToValue"
+import { toErrata } from "./Sub/toErrata"
+import { toSourceLinks } from "./Sub/toSourceLinks"
 
 const primaryAttributeRx =
   new RegExp (exactR (`${prefixAttr ("[1-8]")}|${prefixAttr ("6_8")}`), "u")

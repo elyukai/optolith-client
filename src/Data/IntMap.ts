@@ -7,18 +7,18 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "../App/Utilities/pipe";
-import { not } from "./Bool";
-import { equals } from "./Eq";
-import { cnst, flip, ident, on } from "./Function";
-import { fmapF } from "./Functor";
-import { Internals } from "./Internals";
-import { consF, intercalate, List, notNull } from "./List";
-import { alt, fromJust, fromMaybe, isJust, Just, Maybe, maybe, Nothing } from "./Maybe";
-import { abs, add, inc, max } from "./Num";
-import { show } from "./Show";
-import { curry, fst, Pair, second, snd, uncurry } from "./Tuple";
-import { upd2 } from "./Tuple/Update";
+import { pipe } from "../App/Utilities/pipe"
+import { not } from "./Bool"
+import { equals } from "./Eq"
+import { cnst, flip, ident, on } from "./Function"
+import { fmapF } from "./Functor"
+import { Internals } from "./Internals"
+import { consF, intercalate, List, notNull } from "./List"
+import { alt, fromJust, fromMaybe, isJust, Just, Maybe, maybe, Nothing } from "./Maybe"
+import { abs, add, inc, max } from "./Num"
+import { show } from "./Show"
+import { curry, fst, Pair, second, snd, uncurry } from "./Tuple"
+import { upd2 } from "./Tuple/Update"
 
 import Map = Internals.Map
 import Bin = Internals.Bin
@@ -28,6 +28,168 @@ import isTip = Internals.isTip
 type Key = number
 export type IntMap<A> = Map<Key, A>
 type IntBin<A> = Bin<Key, A>
+
+
+// Internal
+
+// "Slope" = difference in heights between the left and right subtrees of a node
+
+const height = <A> (mp: IntMap<A>): number => isTip (mp) ? 0 : mp .height
+
+const slope = <A> (mp: IntMap<A>): number => isTip (mp) ? 0 : height (mp .left) - height (mp .right)
+
+const calcHeight: <A> (l: IntMap<A>) => (r: IntMap<A>) => number =
+  l => pipe (on (max) (height) (l), inc)
+
+const calcSize: <A> (l: IntMap<A>) => (r: IntMap<A>) => number =
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  l => pipe (on (add) (size) (l), inc)
+
+// /**
+//  * If the trees are balanced but the left side weights less than the right side,
+//  * we need to ensure the left side is heavier so that we can compare trees by
+//  * structural equality.
+//  */
+// const isRotationNeededForLeftWeight =
+//   <A> (mp: IntBin<A>) =>
+//     slope (mp) === -1 && size (mp .left) >= 1 && size (mp .right) >= 2
+
+const rotateRight =
+  <A> (mp: IntBin<A>): IntBin<A> => {
+    const left = mp .left as IntBin<A>
+    const t1 = left .left
+    const t2 = left .right
+    const t3 = mp .right
+    const y_key = left .key
+    const y_value = left .value
+    const x_key = mp .key
+    const x_value = mp .value
+
+    const right = Bin (calcSize (t2) (t3)) (calcHeight (t2) (t3)) (x_key) (x_value) (t2) (t3)
+
+    return Bin (calcSize (t1) (right))
+               (calcHeight (t1) (right))
+               (y_key)
+               (y_value)
+               (t1)
+               (right)
+  }
+
+const rotateLeft =
+  <A> (mp: IntBin<A>): IntBin<A> => {
+    const right = mp .right as IntBin<A>
+    const t1 = mp .left
+    const t2 = right .left
+    const t3 = right .right
+    const y_key = mp .key
+    const y_value = mp .value
+    const x_key = right .key
+    const x_value = right .value
+
+    const left = Bin (calcSize (t1) (t2)) (calcHeight (t1) (t2)) (y_key) (y_value) (t1) (t2)
+
+    return Bin (calcSize (left) (t3))
+               (calcHeight (left) (t3))
+               (x_key)
+               (x_value)
+               (left)
+               (t3)
+  }
+
+const rebalance =
+  <A> (mp: IntBin<A>): IntBin<A> => {
+    const slope_current = slope (mp)
+    const slope_left = slope (mp .left)
+    const slope_right = slope (mp .right)
+
+    // const is_rotation_needed_for_left_weight = isRotationNeededForLeftWeight (mp)
+
+    // if (is_rotation_needed_for_left_weight) {
+    //   console.log (`slope_current = ${slope_current}`)
+    //   console.log (`slope_left = ${slope_left}`)
+    //   console.log (`slope_right = ${slope_right}`)
+    //   console.log (`before\n${showTree (mp)}`)
+    //   if (isTip ((mp .right as IntBin<A>) .right)) {
+    //     console.log (`after alt\n${showTree ((() => {
+    //       const new_left = Bin (calcSize (mp .left) (Tip))
+    //                            (calcHeight (mp .left) (Tip))
+    //                            (mp .key)
+    //                            (mp .value)
+    //                            (mp .left)
+    //                            (Tip)
+
+    //       const new_right = singleton ((mp .right as IntBin<A>) .key)
+    //                                   ((mp .right as IntBin<A>) .value)
+
+    //       const new_main = (mp .right as IntBin<A>) .left as IntBin<A>
+
+    //       return Bin (calcSize (mp .left) (new_right))
+    //                  (calcHeight (mp .left) (new_right))
+    //                  (new_main .key)
+    //                  (new_main .value)
+    //                  (new_left)
+    //                  (new_right)
+    //     }) ())}`)
+    //   }
+    //   console.log (`after\n${showTree (rotateLeft (mp))}`)
+    // }
+
+    // return is_rotation_needed_for_left_weight
+    // ? isTip ((mp .right as IntBin<A>) .right)
+    //   ? (() => {
+    //       const new_left = Bin (calcSize (mp .left) (Tip))
+    //                            (calcHeight (mp .left) (Tip))
+    //                            (mp .key)
+    //                            (mp .value)
+    //                            (mp .left)
+    //                            (Tip)
+
+    //       const new_right = singleton ((mp .right as IntBin<A>) .key)
+    //                                   ((mp .right as IntBin<A>) .value)
+
+    //       const new_main = (mp .right as IntBin<A>) .left as IntBin<A>
+
+    //       return Bin (calcSize (mp .left) (new_right))
+    //                  (calcHeight (mp .left) (new_right))
+    //                  (new_main .key)
+    //                  (new_main .value)
+    //                  (new_left)
+    //                  (new_right)
+    //     }) ()
+    //   : rotateLeft (mp)
+    // : abs (slope_current) < 2
+    return abs (slope_current) < 2
+    ? mp
+    : slope_current === 2 && slope_left !== -1
+    ? rotateRight (mp)
+    : slope_current === 2 && slope_left === -1
+    ? (() => {
+        const new_left = rotateLeft (mp .left as IntBin<A>)
+
+        return rotateRight (Bin (calcSize (new_left) (mp .right))
+                                (calcHeight (new_left) (mp .right))
+                                (mp .key)
+                                (mp .value)
+                                (new_left)
+                                (mp .right))
+      }) ()
+    : slope_current === -2 && slope_right !== 1
+    ? rotateLeft (mp)
+    : slope_current === -2 && slope_right === 1
+    ? (() => {
+        const new_right = rotateRight (mp .right as IntBin<A>)
+
+        return rotateLeft (Bin (calcSize (mp .left) (new_right))
+                               (calcHeight (mp .left) (new_right))
+                               (mp .key)
+                               (mp .value)
+                               (mp .left)
+                               (new_right))
+      }) ()
+    : (() => {
+        throw new TypeError ("rebalance: BST was not balanced before")
+      }) ()
+  }
 
 
 // FOLDABLE
@@ -347,17 +509,6 @@ export const insertLookupWithKey =
 
 // DELETE/UPDATE
 
-/**
- * `delete :: Key -> IntMap a -> IntMap a`
- *
- * Delete a key and its value from the map. When the key is not a member of the
- * map, the original map is returned.
- */
-export const sdelete =
-  (key: Key) =>
-  <A> (mp: IntMap<A>): IntMap<A> =>
-    fromMaybe (mp) (sdeleteMaybe (key) (mp))
-
 const minKeyValue =
   <A> (mp: IntBin<A>): Pair<number, A> =>
     isTip (mp .left) ? Pair (mp .key, mp .value) : minKeyValue (mp .left)
@@ -376,6 +527,7 @@ const sdeleteMaybe =
       ? Just (mp .left)
       : (() => {
           const keyValue_ = minKeyValue (mp .right)
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
           const right_ = sdelete (fst (keyValue_)) (mp .right)
 
           return Just (rebalance (Bin (calcSize (mp .left) (right_))
@@ -402,30 +554,15 @@ const sdeleteMaybe =
                                      (right)))
 
 /**
- * `adjust :: (a -> a) -> Key -> IntMap a -> IntMap a`
+ * `delete :: Key -> IntMap a -> IntMap a`
  *
- * Update a value at a specific key with the result of the provided function.
- * When the key is not a member of the map, the original map is returned.
+ * Delete a key and its value from the map. When the key is not a member of the
+ * map, the original map is returned.
  */
-export const adjust =
-  <A>
-  (f: (value: A) => A) =>
+export const sdelete =
   (key: Key) =>
-  (mp: IntMap<A>): IntMap<A> =>
-    fromMaybe (mp) (adjustWithKeyMaybe (cnst (f)) (key) (mp))
-
-/**
- * `adjustWithKey :: (Key -> a -> a) -> Key -> IntMap a -> IntMap a`
- *
- * Adjust a value at a specific key. When the key is not a member of the map,
- * the original map is returned.
- */
-export const adjustWithKey =
-  <A>
-  (f: (key: Key) => (value: A) => A) =>
-  (key: Key) =>
-  (mp: IntMap<A>): IntMap<A> =>
-    fromMaybe (mp) (adjustWithKeyMaybe (f) (key) (mp))
+  <A> (mp: IntMap<A>): IntMap<A> =>
+    fromMaybe (mp) (sdeleteMaybe (key) (mp))
 
 const adjustWithKeyMaybe =
   <A>
@@ -458,47 +595,30 @@ const adjustWithKeyMaybe =
                           (right))
 
 /**
- * `update :: Ord k => (a -> Maybe a) -> k -> Map k a -> Map k a`
+ * `adjust :: (a -> a) -> Key -> IntMap a -> IntMap a`
  *
- * The expression `(update f k map)` updates the value `x` at `k` (if it is in
- * the map). If `(f x)` is `Nothing`, the element is deleted. If it is
- * `(Just y)`, the key `k` is bound to the new value `y`.
+ * Update a value at a specific key with the result of the provided function.
+ * When the key is not a member of the map, the original map is returned.
  */
-export const update =
+export const adjust =
   <A>
-  (f: (value: A) => Maybe<A>) =>
+  (f: (value: A) => A) =>
   (key: Key) =>
   (mp: IntMap<A>): IntMap<A> =>
-    maybe (mp) <Pair<Maybe<A>, IntMap<A>>> (snd) (updateLookupWithKeyMaybe (cnst (f)) (key) (mp))
+    fromMaybe (mp) (adjustWithKeyMaybe (cnst (f)) (key) (mp))
 
 /**
- * `updateWithKey :: Ord k => (k -> a -> Maybe a) -> k -> Map k a -> Map k a`
+ * `adjustWithKey :: (Key -> a -> a) -> Key -> IntMap a -> IntMap a`
  *
- * The expression `(updateWithKey f k map)` updates the value `x` at `k` (if
- * it is in the map). If `(f k x)` is `Nothing`, the element is deleted. If it
- * is `(Just y)`, the key `k` is bound to the new value `y`.
+ * Adjust a value at a specific key. When the key is not a member of the map,
+ * the original map is returned.
  */
-export const updateWithKey =
+export const adjustWithKey =
   <A>
-  (f: (key: Key) => (value: A) => Maybe<A>) =>
+  (f: (key: Key) => (value: A) => A) =>
   (key: Key) =>
   (mp: IntMap<A>): IntMap<A> =>
-    maybe (mp) <Pair<Maybe<A>, IntMap<A>>> (snd) (updateLookupWithKeyMaybe (f) (key) (mp))
-
-/**
- * `updateLookupWithKey :: (Key -> a -> Maybe a) -> Key -> IntMap a -> (Maybe a, IntMap a)`
- *
- * Lookup and update. See also `updateWithKey`. The function returns changed
- * value, if it is updated. Returns the original key value if the map entry is
- * deleted.
- */
-export const updateLookupWithKey =
-  <A>
-  (f: (key: Key) => (value: A) => Maybe<A>) =>
-  (key: Key) =>
-  (mp: IntMap<A>): Pair<Maybe<A>, IntMap<A>> =>
-    fromMaybe<Pair<Maybe<A>, IntMap<A>>> (Pair (Nothing, mp))
-                                         (updateLookupWithKeyMaybe (f) (key) (mp))
+    fromMaybe (mp) (adjustWithKeyMaybe (f) (key) (mp))
 
 const updateLookupWithKeyMaybe =
   <A>
@@ -561,6 +681,49 @@ const updateLookupWithKeyMaybe =
                                              (mp .value)
                                              (mp .left)
                                              (right))))
+
+/**
+ * `update :: Ord k => (a -> Maybe a) -> k -> Map k a -> Map k a`
+ *
+ * The expression `(update f k map)` updates the value `x` at `k` (if it is in
+ * the map). If `(f x)` is `Nothing`, the element is deleted. If it is
+ * `(Just y)`, the key `k` is bound to the new value `y`.
+ */
+export const update =
+  <A>
+  (f: (value: A) => Maybe<A>) =>
+  (key: Key) =>
+  (mp: IntMap<A>): IntMap<A> =>
+    maybe (mp) <Pair<Maybe<A>, IntMap<A>>> (snd) (updateLookupWithKeyMaybe (cnst (f)) (key) (mp))
+
+/**
+ * `updateWithKey :: Ord k => (k -> a -> Maybe a) -> k -> Map k a -> Map k a`
+ *
+ * The expression `(updateWithKey f k map)` updates the value `x` at `k` (if
+ * it is in the map). If `(f k x)` is `Nothing`, the element is deleted. If it
+ * is `(Just y)`, the key `k` is bound to the new value `y`.
+ */
+export const updateWithKey =
+  <A>
+  (f: (key: Key) => (value: A) => Maybe<A>) =>
+  (key: Key) =>
+  (mp: IntMap<A>): IntMap<A> =>
+    maybe (mp) <Pair<Maybe<A>, IntMap<A>>> (snd) (updateLookupWithKeyMaybe (f) (key) (mp))
+
+/**
+ * `updateLookupWithKey :: (Key -> a -> Maybe a) -> Key -> IntMap a -> (Maybe a, IntMap a)`
+ *
+ * Lookup and update. See also `updateWithKey`. The function returns changed
+ * value, if it is updated. Returns the original key value if the map entry is
+ * deleted.
+ */
+export const updateLookupWithKey =
+  <A>
+  (f: (key: Key) => (value: A) => Maybe<A>) =>
+  (key: Key) =>
+  (mp: IntMap<A>): Pair<Maybe<A>, IntMap<A>> =>
+    fromMaybe<Pair<Maybe<A>, IntMap<A>>> (Pair (Nothing, mp))
+                                         (updateLookupWithKeyMaybe (f) (key) (mp))
 
 /**
  * `alter :: (Maybe a -> Maybe a) -> Key -> IntMap a -> IntMap a`
@@ -682,22 +845,10 @@ export const fromList =
  */
 export const fromListN =
   <A> (xs: [Key, A][]): IntMap<A> =>
-    xs .reduce<IntMap<A>> ((mp, [k, v]) => insert (k) (v) (mp), empty)
+    xs .reduce<IntMap<A>> ((mp, [ k, v ]) => insert (k) (v) (mp), empty)
 
 
 // DEBUGGING
-
-export const showTreeWith =
-  <A> (showelem: (key: Key) => (x: A) => string) =>
-  (wide: boolean) =>
-  (mp: IntMap<A>): string => {
-  if (isTip (mp)) {
-    return "+"
-  }
-  else {
-    return intercalate ("\n") (showBranch (true) (showelem) (wide) (Nothing) (0) (mp))
-  }
-}
 
 const showBranch =
   (start: boolean) =>
@@ -709,6 +860,7 @@ const showBranch =
     const dls = fromMaybe (depth) (depthLinesStart)
     const with_line = depth - dls
     const without_line = depth - with_line
+
     // depth whitespace
     const dws = "   " .repeat (without_line) + "|  " .repeat (with_line)
     const elem_dws = dws .slice (0, -3) + (start ? "" : "+--")
@@ -741,164 +893,16 @@ const showBranch =
     }
   }
 
+export const showTreeWith =
+  <A> (showelem: (key: Key) => (x: A) => string) =>
+  (wide: boolean) =>
+  (mp: IntMap<A>): string => {
+  if (isTip (mp)) {
+    return "+"
+  }
+  else {
+    return intercalate ("\n") (showBranch (true) (showelem) (wide) (Nothing) (0) (mp))
+  }
+}
+
 export const showTree = showTreeWith<any> (k => x => `(${show (k)}, ${show (x)})`) (true)
-
-
-// Internal
-
-const rebalance =
-  <A> (mp: IntBin<A>): IntBin<A> => {
-    const slope_current = slope (mp)
-    const slope_left = slope (mp .left)
-    const slope_right = slope (mp .right)
-    // const is_rotation_needed_for_left_weight = isRotationNeededForLeftWeight (mp)
-
-    // if (is_rotation_needed_for_left_weight) {
-    //   console.log (`slope_current = ${slope_current}`)
-    //   console.log (`slope_left = ${slope_left}`)
-    //   console.log (`slope_right = ${slope_right}`)
-    //   console.log (`before\n${showTree (mp)}`)
-    //   if (isTip ((mp .right as IntBin<A>) .right)) {
-    //     console.log (`after alt\n${showTree ((() => {
-    //       const new_left = Bin (calcSize (mp .left) (Tip))
-    //                            (calcHeight (mp .left) (Tip))
-    //                            (mp .key)
-    //                            (mp .value)
-    //                            (mp .left)
-    //                            (Tip)
-
-    //       const new_right = singleton ((mp .right as IntBin<A>) .key)
-    //                                   ((mp .right as IntBin<A>) .value)
-
-    //       const new_main = (mp .right as IntBin<A>) .left as IntBin<A>
-
-    //       return Bin (calcSize (mp .left) (new_right))
-    //                  (calcHeight (mp .left) (new_right))
-    //                  (new_main .key)
-    //                  (new_main .value)
-    //                  (new_left)
-    //                  (new_right)
-    //     }) ())}`)
-    //   }
-    //   console.log (`after\n${showTree (rotateLeft (mp))}`)
-    // }
-
-    // return is_rotation_needed_for_left_weight
-    // ? isTip ((mp .right as IntBin<A>) .right)
-    //   ? (() => {
-    //       const new_left = Bin (calcSize (mp .left) (Tip))
-    //                            (calcHeight (mp .left) (Tip))
-    //                            (mp .key)
-    //                            (mp .value)
-    //                            (mp .left)
-    //                            (Tip)
-
-    //       const new_right = singleton ((mp .right as IntBin<A>) .key)
-    //                                   ((mp .right as IntBin<A>) .value)
-
-    //       const new_main = (mp .right as IntBin<A>) .left as IntBin<A>
-
-    //       return Bin (calcSize (mp .left) (new_right))
-    //                  (calcHeight (mp .left) (new_right))
-    //                  (new_main .key)
-    //                  (new_main .value)
-    //                  (new_left)
-    //                  (new_right)
-    //     }) ()
-    //   : rotateLeft (mp)
-    // : abs (slope_current) < 2
-    return abs (slope_current) < 2
-    ? mp
-    : slope_current === 2 && slope_left !== -1
-    ? rotateRight (mp)
-    : slope_current === 2 && slope_left === -1
-    ? (() => {
-        const new_left = rotateLeft (mp .left as IntBin<A>)
-
-        return rotateRight (Bin (calcSize (new_left) (mp .right))
-                                (calcHeight (new_left) (mp .right))
-                                (mp .key)
-                                (mp .value)
-                                (new_left)
-                                (mp .right))
-      }) ()
-    : slope_current === -2 && slope_right !== 1
-    ? rotateLeft (mp)
-    : slope_current === -2 && slope_right === 1
-    ? (() => {
-        const new_right = rotateRight (mp .right as IntBin<A>)
-
-        return rotateLeft (Bin (calcSize (mp .left) (new_right))
-                               (calcHeight (mp .left) (new_right))
-                               (mp .key)
-                               (mp .value)
-                               (mp .left)
-                               (new_right))
-      }) ()
-    : (() => {
-        throw new TypeError ("rebalance: BST was not balanced before")
-      }) ()
-  }
-
-// "Slope" = difference in heights between the left and right subtrees of a node
-
-const slope = <A> (mp: IntMap<A>): number => isTip (mp) ? 0 : height (mp .left) - height (mp .right)
-
-const height = <A> (mp: IntMap<A>): number => isTip (mp) ? 0 : mp .height
-
-const calcHeight: <A> (l: IntMap<A>) => (r: IntMap<A>) => number =
-  l => pipe (on (max) (height) (l), inc)
-
-const calcSize: <A> (l: IntMap<A>) => (r: IntMap<A>) => number =
-  l => pipe (on (add) (size) (l), inc)
-
-// /**
-//  * If the trees are balanced but the left side weights less than the right side,
-//  * we need to ensure the left side is heavier so that we can compare trees by
-//  * structural equality.
-//  */
-// const isRotationNeededForLeftWeight =
-//   <A> (mp: IntBin<A>) =>
-//     slope (mp) === -1 && size (mp .left) >= 1 && size (mp .right) >= 2
-
-const rotateRight =
-  <A> (mp: IntBin<A>): IntBin<A> => {
-    const left = mp .left as IntBin<A>
-    const t1 = left .left
-    const t2 = left .right
-    const t3 = mp .right
-    const y_key = left .key
-    const y_value = left .value
-    const x_key = mp .key
-    const x_value = mp .value
-
-    const right = Bin (calcSize (t2) (t3)) (calcHeight (t2) (t3)) (x_key) (x_value) (t2) (t3)
-
-    return Bin (calcSize (t1) (right))
-               (calcHeight (t1) (right))
-               (y_key)
-               (y_value)
-               (t1)
-               (right)
-  }
-
-const rotateLeft =
-  <A> (mp: IntBin<A>): IntBin<A> => {
-    const right = mp .right as IntBin<A>
-    const t1 = mp .left
-    const t2 = right .left
-    const t3 = right .right
-    const y_key = mp .key
-    const y_value = mp .value
-    const x_key = right .key
-    const x_value = right .value
-
-    const left = Bin (calcSize (t1) (t2)) (calcHeight (t1) (t2)) (y_key) (y_value) (t1) (t2)
-
-    return Bin (calcSize (left) (t3))
-               (calcHeight (left) (t3))
-               (x_key)
-               (x_value)
-               (left)
-               (t3)
-  }

@@ -1,9 +1,9 @@
-import * as React from "react";
-import { Maybe, orN } from "../../../Data/Maybe";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Aside } from "../Universal/Aside";
-import { ErrorMessage } from "../Universal/ErrorMessage";
-import { WikiInfoContent, WikiInfoContentStateProps } from "./WikiInfoContent";
+import * as React from "react"
+import { Maybe, orN } from "../../../Data/Maybe"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { Aside } from "../Universal/Aside"
+import { ErrorMessage } from "../Universal/ErrorMessage"
+import { WikiInfoContent, WikiInfoContentStateProps } from "./WikiInfoContent"
 
 export interface WikiInfoOwnProps {
   currentId: Maybe<string>
@@ -17,8 +17,8 @@ export type WikiInfoProps = WikiInfoContentStateProps & WikiInfoDispatchProps & 
 
 export interface WikiInfoState {
   hasError?: {
-    error: Error;
-    info: any;
+    error: Error
+    info: any
   }
 }
 
@@ -48,30 +48,15 @@ export class WikiInfo extends React.Component<WikiInfoProps, WikiInfoState> {
       currentId,
       l10n,
       noWrapper,
-      attributes,
-      advantages,
-      books,
-      blessings,
-      cantrips,
-      combatTechniques,
-      cultures,
       combinedRaces,
       combinedCultures,
       combinedProfessions,
-      disadvantages,
       items,
-      itemTemplates,
       languages,
       liturgicalChantExtensions,
-      liturgicalChants,
-      professionVariants,
-      races,
       scripts,
       sex,
-      skills,
       spellExtensions,
-      spells,
-      specialAbilities,
       wiki,
     } = this.props
 
@@ -93,30 +78,15 @@ export class WikiInfo extends React.Component<WikiInfoProps, WikiInfoState> {
         currentId={currentId}
         l10n={l10n}
         noWrapper={noWrapper}
-        attributes={attributes}
-        advantages={advantages}
-        books={books}
-        blessings={blessings}
-        cantrips={cantrips}
-        combatTechniques={combatTechniques}
-        cultures={cultures}
         combinedRaces={combinedRaces}
         combinedCultures={combinedCultures}
         combinedProfessions={combinedProfessions}
-        disadvantages={disadvantages}
         items={items}
-        itemTemplates={itemTemplates}
         languages={languages}
         liturgicalChantExtensions={liturgicalChantExtensions}
-        liturgicalChants={liturgicalChants}
-        professionVariants={professionVariants}
-        races={races}
         scripts={scripts}
         sex={sex}
-        skills={skills}
         spellExtensions={spellExtensions}
-        spells={spells}
-        specialAbilities={specialAbilities}
         wiki={wiki}
         />
     )

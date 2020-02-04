@@ -1,28 +1,28 @@
-import { cnst, ident } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { consF, countWith, foldr, List, maximum, maximumNonNegative, minimum } from "../../../Data/List";
-import { bindF, elem, ensure, Just, maybe, Maybe, Nothing, sum } from "../../../Data/Maybe";
-import { add, gt } from "../../../Data/Num";
-import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { Pair } from "../../../Data/Tuple";
-import { SkillId, SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
-import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
-import { SkillCombined, SkillCombinedA_ } from "../../Models/View/SkillCombined";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
-import { Skill } from "../../Models/Wiki/Skill";
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { isMaybeActive } from "../Activatable/isActive";
-import { flattenDependencies } from "../Dependencies/flattenDependencies";
-import { ifElse } from "../ifElse";
-import { pipe } from "../pipe";
-import { getSkillCheckValues } from "./attributeUtils";
+import { cnst, ident } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { consF, countWith, foldr, List, maximum, maximumNonNegative, minimum } from "../../../Data/List"
+import { bindF, elem, ensure, Just, maybe, Maybe, Nothing, sum } from "../../../Data/Maybe"
+import { add, gt } from "../../../Data/Num"
+import { lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { Pair } from "../../../Data/Tuple"
+import { SkillId, SpecialAbilityId } from "../../Constants/Ids"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
+import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
+import { SkillCombined, SkillCombinedA_ } from "../../Models/View/SkillCombined"
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { Skill } from "../../Models/Wiki/Skill"
+import { WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { isMaybeActive } from "../Activatable/isActive"
+import { flattenDependencies } from "../Dependencies/flattenDependencies"
+import { ifElse } from "../ifElse"
+import { pipe } from "../pipe"
+import { getSkillCheckValues } from "./attributeUtils"
 
 const { specialAbilities, skills } = HeroModel.AL
 const { active } = ActivatableDependent.AL
@@ -136,6 +136,7 @@ export const getRoutineValue: (checkAttributeValues: List<number>) =>
                               (sr: number) => Maybe<Pair<number, boolean>> =
   checkAttributeValues =>
     pipe (
+
       // Routine checks do only work if the SR is larger than 0
       ensure (gt (0)),
       bindF (sr => {

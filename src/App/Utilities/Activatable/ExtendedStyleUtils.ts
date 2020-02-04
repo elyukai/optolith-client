@@ -1,17 +1,17 @@
-import { equals } from "../../../Data/Eq";
-import { flip, thrush } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { Lens_, over, set, view } from "../../../Data/Lens";
-import { all, append, concatMap, elem, empty, filter, findIndex, foldr, isList, List, ListI, map, mapAccumL, modifyAt, partition, pure } from "../../../Data/List";
-import { alt_, and, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, Maybe, Nothing, or } from "../../../Data/Maybe";
-import { gt } from "../../../Data/Num";
-import { Record } from "../../../Data/Record";
-import { fst, Pair, snd, uncurry } from "../../../Data/Tuple";
-import { SpecialAbilityGroup } from "../../Constants/Groups";
-import { HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { StyleDependency, StyleDependencyL } from "../../Models/Hero/StyleDependency";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { pipe, pipe_ } from "../pipe";
+import { equals } from "../../../Data/Eq"
+import { flip, thrush } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { Lens_, over, set, view } from "../../../Data/Lens"
+import { all, append, concatMap, elem, empty, filter, findIndex, foldr, isList, List, ListI, map, mapAccumL, modifyAt, partition, pure } from "../../../Data/List"
+import { alt_, and, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, Maybe, Nothing, or } from "../../../Data/Maybe"
+import { gt } from "../../../Data/Num"
+import { Record } from "../../../Data/Record"
+import { fst, Pair, snd, uncurry } from "../../../Data/Tuple"
+import { SpecialAbilityGroup } from "../../Constants/Groups"
+import { HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { StyleDependency, StyleDependencyL } from "../../Models/Hero/StyleDependency"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { pipe, pipe_ } from "../pipe"
 
 const HL = HeroModelL
 
@@ -74,41 +74,6 @@ const lensByExtended =
     }
   }
 
-/**
- * Adds extended special ability dependencies if the passed entry is a style
- * special ability.
- * @param hero Dependent instances state slice.
- * @param wiki_entry The special ability you want to add extended entry
- * dependencies for.
- * @returns Changed state slice.
- */
-export const addStyleExtendedSpecialAbilityDependencies =
-  (wiki_entry: Record<SpecialAbility>) =>
-  (hero: HeroModelRecord): HeroModelRecord => {
-    const ml = lensByStyle (wiki_entry)
-
-    const mnewxs =
-      pipe_ (
-        wiki_entry,
-        SAA.extended,
-        fmap (map (x => StyleDependency ({ id: x, origin: SAA.id (wiki_entry) }))),
-      )
-
-    type DependencyList = List<Record<StyleDependency>>
-
-    return fromMaybe (hero)
-                     (liftM2 ((l: StyleDependenciesLens) => (newxs: DependencyList) =>
-                               over (l)
-                                    (pipe (
-                                      mapAccumL (moveActiveInListToNew)
-                                                (newxs),
-                                      uncurry (append)
-                                    ))
-                                    (hero))
-                             (ml)
-                             (mnewxs))
-  }
-
 const moveActiveInListToNew: (newxs: List<Record<StyleDependency>>) =>
                              (x: Record<StyleDependency>) =>
                              Pair<List<Record<StyleDependency>>, Record<StyleDependency>> =
@@ -146,6 +111,61 @@ const moveActiveInListToNew: (newxs: List<Record<StyleDependency>>) =>
   }
 
 /**
+ * Adds extended special ability dependencies if the passed entry is a style
+ * special ability.
+ * @param hero Dependent instances state slice.
+ * @param wiki_entry The special ability you want to add extended entry
+ * dependencies for.
+ * @returns Changed state slice.
+ */
+export const addStyleExtendedSpecialAbilityDependencies =
+  (wiki_entry: Record<SpecialAbility>) =>
+  (hero: HeroModelRecord): HeroModelRecord => {
+    const ml = lensByStyle (wiki_entry)
+
+    const mnewxs =
+      pipe_ (
+        wiki_entry,
+        SAA.extended,
+        fmap (map (x => StyleDependency ({ id: x, origin: SAA.id (wiki_entry) }))),
+      )
+
+    type DependencyList = List<Record<StyleDependency>>
+
+    return fromMaybe (hero)
+                     (liftM2 ((l: StyleDependenciesLens) => (newxs: DependencyList) =>
+                               over (l)
+                                    (pipe (
+                                      mapAccumL (moveActiveInListToNew)
+                                                (newxs),
+                                      uncurry (append)
+                                    ))
+                                    (hero))
+                             (ml)
+                             (mnewxs))
+  }
+
+const getIndexForExtendedSpecialAbilityDependency =
+  (wiki_entry: Record<SpecialAbility>) =>
+  (xs: List<Record<StyleDependency>>) =>
+
+         // Checks if requested entry is plain dependency
+    alt_ (findIndex (pipe (SDA.id, equals<string | List<string>> (SAA.id (wiki_entry))))
+                    (xs))
+
+         /**
+          * Otherwise check if the requested entry is part of a list of
+          * options.
+          */
+         (() => findIndex ((e: ListI<typeof xs>) => {
+                            const e_id = SDA.id (e)
+
+                            return isList (e_id)
+                              && elem (SAA.id (wiki_entry)) (e_id)
+                          })
+                          (xs))
+
+/**
  * Modifies a `StyleDependency` object to show a extended special ability has
  * been added.
  * @param hero Dependent instances state slice.
@@ -169,25 +189,6 @@ export const addExtendedSpecialAbilityDependency =
                       (xs))
                    (hero))
             (lensByExtended (wiki_entry)))
-
-const getIndexForExtendedSpecialAbilityDependency =
-  (wiki_entry: Record<SpecialAbility>) =>
-  (xs: List<Record<StyleDependency>>) =>
-         // Checks if requested entry is plain dependency
-    alt_ (findIndex (pipe (SDA.id, equals<string | List<string>> (SAA.id (wiki_entry))))
-                    (xs))
-
-         /**
-          * Otherwise check if the requested entry is part of a list of
-          * options.
-          */
-         (() => findIndex ((e: ListI<typeof xs>) => {
-                            const e_id = SDA.id (e)
-
-                            return isList (e_id)
-                              && elem (SAA.id (wiki_entry)) (e_id)
-                          })
-                          (xs))
 
 /**
  * A combination of `addStyleExtendedSpecialAbilityDependencies` and

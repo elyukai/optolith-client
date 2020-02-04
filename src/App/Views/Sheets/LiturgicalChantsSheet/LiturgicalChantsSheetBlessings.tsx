@@ -1,21 +1,21 @@
-import * as React from "react";
-import { fmap } from "../../../../Data/Functor";
-import { intercalate, List, map } from "../../../../Data/List";
-import { Maybe, maybeToNullable } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { BlessingCombined, BlessingCombinedA_ } from "../../../Models/View/BlessingCombined";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { sortStrings } from "../../../Utilities/sortBy";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { fmap } from "../../../../Data/Functor"
+import { intercalate, List, map } from "../../../../Data/List"
+import { Maybe, maybeToNullable } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { BlessingCombined, BlessingCombinedA_ } from "../../../Models/View/BlessingCombined"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { sortStrings } from "../../../Utilities/sortBy"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface LiturgicalChantSheetBlessingsProps {
-  blessings: Maybe<List<Record<BlessingCombined>>>
+interface Props {
   l10n: L10nRecord
+  blessings: Maybe<List<Record<BlessingCombined>>>
 }
 
-export function LiturgicalChantsSheetBlessings (props: LiturgicalChantSheetBlessingsProps) {
+export const LiturgicalChantsSheetBlessings: React.FC<Props> = props => {
   const { blessings, l10n } = props
 
   return (
