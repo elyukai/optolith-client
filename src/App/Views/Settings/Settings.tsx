@@ -4,9 +4,9 @@ import { Just, Maybe, Nothing } from "../../../Data/Maybe"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { RadioOption } from "../../Models/View/RadioOption"
 import { L10nRecord } from "../../Models/Wiki/L10n"
-import { isStable } from "../../Selectors/envSelectors";
+import { isStable } from "../../Selectors/envSelectors"
 import { translate } from "../../Utilities/I18n"
-import { Locale, Theme } from "../../Utilities/Raw/JSON/Config";
+import { Locale, Theme } from "../../Utilities/Raw/JSON/Config"
 import { BorderButton } from "../Universal/BorderButton"
 import { Checkbox } from "../Universal/Checkbox"
 import { Dialog } from "../Universal/Dialog"
@@ -106,7 +106,7 @@ export const Settings: React.FC<Props> = props => {
       <p>{translate (l10n) ("languagehint")}</p>
       <SegmentedControls
         options={List (
-          RadioButton ({
+          RadioOption ({
             name: translate (l10n) ("dark"),
             value: Just (Theme.Dark),
           }),

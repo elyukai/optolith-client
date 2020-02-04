@@ -1,5 +1,5 @@
-import { remote } from "electron";
-import { prerelease } from "semver";
+import { remote } from "electron"
+import { prerelease } from "semver"
 
 /**
  * The path to the root directory of the packed ASAR, which is the root
@@ -14,7 +14,7 @@ export const current_version = remote .app .getVersion ()
 
 export const isStable: boolean = prerelease (current_version) === null
 
-export const isPrerelease: boolean = !isStable
+export const isPrerelease = !isStable
 
 /**
  * Path to directory where all of the cached and saved files are located.
