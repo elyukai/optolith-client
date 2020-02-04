@@ -1,5 +1,5 @@
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { getAddPermanentEnergy, getArmorZonesEditorInstance, getCurrentAlert, getEditPermanentEnergy, getIsAddAdventurePointsOpen, getIsCharacterCreatorOpen, getIsEditCharacterAvatarOpen, getIsEditPetAvatarOpen, getIsSettingsOpen, getItemEditorInstance, getUpdateDownloadProgress } from "./stateSelectors";
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { getAddPermanentEnergy, getArmorZonesEditorInstance, getCurrentAlert, getEditPermanentEnergy, getIsAddAdventurePointsOpen, getIsCharacterCreatorOpen, getIsEditCharacterAvatarOpen, getIsEditPetAvatarOpen, getIsSettingsOpen, getItemEditorInstance, getUpdateDownloadProgress } from "./stateSelectors"
 
 export const isDialogOpen = createMaybeSelector (
   getCurrentAlert,
@@ -25,8 +25,7 @@ export const isDialogOpen = createMaybeSelector (
     isEditPetAvatarOpen,
     itemEditorInstance,
     armorZonesEditorInstance
-  ) => {
-    return typeof alert === "object"
+  ) => typeof alert === "object"
       || typeof updateDownloadProgress === "object"
       || typeof addPermanentEnergy === "string"
       || typeof editPermanentEnergy === "string"
@@ -37,5 +36,4 @@ export const isDialogOpen = createMaybeSelector (
       || isSettingsOpen
       || isEditCharacterAvatarOpen
       || isEditPetAvatarOpen
-  }
 )

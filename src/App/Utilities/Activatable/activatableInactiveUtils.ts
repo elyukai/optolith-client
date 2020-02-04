@@ -7,56 +7,56 @@
  * @since 1.1.0
  */
 
-import { notP } from "../../../Data/Bool";
-import { equals, notEquals } from "../../../Data/Eq";
-import { cnst, flip, ident, thrush } from "../../../Data/Function";
-import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
-import * as IntMap from "../../../Data/IntMap";
-import { over, set } from "../../../Data/Lens";
-import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, nub, subscript } from "../../../Data/List";
-import { all, ap, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
-import { add, gt, gte, inc, multiply } from "../../../Data/Num";
-import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
-import { Record, RecordI } from "../../../Data/Record";
-import { filterMapListT, filterT, mapT } from "../../../Data/Transducer";
-import { fst, Pair, snd, Tuple } from "../../../Data/Tuple";
-import { CombatTechniqueGroup, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups";
-import { AdvantageId, DisadvantageId, SkillId, SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { Pact } from "../../Models/Hero/Pact";
-import { Rules } from "../../Models/Hero/Rules";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { InactiveActivatable, InactiveActivatableL } from "../../Models/View/InactiveActivatable";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { Skill } from "../../Models/Wiki/Skill";
-import { Spell } from "../../Models/Wiki/Spell";
-import { Application } from "../../Models/Wiki/sub/Application";
-import { SelectOption, SelectOptionL } from "../../Models/Wiki/sub/SelectOption";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
-import { composeT } from "../compose";
-import { countActiveGroupEntries } from "../entryGroupUtils";
-import { getAllEntriesByGroup } from "../heroStateUtils";
-import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
-import { isUnfamiliarSpell } from "../Increasable/spellUtils";
-import { pipe, pipe_ } from "../pipe";
-import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
-import { isEntryAvailable } from "../RulesUtils";
-import { sortRecordsByName } from "../sortBy";
-import { isNumber, isString, misNumberM, misStringM } from "../typeCheckUtils";
-import { getMaxLevelForDecreaseEntry, getSermonsAndVisionsCount } from "./activatableActiveValidationUtils";
-import { isAdditionDisabled } from "./activatableInactiveValidationUtils";
-import { modifyByLevel } from "./activatableModifierUtils";
-import { countActiveSkillEntries } from "./activatableSkillUtils";
-import { isMaybeActive } from "./isActive";
-import { getActiveSecondarySelections, getActiveSelections, getActiveSelectionsMaybe, getRequiredSelections } from "./selectionUtils";
-import { getBlessedTradition, getMagicalTraditionsHeroEntries, mapBlessedNumIdToTradId } from "./traditionUtils";
+import { notP } from "../../../Data/Bool"
+import { equals, notEquals } from "../../../Data/Eq"
+import { cnst, flip, ident, thrush } from "../../../Data/Function"
+import { fmap, fmapF, mapReplace } from "../../../Data/Functor"
+import * as IntMap from "../../../Data/IntMap"
+import { over, set } from "../../../Data/Lens"
+import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, nub, subscript } from "../../../Data/List"
+import { all, ap, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe"
+import { add, gt, gte, inc, multiply } from "../../../Data/Num"
+import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap"
+import { Record, RecordI } from "../../../Data/Record"
+import { filterMapListT, filterT, mapT } from "../../../Data/Transducer"
+import { fst, Pair, snd, Tuple } from "../../../Data/Tuple"
+import { CombatTechniqueGroup, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups"
+import { AdvantageId, DisadvantageId, SkillId, SpecialAbilityId } from "../../Constants/Ids"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Pact } from "../../Models/Hero/Pact"
+import { Rules } from "../../Models/Hero/Rules"
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
+import { InactiveActivatable, InactiveActivatableL } from "../../Models/View/InactiveActivatable"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
+import { Skill } from "../../Models/Wiki/Skill"
+import { Spell } from "../../Models/Wiki/Spell"
+import { Application } from "../../Models/Wiki/sub/Application"
+import { SelectOption, SelectOptionL } from "../../Models/Wiki/sub/SelectOption"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
+import { composeT } from "../compose"
+import { countActiveGroupEntries } from "../entryGroupUtils"
+import { getAllEntriesByGroup } from "../heroStateUtils"
+import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils"
+import { isUnfamiliarSpell } from "../Increasable/spellUtils"
+import { pipe, pipe_ } from "../pipe"
+import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils"
+import { isEntryAvailable } from "../RulesUtils"
+import { sortRecordsByName } from "../sortBy"
+import { isNumber, isString, misNumberM, misStringM } from "../typeCheckUtils"
+import { getMaxLevelForDecreaseEntry, getSermonsAndVisionsCount } from "./activatableActiveValidationUtils"
+import { isAdditionDisabled } from "./activatableInactiveValidationUtils"
+import { modifyByLevel } from "./activatableModifierUtils"
+import { countActiveSkillEntries } from "./activatableSkillUtils"
+import { isMaybeActive } from "./isActive"
+import { getActiveSecondarySelections, getActiveSelections, getActiveSelectionsMaybe, getRequiredSelections } from "./selectionUtils"
+import { getBlessedTradition, getMagicalTraditionsHeroEntries, mapBlessedNumIdToTradId } from "./traditionUtils"
 
 const WA = WikiModel.A
 const HA = HeroModel.A
@@ -199,6 +199,44 @@ const getAspectsWith3Gte10 =
                                                 (List.empty)
     )
 
+const isSocialSkill =
+  (wiki: WikiModelRecord) =>
+    pipe (
+      SOA.id,
+      ensure (isString),
+      bindF (lookupF (WA.skills (wiki))),
+      fmap (pipe (SA.gr, equals (SkillGroup.Social))),
+      or
+    )
+
+const isAddExistSkillSpecAllowed =
+  (hero: HeroModelRecord) =>
+  (counter: OrderedMap<string | number, List<string | number>>) =>
+  (curr_select_id: string | number) =>
+    pipe_ (
+      curr_select_id,
+      ensure (isString),
+      bindF (lookupF (HA.skills (hero))),
+      liftM2 ((apps: List<string | number>) =>
+              (skill: Record<SkillDependent>) =>
+                flength (apps) < 3 && value (skill) >= (flength (apps) + 1) * 6)
+             (lookupF (counter) (curr_select_id)),
+      or
+    )
+
+const isAddNotExistSkillSpecAllowed =
+  (hero: HeroModelRecord) =>
+  (curr_select_id: string | number) =>
+    pipe_ (
+      curr_select_id,
+      ensure (isString),
+      bindF (lookupF (HA.skills (hero))),
+      fmap (skill => value (skill) >= 6),
+      or
+    )
+
+const is3or4 = (x: string | number): x is number => x === 3 || x === 4
+
 /**
  * Modifies the select options of specific entries to match current conditions.
  */
@@ -207,6 +245,7 @@ const modifySelectOptions =
   (hero: HeroModelRecord) =>
   (hero_magical_traditions: List<Record<ActivatableDependent>>) =>
   (wiki_entry: Activatable) =>
+
   // tslint:disable-next-line: cyclomatic-complexity
   (mhero_entry: Maybe<Record<ActivatableDependent>>): ident<Maybe<List<Record<SelectOption>>>> => {
     const current_id = AAL.id (wiki_entry)
@@ -286,6 +325,7 @@ const modifySelectOptions =
         return fmap (filterMapListT (composeT (
                                       isNoRequiredOrActiveSelection,
                                       filterT (e =>
+
                                         // Socially Adaptable and Inspire Confidence
                                         // require no Incompetence in social skills
                                         (isAdvActive (AdvantageId.SociallyAdaptable)
@@ -328,6 +368,7 @@ const modifySelectOptions =
               pipe (
                 over (select_costL)
                      (isJust (mcounts)
+
                        // Increase cost if there are active specializations
                        // for the same skill
                        ? fmap (multiply (flength (fromJust (mcounts)) + 1))
@@ -490,6 +531,7 @@ const modifySelectOptions =
           maybe (cnst (Nothing) as ident<Maybe<List<Record<SelectOption>>>>)
                 (current_select => {
                   const available_langs =
+
                           // Pair: fst = sid, snd = current_level
                     maybe (List<Pair<number, number>> ())
                           (pipe (
@@ -554,45 +596,15 @@ const modifySelectOptions =
     }
   }
 
-const isSocialSkill =
-  (wiki: WikiModelRecord) =>
-    pipe (
-      SOA.id,
-      ensure (isString),
-      bindF (lookupF (WA.skills (wiki))),
-      fmap (pipe (SA.gr, equals (SkillGroup.Social))),
-      or
-    )
-
-const isAddExistSkillSpecAllowed =
-  (hero: HeroModelRecord) =>
-  (counter: OrderedMap<string | number, List<string | number>>) =>
-  (curr_select_id: string | number) =>
-    pipe_ (
-      curr_select_id,
-      ensure (isString),
-      bindF (lookupF (HA.skills (hero))),
-      liftM2 ((apps: List<string | number>) =>
-              (skill: Record<SkillDependent>) =>
-                flength (apps) < 3 && value (skill) >= (flength (apps) + 1) * 6)
-             (lookupF (counter) (curr_select_id)),
-      or
-    )
-
-const isAddNotExistSkillSpecAllowed =
-  (hero: HeroModelRecord) =>
-  (curr_select_id: string | number) =>
-    pipe_ (
-      curr_select_id,
-      ensure (isString),
-      bindF (lookupF (HA.skills (hero))),
-      fmap (skill => value (skill) >= 6),
-      or
-    )
-
-const is3or4 = (x: string | number): x is number => x === 3 || x === 4
-
 type OtherOptionsModifier = ident<Record<InactiveActivatable>>
+
+const getSermonOrVisionCountMax =
+  (hero: HeroModelRecord) =>
+  (adv_id: string) =>
+  (disadv_id: string) =>
+    modifyByLevel (3)
+                  (lookup (adv_id) (HA.advantages (hero)))
+                  (lookup (disadv_id) (HA.disadvantages (hero)))
 
 const modifyOtherOptions =
   (wiki: WikiModelRecord) =>
@@ -814,14 +826,6 @@ const modifyOtherOptions =
         return Just (ident)
     }
   }
-
-const getSermonOrVisionCountMax =
-  (hero: HeroModelRecord) =>
-  (adv_id: string) =>
-  (disadv_id: string) =>
-    modifyByLevel (3)
-                  (lookup (adv_id) (HA.advantages (hero)))
-                  (lookup (disadv_id) (HA.disadvantages (hero)))
 
 /**
  * Calculates whether an Activatable is valid to add or not and, if valid,

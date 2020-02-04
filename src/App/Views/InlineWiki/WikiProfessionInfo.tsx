@@ -1,70 +1,63 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { flip, ident } from "../../../Data/Function";
-import { fmap, fmapF } from "../../../Data/Functor";
-import { append, cons, consF, deleteAt, find, findIndex, flength, foldr, imap, intercalate, intersperse, isList, List, ListI, map, NonEmptyList, notElem, notNull, reverse, snoc, sortBy, subscript, toArray, uncons, unconsSafe, unsafeIndex } from "../../../Data/List";
-import { alt_, any, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe";
-import { compare, dec, gt } from "../../../Data/Num";
-import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet";
-import { fromDefault, Record } from "../../../Data/Record";
-import { show } from "../../../Data/Show";
-import { fst, isTuple, Pair, snd } from "../../../Data/Tuple";
-import { SpecialAbilityId } from "../../Constants/Ids";
-import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { ActivatableNameCostIsActive, ActivatableNameCostIsActiveA_ } from "../../Models/View/ActivatableNameCostIsActive";
-import { IncreasableForView } from "../../Models/View/IncreasableForView";
-import { IncreasableListForView } from "../../Models/View/IncreasableListForView";
-import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
-import { ProfessionVariantCombined, ProfessionVariantCombinedA_ } from "../../Models/View/ProfessionVariantCombined";
-import { Attribute } from "../../Models/Wiki/Attribute";
-import { Blessing } from "../../Models/Wiki/Blessing";
-import { Cantrip } from "../../Models/Wiki/Cantrip";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { ProfessionRequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
-import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement";
-import { CantripsSelection } from "../../Models/Wiki/professionSelections/CantripsSelection";
-import { CombatTechniquesSelection } from "../../Models/Wiki/professionSelections/CombatTechniquesSelection";
-import { CursesSelection } from "../../Models/Wiki/professionSelections/CursesSelection";
-import { LanguagesScriptsSelection } from "../../Models/Wiki/professionSelections/LanguagesScriptsSelection";
-import { ProfessionSelections } from "../../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
-import { ProfessionVariantSelections } from "../../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
-import { isRemoveCombatTechniquesSelection } from "../../Models/Wiki/professionSelections/RemoveCombatTechniquesSelection";
-import { isRemoveSpecializationSelection } from "../../Models/Wiki/professionSelections/RemoveSpecializationSelection";
-import { CombatTechniquesSecondSelection } from "../../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
-import { SkillsSelection } from "../../Models/Wiki/professionSelections/SkillsSelection";
-import { SpecializationSelection } from "../../Models/Wiki/professionSelections/SpecializationSelection";
-import { TerrainKnowledgeSelection } from "../../Models/Wiki/professionSelections/TerrainKnowledgeSelection";
-import { Race } from "../../Models/Wiki/Race";
-import { Skill } from "../../Models/Wiki/Skill";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { Spell } from "../../Models/Wiki/Spell";
-import { IncreaseSkill } from "../../Models/Wiki/sub/IncreaseSkill";
-import { IncreaseSkillList } from "../../Models/Wiki/sub/IncreaseSkillList";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers";
-import { getSelectOptionName } from "../../Utilities/Activatable/selectionUtils";
-import { ndash } from "../../Utilities/Chars";
-import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
-import { getNumericId, prefixRace } from "../../Utilities/IDUtils";
-import { signNeg } from "../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils";
-import { renderMaybe } from "../../Utilities/ReactUtils";
-import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy";
-import { whilePred } from "../../Utilities/whilePred";
-import { WikiSource } from "./Elements/WikiSource";
-import { WikiBoxTemplate } from "./WikiBoxTemplate";
-import { WikiProperty } from "./WikiProperty";
-
-export interface WikiProfessionInfoProps {
-  l10n: L10nRecord
-  wiki: WikiModelRecord
-  x: Record<ProfessionCombined>
-  sex: Maybe<Sex>
-}
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { flip, ident } from "../../../Data/Function"
+import { fmap, fmapF } from "../../../Data/Functor"
+import { append, cons, consF, deleteAt, find, findIndex, flength, foldr, imap, intercalate, intersperse, isList, List, ListI, map, NonEmptyList, notElem, notNull, reverse, snoc, sortBy, subscript, toArray, uncons, unconsSafe, unsafeIndex } from "../../../Data/List"
+import { alt_, any, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe"
+import { compare, dec, gt } from "../../../Data/Num"
+import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet"
+import { fromDefault, Record } from "../../../Data/Record"
+import { show } from "../../../Data/Show"
+import { fst, isTuple, Pair, snd } from "../../../Data/Tuple"
+import { SpecialAbilityId } from "../../Constants/Ids"
+import { Sex } from "../../Models/Hero/heroTypeHelpers"
+import { ActivatableNameCostIsActive, ActivatableNameCostIsActiveA_ } from "../../Models/View/ActivatableNameCostIsActive"
+import { IncreasableForView } from "../../Models/View/IncreasableForView"
+import { IncreasableListForView } from "../../Models/View/IncreasableListForView"
+import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined"
+import { ProfessionVariantCombined, ProfessionVariantCombinedA_ } from "../../Models/View/ProfessionVariantCombined"
+import { Attribute } from "../../Models/Wiki/Attribute"
+import { Blessing } from "../../Models/Wiki/Blessing"
+import { Cantrip } from "../../Models/Wiki/Cantrip"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
+import { ProfessionRequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement"
+import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement"
+import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement"
+import { CantripsSelection } from "../../Models/Wiki/professionSelections/CantripsSelection"
+import { CombatTechniquesSelection } from "../../Models/Wiki/professionSelections/CombatTechniquesSelection"
+import { CursesSelection } from "../../Models/Wiki/professionSelections/CursesSelection"
+import { LanguagesScriptsSelection } from "../../Models/Wiki/professionSelections/LanguagesScriptsSelection"
+import { ProfessionSelections } from "../../Models/Wiki/professionSelections/ProfessionAdjustmentSelections"
+import { ProfessionVariantSelections } from "../../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections"
+import { isRemoveCombatTechniquesSelection } from "../../Models/Wiki/professionSelections/RemoveCombatTechniquesSelection"
+import { isRemoveSpecializationSelection } from "../../Models/Wiki/professionSelections/RemoveSpecializationSelection"
+import { CombatTechniquesSecondSelection } from "../../Models/Wiki/professionSelections/SecondCombatTechniquesSelection"
+import { SkillsSelection } from "../../Models/Wiki/professionSelections/SkillsSelection"
+import { SpecializationSelection } from "../../Models/Wiki/professionSelections/SpecializationSelection"
+import { TerrainKnowledgeSelection } from "../../Models/Wiki/professionSelections/TerrainKnowledgeSelection"
+import { Race } from "../../Models/Wiki/Race"
+import { Skill } from "../../Models/Wiki/Skill"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { Spell } from "../../Models/Wiki/Spell"
+import { IncreaseSkill } from "../../Models/Wiki/sub/IncreaseSkill"
+import { IncreaseSkillList } from "../../Models/Wiki/sub/IncreaseSkillList"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers"
+import { getSelectOptionName } from "../../Utilities/Activatable/selectionUtils"
+import { ndash } from "../../Utilities/Chars"
+import { localizeOrList, translate, translateP } from "../../Utilities/I18n"
+import { getNumericId, prefixRace } from "../../Utilities/IDUtils"
+import { signNeg } from "../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils"
+import { renderMaybe } from "../../Utilities/ReactUtils"
+import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy"
+import { whilePred } from "../../Utilities/whilePred"
+import { WikiSource } from "./Elements/WikiSource"
+import { WikiBoxTemplate } from "./WikiBoxTemplate"
+import { WikiProperty } from "./WikiProperty"
 
 const WA = WikiModel.A
 const PCA = ProfessionCombined.A
@@ -84,244 +77,6 @@ const PRIA = ProfessionRequireIncreasable.A
 const CTSA = CombatTechniquesSelection.A
 const CTSSA = CombatTechniquesSecondSelection.A
 const LCA = LiturgicalChant.A
-
-// tslint:disable-next-line: cyclomatic-complexity
-export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
-  const { x, l10n, sex, wiki } = props
-
-  const attributes = WA.attributes (wiki)
-  const blessings = WA.blessings (wiki)
-  const books = WA.books (wiki)
-  const cantrips = WA.cantrips (wiki)
-  const liturgicalChants = WA.liturgicalChants (wiki)
-  const races = WA.races (wiki)
-  const skills = WA.skills (wiki)
-  const spells = WA.spells (wiki)
-  const specialAbilities = WA.specialAbilities (wiki)
-
-  const selections = PCA.mappedSelections (x)
-
-  const name = getNameBySex (fromMaybe<Sex> ("m") (sex)) (PCA_.name (x))
-  const msubname = getNameBySexM (fromMaybe<Sex> ("m") (sex)) (PCA_.subname (x))
-
-  const specializationSelectionString =
-    getSpecializationSelection (l10n) (skills) (x)
-
-  const skillsSelectionJoinedObject =
-    getSkillSelection (l10n) (x)
-
-  const cursesSelection =
-    PSA[ProfessionSelectionIds.CURSES] (selections)
-
-  const languagesLiteracySelection =
-    PSA[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (selections)
-
-  const combatTechniquesSelectionString =
-    getCombatTechniquesSelection (l10n) (x)
-
-  const terrainKnowledgeSelectionString =
-    getTerrainKnowledgeSelection (l10n) (specialAbilities) (x)
-
-  const spellsString =
-    getSpells (l10n) (cantrips) (spells) (x)
-
-  const liturgicalChantsString =
-    getLiturgicalChants (l10n) (blessings) (liturgicalChants) (x)
-
-  const raceRequirement =
-     pipe_ (x, PCA_.dependencies, find (RaceRequirement.is))
-
-  const sexRequirement =
-     pipe_ (x, PCA_.dependencies, find (isSexRequirement))
-
-  const getRaceNameAP =
-    (race: Record<Race>) =>
-      `${Race.A.name (race)} (${Race.A.ap (race)} ${translate (l10n) ("adventurepoints.short")})`
-
-  const mrace_depencency_str =
-    bind (raceRequirement)
-         (pipe (
-           race_dep => {
-             const value = RaceRequirement.A.value (race_dep)
-
-             return isList (value)
-               ? pipe_ (
-                   value,
-                   mapMaybe (pipe (prefixRace, lookupF (races), fmap (getRaceNameAP))),
-                   ensure (notNull),
-                   fmap (localizeOrList (l10n))
-                 )
-               : pipe_ (value, prefixRace, lookupF (races), fmap (getRaceNameAP))
-           },
-           fmap (str => `${translate (l10n) ("race")}: ${str}`)
-         ))
-
-  const prereq_strs =
-    pipe_ (
-      x,
-      PCA.mappedPrerequisites,
-      mapMaybe (e => {
-        if (ProfessionRequireIncreasable.is (e)) {
-          const id = PRIA.id (e)
-          const value = PRIA.value (e)
-          const mwiki_entry =
-            alt_<Record<Attribute> | Record<Skill>> (lookup (id) (attributes))
-                                                    (() => lookup (id) (skills))
-
-          return fmapF (mwiki_entry)
-                       (wiki_entry =>
-                         Attribute.is (wiki_entry)
-                           ? `${Attribute.A.short (wiki_entry)} ${value}`
-                           : `${Skill.A.name (wiki_entry)} ${value}`)
-        }
-        else {
-          const pr_name = ANCIAA_.name (e)
-          const pr_cost_str = signNeg (ANCIAA_.finalCost (e))
-          const ap_tag = translate (l10n) ("adventurepoints.short")
-
-          return Just (`${pr_name} (${pr_cost_str} ${ap_tag})`)
-        }
-      }),
-      sortStrings (l10n)
-    )
-
-  const prerequisites = List (
-    ...maybeToList (mrace_depencency_str),
-    ...maybeToList (PCA_.prerequisitesStart (x)),
-    ...prereq_strs,
-    ...maybeToList (PCA_.prerequisitesEnd (x))
-  )
-
-  const sex_dep_str =
-    fmapF (sexRequirement)
-          (sex_dep => {
-            const space_before = notNull (prerequisites) ? " " : ""
-            const sex_tag = translate (l10n) ("sex")
-            const sex_value =
-              SexRequirement.A.value (sex_dep) === "m"
-                ? translate (l10n) ("male")
-                : translate (l10n) ("female")
-
-            return `${space_before}${sex_tag}: ${sex_value}`
-          })
-
-  const single_sas_strs =
-    pipe_ (
-      x,
-      PCA.mappedSpecialAbilities,
-      map (ANCIAA_.name),
-      sortStrings (l10n)
-    )
-
-  const sas_str =
-    pipe_ (
-      List<string> (),
-      maybe<ident<List<string>>> (ident)
-                                 ((curss: Record<CursesSelection>) =>
-                                   consF (translateP (l10n)
-                                                     ("cursestotalingap")
-                                                     (List (CursesSelection.A.value (curss)))))
-                                 (cursesSelection),
-      maybe<ident<List<string>>> (ident) <string> (consF) (terrainKnowledgeSelectionString),
-      maybe<ident<List<string>>> (ident) <string> (consF) (specializationSelectionString),
-      maybe<ident<List<string>>> (ident)
-                                 ((curss: Record<LanguagesScriptsSelection>) =>
-                                   consF (translateP (l10n)
-                                                     ("languagesandliteracytotalingap")
-                                                     (List (
-                                                       LanguagesScriptsSelection.A.value (curss)
-                                                     ))))
-                                 (languagesLiteracySelection),
-      sortStrings (l10n),
-      flip (append) (single_sas_strs),
-      ensure (notNull),
-      maybe (translate (l10n) ("none")) (intercalate (", "))
-    )
-
-  const final_ap =
-    fromMaybe_ (() => pipe_ (
-                        x,
-                        PCA.mappedVariants,
-                        foldr (pipe (PVCA_.ap, insert))
-                              (OrderedSet.empty),
-                        toList,
-                        sortBy (compare),
-                        localizeOrList (l10n)
-                      ))
-               (fmapF (PCA_.ap (x)) (show))
-
-  return (
-    <WikiBoxTemplate
-      className="profession"
-      title={maybe (name) ((subname: string) => `${name} (${subname})`) (msubname)}
-      >
-      <WikiProperty l10n={l10n} title="apvalue">
-        {final_ap}
-        {" "}
-        {translate (l10n) ("adventurepoints")}
-      </WikiProperty>
-      <WikiProperty l10n={l10n} title="prerequisites">
-        {maybe (translate (l10n) ("none")) (intercalate (", ")) (ensure (notNull) (prerequisites))}
-        {renderMaybe (sex_dep_str)}
-      </WikiProperty>
-      <WikiProperty l10n={l10n} title="specialabilities">
-        {sas_str}
-      </WikiProperty>
-      <CombatTechniques
-        combatTechniquesSelectionString={combatTechniquesSelectionString}
-        x={x}
-        l10n={l10n}
-        />
-      <WikiProperty l10n={l10n} title="skills" />
-      <SkillsList
-        profession={x}
-        l10n={l10n}
-        skillsSelection={skillsSelectionJoinedObject}
-        />
-      {maybeRNullF (spellsString)
-                   (str => (
-                     <WikiProperty l10n={l10n} title="spells">
-                       {str}
-                     </WikiProperty>
-                   ))}
-      {maybeRNullF (liturgicalChantsString)
-                   (str => (
-                     <WikiProperty l10n={l10n} title="liturgicalchants">
-                       {str}
-                     </WikiProperty>
-                   ))}
-      <WikiProperty l10n={l10n} title="suggestedadvantages">
-        {fromMaybe (translate (l10n) ("none")) (PCA_.suggestedAdvantagesText (x))}
-      </WikiProperty>
-      <WikiProperty l10n={l10n} title="suggesteddisadvantages">
-        {fromMaybe (translate (l10n) ("none")) (PCA_.suggestedDisadvantagesText (x))}
-      </WikiProperty>
-      <WikiProperty l10n={l10n} title="unsuitableadvantages">
-        {fromMaybe (translate (l10n) ("none")) (PCA_.unsuitableAdvantagesText (x))}
-      </WikiProperty>
-      <WikiProperty l10n={l10n} title="unsuitabledisadvantages">
-        {fromMaybe (translate (l10n) ("none")) (PCA_.unsuitableDisadvantagesText (x))}
-      </WikiProperty>
-      <VariantList
-        attributes={attributes}
-        combatTechniquesSelectionString={combatTechniquesSelectionString}
-        liturgicalChants={liturgicalChants}
-        l10n={l10n}
-        profession={x}
-        sex={sex}
-        skills={skills}
-        specializationSelectionString={specializationSelectionString}
-        spells={spells}
-        />
-      <WikiSource
-        books={books}
-        x={x}
-        l10n={l10n}
-        acc={PCA_}
-        />
-    </WikiBoxTemplate>
-  )
-}
 
 const getSpecializationSelection =
   (l10n: L10nRecord) =>
@@ -706,165 +461,6 @@ function Skills (props: SkillProps) {
     )
 }
 
-interface VariantListHeaderProps {
-  l10n: L10nRecord
-}
-
-function VariantListHeader (props: VariantListHeaderProps): JSX.Element {
-  const { l10n } = props
-
-  return (
-    <p className="profession-variants">
-      <span>{translate (l10n) ("variants")}</span>
-    </p>
-  )
-}
-
-interface VariantListProps {
-  attributes: OrderedMap<string, Record<Attribute>>
-  combatTechniquesSelectionString: Maybe<string>
-  liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
-  l10n: L10nRecord
-  profession: Record<ProfessionCombined>
-  sex: Maybe<Sex>
-  skills: OrderedMap<string, Record<Skill>>
-  specializationSelectionString: Maybe<string>
-  spells: OrderedMap<string, Record<Spell>>
-}
-
-function VariantList (props: VariantListProps): JSX.Element | null {
-  const {
-    attributes,
-    combatTechniquesSelectionString,
-    liturgicalChants,
-    l10n,
-    profession,
-    sex,
-    skills,
-    specializationSelectionString,
-    spells,
-  } = props
-
-  const variants = PCA.mappedVariants (profession)
-
-  if (notNull (variants)) {
-    return (
-      <>
-        <VariantListHeader l10n={l10n} />
-        <ul className="profession-variants">
-          {
-            pipe_ (
-              variants,
-              map (variant => (
-                    <Variant
-                      key={PVCA_.id (variant)}
-                      attributes={attributes}
-                      combatTechniquesSelectionString={combatTechniquesSelectionString}
-                      liturgicalChants={liturgicalChants}
-                      l10n={l10n}
-                      profession={profession}
-                      sex={sex}
-                      skills={skills}
-                      specializationSelectionString={specializationSelectionString}
-                      spells={spells}
-                      variant={variant}
-                      />
-                  )),
-              toArray
-            )
-          }
-        </ul>
-      </>
-    )
-  }
-
-  return null
-}
-
-interface VariantProps {
-  attributes: OrderedMap<string, Record<Attribute>>
-  combatTechniquesSelectionString: Maybe<string>
-  liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
-  l10n: L10nRecord
-  profession: Record<ProfessionCombined>
-  sex: Maybe<Sex>
-  skills: OrderedMap<string, Record<Skill>>
-  specializationSelectionString: Maybe<string>
-  spells: OrderedMap<string, Record<Spell>>
-  variant: Record<ProfessionVariantCombined>
-}
-
-function Variant (props: VariantProps) {
-  const {
-    attributes,
-    l10n,
-    profession,
-    sex: msex,
-    skills,
-    variant,
-  } = props
-
-  const fullText = PVCA_.fullText (variant)
-
-  const name = getNameBySex (fromMaybe<Sex> ("m") (msex)) (PVCA_.name (variant))
-
-  const ap_sum = Maybe.sum (PCA_.ap (profession)) + PVCA_.ap (variant)
-
-  if (isJust (fullText)) {
-    return (
-      <li>
-        <span>{name}</span>
-        {" "}
-        <span>
-          {"("}
-          {ap_sum}
-          {" "}
-          {translate (l10n) ("adventurepoints.short")}
-          {"): "}
-        </span>
-        {fromJust (fullText)}
-      </li>
-    )
-  }
-
-  return (
-    <li>
-      <span>{name}</span>
-      {" "}
-      <span>
-        {"("}
-        {ap_sum}
-        {" "}
-        {translate (l10n) ("adventurepoints.short")}
-        {"): "}
-      </span>
-      <span>
-        {maybeRNullF (PVCA_.precedingText (variant))
-                     (str => <span>{str}</span>)}
-        {maybe (<></>)
-               ((str: string) => (<>{str}</>))
-               (getVariantPrerequisites (l10n)
-                                        (attributes)
-                                        (skills)
-                                        (variant))}
-        {pipe_ (
-          List<Maybe<NonNullable<React.ReactNode>>> (
-            ...getVariantSpecialAbilities (props),
-            getVariantLanguagesLiteracySelection (PCA_.selections (profession)) (props),
-            getVariantSpecializationSelection (PCA_.selections (profession)) (props),
-            getVariantCombatTechniquesSelection (PCA_.selections (profession)) (props),
-            Just (getVariantSkillsSelection (props)),
-            PVCA_.concludingText (variant)
-          ),
-          catMaybes,
-          intersperse<React.ReactNode> (", "),
-          toArray
-        )}
-      </span>
-    </li>
-  )
-}
-
 interface VariantPrerequisiteIntermediate {
   "@@name": "VariantPrerequisiteIntermediate"
   id: string
@@ -1139,6 +735,105 @@ const getVariantCombatTechniquesSelection =
     return Nothing
   }
 
+const mapVariantSkills =
+  (l10n: L10nRecord) =>
+  (base: number) =>
+    map ((e: Record<IncreasableForView>) => {
+      const prev = fromMaybe (base) (IFVA.previous (e))
+
+      return `${IFVA.name (e)} ${IFVA.value (e)} ${translate (l10n) ("insteadof")} ${prev}`
+    })
+
+const getCombinedSpellName =
+  (l10n: L10nRecord) =>
+  (x: CombinedMappedSpell): string =>
+    IncreasableListForView.is (x) ? localizeOrList (l10n) (ILFVA.name (x)) : IFVA.name (x)
+
+type CombinedMappedSpell = Record<IncreasableForView> | Record<IncreasableListForView>
+
+/**
+ * fst => old
+ *
+ * snd => new
+ */
+type SpellPair = Pair<CombinedMappedSpell, CombinedMappedSpell>
+
+type CombinedSpells = List<CombinedMappedSpell | SpellPair>
+
+type CombinedSpellsPair =
+  Pair<List<CombinedMappedSpell>, List<CombinedMappedSpell | SpellPair>>
+
+type CombinedSpellsPairValid =
+  Pair<NonEmptyList<CombinedMappedSpell>, List<CombinedMappedSpell | SpellPair>>
+
+const combineSpellsPred =
+  (x: CombinedSpellsPair): x is CombinedSpellsPairValid =>
+    pipe_ (x, fst, notNull)
+
+const combineSpells: (mapped_spells: List<CombinedMappedSpell>) => CombinedSpells =
+  pipe (
+    mapped_spells => Pair (mapped_spells, List<CombinedMappedSpell | SpellPair> ()),
+    whilePred (combineSpellsPred)
+              (p => {
+                const processeds = snd (p)
+                const remainings_separate = fromJust ((uncons as unconsSafe) (fst (p)))
+                const current = fst (remainings_separate)
+                const current_value = IFVAL.value (current)
+                const mcurrent_previous_value = IFVAL.previous (current)
+                const remainings = snd (remainings_separate)
+
+                // This is the previous spell, and we need the next to form a pair
+                if (isJust (mcurrent_previous_value)) {
+                  // Index of a spell to pair `current` with
+                  const mmatching_spell_index =
+                    findIndex ((e: CombinedMappedSpell) =>
+                                IFVAL.value (e) === fromJust (mcurrent_previous_value)
+                                && current_value === 0)
+                              (remainings)
+
+                  if (isJust (mmatching_spell_index)) {
+                    // Index found, so we can pair
+                    const index = fromJust (mmatching_spell_index)
+
+                    return Pair (
+                      deleteAt (index) (remainings),
+                      cons (processeds)
+                           (Pair (current, unsafeIndex (remainings) (index)))
+                    )
+                  }
+                  else {
+                    return Pair (remainings, cons (processeds) (current))
+                  }
+                }
+
+                // Otherwise, this is the next and we need the previous to form a pair
+                else {
+                  // Index of a spell to pair `current` with
+                  const mmatching_spell_index =
+                    findIndex ((e: CombinedMappedSpell) =>
+                                Maybe.elem (current_value) (IFVAL.previous (e))
+                                && IFVAL.value (e) === 0)
+                              (remainings)
+
+                  if (isJust (mmatching_spell_index)) {
+                    // Index found, so we can pair
+                    const index = fromJust (mmatching_spell_index)
+
+                    return Pair (
+                      deleteAt (index) (remainings),
+                      cons (processeds)
+                           (Pair (unsafeIndex (remainings) (index), current))
+                    )
+                  }
+                  else {
+                    return Pair (remainings, cons (processeds) (current))
+                  }
+                }
+              }),
+    snd,
+    reverse
+  )
+
 interface VariantSkillsSelectionProps {
   l10n: L10nRecord
   liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
@@ -1227,100 +922,406 @@ const getVariantSkillsSelection =
                  (ensure (notNull) (PVCA.mappedLiturgicalChants (variant)))
   }
 
-const mapVariantSkills =
-  (l10n: L10nRecord) =>
-  (base: number) =>
-    map ((e: Record<IncreasableForView>) => {
-      const prev = fromMaybe (base) (IFVA.previous (e))
+interface VariantListHeaderProps {
+  l10n: L10nRecord
+}
 
-      return `${IFVA.name (e)} ${IFVA.value (e)} ${translate (l10n) ("insteadof")} ${prev}`
-    })
+function VariantListHeader (props: VariantListHeaderProps): JSX.Element {
+  const { l10n } = props
 
-const getCombinedSpellName =
-  (l10n: L10nRecord) =>
-  (x: CombinedMappedSpell): string =>
-    IncreasableListForView.is (x) ? localizeOrList (l10n) (ILFVA.name (x)) : IFVA.name (x)
-
-type CombinedMappedSpell = Record<IncreasableForView> | Record<IncreasableListForView>
-
-/**
- * fst => old
- *
- * snd => new
- */
-type SpellPair = Pair<CombinedMappedSpell, CombinedMappedSpell>
-
-type CombinedSpells = List<CombinedMappedSpell | SpellPair>
-
-type CombinedSpellsPair =
-  Pair<List<CombinedMappedSpell>, List<CombinedMappedSpell | SpellPair>>
-
-type CombinedSpellsPairValid =
-  Pair<NonEmptyList<CombinedMappedSpell>, List<CombinedMappedSpell | SpellPair>>
-
-const combineSpellsPred =
-  (x: CombinedSpellsPair): x is CombinedSpellsPairValid =>
-    pipe_ (x, fst, notNull)
-
-const combineSpells: (mapped_spells: List<CombinedMappedSpell>) => CombinedSpells =
-  pipe (
-    mapped_spells => Pair (mapped_spells, List<CombinedMappedSpell | SpellPair> ()),
-    whilePred (combineSpellsPred)
-              (p => {
-                const processeds = snd (p)
-                const remainings_separate = fromJust ((uncons as unconsSafe) (fst (p)))
-                const current = fst (remainings_separate)
-                const current_value = IFVAL.value (current)
-                const mcurrent_previous_value = IFVAL.previous (current)
-                const remainings = snd (remainings_separate)
-
-                // This is the previous spell, and we need the next to form a pair
-                if (isJust (mcurrent_previous_value)) {
-                  // Index of a spell to pair `current` with
-                  const mmatching_spell_index =
-                    findIndex ((e: CombinedMappedSpell) =>
-                                IFVAL.value (e) === fromJust (mcurrent_previous_value)
-                                && current_value === 0)
-                              (remainings)
-
-                  if (isJust (mmatching_spell_index)) {
-                    // Index found, so we can pair
-                    const index = fromJust (mmatching_spell_index)
-
-                    return Pair (
-                      deleteAt (index) (remainings),
-                      cons (processeds)
-                           (Pair (current, unsafeIndex (remainings) (index)))
-                    )
-                  }
-                  else {
-                    return Pair (remainings, cons (processeds) (current))
-                  }
-                }
-                // Otherwise, this is the next and we need the previous to form a pair
-                else {
-                  // Index of a spell to pair `current` with
-                  const mmatching_spell_index =
-                    findIndex ((e: CombinedMappedSpell) =>
-                                Maybe.elem (current_value) (IFVAL.previous (e))
-                                && IFVAL.value (e) === 0)
-                              (remainings)
-
-                  if (isJust (mmatching_spell_index)) {
-                    // Index found, so we can pair
-                    const index = fromJust (mmatching_spell_index)
-
-                    return Pair (
-                      deleteAt (index) (remainings),
-                      cons (processeds)
-                           (Pair (unsafeIndex (remainings) (index), current))
-                    )
-                  }
-                  else {
-                    return Pair (remainings, cons (processeds) (current))
-                  }
-                }
-              }),
-    snd,
-    reverse
+  return (
+    <p className="profession-variants">
+      <span>{translate (l10n) ("variants")}</span>
+    </p>
   )
+}
+
+interface VariantListProps {
+  attributes: OrderedMap<string, Record<Attribute>>
+  combatTechniquesSelectionString: Maybe<string>
+  liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
+  l10n: L10nRecord
+  profession: Record<ProfessionCombined>
+  sex: Maybe<Sex>
+  skills: OrderedMap<string, Record<Skill>>
+  specializationSelectionString: Maybe<string>
+  spells: OrderedMap<string, Record<Spell>>
+}
+
+function VariantList (props: VariantListProps): JSX.Element | null {
+  const {
+    attributes,
+    combatTechniquesSelectionString,
+    liturgicalChants,
+    l10n,
+    profession,
+    sex,
+    skills,
+    specializationSelectionString,
+    spells,
+  } = props
+
+  const variants = PCA.mappedVariants (profession)
+
+  if (notNull (variants)) {
+    return (
+      <>
+        <VariantListHeader l10n={l10n} />
+        <ul className="profession-variants">
+          {
+            pipe_ (
+              variants,
+              map (variant => (
+                    <Variant
+                      key={PVCA_.id (variant)}
+                      attributes={attributes}
+                      combatTechniquesSelectionString={combatTechniquesSelectionString}
+                      liturgicalChants={liturgicalChants}
+                      l10n={l10n}
+                      profession={profession}
+                      sex={sex}
+                      skills={skills}
+                      specializationSelectionString={specializationSelectionString}
+                      spells={spells}
+                      variant={variant}
+                      />
+                  )),
+              toArray
+            )
+          }
+        </ul>
+      </>
+    )
+  }
+
+  return null
+}
+
+interface VariantProps {
+  attributes: OrderedMap<string, Record<Attribute>>
+  combatTechniquesSelectionString: Maybe<string>
+  liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
+  l10n: L10nRecord
+  profession: Record<ProfessionCombined>
+  sex: Maybe<Sex>
+  skills: OrderedMap<string, Record<Skill>>
+  specializationSelectionString: Maybe<string>
+  spells: OrderedMap<string, Record<Spell>>
+  variant: Record<ProfessionVariantCombined>
+}
+
+function Variant (props: VariantProps) {
+  const {
+    attributes,
+    l10n,
+    profession,
+    sex: msex,
+    skills,
+    variant,
+  } = props
+
+  const fullText = PVCA_.fullText (variant)
+
+  const name = getNameBySex (fromMaybe<Sex> ("m") (msex)) (PVCA_.name (variant))
+
+  const ap_sum = Maybe.sum (PCA_.ap (profession)) + PVCA_.ap (variant)
+
+  if (isJust (fullText)) {
+    return (
+      <li>
+        <span>{name}</span>
+        {" "}
+        <span>
+          {"("}
+          {ap_sum}
+          {" "}
+          {translate (l10n) ("adventurepoints.short")}
+          {"): "}
+        </span>
+        {fromJust (fullText)}
+      </li>
+    )
+  }
+
+  return (
+    <li>
+      <span>{name}</span>
+      {" "}
+      <span>
+        {"("}
+        {ap_sum}
+        {" "}
+        {translate (l10n) ("adventurepoints.short")}
+        {"): "}
+      </span>
+      <span>
+        {maybeRNullF (PVCA_.precedingText (variant))
+                     (str => <span>{str}</span>)}
+        {maybe (<></>)
+               ((str: string) => (<>{str}</>))
+               (getVariantPrerequisites (l10n)
+                                        (attributes)
+                                        (skills)
+                                        (variant))}
+        {pipe_ (
+          List<Maybe<NonNullable<React.ReactNode>>> (
+            ...getVariantSpecialAbilities (props),
+            getVariantLanguagesLiteracySelection (PCA_.selections (profession)) (props),
+            getVariantSpecializationSelection (PCA_.selections (profession)) (props),
+            getVariantCombatTechniquesSelection (PCA_.selections (profession)) (props),
+            Just (getVariantSkillsSelection (props)),
+            PVCA_.concludingText (variant)
+          ),
+          catMaybes,
+          intersperse<React.ReactNode> (", "),
+          toArray
+        )}
+      </span>
+    </li>
+  )
+}
+
+export interface WikiProfessionInfoProps {
+  l10n: L10nRecord
+  wiki: WikiModelRecord
+  x: Record<ProfessionCombined>
+  sex: Maybe<Sex>
+}
+
+// tslint:disable-next-line: cyclomatic-complexity
+export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
+  const { x, l10n, sex, wiki } = props
+
+  const attributes = WA.attributes (wiki)
+  const blessings = WA.blessings (wiki)
+  const books = WA.books (wiki)
+  const cantrips = WA.cantrips (wiki)
+  const liturgicalChants = WA.liturgicalChants (wiki)
+  const races = WA.races (wiki)
+  const skills = WA.skills (wiki)
+  const spells = WA.spells (wiki)
+  const specialAbilities = WA.specialAbilities (wiki)
+
+  const selections = PCA.mappedSelections (x)
+
+  const name = getNameBySex (fromMaybe<Sex> ("m") (sex)) (PCA_.name (x))
+  const msubname = getNameBySexM (fromMaybe<Sex> ("m") (sex)) (PCA_.subname (x))
+
+  const specializationSelectionString =
+    getSpecializationSelection (l10n) (skills) (x)
+
+  const skillsSelectionJoinedObject =
+    getSkillSelection (l10n) (x)
+
+  const cursesSelection =
+    PSA[ProfessionSelectionIds.CURSES] (selections)
+
+  const languagesLiteracySelection =
+    PSA[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (selections)
+
+  const combatTechniquesSelectionString =
+    getCombatTechniquesSelection (l10n) (x)
+
+  const terrainKnowledgeSelectionString =
+    getTerrainKnowledgeSelection (l10n) (specialAbilities) (x)
+
+  const spellsString =
+    getSpells (l10n) (cantrips) (spells) (x)
+
+  const liturgicalChantsString =
+    getLiturgicalChants (l10n) (blessings) (liturgicalChants) (x)
+
+  const raceRequirement =
+     pipe_ (x, PCA_.dependencies, find (RaceRequirement.is))
+
+  const sexRequirement =
+     pipe_ (x, PCA_.dependencies, find (isSexRequirement))
+
+  const getRaceNameAP =
+    (race: Record<Race>) =>
+      `${Race.A.name (race)} (${Race.A.ap (race)} ${translate (l10n) ("adventurepoints.short")})`
+
+  const mrace_depencency_str =
+    bind (raceRequirement)
+         (pipe (
+           race_dep => {
+             const value = RaceRequirement.A.value (race_dep)
+
+             return isList (value)
+               ? pipe_ (
+                   value,
+                   mapMaybe (pipe (prefixRace, lookupF (races), fmap (getRaceNameAP))),
+                   ensure (notNull),
+                   fmap (localizeOrList (l10n))
+                 )
+               : pipe_ (value, prefixRace, lookupF (races), fmap (getRaceNameAP))
+           },
+           fmap (str => `${translate (l10n) ("race")}: ${str}`)
+         ))
+
+  const prereq_strs =
+    pipe_ (
+      x,
+      PCA.mappedPrerequisites,
+      mapMaybe (e => {
+        if (ProfessionRequireIncreasable.is (e)) {
+          const id = PRIA.id (e)
+          const value = PRIA.value (e)
+          const mwiki_entry =
+            alt_<Record<Attribute> | Record<Skill>> (lookup (id) (attributes))
+                                                    (() => lookup (id) (skills))
+
+          return fmapF (mwiki_entry)
+                       (wiki_entry =>
+                         Attribute.is (wiki_entry)
+                           ? `${Attribute.A.short (wiki_entry)} ${value}`
+                           : `${Skill.A.name (wiki_entry)} ${value}`)
+        }
+        else {
+          const pr_name = ANCIAA_.name (e)
+          const pr_cost_str = signNeg (ANCIAA_.finalCost (e))
+          const ap_tag = translate (l10n) ("adventurepoints.short")
+
+          return Just (`${pr_name} (${pr_cost_str} ${ap_tag})`)
+        }
+      }),
+      sortStrings (l10n)
+    )
+
+  const prerequisites = List (
+    ...maybeToList (mrace_depencency_str),
+    ...maybeToList (PCA_.prerequisitesStart (x)),
+    ...prereq_strs,
+    ...maybeToList (PCA_.prerequisitesEnd (x))
+  )
+
+  const sex_dep_str =
+    fmapF (sexRequirement)
+          (sex_dep => {
+            const space_before = notNull (prerequisites) ? " " : ""
+            const sex_tag = translate (l10n) ("sex")
+            const sex_value =
+              SexRequirement.A.value (sex_dep) === "m"
+                ? translate (l10n) ("male")
+                : translate (l10n) ("female")
+
+            return `${space_before}${sex_tag}: ${sex_value}`
+          })
+
+  const single_sas_strs =
+    pipe_ (
+      x,
+      PCA.mappedSpecialAbilities,
+      map (ANCIAA_.name),
+      sortStrings (l10n)
+    )
+
+  const sas_str =
+    pipe_ (
+      List<string> (),
+      maybe<ident<List<string>>> (ident)
+                                 ((curss: Record<CursesSelection>) =>
+                                   consF (translateP (l10n)
+                                                     ("cursestotalingap")
+                                                     (List (CursesSelection.A.value (curss)))))
+                                 (cursesSelection),
+      maybe<ident<List<string>>> (ident) <string> (consF) (terrainKnowledgeSelectionString),
+      maybe<ident<List<string>>> (ident) <string> (consF) (specializationSelectionString),
+      maybe<ident<List<string>>> (ident)
+                                 ((curss: Record<LanguagesScriptsSelection>) =>
+                                   consF (translateP (l10n)
+                                                     ("languagesandliteracytotalingap")
+                                                     (List (
+                                                       LanguagesScriptsSelection.A.value (curss)
+                                                     ))))
+                                 (languagesLiteracySelection),
+      sortStrings (l10n),
+      flip (append) (single_sas_strs),
+      ensure (notNull),
+      maybe (translate (l10n) ("none")) (intercalate (", "))
+    )
+
+  const final_ap =
+    fromMaybe_ (() => pipe_ (
+                        x,
+                        PCA.mappedVariants,
+                        foldr (pipe (PVCA_.ap, insert))
+                              (OrderedSet.empty),
+                        toList,
+                        sortBy (compare),
+                        localizeOrList (l10n)
+                      ))
+               (fmapF (PCA_.ap (x)) (show))
+
+  return (
+    <WikiBoxTemplate
+      className="profession"
+      title={maybe (name) ((subname: string) => `${name} (${subname})`) (msubname)}
+      >
+      <WikiProperty l10n={l10n} title="apvalue">
+        {final_ap}
+        {" "}
+        {translate (l10n) ("adventurepoints")}
+      </WikiProperty>
+      <WikiProperty l10n={l10n} title="prerequisites">
+        {maybe (translate (l10n) ("none")) (intercalate (", ")) (ensure (notNull) (prerequisites))}
+        {renderMaybe (sex_dep_str)}
+      </WikiProperty>
+      <WikiProperty l10n={l10n} title="specialabilities">
+        {sas_str}
+      </WikiProperty>
+      <CombatTechniques
+        combatTechniquesSelectionString={combatTechniquesSelectionString}
+        x={x}
+        l10n={l10n}
+        />
+      <WikiProperty l10n={l10n} title="skills" />
+      <SkillsList
+        profession={x}
+        l10n={l10n}
+        skillsSelection={skillsSelectionJoinedObject}
+        />
+      {maybeRNullF (spellsString)
+                   (str => (
+                     <WikiProperty l10n={l10n} title="spells">
+                       {str}
+                     </WikiProperty>
+                   ))}
+      {maybeRNullF (liturgicalChantsString)
+                   (str => (
+                     <WikiProperty l10n={l10n} title="liturgicalchants">
+                       {str}
+                     </WikiProperty>
+                   ))}
+      <WikiProperty l10n={l10n} title="suggestedadvantages">
+        {fromMaybe (translate (l10n) ("none")) (PCA_.suggestedAdvantagesText (x))}
+      </WikiProperty>
+      <WikiProperty l10n={l10n} title="suggesteddisadvantages">
+        {fromMaybe (translate (l10n) ("none")) (PCA_.suggestedDisadvantagesText (x))}
+      </WikiProperty>
+      <WikiProperty l10n={l10n} title="unsuitableadvantages">
+        {fromMaybe (translate (l10n) ("none")) (PCA_.unsuitableAdvantagesText (x))}
+      </WikiProperty>
+      <WikiProperty l10n={l10n} title="unsuitabledisadvantages">
+        {fromMaybe (translate (l10n) ("none")) (PCA_.unsuitableDisadvantagesText (x))}
+      </WikiProperty>
+      <VariantList
+        attributes={attributes}
+        combatTechniquesSelectionString={combatTechniquesSelectionString}
+        liturgicalChants={liturgicalChants}
+        l10n={l10n}
+        profession={x}
+        sex={sex}
+        skills={skills}
+        specializationSelectionString={specializationSelectionString}
+        spells={spells}
+        />
+      <WikiSource
+        books={books}
+        x={x}
+        l10n={l10n}
+        acc={PCA_}
+        />
+    </WikiBoxTemplate>
+  )
+}

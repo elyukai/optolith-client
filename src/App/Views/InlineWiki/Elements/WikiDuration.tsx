@@ -1,10 +1,10 @@
-import * as React from "react";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { Category } from "../../../Constants/Categories";
-import { MagicalGroup } from "../../../Constants/Groups";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { Category } from "../../../Constants/Categories"
+import { MagicalGroup } from "../../../Constants/Groups"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
   duration: (r: Record<A>) => string

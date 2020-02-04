@@ -1,6 +1,6 @@
-import { List } from "../../../../Data/List";
-import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record";
-import { AnyProfessionVariantSelection, ProfessionSelectionIds } from "../wikiTypeHelpers";
+import { List } from "../../../../Data/List"
+import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record"
+import { AnyProfessionVariantSelection, ProfessionSelectionIds } from "../wikiTypeHelpers"
 
 export interface CombatTechniquesSelection {
   "@@name": "CombatTechniquesSelection"

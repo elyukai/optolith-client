@@ -1,16 +1,16 @@
-import { connect } from "react-redux";
-import { Action } from "redux";
-import { join, Just } from "../../Data/Maybe";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as HerolistActions from "../Actions/HerolistActions";
-import * as LocationActions from "../Actions/LocationActions";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getAPObjectMap } from "../Selectors/adventurePointsSelectors";
-import { getUnsavedHeroesById } from "../Selectors/herolistSelectors";
-import { getUsers, getWiki } from "../Selectors/stateSelectors";
-import { TabId } from "../Utilities/LocationUtils";
-import { HerolistItem, HerolistItemDispatchProps, HerolistItemOwnProps, HerolistItemStateProps } from "../Views/Heroes/HerolistItem";
+import { connect } from "react-redux"
+import { Action } from "redux"
+import { join, Just } from "../../Data/Maybe"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as HerolistActions from "../Actions/HerolistActions"
+import * as LocationActions from "../Actions/LocationActions"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
+import { getUnsavedHeroesById } from "../Selectors/herolistSelectors"
+import { getUsers, getWiki } from "../Selectors/stateSelectors"
+import { TabId } from "../Utilities/LocationUtils"
+import { HerolistItem, HerolistItemDispatchProps, HerolistItemOwnProps, HerolistItemStateProps } from "../Views/Heroes/HerolistItem"
 
 const HA = HeroModel.A
 
@@ -31,14 +31,14 @@ const mapDispatchToProps = (
   showHero () {
     dispatch (LocationActions.setTab (TabId.Profile))
   },
-  saveHero () {
-    dispatch (HerolistActions.saveHero (l10n) (Just (HA.id (hero))))
+  async saveHero () {
+    await dispatch (HerolistActions.saveHero (l10n) (Just (HA.id (hero))))
   },
   saveHeroAsJSON () {
     dispatch (HerolistActions.exportHeroValidate (l10n) (HA.id (hero)))
   },
-  deleteHero () {
-    dispatch (HerolistActions.deleteHeroValidate (l10n) (HA.id (hero)))
+  async deleteHero () {
+    await dispatch (HerolistActions.deleteHeroValidate (l10n) (HA.id (hero)))
   },
   duplicateHero () {
     dispatch (HerolistActions.duplicateHero (HA.id (hero)))

@@ -1,7 +1,7 @@
-import * as React from "react";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
   target: (r: Record<A>) => string

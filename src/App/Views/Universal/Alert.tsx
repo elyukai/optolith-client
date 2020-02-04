@@ -1,10 +1,10 @@
-import * as React from "react";
-import { flength, map, toArray } from "../../../Data/List";
-import { fromJust, isJust, Just, listToMaybe, Maybe, maybeToUndefined, Nothing } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { PromptButton, PromptOptions } from "../../Actions/AlertActions";
-import { addKeybinding, removeKeybinding } from "../../Utilities/Keybindings";
-import { Dialog } from "./Dialog";
+import * as React from "react"
+import { flength, map, toArray } from "../../../Data/List"
+import { fromJust, isJust, Just, listToMaybe, Maybe, maybeToUndefined, Nothing } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { PromptButton, PromptOptions } from "../../Actions/AlertActions"
+import { addKeybinding, removeKeybinding } from "../../Utilities/Keybindings"
+import { Dialog } from "./Dialog"
 
 const POA = PromptOptions.A
 const PBA = PromptButton.A

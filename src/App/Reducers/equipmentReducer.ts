@@ -1,27 +1,27 @@
-import { not } from "../../Data/Bool";
-import { ident } from "../../Data/Function";
-import { fmap } from "../../Data/Functor";
-import { over, set, view } from "../../Data/Lens";
-import { insertAt, isList } from "../../Data/List";
-import { bind, bindF, ensure, fromJust, Just, maybe, Maybe, Nothing, thenF } from "../../Data/Maybe";
-import { insert, lookup, map, sdelete } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { isTuple, Pair } from "../../Data/Tuple";
-import { upd1, upd2 } from "../../Data/Tuple/Update";
-import * as EquipmentActions from "../Actions/EquipmentActions";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { CombatTechniqueId } from "../Constants/Ids";
-import { BelongingsL } from "../Models/Hero/Belongings";
-import { EditHitZoneArmor, EditHitZoneArmorL, EditHitZoneArmorSafe, ensureHitZoneArmorId } from "../Models/Hero/EditHitZoneArmor";
-import { EditItem, EditItemL, EditItemSafe, ensureEditId } from "../Models/Hero/EditItem";
-import { EditPrimaryAttributeDamageThreshold, EditPrimaryAttributeDamageThresholdL } from "../Models/Hero/EditPrimaryAttributeDamageThreshold";
-import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { HitZoneArmor, HitZoneArmorL } from "../Models/Hero/HitZoneArmor";
-import { fromItemTemplate, Item } from "../Models/Hero/Item";
-import { PurseL } from "../Models/Hero/Purse";
-import { composeL } from "../Utilities/compose";
-import { editableToHitZoneArmor, editableToItem, fromItemTemplateEdit, hitZoneArmorToEditable, itemToEditable } from "../Utilities/ItemUtils";
-import { pipe } from "../Utilities/pipe";
+import { not } from "../../Data/Bool"
+import { ident } from "../../Data/Function"
+import { fmap } from "../../Data/Functor"
+import { over, set, view } from "../../Data/Lens"
+import { insertAt, isList } from "../../Data/List"
+import { bind, bindF, ensure, fromJust, Just, maybe, Maybe, Nothing, thenF } from "../../Data/Maybe"
+import { insert, lookup, map, sdelete } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { isTuple, Pair } from "../../Data/Tuple"
+import { upd1, upd2 } from "../../Data/Tuple/Update"
+import * as EquipmentActions from "../Actions/EquipmentActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { CombatTechniqueId } from "../Constants/Ids"
+import { BelongingsL } from "../Models/Hero/Belongings"
+import { EditHitZoneArmor, EditHitZoneArmorL, EditHitZoneArmorSafe, ensureHitZoneArmorId } from "../Models/Hero/EditHitZoneArmor"
+import { EditItem, EditItemL, EditItemSafe, ensureEditId } from "../Models/Hero/EditItem"
+import { EditPrimaryAttributeDamageThreshold, EditPrimaryAttributeDamageThresholdL } from "../Models/Hero/EditPrimaryAttributeDamageThreshold"
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { HitZoneArmor, HitZoneArmorL } from "../Models/Hero/HitZoneArmor"
+import { fromItemTemplate, Item } from "../Models/Hero/Item"
+import { PurseL } from "../Models/Hero/Purse"
+import { composeL } from "../Utilities/compose"
+import { editableToHitZoneArmor, editableToItem, fromItemTemplateEdit, hitZoneArmorToEditable, itemToEditable } from "../Utilities/ItemUtils"
+import { pipe } from "../Utilities/pipe"
 
 type Action = EquipmentActions.AddItemAction
             | EquipmentActions.AddItemTemplateAction
@@ -243,6 +243,7 @@ const equipmentManagingReducer =
                               (insert (fromJust (view (edit_id) (edit_item) as Just<string>))
                                       (
                                         editableToItem (edit_item)
+
                                         // TODO: does not handle locked
                                         // templated anymore
                                       )),
@@ -291,6 +292,7 @@ const equipmentManagingReducer =
                            (sdelete (id_to_remove)),
                       over (hitZoneArmors)
                            (map (pipe (
+
                                   // Remove hit zone from armor if hit zone
                                   // contains removed item
                                   over (head) (bindF (ensureNotId)),

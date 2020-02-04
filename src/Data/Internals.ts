@@ -1,5 +1,5 @@
-import { Type, TypeName } from "./Data";
-import { RecordIBase } from "./Record";
+import { Type, TypeName } from "./Data"
+import { RecordIBase } from "./Record"
 
 export namespace Internals {
   export type Either<A, B> = Left<A> | Right<B>
@@ -95,6 +95,7 @@ export namespace Internals {
         // tslint:disable-next-line: no-this-assignment
         let current = this as List<any>
 
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
         while (!isNil (current)) {
           yield current .x
           current = current .xs
@@ -183,6 +184,137 @@ export namespace Internals {
       isTuple: true,
       "@@type": TypeName.Tuple,
     })
+
+
+  // Functions on Prototypes
+
+  /**
+   * `isConst :: a -> Bool`
+   *
+   * The `isConst` function returns `True` if its argument is a `Const`.
+   */
+  export const isConst =
+    (x: any): x is Const<any, any> =>
+      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === ConstPrototype
+
+  /**
+   * `isIdentity :: a -> Bool`
+   *
+   * The `isIdentity` function returns `True` if its argument is an `Identity`.
+   */
+  export const isIdentity =
+    (x: any): x is Identity<any> =>
+      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === IdentityPrototype
+
+  /**
+   * `isLeft :: Either a b -> Bool`
+   *
+   * Return `True` if the given value is a `Left`-value, `False` otherwise.
+   */
+  export const isLeft =
+    <A, B> (x: Either<A, B>): x is Left<A> =>
+      Object.getPrototypeOf (x) === LeftPrototype
+
+  /**
+  * `isRight :: Either a b -> Bool`
+  *
+  * Return `True` if the given value is a `Right`-value, `False` otherwise.
+  */
+  export const isRight =
+    <A, B> (x: Either<A, B>): x is Right<B> =>
+      Object.getPrototypeOf (x) === RightPrototype
+
+  /**
+   * `isEither :: a -> Bool`
+   *
+   * Return `True` if the given value is an `Either`.
+   */
+  export const isEither =
+    (x: any): x is Either<any, any> =>
+      typeof x === "object" && x !== null && (isLeft (x) || isRight (x))
+
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  export const isNil = (xs: List<any>): xs is Nil => xs === Nil
+
+  /**
+   * Checks if the given value is a `List`.
+   * @param x The value to test.
+   */
+  export const isList =
+    <A, A1> (x: A | List<A1>): x is List<A1> =>
+      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === ListPrototype
+
+  /**
+   * `isJust :: Maybe a -> Bool`
+   *
+   * The `isJust` function returns `true` if its argument is of the form
+   * `Just _`.
+   */
+  export const isJust =
+    <A> (x: Maybe<A>): x is Just<A> =>
+      Object.getPrototypeOf (x) === JustPrototype
+
+  /**
+   * `isNothing :: Maybe a -> Bool`
+   *
+   * The `isNothing` function returns `true` if its argument is `Nothing`.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  export const isNothing = (x: Maybe<any>): x is Nothing => x === Nothing
+
+  /**
+   * `isMaybe :: a -> Bool`
+   *
+   * The `isMaybe` function returns `True` if its argument is a `Maybe`.
+   */
+  export const isMaybe =
+    <A, A0>(x: A | Maybe<A0>): x is Maybe<A0> =>
+      typeof x === "object"
+      && x !== null
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      && (x === Nothing || Object.getPrototypeOf (x) === JustPrototype)
+
+  /**
+   * Checks if the given value is a `OrderedMap`.
+   * @param x The value to test.
+   */
+  export const isOrderedMap =
+    (x: any): x is OrderedMap<any, any> =>
+      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === OrderedMapPrototype
+
+  /**
+   * Checks if the given value is a `OrderedSet`.
+   * @param x The value to test.
+   */
+  export const isOrderedSet =
+    (x: any): x is OrderedSet<any> =>
+      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === OrderedSetPrototype
+
+  /**
+   * `isPair :: a -> Bool`
+   *
+   * Return `True` if the given value is an pair.
+   */
+  export const isPair =
+    (x: any): x is Pair<any, any> =>
+      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === PairPrototype
+
+  /**
+   * Checks if the given value is a `Record`.
+   * @param x The value to test.
+   */
+  export const isRecord =
+    <A, I extends RecordIBase<any>>(x: A | Record<I>): x is Record<I> =>
+      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === RecordPrototype
+
+  /**
+   * `isTuple :: a -> Bool`
+   *
+   * The `isTuple` function returns `True` if its argument is a `Tuple`.
+   */
+  export const isTuple =
+    <A, A0 extends any[]>(x: A | Tuple<A0>): x is Tuple<A0> =>
+      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === TuplePrototype
 
 
   // Constructors
@@ -459,134 +591,6 @@ export namespace Internals {
         }
       )
     }
-
-
-  // Functions on Prototypes
-
-  /**
-   * `isConst :: a -> Bool`
-   *
-   * The `isConst` function returns `True` if its argument is a `Const`.
-   */
-  export const isConst =
-    (x: any): x is Const<any, any> =>
-      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === ConstPrototype
-
-  /**
-   * `isIdentity :: a -> Bool`
-   *
-   * The `isIdentity` function returns `True` if its argument is an `Identity`.
-   */
-  export const isIdentity =
-    (x: any): x is Identity<any> =>
-      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === IdentityPrototype
-
-  /**
-   * `isEither :: a -> Bool`
-   *
-   * Return `True` if the given value is an `Either`.
-   */
-  export const isEither =
-    (x: any): x is Either<any, any> =>
-      typeof x === "object" && x !== null && (isLeft (x) || isRight (x))
-
-  /**
-   * `isLeft :: Either a b -> Bool`
-   *
-   * Return `True` if the given value is a `Left`-value, `False` otherwise.
-   */
-  export const isLeft =
-    <A, B> (x: Either<A, B>): x is Left<A> =>
-      Object.getPrototypeOf (x) === LeftPrototype
-
-  /**
-  * `isRight :: Either a b -> Bool`
-  *
-  * Return `True` if the given value is a `Right`-value, `False` otherwise.
-  */
-  export const isRight =
-    <A, B> (x: Either<A, B>): x is Right<B> =>
-      Object.getPrototypeOf (x) === RightPrototype
-
-  export const isNil = (xs: List<any>): xs is Nil => xs === Nil
-
-  /**
-   * Checks if the given value is a `List`.
-   * @param x The value to test.
-   */
-  export const isList =
-    <A, A1> (x: A | List<A1>): x is List<A1> =>
-      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === ListPrototype
-
-  /**
-   * `isJust :: Maybe a -> Bool`
-   *
-   * The `isJust` function returns `true` if its argument is of the form
-   * `Just _`.
-   */
-  export const isJust =
-    <A> (x: Maybe<A>): x is Just<A> =>
-      Object.getPrototypeOf (x) === JustPrototype
-
-  /**
-   * `isNothing :: Maybe a -> Bool`
-   *
-   * The `isNothing` function returns `true` if its argument is `Nothing`.
-   */
-  export const isNothing = (x: Maybe<any>): x is Nothing => x === Nothing
-
-  /**
-   * `isMaybe :: a -> Bool`
-   *
-   * The `isMaybe` function returns `True` if its argument is a `Maybe`.
-   */
-  export const isMaybe =
-    <A, A0>(x: A | Maybe<A0>): x is Maybe<A0> =>
-      typeof x === "object"
-      && x !== null
-      && (x === Nothing || Object.getPrototypeOf (x) === JustPrototype)
-
-  /**
-   * Checks if the given value is a `OrderedMap`.
-   * @param x The value to test.
-   */
-  export const isOrderedMap =
-    (x: any): x is OrderedMap<any, any> =>
-      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === OrderedMapPrototype
-
-  /**
-   * Checks if the given value is a `OrderedSet`.
-   * @param x The value to test.
-   */
-  export const isOrderedSet =
-    (x: any): x is OrderedSet<any> =>
-      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === OrderedSetPrototype
-
-  /**
-   * `isPair :: a -> Bool`
-   *
-   * Return `True` if the given value is an pair.
-   */
-  export const isPair =
-    (x: any): x is Pair<any, any> =>
-      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === PairPrototype
-
-  /**
-   * Checks if the given value is a `Record`.
-   * @param x The value to test.
-   */
-  export const isRecord =
-    <A, I extends RecordIBase<any>>(x: A | Record<I>): x is Record<I> =>
-      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === RecordPrototype
-
-  /**
-   * `isTuple :: a -> Bool`
-   *
-   * The `isTuple` function returns `True` if its argument is a `Tuple`.
-   */
-  export const isTuple =
-    <A, A0 extends any[]>(x: A | Tuple<A0>): x is Tuple<A0> =>
-      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === TuplePrototype
 
   // OrderedMap
 

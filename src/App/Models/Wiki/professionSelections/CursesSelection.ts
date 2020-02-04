@@ -1,5 +1,5 @@
-import { fromDefault, Record } from "../../../../Data/Record";
-import { AnyProfessionSelection, ProfessionSelectionIds } from "../wikiTypeHelpers";
+import { fromDefault, Record } from "../../../../Data/Record"
+import { AnyProfessionSelection, ProfessionSelectionIds } from "../wikiTypeHelpers"
 
 export interface CursesSelection {
   "@@name": "CursesSelection"

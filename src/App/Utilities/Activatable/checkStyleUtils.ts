@@ -1,13 +1,13 @@
-import { SpecialAbilityGroup } from "../../Constants/Groups";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import * as Wiki from "../../Models/Wiki/wikiTypeHelpers";
+import { SpecialAbilityGroup } from "../../Constants/Groups"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import * as Wiki from "../../Models/Wiki/wikiTypeHelpers"
 
 const { gr } = SpecialAbility.AL
 
 export const isCombatStyleSpecialAbility =
   (e: Wiki.EntryWithCategory) =>
     SpecialAbility.is (e)
-    && [SpecialAbilityGroup.CombatStylesArmed, SpecialAbilityGroup.CombatStylesUnarmed]
+    && [ SpecialAbilityGroup.CombatStylesArmed, SpecialAbilityGroup.CombatStylesUnarmed ]
       .includes (gr (e))
 
 export const isMagicalStyleSpecialAbility =

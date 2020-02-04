@@ -1,15 +1,15 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, List, map, replicateR, toArray } from "../../../../Data/List";
-import { fromMaybe, Maybe } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { HitZoneArmorForView } from "../../../Models/View/HitZoneArmorForView";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { minus, ndash } from "../../../Utilities/Chars";
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { flength, List, map, replicateR, toArray } from "../../../../Data/List"
+import { fromMaybe, Maybe } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { HitZoneArmorForView } from "../../../Models/View/HitZoneArmorForView"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { minus, ndash } from "../../../Utilities/Chars"
+import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   armorZones: Maybe<List<Record<HitZoneArmorForView>>>

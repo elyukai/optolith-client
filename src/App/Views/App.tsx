@@ -1,19 +1,19 @@
-import * as React from "react";
-import { List, splitOn } from "../../Data/List";
-import { bind, ensure, fromMaybe, guardReplace, Just, listToMaybe, Maybe, maybe } from "../../Data/Maybe";
-import { AlertsContainer } from "../Containers/AlertsContainer";
-import { DownloaderContainer } from "../Containers/DownloaderContainer";
-import { NavigationBarContainer } from "../Containers/NavigationBarContainer";
-import { HeroModelRecord } from "../Models/Hero/HeroModel";
-import { L10n, L10nRecord } from "../Models/Wiki/L10n";
-import { LAST_LOADING_PHASE } from "../Reducers/isReadyReducer";
-import { classListMaybe } from "../Utilities/CSS";
-import { getSystemLocale } from "../Utilities/IOUtils";
-import { TabId } from "../Utilities/LocationUtils";
-import { Theme } from "../Utilities/Raw/JSON/Config";
-import { Router } from "./Router/Router";
-import { Scroll } from "./Universal/Scroll";
-import { TitleBar } from "./Universal/TitleBar";
+import * as React from "react"
+import { List, splitOn } from "../../Data/List"
+import { bind, ensure, fromMaybe, guardReplace, Just, listToMaybe, Maybe, maybe } from "../../Data/Maybe"
+import { AlertsContainer } from "../Containers/AlertsContainer"
+import { DownloaderContainer } from "../Containers/DownloaderContainer"
+import { NavigationBarContainer } from "../Containers/NavigationBarContainer"
+import { HeroModelRecord } from "../Models/Hero/HeroModel"
+import { L10n, L10nRecord } from "../Models/Wiki/L10n"
+import { LAST_LOADING_PHASE } from "../Reducers/isReadyReducer"
+import { classListMaybe } from "../Utilities/CSS"
+import { getSystemLocale } from "../Utilities/IOUtils"
+import { TabId } from "../Utilities/LocationUtils"
+import { Theme } from "../Utilities/Raw/JSON/Config"
+import { Router } from "./Router/Router"
+import { Scroll } from "./Universal/Scroll"
+import { TitleBar } from "./Universal/TitleBar"
 
 export interface AppOwnProps {}
 
@@ -42,8 +42,8 @@ export type AppProps = AppStateProps & AppDispatchProps & AppOwnProps
 
 export interface AppState {
   hasError?: {
-    error: Error;
-    info: any;
+    error: Error
+    info: any
   }
 }
 

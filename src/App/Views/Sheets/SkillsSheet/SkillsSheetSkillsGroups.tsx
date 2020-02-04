@@ -1,18 +1,18 @@
-import * as React from "react";
-import { equals } from "../../../../Data/Eq";
-import { fmap } from "../../../../Data/Functor";
-import { find, imap, intercalate, List, subscriptF } from "../../../../Data/List";
-import { mapMaybe } from "../../../../Data/Maybe";
-import { lookup, OrderedMap } from "../../../../Data/OrderedMap";
-import { Record } from "../../../../Data/Record";
-import { fst, Pair, snd } from "../../../../Data/Tuple";
-import { AttrId } from "../../../Constants/Ids";
-import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { ndash } from "../../../Utilities/Chars";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybeWith } from "../../../Utilities/ReactUtils";
+import * as React from "react"
+import { equals } from "../../../../Data/Eq"
+import { fmap } from "../../../../Data/Functor"
+import { find, imap, intercalate, List, subscriptF } from "../../../../Data/List"
+import { mapMaybe } from "../../../../Data/Maybe"
+import { lookup, OrderedMap } from "../../../../Data/OrderedMap"
+import { Record } from "../../../../Data/Record"
+import { fst, Pair, snd } from "../../../../Data/Tuple"
+import { AttrId } from "../../../Constants/Ids"
+import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { ndash } from "../../../Utilities/Chars"
+import { translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { renderMaybeWith } from "../../../Utilities/ReactUtils"
 
 type GroupNameKeys = "physicalskills"
                    | "socialskills"

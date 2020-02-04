@@ -1,11 +1,11 @@
-import * as React from "react";
-import { useDispatch } from "react-redux";
-import { elem } from "../../../Data/List";
-import { Record } from "../../../Data/Record";
-import { setTab } from "../../Actions/LocationActions";
-import { NavigationBarTabOptions } from "../../Models/View/NavigationBarTabOptions";
-import { TabId } from "../../Utilities/LocationUtils";
-import { Tab } from "../Universal/Tab";
+import * as React from "react"
+import { useDispatch } from "react-redux"
+import { elem } from "../../../Data/List"
+import { Record } from "../../../Data/Record"
+import { setTab } from "../../Actions/LocationActions"
+import { NavigationBarTabOptions } from "../../Models/View/NavigationBarTabOptions"
+import { TabId } from "../../Utilities/LocationUtils"
+import { Tab } from "../Universal/Tab"
 
 const NBTOA = NavigationBarTabOptions.A
 

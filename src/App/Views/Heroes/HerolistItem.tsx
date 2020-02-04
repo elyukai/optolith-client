@@ -1,29 +1,29 @@
-import * as React from "react";
-import { fmap } from "../../../Data/Functor";
-import { bindF, fromMaybe, Just, Maybe } from "../../../Data/Maybe";
-import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { notMember, OrderedSet } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { User } from "../../Models/Hero/heroTypeHelpers";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { Culture } from "../../Models/Wiki/Culture";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Race } from "../../Models/Wiki/Race";
-import { RaceVariant } from "../../Models/Wiki/RaceVariant";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { getFullProfessionName } from "../../Utilities/rcpUtils";
-import { renderMaybeWith } from "../../Utilities/ReactUtils";
-import { AvatarWrapper } from "../Universal/AvatarWrapper";
-import { BorderButton } from "../Universal/BorderButton";
-import { IconButton } from "../Universal/IconButton";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemButtons } from "../Universal/ListItemButtons";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListItemSeparator } from "../Universal/ListItemSeparator";
-import { VerticalList } from "../Universal/VerticalList";
+import * as React from "react"
+import { fmap } from "../../../Data/Functor"
+import { bindF, fromMaybe, Just, Maybe } from "../../../Data/Maybe"
+import { lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { notMember, OrderedSet } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { User } from "../../Models/Hero/heroTypeHelpers"
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
+import { Culture } from "../../Models/Wiki/Culture"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { Race } from "../../Models/Wiki/Race"
+import { RaceVariant } from "../../Models/Wiki/RaceVariant"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { getFullProfessionName } from "../../Utilities/rcpUtils"
+import { renderMaybeWith } from "../../Utilities/ReactUtils"
+import { AvatarWrapper } from "../Universal/AvatarWrapper"
+import { BorderButton } from "../Universal/BorderButton"
+import { IconButton } from "../Universal/IconButton"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemButtons } from "../Universal/ListItemButtons"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListItemSeparator } from "../Universal/ListItemSeparator"
+import { VerticalList } from "../Universal/VerticalList"
 
 export interface HerolistItemOwnProps {
   hero: HeroModelRecord

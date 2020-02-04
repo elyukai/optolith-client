@@ -1,19 +1,19 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { equals } from "../../../../Data/Eq";
-import { fmap } from "../../../../Data/Functor";
-import { find, List } from "../../../../Data/List";
-import { bind, bindF, Maybe } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { AttrId } from "../../../Constants/Ids";
-import { Pet } from "../../../Models/Hero/Pet";
-import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
-import { AvatarWrapper } from "../../Universal/AvatarWrapper";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { equals } from "../../../../Data/Eq"
+import { fmap } from "../../../../Data/Functor"
+import { find, List } from "../../../../Data/List"
+import { bind, bindF, Maybe } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { AttrId } from "../../../Constants/Ids"
+import { Pet } from "../../../Models/Hero/Pet"
+import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
+import { AvatarWrapper } from "../../Universal/AvatarWrapper"
+import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   attributes: List<Record<AttributeCombined>>

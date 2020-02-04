@@ -1,23 +1,23 @@
-import { connect } from "react-redux";
-import { List } from "../../Data/List";
-import { Maybe } from "../../Data/Maybe";
-import { Record } from "../../Data/Record";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as ProfessionActions from "../Actions/ProfessionActions";
-import { HeroModelRecord } from "../Models/Hero/HeroModel";
-import { Selections as SelectionsInterface } from "../Models/Hero/heroTypeHelpers";
-import { DropdownOption } from "../Models/View/DropdownOption";
-import { Culture } from "../Models/Wiki/Culture";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { Profession } from "../Models/Wiki/Profession";
-import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
-import { Race } from "../Models/Wiki/Race";
-import { WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getRace } from "../Selectors/rcpSelectors";
-import { getAllSpellsForManualGuildMageSelect } from "../Selectors/spellsSelectors";
-import { getWiki } from "../Selectors/stateSelectors";
-import { RCPOptionSelectionsEnsure } from "../Views/RCPOptionSelections/RCPOptionSelectionsEnsure";
+import { connect } from "react-redux"
+import { List } from "../../Data/List"
+import { Maybe } from "../../Data/Maybe"
+import { Record } from "../../Data/Record"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as ProfessionActions from "../Actions/ProfessionActions"
+import { HeroModelRecord } from "../Models/Hero/HeroModel"
+import { Selections as SelectionsInterface } from "../Models/Hero/heroTypeHelpers"
+import { DropdownOption } from "../Models/View/DropdownOption"
+import { Culture } from "../Models/Wiki/Culture"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { Profession } from "../Models/Wiki/Profession"
+import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
+import { Race } from "../Models/Wiki/Race"
+import { WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getRace } from "../Selectors/rcpSelectors"
+import { getAllSpellsForManualGuildMageSelect } from "../Selectors/spellsSelectors"
+import { getWiki } from "../Selectors/stateSelectors"
+import { RCPOptionSelectionsEnsure } from "../Views/RCPOptionSelections/RCPOptionSelectionsEnsure"
 
 interface OwnProps {
   hero: HeroModelRecord

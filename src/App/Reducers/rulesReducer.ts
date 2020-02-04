@@ -1,12 +1,12 @@
-import { not } from "../../Data/Bool";
-import { ident } from "../../Data/Function";
-import { over, set } from "../../Data/Lens";
-import { toggle } from "../../Data/OrderedSet";
-import * as RulesActions from "../Actions/RulesActions";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { RulesL } from "../Models/Hero/Rules";
-import { composeL } from "../Utilities/compose";
+import { not } from "../../Data/Bool"
+import { ident } from "../../Data/Function"
+import { over, set } from "../../Data/Lens"
+import { toggle } from "../../Data/OrderedSet"
+import * as RulesActions from "../Actions/RulesActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { RulesL } from "../Models/Hero/Rules"
+import { composeL } from "../Utilities/compose"
 
 type Action = RulesActions.SetHigherParadeValuesAction
             | RulesActions.SwitchAttributeValueLimitAction

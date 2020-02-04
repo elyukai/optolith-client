@@ -1,6 +1,6 @@
-import * as React from "react";
-import { Markdown } from "./Markdown";
-import { TooltipToggle } from "./TooltipToggle";
+import * as React from "react"
+import { Markdown } from "./Markdown"
+import { TooltipToggle } from "./TooltipToggle"
 
 interface Props {
   hint: string

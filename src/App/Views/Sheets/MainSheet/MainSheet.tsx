@@ -1,31 +1,31 @@
-import * as React from "react";
-import { fmap } from "../../../../Data/Functor";
-import { List } from "../../../../Data/List";
-import { fromMaybe, Maybe } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { Sex } from "../../../Models/Hero/heroTypeHelpers";
-import { PersonalData } from "../../../Models/Hero/PersonalData";
-import { ActiveActivatable } from "../../../Models/View/ActiveActivatable";
-import { AdventurePointsCategories } from "../../../Models/View/AdventurePointsCategories";
-import { AttributeCombined } from "../../../Models/View/AttributeCombined";
-import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
-import { Advantage } from "../../../Models/Wiki/Advantage";
-import { Culture } from "../../../Models/Wiki/Culture";
-import { Disadvantage } from "../../../Models/Wiki/Disadvantage";
-import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { Race } from "../../../Models/Wiki/Race";
-import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
-import { compressList } from "../../../Utilities/Activatable/activatableNameUtils";
-import { translate } from "../../../Utilities/I18n";
-import { pipe_ } from "../../../Utilities/pipe";
-import { BorderButton } from "../../Universal/BorderButton";
-import { Options } from "../../Universal/Options";
-import { TextBox } from "../../Universal/TextBox";
-import { Sheet } from "../Sheet";
-import { SheetWrapper } from "../SheetWrapper";
-import { MainSheetAttributes } from "./MainSheetAttributes";
-import { MainSheetPersonalData } from "./MainSheetPersonalData";
+import * as React from "react"
+import { fmap } from "../../../../Data/Functor"
+import { List } from "../../../../Data/List"
+import { fromMaybe, Maybe } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { Sex } from "../../../Models/Hero/heroTypeHelpers"
+import { PersonalData } from "../../../Models/Hero/PersonalData"
+import { ActiveActivatable } from "../../../Models/View/ActiveActivatable"
+import { AdventurePointsCategories } from "../../../Models/View/AdventurePointsCategories"
+import { AttributeCombined } from "../../../Models/View/AttributeCombined"
+import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic"
+import { Advantage } from "../../../Models/Wiki/Advantage"
+import { Culture } from "../../../Models/Wiki/Culture"
+import { Disadvantage } from "../../../Models/Wiki/Disadvantage"
+import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { Race } from "../../../Models/Wiki/Race"
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { compressList } from "../../../Utilities/Activatable/activatableNameUtils"
+import { translate } from "../../../Utilities/I18n"
+import { pipe_ } from "../../../Utilities/pipe"
+import { BorderButton } from "../../Universal/BorderButton"
+import { Options } from "../../Universal/Options"
+import { TextBox } from "../../Universal/TextBox"
+import { Sheet } from "../Sheet"
+import { SheetWrapper } from "../SheetWrapper"
+import { MainSheetAttributes } from "./MainSheetAttributes"
+import { MainSheetPersonalData } from "./MainSheetPersonalData"
 
 interface Props {
   advantagesActive: Maybe<List<Record<ActiveActivatable<Advantage>>>>

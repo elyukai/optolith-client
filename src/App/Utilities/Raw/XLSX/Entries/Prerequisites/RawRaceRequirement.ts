@@ -1,7 +1,7 @@
-import { fromArray } from "../../../../../../Data/List";
-import { Nothing } from "../../../../../../Data/Maybe";
-import { RaceRequirement } from "../../../../../Models/Wiki/prerequisites/RaceRequirement";
-import { AllRawRequirementObjects } from "../rawTypeHelpers";
+import { fromArray } from "../../../../../../Data/List"
+import { Nothing } from "../../../../../../Data/Maybe"
+import { RaceRequirement } from "../../../../../Models/Wiki/prerequisites/RaceRequirement"
+import { AllRawRequirementObjects } from "../rawTypeHelpers"
 
 export interface RawRaceRequirement {
   id: "RACE"
@@ -16,7 +16,7 @@ export const isRawRaceRequirement =
       // @ts-ignore
       typeof req.value === "number"
       // @ts-ignore
-      || Array.isArray (req.value) && req.value .every (isNumber)
+      || (Array.isArray (req.value) && (req.value as any[]) .every (isNumber))
     )
     // @ts-ignore
     && (req.active === undefined || typeof req.active === "boolean")

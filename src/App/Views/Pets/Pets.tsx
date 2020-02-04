@@ -1,23 +1,23 @@
-import * as React from "react";
-import { fmap } from "../../../Data/Functor";
-import { map, toArray } from "../../../Data/List";
-import { fromMaybe, Maybe } from "../../../Data/Maybe";
-import { elems, OrderedMap, size } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { EditPet } from "../../Models/Hero/EditPet";
-import { Pet } from "../../Models/Hero/Pet";
-import { Attribute } from "../../Models/Wiki/Attribute";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { ReactReturn } from "../../Utilities/ReactUtils";
-import { BorderButton } from "../Universal/BorderButton";
-import { ListView } from "../Universal/List";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { PetEditor } from "./PetEditor";
-import { PetsListItem } from "./PetsListItem";
+import * as React from "react"
+import { fmap } from "../../../Data/Functor"
+import { map, toArray } from "../../../Data/List"
+import { fromMaybe, Maybe } from "../../../Data/Maybe"
+import { elems, OrderedMap, size } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { EditPet } from "../../Models/Hero/EditPet"
+import { Pet } from "../../Models/Hero/Pet"
+import { Attribute } from "../../Models/Wiki/Attribute"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { ReactReturn } from "../../Utilities/ReactUtils"
+import { BorderButton } from "../Universal/BorderButton"
+import { ListView } from "../Universal/List"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { PetEditor } from "./PetEditor"
+import { PetsListItem } from "./PetsListItem"
 
 export interface PetsOwnProps {
   l10n: L10nRecord

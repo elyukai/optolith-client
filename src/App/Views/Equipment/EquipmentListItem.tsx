@@ -1,16 +1,16 @@
-import * as React from "react";
-import { ensure, maybe, Maybe, orN } from "../../../Data/Maybe";
-import { gt } from "../../../Data/Num";
-import { Record } from "../../../Data/Record";
-import { Item } from "../../Models/Hero/Item";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { IconButton } from "../Universal/IconButton";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemButtons } from "../Universal/ListItemButtons";
-import { ListItemGroup } from "../Universal/ListItemGroup";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListItemSeparator } from "../Universal/ListItemSeparator";
+import * as React from "react"
+import { ensure, maybe, Maybe, orN } from "../../../Data/Maybe"
+import { gt } from "../../../Data/Num"
+import { Record } from "../../../Data/Record"
+import { Item } from "../../Models/Hero/Item"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { IconButton } from "../Universal/IconButton"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemButtons } from "../Universal/ListItemButtons"
+import { ListItemGroup } from "../Universal/ListItemGroup"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListItemSeparator } from "../Universal/ListItemSeparator"
 
 export interface EquipmentListItemProps {
   add?: boolean

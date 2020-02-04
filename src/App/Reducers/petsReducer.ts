@@ -1,16 +1,16 @@
-import { ident } from "../../Data/Function";
-import { fmap } from "../../Data/Functor";
-import { over, set } from "../../Data/Lens";
-import { bind, ensure, fromJust, Just, maybe, Nothing } from "../../Data/Maybe";
-import { insert, lookup, sdelete } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import * as PetActions from "../Actions/PetActions";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { EditPet, EditPetL, EditPetSafe } from "../Models/Hero/EditPet";
-import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { Pet } from "../Models/Hero/Pet";
-import { ensureEditPetId, fromEditPet, toEditPet } from "../Utilities/PetUtils";
-import { pipe } from "../Utilities/pipe";
+import { ident } from "../../Data/Function"
+import { fmap } from "../../Data/Functor"
+import { over, set } from "../../Data/Lens"
+import { bind, ensure, fromJust, Just, maybe, Nothing } from "../../Data/Maybe"
+import { insert, lookup, sdelete } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import * as PetActions from "../Actions/PetActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { EditPet, EditPetL, EditPetSafe } from "../Models/Hero/EditPet"
+import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { Pet } from "../Models/Hero/Pet"
+import { ensureEditPetId, fromEditPet, toEditPet } from "../Utilities/PetUtils"
+import { pipe } from "../Utilities/pipe"
 
 type Action = PetActions.AddPetAction
             | PetActions.CreatePetAction

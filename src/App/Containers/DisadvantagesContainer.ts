@@ -1,20 +1,20 @@
-import { connect } from "react-redux";
-import { join } from "../../Data/Maybe";
-import { Record } from "../../Data/Record";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as ConfigActions from "../Actions/ConfigActions";
-import * as DisAdvActions from "../Actions/DisAdvActions";
-import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
-import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getDisadvantagesRating, getFilteredActiveDisadvantages } from "../Selectors/activatableSelectors";
-import { getAPObjectMap, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from "../Selectors/adventurePointsSelectors";
-import { getFilteredInactiveDisadvantages } from "../Selectors/combinedActivatablesSelectors";
-import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
-import { getDisadvantages, getDisadvantagesFilterText, getInactiveDisadvantagesFilterText, getWikiDisadvantages } from "../Selectors/stateSelectors";
-import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from "../Selectors/uisettingsSelectors";
-import { Disadvantages, DisadvantagesDispatchProps, DisadvantagesOwnProps, DisadvantagesStateProps } from "../Views/DisAdvantages/Disadvantages";
+import { connect } from "react-redux"
+import { join } from "../../Data/Maybe"
+import { Record } from "../../Data/Record"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as ConfigActions from "../Actions/ConfigActions"
+import * as DisAdvActions from "../Actions/DisAdvActions"
+import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions"
+import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getDisadvantagesRating, getFilteredActiveDisadvantages } from "../Selectors/activatableSelectors"
+import { getAPObjectMap, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from "../Selectors/adventurePointsSelectors"
+import { getFilteredInactiveDisadvantages } from "../Selectors/combinedActivatablesSelectors"
+import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"
+import { getDisadvantages, getDisadvantagesFilterText, getInactiveDisadvantagesFilterText, getWikiDisadvantages } from "../Selectors/stateSelectors"
+import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from "../Selectors/uisettingsSelectors"
+import { Disadvantages, DisadvantagesDispatchProps, DisadvantagesOwnProps, DisadvantagesStateProps } from "../Views/DisAdvantages/Disadvantages"
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: DisadvantagesOwnProps): DisadvantagesStateProps => ({

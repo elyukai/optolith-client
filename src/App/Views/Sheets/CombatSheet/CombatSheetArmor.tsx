@@ -1,18 +1,18 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { notEquals } from "../../../../Data/Eq";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, intercalate, List, map, notNull, replicateR, toArray } from "../../../../Data/List";
-import { catMaybes, ensure, Maybe, maybe, maybeRNull } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { Armor } from "../../../Models/View/Armor";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { ndash } from "../../../Utilities/Chars";
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
-import { sign, toRoman } from "../../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { notEquals } from "../../../../Data/Eq"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { flength, intercalate, List, map, notNull, replicateR, toArray } from "../../../../Data/List"
+import { catMaybes, ensure, Maybe, maybe, maybeRNull } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { Armor } from "../../../Models/View/Armor"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { ndash } from "../../../Utilities/Chars"
+import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
+import { sign, toRoman } from "../../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
+import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   armors: Maybe<List<Record<Armor>>>

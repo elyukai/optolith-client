@@ -1,13 +1,13 @@
-import * as React from "react";
-import { List, map, toArray } from "../../../Data/List";
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { Book } from "../../Models/Wiki/Book";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe_ } from "../../Utilities/pipe";
-import { Checkbox } from "../Universal/Checkbox";
-import { BookSelectionListItem } from "./BookSelectionListItem";
+import * as React from "react"
+import { List, map, toArray } from "../../../Data/List"
+import { OrderedSet } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { Book } from "../../Models/Wiki/Book"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { pipe_ } from "../../Utilities/pipe"
+import { Checkbox } from "../Universal/Checkbox"
+import { BookSelectionListItem } from "./BookSelectionListItem"
 
 interface Props {
   l10n: L10nRecord

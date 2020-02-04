@@ -1,5 +1,5 @@
-import * as React from "react";
-import { Scroll } from "../Universal/Scroll";
+import * as React from "react"
+import { Scroll } from "../Universal/Scroll"
 
 export function TOU () {
   return (

@@ -1,29 +1,29 @@
-import * as React from "react";
-import { List, notNullStr } from "../../../Data/List";
-import { any, ensure, fromMaybe, guardReplace, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { fst, snd } from "../../../Data/Tuple";
-import { AdvantageId, DisadvantageId } from "../../Constants/Ids";
-import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
-import { HeroModel } from "../../Models/Hero/HeroModel";
-import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, InactiveActivatableControlElements, insertFinalCurrentCost, PropertiesAffectedByState } from "../../Utilities/Activatable/activatableInactiveViewUtils";
-import { classListMaybe } from "../../Utilities/CSS";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { renderMaybeWith } from "../../Utilities/ReactUtils";
-import { BasicInputDialog } from "../Universal/BasicInputDialog";
-import { IconButton } from "../Universal/IconButton";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemButtons } from "../Universal/ListItemButtons";
-import { ListItemGroup } from "../Universal/ListItemGroup";
-import { ListItemLeft } from "../Universal/ListItemLeft";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListItemSeparator } from "../Universal/ListItemSeparator";
-import { ListItemValues } from "../Universal/ListItemValues";
+import * as React from "react"
+import { List, notNullStr } from "../../../Data/List"
+import { any, ensure, fromMaybe, guardReplace, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { fst, snd } from "../../../Data/Tuple"
+import { AdvantageId, DisadvantageId } from "../../Constants/Ids"
+import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
+import { HeroModel } from "../../Models/Hero/HeroModel"
+import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, InactiveActivatableControlElements, insertFinalCurrentCost, PropertiesAffectedByState } from "../../Utilities/Activatable/activatableInactiveViewUtils"
+import { classListMaybe } from "../../Utilities/CSS"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { renderMaybeWith } from "../../Utilities/ReactUtils"
+import { BasicInputDialog } from "../Universal/BasicInputDialog"
+import { IconButton } from "../Universal/IconButton"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemButtons } from "../Universal/ListItemButtons"
+import { ListItemGroup } from "../Universal/ListItemGroup"
+import { ListItemLeft } from "../Universal/ListItemLeft"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListItemSeparator } from "../Universal/ListItemSeparator"
+import { ListItemValues } from "../Universal/ListItemValues"
 
 export interface ActivatableAddListItemOwnProps {
   item: Record<InactiveActivatable>

@@ -1,5 +1,5 @@
-import * as React from "react";
-import { Maybe, maybe, normalize } from "../../../Data/Maybe";
+import * as React from "react"
+import { Maybe, maybe, normalize } from "../../../Data/Maybe"
 
 interface Props {
   current?: Maybe<number> | number

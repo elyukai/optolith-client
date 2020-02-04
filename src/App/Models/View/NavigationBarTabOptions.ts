@@ -1,6 +1,6 @@
-import { List } from "../../../Data/List";
-import { fromDefault } from "../../../Data/Record";
-import { TabId } from "../../Utilities/LocationUtils";
+import { List } from "../../../Data/List"
+import { fromDefault } from "../../../Data/Record"
+import { TabId } from "../../Utilities/LocationUtils"
 
 export interface NavigationBarTabOptions {
   "@@name": "NavigationBarTabOptions"

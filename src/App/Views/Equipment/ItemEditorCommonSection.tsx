@@ -1,19 +1,19 @@
-import * as React from "react";
-import { consF, imap, List, map, take } from "../../../Data/List";
-import { isJust, isNothing, Just, Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { EditItem } from "../../Models/Hero/EditItem";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { ItemTemplate, itemTemplateToDropdown } from "../../Models/Wiki/ItemTemplate";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils";
-import { pipe_ } from "../../Utilities/pipe";
-import { Checkbox } from "../Universal/Checkbox";
-import { Dropdown } from "../Universal/Dropdown";
-import { Hr } from "../Universal/Hr";
-import { IconButton } from "../Universal/IconButton";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { consF, imap, List, map, take } from "../../../Data/List"
+import { isJust, isNothing, Just, Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { EditItem } from "../../Models/Hero/EditItem"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { ItemTemplate, itemTemplateToDropdown } from "../../Models/Wiki/ItemTemplate"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils"
+import { pipe_ } from "../../Utilities/pipe"
+import { Checkbox } from "../Universal/Checkbox"
+import { Dropdown } from "../Universal/Dropdown"
+import { Hr } from "../Universal/Hr"
+import { IconButton } from "../Universal/IconButton"
+import { TextField } from "../Universal/TextField"
 
 export interface ItemEditorCommonSectionProps {
   isInCreation: Maybe<boolean>

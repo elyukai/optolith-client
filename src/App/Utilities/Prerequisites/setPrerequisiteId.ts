@@ -1,7 +1,7 @@
-import { set } from "../../../Data/Lens";
-import { RequireActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { RequireIncreasable, RequireIncreasableL } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { AllRequirementObjects } from "../../Models/Wiki/wikiTypeHelpers";
+import { set } from "../../../Data/Lens"
+import { RequireActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement"
+import { RequireIncreasable, RequireIncreasableL } from "../../Models/Wiki/prerequisites/IncreasableRequirement"
+import { AllRequirementObjects } from "../../Models/Wiki/wikiTypeHelpers"
 
 const { id: ra_id } = RequireActivatableL
 const { id: ri_id } = RequireIncreasableL

@@ -1,12 +1,12 @@
-import { Record } from "../../../Data/Record";
-import { fst, snd } from "../../../Data/Tuple";
-import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityAction } from "../../Actions/SpecialAbilitiesActions";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { ActiveObjectWithId, toActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { addTransferUnfamiliarDependencies, addTransferUnfamiliarDependenciesByActivationOptions, removeTransferUnfamiliarDependencies } from "../Dependencies/TransferredUnfamiliarUtils";
-import { pipe, pipe_ } from "../pipe";
-import { addAllStyleRelatedDependencies, removeAllStyleRelatedDependencies } from "./ExtendedStyleUtils";
+import { Record } from "../../../Data/Record"
+import { fst, snd } from "../../../Data/Tuple"
+import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityAction } from "../../Actions/SpecialAbilitiesActions"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { ActiveObjectWithId, toActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { addTransferUnfamiliarDependencies, addTransferUnfamiliarDependenciesByActivationOptions, removeTransferUnfamiliarDependencies } from "../Dependencies/TransferredUnfamiliarUtils"
+import { pipe, pipe_ } from "../pipe"
+import { addAllStyleRelatedDependencies, removeAllStyleRelatedDependencies } from "./ExtendedStyleUtils"
 
 export const addOtherSpecialAbilityDependenciesOnActivation =
   (action: ActivateSpecialAbilityAction) => pipe (

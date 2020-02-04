@@ -1,4 +1,4 @@
-import { List } from "../../Data/List";
+import { List } from "../../Data/List"
 
 /**
  * Please keep enum members sorted by value and not by key!
@@ -68,8 +68,10 @@ export enum EnergyId {
 }
 
 export enum AdvantageId {
+
   // Begabung
   Aptitude = "ADV_4",
+
   // Flink
   Nimble = "ADV_9",
   Blessed = "ADV_12",
@@ -89,6 +91,7 @@ export enum AdvantageId {
   InspireConfidence = "ADV_46",
   WeaponAptitude = "ADV_47",
   Spellcaster = "ADV_50",
+
   // Eisern
   Unyielding = "ADV_54",
   LargeSpellSelection = "ADV_58",
@@ -122,16 +125,21 @@ export enum DisadvantageId {
   PersonalityFlaw = "DISADV_33",
   Principles = "DISADV_34",
   BadHabit = "DISADV_36",
+
   // Schlechte Eigenschaft
   NegativeTrait = "DISADV_37",
   Stigma = "DISADV_45",
+
   // Taub
   Deaf = "DISADV_47",
   Incompetent = "DISADV_48",
+
   // Verpflichtungen
   Obligations = "DISADV_50",
+
   // Verstümmelt
   Maimed = "DISADV_51",
+
   // Gläsern
   BrittleBones = "DISADV_56",
   SmallSpellSelection = "DISADV_59",
@@ -269,6 +277,7 @@ export enum SpecialAbilityId {
   CombatStyleCombination = "SA_164",
   AdaptionZauber = "SA_231",
   Exorzist = "SA_240",
+
   // Lieblingszauber
   FavoriteSpellwork = "SA_250",
   TraditionWitches = "SA_255",
@@ -298,13 +307,17 @@ export enum SpecialAbilityId {
   GebieterDesAspekts = "SA_639",
   ChantEnhancement = "SA_663",
   DunklesAbbildDerBuendnisgabe = "SA_667",
+
   // Tradition (Scharlatane)
   TraditionIllusionist = "SA_676",
+
   // Tradition (Zauberbarden)
   TraditionArcaneBard = "SA_677",
+
   // Tradition (Zaubertaenzer)
   TraditionArcaneDancer = "SA_678",
   TraditionIntuitiveMage = "SA_679",
+
   // Tradition (Meistertalentierte)
   TraditionSavant = "SA_680",
   TraditionQabalyaMage = "SA_681",

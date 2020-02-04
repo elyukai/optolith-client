@@ -1,20 +1,20 @@
-import * as React from "react";
-import { List, map, toArray } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
-import { OrderedMap, size, sum } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Pair } from "../../../Data/Tuple";
-import { Rules } from "../../Models/Hero/Rules";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { CursesSelection } from "../../Models/Wiki/professionSelections/CursesSelection";
-import { Spell } from "../../Models/Wiki/Spell";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { translateP } from "../../Utilities/I18n";
-import { pipe_ } from "../../Utilities/pipe";
-import { filterByAvailability } from "../../Utilities/RulesUtils";
-import { sortRecordsByName } from "../../Utilities/sortBy";
-import { getAllWikiEntriesByGroup } from "../../Utilities/WikiUtils";
-import { CursesSelectionListItem } from "./CursesSelectionListItem";
+import * as React from "react"
+import { List, map, toArray } from "../../../Data/List"
+import { Maybe } from "../../../Data/Maybe"
+import { OrderedMap, size, sum } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { Pair } from "../../../Data/Tuple"
+import { Rules } from "../../Models/Hero/Rules"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { CursesSelection } from "../../Models/Wiki/professionSelections/CursesSelection"
+import { Spell } from "../../Models/Wiki/Spell"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { translateP } from "../../Utilities/I18n"
+import { pipe_ } from "../../Utilities/pipe"
+import { filterByAvailability } from "../../Utilities/RulesUtils"
+import { sortRecordsByName } from "../../Utilities/sortBy"
+import { getAllWikiEntriesByGroup } from "../../Utilities/WikiUtils"
+import { CursesSelectionListItem } from "./CursesSelectionListItem"
 
 const WA = WikiModel.A
 const CSA = CursesSelection.A

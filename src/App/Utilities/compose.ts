@@ -1,5 +1,5 @@
-import { Lens_ } from "../../Data/Lens";
-import { Transducer } from "../../Data/Transducer";
+import { Lens_ } from "../../Data/Lens"
+import { Transducer } from "../../Data/Transducer"
 
 interface compose {
   <A, B, C> (bc: (b: B) => C, ab: (a: A) => B): (a: A) => C

@@ -1,26 +1,26 @@
-import * as React from "react";
-import { List, map, notNull, toArray } from "../../../Data/List";
-import { bindF, ensure, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { AttributeCombined } from "../../Models/View/AttributeCombined";
-import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { CombatTechniquesSortOptions } from "../../Utilities/Raw/JSON/Config";
-import { ListView } from "../Universal/List";
-import { ListHeader } from "../Universal/ListHeader";
-import { ListHeaderTag } from "../Universal/ListHeaderTag";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { SearchField } from "../Universal/SearchField";
-import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { CombatTechniqueListItem } from "./CombatTechniquesListItem";
+import * as React from "react"
+import { List, map, notNull, toArray } from "../../../Data/List"
+import { bindF, ensure, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { AttributeCombined } from "../../Models/View/AttributeCombined"
+import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { CombatTechniquesSortOptions } from "../../Utilities/Raw/JSON/Config"
+import { ListView } from "../Universal/List"
+import { ListHeader } from "../Universal/ListHeader"
+import { ListHeaderTag } from "../Universal/ListHeaderTag"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { SearchField } from "../Universal/SearchField"
+import { SortNames, SortOptions } from "../Universal/SortOptions"
+import { CombatTechniqueListItem } from "./CombatTechniquesListItem"
 
 export interface CombatTechniquesOwnProps {
   l10n: L10nRecord

@@ -1,24 +1,24 @@
-import * as React from "react";
-import { List, map } from "../../../Data/List";
-import { fromJust, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe";
-import { elems, OrderedMap } from "../../../Data/OrderedMap";
-import { OrderedSet, toggle } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { RadioOption } from "../../Models/View/RadioOption";
-import { Book } from "../../Models/Wiki/Book";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe_ } from "../../Utilities/pipe";
-import { BookSelection } from "../Rules/BookSelection";
-import { Dialog } from "../Universal/Dialog";
-import { Dropdown } from "../Universal/Dropdown";
-import { Hr } from "../Universal/Hr";
-import { Scroll } from "../Universal/Scroll";
-import { SegmentedControls } from "../Universal/SegmentedControls";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { List, map } from "../../../Data/List"
+import { fromJust, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe"
+import { elems, OrderedMap } from "../../../Data/OrderedMap"
+import { OrderedSet, toggle } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { Sex } from "../../Models/Hero/heroTypeHelpers"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { RadioOption } from "../../Models/View/RadioOption"
+import { Book } from "../../Models/Wiki/Book"
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { pipe_ } from "../../Utilities/pipe"
+import { BookSelection } from "../Rules/BookSelection"
+import { Dialog } from "../Universal/Dialog"
+import { Dropdown } from "../Universal/Dropdown"
+import { Hr } from "../Universal/Hr"
+import { Scroll } from "../Universal/Scroll"
+import { SegmentedControls } from "../Universal/SegmentedControls"
+import { TextField } from "../Universal/TextField"
 
 const ELA = ExperienceLevel.A
 

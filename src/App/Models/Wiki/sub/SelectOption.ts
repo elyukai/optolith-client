@@ -1,11 +1,11 @@
-import { List } from "../../../../Data/List";
-import { Just, Maybe, Nothing } from "../../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../../Data/Record";
-import { DropdownOption } from "../../View/DropdownOption";
-import { AllRequirementObjects } from "../wikiTypeHelpers";
-import { Application } from "./Application";
-import { Erratum } from "./Errata";
-import { SourceLink } from "./SourceLink";
+import { List } from "../../../../Data/List"
+import { Just, Maybe, Nothing } from "../../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../../Data/Record"
+import { DropdownOption } from "../../View/DropdownOption"
+import { AllRequirementObjects } from "../wikiTypeHelpers"
+import { Application } from "./Application"
+import { Erratum } from "./Errata"
+import { SourceLink } from "./SourceLink"
 
 export interface SelectOption {
   "@@name": "SelectOption"

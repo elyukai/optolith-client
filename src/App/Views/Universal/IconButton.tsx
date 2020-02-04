@@ -1,7 +1,7 @@
-import * as React from "react";
-import { Maybe } from "../../../Data/Maybe";
-import { Button } from "./Button";
-import { Icon } from "./Icon";
+import * as React from "react"
+import { Maybe } from "../../../Data/Maybe"
+import { Button } from "./Button"
+import { Icon } from "./Icon"
 
 interface Props {
   active?: boolean

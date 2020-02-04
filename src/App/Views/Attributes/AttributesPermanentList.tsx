@@ -1,14 +1,14 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { find, List } from "../../../Data/List";
-import { bindF, ensure, isJust, Maybe, maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { DCId, EnergyId } from "../../Constants/Ids";
-import { DerivedCharacteristic, EnergyWithLoss } from "../../Models/View/DerivedCharacteristic";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { AttributesPermanentListItem } from "./AttributesPermanentListItem";
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { find, List } from "../../../Data/List"
+import { bindF, ensure, isJust, Maybe, maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { DCId, EnergyId } from "../../Constants/Ids"
+import { DerivedCharacteristic, EnergyWithLoss } from "../../Models/View/DerivedCharacteristic"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { AttributesPermanentListItem } from "./AttributesPermanentListItem"
 
 export interface AttributesPermanentListProps {
   derived: List<Record<DerivedCharacteristic>>

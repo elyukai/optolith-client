@@ -1,22 +1,22 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { ident } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { append, consF, List } from "../../../Data/List";
-import { ensure, mapMaybe, Maybe, maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { EditHitZoneArmor } from "../../Models/Hero/EditHitZoneArmor";
-import { Item, itemToDropdown } from "../../Models/Hero/Item";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { ItemTemplate, itemTemplateToDropdown } from "../../Models/Wiki/ItemTemplate";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { getLossLevelElements } from "../../Utilities/ItemUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { sortRecordsByName } from "../../Utilities/sortBy";
-import { Dialog } from "../Universal/Dialog";
-import { TextField } from "../Universal/TextField";
-import { HitZoneArmorEditorRow } from "./HitZoneArmorEditorRow";
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { ident } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { append, consF, List } from "../../../Data/List"
+import { ensure, mapMaybe, Maybe, maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { EditHitZoneArmor } from "../../Models/Hero/EditHitZoneArmor"
+import { Item, itemToDropdown } from "../../Models/Hero/Item"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { ItemTemplate, itemTemplateToDropdown } from "../../Models/Wiki/ItemTemplate"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { getLossLevelElements } from "../../Utilities/ItemUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { sortRecordsByName } from "../../Utilities/sortBy"
+import { Dialog } from "../Universal/Dialog"
+import { TextField } from "../Universal/TextField"
+import { HitZoneArmorEditorRow } from "./HitZoneArmorEditorRow"
 
 export interface HitZoneArmorEditorProps {
   armorZonesEditor: Record<EditHitZoneArmor>

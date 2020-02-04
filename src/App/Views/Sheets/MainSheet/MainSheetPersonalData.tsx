@@ -1,22 +1,22 @@
-import * as React from "react";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { List, subscript } from "../../../../Data/List";
-import { bind, bindF, Maybe } from "../../../../Data/Maybe";
-import { dec } from "../../../../Data/Num";
-import { Record } from "../../../../Data/Record";
-import { Sex } from "../../../Models/Hero/heroTypeHelpers";
-import { PersonalData } from "../../../Models/Hero/PersonalData";
-import { AdventurePointsCategories } from "../../../Models/View/AdventurePointsCategories";
-import { Culture } from "../../../Models/Wiki/Culture";
-import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { Race } from "../../../Models/Wiki/Race";
-import { localizeSize, localizeWeight, translate } from "../../../Utilities/I18n";
-import { toInt } from "../../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { Avatar } from "../../Universal/Avatar";
-import { LabelBox } from "../../Universal/LabelBox";
-import { Plain } from "../../Universal/Plain";
+import * as React from "react"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { List, subscript } from "../../../../Data/List"
+import { bind, bindF, Maybe } from "../../../../Data/Maybe"
+import { dec } from "../../../../Data/Num"
+import { Record } from "../../../../Data/Record"
+import { Sex } from "../../../Models/Hero/heroTypeHelpers"
+import { PersonalData } from "../../../Models/Hero/PersonalData"
+import { AdventurePointsCategories } from "../../../Models/View/AdventurePointsCategories"
+import { Culture } from "../../../Models/Wiki/Culture"
+import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { Race } from "../../../Models/Wiki/Race"
+import { localizeSize, localizeWeight, translate } from "../../../Utilities/I18n"
+import { toInt } from "../../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { Avatar } from "../../Universal/Avatar"
+import { LabelBox } from "../../Universal/LabelBox"
+import { Plain } from "../../Universal/Plain"
 
 const PDA = PersonalData.A
 

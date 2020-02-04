@@ -1,20 +1,30 @@
-import * as React from "react";
-import { fromLeft_, fromRight_, isLeft, Left, Right } from "../../../Data/Either";
-import { fmap } from "../../../Data/Functor";
-import { flength, map } from "../../../Data/List";
-import { Just, Maybe, maybeToNullable } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { fst, Pair, snd } from "../../../Data/Tuple";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { RadioOption } from "../../Models/View/RadioOption";
-import { Skill } from "../../Models/Wiki/Skill";
-import { Application } from "../../Models/Wiki/sub/Application";
-import { pipe_ } from "../../Utilities/pipe";
-import { Dropdown } from "../Universal/Dropdown";
-import { RadioButtonGroup } from "../Universal/RadioButtonGroup";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { fromLeft_, fromRight_, isLeft, Left, Right } from "../../../Data/Either"
+import { fmap } from "../../../Data/Functor"
+import { flength, map } from "../../../Data/List"
+import { Just, Maybe, maybeToNullable } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { fst, Pair, snd } from "../../../Data/Tuple"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { RadioOption } from "../../Models/View/RadioOption"
+import { Skill } from "../../Models/Wiki/Skill"
+import { Application } from "../../Models/Wiki/sub/Application"
+import { pipe_ } from "../../Utilities/pipe"
+import { Dropdown } from "../Universal/Dropdown"
+import { RadioButtonGroup } from "../Universal/RadioButtonGroup"
+import { TextField } from "../Universal/TextField"
 
 const SA = Skill.A
+
+const applicationsToDropdown = map ((e: Record<Application>) => DropdownOption ({
+  id: Just (Application.A.id (e)),
+  name: Application.A.name (e),
+}))
+
+const applicationsToRadio = map ((e: Record<Application>) => RadioOption ({
+  name: Application.A.name (e),
+  value: Just (Application.A.id (e)),
+}))
 
 interface Props {
   active: Pair<Maybe<number>, string>
@@ -75,13 +85,3 @@ export const SkillSpecializationSelectionApplications: React.FC<Props> = props =
     </div>
   )
 }
-
-const applicationsToDropdown = map ((e: Record<Application>) => DropdownOption ({
-  id: Just (Application.A.id (e)),
-  name: Application.A.name (e),
-}))
-
-const applicationsToRadio = map ((e: Record<Application>) => RadioOption ({
-  name: Application.A.name (e),
-  value: Just (Application.A.id (e)),
-}))

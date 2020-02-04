@@ -1,7 +1,7 @@
-import * as React from "react";
-import { SubTab } from "../../Models/Hero/heroTypeHelpers";
-import { TabId } from "../../Utilities/LocationUtils";
-import { Tab } from "../Universal/Tab";
+import * as React from "react"
+import { SubTab } from "../../Models/Hero/heroTypeHelpers"
+import { TabId } from "../../Utilities/LocationUtils"
+import { Tab } from "../Universal/Tab"
 
 interface Props {
   currentTab: TabId

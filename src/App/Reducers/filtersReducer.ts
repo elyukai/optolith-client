@@ -1,19 +1,19 @@
-import { cnst, ident } from "../../Data/Function";
-import { set } from "../../Data/Lens";
-import { fromDefault, makeLenses, Record } from "../../Data/Record";
-import { SetCombatTechniquesFilterTextAction } from "../Actions/CombatTechniquesActions";
-import { SetCulturesFilterTextAction } from "../Actions/CultureActions";
-import { SetActiveAdvantagesFilterTextAction, SetActiveDisadvantagesFilterTextAction, SetInactiveAdvantagesFilterTextAction, SetInactiveDisadvantagesFilterTextAction } from "../Actions/DisAdvActions";
-import { SetEquipmentFilterTextAction, SetItemTemplatesFilterTextAction, SetZoneArmorFilterTextAction } from "../Actions/EquipmentActions";
-import { SetHerolistFilterTextAction } from "../Actions/HerolistActions";
-import { SetActiveLiturgicalChantsFilterTextAction, SetInactiveLiturgicalChantsFilterTextAction } from "../Actions/LiturgicalChantActions";
-import { SetTabAction } from "../Actions/LocationActions";
-import { SetProfessionsFilterTextAction } from "../Actions/ProfessionActions";
-import { SetRacesFilterTextAction } from "../Actions/RaceActions";
-import { SetSkillsFilterTextAction } from "../Actions/SkillActions";
-import { SetActiveSpecialAbilitiesFilterTextAction, SetInactiveSpecialAbilitiesFilterTextAction } from "../Actions/SpecialAbilitiesActions";
-import { SetActiveSpellsFilterTextAction, SetInactiveSpellsFilterTextAction } from "../Actions/SpellsActions";
-import * as ActionTypes from "../Constants/ActionTypes";
+import { cnst, ident } from "../../Data/Function"
+import { set } from "../../Data/Lens"
+import { fromDefault, makeLenses, Record } from "../../Data/Record"
+import { SetCombatTechniquesFilterTextAction } from "../Actions/CombatTechniquesActions"
+import { SetCulturesFilterTextAction } from "../Actions/CultureActions"
+import { SetActiveAdvantagesFilterTextAction, SetActiveDisadvantagesFilterTextAction, SetInactiveAdvantagesFilterTextAction, SetInactiveDisadvantagesFilterTextAction } from "../Actions/DisAdvActions"
+import { SetEquipmentFilterTextAction, SetItemTemplatesFilterTextAction, SetZoneArmorFilterTextAction } from "../Actions/EquipmentActions"
+import { SetHerolistFilterTextAction } from "../Actions/HerolistActions"
+import { SetActiveLiturgicalChantsFilterTextAction, SetInactiveLiturgicalChantsFilterTextAction } from "../Actions/LiturgicalChantActions"
+import { SetTabAction } from "../Actions/LocationActions"
+import { SetProfessionsFilterTextAction } from "../Actions/ProfessionActions"
+import { SetRacesFilterTextAction } from "../Actions/RaceActions"
+import { SetSkillsFilterTextAction } from "../Actions/SkillActions"
+import { SetActiveSpecialAbilitiesFilterTextAction, SetInactiveSpecialAbilitiesFilterTextAction } from "../Actions/SpecialAbilitiesActions"
+import { SetActiveSpellsFilterTextAction, SetInactiveSpellsFilterTextAction } from "../Actions/SpellsActions"
+import * as ActionTypes from "../Constants/ActionTypes"
 
 type Action = SetTabAction
             | SetHerolistFilterTextAction

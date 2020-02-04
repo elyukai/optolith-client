@@ -1,6 +1,6 @@
-import { List } from "../../../Data/List";
-import { fromDefault, OmitName, Record } from "../../../Data/Record";
-import { Locale } from "../../Utilities/Raw/JSON/Config";
+import { List } from "../../../Data/List"
+import { fromDefault, OmitName, Record } from "../../../Data/Record"
+import { Locale } from "../../Utilities/Raw/JSON/Config"
 
 export interface L10n {
   "@@name": "L10n"

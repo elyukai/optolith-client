@@ -1,37 +1,37 @@
-import * as React from "react";
-import { fmap } from "../../../Data/Functor";
-import { List } from "../../../Data/List";
-import { any, isNothing, Maybe, maybe, maybeRNull } from "../../../Data/Maybe";
-import { gt, lt } from "../../../Data/Num";
-import { Record } from "../../../Data/Record";
-import { ProfessionId, SocialStatusId } from "../../Constants/Ids";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { PersonalData } from "../../Models/Hero/PersonalData";
-import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { Culture } from "../../Models/Wiki/Culture";
-import { Disadvantage } from "../../Models/Wiki/Disadvantage";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Profession } from "../../Models/Wiki/Profession";
-import { Race } from "../../Models/Wiki/Race";
-import { RaceVariant } from "../../Models/Wiki/RaceVariant";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils";
-import { ActivatableTextList } from "../Activatable/ActivatableTextList";
-import { AvatarChange } from "../Universal/AvatarChange";
-import { AvatarWrapper } from "../Universal/AvatarWrapper";
-import { BorderButton } from "../Universal/BorderButton";
-import { EditText } from "../Universal/EditText";
-import { IconButton } from "../Universal/IconButton";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { VerticalList } from "../Universal/VerticalList";
-import { OverviewAddAP } from "./OverviewAddAP";
-import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from "./OverviewPersonalData";
+import * as React from "react"
+import { fmap } from "../../../Data/Functor"
+import { List } from "../../../Data/List"
+import { any, isNothing, Maybe, maybe, maybeRNull } from "../../../Data/Maybe"
+import { gt, lt } from "../../../Data/Num"
+import { Record } from "../../../Data/Record"
+import { ProfessionId, SocialStatusId } from "../../Constants/Ids"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Sex } from "../../Models/Hero/heroTypeHelpers"
+import { PersonalData } from "../../Models/Hero/PersonalData"
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { Culture } from "../../Models/Wiki/Culture"
+import { Disadvantage } from "../../Models/Wiki/Disadvantage"
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { Profession } from "../../Models/Wiki/Profession"
+import { Race } from "../../Models/Wiki/Race"
+import { RaceVariant } from "../../Models/Wiki/RaceVariant"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils"
+import { ActivatableTextList } from "../Activatable/ActivatableTextList"
+import { AvatarChange } from "../Universal/AvatarChange"
+import { AvatarWrapper } from "../Universal/AvatarWrapper"
+import { BorderButton } from "../Universal/BorderButton"
+import { EditText } from "../Universal/EditText"
+import { IconButton } from "../Universal/IconButton"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { VerticalList } from "../Universal/VerticalList"
+import { OverviewAddAP } from "./OverviewAddAP"
+import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from "./OverviewPersonalData"
 
 export interface PersonalDataOwnProps {
   l10n: L10nRecord

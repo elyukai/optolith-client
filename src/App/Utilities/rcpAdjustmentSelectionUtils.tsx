@@ -1,26 +1,26 @@
-import * as React from "react";
-import { flip } from "../../Data/Function";
-import { fmap, fmapF } from "../../Data/Functor";
-import { any, List } from "../../Data/List";
-import { bindF, fromMaybe, guard, Just, listToMaybe, mapMaybe, Maybe, maybeToNullable, Nothing } from "../../Data/Maybe";
-import { lookup, lookupF } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { fst, Pair, snd } from "../../Data/Tuple";
-import { SpecialAbilityId } from "../Constants/Ids";
-import { DropdownOption } from "../Models/View/DropdownOption";
-import { Culture } from "../Models/Wiki/Culture";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement";
-import { Profession } from "../Models/Wiki/Profession";
-import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { SelectOption } from "../Models/Wiki/sub/SelectOption";
-import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { ProfessionPrerequisite } from "../Models/Wiki/wikiTypeHelpers";
-import { Checkbox } from "../Views/Universal/Checkbox";
-import { Dropdown } from "../Views/Universal/Dropdown";
-import { findSelectOption } from "./Activatable/selectionUtils";
-import { translate } from "./I18n";
-import { pipe } from "./pipe";
+import * as React from "react"
+import { flip } from "../../Data/Function"
+import { fmap, fmapF } from "../../Data/Functor"
+import { any, List } from "../../Data/List"
+import { bindF, fromMaybe, guard, Just, listToMaybe, mapMaybe, Maybe, maybeToNullable, Nothing } from "../../Data/Maybe"
+import { lookup, lookupF } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { fst, Pair, snd } from "../../Data/Tuple"
+import { SpecialAbilityId } from "../Constants/Ids"
+import { DropdownOption } from "../Models/View/DropdownOption"
+import { Culture } from "../Models/Wiki/Culture"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement"
+import { Profession } from "../Models/Wiki/Profession"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { SelectOption } from "../Models/Wiki/sub/SelectOption"
+import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { ProfessionPrerequisite } from "../Models/Wiki/wikiTypeHelpers"
+import { Checkbox } from "../Views/Universal/Checkbox"
+import { Dropdown } from "../Views/Universal/Dropdown"
+import { findSelectOption } from "./Activatable/selectionUtils"
+import { translate } from "./I18n"
+import { pipe } from "./pipe"
 
 const WA = WikiModel.A
 const CA = Culture.A

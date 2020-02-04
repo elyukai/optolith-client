@@ -1,23 +1,23 @@
-import { List } from "../../Data/List";
-import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe";
-import { lookup } from "../../Data/OrderedMap";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
-import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
-import { getCurrentHeroPresent, getSkills, getWikiSkills } from "../Selectors/stateSelectors";
-import { translate, translateP } from "../Utilities/I18n";
-import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
-import { pipe_ } from "../Utilities/pipe";
-import { SkillsSortOptions } from "../Utilities/Raw/JSON/Config";
-import { ReduxAction } from "./Actions";
-import { addAlert, AlertOptions } from "./AlertActions";
+import { List } from "../../Data/List"
+import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe"
+import { lookup } from "../../Data/OrderedMap"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
+import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
+import { getCurrentHeroPresent, getSkills, getWikiSkills } from "../Selectors/stateSelectors"
+import { translate, translateP } from "../Utilities/I18n"
+import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
+import { pipe_ } from "../Utilities/pipe"
+import { SkillsSortOptions } from "../Utilities/Raw/JSON/Config"
+import { ReduxAction } from "./Actions"
+import { addAlert, AlertOptions } from "./AlertActions"
 
 export interface AddSkillPointAction {
   type: ActionTypes.ADD_TALENT_POINT
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -63,7 +63,7 @@ export const addSkillPoint =
 export interface RemoveSkillPointAction {
   type: ActionTypes.REMOVE_TALENT_POINT
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -77,7 +77,7 @@ export const removeSkillPoint = (id: string): RemoveSkillPointAction => ({
 export interface SetSkillsSortOrderAction {
   type: ActionTypes.SET_TALENTS_SORT_ORDER
   payload: {
-    sortOrder: SkillsSortOptions;
+    sortOrder: SkillsSortOptions
   }
 }
 
@@ -99,7 +99,7 @@ export const switchSkillRatingVisibility = (): SwitchSkillRatingVisibilityAction
 export interface SetSkillsFilterTextAction {
   type: ActionTypes.SET_SKILLS_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 

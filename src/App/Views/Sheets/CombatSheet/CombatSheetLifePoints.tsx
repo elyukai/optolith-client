@@ -1,16 +1,16 @@
-import * as React from "react";
-import { equals } from "../../../../Data/Eq";
-import { find, List } from "../../../../Data/List";
-import { bindF, Just, Maybe, Nothing } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { DCId } from "../../../Constants/Ids";
-import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { Box } from "../../Universal/Box";
-import { LabelBox } from "../../Universal/LabelBox";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { equals } from "../../../../Data/Eq"
+import { find, List } from "../../../../Data/List"
+import { bindF, Just, Maybe, Nothing } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { DCId } from "../../../Constants/Ids"
+import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { Box } from "../../Universal/Box"
+import { LabelBox } from "../../Universal/LabelBox"
+import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   derivedCharacteristics: List<Record<DerivedCharacteristic>>

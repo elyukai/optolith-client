@@ -1,8 +1,8 @@
-import * as React from "react";
-import { List, notNullStrUndef } from "../../../Data/List";
-import { guardReplace, Just, Maybe, orN } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
-import { Text } from "./Text";
+import * as React from "react"
+import { List, notNullStrUndef } from "../../../Data/List"
+import { guardReplace, Just, Maybe, orN } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
+import { Text } from "./Text"
 
 export interface TabBaseProps {
   className?: string

@@ -1,4 +1,4 @@
-import { equals } from "../../Data/Eq";
+import { equals } from "../../Data/Eq"
 
 type TypeGuard<T, I extends T = T> = (x: T) => x is I
 type TypeCheck<T> = (x: T) => boolean

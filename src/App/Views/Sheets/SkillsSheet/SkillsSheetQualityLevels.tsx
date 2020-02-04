@@ -1,8 +1,8 @@
-import * as React from "react";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { ndash } from "../../../Utilities/Chars";
-import { translate } from "../../../Utilities/I18n";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { ndash } from "../../../Utilities/Chars"
+import { translate } from "../../../Utilities/I18n"
+import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   l10n: L10nRecord

@@ -1,27 +1,27 @@
-import { not } from "../../Data/Bool";
-import { cnst, ident } from "../../Data/Function";
-import { over, set } from "../../Data/Lens";
-import { fromJust, fromMaybe, isJust, Maybe, Nothing } from "../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../Data/Record";
-import { SetCombatTechniquesSortOrderAction } from "../Actions/CombatTechniquesActions";
-import { SetThemeAction, SwitchEnableActiveItemHintsAction, SwitchEnableAnimationsAction, SwitchEnableEditingHeroAfterCreationPhaseAction } from "../Actions/ConfigActions";
-import { SetCulturesSortOrderAction, SetCulturesVisibilityFilterAction } from "../Actions/CultureActions";
-import { SwitchDisAdvRatingVisibilityAction } from "../Actions/DisAdvActions";
-import { SetItemsSortOrderAction, SetMeleeItemTemplatesCombatTechniqueFilterAction, SetRangedItemTemplatesCombatTechniqueFilterAction } from "../Actions/EquipmentActions";
-import { SetHerolistSortOrderAction, SetHerolistVisibilityFilterAction } from "../Actions/HerolistActions";
-import { ReceiveInitialDataAction } from "../Actions/IOActions";
-import { SetLiturgicalChantsSortOrderAction } from "../Actions/LiturgicalChantActions";
-import { SetProfessionsGroupVisibilityFilterAction, SetProfessionsSortOrderAction, SetProfessionsVisibilityFilterAction } from "../Actions/ProfessionActions";
-import { SetRacesSortOrderAction } from "../Actions/RaceActions";
-import { SwitchSheetAttributeValueVisibilityAction } from "../Actions/SheetActions";
-import { SetSkillsSortOrderAction, SwitchSkillRatingVisibilityAction } from "../Actions/SkillActions";
-import { SetSpecialAbilitiesSortOrderAction } from "../Actions/SpecialAbilitiesActions";
-import { SetSpellsSortOrderAction } from "../Actions/SpellsActions";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { EquipmentGroup } from "../Constants/Groups";
-import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids";
-import { ChantsSortOptions, CombatTechniquesSortOptions, Config, CulturesSortOptions, CulturesVisibilityFilter, EquipmentSortOptions, HeroListSortOptions, HeroListVisibilityFilter, ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter, RacesSortOptions, SkillsSortOptions, SpecialAbilitiesSortOptions, SpellsSortOptions, Theme } from "../Utilities/Raw/JSON/Config";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { not } from "../../Data/Bool"
+import { cnst, ident } from "../../Data/Function"
+import { over, set } from "../../Data/Lens"
+import { fromJust, fromMaybe, isJust, Maybe, Nothing } from "../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../Data/Record"
+import { SetCombatTechniquesSortOrderAction } from "../Actions/CombatTechniquesActions"
+import { SetThemeAction, SwitchEnableActiveItemHintsAction, SwitchEnableAnimationsAction, SwitchEnableEditingHeroAfterCreationPhaseAction } from "../Actions/ConfigActions"
+import { SetCulturesSortOrderAction, SetCulturesVisibilityFilterAction } from "../Actions/CultureActions"
+import { SwitchDisAdvRatingVisibilityAction } from "../Actions/DisAdvActions"
+import { SetItemsSortOrderAction, SetMeleeItemTemplatesCombatTechniqueFilterAction, SetRangedItemTemplatesCombatTechniqueFilterAction } from "../Actions/EquipmentActions"
+import { SetHerolistSortOrderAction, SetHerolistVisibilityFilterAction } from "../Actions/HerolistActions"
+import { ReceiveInitialDataAction } from "../Actions/IOActions"
+import { SetLiturgicalChantsSortOrderAction } from "../Actions/LiturgicalChantActions"
+import { SetProfessionsGroupVisibilityFilterAction, SetProfessionsSortOrderAction, SetProfessionsVisibilityFilterAction } from "../Actions/ProfessionActions"
+import { SetRacesSortOrderAction } from "../Actions/RaceActions"
+import { SwitchSheetAttributeValueVisibilityAction } from "../Actions/SheetActions"
+import { SetSkillsSortOrderAction, SwitchSkillRatingVisibilityAction } from "../Actions/SkillActions"
+import { SetSpecialAbilitiesSortOrderAction } from "../Actions/SpecialAbilitiesActions"
+import { SetSpellsSortOrderAction } from "../Actions/SpellsActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { EquipmentGroup } from "../Constants/Groups"
+import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids"
+import { ChantsSortOptions, CombatTechniquesSortOptions, Config, CulturesSortOptions, CulturesVisibilityFilter, EquipmentSortOptions, HeroListSortOptions, HeroListVisibilityFilter, ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter, RacesSortOptions, SkillsSortOptions, SpecialAbilitiesSortOptions, SpellsSortOptions, Theme } from "../Utilities/Raw/JSON/Config"
+import { SortNames } from "../Views/Universal/SortOptions"
 
 type Action = ReceiveInitialDataAction
             | SetCombatTechniquesSortOrderAction

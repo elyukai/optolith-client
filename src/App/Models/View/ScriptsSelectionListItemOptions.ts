@@ -1,4 +1,4 @@
-import { fromDefault } from "../../../Data/Record";
+import { fromDefault } from "../../../Data/Record"
 
 export interface ScriptsSelectionListItemOptions {
   "@@name": "ScriptsSelectionListItemOptions"

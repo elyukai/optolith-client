@@ -1,23 +1,23 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { fmap } from "../../../Data/Functor";
-import { consF, List, map, subscript } from "../../../Data/List";
-import { ensure, Just, mapMaybe, Maybe } from "../../../Data/Maybe";
-import { elems, OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { EditItem } from "../../Models/Hero/EditItem";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils";
-import { getLossLevelElements } from "../../Utilities/ItemUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { Dropdown } from "../Universal/Dropdown";
-import { Hr } from "../Universal/Hr";
-import { Label } from "../Universal/Label";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { fmap } from "../../../Data/Functor"
+import { consF, List, map, subscript } from "../../../Data/List"
+import { ensure, Just, mapMaybe, Maybe } from "../../../Data/Maybe"
+import { elems, OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { EditItem } from "../../Models/Hero/EditItem"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils"
+import { getLossLevelElements } from "../../Utilities/ItemUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { Dropdown } from "../Universal/Dropdown"
+import { Hr } from "../Universal/Hr"
+import { Label } from "../Universal/Label"
+import { TextField } from "../Universal/TextField"
 
 export interface ItemEditorRangedSectionProps {
   combatTechniques: OrderedMap<string, Record<CombatTechnique>>

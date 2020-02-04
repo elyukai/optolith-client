@@ -13,12 +13,12 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "../App/Utilities/pipe";
-import { not } from "./Bool";
-import { equals } from "./Eq";
-import { Internals } from "./Internals";
-import { lens, Lens_ } from "./Lens";
-import { show } from "./Show";
+import { pipe } from "../App/Utilities/pipe"
+import { not } from "./Bool"
+import { equals } from "./Eq"
+import { Internals } from "./Internals"
+import { lens, Lens_ } from "./Lens"
+import { show } from "./Show"
 
 import RecordPrototype = Internals.RecordPrototype
 import OrderedSet = Internals.OrderedSet
@@ -88,6 +88,48 @@ const _Record =
         },
       }
     )
+
+const accessor =
+  <A extends RecordIBase<Name>, Name extends string = A["@@name"]>
+  (key: keyof A) =>
+  (r: Record<A>) => {
+    if (elem<keyof A> (key) (r .keys)) {
+      const x = r .values [key]
+
+      return Internals.isMaybe (x) && Internals.isNothing (x) ? r .defaultValues [key] : x
+    }
+
+    throw new TypeError (`Key ${show (key)} is not in Record ${show (r)}!`)
+  }
+
+const setter =
+  <A extends RecordIBase<Name>, Name extends string = A["@@name"]>
+  (key: keyof A) =>
+  (r: Record<A>) =>
+  (x: A[typeof key]) =>
+    r .values [key] === x
+    ? r
+    : _Record<A, Name> (r .name)
+                       (r .unique)
+                       (r .keys)
+                       (r .defaultValues)
+                       ({
+                         ...r .values,
+                         [key]: x,
+                       })
+
+/**
+ * Creates accessor functions for every key in the passed record creator.
+ */
+const makeAccessors =
+  <A extends RecordIBase<any>>
+  (keys: OrderedSet<string>): Accessors<A> =>
+    Object.freeze (foldl<string, Accessors<A>> (acc => key => ({
+                                                 ...acc,
+                                                 [key]: accessor (key),
+                                               }))
+                                               ({} as Accessors<A>)
+                                               (keys))
 
 export const fromDefault =
   <Name extends string>(name: Name) =>
@@ -160,6 +202,7 @@ export const fromDefault =
     creator.AL = makeAccessors<A> (keys)
     creator.A = creator.AL as StrictAccessors<A>
 
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     creator.is = <B> (x: B | Record<A>): x is Record<A> => isRecord (x) && x.unique === unique
 
     return Object.freeze (creator)
@@ -186,48 +229,6 @@ export const makeLenses =
 
 
 // CUSTOM FUNCTIONS
-
-const accessor =
-  <A extends RecordIBase<Name>, Name extends string = A["@@name"]>
-  (key: keyof A) =>
-  (r: Record<A>) => {
-    if (elem<keyof A> (key) (r .keys)) {
-      const x = r .values [key]
-
-      return Internals.isMaybe (x) && Internals.isNothing (x) ? r .defaultValues [key] : x
-    }
-
-    throw new TypeError (`Key ${show (key)} is not in Record ${show (r)}!`)
-  }
-
-const setter =
-  <A extends RecordIBase<Name>, Name extends string = A["@@name"]>
-  (key: keyof A) =>
-  (r: Record<A>) =>
-  (x: A[typeof key]) =>
-    r .values [key] === x
-    ? r
-    : _Record<A, Name> (r .name)
-                       (r .unique)
-                       (r .keys)
-                       (r .defaultValues)
-                       ({
-                         ...r .values,
-                         [key]: x,
-                       })
-
-/**
- * Creates accessor functions for every key in the passed record creator.
- */
-const makeAccessors =
-  <A extends RecordIBase<any>>
-  (keys: OrderedSet<string>): Accessors<A> =>
-    Object.freeze (foldl<string, Accessors<A>> (acc => key => ({
-                                                 ...acc,
-                                                 [key]: accessor (key),
-                                               }))
-                                               ({} as Accessors<A>)
-                                               (keys))
 
 /**
  * `member :: String -> Record a -> Bool`

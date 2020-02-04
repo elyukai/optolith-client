@@ -1,25 +1,25 @@
-import * as React from "react";
-import { List } from "../../../../Data/List";
-import { Maybe } from "../../../../Data/Maybe";
-import { OrderedMap } from "../../../../Data/OrderedMap";
-import { Record } from "../../../../Data/Record";
-import { Pair } from "../../../../Data/Tuple";
-import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
-import { AttributeCombined } from "../../../Models/View/AttributeCombined";
-import { SkillCombined } from "../../../Models/View/SkillCombined";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
-import { translate } from "../../../Utilities/I18n";
-import { Checkbox } from "../../Universal/Checkbox";
-import { Options } from "../../Universal/Options";
-import { AttributeMods } from "../AttributeMods";
-import { Sheet } from "../Sheet";
-import { SheetWrapper } from "../SheetWrapper";
-import { SkillsSheetLanguages } from "./SkillsSheetLanguages";
-import { SkillsSheetQualityLevels } from "./SkillsSheetQualityLevels";
-import { SkillsSheetRoutineChecks } from "./SkillsSheetRoutineChecks";
-import { SkillsSheetScripts } from "./SkillsSheetScripts";
-import { SkillsSheetSkills } from "./SkillsSheetSkills";
+import * as React from "react"
+import { List } from "../../../../Data/List"
+import { Maybe } from "../../../../Data/Maybe"
+import { OrderedMap } from "../../../../Data/OrderedMap"
+import { Record } from "../../../../Data/Record"
+import { Pair } from "../../../../Data/Tuple"
+import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent"
+import { AttributeCombined } from "../../../Models/View/AttributeCombined"
+import { SkillCombined } from "../../../Models/View/SkillCombined"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { translate } from "../../../Utilities/I18n"
+import { Checkbox } from "../../Universal/Checkbox"
+import { Options } from "../../Universal/Options"
+import { AttributeMods } from "../AttributeMods"
+import { Sheet } from "../Sheet"
+import { SheetWrapper } from "../SheetWrapper"
+import { SkillsSheetLanguages } from "./SkillsSheetLanguages"
+import { SkillsSheetQualityLevels } from "./SkillsSheetQualityLevels"
+import { SkillsSheetRoutineChecks } from "./SkillsSheetRoutineChecks"
+import { SkillsSheetScripts } from "./SkillsSheetScripts"
+import { SkillsSheetSkills } from "./SkillsSheetSkills"
 
 interface Props {
   attributes: List<Record<AttributeCombined>>

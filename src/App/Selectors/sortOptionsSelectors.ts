@@ -1,42 +1,42 @@
-import { fnull, head, List, subscript } from "../../Data/List";
-import { bindF, ensure, fromMaybe, listToMaybe, maybe, Maybe } from "../../Data/Maybe";
-import { compare, dec } from "../../Data/Num";
-import { Record } from "../../Data/Record";
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { Sex } from "../Models/Hero/heroTypeHelpers";
-import { isItem, Item } from "../Models/Hero/Item";
-import { ActiveActivatable } from "../Models/View/ActiveActivatable";
-import { BlessingCombined } from "../Models/View/BlessingCombined";
-import { CantripCombined } from "../Models/View/CantripCombined";
-import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements";
-import { CultureCombined } from "../Models/View/CultureCombined";
-import { InactiveActivatable } from "../Models/View/InactiveActivatable";
-import { LiturgicalChantWithRequirements } from "../Models/View/LiturgicalChantWithRequirements";
-import { ProfessionCombined } from "../Models/View/ProfessionCombined";
-import { RaceCombined } from "../Models/View/RaceCombined";
-import { SkillWithRequirements } from "../Models/View/SkillWithRequirements";
-import { SpellWithRequirements } from "../Models/View/SpellWithRequirements";
-import { Blessing } from "../Models/Wiki/Blessing";
-import { Cantrip } from "../Models/Wiki/Cantrip";
-import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
-import { Culture } from "../Models/Wiki/Culture";
-import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { isLiturgicalChant, LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
-import { Profession } from "../Models/Wiki/Profession";
-import { Race } from "../Models/Wiki/Race";
-import { Skill } from "../Models/Wiki/Skill";
-import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { isSpell, Spell } from "../Models/Wiki/Spell";
-import { NameBySex } from "../Models/Wiki/sub/NameBySex";
-import { SourceLink } from "../Models/Wiki/sub/SourceLink";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { compareLocale, translate } from "../Utilities/I18n";
-import { pipe } from "../Utilities/pipe";
-import { comparingR, SortOptions } from "../Utilities/sortBy";
-import { isNumber, isString } from "../Utilities/typeCheckUtils";
-import { getLocaleAsProp, getSex } from "./stateSelectors";
-import * as uiSettingsSelectors from "./uisettingsSelectors";
+import { fnull, head, List, subscript } from "../../Data/List"
+import { bindF, ensure, fromMaybe, listToMaybe, maybe, Maybe } from "../../Data/Maybe"
+import { compare, dec } from "../../Data/Num"
+import { Record } from "../../Data/Record"
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { Sex } from "../Models/Hero/heroTypeHelpers"
+import { isItem, Item } from "../Models/Hero/Item"
+import { ActiveActivatable } from "../Models/View/ActiveActivatable"
+import { BlessingCombined } from "../Models/View/BlessingCombined"
+import { CantripCombined } from "../Models/View/CantripCombined"
+import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements"
+import { CultureCombined } from "../Models/View/CultureCombined"
+import { InactiveActivatable } from "../Models/View/InactiveActivatable"
+import { LiturgicalChantWithRequirements } from "../Models/View/LiturgicalChantWithRequirements"
+import { ProfessionCombined } from "../Models/View/ProfessionCombined"
+import { RaceCombined } from "../Models/View/RaceCombined"
+import { SkillWithRequirements } from "../Models/View/SkillWithRequirements"
+import { SpellWithRequirements } from "../Models/View/SpellWithRequirements"
+import { Blessing } from "../Models/Wiki/Blessing"
+import { Cantrip } from "../Models/Wiki/Cantrip"
+import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
+import { Culture } from "../Models/Wiki/Culture"
+import { ItemTemplate } from "../Models/Wiki/ItemTemplate"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { isLiturgicalChant, LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
+import { Profession } from "../Models/Wiki/Profession"
+import { Race } from "../Models/Wiki/Race"
+import { Skill } from "../Models/Wiki/Skill"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { isSpell, Spell } from "../Models/Wiki/Spell"
+import { NameBySex } from "../Models/Wiki/sub/NameBySex"
+import { SourceLink } from "../Models/Wiki/sub/SourceLink"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { compareLocale, translate } from "../Utilities/I18n"
+import { pipe } from "../Utilities/pipe"
+import { comparingR, SortOptions } from "../Utilities/sortBy"
+import { isNumber, isString } from "../Utilities/typeCheckUtils"
+import { getLocaleAsProp, getSex } from "./stateSelectors"
+import * as uiSettingsSelectors from "./uisettingsSelectors"
 
 const compareName =
   (l10n: L10nRecord) => comparingR (HeroModel.AL.name) (compareLocale (l10n))

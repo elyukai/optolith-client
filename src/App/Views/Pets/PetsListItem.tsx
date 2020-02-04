@@ -1,14 +1,14 @@
-import * as React from "react";
-import { Record } from "../../../Data/Record";
-import { Pet } from "../../Models/Hero/Pet";
-import { renderMaybe } from "../../Utilities/ReactUtils";
-import { AvatarWrapper } from "../Universal/AvatarWrapper";
-import { IconButton } from "../Universal/IconButton";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemButtons } from "../Universal/ListItemButtons";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListItemSeparator } from "../Universal/ListItemSeparator";
-import { VerticalList } from "../Universal/VerticalList";
+import * as React from "react"
+import { Record } from "../../../Data/Record"
+import { Pet } from "../../Models/Hero/Pet"
+import { renderMaybe } from "../../Utilities/ReactUtils"
+import { AvatarWrapper } from "../Universal/AvatarWrapper"
+import { IconButton } from "../Universal/IconButton"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemButtons } from "../Universal/ListItemButtons"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListItemSeparator } from "../Universal/ListItemSeparator"
+import { VerticalList } from "../Universal/VerticalList"
 
 export interface PetsListItemProps {
   pet: Record<Pet>

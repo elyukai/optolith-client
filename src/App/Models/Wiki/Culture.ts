@@ -1,13 +1,13 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { SocialStatusId } from "../../Constants/Ids";
-import { CommonProfession } from "./sub/CommonProfession";
-import { Erratum } from "./sub/Errata";
-import { IncreaseSkill } from "./sub/IncreaseSkill";
-import { SourceLink } from "./sub/SourceLink";
-import { EntryWithCategory } from "./wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { SocialStatusId } from "../../Constants/Ids"
+import { CommonProfession } from "./sub/CommonProfession"
+import { Erratum } from "./sub/Errata"
+import { IncreaseSkill } from "./sub/IncreaseSkill"
+import { SourceLink } from "./sub/SourceLink"
+import { EntryWithCategory } from "./wikiTypeHelpers"
 
 export interface Culture {
   "@@name": "Culture"

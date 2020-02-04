@@ -1,15 +1,15 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { findWithDefault, member, OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { LanguagesSelectionListItemOptions } from "../../Models/View/LanguagesSelectionListItemOptions";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { getLevelElements } from "../../Utilities/levelUtils";
-import { Checkbox } from "../Universal/Checkbox";
-import { Dropdown } from "../Universal/Dropdown";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { findWithDefault, member, OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { LanguagesSelectionListItemOptions } from "../../Models/View/LanguagesSelectionListItemOptions"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { getLevelElements } from "../../Utilities/levelUtils"
+import { Checkbox } from "../Universal/Checkbox"
+import { Dropdown } from "../Universal/Dropdown"
 
 const LSLIOA = LanguagesSelectionListItemOptions.A
 

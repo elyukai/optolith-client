@@ -1,6 +1,6 @@
-import { empty, List } from "../../../../Data/List";
-import { fromDefault, makeLenses } from "../../../../Data/Record";
-import { Pair } from "../../../../Data/Tuple";
+import { empty, List } from "../../../../Data/List"
+import { fromDefault, makeLenses } from "../../../../Data/Record"
+import { Pair } from "../../../../Data/Tuple"
 
 export interface SourceLinks {
   "@@name": "SourceLinks"

@@ -1,13 +1,12 @@
-import * as React from "react";
-import { ident } from "../../../Data/Function";
-import { BorderButton } from "../Universal/BorderButton";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { ident } from "../../../Data/Function"
+import { BorderButton } from "../Universal/BorderButton"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { TextField } from "../Universal/TextField"
 
-export const Grouplist: React.FC = () => {
-  return (
+export const Grouplist: React.FC = () => (
     <Page>
       <Options>
         <TextField
@@ -24,4 +23,3 @@ export const Grouplist: React.FC = () => {
       </Scroll>
     </Page>
   )
-}

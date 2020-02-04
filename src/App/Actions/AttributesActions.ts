@@ -1,25 +1,25 @@
-import { fmapF } from "../../Data/Functor";
-import { List } from "../../Data/List";
-import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe";
-import { lookup } from "../../Data/OrderedMap";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
-import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
-import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getCurrentHeroPresent, getWikiAttributes } from "../Selectors/stateSelectors";
-import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";
-import { getIncreaseAP } from "../Utilities/AdventurePoints/improvementCostUtils";
-import { translate, translateP } from "../Utilities/I18n";
-import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { ReduxAction } from "./Actions";
-import { addAlert, AlertOptions } from "./AlertActions";
+import { fmapF } from "../../Data/Functor"
+import { List } from "../../Data/List"
+import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe"
+import { lookup } from "../../Data/OrderedMap"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
+import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
+import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getCurrentHeroPresent, getWikiAttributes } from "../Selectors/stateSelectors"
+import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
+import { getIncreaseAP } from "../Utilities/AdventurePoints/improvementCostUtils"
+import { translate, translateP } from "../Utilities/I18n"
+import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { ReduxAction } from "./Actions"
+import { addAlert, AlertOptions } from "./AlertActions"
 
 export interface AddAttributePointAction {
   type: ActionTypes.ADD_ATTRIBUTE_POINT
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -63,7 +63,7 @@ export const addAttributePoint = (l10n: L10nRecord) => (id: string): ReduxAction
 export interface RemoveAttributePointAction {
   type: ActionTypes.REMOVE_ATTRIBUTE_POINT
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -90,6 +90,7 @@ export const addLifePoint =
         bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
         join,
         liftM2 (pipe (
+
                  // get AP for added points
                  getIncreaseAP (4),
 
@@ -130,6 +131,7 @@ export const addArcaneEnergyPoint = (l10n: L10nRecord): ReduxAction<Promise<void
         bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
         join,
         liftM2 (pipe (
+
                  // get AP for added points
                  getIncreaseAP (4),
 
@@ -171,6 +173,7 @@ export const addKarmaPoint =
         bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
         join,
         liftM2 (pipe (
+
                  // get AP for added points
                  getIncreaseAP (4),
 
@@ -272,7 +275,7 @@ export const removeLostLPPoint = (): RemoveLostLPPointAction => ({
 export interface AddLostLPPointsAction {
   type: ActionTypes.ADD_LOST_LP_POINTS
   payload: {
-    value: number;
+    value: number
   }
 }
 
@@ -310,7 +313,7 @@ export const removeLostAEPoint = (): RemoveLostAEPointAction => ({
 export interface AddLostAEPointsAction {
   type: ActionTypes.ADD_LOST_AE_POINTS
   payload: {
-    value: number;
+    value: number
   }
 }
 
@@ -382,7 +385,7 @@ export const removeLostKPPoint = (): RemoveLostKPPointAction => ({
 export interface AddLostKPPointsAction {
   type: ActionTypes.ADD_LOST_KP_POINTS
   payload: {
-    value: number;
+    value: number
   }
 }
 
@@ -396,7 +399,7 @@ export const addLostKPPoints = (value: number): AddLostKPPointsAction => ({
 export interface SetAdjustmentIdAction {
   type: ActionTypes.SET_ATTR_ADJUSTMENT_SID
   payload: {
-    id: string;
+    id: string
   }
 }
 

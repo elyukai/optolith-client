@@ -1,5 +1,5 @@
-import * as React from "react";
-import { orN } from "../../../Data/Maybe";
+import * as React from "react"
+import { orN } from "../../../Data/Maybe"
 
 interface Props {
   addFillElement?: boolean

@@ -1,17 +1,17 @@
-import * as React from "react";
-import { elemF, filter, List, map, subscript, toArray } from "../../../Data/List";
-import { elems } from "../../../Data/OrderedMap";
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { Tuple } from "../../../Data/Tuple";
-import { Cantrip } from "../../Models/Wiki/Cantrip";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { CantripsSelection } from "../../Models/Wiki/professionSelections/CantripsSelection";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { translate, translateP } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { renderMaybe } from "../../Utilities/ReactUtils";
-import { CantripSelectionListItem } from "./CantripSelectionListItem";
+import * as React from "react"
+import { elemF, filter, List, map, subscript, toArray } from "../../../Data/List"
+import { elems } from "../../../Data/OrderedMap"
+import { OrderedSet } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { Tuple } from "../../../Data/Tuple"
+import { Cantrip } from "../../Models/Wiki/Cantrip"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { CantripsSelection } from "../../Models/Wiki/professionSelections/CantripsSelection"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { translate, translateP } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { renderMaybe } from "../../Utilities/ReactUtils"
+import { CantripSelectionListItem } from "./CantripSelectionListItem"
 
 const WA = WikiModel.A
 const CSA = CantripsSelection.A

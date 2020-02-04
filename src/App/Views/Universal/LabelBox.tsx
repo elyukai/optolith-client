@@ -1,8 +1,8 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { fromMaybe, Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
-import { Box } from "./Box";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { fromMaybe, Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
+import { Box } from "./Box"
 
 interface Props {
   className?: string

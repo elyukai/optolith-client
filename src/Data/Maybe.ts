@@ -14,14 +14,14 @@
  * @see Either
  */
 
-import { ReactNode } from "react";
-import { ifElse } from "../App/Utilities/ifElse";
-import { pipe } from "../App/Utilities/pipe";
-import { cnst, flip, ident } from "./Function";
-import { fmap, fmapF } from "./Functor";
-import { Internals } from "./Internals";
-import { cons, consF, head, ifoldr, List } from "./List";
-import * as Math from "./Num";
+import { ReactNode } from "react"
+import { ifElse } from "../App/Utilities/ifElse"
+import { pipe } from "../App/Utilities/pipe"
+import { cnst, flip, ident } from "./Function"
+import { fmap, fmapF } from "./Functor"
+import { Internals } from "./Internals"
+import { cons, consF, head, ifoldr, List } from "./List"
+import * as Math from "./Num"
 
 export import Just = Internals.Just
 export import Nothing = Internals.Nothing
@@ -539,6 +539,7 @@ export const all = (
   <A>
   (f: (x: A) => boolean) =>
   (x: Maybe<A>): boolean =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     maybe (true) (f) (x)
 ) as All
 

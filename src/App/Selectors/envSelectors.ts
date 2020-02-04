@@ -1,4 +1,4 @@
-import { remote } from "electron";
+import { remote } from "electron"
 
 /**
  * The path to the root directory of the packed ASAR, which is the root

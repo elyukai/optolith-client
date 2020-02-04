@@ -1,5 +1,5 @@
-import * as React from "react";
-import { Scroll } from "./Scroll";
+import * as React from "react"
+import { Scroll } from "./Scroll"
 
 interface Props {
   stack: string

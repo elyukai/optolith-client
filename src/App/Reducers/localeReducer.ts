@@ -1,14 +1,14 @@
-import { cnst, ident } from "../../Data/Function";
-import { set } from "../../Data/Lens";
-import { bind, fromMaybe, isJust, Just, Maybe, Nothing } from "../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../Data/Record";
-import { fst } from "../../Data/Tuple";
-import { ReceiveInitialDataAction } from "../Actions/IOActions";
-import { SetLocaleAction } from "../Actions/LocaleActions";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { pipe } from "../Utilities/pipe";
-import { Config, Locale } from "../Utilities/Raw/JSON/Config";
+import { cnst, ident } from "../../Data/Function"
+import { set } from "../../Data/Lens"
+import { bind, fromMaybe, isJust, Just, Maybe, Nothing } from "../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../Data/Record"
+import { fst } from "../../Data/Tuple"
+import { ReceiveInitialDataAction } from "../Actions/IOActions"
+import { SetLocaleAction } from "../Actions/LocaleActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { pipe } from "../Utilities/pipe"
+import { Config, Locale } from "../Utilities/Raw/JSON/Config"
 
 type Action = ReceiveInitialDataAction | SetLocaleAction
 

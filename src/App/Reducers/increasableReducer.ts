@@ -1,21 +1,21 @@
-import { ident } from "../../Data/Function";
-import { over, set } from "../../Data/Lens";
-import { insert, sdelete } from "../../Data/OrderedSet";
-import * as AttributesActions from "../Actions/AttributesActions";
-import * as CombatTechniquesActions from "../Actions/CombatTechniquesActions";
-import * as LiturgicalChantActions from "../Actions/LiturgicalChantActions";
-import * as SkillActions from "../Actions/SkillActions";
-import * as SpellsActions from "../Actions/SpellsActions";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { ActivatableSkillDependentL, isActivatableSkillDependentUnused } from "../Models/ActiveEntries/ActivatableSkillDependent";
-import { isAttributeDependentUnused } from "../Models/ActiveEntries/AttributeDependent";
-import { isCombatTechniqueSkillDependentUnused, isSkillDependentUnused } from "../Models/ActiveEntries/SkillDependent";
-import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { Spell } from "../Models/Wiki/Spell";
-import { addDependencies, removeDependencies } from "../Utilities/Dependencies/dependencyUtils";
-import { adjustEntryDef, adjustRemoveEntryDef } from "../Utilities/heroStateUtils";
-import { addPoint, removePoint } from "../Utilities/Increasable/increasableUtils";
-import { pipe } from "../Utilities/pipe";
+import { ident } from "../../Data/Function"
+import { over, set } from "../../Data/Lens"
+import { insert, sdelete } from "../../Data/OrderedSet"
+import * as AttributesActions from "../Actions/AttributesActions"
+import * as CombatTechniquesActions from "../Actions/CombatTechniquesActions"
+import * as LiturgicalChantActions from "../Actions/LiturgicalChantActions"
+import * as SkillActions from "../Actions/SkillActions"
+import * as SpellsActions from "../Actions/SpellsActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { ActivatableSkillDependentL, isActivatableSkillDependentUnused } from "../Models/ActiveEntries/ActivatableSkillDependent"
+import { isAttributeDependentUnused } from "../Models/ActiveEntries/AttributeDependent"
+import { isCombatTechniqueSkillDependentUnused, isSkillDependentUnused } from "../Models/ActiveEntries/SkillDependent"
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { Spell } from "../Models/Wiki/Spell"
+import { addDependencies, removeDependencies } from "../Utilities/Dependencies/dependencyUtils"
+import { adjustEntryDef, adjustRemoveEntryDef } from "../Utilities/heroStateUtils"
+import { addPoint, removePoint } from "../Utilities/Increasable/increasableUtils"
+import { pipe } from "../Utilities/pipe"
 
 type Action = AttributesActions.AddAttributePointAction
             | AttributesActions.RemoveAttributePointAction

@@ -1,11 +1,11 @@
-import { WikiModel } from "../Models/Wiki/WikiModel";
-import { combineReducerRecord } from "../Utilities/combineReducerRecord";
-import { AppState } from "./appReducer";
-import { HeroesState, herolistReducer } from "./herolistReducer";
-import { isReadyReducer } from "./isReadyReducer";
-import { localeReducer, LocaleState } from "./localeReducer";
-import { uiReducer } from "./uiReducer";
-import { wikiReducer } from "./wikiReducer";
+import { WikiModel } from "../Models/Wiki/WikiModel"
+import { combineReducerRecord } from "../Utilities/combineReducerRecord"
+import { AppState } from "./appReducer"
+import { HeroesState, herolistReducer } from "./herolistReducer"
+import { isReadyReducer } from "./isReadyReducer"
+import { localeReducer, LocaleState } from "./localeReducer"
+import { uiReducer } from "./uiReducer"
+import { wikiReducer } from "./wikiReducer"
 
 export const appSlicesReducer =
   combineReducerRecord ("AppState")

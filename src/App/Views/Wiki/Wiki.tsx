@@ -1,36 +1,48 @@
-import * as React from "react";
-import { fmapF } from "../../../Data/Functor";
-import { cons, consF, imap, List, notNull } from "../../../Data/List";
-import { Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { CultureCombined } from "../../Models/View/CultureCombined";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { ProfessionCombined } from "../../Models/View/ProfessionCombined";
-import { RaceCombined } from "../../Models/View/RaceCombined";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { Blessing } from "../../Models/Wiki/Blessing";
-import { Cantrip } from "../../Models/Wiki/Cantrip";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { Disadvantage } from "../../Models/Wiki/Disadvantage";
-import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { Skill } from "../../Models/Wiki/Skill";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { Spell } from "../../Models/Wiki/Spell";
-import { InlineWikiEntry } from "../../Models/Wiki/wikiTypeHelpers";
-import { translate } from "../../Utilities/I18n";
-import { pipe } from "../../Utilities/pipe";
-import { sortRecordsByName } from "../../Utilities/sortBy";
-import { Dropdown } from "../Universal/Dropdown";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { SearchField } from "../Universal/SearchField";
-import { WikiList } from "./WikiList";
+import * as React from "react"
+import { fmapF } from "../../../Data/Functor"
+import { cons, consF, imap, List, notNull } from "../../../Data/List"
+import { Just, Maybe, maybe, Nothing } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { CultureCombined } from "../../Models/View/CultureCombined"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { ProfessionCombined } from "../../Models/View/ProfessionCombined"
+import { RaceCombined } from "../../Models/View/RaceCombined"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { Blessing } from "../../Models/Wiki/Blessing"
+import { Cantrip } from "../../Models/Wiki/Cantrip"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { Disadvantage } from "../../Models/Wiki/Disadvantage"
+import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
+import { Skill } from "../../Models/Wiki/Skill"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { Spell } from "../../Models/Wiki/Spell"
+import { InlineWikiEntry } from "../../Models/Wiki/wikiTypeHelpers"
+import { translate } from "../../Utilities/I18n"
+import { pipe } from "../../Utilities/pipe"
+import { sortRecordsByName } from "../../Utilities/sortBy"
+import { Dropdown } from "../Universal/Dropdown"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { SearchField } from "../Universal/SearchField"
+import { WikiList } from "./WikiList"
+
+const getSortedGroupsDef =
+  (l10n: L10nRecord) =>
+  (def: string) =>
+    pipe (
+      imap (i => (n: string) => DropdownOption ({ id: Just (i + 1), name: n })),
+      sortRecordsByName (l10n),
+      consF (DropdownOption ({
+              id: Nothing,
+              name: def,
+            }))
+    )
 
 export interface WikiOwnProps {
   l10n: L10nRecord
@@ -307,15 +319,3 @@ export const Wiki: React.FC<Props> = props => {
     </Page>
   )
 }
-
-const getSortedGroupsDef =
-  (l10n: L10nRecord) =>
-  (def: string) =>
-    pipe (
-      imap (i => (n: string) => DropdownOption ({ id: Just (i + 1), name: n })),
-      sortRecordsByName (l10n),
-      consF (DropdownOption ({
-              id: Nothing,
-              name: def,
-            }))
-    )

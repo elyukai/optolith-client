@@ -1,6 +1,6 @@
-import { ProfessionSelectionIds } from "../../../../../Models/Wiki/wikiTypeHelpers";
-import { isNaturalNumber } from "../../../../RegexUtils";
-import { AnyRawProfessionSelection } from "../rawTypeHelpers";
+import { ProfessionSelectionIds } from "../../../../../Models/Wiki/wikiTypeHelpers"
+import { isNaturalNumber } from "../../../../RegexUtils"
+import { AnyRawProfessionSelection } from "../rawTypeHelpers"
 
 export interface RawCombatTechniquesSelection {
   id: ProfessionSelectionIds
@@ -19,4 +19,4 @@ export const isRawCombatTechniquesSelection =
     // @ts-ignore
     && Array.isArray (obj .sid)
     // @ts-ignore
-    && obj .sid .every (isNaturalNumber)
+    && (obj .sid as any[]) .every (isNaturalNumber)

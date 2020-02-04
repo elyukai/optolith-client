@@ -1,39 +1,39 @@
-import { equals } from "../../../Data/Eq";
-import { cnst, ident, join } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { elem, filter, List, sum } from "../../../Data/List";
-import { bindF, ensure, maybe, Maybe, thenF } from "../../../Data/Maybe";
-import { add, multiply } from "../../../Data/Num";
-import { foldr, lookupF } from "../../../Data/OrderedMap";
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { bimap, first, fst, Pair, second, snd, Tuple } from "../../../Data/Tuple";
-import { Category } from "../../Constants/Categories";
-import { AdvantageIdsNoMaxInfl } from "../../Constants/Ids";
-import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
-import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
-import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
-import { Energies } from "../../Models/Hero/Energies";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { PermanentEnergyLossAndBoughtBack } from "../../Models/Hero/PermanentEnergyLossAndBoughtBack";
-import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { Disadvantage } from "../../Models/Wiki/Disadvantage";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { Profession } from "../../Models/Wiki/Profession";
-import { ProfessionVariant } from "../../Models/Wiki/ProfessionVariant";
-import { Race } from "../../Models/Wiki/Race";
-import { Skill } from "../../Models/Wiki/Skill";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { Spell } from "../../Models/Wiki/Spell";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getAllActiveByCategory } from "../Activatable/activatableActiveUtils";
-import { pipe, pipe_ } from "../pipe";
-import { getAdventurePointsSpentDifference } from "./adventurePointsUtils";
-import { getAPRange } from "./improvementCostUtils";
+import { equals } from "../../../Data/Eq"
+import { cnst, ident, join } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { elem, filter, List, sum } from "../../../Data/List"
+import { bindF, ensure, maybe, Maybe, thenF } from "../../../Data/Maybe"
+import { add, multiply } from "../../../Data/Num"
+import { foldr, lookupF } from "../../../Data/OrderedMap"
+import { OrderedSet } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { bimap, first, fst, Pair, second, snd, Tuple } from "../../../Data/Tuple"
+import { Category } from "../../Constants/Categories"
+import { AdvantageIdsNoMaxInfl } from "../../Constants/Ids"
+import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
+import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
+import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
+import { Energies } from "../../Models/Hero/Energies"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { PermanentEnergyLossAndBoughtBack } from "../../Models/Hero/PermanentEnergyLossAndBoughtBack"
+import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable"
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { Disadvantage } from "../../Models/Wiki/Disadvantage"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
+import { Profession } from "../../Models/Wiki/Profession"
+import { ProfessionVariant } from "../../Models/Wiki/ProfessionVariant"
+import { Race } from "../../Models/Wiki/Race"
+import { Skill } from "../../Models/Wiki/Skill"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { Spell } from "../../Models/Wiki/Spell"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { getAllActiveByCategory } from "../Activatable/activatableActiveUtils"
+import { pipe, pipe_ } from "../pipe"
+import { getAdventurePointsSpentDifference } from "./adventurePointsUtils"
+import { getAPRange } from "./improvementCostUtils"
 
 // Attributes
 

@@ -1,5 +1,5 @@
-import { List } from "../../../../Data/List";
-import { fromDefault } from "../../../../Data/Record";
+import { List } from "../../../../Data/List"
+import { fromDefault } from "../../../../Data/Record"
 
 export interface CommonProfession {
   "@@name": "CommonProfession"

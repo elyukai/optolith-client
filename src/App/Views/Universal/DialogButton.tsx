@@ -1,6 +1,6 @@
-import * as React from "react";
-import { Maybe } from "../../../Data/Maybe";
-import { BorderButton } from "./BorderButton";
+import * as React from "react"
+import { Maybe } from "../../../Data/Maybe"
+import { BorderButton } from "./BorderButton"
 
 interface Props {
   active?: boolean

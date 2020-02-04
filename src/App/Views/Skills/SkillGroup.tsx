@@ -1,6 +1,6 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { ListItemGroup } from "../Universal/ListItemGroup";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { ListItemGroup } from "../Universal/ListItemGroup"
 
 interface Props {
   addText?: string

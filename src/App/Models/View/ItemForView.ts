@@ -1,7 +1,7 @@
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
-import { Item } from "../Hero/Item";
-import { ItemTemplate } from "../Wiki/ItemTemplate";
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, Record } from "../../../Data/Record"
+import { Item } from "../Hero/Item"
+import { ItemTemplate } from "../Wiki/ItemTemplate"
 
 export interface ItemForView {
   "@@name": "ItemForView"

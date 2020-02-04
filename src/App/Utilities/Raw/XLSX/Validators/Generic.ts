@@ -1,11 +1,13 @@
-import { Either, first, fromRight_, isEither, isLeft, isRight, Left, Right, RightI } from "../../../../../Data/Either";
-import { appendStr, List, notNullStr } from "../../../../../Data/List";
-import { bindF, ensure, Maybe } from "../../../../../Data/Maybe";
-import { showP } from "../../../../../Data/Show";
-import { pipe_ } from "../../../pipe";
-import { mensureMapNatural, mensureMapNaturalOptional, mensureMapNonEmptyString } from "./ToValue";
+import { Either, first, fromRight_, isEither, isLeft, isRight, Left, Right, RightI } from "../../../../../Data/Either"
+import { appendStr, List, notNullStr } from "../../../../../Data/List"
+import { bindF, ensure, Maybe } from "../../../../../Data/Maybe"
+import { showP } from "../../../../../Data/Show"
+import { pipe_ } from "../../../pipe"
+import { mensureMapNatural, mensureMapNaturalOptional, mensureMapNonEmptyString } from "./ToValue"
 
-export enum TableType { Univ, L10n }
+export enum TableType {
+ Univ, L10n
+}
 
 const getTableTypeName = (x: TableType) => x === TableType.Univ ? `"univ.xlsx"` : `"l10n.xlsx"`
 
@@ -49,7 +51,7 @@ export const mapMNamed =
     const rs =
       Object.entries (es)
         .reduce<Left<string> | MapRight<A>> (
-          (rsAcc, [key, e]) =>
+          (rsAcc, [ key, e ]) =>
             isEither (rsAcc)
             ? rsAcc
             : isLeft (e)

@@ -1,17 +1,17 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Pair } from "../../../Data/Tuple";
-import { Rules } from "../../Models/Hero/Rules";
-import { Culture } from "../../Models/Wiki/Culture";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { LanguagesScriptsSelection } from "../../Models/Wiki/professionSelections/LanguagesScriptsSelection";
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { translateP } from "../../Utilities/I18n";
-import { getLanguageSelectionAPSpent, LanguageSelectionList } from "./LanguageSelectionList";
-import { getScriptSelectionAPSpent, ScriptSelectionList } from "./ScriptSelectionList";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Maybe } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { Pair } from "../../../Data/Tuple"
+import { Rules } from "../../Models/Hero/Rules"
+import { Culture } from "../../Models/Wiki/Culture"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { LanguagesScriptsSelection } from "../../Models/Wiki/professionSelections/LanguagesScriptsSelection"
+import { WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { translateP } from "../../Utilities/I18n"
+import { getLanguageSelectionAPSpent, LanguageSelectionList } from "./LanguageSelectionList"
+import { getScriptSelectionAPSpent, ScriptSelectionList } from "./ScriptSelectionList"
 
 const LSSOA = LanguagesScriptsSelection.A
 

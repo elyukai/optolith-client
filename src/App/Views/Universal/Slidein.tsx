@@ -1,8 +1,8 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Just, Maybe } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
-import { Portal } from "./Portal";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Just, Maybe } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
+import { Portal } from "./Portal"
 
 interface Props {
   children?: React.ReactNode

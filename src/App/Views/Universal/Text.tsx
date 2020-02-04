@@ -1,8 +1,8 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Just, Maybe } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
-import { ChildrenProps } from "../../Utilities/ReactUtils";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Just, Maybe } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
+import { ChildrenProps } from "../../Utilities/ReactUtils"
 
 export interface TextProps extends ChildrenProps {
   className?: string
@@ -29,4 +29,4 @@ const Text: React.RefForwardingComponent<HTMLDivElement, TextProps> = (props, re
 
 const TextRef = React.forwardRef (Text)
 
-export { TextRef as Text };
+export { TextRef as Text }

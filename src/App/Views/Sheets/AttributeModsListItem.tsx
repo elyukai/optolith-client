@@ -1,6 +1,6 @@
-import * as React from "react";
-import { Record } from "../../../Data/Record";
-import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
+import * as React from "react"
+import { Record } from "../../../Data/Record"
+import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined"
 
 interface Props {
   attribute: Record<AttributeCombined>

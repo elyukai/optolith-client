@@ -1,6 +1,6 @@
-import { add, inc, max, multiply, negate, subtractBy } from "../../../Data/Num";
-import { bimap, fst, Pair, snd } from "../../../Data/Tuple";
-import { pipe } from "../pipe";
+import { add, inc, max, multiply, negate, subtractBy } from "../../../Data/Num"
+import { bimap, fst, Pair, snd } from "../../../Data/Tuple"
+import { pipe } from "../pipe"
 
 /**
  * `getICMultiplier :: Int -> Int`

@@ -1,20 +1,20 @@
-import { fmap } from "../../../../../Data/Functor";
-import { concatMap } from "../../../../../Data/List";
-import { Nothing } from "../../../../../Data/Maybe";
-import { OrderedMap } from "../../../../../Data/OrderedMap";
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { Advantage } from "../../../../Models/Wiki/Advantage";
-import { prefixId } from "../../../IDUtils";
-import { mergeRowsById } from "../MergeRows";
-import { modifyNegIntNoBreak } from "../SourceHelpers";
-import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapNatural, mensureMapNaturalOptional, mensureMapNonEmptyString } from "../Validators/ToValue";
-import { toActivatableCost } from "./Sub/toActivatableCost";
-import { toErrata } from "./Sub/toErrata";
-import { categoryToSelectOptions, toOptionalCategoryList } from "./Sub/toOptionalCategoryList";
-import { toPrerequisites } from "./Sub/toPrerequisites";
-import { toPrerequisitesIndex } from "./Sub/toPrerequisitesIndex";
-import { toSourceLinks } from "./Sub/toSourceLinks";
+import { fmap } from "../../../../../Data/Functor"
+import { concatMap } from "../../../../../Data/List"
+import { Nothing } from "../../../../../Data/Maybe"
+import { OrderedMap } from "../../../../../Data/OrderedMap"
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { Advantage } from "../../../../Models/Wiki/Advantage"
+import { prefixId } from "../../../IDUtils"
+import { mergeRowsById } from "../MergeRows"
+import { modifyNegIntNoBreak } from "../SourceHelpers"
+import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapNatural, mensureMapNaturalOptional, mensureMapNonEmptyString } from "../Validators/ToValue"
+import { toActivatableCost } from "./Sub/toActivatableCost"
+import { toErrata } from "./Sub/toErrata"
+import { categoryToSelectOptions, toOptionalCategoryList } from "./Sub/toOptionalCategoryList"
+import { toPrerequisites } from "./Sub/toPrerequisites"
+import { toPrerequisitesIndex } from "./Sub/toPrerequisitesIndex"
+import { toSourceLinks } from "./Sub/toSourceLinks"
 
 export const toAdvantage =
   mergeRowsById

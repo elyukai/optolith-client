@@ -1,10 +1,10 @@
-import * as React from "react";
-import { List, map, toArray } from "../../../Data/List";
-import { Record } from "../../../Data/Record";
-import { NavigationBarTabOptions } from "../../Models/View/NavigationBarTabOptions";
-import { TabId } from "../../Utilities/LocationUtils";
-import { pipe_ } from "../../Utilities/pipe";
-import { NavigationBarTab } from "./NavigationBarTab";
+import * as React from "react"
+import { List, map, toArray } from "../../../Data/List"
+import { Record } from "../../../Data/Record"
+import { NavigationBarTabOptions } from "../../Models/View/NavigationBarTabOptions"
+import { TabId } from "../../Utilities/LocationUtils"
+import { pipe_ } from "../../Utilities/pipe"
+import { NavigationBarTab } from "./NavigationBarTab"
 
 const NBTOA = NavigationBarTabOptions.A
 

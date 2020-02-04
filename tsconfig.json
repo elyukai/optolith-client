@@ -28,7 +28,6 @@
   ],
   "exclude": [
     "node_modules",
-    "src/data/*",
     "**/__tests__/**"
   ]
 }

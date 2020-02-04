@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Maybe } from "../../../Data/Maybe";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListItemSeparator } from "../Universal/ListItemSeparator";
+import * as React from "react"
+import { Maybe } from "../../../Data/Maybe"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListItemSeparator } from "../Universal/ListItemSeparator"
 
 interface Props {
   id: string
@@ -35,4 +35,4 @@ const MemoWikiListItem = React.memo (
                             !== Maybe.elem (prevProps.id) (prevProps.currentInfoId)
 )
 
-export { MemoWikiListItem as WikiListItem };
+export { MemoWikiListItem as WikiListItem }

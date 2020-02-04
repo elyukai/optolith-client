@@ -1,8 +1,8 @@
-import { fromDefault, Record } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
-import { SkillDependent } from "../ActiveEntries/SkillDependent";
-import { Skill } from "../Wiki/Skill";
-import { IncreasableWithRequirements } from "./viewTypeHelpers";
+import { fromDefault, Record } from "../../../Data/Record"
+import { pipe } from "../../Utilities/pipe"
+import { SkillDependent } from "../ActiveEntries/SkillDependent"
+import { Skill } from "../Wiki/Skill"
+import { IncreasableWithRequirements } from "./viewTypeHelpers"
 
 export interface SkillWithRequirements extends IncreasableWithRequirements {
   "@@name": "SkillWithRequirements"

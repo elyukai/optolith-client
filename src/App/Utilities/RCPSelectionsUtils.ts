@@ -1,6 +1,6 @@
-import { Just, Maybe, maybe, Nothing } from "../../Data/Maybe";
-import { Pair, Tuple } from "../../Data/Tuple";
-import { sel1 } from "../../Data/Tuple/Select";
+import { Just, Maybe, maybe, Nothing } from "../../Data/Maybe"
+import { Pair, Tuple } from "../../Data/Tuple"
+import { sel1 } from "../../Data/Tuple/Select"
 
 type SelectionValidView = Pair<boolean, Maybe<JSX.Element>>
 

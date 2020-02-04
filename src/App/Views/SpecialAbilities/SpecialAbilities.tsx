@@ -1,29 +1,29 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
-import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
-import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { translate } from "../../Utilities/I18n";
-import { ActivatableAddList } from "../Activatable/ActivatableAddList";
-import { ActivatableRemoveList } from "../Activatable/ActivatableRemoveList";
-import { BorderButton } from "../Universal/BorderButton";
-import { Checkbox } from "../Universal/Checkbox";
-import { ListHeader } from "../Universal/ListHeader";
-import { ListHeaderTag } from "../Universal/ListHeaderTag";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { SearchField } from "../Universal/SearchField";
-import { Slidein } from "../Universal/Slidein";
-import { SortNames, SortOptions } from "../Universal/SortOptions";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
+import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
+import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { translate } from "../../Utilities/I18n"
+import { ActivatableAddList } from "../Activatable/ActivatableAddList"
+import { ActivatableRemoveList } from "../Activatable/ActivatableRemoveList"
+import { BorderButton } from "../Universal/BorderButton"
+import { Checkbox } from "../Universal/Checkbox"
+import { ListHeader } from "../Universal/ListHeader"
+import { ListHeaderTag } from "../Universal/ListHeaderTag"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { SearchField } from "../Universal/SearchField"
+import { Slidein } from "../Universal/Slidein"
+import { SortNames, SortOptions } from "../Universal/SortOptions"
 
 export interface SpecialAbilitiesOwnProps {
   l10n: L10nRecord

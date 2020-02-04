@@ -1,9 +1,9 @@
-import * as React from "react";
-import { maybe, Maybe } from "../../../Data/Maybe";
-import { member, notMember, OrderedSet, size } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { Checkbox } from "../Universal/Checkbox";
+import * as React from "react"
+import { maybe, Maybe } from "../../../Data/Maybe"
+import { member, notMember, OrderedSet, size } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { Checkbox } from "../Universal/Checkbox"
 
 const CTA = CombatTechnique.A
 

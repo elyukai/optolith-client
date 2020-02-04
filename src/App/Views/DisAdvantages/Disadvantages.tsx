@@ -1,19 +1,19 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
-import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
-import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
-import { Disadvantage } from "../../Models/Wiki/Disadvantage";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { AdvantagesDisadvantages } from "./AdvantagesDisadvantages";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Maybe } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
+import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
+import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
+import { Disadvantage } from "../../Models/Wiki/Disadvantage"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { AdvantagesDisadvantages } from "./AdvantagesDisadvantages"
 
 export interface DisadvantagesOwnProps {
   hero: HeroModelRecord

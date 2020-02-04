@@ -1,14 +1,14 @@
-import * as React from "react";
-import { elem, flength, intercalate, List, subscript } from "../../../../Data/List";
-import { bindF, ensure, mapMaybe } from "../../../../Data/Maybe";
-import { dec, lte } from "../../../../Data/Num";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { MagicalTradition } from "../../../Constants/Groups";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { sortStrings } from "../../../Utilities/sortBy";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { elem, flength, intercalate, List, subscript } from "../../../../Data/List"
+import { bindF, ensure, mapMaybe } from "../../../../Data/Maybe"
+import { dec, lte } from "../../../../Data/Num"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { MagicalTradition } from "../../../Constants/Groups"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { sortStrings } from "../../../Utilities/sortBy"
+import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
   subtradition: (r: Record<A>) => List<number>

@@ -1,5 +1,5 @@
-import { Sex } from "../../../../../Models/Hero/heroTypeHelpers";
-import { AllRawRequirementObjects } from "../rawTypeHelpers";
+import { Sex } from "../../../../../Models/Hero/heroTypeHelpers"
+import { AllRawRequirementObjects } from "../rawTypeHelpers"
 
 export interface RawSexRequirement {
   id: "SEX"

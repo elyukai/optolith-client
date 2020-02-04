@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { List } from "../../../Data/List";
-import { fromMaybe, Just, Maybe, orN } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { List } from "../../../Data/List"
+import { fromMaybe, Just, Maybe, orN } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
 
 interface Props {
   className: string

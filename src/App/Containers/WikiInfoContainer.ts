@@ -1,11 +1,11 @@
-import { connect } from "react-redux";
-import { SpecialAbilityId } from "../Constants/Ids";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getAllCultures, getAllProfessions, getAllRaces } from "../Selectors/rcpSelectors";
-import * as stateSelectors from "../Selectors/stateSelectors";
-import { mapGetToSlice } from "../Utilities/SelectorsUtils";
-import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps } from "../Views/InlineWiki/WikiInfo";
-import { WikiInfoContentStateProps } from "../Views/InlineWiki/WikiInfoContent";
+import { connect } from "react-redux"
+import { SpecialAbilityId } from "../Constants/Ids"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getAllCultures, getAllProfessions, getAllRaces } from "../Selectors/rcpSelectors"
+import * as stateSelectors from "../Selectors/stateSelectors"
+import { mapGetToSlice } from "../Utilities/SelectorsUtils"
+import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps } from "../Views/InlineWiki/WikiInfo"
+import { WikiInfoContentStateProps } from "../Views/InlineWiki/WikiInfoContent"
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: WikiInfoOwnProps): WikiInfoContentStateProps => ({

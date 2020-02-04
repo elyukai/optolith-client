@@ -1,5 +1,5 @@
-import { isNumber } from "../../../../typeCheckUtils";
-import { AllRawRequirementObjects } from "../rawTypeHelpers";
+import { isNumber } from "../../../../typeCheckUtils"
+import { AllRawRequirementObjects } from "../rawTypeHelpers"
 
 export interface RawCultureRequirement {
   id: "CULTURE"
@@ -13,5 +13,5 @@ export const isRawCultureRequirement =
       // @ts-ignore
       typeof req.value === "number"
       // @ts-ignore
-      || Array.isArray (req.value) && req.value .every (isNumber)
+      || (Array.isArray (req.value) && (req.value as any[]) .every (isNumber))
     )

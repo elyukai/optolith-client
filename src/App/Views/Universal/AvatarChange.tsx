@@ -1,16 +1,16 @@
-import * as path from "path";
-import * as React from "react";
-import { fmap, fmapF } from "../../../Data/Functor";
-import { head, notNull } from "../../../Data/List";
-import { ensure, fromJust, isJust, Just, orN } from "../../../Data/Maybe";
-import { imgPathToBase64 } from "../../Actions/IOActions";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { showOpenDialog } from "../../Utilities/IOUtils";
-import { pipe } from "../../Utilities/pipe";
-import { AvatarWrapper } from "./AvatarWrapper";
-import { BorderButton } from "./BorderButton";
-import { Dialog } from "./Dialog";
+import * as path from "path"
+import * as React from "react"
+import { fmap, fmapF } from "../../../Data/Functor"
+import { head, notNull } from "../../../Data/List"
+import { ensure, fromJust, isJust, Just, orN } from "../../../Data/Maybe"
+import { imgPathToBase64 } from "../../Actions/IOActions"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { showOpenDialog } from "../../Utilities/IOUtils"
+import { pipe } from "../../Utilities/pipe"
+import { AvatarWrapper } from "./AvatarWrapper"
+import { BorderButton } from "./BorderButton"
+import { Dialog } from "./Dialog"
 
 interface Props {
   l10n: L10nRecord

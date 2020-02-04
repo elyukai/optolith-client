@@ -1,12 +1,12 @@
-import { connect } from "react-redux";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as ProfessionActions from "../Actions/ProfessionActions";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getFilteredProfessions } from "../Selectors/rcpSelectors";
-import { getCurrentProfessionId, getCurrentProfessionVariantId, getProfessionsFilterText, getSex, getWiki } from "../Selectors/stateSelectors";
-import { getProfessionsGroupVisibilityFilter, getProfessionsSortOrder, getProfessionsVisibilityFilter } from "../Selectors/uisettingsSelectors";
-import { ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter } from "../Utilities/Raw/JSON/Config";
-import { Professions, ProfessionsDispatchProps, ProfessionsOwnProps, ProfessionsStateProps } from "../Views/Professions/Professions";
+import { connect } from "react-redux"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as ProfessionActions from "../Actions/ProfessionActions"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getFilteredProfessions } from "../Selectors/rcpSelectors"
+import { getCurrentProfessionId, getCurrentProfessionVariantId, getProfessionsFilterText, getSex, getWiki } from "../Selectors/stateSelectors"
+import { getProfessionsGroupVisibilityFilter, getProfessionsSortOrder, getProfessionsVisibilityFilter } from "../Selectors/uisettingsSelectors"
+import { ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter } from "../Utilities/Raw/JSON/Config"
+import { Professions, ProfessionsDispatchProps, ProfessionsOwnProps, ProfessionsStateProps } from "../Views/Professions/Professions"
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: ProfessionsOwnProps): ProfessionsStateProps => ({

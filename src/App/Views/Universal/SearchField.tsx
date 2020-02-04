@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Maybe } from "../../../Data/Maybe";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { TextField } from "./TextField";
+import * as React from "react"
+import { Maybe } from "../../../Data/Maybe"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { TextField } from "./TextField"
 
 interface Props {
   autoFocus?: boolean | Maybe<boolean>

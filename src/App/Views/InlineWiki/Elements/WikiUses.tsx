@@ -1,13 +1,13 @@
-import * as React from "react";
-import { intercalate, List, map, notNull } from "../../../../Data/List";
-import { OrderedMap } from "../../../../Data/OrderedMap";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { Advantage } from "../../../Models/Wiki/Advantage";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
-import { Application } from "../../../Models/Wiki/sub/Application";
-import { sortStrings } from "../../../Utilities/sortBy";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { intercalate, List, map, notNull } from "../../../../Data/List"
+import { OrderedMap } from "../../../../Data/OrderedMap"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { Advantage } from "../../../Models/Wiki/Advantage"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { Application } from "../../../Models/Wiki/sub/Application"
+import { sortStrings } from "../../../Utilities/sortBy"
+import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
   uses: (r: Record<A>) => List<Record<Application>>

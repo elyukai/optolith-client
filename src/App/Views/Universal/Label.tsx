@@ -1,7 +1,7 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { guardReplace, Maybe, orN } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { guardReplace, Maybe, orN } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
 
 interface Props {
   className?: string

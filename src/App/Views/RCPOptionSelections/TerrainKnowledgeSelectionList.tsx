@@ -1,18 +1,18 @@
-import * as React from "react";
-import { fmap } from "../../../Data/Functor";
-import { elem, List } from "../../../Data/List";
-import { bindF, ensure, joinMaybeList, mapMaybe, Maybe, maybe } from "../../../Data/Maybe";
-import { lookup } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Tuple } from "../../../Data/Tuple";
-import { SpecialAbilityId } from "../../Constants/Ids";
-import { TerrainKnowledgeSelection } from "../../Models/Wiki/professionSelections/TerrainKnowledgeSelection";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { SelectOption, selectToDropdownOption } from "../../Models/Wiki/sub/SelectOption";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { isNumber } from "../../Utilities/typeCheckUtils";
-import { Dropdown } from "../Universal/Dropdown";
+import * as React from "react"
+import { fmap } from "../../../Data/Functor"
+import { elem, List } from "../../../Data/List"
+import { bindF, ensure, joinMaybeList, mapMaybe, Maybe, maybe } from "../../../Data/Maybe"
+import { lookup } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { Tuple } from "../../../Data/Tuple"
+import { SpecialAbilityId } from "../../Constants/Ids"
+import { TerrainKnowledgeSelection } from "../../Models/Wiki/professionSelections/TerrainKnowledgeSelection"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { SelectOption, selectToDropdownOption } from "../../Models/Wiki/sub/SelectOption"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { isNumber } from "../../Utilities/typeCheckUtils"
+import { Dropdown } from "../Universal/Dropdown"
 
 const WA = WikiModel.A
 const TKSA = TerrainKnowledgeSelection.A

@@ -1,20 +1,20 @@
-import { connect } from "react-redux";
-import { join } from "../../Data/Maybe";
-import { Record } from "../../Data/Record";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as ConfigActions from "../Actions/ConfigActions";
-import * as DisAdvActions from "../Actions/DisAdvActions";
-import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
-import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getAdvantagesRating, getFilteredActiveAdvantages } from "../Selectors/activatableSelectors";
-import { getAPObjectMap, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from "../Selectors/adventurePointsSelectors";
-import { getFilteredInactiveAdvantages } from "../Selectors/combinedActivatablesSelectors";
-import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
-import { getAdvantagesFilterText, getInactiveAdvantagesFilterText } from "../Selectors/stateSelectors";
-import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from "../Selectors/uisettingsSelectors";
-import { Advantages, AdvantagesDispatchProps, AdvantagesOwnProps, AdvantagesStateProps } from "../Views/DisAdvantages/Advantages";
+import { connect } from "react-redux"
+import { join } from "../../Data/Maybe"
+import { Record } from "../../Data/Record"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as ConfigActions from "../Actions/ConfigActions"
+import * as DisAdvActions from "../Actions/DisAdvActions"
+import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions"
+import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getAdvantagesRating, getFilteredActiveAdvantages } from "../Selectors/activatableSelectors"
+import { getAPObjectMap, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from "../Selectors/adventurePointsSelectors"
+import { getFilteredInactiveAdvantages } from "../Selectors/combinedActivatablesSelectors"
+import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"
+import { getAdvantagesFilterText, getInactiveAdvantagesFilterText } from "../Selectors/stateSelectors"
+import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from "../Selectors/uisettingsSelectors"
+import { Advantages, AdvantagesDispatchProps, AdvantagesOwnProps, AdvantagesStateProps } from "../Views/DisAdvantages/Advantages"
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: AdvantagesOwnProps): AdvantagesStateProps => ({

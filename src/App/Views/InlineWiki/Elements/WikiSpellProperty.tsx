@@ -1,10 +1,10 @@
-import * as React from "react";
-import { subscript } from "../../../../Data/List";
-import { fromMaybe } from "../../../../Data/Maybe";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { subscript } from "../../../../Data/List"
+import { fromMaybe } from "../../../../Data/Maybe"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
   property: (r: Record<A>) => number

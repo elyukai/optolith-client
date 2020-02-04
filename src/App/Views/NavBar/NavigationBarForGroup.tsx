@@ -1,18 +1,18 @@
-import { remote } from "electron";
-import * as React from "react";
-import { useDispatch } from "react-redux";
-import { setTab } from "../../Actions/LocationActions";
-import { SettingsContainer } from "../../Containers/SettingsContainer";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { TabId } from "../../Utilities/LocationUtils";
-import { BorderButton } from "../Universal/BorderButton";
-import { IconButton } from "../Universal/IconButton";
-import { Text } from "../Universal/Text";
-import { NavigationBarBack } from "./NavigationBarBack";
-import { NavigationBarLeft } from "./NavigationBarLeft";
-import { NavigationBarRight } from "./NavigationBarRight";
-import { NavigationBarWrapper } from "./NavigationBarWrapper";
+import { remote } from "electron"
+import * as React from "react"
+import { useDispatch } from "react-redux"
+import { setTab } from "../../Actions/LocationActions"
+import { SettingsContainer } from "../../Containers/SettingsContainer"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { TabId } from "../../Utilities/LocationUtils"
+import { BorderButton } from "../Universal/BorderButton"
+import { IconButton } from "../Universal/IconButton"
+import { Text } from "../Universal/Text"
+import { NavigationBarBack } from "./NavigationBarBack"
+import { NavigationBarLeft } from "./NavigationBarLeft"
+import { NavigationBarRight } from "./NavigationBarRight"
+import { NavigationBarWrapper } from "./NavigationBarWrapper"
 
 interface Props {
   l10n: L10nRecord

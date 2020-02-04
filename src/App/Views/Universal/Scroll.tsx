@@ -1,36 +1,8 @@
-import * as React from "react";
-import Scrollbars from "react-custom-scrollbars";
-import { List } from "../../../Data/List";
-import { Just, Maybe, orN } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
-
-interface Props {
-  className?: string
-  noInnerElement?: boolean
-}
-
-export const Scroll: React.FC<Props> = props => {
-  const { className, children, noInnerElement } = props
-
-  return (
-    <Scrollbars
-      className={classListMaybe (List (Just ("scroll"), Maybe (className)))}
-      renderThumbHorizontal={ThumbHorizontal}
-      renderThumbVertical={ThumbVertical}
-      renderTrackHorizontal={TrackHorizontal}
-      renderTrackVertical={TrackVertical}
-      renderView={View}
-      >
-      {orN (noInnerElement)
-        ? children
-        : (
-          <div className="scroll-inner">
-            {children}
-          </div>
-        )}
-    </Scrollbars>
-  )
-}
+import * as React from "react"
+import Scrollbars from "react-custom-scrollbars"
+import { List } from "../../../Data/List"
+import { Just, Maybe, orN } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
 
 const ThumbHorizontal: React.FC = p => (
   // eslint-disable-next-line react/jsx-props-no-spreading
@@ -63,3 +35,30 @@ const View: React.FC = p => (
   <div {...p} className="scroll-view" />
 )
 
+interface Props {
+  className?: string
+  noInnerElement?: boolean
+}
+
+export const Scroll: React.FC<Props> = props => {
+  const { className, children, noInnerElement } = props
+
+  return (
+    <Scrollbars
+      className={classListMaybe (List (Just ("scroll"), Maybe (className)))}
+      renderThumbHorizontal={ThumbHorizontal}
+      renderThumbVertical={ThumbVertical}
+      renderTrackHorizontal={TrackHorizontal}
+      renderTrackVertical={TrackVertical}
+      renderView={View}
+      >
+      {orN (noInnerElement)
+        ? children
+        : (
+          <div className="scroll-inner">
+            {children}
+          </div>
+        )}
+    </Scrollbars>
+  )
+}

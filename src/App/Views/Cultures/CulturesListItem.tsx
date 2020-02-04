@@ -1,12 +1,12 @@
-import * as React from "react";
-import { Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
-import { IconButton } from "../Universal/IconButton";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemButtons } from "../Universal/ListItemButtons";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListItemSeparator } from "../Universal/ListItemSeparator";
+import * as React from "react"
+import { Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined"
+import { IconButton } from "../Universal/IconButton"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemButtons } from "../Universal/ListItemButtons"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListItemSeparator } from "../Universal/ListItemSeparator"
 
 export interface CulturesListItemProps {
   culture: Record<CultureCombined>

@@ -8,33 +8,33 @@
  * @since 1.1.0
  */
 
-import { equals } from "../../../Data/Eq";
-import { flip, thrush } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { appendStr, elem, find, flength, groupByKey, intercalate, List, map, replaceStr, subscript, subscriptF } from "../../../Data/List";
-import { altF_, any, bind, bindF, elemF, ensure, fromMaybe, isJust, Just, liftM2, listToMaybe, maybe, Maybe, Nothing, thenF } from "../../../Data/Maybe";
-import { dec } from "../../../Data/Num";
-import { elems, lookup, lookupF } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
-import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
-import { ActivatableCombinedName } from "../../Models/View/ActivatableCombinedName";
-import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Skill } from "../../Models/Wiki/Skill";
-import { Application } from "../../Models/Wiki/sub/Application";
-import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable, ActivatableSkillEntry, EntryWithCategory, SID, SkillishEntry } from "../../Models/Wiki/wikiTypeHelpers";
-import { translate } from "../I18n";
-import { ifElse } from "../ifElse";
-import { toRoman } from "../NumberUtils";
-import { pipe, pipe_ } from "../pipe";
-import { sortStrings } from "../sortBy";
-import { isNumber, isString, misNumberM, misStringM } from "../typeCheckUtils";
-import { getWikiEntry, isActivatableWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
-import { findSelectOption, getSelectOptionName } from "./selectionUtils";
+import { equals } from "../../../Data/Eq"
+import { flip, thrush } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { appendStr, elem, find, flength, groupByKey, intercalate, List, map, replaceStr, subscript, subscriptF } from "../../../Data/List"
+import { altF_, any, bind, bindF, elemF, ensure, fromMaybe, isJust, Just, liftM2, listToMaybe, maybe, Maybe, Nothing, thenF } from "../../../Data/Maybe"
+import { dec } from "../../../Data/Num"
+import { elems, lookup, lookupF } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
+import { ActivatableCombinedName } from "../../Models/View/ActivatableCombinedName"
+import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { Skill } from "../../Models/Wiki/Skill"
+import { Application } from "../../Models/Wiki/sub/Application"
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { Activatable, ActivatableSkillEntry, EntryWithCategory, SID, SkillishEntry } from "../../Models/Wiki/wikiTypeHelpers"
+import { translate } from "../I18n"
+import { ifElse } from "../ifElse"
+import { toRoman } from "../NumberUtils"
+import { pipe, pipe_ } from "../pipe"
+import { sortStrings } from "../sortBy"
+import { isNumber, isString, misNumberM, misStringM } from "../typeCheckUtils"
+import { getWikiEntry, isActivatableWikiEntry, isSkillishWikiEntry } from "../WikiUtils"
+import { findSelectOption, getSelectOptionName } from "./selectionUtils"
 
 const WA = WikiModel.A
 const AOWIA = ActiveObjectWithId.A
@@ -269,6 +269,8 @@ const getEntrySpecificNameAddition =
     }
   }
 
+const addSndinParenthesis = (snd: string) => replaceStr (")") (`: ${snd})`)
+
 /**
  * Some entries cannot use the default `name` property from wiki entries. The
  * value returned by may not use the default `name` property. For all entries
@@ -317,8 +319,6 @@ const getEntrySpecificNameReplacements =
         return maybeMap (name_add => `${AAL.name (wiki_entry)} (${name_add})`)
     }
   }
-
-const addSndinParenthesis = (snd: string) => replaceStr (")") (`: ${snd})`)
 
 /**
  * Returns name, splitted and combined, of advantage/disadvantage/special

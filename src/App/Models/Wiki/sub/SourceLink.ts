@@ -1,5 +1,5 @@
-import { fromDefault } from "../../../../Data/Record";
-import { Pair } from "../../../../Data/Tuple";
+import { fromDefault } from "../../../../Data/Record"
+import { Pair } from "../../../../Data/Tuple"
 
 export interface SourceLink {
   "@@name": "SourceLink"

@@ -1,34 +1,34 @@
-import { cnst, ident, thrush } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { all, any, consF, elemF, foldr, intercalate, List, minimum, notElem, notElemF, subscript } from "../../../Data/List";
-import { and, bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, Just, mapMaybe, Maybe, maybe, Nothing, sum, thenF } from "../../../Data/Maybe";
-import { dec, gte, inc, min } from "../../../Data/Num";
-import { alter, empty, filter, findWithDefault, foldl, fromArray, lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Aspect, BlessedTradition } from "../../Constants/Groups";
-import { SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
-import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { BlessingCombined } from "../../Models/View/BlessingCombined";
-import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../Models/View/LiturgicalChantWithRequirements";
-import { Blessing } from "../../Models/Wiki/Blessing";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
-import { mapBlessedTradIdToNumId } from "../Activatable/traditionUtils";
-import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies";
-import { translate } from "../I18n";
-import { ifElse } from "../ifElse";
-import { pipe, pipe_ } from "../pipe";
-import { ChantsSortOptions } from "../Raw/JSON/Config";
-import { sortStrings } from "../sortBy";
-import { isNumber } from "../typeCheckUtils";
-import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
+import { cnst, ident, thrush } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { all, any, consF, elemF, foldr, intercalate, List, minimum, notElem, notElemF, subscript } from "../../../Data/List"
+import { and, bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, Just, mapMaybe, Maybe, maybe, Nothing, sum, thenF } from "../../../Data/Maybe"
+import { dec, gte, inc, min } from "../../../Data/Num"
+import { alter, empty, filter, findWithDefault, foldl, fromArray, lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { Aspect, BlessedTradition } from "../../Constants/Groups"
+import { SpecialAbilityId } from "../../Constants/Ids"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
+import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { BlessingCombined } from "../../Models/View/BlessingCombined"
+import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../Models/View/LiturgicalChantWithRequirements"
+import { Blessing } from "../../Models/Wiki/Blessing"
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils"
+import { mapBlessedTradIdToNumId } from "../Activatable/traditionUtils"
+import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies"
+import { translate } from "../I18n"
+import { ifElse } from "../ifElse"
+import { pipe, pipe_ } from "../pipe"
+import { ChantsSortOptions } from "../Raw/JSON/Config"
+import { sortStrings } from "../sortBy"
+import { isNumber } from "../typeCheckUtils"
+import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils"
 
 const WA = WikiModel.A
 const LCA = LiturgicalChant.A
@@ -61,6 +61,7 @@ const putAspectKnowledgeRestrictionMaximum =
   (wikiEntry: Record<LiturgicalChant>) =>
     ifElse<List<number>>
       (cnst (
+
         // is not nameless tradition
         SAA.id (currentTradition) !== SpecialAbilityId.TraditionCultOfTheNamelessOne
 
@@ -137,6 +138,32 @@ const isLiturgicalChantDecreasableByDependencies =
   }
 
 /**
+ * Calculates how many liturgical chants are valid as a dependency for
+ * all aspect knowledges that also match the current liturgical chant, and
+ * returns the lowest sum. Used to check if the liturgical chant's can be safely
+ * decreased without invalidating an aspect knowledge's prerequisites.
+ */
+const getLowestSumForMatchingAspectKnowledges =
+  (activeAspects: List<string | number>) =>
+  (counter: OrderedMap<Aspect, number>) =>
+    pipe (
+      LCA.aspects,
+      List.foldr<Aspect, number>
+        (
+          aspect => {
+            const counted = lookupF (counter) (aspect)
+
+            if (isJust (counted) && List.elemF (activeAspects) (aspect)) {
+              return min (fromJust (counted))
+            }
+
+            return ident
+          }
+        )
+        (4)
+    )
+
+/**
  * Check if the active aspect knowledges allow the passed liturgical chant to be
  * decreased. (There must be at leased 3 liturgical chants of the
  * respective aspect active.)
@@ -166,32 +193,6 @@ const isLiturgicalChantDecreasableByAspectKnowledges =
         )
       )
       (aspectKnowledge)
-    )
-
-/**
- * Calculates how many liturgical chants are valid as a dependency for
- * all aspect knowledges that also match the current liturgical chant, and
- * returns the lowest sum. Used to check if the liturgical chant's can be safely
- * decreased without invalidating an aspect knowledge's prerequisites.
- */
-const getLowestSumForMatchingAspectKnowledges =
-  (activeAspects: List<string | number>) =>
-  (counter: OrderedMap<Aspect, number>) =>
-    pipe (
-      LCA.aspects,
-      List.foldr<Aspect, number>
-        (
-          aspect => {
-            const counted = lookupF (counter) (aspect)
-
-            if (isJust (counted) && List.elemF (activeAspects) (aspect)) {
-              return min (fromJust (counted))
-            }
-
-            return ident
-          }
-        )
-        (4)
     )
 
 /**

@@ -1,19 +1,16 @@
-import { app, BrowserWindow, ipcMain } from "electron";
-import * as log from "electron-log";
-// tslint:disable-next-line:no-implicit-dependencies
-import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater";
-import { existsSync, mkdirSync } from "fs";
-// import windowStateKeeper from "electron-window-state";
-import * as path from "path";
-import { prerelease } from "semver";
-import * as url from "url";
-import { tryIO } from "./Control/Exception";
-import { fromLeft_, isLeft } from "./Data/Either";
-import { fmapF } from "./Data/Functor";
-import { Unit } from "./Data/Unit";
-import { copyFile, existsFile } from "./System/IO";
-// tslint:disable-next-line:ordered-imports
-import windowStateKeeper = require("electron-window-state");
+import { app, BrowserWindow, ipcMain } from "electron"
+import * as log from "electron-log"
+import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater"
+import { existsSync, mkdirSync } from "fs"
+import * as path from "path"
+import { prerelease } from "semver"
+import * as url from "url"
+import { tryIO } from "./Control/Exception"
+import { fromLeft_, isLeft } from "./Data/Either"
+import { fmapF } from "./Data/Functor"
+import { Unit } from "./Data/Unit"
+import { copyFile, existsFile } from "./System/IO"
+import windowStateKeeper = require("electron-window-state")
 
 app.setAppUserModelId ("lukasobermann.optolith")
 

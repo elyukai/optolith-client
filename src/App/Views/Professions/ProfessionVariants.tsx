@@ -1,21 +1,21 @@
-import * as React from "react";
-import { useDispatch } from "react-redux";
-import { ident } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { consF, find, List, map, notNull } from "../../../Data/List";
-import { bind, ensure, join, Just, liftM2, Maybe, maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { selectProfessionVariant } from "../../Actions/ProfessionVariantActions";
-import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
-import { ProfessionVariantCombinedA_ } from "../../Models/View/ProfessionVariantCombined";
-import { RadioOption } from "../../Models/View/RadioOption";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { getNameBySex } from "../../Utilities/rcpUtils";
-import { sortRecordsByName } from "../../Utilities/sortBy";
-import { RadioButtonGroup } from "../Universal/RadioButtonGroup";
+import * as React from "react"
+import { useDispatch } from "react-redux"
+import { ident } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { consF, find, List, map, notNull } from "../../../Data/List"
+import { bind, ensure, join, Just, liftM2, Maybe, maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { selectProfessionVariant } from "../../Actions/ProfessionVariantActions"
+import { Sex } from "../../Models/Hero/heroTypeHelpers"
+import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined"
+import { ProfessionVariantCombinedA_ } from "../../Models/View/ProfessionVariantCombined"
+import { RadioOption } from "../../Models/View/RadioOption"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { getNameBySex } from "../../Utilities/rcpUtils"
+import { sortRecordsByName } from "../../Utilities/sortBy"
+import { RadioButtonGroup } from "../Universal/RadioButtonGroup"
 
 export interface ProfessionVariantsProps {
   currentProfessionId: Maybe<string>

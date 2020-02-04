@@ -1,7 +1,7 @@
-import * as React from "react";
-import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers";
-import { IconButton } from "../Universal/IconButton";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers"
+import { IconButton } from "../Universal/IconButton"
+import { TextField } from "../Universal/TextField"
 
 interface Props {
   name: string

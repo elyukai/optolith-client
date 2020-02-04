@@ -1,26 +1,26 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { fromDefault, makeLenses, Record, RecordCreator } from "../../../Data/Record";
-import { SocialStatusId } from "../../Constants/Ids";
-import { current_version } from "../../Selectors/envSelectors";
-import { Locale } from "../../Utilities/Raw/JSON/Config";
-import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
-import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
-import { SkillDependent } from "../ActiveEntries/SkillDependent";
-import { L10n, L10nRecord } from "../Wiki/L10n";
-import { Belongings } from "./Belongings";
-import { EditPet } from "./EditPet";
-import { Energies } from "./Energies";
-import { Sex } from "./heroTypeHelpers";
-import { Pact } from "./Pact";
-import { PersonalData } from "./PersonalData";
-import { Pet } from "./Pet";
-import { Rules } from "./Rules";
-import { StyleDependency } from "./StyleDependency";
-import { TransferUnfamiliar } from "./TransferUnfamiliar";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { OrderedSet } from "../../../Data/OrderedSet"
+import { fromDefault, makeLenses, Record, RecordCreator } from "../../../Data/Record"
+import { SocialStatusId } from "../../Constants/Ids"
+import { current_version } from "../../Selectors/envSelectors"
+import { Locale } from "../../Utilities/Raw/JSON/Config"
+import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent"
+import { AttributeDependent } from "../ActiveEntries/AttributeDependent"
+import { SkillDependent } from "../ActiveEntries/SkillDependent"
+import { L10n, L10nRecord } from "../Wiki/L10n"
+import { Belongings } from "./Belongings"
+import { EditPet } from "./EditPet"
+import { Energies } from "./Energies"
+import { Sex } from "./heroTypeHelpers"
+import { Pact } from "./Pact"
+import { PersonalData } from "./PersonalData"
+import { Pet } from "./Pet"
+import { Rules } from "./Rules"
+import { StyleDependency } from "./StyleDependency"
+import { TransferUnfamiliar } from "./TransferUnfamiliar"
 
 export type HeroModelRecord = Record<HeroModel>
 

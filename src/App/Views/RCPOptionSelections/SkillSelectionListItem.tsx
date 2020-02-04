@@ -1,12 +1,12 @@
-import * as React from "react";
-import { isNothing, maybe } from "../../../Data/Maybe";
-import { divideBy } from "../../../Data/Num";
-import { lookup, OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Skill } from "../../Models/Wiki/Skill";
-import { getIncreaseAP } from "../../Utilities/AdventurePoints/improvementCostUtils";
-import { minus } from "../../Utilities/Chars";
-import { BorderButton } from "../Universal/BorderButton";
+import * as React from "react"
+import { isNothing, maybe } from "../../../Data/Maybe"
+import { divideBy } from "../../../Data/Num"
+import { lookup, OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { Skill } from "../../Models/Wiki/Skill"
+import { getIncreaseAP } from "../../Utilities/AdventurePoints/improvementCostUtils"
+import { minus } from "../../Utilities/Chars"
+import { BorderButton } from "../Universal/BorderButton"
 
 const SA = Skill.A
 

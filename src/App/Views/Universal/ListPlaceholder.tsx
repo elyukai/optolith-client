@@ -1,16 +1,16 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { guardReplace, Just, orN } from "../../../Data/Maybe";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { classListMaybe } from "../../Utilities/CSS";
-import { translate } from "../../Utilities/I18n";
-import { IconButton } from "./IconButton";
-import { ListView } from "./List";
-import { ListItem } from "./ListItem";
-import { ListItemButtons } from "./ListItemButtons";
-import { ListItemName } from "./ListItemName";
-import { ListItemSeparator } from "./ListItemSeparator";
-import { ListItemValues } from "./ListItemValues";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { guardReplace, Just, orN } from "../../../Data/Maybe"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { classListMaybe } from "../../Utilities/CSS"
+import { translate } from "../../Utilities/I18n"
+import { IconButton } from "./IconButton"
+import { ListView } from "./List"
+import { ListItem } from "./ListItem"
+import { ListItemButtons } from "./ListItemButtons"
+import { ListItemName } from "./ListItemName"
+import { ListItemSeparator } from "./ListItemSeparator"
+import { ListItemValues } from "./ListItemValues"
 
 export type ListPlaceholderType = "races"
                                 | "cultures"

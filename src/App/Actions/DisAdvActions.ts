@@ -1,41 +1,41 @@
-import { fmap, fmapF } from "../../Data/Functor";
-import { over, set } from "../../Data/Lens";
-import { List, subscriptF, uncons } from "../../Data/List";
-import { altF_, bind, bindF, elem, ensure, fromJust, isJust, join, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe";
-import { negate, subtract } from "../../Data/Num";
-import { lookup } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { fst, Pair, PairP1_, snd } from "../../Data/Tuple";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { DisadvantageId } from "../Constants/Ids";
-import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
-import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
-import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType";
-import { ActivatableDeactivationOptions, ActivatableDeactivationOptionsL } from "../Models/Actions/ActivatableDeactivationOptions";
-import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
-import { ActiveObjectWithIdL, toActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../Models/View/ActivatableNameCost";
-import { Advantage, isAdvantage } from "../Models/Wiki/Advantage";
-import { Disadvantage, isDisadvantage } from "../Models/Wiki/Disadvantage";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { Race } from "../Models/Wiki/Race";
-import { RaceVariant } from "../Models/Wiki/RaceVariant";
-import { getAPObjectMap } from "../Selectors/adventurePointsSelectors";
-import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
-import { getAutomaticAdvantages, getCurrentRaceVariant, getRace } from "../Selectors/rcpSelectors";
-import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors";
-import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils";
-import { isBlessedOrMagical } from "../Utilities/Activatable/checkActivatableUtils";
-import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils";
-import { getDisAdvantagesSubtypeMax, getMissingAPForDisAdvantage, MissingAPForDisAdvantage } from "../Utilities/AdventurePoints/adventurePointsUtils";
-import { translate, translateP } from "../Utilities/I18n";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { misNumberM } from "../Utilities/typeCheckUtils";
-import { getWikiEntry } from "../Utilities/WikiUtils";
-import { ReduxAction, ReduxDispatch } from "./Actions";
-import { addAlert, AlertOptions } from "./AlertActions";
+import { fmap, fmapF } from "../../Data/Functor"
+import { over, set } from "../../Data/Lens"
+import { List, subscriptF, uncons } from "../../Data/List"
+import { altF_, bind, bindF, elem, ensure, fromJust, isJust, join, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe"
+import { negate, subtract } from "../../Data/Num"
+import { lookup } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { fst, Pair, PairP1_, snd } from "../../Data/Tuple"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { DisadvantageId } from "../Constants/Ids"
+import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType"
+import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions"
+import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType"
+import { ActivatableDeactivationOptions, ActivatableDeactivationOptionsL } from "../Models/Actions/ActivatableDeactivationOptions"
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../Models/ActiveEntries/ActiveObject"
+import { ActiveObjectWithIdL, toActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId"
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../Models/View/ActivatableNameCost"
+import { Advantage, isAdvantage } from "../Models/Wiki/Advantage"
+import { Disadvantage, isDisadvantage } from "../Models/Wiki/Disadvantage"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { Race } from "../Models/Wiki/Race"
+import { RaceVariant } from "../Models/Wiki/RaceVariant"
+import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
+import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
+import { getAutomaticAdvantages, getCurrentRaceVariant, getRace } from "../Selectors/rcpSelectors"
+import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors"
+import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils"
+import { isBlessedOrMagical } from "../Utilities/Activatable/checkActivatableUtils"
+import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils"
+import { getDisAdvantagesSubtypeMax, getMissingAPForDisAdvantage, MissingAPForDisAdvantage } from "../Utilities/AdventurePoints/adventurePointsUtils"
+import { translate, translateP } from "../Utilities/I18n"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { misNumberM } from "../Utilities/typeCheckUtils"
+import { getWikiEntry } from "../Utilities/WikiUtils"
+import { ReduxAction, ReduxDispatch } from "./Actions"
+import { addAlert, AlertOptions } from "./AlertActions"
 
 /**
  * Advantages and disadvantages might not only be added or removed due to not
@@ -161,10 +161,12 @@ export const addDisAdvantage =
           const color: Pair<Maybe<number>, Maybe<number>> =
             current_id === DisadvantageId.Stigma
               && elem<string | number> (1) (ActivatableActivationOptions.AL.selectOptionId1 (args))
+
               // (eyeColor, hairColor)
             ? Pair (Just (19), Just (24))
             : current_id === DisadvantageId.Stigma
               && elem<string | number> (3) (ActivatableActivationOptions.AL.selectOptionId1 (args))
+
               // (eyeColor, hairColor)
             ? Pair (Nothing, Just (25))
             : Pair (Nothing, Nothing)
@@ -466,7 +468,7 @@ export const switchRatingVisibility = (): SwitchDisAdvRatingVisibilityAction => 
 export interface SetActiveAdvantagesFilterTextAction {
   type: ActionTypes.SET_ADVANTAGES_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 
@@ -481,7 +483,7 @@ export const setActiveAdvantagesFilterText =
 export interface SetInactiveAdvantagesFilterTextAction {
   type: ActionTypes.SET_INAC_ADVANTAGES_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 
@@ -496,7 +498,7 @@ export const setInactiveAdvantagesFilterText =
 export interface SetActiveDisadvantagesFilterTextAction {
   type: ActionTypes.SET_DISADVANTAGES_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 
@@ -511,7 +513,7 @@ export const setActiveDisadvantagesFilterText =
 export interface SetInactiveDisadvantagesFilterTextAction {
   type: ActionTypes.SET_INAC_DISADVANTAGES_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 

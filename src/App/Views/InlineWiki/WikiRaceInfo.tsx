@@ -1,31 +1,71 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { fmap } from "../../../Data/Functor";
-import { all, flength, fnull, intercalate, List, map, notNull, toArray } from "../../../Data/List";
-import { ensure, fromMaybe, fromMaybe_, isNothing, mapMaybe, Maybe, maybeRNullF } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { RaceVariant } from "../../Models/Wiki/RaceVariant";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { translate } from "../../Utilities/I18n";
-import { signNeg } from "../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { sortStrings } from "../../Utilities/sortBy";
-import { WikiSource } from "./Elements/WikiSource";
-import { WikiBoxTemplate } from "./WikiBoxTemplate";
-import { WikiProperty } from "./WikiProperty";
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { fmap } from "../../../Data/Functor"
+import { all, flength, fnull, intercalate, List, map, notNull, toArray } from "../../../Data/List"
+import { ensure, fromMaybe, fromMaybe_, isNothing, mapMaybe, Maybe, maybeRNullF } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { RaceVariant } from "../../Models/Wiki/RaceVariant"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { signNeg } from "../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { sortStrings } from "../../Utilities/sortBy"
+import { WikiSource } from "./Elements/WikiSource"
+import { WikiBoxTemplate } from "./WikiBoxTemplate"
+import { WikiProperty } from "./WikiProperty"
+
+const WA = WikiModel.A
+const RCA = RaceCombined.A
+const RVA = RaceVariant.A
+const RCA_ = RaceCombinedA_
+
+type PlainOrByVarsTitle = "commonadvantages"
+                        | "commondisadvantages"
+                        | "uncommonadvantages"
+                        | "uncommondisadvantages"
+
+const renderPlainOrByVars =
+  (l10n: L10nRecord) =>
+  (mapText: (x: Record<RaceCombined>) => Maybe<string>) =>
+  (mapVarText: (x: Record<RaceVariant>) => Maybe<string>) =>
+  (vars: List<Record<RaceVariant>>) =>
+  (title: PlainOrByVarsTitle) =>
+  (same_for_vars: boolean) =>
+  (x: Record<RaceCombined>) => (
+    <>
+      <WikiProperty l10n={l10n} title={title}>
+        {same_for_vars
+          ? <span>{fromMaybe (translate (l10n) ("none")) (mapText (x))}</span>
+          : null}
+      </WikiProperty>
+      {same_for_vars
+        ? null
+        : (
+          <ul className="race-variant-options">
+            {toArray (mapMaybe ((v: Record<RaceVariant>) =>
+                                 pipe_ (
+                                   v,
+                                   mapVarText,
+                                   fmap (text => (
+                                     <li key={RVA.id (v)}>
+                                       <span>{RVA.name (v)}</span>
+                                       <span>{text}</span>
+                                     </li>
+                                   ))
+                                 ))
+                               (vars))}
+          </ul>
+        )}
+    </>
+  )
 
 export interface WikiRaceInfoProps {
   l10n: L10nRecord
   wiki: WikiModelRecord
   x: Record<RaceCombined>
 }
-
-const WA = WikiModel.A
-const RCA = RaceCombined.A
-const RVA = RaceVariant.A
-const RCA_ = RaceCombinedA_
 
 export const WikiRaceInfo: React.FC<WikiRaceInfoProps> = props => {
   const { x, l10n, wiki } = props
@@ -167,43 +207,3 @@ export const WikiRaceInfo: React.FC<WikiRaceInfoProps> = props => {
     </WikiBoxTemplate>
   )
 }
-
-type PlainOrByVarsTitle = "commonadvantages"
-                        | "commondisadvantages"
-                        | "uncommonadvantages"
-                        | "uncommondisadvantages"
-
-const renderPlainOrByVars =
-  (l10n: L10nRecord) =>
-  (mapText: (x: Record<RaceCombined>) => Maybe<string>) =>
-  (mapVarText: (x: Record<RaceVariant>) => Maybe<string>) =>
-  (vars: List<Record<RaceVariant>>) =>
-  (title: PlainOrByVarsTitle) =>
-  (same_for_vars: boolean) =>
-  (x: Record<RaceCombined>) => (
-    <>
-      <WikiProperty l10n={l10n} title={title}>
-        {same_for_vars
-          ? <span>{fromMaybe (translate (l10n) ("none")) (mapText (x))}</span>
-          : null}
-      </WikiProperty>
-      {same_for_vars
-        ? null
-        : (
-          <ul className="race-variant-options">
-            {toArray (mapMaybe ((v: Record<RaceVariant>) =>
-                                 pipe_ (
-                                   v,
-                                   mapVarText,
-                                   fmap (text => (
-                                     <li key={RVA.id (v)}>
-                                       <span>{RVA.name (v)}</span>
-                                       <span>{text}</span>
-                                     </li>
-                                   ))
-                                 ))
-                               (vars))}
-          </ul>
-        )}
-    </>
-  )

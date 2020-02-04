@@ -1,17 +1,17 @@
-import { bind, bindF, Either, isRight, liftM2, mapM } from "../../../../Data/Either";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { append, deleteAtPair, findIndex, List, map, mapAccumL } from "../../../../Data/List";
-import { catMaybes, elem, fromJust, isNothing, Maybe, maybe } from "../../../../Data/Maybe";
-import { fromList, lookup, OrderedMap } from "../../../../Data/OrderedMap";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { fst, Pair, snd, uncurry } from "../../../../Data/Tuple";
-import { traceShowIdWhen } from "../../../../Debug/Trace";
-import { ReduxAction } from "../../../Actions/Actions";
-import { setLoadingPhase } from "../../../Actions/IOActions";
-import { Book } from "../../../Models/Wiki/Book";
-import { pipe, pipe_ } from "../../pipe";
-import { Row, Sheet } from "./CSVtoList";
-import { BothOptionalRows } from "./MergeRows";
+import { bind, bindF, Either, isRight, liftM2, mapM } from "../../../../Data/Either"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { append, deleteAtPair, findIndex, List, map, mapAccumL } from "../../../../Data/List"
+import { catMaybes, elem, fromJust, isNothing, Maybe, maybe } from "../../../../Data/Maybe"
+import { fromList, lookup, OrderedMap } from "../../../../Data/OrderedMap"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { fst, Pair, snd, uncurry } from "../../../../Data/Tuple"
+import { traceShowIdWhen } from "../../../../Debug/Trace"
+import { ReduxAction } from "../../../Actions/Actions"
+import { setLoadingPhase } from "../../../Actions/IOActions"
+import { Book } from "../../../Models/Wiki/Book"
+import { pipe, pipe_ } from "../../pipe"
+import { Row, Sheet } from "./CSVtoList"
+import { BothOptionalRows } from "./MergeRows"
 
 interface RecordWithId extends RecordIBase<any> {
   id: string
@@ -221,6 +221,65 @@ export const univRowsMatchL10nToMap =
     return res
   }
 
+const joinBothOpt: (debug: boolean) =>
+                   (univ_sheet: Sheet) =>
+                   (l10n_sheet: Sheet) => List<BothOptionalRows> =
+  debug => univ_sheet =>
+    pipe (
+      mapAccumL ((rem_univ_sheet: Sheet) =>
+                 (l10n: Row): Pair<Sheet, BothOptionalRows> => {
+                   const mmainId = lookup ("mainId") (l10n)
+                   const mid = lookup ("id") (l10n)
+
+                   // There must be both an id of the main entry and the id of
+                   // the selection entry
+                   if (isNothing (mmainId) || isNothing (mid)) {
+                     return Pair (rem_univ_sheet, l10n)
+                   }
+
+                   traceShowIdWhen (debug) (l10n)
+
+                   const mainId = fromJust (mmainId)
+                   const id = fromJust (mid)
+
+                   return maybe <Pair<Sheet, BothOptionalRows>>
+
+                                // Return l10n row only if no matching univ row
+                                // found
+                                (Pair (rem_univ_sheet, l10n))
+
+                                // Otherwise use the row at the passed index and
+                                // merge both rows as a pair
+                                ((i: number) => pipe_ (
+                                  rem_univ_sheet,
+
+                                  // Delete in remaining univ sheet
+                                  deleteAtPair (i),
+                                  p => maybe <Pair<Sheet, BothOptionalRows>>
+
+                                             // if not found (which should not
+                                             // be possible) return l10n row
+                                             // only
+                                             (Pair (rem_univ_sheet, l10n))
+
+                                             // otherwise return both as a pair
+                                             // l10n row must come first as required in type
+                                             // BothOptionalRows
+                                             ((univ: Row) => Pair (snd (p), Pair (l10n,
+                                              traceShowIdWhen (debug) (univ))))
+                                             (fst (p))
+                                ))
+
+                                // Search for a univ row that matches both
+                                // mainId and id and return the index
+                                (findIndex ((univ: Row) => elem (mainId) (lookup ("mainId") (univ))
+                                                           && elem (id) (lookup ("id") (univ)))
+                                           (rem_univ_sheet))
+                 })
+                 (univ_sheet),
+       uncurry (append as append<BothOptionalRows>)
+    )
+
 /**
  * `univRowsMatchL10nToList :: LookupSheet -> LookupSheet -> JoinUnivRowWithMatchingL10n a -> String -> Int -> Action (Either String [a])`
  *
@@ -258,56 +317,3 @@ export const bothOptRowsByIdAndMainIdToList =
 
     return res
   }
-
-const joinBothOpt: (debug: boolean) =>
-                   (univ_sheet: Sheet) =>
-                   (l10n_sheet: Sheet) => List<BothOptionalRows> =
-  debug => univ_sheet =>
-    pipe (
-      mapAccumL ((rem_univ_sheet: Sheet) =>
-                 (l10n: Row): Pair<Sheet, BothOptionalRows> => {
-                   const mmainId = lookup ("mainId") (l10n)
-                   const mid = lookup ("id") (l10n)
-
-                   // There must be both an id of the main entry and the id of
-                   // the selection entry
-                   if (isNothing (mmainId) || isNothing (mid)) {
-                     return Pair (rem_univ_sheet, l10n)
-                   }
-
-                   traceShowIdWhen (debug) (l10n)
-
-                   const mainId = fromJust (mmainId)
-                   const id = fromJust (mid)
-
-                   return maybe <Pair<Sheet, BothOptionalRows>>
-                                // Return l10n row only if no matching univ row
-                                // found
-                                (Pair (rem_univ_sheet, l10n))
-                                // Otherwise use the row at the passed index and
-                                // merge both rows as a pair
-                                ((i: number) => pipe_ (
-                                  rem_univ_sheet,
-                                  // Delete in remaining univ sheet
-                                  deleteAtPair (i),
-                                  p => maybe <Pair<Sheet, BothOptionalRows>>
-                                             // if not found (which should not
-                                             // be possible) return l10n row
-                                             // only
-                                             (Pair (rem_univ_sheet, l10n))
-                                             // otherwise return both as a pair
-                                             // l10n row must come first as required in type
-                                             // BothOptionalRows
-                                             ((univ: Row) => Pair (snd (p), Pair (l10n,
-                                              traceShowIdWhen (debug) (univ))))
-                                             (fst (p))
-                                ))
-                                // Search for a univ row that matches both
-                                // mainId and id and return the index
-                                (findIndex ((univ: Row) => elem (mainId) (lookup ("mainId") (univ))
-                                                           && elem (id) (lookup ("id") (univ)))
-                                           (rem_univ_sheet))
-                 })
-                 (univ_sheet),
-       uncurry (append as append<BothOptionalRows>)
-    )

@@ -1,7 +1,7 @@
-import { remote } from "electron";
-import * as React from "react";
-import { TitleBarButton } from "./TitleBarButton";
-import { TitleBarWrapper } from "./TitleBarWrapper";
+import { remote } from "electron"
+import * as React from "react"
+import { TitleBarButton } from "./TitleBarButton"
+import { TitleBarWrapper } from "./TitleBarWrapper"
 
 interface Props {
   platform: string

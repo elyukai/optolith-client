@@ -1,9 +1,9 @@
-import * as React from "react";
-import { notNullStrUndef } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
-import { Activate } from "./Activate";
-import { Icon } from "./Icon";
-import { Text } from "./Text";
+import * as React from "react"
+import { notNullStrUndef } from "../../../Data/List"
+import { Maybe } from "../../../Data/Maybe"
+import { Activate } from "./Activate"
+import { Icon } from "./Icon"
+import { Text } from "./Text"
 
 interface Props {
   active: boolean

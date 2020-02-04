@@ -1,24 +1,24 @@
-import * as React from "react";
-import { Functn } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { List, map, toArray } from "../../../Data/List";
-import { bindF, elem, fromMaybe, Just, listToMaybe, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
-import { lookup, OrderedMap, sum } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Pair } from "../../../Data/Tuple";
-import { SpecialAbilityId } from "../../Constants/Ids";
-import { Rules } from "../../Models/Hero/Rules";
-import { LanguagesSelectionListItemOptions } from "../../Models/View/LanguagesSelectionListItemOptions";
-import { Culture } from "../../Models/Wiki/Culture";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { findSelectOption } from "../../Utilities/Activatable/selectionUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { isAvailable } from "../../Utilities/RulesUtils";
-import { sortRecordsByName } from "../../Utilities/sortBy";
-import { LanguagesSelectionListItem } from "./LanguageSelectionListItem";
+import * as React from "react"
+import { Functn } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { List, map, toArray } from "../../../Data/List"
+import { bindF, elem, fromMaybe, Just, listToMaybe, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe"
+import { lookup, OrderedMap, sum } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { Pair } from "../../../Data/Tuple"
+import { SpecialAbilityId } from "../../Constants/Ids"
+import { Rules } from "../../Models/Hero/Rules"
+import { LanguagesSelectionListItemOptions } from "../../Models/View/LanguagesSelectionListItemOptions"
+import { Culture } from "../../Models/Wiki/Culture"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { findSelectOption } from "../../Utilities/Activatable/selectionUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { isAvailable } from "../../Utilities/RulesUtils"
+import { sortRecordsByName } from "../../Utilities/sortBy"
+import { LanguagesSelectionListItem } from "./LanguageSelectionListItem"
 
 const WA = WikiModel.A
 const CA = Culture.A

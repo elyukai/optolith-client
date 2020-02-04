@@ -1,17 +1,17 @@
-import * as React from "react";
-import { fmap } from "../../../../Data/Functor";
-import { intercalate, notNull } from "../../../../Data/List";
-import { fromJust, isJust, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe";
-import { lookupF, OrderedMap } from "../../../../Data/OrderedMap";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { CombatTechnique } from "../../../Models/Wiki/CombatTechnique";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { SpecialAbilityCombatTechniqueGroup, SpecialAbilityCombatTechniques } from "../../../Models/Wiki/SpecialAbility";
-import { ndash } from "../../../Utilities/Chars";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { sortStrings } from "../../../Utilities/sortBy";
-import { Markdown } from "../../Universal/Markdown";
+import * as React from "react"
+import { fmap } from "../../../../Data/Functor"
+import { intercalate, notNull } from "../../../../Data/List"
+import { fromJust, isJust, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe"
+import { lookupF, OrderedMap } from "../../../../Data/OrderedMap"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { CombatTechnique } from "../../../Models/Wiki/CombatTechnique"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { SpecialAbilityCombatTechniqueGroup, SpecialAbilityCombatTechniques } from "../../../Models/Wiki/SpecialAbility"
+import { ndash } from "../../../Utilities/Chars"
+import { translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { sortStrings } from "../../../Utilities/sortBy"
+import { Markdown } from "../../Universal/Markdown"
 
 interface Accessors<A extends RecordIBase<any>> {
   combatTechniques: (r: Record<A>) => Maybe<Record<SpecialAbilityCombatTechniques>>

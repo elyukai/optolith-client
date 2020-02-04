@@ -1,8 +1,8 @@
-import { List } from "../../../Data/List";
-import { fromDefault, Record } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
-import { Race } from "../Wiki/Race";
-import { RaceVariant } from "../Wiki/RaceVariant";
+import { List } from "../../../Data/List"
+import { fromDefault, Record } from "../../../Data/Record"
+import { pipe } from "../../Utilities/pipe"
+import { Race } from "../Wiki/Race"
+import { RaceVariant } from "../Wiki/RaceVariant"
 
 export interface RaceCombined {
   "@@name": "RaceCombined"

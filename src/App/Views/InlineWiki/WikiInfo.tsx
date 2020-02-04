@@ -1,9 +1,9 @@
-import * as React from "react";
-import { Maybe, orN } from "../../../Data/Maybe";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Aside } from "../Universal/Aside";
-import { ErrorMessage } from "../Universal/ErrorMessage";
-import { WikiInfoContent, WikiInfoContentStateProps } from "./WikiInfoContent";
+import * as React from "react"
+import { Maybe, orN } from "../../../Data/Maybe"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { Aside } from "../Universal/Aside"
+import { ErrorMessage } from "../Universal/ErrorMessage"
+import { WikiInfoContent, WikiInfoContentStateProps } from "./WikiInfoContent"
 
 export interface WikiInfoOwnProps {
   currentId: Maybe<string>
@@ -17,8 +17,8 @@ export type WikiInfoProps = WikiInfoContentStateProps & WikiInfoDispatchProps & 
 
 export interface WikiInfoState {
   hasError?: {
-    error: Error;
-    info: any;
+    error: Error
+    info: any
   }
 }
 

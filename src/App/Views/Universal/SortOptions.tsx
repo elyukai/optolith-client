@@ -1,11 +1,11 @@
-import * as React from "react";
-import { List, map } from "../../../Data/List";
-import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe";
-import { RadioOption } from "../../Models/View/RadioOption";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { sortRecordsByName } from "../../Utilities/sortBy";
-import { RadioButtonGroup } from "./RadioButtonGroup";
+import * as React from "react"
+import { List, map } from "../../../Data/List"
+import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe"
+import { RadioOption } from "../../Models/View/RadioOption"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { sortRecordsByName } from "../../Utilities/sortBy"
+import { RadioButtonGroup } from "./RadioButtonGroup"
 
 export enum SortNames {
   Name = "name",

@@ -1,8 +1,8 @@
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
-import { ActiveObjectWithId } from "../ActiveEntries/ActiveObjectWithId";
-import { ActivatableCombinedName } from "./ActivatableCombinedName";
-import { ActivatableNameCost, ActivatableNameCostSafeCost } from "./ActivatableNameCost";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { pipe } from "../../Utilities/pipe"
+import { ActiveObjectWithId } from "../ActiveEntries/ActiveObjectWithId"
+import { ActivatableCombinedName } from "./ActivatableCombinedName"
+import { ActivatableNameCost, ActivatableNameCostSafeCost } from "./ActivatableNameCost"
 
 export interface ActivatableNameCostIsActive {
   "@@name": "ActivatableNameCostIsActive"
@@ -13,8 +13,7 @@ export interface ActivatableNameCostIsActive {
 export const ActivatableNameCostIsActive =
   fromDefault ("ActivatableNameCostIsActive")
               <ActivatableNameCostIsActive> ({
-                nameAndCost:
-                  ActivatableNameCost.default as Record<ActivatableNameCostSafeCost>,
+                nameAndCost: ActivatableNameCost.default,
                 isActive: false,
               })
 

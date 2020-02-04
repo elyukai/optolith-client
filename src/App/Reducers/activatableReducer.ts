@@ -1,23 +1,23 @@
-import { ident } from "../../Data/Function";
-import { over, set } from "../../Data/Lens";
-import { modifyAt } from "../../Data/List";
-import { Just } from "../../Data/Maybe";
-import { adjust } from "../../Data/OrderedMap";
-import { fst, snd } from "../../Data/Tuple";
-import * as DisAdvActions from "../Actions/DisAdvActions";
-import * as SpecialAbilitiesActions from "../Actions/SpecialAbilitiesActions";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids";
-import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
-import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType";
-import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions";
-import { ActivatableDependentL } from "../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObjectL } from "../Models/ActiveEntries/ActiveObject";
-import { SkillDependentL } from "../Models/ActiveEntries/SkillDependent";
-import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { activate, deactivate, setLevel } from "../Utilities/Activatable/activatableActivationUtils";
-import { addOtherSpecialAbilityDependenciesOnActivation, removeOtherSpecialAbilityDependenciesOnDeletion } from "../Utilities/Activatable/SpecialAbilityUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
+import { ident } from "../../Data/Function"
+import { over, set } from "../../Data/Lens"
+import { modifyAt } from "../../Data/List"
+import { Just } from "../../Data/Maybe"
+import { adjust } from "../../Data/OrderedMap"
+import { fst, snd } from "../../Data/Tuple"
+import * as DisAdvActions from "../Actions/DisAdvActions"
+import * as SpecialAbilitiesActions from "../Actions/SpecialAbilitiesActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids"
+import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType"
+import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType"
+import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions"
+import { ActivatableDependentL } from "../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObjectL } from "../Models/ActiveEntries/ActiveObject"
+import { SkillDependentL } from "../Models/ActiveEntries/SkillDependent"
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { activate, deactivate, setLevel } from "../Utilities/Activatable/activatableActivationUtils"
+import { addOtherSpecialAbilityDependenciesOnActivation, removeOtherSpecialAbilityDependenciesOnDeletion } from "../Utilities/Activatable/SpecialAbilityUtils"
+import { pipe, pipe_ } from "../Utilities/pipe"
 
 type Action = DisAdvActions.ActivateDisAdvAction
             | DisAdvActions.DeactivateDisAdvAction

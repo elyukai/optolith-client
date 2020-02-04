@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Portal } from "react-portal";
-import { List } from "../../../Data/List";
-import { Just, Maybe } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
+import * as React from "react"
+import { Portal } from "react-portal"
+import { List } from "../../../Data/List"
+import { Just, Maybe } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
 
 interface CallBackProps extends React.Props<any> {
   closePortal (): void

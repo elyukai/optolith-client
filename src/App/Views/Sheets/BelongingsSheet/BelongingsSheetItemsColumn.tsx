@@ -1,15 +1,15 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { fmap } from "../../../../Data/Functor";
-import { flength, List, map, replicateR, toArray } from "../../../../Data/List";
-import { bindF, ensure } from "../../../../Data/Maybe";
-import { gt } from "../../../../Data/Num";
-import { Record } from "../../../../Data/Record";
-import { ItemForView } from "../../../Models/View/ItemForView";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { fmap } from "../../../../Data/Functor"
+import { flength, List, map, replicateR, toArray } from "../../../../Data/List"
+import { bindF, ensure } from "../../../../Data/Maybe"
+import { gt } from "../../../../Data/Num"
+import { Record } from "../../../../Data/Record"
+import { ItemForView } from "../../../Models/View/ItemForView"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
 
 interface Props {
   columnSize: number

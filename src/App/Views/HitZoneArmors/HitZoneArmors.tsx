@@ -1,31 +1,31 @@
-import * as React from "react";
-import { fmap } from "../../../Data/Functor";
-import { List, map, notNull, toArray } from "../../../Data/List";
-import { bindF, ensure, isJust, Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { EditHitZoneArmor } from "../../Models/Hero/EditHitZoneArmor";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { HitZoneArmor } from "../../Models/Hero/HitZoneArmor";
-import { Item } from "../../Models/Hero/Item";
-import { Purse } from "../../Models/Hero/Purse";
-import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { PurseAndTotals } from "../Equipment/PurseAndTotals";
-import { Aside } from "../Universal/Aside";
-import { BorderButton } from "../Universal/BorderButton";
-import { ListView } from "../Universal/List";
-import { ListHeader } from "../Universal/ListHeader";
-import { ListHeaderTag } from "../Universal/ListHeaderTag";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { SearchField } from "../Universal/SearchField";
-import { HitZoneArmorEditor } from "./HitZoneArmorEditor";
-import { HitZoneArmorsListItem } from "./HitZoneArmorsListItem";
+import * as React from "react"
+import { fmap } from "../../../Data/Functor"
+import { List, map, notNull, toArray } from "../../../Data/List"
+import { bindF, ensure, isJust, Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { EditHitZoneArmor } from "../../Models/Hero/EditHitZoneArmor"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { HitZoneArmor } from "../../Models/Hero/HitZoneArmor"
+import { Item } from "../../Models/Hero/Item"
+import { Purse } from "../../Models/Hero/Purse"
+import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { PurseAndTotals } from "../Equipment/PurseAndTotals"
+import { Aside } from "../Universal/Aside"
+import { BorderButton } from "../Universal/BorderButton"
+import { ListView } from "../Universal/List"
+import { ListHeader } from "../Universal/ListHeader"
+import { ListHeaderTag } from "../Universal/ListHeaderTag"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { SearchField } from "../Universal/SearchField"
+import { HitZoneArmorEditor } from "./HitZoneArmorEditor"
+import { HitZoneArmorsListItem } from "./HitZoneArmorsListItem"
 
 export interface HitZoneArmorsOwnProps {
   l10n: L10nRecord

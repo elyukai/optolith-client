@@ -1,47 +1,47 @@
-import { equals } from "../../Data/Eq";
-import { flip, ident, thrush } from "../../Data/Function";
-import { fmap, fmapF } from "../../Data/Functor";
-import { set } from "../../Data/Lens";
-import { any, append, consF, filter, foldr, ifilter, imap, List, map, maximum, subscript, sum } from "../../Data/List";
-import { altF_, bind, bindF, fromMaybe, guard, isJust, Just, liftM2, mapMaybe, Maybe, maybe, thenF } from "../../Data/Maybe";
-import { add, dec, multiply, subtractBy } from "../../Data/Num";
-import { elems, lookup, lookupF } from "../../Data/OrderedMap";
-import { OmitName, Record } from "../../Data/Record";
-import { bimap, fst, isTuple, Pair, snd } from "../../Data/Tuple";
-import { uncurryN } from "../../Data/Tuple/Curry";
-import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids";
-import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
-import { Belongings } from "../Models/Hero/Belongings";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { HitZoneArmor } from "../Models/Hero/HitZoneArmor";
-import { fromItemTemplate, Item, ItemL } from "../Models/Hero/Item";
-import { Armor } from "../Models/View/Armor";
-import { HitZoneArmorForView } from "../Models/View/HitZoneArmorForView";
-import { ItemForView, itemToItemForView } from "../Models/View/ItemForView";
-import { MeleeWeapon } from "../Models/View/MeleeWeapon";
-import { RangedWeapon } from "../Models/View/RangedWeapon";
-import { ShieldOrParryingWeapon } from "../Models/View/ShieldOrParryingWeapon";
-import { Attribute } from "../Models/Wiki/Attribute";
-import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
-import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
-import { L10n } from "../Models/Wiki/L10n";
-import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
-import { WikiModel } from "../Models/Wiki/WikiModel";
-import { isMaybeActive } from "../Utilities/Activatable/isActive";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { filterAndSortRecordsBy, filterAndSortRecordsByName } from "../Utilities/filterAndSortBy";
-import { filterRecordsByName } from "../Utilities/filterBy";
-import { getAttack, getParry } from "../Utilities/Increasable/combatTechniqueUtils";
-import { convertPrimaryAttributeToArray } from "../Utilities/ItemUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { filterByAvailability } from "../Utilities/RulesUtils";
-import { mapGetToSlice } from "../Utilities/SelectorsUtils";
-import { sortRecordsByName } from "../Utilities/sortBy";
-import { isNumber } from "../Utilities/typeCheckUtils";
-import { stringOfListToDropdown } from "../Views/Universal/Dropdown";
-import { getRuleBooksEnabled } from "./rulesSelectors";
-import { getEquipmentSortOptions } from "./sortOptionsSelectors";
-import { getCurrentHeroPresent, getEquipmentFilterText, getEquipmentState, getHigherParadeValues, getHitZoneArmorsState, getItemsState, getItemTemplatesFilterText, getLocaleAsProp, getSpecialAbilities, getWiki, getWikiItemTemplates, getZoneArmorFilterText } from "./stateSelectors";
+import { equals } from "../../Data/Eq"
+import { flip, ident, thrush } from "../../Data/Function"
+import { fmap, fmapF } from "../../Data/Functor"
+import { set } from "../../Data/Lens"
+import { any, append, consF, filter, foldr, ifilter, imap, List, map, maximum, subscript, sum } from "../../Data/List"
+import { altF_, bind, bindF, fromMaybe, guard, isJust, Just, liftM2, mapMaybe, Maybe, maybe, thenF } from "../../Data/Maybe"
+import { add, dec, multiply, subtractBy } from "../../Data/Num"
+import { elems, lookup, lookupF } from "../../Data/OrderedMap"
+import { OmitName, Record } from "../../Data/Record"
+import { bimap, fst, isTuple, Pair, snd } from "../../Data/Tuple"
+import { uncurryN } from "../../Data/Tuple/Curry"
+import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids"
+import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
+import { Belongings } from "../Models/Hero/Belongings"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { HitZoneArmor } from "../Models/Hero/HitZoneArmor"
+import { fromItemTemplate, Item, ItemL } from "../Models/Hero/Item"
+import { Armor } from "../Models/View/Armor"
+import { HitZoneArmorForView } from "../Models/View/HitZoneArmorForView"
+import { ItemForView, itemToItemForView } from "../Models/View/ItemForView"
+import { MeleeWeapon } from "../Models/View/MeleeWeapon"
+import { RangedWeapon } from "../Models/View/RangedWeapon"
+import { ShieldOrParryingWeapon } from "../Models/View/ShieldOrParryingWeapon"
+import { Attribute } from "../Models/Wiki/Attribute"
+import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
+import { ItemTemplate } from "../Models/Wiki/ItemTemplate"
+import { L10n } from "../Models/Wiki/L10n"
+import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
+import { WikiModel } from "../Models/Wiki/WikiModel"
+import { isMaybeActive } from "../Utilities/Activatable/isActive"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { filterAndSortRecordsBy, filterAndSortRecordsByName } from "../Utilities/filterAndSortBy"
+import { filterRecordsByName } from "../Utilities/filterBy"
+import { getAttack, getParry } from "../Utilities/Increasable/combatTechniqueUtils"
+import { convertPrimaryAttributeToArray } from "../Utilities/ItemUtils"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { filterByAvailability } from "../Utilities/RulesUtils"
+import { mapGetToSlice } from "../Utilities/SelectorsUtils"
+import { sortRecordsByName } from "../Utilities/sortBy"
+import { isNumber } from "../Utilities/typeCheckUtils"
+import { stringOfListToDropdown } from "../Views/Universal/Dropdown"
+import { getRuleBooksEnabled } from "./rulesSelectors"
+import { getEquipmentSortOptions } from "./sortOptionsSelectors"
+import { getCurrentHeroPresent, getEquipmentFilterText, getEquipmentState, getHigherParadeValues, getHitZoneArmorsState, getItemsState, getItemTemplatesFilterText, getLocaleAsProp, getSpecialAbilities, getWiki, getWikiItemTemplates, getZoneArmorFilterText } from "./stateSelectors"
 
 const HA = HeroModel.A
 const WA = WikiModel.A
@@ -147,6 +147,72 @@ export const getFilteredHitZoneArmors = createMaybeSelector (
           (filterAndSortRecordsByName (l10n)
                                       (filterText))
 )
+
+const getProtection = pipe (bindF (IA.pro), Maybe.sum)
+
+const getProtectionTotal =
+  (head: Maybe<Record<Item>>) =>
+  (leftArm: Maybe<Record<Item>>) =>
+  (leftLeg: Maybe<Record<Item>>) =>
+  (rightArm: Maybe<Record<Item>>) =>
+  (rightLeg: Maybe<Record<Item>>) =>
+  (torso: Maybe<Record<Item>>) => {
+    const total =
+      sum (List (
+        getProtection (head),
+        getProtection (torso) * 5,
+        getProtection (leftArm) * 2,
+        getProtection (rightArm) * 2,
+        getProtection (leftLeg) * 2,
+        getProtection (rightLeg) * 2
+      ))
+
+    return Math.ceil (total / 14)
+  }
+
+const getWeight = pipe (bindF (IA.weight), Maybe.sum)
+
+const getWeightTotal =
+  (head: Maybe<Record<Item>>) =>
+  (leftArm: Maybe<Record<Item>>) =>
+  (leftLeg: Maybe<Record<Item>>) =>
+  (rightArm: Maybe<Record<Item>>) =>
+  (rightLeg: Maybe<Record<Item>>) =>
+  (torso: Maybe<Record<Item>>) => {
+    const total =
+      sum (List (
+        getWeight (head) * 0.1,
+        getWeight (torso) * 0.5,
+        getWeight (leftArm) * 0.1,
+        getWeight (rightArm) * 0.1,
+        getWeight (leftLeg) * 0.1,
+        getWeight (rightLeg) * 0.1
+      ))
+
+    return Math.floor (total * 100) / 100
+  }
+
+const getPrice = pipe (bindF (IA.price), Maybe.sum)
+
+const getPriceTotal =
+  (head: Maybe<Record<Item>>) =>
+  (leftArm: Maybe<Record<Item>>) =>
+  (leftLeg: Maybe<Record<Item>>) =>
+  (rightArm: Maybe<Record<Item>>) =>
+  (rightLeg: Maybe<Record<Item>>) =>
+  (torso: Maybe<Record<Item>>) => {
+    const total =
+      sum (List (
+        getPrice (head) * 0.5,
+        getPrice (torso) * 0.1,
+        getPrice (leftArm) * 0.1,
+        getPrice (rightArm) * 0.1,
+        getPrice (leftLeg) * 0.1,
+        getPrice (rightLeg) * 0.1
+      ))
+
+    return Math.floor (total * 100) / 100
+  }
 
 type HitZoneKeys =
   Exclude<
@@ -354,6 +420,7 @@ export const getMeleeWeapons = createMaybeSelector (
                           fmapF (mprimary_attr_values)
                                 (primary_attr_values =>
                                   isTuple (damage_thresholds)
+
                                     // P/T looks like "AGI 14/STR 15" and combat
                                     // technique has both attributes as primary
                                     // => maps them and look up the greatest
@@ -644,72 +711,6 @@ export const getShieldsAndParryingWeapons = createMaybeSelector (
             return mapMaybe (mapper) (filteredItems)
           })
 )
-
-const getProtection = pipe (bindF (IA.pro), Maybe.sum)
-
-const getProtectionTotal =
-  (head: Maybe<Record<Item>>) =>
-  (leftArm: Maybe<Record<Item>>) =>
-  (leftLeg: Maybe<Record<Item>>) =>
-  (rightArm: Maybe<Record<Item>>) =>
-  (rightLeg: Maybe<Record<Item>>) =>
-  (torso: Maybe<Record<Item>>) => {
-    const total =
-      sum (List (
-        getProtection (head),
-        getProtection (torso) * 5,
-        getProtection (leftArm) * 2,
-        getProtection (rightArm) * 2,
-        getProtection (leftLeg) * 2,
-        getProtection (rightLeg) * 2
-      ))
-
-    return Math.ceil (total / 14)
-  }
-
-const getWeight = pipe (bindF (IA.weight), Maybe.sum)
-
-const getWeightTotal =
-  (head: Maybe<Record<Item>>) =>
-  (leftArm: Maybe<Record<Item>>) =>
-  (leftLeg: Maybe<Record<Item>>) =>
-  (rightArm: Maybe<Record<Item>>) =>
-  (rightLeg: Maybe<Record<Item>>) =>
-  (torso: Maybe<Record<Item>>) => {
-    const total =
-      sum (List (
-        getWeight (head) * 0.1,
-        getWeight (torso) * 0.5,
-        getWeight (leftArm) * 0.1,
-        getWeight (rightArm) * 0.1,
-        getWeight (leftLeg) * 0.1,
-        getWeight (rightLeg) * 0.1
-      ))
-
-    return Math.floor (total * 100) / 100
-  }
-
-const getPrice = pipe (bindF (IA.price), Maybe.sum)
-
-const getPriceTotal =
-  (head: Maybe<Record<Item>>) =>
-  (leftArm: Maybe<Record<Item>>) =>
-  (leftLeg: Maybe<Record<Item>>) =>
-  (rightArm: Maybe<Record<Item>>) =>
-  (rightLeg: Maybe<Record<Item>>) =>
-  (torso: Maybe<Record<Item>>) => {
-    const total =
-      sum (List (
-        getPrice (head) * 0.5,
-        getPrice (torso) * 0.1,
-        getPrice (leftArm) * 0.1,
-        getPrice (rightArm) * 0.1,
-        getPrice (leftLeg) * 0.1,
-        getPrice (rightLeg) * 0.1
-      ))
-
-    return Math.floor (total * 100) / 100
-  }
 
 export const getProtectionAndWeight =
   (getZoneArmor: (id: Maybe<string>) => Maybe<Record<Item>>) =>

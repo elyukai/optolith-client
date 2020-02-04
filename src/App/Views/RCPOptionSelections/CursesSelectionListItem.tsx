@@ -1,12 +1,12 @@
-import * as React from "react";
-import { isJust, isNothing, Just, Maybe, maybe, maybeRNullF, Nothing } from "../../../Data/Maybe";
-import { lte } from "../../../Data/Num";
-import { lookup, OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Spell } from "../../Models/Wiki/Spell";
-import { minus } from "../../Utilities/Chars";
-import { BorderButton } from "../Universal/BorderButton";
-import { Checkbox } from "../Universal/Checkbox";
+import * as React from "react"
+import { isJust, isNothing, Just, Maybe, maybe, maybeRNullF, Nothing } from "../../../Data/Maybe"
+import { lte } from "../../../Data/Num"
+import { lookup, OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { Spell } from "../../Models/Wiki/Spell"
+import { minus } from "../../Utilities/Chars"
+import { BorderButton } from "../Universal/BorderButton"
+import { Checkbox } from "../Universal/Checkbox"
 
 const SA = Spell.A
 

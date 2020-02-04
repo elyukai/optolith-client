@@ -1,20 +1,20 @@
-import * as React from "react";
-import { Record } from "../../../Data/Record";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Skill } from "../../Models/Wiki/Skill";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { WikiApplications } from "./Elements/WikiApplications";
-import { WikiBotch } from "./Elements/WikiBotch";
-import { WikiCriticalSuccess } from "./Elements/WikiCriticalSuccess";
-import { WikiEncumbrance } from "./Elements/WikiEncumbrance";
-import { WikiFailedCheck } from "./Elements/WikiFailedCheck";
-import { WikiImprovementCost } from "./Elements/WikiImprovementCost";
-import { WikiQuality } from "./Elements/WikiQuality";
-import { WikiSkillCheck } from "./Elements/WikiSkillCheck";
-import { WikiSource } from "./Elements/WikiSource";
-import { WikiTools } from "./Elements/WikiTools";
-import { WikiUses } from "./Elements/WikiUses";
-import { WikiBoxTemplate } from "./WikiBoxTemplate";
+import * as React from "react"
+import { Record } from "../../../Data/Record"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { Skill } from "../../Models/Wiki/Skill"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { WikiApplications } from "./Elements/WikiApplications"
+import { WikiBotch } from "./Elements/WikiBotch"
+import { WikiCriticalSuccess } from "./Elements/WikiCriticalSuccess"
+import { WikiEncumbrance } from "./Elements/WikiEncumbrance"
+import { WikiFailedCheck } from "./Elements/WikiFailedCheck"
+import { WikiImprovementCost } from "./Elements/WikiImprovementCost"
+import { WikiQuality } from "./Elements/WikiQuality"
+import { WikiSkillCheck } from "./Elements/WikiSkillCheck"
+import { WikiSource } from "./Elements/WikiSource"
+import { WikiTools } from "./Elements/WikiTools"
+import { WikiUses } from "./Elements/WikiUses"
+import { WikiBoxTemplate } from "./WikiBoxTemplate"
 
 export interface WikiSkillInfoProps {
   l10n: L10nRecord

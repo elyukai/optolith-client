@@ -1,14 +1,14 @@
-import * as React from "react";
-import { fromMaybe, listToMaybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { Blessing } from "../../Models/Wiki/Blessing";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { translate } from "../../Utilities/I18n";
-import { Markdown } from "../Universal/Markdown";
-import { WikiSource } from "./Elements/WikiSource";
-import { WikiBoxTemplate } from "./WikiBoxTemplate";
-import { WikiProperty } from "./WikiProperty";
+import * as React from "react"
+import { fromMaybe, listToMaybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { Blessing } from "../../Models/Wiki/Blessing"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { Markdown } from "../Universal/Markdown"
+import { WikiSource } from "./Elements/WikiSource"
+import { WikiBoxTemplate } from "./WikiBoxTemplate"
+import { WikiProperty } from "./WikiProperty"
 
 export interface WikiBlessingInfoProps {
   l10n: L10nRecord

@@ -1,8 +1,8 @@
-import * as React from "react";
-import { orN } from "../../../Data/Maybe";
-import { isNumber } from "../../Utilities/typeCheckUtils";
-import { IconButton } from "../Universal/IconButton";
-import { ListItemButtons } from "../Universal/ListItemButtons";
+import * as React from "react"
+import { orN } from "../../../Data/Maybe"
+import { isNumber } from "../../Utilities/typeCheckUtils"
+import { IconButton } from "../Universal/IconButton"
+import { ListItemButtons } from "../Universal/ListItemButtons"
 
 interface Props {
   activateDisabled?: boolean

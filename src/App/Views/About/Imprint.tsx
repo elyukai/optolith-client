@@ -1,8 +1,8 @@
-import * as React from "react";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
+import * as React from "react"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
 
 export interface ImprintProps {
   l10n: L10nRecord

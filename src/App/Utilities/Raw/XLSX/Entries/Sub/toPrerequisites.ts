@@ -1,35 +1,35 @@
-import { Either, Left, mapM, maybeToEither, Right, second } from "../../../../../../Data/Either";
-import { flip } from "../../../../../../Data/Function";
-import { fmap } from "../../../../../../Data/Functor";
-import { fromArray, isInfixOf, List, NonEmptyList, notNullStr, splitOn, uncons } from "../../../../../../Data/List";
-import { bindF, ensure, fromJust, fromMaybe, isNothing, Just, Maybe, Nothing } from "../../../../../../Data/Maybe";
-import { gte } from "../../../../../../Data/Num";
-import { fromList } from "../../../../../../Data/OrderedMap";
-import { show } from "../../../../../../Data/Show";
-import { parseJSON } from "../../../../../../Data/String/JSON";
-import { fst, Pair, snd } from "../../../../../../Data/Tuple";
-import { traceShowBoth } from "../../../../../../Debug/Trace";
-import { RequireActivatable } from "../../../../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { CultureRequirement } from "../../../../../Models/Wiki/prerequisites/CultureRequirement";
-import { RequireIncreasable } from "../../../../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { PactRequirement } from "../../../../../Models/Wiki/prerequisites/PactRequirement";
-import { RequirePrimaryAttribute } from "../../../../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
-import { RaceRequirement } from "../../../../../Models/Wiki/prerequisites/RaceRequirement";
-import { SexRequirement } from "../../../../../Models/Wiki/prerequisites/SexRequirement";
-import { AllRequirementObjects, AllRequirements, LevelAwarePrerequisites } from "../../../../../Models/Wiki/wikiTypeHelpers";
-import { ifElse } from "../../../../ifElse";
-import { toInt } from "../../../../NumberUtils";
-import { pipe } from "../../../../pipe";
-import { Expect } from "../../../Expect";
-import { lookupKeyValid, TableType } from "../../Validators/Generic";
-import { isRawRequiringActivatable } from "../Prerequisites/RawActivatableRequirement";
-import { isRawCultureRequirement } from "../Prerequisites/RawCultureRequirement";
-import { isRawRequiringIncreasable } from "../Prerequisites/RawIncreasableRequirement";
-import { isRawPactRequirement } from "../Prerequisites/RawPactRequirement";
-import { isRawRequiringPrimaryAttribute } from "../Prerequisites/RawPrimaryAttributeRequirement";
-import { isRawRaceRequirement, toRaceRequirement } from "../Prerequisites/RawRaceRequirement";
-import { isRawSexRequirement } from "../Prerequisites/RawSexRequirement";
-import { fromRawSocialPrerequisiteToRecord, isRawSocialPrerequisite } from "../Prerequisites/RawSocialPrerequisite";
+import { Either, Left, mapM, maybeToEither, Right, second } from "../../../../../../Data/Either"
+import { flip } from "../../../../../../Data/Function"
+import { fmap } from "../../../../../../Data/Functor"
+import { fromArray, isInfixOf, List, NonEmptyList, notNullStr, splitOn, uncons } from "../../../../../../Data/List"
+import { bindF, ensure, fromJust, fromMaybe, isNothing, Just, Maybe, Nothing } from "../../../../../../Data/Maybe"
+import { gte } from "../../../../../../Data/Num"
+import { fromList } from "../../../../../../Data/OrderedMap"
+import { show } from "../../../../../../Data/Show"
+import { parseJSON } from "../../../../../../Data/String/JSON"
+import { fst, Pair, snd } from "../../../../../../Data/Tuple"
+import { traceShowBoth } from "../../../../../../Debug/Trace"
+import { RequireActivatable } from "../../../../../Models/Wiki/prerequisites/ActivatableRequirement"
+import { CultureRequirement } from "../../../../../Models/Wiki/prerequisites/CultureRequirement"
+import { RequireIncreasable } from "../../../../../Models/Wiki/prerequisites/IncreasableRequirement"
+import { PactRequirement } from "../../../../../Models/Wiki/prerequisites/PactRequirement"
+import { RequirePrimaryAttribute } from "../../../../../Models/Wiki/prerequisites/PrimaryAttributeRequirement"
+import { RaceRequirement } from "../../../../../Models/Wiki/prerequisites/RaceRequirement"
+import { SexRequirement } from "../../../../../Models/Wiki/prerequisites/SexRequirement"
+import { AllRequirementObjects, AllRequirements, LevelAwarePrerequisites } from "../../../../../Models/Wiki/wikiTypeHelpers"
+import { ifElse } from "../../../../ifElse"
+import { toInt } from "../../../../NumberUtils"
+import { pipe } from "../../../../pipe"
+import { Expect } from "../../../Expect"
+import { lookupKeyValid, TableType } from "../../Validators/Generic"
+import { isRawRequiringActivatable } from "../Prerequisites/RawActivatableRequirement"
+import { isRawCultureRequirement } from "../Prerequisites/RawCultureRequirement"
+import { isRawRequiringIncreasable } from "../Prerequisites/RawIncreasableRequirement"
+import { isRawPactRequirement } from "../Prerequisites/RawPactRequirement"
+import { isRawRequiringPrimaryAttribute } from "../Prerequisites/RawPrimaryAttributeRequirement"
+import { isRawRaceRequirement, toRaceRequirement } from "../Prerequisites/RawRaceRequirement"
+import { isRawSexRequirement } from "../Prerequisites/RawSexRequirement"
+import { fromRawSocialPrerequisiteToRecord, isRawSocialPrerequisite } from "../Prerequisites/RawSocialPrerequisite"
 
 const parseJSONAndRCP = (x: string) => x === "RCP" ? Just (x) : parseJSON (x)
 

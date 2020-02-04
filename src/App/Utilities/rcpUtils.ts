@@ -1,24 +1,24 @@
-import { fmap } from "../../Data/Functor";
-import { flength, foldr, List, subscript } from "../../Data/List";
-import { altF, bindF, elem, fromMaybe, liftM2, Maybe, sum } from "../../Data/Maybe";
-import { add, dec, lt, odd, subtract, subtractBy } from "../../Data/Num";
-import { lookupF, OrderedMap } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { show } from "../../Data/Show";
-import { ProfessionId, RaceId } from "../Constants/Ids";
-import { Sex } from "../Models/Hero/heroTypeHelpers";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { Profession } from "../Models/Wiki/Profession";
-import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
-import { Race } from "../Models/Wiki/Race";
-import { RaceVariant } from "../Models/Wiki/RaceVariant";
-import { Die } from "../Models/Wiki/sub/Die";
-import { NameBySex, nameBySexDef } from "../Models/Wiki/sub/NameBySex";
-import { rollDiceFold, rollDiceR, rollDie } from "./dice";
-import { translate } from "./I18n";
-import { ifElse } from "./ifElse";
-import { multiplyString, toInt } from "./NumberUtils";
-import { pipe, pipe_ } from "./pipe";
+import { fmap } from "../../Data/Functor"
+import { flength, foldr, List, subscript } from "../../Data/List"
+import { altF, bindF, elem, fromMaybe, liftM2, Maybe, sum } from "../../Data/Maybe"
+import { add, dec, lt, odd, subtract, subtractBy } from "../../Data/Num"
+import { lookupF, OrderedMap } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { show } from "../../Data/Show"
+import { ProfessionId, RaceId } from "../Constants/Ids"
+import { Sex } from "../Models/Hero/heroTypeHelpers"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { Profession } from "../Models/Wiki/Profession"
+import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
+import { Race } from "../Models/Wiki/Race"
+import { RaceVariant } from "../Models/Wiki/RaceVariant"
+import { Die } from "../Models/Wiki/sub/Die"
+import { NameBySex, nameBySexDef } from "../Models/Wiki/sub/NameBySex"
+import { rollDiceFold, rollDiceR, rollDie } from "./dice"
+import { translate } from "./I18n"
+import { ifElse } from "./ifElse"
+import { multiplyString, toInt } from "./NumberUtils"
+import { pipe, pipe_ } from "./pipe"
 
 const { id, sizeBase, sizeRandom, weightBase, weightRandom } = Race.AL
 const { amount, sides } = Die.AL

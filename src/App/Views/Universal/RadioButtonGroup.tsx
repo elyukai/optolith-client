@@ -1,11 +1,11 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { List, map, toArray } from "../../../Data/List";
-import { elem, fromJust, fromMaybe, isJust, Maybe, normalize } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { RadioOption, RadioOptionValue } from "../../Models/View/RadioOption";
-import { pipe_ } from "../../Utilities/pipe";
-import { RadioButton } from "./RadioButton";
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { List, map, toArray } from "../../../Data/List"
+import { elem, fromJust, fromMaybe, isJust, Maybe, normalize } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { RadioOption, RadioOptionValue } from "../../Models/View/RadioOption"
+import { pipe_ } from "../../Utilities/pipe"
+import { RadioButton } from "./RadioButton"
 
 const ROA = RadioOption.A
 

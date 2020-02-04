@@ -1,8 +1,8 @@
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
-import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
-import { Spell } from "../Wiki/Spell";
-import { IncreasableWithRequirements } from "./viewTypeHelpers";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { pipe } from "../../Utilities/pipe"
+import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent"
+import { Spell } from "../Wiki/Spell"
+import { IncreasableWithRequirements } from "./viewTypeHelpers"
 
 export interface SpellWithRequirements extends IncreasableWithRequirements {
   "@@name": "SpellWithRequirements"

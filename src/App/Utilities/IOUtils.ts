@@ -1,11 +1,11 @@
-import { remote } from "electron";
-import { fmap } from "../../Data/Functor";
-import { flength, fromArray, List, subscript } from "../../Data/List";
-import { fromMaybe, guard, joinMaybeList, Maybe, normalize, then } from "../../Data/Maybe";
-import { divideBy, inc } from "../../Data/Num";
-import { bimap, fst, Pair, snd } from "../../Data/Tuple";
-import { pipe_ } from "./pipe";
-import { Locale } from "./Raw/JSON/Config";
+import { remote } from "electron"
+import { fmap } from "../../Data/Functor"
+import { flength, fromArray, List, subscript } from "../../Data/List"
+import { fromMaybe, guard, joinMaybeList, Maybe, normalize, then } from "../../Data/Maybe"
+import { divideBy, inc } from "../../Data/Num"
+import { bimap, fst, Pair, snd } from "../../Data/Tuple"
+import { pipe_ } from "./pipe"
+import { Locale } from "./Raw/JSON/Config"
 
 /**
  * Prints windows' web page as PDF with Chromium's preview printing custom settings.

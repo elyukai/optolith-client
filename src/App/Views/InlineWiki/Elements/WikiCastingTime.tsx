@@ -1,47 +1,10 @@
-import * as React from "react";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { Category } from "../../../Constants/Categories";
-import { BlessedGroup, MagicalGroup } from "../../../Constants/Groups";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { WikiProperty } from "../WikiProperty";
-
-interface Accessors<A extends RecordIBase<any>> {
-  castingTime: (r: Record<A>) => string
-  castingTimeNoMod: (r: Record<A>) => boolean
-  category: (r: Record<A>) => Category
-  gr: (r: Record<A>) => number
-}
-
-export interface WikiCastingTimeProps<A extends RecordIBase<any>> {
-  x: Record<A>
-  acc: Accessors<A>
-  l10n: L10nRecord
-}
-
-type FC = <A extends RecordIBase<any>> (props: WikiCastingTimeProps<A>) => ReturnType<React.FC>
-
-export const WikiCastingTime: FC = props => {
-  const {
-    x,
-    acc,
-    l10n,
-  } = props
-
-  const category = acc.category (x)
-  const gr = acc.gr (x)
-  const isNoModAllowed = acc.castingTimeNoMod (x)
-
-  const key = getNameKey (category) (gr)
-  const keyNoMod = nameKeyToModKey (key)
-
-  return (
-    <WikiProperty l10n={l10n} title={key}>
-      {acc.castingTime (x)}
-      {isNoModAllowed ? ` (${translate (l10n) (keyNoMod)})` : ""}
-    </WikiProperty>
-  )
-}
+import * as React from "react"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { Category } from "../../../Constants/Categories"
+import { BlessedGroup, MagicalGroup } from "../../../Constants/Groups"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { WikiProperty } from "../WikiProperty"
 
 type NameKey = "castingtime"
              | "ritualtime"
@@ -83,3 +46,40 @@ const nameKeyToModKey =
     : x === "liturgicaltime"
     ? "youcannotuseamodificationonthischantsliturgicaltime"
     : "youcannotuseamodificationonthischantsceremonialtime"
+
+interface Accessors<A extends RecordIBase<any>> {
+  castingTime: (r: Record<A>) => string
+  castingTimeNoMod: (r: Record<A>) => boolean
+  category: (r: Record<A>) => Category
+  gr: (r: Record<A>) => number
+}
+
+export interface WikiCastingTimeProps<A extends RecordIBase<any>> {
+  x: Record<A>
+  acc: Accessors<A>
+  l10n: L10nRecord
+}
+
+type FC = <A extends RecordIBase<any>> (props: WikiCastingTimeProps<A>) => ReturnType<React.FC>
+
+export const WikiCastingTime: FC = props => {
+  const {
+    x,
+    acc,
+    l10n,
+  } = props
+
+  const category = acc.category (x)
+  const gr = acc.gr (x)
+  const isNoModAllowed = acc.castingTimeNoMod (x)
+
+  const key = getNameKey (category) (gr)
+  const keyNoMod = nameKeyToModKey (key)
+
+  return (
+    <WikiProperty l10n={l10n} title={key}>
+      {acc.castingTime (x)}
+      {isNoModAllowed ? ` (${translate (l10n) (keyNoMod)})` : ""}
+    </WikiProperty>
+  )
+}

@@ -1,5 +1,5 @@
-import * as React from "react";
-import { getICName } from "../../Utilities/AdventurePoints/improvementCostUtils";
+import * as React from "react"
+import { getICName } from "../../Utilities/AdventurePoints/improvementCostUtils"
 
 interface Props {
   ic?: number

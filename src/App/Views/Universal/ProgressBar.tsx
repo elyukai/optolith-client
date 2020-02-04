@@ -1,8 +1,8 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { guardReplace, Just, Maybe, orN } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
-import { ProgressBarOverlay } from "./ProgressBarOverlay";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { guardReplace, Just, Maybe, orN } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
+import { ProgressBarOverlay } from "./ProgressBarOverlay"
 
 interface Props {
   className?: string

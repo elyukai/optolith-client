@@ -1,20 +1,25 @@
-import * as React from "react";
-import { List, map, toArray } from "../../../Data/List";
-import { fromMaybe, maybe, Maybe } from "../../../Data/Maybe";
-import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
-import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
-import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { Disadvantage } from "../../Models/Wiki/Disadvantage";
-import { Skill } from "../../Models/Wiki/Skill";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { InlineWikiEntry } from "../../Models/Wiki/wikiTypeHelpers";
-import { toRoman } from "../../Utilities/NumberUtils";
-import { pipe_ } from "../../Utilities/pipe";
-import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils";
-import { ListView } from "../Universal/List";
-import { WikiListItem } from "./WikiListItem";
+import * as React from "react"
+import { List, map, toArray } from "../../../Data/List"
+import { fromMaybe, maybe, Maybe } from "../../../Data/Maybe"
+import { Sex } from "../../Models/Hero/heroTypeHelpers"
+import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined"
+import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined"
+import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { Disadvantage } from "../../Models/Wiki/Disadvantage"
+import { Skill } from "../../Models/Wiki/Skill"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { InlineWikiEntry } from "../../Models/Wiki/wikiTypeHelpers"
+import { toRoman } from "../../Utilities/NumberUtils"
+import { pipe_ } from "../../Utilities/pipe"
+import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils"
+import { ListView } from "../Universal/List"
+import { WikiListItem } from "./WikiListItem"
+
+const addLevelToName =
+  (name: string) =>
+  (mlevel: Maybe<number>) =>
+    maybe (name) ((level: number) => `${name} I-${toRoman (level)}`) (mlevel)
 
 interface Props {
   list: List<InlineWikiEntry>
@@ -137,11 +142,6 @@ const WikiList: React.FC<Props> = ({ list, sex = "m", currentInfoId, showInfo })
   </ListView>
 )
 
-const addLevelToName =
-  (name: string) =>
-  (mlevel: Maybe<number>) =>
-    maybe (name) ((level: number) => `${name} I-${toRoman (level)}`) (mlevel)
-
 const MemoWikiList = React.memo (
   WikiList,
   (prevProps, nextProps) =>
@@ -150,4 +150,4 @@ const MemoWikiList = React.memo (
     || nextProps.currentInfoId !== prevProps.currentInfoId
 )
 
-export { MemoWikiList as WikiList };
+export { MemoWikiList as WikiList }

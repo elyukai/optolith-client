@@ -1,11 +1,11 @@
-import * as React from "react";
-import { fromJust, isJust, Maybe } from "../../../Data/Maybe";
-import { EnergyId } from "../../Constants/Ids";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { isFunction } from "../../Utilities/typeCheckUtils";
-import { Dialog } from "../Universal/Dialog";
-import { IconButton } from "../Universal/IconButton";
+import * as React from "react"
+import { fromJust, isJust, Maybe } from "../../../Data/Maybe"
+import { EnergyId } from "../../Constants/Ids"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { isFunction } from "../../Utilities/typeCheckUtils"
+import { Dialog } from "../Universal/Dialog"
+import { IconButton } from "../Universal/IconButton"
 
 export interface PermanentPointsProps {
   id: string

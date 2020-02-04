@@ -1,14 +1,14 @@
-import { Either } from "../../../../../../Data/Either";
-import { flip } from "../../../../../../Data/Function";
-import { Cons, flength, List, splitOn } from "../../../../../../Data/List";
-import { bindF, ensure, liftM2, listToMaybe, Maybe, maybe, Nothing } from "../../../../../../Data/Maybe";
-import { Record } from "../../../../../../Data/Record";
-import { Pair } from "../../../../../../Data/Tuple";
-import { SourceLink } from "../../../../../Models/Wiki/sub/SourceLink";
-import { toNatural } from "../../../../NumberUtils";
-import { Expect } from "../../../Expect";
-import { lookupKeyValid, TableType } from "../../Validators/Generic";
-import { mensureMapList, mensureMapListOptional } from "../../Validators/ToValue";
+import { Either } from "../../../../../../Data/Either"
+import { flip } from "../../../../../../Data/Function"
+import { Cons, flength, List, splitOn } from "../../../../../../Data/List"
+import { bindF, ensure, liftM2, listToMaybe, Maybe, maybe, Nothing } from "../../../../../../Data/Maybe"
+import { Record } from "../../../../../../Data/Record"
+import { Pair } from "../../../../../../Data/Tuple"
+import { SourceLink } from "../../../../../Models/Wiki/sub/SourceLink"
+import { toNatural } from "../../../../NumberUtils"
+import { Expect } from "../../../Expect"
+import { lookupKeyValid, TableType } from "../../Validators/Generic"
+import { mensureMapList, mensureMapListOptional } from "../../Validators/ToValue"
 
 const bookIdRx = /[A-Za-z0-9]+/u
 
@@ -17,7 +17,7 @@ const isBookIdString = (x: string) => bookIdRx .test (x)
 const toSourceLink = (x: string) => {
   const xs = splitOn (",") (x) as Cons<string>
 
-  if (![2, 3] .includes (flength (xs))) {
+  if (![ 2, 3 ] .includes (flength (xs))) {
     return Nothing
   }
 

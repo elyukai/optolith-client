@@ -1,5 +1,5 @@
-import { isNumber } from "../../../../typeCheckUtils";
-import { AllRawRequirementObjects } from "../rawTypeHelpers";
+import { isNumber } from "../../../../typeCheckUtils"
+import { AllRawRequirementObjects } from "../rawTypeHelpers"
 
 export interface RawPactRequirement {
   id: "PACT"
@@ -17,7 +17,7 @@ export const isRawPactRequirement =
       // @ts-ignore
       typeof req.domain === "number"
       // @ts-ignore
-      || Array.isArray (req.domain) && req.domain.every (isNumber)
+      || (Array.isArray (req.domain) && (req.domain as any[]).every (isNumber))
       // @ts-ignore
       || req.domain === undefined
     )

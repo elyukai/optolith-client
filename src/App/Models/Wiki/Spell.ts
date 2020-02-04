@@ -1,11 +1,11 @@
-import { List } from "../../../Data/List";
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { MagicalTradition, Property } from "../../Constants/Groups";
-import { Erratum } from "./sub/Errata";
-import { SourceLink } from "./sub/SourceLink";
-import { AllRequirementObjects, CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { OrderedSet } from "../../../Data/OrderedSet"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { MagicalTradition, Property } from "../../Constants/Groups"
+import { Erratum } from "./sub/Errata"
+import { SourceLink } from "./sub/SourceLink"
+import { AllRequirementObjects, CheckModifier, EntryWithCategory } from "./wikiTypeHelpers"
 
 export interface Spell {
   "@@name": "Spell"

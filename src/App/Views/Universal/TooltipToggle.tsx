@@ -1,8 +1,8 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { guardReplace, Just, orN } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
-import { Overlay } from "./Overlay";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { guardReplace, Just, orN } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
+import { Overlay } from "./Overlay"
 
 interface Props {
   content: React.ReactNode

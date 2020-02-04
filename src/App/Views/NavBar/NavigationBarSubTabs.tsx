@@ -1,9 +1,9 @@
-import * as React from "react";
-import { List, map, toArray } from "../../../Data/List";
-import { SubTab } from "../../Models/Hero/heroTypeHelpers";
-import { TabId } from "../../Utilities/LocationUtils";
-import { pipe_ } from "../../Utilities/pipe";
-import { NavigationBarSubTab } from "./NavigationBarSubTab";
+import * as React from "react"
+import { List, map, toArray } from "../../../Data/List"
+import { SubTab } from "../../Models/Hero/heroTypeHelpers"
+import { TabId } from "../../Utilities/LocationUtils"
+import { pipe_ } from "../../Utilities/pipe"
+import { NavigationBarSubTab } from "./NavigationBarSubTab"
 
 interface Props {
   currentTab: TabId

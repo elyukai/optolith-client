@@ -1,16 +1,16 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { fmapF } from "../../../Data/Functor";
-import { find, flength, intercalate, List } from "../../../Data/List";
-import { fromMaybe, listToMaybe, mapMaybe, Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
-import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { ndash } from "../../Utilities/Chars";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { SkillListItem } from "../Skills/SkillListItem";
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { fmapF } from "../../../Data/Functor"
+import { find, flength, intercalate, List } from "../../../Data/List"
+import { fromMaybe, listToMaybe, mapMaybe, Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined"
+import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { ndash } from "../../Utilities/Chars"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { SkillListItem } from "../Skills/SkillListItem"
 
 const ACA_ = AttributeCombinedA_
 const CTWRA = CombatTechniqueWithRequirements.A

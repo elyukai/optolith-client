@@ -1,7 +1,7 @@
-import { Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { PromptOptions } from "../../Actions/AlertActions";
-import { Alert } from "../Universal/Alert";
+import { Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { PromptOptions } from "../../Actions/AlertActions"
+import { Alert } from "../Universal/Alert"
 
 export interface AlertsOwnProps { }
 

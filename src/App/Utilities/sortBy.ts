@@ -1,10 +1,10 @@
-import { flip, on } from "../../Data/Function";
-import { flength, List, sortBy } from "../../Data/List";
-import { Compare, EQ, Ordering } from "../../Data/Ord";
-import { fromDefault, Record, RecordIBase } from "../../Data/Record";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { compareLocale } from "./I18n";
-import { pipe_ } from "./pipe";
+import { flip, on } from "../../Data/Function"
+import { flength, List, sortBy } from "../../Data/List"
+import { Compare, EQ, Ordering } from "../../Data/Ord"
+import { fromDefault, Record, RecordIBase } from "../../Data/Record"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { compareLocale } from "./I18n"
+import { pipe_ } from "./pipe"
 
 export interface SortOption<A> {
   compare: Compare<A>
@@ -61,17 +61,6 @@ export const RecordWithName = fromDefault ("RecordWithName")
 const { name } = RecordWithName.AL
 
 /**
- * Sort the list of passed records by their `name` property in ascending order.
- */
-export const sortRecordsByName = (
-  (locale: L10nRecord) =>
-    sortByMulti<Record<RecordWithName>> ([
-      comparingR<RecordWithName, string> (name) (compareLocale (locale)),
-    ])
-) as (locale: L10nRecord) =>
-  <A extends RecordWithName> (xs: List<Record<A>>) => List<Record<A>>
-
-/**
  * `comparingR :: Ord a => (a -> a -> Ordering) -> (b -> a) -> b -> b -> Ordering`
  *
  * Special version of `on` (from `Data.Function`) specialized to compare
@@ -84,6 +73,17 @@ export const comparingR =
   (accessor: (x: Record<A>) => B) =>
   (compare: (x: B) => (y: B) => Ordering) =>
     on (compare) (accessor)
+
+/**
+ * Sort the list of passed records by their `name` property in ascending order.
+ */
+export const sortRecordsByName = (
+  (locale: L10nRecord) =>
+    sortByMulti<Record<RecordWithName>> ([
+      comparingR<RecordWithName, string> (name) (compareLocale (locale)),
+    ])
+) as (locale: L10nRecord) =>
+  <A extends RecordWithName> (xs: List<Record<A>>) => List<Record<A>>
 
 /**
  * `sortStrings locale xs` sorts a list of strings with respect to the passed

@@ -1,10 +1,10 @@
-import * as React from "react";
-import { orN } from "../../../Data/Maybe";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
+import * as React from "react"
+import { orN } from "../../../Data/Maybe"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
 
 interface Props {
-  l10n: L10nRecord;
+  l10n: L10nRecord
   strongly?: boolean
   unfamiliarSpells?: boolean
 }

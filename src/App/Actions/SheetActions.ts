@@ -1,4 +1,4 @@
-import { SWITCH_SHEET_ATTR_VALUE_VISIBILITY } from "../Constants/ActionTypes";
+import { SWITCH_SHEET_ATTR_VALUE_VISIBILITY } from "../Constants/ActionTypes"
 
 export interface SwitchSheetAttributeValueVisibilityAction {
   type: SWITCH_SHEET_ATTR_VALUE_VISIBILITY

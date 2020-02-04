@@ -1,36 +1,36 @@
-import * as React from "react";
-import { Maybe, maybe } from "../../../Data/Maybe";
-import { AdvantagesContainer } from "../../Containers/AdvantagesContainer";
-import { AttributesContainer } from "../../Containers/AttributesContainer";
-import { CombatTechniquesContainer } from "../../Containers/CombatTechniquesContainer";
-import { CulturesContainer } from "../../Containers/CulturesContainer";
-import { DisadvantagesContainer } from "../../Containers/DisadvantagesContainer";
-import { EquipmentContainer } from "../../Containers/EquipmentContainer";
-import { HelpContainer } from "../../Containers/HelpContainer";
-import { HerolistContainer } from "../../Containers/HerolistContainer";
-import { HitZoneArmorsContainer } from "../../Containers/HitZoneArmorsContainer";
-import { LiturgicalChantsContainer } from "../../Containers/LiturgicalChantsContainer";
-import { PactContainer } from "../../Containers/PactContainer";
-import { PersonalDataContainer } from "../../Containers/PersonalDataContainer";
-import { PetsContainer } from "../../Containers/PetsContainer";
-import { ProfessionsContainer } from "../../Containers/ProfessionsContainer";
-import { RacesContainer } from "../../Containers/RacesContainer";
-import { RulesContainer } from "../../Containers/RulesContainer";
-import { SheetsContainer } from "../../Containers/SheetsContainer";
-import { SkillsContainer } from "../../Containers/SkillsContainer";
-import { SpecialAbilitiesContainer } from "../../Containers/SpecialAbilitiesContainer";
-import { SpellsContainer } from "../../Containers/SpellsContainer";
-import { WikiContainer } from "../../Containers/WikiContainer";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { TabId } from "../../Utilities/LocationUtils";
-import { Imprint } from "../About/Imprint";
-import { LastChanges } from "../About/LastChanges";
-import { ThirdPartyLicenses } from "../About/ThirdPartyLicenses";
-import { Grouplist } from "../Groups/Grouplist";
-import { MainContent } from "../Universal/MainContent";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
+import * as React from "react"
+import { Maybe, maybe } from "../../../Data/Maybe"
+import { AdvantagesContainer } from "../../Containers/AdvantagesContainer"
+import { AttributesContainer } from "../../Containers/AttributesContainer"
+import { CombatTechniquesContainer } from "../../Containers/CombatTechniquesContainer"
+import { CulturesContainer } from "../../Containers/CulturesContainer"
+import { DisadvantagesContainer } from "../../Containers/DisadvantagesContainer"
+import { EquipmentContainer } from "../../Containers/EquipmentContainer"
+import { HelpContainer } from "../../Containers/HelpContainer"
+import { HerolistContainer } from "../../Containers/HerolistContainer"
+import { HitZoneArmorsContainer } from "../../Containers/HitZoneArmorsContainer"
+import { LiturgicalChantsContainer } from "../../Containers/LiturgicalChantsContainer"
+import { PactContainer } from "../../Containers/PactContainer"
+import { PersonalDataContainer } from "../../Containers/PersonalDataContainer"
+import { PetsContainer } from "../../Containers/PetsContainer"
+import { ProfessionsContainer } from "../../Containers/ProfessionsContainer"
+import { RacesContainer } from "../../Containers/RacesContainer"
+import { RulesContainer } from "../../Containers/RulesContainer"
+import { SheetsContainer } from "../../Containers/SheetsContainer"
+import { SkillsContainer } from "../../Containers/SkillsContainer"
+import { SpecialAbilitiesContainer } from "../../Containers/SpecialAbilitiesContainer"
+import { SpellsContainer } from "../../Containers/SpellsContainer"
+import { WikiContainer } from "../../Containers/WikiContainer"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { TabId } from "../../Utilities/LocationUtils"
+import { Imprint } from "../About/Imprint"
+import { LastChanges } from "../About/LastChanges"
+import { ThirdPartyLicenses } from "../About/ThirdPartyLicenses"
+import { Grouplist } from "../Groups/Grouplist"
+import { MainContent } from "../Universal/MainContent"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
 
 interface Props {
   id: TabId
@@ -40,8 +40,8 @@ interface Props {
 
 interface State {
   hasError?: {
-    error: Error;
-    info: any;
+    error: Error
+    info: any
   }
 }
 

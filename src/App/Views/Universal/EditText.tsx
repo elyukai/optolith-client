@@ -1,10 +1,10 @@
-import * as React from "react";
-import { fnullStr, List, notNullStr } from "../../../Data/List";
-import { fromMaybe, Just, Maybe } from "../../../Data/Maybe";
-import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers";
-import { classListMaybe } from "../../Utilities/CSS";
-import { IconButton } from "./IconButton";
-import { TextField } from "./TextField";
+import * as React from "react"
+import { fnullStr, List, notNullStr } from "../../../Data/List"
+import { fromMaybe, Just, Maybe } from "../../../Data/Maybe"
+import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers"
+import { classListMaybe } from "../../Utilities/CSS"
+import { IconButton } from "./IconButton"
+import { TextField } from "./TextField"
 
 export interface EditTextProps {
   autoFocus?: boolean

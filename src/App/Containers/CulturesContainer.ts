@@ -1,14 +1,14 @@
-import { connect } from "react-redux";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as CultureActions from "../Actions/CultureActions";
-import { setTab } from "../Actions/LocationActions";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getFilteredCultures } from "../Selectors/rcpSelectors";
-import { getCulturesFilterText, getCurrentCultureId } from "../Selectors/stateSelectors";
-import { getCulturesSortOrder, getCulturesVisibilityFilter } from "../Selectors/uisettingsSelectors";
-import { TabId } from "../Utilities/LocationUtils";
-import { CulturesSortOptions, CulturesVisibilityFilter } from "../Utilities/Raw/JSON/Config";
-import { Cultures, CulturesDispatchProps, CulturesOwnProps, CulturesStateProps } from "../Views/Cultures/Cultures";
+import { connect } from "react-redux"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as CultureActions from "../Actions/CultureActions"
+import { setTab } from "../Actions/LocationActions"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getFilteredCultures } from "../Selectors/rcpSelectors"
+import { getCulturesFilterText, getCurrentCultureId } from "../Selectors/stateSelectors"
+import { getCulturesSortOrder, getCulturesVisibilityFilter } from "../Selectors/uisettingsSelectors"
+import { TabId } from "../Utilities/LocationUtils"
+import { CulturesSortOptions, CulturesVisibilityFilter } from "../Utilities/Raw/JSON/Config"
+import { Cultures, CulturesDispatchProps, CulturesOwnProps, CulturesStateProps } from "../Views/Cultures/Cultures"
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: CulturesOwnProps): CulturesStateProps => ({

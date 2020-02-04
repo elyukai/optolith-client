@@ -1,5 +1,5 @@
-import { fromDefault } from "../../../../Data/Record";
-import { SocialStatusId } from "../../../Constants/Ids";
+import { fromDefault } from "../../../../Data/Record"
+import { SocialStatusId } from "../../../Constants/Ids"
 
 export interface SocialPrerequisite {
   "@@name": "SocialPrerequisite"

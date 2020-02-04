@@ -1,9 +1,9 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Record } from "../../../Data/Record";
-import { AttributeCombined } from "../../Models/View/AttributeCombined";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { HeaderValue, SheetHeader } from "./SheetHeader";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Record } from "../../../Data/Record"
+import { AttributeCombined } from "../../Models/View/AttributeCombined"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { HeaderValue, SheetHeader } from "./SheetHeader"
 
 export interface SheetProps {
   addHeaderInfo?: List<Record<HeaderValue>>

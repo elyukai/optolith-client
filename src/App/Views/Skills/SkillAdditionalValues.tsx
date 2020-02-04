@@ -1,6 +1,6 @@
-import * as React from "react";
-import { List, map, toArray } from "../../../Data/List";
-import { pipe_ } from "../../Utilities/pipe";
+import * as React from "react"
+import { List, map, toArray } from "../../../Data/List"
+import { pipe_ } from "../../Utilities/pipe"
 
 export interface AdditionalValue {
   className: string

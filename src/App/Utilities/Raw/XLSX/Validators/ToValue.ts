@@ -1,16 +1,16 @@
-import { Either, maybeToEither_ } from "../../../../../Data/Either";
-import { equals } from "../../../../../Data/Eq";
-import { fmap } from "../../../../../Data/Functor";
-import { inRangeN } from "../../../../../Data/Ix";
-import { Cons, flength, List, notNullStr, splitOn } from "../../../../../Data/List";
-import { bindF, ensure, fromMaybe, Just, liftM2, mapM, Maybe, maybe, Nothing } from "../../../../../Data/Maybe";
-import { fromList, OrderedSet } from "../../../../../Data/OrderedSet";
-import { show } from "../../../../../Data/Show";
-import { Pair } from "../../../../../Data/Tuple";
-import { isInNumEnum, isInStrEnum } from "../../../Enum";
-import { toFloat, toInt, toNatural } from "../../../NumberUtils";
-import { pipe } from "../../../pipe";
-import { Expect } from "../../Expect";
+import { Either, maybeToEither_ } from "../../../../../Data/Either"
+import { equals } from "../../../../../Data/Eq"
+import { fmap } from "../../../../../Data/Functor"
+import { inRangeN } from "../../../../../Data/Ix"
+import { Cons, flength, List, notNullStr, splitOn } from "../../../../../Data/List"
+import { bindF, ensure, fromMaybe, Just, liftM2, mapM, Maybe, maybe, Nothing } from "../../../../../Data/Maybe"
+import { fromList, OrderedSet } from "../../../../../Data/OrderedSet"
+import { show } from "../../../../../Data/Show"
+import { Pair } from "../../../../../Data/Tuple"
+import { isInNumEnum, isInStrEnum } from "../../../Enum"
+import { toFloat, toInt, toNatural } from "../../../NumberUtils"
+import { pipe } from "../../../pipe"
+import { Expect } from "../../Expect"
 
 export const mensureMap =
   (expected: string) =>

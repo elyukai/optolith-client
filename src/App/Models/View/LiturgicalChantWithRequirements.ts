@@ -1,8 +1,8 @@
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
-import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
-import { LiturgicalChant } from "../Wiki/LiturgicalChant";
-import { IncreasableWithRequirements } from "./viewTypeHelpers";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { pipe } from "../../Utilities/pipe"
+import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent"
+import { LiturgicalChant } from "../Wiki/LiturgicalChant"
+import { IncreasableWithRequirements } from "./viewTypeHelpers"
 
 export interface LiturgicalChantWithRequirements extends IncreasableWithRequirements {
     "@@name": "LiturgicalChantWithRequirements"

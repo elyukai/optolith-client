@@ -1,11 +1,11 @@
-import { ident } from "../../Data/Function";
-import { set } from "../../Data/Lens";
-import { Just, Maybe, Nothing } from "../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../Data/Record";
-import { SetTabAction } from "../Actions/LocationActions";
-import * as WikiActions from "../Actions/WikiActions";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { pipe } from "../Utilities/pipe";
+import { ident } from "../../Data/Function"
+import { set } from "../../Data/Lens"
+import { Just, Maybe, Nothing } from "../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../Data/Record"
+import { SetTabAction } from "../Actions/LocationActions"
+import * as WikiActions from "../Actions/WikiActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { pipe } from "../Utilities/pipe"
 
 type Action = SetTabAction
             | WikiActions.SetWikiCategory1Action

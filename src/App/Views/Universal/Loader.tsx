@@ -1,6 +1,6 @@
-import * as React from "react";
-import { Icon } from "./Icon";
-import { Text } from "./Text";
+import * as React from "react"
+import { Icon } from "./Icon"
+import { Text } from "./Text"
 
 interface Props {
   text?: string

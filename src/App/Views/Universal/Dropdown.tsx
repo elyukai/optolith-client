@@ -1,16 +1,16 @@
-import * as React from "react";
-import { not } from "../../../Data/Bool";
-import { equals } from "../../../Data/Eq";
-import { cons, elemF, filter, find, flength, fnull, intercalate, List, map, notNull, toArray } from "../../../Data/List";
-import { any, ensure, fromJust, fromMaybe, guardReplace, isJust, Just, Maybe, maybe, maybeToList, normalize, Nothing, or, orN } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { DropdownKey, DropdownOption } from "../../Models/View/DropdownOption";
-import { classListMaybe } from "../../Utilities/CSS";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { renderMaybe } from "../../Utilities/ReactUtils";
-import { DropdownItem } from "./DropdownItem";
-import { Label } from "./Label";
-import { Scroll } from "./Scroll";
+import * as React from "react"
+import { not } from "../../../Data/Bool"
+import { equals } from "../../../Data/Eq"
+import { cons, elemF, filter, find, flength, fnull, intercalate, List, map, notNull, toArray } from "../../../Data/List"
+import { any, ensure, fromJust, fromMaybe, guardReplace, isJust, Just, Maybe, maybe, maybeToList, normalize, Nothing, or, orN } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { DropdownKey, DropdownOption } from "../../Models/View/DropdownOption"
+import { classListMaybe } from "../../Utilities/CSS"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { renderMaybe } from "../../Utilities/ReactUtils"
+import { DropdownItem } from "./DropdownItem"
+import { Label } from "./Label"
+import { Scroll } from "./Scroll"
 
 const DOA = DropdownOption.A
 

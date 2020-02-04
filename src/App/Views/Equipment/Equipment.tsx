@@ -1,38 +1,38 @@
-import * as React from "react";
-import { notP } from "../../../Data/Bool";
-import { equals } from "../../../Data/Eq";
-import { fmap } from "../../../Data/Functor";
-import { any, cons, filter, List, map, notNull, toArray } from "../../../Data/List";
-import { bindF, elem, ensure, fromJust, fromMaybe, isJust, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../../Constants/Ids";
-import { ItemEditorContainer } from "../../Containers/ItemEditorContainer";
-import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { fromItemTemplate, Item } from "../../Models/Hero/Item";
-import { Purse } from "../../Models/Hero/Purse";
-import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { Aside } from "../Universal/Aside";
-import { BorderButton } from "../Universal/BorderButton";
-import { Dropdown } from "../Universal/Dropdown";
-import { ListView } from "../Universal/List";
-import { ListHeader } from "../Universal/ListHeader";
-import { ListHeaderTag } from "../Universal/ListHeaderTag";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { SearchField } from "../Universal/SearchField";
-import { Slidein } from "../Universal/Slidein";
-import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { EquipmentListItem } from "./EquipmentListItem";
-import { PurseAndTotals } from "./PurseAndTotals";
+import * as React from "react"
+import { notP } from "../../../Data/Bool"
+import { equals } from "../../../Data/Eq"
+import { fmap } from "../../../Data/Functor"
+import { any, cons, filter, List, map, notNull, toArray } from "../../../Data/List"
+import { bindF, elem, ensure, fromJust, fromMaybe, isJust, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../../Constants/Ids"
+import { ItemEditorContainer } from "../../Containers/ItemEditorContainer"
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { fromItemTemplate, Item } from "../../Models/Hero/Item"
+import { Purse } from "../../Models/Hero/Purse"
+import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { Aside } from "../Universal/Aside"
+import { BorderButton } from "../Universal/BorderButton"
+import { Dropdown } from "../Universal/Dropdown"
+import { ListView } from "../Universal/List"
+import { ListHeader } from "../Universal/ListHeader"
+import { ListHeaderTag } from "../Universal/ListHeaderTag"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { SearchField } from "../Universal/SearchField"
+import { Slidein } from "../Universal/Slidein"
+import { SortNames, SortOptions } from "../Universal/SortOptions"
+import { EquipmentListItem } from "./EquipmentListItem"
+import { PurseAndTotals } from "./PurseAndTotals"
 
 export interface EquipmentOwnProps {
   l10n: L10nRecord

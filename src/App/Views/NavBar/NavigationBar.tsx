@@ -1,30 +1,34 @@
-import { remote } from "electron";
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Maybe, maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { SettingsContainer } from "../../Containers/SettingsContainer";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { SubTab } from "../../Models/Hero/heroTypeHelpers";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { NavigationBarTabOptions } from "../../Models/View/NavigationBarTabOptions";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { TabId } from "../../Utilities/LocationUtils";
-import { signNeg } from "../../Utilities/NumberUtils";
-import { pipe } from "../../Utilities/pipe";
-import { AvatarWrapper } from "../Universal/AvatarWrapper";
-import { BorderButton } from "../Universal/BorderButton";
-import { IconButton } from "../Universal/IconButton";
-import { Text } from "../Universal/Text";
-import { TooltipToggle } from "../Universal/TooltipToggle";
-import { ApTooltip } from "./ApTooltip";
-import { NavigationBarBack } from "./NavigationBarBack";
-import { NavigationBarLeft } from "./NavigationBarLeft";
-import { NavigationBarRight } from "./NavigationBarRight";
-import { NavigationBarSubTabs } from "./NavigationBarSubTabs";
-import { NavigationBarTabs } from "./NavigationBarTabs";
-import { NavigationBarWrapper } from "./NavigationBarWrapper";
+import { remote } from "electron"
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Maybe, maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { SettingsContainer } from "../../Containers/SettingsContainer"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { SubTab } from "../../Models/Hero/heroTypeHelpers"
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
+import { NavigationBarTabOptions } from "../../Models/View/NavigationBarTabOptions"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { TabId } from "../../Utilities/LocationUtils"
+import { signNeg } from "../../Utilities/NumberUtils"
+import { pipe } from "../../Utilities/pipe"
+import { AvatarWrapper } from "../Universal/AvatarWrapper"
+import { BorderButton } from "../Universal/BorderButton"
+import { IconButton } from "../Universal/IconButton"
+import { Text } from "../Universal/Text"
+import { TooltipToggle } from "../Universal/TooltipToggle"
+import { ApTooltip } from "./ApTooltip"
+import { NavigationBarBack } from "./NavigationBarBack"
+import { NavigationBarLeft } from "./NavigationBarLeft"
+import { NavigationBarRight } from "./NavigationBarRight"
+import { NavigationBarSubTabs } from "./NavigationBarSubTabs"
+import { NavigationBarTabs } from "./NavigationBarTabs"
+import { NavigationBarWrapper } from "./NavigationBarWrapper"
+
+const toggleDevtools = () => {
+  remote.getCurrentWindow ().webContents.toggleDevTools ()
+}
 
 export interface NavigationBarOwnProps {
   mhero: Maybe<HeroModelRecord>
@@ -189,8 +193,4 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
              (msubtabs)}
     </>
   )
-}
-
-function toggleDevtools () {
-  remote.getCurrentWindow ().webContents.toggleDevTools ()
 }

@@ -1,28 +1,28 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { fmap } from "../../../Data/Functor";
-import { flength, imap, intercalate, isList, List, map } from "../../../Data/List";
-import { bindF, elem, ensure, fromJust, isJust, isNothing, Just, mapMaybe, Maybe, maybe, or } from "../../../Data/Maybe";
-import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { fst, isTuple, snd } from "../../../Data/Tuple";
-import { AttrId, CombatTechniqueId } from "../../Constants/Ids";
-import { EditItem } from "../../Models/Hero/EditItem";
-import { EditPrimaryAttributeDamageThreshold } from "../../Models/Hero/EditPrimaryAttributeDamageThreshold";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { Attribute } from "../../Models/Wiki/Attribute";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils";
-import { getLossLevelElements } from "../../Utilities/ItemUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { isString } from "../../Utilities/typeCheckUtils";
-import { Checkbox } from "../Universal/Checkbox";
-import { Dropdown } from "../Universal/Dropdown";
-import { Hr } from "../Universal/Hr";
-import { Label } from "../Universal/Label";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { fmap } from "../../../Data/Functor"
+import { flength, imap, intercalate, isList, List, map } from "../../../Data/List"
+import { bindF, elem, ensure, fromJust, isJust, isNothing, Just, mapMaybe, Maybe, maybe, or } from "../../../Data/Maybe"
+import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { fst, isTuple, snd } from "../../../Data/Tuple"
+import { AttrId, CombatTechniqueId } from "../../Constants/Ids"
+import { EditItem } from "../../Models/Hero/EditItem"
+import { EditPrimaryAttributeDamageThreshold } from "../../Models/Hero/EditPrimaryAttributeDamageThreshold"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { Attribute } from "../../Models/Wiki/Attribute"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils"
+import { getLossLevelElements } from "../../Utilities/ItemUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { isString } from "../../Utilities/typeCheckUtils"
+import { Checkbox } from "../Universal/Checkbox"
+import { Dropdown } from "../Universal/Dropdown"
+import { Hr } from "../Universal/Hr"
+import { Label } from "../Universal/Label"
+import { TextField } from "../Universal/TextField"
 
 export interface ItemEditorMeleeSectionProps {
   attributes: OrderedMap<string, Record<Attribute>>

@@ -1,13 +1,13 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
-import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
-import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { ActivatableRemoveList } from "../Activatable/ActivatableRemoveList";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Maybe } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
+import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { ActivatableRemoveList } from "../Activatable/ActivatableRemoveList"
 
 export interface ActiveListProps {
   filterText: string

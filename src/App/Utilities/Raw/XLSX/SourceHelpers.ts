@@ -1,7 +1,7 @@
-import { empty, List, map, replaceStrRx } from "../../../../Data/List";
-import { maybe } from "../../../../Data/Maybe";
-import { IdPrefixes } from "../../../Constants/IdPrefixes";
-import { prefixId } from "../../IDUtils";
+import { empty, List, map, replaceStrRx } from "../../../../Data/List"
+import { maybe } from "../../../../Data/Maybe"
+import { IdPrefixes } from "../../../Constants/IdPrefixes"
+import { prefixId } from "../../IDUtils"
 
 export const maybePrefix =
   (p: IdPrefixes) =>

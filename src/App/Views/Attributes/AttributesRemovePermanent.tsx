@@ -1,10 +1,10 @@
-import * as React from "react";
-import { fromJust, isJust, Just, Nothing } from "../../../Data/Maybe";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { toInt } from "../../Utilities/NumberUtils";
-import { isNaturalNumber } from "../../Utilities/RegexUtils";
-import { BasicInputDialog } from "../Universal/BasicInputDialog";
+import * as React from "react"
+import { fromJust, isJust, Just, Nothing } from "../../../Data/Maybe"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { toInt } from "../../Utilities/NumberUtils"
+import { isNaturalNumber } from "../../Utilities/RegexUtils"
+import { BasicInputDialog } from "../Universal/BasicInputDialog"
 
 export interface AttributesRemovePermanentProps {
   isOpen: boolean

@@ -1,9 +1,9 @@
-import * as React from "react";
-import { Just, Nothing } from "../../../../Data/Maybe";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { LabelBox } from "../../Universal/LabelBox";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Just, Nothing } from "../../../../Data/Maybe"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { LabelBox } from "../../Universal/LabelBox"
+import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   fatePointsModifier: number

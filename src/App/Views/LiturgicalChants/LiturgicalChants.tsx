@@ -1,35 +1,55 @@
-import * as React from "react";
-import { notEquals } from "../../../Data/Eq";
-import { fmap } from "../../../Data/Functor";
-import { List, mapAccumL, notNull, notNullStr, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, Just, Maybe, Nothing, or } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { Pair, snd } from "../../../Data/Tuple";
-import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { AttributeCombined } from "../../Models/View/AttributeCombined";
-import { BlessingCombined } from "../../Models/View/BlessingCombined";
-import { LiturgicalChantWithRequirements } from "../../Models/View/LiturgicalChantWithRequirements";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { LCBCA } from "../../Utilities/Increasable/liturgicalChantUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { ChantsSortOptions } from "../../Utilities/Raw/JSON/Config";
-import { BorderButton } from "../Universal/BorderButton";
-import { Checkbox } from "../Universal/Checkbox";
-import { ListView } from "../Universal/List";
-import { ListHeader } from "../Universal/ListHeader";
-import { ListHeaderTag } from "../Universal/ListHeaderTag";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { SearchField } from "../Universal/SearchField";
-import { Slidein } from "../Universal/Slidein";
-import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { LiturgicalChantsListItemActive } from "./LiturgicalChantsListItemActive";
-import { LiturgicalChantsListItemInactive } from "./LiturgicalChantsListItemInactive";
+import * as React from "react"
+import { notEquals } from "../../../Data/Eq"
+import { fmap } from "../../../Data/Functor"
+import { List, mapAccumL, notNull, notNullStr, toArray } from "../../../Data/List"
+import { bindF, ensure, fromMaybe, Just, Maybe, Nothing, or } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { Pair, snd } from "../../../Data/Tuple"
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { AttributeCombined } from "../../Models/View/AttributeCombined"
+import { BlessingCombined } from "../../Models/View/BlessingCombined"
+import { LiturgicalChantWithRequirements } from "../../Models/View/LiturgicalChantWithRequirements"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { LCBCA } from "../../Utilities/Increasable/liturgicalChantUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { ChantsSortOptions } from "../../Utilities/Raw/JSON/Config"
+import { BorderButton } from "../Universal/BorderButton"
+import { Checkbox } from "../Universal/Checkbox"
+import { ListView } from "../Universal/List"
+import { ListHeader } from "../Universal/ListHeader"
+import { ListHeaderTag } from "../Universal/ListHeaderTag"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { SearchField } from "../Universal/SearchField"
+import { Slidein } from "../Universal/Slidein"
+import { SortNames, SortOptions } from "../Universal/SortOptions"
+import { LiturgicalChantsListItemActive } from "./LiturgicalChantsListItemActive"
+import { LiturgicalChantsListItemInactive } from "./LiturgicalChantsListItemInactive"
+
+const isTopMarginNeeded =
+  (sortOrder: string) =>
+  (curr: Combined) =>
+  (mprev: Maybe<Combined>) =>
+    pipe_ (
+      mprev,
+      bindF (ensure (
+        () => sortOrder === "group" && LCBCA.active (curr)
+      )),
+      fmap (prev =>
+             (!BlessingCombined.is (prev) && BlessingCombined.is (curr))
+             || (BlessingCombined.is (prev) && !BlessingCombined.is (curr))
+             || (
+               !BlessingCombined.is (prev)
+               && !BlessingCombined.is (curr)
+               && notEquals (LCBCA.gr (prev)) (LCBCA.gr (curr))
+             )),
+      or
+    )
 
 export interface LiturgicalChantsOwnProps {
   l10n: L10nRecord
@@ -305,23 +325,3 @@ export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
     </Page>
   )
 }
-
-const isTopMarginNeeded =
-  (sortOrder: string) =>
-  (curr: Combined) =>
-  (mprev: Maybe<Combined>) =>
-    pipe_ (
-      mprev,
-      bindF (ensure (
-        () => sortOrder === "group" && LCBCA.active (curr)
-      )),
-      fmap (prev =>
-             (!BlessingCombined.is (prev) && BlessingCombined.is (curr))
-             || (BlessingCombined.is (prev) && !BlessingCombined.is (curr))
-             || (
-               !BlessingCombined.is (prev)
-               && !BlessingCombined.is (curr)
-               && notEquals (LCBCA.gr (prev)) (LCBCA.gr (curr))
-             )),
-      or
-    )

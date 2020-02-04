@@ -6,17 +6,17 @@
  * @since 1.1.0
  */
 
-import { fmap } from "../../../Data/Functor";
-import { append, elemF, empty, imap, List } from "../../../Data/List";
-import { alt, guard, isJust, Nothing, or, then } from "../../../Data/Maybe";
-import { foldr } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { toActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
-import { pipe, pipe_ } from "../pipe";
+import { fmap } from "../../../Data/Functor"
+import { append, elemF, empty, imap, List } from "../../../Data/List"
+import { alt, guard, isJust, Nothing, or, then } from "../../../Data/Maybe"
+import { foldr } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { toActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
+import { pipe, pipe_ } from "../pipe"
 
 const ADA = ActivatableDependent.A
 const AAOA = ActivatableActivationOptions.A

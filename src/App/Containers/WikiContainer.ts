@@ -1,11 +1,11 @@
-import { connect } from "react-redux";
-import { Action, Dispatch } from "redux";
-import { fromJust, isJust, Maybe } from "../../Data/Maybe";
-import { setWikiCategory1, setWikiCategory2, setWikiCombatTechniquesGroup, setWikiFilter, setWikiFilterAll, setWikiItemTemplatesGroup, setWikiLiturgicalChantsGroup, setWikiProfessionsGroup, setWikiSkillsGroup, setWikiSpecialAbilitiesGroup, setWikiSpellsGroup } from "../Actions/WikiActions";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getWikiCombatTechniquesGroup, getWikiFilterText, getWikiItemTemplatesGroup, getWikiLiturgicalChantsGroup, getWikiMainCategory, getWikiProfessionsGroup, getWikiSkillsGroup, getWikiSpecialAbilitiesGroup, getWikiSpellsGroup } from "../Selectors/stateSelectors";
-import { getPreparedAdvantages, getPreparedBlessings, getPreparedCantrips, getPreparedCombatTechniques, getPreparedCultures, getPreparedDisadvantages, getPreparedItemTemplates, getPreparedLiturgicalChants, getPreparedProfessions, getPreparedRaces, getPreparedSkills, getPreparedSpecialAbilities, getPreparedSpells, getSpecialAbilityGroups } from "../Selectors/wikiSelectors";
-import { Wiki, WikiDispatchProps, WikiOwnProps, WikiStateProps } from "../Views/Wiki/Wiki";
+import { connect } from "react-redux"
+import { Action, Dispatch } from "redux"
+import { fromJust, isJust, Maybe } from "../../Data/Maybe"
+import { setWikiCategory1, setWikiCategory2, setWikiCombatTechniquesGroup, setWikiFilter, setWikiFilterAll, setWikiItemTemplatesGroup, setWikiLiturgicalChantsGroup, setWikiProfessionsGroup, setWikiSkillsGroup, setWikiSpecialAbilitiesGroup, setWikiSpellsGroup } from "../Actions/WikiActions"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getWikiCombatTechniquesGroup, getWikiFilterText, getWikiItemTemplatesGroup, getWikiLiturgicalChantsGroup, getWikiMainCategory, getWikiProfessionsGroup, getWikiSkillsGroup, getWikiSpecialAbilitiesGroup, getWikiSpellsGroup } from "../Selectors/stateSelectors"
+import { getPreparedAdvantages, getPreparedBlessings, getPreparedCantrips, getPreparedCombatTechniques, getPreparedCultures, getPreparedDisadvantages, getPreparedItemTemplates, getPreparedLiturgicalChants, getPreparedProfessions, getPreparedRaces, getPreparedSkills, getPreparedSpecialAbilities, getPreparedSpells, getSpecialAbilityGroups } from "../Selectors/wikiSelectors"
+import { Wiki, WikiDispatchProps, WikiOwnProps, WikiStateProps } from "../Views/Wiki/Wiki"
 
 const mapStateToProps = (state: AppStateRecord, props: WikiOwnProps): WikiStateProps => ({
   filterText: getWikiFilterText (state),

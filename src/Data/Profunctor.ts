@@ -4,13 +4,18 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "../App/Utilities/pipe";
-import { contramap } from "./Contravariant";
-import { first } from "./Either";
-import { fmap } from "./Functor";
-import { isMarket, Market } from "./Market";
-import { showP } from "./Show";
-import { isTagged, Tagged } from "./Tagged";
+import { pipe } from "../App/Utilities/pipe"
+import { contramap } from "./Contravariant"
+import { first } from "./Either"
+import { fmap } from "./Functor"
+import { isMarket, Market } from "./Market"
+import { showP } from "./Show"
+import { isTagged, Tagged } from "./Tagged"
+
+const instanceErrorMsg =
+  (fname: string) =>
+  (x: any) =>
+    `${fname}: missing instance of Profunctor\n${showP (x)}`
 
 export type Profunctor<B, C> = Market<any, any, B, C>
                              | Tagged<B, C>
@@ -81,8 +86,3 @@ export const rmap =
 
     throw new TypeError (instanceErrorMsg ("rmap") (x))
   }
-
-const instanceErrorMsg =
-  (fname: string) =>
-  (x: any) =>
-    `${fname}: missing instance of Profunctor\n${showP (x)}`

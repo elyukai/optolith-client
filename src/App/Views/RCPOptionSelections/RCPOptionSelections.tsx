@@ -1,50 +1,50 @@
-import * as React from "react";
-import { not } from "../../../Data/Bool";
-import { notEquals } from "../../../Data/Eq";
-import { cnst } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { flength, List, notNullStr } from "../../../Data/List";
-import { bindF, ensure, fromJust, isJust, isNothing, Just, mapMaybe, Maybe, maybe, maybeToNullable, maybe_, Nothing } from "../../../Data/Maybe";
-import { add, dec, gt, inc, subtract } from "../../../Data/Num";
-import { adjust, alter, lookup, lookupF, OrderedMap, size } from "../../../Data/OrderedMap";
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { first, fst, Pair, second, snd } from "../../../Data/Tuple";
-import { sel2 } from "../../../Data/Tuple/Select";
-import { ProfessionId } from "../../Constants/Ids";
-import { Selections as SelectionsInterface } from "../../Models/Hero/heroTypeHelpers";
-import { Rules } from "../../Models/Hero/Rules";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { Attribute } from "../../Models/Wiki/Attribute";
-import { Culture } from "../../Models/Wiki/Culture";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Profession } from "../../Models/Wiki/Profession";
-import { CombatTechniquesSelection } from "../../Models/Wiki/professionSelections/CombatTechniquesSelection";
-import { ProfessionSelections } from "../../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
-import { CombatTechniquesSecondSelection } from "../../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
-import { ProfessionVariant } from "../../Models/Wiki/ProfessionVariant";
-import { Race } from "../../Models/Wiki/Race";
-import { Skill } from "../../Models/Wiki/Skill";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers";
-import { translate } from "../../Utilities/I18n";
-import { getAllAdjustmentSelections } from "../../Utilities/mergeRcpAdjustmentSelections";
-import { sign } from "../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { getBuyScriptElement, getGuildMageUnfamiliarSpellSelectionElement, getMainScriptSelectionElement, getMotherTongueSelectionElement } from "../../Utilities/rcpAdjustmentSelectionUtils";
-import { getSelPair } from "../../Utilities/RCPSelectionsUtils";
-import { BorderButton } from "../Universal/BorderButton";
-import { Checkbox } from "../Universal/Checkbox";
-import { Dropdown } from "../Universal/Dropdown";
-import { Scroll } from "../Universal/Scroll";
-import { Slidein } from "../Universal/Slidein";
-import { CantripSelectionList, isCantripsSelectionValid } from "./CantripSelectionList";
-import { CombatTechniqueSelectionList, getFirstCombatTechniques, getSecondCombatTechniques, isFirstCombatTechniqueSelectionValid, isSecondCombatTechniqueSelectionValid } from "./CombatTechniqueSelectionList";
-import { CursesSelectionList, isCursesSelectionValid } from "./CursesSelectionList";
-import { isLanguagesScriptsSelectionValid, LanguagesScriptsSelectionLists } from "./LanguagesScriptsSelectionLists";
-import { isSkillSelectionValid, SkillSelectionList } from "./SkillSelectionList";
-import { isSkillSpecializationSelectionValid, SkillSpecializationSelectionList } from "./SkillSpecializationSelectionList";
-import { isTerrainKnowledgeSelectionValid, TerrainKnowledgeSelectionList } from "./TerrainKnowledgeSelectionList";
+import * as React from "react"
+import { not } from "../../../Data/Bool"
+import { notEquals } from "../../../Data/Eq"
+import { cnst } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { flength, List, notNullStr } from "../../../Data/List"
+import { bindF, ensure, fromJust, isJust, isNothing, Just, mapMaybe, Maybe, maybe, maybeToNullable, maybe_, Nothing } from "../../../Data/Maybe"
+import { add, dec, gt, inc, subtract } from "../../../Data/Num"
+import { adjust, alter, lookup, lookupF, OrderedMap, size } from "../../../Data/OrderedMap"
+import { OrderedSet } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { first, fst, Pair, second, snd } from "../../../Data/Tuple"
+import { sel2 } from "../../../Data/Tuple/Select"
+import { ProfessionId } from "../../Constants/Ids"
+import { Selections as SelectionsInterface } from "../../Models/Hero/heroTypeHelpers"
+import { Rules } from "../../Models/Hero/Rules"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { Attribute } from "../../Models/Wiki/Attribute"
+import { Culture } from "../../Models/Wiki/Culture"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { Profession } from "../../Models/Wiki/Profession"
+import { CombatTechniquesSelection } from "../../Models/Wiki/professionSelections/CombatTechniquesSelection"
+import { ProfessionSelections } from "../../Models/Wiki/professionSelections/ProfessionAdjustmentSelections"
+import { CombatTechniquesSecondSelection } from "../../Models/Wiki/professionSelections/SecondCombatTechniquesSelection"
+import { ProfessionVariant } from "../../Models/Wiki/ProfessionVariant"
+import { Race } from "../../Models/Wiki/Race"
+import { Skill } from "../../Models/Wiki/Skill"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers"
+import { translate } from "../../Utilities/I18n"
+import { getAllAdjustmentSelections } from "../../Utilities/mergeRcpAdjustmentSelections"
+import { sign } from "../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { getBuyScriptElement, getGuildMageUnfamiliarSpellSelectionElement, getMainScriptSelectionElement, getMotherTongueSelectionElement } from "../../Utilities/rcpAdjustmentSelectionUtils"
+import { getSelPair } from "../../Utilities/RCPSelectionsUtils"
+import { BorderButton } from "../Universal/BorderButton"
+import { Checkbox } from "../Universal/Checkbox"
+import { Dropdown } from "../Universal/Dropdown"
+import { Scroll } from "../Universal/Scroll"
+import { Slidein } from "../Universal/Slidein"
+import { CantripSelectionList, isCantripsSelectionValid } from "./CantripSelectionList"
+import { CombatTechniqueSelectionList, getFirstCombatTechniques, getSecondCombatTechniques, isFirstCombatTechniqueSelectionValid, isSecondCombatTechniqueSelectionValid } from "./CombatTechniqueSelectionList"
+import { CursesSelectionList, isCursesSelectionValid } from "./CursesSelectionList"
+import { isLanguagesScriptsSelectionValid, LanguagesScriptsSelectionLists } from "./LanguagesScriptsSelectionLists"
+import { isSkillSelectionValid, SkillSelectionList } from "./SkillSelectionList"
+import { isSkillSpecializationSelectionValid, SkillSpecializationSelectionList } from "./SkillSpecializationSelectionList"
+import { isTerrainKnowledgeSelectionValid, TerrainKnowledgeSelectionList } from "./TerrainKnowledgeSelectionList"
 
 export interface RCPOptionSelectionsProps {
   l10n: L10nRecord
@@ -93,6 +93,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
   const [ scriptsActive, setScripts ] =
     React.useState<OrderedMap<number, number>> (OrderedMap.empty)
   const [ skillsActive, setSkills ] = React.useState<OrderedMap<string, number>> (OrderedMap.empty)
+
   // first: selection id, second: user input
   const [ specialization, setSpecialization ] =
     React.useState<Pair<Maybe<number>, string>> (Pair (Nothing, ""))

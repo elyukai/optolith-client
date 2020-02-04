@@ -1,10 +1,10 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { fromMaybe, Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translateP } from "../../Utilities/I18n";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { fromMaybe, Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translateP } from "../../Utilities/I18n"
 
 export interface APSpentOnAdvDisadvProps {
   ap: Record<AdventurePointsCategories>

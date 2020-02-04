@@ -1,6 +1,6 @@
-import { List } from "../../../../Data/List";
-import { fromDefault, Record } from "../../../../Data/Record";
-import { AnyProfessionSelection, ProfessionSelectionIds } from "../wikiTypeHelpers";
+import { List } from "../../../../Data/List"
+import { fromDefault, Record } from "../../../../Data/Record"
+import { AnyProfessionSelection, ProfessionSelectionIds } from "../wikiTypeHelpers"
 
 export interface SpecializationSelection {
   "@@name": "SpecializationSelection"

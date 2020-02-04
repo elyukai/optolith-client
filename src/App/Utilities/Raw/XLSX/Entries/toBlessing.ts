@@ -1,14 +1,14 @@
-import { Nothing } from "../../../../../Data/Maybe";
-import { BlessedTradition } from "../../../../Constants/Groups";
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { Blessing } from "../../../../Models/Wiki/Blessing";
-import { prefixId } from "../../../IDUtils";
-import { mergeRowsById } from "../MergeRows";
-import { modifyNegIntNoBreak } from "../SourceHelpers";
-import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapNonEmptyString, mensureMapNumEnumList } from "../Validators/ToValue";
-import { toErrata } from "./Sub/toErrata";
-import { toSourceLinks } from "./Sub/toSourceLinks";
+import { Nothing } from "../../../../../Data/Maybe"
+import { BlessedTradition } from "../../../../Constants/Groups"
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { Blessing } from "../../../../Models/Wiki/Blessing"
+import { prefixId } from "../../../IDUtils"
+import { mergeRowsById } from "../MergeRows"
+import { modifyNegIntNoBreak } from "../SourceHelpers"
+import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapNonEmptyString, mensureMapNumEnumList } from "../Validators/ToValue"
+import { toErrata } from "./Sub/toErrata"
+import { toSourceLinks } from "./Sub/toSourceLinks"
 
 export const toBlessing =
   mergeRowsById

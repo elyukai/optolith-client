@@ -1,4 +1,4 @@
-import { ReducerM } from "./combineReducerRecord";
+import { ReducerM } from "./combineReducerRecord"
 
 interface Action {
   type: any
@@ -23,7 +23,7 @@ interface ReduceReducers {
   <S, A extends Action>(
     combinedReducer: Reducer<S, A>,
     ...crossSlicereducers: CrossSliceReducer<S, A>[]
-  ): (previous: S | undefined, action: A) => S,
+  ): (previous: S | undefined, action: A) => S
   <S, A extends Action>(
     combinedReducer: NoInitialReducer<S, A>,
     ...crossSlicereducers: CrossSliceNoInitialReducer<S, A>[]

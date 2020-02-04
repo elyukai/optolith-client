@@ -1,16 +1,16 @@
-import { fmap } from "../../../Data/Functor";
-import { consF, find, foldl, List } from "../../../Data/List";
-import { altF, bind, bindF, elemF, ensure, fromMaybe, Just, liftM2, mapMaybe, Maybe } from "../../../Data/Maybe";
-import { alter, OrderedMap } from "../../../Data/OrderedMap";
-import { isRecord, Record } from "../../../Data/Record";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
-import { ActivatableDependency } from "../../Models/Hero/heroTypeHelpers";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
-import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
-import { pipe } from "../pipe";
+import { fmap } from "../../../Data/Functor"
+import { consF, find, foldl, List } from "../../../Data/List"
+import { altF, bind, bindF, elemF, ensure, fromMaybe, Just, liftM2, mapMaybe, Maybe } from "../../../Data/Maybe"
+import { alter, OrderedMap } from "../../../Data/OrderedMap"
+import { isRecord, Record } from "../../../Data/Record"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject"
+import { ActivatableDependency } from "../../Models/Hero/heroTypeHelpers"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
+import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
+import { pipe } from "../pipe"
 
 const AAL = Advantage.AL
 const SOA = SelectOption.A

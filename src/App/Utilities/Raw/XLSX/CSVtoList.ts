@@ -1,13 +1,13 @@
-import { bindF, Either, Left, maybeToEither, Right } from "../../../../Data/Either";
-import { equals } from "../../../../Data/Eq";
-import { ident } from "../../../../Data/Function";
-import { fmap } from "../../../../Data/Functor";
-import { any, cons, empty, filter, flength, head, ifilter, ifoldr, imap, lines, List, map, notNull, notNullStr, replaceStr, splitOn, uncons, zip } from "../../../../Data/List";
-import { ensure, mapMaybe } from "../../../../Data/Maybe";
-import { fromList, OrderedMap } from "../../../../Data/OrderedMap";
-import { show } from "../../../../Data/Show";
-import { fst, Pair, second, snd } from "../../../../Data/Tuple";
-import { pipe, pipe_ } from "../../pipe";
+import { bindF, Either, Left, maybeToEither, Right } from "../../../../Data/Either"
+import { equals } from "../../../../Data/Eq"
+import { ident } from "../../../../Data/Function"
+import { fmap } from "../../../../Data/Functor"
+import { any, cons, empty, filter, flength, head, ifilter, ifoldr, imap, lines, List, map, notNull, notNullStr, replaceStr, splitOn, uncons, zip } from "../../../../Data/List"
+import { ensure, mapMaybe } from "../../../../Data/Maybe"
+import { fromList, OrderedMap } from "../../../../Data/OrderedMap"
+import { show } from "../../../../Data/Show"
+import { fst, Pair, second, snd } from "../../../../Data/Tuple"
+import { pipe, pipe_ } from "../../pipe"
 
 // const file = xlsx.readFile(`${dataSrcPath}TDE5.xlsx`);
 // const allWorksheets = file.SheetNames.reduce((m, name) => {
@@ -21,6 +21,25 @@ export type Sheet = List<Row>
 export const CsvColumnDelimiter = ";;"
 
 const emptyColRegex = /(?:^(?:Spalte|Column)\d+$)|(?:^_)|(?:^$)/u
+
+const unescapeStr =
+  (x: string) => {
+    const res = /^"(?<content>.+)"$/u .exec (x)
+
+    if (res !== null && res .groups !== undefined && typeof res .groups .content === "string") {
+      return replaceStr ("\"\"") ("\"") (res .groups .content)
+    }
+
+    return x
+  }
+
+const decodeLF = replaceStr ("\\n") ("\n")
+
+const decode =
+  pipe (
+    ensure<Pair<string, string>> (pipe (snd, notNullStr)),
+    fmap (second (pipe (unescapeStr, decodeLF)))
+  )
 
 /**
  * Converts a CSV string into a list of entries. If `check` is `True`, the line
@@ -81,23 +100,4 @@ export const csvToList =
                           (Right (empty))
                           (body)
           })
-  )
-
-const unescapeStr =
-  (x: string) => {
-    const res = /^"(?<content>.+)"$/u .exec (x)
-
-    if (res !== null && res .groups !== undefined && typeof res .groups .content === "string") {
-      return replaceStr ("\"\"") ("\"") (res .groups .content)
-    }
-
-    return x
-  }
-
-const decodeLF = replaceStr ("\\n") ("\n")
-
-const decode =
-  pipe (
-    ensure<Pair<string, string>> (pipe (snd, notNullStr)),
-    fmap (second (pipe (unescapeStr, decodeLF)))
   )

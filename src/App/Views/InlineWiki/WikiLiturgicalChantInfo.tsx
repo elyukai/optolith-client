@@ -1,25 +1,25 @@
-import * as React from "react";
-import { map } from "../../../Data/List";
-import { joinMaybeList, Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { pipe_ } from "../../Utilities/pipe";
-import { WikiCastingTime } from "./Elements/WikiCastingTime";
-import { WikiCost } from "./Elements/WikiCost";
-import { WikiDuration } from "./Elements/WikiDuration";
-import { WikiEffect } from "./Elements/WikiEffect";
-import { getExtensionsForEntry, WikiExtensions } from "./Elements/WikiExtensions";
-import { WikiImprovementCost } from "./Elements/WikiImprovementCost";
-import { WikiLiturgicalChantTraditions } from "./Elements/WikiLiturgicalChantTraditions";
-import { WikiRange } from "./Elements/WikiRange";
-import { WikiSkillCheck } from "./Elements/WikiSkillCheck";
-import { WikiSource } from "./Elements/WikiSource";
-import { WikiTargetCategory } from "./Elements/WikiTargetCategory";
-import { WikiBoxTemplate } from "./WikiBoxTemplate";
+import * as React from "react"
+import { map } from "../../../Data/List"
+import { joinMaybeList, Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { pipe_ } from "../../Utilities/pipe"
+import { WikiCastingTime } from "./Elements/WikiCastingTime"
+import { WikiCost } from "./Elements/WikiCost"
+import { WikiDuration } from "./Elements/WikiDuration"
+import { WikiEffect } from "./Elements/WikiEffect"
+import { getExtensionsForEntry, WikiExtensions } from "./Elements/WikiExtensions"
+import { WikiImprovementCost } from "./Elements/WikiImprovementCost"
+import { WikiLiturgicalChantTraditions } from "./Elements/WikiLiturgicalChantTraditions"
+import { WikiRange } from "./Elements/WikiRange"
+import { WikiSkillCheck } from "./Elements/WikiSkillCheck"
+import { WikiSource } from "./Elements/WikiSource"
+import { WikiTargetCategory } from "./Elements/WikiTargetCategory"
+import { WikiBoxTemplate } from "./WikiBoxTemplate"
 
 export interface WikiLiturgicalChantInfoProps {
   l10n: L10nRecord

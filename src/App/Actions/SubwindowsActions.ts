@@ -1,10 +1,10 @@
-import * as ActionTypes from "../Constants/ActionTypes";
-import { EnergyId } from "../Constants/Ids";
+import * as ActionTypes from "../Constants/ActionTypes"
+import { EnergyId } from "../Constants/Ids"
 
 export interface OpenEditPermanentEnergyAction {
   type: ActionTypes.OPEN_EDIT_PERMANENT_ENERGY
   payload: {
-    energy: EnergyId;
+    energy: EnergyId
   }
 }
 
@@ -27,7 +27,7 @@ export const closeEditPermanentEnergy = (): CloseEditPermanentEnergyAction => ({
 export interface OpenAddPermanentEnergyLossAction {
   type: ActionTypes.OPEN_ADD_PERMANENT_ENERGY_LOSS
   payload: {
-    energy: EnergyId;
+    energy: EnergyId
   }
 }
 

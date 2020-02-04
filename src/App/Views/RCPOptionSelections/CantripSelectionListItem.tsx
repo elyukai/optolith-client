@@ -1,9 +1,9 @@
-import * as React from "react";
-import { member, notMember, OrderedSet, size } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { Cantrip } from "../../Models/Wiki/Cantrip";
-import { CantripsSelection } from "../../Models/Wiki/professionSelections/CantripsSelection";
-import { Checkbox } from "../Universal/Checkbox";
+import * as React from "react"
+import { member, notMember, OrderedSet, size } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { Cantrip } from "../../Models/Wiki/Cantrip"
+import { CantripsSelection } from "../../Models/Wiki/professionSelections/CantripsSelection"
+import { Checkbox } from "../Universal/Checkbox"
 
 const CSA = CantripsSelection.A
 

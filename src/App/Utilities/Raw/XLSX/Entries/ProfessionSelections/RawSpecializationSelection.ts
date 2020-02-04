@@ -1,7 +1,7 @@
-import { ProfessionSelectionIds } from "../../../../../Models/Wiki/wikiTypeHelpers";
-import { prefixSkill } from "../../../../IDUtils";
-import { exactR, naturalNumberU } from "../../../../RegexUtils";
-import { AnyRawProfessionSelection } from "../rawTypeHelpers";
+import { ProfessionSelectionIds } from "../../../../../Models/Wiki/wikiTypeHelpers"
+import { prefixSkill } from "../../../../IDUtils"
+import { exactR, naturalNumberU } from "../../../../RegexUtils"
+import { AnyRawProfessionSelection } from "../rawTypeHelpers"
 
 export interface RawSpecializationSelection {
   id: ProfessionSelectionIds
@@ -9,7 +9,7 @@ export interface RawSpecializationSelection {
 }
 
 const skillId =
-  new RegExp (exactR (prefixSkill (naturalNumberU)))
+  new RegExp (exactR (prefixSkill (naturalNumberU)), "u")
 
 export const isSkillId = (x: string) => skillId .test (x)
 
@@ -18,8 +18,8 @@ export const isRawSpecializationSelection =
     obj.id === ProfessionSelectionIds.SPECIALIZATION
     && (
       // @ts-ignore
-      typeof obj.sid === "string" && isSkillId (obj.sid)
+      (typeof obj.sid === "string" && isSkillId (obj.sid))
 
       // @ts-ignore
-      || Array.isArray (obj.sid) && obj.sid .every (isSkillId)
+      || (Array.isArray (obj.sid) && (obj.sid as any[]) .every (isSkillId))
     )

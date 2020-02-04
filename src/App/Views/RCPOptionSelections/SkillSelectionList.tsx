@@ -1,18 +1,18 @@
-import * as React from "react";
-import { fmap } from "../../../Data/Functor";
-import { List, map, subscriptF, toArray } from "../../../Data/List";
-import { fromMaybe } from "../../../Data/Maybe";
-import { elems, OrderedMap, sum } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Pair } from "../../../Data/Tuple";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { SkillsSelection } from "../../Models/Wiki/professionSelections/SkillsSelection";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { translate, translateP } from "../../Utilities/I18n";
-import { pipe_ } from "../../Utilities/pipe";
-import { renderMaybe } from "../../Utilities/ReactUtils";
-import { sortRecordsByName } from "../../Utilities/sortBy";
-import { SkillSelectionListItem } from "./SkillSelectionListItem";
+import * as React from "react"
+import { fmap } from "../../../Data/Functor"
+import { List, map, subscriptF, toArray } from "../../../Data/List"
+import { fromMaybe } from "../../../Data/Maybe"
+import { elems, OrderedMap, sum } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { Pair } from "../../../Data/Tuple"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { SkillsSelection } from "../../Models/Wiki/professionSelections/SkillsSelection"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { translate, translateP } from "../../Utilities/I18n"
+import { pipe_ } from "../../Utilities/pipe"
+import { renderMaybe } from "../../Utilities/ReactUtils"
+import { sortRecordsByName } from "../../Utilities/sortBy"
+import { SkillSelectionListItem } from "./SkillSelectionListItem"
 
 const WA = WikiModel.A
 const SSA = SkillsSelection.A

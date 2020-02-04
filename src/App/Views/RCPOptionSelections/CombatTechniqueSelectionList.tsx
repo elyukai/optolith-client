@@ -1,19 +1,19 @@
-import * as React from "react";
-import { elemF, filter, List, map, subscript, toArray } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
-import { elems } from "../../../Data/OrderedMap";
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { Tuple } from "../../../Data/Tuple";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { CombatTechniquesSelection } from "../../Models/Wiki/professionSelections/CombatTechniquesSelection";
-import { CombatTechniquesSecondSelection } from "../../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { translate, translateP } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { renderMaybe } from "../../Utilities/ReactUtils";
-import { CombatTechniqueSelectionListItem } from "./CombatTechniqueSelectionListItem";
+import * as React from "react"
+import { elemF, filter, List, map, subscript, toArray } from "../../../Data/List"
+import { Maybe } from "../../../Data/Maybe"
+import { elems } from "../../../Data/OrderedMap"
+import { OrderedSet } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { Tuple } from "../../../Data/Tuple"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { CombatTechniquesSelection } from "../../Models/Wiki/professionSelections/CombatTechniquesSelection"
+import { CombatTechniquesSecondSelection } from "../../Models/Wiki/professionSelections/SecondCombatTechniquesSelection"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { translate, translateP } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { renderMaybe } from "../../Utilities/ReactUtils"
+import { CombatTechniqueSelectionListItem } from "./CombatTechniqueSelectionListItem"
 
 const WA = WikiModel.A
 const CTA = CombatTechnique.A

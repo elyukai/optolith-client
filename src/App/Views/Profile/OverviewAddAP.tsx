@@ -1,11 +1,11 @@
-import * as React from "react";
-import { fromJust, isJust } from "../../../Data/Maybe";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { toInt } from "../../Utilities/NumberUtils";
-import { isInteger, isNaturalNumber } from "../../Utilities/RegexUtils";
-import { Dialog } from "../Universal/Dialog";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { fromJust, isJust } from "../../../Data/Maybe"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { toInt } from "../../Utilities/NumberUtils"
+import { isInteger, isNaturalNumber } from "../../Utilities/RegexUtils"
+import { Dialog } from "../Universal/Dialog"
+import { TextField } from "../Universal/TextField"
 
 interface OverviewAddAPProps {
   l10n: L10nRecord

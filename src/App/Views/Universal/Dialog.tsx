@@ -1,15 +1,15 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { connect } from "react-redux";
-import { List, notNullStrUndef } from "../../../Data/List";
-import { guardReplace, Just, Maybe } from "../../../Data/Maybe";
-import { abs, max } from "../../../Data/Num";
-import { AppStateRecord } from "../../Reducers/appReducer";
-import { getTheme } from "../../Selectors/uisettingsSelectors";
-import { classListMaybe } from "../../Utilities/CSS";
-import { Theme } from "../../Utilities/Raw/JSON/Config";
-import { DialogButtonProps } from "./DialogButton";
-import { DialogButtons } from "./DialogButtons";
+import * as React from "react"
+import * as ReactDOM from "react-dom"
+import { connect } from "react-redux"
+import { List, notNullStrUndef } from "../../../Data/List"
+import { guardReplace, Just, Maybe } from "../../../Data/Maybe"
+import { abs, max } from "../../../Data/Num"
+import { AppStateRecord } from "../../Reducers/appReducer"
+import { getTheme } from "../../Selectors/uisettingsSelectors"
+import { classListMaybe } from "../../Utilities/CSS"
+import { Theme } from "../../Utilities/Raw/JSON/Config"
+import { DialogButtonProps } from "./DialogButton"
+import { DialogButtons } from "./DialogButtons"
 
 const modals_root = document.querySelector ("#modals-root")
 
@@ -79,9 +79,9 @@ export const DialogComp: React.FC<Props> = props => {
   )
 
   const contentStyle: React.CSSProperties = buttons.length === 0 ? { paddingBottom: 26 } : {}
-  const height_diff_base = 77;
-  const height_diff_add = 33;
-  const padding_base = 55;
+  const height_diff_base = 77
+  const height_diff_add = 33
+  const padding_base = 55
   const button_count = buttons .length
   const more_button_space = max (0) (button_count - 1) * height_diff_add
   const height_diff = button_count > 2 ? height_diff_base - more_button_space : height_diff_base

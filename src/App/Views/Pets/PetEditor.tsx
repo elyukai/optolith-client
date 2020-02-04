@@ -1,20 +1,26 @@
-import * as React from "react";
-import { fmap } from "../../../Data/Functor";
-import { fromJust, isJust, isNothing, Maybe } from "../../../Data/Maybe";
-import { lookupF } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { AttrId } from "../../Constants/Ids";
-import { EditPet } from "../../Models/Hero/EditPet";
-import { Attribute } from "../../Models/Wiki/Attribute";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { WikiModel } from "../../Models/Wiki/WikiModel";
-import { translate } from "../../Utilities/I18n";
-import { pipe } from "../../Utilities/pipe";
-import { AvatarChange } from "../Universal/AvatarChange";
-import { AvatarWrapper } from "../Universal/AvatarWrapper";
-import { BorderButton } from "../Universal/BorderButton";
-import { Slidein } from "../Universal/Slidein";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { fmap } from "../../../Data/Functor"
+import { fromJust, isJust, isNothing, Maybe } from "../../../Data/Maybe"
+import { lookupF } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { AttrId } from "../../Constants/Ids"
+import { EditPet } from "../../Models/Hero/EditPet"
+import { Attribute } from "../../Models/Wiki/Attribute"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { WikiModel } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { pipe } from "../../Utilities/pipe"
+import { AvatarChange } from "../Universal/AvatarChange"
+import { AvatarWrapper } from "../Universal/AvatarWrapper"
+import { BorderButton } from "../Universal/BorderButton"
+import { Slidein } from "../Universal/Slidein"
+import { TextField } from "../Universal/TextField"
+
+const EPA = EditPet.A
+
+const getAttrShort =
+  (attrs: WikiModel["attributes"]) =>
+    pipe (lookupF (attrs), fmap (Attribute.A.short))
 
 export interface PetEditorProps {
   attributes: WikiModel["attributes"]
@@ -61,8 +67,6 @@ export interface PetEditorProps {
   setAbilities (abilities: string): void
   setNotes (notes: string): void
 }
-
-const EPA = EditPet.A
 
 export function PetEditor (props: PetEditorProps) {
   const {
@@ -311,7 +315,3 @@ export function PetEditor (props: PetEditorProps) {
 
   return null
 }
-
-const getAttrShort =
-  (attrs: WikiModel["attributes"]) =>
-    pipe (lookupF (attrs), fmap (Attribute.A.short))

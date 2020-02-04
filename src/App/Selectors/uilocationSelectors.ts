@@ -1,21 +1,21 @@
-import { ident } from "../../Data/Function";
-import { fmapF } from "../../Data/Functor";
-import { any, elem, insertAt, List, snocF } from "../../Data/List";
-import { Just, Maybe, maybe, Nothing } from "../../Data/Maybe";
-import { Record } from "../../Data/Record";
-import { uncurry3 } from "../../Data/Tuple/Curry";
-import { SubTab } from "../Models/Hero/heroTypeHelpers";
-import { NavigationBarTabOptions } from "../Models/View/NavigationBarTabOptions";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { translate } from "../Utilities/I18n";
-import { isHeroSectionTab, isMainSectionTab, TabId } from "../Utilities/LocationUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils";
-import { getIsLiturgicalChantsTabAvailable } from "./liturgicalChantsSelectors";
-import { getIsRemovingEnabled } from "./phaseSelectors";
-import { getRuleBooksEnabledM } from "./rulesSelectors";
-import { getIsSpellsTabAvailable } from "./spellsSelectors";
-import { getCurrentCultureId, getCurrentPhase, getCurrentTab, getLocaleAsProp, getRaceIdM } from "./stateSelectors";
+import { ident } from "../../Data/Function"
+import { fmapF } from "../../Data/Functor"
+import { any, elem, insertAt, List, snocF } from "../../Data/List"
+import { Just, Maybe, maybe, Nothing } from "../../Data/Maybe"
+import { Record } from "../../Data/Record"
+import { uncurry3 } from "../../Data/Tuple/Curry"
+import { SubTab } from "../Models/Hero/heroTypeHelpers"
+import { NavigationBarTabOptions } from "../Models/View/NavigationBarTabOptions"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { translate } from "../Utilities/I18n"
+import { isHeroSectionTab, isMainSectionTab, TabId } from "../Utilities/LocationUtils"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils"
+import { getIsLiturgicalChantsTabAvailable } from "./liturgicalChantsSelectors"
+import { getIsRemovingEnabled } from "./phaseSelectors"
+import { getRuleBooksEnabledM } from "./rulesSelectors"
+import { getIsSpellsTabAvailable } from "./spellsSelectors"
+import { getCurrentCultureId, getCurrentPhase, getCurrentTab, getLocaleAsProp, getRaceIdM } from "./stateSelectors"
 
 export const getIsMainSection = createMaybeSelector (
   getCurrentTab,

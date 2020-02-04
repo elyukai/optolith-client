@@ -1,6 +1,6 @@
-import { isJust, Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { HitZoneArmorBase } from "./HitZoneArmor";
+import { isJust, Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { HitZoneArmorBase } from "./HitZoneArmor"
 
 export interface EditHitZoneArmor extends HitZoneArmorBase {
   "@@name": "EditHitZoneArmor"

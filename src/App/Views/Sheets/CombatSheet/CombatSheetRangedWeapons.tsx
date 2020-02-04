@@ -1,16 +1,16 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, intercalate, List, map, replicateR, toArray } from "../../../../Data/List";
-import { fromMaybe, Maybe } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { RangedWeapon } from "../../../Models/View/RangedWeapon";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
-import { signZero, toRoman } from "../../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { flength, intercalate, List, map, replicateR, toArray } from "../../../../Data/List"
+import { fromMaybe, Maybe } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { RangedWeapon } from "../../../Models/View/RangedWeapon"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
+import { signZero, toRoman } from "../../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
+import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   l10n: L10nRecord

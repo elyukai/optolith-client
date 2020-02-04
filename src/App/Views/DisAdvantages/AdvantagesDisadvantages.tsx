@@ -1,31 +1,31 @@
-import * as React from "react";
-import { fmapF } from "../../../Data/Functor";
-import { List } from "../../../Data/List";
-import { fromMaybe, Just, Maybe, Nothing, orN } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
-import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
-import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
-import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { BorderButton } from "../Universal/BorderButton";
-import { Checkbox } from "../Universal/Checkbox";
-import { ListHeader } from "../Universal/ListHeader";
-import { ListHeaderTag } from "../Universal/ListHeaderTag";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { RecommendedReference } from "../Universal/RecommendedReference";
-import { SearchField } from "../Universal/SearchField";
-import { Slidein } from "../Universal/Slidein";
-import { ActiveList } from "./ActiveList";
-import { APSpentOnAdvDisadv } from "./APSpentOnAdvDisadv";
-import { InactiveList } from "./DeactiveList";
+import * as React from "react"
+import { fmapF } from "../../../Data/Functor"
+import { List } from "../../../Data/List"
+import { fromMaybe, Just, Maybe, Nothing, orN } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
+import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
+import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
+import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { BorderButton } from "../Universal/BorderButton"
+import { Checkbox } from "../Universal/Checkbox"
+import { ListHeader } from "../Universal/ListHeader"
+import { ListHeaderTag } from "../Universal/ListHeaderTag"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { RecommendedReference } from "../Universal/RecommendedReference"
+import { SearchField } from "../Universal/SearchField"
+import { Slidein } from "../Universal/Slidein"
+import { ActiveList } from "./ActiveList"
+import { APSpentOnAdvDisadv } from "./APSpentOnAdvDisadv"
+import { InactiveList } from "./DeactiveList"
 
 export interface AdvantagesDisadvantagesProps {
   l10n: L10nRecord

@@ -1,11 +1,11 @@
-import { connect } from "react-redux";
-import { Maybe } from "../../Data/Maybe";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as EquipmentActions from "../Actions/EquipmentActions";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getSortedTemplates } from "../Selectors/equipmentSelectors";
-import { getIsItemCreation, getItemEditorInstance, getWikiAttributes, getWikiCombatTechniques } from "../Selectors/stateSelectors";
-import { ItemEditor, ItemEditorDispatchProps, ItemEditorOwnProps, ItemEditorStateProps } from "../Views/Equipment/ItemEditor";
+import { connect } from "react-redux"
+import { Maybe } from "../../Data/Maybe"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as EquipmentActions from "../Actions/EquipmentActions"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getSortedTemplates } from "../Selectors/equipmentSelectors"
+import { getIsItemCreation, getItemEditorInstance, getWikiAttributes, getWikiCombatTechniques } from "../Selectors/stateSelectors"
+import { ItemEditor, ItemEditorDispatchProps, ItemEditorOwnProps, ItemEditorStateProps } from "../Views/Equipment/ItemEditor"
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: ItemEditorOwnProps): ItemEditorStateProps => ({

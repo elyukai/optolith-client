@@ -1,24 +1,24 @@
-import * as React from "react";
-import { isNumber, isString } from "util";
-import { equals } from "../../../Data/Eq";
-import { fmap, fmapF } from "../../../Data/Functor";
-import { consF, drop, imap, notNullStr, subscript, take, unfoldr } from "../../../Data/List";
-import { and, bindF, ensure, fromJust, isJust, isNothing, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
-import { dec, gte, inc } from "../../../Data/Num";
-import { Record } from "../../../Data/Record";
-import { Pair } from "../../../Data/Tuple";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { Pact } from "../../Models/Hero/Pact";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { toRoman } from "../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { misNumberM, misStringM } from "../../Utilities/typeCheckUtils";
-import { Checkbox } from "../Universal/Checkbox";
-import { Dropdown } from "../Universal/Dropdown";
-import { Page } from "../Universal/Page";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { isNumber, isString } from "util"
+import { equals } from "../../../Data/Eq"
+import { fmap, fmapF } from "../../../Data/Functor"
+import { consF, drop, imap, notNullStr, subscript, take, unfoldr } from "../../../Data/List"
+import { and, bindF, ensure, fromJust, isJust, isNothing, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe"
+import { dec, gte, inc } from "../../../Data/Num"
+import { Record } from "../../../Data/Record"
+import { Pair } from "../../../Data/Tuple"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Pact } from "../../Models/Hero/Pact"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { toRoman } from "../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { misNumberM, misStringM } from "../../Utilities/typeCheckUtils"
+import { Checkbox } from "../Universal/Checkbox"
+import { Dropdown } from "../Universal/Dropdown"
+import { Page } from "../Universal/Page"
+import { TextField } from "../Universal/TextField"
 
 export interface PactSettingsOwnProps {
   l10n: L10nRecord

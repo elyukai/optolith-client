@@ -1,16 +1,16 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { HitZoneArmor } from "../../Models/Hero/HitZoneArmor";
-import { Item } from "../../Models/Hero/Item";
-import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
-import { IconButton } from "../Universal/IconButton";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemButtons } from "../Universal/ListItemButtons";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListItemSeparator } from "../Universal/ListItemSeparator";
-import { TooltipToggle } from "../Universal/TooltipToggle";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { HitZoneArmor } from "../../Models/Hero/HitZoneArmor"
+import { Item } from "../../Models/Hero/Item"
+import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
+import { IconButton } from "../Universal/IconButton"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemButtons } from "../Universal/ListItemButtons"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListItemSeparator } from "../Universal/ListItemSeparator"
+import { TooltipToggle } from "../Universal/TooltipToggle"
 
 export interface HitZoneArmorsListItemProps {
   data: Record<HitZoneArmor>

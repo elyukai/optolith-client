@@ -1,14 +1,14 @@
 // tslint:disable-next-line:no-implicit-dependencies
-import { ProgressInfo } from "builder-util-runtime";
-import { cnst, ident } from "../../Data/Function";
-import { set } from "../../Data/Lens";
-import { Just, Maybe, Nothing } from "../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../Data/Record";
-import { SetUpdateDownloadProgressAction } from "../Actions/IOActions";
-import { SetTabAction } from "../Actions/LocationActions";
-import * as SubwindowsActions from "../Actions/SubwindowsActions";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { EnergyId } from "../Constants/Ids";
+import { ProgressInfo } from "builder-util-runtime"
+import { cnst, ident } from "../../Data/Function"
+import { set } from "../../Data/Lens"
+import { Just, Maybe, Nothing } from "../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../Data/Record"
+import { SetUpdateDownloadProgressAction } from "../Actions/IOActions"
+import { SetTabAction } from "../Actions/LocationActions"
+import * as SubwindowsActions from "../Actions/SubwindowsActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { EnergyId } from "../Constants/Ids"
 
 type Action = SetTabAction
             | SetUpdateDownloadProgressAction

@@ -1,9 +1,9 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { guardReplace, Just, Maybe } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
-import { isURLValidM } from "../../Utilities/RegexUtils";
-import { Avatar } from "./Avatar";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { guardReplace, Just, Maybe } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
+import { isURLValidM } from "../../Utilities/RegexUtils"
+import { Avatar } from "./Avatar"
 
 interface Props {
   className?: string

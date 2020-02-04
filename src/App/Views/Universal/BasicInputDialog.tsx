@@ -1,11 +1,11 @@
-import * as React from "react";
-import { notNullStr } from "../../../Data/List";
-import { bindF, ensure, isJust, isNothing, Maybe, normalize, Nothing } from "../../../Data/Maybe";
-import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers";
-import { addKeybinding, removeKeybinding } from "../../Utilities/Keybindings";
-import { pipe_ } from "../../Utilities/pipe";
-import { Dialog } from "../Universal/Dialog";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { notNullStr } from "../../../Data/List"
+import { bindF, ensure, isJust, isNothing, Maybe, normalize, Nothing } from "../../../Data/Maybe"
+import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers"
+import { addKeybinding, removeKeybinding } from "../../Utilities/Keybindings"
+import { pipe_ } from "../../Utilities/pipe"
+import { Dialog } from "../Universal/Dialog"
+import { TextField } from "../Universal/TextField"
 
 interface Dialog {
   id: string

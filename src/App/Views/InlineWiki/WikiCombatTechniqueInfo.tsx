@@ -1,21 +1,21 @@
-import * as React from "react";
-import { fmap } from "../../../Data/Functor";
-import { intercalate } from "../../../Data/List";
-import { mapMaybe, Maybe, maybeRNullF } from "../../../Data/Maybe";
-import { lookupF } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { Attribute } from "../../Models/Wiki/Attribute";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getICName } from "../../Utilities/AdventurePoints/improvementCostUtils";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { Markdown } from "../Universal/Markdown";
-import { WikiSource } from "./Elements/WikiSource";
-import { WikiBoxTemplate } from "./WikiBoxTemplate";
-import { WikiProperty } from "./WikiProperty";
+import * as React from "react"
+import { fmap } from "../../../Data/Functor"
+import { intercalate } from "../../../Data/List"
+import { mapMaybe, Maybe, maybeRNullF } from "../../../Data/Maybe"
+import { lookupF } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { Sex } from "../../Models/Hero/heroTypeHelpers"
+import { Attribute } from "../../Models/Wiki/Attribute"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { getICName } from "../../Utilities/AdventurePoints/improvementCostUtils"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { Markdown } from "../Universal/Markdown"
+import { WikiSource } from "./Elements/WikiSource"
+import { WikiBoxTemplate } from "./WikiBoxTemplate"
+import { WikiProperty } from "./WikiProperty"
 
 export interface WikiCombatTechniqueInfoProps {
   l10n: L10nRecord

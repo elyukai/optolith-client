@@ -1,25 +1,25 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { ident } from "../../../../Data/Function";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { consF, elem, flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
-import { ensure, fromMaybe, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe";
-import { dec } from "../../../../Data/Num";
-import { elems } from "../../../../Data/OrderedSet";
-import { Record } from "../../../../Data/Record";
-import { BlessedTradition } from "../../../Constants/Groups";
-import { AttributeCombined } from "../../../Models/View/AttributeCombined";
-import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../../Models/View/LiturgicalChantWithRequirements";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
-import { minus } from "../../../Utilities/Chars";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybeWith } from "../../../Utilities/ReactUtils";
-import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils";
-import { sortStrings } from "../../../Utilities/sortBy";
-import { getCheckModStr } from "../../InlineWiki/Elements/WikiSkillCheck";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { ident } from "../../../../Data/Function"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { consF, elem, flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List"
+import { ensure, fromMaybe, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe"
+import { dec } from "../../../../Data/Num"
+import { elems } from "../../../../Data/OrderedSet"
+import { Record } from "../../../../Data/Record"
+import { BlessedTradition } from "../../../Constants/Groups"
+import { AttributeCombined } from "../../../Models/View/AttributeCombined"
+import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../../Models/View/LiturgicalChantWithRequirements"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils"
+import { minus } from "../../../Utilities/Chars"
+import { translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { renderMaybeWith } from "../../../Utilities/ReactUtils"
+import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils"
+import { sortStrings } from "../../../Utilities/sortBy"
+import { getCheckModStr } from "../../InlineWiki/Elements/WikiSkillCheck"
+import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   attributes: List<Record<AttributeCombined>>

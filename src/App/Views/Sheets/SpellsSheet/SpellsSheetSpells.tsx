@@ -1,22 +1,22 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
-import { ensure, fromMaybe, guardReplace, Just, Maybe } from "../../../../Data/Maybe";
-import { elems } from "../../../../Data/OrderedSet";
-import { Record } from "../../../../Data/Record";
-import { AttributeCombined } from "../../../Models/View/AttributeCombined";
-import { SpellWithRequirements, SpellWithRequirementsA_ } from "../../../Models/View/SpellWithRequirements";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
-import { minus } from "../../../Utilities/Chars";
-import { classListMaybe } from "../../../Utilities/CSS";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
-import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils";
-import { getCheckModStr } from "../../InlineWiki/Elements/WikiSkillCheck";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List"
+import { ensure, fromMaybe, guardReplace, Just, Maybe } from "../../../../Data/Maybe"
+import { elems } from "../../../../Data/OrderedSet"
+import { Record } from "../../../../Data/Record"
+import { AttributeCombined } from "../../../Models/View/AttributeCombined"
+import { SpellWithRequirements, SpellWithRequirementsA_ } from "../../../Models/View/SpellWithRequirements"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils"
+import { minus } from "../../../Utilities/Chars"
+import { classListMaybe } from "../../../Utilities/CSS"
+import { translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
+import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils"
+import { getCheckModStr } from "../../InlineWiki/Elements/WikiSkillCheck"
+import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   attributes: List<Record<AttributeCombined>>

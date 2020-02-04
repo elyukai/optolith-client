@@ -1,8 +1,8 @@
-import { Maybe } from "../../Data/Maybe";
-import { Record } from "../../Data/Record";
-import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
-import { HeroModelRecord } from "../Models/Hero/HeroModel";
-import { Activatable } from "../Models/Wiki/wikiTypeHelpers";
+import { Maybe } from "../../Data/Maybe"
+import { Record } from "../../Data/Record"
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
+import { HeroModelRecord } from "../Models/Hero/HeroModel"
+import { Activatable } from "../Models/Wiki/wikiTypeHelpers"
 
 export function reduce<T> (
   initial: T

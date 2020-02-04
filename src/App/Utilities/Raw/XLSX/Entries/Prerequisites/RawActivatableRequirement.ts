@@ -1,10 +1,10 @@
-import { intercalate, map } from "../../../../../../Data/List";
-import { ActivatableLikeCategories, ActivatableLikeCategory } from "../../../../../Constants/Categories";
-import { IdPrefixes, IdPrefixesByCategory } from "../../../../../Constants/IdPrefixes";
-import { prefixId } from "../../../../IDUtils";
-import { exactR, naturalNumberU } from "../../../../RegexUtils";
-import { isNumber } from "../../../../typeCheckUtils";
-import { AllRawRequirementObjects, RawProfessionPrerequisite, RawSID } from "../rawTypeHelpers";
+import { intercalate, map } from "../../../../../../Data/List"
+import { ActivatableLikeCategories, ActivatableLikeCategory } from "../../../../../Constants/Categories"
+import { IdPrefixes, IdPrefixesByCategory } from "../../../../../Constants/IdPrefixes"
+import { prefixId } from "../../../../IDUtils"
+import { exactR, naturalNumberU } from "../../../../RegexUtils"
+import { isNumber } from "../../../../typeCheckUtils"
+import { AllRawRequirementObjects, RawProfessionPrerequisite, RawSID } from "../rawTypeHelpers"
 
 export interface RawRequireActivatable {
   id: string | string[]
@@ -29,15 +29,15 @@ const availablePrefixes =
 const prefixesRx = `(${intercalate ("|") (availablePrefixes)})`
 
 const activatableLikeId =
-  new RegExp (exactR (prefixId (prefixesRx as IdPrefixes) (naturalNumberU)))
+  new RegExp (exactR (prefixId (prefixesRx as IdPrefixes) (naturalNumberU)), "u")
 
 const isActivatableLikeId = (x: string) => activatableLikeId .test (x)
 
 export const isRawRequiringActivatable =
   (req: AllRawRequirementObjects): req is RawRequireActivatable =>
     (
-      typeof req.id === "string" && isActivatableLikeId (req .id)
-      || Array.isArray (req .id) && req .id .length > 0 && req .id .every (isActivatableLikeId)
+      (typeof req.id === "string" && isActivatableLikeId (req .id))
+      || (Array.isArray (req .id) && req .id .length > 0 && req .id .every (isActivatableLikeId))
     )
     // @ts-ignore
     && typeof req.active === "boolean"
@@ -47,7 +47,7 @@ export const isRawRequiringActivatable =
       // @ts-ignore
       || typeof req.sid === "number"
       // @ts-ignore
-      || Array.isArray (req .sid) && req .sid .length > 0 && req .sid .every (isNumber)
+      || (Array.isArray (req .sid) && req .sid .length > 0 && (req .sid as any[]) .every (isNumber))
       // @ts-ignore
       || req.sid === undefined
     )

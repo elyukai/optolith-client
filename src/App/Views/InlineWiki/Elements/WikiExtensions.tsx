@@ -1,18 +1,18 @@
-import * as React from "react";
-import { equals } from "../../../../Data/Eq";
-import { filter, flength, List, map, toArray } from "../../../../Data/List";
-import { bindF, elem, ensure, Maybe, maybe, sum } from "../../../../Data/Maybe";
-import { compare } from "../../../../Data/Num";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { Category } from "../../../Constants/Categories";
-import { L10nKey, L10nRecord } from "../../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
-import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { ReactReturn, renderMaybe } from "../../../Utilities/ReactUtils";
-import { comparingR, sortByMulti } from "../../../Utilities/sortBy";
-import { Markdown } from "../../Universal/Markdown";
+import * as React from "react"
+import { equals } from "../../../../Data/Eq"
+import { filter, flength, List, map, toArray } from "../../../../Data/List"
+import { bindF, elem, ensure, Maybe, maybe, sum } from "../../../../Data/Maybe"
+import { compare } from "../../../../Data/Num"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { Category } from "../../../Constants/Categories"
+import { L10nKey, L10nRecord } from "../../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { SelectOption } from "../../../Models/Wiki/sub/SelectOption"
+import { translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { ReactReturn, renderMaybe } from "../../../Utilities/ReactUtils"
+import { comparingR, sortByMulti } from "../../../Utilities/sortBy"
+import { Markdown } from "../../Universal/Markdown"
 
 interface Accessors<A extends RecordIBase<any>> {
   id: (r: Record<A>) => string

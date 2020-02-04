@@ -1,10 +1,10 @@
-import { cnst, ident } from "../../Data/Function";
-import { SwitchEnableEditingHeroAfterCreationPhaseAction } from "../Actions/ConfigActions";
-import { CreateHeroAction, LoadHeroAction } from "../Actions/HerolistActions";
-import { SetTabAction } from "../Actions/LocationActions";
-import { SetSelectionsAction } from "../Actions/ProfessionActions";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { TabId } from "../Utilities/LocationUtils";
+import { cnst, ident } from "../../Data/Function"
+import { SwitchEnableEditingHeroAfterCreationPhaseAction } from "../Actions/ConfigActions"
+import { CreateHeroAction, LoadHeroAction } from "../Actions/HerolistActions"
+import { SetTabAction } from "../Actions/LocationActions"
+import { SetSelectionsAction } from "../Actions/ProfessionActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { TabId } from "../Utilities/LocationUtils"
 
 type Action = SetTabAction
             | CreateHeroAction

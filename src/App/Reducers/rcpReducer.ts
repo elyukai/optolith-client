@@ -1,13 +1,13 @@
-import { ident } from "../../Data/Function";
-import { set } from "../../Data/Lens";
-import { Just, Nothing } from "../../Data/Maybe";
-import { SelectCultureAction } from "../Actions/CultureActions";
-import { SelectProfessionAction } from "../Actions/ProfessionActions";
-import { SelectProfessionVariantAction } from "../Actions/ProfessionVariantActions";
-import { SelectRaceAction, SetRaceVariantAction } from "../Actions/RaceActions";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { pipe } from "../Utilities/pipe";
+import { ident } from "../../Data/Function"
+import { set } from "../../Data/Lens"
+import { Just, Nothing } from "../../Data/Maybe"
+import { SelectCultureAction } from "../Actions/CultureActions"
+import { SelectProfessionAction } from "../Actions/ProfessionActions"
+import { SelectProfessionVariantAction } from "../Actions/ProfessionVariantActions"
+import { SelectRaceAction, SetRaceVariantAction } from "../Actions/RaceActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { pipe } from "../Utilities/pipe"
 
 type Action = SelectRaceAction
             | SetRaceVariantAction

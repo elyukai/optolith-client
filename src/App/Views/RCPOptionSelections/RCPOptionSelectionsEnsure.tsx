@@ -1,17 +1,17 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { fromJust, isJust, Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { Selections as SelectionsInterface } from "../../Models/Hero/heroTypeHelpers";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { Culture } from "../../Models/Wiki/Culture";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Profession } from "../../Models/Wiki/Profession";
-import { ProfessionVariant } from "../../Models/Wiki/ProfessionVariant";
-import { Race } from "../../Models/Wiki/Race";
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { RCPOptionSelections } from "./RCPOptionSelections";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { fromJust, isJust, Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Selections as SelectionsInterface } from "../../Models/Hero/heroTypeHelpers"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { Culture } from "../../Models/Wiki/Culture"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { Profession } from "../../Models/Wiki/Profession"
+import { ProfessionVariant } from "../../Models/Wiki/ProfessionVariant"
+import { Race } from "../../Models/Wiki/Race"
+import { WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { RCPOptionSelections } from "./RCPOptionSelections"
 
 export interface RCPOptionSelectionsEnsureProps {
   hero: HeroModelRecord

@@ -1,13 +1,13 @@
-import * as React from "react";
-import { List, map, toArray } from "../../../Data/List";
-import { Record } from "../../../Data/Record";
-import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { sign } from "../../Utilities/NumberUtils";
-import { pipe_ } from "../../Utilities/pipe";
-import { TextBox } from "../Universal/TextBox";
-import { AttributeModsListItem } from "./AttributeModsListItem";
+import * as React from "react"
+import { List, map, toArray } from "../../../Data/List"
+import { Record } from "../../../Data/Record"
+import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { sign } from "../../Utilities/NumberUtils"
+import { pipe_ } from "../../Utilities/pipe"
+import { TextBox } from "../Universal/TextBox"
+import { AttributeModsListItem } from "./AttributeModsListItem"
 
 interface Props {
   l10n: L10nRecord

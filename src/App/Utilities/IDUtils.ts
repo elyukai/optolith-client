@@ -1,14 +1,14 @@
-import { cnst } from "../../Data/Function";
-import { foldl } from "../../Data/List";
-import { Just, Maybe, Nothing } from "../../Data/Maybe";
-import { inc, max } from "../../Data/Num";
-import { lookupF, OrderedMap } from "../../Data/OrderedMap";
-import { Category } from "../Constants/Categories";
-import { IdPrefixes } from "../Constants/IdPrefixes";
-import { DCId, SpecialAbilityId } from "../Constants/Ids";
-import { CheckModifier } from "../Models/Wiki/wikiTypeHelpers";
-import { match } from "./match";
-import { pipe } from "./pipe";
+import { cnst } from "../../Data/Function"
+import { foldl } from "../../Data/List"
+import { Just, Maybe, Nothing } from "../../Data/Maybe"
+import { inc, max } from "../../Data/Num"
+import { lookupF, OrderedMap } from "../../Data/OrderedMap"
+import { Category } from "../Constants/Categories"
+import { IdPrefixes } from "../Constants/IdPrefixes"
+import { DCId, SpecialAbilityId } from "../Constants/Ids"
+import { CheckModifier } from "../Models/Wiki/wikiTypeHelpers"
+import { match } from "./match"
+import { pipe } from "./pipe"
 
 export const getIdPrefix = (id: string) => id.split (/_/u)[0] as IdPrefixes
 
@@ -59,7 +59,7 @@ export const getNewId = pipe (foldl<string, number> (n => pipe (getNumericId, ma
 /**
  * Returns the current date in milliseconds.
  */
-export const getNewIdByDate = (): number => Date.now () .valueOf ();
+export const getNewIdByDate = (): number => Date.now () .valueOf ()
 
 export const getCategoryByIdPrefix =
   (id: IdPrefixes): Maybe<Category> =>
@@ -91,23 +91,23 @@ export const getCategoryById = pipe (
  * extend, use `traditionUtils.ts` instead.
  */
 const magicalTraditionIdByNumericId = OrderedMap.fromArray<number, string> ([
-  [1, SpecialAbilityId.TraditionGuildMages],
-  [2, SpecialAbilityId.TraditionWitches],
-  [3, SpecialAbilityId.TraditionElves],
-  [4, SpecialAbilityId.TraditionDruids],
-  [5, SpecialAbilityId.TraditionIllusionist],
-  [6, SpecialAbilityId.TraditionArcaneBard],
-  [7, SpecialAbilityId.TraditionArcaneDancer],
-  [8, SpecialAbilityId.TraditionIntuitiveMage],
-  [9, SpecialAbilityId.TraditionSavant],
-  [10, SpecialAbilityId.TraditionQabalyaMage],
-  [11, SpecialAbilityId.TraditionKristallomanten],
-  [12, SpecialAbilityId.TraditionGeoden],
-  [13, SpecialAbilityId.TraditionZauberalchimisten],
-  [14, SpecialAbilityId.TraditionSchelme],
-  [15, SpecialAbilityId.TraditionAnimisten],
-  [16, SpecialAbilityId.TraditionZibilijas],
-  [17, SpecialAbilityId.TraditionBrobimGeoden],
+  [ 1, SpecialAbilityId.TraditionGuildMages ],
+  [ 2, SpecialAbilityId.TraditionWitches ],
+  [ 3, SpecialAbilityId.TraditionElves ],
+  [ 4, SpecialAbilityId.TraditionDruids ],
+  [ 5, SpecialAbilityId.TraditionIllusionist ],
+  [ 6, SpecialAbilityId.TraditionArcaneBard ],
+  [ 7, SpecialAbilityId.TraditionArcaneDancer ],
+  [ 8, SpecialAbilityId.TraditionIntuitiveMage ],
+  [ 9, SpecialAbilityId.TraditionSavant ],
+  [ 10, SpecialAbilityId.TraditionQabalyaMage ],
+  [ 11, SpecialAbilityId.TraditionKristallomanten ],
+  [ 12, SpecialAbilityId.TraditionGeoden ],
+  [ 13, SpecialAbilityId.TraditionZauberalchimisten ],
+  [ 14, SpecialAbilityId.TraditionSchelme ],
+  [ 15, SpecialAbilityId.TraditionAnimisten ],
+  [ 16, SpecialAbilityId.TraditionZibilijas ],
+  [ 17, SpecialAbilityId.TraditionBrobimGeoden ],
 ])
 
 /**
@@ -121,25 +121,25 @@ export const getMagicalTraditionInstanceIdByNumericId = lookupF (magicalTraditio
  * extend, use `traditionUtils.ts` instead.
  */
 const blessedTraditionIdByNumericId = OrderedMap.fromArray<number, string> ([
-  [1, SpecialAbilityId.TraditionChurchOfPraios],
-  [2, SpecialAbilityId.TraditionChurchOfRondra],
-  [3, SpecialAbilityId.TraditionChurchOfBoron],
-  [4, SpecialAbilityId.TraditionChurchOfHesinde],
-  [5, SpecialAbilityId.TraditionChurchOfPhex],
-  [6, SpecialAbilityId.TraditionChurchOfPeraine],
-  [7, SpecialAbilityId.TraditionChurchOfEfferd],
-  [8, SpecialAbilityId.TraditionChurchOfTravia],
-  [9, SpecialAbilityId.TraditionChurchOfFirun],
-  [10, SpecialAbilityId.TraditionChurchOfTsa],
-  [11, SpecialAbilityId.TraditionChurchOfIngerimm],
-  [12, SpecialAbilityId.TraditionChurchOfRahja],
-  [13, SpecialAbilityId.TraditionCultOfTheNamelessOne],
-  [14, SpecialAbilityId.TraditionChurchOfAves],
-  [15, SpecialAbilityId.TraditionChurchOfIfirn],
-  [16, SpecialAbilityId.TraditionChurchOfKor],
-  [17, SpecialAbilityId.TraditionChurchOfNandus],
-  [18, SpecialAbilityId.TraditionChurchOfSwafnir],
-  [19, SpecialAbilityId.TraditionCultOfNuminoru],
+  [ 1, SpecialAbilityId.TraditionChurchOfPraios ],
+  [ 2, SpecialAbilityId.TraditionChurchOfRondra ],
+  [ 3, SpecialAbilityId.TraditionChurchOfBoron ],
+  [ 4, SpecialAbilityId.TraditionChurchOfHesinde ],
+  [ 5, SpecialAbilityId.TraditionChurchOfPhex ],
+  [ 6, SpecialAbilityId.TraditionChurchOfPeraine ],
+  [ 7, SpecialAbilityId.TraditionChurchOfEfferd ],
+  [ 8, SpecialAbilityId.TraditionChurchOfTravia ],
+  [ 9, SpecialAbilityId.TraditionChurchOfFirun ],
+  [ 10, SpecialAbilityId.TraditionChurchOfTsa ],
+  [ 11, SpecialAbilityId.TraditionChurchOfIngerimm ],
+  [ 12, SpecialAbilityId.TraditionChurchOfRahja ],
+  [ 13, SpecialAbilityId.TraditionCultOfTheNamelessOne ],
+  [ 14, SpecialAbilityId.TraditionChurchOfAves ],
+  [ 15, SpecialAbilityId.TraditionChurchOfIfirn ],
+  [ 16, SpecialAbilityId.TraditionChurchOfKor ],
+  [ 17, SpecialAbilityId.TraditionChurchOfNandus ],
+  [ 18, SpecialAbilityId.TraditionChurchOfSwafnir ],
+  [ 19, SpecialAbilityId.TraditionCultOfNuminoru ],
 ])
 
 /**

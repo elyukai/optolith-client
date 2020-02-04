@@ -1,16 +1,16 @@
-import * as React from "react";
-import { useDispatch } from "react-redux";
-import { find, List, map, notNull } from "../../../Data/List";
-import { bindF, ensure, Just, Maybe, maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { selectRaceVariant } from "../../Actions/RaceActions";
-import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
-import { RadioOption } from "../../Models/View/RadioOption";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { RaceVariant } from "../../Models/Wiki/RaceVariant";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { sortRecordsByName } from "../../Utilities/sortBy";
-import { RadioButtonGroup } from "../Universal/RadioButtonGroup";
+import * as React from "react"
+import { useDispatch } from "react-redux"
+import { find, List, map, notNull } from "../../../Data/List"
+import { bindF, ensure, Just, Maybe, maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { selectRaceVariant } from "../../Actions/RaceActions"
+import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined"
+import { RadioOption } from "../../Models/View/RadioOption"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { RaceVariant } from "../../Models/Wiki/RaceVariant"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { sortRecordsByName } from "../../Utilities/sortBy"
+import { RadioButtonGroup } from "../Universal/RadioButtonGroup"
 
 export interface RaceVariantsProps {
   currentId: Maybe<string>

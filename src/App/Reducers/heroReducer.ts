@@ -1,27 +1,27 @@
-import { flip } from "../../Data/Function";
-import { set } from "../../Data/Lens";
-import { List } from "../../Data/List";
-import * as ActionTypes from "../Constants/ActionTypes";
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { reduceReducersC } from "../Utilities/reduceReducers";
-import { undo } from "../Utilities/undo";
-import { adventurePointsReducer } from "./adventurePointsReducer";
-import { applyRCPSelectionsReducer } from "./applyRCPSelectionsReducer";
-import { dependentReducer } from "./dependentReducer";
-import { energiesReducer } from "./energiesReducer";
-import { equipmentReducer } from "./equipmentReducer";
-import { pactReducer } from "./pactReducer";
-import { petsReducer } from "./petsReducer";
-import { phaseReducer } from "./phaseReducer";
-import { profileReducer } from "./profileReducer";
-import { rcpReducer } from "./rcpReducer";
-import { rulesReducer } from "./rulesReducer";
+import { flip } from "../../Data/Function"
+import { set } from "../../Data/Lens"
+import { List } from "../../Data/List"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { reduceReducersC } from "../Utilities/reduceReducers"
+import { undo } from "../Utilities/undo"
+import { adventurePointsReducer } from "./adventurePointsReducer"
+import { applyRCPSelectionsReducer } from "./applyRCPSelectionsReducer"
+import { dependentReducer } from "./dependentReducer"
+import { energiesReducer } from "./energiesReducer"
+import { equipmentReducer } from "./equipmentReducer"
+import { pactReducer } from "./pactReducer"
+import { petsReducer } from "./petsReducer"
+import { phaseReducer } from "./phaseReducer"
+import { profileReducer } from "./profileReducer"
+import { rcpReducer } from "./rcpReducer"
+import { rulesReducer } from "./rulesReducer"
 
 export const heroReducer =
   undo (List (
          ActionTypes.SAVE_HERO
        ))
-       (List<symbol> (
+       (List (
          ActionTypes.CREATE_ITEM,
          ActionTypes.CLOSE_ITEM_EDITOR,
          ActionTypes.EDIT_ITEM,

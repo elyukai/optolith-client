@@ -1,16 +1,16 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { RadioOption } from "../../Models/View/RadioOption";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { Theme } from "../../Utilities/Raw/JSON/Config";
-import { BorderButton } from "../Universal/BorderButton";
-import { Checkbox } from "../Universal/Checkbox";
-import { Dialog } from "../Universal/Dialog";
-import { Dropdown } from "../Universal/Dropdown";
-import { SegmentedControls } from "../Universal/SegmentedControls";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { RadioOption } from "../../Models/View/RadioOption"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { Theme } from "../../Utilities/Raw/JSON/Config"
+import { BorderButton } from "../Universal/BorderButton"
+import { Checkbox } from "../Universal/Checkbox"
+import { Dialog } from "../Universal/Dialog"
+import { Dropdown } from "../Universal/Dropdown"
+import { SegmentedControls } from "../Universal/SegmentedControls"
 
 export interface SettingsOwnProps {
   l10n: L10nRecord
@@ -90,6 +90,7 @@ export const Settings: React.FC<Props> = props => {
           DropdownOption ({
             id: Just ("fr-FR"),
             name: "Français (France)",
+
             // disabled: Just (true),
           })
         )}

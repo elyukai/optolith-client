@@ -1,19 +1,19 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { EnergyId } from "../../Constants/Ids";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { AttributeWithRequirements } from "../../Models/View/AttributeWithRequirements";
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { AttributeCalc } from "./AttributeCalc";
-import { AttributeList } from "./AttributeList";
-import { AttributesAdjustment } from "./AttributesAdjustment";
-import { AttributesPermanentList } from "./AttributesPermanentList";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { EnergyId } from "../../Constants/Ids"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { AttributeWithRequirements } from "../../Models/View/AttributeWithRequirements"
+import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { AttributeCalc } from "./AttributeCalc"
+import { AttributeList } from "./AttributeList"
+import { AttributesAdjustment } from "./AttributesAdjustment"
+import { AttributesPermanentList } from "./AttributesPermanentList"
 
 export interface AttributesOwnProps {
   l10n: L10nRecord

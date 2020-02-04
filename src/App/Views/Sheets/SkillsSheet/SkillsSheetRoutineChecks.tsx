@@ -1,9 +1,9 @@
-import * as React from "react";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { minus } from "../../../Utilities/Chars";
-import { translate } from "../../../Utilities/I18n";
-import { sign, signNeg } from "../../../Utilities/NumberUtils";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { minus } from "../../../Utilities/Chars"
+import { translate } from "../../../Utilities/I18n"
+import { sign, signNeg } from "../../../Utilities/NumberUtils"
+import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   l10n: L10nRecord

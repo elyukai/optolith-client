@@ -1,22 +1,22 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { INTERNAL_shallowEquals, Maybe } from "../../../Data/Maybe";
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { AttributeCombined } from "../../Models/View/AttributeCombined";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { CheckModifier } from "../../Models/Wiki/wikiTypeHelpers";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListItemSeparator } from "../Universal/ListItemSeparator";
-import { ListItemValues } from "../Universal/ListItemValues";
-import { AdditionalValue, SkillAdditionalValues } from "./SkillAdditionalValues";
-import { SkillButtons } from "./SkillButtons";
-import { SkillCheck } from "./SkillCheck";
-import { SkillFill } from "./SkillFill";
-import { SkillGroup } from "./SkillGroup";
-import { SkillImprovementCost } from "./SkillImprovementCost";
-import { SkillRating } from "./SkillRating";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { INTERNAL_shallowEquals, Maybe } from "../../../Data/Maybe"
+import { OrderedSet } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { AttributeCombined } from "../../Models/View/AttributeCombined"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { CheckModifier } from "../../Models/Wiki/wikiTypeHelpers"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListItemSeparator } from "../Universal/ListItemSeparator"
+import { ListItemValues } from "../Universal/ListItemValues"
+import { AdditionalValue, SkillAdditionalValues } from "./SkillAdditionalValues"
+import { SkillButtons } from "./SkillButtons"
+import { SkillCheck } from "./SkillCheck"
+import { SkillFill } from "./SkillFill"
+import { SkillGroup } from "./SkillGroup"
+import { SkillImprovementCost } from "./SkillImprovementCost"
+import { SkillRating } from "./SkillRating"
 
 interface Props {
   attributes: List<Record<AttributeCombined>>
@@ -151,4 +151,4 @@ const MemoSkillListItem = React.memo (
     || !INTERNAL_shallowEquals (prevProps.selectedForInfo) (nextProps.selectedForInfo)
 )
 
-export { MemoSkillListItem as SkillListItem };
+export { MemoSkillListItem as SkillListItem }

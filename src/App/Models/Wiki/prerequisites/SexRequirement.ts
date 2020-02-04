@@ -1,10 +1,10 @@
-import { equals } from "../../../../Data/Eq";
-import { List } from "../../../../Data/List";
-import { fromDefault, Record } from "../../../../Data/Record";
-import { pipe } from "../../../Utilities/pipe";
-import { Sex } from "../../Hero/heroTypeHelpers";
-import { AllRequirementObjects } from "../wikiTypeHelpers";
-import { RequireActivatable } from "./ActivatableRequirement";
+import { equals } from "../../../../Data/Eq"
+import { List } from "../../../../Data/List"
+import { fromDefault, Record } from "../../../../Data/Record"
+import { pipe } from "../../../Utilities/pipe"
+import { Sex } from "../../Hero/heroTypeHelpers"
+import { AllRequirementObjects } from "../wikiTypeHelpers"
+import { RequireActivatable } from "./ActivatableRequirement"
 
 export interface SexRequirement {
   "@@name": "SexRequirement"

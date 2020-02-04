@@ -1,31 +1,31 @@
-import * as React from "react";
-import { isString } from "util";
-import { notEquals } from "../../../Data/Eq";
-import { onF } from "../../../Data/Function";
-import { fmap, mapReplace } from "../../../Data/Functor";
-import { cons, flength, List } from "../../../Data/List";
-import { any, bindF, ensure, fromJust, fromMaybe, guard, INTERNAL_shallowEquals, isJust, Just, liftM2, listToMaybe, Maybe, maybe, orN } from "../../../Data/Maybe";
-import { max, min } from "../../../Data/Num";
-import { Record } from "../../../Data/Record";
-import { SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
-import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
-import { DropdownOption } from "../../Models/View/DropdownOption";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { classListMaybe } from "../../Utilities/CSS";
-import { translate } from "../../Utilities/I18n";
-import { getLevelElementsWithMin } from "../../Utilities/levelUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { renderMaybe } from "../../Utilities/ReactUtils";
-import { Dropdown } from "../Universal/Dropdown";
-import { IconButton } from "../Universal/IconButton";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemButtons } from "../Universal/ListItemButtons";
-import { ListItemGroup } from "../Universal/ListItemGroup";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListItemSelections } from "../Universal/ListItemSelections";
-import { ListItemSeparator } from "../Universal/ListItemSeparator";
-import { ListItemValues } from "../Universal/ListItemValues";
+import * as React from "react"
+import { isString } from "util"
+import { notEquals } from "../../../Data/Eq"
+import { onF } from "../../../Data/Function"
+import { fmap, mapReplace } from "../../../Data/Functor"
+import { cons, flength, List } from "../../../Data/List"
+import { any, bindF, ensure, fromJust, fromMaybe, guard, INTERNAL_shallowEquals, isJust, Just, liftM2, listToMaybe, Maybe, maybe, orN } from "../../../Data/Maybe"
+import { max, min } from "../../../Data/Num"
+import { Record } from "../../../Data/Record"
+import { SpecialAbilityId } from "../../Constants/Ids"
+import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
+import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { classListMaybe } from "../../Utilities/CSS"
+import { translate } from "../../Utilities/I18n"
+import { getLevelElementsWithMin } from "../../Utilities/levelUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { renderMaybe } from "../../Utilities/ReactUtils"
+import { Dropdown } from "../Universal/Dropdown"
+import { IconButton } from "../Universal/IconButton"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemButtons } from "../Universal/ListItemButtons"
+import { ListItemGroup } from "../Universal/ListItemGroup"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListItemSelections } from "../Universal/ListItemSelections"
+import { ListItemSeparator } from "../Universal/ListItemSeparator"
+import { ListItemValues } from "../Universal/ListItemValues"
 
 export interface ActivatableRemoveListItemProps {
   item: Record<ActiveActivatable>
@@ -212,5 +212,5 @@ const ActivatableRemoveListItemM =
     }
   )
 
-export { ActivatableRemoveListItemM as ActivatableRemoveListItem };
+export { ActivatableRemoveListItemM as ActivatableRemoveListItem }
 

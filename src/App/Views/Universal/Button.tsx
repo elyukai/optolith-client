@@ -1,8 +1,8 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { guardReplace, Just, Maybe, maybe, normalize, or, orN } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
-import { TooltipHint } from "./TooltipHint";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { guardReplace, Just, Maybe, maybe, normalize, or, orN } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
+import { TooltipHint } from "./TooltipHint"
 
 interface Props {
   active?: boolean

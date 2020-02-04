@@ -1,15 +1,15 @@
-import { fmap } from "../../../../../Data/Functor";
-import { map } from "../../../../../Data/List";
-import { Nothing } from "../../../../../Data/Maybe";
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { CombatTechnique } from "../../../../Models/Wiki/CombatTechnique";
-import { prefixId } from "../../../IDUtils";
-import { mergeRowsById } from "../MergeRows";
-import { modifyNegIntNoBreak } from "../SourceHelpers";
-import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapNatural, mensureMapNaturalList, mensureMapNonEmptyString } from "../Validators/ToValue";
-import { toErrata } from "./Sub/toErrata";
-import { toSourceLinks } from "./Sub/toSourceLinks";
+import { fmap } from "../../../../../Data/Functor"
+import { map } from "../../../../../Data/List"
+import { Nothing } from "../../../../../Data/Maybe"
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { CombatTechnique } from "../../../../Models/Wiki/CombatTechnique"
+import { prefixId } from "../../../IDUtils"
+import { mergeRowsById } from "../MergeRows"
+import { modifyNegIntNoBreak } from "../SourceHelpers"
+import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapNatural, mensureMapNaturalList, mensureMapNonEmptyString } from "../Validators/ToValue"
+import { toErrata } from "./Sub/toErrata"
+import { toSourceLinks } from "./Sub/toSourceLinks"
 
 export const toCombatTechnique =
   mergeRowsById

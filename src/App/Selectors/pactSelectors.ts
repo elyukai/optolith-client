@@ -1,19 +1,19 @@
-import { not } from "../../Data/Bool";
-import { cnst } from "../../Data/Function";
-import { any, fnull, isList } from "../../Data/List";
-import { bindF, ensure, fromJust, isJust, maybe } from "../../Data/Maybe";
-import { elems, lookup } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { uncurryN } from "../../Data/Tuple/Curry";
-import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
-import { Pact } from "../Models/Hero/Pact";
-import { isPactRequirement } from "../Models/Wiki/prerequisites/PactRequirement";
-import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { AllRequirements } from "../Models/Wiki/wikiTypeHelpers";
-import { isPactFromStateValid } from "../Utilities/Activatable/pactUtils";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { pipe } from "../Utilities/pipe";
-import { getPact, getSpecialAbilities, getWikiSpecialAbilities } from "./stateSelectors";
+import { not } from "../../Data/Bool"
+import { cnst } from "../../Data/Function"
+import { any, fnull, isList } from "../../Data/List"
+import { bindF, ensure, fromJust, isJust, maybe } from "../../Data/Maybe"
+import { elems, lookup } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { uncurryN } from "../../Data/Tuple/Curry"
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
+import { Pact } from "../Models/Hero/Pact"
+import { isPactRequirement } from "../Models/Wiki/prerequisites/PactRequirement"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { AllRequirements } from "../Models/Wiki/wikiTypeHelpers"
+import { isPactFromStateValid } from "../Utilities/Activatable/pactUtils"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { pipe } from "../Utilities/pipe"
+import { getPact, getSpecialAbilities, getWikiSpecialAbilities } from "./stateSelectors"
 
 export const getIsPactValid = createMaybeSelector (
   getPact,

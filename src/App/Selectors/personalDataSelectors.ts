@@ -1,25 +1,36 @@
-import { ident } from "../../Data/Function";
-import { fmap } from "../../Data/Functor";
-import { elem, filter, imap, List, map, minimum, notNull, nub, subscript } from "../../Data/List";
-import { alt, any, bind, ensure, Just, liftM2, mapMaybe, maybe } from "../../Data/Maybe";
-import { dec } from "../../Data/Num";
-import { fst, Pair, snd } from "../../Data/Tuple";
-import { curryN, uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
-import { DisadvantageId, SocialStatusId } from "../Constants/Ids";
-import { DropdownOption } from "../Models/View/DropdownOption";
-import { Culture } from "../Models/Wiki/Culture";
-import { Race } from "../Models/Wiki/Race";
-import { RaceVariant } from "../Models/Wiki/RaceVariant";
-import { getActiveSelections } from "../Utilities/Activatable/selectionUtils";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { translate } from "../Utilities/I18n";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
-import { sortRecordsByName } from "../Utilities/sortBy";
-import { getCulture, getRace, getRaceVariant } from "./rcpSelectors";
-import { getDisadvantages, getLocaleAsProp, getSocialDependencies } from "./stateSelectors";
+import { ident } from "../../Data/Function"
+import { fmap } from "../../Data/Functor"
+import { elem, filter, imap, List, map, minimum, notNull, nub, subscript } from "../../Data/List"
+import { alt, any, bind, ensure, Just, liftM2, mapMaybe, maybe } from "../../Data/Maybe"
+import { dec } from "../../Data/Num"
+import { fst, Pair, snd } from "../../Data/Tuple"
+import { curryN, uncurryN, uncurryN3 } from "../../Data/Tuple/Curry"
+import { DisadvantageId, SocialStatusId } from "../Constants/Ids"
+import { DropdownOption } from "../Models/View/DropdownOption"
+import { Culture } from "../Models/Wiki/Culture"
+import { Race } from "../Models/Wiki/Race"
+import { RaceVariant } from "../Models/Wiki/RaceVariant"
+import { getActiveSelections } from "../Utilities/Activatable/selectionUtils"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { translate } from "../Utilities/I18n"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils"
+import { sortRecordsByName } from "../Utilities/sortBy"
+import { getCulture, getRace, getRaceVariant } from "./rcpSelectors"
+import { getDisadvantages, getLocaleAsProp, getSocialDependencies } from "./stateSelectors"
 
 const CA = Culture.A
+
+const indexToSocialStatusId: (index: number) => SocialStatusId =
+  i => {
+    switch (i) {
+      case 0: return SocialStatusId.NotFree
+      case 2: return SocialStatusId.LesserNoble
+      case 3: return SocialStatusId.Noble
+      case 4: return SocialStatusId.Aristocracy
+      default: return SocialStatusId.Free
+    }
+  }
 
 const getSocialStatusAssocs = createMaybeSelector (
   getLocaleAsProp,
@@ -35,17 +46,6 @@ const getMinimumSocialStatus = createMaybeSelector (
     fmap (minimum)
   )
 )
-
-const indexToSocialStatusId: (index: number) => SocialStatusId =
-  i => {
-    switch (i) {
-      case 0: return SocialStatusId.NotFree
-      case 2: return SocialStatusId.LesserNoble
-      case 3: return SocialStatusId.Noble
-      case 4: return SocialStatusId.Aristocracy
-      default: return SocialStatusId.Free
-    }
-  }
 
 const getAvailableSocialStatusesTuples = createMaybeSelector (
   getCulture,

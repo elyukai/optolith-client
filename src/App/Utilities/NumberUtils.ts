@@ -1,10 +1,10 @@
-import { not } from "../../Data/Bool";
-import { List, subscript } from "../../Data/List";
-import { bindF, ensure, fromMaybe, Just, Maybe, Nothing } from "../../Data/Maybe";
-import { dec } from "../../Data/Num";
-import { minus } from "./Chars";
-import { pipe } from "./pipe";
-import { isInteger, isNaturalNumber } from "./RegexUtils";
+import { not } from "../../Data/Bool"
+import { List, subscript } from "../../Data/List"
+import { bindF, ensure, fromMaybe, Just, Maybe, Nothing } from "../../Data/Maybe"
+import { dec } from "../../Data/Num"
+import { minus } from "./Chars"
+import { pipe } from "./pipe"
+import { isInteger, isNaturalNumber } from "./RegexUtils"
 
 /**
  * A list of all Roman numbers from 1 to 13.
@@ -77,6 +77,18 @@ export const signNeg = (x: number) => x < 0 ? `${minus}\u2060${Math.abs (x)}` : 
 export const signZero = signNullCustom ("")
 
 /**
+ * Converts a string to a decimal integer. This function does **not** check if
+ * the string is a valid number.
+ */
+export const unsafeToInt = (string: string) => Number.parseInt (string, 10)
+
+/**
+ * Converts a string to a floating point number. This function does
+ * **not** check if the string is a valid number.
+ */
+export const unsafeToFloat = (string: string) => Number.parseFloat (string)
+
+/**
  * Multiplies given string by 100 if it contains `,` o `.`.
  */
 export const multiplyString = (string: string): string => {
@@ -89,18 +101,6 @@ export const multiplyString = (string: string): string => {
 
   return string
 }
-
-/**
- * Converts a string to a decimal integer. This function does **not** check if
- * the string is a valid number.
- */
-export const unsafeToInt = (string: string) => Number.parseInt (string, 10)
-
-/**
- * Converts a string to a floating point number. This function does
- * **not** check if the string is a valid number.
- */
-export const unsafeToFloat = (string: string) => Number.parseFloat (string)
 
 /**
  * Converts a string to a decimal integer. If the string is not a valid integer,
@@ -118,6 +118,10 @@ export const toNatural =
   (e: string): Maybe<number> =>
     e.length > 0 && isNaturalNumber (e) ? Just (unsafeToInt (e)) : Nothing
 
+const isNotNaN = pipe (Number.isNaN, not)
+
+const misNotNaN = bindF<number, number> (ensure (isNotNaN))
+
 /**
  * Converts a string to a floating point number. If the string is not a valid
  * floating point number, it returns `Nothing`, otherwise a `Just` of the
@@ -126,7 +130,3 @@ export const toNatural =
 export const toFloat =
   (e: string): Maybe<number> =>
     e.length > 0 ? misNotNaN (Just (unsafeToFloat (e.replace (/,/u, ".")))) : Nothing
-
-const isNotNaN = pipe (Number.isNaN, not)
-
-const misNotNaN = bindF<number, number> (ensure (isNotNaN))

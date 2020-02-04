@@ -4,8 +4,13 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "../App/Utilities/pipe";
-import { showP } from "./Show";
+import { pipe } from "../App/Utilities/pipe"
+import { showP } from "./Show"
+
+const instanceErrorMsg =
+  (fname: string) =>
+  (x: any) =>
+    `${fname}: missing instance of Contravariant\n${showP (x)}`
 
 export type Contravariant<A> = ((x: A) => any)
 
@@ -28,8 +33,3 @@ export const contramap =
 
     throw new TypeError (instanceErrorMsg ("contramap") (x))
   }
-
-const instanceErrorMsg =
-  (fname: string) =>
-  (x: any) =>
-    `${fname}: missing instance of Contravariant\n${showP (x)}`
