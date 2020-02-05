@@ -15,6 +15,7 @@ app/Database/**/*.xlsx
 *.map
 app/Database/de-DE/.~lock.l10n.xlsx#
 app/Database/.~lock.univ.xlsx#
+app/Database/**/*.yaml
 tablesSrc.json
 publishSettings.json
 
