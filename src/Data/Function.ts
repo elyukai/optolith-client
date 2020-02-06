@@ -139,6 +139,15 @@ export const genericMap2F =
     genericMap2 (f) (g)
 
 
+// Type Helpers
+
+
+/**
+ * Get type of first parameter.
+ */
+export type Param1<A> = A extends (x: infer B) => any ? B : never
+
+
 // NAMESPACED FUNCTIONS
 
 export const Functn = {

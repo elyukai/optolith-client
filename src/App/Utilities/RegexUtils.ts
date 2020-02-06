@@ -77,7 +77,8 @@ export const isURLValid = (url: string) => notNullStr (url)
                                              isBase64Image (url)
                                              || trySync (existsSync)
                                                         (cnst (false))
-                                                        (() => fileURLToPath (url))
+                                                        (fileURLToPath)
+                                                        (url)
                                            )
 
 /**

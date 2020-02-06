@@ -1,5 +1,5 @@
 import { connect } from "react-redux"
-import { AppStateRecord } from "../../Reducers/appReducer"
+import { AppStateRecord } from "../../Models/AppState"
 import { getTheme } from "../../Selectors/uisettingsSelectors"
 import { PortalWrapped, PortalWrappedDispatchProps, PortalWrappedOwnProps, PortalWrappedStateProps } from "./PortalWrapped"
 

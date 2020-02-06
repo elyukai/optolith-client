@@ -1,7 +1,7 @@
 import { connect } from "react-redux"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as SkillActions from "../Actions/SkillActions"
-import { AppStateRecord } from "../Reducers/appReducer"
+import { AppStateRecord } from "../Models/AppState"
 import { getAttributesForSheet } from "../Selectors/attributeSelectors"
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"
 import { getFilteredSkills, getSkillRating } from "../Selectors/skillsSelectors"

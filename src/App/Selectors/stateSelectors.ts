@@ -4,32 +4,34 @@ import { bind, bindF, Maybe } from "../../Data/Maybe"
 import { lookupF } from "../../Data/OrderedMap"
 import { peekFst } from "../../Data/Queue"
 import { Record } from "../../Data/Record"
+import { AppState, AppStateRecord } from "../Models/AppState"
+import { FiltersState } from "../Models/FiltersState"
 import { Belongings } from "../Models/Hero/Belongings"
 import { Energies } from "../Models/Hero/Energies"
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
 import { PersonalData } from "../Models/Hero/PersonalData"
 import { Rules } from "../Models/Hero/Rules"
+import { HeroesState } from "../Models/HeroesState"
+import { LocaleState } from "../Models/LocaleState"
+import { SubWindowsState } from "../Models/SubWindowsState"
+import { UIState } from "../Models/UIState"
+import { UIWikiState } from "../Models/UIWikiState"
 import { L10nRecord } from "../Models/Wiki/L10n"
 import { WikiModel } from "../Models/Wiki/WikiModel"
-import { AppStateRecord } from "../Reducers/appReducer"
-import { appSlicesReducer } from "../Reducers/appSlicesReducer"
-import { FiltersState } from "../Reducers/filtersReducer"
-import { HeroesState } from "../Reducers/herolistReducer"
 import { heroReducer } from "../Reducers/heroReducer"
-import { LocaleState } from "../Reducers/localeReducer"
-import { SubWindowsState } from "../Reducers/subwindowsReducer"
-import { uiReducer } from "../Reducers/uiReducer"
-import { UIWikiState } from "../Reducers/wikiUIReducer"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { pipe } from "../Utilities/pipe"
 import { UndoState } from "../Utilities/undo"
 
-const App = appSlicesReducer.A
-const UIA = uiReducer.A
+const App = AppState.A
+const UIA = UIState.A
 const LSA = LocaleState.A
 const HSA = HeroesState.A
 const HRA = heroReducer.A
 const HA = HeroModel.A
+const Filt = FiltersState.A
+const SubW = SubWindowsState.A
+const WikiUI = UIWikiState.A
 
 export const getCurrentTab = pipe (App.ui, UIA.location)
 
@@ -293,8 +295,6 @@ export const getAlerts = pipe (App.ui, UIA.alerts)
 export const getCurrentAlert = pipe (App.ui, UIA.alerts, peekFst)
 
 
-const SubW = SubWindowsState.A
-
 export const getUpdateDownloadProgress =
   pipe (App.ui, UIA.subwindows, SubW.updateDownloadProgress)
 
@@ -319,8 +319,6 @@ export const getIsEditCharacterAvatarOpen =
 export const getIsEditPetAvatarOpen =
   pipe (App.ui, UIA.subwindows, SubW.isEditPetAvatarOpen)
 
-
-const Filt = FiltersState.A
 
 export const getAdvantagesFilterText =
   pipe (App.ui, UIA.filters, Filt.advantagesFilterText)
@@ -379,8 +377,6 @@ export const getSpellsFilterText =
 export const getZoneArmorFilterText =
   pipe (App.ui, UIA.filters, Filt.hitZoneArmorFilterText)
 
-
-const WikiUI = UIWikiState.A
 
 export const getWikiFilterText =
   pipe (App.ui, UIA.wiki, WikiUI.filter)

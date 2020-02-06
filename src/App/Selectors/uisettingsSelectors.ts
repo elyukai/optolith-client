@@ -1,102 +1,86 @@
-import { AppState } from "../Reducers/appReducer"
-import { uiReducer } from "../Reducers/uiReducer"
-import { UISettingsState } from "../Reducers/uiSettingsReducer"
+import { AppState } from "../Models/AppState"
+import { UISettingsState } from "../Models/UISettingsState"
+import { UIState } from "../Models/UIState"
 import { pipe } from "../Utilities/pipe"
 
+const ASA = AppState.A
+const UISA = UIState.A
+const UISSA = UISettingsState.A
+
 export const getHerolistSortOrder =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.herolistSortOrder)
+  pipe (ASA.ui, UISA.settings, UISSA.herolistSortOrder)
 
 export const getUISettingsState =
-  pipe (AppState.A.ui, uiReducer.A.settings)
+  pipe (ASA.ui, UISA.settings)
 
 export const getHerolistVisibilityFilter =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.herolistVisibilityFilter)
+  pipe (ASA.ui, UISA.settings, UISSA.herolistVisibilityFilter)
 
 export const getRacesSortOrder =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.racesSortOrder)
+  pipe (ASA.ui, UISA.settings, UISSA.racesSortOrder)
 
 export const getCulturesSortOrder =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.culturesSortOrder)
+  pipe (ASA.ui, UISA.settings, UISSA.culturesSortOrder)
 
 export const getCulturesVisibilityFilter =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.culturesVisibilityFilter)
+  pipe (ASA.ui, UISA.settings, UISSA.culturesVisibilityFilter)
 
 export const getProfessionsSortOrder =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.professionsSortOrder)
+  pipe (ASA.ui, UISA.settings, UISSA.professionsSortOrder)
 
 export const getProfessionsVisibilityFilter =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.professionsVisibilityFilter)
+  pipe (ASA.ui, UISA.settings, UISSA.professionsVisibilityFilter)
 
 export const getProfessionsGroupVisibilityFilter =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.professionsGroupVisibilityFilter)
+  pipe (ASA.ui, UISA.settings, UISSA.professionsGroupVisibilityFilter)
 
 export const getAdvantagesDisadvantagesCultureRatingVisibility =
-  pipe (
-    AppState.A.ui,
-    uiReducer.A.settings,
-    UISettingsState.A.advantagesDisadvantagesCultureRatingVisibility
-  )
+  pipe (ASA.ui, UISA.settings, UISSA.advantagesDisadvantagesCultureRatingVisibility)
 
 export const getSkillsSortOrder =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.talentsSortOrder)
+  pipe (ASA.ui, UISA.settings, UISSA.talentsSortOrder)
 
 export const getSkillsCultureRatingVisibility =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.talentsCultureRatingVisibility)
+  pipe (ASA.ui, UISA.settings, UISSA.talentsCultureRatingVisibility)
 
 export const getCombatTechniquesSortOrder =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.combatTechniquesSortOrder)
+  pipe (ASA.ui, UISA.settings, UISSA.combatTechniquesSortOrder)
 
 export const getSpecialAbilitiesSortOrder =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.specialAbilitiesSortOrder)
+  pipe (ASA.ui, UISA.settings, UISSA.specialAbilitiesSortOrder)
 
 export const getSpellsSortOrder =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.spellsSortOrder)
+  pipe (ASA.ui, UISA.settings, UISSA.spellsSortOrder)
 
 export const getSpellsUnfamiliarVisibility =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.spellsUnfamiliarVisibility)
+  pipe (ASA.ui, UISA.settings, UISSA.spellsUnfamiliarVisibility)
 
 export const getLiturgiesSortOrder =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.liturgiesSortOrder)
+  pipe (ASA.ui, UISA.settings, UISSA.liturgiesSortOrder)
 
 export const getEquipmentSortOrder =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.equipmentSortOrder)
+  pipe (ASA.ui, UISA.settings, UISSA.equipmentSortOrder)
 
 export const getEquipmentGroupVisibilityFilter =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.equipmentGroupVisibilityFilter)
+  pipe (ASA.ui, UISA.settings, UISSA.equipmentGroupVisibilityFilter)
 
 export const getEnableActiveItemHints =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.enableActiveItemHints)
+  pipe (ASA.ui, UISA.settings, UISSA.enableActiveItemHints)
 
 export const getSheetCheckAttributeValueVisibility =
-  pipe (
-    AppState.A.ui,
-    uiReducer.A.settings,
-    UISettingsState.A.sheetCheckAttributeValueVisibility
-  )
+  pipe (ASA.ui, UISA.settings, UISSA.sheetCheckAttributeValueVisibility)
 
 export const getTheme =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.theme)
+  pipe (ASA.ui, UISA.settings, UISSA.theme)
 
 export const getIsEditingHeroAfterCreationPhaseEnabled =
-  pipe (
-    AppState.A.ui,
-    uiReducer.A.settings,
-    UISettingsState.A.enableEditingHeroAfterCreationPhase
-  )
+  pipe (ASA.ui, UISA.settings, UISSA.enableEditingHeroAfterCreationPhase)
 
 export const getMeleeItemTemplateCombatTechniqueFilter =
-  pipe (
-    AppState.A.ui,
-    uiReducer.A.settings,
-    UISettingsState.A.meleeItemTemplatesCombatTechniqueFilter
-  )
+  pipe (ASA.ui, UISA.settings, UISSA.meleeItemTemplatesCombatTechniqueFilter)
 
 export const getRangedItemTemplateCombatTechniqueFilter =
-  pipe (
-    AppState.A.ui,
-    uiReducer.A.settings,
-    UISettingsState.A.rangedItemTemplatesCombatTechniqueFilter
-  )
+  pipe (ASA.ui, UISA.settings, UISSA.rangedItemTemplatesCombatTechniqueFilter)
 
 export const areAnimationsEnabled =
-  pipe (AppState.A.ui, uiReducer.A.settings, UISettingsState.A.enableAnimations)
+  pipe (ASA.ui, UISA.settings, UISSA.enableAnimations)

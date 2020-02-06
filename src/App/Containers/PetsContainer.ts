@@ -2,7 +2,7 @@ import { connect } from "react-redux"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as PetActions from "../Actions/PetActions"
 import * as SubwindowsActions from "../Actions/SubwindowsActions"
-import { AppStateRecord } from "../Reducers/appReducer"
+import { AppStateRecord } from "../Models/AppState"
 import { getIsEditPetAvatarOpen, getIsInPetCreation, getPetEditorInstance, getPets, getWikiAttributes } from "../Selectors/stateSelectors"
 import { Pets, PetsDispatchProps, PetsOwnProps, PetsStateProps } from "../Views/Pets/Pets"
 

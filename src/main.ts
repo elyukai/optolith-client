@@ -5,7 +5,7 @@ import { existsSync, mkdirSync } from "fs"
 import * as path from "path"
 import { prerelease } from "semver"
 import * as url from "url"
-import { tryIO } from "./Control/Exception"
+import { handleE } from "./Control/Exception"
 import { fromLeft_, isLeft } from "./Data/Either"
 import { fmapF } from "./Data/Functor"
 import { Unit } from "./Data/Unit"
@@ -193,13 +193,13 @@ const openMainWindow = () => {
 
 const copyAllFiles =
   async (copy: (fileName: string) => Promise<void>) => {
-    await fmapF (tryIO (copy) ("window.json"))
+    await fmapF (handleE (copy ("window.json")))
                 (x => isLeft (x) ? console.warn (fromLeft_ (x)) : undefined)
 
-    await fmapF (tryIO (copy) ("heroes.json"))
+    await fmapF (handleE (copy ("heroes.json")))
                 (x => isLeft (x) ? console.warn (fromLeft_ (x)) : undefined)
 
-    await fmapF (tryIO (copy) ("config.json"))
+    await fmapF (handleE (copy ("config.json")))
                 (x => isLeft (x) ? console.warn (fromLeft_ (x)) : undefined)
   }
 

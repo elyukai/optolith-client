@@ -1,7 +1,7 @@
 import { connect } from "react-redux"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as ProfessionActions from "../Actions/ProfessionActions"
-import { AppStateRecord } from "../Reducers/appReducer"
+import { AppStateRecord } from "../Models/AppState"
 import { getFilteredProfessions } from "../Selectors/rcpSelectors"
 import { getCurrentProfessionId, getCurrentProfessionVariantId, getProfessionsFilterText, getSex, getWiki } from "../Selectors/stateSelectors"
 import { getProfessionsGroupVisibilityFilter, getProfessionsSortOrder, getProfessionsVisibilityFilter } from "../Selectors/uisettingsSelectors"

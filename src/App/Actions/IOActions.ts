@@ -3,7 +3,7 @@ import { ipcRenderer, remote } from "electron"
 import { UpdateInfo } from "electron-updater"
 import * as fs from "fs"
 import { extname, join } from "path"
-import { toMsg, tryIO } from "../../Control/Exception"
+import { handleE, toMsg } from "../../Control/Exception"
 import { bimap, Either, either, eitherToMaybe, first, fromLeft_, fromRight_, isLeft, isRight, Left, Right } from "../../Data/Either"
 import { flip } from "../../Data/Function"
 import { fmap } from "../../Data/Functor"
@@ -21,11 +21,11 @@ import { IdPrefixes } from "../Constants/IdPrefixes"
 import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
 import { User } from "../Models/Hero/heroTypeHelpers"
 import { PetL } from "../Models/Hero/Pet"
+import { UISettingsState } from "../Models/UISettingsState"
 import { L10n, L10nRecord } from "../Models/Wiki/L10n"
 import { WikiModel } from "../Models/Wiki/WikiModel"
 import { heroReducer } from "../Reducers/heroReducer"
 import { LAST_LOADING_PHASE } from "../Reducers/isReadyReducer"
-import { UISettingsState } from "../Reducers/uiSettingsReducer"
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
 import { user_data_path } from "../Selectors/envSelectors"
 import { getCurrentHeroId, getCurrentHeroName, getHeroes, getLocaleId, getLocaleMessages, getUsers, getWiki } from "../Selectors/stateSelectors"
@@ -54,7 +54,8 @@ import { updateDateModified } from "./HerolistActions"
 const loadConfig = async () =>
   pipe_ (
     join (user_data_path, "config.json"),
-    tryIO (IO.readFile),
+    IO.readFile,
+    handleE,
     fmap (pipe (
       first (err => err .message),
       fmap (readConfig)
@@ -64,7 +65,8 @@ const loadConfig = async () =>
 const loadHeroes = async () =>
   pipe_ (
     join (user_data_path, "heroes.json"),
-    tryIO (IO.readFile),
+    IO.readFile,
+    handleE,
     fmap (pipe (eitherToMaybe, bindF (parseJSON as (x: string) => Maybe<RawHerolist>)))
   )
 
@@ -236,7 +238,8 @@ export const requestConfigSave =
 
     return pipe_ (
       join (user_data_path, "config.json"),
-      tryIO (flip (IO.writeFile) (writeConfig (data))),
+      flip (IO.writeFile) (writeConfig (data)),
+      handleE,
       IO.bindF (async res => {
         console.log (res)
 
@@ -275,7 +278,8 @@ export const requestAllHeroesSave =
 
     return pipe_ (
       join (user_data_path, "heroes.json"),
-      tryIO (flip (IO.writeFile) (JSON.stringify (data))),
+      flip (IO.writeFile) (JSON.stringify (data)),
+      handleE,
       IO.bindF (async res => {
         if (isLeft (res)) {
           await dispatch (addDefaultErrorAlert (l10n)
@@ -349,12 +353,13 @@ export const requestHeroSave =
 
       return pipe_ (
         join (user_data_path, "heroes.json"),
-        tryIO (flip (IO.writeFile) (JSON.stringify (maybe ({ [hero.id]: hero })
-                                                       ((savedHeroes: RawHerolist) => ({
-                                                         ...savedHeroes,
-                                                         [hero.id]: hero,
-                                                       }))
-                                                       (msaved_heroes)))),
+        flip (IO.writeFile) (JSON.stringify (maybe ({ [hero.id]: hero })
+                                                   ((savedHeroes: RawHerolist) => ({
+                                                     ...savedHeroes,
+                                                     [hero.id]: hero,
+                                                   }))
+                                                   (msaved_heroes))),
+        handleE,
         IO.bindF (async res => {
           if (isLeft (res)) {
             await dispatch (addDefaultErrorAlert (l10n)
@@ -386,18 +391,19 @@ export const requestHeroDeletion =
 
     return pipe_ (
       join (user_data_path, "heroes.json"),
-      tryIO (flip (IO.writeFile) (JSON.stringify (
-                                 maybe<RawHerolist> ({})
-                                                    ((savedHeroes: RawHerolist) => {
-                                                      const {
-                                                        [id]: _,
-                                                        ...other
-                                                      } = savedHeroes
+      flip (IO.writeFile) (JSON.stringify (
+                          maybe<RawHerolist> ({})
+                                             ((savedHeroes: RawHerolist) => {
+                                               const {
+                                                 [id]: _,
+                                                 ...other
+                                               } = savedHeroes
 
-                                                      return other
-                                                    })
-                                                    (msaved_heroes)
-                              ))),
+                                               return other
+                                             })
+                                             (msaved_heroes)
+                       )),
+      handleE,
       IO.bindF (async res => {
         if (isLeft (res)) {
           await dispatch (addDefaultErrorAlert (l10n)
@@ -470,9 +476,9 @@ export const requestHeroExport =
       })
 
       if (isJust (pmfilepath)) {
-        const res = await tryIO (maybe (Promise.resolve ())
-                                      (flip (IO.writeFile) (JSON.stringify (hero))))
-                                (pmfilepath)
+        const res = await handleE (maybe (Promise.resolve ())
+                                         (flip (IO.writeFile) (JSON.stringify (hero)))
+                                         (pmfilepath))
 
         if (isRight (res)) {
           await dispatch (addAlert (l10n)
@@ -504,7 +510,7 @@ export const loadImportedHero =
       listToMaybe,
       bindF (ensure (x => extname (x) === ".json")),
       maybe<Promise<Maybe<Either<Error, string>>>> (Promise.resolve (Nothing))
-                                                   (pipe (tryIO (IO.readFile), fmap (Just))),
+                                                   (pipe (IO.readFile, handleE, fmap (Just))),
       IO.bindF (pipe (
         fmap (Either.bindF (tryParseJSON)),
         async mres => {
@@ -679,7 +685,7 @@ export const requestPrintHeroToPDF =
                  })
 
     const res = await maybe (Promise.resolve<Either<Error, void>> (Right (undefined)))
-                            (tryIO (flip (IO.writeFile) (data)))
+                            (pipe (flip (IO.writeFile) (data), handleE))
                             (path)
 
     if (isRight (res) && isJust (path)) {

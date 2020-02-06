@@ -12,8 +12,6 @@ type Action = SetTabAction
             | SetSelectionsAction
             | SwitchEnableEditingHeroAfterCreationPhaseAction
 
-export const RouteDefault: TabId = TabId.Herolist
-
 export const routeReducer =
   (action: Action): ident<TabId> => {
     switch (action.type) {

@@ -1,4 +1,4 @@
-import { tryIO } from "../../Control/Exception"
+import { handleE } from "../../Control/Exception"
 import { Either, fromLeft_, fromRight_, isLeft, isRight } from "../../Data/Either"
 import { List } from "../../Data/List"
 import { elem, fromJust, isJust, Just, Maybe } from "../../Data/Maybe"
@@ -126,7 +126,7 @@ export const loadHero = (id: string): LoadHeroAction => ({
 export const saveHeroes =
   (l10n: L10nRecord): ReduxAction =>
   async dispatch => {
-    await bind (dispatch (tryIO (requestAllHeroesSave (l10n))))
+    await bind (handleE (dispatch (requestAllHeroesSave (l10n))))
                (async res => isRight (res)
                              ? dispatch (addAlert (l10n)
                                                   (AlertOptions ({
@@ -146,7 +146,7 @@ export const saveHero =
   (l10n: L10nRecord) =>
   (id: Maybe<string>): ReduxAction<Promise<void>> =>
     async dispatch => {
-      await bind (dispatch (tryIO (requestHeroSave (l10n) (id))))
+      await bind (handleE (dispatch (requestHeroSave (l10n) (id))))
                  (async res => {
                    if (isLeft (res)) {
                      const err = fromLeft_ (res)
@@ -215,7 +215,7 @@ export const deleteHeroValidate =
 
       if (elem (ConfirmResponse.Accepted) (res)) {
         dispatch (deleteHero (id))
-        await dispatch (tryIO (requestHeroDeletion (l10n) (id)))
+        await handleE (dispatch (requestHeroDeletion (l10n) (id)))
       }
     }
   }

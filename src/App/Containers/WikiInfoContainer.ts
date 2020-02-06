@@ -1,6 +1,6 @@
 import { connect } from "react-redux"
 import { SpecialAbilityId } from "../Constants/Ids"
-import { AppStateRecord } from "../Reducers/appReducer"
+import { AppStateRecord } from "../Models/AppState"
 import { getAllCultures, getAllProfessions, getAllRaces } from "../Selectors/rcpSelectors"
 import * as stateSelectors from "../Selectors/stateSelectors"
 import { mapGetToSlice } from "../Utilities/SelectorsUtils"

@@ -1,33 +1,16 @@
 import { cnst, ident } from "../../Data/Function"
 import { set } from "../../Data/Lens"
-import { bind, fromMaybe, isJust, Just, Maybe, Nothing } from "../../Data/Maybe"
-import { fromDefault, makeLenses, Record } from "../../Data/Record"
+import { bind, fromMaybe, isJust, Just, Nothing } from "../../Data/Maybe"
+import { Record } from "../../Data/Record"
 import { fst } from "../../Data/Tuple"
 import { ReceiveInitialDataAction } from "../Actions/IOActions"
 import { SetLocaleAction } from "../Actions/LocaleActions"
 import * as ActionTypes from "../Constants/ActionTypes"
-import { L10nRecord } from "../Models/Wiki/L10n"
+import { LocaleState, LocaleStateL } from "../Models/LocaleState"
 import { pipe } from "../Utilities/pipe"
-import { Config, Locale } from "../Utilities/Raw/JSON/Config"
+import { Config } from "../Utilities/Raw/JSON/Config"
 
 type Action = ReceiveInitialDataAction | SetLocaleAction
-
-export interface LocaleState {
-  "@@name": "LocaleState"
-  id: Maybe<Locale>
-  type: "default" | "set"
-  messages: Maybe<L10nRecord>
-}
-
-export const LocaleState =
-  fromDefault ("LocaleState")
-              <LocaleState> ({
-                id: Nothing,
-                type: "default",
-                messages: Nothing,
-              })
-
-export const LocaleStateL = makeLenses (LocaleState)
 
 export const localeReducer =
   (action: Action): ident<Record<LocaleState>> => {

@@ -1,7 +1,7 @@
 import { connect } from "react-redux"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as CombatTechniquesActions from "../Actions/CombatTechniquesActions"
-import { AppStateRecord } from "../Reducers/appReducer"
+import { AppStateRecord } from "../Models/AppState"
 import { getAttributesForSheet } from "../Selectors/attributeSelectors"
 import { getFilteredCombatTechniques } from "../Selectors/combatTechniquesSelectors"
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"

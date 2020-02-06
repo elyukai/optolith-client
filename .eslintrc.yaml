@@ -233,7 +233,7 @@ rules:
     - 2
     - before
     - overrides:
-        "=": after
+        "=": ignore
   padded-blocks:
     - 2
     - blocks: never

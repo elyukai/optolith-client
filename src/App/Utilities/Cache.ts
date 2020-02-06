@@ -1,5 +1,5 @@
 import { join } from "path"
-import { tryIO } from "../../Control/Exception"
+import { handleE } from "../../Control/Exception"
 import { Either, eitherToMaybe, Right } from "../../Data/Either"
 import { ident } from "../../Data/Function"
 import { fmap } from "../../Data/Functor"
@@ -10,11 +10,11 @@ import { Record } from "../../Data/Record"
 import { parseJSON } from "../../Data/String/JSON"
 import { Pair, Tuple } from "../../Data/Tuple"
 import { deleteFile, existsFile, readFile, writeFile } from "../../System/IO"
+import { AppStateRecord } from "../Models/AppState"
 import { HeroModelRecord } from "../Models/Hero/HeroModel"
+import { HeroesState } from "../Models/HeroesState"
 import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories"
 import { L10nRecord } from "../Models/Wiki/L10n"
-import { AppStateRecord } from "../Reducers/appReducer"
-import { HeroesState } from "../Reducers/herolistReducer"
 import { getAPSpentMap, getAPSpentOnAdvantagesMap, getAPSpentOnAttributesMap, getAPSpentOnBlessedAdvantagesMap, getAPSpentOnBlessedDisadvantagesMap, getAPSpentOnBlessingsMap, getAPSpentOnCantripsMap, getAPSpentOnCombatTechniquesMap, getAPSpentOnDisadvantagesMap, getAPSpentOnEnergiesMap, getAPSpentOnLiturgicalChantsMap, getAPSpentOnMagicalAdvantagesMap, getAPSpentOnMagicalDisadvantagesMap, getAPSpentOnSkillsMap, getAPSpentOnSpecialAbilitiesMap, getAPSpentOnSpellsMap, getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { current_version, user_data_path } from "../Selectors/envSelectors"
 import { pipe, pipe_ } from "./pipe"
@@ -78,7 +78,8 @@ export const readCache =
   async () =>
     pipe_ (
       file_path,
-      tryIO (readFile),
+      readFile,
+      handleE,
       fmap (pipe (
         eitherToMaybe,
         bindF (parseJSON),
@@ -110,12 +111,13 @@ export const writeCache =
       [AP_KEY]: m,
     }),
     JSON.stringify,
-    tryIO (writeFile (file_path))
+    writeFile (file_path),
+    handleE
   )
 
 export const deleteCache: () => Promise<Either<Error, void>> =
   async () => await existsFile (file_path)
-              ? tryIO (deleteFile) (file_path)
+              ? pipe_ (file_path, deleteFile, handleE)
               : Right<void> (undefined)
 
 const fromNumOrPair =
