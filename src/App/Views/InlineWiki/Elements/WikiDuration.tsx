@@ -34,7 +34,7 @@ export const WikiDuration: FC = props => {
 
   const key =
     category === Category.SPELLS
-    && (gr === MagicalGroup.ElvenMagicalSongs || gr === MagicalGroup.Zaubermelodien)
+    && (gr === MagicalGroup.ElvenMagicalSongs || gr === MagicalGroup.MagicalMelodies)
     ? "skill"
     : "duration"
 

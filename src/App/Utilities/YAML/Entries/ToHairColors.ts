@@ -11,13 +11,7 @@ import { YamlFileConverter } from "../ToRecordsByFile"
 
 
 const toHairColor : (x : HairColorL10n) => [number, Record<NumIdName>]
-                  = x => [
-                      x.id,
-                      NumIdName ({
-                        id: x.id,
-                        name: x.name,
-                      }),
-                    ]
+                  = x => [ x.id, NumIdName (x) ]
 
 
 export const toHairColors : YamlFileConverter<number, Record<NumIdName>>

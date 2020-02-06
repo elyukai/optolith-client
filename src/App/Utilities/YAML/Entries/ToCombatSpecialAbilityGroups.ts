@@ -11,13 +11,7 @@ import { YamlFileConverter } from "../ToRecordsByFile"
 
 
 const toCombatSAGroup : (x : CombatSpecialAbilityGroupL10n) => [number, Record<NumIdName>]
-                      = x => [
-                          x.id,
-                          NumIdName ({
-                            id: x.id,
-                            name: x.name,
-                          }),
-                        ]
+                      = x => [ x.id, NumIdName (x) ]
 
 
 export const toCombatSpecialAbilityGroups : YamlFileConverter<number, Record<NumIdName>>

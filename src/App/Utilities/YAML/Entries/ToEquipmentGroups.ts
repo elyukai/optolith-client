@@ -11,13 +11,7 @@ import { YamlFileConverter } from "../ToRecordsByFile"
 
 
 const toEquipmentGroup : (x : EquipmentGroupL10n) => [number, Record<NumIdName>]
-                       = x => [
-                           x.id,
-                           NumIdName ({
-                             id: x.id,
-                             name: x.name,
-                           }),
-                         ]
+                       = x => [ x.id, NumIdName (x) ]
 
 
 export const toEquipmentGroups : YamlFileConverter<number, Record<NumIdName>>

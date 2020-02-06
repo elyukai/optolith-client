@@ -22,12 +22,12 @@ const getNameKey =
   (gr: number): NameKey =>
     (category === Category.SPELLS
      && (gr === MagicalGroup.Rituals
-         || gr === MagicalGroup.Herrschaftsrituale
-         || gr === MagicalGroup.Geodenrituale
-         || gr === MagicalGroup.Zibiljarituale))
+         || gr === MagicalGroup.DominationRituals
+         || gr === MagicalGroup.GeodeRituals
+         || gr === MagicalGroup.ZibiljaRituals))
     ? "ritualtime"
     : (category === Category.SPELLS
-       && (gr === MagicalGroup.Zaubermelodien || gr === MagicalGroup.Zaubertaenze))
+       && (gr === MagicalGroup.MagicalMelodies || gr === MagicalGroup.MagicalDances))
     ? "lengthoftime"
     : category === Category.LITURGICAL_CHANTS && gr === BlessedGroup.LiturgicalChants
     ? "liturgicaltime"

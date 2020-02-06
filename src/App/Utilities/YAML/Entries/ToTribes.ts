@@ -11,13 +11,7 @@ import { YamlFileConverter } from "../ToRecordsByFile"
 
 
 const toTribe : (x : TribeL10n) => [number, Record<NumIdName>]
-              = x => [
-                  x.id,
-                  NumIdName ({
-                    id: x.id,
-                    name: x.name,
-                  }),
-                ]
+              = x => [ x.id, NumIdName (x) ]
 
 
 export const toTribes : YamlFileConverter<number, Record<NumIdName>>

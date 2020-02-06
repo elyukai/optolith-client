@@ -11,13 +11,7 @@ import { YamlFileConverter } from "../ToRecordsByFile"
 
 
 const toEyeColor : (x : EyeColorL10n) => [number, Record<NumIdName>]
-                 = x => [
-                     x.id,
-                     NumIdName ({
-                       id: x.id,
-                       name: x.name,
-                     }),
-                   ]
+                 = x => [ x.id, NumIdName (x) ]
 
 
 export const toEyeColors : YamlFileConverter<number, Record<NumIdName>>

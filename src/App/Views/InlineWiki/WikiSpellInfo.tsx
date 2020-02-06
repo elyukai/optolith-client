@@ -133,7 +133,7 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
         </WikiBoxTemplate>
       )
 
-    case MagicalGroup.Zaubermelodien:
+    case MagicalGroup.MagicalMelodies:
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
@@ -158,7 +158,7 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
         </WikiBoxTemplate>
       )
 
-    case MagicalGroup.Zaubertaenze:
+    case MagicalGroup.MagicalDances:
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
@@ -182,7 +182,7 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
         </WikiBoxTemplate>
       )
 
-    case MagicalGroup.Herrschaftsrituale:
+    case MagicalGroup.DominationRituals:
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
@@ -204,7 +204,7 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
         </WikiBoxTemplate>
       )
 
-    case MagicalGroup.Schelmenzauber:
+    case MagicalGroup.RogueSpells:
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
@@ -228,7 +228,7 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
         </WikiBoxTemplate>
         )
 
-    case MagicalGroup.Animistenkräfte:
+    case MagicalGroup.AnimistForces:
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
@@ -252,7 +252,7 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
         </WikiBoxTemplate>
       )
 
-    case MagicalGroup.Geodenrituale:
+    case MagicalGroup.GeodeRituals:
       // zw. Property und Source sollte prerequisites sein
       return (
         <WikiBoxTemplate className="spell" title={name}>
@@ -278,7 +278,7 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
         </WikiBoxTemplate>
       )
 
-    case MagicalGroup.Zibiljarituale:
+    case MagicalGroup.ZibiljaRituals:
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck

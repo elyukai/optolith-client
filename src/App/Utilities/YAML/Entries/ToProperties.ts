@@ -11,13 +11,7 @@ import { YamlFileConverter } from "../ToRecordsByFile"
 
 
 const toProperty : (x : PropertyL10n) => [number, Record<NumIdName>]
-                 = x => [
-                     x.id,
-                     NumIdName ({
-                       id: x.id,
-                       name: x.name,
-                     }),
-                   ]
+                 = x => [ x.id, NumIdName (x) ]
 
 
 export const toProperties : YamlFileConverter<number, Record<NumIdName>>

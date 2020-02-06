@@ -28,57 +28,59 @@ import { toSourceRefs } from "./toSourceRefs"
 
 const toApplications : (x : [SkillUniv, SkillL10n]) => List<Record<Application>>
                      = pipe (
-                       x => zipByIdLoose (x [0] .applications)
-                                         (x [1] .applications),
-                       ([ xs, ys ]) : Pair<Record<Application>[], Record<Application>[]> =>
-                         Pair (
-                           xs.map (([ u, l ]) => Application ({
-                                                 id: u.id,
-                                                 name: l.name,
-                                                 prerequisite:
-                                                   Just (
-                                                     toActivatablePrerequisite (u.prerequisite)
-                                                   ),
-                                               })),
-                           ys.map (l => Application ({
-                                          id: l.id,
-                                          name: l.name,
-                                        }))
-                         ),
-                       uncurry (on (append as append<Record<Application>>)
-                                   <Record<Application>[]> (fromArray))
-                     )
+                         ([ univ, l10n ]) => zipByIdLoose (univ.applications)
+                                                          (l10n.applications),
+                         ([ xs, ys ]) : Pair<Record<Application>[], Record<Application>[]> =>
+                           Pair (
+                             xs.map (([ u, l ]) => Application ({
+                                                   id: u.id,
+                                                   name: l.name,
+                                                   prerequisite:
+                                                     Just (
+                                                       toActivatablePrerequisite (u.prerequisite)
+                                                     ),
+                                                 })),
+                             ys.map (l => Application ({
+                                            id: l.id,
+                                            name: l.name,
+                                          }))
+                           ),
+                         uncurry (on (append as append<Record<Application>>)
+                                     <Record<Application>[]> (fromArray))
+                       )
 
 
 const toUses : (x : [SkillUniv, SkillL10n]) => Either<Error[], List<Record<Use>>>
              = pipe (
-               (x) : Either<Error[], Maybe<[UseUniv, UseL10n][]>> =>
-                 x [1] .uses === undefined
-                 ? Right (Nothing)
-                 : x [0] .uses === undefined
-                 ? Left ([ new Error (`toSkills: skill "${x [0] .id}" has uses but there are no entries in universal file`) ])
-                 : pipe_ (
-                     zipById (x [0] .uses)
-                             (x [1] .uses),
-                     second (Just)
-                   ),
-               second (pipe (
-                        fmap (pipe (
-                               map (([ u, l ]) => Use ({
-                                                  id: u.id,
-                                                  name: l.name,
-                                                  prerequisite:
-                                                    toActivatablePrerequisite (u.prerequisite),
-                                                })),
-                               fromArray
-                             )),
-                        fromMaybe (List ())
-                      ))
-             )
+                 ([ univ, l10n ]) : Either<Error[], Maybe<[UseUniv, UseL10n][]>> =>
+                   l10n.uses === undefined
+                   ? Right (Nothing)
+                   : univ.uses === undefined
+                   ? Left ([ new Error (`toSkills: skill "${univ.id}" has uses but there are no entries in universal file`) ])
+                   : pipe_ (
+                       zipById (univ.uses)
+                               (l10n.uses),
+                       second (Just)
+                     ),
+                 second (pipe (
+                          fmap (pipe (
+                                 map (([ u, l ]) => Use ({
+                                                      id: u.id,
+                                                      name: l.name,
+                                                      prerequisite:
+                                                        toActivatablePrerequisite (u.prerequisite),
+                                                    })),
+                                 fromArray
+                               )),
+                          fromMaybe (List ())
+                        ))
+               )
 
 
 const toSkill : YamlPairConverterE<SkillUniv, SkillL10n, string, Skill>
               = x => {
+                  const [ univ, l10n ] = x
+
                   const applications = toApplications (x)
 
                   const euses = toUses (x)
@@ -90,25 +92,25 @@ const toSkill : YamlPairConverterE<SkillUniv, SkillL10n, string, Skill>
                   const uses = fromRight_<RightI<typeof euses>> (euses)
 
                   return Right<[string, Record<Skill>]> ([
-                    x [0] .id,
+                    univ.id,
                     Skill ({
-                      id: x [0] .id,
-                      name: x [1] .name,
-                      check: List (x [0] .check1, x [0] .check2, x [0] .check3),
-                      encumbrance: x [0] .enc,
-                      encumbranceDescription: Maybe (x [1] .name),
-                      gr: x [0] .gr,
-                      ic: icToInt (x [0] .ic),
+                      id: univ.id,
+                      name: l10n.name,
+                      check: List (univ.check1, univ.check2, univ.check3),
+                      encumbrance: univ.enc,
+                      encumbranceDescription: Maybe (l10n.name),
+                      gr: univ.gr,
+                      ic: icToInt (univ.ic),
                       applications,
-                      applicationsInput: Maybe (x [1] .applicationsInput),
+                      applicationsInput: Maybe (l10n.applicationsInput),
                       uses,
-                      tools: toMarkdownM (Maybe (x [1] .tools)),
-                      quality: toMarkdown (x [1] .quality),
-                      failed: toMarkdown (x [1] .failed),
-                      critical: toMarkdown (x [1] .critical),
-                      botch: toMarkdown (x [1] .botch),
-                      src: toSourceRefs (x [1] .src),
-                      errata: toErrata (x [1] .errata),
+                      tools: toMarkdownM (Maybe (l10n.tools)),
+                      quality: toMarkdown (l10n.quality),
+                      failed: toMarkdown (l10n.failed),
+                      critical: toMarkdown (l10n.critical),
+                      botch: toMarkdown (l10n.botch),
+                      src: toSourceRefs (l10n.src),
+                      errata: toErrata (l10n.errata),
                       category: Nothing,
                     }),
                   ])

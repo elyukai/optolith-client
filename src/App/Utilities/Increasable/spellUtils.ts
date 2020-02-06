@@ -404,7 +404,7 @@ const isInactiveValidForAnimist =
                                     (is_spell_max_count_reached)
                                     (wiki_entry)
                                     (mhero_entry)
-    || SA.gr (wiki_entry) === MagicalGroup.Animistenkräfte
+    || SA.gr (wiki_entry) === MagicalGroup.AnimistForces
 
 
 const consTradSpecificSpell =

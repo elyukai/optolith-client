@@ -11,13 +11,7 @@ import { YamlFileConverter } from "../ToRecordsByFile"
 
 
 const toArcaneBardTradition : (x : ArcaneBardTraditionL10n) => [number, Record<NumIdName>]
-                            = x => [
-                                x.id,
-                                NumIdName ({
-                                  id: x.id,
-                                  name: x.name,
-                                }),
-                              ]
+                            = x => [ x.id, NumIdName (x) ]
 
 
 export const toArcaneBardTraditions : YamlFileConverter<number, Record<NumIdName>>

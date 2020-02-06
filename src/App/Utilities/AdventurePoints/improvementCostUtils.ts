@@ -1,6 +1,8 @@
+/* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 import { add, inc, max, multiply, negate, subtractBy } from "../../../Data/Num"
 import { bimap, fst, Pair, snd } from "../../../Data/Tuple"
 import { pipe } from "../pipe"
+
 
 /**
  * `getICMultiplier :: Int -> Int`
@@ -11,44 +13,52 @@ import { pipe } from "../pipe"
  * liturgical chants as well as the improvement cost value for skills up to
  * SR 12 and attributes up to 14.
  */
-export const getICMultiplier = (ic: number) => ic === 5 ? 15 : ic
+export const getICMultiplier : (ic : number) => number
+                             = ic => ic === 5 ? 15 : ic
+
 
 /**
  * Get the IC-specific threshold where the AP cost for one point does not equal
  * the IC-specific multiplier (`getICMultiplier`) anymore.
  */
-const getCostThreshold = (ic: number) => ic === 5 ? 15 : 13
+const getCostThreshold : (ic : number) => number
+                       = ic => ic === 5 ? 15 : 13
+
 
 /**
  * Returns the multiplicand depending on IC-specific threshold
  * (`getCostThreshold`) and current value.
  */
-const getValueMultiplier =
-  (ic: number) => pipe (subtractBy (getCostThreshold (ic)), add (2), max (1))
+const getValueMultiplier : (ic : number) => (value : number) => number
+                         = ic => pipe (subtractBy (getCostThreshold (ic)), add (2), max (1))
+
 
 /**
  * The function `getImprovementCost ic sr` returns the AP cost for one
  * step based on the passed improvement cost factor (`ic`) and the current skill
  * rating or value (`sr`).
  */
-const getImprovementCost = (ic: number) => pipe (
-  getValueMultiplier (ic),
-  multiply (getICMultiplier (ic))
-)
+const getImprovementCost : (ic : number) => (value : number) => number
+                         = ic => pipe (getValueMultiplier (ic), multiply (getICMultiplier (ic)))
+
 
 /**
  * `getIncreaseAP :: Int -> Int -> Int`
  *
  * `getIncreaseAP ic fromValue` returns the AP cost for the next increase.
  */
-export const getIncreaseAP = (ic: number) => pipe (inc, getImprovementCost (ic))
+export const getIncreaseAP : (ic : number) => (fromValue : number) => number
+                           = ic => pipe (inc, getImprovementCost (ic))
+
 
 /**
  * `getDecreaseAP :: Int -> Int -> Int`
  *
  * `getDecreaseAP ic fromValue` returns the AP cost for the next decrease.
  */
-export const getDecreaseAP = (ic: number) => pipe (getImprovementCost (ic), negate)
+export const getDecreaseAP : (ic : number) => (fromValue : number) => number
+                           = ic => pipe (getImprovementCost (ic), negate)
+
 
 /**
  * `sumAPValue :: (Int, Int) -> (Int, Int) -> Int`
@@ -69,23 +79,31 @@ export const getDecreaseAP = (ic: number) => pipe (getImprovementCost (ic), nega
  * sumAPValue (5, 15) (13, 0) == 45
  * ```
  */
-const sumAPValue =
-  (icAndMax: Pair<number, number>) => (current: Pair<number, number>): number =>
-    fst (current) === snd (icAndMax)
-      ? snd (current)
-      : sumAPValue (icAndMax)
-                   (bimap (inc)
-                          (add (getImprovementCost (fst (icAndMax))
-                                                   (inc (fst (current)))))
-                          (current))
+const sumAPValue : (icAndMax : Pair<number, number>) => (current : Pair<number, number>) => number
+                 = icAndMax =>
+                   current =>
+                     fst (current) === snd (icAndMax)
+                     ? snd (current)
+                     : sumAPValue (icAndMax)
+                                  (bimap (inc)
+                                         (add (getImprovementCost (fst (icAndMax))
+                                                                  (inc (fst (current)))))
+                                         (current))
 
-const getIncreaseRangeAP =
-  (ic: number) => (fromValue: number) => (toValue: number) =>
-    sumAPValue (Pair (ic, toValue)) (Pair (fromValue, 0))
 
-const getDecreaseRangeAP =
-  (ic: number) => (fromValue: number) => (toValue: number) =>
-    -sumAPValue (Pair (ic, fromValue)) (Pair (toValue, 0))
+const getIncreaseRangeAP : (ic : number) => (fromValue : number) => (toValue : number) => number
+                         = ic =>
+                           fromValue =>
+                           toValue =>
+                             sumAPValue (Pair (ic, toValue)) (Pair (fromValue, 0))
+
+
+const getDecreaseRangeAP : (ic : number) => (fromValue : number) => (toValue : number) => number
+                         = ic =>
+                           fromValue =>
+                           toValue =>
+                             -sumAPValue (Pair (ic, fromValue)) (Pair (toValue, 0))
+
 
 /**
  * `getAPRange :: Int -> Int -> Int -> Int`
@@ -93,21 +111,42 @@ const getDecreaseRangeAP =
  * `getAPRange ic fromValue toValue` returns the AP cost for the given value
  * range.
  */
-export const getAPRange = (ic: number) => (fromValue: number) => (toValue: number) => {
-  if (fromValue === toValue) {
-    return 0
-  }
+export const getAPRange : (ic : number) => (fromValue : number) => (toValue : number) => number
+                        = ic => fromValue => toValue => {
+                          if (fromValue === toValue) {
+                            return 0
+                          }
 
-  const getSignedAPRange = fromValue > toValue ? getDecreaseRangeAP : getIncreaseRangeAP
+                          const getSignedAPRange = fromValue > toValue
+                                                   ? getDecreaseRangeAP
+                                                   : getIncreaseRangeAP
 
-  return getSignedAPRange (ic) (fromValue) (toValue)
-}
+                          return getSignedAPRange (ic) (fromValue) (toValue)
+                        }
+
+
+const ICMap = {
+  A: 1,
+  B: 2,
+  C: 3,
+  D: 4,
+  E: 5,
+} as const
+
+
+/**
+ * Takes an improvement cost label and returns the corresponding integer value.
+ */
+export const icToInt : <A extends keyof typeof ICMap>(x : A) => (typeof ICMap)[A]
+                     = x => ICMap [x]
+
 
 const improvementCostNames = [ "A", "B", "C", "D", "E" ]
+
 
 /**
  * `getICName :: Int -> String`
  *
  * Returns the string representing the IC id.
  */
-export const getICName = (numericId: number) => improvementCostNames [numericId - 1]
+export const getICName = (numericId : number) => improvementCostNames [numericId - 1]
