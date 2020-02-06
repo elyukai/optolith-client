@@ -10,7 +10,7 @@ export interface Condition {
   id: string
   name: string
   description: Maybe<string>
-  levelColumnDescription: string
+  levelColumnDescription: Maybe<string>
   levelDescriptions: Tuple<[string, string, string, string]>
   src: List<Record<SourceLink>>
   errata: List<Record<Erratum>>
@@ -22,7 +22,7 @@ export const Condition =
                 id: "",
                 name: "",
                 description: Nothing,
-                levelColumnDescription: "",
+                levelColumnDescription: Nothing,
                 levelDescriptions: Tuple ("", "", "", ""),
                 src: List (),
                 errata: List (),

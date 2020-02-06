@@ -19,12 +19,12 @@ const copySchema =
   }
 
 
-const copyL10n =
-  async locale => {
-    const src = join (src_dir, "Data", locale)
+const copyData =
+  async () => {
+    const src = join (src_dir, "Data")
 
     if (existsSync (src)) {
-      const dest = join ("app", "Database", locale)
+      const dest = join ("app", "Database")
 
       await remove (dest)
       await copy (src, dest)
@@ -37,14 +37,9 @@ const copyL10n =
 const getStaticData = async () => {
   console.log ("Copying most recent static data files...")
 
+  await copyData ()
   await copySchema (join ("app", "Database", "Schema"))
   await copySchema (join ("src", "App", "Utilities", "YAML", "Schema"))
-
-  await copyL10n ("univ")
-  await copyL10n ("de-DE")
-  await copyL10n ("en-US")
-  await copyL10n ("nl-BE")
-  await copyL10n ("fr-FR")
 
   console.log ("All files copied!")
 }

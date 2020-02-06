@@ -6,6 +6,7 @@ export interface MagicalTradition {
   "@@name": "MagicalTradition"
   id: string
   numId: Maybe<number>
+  name: string
   primary: Maybe<AttrId>
   aeMod: Maybe<number>
 }
@@ -15,6 +16,7 @@ export const MagicalTradition =
               <MagicalTradition> ({
                 id: "",
                 numId: Nothing,
+                name: "",
                 primary: Nothing,
                 aeMod: Nothing,
               })
