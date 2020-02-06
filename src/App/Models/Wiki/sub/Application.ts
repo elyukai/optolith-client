@@ -1,13 +1,12 @@
-import { List } from "../../../../Data/List"
 import { Maybe, Nothing } from "../../../../Data/Maybe"
-import { fromDefault } from "../../../../Data/Record"
-import { AllRequirementObjects } from "../wikiTypeHelpers"
+import { fromDefault, Record } from "../../../../Data/Record"
+import { RequireActivatable } from "../prerequisites/ActivatableRequirement"
 
 export interface Application {
   "@@name": "Application"
   id: number
   name: string
-  prerequisites: Maybe<List<AllRequirementObjects>>
+  prerequisite: Maybe<Record<RequireActivatable>>
 }
 
 export const Application =
@@ -15,5 +14,5 @@ export const Application =
               <Application> ({
                 id: 0,
                 name: "",
-                prerequisites: Nothing,
+                prerequisite: Nothing,
               })

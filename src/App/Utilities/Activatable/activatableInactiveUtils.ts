@@ -9,12 +9,12 @@
 
 import { notP } from "../../../Data/Bool"
 import { equals, notEquals } from "../../../Data/Eq"
-import { cnst, flip, ident, thrush } from "../../../Data/Function"
+import { cnst, flip, ident } from "../../../Data/Function"
 import { fmap, fmapF, mapReplace } from "../../../Data/Functor"
 import * as IntMap from "../../../Data/IntMap"
 import { over, set } from "../../../Data/Lens"
 import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, nub, subscript } from "../../../Data/List"
-import { all, ap, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe"
+import { all, ap, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, Maybe, maybe, maybeToList, Nothing, or, thenF } from "../../../Data/Maybe"
 import { add, gt, gte, inc, multiply } from "../../../Data/Num"
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap"
 import { Record, RecordI } from "../../../Data/Record"
@@ -383,12 +383,10 @@ const modifySelectOptions =
                                            (mcounts)
 
                                      const arePrerequisitesMet =
-                                       all (pipe (
-                                             validatePrerequisites (wiki)
-                                                                   (hero),
-                                             thrush (current_id)
-                                           ))
-                                           (AppA.prerequisites (app))
+                                       validatePrerequisites (wiki)
+                                                             (hero)
+                                                             (maybeToList (AppA.prerequisite (app)))
+                                                             (current_id)
 
                                      return isInactive
                                        && arePrerequisitesMet

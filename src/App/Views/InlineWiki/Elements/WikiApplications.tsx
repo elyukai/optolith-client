@@ -1,7 +1,7 @@
 import * as React from "react"
 import { fmap } from "../../../../Data/Functor"
 import { fnull, intercalate, List, notNull } from "../../../../Data/List"
-import { bindF, ensure, isNothing, listToMaybe, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe"
+import { bindF, ensure, isNothing, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe"
 import { member, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { Advantage } from "../../../Models/Wiki/Advantage"
@@ -50,9 +50,7 @@ export const WikiApplications: FC = props => {
       const new_apps =
         mapMaybe (pipe (
                    ensure (pipe (
-                     AA.prerequisites,
-                     bindF (listToMaybe),
-                     bindF (ensure (RequireActivatable.is)),
+                     AA.prerequisite,
                      bindF (pipe (RequireActivatable.A.id, ensure (isString))),
                      maybe (false)
                            (id => member (id) (advantages) || member (id) (specialAbilities))
@@ -75,7 +73,7 @@ export const WikiApplications: FC = props => {
     }
 
     const default_apps =
-      mapMaybe (pipe (ensure (pipe (AA.prerequisites, isNothing)), fmap (AA.name)))
+      mapMaybe (pipe (ensure (pipe (AA.prerequisite, isNothing)), fmap (AA.name)))
                (applications)
 
     const sorted_default_apps = sortStrings (l10n) (default_apps)

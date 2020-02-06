@@ -1,7 +1,7 @@
 import { equals } from "../../../Data/Eq"
 import { fmap } from "../../../Data/Functor"
-import { append, consF, filter, find, flength, List } from "../../../Data/List"
-import { altF, ap, bindF, elemF, fromMaybe, joinMaybeList, Just, liftM2, Maybe, maybe, Nothing } from "../../../Data/Maybe"
+import { append, filter, find, flength, List, notNull } from "../../../Data/List"
+import { bindF, elemF, ensure, fromMaybe, joinMaybeList, Just, liftM2, Maybe, maybe, maybeToList, Nothing } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
@@ -116,25 +116,11 @@ export const getGeneratedPrerequisites =
 
         return pipe (
                       bindF (SOA.applications),
-                      bindF (
-                        find<Record<Application>> (pipe (
-                                                               Application.AL.id,
-                                                               elemF (sid2)
-                                                             ))
-                      ),
-                      bindF (Application.AL.prerequisites),
-                      ap (
-                        fmap<
-                          AllRequirementObjects,
-                          (xs: List<AllRequirementObjects>) => List<AllRequirementObjects>
-                        > (consF)
-                          (sameSkillDependency)
-                      ),
-                      altF (
-                        fmap<AllRequirementObjects, List<AllRequirementObjects>>
-                          (List)
-                          (sameSkillDependency)
-                      )
+                      bindF (find (pipe (Application.A.id, elemF (sid2)))),
+                      bindF (Application.A.prerequisite),
+                      maybeToList,
+                      append<AllRequirementObjects> (maybeToList (sameSkillDependency)),
+                      ensure (notNull)
                     )
                     (findSelectOption (wiki_entry) (sid))
       }

@@ -28,13 +28,13 @@ export const parseStaticData : (locale : string) => Promise<Either<Error, void>>
                                const estatic_data_by_file =
                                 await parseByFile (univ_parser) (l10n_parser)
 
-                               console.log ("Files parsed")
-
                                if (isLeft (estatic_data_by_file)) {
                                  console.log (fromLeft_ (estatic_data_by_file))
 
                                  return estatic_data_by_file
                                }
+
+                               console.log ("Files parsed")
 
                                const static_data_by_file = fromRight_ (estatic_data_by_file)
 

@@ -30,7 +30,7 @@ const test = async () => {
   await parseStaticData ("de-DE")
 }
 
-test ()
+test () .catch (() => undefined)
 
 // store
 //   .dispatch (requestInitialData)

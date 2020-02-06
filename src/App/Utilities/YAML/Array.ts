@@ -22,3 +22,9 @@ export const mapM = <A, B> (f: (x: A) => Promise<B>) => async (xs: A[]): Promise
 
   return ys
 }
+
+
+export type ArrayValue<A> = A extends (infer B)[] ? B : never
+
+
+export const cons = <A> (x: A) => (xs: A[]): A[] => [ x, ...xs ]
