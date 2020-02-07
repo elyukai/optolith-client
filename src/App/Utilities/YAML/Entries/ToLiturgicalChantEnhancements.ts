@@ -66,7 +66,7 @@ const toSE : (x : [LiturgicalChantEnhancementUniv, LiturgicalChantEnhancementL10
                    level: Just (2),
                    prerequisites: typeof univ.level2.previousRequirement === "number"
                                   ? Just (List (RequireActivatable ({
-                                                  id: SpecialAbilityId.SpellEnhancement,
+                                                  id: SpecialAbilityId.ChantEnhancement,
                                                   active: true,
                                                   sid: Just (univ.level1.id),
                                                 })))
@@ -80,13 +80,13 @@ const toSE : (x : [LiturgicalChantEnhancementUniv, LiturgicalChantEnhancementL10
                    level: Just (3),
                    prerequisites: univ.level3.previousRequirement === 1
                                   ? Just (List (RequireActivatable ({
-                                                  id: SpecialAbilityId.SpellEnhancement,
+                                                  id: SpecialAbilityId.ChantEnhancement,
                                                   active: true,
                                                   sid: Just (univ.level1.id),
                                                 })))
                                   : univ.level3.previousRequirement === 2
                                   ? Just (List (RequireActivatable ({
-                                                  id: SpecialAbilityId.SpellEnhancement,
+                                                  id: SpecialAbilityId.ChantEnhancement,
                                                   active: true,
                                                   sid: Just (univ.level2.id),
                                                 })))
