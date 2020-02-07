@@ -14,7 +14,7 @@ import { CultureL10n } from "../Schema/Cultures/Cultures.l10n"
 import { CultureUniv } from "../Schema/Cultures/Cultures.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toSourceRefs } from "./toSourceRefs"
 
@@ -77,8 +77,9 @@ const toCulture : YamlPairConverterE<CultureUniv, CultureL10n, string, Culture>
 export const toCultures : YamlFileConverter<string, Record<Culture>>
                         = pipe (
                             (yaml_mp : YamlNameMap) =>
-                              zipById (yaml_mp.CulturesUniv)
-                                      (yaml_mp.CulturesL10n),
+                              zipBy ("id")
+                                    (yaml_mp.CulturesUniv)
+                                    (yaml_mp.CulturesL10n),
                             bindF (pipe (
                               mapM (toCulture),
                               bindF (toMapIntegrity),

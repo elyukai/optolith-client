@@ -15,7 +15,7 @@ import { MagicalMelodyL10n } from "../Schema/MagicalMelodies/MagicalMelodies.l10
 import { MagicalMelodyUniv } from "../Schema/MagicalMelodies/MagicalMelodies.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toSourceRefs } from "./toSourceRefs"
@@ -58,8 +58,9 @@ const toMagicalMelody : YamlPairConverterE<MagicalMelodyUniv, MagicalMelodyL10n,
 
 export const toMagicalMelodies : YamlFileConverter<string, Record<Spell>>
                                = pipe (
-                                   (yaml_mp : YamlNameMap) => zipById (yaml_mp.MagicalMelodiesUniv)
-                                                                      (yaml_mp.MagicalMelodiesL10n),
+                                   (yaml_mp : YamlNameMap) => zipBy ("id")
+                                                                    (yaml_mp.MagicalMelodiesUniv)
+                                                                    (yaml_mp.MagicalMelodiesL10n),
                                    bindF (pipe (
                                      mapM (toMagicalMelody),
                                      bindF (toMapIntegrity),

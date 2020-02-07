@@ -12,7 +12,7 @@ import { CantripL10n } from "../Schema/Cantrips/Cantrips.l10n"
 import { CantripUniv } from "../Schema/Cantrips/Cantrips.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toSourceRefs } from "./toSourceRefs"
@@ -40,8 +40,9 @@ const toCantrip : YamlPairConverterE<CantripUniv, CantripL10n, string, Cantrip>
 
 export const toCantrips : YamlFileConverter<string, Record<Cantrip>>
                       = pipe (
-                          (yaml_mp : YamlNameMap) => zipById (yaml_mp.CantripsUniv)
-                                                             (yaml_mp.CantripsL10n),
+                          (yaml_mp : YamlNameMap) => zipBy ("id")
+                                                           (yaml_mp.CantripsUniv)
+                                                           (yaml_mp.CantripsL10n),
                           bindF (pipe (
                             mapM (toCantrip),
                             bindF (toMapIntegrity),

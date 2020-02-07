@@ -15,7 +15,7 @@ import { CurseL10n } from "../Schema/Curses/Curses.l10n"
 import { CurseUniv } from "../Schema/Curses/Curses.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toSourceRefs } from "./toSourceRefs"
@@ -58,8 +58,9 @@ const toCurse : YamlPairConverterE<CurseUniv, CurseL10n, string, Spell>
 
 export const toCurses : YamlFileConverter<string, Record<Spell>>
                       = pipe (
-                          (yaml_mp : YamlNameMap) => zipById (yaml_mp.CursesUniv)
-                                                             (yaml_mp.CursesL10n),
+                          (yaml_mp : YamlNameMap) => zipBy ("id")
+                                                           (yaml_mp.CursesUniv)
+                                                           (yaml_mp.CursesL10n),
                           bindF (pipe (
                             mapM (toCurse),
                             bindF (toMapIntegrity),

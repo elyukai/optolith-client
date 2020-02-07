@@ -13,7 +13,7 @@ import { RaceVariantL10n } from "../Schema/RaceVariants/RaceVariants.l10n"
 import { RaceVariantUniv } from "../Schema/RaceVariants/RaceVariants.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 
 
 const toRaceVariant : YamlPairConverterE<RaceVariantUniv, RaceVariantL10n, string, RaceVariant>
@@ -43,8 +43,9 @@ const toRaceVariant : YamlPairConverterE<RaceVariantUniv, RaceVariantL10n, strin
 export const toRaceVariants : YamlFileConverter<string, Record<RaceVariant>>
                                  = pipe (
                                      (yaml_mp : YamlNameMap) =>
-                                       zipById (yaml_mp.RaceVariantsUniv)
-                                               (yaml_mp.RaceVariantsL10n),
+                                       zipBy ("id")
+                                             (yaml_mp.RaceVariantsUniv)
+                                             (yaml_mp.RaceVariantsL10n),
                                      bindF (pipe (
                                        mapM (toRaceVariant),
                                        bindF (toMapIntegrity),

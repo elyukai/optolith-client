@@ -15,7 +15,7 @@ import { GeodeRitualL10n } from "../Schema/GeodeRituals/GeodeRituals.l10n"
 import { GeodeRitualUniv } from "../Schema/GeodeRituals/GeodeRituals.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toActivatablePrerequisite } from "./ToPrerequisites"
@@ -62,8 +62,9 @@ const toGeodeRitual : YamlPairConverterE<GeodeRitualUniv, GeodeRitualL10n, strin
 
 export const toGeodeRituals : YamlFileConverter<string, Record<Spell>>
                             = pipe (
-                                (yaml_mp : YamlNameMap) => zipById (yaml_mp.GeodeRitualsUniv)
-                                                                   (yaml_mp.GeodeRitualsL10n),
+                                (yaml_mp : YamlNameMap) => zipBy ("id")
+                                                                 (yaml_mp.GeodeRitualsUniv)
+                                                                 (yaml_mp.GeodeRitualsL10n),
                                 bindF (pipe (
                                   mapM (toGeodeRitual),
                                   bindF (toMapIntegrity),

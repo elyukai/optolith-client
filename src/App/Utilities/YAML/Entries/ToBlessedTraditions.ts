@@ -14,28 +14,29 @@ import { BlessedTraditionL10n } from "../Schema/BlessedTraditions/BlessedTraditi
 import { BlessedTraditionUniv } from "../Schema/BlessedTraditions/BlessedTraditions.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 
 
 // eslint-disable-next-line max-len
 const toBT : YamlPairConverterE<BlessedTraditionUniv, BlessedTraditionL10n, string, BlessedTradition>
-                = ([ univ, l10n ]) => Right<[string, Record<BlessedTradition>]> ([
-                    univ.id,
-                    BlessedTradition ({
-                      id: univ.id,
-                      numId: univ.numId,
-                      name: l10n.name,
-                      primary: univ.primary as AttrId,
-                      aspects: fmapF (Maybe (univ.aspects)) (([ f, s ]) => Pair (f, s)),
-                    }),
-                  ])
+           = ([ univ, l10n ]) => Right<[string, Record<BlessedTradition>]> ([
+               univ.id,
+               BlessedTradition ({
+                 id: univ.id,
+                 numId: univ.numId,
+                 name: l10n.name,
+                 primary: univ.primary as AttrId,
+                 aspects: fmapF (Maybe (univ.aspects)) (([ f, s ]) => Pair (f, s)),
+               }),
+             ])
 
 
 export const toBlessedTraditions : YamlFileConverter<string, Record<BlessedTradition>>
                                  = pipe (
                                      (yaml_mp : YamlNameMap) =>
-                                       zipById (yaml_mp.BlessedTraditionsUniv)
-                                               (yaml_mp.BlessedTraditionsL10n),
+                                       zipBy ("id")
+                                             (yaml_mp.BlessedTraditionsUniv)
+                                             (yaml_mp.BlessedTraditionsL10n),
                                      bindF (pipe (
                                        mapM (toBT),
                                        bindF (toMapIntegrity),

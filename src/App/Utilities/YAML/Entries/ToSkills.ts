@@ -10,16 +10,16 @@ import { Pair, uncurry } from "../../../../Data/Tuple"
 import { Skill } from "../../../Models/Wiki/Skill"
 import { Application } from "../../../Models/Wiki/sub/Application"
 import { Use } from "../../../Models/Wiki/sub/Use"
+import { icToInt } from "../../AdventurePoints/improvementCostUtils"
 import { pipe, pipe_ } from "../../pipe"
 import { map } from "../Array"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { icToInt } from "../ICToInt"
 import { SkillL10n, UseL10n } from "../Schema/Skills/Skills.l10n"
 import { SkillUniv, UseUniv } from "../Schema/Skills/Skills.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById, zipByIdLoose } from "../ZipById"
+import { zipBy, zipByIdLoose } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown, toMarkdownM } from "./ToMarkdown"
 import { toActivatablePrerequisite } from "./ToPrerequisites"
@@ -58,8 +58,9 @@ const toUses : (x : [SkillUniv, SkillL10n]) => Either<Error[], List<Record<Use>>
                    : univ.uses === undefined
                    ? Left ([ new Error (`toSkills: skill "${univ.id}" has uses but there are no entries in universal file`) ])
                    : pipe_ (
-                       zipById (univ.uses)
-                               (l10n.uses),
+                       zipBy ("id")
+                             (univ.uses)
+                             (l10n.uses),
                        second (Just)
                      ),
                  second (pipe (
@@ -119,8 +120,9 @@ const toSkill : YamlPairConverterE<SkillUniv, SkillL10n, string, Skill>
 
 export const toSkills : YamlFileConverter<string, Record<Skill>>
                       = pipe (
-                          (yaml_mp : YamlNameMap) => zipById (yaml_mp.SkillsUniv)
-                                                             (yaml_mp.SkillsL10n),
+                          (yaml_mp : YamlNameMap) => zipBy ("id")
+                                                           (yaml_mp.SkillsUniv)
+                                                           (yaml_mp.SkillsL10n),
                           bindF (pipe (
                             mapM (toSkill),
                             bindF (toMapIntegrity),

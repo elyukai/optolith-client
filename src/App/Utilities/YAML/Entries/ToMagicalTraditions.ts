@@ -12,7 +12,7 @@ import { MagicalTraditionL10n } from "../Schema/MagicalTraditions/MagicalTraditi
 import { MagicalTraditionUniv } from "../Schema/MagicalTraditions/MagicalTraditions.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 
 
 // eslint-disable-next-line max-len
@@ -32,8 +32,9 @@ const toMT : YamlPairConverterE<MagicalTraditionUniv, MagicalTraditionL10n, stri
 export const toMagicalTraditions : YamlFileConverter<string, Record<MagicalTradition>>
                                  = pipe (
                                      (yaml_mp : YamlNameMap) =>
-                                       zipById (yaml_mp.MagicalTraditionsUniv)
-                                               (yaml_mp.MagicalTraditionsL10n),
+                                       zipBy ("id")
+                                             (yaml_mp.MagicalTraditionsUniv)
+                                             (yaml_mp.MagicalTraditionsL10n),
                                      bindF (pipe (
                                        mapM (toMT),
                                        bindF (toMapIntegrity),

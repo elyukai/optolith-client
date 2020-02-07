@@ -9,12 +9,12 @@ import { pipe, pipe_ } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { YamlFileConverter } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 
 
 export const toAdvantages : YamlFileConverter<string, Record<Advantage>>
                           = pipe (
-                            yaml_mp => zipById (yaml_mp.AdvantagesUniv)
+                            yaml_mp => zipBy (yaml_mp.AdvantagesUniv)
                                                (yaml_mp.AdvantagesL10n),
                             bindF (pipe (
                               mapM ((x) : Either<Error | Error[], [string, Record<Advantage>]> => {
@@ -24,7 +24,7 @@ export const toAdvantages : YamlFileConverter<string, Record<Advantage>>
                                   : x [0] .selectOptions === undefined
                                   ? Left (new Error ())
                                   : pipe_ (
-                                      zipById (x [0] .selectOptions)
+                                      zipBy (x [0] .selectOptions)
                                               (x [1] .selectOptions),
                                       second (Just)
                                     )

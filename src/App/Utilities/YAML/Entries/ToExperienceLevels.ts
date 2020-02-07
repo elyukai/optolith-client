@@ -10,7 +10,7 @@ import { ExperienceLevelL10n } from "../Schema/ExperienceLevels/ExperienceLevels
 import { ExperienceLevelUniv } from "../Schema/ExperienceLevels/ExperienceLevels.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 
 
 const toEL : YamlPairConverterE<ExperienceLevelUniv, ExperienceLevelL10n, string, ExperienceLevel>
@@ -33,8 +33,9 @@ const toEL : YamlPairConverterE<ExperienceLevelUniv, ExperienceLevelL10n, string
 export const toExperienceLevels : YamlFileConverter<string, Record<ExperienceLevel>>
                                 = pipe (
                                     (yaml_mp : YamlNameMap) =>
-                                      zipById (yaml_mp.ExperienceLevelsUniv)
-                                              (yaml_mp.ExperienceLevelsL10n),
+                                      zipBy ("id")
+                                            (yaml_mp.ExperienceLevelsUniv)
+                                            (yaml_mp.ExperienceLevelsL10n),
                                     bindF (pipe (
                                       mapM (toEL),
                                       bindF (toMapIntegrity),

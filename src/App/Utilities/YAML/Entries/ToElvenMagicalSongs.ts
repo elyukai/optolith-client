@@ -15,7 +15,7 @@ import { ElvenMagicalSongL10n } from "../Schema/ElvenMagicalSongs/ElvenMagicalSo
 import { ElvenMagicalSongUniv } from "../Schema/ElvenMagicalSongs/ElvenMagicalSongs.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toSourceRefs } from "./toSourceRefs"
@@ -59,8 +59,9 @@ const toEMS : YamlPairConverterE<ElvenMagicalSongUniv, ElvenMagicalSongL10n, str
 export const toElvenMagicalSongs : YamlFileConverter<string, Record<Spell>>
                                  = pipe (
                                      (yaml_mp : YamlNameMap) =>
-                                       zipById (yaml_mp.ElvenMagicalSongsUniv)
-                                               (yaml_mp.ElvenMagicalSongsL10n),
+                                       zipBy ("id")
+                                             (yaml_mp.ElvenMagicalSongsUniv)
+                                             (yaml_mp.ElvenMagicalSongsL10n),
                                      bindF (pipe (
                                        mapM (toEMS),
                                        bindF (toMapIntegrity),

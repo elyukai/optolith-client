@@ -13,7 +13,7 @@ import { LiturgicalChantL10n } from "../Schema/LiturgicalChants/LiturgicalChants
 import { LiturgicalChantUniv } from "../Schema/LiturgicalChants/LiturgicalChants.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toSourceRefs } from "./toSourceRefs"
@@ -56,8 +56,9 @@ const toLC : YamlPairConverterE<LiturgicalChantUniv, LiturgicalChantL10n, string
 export const toLiturgicalChants : YamlFileConverter<string, Record<LiturgicalChant>>
                                 = pipe (
                                     (yaml_mp : YamlNameMap) =>
-                                      zipById (yaml_mp.LiturgicalChantsUniv)
-                                              (yaml_mp.LiturgicalChantsL10n),
+                                      zipBy ("id")
+                                            (yaml_mp.LiturgicalChantsUniv)
+                                            (yaml_mp.LiturgicalChantsL10n),
                                     bindF (pipe (
                                       mapM (toLC),
                                       bindF (toMapIntegrity),

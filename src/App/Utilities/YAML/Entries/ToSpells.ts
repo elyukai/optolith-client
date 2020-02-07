@@ -14,7 +14,7 @@ import { SpellL10n } from "../Schema/Spells/Spells.l10n"
 import { SpellUniv } from "../Schema/Spells/Spells.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toActivatablePrerequisite, toIncreasablePrerequisite } from "./ToPrerequisites"
@@ -63,8 +63,9 @@ const toSpell : YamlPairConverterE<SpellUniv, SpellL10n, string, Spell>
 
 export const toSpells : YamlFileConverter<string, Record<Spell>>
                       = pipe (
-                          (yaml_mp : YamlNameMap) => zipById (yaml_mp.SpellsUniv)
-                                                             (yaml_mp.SpellsL10n),
+                          (yaml_mp : YamlNameMap) => zipBy ("id")
+                                                           (yaml_mp.SpellsUniv)
+                                                           (yaml_mp.SpellsL10n),
                           bindF (pipe (
                             mapM (toSpell),
                             bindF (toMapIntegrity),

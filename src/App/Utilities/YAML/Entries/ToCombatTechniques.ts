@@ -13,7 +13,7 @@ import { CombatTechniqueL10n } from "../Schema/CombatTechniques/CombatTechniques
 import { CombatTechniqueUniv } from "../Schema/CombatTechniques/CombatTechniques.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverter } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toSourceRefs } from "./toSourceRefs"
 
@@ -40,8 +40,9 @@ const toCT : YamlPairConverter<CombatTechniqueUniv, CombatTechniqueL10n, string,
 export const toCombatTechniques : YamlFileConverter<string, Record<CombatTechnique>>
                                 = pipe (
                                     (yaml_mp : YamlNameMap) =>
-                                      zipById (yaml_mp.CombatTechniquesUniv)
-                                              (yaml_mp.CombatTechniquesL10n),
+                                      zipBy ("id")
+                                            (yaml_mp.CombatTechniquesUniv)
+                                            (yaml_mp.CombatTechniquesL10n),
                                     bindF (pipe (
                                       map (toCT),
                                       toMapIntegrity,

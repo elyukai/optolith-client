@@ -15,7 +15,7 @@ import { AnimistForceL10n } from "../Schema/AnimistForces/AnimistForces.l10n"
 import { AnimistForceUniv } from "../Schema/AnimistForces/AnimistForces.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toSourceRefs } from "./toSourceRefs"
@@ -58,8 +58,9 @@ const toAnimistForce : YamlPairConverterE<AnimistForceUniv, AnimistForceL10n, st
 
 export const toAnimistForces : YamlFileConverter<string, Record<Spell>>
                              = pipe (
-                                 (yaml_mp : YamlNameMap) => zipById (yaml_mp.AnimistForcesUniv)
-                                                                    (yaml_mp.AnimistForcesL10n),
+                                 (yaml_mp : YamlNameMap) => zipBy ("id")
+                                                                  (yaml_mp.AnimistForcesUniv)
+                                                                  (yaml_mp.AnimistForcesL10n),
                                  bindF (pipe (
                                    mapM (toAnimistForce),
                                    bindF (toMapIntegrity),

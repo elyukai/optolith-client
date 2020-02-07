@@ -15,7 +15,7 @@ import { ZibiljaRitualL10n } from "../Schema/ZibiljaRituals/ZibiljaRituals.l10n"
 import { ZibiljaRitualUniv } from "../Schema/ZibiljaRituals/ZibiljaRituals.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toSourceRefs } from "./toSourceRefs"
@@ -58,8 +58,9 @@ const toZibiljaRitual : YamlPairConverterE<ZibiljaRitualUniv, ZibiljaRitualL10n,
 
 export const toZibiljaRituals : YamlFileConverter<string, Record<Spell>>
                               = pipe (
-                                  (yaml_mp : YamlNameMap) => zipById (yaml_mp.ZibiljaRitualsUniv)
-                                                                     (yaml_mp.ZibiljaRitualsL10n),
+                                  (yaml_mp : YamlNameMap) => zipBy ("id")
+                                                                   (yaml_mp.ZibiljaRitualsUniv)
+                                                                   (yaml_mp.ZibiljaRitualsL10n),
                                   bindF (pipe (
                                     mapM (toZibiljaRitual),
                                     bindF (toMapIntegrity),

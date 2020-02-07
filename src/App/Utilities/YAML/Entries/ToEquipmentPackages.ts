@@ -10,7 +10,7 @@ import { EquipmentPackageL10n } from "../Schema/EquipmentPackages/EquipmentPacka
 import { EquipmentPackageUniv } from "../Schema/EquipmentPackages/EquipmentPackages.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 
 
 // eslint-disable-next-line max-len
@@ -31,8 +31,9 @@ const toEPKG : YamlPairConverterE<EquipmentPackageUniv, EquipmentPackageL10n, st
 export const toEquipmentPackages : YamlFileConverter<string, Record<EquipmentPackage>>
                                  = pipe (
                                      (yaml_mp : YamlNameMap) =>
-                                       zipById (yaml_mp.EquipmentPackagesUniv)
-                                               (yaml_mp.EquipmentPackagesL10n),
+                                       zipBy ("id")
+                                             (yaml_mp.EquipmentPackagesUniv)
+                                             (yaml_mp.EquipmentPackagesL10n),
                                      bindF (pipe (
                                        mapM (toEPKG),
                                        bindF (toMapIntegrity),

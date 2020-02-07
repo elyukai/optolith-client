@@ -15,7 +15,7 @@ import { DominationRitualL10n } from "../Schema/DominationRituals/DominationRitu
 import { DominationRitualUniv } from "../Schema/DominationRituals/DominationRituals.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toSourceRefs } from "./toSourceRefs"
@@ -59,8 +59,9 @@ const toDR : YamlPairConverterE<DominationRitualUniv, DominationRitualL10n, stri
 export const toDominationRituals : YamlFileConverter<string, Record<Spell>>
                                  = pipe (
                                      (yaml_mp : YamlNameMap) =>
-                                       zipById (yaml_mp.DominationRitualsUniv)
-                                               (yaml_mp.DominationRitualsL10n),
+                                       zipBy ("id")
+                                             (yaml_mp.DominationRitualsUniv)
+                                             (yaml_mp.DominationRitualsL10n),
                                      bindF (pipe (
                                        mapM (toDR),
                                        bindF (toMapIntegrity),

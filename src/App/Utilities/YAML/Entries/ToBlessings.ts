@@ -12,7 +12,7 @@ import { BlessingL10n } from "../Schema/Blessings/Blessings.l10n"
 import { BlessingUniv } from "../Schema/Blessings/Blessings.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toSourceRefs } from "./toSourceRefs"
@@ -38,9 +38,9 @@ const toBlessing : YamlPairConverterE<BlessingUniv, BlessingL10n, string, Blessi
 
 export const toBlessings : YamlFileConverter<string, Record<Blessing>>
                                 = pipe (
-                                    (yaml_mp : YamlNameMap) =>
-                                      zipById (yaml_mp.BlessingsUniv)
-                                              (yaml_mp.BlessingsL10n),
+                                    (yaml_mp : YamlNameMap) => zipBy ("id")
+                                                                     (yaml_mp.BlessingsUniv)
+                                                                     (yaml_mp.BlessingsL10n),
                                     bindF (pipe (
                                       mapM (toBlessing),
                                       bindF (toMapIntegrity),

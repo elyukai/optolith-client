@@ -8,35 +8,45 @@ export interface ObjectWithId<A extends string | number> {
 }
 
 
+export type ObjectWithKey<K extends string, A extends string | number> = {
+  [B in K] : A
+}
+
+
 /**
- * `zipById os rs` zips two arrays by the `id` property. There must always be a
- * matching element in `os` for an `r`, but its not needed to have an element in
- * `rs` for every `o`. Either returns a list of occurred errors or the list of
- * successful zips.
+ * `zipById key os rs` zips two arrays by the property named `key`. There must
+ * always be a matching element in `os` for an `r`, but its not needed to have
+ * an element in `rs` for every `o`. Either returns a list of occurred errors or
+ * the list of successful zips.
  */
-export const zipById : <A extends string | number, B extends ObjectWithId<A>> (os : B[])
-                     => <C extends ObjectWithId<A>> (rs : C[])
-                     => Either<Error[], [B, C][]>
-                     = os => rs => {
-                       const ress : [ArrayValue<typeof os>, ArrayValue<typeof rs>][]
-                                  = []
+export const zipBy : <K extends string> (key : K)
+                   => <A extends string | number, B extends ObjectWithKey<K, A>> (os : B[])
+                   => <C extends ObjectWithKey<K, A>> (rs : C[])
+                   => Either<Error[], [B, C][]>
+                   = key => os => rs => {
+                     type A1 = ArrayValue<typeof os> extends ObjectWithKey<string, infer A>
+                               ? A
+                               : never
 
-                       const errs : Error[]
-                                  = []
+                     const ress : [ArrayValue<typeof os>, ArrayValue<typeof rs>][]
+                                = []
 
-                       for (const r of rs) {
-                         const o = os .find (x => x .id === r .id)
+                     const errs : Error[]
+                                = []
 
-                         if (o === undefined) {
-                           errs.push (new Error (`zipById: No matching entry found for "${JSON.stringify (r)}"`))
-                         }
-                         else {
-                           ress.push ([ o, r ])
-                         }
+                     for (const r of rs) {
+                       const o = os .find (x => (x[key] as A1) === (r[key] as A1))
+
+                       if (o === undefined) {
+                         errs.push (new Error (`zipById: No matching entry found for "${JSON.stringify (r)}"`))
                        }
-
-                       return errs.length > 0 ? Left (errs) : Right (ress)
+                       else {
+                         ress.push ([ o, r ])
+                       }
                      }
+
+                     return errs.length > 0 ? Left (errs) : Right (ress)
+                   }
 
 
 /**

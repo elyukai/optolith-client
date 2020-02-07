@@ -17,7 +17,7 @@ import { NameBySex as RawNameBySex, ProfessionL10n } from "../Schema/Professions
 import { ProfessionCombatTechnique, ProfessionLiturgicalChant, ProfessionSkill, ProfessionSpell, ProfessionUniv } from "../Schema/Professions/Professions.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toActivatablePrerequisiteP, toCulturePrerequisite, toIncreasablePrerequisite, toRacePrerequisite, toSexPrerequisite } from "./ToPrerequisites"
 import { toCantripSO, toCombatTechniqueSO, toCurseSO, toLanguageScriptSO, toSkillSO, toSkillSpecializationSO, toTerrainKnowledgeSO } from "./ToProfessionSelectOptions"
@@ -67,108 +67,111 @@ const toProfessionLiturgicalChant : (x : ProfessionLiturgicalChant)
 
 
 const toProfession : YamlPairConverterE<ProfessionUniv, ProfessionL10n, string, Profession>
-                = ([ univ, l10n ]) => Right<[string, Record<Profession>]> ([
-                    univ.id,
-                    Profession ({
-                      id: univ.id,
-                      name: toNameBySex (l10n.name),
-                      subname: toNameBySexM (l10n.subname),
-                      ap: Maybe (univ.cost),
-                      dependencies: catMaybes (List<Maybe<ProfessionDependency>> (
-                        univ.sexPrerequisite === undefined
-                          ? Nothing
-                          : Just (toSexPrerequisite (univ.sexPrerequisite)),
-                        univ.racePrerequisite === undefined
-                          ? Nothing
-                          : Just (toRacePrerequisite (univ.racePrerequisite)),
-                        univ.culturePrerequisite === undefined
-                          ? Nothing
-                          : Just (toCulturePrerequisite (univ.culturePrerequisite))
-                      )),
-                      prerequisites: List<ProfessionPrerequisite> (
-                        ...(univ.activatablePrerequisites === undefined
-                            ? []
-                            : univ.activatablePrerequisites .map (toActivatablePrerequisiteP)),
-                        ...(l10n.activatablePrerequisites === undefined
-                            ? []
-                            : l10n.activatablePrerequisites .map (toActivatablePrerequisiteP)),
-                        ...(univ.increasablePrerequisites === undefined
-                            ? []
-                            : univ.increasablePrerequisites .map (toIncreasablePrerequisite)),
-                      ),
-                      prerequisitesStart: Maybe (l10n.prerequisitesStart),
-                      prerequisitesEnd: Nothing,
-                      selections: ProfessionSelections ({
-                        [ProfessionSelectionIds.CANTRIPS]:
-                          univ.cantripSelectOptions === undefined
-                          ? Nothing
-                          : Just (toCantripSO (univ.cantripSelectOptions)),
-                        [ProfessionSelectionIds.COMBAT_TECHNIQUES]:
-                          univ.combatTechniqueSelectOptions === undefined
-                          ? Nothing
-                          : Just (toCombatTechniqueSO (univ.combatTechniqueSelectOptions)),
-                        [ProfessionSelectionIds.CURSES]:
-                          univ.curseSelectOptions === undefined
-                          ? Nothing
-                          : Just (toCurseSO (univ.curseSelectOptions)),
-                        [ProfessionSelectionIds.LANGUAGES_SCRIPTS]:
-                          univ.languageScriptSelectOptions === undefined
-                          ? Nothing
-                          : Just (toLanguageScriptSO (univ.languageScriptSelectOptions)),
-                        [ProfessionSelectionIds.SKILLS]:
-                          univ.skillSelectOptions === undefined
-                          ? Nothing
-                          : Just (toSkillSO (univ.skillSelectOptions)),
-                        [ProfessionSelectionIds.SPECIALIZATION]:
-                          univ.skillSpecializationSelectOptions === undefined
-                          ? Nothing
-                          : Just (toSkillSpecializationSO (univ.skillSpecializationSelectOptions)),
-                        [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]:
-                          univ.terrainKnowledgeSelectOptions === undefined
-                          ? Nothing
-                          : Just (toTerrainKnowledgeSO (univ.terrainKnowledgeSelectOptions)),
-                        [ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL]: false,
-                      }),
-                      specialAbilities: fromArray (
-                        univ.specialAbilities?.map (toActivatablePrerequisiteP) ?? []
-                      ),
-                      combatTechniques: fromArray (
-                        univ.combatTechniques?.map (toProfessionCombatTechnique) ?? []
-                      ),
-                      skills: fromArray (
-                        univ.skills?.map (toProfessionSkill) ?? []
-                      ),
-                      spells: fromArray (
-                        univ.spells?.map (toProfessionSpell) ?? []
-                      ),
-                      liturgicalChants: fromArray (
-                        univ.liturgicalChants?.map (toProfessionLiturgicalChant) ?? []
-                      ),
-                      blessings: fromArray (univ.blessings ?? []),
-                      suggestedAdvantages: fromArray (univ.suggestedAdvantages ?? []),
-                      suggestedAdvantagesText: Maybe (l10n.suggestedAdvantages),
-                      suggestedDisadvantages: fromArray (univ.suggestedDisadvantages ?? []),
-                      suggestedDisadvantagesText: Maybe (l10n.suggestedDisadvantages),
-                      unsuitableAdvantages: fromArray (univ.unsuitableAdvantages ?? []),
-                      unsuitableAdvantagesText: Maybe (l10n.unsuitableAdvantages),
-                      unsuitableDisadvantages: fromArray (univ.unsuitableDisadvantages ?? []),
-                      unsuitableDisadvantagesText: Maybe (l10n.unsuitableDisadvantages),
-                      isVariantRequired: univ.isVariantRequired,
-                      variants: fromArray (univ.variants ?? []),
-                      gr: univ.gr,
-                      subgr: univ.sgr,
-                      src: toSourceRefs (l10n.src),
-                      errata: toErrata (l10n.errata),
-                      category: Nothing,
-                    }),
-                  ])
+                   = ([ univ, l10n ]) => Right<[string, Record<Profession>]> ([
+                       univ.id,
+                       Profession ({
+                         id: univ.id,
+                         name: toNameBySex (l10n.name),
+                         subname: toNameBySexM (l10n.subname),
+                         ap: Maybe (univ.cost),
+                         dependencies: catMaybes (List<Maybe<ProfessionDependency>> (
+                           univ.sexPrerequisite === undefined
+                             ? Nothing
+                             : Just (toSexPrerequisite (univ.sexPrerequisite)),
+                           univ.racePrerequisite === undefined
+                             ? Nothing
+                             : Just (toRacePrerequisite (univ.racePrerequisite)),
+                           univ.culturePrerequisite === undefined
+                             ? Nothing
+                             : Just (toCulturePrerequisite (univ.culturePrerequisite))
+                         )),
+                         prerequisites: List<ProfessionPrerequisite> (
+                           ...(univ.activatablePrerequisites === undefined
+                               ? []
+                               : univ.activatablePrerequisites .map (toActivatablePrerequisiteP)),
+                           ...(l10n.activatablePrerequisites === undefined
+                               ? []
+                               : l10n.activatablePrerequisites .map (toActivatablePrerequisiteP)),
+                           ...(univ.increasablePrerequisites === undefined
+                               ? []
+                               : univ.increasablePrerequisites .map (toIncreasablePrerequisite)),
+                         ),
+                         prerequisitesStart: Maybe (l10n.prerequisitesStart),
+                         prerequisitesEnd: Nothing,
+                         selections: ProfessionSelections ({
+                           [ProfessionSelectionIds.CANTRIPS]:
+                             univ.cantripSelectOptions === undefined
+                             ? Nothing
+                             : Just (toCantripSO (univ.cantripSelectOptions)),
+                           [ProfessionSelectionIds.COMBAT_TECHNIQUES]:
+                             univ.combatTechniqueSelectOptions === undefined
+                             ? Nothing
+                             : Just (toCombatTechniqueSO (univ.combatTechniqueSelectOptions)),
+                           [ProfessionSelectionIds.CURSES]:
+                             univ.curseSelectOptions === undefined
+                             ? Nothing
+                             : Just (toCurseSO (univ.curseSelectOptions)),
+                           [ProfessionSelectionIds.LANGUAGES_SCRIPTS]:
+                             univ.languageScriptSelectOptions === undefined
+                             ? Nothing
+                             : Just (toLanguageScriptSO (univ.languageScriptSelectOptions)),
+                           [ProfessionSelectionIds.SKILLS]:
+                             univ.skillSelectOptions === undefined
+                             ? Nothing
+                             : Just (toSkillSO (univ.skillSelectOptions)),
+                           [ProfessionSelectionIds.SPECIALIZATION]:
+                             univ.skillSpecializationSelectOptions === undefined
+                             ? Nothing
+                             : Just (toSkillSpecializationSO (
+                                 univ.skillSpecializationSelectOptions
+                               )),
+                           [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]:
+                             univ.terrainKnowledgeSelectOptions === undefined
+                             ? Nothing
+                             : Just (toTerrainKnowledgeSO (univ.terrainKnowledgeSelectOptions)),
+                           [ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL]: false,
+                         }),
+                         specialAbilities: fromArray (
+                           univ.specialAbilities?.map (toActivatablePrerequisiteP) ?? []
+                         ),
+                         combatTechniques: fromArray (
+                           univ.combatTechniques?.map (toProfessionCombatTechnique) ?? []
+                         ),
+                         skills: fromArray (
+                           univ.skills?.map (toProfessionSkill) ?? []
+                         ),
+                         spells: fromArray (
+                           univ.spells?.map (toProfessionSpell) ?? []
+                         ),
+                         liturgicalChants: fromArray (
+                           univ.liturgicalChants?.map (toProfessionLiturgicalChant) ?? []
+                         ),
+                         blessings: fromArray (univ.blessings ?? []),
+                         suggestedAdvantages: fromArray (univ.suggestedAdvantages ?? []),
+                         suggestedAdvantagesText: Maybe (l10n.suggestedAdvantages),
+                         suggestedDisadvantages: fromArray (univ.suggestedDisadvantages ?? []),
+                         suggestedDisadvantagesText: Maybe (l10n.suggestedDisadvantages),
+                         unsuitableAdvantages: fromArray (univ.unsuitableAdvantages ?? []),
+                         unsuitableAdvantagesText: Maybe (l10n.unsuitableAdvantages),
+                         unsuitableDisadvantages: fromArray (univ.unsuitableDisadvantages ?? []),
+                         unsuitableDisadvantagesText: Maybe (l10n.unsuitableDisadvantages),
+                         isVariantRequired: univ.isVariantRequired,
+                         variants: fromArray (univ.variants ?? []),
+                         gr: univ.gr,
+                         subgr: univ.sgr,
+                         src: toSourceRefs (l10n.src),
+                         errata: toErrata (l10n.errata),
+                         category: Nothing,
+                       }),
+                     ])
 
 
 export const toProfessions : YamlFileConverter<string, Record<Profession>>
                            = pipe (
                                (yaml_mp : YamlNameMap) =>
-                                 zipById (yaml_mp.ProfessionsUniv)
-                                         (yaml_mp.ProfessionsL10n),
+                                 zipBy ("id")
+                                       (yaml_mp.ProfessionsUniv)
+                                       (yaml_mp.ProfessionsL10n),
                                bindF (pipe (
                                  mapM (toProfession),
                                  bindF (toMapIntegrity),

@@ -10,7 +10,7 @@ import { FocusRuleL10n } from "../Schema/FocusRules/FocusRules.l10n"
 import { FocusRuleUniv } from "../Schema/FocusRules/FocusRules.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toSourceRefs } from "./toSourceRefs"
 
@@ -33,8 +33,9 @@ const toFocusRule : YamlPairConverterE<FocusRuleUniv, FocusRuleL10n, string, Foc
 export const toFocusRules : YamlFileConverter<string, Record<FocusRule>>
                           = pipe (
                               (yaml_mp : YamlNameMap) =>
-                                zipById (yaml_mp.FocusRulesUniv)
-                                        (yaml_mp.FocusRulesL10n),
+                                zipBy ("id")
+                                      (yaml_mp.FocusRulesUniv)
+                                      (yaml_mp.FocusRulesL10n),
                               bindF (pipe (
                                 mapM (toFocusRule),
                                 bindF (toMapIntegrity),

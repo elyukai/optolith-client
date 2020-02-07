@@ -14,7 +14,7 @@ import { RogueSpellL10n } from "../Schema/RogueSpells/RogueSpells.l10n"
 import { RogueSpellUniv } from "../Schema/RogueSpells/RogueSpells.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
-import { zipById } from "../ZipById"
+import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toSourceRefs } from "./toSourceRefs"
@@ -57,8 +57,9 @@ const toRogueSpell : YamlPairConverterE<RogueSpellUniv, RogueSpellL10n, string, 
 
 export const toRogueSpells : YamlFileConverter<string, Record<Spell>>
                            = pipe (
-                               (yaml_mp : YamlNameMap) => zipById (yaml_mp.RogueSpellsUniv)
-                                                                  (yaml_mp.RogueSpellsL10n),
+                               (yaml_mp : YamlNameMap) => zipBy ("id")
+                                                                (yaml_mp.RogueSpellsUniv)
+                                                                (yaml_mp.RogueSpellsL10n),
                                bindF (pipe (
                                  mapM (toRogueSpell),
                                  bindF (toMapIntegrity),
