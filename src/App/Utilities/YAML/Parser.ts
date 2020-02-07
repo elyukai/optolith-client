@@ -62,14 +62,19 @@ const validate : (validator : Ajv.Ajv)
                )
 
 
-const readYaml : (pathToDir : string) => (validator : Ajv.Ajv) => YamlParser
-               = pathToDir => validator => async ref => pipe_ (
-                 join (app_path, "app", "Database", pathToDir, schema_to_data [ref]),
-                 parseYamlFile,
-                 handleE,
-                 fmap (either ((err : Error) : YamlParserResult<typeof ref> => Left (err))
-                               (validate (validator) (ref)))
-               )
+/**
+ * Takes a path to the directory of the YAML file (base `/app/Database`) and a
+ * validator and returns a `YamlParser`, which required a scheme ID for the file
+ * and then either returns occurred errors or the parsed result.
+ */
+export const readYaml : (pathToDir : string) => (validator : Ajv.Ajv) => YamlParser
+                      = pathToDir => validator => async ref => pipe_ (
+                          join (app_path, "app", "Database", pathToDir, schema_to_data [ref]),
+                          parseYamlFile,
+                          handleE,
+                          fmap (either ((err : Error) : YamlParserResult<typeof ref> => Left (err))
+                                        (validate (validator) (ref)))
+                        )
 
 
 /**

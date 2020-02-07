@@ -40,5 +40,8 @@ export const parseStaticData : (locale : string) => Promise<Either<Error, void>>
 
                                console.log (static_data_by_file)
 
+                               // eslint-disable-next-line no-alert
+                               alert ("Parsing static data done!")
+
                                return Right (undefined)
                              }
