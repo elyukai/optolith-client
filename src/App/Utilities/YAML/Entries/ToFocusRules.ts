@@ -16,28 +16,28 @@ import { toSourceRefs } from "./toSourceRefs"
 
 
 const toFocusRule : YamlPairConverterE<FocusRuleUniv, FocusRuleL10n, string, FocusRule>
-                = ([ univ, l10n ]) => Right<[string, Record<FocusRule>]> ([
-                    univ.id,
-                    FocusRule ({
-                      id: univ.id,
-                      name: l10n.name,
-                      level: univ.level,
-                      subject: univ.subject,
-                      description: l10n.description,
-                      src: toSourceRefs (l10n.src),
-                      errata: toErrata (l10n.errata),
-                    }),
-                  ])
+                  = ([ univ, l10n ]) => Right<[string, Record<FocusRule>]> ([
+                      univ.id,
+                      FocusRule ({
+                        id: univ.id,
+                        name: l10n.name,
+                        level: univ.level,
+                        subject: univ.subject,
+                        description: l10n.description,
+                        src: toSourceRefs (l10n.src),
+                        errata: toErrata (l10n.errata),
+                      }),
+                    ])
 
 
 export const toFocusRules : YamlFileConverter<string, Record<FocusRule>>
-                                 = pipe (
-                                     (yaml_mp : YamlNameMap) =>
-                                       zipById (yaml_mp.FocusRulesUniv)
-                                               (yaml_mp.FocusRulesL10n),
-                                     bindF (pipe (
-                                       mapM (toFocusRule),
-                                       bindF (toMapIntegrity),
-                                     )),
-                                     second (fromMap)
-                                   )
+                          = pipe (
+                              (yaml_mp : YamlNameMap) =>
+                                zipById (yaml_mp.FocusRulesUniv)
+                                        (yaml_mp.FocusRulesL10n),
+                              bindF (pipe (
+                                mapM (toFocusRule),
+                                bindF (toMapIntegrity),
+                              )),
+                              second (fromMap)
+                            )

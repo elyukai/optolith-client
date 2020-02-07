@@ -41,7 +41,6 @@ export interface Profession {
   unsuitableDisadvantagesText: Maybe<string>
   isVariantRequired: boolean
   variants: List<string>
-  category: Category
   gr: number
 
   /**
@@ -51,6 +50,7 @@ export interface Profession {
   subgr: number
   src: List<Record<SourceLink>>
   errata: List<Record<Erratum>>
+  category: Category
 }
 
 export const Profession =
@@ -97,7 +97,7 @@ export const getCustomProfession =
   (l10n: L10nRecord) =>
     Profession ({
       id: ProfessionId.CustomProfession,
-      name: translate (l10n) ("ownprofession"),
+      name: translate (l10n) ("profession.ownprofession"),
       subname: Nothing,
       ap: Just (0),
       dependencies: Nothing,

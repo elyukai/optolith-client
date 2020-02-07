@@ -1,5 +1,4 @@
 import { fromDefault, OmitName, Record } from "../../../Data/Record"
-import { Locale } from "../../Utilities/Raw/JSON/Config"
 import { UIL10n } from "../../Utilities/YAML/Schema/UI/UI.l10n"
 
 export interface L10n extends UIL10n {
@@ -14,7 +13,7 @@ export type L10nRecord = Record<L10n>
 export const L10n =
   fromDefault ("L10n")
               <L10n> ({
-                id: Locale.German,
+                id: "de-DE",
                 "macosmenubar.aboutapp": "",
                 "macosmenubar.preferences": "",
                 "macosmenubar.quit": "",

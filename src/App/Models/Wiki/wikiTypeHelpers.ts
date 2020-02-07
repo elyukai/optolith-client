@@ -18,7 +18,7 @@ import { ItemTemplate } from "./ItemTemplate"
 import { LiturgicalChant } from "./LiturgicalChant"
 import { ProfessionRequireActivatable, RequireActivatable } from "./prerequisites/ActivatableRequirement"
 import { CultureRequirement } from "./prerequisites/CultureRequirement"
-import { ProfessionRequireIncreasable, RequireIncreasable } from "./prerequisites/IncreasableRequirement"
+import { RequireIncreasable } from "./prerequisites/IncreasableRequirement"
 import { PactRequirement } from "./prerequisites/PactRequirement"
 import { RequirePrimaryAttribute } from "./prerequisites/PrimaryAttributeRequirement"
 import { RaceRequirement } from "./prerequisites/RaceRequirement"
@@ -258,7 +258,7 @@ export type ProfessionDependency =
 
 export type ProfessionPrerequisite =
   Record<ProfessionRequireActivatable> |
-  Record<ProfessionRequireIncreasable>
+  Record<RequireIncreasable>
 
 export type AbilityRequirement =
   Record<RequireActivatable> |
