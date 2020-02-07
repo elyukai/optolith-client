@@ -1,9 +1,9 @@
-import { List } from "../../../Data/List";
-import { isJust, Just, Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamageThreshold";
-import { ItemEditorSpecific } from "./heroTypeHelpers";
-import { ItemBase } from "./Item";
+import { List } from "../../../Data/List"
+import { isJust, Just, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamageThreshold"
+import { ItemEditorSpecific } from "./heroTypeHelpers"
+import { ItemBase } from "./Item"
 
 export interface EditItem extends ItemBase, ItemEditorSpecific {
   "@@name": "EditItem"

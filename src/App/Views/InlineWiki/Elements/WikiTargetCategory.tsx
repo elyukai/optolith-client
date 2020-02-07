@@ -1,7 +1,7 @@
-import * as React from "react";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
   target: (r: Record<A>) => string
@@ -13,7 +13,9 @@ export interface WikiTargetCategoryProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiTargetCategory<A extends RecordIBase<any>> (props: WikiTargetCategoryProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiTargetCategoryProps<A>) => ReturnType<React.FC>
+
+export const WikiTargetCategory: FC = props => {
   const {
     x,
     acc,

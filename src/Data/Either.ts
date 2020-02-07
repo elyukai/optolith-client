@@ -12,14 +12,14 @@
  * @author Lukas Obermann
  */
 
-import { ifElse } from "../App/Utilities/ifElse";
-import { pipe } from "../App/Utilities/pipe";
-import { ident } from "./Function";
-import { fmap, fmapF } from "./Functor";
-import { Internals } from "./Internals";
-import { cons, consF, List } from "./List";
-import { fromJust, isJust, Just, Maybe, Nothing } from "./Maybe";
-import { Pair, Tuple } from "./Tuple";
+import { ifElse } from "../App/Utilities/ifElse"
+import { pipe } from "../App/Utilities/pipe"
+import { ident } from "./Function"
+import { fmap, fmapF } from "./Functor"
+import { Internals } from "./Internals"
+import { cons, consF, List } from "./List"
+import { fromJust, isJust, Just, Maybe, Nothing } from "./Maybe"
+import { Pair, Tuple } from "./Tuple"
 
 export import Left = Internals.Left
 export import Right = Internals.Right
@@ -703,21 +703,6 @@ export const partitionEithers =
 
 export import isEither = Internals.isEither
 
-/**
- * `imapM :: (Int -> a -> Either e b) -> [a] -> Either e [b]`
- *
- * `imapM f xs` takes a function and a list and maps the function over every
- * element in the list. If the function returns a `Left`, it is immediately
- * returned by the function. If `f` did not return any `Left`, the list of
- * unwrapped return values is returned as a `Right`. If `xs` is empty,
- * `Right []` is returned.
- */
-export const imapM =
-  <E, A, B>
-  (f: (index: number) => (x: A) => Either<E, B>) =>
-  (xs: List<A>): Either<E, List<B>> =>
-    imapMIndex (0) (f) (xs)
-
 const imapMIndex =
   (i: number) =>
   <E, A, B>
@@ -732,6 +717,21 @@ const imapMIndex =
       (y => second (consF (fromRight_ (y)))
                    (imapMIndex (i + 1) (f) (xs .xs)))
       (f (i) (xs .x))
+
+/**
+ * `imapM :: (Int -> a -> Either e b) -> [a] -> Either e [b]`
+ *
+ * `imapM f xs` takes a function and a list and maps the function over every
+ * element in the list. If the function returns a `Left`, it is immediately
+ * returned by the function. If `f` did not return any `Left`, the list of
+ * unwrapped return values is returned as a `Right`. If `xs` is empty,
+ * `Right []` is returned.
+ */
+export const imapM =
+  <E, A, B>
+  (f: (index: number) => (x: A) => Either<E, B>) =>
+  (xs: List<A>): Either<E, List<B>> =>
+    imapMIndex (0) (f) (xs)
 
 /**
  * `invertEither :: Either l r -> Either r l`

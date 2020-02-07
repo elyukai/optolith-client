@@ -1,28 +1,28 @@
-import { tryIO } from "../../Control/Exception";
-import { Either, fromLeft_, fromRight_, isLeft, isRight } from "../../Data/Either";
-import { List } from "../../Data/List";
-import { elem, fromJust, isJust, Just, Maybe } from "../../Data/Maybe";
-import { lookup } from "../../Data/OrderedMap";
-import { OrderedSet } from "../../Data/OrderedSet";
-import { bind } from "../../System/IO";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { heroReducer } from "../Reducers/heroReducer";
-import { getHeroes, getWikiExperienceLevels } from "../Selectors/stateSelectors";
-import { translate, translateP } from "../Utilities/I18n";
-import { getNewIdByDate } from "../Utilities/IDUtils";
-import { pipe_ } from "../Utilities/pipe";
-import { HeroListSortOptions, HeroListVisibilityFilter } from "../Utilities/Raw/JSON/Config";
-import { ReduxAction } from "./Actions";
-import { addAlert, addConfirm, addErrorAlert, AlertOptions, ConfirmOptions, ConfirmResponse } from "./AlertActions";
-import { requestAllHeroesSave, requestHeroDeletion, requestHeroExport, requestHeroSave } from "./IOActions";
+import { tryIO } from "../../Control/Exception"
+import { Either, fromLeft_, fromRight_, isLeft, isRight } from "../../Data/Either"
+import { List } from "../../Data/List"
+import { elem, fromJust, isJust, Just, Maybe } from "../../Data/Maybe"
+import { lookup } from "../../Data/OrderedMap"
+import { OrderedSet } from "../../Data/OrderedSet"
+import { bind } from "../../System/IO"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { heroReducer } from "../Reducers/heroReducer"
+import { getHeroes, getWikiExperienceLevels } from "../Selectors/stateSelectors"
+import { translate, translateP } from "../Utilities/I18n"
+import { getNewIdByDate } from "../Utilities/IDUtils"
+import { pipe_ } from "../Utilities/pipe"
+import { HeroListSortOptions, HeroListVisibilityFilter } from "../Utilities/Raw/JSON/Config"
+import { ReduxAction } from "./Actions"
+import { addAlert, addConfirm, addErrorAlert, AlertOptions, ConfirmOptions, ConfirmResponse } from "./AlertActions"
+import { requestAllHeroesSave, requestHeroDeletion, requestHeroExport, requestHeroSave } from "./IOActions"
 
 export interface SetHerolistSortOrderAction {
   type: ActionTypes.SET_HEROLIST_SORT_ORDER
   payload: {
-    sortOrder: HeroListSortOptions;
+    sortOrder: HeroListSortOptions
   }
 }
 
@@ -37,7 +37,7 @@ export const setHerolistSortOrder =
 export interface SetHerolistFilterTextAction {
   type: ActionTypes.SET_HEROLIST_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 
@@ -51,7 +51,7 @@ export const setHerolistFilterText = (filterText: string): SetHerolistFilterText
 export interface SetHerolistVisibilityFilterAction {
   type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER
   payload: {
-    filterOption: HeroListVisibilityFilter;
+    filterOption: HeroListVisibilityFilter
   }
 }
 
@@ -66,14 +66,14 @@ export const setHerolistVisibilityFilter =
 export interface CreateHeroAction {
   type: ActionTypes.CREATE_HERO
   payload: {
-    l10n: L10nRecord;
-    id: string;
-    name: string;
-    sex: "m" | "f";
-    el: string;
-    enableAllRuleBooks: boolean;
-    enabledRuleBooks: OrderedSet<string>;
-    totalAp: number;
+    l10n: L10nRecord
+    id: string
+    name: string
+    sex: "m" | "f"
+    el: string
+    enableAllRuleBooks: boolean
+    enabledRuleBooks: OrderedSet<string>
+    totalAp: number
   }
 }
 
@@ -112,7 +112,7 @@ export const createHero =
 export interface LoadHeroAction {
   type: ActionTypes.LOAD_HERO
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -138,7 +138,7 @@ export const saveHeroes =
 export interface SaveHeroAction {
   type: ActionTypes.SAVE_HERO
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -181,7 +181,7 @@ export const exportHeroValidate =
 export interface DeleteHeroAction {
   type: ActionTypes.DELETE_HERO
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -206,7 +206,7 @@ export const deleteHeroValidate =
       const opts = ConfirmOptions ({
         title: Just (translateP (l10n)
                                 ("deletehero")
-                                (List (pipe_ (hero, heroReducer.A_.present, HeroModel.A.name)))),
+                                (List (pipe_ (hero, heroReducer.A.present, HeroModel.A.name)))),
         message: translate (l10n) ("deletehero.text"),
         useYesNo: true,
       })
@@ -223,8 +223,8 @@ export const deleteHeroValidate =
 export interface DuplicateHeroAction {
   type: ActionTypes.DUPLICATE_HERO
   payload: {
-    id: string;
-    newId: string;
+    id: string
+    newId: string
   }
 }
 
@@ -243,8 +243,8 @@ export const duplicateHero = (id: string): DuplicateHeroAction => {
 export interface UpdateDateModifiedAction {
   type: ActionTypes.UPDATE_DATE_MODIFIED
   payload: {
-    id: string;
-    dateModified: Date;
+    id: string
+    dateModified: Date
   }
 }
 

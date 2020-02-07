@@ -1,14 +1,15 @@
-import { Identity, isIdentity } from "../Control/Monad/Identity";
-import { Type, TypeName } from "./Data";
-import { isEither, isLeft, Left, Right } from "./Either";
-import { Const, isConst } from "./Functor/Const";
-import { Internals } from "./Internals";
-import { isList, List } from "./List";
-import { isJust, isMaybe, Just, Nothing } from "./Maybe";
-import { assocs, OrderedMap } from "./OrderedMap";
-import { OrderedSet } from "./OrderedSet";
-import { isRecord, Record, RecordBase } from "./Record";
-import { fst, isTuple, snd, Tuple } from "./Tuple";
+import { hasOwnProperty } from "../App/Utilities/Object"
+import { Identity, isIdentity } from "../Control/Monad/Identity"
+import { Type, TypeName } from "./Data"
+import { isEither, isLeft, Left, Right } from "./Either"
+import { Const, isConst } from "./Functor/Const"
+import { Internals } from "./Internals"
+import { isList, List } from "./List"
+import { isJust, isMaybe, Just, Nothing } from "./Maybe"
+import { assocs, OrderedMap } from "./OrderedMap"
+import { OrderedSet } from "./OrderedSet"
+import { isRecord, Record, RecordBase } from "./Record"
+import { fst, isTuple, snd, Tuple } from "./Tuple"
 
 export type Serializable = string
                          | number
@@ -53,7 +54,7 @@ export interface ConstS<A> extends Type<TypeName.Identity> {
 const isConstS = (x: any): x is ConstS<any> => typeof x === "object"
                                                && x !== null
                                                && x ["@@type"] === TypeName.Const
-                                               && x .hasOwnProperty ("value")
+                                               && hasOwnProperty ("value") (x)
 
 export interface IdentityS<A> extends Type<TypeName.Identity> {
   value: A
@@ -62,7 +63,7 @@ export interface IdentityS<A> extends Type<TypeName.Identity> {
 const isIdentityS = (x: any): x is IdentityS<any> => typeof x === "object"
                                                      && x !== null
                                                      && x ["@@type"] === TypeName.Identity
-                                                     && x .hasOwnProperty ("value")
+                                                     && hasOwnProperty ("value") (x)
 
 export interface LeftS<A> extends Type<TypeName.Left> {
   value: A
@@ -71,7 +72,7 @@ export interface LeftS<A> extends Type<TypeName.Left> {
 const isLeftS = (x: any): x is LeftS<any> => typeof x === "object"
                                              && x !== null
                                              && x ["@@type"] === TypeName.Left
-                                             && x .hasOwnProperty ("value")
+                                             && hasOwnProperty ("value") (x)
 
 export interface RightS<A> extends Type<TypeName.Right> {
   value: A
@@ -80,7 +81,7 @@ export interface RightS<A> extends Type<TypeName.Right> {
 const isRightS = (x: any): x is RightS<any> => typeof x === "object"
                                                && x !== null
                                                && x ["@@type"] === TypeName.Right
-                                               && x .hasOwnProperty ("value")
+                                               && hasOwnProperty ("value") (x)
 
 export type EitherS<L, R> = LeftS<L> | RightS<R>
 
@@ -91,7 +92,7 @@ export interface ListS<A> extends Type<TypeName.List> {
 const isListS = (x: any): x is ListS<any> => typeof x === "object"
                                              && x !== null
                                              && x ["@@type"] === TypeName.List
-                                             && x .hasOwnProperty ("value")
+                                             && hasOwnProperty ("value") (x)
 
 export interface JustS<A> extends Type<TypeName.Just> {
   value: A
@@ -100,7 +101,7 @@ export interface JustS<A> extends Type<TypeName.Just> {
 const isJustS = (x: any): x is JustS<any> => typeof x === "object"
                                              && x !== null
                                              && x ["@@type"] === TypeName.Just
-                                             && x .hasOwnProperty ("value")
+                                             && hasOwnProperty ("value") (x)
 
 export interface NothingS extends Type<TypeName.Right> { }
 
@@ -116,9 +117,9 @@ export interface OrderedMapS<K, A> extends Type<TypeName.OrderedMap> {
 
 const isOrderedMapS = (x: any): x is OrderedMapS<any, any> => typeof x === "object"
                                                               && x !== null
-                                                              && x ["@@type"] ===
-                                                                TypeName.OrderedMap
-                                                              && x .hasOwnProperty ("values")
+                                                              && x ["@@type"]
+                                                                === TypeName.OrderedMap
+                                                              && hasOwnProperty ("values") (x)
 
 export interface OrderedSetS<A> extends Type<TypeName.OrderedSet> {
   values: A[]
@@ -126,9 +127,9 @@ export interface OrderedSetS<A> extends Type<TypeName.OrderedSet> {
 
 const isOrderedSetS = (x: any): x is OrderedSetS<any> => typeof x === "object"
                                                          && x !== null
-                                                         && x ["@@type"] ===
-                                                           TypeName.OrderedSet
-                                                         && x .hasOwnProperty ("value")
+                                                         && x ["@@type"]
+                                                           === TypeName.OrderedSet
+                                                         && hasOwnProperty ("value") (x)
 
 export interface RecordS<A extends RecordBase, N extends string>
   extends Type<TypeName.Record> {
@@ -139,8 +140,8 @@ export interface RecordS<A extends RecordBase, N extends string>
 const isRecordS = (x: any): x is RecordS<any, any> => typeof x === "object"
                                                       && x !== null
                                                       && x ["@@type"] === TypeName.Record
-                                                      && x .hasOwnProperty ("name")
-                                                      && x .hasOwnProperty ("values")
+                                                      && hasOwnProperty ("name") (x)
+                                                      && hasOwnProperty ("values") (x)
 
 export interface TupleS<A extends any[]> extends Type<TypeName.Tuple> {
   values: A
@@ -149,7 +150,7 @@ export interface TupleS<A extends any[]> extends Type<TypeName.Tuple> {
 const isTupleS = (x: any): x is TupleS<any> => typeof x === "object"
                                                && x !== null
                                                && x ["@@type"] === TypeName.Tuple
-                                               && x .hasOwnProperty ("values")
+                                               && hasOwnProperty ("values") (x)
 
 export const serialize = (x: Serializable): Serialized => {
   if (isConst (x)) {
@@ -183,7 +184,7 @@ export const serialize = (x: Serializable): Serialized => {
   if (isList (x)) {
     return {
       "@@type": TypeName.List,
-      values: [...x] .map (serialize),
+      values: [ ...x ] .map (serialize),
     }
   }
 
@@ -203,14 +204,14 @@ export const serialize = (x: Serializable): Serialized => {
   if (Internals.isOrderedMap (x)) {
     return {
       "@@type": TypeName.OrderedMap,
-      values: [...assocs (x)] .map (p => [serialize (fst (p)), serialize (snd (p))]),
+      values: [ ...assocs (x) ] .map (p => [ serialize (fst (p)), serialize (snd (p)) ]),
     }
   }
 
   if (Internals.isOrderedSet (x)) {
     return {
       "@@type": TypeName.List,
-      values: [...x] .map (serialize),
+      values: [ ...x ] .map (serialize),
     }
   }
 
@@ -220,19 +221,19 @@ export const serialize = (x: Serializable): Serialized => {
       name: x .name,
       values: Object.entries (x .values)
         .reduce<{ [key: string]: Serialized }> (
-          (acc, [k, v]) => ({ ...acc, [k]: serialize (v) }),
+          (acc, [ k, v ]) => ({ ...acc, [k]: serialize (v) }),
           {}
-        )
+        ),
     }
   }
 
   if (isTuple (x)) {
     return Object.entries (x .values)
       .reduce<Serialized[]> (
-        (acc, [k, v]) => {
-          const new_acc = [...acc]
+        (acc, [ k, v ]) => {
+          const new_acc = [ ...acc ]
 
-          new_acc [Number.parseInt (k)] = serialize (v)
+          new_acc [Number.parseInt (k, 10)] = serialize (v)
 
           return new_acc
         },
@@ -247,7 +248,7 @@ export const serialize = (x: Serializable): Serialized => {
   if (typeof x === "object") {
     return Object.entries (x)
       .reduce<{ [key: string]: Serialized }> (
-        (acc, [k, v]) => ({ ...acc, [k]: serialize (v) }),
+        (acc, [ k, v ]) => ({ ...acc, [k]: serialize (v) }),
         {}
       )
   }
@@ -285,7 +286,9 @@ export const deserialize = (x: Serialized): Serializable => {
   }
 
   if (isOrderedMapS (x)) {
-    return OrderedMap.fromArray (x .values .map (([k, v]) => [deserialize (k), deserialize (v)]))
+    return OrderedMap.fromArray (
+      x .values .map (([ k, v ]) => [ deserialize (k), deserialize (v) ])
+    )
   }
 
   if (isOrderedSetS (x)) {
@@ -307,7 +310,7 @@ export const deserialize = (x: Serialized): Serializable => {
   if (typeof x === "object") {
     return Object.entries (x)
       .reduce<{ [key: string]: Serializable }> (
-        (acc, [k, v]) => ({ ...acc, [k]: deserialize (v) }),
+        (acc, [ k, v ]) => ({ ...acc, [k]: deserialize (v) }),
         {}
       )
   }

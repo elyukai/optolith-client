@@ -1,33 +1,33 @@
-import { fmap } from "../../Data/Functor";
-import { set } from "../../Data/Lens";
-import { List, subscriptF } from "../../Data/List";
-import { bind, bindF, ensure, fromJust, isJust, isNothing, join, Just, liftM2, Maybe } from "../../Data/Maybe";
-import { subtract } from "../../Data/Num";
-import { lookup } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { Pair } from "../../Data/Tuple";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
-import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions";
-import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObjectWithIdL, toActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../Models/View/ActivatableNameCost";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
-import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
-import { getAutomaticAdvantages } from "../Selectors/rcpSelectors";
-import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors";
-import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils";
-import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils";
-import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";
-import { translate, translateP } from "../Utilities/I18n";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { SpecialAbilitiesSortOptions } from "../Utilities/Raw/JSON/Config";
-import { getWikiEntry } from "../Utilities/WikiUtils";
-import { ReduxAction } from "./Actions";
-import { addAlert, AlertOptions } from "./AlertActions";
+import { fmap } from "../../Data/Functor"
+import { set } from "../../Data/Lens"
+import { List, subscriptF } from "../../Data/List"
+import { bind, bindF, ensure, fromJust, isJust, isNothing, join, Just, liftM2, Maybe } from "../../Data/Maybe"
+import { subtract } from "../../Data/Num"
+import { lookup } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { Pair } from "../../Data/Tuple"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions"
+import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions"
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObjectWithIdL, toActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../Models/View/ActivatableNameCost"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
+import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
+import { getAutomaticAdvantages } from "../Selectors/rcpSelectors"
+import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors"
+import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils"
+import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils"
+import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
+import { translate, translateP } from "../Utilities/I18n"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { SpecialAbilitiesSortOptions } from "../Utilities/Raw/JSON/Config"
+import { getWikiEntry } from "../Utilities/WikiUtils"
+import { ReduxAction } from "./Actions"
+import { addAlert, AlertOptions } from "./AlertActions"
 
 export interface ActivateSpecialAbilityAction {
   type: ActionTypes.ACTIVATE_SPECIALABILITY
@@ -248,7 +248,7 @@ export const setSpecialAbilityLevel =
 export interface SetSpecialAbilitiesSortOrderAction {
   type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER
   payload: {
-    sortOrder: SpecialAbilitiesSortOptions;
+    sortOrder: SpecialAbilitiesSortOptions
   }
 }
 
@@ -263,7 +263,7 @@ export const setSpecialAbilitiesSortOrder =
 export interface SetActiveSpecialAbilitiesFilterTextAction {
   type: ActionTypes.SET_SPECIAL_ABILITIES_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 
@@ -276,29 +276,29 @@ export const setActiveSpecialAbilitiesFilterText =
   })
 
 export interface SetInactiveSpecialAbilitiesFilterTextAction {
-  type: ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT
+  type: ActionTypes.SET_INAC_SAS_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 
 export const setInactiveSpecialAbilitiesFilterText =
   (filterText: string): SetInactiveSpecialAbilitiesFilterTextAction => ({
-    type: ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT,
+    type: ActionTypes.SET_INAC_SAS_FILTER_TEXT,
     payload: {
       filterText,
     },
   })
 
 export interface SetGuildMageUnfamiliarSpellIdAction {
-  type: ActionTypes.SET_TRADITION_GUILD_MAGE_UNFAMILIAR_SPELL_ID
+  type: ActionTypes.SET_TRAD_GUILD_MAGE_UNFAM_SPELL_ID
   payload: {
-    id: string;
+    id: string
   }
 }
 
 export const setGuildMageUnfamiliarSpellId = (id: string): SetGuildMageUnfamiliarSpellIdAction => ({
-  type: ActionTypes.SET_TRADITION_GUILD_MAGE_UNFAMILIAR_SPELL_ID,
+  type: ActionTypes.SET_TRAD_GUILD_MAGE_UNFAM_SPELL_ID,
   payload: {
     id,
   },

@@ -1,7 +1,7 @@
-import { SocialStatusId } from "../../../../../Constants/Ids";
-import { SocialPrerequisite } from "../../../../../Models/Wiki/prerequisites/SocialPrerequisite";
-import { isInNumEnum } from "../../../../Enum";
-import { AllRawRequirementObjects } from "../rawTypeHelpers";
+import { SocialStatusId } from "../../../../../Constants/Ids"
+import { SocialPrerequisite } from "../../../../../Models/Wiki/prerequisites/SocialPrerequisite"
+import { isInNumEnum } from "../../../../Enum"
+import { AllRawRequirementObjects } from "../rawTypeHelpers"
 
 export interface RawSocialPrerequisite {
   id: "SOCIAL"

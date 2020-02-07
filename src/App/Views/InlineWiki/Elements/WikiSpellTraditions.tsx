@@ -1,14 +1,14 @@
-import * as React from "react";
-import { elem, flength, intercalate, List, subscript } from "../../../../Data/List";
-import { bindF, ensure, mapMaybe } from "../../../../Data/Maybe";
-import { dec, lte } from "../../../../Data/Num";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { MagicalTradition } from "../../../Constants/Groups";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { sortStrings } from "../../../Utilities/sortBy";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { elem, flength, intercalate, List, subscript } from "../../../../Data/List"
+import { bindF, ensure, mapMaybe } from "../../../../Data/Maybe"
+import { dec, lte } from "../../../../Data/Num"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { MagicalTradition } from "../../../Constants/Groups"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { sortStrings } from "../../../Utilities/sortBy"
+import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
   subtradition: (r: Record<A>) => List<number>
@@ -21,9 +21,9 @@ export interface WikiSpellTraditionsProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiSpellTraditions<A extends RecordIBase<any>> (
-  props: WikiSpellTraditionsProps<A>
-) {
+type FC = <A extends RecordIBase<any>> (props: WikiSpellTraditionsProps<A>) => ReturnType<React.FC>
+
+export const WikiSpellTraditions: FC = props => {
   const {
     x,
     acc,

@@ -1,17 +1,17 @@
-import { connect } from "react-redux";
-import { Maybe } from "../../Data/Maybe";
-import { ReduxDispatch } from "../Actions/Actions";
-import { setHeroLocale } from "../Actions/ProfileActions";
-import * as RulesActions from "../Actions/RulesActions";
-import { setGuildMageUnfamiliarSpellId } from "../Actions/SpecialAbilitiesActions";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getGuildMageUnfamiliarSpellId } from "../Selectors/activatableSelectors";
-import { getSortedBooks } from "../Selectors/bookSelectors";
-import { isEnableLanguageSpecializationsDeactivatable } from "../Selectors/rulesSelectors";
-import { getAllSpellsForManualGuildMageSelect } from "../Selectors/spellsSelectors";
-import { getHeroLocale } from "../Selectors/stateSelectors";
-import { Locale } from "../Utilities/Raw/JSON/Config";
-import { RulesDispatchProps, RulesOwnProps, RulesStateProps, RulesView } from "../Views/Rules/Rules";
+import { connect } from "react-redux"
+import { Maybe } from "../../Data/Maybe"
+import { ReduxDispatch } from "../Actions/Actions"
+import { setHeroLocale } from "../Actions/ProfileActions"
+import * as RulesActions from "../Actions/RulesActions"
+import { setGuildMageUnfamiliarSpellId } from "../Actions/SpecialAbilitiesActions"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getGuildMageUnfamiliarSpellId } from "../Selectors/activatableSelectors"
+import { getSortedBooks } from "../Selectors/bookSelectors"
+import { isEnableLanguageSpecializationsDeactivatable } from "../Selectors/rulesSelectors"
+import { getAllSpellsForManualGuildMageSelect } from "../Selectors/spellsSelectors"
+import { getHeroLocale } from "../Selectors/stateSelectors"
+import { Locale } from "../Utilities/Raw/JSON/Config"
+import { RulesDispatchProps, RulesOwnProps, RulesStateProps, RulesView } from "../Views/Rules/Rules"
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: RulesOwnProps): RulesStateProps => ({

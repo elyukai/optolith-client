@@ -1,28 +1,28 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, intercalate, List, map, replicateR, subscript, subscriptF, toArray } from "../../../../Data/List";
-import { bindF, fromMaybe, Maybe } from "../../../../Data/Maybe";
-import { dec } from "../../../../Data/Num";
-import { Record } from "../../../../Data/Record";
-import { bimap, fst, isTuple, snd } from "../../../../Data/Tuple";
-import { MeleeWeapon } from "../../../Models/View/MeleeWeapon";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { ndash } from "../../../Utilities/Chars";
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
-import { sign, signZero, toRoman } from "../../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { flength, intercalate, List, map, replicateR, subscript, subscriptF, toArray } from "../../../../Data/List"
+import { bindF, fromMaybe, Maybe } from "../../../../Data/Maybe"
+import { dec } from "../../../../Data/Num"
+import { Record } from "../../../../Data/Record"
+import { bimap, fst, isTuple, snd } from "../../../../Data/Tuple"
+import { MeleeWeapon } from "../../../Models/View/MeleeWeapon"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { ndash } from "../../../Utilities/Chars"
+import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
+import { sign, signZero, toRoman } from "../../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface CombatSheetMeleeWeaponsProps {
+interface Props {
   l10n: L10nRecord
   meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
 }
 
 const MWA = MeleeWeapon.A
 
-export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
+export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
   const { l10n, meleeWeapons: mmelee_weapons } = props
 
   return (

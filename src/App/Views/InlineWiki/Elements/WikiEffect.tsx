@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { Markdown } from "../../Universal/Markdown";
+import * as React from "react"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { Markdown } from "../../Universal/Markdown"
 
 interface Accessors<A extends RecordIBase<any>> {
   effect: (r: Record<A>) => string
@@ -14,7 +14,9 @@ export interface WikiEffectProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiEffect<A extends RecordIBase<any>> (props: WikiEffectProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiEffectProps<A>) => ReturnType<React.FC>
+
+export const WikiEffect: FC = props => {
   const {
     x,
     acc,

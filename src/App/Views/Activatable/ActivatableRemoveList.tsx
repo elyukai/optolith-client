@@ -1,20 +1,20 @@
-import * as React from "react";
-import { flip, thrush } from "../../../Data/Function";
-import { fmapF } from "../../../Data/Functor";
-import { fnull, List, map, toArray } from "../../../Data/List";
-import { all, fromJust, Maybe, normalize, or } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
-import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
-import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { pipe_ } from "../../Utilities/pipe";
-import { isActiveRated } from "../../Utilities/ratingUtils";
-import { ListView } from "../Universal/List";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { Scroll } from "../Universal/Scroll";
-import { ActivatableRemoveListItem } from "./ActivatableRemoveListItem";
+import * as React from "react"
+import { flip, thrush } from "../../../Data/Function"
+import { fmapF } from "../../../Data/Functor"
+import { fnull, List, map, toArray } from "../../../Data/List"
+import { all, fromJust, Maybe, normalize, or } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
+import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
+import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { pipe_ } from "../../Utilities/pipe"
+import { isActiveRated } from "../../Utilities/ratingUtils"
+import { ListView } from "../Universal/List"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { Scroll } from "../Universal/Scroll"
+import { ActivatableRemoveListItem } from "./ActivatableRemoveListItem"
 
 export interface ActivatableRemoveListProps {
   filterText: string
@@ -33,7 +33,19 @@ export interface ActivatableRemoveListProps {
 const AAA_ = ActiveActivatableA_
 
 export function ActivatableRemoveList (props: ActivatableRemoveListProps) {
-  const { filterText, list: mactives, l10n, rating, showRating: mshow_rating } = props
+  const {
+    filterText,
+    list: mactives,
+    l10n,
+    rating,
+    showRating: mshow_rating,
+    isRemovingEnabled,
+    selectedForInfo,
+    setLevel,
+    removeFromList,
+    selectForInfo,
+    hideGroup,
+  } = props
 
   if (all (fnull) (mactives)) {
     return (
@@ -60,12 +72,18 @@ export function ActivatableRemoveList (props: ActivatableRemoveListProps) {
 
             return (
               <ActivatableRemoveListItem
-                {...props}
                 key={`${AAA_.id (item)}_${AAA_.index (item)}`}
+                l10n={l10n}
                 item={item}
                 isImportant={or (fmapF (isRatedForItem) (thrush (EntryRating.Essential)))}
                 isTypical={or (fmapF (isRatedForItem) (thrush (EntryRating.Common)))}
                 isUntypical={or (fmapF (isRatedForItem) (thrush (EntryRating.Uncommon)))}
+                isRemovingEnabled={isRemovingEnabled}
+                selectedForInfo={selectedForInfo}
+                setLevel={setLevel}
+                removeFromList={removeFromList}
+                selectForInfo={selectForInfo}
+                hideGroup={hideGroup}
                 />
             )
           }),

@@ -1,21 +1,21 @@
-import { ident } from "../../Data/Function";
-import { fmap } from "../../Data/Functor";
-import { foldr, groupByKey, imap, List } from "../../Data/List";
-import { fromMaybe, listToMaybe } from "../../Data/Maybe";
-import { max, min } from "../../Data/Num";
-import { elems, map } from "../../Data/OrderedMap";
-import { fst, isTuple, Pair, snd } from "../../Data/Tuple";
-import { upd1, upd2 } from "../../Data/Tuple/Update";
-import { fromIndexName } from "../Models/NumIdName";
-import { SkillCombinedA_ } from "../Models/View/SkillCombined";
-import { Skill } from "../Models/Wiki/Skill";
-import { SourceLink } from "../Models/Wiki/sub/SourceLink";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { translate } from "../Utilities/I18n";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { sortStrings } from "../Utilities/sortBy";
-import { getAllSkills } from "./skillsSelectors";
-import { getLocaleAsProp, getWikiSkills } from "./stateSelectors";
+import { ident } from "../../Data/Function"
+import { fmap } from "../../Data/Functor"
+import { foldr, groupByKey, imap, List } from "../../Data/List"
+import { fromMaybe, listToMaybe } from "../../Data/Maybe"
+import { max, min } from "../../Data/Num"
+import { elems, map } from "../../Data/OrderedMap"
+import { fst, isTuple, Pair, snd } from "../../Data/Tuple"
+import { upd1, upd2 } from "../../Data/Tuple/Update"
+import { fromIndexName } from "../Models/NumIdName"
+import { SkillCombinedA_ } from "../Models/View/SkillCombined"
+import { Skill } from "../Models/Wiki/Skill"
+import { SourceLink } from "../Models/Wiki/sub/SourceLink"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { translate } from "../Utilities/I18n"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { sortStrings } from "../Utilities/sortBy"
+import { getAllSkills } from "./skillsSelectors"
+import { getLocaleAsProp, getWikiSkills } from "./stateSelectors"
 
 export const getConditions = createMaybeSelector (
   getLocaleAsProp,

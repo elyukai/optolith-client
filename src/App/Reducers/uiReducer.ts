@@ -1,12 +1,12 @@
-import { Record } from "../../Data/Record";
-import { combineReducerRecord } from "../Utilities/combineReducerRecord";
-import { TabId } from "../Utilities/LocationUtils";
-import { alertsReducer as alerts, AlertsState, AlertsStateDefault } from "./alertsReducer";
-import { filtersReducer as filters, FiltersState } from "./filtersReducer";
-import { RouteDefault, routeReducer as location } from "./routeReducer";
-import { subwindowsReducer as subwindows, SubWindowsState } from "./subwindowsReducer";
-import { uiSettingsReducer as settings, UISettingsState } from "./uiSettingsReducer";
-import { UIWikiState, wikiUIReducer as wiki } from "./wikiUIReducer";
+import { Record } from "../../Data/Record"
+import { combineReducerRecord } from "../Utilities/combineReducerRecord"
+import { TabId } from "../Utilities/LocationUtils"
+import { alertsReducer as alerts, AlertsState, AlertsStateDefault } from "./alertsReducer"
+import { filtersReducer as filters, FiltersState } from "./filtersReducer"
+import { RouteDefault, routeReducer as location } from "./routeReducer"
+import { subwindowsReducer as subwindows, SubWindowsState } from "./subwindowsReducer"
+import { uiSettingsReducer as settings, UISettingsState } from "./uiSettingsReducer"
+import { UIWikiState, wikiUIReducer as wiki } from "./wikiUIReducer"
 
 export interface UIState {
   "@@name": "UIState"

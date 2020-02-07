@@ -1,11 +1,11 @@
-import { existsSync } from "fs";
-import { fileURLToPath } from "url";
-import { trySync } from "../../Control/Exception";
-import { cnst } from "../../Data/Function";
-import { notNullStr } from "../../Data/List";
-import { maybe } from "../../Data/Maybe";
+import { existsSync } from "fs"
+import { fileURLToPath } from "url"
+import { trySync } from "../../Control/Exception"
+import { cnst } from "../../Data/Function"
+import { notNullStr } from "../../Data/List"
+import { maybe } from "../../Data/Maybe"
 
-export const naturalNumber = /^(?:0|[1-9][0-9]*)$/
+export const naturalNumber = /^(?:0|[1-9][0-9]*)$/u
 
 /**
  * Natural number regex source without explicit start and end.
@@ -17,21 +17,21 @@ export const naturalNumberU = "[1-9][0-9]*"
  */
 export const naturalNumberZeroU = "0|[1-9][0-9]*"
 
-export const integer = /^(?:0|-?[1-9][0-9]*)$/
+export const integer = /^(?:0|-?[1-9][0-9]*)$/u
 
 /**
  * Integer regex source without explicit start and end.
  */
 export const integerU = "0|-?[1-9][0-9]*"
 
-export const float = /^(?:(?:0|-?[1-9][0-9]*)(?:[\.,][0-9]+)?)$/
+export const float = /^(?:(?:0|-?[1-9][0-9]*)(?:[.,][0-9]+)?)$/u
 
 /**
  * Float regex source without explicit start and end.
  */
-export const floatU = "0|-?[1-9][0-9]*(?:[\.,][0-9]+)?"
+export const floatU = "0|-?[1-9][0-9]*(?:[.,][0-9]+)?"
 
-export const base64Image = /^data:image\/(png|gif|jpeg|jpg);base64,.+/
+export const base64Image = /^data:image\/(?<ext>png|gif|jpeg|jpg);base64,.+/u
 
 /**
  * Checks if the provided string is a string representation of a natural number.
@@ -95,4 +95,4 @@ export const isURLValidM = maybe (false) (isURLValid)
  */
 export const exactR = (str: string) => `^(?:${str})$`
 
-export const id_rx = new RegExp (exactR (`[A-Z]+_${naturalNumberU}`))
+export const id_rx = new RegExp (exactR (`[A-Z]+_${naturalNumberU}`), "u")

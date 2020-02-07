@@ -1,11 +1,11 @@
-import * as React from "react";
-import { getICName } from "../../Utilities/AdventurePoints/improvementCostUtils";
+import * as React from "react"
+import { getICName } from "../../Utilities/AdventurePoints/improvementCostUtils"
 
-export interface SkillImprovementCostProps {
+interface Props {
   ic?: number
 }
 
-export function SkillImprovementCost (props: SkillImprovementCostProps) {
+export const SkillImprovementCost: React.FC<Props> = props => {
   const { ic } = props
 
   if (typeof ic === "number") {

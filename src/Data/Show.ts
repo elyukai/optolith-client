@@ -6,9 +6,9 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "../App/Utilities/pipe";
-import { Internals } from "./Internals";
-import { GT, isOrdering, LT } from "./Ord";
+import { pipe } from "../App/Utilities/pipe"
+import { Internals } from "./Internals"
+import { GT, isOrdering, LT } from "./Ord"
 
 const intercalate =
   (separator: string) => (xs: Internals.List<number | string>): string =>
@@ -63,12 +63,12 @@ export const show = (x: unknown): string => {
   }
 
   if (Internals.isOrderedSet (x)) {
-    return `Set (${[...x] .map (show) .join (", ")})`
+    return `Set (${[ ...x ] .map (show) .join (", ")})`
   }
 
   if (Internals.isOrderedMap (x)) {
     return `Map (${
-      [...x] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (", ")
+      [ ...x ] .map (([ k, v ]) => `${show (k)} = ${show (v)}`) .join (", ")
     })`
   }
 
@@ -76,22 +76,22 @@ export const show = (x: unknown): string => {
     const named = x .name !== undefined && x .name .length > 0 ? `${x .name} ` : ""
 
     return `${named}{ ${
-      [...x .keys .value]
-        .sort ()
+      [ ...x .keys .value ]
+        .sort ((a, b) => a < b ? -1 : a > b ? 1 : 0)
         .map (key =>
           `${key} = ${
             show (
               x .values [key] === null || x .values [key] === undefined
               ? x .defaultValues [key]
-              : x .values [key])
-          }`
-        )
+              : x .values [key]
+)
+          }`)
         .join (", ")
     } }`
   }
 
   if (isOrdering (x)) {
-    return x === GT ? "GT" : x === LT ? "LT" : "EQ";
+    return x === GT ? "GT" : x === LT ? "LT" : "EQ"
   }
 
   // tslint:disable-next-line: strict-type-predicates
@@ -135,6 +135,11 @@ export const show = (x: unknown): string => {
   return String (x)
 }
 
+const parensNeeded =
+  (x: string) => x.includes ("\n[(") || /^\w.* /u .test (x)
+
+const wrapParens = (x: string) => parensNeeded (x) ? `(${x})` : x
+
 // tslint:disable-next-line: cyclomatic-complexity
 export const showPDepth = (depth: number) => (x: unknown): string => {
   // depth whitespace
@@ -142,9 +147,10 @@ export const showPDepth = (depth: number) => (x: unknown): string => {
 
   if (Internals.isMaybe (x)) {
     if (Internals.isJust (x)) {
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       const str = trimNextDepth (depth) (x.value)
 
-      if (/\n/ .test (str)) {
+      if (str.includes ("\n")) {
         return `${dws}Just (\n${dws}  ${str}${dws}\n)`
       }
 
@@ -155,17 +161,18 @@ export const showPDepth = (depth: number) => (x: unknown): string => {
   }
 
   if (Internals.isEither (x)) {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const str = trimNextDepth (depth) (x.value)
 
     if (Internals.isRight (x)) {
-      if (/\n/ .test (str)) {
+      if (str.includes ("\n")) {
         return `${dws}Right (\n${dws}  ${str}${dws}\n)`
       }
 
       return `${dws}Right ${wrapParens (str)}`
     }
 
-    if (/\n/ .test (str)) {
+    if (str.includes ("\n")) {
       return `${dws}Left (\n${dws}  ${str}${dws}\n)`
     }
 
@@ -177,7 +184,8 @@ export const showPDepth = (depth: number) => (x: unknown): string => {
       return `${dws}[]`
     }
 
-    return `${dws}[ ${[...x] .map (trimNextDepth (depth)) .join (`\n${dws}, `)} ]`
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    return `${dws}[ ${[ ...x ] .map (trimNextDepth (depth)) .join (`\n${dws}, `)} ]`
   }
 
   if (Internals.isTuple (x)) {
@@ -188,18 +196,20 @@ export const showPDepth = (depth: number) => (x: unknown): string => {
       arr .push (e)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return `${dws}( ${arr .map (trimNextDepth (depth)) .join (`\n${dws}, `)}\n${dws})`
   }
 
   if (Internals.isOrderedSet (x)) {
     return `${dws}Set ( ${
-      [...x] .map (trimNextDepth (depth + 2)) .join (`\n${dws}    , `)
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      [ ...x ] .map (trimNextDepth (depth + 2)) .join (`\n${dws}    , `)
     }\n${dws})`
   }
 
   if (Internals.isOrderedMap (x)) {
     return `${dws}Map ( ${
-      [...x] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (`\n${dws}    , `)
+      [ ...x ] .map (([ k, v ]) => `${show (k)} = ${show (v)}`) .join (`\n${dws}    , `)
     }\n${dws})`
   }
 
@@ -209,23 +219,23 @@ export const showPDepth = (depth: number) => (x: unknown): string => {
     const mod_depth = depth + named .length / 2
 
     return `${dws}${named}{ ${
-      [...x .keys .value]
-        .sort ()
+      [ ...x .keys .value ]
+        .sort ((a, b) => a < b ? -1 : a > b ? 1 : 0)
         .map (key =>
           `${key} = ${
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
             trimNextDepth (mod_depth)
                           (x .values [key] === null || x .values [key] === undefined
                           ? x .defaultValues [key]
                           : x .values [key])
-                          .replace (/\n/g, `\n   ${" " .repeat (key .length)}`)
-          }`
-        )
+                          .replace (/\n/ug, `\n   ${" " .repeat (key .length)}`)
+          }`)
         .join (`\n${" " .repeat (named .length)}${dws}, `)
     } }`
   }
 
   if (isOrdering (x)) {
-    return x === GT ? `${dws}GT` : x === LT ? `${dws}LT` : `${dws}EQ`;
+    return x === GT ? `${dws}GT` : x === LT ? `${dws}LT` : `${dws}EQ`
   }
 
   // tslint:disable-next-line: strict-type-predicates
@@ -246,11 +256,11 @@ export const showPDepth = (depth: number) => (x: unknown): string => {
   }
 
   if (typeof x === "symbol") {
-    if (x.description !== "") {
-      return `${dws}Symbol "${x.description}"`
+    if (x.description === "") {
+      return `${dws}Symbol`
     }
     else {
-      return `${dws}Symbol`
+      return `${dws}Symbol "${x.description}"`
     }
   }
 
@@ -272,11 +282,6 @@ export const showPDepth = (depth: number) => (x: unknown): string => {
 const trimNextDepth =
   (current_depth: number) =>
     pipe (showPDepth (current_depth + 1), trimStart)
-
-const parensNeeded =
-  (x: string) => /\n\[\(/ .test (x) || /^\w.* / .test (x)
-
-const wrapParens = (x: string) => parensNeeded (x) ? `(${x})` : x
 
 /**
  * `showP :: a -> String`

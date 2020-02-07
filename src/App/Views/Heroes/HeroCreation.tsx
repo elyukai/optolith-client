@@ -1,22 +1,24 @@
-import * as React from "react";
-import { List, map } from "../../../Data/List";
-import { fromJust, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe";
-import { elems, OrderedMap } from "../../../Data/OrderedMap";
-import { OrderedSet, toggle } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { Book } from "../../Models/Wiki/Book";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe_ } from "../../Utilities/pipe";
-import { BookSelection } from "../Rules/BookSelection";
-import { Dialog } from "../Universal/Dialog";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
-import { Hr } from "../Universal/Hr";
-import { Scroll } from "../Universal/Scroll";
-import { Option, SegmentedControls } from "../Universal/SegmentedControls";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { List, map } from "../../../Data/List"
+import { fromJust, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe"
+import { elems, OrderedMap } from "../../../Data/OrderedMap"
+import { OrderedSet, toggle } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { Sex } from "../../Models/Hero/heroTypeHelpers"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { RadioOption } from "../../Models/View/RadioOption"
+import { Book } from "../../Models/Wiki/Book"
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { pipe_ } from "../../Utilities/pipe"
+import { BookSelection } from "../Rules/BookSelection"
+import { Dialog } from "../Universal/Dialog"
+import { Dropdown } from "../Universal/Dropdown"
+import { Hr } from "../Universal/Hr"
+import { Scroll } from "../Universal/Scroll"
+import { SegmentedControls } from "../Universal/SegmentedControls"
+import { TextField } from "../Universal/TextField"
 
 const ELA = ExperienceLevel.A
 
@@ -53,13 +55,13 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
     close,
   } = props
 
-  const [name, setName] = React.useState ("")
-  const [enableAllRuleBooks, setEnableAllRuleBooks] = React.useState (false)
-  const [enabledRuleBooks, setEnabledRuleBooks] =
+  const [ name, setName ] = React.useState ("")
+  const [ enableAllRuleBooks, setEnableAllRuleBooks ] = React.useState (false)
+  const [ enabledRuleBooks, setEnabledRuleBooks ] =
     React.useState<OrderedSet<string>> (OrderedSet.empty)
-  const [msex, setSex] = React.useState<Maybe<Sex>> (Nothing)
-  const [mel, setEL] = React.useState<Maybe<string>> (Nothing)
-  const [prevIsOpen, setPrevIsOpen] = React.useState (isOpen)
+  const [ msex, setSex ] = React.useState<Maybe<Sex>> (Nothing)
+  const [ mel, setEL ] = React.useState<Maybe<string>> (Nothing)
+  const [ prevIsOpen, setPrevIsOpen ] = React.useState (isOpen)
 
   const handleSubmit = React.useCallback (
     () => {
@@ -73,7 +75,7 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
         )
       }
     },
-    [createHero, enableAllRuleBooks, enabledRuleBooks, mel, msex, name]
+    [ createHero, enableAllRuleBooks, enabledRuleBooks, mel, msex, name ]
   )
 
   const handleClear = React.useCallback (
@@ -90,21 +92,21 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
       close ()
       handleClear ()
     },
-    [handleClear, close]
+    [ handleClear, close ]
   )
 
   const handleSwitchEnableAllRuleBooks = React.useCallback (
     () => {
       setEnableAllRuleBooks (!enableAllRuleBooks)
     },
-    [setEnableAllRuleBooks, enableAllRuleBooks]
+    [ setEnableAllRuleBooks, enableAllRuleBooks ]
   )
 
   const handleSwitchEnableRuleBook = React.useCallback (
     (id: string) => {
       setEnabledRuleBooks (toggle (id) (enabledRuleBooks))
     },
-    [setEnabledRuleBooks, enabledRuleBooks]
+    [ setEnabledRuleBooks, enabledRuleBooks ]
   )
 
   if (!isOpen && orN (prevIsOpen)) {
@@ -150,11 +152,11 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
         active={msex}
         onClick={setSex}
         options={List (
-          Option<Sex> ({
+          RadioOption<Sex> ({
             value: Just<Sex> ("m"),
             name: translate (l10n) ("male"),
           }),
-          Option<Sex> ({
+          RadioOption<Sex> ({
             value: Just<Sex> ("f"),
             name: translate (l10n) ("female"),
           })

@@ -1,32 +1,32 @@
-import { fromJust, isJust, liftM3, listToMaybe, Maybe, Nothing } from "../../Data/Maybe";
-import { lookup } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { Selections } from "../Models/Hero/heroTypeHelpers";
-import { Culture } from "../Models/Wiki/Culture";
-import { Profession } from "../Models/Wiki/Profession";
-import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
-import { Race } from "../Models/Wiki/Race";
-import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { AppState } from "../Reducers/appReducer";
-import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from "../Selectors/rcpSelectors";
-import { getWiki } from "../Selectors/stateSelectors";
-import { pipe_ } from "../Utilities/pipe";
-import { ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter } from "../Utilities/Raw/JSON/Config";
-import { ReduxAction } from "./Actions";
+import { fromJust, isJust, liftM3, listToMaybe, Maybe, Nothing } from "../../Data/Maybe"
+import { lookup } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { Selections } from "../Models/Hero/heroTypeHelpers"
+import { Culture } from "../Models/Wiki/Culture"
+import { Profession } from "../Models/Wiki/Profession"
+import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
+import { Race } from "../Models/Wiki/Race"
+import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { AppState } from "../Reducers/appReducer"
+import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from "../Selectors/rcpSelectors"
+import { getWiki } from "../Selectors/stateSelectors"
+import { pipe_ } from "../Utilities/pipe"
+import { ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter } from "../Utilities/Raw/JSON/Config"
+import { ReduxAction } from "./Actions"
 
 export interface SelectProfessionAction {
   type: ActionTypes.SELECT_PROFESSION
   payload: {
-    id: string;
-    var_id: Maybe<string>;
+    id: string
+    var_id: Maybe<string>
   }
 }
 
 export const selectProfession =
   (id: string): ReduxAction =>
   (dispatch, getState) => {
-    const state = getState ();
+    const state = getState ()
 
     const mselected_prof = pipe_ (state, AppState.A.wiki, WikiModel.A.professions, lookup (id))
 
@@ -84,7 +84,7 @@ export const setSelections =
 export interface SetProfessionsSortOrderAction {
   type: ActionTypes.SET_PROFESSIONS_SORT_ORDER
   payload: {
-    sortOrder: ProfessionsSortOptions;
+    sortOrder: ProfessionsSortOptions
   }
 }
 
@@ -99,7 +99,7 @@ export const setProfessionsSortOrder =
 export interface SetProfessionsVisibilityFilterAction {
   type: ActionTypes.SET_PROFESSIONS_VISIBILITY_FILTER
   payload: {
-    filter: ProfessionsVisibilityFilter;
+    filter: ProfessionsVisibilityFilter
   }
 }
 
@@ -112,33 +112,24 @@ export const setProfessionsVisibilityFilter =
   })
 
 export interface SetProfessionsGroupVisibilityFilterAction {
-  type: ActionTypes.SET_PROFESSIONS_GROUP_VISIBILITY_FILTER
+  type: ActionTypes.SET_PROFESSIONS_GR_VISIBILITY_FILTER
   payload: {
-    filter: ProfessionsGroupVisibilityFilter;
+    filter: ProfessionsGroupVisibilityFilter
   }
 }
 
 export const setProfessionsGroupVisibilityFilter =
   (filter: ProfessionsGroupVisibilityFilter): SetProfessionsGroupVisibilityFilterAction => ({
-    type: ActionTypes.SET_PROFESSIONS_GROUP_VISIBILITY_FILTER,
+    type: ActionTypes.SET_PROFESSIONS_GR_VISIBILITY_FILTER,
     payload: {
       filter,
     },
   })
 
-export interface SwitchProfessionsExpansionVisibilityFilterAction {
-  type: ActionTypes.SWITCH_PROFESSIONS_EXPANSION_VISIBILITY_FILTER
-}
-
-export const switchProfessionsExpansionVisibilityFilter =
-  (): SwitchProfessionsExpansionVisibilityFilterAction => ({
-    type: ActionTypes.SWITCH_PROFESSIONS_EXPANSION_VISIBILITY_FILTER,
-  })
-
 export interface SetProfessionsFilterTextAction {
   type: ActionTypes.SET_PROFESSIONS_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 

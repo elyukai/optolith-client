@@ -1,19 +1,19 @@
-import { fmap } from "../../../Data/Functor";
-import { cons, elem, foldl, List, maximum } from "../../../Data/List";
-import { guard, Just, Maybe, maybe, then } from "../../../Data/Maybe";
-import { add, divideBy, max } from "../../../Data/Num";
-import { lookupF } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { CombatTechniqueGroup } from "../../Constants/Groups";
-import { AdvantageId, AttrId, CombatTechniqueId } from "../../Constants/Ids";
-import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
-import { flattenDependencies } from "../Dependencies/flattenDependencies";
-import { pipe } from "../pipe";
+import { fmap } from "../../../Data/Functor"
+import { cons, elem, foldl, List, maximum } from "../../../Data/List"
+import { guard, Just, Maybe, maybe, then } from "../../../Data/Maybe"
+import { add, divideBy, max } from "../../../Data/Num"
+import { lookupF } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { CombatTechniqueGroup } from "../../Constants/Groups"
+import { AdvantageId, AttrId, CombatTechniqueId } from "../../Constants/Ids"
+import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils"
+import { flattenDependencies } from "../Dependencies/flattenDependencies"
+import { pipe } from "../pipe"
 
 const { value, dependencies } = SkillDependent.AL
 const { gr, primary, id } = CombatTechnique.AL

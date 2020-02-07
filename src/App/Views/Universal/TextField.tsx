@@ -1,15 +1,15 @@
 // import { TextareaAutosize } from 'react-textarea-autosize'
-import * as React from "react";
-import { Either, isEither, isLeft } from "../../../Data/Either";
-import { List } from "../../../Data/List";
-import { guardReplace, isJust, isMaybe, Just, Maybe, normalize, orN } from "../../../Data/Maybe";
-import { InputKeyEvent, InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
-import { classListMaybe } from "../../Utilities/CSS";
-import { renderMaybe } from "../../Utilities/ReactUtils";
-import { TextFieldCounter } from "./TextFieldCounter";
-import { TextFieldError } from "./TextFieldError";
-import { TextFieldHint } from "./TextFieldHint";
-import { TextFieldLabel } from "./TextFieldLabel";
+import * as React from "react"
+import { Either, isEither, isLeft } from "../../../Data/Either"
+import { List } from "../../../Data/List"
+import { guardReplace, isJust, isMaybe, Just, Maybe, normalize, orN } from "../../../Data/Maybe"
+import { InputKeyEvent, InputTextEvent } from "../../Models/Hero/heroTypeHelpers"
+import { classListMaybe } from "../../Utilities/CSS"
+import { renderMaybe } from "../../Utilities/ReactUtils"
+import { TextFieldCounter } from "./TextFieldCounter"
+import { TextFieldError } from "./TextFieldError"
+import { TextFieldHint } from "./TextFieldHint"
+import { TextFieldLabel } from "./TextFieldLabel"
 
 export interface TextFieldProps {
   autoFocus?: boolean | Maybe<boolean>
@@ -57,8 +57,8 @@ export const TextField: React.FC<TextFieldProps> = props => {
 
   const defaultValue = typeof saved_value === "number" ? saved_value .toString () : saved_value
 
-  const [value, setValue] = React.useState (defaultValue)
-  const [prevValue, setPrevValue] = React.useState (defaultValue)
+  const [ value, setValue ] = React.useState (defaultValue)
+  const [ prevValue, setPrevValue ] = React.useState (defaultValue)
 
   if (prevValue !== defaultValue) {
     setValue (defaultValue)
@@ -71,7 +71,7 @@ export const TextField: React.FC<TextFieldProps> = props => {
         inputRef.current.focus ()
       }
     },
-    [autoFocus]
+    [ autoFocus ]
   )
 
   const handleChange =
@@ -85,7 +85,7 @@ export const TextField: React.FC<TextFieldProps> = props => {
         : orN (disabled)
         ? () => undefined
         : (event: InputTextEvent) => setValue (event.target.value),
-      [disabled, onChange, onChange]
+      [ disabled, onChange, onChange ]
     )
 
   const handleBlur =
@@ -93,7 +93,7 @@ export const TextField: React.FC<TextFieldProps> = props => {
       orN (disabled) || everyKeyDown === true
         ? () => undefined
         : () => defaultValue === value ? undefined : onChange (value),
-      [disabled, onChange, value]
+      [ disabled, onChange, value ]
     )
 
   return (

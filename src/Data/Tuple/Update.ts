@@ -1,4 +1,32 @@
-import { Tuple } from "../Tuple";
+import { Tuple } from "../Tuple"
+
+type ChangeAtIndex<A, B, I extends keyof A> = {
+  [K in keyof A]: K extends I ? B : A[K]
+}
+
+type FilterNumber<A> = Extract<A, number>
+
+const upd =
+  (fname: string) =>
+  <B>
+  (new_value: B) =>
+  <A extends any[]>
+  (x: Tuple<A>) =>
+  <I extends FilterNumber<keyof A>>
+  (i: I): Tuple<ChangeAtIndex<A, B, I>> => {
+    if (i > x .length - 1 || i < 0) {
+      throw new TypeError (
+        `${fname}: Tuple is of length ${x .length}, but you tried to access a `
+        + `value at position ${i}.`
+      )
+    }
+
+    const arr: A = Array.from ({ ...x.values, length: x.length }) as A
+
+    arr [i as number] = new_value
+
+    return Tuple (...arr) as Tuple<ChangeAtIndex<A, B, I>>
+  }
 
 /**
  * `upd1 :: b -> (a1, ...) -> (b, ...)`
@@ -43,31 +71,3 @@ export const upd4 =
   // @ts-ignore
   <A extends any[]> (x: Tuple<A>): Tuple<ChangeAtIndex<A, B, "3">> =>
     upd ("upd1") (new_value) (x) (3 as FilterNumber<keyof A>) as any
-
-type ChangeAtIndex<A, B, I extends keyof A> = {
-  [K in keyof A]: K extends I ? B : A[K]
-}
-
-type FilterNumber<A> = Extract<A, number>
-
-const upd =
-  (fname: string) =>
-  <B>
-  (new_value: B) =>
-  <A extends any[]>
-  (x: Tuple<A>) =>
-  <I extends FilterNumber<keyof A>>
-  (i: I): Tuple<ChangeAtIndex<A, B, I>> => {
-    if (i > x .length - 1 || i < 0) {
-      throw new TypeError (
-        `${fname}: Tuple is of length ${x .length}, but you tried to access a `
-        + `value at position ${i}.`
-      )
-    }
-
-    const arr: A = Array.from ({ ...x.values, length: x.length }) as A
-
-    arr [i as number] = new_value
-
-    return Tuple (...arr) as Tuple<ChangeAtIndex<A, B, I>>
-  }

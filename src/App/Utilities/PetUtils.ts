@@ -1,8 +1,8 @@
-import { fromJust, fromMaybe, isJust, Just, Nothing } from "../../Data/Maybe";
-import { Record } from "../../Data/Record";
-import { EditPet, EditPetSafe } from "../Models/Hero/EditPet";
-import { Pet } from "../Models/Hero/Pet";
-import { pipe } from "./pipe";
+import { fromJust, fromMaybe, isJust, Just, Nothing } from "../../Data/Maybe"
+import { Record } from "../../Data/Record"
+import { EditPet, EditPetSafe } from "../Models/Hero/EditPet"
+import { Pet } from "../Models/Hero/Pet"
+import { pipe } from "./pipe"
 
 const toStringM = fromMaybe ("")
 

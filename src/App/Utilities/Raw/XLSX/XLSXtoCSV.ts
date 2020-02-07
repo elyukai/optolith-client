@@ -1,7 +1,7 @@
-import * as xlsx from "xlsx";
-import { OrderedMap } from "../../../../Data/OrderedMap";
-import { OrderedSet } from "../../../../Data/OrderedSet";
-import { CsvColumnDelimiter } from "./CSVtoList";
+import * as xlsx from "xlsx"
+import { OrderedMap } from "../../../../Data/OrderedMap"
+import { OrderedSet } from "../../../../Data/OrderedSet"
+import { CsvColumnDelimiter } from "./CSVtoList"
 
 const workbookToMap =
   (wb: xlsx.WorkBook) =>
@@ -17,12 +17,12 @@ export const readXLSX =
     try {
       const work_book = workbookToMap (xlsx.readFile (pathToFile))
 
-      return Promise.resolve (work_book)
+      return await Promise.resolve (work_book)
     }
     catch (e) {
       console.error (e)
 
-      return Promise.reject (
+      return await Promise.reject (
         new Error (`readXLSX: XLSX file not found at ${pathToFile}.`)
       )
     }

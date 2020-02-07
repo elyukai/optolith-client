@@ -1,5 +1,9 @@
-import { pipe } from "../App/Utilities/pipe";
-import { showP } from "../Data/Show";
+import { pipe } from "../App/Utilities/pipe"
+import { showP } from "../Data/Show"
+
+const insertSpaceNotNull = (x: string) => x .length > 0 ? `${x} ` : ""
+
+const concatMsgValue = (msg: string) => (x: any) => `${insertSpaceNotNull (msg)}${showP (x)}`
 
 /**
  * `trace :: Show a => String -> a -> a`
@@ -108,7 +112,3 @@ export const traceShowIO =
   (msg: string) =>
   <A> (x: A) =>
     async () => (console.trace (concatMsgValue (msg) (x)), Promise.resolve (x))
-
-const concatMsgValue = (msg: string) => (x: any) => `${insertSpaceNotNull (msg)}${showP (x)}`
-
-const insertSpaceNotNull = (x: string) => x .length > 0 ? `${x} ` : ""

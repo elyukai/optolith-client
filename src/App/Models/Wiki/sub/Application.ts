@@ -1,7 +1,7 @@
-import { List } from "../../../../Data/List";
-import { Maybe, Nothing } from "../../../../Data/Maybe";
-import { fromDefault } from "../../../../Data/Record";
-import { AllRequirementObjects } from "../wikiTypeHelpers";
+import { List } from "../../../../Data/List"
+import { Maybe, Nothing } from "../../../../Data/Maybe"
+import { fromDefault } from "../../../../Data/Record"
+import { AllRequirementObjects } from "../wikiTypeHelpers"
 
 export interface Application {
   "@@name": "Application"

@@ -1,9 +1,9 @@
-import { isList, List, map } from "../../../../Data/List";
-import { fromDefault } from "../../../../Data/Record";
-import { fst, Pair, snd } from "../../../../Data/Tuple";
-import { IdPrefixes } from "../../../Constants/IdPrefixes";
-import { prefixId } from "../../../Utilities/IDUtils";
-import { pairToIncreaseSkill } from "./IncreaseSkill";
+import { isList, List, map } from "../../../../Data/List"
+import { fromDefault } from "../../../../Data/Record"
+import { fst, Pair, snd } from "../../../../Data/Tuple"
+import { IdPrefixes } from "../../../Constants/IdPrefixes"
+import { prefixId } from "../../../Utilities/IDUtils"
+import { pairToIncreaseSkill } from "./IncreaseSkill"
 
 export interface IncreaseSkillList {
   "@@name": "IncreaseSkillList"

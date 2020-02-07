@@ -1,10 +1,10 @@
-import * as React from "react";
-import { fromJust, isJust, Just, Nothing } from "../../../Data/Maybe";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { toInt } from "../../Utilities/NumberUtils";
-import { isNaturalNumber } from "../../Utilities/RegexUtils";
-import { BasicInputDialog } from "../Universal/BasicInputDialog";
+import * as React from "react"
+import { fromJust, isJust, Just, Nothing } from "../../../Data/Maybe"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { toInt } from "../../Utilities/NumberUtils"
+import { isNaturalNumber } from "../../Utilities/RegexUtils"
+import { BasicInputDialog } from "../Universal/BasicInputDialog"
 
 export interface AttributesRemovePermanentProps {
   isOpen: boolean
@@ -20,7 +20,7 @@ export interface AttributesRemovePermanentState {
 export const AttributesRemovePermanent: React.FC<AttributesRemovePermanentProps> = props => {
   const { l10n, remove, isOpen, close } = props
 
-  const [value, setValue] = React.useState ("")
+  const [ value, setValue ] = React.useState ("")
 
   const handleRemove = React.useCallback (
     () => {
@@ -30,7 +30,7 @@ export const AttributesRemovePermanent: React.FC<AttributesRemovePermanentProps>
         remove (fromJust (mvalue))
       }
     },
-    [remove, value]
+    [ remove, value ]
   )
 
   return (

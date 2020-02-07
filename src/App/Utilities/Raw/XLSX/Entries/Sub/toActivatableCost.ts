@@ -1,12 +1,12 @@
-import { Either } from "../../../../../../Data/Either";
-import { flip } from "../../../../../../Data/Function";
-import { List, splitOn } from "../../../../../../Data/List";
-import { Just, mapM, Maybe } from "../../../../../../Data/Maybe";
-import { toNatural, unsafeToInt } from "../../../../NumberUtils";
-import { isNaturalNumber } from "../../../../RegexUtils";
-import { Expect } from "../../../Expect";
-import { lookupKeyValid, TableType } from "../../Validators/Generic";
-import { bindOptional, mensureMap } from "../../Validators/ToValue";
+import { Either } from "../../../../../../Data/Either"
+import { flip } from "../../../../../../Data/Function"
+import { List, splitOn } from "../../../../../../Data/List"
+import { Just, mapM, Maybe } from "../../../../../../Data/Maybe"
+import { toNatural, unsafeToInt } from "../../../../NumberUtils"
+import { isNaturalNumber } from "../../../../RegexUtils"
+import { Expect } from "../../../Expect"
+import { lookupKeyValid, TableType } from "../../Validators/Generic"
+import { bindOptional, mensureMap } from "../../Validators/ToValue"
 
 export const toActivatableCost =
   flip (lookupKeyValid (mensureMap (Expect.Maybe (Expect.G (

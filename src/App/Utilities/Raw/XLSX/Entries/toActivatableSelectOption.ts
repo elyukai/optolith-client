@@ -1,18 +1,18 @@
-import { fmap } from "../../../../../Data/Functor";
-import { notNull, notNullStr } from "../../../../../Data/List";
-import { fromMaybe, joinMaybeList, Just, Nothing } from "../../../../../Data/Maybe";
-import { Pair } from "../../../../../Data/Tuple";
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { SelectOption } from "../../../../Models/Wiki/sub/SelectOption";
-import { prefixId } from "../../../IDUtils";
-import { Expect } from "../../Expect";
-import { mergeRowsByIdAndMainIdBothOpt } from "../MergeRows";
-import { modifyNegIntNoBreak } from "../SourceHelpers";
-import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapBoolean, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapStringPredListOptional } from "../Validators/ToValue";
-import { toErrata } from "./Sub/toErrata";
-import { toSpellPrerequisites } from "./Sub/toPrerequisites";
-import { toSourceLinksOpt } from "./Sub/toSourceLinks";
+import { fmap } from "../../../../../Data/Functor"
+import { notNull, notNullStr } from "../../../../../Data/List"
+import { fromMaybe, joinMaybeList, Just, Nothing } from "../../../../../Data/Maybe"
+import { Pair } from "../../../../../Data/Tuple"
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { SelectOption } from "../../../../Models/Wiki/sub/SelectOption"
+import { prefixId } from "../../../IDUtils"
+import { Expect } from "../../Expect"
+import { mergeRowsByIdAndMainIdBothOpt } from "../MergeRows"
+import { modifyNegIntNoBreak } from "../SourceHelpers"
+import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapBoolean, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapStringPredListOptional } from "../Validators/ToValue"
+import { toErrata } from "./Sub/toErrata"
+import { toSpellPrerequisites } from "./Sub/toPrerequisites"
+import { toSourceLinksOpt } from "./Sub/toSourceLinks"
 
 export const toActivatableSelectOption =
   (prefix: IdPrefixes) =>

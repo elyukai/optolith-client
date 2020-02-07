@@ -1,14 +1,14 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault } from "../../../Data/Record";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault } from "../../../Data/Record"
 
 export interface DependencyObject {
   "@@name": "DependencyObject"
-  origin: Maybe<string>;
-  active: Maybe<boolean>;
-  sid: Maybe<string | number | List<number>>;
-  sid2: Maybe<string | number>;
-  tier: Maybe<number>;
+  origin: Maybe<string>
+  active: Maybe<boolean>
+  sid: Maybe<string | number | List<number>>
+  sid2: Maybe<string | number>
+  tier: Maybe<number>
 }
 
 export const DependencyObject =

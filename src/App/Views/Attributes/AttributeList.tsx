@@ -1,12 +1,12 @@
-import * as React from "react";
-import { fmap } from "../../../Data/Functor";
-import { List, map, toArray } from "../../../Data/List";
-import { Maybe, maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { AttributeWithRequirements } from "../../Models/View/AttributeWithRequirements";
-import { Attribute } from "../../Models/Wiki/Attribute";
-import { pipe_ } from "../../Utilities/pipe";
-import { AttributeListItem } from "./AttributeListItem";
+import * as React from "react"
+import { fmap } from "../../../Data/Functor"
+import { List, map, toArray } from "../../../Data/List"
+import { Maybe, maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { AttributeWithRequirements } from "../../Models/View/AttributeWithRequirements"
+import { Attribute } from "../../Models/Wiki/Attribute"
+import { pipe_ } from "../../Utilities/pipe"
+import { AttributeListItem } from "./AttributeListItem"
 
 export interface AttributeListProps {
   attributes: Maybe<List<Record<AttributeWithRequirements>>>

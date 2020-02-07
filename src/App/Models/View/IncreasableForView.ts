@@ -1,6 +1,6 @@
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
-import { IncreaseSkill } from "../Wiki/sub/IncreaseSkill";
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, Record } from "../../../Data/Record"
+import { IncreaseSkill } from "../Wiki/sub/IncreaseSkill"
 
 export interface IncreasableForView {
   "@@name": "IncreasableForView"

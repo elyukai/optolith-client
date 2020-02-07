@@ -1,42 +1,42 @@
-import { notEquals } from "../../Data/Eq";
-import { cnst, thrush } from "../../Data/Function";
-import { fmap, fmapF } from "../../Data/Functor";
-import { set } from "../../Data/Lens";
-import { append, countWith, elemF, fnull, List, ListI, map, notNull, partition } from "../../Data/List";
-import { any, bindF, ensure, liftM2, mapMaybe, Maybe, maybe } from "../../Data/Maybe";
-import { lte } from "../../Data/Num";
-import { elems, lookup, lookupF } from "../../Data/OrderedMap";
-import { member } from "../../Data/OrderedSet";
-import { Record } from "../../Data/Record";
-import { fst, snd } from "../../Data/Tuple";
-import { uncurryN, uncurryN3, uncurryN5 } from "../../Data/Tuple/Curry";
-import { MagicalGroup } from "../Constants/Groups";
-import { AdvantageId, Phase, SpecialAbilityId } from "../Constants/Ids";
-import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { CantripCombined } from "../Models/View/CantripCombined";
-import { SpellWithRequirements, SpellWithRequirementsL } from "../Models/View/SpellWithRequirements";
-import { Cantrip } from "../Models/Wiki/Cantrip";
-import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
-import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { Spell, SpellL } from "../Models/Wiki/Spell";
-import { SelectOption, selectToDropdownOption } from "../Models/Wiki/sub/SelectOption";
-import { WikiModel } from "../Models/Wiki/WikiModel";
-import { getMagicalTraditionsHeroEntries } from "../Utilities/Activatable/traditionUtils";
-import { composeL } from "../Utilities/compose";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
-import { getInactiveSpellsForAnimist, getInactiveSpellsForArcaneBardOrDancer, getInactiveSpellsForIntuitiveMages, getInactiveSpellsForOtherTradition, isIdInSpecialAbilityList, isSpellDecreasable, isSpellIncreasable, isSpellsRitualsCountMaxReached, isUnfamiliarSpell } from "../Utilities/Increasable/spellUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { filterByAvailability } from "../Utilities/RulesUtils";
-import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
-import { sortByMulti, sortRecordsByName } from "../Utilities/sortBy";
-import { getStartEl } from "./elSelectors";
-import { getRuleBooksEnabled } from "./rulesSelectors";
-import { getCantripsSortOptions, getSpellsCombinedSortOptions, getSpellsSortOptions } from "./sortOptionsSelectors";
-import { getAdvantages, getCantrips, getHeroProp, getInactiveSpellsFilterText, getLocaleAsProp, getMaybeSpecialAbilities, getPhase, getSpecialAbilities, getSpellsFilterText, getTransferredUnfamiliarSpells, getWiki, getWikiCantrips, getWikiSpecialAbilities } from "./stateSelectors";
-import { getEnableActiveItemHints } from "./uisettingsSelectors";
+import { notEquals } from "../../Data/Eq"
+import { cnst, thrush } from "../../Data/Function"
+import { fmap, fmapF } from "../../Data/Functor"
+import { set } from "../../Data/Lens"
+import { append, countWith, elemF, fnull, List, ListI, map, notNull, partition } from "../../Data/List"
+import { any, bindF, ensure, liftM2, mapMaybe, Maybe, maybe } from "../../Data/Maybe"
+import { lte } from "../../Data/Num"
+import { elems, lookup, lookupF } from "../../Data/OrderedMap"
+import { member } from "../../Data/OrderedSet"
+import { Record } from "../../Data/Record"
+import { fst, snd } from "../../Data/Tuple"
+import { uncurryN, uncurryN3, uncurryN5 } from "../../Data/Tuple/Curry"
+import { MagicalGroup } from "../Constants/Groups"
+import { AdvantageId, Phase, SpecialAbilityId } from "../Constants/Ids"
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { CantripCombined } from "../Models/View/CantripCombined"
+import { SpellWithRequirements, SpellWithRequirementsL } from "../Models/View/SpellWithRequirements"
+import { Cantrip } from "../Models/Wiki/Cantrip"
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { Spell, SpellL } from "../Models/Wiki/Spell"
+import { SelectOption, selectToDropdownOption } from "../Models/Wiki/sub/SelectOption"
+import { WikiModel } from "../Models/Wiki/WikiModel"
+import { getMagicalTraditionsHeroEntries } from "../Utilities/Activatable/traditionUtils"
+import { composeL } from "../Utilities/compose"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
+import { getInactiveSpellsForAnimist, getInactiveSpellsForArcaneBardOrDancer, getInactiveSpellsForIntuitiveMages, getInactiveSpellsForOtherTradition, isIdInSpecialAbilityList, isSpellDecreasable, isSpellIncreasable, isSpellsRitualsCountMaxReached, isUnfamiliarSpell } from "../Utilities/Increasable/spellUtils"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { filterByAvailability } from "../Utilities/RulesUtils"
+import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils"
+import { sortByMulti, sortRecordsByName } from "../Utilities/sortBy"
+import { getStartEl } from "./elSelectors"
+import { getRuleBooksEnabled } from "./rulesSelectors"
+import { getCantripsSortOptions, getSpellsCombinedSortOptions, getSpellsSortOptions } from "./sortOptionsSelectors"
+import { getAdvantages, getCantrips, getHeroProp, getInactiveSpellsFilterText, getLocaleAsProp, getMaybeSpecialAbilities, getPhase, getSpecialAbilities, getSpellsFilterText, getTransferredUnfamiliarSpells, getWiki, getWikiCantrips, getWikiSpecialAbilities } from "./stateSelectors"
+import { getEnableActiveItemHints } from "./uisettingsSelectors"
 
 
 const HA = HeroModel.A

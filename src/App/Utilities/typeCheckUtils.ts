@@ -1,4 +1,4 @@
-import { bindF, ensure, Maybe } from "../../Data/Maybe";
+import { bindF, ensure, Maybe } from "../../Data/Maybe"
 
 export const isString =
   <A> (arg: A | string): arg is string =>

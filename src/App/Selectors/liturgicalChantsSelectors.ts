@@ -1,43 +1,43 @@
-import { notP } from "../../Data/Bool";
-import { equals } from "../../Data/Eq";
-import { flip, ident, thrush } from "../../Data/Function";
-import { fmap, fmapF, mapReplace } from "../../Data/Functor";
-import { over } from "../../Data/Lens";
-import { any, append, consF, elem, filter, flength, foldr, List, map, notElem, notNull, partition } from "../../Data/List";
-import { all, and, bind, bindF, ensure, fromMaybe_, guard, isJust, liftM2, liftM3, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
-import { lt, lte } from "../../Data/Num";
-import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
-import { insert, member, OrderedSet } from "../../Data/OrderedSet";
-import { Record } from "../../Data/Record";
-import { fst, snd } from "../../Data/Tuple";
-import { uncurryN, uncurryN3, uncurryN4, uncurryN5, uncurryN6 } from "../../Data/Tuple/Curry";
-import { Aspect, IC } from "../Constants/Groups";
-import { AdvantageId, SpecialAbilityId } from "../Constants/Ids";
-import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { BlessingCombined, BlessingCombinedA_ } from "../Models/View/BlessingCombined";
-import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsL } from "../Models/View/LiturgicalChantWithRequirements";
-import { Blessing } from "../Models/Wiki/Blessing";
-import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
-import { LiturgicalChant, LiturgicalChantL } from "../Models/Wiki/LiturgicalChant";
-import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { WikiModel } from "../Models/Wiki/WikiModel";
-import { isMaybeActive } from "../Utilities/Activatable/isActive";
-import { getBlessedTradition, mapBlessedTradIdToNumId } from "../Utilities/Activatable/traditionUtils";
-import { composeL } from "../Utilities/compose";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
-import { getAspectsOfTradition, isLiturgicalChantDecreasable, isLiturgicalChantIncreasable, isOwnTradition } from "../Utilities/Increasable/liturgicalChantUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { filterByAvailability } from "../Utilities/RulesUtils";
-import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
-import { sortByMulti } from "../Utilities/sortBy";
-import { getStartEl } from "./elSelectors";
-import { getRuleBooksEnabled } from "./rulesSelectors";
-import { getBlessingsSortOptions, getLiturgicalChantsCombinedSortOptions, getLiturgicalChantsSortOptions } from "./sortOptionsSelectors";
-import { getAdvantages, getBlessings, getCurrentHeroPresent, getCurrentPhase, getInactiveLiturgicalChantsFilterText, getLiturgicalChants, getLiturgicalChantsFilterText, getMaybeSpecialAbilities, getSpecialAbilities, getWiki, getWikiBlessings, getWikiLiturgicalChants, getWikiSpecialAbilities } from "./stateSelectors";
-import { getEnableActiveItemHints } from "./uisettingsSelectors";
+import { notP } from "../../Data/Bool"
+import { equals } from "../../Data/Eq"
+import { flip, ident, thrush } from "../../Data/Function"
+import { fmap, fmapF, mapReplace } from "../../Data/Functor"
+import { over } from "../../Data/Lens"
+import { any, append, consF, elem, filter, flength, foldr, List, map, notElem, notNull, partition } from "../../Data/List"
+import { all, and, bind, bindF, ensure, fromMaybe_, guard, isJust, liftM2, liftM3, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe"
+import { lt, lte } from "../../Data/Num"
+import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
+import { insert, member, OrderedSet } from "../../Data/OrderedSet"
+import { Record } from "../../Data/Record"
+import { fst, snd } from "../../Data/Tuple"
+import { uncurryN, uncurryN3, uncurryN4, uncurryN5, uncurryN6 } from "../../Data/Tuple/Curry"
+import { Aspect, IC } from "../Constants/Groups"
+import { AdvantageId, SpecialAbilityId } from "../Constants/Ids"
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { BlessingCombined, BlessingCombinedA_ } from "../Models/View/BlessingCombined"
+import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsL } from "../Models/View/LiturgicalChantWithRequirements"
+import { Blessing } from "../Models/Wiki/Blessing"
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
+import { LiturgicalChant, LiturgicalChantL } from "../Models/Wiki/LiturgicalChant"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { WikiModel } from "../Models/Wiki/WikiModel"
+import { isMaybeActive } from "../Utilities/Activatable/isActive"
+import { getBlessedTradition, mapBlessedTradIdToNumId } from "../Utilities/Activatable/traditionUtils"
+import { composeL } from "../Utilities/compose"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
+import { getAspectsOfTradition, isLiturgicalChantDecreasable, isLiturgicalChantIncreasable, isOwnTradition } from "../Utilities/Increasable/liturgicalChantUtils"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { filterByAvailability } from "../Utilities/RulesUtils"
+import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils"
+import { sortByMulti } from "../Utilities/sortBy"
+import { getStartEl } from "./elSelectors"
+import { getRuleBooksEnabled } from "./rulesSelectors"
+import { getBlessingsSortOptions, getLiturgicalChantsCombinedSortOptions, getLiturgicalChantsSortOptions } from "./sortOptionsSelectors"
+import { getAdvantages, getBlessings, getCurrentHeroPresent, getCurrentPhase, getInactiveLiturgicalChantsFilterText, getLiturgicalChants, getLiturgicalChantsFilterText, getMaybeSpecialAbilities, getSpecialAbilities, getWiki, getWikiBlessings, getWikiLiturgicalChants, getWikiSpecialAbilities } from "./stateSelectors"
+import { getEnableActiveItemHints } from "./uisettingsSelectors"
 
 const HA = HeroModel.A
 const WA = WikiModel.A
@@ -262,6 +262,7 @@ export const getAdditionalValidLiturgicalChants = createMaybeSelector (
           return append (additionalInactiveListFilter (isTrad (6))
                                                       (inactives)
                                                       (actives))
+
                         // Travia
                         (additionalInactiveListFilter (isTrad (9))
                                                       (inactives)
@@ -273,6 +274,7 @@ export const getAdditionalValidLiturgicalChants = createMaybeSelector (
           return append (additionalInactiveListFilter (e => isTrad (10) (e) && isGr (1) (e))
                                                       (inactives)
                                                       (actives))
+
                         // Firun Ceremony
                         (additionalInactiveListFilter (e => isTrad (10) (e) && isGr (2) (e))
                                                       (inactives)

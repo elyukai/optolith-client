@@ -1,10 +1,10 @@
-import * as React from "react";
-import { Maybe } from "../../../Data/Maybe";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { TextField } from "./TextField";
+import * as React from "react"
+import { Maybe } from "../../../Data/Maybe"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { TextField } from "./TextField"
 
-export interface SearchFieldProps {
+interface Props {
   autoFocus?: boolean | Maybe<boolean>
   className?: string
   countCurrent?: number
@@ -17,7 +17,7 @@ export interface SearchFieldProps {
   valid?: boolean
 }
 
-export const SearchField: React.FC<SearchFieldProps> = props => {
+export const SearchField: React.FC<Props> = props => {
   const {
     autoFocus,
     className,

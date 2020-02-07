@@ -1,12 +1,12 @@
-import { List } from "../../../../Data/List";
-import { Just, Maybe, maybeToUndefined, Nothing } from "../../../../Data/Maybe";
-import { fromDefault, Record, toObject } from "../../../../Data/Record";
-import { fromJSBool, fromJSBoolM, fromJSEnum, fromJSEnumM, fromJSInArray, tryParseJSONRecord } from "../../../../Data/String/JSON";
-import { EquipmentGroup } from "../../../Constants/Groups";
-import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../../../Constants/Ids";
-import { SortNames } from "../../../Views/Universal/SortOptions";
-import { pipe } from "../../pipe";
-import { RawConfig } from "../XLSX/RawData";
+import { List } from "../../../../Data/List"
+import { Just, Maybe, maybeToUndefined, Nothing } from "../../../../Data/Maybe"
+import { fromDefault, Record, toObject } from "../../../../Data/Record"
+import { fromJSBool, fromJSBoolM, fromJSEnum, fromJSEnumM, fromJSInArray, tryParseJSONRecord } from "../../../../Data/String/JSON"
+import { EquipmentGroup } from "../../../Constants/Groups"
+import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../../../Constants/Ids"
+import { SortNames } from "../../../Views/Universal/SortOptions"
+import { pipe } from "../../pipe"
+import { RawConfig } from "../XLSX/RawData"
 
 export type HeroListSortOptions = SortNames.Name
                                 | SortNames.DateModified
@@ -130,6 +130,7 @@ export enum Locale {
   English = "en-US",
   French = "fr-FR",
   Dutch = "nl-BE",
+  Italian = "it-IT",
 }
 
 export enum Theme {

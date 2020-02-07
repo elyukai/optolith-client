@@ -1,16 +1,16 @@
-import * as React from "react";
-import { fmapF } from "../../../Data/Functor";
-import { bindF, ensure, fromJust, fromMaybe, isJust, liftM2, maybe, Maybe, or } from "../../../Data/Maybe";
-import { gt, subtractBy } from "../../../Data/Num";
-import { Record } from "../../../Data/Record";
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { sign, signNeg } from "../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { IconButton } from "../Universal/IconButton";
-import { NumberBox } from "../Universal/NumberBox";
-import { AttributeBorder } from "./AttributeBorder";
+import * as React from "react"
+import { fmapF } from "../../../Data/Functor"
+import { bindF, ensure, fromJust, fromMaybe, isJust, liftM2, maybe, Maybe, or } from "../../../Data/Maybe"
+import { gt, subtractBy } from "../../../Data/Num"
+import { Record } from "../../../Data/Record"
+import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { sign, signNeg } from "../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { IconButton } from "../Universal/IconButton"
+import { NumberBox } from "../Universal/NumberBox"
+import { AttributeBorder } from "./AttributeBorder"
 
 export interface AttributeCalcItemProps {
   attribute: Record<DerivedCharacteristic>
@@ -60,7 +60,7 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
           break
       }
     },
-    [addArcaneEnergyPoint, addKarmaPoint, addLifePoint, attribute]
+    [ addArcaneEnergyPoint, addKarmaPoint, addLifePoint, attribute ]
   )
 
   const handleRemoveMaxEnergyPoint = React.useCallback (
@@ -82,7 +82,7 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
           break
       }
     },
-    [removeArcaneEnergyPoint, removeKarmaPoint, removeLifePoint, attribute]
+    [ removeArcaneEnergyPoint, removeKarmaPoint, removeLifePoint, attribute ]
   )
 
   const base = DCA.base (attribute)

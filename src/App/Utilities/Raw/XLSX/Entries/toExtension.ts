@@ -1,16 +1,16 @@
-import { fmap } from "../../../../../Data/Functor";
-import { notNull } from "../../../../../Data/List";
-import { Just, Nothing } from "../../../../../Data/Maybe";
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { SelectOption } from "../../../../Models/Wiki/sub/SelectOption";
-import { prefixId } from "../../../IDUtils";
-import { mergeRowsById } from "../MergeRows";
-import { modifyNegIntNoBreak } from "../SourceHelpers";
-import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapNatural, mensureMapNaturalInRange, mensureMapNonEmptyString } from "../Validators/ToValue";
-import { toErrata } from "./Sub/toErrata";
-import { toSpellPrerequisites } from "./Sub/toPrerequisites";
-import { toSourceLinks } from "./Sub/toSourceLinks";
+import { fmap } from "../../../../../Data/Functor"
+import { notNull } from "../../../../../Data/List"
+import { Just, Nothing } from "../../../../../Data/Maybe"
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { SelectOption } from "../../../../Models/Wiki/sub/SelectOption"
+import { prefixId } from "../../../IDUtils"
+import { mergeRowsById } from "../MergeRows"
+import { modifyNegIntNoBreak } from "../SourceHelpers"
+import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapNatural, mensureMapNaturalInRange, mensureMapNonEmptyString } from "../Validators/ToValue"
+import { toErrata } from "./Sub/toErrata"
+import { toSpellPrerequisites } from "./Sub/toPrerequisites"
+import { toSourceLinks } from "./Sub/toSourceLinks"
 
 export const toExtension =
   (prefix: IdPrefixes) =>

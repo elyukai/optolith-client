@@ -1,24 +1,24 @@
-import { join } from "path";
-import { tryIO } from "../../Control/Exception";
-import { Either, eitherToMaybe, Right } from "../../Data/Either";
-import { ident } from "../../Data/Function";
-import { fmap } from "../../Data/Functor";
-import { all, fromArray, List } from "../../Data/List";
-import { bindF, ensure, mapM, Maybe } from "../../Data/Maybe";
-import { fromList, OrderedMap, toObjectWith } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { parseJSON } from "../../Data/String/JSON";
-import { Pair, Tuple } from "../../Data/Tuple";
-import { deleteFile, existsFile, readFile, writeFile } from "../../System/IO";
-import { HeroModelRecord } from "../Models/Hero/HeroModel";
-import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { HeroesState } from "../Reducers/herolistReducer";
-import { getAPSpentMap, getAPSpentOnAdvantagesMap, getAPSpentOnAttributesMap, getAPSpentOnBlessedAdvantagesMap, getAPSpentOnBlessedDisadvantagesMap, getAPSpentOnBlessingsMap, getAPSpentOnCantripsMap, getAPSpentOnCombatTechniquesMap, getAPSpentOnDisadvantagesMap, getAPSpentOnEnergiesMap, getAPSpentOnLiturgicalChantsMap, getAPSpentOnMagicalAdvantagesMap, getAPSpentOnMagicalDisadvantagesMap, getAPSpentOnSkillsMap, getAPSpentOnSpecialAbilitiesMap, getAPSpentOnSpellsMap, getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
-import { current_version, user_data_path } from "../Selectors/envSelectors";
-import { pipe, pipe_ } from "./pipe";
-import { isObject } from "./typeCheckUtils";
+import { join } from "path"
+import { tryIO } from "../../Control/Exception"
+import { Either, eitherToMaybe, Right } from "../../Data/Either"
+import { ident } from "../../Data/Function"
+import { fmap } from "../../Data/Functor"
+import { all, fromArray, List } from "../../Data/List"
+import { bindF, ensure, mapM, Maybe } from "../../Data/Maybe"
+import { fromList, OrderedMap, toObjectWith } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { parseJSON } from "../../Data/String/JSON"
+import { Pair, Tuple } from "../../Data/Tuple"
+import { deleteFile, existsFile, readFile, writeFile } from "../../System/IO"
+import { HeroModelRecord } from "../Models/Hero/HeroModel"
+import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { HeroesState } from "../Reducers/herolistReducer"
+import { getAPSpentMap, getAPSpentOnAdvantagesMap, getAPSpentOnAttributesMap, getAPSpentOnBlessedAdvantagesMap, getAPSpentOnBlessedDisadvantagesMap, getAPSpentOnBlessingsMap, getAPSpentOnCantripsMap, getAPSpentOnCombatTechniquesMap, getAPSpentOnDisadvantagesMap, getAPSpentOnEnergiesMap, getAPSpentOnLiturgicalChantsMap, getAPSpentOnMagicalAdvantagesMap, getAPSpentOnMagicalDisadvantagesMap, getAPSpentOnSkillsMap, getAPSpentOnSpecialAbilitiesMap, getAPSpentOnSpellsMap, getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
+import { current_version, user_data_path } from "../Selectors/envSelectors"
+import { pipe, pipe_ } from "./pipe"
+import { isObject } from "./typeCheckUtils"
 
 const file_path = join (user_data_path, "cache.json")
 
@@ -118,10 +118,11 @@ export const deleteCache: () => Promise<Either<Error, void>> =
               ? tryIO (deleteFile) (file_path)
               : Right<void> (undefined)
 
-export const insertCacheMap =
-  (map: OrderedMap<string, APCache>) => {
-    OrderedMap.mapWithKey<string, APCache, void> (insertCacheAt) (map)
-  }
+const fromNumOrPair =
+  (x: number | [number, number]) => typeof x === "number" ? Pair (x, x) : Pair (...x)
+
+const unsafeFromNumOrPair =
+  (x: number | [number, number] | undefined) => fmap (fromNumOrPair) (Maybe (x))
 
 export const insertCacheAt =
   (key_str: string) =>
@@ -170,11 +171,10 @@ export const insertCacheAt =
                                                 (Maybe (cache.spentOnSpecialAbilities))
   }
 
-const unsafeFromNumOrPair =
-  (x: number | [number, number] | undefined) => fmap (fromNumOrPair) (Maybe (x))
-
-const fromNumOrPair =
-  (x: number | [number, number]) => typeof x === "number" ? Pair (x, x) : Pair (...x)
+export const insertCacheMap =
+  (map: OrderedMap<string, APCache>) => {
+    OrderedMap.mapWithKey<string, APCache, void> (insertCacheAt) (map)
+  }
 
 export const insertHeroesCache =
   (hs: HeroesState["heroes"]) => {

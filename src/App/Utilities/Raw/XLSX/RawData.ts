@@ -1,7 +1,7 @@
-import { StringKeyObject } from "../../../../Data/Record";
-import { SID } from "../../../Models/Wiki/wikiTypeHelpers";
-import { SortNames } from "../../../Views/Universal/SortOptions";
-import { Locale } from "../JSON/Config";
+import { StringKeyObject } from "../../../../Data/Record"
+import { SID } from "../../../Models/Wiki/wikiTypeHelpers"
+import { SortNames } from "../../../Views/Universal/SortOptions"
+import { Locale } from "../JSON/Config"
 
 export interface RawUser {
   id: string
@@ -14,7 +14,7 @@ export interface RawHero {
   readonly locale?: Locale
   readonly avatar?: string
   readonly ap: {
-    total: number;
+    total: number
   }
   readonly r?: string
   readonly rv?: string
@@ -32,38 +32,38 @@ export interface RawHero {
   readonly phase: number
   readonly el: string
   readonly pers: {
-    family?: string;
-    placeofbirth?: string;
-    dateofbirth?: string;
-    age?: string;
-    haircolor?: number;
-    eyecolor?: number;
-    size?: string;
-    weight?: string;
-    title?: string;
-    socialstatus?: number;
-    characteristics?: string;
-    otherinfo?: string;
-    cultureAreaKnowledge?: string;
+    family?: string
+    placeofbirth?: string
+    dateofbirth?: string
+    age?: string
+    haircolor?: number
+    eyecolor?: number
+    size?: string
+    weight?: string
+    title?: string
+    socialstatus?: number
+    characteristics?: string
+    otherinfo?: string
+    cultureAreaKnowledge?: string
   }
   readonly activatable: StringKeyObject<RawActiveObject[]>
   readonly attr: {
-    values: { id: string; value: number }[];
-    readonly attributeAdjustmentSelected: string;
-    lp: number;
-    ae: number;
-    kp: number;
+    values: { id: string; value: number }[]
+    readonly attributeAdjustmentSelected: string
+    lp: number
+    ae: number
+    kp: number
     permanentLP?: {
-      lost: number;
-    };
+      lost: number
+    }
     permanentAE: {
-      lost: number;
-      redeemed: number;
-    };
+      lost: number
+      redeemed: number
+    }
     permanentKP: {
-      lost: number;
-      redeemed: number;
-    };
+      lost: number
+      redeemed: number
+    }
   }
   readonly talents: StringKeyObject<number>
   readonly ct: StringKeyObject<number>
@@ -72,14 +72,14 @@ export interface RawHero {
   readonly liturgies: StringKeyObject<number>
   readonly blessings: string[]
   readonly belongings: {
-    items: StringKeyObject<RawCustomItem>;
-    armorZones?: StringKeyObject<RawArmorZone>;
+    items: StringKeyObject<RawCustomItem>
+    armorZones?: StringKeyObject<RawArmorZone>
     purse: {
-      d: string;
-      s: string;
-      h: string;
-      k: string;
-    };
+      d: string
+      s: string
+      h: string
+      k: string
+    }
   }
   readonly pets?: StringKeyObject<RawPet>
   readonly pact?: RawPact

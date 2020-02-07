@@ -1,7 +1,7 @@
-import { ifElse } from "../App/Utilities/ifElse";
-import { flip } from "./Function";
-import { EQ, GT, LT, Ordering } from "./Ord";
-import { Pair } from "./Tuple";
+import { ifElse } from "../App/Utilities/ifElse"
+import { flip } from "./Function"
+import { EQ, GT, LT, Ordering } from "./Ord"
+import { Pair } from "./Tuple"
 
 /**
  * Adds two numbers. Equivalent to `a + b` but curried.
@@ -184,6 +184,13 @@ export const odd =
     throw new TypeError (`odd: x = ${x} is not an instance of Integral`)
   }
 
+const modUntilNoRemainder =
+  (x: number) => (div: number): number =>
+    ifElse ((rem: number) => rem !== 0)
+           (modUntilNoRemainder (div))
+           (() => abs (div))
+           (x % div)
+
 /**
  * `gcd :: Integral a => a -> a -> a`
  *
@@ -212,13 +219,6 @@ export const gcd: (x: number) => (y: number) => number =
       return modUntilNoRemainder (max (x) (y)) (min (x) (y))
     }
   }
-
-const modUntilNoRemainder =
-  (x: number) => (div: number): number =>
-    ifElse ((rem: number) => rem !== 0)
-           (modUntilNoRemainder (div))
-           (() => abs (div))
-           (x % div)
 
 /**
  * `lcm :: Integral a => a -> a -> a`

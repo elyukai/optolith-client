@@ -1,11 +1,10 @@
-import * as React from "react";
+import * as React from "react"
 
-export interface PageProps {
-  children?: React.ReactNode
+interface Props {
   id?: string
 }
 
-export function Page (props: PageProps) {
+export const Page: React.FC<Props> = props => {
   const { children, id } = props
 
   return (

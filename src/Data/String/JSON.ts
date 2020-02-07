@@ -1,13 +1,13 @@
-import { EnsureEnumType, GenericEnumType, isInEnum } from "../../App/Utilities/Enum";
-import { pipe, pipe_ } from "../../App/Utilities/pipe";
-import { Expect } from "../../App/Utilities/Raw/Expect";
-import { isBoolean, isNumber, isString } from "../../App/Utilities/typeCheckUtils";
-import { bimap, bindF, Either, eitherToMaybe, first, fromLeft_, fromRight_, isLeft, Left, Right } from "../Either";
-import { ident } from "../Function";
-import { elem, fromArray, List } from "../List";
-import { Maybe, Nothing } from "../Maybe";
-import { empty, insert, OrderedMap } from "../OrderedMap";
-import { OmitName, Record, RecordBase, RecordIBase } from "../Record";
+import { EnsureEnumType, GenericEnumType, isInEnum } from "../../App/Utilities/Enum"
+import { pipe, pipe_ } from "../../App/Utilities/pipe"
+import { Expect } from "../../App/Utilities/Raw/Expect"
+import { isBoolean, isNumber, isString } from "../../App/Utilities/typeCheckUtils"
+import { bimap, bindF, Either, eitherToMaybe, first, fromLeft_, fromRight_, isLeft, Left, Right } from "../Either"
+import { ident } from "../Function"
+import { elem, fromArray, List } from "../List"
+import { Maybe, Nothing } from "../Maybe"
+import { empty, insert, OrderedMap } from "../OrderedMap"
+import { OmitName, Record, RecordBase, RecordIBase } from "../Record"
 
 /**
  * `type GetJSON a = Unknown -> Either String a`
@@ -37,6 +37,45 @@ export const tryParseJSON: (x: string) => Either<Error, unknown> =
 
 export const parseJSON: (x: string) => Maybe<unknown> =
   pipe (tryParseJSON, eitherToMaybe)
+
+/**
+ * `fromJSRecord :: Validators a -> (a -> b) -> String -> GetJSON b`
+ *
+ * `type Validators a = Dictionary (keyof a) (Unknown -> Bool)`
+ *
+ * Ensures that a value `x` from a JSON is an object of defined keys with
+ * specific value. Every element of the object is tested by the validator at the
+ * same key of `validators`. If all keys pass the tests, there are no other
+ * unknown keys and `x` is an object, the object is passed to `toRecord`, which
+ * creates a Record of the object, which is returned in a `Right`. If the object
+ * is not of type `a`, a `Left` is returned, mentioning the `expected` type and
+ * the actual type of the current key or the complete object.
+ */
+export const fromJSRecord =
+  <A extends RecordIBase<any>> (validators: GetJSONRecord<OmitName<A>>) =>
+  (toRecord: (x: OmitName<A>) => Record<A>) =>
+  (expected: string): GetJSON<Record<A>> =>
+  x => {
+    if (typeof x === "object" && x !== null) {
+      const validator_assocs = Object.entries (validators)
+      const validated: A = {} as A
+
+      for (const [ key, validator ] of validator_assocs) {
+        const res = validator ((x as any) [key] as unknown)
+
+        if (isLeft (res)) {
+          return Left (`In object at key "${key}":\n${fromLeft_ (res)}`)
+        }
+        else {
+          (validated as RecordBase) [key] = fromRight_ (res)
+        }
+      }
+
+      return Right (toRecord (validated))
+    }
+
+    return Left (`Expected: ${expected}, Received: not an object: ${JSON.stringify (x)}`)
+  }
 
 export const tryParseJSONRecord =
   <A extends RecordIBase<any>> (validators: GetJSONRecord<OmitName<A>>) =>
@@ -140,6 +179,30 @@ export const fromJSInArrayNothing =
     fromJS (orUndefined ((x): x is A => elem (x) (possible_values)))
            (res => res === undefined ? Nothing : res)
 
+export const mapM =
+  <A, B>
+  (f: (x: A) => Either<string, B>) =>
+  (m: A[]): Either<string, B[]> => {
+    if (m .length === 0) {
+      return Right ([])
+    }
+
+    const arr: B[] = []
+
+    for (let i = 0; i < m .length; i++) {
+      const value = m [i]
+      const res = f (value)
+
+      if (isLeft (res)) {
+        return Left (`In array at index ${i}\n${fromLeft_ (res)}`)
+      }
+
+      arr .push (fromRight_ (res))
+    }
+
+    return Right (arr)
+  }
+
 /**
  * `fromJSArray :: (Unknown -> Bool) -> (a -> b) -> String -> GetJSON [b]`
  *
@@ -162,45 +225,6 @@ export const fromJSArray =
       bimap ((str: string) => `In array:\n${str}`) (fromArray)
     )
 
-/**
- * `fromJSRecord :: Validators a -> (a -> b) -> String -> GetJSON b`
- *
- * `type Validators a = Dictionary (keyof a) (Unknown -> Bool)`
- *
- * Ensures that a value `x` from a JSON is an object of defined keys with
- * specific value. Every element of the object is tested by the validator at the
- * same key of `validators`. If all keys pass the tests, there are no other
- * unknown keys and `x` is an object, the object is passed to `toRecord`, which
- * creates a Record of the object, which is returned in a `Right`. If the object
- * is not of type `a`, a `Left` is returned, mentioning the `expected` type and
- * the actual type of the current key or the complete object.
- */
-export const fromJSRecord =
-  <A extends RecordIBase<any>> (validators: GetJSONRecord<OmitName<A>>) =>
-  (toRecord: (x: OmitName<A>) => Record<A>) =>
-  (expected: string): GetJSON<Record<A>> =>
-  x => {
-    if (typeof x === "object" && x !== null) {
-      const validator_assocs = Object.entries (validators)
-      const validated: A = {} as A
-
-      for (const [key, validator] of validator_assocs) {
-        const res = validator ((x as any) [key] as unknown)
-
-        if (isLeft (res)) {
-          return Left (`In object at key "${key}":\n${fromLeft_ (res)}`)
-        }
-        else {
-          (validated as RecordBase) [key] = fromRight_ (res)
-        }
-      }
-
-      return Right (toRecord (validated))
-    }
-
-    return Left (`Expected: ${expected}, Received: not an object: ${JSON.stringify (x)}`)
-  }
-
 
 /**
  * `fromJSDict :: (Unknown -> Bool) -> (a -> b) -> String -> GetJSON (OrderedMap String b)`
@@ -217,7 +241,7 @@ export const fromJSDict =
 
       let validated: OrderedMap<string, B> = empty
 
-      for (const [key, value] of assocs) {
+      for (const [ key, value ] of assocs) {
         const k =
           typeof key === "string"
           ? Right (key)
@@ -241,28 +265,4 @@ export const fromJSDict =
     else {
       return Left (`Expected: ${expected}, Received: not an object (${JSON.stringify (x)})`)
     }
-  }
-
-export const mapM =
-  <A, B>
-  (f: (x: A) => Either<string, B>) =>
-  (m: A[]): Either<string, B[]> => {
-    if (m .length === 0) {
-      return Right ([])
-    }
-
-    const arr: B[] = []
-
-    for (let i = 0; i < m .length; i++) {
-      const value = m [i]
-      const res = f (value)
-
-      if (isLeft (res)) {
-        return Left (`In array at index ${i}\n${fromLeft_ (res)}`)
-      }
-
-      arr .push (fromRight_ (res))
-    }
-
-    return Right (arr)
   }

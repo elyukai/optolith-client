@@ -1,12 +1,12 @@
-import { List } from "../../../Data/List";
-import { fromDefault, Record } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
-import { ProfessionRequireIncreasable } from "../Wiki/prerequisites/IncreasableRequirement";
-import { ProfessionVariantSelections } from "../Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
-import { ProfessionVariant } from "../Wiki/ProfessionVariant";
-import { ActivatableNameCostIsActive } from "./ActivatableNameCostIsActive";
-import { IncreasableForView } from "./IncreasableForView";
-import { IncreasableListForView } from "./IncreasableListForView";
+import { List } from "../../../Data/List"
+import { fromDefault, Record } from "../../../Data/Record"
+import { pipe } from "../../Utilities/pipe"
+import { ProfessionRequireIncreasable } from "../Wiki/prerequisites/IncreasableRequirement"
+import { ProfessionVariantSelections } from "../Wiki/professionSelections/ProfessionVariantAdjustmentSelections"
+import { ProfessionVariant } from "../Wiki/ProfessionVariant"
+import { ActivatableNameCostIsActive } from "./ActivatableNameCostIsActive"
+import { IncreasableForView } from "./IncreasableForView"
+import { IncreasableListForView } from "./IncreasableListForView"
 
 export interface ProfessionVariantCombined {
   "@@name": "ProfessionVariantCombined"

@@ -1,7 +1,7 @@
-import { Book } from "../../../../Models/Wiki/Book";
-import { fromRow } from "../MergeRows";
-import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapBoolean, mensureMapNonEmptyString } from "../Validators/ToValue";
+import { Book } from "../../../../Models/Wiki/Book"
+import { fromRow } from "../MergeRows"
+import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapBoolean, mensureMapNonEmptyString } from "../Validators/ToValue"
 
 export const toBook =
   fromRow

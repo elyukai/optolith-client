@@ -1,5 +1,5 @@
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault } from "../../../Data/Record";
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault } from "../../../Data/Record"
 
 export interface ActivatableActivationValidation {
   "@@name": "ActivatableActivationValidation"

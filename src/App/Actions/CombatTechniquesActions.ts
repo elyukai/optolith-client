@@ -1,23 +1,23 @@
-import { List } from "../../Data/List";
-import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe";
-import { lookup } from "../../Data/OrderedMap";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
-import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
-import { getCombatTechniques, getCurrentHeroPresent, getWikiCombatTechniques } from "../Selectors/stateSelectors";
-import { translate, translateP } from "../Utilities/I18n";
-import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
-import { pipe_ } from "../Utilities/pipe";
-import { CombatTechniquesSortOptions } from "../Utilities/Raw/JSON/Config";
-import { ReduxAction } from "./Actions";
-import { addAlert, AlertOptions } from "./AlertActions";
+import { List } from "../../Data/List"
+import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe"
+import { lookup } from "../../Data/OrderedMap"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
+import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
+import { getCombatTechniques, getCurrentHeroPresent, getWikiCombatTechniques } from "../Selectors/stateSelectors"
+import { translate, translateP } from "../Utilities/I18n"
+import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
+import { pipe_ } from "../Utilities/pipe"
+import { CombatTechniquesSortOptions } from "../Utilities/Raw/JSON/Config"
+import { ReduxAction } from "./Actions"
+import { addAlert, AlertOptions } from "./AlertActions"
 
 export interface AddCombatTechniquePointAction {
   type: ActionTypes.ADD_COMBATTECHNIQUE_POINT
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -63,7 +63,7 @@ export const addCombatTechniquePoint =
 export interface RemoveCombatTechniquePointAction {
   type: ActionTypes.REMOVE_COMBATTECHNIQUE_POINT
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -77,7 +77,7 @@ export const removeCombatTechniquePoint = (id: string): RemoveCombatTechniquePoi
 export interface SetCombatTechniquesSortOrderAction {
   type: ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER
   payload: {
-    sortOrder: CombatTechniquesSortOptions;
+    sortOrder: CombatTechniquesSortOptions
   }
 }
 
@@ -92,7 +92,7 @@ export const setCombatTechniquesSortOrder =
 export interface SetCombatTechniquesFilterTextAction {
   type: ActionTypes.SET_COMBAT_TECHNIQUES_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 

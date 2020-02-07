@@ -1,5 +1,5 @@
-import { Record } from "../../../Data/Record";
-import { Pact } from "../../Models/Hero/Pact";
+import { Record } from "../../../Data/Record"
+import { Pact } from "../../Models/Hero/Pact"
 
 const { domain, name, category, type } = Pact.AL
 

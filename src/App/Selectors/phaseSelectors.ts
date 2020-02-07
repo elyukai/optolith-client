@@ -1,7 +1,7 @@
-import { elem } from "../../Data/Maybe";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { getCurrentPhase } from "./stateSelectors";
-import { getIsEditingHeroAfterCreationPhaseEnabled } from "./uisettingsSelectors";
+import { elem } from "../../Data/Maybe"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { getCurrentPhase } from "./stateSelectors"
+import { getIsEditingHeroAfterCreationPhaseEnabled } from "./uisettingsSelectors"
 
 export const getIsInCharacterCreation = createMaybeSelector (
   getCurrentPhase,

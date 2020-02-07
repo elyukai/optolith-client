@@ -1,10 +1,10 @@
-import * as React from "react";
+import * as React from "react"
 
-export interface SheetOptionsProps {
+interface Props {
   children?: React.ReactNode
 }
 
-export function SheetOptions (props: SheetOptionsProps) {
+export const SheetOptions: React.FC<Props> = props => {
   const { children } = props
 
   return (

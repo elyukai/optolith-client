@@ -1,42 +1,55 @@
-import * as React from "react";
-import { notEquals } from "../../../Data/Eq";
-import { ident } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { consF, elem, elemF, intercalate, List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, guard, Just, mapMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
-import { dec } from "../../../Data/Num";
-import { Record } from "../../../Data/Record";
-import { Pair, snd } from "../../../Data/Tuple";
-import { BlessedTradition } from "../../Constants/Groups";
-import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { AttributeCombined } from "../../Models/View/AttributeCombined";
-import { BlessingCombined } from "../../Models/View/BlessingCombined";
-import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../Models/View/LiturgicalChantWithRequirements";
-import { Blessing } from "../../Models/Wiki/Blessing";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { translate } from "../../Utilities/I18n";
-import { getAspectsOfTradition } from "../../Utilities/Increasable/liturgicalChantUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { sortStrings } from "../../Utilities/sortBy";
-import { SkillListItem } from "../Skills/SkillListItem";
-import { BorderButton } from "../Universal/BorderButton";
-import { Checkbox } from "../Universal/Checkbox";
-import { ListView } from "../Universal/List";
-import { ListHeader } from "../Universal/ListHeader";
-import { ListHeaderTag } from "../Universal/ListHeaderTag";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { SearchField } from "../Universal/SearchField";
-import { Slidein } from "../Universal/Slidein";
-import { SortNames, SortOptions } from "../Universal/SortOptions";
+import * as React from "react"
+import { notEquals } from "../../../Data/Eq"
+import { fmap } from "../../../Data/Functor"
+import { List, mapAccumL, notNull, notNullStr, toArray } from "../../../Data/List"
+import { bindF, ensure, fromMaybe, Just, Maybe, Nothing, or } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { Pair, snd } from "../../../Data/Tuple"
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { AttributeCombined } from "../../Models/View/AttributeCombined"
+import { BlessingCombined } from "../../Models/View/BlessingCombined"
+import { LiturgicalChantWithRequirements } from "../../Models/View/LiturgicalChantWithRequirements"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { LCBCA } from "../../Utilities/Increasable/liturgicalChantUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { ChantsSortOptions } from "../../Utilities/Raw/JSON/Config"
+import { BorderButton } from "../Universal/BorderButton"
+import { Checkbox } from "../Universal/Checkbox"
+import { ListView } from "../Universal/List"
+import { ListHeader } from "../Universal/ListHeader"
+import { ListHeaderTag } from "../Universal/ListHeaderTag"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { SearchField } from "../Universal/SearchField"
+import { Slidein } from "../Universal/Slidein"
+import { SortNames, SortOptions } from "../Universal/SortOptions"
+import { LiturgicalChantsListItemActive } from "./LiturgicalChantsListItemActive"
+import { LiturgicalChantsListItemInactive } from "./LiturgicalChantsListItemInactive"
+
+const isTopMarginNeeded =
+  (sortOrder: string) =>
+  (curr: Combined) =>
+  (mprev: Maybe<Combined>) =>
+    pipe_ (
+      mprev,
+      bindF (ensure (
+        () => sortOrder === "group" && LCBCA.active (curr)
+      )),
+      fmap (prev =>
+             (!BlessingCombined.is (prev) && BlessingCombined.is (curr))
+             || (BlessingCombined.is (prev) && !BlessingCombined.is (curr))
+             || (
+               !BlessingCombined.is (prev)
+               && !BlessingCombined.is (curr)
+               && notEquals (LCBCA.gr (prev)) (LCBCA.gr (curr))
+             )),
+      or
+    )
 
 export interface LiturgicalChantsOwnProps {
   l10n: L10nRecord
@@ -52,7 +65,7 @@ export interface LiturgicalChantsStateProps {
   inactiveFilterText: string
   inactiveList: Maybe<List<Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>>>
   isRemovingEnabled: boolean
-  sortOrder: SortNames
+  sortOrder: ChantsSortOptions
   traditionId: Maybe<number>
 }
 
@@ -74,255 +87,73 @@ export type LiturgicalChantsProps =
   & LiturgicalChantsDispatchProps
   & LiturgicalChantsOwnProps
 
-export interface LiturgicalChantsState {
-  showAddSlidein: boolean
-  currentId: Maybe<string>
-  currentSlideinId: Maybe<string>
-}
-
-const LCWRA = LiturgicalChantWithRequirements.A
-const LCWRA_ = LiturgicalChantWithRequirementsA_
-
 type Combined = Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>
 
-const wikiEntryCombined =
-  (x: Combined): Record<LiturgicalChant> | Record<Blessing> =>
-    LiturgicalChantWithRequirements.is (x)
-      ? LiturgicalChantWithRequirements.A.wikiEntry (x)
-      : BlessingCombined.A.wikiEntry (x)
+export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
+  const {
+    addChantsDisabled,
+    addPoint,
+    addToList,
+    addBlessingToList,
+    enableActiveItemHints,
+    attributes,
+    activeList,
+    inactiveList,
+    l10n,
+    isRemovingEnabled,
+    removeFromList,
+    removeBlessingFromList,
+    removePoint,
+    setSortOrder,
+    sortOrder,
+    switchActiveItemHints,
+    traditionId: mtradition_id,
+    filterText,
+    inactiveFilterText,
+    setFilterText,
+    setInactiveFilterText,
+  } = props
 
-const LCBCA = {
-  active: (x: Combined): boolean =>
-    LiturgicalChantWithRequirements.is (x)
-      ? pipe_ (
-          x,
-          LiturgicalChantWithRequirements.A.stateEntry,
-          ActivatableSkillDependent.A.active
-        )
-      : BlessingCombined.A.active (x),
-  gr: (x: Combined): Maybe<number> =>
-    LiturgicalChantWithRequirements.is (x)
-      ? pipe_ (
-          x,
-          LiturgicalChantWithRequirements.A.wikiEntry,
-          LiturgicalChant.A.gr,
-          Just
-        )
-      : Nothing,
-  aspects: (x: Combined): List<number> =>
-    LiturgicalChantWithRequirements.is (x)
-      ? pipe_ (
-          x,
-          LiturgicalChantWithRequirements.A.wikiEntry,
-          LiturgicalChant.A.aspects
-        )
-      : List (1),
-  tradition: (x: Combined): List<number> =>
-    LiturgicalChantWithRequirements.is (x)
-      ? pipe_ (
-          x,
-          LiturgicalChantWithRequirements.A.wikiEntry,
-          LiturgicalChant.A.tradition
-        )
-      : List (1),
-  id: pipe (wikiEntryCombined, Blessing.AL.id),
-  name: pipe (wikiEntryCombined, Blessing.AL.name),
-}
+  const [ showAddSlidein, setShowAddSlidein ] = React.useState (false)
+  const [ currentId, setCurrenId ] = React.useState<Maybe<string>> (Nothing)
+  const [ currentSlideinId, setCurrentSlideinId ] = React.useState<Maybe<string>> (Nothing)
 
-const isBlessing = BlessingCombined.is
+  const handleShowSlidein = React.useCallback (
+    () => setShowAddSlidein (true),
+    [ setShowAddSlidein ]
+  )
 
-export class LiturgicalChants
-  extends React.Component<LiturgicalChantsProps, LiturgicalChantsState> {
-  state: LiturgicalChantsState = {
-    showAddSlidein: false,
-    currentId: Nothing,
-    currentSlideinId: Nothing,
-  }
+  const handleHideSlidein = React.useCallback (
+    () => {
+      setInactiveFilterText ("")
+      setCurrentSlideinId (Nothing)
+      setShowAddSlidein (false)
+    },
+    [ setInactiveFilterText, setCurrentSlideinId, setShowAddSlidein ]
+  )
 
-  showAddSlidein = () => this.setState ({ showAddSlidein: true })
+  const handleShowInfo = React.useCallback (
+    (id: string) => setCurrenId (Just (id)),
+    [ setCurrenId ]
+  )
 
-  hideAddSlidein = () => {
-    this.props.setInactiveFilterText ("")
-    this.setState ({ showAddSlidein: false })
-  }
+  const handleShowSlideinInfo = React.useCallback (
+    (id: string) => setCurrentSlideinId (Just (id)),
+    [ setCurrentSlideinId ]
+  )
 
-  showInfo = (id: string) => this.setState ({ currentId: Just (id) })
-  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: Just (id) })
-
-  render () {
-    const {
-      addChantsDisabled,
-      addPoint,
-      addToList,
-      addBlessingToList,
-      enableActiveItemHints,
-      attributes,
-      activeList,
-      inactiveList,
-      l10n,
-      isRemovingEnabled,
-      removeFromList,
-      removeBlessingFromList,
-      removePoint,
-      setSortOrder,
-      sortOrder,
-      switchActiveItemHints,
-      traditionId: mtradition_id,
-      filterText,
-      inactiveFilterText,
-      setFilterText,
-      setInactiveFilterText,
-    } = this.props
-
-    const { showAddSlidein } = this.state
-
-    return (
-      <Page id="liturgies">
-        <Slidein
-          isOpen={showAddSlidein}
-          close={this.hideAddSlidein}
-          className="adding-liturgical-chants"
-          >
-          <Options>
-            <SearchField
-              l10n={l10n}
-              value={inactiveFilterText}
-              onChange={setInactiveFilterText}
-              fullWidth
-              />
-            <SortOptions
-              sortOrder={sortOrder}
-              sort={setSortOrder}
-              options={List (SortNames.Name, SortNames.Group, SortNames.IC)}
-              l10n={l10n}
-              />
-            <Checkbox
-              checked={enableActiveItemHints}
-              onClick={switchActiveItemHints}
-              >
-              {translate (l10n) ("showactivated")}
-            </Checkbox>
-          </Options>
-          <MainContent>
-            <ListHeader>
-              <ListHeaderTag className="name">
-                {translate (l10n) ("name")}
-              </ListHeaderTag>
-              <ListHeaderTag className="group">
-                {translate (l10n) ("traditions")}
-                {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
-              </ListHeaderTag>
-              <ListHeaderTag className="check">
-                {translate (l10n) ("check")}
-              </ListHeaderTag>
-              <ListHeaderTag className="mod" hint={translate (l10n) ("checkmodifier")}>
-                {translate (l10n) ("checkmodifier.short")}
-              </ListHeaderTag>
-              <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
-                {translate (l10n) ("improvementcost.short")}
-              </ListHeaderTag>
-              {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
-              <ListHeaderTag className="btn-placeholder" />
-            </ListHeader>
-            <Scroll>
-              <ListView>
-                {pipe_ (
-                  inactiveList,
-                  bindF (ensure (notNull)),
-                  fmap (pipe (
-                    mapAccumL ((mprev: Maybe<Combined>) => (curr: Combined) => {
-                                const insertTopMargin = isTopMarginNeeded (sortOrder) (curr) (mprev)
-
-                                const aspects = getAspectsStr (l10n) (curr) (mtradition_id)
-
-                                if (LCBCA.active (curr)) {
-                                  return Pair<Maybe<Combined>, JSX.Element> (
-                                    Just (curr),
-                                    (
-                                      <ListItem
-                                        key={LCBCA.id (curr)}
-                                        disabled
-                                        insertTopMargin={insertTopMargin}
-                                        >
-                                        <ListItemName name={LCBCA.name (curr)} />
-                                      </ListItem>
-                                    )
-                                  )
-                                }
-                                else if (isBlessing (curr)) {
-                                  return Pair<Maybe<Combined>, JSX.Element> (
-                                    Just (curr),
-                                    (
-                                      <SkillListItem
-                                        key={LCBCA.id (curr)}
-                                        id={LCBCA.id (curr)}
-                                        name={LCBCA.name (curr)}
-                                        isNotActive
-                                        activate={
-                                          addBlessingToList .bind (null, LCBCA.id (curr))
-                                        }
-                                        addFillElement
-                                        insertTopMargin={insertTopMargin}
-                                        attributes={attributes}
-                                        l10n={l10n}
-                                        selectForInfo={this.showSlideinInfo}
-                                        addText={
-                                          sortOrder === "group"
-                                            ? `${aspects} / ${translate (l10n) ("blessing")}`
-                                            : aspects
-                                        }
-                                        selectedForInfo={this.state.currentSlideinId}
-                                        />
-                                    )
-                                  )
-                                }
-                                else {
-                                  const add_text = getLCAddText (l10n) (sortOrder) (aspects) (curr)
-
-                                  return Pair<Maybe<Combined>, JSX.Element> (
-                                    Just (curr),
-                                    (
-                                      <SkillListItem
-                                        key={LCBCA.id (curr)}
-                                        id={LCBCA.id (curr)}
-                                        name={LCBCA.name (curr)}
-                                        isNotActive
-                                        activate={addToList .bind (null, LCBCA.id (curr))}
-                                        activateDisabled={addChantsDisabled}
-                                        addFillElement
-                                        check={LCWRA_.check (curr)}
-                                        checkmod={LCWRA_.checkmod (curr)}
-                                        ic={LCWRA_.ic (curr)}
-                                        insertTopMargin={insertTopMargin}
-                                        attributes={attributes}
-                                        l10n={l10n}
-                                        selectForInfo={this.showSlideinInfo}
-                                        addText={add_text}
-                                        selectedForInfo={this.state.currentSlideinId}
-                                        />
-                                    )
-                                  )
-                                }
-                              })
-                              (Nothing),
-                    snd,
-                    toArray,
-                    arr => <>{arr}</>
-                  )),
-                  fromMaybe (
-                    <ListPlaceholder l10n={l10n} type="inactiveLiturgicalChants" noResults />
-                  )
-                )}
-              </ListView>
-            </Scroll>
-          </MainContent>
-          <WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
-        </Slidein>
+  return (
+    <Page id="liturgies">
+      <Slidein
+        isOpen={showAddSlidein}
+        close={handleHideSlidein}
+        className="adding-liturgical-chants"
+        >
         <Options>
           <SearchField
             l10n={l10n}
-            value={filterText}
-            onChange={setFilterText}
+            value={inactiveFilterText}
+            onChange={setInactiveFilterText}
             fullWidth
             />
           <SortOptions
@@ -331,10 +162,12 @@ export class LiturgicalChants
             options={List (SortNames.Name, SortNames.Group, SortNames.IC)}
             l10n={l10n}
             />
-          <BorderButton
-            label={translate (l10n) ("add")}
-            onClick={this.showAddSlidein}
-            />
+          <Checkbox
+            checked={enableActiveItemHints}
+            onClick={switchActiveItemHints}
+            >
+            {translate (l10n) ("showactivated")}
+          </Checkbox>
         </Options>
         <MainContent>
           <ListHeader>
@@ -343,10 +176,7 @@ export class LiturgicalChants
             </ListHeaderTag>
             <ListHeaderTag className="group">
               {translate (l10n) ("traditions")}
-              {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
-            </ListHeaderTag>
-            <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
-              {translate (l10n) ("skillrating.short")}
+              {sortOrder === SortNames.Group ? ` / ${translate (l10n) ("group")}` : null}
             </ListHeaderTag>
             <ListHeaderTag className="check">
               {translate (l10n) ("check")}
@@ -359,78 +189,34 @@ export class LiturgicalChants
             </ListHeaderTag>
             {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
             <ListHeaderTag className="btn-placeholder" />
-            <ListHeaderTag className="btn-placeholder" />
           </ListHeader>
           <Scroll>
             <ListView>
               {pipe_ (
-                activeList,
+                inactiveList,
                 bindF (ensure (notNull)),
                 fmap (pipe (
                   mapAccumL ((mprev: Maybe<Combined>) => (curr: Combined) => {
                               const insertTopMargin = isTopMarginNeeded (sortOrder) (curr) (mprev)
 
-                              const aspects = getAspectsStr (l10n) (curr) (mtradition_id)
-
-                              if (isBlessing (curr)) {
-                                return Pair<Maybe<Combined>, JSX.Element> (
-                                  Just (curr),
-                                  (
-                                    <SkillListItem
-                                      key={LCBCA.id (curr)}
-                                      id={LCBCA.id (curr)}
-                                      name={LCBCA.name (curr)}
-                                      removePoint={
-                                        isRemovingEnabled
-                                          ? removeBlessingFromList.bind (null, LCBCA.id (curr))
-                                          : undefined}
-                                      addFillElement
-                                      noIncrease
-                                      insertTopMargin={insertTopMargin}
-                                      attributes={attributes}
-                                      l10n={l10n}
-                                      selectForInfo={this.showInfo}
-                                      addText={
-                                        sortOrder === "group"
-                                          ? `${aspects} / ${translate (l10n) ("blessing")}`
-                                          : aspects
-                                      }
-                                      selectedForInfo={this.state.currentId}
-                                      />
-                                  )
+                              return Pair<Maybe<Combined>, JSX.Element> (
+                                Just (curr),
+                                (
+                                  <LiturgicalChantsListItemInactive
+                                    l10n={l10n}
+                                    addChantsDisabled={addChantsDisabled}
+                                    attributes={attributes}
+                                    currentInfoId={currentSlideinId}
+                                    entry={curr}
+                                    insertTopMargin={insertTopMargin}
+                                    mtradition_id={mtradition_id}
+                                    sortOrder={sortOrder}
+                                    addToList={addToList}
+                                    addBlessingToList={addBlessingToList}
+                                    selectForInfo={handleShowSlideinInfo}
+                                    />
                                 )
-                              }
-                              else {
-                                const add_text = getLCAddText (l10n) (sortOrder) (aspects) (curr)
-
-                                return Pair<Maybe<Combined>, JSX.Element> (
-                                  Just (curr),
-                                  (
-                                    <SkillListItem
-                                      key={LCBCA.id (curr)}
-                                      id={LCBCA.id (curr)}
-                                      name={LCBCA.name (curr)}
-                                      addDisabled={!LCWRA.isIncreasable (curr)}
-                                      addPoint={addPoint}
-                                      removeDisabled={!isRemovingEnabled || !LCWRA.isDecreasable (curr)}
-                                      removePoint={
-                                        LCWRA_.value (curr) === 0 ? removeFromList : removePoint
-                                      }
-                                      addFillElement
-                                      check={LCWRA_.check (curr)}
-                                      checkmod={LCWRA_.checkmod (curr)}
-                                      ic={LCWRA_.ic (curr)}
-                                      sr={LCWRA_.value (curr)}
-                                      insertTopMargin={insertTopMargin}
-                                      attributes={attributes}
-                                      l10n={l10n}
-                                      selectForInfo={this.showInfo}
-                                      addText={add_text}
-                                      selectedForInfo={this.state.currentId}
-                                      />
-                                  )
-                                )
-                              }
+                              )
                             })
                             (Nothing),
                   snd,
@@ -438,73 +224,104 @@ export class LiturgicalChants
                   arr => <>{arr}</>
                 )),
                 fromMaybe (
-                  <ListPlaceholder
-                    l10n={l10n}
-                    type="liturgicalChants"
-                    noResults={notNullStr (filterText)}
-                    />
+                  <ListPlaceholder l10n={l10n} type="inactiveLiturgicalChants" noResults />
                 )
               )}
             </ListView>
           </Scroll>
         </MainContent>
-        <WikiInfoContainer {...this.props} {...this.state} />
-      </Page>
-    )
-  }
+        <WikiInfoContainer l10n={l10n} currentId={currentSlideinId} />
+      </Slidein>
+      <Options>
+        <SearchField
+          l10n={l10n}
+          value={filterText}
+          onChange={setFilterText}
+          fullWidth
+          />
+        <SortOptions
+          sortOrder={sortOrder}
+          sort={setSortOrder}
+          options={List (SortNames.Name, SortNames.Group, SortNames.IC)}
+          l10n={l10n}
+          />
+        <BorderButton
+          label={translate (l10n) ("add")}
+          onClick={handleShowSlidein}
+          />
+      </Options>
+      <MainContent>
+        <ListHeader>
+          <ListHeaderTag className="name">
+            {translate (l10n) ("name")}
+          </ListHeaderTag>
+          <ListHeaderTag className="group">
+            {translate (l10n) ("traditions")}
+            {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
+          </ListHeaderTag>
+          <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
+            {translate (l10n) ("skillrating.short")}
+          </ListHeaderTag>
+          <ListHeaderTag className="check">
+            {translate (l10n) ("check")}
+          </ListHeaderTag>
+          <ListHeaderTag className="mod" hint={translate (l10n) ("checkmodifier")}>
+            {translate (l10n) ("checkmodifier.short")}
+          </ListHeaderTag>
+          <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
+            {translate (l10n) ("improvementcost.short")}
+          </ListHeaderTag>
+          {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
+          <ListHeaderTag className="btn-placeholder" />
+          <ListHeaderTag className="btn-placeholder" />
+        </ListHeader>
+        <Scroll>
+          <ListView>
+            {pipe_ (
+              activeList,
+              bindF (ensure (notNull)),
+              fmap (pipe (
+                mapAccumL ((mprev: Maybe<Combined>) => (curr: Combined) => {
+                            const insertTopMargin = isTopMarginNeeded (sortOrder) (curr) (mprev)
+
+                            return Pair<Maybe<Combined>, JSX.Element> (
+                              Just (curr),
+                              (
+                                <LiturgicalChantsListItemActive
+                                  l10n={l10n}
+                                  attributes={attributes}
+                                  currentInfoId={currentId}
+                                  entry={curr}
+                                  insertTopMargin={insertTopMargin}
+                                  isRemovingEnabled={isRemovingEnabled}
+                                  mtradition_id={mtradition_id}
+                                  sortOrder={sortOrder}
+                                  addPoint={addPoint}
+                                  removePoint={removePoint}
+                                  removeFromList={removeFromList}
+                                  removeBlessingFromList={removeBlessingFromList}
+                                  selectForInfo={handleShowInfo}
+                                  />
+                              )
+                            )
+                          })
+                          (Nothing),
+                snd,
+                toArray,
+                arr => <>{arr}</>
+              )),
+              fromMaybe (
+                <ListPlaceholder
+                  l10n={l10n}
+                  type="liturgicalChants"
+                  noResults={notNullStr (filterText)}
+                  />
+              )
+            )}
+          </ListView>
+        </Scroll>
+      </MainContent>
+      <WikiInfoContainer l10n={l10n} currentId={currentId} />
+    </Page>
+  )
 }
-
-const isTopMarginNeeded =
-  (sortOrder: string) =>
-  (curr: Combined) =>
-  (mprev: Maybe<Combined>) =>
-    pipe_ (
-      mprev,
-      bindF (ensure (
-        () => sortOrder === "group" && LCBCA.active (curr)
-      )),
-      fmap (prev =>
-             !isBlessing (prev) && isBlessing (curr)
-             || isBlessing (prev) && !isBlessing (curr)
-             || !isBlessing (prev)
-               && !isBlessing (curr)
-               && notEquals (LCBCA.gr (prev)) (LCBCA.gr (curr))),
-      or
-    )
-
-const getAspectsStr =
-  (l10n: L10nRecord) =>
-  (curr: Combined) =>
-  (mtradition_id: Maybe<BlessedTradition>) =>
-    pipe_ (
-      mtradition_id,
-      fmap (pipe (
-        tradition_id =>
-          mapMaybe (pipe (
-                     ensure (elemF (getAspectsOfTradition (tradition_id))),
-                     bindF (pipe (
-                       dec,
-                       subscript (translate (l10n) ("aspectlist"))
-                     ))
-                   ))
-                   (LCBCA.aspects (curr)),
-        elem (14) (LCBCA.tradition (curr))
-          ? maybe (ident as ident<List<string>>) <string> (consF)
-                  (subscript (translate (l10n) ("blessedtraditions")) (13))
-          : ident,
-        sortStrings (l10n),
-        intercalate (", ")
-      )),
-      fromMaybe ("")
-    )
-
-const getLCAddText =
-  (l10n: L10nRecord) =>
-  (sortOrder: string) =>
-  (aspects_str: string) =>
-  (curr: Record<LiturgicalChantWithRequirements>) =>
-    pipe_ (
-      guard (sortOrder === "group"),
-      thenF (subscript (translate (l10n) ("liturgicalchantgroups")) (LCWRA_.gr (curr) - 1)),
-      maybe (aspects_str) (gr_str => `${aspects_str} / ${gr_str}`)
-    )

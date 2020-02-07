@@ -1,8 +1,8 @@
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { ExperienceLevel } from "../../../../Models/Wiki/ExperienceLevel";
-import { prefixId } from "../../../IDUtils";
-import { mergeRowsById } from "../MergeRows";
-import { lookupKeyMapValidNatural, lookupKeyMapValidNonEmptyString, mapMNamed, TableType } from "../Validators/Generic";
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { ExperienceLevel } from "../../../../Models/Wiki/ExperienceLevel"
+import { prefixId } from "../../../IDUtils"
+import { mergeRowsById } from "../MergeRows"
+import { lookupKeyMapValidNatural, lookupKeyMapValidNonEmptyString, mapMNamed, TableType } from "../Validators/Generic"
 
 export const toExperienceLevel =
   mergeRowsById

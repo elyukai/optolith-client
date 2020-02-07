@@ -1,52 +1,52 @@
-import { equals } from "../../../../../Data/Eq";
-import { ident } from "../../../../../Data/Function";
-import { fmap } from "../../../../../Data/Functor";
-import { set } from "../../../../../Data/Lens";
-import { empty, foldr, fromArray, List, map, notNull, splitOn } from "../../../../../Data/List";
-import { altF_, any, bindF, ensure, fromJust, fromMaybe, Just, mapM, maybe, Maybe, Nothing } from "../../../../../Data/Maybe";
-import { Record } from "../../../../../Data/Record";
-import { parseJSON } from "../../../../../Data/String/JSON";
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { SpecialAbilityId } from "../../../../Constants/Ids";
-import { ProfessionRequireActivatable } from "../../../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { CantripsSelection } from "../../../../Models/Wiki/professionSelections/CantripsSelection";
-import { CombatTechniquesSelection } from "../../../../Models/Wiki/professionSelections/CombatTechniquesSelection";
-import { CursesSelection } from "../../../../Models/Wiki/professionSelections/CursesSelection";
-import { LanguagesScriptsSelection } from "../../../../Models/Wiki/professionSelections/LanguagesScriptsSelection";
-import { ProfessionVariantSelections, ProfessionVariantSelectionsL } from "../../../../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
-import { RemoveCombatTechniquesSelection } from "../../../../Models/Wiki/professionSelections/RemoveCombatTechniquesSelection";
-import { RemoveCombatTechniquesSecondSelection } from "../../../../Models/Wiki/professionSelections/RemoveSecondCombatTechniquesSelection";
-import { RemoveSpecializationSelection } from "../../../../Models/Wiki/professionSelections/RemoveSpecializationSelection";
-import { CombatTechniquesSecondSelection } from "../../../../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
-import { SkillsSelection } from "../../../../Models/Wiki/professionSelections/SkillsSelection";
-import { SpecializationSelection } from "../../../../Models/Wiki/professionSelections/SpecializationSelection";
-import { TerrainKnowledgeSelection } from "../../../../Models/Wiki/professionSelections/TerrainKnowledgeSelection";
-import { ProfessionVariant } from "../../../../Models/Wiki/ProfessionVariant";
-import { pairToIncreaseSkill } from "../../../../Models/Wiki/sub/IncreaseSkill";
-import { pairToIncreaseSkillOrList } from "../../../../Models/Wiki/sub/IncreaseSkillList";
-import { NameBySex } from "../../../../Models/Wiki/sub/NameBySex";
-import { AnyProfessionVariantSelection, ProfessionPrerequisite, ProfessionSelectionIds } from "../../../../Models/Wiki/wikiTypeHelpers";
-import { prefixCantrip, prefixCT, prefixId } from "../../../IDUtils";
-import { toInt, toNatural } from "../../../NumberUtils";
-import { pipe, pipe_ } from "../../../pipe";
-import { Expect } from "../../Expect";
-import { mergeRowsById } from "../MergeRows";
-import { modifyNegIntNoBreak } from "../SourceHelpers";
-import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapInteger, mensureMapListOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../Validators/ToValue";
-import { isRawCantripsSelection } from "./ProfessionSelections/RawCantripsSelection";
-import { isRawCombatTechniquesSelection } from "./ProfessionSelections/RawCombatTechniquesSelection";
-import { isRawCursesSelection } from "./ProfessionSelections/RawCursesSelection";
-import { isRawLanguagesScriptsSelection } from "./ProfessionSelections/RawLanguagesScriptsSelection";
-import { isRawSecondCombatTechniquesSelection } from "./ProfessionSelections/RawSecondCombatTechniquesSelection";
-import { isRawSkillsSelection } from "./ProfessionSelections/RawSkillsSelection";
-import { isRawSpecializationSelection } from "./ProfessionSelections/RawSpecializationSelection";
-import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrainKnowledgeSelection";
-import { isRemoveRawCombatTechniquesSelection } from "./ProfessionSelections/RemoveRawCombatTechniquesSelection";
-import { isRemoveRawCombatTechniquesSecondSelection } from "./ProfessionSelections/RemoveRawSecondCombatTechniquesSelection";
-import { isRemoveRawSpecializationSelection } from "./ProfessionSelections/RemoveRawSpecializationSelection";
-import { toErrata } from "./Sub/toErrata";
-import { stringToBlessings, stringToDependencies, stringToPrerequisites, stringToSpecialAbilities } from "./toProfession";
+import { equals } from "../../../../../Data/Eq"
+import { ident } from "../../../../../Data/Function"
+import { fmap } from "../../../../../Data/Functor"
+import { set } from "../../../../../Data/Lens"
+import { empty, foldr, fromArray, List, map, notNull, splitOn } from "../../../../../Data/List"
+import { altF_, any, bindF, ensure, fromJust, fromMaybe, Just, mapM, maybe, Maybe, Nothing } from "../../../../../Data/Maybe"
+import { Record } from "../../../../../Data/Record"
+import { parseJSON } from "../../../../../Data/String/JSON"
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { SpecialAbilityId } from "../../../../Constants/Ids"
+import { ProfessionRequireActivatable } from "../../../../Models/Wiki/prerequisites/ActivatableRequirement"
+import { CantripsSelection } from "../../../../Models/Wiki/professionSelections/CantripsSelection"
+import { CombatTechniquesSelection } from "../../../../Models/Wiki/professionSelections/CombatTechniquesSelection"
+import { CursesSelection } from "../../../../Models/Wiki/professionSelections/CursesSelection"
+import { LanguagesScriptsSelection } from "../../../../Models/Wiki/professionSelections/LanguagesScriptsSelection"
+import { ProfessionVariantSelections, ProfessionVariantSelectionsL } from "../../../../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections"
+import { RemoveCombatTechniquesSelection } from "../../../../Models/Wiki/professionSelections/RemoveCombatTechniquesSelection"
+import { RemoveCombatTechniquesSecondSelection } from "../../../../Models/Wiki/professionSelections/RemoveSecondCombatTechniquesSelection"
+import { RemoveSpecializationSelection } from "../../../../Models/Wiki/professionSelections/RemoveSpecializationSelection"
+import { CombatTechniquesSecondSelection } from "../../../../Models/Wiki/professionSelections/SecondCombatTechniquesSelection"
+import { SkillsSelection } from "../../../../Models/Wiki/professionSelections/SkillsSelection"
+import { SpecializationSelection } from "../../../../Models/Wiki/professionSelections/SpecializationSelection"
+import { TerrainKnowledgeSelection } from "../../../../Models/Wiki/professionSelections/TerrainKnowledgeSelection"
+import { ProfessionVariant } from "../../../../Models/Wiki/ProfessionVariant"
+import { pairToIncreaseSkill } from "../../../../Models/Wiki/sub/IncreaseSkill"
+import { pairToIncreaseSkillOrList } from "../../../../Models/Wiki/sub/IncreaseSkillList"
+import { NameBySex } from "../../../../Models/Wiki/sub/NameBySex"
+import { AnyProfessionVariantSelection, ProfessionPrerequisite, ProfessionSelectionIds } from "../../../../Models/Wiki/wikiTypeHelpers"
+import { prefixCantrip, prefixCT, prefixId } from "../../../IDUtils"
+import { toInt, toNatural } from "../../../NumberUtils"
+import { pipe, pipe_ } from "../../../pipe"
+import { Expect } from "../../Expect"
+import { mergeRowsById } from "../MergeRows"
+import { modifyNegIntNoBreak } from "../SourceHelpers"
+import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapInteger, mensureMapListOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../Validators/ToValue"
+import { isRawCantripsSelection } from "./ProfessionSelections/RawCantripsSelection"
+import { isRawCombatTechniquesSelection } from "./ProfessionSelections/RawCombatTechniquesSelection"
+import { isRawCursesSelection } from "./ProfessionSelections/RawCursesSelection"
+import { isRawLanguagesScriptsSelection } from "./ProfessionSelections/RawLanguagesScriptsSelection"
+import { isRawSecondCombatTechniquesSelection } from "./ProfessionSelections/RawSecondCombatTechniquesSelection"
+import { isRawSkillsSelection } from "./ProfessionSelections/RawSkillsSelection"
+import { isRawSpecializationSelection } from "./ProfessionSelections/RawSpecializationSelection"
+import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrainKnowledgeSelection"
+import { isRemoveRawCombatTechniquesSelection } from "./ProfessionSelections/RemoveRawCombatTechniquesSelection"
+import { isRemoveRawCombatTechniquesSecondSelection } from "./ProfessionSelections/RemoveRawSecondCombatTechniquesSelection"
+import { isRemoveRawSpecializationSelection } from "./ProfessionSelections/RemoveRawSpecializationSelection"
+import { toErrata } from "./Sub/toErrata"
+import { stringToBlessings, stringToDependencies, stringToPrerequisites, stringToSpecialAbilities } from "./toProfession"
 
 const PVSL = ProfessionVariantSelectionsL
 
@@ -64,6 +64,7 @@ const stringToVariantSelections =
         + "| TerrainKnowledgeSelection "
         + "| SkillsSelection"
       )
+
 // tslint:disable-next-line: cyclomatic-complexity
       ((x): Maybe<AnyProfessionVariantSelection> => {
         try {

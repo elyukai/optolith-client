@@ -1,18 +1,18 @@
-import { fmap } from "../../../../../Data/Functor";
-import { List, map } from "../../../../../Data/List";
-import { fromMaybe, Nothing } from "../../../../../Data/Maybe";
-import { OrderedSet } from "../../../../../Data/OrderedSet";
-import { Aspect, BlessedGroup, BlessedTradition } from "../../../../Constants/Groups";
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { LiturgicalChant } from "../../../../Models/Wiki/LiturgicalChant";
-import { CheckModifier } from "../../../../Models/Wiki/wikiTypeHelpers";
-import { isCheckMod, prefixId } from "../../../IDUtils";
-import { mergeRowsById } from "../MergeRows";
-import { modifyNegIntNoBreak } from "../SourceHelpers";
-import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapNumEnum, mensureMapNumEnumList, mensureMapNumEnumListOptional, mensureMapStringPredSetOptional } from "../Validators/ToValue";
-import { toErrata } from "./Sub/toErrata";
-import { toSourceLinks } from "./Sub/toSourceLinks";
+import { fmap } from "../../../../../Data/Functor"
+import { List, map } from "../../../../../Data/List"
+import { fromMaybe, Nothing } from "../../../../../Data/Maybe"
+import { OrderedSet } from "../../../../../Data/OrderedSet"
+import { Aspect, BlessedGroup, BlessedTradition } from "../../../../Constants/Groups"
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { LiturgicalChant } from "../../../../Models/Wiki/LiturgicalChant"
+import { CheckModifier } from "../../../../Models/Wiki/wikiTypeHelpers"
+import { isCheckMod, prefixId } from "../../../IDUtils"
+import { mergeRowsById } from "../MergeRows"
+import { modifyNegIntNoBreak } from "../SourceHelpers"
+import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapNumEnum, mensureMapNumEnumList, mensureMapNumEnumListOptional, mensureMapStringPredSetOptional } from "../Validators/ToValue"
+import { toErrata } from "./Sub/toErrata"
+import { toSourceLinks } from "./Sub/toSourceLinks"
 
 export const toLiturgicalChant =
   mergeRowsById

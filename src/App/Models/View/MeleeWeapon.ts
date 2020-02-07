@@ -1,7 +1,7 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault } from "../../../Data/Record";
-import { Pair } from "../../../Data/Tuple";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault } from "../../../Data/Record"
+import { Pair } from "../../../Data/Tuple"
 
 export interface MeleeWeapon {
   "@@name": "MeleeWeapon"

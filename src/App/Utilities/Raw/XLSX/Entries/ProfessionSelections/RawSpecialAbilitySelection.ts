@@ -1,6 +1,6 @@
-import { ProfessionSelectionIds } from "../../../../../Models/Wiki/wikiTypeHelpers";
-import { isRawProfessionRequiringActivatable, RawProfessionRequireActivatable } from "../Prerequisites/RawActivatableRequirement";
-import { AnyRawProfessionSelection } from "../rawTypeHelpers";
+import { ProfessionSelectionIds } from "../../../../../Models/Wiki/wikiTypeHelpers"
+import { isRawProfessionRequiringActivatable, RawProfessionRequireActivatable } from "../Prerequisites/RawActivatableRequirement"
+import { AnyRawProfessionSelection } from "../rawTypeHelpers"
 
 export interface RawSpecialAbilitySelection {
   id: ProfessionSelectionIds
@@ -11,4 +11,4 @@ export const isRawSpecialAbilitySelection =
   (obj: AnyRawProfessionSelection): obj is RawSpecialAbilitySelection =>
     obj.id === ProfessionSelectionIds.SPECIAL_ABILITY
     // @ts-ignore
-    && Array.isArray (obj .sid) && obj .sid .every (isRawProfessionRequiringActivatable)
+    && Array.isArray (obj .sid) && (obj .sid as any[]) .every (isRawProfessionRequiringActivatable)

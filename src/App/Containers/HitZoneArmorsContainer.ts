@@ -1,14 +1,14 @@
-import { connect } from "react-redux";
-import { Maybe } from "../../Data/Maybe";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as EquipmentActions from "../Actions/EquipmentActions";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getInitialStartingWealth } from "../Selectors/activatableSelectors";
-import { getHasCurrentNoAddedAP } from "../Selectors/adventurePointsSelectors";
-import { getCarryingCapacity } from "../Selectors/attributeSelectors";
-import { getFilteredHitZoneArmors, getItems, getTemplates, getTotalPrice, getTotalWeight } from "../Selectors/equipmentSelectors";
-import { getArmorZonesEditorInstance, getIsInHitZoneArmorCreation, getPurse, getZoneArmorFilterText } from "../Selectors/stateSelectors";
-import { HitZoneArmors, HitZoneArmorsDispatchProps, HitZoneArmorsOwnProps, HitZoneArmorsStateProps } from "../Views/HitZoneArmors/HitZoneArmors";
+import { connect } from "react-redux"
+import { Maybe } from "../../Data/Maybe"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as EquipmentActions from "../Actions/EquipmentActions"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getInitialStartingWealth } from "../Selectors/activatableSelectors"
+import { getHasCurrentNoAddedAP } from "../Selectors/adventurePointsSelectors"
+import { getCarryingCapacity } from "../Selectors/attributeSelectors"
+import { getFilteredHitZoneArmors, getItems, getTemplates, getTotalPrice, getTotalWeight } from "../Selectors/equipmentSelectors"
+import { getArmorZonesEditorInstance, getIsInHitZoneArmorCreation, getPurse, getZoneArmorFilterText } from "../Selectors/stateSelectors"
+import { HitZoneArmors, HitZoneArmorsDispatchProps, HitZoneArmorsOwnProps, HitZoneArmorsStateProps } from "../Views/HitZoneArmors/HitZoneArmors"
 
 const mapStateToProps = (
   state: AppStateRecord,

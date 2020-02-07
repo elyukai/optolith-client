@@ -1,48 +1,48 @@
-import { notEquals } from "../../Data/Eq";
-import { cnst, flip, ident, join, thrush } from "../../Data/Function";
-import { fmap, fmapF } from "../../Data/Functor";
-import { over, set } from "../../Data/Lens";
-import { append, consF, elem, filter, flength, foldr, isList, List, ListI, map } from "../../Data/List";
-import { bind, ensure, fromMaybe, isJust, isNothing, Just, listToMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
-import { add, gt, max, min } from "../../Data/Num";
-import { alter, foldrWithKey, insertF, keys, lookup, member, OrderedMap } from "../../Data/OrderedMap";
-import { insert, OrderedSet, sdelete, toList, union } from "../../Data/OrderedSet";
-import { fromDefault, makeLenses, Record } from "../../Data/Record";
-import { SetSelectionsAction } from "../Actions/ProfessionActions";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { SpecialAbilityId } from "../Constants/Ids";
-import { ActivatableDependent, ActivatableDependentL, createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent, ActivatableSkillDependentL } from "../Models/ActiveEntries/ActivatableSkillDependent";
-import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
-import { AttributeDependent, AttributeDependentL } from "../Models/ActiveEntries/AttributeDependent";
-import { SkillDependent, SkillDependentL } from "../Models/ActiveEntries/SkillDependent";
-import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { Advantage } from "../Models/Wiki/Advantage";
-import { Culture } from "../Models/Wiki/Culture";
-import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
-import { ProfessionRequireActivatable, ProfessionRequireActivatableL, reqToActive } from "../Models/Wiki/prerequisites/ActivatableRequirement";
-import { ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement";
-import { Profession } from "../Models/Wiki/Profession";
-import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
-import { ProfessionSelections } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
-import { CombatTechniquesSecondSelection } from "../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
-import { SpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection";
-import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
-import { Race } from "../Models/Wiki/Race";
-import { Skill } from "../Models/Wiki/Skill";
-import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill";
-import { WikiModel } from "../Models/Wiki/WikiModel";
-import { Activatable, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
-import { getCombinedPrerequisites } from "../Utilities/Activatable/activatableActivationUtils";
-import { addOtherSpecialAbilityDependenciesOnRCPApplication } from "../Utilities/Activatable/SpecialAbilityUtils";
-import { composeL } from "../Utilities/compose";
-import { addDependencies } from "../Utilities/Dependencies/dependencyUtils";
-import { getHeroStateItem, updateEntryDef } from "../Utilities/heroStateUtils";
-import { ifElse } from "../Utilities/ifElse";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { isString } from "../Utilities/typeCheckUtils";
-import { getWikiEntry, isActivatableWikiEntry } from "../Utilities/WikiUtils";
+import { notEquals } from "../../Data/Eq"
+import { cnst, flip, ident, join, thrush } from "../../Data/Function"
+import { fmap, fmapF } from "../../Data/Functor"
+import { over, set } from "../../Data/Lens"
+import { append, consF, elem, filter, flength, foldr, isList, List, ListI, map } from "../../Data/List"
+import { bind, ensure, fromMaybe, isJust, isNothing, Just, listToMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe"
+import { add, gt, max, min } from "../../Data/Num"
+import { alter, foldrWithKey, insertF, keys, lookup, member, OrderedMap } from "../../Data/OrderedMap"
+import { insert, OrderedSet, sdelete, toList, union } from "../../Data/OrderedSet"
+import { fromDefault, makeLenses, Record } from "../../Data/Record"
+import { SetSelectionsAction } from "../Actions/ProfessionActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { SpecialAbilityId } from "../Constants/Ids"
+import { ActivatableDependent, ActivatableDependentL, createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent, ActivatableSkillDependentL } from "../Models/ActiveEntries/ActivatableSkillDependent"
+import { ActiveObject } from "../Models/ActiveEntries/ActiveObject"
+import { AttributeDependent, AttributeDependentL } from "../Models/ActiveEntries/AttributeDependent"
+import { SkillDependent, SkillDependentL } from "../Models/ActiveEntries/SkillDependent"
+import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { Advantage } from "../Models/Wiki/Advantage"
+import { Culture } from "../Models/Wiki/Culture"
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
+import { ProfessionRequireActivatable, ProfessionRequireActivatableL, reqToActive } from "../Models/Wiki/prerequisites/ActivatableRequirement"
+import { ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement"
+import { Profession } from "../Models/Wiki/Profession"
+import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection"
+import { ProfessionSelections } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections"
+import { CombatTechniquesSecondSelection } from "../Models/Wiki/professionSelections/SecondCombatTechniquesSelection"
+import { SpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection"
+import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
+import { Race } from "../Models/Wiki/Race"
+import { Skill } from "../Models/Wiki/Skill"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill"
+import { WikiModel } from "../Models/Wiki/WikiModel"
+import { Activatable, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers"
+import { getCombinedPrerequisites } from "../Utilities/Activatable/activatableActivationUtils"
+import { addOtherSpecialAbilityDependenciesOnRCPApplication } from "../Utilities/Activatable/SpecialAbilityUtils"
+import { composeL } from "../Utilities/compose"
+import { addDependencies } from "../Utilities/Dependencies/dependencyUtils"
+import { getHeroStateItem, updateEntryDef } from "../Utilities/heroStateUtils"
+import { ifElse } from "../Utilities/ifElse"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { isString } from "../Utilities/typeCheckUtils"
+import { getWikiEntry, isActivatableWikiEntry } from "../Utilities/WikiUtils"
 
 interface ConcatenatedModifications {
   "@@name": "ConcatenatedModifications"
@@ -101,6 +101,51 @@ const foldIntoSRsFrom =
 const foldIncSkillsIntoSRs = foldIntoSRsFrom (ISA.id) (ISA.value)
 
 // const modIdentityFn = ident (acc: ConcatenatedModifications) => acc
+
+const updateListToContainNewEntry =
+  (wiki_entry: Activatable) =>
+  (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
+  (active: Record<ActiveObject>): ident<HeroModelRecord> =>
+    pipe (
+      updateEntryDef (pipe (
+                             ensure (ActivatableDependent.is),
+                             fmap (over (ActivatableDependentL.active)
+                                        (consF (active)))
+                           ))
+                     (Advantage.AL.id (wiki_entry)),
+      addDependencies (Advantage.AL.id (wiki_entry))
+                      (getCombinedPrerequisites (true)
+                                                (wiki_entry)
+                                                (mhero_entry)
+                                                (active)),
+      SpecialAbility.is (wiki_entry)
+        ? addOtherSpecialAbilityDependenciesOnRCPApplication (wiki_entry) (active)
+        : ident
+    )
+
+const shouldSABeRemovedByProfVariant =
+  (id: string) =>
+  (msid: Maybe<string | number>) =>
+  (msid2: Maybe<string | number>) =>
+  (x: Record<ProfessionRequireActivatable>) => {
+    type MSID = Maybe<string | number>
+
+    const current_id = PRAA.id (x)
+    const mcurrent_sid = PRAA.sid (x)
+    const mcurrent_sid2 = PRAA.sid2 (x)
+
+    return id !== current_id
+      || (
+        (
+          isNothing (msid)
+          || notEquals<MSID> (msid) (mcurrent_sid)
+        )
+        && (
+          isNothing (msid2)
+          || notEquals<MSID> (msid2) (mcurrent_sid2)
+        )
+      )
+  }
 
 const concatBaseModifications = (action: SetSelectionsAction) => {
   const {
@@ -400,6 +445,7 @@ const concatModifications =
 const applyModifications =
   (action: SetSelectionsAction) =>
     pipe (
+
       // - Skill activations
       join (pipe (
         CMA.skillActivateList,
@@ -515,6 +561,7 @@ const applyModifications =
                                              return pipe_ (
                                                x,
                                                over (AttributeDependentL.value)
+
                                                     // If the value is already valid for the
                                                     // prerequisite, do not change it
                                                     (max (v)),
@@ -526,6 +573,7 @@ const applyModifications =
                                              return pipe_ (
                                                x,
                                                over (SkillDependentL.value)
+
                                                     // If the value is already valid for the
                                                     // prerequisite, do not change it
                                                     (max (v)),
@@ -537,6 +585,7 @@ const applyModifications =
                                              return pipe_ (
                                                x,
                                                over (ActivatableSkillDependentL.value)
+
                                                     // If the value is already valid for the
                                                     // prerequisite, do not change it
                                                     (max (v)),
@@ -606,49 +655,4 @@ export const applyRCPSelectionsReducer =
       default:
         return ident
     }
-  }
-
-const updateListToContainNewEntry =
-  (wiki_entry: Activatable) =>
-  (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
-  (active: Record<ActiveObject>): ident<HeroModelRecord> =>
-    pipe (
-      updateEntryDef (pipe (
-                             ensure (ActivatableDependent.is),
-                             fmap (over (ActivatableDependentL.active)
-                                        (consF (active)))
-                           ))
-                     (Advantage.AL.id (wiki_entry)),
-      addDependencies (Advantage.AL.id (wiki_entry))
-                      (getCombinedPrerequisites (true)
-                                                (wiki_entry)
-                                                (mhero_entry)
-                                                (active)),
-      SpecialAbility.is (wiki_entry)
-        ? addOtherSpecialAbilityDependenciesOnRCPApplication (wiki_entry) (active)
-        : ident
-    )
-
-const shouldSABeRemovedByProfVariant =
-  (id: string) =>
-  (msid: Maybe<string | number>) =>
-  (msid2: Maybe<string | number>) =>
-  (x: Record<ProfessionRequireActivatable>) => {
-    type MSID = Maybe<string | number>
-
-    const current_id = PRAA.id (x)
-    const mcurrent_sid = PRAA.sid (x)
-    const mcurrent_sid2 = PRAA.sid2 (x)
-
-    return id !== current_id
-      || (
-        (
-          isNothing (msid)
-          || notEquals<MSID> (msid) (mcurrent_sid)
-        )
-        && (
-          isNothing (msid2)
-          || notEquals<MSID> (msid2) (mcurrent_sid2)
-        )
-      )
   }

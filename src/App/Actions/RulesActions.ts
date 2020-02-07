@@ -1,9 +1,9 @@
-import { ActionTypes } from "../Constants/ActionTypes";
+import * as ActionTypes from "../Constants/ActionTypes"
 
 export interface SetHigherParadeValuesAction {
   type: ActionTypes.SET_HIGHER_PARADE_VALUES
   payload: {
-    value: number;
+    value: number
   }
 }
 
@@ -33,7 +33,7 @@ export const switchEnableAllRuleBooks = (): SwitchEnableAllRuleBooksAction => ({
 export interface SwitchEnableRuleBookAction {
   type: ActionTypes.SWITCH_ENABLE_RULE_BOOK
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -45,10 +45,10 @@ export const switchEnableRuleBook = (id: string): SwitchEnableRuleBookAction => 
 })
 
 export interface SwitchEnableLanguageSpecializationsAction {
-  type: ActionTypes.SWITCH_ENABLE_LANGUAGE_SPECIALIZATIONS
+  type: ActionTypes.SWITCH_ENABLE_LANG_SPEC
 }
 
 export const switchEnableLanguageSpecializations =
   (): SwitchEnableLanguageSpecializationsAction => ({
-    type: ActionTypes.SWITCH_ENABLE_LANGUAGE_SPECIALIZATIONS,
+    type: ActionTypes.SWITCH_ENABLE_LANG_SPEC,
   })

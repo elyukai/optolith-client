@@ -1,11 +1,11 @@
-import * as React from "react";
-import { fmapF } from "../../../Data/Functor";
-import { fromJust, isJust, Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { Purse } from "../../Models/Hero/Purse";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
-import { localizeNumber, localizeWeight, translate } from "../../Utilities/I18n";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { fmapF } from "../../../Data/Functor"
+import { fromJust, isJust, Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { Purse } from "../../Models/Hero/Purse"
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n"
+import { localizeNumber, localizeWeight, translate } from "../../Utilities/I18n"
+import { TextField } from "../Universal/TextField"
 
 export interface PurseAndTotalsProps {
   carryingCapacity: number

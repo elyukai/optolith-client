@@ -1,9 +1,9 @@
-import * as React from "react";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { Category } from "../../../Constants/Categories";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { Category } from "../../../Constants/Categories"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
   cost: (r: Record<A>) => string
@@ -17,7 +17,9 @@ export interface WikiCostProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiCost<A extends RecordIBase<any>> (props: WikiCostProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiCostProps<A>) => ReturnType<React.FC>
+
+export const WikiCost: FC = props => {
   const {
     x,
     acc,
@@ -35,7 +37,8 @@ export function WikiCost<A extends RecordIBase<any>> (props: WikiCostProps<A>) {
 
   return (
     <WikiProperty l10n={l10n} title={key}>
-      {acc.cost (x)}{isNoModAllowed ? ` (${translate (l10n) (modKey)})` : ""}
+      {acc.cost (x)}
+      {isNoModAllowed ? ` (${translate (l10n) (modKey)})` : ""}
     </WikiProperty>
   )
 }

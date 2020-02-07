@@ -1,17 +1,17 @@
-import { Either } from "../../../../../../Data/Either";
-import { append, empty, List, map, notNullStr } from "../../../../../../Data/List";
-import { ensure, fromMaybe, Maybe } from "../../../../../../Data/Maybe";
-import { fromList } from "../../../../../../Data/OrderedMap";
-import { Pair } from "../../../../../../Data/Tuple";
-import { Advantage } from "../../../../../Models/Wiki/Advantage";
-import { toNatural } from "../../../../NumberUtils";
-import { Expect } from "../../../Expect";
-import { mensureMapNaturalListOptional, mensureMapPairListOptional } from "../../Validators/ToValue";
-import { lookupKeyValid, TableType } from "../../Validators/Generic";
+import { Either } from "../../../../../../Data/Either"
+import { append, empty, List, map, notNullStr } from "../../../../../../Data/List"
+import { ensure, fromMaybe, Maybe } from "../../../../../../Data/Maybe"
+import { fromList } from "../../../../../../Data/OrderedMap"
+import { Pair } from "../../../../../../Data/Tuple"
+import { Advantage } from "../../../../../Models/Wiki/Advantage"
+import { toNatural } from "../../../../NumberUtils"
+import { Expect } from "../../../Expect"
+import { lookupKeyValid, TableType } from "../../Validators/Generic"
+import { mensureMapNaturalListOptional, mensureMapPairListOptional } from "../../Validators/ToValue"
 
 export const toPrerequisitesIndex =
   (lookup_l10n: (key: string) => Maybe<string>) =>
-  (lookup_univ: (key: string) => Maybe<string>) =>{
+  (lookup_univ: (key: string) => Maybe<string>) => {
     const checkOptionalUnivNaturalNumberList =
       lookupKeyValid (mensureMapNaturalListOptional ("&")) (TableType.Univ) (lookup_univ)
 

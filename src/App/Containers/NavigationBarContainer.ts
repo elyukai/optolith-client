@@ -1,22 +1,22 @@
-import { connect } from "react-redux";
-import { bind, join, Nothing } from "../../Data/Maybe";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as HerolistActions from "../Actions/HerolistActions";
-import * as HistoryActions from "../Actions/HistoryActions";
-import * as InGameActions from "../Actions/InGameActions";
-import * as LocationActions from "../Actions/LocationActions";
-import * as SubwindowsActions from "../Actions/SubwindowsActions";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getAPObjectMap, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from "../Selectors/adventurePointsSelectors";
-import { getRedoAvailability, getUndoAvailability } from "../Selectors/currentHeroSelectors";
-import { getIsLiturgicalChantsTabAvailable } from "../Selectors/liturgicalChantsSelectors";
-import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
-import { getIsSpellsTabAvailable } from "../Selectors/spellsSelectors";
-import { getAvatar, getCurrentTab, getIsSettingsOpen } from "../Selectors/stateSelectors";
-import { getIsHeroSection, getSubtabs, getTabs } from "../Selectors/uilocationSelectors";
-import { TabId } from "../Utilities/LocationUtils";
-import { NavigationBar, NavigationBarDispatchProps, NavigationBarOwnProps, NavigationBarStateProps } from "../Views/NavBar/NavigationBar";
+import { connect } from "react-redux"
+import { bind, join, Nothing } from "../../Data/Maybe"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as HerolistActions from "../Actions/HerolistActions"
+import * as HistoryActions from "../Actions/HistoryActions"
+import * as InGameActions from "../Actions/InGameActions"
+import * as LocationActions from "../Actions/LocationActions"
+import * as SubwindowsActions from "../Actions/SubwindowsActions"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getAPObjectMap, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from "../Selectors/adventurePointsSelectors"
+import { getRedoAvailability, getUndoAvailability } from "../Selectors/currentHeroSelectors"
+import { getIsLiturgicalChantsTabAvailable } from "../Selectors/liturgicalChantsSelectors"
+import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"
+import { getIsSpellsTabAvailable } from "../Selectors/spellsSelectors"
+import { getAvatar, getCurrentTab, getIsSettingsOpen } from "../Selectors/stateSelectors"
+import { getIsHeroSection, getSubtabs, getTabs } from "../Selectors/uilocationSelectors"
+import { TabId } from "../Utilities/LocationUtils"
+import { NavigationBar, NavigationBarDispatchProps, NavigationBarOwnProps, NavigationBarStateProps } from "../Views/NavBar/NavigationBar"
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: NavigationBarOwnProps): NavigationBarStateProps => ({
@@ -48,8 +48,8 @@ const mapDispatchToProps = (dispatch: ReduxDispatch, ownProps: NavigationBarOwnP
   redo () {
     dispatch (HistoryActions.redo ())
   },
-  saveHero () {
-    dispatch (HerolistActions.saveHero (ownProps.l10n) (Nothing))
+  async saveHero () {
+    await dispatch (HerolistActions.saveHero (ownProps.l10n) (Nothing))
   },
   openSettings () {
     dispatch (SubwindowsActions.openSettings ())

@@ -1,9 +1,9 @@
-import { List } from "../../Data/List";
-import { Record, RecordIBase } from "../../Data/Record";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { FilterAccessor, filterByMulti, filterRecordsByE, filterRecordsByName } from "./filterBy";
-import { pipe } from "./pipe";
-import { RecordWithName, sortByMulti, SortOptions, sortRecordsByName } from "./sortBy";
+import { List } from "../../Data/List"
+import { Record, RecordIBase } from "../../Data/Record"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { FilterAccessor, filterByMulti, filterRecordsByE, filterRecordsByName } from "./filterBy"
+import { pipe } from "./pipe"
+import { RecordWithName, sortByMulti, SortOptions, sortRecordsByName } from "./sortBy"
 
 /**
  * A combination of `filterRecordsBy` and `sortRecordsBy`.

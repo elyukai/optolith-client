@@ -1,23 +1,23 @@
-import * as React from "react";
-import { flip } from "../../../../Data/Function";
-import { fmap } from "../../../../Data/Functor";
-import { flength, List, map, replicateR, toArray } from "../../../../Data/List";
-import { bindF, fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe";
-import { compare } from "../../../../Data/Num";
-import { fromDefault, Record } from "../../../../Data/Record";
-import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
-import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
-import { findSelectOption } from "../../../Utilities/Activatable/selectionUtils";
-import { compareLocale, translate } from "../../../Utilities/I18n";
-import { toRoman } from "../../../Utilities/NumberUtils";
-import { pipe_ } from "../../../Utilities/pipe";
-import { comparingR, sortByMulti } from "../../../Utilities/sortBy";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { flip } from "../../../../Data/Function"
+import { fmap } from "../../../../Data/Functor"
+import { flength, List, map, replicateR, toArray } from "../../../../Data/List"
+import { bindF, fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe"
+import { compare } from "../../../../Data/Num"
+import { fromDefault, Record } from "../../../../Data/Record"
+import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { SelectOption } from "../../../Models/Wiki/sub/SelectOption"
+import { findSelectOption } from "../../../Utilities/Activatable/selectionUtils"
+import { compareLocale, translate } from "../../../Utilities/I18n"
+import { toRoman } from "../../../Utilities/NumberUtils"
+import { pipe_ } from "../../../Utilities/pipe"
+import { comparingR, sortByMulti } from "../../../Utilities/sortBy"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface SkillsSheetLanguagesProps {
+interface Props {
   languagesStateEntry: Maybe<Record<ActivatableDependent>>
   languagesWikiEntry: Maybe<Record<SpecialAbility>>
   l10n: L10nRecord
@@ -37,7 +37,7 @@ const IdNameLevel =
                 level: 0,
               })
 
-export function SkillsSheetLanguages (props: SkillsSheetLanguagesProps) {
+export const SkillsSheetLanguages: React.FC<Props> = props => {
   const {
     languagesStateEntry: maybeLanguagesStateEntry,
     languagesWikiEntry: maybeLanguagesWikiEntry,

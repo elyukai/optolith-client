@@ -1,14 +1,14 @@
-import { List } from "../../../Data/List";
-import { elem, OrderedSet } from "../../../Data/OrderedSet";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
-import { ProfessionRequireIncreasable } from "../Wiki/prerequisites/IncreasableRequirement";
-import { Profession } from "../Wiki/Profession";
-import { ProfessionSelections } from "../Wiki/professionSelections/ProfessionAdjustmentSelections";
-import { ActivatableNameCostIsActive } from "./ActivatableNameCostIsActive";
-import { IncreasableForView } from "./IncreasableForView";
-import { IncreasableListForView } from "./IncreasableListForView";
-import { ProfessionVariantCombined } from "./ProfessionVariantCombined";
+import { List } from "../../../Data/List"
+import { elem, OrderedSet } from "../../../Data/OrderedSet"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { pipe } from "../../Utilities/pipe"
+import { ProfessionRequireIncreasable } from "../Wiki/prerequisites/IncreasableRequirement"
+import { Profession } from "../Wiki/Profession"
+import { ProfessionSelections } from "../Wiki/professionSelections/ProfessionAdjustmentSelections"
+import { ActivatableNameCostIsActive } from "./ActivatableNameCostIsActive"
+import { IncreasableForView } from "./IncreasableForView"
+import { IncreasableListForView } from "./IncreasableListForView"
+import { ProfessionVariantCombined } from "./ProfessionVariantCombined"
 
 export interface ProfessionCombined {
   "@@name": "ProfessionCombined"

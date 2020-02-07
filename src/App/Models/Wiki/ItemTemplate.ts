@@ -1,10 +1,10 @@
-import { List } from "../../../Data/List";
-import { Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
-import { DropdownOption } from "../../Views/Universal/Dropdown";
-import { Erratum } from "./sub/Errata";
-import { PrimaryAttributeDamageThreshold } from "./sub/PrimaryAttributeDamageThreshold";
-import { SourceLink } from "./sub/SourceLink";
+import { List } from "../../../Data/List"
+import { Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, Record } from "../../../Data/Record"
+import { DropdownOption } from "../View/DropdownOption"
+import { Erratum } from "./sub/Errata"
+import { PrimaryAttributeDamageThreshold } from "./sub/PrimaryAttributeDamageThreshold"
+import { SourceLink } from "./sub/SourceLink"
 
 export interface ItemTemplate {
   "@@name": "ItemTemplate"

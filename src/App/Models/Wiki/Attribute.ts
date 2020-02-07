@@ -1,6 +1,6 @@
-import { fromDefault, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { EntryWithCategory } from "./wikiTypeHelpers";
+import { fromDefault, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { EntryWithCategory } from "./wikiTypeHelpers"
 
 export interface Attribute {
   "@@name": "Attribute"

@@ -1,14 +1,14 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
-import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
-import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
-import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { ActivatableAddList } from "../Activatable/ActivatableAddList";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Maybe } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
+import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
+import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { ActivatableAddList } from "../Activatable/ActivatableAddList"
 
 interface InactiveListProps {
   inactiveList: Maybe<List<

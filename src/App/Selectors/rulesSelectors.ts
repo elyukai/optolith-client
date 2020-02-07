@@ -1,15 +1,15 @@
-import { fmap } from "../../Data/Functor";
-import { OrderedMap } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { Pair } from "../../Data/Tuple";
-import { uncurryN } from "../../Data/Tuple/Curry";
-import { SpecialAbilityId } from "../Constants/Ids";
-import { Rules } from "../Models/Hero/Rules";
-import { Book } from "../Models/Wiki/Book";
-import { isMaybeActive } from "../Utilities/Activatable/isActive";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { mapGetToSlice } from "../Utilities/SelectorsUtils";
-import { getRules, getRulesM, getSpecialAbilities, getWikiBooks } from "./stateSelectors";
+import { fmap } from "../../Data/Functor"
+import { OrderedMap } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { Pair } from "../../Data/Tuple"
+import { uncurryN } from "../../Data/Tuple/Curry"
+import { SpecialAbilityId } from "../Constants/Ids"
+import { Rules } from "../Models/Hero/Rules"
+import { Book } from "../Models/Wiki/Book"
+import { isMaybeActive } from "../Utilities/Activatable/isActive"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { mapGetToSlice } from "../Utilities/SelectorsUtils"
+import { getRules, getRulesM, getSpecialAbilities, getWikiBooks } from "./stateSelectors"
 
 export type EnabledSourceBooks = Pair<OrderedMap<string, Record<Book>>, Record<Rules>>
 

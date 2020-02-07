@@ -1,16 +1,16 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { HitZoneArmor } from "../../Models/Hero/HitZoneArmor";
-import { Item } from "../../Models/Hero/Item";
-import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
-import { IconButton } from "../Universal/IconButton";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemButtons } from "../Universal/ListItemButtons";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListItemSeparator } from "../Universal/ListItemSeparator";
-import { TooltipToggle } from "../Universal/TooltipToggle";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { HitZoneArmor } from "../../Models/Hero/HitZoneArmor"
+import { Item } from "../../Models/Hero/Item"
+import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
+import { IconButton } from "../Universal/IconButton"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemButtons } from "../Universal/ListItemButtons"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListItemSeparator } from "../Universal/ListItemSeparator"
+import { TooltipToggle } from "../Universal/TooltipToggle"
 
 export interface HitZoneArmorsListItemProps {
   data: Record<HitZoneArmor>
@@ -22,19 +22,19 @@ export interface HitZoneArmorsListItemProps {
 
 const HZAA = HitZoneArmor.A
 
-export function HitZoneArmorsListItem (props: HitZoneArmorsListItemProps) {
+export const HitZoneArmorsListItem: React.FC<HitZoneArmorsListItemProps> = props => {
   const { data: item, editItem, deleteItem } = props
 
   const handleEdit =
     React.useCallback (
       () => editItem (HZAA.id (item)),
-      [editItem, item]
+      [ editItem, item ]
     )
 
   const handleDelete =
     React.useCallback (
       () => deleteItem (HZAA.id (item)),
-      [deleteItem, item]
+      [ deleteItem, item ]
     )
 
   return (

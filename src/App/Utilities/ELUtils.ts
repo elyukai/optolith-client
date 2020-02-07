@@ -1,15 +1,15 @@
-import { fmap } from "../../Data/Functor";
-import { and, Maybe } from "../../Data/Maybe";
-import { inc, lt } from "../../Data/Num";
-import { foldlWithKey, lookupF, OrderedMap } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { IdPrefixes } from "../Constants/IdPrefixes";
-import { ExperienceLevelId } from "../Constants/Ids";
-import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
-import { getNumericId, prefixId } from "./IDUtils";
-import { pipe } from "./pipe";
-import { WikiModelRecord, WikiModel } from "../Models/Wiki/WikiModel";
-import { HeroModel } from "../Models/Hero/HeroModel";
+import { fmap } from "../../Data/Functor"
+import { and, Maybe } from "../../Data/Maybe"
+import { inc, lt } from "../../Data/Num"
+import { foldlWithKey, lookupF, OrderedMap } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { IdPrefixes } from "../Constants/IdPrefixes"
+import { ExperienceLevelId } from "../Constants/Ids"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
+import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { getNumericId, prefixId } from "./IDUtils"
+import { pipe } from "./pipe"
 
 
 const WA = WikiModel.A

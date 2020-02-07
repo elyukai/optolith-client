@@ -1,19 +1,19 @@
-import { fmap } from "../../Data/Functor";
-import { bindF, fromJust, isJust, Just, Maybe } from "../../Data/Maybe";
-import { keys, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { IdPrefixes } from "../Constants/IdPrefixes";
-import { EditItem } from "../Models/Hero/EditItem";
-import { HitZoneArmor } from "../Models/Hero/HitZoneArmor";
-import { Item } from "../Models/Hero/Item";
-import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
-import { getHitZoneArmorsState, getItemEditorInstance, getItemsState, getWikiItemTemplates } from "../Selectors/stateSelectors";
-import { getNewId, prefixId } from "../Utilities/IDUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { EquipmentSortOptions } from "../Utilities/Raw/JSON/Config";
-import { ReduxAction } from "./Actions";
-import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids";
+import { fmap } from "../../Data/Functor"
+import { bindF, fromJust, isJust, Just, Maybe } from "../../Data/Maybe"
+import { keys, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { IdPrefixes } from "../Constants/IdPrefixes"
+import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids"
+import { EditItem } from "../Models/Hero/EditItem"
+import { HitZoneArmor } from "../Models/Hero/HitZoneArmor"
+import { Item } from "../Models/Hero/Item"
+import { ItemTemplate } from "../Models/Wiki/ItemTemplate"
+import { getHitZoneArmorsState, getItemEditorInstance, getItemsState, getWikiItemTemplates } from "../Selectors/stateSelectors"
+import { getNewId, prefixId } from "../Utilities/IDUtils"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { EquipmentSortOptions } from "../Utilities/Raw/JSON/Config"
+import { ReduxAction } from "./Actions"
 
 const getNewIdFromCurrentItems: (x: Just<OrderedMap<string, Record<Item>>>) => string =
   pipe (fromJust, keys, getNewId, prefixId (IdPrefixes.ITEM))
@@ -25,7 +25,7 @@ const getNewIdFromCurrentHitZoneArmors:
 export interface AddItemAction {
   type: ActionTypes.ADD_ITEM
   payload: {
-    newId: string;
+    newId: string
   }
 }
 
@@ -50,8 +50,8 @@ export const addItem: ReduxAction =
 export interface AddItemTemplateAction {
   type: ActionTypes.ADD_ITEM_TEMPLATE
   payload: {
-    template: Record<ItemTemplate>;
-    newId: string;
+    template: Record<ItemTemplate>
+    newId: string
   }
 }
 
@@ -103,7 +103,7 @@ export const saveItem = (): SaveItemAction => ({
 export interface EditItemAction {
   type: ActionTypes.EDIT_ITEM
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -117,7 +117,7 @@ export const editItem = (id: string): EditItemAction => ({
 export interface RemoveItemAction {
   type: ActionTypes.REMOVE_ITEM
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -131,7 +131,7 @@ export const removeItem = (id: string): RemoveItemAction => ({
 export interface SetItemsSortOrderAction {
   type: ActionTypes.SET_ITEMS_SORT_ORDER
   payload: {
-    sortOrder: EquipmentSortOptions;
+    sortOrder: EquipmentSortOptions
   }
 }
 
@@ -145,7 +145,7 @@ export const setItemsSortOrder = (sortOrder: EquipmentSortOptions): SetItemsSort
 export interface SetDucatesAction {
   type: ActionTypes.SET_DUCATES
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -159,7 +159,7 @@ export const setDucates = (value: string): SetDucatesAction => ({
 export interface SetSilverthalersAction {
   type: ActionTypes.SET_SILVERTHALERS
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -173,7 +173,7 @@ export const setSilverthalers = (value: string): SetSilverthalersAction => ({
 export interface SetHellersAction {
   type: ActionTypes.SET_HELLERS
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -187,7 +187,7 @@ export const setHellers = (value: string): SetHellersAction => ({
 export interface SetKreutzersAction {
   type: ActionTypes.SET_KREUTZERS
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -201,7 +201,7 @@ export const setKreutzers = (value: string): SetKreutzersAction => ({
 export interface SetNameAction {
   type: ActionTypes.SET_ITEM_NAME
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -215,7 +215,7 @@ export const setName = (value: string): SetNameAction => ({
 export interface SetPriceAction {
   type: ActionTypes.SET_ITEM_PRICE
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -229,7 +229,7 @@ export const setPrice = (value: string): SetPriceAction => ({
 export interface SetWeightAction {
   type: ActionTypes.SET_ITEM_WEIGHT
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -243,7 +243,7 @@ export const setWeight = (value: string): SetWeightAction => ({
 export interface SetAmountAction {
   type: ActionTypes.SET_ITEM_AMOUNT
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -257,7 +257,7 @@ export const setAmount = (value: string): SetAmountAction => ({
 export interface SetWhereAction {
   type: ActionTypes.SET_ITEM_WHERE
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -271,7 +271,7 @@ export const setWhere = (value: string): SetWhereAction => ({
 export interface SetGroupAction {
   type: ActionTypes.SET_ITEM_GROUP
   payload: {
-    gr: number;
+    gr: number
   }
 }
 
@@ -285,7 +285,7 @@ export const setGroup = (gr: number): SetGroupAction => ({
 export interface SetTemplateAction {
   type: ActionTypes.SET_ITEM_TEMPLATE
   payload: {
-    template: string;
+    template: string
   }
 }
 
@@ -299,7 +299,7 @@ export const setTemplate = (template: string): SetTemplateAction => ({
 export interface SetCombatTechniqueAction {
   type: ActionTypes.SET_ITEM_COMBAT_TECHNIQUE
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -313,7 +313,7 @@ export const setCombatTechnique = (id: string): SetCombatTechniqueAction => ({
 export interface SetDamageDiceNumberAction {
   type: ActionTypes.SET_ITEM_DAMAGE_DICE_NUMBER
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -327,7 +327,7 @@ export const setDamageDiceNumber = (value: string): SetDamageDiceNumberAction =>
 export interface SetDamageDiceSidesAction {
   type: ActionTypes.SET_ITEM_DAMAGE_DICE_SIDES
   payload: {
-    value: number;
+    value: number
   }
 }
 
@@ -341,7 +341,7 @@ export const setDamageDiceSides = (value: number): SetDamageDiceSidesAction => (
 export interface SetDamageFlatAction {
   type: ActionTypes.SET_ITEM_DAMAGE_FLAT
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -355,7 +355,7 @@ export const setDamageFlat = (value: string): SetDamageFlatAction => ({
 export interface SetPrimaryAttributeAction {
   type: ActionTypes.SET_ITEM_PRIMARY_ATTRIBUTE
   payload: {
-    primary: Maybe<string>;
+    primary: Maybe<string>
   }
 }
 
@@ -369,7 +369,7 @@ export const setPrimaryAttribute = (primary: Maybe<string>): SetPrimaryAttribute
 export interface SetDamageThresholdAction {
   type: ActionTypes.SET_ITEM_DAMAGE_THRESHOLD
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -383,7 +383,7 @@ export const setDamageThreshold = (value: string): SetDamageThresholdAction => (
 export interface SetFirstDamageThresholdAction {
   type: ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -397,7 +397,7 @@ export const setFirstDamageThreshold = (value: string): SetFirstDamageThresholdA
 export interface SetSecondDamageThresholdAction {
   type: ActionTypes.SET_ITEM_SECOND_DAMAGE_THRESHOLD
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -409,17 +409,17 @@ export const setSecondDamageThreshold = (value: string): SetSecondDamageThreshol
 })
 
 export interface SwitchIsDamageThresholdSeparatedAction {
-  type: ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED
+  type: ActionTypes.SWITCH_IS_ITEM_DT_SEPARATED
 }
 
 export const switchIsDamageThresholdSeparated = (): SwitchIsDamageThresholdSeparatedAction => ({
-  type: ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED,
+  type: ActionTypes.SWITCH_IS_ITEM_DT_SEPARATED,
 })
 
 export interface SetAttackAction {
   type: ActionTypes.SET_ITEM_ATTACK
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -433,7 +433,7 @@ export const setAttack = (value: string): SetAttackAction => ({
 export interface SetParryAction {
   type: ActionTypes.SET_ITEM_PARRY
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -447,7 +447,7 @@ export const setParry = (value: string): SetParryAction => ({
 export interface SetReachAction {
   type: ActionTypes.SET_ITEM_REACH
   payload: {
-    id: number;
+    id: number
   }
 }
 
@@ -461,7 +461,7 @@ export const setReach = (id: number): SetReachAction => ({
 export interface SetLengthAction {
   type: ActionTypes.SET_ITEM_LENGTH
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -475,7 +475,7 @@ export const setLength = (value: string): SetLengthAction => ({
 export interface SetStructurePointsAction {
   type: ActionTypes.SET_ITEM_STRUCTURE_POINTS
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -489,8 +489,8 @@ export const setStructurePoints = (value: string): SetStructurePointsAction => (
 export interface SetRangeAction {
   type: ActionTypes.SET_ITEM_RANGE
   payload: {
-    value: string;
-    index: number;
+    value: string
+    index: number
   }
 }
 
@@ -505,7 +505,7 @@ export const setRange = (value: string, index: number): SetRangeAction => ({
 export interface SetReloadTimeAction {
   type: ActionTypes.SET_ITEM_RELOAD_TIME
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -519,7 +519,7 @@ export const setReloadTime = (value: string): SetReloadTimeAction => ({
 export interface SetAmmunitionAction {
   type: ActionTypes.SET_ITEM_AMMUNITION
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -533,7 +533,7 @@ export const setAmmunition = (id: string): SetAmmunitionAction => ({
 export interface SetProtectionAction {
   type: ActionTypes.SET_ITEM_PROTECTION
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -547,7 +547,7 @@ export const setProtection = (value: string): SetProtectionAction => ({
 export interface SetEncumbranceAction {
   type: ActionTypes.SET_ITEM_ENCUMBRANCE
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -561,7 +561,7 @@ export const setEncumbrance = (value: string): SetEncumbranceAction => ({
 export interface SetMovementModifierAction {
   type: ActionTypes.SET_ITEM_MOVEMENT_MODIFIER
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -575,7 +575,7 @@ export const setMovementModifier = (value: string): SetMovementModifierAction =>
 export interface SetInitiativeModifierAction {
   type: ActionTypes.SET_ITEM_INITIATIVE_MODIFIER
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -589,7 +589,7 @@ export const setInitiativeModifier = (value: string): SetInitiativeModifierActio
 export interface SetStabilityModifierAction {
   type: ActionTypes.SET_ITEM_STABILITY_MODIFIER
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -627,7 +627,7 @@ export const switchIsImprovisedWeapon = (): SwitchIsImprovisedWeaponAction => ({
 export interface SetImprovisedWeaponGroupAction {
   type: ActionTypes.SET_ITEM_IMPROVISED_WEAPON_GROUP
   payload: {
-    gr: number;
+    gr: number
   }
 }
 
@@ -641,7 +641,7 @@ export const setImprovisedWeaponGroup = (gr: number): SetImprovisedWeaponGroupAc
 export interface SetLossAction {
   type: ActionTypes.SET_ITEM_LOSS
   payload: {
-    id: Maybe<number>;
+    id: Maybe<number>
   }
 }
 
@@ -671,7 +671,7 @@ export const setHasAdditionalPenalties = (): SwitchHasAdditionalPenaltiesAction 
 export interface SetArmorTypeAction {
   type: ActionTypes.SET_ITEM_ARMOR_TYPE
   payload: {
-    id: number;
+    id: number
   }
 }
 
@@ -685,7 +685,7 @@ export const setArmorType = (id: number): SetArmorTypeAction => ({
 export interface ApplyItemTemplateAction {
   type: ActionTypes.APPLY_ITEM_TEMPLATE
   payload: {
-    template: Record<ItemTemplate>;
+    template: Record<ItemTemplate>
   }
 }
 
@@ -708,7 +708,7 @@ export const applyItemTemplate: ReduxAction =
 export interface LockItemTemplateAction {
   type: ActionTypes.LOCK_ITEM_TEMPLATE
   payload: {
-    template: Record<ItemTemplate>;
+    template: Record<ItemTemplate>
   }
 }
 
@@ -739,7 +739,7 @@ export const unlockItemTemplate = (): UnlockItemTemplateAction => ({
 export interface AddArmorZonesAction {
   type: ActionTypes.ADD_ARMOR_ZONES
   payload: {
-    newId: string;
+    newId: string
   }
 }
 
@@ -787,7 +787,7 @@ export const saveArmorZones = (): SaveArmorZonesAction => ({
 export interface EditArmorZonesAction {
   type: ActionTypes.EDIT_ARMOR_ZONES
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -801,7 +801,7 @@ export const editArmorZones = (id: string): EditArmorZonesAction => ({
 export interface RemoveArmorZonesAction {
   type: ActionTypes.REMOVE_ARMOR_ZONES
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -815,7 +815,7 @@ export const removeArmorZonesFromList = (id: string): RemoveArmorZonesAction => 
 export interface SetArmorZonesNameAction {
   type: ActionTypes.SET_ARMOR_ZONES_NAME
   payload: {
-    value: string;
+    value: string
   }
 }
 
@@ -829,7 +829,7 @@ export const setArmorZonesName = (value: string): SetArmorZonesNameAction => ({
 export interface SetArmorZonesHeadAction {
   type: ActionTypes.SET_ARMOR_ZONES_HEAD
   payload: {
-    id: Maybe<string>;
+    id: Maybe<string>
   }
 }
 
@@ -843,7 +843,7 @@ export const setArmorZonesHead = (id: Maybe<string>): SetArmorZonesHeadAction =>
 export interface SetArmorZonesHeadLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_HEAD_LOSS
   payload: {
-    id: Maybe<number>;
+    id: Maybe<number>
   }
 }
 
@@ -857,7 +857,7 @@ export const setArmorZonesHeadLoss = (id: Maybe<number>): SetArmorZonesHeadLossA
 export interface SetArmorZonesLeftArmAction {
   type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM
   payload: {
-    id: Maybe<string>;
+    id: Maybe<string>
   }
 }
 
@@ -871,7 +871,7 @@ export const setArmorZonesLeftArm = (id: Maybe<string>): SetArmorZonesLeftArmAct
 export interface SetArmorZonesLeftArmLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM_LOSS
   payload: {
-    id: Maybe<number>;
+    id: Maybe<number>
   }
 }
 
@@ -885,7 +885,7 @@ export const setArmorZonesLeftArmLoss = (id: Maybe<number>): SetArmorZonesLeftAr
 export interface SetArmorZonesLeftLegAction {
   type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG
   payload: {
-    id: Maybe<string>;
+    id: Maybe<string>
   }
 }
 
@@ -899,7 +899,7 @@ export const setArmorZonesLeftLeg = (id: Maybe<string>): SetArmorZonesLeftLegAct
 export interface SetArmorZonesLeftLegLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG_LOSS
   payload: {
-    id: Maybe<number>;
+    id: Maybe<number>
   }
 }
 
@@ -914,7 +914,7 @@ export const setArmorZonesLeftLegLoss =
 export interface SetArmorZonesTorsoAction {
   type: ActionTypes.SET_ARMOR_ZONES_TORSO
   payload: {
-    id: Maybe<string>;
+    id: Maybe<string>
   }
 }
 
@@ -928,7 +928,7 @@ export const setArmorZonesTorso = (id: Maybe<string>): SetArmorZonesTorsoAction 
 export interface SetArmorZonesTorsoLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_TORSO_LOSS
   payload: {
-    id: Maybe<number>;
+    id: Maybe<number>
   }
 }
 
@@ -942,7 +942,7 @@ export const setArmorZonesTorsoLoss = (id: Maybe<number>): SetArmorZonesTorsoLos
 export interface SetArmorZonesRightArmAction {
   type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM
   payload: {
-    id: Maybe<string>;
+    id: Maybe<string>
   }
 }
 
@@ -956,7 +956,7 @@ export const setArmorZonesRightArm = (id: Maybe<string>): SetArmorZonesRightArmA
 export interface SetArmorZonesRightArmLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM_LOSS
   payload: {
-    id: Maybe<number>;
+    id: Maybe<number>
   }
 }
 
@@ -970,7 +970,7 @@ export const setArmorZonesRightArmLoss = (id: Maybe<number>): SetArmorZonesRight
 export interface SetArmorZonesRightLegAction {
   type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG
   payload: {
-    id: Maybe<string>;
+    id: Maybe<string>
   }
 }
 
@@ -984,7 +984,7 @@ export const setArmorZonesRightLeg = (id: Maybe<string>): SetArmorZonesRightLegA
 export interface SetArmorZonesRightLegLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG_LOSS
   payload: {
-    id: Maybe<number>;
+    id: Maybe<number>
   }
 }
 
@@ -996,32 +996,32 @@ export const setArmorZonesRightLegLoss = (id: Maybe<number>): SetArmorZonesRight
 })
 
 export interface SetMeleeItemTemplatesCombatTechniqueFilterAction {
-  type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER
+  type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_CT_FILTER
   payload: {
-    filterOption: Maybe<MeleeCombatTechniqueId>;
+    filterOption: Maybe<MeleeCombatTechniqueId>
   }
 }
 
 export const setMeleeItemTemplatesCombatTechniqueFilter =
   (filterOption: Maybe<MeleeCombatTechniqueId>):
   SetMeleeItemTemplatesCombatTechniqueFilterAction => ({
-    type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER,
+    type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_CT_FILTER,
     payload: {
       filterOption,
     },
   })
 
 export interface SetRangedItemTemplatesCombatTechniqueFilterAction {
-  type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER
+  type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_CT_FILTER
   payload: {
-    filterOption: Maybe<RangedCombatTechniqueId>;
+    filterOption: Maybe<RangedCombatTechniqueId>
   }
 }
 
 export const setRangedItemTemplatesCombatTechniqueFilter =
   (filterOption: Maybe<RangedCombatTechniqueId>):
   SetRangedItemTemplatesCombatTechniqueFilterAction => ({
-    type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER,
+    type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_CT_FILTER,
     payload: {
       filterOption,
     },
@@ -1030,7 +1030,7 @@ export const setRangedItemTemplatesCombatTechniqueFilter =
 export interface SetEquipmentFilterTextAction {
   type: ActionTypes.SET_EQUIPMENT_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 
@@ -1044,7 +1044,7 @@ export const setEquipmentFilterText = (filterText: string): SetEquipmentFilterTe
 export interface SetItemTemplatesFilterTextAction {
   type: ActionTypes.SET_ITEM_TEMPLATES_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 
@@ -1059,7 +1059,7 @@ export const setItemTemplatesFilterText =
 export interface SetZoneArmorFilterTextAction {
   type: ActionTypes.SET_ZONE_ARMOR_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 

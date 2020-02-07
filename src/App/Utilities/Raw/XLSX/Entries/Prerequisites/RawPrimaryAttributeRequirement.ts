@@ -1,5 +1,5 @@
-import { PrimaryAttributeType } from "../../../../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
-import { AllRawRequirementObjects } from "../rawTypeHelpers";
+import { PrimaryAttributeType } from "../../../../../Models/Wiki/prerequisites/PrimaryAttributeRequirement"
+import { AllRawRequirementObjects } from "../rawTypeHelpers"
 
 export interface RawRequirePrimaryAttribute {
   id: "ATTR_PRIMARY"

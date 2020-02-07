@@ -1,5 +1,5 @@
-import { Tuple } from "../Tuple";
-import { sel1, sel2, sel3 } from "./Select";
+import { Tuple } from "../Tuple"
+import { sel1, sel2, sel3 } from "./Select"
 
 /**
  * `curryN :: ((a, b) -> c) -> a -> b -> c`

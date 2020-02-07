@@ -1,24 +1,45 @@
-import { gte, lt, lte } from "semver";
-import { ident } from "../../../../../Data/Function";
-import { fmap } from "../../../../../Data/Functor";
-import { all } from "../../../../../Data/List";
-import { bindF, ensure, fromMaybe, Maybe, maybe_ } from "../../../../../Data/Maybe";
-import { lookupF } from "../../../../../Data/OrderedMap";
-import { Culture } from "../../../../Models/Wiki/Culture";
-import { L10n, L10nRecord } from "../../../../Models/Wiki/L10n";
-import { IncreaseSkill } from "../../../../Models/Wiki/sub/IncreaseSkill";
-import { WikiModel, WikiModelRecord } from "../../../../Models/Wiki/WikiModel";
-import { current_version } from "../../../../Selectors/envSelectors";
-import { getBlessedTradStrIdFromNumId, getMagicalTraditionInstanceIdByNumericId } from "../../../IDUtils";
-import { hasOwnProperty } from "../../../Object";
-import { pipe, pipe_ } from "../../../pipe";
-import { isNumber } from "../../../typeCheckUtils";
-import { RawCustomItem, RawHero } from "../../XLSX/RawData";
+import { gte, lt, lte } from "semver"
+import { ident } from "../../../../../Data/Function"
+import { fmap } from "../../../../../Data/Functor"
+import { all } from "../../../../../Data/List"
+import { bindF, ensure, fromMaybe, Maybe, maybe_ } from "../../../../../Data/Maybe"
+import { lookupF } from "../../../../../Data/OrderedMap"
+import { Culture } from "../../../../Models/Wiki/Culture"
+import { L10n, L10nRecord } from "../../../../Models/Wiki/L10n"
+import { IncreaseSkill } from "../../../../Models/Wiki/sub/IncreaseSkill"
+import { WikiModel, WikiModelRecord } from "../../../../Models/Wiki/WikiModel"
+import { current_version } from "../../../../Selectors/envSelectors"
+import { getBlessedTradStrIdFromNumId, getMagicalTraditionInstanceIdByNumericId } from "../../../IDUtils"
+import { hasOwnProperty } from "../../../Object"
+import { pipe, pipe_ } from "../../../pipe"
+import { isNumber } from "../../../typeCheckUtils"
+import { RawCustomItem, RawHero } from "../../XLSX/RawData"
 
 const WA = WikiModel.A
 
 export const MIN_SUPPORTED_VERSION = "0.49.5"
 export const MAX_SUPPORTED_VERSION = current_version
+
+const shallowClone = <A extends object> (x: A): A => ({ ...x })
+
+const fromEntries =
+  <A> (xs: [string, A][]): { [key: string]: A } => {
+    const obj: { [key: string]: A } = {}
+
+    xs.forEach (x => {
+      obj [x[0]] = x[1]
+    })
+
+    return obj
+  }
+
+const convertLT =
+  (lower_than_version: string) =>
+  (f: ident<RawHero>) =>
+  (hero: RawHero): RawHero =>
+    lt (hero.clientVersion, lower_than_version)
+      ? { ...(f (hero)), clientVersion: lower_than_version }
+      : hero
 
 export const convertHero =
   (l10n: L10nRecord) =>
@@ -103,6 +124,7 @@ export const convertHero =
                         && hasOwnProperty ("SA_255") (entry.activatable)) {
                       const { SA_255: _, ...other } = entry.activatable
                       entry.activatable = other
+
                       // @ts-ignore
                       entry.ap.spent -= 10
                     }
@@ -167,6 +189,7 @@ export const convertHero =
                       for (const active of arr) {
                         const { sid, sid2 } = active
                         const id = getMagicalTraditionInstanceIdByNumericId (sid as number)
+
                         // @ts-ignore
                         entry.activatable[fromMaybe ("SA_70") (id)] = [ { sid: sid2 } ]
                       }
@@ -178,6 +201,7 @@ export const convertHero =
                       for (const active of arr) {
                         const { sid, sid2 } = active
                         const id = getBlessedTradStrIdFromNumId (sid as number)
+
                         // @ts-ignore
                         entry.activatable[fromMaybe ("SA_86") (id)] = [ { sid: sid2 } ]
                       }
@@ -255,10 +279,10 @@ export const convertHero =
                         ...hero.attr,
                         values: hero.attr.values.map ((e, i) => {
                           // @ts-ignore
-                          const inter = [ ...e ] as [string, number, number];
-                          inter[2] = i === index ? adjValue : 0;
+                          const inter = [ ...e ] as [string, number, number]
+                          inter[2] = i === index ? adjValue : 0
 
-                          return inter;
+                          return inter
                         }),
                       },
                     } as unknown as RawHero
@@ -269,26 +293,31 @@ export const convertHero =
                     ...hero,
                     attr: {
                       ...hero.attr,
+
                       // @ts-ignore
                       values: hero .attr .values .map (e => ({ id: e[0], value: e[1] })),
                       attributeAdjustmentSelected: [ "R_1", "R_3" ] .includes (hero .r!)
                         ? hero .attr .values .reduce (
+
                           // @ts-ignore
                           (acc, e) => e[2] === 1 ? e[0] : acc,
                           "ATTR_1"
                         )
                         : hero .r === "R_2"
                         ? hero .attr .values .reduce (
+
                           // @ts-ignore
                           (acc, e) => e[0] === "ATTR_2" && e[2] === 1 ? e[0] : acc,
                           "ATTR_8"
                         )
                         : hero .attr .values .reduce (
+
                           // @ts-ignore
                           (acc, e) => e[0] === "ATTR_4" && e[2] === 1 ? e[0] : acc,
                           "ATTR_6"
                         ),
                     },
+
                     // ct: Object.entries (hero.ct)
                     //   .reduce<StringKeyObject<number>> ((acc, e) => ({ ...acc, [e[0]]: e[1] - 6 }), {}),
                   })),
@@ -375,6 +404,7 @@ export const convertHero =
                   }),
         convertLT ("1.2.0-alpha.6")
                   (hero => pipe_ (
+
                     // Try to infer if player used cultural package
                     // To check that, we compare all skills of the cultural package
                     // if the actual SRs from the character are at least as high
@@ -396,6 +426,7 @@ export const convertHero =
                            ))
                   )),
         convertLT ("1.2.0-alpha.7")
+
                   // Fix Stigma (Green Hair) actually allow green hair in
                   // personal data
                   (hero => hasOwnProperty ("DISADV_45") (hero .activatable)
@@ -409,6 +440,7 @@ export const convertHero =
                     }
                     : hero),
         convertLT ("1.2.0-alpha.11")
+
                   // Fix Stigma (Green Hair) actually allow green hair in
                   // personal data
                   (hero => hasOwnProperty ("SA_250") (hero .activatable)
@@ -423,24 +455,3 @@ export const convertHero =
                     : hero)
       ))
     )
-
-const shallowClone = <A extends object> (x: A): A => ({ ...x })
-
-const fromEntries =
-  <A> (xs: [string, A][]): { [key: string]: A } => {
-    const obj: { [key: string]: A } = {}
-
-    xs.forEach (x => {
-      obj [x[0]] = x[1]
-    })
-
-    return obj
-  }
-
-const convertLT =
-  (lower_than_version: string) =>
-  (f: ident<RawHero>) =>
-  (hero: RawHero): RawHero =>
-    lt (hero.clientVersion, lower_than_version)
-      ? { ...(f (hero)), clientVersion: lower_than_version }
-      : hero

@@ -27,8 +27,6 @@ rules:
   no-duplicate-case: 2
   no-empty-character-class: 2
   no-ex-assign: 2
-  no-extra-parens: 0
-  no-extra-semi: 2
   no-inner-declarations: 1
   no-invalid-regexp: 2
   no-irregular-whitespace: 2
@@ -97,13 +95,11 @@ rules:
   no-proto: 2
   no-redeclare: 2
   no-return-assign: 2
-  no-return-await: 2
   no-script-url: 2
   no-self-assign: 2
   no-self-compare: 2
   no-throw-literal: 2
   no-unmodified-loop-condition: 2
-  no-unused-expressions: 2
   no-unused-labels: 2
   no-useless-call: 2
   no-useless-catch: 2
@@ -136,9 +132,6 @@ rules:
     - 2
     - consistent
   block-spacing: 2
-  brace-style:
-    - 2
-    - stroustrup
   # capitalized-comments: 2
   comma-dangle:
     - 2
@@ -147,11 +140,9 @@ rules:
       imports: always-multiline
       exports: always-multiline
       functions: only-multiline
-  comma-spacing: 2
   comma-style: 2
   computed-property-spacing: 2
   eol-last: 2
-  func-call-spacing: 0
   func-name-matching: 2
   func-names: 2
   func-style:
@@ -164,19 +155,37 @@ rules:
   function-paren-newline:
     - 2
     - consistent
-  indent: 0
   jsx-quotes: 2
   key-spacing: 2
   keyword-spacing: 2
   line-comment-position: 2
   lines-around-comment:
-    - 2
+    - 0
+      # requires an empty line before block comments
     - beforeBlockComment: true
-  # lines-around-comment":
-  #   - 2
-  #   - beforeBlockComment: true
-  #     allowBlockStart: true
-  #     beforeLineComment: true
+      # requires an empty line after block comments
+      afterBlockComment: false
+      # requires an empty line before line comments
+      beforeLineComment: true
+      # requires an empty line after line comments
+      afterLineComment: false
+      # allows comments to appear at the start of block statements
+      allowBlockStart: true
+      # allows comments to appear at the end of block statements
+      allowBlockEnd: false
+      # allows comments to appear at the start of object literals
+      allowObjectStart: true
+      # allows comments to appear at the end of object literals
+      allowObjectEnd: false
+      # allows comments to appear at the start of array literals
+      allowArrayStart: true
+      # allows comments to appear at the end of array literals
+      allowArrayEnd: false
+      # allows comments to appear at the start of classes
+      allowClassStart: true
+      # allows comments to appear at the end of classes
+      allowClassEnd: false
+      ignorePattern: "^ *@"
   lines-between-class-members: 2
   max-len:
     - 2
@@ -192,7 +201,6 @@ rules:
   newline-per-chained-call:
     - 2
     - ignoreChainWithDepth: 2
-  no-array-constructor: 2
   no-bitwise: 2
   no-continue: 2
   no-inline-comments: 2
@@ -240,16 +248,9 @@ rules:
   quote-props:
     - 2
     - as-needed
-  quotes:
-    - 2
-    - double
-    - avoidEscape: true
-      allowTemplateLiterals: true
-  semi: 0
   semi-spacing: 2
   semi-style: 2
   space-before-blocks: 2
-  space-before-function-paren: 2
   space-in-parens: 2
   space-infix-ops:
     - 2
@@ -275,7 +276,6 @@ rules:
   no-new-symbol: 2
   no-this-before-super: 2
   no-useless-computed-key: 2
-  no-useless-constructor: 2
   no-useless-rename: 2
   no-var: 2
   object-shorthand: 2
@@ -307,18 +307,14 @@ rules:
   "@typescript-eslint/await-thenable": 2
   # "@typescript-eslint/class-name-casing": 2
   "@typescript-eslint/consistent-type-assertions": 2
-  "@typescript-eslint/func-call-spacing":
-    - 2
-    - always
-    - allowNewlines: true
-  # "@typescript-eslint/indent":
-  #   - 2
-  #   - 2
-  #   - flatTernaryExpressions: true
   "@typescript-eslint/interface-name-prefix": 2
-  "@typescript-eslint/no-extra-parens":
-    - 1
-    - functions
+  "@typescript-eslint/member-delimiter-style":
+    - 2
+    - multiline:
+        delimiter: none
+      singleline:
+        delimiter: semi
+        requireLast: false
   "@typescript-eslint/no-floating-promises": 2
   "@typescript-eslint/no-for-in-array": 2
   "@typescript-eslint/no-inferrable-types": 2
@@ -333,7 +329,7 @@ rules:
   "@typescript-eslint/promise-function-async": 2
   # "@typescript-eslint/quotes": 2
   "@typescript-eslint/require-array-sort-compare": 2
-  # "@typescript-eslint/require-await": 2
+  "@typescript-eslint/require-await": 2
   "@typescript-eslint/restrict-plus-operands": 2
   # "@typescript-eslint/semi":
   #   - 2
@@ -343,6 +339,50 @@ rules:
   "@typescript-eslint/type-annotation-spacing": 2
   # "@typescript-eslint/unbound-method": 2
   "@typescript-eslint/unified-signatures": 2
+
+  # TypeScript Extension
+  brace-style: 0
+  "@typescript-eslint/brace-style":
+    - 2
+    - stroustrup
+  comma-spacing: 0
+  "@typescript-eslint/comma-spacing": 2
+  func-call-spacing: 0
+  "@typescript-eslint/func-call-spacing":
+    - 2
+    - always
+    - allowNewlines: true
+  indent: 0
+  "@typescript-eslint/indent": 0
+  no-array-constructor: 0
+  "@typescript-eslint/no-array-constructor": 2
+  no-extra-parens: 0
+  "@typescript-eslint/no-extra-parens": 0
+  no-extra-semi: 0
+  "@typescript-eslint/no-extra-semi": 2
+  no-unused-expressions: 0
+  "@typescript-eslint/no-unused-expressions": 2
+  "@typescript-eslint/no-unused-vars":
+    - 0
+    - varsIgnorePattern: "^_"
+  "@typescript-eslint/no-use-before-define": 2
+  no-useless-constructor: 0
+  "@typescript-eslint/no-useless-constructor": 2
+  quotes: 0
+  "@typescript-eslint/quotes":
+    - 2
+    - double
+    - avoidEscape: true
+      allowTemplateLiterals: true
+  no-return-await: 0
+  "@typescript-eslint/return-await": 2
+  semi: 0
+  "@typescript-eslint/semi":
+    - 2
+    - never
+    - beforeStatementContinuationChars: never
+  space-before-function-paren: 0
+  "@typescript-eslint/space-before-function-paren": 2
 
   # React
   react/boolean-prop-naming: 2

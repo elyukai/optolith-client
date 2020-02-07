@@ -1,9 +1,9 @@
-import * as React from "react";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { Category } from "../../../Constants/Categories";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { Category } from "../../../Constants/Categories"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
   range: (r: Record<A>) => string
@@ -17,7 +17,9 @@ export interface WikiRangeProps<A extends RecordIBase<any>> {
   l10n: L10nRecord
 }
 
-export function WikiRange<A extends RecordIBase<any>> (props: WikiRangeProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiRangeProps<A>) => ReturnType<React.FC>
+
+export const WikiRange: FC = props => {
   const {
     x,
     acc,
@@ -34,7 +36,8 @@ export function WikiRange<A extends RecordIBase<any>> (props: WikiRangeProps<A>)
 
   return (
     <WikiProperty l10n={l10n} title="range">
-      {acc.range (x)}{isNoModAllowed ? ` (${translate (l10n) (modKey)})` : ""}
+      {acc.range (x)}
+      {isNoModAllowed ? ` (${translate (l10n) (modKey)})` : ""}
     </WikiProperty>
   )
 }

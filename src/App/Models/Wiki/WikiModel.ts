@@ -1,24 +1,24 @@
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Advantage } from "./Advantage";
-import { Attribute } from "./Attribute";
-import { Blessing } from "./Blessing";
-import { Book } from "./Book";
-import { Cantrip } from "./Cantrip";
-import { CombatTechnique } from "./CombatTechnique";
-import { Culture } from "./Culture";
-import { Disadvantage } from "./Disadvantage";
-import { ExperienceLevel } from "./ExperienceLevel";
-import { ItemTemplate } from "./ItemTemplate";
-import { LiturgicalChant } from "./LiturgicalChant";
-import { MagicalTradition } from "./MagicalTradition";
-import { Profession } from "./Profession";
-import { ProfessionVariant } from "./ProfessionVariant";
-import { Race } from "./Race";
-import { RaceVariant } from "./RaceVariant";
-import { Skill } from "./Skill";
-import { SpecialAbility } from "./SpecialAbility";
-import { Spell } from "./Spell";
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { Advantage } from "./Advantage"
+import { Attribute } from "./Attribute"
+import { Blessing } from "./Blessing"
+import { Book } from "./Book"
+import { Cantrip } from "./Cantrip"
+import { CombatTechnique } from "./CombatTechnique"
+import { Culture } from "./Culture"
+import { Disadvantage } from "./Disadvantage"
+import { ExperienceLevel } from "./ExperienceLevel"
+import { ItemTemplate } from "./ItemTemplate"
+import { LiturgicalChant } from "./LiturgicalChant"
+import { MagicalTradition } from "./MagicalTradition"
+import { Profession } from "./Profession"
+import { ProfessionVariant } from "./ProfessionVariant"
+import { Race } from "./Race"
+import { RaceVariant } from "./RaceVariant"
+import { Skill } from "./Skill"
+import { SpecialAbility } from "./SpecialAbility"
+import { Spell } from "./Spell"
 
 export type WikiModelRecord = Record<WikiModel>
 

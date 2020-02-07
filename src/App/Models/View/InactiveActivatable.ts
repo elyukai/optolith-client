@@ -1,11 +1,11 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
-import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
-import { Advantage } from "../Wiki/Advantage";
-import { SelectOption } from "../Wiki/sub/SelectOption";
-import { Activatable } from "../Wiki/wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record"
+import { pipe } from "../../Utilities/pipe"
+import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent"
+import { Advantage } from "../Wiki/Advantage"
+import { SelectOption } from "../Wiki/sub/SelectOption"
+import { Activatable } from "../Wiki/wikiTypeHelpers"
 
 export interface InactiveActivatable<T extends RecordI<Activatable> = RecordI<Activatable>> {
   "@@name": "InactiveActivatable"

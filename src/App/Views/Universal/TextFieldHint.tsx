@@ -5,12 +5,12 @@ import { guardReplace, Just, Maybe, maybeToNullable, normalize } from "../../../
 import { classListMaybe } from "../../Utilities/CSS"
 import { pipe_ } from "../../Utilities/pipe"
 
-interface TextFieldHintProps {
+interface Props {
   hint: Maybe<string> | string | undefined
   value: string
 }
 
-export const TextFieldHint: React.FC<TextFieldHintProps> =
+export const TextFieldHint: React.FC<Props> =
   ({ hint: mhint, value }) => pipe_ (
     mhint,
     normalize,

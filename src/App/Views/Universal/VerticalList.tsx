@@ -1,18 +1,17 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Just, Maybe } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Just, Maybe } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
 
-export interface VerticalListProps {
+interface Props {
   className?: string
-  children?: React.ReactNode
 }
 
-export function VerticalList (props: VerticalListProps) {
-  const { children, className, ...other } = props
+export const VerticalList: React.FC<Props> = props => {
+  const { children, className } = props
 
   return (
-    <div {...other} className={classListMaybe (List (Just ("vertical-list"), Maybe (className)))}>
+    <div className={classListMaybe (List (Just ("vertical-list"), Maybe (className)))}>
       {children}
     </div>
   )

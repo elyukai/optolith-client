@@ -1,13 +1,13 @@
-import { any } from "../../../Data/List";
-import { member, Record } from "../../../Data/Record";
-import { Pair } from "../../../Data/Tuple";
-import { AdvantageId } from "../../Constants/Ids";
-import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
-import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
-import { getFirstLevelPrerequisites } from "../Prerequisites/flattenPrerequisites";
+import { any } from "../../../Data/List"
+import { member, Record } from "../../../Data/Record"
+import { Pair } from "../../../Data/Tuple"
+import { AdvantageId } from "../../Constants/Ids"
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
+import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement"
+import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
+import { getFirstLevelPrerequisites } from "../Prerequisites/flattenPrerequisites"
 
 const { id, active } = RequireActivatable.AL
 const AAL = Advantage.AL

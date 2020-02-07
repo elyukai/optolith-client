@@ -1,19 +1,19 @@
-import { fmap } from "../../../../../Data/Functor";
-import { empty, List, map } from "../../../../../Data/List";
-import { fromMaybe, Nothing } from "../../../../../Data/Maybe";
-import { OrderedSet } from "../../../../../Data/OrderedSet";
-import { MagicalGroup, MagicalTradition, Property } from "../../../../Constants/Groups";
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { Spell } from "../../../../Models/Wiki/Spell";
-import { CheckModifier } from "../../../../Models/Wiki/wikiTypeHelpers";
-import { isCheckMod, prefixId } from "../../../IDUtils";
-import { mergeRowsById } from "../MergeRows";
-import { modifyNegIntNoBreak } from "../SourceHelpers";
-import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalFixedList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapNumEnum, mensureMapNumEnumList, mensureMapStringPredSetOptional } from "../Validators/ToValue";
-import { toErrata } from "./Sub/toErrata";
-import { toSpellPrerequisites } from "./Sub/toPrerequisites";
-import { toSourceLinks } from "./Sub/toSourceLinks";
+import { fmap } from "../../../../../Data/Functor"
+import { empty, List, map } from "../../../../../Data/List"
+import { fromMaybe, Nothing } from "../../../../../Data/Maybe"
+import { OrderedSet } from "../../../../../Data/OrderedSet"
+import { MagicalGroup, MagicalTradition, Property } from "../../../../Constants/Groups"
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { Spell } from "../../../../Models/Wiki/Spell"
+import { CheckModifier } from "../../../../Models/Wiki/wikiTypeHelpers"
+import { isCheckMod, prefixId } from "../../../IDUtils"
+import { mergeRowsById } from "../MergeRows"
+import { modifyNegIntNoBreak } from "../SourceHelpers"
+import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalFixedList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapNumEnum, mensureMapNumEnumList, mensureMapStringPredSetOptional } from "../Validators/ToValue"
+import { toErrata } from "./Sub/toErrata"
+import { toSpellPrerequisites } from "./Sub/toPrerequisites"
+import { toSourceLinks } from "./Sub/toSourceLinks"
 
 export const toSpell =
   mergeRowsById

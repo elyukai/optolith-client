@@ -1,8 +1,8 @@
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
-import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
-import { Advantage } from "../Wiki/Advantage";
-import { Disadvantage } from "../Wiki/Disadvantage";
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, Record } from "../../../Data/Record"
+import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent"
+import { Advantage } from "../Wiki/Advantage"
+import { Disadvantage } from "../Wiki/Disadvantage"
 
 export interface ActivatableActivationEntryType {
   "@@name": "ActivatableActivationEntryType"

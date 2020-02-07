@@ -1,17 +1,18 @@
-import * as React from "react";
-import { imap } from "../../../Data/List";
-import { Just, Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { EditItem } from "../../Models/Hero/EditItem";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils";
-import { getLossLevelElements } from "../../Utilities/ItemUtils";
-import { sortRecordsByName } from "../../Utilities/sortBy";
-import { Checkbox } from "../Universal/Checkbox";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
-import { Hr } from "../Universal/Hr";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { imap } from "../../../Data/List"
+import { Just, Maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { EditItem } from "../../Models/Hero/EditItem"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { L10nRecord } from "../../Models/Wiki/L10n"
+import { translate } from "../../Utilities/I18n"
+import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils"
+import { getLossLevelElements } from "../../Utilities/ItemUtils"
+import { sortRecordsByName } from "../../Utilities/sortBy"
+import { Checkbox } from "../Universal/Checkbox"
+import { Dropdown } from "../Universal/Dropdown"
+import { Hr } from "../Universal/Hr"
+import { TextField } from "../Universal/TextField"
 
 export interface ItemEditorArmorSectionProps {
   item: Record<EditItem>

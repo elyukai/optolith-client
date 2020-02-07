@@ -1,64 +1,64 @@
-import { equals } from "../../Data/Eq";
-import { ident, thrush } from "../../Data/Function";
-import { fmap, fmapF } from "../../Data/Functor";
-import { over } from "../../Data/Lens";
-import { all, cons, Cons, consF, elemF, filter, find, foldr, intercalate, List, ListI, map, subscriptF } from "../../Data/List";
-import { alt, any, bind, bindF, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe";
-import { abs, add } from "../../Data/Num";
-import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { PairF } from "../../Data/Tuple";
-import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Tuple/Curry";
-import { Category } from "../Constants/Categories";
-import { ProfessionId, RaceId } from "../Constants/Ids";
-import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
-import { Sex } from "../Models/Hero/heroTypeHelpers";
-import { ActivatableNameCostIsActive } from "../Models/View/ActivatableNameCostIsActive";
-import { CultureCombined } from "../Models/View/CultureCombined";
-import { IncreasableForView } from "../Models/View/IncreasableForView";
-import { IncreasableListForView } from "../Models/View/IncreasableListForView";
-import { ProfessionCombined, ProfessionCombinedA_, ProfessionCombinedL } from "../Models/View/ProfessionCombined";
-import { ProfessionVariantCombined } from "../Models/View/ProfessionVariantCombined";
-import { RaceCombined } from "../Models/View/RaceCombined";
-import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
-import { Culture } from "../Models/Wiki/Culture";
-import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
-import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement";
-import { ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement";
-import { Profession } from "../Models/Wiki/Profession";
-import { CombatTechniquesSelection, CombatTechniquesSelectionL } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
-import { ProfessionSelectionsL } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
-import { ProfessionVariantSelectionsL } from "../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
-import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
-import { Race, RaceL } from "../Models/Wiki/Race";
-import { RaceVariant, RaceVariantL } from "../Models/Wiki/RaceVariant";
-import { Skill } from "../Models/Wiki/Skill";
-import { Spell } from "../Models/Wiki/Spell";
-import { CommonProfession } from "../Models/Wiki/sub/CommonProfession";
-import { Die } from "../Models/Wiki/sub/Die";
-import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill";
-import { IncreaseSkillList } from "../Models/Wiki/sub/IncreaseSkillList";
-import { NameBySex } from "../Models/Wiki/sub/NameBySex";
-import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
-import { getNameCostForWiki } from "../Utilities/Activatable/activatableActiveUtils";
-import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils";
-import { minus, plusmn } from "../Utilities/Chars";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
-import { translate } from "../Utilities/I18n";
-import { getCategoryById } from "../Utilities/IDUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { validateProfession } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
-import { getFullProfessionName } from "../Utilities/rcpUtils";
-import { filterByAvailability, filterByAvailabilityAndPred, isEntryFromCoreBook } from "../Utilities/RulesUtils";
-import { getStartEl } from "./elSelectors";
-import { getRuleBooksEnabled } from "./rulesSelectors";
-import { getCulturesCombinedSortOptions, getProfessionsCombinedSortOptions, getRacesCombinedSortOptions } from "./sortOptionsSelectors";
-import { getCultureId, getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getProfessionsFilterText, getRaceId, getRacesFilterText, getRaceVariantId, getSex, getWiki, getWikiBooks, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors";
-import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from "./uisettingsSelectors";
+import { equals } from "../../Data/Eq"
+import { ident, thrush } from "../../Data/Function"
+import { fmap, fmapF } from "../../Data/Functor"
+import { over } from "../../Data/Lens"
+import { all, cons, Cons, consF, elemF, filter, find, foldr, intercalate, List, ListI, map, subscriptF } from "../../Data/List"
+import { alt, any, bind, bindF, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe"
+import { abs, add } from "../../Data/Num"
+import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { PairF } from "../../Data/Tuple"
+import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Tuple/Curry"
+import { Category } from "../Constants/Categories"
+import { ProfessionId, RaceId } from "../Constants/Ids"
+import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId"
+import { Sex } from "../Models/Hero/heroTypeHelpers"
+import { ActivatableNameCostIsActive } from "../Models/View/ActivatableNameCostIsActive"
+import { CultureCombined } from "../Models/View/CultureCombined"
+import { IncreasableForView } from "../Models/View/IncreasableForView"
+import { IncreasableListForView } from "../Models/View/IncreasableListForView"
+import { ProfessionCombined, ProfessionCombinedA_, ProfessionCombinedL } from "../Models/View/ProfessionCombined"
+import { ProfessionVariantCombined } from "../Models/View/ProfessionVariantCombined"
+import { RaceCombined } from "../Models/View/RaceCombined"
+import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
+import { Culture } from "../Models/Wiki/Culture"
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
+import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement"
+import { ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement"
+import { Profession } from "../Models/Wiki/Profession"
+import { CombatTechniquesSelection, CombatTechniquesSelectionL } from "../Models/Wiki/professionSelections/CombatTechniquesSelection"
+import { ProfessionSelectionsL } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections"
+import { ProfessionVariantSelectionsL } from "../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections"
+import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
+import { Race, RaceL } from "../Models/Wiki/Race"
+import { RaceVariant, RaceVariantL } from "../Models/Wiki/RaceVariant"
+import { Skill } from "../Models/Wiki/Skill"
+import { Spell } from "../Models/Wiki/Spell"
+import { CommonProfession } from "../Models/Wiki/sub/CommonProfession"
+import { Die } from "../Models/Wiki/sub/Die"
+import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill"
+import { IncreaseSkillList } from "../Models/Wiki/sub/IncreaseSkillList"
+import { NameBySex } from "../Models/Wiki/sub/NameBySex"
+import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers"
+import { getNameCostForWiki } from "../Utilities/Activatable/activatableActiveUtils"
+import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils"
+import { minus, plusmn } from "../Utilities/Chars"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
+import { translate } from "../Utilities/I18n"
+import { getCategoryById } from "../Utilities/IDUtils"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { validateProfession } from "../Utilities/Prerequisites/validatePrerequisitesUtils"
+import { getFullProfessionName } from "../Utilities/rcpUtils"
+import { filterByAvailability, filterByAvailabilityAndPred, isEntryFromCoreBook } from "../Utilities/RulesUtils"
+import { getStartEl } from "./elSelectors"
+import { getRuleBooksEnabled } from "./rulesSelectors"
+import { getCulturesCombinedSortOptions, getProfessionsCombinedSortOptions, getRacesCombinedSortOptions } from "./sortOptionsSelectors"
+import { getCultureId, getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getProfessionsFilterText, getRaceId, getRacesFilterText, getRaceVariantId, getSex, getWiki, getWikiBooks, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors"
+import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from "./uisettingsSelectors"
 
 const WA = WikiModel.A
 const ELA = ExperienceLevel.A
@@ -273,132 +273,6 @@ const getGroupSliceKey = (gr: number): keyof SkillGroupLists => {
   }
 }
 
-export const getAllProfessions = createMaybeSelector (
-  getLocaleAsProp,
-  getWiki,
-  uncurryN (l10n =>
-            wiki =>
-              pipe_ (
-                wiki,
-                WA.professions,
-                elems,
-                map (p => {
-                  const {
-                    physicalSkills,
-                    socialSkills,
-                    natureSkills,
-                    knowledgeSkills,
-                    craftSkills,
-                  } = pipe_ (
-                        p,
-                        PA.skills,
-                        foldr ((incsk: Record<IncreaseSkill>) => (acc: SkillGroupLists) =>
-                                pipe_ (
-                                  wiki,
-                                  WA.skills,
-                                  lookup (ISA.id (incsk)),
-                                  maybe (acc)
-                                        (skill => {
-                                          const key = getGroupSliceKey (SA.gr (skill))
-
-                                          return {
-                                            ...acc,
-                                            [key]: cons (acc [key])
-                                                        (IncreasableForView ({
-                                                          id: ISA.id (incsk),
-                                                          name: SA.name (skill),
-                                                          value: ISA.value (incsk),
-                                                        })),
-                                          }
-                                        })
-                                ))
-                              ({
-                                physicalSkills: List (),
-                                socialSkills: List (),
-                                natureSkills: List (),
-                                knowledgeSkills: List (),
-                                craftSkills: List (),
-                              })
-                      )
-
-                  const filtered_variants =
-                    mapMaybe (lookupF (WA.professionVariants (wiki)))
-                             (PA.variants (p))
-
-                  return ProfessionCombined ({
-                    mappedAP: fromMaybe_<List<number> | number> (() => map (PVA.ap)
-                                                                           (filtered_variants))
-                                                                (PA.ap (p)),
-                    mappedPrerequisites:
-                      imapMaybe (mapProfessionPrerequisite (l10n) (wiki))
-                                (PA.prerequisites (p)),
-                    mappedSpecialAbilities:
-                      imapMaybe (mapProfessionSpecialAbility (l10n) (wiki))
-                                (PA.specialAbilities (p)),
-                    mappedSelections:
-                      thrush (PA.selections (p))
-                             (mapProfessionSelection (wiki)),
-                    mappedCombatTechniques:
-                      thrush (PA.combatTechniques (p))
-                             (mapMaybe (mapCombatTechnique (wiki))),
-                    mappedPhysicalSkills: physicalSkills,
-                    mappedSocialSkills: socialSkills,
-                    mappedNatureSkills: natureSkills,
-                    mappedKnowledgeSkills: knowledgeSkills,
-                    mappedCraftSkills: craftSkills,
-                    mappedSpells:
-                      thrush (PA.spells (p))
-                             (mapMaybe<
-                               ListI<Profession["spells"]>,
-                               ListI<ProfessionCombined["mappedSpells"]>
-                             > (mapSpell (wiki))),
-                    mappedLiturgicalChants:
-                      thrush (PA.liturgicalChants (p))
-                             (mapMaybe<
-                               ListI<Profession["liturgicalChants"]>,
-                               ListI<ProfessionCombined["mappedLiturgicalChants"]>
-                             > (mapLiturgicalChant (wiki))),
-                    mappedVariants:
-                      map ((v: Record<ProfessionVariant>) =>
-                        ProfessionVariantCombined ({
-                          mappedPrerequisites:
-                            imapMaybe (mapProfessionPrerequisite (l10n) (wiki))
-                                      (PVA.prerequisites (v)),
-                          mappedSpecialAbilities:
-                            imapMaybe (mapProfessionSpecialAbility (l10n) (wiki))
-                                      (PVA.specialAbilities (v)),
-                          mappedSelections:
-                            thrush (PVA.selections (v))
-                                   (mapProfessionVariantSelection (wiki)),
-                          mappedCombatTechniques:
-                            mapMaybe (mapCombatTechniquePrevious (wiki)
-                                                                 (PA.combatTechniques (p)))
-                                     (PVA.combatTechniques (v)),
-                          mappedSkills:
-                            thrush (PVA.skills (v))
-                                   (mapMaybe (mapSkillPrevious (wiki)
-                                                               (PA.skills (p)))),
-                          mappedSpells:
-                            thrush (PVA.spells (v))
-                                   (mapMaybe<
-                                     ListI<Profession["spells"]>,
-                                     ListI<ProfessionCombined["mappedSpells"]>
-                                   > (mapSpellPrevious (wiki) (PA.spells (p)))),
-                          mappedLiturgicalChants:
-                            thrush (PVA.liturgicalChants (v))
-                                   (mapMaybe<
-                                     ListI<Profession["liturgicalChants"]>,
-                                     ListI<ProfessionCombined["mappedLiturgicalChants"]>
-                                   > (mapLiturgicalChantPrevious (wiki) (PA.liturgicalChants (p)))),
-                          wikiEntry: v,
-                        }))
-                          (filtered_variants),
-                    wikiEntry: p,
-                  })
-                })
-              ))
-)
-
 const mapProfessionPrerequisite =
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
@@ -610,6 +484,132 @@ const mapSpellPrevious = mapIncreaseSkillListPrevious (0) (WA.spells) (SPA.name)
 
 const mapLiturgicalChantPrevious = mapIncreaseSkillListPrevious (0) (WA.liturgicalChants) (LCA.name)
 
+export const getAllProfessions = createMaybeSelector (
+  getLocaleAsProp,
+  getWiki,
+  uncurryN (l10n =>
+            wiki =>
+              pipe_ (
+                wiki,
+                WA.professions,
+                elems,
+                map (p => {
+                  const {
+                    physicalSkills,
+                    socialSkills,
+                    natureSkills,
+                    knowledgeSkills,
+                    craftSkills,
+                  } = pipe_ (
+                        p,
+                        PA.skills,
+                        foldr ((incsk: Record<IncreaseSkill>) => (acc: SkillGroupLists) =>
+                                pipe_ (
+                                  wiki,
+                                  WA.skills,
+                                  lookup (ISA.id (incsk)),
+                                  maybe (acc)
+                                        (skill => {
+                                          const key = getGroupSliceKey (SA.gr (skill))
+
+                                          return {
+                                            ...acc,
+                                            [key]: cons (acc [key])
+                                                        (IncreasableForView ({
+                                                          id: ISA.id (incsk),
+                                                          name: SA.name (skill),
+                                                          value: ISA.value (incsk),
+                                                        })),
+                                          }
+                                        })
+                                ))
+                              ({
+                                physicalSkills: List (),
+                                socialSkills: List (),
+                                natureSkills: List (),
+                                knowledgeSkills: List (),
+                                craftSkills: List (),
+                              })
+                      )
+
+                  const filtered_variants =
+                    mapMaybe (lookupF (WA.professionVariants (wiki)))
+                             (PA.variants (p))
+
+                  return ProfessionCombined ({
+                    mappedAP: fromMaybe_<List<number> | number> (() => map (PVA.ap)
+                                                                           (filtered_variants))
+                                                                (PA.ap (p)),
+                    mappedPrerequisites:
+                      imapMaybe (mapProfessionPrerequisite (l10n) (wiki))
+                                (PA.prerequisites (p)),
+                    mappedSpecialAbilities:
+                      imapMaybe (mapProfessionSpecialAbility (l10n) (wiki))
+                                (PA.specialAbilities (p)),
+                    mappedSelections:
+                      thrush (PA.selections (p))
+                             (mapProfessionSelection (wiki)),
+                    mappedCombatTechniques:
+                      thrush (PA.combatTechniques (p))
+                             (mapMaybe (mapCombatTechnique (wiki))),
+                    mappedPhysicalSkills: physicalSkills,
+                    mappedSocialSkills: socialSkills,
+                    mappedNatureSkills: natureSkills,
+                    mappedKnowledgeSkills: knowledgeSkills,
+                    mappedCraftSkills: craftSkills,
+                    mappedSpells:
+                      thrush (PA.spells (p))
+                             (mapMaybe<
+                               ListI<Profession["spells"]>,
+                               ListI<ProfessionCombined["mappedSpells"]>
+                             > (mapSpell (wiki))),
+                    mappedLiturgicalChants:
+                      thrush (PA.liturgicalChants (p))
+                             (mapMaybe<
+                               ListI<Profession["liturgicalChants"]>,
+                               ListI<ProfessionCombined["mappedLiturgicalChants"]>
+                             > (mapLiturgicalChant (wiki))),
+                    mappedVariants:
+                      map ((v: Record<ProfessionVariant>) =>
+                        ProfessionVariantCombined ({
+                          mappedPrerequisites:
+                            imapMaybe (mapProfessionPrerequisite (l10n) (wiki))
+                                      (PVA.prerequisites (v)),
+                          mappedSpecialAbilities:
+                            imapMaybe (mapProfessionSpecialAbility (l10n) (wiki))
+                                      (PVA.specialAbilities (v)),
+                          mappedSelections:
+                            thrush (PVA.selections (v))
+                                   (mapProfessionVariantSelection (wiki)),
+                          mappedCombatTechniques:
+                            mapMaybe (mapCombatTechniquePrevious (wiki)
+                                                                 (PA.combatTechniques (p)))
+                                     (PVA.combatTechniques (v)),
+                          mappedSkills:
+                            thrush (PVA.skills (v))
+                                   (mapMaybe (mapSkillPrevious (wiki)
+                                                               (PA.skills (p)))),
+                          mappedSpells:
+                            thrush (PVA.spells (v))
+                                   (mapMaybe<
+                                     ListI<Profession["spells"]>,
+                                     ListI<ProfessionCombined["mappedSpells"]>
+                                   > (mapSpellPrevious (wiki) (PA.spells (p)))),
+                          mappedLiturgicalChants:
+                            thrush (PVA.liturgicalChants (v))
+                                   (mapMaybe<
+                                     ListI<Profession["liturgicalChants"]>,
+                                     ListI<ProfessionCombined["mappedLiturgicalChants"]>
+                                   > (mapLiturgicalChantPrevious (wiki) (PA.liturgicalChants (p)))),
+                          wikiEntry: v,
+                        }))
+                          (filtered_variants),
+                    wikiEntry: p,
+                  })
+                })
+              ))
+)
+
 const isCustomProfession = (e: Record<ProfessionCombined>) => ProfessionCombinedA_.id (e)
                                                               === ProfessionId.CustomProfession
 
@@ -668,8 +668,10 @@ const filterProfession =
     const mcommon_profs_for_gr = pipe_ (current_culture, CA.commonProfessions, subscriptF (gr - 1))
 
     const is_common =
+
       // Either its not restricted to common professions
       visibility === "all"
+
       // Or it must be a common profession
       || maybe (true)
                ((common_profs_for_gr: boolean | Record<CommonProfession>) => {
@@ -696,8 +698,10 @@ const filterProfession =
                  const is_reverse = CommonProfession.A.reverse (common_profs_for_gr)
 
                  return is_reverse
+
                    // if reversed, the entry does not need to be in the list to be common
                    ? !is_included && is_from_core_book
+
                    // if not reversed, the entry must be in the list to be common
                    : is_included && is_from_core_book
                })
@@ -837,6 +841,8 @@ export const getCurrentFullProfessionName = createMaybeSelector (
                                         (mcustom_prof_name))
 )
 
+const getSign = (x: number) => x < 0 ? minus : "+"
+
 export const getRandomSizeCalcStr = createMaybeSelector (
   getLocaleAsProp,
   getRace,
@@ -868,8 +874,6 @@ export const getRandomSizeCalcStr = createMaybeSelector (
                   (msize_randoms)
   }
 )
-
-const getSign = (x: number) => x < 0 ? minus : "+"
 
 export const getRandomWeightCalcStr = createMaybeSelector (
   getLocaleAsProp,

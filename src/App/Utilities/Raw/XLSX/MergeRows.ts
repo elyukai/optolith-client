@@ -1,15 +1,15 @@
-import { bimap, Either, first, fromRight_, isLeft, maybeToEither, Right } from "../../../../Data/Either";
-import { appendStr, find, List, notNullStr } from "../../../../Data/List";
-import { bindF, elem, ensure, fromJust, isJust, Just, Maybe, Nothing } from "../../../../Data/Maybe";
-import { lookup, lookupF, OrderedMap, union } from "../../../../Data/OrderedMap";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { show } from "../../../../Data/Show";
-import { fst, isTuple, Pair, uncurry } from "../../../../Data/Tuple";
-import { traceShowIdWhen } from "../../../../Debug/Trace";
-import { toInt, toNatural, unsafeToInt } from "../../NumberUtils";
-import { pipe, pipe_ } from "../../pipe";
-import { id_rx, isNaturalNumber } from "../../RegexUtils";
-import { isNumber } from "../../typeCheckUtils";
+import { bimap, Either, first, fromRight_, isLeft, maybeToEither, Right } from "../../../../Data/Either"
+import { appendStr, find, List, notNullStr } from "../../../../Data/List"
+import { bindF, elem, ensure, fromJust, isJust, Just, Maybe, Nothing } from "../../../../Data/Maybe"
+import { lookup, lookupF, OrderedMap, union } from "../../../../Data/OrderedMap"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { show } from "../../../../Data/Show"
+import { fst, isTuple, Pair, uncurry } from "../../../../Data/Tuple"
+import { traceShowIdWhen } from "../../../../Debug/Trace"
+import { toInt, toNatural, unsafeToInt } from "../../NumberUtils"
+import { pipe, pipe_ } from "../../pipe"
+import { id_rx, isNaturalNumber } from "../../RegexUtils"
+import { isNumber } from "../../typeCheckUtils"
 
 /**
  * Lookup property `"id"` in passed line from universal table and returns an

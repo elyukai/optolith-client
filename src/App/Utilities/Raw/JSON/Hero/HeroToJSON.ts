@@ -1,32 +1,32 @@
-import { ident } from "../../../../../Data/Function";
-import { fmap, fmapF } from "../../../../../Data/Functor";
-import { List } from "../../../../../Data/List";
-import { bind, elem, maybeToUndefined } from "../../../../../Data/Maybe";
-import { gt } from "../../../../../Data/Num";
-import { foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from "../../../../../Data/OrderedMap";
-import { toArray } from "../../../../../Data/OrderedSet";
-import { Record, StringKeyObject, toObject } from "../../../../../Data/Record";
-import { isTuple, Pair, Tuple } from "../../../../../Data/Tuple";
-import { ProfessionId } from "../../../../Constants/Ids";
-import { ActivatableDependent } from "../../../../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent } from "../../../../Models/ActiveEntries/ActivatableSkillDependent";
-import { ActiveObject } from "../../../../Models/ActiveEntries/ActiveObject";
-import { AttributeDependent } from "../../../../Models/ActiveEntries/AttributeDependent";
-import { Belongings } from "../../../../Models/Hero/Belongings";
-import { Energies } from "../../../../Models/Hero/Energies";
-import { HeroModel, HeroModelRecord } from "../../../../Models/Hero/HeroModel";
-import { ExtendedSkillDependent, User } from "../../../../Models/Hero/heroTypeHelpers";
-import { HitZoneArmor } from "../../../../Models/Hero/HitZoneArmor";
-import { Item } from "../../../../Models/Hero/Item";
-import { PersonalData } from "../../../../Models/Hero/PersonalData";
-import { Rules } from "../../../../Models/Hero/Rules";
-import { UndoableHero, UndoableHeroModelRecord } from "../../../../Models/Hero/UndoHero";
-import { PrimaryAttributeDamageThreshold } from "../../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
-import { current_version } from "../../../../Selectors/envSelectors";
-import { HeroStateMapKey } from "../../../heroStateUtils";
-import { ifElse } from "../../../ifElse";
-import { pipe, pipe_ } from "../../../pipe";
-import { RawActiveObject, RawArmorZone, RawCustomItem, RawHero, RawPet, RawPrimaryAttributeDamageThreshold } from "../../XLSX/RawData";
+import { ident } from "../../../../../Data/Function"
+import { fmap, fmapF } from "../../../../../Data/Functor"
+import { List } from "../../../../../Data/List"
+import { bind, elem, maybeToUndefined } from "../../../../../Data/Maybe"
+import { gt } from "../../../../../Data/Num"
+import { foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from "../../../../../Data/OrderedMap"
+import { toArray } from "../../../../../Data/OrderedSet"
+import { Record, StringKeyObject, toObject } from "../../../../../Data/Record"
+import { isTuple, Pair, Tuple } from "../../../../../Data/Tuple"
+import { ProfessionId } from "../../../../Constants/Ids"
+import { ActivatableDependent } from "../../../../Models/ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent } from "../../../../Models/ActiveEntries/ActivatableSkillDependent"
+import { ActiveObject } from "../../../../Models/ActiveEntries/ActiveObject"
+import { AttributeDependent } from "../../../../Models/ActiveEntries/AttributeDependent"
+import { Belongings } from "../../../../Models/Hero/Belongings"
+import { Energies } from "../../../../Models/Hero/Energies"
+import { HeroModel, HeroModelRecord } from "../../../../Models/Hero/HeroModel"
+import { ExtendedSkillDependent, User } from "../../../../Models/Hero/heroTypeHelpers"
+import { HitZoneArmor } from "../../../../Models/Hero/HitZoneArmor"
+import { Item } from "../../../../Models/Hero/Item"
+import { PersonalData } from "../../../../Models/Hero/PersonalData"
+import { Rules } from "../../../../Models/Hero/Rules"
+import { UndoableHero, UndoableHeroModelRecord } from "../../../../Models/Hero/UndoHero"
+import { PrimaryAttributeDamageThreshold } from "../../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
+import { current_version } from "../../../../Selectors/envSelectors"
+import { HeroStateMapKey } from "../../../heroStateUtils"
+import { ifElse } from "../../../ifElse"
+import { pipe, pipe_ } from "../../../pipe"
+import { RawActiveObject, RawArmorZone, RawCustomItem, RawHero, RawPet, RawPrimaryAttributeDamageThreshold } from "../../XLSX/RawData"
 
 const HA = HeroModel.A
 
@@ -50,7 +50,7 @@ const { cost, sid, sid2, tier } = ActiveObject.AL
 const getAttributesForSave = (hero: HeroModelRecord): RawHero["attr"] =>
   ({
     values: foldl<Record<AttributeDependent>, { id: string; value: number }[]>
-      (acc => e => [...acc, { id: id (e), value: value (e) }])
+      (acc => e => [ ...acc, { id: id (e), value: value (e) } ])
       ([])
       (HA.attributes (hero)),
     attributeAdjustmentSelected: HA.attributeAdjustmentSelected (hero),
@@ -96,10 +96,10 @@ const getValuesForSave =
           return {
             ...acc,
             [key]: value (obj),
-          };
+          }
         }
 
-        return acc;
+        return acc
       })
       ({})
       (sliceGetter (hero) as OrderedMap<string, ExtendedSkillDependent>)

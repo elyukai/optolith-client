@@ -1,10 +1,10 @@
-import { countWith, List } from "../../../Data/List";
-import { bindF, listToMaybe, Maybe, maybe, sum } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { pipe } from "../pipe";
-import { isMaybeActive } from "./isActive";
+import { countWith, List } from "../../../Data/List"
+import { bindF, listToMaybe, Maybe, maybe, sum } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { pipe } from "../pipe"
+import { isMaybeActive } from "./isActive"
 
 const ADA = ActivatableDependent.A
 const AOA = ActiveObject.A

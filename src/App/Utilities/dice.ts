@@ -1,6 +1,6 @@
-import { subtractAbs } from "../../Data/Num";
-import { Record } from "../../Data/Record";
-import { Die } from "../Models/Wiki/sub/Die";
+import { subtractAbs } from "../../Data/Num"
+import { Record } from "../../Data/Record"
+import { Die } from "../Models/Wiki/sub/Die"
 
 /**
  * Return a random integer between 1 (included) and the passed parameter

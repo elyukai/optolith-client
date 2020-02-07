@@ -1,23 +1,23 @@
-import { fmap } from "../../../../../Data/Functor";
-import { empty, List, map, notNull } from "../../../../../Data/List";
-import { fromMaybe, maybe, Nothing } from "../../../../../Data/Maybe";
-import { Record } from "../../../../../Data/Record";
-import { fst, Pair, snd } from "../../../../../Data/Tuple";
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { SocialStatusId } from "../../../../Constants/Ids";
-import { Culture } from "../../../../Models/Wiki/Culture";
-import { CommonProfession } from "../../../../Models/Wiki/sub/CommonProfession";
-import { IncreaseSkill } from "../../../../Models/Wiki/sub/IncreaseSkill";
-import { prefixId, prefixProf } from "../../../IDUtils";
-import { toNatural, unsafeToInt } from "../../../NumberUtils";
-import { exactR, isNaturalNumber, naturalNumberU } from "../../../RegexUtils";
-import { Expect } from "../../Expect";
-import { mergeRowsById } from "../MergeRows";
-import { maybePrefix, modifyNegIntNoBreak } from "../SourceHelpers";
-import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapNumEnumList, mensureMapPairList, mensureMapStringPredListOptional } from "../Validators/ToValue";
-import { toErrata } from "./Sub/toErrata";
-import { toSourceLinks } from "./Sub/toSourceLinks";
+import { fmap } from "../../../../../Data/Functor"
+import { empty, List, map, notNull } from "../../../../../Data/List"
+import { fromMaybe, maybe, Nothing } from "../../../../../Data/Maybe"
+import { Record } from "../../../../../Data/Record"
+import { fst, Pair, snd } from "../../../../../Data/Tuple"
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { SocialStatusId } from "../../../../Constants/Ids"
+import { Culture } from "../../../../Models/Wiki/Culture"
+import { CommonProfession } from "../../../../Models/Wiki/sub/CommonProfession"
+import { IncreaseSkill } from "../../../../Models/Wiki/sub/IncreaseSkill"
+import { prefixId, prefixProf } from "../../../IDUtils"
+import { toNatural, unsafeToInt } from "../../../NumberUtils"
+import { exactR, isNaturalNumber, naturalNumberU } from "../../../RegexUtils"
+import { Expect } from "../../Expect"
+import { mergeRowsById } from "../MergeRows"
+import { maybePrefix, modifyNegIntNoBreak } from "../SourceHelpers"
+import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapNumEnumList, mensureMapPairList, mensureMapStringPredListOptional } from "../Validators/ToValue"
+import { toErrata } from "./Sub/toErrata"
+import { toSourceLinks } from "./Sub/toSourceLinks"
 
 const exception =
   new RegExp (exactR (`${naturalNumberU}|${prefixProf (naturalNumberU)}`), "u")

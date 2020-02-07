@@ -1,8 +1,8 @@
-import { AttrId } from "../../../../Constants/Ids";
-import { MagicalTradition } from "../../../../Models/Wiki/MagicalTradition";
-import { fromRow } from "../MergeRows";
-import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapFloatOptional, mensureMapNaturalOptional, mensureMapStrEnumOption, mensureMapStringRegexp } from "../Validators/ToValue";
+import { AttrId } from "../../../../Constants/Ids"
+import { MagicalTradition } from "../../../../Models/Wiki/MagicalTradition"
+import { fromRow } from "../MergeRows"
+import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapFloatOptional, mensureMapNaturalOptional, mensureMapStrEnumOption, mensureMapStringRegexp } from "../Validators/ToValue"
 
 export const toMagicalTradition =
   fromRow

@@ -1,11 +1,11 @@
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { EditHitZoneArmor } from "./EditHitZoneArmor";
-import { EditItem } from "./EditItem";
-import { HitZoneArmor } from "./HitZoneArmor";
-import { Item } from "./Item";
-import { Purse } from "./Purse";
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { EditHitZoneArmor } from "./EditHitZoneArmor"
+import { EditItem } from "./EditItem"
+import { HitZoneArmor } from "./HitZoneArmor"
+import { Item } from "./Item"
+import { Purse } from "./Purse"
 
 export interface Belongings {
   "@@name": "Belongings"

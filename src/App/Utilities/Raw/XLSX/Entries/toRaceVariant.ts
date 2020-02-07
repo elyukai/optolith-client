@@ -1,17 +1,17 @@
-import { fmap } from "../../../../../Data/Functor";
-import { map } from "../../../../../Data/List";
-import { Nothing } from "../../../../../Data/Maybe";
-import { fst, Pair, snd } from "../../../../../Data/Tuple";
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
-import { RaceVariant } from "../../../../Models/Wiki/RaceVariant";
-import { Die } from "../../../../Models/Wiki/sub/Die";
-import { prefixId } from "../../../IDUtils";
-import { mergeRowsById } from "../MergeRows";
-import { maybePrefix, modifyNegIntNoBreak } from "../SourceHelpers";
-import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic";
-import { mensureMapIntegerOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalListOptional, mensureMapNonEmptyString } from "../Validators/ToValue";
-import { stringToDiceList } from "./toRace";
-import { toErrata } from "./Sub/toErrata";
+import { fmap } from "../../../../../Data/Functor"
+import { map } from "../../../../../Data/List"
+import { Nothing } from "../../../../../Data/Maybe"
+import { fst, Pair, snd } from "../../../../../Data/Tuple"
+import { IdPrefixes } from "../../../../Constants/IdPrefixes"
+import { RaceVariant } from "../../../../Models/Wiki/RaceVariant"
+import { Die } from "../../../../Models/Wiki/sub/Die"
+import { prefixId } from "../../../IDUtils"
+import { mergeRowsById } from "../MergeRows"
+import { maybePrefix, modifyNegIntNoBreak } from "../SourceHelpers"
+import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
+import { mensureMapIntegerOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalListOptional, mensureMapNonEmptyString } from "../Validators/ToValue"
+import { toErrata } from "./Sub/toErrata"
+import { stringToDiceList } from "./toRace"
 
 export const toRaceVariant =
   mergeRowsById

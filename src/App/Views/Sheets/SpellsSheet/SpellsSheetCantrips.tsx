@@ -1,21 +1,21 @@
-import * as React from "react";
-import { fmap } from "../../../../Data/Functor";
-import { intercalate, List, map } from "../../../../Data/List";
-import { Maybe, maybeToNullable } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { CantripCombined, CantripCombinedA_ } from "../../../Models/View/CantripCombined";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { sortStrings } from "../../../Utilities/sortBy";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { fmap } from "../../../../Data/Functor"
+import { intercalate, List, map } from "../../../../Data/List"
+import { Maybe, maybeToNullable } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { CantripCombined, CantripCombinedA_ } from "../../../Models/View/CantripCombined"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { sortStrings } from "../../../Utilities/sortBy"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface SpellsSheetCantripsProps {
+interface Props {
   cantrips: Maybe<List<Record<CantripCombined>>>
   l10n: L10nRecord
 }
 
-export function SpellsSheetCantrips (props: SpellsSheetCantripsProps) {
+export const SpellsSheetCantrips: React.FC<Props> = props => {
   const { cantrips, l10n } = props
 
   return (

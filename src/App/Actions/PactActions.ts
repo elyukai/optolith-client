@@ -1,10 +1,10 @@
-import { Maybe } from "../../Data/Maybe";
-import { ActionTypes } from "../Constants/ActionTypes";
+import { Maybe } from "../../Data/Maybe"
+import * as ActionTypes from "../Constants/ActionTypes"
 
 export interface SetPactCategoryAction {
   type: ActionTypes.SET_PACT_CATEGORY
   payload: {
-    category: Maybe<number>;
+    category: Maybe<number>
   }
 }
 
@@ -18,7 +18,7 @@ export const setPactCategory = (category: Maybe<number>): SetPactCategoryAction 
 export interface SetPactLevelAction {
   type: ActionTypes.SET_PACT_LEVEL
   payload: {
-    level: number;
+    level: number
   }
 }
 
@@ -32,7 +32,7 @@ export const setPactLevel = (level: number): SetPactLevelAction => ({
 export interface SetTargetTypeAction {
   type: ActionTypes.SET_TARGET_TYPE
   payload: {
-    type: number;
+    type: number
   }
 }
 
@@ -46,7 +46,7 @@ export const setPactTargetType = (type: number): SetTargetTypeAction => ({
 export interface SetTargetDomainAction {
   type: ActionTypes.SET_TARGET_DOMAIN
   payload: {
-    domain: number | string;
+    domain: number | string
   }
 }
 
@@ -60,7 +60,7 @@ export const setPactTargetDomain = (domain: number | string): SetTargetDomainAct
 export interface SetTargetNameAction {
   type: ActionTypes.SET_TARGET_NAME
   payload: {
-    name: string;
+    name: string
   }
 }
 

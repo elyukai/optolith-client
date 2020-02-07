@@ -1,28 +1,28 @@
-import { bool_ } from "../../../Data/Bool";
-import { equals } from "../../../Data/Eq";
-import { ident } from "../../../Data/Function";
-import { fmap, fmapF } from "../../../Data/Functor";
-import { any, countWith, countWithByKeyMaybe, elemF, find, flength, foldl, foldr, isList, List, notElem, subscript, take } from "../../../Data/List";
-import { all, altF, bind, bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing, or, sum, then } from "../../../Data/Maybe";
-import { add, gt, inc, lt, multiply, negate, subtractBy } from "../../../Data/Num";
-import { alter, empty, findWithDefault, lookup, OrderedMap } from "../../../Data/OrderedMap";
-import { fromDefault, Record } from "../../../Data/Record";
-import { fst, Pair, snd } from "../../../Data/Tuple";
-import { AdvantageIdsNoMaxInfl, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { ActiveActivatable, ActiveActivatableAL_, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { Disadvantage } from "../../Models/Wiki/Disadvantage";
-import { Skill } from "../../Models/Wiki/Skill";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
-import { getSelectOptionCost } from "../Activatable/selectionUtils";
-import { getMagicalTraditionsHeroEntries } from "../Activatable/traditionUtils";
-import { pipe, pipe_ } from "../pipe";
-import { misNumberM, misStringM } from "../typeCheckUtils";
-import { compareMaxLevel, compareSubMaxLevel, getActiveWithNoCustomCost } from "./activatableCostUtils";
+import { bool_ } from "../../../Data/Bool"
+import { equals } from "../../../Data/Eq"
+import { ident } from "../../../Data/Function"
+import { fmap, fmapF } from "../../../Data/Functor"
+import { any, countWith, countWithByKeyMaybe, elemF, find, flength, foldl, foldr, isList, List, notElem, subscript, take } from "../../../Data/List"
+import { all, altF, bind, bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing, or, sum, then } from "../../../Data/Maybe"
+import { add, gt, inc, lt, multiply, negate, subtractBy } from "../../../Data/Num"
+import { alter, empty, findWithDefault, lookup, OrderedMap } from "../../../Data/OrderedMap"
+import { fromDefault, Record } from "../../../Data/Record"
+import { fst, Pair, snd } from "../../../Data/Tuple"
+import { AdvantageIdsNoMaxInfl, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { ActiveActivatable, ActiveActivatableAL_, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable"
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
+import { Disadvantage } from "../../Models/Wiki/Disadvantage"
+import { Skill } from "../../Models/Wiki/Skill"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
+import { getSelectOptionCost } from "../Activatable/selectionUtils"
+import { getMagicalTraditionsHeroEntries } from "../Activatable/traditionUtils"
+import { pipe, pipe_ } from "../pipe"
+import { misNumberM, misStringM } from "../typeCheckUtils"
+import { compareMaxLevel, compareSubMaxLevel, getActiveWithNoCustomCost } from "./activatableCostUtils"
 
 const AP = AdventurePointsCategories.AL
 const AAA = ActiveActivatable.A
@@ -159,6 +159,7 @@ export const getMissingAPForDisAdvantage =
     // (magical/blessed)
     const subMissing =
       isInCharacterCreation && notElem (id) (AdvantageIdsNoMaxInfl)
+
         // (current + spent) - max > 0 => invalid
         ? bind (subCurrentAPSpent)
                (pipe (
@@ -171,6 +172,7 @@ export const getMissingAPForDisAdvantage =
     // Checks if there are enough AP below the max for advantages/disadvantages
     const mainMissing =
       isInCharacterCreation && notElem (id) (AdvantageIdsNoMaxInfl)
+
         // (current + spent) - max > 0 => invalid
         ? ensure (gt (0)) (currentAPSpent + normalizedCost - 80)
         : Nothing
@@ -320,6 +322,7 @@ const getBadHabitsDiff =
         hero_slice,
         lookup<string> (DisadvantageId.PersonalityFlaw),
         fmap (pipe (
+
           // get current active
           ActivatableDependent.A.active,
           getActiveWithNoCustomCost,

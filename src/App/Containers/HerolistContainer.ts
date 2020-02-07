@@ -1,20 +1,20 @@
-import { connect } from "react-redux";
-import { Action } from "redux";
-import { fromJust, isJust, Just, Maybe } from "../../Data/Maybe";
-import { OrderedSet } from "../../Data/OrderedSet";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as HerolistActions from "../Actions/HerolistActions";
-import * as IOActions from "../Actions/IOActions";
-import * as LocationActions from "../Actions/LocationActions";
-import * as SubwindowsActions from "../Actions/SubwindowsActions";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getSortedBooks } from "../Selectors/bookSelectors";
-import { getSortedHerolist, getUnsavedHeroesById } from "../Selectors/herolistSelectors";
-import { getCurrentHeroPresent, getHerolistFilterText, getIsCharacterCreatorOpen, getUsers, getWiki, getWikiExperienceLevels } from "../Selectors/stateSelectors";
-import { getHerolistSortOrder, getHerolistVisibilityFilter } from "../Selectors/uisettingsSelectors";
-import { TabId } from "../Utilities/LocationUtils";
-import { HeroListSortOptions, HeroListVisibilityFilter } from "../Utilities/Raw/JSON/Config";
-import { Herolist, HerolistDispatchProps, HerolistOwnProps, HerolistStateProps } from "../Views/Heroes/Herolist";
+import { connect } from "react-redux"
+import { Action } from "redux"
+import { fromJust, isJust, Just, Maybe } from "../../Data/Maybe"
+import { OrderedSet } from "../../Data/OrderedSet"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as HerolistActions from "../Actions/HerolistActions"
+import * as IOActions from "../Actions/IOActions"
+import * as LocationActions from "../Actions/LocationActions"
+import * as SubwindowsActions from "../Actions/SubwindowsActions"
+import { AppStateRecord } from "../Reducers/appReducer"
+import { getSortedBooks } from "../Selectors/bookSelectors"
+import { getSortedHerolist, getUnsavedHeroesById } from "../Selectors/herolistSelectors"
+import { getCurrentHeroPresent, getHerolistFilterText, getIsCharacterCreatorOpen, getUsers, getWiki, getWikiExperienceLevels } from "../Selectors/stateSelectors"
+import { getHerolistSortOrder, getHerolistVisibilityFilter } from "../Selectors/uisettingsSelectors"
+import { TabId } from "../Utilities/LocationUtils"
+import { HeroListSortOptions, HeroListVisibilityFilter } from "../Utilities/Raw/JSON/Config"
+import { Herolist, HerolistDispatchProps, HerolistOwnProps, HerolistStateProps } from "../Views/Heroes/Herolist"
 
 const mapStateToProps = (state: AppStateRecord, props: HerolistOwnProps) => ({
   currentHero: getCurrentHeroPresent (state),
@@ -40,14 +40,14 @@ const mapDispatchToProps = (
   showHero () {
     dispatch (LocationActions.setTab (TabId.Profile))
   },
-  saveHero (id: string) {
-    dispatch (HerolistActions.saveHero (l10n) (Just (id)))
+  async saveHero (id: string) {
+    await dispatch (HerolistActions.saveHero (l10n) (Just (id)))
   },
   saveHeroAsJSON (id: string) {
     dispatch (HerolistActions.exportHeroValidate (l10n) (id))
   },
-  deleteHero (id: string) {
-    dispatch (HerolistActions.deleteHeroValidate (l10n) (id))
+  async deleteHero (id: string) {
+    await dispatch (HerolistActions.deleteHeroValidate (l10n) (id))
   },
   duplicateHero (id: string) {
     dispatch (HerolistActions.duplicateHero (id))
@@ -66,8 +66,8 @@ const mapDispatchToProps = (
                                          (enableAllRuleBooks)
                                          (enabledRuleBooks))
   },
-  importHero () {
-    dispatch (IOActions.requestHeroImport (l10n))
+  async importHero () {
+    await dispatch (IOActions.requestHeroImport (l10n))
   },
   setSortOrder (id: HeroListSortOptions) {
     dispatch (HerolistActions.setHerolistSortOrder (id))

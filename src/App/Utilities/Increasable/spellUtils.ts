@@ -1,37 +1,37 @@
-import { notP } from "../../../Data/Bool";
-import { equals } from "../../../Data/Eq";
-import { cnst, flip, ident, thrush } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { all, any, consF, countWith, elemF, find, intersecting, List, minimum, notElem } from "../../../Data/List";
-import { and, bindF, elem, ensure, fromMaybe_, isJust, Just, listToMaybe, mapMaybe, Maybe, maybe, Nothing, sum } from "../../../Data/Maybe";
-import { gte, inc } from "../../../Data/Num";
-import { alter, elems, empty, filter, foldl, foldrWithKey, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { traceShowId } from "../../../Debug/Trace";
-import { IC, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups";
-import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { TransferUnfamiliar, UnfamiliarGroup } from "../../Models/Hero/TransferUnfamiliar";
-import { SpellWithRequirements } from "../../Models/View/SpellWithRequirements";
-import { Cantrip } from "../../Models/Wiki/Cantrip";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { Spell } from "../../Models/Wiki/Spell";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { modifyByLevel } from "../Activatable/activatableModifierUtils";
-import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
-import { mapMagicalTradIdToNumId } from "../Activatable/traditionUtils";
-import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies";
-import { getExperienceLevelAtStart } from "../ELUtils";
-import { ifElse } from "../ifElse";
-import { pipe, pipe_ } from "../pipe";
-import { areSpellPrereqisitesMet } from "../Prerequisites/validatePrerequisitesUtils";
-import { isNumber, misNumberM } from "../typeCheckUtils";
-import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
+import { notP } from "../../../Data/Bool"
+import { equals } from "../../../Data/Eq"
+import { cnst, flip, ident, thrush } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { all, any, consF, countWith, elemF, find, intersecting, List, minimum, notElem } from "../../../Data/List"
+import { and, bindF, elem, ensure, fromMaybe_, isJust, Just, listToMaybe, mapMaybe, Maybe, maybe, Nothing, sum } from "../../../Data/Maybe"
+import { gte, inc } from "../../../Data/Num"
+import { alter, elems, empty, filter, foldl, foldrWithKey, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { traceShowId } from "../../../Debug/Trace"
+import { IC, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { TransferUnfamiliar, UnfamiliarGroup } from "../../Models/Hero/TransferUnfamiliar"
+import { SpellWithRequirements } from "../../Models/View/SpellWithRequirements"
+import { Cantrip } from "../../Models/Wiki/Cantrip"
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { Spell } from "../../Models/Wiki/Spell"
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { modifyByLevel } from "../Activatable/activatableModifierUtils"
+import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils"
+import { mapMagicalTradIdToNumId } from "../Activatable/traditionUtils"
+import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies"
+import { getExperienceLevelAtStart } from "../ELUtils"
+import { ifElse } from "../ifElse"
+import { pipe, pipe_ } from "../pipe"
+import { areSpellPrereqisitesMet } from "../Prerequisites/validatePrerequisitesUtils"
+import { isNumber, misNumberM } from "../typeCheckUtils"
+import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils"
 
 const WA = WikiModel.A
 const HA = HeroModel.A
@@ -315,6 +315,18 @@ export const isIdInSpecialAbilityList: (xs: List<Record<SpecialAbility>>) =>
   flip (id => List.any (pipe (SAA.id, equals (id))))
 
 
+const isAnySpellActiveWithImpCostC =
+  (wiki_spells: OrderedMap<string, Record<Spell>>) =>
+    OrderedMap.any ((x: Record<ActivatableSkillDependent>) => ASDA.active (x)
+                                                              && pipe_ (
+                                                                x,
+                                                                ASDA.id,
+                                                                lookupF (wiki_spells),
+                                                                maybe (false)
+                                                                      (pipe (SA.ic, equals (IC.C)))
+                                                              ))
+
+
 /**
  * ```haskell
  * isInactiveValidForIntuitiveMage :: Wiki
@@ -333,12 +345,16 @@ const isInactiveValidForIntuitiveMage =
   (wiki_entry: Record<Spell>) =>
   (mhero_entry: Maybe<Record<ActivatableSkillDependent>>) =>
     !is_spell_max_count_reached
+
     // Intuitive Mages can only learn spells
     && SA.gr (wiki_entry) === MagicalGroup.Spells
+
     // Must be inactive
     && Maybe.all (notP (ASDA.active)) (mhero_entry)
+
     // No spells with IC D
     && SA.ic (wiki_entry) < IC.D
+
     // Only one spell with IC C
     && !(SA.ic (wiki_entry) === IC.C && isAnySpellActiveWithImpCostC (WA.spells (wiki))
                                                                      (HA.spells (hero)))
@@ -389,18 +405,6 @@ const isInactiveValidForAnimist =
                                     (wiki_entry)
                                     (mhero_entry)
     || SA.gr (wiki_entry) === MagicalGroup.Animistenkräfte
-
-
-const isAnySpellActiveWithImpCostC =
-  (wiki_spells: OrderedMap<string, Record<Spell>>) =>
-    OrderedMap.any ((x: Record<ActivatableSkillDependent>) => ASDA.active (x)
-                                                              && pipe_ (
-                                                                x,
-                                                                ASDA.id,
-                                                                lookupF (wiki_spells),
-                                                                maybe (false)
-                                                                      (pipe (SA.ic, equals (IC.C)))
-                                                              ))
 
 
 const consTradSpecificSpell =

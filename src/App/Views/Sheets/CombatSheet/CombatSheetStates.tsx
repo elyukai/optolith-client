@@ -1,20 +1,20 @@
-import * as React from "react";
-import { List, map, splitAt, toArray } from "../../../../Data/List";
-import { Record } from "../../../../Data/Record";
-import { fst, snd } from "../../../../Data/Tuple";
-import { NumIdName } from "../../../Models/NumIdName";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { toRoman } from "../../../Utilities/NumberUtils";
-import { pipe_ } from "../../../Utilities/pipe";
+import * as React from "react"
+import { List, map, splitAt, toArray } from "../../../../Data/List"
+import { Record } from "../../../../Data/Record"
+import { fst, snd } from "../../../../Data/Tuple"
+import { NumIdName } from "../../../Models/NumIdName"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { translate } from "../../../Utilities/I18n"
+import { toRoman } from "../../../Utilities/NumberUtils"
+import { pipe_ } from "../../../Utilities/pipe"
 
-export interface CombatSheetStatesProps {
+interface Props {
   l10n: L10nRecord
   conditions: List<Record<NumIdName>>
   states: List<Record<NumIdName>>
 }
 
-export function CombatSheetStates (props: CombatSheetStatesProps) {
+export const CombatSheetStates: React.FC<Props> = props => {
   const { l10n, conditions, states } = props
 
   const statesSplit = splitAt (9) (states)
@@ -35,16 +35,16 @@ export function CombatSheetStates (props: CombatSheetStatesProps) {
             <div key={NumIdName.A.id (e)}>
               <span>{NumIdName.A.name (e)}</span>
               <div>
-                <div></div>
+                <div />
               </div>
               <div>
-                <div></div>
+                <div />
               </div>
               <div>
-                <div></div>
+                <div />
               </div>
               <div>
-                <div></div>
+                <div />
               </div>
             </div>
           )),
@@ -62,7 +62,7 @@ export function CombatSheetStates (props: CombatSheetStatesProps) {
             <div key={NumIdName.A.id (e)}>
               <span>{NumIdName.A.name (e)}</span>
               <div>
-                <div></div>
+                <div />
               </div>
             </div>
           )),
@@ -77,7 +77,7 @@ export function CombatSheetStates (props: CombatSheetStatesProps) {
             <div key={NumIdName.A.id (e)}>
               <span>{NumIdName.A.name (e)}</span>
               <div>
-                <div></div>
+                <div />
               </div>
             </div>
           )),

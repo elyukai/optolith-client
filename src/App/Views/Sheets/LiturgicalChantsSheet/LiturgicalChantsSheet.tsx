@@ -1,30 +1,30 @@
-import * as React from "react";
-import { equals } from "../../../../Data/Eq";
-import { find, List } from "../../../../Data/List";
-import { bindF, Maybe } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { DCId } from "../../../Constants/Ids";
-import { ActiveActivatable } from "../../../Models/View/ActiveActivatable";
-import { AttributeCombined } from "../../../Models/View/AttributeCombined";
-import { BlessingCombined } from "../../../Models/View/BlessingCombined";
-import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
-import { LiturgicalChantWithRequirements } from "../../../Models/View/LiturgicalChantWithRequirements";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { Checkbox } from "../../Universal/Checkbox";
-import { Options } from "../../Universal/Options";
-import { AttributeMods } from "../AttributeMods";
-import { Sheet } from "../Sheet";
-import { HeaderValue } from "../SheetHeader";
-import { SheetWrapper } from "../SheetWrapper";
-import { LiturgicalChantsSheetBlessings } from "./LiturgicalChantsSheetBlessings";
-import { LiturgicalChantsSheetLiturgicalChants } from "./LiturgicalChantsSheetLiturgicalChants";
-import { LiturgicalChantsSheetSpecialAbilities } from "./LiturgicalChantsSheetSpecialAbilities";
-import { LiturgicalChantsSheetTraditionsAspects } from "./LiturgicalChantsSheetTraditionsAspects";
+import * as React from "react"
+import { equals } from "../../../../Data/Eq"
+import { find, List } from "../../../../Data/List"
+import { bindF, Maybe } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { DCId } from "../../../Constants/Ids"
+import { ActiveActivatable } from "../../../Models/View/ActiveActivatable"
+import { AttributeCombined } from "../../../Models/View/AttributeCombined"
+import { BlessingCombined } from "../../../Models/View/BlessingCombined"
+import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic"
+import { LiturgicalChantWithRequirements } from "../../../Models/View/LiturgicalChantWithRequirements"
+import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { Checkbox } from "../../Universal/Checkbox"
+import { Options } from "../../Universal/Options"
+import { AttributeMods } from "../AttributeMods"
+import { Sheet } from "../Sheet"
+import { HeaderValue } from "../SheetHeader"
+import { SheetWrapper } from "../SheetWrapper"
+import { LiturgicalChantsSheetBlessings } from "./LiturgicalChantsSheetBlessings"
+import { LiturgicalChantsSheetLiturgicalChants } from "./LiturgicalChantsSheetLiturgicalChants"
+import { LiturgicalChantsSheetSpecialAbilities } from "./LiturgicalChantsSheetSpecialAbilities"
+import { LiturgicalChantsSheetTraditionsAspects } from "./LiturgicalChantsSheetTraditionsAspects"
 
-export interface LiturgicalChantsSheetProps {
+interface Props {
   aspects: Maybe<string>
   attributes: List<Record<AttributeCombined>>
   blessedPrimary: Maybe<string>
@@ -38,10 +38,17 @@ export interface LiturgicalChantsSheetProps {
   switchAttributeValueVisibility (): void
 }
 
-export function LiturgicalChantsSheet (props: LiturgicalChantsSheetProps) {
+export const LiturgicalChantsSheet: React.FC<Props> = props => {
   const {
+    aspects,
+    attributes,
+    blessedPrimary,
+    blessedSpecialAbilities,
+    blessedTradition,
+    blessings,
     checkAttributeValueVisibility,
     derivedCharacteristics,
+    liturgicalChants,
     l10n,
     switchAttributeValueVisibility,
   } = props
@@ -74,17 +81,37 @@ export function LiturgicalChantsSheet (props: LiturgicalChantsSheetProps) {
         </Checkbox>
       </Options>
       <Sheet
-        {...props}
         id="liturgies-sheet"
         title={translate (l10n) ("liturgicalchants")}
         addHeaderInfo={addHeader}
+        l10n={l10n}
+        attributes={attributes}
         >
         <div className="all">
-          <LiturgicalChantsSheetLiturgicalChants {...props} />
-          <AttributeMods {...props} />
-          <LiturgicalChantsSheetTraditionsAspects {...props} />
-          <LiturgicalChantsSheetSpecialAbilities {...props} />
-          <LiturgicalChantsSheetBlessings {...props} />
+          <LiturgicalChantsSheetLiturgicalChants
+            attributes={attributes}
+            checkAttributeValueVisibility={checkAttributeValueVisibility}
+            liturgicalChants={liturgicalChants}
+            l10n={l10n}
+            />
+          <AttributeMods
+            l10n={l10n}
+            attributes={attributes}
+            />
+          <LiturgicalChantsSheetTraditionsAspects
+            l10n={l10n}
+            aspects={aspects}
+            blessedPrimary={blessedPrimary}
+            blessedTradition={blessedTradition}
+            />
+          <LiturgicalChantsSheetSpecialAbilities
+            l10n={l10n}
+            blessedSpecialAbilities={blessedSpecialAbilities}
+            />
+          <LiturgicalChantsSheetBlessings
+            l10n={l10n}
+            blessings={blessings}
+            />
         </div>
       </Sheet>
     </SheetWrapper>

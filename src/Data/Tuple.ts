@@ -7,7 +7,7 @@
  * @author Lukas Obermann
  */
 
-import { Internals } from "./Internals";
+import { Internals } from "./Internals"
 
 
 // CONSTRUCTOR
@@ -45,9 +45,7 @@ interface TupleConstructor {
 }
 
 export const Tuple =
-  ((...args: any[]) => {
-    return Internals._Tuple (...args)
-  }) as TupleConstructor
+  ((...args: any[]) => Internals._Tuple (...args)) as TupleConstructor
 
 
 // CONSTRUCTOR SPECIFIED ON PAIRS

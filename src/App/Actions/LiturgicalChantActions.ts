@@ -1,27 +1,27 @@
-import { fmapF } from "../../Data/Functor";
-import { List } from "../../Data/List";
-import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe";
-import { lookup } from "../../Data/OrderedMap";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
-import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
-import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
-import { getCurrentHeroPresent, getLiturgicalChants, getWikiLiturgicalChants } from "../Selectors/stateSelectors";
-import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";
-import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUtils";
-import { translate, translateP } from "../Utilities/I18n";
-import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { ChantsSortOptions } from "../Utilities/Raw/JSON/Config";
-import { ReduxAction } from "./Actions";
-import { addAlert, AlertOptions } from "./AlertActions";
+import { fmapF } from "../../Data/Functor"
+import { List } from "../../Data/List"
+import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe"
+import { lookup } from "../../Data/OrderedMap"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { L10nRecord } from "../Models/Wiki/L10n"
+import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
+import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
+import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
+import { getCurrentHeroPresent, getLiturgicalChants, getWikiLiturgicalChants } from "../Selectors/stateSelectors"
+import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
+import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUtils"
+import { translate, translateP } from "../Utilities/I18n"
+import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { ChantsSortOptions } from "../Utilities/Raw/JSON/Config"
+import { ReduxAction } from "./Actions"
+import { addAlert, AlertOptions } from "./AlertActions"
 
 export interface ActivateLiturgicalChantAction {
   type: ActionTypes.ACTIVATE_LITURGY
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -65,7 +65,7 @@ export const addLiturgicalChant =
 export interface ActivateBlessingAction {
   type: ActionTypes.ACTIVATE_BLESSING
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -106,7 +106,7 @@ export const addBlessing =
 export interface DeactivateLiturgyAction {
   type: ActionTypes.DEACTIVATE_LITURGY
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -120,7 +120,7 @@ export const removeLiturgicalChant = (id: string): DeactivateLiturgyAction => ({
 export interface DeactivateBlessingAction {
   type: ActionTypes.DEACTIVATE_BLESSING
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -134,7 +134,7 @@ export const removeBlessing = (id: string): DeactivateBlessingAction => ({
 export interface AddLiturgicalChantPointAction {
   type: ActionTypes.ADD_LITURGY_POINT
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -180,7 +180,7 @@ export const addLiturgicalChantPoint =
 export interface RemoveLiturgicalChantPointAction {
   type: ActionTypes.REMOVE_LITURGY_POINT
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -194,7 +194,7 @@ export const removeLiturgicalChantPoint = (id: string): RemoveLiturgicalChantPoi
 export interface SetLiturgicalChantsSortOrderAction {
   type: ActionTypes.SET_LITURGIES_SORT_ORDER
   payload: {
-    sortOrder: ChantsSortOptions;
+    sortOrder: ChantsSortOptions
   }
 }
 
@@ -209,7 +209,7 @@ export const setLiturgicalChantsSortOrder =
 export interface SetActiveLiturgicalChantsFilterTextAction {
   type: ActionTypes.SET_LITURGICAL_CHANTS_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 
@@ -222,15 +222,15 @@ export const setActiveLiturgicalChantsFilterText =
   })
 
 export interface SetInactiveLiturgicalChantsFilterTextAction {
-  type: ActionTypes.SET_INACTIVE_LITURGICAL_CHANTS_FILTER_TEXT
+  type: ActionTypes.SET_INAC_LCS_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 
 export const setInactiveLiturgicalChantsFilterText =
   (filterText: string): SetInactiveLiturgicalChantsFilterTextAction => ({
-    type: ActionTypes.SET_INACTIVE_LITURGICAL_CHANTS_FILTER_TEXT,
+    type: ActionTypes.SET_INAC_LCS_FILTER_TEXT,
     payload: {
       filterText,
     },

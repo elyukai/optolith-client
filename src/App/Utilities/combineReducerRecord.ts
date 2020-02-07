@@ -1,7 +1,7 @@
-import { Action, AnyAction } from "redux";
-import { over } from "../../Data/Lens";
-import { foldr, OrderedSet } from "../../Data/OrderedSet";
-import { fromDefault, makeLenses, Omit, Record, RecordBase, RecordIBase } from "../../Data/Record";
+import { Action, AnyAction } from "redux"
+import { over } from "../../Data/Lens"
+import { foldr, OrderedSet } from "../../Data/OrderedSet"
+import { fromDefault, makeLenses, Omit, Record, RecordBase, RecordIBase } from "../../Data/Record"
 
 export type ReducerM<S = any, A extends Action = AnyAction> = (action: A) => (mstate: S) => S
 
@@ -41,8 +41,8 @@ export const combineReducerRecord =
               (x .keys as OrderedSet<keyof Omit<S, "@@name">>)
 
     reducer.default = x.default
-    reducer.A = x.AL
-    reducer.A_ = x.A
+    reducer.A = x.A
+    reducer.AL = x.AL
     reducer.L = xL
 
     return reducer

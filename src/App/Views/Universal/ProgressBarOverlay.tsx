@@ -1,13 +1,13 @@
-import * as React from "react";
-import { orN } from "../../../Data/Maybe";
+import * as React from "react"
+import { orN } from "../../../Data/Maybe"
 
-export interface ProgressBarOverlayProps {
+interface Props {
   current: number
   max: number
   horizontal?: boolean
 }
 
-export function ProgressBarOverlay (props: ProgressBarOverlayProps) {
+export const ProgressBarOverlay: React.FC<Props> = props => {
   const { current, max, horizontal } = props
 
   const style =
@@ -15,5 +15,5 @@ export function ProgressBarOverlay (props: ProgressBarOverlayProps) {
       ? { width: `${current / max * 100}%` }
       : { height: `${current / max * 100}%` }
 
-  return <div className="progressbar-overlay" style={style}></div>
+  return <div className="progressbar-overlay" style={style} />
 }
