@@ -48,7 +48,7 @@ import { isRawSecondCombatTechniquesSelection } from "./ProfessionSelections/Raw
 import { isRawSkillsSelection } from "./ProfessionSelections/RawSkillsSelection"
 import { isRawSpecializationSelection } from "./ProfessionSelections/RawSpecializationSelection"
 import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrainKnowledgeSelection"
-import { toErrata } from "./Sub/toErrata"
+import { toErrata } from "./Sub/ToErrata"
 import { toSourceLinks } from "./Sub/toSourceLinks"
 
 const isNotNullObject = (x: unknown): x is object => typeof x === "object" && x !== null

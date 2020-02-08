@@ -10,7 +10,7 @@ import { mergeRowsById } from "../MergeRows"
 import { maybePrefix, modifyNegIntNoBreak } from "../SourceHelpers"
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
 import { mensureMapIntegerOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalListOptional, mensureMapNonEmptyString } from "../Validators/ToValue"
-import { toErrata } from "./Sub/toErrata"
+import { toErrata } from "./Sub/ToErrata"
 import { stringToDiceList } from "./toRace"
 
 export const toRaceVariant =

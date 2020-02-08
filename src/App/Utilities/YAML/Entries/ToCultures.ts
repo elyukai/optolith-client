@@ -15,7 +15,7 @@ import { CultureUniv } from "../Schema/Cultures/Cultures.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
-import { toErrata } from "./toErrata"
+import { toErrata } from "./ToErrata"
 import { toSourceRefs } from "./ToSourceRefs"
 
 

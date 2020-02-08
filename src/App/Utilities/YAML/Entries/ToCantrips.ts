@@ -13,7 +13,7 @@ import { CantripUniv } from "../Schema/Cantrips/Cantrips.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
-import { toErrata } from "./toErrata"
+import { toErrata } from "./ToErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toSourceRefs } from "./ToSourceRefs"
 

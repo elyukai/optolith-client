@@ -17,7 +17,7 @@ import { SpellEnhancementLevelUniv, SpellEnhancementUniv } from "../Schema/Spell
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
-import { toErrata } from "./toErrata"
+import { toErrata } from "./ToErrata"
 import { toSourceRefs } from "./ToSourceRefs"
 
 interface SelectOptionBase {

@@ -11,7 +11,7 @@ import { mergeRowsById } from "../MergeRows"
 import { modifyNegIntNoBreak } from "../SourceHelpers"
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
 import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapNumEnum, mensureMapNumEnumList, mensureMapNumEnumListOptional, mensureMapStringPredSetOptional } from "../Validators/ToValue"
-import { toErrata } from "./Sub/toErrata"
+import { toErrata } from "./Sub/ToErrata"
 import { toSourceLinks } from "./Sub/toSourceLinks"
 
 export const toLiturgicalChant =

@@ -45,7 +45,7 @@ import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrai
 import { isRemoveRawCombatTechniquesSelection } from "./ProfessionSelections/RemoveRawCombatTechniquesSelection"
 import { isRemoveRawCombatTechniquesSecondSelection } from "./ProfessionSelections/RemoveRawSecondCombatTechniquesSelection"
 import { isRemoveRawSpecializationSelection } from "./ProfessionSelections/RemoveRawSpecializationSelection"
-import { toErrata } from "./Sub/toErrata"
+import { toErrata } from "./Sub/ToErrata"
 import { stringToBlessings, stringToDependencies, stringToPrerequisites, stringToSpecialAbilities } from "./toProfession"
 
 const PVSL = ProfessionVariantSelectionsL

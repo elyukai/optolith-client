@@ -11,7 +11,7 @@ import { mergeRowsById } from "../MergeRows"
 import { modifyNegIntNoBreak } from "../SourceHelpers"
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
 import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalFixedList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapNumEnum, mensureMapNumEnumList, mensureMapStringPredSetOptional } from "../Validators/ToValue"
-import { toErrata } from "./Sub/toErrata"
+import { toErrata } from "./Sub/ToErrata"
 import { toSpellPrerequisites } from "./Sub/toPrerequisites"
 import { toSourceLinks } from "./Sub/toSourceLinks"
 

@@ -14,7 +14,7 @@ import { CombatTechniqueUniv } from "../Schema/CombatTechniques/CombatTechniques
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverter } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
-import { toErrata } from "./toErrata"
+import { toErrata } from "./ToErrata"
 import { toSourceRefs } from "./ToSourceRefs"
 
 

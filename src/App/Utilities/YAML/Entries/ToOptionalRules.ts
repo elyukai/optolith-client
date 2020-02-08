@@ -8,7 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { OptionalRuleL10n } from "../Schema/OptionalRules/OptionalRules.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
-import { toErrata } from "./toErrata"
+import { toErrata } from "./ToErrata"
 import { toSourceRefs } from "./ToSourceRefs"
 
 

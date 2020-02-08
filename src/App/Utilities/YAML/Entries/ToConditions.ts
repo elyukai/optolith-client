@@ -10,7 +10,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { ConditionL10n } from "../Schema/Conditions/Conditions.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
-import { toErrata } from "./toErrata"
+import { toErrata } from "./ToErrata"
 import { toSourceRefs } from "./ToSourceRefs"
 
 

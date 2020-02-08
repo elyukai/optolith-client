@@ -20,7 +20,7 @@ import { ProfessionVariantUniv } from "../Schema/ProfessionVariants/ProfessionVa
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
-import { toErrata } from "./toErrata"
+import { toErrata } from "./ToErrata"
 import { toActivatablePrerequisiteP, toCulturePrerequisite, toIncreasablePrerequisite, toRacePrerequisite, toSexPrerequisite } from "./ToPrerequisites"
 import { toCantripSO, toCombatTechniqueSOV, toCurseSO, toLanguageScriptSO, toSkillSO, toSkillSpecializationSOV, toTerrainKnowledgeSO } from "./ToProfessionSelectOptions"
 

@@ -17,7 +17,7 @@ import { modifyNegIntNoBreak } from "../SourceHelpers"
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
 import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapPairList, mensureMapPairListOptional, mensureMapStringPred } from "../Validators/ToValue"
 import { isRawRequiringActivatable } from "./Prerequisites/RawActivatableRequirement"
-import { toErrata } from "./Sub/toErrata"
+import { toErrata } from "./Sub/ToErrata"
 import { toSourceLinks } from "./Sub/toSourceLinks"
 
 const encumbrance = /true|false|maybe/u

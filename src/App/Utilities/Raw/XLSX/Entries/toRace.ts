@@ -12,7 +12,7 @@ import { mergeRowsById } from "../MergeRows"
 import { maybePrefix, modifyNegIntNoBreak } from "../SourceHelpers"
 import { lookupKeyMapValidNatural, lookupKeyMapValidNonEmptyString, lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
 import { mensureMapInteger, mensureMapIntegerOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapPairList, mensureMapPairListOptional } from "../Validators/ToValue"
-import { toErrata } from "./Sub/toErrata"
+import { toErrata } from "./Sub/ToErrata"
 import { toSourceLinks } from "./Sub/toSourceLinks"
 
 const stringToAttributeAdjustments =

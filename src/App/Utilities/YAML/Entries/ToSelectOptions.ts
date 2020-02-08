@@ -15,7 +15,7 @@ import { SelectOption } from "../../../Models/Wiki/sub/SelectOption"
 import { pipe, pipe_ } from "../../pipe"
 import { SpecialAbilitySelectOptionL10n } from "../Schema/SpecialAbilities/SpecialAbilities.l10n"
 import { SelectOptionCategoryUniv, SpecialAbilitySelectOptionUniv } from "../Schema/SpecialAbilities/SpecialAbilities.univ"
-import { toErrata } from "./toErrata"
+import { toErrata } from "./ToErrata"
 import { toPrerequisites } from "./ToPrerequisites"
 import { toSourceRefs } from "./ToSourceRefs"
 

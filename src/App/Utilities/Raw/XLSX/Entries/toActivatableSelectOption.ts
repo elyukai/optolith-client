@@ -10,7 +10,7 @@ import { mergeRowsByIdAndMainIdBothOpt } from "../MergeRows"
 import { modifyNegIntNoBreak } from "../SourceHelpers"
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
 import { mensureMapBoolean, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapStringPredListOptional } from "../Validators/ToValue"
-import { toErrata } from "./Sub/toErrata"
+import { toErrata } from "./Sub/ToErrata"
 import { toSpellPrerequisites } from "./Sub/toPrerequisites"
 import { toSourceLinksOpt } from "./Sub/toSourceLinks"
 

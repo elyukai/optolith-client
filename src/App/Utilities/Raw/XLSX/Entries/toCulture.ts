@@ -16,7 +16,7 @@ import { mergeRowsById } from "../MergeRows"
 import { maybePrefix, modifyNegIntNoBreak } from "../SourceHelpers"
 import { lookupKeyValid, mapMNamed, TableType } from "../Validators/Generic"
 import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapNumEnumList, mensureMapPairList, mensureMapStringPredListOptional } from "../Validators/ToValue"
-import { toErrata } from "./Sub/toErrata"
+import { toErrata } from "./Sub/ToErrata"
 import { toSourceLinks } from "./Sub/toSourceLinks"
 
 const exception =

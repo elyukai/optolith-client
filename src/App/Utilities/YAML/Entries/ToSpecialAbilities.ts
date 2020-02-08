@@ -22,7 +22,7 @@ import { SpecialAbilityUniv } from "../Schema/SpecialAbilities/SpecialAbilities.
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
-import { toErrata } from "./toErrata"
+import { toErrata } from "./ToErrata"
 import { toMarkdownM } from "./ToMarkdown"
 import { toLevelPrerequisites } from "./ToPrerequisites"
 import { mergeSOs, resolveSOCats } from "./ToSelectOptions"

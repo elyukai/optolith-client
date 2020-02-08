@@ -18,7 +18,7 @@ import { ProfessionCombatTechnique, ProfessionLiturgicalChant, ProfessionSkill, 
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
-import { toErrata } from "./toErrata"
+import { toErrata } from "./ToErrata"
 import { toActivatablePrerequisiteP, toCulturePrerequisite, toIncreasablePrerequisite, toRacePrerequisite, toSexPrerequisite } from "./ToPrerequisites"
 import { toCantripSO, toCombatTechniqueSO, toCurseSO, toLanguageScriptSO, toSkillSO, toSkillSpecializationSO, toTerrainKnowledgeSO } from "./ToProfessionSelectOptions"
 import { toSourceRefs } from "./ToSourceRefs"
