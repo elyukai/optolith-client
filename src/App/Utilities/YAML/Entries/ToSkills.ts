@@ -23,7 +23,7 @@ import { zipBy, zipByIdLoose } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown, toMarkdownM } from "./ToMarkdown"
 import { toActivatablePrerequisite } from "./ToPrerequisites"
-import { toSourceRefs } from "./toSourceRefs"
+import { toSourceRefs } from "./ToSourceRefs"
 
 
 const toApplications : (x : [SkillUniv, SkillL10n]) => List<Record<Application>>

@@ -18,7 +18,7 @@ import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
-import { toSourceRefs } from "./toSourceRefs"
+import { toSourceRefs } from "./ToSourceRefs"
 
 
 const toMagicalMelody : YamlPairConverterE<MagicalMelodyUniv, MagicalMelodyL10n, string, Spell>

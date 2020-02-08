@@ -1,8 +1,9 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
-import { ident } from "../../../../Data/Function"
-import { concatMap, consF, fromArray, List } from "../../../../Data/List"
-import { Just } from "../../../../Data/Maybe"
-import { foldr, OrderedMap } from "../../../../Data/OrderedMap"
+import { Either, Left, Right } from "../../../../Data/Either"
+import { flip, ident } from "../../../../Data/Function"
+import { fromArray, List, notNull } from "../../../../Data/List"
+import { ensure, Just, Maybe, Nothing } from "../../../../Data/Maybe"
+import { foldr, insert, OrderedMap, toMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Blessing } from "../../../Models/Wiki/Blessing"
 import { Cantrip } from "../../../Models/Wiki/Cantrip"
@@ -12,7 +13,14 @@ import { Skill } from "../../../Models/Wiki/Skill"
 import { Spell } from "../../../Models/Wiki/Spell"
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption"
 import { pipe, pipe_ } from "../../pipe"
-import { SelectOptionCategoryUniv } from "../Schema/SpecialAbilities/SpecialAbilities.univ"
+import { SpecialAbilitySelectOptionL10n } from "../Schema/SpecialAbilities/SpecialAbilities.l10n"
+import { SelectOptionCategoryUniv, SpecialAbilitySelectOptionUniv } from "../Schema/SpecialAbilities/SpecialAbilities.univ"
+import { toErrata } from "./toErrata"
+import { toPrerequisites } from "./ToPrerequisites"
+import { toSourceRefs } from "./ToSourceRefs"
+
+
+type InsertMap = ident<OrderedMap<string, Record<SelectOption>>>
 
 
 const blessingToSelectOption : (attr : Record<Blessing>) => Record<SelectOption>
@@ -25,8 +33,12 @@ const blessingToSelectOption : (attr : Record<Blessing>) => Record<SelectOption>
 
 
 const resolveBlessings : (blessings : OrderedMap<string, Record<Blessing>>)
-                       => List<Record<SelectOption>>
-                       = foldr (pipe (blessingToSelectOption, consF)) (List ())
+                       => InsertMap
+                       = flip (foldr (x => pipe_ (
+                                             x,
+                                             blessingToSelectOption,
+                                             insert (Blessing.A.id (x))
+                                           )))
 
 
 const cantripToSelectOption : (cantrip : Record<Cantrip>) => Record<SelectOption>
@@ -39,8 +51,12 @@ const cantripToSelectOption : (cantrip : Record<Cantrip>) => Record<SelectOption
 
 
 const resolveCantrips : (cantrips : OrderedMap<string, Record<Cantrip>>)
-                      => List<Record<SelectOption>>
-                      = foldr (pipe (cantripToSelectOption, consF)) (List ())
+                      => InsertMap
+                      = flip (foldr (x => pipe_ (
+                                            x,
+                                            cantripToSelectOption,
+                                            insert (Cantrip.A.id (x))
+                                          )))
 
 
 const ctToSelectOption : (combatTechnique : Record<CombatTechnique>) => Record<SelectOption>
@@ -55,15 +71,22 @@ const ctToSelectOption : (combatTechnique : Record<CombatTechnique>) => Record<S
 
 const resolveCombatTechniques : (gr : number[] | undefined)
                               => (combatTechniques : OrderedMap<string, Record<CombatTechnique>>)
-                              => List<Record<SelectOption>>
+                              => InsertMap
                               = gr => gr === undefined
-                                      ? foldr (pipe (ctToSelectOption, consF))
-                                              (List ())
-                                      : foldr ((x : Record<CombatTechnique>) =>
-                                                gr.includes (CombatTechnique.A.gr (x))
-                                                ? pipe_ (x, ctToSelectOption, consF)
-                                                : ident as ident<List<Record<SelectOption>>>)
-                                              (List ())
+                                      ? flip (foldr ((x : Record<CombatTechnique>) =>
+                                                      pipe_ (
+                                                        x,
+                                                        ctToSelectOption,
+                                                        insert (CombatTechnique.A.id (x))
+                                                      )))
+                                      : flip (foldr ((x : Record<CombatTechnique>) =>
+                                                      gr.includes (CombatTechnique.A.gr (x))
+                                                      ? pipe_ (
+                                                          x,
+                                                          ctToSelectOption,
+                                                          insert (CombatTechnique.A.id (x))
+                                                        )
+                                                      : ident as InsertMap))
 
 
 const lcToSelectOption : (liturgicalChant : Record<LiturgicalChant>) => Record<SelectOption>
@@ -78,15 +101,22 @@ const lcToSelectOption : (liturgicalChant : Record<LiturgicalChant>) => Record<S
 
 const resolveLiturgicalChants : (gr : number[] | undefined)
                               => (liturgicalChants : OrderedMap<string, Record<LiturgicalChant>>)
-                              => List<Record<SelectOption>>
+                              => InsertMap
                               = gr => gr === undefined
-                                      ? foldr (pipe (lcToSelectOption, consF))
-                                              (List ())
-                                      : foldr ((x : Record<LiturgicalChant>) =>
-                                                gr.includes (LiturgicalChant.A.gr (x))
-                                                ? pipe_ (x, lcToSelectOption, consF)
-                                                : ident as ident<List<Record<SelectOption>>>)
-                                              (List ())
+                                      ? flip (foldr ((x : Record<LiturgicalChant>) =>
+                                                      pipe_ (
+                                                        x,
+                                                        lcToSelectOption,
+                                                        insert (LiturgicalChant.A.id (x))
+                                                      )))
+                                      : flip (foldr ((x : Record<LiturgicalChant>) =>
+                                                      gr.includes (LiturgicalChant.A.gr (x))
+                                                      ? pipe_ (
+                                                          x,
+                                                          lcToSelectOption,
+                                                          insert (LiturgicalChant.A.id (x))
+                                                        )
+                                                      : ident as InsertMap))
 
 
 const skillToSelectOption : (skill : Record<Skill>) => Record<SelectOption>
@@ -94,6 +124,8 @@ const skillToSelectOption : (skill : Record<Skill>) => Record<SelectOption>
                                    id: Skill.A.id (x),
                                    name: Skill.A.name (x),
                                    cost: Just (Skill.A.ic (x)),
+                                   applications: Just (Skill.A.applications (x)),
+                                   applicationInput: Skill.A.applicationsInput (x),
                                    src: Skill.A.src (x),
                                    errata: Skill.A.errata (x),
                                  })
@@ -101,15 +133,22 @@ const skillToSelectOption : (skill : Record<Skill>) => Record<SelectOption>
 
 const resolveSkills : (gr : number[] | undefined)
                     => (skills : OrderedMap<string, Record<Skill>>)
-                    => List<Record<SelectOption>>
+                    => InsertMap
                     = gr => gr === undefined
-                            ? foldr (pipe (skillToSelectOption, consF))
-                                    (List ())
-                            : foldr ((x : Record<Skill>) =>
-                                      gr.includes (Skill.A.gr (x))
-                                      ? pipe_ (x, skillToSelectOption, consF)
-                                      : ident as ident<List<Record<SelectOption>>>)
-                                    (List ())
+                            ? flip (foldr ((x : Record<Skill>) =>
+                                            pipe_ (
+                                              x,
+                                              skillToSelectOption,
+                                              insert (Skill.A.id (x))
+                                            )))
+                            : flip (foldr ((x : Record<Skill>) =>
+                                            gr.includes (Skill.A.gr (x))
+                                            ? pipe_ (
+                                                x,
+                                                skillToSelectOption,
+                                                insert (Skill.A.id (x))
+                                              )
+                                            : ident as InsertMap))
 
 
 const spellToSelectOption : (spell : Record<Spell>) => Record<SelectOption>
@@ -124,15 +163,22 @@ const spellToSelectOption : (spell : Record<Spell>) => Record<SelectOption>
 
 const resolveSpells : (gr : number[] | undefined)
                     => (spells : OrderedMap<string, Record<Spell>>)
-                    => List<Record<SelectOption>>
+                    => InsertMap
                     = gr => gr === undefined
-                            ? foldr (pipe (spellToSelectOption, consF))
-                                    (List ())
-                            : foldr ((x : Record<Spell>) =>
-                                      gr.includes (Spell.A.gr (x))
-                                      ? pipe_ (x, spellToSelectOption, consF)
-                                      : ident as ident<List<Record<SelectOption>>>)
-                                    (List ())
+                            ? flip (foldr ((x : Record<Spell>) =>
+                                            pipe_ (
+                                              x,
+                                              spellToSelectOption,
+                                              insert (Spell.A.id (x))
+                                            )))
+                            : flip (foldr ((x : Record<Spell>) =>
+                                            gr.includes (Spell.A.gr (x))
+                                            ? pipe_ (
+                                                x,
+                                                spellToSelectOption,
+                                                insert (Spell.A.id (x))
+                                              )
+                                            : ident as InsertMap))
 
 
 /**
@@ -145,22 +191,102 @@ export const resolveSOCats : (blessings : OrderedMap<string, Record<Blessing>>)
                            => (liturgicalChants : OrderedMap<string, Record<LiturgicalChant>>)
                            => (skills : OrderedMap<string, Record<Skill>>)
                            => (spells : OrderedMap<string, Record<Spell>>)
-                           => (categories : SelectOptionCategoryUniv[])
-                           => List<Record<SelectOption>>
+                           => (categories : SelectOptionCategoryUniv[] | undefined)
+                           => OrderedMap<string, Record<SelectOption>>
                            = bs => cas => cts => lcs => sks => sps =>
                                pipe (
+                                 xs => xs === undefined ? [] : xs,
                                  fromArray,
-                                 concatMap (cat => cat.category === "BLESSINGS"
-                                                   ? resolveBlessings (bs)
-                                                   : cat.category === "CANTRIPS"
-                                                   ? resolveCantrips (cas)
-                                                   : cat.category === "COMBAT_TECHNIQUES"
-                                                   ? resolveCombatTechniques (cat.group)
-                                                                             (cts)
-                                                   : cat.category === "LITURGICAL_CHANTS"
-                                                   ? resolveLiturgicalChants (cat.group)
-                                                                             (lcs)
-                                                   : cat.category === "SKILLS"
-                                                   ? resolveSkills (cat.group) (sks)
-                                                   : resolveSpells (cat.group) (sps))
+                                 List.foldr ((cat : SelectOptionCategoryUniv) =>
+                                              cat.category === "BLESSINGS"
+                                              ? resolveBlessings (bs)
+                                              : cat.category === "CANTRIPS"
+                                              ? resolveCantrips (cas)
+                                              : cat.category === "COMBAT_TECHNIQUES"
+                                              ? resolveCombatTechniques (cat.group) (cts)
+                                              : cat.category === "LITURGICAL_CHANTS"
+                                              ? resolveLiturgicalChants (cat.group) (lcs)
+                                              : cat.category === "SKILLS"
+                                              ? resolveSkills (cat.group) (sks)
+                                              : resolveSpells (cat.group) (sps))
+                                            (OrderedMap.empty)
                                )
+
+
+const l10nSelectOptionToRecord : (l10n : SpecialAbilitySelectOptionL10n) => Record<SelectOption>
+                               = l10n => SelectOption ({
+                                           id: l10n.id,
+                                           name: l10n.name,
+                                           description: Maybe (l10n.description),
+                                           specializations: l10n.specializations === undefined
+                                                            ? Nothing
+                                                            : Just (
+                                                                fromArray (l10n.specializations)
+                                                              ),
+                                           specializationInput: Maybe (l10n.specializationInput),
+                                           src: toSourceRefs (l10n.src),
+                                           errata: toErrata (l10n.errata),
+                                         })
+
+
+const mergeUnivIntoL10n : (univ : SpecialAbilitySelectOptionUniv) => ident<Record<SelectOption>>
+                        = univ => l10n => SelectOption ({
+                                            id: SelectOption.A.id (l10n),
+                                            name: SelectOption.A.name (l10n),
+                                            description: SelectOption.A.description (l10n),
+                                            specializations: SelectOption.A.specializations (l10n),
+                                            specializationInput:
+                                              SelectOption.A.specializationInput (l10n),
+                                            continent: Maybe (univ.continent),
+                                            cost: Maybe (univ.cost),
+                                            isExtinct: Maybe (univ.isExtinct),
+                                            isSecret: Maybe (univ.isSecret),
+                                            languages: typeof univ.languages === "object"
+                                                       ? Just (fromArray (univ.languages))
+                                                       : Nothing,
+                                            prerequisites: ensure (notNull)
+                                                                  (toPrerequisites (univ)),
+                                            level: Maybe (univ.animalLevel),
+                                            gr: Maybe (univ.animalGr),
+                                            src: SelectOption.A.src (l10n),
+                                            errata: SelectOption.A.errata (l10n),
+                                          })
+
+
+export const mergeSOs : (sosL10n : SpecialAbilitySelectOptionL10n[] | undefined)
+                      => (sosUniv : SpecialAbilitySelectOptionUniv[] | undefined)
+                      => (soCatMap : OrderedMap<string, Record<SelectOption>>)
+                      => Either<Error[], List<Record<SelectOption>>>
+                      = sosL10n => sosUniv => soCatMap => {
+                          const mp : Map<string | number, Record<SelectOption>>
+                                   = new Map (toMap (soCatMap))
+
+                          const errs : Error[] = []
+
+                          if (sosL10n !== undefined) {
+                            for (const so of sosL10n) {
+                              if (mp.has (so.id)) {
+                                errs.push (new Error (`mergeSOs: Key ${so.id} already in use`))
+                              }
+                              else {
+                                mp.set (so.id, l10nSelectOptionToRecord (so))
+                              }
+                            }
+                          }
+
+                          if (sosUniv !== undefined) {
+                            for (const so of sosUniv) {
+                              const v = mp.get (so.id)
+
+                              if (v !== undefined) {
+                                mp.set (so.id, mergeUnivIntoL10n (so) (v))
+                              }
+                            }
+                          }
+
+                          if (errs.length > 0) {
+                            return Left (errs)
+                          }
+
+                          return Right (List (...mp.values ()))
+                        }

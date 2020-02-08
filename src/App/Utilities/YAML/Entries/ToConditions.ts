@@ -11,7 +11,7 @@ import { toMapIntegrity } from "../EntityIntegrity"
 import { ConditionL10n } from "../Schema/Conditions/Conditions.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { toErrata } from "./toErrata"
-import { toSourceRefs } from "./toSourceRefs"
+import { toSourceRefs } from "./ToSourceRefs"
 
 
 const toCondition : (l10n : ConditionL10n) => [string, Record<Condition>]

@@ -18,7 +18,7 @@ import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
-import { toSourceRefs } from "./toSourceRefs"
+import { toSourceRefs } from "./ToSourceRefs"
 
 
 const toDR : YamlPairConverterE<DominationRitualUniv, DominationRitualL10n, string, Spell>

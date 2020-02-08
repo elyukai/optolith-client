@@ -11,17 +11,11 @@ import { pipe, pipe_ } from "../pipe"
 import { schema_to_data, YamlSchemaMap } from "./SchemaMap"
 
 
-export type YamlValidationError = Error
-                                | Ajv.ErrorObject[]
-                                | null
-                                | undefined
-
-
 /**
  * The result from the `FileParser`. Either an error or the valid data.
  */
 export type YamlParserResult<A extends keyof YamlSchemaMap>
-  = Either<YamlValidationError, YamlSchemaMap [A]>
+  = Either<Error[], YamlSchemaMap [A]>
 
 
 /**
@@ -55,10 +49,14 @@ const validate : (validator : Ajv.Ajv)
                  x => typeof x === "boolean"
                    ? x
                      ? Right (data as YamlSchemaMap [typeof ref])
-                     : Left (validator .errors)
-                   : Left (new TypeError (
+                     : Left (typeof validator.errors === "object" && validator.errors !== null
+                             ? validator.errors.map (
+                                 err => new Error (`validate: JSON validation error at ${err.schemaPath}: ${err.message}`)
+                               )
+                             : [])
+                   : Left ([ new TypeError (
                        "validateYaml: Async schemes are not supported"
-                     ))
+                     ) ])
                )
 
 
@@ -72,7 +70,8 @@ export const readYaml : (pathToDir : string) => (validator : Ajv.Ajv) => YamlPar
                           join (app_path, "app", "Database", pathToDir, schema_to_data [ref]),
                           parseYamlFile,
                           handleE,
-                          fmap (either ((err : Error) : YamlParserResult<typeof ref> => Left (err))
+                          fmap (either ((err : Error) : YamlParserResult<typeof ref> =>
+                                          Left ([ err ]))
                                         (validate (validator) (ref)))
                         )
 

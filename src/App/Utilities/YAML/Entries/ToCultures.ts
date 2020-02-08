@@ -16,7 +16,7 @@ import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
-import { toSourceRefs } from "./toSourceRefs"
+import { toSourceRefs } from "./ToSourceRefs"
 
 
 const toCulture : YamlPairConverterE<CultureUniv, CultureL10n, string, Culture>

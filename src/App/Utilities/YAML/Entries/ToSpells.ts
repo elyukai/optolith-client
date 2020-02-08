@@ -18,7 +18,7 @@ import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toActivatablePrerequisite, toIncreasablePrerequisite } from "./ToPrerequisites"
-import { toSourceRefs } from "./toSourceRefs"
+import { toSourceRefs } from "./ToSourceRefs"
 
 
 const toSpell : YamlPairConverterE<SpellUniv, SpellL10n, string, Spell>

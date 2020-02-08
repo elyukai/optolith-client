@@ -19,7 +19,7 @@ import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdown } from "./ToMarkdown"
 import { toActivatablePrerequisite } from "./ToPrerequisites"
-import { toSourceRefs } from "./toSourceRefs"
+import { toSourceRefs } from "./ToSourceRefs"
 
 
 const toGeodeRitual : YamlPairConverterE<GeodeRitualUniv, GeodeRitualL10n, string, Spell>

@@ -20,7 +20,7 @@ import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
 import { toMarkdownM } from "./ToMarkdown"
-import { toSourceRefs } from "./toSourceRefs"
+import { toSourceRefs } from "./ToSourceRefs"
 
 
 const concatTexts : (l10n : ItemL10n) => ItemInfo

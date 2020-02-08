@@ -1,6 +1,9 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
-import { fromArray, NonEmptyList } from "../../../../Data/List"
-import { Just, Maybe, Nothing } from "../../../../Data/Maybe"
+import { flip, ident } from "../../../../Data/Function"
+import { fmapF } from "../../../../Data/Functor"
+import { foldr, fromArray, List, map, NonEmptyList, notNull } from "../../../../Data/List"
+import { catMaybes, Just, Maybe, Nothing } from "../../../../Data/Maybe"
+import { insert, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement"
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement"
@@ -10,6 +13,8 @@ import { PrimaryAttributeType, RequirePrimaryAttribute } from "../../../Models/W
 import { RaceRequirement } from "../../../Models/Wiki/prerequisites/RaceRequirement"
 import { SexRequirement } from "../../../Models/Wiki/prerequisites/SexRequirement"
 import { SocialPrerequisite } from "../../../Models/Wiki/prerequisites/SocialPrerequisite"
+import { AllRequirementObjects } from "../../../Models/Wiki/wikiTypeHelpers"
+import { pipe, pipe_ } from "../../pipe"
 import * as RawPrerequisites from "../Schema/Prerequisites/Prerequisites"
 
 
@@ -125,3 +130,75 @@ export const toIncreasablePrerequisite : (x : RawPrerequisites.IncreasableRequir
                                                   : x.id,
                                                 value: x.value,
                                               })
+
+
+export const toPrerequisites : (univ : RawPrerequisites.Prerequisites)
+                             => List<AllRequirementObjects>
+                             = univ => catMaybes (List<Maybe<AllRequirementObjects>> (
+                                                   fmapF (Maybe (univ.sexPrerequisite))
+                                                         (toSexPrerequisite),
+                                                   fmapF (Maybe (univ.racePrerequisite))
+                                                         (toRacePrerequisite),
+                                                   fmapF (Maybe (univ.culturePrerequisite))
+                                                         (toCulturePrerequisite),
+                                                   fmapF (Maybe (univ.primaryAttributePrerequisite))
+                                                         (toPrimaryAttrPrerequisite),
+                                                   fmapF (Maybe (univ.socialStatusPrerequisite))
+                                                         (toSocialPrerequisite),
+                                                   fmapF (Maybe (univ.pactPrerequisite))
+                                                         (toPactPrerequisite),
+                                                   ...(univ.activatablePrerequisites === undefined
+                                                       ? List (Nothing)
+                                                       : pipe_ (
+                                                           univ.activatablePrerequisites,
+                                                           fromArray,
+                                                           map (pipe (
+                                                             toActivatablePrerequisite,
+                                                             Just
+                                                           ))
+                                                         )),
+                                                   ...(univ.increasablePrerequisites === undefined
+                                                       ? List (Nothing)
+                                                       : pipe_ (
+                                                           univ.increasablePrerequisites,
+                                                           fromArray,
+                                                           map (pipe (
+                                                             toIncreasablePrerequisite,
+                                                             Just
+                                                           ))
+                                                         ))
+                                                 ))
+
+
+type RawLevelOptions = RawPrerequisites.LevelPrerequisites
+type PrerequisiteList = List<AllRequirementObjects>
+type PrerequisitesByLevel = OrderedMap<number, PrerequisiteList>
+
+
+export const toLevelPrerequisites : (univ : RawPrerequisites.WithLevelPrerequisites)
+                                  => PrerequisitesByLevel
+                                  = univ => pipe_ (
+                                              OrderedMap.empty as PrerequisitesByLevel,
+                                              mp => {
+                                                const level1 = toPrerequisites (univ)
+
+                                                if (notNull (level1)) {
+                                                  return insert (1)
+                                                                <PrerequisiteList> (level1)
+                                                                (mp)
+                                                }
+
+                                                return mp
+                                              },
+                                              univ.levelPrerequisites === undefined
+                                              ? ident
+                                              : pipe_ (
+                                                  univ.levelPrerequisites,
+                                                  fromArray,
+                                                  flip (foldr ((x : RawLevelOptions) => pipe_ (
+                                                                x,
+                                                                toPrerequisites,
+                                                                insert (x.level)
+                                                              )))
+                                                )
+                                            )

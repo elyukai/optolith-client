@@ -18,7 +18,7 @@ import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
 import { toErrata } from "./toErrata"
-import { toSourceRefs } from "./toSourceRefs"
+import { toSourceRefs } from "./ToSourceRefs"
 
 interface SelectOptionBase {
   id : number

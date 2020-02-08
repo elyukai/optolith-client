@@ -9,7 +9,7 @@ import { toMapIntegrity } from "../EntityIntegrity"
 import { StateL10n } from "../Schema/States/States.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { toErrata } from "./toErrata"
-import { toSourceRefs } from "./toSourceRefs"
+import { toSourceRefs } from "./ToSourceRefs"
 
 
 const toState : (l10n : StateL10n) => [string, Record<State>]

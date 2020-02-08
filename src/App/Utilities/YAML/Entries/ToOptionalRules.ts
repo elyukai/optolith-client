@@ -9,7 +9,7 @@ import { toMapIntegrity } from "../EntityIntegrity"
 import { OptionalRuleL10n } from "../Schema/OptionalRules/OptionalRules.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { toErrata } from "./toErrata"
-import { toSourceRefs } from "./toSourceRefs"
+import { toSourceRefs } from "./ToSourceRefs"
 
 
 const toOptionalRule : (l10n : OptionalRuleL10n) => [string, Record<OptionalRule>]
