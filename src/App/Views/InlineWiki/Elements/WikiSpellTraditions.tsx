@@ -35,7 +35,7 @@ export const WikiSpellTraditions: FC = props => {
 
   if (elem (MagicalTradition.Animists) (trad)) {
     return (
-      <WikiProperty l10n={l10n} title="tribaltraditions">
+      <WikiProperty l10n={l10n} title="inlinewiki.tribaltraditions">
         {pipe_ (
           subtrad,
           mapMaybe (pipe (dec, subscript (translate (l10n) ("tribes")))),
@@ -48,7 +48,7 @@ export const WikiSpellTraditions: FC = props => {
 
   if (elem (MagicalTradition.ArcaneBards) (trad) || elem (MagicalTradition.ArcaneDancers) (trad)) {
     return (
-      <WikiProperty l10n={l10n} title="musictradition">
+      <WikiProperty l10n={l10n} title="inlinewiki.musictradition">
         {pipe_ (
           subtrad,
           mapMaybe (pipe (dec, subscript (translate (l10n) ("musictraditions")))),
@@ -62,7 +62,7 @@ export const WikiSpellTraditions: FC = props => {
   const trad_strs = translate (l10n) ("magicaltraditions")
 
   return (
-    <WikiProperty l10n={l10n} title="traditions">
+    <WikiProperty l10n={l10n} title="inlinewiki.traditions">
       {pipe_ (
         trad,
         mapMaybe (pipe (

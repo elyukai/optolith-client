@@ -83,17 +83,18 @@ const getMainScriptStr =
             )
 
             return fmapF (mcost)
-                         ((cost: number) =>
-                            `${names} (${cost} ${translate (l10n) ("adventurepoints.short")})`)
+                         ((cost: number) => translateP (l10n)
+                                                       ("general.withapvalue")
+                                                       (List<string | number> (names, cost)))
           }),
-    fromMaybe (translate (l10n) ("none"))
+    fromMaybe (translate (l10n) ("general.none"))
   )
 
 const getSocialStatusStr =
   (l10n: L10nRecord) => pipe (
     CCA_.socialStatus,
     ensure (notNull),
-    maybe (translate (l10n) ("none"))
+    maybe (translate (l10n) ("general.none"))
           (pipe (
             mapMaybe (pipe (dec, subscript (translate (l10n) ("socialstatuses")))),
             intercalate (", ")
@@ -138,19 +139,19 @@ export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
 
   return (
     <WikiBoxTemplate className="culture" title={CCA_.name (x)}>
-      <WikiProperty l10n={l10n} title="language">
+      <WikiProperty l10n={l10n} title="inlinewiki.language">
         {native_tongue}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="script">
+      <WikiProperty l10n={l10n} title="inlinewiki.script">
         {main_script}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="areaknowledge">
+      <WikiProperty l10n={l10n} title="inlinewiki.areaknowledge">
         {CCA_.areaKnowledge (x)}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="socialstatus">
+      <WikiProperty l10n={l10n} title="inlinewiki.socialstatus">
         {social_status}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="commonprofessions">
+      <WikiProperty l10n={l10n} title="inlinewiki.commonprofessions">
         {isElvenCulture (CCA_.id (x)) ? renderMaybe (CCA_.commonMagicProfessions (x)) : null}
       </WikiProperty>
       {isElvenCulture (CCA_.id (x))
@@ -159,7 +160,7 @@ export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
           <ul>
             <li>
               <em>
-                {translate (l10n) ("commonmundaneprofessions")}
+                {translate (l10n) ("inlinewiki.commonprofessions.mundane")}
                 {":"}
               </em>
               {" "}
@@ -167,7 +168,7 @@ export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
             </li>
             <li>
               <em>
-                {translate (l10n) ("commonmagicprofessions")}
+                {translate (l10n) ("inlinewiki.commonprofessions.magic")}
                 {":"}
               </em>
               {" "}
@@ -175,7 +176,7 @@ export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
             </li>
             <li>
               <em>
-                {translate (l10n) ("commonblessedprofessions")}
+                {translate (l10n) ("inlinewiki.commonprofessions.blessed")}
                 {":"}
               </em>
               {" "}
@@ -183,23 +184,23 @@ export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
             </li>
           </ul>
         )}
-      <WikiProperty l10n={l10n} title="commonadvantages">
-        {fromMaybe (translate (l10n) ("none"))
+      <WikiProperty l10n={l10n} title="inlinewiki.commonadvantages">
+        {fromMaybe (translate (l10n) ("general.none"))
                    (CCA_.commonAdvantagesText (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="commondisadvantages">
-        {fromMaybe (translate (l10n) ("none"))
+      <WikiProperty l10n={l10n} title="inlinewiki.commondisadvantages">
+        {fromMaybe (translate (l10n) ("general.none"))
                    (CCA_.commonDisadvantagesText (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="uncommonadvantages">
-        {fromMaybe (translate (l10n) ("none"))
+      <WikiProperty l10n={l10n} title="inlinewiki.uncommonadvantages">
+        {fromMaybe (translate (l10n) ("general.none"))
                    (CCA_.uncommonAdvantagesText (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="uncommondisadvantages">
-        {fromMaybe (translate (l10n) ("none"))
+      <WikiProperty l10n={l10n} title="inlinewiki.uncommondisadvantages">
+        {fromMaybe (translate (l10n) ("general.none"))
                    (CCA_.uncommonDisadvantagesText (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="commonskills">
+      <WikiProperty l10n={l10n} title="inlinewiki.commonskills">
         {pipe_ (
           x,
           CCA_.commonSkills,
@@ -209,7 +210,7 @@ export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
           intercalate (", ")
         )}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="uncommonskills">
+      <WikiProperty l10n={l10n} title="inlinewiki.uncommonskills">
         {pipe_ (
           x,
           CCA_.uncommonSkills,
@@ -219,11 +220,13 @@ export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
           intercalate (", ")
         )}
       </WikiProperty>
-      <Markdown source={`**${translate (l10n) ("commonnames")}:**\n${CCA_.commonNames (x)}`} />
+      <Markdown
+        source={`**${translate (l10n) ("inlinewiki.commonnames")}:**\n${CCA_.commonNames (x)}`}
+        />
       <p className="cultural-package">
         <span>
           {translateP (l10n)
-                      ("culturalpackageap")
+                      ("inlinewiki.culturalpackage")
                       (List<string | number> (
                         CCA_.name (x),
                         CCA_.culturalPackageAdventurePoints (x)

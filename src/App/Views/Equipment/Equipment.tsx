@@ -215,7 +215,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
                 options={
                   cons (meleeCombatTechniques)
                        (DropdownOption ({
-                         name: translate (l10n) ("allcombattechniques"),
+                         name: translate (l10n) ("equipment.filters.allcombattechniques"),
                        })) as List<Record<DropdownOption<MeleeCombatTechniqueId>>>
                 }
                 fullWidth
@@ -230,7 +230,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
                 options={
                   cons (rangedCombatTechniques)
                        (DropdownOption ({
-                         name: translate (l10n) ("allcombattechniques"),
+                         name: translate (l10n) ("equipment.filters.allcombattechniques"),
                        })) as List<Record<DropdownOption<RangedCombatTechniqueId>>>
                 }
                 fullWidth
@@ -241,7 +241,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (l10n) ("name")}
+              {translate (l10n) ("equipment.header.name")}
             </ListHeaderTag>
             <ListHeaderTag className="btn-placeholder" />
           </ListHeader>

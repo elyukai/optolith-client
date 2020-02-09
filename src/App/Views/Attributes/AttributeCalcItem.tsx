@@ -115,7 +115,7 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
                 {isJust (mod)
                   ? (
                     <span className="mod">
-                      {translate (l10n) ("modifier")}
+                      {translate (l10n) ("attributes.derivedcharacteristics.tooltips.modifier")}
                       {": "}
                       {sign (fromJust (mod))}
                       <br />
@@ -125,7 +125,7 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
                 {isJust (mcurrent_add) && !isInCharacterCreation
                   ? (
                     <span className="add">
-                      {translate (l10n) ("bought")}
+                      {translate (l10n) ("attributes.derivedcharacteristics.tooltips.bought")}
                       {": "}
                       {fromJust (mcurrent_add)}
                       {" / "}

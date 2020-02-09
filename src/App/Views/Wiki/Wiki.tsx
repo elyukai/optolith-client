@@ -144,23 +144,23 @@ export const Wiki: React.FC<Props> = props => {
         <Dropdown
           value={maybeCategory}
           onChange={setCategory1}
-          hint={translate (l10n) ("chooseacategory")}
+          hint={translate (l10n) ("wiki.chooseacategory")}
           options={List (
             DropdownOption ({
               id: Just ("races"),
-              name: translate (l10n) ("races"),
+              name: translate (l10n) ("wiki.filters.races"),
             }),
             DropdownOption ({
               id: Just ("cultures"),
-              name: translate (l10n) ("cultures"),
+              name: translate (l10n) ("wiki.filters.cultures"),
             }),
             DropdownOption ({
               id: Just ("professions"),
-              name: translate (l10n) ("professions"),
+              name: translate (l10n) ("wiki.filters.professions"),
             }),
             DropdownOption ({
               id: Just ("advantages"),
-              name: translate (l10n) ("advantages"),
+              name: translate (l10n) ("wiki.filters.advantages"),
             }),
             DropdownOption ({
               id: Just ("disadvantages"),

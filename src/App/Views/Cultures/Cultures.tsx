@@ -77,11 +77,11 @@ export const Cultures: React.FC<CulturesProps> = props => {
           options={List (
             DropdownOption ({
               id: Just (CulturesVisibilityFilter.All),
-              name: translate (l10n) ("allcultures"),
+              name: translate (l10n) ("culture.filters.common.allcultures"),
             }),
             DropdownOption ({
               id: Just (CulturesVisibilityFilter.Common),
-              name: translate (l10n) ("commoncultures"),
+              name: translate (l10n) ("culture.filters.common.commoncultures"),
             })
           )}
           fullWidth
@@ -96,7 +96,7 @@ export const Cultures: React.FC<CulturesProps> = props => {
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (l10n) ("culture.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />

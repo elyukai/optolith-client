@@ -26,20 +26,20 @@ export const WikiEncumbrance: FC = props => {
     l10n,
   } = props
 
-  let string = fromMaybe (lower (translate (l10n) ("maybe")))
+  let string = fromMaybe (lower (translate (l10n) ("inlinewiki.encumbrance.maybe")))
                          (acc.encumbranceDescription (x))
 
   const encumbrance = acc.encumbrance (x)
 
   if (encumbrance === "true") {
-    string = lower (translate (l10n) ("yes"))
+    string = lower (translate (l10n) ("inlinewiki.encumbrance.yes"))
   }
   else if (encumbrance === "false") {
-    string = lower (translate (l10n) ("no"))
+    string = lower (translate (l10n) ("inlinewiki.encumbrance.no"))
   }
 
   return (
-    <WikiProperty l10n={l10n} title="encumbrance">
+    <WikiProperty l10n={l10n} title="inlinewiki.encumbrance">
       {string}
     </WikiProperty>
   )

@@ -31,11 +31,11 @@ export const WikiRange: FC = props => {
 
   const modKey =
     category === Category.LITURGICAL_CHANTS
-    ? "youcannotuseamodificationonthischantsrange"
-    : "youcannotuseamodificationonthisspellsrange"
+    ? "inlinewiki.youcannotuseamodificationonthischantsrange"
+    : "inlinewiki.youcannotuseamodificationonthisspellsrange"
 
   return (
-    <WikiProperty l10n={l10n} title="range">
+    <WikiProperty l10n={l10n} title="inlinewiki.range">
       {acc.range (x)}
       {isNoModAllowed ? ` (${translate (l10n) (modKey)})` : ""}
     </WikiProperty>

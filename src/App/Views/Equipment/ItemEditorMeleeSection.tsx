@@ -89,7 +89,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
   const dice =
     map ((id: number) => DropdownOption ({
                                            id: Just (id),
-                                           name: `${translate (l10n) ("dice.short")}${id}`,
+                                           name: `${translate (l10n) ("general.dice")}${id}`,
                                         }))
         (List (2, 3, 6))
 
@@ -111,8 +111,8 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
           <div className="row">
             <Dropdown
               className="combattechnique"
-              label={translate (l10n) ("combattechnique")}
-              hint={translate (l10n) ("none")}
+              label={translate (l10n) ("equipment.dialogs.addedit.combattechnique")}
+              hint={translate (l10n) ("general.none")}
               value={combatTechnique}
               options={pipe_ (
                 combatTechniques,
@@ -130,11 +130,11 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
           <div className="row">
             <Dropdown
               className="primary-attribute-selection"
-              label={translate (l10n) ("primaryattribute")}
+              label={translate (l10n) ("equipment.dialogs.addedit.primaryattribute")}
               value={pipe_ (item, EIA.damageBonus, EPADTA.primary)}
               options={List (
                 DropdownOption ({
-                  name: `${translate (l10n) ("primaryattribute.short")} (${
+                  name: `${translate (l10n) ("equipment.dialogs.addedit.primaryattribute.short")} (${
                     pipe_ (
                       combatTechnique,
                       bindF (lookupF (combatTechniques)),
@@ -176,7 +176,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                 ? (
                   <div className="container damage-threshold">
                     <Label
-                      text={translate (l10n) ("damagethreshold")}
+                      text={translate (l10n) ("equipment.dialogs.addedit.damagethreshold")}
                       disabled={lockedByNoCombatTechniqueOrLances}
                       />
                     <TextField
@@ -198,7 +198,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                 : (
                   <TextField
                     className="damage-threshold"
-                    label={translate (l10n) ("damagethreshold")}
+                    label={translate (l10n) ("equipment.dialogs.addedit.damagethreshold")}
                     value={damageBonusThreshold}
                     onChange={setDamageThreshold}
                     disabled={lockedByNoCombatTechniqueOrLances}
@@ -210,7 +210,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
           <div className="row">
             <Checkbox
               className="damage-threshold-separated"
-              label={translate (l10n) ("separatedamagethresholds")}
+              label={translate (l10n) ("equipment.dialogs.addedit.separatedamagethresholds")}
               checked={isList (damageBonusThreshold)}
               onClick={switchIsDamageThresholdSeparated}
               disabled={
@@ -235,7 +235,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
           </div>
           <div className="row">
             <div className="container">
-              <Label text={translate (l10n) ("damage")} disabled={locked} />
+              <Label text={translate (l10n) ("equipment.dialogs.addedit.damage")} disabled={locked} />
               <TextField
                 className="damage-dice-number"
                 value={EIA.damageDiceNumber (item)}
@@ -245,7 +245,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                 />
               <Dropdown
                 className="damage-dice-sides"
-                hint={translate (l10n) ("dice.short")}
+                hint={translate (l10n) ("general.dice")}
                 value={EIA.damageDiceSides (item)}
                 options={dice}
                 onChangeJust={setDamageDiceSides}
@@ -261,7 +261,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
             </div>
             <TextField
               className="stabilitymod"
-              label={translate (l10n) ("breakingpointratingmodifier.short")}
+              label={translate (l10n) ("equipment.dialogs.addedit.breakingpointratingmodifier")}
               value={EIA.stabilityMod (item)}
               onChange={setStabilityModifier}
               disabled={locked}
@@ -269,7 +269,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
               />
             <Dropdown
               className="weapon-loss"
-              label={translate (l10n) ("damaged.short")}
+              label={translate (l10n) ("equipment.dialogs.addedit.damaged")}
               value={EIA.loss (item)}
               options={getLossLevelElements ()}
               onChange={setLoss}
@@ -278,8 +278,8 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
           <div className="row">
             <Dropdown
               className="reach"
-              label={translate (l10n) ("reach")}
-              hint={translate (l10n) ("none")}
+              label={translate (l10n) ("equipment.dialogs.addedit.reach")}
+              hint={translate (l10n) ("general.none")}
               value={EIA.reach (item)}
               options={imap (i => (name: string) => DropdownOption ({ id: Just (i + 1), name }))
                             (translate (l10n) ("reachlabels"))}
@@ -289,7 +289,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
               />
             <div className="container">
               <Label
-                text={translate (l10n) ("attackparrymodifier.short")}
+                text={translate (l10n) ("equipment.dialogs.addedit.attackparrymodifier")}
                 disabled={locked || elem<string> (CombatTechniqueId.Lances) (combatTechnique)}
                 />
               <TextField
@@ -316,7 +316,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
               ? (
                 <TextField
                   className="stp"
-                  label={translate (l10n) ("structurepoints.short")}
+                  label={translate (l10n) ("equipment.dialogs.addedit.structurepoints")}
                   value={EIA.stp (item)}
                   onChange={setStructurePoints}
                   disabled={locked}
@@ -325,7 +325,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
               : (
                 <TextField
                   className="length"
-                  label={translate (l10n) ("length")}
+                  label={translate (l10n) ("equipment.dialogs.addedit.lengthwithunit")}
                   value={EIA.length (item)}
                   onChange={setLength}
                   disabled={locked}
@@ -337,14 +337,14 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
           <div className="row">
             <Checkbox
               className="parrying-weapon"
-              label={translate (l10n) ("parryingweapon")}
+              label={translate (l10n) ("equipment.dialogs.addedit.parryingweapon")}
               checked={EIA.isParryingWeapon (item)}
               onClick={switchIsParryingWeapon}
               disabled={locked}
               />
             <Checkbox
               className="twohanded-weapon"
-              label={translate (l10n) ("twohandedweapon")}
+              label={translate (l10n) ("equipment.dialogs.addedit.twohandedweapon")}
               checked={!EIA.isTwoHandedWeapon (item)}
               onClick={switchIsTwoHandedWeapon}
               disabled={locked}

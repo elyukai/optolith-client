@@ -93,25 +93,40 @@ export const CombatTechniques: React.FC<CombatTechniquesProps> = props => {
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (l10n) ("combattechniques.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="group">
-            {translate (l10n) ("group")}
+            {translate (l10n) ("combattechniques.header.group")}
           </ListHeaderTag>
-          <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
-            {translate (l10n) ("skillrating.short")}
+          <ListHeaderTag
+            className="value"
+            hint={translate (l10n) ("combattechniques.header.combattechniquerating.tooltip")}
+            >
+            {translate (l10n) ("combattechniques.header.combattechniquerating")}
           </ListHeaderTag>
-          <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
-            {translate (l10n) ("improvementcost.short")}
+          <ListHeaderTag
+            className="ic"
+            hint={translate (l10n) ("combattechniques.header.improvementcost.tooltip")}
+            >
+            {translate (l10n) ("combattechniques.header.improvementcost")}
           </ListHeaderTag>
-          <ListHeaderTag className="primary" hint={translate (l10n) ("primaryattribute")}>
-            {translate (l10n) ("primaryattribute.short")}
+          <ListHeaderTag
+            className="primary"
+            hint={translate (l10n) ("combattechniques.header.primaryattribute.tooltip")}
+            >
+            {translate (l10n) ("combattechniques.header.primaryattribute")}
           </ListHeaderTag>
-          <ListHeaderTag className="at" hint={translate (l10n) ("attack")}>
-            {translate (l10n) ("attack.short")}
+          <ListHeaderTag
+            className="at"
+            hint={translate (l10n) ("combattechniques.header.attack.tooltip")}
+            >
+            {translate (l10n) ("combattechniques.header.attack")}
           </ListHeaderTag>
-          <ListHeaderTag className="pa" hint={translate (l10n) ("parry")}>
-            {translate (l10n) ("parry.short")}
+          <ListHeaderTag
+            className="pa"
+            hint={translate (l10n) ("combattechniques.header.parry.tooltip")}
+            >
+            {translate (l10n) ("combattechniques.header.parry")}
           </ListHeaderTag>
           {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />

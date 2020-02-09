@@ -28,16 +28,16 @@ export const WikiCantripInfo: React.FC<WikiCantripInfoProps> = props => {
   return (
     <WikiBoxTemplate className="cantrip" title={CA.name (x)}>
       <Markdown className="no-indent" source={CA.effect (x)} />
-      <WikiProperty l10n={l10n} title="range">{CA.range (x)}</WikiProperty>
-      <WikiProperty l10n={l10n} title="duration">{CA.duration (x)}</WikiProperty>
-      <WikiProperty l10n={l10n} title="targetcategory">{CA.target (x)}</WikiProperty>
+      <WikiProperty l10n={l10n} title="inlinewiki.range">{CA.range (x)}</WikiProperty>
+      <WikiProperty l10n={l10n} title="inlinewiki.duration">{CA.duration (x)}</WikiProperty>
+      <WikiProperty l10n={l10n} title="inlinewiki.targetcategory">{CA.target (x)}</WikiProperty>
       {maybeRNullF (subscript (translate (l10n) ("propertylist")) (CA.property (x) - 1))
                    (str => (
-                     <WikiProperty l10n={l10n} title="property">{str}</WikiProperty>
+                     <WikiProperty l10n={l10n} title="inlinewiki.property">{str}</WikiProperty>
                    ))}
       {maybeRNullF (CA.note (x))
                    (str => (
-                     <WikiProperty l10n={l10n} title="notes">{str}</WikiProperty>
+                     <WikiProperty l10n={l10n} title="inlinewiki.notes">{str}</WikiProperty>
                    ))}
       <WikiSource
         books={books}

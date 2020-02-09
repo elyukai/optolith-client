@@ -44,15 +44,15 @@ export const PermanentPoints: React.FC<PermanentPointsProps> = props => {
       className="permanent-points-editor"
       title={
         eid === EnergyId.AE
-          ? translate (l10n) ("arcaneenergylostpermanently")
+          ? translate (l10n) ("attributes.lostpermanently.arcaneenergy")
           : eid === EnergyId.KP
-          ? translate (l10n) ("karmapointslostpermanently")
-          : translate (l10n) ("lifepointslostpermanently")
+          ? translate (l10n) ("attributes.lostpermanently.karmapoints")
+          : translate (l10n) ("attributes.lostpermanently.lifepoints")
       }
       buttons={[
         {
           autoWidth: true,
-          label: translate (l10n) ("done"),
+          label: translate (l10n) ("general.dialogs.donebtn"),
         },
       ]}
       >
@@ -65,7 +65,7 @@ export const PermanentPoints: React.FC<PermanentPointsProps> = props => {
               <div className="column boughtback">
                 <div className="value">{fromJust (permanentBoughtBack)}</div>
                 <div className="description smallcaps">
-                  {translate (l10n) ("boughtback")}
+                  {translate (l10n) ("attributes.pointslostpermanentlyeditor.boughtback")}
                 </div>
                 <div className="buttons">
                   <IconButton
@@ -87,7 +87,9 @@ export const PermanentPoints: React.FC<PermanentPointsProps> = props => {
         }
         <div className="column lost">
           <div className="value">{permanentSpent}</div>
-          <div className="description smallcaps">{translate (l10n) ("spent")}</div>
+          <div className="description smallcaps">
+            {translate (l10n) ("attributes.pointslostpermanentlyeditor.spent")}
+          </div>
           <div className="buttons">
             <IconButton className="add" icon="&#xE908;" onClick={addLostPoint} />
             <IconButton

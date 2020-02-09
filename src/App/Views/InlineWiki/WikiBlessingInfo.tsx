@@ -29,10 +29,10 @@ export const WikiBlessingInfo: React.FC<WikiBlessingInfoProps> = props => {
   return (
     <WikiBoxTemplate className="blessing" title={BA.name (x)}>
       <Markdown className="no-indent" source={BA.effect (x)} />
-      <WikiProperty l10n={l10n} title="range">{BA.range (x)}</WikiProperty>
-      <WikiProperty l10n={l10n} title="duration">{BA.duration (x)}</WikiProperty>
-      <WikiProperty l10n={l10n} title="targetcategory">{BA.target (x)}</WikiProperty>
-      <WikiProperty l10n={l10n} title="aspect">{traditions}</WikiProperty>
+      <WikiProperty l10n={l10n} title="inlinewiki.range">{BA.range (x)}</WikiProperty>
+      <WikiProperty l10n={l10n} title="inlinewiki.duration">{BA.duration (x)}</WikiProperty>
+      <WikiProperty l10n={l10n} title="inlinewiki.targetcategory">{BA.target (x)}</WikiProperty>
+      <WikiProperty l10n={l10n} title="inlinewiki.aspect">{traditions}</WikiProperty>
       <WikiSource
         books={books}
         l10n={l10n}

@@ -132,14 +132,14 @@ export const HitZoneArmors: React.FC<HitZoneArmorsProps> = props => {
           fullWidth
           />
         <BorderButton
-          label={translate (l10n) ("create")}
+          label={translate (l10n) ("hitzonearmors.createbtn")}
           onClick={createItem}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (l10n) ("hitzonearmors.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />

@@ -32,7 +32,7 @@ export const Downloader: React.FC<DownloaderProps> = props => {
                ((progress: ProgressInfo) => (
                  <Dialog
                    id="downloader"
-                   title={translate (l10n) ("downloadupdate")}
+                   title={translate (l10n) ("settings.downloadingupdate.title")}
                    isOpen={typeof progress === "object"}
                    close={emptyFn}
                    noCloseButton

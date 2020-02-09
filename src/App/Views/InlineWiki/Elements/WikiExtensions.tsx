@@ -8,7 +8,7 @@ import { Category } from "../../../Constants/Categories"
 import { L10nKey, L10nRecord } from "../../../Models/Wiki/L10n"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption"
-import { translate } from "../../../Utilities/I18n"
+import { translate, translateP } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { ReactReturn, renderMaybe } from "../../../Utilities/ReactUtils"
 import { comparingR, sortByMulti } from "../../../Utilities/sortBy"
@@ -40,10 +40,10 @@ export const WikiExtensions: FC = props => {
 
   const category = acc.category (x)
 
-  let key: L10nKey = "spellextensions"
+  let key: L10nKey = "inlinewiki.spellenhancements"
 
   if (category === Category.LITURGICAL_CHANTS) {
-    key = "liturgicalchantextensions"
+    key = "inlinewiki.liturgicalchantenhancements"
   }
 
   return maybe (null as ReactReturn)
@@ -57,15 +57,22 @@ export const WikiExtensions: FC = props => {
                        exs,
                        map (e => {
                          const requiredSR = Maybe.product (SOA.level (e)) * 4 + 4
-                         const srText = `${translate (l10n) ("skillrating.short")} ${requiredSR}`
-                         const ap = Maybe.sum (SOA.cost (e))
-                         const apText = `${ap} ${translate (l10n) ("adventurepoints.short")}`
-                         const desc = renderMaybe (SOA.description (e))
+
+                         const text = translateP (l10n)
+                                                 (category === Category.LITURGICAL_CHANTS
+                                                   ? "inlinewiki.liturgicalchantenhancements.title"
+                                                   : "inlinewiki.spellenhancements.title")
+                                                 (List<string | number> (
+                                                   SOA.name (e),
+                                                   requiredSR,
+                                                   Maybe.sum (SOA.cost (e)),
+                                                   renderMaybe (SOA.description (e))
+                                                 ))
 
                          return (
                            <Markdown
                              key={SOA.id (e)}
-                             source={`*${SOA.name (e)}* (${srText}, ${apText}): ${desc}`}
+                             source={text}
                              isListElement
                              />
                          )

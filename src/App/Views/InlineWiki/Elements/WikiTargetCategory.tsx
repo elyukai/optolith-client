@@ -23,7 +23,7 @@ export const WikiTargetCategory: FC = props => {
   } = props
 
   return (
-    <WikiProperty l10n={l10n} title="targetcategory">
+    <WikiProperty l10n={l10n} title="inlinewiki.targetcategory">
       {acc.target (x)}
     </WikiProperty>
   )

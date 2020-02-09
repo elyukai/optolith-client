@@ -111,7 +111,7 @@ export const Attributes: React.FC<AttributesProps> = props => {
     <Page id="attribute">
       <Scroll>
         <div className="counter">
-          {translate (l10n) ("attributetotal")}
+          {translate (l10n) ("attributes.totalpoints")}
           {": "}
           {sum}
           {isInCharacterCreation ? ` / ${Maybe.sum (maxTotalAttributeValues)}` : ""}

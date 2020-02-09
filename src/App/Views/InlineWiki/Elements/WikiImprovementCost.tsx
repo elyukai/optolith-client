@@ -24,7 +24,7 @@ export const WikiImprovementCost: FC = props => {
   } = props
 
   return (
-    <WikiProperty l10n={l10n} title="improvementcost">
+    <WikiProperty l10n={l10n} title="inlinewiki.improvementcost">
       {getICName (acc.ic (x))}
     </WikiProperty>
   )

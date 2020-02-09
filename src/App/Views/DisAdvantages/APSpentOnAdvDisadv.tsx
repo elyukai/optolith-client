@@ -32,13 +32,13 @@ export const APSpentOnAdvDisadv: React.FC<APSpentOnAdvDisadvProps> = props => {
     <>
       <p>
         {translateP (l10n)
-                    ("apspentonadvantages")
+                    ("advantagesdisadvantages.apspent.spentonadvantages")
                     (List (adv_total, 80))}
         <br />
         {
           adv_magical > 0
             ? translateP (l10n)
-                         ("apspentonmagicadvantages")
+                         ("advantagesdisadvantages.apspent.spentonmagicadvantages")
                          (List (adv_magical, fromMaybe (50) (magicalMax)))
             : null
         }
@@ -46,20 +46,20 @@ export const APSpentOnAdvDisadv: React.FC<APSpentOnAdvDisadvProps> = props => {
         {
           adv_blessed > 0
             ? translateP (l10n)
-                         ("apspentonblessedadvantages")
+                         ("advantagesdisadvantages.apspent.spentonblessedadvantages")
                          (List (adv_blessed, 50))
             : null
         }
       </p>
       <p>
         {translateP (l10n)
-                    ("apspentondisadvantages")
+                    ("advantagesdisadvantages.apspent.spentondisadvantages")
                     (List (dis_total, 80))}
         <br />
         {
           dis_magical > 0
             ? translateP (l10n)
-                         ("apspentonmagicdisadvantages")
+                         ("advantagesdisadvantages.apspent.spentonmagicdisadvantages")
                          (List (dis_magical, fromMaybe (50) (magicalMax)))
             : null
         }
@@ -67,7 +67,7 @@ export const APSpentOnAdvDisadv: React.FC<APSpentOnAdvDisadvProps> = props => {
         {
           dis_blessed > 0
             ? translateP (l10n)
-                         ("apspentonblesseddisadvantages")
+                         ("advantagesdisadvantages.apspent.spentonblesseddisadvantages")
                          (List (dis_blessed, 50))
             : null
         }

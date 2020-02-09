@@ -64,7 +64,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
   const dice =
     map ((id: number) => DropdownOption ({
                                            id: Just (id),
-                                           name: `${translate (l10n) ("dice.short")}${id}`,
+                                           name: `${translate (l10n) ("general.dice")}${id}`,
                                         }))
         (List (2, 3, 6))
 
@@ -79,7 +79,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
         ensure (pipe (ITA.gr, equals (3))),
         fmap (x => DropdownOption ({ id: Just (ITA.id (x)), name: ITA.name (x) }))
       )),
-      consF (DropdownOption ({ name: translate (l10n) ("none") }))
+      consF (DropdownOption ({ name: translate (l10n) ("general.none") }))
     )
 
   return (gr === 2 || Maybe.elem (2) (EIA.improvisedWeaponGroup (item)))
@@ -90,8 +90,8 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
           <div className="row">
             <Dropdown
               className="combattechnique"
-              label={translate (l10n) ("combattechnique")}
-              hint={translate (l10n) ("none")}
+              label={translate (l10n) ("equipment.dialogs.addedit.combattechnique")}
+              hint={translate (l10n) ("general.none")}
               value={combatTechnique}
               options={pipe_ (
                 combatTechniques,
@@ -107,7 +107,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               />
             <TextField
               className="reloadtime"
-              label={translate (l10n) ("reloadtime")}
+              label={translate (l10n) ("equipment.dialogs.addedit.reloadtime")}
               value={EIA.reloadTime (item)}
               onChange={setReloadTime}
               disabled={locked}
@@ -115,7 +115,10 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
           </div>
           <div className="row">
             <div className="container">
-              <Label text={translate (l10n) ("damage")} disabled={locked} />
+              <Label
+                text={translate (l10n) ("equipment.dialogs.addedit.damage")}
+                disabled={locked}
+                />
               <TextField
                 className="damage-dice-number"
                 value={EIA.damageDiceNumber (item)}
@@ -125,7 +128,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 />
               <Dropdown
                 className="damage-dice-sides"
-                hint={translate (l10n) ("dice.short")}
+                hint={translate (l10n) ("general.dice")}
                 value={EIA.damageDiceSides (item)}
                 options={dice}
                 onChangeJust={setDamageDiceSides}
@@ -141,7 +144,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
             </div>
             <TextField
               className="stabilitymod"
-              label={translate (l10n) ("breakingpointratingmodifier.short")}
+              label={translate (l10n) ("equipment.dialogs.addedit.breakingpointratingmodifier")}
               value={EIA.stabilityMod (item)}
               onChange={setStabilityModifier}
               disabled={locked}
@@ -149,7 +152,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               />
             <Dropdown
               className="weapon-loss"
-              label={translate (l10n) ("damaged.short")}
+              label={translate (l10n) ("equipment.dialogs.addedit.damaged")}
               value={EIA.loss (item)}
               options={getLossLevelElements ()}
               onChange={setLoss}
@@ -159,7 +162,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
             <div className="container">
               <TextField
                 className="range1"
-                label={translate (l10n) ("rangeclose")}
+                label={translate (l10n) ("equipment.dialogs.addedit.rangeclose")}
                 value={subscript (EIA.range (item)) (0)}
                 onChange={setRange (1)}
                 disabled={locked}
@@ -167,7 +170,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 />
               <TextField
                 className="range2"
-                label={translate (l10n) ("rangemedium")}
+                label={translate (l10n) ("equipment.dialogs.addedit.rangemedium")}
                 value={subscript (EIA.range (item)) (1)}
                 onChange={setRange (2)}
                 disabled={locked}
@@ -175,7 +178,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 />
               <TextField
                 className="range3"
-                label={translate (l10n) ("rangefar")}
+                label={translate (l10n) ("equipment.dialogs.addedit.rangefar")}
                 value={subscript (EIA.range (item)) (2)}
                 onChange={setRange (3)}
                 disabled={locked}
@@ -184,8 +187,8 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
             </div>
             <Dropdown
               className="ammunition"
-              label={translate (l10n) ("ammunition")}
-              hint={translate (l10n) ("none")}
+              label={translate (l10n) ("equipment.dialogs.addedit.ammunition")}
+              hint={translate (l10n) ("general.none")}
               value={EIA.ammunition (item)}
               options={AMMUNITION}
               onChangeJust={setAmmunition}
@@ -193,7 +196,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               />
             <TextField
               className="length"
-              label={translate (l10n) ("length")}
+              label={translate (l10n) ("equipment.dialogs.addedit.lengthwithunit")}
               value={EIA.length (item)}
               onChange={setLength}
               disabled={locked}

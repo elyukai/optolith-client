@@ -48,15 +48,19 @@ export const WikiCombatTechniques: FC = props => {
                    isJust (customText)
                    ? fromJust (customText)
                    : group === SpecialAbilityCombatTechniqueGroup.All
-                   ? translate (l10n) ("all")
+                   ? translate (l10n) ("inlinewiki.combattechniques.groups.all")
                    : group === SpecialAbilityCombatTechniqueGroup.Melee
-                   ? translate (l10n) ("allmeleecombattechniques")
+                   // eslint-disable-next-line max-len
+                   ? translate (l10n) ("inlinewiki.combattechniques.groups.allmeleecombattechniques")
                    : group === SpecialAbilityCombatTechniqueGroup.Ranged
-                   ? translate (l10n) ("allrangedcombattechniques")
+                   // eslint-disable-next-line max-len
+                   ? translate (l10n) ("inlinewiki.combattechniques.groups.allrangedcombattechniques")
                    : group === SpecialAbilityCombatTechniqueGroup.WithParry
-                   ? translate (l10n) ("allmeleecombattechniqueswithparry")
+                   // eslint-disable-next-line max-len
+                   ? translate (l10n) ("inlinewiki.combattechniques.groups.allmeleecombattechniqueswithparry")
                    : group === SpecialAbilityCombatTechniqueGroup.OneHanded
-                   ? translate (l10n) ("allmeleecombattechniquesforonehandedweapons")
+                   // eslint-disable-next-line max-len
+                   ? translate (l10n) ("inlinewiki.combattechniques.groups.allmeleecombattechniquesforonehandedweapons")
                    : notNull (explicitIds)
                    ? pipe_ (
                        explicitIds,
@@ -68,7 +72,7 @@ export const WikiCombatTechniques: FC = props => {
 
                  return (
                    <Markdown
-                     source={`**${translate (l10n) ("combattechniques")}:** ${str}`}
+                     source={`**${translate (l10n) ("inlinewiki.combattechniques")}:** ${str}`}
                      />
                  )
                })

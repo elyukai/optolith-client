@@ -26,7 +26,7 @@ export const WikiSpellProperty: FC = props => {
   } = props
 
   return (
-    <WikiProperty l10n={l10n} title="property">
+    <WikiProperty l10n={l10n} title="inlinewiki.property">
       {fromMaybe ("") (subscript (translate (l10n) ("propertylist")) (acc.property (x) - 1))}
     </WikiProperty>
   )

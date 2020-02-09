@@ -7,13 +7,12 @@ import { L10nRecord } from "../../Models/Wiki/L10n"
 import { translate } from "../../Utilities/I18n"
 import { Dropdown } from "../Universal/Dropdown"
 
-export type HitZoneNames =
-  "head"
-  | "torso"
-  | "leftarm"
-  | "rightarm"
-  | "leftleg"
-  | "rightleg"
+export type HitZoneNames = "hitzonearmors.dialogs.addedit.head"
+                         | "hitzonearmors.dialogs.addedit.torso"
+                         | "hitzonearmors.dialogs.addedit.leftarm"
+                         | "hitzonearmors.dialogs.addedit.rightarm"
+                         | "hitzonearmors.dialogs.addedit.leftleg"
+                         | "hitzonearmors.dialogs.addedit.rightleg"
 
 export interface ArmorZonesEditorProps {
   armorList: List<Record<DropdownOption<string>>>
@@ -49,7 +48,7 @@ export const HitZoneArmorEditorRow: React.FC<ArmorZonesEditorProps> = props => {
         />
       <Dropdown
         className="loss"
-        label={translate (l10n) ("wear")}
+        label={translate (l10n) ("hitzonearmors.dialogs.addedit.wear")}
         value={componentLoss}
         options={lossLevels}
         onChange={setComponentLoss}

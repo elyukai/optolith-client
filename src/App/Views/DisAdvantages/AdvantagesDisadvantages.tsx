@@ -117,13 +117,16 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
             checked={showRating}
             onClick={switchRatingVisibility}
             >
-            {translate (l10n) (orN (isAdvantages) ? "commonadvantages" : "commondisadvantages")}
+            {translate (l10n)
+                       (orN (isAdvantages)
+                         ? "advantages.commonadvantages"
+                         : "disadvantages.commondisadvantages")}
           </Checkbox>
           <Checkbox
             checked={enableActiveItemHints}
             onClick={switchActiveItemHints}
             >
-            {translate (l10n) ("showactivated")}
+            {translate (l10n) ("general.filters.showactivatedentries")}
           </Checkbox>
           {fromMaybe (null as React.ReactNode)
                      (fmapF (m_ap)
@@ -139,10 +142,13 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (l10n) ("name")}
+              {translate (l10n) ("advantagesdisadvantages.header.name")}
             </ListHeaderTag>
-            <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
-              {translate (l10n) ("adventurepoints.short")}
+            <ListHeaderTag
+              className="cost"
+              hint={translate (l10n) ("advantagesdisadvantages.header.adventurepoints.tooltip")}
+              >
+              {translate (l10n) ("advantagesdisadvantages.header.adventurepoints")}
             </ListHeaderTag>
             <ListHeaderTag className="btn-placeholder" />
             <ListHeaderTag className="btn-placeholder" />
@@ -170,10 +176,13 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
           checked={showRating}
           onClick={switchRatingVisibility}
           >
-          {translate (l10n) (orN (isAdvantages) ? "commonadvantages" : "commondisadvantages")}
+          {translate (l10n)
+                     (orN (isAdvantages)
+                       ? "advantages.commonadvantages"
+                       : "disadvantages.commondisadvantages")}
         </Checkbox>
         <BorderButton
-          label={translate (l10n) ("add")}
+          label={translate (l10n) ("advantagesdisadvantages.addbtn")}
           onClick={handleShowSlidein}
           />
         {showRating ? <RecommendedReference l10n={l10n} strongly /> : null}
@@ -190,10 +199,13 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (l10n) ("advantagesdisadvantages.header.name")}
           </ListHeaderTag>
-          <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
-            {translate (l10n) ("adventurepoints.short")}
+          <ListHeaderTag
+            className="cost"
+            hint={translate (l10n) ("advantagesdisadvantages.header.adventurepoints.tooltip")}
+            >
+            {translate (l10n) ("advantagesdisadvantages.header.adventurepoints")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />

@@ -10,6 +10,8 @@ import { toWiki } from "./YAML/ToRecordsByFile"
 
 export const parseStaticData : (locale : string) => Promise<Either<Error[], WikiModelRecord>>
                              = async locale => {
+                               console.time ("parseStaticData")
+
                                const eschemes = await handleE (getAllSchemes ())
 
                                if (isLeft (eschemes)) {
@@ -41,12 +43,10 @@ export const parseStaticData : (locale : string) => Promise<Either<Error[], Wiki
 
                                const static_data_by_file = fromRight_ (estatic_data_by_file)
 
-                               console.log (static_data_by_file)
-
                                const wiki = toWiki (locale) (static_data_by_file)
 
-                               // eslint-disable-next-line no-alert
-                               alert ("Parsing static data done!")
+                               console.log ("Parsing static data done!")
+                               console.timeEnd ("parseStaticData")
 
                                return wiki
                              }

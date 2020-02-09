@@ -24,6 +24,6 @@ export const WikiQuality: FC = props => {
   } = props
 
   return (
-    <Markdown source={`**${translate (l10n) ("quality")}:** ${acc.quality (x)}`} />
+    <Markdown source={`**${translate (l10n) ("inlinewiki.quality")}:** ${acc.quality (x)}`} />
   )
 }

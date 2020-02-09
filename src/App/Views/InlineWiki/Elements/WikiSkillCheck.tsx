@@ -14,14 +14,15 @@ import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybeWith } from "../../../Utilities/ReactUtils"
 import { WikiProperty } from "../WikiProperty"
 
-export const getCheckModStr = (l10n: L10nRecord) =>
-                              (id: CheckModifier) => id === "SPI"
-                                                     ? translate (l10n) ("spirit.short")
-                                                     : id === "TOU"
-                                                     ? translate (l10n) ("toughness.short")
-                                                     : id === "SPI/2"
-                                                     ? translate (l10n) ("spirithalf.short")
-                                                     : `${translate (l10n) ("spirit.short")}/${translate (l10n) ("toughness.short")}`
+export const getCheckModStr: (l10n: L10nRecord) => (id: CheckModifier) => string
+                            = l10n => id => id === "SPI"
+                                            ? translate (l10n) ("spirit.short")
+                                            : id === "TOU"
+                                            ? translate (l10n) ("toughness.short")
+                                            : id === "SPI/2"
+                                            ? translate (l10n) ("inlinewiki.spirithalf.short")
+                                            : translate (l10n)
+                                                        ("inlinewiki.spiritortoughness.short")
 
 interface Accessors<A extends RecordIBase<any>> {
   check: (r: Record<A>) => List<string>
@@ -58,7 +59,7 @@ export const WikiSkillCheck: FC = props => {
   const mod = fmap (getCheckModStr (l10n)) (checkmod)
 
   return (
-    <WikiProperty l10n={l10n} title="check">
+    <WikiProperty l10n={l10n} title="inlinewiki.check">
       {checkString}
       {renderMaybeWith (str => `(${minus}${str})`) (mod)}
     </WikiProperty>

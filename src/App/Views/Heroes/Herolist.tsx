@@ -105,15 +105,15 @@ export const Herolist: React.FC<HerolistProps> = props => {
           options={List (
             DropdownOption ({
               id: Just (HeroListVisibilityFilter.All),
-              name: translate (l10n) ("allheroes"),
+              name: translate (l10n) ("heroes.filters.origin.allheroes"),
             }),
             DropdownOption ({
               id: Just (HeroListVisibilityFilter.Own),
-              name: translate (l10n) ("ownheroes"),
+              name: translate (l10n) ("heroes.filters.origin.ownheroes"),
             }),
             DropdownOption ({
               id: Just (HeroListVisibilityFilter.Shared),
-              name: translate (l10n) ("sharedheroes"),
+              name: translate (l10n) ("heroes.filters.origin.sharedheroes"),
             })
           )}
           fullWidth
@@ -126,12 +126,12 @@ export const Herolist: React.FC<HerolistProps> = props => {
           sortOrder={sortOrder}
           />
         <BorderButton
-          label={translate (l10n) ("create")}
+          label={translate (l10n) ("heroes.createherobtn")}
           onClick={openCharacterCreator}
           primary
           />
         <BorderButton
-          label={translate (l10n) ("import")}
+          label={translate (l10n) ("heroes.importherobtn")}
           onClick={importHero}
           />
       </Options>

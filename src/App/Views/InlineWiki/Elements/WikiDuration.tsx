@@ -2,7 +2,7 @@ import * as React from "react"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { Category } from "../../../Constants/Categories"
 import { MagicalGroup } from "../../../Constants/Groups"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { L10nKey, L10nRecord } from "../../../Models/Wiki/L10n"
 import { translate } from "../../../Utilities/I18n"
 import { WikiProperty } from "../WikiProperty"
 
@@ -32,16 +32,16 @@ export const WikiDuration: FC = props => {
   const gr = acc.gr (x)
   const isNoModAllowed = acc.durationNoMod (x)
 
-  const key =
+  const key: L10nKey =
     category === Category.SPELLS
     && (gr === MagicalGroup.ElvenMagicalSongs || gr === MagicalGroup.MagicalMelodies)
-    ? "skill"
-    : "duration"
+    ? "inlinewiki.skill"
+    : "inlinewiki.duration"
 
-  const modKey =
+  const modKey: L10nKey =
     category === Category.LITURGICAL_CHANTS
-    ? "youcannotuseamodificationonthischantsduration"
-    : "youcannotuseamodificationonthisspellsduration"
+    ? "inlinewiki.youcannotuseamodificationonthischantsduration"
+    : "inlinewiki.youcannotuseamodificationonthisspellsduration"
 
   return (
     <WikiProperty l10n={l10n} title={key}>

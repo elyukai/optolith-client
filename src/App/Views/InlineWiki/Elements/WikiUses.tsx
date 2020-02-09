@@ -38,7 +38,7 @@ export const WikiUses: FC = props => {
     const sorted_uses = sortStrings (l10n) (map (AA.name) (uses))
 
     return (
-      <WikiProperty l10n={l10n} title="uses">
+      <WikiProperty l10n={l10n} title="inlinewiki.uses">
         {intercalate (", ") (sorted_uses)}
       </WikiProperty>
     )

@@ -120,7 +120,7 @@ export const HerolistItem: React.FC<HerolistItemProps> = props => {
             {" / "}
             {renderMaybeWith (AdventurePointsCategories.A.total) (map)}
             {" "}
-            {translate (l10n) ("adventurepoints.short")}
+            {translate (l10n) ("heroes.list.adventurepoints")}
           </span>
         </VerticalList>
       </ListItemName>
@@ -128,29 +128,29 @@ export const HerolistItem: React.FC<HerolistItemProps> = props => {
       <ListItemButtons>
         <BorderButton
           className="save"
-          label={translate (l10n) ("save")}
+          label={translate (l10n) ("heroes.saveherobtn")}
           onClick={saveHero}
           disabled={notMember (id) (unsavedHeroesById)}
           />
         <IconButton
           icon="&#xE907;"
           onClick={duplicateHero}
-          hint={Just (translate (l10n) ("duplicatehero"))}
+          hint={Just (translate (l10n) ("heroes.duplicateherobtn"))}
           />
         <IconButton
           icon="&#xE914;"
           onClick={saveHeroAsJSON}
-          hint={Just (translate (l10n) ("exportheroasjson"))}
+          hint={Just (translate (l10n) ("heroes.exportheroasjsonbtn"))}
           />
         <IconButton
           icon="&#xE90b;"
           onClick={deleteHero}
-          hint={Just (translate (l10n) ("deletehero.novar"))}
+          hint={Just (translate (l10n) ("heroes.deleteherobtn"))}
           />
         <IconButton
           icon="&#xE90e;"
           onClick={loadHero}
-          hint={Just (translate (l10n) ("openhero"))}
+          hint={Just (translate (l10n) ("heroes.openherobtn"))}
           />
       </ListItemButtons>
     </ListItem>

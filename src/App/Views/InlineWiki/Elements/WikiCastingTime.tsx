@@ -6,16 +6,16 @@ import { L10nRecord } from "../../../Models/Wiki/L10n"
 import { translate } from "../../../Utilities/I18n"
 import { WikiProperty } from "../WikiProperty"
 
-type NameKey = "castingtime"
-             | "ritualtime"
-             | "lengthoftime"
-             | "liturgicaltime"
-             | "ceremonialtime"
+type NameKey = "inlinewiki.castingtime"
+             | "inlinewiki.ritualtime"
+             | "inlinewiki.lengthoftime"
+             | "inlinewiki.liturgicaltime"
+             | "inlinewiki.ceremonialtime"
 
-type ModKey = "youcannotuseamodificationonthisspellscastingtime"
-            | "youcannotuseamodificationonthisspellsritualtime"
-            | "youcannotuseamodificationonthischantsliturgicaltime"
-            | "youcannotuseamodificationonthischantsceremonialtime"
+type ModKey = "inlinewiki.youcannotuseamodificationonthisspellscastingtime"
+            | "inlinewiki.youcannotuseamodificationonthisspellsritualtime"
+            | "inlinewiki.youcannotuseamodificationonthischantsliturgicaltime"
+            | "inlinewiki.youcannotuseamodificationonthischantsceremonialtime"
 
 const getNameKey =
   (category: Category) =>
@@ -25,27 +25,27 @@ const getNameKey =
          || gr === MagicalGroup.DominationRituals
          || gr === MagicalGroup.GeodeRituals
          || gr === MagicalGroup.ZibiljaRituals))
-    ? "ritualtime"
+    ? "inlinewiki.ritualtime"
     : (category === Category.SPELLS
        && (gr === MagicalGroup.MagicalMelodies || gr === MagicalGroup.MagicalDances))
-    ? "lengthoftime"
+    ? "inlinewiki.lengthoftime"
     : category === Category.LITURGICAL_CHANTS && gr === BlessedGroup.LiturgicalChants
-    ? "liturgicaltime"
+    ? "inlinewiki.liturgicaltime"
     : category === Category.LITURGICAL_CHANTS && gr === BlessedGroup.Ceremonies
-    ? "ceremonialtime"
-    : "castingtime"
+    ? "inlinewiki.ceremonialtime"
+    : "inlinewiki.castingtime"
 
 const nameKeyToModKey =
   (x: NameKey): ModKey =>
-    x === "castingtime"
-    ? "youcannotuseamodificationonthisspellscastingtime"
-    : x === "ritualtime"
-    ? "youcannotuseamodificationonthisspellsritualtime"
-    : x === "lengthoftime"
-    ? "youcannotuseamodificationonthisspellscastingtime"
-    : x === "liturgicaltime"
-    ? "youcannotuseamodificationonthischantsliturgicaltime"
-    : "youcannotuseamodificationonthischantsceremonialtime"
+    x === "inlinewiki.castingtime"
+    ? "inlinewiki.youcannotuseamodificationonthisspellscastingtime"
+    : x === "inlinewiki.ritualtime"
+    ? "inlinewiki.youcannotuseamodificationonthisspellsritualtime"
+    : x === "inlinewiki.lengthoftime"
+    ? "inlinewiki.youcannotuseamodificationonthisspellscastingtime"
+    : x === "inlinewiki.liturgicaltime"
+    ? "inlinewiki.youcannotuseamodificationonthischantsliturgicaltime"
+    : "inlinewiki.youcannotuseamodificationonthischantsceremonialtime"
 
 interface Accessors<A extends RecordIBase<any>> {
   castingTime: (r: Record<A>) => string

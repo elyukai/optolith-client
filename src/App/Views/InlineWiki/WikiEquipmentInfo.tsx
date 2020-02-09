@@ -51,7 +51,6 @@ export interface WikiEquipmentInfoProps {
   wiki: WikiModelRecord
 }
 
-// tslint:disable-next-line: cyclomatic-complexity
 export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
   const { x, l10n, wiki } = props
 

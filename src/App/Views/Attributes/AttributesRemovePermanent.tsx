@@ -37,12 +37,12 @@ export const AttributesRemovePermanent: React.FC<AttributesRemovePermanentProps>
     <BasicInputDialog
       id="overview-add-ap"
       isOpen={isOpen}
-      title={translate (l10n) ("removeenergypointslostpermanently")}
+      title={translate (l10n) ("attributes.removeenergypointslostpermanently.message")}
       description=""
       value={value}
       invalid={isNaturalNumber (value) ? Nothing : Just ("")}
-      acceptLabel={translate (l10n) ("remove")}
-      rejectLabel={translate (l10n) ("cancel")}
+      acceptLabel={translate (l10n) ("attributes.removeenergypointslostpermanently.removebtn")}
+      rejectLabel={translate (l10n) ("general.dialogs.cancelbtn")}
       onClose={close}
       onAccept={handleRemove}
       onChange={setValue}

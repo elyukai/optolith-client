@@ -14,7 +14,7 @@ export const Imprint = (props: ImprintProps) => {
   return (
     <Page id="imprint">
       <Scroll className="text">
-        <h2>{translate (l10n) ("imprint")}</h2>
+        <h2>{translate (l10n) ("imprint.title")}</h2>
 
         <h3>{"Lukas Obermann"}</h3>
         <p>

@@ -24,6 +24,8 @@ export const WikiCriticalSuccess: FC = props => {
   } = props
 
   return (
-    <Markdown source={`**${translate (l10n) ("criticalsuccess")}:** ${acc.critical (x)}`} />
+    <Markdown
+      source={`**${translate (l10n) ("inlinewiki.criticalsuccess")}:** ${acc.critical (x)}`}
+      />
   )
 }

@@ -24,6 +24,6 @@ export const WikiEffect: FC = props => {
   } = props
 
   return (
-    <Markdown source={`**${translate (l10n) ("effect")}:** ${acc.effect (x)}`} />
+    <Markdown source={`**${translate (l10n) ("inlinewiki.effect")}:** ${acc.effect (x)}`} />
   )
 }

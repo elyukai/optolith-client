@@ -4,7 +4,7 @@ import { fromJust, isJust, Maybe } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
 import { Purse } from "../../Models/Hero/Purse"
 import { L10n, L10nRecord } from "../../Models/Wiki/L10n"
-import { localizeNumber, localizeWeight, translate } from "../../Utilities/I18n"
+import { localizeNumber, localizeWeight, translate, translateP } from "../../Utilities/I18n"
 import { TextField } from "../Universal/TextField"
 
 export interface PurseAndTotalsProps {
@@ -43,25 +43,25 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
   return (
     <>
       <div className="purse">
-        <h4>{translate (l10n) ("purse")}</h4>
+        <h4>{translate (l10n) ("equipment.purse.title")}</h4>
         <div className="fields">
           <TextField
-            label={translate (l10n) ("ducats")}
+            label={translate (l10n) ("equipment.purse.ducates")}
             value={fmapF (purse) (PA.d)}
             onChange={setDucates}
             />
           <TextField
-            label={translate (l10n) ("silverthalers")}
+            label={translate (l10n) ("equipment.purse.silverthalers")}
             value={fmapF (purse) (PA.s)}
             onChange={setSilverthalers}
             />
           <TextField
-            label={translate (l10n) ("halers")}
+            label={translate (l10n) ("equipment.purse.halers")}
             value={fmapF (purse) (PA.h)}
             onChange={setHellers}
             />
           <TextField
-            label={translate (l10n) ("kreutzers")}
+            label={translate (l10n) ("equipment.purse.kreutzers")}
             value={fmapF (purse) (PA.k)}
             onChange={setKreutzers}
             />
@@ -69,27 +69,24 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
       </div>
       <div className="total-points">
         <h4>
-          {hasNoAddedAP ? `${translate (l10n) ("initialstartingwealth")} & ` : ""}
-          {translate (l10n) ("carryingcapacity")}
+          {hasNoAddedAP
+            ? translate (l10n) ("equipment.purse.initialstartingwealthandcarryingcapacity")
+            : translate (l10n) ("equipment.purse.carryingcapacity")}
         </h4>
         <div className="fields">
           {hasNoAddedAP && isJust (totalPrice)
             ? (
               <div>
-                {localizeNumber (l10n_id) (fromJust (totalPrice))}
-                {" / "}
-                {localizeNumber (l10n_id) (initialStartingWealth)}
-                {" "}
-                {translate (l10n) ("priceunit")}
+                {translateP (l10n)
+                            ("general.pricevalue")
+                            (`${localizeNumber (l10n_id) (fromJust (totalPrice))} / ${localizeNumber (l10n_id) (initialStartingWealth)}`)}
               </div>
             )
             : null}
           <div>
-            {localizeNumber (l10n_id) (localizeWeight (l10n_id) (totalWeight))}
-            {" / "}
-            {localizeNumber (l10n_id) (localizeWeight (l10n_id) (carryingCapacity))}
-            {" "}
-            {translate (l10n) ("weightunit.short")}
+            {translateP (l10n)
+                        ("general.weightvalue")
+                        (`${localizeNumber (l10n_id) (localizeWeight (l10n_id) (totalWeight))} / ${localizeNumber (l10n_id) (localizeWeight (l10n_id) (carryingCapacity))}`)}
           </div>
         </div>
       </div>

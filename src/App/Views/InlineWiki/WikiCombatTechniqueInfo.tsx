@@ -37,9 +37,9 @@ export const WikiCombatTechniqueInfo: React.FC<WikiCombatTechniqueInfoProps> = p
     <WikiBoxTemplate className="combattechnique" title={CTA.name (x)}>
       {maybeRNullF (CTA.special (x))
                    (str => (
-                     <Markdown source={`**${translate (l10n) ("special")}:** ${str}`} />
+                     <Markdown source={`**${translate (l10n) ("inlinewiki.special")}:** ${str}`} />
                    ))}
-      <WikiProperty l10n={l10n} title="primaryattribute">
+      <WikiProperty l10n={l10n} title="inlinewiki.primaryattribute">
         {pipe_ (
           x,
           CTA.primary,
@@ -47,7 +47,9 @@ export const WikiCombatTechniqueInfo: React.FC<WikiCombatTechniqueInfoProps> = p
           intercalate ("/")
         )}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="improvementcost">{getICName (CTA.ic (x))}</WikiProperty>
+      <WikiProperty l10n={l10n} title="inlinewiki.improvementcost">
+        {getICName (CTA.ic (x))}
+      </WikiProperty>
       <WikiSource
         books={books}
         x={x}

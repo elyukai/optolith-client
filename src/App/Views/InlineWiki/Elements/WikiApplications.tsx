@@ -66,7 +66,7 @@ export const WikiApplications: FC = props => {
       const sorted_new_apps = sortStrings (l10n) (new_apps)
 
       return (
-        <WikiProperty l10n={l10n} title="newapplications">
+        <WikiProperty l10n={l10n} title="inlinewiki.newapplications">
           {intercalate (", ") (sorted_new_apps)}
         </WikiProperty>
       )
@@ -79,7 +79,7 @@ export const WikiApplications: FC = props => {
     const sorted_default_apps = sortStrings (l10n) (default_apps)
 
     return (
-      <WikiProperty l10n={l10n} title="applications">
+      <WikiProperty l10n={l10n} title="inlinewiki.applications">
         {intercalate (", ") (sorted_default_apps)}
         {maybe ("") ((input: string) => `, ${input}`) (applicationsInput)}
       </WikiProperty>

@@ -78,18 +78,18 @@ export const AttributesPermanentListItem: React.FC<AttributesPermanentListItemPr
             typeof boughtBack === "number"
             ? (
                 <p>
-                  {translate (l10n) ("losttotal")}
+                  {translate (l10n) ("attributes.derivedcharacteristics.tooltips.losttotal")}
                   {": "}
                   {lost}
                   <br />
-                  {translate (l10n) ("boughtback")}
+                  {translate (l10n) ("attributes.derivedcharacteristics.tooltips.boughtback")}
                   {": "}
                   {boughtBack}
                 </p>
               )
             : (
                 <p>
-                  {translate (l10n) ("losttotal")}
+                  {translate (l10n) ("attributes.derivedcharacteristics.tooltips.losttotal")}
                   {": "}
                   {lost}
                 </p>

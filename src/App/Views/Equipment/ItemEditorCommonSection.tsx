@@ -75,7 +75,7 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
       templates,
       map (itemTemplateToDropdown),
       consF (
-        DropdownOption ({ name: translate (l10n) ("none") })
+        DropdownOption ({ name: translate (l10n) ("general.none") })
       )
     )
 
@@ -85,14 +85,14 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
         <div className="row">
           <TextField
             className="number"
-            label={translate (l10n) ("number")}
+            label={translate (l10n) ("equipment.dialogs.addedit.number")}
             value={EIA.amount (item)}
             onChange={setAmount}
             valid={IEIVA.amount (inputValidation)}
             />
           <TextField
             className="name"
-            label={translate (l10n) ("name")}
+            label={translate (l10n) ("equipment.dialogs.addedit.name")}
             value={EIA.name (item)}
             onChange={setName}
             autoFocus={isInCreation}
@@ -103,7 +103,7 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
         <div className="row">
           <TextField
             className="price"
-            label={translate (l10n) ("price")}
+            label={translate (l10n) ("equipment.dialogs.addedit.price")}
             value={EIA.price (item)}
             onChange={setPrice}
             disabled={locked}
@@ -111,7 +111,7 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
             />
           <TextField
             className="weight"
-            label={translate (l10n) ("weight")}
+            label={translate (l10n) ("equipment.dialogs.addedit.weight")}
             value={EIA.weight (item)}
             onChange={setWeight}
             disabled={locked}
@@ -119,7 +119,7 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
             />
           <TextField
             className="where"
-            label={translate (l10n) ("carriedwhere")}
+            label={translate (l10n) ("equipment.dialogs.addedit.carriedwhere")}
             value={EIA.where (item)}
             onChange={setWhere}
             />
@@ -127,8 +127,8 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
         <div className="row">
           <Dropdown
             className="gr"
-            label={translate (l10n) ("itemgroup")}
-            hint={translate (l10n) ("itemgrouphint")}
+            label={translate (l10n) ("equipment.dialogs.addedit.itemgroup")}
+            hint={translate (l10n) ("equipment.dialogs.addedit.itemgrouphint")}
             value={Just (gr)}
             options={GROUPS_SELECTION}
             onChangeJust={setGroup}
@@ -141,14 +141,14 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
             <div className="row">
               <Checkbox
                 className="improvised-weapon"
-                label={translate (l10n) ("improvisedweapon")}
+                label={translate (l10n) ("equipment.dialogs.addedit.improvisedweapon")}
                 checked={isJust (EIA.improvisedWeaponGroup (item))}
                 onClick={switchIsImprovisedWeapon}
                 disabled={locked}
                 />
               <Dropdown
                 className="gr imp-gr"
-                hint={translate (l10n) ("improvisedweapongroup")}
+                hint={translate (l10n) ("equipment.dialogs.addedit.improvisedweapongroup")}
                 value={EIA.improvisedWeaponGroup (item)}
                 options={IMP_GROUPS_SELECTION}
                 onChangeJust={setImprovisedWeaponGroup}
@@ -161,8 +161,8 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
         <div className="row">
           <Dropdown
             className="template"
-            label={translate (l10n) ("template")}
-            hint={translate (l10n) ("none")}
+            label={translate (l10n) ("equipment.dialogs.addedit.template")}
+            hint={translate (l10n) ("general.none")}
             value={EIA.template (item)}
             options={TEMPLATES}
             onChangeJust={setTemplate}

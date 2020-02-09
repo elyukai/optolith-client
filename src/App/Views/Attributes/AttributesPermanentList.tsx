@@ -80,8 +80,8 @@ export const AttributesPermanentList: React.FC<AttributesPermanentListProps> = p
                 <AttributesPermanentListItem
                   l10n={l10n}
                   id={EnergyId.LP}
-                  label={translate (l10n) ("lifepointslostpermanently.short")}
-                  name={translate (l10n) ("lifepointslostpermanently")}
+                  label={translate (l10n) ("attributes.lostpermanently.lifepoints.short")}
+                  name={translate (l10n) ("attributes.lostpermanently.lifepoints")}
                   lost={Maybe.sum (DCA.permanentLost (lp))}
                   isRemovingEnabled={isRemovingEnabled}
                   getEditPermanentEnergy={getEditPermanentEnergy}
@@ -105,8 +105,8 @@ export const AttributesPermanentList: React.FC<AttributesPermanentListProps> = p
                 <AttributesPermanentListItem
                   l10n={l10n}
                   id={EnergyId.AE}
-                  label={translate (l10n) ("arcaneenergylostpermanently.short")}
-                  name={translate (l10n) ("arcaneenergylostpermanently")}
+                  label={translate (l10n) ("attributes.lostpermanently.arcaneenergy.short")}
+                  name={translate (l10n) ("attributes.lostpermanently.arcaneenergy")}
                   boughtBack={Maybe.sum (DCA.permanentRedeemed (ae))}
                   lost={Maybe.sum (DCA.permanentLost (ae))}
                   isRemovingEnabled={isRemovingEnabled}
@@ -132,8 +132,8 @@ export const AttributesPermanentList: React.FC<AttributesPermanentListProps> = p
                 <AttributesPermanentListItem
                   l10n={l10n}
                   id={EnergyId.KP}
-                  label={translate (l10n) ("karmapointslostpermanently.short")}
-                  name={translate (l10n) ("karmapointslostpermanently")}
+                  label={translate (l10n) ("attributes.lostpermanently.karmapoints.short")}
+                  name={translate (l10n) ("attributes.lostpermanently.karmapoints")}
                   boughtBack={Maybe.sum (DCA.permanentRedeemed (kp))}
                   lost={Maybe.sum (DCA.permanentLost (kp))}
                   isRemovingEnabled={isRemovingEnabled}

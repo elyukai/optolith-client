@@ -120,21 +120,21 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
       elems,
       map (e => DropdownOption ({
                   id: Just (ELA.id (e)),
-                  name: `${ELA.name (e)} (${ELA.ap (e)} ${translate (l10n) ("adventurepoints.short")})`,
+                  name: `${ELA.name (e)} (${ELA.ap (e)} ${translate (l10n) ("heroes.dialogs.herocreation.experiencelevel.adventurepoints")})`,
                 }))
     )
 
   return (
     <Dialog
       id="herocreation"
-      title={translate (l10n) ("herocreation")}
+      title={translate (l10n) ("heroes.dialogs.herocreation.title")}
       close={handleClose}
       buttons={[
         {
           disabled: name === ""
                     || isNothing (msex)
                     || isNothing (mel),
-          label: translate (l10n) ("start"),
+          label: translate (l10n) ("heroes.dialogs.herocreation.startbtn"),
           onClick: handleSubmit,
           primary: true,
         },
@@ -142,7 +142,7 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
       isOpen={isOpen}
       >
       <TextField
-        hint={translate (l10n) ("nameofhero")}
+        hint={translate (l10n) ("heroes.dialogs.herocreation.nameofhero")}
         value={name}
         onChange={setName}
         fullWidth
@@ -154,11 +154,11 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
         options={List (
           RadioOption<Sex> ({
             value: Just<Sex> ("m"),
-            name: translate (l10n) ("male"),
+            name: translate (l10n) ("heroes.dialogs.herocreation.sex.male"),
           }),
           RadioOption<Sex> ({
             value: Just<Sex> ("f"),
-            name: translate (l10n) ("female"),
+            name: translate (l10n) ("heroes.dialogs.herocreation.sex.female"),
           })
         )}
         />
@@ -166,7 +166,7 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
         value={mel}
         onChange={setEL}
         options={experienceLevels}
-        hint={translate (l10n) ("selectexperiencelevel")}
+        hint={translate (l10n) ("heroes.dialogs.herocreation.experiencelevel.placeholder")}
         fullWidth
         />
       <Hr />

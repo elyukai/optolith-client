@@ -27,7 +27,7 @@ export const WikiTools: FC = props => {
 
   return maybe (null as ReactReturn)
                ((tools: string) => (
-                 <Markdown source={`**${translate (l10n) ("tools")}:** ${tools}`} />
+                 <Markdown source={`**${translate (l10n) ("inlinewiki.tools")}:** ${tools}`} />
                ))
                (acc.tools (x))
 }

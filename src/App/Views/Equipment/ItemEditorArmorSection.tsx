@@ -68,7 +68,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
             <div className="container">
               <TextField
                 className="pro"
-                label={translate (l10n) ("protection.short")}
+                label={translate (l10n) ("equipment.dialogs.addedit.protection")}
                 value={EIA.pro (item)}
                 onChange={setProtection}
                 disabled={locked}
@@ -76,7 +76,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
                 />
               <TextField
                 className="enc"
-                label={translate (l10n) ("encumbrance.short")}
+                label={translate (l10n) ("equipment.dialogs.addedit.encumbrance")}
                 value={EIA.enc (item)}
                 onChange={setEncumbrance}
                 disabled={locked}
@@ -85,8 +85,8 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
             </div>
             <Dropdown
               className="armor-type"
-              label={translate (l10n) ("armortype")}
-              hint={translate (l10n) ("none")}
+              label={translate (l10n) ("equipment.dialogs.addedit.armortype")}
+              hint={translate (l10n) ("general.none")}
               value={EIA.armorType (item)}
               options={armorTypes}
               onChangeJust={setArmorType}
@@ -98,7 +98,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
             <div className="container armor-loss-container">
               <TextField
                 className="stabilitymod"
-                label={translate (l10n) ("sturdinessmodifier.short")}
+                label={translate (l10n) ("equipment.dialogs.addedit.sturdinessmodifier")}
                 value={EIA.stabilityMod (item)}
                 onChange={setStabilityModifier}
                 disabled={locked}
@@ -106,7 +106,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
                 />
               <Dropdown
                 className="weapon-loss"
-                label={translate (l10n) ("wear")}
+                label={translate (l10n) ("equipment.dialogs.addedit.wear")}
                 value={EIA.loss (item)}
                 options={getLossLevelElements ()}
                 onChange={setLoss}
@@ -114,7 +114,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
             </div>
             <Checkbox
               className="only-zones"
-              label={translate (l10n) ("hitzonearmoronly")}
+              label={translate (l10n) ("equipment.dialogs.addedit.hitzonearmoronly")}
               checked={EIA.forArmorZoneOnly (item)}
               onClick={switchIsForArmorZonesOnly}
               disabled={locked}
@@ -124,7 +124,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
             <div className="container">
               <TextField
                 className="mov"
-                label={translate (l10n) ("movementmodifier.short")}
+                label={translate (l10n) ("equipment.dialogs.addedit.movementmodifier")}
                 value={EIA.movMod (item)}
                 onChange={setMovementModifier}
                 disabled={locked}
@@ -132,7 +132,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
                 />
               <TextField
                 className="ini"
-                label={translate (l10n) ("initiativemodifier.short")}
+                label={translate (l10n) ("equipment.dialogs.addedit.initiativemodifier")}
                 value={EIA.iniMod (item)}
                 onChange={setInitiativeModifier}
                 disabled={locked}
@@ -141,7 +141,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
             </div>
             <Checkbox
               className="add-penalties"
-              label={translate (l10n) ("additionalpenalties")}
+              label={translate (l10n) ("equipment.dialogs.addedit.additionalpenalties")}
               checked={EIA.addPenalties (item)}
               onClick={setHasAdditionalPenalties}
               disabled={locked}

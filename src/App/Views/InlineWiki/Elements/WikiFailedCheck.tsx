@@ -24,6 +24,6 @@ export const WikiFailedCheck: FC = props => {
   } = props
 
   return (
-    <Markdown source={`**${translate (l10n) ("failedcheck")}:** ${acc.failed (x)}`} />
+    <Markdown source={`**${translate (l10n) ("inlinewiki.failedcheck")}:** ${acc.failed (x)}`} />
   )
 }

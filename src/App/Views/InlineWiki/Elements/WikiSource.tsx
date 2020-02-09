@@ -76,7 +76,7 @@ export const WikiSource: FC = props => {
                <p className="source">
                  <span>
                    <strong>
-                     {translate (l10n) ("complementarysources")}
+                     {translate (l10n) ("inlinewiki.complementarysources")}
                      {":"}
                    </strong>
                    {" "}

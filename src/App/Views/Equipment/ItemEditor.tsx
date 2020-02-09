@@ -143,7 +143,11 @@ export const ItemEditor: React.FC<ItemEditorProps> = props => {
     return (
       <Dialog
         id="item-editor"
-        title={or (isInCreation) ? translate (l10n) ("createitem") : translate (l10n) ("edititem")}
+        title={
+          or (isInCreation)
+          ? translate (l10n) ("equipment.dialogs.addedit.createitem")
+          : translate (l10n) ("equipment.dialogs.addedit.edititem")
+        }
         close={closeEditor}
         isOpen
         buttons={[
@@ -161,7 +165,7 @@ export const ItemEditor: React.FC<ItemEditorProps> = props => {
                   || !IEIVA.other (inputValidation)
                 )
               ),
-            label: translate (l10n) ("save"),
+            label: translate (l10n) ("general.dialogs.savebtn"),
             onClick: or (isInCreation) ? addToList : saveItem,
           },
         ]}

@@ -24,6 +24,6 @@ export const WikiBotch: FC = props => {
   } = props
 
   return (
-    <Markdown source={`**${translate (l10n) ("botch")}:** ${acc.botch (x)}`} />
+    <Markdown source={`**${translate (l10n) ("inlinewiki.botch")}:** ${acc.botch (x)}`} />
   )
 }

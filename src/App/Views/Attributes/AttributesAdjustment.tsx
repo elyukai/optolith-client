@@ -33,7 +33,9 @@ export const AttributesAdjustment: React.FC<AttributesAdjustmentProps> = props =
 
   return (
     <div className="attribute-adjustment">
-      <span className="label">{translate (l10n) ("attributeadjustmentselection")}</span>
+      <span className="label">
+        {translate (l10n) ("attributes.attributeadjustmentselection")}
+      </span>
       {fromMaybe
         (<></>)
         (liftM2 ((available_attr_ids: List<string>) => (adjustment: number) => (

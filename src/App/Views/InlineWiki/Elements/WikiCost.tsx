@@ -29,11 +29,11 @@ export const WikiCost: FC = props => {
   const category = acc.category (x)
   const isNoModAllowed = acc.costNoMod (x)
 
-  const key = category === Category.LITURGICAL_CHANTS ? "kpcost" : "aecost"
+  const key = category === Category.LITURGICAL_CHANTS ? "inlinewiki.kpcost" : "inlinewiki.aecost"
   const modKey =
     category === Category.LITURGICAL_CHANTS
-    ? "youcannotuseamodificationonthischantscost"
-    : "youcannotuseamodificationonthisspellscost"
+    ? "inlinewiki.youcannotuseamodificationonthischantscost"
+    : "inlinewiki.youcannotuseamodificationonthisspellscost"
 
   return (
     <WikiProperty l10n={l10n} title={key}>

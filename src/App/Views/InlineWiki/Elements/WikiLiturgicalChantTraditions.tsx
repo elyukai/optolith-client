@@ -76,7 +76,7 @@ export const WikiLiturgicalChantTraditions: FC = props => {
                             (List ()),
     sortStrings (l10n),
     traditions => (
-      <WikiProperty l10n={l10n} title="traditions">
+      <WikiProperty l10n={l10n} title="inlinewiki.traditions">
         {intercalate (", ") (traditions)}
       </WikiProperty>
     )
