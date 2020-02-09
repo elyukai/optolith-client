@@ -12,40 +12,40 @@ interface Props {
 export const SkillsSheetRoutineChecks: React.FC<Props> = ({ l10n }) => (
   <TextBox
     className="routine-checks"
-    label={translate (l10n) ("routinechecks")}
+    label={translate (l10n) ("sheets.gamestatssheet.routinechecks.title")}
     >
-    <p>{translate (l10n) ("routinechecks.text1")}</p>
-    <p>{translate (l10n) ("routinechecks.text2")}</p>
-    <p>{translate (l10n) ("routinechecks.text3")}</p>
-    <p>{translate (l10n) ("routinechecks.text4")}</p>
+    <p>{translate (l10n) ("sheets.gamestatssheet.routinechecks.textRow1")}</p>
+    <p>{translate (l10n) ("sheets.gamestatssheet.routinechecks.textRow2")}</p>
+    <p>{translate (l10n) ("sheets.gamestatssheet.routinechecks.textRow3")}</p>
+    <p>{translate (l10n) ("sheets.gamestatssheet.routinechecks.textRow4")}</p>
     <table>
       <thead>
         <tr>
           <th>
             <div>
-              {translate (l10n) ("checkmod")}
+              {translate (l10n) ("sheets.gamestatssheet.routinechecks.labels.checkmod")}
             </div>
           </th>
           <th>
             <div>
-              {translate (l10n) ("neededsr")}
+              {translate (l10n) ("sheets.gamestatssheet.routinechecks.labels.neededsr")}
             </div>
           </th>
           <th>
             <div>
-              {translate (l10n) ("checkmod")}
+              {translate (l10n) ("sheets.gamestatssheet.routinechecks.labels.checkmod")}
             </div>
           </th>
           <th>
             <div>
-              {translate (l10n) ("neededsr")}
+              {translate (l10n) ("sheets.gamestatssheet.routinechecks.labels.neededsr")}
             </div>
           </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>{translate (l10n) ("from")}</td>
+          <td>{translate (l10n) ("sheets.gamestatssheet.routinechecks.from3on")}</td>
           <td>{1}</td>
           <td>{signNeg (-1)}</td>
           <td>{13}</td>

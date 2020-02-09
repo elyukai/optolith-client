@@ -9,7 +9,7 @@ import { bimap, fst, isTuple, snd } from "../../../../Data/Tuple"
 import { MeleeWeapon } from "../../../Models/View/MeleeWeapon"
 import { L10nRecord } from "../../../Models/Wiki/L10n"
 import { ndash } from "../../../Utilities/Chars"
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
+import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
 import { sign, signZero, toRoman } from "../../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
@@ -27,29 +27,47 @@ export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
 
   return (
     <TextBox
-      label={translate (l10n) ("closecombatweapons")}
+      label={translate (l10n) ("sheets.combatsheet.closecombatweapons")}
       className="melee-weapons"
       >
       <table>
         <thead>
           <tr>
-            <th className="name">{translate (l10n) ("weapon")}</th>
+            <th className="name">
+              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.weapon")}
+            </th>
             <th className="combat-technique">
-              {translate (l10n) ("combattechnique")}
+              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.combattechnique")}
             </th>
             <th className="damage-bonus">
-              {translate (l10n) ("damagebonus.medium")}
+              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.damagebonus")}
             </th>
-            <th className="damage">{translate (l10n) ("damagepoints.short")}</th>
+            <th className="damage">
+              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.damagepoints")}
+            </th>
             <th className="mod" colSpan={2}>
-              {translate (l10n) ("attackparrymodifier.short")}
+              {translate (l10n)
+                         ("sheets.combatsheet.closecombatweapons.labels.attackparrymodifier")}
             </th>
-            <th className="reach">{translate (l10n) ("reach")}</th>
-            <th className="bf">{translate (l10n) ("breakingpointrating.short")}</th>
-            <th className="loss">{translate (l10n) ("damaged.short")}</th>
-            <th className="at">{translate (l10n) ("attack.short")}</th>
-            <th className="pa">{translate (l10n) ("parry.short")}</th>
-            <th className="weight">{translate (l10n) ("weight")}</th>
+            <th className="reach">
+              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.reach")}
+            </th>
+            <th className="bf">
+              {translate (l10n)
+                         ("sheets.combatsheet.closecombatweapons.labels.breakingpointrating")}
+            </th>
+            <th className="loss">
+              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.damaged")}
+            </th>
+            <th className="at">
+              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.attack")}
+            </th>
+            <th className="pa">
+              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.parry")}
+            </th>
+            <th className="weight">
+              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.weight")}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -80,7 +98,7 @@ export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
                     </td>
                     <td className="damage">
                       {renderMaybe (MWA.damageDiceNumber (e))}
-                      {translate (l10n) ("dice.short")}
+                      {translate (l10n) ("general.dice")}
                       {renderMaybe (MWA.damageDiceSides (e))}
                       {signZero (MWA.damageFlat (e))}
                     </td>
@@ -110,14 +128,14 @@ export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
                       {fromMaybe<string | number> (ndash) (MWA.pa (e))}
                     </td>
                     <td className="weight">
-                      {pipe_ (
-                        e,
-                        MWA.weight,
-                        localizeWeight (l10n),
-                        localizeNumber (l10n)
-                      )}
-                      {" "}
-                      {translate (l10n) ("weightunit.short")}
+                      {translateP (l10n)
+                                  ("general.weightvalue")
+                                  (pipe_ (
+                                    e,
+                                    MWA.weight,
+                                    localizeWeight (l10n),
+                                    localizeNumber (l10n)
+                                  ))}
                     </td>
                   </tr>
                 )

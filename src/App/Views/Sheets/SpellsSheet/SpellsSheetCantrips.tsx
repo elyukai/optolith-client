@@ -20,7 +20,7 @@ export const SpellsSheetCantrips: React.FC<Props> = props => {
 
   return (
     <TextBox
-      label={translate (l10n) ("cantrips")}
+      label={translate (l10n) ("sheets.spellssheet.cantrips")}
       className="cantrips activatable-list"
       >
       <div className="list">

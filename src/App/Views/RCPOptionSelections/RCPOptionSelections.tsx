@@ -27,7 +27,7 @@ import { Race } from "../../Models/Wiki/Race"
 import { Skill } from "../../Models/Wiki/Skill"
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
 import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers"
-import { translate } from "../../Utilities/I18n"
+import { translate, translateP } from "../../Utilities/I18n"
 import { getAllAdjustmentSelections } from "../../Utilities/mergeRcpAdjustmentSelections"
 import { sign } from "../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
@@ -468,9 +468,9 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
   return (
     <Slidein isOpen close={close} className="rcp-selections">
       <Scroll>
-        <h3>{translate (l10n) ("race")}</h3>
+        <h3>{translate (l10n) ("rcpselectoptions.race")}</h3>
         <Dropdown
-          hint={translate (l10n) ("selectattributeadjustment")}
+          hint={translate (l10n) ("rcpselectoptions.selectattributeadjustment")}
           value={attributeAdjustment}
           onChangeJust={handleSetAttributeAdjustment}
           options={mapMaybe (pipe (
@@ -483,15 +483,17 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                             (snd (attributeAdjustmentSelection))}
           />
 
-        <h3>{translate (l10n) ("culture")}</h3>
+        <h3>{translate (l10n) ("rcpselectoptions.culture")}</h3>
         <Checkbox
           checked={useCulturePackage}
           onClick={handleSwitchIsCulturalPackageEnabled}
           >
-          {translate (l10n) ("buyculturalpackage")}
-          {" ("}
-          {Culture.A.culturalPackageAdventurePoints (culture)}
-          {` ${translate (l10n) ("adventurepoints.short")})`}
+          {translateP (l10n)
+                      ("general.withapvalue")
+                      (List<string | number> (
+                        translate (l10n) ("rcpselectoptions.buyculturalpackage"),
+                        Culture.A.culturalPackageAdventurePoints (culture)
+                      ))}
         </Checkbox>
         {getMotherTongueSelectionElement (l10n)
                                          (wiki)
@@ -514,7 +516,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
           Profession.A.id,
           notEquals<string> (ProfessionId.CustomProfession)
         )
-          ? <h3>{translate (l10n) ("profession")}</h3>
+          ? <h3>{translate (l10n) ("rcpselectoptions.profession")}</h3>
           : null}
         {maybeToNullable (snd (skillSpecialization))}
         {maybeToNullable (snd (languagesAndScripts))}
@@ -526,7 +528,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
         {maybeToNullable (snd (skills))}
         {maybeToNullable (snd (terrainKnowledge))}
         <BorderButton
-          label={translate (l10n) ("complete")}
+          label={translate (l10n) ("rcpselectoptions.completebtn")}
           primary
           disabled={isConfirmingSelectionsDisabled}
           onClick={handleConfirmSelections}

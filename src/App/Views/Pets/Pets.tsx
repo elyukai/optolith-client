@@ -178,7 +178,7 @@ export function Pets (props: PetsProps) {
           ? (
             <Options>
               <BorderButton
-                label={translate (l10n) ("add")}
+                label={translate (l10n) ("general.dialogs.addbtn")}
                 onClick={createPet}
                 />
             </Options>

@@ -46,7 +46,7 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
         <h4>{translate (l10n) ("equipment.purse.title")}</h4>
         <div className="fields">
           <TextField
-            label={translate (l10n) ("equipment.purse.ducates")}
+            label={translate (l10n) ("equipment.purse.ducats")}
             value={fmapF (purse) (PA.d)}
             onChange={setDucates}
             />

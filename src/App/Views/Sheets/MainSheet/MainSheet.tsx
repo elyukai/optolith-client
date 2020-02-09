@@ -73,13 +73,13 @@ export const MainSheet: React.FC<Props> = props => {
       <Options>
         <BorderButton
           className="print-document"
-          label={translate (l10n) ("printtopdf")}
+          label={translate (l10n) ("sheets.printtopdfbtn")}
           onClick={printToPDF}
           />
       </Options>
       <Sheet
         id="main-sheet"
-        title={translate (l10n) ("personaldata")}
+        title={translate (l10n) ("sheets.mainsheet.title")}
         attributes={attributes}
         l10n={l10n}
         >
@@ -105,7 +105,7 @@ export const MainSheet: React.FC<Props> = props => {
               fmap (advantagesActive => (
                 <TextBox
                   className="activatable-list"
-                  label={translate (l10n) ("advantages")}
+                  label={translate (l10n) ("sheets.mainsheet.advantages")}
                   value={compressList (l10n) (advantagesActive)}
                   />
               )),
@@ -116,7 +116,7 @@ export const MainSheet: React.FC<Props> = props => {
               fmap (disadvantagesActive => (
                 <TextBox
                   className="activatable-list"
-                  label={translate (l10n) ("disadvantages")}
+                  label={translate (l10n) ("sheets.mainsheet.disadvantages")}
                   value={compressList (l10n) (disadvantagesActive)}
                   />
               )),
@@ -127,7 +127,7 @@ export const MainSheet: React.FC<Props> = props => {
               fmap (generalsaActive => (
                 <TextBox
                   className="activatable-list"
-                  label={translate (l10n) ("generalspecialabilites")}
+                  label={translate (l10n) ("sheets.mainsheet.generalspecialabilites")}
                   value={compressList (l10n) (generalsaActive)}
                   />
               )),

@@ -28,28 +28,31 @@ export const CombatSheetTechniques: React.FC<Props> = props => {
   return (
     <TextBox
       className="combat-techniques"
-      label={translate (l10n) ("combattechniques")}
+      label={translate (l10n) ("sheets.combatsheet.combattechniquestable.title")}
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (l10n) ("combattechnique")}
+              {translate (l10n) ("sheets.combatsheet.combattechniquestable.labels.combattechnique")}
             </th>
             <th className="primary">
-              {translate (l10n) ("primaryattribute")}
+              {translate (l10n)
+                         ("sheets.combatsheet.combattechniquestable.labels.primaryattribute")}
             </th>
             <th className="ic">
-              {translate (l10n) ("improvementcost.short")}
+              {translate (l10n) ("sheets.combatsheet.combattechniquestable.labels.improvementcost")}
             </th>
             <th className="value">
-              {translate (l10n) ("combattechniquerating.short")}
+              {translate (l10n)
+                         ("sheets.combatsheet.combattechniquestable.labels.combattechniquerating")}
             </th>
             <th className="at">
-              {translate (l10n) ("attackrangecombat.short")}
+              {translate (l10n)
+                         ("sheets.combatsheet.combattechniquestable.labels.attackrangecombat")}
             </th>
             <th className="pa">
-              {translate (l10n) ("parry.short")}
+              {translate (l10n) ("sheets.combatsheet.combattechniquestable.labels.parry")}
             </th>
           </tr>
         </thead>

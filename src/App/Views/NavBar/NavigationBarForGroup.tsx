@@ -54,7 +54,7 @@ export const NavigationBarForGroup: React.FC<Props> = props => {
       </NavigationBarLeft>
       <NavigationBarRight>
         <BorderButton
-          label={translate (l10n) ("save")}
+          label={translate (l10n) ("header.savebtn")}
           onClick={saveGroup}
           />
         <IconButton

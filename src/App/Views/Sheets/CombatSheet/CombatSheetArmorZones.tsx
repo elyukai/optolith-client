@@ -7,7 +7,7 @@ import { Record } from "../../../../Data/Record"
 import { HitZoneArmorForView } from "../../../Models/View/HitZoneArmorForView"
 import { L10nRecord } from "../../../Models/Wiki/L10n"
 import { minus, ndash } from "../../../Utilities/Chars"
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
+import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { TextBox } from "../../Universal/TextBox"
 
@@ -23,24 +23,42 @@ export const CombatSheetArmorZones: React.FC<Props> = props => {
 
   return (
     <TextBox
-      label={translate (l10n) ("armor")}
+      label={translate (l10n) ("sheets.combatsheet.armors.title")}
       className="armor armor-zones"
       >
       <table>
         <thead>
           <tr>
-            <th className="name">{translate (l10n) ("armor")}</th>
-            <th className="zone">{translate (l10n) ("head.short")}</th>
-            <th className="zone">{translate (l10n) ("torso.short")}</th>
-            <th className="zone">{translate (l10n) ("leftarm.short")}</th>
-            <th className="zone">{translate (l10n) ("rightarm.short")}</th>
-            <th className="zone">{translate (l10n) ("leftleg.short")}</th>
-            <th className="zone">{translate (l10n) ("rightleg.short")}</th>
-            <th className="enc">{translate (l10n) ("encumbrance.short")}</th>
-            <th className="add-penalties">
-              {translate (l10n) ("additionalpenalties")}
+            <th className="name">
+              {translate (l10n) ("sheets.combatsheet.armors.title")}
             </th>
-            <th className="weight">{translate (l10n) ("weight")}</th>
+            <th className="zone">
+              {translate (l10n) ("sheets.combatsheet.armors.labels.head")}
+            </th>
+            <th className="zone">
+              {translate (l10n) ("sheets.combatsheet.armors.labels.torso")}
+            </th>
+            <th className="zone">
+              {translate (l10n) ("sheets.combatsheet.armors.labels.leftarm")}
+            </th>
+            <th className="zone">
+              {translate (l10n) ("sheets.combatsheet.armors.labels.rightarm")}
+            </th>
+            <th className="zone">
+              {translate (l10n) ("sheets.combatsheet.armors.labels.leftleg")}
+            </th>
+            <th className="zone">
+              {translate (l10n) ("sheets.combatsheet.armors.labels.rightleg")}
+            </th>
+            <th className="enc">
+              {translate (l10n) ("sheets.combatsheet.armors.labels.encumbrance")}
+            </th>
+            <th className="add-penalties">
+              {translate (l10n) ("sheets.combatsheet.armors.labels.movementinitiative")}
+            </th>
+            <th className="weight">
+              {translate (l10n) ("sheets.combatsheet.armors.labels.weight")}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -63,14 +81,16 @@ export const CombatSheetArmorZones: React.FC<Props> = props => {
                     {HZAFVA.addPenalties (e) ? `${minus}1/${minus}1` : ndash}
                   </td>
                   <td className="weight">
-                    {pipe_ (
-                      e,
-                      HZAFVA.weight,
-                      localizeWeight (l10n),
-                      localizeNumber (l10n)
-                    )}
-                    {" "}
-                    {translate (l10n) ("weightunit.short")}
+                    {translateP (l10n)
+                                ("general.weightvalue")
+                                (List (
+                                  pipe_ (
+                                    e,
+                                    HZAFVA.weight,
+                                    localizeWeight (l10n),
+                                    localizeNumber (l10n)
+                                  )
+                                ))}
                   </td>
                 </tr>
               )),

@@ -45,7 +45,7 @@ export const SheetHeader: React.FC<Props> = props => {
   return (
     <div className="sheet-header">
       <div className="sheet-title">
-        <h1>{translate (l10n) ("charactersheet")}</h1>
+        <h1>{translate (l10n) ("sheets.charactersheet")}</h1>
         <p>{title}</p>
         <img src="images/icon.svg" alt="" />
       </div>

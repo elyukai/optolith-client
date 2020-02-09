@@ -42,31 +42,31 @@ export const SkillsSheetSkills: React.FC<Props> = props => {
                                            (attributes)
 
   return (
-    <TextBox label={translate (l10n) ("skills")}>
+    <TextBox label={translate (l10n) ("sheets.gamestatssheet.skillstable.title")}>
       <div className="upper">
         <table>
           <thead>
             <tr>
               <th className="name">
-                {translate (l10n) ("skill")}
+                {translate (l10n) ("sheets.gamestatssheet.skillstable.labels.skill")}
               </th>
               <th className="check">
-                {translate (l10n) ("check")}
+                {translate (l10n) ("sheets.gamestatssheet.skillstable.labels.check")}
               </th>
               <th className="enc">
-                {translate (l10n) ("encumbrance.short")}
+                {translate (l10n) ("sheets.gamestatssheet.skillstable.labels.encumbrance")}
               </th>
               <th className="ic">
-                {translate (l10n) ("improvementcost.short")}
+                {translate (l10n) ("sheets.gamestatssheet.skillstable.labels.improvementcost")}
               </th>
               <th className="sr">
-                {translate (l10n) ("skillrating.short")}
+                {translate (l10n) ("sheets.gamestatssheet.skillstable.labels.skillrating")}
               </th>
               <th className="routine">
-                {translate (l10n) ("routinechecks.short")}
+                {translate (l10n) ("sheets.gamestatssheet.skillstable.labels.routinechecks")}
               </th>
               <th className="comment">
-                {translate (l10n) ("notes")}
+                {translate (l10n) ("sheets.gamestatssheet.skillstable.labels.notes")}
               </th>
             </tr>
           </thead>
@@ -100,25 +100,25 @@ export const SkillsSheetSkills: React.FC<Props> = props => {
           <thead>
             <tr>
               <th className="name">
-                {translate (l10n) ("skill")}
+                {translate (l10n) ("sheets.gamestatssheet.skillstable.labels.skill")}
               </th>
               <th className="check">
-                {translate (l10n) ("check")}
+                {translate (l10n) ("sheets.gamestatssheet.skillstable.labels.check")}
               </th>
               <th className="enc">
-                {translate (l10n) ("encumbrance.short")}
+                {translate (l10n) ("sheets.gamestatssheet.skillstable.labels.encumbrance")}
               </th>
               <th className="ic">
-                {translate (l10n) ("improvementcost.short")}
+                {translate (l10n) ("sheets.gamestatssheet.skillstable.labels.improvementcost")}
               </th>
               <th className="sr">
-                {translate (l10n) ("skillrating.short")}
+                {translate (l10n) ("sheets.gamestatssheet.skillstable.labels.skillrating")}
               </th>
               <th className="routine">
-                {translate (l10n) ("routinechecks.short")}
+                {translate (l10n) ("sheets.gamestatssheet.skillstable.labels.routinechecks")}
               </th>
               <th className="comment">
-                {translate (l10n) ("notes")}
+                {translate (l10n) ("sheets.gamestatssheet.skillstable.labels.notes")}
               </th>
             </tr>
           </thead>

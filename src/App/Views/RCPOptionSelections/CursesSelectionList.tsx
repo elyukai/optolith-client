@@ -59,7 +59,9 @@ export const CursesSelectionList: React.FC<Props> = props => {
 
   return (
     <div className="curses list">
-      <h4>{translateP (l10n) ("cursestotalingapleft") (List (ap_total, ap_left))}</h4>
+      <h4>
+        {translateP (l10n) ("rcpselectoptions.cursestotalingapleft") (List (ap_total, ap_left))}
+      </h4>
       <ul>
         {pipe_ (
           curses,

@@ -97,28 +97,28 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
     <div className="personal-data">
       <div>
         <TextField
-          label={translate (l10n) ("family")}
+          label={translate (l10n) ("personaldata.family")}
           value={PDA.family (profile)}
           onChange={changeFamily}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("placeofbirth")}
+          label={translate (l10n) ("personaldata.placeofbirth")}
           value={PDA.placeOfBirth (profile)}
           onChange={changePlaceOfBirth}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("dateofbirth")}
+          label={translate (l10n) ("personaldata.dateofbirth")}
           value={PDA.dateOfBirth (profile)}
           onChange={changeDateOfBirth}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("age")}
+          label={translate (l10n) ("personaldata.age")}
           value={age}
           onChange={changeAge}
           valid={all (isEmptyOr (isNaturalNumber)) (age)}
@@ -126,7 +126,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </div>
       <InputButtonGroup className="reroll">
         <Dropdown
-          label={translate (l10n) ("haircolor")}
+          label={translate (l10n) ("personaldata.haircolor")}
           value={hair_color}
           onChange={changeHaircolor}
           options={hairColors}
@@ -136,7 +136,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <Dropdown
-          label={translate (l10n) ("eyecolor")}
+          label={translate (l10n) ("personaldata.eyecolor")}
           value={PDA.eyeColor (profile)}
           onChange={changeEyecolor}
           options={eyeColors}
@@ -145,7 +145,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
-          label={`${translate (l10n) ("size")}${wrapParenSpace (sizeCalcStr)}`}
+          label={`${translate (l10n) ("personaldata.size")}${wrapParenSpace (sizeCalcStr)}`}
           value={PDA.size (profile)}
           onChange={changeSize}
           valid={all (isEmptyOr (isFloat)) (size)}
@@ -154,7 +154,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
-          label={`${translate (l10n) ("weight")}${wrapParenSpace (weightCalcStr)}`}
+          label={`${translate (l10n) ("personaldata.weight")}${wrapParenSpace (weightCalcStr)}`}
           value={PDA.weight (profile)}
           onChange={changeWeight}
           valid={all (isEmptyOr (isNaturalNumber)) (weight)}
@@ -163,14 +163,14 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </InputButtonGroup>
       <div>
         <TextField
-          label={translate (l10n) ("title")}
+          label={translate (l10n) ("personaldata.title")}
           value={PDA.title (profile)}
           onChange={changeTitle}
           />
       </div>
       <div>
         <Dropdown
-          label={translate (l10n) ("socialstatus")}
+          label={translate (l10n) ("personaldata.socialstatus")}
           value={PDA.socialStatus (profile)}
           onChange={changeSocialStatus}
           options={socialStatuses}
@@ -178,21 +178,21 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("characteristics")}
+          label={translate (l10n) ("personaldata.characteristics")}
           value={PDA.characteristics (profile)}
           onChange={changeCharacteristics}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("otherinfo")}
+          label={translate (l10n) ("personaldata.otherinfo")}
           value={PDA.otherInfo (profile)}
           onChange={changeOtherInfo}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("cultureareaknowledge")}
+          label={translate (l10n) ("personaldata.cultureareaknowledge")}
           value={PDA.cultureAreaKnowledge (profile)}
           onChange={changeCultureAreaKnowledge}
           />

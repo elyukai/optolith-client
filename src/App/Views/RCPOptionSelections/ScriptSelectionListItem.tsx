@@ -1,9 +1,10 @@
 import * as React from "react"
+import { List } from "../../../Data/List"
 import { member, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { ScriptsSelectionListItemOptions } from "../../Models/View/ScriptsSelectionListItemOptions"
 import { L10nRecord } from "../../Models/Wiki/L10n"
-import { translate } from "../../Utilities/I18n"
+import { translateP } from "../../Utilities/I18n"
 import { Checkbox } from "../Universal/Checkbox"
 
 const SSLIOA = ScriptsSelectionListItemOptions.A
@@ -40,11 +41,7 @@ export const ScriptSelectionListItem: React.FC<Props> = props => {
         disabled={disabled}
         onClick={handleToggle}
         >
-        {name}
-        {" ("}
-        {cost}
-        {translate (l10n) ("adventurepoints.short")}
-        {")"}
+        {translateP (l10n) ("general.withapvalue") (List<string | number> (name, cost))}
       </Checkbox>
     </li>
   )

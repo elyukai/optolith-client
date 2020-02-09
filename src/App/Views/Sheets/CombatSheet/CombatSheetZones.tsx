@@ -63,7 +63,7 @@ export const CombatSheetZones: React.FC<Props> = props => {
       <Options />
       <Sheet
         id="combat-sheet-zones"
-        title={translate (l10n) ("combat")}
+        title={translate (l10n) ("sheets.combatsheet.title")}
         addHeaderInfo={addHeader}
         attributes={attributes}
         l10n={l10n}

@@ -67,7 +67,7 @@ export const LanguagesSelectionListItem: React.FC<Props> = props => {
               options={List (
                 DropdownOption ({
                   id: Just (4),
-                  name: translate (l10n) ("nativetongue.short"),
+                  name: translate (l10n) ("rcpselectoptions.nativetongue.placeholder"),
                 })
               )}
               disabled

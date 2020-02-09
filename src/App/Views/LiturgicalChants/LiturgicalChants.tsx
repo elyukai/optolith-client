@@ -166,26 +166,34 @@ export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
             checked={enableActiveItemHints}
             onClick={switchActiveItemHints}
             >
-            {translate (l10n) ("showactivated")}
+            {translate (l10n) ("general.filters.showactivatedentries")}
           </Checkbox>
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (l10n) ("name")}
+              {translate (l10n) ("liturgicalchants.header.name")}
             </ListHeaderTag>
             <ListHeaderTag className="group">
-              {translate (l10n) ("traditions")}
-              {sortOrder === SortNames.Group ? ` / ${translate (l10n) ("group")}` : null}
+              {translate (l10n) ("liturgicalchants.header.traditions")}
+              {sortOrder === SortNames.Group
+                ? ` / ${translate (l10n) ("liturgicalchants.header.group")}`
+                : null}
             </ListHeaderTag>
             <ListHeaderTag className="check">
-              {translate (l10n) ("check")}
+              {translate (l10n) ("liturgicalchants.header.check")}
             </ListHeaderTag>
-            <ListHeaderTag className="mod" hint={translate (l10n) ("checkmodifier")}>
-              {translate (l10n) ("checkmodifier.short")}
+            <ListHeaderTag
+              className="mod"
+              hint={translate (l10n) ("liturgicalchants.header.checkmodifier.tooltip")}
+              >
+              {translate (l10n) ("liturgicalchants.header.checkmodifier")}
             </ListHeaderTag>
-            <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
-              {translate (l10n) ("improvementcost.short")}
+            <ListHeaderTag
+              className="ic"
+              hint={translate (l10n) ("liturgicalchants.header.improvementcost.tooltip")}
+              >
+              {translate (l10n) ("liturgicalchants.header.improvementcost")}
             </ListHeaderTag>
             {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
             <ListHeaderTag className="btn-placeholder" />
@@ -246,30 +254,41 @@ export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
           l10n={l10n}
           />
         <BorderButton
-          label={translate (l10n) ("add")}
+          label={translate (l10n) ("liturgicalchants.addbtn")}
           onClick={handleShowSlidein}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (l10n) ("liturgicalchants.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="group">
-            {translate (l10n) ("traditions")}
-            {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
+            {translate (l10n) ("liturgicalchants.header.traditions")}
+            {sortOrder === "group"
+              ? ` / ${translate (l10n) ("liturgicalchants.header.group")}`
+              : null}
           </ListHeaderTag>
-          <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
-            {translate (l10n) ("skillrating.short")}
+          <ListHeaderTag
+            className="value"
+            hint={translate (l10n) ("liturgicalchants.header.skillrating.tooltip")}
+            >
+            {translate (l10n) ("liturgicalchants.header.skillrating")}
           </ListHeaderTag>
           <ListHeaderTag className="check">
-            {translate (l10n) ("check")}
+            {translate (l10n) ("liturgicalchants.header.check")}
           </ListHeaderTag>
-          <ListHeaderTag className="mod" hint={translate (l10n) ("checkmodifier")}>
-            {translate (l10n) ("checkmodifier.short")}
+          <ListHeaderTag
+            className="mod"
+            hint={translate (l10n) ("liturgicalchants.header.checkmodifier.tooltip")}
+            >
+            {translate (l10n) ("liturgicalchants.header.checkmodifier")}
           </ListHeaderTag>
-          <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
-            {translate (l10n) ("improvementcost.short")}
+          <ListHeaderTag
+            className="ic"
+            hint={translate (l10n) ("liturgicalchants.header.improvementcost.tooltip")}
+            >
+            {translate (l10n) ("liturgicalchants.header.improvementcost")}
           </ListHeaderTag>
           {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />

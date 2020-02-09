@@ -23,7 +23,7 @@ export const CombatSheetStates: React.FC<Props> = props => {
     <div className="status">
       <div className="status-tiers">
         <header>
-          <h4>{translate (l10n) ("conditions")}</h4>
+          <h4>{translate (l10n) ("sheets.combatsheet.conditions")}</h4>
           <div>{toRoman (1)}</div>
           <div>{toRoman (2)}</div>
           <div>{toRoman (3)}</div>
@@ -53,7 +53,7 @@ export const CombatSheetStates: React.FC<Props> = props => {
       </div>
       <div className="status-effects">
         <header>
-          <h4>{translate (l10n) ("states")}</h4>
+          <h4>{translate (l10n) ("sheets.combatsheet.states")}</h4>
         </header>
         {pipe_ (
           statesSplit,

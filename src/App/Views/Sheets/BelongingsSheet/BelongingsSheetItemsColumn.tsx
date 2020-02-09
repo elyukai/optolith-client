@@ -27,19 +27,19 @@ export const BelongingsSheetItemsColumn: React.FC<Props> = props => {
       <thead>
         <tr>
           <th className="name">
-            {translate (l10n) ("item")}
+            {translate (l10n) ("sheets.belongingssheet.equipmenttable.labels.item")}
           </th>
           <th className="amount">
-            {translate (l10n) ("number.short")}
+            {translate (l10n) ("sheets.belongingssheet.equipmenttable.labels.number")}
           </th>
           <th className="price">
-            {translate (l10n) ("price")}
+            {translate (l10n) ("sheets.belongingssheet.equipmenttable.labels.price")}
           </th>
           <th className="weight">
-            {translate (l10n) ("weight")}
+            {translate (l10n) ("sheets.belongingssheet.equipmenttable.labels.weight")}
           </th>
           <th className="where">
-            {translate (l10n) ("carriedwhere")}
+            {translate (l10n) ("sheets.belongingssheet.equipmenttable.labels.carriedwhere")}
           </th>
         </tr>
       </thead>

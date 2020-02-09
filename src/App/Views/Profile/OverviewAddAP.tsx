@@ -41,28 +41,29 @@ export const OverviewAddAP: React.FC<OverviewAddAPProps> = props => {
   return (
     <Dialog
       id="overview-add-ap"
-      title={translate (l10n) ("addadventurepoints")}
+      title={translate (l10n) ("profile.dialogs.addadventurepoints.title")}
       buttons={[
         {
           disabled: isRemovingEnabled
             ? !isInteger (value)
             : (!isNaturalNumber (value) || value === "0"),
-          label: translate (l10n) ("add"),
+          label: translate (l10n) ("general.dialogs.addbtn"),
           onClick: addAP,
         },
         {
-          label: translate (l10n) ("cancel"),
+          label: translate (l10n) ("general.dialogs.cancelbtn"),
         },
       ]}
       close={close}
       isOpen={isOpen}
       >
       <TextField
-        hint={translate (l10n) ("adventurepoints")}
+        hint={translate (l10n) ("profile.dialogs.addadventurepoints.label")}
         value={value}
         onChange={setValue}
         fullWidth
         valid={isRemovingEnabled ? isInteger (value) : isNaturalNumber (value) && value !== "0"}
+        everyKeyDown
         />
     </Dialog>
   )

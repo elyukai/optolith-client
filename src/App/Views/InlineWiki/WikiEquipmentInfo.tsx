@@ -16,7 +16,7 @@ import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAt
 import { SourceLink } from "../../Models/Wiki/sub/SourceLink"
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
 import { minus, ndash } from "../../Utilities/Chars"
-import { localizeNumber, localizeSize, localizeWeight, translate } from "../../Utilities/I18n"
+import { localizeNumber, localizeSize, localizeWeight, translate, translateP } from "../../Utilities/I18n"
 import { convertPrimaryAttributeToArray } from "../../Utilities/ItemUtils"
 import { sign, signZero } from "../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
@@ -144,11 +144,17 @@ export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
     maybe (null as React.ReactNode)
           ((weight: number) => (
             <tr>
-              <td>{translate (l10n) ("weight")}</td>
+              <td>{translate (l10n) ("inlinewiki.equipment.weight")}</td>
               <td>
-                {pipe_ (weight, localizeWeight (locale), localizeNumber (locale))}
-                {" "}
-                {translate (l10n) ("weightunit.short")}
+                {translateP (l10n)
+                            ("general.weightvalue")
+                            (List (
+                              pipe_ (
+                                weight,
+                                localizeWeight (locale),
+                                localizeNumber (locale)
+                              )
+                            ))}
               </td>
             </tr>
           ))
@@ -158,11 +164,9 @@ export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
     maybe (null as React.ReactNode)
           ((price: number) => (
             <tr>
-              <td>{translate (l10n) ("price")}</td>
+              <td>{translate (l10n) ("inlinewiki.equipment.price")}</td>
               <td>
-                {localizeNumber (locale) (price)}
-                {" "}
-                {translate (l10n) ("priceunit")}
+                {translateP (l10n) ("general.pricevalue") (List (localizeNumber (locale) (price)))}
               </td>
             </tr>
           ))
@@ -173,11 +177,11 @@ export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
       className="item"
       title={name}
       subtitle={gr === 3
-                  ? <p className="title">{translate (l10n) ("ammunition")}</p>
+                  ? <p className="title">{translate (l10n) ("inlinewiki.equipment.ammunition")}</p>
                   : null}
       >
       {gr === 3
-        ? <p className="ammunition">{translate (l10n) ("ammunition")}</p>
+        ? <p className="ammunition">{translate (l10n) ("inlinewiki.equipment.ammunition")}</p>
         : null}
       {notElem (gr) (List (1, 2, 4))
         ? (
@@ -194,30 +198,34 @@ export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
           <table className="melee">
             <tbody>
               <tr>
-                <td>{translate (l10n) ("combattechnique")}</td>
+                <td>{translate (l10n) ("inlinewiki.equipment.combattechnique")}</td>
                 <td>{renderMaybeWith (CTA.name) (mcombat_technique)}</td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("damage")}</td>
+                <td>{translate (l10n) ("inlinewiki.equipment.damage")}</td>
                 <td>
                   {renderMaybe (damageDiceNumber)}
-                  {translate (l10n) ("dice.short")}
+                  {translate (l10n) ("general.dice")}
                   {renderMaybe (damageDiceSides)}
                   {renderMaybeWith (signZero) (damageFlat)}
                 </td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("primaryattributeanddamagethreshold.short")}</td>
+                <td>
+                  {translate (l10n) ("inlinewiki.equipment.primaryattributeanddamagethreshold")}
+                </td>
                 <td>{isLancesCT ? ndash : renderMaybe (mpadt)}</td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("attackparrymodifier.short")}</td>
+                <td>{translate (l10n) ("inlinewiki.equipment.attackparrymodifier")}</td>
                 <td>
-                  {isLancesCT ? ndash : `${renderMaybeWith (sign) (at)}/${maybe (ndash) (sign) (pa)}`}
+                  {isLancesCT
+                    ? ndash
+                    : `${renderMaybeWith (sign) (at)}/${maybe (ndash) (sign) (pa)}`}
                 </td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("reach")}</td>
+                <td>{translate (l10n) ("inlinewiki.equipment.reach")}</td>
                 <td>
                   {isLancesCT
                   ? ndash
@@ -233,12 +241,17 @@ export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
                 ? null
                 : (
                   <tr>
-                    <td>{translate (l10n) ("length")}</td>
+                    <td>{translate (l10n) ("inlinewiki.equipment.length")}</td>
                     <td>
-                      {renderMaybeWith (pipe (localizeSize (locale), localizeNumber (locale)))
-                                      (mlength)}
-                      {" "}
-                      {translate (l10n) ("lengthunit")}
+                      {translateP (l10n)
+                                  ("general.lengthvalue")
+                                  (List (
+                                    renderMaybeWith (pipe (
+                                                      localizeSize (locale),
+                                                      localizeNumber (locale)
+                                                    ))
+                                                    (mlength)
+                                  ))}
                     </td>
                   </tr>
                 )}
@@ -252,44 +265,53 @@ export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
           <table className="ranged">
             <tbody>
               <tr>
-                <td>{translate (l10n) ("combattechnique")}</td>
+                <td>{translate (l10n) ("inlinewiki.equipment.combattechnique")}</td>
                 <td>
                   {renderMaybeWith (CTA.name) (mcombat_technique)}
                 </td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("damage")}</td>
+                <td>{translate (l10n) ("inlinewiki.equipment.damage")}</td>
                 <td>
                   {renderMaybe (damageDiceNumber)}
-                  {translate (l10n) ("dice.short")}
+                  {translate (l10n) ("general.dice")}
                   {renderMaybe (damageDiceSides)}
                   {renderMaybeWith (signZero) (damageFlat)}
                 </td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("reloadtime")}</td>
+                <td>{translate (l10n) ("inlinewiki.equipment.reloadtime")}</td>
                 <td>
-                  {renderMaybe (reloadTime)}
-                  {" "}
-                  {translate (l10n) ("actions.short")}
+                  {translateP (l10n)
+                              ("inlinewiki.equipment.actionsvalue")
+                              (List (renderMaybe (reloadTime)))}
                 </td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("range")}</td>
+                <td>{translate (l10n) ("inlinewiki.equipment.range")}</td>
                 <td>{renderMaybeWith (intercalate ("/")) (range)}</td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("ammunition")}</td>
-                <td>{maybe (translate (l10n) ("none")) (ITAL.name) (ammunitionTemplate)}</td>
+                <td>{translate (l10n) ("inlinewiki.equipment.ammunition")}</td>
+                <td>
+                  {maybe (translate (l10n) ("general.none"))
+                         (ITAL.name)
+                         (ammunitionTemplate)}
+                </td>
               </tr>
               {weightElement}
               <tr>
-                <td>{translate (l10n) ("length")}</td>
+                <td>{translate (l10n) ("inlinewiki.equipment.length")}</td>
                 <td>
-                  {renderMaybeWith (pipe (localizeSize (locale), localizeNumber (locale)))
-                                   (mlength)}
-                  {" "}
-                  {translate (l10n) ("lengthunit")}
+                  {translateP (l10n)
+                              ("general.lengthvalue")
+                              (List (
+                                renderMaybeWith (pipe (
+                                                  localizeSize (locale),
+                                                  localizeNumber (locale)
+                                                ))
+                                                (mlength)
+                              ))}
                 </td>
               </tr>
               {priceElement}
@@ -302,17 +324,17 @@ export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
           <table className="armor">
             <tbody>
               <tr>
-                <td>{translate (l10n) ("protection.short")}</td>
+                <td>{translate (l10n) ("inlinewiki.equipment.protection")}</td>
                 <td>{renderMaybe (pro)}</td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("encumbrance.short")}</td>
+                <td>{translate (l10n) ("inlinewiki.equipment.encumbrance")}</td>
                 <td>{renderMaybe (enc)}</td>
               </tr>
               {weightElement}
               {priceElement}
               <tr>
-                <td>{translate (l10n) ("additionalpenalties")}</td>
+                <td>{translate (l10n) ("inlinewiki.equipment.additionalpenalties")}</td>
                 <td>{maybe (ndash) (intercalate (", ")) (ensure (notNull) (addPenaltiesArr))}</td>
               </tr>
             </tbody>
@@ -321,20 +343,24 @@ export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
         : null}
       {maybeRNullF (mnote)
                    (str => (
-                     <Markdown source={`**${translate (l10n) ("notes")}:** ${str}`} />
+                     <Markdown
+                       source={`**${translate (l10n) ("inlinewiki.equipment.note")}:** ${str}`}
+                       />
                    ))}
       {maybeRNullF (mrules)
                    (str => (
-                     <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
+                     <Markdown
+                       source={`**${translate (l10n) ("inlinewiki.equipment.rules")}:** ${str}`}
+                       />
                    ))}
       {maybeRNullF (madvantage)
                    (str => {
                      const tag =
                        ITAL.gr (x) === 4
-                         ? translate (l10n) ("armoradvantage")
-                         : translate (l10n) ("weaponadvantage")
+                         ? translate (l10n) ("inlinewiki.equipment.armoradvantage")
+                         : translate (l10n) ("inlinewiki.equipment.weaponadvantage")
 
-                     const val = fromMaybe (translate (l10n) ("none")) (str)
+                     const val = fromMaybe (translate (l10n) ("general.none")) (str)
 
                      return (
                        <Markdown source={`**${tag}:** ${val}`} />
@@ -344,10 +370,10 @@ export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
                    (str => {
                      const tag =
                        ITAL.gr (x) === 4
-                         ? translate (l10n) ("armordisadvantage")
-                         : translate (l10n) ("weapondisadvantage")
+                         ? translate (l10n) ("inlinewiki.equipment.armordisadvantage")
+                         : translate (l10n) ("inlinewiki.equipment.weapondisadvantage")
 
-                     const val = fromMaybe (translate (l10n) ("none")) (str)
+                     const val = fromMaybe (translate (l10n) ("general.none")) (str)
 
                      return (
                        <Markdown source={`**${tag}:** ${val}`} />

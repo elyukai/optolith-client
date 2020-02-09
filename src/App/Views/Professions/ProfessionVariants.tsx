@@ -11,7 +11,7 @@ import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/Prof
 import { ProfessionVariantCombinedA_ } from "../../Models/View/ProfessionVariantCombined"
 import { RadioOption } from "../../Models/View/RadioOption"
 import { L10nRecord } from "../../Models/Wiki/L10n"
-import { translate } from "../../Utilities/I18n"
+import { translate, translateP } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { getNameBySex } from "../../Utilities/rcpUtils"
 import { sortRecordsByName } from "../../Utilities/sortBy"
@@ -55,18 +55,21 @@ export const ProfessionVariants: React.FC<ProfessionVariantsProps> = props => {
                fmap (pipe (
                  map (prof_var => {
                    const name = getNameBySex (sex) (PVCA_.name (prof_var))
-                   const ap_tag = translate (l10n) ("adventurepoints.short")
                    const ap = Maybe.sum (PCA_.ap (prof)) + PVCA_.ap (prof_var)
 
                    return RadioOption ({
-                     name: `${name} (${ap} ${ap_tag})`,
+                     name: translateP (l10n)
+                                      ("general.withapvalue")
+                                      (List<string | number> (name, ap)),
                      value: Just (PVCA_.id (prof_var)),
                    })
                  }),
                  sortRecordsByName (l10n),
                  PCA_.isVariantRequired (prof)
                    ? ident
-                   : consF (RadioOption ({ name: translate (l10n) ("novariant") }))
+                   : consF (RadioOption ({
+                              name: translate (l10n) ("profession.variants.novariant"),
+                            }))
                ))
              ))
            (msex)

@@ -11,19 +11,19 @@ interface Props {
 export const SkillsSheetQualityLevels: React.FC<Props> = ({ l10n }) => (
   <TextBox
     className="quality-levels"
-    label={translate (l10n) ("qualitylevels")}
+    label={translate (l10n) ("sheets.gamestatssheet.qualitylevels.title")}
     >
     <table>
       <thead>
         <tr>
           <th>
             <div>
-              {translate (l10n) ("skillpoints.splitted")}
+              {translate (l10n) ("sheets.gamestatssheet.qualitylevels.labels.skillpoints")}
             </div>
           </th>
           <th>
             <div>
-              {translate (l10n) ("qualitylevel.splitted")}
+              {translate (l10n) ("sheets.gamestatssheet.qualitylevels.labels.qualitylevel")}
             </div>
           </th>
         </tr>

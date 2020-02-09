@@ -31,15 +31,15 @@ export const CombatSheetLifePoints: React.FC<Props> = props => {
   return (
     <TextBox
       className="life-points"
-      label={translate (l10n) ("lifepoints")}
+      label={translate (l10n) ("sheets.combatsheet.lifepoints.title")}
       >
       <div className="life-points-first">
         <LabelBox
-          label={translate (l10n) ("max")}
+          label={translate (l10n) ("sheets.combatsheet.lifepoints.max")}
           value={Just (lifePoints)}
           />
         <LabelBox
-          label={translate (l10n) ("current")}
+          label={translate (l10n) ("sheets.combatsheet.lifepoints.current")}
           value={Nothing}
           />
       </div>
@@ -48,23 +48,23 @@ export const CombatSheetLifePoints: React.FC<Props> = props => {
       </div>
       <div className="tiers">
         <Box>{Math.round (lifePoints * 0.75)}</Box>
-        {translate (l10n) ("pain1")}
+        {translate (l10n) ("sheets.combatsheet.lifepoints.pain1")}
       </div>
       <div className="tiers">
         <Box>{Math.round (lifePoints * 0.5)}</Box>
-        {translate (l10n) ("pain2")}
+        {translate (l10n) ("sheets.combatsheet.lifepoints.pain2")}
       </div>
       <div className="tiers">
         <Box>{Math.round (lifePoints * 0.25)}</Box>
-        {translate (l10n) ("pain3")}
+        {translate (l10n) ("sheets.combatsheet.lifepoints.pain3")}
       </div>
       <div className="tiers">
         <Box>{5}</Box>
-        {translate (l10n) ("pain4")}
+        {translate (l10n) ("sheets.combatsheet.lifepoints.pain4")}
       </div>
       <div className="tiers">
         <Box>{0}</Box>
-        {translate (l10n) ("dying")}
+        {translate (l10n) ("sheets.combatsheet.lifepoints.dying")}
       </div>
     </TextBox>
   )

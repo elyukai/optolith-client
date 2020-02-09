@@ -17,7 +17,7 @@ interface Props {
 export const AttributeMods: React.FC<Props> = ({ attributes, l10n }) => (
   <TextBox
     className="attribute-mods"
-    label={translate (l10n) ("attributemodifiers")}
+    label={translate (l10n) ("sheets.attributemodifiers.title")}
     >
     <table>
       <thead>

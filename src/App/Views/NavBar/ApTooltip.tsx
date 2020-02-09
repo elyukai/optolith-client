@@ -27,22 +27,22 @@ export const ApTooltip: React.FC<Props> = props => {
 
   return (
     <div className="ap-details">
-      <h4>{translate (l10n) ("adventurepoints")}</h4>
+      <h4>{translate (l10n) ("header.aptooltip.title")}</h4>
       <p className="general">
-        <span>{translateP (l10n) ("totalap") (List (APCA.total (ap)))}</span>
-        <span>{translateP (l10n) ("apspent") (List (APCA.spent (ap)))}</span>
+        <span>{translateP (l10n) ("header.aptooltip.total") (List (APCA.total (ap)))}</span>
+        <span>{translateP (l10n) ("header.aptooltip.spent") (List (APCA.spent (ap)))}</span>
       </p>
       <hr />
       <p>
         <span>
           {translateP (l10n)
-                      ("apspentonadvantages")
+                      ("header.aptooltip.spentonadvantages")
                       (List (APCA.spentOnAdvantages (ap), 80))}
         </span>
         <span>
           {APCA.spentOnMagicalAdvantages (ap) > 0
             ? translateP (l10n)
-                         ("apspentonmagicadvantages")
+                         ("header.aptooltip.spentonmagicadvantages")
                          (List (
                            APCA.spentOnMagicalAdvantages (ap),
                            Maybe.sum (maximumForMagicalAdvantagesDisadvantages)
@@ -52,19 +52,19 @@ export const ApTooltip: React.FC<Props> = props => {
         <span>
           {APCA.spentOnBlessedAdvantages (ap) > 0
             ? translateP (l10n)
-                         ("apspentonblessedadvantages")
+                         ("header.aptooltip.spentonblessedadvantages")
                          (List (APCA.spentOnBlessedAdvantages (ap), 50))
             : null}
         </span>
         <span>
           {translateP (l10n)
-                      ("apspentondisadvantages")
+                      ("header.aptooltip.spentondisadvantages")
                       (List (APCA.spentOnDisadvantages (ap), 80))}
         </span>
         <span>
           {APCA.spentOnMagicalDisadvantages (ap) > 0
             ? translateP (l10n)
-                         ("apspentonmagicdisadvantages")
+                         ("header.aptooltip.spentonmagicdisadvantages")
                          (List (
                            APCA.spentOnMagicalDisadvantages (ap),
                            Maybe.sum (maximumForMagicalAdvantagesDisadvantages)
@@ -74,7 +74,7 @@ export const ApTooltip: React.FC<Props> = props => {
         <span>
           {APCA.spentOnBlessedDisadvantages (ap) > 0
             ? translateP (l10n)
-                         ("apspentonblesseddisadvantages")
+                         ("header.aptooltip.spentonblesseddisadvantages")
                          (List (APCA.spentOnBlessedDisadvantages (ap), 50))
             : null}
         </span>
@@ -82,34 +82,36 @@ export const ApTooltip: React.FC<Props> = props => {
       <hr />
       <p>
         <span>
-          {translateP (l10n) ("apspentonrace") (List (APCA.spentOnRace (ap), 80))}
+          {translateP (l10n) ("header.aptooltip.spentonrace") (List (APCA.spentOnRace (ap), 80))}
         </span>
         {maybeRNull ((spentOnProfession: number) => (
                       <span>
-                        {translateP (l10n) ("apspentonprofession") (List (spentOnProfession, 80))}
+                        {translateP (l10n)
+                                    ("header.aptooltip.spentonprofession")
+                                    (List (spentOnProfession, 80))}
                       </span>
                     ))
                     (APCA.spentOnProfession (ap))}
         <span>
           {translateP (l10n)
-                      ("apspentonattributes")
+                      ("header.aptooltip.spentonattributes")
                       (List (APCA.spentOnAttributes (ap)))}
         </span>
         <span>
           {translateP (l10n)
-                      ("apspentonskills")
+                      ("header.aptooltip.spentonskills")
                       (List (APCA.spentOnSkills (ap)))}
         </span>
         <span>
           {translateP (l10n)
-                      ("apspentoncombattechniques")
+                      ("header.aptooltip.spentoncombattechniques")
                       (List (APCA.spentOnCombatTechniques (ap)))}
         </span>
         {isSpellcaster
           ? (
             <span>
               {translateP (l10n)
-                          ("apspentonspells")
+                          ("header.aptooltip.spentonspells")
                           (List (APCA.spentOnSpells (ap)))}
             </span>
           )
@@ -118,7 +120,7 @@ export const ApTooltip: React.FC<Props> = props => {
           ? (
             <span>
               {translateP (l10n)
-                          ("apspentoncantrips")
+                          ("header.aptooltip.spentoncantrips")
                           (List (APCA.spentOnCantrips (ap)))}
             </span>
           )
@@ -127,7 +129,7 @@ export const ApTooltip: React.FC<Props> = props => {
           ? (
             <span>
               {translateP (l10n)
-                          ("apspentonliturgicalchants")
+                          ("header.aptooltip.spentonliturgicalchants")
                           (List (APCA.spentOnLiturgicalChants (ap)))}
             </span>
           )
@@ -136,19 +138,19 @@ export const ApTooltip: React.FC<Props> = props => {
           ? (
             <span>
               {translateP (l10n)
-                          ("apspentonblessings")
+                          ("header.aptooltip.spentonblessings")
                           (List (APCA.spentOnBlessings (ap)))}
             </span>
           )
           : null}
         <span>
           {translateP (l10n)
-                      ("apspentonspecialabilities")
+                      ("header.aptooltip.spentonspecialabilities")
                       (List (APCA.spentOnSpecialAbilities (ap)))}
         </span>
         <span>
           {translateP (l10n)
-                      ("apspentonenergies")
+                      ("header.aptooltip.spentonenergies")
                       (List (APCA.spentOnEnergies (ap)))}
         </span>
       </p>

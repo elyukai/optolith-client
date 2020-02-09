@@ -84,7 +84,7 @@ export const SkillSpecializationSelectionList: React.FC<Props> = props => {
       fromMaybe (Skill.A.name (active_skill))
     )
 
-  const title = translateP (l10n) ("skillspecialization") (List (name))
+  const title = translateP (l10n) ("rcpselectoptions.skillspecialization") (List (name))
 
   const selectSkillElement =
     fmapF (mskills)

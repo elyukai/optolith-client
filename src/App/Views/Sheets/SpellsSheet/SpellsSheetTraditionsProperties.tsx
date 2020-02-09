@@ -19,13 +19,13 @@ export const SpellsSheetTraditionsProperties: React.FC<Props> = props => {
     <div className="tradition-properties">
       <div className="primary">
         <span className="label">
-          {translate (l10n) ("primaryattribute")}
+          {translate (l10n) ("sheets.spellssheet.primaryattribute")}
         </span>
         <span className="value">{intercalate ("/") (magicalPrimary)}</span>
       </div>
       <div className="properties">
         <span className="label">
-          {translate (l10n) ("property")}
+          {translate (l10n) ("sheets.spellssheet.properties")}
         </span>
         <span className="value">
           {renderMaybe (properties)}
@@ -33,7 +33,7 @@ export const SpellsSheetTraditionsProperties: React.FC<Props> = props => {
       </div>
       <div className="tradition">
         <span className="label">
-          {translate (l10n) ("tradition")}
+          {translate (l10n) ("sheets.spellssheet.tradition")}
         </span>
         <span className="value">{magicalTradition}</span>
       </div>

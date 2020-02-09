@@ -21,10 +21,10 @@ const RCA = RaceCombined.A
 const RVA = RaceVariant.A
 const RCA_ = RaceCombinedA_
 
-type PlainOrByVarsTitle = "commonadvantages"
-                        | "commondisadvantages"
-                        | "uncommonadvantages"
-                        | "uncommondisadvantages"
+type PlainOrByVarsTitle = "inlinewiki.commonadvantages"
+                        | "inlinewiki.commondisadvantages"
+                        | "inlinewiki.uncommonadvantages"
+                        | "inlinewiki.uncommondisadvantages"
 
 const renderPlainOrByVars =
   (l10n: L10nRecord) =>
@@ -37,7 +37,7 @@ const renderPlainOrByVars =
     <>
       <WikiProperty l10n={l10n} title={title}>
         {same_for_vars
-          ? <span>{fromMaybe (translate (l10n) ("none")) (mapText (x))}</span>
+          ? <span>{fromMaybe (translate (l10n) ("general.none")) (mapText (x))}</span>
           : null}
       </WikiProperty>
       {same_for_vars
@@ -95,37 +95,45 @@ export const WikiRaceInfo: React.FC<WikiRaceInfoProps> = props => {
 
   return (
     <WikiBoxTemplate className="race" title={name}>
-      <WikiProperty l10n={l10n} title="apvalue">
+      <WikiProperty l10n={l10n} title="inlinewiki.apvalue">
         {RCA_.ap (x)}
         {" "}
-        {translate (l10n) ("adventurepoints")}
+        {translate (l10n) ("inlinewiki.adventurepoints")}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="lifepointbasevalue">{signNeg (RCA_.lp (x))}</WikiProperty>
-      <WikiProperty l10n={l10n} title="spiritbasevalue">{signNeg (RCA_.spi (x))}</WikiProperty>
-      <WikiProperty l10n={l10n} title="toughnessbasevalue">{signNeg (RCA_.tou (x))}</WikiProperty>
-      <WikiProperty l10n={l10n} title="movementbasevalue">{signNeg (RCA_.mov (x))}</WikiProperty>
-      <WikiProperty l10n={l10n} title="attributeadjustments">
+      <WikiProperty l10n={l10n} title="inlinewiki.lifepointbasevalue">
+        {signNeg (RCA_.lp (x))}
+      </WikiProperty>
+      <WikiProperty l10n={l10n} title="inlinewiki.spiritbasevalue">
+        {signNeg (RCA_.spi (x))}
+      </WikiProperty>
+      <WikiProperty l10n={l10n} title="inlinewiki.toughnessbasevalue">
+        {signNeg (RCA_.tou (x))}
+      </WikiProperty>
+      <WikiProperty l10n={l10n} title="inlinewiki.movementbasevalue">
+        {signNeg (RCA_.mov (x))}
+      </WikiProperty>
+      <WikiProperty l10n={l10n} title="inlinewiki.attributeadjustments">
         {RCA_.attributeAdjustmentsText (x)}
       </WikiProperty>
       {maybeRNullF (RCA_.automaticAdvantagesText (x))
                    (str => (
-                     <WikiProperty l10n={l10n} title="automaticadvantages">
+                     <WikiProperty l10n={l10n} title="inlinewiki.automaticadvantages">
                        {str}
                      </WikiProperty>
                    ))}
       {maybeRNullF (RCA_.stronglyRecommendedAdvantagesText (x))
                    (str => (
-                     <WikiProperty l10n={l10n} title="stronglyrecommendedadvantages">
+                     <WikiProperty l10n={l10n} title="inlinewiki.stronglyrecommendedadvantages">
                        {str}
                      </WikiProperty>
                    ))}
       {maybeRNullF (RCA_.stronglyRecommendedDisadvantagesText (x))
                    (str => (
-                     <WikiProperty l10n={l10n} title="stronglyrecommendeddisadvantages">
+                     <WikiProperty l10n={l10n} title="inlinewiki.stronglyrecommendeddisadvantages">
                        {str}
                      </WikiProperty>
                    ))}
-      <WikiProperty l10n={l10n} title="commoncultures">
+      <WikiProperty l10n={l10n} title="inlinewiki.commoncultures">
         {sameCommonCultures
           ? (
             <span>
@@ -174,28 +182,28 @@ export const WikiRaceInfo: React.FC<WikiRaceInfoProps> = props => {
                            (RCA_.commonAdvantagesText)
                            (RVA.commonAdvantagesText)
                            (variants)
-                           ("commonadvantages")
+                           ("inlinewiki.commonadvantages")
                            (sameCommonAdvantages)
                            (x)}
       {renderPlainOrByVars (l10n)
                            (RCA_.commonDisadvantagesText)
                            (RVA.commonDisadvantagesText)
                            (variants)
-                           ("commondisadvantages")
+                           ("inlinewiki.commondisadvantages")
                            (sameCommonDisadvantages)
                            (x)}
       {renderPlainOrByVars (l10n)
                            (RCA_.uncommonAdvantagesText)
                            (RVA.uncommonAdvantagesText)
                            (variants)
-                           ("uncommonadvantages")
+                           ("inlinewiki.uncommonadvantages")
                            (sameUncommonAdvantages)
                            (x)}
       {renderPlainOrByVars (l10n)
                            (RCA_.uncommonDisadvantagesText)
                            (RVA.uncommonDisadvantagesText)
                            (variants)
-                           ("uncommondisadvantages")
+                           ("inlinewiki.uncommondisadvantages")
                            (sameUncommonDisadvantages)
                            (x)}
       <WikiSource

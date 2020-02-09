@@ -62,7 +62,7 @@ export const SkillSelectionList: React.FC<Props> = props => {
           translate (l10n) ("skillselectiongroups"),
           subscriptF (fromMaybe (0) (mgr)),
           fmap (gr_name => translateP (l10n)
-                                      ("skillselectionap")
+                                      ("rcpselectoptions.skillselectionap")
                                       (List<string | number> (
                                         gr_name,
                                         ap_total,

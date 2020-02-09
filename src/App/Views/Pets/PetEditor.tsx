@@ -125,7 +125,7 @@ export function PetEditor (props: PetEditorProps) {
             <AvatarWrapper src={EPA.avatar (pet)} onClick={openEditPetAvatar} />
             <BorderButton
               className="delete-avatar"
-              label={translate (l10n) ("deleteavatar")}
+              label={translate (l10n) ("pets.dialogs.addedit.deleteavatarbtn")}
               onClick={deleteAvatar}
               disabled={isNothing (EPA.avatar (pet))}
               />
@@ -133,27 +133,27 @@ export function PetEditor (props: PetEditorProps) {
           <div className="right">
             <div className="row">
               <TextField
-                label={translate (l10n) ("name")}
+                label={translate (l10n) ("pets.dialogs.addedit.name")}
                 value={EPA.name (pet)}
                 onChange={setName}
                 />
               <TextField
-                label={translate (l10n) ("sizecategory")}
+                label={translate (l10n) ("pets.dialogs.addedit.sizecategory")}
                 value={EPA.size (pet)}
                 onChange={setSize}
                 />
               <TextField
-                label={translate (l10n) ("type")}
+                label={translate (l10n) ("pets.dialogs.addedit.type")}
                 value={EPA.type (pet)}
                 onChange={setType}
                 />
               <TextField
-                label={translate (l10n) ("apspent.novar")}
+                label={translate (l10n) ("pets.dialogs.addedit.apspent")}
                 value={EPA.spentAp (pet)}
                 onChange={setSpentAp}
                 />
               <TextField
-                label={translate (l10n) ("totalap.novar")}
+                label={translate (l10n) ("pets.dialogs.addedit.totalap")}
                 value={EPA.totalAp (pet)}
                 onChange={setTotalAp}
                 />
@@ -239,51 +239,51 @@ export function PetEditor (props: PetEditorProps) {
             </div>
             <div className="row">
               <TextField
-                label={translate (l10n) ("attack")}
+                label={translate (l10n) ("pets.dialogs.addedit.attackname")}
                 value={EPA.attack (pet)}
                 onChange={setAttack}
                 />
               <TextField
-                label={translate (l10n) ("attack.short")}
+                label={translate (l10n) ("pets.dialogs.addedit.attack")}
                 value={EPA.at (pet)}
                 onChange={setAt}
                 />
               <TextField
-                label={translate (l10n) ("parry.short")}
+                label={translate (l10n) ("pets.dialogs.addedit.parry")}
                 value={EPA.pa (pet)}
                 onChange={setPa}
                 />
               <TextField
-                label={translate (l10n) ("damagepoints.short")}
+                label={translate (l10n) ("pets.dialogs.addedit.damagepoints")}
                 value={EPA.dp (pet)}
                 onChange={setDp}
                 />
               <TextField
-                label={translate (l10n) ("reach")}
+                label={translate (l10n) ("pets.dialogs.addedit.reach")}
                 value={EPA.reach (pet)}
                 onChange={setReach}
                 />
             </div>
             <div className="row">
               <TextField
-                label={translate (l10n) ("actions")}
+                label={translate (l10n) ("pets.dialogs.addedit.actions")}
                 value={EPA.actions (pet)}
                 onChange={setActions}
                 />
               <TextField
-                label={translate (l10n) ("skills")}
+                label={translate (l10n) ("pets.dialogs.addedit.skills")}
                 value={EPA.talents (pet)}
                 onChange={setSkills}
                 />
               <TextField
-                label={translate (l10n) ("specialabilities")}
+                label={translate (l10n) ("pets.dialogs.addedit.specialabilities")}
                 value={EPA.skills (pet)}
                 onChange={setAbilities}
                 />
             </div>
             <div className="row">
               <TextField
-                label={translate (l10n) ("notes")}
+                label={translate (l10n) ("pets.dialogs.addedit.notes")}
                 value={EPA.notes (pet)}
                 onChange={setNotes}
                 />
@@ -291,13 +291,13 @@ export function PetEditor (props: PetEditorProps) {
             {Maybe.elem (true) (isInCreation)
               ? (
                 <BorderButton
-                  label={translate (l10n) ("add")}
+                  label={translate (l10n) ("pets.dialogs.addedit.addbtn")}
                   onClick={addPet}
                   />
               )
               : (
                 <BorderButton
-                  label={translate (l10n) ("save")}
+                  label={translate (l10n) ("pets.dialogs.addedit.savebtn")}
                   onClick={savePet}
                   />
               )}

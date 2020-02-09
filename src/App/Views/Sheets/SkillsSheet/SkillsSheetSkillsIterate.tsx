@@ -52,10 +52,10 @@ export const iterateList =
         const enc = SkillCombinedA_.encumbrance (obj)
 
         const enc_str = enc === "true"
-          ? translate (l10n) ("yes")
+          ? translate (l10n) ("sheets.gamestatssheet.skillstable.encumbrance.yes")
           : enc === "false"
-          ? translate (l10n) ("no")
-          : translate (l10n) ("maybe")
+          ? translate (l10n) ("sheets.gamestatssheet.skillstable.encumbrance.no")
+          : translate (l10n) ("sheets.gamestatssheet.skillstable.encumbrance.maybe")
 
         const mroutine = getRoutineValue (check_vals) (SkillCombinedA_.value (obj))
 

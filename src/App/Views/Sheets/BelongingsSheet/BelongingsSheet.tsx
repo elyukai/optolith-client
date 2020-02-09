@@ -71,13 +71,13 @@ export const BelongingsSheet: React.FC<Props> = props => {
       <Options />
       <Sheet
         id="belongings"
-        title={translate (l10n) ("belongings")}
+        title={translate (l10n) ("sheets.belongingssheet.title")}
         attributes={attributes}
         l10n={l10n}
         >
         <div className="upper">
           <TextBox
-            label={translate (l10n) ("equipment")}
+            label={translate (l10n) ("sheets.belongingssheet.equipmenttable.title")}
             className="equipment"
             >
             {pipe_ (
@@ -100,7 +100,7 @@ export const BelongingsSheet: React.FC<Props> = props => {
             )}
             <div className="total">
               <label>
-                {translate (l10n) ("total")}
+                {translate (l10n) ("sheets.belongingssheet.equipmenttable.labels.total")}
               </label>
               <span>
                 {pipe_ (
@@ -130,33 +130,33 @@ export const BelongingsSheet: React.FC<Props> = props => {
             </div>
           </TextBox>
           <TextBox
-            label={translate (l10n) ("purse")}
+            label={translate (l10n) ("sheets.belongingssheet.purse.title")}
             className="purse"
             >
             <div className="top">
               <LabelBox
                 className="money"
-                label={translate (l10n) ("ducates.short")}
+                label={translate (l10n) ("sheets.belongingssheet.purse.ducats")}
                 value={fmapF (purse) (Purse.A.d)}
                 />
               <LabelBox
                 className="money"
-                label={translate (l10n) ("silverthalers.short")}
+                label={translate (l10n) ("sheets.belongingssheet.purse.silverthalers")}
                 value={fmapF (purse) (Purse.A.s)}
                 />
               <LabelBox
                 className="money"
-                label={translate (l10n) ("halers.short")}
+                label={translate (l10n) ("sheets.belongingssheet.purse.halers")}
                 value={fmapF (purse) (Purse.A.h)}
                 />
               <LabelBox
                 className="money"
-                label={translate (l10n) ("kreutzers.short")}
+                label={translate (l10n) ("sheets.belongingssheet.purse.kreutzers")}
                 value={fmapF (purse) (Purse.A.k)}
                 />
               <LabelBox
                 className="specifics"
-                label={translate (l10n) ("gems")}
+                label={translate (l10n) ("sheets.belongingssheet.purse.gems")}
                 value={fmapF (mitems)
                              (pipe (
                                filter (pipe (ItemForView.A.gr, equals (16))),
@@ -166,7 +166,7 @@ export const BelongingsSheet: React.FC<Props> = props => {
                 />
               <LabelBox
                 className="specifics"
-                label={translate (l10n) ("jewelry")}
+                label={translate (l10n) ("sheets.belongingssheet.purse.jewelry")}
                 value={fmapF (mitems)
                              (pipe (
                                filter (pipe (ItemForView.A.gr, equals (15))),
@@ -176,18 +176,18 @@ export const BelongingsSheet: React.FC<Props> = props => {
                 />
               <LabelBox
                 className="specifics"
-                label={translate (l10n) ("other")}
+                label={translate (l10n) ("sheets.belongingssheet.purse.other")}
                 value={Nothing}
                 />
             </div>
             <div className="fill" />
             <div className="carrying-capacity">
               <div className="left">
-                <h3>{translate (l10n) ("carryingcapacity")}</h3>
-                <p>{translate (l10n) ("carryingcapacitycalc")}</p>
+                <h3>{translate (l10n) ("sheets.belongingssheet.carryingcapacity.title")}</h3>
+                <p>{translate (l10n) ("sheets.belongingssheet.carryingcapacity.calc")}</p>
               </div>
               <LabelBox
-                label={translate (l10n) ("carryingcapacitylabel")}
+                label={translate (l10n) ("sheets.belongingssheet.carryingcapacity.label")}
                 value={Just (localizeWeight (l10n) (strength * 2))}
                 />
             </div>

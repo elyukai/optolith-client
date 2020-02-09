@@ -55,12 +55,12 @@ export const SkillsSheet: React.FC<Props> = props => {
           checked={checkAttributeValueVisibility}
           onClick={switchAttributeValueVisibility}
           >
-          {translate (l10n) ("showattributevalues")}
+          {translate (l10n) ("sheets.showattributevalues")}
         </Checkbox>
       </Options>
       <Sheet
         id="skills-sheet"
-        title={translate (l10n) ("gamestats")}
+        title={translate (l10n) ("sheets.gamestatssheet.title")}
         attributes={attributes}
         l10n={l10n}
         >

@@ -110,11 +110,11 @@ export const Professions: React.FC<ProfessionsProps> = props => {
           options={List (
             DropdownOption ({
               id: Just (ProfessionsVisibilityFilter.All),
-              name: translate (l10n) ("allprofessions"),
+              name: translate (l10n) ("profession.filters.common.allprofessions"),
             }),
             DropdownOption ({
               id: Just (ProfessionsVisibilityFilter.Common),
-              name: translate (l10n) ("commonprofessions"),
+              name: translate (l10n) ("profession.filters.common.commonprofessions"),
             })
           )}
           fullWidth
@@ -125,19 +125,19 @@ export const Professions: React.FC<ProfessionsProps> = props => {
           options={List (
             DropdownOption ({
               id: Just (ProfessionsGroupVisibilityFilter.All),
-              name: translate (l10n) ("allprofessiongroups"),
+              name: translate (l10n) ("profession.filters.groups.allprofessiongroups"),
             }),
             DropdownOption ({
               id: Just (ProfessionsGroupVisibilityFilter.Mundane),
-              name: translate (l10n) ("mundaneprofessions"),
+              name: translate (l10n) ("profession.filters.groups.mundaneprofessions"),
             }),
             DropdownOption ({
               id: Just (ProfessionsGroupVisibilityFilter.Magical),
-              name: translate (l10n) ("magicalprofessions"),
+              name: translate (l10n) ("profession.filters.groups.magicalprofessions"),
             }),
             DropdownOption ({
               id: Just (ProfessionsGroupVisibilityFilter.Blessed),
-              name: translate (l10n) ("blessedprofessions"),
+              name: translate (l10n) ("profession.filters.groups.blessedprofessions"),
             })
           )}
           fullWidth
@@ -154,8 +154,11 @@ export const Professions: React.FC<ProfessionsProps> = props => {
           <ListHeaderTag className="name">
             {translate (l10n) ("name")}
           </ListHeaderTag>
-          <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
-            {translate (l10n) ("adventurepoints.short")}
+          <ListHeaderTag
+            className="cost"
+            hint={translate (l10n) ("profession.header.adventurepoints.tooltip")}
+            >
+            {translate (l10n) ("profession.header.adventurepoints")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder has-border" />

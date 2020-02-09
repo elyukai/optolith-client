@@ -6,7 +6,7 @@ import { fromMaybe, Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { ShieldOrParryingWeapon } from "../../../Models/View/ShieldOrParryingWeapon"
 import { L10nRecord } from "../../../Models/Wiki/L10n"
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
+import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
 import { sign, toRoman } from "../../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybeWith } from "../../../Utilities/ReactUtils"
@@ -24,22 +24,33 @@ export const CombatSheetShields: React.FC<Props> = props => {
 
   return (
     <TextBox
-      label={translate (l10n) ("shieldparryingweapon")}
+      label={translate (l10n) ("sheets.combatsheet.shieldparryingweapon.title")}
       className="shields"
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (l10n) ("shieldparryingweapon")}
+              {translate (l10n)
+                         ("sheets.combatsheet.shieldparryingweapon.labels.shieldparryingweapon")}
             </th>
             <th className="str">
-              {translate (l10n) ("structurepoints.short")}
+              {translate (l10n) ("sheets.combatsheet.shieldparryingweapon.labels.structurepoints")}
             </th>
-            <th className="bf">{translate (l10n) ("breakingpointrating.short")}</th>
-            <th className="loss">{translate (l10n) ("damaged.short")}</th>
-            <th className="mod">{translate (l10n) ("attackparrymodifier.short")}</th>
-            <th className="weight">{translate (l10n) ("weight")}</th>
+            <th className="bf">
+              {translate (l10n)
+                         ("sheets.combatsheet.shieldparryingweapon.labels.breakingpointrating")}
+            </th>
+            <th className="loss">
+              {translate (l10n) ("sheets.combatsheet.shieldparryingweapon.labels.damaged")}
+            </th>
+            <th className="mod">
+              {translate (l10n)
+                         ("sheets.combatsheet.shieldparryingweapon.labels.attackparrymodifier")}
+            </th>
+            <th className="weight">
+              {translate (l10n) ("sheets.combatsheet.shieldparryingweapon.labels.weight")}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -64,14 +75,16 @@ export const CombatSheetShields: React.FC<Props> = props => {
                     {sign (Maybe.sum (SOPWA.paMod (e)))}
                   </td>
                   <td className="weight">
-                    {pipe_ (
-                      e,
-                      SOPWA.weight,
-                      localizeWeight (l10n),
-                      localizeNumber (l10n)
-                    )}
-                    {" "}
-                    {translate (l10n) ("weightunit.short")}
+                    {translateP (l10n)
+                                ("general.weightvalue")
+                                (List (
+                                  pipe_ (
+                                    e,
+                                    SOPWA.weight,
+                                    localizeWeight (l10n),
+                                    localizeNumber (l10n)
+                                  )
+                                ))}
                   </td>
                 </tr>
               )),

@@ -56,7 +56,7 @@ export function SpellsSheet (props: SpellsSheetProps) {
   const addHeader = List<Record<HeaderValue>> (
     HeaderValue ({
       id: "AE_MAX",
-      short: translate (l10n) ("aemax"),
+      short: translate (l10n) ("sheets.spellssheet.header.labels.aemax"),
       value:
         pipe_ (
           derivedCharacteristics,
@@ -66,7 +66,7 @@ export function SpellsSheet (props: SpellsSheetProps) {
     }),
     HeaderValue ({
       id: "AE_CURRENT",
-      short: translate (l10n) ("current"),
+      short: translate (l10n) ("sheets.spellssheet.header.labels.aecurrent"),
     })
   )
 
@@ -77,12 +77,12 @@ export function SpellsSheet (props: SpellsSheetProps) {
           checked={checkAttributeValueVisibility}
           onClick={switchAttributeValueVisibility}
           >
-          {translate (l10n) ("showattributevalues")}
+          {translate (l10n) ("sheets.showattributevalues")}
         </Checkbox>
       </Options>
       <Sheet
         id="spells-sheet"
-        title={translate (l10n) ("spellsandrituals")}
+        title={translate (l10n) ("sheets.spellssheet.title")}
         addHeaderInfo={addHeader}
         l10n={l10n}
         attributes={attributes}

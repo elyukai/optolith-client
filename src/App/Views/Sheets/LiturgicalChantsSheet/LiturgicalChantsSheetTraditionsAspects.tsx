@@ -18,13 +18,13 @@ export const LiturgicalChantsSheetTraditionsAspects: React.FC<Props> = props => 
     <div className="tradition-aspects">
       <div className="primary">
         <span className="label">
-          {translate (l10n) ("primaryattribute")}
+          {translate (l10n) ("sheets.chantssheet.primaryattribute")}
         </span>
         <span className="value">{renderMaybe (blessedPrimary)}</span>
       </div>
       <div className="aspects">
         <span className="label">
-          {translate (l10n) ("aspects.oneormore")}
+          {translate (l10n) ("sheets.chantssheet.aspects")}
         </span>
         <span className="value">
           {renderMaybe (aspects)}
@@ -32,7 +32,7 @@ export const LiturgicalChantsSheetTraditionsAspects: React.FC<Props> = props => 
       </div>
       <div className="tradition">
         <span className="label">
-          {translate (l10n) ("tradition")}
+          {translate (l10n) ("sheets.chantssheet.tradition")}
         </span>
         <span className="value">{renderMaybe (blessedTradition)}</span>
       </div>

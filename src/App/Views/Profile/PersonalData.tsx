@@ -18,7 +18,7 @@ import { L10nRecord } from "../../Models/Wiki/L10n"
 import { Profession } from "../../Models/Wiki/Profession"
 import { Race } from "../../Models/Wiki/Race"
 import { RaceVariant } from "../../Models/Wiki/RaceVariant"
-import { translate } from "../../Utilities/I18n"
+import { translate, translateP } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils"
 import { ActivatableTextList } from "../Activatable/ActivatableTextList"
@@ -220,7 +220,7 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
         : (
           <BorderButton
             className="edit-profession-name-btn"
-            label={translate (l10n) ("editprofessionname")}
+            label={translate (l10n) ("profile.editprofessionnamebtn")}
             onClick={handleStartEditProfessionName}
             />
         ))
@@ -244,7 +244,9 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                                        ((sex: Sex) => (
                                            <span>
                                              {translate (l10n)
-                                                        (sex === "m" ? "male" : "female")}
+                                                        (sex === "m"
+                                                          ? "personaldata.sex.male"
+                                                          : "personaldata.sex.female")}
                                            </span>
                                          ))
                                        (maybeSex)
@@ -271,9 +273,9 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                              {renderMaybeWith (ExperienceLevel.A.name) (currentEl)}
                            </span>
                            <span>
-                             {Maybe.sum (apTotal)}
-                             {" "}
-                             {translate (l10n) ("adventurepoints.short")}
+                             {translateP (l10n)
+                                         ("general.apvalue.short")
+                                         (List (Maybe.sum (apTotal)))}
                            </span>
                          </VerticalList>
                        </div>
@@ -284,7 +286,7 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                            ? (
                                <BorderButton
                                  className="add-ap"
-                                 label={translate (l10n) ("addadventurepoints")}
+                                 label={translate (l10n) ("profile.addadventurepointsbtn")}
                                  onClick={openAddAdventurePoints}
                                  />
                              )
@@ -292,7 +294,7 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                        }
                        <BorderButton
                          className="delete-avatar"
-                         label={translate (l10n) ("deleteavatar")}
+                         label={translate (l10n) ("profile.deleteavatarbtn")}
                          onClick={deleteAvatar}
                          disabled={isNothing (avatar)}
                          />
@@ -303,7 +305,7 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                        ? null
                        : (
                          <>
-                           <h3>{translate (l10n) ("personaldata")}</h3>
+                           <h3>{translate (l10n) ("personaldata.title")}</h3>
                            <OverviewPersonalData
                              profile={profile}
                              socialStatuses={socialStatuses}
@@ -339,7 +341,7 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                            <div>
                              <BorderButton
                                className="end-char-creation"
-                               label={translate (l10n) ("endherocreation")}
+                               label={translate (l10n) ("profile.endherocreationbtn")}
                                onClick={endCharacterCreation}
                                primary
                                disabled={any (lt (0)) (apLeft) || any (gt (10)) (apLeft)}
@@ -352,7 +354,7 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                        Maybe.elem (3) (phase)
                          ? (
                            <div>
-                             <h3>{translate (l10n) ("advantages")}</h3>
+                             <h3>{translate (l10n) ("profile.advantages")}</h3>
                              {maybeRNull ((advantages: List<Record<ActiveActivatable>>) => (
                                              <ActivatableTextList
                                                list={advantages}
@@ -360,7 +362,7 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                                                />
                                            ))
                                          (maybeAdvantages)}
-                             <h3>{translate (l10n) ("disadvantages")}</h3>
+                             <h3>{translate (l10n) ("profile.disadvantages")}</h3>
                              {maybeRNull ((disadvantages: List<Record<ActiveActivatable>>) => (
                                              <ActivatableTextList
                                                list={disadvantages}

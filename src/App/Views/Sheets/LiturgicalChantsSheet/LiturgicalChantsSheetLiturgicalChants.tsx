@@ -43,44 +43,44 @@ export const LiturgicalChantsSheetLiturgicalChants: React.FC<Props> = props => {
 
   return (
     <TextBox
-      label={translate (l10n) ("liturgicalchantsandceremonies")}
+      label={translate (l10n) ("sheets.chantssheet.chantstable.title")}
       className="skill-list"
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (l10n) ("liturgicalchantsandceremonies")}
+              {translate (l10n) ("sheets.chantssheet.chantstable.labels.chant")}
             </th>
             <th className="check">
-              {translate (l10n) ("check")}
+              {translate (l10n) ("sheets.chantssheet.chantstable.labels.check")}
             </th>
             <th className="value">
-              {translate (l10n) ("skillrating.short")}
+              {translate (l10n) ("sheets.chantssheet.chantstable.labels.skillrating")}
             </th>
             <th className="cost">
-              {translate (l10n) ("cost")}
+              {translate (l10n) ("sheets.chantssheet.chantstable.labels.cost")}
             </th>
             <th className="cast-time">
-              {translate (l10n) ("liturgicaltime")}
+              {translate (l10n) ("sheets.chantssheet.chantstable.labels.castingtime")}
             </th>
             <th className="range">
-              {translate (l10n) ("range")}
+              {translate (l10n) ("sheets.chantssheet.chantstable.labels.range")}
             </th>
             <th className="duration">
-              {translate (l10n) ("duration")}
+              {translate (l10n) ("sheets.chantssheet.chantstable.labels.duration")}
             </th>
             <th className="aspect">
-              {translate (l10n) ("aspect")}
+              {translate (l10n) ("sheets.chantssheet.chantstable.labels.aspect")}
             </th>
             <th className="ic">
-              {translate (l10n) ("improvementcost.short")}
+              {translate (l10n) ("sheets.chantssheet.chantstable.labels.improvementcost")}
             </th>
             <th className="effect">
-              {translate (l10n) ("effect")}
+              {translate (l10n) ("sheets.chantssheet.chantstable.labels.effect")}
             </th>
             <th className="ref">
-              {translate (l10n) ("page.short")}
+              {translate (l10n) ("sheets.chantssheet.chantstable.labels.pages")}
             </th>
           </tr>
         </thead>

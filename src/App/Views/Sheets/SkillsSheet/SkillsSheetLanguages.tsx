@@ -64,7 +64,7 @@ export const SkillsSheetLanguages: React.FC<Props> = props => {
   )
 
   return (
-    <TextBox label={translate (l10n) ("languages")}>
+    <TextBox label={translate (l10n) ("sheets.gamestatssheet.languages.title")}>
       <ul className="languages-list">
         {pipe_ (
           languages,
@@ -73,7 +73,7 @@ export const SkillsSheetLanguages: React.FC<Props> = props => {
               <span>{IdNameLevel.A.name (e)}</span>
               <span>
                 {IdNameLevel.A.level (e) === 4
-                  ? translate (l10n) ("nativetongue.short")
+                  ? translate (l10n) ("sheets.gamestatssheet.languages.nativetongue")
                   : toRoman (IdNameLevel.A.level (e))}
               </span>
             </li>

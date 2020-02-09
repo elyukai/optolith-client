@@ -76,11 +76,11 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
       <div className="pact-content">
         {!isPactValid && isJust (mpact)
           ? (
-            <p>{translate (l10n) ("pactisincompletehint")}</p>
+            <p>{translate (l10n) ("pacts.pactisincompletehint")}</p>
           )
           : null}
         <Dropdown
-          label={translate (l10n) ("pactcategory")}
+          label={translate (l10n) ("pacts.pactcategory")}
           options={pipe_ (
                           translate (l10n) ("pactcategories"),
                           imap (i => (name: string) => DropdownOption ({
@@ -88,7 +88,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
                             name,
                           })),
                           consF (DropdownOption ({
-                            name: translate (l10n) ("nopact"),
+                            name: translate (l10n) ("pacts.nopact"),
                           }))
                       )}
           onChange={setPactCategory}
@@ -98,7 +98,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
         {(maybe (false) (pipe (Pact.A.category, equals (2))) (mpact))
           ? (
             <Checkbox
-              label={translate (l10n) ("minorpact")}
+              label={translate (l10n) ("pacts.minorpact")}
               checked={checked}
               onClick={setLesserPactLevel}
               disabled={!isPactEditable || isNothing (mpact)
@@ -109,7 +109,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
         {maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
           ? (
             <Dropdown
-              label={translate (l10n) ("circleofdamnation")}
+              label={translate (l10n) ("pacts.circleofdamnation")}
               options={
                 unfoldr ((id: number) => id > 7
                           ? Nothing
@@ -134,7 +134,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
           )
           : (
             <Dropdown
-              label={translate (l10n) ("pactlevel")}
+              label={translate (l10n) ("pacts.pactlevel")}
               options={
                 unfoldr ((id: number) => id > 3
                           ? Nothing
@@ -160,7 +160,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
         {maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
           ? (
             <Dropdown
-              label={translate (l10n) ("demontype")}
+              label={translate (l10n) ("pacts.demontype")}
               options={(imap (i => (name: string) => DropdownOption ({
                                id: Just (i + 1),
                                name,
@@ -173,7 +173,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
           )
           : (
             <Dropdown
-              label={translate (l10n) ("fairytype")}
+              label={translate (l10n) ("pacts.fairytype")}
               options={imap (i => (name: string) => DropdownOption ({
                               id: Just (i + 1),
                               name,
@@ -187,7 +187,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
         {maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
           ? (
             <Dropdown
-              label={translate (l10n) ("domain")}
+              label={translate (l10n) ("pacts.domain")}
               options={
                 maybe (false) (pipe (Pact.A.type, equals (1))) (mpact)
                 ? take (12)
@@ -220,7 +220,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
           )
           : (
             <Dropdown
-              label={translate (l10n) ("domain")}
+              label={translate (l10n) ("pacts.domain")}
               options={imap (i => (name: string) => DropdownOption ({
                               id: Just (i + 1),
                               name,
@@ -244,7 +244,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
         {maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
           ? (
             <TextField
-              label={`${translate (l10n) ("domain")} (${translate (l10n) ("userdefined")})`}
+              label={`${translate (l10n) ("pacts.domain")} (${translate (l10n) ("pacts.userdefined")})`}
               hint={pipe_ (
                 mpact,
                 bindF (pipe (Pact.A.domain, ensure (isNumber))),
@@ -261,7 +261,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
           )
           : (
             <TextField
-              label={`${translate (l10n) ("domain")} (${translate (l10n) ("userdefined")})`}
+              label={`${translate (l10n) ("pacts.domain")} (${translate (l10n) ("pacts.userdefined")})`}
               hint={pipe_ (
                 mpact,
                 bindF (pipe (Pact.A.domain, ensure (isNumber))),
@@ -279,7 +279,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
         {maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
           ? (
             <TextField
-              label={translate (l10n) ("name")}
+              label={translate (l10n) ("pacts.name")}
               hint={pipe_ (
                 mpact,
                 bindF (pipe (Pact.A.domain, ensure (isNumber))),
@@ -296,7 +296,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
           )
           : (
             <TextField
-              label={translate (l10n) ("name")}
+              label={translate (l10n) ("pacts.name")}
               onChange={setTargetName}
               value={fmapF (mpact) (Pact.A.name)}
               disabled={

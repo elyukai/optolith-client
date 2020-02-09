@@ -26,12 +26,14 @@ export const BelongingsSheetPet: React.FC<Props> = props => {
 
   return (
     <div className="pet">
-      <TextBox label={translate (l10n) ("title")}>
+      <TextBox label={translate (l10n) ("sheets.belongingssheet.animal.title")}>
         <div className="pet-content">
           <div className="left">
             <div className="row pet-base">
               <div className="name">
-                <span className="label">{translate (l10n) ("name")}</span>
+                <span className="label">
+                  {translate (l10n) ("sheets.belongingssheet.animal.name")}
+                </span>
                 <span className="value">
                   <Textfit max={11} min={7} mode="single">
                     {pipe_ (mpet, fmap (Pet.A.name), renderMaybe)}
@@ -39,19 +41,25 @@ export const BelongingsSheetPet: React.FC<Props> = props => {
                 </span>
               </div>
               <div className="size">
-                <span className="label">{translate (l10n) ("sizecategory")}</span>
+                <span className="label">
+                  {translate (l10n) ("sheets.belongingssheet.animal.sizecategory")}
+                </span>
                 <span className="value">
                   {pipe_ (mpet, bindF (Pet.A.size), renderMaybe)}
                 </span>
               </div>
               <div className="type">
-                <span className="label">{translate (l10n) ("type")}</span>
+                <span className="label">
+                  {translate (l10n) ("sheets.belongingssheet.animal.type")}
+                </span>
                 <span className="value">
                   {pipe_ (mpet, bindF (Pet.A.type), renderMaybe)}
                 </span>
               </div>
               <div className="ap">
-                <span className="label">{translate (l10n) ("adventurepoints.short")}</span>
+                <span className="label">
+                  {translate (l10n) ("sheets.belongingssheet.animal.ap")}
+                </span>
                 <span className="value">
                   {pipe_ (mpet, bindF (Pet.A.spentAp), renderMaybe)}
                 </span>
@@ -205,31 +213,41 @@ export const BelongingsSheetPet: React.FC<Props> = props => {
             </div>
             <div className="row pet-offensive">
               <div className="attack">
-                <span className="label">{translate (l10n) ("attack")}</span>
+                <span className="label">
+                  {translate (l10n) ("sheets.belongingssheet.animal.attackname")}
+                </span>
                 <span className="value">
                   {pipe_ (mpet, bindF (Pet.A.attack), renderMaybe)}
                 </span>
               </div>
               <div className="at">
-                <span className="label">{translate (l10n) ("attack.short")}</span>
+                <span className="label">
+                  {translate (l10n) ("sheets.belongingssheet.animal.attack")}
+                </span>
                 <span className="value">
                   {pipe_ (mpet, bindF (Pet.A.at), renderMaybe)}
                 </span>
               </div>
               <div className="pa">
-                <span className="label">{translate (l10n) ("parry.short")}</span>
+                <span className="label">
+                  {translate (l10n) ("sheets.belongingssheet.animal.parry")}
+                </span>
                 <span className="value">
                   {pipe_ (mpet, bindF (Pet.A.pa), renderMaybe)}
                 </span>
               </div>
               <div className="dp">
-                <span className="label">{translate (l10n) ("damagepoints.short")}</span>
+                <span className="label">
+                  {translate (l10n) ("sheets.belongingssheet.animal.damagepoints")}
+                </span>
                 <span className="value">
                   {pipe_ (mpet, bindF (Pet.A.dp), renderMaybe)}
                 </span>
               </div>
               <div className="reach">
-                <span className="label">{translate (l10n) ("reach")}</span>
+                <span className="label">
+                  {translate (l10n) ("sheets.belongingssheet.animal.reach")}
+                </span>
                 <span className="value">
                   {pipe_ (mpet, bindF (Pet.A.reach), renderMaybe)}
                 </span>
@@ -237,7 +255,9 @@ export const BelongingsSheetPet: React.FC<Props> = props => {
             </div>
             <div className="row pet-actions">
               <div className="actions">
-                <span className="label">{translate (l10n) ("actions")}</span>
+                <span className="label">
+                  {translate (l10n) ("sheets.belongingssheet.animal.actions")}
+                </span>
                 <span className="value">
                   <Textfit max={11} min={7} mode="single">
                     {pipe_ (mpet, bindF (Pet.A.actions), renderMaybe)}
@@ -247,7 +267,9 @@ export const BelongingsSheetPet: React.FC<Props> = props => {
             </div>
             <div className="row pet-skills">
               <div className="skills">
-                <span className="label">{translate (l10n) ("skills")}</span>
+                <span className="label">
+                  {translate (l10n) ("sheets.belongingssheet.animal.skills")}
+                </span>
                 <span className="value">
                   <Textfit max={11} min={7} mode="single">
                     {pipe_ (mpet, bindF (Pet.A.talents), renderMaybe)}
@@ -257,7 +279,9 @@ export const BelongingsSheetPet: React.FC<Props> = props => {
             </div>
             <div className="row pet-specialabilities">
               <div className="specialabilities">
-                <span className="label">{translate (l10n) ("specialabilities")}</span>
+                <span className="label">
+                  {translate (l10n) ("sheets.belongingssheet.animal.specialabilities")}
+                </span>
                 <span className="value">
                   <Textfit max={11} min={7} mode="single">
                     {pipe_ (mpet, bindF (Pet.A.skills), renderMaybe)}
@@ -267,7 +291,9 @@ export const BelongingsSheetPet: React.FC<Props> = props => {
             </div>
             <div className="row pet-notes">
               <div className="notes">
-                <span className="label">{translate (l10n) ("notes")}</span>
+                <span className="label">
+                  {translate (l10n) ("sheets.belongingssheet.animal.notes")}
+                </span>
                 <span className="value">
                   <Textfit max={11} min={7} mode="single">
                     {pipe_ (mpet, bindF (Pet.A.notes), renderMaybe)}

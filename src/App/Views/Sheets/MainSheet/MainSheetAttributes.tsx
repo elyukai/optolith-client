@@ -27,10 +27,18 @@ export const MainSheetAttributes: React.FC<Props> = props => {
   return (
     <div className="calculated">
       <div className="calc-header">
-        <div>{translate (l10n) ("value")}</div>
-        <div>{translate (l10n) ("bonuspenalty")}</div>
-        <div>{translate (l10n) ("bought")}</div>
-        <div>{translate (l10n) ("max")}</div>
+        <div>
+          {translate (l10n) ("sheets.mainsheet.derivedcharacteristics.labels.value")}
+        </div>
+        <div>
+          {translate (l10n) ("sheets.mainsheet.derivedcharacteristics.labels.bonuspenalty")}
+        </div>
+        <div>
+          {translate (l10n) ("sheets.mainsheet.derivedcharacteristics.labels.bought")}
+        </div>
+        <div>
+          {translate (l10n) ("sheets.mainsheet.derivedcharacteristics.labels.max")}
+        </div>
       </div>
       {pipe_ (
         attributes,
@@ -49,11 +57,18 @@ export const MainSheetAttributes: React.FC<Props> = props => {
                 case DCId.SPI:
                 case DCId.TOU:
                 case DCId.MOV:
-                  return Just (translate (l10n) ("basestat"))
+                  return Just (
+                    translate (l10n)
+                              ("sheets.mainsheet.derivedcharacteristics.labels.basestat")
+                  )
 
                 case DCId.AE:
                 case DCId.KP:
-                  return Just (translate (l10n) ("permanentlylostboughtback"))
+                  return Just (
+                    translate (l10n)
+                              // eslint-disable-next-line max-len
+                              ("sheets.mainsheet.derivedcharacteristics.labels.permanentlylostboughtback")
+                  )
 
                 default:
                   return Nothing

@@ -61,10 +61,10 @@ export const Settings: React.FC<Props> = props => {
   return (
     <Dialog
       id="settings"
-      title={translate (l10n) ("settings")}
+      title={translate (l10n) ("settings.title")}
       buttons={[
         {
-          label: translate (l10n) ("close"),
+          label: translate (l10n) ("general.dialogs.donebtn"),
           onClick: saveConfig,
         },
       ]}
@@ -74,7 +74,7 @@ export const Settings: React.FC<Props> = props => {
       <Dropdown
         options={List (
           DropdownOption ({
-            name: translate (l10n) ("systemlanguage"),
+            name: translate (l10n) ("settings.systemlanguage"),
           }),
           DropdownOption ({
             id: Just (Locale.German),
@@ -100,41 +100,41 @@ export const Settings: React.FC<Props> = props => {
           })
         )}
         value={localeType === "default" ? Nothing : localeString}
-        label={translate (l10n) ("language")}
+        label={translate (l10n) ("settings.language")}
         onChange={setLocale}
         />
-      <p>{translate (l10n) ("languagehint")}</p>
+      <p>{translate (l10n) ("settings.languagehint")}</p>
       <SegmentedControls
         options={List (
           RadioOption ({
-            name: translate (l10n) ("dark"),
+            name: translate (l10n) ("settings.theme.dark"),
             value: Just (Theme.Dark),
           }),
           RadioOption ({
-            name: translate (l10n) ("light"),
+            name: translate (l10n) ("settings.theme.light"),
             value: Just (Theme.Light),
           })
         )}
         active={Just (theme)}
         onClick={setTheme}
-        label={translate (l10n) ("theme")}
+        label={translate (l10n) ("settings.theme")}
         />
       <Checkbox
         checked={isEditingHeroAfterCreationPhaseEnabled}
         className="editor-switch"
-        label={translate (l10n) ("enableeditingheroaftercreationphase")}
+        label={translate (l10n) ("settings.enableeditingheroaftercreationphase")}
         onClick={switchEnableEditingHeroAfterCreationPhase}
         />
       <Checkbox
         checked={areAnimationsEnabled}
         className="animations"
-        label={translate (l10n) ("showanimations")}
+        label={translate (l10n) ("settings.showanimations")}
         onClick={switchEnableAnimations}
         />
       {(platform === "win32" || platform === "darwin")
         ? (
           <BorderButton
-            label={translate (l10n) ("checkforupdates")}
+            label={translate (l10n) ("settings.checkforupdatesbtn")}
             onClick={checkForUpdates}
             autoWidth
             />

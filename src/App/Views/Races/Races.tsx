@@ -74,10 +74,13 @@ export const Races: React.FC<RacesProps> = props => {
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (l10n) ("race.header.name")}
           </ListHeaderTag>
-          <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
-            {translate (l10n) ("adventurepoints.short")}
+          <ListHeaderTag
+            className="cost"
+            hint={translate (l10n) ("race.header.adventurepoints.tooltip")}
+            >
+            {translate (l10n) ("race.header.adventurepoints")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder has-border" />

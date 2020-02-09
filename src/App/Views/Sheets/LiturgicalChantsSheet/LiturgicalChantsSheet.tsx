@@ -56,7 +56,7 @@ export const LiturgicalChantsSheet: React.FC<Props> = props => {
   const addHeader = List<Record<HeaderValue>> (
     HeaderValue ({
       id: "KP_MAX",
-      short: translate (l10n) ("kpmax"),
+      short: translate (l10n) ("sheets.chantssheet.header.labels.kpmax"),
       value:
         pipe_ (
           derivedCharacteristics,
@@ -66,7 +66,7 @@ export const LiturgicalChantsSheet: React.FC<Props> = props => {
     }),
     HeaderValue ({
       id: "KP_CURRENT",
-      short: translate (l10n) ("current"),
+      short: translate (l10n) ("sheets.chantssheet.header.labels.kpcurrent"),
     })
   )
 
@@ -77,12 +77,12 @@ export const LiturgicalChantsSheet: React.FC<Props> = props => {
           checked={checkAttributeValueVisibility}
           onClick={switchAttributeValueVisibility}
           >
-          {translate (l10n) ("showattributevalues")}
+          {translate (l10n) ("sheets.showattributevalues")}
         </Checkbox>
       </Options>
       <Sheet
         id="liturgies-sheet"
-        title={translate (l10n) ("liturgicalchants")}
+        title={translate (l10n) ("sheets.chantssheet.title")}
         addHeaderInfo={addHeader}
         l10n={l10n}
         attributes={attributes}

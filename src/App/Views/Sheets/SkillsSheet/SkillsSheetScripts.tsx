@@ -38,7 +38,7 @@ export const SkillsSheetScripts: React.FC<Props> = props => {
   )
 
   return (
-    <TextBox label={translate (l10n) ("knownscripts")}>
+    <TextBox label={translate (l10n) ("sheets.gamestatssheet.knownscripts.title")}>
       <div className="scripts-list">
         {scripts}
       </div>

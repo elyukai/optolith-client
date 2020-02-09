@@ -75,7 +75,9 @@ export const LanguagesScriptsSelectionLists: React.FC<Props> = props => {
   return (
     <div className="lang_lit list">
       <h4>
-        {translateP (l10n) ("languagesandliteracytotalingapleft") (List (ap_total, ap_left))}
+        {translateP (l10n)
+                    ("rcpselectoptions.languagesandliteracytotalingapleft")
+                    (List (ap_total, ap_left))}
       </h4>
       <div className="languages-scripts">
         <LanguageSelectionList

@@ -6,7 +6,7 @@ import { fromMaybe, Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { RangedWeapon } from "../../../Models/View/RangedWeapon"
 import { L10nRecord } from "../../../Models/Wiki/L10n"
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
+import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
 import { signZero, toRoman } from "../../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
@@ -24,32 +24,43 @@ export const CombatSheetRangedWeapons: React.FC<Props> = props => {
 
   return (
     <TextBox
-      label={translate (l10n) ("rangedcombatweapons")}
+      label={translate (l10n) ("sheets.combatsheet.rangedcombatweapons")}
       className="melee-weapons"
       >
       <table>
         <thead>
           <tr>
-            <th className="name">{translate (l10n) ("weapon")}</th>
+            <th className="name">
+              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.weapon")}
+            </th>
             <th className="combat-technique">
-              {translate (l10n) ("combattechnique")}
+              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.combattechnique")}
             </th>
             <th className="reload-time">
-              {translate (l10n) ("reloadtime")}
+              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.reloadtime")}
             </th>
-            <th className="damage">{translate (l10n) ("damagepoints.short")}</th>
+            <th className="damage">
+              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.damagepoints")}
+            </th>
             <th className="ammunition">
-              {translate (l10n) ("ammunition")}
+              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.ammunition")}
             </th>
             <th className="range">
-              {translate (l10n) ("rangebrackets")}
+              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.rangebrackets")}
             </th>
-            <th className="bf">{translate (l10n) ("breakingpointrating.short")}</th>
-            <th className="loss">{translate (l10n) ("damaged.short")}</th>
+            <th className="bf">
+              {translate (l10n)
+                         ("sheets.combatsheet.rangedcombatweapons.labels.breakingpointrating")}
+            </th>
+            <th className="loss">
+              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.damaged")}
+            </th>
             <th className="ranged">
-              {translate (l10n) ("rangedcombat")}
+              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.rangedcombat")}
             </th>
-            <th className="weight">{translate (l10n) ("weight")}</th>
+            <th className="weight">
+              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.weight")}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -65,11 +76,11 @@ export const CombatSheetRangedWeapons: React.FC<Props> = props => {
                   <td className="reload-time">
                     {renderMaybe (RWA.reloadTime (e))}
                     {" "}
-                    {translate (l10n) ("actions")}
+                    {translate (l10n) ("sheets.combatsheet.actions")}
                   </td>
                   <td className="damage">
                     {renderMaybe (RWA.damageDiceNumber (e))}
-                    {translate (l10n) ("dice.short")}
+                    {translate (l10n) ("general.dice")}
                     {renderMaybe (RWA.damageDiceSides (e))}
                     {signZero (Maybe.sum (RWA.damageFlat (e)))}
                   </td>
@@ -85,14 +96,16 @@ export const CombatSheetRangedWeapons: React.FC<Props> = props => {
                   </td>
                   <td className="ranged">{RWA.at (e)}</td>
                   <td className="weight">
-                    {pipe_ (
-                      e,
-                      RWA.weight,
-                      localizeWeight (l10n),
-                      localizeNumber (l10n)
-                    )}
-                    {" "}
-                    {translate (l10n) ("weightunit.short")}
+                    {translateP (l10n)
+                                ("general.weightvalue")
+                                (List (
+                                  pipe_ (
+                                    e,
+                                    RWA.weight,
+                                    localizeWeight (l10n),
+                                    localizeNumber (l10n)
+                                  )
+                                ))}
                   </td>
                 </tr>
               )),

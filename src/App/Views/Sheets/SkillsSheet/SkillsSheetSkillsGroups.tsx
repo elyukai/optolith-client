@@ -41,7 +41,7 @@ export const iterateGroupHeaders =
       "craftskills"
     )
 
-    const page = translate (l10n) ("page.short")
+    const page = translate (l10n) ("sheets.gamestatssheet.skillstable.groups.pages")
 
     return imap (index => pipe (
                             mapMaybe (pipe (

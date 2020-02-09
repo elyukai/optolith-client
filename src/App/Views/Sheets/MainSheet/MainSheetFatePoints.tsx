@@ -14,21 +14,21 @@ export const MainSheetFatePoints: React.FC<Props> = props => {
   const { fatePointsModifier, l10n } = props
 
   return (
-    <TextBox className="fate-points" label={translate (l10n) ("fatepoints")}>
+    <TextBox className="fate-points" label={translate (l10n) ("sheets.mainsheet.fatepoints")}>
       <LabelBox
-        label={translate (l10n) ("value")}
+        label={translate (l10n) ("sheets.mainsheet.derivedcharacteristics.labels.value")}
         value={Just (3)}
         />
       <LabelBox
-        label={translate (l10n) ("bonus")}
+        label={translate (l10n) ("sheets.mainsheet.derivedcharacteristics.labels.bonus")}
         value={Just (fatePointsModifier)}
         />
       <LabelBox
-        label={translate (l10n) ("max")}
+        label={translate (l10n) ("sheets.mainsheet.derivedcharacteristics.labels.max")}
         value={Just (fatePointsModifier + 3)}
         />
       <LabelBox
-        label={translate (l10n) ("current")}
+        label={translate (l10n) ("sheets.mainsheet.derivedcharacteristics.labels.current")}
         value={Nothing}
         />
     </TextBox>

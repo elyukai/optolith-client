@@ -20,7 +20,7 @@ export const LiturgicalChantsSheetSpecialAbilities: React.FC<Props> = props => {
   return (
     <TextBox
       className="activatable-list"
-      label={translate (l10n) ("blessedspecialabilities")}
+      label={translate (l10n) ("sheets.chantssheet.blessedspecialabilities")}
       value={compressList (l10n)
                           (fromMaybe (List<Record<ActiveActivatable<SpecialAbility>>> ())
                                      (maybeBlessedSpecialAbilities))}

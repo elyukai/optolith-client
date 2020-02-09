@@ -20,7 +20,7 @@ export const LiturgicalChantsSheetBlessings: React.FC<Props> = props => {
 
   return (
     <TextBox
-      label={translate (l10n) ("blessings")}
+      label={translate (l10n) ("sheets.chantssheet.blessings")}
       className="blessings activatable-list"
       >
       <div className="list">

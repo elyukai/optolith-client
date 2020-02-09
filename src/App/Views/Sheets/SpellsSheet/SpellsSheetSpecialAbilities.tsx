@@ -20,7 +20,7 @@ export const SpellsSheetSpecialAbilities: React.FC<Props> = props => {
   return (
     <TextBox
       className="activatable-list"
-      label={translate (l10n) ("magicalspecialabilities")}
+      label={translate (l10n) ("sheets.spellssheet.magicalspecialabilities")}
       value={compressList (l10n)
                           (fromMaybe (List<Record<ActiveActivatable<SpecialAbility>>> ())
                                      (maybeMagicalSpecialAbilities))}

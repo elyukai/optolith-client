@@ -68,7 +68,7 @@ export const LiturgicalChantsListItemActive: FC = props => {
         selectForInfo={selectForInfo}
         addText={
           sortOrder === "group"
-            ? `${aspects} / ${translate (l10n) ("blessing")}`
+            ? `${aspects} / ${translate (l10n) ("liturgicalchants.groups.blessing")}`
             : aspects
         }
         selectedForInfo={currentInfoId}

@@ -46,37 +46,37 @@ export const SpellsSheetSpells: React.FC<Props> = props => {
         <thead>
           <tr>
             <th className="name">
-              {translate (l10n) ("spellorritual")}
+              {translate (l10n) ("sheets.spellssheet.spellstable.labels.spellorritual")}
             </th>
             <th className="check">
-              {translate (l10n) ("check")}
+              {translate (l10n) ("sheets.spellssheet.spellstable.labels.check")}
             </th>
             <th className="value">
-              {translate (l10n) ("skillrating.short")}
+              {translate (l10n) ("sheets.spellssheet.spellstable.labels.skillrating")}
             </th>
             <th className="cost">
-              {translate (l10n) ("cost")}
+              {translate (l10n) ("sheets.spellssheet.spellstable.labels.cost")}
             </th>
             <th className="cast-time">
-              {translate (l10n) ("castingtime")}
+              {translate (l10n) ("sheets.spellssheet.spellstable.labels.castingtime")}
             </th>
             <th className="range">
-              {translate (l10n) ("range")}
+              {translate (l10n) ("sheets.spellssheet.spellstable.labels.range")}
             </th>
             <th className="duration">
-              {translate (l10n) ("duration")}
+              {translate (l10n) ("sheets.spellssheet.spellstable.labels.duration")}
             </th>
             <th className="property">
-              {translate (l10n) ("property")}
+              {translate (l10n) ("sheets.spellssheet.spellstable.labels.property")}
             </th>
             <th className="ic">
-              {translate (l10n) ("improvementcost.short")}
+              {translate (l10n) ("sheets.spellssheet.spellstable.labels.improvementcost")}
             </th>
             <th className="effect">
-              {translate (l10n) ("effect")}
+              {translate (l10n) ("sheets.spellssheet.spellstable.labels.effect")}
             </th>
             <th className="ref">
-              {translate (l10n) ("page.short")}
+              {translate (l10n) ("sheets.spellssheet.spellstable.labels.pages")}
             </th>
           </tr>
         </thead>
@@ -104,7 +104,8 @@ export const SpellsSheetSpells: React.FC<Props> = props => {
                       <Textfit max={11} min={7} mode="single">
                         {SWRA_.name (e)}
                         {notNull (SWRA_.tradition (e))
-                          ? ` (${translate (l10n) ("unfamiliarspell")})`
+                          ? ` (${translate (l10n)
+                                           ("sheets.spellssheet.spellstable.unfamiliarspell")})`
                           : ""}
                       </Textfit>
                     </td>

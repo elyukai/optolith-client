@@ -1,5 +1,5 @@
 import * as React from "react"
-import { elemF, filter, List, map, subscript, toArray } from "../../../Data/List"
+import { elemF, filter, List, map, toArray } from "../../../Data/List"
 import { elems } from "../../../Data/OrderedMap"
 import { OrderedSet } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
@@ -10,7 +10,6 @@ import { CantripsSelection } from "../../Models/Wiki/professionSelections/Cantri
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
 import { translate, translateP } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
-import { renderMaybe } from "../../Utilities/ReactUtils"
 import { CantripSelectionListItem } from "./CantripSelectionListItem"
 
 const WA = WikiModel.A
@@ -39,16 +38,20 @@ interface Props {
 export const CantripSelectionList: React.FC<Props> = props => {
   const { l10n, wiki, active, selection, toggleCantripId } = props
 
-  const nums = translate (l10n) ("cantripcounter")
   const cantrips = React.useMemo (() => getCantrips (wiki) (selection), [ wiki, selection ])
   const amount = CSA.amount (selection)
+  const count = amount === 1
+                ? translate (l10n) ("rcpselectoptions.cantrip.one")
+                : amount === 2
+                ? translate (l10n) ("rcpselectoptions.cantrip.two")
+                : "..."
 
   return (
     <div className="cantrips list">
       <h4>
         {translateP (l10n)
-                    ("cantripsfromlist")
-                    (List (renderMaybe (subscript (nums) (amount - 1))))}
+                    ("rcpselectoptions.cantripsfromlist")
+                    (List (count))}
       </h4>
       <ul>
         {pipe_ (

@@ -82,87 +82,87 @@ export const MainSheetPersonalData: React.FC<Props> = props => {
       <div className="info">
         <Plain
           className="name"
-          label={translate (l10n) ("name")}
+          label={translate (l10n) ("sheets.mainsheet.name")}
           value={name}
           />
         <Plain
           className="family"
-          label={translate (l10n) ("family")}
+          label={translate (l10n) ("sheets.mainsheet.family")}
           value={bind (mprofile) (PDA.family)}
           />
         <Plain
           className="placeofbirth"
-          label={translate (l10n) ("placeofbirth")}
+          label={translate (l10n) ("sheets.mainsheet.placeofbirth")}
           value={bind (mprofile) (PDA.placeOfBirth)}
           />
         <Plain
           className="dateofbirth"
-          label={translate (l10n) ("dateofbirth")}
+          label={translate (l10n) ("sheets.mainsheet.dateofbirth")}
           value={bind (mprofile) (PDA.dateOfBirth)}
           />
         <Plain
           className="age"
-          label={translate (l10n) ("age")}
+          label={translate (l10n) ("sheets.mainsheet.age")}
           value={bind (mprofile) (PDA.age)}
           />
         <Plain
           className="sex"
-          label={translate (l10n) ("sex")}
+          label={translate (l10n) ("sheets.mainsheet.sex")}
           value={sex}
           />
         <Plain
           className="race"
-          label={translate (l10n) ("race")}
+          label={translate (l10n) ("sheets.mainsheet.race")}
           value={raceName}
           />
         <Plain
           className="size"
-          label={translate (l10n) ("size")}
+          label={translate (l10n) ("sheets.mainsheet.size")}
           value={pipe_ (mprofile, bindF (PDA.size), bindF (toInt), fmap (localizeSize (l10n)))}
           />
         <Plain
           className="weight"
-          label={translate (l10n) ("weight")}
+          label={translate (l10n) ("sheets.mainsheet.weight")}
           value={pipe_ (mprofile, bindF (PDA.weight), bindF (toInt), fmap (localizeWeight (l10n)))}
           />
         <Plain
           className="haircolor"
-          label={translate (l10n) ("haircolor")}
+          label={translate (l10n) ("sheets.mainsheet.haircolor")}
           value={haircolorName}
           />
         <Plain
           className="eyecolor"
-          label={translate (l10n) ("eyecolor")}
+          label={translate (l10n) ("sheets.mainsheet.eyecolor")}
           value={eyecolorName}
           />
         <Plain
           className="culture"
-          label={translate (l10n) ("culture")}
+          label={translate (l10n) ("sheets.mainsheet.culture")}
           value={cultureName}
           />
         <Plain
           className="socialstatus"
-          label={translate (l10n) ("socialstatus")}
+          label={translate (l10n) ("sheets.mainsheet.socialstatus")}
           value={socialstatusName}
           />
         <Plain
           className="profession"
-          label={translate (l10n) ("profession")}
+          label={translate (l10n) ("sheets.mainsheet.profession")}
           value={professionName}
           />
         <Plain
           className="title"
-          label={translate (l10n) ("title")}
+          label={translate (l10n) ("sheets.mainsheet.rank")}
           value={bind (mprofile) (PDA.title)}
           />
         <Plain
           className="characteristics"
-          label={translate (l10n) ("characteristics")}
+          label={translate (l10n) ("sheets.mainsheet.characteristics")}
           value={bind (mprofile) (PDA.characteristics)}
           />
         <Plain
           className="otherinfo"
-          label={translate (l10n) ("otherinfo")}
+          label={translate (l10n) ("sheets.mainsheet.otherinfo")}
           value={bind (mprofile) (PDA.otherInfo)}
           multi
           />
@@ -170,28 +170,28 @@ export const MainSheetPersonalData: React.FC<Props> = props => {
       <div className="ap-portrait">
         <LabelBox
           className="el"
-          label={translate (l10n) ("experiencelevel")}
+          label={translate (l10n) ("sheets.mainsheet.experiencelevellabel")}
           value={fmapF (maybeExperienceLevel) (ExperienceLevel.A.name)}
           />
         <LabelBox
           className="ap-total"
-          label={translate (l10n) ("totalap.novar")}
+          label={translate (l10n) ("sheets.mainsheet.totalaplabel")}
           value={fmapF (ap) (AdventurePointsCategories.A.total)}
           />
         <LabelBox
           className="portrait"
-          label={translate (l10n) ("avatar")}
+          label={translate (l10n) ("sheets.mainsheet.avatarlabel")}
           >
           <Avatar src={avatar} img />
         </LabelBox>
         <LabelBox
           className="ap-available"
-          label={translate (l10n) ("apcollected")}
+          label={translate (l10n) ("sheets.mainsheet.apcollectedlabel")}
           value={fmapF (ap) (AdventurePointsCategories.A.available)}
           />
         <LabelBox
           className="ap-used"
-          label={translate (l10n) ("apspent.novar")}
+          label={translate (l10n) ("sheets.mainsheet.apspentlabel")}
           value={fmapF (ap) (AdventurePointsCategories.A.spent)}
           />
       </div>
