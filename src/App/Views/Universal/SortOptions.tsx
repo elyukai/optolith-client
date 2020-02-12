@@ -30,15 +30,15 @@ export const SortOptions = <A extends SortNames> (props: Props<A>): React.ReactE
   const { l10n, options, sort, sortOrder } = props
 
   const SORT_NAMES = {
-    [SortNames.Name]: translate (l10n) ("sortalphabetically"),
-    [SortNames.DateModified]: translate (l10n) ("sortbydatemodified"),
-    [SortNames.Group]: translate (l10n) ("sortbygroup"),
-    [SortNames.GroupName]: translate (l10n) ("sortbygroup"),
-    [SortNames.Where]: translate (l10n) ("sortbylocation"),
-    [SortNames.Cost]: translate (l10n) ("sortbycost"),
-    [SortNames.IC]: translate (l10n) ("sortbyimprovementcost"),
-    [SortNames.Property]: translate (l10n) ("sortbyproperty"),
-    [SortNames.Weight]: translate (l10n) ("sortbyweight"),
+    [SortNames.Name]: translate (l10n) ("general.filters.sort.alphabetically"),
+    [SortNames.DateModified]: translate (l10n) ("general.filters.sort.bydatemodified"),
+    [SortNames.Group]: translate (l10n) ("general.filters.sort.bygroup"),
+    [SortNames.GroupName]: translate (l10n) ("general.filters.sort.bygroup"),
+    [SortNames.Where]: translate (l10n) ("general.filters.sort.bylocation"),
+    [SortNames.Cost]: translate (l10n) ("general.filters.sort.bycost"),
+    [SortNames.IC]: translate (l10n) ("general.filters.sort.byimprovementcost"),
+    [SortNames.Property]: translate (l10n) ("general.filters.sort.byproperty"),
+    [SortNames.Weight]: translate (l10n) ("general.filters.sort.byweight"),
   }
 
   const handleClick =

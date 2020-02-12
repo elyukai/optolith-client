@@ -33,7 +33,10 @@ export const AvatarChange: React.FC<Props> = props => {
     async () =>
       fmapF (showOpenDialog ({
               filters: [
-                { name: translate (l10n) ("image"), extensions: valid_extensions },
+                {
+                  name: translate (l10n) ("profile.dialogs.changeheroavatar.imagefiletype"),
+                  extensions: valid_extensions,
+                },
                 { name: "JPG", extensions: [ "jpeg", "jpg" ] },
                 { name: "PNG", extensions: [ "png" ] },
               ],
@@ -85,11 +88,15 @@ export const AvatarChange: React.FC<Props> = props => {
   return (
     <Dialog
       id="avatar-change"
-      title={title === undefined ? translate (l10n) ("changeheroavatar") : title}
+      title={
+        title === undefined
+        ? translate (l10n) ("profile.dialogs.changeheroavatar.title")
+        : title
+      }
       buttons={[
         {
           disabled: !fileValid || url === "",
-          label: translate (l10n) ("apply"),
+          label: translate (l10n) ("general.dialogs.applybtn"),
           onClick: handleSubmit,
         },
       ]}
@@ -97,7 +104,7 @@ export const AvatarChange: React.FC<Props> = props => {
       isOpen={isOpen}
       >
       <BorderButton
-        label={translate (l10n) ("selectfile")}
+        label={translate (l10n) ("profile.dialogs.changeheroavatar.selectfilebtn")}
         onClick={handleSelectFile}
         />
       <AvatarWrapper
@@ -105,7 +112,7 @@ export const AvatarChange: React.FC<Props> = props => {
         />
       {!fileValid && url !== ""
         ? (
-          <p>{translate (l10n) ("changeheroavatar.invalidfile")}</p>
+          <p>{translate (l10n) ("profile.dialogs.changeheroavatar.invalidfilewarning")}</p>
         )
         : null}
     </Dialog>

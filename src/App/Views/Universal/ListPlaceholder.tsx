@@ -263,10 +263,10 @@ export const ListPlaceholder: React.FC<Props> = props => {
         >
         {
           orN (wikiInitial)
-            ? translate (l10n) ("chooseacategorytodisplayalist")
+            ? translate (l10n) ("wiki.chooseacategorytodisplayalist")
             : orN (noResults)
-            ? translate (l10n) ("emptylistnoresults")
-            : translate (l10n) ("emptylist")
+            ? translate (l10n) ("general.emptylistnoresultsplaceholder")
+            : translate (l10n) ("general.emptylistplaceholder")
         }
       </div>
     </ListView>

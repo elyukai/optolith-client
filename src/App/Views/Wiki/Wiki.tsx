@@ -164,39 +164,31 @@ export const Wiki: React.FC<Props> = props => {
             }),
             DropdownOption ({
               id: Just ("disadvantages"),
-              name: translate (l10n) ("disadvantages"),
+              name: translate (l10n) ("wiki.filters.disadvantages"),
             }),
             DropdownOption ({
               id: Just ("skills"),
-              name: translate (l10n) ("skills"),
+              name: translate (l10n) ("wiki.filters.skills"),
             }),
             DropdownOption ({
               id: Just ("combatTechniques"),
-              name: translate (l10n) ("combattechniques"),
+              name: translate (l10n) ("wiki.filters.combattechniques"),
             }),
             DropdownOption ({
               id: Just ("specialAbilities"),
-              name: translate (l10n) ("specialabilities"),
+              name: translate (l10n) ("wiki.filters.specialabilities"),
             }),
             DropdownOption ({
               id: Just ("spells"),
-              name: translate (l10n) ("spells"),
-            }),
-            DropdownOption ({
-              id: Just ("cantrips"),
-              name: translate (l10n) ("cantrips"),
+              name: translate (l10n) ("wiki.filters.magic"),
             }),
             DropdownOption ({
               id: Just ("liturgicalChants"),
-              name: translate (l10n) ("liturgicalchants"),
-            }),
-            DropdownOption ({
-              id: Just ("blessings"),
-              name: translate (l10n) ("blessings"),
+              name: translate (l10n) ("wiki.filters.liturgicalchants"),
             }),
             DropdownOption ({
               id: Just ("itemTemplates"),
-              name: translate (l10n) ("items"),
+              name: translate (l10n) ("wiki.filters.itemtemplates"),
             })
           )}
           />
@@ -208,19 +200,19 @@ export const Wiki: React.FC<Props> = props => {
                 options={List (
                   DropdownOption ({
                     id: Nothing,
-                    name: translate (l10n) ("allprofessiongroups"),
+                    name: translate (l10n) ("profession.filters.groups.allprofessiongroups"),
                   }),
                   DropdownOption ({
                     id: Just (1),
-                    name: translate (l10n) ("mundaneprofessions"),
+                    name: translate (l10n) ("profession.filters.groups.mundaneprofessions"),
                   }),
                   DropdownOption ({
                     id: Just (2),
-                    name: translate (l10n) ("magicalprofessions"),
+                    name: translate (l10n) ("profession.filters.groups.magicalprofessions"),
                   }),
                   DropdownOption ({
                     id: Just (3),
-                    name: translate (l10n) ("blessedprofessions"),
+                    name: translate (l10n) ("profession.filters.groups.blessedprofessions"),
                   })
                 )}
                 fullWidth
@@ -233,7 +225,7 @@ export const Wiki: React.FC<Props> = props => {
               value={skillsGroup}
               onChange={setSkillsGroup}
               options={getSortedGroupsDef (l10n)
-                                          (translate (l10n) ("allskills"))
+                                          (translate (l10n) ("wiki.filters.skills.all"))
                                           (translate (l10n) ("skillgroups"))}
               fullWidth
               />
@@ -245,7 +237,7 @@ export const Wiki: React.FC<Props> = props => {
                 value={combatTechniquesGroup}
                 onChange={setCombatTechniquesGroup}
                 options={getSortedGroupsDef (l10n)
-                                            (translate (l10n) ("allcombattechniques"))
+                                            (translate (l10n) ("wiki.filters.combattechniques.all"))
                                             (translate (l10n) ("combattechniquegroups"))}
                 fullWidth
                 />
@@ -259,7 +251,7 @@ export const Wiki: React.FC<Props> = props => {
                 options={cons (specialAbilityGroups)
                               (DropdownOption ({
                                 id: Nothing,
-                                name: translate (l10n) ("allspecialabilities"),
+                                name: translate (l10n) ("wiki.filters.specialabilities.all"),
                               }))}
                 fullWidth
                 />
@@ -271,7 +263,7 @@ export const Wiki: React.FC<Props> = props => {
                 value={spellsGroup}
                 onChange={setSpellsGroup}
                 options={getSortedGroupsDef (l10n)
-                                            (translate (l10n) ("allspells"))
+                                            (translate (l10n) ("wiki.filters.magic.all"))
                                             (translate (l10n) ("spellgroups"))}
                 fullWidth
                 />
@@ -283,7 +275,7 @@ export const Wiki: React.FC<Props> = props => {
                 value={liturgicalChantsGroup}
                 onChange={setLiturgicalChantsGroup}
                 options={getSortedGroupsDef (l10n)
-                                            (translate (l10n) ("allliturgicalchants"))
+                                            (translate (l10n) ("wiki.filters.liturgicalchants.all"))
                                             (translate (l10n) ("liturgicalchantgroups"))}
                 fullWidth
                 />
@@ -295,7 +287,7 @@ export const Wiki: React.FC<Props> = props => {
                 value={itemTemplatesGroup}
                 onChange={setItemTemplatesGroup}
                 options={getSortedGroupsDef (l10n)
-                                            (translate (l10n) ("allitemtemplates"))
+                                            (translate (l10n) ("wiki.filters.itemtemplates.all"))
                                             (translate (l10n) ("itemgroups"))}
                 fullWidth
                 />

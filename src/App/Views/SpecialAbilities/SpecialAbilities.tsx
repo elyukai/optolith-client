@@ -122,19 +122,22 @@ export const SpecialAbilities: React.FC<Props> = props => {
             checked={enableActiveItemHints}
             onClick={switchActiveItemHints}
             >
-            {translate (l10n) ("showactivated")}
+            {translate (l10n) ("general.filters.showactivatedentries")}
           </Checkbox>
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (l10n) ("name")}
+              {translate (l10n) ("specialabilities.header.name")}
             </ListHeaderTag>
             <ListHeaderTag className="group">
-              {translate (l10n) ("group")}
+              {translate (l10n) ("specialabilities.header.group")}
             </ListHeaderTag>
-            <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
-              {translate (l10n) ("adventurepoints.short")}
+            <ListHeaderTag
+              className="cost"
+              hint={translate (l10n) ("specialabilities.header.adventurepoints.tooltip")}
+              >
+              {translate (l10n) ("specialabilities.header.adventurepoints")}
             </ListHeaderTag>
             <ListHeaderTag className="btn-placeholder" />
             <ListHeaderTag className="btn-placeholder" />
@@ -163,20 +166,23 @@ export const SpecialAbilities: React.FC<Props> = props => {
           l10n={l10n}
           />
         <BorderButton
-          label={translate (l10n) ("add")}
+          label={translate (l10n) ("specialabilities.addbtn")}
           onClick={handleShowSlidein}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (l10n) ("specialabilities.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="group">
-            {translate (l10n) ("group")}
+            {translate (l10n) ("specialabilities.header.group")}
           </ListHeaderTag>
-          <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
-            {translate (l10n) ("adventurepoints.short")}
+          <ListHeaderTag
+            className="cost"
+            hint={translate (l10n) ("specialabilities.header.adventurepoints.tooltip")}
+            >
+            {translate (l10n) ("specialabilities.header.adventurepoints")}
           </ListHeaderTag>
           {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />

@@ -112,26 +112,32 @@ export const Skills: React.FC<Props> = props => {
           checked={is_rating_visible}
           onClick={switchRatingVisibility}
           >
-          {translate (l10n) ("commonskills")}
+          {translate (l10n) ("skills.commonskills")}
         </Checkbox>
         {is_rating_visible ? <RecommendedReference l10n={l10n} /> : null}
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (l10n) ("skills.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="group">
-            {translate (l10n) ("group")}
+            {translate (l10n) ("skills.header.group")}
           </ListHeaderTag>
-          <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
-            {translate (l10n) ("skillrating.short")}
+          <ListHeaderTag
+            className="value"
+            hint={translate (l10n) ("skills.header.skillrating.tooltip")}
+            >
+            {translate (l10n) ("skills.header.skillrating")}
           </ListHeaderTag>
           <ListHeaderTag className="check">
-            {translate (l10n) ("check")}
+            {translate (l10n) ("skills.header.check")}
           </ListHeaderTag>
-          <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
-            {translate (l10n) ("improvementcost.short")}
+          <ListHeaderTag
+            className="ic"
+            hint={translate (l10n) ("skills.header.improvementcost.tooltip")}
+            >
+            {translate (l10n) ("skills.header.improvementcost")}
           </ListHeaderTag>
           {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />

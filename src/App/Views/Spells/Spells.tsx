@@ -226,30 +226,33 @@ export const Spells: React.FC<Props> = props => {
             checked={enableActiveItemHints}
             onClick={switchActiveItemHints}
             >
-            {translate (l10n) ("showactivated")}
+            {translate (l10n) ("general.filters.showactivatedentries")}
           </Checkbox>
           <RecommendedReference l10n={l10n} unfamiliarSpells />
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (l10n) ("name")}
-              {" ("}
-              {translate (l10n) ("unfamiliartraditions")}
-              {")"}
+              {translate (l10n) ("spells.header.name")}
             </ListHeaderTag>
             <ListHeaderTag className="group">
-              {translate (l10n) ("property")}
-              {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
+              {translate (l10n) ("spells.header.property")}
+              {sortOrder === "group" ? ` / ${translate (l10n) ("spells.header.group")}` : null}
             </ListHeaderTag>
             <ListHeaderTag className="check">
-              {translate (l10n) ("check")}
+              {translate (l10n) ("spells.header.check")}
             </ListHeaderTag>
-            <ListHeaderTag className="mod" hint={translate (l10n) ("checkmodifier")}>
-              {translate (l10n) ("checkmodifier.short")}
+            <ListHeaderTag
+              className="mod"
+              hint={translate (l10n) ("spells.header.checkmodifier.tooltip")}
+              >
+              {translate (l10n) ("spells.header.checkmodifier")}
             </ListHeaderTag>
-            <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
-              {translate (l10n) ("improvementcost.short")}
+            <ListHeaderTag
+              className="ic"
+              hint={translate (l10n) ("spells.header.improvementcost.tooltip")}
+              >
+              {translate (l10n) ("spells.header.improvementcost")}
             </ListHeaderTag>
             {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
             <ListHeaderTag className="btn-placeholder" />
@@ -296,7 +299,7 @@ export const Spells: React.FC<Props> = props => {
                                       selectForInfo={handleShowSlideinInfo}
                                       addText={
                                         sortOrder === "group"
-                                          ? `${propertyName} / ${translate (l10n) ("cantrip")}`
+                                          ? `${propertyName} / ${translate (l10n) ("spells.groups.cantrip")}`
                                           : propertyName
                                       }
                                       untyp={SWRAL.isUnfamiliar (curr)}
@@ -365,7 +368,7 @@ export const Spells: React.FC<Props> = props => {
           l10n={l10n}
           />
         <BorderButton
-          label={translate (l10n) ("add")}
+          label={translate (l10n) ("spells.addbtn")}
           onClick={handleShowSlidein}
           />
         <RecommendedReference l10n={l10n} unfamiliarSpells />
@@ -373,26 +376,32 @@ export const Spells: React.FC<Props> = props => {
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
-            {" ("}
-            {translate (l10n) ("unfamiliartraditions")}
-            {")"}
+            {translate (l10n) ("spells.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="group">
-            {translate (l10n) ("property")}
-            {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
+            {translate (l10n) ("spells.header.property")}
+            {sortOrder === "group" ? ` / ${translate (l10n) ("spells.header.group")}` : null}
           </ListHeaderTag>
-          <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
-            {translate (l10n) ("skillrating.short")}
+          <ListHeaderTag
+            className="value"
+            hint={translate (l10n) ("spells.header.skillrating.tooltip")}
+            >
+            {translate (l10n) ("spells.header.skillrating")}
           </ListHeaderTag>
           <ListHeaderTag className="check">
-            {translate (l10n) ("check")}
+            {translate (l10n) ("spells.header.check")}
           </ListHeaderTag>
-          <ListHeaderTag className="mod" hint={translate (l10n) ("checkmodifier")}>
-            {translate (l10n) ("checkmodifier.short")}
+          <ListHeaderTag
+            className="mod"
+            hint={translate (l10n) ("spells.header.checkmodifier.tooltip")}
+            >
+            {translate (l10n) ("spells.header.checkmodifier")}
           </ListHeaderTag>
-          <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
-            {translate (l10n) ("improvementcost.short")}
+          <ListHeaderTag
+            className="ic"
+            hint={translate (l10n) ("spells.header.improvementcost.tooltip")}
+            >
+            {translate (l10n) ("spells.header.improvementcost")}
           </ListHeaderTag>
           {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />
@@ -427,7 +436,7 @@ export const Spells: React.FC<Props> = props => {
                                     selectForInfo={handleShowInfo}
                                     addText={
                                       sortOrder === "group"
-                                        ? `${propertyName} / ${translate (l10n) ("cantrip")}`
+                                        ? `${propertyName} / ${translate (l10n) ("spells.groups.cantrip")}`
                                         : propertyName
                                     }
                                     untyp={SWRAL.isUnfamiliar (curr)}
