@@ -17,15 +17,12 @@ import { Rules } from "../../Models/Hero/Rules"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { Attribute } from "../../Models/Wiki/Attribute"
 import { Culture } from "../../Models/Wiki/Culture"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { Profession } from "../../Models/Wiki/Profession"
-import { CombatTechniquesSelection } from "../../Models/Wiki/professionSelections/CombatTechniquesSelection"
 import { ProfessionSelections } from "../../Models/Wiki/professionSelections/ProfessionAdjustmentSelections"
-import { CombatTechniquesSecondSelection } from "../../Models/Wiki/professionSelections/SecondCombatTechniquesSelection"
 import { ProfessionVariant } from "../../Models/Wiki/ProfessionVariant"
 import { Race } from "../../Models/Wiki/Race"
 import { Skill } from "../../Models/Wiki/Skill"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers"
 import { translate, translateP } from "../../Utilities/I18n"
 import { getAllAdjustmentSelections } from "../../Utilities/mergeRcpAdjustmentSelections"
@@ -39,7 +36,7 @@ import { Dropdown } from "../Universal/Dropdown"
 import { Scroll } from "../Universal/Scroll"
 import { Slidein } from "../Universal/Slidein"
 import { CantripSelectionList, isCantripsSelectionValid } from "./CantripSelectionList"
-import { CombatTechniqueSelectionList, getFirstCombatTechniques, getSecondCombatTechniques, isFirstCombatTechniqueSelectionValid, isSecondCombatTechniqueSelectionValid } from "./CombatTechniqueSelectionList"
+import { CombatTechniqueSelectionList, getCombatTechniques, isCombatTechniqueSelectionValid } from "./CombatTechniqueSelectionList"
 import { CursesSelectionList, isCursesSelectionValid } from "./CursesSelectionList"
 import { isLanguagesScriptsSelectionValid, LanguagesScriptsSelectionLists } from "./LanguagesScriptsSelectionLists"
 import { isSkillSelectionValid, SkillSelectionList } from "./SkillSelectionList"
@@ -47,18 +44,18 @@ import { isSkillSpecializationSelectionValid, SkillSpecializationSelectionList }
 import { isTerrainKnowledgeSelectionValid, TerrainKnowledgeSelectionList } from "./TerrainKnowledgeSelectionList"
 
 export interface RCPOptionSelectionsProps {
-  l10n: L10nRecord
   race: Record<Race>
   culture: Record<Culture>
   profession: Record<Profession>
   professionVariant: Maybe<Record<ProfessionVariant>>
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   munfamiliar_spells: Maybe<List<Record<DropdownOption>>>
   rules: Record<Rules>
   close (): void
   setSelections (selections: SelectionsInterface): void
 }
 
+const SDA = StaticData.A
 const AttrA = Attribute.A
 const PSA = ProfessionSelections.A
 
@@ -69,9 +66,8 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
     culture,
     profession,
     professionVariant,
-    l10n,
     rules,
-    wiki,
+    staticData,
     munfamiliar_spells,
     setSelections,
   } = props
@@ -194,28 +190,28 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
     (id: string) => {
       setSkills (alter ((skill: Maybe<number>) =>
                          pipe_ (
-                           wiki,
-                           WikiModel.A.skills,
+                           staticData,
+                           SDA.skills,
                            lookup (id),
                            fmap (pipe (Skill.A.ic, add (Maybe.sum (skill))))
                          ))
                        (id))
     },
-    [ wiki ]
+    [ staticData ]
   )
 
   const handleRemoveSkillPoint = React.useCallback (
     (id: string) => {
       setSkills (alter ((skill: Maybe<number>) =>
                          pipe_ (
-                           wiki,
-                           WikiModel.A.skills,
+                           staticData,
+                           SDA.skills,
                            lookup (id),
                            bindF (pipe (Skill.A.ic, subtract (Maybe.sum (skill)), ensure (gt (0))))
                          ))
                        (id))
     },
-    [ wiki ]
+    [ staticData ]
   )
 
   const handleSetTerrainKnowledge = React.useCallback (
@@ -296,8 +292,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
 
   const isAnyLanguageOrScriptSelected = size (languagesActive) > 0 || size (scriptsActive) > 0
 
-  const buyScriptElement = getBuyScriptElement (l10n)
-                                               (wiki)
+  const buyScriptElement = getBuyScriptElement (staticData)
                                                (culture)
                                                (isScriptSelectionNeeded)
                                                (isBuyingMainScriptEnabled)
@@ -308,8 +303,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
     getSelPair (isLanguagesScriptsSelectionValid (languagesActive) (scriptsActive))
                ((selection, res) => (
                  <LanguagesScriptsSelectionLists
-                   l10n={l10n}
-                   wiki={wiki}
+                   staticData={staticData}
                    rules={rules}
                    ap_left={sel2 (res)}
                    culture={culture}
@@ -332,8 +326,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
     getSelPair (isCursesSelectionValid (cursesActive))
                ((selection, res) => (
                  <CursesSelectionList
-                   l10n={l10n}
-                   wiki={wiki}
+                   staticData={staticData}
                    rules={rules}
                    active={cursesActive}
                    ap_left={sel2 (res)}
@@ -345,43 +338,26 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                (prof_sels)
 
   const combatTechniques =
-    getSelPair (isFirstCombatTechniqueSelectionValid (combatTechniquesActive))
+    getSelPair (isCombatTechniqueSelectionValid (combatTechniquesActive))
                (selection => (
                  <CombatTechniqueSelectionList
-                   l10n={l10n}
-                   active={combatTechniquesActive}
-                   amount={CombatTechniquesSelection.A.amount (selection)}
-                   list={getFirstCombatTechniques (wiki) (selection)}
-                   value={CombatTechniquesSelection.A.value (selection)}
+                   staticData={staticData}
+                   activeFirst={combatTechniquesActive}
+                   activeSecond={combatTechniquesSecondActive}
+                   list={getCombatTechniques (staticData) (selection)}
+                   selection={selection}
                    setCombatTechniqueId={handleSwitchCombatTechnique}
+                   setCombatTechniqueSecondId={handleSwitchSecondCombatTechnique}
                    />
                ))
                (PSA[ProfessionSelectionIds.COMBAT_TECHNIQUES])
-               (prof_sels)
-
-  const combatTechniquesSecond =
-    getSelPair (isSecondCombatTechniqueSelectionValid (combatTechniquesSecondActive))
-               (selection => (
-                 <CombatTechniqueSelectionList
-                   l10n={l10n}
-                   active={combatTechniquesSecondActive}
-                   disabled={combatTechniquesActive}
-                   amount={CombatTechniquesSecondSelection.A.amount (selection)}
-                   list={getSecondCombatTechniques (wiki) (selection)}
-                   value={CombatTechniquesSecondSelection.A.value (selection)}
-                   second
-                   setCombatTechniqueId={handleSwitchSecondCombatTechnique}
-                   />
-               ))
-               (PSA[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND])
                (prof_sels)
 
   const cantrips =
     getSelPair (isCantripsSelectionValid (cantripsActive))
                (selection => (
                  <CantripSelectionList
-                   l10n={l10n}
-                   wiki={wiki}
+                   staticData={staticData}
                    active={cantripsActive}
                    selection={selection}
                    toggleCantripId={handleSwitchCantrip}
@@ -397,12 +373,11 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                  <SkillSpecializationSelectionList
                    activeApplication={specialization}
                    activeSkillId={specializationSkillId}
-                   l10n={l10n}
                    selection={selection}
                    setApplicationId={handleSetSpecializationApplicationId}
                    setApplicationString={handleSetSpecializationApplicationString}
                    setSkillId={handleSetSpecializationSkill}
-                   wiki={wiki}
+                   staticData={staticData}
                    />
                ))
                (PSA[ProfessionSelectionIds.SPECIALIZATION])
@@ -412,8 +387,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
     getSelPair (isSkillSelectionValid (skillsActive))
                ((selection, res) => (
                  <SkillSelectionList
-                   l10n={l10n}
-                   wiki={wiki}
+                   staticData={staticData}
                    active={skillsActive}
                    ap_left={sel2 (res)}
                    selection={selection}
@@ -428,7 +402,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
     getSelPair (isTerrainKnowledgeSelectionValid (terrainKnowledgeActive))
                (selection => (
                  <TerrainKnowledgeSelectionList
-                   wiki={wiki}
+                   staticData={staticData}
                    active={terrainKnowledgeActive}
                    selection={selection}
                    setTerrainId={handleSetTerrainKnowledge}
@@ -438,7 +412,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                (prof_sels)
 
   const guildMageUnfamiliarSpell =
-    getGuildMageUnfamiliarSpellSelectionElement (l10n)
+    getGuildMageUnfamiliarSpellSelectionElement (staticData)
                                                 (munfamiliar_spells)
                                                 (selectedUnfamiliarSpell)
                                                 (handleSetGuildMageUnfamiliarSpellId)
@@ -448,7 +422,6 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
     !fst (skillSpecialization)
     || !fst (languagesAndScripts)
     || !fst (combatTechniques)
-    || !fst (combatTechniquesSecond)
     || !fst (cantrips)
     || !fst (curses)
     || !fst (skills)
@@ -468,13 +441,13 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
   return (
     <Slidein isOpen close={close} className="rcp-selections">
       <Scroll>
-        <h3>{translate (l10n) ("rcpselectoptions.race")}</h3>
+        <h3>{translate (staticData) ("rcpselectoptions.race")}</h3>
         <Dropdown
-          hint={translate (l10n) ("rcpselectoptions.selectattributeadjustment")}
+          hint={translate (staticData) ("rcpselectoptions.selectattributeadjustment")}
           value={attributeAdjustment}
           onChangeJust={handleSetAttributeAdjustment}
           options={mapMaybe (pipe (
-                              lookupF (WikiModel.A.attributes (wiki)),
+                              lookupF (SDA.attributes (staticData)),
                               fmap (attr => DropdownOption ({
                                   id: Just (AttrA.id (attr)),
                                   name: `${AttrA.name (attr)} ${signed_attr_ajst_val}`,
@@ -483,28 +456,26 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                             (snd (attributeAdjustmentSelection))}
           />
 
-        <h3>{translate (l10n) ("rcpselectoptions.culture")}</h3>
+        <h3>{translate (staticData) ("rcpselectoptions.culture")}</h3>
         <Checkbox
           checked={useCulturePackage}
           onClick={handleSwitchIsCulturalPackageEnabled}
           >
-          {translateP (l10n)
+          {translateP (staticData)
                       ("general.withapvalue")
                       (List<string | number> (
-                        translate (l10n) ("rcpselectoptions.buyculturalpackage"),
+                        translate (staticData) ("rcpselectoptions.buyculturalpackage"),
                         Culture.A.culturalPackageAdventurePoints (culture)
                       ))}
         </Checkbox>
-        {getMotherTongueSelectionElement (l10n)
-                                         (wiki)
+        {getMotherTongueSelectionElement (staticData)
                                          (culture)
                                          (isMotherTongueSelectionNeeded)
                                          (motherTongue)
                                          (isAnyLanguageOrScriptSelected)
                                          (setMotherTongue)}
         {maybeToNullable (buyScriptElement)}
-        {getMainScriptSelectionElement (l10n)
-                                       (wiki)
+        {getMainScriptSelectionElement (staticData)
                                        (culture)
                                        (isScriptSelectionNeeded)
                                        (mainScript)
@@ -516,19 +487,18 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
           Profession.A.id,
           notEquals<string> (ProfessionId.CustomProfession)
         )
-          ? <h3>{translate (l10n) ("rcpselectoptions.profession")}</h3>
+          ? <h3>{translate (staticData) ("rcpselectoptions.profession")}</h3>
           : null}
         {maybeToNullable (snd (skillSpecialization))}
         {maybeToNullable (snd (languagesAndScripts))}
         {maybeToNullable (snd (combatTechniques))}
-        {maybeToNullable (snd (combatTechniquesSecond))}
         {maybeToNullable (snd (curses))}
         {maybeToNullable (guildMageUnfamiliarSpell)}
         {maybeToNullable (snd (cantrips))}
         {maybeToNullable (snd (skills))}
         {maybeToNullable (snd (terrainKnowledge))}
         <BorderButton
-          label={translate (l10n) ("rcpselectoptions.completebtn")}
+          label={translate (staticData) ("rcpselectoptions.completebtn")}
           primary
           disabled={isConfirmingSelectionsDisabled}
           onClick={handleConfirmSelections}

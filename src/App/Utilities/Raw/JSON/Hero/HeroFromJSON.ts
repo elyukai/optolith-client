@@ -25,10 +25,10 @@ import { PersonalData } from "../../../../Models/Hero/PersonalData"
 import { Pet } from "../../../../Models/Hero/Pet"
 import { Purse } from "../../../../Models/Hero/Purse"
 import { Rules } from "../../../../Models/Hero/Rules"
-import { L10n, L10nRecord } from "../../../../Models/Wiki/L10n"
+import { L10n } from "../../../../Models/Wiki/L10n"
 import { Spell } from "../../../../Models/Wiki/Spell"
 import { PrimaryAttributeDamageThreshold } from "../../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
-import { WikiModel, WikiModelRecord } from "../../../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../../../Models/Wiki/WikiModel"
 import { Activatable } from "../../../../Models/Wiki/wikiTypeHelpers"
 import { getCombinedPrerequisites } from "../../../Activatable/activatableActivationUtils"
 import { getActiveFromState } from "../../../Activatable/activatableConvertUtils"
@@ -36,7 +36,7 @@ import { addOtherSpecialAbilityDependenciesOnHeroInit } from "../../../Activatab
 import { addDependencies } from "../../../Dependencies/dependencyUtils"
 import { getCategoryById } from "../../../IDUtils"
 import { pipe, pipe_ } from "../../../pipe"
-import * as Raw from "../../XLSX/RawData"
+import * as Raw from "../../RawData"
 
 interface ActivatableMaps {
   advantages: OrderedMap<string, Record<ActivatableDependent>>
@@ -105,11 +105,12 @@ const getActivatableDependentSkills =
       )
     )
 
-const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRecord =>
+const createHeroObject = (staticData: StaticDataRecord) => (hero: Raw.RawHero): HeroModelRecord =>
   HeroModel ({
     id: hero .id,
     clientVersion: hero .clientVersion,
-    locale: fromMaybe (L10n.A.id (l10n)) (Maybe (hero .locale)),
+    locale: fromMaybe (L10n.A.id (StaticData.A.ui (staticData)))
+                      (Maybe (hero .locale)),
     phase: hero .phase,
     name: hero .name,
     avatar: Maybe (hero .avatar),
@@ -368,10 +369,9 @@ const addDependenciesForSlice =
   }
 
 export const convertFromRawHero =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (hero: Raw.RawHero): HeroModelRecord => {
-    const intermediateState = createHeroObject (l10n) (hero)
+    const intermediateState = createHeroObject (staticData) (hero)
 
     const activeAdvantages = getActiveFromState (advantages (intermediateState))
     const activeDisadvantages = getActiveFromState (disadvantages (intermediateState))
@@ -390,23 +390,23 @@ export const convertFromRawHero =
 
       join ((s: HeroModelRecord) => addDependenciesForSlice (cnst (cnst (ident)))
                                                             (HeroModel.A.advantages (s))
-                                                            (WikiModel.A.advantages (wiki))
+                                                            (StaticData.A.advantages (staticData))
                                                             (activeAdvantages)),
 
       join (s => addDependenciesForSlice (cnst (cnst (ident)))
                                          (HeroModel.A.disadvantages (s))
-                                         (WikiModel.A.disadvantages (wiki))
+                                         (StaticData.A.disadvantages (staticData))
                                          (activeDisadvantages)),
 
       join (s => addDependenciesForSlice (addOtherSpecialAbilityDependenciesOnHeroInit)
                                          (HeroModel.A.specialAbilities (s))
-                                         (WikiModel.A.specialAbilities (wiki))
+                                         (StaticData.A.specialAbilities (staticData))
                                          (activeSpecialAbilities)),
 
       flip (OrderedSet.foldr ((id: string) =>
                                maybe (ident as ident<HeroModelRecord>)
                                      (pipe (Spell.A.prerequisites, addDependencies (id)))
-                                     (lookup (id) (WikiModel.A.spells (wiki)))))
+                                     (lookup (id) (StaticData.A.spells (staticData)))))
            (activeSpells)
     )
   }

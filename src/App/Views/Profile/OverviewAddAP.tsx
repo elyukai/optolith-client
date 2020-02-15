@@ -1,6 +1,6 @@
 import * as React from "react"
 import { fromJust, isJust } from "../../../Data/Maybe"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { toInt } from "../../Utilities/NumberUtils"
 import { isInteger, isNaturalNumber } from "../../Utilities/RegexUtils"
@@ -8,7 +8,7 @@ import { Dialog } from "../Universal/Dialog"
 import { TextField } from "../Universal/TextField"
 
 interface OverviewAddAPProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   isOpen: boolean
   isRemovingEnabled: boolean
   addAdventurePoints (ap: number): void
@@ -16,7 +16,7 @@ interface OverviewAddAPProps {
 }
 
 export const OverviewAddAP: React.FC<OverviewAddAPProps> = props => {
-  const { addAdventurePoints, isRemovingEnabled, l10n, isOpen, close } = props
+  const { addAdventurePoints, isRemovingEnabled, staticData, isOpen, close } = props
 
   const [ value, setValue ] = React.useState ("")
   const [ prevIsOpen, setPrevIsOpen ] = React.useState (false)
@@ -41,24 +41,24 @@ export const OverviewAddAP: React.FC<OverviewAddAPProps> = props => {
   return (
     <Dialog
       id="overview-add-ap"
-      title={translate (l10n) ("profile.dialogs.addadventurepoints.title")}
+      title={translate (staticData) ("profile.dialogs.addadventurepoints.title")}
       buttons={[
         {
           disabled: isRemovingEnabled
             ? !isInteger (value)
             : (!isNaturalNumber (value) || value === "0"),
-          label: translate (l10n) ("general.dialogs.addbtn"),
+          label: translate (staticData) ("general.dialogs.addbtn"),
           onClick: addAP,
         },
         {
-          label: translate (l10n) ("general.dialogs.cancelbtn"),
+          label: translate (staticData) ("general.dialogs.cancelbtn"),
         },
       ]}
       close={close}
       isOpen={isOpen}
       >
       <TextField
-        hint={translate (l10n) ("profile.dialogs.addadventurepoints.label")}
+        hint={translate (staticData) ("profile.dialogs.addadventurepoints.label")}
         value={value}
         onChange={setValue}
         fullWidth

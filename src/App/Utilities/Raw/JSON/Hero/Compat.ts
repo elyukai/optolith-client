@@ -5,17 +5,17 @@ import { all } from "../../../../../Data/List"
 import { bindF, ensure, fromMaybe, Maybe, maybe_ } from "../../../../../Data/Maybe"
 import { lookupF } from "../../../../../Data/OrderedMap"
 import { Culture } from "../../../../Models/Wiki/Culture"
-import { L10n, L10nRecord } from "../../../../Models/Wiki/L10n"
+import { L10n } from "../../../../Models/Wiki/L10n"
 import { IncreaseSkill } from "../../../../Models/Wiki/sub/IncreaseSkill"
-import { WikiModel, WikiModelRecord } from "../../../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../../../Models/Wiki/WikiModel"
 import { current_version } from "../../../../Selectors/envSelectors"
 import { getBlessedTradStrIdFromNumId, getMagicalTraditionInstanceIdByNumericId } from "../../../IDUtils"
 import { hasOwnProperty } from "../../../Object"
 import { pipe, pipe_ } from "../../../pipe"
 import { isNumber } from "../../../typeCheckUtils"
-import { RawCustomItem, RawHero } from "../../XLSX/RawData"
+import { RawCustomItem, RawHero } from "../../RawData"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 
 export const MIN_SUPPORTED_VERSION = "0.49.5"
 export const MAX_SUPPORTED_VERSION = current_version
@@ -42,8 +42,7 @@ const convertLT =
       : hero
 
 export const convertHero =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord): (orig_hero: RawHero) => Maybe<RawHero> =>
+  (staticData: StaticDataRecord): (orig_hero: RawHero) => Maybe<RawHero> =>
     pipe (
       shallowClone,
       ensure ((hero: RawHero) => gte (hero .clientVersion, MIN_SUPPORTED_VERSION)
@@ -324,7 +323,7 @@ export const convertHero =
         convertLT ("1.1.0-alpha.9")
                   (hero => ({
                     ...hero,
-                    locale: L10n.A.id (l10n),
+                    locale: L10n.A.id (SDA.ui (staticData)),
                     belongings: {
                       ...hero.belongings,
                       items: pipe_ (
@@ -410,7 +409,7 @@ export const convertHero =
                     // if the actual SRs from the character are at least as high
                     // as the bonus from the package is
                     Maybe (hero .c),
-                    bindF (lookupF (WA.cultures (wiki))),
+                    bindF (lookupF (SDA.cultures (staticData))),
                     maybe_ (() => ({
                              ...hero,
                              isCulturalPackageActive: false,

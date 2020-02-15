@@ -9,8 +9,8 @@ import { DropdownOption } from "../../Models/View/DropdownOption"
 import { RadioOption } from "../../Models/View/RadioOption"
 import { Book } from "../../Models/Wiki/Book"
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
-import { L10nRecord } from "../../Models/Wiki/L10n"
-import { translate } from "../../Utilities/I18n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate, translateP } from "../../Utilities/I18n"
 import { pipe_ } from "../../Utilities/pipe"
 import { BookSelection } from "../Rules/BookSelection"
 import { Dialog } from "../Universal/Dialog"
@@ -24,7 +24,7 @@ const ELA = ExperienceLevel.A
 
 export interface HeroCreationProps {
   isOpen: boolean
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   experienceLevels: OrderedMap<string, Record<ExperienceLevel>>
   sortedBooks: List<Record<Book>>
   close (): void
@@ -49,7 +49,7 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
   const {
     createHero,
     experienceLevels: experienceLevelsMap,
-    l10n,
+    staticData,
     sortedBooks,
     isOpen,
     close,
@@ -120,21 +120,23 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
       elems,
       map (e => DropdownOption ({
                   id: Just (ELA.id (e)),
-                  name: `${ELA.name (e)} (${ELA.ap (e)} ${translate (l10n) ("heroes.dialogs.herocreation.experiencelevel.adventurepoints")})`,
+                  name: translateP (staticData)
+                                   ("general.withapvalue")
+                                   (List<string | number> (ELA.name (e), ELA.ap (e))),
                 }))
     )
 
   return (
     <Dialog
       id="herocreation"
-      title={translate (l10n) ("heroes.dialogs.herocreation.title")}
+      title={translate (staticData) ("heroes.dialogs.herocreation.title")}
       close={handleClose}
       buttons={[
         {
           disabled: name === ""
                     || isNothing (msex)
                     || isNothing (mel),
-          label: translate (l10n) ("heroes.dialogs.herocreation.startbtn"),
+          label: translate (staticData) ("heroes.dialogs.herocreation.startbtn"),
           onClick: handleSubmit,
           primary: true,
         },
@@ -142,7 +144,7 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
       isOpen={isOpen}
       >
       <TextField
-        hint={translate (l10n) ("heroes.dialogs.herocreation.nameofhero")}
+        hint={translate (staticData) ("heroes.dialogs.herocreation.nameofhero")}
         value={name}
         onChange={setName}
         fullWidth
@@ -154,11 +156,11 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
         options={List (
           RadioOption<Sex> ({
             value: Just<Sex> ("m"),
-            name: translate (l10n) ("heroes.dialogs.herocreation.sex.male"),
+            name: translate (staticData) ("heroes.dialogs.herocreation.sex.male"),
           }),
           RadioOption<Sex> ({
             value: Just<Sex> ("f"),
-            name: translate (l10n) ("heroes.dialogs.herocreation.sex.female"),
+            name: translate (staticData) ("heroes.dialogs.herocreation.sex.female"),
           })
         )}
         />
@@ -166,7 +168,7 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
         value={mel}
         onChange={setEL}
         options={experienceLevels}
-        hint={translate (l10n) ("heroes.dialogs.herocreation.experiencelevel.placeholder")}
+        hint={translate (staticData) ("heroes.dialogs.herocreation.experiencelevel.placeholder")}
         fullWidth
         />
       <Hr />
@@ -174,7 +176,7 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
         <BookSelection
           allRuleBooksEnabled={enableAllRuleBooks}
           enabledRuleBooks={enabledRuleBooks}
-          l10n={l10n}
+          staticData={staticData}
           sortedBooks={sortedBooks}
           switchEnableAllRuleBooks={handleSwitchEnableAllRuleBooks}
           switchEnableRuleBook={handleSwitchEnableRuleBook}

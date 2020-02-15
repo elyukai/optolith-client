@@ -6,7 +6,7 @@ import { BlessedTradition } from "../../Constants/Groups"
 import { AttributeCombined } from "../../Models/View/AttributeCombined"
 import { BlessingCombined } from "../../Models/View/BlessingCombined"
 import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../Models/View/LiturgicalChantWithRequirements"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { getAspectsStr, getLCAddText, LCBCA } from "../../Utilities/Increasable/liturgicalChantUtils"
 import { ChantsSortOptions } from "../../Utilities/Raw/JSON/Config"
@@ -16,7 +16,7 @@ const LCWRA = LiturgicalChantWithRequirements.A
 const LCWRA_ = LiturgicalChantWithRequirementsA_
 
 export interface LiturgicalChantsListItemActiveProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   attributes: List<Record<AttributeCombined>>
   currentInfoId: Maybe<string>
   entry: Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>
@@ -35,7 +35,7 @@ type FC = React.FC<LiturgicalChantsListItemActiveProps>
 
 export const LiturgicalChantsListItemActive: FC = props => {
   const {
-    l10n,
+    staticData,
     attributes,
     entry,
     currentInfoId,
@@ -50,7 +50,7 @@ export const LiturgicalChantsListItemActive: FC = props => {
     selectForInfo,
   } = props
 
-  const aspects = getAspectsStr (l10n) (entry) (mtradition_id)
+  const aspects = getAspectsStr (staticData) (entry) (mtradition_id)
 
   if (BlessingCombined.is (entry)) {
     return (
@@ -64,11 +64,11 @@ export const LiturgicalChantsListItemActive: FC = props => {
         noIncrease
         insertTopMargin={insertTopMargin}
         attributes={attributes}
-        l10n={l10n}
+        staticData={staticData}
         selectForInfo={selectForInfo}
         addText={
           sortOrder === "group"
-            ? `${aspects} / ${translate (l10n) ("liturgicalchants.groups.blessing")}`
+            ? `${aspects} / ${translate (staticData) ("liturgicalchants.groups.blessing")}`
             : aspects
         }
         selectedForInfo={currentInfoId}
@@ -76,7 +76,7 @@ export const LiturgicalChantsListItemActive: FC = props => {
     )
   }
   else {
-    const add_text = getLCAddText (l10n) (sortOrder) (aspects) (entry)
+    const add_text = getLCAddText (staticData) (sortOrder) (aspects) (entry)
 
     return (
       <SkillListItem
@@ -94,7 +94,7 @@ export const LiturgicalChantsListItemActive: FC = props => {
         sr={LCWRA_.value (entry)}
         insertTopMargin={insertTopMargin}
         attributes={attributes}
-        l10n={l10n}
+        staticData={staticData}
         selectForInfo={selectForInfo}
         addText={add_text}
         selectedForInfo={currentInfoId}

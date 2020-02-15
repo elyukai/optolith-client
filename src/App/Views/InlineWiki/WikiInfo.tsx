@@ -1,13 +1,11 @@
 import * as React from "react"
 import { Maybe, orN } from "../../../Data/Maybe"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { Aside } from "../Universal/Aside"
 import { ErrorMessage } from "../Universal/ErrorMessage"
 import { WikiInfoContent, WikiInfoContentStateProps } from "./WikiInfoContent"
 
 export interface WikiInfoOwnProps {
   currentId: Maybe<string>
-  l10n: L10nRecord
   noWrapper?: boolean
 }
 
@@ -46,7 +44,6 @@ export class WikiInfo extends React.Component<WikiInfoProps, WikiInfoState> {
   render () {
     const {
       currentId,
-      l10n,
       noWrapper,
       combinedRaces,
       combinedCultures,
@@ -57,7 +54,7 @@ export class WikiInfo extends React.Component<WikiInfoProps, WikiInfoState> {
       scripts,
       sex,
       spellExtensions,
-      wiki,
+      staticData,
     } = this.props
 
     const { hasError } = this.state
@@ -76,7 +73,6 @@ export class WikiInfo extends React.Component<WikiInfoProps, WikiInfoState> {
     return (
       <WikiInfoContent
         currentId={currentId}
-        l10n={l10n}
         noWrapper={noWrapper}
         combinedRaces={combinedRaces}
         combinedCultures={combinedCultures}
@@ -87,7 +83,7 @@ export class WikiInfo extends React.Component<WikiInfoProps, WikiInfoState> {
         scripts={scripts}
         sex={sex}
         spellExtensions={spellExtensions}
-        wiki={wiki}
+        staticData={staticData}
         />
     )
   }

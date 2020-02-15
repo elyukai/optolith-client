@@ -28,7 +28,7 @@ export interface HeroModel {
   "@@name": "Hero"
   id: string
   clientVersion: string
-  locale: Locale
+  locale: string
   player: Maybe<string>
   dateCreated: Date
   dateModified: Date

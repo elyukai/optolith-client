@@ -1,23 +1,23 @@
 import * as React from "react"
 import { orN } from "../../../Data/Maybe"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   strongly?: boolean
   unfamiliarSpells?: boolean
 }
 
 export const RecommendedReference: React.FC<Props> = props => {
-  const { l10n, strongly, unfamiliarSpells } = props
+  const { staticData, strongly, unfamiliarSpells } = props
 
   if (orN (unfamiliarSpells)) {
     return (
       <div className="recommended-ref">
         <div className="unrec">
           <div className="icon" />
-          <div className="name">{translate (l10n) ("showfrequency.unfamiliarspells")}</div>
+          <div className="name">{translate (staticData) ("showfrequency.unfamiliarspells")}</div>
         </div>
       </div>
     )
@@ -29,17 +29,19 @@ export const RecommendedReference: React.FC<Props> = props => {
         ? (
           <div className="strongly-recommended">
             <div className="icon" />
-            <div className="name">{translate (l10n) ("showfrequency.stronglyrecommended")}</div>
+            <div className="name">
+              {translate (staticData) ("showfrequency.stronglyrecommended")}
+            </div>
           </div>
         )
         : null}
       <div className="rec">
         <div className="icon" />
-        <div className="name">{translate (l10n) ("showfrequency.common")}</div>
+        <div className="name">{translate (staticData) ("showfrequency.common")}</div>
       </div>
       <div className="unrec">
         <div className="icon" />
-        <div className="name">{translate (l10n) ("showfrequency.uncommon")}</div>
+        <div className="name">{translate (staticData) ("showfrequency.uncommon")}</div>
       </div>
     </div>
   )

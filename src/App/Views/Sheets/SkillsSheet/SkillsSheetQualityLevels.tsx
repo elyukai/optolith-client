@@ -1,29 +1,29 @@
 import * as React from "react"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { ndash } from "../../../Utilities/Chars"
 import { translate } from "../../../Utilities/I18n"
 import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
-export const SkillsSheetQualityLevels: React.FC<Props> = ({ l10n }) => (
+export const SkillsSheetQualityLevels: React.FC<Props> = ({ staticData }) => (
   <TextBox
     className="quality-levels"
-    label={translate (l10n) ("sheets.gamestatssheet.qualitylevels.title")}
+    label={translate (staticData) ("sheets.gamestatssheet.qualitylevels.title")}
     >
     <table>
       <thead>
         <tr>
           <th>
             <div>
-              {translate (l10n) ("sheets.gamestatssheet.qualitylevels.labels.skillpoints")}
+              {translate (staticData) ("sheets.gamestatssheet.qualitylevels.labels.skillpoints")}
             </div>
           </th>
           <th>
             <div>
-              {translate (l10n) ("sheets.gamestatssheet.qualitylevels.labels.qualitylevel")}
+              {translate (staticData) ("sheets.gamestatssheet.qualitylevels.labels.qualitylevel")}
             </div>
           </th>
         </tr>

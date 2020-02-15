@@ -10,7 +10,7 @@ import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { AttributeCombined } from "../../Models/View/AttributeCombined"
 import { BlessingCombined } from "../../Models/View/BlessingCombined"
 import { LiturgicalChantWithRequirements } from "../../Models/View/LiturgicalChantWithRequirements"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { LCBCA } from "../../Utilities/Increasable/liturgicalChantUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
@@ -52,7 +52,7 @@ const isTopMarginNeeded =
     )
 
 export interface LiturgicalChantsOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   hero: HeroModelRecord
 }
 
@@ -99,7 +99,7 @@ export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
     attributes,
     activeList,
     inactiveList,
-    l10n,
+    staticData,
     isRemovingEnabled,
     removeFromList,
     removeBlessingFromList,
@@ -151,7 +151,7 @@ export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
         >
         <Options>
           <SearchField
-            l10n={l10n}
+            staticData={staticData}
             value={inactiveFilterText}
             onChange={setInactiveFilterText}
             fullWidth
@@ -160,40 +160,40 @@ export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
             sortOrder={sortOrder}
             sort={setSortOrder}
             options={List (SortNames.Name, SortNames.Group, SortNames.IC)}
-            l10n={l10n}
+            staticData={staticData}
             />
           <Checkbox
             checked={enableActiveItemHints}
             onClick={switchActiveItemHints}
             >
-            {translate (l10n) ("general.filters.showactivatedentries")}
+            {translate (staticData) ("general.filters.showactivatedentries")}
           </Checkbox>
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (l10n) ("liturgicalchants.header.name")}
+              {translate (staticData) ("liturgicalchants.header.name")}
             </ListHeaderTag>
             <ListHeaderTag className="group">
-              {translate (l10n) ("liturgicalchants.header.traditions")}
+              {translate (staticData) ("liturgicalchants.header.traditions")}
               {sortOrder === SortNames.Group
-                ? ` / ${translate (l10n) ("liturgicalchants.header.group")}`
+                ? ` / ${translate (staticData) ("liturgicalchants.header.group")}`
                 : null}
             </ListHeaderTag>
             <ListHeaderTag className="check">
-              {translate (l10n) ("liturgicalchants.header.check")}
+              {translate (staticData) ("liturgicalchants.header.check")}
             </ListHeaderTag>
             <ListHeaderTag
               className="mod"
-              hint={translate (l10n) ("liturgicalchants.header.checkmodifier.tooltip")}
+              hint={translate (staticData) ("liturgicalchants.header.checkmodifier.tooltip")}
               >
-              {translate (l10n) ("liturgicalchants.header.checkmodifier")}
+              {translate (staticData) ("liturgicalchants.header.checkmodifier")}
             </ListHeaderTag>
             <ListHeaderTag
               className="ic"
-              hint={translate (l10n) ("liturgicalchants.header.improvementcost.tooltip")}
+              hint={translate (staticData) ("liturgicalchants.header.improvementcost.tooltip")}
               >
-              {translate (l10n) ("liturgicalchants.header.improvementcost")}
+              {translate (staticData) ("liturgicalchants.header.improvementcost")}
             </ListHeaderTag>
             {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
             <ListHeaderTag className="btn-placeholder" />
@@ -211,7 +211,7 @@ export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
                                 Just (curr),
                                 (
                                   <LiturgicalChantsListItemInactive
-                                    l10n={l10n}
+                                    staticData={staticData}
                                     addChantsDisabled={addChantsDisabled}
                                     attributes={attributes}
                                     currentInfoId={currentSlideinId}
@@ -232,17 +232,21 @@ export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
                   arr => <>{arr}</>
                 )),
                 fromMaybe (
-                  <ListPlaceholder l10n={l10n} type="inactiveLiturgicalChants" noResults />
+                  <ListPlaceholder
+                    staticData={staticData}
+                    type="inactiveLiturgicalChants"
+                    noResults
+                    />
                 )
               )}
             </ListView>
           </Scroll>
         </MainContent>
-        <WikiInfoContainer l10n={l10n} currentId={currentSlideinId} />
+        <WikiInfoContainer currentId={currentSlideinId} />
       </Slidein>
       <Options>
         <SearchField
-          l10n={l10n}
+          staticData={staticData}
           value={filterText}
           onChange={setFilterText}
           fullWidth
@@ -251,44 +255,44 @@ export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
           sortOrder={sortOrder}
           sort={setSortOrder}
           options={List (SortNames.Name, SortNames.Group, SortNames.IC)}
-          l10n={l10n}
+          staticData={staticData}
           />
         <BorderButton
-          label={translate (l10n) ("liturgicalchants.addbtn")}
+          label={translate (staticData) ("liturgicalchants.addbtn")}
           onClick={handleShowSlidein}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("liturgicalchants.header.name")}
+            {translate (staticData) ("liturgicalchants.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="group">
-            {translate (l10n) ("liturgicalchants.header.traditions")}
+            {translate (staticData) ("liturgicalchants.header.traditions")}
             {sortOrder === "group"
-              ? ` / ${translate (l10n) ("liturgicalchants.header.group")}`
+              ? ` / ${translate (staticData) ("liturgicalchants.header.group")}`
               : null}
           </ListHeaderTag>
           <ListHeaderTag
             className="value"
-            hint={translate (l10n) ("liturgicalchants.header.skillrating.tooltip")}
+            hint={translate (staticData) ("liturgicalchants.header.skillrating.tooltip")}
             >
-            {translate (l10n) ("liturgicalchants.header.skillrating")}
+            {translate (staticData) ("liturgicalchants.header.skillrating")}
           </ListHeaderTag>
           <ListHeaderTag className="check">
-            {translate (l10n) ("liturgicalchants.header.check")}
+            {translate (staticData) ("liturgicalchants.header.check")}
           </ListHeaderTag>
           <ListHeaderTag
             className="mod"
-            hint={translate (l10n) ("liturgicalchants.header.checkmodifier.tooltip")}
+            hint={translate (staticData) ("liturgicalchants.header.checkmodifier.tooltip")}
             >
-            {translate (l10n) ("liturgicalchants.header.checkmodifier")}
+            {translate (staticData) ("liturgicalchants.header.checkmodifier")}
           </ListHeaderTag>
           <ListHeaderTag
             className="ic"
-            hint={translate (l10n) ("liturgicalchants.header.improvementcost.tooltip")}
+            hint={translate (staticData) ("liturgicalchants.header.improvementcost.tooltip")}
             >
-            {translate (l10n) ("liturgicalchants.header.improvementcost")}
+            {translate (staticData) ("liturgicalchants.header.improvementcost")}
           </ListHeaderTag>
           {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />
@@ -307,7 +311,7 @@ export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
                               Just (curr),
                               (
                                 <LiturgicalChantsListItemActive
-                                  l10n={l10n}
+                                  staticData={staticData}
                                   attributes={attributes}
                                   currentInfoId={currentId}
                                   entry={curr}
@@ -331,7 +335,7 @@ export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
               )),
               fromMaybe (
                 <ListPlaceholder
-                  l10n={l10n}
+                  staticData={staticData}
                   type="liturgicalChants"
                   noResults={notNullStr (filterText)}
                   />
@@ -340,7 +344,7 @@ export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
           </ListView>
         </Scroll>
       </MainContent>
-      <WikiInfoContainer l10n={l10n} currentId={currentId} />
+      <WikiInfoContainer currentId={currentId} />
     </Page>
   )
 }

@@ -21,6 +21,7 @@ import { CultureRequirement } from "./prerequisites/CultureRequirement"
 import { RequireIncreasable } from "./prerequisites/IncreasableRequirement"
 import { PactRequirement } from "./prerequisites/PactRequirement"
 import { RequirePrimaryAttribute } from "./prerequisites/PrimaryAttributeRequirement"
+import { ProfessionRequireIncreasable } from "./prerequisites/ProfessionRequireIncreasable"
 import { RaceRequirement } from "./prerequisites/RaceRequirement"
 import { SexRequirement } from "./prerequisites/SexRequirement"
 import { SocialPrerequisite } from "./prerequisites/SocialPrerequisite"
@@ -258,7 +259,7 @@ export type ProfessionDependency =
 
 export type ProfessionPrerequisite =
   Record<ProfessionRequireActivatable> |
-  Record<RequireIncreasable>
+  Record<ProfessionRequireIncreasable>
 
 export type AbilityRequirement =
   Record<RequireActivatable> |

@@ -1,9 +1,9 @@
 import { cnst, ident, thrush } from "../../../Data/Function"
 import { fmap } from "../../../Data/Functor"
-import { all, any, consF, elemF, foldr, intercalate, List, minimum, notElem, notElemF, subscript } from "../../../Data/List"
+import { all, any, consF, elemF, foldr, intercalate, List, minimum, notElem, notElemF } from "../../../Data/List"
 import { and, bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, Just, mapMaybe, Maybe, maybe, Nothing, sum, thenF } from "../../../Data/Maybe"
-import { dec, gte, inc, min } from "../../../Data/Num"
-import { alter, empty, filter, findWithDefault, foldl, fromArray, lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { gte, inc, min } from "../../../Data/Num"
+import { alter, empty, filter, findWithDefault, foldl, fromArray, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Aspect, BlessedTradition } from "../../Constants/Groups"
 import { SpecialAbilityId } from "../../Constants/Ids"
@@ -11,18 +11,18 @@ import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDepe
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { NumIdName } from "../../Models/NumIdName"
 import { BlessingCombined } from "../../Models/View/BlessingCombined"
 import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../Models/View/LiturgicalChantWithRequirements"
+import { BlessedTradition as BlessedTraditionR } from "../../Models/Wiki/BlessedTradition"
 import { Blessing } from "../../Models/Wiki/Blessing"
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils"
 import { mapBlessedTradIdToNumId } from "../Activatable/traditionUtils"
 import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies"
-import { translate } from "../I18n"
 import { ifElse } from "../ifElse"
 import { pipe, pipe_ } from "../pipe"
 import { ChantsSortOptions } from "../Raw/JSON/Config"
@@ -30,7 +30,7 @@ import { sortStrings } from "../sortBy"
 import { isNumber } from "../typeCheckUtils"
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const LCA = LiturgicalChant.A
 const LCAL = LiturgicalChant.AL
 const SAA = SpecialAbility.A
@@ -126,7 +126,7 @@ export const countActiveLiturgicalChantsPerAspect =
  * Check if the dependencies allow the passed liturgical chant to be decreased.
  */
 const isLiturgicalChantDecreasableByDependencies =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (stateEntry: Record<ActivatableSkillDependent>) => {
     const flattenedDependencies =
@@ -169,7 +169,7 @@ const getLowestSumForMatchingAspectKnowledges =
  * respective aspect active.)
  */
 const isLiturgicalChantDecreasableByAspectKnowledges =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (liturgicalChantsStateEntries: OrderedMap<string, Record<ActivatableSkillDependent>>) =>
   (aspectKnowledge: Maybe<Record<ActivatableDependent>>) =>
   (wikiEntry: Record<LiturgicalChant>) =>
@@ -185,7 +185,7 @@ const isLiturgicalChantDecreasableByAspectKnowledges =
         fmap (
           pipe (
             getLowestSumForMatchingAspectKnowledges,
-            thrush (countActiveLiturgicalChantsPerAspect (WA.liturgicalChants (wiki))
+            thrush (countActiveLiturgicalChantsPerAspect (SDA.liturgicalChants (wiki))
                                                          (liturgicalChantsStateEntries)),
             thrush (wikiEntry),
             lowest => ASDA.value (stateEntry) !== 10 || lowest > 3
@@ -199,7 +199,7 @@ const isLiturgicalChantDecreasableByAspectKnowledges =
  * Checks if the passed liturgical chant's skill rating can be decreased.
  */
 export const isLiturgicalChantDecreasable =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (aspectKnowledge: Maybe<Record<ActivatableDependent>>) =>
   (wikiEntry: Record<LiturgicalChant>) =>
@@ -356,26 +356,30 @@ export const LCBCA = {
  * Returns the Aspects string for list display.
  */
 export const getAspectsStr =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (curr: LiturgicalChantBlessingCombined) =>
-  (mtradition_id: Maybe<BlessedTradition>) =>
+  (mtradition_id: Maybe<BlessedTradition>): string =>
     pipe_ (
       mtradition_id,
       fmap (pipe (
         tradition_id =>
           mapMaybe (pipe (
                      ensure (elemF (getAspectsOfTradition (tradition_id))),
-                     bindF (pipe (
-                       dec,
-                       subscript (translate (l10n) ("aspectlist"))
-                     ))
+                     bindF (lookupF (SDA.aspects (staticData))),
+                     fmap (NumIdName.A.name)
                    ))
                    (LCBCA.aspects (curr)),
         List.elem (14) (LCBCA.tradition (curr))
-          ? maybe (ident as ident<List<string>>) <string> (consF)
-                  (subscript (translate (l10n) ("blessedtraditions")) (13))
+          ? maybe (ident as ident<List<string>>)
+                  <string> (consF)
+                  (pipe_ (
+                    staticData,
+                    SDA.blessedTraditions,
+                    lookup<string> (SpecialAbilityId.TraditionCultOfTheNamelessOne),
+                    fmap (BlessedTraditionR.A.name)
+                  ))
           : ident,
-        sortStrings (l10n),
+        sortStrings (staticData),
         intercalate (", ")
       )),
       fromMaybe ("")
@@ -385,12 +389,14 @@ export const getAspectsStr =
  * Returns the final Group/Aspects string for list display.
  */
 export const getLCAddText =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (sortOrder: ChantsSortOptions) =>
   (aspects_str: string) =>
   (curr: Record<LiturgicalChantWithRequirements>) =>
     pipe_ (
       guard (sortOrder === "group"),
-      thenF (subscript (translate (l10n) ("liturgicalchantgroups")) (LCWRA_.gr (curr) - 1)),
-      maybe (aspects_str) (gr_str => `${aspects_str} / ${gr_str}`)
+      thenF (lookup (LCWRA_.gr (curr))
+                    (SDA.liturgicalChantGroups (staticData))),
+      maybe (aspects_str)
+            (pipe (NumIdName.A.name, gr_str => `${aspects_str} / ${gr_str}`))
     )

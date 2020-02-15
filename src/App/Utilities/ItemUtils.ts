@@ -1,26 +1,43 @@
 import { equals } from "../../Data/Eq"
 import { fmap } from "../../Data/Functor"
 import { set } from "../../Data/Lens"
-import { flength, fromArray, List, map, notNullStr } from "../../Data/List"
-import { bindF, ensure, fromJust, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, product } from "../../Data/Maybe"
+import { flength, fnull, head, intercalate, List, map, NonEmptyList, splitOn } from "../../Data/List"
+import { bindF, ensure, fromJust, Just, liftM2, mapM, mapMaybe, Maybe, maybe, Nothing, product } from "../../Data/Maybe"
 import { gt } from "../../Data/Num"
 import { Record } from "../../Data/Record"
 import { show } from "../../Data/Show"
 import { bimap, fst, isTuple, Pair, snd } from "../../Data/Tuple"
-import { IdPrefixes } from "../Constants/IdPrefixes"
 import { EditHitZoneArmor, EditHitZoneArmorSafe } from "../Models/Hero/EditHitZoneArmor"
 import { EditItem, EditItemL, EditItemSafe } from "../Models/Hero/EditItem"
 import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold"
 import { HitZoneArmor } from "../Models/Hero/HitZoneArmor"
 import { fromItemTemplate, Item } from "../Models/Hero/Item"
 import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
-import { prefixId } from "./IDUtils"
 import { ifElse } from "./ifElse"
 import { getLevelElementsWithZero } from "./levelUtils"
 import { toFloat, toInt } from "./NumberUtils"
-import { pipe } from "./pipe"
+import { pipe, pipe_ } from "./pipe"
+
+const IA = Item.A
+const EIA = EditItem.A
 
 const showMaybe = maybe ("") (show)
+
+const intOrIntsMToEditable = maybe ("")
+                                   ((x: number | List<number>) => typeof x === "object"
+                                                                  ? intercalate ("/") (x)
+                                                                  : show (x))
+
+const intOrIntsMFromEditable = pipe (
+                                 splitOn ("/"),
+                                 mapM (toInt),
+                                 bindF ((xs): Maybe<number | NonEmptyList<number>> =>
+                                         fnull (xs)
+                                         ? Nothing
+                                         : flength (xs) === 1
+                                         ? Just (head (xs))
+                                         : Just (xs))
+                               )
 
 const primaryAttributeDamageThresholdToEditable =
   maybe
@@ -29,54 +46,53 @@ const primaryAttributeDamageThresholdToEditable =
     }))
     ((damageBonus: Record<PrimaryAttributeDamageThreshold>) =>
       EditPrimaryAttributeDamageThreshold ({
-        primary: PrimaryAttributeDamageThreshold.AL.primary (damageBonus),
-        threshold: ifElse<number | Pair<number, number>, Pair<number, number>>
-          (isTuple)
-          <string | Pair<string, string>>
-          (bimap (show) (show))
-          (show)
-          (PrimaryAttributeDamageThreshold.AL.threshold (damageBonus)),
+        primary: PrimaryAttributeDamageThreshold.A.primary (damageBonus),
+        threshold: pipe_ (
+          damageBonus,
+          PrimaryAttributeDamageThreshold.A.threshold,
+          x => typeof x === "object" ? bimap (show) (show) (x) : show (x)
+        ),
       }))
 
 export const itemToEditable =
   (item: Record<Item>): Record<EditItem> =>
     EditItem ({
-      id: Just (Item.AL.id (item)),
-      name: Item.AL.name (item),
-      ammunition: Item.AL.ammunition (item),
-      combatTechnique: Item.AL.combatTechnique (item),
-      damageDiceSides: Item.AL.damageDiceSides (item),
-      gr: Item.AL.gr (item),
-      isParryingWeapon: Item.AL.isParryingWeapon (item),
-      isTemplateLocked: Item.AL.isTemplateLocked (item),
-      reach: Item.AL.reach (item),
-      template: Item.AL.template (item),
-      where: Item.AL.where (item),
-      isTwoHandedWeapon: Item.AL.isTwoHandedWeapon (item),
-      improvisedWeaponGroup: Item.AL.improvisedWeaponGroup (item),
-      loss: Item.AL.loss (item),
-      forArmorZoneOnly: Item.AL.forArmorZoneOnly (item),
-      addPenalties: Item.AL.addPenalties (item),
-      armorType: Item.AL.armorType (item),
-      at: showMaybe (Item.AL.at (item)),
-      iniMod: showMaybe (Item.AL.iniMod (item)),
-      movMod: showMaybe (Item.AL.movMod (item)),
-      damageBonus: primaryAttributeDamageThresholdToEditable (Item.AL.damageBonus (item)),
-      damageDiceNumber: showMaybe (Item.AL.damageDiceNumber (item)),
-      damageFlat: showMaybe (Item.AL.damageFlat (item)),
-      enc: showMaybe (Item.AL.enc (item)),
-      length: showMaybe (Item.AL.length (item)),
-      amount: show (Item.AL.amount (item)),
-      pa: showMaybe (Item.AL.pa (item)),
-      price: showMaybe (Item.AL.price (item)),
-      pro: showMaybe (Item.AL.pro (item)),
+      id: Just (IA.id (item)),
+      name: IA.name (item),
+      ammunition: IA.ammunition (item),
+      combatTechnique: IA.combatTechnique (item),
+      damageDiceSides: IA.damageDiceSides (item),
+      gr: IA.gr (item),
+      isParryingWeapon: IA.isParryingWeapon (item),
+      isTemplateLocked: IA.isTemplateLocked (item),
+      reach: IA.reach (item),
+      template: IA.template (item),
+      where: IA.where (item),
+      isTwoHandedWeapon: IA.isTwoHandedWeapon (item),
+      improvisedWeaponGroup: IA.improvisedWeaponGroup (item),
+      loss: IA.loss (item),
+      forArmorZoneOnly: IA.forArmorZoneOnly (item),
+      addPenalties: IA.addPenalties (item),
+      armorType: IA.armorType (item),
+      at: showMaybe (IA.at (item)),
+      iniMod: showMaybe (IA.iniMod (item)),
+      movMod: showMaybe (IA.movMod (item)),
+      damageBonus: primaryAttributeDamageThresholdToEditable (IA.damageBonus (item)),
+      damageDiceNumber: showMaybe (IA.damageDiceNumber (item)),
+      damageFlat: showMaybe (IA.damageFlat (item)),
+      enc: showMaybe (IA.enc (item)),
+      length: showMaybe (IA.length (item)),
+      amount: show (IA.amount (item)),
+      pa: showMaybe (IA.pa (item)),
+      price: showMaybe (IA.price (item)),
+      pro: showMaybe (IA.pro (item)),
       range: maybe (List ("", "", ""))
                    (map<number, string> (show))
-                   (Item.AL.range (item)),
-      reloadTime: showMaybe (Item.AL.reloadTime (item)),
-      stp: showMaybe (Item.AL.stp (item)),
-      weight: showMaybe (Item.AL.weight (item)),
-      stabilityMod: showMaybe (Item.AL.stabilityMod (item)),
+                   (IA.range (item)),
+      reloadTime: pipe_ (item, IA.reloadTime, intOrIntsMToEditable),
+      stp: pipe_ (item, IA.stp, intOrIntsMToEditable),
+      weight: showMaybe (IA.weight (item)),
+      stabilityMod: showMaybe (IA.stabilityMod (item)),
     })
 
 const toMaybeIntGreaterThan =
@@ -113,47 +129,46 @@ const editableToPrimaryAttributeDamageThreshold =
 export const editableToItem =
   (item: Record<EditItemSafe>): Record<Item> =>
     Item ({
-      id: fromJust (EditItem.AL.id (item) as Just<string>),
-      name: EditItem.AL.name (item),
-      ammunition: EditItem.AL.ammunition (item),
-      combatTechnique: EditItem.AL.combatTechnique (item),
-      damageDiceSides: EditItem.AL.damageDiceSides (item),
-      gr: EditItem.AL.gr (item),
-      isParryingWeapon: EditItem.AL.isParryingWeapon (item),
-      isTemplateLocked: EditItem.AL.isTemplateLocked (item),
-      reach: EditItem.AL.reach (item),
-      template: EditItem.AL.template (item),
-      where: EditItem.AL.where (item),
-      isTwoHandedWeapon: EditItem.AL.isTwoHandedWeapon (item),
-      improvisedWeaponGroup: EditItem.AL.improvisedWeaponGroup (item),
-      loss: EditItem.AL.loss (item),
-      forArmorZoneOnly: EditItem.AL.forArmorZoneOnly (item),
-      addPenalties: EditItem.AL.addPenalties (item),
-      armorType: EditItem.AL.armorType (item),
-      at: toInt (EditItem.AL.at (item)),
-      iniMod: toMaybeIntGreaterThan0 (EditItem.AL.iniMod (item)),
-      movMod: toMaybeIntGreaterThan0 (EditItem.AL.movMod (item)),
-      damageBonus: editableToPrimaryAttributeDamageThreshold (EditItem.AL.damageBonus (item)),
-      damageDiceNumber: toInt (EditItem.AL.damageDiceNumber (item)),
-      damageFlat: toInt (EditItem.AL.damageFlat (item)),
-      enc: toInt (EditItem.AL.enc (item)),
-      length: toFloat (EditItem.AL.length (item)),
-      amount: product (toMaybeIntGreaterThan1 (EditItem.AL.amount (item))),
-      pa: toInt (EditItem.AL.pa (item)),
-      price: toFloat (EditItem.AL.price (item)),
-      pro: toInt (EditItem.AL.pro (item)),
+      id: fromJust (EIA.id (item) as Just<string>),
+      name: EIA.name (item),
+      ammunition: EIA.ammunition (item),
+      combatTechnique: EIA.combatTechnique (item),
+      damageDiceSides: EIA.damageDiceSides (item),
+      gr: EIA.gr (item),
+      isParryingWeapon: EIA.isParryingWeapon (item),
+      isTemplateLocked: EIA.isTemplateLocked (item),
+      reach: EIA.reach (item),
+      template: EIA.template (item),
+      where: EIA.where (item),
+      isTwoHandedWeapon: EIA.isTwoHandedWeapon (item),
+      improvisedWeaponGroup: EIA.improvisedWeaponGroup (item),
+      loss: EIA.loss (item),
+      forArmorZoneOnly: EIA.forArmorZoneOnly (item),
+      addPenalties: EIA.addPenalties (item),
+      armorType: EIA.armorType (item),
+      at: toInt (EIA.at (item)),
+      iniMod: toMaybeIntGreaterThan0 (EIA.iniMod (item)),
+      movMod: toMaybeIntGreaterThan0 (EIA.movMod (item)),
+      damageBonus: editableToPrimaryAttributeDamageThreshold (EIA.damageBonus (item)),
+      damageDiceNumber: toInt (EIA.damageDiceNumber (item)),
+      damageFlat: toInt (EIA.damageFlat (item)),
+      enc: toInt (EIA.enc (item)),
+      length: toFloat (EIA.length (item)),
+      amount: product (toMaybeIntGreaterThan1 (EIA.amount (item))),
+      pa: toInt (EIA.pa (item)),
+      price: toFloat (EIA.price (item)),
+      pro: toInt (EIA.pro (item)),
       range: ensure<List<number>> (pipe (flength, equals (3)))
-                                  (mapMaybe (toInt) (EditItem.AL.range (item))),
-      reloadTime: ensure (notNullStr) (EditItem.AL.reloadTime (item)),
-      stp: ensure (notNullStr) (EditItem.AL.stp (item)),
-      weight: toFloat (EditItem.AL.weight (item)),
-      stabilityMod: toInt (EditItem.AL.stabilityMod (item)),
+                                  (mapMaybe (toInt) (EIA.range (item))),
+      reloadTime: pipe_ (item, EIA.reloadTime, intOrIntsMFromEditable),
+      stp: pipe_ (item, EIA.stp, intOrIntsMFromEditable),
+      weight: toFloat (EIA.weight (item)),
+      stabilityMod: toInt (EIA.stabilityMod (item)),
     })
 
 export const convertPrimaryAttributeToArray =
-  (id: string): List<string> =>
-    fromArray (id .split (/_/u) .slice (1)
-.map (prefixId (IdPrefixes.ATTRIBUTES)))
+  (id: string | Pair<string, string>): List<string> =>
+    typeof id === "object" ? List (fst (id), snd (id)) : List (id)
 
 export const getLossLevelElements = () => getLevelElementsWithZero (4)
 

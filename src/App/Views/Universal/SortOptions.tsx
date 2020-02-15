@@ -2,7 +2,7 @@ import * as React from "react"
 import { List, map } from "../../../Data/List"
 import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe"
 import { RadioOption } from "../../Models/View/RadioOption"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { sortRecordsByName } from "../../Utilities/sortBy"
 import { RadioButtonGroup } from "./RadioButtonGroup"
@@ -20,25 +20,25 @@ export enum SortNames {
 }
 
 interface Props<A extends SortNames> {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   options: List<A>
   sortOrder: A
   sort (option: A): void
 }
 
 export const SortOptions = <A extends SortNames> (props: Props<A>): React.ReactElement => {
-  const { l10n, options, sort, sortOrder } = props
+  const { staticData, options, sort, sortOrder } = props
 
   const SORT_NAMES = {
-    [SortNames.Name]: translate (l10n) ("general.filters.sort.alphabetically"),
-    [SortNames.DateModified]: translate (l10n) ("general.filters.sort.bydatemodified"),
-    [SortNames.Group]: translate (l10n) ("general.filters.sort.bygroup"),
-    [SortNames.GroupName]: translate (l10n) ("general.filters.sort.bygroup"),
-    [SortNames.Where]: translate (l10n) ("general.filters.sort.bylocation"),
-    [SortNames.Cost]: translate (l10n) ("general.filters.sort.bycost"),
-    [SortNames.IC]: translate (l10n) ("general.filters.sort.byimprovementcost"),
-    [SortNames.Property]: translate (l10n) ("general.filters.sort.byproperty"),
-    [SortNames.Weight]: translate (l10n) ("general.filters.sort.byweight"),
+    [SortNames.Name]: translate (staticData) ("general.filters.sort.alphabetically"),
+    [SortNames.DateModified]: translate (staticData) ("general.filters.sort.bydatemodified"),
+    [SortNames.Group]: translate (staticData) ("general.filters.sort.bygroup"),
+    [SortNames.GroupName]: translate (staticData) ("general.filters.sort.bygroup"),
+    [SortNames.Where]: translate (staticData) ("general.filters.sort.bylocation"),
+    [SortNames.Cost]: translate (staticData) ("general.filters.sort.bycost"),
+    [SortNames.IC]: translate (staticData) ("general.filters.sort.byimprovementcost"),
+    [SortNames.Property]: translate (staticData) ("general.filters.sort.byproperty"),
+    [SortNames.Weight]: translate (staticData) ("general.filters.sort.byweight"),
   }
 
   const handleClick =
@@ -56,7 +56,7 @@ export const SortOptions = <A extends SortNames> (props: Props<A>): React.ReactE
       active={sortOrder}
       onClick={handleClick}
       array={
-        sortRecordsByName (l10n)
+        sortRecordsByName (staticData)
                           (map ((e: A) => RadioOption ({ name: SORT_NAMES [e], value: Just (e) }))
                                (options))
       }

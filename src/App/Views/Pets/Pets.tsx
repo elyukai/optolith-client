@@ -7,7 +7,7 @@ import { Record } from "../../../Data/Record"
 import { EditPet } from "../../Models/Hero/EditPet"
 import { Pet } from "../../Models/Hero/Pet"
 import { Attribute } from "../../Models/Wiki/Attribute"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { ReactReturn } from "../../Utilities/ReactUtils"
@@ -20,7 +20,7 @@ import { PetEditor } from "./PetEditor"
 import { PetsListItem } from "./PetsListItem"
 
 export interface PetsOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 export interface PetsStateProps {
@@ -78,7 +78,7 @@ export type PetsProps = PetsStateProps & PetsDispatchProps & PetsOwnProps
 
 export function Pets (props: PetsProps) {
   const {
-    l10n,
+    staticData,
 
     attributes,
     pets,
@@ -133,7 +133,7 @@ export function Pets (props: PetsProps) {
       <PetEditor
         attributes={attributes}
         petInEditor={petInEditor}
-        l10n={l10n}
+        staticData={staticData}
         isEditPetAvatarOpen={isEditPetAvatarOpen}
         isInCreation={isInCreation}
         closePetEditor={closePetEditor}
@@ -178,7 +178,7 @@ export function Pets (props: PetsProps) {
           ? (
             <Options>
               <BorderButton
-                label={translate (l10n) ("general.dialogs.addbtn")}
+                label={translate (staticData) ("general.dialogs.addbtn")}
                 onClick={createPet}
                 />
             </Options>

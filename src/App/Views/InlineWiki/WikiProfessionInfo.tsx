@@ -2,9 +2,9 @@ import * as React from "react"
 import { equals } from "../../../Data/Eq"
 import { flip, ident } from "../../../Data/Function"
 import { fmap, fmapF } from "../../../Data/Functor"
-import { append, cons, consF, deleteAt, find, findIndex, flength, foldr, imap, intercalate, intersperse, isList, List, ListI, map, NonEmptyList, notElem, notNull, reverse, snoc, sortBy, subscript, toArray, uncons, unconsSafe, unsafeIndex } from "../../../Data/List"
+import { append, cons, consF, deleteAt, find, findIndex, flength, foldr, imap, intercalate, intersperse, isList, List, ListI, map, NonEmptyList, notElem, notNull, reverse, snoc, sortBy, toArray, uncons, unconsSafe, unsafeIndex } from "../../../Data/List"
 import { alt_, any, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe"
-import { compare, dec, gt } from "../../../Data/Num"
+import { compare, dec, gt, inc } from "../../../Data/Num"
 import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
 import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet"
 import { fromDefault, Record } from "../../../Data/Record"
@@ -20,9 +20,8 @@ import { ProfessionVariantCombined, ProfessionVariantCombinedA_ } from "../../Mo
 import { Attribute } from "../../Models/Wiki/Attribute"
 import { Blessing } from "../../Models/Wiki/Blessing"
 import { Cantrip } from "../../Models/Wiki/Cantrip"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
-import { ProfessionRequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement"
+import { ProfessionRequireIncreasable } from "../../Models/Wiki/prerequisites/ProfessionRequireIncreasable"
 import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement"
 import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement"
 import { CantripsSelection } from "../../Models/Wiki/professionSelections/CantripsSelection"
@@ -39,11 +38,12 @@ import { SpecializationSelection } from "../../Models/Wiki/professionSelections/
 import { TerrainKnowledgeSelection } from "../../Models/Wiki/professionSelections/TerrainKnowledgeSelection"
 import { Race } from "../../Models/Wiki/Race"
 import { Skill } from "../../Models/Wiki/Skill"
+import { SkillGroup } from "../../Models/Wiki/SkillGroup"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { Spell } from "../../Models/Wiki/Spell"
 import { IncreaseSkill } from "../../Models/Wiki/sub/IncreaseSkill"
 import { IncreaseSkillList } from "../../Models/Wiki/sub/IncreaseSkillList"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers"
 import { getSelectOptionName } from "../../Utilities/Activatable/selectionUtils"
 import { ndash } from "../../Utilities/Chars"
@@ -52,7 +52,7 @@ import { getNumericId, prefixRace } from "../../Utilities/IDUtils"
 import { signNeg } from "../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils"
-import { renderMaybe } from "../../Utilities/ReactUtils"
+import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils"
 import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy"
 import { whilePred } from "../../Utilities/whilePred"
 import { Markdown } from "../Universal/Markdown"
@@ -60,7 +60,7 @@ import { WikiSource } from "./Elements/WikiSource"
 import { WikiBoxTemplate } from "./WikiBoxTemplate"
 import { WikiProperty } from "./WikiProperty"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const PCA = ProfessionCombined.A
 const PCA_ = ProfessionCombinedA_
 const PSA = ProfessionSelections.A
@@ -78,9 +78,10 @@ const PRIA = ProfessionRequireIncreasable.A
 const CTSA = CombatTechniquesSelection.A
 const CTSSA = CombatTechniquesSecondSelection.A
 const LCA = LiturgicalChant.A
+const SGA = SkillGroup.A
 
 const getSpecializationSelection =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (skills: OrderedMap<string, Record<Skill>>) =>
   (profession: Record<ProfessionCombined>): Maybe<string> =>
     pipe_ (
@@ -96,8 +97,8 @@ const getSpecializationSelection =
                   mapMaybe (pipe (lookupF (skills), fmap (Skill.A.name))),
                   ensure (notNull),
                   fmap (pipe (
-                    sortStrings (l10n),
-                    localizeOrList (l10n)
+                    sortStrings (staticData),
+                    localizeOrList (staticData)
                   ))
                 )
               }
@@ -105,20 +106,20 @@ const getSpecializationSelection =
                 return pipe_ (sid, lookupF (skills), fmap (Skill.A.name))
               }
             }),
-      fmap (pipe (List.pure, translateP (l10n) ("inlinewiki.skillspecialization")))
+      fmap (pipe (List.pure, translateP (staticData) ("inlinewiki.skillspecialization")))
     )
 
 interface CombatTechniquesProps {
   combatTechniquesSelectionString: Maybe<string>
   x: Record<ProfessionCombined>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 function CombatTechniques (props: CombatTechniquesProps): JSX.Element {
   const {
     combatTechniquesSelectionString: selectionString,
     x,
-    l10n,
+    staticData,
   } = props
 
   const cts =
@@ -126,14 +127,14 @@ function CombatTechniques (props: CombatTechniquesProps): JSX.Element {
       x,
       PCA.mappedCombatTechniques,
       map (e => `${IFVA.name (e)} ${IFVA.value (e) + 6}`),
-      sortStrings (l10n),
+      sortStrings (staticData),
       maybe<ident<List<string>>> (ident) <string> (consF) (selectionString),
       ensure (notNull),
       maybe (ndash) (intercalate (", "))
     )
 
   return (
-    <WikiProperty l10n={l10n} title="inlinewiki.combattechniques">
+    <WikiProperty staticData={staticData} title="inlinewiki.combattechniques">
       {cts}
     </WikiProperty>
   )
@@ -152,30 +153,30 @@ const SkillsSelectionJoined =
               })
 
 const getSkillSelection =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (profession: Record<ProfessionCombined>): Maybe<Record<SkillsSelectionJoined>> =>
     pipe_ (
       profession,
       PCA.mappedSelections,
       PSA[ProfessionSelectionIds.SKILLS],
       fmap (sel => {
-        const skill_gr = subscript (translate (l10n) ("skillgroups"))
-                                   (fromMaybe (0) (SkillsSelection.A.gr (sel)))
+        const skill_gr = lookup (fromMaybe (0) (SkillsSelection.A.gr (sel)))
+                                (SDA.skillGroups (staticData))
 
         return SkillsSelectionJoined ({
           properties: sel,
-          text: translateP (l10n)
+          text: translateP (staticData)
                            ("inlinewiki.skillsselection")
                            (List<string | number> (
                              SkillsSelection.A.value (sel),
-                             fromMaybe ("...") (skill_gr)
+                             maybe ("...") (SGA.fullName) (skill_gr)
                            )),
         })
       })
     )
 
 const getCombatTechniquesSelection =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (profession: Record<ProfessionCombined>): Maybe<string> => {
     const selections = PCA.mappedSelections (profession)
 
@@ -185,9 +186,9 @@ const getCombatTechniquesSelection =
     return fmapF (msel)
                  (sel => {
                    const fst_counter = CTSA.amount (sel) === 1
-                                       ? translate (l10n) ("inlinewiki.combattechnique.one")
+                                       ? translate (staticData) ("inlinewiki.combattechnique.one")
                                        : CTSA.amount (sel) === 2
-                                       ? translate (l10n) ("inlinewiki.combattechnique.two")
+                                       ? translate (staticData) ("inlinewiki.combattechnique.two")
                                        : "..."
 
                    const firstValue = CTSA.value (sel) + 6
@@ -196,49 +197,43 @@ const getCombatTechniquesSelection =
                      pipe_ (
                        sel,
                        CTSA.sid,
-                       sortStrings (l10n),
+                       sortStrings (staticData),
                        intercalate (", ")
                      )
 
-                   return maybe_ (() => {
-                                   const precedingText =
-                                     translateP (l10n)
-                                                ("inlinewiki.combattechniqueselection")
-                                                (List<string | number> (
-                                                  renderMaybe (fst_counter),
-                                                  firstValue
-                                                ))
-
-                                   return `${precedingText}${entryList}`
-                                 })
+                   return maybe_ (() => translateP (staticData)
+                                                   ("inlinewiki.combattechniqueselection")
+                                                   (List<string | number> (
+                                                     fst_counter,
+                                                     firstValue,
+                                                     entryList
+                                                   )))
                                  ((second_sel: Record<CombatTechniquesSecondSelection>) => {
                                    const snd_counter =
-                                     CTSA.amount (second_sel) === 1
-                                     ? translate (l10n) ("inlinewiki.combattechnique.one")
-                                     : CTSA.amount (second_sel) === 2
-                                     ? translate (l10n) ("inlinewiki.combattechnique.two")
+                                     CTSSA.amount (second_sel) === 1
+                                     ? translate (staticData) ("inlinewiki.combattechnique.one")
+                                     : CTSSA.amount (second_sel) === 2
+                                     ? translate (staticData) ("inlinewiki.combattechnique.two")
                                      : "..."
 
                                    const secondValue = CTSSA.value (second_sel) + 6
 
-                                   const precedingText =
-                                     translateP (l10n)
+                                   return translateP (staticData)
                                                 ("inlinewiki.combattechniquesecondselection")
                                                 (List<string | number> (
-                                                  renderMaybe (fst_counter),
+                                                  fst_counter,
                                                   firstValue,
-                                                  renderMaybe (snd_counter),
-                                                  secondValue
+                                                  snd_counter,
+                                                  secondValue,
+                                                  entryList
                                                 ))
-
-                                   return `${precedingText}${entryList}`
                                  })
                                  (msecond_sel)
                  })
   }
 
 const getTerrainKnowledgeSelection =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (specialAbilities: OrderedMap<string, Record<SpecialAbility>>) =>
   (profession: Record<ProfessionCombined>): Maybe<string> =>
     pipe_ (
@@ -249,14 +244,14 @@ const getTerrainKnowledgeSelection =
                pipe (
                  TerrainKnowledgeSelection.A.sid,
                  mapMaybe (pipe (Just, getSelectOptionName (terrain_knowledge))),
-                 localizeOrList (l10n),
+                 localizeOrList (staticData),
                  xs => `${SpecialAbility.A.name (terrain_knowledge)} (${xs})`
                ))
              (lookup<string> (SpecialAbilityId.TerrainKnowledge) (specialAbilities))
     )
 
 const getSpells =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (cantrips: OrderedMap<string, Record<Cantrip>>) =>
   (spells: OrderedMap<string, Record<Spell>>) =>
   (profession: Record<ProfessionCombined>): Maybe<string> => {
@@ -267,27 +262,27 @@ const getSpells =
         PSA[ProfessionSelectionIds.CANTRIPS],
         maybe ("")
               (cantrips_sel => {
-                const mcounter =
+                const counter =
                   CantripsSelection.A.amount (cantrips_sel) === 1
-                  ? Just (translate (l10n) ("inlinewiki.cantrip.one"))
+                  ? translate (staticData) ("inlinewiki.cantrip.one")
                   : CantripsSelection.A.amount (cantrips_sel) === 2
-                  ? Just (translate (l10n) ("inlinewiki.cantrip.two"))
-                  : Nothing
-
-                const precedingText =
-                  fmapF (mcounter)
-                        (pipe (List.pure, translateP (l10n) ("inlinewiki.cantripsfromlist")))
+                  ? translate (staticData) ("inlinewiki.cantrip.two")
+                  : "..."
 
                 const options =
                   pipe_ (
                     cantrips_sel,
                     CantripsSelection.A.sid,
                     mapMaybe (pipe (lookupF (cantrips), fmap (Cantrip.A.name))),
-                    sortStrings (l10n),
+                    sortStrings (staticData),
                     intercalate (", ")
                   )
 
-                return `${renderMaybe (precedingText)}${options}, `
+                const text = translateP (staticData)
+                                        ("inlinewiki.cantripsfromlist")
+                                        (List (counter, options))
+
+                return `${text}, `
               })
       )
 
@@ -304,7 +299,7 @@ const getSpells =
               ids,
               mapMaybe (pipe (lookupF (spells), fmap (Spell.A.name))),
               ensure (pipe (flength, gt (1))),
-              fmap (pipe (localizeOrList (l10n), names => `${names} ${value}`))
+              fmap (pipe (localizeOrList (staticData), names => `${names} ${value}`))
             )
           }
           else {
@@ -314,7 +309,7 @@ const getSpells =
             return fmapF (lookup (id) (spells)) (spell => `${Spell.A.name (spell)} ${value}`)
           }
         }),
-        sortStrings (l10n),
+        sortStrings (staticData),
         intercalate (", ")
       )
 
@@ -325,7 +320,7 @@ const getSpells =
   }
 
 const getLiturgicalChants =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (blessings: OrderedMap<string, Record<Blessing>>) =>
   (liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>) =>
   (profession: Record<ProfessionCombined>): Maybe<string> =>
@@ -341,7 +336,7 @@ const getLiturgicalChants =
             ids,
             mapMaybe (pipe (lookupF (liturgicalChants), fmap (LiturgicalChant.A.name))),
             ensure (pipe (flength, gt (1))),
-            fmap (pipe (localizeOrList (l10n), names => `${names} ${value}`))
+            fmap (pipe (localizeOrList (staticData), names => `${names} ${value}`))
           )
         }
         else {
@@ -356,7 +351,7 @@ const getLiturgicalChants =
         const incl_blessings = PCA_.blessings (profession)
 
         if (flength (incl_blessings) === 12) {
-          return cons (xs) (translate (l10n) ("inlinewiki.thetwelveblessings"))
+          return cons (xs) (translate (staticData) ("inlinewiki.thetwelveblessings"))
         }
         else if (flength (incl_blessings) === 9) {
           return pipe_ (
@@ -369,32 +364,32 @@ const getLiturgicalChants =
                               )),
                        fmap (Blessing.A.name)
                      )),
-            sortStrings (l10n),
-            translateP (l10n) ("inlinewiki.thetwelveblessingsexceptions"),
+            sortStrings (staticData),
+            translateP (staticData) ("inlinewiki.thetwelveblessingsexceptions"),
             str => cons (xs) (str)
           )
         }
         else if (flength (incl_blessings) === 6) {
-          return cons (xs) (translate (l10n) ("inlinewiki.sixblessings"))
+          return cons (xs) (translate (staticData) ("inlinewiki.sixblessings"))
         }
 
         return xs
       },
-      sortStrings (l10n),
+      sortStrings (staticData),
       ensure (notNull),
       fmap (intercalate (", "))
     )
 
 interface SkillsListProps {
   profession: Record<ProfessionCombined>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   skillsSelection: Maybe<Record<SkillsSelectionJoined>>
 }
 
 function SkillsList (props: SkillsListProps): JSX.Element {
   const {
     profession,
-    l10n,
+    staticData,
     skillsSelection,
   } = props
 
@@ -415,7 +410,7 @@ function SkillsList (props: SkillsListProps): JSX.Element {
                  key={i}
                  groupIndex={i}
                  list={xs}
-                 l10n={l10n}
+                 staticData={staticData}
                  skillsSelection={skillsSelection}
                  />
              )),
@@ -426,7 +421,7 @@ function SkillsList (props: SkillsListProps): JSX.Element {
 }
 
 interface SkillProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   groupIndex: number
   list: List<Record<IncreasableForView>>
   skillsSelection: Maybe<Record<SkillsSelectionJoined>>
@@ -436,14 +431,14 @@ function Skills (props: SkillProps) {
   const {
     groupIndex,
     list,
-    l10n,
+    staticData,
     skillsSelection: mskills_selection,
   } = props
 
   return pipe_ (
       list,
       map (e => `${IFVA.name (e)} ${IFVA.value (e)}`),
-      sortStrings (l10n),
+      sortStrings (staticData),
       xs => maybe (xs)
                   ((skills_selection: Record<SkillsSelectionJoined>) => {
                     const mgr =
@@ -464,7 +459,12 @@ function Skills (props: SkillProps) {
       joined_text => (
         <p className="skill-group">
           <span>
-            {renderMaybe (subscript (translate (l10n) ("skillgroups")) (groupIndex))}
+            {pipe_ (
+              groupIndex,
+              inc,
+              lookupF (SDA.skillGroups (staticData)),
+              renderMaybeWith (SGA.name)
+            )}
             {": "}
           </span>
           <span>{notNull (list) ? joined_text : ndash}</span>
@@ -488,7 +488,7 @@ const VariantPrerequisiteIntermediate =
               })
 
 const getVariantPrerequisites =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (attributes: OrderedMap<string, Record<Attribute>>) =>
   (skills: OrderedMap<string, Record<Skill>>) =>
   (variant: Record<ProfessionVariantCombined>) =>
@@ -521,14 +521,14 @@ const getVariantPrerequisites =
 
               return VariantPrerequisiteIntermediate ({
                 id,
-                name: translateP (l10n)
+                name: translateP (staticData)
                                  ("general.withapvalue")
                                  (List<string | number> (name, finalCost)),
                 active: Just (active),
               })
             }
           }),
-      sortRecordsByName (l10n),
+      sortRecordsByName (staticData),
       map (x => {
             if (Maybe.and (VariantPrerequisiteIntermediate.A.active (x))) {
               return VariantPrerequisiteIntermediate.A.name (x)
@@ -543,7 +543,7 @@ const getVariantPrerequisites =
           }),
       intersperse<React.ReactNode> (", "),
       ensure (notNull),
-      fmap (xs => `${translate (l10n) ("inlinewiki.prerequisites")}: ${xs}; `)
+      fmap (xs => `${translate (staticData) ("inlinewiki.prerequisites")}: ${xs}; `)
     )
 
 interface VariantSpecialAbilitiesProps {
@@ -566,7 +566,7 @@ const getVariantSpecialAbilities =
     )
 
 interface VariantLanguagesLiteracySelectionProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   variant: Record<ProfessionVariantCombined>
 }
 
@@ -574,7 +574,7 @@ const getVariantLanguagesLiteracySelection =
   (mappedProfSelections: Record<ProfessionSelections>) =>
   (props: VariantLanguagesLiteracySelectionProps): Maybe<string> => {
     const {
-      l10n,
+      staticData,
       variant,
     } = props
 
@@ -590,13 +590,13 @@ const getVariantLanguagesLiteracySelection =
       const variant_sel = fromJust (mvariant_sel)
       const vvalue = LanguagesScriptsSelection.A.value (variant_sel)
 
-      const main_str = translateP (l10n)
+      const main_str = translateP (staticData)
                                   ("inlinewiki.languagesandliteracytotalingap")
                                   (List (vvalue))
 
       if (isJust (msel)) {
         const value = LanguagesScriptsSelection.A.value (fromJust (msel))
-        const instead = translate (l10n) ("inlinewiki.insteadof")
+        const instead = translate (staticData) ("inlinewiki.insteadof")
 
         return Just (`${main_str} ${instead} ${value}`)
       }
@@ -609,7 +609,7 @@ const getVariantLanguagesLiteracySelection =
   }
 
 interface VariantSpecializationSelectionProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   skills: OrderedMap<string, Record<Skill>>
   specializationSelectionString: Maybe<string>
   variant: Record<ProfessionVariantCombined>
@@ -619,7 +619,7 @@ const getVariantSpecializationSelection =
   (mappedProfSelections: Record<ProfessionSelections>) =>
   (props: VariantSpecializationSelectionProps): Maybe<NonNullable<React.ReactNode>> => {
     const {
-      l10n,
+      staticData,
       skills,
       specializationSelectionString,
       variant,
@@ -651,19 +651,19 @@ const getVariantSpecializationSelection =
             ? pipe_ (
                 vsid,
                 mapMaybe (pipe (lookupF (skills), fmap (Skill.A.name))),
-                sortStrings (l10n),
+                sortStrings (staticData),
                 ensure (pipe (flength, gt (1))),
-                fmap (localizeOrList (l10n))
+                fmap (localizeOrList (staticData))
               )
             : pipe_ (vsid, lookupF (skills), fmap (Skill.A.name))
 
         const mmain_text = fmapF (mskill_text)
-                                 (skill_text => translateP (l10n)
+                                 (skill_text => translateP (staticData)
                                                            ("inlinewiki.skillspecialization")
                                                            (List (skill_text)))
 
         if (isJust (msel)) {
-          const instead = translate (l10n) ("inlinewiki.insteadof")
+          const instead = translate (staticData) ("inlinewiki.insteadof")
           const next = renderMaybe (mmain_text)
           const prev = renderMaybe (specializationSelectionString)
 
@@ -680,7 +680,7 @@ const getVariantSpecializationSelection =
 
 interface VariantCombatTechniquesSelectionProps {
   combatTechniquesSelectionString: Maybe<string>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   variant: Record<ProfessionVariantCombined>
 }
 
@@ -689,7 +689,7 @@ const getVariantCombatTechniquesSelection =
   (props: VariantCombatTechniquesSelectionProps): Maybe<NonNullable<React.ReactNode>> => {
     const {
       combatTechniquesSelectionString,
-      l10n,
+      staticData,
       variant,
     } = props
 
@@ -722,9 +722,9 @@ const getVariantCombatTechniquesSelection =
         const hasSameAmount = amount === vamount
 
         if (hasSameSids && hasSameAmount) {
-          const instead = translate (l10n) ("inlinewiki.insteadof")
+          const instead = translate (staticData) ("inlinewiki.insteadof")
 
-          const joinedList = pipe_ (sid, sortStrings (l10n), localizeOrList (l10n))
+          const joinedList = pipe_ (sid, sortStrings (staticData), localizeOrList (staticData))
 
           return Just (`${joinedList} ${vvalue} ${instead} ${value}`)
         }
@@ -734,18 +734,18 @@ const getVariantCombatTechniquesSelection =
         const vamount = CombatTechniquesSelection.A.amount (variant_sel)
         const vvalue = CombatTechniquesSelection.A.value (variant_sel)
 
-        const tag = translateP (l10n)
+        const tag = translateP (staticData)
                                ("inlinewiki.combattechniquesecondselection")
                                (List<string | number> (
                                 vamount === 1
-                                ? translate (l10n) ("inlinewiki.combattechnique.one")
+                                ? translate (staticData) ("inlinewiki.combattechnique.one")
                                 : vamount === 2
-                                ? translate (l10n) ("inlinewiki.combattechnique.two")
+                                ? translate (staticData) ("inlinewiki.combattechnique.two")
                                 : "...",
                                  vvalue + 6
                                ))
 
-        const joinedList = pipe_ (vsid, sortStrings (l10n), intercalate (", "))
+        const joinedList = pipe_ (vsid, sortStrings (staticData), intercalate (", "))
 
         return Just (`${tag}${joinedList}`)
       }
@@ -755,18 +755,18 @@ const getVariantCombatTechniquesSelection =
   }
 
 const mapVariantSkills =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (base: number) =>
     map ((e: Record<IncreasableForView>) => {
       const prev = fromMaybe (base) (IFVA.previous (e))
 
-      return `${IFVA.name (e)} ${IFVA.value (e)} ${translate (l10n) ("inlinewiki.insteadof")} ${prev}`
+      return `${IFVA.name (e)} ${IFVA.value (e)} ${translate (staticData) ("inlinewiki.insteadof")} ${prev}`
     })
 
 const getCombinedSpellName =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (x: CombinedMappedSpell): string =>
-    IncreasableListForView.is (x) ? localizeOrList (l10n) (ILFVA.name (x)) : IFVA.name (x)
+    IncreasableListForView.is (x) ? localizeOrList (staticData) (ILFVA.name (x)) : IFVA.name (x)
 
 type CombinedMappedSpell = Record<IncreasableForView> | Record<IncreasableListForView>
 
@@ -854,7 +854,7 @@ const combineSpells: (mapped_spells: List<CombinedMappedSpell>) => CombinedSpell
   )
 
 interface VariantSkillsSelectionProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
   variant: Record<ProfessionVariantCombined>
 }
@@ -862,18 +862,18 @@ interface VariantSkillsSelectionProps {
 const getVariantSkillsSelection =
   (props: VariantSkillsSelectionProps): string => {
     const {
-      l10n,
+      staticData,
       liturgicalChants,
       variant,
     } = props
 
-    const instead = translate (l10n) ("inlinewiki.insteadof")
+    const instead = translate (staticData) ("inlinewiki.insteadof")
 
     const combatTechniquesList =
-      pipe_ (variant, PVCA.mappedCombatTechniques, mapVariantSkills (l10n) (6))
+      pipe_ (variant, PVCA.mappedCombatTechniques, mapVariantSkills (staticData) (6))
 
     const skillsList =
-      pipe_ (variant, PVCA.mappedSkills, mapVariantSkills (l10n) (0))
+      pipe_ (variant, PVCA.mappedSkills, mapVariantSkills (staticData) (0))
 
     const combinedSpellsList = combineSpells (PVCA.mappedSpells (variant))
 
@@ -884,15 +884,15 @@ const getVariantSkillsSelection =
               const new_entry = snd (e)
               const value = IFVAL.value (new_entry)
 
-              const old_name = getCombinedSpellName (l10n) (old_entry)
-              const new_name = getCombinedSpellName (l10n) (new_entry)
+              const old_name = getCombinedSpellName (staticData) (old_entry)
+              const new_name = getCombinedSpellName (staticData) (new_entry)
 
               return `${new_name} ${value} ${instead} ${old_name} ${value}`
             }
             else {
               const value = IFVAL.value (e)
               const previous = Maybe.sum (IFVAL.previous (e))
-              const name = getCombinedSpellName (l10n) (e)
+              const name = getCombinedSpellName (staticData) (e)
 
               return `${name} ${value} ${instead} ${previous}`
             }
@@ -902,14 +902,14 @@ const getVariantSkillsSelection =
     const combinedList =
       intercalate (", ")
                   (List (
-                    ...sortStrings (l10n) (combatTechniquesList),
-                    ...sortStrings (l10n) (skillsList),
-                    ...sortStrings (l10n) (spellsList)
+                    ...sortStrings (staticData) (combatTechniquesList),
+                    ...sortStrings (staticData) (skillsList),
+                    ...sortStrings (staticData) (spellsList)
                   ))
 
     return maybe (combinedList)
                  ((chants: NonEmptyList<CombinedMappedSpell>) => {
-                   const blessings = translate (l10n) ("inlinewiki.thetwelveblessings")
+                   const blessings = translate (staticData) ("inlinewiki.thetwelveblessings")
 
                    return pipe_ (
                      chants,
@@ -920,7 +920,7 @@ const getVariantSkillsSelection =
 
                          return fmapF (ensure (pipe (flength, gt (1))) (names))
                                       (pipe (
-                                        localizeOrList (l10n),
+                                        localizeOrList (staticData),
                                         name => `${name} ${ILFVA.value (e)}`
                                       ))
                        }
@@ -933,24 +933,24 @@ const getVariantSkillsSelection =
                        }
                      }),
                      flength (PVCA_.blessings (variant)) === 12 ? consF (blessings) : ident,
-                     sortStrings (l10n),
+                     sortStrings (staticData),
                      intercalate (", "),
-                     xs => `${combinedList}, ${translate (l10n) ("inlinewiki.liturgicalchants")}: ${xs}`
+                     xs => `${combinedList}, ${translate (staticData) ("inlinewiki.liturgicalchants")}: ${xs}`
                    )
                  })
                  (ensure (notNull) (PVCA.mappedLiturgicalChants (variant)))
   }
 
 interface VariantListHeaderProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 function VariantListHeader (props: VariantListHeaderProps): JSX.Element {
-  const { l10n } = props
+  const { staticData } = props
 
   return (
     <p className="profession-variants">
-      <span>{translate (l10n) ("inlinewiki.variants")}</span>
+      <span>{translate (staticData) ("inlinewiki.variants")}</span>
     </p>
   )
 }
@@ -959,7 +959,7 @@ interface VariantListProps {
   attributes: OrderedMap<string, Record<Attribute>>
   combatTechniquesSelectionString: Maybe<string>
   liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   profession: Record<ProfessionCombined>
   sex: Maybe<Sex>
   skills: OrderedMap<string, Record<Skill>>
@@ -972,7 +972,7 @@ function VariantList (props: VariantListProps): JSX.Element | null {
     attributes,
     combatTechniquesSelectionString,
     liturgicalChants,
-    l10n,
+    staticData,
     profession,
     sex,
     skills,
@@ -985,7 +985,7 @@ function VariantList (props: VariantListProps): JSX.Element | null {
   if (notNull (variants)) {
     return (
       <>
-        <VariantListHeader l10n={l10n} />
+        <VariantListHeader staticData={staticData} />
         <ul className="profession-variants">
           {
             pipe_ (
@@ -996,7 +996,7 @@ function VariantList (props: VariantListProps): JSX.Element | null {
                       attributes={attributes}
                       combatTechniquesSelectionString={combatTechniquesSelectionString}
                       liturgicalChants={liturgicalChants}
-                      l10n={l10n}
+                      staticData={staticData}
                       profession={profession}
                       sex={sex}
                       skills={skills}
@@ -1020,7 +1020,7 @@ interface VariantProps {
   attributes: OrderedMap<string, Record<Attribute>>
   combatTechniquesSelectionString: Maybe<string>
   liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   profession: Record<ProfessionCombined>
   sex: Maybe<Sex>
   skills: OrderedMap<string, Record<Skill>>
@@ -1032,7 +1032,7 @@ interface VariantProps {
 function Variant (props: VariantProps) {
   const {
     attributes,
-    l10n,
+    staticData,
     profession,
     sex: msex,
     skills,
@@ -1049,7 +1049,7 @@ function Variant (props: VariantProps) {
     return (
       <li>
         <Markdown
-          source={translateP (l10n)
+          source={translateP (staticData)
                              ("general.withapvalue")
                              (List<string | number> (`*${name}*`, ap_sum))}
           noWrapper
@@ -1063,9 +1063,9 @@ function Variant (props: VariantProps) {
   return (
     <li>
       <Markdown
-        source={translateP (l10n)
-                          ("general.withapvalue")
-                          (List<string | number> (`*${name}*`, ap_sum))}
+        source={translateP (staticData)
+                           ("general.withapvalue")
+                           (List<string | number> (`*${name}*`, ap_sum))}
         noWrapper
         />
       {": "}
@@ -1074,7 +1074,7 @@ function Variant (props: VariantProps) {
                      (str => <span>{str}</span>)}
         {maybe (<></>)
                ((str: string) => (<>{str}</>))
-               (getVariantPrerequisites (l10n)
+               (getVariantPrerequisites (staticData)
                                         (attributes)
                                         (skills)
                                         (variant))}
@@ -1097,25 +1097,23 @@ function Variant (props: VariantProps) {
 }
 
 export interface WikiProfessionInfoProps {
-  l10n: L10nRecord
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   x: Record<ProfessionCombined>
   sex: Maybe<Sex>
 }
 
 // tslint:disable-next-line: cyclomatic-complexity
 export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
-  const { x, l10n, sex, wiki } = props
+  const { x, sex, staticData } = props
 
-  const attributes = WA.attributes (wiki)
-  const blessings = WA.blessings (wiki)
-  const books = WA.books (wiki)
-  const cantrips = WA.cantrips (wiki)
-  const liturgicalChants = WA.liturgicalChants (wiki)
-  const races = WA.races (wiki)
-  const skills = WA.skills (wiki)
-  const spells = WA.spells (wiki)
-  const specialAbilities = WA.specialAbilities (wiki)
+  const attributes = SDA.attributes (staticData)
+  const blessings = SDA.blessings (staticData)
+  const cantrips = SDA.cantrips (staticData)
+  const liturgicalChants = SDA.liturgicalChants (staticData)
+  const races = SDA.races (staticData)
+  const skills = SDA.skills (staticData)
+  const spells = SDA.spells (staticData)
+  const specialAbilities = SDA.specialAbilities (staticData)
 
   const selections = PCA.mappedSelections (x)
 
@@ -1123,10 +1121,10 @@ export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
   const msubname = getNameBySexM (fromMaybe<Sex> ("m") (sex)) (PCA_.subname (x))
 
   const specializationSelectionString =
-    getSpecializationSelection (l10n) (skills) (x)
+    getSpecializationSelection (staticData) (skills) (x)
 
   const skillsSelectionJoinedObject =
-    getSkillSelection (l10n) (x)
+    getSkillSelection (staticData) (x)
 
   const cursesSelection =
     PSA[ProfessionSelectionIds.CURSES] (selections)
@@ -1135,16 +1133,16 @@ export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
     PSA[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (selections)
 
   const combatTechniquesSelectionString =
-    getCombatTechniquesSelection (l10n) (x)
+    getCombatTechniquesSelection (staticData) (x)
 
   const terrainKnowledgeSelectionString =
-    getTerrainKnowledgeSelection (l10n) (specialAbilities) (x)
+    getTerrainKnowledgeSelection (staticData) (specialAbilities) (x)
 
   const spellsString =
-    getSpells (l10n) (cantrips) (spells) (x)
+    getSpells (staticData) (cantrips) (spells) (x)
 
   const liturgicalChantsString =
-    getLiturgicalChants (l10n) (blessings) (liturgicalChants) (x)
+    getLiturgicalChants (staticData) (blessings) (liturgicalChants) (x)
 
   const raceRequirement =
      pipe_ (x, PCA_.dependencies, find (RaceRequirement.is))
@@ -1154,7 +1152,7 @@ export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
 
   const getRaceNameAP =
     (race: Record<Race>) =>
-      translateP (l10n)
+      translateP (staticData)
                  ("general.withapvalue")
                  (List<string | number> (Race.A.name (race), Race.A.ap (race)))
 
@@ -1169,11 +1167,11 @@ export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
                    value,
                    mapMaybe (pipe (prefixRace, lookupF (races), fmap (getRaceNameAP))),
                    ensure (notNull),
-                   fmap (localizeOrList (l10n))
+                   fmap (localizeOrList (staticData))
                  )
                : pipe_ (value, prefixRace, lookupF (races), fmap (getRaceNameAP))
            },
-           fmap (str => `${translate (l10n) ("inlinewiki.race")}: ${str}`)
+           fmap (str => `${translate (staticData) ("inlinewiki.race")}: ${str}`)
          ))
 
   const prereq_strs =
@@ -1197,14 +1195,13 @@ export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
         else {
           const pr_name = ANCIAA_.name (e)
           const pr_cost_str = signNeg (ANCIAA_.finalCost (e))
-          const ap_tag = translate (l10n) ("adventurepoints.short")
 
-          return Just (translateP (l10n)
+          return Just (translateP (staticData)
                                   ("general.withapvalue")
                                   (List<string | number> (pr_name, pr_cost_str)))
         }
       }),
-      sortStrings (l10n)
+      sortStrings (staticData)
     )
 
   const prerequisites = List (
@@ -1218,11 +1215,11 @@ export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
     fmapF (sexRequirement)
           (sex_dep => {
             const space_before = notNull (prerequisites) ? " " : ""
-            const sex_tag = translate (l10n) ("inlinewiki.sex")
+            const sex_tag = translate (staticData) ("inlinewiki.sex")
             const sex_value =
               SexRequirement.A.value (sex_dep) === "m"
-                ? translate (l10n) ("inlinewiki.sex.male")
-                : translate (l10n) ("inlinewiki.sex.female")
+                ? translate (staticData) ("inlinewiki.sex.male")
+                : translate (staticData) ("inlinewiki.sex.female")
 
             return `${space_before}${sex_tag}: ${sex_value}`
           })
@@ -1232,7 +1229,7 @@ export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
       x,
       PCA.mappedSpecialAbilities,
       map (ANCIAA_.name),
-      sortStrings (l10n)
+      sortStrings (staticData)
     )
 
   const sas_str =
@@ -1240,7 +1237,7 @@ export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
       List<string> (),
       maybe<ident<List<string>>> (ident)
                                  ((curss: Record<CursesSelection>) =>
-                                   consF (translateP (l10n)
+                                   consF (translateP (staticData)
                                                      ("inlinewiki.cursestotalingap")
                                                      (List (CursesSelection.A.value (curss)))))
                                  (cursesSelection),
@@ -1248,16 +1245,16 @@ export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
       maybe<ident<List<string>>> (ident) <string> (consF) (specializationSelectionString),
       maybe<ident<List<string>>> (ident)
                                  ((curss: Record<LanguagesScriptsSelection>) =>
-                                   consF (translateP (l10n)
+                                   consF (translateP (staticData)
                                                      ("inlinewiki.languagesandliteracytotalingap")
                                                      (List (
                                                        LanguagesScriptsSelection.A.value (curss)
                                                      ))))
                                  (languagesLiteracySelection),
-      sortStrings (l10n),
+      sortStrings (staticData),
       flip (append) (single_sas_strs),
       ensure (notNull),
-      maybe (translate (l10n) ("general.none")) (intercalate (", "))
+      maybe (translate (staticData) ("general.none")) (intercalate (", "))
     )
 
   const final_ap =
@@ -1268,7 +1265,7 @@ export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
                               (OrderedSet.empty),
                         toList,
                         sortBy (compare),
-                        localizeOrList (l10n)
+                        localizeOrList (staticData)
                       ))
                (fmapF (PCA_.ap (x)) (show))
 
@@ -1277,60 +1274,60 @@ export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
       className="profession"
       title={maybe (name) ((subname: string) => `${name} (${subname})`) (msubname)}
       >
-      <WikiProperty l10n={l10n} title="apvalue">
+      <WikiProperty staticData={staticData} title="inlinewiki.apvalue">
         {final_ap}
         {" "}
-        {translate (l10n) ("inlinewiki.adventurepoints")}
+        {translate (staticData) ("inlinewiki.adventurepoints")}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="prerequisites">
-        {maybe (translate (l10n) ("general.none"))
+      <WikiProperty staticData={staticData} title="inlinewiki.prerequisites">
+        {maybe (translate (staticData) ("general.none"))
                (intercalate (", "))
                (ensure (notNull) (prerequisites))}
         {renderMaybe (sex_dep_str)}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="specialabilities">
+      <WikiProperty staticData={staticData} title="inlinewiki.specialabilities">
         {sas_str}
       </WikiProperty>
       <CombatTechniques
         combatTechniquesSelectionString={combatTechniquesSelectionString}
         x={x}
-        l10n={l10n}
+        staticData={staticData}
         />
-      <WikiProperty l10n={l10n} title="skills" />
+      <WikiProperty staticData={staticData} title="inlinewiki.skills" />
       <SkillsList
         profession={x}
-        l10n={l10n}
+        staticData={staticData}
         skillsSelection={skillsSelectionJoinedObject}
         />
       {maybeRNullF (spellsString)
                    (str => (
-                     <WikiProperty l10n={l10n} title="spells">
+                     <WikiProperty staticData={staticData} title="inlinewiki.spells">
                        {str}
                      </WikiProperty>
                    ))}
       {maybeRNullF (liturgicalChantsString)
                    (str => (
-                     <WikiProperty l10n={l10n} title="liturgicalchants">
+                     <WikiProperty staticData={staticData} title="inlinewiki.liturgicalchants">
                        {str}
                      </WikiProperty>
                    ))}
-      <WikiProperty l10n={l10n} title="inlinewiki.suggestedadvantages">
-        {fromMaybe (translate (l10n) ("general.none")) (PCA_.suggestedAdvantagesText (x))}
+      <WikiProperty staticData={staticData} title="inlinewiki.suggestedadvantages">
+        {fromMaybe (translate (staticData) ("general.none")) (PCA_.suggestedAdvantagesText (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.suggesteddisadvantages">
-        {fromMaybe (translate (l10n) ("general.none")) (PCA_.suggestedDisadvantagesText (x))}
+      <WikiProperty staticData={staticData} title="inlinewiki.suggesteddisadvantages">
+        {fromMaybe (translate (staticData) ("general.none")) (PCA_.suggestedDisadvantagesText (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.unsuitableadvantages">
-        {fromMaybe (translate (l10n) ("general.none")) (PCA_.unsuitableAdvantagesText (x))}
+      <WikiProperty staticData={staticData} title="inlinewiki.unsuitableadvantages">
+        {fromMaybe (translate (staticData) ("general.none")) (PCA_.unsuitableAdvantagesText (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.unsuitabledisadvantages">
-        {fromMaybe (translate (l10n) ("general.none")) (PCA_.unsuitableDisadvantagesText (x))}
+      <WikiProperty staticData={staticData} title="inlinewiki.unsuitabledisadvantages">
+        {fromMaybe (translate (staticData) ("general.none")) (PCA_.unsuitableDisadvantagesText (x))}
       </WikiProperty>
       <VariantList
         attributes={attributes}
         combatTechniquesSelectionString={combatTechniquesSelectionString}
         liturgicalChants={liturgicalChants}
-        l10n={l10n}
+        staticData={staticData}
         profession={x}
         sex={sex}
         skills={skills}
@@ -1338,9 +1335,8 @@ export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
         spells={spells}
         />
       <WikiSource
-        books={books}
         x={x}
-        l10n={l10n}
+        staticData={staticData}
         acc={PCA_}
         />
     </WikiBoxTemplate>

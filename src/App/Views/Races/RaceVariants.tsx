@@ -6,8 +6,8 @@ import { Record } from "../../../Data/Record"
 import { selectRaceVariant } from "../../Actions/RaceActions"
 import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined"
 import { RadioOption } from "../../Models/View/RadioOption"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { RaceVariant } from "../../Models/Wiki/RaceVariant"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { sortRecordsByName } from "../../Utilities/sortBy"
 import { RadioButtonGroup } from "../Universal/RadioButtonGroup"
@@ -15,12 +15,12 @@ import { RadioButtonGroup } from "../Universal/RadioButtonGroup"
 export interface RaceVariantsProps {
   currentId: Maybe<string>
   currentVariantId: Maybe<string>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   races: List<Record<RaceCombined>>
 }
 
 export const RaceVariants: React.FC<RaceVariantsProps> = props => {
-  const { currentId, currentVariantId, l10n, races } = props
+  const { currentId, currentVariantId, staticData, races } = props
 
   const dispatch = useDispatch ()
 
@@ -39,7 +39,7 @@ export const RaceVariants: React.FC<RaceVariantsProps> = props => {
         name: RaceVariant.A.name (e),
         value: Just (RaceVariant.A.id (e)),
       })),
-      sortRecordsByName (l10n),
+      sortRecordsByName (staticData),
       ensure (notNull)
     )),
     maybe (<></>)

@@ -5,7 +5,7 @@ import { findWithDefault, member, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { LanguagesSelectionListItemOptions } from "../../Models/View/LanguagesSelectionListItemOptions"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { getLevelElements } from "../../Utilities/levelUtils"
 import { Checkbox } from "../Universal/Checkbox"
@@ -14,7 +14,7 @@ import { Dropdown } from "../Universal/Dropdown"
 const LSLIOA = LanguagesSelectionListItemOptions.A
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   apLeft: number
   active: OrderedMap<number, number>
   options: Record<LanguagesSelectionListItemOptions>
@@ -22,7 +22,7 @@ interface Props {
 }
 
 export const LanguagesSelectionListItem: React.FC<Props> = props => {
-  const { active, apLeft, l10n, options, adjustLanguage } = props
+  const { active, apLeft, staticData, options, adjustLanguage } = props
 
   const id = LSLIOA.id (options)
   const name = LSLIOA.name (options)
@@ -67,7 +67,7 @@ export const LanguagesSelectionListItem: React.FC<Props> = props => {
               options={List (
                 DropdownOption ({
                   id: Just (4),
-                  name: translate (l10n) ("rcpselectoptions.nativetongue.placeholder"),
+                  name: translate (staticData) ("rcpselectoptions.nativetongue.placeholder"),
                 })
               )}
               disabled

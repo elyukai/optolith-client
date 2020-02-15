@@ -2,7 +2,8 @@ import * as React from "react"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { Category } from "../../../Constants/Categories"
 import { MagicalGroup } from "../../../Constants/Groups"
-import { L10nKey, L10nRecord } from "../../../Models/Wiki/L10n"
+import { L10nKey } from "../../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
 import { WikiProperty } from "../WikiProperty"
 
@@ -16,7 +17,7 @@ interface Accessors<A extends RecordIBase<any>> {
 export interface WikiDurationProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 type FC = <A extends RecordIBase<any>> (props: WikiDurationProps<A>) => ReturnType<React.FC>
@@ -25,7 +26,7 @@ export const WikiDuration: FC = props => {
   const {
     x,
     acc,
-    l10n,
+    staticData,
   } = props
 
   const category = acc.category (x)
@@ -44,9 +45,9 @@ export const WikiDuration: FC = props => {
     : "inlinewiki.youcannotuseamodificationonthisspellsduration"
 
   return (
-    <WikiProperty l10n={l10n} title={key}>
+    <WikiProperty staticData={staticData} title={key}>
       {acc.duration (x)}
-{isNoModAllowed ? ` (${translate (l10n) (modKey)})` : ""}
+{isNoModAllowed ? ` (${translate (staticData) (modKey)})` : ""}
     </WikiProperty>
   )
 }

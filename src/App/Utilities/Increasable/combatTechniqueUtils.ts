@@ -10,7 +10,7 @@ import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils"
 import { flattenDependencies } from "../Dependencies/flattenDependencies"
 import { pipe } from "../pipe"
@@ -61,7 +61,7 @@ export const getParry =
          ))
 
 export const isIncreaseDisabled =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (wikiEntry: Record<CombatTechnique>) =>
   (instance: Record<SkillDependent>): boolean => {
@@ -87,7 +87,7 @@ export const isIncreaseDisabled =
   }
 
 export const isDecreaseDisabled =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (wikiEntry: Record<CombatTechnique>) =>
   (instance: Record<SkillDependent>) =>

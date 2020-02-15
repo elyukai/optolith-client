@@ -1,10 +1,14 @@
 import * as React from "react"
-import { subscript } from "../../../../Data/List"
-import { fromMaybe } from "../../../../Data/Maybe"
+import { maybe } from "../../../../Data/Maybe"
+import { lookupF } from "../../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../../Data/Record"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
-import { translate } from "../../../Utilities/I18n"
+import { NumIdName } from "../../../Models/NumIdName"
+import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { pipe_ } from "../../../Utilities/pipe"
 import { WikiProperty } from "../WikiProperty"
+
+const SDA = StaticData.A
+const NINA = NumIdName.A
 
 interface Accessors<A extends RecordIBase<any>> {
   property: (r: Record<A>) => number
@@ -13,7 +17,7 @@ interface Accessors<A extends RecordIBase<any>> {
 export interface WikiSpellPropertyProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 type FC = <A extends RecordIBase<any>> (props: WikiSpellPropertyProps<A>) => ReturnType<React.FC>
@@ -22,12 +26,19 @@ export const WikiSpellProperty: FC = props => {
   const {
     x,
     acc,
-    l10n,
+    staticData,
   } = props
 
+  const property = pipe_ (
+                     x,
+                     acc.property,
+                     lookupF (SDA.properties (staticData)),
+                     maybe ("") (NINA.name)
+                   )
+
   return (
-    <WikiProperty l10n={l10n} title="inlinewiki.property">
-      {fromMaybe ("") (subscript (translate (l10n) ("propertylist")) (acc.property (x) - 1))}
+    <WikiProperty staticData={staticData} title="inlinewiki.property">
+      {property}
     </WikiProperty>
   )
 }

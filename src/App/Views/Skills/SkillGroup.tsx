@@ -1,25 +1,24 @@
 import * as React from "react"
-import { List } from "../../../Data/List"
 import { ListItemGroup } from "../Universal/ListItemGroup"
 
 interface Props {
   addText?: string
-  groupList?: List<string>
-  groupIndex?: number
+  group?: number
+  getGroupName?: (id: number) => string
 }
 
 export const SkillGroup: React.FC<Props> = props => {
   const {
     addText,
-    groupIndex,
-    groupList,
+    group,
+    getGroupName,
   } = props
 
-  if (addText === undefined && (groupIndex === undefined || groupList === undefined)) {
+  if (addText === undefined && (group === undefined || getGroupName === undefined)) {
     return null
   }
 
   return (
-    <ListItemGroup index={groupIndex} list={groupList} text={addText} />
+    <ListItemGroup group={group} getGroupName={getGroupName} text={addText} />
   )
 }

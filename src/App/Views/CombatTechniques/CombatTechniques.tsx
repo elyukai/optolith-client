@@ -6,7 +6,7 @@ import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
 import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { AttributeCombined } from "../../Models/View/AttributeCombined"
 import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { CombatTechniquesSortOptions } from "../../Utilities/Raw/JSON/Config"
@@ -23,7 +23,7 @@ import { SortNames, SortOptions } from "../Universal/SortOptions"
 import { CombatTechniqueListItem } from "./CombatTechniquesListItem"
 
 export interface CombatTechniquesOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   hero: HeroModelRecord
 }
 
@@ -58,7 +58,7 @@ export const CombatTechniques: React.FC<CombatTechniquesProps> = props => {
     addPoint,
     attributes,
     list,
-    l10n,
+    staticData,
     isRemovingEnabled,
     removePoint,
     setSortOrder,
@@ -78,7 +78,7 @@ export const CombatTechniques: React.FC<CombatTechniquesProps> = props => {
     <Page id="combattechniques">
       <Options>
         <SearchField
-          l10n={l10n}
+          staticData={staticData}
           value={filterText}
           onChange={setFilterText}
           fullWidth
@@ -86,47 +86,47 @@ export const CombatTechniques: React.FC<CombatTechniquesProps> = props => {
         <SortOptions
           sortOrder={sortOrder}
           sort={setSortOrder}
-          l10n={l10n}
+          staticData={staticData}
           options={List (SortNames.Name, SortNames.Group, SortNames.IC)}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("combattechniques.header.name")}
+            {translate (staticData) ("combattechniques.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="group">
-            {translate (l10n) ("combattechniques.header.group")}
+            {translate (staticData) ("combattechniques.header.group")}
           </ListHeaderTag>
           <ListHeaderTag
             className="value"
-            hint={translate (l10n) ("combattechniques.header.combattechniquerating.tooltip")}
+            hint={translate (staticData) ("combattechniques.header.combattechniquerating.tooltip")}
             >
-            {translate (l10n) ("combattechniques.header.combattechniquerating")}
+            {translate (staticData) ("combattechniques.header.combattechniquerating")}
           </ListHeaderTag>
           <ListHeaderTag
             className="ic"
-            hint={translate (l10n) ("combattechniques.header.improvementcost.tooltip")}
+            hint={translate (staticData) ("combattechniques.header.improvementcost.tooltip")}
             >
-            {translate (l10n) ("combattechniques.header.improvementcost")}
+            {translate (staticData) ("combattechniques.header.improvementcost")}
           </ListHeaderTag>
           <ListHeaderTag
             className="primary"
-            hint={translate (l10n) ("combattechniques.header.primaryattribute.tooltip")}
+            hint={translate (staticData) ("combattechniques.header.primaryattribute.tooltip")}
             >
-            {translate (l10n) ("combattechniques.header.primaryattribute")}
+            {translate (staticData) ("combattechniques.header.primaryattribute")}
           </ListHeaderTag>
           <ListHeaderTag
             className="at"
-            hint={translate (l10n) ("combattechniques.header.attack.tooltip")}
+            hint={translate (staticData) ("combattechniques.header.attack.tooltip")}
             >
-            {translate (l10n) ("combattechniques.header.attack")}
+            {translate (staticData) ("combattechniques.header.attack")}
           </ListHeaderTag>
           <ListHeaderTag
             className="pa"
-            hint={translate (l10n) ("combattechniques.header.parry.tooltip")}
+            hint={translate (staticData) ("combattechniques.header.parry.tooltip")}
             >
-            {translate (l10n) ("combattechniques.header.parry")}
+            {translate (staticData) ("combattechniques.header.parry")}
           </ListHeaderTag>
           {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />
@@ -138,7 +138,7 @@ export const CombatTechniques: React.FC<CombatTechniquesProps> = props => {
               list,
               bindF (ensure (notNull)),
               maybe<JSX.Element | JSX.Element[]>
-                (<ListPlaceholder l10n={l10n} type="combatTechniques" noResults />)
+                (<ListPlaceholder staticData={staticData} type="combatTechniques" noResults />)
                 (pipe (
                   map (
                     (x: Record<CombatTechniqueWithRequirements>) => (
@@ -148,7 +148,7 @@ export const CombatTechniques: React.FC<CombatTechniquesProps> = props => {
                         combatTechnique={x}
                         currentInfoId={infoId}
                         selectForInfo={showInfo}
-                        l10n={l10n}
+                        staticData={staticData}
                         addPoint={addPoint}
                         removePoint={removePoint}
                         isRemovingEnabled={isRemovingEnabled}
@@ -161,10 +161,7 @@ export const CombatTechniques: React.FC<CombatTechniquesProps> = props => {
           </ListView>
         </Scroll>
       </MainContent>
-      <WikiInfoContainer
-        l10n={l10n}
-        currentId={infoId}
-        />
+      <WikiInfoContainer currentId={infoId} />
     </Page>
   )
 }

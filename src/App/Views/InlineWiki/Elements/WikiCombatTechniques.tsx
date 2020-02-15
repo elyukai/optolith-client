@@ -5,8 +5,8 @@ import { fromJust, isJust, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe
 import { lookupF, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { CombatTechnique } from "../../../Models/Wiki/CombatTechnique"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
 import { SpecialAbilityCombatTechniqueGroup, SpecialAbilityCombatTechniques } from "../../../Models/Wiki/SpecialAbility"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { ndash } from "../../../Utilities/Chars"
 import { translate } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
@@ -21,7 +21,7 @@ export interface WikiCombatTechniquesProps<A extends RecordIBase<any>> {
   combatTechniques: OrderedMap<string, Record<CombatTechnique>>
   x: Record<A>
   acc: Accessors<A>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 const CTA = CombatTechnique.A
@@ -34,7 +34,7 @@ export const WikiCombatTechniques: FC = props => {
     combatTechniques,
     x,
     acc,
-    l10n,
+    staticData,
   } = props
 
   return maybe <JSX.Element | null>
@@ -48,31 +48,33 @@ export const WikiCombatTechniques: FC = props => {
                    isJust (customText)
                    ? fromJust (customText)
                    : group === SpecialAbilityCombatTechniqueGroup.All
-                   ? translate (l10n) ("inlinewiki.combattechniques.groups.all")
+                   ? translate (staticData) ("inlinewiki.combattechniques.groups.all")
                    : group === SpecialAbilityCombatTechniqueGroup.Melee
                    // eslint-disable-next-line max-len
-                   ? translate (l10n) ("inlinewiki.combattechniques.groups.allmeleecombattechniques")
+                   ? translate (staticData) ("inlinewiki.combattechniques.groups.allmeleecombattechniques")
                    : group === SpecialAbilityCombatTechniqueGroup.Ranged
                    // eslint-disable-next-line max-len
-                   ? translate (l10n) ("inlinewiki.combattechniques.groups.allrangedcombattechniques")
+                   ? translate (staticData) ("inlinewiki.combattechniques.groups.allrangedcombattechniques")
                    : group === SpecialAbilityCombatTechniqueGroup.WithParry
                    // eslint-disable-next-line max-len
-                   ? translate (l10n) ("inlinewiki.combattechniques.groups.allmeleecombattechniqueswithparry")
+                   ? translate (staticData) ("inlinewiki.combattechniques.groups.allmeleecombattechniqueswithparry")
                    : group === SpecialAbilityCombatTechniqueGroup.OneHanded
                    // eslint-disable-next-line max-len
-                   ? translate (l10n) ("inlinewiki.combattechniques.groups.allmeleecombattechniquesforonehandedweapons")
+                   ? translate (staticData) ("inlinewiki.combattechniques.groups.allmeleecombattechniquesforonehandedweapons")
                    : notNull (explicitIds)
                    ? pipe_ (
                        explicitIds,
                        mapMaybe (pipe (lookupF (combatTechniques), fmap (CTA.name))),
-                       sortStrings (l10n),
+                       sortStrings (staticData),
                        intercalate (", ")
                      )
                    : ndash
 
                  return (
                    <Markdown
-                     source={`**${translate (l10n) ("inlinewiki.combattechniques")}:** ${str}`}
+                     source={
+                       `**${translate (staticData) ("inlinewiki.combattechniques")}:** ${str}`
+                     }
                      />
                  )
                })

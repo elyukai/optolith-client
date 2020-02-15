@@ -14,7 +14,7 @@ import { Purse } from "../../Models/Hero/Purse"
 import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { Aside } from "../Universal/Aside"
@@ -35,7 +35,7 @@ import { EquipmentListItem } from "./EquipmentListItem"
 import { PurseAndTotals } from "./PurseAndTotals"
 
 export interface EquipmentOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   hero: HeroModelRecord
 }
 
@@ -128,7 +128,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
   )
 
   const {
-    l10n,
+    staticData,
     combatTechniques: maybeCombatTechniques,
     carryingCapacity,
     initialStartingWealth,
@@ -196,7 +196,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
       <Slidein isOpen={showAddSlidein} close={handleHideSlidein}>
         <Options>
           <SearchField
-            l10n={l10n}
+            staticData={staticData}
             value={templatesFilterText}
             onChange={setTemplatesFilterText}
             fullWidth
@@ -215,7 +215,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
                 options={
                   cons (meleeCombatTechniques)
                        (DropdownOption ({
-                         name: translate (l10n) ("equipment.filters.allcombattechniques"),
+                         name: translate (staticData) ("equipment.filters.allcombattechniques"),
                        })) as List<Record<DropdownOption<MeleeCombatTechniqueId>>>
                 }
                 fullWidth
@@ -230,7 +230,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
                 options={
                   cons (rangedCombatTechniques)
                        (DropdownOption ({
-                         name: translate (l10n) ("equipment.filters.allcombattechniques"),
+                         name: translate (staticData) ("equipment.filters.allcombattechniques"),
                        })) as List<Record<DropdownOption<RangedCombatTechniqueId>>>
                 }
                 fullWidth
@@ -241,7 +241,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (l10n) ("equipment.header.name")}
+              {translate (staticData) ("equipment.header.name")}
             </ListHeaderTag>
             <ListHeaderTag className="btn-placeholder" />
           </ListHeader>
@@ -256,7 +256,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
                       <EquipmentListItem
                         key={ITA.id (obj)}
                         data={fromItemTemplate (ITA.id (obj)) (obj)}
-                        l10n={l10n}
+                        staticData={staticData}
                         selectedForInfo={slideinInfoId}
                         addTemplateToList={addTemplateToList}
                         deleteItem={deleteItem}
@@ -269,16 +269,18 @@ export const Equipment: React.FC<EquipmentProps> = props => {
                   toArray,
                   arr => <>{arr}</>
                 )),
-                fromMaybe (<ListPlaceholder l10n={l10n} type="itemTemplates" noResults />)
+                fromMaybe (
+                  <ListPlaceholder staticData={staticData} type="itemTemplates" noResults />
+                )
               )}
             </ListView>
           </Scroll>
         </MainContent>
-        <WikiInfoContainer l10n={l10n} currentId={slideinInfoId} />
+        <WikiInfoContainer currentId={slideinInfoId} />
       </Slidein>
       <Options>
         <SearchField
-          l10n={l10n}
+          staticData={staticData}
           value={filterText}
           onChange={setFilterText}
           fullWidth
@@ -287,24 +289,24 @@ export const Equipment: React.FC<EquipmentProps> = props => {
           options={List (SortNames.Name, SortNames.GroupName, SortNames.Where, SortNames.Weight)}
           sortOrder={sortOrder}
           sort={setSortOrder}
-          l10n={l10n}
+          staticData={staticData}
           />
         <BorderButton
-          label={translate (l10n) ("add")}
+          label={translate (staticData) ("equipment.addbtn")}
           onClick={handleShowSlidein}
           />
         <BorderButton
-          label={translate (l10n) ("create")}
+          label={translate (staticData) ("equipment.createbtn")}
           onClick={createItem}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (staticData) ("equipment.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="group">
-            {translate (l10n) ("group")}
+            {translate (staticData) ("equipment.header.group")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />
@@ -321,7 +323,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
                     <EquipmentListItem
                       key={IA.id (obj)}
                       data={obj}
-                      l10n={l10n}
+                      staticData={staticData}
                       selectedForInfo={infoId}
                       addTemplateToList={addTemplateToList}
                       deleteItem={deleteItem}
@@ -335,7 +337,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
               )),
               fromMaybe (
                 <ListPlaceholder
-                  l10n={l10n}
+                  staticData={staticData}
                   type="equipment"
                   noResults={filterText.length > 0}
                   />
@@ -349,7 +351,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
           carryingCapacity={carryingCapacity}
           hasNoAddedAP={hasNoAddedAP}
           initialStartingWealth={initialStartingWealth}
-          l10n={l10n}
+          staticData={staticData}
           purse={purse}
           totalPrice={totalPrice}
           totalWeight={totalWeight}
@@ -358,9 +360,9 @@ export const Equipment: React.FC<EquipmentProps> = props => {
           setHellers={setHellers}
           setKreutzers={setKreutzers}
           />
-        <WikiInfoContainer l10n={l10n} currentId={infoId} noWrapper />
+        <WikiInfoContainer currentId={infoId} noWrapper />
       </Aside>
-      <ItemEditorContainer l10n={l10n} />
+      <ItemEditorContainer staticData={staticData} />
     </Page>
   )
 }

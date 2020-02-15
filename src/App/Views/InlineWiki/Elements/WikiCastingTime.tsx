@@ -2,7 +2,7 @@ import * as React from "react"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { Category } from "../../../Constants/Categories"
 import { BlessedGroup, MagicalGroup } from "../../../Constants/Groups"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
 import { WikiProperty } from "../WikiProperty"
 
@@ -57,7 +57,7 @@ interface Accessors<A extends RecordIBase<any>> {
 export interface WikiCastingTimeProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 type FC = <A extends RecordIBase<any>> (props: WikiCastingTimeProps<A>) => ReturnType<React.FC>
@@ -66,7 +66,7 @@ export const WikiCastingTime: FC = props => {
   const {
     x,
     acc,
-    l10n,
+    staticData,
   } = props
 
   const category = acc.category (x)
@@ -77,9 +77,9 @@ export const WikiCastingTime: FC = props => {
   const keyNoMod = nameKeyToModKey (key)
 
   return (
-    <WikiProperty l10n={l10n} title={key}>
+    <WikiProperty staticData={staticData} title={key}>
       {acc.castingTime (x)}
-      {isNoModAllowed ? ` (${translate (l10n) (keyNoMod)})` : ""}
+      {isNoModAllowed ? ` (${translate (staticData) (keyNoMod)})` : ""}
     </WikiProperty>
   )
 }

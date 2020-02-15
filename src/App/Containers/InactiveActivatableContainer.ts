@@ -6,7 +6,7 @@ import { ActivatableAddListItem, ActivatableAddListItemDispatchProps, Activatabl
 
 const mapStateToProps = (state: AppStateRecord): ActivatableAddListItemStateProps => ({
   skills: getSkills (state),
-  wiki: getWiki (state),
+  staticData: getWiki (state),
   isEditingAllowed: getIsRemovingEnabled (state),
 })
 

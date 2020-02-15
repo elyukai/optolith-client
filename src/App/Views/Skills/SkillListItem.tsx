@@ -1,10 +1,9 @@
 import * as React from "react"
 import { List } from "../../../Data/List"
 import { INTERNAL_shallowEquals, Maybe } from "../../../Data/Maybe"
-import { OrderedSet } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
 import { AttributeCombined } from "../../Models/View/AttributeCombined"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { CheckModifier } from "../../Models/Wiki/wikiTypeHelpers"
 import { ListItem } from "../Universal/ListItem"
 import { ListItemName } from "../Universal/ListItemName"
@@ -27,9 +26,8 @@ interface Props {
   addText?: string
   check?: List<string>
   checkDisabled?: boolean
-  checkmod?: OrderedSet<CheckModifier>
-  groupList?: List<string>
-  groupIndex?: number
+  checkmod?: Maybe<CheckModifier>
+  group?: number
   ic?: number
   id: string
   insertTopMargin?: boolean
@@ -41,10 +39,11 @@ interface Props {
   typ?: boolean
   untyp?: boolean
   selectedForInfo: Maybe<string>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   activate? (id: string): void
   addPoint? (id: string): void
   removePoint? (id: string): void
+  getGroupName?: (id: number) => string
   selectForInfo (id: string): void
 }
 
@@ -59,8 +58,8 @@ const SkillListItem: React.FC<Props> = props => {
     check,
     checkDisabled,
     checkmod,
-    groupList,
-    groupIndex,
+    getGroupName,
+    group,
     ic,
     id,
     insertTopMargin,
@@ -72,7 +71,7 @@ const SkillListItem: React.FC<Props> = props => {
     typ,
     untyp,
     selectedForInfo,
-    l10n,
+    staticData,
     activate,
     addPoint,
     removePoint,
@@ -91,8 +90,8 @@ const SkillListItem: React.FC<Props> = props => {
       <ListItemSeparator />
       <SkillGroup
         addText={addText}
-        groupList={groupList}
-        groupIndex={groupIndex}
+        group={group}
+        getGroupName={getGroupName}
         />
       <ListItemValues>
         <SkillRating
@@ -106,7 +105,7 @@ const SkillListItem: React.FC<Props> = props => {
           check={check}
           checkDisabled={checkDisabled}
           checkmod={checkmod}
-          l10n={l10n}
+          staticData={staticData}
           />
         <SkillFill
           addFillElement={addFillElement}
@@ -144,7 +143,7 @@ const MemoSkillListItem = React.memo (
     || prevProps.addDisabled !== nextProps.addDisabled
     || prevProps.removeDisabled !== nextProps.removeDisabled
     || prevProps.attributes !== nextProps.attributes
-    || prevProps.l10n !== nextProps.l10n
+    || prevProps.staticData !== nextProps.staticData
     || prevProps.insertTopMargin !== nextProps.insertTopMargin
     || prevProps.typ !== nextProps.typ
     || prevProps.untyp !== nextProps.untyp

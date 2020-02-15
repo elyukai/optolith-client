@@ -7,7 +7,7 @@ import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableAc
 import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { ActivatableAddList } from "../Activatable/ActivatableAddList"
 
 interface InactiveListProps {
@@ -15,7 +15,7 @@ interface InactiveListProps {
     Record<ActiveActivatable>
     | Record<InactiveActivatable>
   >>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   rating: Maybe<OrderedMap<string, EntryRating>>
   showRating: boolean
   selectedForInfo: Maybe<string>
@@ -26,7 +26,7 @@ interface InactiveListProps {
 export const InactiveList: React.FC<InactiveListProps> = props => {
   const {
     inactiveList,
-    l10n,
+    staticData,
     rating,
     showRating,
     selectedForInfo,
@@ -37,7 +37,7 @@ export const InactiveList: React.FC<InactiveListProps> = props => {
   return (
     <ActivatableAddList
       inactiveList={inactiveList}
-      l10n={l10n}
+      staticData={staticData}
       rating={rating}
       showRating={showRating}
       selectedForInfo={selectedForInfo}

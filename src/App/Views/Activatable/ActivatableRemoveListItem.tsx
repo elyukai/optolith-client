@@ -6,12 +6,15 @@ import { fmap, mapReplace } from "../../../Data/Functor"
 import { cons, flength, List } from "../../../Data/List"
 import { any, bindF, ensure, fromJust, fromMaybe, guard, INTERNAL_shallowEquals, isJust, Just, liftM2, listToMaybe, Maybe, maybe, orN } from "../../../Data/Maybe"
 import { max, min } from "../../../Data/Num"
+import { lookup } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { SpecialAbilityId } from "../../Constants/Ids"
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
+import { NumIdName } from "../../Models/NumIdName"
 import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable"
 import { DropdownOption } from "../../Models/View/DropdownOption"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { classListMaybe } from "../../Utilities/CSS"
 import { translate } from "../../Utilities/I18n"
 import { getLevelElementsWithMin } from "../../Utilities/levelUtils"
@@ -29,7 +32,7 @@ import { ListItemValues } from "../Universal/ListItemValues"
 
 export interface ActivatableRemoveListItemProps {
   item: Record<ActiveActivatable>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   isRemovingEnabled: boolean
   hideGroup?: boolean
   isImportant?: boolean
@@ -41,6 +44,7 @@ export interface ActivatableRemoveListItemProps {
   selectForInfo (id: string): void
 }
 
+const AAA = ActiveActivatable.A
 const AAA_ = ActiveActivatableA_
 const DOA = DropdownOption.A
 
@@ -52,7 +56,7 @@ const ActivatableRemoveListItem: React.FC<ActivatableRemoveListItemProps> = prop
     isImportant,
     isTypical,
     isUntypical,
-    l10n,
+    staticData,
     selectForInfo,
     selectedForInfo,
     removeFromList,
@@ -109,7 +113,7 @@ const ActivatableRemoveListItem: React.FC<ActivatableRemoveListItemProps> = prop
             ? cons (levelOptions)
                    (DropdownOption ({
                      id: Just (4),
-                     name: translate (l10n) ("nativetongue.short"),
+                     name: translate (staticData) ("specialabilities.nativetonguelevel"),
                    }))
             : levelOptions
 
@@ -158,8 +162,12 @@ const ActivatableRemoveListItem: React.FC<ActivatableRemoveListItemProps> = prop
         ? null
         : (
           <ListItemGroup
-            list={translate (l10n) ("specialabilitygroups")}
-            index={AAA_.gr (item)}
+            text={pipe_ (
+              staticData,
+              StaticData.A.specialAbilityGroups,
+              lookup (pipe_ (item, AAA.wikiEntry, SpecialAbility.AL.gr)),
+              maybe ("") (NumIdName.A.name)
+            )}
             />
         )}
       <ListItemValues>
@@ -213,4 +221,3 @@ const ActivatableRemoveListItemM =
   )
 
 export { ActivatableRemoveListItemM as ActivatableRemoveListItem }
-

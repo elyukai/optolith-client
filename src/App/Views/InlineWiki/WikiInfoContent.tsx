@@ -17,12 +17,11 @@ import { Cantrip } from "../../Models/Wiki/Cantrip"
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
 import { Disadvantage } from "../../Models/Wiki/Disadvantage"
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
 import { Skill } from "../../Models/Wiki/Skill"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { Spell } from "../../Models/Wiki/Spell"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { InlineWikiEntry } from "../../Models/Wiki/wikiTypeHelpers"
 import { getCategoryById, getIdPrefix } from "../../Utilities/IDUtils"
 import { pipe } from "../../Utilities/pipe"
@@ -39,7 +38,7 @@ import { WikiRaceInfo } from "./WikiRaceInfo"
 import { WikiSkillInfo } from "./WikiSkillInfo"
 import { WikiSpellInfo } from "./WikiSpellInfo"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 
 const getEntry =
   (props: WikiInfoContentStateProps) =>
@@ -55,7 +54,7 @@ const getEntry =
                              return bind (props.items) (lookup (id))
                            }
                            else if (prefix === IdPrefixes.ITEM_TEMPLATE) {
-                             return lookup (id) (WA.itemTemplates (props.wiki))
+                             return lookup (id) (SDA.itemTemplates (props.staticData))
                            }
                            else {
                              return Nothing
@@ -64,26 +63,26 @@ const getEntry =
                          ((category: Category) => {
                            switch (category) {
                              case Category.ADVANTAGES:
-                               return lookup (id) (WA.advantages (props.wiki))
+                               return lookup (id) (SDA.advantages (props.staticData))
 
                              case Category.BLESSINGS:
-                               return lookup (id) (WA.blessings (props.wiki))
+                               return lookup (id) (SDA.blessings (props.staticData))
 
                              case Category.CANTRIPS:
-                               return lookup (id) (WA.cantrips (props.wiki))
+                               return lookup (id) (SDA.cantrips (props.staticData))
 
                              case Category.COMBAT_TECHNIQUES:
-                               return lookup (id) (WA.combatTechniques (props.wiki))
+                               return lookup (id) (SDA.combatTechniques (props.staticData))
 
                              case Category.CULTURES:
                                return find (pipe (CultureCombinedA_.id, equals (id)))
                                            (props.combinedCultures)
 
                              case Category.DISADVANTAGES:
-                               return lookup (id) (WA.disadvantages (props.wiki))
+                               return lookup (id) (SDA.disadvantages (props.staticData))
 
                              case Category.LITURGICAL_CHANTS:
-                               return lookup (id) (WA.liturgicalChants (props.wiki))
+                               return lookup (id) (SDA.liturgicalChants (props.staticData))
 
                              case Category.PROFESSIONS:
                                return find (pipe (ProfessionCombinedA_.id, equals (id)))
@@ -94,13 +93,13 @@ const getEntry =
                                            (props.combinedRaces)
 
                              case Category.SPECIAL_ABILITIES:
-                               return lookup (id) (WA.specialAbilities (props.wiki))
+                               return lookup (id) (SDA.specialAbilities (props.staticData))
 
                              case Category.SPELLS:
-                               return lookup (id) (WA.spells (props.wiki))
+                               return lookup (id) (SDA.spells (props.staticData))
 
                              case Category.SKILLS:
-                               return lookup (id) (WA.skills (props.wiki))
+                               return lookup (id) (SDA.skills (props.staticData))
 
                              default:
                                return Nothing
@@ -111,7 +110,6 @@ const getEntry =
 
 export interface WikiInfoContentOwnProps {
   currentId: Maybe<string>
-  l10n: L10nRecord
   noWrapper?: boolean
 }
 
@@ -125,7 +123,7 @@ export interface WikiInfoContentStateProps {
   scripts: Maybe<Record<SpecialAbility>>
   sex: Maybe<Sex>
   spellExtensions: Maybe<Record<SpecialAbility>>
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
 }
 
 export interface WikiInfoContentDispatchProps { }
@@ -137,7 +135,6 @@ export type WikiInfoContentProps =
 
 export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
   const {
-    l10n,
     currentId: mid,
     noWrapper,
     languages,
@@ -145,7 +142,7 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
     scripts,
     sex,
     spellExtensions,
-    wiki,
+    staticData,
   } = props
 
   const mx = getEntry (props) (mid)
@@ -157,8 +154,7 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
       return (
         <WikiInfoContentWrapper noWrapper={noWrapper}>
           <WikiEquipmentInfo
-            wiki={wiki}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             />
         </WikiInfoContentWrapper>
@@ -169,8 +165,7 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
       return (
         <WikiInfoContentWrapper noWrapper={noWrapper}>
           <WikiActivatableInfo
-            l10n={l10n}
-            wiki={wiki}
+            staticData={staticData}
             x={x}
             />
         </WikiInfoContentWrapper>
@@ -181,8 +176,7 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
       return (
         <WikiInfoContentWrapper noWrapper={noWrapper}>
           <WikiBlessingInfo
-            wiki={wiki}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             />
         </WikiInfoContentWrapper>
@@ -193,8 +187,7 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
       return (
         <WikiInfoContentWrapper noWrapper={noWrapper}>
           <WikiCantripInfo
-            wiki={wiki}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             />
         </WikiInfoContentWrapper>
@@ -205,8 +198,7 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
       return (
         <WikiInfoContentWrapper noWrapper={noWrapper}>
           <WikiCombatTechniqueInfo
-            wiki={wiki}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             sex={sex}
             />
@@ -218,8 +210,7 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
       return (
         <WikiInfoContentWrapper noWrapper={noWrapper}>
           <WikiCultureInfo
-            wiki={wiki}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             languages={languages}
             scripts={scripts}
@@ -232,8 +223,7 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
       return (
         <WikiInfoContentWrapper noWrapper={noWrapper}>
           <WikiLiturgicalChantInfo
-            wiki={wiki}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             liturgicalChantExtensions={liturgicalChantExtensions}
             />
@@ -245,8 +235,7 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
       return (
         <WikiInfoContentWrapper noWrapper={noWrapper}>
           <WikiProfessionInfo
-            wiki={wiki}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             sex={sex}
             />
@@ -258,8 +247,7 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
       return (
         <WikiInfoContentWrapper noWrapper={noWrapper}>
           <WikiRaceInfo
-            wiki={wiki}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             />
         </WikiInfoContentWrapper>
@@ -270,8 +258,7 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
       return (
         <WikiInfoContentWrapper noWrapper={noWrapper}>
           <WikiSpellInfo
-            wiki={wiki}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             spellExtensions={spellExtensions}
             />
@@ -283,8 +270,7 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
       return (
         <WikiInfoContentWrapper noWrapper={noWrapper}>
           <WikiSkillInfo
-            wiki={wiki}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             />
         </WikiInfoContentWrapper>

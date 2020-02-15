@@ -1,94 +1,143 @@
 import * as React from "react"
 import { elemF, filter, List, map, toArray } from "../../../Data/List"
-import { Maybe } from "../../../Data/Maybe"
+import { fromJust, isJust, Just, Nothing } from "../../../Data/Maybe"
 import { elems } from "../../../Data/OrderedMap"
-import { OrderedSet } from "../../../Data/OrderedSet"
+import { fnull, OrderedSet } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
 import { Tuple } from "../../../Data/Tuple"
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { CombatTechniquesSelection } from "../../Models/Wiki/professionSelections/CombatTechniquesSelection"
 import { CombatTechniquesSecondSelection } from "../../Models/Wiki/professionSelections/SecondCombatTechniquesSelection"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate, translateP } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { CombatTechniqueSelectionListItem } from "./CombatTechniqueSelectionListItem"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const CTA = CombatTechnique.A
 const CTSA = CombatTechniquesSelection.A
 const CTSSA = CombatTechniquesSecondSelection.A
 
-export const isFirstCombatTechniqueSelectionValid =
+export const isCombatTechniqueSelectionValid =
   (actives: OrderedSet<string>) =>
-  (selection: Record<CombatTechniquesSelection>): Tuple<[boolean]> =>
-    Tuple (OrderedSet.size (actives) === CTSA.amount (selection))
+  (selection: Record<CombatTechniquesSelection>): Tuple<[boolean]> => {
+    const first = OrderedSet.size (actives) === CTSA.amount (selection)
+    const msecond = CTSA.second (selection)
 
-export const isSecondCombatTechniqueSelectionValid =
-  (actives: OrderedSet<string>) =>
-  (selection: Record<CombatTechniquesSecondSelection>): Tuple<[boolean]> =>
-    Tuple (OrderedSet.size (actives) === CTSSA.amount (selection))
+    if (isJust (msecond)) {
+      return Tuple (first && OrderedSet.size (actives) === CTSSA.amount (fromJust (msecond)))
+    }
 
-export const getFirstCombatTechniques =
-  (wiki: WikiModelRecord) =>
+    return Tuple (first && fnull (actives))
+  }
+
+export const getCombatTechniques =
+  (wiki: StaticDataRecord) =>
   (selection: Record<CombatTechniquesSelection>) =>
     filter (pipe (CTA.id, elemF (CTSA.sid (selection))))
-           (elems (WA.combatTechniques (wiki)))
-
-export const getSecondCombatTechniques =
-  (wiki: WikiModelRecord) =>
-  (selection: Record<CombatTechniquesSecondSelection>) =>
-    filter (pipe (CTA.id, elemF (CTSSA.sid (selection))))
-           (elems (WA.combatTechniques (wiki)))
+           (elems (SDA.combatTechniques (wiki)))
 
 interface Props {
-  active: OrderedSet<string>
-  disabled?: OrderedSet<string>
-  amount: number
+  activeFirst: OrderedSet<string>
+  activeSecond: OrderedSet<string>
   list: List<Record<CombatTechnique>>
-  l10n: L10nRecord
-  value: number
-  second?: boolean
+  staticData: StaticDataRecord
+  selection: Record<CombatTechniquesSelection>
   setCombatTechniqueId (id: string): void
+  setCombatTechniqueSecondId (id: string): void
 }
 
 export const CombatTechniqueSelectionList: React.FC<Props> = props => {
-  const { active, amount, setCombatTechniqueId, disabled, list, l10n, value } = props
+  const {
+    activeFirst,
+    activeSecond,
+    list,
+    selection,
+    setCombatTechniqueId,
+    setCombatTechniqueSecondId,
+    staticData,
+  } = props
 
-  const mdisabled = Maybe (disabled)
+  const countFirst = CTSA.amount (selection) === 1
+                     ? translate (staticData) ("rcpselectoptions.combattechnique.one")
+                     : CTSA.amount (selection) === 2
+                     ? translate (staticData) ("rcpselectoptions.combattechnique.two")
+                     : "..."
 
-  const count = amount === 1
-                ? translate (l10n) ("rcpselectoptions.combattechnique.one")
-                : amount === 2
-                ? translate (l10n) ("rcpselectoptions.combattechnique.two")
-                : "..."
-
-  const text =
-    translateP (l10n)
+  const textFirst =
+    translateP (staticData)
                ("rcpselectoptions.combattechniqueselection")
                (List<string | number> (
-                 count,
-                 value + 6
+                 countFirst,
+                 CTSA.value (selection) + 6
                ))
 
-  return (
-    <div className="ct list">
-      <h4>{text}</h4>
+  const firstElem = (
+    <>
+      <h4>{textFirst}</h4>
       <ul>
         {pipe_ (
           list,
           map (e => (
             <CombatTechniqueSelectionListItem
-              active={active}
-              amount={amount}
+              active={activeFirst}
+              amount={CTSA.amount (selection)}
               combatTechnique={e}
-              disabled={mdisabled}
+              disabled={Just (activeSecond)}
               toggleCombatTechniqueId={setCombatTechniqueId}
               />
           )),
           toArray
         )}
       </ul>
+    </>
+  )
+
+  const msecond = CTSA.second (selection)
+
+  if (isJust (msecond)) {
+    const second = fromJust (msecond)
+
+    const countSecond = CTSSA.amount (second) === 1
+                        ? translate (staticData) ("rcpselectoptions.combattechnique.one")
+                        : CTSSA.amount (second) === 2
+                        ? translate (staticData) ("rcpselectoptions.combattechnique.two")
+                        : "..."
+
+    const textSecond =
+      translateP (staticData)
+                 ("rcpselectoptions.combattechniquesecondselection")
+                 (List<string | number> (
+                   countSecond,
+                   CTSSA.value (second) + 6
+                 ))
+
+    return (
+      <div className="ct list">
+        {firstElem}
+        <h4>{textSecond}</h4>
+        <ul>
+          {pipe_ (
+            list,
+            map (e => (
+              <CombatTechniqueSelectionListItem
+                active={activeSecond}
+                amount={CTSSA.amount (second)}
+                combatTechnique={e}
+                disabled={Nothing}
+                toggleCombatTechniqueId={setCombatTechniqueSecondId}
+                />
+            )),
+            toArray
+          )}
+        </ul>
+      </div>
+    )
+  }
+
+  return (
+    <div className="ct list">
+      {firstElem}
     </div>
   )
 }

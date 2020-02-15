@@ -5,14 +5,14 @@ import { bindF, ensure, isJust, Maybe, maybe } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
 import { DCId, EnergyId } from "../../Constants/Ids"
 import { DerivedCharacteristic, EnergyWithLoss } from "../../Models/View/DerivedCharacteristic"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { AttributesPermanentListItem } from "./AttributesPermanentListItem"
 
 export interface AttributesPermanentListProps {
   derived: List<Record<DerivedCharacteristic>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   isRemovingEnabled: boolean
   getEditPermanentEnergy: Maybe<EnergyId>
   getAddPermanentEnergy: Maybe<EnergyId>
@@ -40,7 +40,7 @@ const DCA = DerivedCharacteristic.A
 export const AttributesPermanentList: React.FC<AttributesPermanentListProps> = props => {
   const {
     derived,
-    l10n,
+    staticData,
     isRemovingEnabled,
     getEditPermanentEnergy,
     getAddPermanentEnergy,
@@ -78,10 +78,10 @@ export const AttributesPermanentList: React.FC<AttributesPermanentListProps> = p
         maybe (<></>)
               ((lp: Record<EnergyWithLoss>) => (
                 <AttributesPermanentListItem
-                  l10n={l10n}
+                  staticData={staticData}
                   id={EnergyId.LP}
-                  label={translate (l10n) ("attributes.lostpermanently.lifepoints.short")}
-                  name={translate (l10n) ("attributes.lostpermanently.lifepoints")}
+                  label={translate (staticData) ("attributes.lostpermanently.lifepoints.short")}
+                  name={translate (staticData) ("attributes.lostpermanently.lifepoints")}
                   lost={Maybe.sum (DCA.permanentLost (lp))}
                   isRemovingEnabled={isRemovingEnabled}
                   getEditPermanentEnergy={getEditPermanentEnergy}
@@ -103,10 +103,10 @@ export const AttributesPermanentList: React.FC<AttributesPermanentListProps> = p
         maybe (<></>)
               ((ae: Record<EnergyWithLoss>) => (
                 <AttributesPermanentListItem
-                  l10n={l10n}
+                  staticData={staticData}
                   id={EnergyId.AE}
-                  label={translate (l10n) ("attributes.lostpermanently.arcaneenergy.short")}
-                  name={translate (l10n) ("attributes.lostpermanently.arcaneenergy")}
+                  label={translate (staticData) ("attributes.lostpermanently.arcaneenergy.short")}
+                  name={translate (staticData) ("attributes.lostpermanently.arcaneenergy")}
                   boughtBack={Maybe.sum (DCA.permanentRedeemed (ae))}
                   lost={Maybe.sum (DCA.permanentLost (ae))}
                   isRemovingEnabled={isRemovingEnabled}
@@ -130,10 +130,10 @@ export const AttributesPermanentList: React.FC<AttributesPermanentListProps> = p
         maybe (<></>)
               ((kp: Record<EnergyWithLoss>) => (
                 <AttributesPermanentListItem
-                  l10n={l10n}
+                  staticData={staticData}
                   id={EnergyId.KP}
-                  label={translate (l10n) ("attributes.lostpermanently.karmapoints.short")}
-                  name={translate (l10n) ("attributes.lostpermanently.karmapoints")}
+                  label={translate (staticData) ("attributes.lostpermanently.karmapoints.short")}
+                  name={translate (staticData) ("attributes.lostpermanently.karmapoints")}
                   boughtBack={Maybe.sum (DCA.permanentRedeemed (kp))}
                   lost={Maybe.sum (DCA.permanentLost (kp))}
                   isRemovingEnabled={isRemovingEnabled}

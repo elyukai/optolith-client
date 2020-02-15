@@ -33,7 +33,7 @@ import { Profession } from "../../Models/Wiki/Profession"
 import { Race } from "../../Models/Wiki/Race"
 import { Skill } from "../../Models/Wiki/Skill"
 import { Spell } from "../../Models/Wiki/Spell"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { AllRequirements, ProfessionDependency, SID } from "../../Models/Wiki/wikiTypeHelpers"
 import { isActive } from "../Activatable/isActive"
 import { isPactFromStateValid } from "../Activatable/pactUtils"
@@ -44,12 +44,12 @@ import { pipe, pipe_ } from "../pipe"
 import { getPrimaryAttributeId } from "../primaryAttributeUtils"
 import { getAllWikiEntriesByGroup } from "../WikiUtils"
 
-type Validator = (wiki: WikiModelRecord) =>
+type Validator = (wiki: StaticDataRecord) =>
                  (state: HeroModelRecord) =>
                  (req: AllRequirements) =>
                  (sourceId: string) => boolean
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const HA = HeroModel.A
 const PDA = PersonalData.A
 const SA = Spell.A
@@ -60,56 +60,56 @@ const DOA = DependencyObject.A
 const SDAL = SkillDependent.AL
 
 const getAllRaceEntries =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
     pipe (
       HA.race,
-      bindF (lookupF (WA.races (wiki))),
+      bindF (lookupF (SDA.races (wiki))),
       fmap (
         selectedRace => concat (
           List (
-            Race.AL.stronglyRecommendedAdvantages (selectedRace),
-            Race.AL.automaticAdvantages (selectedRace),
-            Race.AL.stronglyRecommendedAdvantages (selectedRace),
-            Race.AL.stronglyRecommendedDisadvantages (selectedRace),
-            Race.AL.commonAdvantages (selectedRace),
-            Race.AL.commonDisadvantages (selectedRace)
+            Race.A.stronglyRecommendedAdvantages (selectedRace),
+            Race.A.automaticAdvantages (selectedRace),
+            Race.A.stronglyRecommendedAdvantages (selectedRace),
+            Race.A.stronglyRecommendedDisadvantages (selectedRace),
+            Race.A.commonAdvantages (selectedRace),
+            Race.A.commonDisadvantages (selectedRace)
           )
         )
       )
     )
 
 const getAllCultureEntries =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
     pipe (
       HA.culture,
-      bindF (lookupF (WA.cultures (wiki))),
+      bindF (lookupF (SDA.cultures (wiki))),
       fmap (
         selectedCulture => concat (
           List (
-            Culture.AL.commonAdvantages (selectedCulture),
-            Culture.AL.commonDisadvantages (selectedCulture)
+            Culture.A.commonAdvantages (selectedCulture),
+            Culture.A.commonDisadvantages (selectedCulture)
           )
         )
       )
     )
 
 const getAllProfessionEntries =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
     pipe (
       HA.profession,
-      bindF (lookupF (WA.professions (wiki))),
+      bindF (lookupF (SDA.professions (wiki))),
       fmap (
         selectedProfession => concat (
           List (
-            Profession.AL.suggestedAdvantages (selectedProfession),
-            Profession.AL.suggestedDisadvantages (selectedProfession)
+            Profession.A.suggestedAdvantages (selectedProfession),
+            Profession.A.suggestedDisadvantages (selectedProfession)
           )
         )
       )
     )
 
 const isRCPValid =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (sourceId: string): boolean =>
     any (elem (sourceId))
@@ -237,7 +237,7 @@ const isSocialPrerequisiteValid: (hero: Record<HeroModel>) =>
     )
 
 const isIncreasableValid =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (sourceId: string) =>
   (req: Record<RequireIncreasable>) =>
@@ -301,7 +301,7 @@ const isNeededLevelGiven =
     )
 
 const isActivatableValid =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (sourceId: string) =>
   (req: Record<RequireActivatable>) =>
@@ -333,7 +333,7 @@ const isActivatableValid =
                                const arr =
                                  map (Skill.AL.id)
                                      (getAllWikiEntriesByGroup
-                                       (WA.skills (wiki))
+                                       (SDA.skills (wiki))
                                        (maybeToList (
                                          RAA.sid2 (req) as Maybe<number>
                                        )))
@@ -382,7 +382,7 @@ const isActivatableValid =
  * @param pact A valid `Pact` object or `undefined`.
  */
 export const validateObject =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (req: AllRequirements) =>
   (sourceId: string): boolean =>
@@ -412,7 +412,7 @@ export const validateObject =
  * @param pact A valid `Pact` object or `undefined`.
  */
 export const validatePrerequisites =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (prerequisites: List<AllRequirements>) =>
   (sourceId: string): boolean =>
@@ -428,7 +428,7 @@ export const validatePrerequisites =
  * Checks if all prerequisites of the passed spell are met.
  */
 export const areSpellPrereqisitesMet =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (entry: Record<Spell>) =>
     validatePrerequisites (wiki)
@@ -455,7 +455,7 @@ const skipLevelCheck =
  * @param sourceId The id of the entry the requirement objects belong to.
  */
 export const validateLevel =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (requirements: OrderedMap<number, List<AllRequirements>>) =>
   (dependencies: List<ActivatableDependency>) =>

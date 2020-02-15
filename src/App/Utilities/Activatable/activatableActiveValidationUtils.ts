@@ -36,7 +36,7 @@ import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableR
 import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { Spell } from "../../Models/Wiki/Spell"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable, EntryWithCategory, LevelAwarePrerequisites, PrerequisitesWithIds } from "../../Models/Wiki/wikiTypeHelpers"
 import { countActiveGroupEntries } from "../entryGroupUtils"
 import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils"
@@ -59,7 +59,7 @@ const hasRequiredMinimumLevel =
     isJust (max_level) && isJust (min_level)
 
 const HA = HeroModel.A
-const WA = WikiModel.A
+const SDA = StaticData.A
 const ELA = ExperienceLevel.A
 const AAL = Advantage.AL
 const ADA = ActivatableDependent.A
@@ -101,7 +101,7 @@ const isRequiredByOthers =
  * Checks if you can somehow remove an ActiveObject from the given entry.
  */
 const isRemovalDisabledEntrySpecific =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (wiki_entry: Activatable) =>
@@ -110,13 +110,13 @@ const isRemovalDisabledEntrySpecific =
   // tslint:disable-next-line: cyclomatic-complexity
   (active: Record<ActiveObjectWithId>): boolean => {
     const mstart_el =
-      lookupF (WikiModel.AL.experienceLevels (wiki))
-              (HeroModel.AL.experienceLevel (hero))
+      lookupF (SDA.experienceLevels (wiki))
+              (HA.experienceLevel (hero))
 
     if (isMagicalTradId (AAL.id (wiki_entry))) {
       // All active tradition entries
       const traditions =
-        getMagicalTraditionsHeroEntries (HeroModel.AL.specialAbilities (hero))
+        getMagicalTraditionsHeroEntries (HA.specialAbilities (hero))
 
       const multiple_traditions = flength (traditions) > 1
 
@@ -140,7 +140,7 @@ const isRemovalDisabledEntrySpecific =
             active,
             AOWIA.sid,
             misStringM,
-            bindF (lookupF (HeroModel.AL.skills (hero))),
+            bindF (lookupF (HA.skills (hero))),
             fmap (SkillDependent.AL.value)
           )
 
@@ -213,7 +213,7 @@ const isRemovalDisabledEntrySpecific =
                                              && pipe_ (
                                                   spell,
                                                   ASDA.id,
-                                                  lookupF (WA.spells (wiki)),
+                                                  lookupF (SDA.spells (wiki)),
                                                   maybe (true)
                                                         (pipe (SA.property, equals (prop_id)))
                                                 ))
@@ -236,7 +236,7 @@ const isRemovalDisabledEntrySpecific =
                                           && pipe_ (
                                                chant,
                                                ASDA.id,
-                                               lookupF (WA.liturgicalChants (wiki)),
+                                               lookupF (SDA.liturgicalChants (wiki)),
                                                maybe (true)
                                                      (pipe (
                                                        LCA.aspects,
@@ -283,7 +283,7 @@ const isRemovalDisabledEntrySpecific =
       case SpecialAbilityId.JaegerinnenDerWeißenMaid:
       case SpecialAbilityId.AnhaengerDesGueldenen: {
         const mblessed_tradition =
-          getBlessedTraditionFromWiki (WikiModel.AL.specialAbilities (wiki))
+          getBlessedTraditionFromWiki (SDA.specialAbilities (wiki))
                                       (HA.specialAbilities (hero))
 
         // Wiki entries for all active liturgical chants
@@ -293,7 +293,7 @@ const isRemovalDisabledEntrySpecific =
             HA.liturgicalChants,
             elems,
             filter<Record<ActivatableSkillDependent>> (ASDA.active),
-            mapByIdKeyMap (WikiModel.AL.liturgicalChants (wiki))
+            mapByIdKeyMap (SDA.liturgicalChants (wiki))
           )
 
         // If there are chants active that do not belong to the own tradition
@@ -310,7 +310,7 @@ const isRemovalDisabledEntrySpecific =
   }
 
 const isEntryDisabledByDependencies =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (wiki_entry: Activatable) =>
   (hero_entry: Record<ActivatableDependent>) =>
@@ -437,17 +437,17 @@ export const getMaxLevelForDecreaseEntry: (def: number) => (count: number) => Ma
   def => pipe (subtract (def), max (0), Just)
 
 export const getSermonsAndVisionsCount =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord):
   (gr: number) => number =>
     pipe (
-      getAllEntriesByGroup (WA.specialAbilities (wiki))
+      getAllEntriesByGroup (SDA.specialAbilities (wiki))
                            (HA.specialAbilities (state)),
       countWith (isActive)
     )
 
 const getEntrySpecificMinimumLevel =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (x: Record<ActiveObjectWithId>): Maybe<number> => {
     switch (AOWIA.id (x)) {
@@ -466,7 +466,7 @@ const getEntrySpecificMinimumLevel =
   }
 
 const getEntrySpecificMaximumLevel =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (entry_id: string): Maybe<number> => {
     switch (entry_id) {
@@ -527,7 +527,7 @@ const adjustMinimumLevelByDependencies =
  * Get minimum valid tier.
  */
 export const getMinTier =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (entry: Record<ActiveObjectWithId>) =>
   (entry_dependencies: List<ActivatableDependency>): Maybe<number> =>
@@ -544,7 +544,7 @@ const minMaybe: (mx: Maybe<number>) => (my: Maybe<number>) => Maybe<number> =
  * Get maximum valid tier.
  */
 export const getMaxTier =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (entry_prerequisites: LevelAwarePrerequisites) =>
   (entry_dependencies: List<ActivatableDependency>) =>
@@ -569,7 +569,7 @@ export const getMaxTier =
  * @param state The current hero's state.
  */
 export const getIsRemovalOrChangeDisabled =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableActivationValidation>> =>

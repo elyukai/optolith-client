@@ -12,11 +12,11 @@ import { setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from "
 import { AppContainer } from "./App/Containers/AppContainer"
 import { AppState, AppStateRecord } from "./App/Models/AppState"
 import { appReducer } from "./App/Reducers/appReducer"
-import { getLocaleMessages } from "./App/Selectors/stateSelectors"
+import { getWiki } from "./App/Selectors/stateSelectors"
 import { pipe } from "./App/Utilities/pipe"
 import { parseStaticData } from "./App/Utilities/YAML"
 import { flip } from "./Data/Function"
-import { fromJust, isJust, Just } from "./Data/Maybe"
+import { Just } from "./Data/Maybe"
 import { uncurryN } from "./Data/Tuple/Curry"
 
 const nativeAppReducer =
@@ -145,20 +145,16 @@ render (
 
 ipcRenderer.addListener ("update-available", (_event: Event, info: UpdateInfo) => {
   const dispatch = store.dispatch as ReduxDispatch
-  const maybeLocale = getLocaleMessages (store.getState ())
+  const staticData = getWiki (store.getState ())
 
-  if (isJust (maybeLocale)) {
-    dispatch (updateAvailable (fromJust (maybeLocale)) (info))
-  }
+  dispatch (updateAvailable (staticData) (info))
 })
 
 ipcRenderer.addListener ("update-not-available", () => {
   const dispatch = store.dispatch as ReduxDispatch
-  const maybeLocale = getLocaleMessages (store.getState ())
+  const staticData = getWiki (store.getState ())
 
-  if (isJust (maybeLocale)) {
-    dispatch (updateNotAvailable (fromJust (maybeLocale)))
-  }
+  dispatch (updateNotAvailable (staticData))
 })
 
 ipcRenderer.addListener ("download-progress", (_event: Event, progressObj: ProgressInfo) => {
@@ -167,16 +163,14 @@ ipcRenderer.addListener ("download-progress", (_event: Event, progressObj: Progr
 
 ipcRenderer.addListener ("auto-updater-error", (_event: Event, err: Error) => {
   const dispatch = store.dispatch as ReduxDispatch
-  const maybeLocale = getLocaleMessages (store.getState ())
+  const staticData = getWiki (store.getState ())
 
-  if (isJust (maybeLocale)) {
-    dispatch (setUpdateDownloadProgress ())
-    dispatch (addErrorAlert (fromJust (maybeLocale))
-                            (AlertOptions ({
-                              title: Just ("Auto Update Error"),
-                              message: `An error occured during auto-update.`
-                                + ` (${JSON.stringify (err)})`,
-                            })))
-      .catch (() => undefined)
-  }
+  dispatch (setUpdateDownloadProgress ())
+  dispatch (addErrorAlert (staticData)
+                          (AlertOptions ({
+                            title: Just ("Auto Update Error"),
+                            message: `An error occured during auto-update.`
+                              + ` (${JSON.stringify (err)})`,
+                          })))
+    .catch (() => undefined)
 })

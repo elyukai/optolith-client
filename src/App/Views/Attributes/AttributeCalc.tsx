@@ -2,13 +2,13 @@ import * as React from "react"
 import { List, map, toArray } from "../../../Data/List"
 import { Record } from "../../../Data/Record"
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { pipe_ } from "../../Utilities/pipe"
 import { AttributeCalcItem } from "./AttributeCalcItem"
 
 export interface AttributesCalcProps {
   derived: List<Record<DerivedCharacteristic>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   isInCharacterCreation: boolean
   isRemovingEnabled: boolean
   addLifePoint (): void
@@ -22,7 +22,7 @@ export interface AttributesCalcProps {
 export const AttributeCalc: React.FC<AttributesCalcProps> = props => {
   const {
     derived,
-    l10n,
+    staticData,
     isInCharacterCreation,
     isRemovingEnabled,
     addLifePoint,
@@ -41,7 +41,7 @@ export const AttributeCalc: React.FC<AttributesCalcProps> = props => {
           <AttributeCalcItem
             key={DerivedCharacteristic.A.id (attribute)}
             attribute={attribute}
-            l10n={l10n}
+            staticData={staticData}
             isInCharacterCreation={isInCharacterCreation}
             isRemovingEnabled={isRemovingEnabled}
             addLifePoint={addLifePoint}

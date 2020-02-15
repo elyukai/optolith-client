@@ -22,8 +22,8 @@ import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel
 import { User } from "../Models/Hero/heroTypeHelpers"
 import { PetL } from "../Models/Hero/Pet"
 import { UISettingsState } from "../Models/UISettingsState"
-import { L10n, L10nRecord } from "../Models/Wiki/L10n"
-import { WikiModel } from "../Models/Wiki/WikiModel"
+import { L10n } from "../Models/Wiki/L10n"
+import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { heroReducer } from "../Reducers/heroReducer"
 import { LAST_LOADING_PHASE } from "../Reducers/isReadyReducer"
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
@@ -39,13 +39,13 @@ import { Config, Locale, readConfig, writeConfig } from "../Utilities/Raw/JSON/C
 import { convertHero } from "../Utilities/Raw/JSON/Hero/Compat"
 import { convertFromRawHero } from "../Utilities/Raw/JSON/Hero/HeroFromJSON"
 import { convertHeroesForSave, convertHeroForSave } from "../Utilities/Raw/JSON/Hero/HeroToJSON"
+import { RawHero, RawHerolist } from "../Utilities/Raw/RawData"
 import { parseTables, TableParseRes } from "../Utilities/Raw/XLSX"
-import { RawHero, RawHerolist } from "../Utilities/Raw/XLSX/RawData"
 import { isBase64Image } from "../Utilities/RegexUtils"
 import { UndoState } from "../Utilities/undo"
 import { readUpdate, writeUpdate } from "../Utilities/Update"
 import { ReduxAction } from "./Actions"
-import { addAlert, addDefaultErrorAlert, addErrorAlert, addPrompt, AlertOptions, CustomPromptOptions, PromptButton } from "./AlertActions"
+import { addAlert, addDefaultErrorAlert, addErrorAlert, addPrompt, AlertOptions, CustomPromptOptions, getErrorMsg, PromptButton } from "./AlertActions"
 import { updateDateModified } from "./HerolistActions"
 
 
@@ -71,7 +71,7 @@ const loadHeroes = async () =>
   )
 
 interface InitialData {
-  tables: Pair<Record<L10n>, Record<WikiModel>>
+  tables: Pair<Record<L10n>, Record<StaticData>>
   heroes: Maybe<RawHerolist>
   defaultLocale: Locale
   config: Maybe<Record<Config>>
@@ -206,7 +206,7 @@ export const requestInitialData: ReduxAction<Promise<void>> = async dispatch =>
            return Promise.resolve ()
          }
          else {
-           await dispatch (addErrorAlert (L10n.default)
+           await dispatch (addErrorAlert (StaticData.default)
                                          (AlertOptions ({
                                            title: Just (fst (fromLeft_ (data))),
                                            message: snd (fromLeft_ (data)),
@@ -219,7 +219,7 @@ export const requestInitialData: ReduxAction<Promise<void>> = async dispatch =>
 const UISSA = UISettingsState.A
 
 export const requestConfigSave =
-  (l10n: L10nRecord): ReduxAction<Promise<boolean>> =>
+  (staticData: StaticDataRecord): ReduxAction<Promise<boolean>> =>
   async (dispatch, getState) => {
     const state = getState ()
 
@@ -244,9 +244,18 @@ export const requestConfigSave =
         console.log (res)
 
         if (isLeft (res)) {
-          await dispatch (addDefaultErrorAlert (l10n)
-                                               (translate (l10n) ("saveconfigerror"))
-                                               (res))
+          const title = Just (translate (staticData) ("header.dialogs.saveconfigerror.title"))
+
+          const message = getErrorMsg (staticData)
+                                      (translate (staticData)
+                                                 ("header.dialogs.saveconfigerror.message"))
+                                      (res)
+
+          await dispatch (addErrorAlert (staticData)
+                                        (AlertOptions ({
+                                          title,
+                                          message,
+                                        })))
 
           return false
         }
@@ -257,7 +266,7 @@ export const requestConfigSave =
   }
 
 export const requestAllHeroesSave =
-  (l10n: L10nRecord): ReduxAction<Promise<boolean>> =>
+  (staticData: StaticDataRecord): ReduxAction<Promise<boolean>> =>
   async (dispatch, getState) => {
     const heroes_before = getHeroes (getState ())
 
@@ -282,9 +291,18 @@ export const requestAllHeroesSave =
       handleE,
       IO.bindF (async res => {
         if (isLeft (res)) {
-          await dispatch (addDefaultErrorAlert (l10n)
-                                               (translate (l10n) ("saveheroeserror"))
-                                               (res))
+          const title = Just (translate (staticData) ("header.dialogs.saveheroeserror.title"))
+
+          const message = getErrorMsg (staticData)
+                                      (translate (staticData)
+                                                 ("header.dialogs.saveheroeserror.message"))
+                                      (res)
+
+          await dispatch (addErrorAlert (staticData)
+                                        (AlertOptions ({
+                                          title,
+                                          message,
+                                        })))
 
           return false
         }
@@ -296,25 +314,25 @@ export const requestAllHeroesSave =
 
 const requestSaveAll =
   (save_heroes: boolean) =>
-  (l10n: L10nRecord): ReduxAction<Promise<boolean>> =>
+  (staticData: StaticDataRecord): ReduxAction<Promise<boolean>> =>
   async dispatch => {
-    const configSavedDone = await dispatch (requestConfigSave (l10n))
+    const configSavedDone = await dispatch (requestConfigSave (staticData))
     const heroesSavedDone = save_heroes
-                            ? await dispatch (requestAllHeroesSave (l10n))
+                            ? await dispatch (requestAllHeroesSave (staticData))
                             : true
 
     return configSavedDone && heroesSavedDone
   }
 
 export const requestSaveCache =
-  (l10n: L10nRecord): ReduxAction<Promise<Either<Error, void>>> =>
+  (staticData: StaticDataRecord): ReduxAction<Promise<Either<Error, void>>> =>
   async (_, getState) =>
     pipe_ (
       getState (),
       getHeroes,
       mapMaybe (pipe (
         heroReducer.A.present,
-        hero => getAPObjectMap (HeroModel.A.id (hero)) (getState (), { l10n, hero }),
+        hero => getAPObjectMap (HeroModel.A.id (hero)) (getState (), { staticData, hero }),
         Maybe.join,
         fmap (toAPCache)
       )),
@@ -322,7 +340,7 @@ export const requestSaveCache =
     )
 
 export const requestHeroSave =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (mcurrent_id: Maybe<string>): ReduxAction<Promise<Maybe<string>>> =>
   async (dispatch, getState) => {
     const mcurrent_id_alt = alt_ (mcurrent_id) (() => getCurrentHeroId (getState ()))
@@ -362,16 +380,25 @@ export const requestHeroSave =
         handleE,
         IO.bindF (async res => {
           if (isLeft (res)) {
-            await dispatch (addDefaultErrorAlert (l10n)
-                                                 (translate (l10n) ("saveheroeserror"))
-                                                 (res))
+            const title = Just (translate (staticData) ("header.dialogs.saveheroeserror.title"))
+
+            const message = getErrorMsg (staticData)
+                                        (translate (staticData)
+                                                   ("header.dialogs.saveheroeserror.message"))
+                                        (res)
+
+            await dispatch (addErrorAlert (staticData)
+                                          (AlertOptions ({
+                                            title,
+                                            message,
+                                          })))
 
             return Nothing
           }
           else {
-            await dispatch (addAlert (l10n)
+            await dispatch (addAlert (staticData)
                                      (AlertOptions ({
-                                       message: translate (l10n) ("herosaved"),
+                                       message: translate (staticData) ("heroes.dialogs.herosaved"),
                                      })))
 
             return Just (hero .id)
@@ -384,7 +411,7 @@ export const requestHeroSave =
   }
 
 export const requestHeroDeletion =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (id: string): ReduxAction<Promise<boolean>> =>
   async dispatch => {
     const msaved_heroes = await loadHeroes ()
@@ -406,9 +433,18 @@ export const requestHeroDeletion =
       handleE,
       IO.bindF (async res => {
         if (isLeft (res)) {
-          await dispatch (addDefaultErrorAlert (l10n)
-                                               (translate (l10n) ("saveheroeserror"))
-                                               (res))
+          const title = Just (translate (staticData) ("header.dialogs.saveheroeserror.title"))
+
+          const message = getErrorMsg (staticData)
+                                      (translate (staticData)
+                                                 ("header.dialogs.saveheroeserror.message"))
+                                      (res)
+
+          await dispatch (addErrorAlert (staticData)
+                                        (AlertOptions ({
+                                          title,
+                                          message,
+                                        })))
 
           return false
         }
@@ -444,7 +480,7 @@ export const imgPathToBase64 =
   }
 
 export const requestHeroExport =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (id: string): ReduxAction =>
   async (dispatch, getState) => {
     const state = getState ()
@@ -468,7 +504,7 @@ export const requestHeroExport =
       const hero = fromJust (mhero)
 
       const pmfilepath = await showSaveDialog ({
-        title: translate (l10n) ("exportheroasjson"),
+        title: translate (staticData) ("heroes.exportheroasjsonbtn"),
         filters: [
           { name: "JSON", extensions: [ "json" ] },
         ],
@@ -481,29 +517,31 @@ export const requestHeroExport =
                                          (pmfilepath))
 
         if (isRight (res)) {
-          await dispatch (addAlert (l10n)
+          await dispatch (addAlert (staticData)
                                    (AlertOptions ({
-                                     message: translate (l10n) ("herosaved"),
+                                     message: translate (staticData) ("heroes.dialogs.herosaved"),
                                    })))
         }
         else {
-          await dispatch (addDefaultErrorAlert (l10n)
-                                               (translate (l10n) ("saveheroeserror"))
-                                               (res))
+          const title = Just (translate (staticData) ("header.dialogs.saveheroeserror.title"))
+
+          const message = getErrorMsg (staticData)
+                                      (translate (staticData)
+                                                 ("header.dialogs.saveheroeserror.message"))
+                                      (res)
+
+          await dispatch (addErrorAlert (staticData)
+                                        (AlertOptions ({
+                                          title,
+                                          message,
+                                        })))
         }
-      }
-      else {
-        // The user canceled the SaveDialog
-        await dispatch (addAlert (l10n)
-                                 (AlertOptions ({
-                                   message: translate (l10n) ("exportcanceled"),
-                                 })))
       }
     }
   }
 
 export const loadImportedHero =
-  (l10n: L10nRecord): ReduxAction<Promise<Maybe<RawHero>>> =>
+  (staticData: StaticDataRecord): ReduxAction<Promise<Maybe<RawHero>>> =>
   async dispatch =>
     pipe_ (
       await showOpenDialog ({ filters: [ { name: "JSON", extensions: [ "json" ] } ] }),
@@ -524,9 +562,18 @@ export const loadImportedHero =
             return Just (fromRight_ (res) as RawHero)
           }
 
-          await dispatch (addDefaultErrorAlert (l10n)
-                                              (translate (l10n) ("importheroerror"))
-                                              (res))
+          const title = Just (translate (staticData) ("header.dialogs.importheroerror.title"))
+
+          const message = getErrorMsg (staticData)
+                                      (translate (staticData)
+                                                 ("header.dialogs.importheroerror.message"))
+                                      (res)
+
+          await dispatch (addErrorAlert (staticData)
+                                        (AlertOptions ({
+                                          title,
+                                          message,
+                                        })))
 
           return Nothing
         }
@@ -542,7 +589,7 @@ export interface ReceiveImportedHeroAction {
 }
 
 export const receiveHeroImport =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (raw: RawHero): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const newId = prefixId (IdPrefixes.HERO) (getNewIdByDate ())
@@ -562,8 +609,8 @@ export const receiveHeroImport =
 
     const mhero = pipe_ (
       data,
-      convertHero (l10n) (wiki),
-      fmap (convertFromRawHero (l10n) (wiki)),
+      convertHero (staticData),
+      fmap (convertFromRawHero (staticData)),
     )
 
     if (isJust (mhero)) {
@@ -578,28 +625,28 @@ export const receiveHeroImport =
   }
 
 export const requestHeroImport =
-  (l10n: L10nRecord): ReduxAction<Promise<void>> =>
+  (staticData: StaticDataRecord): ReduxAction<Promise<void>> =>
   async dispatch => {
-    const mhero = await dispatch (loadImportedHero (l10n))
+    const mhero = await dispatch (loadImportedHero (staticData))
 
     if (isJust (mhero)) {
-      await dispatch (receiveHeroImport (l10n) (fromJust (mhero)))
+      await dispatch (receiveHeroImport (staticData) (fromJust (mhero)))
     }
   }
 
 const isAnyHeroUnsaved = pipe (getHeroes, any (pipe (heroReducer.A.past, notNull)))
 
 const close =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (save_heroes: boolean) =>
   (f: Maybe<() => void>): ReduxAction<Promise<void>> =>
   async dispatch => {
-    await dispatch (requestSaveCache (l10n))
+    await dispatch (requestSaveCache (staticData))
 
-    const all_saved = await dispatch (requestSaveAll (save_heroes) (l10n))
+    const all_saved = await dispatch (requestSaveAll (save_heroes) (staticData))
 
     if (all_saved && save_heroes) {
-      await dispatch (addAlert (l10n) (AlertOptions ({ message: translate (l10n) ("allsaved") })))
+      await dispatch (addAlert (staticData) (AlertOptions ({ message: translate (staticData) ("allsaved") })))
 
       if (isJust (f)) {
         fromJust (f) ()
@@ -629,33 +676,33 @@ export const requestClose =
       const l10n = fromJust (ml10n)
 
       if (safeToExit) {
-        await dispatch (close (l10n) (false) (optionalCall))
+        await dispatch (close (staticData) (false) (optionalCall))
       }
       else {
         const res = await dispatch (addPrompt (CustomPromptOptions ({
-                                                title: Just (translate (l10n) ("unsavedactions")),
-                                                message: translate (l10n) ("unsavedactions.text"),
+                                                title: Just (translate (staticData) ("unsavedactions")),
+                                                message: translate (staticData) ("unsavedactions.text"),
                                                 buttons: List (
                                                   PromptButton<UnsavedActionsResponse> ({
-                                                    label: translate (l10n) ("quit"),
+                                                    label: translate (staticData) ("quit"),
                                                     response: UnsavedActionsResponse.Quit,
                                                   }),
                                                   PromptButton<UnsavedActionsResponse> ({
-                                                    label: translate (l10n) ("cancel"),
+                                                    label: translate (staticData) ("cancel"),
                                                     response: UnsavedActionsResponse.Cancel,
                                                   }),
                                                   PromptButton<UnsavedActionsResponse> ({
-                                                    label: translate (l10n) ("saveandquit"),
+                                                    label: translate (staticData) ("saveandquit"),
                                                     response: UnsavedActionsResponse.SaveAndQuit,
                                                   })
                                                 ),
                                               })))
 
         if (elem (UnsavedActionsResponse.Quit) (res)) {
-          await dispatch (close (l10n) (false) (optionalCall))
+          await dispatch (close (staticData) (false) (optionalCall))
         }
         else if (elem (UnsavedActionsResponse.SaveAndQuit) (res)) {
-          await dispatch (close (l10n) (true) (optionalCall))
+          await dispatch (close (staticData) (true) (optionalCall))
         }
       }
     }
@@ -668,7 +715,7 @@ const getDefaultPDFName = pipe (
 )
 
 export const requestPrintHeroToPDF =
-  (l10n: L10nRecord): ReduxAction<Promise<void>> =>
+  (staticData: StaticDataRecord): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const data = await windowPrintToPDF ({
                          marginsType: 1,
@@ -677,7 +724,7 @@ export const requestPrintHeroToPDF =
                        })
 
     const path = await showSaveDialog ({
-                   title: translate (l10n) ("printcharactersheettopdf"),
+                   title: translate (staticData) ("printcharactersheettopdf"),
                    defaultPath: getDefaultPDFName (getState ()),
                    filters: [
                      { name: "PDF", extensions: [ "pdf" ] },
@@ -689,12 +736,12 @@ export const requestPrintHeroToPDF =
                             (path)
 
     if (isRight (res) && isJust (path)) {
-      await dispatch (addAlert (l10n)
-                               (AlertOptions ({ message: translate (l10n) ("pdfsaved") })))
+      await dispatch (addAlert (staticData)
+                               (AlertOptions ({ message: translate (staticData) ("pdfsaved") })))
     }
     else if (isLeft (res)) {
-      await dispatch (addDefaultErrorAlert (l10n)
-                                           (translate (l10n) ("printcharactersheettopdf"))
+      await dispatch (addDefaultErrorAlert (staticData)
+                                           (translate (staticData) ("printcharactersheettopdf"))
                                            (res))
     }
   }
@@ -715,7 +762,7 @@ enum UpdateAvailableResponse {
 }
 
 export const updateAvailable =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (info: UpdateInfo): ReduxAction =>
   async dispatch => {
     const startDownloadingUpdate: ReduxAction = futureDispatch => {
@@ -732,21 +779,21 @@ export const updateAvailable =
     const size = info.files.reduce ((sum, { size: fileSize = 0 }) => sum + fileSize, 0)
 
     const opts = CustomPromptOptions<UpdateAvailableResponse> ({
-                   title: Just (translate (l10n) ("newversionavailable")),
+                   title: Just (translate (staticData) ("newversionavailable")),
                    message: size > 0
-                     ? translateP (l10n)
+                     ? translateP (staticData)
                                   ("newversionavailable.textwithsize")
-                                  (List (info.version, bytify (L10n.A.id (l10n)) (size)))
-                     : translateP (l10n)
+                                  (List (info.version, bytify (L10n.A.id (staticData)) (size)))
+                     : translateP (staticData)
                                   ("newversionavailable.text")
                                   (List (info.version)),
                    buttons: List (
                      PromptButton ({
-                       label: translate (l10n) ("update"),
+                       label: translate (staticData) ("update"),
                        response: UpdateAvailableResponse.UpdateAndRestart,
                      }),
                      PromptButton ({
-                       label: translate (l10n) ("cancel"),
+                       label: translate (staticData) ("cancel"),
                        response: UpdateAvailableResponse.Cancel,
                      })
                    ),
@@ -759,9 +806,9 @@ export const updateAvailable =
     }
   }
 
-export const updateNotAvailable = (l10n: L10nRecord): ReduxAction => async dispatch =>
-  dispatch (addAlert (l10n)
+export const updateNotAvailable = (staticData: StaticDataRecord): ReduxAction => async dispatch =>
+  dispatch (addAlert (staticData)
                      (AlertOptions ({
-                       title: Just (translate (l10n) ("nonewversionavailable")),
-                       message: translate (l10n) ("nonewversionavailable.text"),
+                       title: Just (translate (staticData) ("nonewversionavailable")),
+                       message: translate (staticData) ("nonewversionavailable.text"),
                      })))

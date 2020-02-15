@@ -3,25 +3,25 @@ import { List } from "../../../../Data/List"
 import { fromMaybe, Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { ActiveActivatable } from "../../../Models/View/ActiveActivatable"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { compressList } from "../../../Utilities/Activatable/activatableNameUtils"
 import { translate } from "../../../Utilities/I18n"
 import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 export const CombatSheetSpecialAbilities: React.FC<Props> = props => {
-  const { combatSpecialAbilities: maybeCombatSpecialAbilities, l10n } = props
+  const { combatSpecialAbilities: maybeCombatSpecialAbilities, staticData } = props
 
   return (
     <TextBox
       className="activatable-list"
-      label={translate (l10n) ("sheets.combatsheet.combatspecialabilities")}
-      value={compressList (l10n)
+      label={translate (staticData) ("sheets.combatsheet.combatspecialabilities")}
+      value={compressList (staticData)
                           (fromMaybe (List<Record<ActiveActivatable<SpecialAbility>>> ())
                                      (maybeCombatSpecialAbilities))}
       />

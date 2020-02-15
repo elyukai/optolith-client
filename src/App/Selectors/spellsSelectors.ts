@@ -22,7 +22,7 @@ import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
 import { Spell, SpellL } from "../Models/Wiki/Spell"
 import { SelectOption, selectToDropdownOption } from "../Models/Wiki/sub/SelectOption"
-import { WikiModel } from "../Models/Wiki/WikiModel"
+import { StaticData } from "../Models/Wiki/WikiModel"
 import { getMagicalTraditionsHeroEntries } from "../Utilities/Activatable/traditionUtils"
 import { composeL } from "../Utilities/compose"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
@@ -40,7 +40,7 @@ import { getEnableActiveItemHints } from "./uisettingsSelectors"
 
 
 const HA = HeroModel.A
-const WA = WikiModel.A
+const SDA = StaticData.A
 const ELA = ExperienceLevel.A
 const ASDA = ActivatableSkillDependent.A
 const CA = Cantrip.A
@@ -108,7 +108,7 @@ export const getActiveSpells = createMaybeSelector (
                     bindF (hero_entry =>
                             pipe_ (
                               wiki,
-                              WA.spells,
+                              SDA.spells,
                               lookup (ASDA.id (hero_entry)),
                               fmap (wiki_entry =>
                                 SpellWithRequirements ({
@@ -354,16 +354,16 @@ export const getSpellsForSheet = createMaybeSelector (
 
 
 export const getAllSpellsForManualGuildMageSelect = createMaybeSelector (
-  getLocaleAsProp,
+  getWiki,
   getRuleBooksEnabled,
   getWikiSpecialAbilities,
-  uncurryN3 (l10n => av => pipe (
+  uncurryN3 (staticData => av => pipe (
                              lookup<string> (SpecialAbilityId.TraditionGuildMages),
                              bindF (SAA.select),
                              fmap (pipe (
                                filterByAvailability (SOA.src) (av),
                                map (selectToDropdownOption),
-                               sortRecordsByName (l10n)
+                               sortRecordsByName (staticData)
                              ))
                            ))
 )

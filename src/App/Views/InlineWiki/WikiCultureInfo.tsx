@@ -2,19 +2,20 @@ import * as React from "react"
 import { equals } from "../../../Data/Eq"
 import { on } from "../../../Data/Function"
 import { fmap, fmapF } from "../../../Data/Functor"
-import { elemF, find, head, intercalate, List, map, notNull, subscript } from "../../../Data/List"
+import { elemF, find, head, intercalate, List, map, notNull } from "../../../Data/List"
 import { bindF, ensure, fromMaybe, mapMaybe, maybe, Maybe } from "../../../Data/Maybe"
-import { compare, dec } from "../../../Data/Num"
+import { compare } from "../../../Data/Num"
 import { lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, Pair, snd } from "../../../Data/Tuple"
 import { CultureId } from "../../Constants/Ids"
+import { NumIdName } from "../../Models/NumIdName"
 import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined"
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n"
+import { L10n } from "../../Models/Wiki/L10n"
 import { Skill } from "../../Models/Wiki/Skill"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { ndash } from "../../Utilities/Chars"
 import { compareLocale, localizeOrList, translate, translateP } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
@@ -33,7 +34,7 @@ const CCA_ = CultureCombinedA_
 const SA = Skill.A
 const SAA = SpecialAbility.A
 const SOA = SelectOption.A
-const WA = WikiModel.A
+const SDA = StaticData.A
 
 const isElvenCulture =
   elemF (List<string> (
@@ -44,7 +45,7 @@ const isElvenCulture =
   ))
 
 const getNativeTongueStr =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (languages_wiki_entry: Maybe<Record<SpecialAbility>>) => pipe (
     CCA_.languages,
     mapMaybe (id => pipe_ (
@@ -53,12 +54,12 @@ const getNativeTongueStr =
                       bindF (find (pipe (SOA.id, equals<string | number> (id)))),
                       fmap (SOA.name)
                     )),
-    sortStrings (l10n),
-    localizeOrList (l10n)
+    sortStrings (staticData),
+    localizeOrList (staticData)
   )
 
 const getMainScriptStr =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (scripts_wiki_entry: Maybe<Record<SpecialAbility>>) => pipe (
     CCA_.scripts,
     ensure (notNull),
@@ -71,8 +72,8 @@ const getMainScriptStr =
                                 bindF (find (pipe (SOA.id, equals<string | number> (id)))),
                                 fmap (SOA.name)
                               )),
-              sortStrings (l10n),
-              localizeOrList (l10n)
+              sortStrings (staticData),
+              localizeOrList (staticData)
             )
 
             const mcost = pipe_ (
@@ -83,75 +84,75 @@ const getMainScriptStr =
             )
 
             return fmapF (mcost)
-                         ((cost: number) => translateP (l10n)
+                         ((cost: number) => translateP (staticData)
                                                        ("general.withapvalue")
                                                        (List<string | number> (names, cost)))
           }),
-    fromMaybe (translate (l10n) ("general.none"))
+    fromMaybe (translate (staticData) ("general.none"))
   )
 
 const getSocialStatusStr =
-  (l10n: L10nRecord) => pipe (
+  (staticData: StaticDataRecord) => pipe (
     CCA_.socialStatus,
     ensure (notNull),
-    maybe (translate (l10n) ("general.none"))
+    maybe (translate (staticData) ("general.none"))
           (pipe (
-            mapMaybe (pipe (dec, subscript (translate (l10n) ("socialstatuses")))),
+            mapMaybe (pipe (
+                       lookupF (SDA.socialStatuses (staticData)),
+                       fmap (NumIdName.A.name)
+                     )),
             intercalate (", ")
           ))
   )
 
 const sortSkills =
-  (l10n: L10nRecord) =>
-    sortByMulti (L10n.A.id (l10n) === Locale.Dutch
-                  ? [ comparingR (SA.gr) (compare), comparingR (SA.name) (compareLocale (l10n)) ]
-                  : [ comparingR (SA.name) (compareLocale (l10n)) ])
+  (staticData: StaticDataRecord) =>
+    sortByMulti (L10n.A.id (SDA.ui (staticData)) === Locale.Dutch
+                  ? [ comparingR (SA.gr) (compare),
+                      comparingR (SA.name) (compareLocale (staticData)) ]
+                  : [ comparingR (SA.name) (compareLocale (staticData)) ])
 
 const sortValueSkills =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
     sortByMulti <ValueSkill>
-                (L10n.A.id (l10n) === Locale.Dutch
-                 ? [
-                     on (compare) <ValueSkill> (pipe (fst, SA.gr)),
-                     on (compareLocale (l10n)) <ValueSkill> (pipe (fst, SA.name)),
-                   ]
-                 : [ on (compareLocale (l10n)) <ValueSkill> (pipe (fst, SA.name)) ])
+                (L10n.A.id (SDA.ui (staticData)) === Locale.Dutch
+                 ? [ on (compare) <ValueSkill> (pipe (fst, SA.gr)),
+                     on (compareLocale (staticData)) <ValueSkill> (pipe (fst, SA.name)) ]
+                 : [ on (compareLocale (staticData)) <ValueSkill> (pipe (fst, SA.name)) ])
 
 export interface WikiCultureInfoProps {
-  l10n: L10nRecord
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   x: Record<CultureCombined>
   languages: Maybe<Record<SpecialAbility>>
   scripts: Maybe<Record<SpecialAbility>>
 }
 
 export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
-  const { x, languages, l10n, scripts, wiki } = props
+  const { x, languages, scripts, staticData } = props
 
-  const books = WA.books (wiki)
-  const skills = WA.skills (wiki)
+  const skills = SDA.skills (staticData)
 
   const culturalPackageSkills = CCA.mappedCulturalPackageSkills (x)
 
-  const native_tongue = getNativeTongueStr (l10n) (languages) (x)
-  const main_script = getMainScriptStr (l10n) (scripts) (x)
-  const social_status = getSocialStatusStr (l10n)
+  const native_tongue = getNativeTongueStr (staticData) (languages) (x)
+  const main_script = getMainScriptStr (staticData) (scripts) (x)
+  const social_status = getSocialStatusStr (staticData)
 
   return (
     <WikiBoxTemplate className="culture" title={CCA_.name (x)}>
-      <WikiProperty l10n={l10n} title="inlinewiki.language">
+      <WikiProperty staticData={staticData} title="inlinewiki.language">
         {native_tongue}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.script">
+      <WikiProperty staticData={staticData} title="inlinewiki.script">
         {main_script}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.areaknowledge">
+      <WikiProperty staticData={staticData} title="inlinewiki.areaknowledge">
         {CCA_.areaKnowledge (x)}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.socialstatus">
+      <WikiProperty staticData={staticData} title="inlinewiki.socialstatus">
         {social_status}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.commonprofessions">
+      <WikiProperty staticData={staticData} title="inlinewiki.commonprofessions">
         {isElvenCulture (CCA_.id (x)) ? renderMaybe (CCA_.commonMagicProfessions (x)) : null}
       </WikiProperty>
       {isElvenCulture (CCA_.id (x))
@@ -160,7 +161,7 @@ export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
           <ul>
             <li>
               <em>
-                {translate (l10n) ("inlinewiki.commonprofessions.mundane")}
+                {translate (staticData) ("inlinewiki.commonprofessions.mundane")}
                 {":"}
               </em>
               {" "}
@@ -168,7 +169,7 @@ export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
             </li>
             <li>
               <em>
-                {translate (l10n) ("inlinewiki.commonprofessions.magic")}
+                {translate (staticData) ("inlinewiki.commonprofessions.magic")}
                 {":"}
               </em>
               {" "}
@@ -176,7 +177,7 @@ export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
             </li>
             <li>
               <em>
-                {translate (l10n) ("inlinewiki.commonprofessions.blessed")}
+                {translate (staticData) ("inlinewiki.commonprofessions.blessed")}
                 {":"}
               </em>
               {" "}
@@ -184,48 +185,48 @@ export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
             </li>
           </ul>
         )}
-      <WikiProperty l10n={l10n} title="inlinewiki.commonadvantages">
-        {fromMaybe (translate (l10n) ("general.none"))
+      <WikiProperty staticData={staticData} title="inlinewiki.commonadvantages">
+        {fromMaybe (translate (staticData) ("general.none"))
                    (CCA_.commonAdvantagesText (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.commondisadvantages">
-        {fromMaybe (translate (l10n) ("general.none"))
+      <WikiProperty staticData={staticData} title="inlinewiki.commondisadvantages">
+        {fromMaybe (translate (staticData) ("general.none"))
                    (CCA_.commonDisadvantagesText (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.uncommonadvantages">
-        {fromMaybe (translate (l10n) ("general.none"))
+      <WikiProperty staticData={staticData} title="inlinewiki.uncommonadvantages">
+        {fromMaybe (translate (staticData) ("general.none"))
                    (CCA_.uncommonAdvantagesText (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.uncommondisadvantages">
-        {fromMaybe (translate (l10n) ("general.none"))
+      <WikiProperty staticData={staticData} title="inlinewiki.uncommondisadvantages">
+        {fromMaybe (translate (staticData) ("general.none"))
                    (CCA_.uncommonDisadvantagesText (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.commonskills">
+      <WikiProperty staticData={staticData} title="inlinewiki.commonskills">
         {pipe_ (
           x,
           CCA_.commonSkills,
           mapMaybe (lookupF (skills)),
-          sortSkills (l10n),
+          sortSkills (staticData),
           map (SA.name),
           intercalate (", ")
         )}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.uncommonskills">
+      <WikiProperty staticData={staticData} title="inlinewiki.uncommonskills">
         {pipe_ (
           x,
           CCA_.uncommonSkills,
           mapMaybe (lookupF (skills)),
-          sortSkills (l10n),
+          sortSkills (staticData),
           map (SA.name),
           intercalate (", ")
         )}
       </WikiProperty>
       <Markdown
-        source={`**${translate (l10n) ("inlinewiki.commonnames")}:**\n${CCA_.commonNames (x)}`}
+        source={`**${translate (staticData) ("inlinewiki.commonnames")}:**\n${CCA_.commonNames (x)}`}
         />
       <p className="cultural-package">
         <span>
-          {translateP (l10n)
+          {translateP (staticData)
                       ("inlinewiki.culturalpackage")
                       (List<string | number> (
                         CCA_.name (x),
@@ -235,7 +236,7 @@ export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
         <span>
           {pipe_ (
             culturalPackageSkills,
-            sortValueSkills (l10n),
+            sortValueSkills (staticData),
             map (p => `${SA.name (fst (p))} +${snd (p)}`),
             intercalate (", ")
           )}
@@ -243,8 +244,7 @@ export const WikiCultureInfo: React.FC<WikiCultureInfoProps> = props => {
       </p>
       <WikiSource
         acc={CCA_}
-        books={books}
-        l10n={l10n}
+        staticData={staticData}
         x={x}
         />
     </WikiBoxTemplate>

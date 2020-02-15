@@ -3,7 +3,7 @@ import { ident, thrush } from "../../Data/Function"
 import { fmap, fmapF } from "../../Data/Functor"
 import { over } from "../../Data/Lens"
 import { all, cons, Cons, consF, elemF, filter, find, foldr, intercalate, List, ListI, map, subscriptF } from "../../Data/List"
-import { alt, any, bind, bindF, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe"
+import { alt, any, bind, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe"
 import { abs, add } from "../../Data/Num"
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
@@ -23,10 +23,10 @@ import { RaceCombined } from "../Models/View/RaceCombined"
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
 import { Culture } from "../Models/Wiki/Culture"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
-import { L10nRecord } from "../Models/Wiki/L10n"
 import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
 import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement"
-import { ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement"
+import { RequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement"
+import { ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/ProfessionRequireIncreasable"
 import { Profession } from "../Models/Wiki/Profession"
 import { CombatTechniquesSelection, CombatTechniquesSelectionL } from "../Models/Wiki/professionSelections/CombatTechniquesSelection"
 import { ProfessionSelectionsL } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections"
@@ -41,7 +41,7 @@ import { Die } from "../Models/Wiki/sub/Die"
 import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill"
 import { IncreaseSkillList } from "../Models/Wiki/sub/IncreaseSkillList"
 import { NameBySex } from "../Models/Wiki/sub/NameBySex"
-import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers"
 import { getNameCostForWiki } from "../Utilities/Activatable/activatableActiveUtils"
 import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils"
@@ -60,7 +60,7 @@ import { getCulturesCombinedSortOptions, getProfessionsCombinedSortOptions, getR
 import { getCultureId, getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getProfessionsFilterText, getRaceId, getRacesFilterText, getRaceVariantId, getSex, getWiki, getWikiBooks, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors"
 import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from "./uisettingsSelectors"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const ELA = ExperienceLevel.A
 const RA = Race.A
 const RL = RaceL
@@ -274,8 +274,7 @@ const getGroupSliceKey = (gr: number): keyof SkillGroupLists => {
 }
 
 const mapProfessionPrerequisite =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (index: number) =>
   (e: ListI<Profession["prerequisites"]>):
   Maybe<ListI<ProfessionCombined["mappedPrerequisites"]>> => {
@@ -288,9 +287,9 @@ const mapProfessionPrerequisite =
           sid: ProfessionRequireActivatable.A.sid (e),
           tier: ProfessionRequireActivatable.A.tier (e),
         }),
-        getNameCostForWiki (l10n) (wiki),
+        getNameCostForWiki (staticData),
         fmap (pipe (
-          convertPerTierCostToFinalCost (true) (l10n),
+          convertPerTierCostToFinalCost (true) (staticData),
           nameAndCost =>
             ActivatableNameCostIsActive ({
               nameAndCost,
@@ -304,8 +303,7 @@ const mapProfessionPrerequisite =
   }
 
 const mapProfessionSpecialAbility =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (index: number) =>
   (e: ListI<Profession["specialAbilities"]>) =>
     pipe_ (
@@ -316,9 +314,9 @@ const mapProfessionSpecialAbility =
         sid: ProfessionRequireActivatable.A.sid (e),
         tier: ProfessionRequireActivatable.A.tier (e),
       }),
-      getNameCostForWiki (l10n) (wiki),
+      getNameCostForWiki (staticData),
       fmap (pipe (
-        convertPerTierCostToFinalCost (true) (l10n),
+        convertPerTierCostToFinalCost (true) (staticData),
         nameAndCost =>
           ActivatableNameCostIsActive ({
             nameAndCost,
@@ -328,36 +326,36 @@ const mapProfessionSpecialAbility =
     )
 
 const mapCombatTechniquesSelectionNames =
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
     over (CombatTechniquesSelectionL.sid)
          (mapMaybe (pipe (
-                     lookupF (WA.combatTechniques (wiki)),
+                     lookupF (SDA.combatTechniques (staticData)),
                      fmap (CTA.name)
                    )))
 
 const mapProfessionSelection =
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
     over (PSL[ProfessionSelectionIds.COMBAT_TECHNIQUES])
-         (fmap (mapCombatTechniquesSelectionNames (wiki)))
+         (fmap (mapCombatTechniquesSelectionNames (staticData)))
 
 const mapProfessionVariantSelection =
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
     over (PVSL[ProfessionSelectionIds.COMBAT_TECHNIQUES])
          (fmap (sel =>
                  CombatTechniquesSelection.is (sel)
-                   ? mapCombatTechniquesSelectionNames (wiki) (sel)
+                   ? mapCombatTechniquesSelectionNames (staticData) (sel)
                    : sel))
 
 const mapIncreaseSkill =
   <a>
-  (wikiAcc: (w: WikiModelRecord) => OrderedMap<string, a>) =>
+  (wikiAcc: (w: StaticDataRecord) => OrderedMap<string, a>) =>
   (nameAcc: (x: a) => string) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (e: Record<IncreaseSkill>) =>
     pipe_ (
       e,
       ISA.id,
-      lookupF (wikiAcc (wiki)),
+      lookupF (wikiAcc (staticData)),
       fmap (pipe (
         nameAcc,
         name =>
@@ -371,16 +369,16 @@ const mapIncreaseSkill =
 
 const mapIncreaseSkillOrList =
   <a>
-  (wikiAcc: (w: WikiModelRecord) => OrderedMap<string, a>) =>
+  (wikiAcc: (w: StaticDataRecord) => OrderedMap<string, a>) =>
   (nameAcc: (x: a) => string) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (e: Record<IncreaseSkill> | Record<IncreaseSkillList>) =>
     IncreaseSkill.is (e)
-      ? mapIncreaseSkill (wikiAcc) (nameAcc) (wiki) (e)
+      ? mapIncreaseSkill (wikiAcc) (nameAcc) (staticData) (e)
       : pipe_ (
           e,
           ISLA.id,
-          mapM (lookupF (wikiAcc (wiki))),
+          mapM (lookupF (wikiAcc (staticData))),
           fmap (pipe (
             map (nameAcc),
             name =>
@@ -392,24 +390,24 @@ const mapIncreaseSkillOrList =
           ))
         )
 
-const mapCombatTechnique = mapIncreaseSkill (WA.combatTechniques) (CTA.name)
+const mapCombatTechnique = mapIncreaseSkill (SDA.combatTechniques) (CTA.name)
 
-const mapSpell = mapIncreaseSkillOrList (WA.spells) (SPA.name)
+const mapSpell = mapIncreaseSkillOrList (SDA.spells) (SPA.name)
 
-const mapLiturgicalChant = mapIncreaseSkillOrList (WA.liturgicalChants) (LCA.name)
+const mapLiturgicalChant = mapIncreaseSkillOrList (SDA.liturgicalChants) (LCA.name)
 
 const mapIncreaseSkillPrevious =
   (base: number) =>
   <A>
-  (wikiAcc: (w: WikiModelRecord) => OrderedMap<string, A>) =>
+  (wikiAcc: (w: StaticDataRecord) => OrderedMap<string, A>) =>
   (nameAcc: (x: A) => string) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (main_xs: List<Record<IncreaseSkill> | Record<IncreaseSkillList>>) =>
   (e: Record<IncreaseSkill>) =>
     pipe_ (
       e,
       ISA.id,
-      lookupF (wikiAcc (wiki)),
+      lookupF (wikiAcc (staticData)),
       fmap (pipe (
         nameAcc,
         name => {
@@ -439,17 +437,17 @@ const mapIncreaseSkillPrevious =
 const mapIncreaseSkillListPrevious =
   (base: number) =>
   <A>
-  (wikiAcc: (w: WikiModelRecord) => OrderedMap<string, A>) =>
+  (wikiAcc: (w: StaticDataRecord) => OrderedMap<string, A>) =>
   (nameAcc: (x: A) => string) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (main_xs: List<Record<IncreaseSkill> | Record<IncreaseSkillList>>) =>
   (e: Record<IncreaseSkill> | Record<IncreaseSkillList>) =>
     IncreaseSkill.is (e)
-      ? mapIncreaseSkillPrevious (base) (wikiAcc) (nameAcc) (wiki) (main_xs) (e)
+      ? mapIncreaseSkillPrevious (base) (wikiAcc) (nameAcc) (staticData) (main_xs) (e)
       : pipe_ (
           e,
           ISLA.id,
-          mapM (lookupF (wikiAcc (wiki))),
+          mapM (lookupF (wikiAcc (staticData))),
           fmap (pipe (
             map (nameAcc),
             name => {
@@ -476,138 +474,138 @@ const mapIncreaseSkillListPrevious =
           ))
         )
 
-const mapSkillPrevious = mapIncreaseSkillPrevious (0) (WA.skills) (SA.name)
+const mapSkillPrevious = mapIncreaseSkillPrevious (0) (SDA.skills) (SA.name)
 
-const mapCombatTechniquePrevious = mapIncreaseSkillPrevious (6) (WA.combatTechniques) (CTA.name)
+const mapCombatTechniquePrevious = mapIncreaseSkillPrevious (6) (SDA.combatTechniques) (CTA.name)
 
-const mapSpellPrevious = mapIncreaseSkillListPrevious (0) (WA.spells) (SPA.name)
+const mapSpellPrevious = mapIncreaseSkillListPrevious (0) (SDA.spells) (SPA.name)
 
-const mapLiturgicalChantPrevious = mapIncreaseSkillListPrevious (0) (WA.liturgicalChants) (LCA.name)
+const mapLiturgicalChantPrevious = mapIncreaseSkillListPrevious (0)
+                                                                (SDA.liturgicalChants)
+                                                                (LCA.name)
 
 export const getAllProfessions = createMaybeSelector (
-  getLocaleAsProp,
   getWiki,
-  uncurryN (l10n =>
-            wiki =>
-              pipe_ (
-                wiki,
-                WA.professions,
-                elems,
-                map (p => {
-                  const {
-                    physicalSkills,
-                    socialSkills,
-                    natureSkills,
-                    knowledgeSkills,
-                    craftSkills,
-                  } = pipe_ (
-                        p,
-                        PA.skills,
-                        foldr ((incsk: Record<IncreaseSkill>) => (acc: SkillGroupLists) =>
-                                pipe_ (
-                                  wiki,
-                                  WA.skills,
-                                  lookup (ISA.id (incsk)),
-                                  maybe (acc)
-                                        (skill => {
-                                          const key = getGroupSliceKey (SA.gr (skill))
+  staticData =>
+    pipe_ (
+      staticData,
+      SDA.professions,
+      elems,
+      map (p => {
+        const {
+          physicalSkills,
+          socialSkills,
+          natureSkills,
+          knowledgeSkills,
+          craftSkills,
+        } = pipe_ (
+              p,
+              PA.skills,
+              foldr ((incsk: Record<IncreaseSkill>) => (acc: SkillGroupLists) =>
+                      pipe_ (
+                        staticData,
+                        SDA.skills,
+                        lookup (ISA.id (incsk)),
+                        maybe (acc)
+                              (skill => {
+                                const key = getGroupSliceKey (SA.gr (skill))
 
-                                          return {
-                                            ...acc,
-                                            [key]: cons (acc [key])
-                                                        (IncreasableForView ({
-                                                          id: ISA.id (incsk),
-                                                          name: SA.name (skill),
-                                                          value: ISA.value (incsk),
-                                                        })),
-                                          }
-                                        })
-                                ))
-                              ({
-                                physicalSkills: List (),
-                                socialSkills: List (),
-                                natureSkills: List (),
-                                knowledgeSkills: List (),
-                                craftSkills: List (),
+                                return {
+                                  ...acc,
+                                  [key]: cons (acc [key])
+                                              (IncreasableForView ({
+                                                id: ISA.id (incsk),
+                                                name: SA.name (skill),
+                                                value: ISA.value (incsk),
+                                              })),
+                                }
                               })
-                      )
+                      ))
+                    ({
+                      physicalSkills: List (),
+                      socialSkills: List (),
+                      natureSkills: List (),
+                      knowledgeSkills: List (),
+                      craftSkills: List (),
+                    })
+            )
 
-                  const filtered_variants =
-                    mapMaybe (lookupF (WA.professionVariants (wiki)))
-                             (PA.variants (p))
+        const filtered_variants =
+          mapMaybe (lookupF (SDA.professionVariants (staticData)))
+                   (PA.variants (p))
 
-                  return ProfessionCombined ({
-                    mappedAP: fromMaybe_<List<number> | number> (() => map (PVA.ap)
-                                                                           (filtered_variants))
-                                                                (PA.ap (p)),
-                    mappedPrerequisites:
-                      imapMaybe (mapProfessionPrerequisite (l10n) (wiki))
-                                (PA.prerequisites (p)),
-                    mappedSpecialAbilities:
-                      imapMaybe (mapProfessionSpecialAbility (l10n) (wiki))
-                                (PA.specialAbilities (p)),
-                    mappedSelections:
-                      thrush (PA.selections (p))
-                             (mapProfessionSelection (wiki)),
-                    mappedCombatTechniques:
-                      thrush (PA.combatTechniques (p))
-                             (mapMaybe (mapCombatTechnique (wiki))),
-                    mappedPhysicalSkills: physicalSkills,
-                    mappedSocialSkills: socialSkills,
-                    mappedNatureSkills: natureSkills,
-                    mappedKnowledgeSkills: knowledgeSkills,
-                    mappedCraftSkills: craftSkills,
-                    mappedSpells:
-                      thrush (PA.spells (p))
-                             (mapMaybe<
-                               ListI<Profession["spells"]>,
-                               ListI<ProfessionCombined["mappedSpells"]>
-                             > (mapSpell (wiki))),
-                    mappedLiturgicalChants:
-                      thrush (PA.liturgicalChants (p))
-                             (mapMaybe<
-                               ListI<Profession["liturgicalChants"]>,
-                               ListI<ProfessionCombined["mappedLiturgicalChants"]>
-                             > (mapLiturgicalChant (wiki))),
-                    mappedVariants:
-                      map ((v: Record<ProfessionVariant>) =>
-                        ProfessionVariantCombined ({
-                          mappedPrerequisites:
-                            imapMaybe (mapProfessionPrerequisite (l10n) (wiki))
-                                      (PVA.prerequisites (v)),
-                          mappedSpecialAbilities:
-                            imapMaybe (mapProfessionSpecialAbility (l10n) (wiki))
-                                      (PVA.specialAbilities (v)),
-                          mappedSelections:
-                            thrush (PVA.selections (v))
-                                   (mapProfessionVariantSelection (wiki)),
-                          mappedCombatTechniques:
-                            mapMaybe (mapCombatTechniquePrevious (wiki)
-                                                                 (PA.combatTechniques (p)))
-                                     (PVA.combatTechniques (v)),
-                          mappedSkills:
-                            thrush (PVA.skills (v))
-                                   (mapMaybe (mapSkillPrevious (wiki)
-                                                               (PA.skills (p)))),
-                          mappedSpells:
-                            thrush (PVA.spells (v))
-                                   (mapMaybe<
-                                     ListI<Profession["spells"]>,
-                                     ListI<ProfessionCombined["mappedSpells"]>
-                                   > (mapSpellPrevious (wiki) (PA.spells (p)))),
-                          mappedLiturgicalChants:
-                            thrush (PVA.liturgicalChants (v))
-                                   (mapMaybe<
-                                     ListI<Profession["liturgicalChants"]>,
-                                     ListI<ProfessionCombined["mappedLiturgicalChants"]>
-                                   > (mapLiturgicalChantPrevious (wiki) (PA.liturgicalChants (p)))),
-                          wikiEntry: v,
-                        }))
-                          (filtered_variants),
-                    wikiEntry: p,
-                  })
-                })
-              ))
+        return ProfessionCombined ({
+          mappedAP: fromMaybe_<List<number> | number> (() => map (PVA.ap)
+                                                                 (filtered_variants))
+                                                      (PA.ap (p)),
+          mappedPrerequisites:
+            imapMaybe (mapProfessionPrerequisite (staticData))
+                      (PA.prerequisites (p)),
+          mappedSpecialAbilities:
+            imapMaybe (mapProfessionSpecialAbility (staticData))
+                      (PA.specialAbilities (p)),
+          mappedSelections:
+            thrush (PA.selections (p))
+                   (mapProfessionSelection (staticData)),
+          mappedCombatTechniques:
+            thrush (PA.combatTechniques (p))
+                   (mapMaybe (mapCombatTechnique (staticData))),
+          mappedPhysicalSkills: physicalSkills,
+          mappedSocialSkills: socialSkills,
+          mappedNatureSkills: natureSkills,
+          mappedKnowledgeSkills: knowledgeSkills,
+          mappedCraftSkills: craftSkills,
+          mappedSpells:
+            thrush (PA.spells (p))
+                   (mapMaybe<
+                     ListI<Profession["spells"]>,
+                     ListI<ProfessionCombined["mappedSpells"]>
+                   > (mapSpell (staticData))),
+          mappedLiturgicalChants:
+            thrush (PA.liturgicalChants (p))
+                   (mapMaybe<
+                     ListI<Profession["liturgicalChants"]>,
+                     ListI<ProfessionCombined["mappedLiturgicalChants"]>
+                   > (mapLiturgicalChant (staticData))),
+          mappedVariants:
+            map ((v: Record<ProfessionVariant>) =>
+              ProfessionVariantCombined ({
+                mappedPrerequisites:
+                  imapMaybe (mapProfessionPrerequisite (staticData))
+                            (PVA.prerequisites (v)),
+                mappedSpecialAbilities:
+                  imapMaybe (mapProfessionSpecialAbility (staticData))
+                            (PVA.specialAbilities (v)),
+                mappedSelections:
+                  thrush (PVA.selections (v))
+                         (mapProfessionVariantSelection (staticData)),
+                mappedCombatTechniques:
+                  mapMaybe (mapCombatTechniquePrevious (staticData)
+                                                       (PA.combatTechniques (p)))
+                           (PVA.combatTechniques (v)),
+                mappedSkills:
+                  thrush (PVA.skills (v))
+                         (mapMaybe (mapSkillPrevious (staticData)
+                                                     (PA.skills (p)))),
+                mappedSpells:
+                  thrush (PVA.spells (v))
+                         (mapMaybe<
+                           ListI<Profession["spells"]>,
+                           ListI<ProfessionCombined["mappedSpells"]>
+                         > (mapSpellPrevious (staticData) (PA.spells (p)))),
+                mappedLiturgicalChants:
+                  thrush (PVA.liturgicalChants (v))
+                         (mapMaybe<
+                           ListI<Profession["liturgicalChants"]>,
+                           ListI<ProfessionCombined["mappedLiturgicalChants"]>
+                         > (mapLiturgicalChantPrevious (staticData) (PA.liturgicalChants (p)))),
+                wikiEntry: v,
+              }))
+                (filtered_variants),
+          wikiEntry: p,
+        })
+      })
+    )
 )
 
 const isCustomProfession = (e: Record<ProfessionCombined>) => ProfessionCombinedA_.id (e)
@@ -628,7 +626,7 @@ const areProfessionOrVariantPrerequisitesValid =
     return isProfessionValid
       && thrush (prerequisites)
                 (all (d => {
-                  if (ProfessionRequireIncreasable.is (d)) {
+                  if (RequireIncreasable.is (d)) {
                     const category = getCategoryById (PRIA.id (d))
 
                     const isAttribute = Maybe.elemF (category) (Category.ATTRIBUTES)
@@ -642,7 +640,7 @@ const areProfessionOrVariantPrerequisitesValid =
   }
 
 const filterProfession =
-  (wiki_books: WikiModel["books"]) =>
+  (wiki_books: StaticData["books"]) =>
   (group_visibility: number) =>
   (visibility: string) =>
   (current_sex: Sex) =>
@@ -833,8 +831,8 @@ export const getCurrentFullProfessionName = createMaybeSelector (
   (l10n, wiki, msex, mprof_id, mprof_var_id, mcustom_prof_name) =>
     fmapF (msex)
           (sex => getFullProfessionName (l10n)
-                                        (WA.professions (wiki))
-                                        (WA.professionVariants (wiki))
+                                        (SDA.professions (wiki))
+                                        (SDA.professionVariants (wiki))
                                         (sex)
                                         (mprof_id)
                                         (mprof_var_id)
@@ -844,18 +842,18 @@ export const getCurrentFullProfessionName = createMaybeSelector (
 const getSign = (x: number) => x < 0 ? minus : "+"
 
 export const getRandomSizeCalcStr = createMaybeSelector (
-  getLocaleAsProp,
+  getWiki,
   getRace,
   getCurrentRaceVariant,
-  (l10n, mrace, mrace_var) => {
-    const msize_base = alt (bindF (RA.sizeBase) (mrace))
-                           (bindF (RVA.sizeBase) (mrace_var))
+  (staticData, mrace, mrace_var) => {
+    const msize_base = alt (bind (mrace) (RA.sizeBase))
+                           (fmapF (mrace_var) (RVA.sizeBase))
 
-    const msize_randoms = alt (bindF (RA.sizeRandom) (mrace))
-                              (bindF (RVA.sizeRandom) (mrace_var))
+    const msize_randoms = alt (bind (mrace) (RA.sizeRandom))
+                              (fmapF (mrace_var) (RVA.sizeRandom))
 
     return liftM2 ((base: number) => (randoms: List<Record<Die>>) => {
-                    const dice_tag = translate (l10n) ("dice.short")
+                    const dice_tag = translate (staticData) ("general.dice")
 
                     return pipe_ (
                       randoms,
@@ -876,16 +874,16 @@ export const getRandomSizeCalcStr = createMaybeSelector (
 )
 
 export const getRandomWeightCalcStr = createMaybeSelector (
-  getLocaleAsProp,
+  getWiki,
   getRace,
-  (l10n, mrace) => {
+  (staticData, mrace) => {
     const mweight_base = fmap (RA.weightBase) (mrace)
     const mweight_randoms = fmap (RA.weightRandom) (mrace)
     const is_humans = any (pipe (RA.id, equals<string> (RaceId.Humans))) (mrace)
 
     return liftM2 ((base: number) => (randoms: List<Record<Die>>) => {
-                    const size_tag = translate (l10n) ("size")
-                    const dice_tag = translate (l10n) ("dice.short")
+                    const size_tag = translate (staticData) ("personaldata.size")
+                    const dice_tag = translate (staticData) ("general.dice")
 
                     return pipe_ (
                       randoms,

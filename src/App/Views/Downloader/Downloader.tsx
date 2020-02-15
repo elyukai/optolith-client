@@ -2,14 +2,15 @@
 import { ProgressInfo } from "builder-util-runtime"
 import * as React from "react"
 import { Maybe, maybe } from "../../../Data/Maybe"
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n"
+import { L10n } from "../../Models/Wiki/L10n"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { bytify } from "../../Utilities/IOUtils"
 import { Dialog } from "../Universal/Dialog"
 import { ProgressBar } from "../Universal/ProgressBar"
 
 export interface DownloaderOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 export interface DownloaderStateProps {
@@ -24,15 +25,15 @@ export type DownloaderProps = DownloaderStateProps & DownloaderDispatchProps & D
 const emptyFn = (): void => undefined
 
 export const Downloader: React.FC<DownloaderProps> = props => {
-  const { l10n, progress: mprogress } = props
+  const { staticData, progress: mprogress } = props
 
-  const id = L10n.A.id (l10n)
+  const id = L10n.A.id (StaticData.A.ui (staticData))
 
   return maybe (<></>)
                ((progress: ProgressInfo) => (
                  <Dialog
                    id="downloader"
-                   title={translate (l10n) ("settings.downloadingupdate.title")}
+                   title={translate (staticData) ("settings.downloadingupdate.title")}
                    isOpen={typeof progress === "object"}
                    close={emptyFn}
                    noCloseButton

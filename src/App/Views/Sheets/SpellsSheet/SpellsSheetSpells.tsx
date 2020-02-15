@@ -1,19 +1,20 @@
 import * as React from "react"
 import { Textfit } from "react-textfit"
 import { fmap, fmapF } from "../../../../Data/Functor"
-import { flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List"
-import { ensure, fromMaybe, guardReplace, Just, Maybe } from "../../../../Data/Maybe"
-import { elems } from "../../../../Data/OrderedSet"
+import { flength, List, map, notNull, replicateR, toArray } from "../../../../Data/List"
+import { fromMaybe, guardReplace, Just, Maybe, maybe } from "../../../../Data/Maybe"
+import { lookup } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
+import { NumIdName } from "../../../Models/NumIdName"
 import { AttributeCombined } from "../../../Models/View/AttributeCombined"
 import { SpellWithRequirements, SpellWithRequirementsA_ } from "../../../Models/View/SpellWithRequirements"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils"
 import { minus } from "../../../Utilities/Chars"
 import { classListMaybe } from "../../../Utilities/CSS"
 import { translate } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
-import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
+import { renderMaybeWith } from "../../../Utilities/ReactUtils"
 import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils"
 import { getCheckModStr } from "../../InlineWiki/Elements/WikiSkillCheck"
 import { TextBox } from "../../Universal/TextBox"
@@ -21,7 +22,7 @@ import { TextBox } from "../../Universal/TextBox"
 interface Props {
   attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   spells: Maybe<List<Record<SpellWithRequirements>>>
 }
 
@@ -31,52 +32,50 @@ export const SpellsSheetSpells: React.FC<Props> = props => {
   const {
     attributes,
     checkAttributeValueVisibility,
-    l10n,
+    staticData,
     spells: maybeSpells,
   } = props
 
-  const propertyNames = translate (l10n) ("propertylist")
-
   return (
     <TextBox
-      label={translate (l10n) ("spells")}
+      label={translate (staticData) ("sheets.spellssheet.spellstable.title")}
       className="skill-list"
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (l10n) ("sheets.spellssheet.spellstable.labels.spellorritual")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.spellorritual")}
             </th>
             <th className="check">
-              {translate (l10n) ("sheets.spellssheet.spellstable.labels.check")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.check")}
             </th>
             <th className="value">
-              {translate (l10n) ("sheets.spellssheet.spellstable.labels.skillrating")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.skillrating")}
             </th>
             <th className="cost">
-              {translate (l10n) ("sheets.spellssheet.spellstable.labels.cost")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.cost")}
             </th>
             <th className="cast-time">
-              {translate (l10n) ("sheets.spellssheet.spellstable.labels.castingtime")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.castingtime")}
             </th>
             <th className="range">
-              {translate (l10n) ("sheets.spellssheet.spellstable.labels.range")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.range")}
             </th>
             <th className="duration">
-              {translate (l10n) ("sheets.spellssheet.spellstable.labels.duration")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.duration")}
             </th>
             <th className="property">
-              {translate (l10n) ("sheets.spellssheet.spellstable.labels.property")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.property")}
             </th>
             <th className="ic">
-              {translate (l10n) ("sheets.spellssheet.spellstable.labels.improvementcost")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.improvementcost")}
             </th>
             <th className="effect">
-              {translate (l10n) ("sheets.spellssheet.spellstable.labels.effect")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.effect")}
             </th>
             <th className="ref">
-              {translate (l10n) ("sheets.spellssheet.spellstable.labels.pages")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.pages")}
             </th>
           </tr>
         </thead>
@@ -104,7 +103,7 @@ export const SpellsSheetSpells: React.FC<Props> = props => {
                       <Textfit max={11} min={7} mode="single">
                         {SWRA_.name (e)}
                         {notNull (SWRA_.tradition (e))
-                          ? ` (${translate (l10n)
+                          ? ` (${translate (staticData)
                                            ("sheets.spellssheet.spellstable.unfamiliarspell")})`
                           : ""}
                       </Textfit>
@@ -115,13 +114,8 @@ export const SpellsSheetSpells: React.FC<Props> = props => {
                         {pipe_ (
                           e,
                           SWRA_.checkmod,
-                          elems,
-                          ensure (notNull),
-                          renderMaybeWith (pipe (
-                            map (getCheckModStr (l10n)),
-                            intercalate ("/"),
-                            str => ` (${minus}${str})`
-                          ))
+                          maybe ("")
+                                (pipe (getCheckModStr (staticData), str => ` (${minus}${str})`))
                         )}
                       </Textfit>
                     </td>
@@ -142,7 +136,9 @@ export const SpellsSheetSpells: React.FC<Props> = props => {
                     </td>
                     <td className="property">
                       <Textfit max={11} min={7} mode="single">
-                        {renderMaybe (subscript (propertyNames) (SWRA_.property (e) - 1))}
+                        {renderMaybeWith (NumIdName.A.name)
+                                         (lookup (SWRA_.property (e))
+                                                 (StaticData.A.properties (staticData)))}
                       </Textfit>
                     </td>
                     <td className="ic">{getICName (SWRA_.ic (e))}</td>

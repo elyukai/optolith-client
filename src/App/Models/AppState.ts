@@ -2,14 +2,14 @@ import { fromDefault, Record } from "../../Data/Record"
 import { HeroesState } from "./HeroesState"
 import { LocaleState } from "./LocaleState"
 import { UIState } from "./UIState"
-import { WikiModel } from "./Wiki/WikiModel"
+import { StaticData } from "./Wiki/WikiModel"
 
 export interface AppState {
   "@@name": "AppState"
   herolist: Record<HeroesState>
   l10n: Record<LocaleState>
   ui: Record<UIState>
-  wiki: Record<WikiModel>
+  wiki: Record<StaticData>
   isReady: number
 }
 
@@ -21,6 +21,6 @@ export const AppState =
                 herolist: HeroesState.default,
                 l10n: LocaleState.default,
                 ui: UIState.default,
-                wiki: WikiModel.default,
+                wiki: StaticData.default,
                 isReady: 0,
               })

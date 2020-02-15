@@ -3,14 +3,14 @@ import { List } from "../../../Data/List"
 import { member, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { ScriptsSelectionListItemOptions } from "../../Models/View/ScriptsSelectionListItemOptions"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translateP } from "../../Utilities/I18n"
 import { Checkbox } from "../Universal/Checkbox"
 
 const SSLIOA = ScriptsSelectionListItemOptions.A
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   active: OrderedMap<number, number>
   apLeft: number
   options: Record<ScriptsSelectionListItemOptions>
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const ScriptSelectionListItem: React.FC<Props> = props => {
-  const { active, apLeft, l10n, options, toggleScript } = props
+  const { active, apLeft, staticData, options, toggleScript } = props
 
   const id = SSLIOA.id (options)
   const name = SSLIOA.name (options)
@@ -41,7 +41,7 @@ export const ScriptSelectionListItem: React.FC<Props> = props => {
         disabled={disabled}
         onClick={handleToggle}
         >
-        {translateP (l10n) ("general.withapvalue") (List<string | number> (name, cost))}
+        {translateP (staticData) ("general.withapvalue") (List<string | number> (name, cost))}
       </Checkbox>
     </li>
   )

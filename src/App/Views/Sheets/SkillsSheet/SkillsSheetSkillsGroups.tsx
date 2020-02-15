@@ -1,27 +1,22 @@
 import * as React from "react"
 import { equals } from "../../../../Data/Eq"
 import { fmap } from "../../../../Data/Functor"
-import { find, imap, intercalate, List, subscriptF } from "../../../../Data/List"
+import { find, imap, intercalate, List } from "../../../../Data/List"
 import { mapMaybe } from "../../../../Data/Maybe"
 import { lookup, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { fst, Pair, snd } from "../../../../Data/Tuple"
 import { AttrId } from "../../../Constants/Ids"
 import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { SkillGroup } from "../../../Models/Wiki/SkillGroup"
+import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { ndash } from "../../../Utilities/Chars"
 import { translate } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybeWith } from "../../../Utilities/ReactUtils"
 
-type GroupNameKeys = "physicalskills"
-                   | "socialskills"
-                   | "natureskills"
-                   | "knowledgeskills"
-                   | "craftskills"
-
 export const iterateGroupHeaders =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (checkAttributeValueVisibility: boolean) =>
   (pages: OrderedMap<number, Pair<number, number>>) =>
   (attributes: List<Record<AttributeCombined>>) => {
@@ -33,15 +28,7 @@ export const iterateGroupHeaders =
       List (AttrId.Dexterity, AttrId.Dexterity, AttrId.Constitution)
     )
 
-    const groupNameKeys = List<GroupNameKeys> (
-      "physicalskills",
-      "socialskills",
-      "natureskills",
-      "knowledgeskills",
-      "craftskills"
-    )
-
-    const page = translate (l10n) ("sheets.gamestatssheet.skillstable.groups.pages")
+    const page = translate (staticData) ("sheets.gamestatssheet.skillstable.groups.pages")
 
     return imap (index => pipe (
                             mapMaybe (pipe (
@@ -59,9 +46,10 @@ export const iterateGroupHeaders =
                               <tr className="group">
                                 <td className="name">
                                   {pipe_ (
-                                    groupNameKeys,
-                                    subscriptF (index),
-                                    renderMaybeWith (translate (l10n))
+                                    staticData,
+                                    StaticData.A.skillGroups,
+                                    lookup (index + 1),
+                                    renderMaybeWith (SkillGroup.A.fullName)
                                   )}
                                 </td>
                                 <td className="check">{check}</td>

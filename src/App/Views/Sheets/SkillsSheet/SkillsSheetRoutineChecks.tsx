@@ -1,51 +1,51 @@
 import * as React from "react"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { minus } from "../../../Utilities/Chars"
 import { translate } from "../../../Utilities/I18n"
 import { sign, signNeg } from "../../../Utilities/NumberUtils"
 import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
-export const SkillsSheetRoutineChecks: React.FC<Props> = ({ l10n }) => (
+export const SkillsSheetRoutineChecks: React.FC<Props> = ({ staticData }) => (
   <TextBox
     className="routine-checks"
-    label={translate (l10n) ("sheets.gamestatssheet.routinechecks.title")}
+    label={translate (staticData) ("sheets.gamestatssheet.routinechecks.title")}
     >
-    <p>{translate (l10n) ("sheets.gamestatssheet.routinechecks.textRow1")}</p>
-    <p>{translate (l10n) ("sheets.gamestatssheet.routinechecks.textRow2")}</p>
-    <p>{translate (l10n) ("sheets.gamestatssheet.routinechecks.textRow3")}</p>
-    <p>{translate (l10n) ("sheets.gamestatssheet.routinechecks.textRow4")}</p>
+    <p>{translate (staticData) ("sheets.gamestatssheet.routinechecks.textRow1")}</p>
+    <p>{translate (staticData) ("sheets.gamestatssheet.routinechecks.textRow2")}</p>
+    <p>{translate (staticData) ("sheets.gamestatssheet.routinechecks.textRow3")}</p>
+    <p>{translate (staticData) ("sheets.gamestatssheet.routinechecks.textRow4")}</p>
     <table>
       <thead>
         <tr>
           <th>
             <div>
-              {translate (l10n) ("sheets.gamestatssheet.routinechecks.labels.checkmod")}
+              {translate (staticData) ("sheets.gamestatssheet.routinechecks.labels.checkmod")}
             </div>
           </th>
           <th>
             <div>
-              {translate (l10n) ("sheets.gamestatssheet.routinechecks.labels.neededsr")}
+              {translate (staticData) ("sheets.gamestatssheet.routinechecks.labels.neededsr")}
             </div>
           </th>
           <th>
             <div>
-              {translate (l10n) ("sheets.gamestatssheet.routinechecks.labels.checkmod")}
+              {translate (staticData) ("sheets.gamestatssheet.routinechecks.labels.checkmod")}
             </div>
           </th>
           <th>
             <div>
-              {translate (l10n) ("sheets.gamestatssheet.routinechecks.labels.neededsr")}
+              {translate (staticData) ("sheets.gamestatssheet.routinechecks.labels.neededsr")}
             </div>
           </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>{translate (l10n) ("sheets.gamestatssheet.routinechecks.from3on")}</td>
+          <td>{translate (staticData) ("sheets.gamestatssheet.routinechecks.from3on")}</td>
           <td>{1}</td>
           <td>{signNeg (-1)}</td>
           <td>{13}</td>

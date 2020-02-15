@@ -5,9 +5,10 @@ import { bindF, elem, ensure, Maybe, maybe, sum } from "../../../../Data/Maybe"
 import { compare } from "../../../../Data/Num"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { Category } from "../../../Constants/Categories"
-import { L10nKey, L10nRecord } from "../../../Models/Wiki/L10n"
+import { L10nKey } from "../../../Models/Wiki/L10n"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate, translateP } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { ReactReturn, renderMaybe } from "../../../Utilities/ReactUtils"
@@ -23,7 +24,7 @@ export interface WikiExtensionsProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
   extensions: Maybe<List<Record<SelectOption>>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 const SOA = SelectOption.A
@@ -35,7 +36,7 @@ export const WikiExtensions: FC = props => {
     x,
     acc,
     extensions,
-    l10n,
+    staticData,
   } = props
 
   const category = acc.category (x)
@@ -50,7 +51,7 @@ export const WikiExtensions: FC = props => {
                ((exs: List<Record<SelectOption>>) => (
                  <>
                    <p className="extensions-title">
-                     <span>{translate (l10n) (key)}</span>
+                     <span>{translate (staticData) (key)}</span>
                    </p>
                    <ul className="extensions">
                      {pipe_ (
@@ -58,7 +59,7 @@ export const WikiExtensions: FC = props => {
                        map (e => {
                          const requiredSR = Maybe.product (SOA.level (e)) * 4 + 4
 
-                         const text = translateP (l10n)
+                         const text = translateP (staticData)
                                                  (category === Category.LITURGICAL_CHANTS
                                                    ? "inlinewiki.liturgicalchantenhancements.title"
                                                    : "inlinewiki.spellenhancements.title")

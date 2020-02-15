@@ -3,11 +3,10 @@ import { map } from "../../../Data/List"
 import { joinMaybeList, Maybe } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
 import { MagicalGroup } from "../../Constants/Groups"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { Spell } from "../../Models/Wiki/Spell"
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { pipe_ } from "../../Utilities/pipe"
 import { WikiCastingTime } from "./Elements/WikiCastingTime"
 import { WikiCost } from "./Elements/WikiCost"
@@ -24,20 +23,15 @@ import { WikiTargetCategory } from "./Elements/WikiTargetCategory"
 import { WikiBoxTemplate } from "./WikiBoxTemplate"
 
 export interface WikiSpellInfoProps {
-  l10n: L10nRecord
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   x: Record<Spell>
   spellExtensions: Maybe<Record<SpecialAbility>>
 }
 
-const WA = WikiModel.A
 const SpA = Spell.A
 
 export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
-  const { l10n, x, spellExtensions, wiki } = props
-
-  const attributes = WA.attributes (wiki)
-  const books = WA.books (wiki)
+  const { x, spellExtensions, staticData } = props
 
   const name = Spell.A.name (x)
   const gr = Spell.A.gr (x)
@@ -52,35 +46,32 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
-            attributes={attributes}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
-          <WikiEffect l10n={l10n} x={x} acc={SpA} />
-          <WikiCastingTime l10n={l10n} x={x} acc={SpA} />
-          <WikiCost l10n={l10n} x={x} acc={SpA} />
-          <WikiRange l10n={l10n} x={x} acc={SpA} />
-          <WikiDuration l10n={l10n} x={x} acc={SpA} />
-          <WikiTargetCategory l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellProperty l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellTraditions l10n={l10n} x={x} acc={SpA} />
-          <WikiImprovementCost l10n={l10n} x={x} acc={SpA} />
+          <WikiEffect staticData={staticData} x={x} acc={SpA} />
+          <WikiCastingTime staticData={staticData} x={x} acc={SpA} />
+          <WikiCost staticData={staticData} x={x} acc={SpA} />
+          <WikiRange staticData={staticData} x={x} acc={SpA} />
+          <WikiDuration staticData={staticData} x={x} acc={SpA} />
+          <WikiTargetCategory staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellProperty staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellTraditions staticData={staticData} x={x} acc={SpA} />
+          <WikiImprovementCost staticData={staticData} x={x} acc={SpA} />
           <WikiSource
-            books={books}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
           <WikiExtensions
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             extensions={mextensions}
             acc={SpA}
             />
           <WikiSource
-            books={books}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             addSrcs={add_srcs}
             />
@@ -92,18 +83,16 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
-            attributes={attributes}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
-          <WikiEffect l10n={l10n} x={x} acc={SpA} />
-          <WikiCost l10n={l10n} x={x} acc={SpA} />
-          <WikiDuration l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellProperty l10n={l10n} x={x} acc={SpA} />
+          <WikiEffect staticData={staticData} x={x} acc={SpA} />
+          <WikiCost staticData={staticData} x={x} acc={SpA} />
+          <WikiDuration staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellProperty staticData={staticData} x={x} acc={SpA} />
           <WikiSource
-            books={books}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
@@ -114,19 +103,17 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
-            attributes={attributes}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
-          <WikiEffect l10n={l10n} x={x} acc={SpA} />
-          <WikiDuration l10n={l10n} x={x} acc={SpA} />
-          <WikiCost l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellProperty l10n={l10n} x={x} acc={SpA} />
-          <WikiImprovementCost l10n={l10n} x={x} acc={SpA} />
+          <WikiEffect staticData={staticData} x={x} acc={SpA} />
+          <WikiDuration staticData={staticData} x={x} acc={SpA} />
+          <WikiCost staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellProperty staticData={staticData} x={x} acc={SpA} />
+          <WikiImprovementCost staticData={staticData} x={x} acc={SpA} />
           <WikiSource
-            books={books}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
@@ -137,21 +124,19 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
-            attributes={attributes}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
-          <WikiEffect l10n={l10n} x={x} acc={SpA} />
-          <WikiCastingTime l10n={l10n} x={x} acc={SpA} />
-          <WikiDuration l10n={l10n} x={x} acc={SpA} />
-          <WikiCost l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellProperty l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellTraditions l10n={l10n} x={x} acc={SpA} />
-          <WikiImprovementCost l10n={l10n} x={x} acc={SpA} />
+          <WikiEffect staticData={staticData} x={x} acc={SpA} />
+          <WikiCastingTime staticData={staticData} x={x} acc={SpA} />
+          <WikiDuration staticData={staticData} x={x} acc={SpA} />
+          <WikiCost staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellProperty staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellTraditions staticData={staticData} x={x} acc={SpA} />
+          <WikiImprovementCost staticData={staticData} x={x} acc={SpA} />
           <WikiSource
-            books={books}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
@@ -162,20 +147,18 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
-            attributes={attributes}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
-          <WikiEffect l10n={l10n} x={x} acc={SpA} />
-          <WikiCastingTime l10n={l10n} x={x} acc={SpA} />
-          <WikiCost l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellProperty l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellTraditions l10n={l10n} x={x} acc={SpA} />
-          <WikiImprovementCost l10n={l10n} x={x} acc={SpA} />
+          <WikiEffect staticData={staticData} x={x} acc={SpA} />
+          <WikiCastingTime staticData={staticData} x={x} acc={SpA} />
+          <WikiCost staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellProperty staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellTraditions staticData={staticData} x={x} acc={SpA} />
+          <WikiImprovementCost staticData={staticData} x={x} acc={SpA} />
           <WikiSource
-            books={books}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
@@ -186,18 +169,16 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
-            attributes={attributes}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
-          <WikiEffect l10n={l10n} x={x} acc={SpA} />
-          <WikiCost l10n={l10n} x={x} acc={SpA} />
-          <WikiDuration l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellProperty l10n={l10n} x={x} acc={SpA} />
+          <WikiEffect staticData={staticData} x={x} acc={SpA} />
+          <WikiCost staticData={staticData} x={x} acc={SpA} />
+          <WikiDuration staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellProperty staticData={staticData} x={x} acc={SpA} />
           <WikiSource
-            books={books}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
@@ -208,20 +189,18 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
-            attributes={attributes}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
-          <WikiEffect l10n={l10n} x={x} acc={SpA} />
-          <WikiCastingTime l10n={l10n} x={x} acc={SpA} />
-          <WikiCost l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellProperty l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellTraditions l10n={l10n} x={x} acc={SpA} />
-          <WikiImprovementCost l10n={l10n} x={x} acc={SpA} />
+          <WikiEffect staticData={staticData} x={x} acc={SpA} />
+          <WikiCastingTime staticData={staticData} x={x} acc={SpA} />
+          <WikiCost staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellProperty staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellTraditions staticData={staticData} x={x} acc={SpA} />
+          <WikiImprovementCost staticData={staticData} x={x} acc={SpA} />
           <WikiSource
-            books={books}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
@@ -232,20 +211,18 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
-            attributes={attributes}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
-          <WikiEffect l10n={l10n} x={x} acc={SpA} />
-          <WikiCost l10n={l10n} x={x} acc={SpA} />
-          <WikiDuration l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellProperty l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellTraditions l10n={l10n} x={x} acc={SpA} />
-          <WikiImprovementCost l10n={l10n} x={x} acc={SpA} />
+          <WikiEffect staticData={staticData} x={x} acc={SpA} />
+          <WikiCost staticData={staticData} x={x} acc={SpA} />
+          <WikiDuration staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellProperty staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellTraditions staticData={staticData} x={x} acc={SpA} />
+          <WikiImprovementCost staticData={staticData} x={x} acc={SpA} />
           <WikiSource
-            books={books}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
@@ -257,21 +234,19 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
-            attributes={attributes}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
-          <WikiEffect l10n={l10n} x={x} acc={SpA} />
-          <WikiCastingTime l10n={l10n} x={x} acc={SpA} />
-          <WikiCost l10n={l10n} x={x} acc={SpA} />
-          <WikiRange l10n={l10n} x={x} acc={SpA} />
-          <WikiDuration l10n={l10n} x={x} acc={SpA} />
-          <WikiTargetCategory l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellProperty l10n={l10n} x={x} acc={SpA} />
+          <WikiEffect staticData={staticData} x={x} acc={SpA} />
+          <WikiCastingTime staticData={staticData} x={x} acc={SpA} />
+          <WikiCost staticData={staticData} x={x} acc={SpA} />
+          <WikiRange staticData={staticData} x={x} acc={SpA} />
+          <WikiDuration staticData={staticData} x={x} acc={SpA} />
+          <WikiTargetCategory staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellProperty staticData={staticData} x={x} acc={SpA} />
           <WikiSource
-            books={books}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
@@ -282,22 +257,20 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
       return (
         <WikiBoxTemplate className="spell" title={name}>
           <WikiSkillCheck
-            attributes={attributes}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />
-          <WikiEffect l10n={l10n} x={x} acc={SpA} />
-          <WikiCastingTime l10n={l10n} x={x} acc={SpA} />
-          <WikiCost l10n={l10n} x={x} acc={SpA} />
-          <WikiRange l10n={l10n} x={x} acc={SpA} />
-          <WikiDuration l10n={l10n} x={x} acc={SpA} />
-          <WikiTargetCategory l10n={l10n} x={x} acc={SpA} />
-          <WikiSpellProperty l10n={l10n} x={x} acc={SpA} />
-          <WikiImprovementCost l10n={l10n} x={x} acc={SpA} />
+          <WikiEffect staticData={staticData} x={x} acc={SpA} />
+          <WikiCastingTime staticData={staticData} x={x} acc={SpA} />
+          <WikiCost staticData={staticData} x={x} acc={SpA} />
+          <WikiRange staticData={staticData} x={x} acc={SpA} />
+          <WikiDuration staticData={staticData} x={x} acc={SpA} />
+          <WikiTargetCategory staticData={staticData} x={x} acc={SpA} />
+          <WikiSpellProperty staticData={staticData} x={x} acc={SpA} />
+          <WikiImprovementCost staticData={staticData} x={x} acc={SpA} />
           <WikiSource
-            books={books}
-            l10n={l10n}
+            staticData={staticData}
             x={x}
             acc={SpA}
             />

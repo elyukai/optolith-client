@@ -29,7 +29,7 @@ const mapDispatchToProps =
       dispatch (ConfigActions.switchEnableEditingHeroAfterCreationPhase ())
     },
     async saveConfig () {
-      await dispatch (IOActions.requestConfigSave (ownProps.l10n))
+      await dispatch (IOActions.requestConfigSave (ownProps.staticData))
     },
     setLocale (id: Maybe<Locale>) {
       dispatch (LocaleActions.setLocale (id))

@@ -21,7 +21,7 @@ import { Advantage } from "../Models/Wiki/Advantage"
 import { Culture } from "../Models/Wiki/Culture"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
 import { ProfessionRequireActivatable, ProfessionRequireActivatableL, reqToActive } from "../Models/Wiki/prerequisites/ActivatableRequirement"
-import { ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement"
+import { ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/ProfessionRequireIncreasable"
 import { Profession } from "../Models/Wiki/Profession"
 import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection"
 import { ProfessionSelections } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections"
@@ -32,7 +32,7 @@ import { Race } from "../Models/Wiki/Race"
 import { Skill } from "../Models/Wiki/Skill"
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
 import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill"
-import { WikiModel } from "../Models/Wiki/WikiModel"
+import { StaticData } from "../Models/Wiki/WikiModel"
 import { Activatable, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers"
 import { getCombinedPrerequisites } from "../Utilities/Activatable/activatableActivationUtils"
 import { addOtherSpecialAbilityDependenciesOnRCPApplication } from "../Utilities/Activatable/SpecialAbilityUtils"
@@ -69,7 +69,7 @@ const ConcatenatedModifications =
 
 const CMA = ConcatenatedModifications.A
 const CML = makeLenses (ConcatenatedModifications)
-const WA = WikiModel.A
+const WA = StaticData.A
 const HA = HeroModel.A
 const HL = HeroModelL
 const ELA = ExperienceLevel.A

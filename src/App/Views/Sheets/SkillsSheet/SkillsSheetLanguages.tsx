@@ -7,9 +7,9 @@ import { compare } from "../../../../Data/Num"
 import { fromDefault, Record } from "../../../../Data/Record"
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { findSelectOption } from "../../../Utilities/Activatable/selectionUtils"
 import { compareLocale, translate } from "../../../Utilities/I18n"
 import { toRoman } from "../../../Utilities/NumberUtils"
@@ -20,7 +20,7 @@ import { TextBox } from "../../Universal/TextBox"
 interface Props {
   languagesStateEntry: Maybe<Record<ActivatableDependent>>
   languagesWikiEntry: Maybe<Record<SpecialAbility>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 interface IdNameLevel {
@@ -41,7 +41,7 @@ export const SkillsSheetLanguages: React.FC<Props> = props => {
   const {
     languagesStateEntry: maybeLanguagesStateEntry,
     languagesWikiEntry: maybeLanguagesWikiEntry,
-    l10n,
+    staticData,
   } = props
 
   const languages = pipe_ (
@@ -59,12 +59,12 @@ export const SkillsSheetLanguages: React.FC<Props> = props => {
     )),
     sortByMulti ([
                     comparingR (IdNameLevel.A.level) (flip (compare)),
-                    comparingR (IdNameLevel.A.name) (compareLocale (l10n)),
+                    comparingR (IdNameLevel.A.name) (compareLocale (staticData)),
                   ])
   )
 
   return (
-    <TextBox label={translate (l10n) ("sheets.gamestatssheet.languages.title")}>
+    <TextBox label={translate (staticData) ("sheets.gamestatssheet.languages.title")}>
       <ul className="languages-list">
         {pipe_ (
           languages,
@@ -73,7 +73,7 @@ export const SkillsSheetLanguages: React.FC<Props> = props => {
               <span>{IdNameLevel.A.name (e)}</span>
               <span>
                 {IdNameLevel.A.level (e) === 4
-                  ? translate (l10n) ("sheets.gamestatssheet.languages.nativetongue")
+                  ? translate (staticData) ("sheets.gamestatssheet.languages.nativetongue")
                   : toRoman (IdNameLevel.A.level (e))}
               </span>
             </li>

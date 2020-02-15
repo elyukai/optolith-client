@@ -26,9 +26,8 @@ import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { ActivatableNameCost, ActivatableNameCostA_, ActivatableNameCostL, ActivatableNameCostL_, ActivatableNameCostSafeCost } from "../../Models/View/ActivatableNameCost"
 import { Advantage } from "../../Models/Wiki/Advantage"
 import { Disadvantage, isDisadvantage } from "../../Models/Wiki/Disadvantage"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { Skill } from "../../Models/Wiki/Skill"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable, EntryWithCategory, SkillishEntry } from "../../Models/Wiki/wikiTypeHelpers"
 import { isMaybeActive } from "../Activatable/isActive"
 import { getSelectOptionCost } from "../Activatable/selectionUtils"
@@ -55,7 +54,7 @@ const isDisadvantageActive =
 
 const getCostForEntryWithSkillSel =
   (ensureId: (x: Maybe<number | string>) => Maybe<string>) =>
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (mcurrent_sid: Maybe<string | number>) =>
   (mcurrent_cost: Maybe<number | List<number>>) =>
     pipe_ (
@@ -144,7 +143,7 @@ export const compareSubMaxLevel =
  */
 const getEntrySpecificCost =
   (isEntryToAdd: boolean) =>
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (wiki_entry: Activatable) =>
   (hero_entry: Maybe<Record<ActivatableDependent>>) =>
@@ -256,7 +255,7 @@ const getEntrySpecificCost =
           bindF (
             current_sid =>
               fmapF (lookup (current_sid)
-                            (WikiModel.A.skills (wiki)))
+                            (StaticData.A.skills (wiki)))
                     (skill =>
 
                       // Multiply number of final occurences of the
@@ -344,7 +343,7 @@ const getEntrySpecificCost =
           pipe (
             ActiveObject.AL.sid,
             misStringM,
-            bindF (lookupF (WikiModel.A.skills (wiki))),
+            bindF (lookupF (StaticData.A.skills (wiki))),
             bindF (pipe (Skill.A.ic, dec, subscript (current_cost)))
           )
 
@@ -399,7 +398,7 @@ const getEntrySpecificCost =
 const getTotalCost =
   (isEntryToAdd: boolean) =>
   (automatic_advantages: List<string>) =>
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (entry: Record<ActiveObjectWithId>) =>
   (hero_entry: Maybe<Record<ActivatableDependent>>) =>
@@ -442,7 +441,7 @@ const getTotalCost =
 export const getCost =
   (isEntryToAdd: boolean) =>
   (automatic_advantages: List<string>) =>
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (entry: Record<ActiveObjectWithId>): Maybe<Pair<number | List<number>, boolean>> => {
     const current_id = AOWIA.id (entry)
@@ -530,7 +529,7 @@ const isSpecialAbilityById =
  * it handles the Native Tongue level for languages.
  */
 const getFinalLevelName =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (entry: Record<ActivatableNameCost>) =>
 
   /**
@@ -542,7 +541,7 @@ const getFinalLevelName =
     const current_cost = ActivatableNameCost.A.finalCost (entry)
 
     if (current_id === SpecialAbilityId.Language && current_level === 4) {
-      return `${nbsp}${translate (l10n) ("nativetongue.short")}`
+      return `${nbsp}${translate (staticData) ("specialabilities.nativetonguelevel")}`
     }
 
     if (isList (current_cost) || isSpecialAbilityById (current_id)) {
@@ -557,14 +556,14 @@ const getFinalLevelName =
  * `Nothing`.
  */
 const getLevelNameIfValid =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (entry: Record<ActivatableNameCost>): Maybe<string> => {
     const current_id = ActivatableNameCostA_.id (entry)
     const mcurrent_level = ActivatableNameCostA_.tier (entry)
 
     if (isJust (mcurrent_level)
         && notElem (current_id) (List (DisadvantageId.Principles, DisadvantageId.Obligations))) {
-      return Just (getFinalLevelName (l10n) (entry) (fromJust (mcurrent_level)))
+      return Just (getFinalLevelName (staticData) (entry) (fromJust (mcurrent_level)))
     }
 
     return Nothing
@@ -572,11 +571,11 @@ const getLevelNameIfValid =
 
 export const putLevelName =
   (addLevelToName: boolean) =>
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (entry: Record<ActivatableNameCost>): Record<ActivatableNameCost> =>
     pipe_ (
       entry,
-      getLevelNameIfValid (l10n),
+      getLevelNameIfValid (staticData),
       fmap (levelName => addLevelToName
                            ? pipe_ (
                                entry,
@@ -598,9 +597,9 @@ export const putLevelName =
  */
 export const convertPerTierCostToFinalCost =
   (addLevelToName: boolean) =>
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
     pipe (
-      putLevelName (addLevelToName) (l10n),
+      putLevelName (addLevelToName) (staticData),
       putCurrentCost
     )
 

@@ -3,7 +3,7 @@ import { List } from "../../../Data/List"
 import { Just, Maybe, Nothing } from "../../../Data/Maybe"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { RadioOption } from "../../Models/View/RadioOption"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { isStable } from "../../Selectors/envSelectors"
 import { translate } from "../../Utilities/I18n"
 import { Locale, Theme } from "../../Utilities/Raw/JSON/Config"
@@ -14,7 +14,7 @@ import { Dropdown } from "../Universal/Dropdown"
 import { SegmentedControls } from "../Universal/SegmentedControls"
 
 export interface SettingsOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   isSettingsOpen: boolean
   platform: string
   close (): void
@@ -43,7 +43,7 @@ export const Settings: React.FC<Props> = props => {
   const {
     close,
     isEditingHeroAfterCreationPhaseEnabled,
-    l10n,
+    staticData,
     localeString,
     localeType,
     setLocale,
@@ -61,10 +61,10 @@ export const Settings: React.FC<Props> = props => {
   return (
     <Dialog
       id="settings"
-      title={translate (l10n) ("settings.title")}
+      title={translate (staticData) ("settings.title")}
       buttons={[
         {
-          label: translate (l10n) ("general.dialogs.donebtn"),
+          label: translate (staticData) ("general.dialogs.donebtn"),
           onClick: saveConfig,
         },
       ]}
@@ -74,7 +74,7 @@ export const Settings: React.FC<Props> = props => {
       <Dropdown
         options={List (
           DropdownOption ({
-            name: translate (l10n) ("settings.systemlanguage"),
+            name: translate (staticData) ("settings.systemlanguage"),
           }),
           DropdownOption ({
             id: Just (Locale.German),
@@ -100,41 +100,41 @@ export const Settings: React.FC<Props> = props => {
           })
         )}
         value={localeType === "default" ? Nothing : localeString}
-        label={translate (l10n) ("settings.language")}
+        label={translate (staticData) ("settings.language")}
         onChange={setLocale}
         />
-      <p>{translate (l10n) ("settings.languagehint")}</p>
+      <p>{translate (staticData) ("settings.languagehint")}</p>
       <SegmentedControls
         options={List (
           RadioOption ({
-            name: translate (l10n) ("settings.theme.dark"),
+            name: translate (staticData) ("settings.theme.dark"),
             value: Just (Theme.Dark),
           }),
           RadioOption ({
-            name: translate (l10n) ("settings.theme.light"),
+            name: translate (staticData) ("settings.theme.light"),
             value: Just (Theme.Light),
           })
         )}
         active={Just (theme)}
         onClick={setTheme}
-        label={translate (l10n) ("settings.theme")}
+        label={translate (staticData) ("settings.theme")}
         />
       <Checkbox
         checked={isEditingHeroAfterCreationPhaseEnabled}
         className="editor-switch"
-        label={translate (l10n) ("settings.enableeditingheroaftercreationphase")}
+        label={translate (staticData) ("settings.enableeditingheroaftercreationphase")}
         onClick={switchEnableEditingHeroAfterCreationPhase}
         />
       <Checkbox
         checked={areAnimationsEnabled}
         className="animations"
-        label={translate (l10n) ("settings.showanimations")}
+        label={translate (staticData) ("settings.showanimations")}
         onClick={switchEnableAnimations}
         />
       {(platform === "win32" || platform === "darwin")
         ? (
           <BorderButton
-            label={translate (l10n) ("settings.checkforupdatesbtn")}
+            label={translate (staticData) ("settings.checkforupdatesbtn")}
             onClick={checkForUpdates}
             autoWidth
             />

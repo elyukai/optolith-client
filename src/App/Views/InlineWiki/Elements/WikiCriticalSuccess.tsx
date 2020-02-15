@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Record, RecordIBase } from "../../../../Data/Record"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
 import { Markdown } from "../../Universal/Markdown"
 
@@ -11,7 +11,7 @@ interface Accessors<A extends RecordIBase<any>> {
 export interface WikiCriticalSuccessProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 type FC = <A extends RecordIBase<any>> (props: WikiCriticalSuccessProps<A>) => ReturnType<React.FC>
@@ -20,12 +20,12 @@ export const WikiCriticalSuccess: FC = props => {
   const {
     x,
     acc,
-    l10n,
+    staticData,
   } = props
 
   return (
     <Markdown
-      source={`**${translate (l10n) ("inlinewiki.criticalsuccess")}:** ${acc.critical (x)}`}
+      source={`**${translate (staticData) ("inlinewiki.criticalsuccess")}:** ${acc.critical (x)}`}
       />
   )
 }

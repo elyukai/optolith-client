@@ -1,15 +1,16 @@
 import * as React from "react"
 import { List, notNullStr } from "../../../Data/List"
-import { any, ensure, fromMaybe, guardReplace, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe"
+import { any, ensure, fromMaybe, guardReplace, isJust, isNothing, Just, Maybe, maybe, Nothing, orN } from "../../../Data/Maybe"
+import { lookup } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, snd } from "../../../Data/Tuple"
 import { AdvantageId, DisadvantageId } from "../../Constants/Ids"
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
 import { HeroModel } from "../../Models/Hero/HeroModel"
+import { NumIdName } from "../../Models/NumIdName"
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, InactiveActivatableControlElements, insertFinalCurrentCost, PropertiesAffectedByState } from "../../Utilities/Activatable/activatableInactiveViewUtils"
 import { classListMaybe } from "../../Utilities/CSS"
 import { translate } from "../../Utilities/I18n"
@@ -31,7 +32,6 @@ export interface ActivatableAddListItemOwnProps {
   isTypical?: boolean
   isUntypical?: boolean
   hideGroup?: boolean
-  l10n: L10nRecord
   selectedForInfo: Maybe<string>
   addToList (args: Record<ActivatableActivationOptions>): void
   selectForInfo (id: string): void
@@ -39,7 +39,7 @@ export interface ActivatableAddListItemOwnProps {
 
 export interface ActivatableAddListItemStateProps {
   skills: Maybe<HeroModel["skills"]>
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   isEditingAllowed: boolean
 }
 
@@ -70,10 +70,9 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
     isTypical,
     isUntypical,
     hideGroup,
-    l10n,
     selectForInfo,
     selectedForInfo,
-    wiki,
+    staticData,
     addToList,
     isEditingAllowed,
   } = props
@@ -181,8 +180,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
                                             handleSelect,
                                             selectElementDisabled,
                                           })
-                                          (l10n)
-                                          (wiki)
+                                          (staticData)
                                           (item)
                                           (selectedOptions)
 
@@ -191,7 +189,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
                                             (propsAndActivationArgs)
 
   const controlElements =
-    getInactiveActivatableControlElements (l10n)
+    getInactiveActivatableControlElements (staticData)
                                           (isEditingAllowed)
                                           ({
                                             handleInput,
@@ -270,8 +268,12 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
         ? null
         : (
           <ListItemGroup
-            list={translate (l10n) ("specialabilitygroups")}
-            index={pipe_ (item, IAA.wikiEntry, SpecialAbility.AL.gr)}
+            text={pipe_ (
+              staticData,
+              StaticData.A.specialAbilityGroups,
+              lookup (pipe_ (item, IAA.wikiEntry, SpecialAbility.AL.gr)),
+              maybe ("") (NumIdName.A.name)
+            )}
             />
         )}
       <ListItemValues>
@@ -289,11 +291,13 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
       <BasicInputDialog
         id="custom-cost-dialog"
         isOpen={showCustomCostDialog}
-        title={translate (l10n) ("customcost")}
-        description={`${translate (l10n) ("customcostfor")} ${IAA.name (item)}`}
+        title={translate (staticData) ("advantagesdisadvantages.dialogs.customcost.title")}
+        description={
+          `${translate (staticData) ("advantagesdisadvantages.dialogs.customcost.for")} ${IAA.name (item)}`
+        }
         value={mcustom_cost_preview}
-        acceptLabel={translate (l10n) ("done")}
-        rejectLabel={translate (l10n) ("delete")}
+        acceptLabel={translate (staticData) ("general.dialogs.donebtn")}
+        rejectLabel={translate (staticData) ("general.dialogs.deletebtn")}
         rejectDisabled={isNothing (mcustom_cost)}
         onClose={handleCloseCustomCostDialog}
         onAccept={handleSetCustomCost}

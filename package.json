@@ -80,6 +80,8 @@
     "build:css": "node --experimental-modules ./deploy/buildSass.mjs",
     "compile": "tsc",
     "watch": "tsc --watch",
+    "ts:build": "tsc",
+    "ts:watch": "tsc --watch",
     "build": "tsc",
     "build:watch": "tsc --watch",
     "getstatic": "node ./deploy/getStaticData.js",

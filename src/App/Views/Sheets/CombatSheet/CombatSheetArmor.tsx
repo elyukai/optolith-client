@@ -4,9 +4,11 @@ import { notEquals } from "../../../../Data/Eq"
 import { fmap, fmapF } from "../../../../Data/Functor"
 import { flength, intercalate, List, map, notNull, replicateR, toArray } from "../../../../Data/List"
 import { catMaybes, ensure, Maybe, maybe, maybeRNull } from "../../../../Data/Maybe"
+import { lookup } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Armor } from "../../../Models/View/Armor"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { DerivedCharacteristic } from "../../../Models/Wiki/DerivedCharacteristic"
+import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { ndash } from "../../../Utilities/Chars"
 import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
 import { sign, toRoman } from "../../../Utilities/NumberUtils"
@@ -16,48 +18,60 @@ import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   armors: Maybe<List<Record<Armor>>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
+const SDA = StaticData.A
 const AA = Armor.A
 
 export const CombatSheetArmor: React.FC<Props> = props => {
-  const { l10n, armors: marmors } = props
+  const { staticData, armors: marmors } = props
 
-  const movement_tag = translate (l10n) ("movement.short")
-  const initiative_tag = translate (l10n) ("initiative.short")
+  const movement_tag = pipe_ (
+                         staticData,
+                         SDA.derivedCharacteristics,
+                         lookup ("MOV"),
+                         maybe ("") (DerivedCharacteristic.A.name)
+                       )
+
+  const initiative_tag = pipe_ (
+                         staticData,
+                         SDA.derivedCharacteristics,
+                         lookup ("INI"),
+                         maybe ("") (DerivedCharacteristic.A.name)
+                       )
 
   return (
     <TextBox
-      label={translate (l10n) ("sheets.combatsheet.armors.title")}
+      label={translate (staticData) ("sheets.combatsheet.armors.title")}
       className="armor"
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.armor")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.armor")}
             </th>
             <th className="st">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.sturdinessrating")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.sturdinessrating")}
             </th>
             <th className="loss">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.wear")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.wear")}
             </th>
             <th className="pro">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.protection")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.protection")}
             </th>
             <th className="enc">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.encumbrance")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.encumbrance")}
             </th>
             <th className="add-penalties">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.movementinitiative")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.movementinitiative")}
             </th>
             <th className="weight">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.weight")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.weight")}
             </th>
             <th className="where">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.carriedwhereexamples")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.carriedwhereexamples")}
             </th>
           </tr>
         </thead>
@@ -87,15 +101,15 @@ export const CombatSheetArmor: React.FC<Props> = props => {
                                        (ensure (notNull) (addPenalties))}
                               </td>
                               <td className="weight">
-                                {translateP (l10n)
+                                {translateP (staticData)
                                             ("general.weightvalue")
                                             (List (
                                               pipe_ (
                                                 e,
                                                 AA.weight,
                                                 fmap (pipe (
-                                                  localizeWeight (l10n),
-                                                  localizeNumber (l10n)
+                                                  localizeWeight (staticData),
+                                                  localizeNumber (staticData)
                                                 )),
                                                 renderMaybe
                                               )

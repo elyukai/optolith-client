@@ -9,12 +9,12 @@ import { SpecialAbilityId } from "../../Constants/Ids"
 import { TerrainKnowledgeSelection } from "../../Models/Wiki/professionSelections/TerrainKnowledgeSelection"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { SelectOption, selectToDropdownOption } from "../../Models/Wiki/sub/SelectOption"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { isNumber } from "../../Utilities/typeCheckUtils"
 import { Dropdown } from "../Universal/Dropdown"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const TKSA = TerrainKnowledgeSelection.A
 const SAA = SpecialAbility.A
 
@@ -29,24 +29,24 @@ export const isTerrainKnowledgeSelectionValid =
   }
 
 interface Props {
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   active: Maybe<number>
   selection: Record<TerrainKnowledgeSelection>
   setTerrainId (id: number): void
 }
 
 export const TerrainKnowledgeSelectionList: React.FC<Props> = props => {
-  const { active, selection, setTerrainId, wiki } = props
+  const { active, selection, setTerrainId, staticData } = props
 
   const available = TKSA.sid (selection)
 
   const terrain_knowledge = React.useMemo (
     () => pipe_ (
-      wiki,
-      WA.specialAbilities,
+      staticData,
+      SDA.specialAbilities,
       lookup <string> (SpecialAbilityId.TerrainKnowledge)
     ),
-    [ wiki ]
+    [ staticData ]
   )
 
   const terrains = React.useMemo (

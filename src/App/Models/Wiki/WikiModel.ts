@@ -27,15 +27,16 @@ import { ProfessionVariant } from "./ProfessionVariant"
 import { Race } from "./Race"
 import { RaceVariant } from "./RaceVariant"
 import { Skill } from "./Skill"
+import { SkillGroup } from "./SkillGroup"
 import { SpecialAbility } from "./SpecialAbility"
 import { Spell } from "./Spell"
 import { State } from "./State"
 import { SelectOption } from "./sub/SelectOption"
 
-export type WikiModelRecord = Record<WikiModel>
+export type StaticDataRecord = Record<StaticData>
 
-export interface WikiModel {
-  "@@name": "Wiki"
+export interface StaticData {
+  "@@name": "StaticData"
   advantages: OrderedMap<string, Record<Advantage>>
   animistForces: OrderedMap<string, Record<Spell>>
   arcaneBardTraditions: OrderedMap<number, Record<NumIdName>>
@@ -81,9 +82,11 @@ export interface WikiModel {
   raceVariants: OrderedMap<string, Record<RaceVariant>>
   reaches: OrderedMap<number, Record<NumIdName>>
   rogueSpells: OrderedMap<string, Record<Spell>>
+  skillGroups: OrderedMap<number, Record<SkillGroup>>
   skills: OrderedMap<string, Record<Skill>>
   socialStatuses: OrderedMap<number, Record<NumIdName>>
   specialAbilities: OrderedMap<string, Record<SpecialAbility>>
+  specialAbilityGroups: OrderedMap<number, Record<NumIdName>>
   spellEnhancements: OrderedMap<number, Record<SelectOption>>
   spellGroups: OrderedMap<number, Record<NumIdName>>
   spells: OrderedMap<string, Record<Spell>>
@@ -94,9 +97,9 @@ export interface WikiModel {
   zibiljaRituals: OrderedMap<string, Record<Spell>>
 }
 
-export const WikiModel =
-  fromDefault ("Wiki")
-              <WikiModel> ({
+export const StaticData =
+  fromDefault ("StaticData")
+              <StaticData> ({
                 advantages: OrderedMap.empty,
                 animistForces: OrderedMap.empty,
                 arcaneBardTraditions: OrderedMap.empty,
@@ -142,9 +145,11 @@ export const WikiModel =
                 raceVariants: OrderedMap.empty,
                 reaches: OrderedMap.empty,
                 rogueSpells: OrderedMap.empty,
+                skillGroups: OrderedMap.empty,
                 skills: OrderedMap.empty,
                 socialStatuses: OrderedMap.empty,
                 specialAbilities: OrderedMap.empty,
+                specialAbilityGroups: OrderedMap.empty,
                 spellEnhancements: OrderedMap.empty,
                 spellGroups: OrderedMap.empty,
                 spells: OrderedMap.empty,
@@ -155,4 +160,4 @@ export const WikiModel =
                 zibiljaRituals: OrderedMap.empty,
               })
 
-export const WikiModelL = makeLenses (WikiModel)
+export const StaticDataL = makeLenses (StaticData)

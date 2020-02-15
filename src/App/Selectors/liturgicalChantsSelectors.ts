@@ -22,7 +22,7 @@ import { Blessing } from "../Models/Wiki/Blessing"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
 import { LiturgicalChant, LiturgicalChantL } from "../Models/Wiki/LiturgicalChant"
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
-import { WikiModel } from "../Models/Wiki/WikiModel"
+import { StaticData } from "../Models/Wiki/WikiModel"
 import { isMaybeActive } from "../Utilities/Activatable/isActive"
 import { getBlessedTradition, mapBlessedTradIdToNumId } from "../Utilities/Activatable/traditionUtils"
 import { composeL } from "../Utilities/compose"
@@ -40,7 +40,7 @@ import { getAdvantages, getBlessings, getCurrentHeroPresent, getCurrentPhase, ge
 import { getEnableActiveItemHints } from "./uisettingsSelectors"
 
 const HA = HeroModel.A
-const WA = WikiModel.A
+const SDA = StaticData.A
 const ELA = ExperienceLevel.A
 const ADA = ActivatableDependent.A
 const ASDA = ActivatableSkillDependent.A
@@ -98,7 +98,7 @@ export const getActiveLiturgicalChants = createMaybeSelector (
                              bindF (hero_entry =>
                                      pipe_ (
                                        wiki,
-                                       WA.liturgicalChants,
+                                       SDA.liturgicalChants,
                                        lookup (ASDA.id (hero_entry)),
                                        fmap (wiki_entry =>
                                          LiturgicalChantWithRequirements ({

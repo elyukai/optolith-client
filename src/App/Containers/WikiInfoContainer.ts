@@ -8,10 +8,10 @@ import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps } from "../Views/Inli
 import { WikiInfoContentStateProps } from "../Views/InlineWiki/WikiInfoContent"
 
 const mapStateToProps =
-  (state: AppStateRecord, ownProps: WikiInfoOwnProps): WikiInfoContentStateProps => ({
+  (state: AppStateRecord): WikiInfoContentStateProps => ({
     combinedCultures: getAllCultures (state),
     combinedRaces: getAllRaces (state),
-    combinedProfessions: getAllProfessions (state, ownProps),
+    combinedProfessions: getAllProfessions (state),
     languages: mapGetToSlice (stateSelectors.getWikiSpecialAbilities)
                              (SpecialAbilityId.Language)
                              (state),
@@ -25,7 +25,7 @@ const mapStateToProps =
     sex: stateSelectors.getSex (state),
     spellExtensions: mapGetToSlice (stateSelectors.getWikiSpecialAbilities)
                                    (SpecialAbilityId.SpellEnhancement) (state),
-    wiki: stateSelectors.getWiki (state),
+    staticData: stateSelectors.getWiki (state),
   })
 
 export const connectWikiInfo =

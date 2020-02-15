@@ -11,12 +11,12 @@ import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
 import { Advantage } from "../../Models/Wiki/Advantage"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { AdvantagesDisadvantages } from "./AdvantagesDisadvantages"
 
 export interface AdvantagesOwnProps {
   hero: HeroModelRecord
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 export interface AdvantagesStateProps {
@@ -49,7 +49,7 @@ export type AdvantagesProps = AdvantagesStateProps & AdvantagesDispatchProps & A
 
 export const Advantages: React.FC<AdvantagesProps> = props => {
   const {
-    l10n,
+    staticData,
     activeList,
     ap,
     deactiveList,
@@ -71,7 +71,7 @@ export const Advantages: React.FC<AdvantagesProps> = props => {
 
   return (
     <AdvantagesDisadvantages
-      l10n={l10n}
+      staticData={staticData}
       activeList={activeList}
       ap={ap}
       deactiveList={deactiveList}

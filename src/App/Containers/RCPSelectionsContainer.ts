@@ -9,11 +9,10 @@ import { HeroModelRecord } from "../Models/Hero/HeroModel"
 import { Selections as SelectionsInterface } from "../Models/Hero/heroTypeHelpers"
 import { DropdownOption } from "../Models/View/DropdownOption"
 import { Culture } from "../Models/Wiki/Culture"
-import { L10nRecord } from "../Models/Wiki/L10n"
 import { Profession } from "../Models/Wiki/Profession"
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
 import { Race } from "../Models/Wiki/Race"
-import { WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getRace } from "../Selectors/rcpSelectors"
 import { getAllSpellsForManualGuildMageSelect } from "../Selectors/spellsSelectors"
 import { getWiki } from "../Selectors/stateSelectors"
@@ -21,12 +20,11 @@ import { RCPOptionSelectionsEnsure } from "../Views/RCPOptionSelections/RCPOptio
 
 interface OwnProps {
   hero: HeroModelRecord
-  l10n: L10nRecord
   close (): void
 }
 
 interface StateProps {
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   race: Maybe<Record<Race>>
   culture: Maybe<Record<Culture>>
   profession: Maybe<Record<Profession>>
@@ -44,7 +42,7 @@ const mapStateToProps =
     culture: getCurrentCulture (state),
     profession: getCurrentProfession (state),
     professionVariant: getCurrentProfessionVariant (state),
-    wiki: getWiki (state),
+    staticData: getWiki (state),
     munfamiliar_spells: getAllSpellsForManualGuildMageSelect (state, ownProps),
   })
 

@@ -5,7 +5,7 @@ import { flength, List, map, replicateR, toArray } from "../../../../Data/List"
 import { fromMaybe, Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { HitZoneArmorForView } from "../../../Models/View/HitZoneArmorForView"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { minus, ndash } from "../../../Utilities/Chars"
 import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
@@ -13,51 +13,51 @@ import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   armorZones: Maybe<List<Record<HitZoneArmorForView>>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 const HZAFVA = HitZoneArmorForView.A
 
 export const CombatSheetArmorZones: React.FC<Props> = props => {
-  const { l10n, armorZones: mhit_zone_armors } = props
+  const { staticData, armorZones: mhit_zone_armors } = props
 
   return (
     <TextBox
-      label={translate (l10n) ("sheets.combatsheet.armors.title")}
+      label={translate (staticData) ("sheets.combatsheet.armors.title")}
       className="armor armor-zones"
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (l10n) ("sheets.combatsheet.armors.title")}
+              {translate (staticData) ("sheets.combatsheet.armors.title")}
             </th>
             <th className="zone">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.head")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.head")}
             </th>
             <th className="zone">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.torso")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.torso")}
             </th>
             <th className="zone">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.leftarm")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.leftarm")}
             </th>
             <th className="zone">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.rightarm")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.rightarm")}
             </th>
             <th className="zone">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.leftleg")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.leftleg")}
             </th>
             <th className="zone">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.rightleg")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.rightleg")}
             </th>
             <th className="enc">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.encumbrance")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.encumbrance")}
             </th>
             <th className="add-penalties">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.movementinitiative")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.movementinitiative")}
             </th>
             <th className="weight">
-              {translate (l10n) ("sheets.combatsheet.armors.labels.weight")}
+              {translate (staticData) ("sheets.combatsheet.armors.labels.weight")}
             </th>
           </tr>
         </thead>
@@ -81,14 +81,14 @@ export const CombatSheetArmorZones: React.FC<Props> = props => {
                     {HZAFVA.addPenalties (e) ? `${minus}1/${minus}1` : ndash}
                   </td>
                   <td className="weight">
-                    {translateP (l10n)
+                    {translateP (staticData)
                                 ("general.weightvalue")
                                 (List (
                                   pipe_ (
                                     e,
                                     HZAFVA.weight,
-                                    localizeWeight (l10n),
-                                    localizeNumber (l10n)
+                                    localizeWeight (staticData),
+                                    localizeNumber (staticData)
                                   )
                                 ))}
                   </td>

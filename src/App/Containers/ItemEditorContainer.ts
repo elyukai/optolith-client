@@ -8,12 +8,12 @@ import { getIsItemCreation, getItemEditorInstance, getWikiAttributes, getWikiCom
 import { ItemEditor, ItemEditorDispatchProps, ItemEditorOwnProps, ItemEditorStateProps } from "../Views/Equipment/ItemEditor"
 
 const mapStateToProps =
-  (state: AppStateRecord, ownProps: ItemEditorOwnProps): ItemEditorStateProps => ({
+  (state: AppStateRecord): ItemEditorStateProps => ({
     attributes: getWikiAttributes (state),
     combatTechniques: getWikiCombatTechniques (state),
     isInCreation: getIsItemCreation (state),
     item: getItemEditorInstance (state),
-    templates: getSortedTemplates (state, ownProps),
+    templates: getSortedTemplates (state),
   })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): ItemEditorDispatchProps => ({

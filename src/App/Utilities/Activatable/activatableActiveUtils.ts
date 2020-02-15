@@ -23,15 +23,17 @@ import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../../Models/V
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
 import { Advantage } from "../../Models/Wiki/Advantage"
 import { Disadvantage } from "../../Models/Wiki/Disadvantage"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { WikiEntryByCategory, WikiEntryRecordByCategory } from "../../Models/Wiki/wikiTypeHelpers"
 import { convertPerTierCostToFinalCost, getCost } from "../AdventurePoints/activatableCostUtils"
 import { pipe_ } from "../pipe"
 import { getIsRemovalOrChangeDisabled } from "./activatableActiveValidationUtils"
 import { getActiveFromState } from "./activatableConvertUtils"
 import { getName } from "./activatableNameUtils"
+
+const SDA = StaticData.A
+const HA = HeroModel.A
 
 /**
  * Takes an Activatable category and a hero and returns the state slice matching
@@ -41,10 +43,10 @@ export const getActivatableHeroSliceByCategory =
   (category: ActivatableCategory) =>
   (hero: HeroModelRecord): OrderedMap<string, Record<ActivatableDependent>> =>
     category === Category.ADVANTAGES
-    ? HeroModel.A.advantages (hero)
+    ? HA.advantages (hero)
     : category === Category.DISADVANTAGES
-    ? HeroModel.A.disadvantages (hero)
-    : HeroModel.A.specialAbilities (hero)
+    ? HA.disadvantages (hero)
+    : HA.specialAbilities (hero)
 
 type ActivatableWikiSliceByCategory<A extends ActivatableCategory> =
   A extends Category.ADVANTAGES
@@ -60,12 +62,12 @@ type ActivatableWikiSliceByCategory<A extends ActivatableCategory> =
 export const getActivatableWikiSliceByCategory =
   <A extends ActivatableCategory>
   (category: A) =>
-  (wiki: WikiModelRecord): OrderedMap<string, ActivatableWikiSliceByCategory<A>> =>
+  (wiki: StaticDataRecord): OrderedMap<string, ActivatableWikiSliceByCategory<A>> =>
     category === Category.ADVANTAGES
-    ? WikiModel.A.advantages (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
+    ? SDA.advantages (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
     : category === Category.DISADVANTAGES
-    ? WikiModel.A.disadvantages (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
-    : WikiModel.A.specialAbilities (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
+    ? SDA.disadvantages (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
+    : SDA.specialAbilities (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
 
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing
@@ -79,8 +81,7 @@ export const getActivatableWikiSliceByCategory =
 export const getNameCost =
   (isEntryToAdd: boolean) =>
   (automatic_advantages: List<string>) =>
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableNameCost>> =>
     liftM2 ((finalCost: Pair<number | List<number>, boolean>) =>
@@ -91,8 +92,8 @@ export const getNameCost =
                finalCost: fst (finalCost),
                isAutomatic: snd (finalCost),
              }))
-           (getCost (isEntryToAdd) (automatic_advantages) (wiki) (hero) (entry))
-           (getName (l10n) (wiki) (entry))
+           (getCost (isEntryToAdd) (automatic_advantages) (staticData) (hero) (entry))
+           (getName (staticData) (entry))
 
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing
@@ -102,8 +103,7 @@ export const getNameCost =
  * @param l10n The locale-dependent messages.
  */
 export const getNameCostForWiki =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (active: Record<ActiveObjectWithId>): Maybe<Record<ActivatableNameCost>> =>
     liftM2 ((finalCost: Pair<number | List<number>, boolean>) =>
             (naming: Record<ActivatableCombinedName>) =>
@@ -113,8 +113,8 @@ export const getNameCostForWiki =
                finalCost: fst (finalCost),
                isAutomatic: snd (finalCost),
              }))
-           (getCost (true) (List ()) (wiki) (HeroModel.default) (active))
-           (getName (l10n) (wiki) (active))
+           (getCost (true) (List ()) (staticData) (HeroModel.default) (active))
+           (getName (staticData) (active))
 
 export const getAllActiveByCategory =
   <T extends ActivatableCategory>
@@ -122,14 +122,13 @@ export const getAllActiveByCategory =
   (addLevelToName: boolean) =>
   (automatic_advantages: List<string>) =>
   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (hero: HeroModelRecord): List<Record<ActiveActivatable<WikiEntryByCategory[T]>>> => {
     type GenericWikiEntry = WikiEntryRecordByCategory[T]
 
-    const convertCost = convertPerTierCostToFinalCost (addLevelToName) (l10n)
+    const convertCost = convertPerTierCostToFinalCost (addLevelToName) (staticData)
 
-    const wiki_slice = getActivatableWikiSliceByCategory (category) (wiki)
+    const wiki_slice = getActivatableWikiSliceByCategory (category) (staticData)
     const hero_slice = getActivatableHeroSliceByCategory (category) (hero)
 
     type Entry = Maybe<Record<ActiveActivatable<WikiEntryByCategory[T]>>>
@@ -153,13 +152,12 @@ export const getAllActiveByCategory =
                                (fmap (convertCost)
                                      (getNameCost (false)
                                                   (automatic_advantages)
-                                                  (l10n)
-                                                  (wiki)
+                                                  (staticData)
                                                   (hero)
                                                   (active)))
                                (lookup (current_id) (wiki_slice) as Maybe<GenericWikiEntry>)
                                (lookup (current_id) (hero_slice))
-                               (getIsRemovalOrChangeDisabled (wiki)
+                               (getIsRemovalOrChangeDisabled (staticData)
                                                              (hero)
                                                              (matching_script_and_lang_related)
                                                              (active)) as Entry

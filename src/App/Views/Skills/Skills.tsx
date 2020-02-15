@@ -3,7 +3,7 @@ import { notEquals } from "../../../Data/Eq"
 import { fmap } from "../../../Data/Functor"
 import { List, mapAccumL, notNull, toArray } from "../../../Data/List"
 import { bindF, ensure, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe"
-import { OrderedMap } from "../../../Data/OrderedMap"
+import { lookupF, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Pair, snd } from "../../../Data/Tuple"
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
@@ -11,7 +11,8 @@ import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
 import { AttributeCombined } from "../../Models/View/AttributeCombined"
 import { SkillWithRequirements, SkillWithRequirementsA_ } from "../../Models/View/SkillWithRequirements"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { SkillGroup } from "../../Models/Wiki/SkillGroup"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { isCommon, isUncommon } from "../../Utilities/Increasable/skillUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
@@ -41,7 +42,7 @@ const isTopMarginNeeded =
     && maybe (false) (pipe (SWRA_.gr, notEquals (SWRA_.gr (curr)))) (mprev)
 
 export interface SkillsOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   hero: HeroModelRecord
 }
 
@@ -80,7 +81,7 @@ export const Skills: React.FC<Props> = props => {
   const {
     addPoint,
     attributes,
-    l10n,
+    staticData,
     isRemovingEnabled,
     ratingVisibility: is_rating_visible,
     removePoint,
@@ -97,7 +98,7 @@ export const Skills: React.FC<Props> = props => {
     <Page id="talents">
       <Options>
         <SearchField
-          l10n={l10n}
+          staticData={staticData}
           value={filterText}
           onChange={setFilterText}
           fullWidth
@@ -105,39 +106,39 @@ export const Skills: React.FC<Props> = props => {
         <SortOptions
           sortOrder={sortOrder}
           sort={setSortOrder}
-          l10n={l10n}
+          staticData={staticData}
           options={List (SortNames.Name, SortNames.Group, SortNames.IC)}
           />
         <Checkbox
           checked={is_rating_visible}
           onClick={switchRatingVisibility}
           >
-          {translate (l10n) ("skills.commonskills")}
+          {translate (staticData) ("skills.commonskills")}
         </Checkbox>
-        {is_rating_visible ? <RecommendedReference l10n={l10n} /> : null}
+        {is_rating_visible ? <RecommendedReference staticData={staticData} /> : null}
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("skills.header.name")}
+            {translate (staticData) ("skills.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="group">
-            {translate (l10n) ("skills.header.group")}
+            {translate (staticData) ("skills.header.group")}
           </ListHeaderTag>
           <ListHeaderTag
             className="value"
-            hint={translate (l10n) ("skills.header.skillrating.tooltip")}
+            hint={translate (staticData) ("skills.header.skillrating.tooltip")}
             >
-            {translate (l10n) ("skills.header.skillrating")}
+            {translate (staticData) ("skills.header.skillrating")}
           </ListHeaderTag>
           <ListHeaderTag className="check">
-            {translate (l10n) ("skills.header.check")}
+            {translate (staticData) ("skills.header.check")}
           </ListHeaderTag>
           <ListHeaderTag
             className="ic"
-            hint={translate (l10n) ("skills.header.improvementcost.tooltip")}
+            hint={translate (staticData) ("skills.header.improvementcost.tooltip")}
             >
-            {translate (l10n) ("skills.header.improvementcost")}
+            {translate (staticData) ("skills.header.improvementcost")}
           </ListHeaderTag>
           {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />
@@ -175,10 +176,13 @@ export const Skills: React.FC<Props> = props => {
                                   addFillElement
                                   insertTopMargin={isTopMarginNeeded (sortOrder) (curr) (mprev)}
                                   attributes={attributes}
-                                  l10n={l10n}
+                                  staticData={staticData}
                                   selectForInfo={showInfo}
-                                  groupIndex={SWRA_.gr (curr)}
-                                  groupList={translate (l10n) ("skillgroups")}
+                                  group={SWRA_.gr (curr)}
+                                  getGroupName={pipe (
+                                    lookupF (StaticData.A.skillGroups (staticData)),
+                                    maybe ("") (SkillGroup.A.name)
+                                  )}
                                   selectedForInfo={infoId}
                                   />
                               )
@@ -188,12 +192,12 @@ export const Skills: React.FC<Props> = props => {
                 toArray,
                 arr => <>{arr}</>
               )),
-              fromMaybe (<ListPlaceholder l10n={l10n} type="skills" noResults />)
+              fromMaybe (<ListPlaceholder staticData={staticData} type="skills" noResults />)
             )}
           </ListView>
         </Scroll>
       </MainContent>
-      <WikiInfoContainer l10n={l10n} currentId={infoId} />
+      <WikiInfoContainer currentId={infoId} />
     </Page>
   )
 }

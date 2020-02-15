@@ -11,7 +11,7 @@ import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { BorderButton } from "../Universal/BorderButton"
 import { Checkbox } from "../Universal/Checkbox"
@@ -25,10 +25,10 @@ import { SearchField } from "../Universal/SearchField"
 import { Slidein } from "../Universal/Slidein"
 import { ActiveList } from "./ActiveList"
 import { APSpentOnAdvDisadv } from "./APSpentOnAdvDisadv"
-import { InactiveList } from "./DeactiveList"
+import { InactiveList } from "./InactiveList"
 
 export interface AdvantagesDisadvantagesProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   activeList: Maybe<List<Record<ActiveActivatable>>>
   ap: Maybe<Record<AdventurePointsCategories>>
   deactiveList: Maybe<List<
@@ -54,7 +54,7 @@ export interface AdvantagesDisadvantagesProps {
 
 export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = props => {
   const {
-    l10n,
+    staticData,
     activeList,
     ap: m_ap,
     deactiveList,
@@ -108,7 +108,7 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
       <Slidein isOpen={showAddSlidein} close={handleHideSlidein}>
         <Options>
           <SearchField
-            l10n={l10n}
+            staticData={staticData}
             value={inactiveFilterText}
             onChange={setInactiveFilterText}
             fullWidth
@@ -117,16 +117,16 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
             checked={showRating}
             onClick={switchRatingVisibility}
             >
-            {translate (l10n)
+            {translate (staticData)
                        (orN (isAdvantages)
-                         ? "advantages.commonadvantages"
-                         : "disadvantages.commondisadvantages")}
+                         ? "advantages.filters.commonadvantages"
+                         : "disadvantages.filters.commondisadvantages")}
           </Checkbox>
           <Checkbox
             checked={enableActiveItemHints}
             onClick={switchActiveItemHints}
             >
-            {translate (l10n) ("general.filters.showactivatedentries")}
+            {translate (staticData) ("general.filters.showactivatedentries")}
           </Checkbox>
           {fromMaybe (null as React.ReactNode)
                      (fmapF (m_ap)
@@ -134,28 +134,30 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
                               <APSpentOnAdvDisadv
                                 ap={ap}
                                 magicalMax={magicalMax}
-                                l10n={l10n}
+                                staticData={staticData}
                                 />
                             )))}
-          {showRating ? <RecommendedReference l10n={l10n} strongly /> : null}
+          {showRating ? <RecommendedReference staticData={staticData} strongly /> : null}
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (l10n) ("advantagesdisadvantages.header.name")}
+              {translate (staticData) ("advantagesdisadvantages.header.name")}
             </ListHeaderTag>
             <ListHeaderTag
               className="cost"
-              hint={translate (l10n) ("advantagesdisadvantages.header.adventurepoints.tooltip")}
+              hint={
+                translate (staticData) ("advantagesdisadvantages.header.adventurepoints.tooltip")
+              }
               >
-              {translate (l10n) ("advantagesdisadvantages.header.adventurepoints")}
+              {translate (staticData) ("advantagesdisadvantages.header.adventurepoints")}
             </ListHeaderTag>
             <ListHeaderTag className="btn-placeholder" />
             <ListHeaderTag className="btn-placeholder" />
           </ListHeader>
           <InactiveList
             inactiveList={deactiveList}
-            l10n={l10n}
+            staticData={staticData}
             rating={rating}
             showRating={showRating}
             addToList={addToList}
@@ -163,11 +165,11 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
             selectedForInfo={currentSlideinId}
             />
         </MainContent>
-        <WikiInfoContainer currentId={currentSlideinId} l10n={l10n} />
+        <WikiInfoContainer currentId={currentSlideinId} />
       </Slidein>
       <Options>
         <SearchField
-          l10n={l10n}
+          staticData={staticData}
           value={filterText}
           onChange={setFilterText}
           fullWidth
@@ -176,36 +178,36 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
           checked={showRating}
           onClick={switchRatingVisibility}
           >
-          {translate (l10n)
+          {translate (staticData)
                      (orN (isAdvantages)
-                       ? "advantages.commonadvantages"
-                       : "disadvantages.commondisadvantages")}
+                       ? "advantages.filters.commonadvantages"
+                       : "disadvantages.filters.commondisadvantages")}
         </Checkbox>
         <BorderButton
-          label={translate (l10n) ("advantagesdisadvantages.addbtn")}
+          label={translate (staticData) ("advantagesdisadvantages.addbtn")}
           onClick={handleShowSlidein}
           />
-        {showRating ? <RecommendedReference l10n={l10n} strongly /> : null}
+        {showRating ? <RecommendedReference staticData={staticData} strongly /> : null}
         {fromMaybe (null as React.ReactNode)
                    (fmapF (m_ap)
                           (ap => (
                             <APSpentOnAdvDisadv
                               ap={ap}
                               magicalMax={magicalMax}
-                              l10n={l10n}
+                              staticData={staticData}
                               />
                           )))}
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("advantagesdisadvantages.header.name")}
+            {translate (staticData) ("advantagesdisadvantages.header.name")}
           </ListHeaderTag>
           <ListHeaderTag
             className="cost"
-            hint={translate (l10n) ("advantagesdisadvantages.header.adventurepoints.tooltip")}
+            hint={translate (staticData) ("advantagesdisadvantages.header.adventurepoints.tooltip")}
             >
-            {translate (l10n) ("advantagesdisadvantages.header.adventurepoints")}
+            {translate (staticData) ("advantagesdisadvantages.header.adventurepoints")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />
@@ -213,7 +215,7 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
         <ActiveList
           filterText={filterText}
           list={activeList}
-          l10n={l10n}
+          staticData={staticData}
           rating={rating}
           showRating={showRating}
           isRemovingEnabled={isRemovingEnabled}
@@ -223,7 +225,7 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
           selectForInfo={handleShowInfo}
           />
       </MainContent>
-      <WikiInfoContainer currentId={currentId} l10n={l10n} />
+      <WikiInfoContainer currentId={currentId} />
     </Page>
   )
 }

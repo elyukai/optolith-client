@@ -3,7 +3,7 @@ import * as React from "react"
 import { useDispatch } from "react-redux"
 import { setTab } from "../../Actions/LocationActions"
 import { SettingsContainer } from "../../Containers/SettingsContainer"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { TabId } from "../../Utilities/LocationUtils"
 import { BorderButton } from "../Universal/BorderButton"
@@ -15,7 +15,7 @@ import { NavigationBarRight } from "./NavigationBarRight"
 import { NavigationBarWrapper } from "./NavigationBarWrapper"
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   groupName: string
   platform: string
   isSettingsOpen: boolean
@@ -29,7 +29,7 @@ const toggleDevtools = remote.getCurrentWindow ().webContents.toggleDevTools
 
 export const NavigationBarForGroup: React.FC<Props> = props => {
   const {
-    l10n,
+    staticData,
     groupName,
     platform,
     isSettingsOpen,
@@ -54,7 +54,7 @@ export const NavigationBarForGroup: React.FC<Props> = props => {
       </NavigationBarLeft>
       <NavigationBarRight>
         <BorderButton
-          label={translate (l10n) ("header.savebtn")}
+          label={translate (staticData) ("header.savebtn")}
           onClick={saveGroup}
           />
         <IconButton
@@ -62,7 +62,7 @@ export const NavigationBarForGroup: React.FC<Props> = props => {
           onClick={openSettings}
           />
         <SettingsContainer
-          l10n={l10n}
+          staticData={staticData}
           isSettingsOpen={isSettingsOpen}
           platform={platform}
           close={closeSettings}

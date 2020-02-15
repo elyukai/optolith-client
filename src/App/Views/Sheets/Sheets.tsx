@@ -34,10 +34,9 @@ import { Advantage } from "../../Models/Wiki/Advantage"
 import { Culture } from "../../Models/Wiki/Culture"
 import { Disadvantage } from "../../Models/Wiki/Disadvantage"
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { Race } from "../../Models/Wiki/Race"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
-import { WikiModel } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { isBookEnabled } from "../../Utilities/RulesUtils"
 import { Page } from "../Universal/Page"
@@ -51,7 +50,7 @@ import { SkillsSheet } from "./SkillsSheet/SkillsSheet"
 import { SpellsSheet } from "./SpellsSheet/SpellsSheet"
 
 export interface SheetsOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   hero: HeroModelRecord
 }
 
@@ -106,7 +105,7 @@ export interface SheetsStateProps {
   liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
   conditions: List<Record<NumIdName>>
   states: List<Record<NumIdName>>
-  books: WikiModel["books"]
+  books: StaticData["books"]
   skillGroupPages: OrderedMap<number, Pair<number, number>>
   skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillCombined>>>>
 }
@@ -136,7 +135,7 @@ export const Sheets: React.FC<Props> = props => {
     el,
     fatePointsModifier,
     generalsaActive,
-    l10n,
+    staticData,
     name,
     professionName,
     profile,
@@ -205,7 +204,7 @@ export const Sheets: React.FC<Props> = props => {
           el={el}
           fatePointsModifier={fatePointsModifier}
           generalsaActive={generalsaActive}
-          l10n={l10n}
+          staticData={staticData}
           name={name}
           professionName={professionName}
           profile={profile}
@@ -218,7 +217,7 @@ export const Sheets: React.FC<Props> = props => {
           checkAttributeValueVisibility={checkAttributeValueVisibility}
           languagesStateEntry={languagesStateEntry}
           languagesWikiEntry={languagesWikiEntry}
-          l10n={l10n}
+          staticData={staticData}
           scriptsStateEntry={scriptsStateEntry}
           scriptsWikiEntry={scriptsWikiEntry}
           skillsByGroup={skillsByGroup}
@@ -231,7 +230,7 @@ export const Sheets: React.FC<Props> = props => {
           combatSpecialAbilities={combatSpecialAbilities}
           combatTechniques={combatTechniques}
           derivedCharacteristics={derivedCharacteristics}
-          l10n={l10n}
+          staticData={staticData}
           meleeWeapons={meleeWeapons}
           rangedWeapons={rangedWeapons}
           shieldsAndParryingWeapons={shieldsAndParryingWeapons}
@@ -249,7 +248,7 @@ export const Sheets: React.FC<Props> = props => {
               combatSpecialAbilities={combatSpecialAbilities}
               combatTechniques={combatTechniques}
               derivedCharacteristics={derivedCharacteristics}
-              l10n={l10n}
+              staticData={staticData}
               meleeWeapons={meleeWeapons}
               rangedWeapons={rangedWeapons}
               shieldsAndParryingWeapons={shieldsAndParryingWeapons}
@@ -261,7 +260,7 @@ export const Sheets: React.FC<Props> = props => {
         <BelongingsSheet
           attributes={attributes}
           items={items}
-          l10n={l10n}
+          staticData={staticData}
           pet={pet}
           purse={purse}
           totalPrice={totalPrice}
@@ -276,7 +275,7 @@ export const Sheets: React.FC<Props> = props => {
                          cantrips={cantrips}
                          checkAttributeValueVisibility={checkAttributeValueVisibility}
                          derivedCharacteristics={derivedCharacteristics}
-                         l10n={l10n}
+                         staticData={staticData}
                          magicalPrimary={magicalPrimary}
                          magicalSpecialAbilities={magicalSpecialAbilities}
                          magicalTradition={magicalTradition}
@@ -300,7 +299,7 @@ export const Sheets: React.FC<Props> = props => {
                          checkAttributeValueVisibility={checkAttributeValueVisibility}
                          derivedCharacteristics={derivedCharacteristics}
                          liturgicalChants={liturgicalChants}
-                         l10n={l10n}
+                         staticData={staticData}
                          switchAttributeValueVisibility={switchAttributeValueVisibility}
                          />
                      ))

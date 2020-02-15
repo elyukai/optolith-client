@@ -7,12 +7,12 @@ import { IdPrefixes } from "../Constants/IdPrefixes"
 import { ExperienceLevelId } from "../Constants/Ids"
 import { HeroModel } from "../Models/Hero/HeroModel"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
-import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { getNumericId, prefixId } from "./IDUtils"
 import { pipe } from "./pipe"
 
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const HA = HeroModel.A
 const ELA = ExperienceLevel.A
 
@@ -62,6 +62,6 @@ export const getHigherExperienceLevelId =
  *
  * Returns the experience level selected before or during hero creation.
  */
-export const getExperienceLevelAtStart: (wiki: WikiModelRecord) =>
+export const getExperienceLevelAtStart: (wiki: StaticDataRecord) =>
                                         (r: Record<HeroModel>) => Maybe<Record<ExperienceLevel>> =
-  wiki => pipe (HA.experienceLevel, lookupF (WA.experienceLevels (wiki)))
+  wiki => pipe (HA.experienceLevel, lookupF (SDA.experienceLevels (wiki)))

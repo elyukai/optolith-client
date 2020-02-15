@@ -1,31 +1,31 @@
 import * as React from "react"
 import { intercalate, List } from "../../../../Data/List"
 import { Maybe } from "../../../../Data/Maybe"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
 import { renderMaybe } from "../../../Utilities/ReactUtils"
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   magicalPrimary: List<string>
   magicalTradition: string
   properties: Maybe<string>
 }
 
 export const SpellsSheetTraditionsProperties: React.FC<Props> = props => {
-  const { magicalPrimary, magicalTradition, properties, l10n } = props
+  const { magicalPrimary, magicalTradition, properties, staticData } = props
 
   return (
     <div className="tradition-properties">
       <div className="primary">
         <span className="label">
-          {translate (l10n) ("sheets.spellssheet.primaryattribute")}
+          {translate (staticData) ("sheets.spellssheet.primaryattribute")}
         </span>
         <span className="value">{intercalate ("/") (magicalPrimary)}</span>
       </div>
       <div className="properties">
         <span className="label">
-          {translate (l10n) ("sheets.spellssheet.properties")}
+          {translate (staticData) ("sheets.spellssheet.properties")}
         </span>
         <span className="value">
           {renderMaybe (properties)}
@@ -33,7 +33,7 @@ export const SpellsSheetTraditionsProperties: React.FC<Props> = props => {
       </div>
       <div className="tradition">
         <span className="label">
-          {translate (l10n) ("sheets.spellssheet.tradition")}
+          {translate (staticData) ("sheets.spellssheet.tradition")}
         </span>
         <span className="value">{magicalTradition}</span>
       </div>

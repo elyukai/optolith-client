@@ -15,7 +15,9 @@ import { Belongings } from "../Models/Hero/Belongings"
 import { HeroModel } from "../Models/Hero/HeroModel"
 import { HitZoneArmor } from "../Models/Hero/HitZoneArmor"
 import { fromItemTemplate, Item, ItemL } from "../Models/Hero/Item"
+import { NumIdName } from "../Models/NumIdName"
 import { Armor } from "../Models/View/Armor"
+import { DropdownOption } from "../Models/View/DropdownOption"
 import { HitZoneArmorForView } from "../Models/View/HitZoneArmorForView"
 import { ItemForView, itemToItemForView } from "../Models/View/ItemForView"
 import { MeleeWeapon } from "../Models/View/MeleeWeapon"
@@ -24,9 +26,8 @@ import { ShieldOrParryingWeapon } from "../Models/View/ShieldOrParryingWeapon"
 import { Attribute } from "../Models/Wiki/Attribute"
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
 import { ItemTemplate } from "../Models/Wiki/ItemTemplate"
-import { L10n } from "../Models/Wiki/L10n"
 import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
-import { WikiModel } from "../Models/Wiki/WikiModel"
+import { StaticData } from "../Models/Wiki/WikiModel"
 import { isMaybeActive } from "../Utilities/Activatable/isActive"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { filterAndSortRecordsBy, filterAndSortRecordsByName } from "../Utilities/filterAndSortBy"
@@ -38,13 +39,12 @@ import { filterByAvailability } from "../Utilities/RulesUtils"
 import { mapGetToSlice } from "../Utilities/SelectorsUtils"
 import { sortRecordsByName } from "../Utilities/sortBy"
 import { isNumber } from "../Utilities/typeCheckUtils"
-import { stringOfListToDropdown } from "../Views/Universal/Dropdown"
 import { getRuleBooksEnabled } from "./rulesSelectors"
 import { getEquipmentSortOptions } from "./sortOptionsSelectors"
 import { getCurrentHeroPresent, getEquipmentFilterText, getEquipmentState, getHigherParadeValues, getHitZoneArmorsState, getItemsState, getItemTemplatesFilterText, getLocaleAsProp, getSpecialAbilities, getWiki, getWikiItemTemplates, getZoneArmorFilterText } from "./stateSelectors"
 
 const HA = HeroModel.A
-const WA = WikiModel.A
+const SDA = StaticData.A
 const BA = Belongings.A
 const IA = Item.A
 const ITA = ItemTemplate.A
@@ -55,10 +55,11 @@ const CTA = CombatTechnique.A
 const PADTA = PrimaryAttributeDamageThreshold.A
 const ADA = AttributeDependent.A
 const AA = Attribute.A
+const NINA = NumIdName.A
 
 export const getFullItem =
   (items: Belongings["items"]) =>
-  (templates: WikiModel["itemTemplates"]) =>
+  (templates: StaticData["itemTemplates"]) =>
   (id: string) =>
     pipe_ (
       items,
@@ -94,9 +95,9 @@ export const getTemplates = createMaybeSelector (
 )
 
 export const getSortedTemplates = createMaybeSelector (
-  getLocaleAsProp,
+  getWiki,
   getTemplates,
-  uncurryN (l10n => tpls => sortRecordsByName (l10n) (tpls))
+  uncurryN (staticData => tpls => sortRecordsByName (staticData) (tpls))
 )
 
 export const getAvailableItemTemplates = createMaybeSelector (
@@ -229,7 +230,7 @@ type HitZoneKeys =
 
 const getFullHitZoneItem =
   (items: Belongings["items"]) =>
-  (templates: WikiModel["itemTemplates"]) =>
+  (templates: StaticData["itemTemplates"]) =>
   (hitZone: HitZoneKeys) =>
     pipe (HitZoneArmor.A[hitZone], bindF (getFullItem (items) (templates)))
 
@@ -237,8 +238,8 @@ export const getAllItems = createMaybeSelector (
   getItemsState,
   getHitZoneArmorsState,
   getWikiItemTemplates,
-  getLocaleAsProp,
-  (mitems, mhitZoneArmors, templates, l10n) =>
+  getWiki,
+  (mitems, mhitZoneArmors, templates, staticData) =>
     liftM2 ((items: Belongings["items"]) => (hitZoneArmors: Belongings["hitZoneArmors"]) => {
              const itemsList = elems (items)
              const hitZoneArmorsList = elems (hitZoneArmors)
@@ -306,7 +307,7 @@ export const getAllItems = createMaybeSelector (
                         })
                       }))
 
-             return sortRecordsByName (l10n)
+             return sortRecordsByName (staticData)
                                       (append (mappedArmorZones) (mappedItems))
            })
            (mitems)
@@ -349,13 +350,13 @@ export const getMeleeWeapons = createMaybeSelector (
 
             const mapper = pipe (
               IA.id,
-              getFullItem (items) (WA.itemTemplates (wiki)),
+              getFullItem (items) (SDA.itemTemplates (wiki)),
               bindF (
                 full_item =>
                   pipe_ (
                     full_item,
                     IA.combatTechnique,
-                    bindF (lookupF (WA.combatTechniques (wiki))),
+                    bindF (lookupF (SDA.combatTechniques (wiki))),
                     bindF (
                       wiki_entry => {
                         const hero_entry = lookup (CTA.id (wiki_entry)) (HA.combatTechniques (hero))
@@ -382,7 +383,7 @@ export const getMeleeWeapons = createMaybeSelector (
 
                         const mprimary_attrs =
                           fmapF (mprimary_attr_ids)
-                                (mapMaybe (lookupF (WA.attributes (wiki))))
+                                (mapMaybe (lookupF (SDA.attributes (wiki))))
 
                         const mprimary_attr_values =
                           fmapF (mprimary_attr_ids)
@@ -480,7 +481,7 @@ export const getMeleeWeapons = createMaybeSelector (
 export const getRangedWeapons = createMaybeSelector (
   getCurrentHeroPresent,
   getWiki,
-  (mhero, wiki) =>
+  (mhero, staticData) =>
     fmapF (mhero)
           (hero => {
             const items = pipe_ (hero, HA.belongings, BA.items)
@@ -493,13 +494,13 @@ export const getRangedWeapons = createMaybeSelector (
 
             const mapper = pipe (
               IA.id,
-              getFullItem (items) (WA.itemTemplates (wiki)),
+              getFullItem (items) (SDA.itemTemplates (staticData)),
               bindF (
                 full_item =>
                   pipe_ (
                     full_item,
                     IA.combatTechnique,
-                    bindF (lookupF (WA.combatTechniques (wiki))),
+                    bindF (lookupF (SDA.combatTechniques (staticData))),
                     fmap (
                       wiki_entry => {
                         const hero_entry = lookup (CTA.id (wiki_entry)) (HA.combatTechniques (hero))
@@ -511,7 +512,7 @@ export const getRangedWeapons = createMaybeSelector (
                           pipe_ (
                             full_item,
                             IA.ammunition,
-                            bindF (getFullItem (items) (WA.itemTemplates (wiki))),
+                            bindF (getFullItem (items) (SDA.itemTemplates (staticData))),
                             fmap (IA.name)
                           )
 
@@ -562,7 +563,7 @@ export const getArmors = createMaybeSelector (
 
             const mapper = pipe (
               IA.id,
-              getFullItem (items) (WA.itemTemplates (wiki)),
+              getFullItem (items) (SDA.itemTemplates (wiki)),
               fmap (
                 full_item => {
                   const addPenaltiesMod = IA.addPenalties (full_item) ? -1 : 0
@@ -666,7 +667,7 @@ export const getArmorZones = createMaybeSelector (
 export const getShieldsAndParryingWeapons = createMaybeSelector (
   getCurrentHeroPresent,
   getWiki,
-  (mhero, wiki) =>
+  (mhero, staticData) =>
     fmapF (mhero)
           (hero => {
             const items = pipe_ (hero, HA.belongings, BA.items)
@@ -683,13 +684,13 @@ export const getShieldsAndParryingWeapons = createMaybeSelector (
 
             const mapper = pipe (
               IA.id,
-              getFullItem (items) (WA.itemTemplates (wiki)),
+              getFullItem (items) (SDA.itemTemplates (staticData)),
               bindF (
                 full_item =>
                   pipe_ (
                     full_item,
                     IA.combatTechnique,
-                    bindF (lookupF (WA.combatTechniques (wiki))),
+                    bindF (lookupF (SDA.combatTechniques (staticData))),
                     fmap (
                       wiki_entry =>
                         ShieldOrParryingWeapon ({
@@ -748,7 +749,14 @@ export const getProtectionAndWeight =
     }
   }
 
-const getItemGroupsAsDropdowns = pipe (L10n.A.itemgroups, imap (stringOfListToDropdown))
+const getItemGroupsAsDropdowns = pipe (
+                                   SDA.equipmentGroups,
+                                   elems,
+                                   map (nin => DropdownOption ({
+                                                 id: Just (NINA.id (nin)),
+                                                 name: NINA.name (nin),
+                                               }))
+                                 )
 
 const isAnyTplOfGr = (gr_name_index: number) => any (pipe (ITA.gr, equals (gr_name_index + 1)))
 
@@ -760,10 +768,10 @@ const filterGrsIfAnyTplAvailable =
     )
 
 export const getAvailableSortedEquipmentGroups = createMaybeSelector (
-  getLocaleAsProp,
+  getWiki,
   getAvailableItemTemplates,
-  uncurryN (l10n => pipe (
-                      flip (filterGrsIfAnyTplAvailable) (l10n),
-                      sortRecordsByName (l10n)
-                    ))
+  uncurryN (staticData => pipe (
+                            flip (filterGrsIfAnyTplAvailable) (staticData),
+                            sortRecordsByName (staticData)
+                          ))
 )

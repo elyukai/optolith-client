@@ -5,9 +5,8 @@ import { all, flength, fnull, intercalate, List, map, notNull, toArray } from ".
 import { ensure, fromMaybe, fromMaybe_, isNothing, mapMaybe, Maybe, maybeRNullF } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
 import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { RaceVariant } from "../../Models/Wiki/RaceVariant"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { signNeg } from "../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
@@ -16,7 +15,6 @@ import { WikiSource } from "./Elements/WikiSource"
 import { WikiBoxTemplate } from "./WikiBoxTemplate"
 import { WikiProperty } from "./WikiProperty"
 
-const WA = WikiModel.A
 const RCA = RaceCombined.A
 const RVA = RaceVariant.A
 const RCA_ = RaceCombinedA_
@@ -27,7 +25,7 @@ type PlainOrByVarsTitle = "inlinewiki.commonadvantages"
                         | "inlinewiki.uncommondisadvantages"
 
 const renderPlainOrByVars =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (mapText: (x: Record<RaceCombined>) => Maybe<string>) =>
   (mapVarText: (x: Record<RaceVariant>) => Maybe<string>) =>
   (vars: List<Record<RaceVariant>>) =>
@@ -35,9 +33,9 @@ const renderPlainOrByVars =
   (same_for_vars: boolean) =>
   (x: Record<RaceCombined>) => (
     <>
-      <WikiProperty l10n={l10n} title={title}>
+      <WikiProperty staticData={staticData} title={title}>
         {same_for_vars
-          ? <span>{fromMaybe (translate (l10n) ("general.none")) (mapText (x))}</span>
+          ? <span>{fromMaybe (translate (staticData) ("general.none")) (mapText (x))}</span>
           : null}
       </WikiProperty>
       {same_for_vars
@@ -62,15 +60,12 @@ const renderPlainOrByVars =
   )
 
 export interface WikiRaceInfoProps {
-  l10n: L10nRecord
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   x: Record<RaceCombined>
 }
 
 export const WikiRaceInfo: React.FC<WikiRaceInfoProps> = props => {
-  const { x, l10n, wiki } = props
-
-  const books = WA.books (wiki)
+  const { x, staticData } = props
 
   const name = RCA_.name (x)
 
@@ -95,45 +90,54 @@ export const WikiRaceInfo: React.FC<WikiRaceInfoProps> = props => {
 
   return (
     <WikiBoxTemplate className="race" title={name}>
-      <WikiProperty l10n={l10n} title="inlinewiki.apvalue">
+      <WikiProperty staticData={staticData} title="inlinewiki.apvalue">
         {RCA_.ap (x)}
         {" "}
-        {translate (l10n) ("inlinewiki.adventurepoints")}
+        {translate (staticData) ("inlinewiki.adventurepoints")}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.lifepointbasevalue">
+      <WikiProperty staticData={staticData} title="inlinewiki.lifepointbasevalue">
         {signNeg (RCA_.lp (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.spiritbasevalue">
+      <WikiProperty staticData={staticData} title="inlinewiki.spiritbasevalue">
         {signNeg (RCA_.spi (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.toughnessbasevalue">
+      <WikiProperty staticData={staticData} title="inlinewiki.toughnessbasevalue">
         {signNeg (RCA_.tou (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.movementbasevalue">
+      <WikiProperty staticData={staticData} title="inlinewiki.movementbasevalue">
         {signNeg (RCA_.mov (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="inlinewiki.attributeadjustments">
+      <WikiProperty staticData={staticData} title="inlinewiki.attributeadjustments">
         {RCA_.attributeAdjustmentsText (x)}
       </WikiProperty>
       {maybeRNullF (RCA_.automaticAdvantagesText (x))
                    (str => (
-                     <WikiProperty l10n={l10n} title="inlinewiki.automaticadvantages">
+                     <WikiProperty
+                       staticData={staticData}
+                       title="inlinewiki.automaticadvantages"
+                       >
                        {str}
                      </WikiProperty>
                    ))}
       {maybeRNullF (RCA_.stronglyRecommendedAdvantagesText (x))
                    (str => (
-                     <WikiProperty l10n={l10n} title="inlinewiki.stronglyrecommendedadvantages">
+                     <WikiProperty
+                       staticData={staticData}
+                       title="inlinewiki.stronglyrecommendedadvantages"
+                       >
                        {str}
                      </WikiProperty>
                    ))}
       {maybeRNullF (RCA_.stronglyRecommendedDisadvantagesText (x))
                    (str => (
-                     <WikiProperty l10n={l10n} title="inlinewiki.stronglyrecommendeddisadvantages">
+                     <WikiProperty
+                       staticData={staticData}
+                       title="inlinewiki.stronglyrecommendeddisadvantages"
+                       >
                        {str}
                      </WikiProperty>
                    ))}
-      <WikiProperty l10n={l10n} title="inlinewiki.commoncultures">
+      <WikiProperty staticData={staticData} title="inlinewiki.commoncultures">
         {sameCommonCultures
           ? (
             <span>
@@ -142,7 +146,7 @@ export const WikiRaceInfo: React.FC<WikiRaceInfoProps> = props => {
                 RCA_.commonCultures,
                 ensure (notNull),
                 fromMaybe_ (() => map (RVA.name) (variants)),
-                sortStrings (l10n),
+                sortStrings (staticData),
                 intercalate (", ")
               )}
             </span>
@@ -160,7 +164,7 @@ export const WikiRaceInfo: React.FC<WikiRaceInfoProps> = props => {
                       pipe_ (
                         e,
                         RVA.commonCultures,
-                        sortStrings (l10n),
+                        sortStrings (staticData),
                         intercalate (", ")
                       )
 
@@ -178,28 +182,28 @@ export const WikiRaceInfo: React.FC<WikiRaceInfoProps> = props => {
             )}
           </ul>
         )}
-      {renderPlainOrByVars (l10n)
+      {renderPlainOrByVars (staticData)
                            (RCA_.commonAdvantagesText)
                            (RVA.commonAdvantagesText)
                            (variants)
                            ("inlinewiki.commonadvantages")
                            (sameCommonAdvantages)
                            (x)}
-      {renderPlainOrByVars (l10n)
+      {renderPlainOrByVars (staticData)
                            (RCA_.commonDisadvantagesText)
                            (RVA.commonDisadvantagesText)
                            (variants)
                            ("inlinewiki.commondisadvantages")
                            (sameCommonDisadvantages)
                            (x)}
-      {renderPlainOrByVars (l10n)
+      {renderPlainOrByVars (staticData)
                            (RCA_.uncommonAdvantagesText)
                            (RVA.uncommonAdvantagesText)
                            (variants)
                            ("inlinewiki.uncommonadvantages")
                            (sameUncommonAdvantages)
                            (x)}
-      {renderPlainOrByVars (l10n)
+      {renderPlainOrByVars (staticData)
                            (RCA_.uncommonDisadvantagesText)
                            (RVA.uncommonDisadvantagesText)
                            (variants)
@@ -207,9 +211,8 @@ export const WikiRaceInfo: React.FC<WikiRaceInfoProps> = props => {
                            (sameUncommonDisadvantages)
                            (x)}
       <WikiSource
-        books={books}
         x={x}
-        l10n={l10n}
+        staticData={staticData}
         acc={RCA_}
         />
     </WikiBoxTemplate>

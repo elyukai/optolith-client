@@ -1,18 +1,19 @@
 import * as fs from "fs"
 import * as path from "path"
 import * as React from "react"
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n"
+import { L10n } from "../../Models/Wiki/L10n"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { app_path } from "../../Selectors/envSelectors"
 import { Markdown } from "../Universal/Markdown"
 import { Page } from "../Universal/Page"
 import { Scroll } from "../Universal/Scroll"
 
 const getPath =
-  (l10n: L10nRecord) =>
-    path.join (app_path, "app", "Database", L10n.A.id (l10n), `FAQ.md`)
+  (staticData: StaticDataRecord) =>
+    path.join (app_path, "app", "Database", L10n.A.id (StaticData.A.ui (staticData)), `FAQ.md`)
 
 export interface HelpOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 export interface HelpStateProps {
@@ -23,19 +24,19 @@ export interface HelpDispatchProps {
 
 export type HelpProps = HelpStateProps & HelpDispatchProps & HelpOwnProps
 
-export const Help: React.FC<HelpProps> = ({ l10n }) => {
+export const Help: React.FC<HelpProps> = ({ staticData }) => {
   const [ text, setText ] = React.useState<string> ("...")
 
   React.useEffect (
     () => {
-      fs.promises.readFile (getPath (l10n), "utf-8")
+      fs.promises.readFile (getPath (staticData), "utf-8")
         .then (setText)
         .catch (err => {
           console.error (err)
           setText ("Last Changes could not be loaded")
         })
     },
-    [ l10n ]
+    [ staticData ]
   )
 
   return (

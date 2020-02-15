@@ -3,9 +3,9 @@ import { intercalate, List, map, notNull } from "../../../../Data/List"
 import { OrderedMap } from "../../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { Advantage } from "../../../Models/Wiki/Advantage"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
 import { Use } from "../../../Models/Wiki/sub/Use"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { sortStrings } from "../../../Utilities/sortBy"
 import { WikiProperty } from "../WikiProperty"
 
@@ -17,7 +17,7 @@ export interface WikiUsesProps<A extends RecordIBase<any>> {
   advantages: OrderedMap<string, Record<Advantage>>
   x: Record<A>
   acc: Accessors<A>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   specialAbilities: OrderedMap<string, Record<SpecialAbility>>
 }
 
@@ -29,16 +29,16 @@ export const WikiUses: FC = props => {
   const {
     x,
     acc,
-    l10n,
+    staticData,
   } = props
 
   const uses = acc.uses (x)
 
   if (notNull (uses)) {
-    const sorted_uses = sortStrings (l10n) (map (UA.name) (uses))
+    const sorted_uses = sortStrings (staticData) (map (UA.name) (uses))
 
     return (
-      <WikiProperty l10n={l10n} title="inlinewiki.uses">
+      <WikiProperty staticData={staticData} title="inlinewiki.uses">
         {intercalate (", ") (sorted_uses)}
       </WikiProperty>
     )

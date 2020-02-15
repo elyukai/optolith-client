@@ -1,11 +1,13 @@
 import { fmap } from "../../Data/Functor"
-import { fnull, intercalate, List, subscript, unsnoc } from "../../Data/List"
+import { fnull, intercalate, List, NonEmptyList, subscript, unsnoc } from "../../Data/List"
 import { maybe, Maybe, normalize, sum } from "../../Data/Maybe"
 import { toOrdering } from "../../Data/Ord"
 import { fst, snd } from "../../Data/Tuple"
-import { L10n, L10nRecord } from "../Models/Wiki/L10n"
+import { L10n } from "../Models/Wiki/L10n"
+import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { pipe } from "./pipe"
-import { isString } from "./typeCheckUtils"
+
+const SDA = StaticData.A
 
 /**
  * Displays a localized message and inserts values into placeholders if
@@ -17,11 +19,12 @@ import { isString } from "./typeCheckUtils"
  * index.
  */
 export const translateP =
-  (messages: L10nRecord) =>
-  <K extends keyof typeof L10n.AL>
+  (messages: StaticDataRecord) =>
+  <K extends keyof typeof L10n.A>
   (key: K) =>
-  (params: List<string | number>): L10n [K] => {
-    const message = L10n.A [key] (messages) as L10n [K]
+  (params: List<string | number>): string => {
+    const l10n = StaticData.is (messages) ? SDA.ui (messages) : messages
+    const message: string = L10n.A [key] (l10n)
 
     if (!fnull (params) && typeof message === "string") {
       return message.replace (
@@ -31,7 +34,7 @@ export const translateP =
                            ? param.toString ()
                            : param)
                          (subscript (params) (Number.parseInt (index, 10)))
-      ) as L10n [K]
+      )
     }
 
     return message
@@ -43,9 +46,9 @@ export const translateP =
  * @param key The key in messages containing the string you want to display.
  */
 export const translate =
-  (messages: L10nRecord) =>
-  <K extends keyof typeof L10n.AL>
-  (key: K): L10n [K] =>
+  (messages: StaticDataRecord) =>
+  <K extends keyof typeof L10n.A>
+  (key: K): string =>
     translateP (messages) (key) (List.empty)
 
 /**
@@ -57,11 +60,11 @@ export const translate =
  * index.
  */
 export const translateMP =
-  (messages: Maybe<L10nRecord>) =>
-  <K extends keyof typeof L10n.AL>
+  (messages: Maybe<StaticDataRecord>) =>
+  <K extends keyof typeof L10n.A>
   (key: K) =>
   (params: List<string | number>): Maybe<L10n [K]> =>
-    fmap<L10nRecord, L10n [K]>
+    fmap<StaticDataRecord, L10n [K]>
       (msg => translateP (msg) (key) (params))
       (messages)
 
@@ -71,14 +74,14 @@ export const translateMP =
  * @param key The key in messages containing the string you want to display.
  */
 export const translateM =
-  (messages: Maybe<L10nRecord>) =>
+  (messages: Maybe<StaticDataRecord>) =>
   <K extends keyof typeof L10n.AL>
   (key: K): Maybe<L10n [K]> =>
     translateMP (messages) (key) (List.empty)
 
 export const localizeNumber =
-  (localeId: string | L10nRecord) => {
-    const locale = isString (localeId) ? localeId : L10n.A.id (localeId)
+  (staticData: StaticDataRecord) => {
+    const locale = L10n.A.id (SDA.ui (staticData))
 
     return (num: number) => num .toLocaleString (locale)
   }
@@ -90,13 +93,12 @@ export const localizeNumber =
  * Uses `1cm = 0.4in` instead of `1cm = 0.3937in`.
  */
 export const localizeSize =
-  (localeId: string | L10nRecord): ((x: number | Maybe<number>) => number) =>
+  (staticData: StaticDataRecord): ((x: number | Maybe<number>) => number) =>
     pipe (
       normalize,
-      fmap ((size: number) =>
-             (isString (localeId) ? localeId : L10n.A.id (localeId)) === "en-US"
-               ? size * 0.4
-               : size),
+      fmap ((size: number) => L10n.A.id (SDA.ui (staticData)) === "en-US"
+                              ? size * 0.4
+                              : size),
       sum
     )
 
@@ -106,13 +108,12 @@ export const localizeSize =
  * Uses `1kg = 2pd` instead of `1kg = 2.2046pd`.
  */
 export const localizeWeight =
-  (localeId: string | L10nRecord): ((x: number | Maybe<number>) => number) =>
+  (staticData: StaticDataRecord): ((x: number | Maybe<number>) => number) =>
     pipe (
       normalize,
-      fmap ((weight: number) =>
-             (isString (localeId) ? localeId : L10n.A.id (localeId)) === "en-US"
-               ? weight * 2
-               : weight),
+      fmap ((weight: number) => L10n.A.id (SDA.ui (staticData)) === "en-US"
+                                ? weight * 2
+                                : weight),
       sum
     )
 
@@ -120,14 +121,21 @@ export const localizeWeight =
  * Takes a locale and returns a locale-aware string compare function.
  */
 export const compareLocale =
-  (locale: L10nRecord) => {
+  (staticData: StaticDataRecord) => {
     const coll = Intl.Collator (
-      L10n.A.id (locale),
+      L10n.A.id (SDA.ui (staticData)),
       { numeric: true }
     )
 
     return (a: string) => (b: string) => toOrdering (coll .compare (a, b))
   }
+
+const getOr = pipe (SDA.ui, L10n.A["general.or"])
+
+const concatMultiple = (staticData: StaticDataRecord) =>
+                       (init: NonEmptyList<string | number>) =>
+                       (last: string | number) =>
+                         `${intercalate (", ") (init)} ${getOr (staticData)} ${last}`
 
 /**
  * `localizeOrList :: L10n -> [String | Int] -> String`
@@ -144,18 +152,18 @@ export const compareLocale =
  * localizeOrList l10n [13, 14, 15, 24] == "13, 14, 15 or 24"
  * ```
  */
-export const localizeOrList: (l10n: L10nRecord) => (xs: List<string | number>) => string =
+export const localizeOrList: (staticData: StaticDataRecord)
+                           => (xs: List<string | number>)
+                           => string
+                           = staticData =>
+                           pipe (
+                             unsnoc,
+                             maybe ("")
+                                   (x => {
+                                     const init = fst (x)
 
-// l10n => {
-//   const intl = new Intl.ListFormat (L10n.A.id (l10n), { type: "disjunction" })
-
-//   return pipe (map (e => isString (e) ? e : e .toString (10)), toArray, arr => intl.format (arr))
-// }
-  l10n =>
-    pipe (
-      unsnoc,
-      maybe ("")
-            (x => fnull (fst (x))
-                    ? `${snd (x)}`
-                    : `${intercalate (", ") (fst (x))} ${L10n.A.or (l10n)} ${snd (x)}`)
-    )
+                                     return fnull (init)
+                                       ? `${snd (x)}`
+                                       : concatMultiple (staticData) (init) (snd (x))
+                                   })
+                           )

@@ -14,10 +14,10 @@ import { Advantage } from "../../Models/Wiki/Advantage"
 import { Culture } from "../../Models/Wiki/Culture"
 import { Disadvantage } from "../../Models/Wiki/Disadvantage"
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { Profession } from "../../Models/Wiki/Profession"
 import { Race } from "../../Models/Wiki/Race"
 import { RaceVariant } from "../../Models/Wiki/RaceVariant"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate, translateP } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils"
@@ -34,7 +34,7 @@ import { OverviewAddAP } from "./OverviewAddAP"
 import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from "./OverviewPersonalData"
 
 export interface PersonalDataOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   hero: HeroModelRecord
 }
 
@@ -98,7 +98,7 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
     currentEl,
     disadvantages: maybeDisadvantages,
     endCharacterCreation,
-    l10n,
+    staticData,
     name,
     phase,
     profession,
@@ -220,7 +220,7 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
         : (
           <BorderButton
             className="edit-profession-name-btn"
-            label={translate (l10n) ("profile.editprofessionnamebtn")}
+            label={translate (staticData) ("profile.editprofessionnamebtn")}
             onClick={handleStartEditProfessionName}
             />
         ))
@@ -243,7 +243,7 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                                  maybe (<></>)
                                        ((sex: Sex) => (
                                            <span>
-                                             {translate (l10n)
+                                             {translate (staticData)
                                                         (sex === "m"
                                                           ? "personaldata.sex.male"
                                                           : "personaldata.sex.female")}
@@ -273,7 +273,7 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                              {renderMaybeWith (ExperienceLevel.A.name) (currentEl)}
                            </span>
                            <span>
-                             {translateP (l10n)
+                             {translateP (staticData)
                                          ("general.apvalue.short")
                                          (List (Maybe.sum (apTotal)))}
                            </span>
@@ -286,7 +286,7 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                            ? (
                                <BorderButton
                                  className="add-ap"
-                                 label={translate (l10n) ("profile.addadventurepointsbtn")}
+                                 label={translate (staticData) ("profile.addadventurepointsbtn")}
                                  onClick={openAddAdventurePoints}
                                  />
                              )
@@ -294,7 +294,7 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                        }
                        <BorderButton
                          className="delete-avatar"
-                         label={translate (l10n) ("profile.deleteavatarbtn")}
+                         label={translate (staticData) ("profile.deleteavatarbtn")}
                          onClick={deleteAvatar}
                          disabled={isNothing (avatar)}
                          />
@@ -305,13 +305,13 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                        ? null
                        : (
                          <>
-                           <h3>{translate (l10n) ("personaldata.title")}</h3>
+                           <h3>{translate (staticData) ("personaldata.title")}</h3>
                            <OverviewPersonalData
                              profile={profile}
                              socialStatuses={socialStatuses}
                              sizeCalcStr={sizeCalcStr}
                              weightCalcStr={weightCalcStr}
-                             l10n={l10n}
+                             staticData={staticData}
                              changeFamily={changeFamily}
                              changePlaceOfBirth={changePlaceOfBirth}
                              changeDateOfBirth={changeDateOfBirth}
@@ -341,7 +341,7 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                            <div>
                              <BorderButton
                                className="end-char-creation"
-                               label={translate (l10n) ("profile.endherocreationbtn")}
+                               label={translate (staticData) ("profile.endherocreationbtn")}
                                onClick={endCharacterCreation}
                                primary
                                disabled={any (lt (0)) (apLeft) || any (gt (10)) (apLeft)}
@@ -354,19 +354,19 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                        Maybe.elem (3) (phase)
                          ? (
                            <div>
-                             <h3>{translate (l10n) ("profile.advantages")}</h3>
+                             <h3>{translate (staticData) ("profile.advantages")}</h3>
                              {maybeRNull ((advantages: List<Record<ActiveActivatable>>) => (
                                              <ActivatableTextList
                                                list={advantages}
-                                               l10n={l10n}
+                                               staticData={staticData}
                                                />
                                            ))
                                          (maybeAdvantages)}
-                             <h3>{translate (l10n) ("profile.disadvantages")}</h3>
+                             <h3>{translate (staticData) ("profile.disadvantages")}</h3>
                              {maybeRNull ((disadvantages: List<Record<ActiveActivatable>>) => (
                                              <ActivatableTextList
                                                list={disadvantages}
-                                               l10n={l10n}
+                                               staticData={staticData}
                                                />
                                            ))
                                          (maybeDisadvantages)}
@@ -380,13 +380,13 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
                      isOpen={isAddAdventurePointsOpen}
                      isRemovingEnabled={isRemovingEnabled}
                      addAdventurePoints={addAdventurePoints}
-                     l10n={l10n}
+                     staticData={staticData}
                      />
                    <AvatarChange
                      setPath={setAvatar}
                      close={closeEditCharacterAvatar}
                      isOpen={isEditCharacterAvatarOpen}
-                     l10n={l10n}
+                     staticData={staticData}
                      />
                  </Page>
                ))

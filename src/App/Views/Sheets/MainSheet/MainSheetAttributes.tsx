@@ -5,8 +5,8 @@ import { Just, Maybe, Nothing } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { DCId } from "../../../Constants/Ids"
 import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
 import { Race } from "../../../Models/Wiki/Race"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
 import { pipe_ } from "../../../Utilities/pipe"
 import { MainSheetAttributesItem } from "./MainSheetAttributesItem"
@@ -15,29 +15,29 @@ import { MainSheetFatePoints } from "./MainSheetFatePoints"
 interface Props {
   attributes: List<Record<DerivedCharacteristic>>
   fatePointsModifier: number
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   race: Maybe<Record<Race>>
 }
 
 const DCA = DerivedCharacteristic.A
 
 export const MainSheetAttributes: React.FC<Props> = props => {
-  const { attributes, fatePointsModifier, race, l10n } = props
+  const { attributes, fatePointsModifier, race, staticData } = props
 
   return (
     <div className="calculated">
       <div className="calc-header">
         <div>
-          {translate (l10n) ("sheets.mainsheet.derivedcharacteristics.labels.value")}
+          {translate (staticData) ("sheets.mainsheet.derivedcharacteristics.labels.value")}
         </div>
         <div>
-          {translate (l10n) ("sheets.mainsheet.derivedcharacteristics.labels.bonuspenalty")}
+          {translate (staticData) ("sheets.mainsheet.derivedcharacteristics.labels.bonuspenalty")}
         </div>
         <div>
-          {translate (l10n) ("sheets.mainsheet.derivedcharacteristics.labels.bought")}
+          {translate (staticData) ("sheets.mainsheet.derivedcharacteristics.labels.bought")}
         </div>
         <div>
-          {translate (l10n) ("sheets.mainsheet.derivedcharacteristics.labels.max")}
+          {translate (staticData) ("sheets.mainsheet.derivedcharacteristics.labels.max")}
         </div>
       </div>
       {pipe_ (
@@ -58,14 +58,14 @@ export const MainSheetAttributes: React.FC<Props> = props => {
                 case DCId.TOU:
                 case DCId.MOV:
                   return Just (
-                    translate (l10n)
+                    translate (staticData)
                               ("sheets.mainsheet.derivedcharacteristics.labels.basestat")
                   )
 
                 case DCId.AE:
                 case DCId.KP:
                   return Just (
-                    translate (l10n)
+                    translate (staticData)
                               // eslint-disable-next-line max-len
                               ("sheets.mainsheet.derivedcharacteristics.labels.permanentlylostboughtback")
                   )
@@ -133,7 +133,7 @@ export const MainSheetAttributes: React.FC<Props> = props => {
       )}
       <MainSheetFatePoints
         fatePointsModifier={fatePointsModifier}
-        l10n={l10n}
+        staticData={staticData}
         />
     </div>
   )

@@ -3,14 +3,14 @@ import { List, map, toArray } from "../../../Data/List"
 import { OrderedSet } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
 import { Book } from "../../Models/Wiki/Book"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { pipe_ } from "../../Utilities/pipe"
 import { Checkbox } from "../Universal/Checkbox"
 import { BookSelectionListItem } from "./BookSelectionListItem"
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   sortedBooks: List<Record<Book>>
   allRuleBooksEnabled: boolean
   enabledRuleBooks: OrderedSet<string>
@@ -20,7 +20,7 @@ interface Props {
 
 export const BookSelection: React.FC<Props> = props => {
   const {
-    l10n,
+    staticData,
     sortedBooks,
     allRuleBooksEnabled,
     enabledRuleBooks,
@@ -33,7 +33,7 @@ export const BookSelection: React.FC<Props> = props => {
       <Checkbox
         checked={allRuleBooksEnabled}
         onClick={switchEnableAllRuleBooks}
-        label={translate (l10n) ("enableallrulebooks")}
+        label={translate (staticData) ("rules.enableallrulebooks")}
         />
       <div className="rule-books">
         {pipe_ (

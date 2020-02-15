@@ -26,7 +26,7 @@ import { current_version } from "../../../../Selectors/envSelectors"
 import { HeroStateMapKey } from "../../../heroStateUtils"
 import { ifElse } from "../../../ifElse"
 import { pipe, pipe_ } from "../../../pipe"
-import { RawActiveObject, RawArmorZone, RawCustomItem, RawHero, RawPet, RawPrimaryAttributeDamageThreshold } from "../../XLSX/RawData"
+import { RawActiveObject, RawArmorZone, RawCustomItem, RawHero, RawPet, RawPrimaryAttributeDamageThreshold } from "../../RawData"
 
 const HA = HeroModel.A
 

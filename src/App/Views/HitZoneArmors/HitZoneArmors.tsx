@@ -9,7 +9,7 @@ import { HitZoneArmor } from "../../Models/Hero/HitZoneArmor"
 import { Item } from "../../Models/Hero/Item"
 import { Purse } from "../../Models/Hero/Purse"
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { PurseAndTotals } from "../Equipment/PurseAndTotals"
@@ -28,7 +28,7 @@ import { HitZoneArmorEditor } from "./HitZoneArmorEditor"
 import { HitZoneArmorsListItem } from "./HitZoneArmorsListItem"
 
 export interface HitZoneArmorsOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   hero: HeroModelRecord
 }
 
@@ -83,7 +83,7 @@ const HZAA = HitZoneArmor.A
 
 export const HitZoneArmors: React.FC<HitZoneArmorsProps> = props => {
   const {
-    l10n,
+    staticData,
     armorZones,
     carryingCapacity,
     initialStartingWealth,
@@ -126,20 +126,20 @@ export const HitZoneArmors: React.FC<HitZoneArmorsProps> = props => {
     <Page id="armor-zones">
       <Options>
         <SearchField
-          l10n={l10n}
+          staticData={staticData}
           value={filterText}
           onChange={setFilterText}
           fullWidth
           />
         <BorderButton
-          label={translate (l10n) ("hitzonearmors.createbtn")}
+          label={translate (staticData) ("hitzonearmors.createbtn")}
           onClick={createItem}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("hitzonearmors.header.name")}
+            {translate (staticData) ("hitzonearmors.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />
@@ -150,7 +150,7 @@ export const HitZoneArmors: React.FC<HitZoneArmorsProps> = props => {
               Maybe.fromMaybe<NonNullable<React.ReactNode>>
                 (
                   <ListPlaceholder
-                    l10n={l10n}
+                    staticData={staticData}
                     type="zoneArmor"
                     noResults={filterText.length > 0}
                     />
@@ -181,7 +181,7 @@ export const HitZoneArmors: React.FC<HitZoneArmorsProps> = props => {
           carryingCapacity={carryingCapacity}
           hasNoAddedAP={hasNoAddedAP}
           initialStartingWealth={initialStartingWealth}
-          l10n={l10n}
+          staticData={staticData}
           purse={purse}
           totalPrice={totalPrice}
           totalWeight={totalWeight}
@@ -197,7 +197,7 @@ export const HitZoneArmors: React.FC<HitZoneArmorsProps> = props => {
             <HitZoneArmorEditor
               armorZonesEditor={Maybe.fromJust (armorZonesEditor)}
               isInHitZoneArmorCreation={isInHitZoneArmorCreation}
-              l10n={l10n}
+              staticData={staticData}
               items={items}
               templates={templates}
               addToList={addToList}

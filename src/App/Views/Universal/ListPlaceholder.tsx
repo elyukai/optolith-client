@@ -1,7 +1,7 @@
 import * as React from "react"
 import { List } from "../../../Data/List"
 import { guardReplace, Just, orN } from "../../../Data/Maybe"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { classListMaybe } from "../../Utilities/CSS"
 import { translate } from "../../Utilities/I18n"
 import { IconButton } from "./IconButton"
@@ -33,14 +33,14 @@ export type ListPlaceholderType = "races"
                                 | "zoneArmor"
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   noResults?: boolean
   wikiInitial?: boolean
   type?: ListPlaceholderType
 }
 
 export const ListPlaceholder: React.FC<Props> = props => {
-  const { l10n, noResults, type = "advantages", wikiInitial } = props
+  const { staticData, noResults, type = "advantages", wikiInitial } = props
   let placeholder: JSX.Element | undefined = undefined
 
   switch (type) {
@@ -263,10 +263,10 @@ export const ListPlaceholder: React.FC<Props> = props => {
         >
         {
           orN (wikiInitial)
-            ? translate (l10n) ("wiki.chooseacategorytodisplayalist")
+            ? translate (staticData) ("wiki.chooseacategorytodisplayalist")
             : orN (noResults)
-            ? translate (l10n) ("general.emptylistnoresultsplaceholder")
-            : translate (l10n) ("general.emptylistplaceholder")
+            ? translate (staticData) ("general.emptylistnoresultsplaceholder")
+            : translate (staticData) ("general.emptylistplaceholder")
         }
       </div>
     </ListView>

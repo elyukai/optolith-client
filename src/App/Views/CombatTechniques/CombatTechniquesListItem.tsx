@@ -2,13 +2,14 @@ import * as React from "react"
 import { equals } from "../../../Data/Eq"
 import { fmapF } from "../../../Data/Functor"
 import { find, flength, intercalate, List } from "../../../Data/List"
-import { fromMaybe, listToMaybe, mapMaybe, Maybe } from "../../../Data/Maybe"
+import { fromMaybe, listToMaybe, mapMaybe, Maybe, maybe } from "../../../Data/Maybe"
+import { lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
+import { NumIdName } from "../../Models/NumIdName"
 import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined"
 import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { ndash } from "../../Utilities/Chars"
-import { translate } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { SkillListItem } from "../Skills/SkillListItem"
 
@@ -17,7 +18,7 @@ const CTWRA = CombatTechniqueWithRequirements.A
 const CTWRA_ = CombatTechniqueWithRequirementsA_
 
 export interface CombatTechniqueListItemProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   attributes: List<Record<AttributeCombined>>
   combatTechnique: Record<CombatTechniqueWithRequirements>
   currentInfoId: Maybe<string>
@@ -32,7 +33,7 @@ export const CombatTechniqueListItem: React.FC<CombatTechniqueListItemProps> = p
     attributes,
     currentInfoId,
     isRemovingEnabled,
-    l10n,
+    staticData,
     combatTechnique: ct,
     selectForInfo,
     addPoint,
@@ -76,10 +77,15 @@ export const CombatTechniqueListItem: React.FC<CombatTechniqueListItemProps> = p
         }
       )}
       attributes={attributes}
-      l10n={l10n}
+      staticData={staticData}
       selectForInfo={selectForInfo}
-      groupIndex={CTWRA_.gr (ct)}
-      groupList={translate (l10n) ("combattechniquegroups")}
+      group={CTWRA_.gr (ct)}
+      getGroupName={
+        pipe (
+          lookupF (StaticData.A.combatTechniqueGroups (staticData)),
+          maybe (ndash) (NumIdName.A.name)
+        )
+      }
       selectedForInfo={currentInfoId}
       />
   )

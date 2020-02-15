@@ -2,13 +2,13 @@
 import Ajv from "ajv"
 import { handleE } from "../../Control/Exception"
 import { Either, fromLeft_, fromRight_, isLeft, Left } from "../../Data/Either"
-import { WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { parseByFile } from "./YAML/ParseByFile"
 import { readYamlL10n, readYamlUniv } from "./YAML/Parser"
 import { getAllSchemes } from "./YAML/Schemes"
 import { toWiki } from "./YAML/ToRecordsByFile"
 
-export const parseStaticData : (locale : string) => Promise<Either<Error[], WikiModelRecord>>
+export const parseStaticData : (locale : string) => Promise<Either<Error[], StaticDataRecord>>
                              = async locale => {
                                console.time ("parseStaticData")
 

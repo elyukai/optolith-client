@@ -8,7 +8,7 @@ import { Record } from "../../../Data/Record"
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
 import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
 import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { pipe_ } from "../../Utilities/pipe"
 import { isActiveRated } from "../../Utilities/ratingUtils"
 import { ListView } from "../Universal/List"
@@ -20,7 +20,7 @@ export interface ActivatableRemoveListProps {
   filterText: string
   hideGroup?: boolean
   list: Maybe<List<Record<ActiveActivatable>>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   isRemovingEnabled: boolean
   rating?: Maybe<OrderedMap<string, EntryRating>>
   showRating?: boolean
@@ -36,7 +36,7 @@ export function ActivatableRemoveList (props: ActivatableRemoveListProps) {
   const {
     filterText,
     list: mactives,
-    l10n,
+    staticData,
     rating,
     showRating: mshow_rating,
     isRemovingEnabled,
@@ -50,7 +50,7 @@ export function ActivatableRemoveList (props: ActivatableRemoveListProps) {
   if (all (fnull) (mactives)) {
     return (
       <ListPlaceholder
-        l10n={l10n}
+        staticData={staticData}
         noResults={filterText.length > 0}
         type="specialAbilities"
         />
@@ -73,7 +73,7 @@ export function ActivatableRemoveList (props: ActivatableRemoveListProps) {
             return (
               <ActivatableRemoveListItem
                 key={`${AAA_.id (item)}_${AAA_.index (item)}`}
-                l10n={l10n}
+                staticData={staticData}
                 item={item}
                 isImportant={or (fmapF (isRatedForItem) (thrush (EntryRating.Essential)))}
                 isTypical={or (fmapF (isRatedForItem) (thrush (EntryRating.Common)))}

@@ -6,7 +6,7 @@ import { bindF, ensure } from "../../../../Data/Maybe"
 import { gt } from "../../../../Data/Num"
 import { Record } from "../../../../Data/Record"
 import { ItemForView } from "../../../Models/View/ItemForView"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
@@ -14,32 +14,32 @@ import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
 interface Props {
   columnSize: number
   items: List<Record<ItemForView>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 const IFVA = ItemForView.A
 
 export const BelongingsSheetItemsColumn: React.FC<Props> = props => {
-  const { columnSize, l10n, items } = props
+  const { columnSize, staticData, items } = props
 
   return (
     <table>
       <thead>
         <tr>
           <th className="name">
-            {translate (l10n) ("sheets.belongingssheet.equipmenttable.labels.item")}
+            {translate (staticData) ("sheets.belongingssheet.equipmenttable.labels.item")}
           </th>
           <th className="amount">
-            {translate (l10n) ("sheets.belongingssheet.equipmenttable.labels.number")}
+            {translate (staticData) ("sheets.belongingssheet.equipmenttable.labels.number")}
           </th>
           <th className="price">
-            {translate (l10n) ("sheets.belongingssheet.equipmenttable.labels.price")}
+            {translate (staticData) ("sheets.belongingssheet.equipmenttable.labels.price")}
           </th>
           <th className="weight">
-            {translate (l10n) ("sheets.belongingssheet.equipmenttable.labels.weight")}
+            {translate (staticData) ("sheets.belongingssheet.equipmenttable.labels.weight")}
           </th>
           <th className="where">
-            {translate (l10n) ("sheets.belongingssheet.equipmenttable.labels.carriedwhere")}
+            {translate (staticData) ("sheets.belongingssheet.equipmenttable.labels.carriedwhere")}
           </th>
         </tr>
       </thead>
@@ -57,7 +57,7 @@ export const BelongingsSheetItemsColumn: React.FC<Props> = props => {
                   e,
                   IFVA.price,
                   bindF (ensure (gt (0))),
-                  renderMaybeWith (localizeNumber (l10n))
+                  renderMaybeWith (localizeNumber (staticData))
                 )}
               </td>
               <td className="weight">
@@ -65,8 +65,8 @@ export const BelongingsSheetItemsColumn: React.FC<Props> = props => {
                     e,
                     IFVA.weight,
                     fmap (pipe (
-                      localizeWeight (l10n),
-                      localizeNumber (l10n)
+                      localizeWeight (staticData),
+                      localizeNumber (staticData)
                     )),
                     renderMaybe
                   )}

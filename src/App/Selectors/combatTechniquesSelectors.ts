@@ -15,7 +15,7 @@ import { CombatTechniqueWithAttackParryBase, CombatTechniqueWithAttackParryBaseA
 import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements"
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
-import { WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { isMaybeActive } from "../Utilities/Activatable/isActive"
 import { getActiveSelections } from "../Utilities/Activatable/selectionUtils"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
@@ -132,7 +132,7 @@ const getMaximum =
 
 const getMinimum =
   (hunterRequiresMinimum: boolean) =>
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (ct: Record<CombatTechniqueWithAttackParryBase>): number => {
     const curr_dependencies = pipe_ (ct, CTWAPBA.stateEntry, SDA.dependencies)

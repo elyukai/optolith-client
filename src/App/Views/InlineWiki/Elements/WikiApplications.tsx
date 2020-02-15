@@ -5,10 +5,10 @@ import { bindF, ensure, isNothing, mapMaybe, Maybe, maybe } from "../../../../Da
 import { member, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { Advantage } from "../../../Models/Wiki/Advantage"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
 import { RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
 import { Application } from "../../../Models/Wiki/sub/Application"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { pipe } from "../../../Utilities/pipe"
 import { sortStrings } from "../../../Utilities/sortBy"
 import { isString } from "../../../Utilities/typeCheckUtils"
@@ -23,7 +23,7 @@ export interface WikiApplicationsProps<A extends RecordIBase<any>> {
   advantages: OrderedMap<string, Record<Advantage>>
   x: Record<A>
   acc: Accessors<A>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   showNewApplications?: boolean
   specialAbilities: OrderedMap<string, Record<SpecialAbility>>
 }
@@ -37,7 +37,7 @@ export const WikiApplications: FC = props => {
     advantages,
     x,
     acc,
-    l10n,
+    staticData,
     showNewApplications = false,
     specialAbilities,
   } = props
@@ -63,10 +63,10 @@ export const WikiApplications: FC = props => {
         return null
       }
 
-      const sorted_new_apps = sortStrings (l10n) (new_apps)
+      const sorted_new_apps = sortStrings (staticData) (new_apps)
 
       return (
-        <WikiProperty l10n={l10n} title="inlinewiki.newapplications">
+        <WikiProperty staticData={staticData} title="inlinewiki.newapplications">
           {intercalate (", ") (sorted_new_apps)}
         </WikiProperty>
       )
@@ -76,10 +76,10 @@ export const WikiApplications: FC = props => {
       mapMaybe (pipe (ensure (pipe (AA.prerequisite, isNothing)), fmap (AA.name)))
                (applications)
 
-    const sorted_default_apps = sortStrings (l10n) (default_apps)
+    const sorted_default_apps = sortStrings (staticData) (default_apps)
 
     return (
-      <WikiProperty l10n={l10n} title="inlinewiki.applications">
+      <WikiProperty staticData={staticData} title="inlinewiki.applications">
         {intercalate (", ") (sorted_default_apps)}
         {maybe ("") ((input: string) => `, ${input}`) (applicationsInput)}
       </WikiProperty>

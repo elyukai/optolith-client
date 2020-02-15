@@ -11,8 +11,8 @@ import { HitZoneArmorForView } from "../../../Models/View/HitZoneArmorForView"
 import { MeleeWeapon } from "../../../Models/View/MeleeWeapon"
 import { RangedWeapon } from "../../../Models/View/RangedWeapon"
 import { ShieldOrParryingWeapon } from "../../../Models/View/ShieldOrParryingWeapon"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
 import { Options } from "../../Universal/Options"
 import { Sheet } from "../Sheet"
@@ -33,7 +33,7 @@ interface Props {
   combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   combatTechniques: Maybe<List<Record<CombatTechniqueWithAttackParryBase>>>
   derivedCharacteristics: List<Record<DerivedCharacteristic>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
   rangedWeapons: Maybe<List<Record<RangedWeapon>>>
   shieldsAndParryingWeapons: Maybe<List<Record<ShieldOrParryingWeapon>>>
@@ -48,7 +48,7 @@ export const CombatSheetZones: React.FC<Props> = props => {
     combatSpecialAbilities,
     combatTechniques,
     derivedCharacteristics,
-    l10n,
+    staticData,
     meleeWeapons,
     rangedWeapons,
     shieldsAndParryingWeapons,
@@ -63,44 +63,44 @@ export const CombatSheetZones: React.FC<Props> = props => {
       <Options />
       <Sheet
         id="combat-sheet-zones"
-        title={translate (l10n) ("sheets.combatsheet.title")}
+        title={translate (staticData) ("sheets.combatsheet.title")}
         addHeaderInfo={addHeader}
         attributes={attributes}
-        l10n={l10n}
+        staticData={staticData}
         >
         <div className="upper">
           <CombatSheetTechniques
             attributes={attributes}
             combatTechniques={combatTechniques}
-            l10n={l10n}
+            staticData={staticData}
             />
           <CombatSheetLifePoints
             derivedCharacteristics={derivedCharacteristics}
-            l10n={l10n}
+            staticData={staticData}
             />
         </div>
         <div className="lower">
           <CombatSheetMeleeWeapons
-            l10n={l10n}
+            staticData={staticData}
             meleeWeapons={meleeWeapons}
             />
           <CombatSheetRangedWeapons
-            l10n={l10n}
+            staticData={staticData}
             rangedWeapons={rangedWeapons}
             />
           <CombatSheetArmorZones
             armorZones={armorZones}
-            l10n={l10n}
+            staticData={staticData}
             />
           <CombatSheetShields
-            l10n={l10n}
+            staticData={staticData}
             shieldsAndParryingWeapons={shieldsAndParryingWeapons}
             />
           <CombatSheetSpecialAbilities
-            l10n={l10n}
+            staticData={staticData}
             combatSpecialAbilities={combatSpecialAbilities}
             />
-          <CombatSheetStates l10n={l10n} conditions={conditions} states={states} />
+          <CombatSheetStates staticData={staticData} conditions={conditions} states={states} />
         </div>
       </Sheet>
     </SheetWrapper>

@@ -3,7 +3,7 @@ import { Either, fromRight_, isLeft, Left, lefts, Right } from "../../../Data/Ei
 import { concatMap, fromArray, List, toArray } from "../../../Data/List"
 import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../Data/Record"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { pipe_ } from "../pipe"
 import { toAdvantages } from "./Entries/ToAdvantages"
 import { toAnimistForces } from "./Entries/ToAnimistForces"
@@ -91,7 +91,7 @@ export type YamlPairConverterE<U, L, K, R extends RecordIBase<any>>
   = (x : [U, L]) => Either<Error[], [K, Record<R>]>
 
 
-export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[], WikiModelRecord>
+export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[], StaticDataRecord>
                     = locale => mp => {
                         const eanimistForces = toAnimistForces (mp)
                         const earcaneBardTraditions = toArcaneBardTraditions (mp)

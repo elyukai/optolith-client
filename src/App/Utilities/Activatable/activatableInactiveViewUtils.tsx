@@ -4,10 +4,10 @@ import { equals, notEquals } from "../../../Data/Eq"
 import { Functn, ident } from "../../../Data/Function"
 import { fmap, fmapF } from "../../../Data/Functor"
 import { over, set } from "../../../Data/Lens"
-import { cons, countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, notNull, subscript, subscriptF, sum, take } from "../../../Data/List"
-import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, or, then, thenF } from "../../../Data/Maybe"
+import { cons, countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, notNull, subscriptF, sum, take } from "../../../Data/List"
+import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, Maybe, maybe, Nothing, or, then, thenF } from "../../../Data/Maybe"
 import { dec, gte, max, min, multiply, negate } from "../../../Data/Num"
-import { lookupF } from "../../../Data/OrderedMap"
+import { elems, lookupF } from "../../../Data/OrderedMap"
 import { fromDefault, makeLenses, Record } from "../../../Data/Record"
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple"
 import { Category } from "../../Constants/Categories"
@@ -15,15 +15,15 @@ import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/I
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { NumIdName } from "../../Models/NumIdName"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { InactiveActivatable, InactiveActivatableA_ } from "../../Models/View/InactiveActivatable"
 import { Disadvantage } from "../../Models/Wiki/Disadvantage"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { Skill } from "../../Models/Wiki/Skill"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { Application } from "../../Models/Wiki/sub/Application"
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
 import { ActivatableAddListItemSelectedOptions } from "../../Views/Activatable/ActivatableAddListItem"
 import { Dropdown } from "../../Views/Universal/Dropdown"
@@ -88,7 +88,7 @@ export const InactiveActivatableControlElements =
 
 const InactiveActivatableControlElementsL = makeLenses (InactiveActivatableControlElements)
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const IAA = InactiveActivatable.A
 const IAA_ = InactiveActivatableA_
 const SAAL = SpecialAbility.AL
@@ -102,6 +102,7 @@ const AAOL = ActivatableActivationOptionsL
 const PABYA = PropertiesAffectedByState.A
 const PABYL = PropertiesAffectedByStateL
 const IACEL = InactiveActivatableControlElementsL
+const NINA = NumIdName.A
 
 /**
  * @default Pair (Record ({ id, cost: 0 }), Record ())
@@ -110,36 +111,6 @@ type IdSpecificAffectedAndDispatchProps =
   Pair<Record<ActivatableActivationOptions>, Record<PropertiesAffectedByState>>
 
 const getPlainCostFromEntry = pipe (IAA.cost, bindF (ensure (isNumber)))
-
-const getIdSpecificAffectedAndDispatchPropsForMusicTraditions =
-  (l10n: L10nRecord) =>
-  (inactive_entry: Record<InactiveActivatable>) =>
-  (music_tradition_ids: List<number>) =>
-  (mselect_option_id: Maybe<string | number>) =>
-    Pair (
-      ActivatableActivationOptions ({
-        id: IAA.id (inactive_entry),
-        selectOptionId1: mselect_option_id,
-        cost: Nothing,
-      }),
-      PropertiesAffectedByState ({
-        currentCost: getPlainCostFromEntry (inactive_entry),
-        firstSelectOptions:
-          Just (mapMaybe ((id: number) => pipe_ (
-                           id,
-                           dec,
-                           subscript (translate (l10n) ("musictraditions")),
-                           fmap (name =>
-                                  SelectOption ({
-                                    id,
-                                    name,
-                                    src: pipe_ (inactive_entry, IAA.wikiEntry, SAAL.src),
-                                    errata: Nothing,
-                                  }))
-                         ))
-                         (music_tradition_ids)),
-      })
-    )
 
 const getCurrentSelectOption =
   (entry: Record<InactiveActivatable>) =>
@@ -160,7 +131,7 @@ const selectToDropdownOption =
 
 const getCostForEntryWithSkillSel =
   (ensureId: (x: Maybe<number | string>) => Maybe<string>) =>
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (entry: Record<InactiveActivatable>) =>
     pipe (
       ensureId,
@@ -175,7 +146,7 @@ const getCostForEntryWithSkillSel =
 
 const getPropsForEntryWithSkillSel =
   (ensureId: (x: Maybe<number | string>) => Maybe<string>) =>
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (mselected: Maybe<string | number>) =>
   (entry: Record<InactiveActivatable>) =>
   (id: string) =>
@@ -201,8 +172,7 @@ interface IdSpecificAffectedAndDispatchPropsInputHandlers {
 
 export const getIdSpecificAffectedAndDispatchProps =
   (inputHandlers: IdSpecificAffectedAndDispatchPropsInputHandlers) =>
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (entry: Record<InactiveActivatable>) =>
 
   // tslint:disable-next-line: cyclomatic-complexity
@@ -235,7 +205,7 @@ export const getIdSpecificAffectedAndDispatchProps =
       case SpecialAbilityId.SozialeKompetenz:
       case SpecialAbilityId.Universalgenie: {
         return getPropsForEntryWithSkillSel (misStringM)
-                                            (wiki)
+                                            (staticData)
                                             (mselected)
                                             (entry)
                                             (id)
@@ -494,17 +464,53 @@ export const getIdSpecificAffectedAndDispatchProps =
       }
 
       case SpecialAbilityId.TraditionArcaneBard: {
-        return getIdSpecificAffectedAndDispatchPropsForMusicTraditions (l10n)
-                                                                       (entry)
-                                                                       (List (1, 2, 3))
-                                                                       (mselected)
+        return Pair (
+          ActivatableActivationOptions ({
+            id: IAA.id (entry),
+            selectOptionId1: mselected,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost: getPlainCostFromEntry (entry),
+            firstSelectOptions: pipe_ (
+              staticData,
+              SDA.arcaneBardTraditions,
+              elems,
+              map (x => SelectOption ({
+                          id: NINA.id (x),
+                          name: NINA.name (x),
+                          src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
+                          errata: Nothing,
+                        })),
+              Just
+            ),
+          })
+        )
       }
 
       case SpecialAbilityId.TraditionArcaneDancer: {
-        return getIdSpecificAffectedAndDispatchPropsForMusicTraditions (l10n)
-                                                                       (entry)
-                                                                       (List (4, 5, 6, 7))
-                                                                       (mselected)
+        return Pair (
+          ActivatableActivationOptions ({
+            id: IAA.id (entry),
+            selectOptionId1: mselected,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost: getPlainCostFromEntry (entry),
+            firstSelectOptions: pipe_ (
+              staticData,
+              SDA.arcaneDancerTraditions,
+              elems,
+              map (x => SelectOption ({
+                          id: NINA.id (x),
+                          name: NINA.name (x),
+                          src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
+                          errata: Nothing,
+                        })),
+              Just
+            ),
+          })
+        )
       }
 
       case SpecialAbilityId.LanguageSpecializations: {
@@ -549,7 +555,7 @@ export const getIdSpecificAffectedAndDispatchProps =
               mselected,
               bindF (pipe (
                 prefixSkill,
-                lookupF (WA.skills (wiki))
+                lookupF (SDA.skills (staticData))
               )),
               fmap (SkA.applications),
               joinMaybeList,
@@ -575,7 +581,7 @@ export const getIdSpecificAffectedAndDispatchProps =
           }),
           PropertiesAffectedByState ({
             currentCost: getCostForEntryWithSkillSel (misStringM)
-                                                     (wiki)
+                                                     (staticData)
                                                      (entry)
                                                      (mselected),
             secondSelectOptions: getApps (mselected3),
@@ -726,7 +732,7 @@ interface InactiveActivatableControlElementsInputHandlers {
 }
 
 export const getInactiveActivatableControlElements =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (isEditingAllowed: boolean) =>
   (inputHandlers: InactiveActivatableControlElementsInputHandlers) =>
   (entry: Record<InactiveActivatable>) =>
@@ -772,7 +778,8 @@ export const getInactiveActivatableControlElements =
                           ? cons (ls)
                                  (DropdownOption ({
                                    id: Just (4),
-                                   name: translate (l10n) ("nativetongue.short"),
+                                   name: translate (staticData)
+                                                   ("specialabilities.nativetonguelevel"),
                                  }))
                           : ls
                   )

@@ -6,7 +6,7 @@ import { EquipmentGroup } from "../../../Constants/Groups"
 import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../../../Constants/Ids"
 import { SortNames } from "../../../Views/Universal/SortOptions"
 import { pipe } from "../../pipe"
-import { RawConfig } from "../XLSX/RawData"
+import { RawConfig } from "../RawData"
 
 export type HeroListSortOptions = SortNames.Name
                                 | SortNames.DateModified

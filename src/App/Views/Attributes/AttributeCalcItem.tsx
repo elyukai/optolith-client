@@ -4,7 +4,7 @@ import { bindF, ensure, fromJust, fromMaybe, isJust, liftM2, maybe, Maybe, or } 
 import { gt, subtractBy } from "../../../Data/Num"
 import { Record } from "../../../Data/Record"
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { sign, signNeg } from "../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
@@ -14,7 +14,7 @@ import { AttributeBorder } from "./AttributeBorder"
 
 export interface AttributeCalcItemProps {
   attribute: Record<DerivedCharacteristic>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   isInCharacterCreation: boolean
   isRemovingEnabled: boolean
   addLifePoint (): void
@@ -30,7 +30,7 @@ const DCA = DerivedCharacteristic.A
 export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
   const {
     attribute,
-    l10n,
+    staticData,
     isInCharacterCreation,
     isRemovingEnabled,
     addLifePoint,
@@ -115,7 +115,8 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
                 {isJust (mod)
                   ? (
                     <span className="mod">
-                      {translate (l10n) ("attributes.derivedcharacteristics.tooltips.modifier")}
+                      {translate (staticData)
+                                 ("attributes.derivedcharacteristics.tooltips.modifier")}
                       {": "}
                       {sign (fromJust (mod))}
                       <br />
@@ -125,7 +126,8 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
                 {isJust (mcurrent_add) && !isInCharacterCreation
                   ? (
                     <span className="add">
-                      {translate (l10n) ("attributes.derivedcharacteristics.tooltips.bought")}
+                      {translate (staticData)
+                                 ("attributes.derivedcharacteristics.tooltips.bought")}
                       {": "}
                       {fromJust (mcurrent_add)}
                       {" / "}

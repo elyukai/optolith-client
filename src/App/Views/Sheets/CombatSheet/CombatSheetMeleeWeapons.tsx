@@ -1,13 +1,14 @@
 import * as React from "react"
 import { Textfit } from "react-textfit"
 import { fmap, fmapF } from "../../../../Data/Functor"
-import { flength, intercalate, List, map, replicateR, subscript, subscriptF, toArray } from "../../../../Data/List"
+import { flength, intercalate, List, map, replicateR, subscriptF, toArray } from "../../../../Data/List"
 import { bindF, fromMaybe, Maybe } from "../../../../Data/Maybe"
-import { dec } from "../../../../Data/Num"
+import { lookupF } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { bimap, fst, isTuple, snd } from "../../../../Data/Tuple"
+import { NumIdName } from "../../../Models/NumIdName"
 import { MeleeWeapon } from "../../../Models/View/MeleeWeapon"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { ndash } from "../../../Utilities/Chars"
 import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
 import { sign, signZero, toRoman } from "../../../Utilities/NumberUtils"
@@ -16,57 +17,59 @@ import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
 import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
 }
 
+const SDA = StaticData.A
 const MWA = MeleeWeapon.A
 
 export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
-  const { l10n, meleeWeapons: mmelee_weapons } = props
+  const { staticData, meleeWeapons: mmelee_weapons } = props
 
   return (
     <TextBox
-      label={translate (l10n) ("sheets.combatsheet.closecombatweapons")}
+      label={translate (staticData) ("sheets.combatsheet.closecombatweapons")}
       className="melee-weapons"
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.weapon")}
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.weapon")}
             </th>
             <th className="combat-technique">
-              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.combattechnique")}
+              {translate (staticData)
+                         ("sheets.combatsheet.closecombatweapons.labels.combattechnique")}
             </th>
             <th className="damage-bonus">
-              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.damagebonus")}
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.damagebonus")}
             </th>
             <th className="damage">
-              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.damagepoints")}
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.damagepoints")}
             </th>
             <th className="mod" colSpan={2}>
-              {translate (l10n)
+              {translate (staticData)
                          ("sheets.combatsheet.closecombatweapons.labels.attackparrymodifier")}
             </th>
             <th className="reach">
-              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.reach")}
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.reach")}
             </th>
             <th className="bf">
-              {translate (l10n)
+              {translate (staticData)
                          ("sheets.combatsheet.closecombatweapons.labels.breakingpointrating")}
             </th>
             <th className="loss">
-              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.damaged")}
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.damaged")}
             </th>
             <th className="at">
-              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.attack")}
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.attack")}
             </th>
             <th className="pa">
-              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.parry")}
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.parry")}
             </th>
             <th className="weight">
-              {translate (l10n) ("sheets.combatsheet.closecombatweapons.labels.weight")}
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.weight")}
             </th>
           </tr>
         </thead>
@@ -98,7 +101,7 @@ export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
                     </td>
                     <td className="damage">
                       {renderMaybe (MWA.damageDiceNumber (e))}
-                      {translate (l10n) ("general.dice")}
+                      {translate (staticData) ("general.dice")}
                       {renderMaybe (MWA.damageDiceSides (e))}
                       {signZero (MWA.damageFlat (e))}
                     </td>
@@ -112,11 +115,8 @@ export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
                       {pipe_ (
                         e,
                         MWA.reach,
-                        bindF (pipe (
-                          dec,
-                          subscript (translate (l10n) ("reachlabels"))
-                        )),
-                        renderMaybe
+                        bindF (lookupF (SDA.reaches (staticData))),
+                        renderMaybeWith (NumIdName.A.name)
                       )}
                     </td>
                     <td className="bf">{MWA.bf (e)}</td>
@@ -128,13 +128,15 @@ export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
                       {fromMaybe<string | number> (ndash) (MWA.pa (e))}
                     </td>
                     <td className="weight">
-                      {translateP (l10n)
+                      {translateP (staticData)
                                   ("general.weightvalue")
-                                  (pipe_ (
-                                    e,
-                                    MWA.weight,
-                                    localizeWeight (l10n),
-                                    localizeNumber (l10n)
+                                  (List (
+                                    pipe_ (
+                                      e,
+                                      MWA.weight,
+                                      localizeWeight (staticData),
+                                      localizeNumber (staticData)
+                                    )
                                   ))}
                     </td>
                   </tr>

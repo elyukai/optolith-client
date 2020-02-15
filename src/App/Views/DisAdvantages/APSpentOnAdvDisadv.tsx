@@ -3,13 +3,13 @@ import { List } from "../../../Data/List"
 import { fromMaybe, Maybe } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translateP } from "../../Utilities/I18n"
 
 export interface APSpentOnAdvDisadvProps {
   ap: Record<AdventurePointsCategories>
   magicalMax: Maybe<number>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 const APCA = AdventurePointsCategories.A
@@ -18,7 +18,7 @@ export const APSpentOnAdvDisadv: React.FC<APSpentOnAdvDisadvProps> = props => {
   const {
     ap,
     magicalMax,
-    l10n,
+    staticData,
   } = props
 
   const adv_total = APCA.spentOnAdvantages (ap)
@@ -31,13 +31,13 @@ export const APSpentOnAdvDisadv: React.FC<APSpentOnAdvDisadvProps> = props => {
   return (
     <>
       <p>
-        {translateP (l10n)
+        {translateP (staticData)
                     ("advantagesdisadvantages.apspent.spentonadvantages")
                     (List (adv_total, 80))}
         <br />
         {
           adv_magical > 0
-            ? translateP (l10n)
+            ? translateP (staticData)
                          ("advantagesdisadvantages.apspent.spentonmagicadvantages")
                          (List (adv_magical, fromMaybe (50) (magicalMax)))
             : null
@@ -45,20 +45,20 @@ export const APSpentOnAdvDisadv: React.FC<APSpentOnAdvDisadvProps> = props => {
         {adv_magical > 0 && adv_blessed > 0 ? <br /> : null}
         {
           adv_blessed > 0
-            ? translateP (l10n)
+            ? translateP (staticData)
                          ("advantagesdisadvantages.apspent.spentonblessedadvantages")
                          (List (adv_blessed, 50))
             : null
         }
       </p>
       <p>
-        {translateP (l10n)
+        {translateP (staticData)
                     ("advantagesdisadvantages.apspent.spentondisadvantages")
                     (List (dis_total, 80))}
         <br />
         {
           dis_magical > 0
-            ? translateP (l10n)
+            ? translateP (staticData)
                          ("advantagesdisadvantages.apspent.spentonmagicdisadvantages")
                          (List (dis_magical, fromMaybe (50) (magicalMax)))
             : null
@@ -66,7 +66,7 @@ export const APSpentOnAdvDisadv: React.FC<APSpentOnAdvDisadvProps> = props => {
         {dis_magical > 0 && dis_blessed > 0 ? <br /> : null}
         {
           dis_blessed > 0
-            ? translateP (l10n)
+            ? translateP (staticData)
                          ("advantagesdisadvantages.apspent.spentonblesseddisadvantages")
                          (List (dis_blessed, 50))
             : null

@@ -5,7 +5,7 @@ import { flength, intercalate, List, map, replicateR, toArray } from "../../../.
 import { fromMaybe, Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { RangedWeapon } from "../../../Models/View/RangedWeapon"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
 import { signZero, toRoman } from "../../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
@@ -13,53 +13,57 @@ import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
 import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   rangedWeapons: Maybe<List<Record<RangedWeapon>>>
 }
 
 const RWA = RangedWeapon.A
 
 export const CombatSheetRangedWeapons: React.FC<Props> = props => {
-  const { l10n, rangedWeapons: mranged_weapons } = props
+  const { staticData, rangedWeapons: mranged_weapons } = props
 
   return (
     <TextBox
-      label={translate (l10n) ("sheets.combatsheet.rangedcombatweapons")}
+      label={translate (staticData) ("sheets.combatsheet.rangedcombatweapons")}
       className="melee-weapons"
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.weapon")}
+              {translate (staticData) ("sheets.combatsheet.rangedcombatweapons.labels.weapon")}
             </th>
             <th className="combat-technique">
-              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.combattechnique")}
+              {translate (staticData)
+                         ("sheets.combatsheet.rangedcombatweapons.labels.combattechnique")}
             </th>
             <th className="reload-time">
-              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.reloadtime")}
+              {translate (staticData) ("sheets.combatsheet.rangedcombatweapons.labels.reloadtime")}
             </th>
             <th className="damage">
-              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.damagepoints")}
+              {translate (staticData)
+                         ("sheets.combatsheet.rangedcombatweapons.labels.damagepoints")}
             </th>
             <th className="ammunition">
-              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.ammunition")}
+              {translate (staticData) ("sheets.combatsheet.rangedcombatweapons.labels.ammunition")}
             </th>
             <th className="range">
-              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.rangebrackets")}
+              {translate (staticData)
+                         ("sheets.combatsheet.rangedcombatweapons.labels.rangebrackets")}
             </th>
             <th className="bf">
-              {translate (l10n)
+              {translate (staticData)
                          ("sheets.combatsheet.rangedcombatweapons.labels.breakingpointrating")}
             </th>
             <th className="loss">
-              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.damaged")}
+              {translate (staticData) ("sheets.combatsheet.rangedcombatweapons.labels.damaged")}
             </th>
             <th className="ranged">
-              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.rangedcombat")}
+              {translate (staticData)
+                         ("sheets.combatsheet.rangedcombatweapons.labels.rangedcombat")}
             </th>
             <th className="weight">
-              {translate (l10n) ("sheets.combatsheet.rangedcombatweapons.labels.weight")}
+              {translate (staticData) ("sheets.combatsheet.rangedcombatweapons.labels.weight")}
             </th>
           </tr>
         </thead>
@@ -76,11 +80,11 @@ export const CombatSheetRangedWeapons: React.FC<Props> = props => {
                   <td className="reload-time">
                     {renderMaybe (RWA.reloadTime (e))}
                     {" "}
-                    {translate (l10n) ("sheets.combatsheet.actions")}
+                    {translate (staticData) ("sheets.combatsheet.actions")}
                   </td>
                   <td className="damage">
                     {renderMaybe (RWA.damageDiceNumber (e))}
-                    {translate (l10n) ("general.dice")}
+                    {translate (staticData) ("general.dice")}
                     {renderMaybe (RWA.damageDiceSides (e))}
                     {signZero (Maybe.sum (RWA.damageFlat (e)))}
                   </td>
@@ -96,14 +100,14 @@ export const CombatSheetRangedWeapons: React.FC<Props> = props => {
                   </td>
                   <td className="ranged">{RWA.at (e)}</td>
                   <td className="weight">
-                    {translateP (l10n)
+                    {translateP (staticData)
                                 ("general.weightvalue")
                                 (List (
                                   pipe_ (
                                     e,
                                     RWA.weight,
-                                    localizeWeight (l10n),
-                                    localizeNumber (l10n)
+                                    localizeWeight (staticData),
+                                    localizeNumber (staticData)
                                   )
                                 ))}
                   </td>

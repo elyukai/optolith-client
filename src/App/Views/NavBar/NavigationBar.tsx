@@ -9,7 +9,7 @@ import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { SubTab } from "../../Models/Hero/heroTypeHelpers"
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
 import { NavigationBarTabOptions } from "../../Models/View/NavigationBarTabOptions"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate, translateP } from "../../Utilities/I18n"
 import { TabId } from "../../Utilities/LocationUtils"
 import { signNeg } from "../../Utilities/NumberUtils"
@@ -33,7 +33,7 @@ const toggleDevtools = () => {
 
 export interface NavigationBarOwnProps {
   mhero: Maybe<HeroModelRecord>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   platform: string
   checkForUpdates (): void
 }
@@ -76,7 +76,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
     closeSettings,
     isHeroSection,
     avatar,
-    l10n,
+    staticData,
     undo,
     isRedoAvailable,
     isUndoAvailable,
@@ -116,7 +116,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
             ? (
               <>
                 {maybe (<Text className="collected-ap">
-                          {translateP (l10n) ("header.apleft") (List ("X"))}
+                          {translateP (staticData) ("header.apleft") (List ("X"))}
                         </Text>)
                         ((ap: Record<AdventurePointsCategories>) => (
                           <TooltipToggle
@@ -125,7 +125,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
                             content={
                               <ApTooltip
                                 adventurePoints={ap}
-                                l10n={l10n}
+                                staticData={staticData}
                                 maximumForMagicalAdvantagesDisadvantages={
                                   maximumForMagicalAdvantagesDisadvantages
                                 }
@@ -135,7 +135,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
                             }
                             target={
                               <Text className="collected-ap">
-                                {translateP (l10n)
+                                {translateP (staticData)
                                             ("header.apleft")
                                             (List (
                                               pipe_ (
@@ -163,7 +163,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
                   disabled={!isRedoAvailable}
                   />
                 <BorderButton
-                  label={translate (l10n) ("header.savebtn")}
+                  label={translate (staticData) ("header.savebtn")}
                   onClick={saveHero}
                   />
               </>
@@ -174,7 +174,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
             onClick={openSettings}
             />
           <SettingsContainer
-            l10n={l10n}
+            staticData={staticData}
             isSettingsOpen={isSettingsOpen}
             platform={platform}
             close={closeSettings}
