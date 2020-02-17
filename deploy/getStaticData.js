@@ -13,7 +13,7 @@ const src_dir = join (...repository, "Schema")
  * @param {string} dest_dir Destination directory where the contents will be
  * copied to
  */
-export const copySchema =
+const copySchema =
   async (src_dir, dest_dir) => {
     const src = join (src_dir)
 
@@ -53,7 +53,8 @@ const getStaticData = async () => {
 
 
 module.exports = {
-  getStaticData
+  getStaticData,
+  copySchema
 }
 
 
