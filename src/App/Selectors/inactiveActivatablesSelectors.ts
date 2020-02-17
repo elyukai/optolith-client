@@ -56,7 +56,6 @@ export const getInactiveForView =
     createMapSelector (stateSelectors.getHeroes)
                       (getAPObjectMap)
                       (
-                        stateSelectors.getLocaleAsProp,
                         getExtendedSpecialAbilitiesToAdd,
                         stateSelectors.getWiki,
                         getMagicalTraditionsFromHero,
@@ -66,9 +65,8 @@ export const getInactiveForView =
                       (heroReducer.A.present)
                       (madventure_points =>
                        (
-                         l10n,
                          validExtendedSpecialAbilities,
-                         wiki,
+                         staticData,
                          hero_magical_traditions,
                          automatic_advantages,
                          matching_script_and_lang_rel
@@ -77,14 +75,13 @@ export const getInactiveForView =
                          fmapF (join (madventure_points))
                                (adventure_points => {
                                  const wikiKey = getWikiSliceGetterByCategory (category)
-                                 const wikiSlice = wikiKey (wiki)
+                                 const wikiSlice = wikiKey (staticData)
 
                                  const stateSlice = getActivatableHeroSliceByCategory (category)
                                                                                       (hero)
 
                                  return mapMaybe ((wiki_entry: WikiEntryRecordByCategory[T]) =>
-                                                   getInactiveView (l10n)
-                                                                   (wiki)
+                                                   getInactiveView (staticData)
                                                                    (hero)
                                                                    (automatic_advantages)
                                                                    (matching_script_and_lang_rel)

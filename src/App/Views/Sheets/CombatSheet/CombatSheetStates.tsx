@@ -2,20 +2,21 @@ import * as React from "react"
 import { List, map, splitAt, toArray } from "../../../../Data/List"
 import { Record } from "../../../../Data/Record"
 import { fst, snd } from "../../../../Data/Tuple"
-import { NumIdName } from "../../../Models/NumIdName"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { Condition } from "../../../Models/Wiki/Condition"
+import { State } from "../../../Models/Wiki/State"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
 import { toRoman } from "../../../Utilities/NumberUtils"
 import { pipe_ } from "../../../Utilities/pipe"
 
 interface Props {
-  l10n: L10nRecord
-  conditions: List<Record<NumIdName>>
-  states: List<Record<NumIdName>>
+  staticData: StaticDataRecord
+  conditions: List<Record<Condition>>
+  states: List<Record<State>>
 }
 
 export const CombatSheetStates: React.FC<Props> = props => {
-  const { l10n, conditions, states } = props
+  const { staticData, conditions, states } = props
 
   const statesSplit = splitAt (9) (states)
 
@@ -23,7 +24,7 @@ export const CombatSheetStates: React.FC<Props> = props => {
     <div className="status">
       <div className="status-tiers">
         <header>
-          <h4>{translate (l10n) ("conditions")}</h4>
+          <h4>{translate (staticData) ("sheets.combatsheet.conditions")}</h4>
           <div>{toRoman (1)}</div>
           <div>{toRoman (2)}</div>
           <div>{toRoman (3)}</div>
@@ -32,8 +33,8 @@ export const CombatSheetStates: React.FC<Props> = props => {
         {pipe_ (
           conditions,
           map (e => (
-            <div key={NumIdName.A.id (e)}>
-              <span>{NumIdName.A.name (e)}</span>
+            <div key={Condition.A.id (e)}>
+              <span>{Condition.A.name (e)}</span>
               <div>
                 <div />
               </div>
@@ -53,14 +54,14 @@ export const CombatSheetStates: React.FC<Props> = props => {
       </div>
       <div className="status-effects">
         <header>
-          <h4>{translate (l10n) ("states")}</h4>
+          <h4>{translate (staticData) ("sheets.combatsheet.states")}</h4>
         </header>
         {pipe_ (
           statesSplit,
           fst,
           map (e => (
-            <div key={NumIdName.A.id (e)}>
-              <span>{NumIdName.A.name (e)}</span>
+            <div key={State.A.id (e)}>
+              <span>{State.A.name (e)}</span>
               <div>
                 <div />
               </div>
@@ -74,8 +75,8 @@ export const CombatSheetStates: React.FC<Props> = props => {
           statesSplit,
           snd,
           map (e => (
-            <div key={NumIdName.A.id (e)}>
-              <span>{NumIdName.A.name (e)}</span>
+            <div key={State.A.id (e)}>
+              <span>{State.A.name (e)}</span>
               <div>
                 <div />
               </div>

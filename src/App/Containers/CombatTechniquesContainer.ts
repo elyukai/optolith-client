@@ -1,7 +1,7 @@
 import { connect } from "react-redux"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as CombatTechniquesActions from "../Actions/CombatTechniquesActions"
-import { AppStateRecord } from "../Reducers/appReducer"
+import { AppStateRecord } from "../Models/AppState"
 import { getAttributesForSheet } from "../Selectors/attributeSelectors"
 import { getFilteredCombatTechniques } from "../Selectors/combatTechniquesSelectors"
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"
@@ -21,12 +21,9 @@ const mapStateToProps = (
   filterText: getCombatTechniquesFilterText (state),
 })
 
-const mapDispatchToProps = (
-  dispatch: ReduxDispatch,
-  { l10n }: CombatTechniquesOwnProps
-) => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch) => ({
   async addPoint (id: string) {
-    await dispatch (CombatTechniquesActions.addCombatTechniquePoint (l10n) (id))
+    await dispatch (CombatTechniquesActions.addCombatTechniquePoint (id))
   },
   removePoint (id: string) {
     dispatch (CombatTechniquesActions.removeCombatTechniquePoint (id))

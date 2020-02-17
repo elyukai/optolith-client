@@ -9,7 +9,7 @@ import { EditHitZoneArmor } from "../../Models/Hero/EditHitZoneArmor"
 import { Item, itemToDropdown } from "../../Models/Hero/Item"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { ItemTemplate, itemTemplateToDropdown } from "../../Models/Wiki/ItemTemplate"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { getLossLevelElements } from "../../Utilities/ItemUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
@@ -21,7 +21,7 @@ import { HitZoneArmorEditorRow } from "./HitZoneArmorEditorRow"
 export interface HitZoneArmorEditorProps {
   armorZonesEditor: Record<EditHitZoneArmor>
   isInHitZoneArmorCreation: Maybe<boolean>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   items: Maybe<List<Record<Item>>>
   templates: List<Record<ItemTemplate>>
   addToList (): void
@@ -52,7 +52,7 @@ export const HitZoneArmorEditor: React.FC<HitZoneArmorEditorProps> = props => {
     closeEditor,
     isInHitZoneArmorCreation,
     items: mitems,
-    l10n,
+    staticData,
     templates,
     addToList,
     saveItem,
@@ -84,8 +84,8 @@ export const HitZoneArmorEditor: React.FC<HitZoneArmorEditorProps> = props => {
               append
             ))
             (mitems),
-      sortRecordsByName (l10n),
-      consF (DropdownOption ({ name: translate (l10n) ("none") }))
+      sortRecordsByName (staticData),
+      consF (DropdownOption ({ name: translate (staticData) ("general.none") }))
     )
 
   const lossLevels = getLossLevelElements ()
@@ -95,8 +95,8 @@ export const HitZoneArmorEditor: React.FC<HitZoneArmorEditorProps> = props => {
       id="armor-zones-editor"
       title={
         Maybe.elem (true) (isInHitZoneArmorCreation)
-          ? translate (l10n) ("createhitzonearmor")
-          : translate (l10n) ("edithitzonearmor")
+          ? translate (staticData) ("hitzonearmors.dialogs.addedit.createhitzonearmor")
+          : translate (staticData) ("hitzonearmors.dialogs.addedit.edithitzonearmor")
       }
       isOpen
       close={closeEditor}
@@ -104,7 +104,7 @@ export const HitZoneArmorEditor: React.FC<HitZoneArmorEditorProps> = props => {
         {
           autoWidth: true,
           disabled: EHZAA.name (armorZonesEditor) === "",
-          label: translate (l10n) ("save"),
+          label: translate (staticData) ("general.dialogs.savebtn"),
           onClick: Maybe.elem (true) (isInHitZoneArmorCreation) ? addToList : saveItem,
         },
       ]}
@@ -113,7 +113,7 @@ export const HitZoneArmorEditor: React.FC<HitZoneArmorEditorProps> = props => {
         <div className="row">
           <TextField
             className="name"
-            label={translate (l10n) ("name")}
+            label={translate (staticData) ("hitzonearmors.dialogs.addedit.name")}
             value={EHZAA.name (armorZonesEditor)}
             onChange={setName}
             autoFocus={Maybe.elem (true) (isInHitZoneArmorCreation)}
@@ -123,9 +123,9 @@ export const HitZoneArmorEditor: React.FC<HitZoneArmorEditorProps> = props => {
           armorList={armorList}
           component={EHZAA.head (armorZonesEditor)}
           componentLoss={EHZAA.headLoss (armorZonesEditor)}
-          l10n={l10n}
+          staticData={staticData}
           lossLevels={lossLevels}
-          name="head"
+          name="hitzonearmors.dialogs.addedit.head"
           setComponent={setHead}
           setComponentLoss={setHeadLoss}
           />
@@ -133,9 +133,9 @@ export const HitZoneArmorEditor: React.FC<HitZoneArmorEditorProps> = props => {
           armorList={armorList}
           component={EHZAA.torso (armorZonesEditor)}
           componentLoss={EHZAA.torsoLoss (armorZonesEditor)}
-          l10n={l10n}
+          staticData={staticData}
           lossLevels={lossLevels}
-          name="torso"
+          name="hitzonearmors.dialogs.addedit.torso"
           setComponent={setTorso}
           setComponentLoss={setTorsoLoss}
           />
@@ -143,9 +143,9 @@ export const HitZoneArmorEditor: React.FC<HitZoneArmorEditorProps> = props => {
           armorList={armorList}
           component={EHZAA.leftArm (armorZonesEditor)}
           componentLoss={EHZAA.leftArmLoss (armorZonesEditor)}
-          l10n={l10n}
+          staticData={staticData}
           lossLevels={lossLevels}
-          name="leftarm"
+          name="hitzonearmors.dialogs.addedit.leftarm"
           setComponent={setLeftArm}
           setComponentLoss={setLeftArmLoss}
           />
@@ -153,9 +153,9 @@ export const HitZoneArmorEditor: React.FC<HitZoneArmorEditorProps> = props => {
           armorList={armorList}
           component={EHZAA.rightArm (armorZonesEditor)}
           componentLoss={EHZAA.rightArmLoss (armorZonesEditor)}
-          l10n={l10n}
+          staticData={staticData}
           lossLevels={lossLevels}
-          name="rightarm"
+          name="hitzonearmors.dialogs.addedit.rightarm"
           setComponent={setRightArm}
           setComponentLoss={setRightArmLoss}
           />
@@ -163,9 +163,9 @@ export const HitZoneArmorEditor: React.FC<HitZoneArmorEditorProps> = props => {
           armorList={armorList}
           component={EHZAA.leftLeg (armorZonesEditor)}
           componentLoss={EHZAA.leftLegLoss (armorZonesEditor)}
-          l10n={l10n}
+          staticData={staticData}
           lossLevels={lossLevels}
-          name="leftleg"
+          name="hitzonearmors.dialogs.addedit.leftleg"
           setComponent={setLeftLeg}
           setComponentLoss={setLeftLegLoss}
           />
@@ -173,9 +173,9 @@ export const HitZoneArmorEditor: React.FC<HitZoneArmorEditorProps> = props => {
           armorList={armorList}
           component={EHZAA.rightLeg (armorZonesEditor)}
           componentLoss={EHZAA.rightLegLoss (armorZonesEditor)}
-          l10n={l10n}
+          staticData={staticData}
           lossLevels={lossLevels}
-          name="rightleg"
+          name="hitzonearmors.dialogs.addedit.rightleg"
           setComponent={setRightLeg}
           setComponentLoss={setRightLegLoss}
           />

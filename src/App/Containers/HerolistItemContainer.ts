@@ -4,8 +4,8 @@ import { join, Just } from "../../Data/Maybe"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as HerolistActions from "../Actions/HerolistActions"
 import * as LocationActions from "../Actions/LocationActions"
+import { AppStateRecord } from "../Models/AppState"
 import { HeroModel } from "../Models/Hero/HeroModel"
-import { AppStateRecord } from "../Reducers/appReducer"
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
 import { getUnsavedHeroesById } from "../Selectors/herolistSelectors"
 import { getUsers, getWiki } from "../Selectors/stateSelectors"
@@ -18,13 +18,13 @@ const mapStateToProps = (state: AppStateRecord, props: HerolistItemOwnProps) => 
   ap: join (getAPObjectMap (HA.id (props .hero)) (state, props)),
   unsavedHeroesById: getUnsavedHeroesById (state),
   users: getUsers (state),
-  wiki: getWiki (state),
+  staticData: getWiki (state),
 })
 
 const mapDispatchToProps = (
   dispatch: ReduxDispatch<Action>,
-  { l10n, hero }: HerolistItemOwnProps
-) => ({
+  { hero }: HerolistItemOwnProps
+): HerolistItemDispatchProps => ({
   loadHero () {
     dispatch (HerolistActions.loadHero (HA.id (hero)))
   },
@@ -32,13 +32,13 @@ const mapDispatchToProps = (
     dispatch (LocationActions.setTab (TabId.Profile))
   },
   async saveHero () {
-    await dispatch (HerolistActions.saveHero (l10n) (Just (HA.id (hero))))
+    await dispatch (HerolistActions.saveHero (Just (HA.id (hero))))
   },
   saveHeroAsJSON () {
-    dispatch (HerolistActions.exportHeroValidate (l10n) (HA.id (hero)))
+    dispatch (HerolistActions.exportHeroValidate (HA.id (hero)))
   },
   async deleteHero () {
-    await dispatch (HerolistActions.deleteHeroValidate (l10n) (HA.id (hero)))
+    await dispatch (HerolistActions.deleteHeroValidate (HA.id (hero)))
   },
   duplicateHero () {
     dispatch (HerolistActions.duplicateHero (HA.id (hero)))

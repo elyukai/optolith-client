@@ -7,16 +7,17 @@ import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { compareLocale } from "../Utilities/I18n"
 import { pipe } from "../Utilities/pipe"
 import { comparingR, sortByMulti, sortRecordsByName } from "../Utilities/sortBy"
-import { getLocaleAsProp, getWikiBooks } from "./stateSelectors"
+import { getWiki, getWikiBooks } from "./stateSelectors"
 
 export const getSortedBooks = createMaybeSelector (
-  getLocaleAsProp,
+  getWiki,
   getWikiBooks,
-  uncurryN (l10n => pipe (
-                           elems,
-                           partition (Book.A.isCore),
-                           bimap (sortByMulti ([ comparingR (Book.A.id) (compareLocale (l10n)) ]))
-                                 (sortRecordsByName (l10n)),
-                           p => append (fst (p)) (snd (p))
-                    ))
+  uncurryN (staticData => pipe (
+                            elems,
+                            partition (Book.A.isCore),
+                            bimap (sortByMulti ([ comparingR (Book.A.id)
+                                                             (compareLocale (staticData)) ]))
+                                  (sortRecordsByName (staticData)),
+                            p => append (fst (p)) (snd (p))
+                          ))
 )

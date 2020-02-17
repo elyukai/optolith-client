@@ -8,7 +8,7 @@ import { uncurry3 } from "../../Data/Tuple/Curry"
 import { Rules } from "../Models/Hero/Rules"
 import { Book } from "../Models/Wiki/Book"
 import { SourceLink } from "../Models/Wiki/sub/SourceLink"
-import { WikiModel } from "../Models/Wiki/WikiModel"
+import { StaticData } from "../Models/Wiki/WikiModel"
 import { EnabledSourceBooks } from "../Selectors/rulesSelectors"
 import { pipe } from "./pipe"
 
@@ -68,7 +68,7 @@ export const isAvailableF =
 export const isEntryFromCoreBook =
   <A>
   (f: (x: A) => List<Record<SourceLink>>) =>
-  (bs: WikiModel["books"]):
+  (bs: StaticData["books"]):
   (x: A) => boolean =>
     pipe (f, any (pipe (SLA.id, lookupF (bs), Maybe.any (BA.isCore))))
 

@@ -9,7 +9,7 @@ import { SkillOptionalDependency } from "../../Models/Hero/SkillOptionalDependen
 import { Advantage } from "../../Models/Wiki/Advantage"
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement"
 import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite"
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { AbilityRequirement, Activatable } from "../../Models/Wiki/wikiTypeHelpers"
 import { getHeroStateItem } from "../heroStateUtils"
 import { pipe } from "../pipe"
@@ -32,7 +32,7 @@ const { id } = RequireActivatable.AL
  * @param dependencies The list of dependencies to flatten.
  */
 export const flattenDependencies =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   <T extends number | boolean>
   (dependencies: List<T | Record<SkillOptionalDependency>>) =>

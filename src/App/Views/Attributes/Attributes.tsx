@@ -5,8 +5,8 @@ import { Record } from "../../../Data/Record"
 import { EnergyId } from "../../Constants/Ids"
 import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { AttributeWithRequirements } from "../../Models/View/AttributeWithRequirements"
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { DCPair } from "../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../Utilities/I18n"
 import { Page } from "../Universal/Page"
 import { Scroll } from "../Universal/Scroll"
@@ -16,13 +16,13 @@ import { AttributesAdjustment } from "./AttributesAdjustment"
 import { AttributesPermanentList } from "./AttributesPermanentList"
 
 export interface AttributesOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   hero: HeroModelRecord
 }
 
 export interface AttributesStateProps {
   attributes: Maybe<List<Record<AttributeWithRequirements>>>
-  derived: List<Record<DerivedCharacteristic>>
+  derived: List<DCPair>
   isInCharacterCreation: boolean
   isRemovingEnabled: boolean
   maxTotalAttributeValues: Maybe<number>
@@ -67,7 +67,7 @@ export type AttributesProps = AttributesStateProps & AttributesDispatchProps & A
 
 export const Attributes: React.FC<AttributesProps> = props => {
   const {
-    l10n,
+    staticData,
     attributes,
     derived,
     isInCharacterCreation,
@@ -111,7 +111,7 @@ export const Attributes: React.FC<AttributesProps> = props => {
     <Page id="attribute">
       <Scroll>
         <div className="counter">
-          {translate (l10n) ("attributetotal")}
+          {translate (staticData) ("attributes.totalpoints")}
           {": "}
           {sum}
           {isInCharacterCreation ? ` / ${Maybe.sum (maxTotalAttributeValues)}` : ""}
@@ -133,14 +133,14 @@ export const Attributes: React.FC<AttributesProps> = props => {
                 attributes={attributes}
                 availableAttributeIds={availableAttributeIds}
                 currentAttributeId={currentAttributeId}
-                l10n={l10n}
+                staticData={staticData}
                 setAdjustmentId={setAdjustmentId}
                 />
             )
             : null}
           <AttributeCalc
             derived={derived}
-            l10n={l10n}
+            staticData={staticData}
             isInCharacterCreation={isInCharacterCreation}
             isRemovingEnabled={isRemovingEnabled}
             addLifePoint={addLifePoint}
@@ -152,7 +152,7 @@ export const Attributes: React.FC<AttributesProps> = props => {
             />
           <AttributesPermanentList
             derived={derived}
-            l10n={l10n}
+            staticData={staticData}
             isRemovingEnabled={isRemovingEnabled}
             getEditPermanentEnergy={getEditPermanentEnergy}
             getAddPermanentEnergy={getAddPermanentEnergy}

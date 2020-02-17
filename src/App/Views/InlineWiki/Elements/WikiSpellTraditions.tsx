@@ -1,14 +1,20 @@
 import * as React from "react"
-import { elem, flength, intercalate, List, subscript } from "../../../../Data/List"
-import { bindF, ensure, mapMaybe } from "../../../../Data/Maybe"
-import { dec, lte } from "../../../../Data/Num"
+import { fmap } from "../../../../Data/Functor"
+import { elem, intercalate, List } from "../../../../Data/List"
+import { mapMaybe, Maybe } from "../../../../Data/Maybe"
+import { find, lookupF } from "../../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { MagicalTradition } from "../../../Constants/Groups"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
-import { translate } from "../../../Utilities/I18n"
+import { NumIdName } from "../../../Models/NumIdName"
+import { MagicalTradition as MagicalTraditionR } from "../../../Models/Wiki/MagicalTradition"
+import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { sortStrings } from "../../../Utilities/sortBy"
 import { WikiProperty } from "../WikiProperty"
+
+const SDA = StaticData.A
+const NINA = NumIdName.A
+const MTA = MagicalTraditionR.A
 
 interface Accessors<A extends RecordIBase<any>> {
   subtradition: (r: Record<A>) => List<number>
@@ -18,7 +24,7 @@ interface Accessors<A extends RecordIBase<any>> {
 export interface WikiSpellTraditionsProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 type FC = <A extends RecordIBase<any>> (props: WikiSpellTraditionsProps<A>) => ReturnType<React.FC>
@@ -27,49 +33,61 @@ export const WikiSpellTraditions: FC = props => {
   const {
     x,
     acc,
-    l10n,
+    staticData,
   } = props
 
   const trad = acc.tradition (x)
   const subtrad = acc.subtradition (x)
 
-  if (elem (MagicalTradition.Animisten) (trad)) {
+  if (elem (MagicalTradition.Animists) (trad)) {
     return (
-      <WikiProperty l10n={l10n} title="tribaltraditions">
+      <WikiProperty staticData={staticData} title="inlinewiki.tribaltraditions">
         {pipe_ (
           subtrad,
-          mapMaybe (pipe (dec, subscript (translate (l10n) ("tribes")))),
-          sortStrings (l10n),
+          mapMaybe (pipe (lookupF (SDA.tribes (staticData)), fmap (NINA.name))),
+          sortStrings (staticData),
           intercalate (", ")
         )}
       </WikiProperty>
     )
   }
 
-  if (elem (MagicalTradition.Zauberbarden) (trad) || elem (MagicalTradition.Zaubertaenzer) (trad)) {
+  if (elem (MagicalTradition.ArcaneBards) (trad)) {
     return (
-      <WikiProperty l10n={l10n} title="musictradition">
+      <WikiProperty staticData={staticData} title="inlinewiki.musictradition">
         {pipe_ (
           subtrad,
-          mapMaybe (pipe (dec, subscript (translate (l10n) ("musictraditions")))),
-          sortStrings (l10n),
+          mapMaybe (pipe (lookupF (SDA.arcaneBardTraditions (staticData)), fmap (NINA.name))),
+          sortStrings (staticData),
           intercalate (", ")
         )}
       </WikiProperty>
     )
   }
 
-  const trad_strs = translate (l10n) ("magicaltraditions")
+  if (elem (MagicalTradition.ArcaneDancers) (trad)) {
+    return (
+      <WikiProperty staticData={staticData} title="inlinewiki.musictradition">
+        {pipe_ (
+          subtrad,
+          mapMaybe (pipe (lookupF (SDA.arcaneDancerTraditions (staticData)), fmap (NINA.name))),
+          sortStrings (staticData),
+          intercalate (", ")
+        )}
+      </WikiProperty>
+    )
+  }
+
+  const getTrad = (numId: number) => find ((mt: Record<MagicalTraditionR>) =>
+                                            Maybe.elem (numId) (MTA.numId (mt)))
+                                          (SDA.magicalTraditions (staticData))
 
   return (
-    <WikiProperty l10n={l10n} title="traditions">
+    <WikiProperty staticData={staticData} title="inlinewiki.traditions">
       {pipe_ (
         trad,
-        mapMaybe (pipe (
-          ensure (lte (flength (trad_strs))),
-          bindF (pipe (dec, subscript (trad_strs)))
-        )),
-        sortStrings (l10n),
+        mapMaybe (pipe (getTrad, fmap (MTA.name))),
+        sortStrings (staticData),
         intercalate (", ")
       )}
     </WikiProperty>

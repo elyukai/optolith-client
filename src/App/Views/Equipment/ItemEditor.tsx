@@ -7,7 +7,7 @@ import { EditItem } from "../../Models/Hero/EditItem"
 import { Attribute } from "../../Models/Wiki/Attribute"
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { ItemEditorInputValidation, validateItemEditorInput } from "../../Utilities/itemEditorInputValidationUtils"
 import { Dialog } from "../Universal/Dialog"
@@ -17,7 +17,7 @@ import { ItemEditorMeleeSection } from "./ItemEditorMeleeSection"
 import { ItemEditorRangedSection } from "./ItemEditorRangedSection"
 
 export interface ItemEditorOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 export interface ItemEditorStateProps {
@@ -81,7 +81,7 @@ const IEIVA = ItemEditorInputValidation.A
 
 export const ItemEditor: React.FC<ItemEditorProps> = props => {
   const {
-    l10n,
+    staticData,
     attributes,
     combatTechniques,
     isInCreation,
@@ -143,7 +143,11 @@ export const ItemEditor: React.FC<ItemEditorProps> = props => {
     return (
       <Dialog
         id="item-editor"
-        title={or (isInCreation) ? translate (l10n) ("createitem") : translate (l10n) ("edititem")}
+        title={
+          or (isInCreation)
+          ? translate (staticData) ("equipment.dialogs.addedit.createitem")
+          : translate (staticData) ("equipment.dialogs.addedit.edititem")
+        }
         close={closeEditor}
         isOpen
         buttons={[
@@ -161,7 +165,7 @@ export const ItemEditor: React.FC<ItemEditorProps> = props => {
                   || !IEIVA.other (inputValidation)
                 )
               ),
-            label: translate (l10n) ("save"),
+            label: translate (staticData) ("general.dialogs.savebtn"),
             onClick: or (isInCreation) ? addToList : saveItem,
           },
         ]}
@@ -170,7 +174,7 @@ export const ItemEditor: React.FC<ItemEditorProps> = props => {
           item={item}
           inputValidation={inputValidation}
           isInCreation={isInCreation}
-          l10n={l10n}
+          staticData={staticData}
           templates={templates}
           setName={setName}
           setPrice={setPrice}
@@ -190,7 +194,7 @@ export const ItemEditor: React.FC<ItemEditorProps> = props => {
           inputValidation={inputValidation}
           attributes={attributes}
           combatTechniques={combatTechniques}
-          l10n={l10n}
+          staticData={staticData}
           setCombatTechnique={setCombatTechnique}
           setDamageDiceNumber={setDamageDiceNumber}
           setDamageDiceSides={setDamageDiceSides}
@@ -214,7 +218,7 @@ export const ItemEditor: React.FC<ItemEditorProps> = props => {
           item={item}
           inputValidation={inputValidation}
           combatTechniques={combatTechniques}
-          l10n={l10n}
+          staticData={staticData}
           templates={templates}
           setCombatTechnique={setCombatTechnique}
           setDamageDiceNumber={setDamageDiceNumber}
@@ -230,7 +234,7 @@ export const ItemEditor: React.FC<ItemEditorProps> = props => {
         <ItemEditorArmorSection
           item={item}
           inputValidation={inputValidation}
-          l10n={l10n}
+          staticData={staticData}
           setProtection={setProtection}
           setEncumbrance={setEncumbrance}
           setMovementModifier={setMovementModifier}

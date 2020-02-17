@@ -4,47 +4,48 @@ import { bind, bindF, Maybe } from "../../Data/Maybe"
 import { lookupF } from "../../Data/OrderedMap"
 import { peekFst } from "../../Data/Queue"
 import { Record } from "../../Data/Record"
+import { AppState, AppStateRecord } from "../Models/AppState"
+import { FiltersState } from "../Models/FiltersState"
 import { Belongings } from "../Models/Hero/Belongings"
 import { Energies } from "../Models/Hero/Energies"
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
 import { PersonalData } from "../Models/Hero/PersonalData"
 import { Rules } from "../Models/Hero/Rules"
+import { HeroesState } from "../Models/HeroesState"
+import { LocaleState } from "../Models/LocaleState"
+import { SubWindowsState } from "../Models/SubWindowsState"
+import { UIState } from "../Models/UIState"
+import { UIWikiState } from "../Models/UIWikiState"
 import { L10nRecord } from "../Models/Wiki/L10n"
-import { WikiModel } from "../Models/Wiki/WikiModel"
-import { AppStateRecord } from "../Reducers/appReducer"
-import { appSlicesReducer } from "../Reducers/appSlicesReducer"
-import { FiltersState } from "../Reducers/filtersReducer"
-import { HeroesState } from "../Reducers/herolistReducer"
+import { StaticData } from "../Models/Wiki/WikiModel"
 import { heroReducer } from "../Reducers/heroReducer"
-import { LocaleState } from "../Reducers/localeReducer"
-import { SubWindowsState } from "../Reducers/subwindowsReducer"
-import { uiReducer } from "../Reducers/uiReducer"
-import { UIWikiState } from "../Reducers/wikiUIReducer"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { pipe } from "../Utilities/pipe"
 import { UndoState } from "../Utilities/undo"
 
-const App = appSlicesReducer.A
-const UIA = uiReducer.A
+const ASA = AppState.A
+const UIA = UIState.A
 const LSA = LocaleState.A
 const HSA = HeroesState.A
 const HRA = heroReducer.A
 const HA = HeroModel.A
+const Filt = FiltersState.A
+const SubW = SubWindowsState.A
+const WikiUI = UIWikiState.A
 
-export const getCurrentTab = pipe (App.ui, UIA.location)
+export const getCurrentTab = pipe (ASA.ui, UIA.location)
 
-export const getLoadingPhase = App.isReady
-
-export const getLocaleMessages = pipe (App.l10n, LSA.messages)
-export const getLocaleId = pipe (App.l10n, LSA.id)
-export const getLocaleType = pipe (App.l10n, LSA.type)
+export const getLocaleMessages = pipe (ASA.l10n, LSA.messages)
+export const getLocaleId = pipe (ASA.l10n, LSA.id)
+export const getLocaleType = pipe (ASA.l10n, LSA.type)
+export const getAvailableLanguages = pipe (ASA.l10n, LSA.availableLangs)
 
 export const getLocaleAsProp =
   (_: AppStateRecord, props: { l10n: L10nRecord }) => props.l10n
 
-export const getCurrentHeroId = pipe (App.herolist, HSA.currentId)
-export const getHeroes = pipe (App.herolist, HSA.heroes)
-export const getUsers = pipe (App.herolist, HSA.users)
+export const getCurrentHeroId = pipe (ASA.herolist, HSA.currentId)
+export const getHeroes = pipe (ASA.herolist, HSA.heroes)
+export const getUsers = pipe (ASA.herolist, HSA.users)
 
 
 export const getCurrentHero = createMaybeSelector (
@@ -288,167 +289,161 @@ export const getIsInPetCreation =
 export const getTransferredUnfamiliarSpells = pipe (getHeroProp, HA.transferredUnfamiliarSpells)
 
 
-export const getAlerts = pipe (App.ui, UIA.alerts)
+export const getAlerts = pipe (ASA.ui, UIA.alerts)
 
-export const getCurrentAlert = pipe (App.ui, UIA.alerts, peekFst)
+export const getCurrentAlert = pipe (ASA.ui, UIA.alerts, peekFst)
 
-
-const SubW = SubWindowsState.A
 
 export const getUpdateDownloadProgress =
-  pipe (App.ui, UIA.subwindows, SubW.updateDownloadProgress)
+  pipe (ASA.ui, UIA.subwindows, SubW.updateDownloadProgress)
 
 export const getAddPermanentEnergy =
-  pipe (App.ui, UIA.subwindows, SubW.addPermanentEnergy)
+  pipe (ASA.ui, UIA.subwindows, SubW.addPermanentEnergy)
 
 export const getEditPermanentEnergy =
-  pipe (App.ui, UIA.subwindows, SubW.editPermanentEnergy)
+  pipe (ASA.ui, UIA.subwindows, SubW.editPermanentEnergy)
 
 export const getIsAddAdventurePointsOpen =
-  pipe (App.ui, UIA.subwindows, SubW.isAddAdventurePointsOpen)
+  pipe (ASA.ui, UIA.subwindows, SubW.isAddAdventurePointsOpen)
 
 export const getIsCharacterCreatorOpen =
-  pipe (App.ui, UIA.subwindows, SubW.isCharacterCreatorOpen)
+  pipe (ASA.ui, UIA.subwindows, SubW.isCharacterCreatorOpen)
 
 export const getIsSettingsOpen =
-  pipe (App.ui, UIA.subwindows, SubW.isSettingsOpen)
+  pipe (ASA.ui, UIA.subwindows, SubW.isSettingsOpen)
 
 export const getIsEditCharacterAvatarOpen =
-  pipe (App.ui, UIA.subwindows, SubW.isEditCharacterAvatarOpen)
+  pipe (ASA.ui, UIA.subwindows, SubW.isEditCharacterAvatarOpen)
 
 export const getIsEditPetAvatarOpen =
-  pipe (App.ui, UIA.subwindows, SubW.isEditPetAvatarOpen)
+  pipe (ASA.ui, UIA.subwindows, SubW.isEditPetAvatarOpen)
 
-
-const Filt = FiltersState.A
 
 export const getAdvantagesFilterText =
-  pipe (App.ui, UIA.filters, Filt.advantagesFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.advantagesFilterText)
 
 export const getCombatTechniquesFilterText =
-  pipe (App.ui, UIA.filters, Filt.combatTechniquesFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.combatTechniquesFilterText)
 
 export const getCulturesFilterText =
-  pipe (App.ui, UIA.filters, Filt.culturesFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.culturesFilterText)
 
 export const getDisadvantagesFilterText =
-  pipe (App.ui, UIA.filters, Filt.disadvantagesFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.disadvantagesFilterText)
 
 export const getEquipmentFilterText =
-  pipe (App.ui, UIA.filters, Filt.equipmentFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.equipmentFilterText)
 
 export const getHerolistFilterText =
-  pipe (App.ui, UIA.filters, Filt.herolistFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.herolistFilterText)
 
 export const getInactiveAdvantagesFilterText =
-  pipe (App.ui, UIA.filters, Filt.inactiveAdvantagesFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.inactiveAdvantagesFilterText)
 
 export const getInactiveDisadvantagesFilterText =
-  pipe (App.ui, UIA.filters, Filt.inactiveDisadvantagesFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.inactiveDisadvantagesFilterText)
 
 export const getInactiveLiturgicalChantsFilterText =
-  pipe (App.ui, UIA.filters, Filt.inactiveLiturgicalChantsFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.inactiveLiturgicalChantsFilterText)
 
 export const getInactiveSpecialAbilitiesFilterText =
-  pipe (App.ui, UIA.filters, Filt.inactiveSpecialAbilitiesFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.inactiveSpecialAbilitiesFilterText)
 
 export const getInactiveSpellsFilterText =
-  pipe (App.ui, UIA.filters, Filt.inactiveSpellsFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.inactiveSpellsFilterText)
 
 export const getItemTemplatesFilterText =
-  pipe (App.ui, UIA.filters, Filt.itemTemplatesFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.itemTemplatesFilterText)
 
 export const getLiturgicalChantsFilterText =
-  pipe (App.ui, UIA.filters, Filt.liturgicalChantsFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.liturgicalChantsFilterText)
 
 export const getProfessionsFilterText =
-  pipe (App.ui, UIA.filters, Filt.professionsFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.professionsFilterText)
 
 export const getRacesFilterText =
-  pipe (App.ui, UIA.filters, Filt.racesFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.racesFilterText)
 
 export const getSkillsFilterText =
-  pipe (App.ui, UIA.filters, Filt.skillsFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.skillsFilterText)
 
 export const getSpecialAbilitiesFilterText =
-  pipe (App.ui, UIA.filters, Filt.specialAbilitiesFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.specialAbilitiesFilterText)
 
 export const getSpellsFilterText =
-  pipe (App.ui, UIA.filters, Filt.spellsFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.spellsFilterText)
 
 export const getZoneArmorFilterText =
-  pipe (App.ui, UIA.filters, Filt.hitZoneArmorFilterText)
+  pipe (ASA.ui, UIA.filters, Filt.hitZoneArmorFilterText)
 
-
-const WikiUI = UIWikiState.A
 
 export const getWikiFilterText =
-  pipe (App.ui, UIA.wiki, WikiUI.filter)
+  pipe (ASA.ui, UIA.wiki, WikiUI.filter)
 
 export const getWikiFilterAll =
-  pipe (App.ui, UIA.wiki, WikiUI.filterAll)
+  pipe (ASA.ui, UIA.wiki, WikiUI.filterAll)
 
 export const getWikiMainCategory =
-  pipe (App.ui, UIA.wiki, WikiUI.category1)
+  pipe (ASA.ui, UIA.wiki, WikiUI.category1)
 
 export const getWikiCombatTechniquesGroup =
-  pipe (App.ui, UIA.wiki, WikiUI.combatTechniquesGroup)
+  pipe (ASA.ui, UIA.wiki, WikiUI.combatTechniquesGroup)
 
 export const getWikiItemTemplatesGroup =
-  pipe (App.ui, UIA.wiki, WikiUI.itemTemplatesGroup)
+  pipe (ASA.ui, UIA.wiki, WikiUI.itemTemplatesGroup)
 
 export const getWikiLiturgicalChantsGroup =
-  pipe (App.ui, UIA.wiki, WikiUI.liturgicalChantsGroup)
+  pipe (ASA.ui, UIA.wiki, WikiUI.liturgicalChantsGroup)
 
 export const getWikiProfessionsGroup =
-  pipe (App.ui, UIA.wiki, WikiUI.professionsGroup)
+  pipe (ASA.ui, UIA.wiki, WikiUI.professionsGroup)
 
 export const getWikiSkillsGroup =
-  pipe (App.ui, UIA.wiki, WikiUI.skillsGroup)
+  pipe (ASA.ui, UIA.wiki, WikiUI.skillsGroup)
 
 export const getWikiSpecialAbilitiesGroup =
-  pipe (App.ui, UIA.wiki, WikiUI.specialAbilitiesGroup)
+  pipe (ASA.ui, UIA.wiki, WikiUI.specialAbilitiesGroup)
 
 export const getWikiSpellsGroup =
-  pipe (App.ui, UIA.wiki, WikiUI.spellsGroup)
+  pipe (ASA.ui, UIA.wiki, WikiUI.spellsGroup)
 
 
-export const getWiki = App.wiki
+export const getWiki = ASA.wiki
 
-const Wiki = WikiModel.A
+const SDA = StaticData.A
 
-export const getWikiAdvantages = pipe (App.wiki, Wiki.advantages)
+export const getWikiAdvantages = pipe (ASA.wiki, SDA.advantages)
 
-export const getWikiAttributes = pipe (App.wiki, Wiki.attributes)
+export const getWikiAttributes = pipe (ASA.wiki, SDA.attributes)
 
-export const getWikiBlessings = pipe (App.wiki, Wiki.blessings)
+export const getWikiBlessings = pipe (ASA.wiki, SDA.blessings)
 
-export const getWikiBooks = pipe (App.wiki, Wiki.books)
+export const getWikiBooks = pipe (ASA.wiki, SDA.books)
 
-export const getWikiCantrips = pipe (App.wiki, Wiki.cantrips)
+export const getWikiCantrips = pipe (ASA.wiki, SDA.cantrips)
 
-export const getWikiCombatTechniques = pipe (App.wiki, Wiki.combatTechniques)
+export const getWikiCombatTechniques = pipe (ASA.wiki, SDA.combatTechniques)
 
-export const getWikiCultures = pipe (App.wiki, Wiki.cultures)
+export const getWikiCultures = pipe (ASA.wiki, SDA.cultures)
 
-export const getWikiDisadvantages = pipe (App.wiki, Wiki.disadvantages)
+export const getWikiDisadvantages = pipe (ASA.wiki, SDA.disadvantages)
 
-export const getWikiExperienceLevels = pipe (App.wiki, Wiki.experienceLevels)
+export const getWikiExperienceLevels = pipe (ASA.wiki, SDA.experienceLevels)
 
-export const getWikiItemTemplates = pipe (App.wiki, Wiki.itemTemplates)
+export const getWikiItemTemplates = pipe (ASA.wiki, SDA.itemTemplates)
 
-export const getWikiLiturgicalChants = pipe (App.wiki, Wiki.liturgicalChants)
+export const getWikiLiturgicalChants = pipe (ASA.wiki, SDA.liturgicalChants)
 
-export const getWikiProfessions = pipe (App.wiki, Wiki.professions)
+export const getWikiProfessions = pipe (ASA.wiki, SDA.professions)
 
-export const getWikiProfessionVariants = pipe (App.wiki, Wiki.professionVariants)
+export const getWikiProfessionVariants = pipe (ASA.wiki, SDA.professionVariants)
 
-export const getWikiRaces = pipe (App.wiki, Wiki.races)
+export const getWikiRaces = pipe (ASA.wiki, SDA.races)
 
-export const getWikiRaceVariants = pipe (App.wiki, Wiki.raceVariants)
+export const getWikiRaceVariants = pipe (ASA.wiki, SDA.raceVariants)
 
-export const getWikiSkills = pipe (App.wiki, Wiki.skills)
+export const getWikiSkills = pipe (ASA.wiki, SDA.skills)
 
-export const getWikiSpecialAbilities = pipe (App.wiki, Wiki.specialAbilities)
+export const getWikiSpecialAbilities = pipe (ASA.wiki, SDA.specialAbilities)
 
-export const getWikiSpells = pipe (App.wiki, Wiki.spells)
+export const getWikiSpells = pipe (ASA.wiki, SDA.spells)

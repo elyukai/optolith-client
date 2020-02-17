@@ -1,66 +1,85 @@
 import * as React from "react"
 import { fmapF } from "../../../../Data/Functor"
 import { List, map, toArray } from "../../../../Data/List"
-import { Just, Maybe, Nothing } from "../../../../Data/Maybe"
+import { fromMaybe, Just, Maybe, Nothing } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
+import { fst, snd } from "../../../../Data/Tuple"
 import { DCId } from "../../../Constants/Ids"
-import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { DerivedCharacteristicValues } from "../../../Models/View/DerivedCharacteristicCombined"
+import { DerivedCharacteristic } from "../../../Models/Wiki/DerivedCharacteristic"
 import { Race } from "../../../Models/Wiki/Race"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../../Utilities/I18n"
 import { pipe_ } from "../../../Utilities/pipe"
 import { MainSheetAttributesItem } from "./MainSheetAttributesItem"
 import { MainSheetFatePoints } from "./MainSheetFatePoints"
 
 interface Props {
-  attributes: List<Record<DerivedCharacteristic>>
+  attributes: List<DCPair>
   fatePointsModifier: number
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   race: Maybe<Record<Race>>
 }
 
 const DCA = DerivedCharacteristic.A
+const DCVA = DerivedCharacteristicValues.A
 
 export const MainSheetAttributes: React.FC<Props> = props => {
-  const { attributes, fatePointsModifier, race, l10n } = props
+  const { attributes, fatePointsModifier, race, staticData } = props
 
   return (
     <div className="calculated">
       <div className="calc-header">
-        <div>{translate (l10n) ("value")}</div>
-        <div>{translate (l10n) ("bonuspenalty")}</div>
-        <div>{translate (l10n) ("bought")}</div>
-        <div>{translate (l10n) ("max")}</div>
+        <div>
+          {translate (staticData) ("sheets.mainsheet.derivedcharacteristics.labels.value")}
+        </div>
+        <div>
+          {translate (staticData) ("sheets.mainsheet.derivedcharacteristics.labels.bonuspenalty")}
+        </div>
+        <div>
+          {translate (staticData) ("sheets.mainsheet.derivedcharacteristics.labels.bought")}
+        </div>
+        <div>
+          {translate (staticData) ("sheets.mainsheet.derivedcharacteristics.labels.max")}
+        </div>
       </div>
       {pipe_ (
         attributes,
         map (attribute => (
           <MainSheetAttributesItem
-            key={DCA.id (attribute)}
-            label={DCA.name (attribute)}
-            calc={DCA.calc (attribute)}
-            base={DCA.base (attribute)}
-            max={DCA.value (attribute)}
-            add={DCA.mod (attribute)}
-            purchased={DCA.currentAdd (attribute)}
+            key={DCA.id (fst (attribute))}
+            label={DCA.name (fst (attribute))}
+            calc={fromMaybe (DCA.calc (fst (attribute))) (DCVA.calc (snd (attribute)))}
+            base={DCVA.base (snd (attribute))}
+            max={DCVA.value (snd (attribute))}
+            add={DCVA.mod (snd (attribute))}
+            purchased={DCVA.currentAdd (snd (attribute))}
             subLabel={(() => {
-              switch (DCA.id (attribute)) {
+              switch (DCA.id (fst (attribute))) {
                 case DCId.LP:
                 case DCId.SPI:
                 case DCId.TOU:
                 case DCId.MOV:
-                  return Just (translate (l10n) ("basestat"))
+                  return Just (
+                    translate (staticData)
+                              ("sheets.mainsheet.derivedcharacteristics.labels.basestat")
+                  )
 
                 case DCId.AE:
                 case DCId.KP:
-                  return Just (translate (l10n) ("permanentlylostboughtback"))
+                  return Just (
+                    translate (staticData)
+                              // eslint-disable-next-line max-len
+                              ("sheets.mainsheet.derivedcharacteristics.labels.permanentlylostboughtback")
+                  )
 
                 default:
                   return Nothing
               }
             }) ()}
             subArray={(() => {
-              switch (DCA.id (attribute)) {
+              switch (DCA.id (fst (attribute))) {
                 case DCId.LP:
                   return Just (
                     List (
@@ -72,8 +91,8 @@ export const MainSheetAttributes: React.FC<Props> = props => {
                 case DCId.KP:
                   return Just (
                     List (
-                      Maybe.sum (DCA.permanentLost (attribute)),
-                      Maybe.sum (DCA.permanentRedeemed (attribute))
+                      Maybe.sum (DCVA.permanentLost (snd (attribute))),
+                      Maybe.sum (DCVA.permanentRedeemed (snd (attribute)))
                     )
                   )
 
@@ -103,10 +122,10 @@ export const MainSheetAttributes: React.FC<Props> = props => {
               }
             }) ()}
             empty={(() => {
-              switch (DCA.id (attribute)) {
+              switch (DCA.id (fst (attribute))) {
                 case DCId.AE:
                 case DCId.KP:
-                  return Just (Maybe.isNothing (DCA.value (attribute)))
+                  return Just (Maybe.isNothing (DCVA.value (snd (attribute))))
 
                 default:
                   return Nothing
@@ -118,7 +137,7 @@ export const MainSheetAttributes: React.FC<Props> = props => {
       )}
       <MainSheetFatePoints
         fatePointsModifier={fatePointsModifier}
-        l10n={l10n}
+        staticData={staticData}
         />
     </div>
   )

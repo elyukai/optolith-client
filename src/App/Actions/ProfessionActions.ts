@@ -2,18 +2,22 @@ import { fromJust, isJust, liftM3, listToMaybe, Maybe, Nothing } from "../../Dat
 import { lookup } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import * as ActionTypes from "../Constants/ActionTypes"
+import { AppState } from "../Models/AppState"
 import { Selections } from "../Models/Hero/heroTypeHelpers"
 import { Culture } from "../Models/Wiki/Culture"
 import { Profession } from "../Models/Wiki/Profession"
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
 import { Race } from "../Models/Wiki/Race"
-import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel"
-import { AppState } from "../Reducers/appReducer"
+import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from "../Selectors/rcpSelectors"
 import { getWiki } from "../Selectors/stateSelectors"
 import { pipe_ } from "../Utilities/pipe"
 import { ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter } from "../Utilities/Raw/JSON/Config"
 import { ReduxAction } from "./Actions"
+
+const ASA = AppState.A
+const SDA = StaticData.A
+const PA = Profession.A
 
 export interface SelectProfessionAction {
   type: ActionTypes.SELECT_PROFESSION
@@ -28,7 +32,7 @@ export const selectProfession =
   (dispatch, getState) => {
     const state = getState ()
 
-    const mselected_prof = pipe_ (state, AppState.A.wiki, WikiModel.A.professions, lookup (id))
+    const mselected_prof = pipe_ (state, ASA.wiki, SDA.professions, lookup (id))
 
     if (isJust (mselected_prof)) {
       const selected_prof = fromJust (mselected_prof)
@@ -37,10 +41,9 @@ export const selectProfession =
         type: ActionTypes.SELECT_PROFESSION,
         payload: {
           id,
-          var_id:
-            Profession.A.isVariantRequired (selected_prof)
-              ? listToMaybe (Profession.A.variants (selected_prof))
-              : Nothing,
+          var_id: PA.isVariantRequired (selected_prof)
+                  ? listToMaybe (PA.variants (selected_prof))
+                  : Nothing,
         },
       })
     }
@@ -51,7 +54,7 @@ interface SelectionsAndWikiEntries extends Selections {
   culture: Record<Culture>
   profession: Record<Profession>
   professionVariant: Maybe<Record<ProfessionVariant>>
-  wiki: WikiModelRecord
+  wiki: StaticDataRecord
 }
 
 export interface SetSelectionsAction {

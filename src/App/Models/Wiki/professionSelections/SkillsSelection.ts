@@ -1,6 +1,6 @@
 import { Maybe, Nothing } from "../../../../Data/Maybe"
-import { fromDefault, Record } from "../../../../Data/Record"
-import { AnyProfessionSelection, ProfessionSelectionIds } from "../wikiTypeHelpers"
+import { fromDefault } from "../../../../Data/Record"
+import { ProfessionSelectionIds } from "../wikiTypeHelpers"
 
 export interface SkillsSelection {
   "@@name": "SkillsSelection"
@@ -24,7 +24,3 @@ export const SkillsSelection =
                 value: 0,
                 gr: Nothing,
               })
-
-export const isSkillsSelection =
-  (obj: AnyProfessionSelection): obj is Record<SkillsSelection> =>
-    SkillsSelection.AL.id (obj) === ProfessionSelectionIds.SKILLS

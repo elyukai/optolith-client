@@ -18,7 +18,7 @@ import { AttributeWithRequirements } from "../Models/View/AttributeWithRequireme
 import { Attribute } from "../Models/Wiki/Attribute"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
 import { Race } from "../Models/Wiki/Race"
-import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies"
 import { pipe, pipe_ } from "../Utilities/pipe"
@@ -105,7 +105,7 @@ const getAttributeMaximum =
   }
 
 const getAttributeMinimum =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
 
   /**
@@ -280,7 +280,7 @@ export const getAttributesForView = createMaybeSelector (
                                         }))
                          })
                          (List.empty)
-                         (WikiModel.A.attributes (wiki)))
+                         (StaticData.A.attributes (wiki)))
 )
 
 export const getCarryingCapacity = createMaybeSelector (

@@ -4,52 +4,68 @@ import { fmap, fmapF } from "../../../../Data/Functor"
 import { flength, intercalate, List, map, replicateR, toArray } from "../../../../Data/List"
 import { fromMaybe, Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
+import { show } from "../../../../Data/Show"
 import { RangedWeapon } from "../../../Models/View/RangedWeapon"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
 import { signZero, toRoman } from "../../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
 import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   rangedWeapons: Maybe<List<Record<RangedWeapon>>>
 }
 
 const RWA = RangedWeapon.A
 
 export const CombatSheetRangedWeapons: React.FC<Props> = props => {
-  const { l10n, rangedWeapons: mranged_weapons } = props
+  const { staticData, rangedWeapons: mranged_weapons } = props
 
   return (
     <TextBox
-      label={translate (l10n) ("rangedcombatweapons")}
+      label={translate (staticData) ("sheets.combatsheet.rangedcombatweapons")}
       className="melee-weapons"
       >
       <table>
         <thead>
           <tr>
-            <th className="name">{translate (l10n) ("weapon")}</th>
+            <th className="name">
+              {translate (staticData) ("sheets.combatsheet.rangedcombatweapons.labels.weapon")}
+            </th>
             <th className="combat-technique">
-              {translate (l10n) ("combattechnique")}
+              {translate (staticData)
+                         ("sheets.combatsheet.rangedcombatweapons.labels.combattechnique")}
             </th>
             <th className="reload-time">
-              {translate (l10n) ("reloadtime")}
+              {translate (staticData) ("sheets.combatsheet.rangedcombatweapons.labels.reloadtime")}
             </th>
-            <th className="damage">{translate (l10n) ("damagepoints.short")}</th>
+            <th className="damage">
+              {translate (staticData)
+                         ("sheets.combatsheet.rangedcombatweapons.labels.damagepoints")}
+            </th>
             <th className="ammunition">
-              {translate (l10n) ("ammunition")}
+              {translate (staticData) ("sheets.combatsheet.rangedcombatweapons.labels.ammunition")}
             </th>
             <th className="range">
-              {translate (l10n) ("rangebrackets")}
+              {translate (staticData)
+                         ("sheets.combatsheet.rangedcombatweapons.labels.rangebrackets")}
             </th>
-            <th className="bf">{translate (l10n) ("breakingpointrating.short")}</th>
-            <th className="loss">{translate (l10n) ("damaged.short")}</th>
+            <th className="bf">
+              {translate (staticData)
+                         ("sheets.combatsheet.rangedcombatweapons.labels.breakingpointrating")}
+            </th>
+            <th className="loss">
+              {translate (staticData) ("sheets.combatsheet.rangedcombatweapons.labels.damaged")}
+            </th>
             <th className="ranged">
-              {translate (l10n) ("rangedcombat")}
+              {translate (staticData)
+                         ("sheets.combatsheet.rangedcombatweapons.labels.rangedcombat")}
             </th>
-            <th className="weight">{translate (l10n) ("weight")}</th>
+            <th className="weight">
+              {translate (staticData) ("sheets.combatsheet.rangedcombatweapons.labels.weight")}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -63,13 +79,19 @@ export const CombatSheetRangedWeapons: React.FC<Props> = props => {
                   </td>
                   <td className="combat-technique">{RWA.combatTechnique (e)}</td>
                   <td className="reload-time">
-                    {renderMaybe (RWA.reloadTime (e))}
+                    {pipe_ (
+                      e,
+                      RWA.reloadTime,
+                      renderMaybeWith (x => typeof x === "object"
+                                            ? intercalate ("/") (x)
+                                            : show (x))
+                    )}
                     {" "}
-                    {translate (l10n) ("actions")}
+                    {translate (staticData) ("sheets.combatsheet.actions")}
                   </td>
                   <td className="damage">
                     {renderMaybe (RWA.damageDiceNumber (e))}
-                    {translate (l10n) ("dice.short")}
+                    {translate (staticData) ("general.dice")}
                     {renderMaybe (RWA.damageDiceSides (e))}
                     {signZero (Maybe.sum (RWA.damageFlat (e)))}
                   </td>
@@ -85,14 +107,16 @@ export const CombatSheetRangedWeapons: React.FC<Props> = props => {
                   </td>
                   <td className="ranged">{RWA.at (e)}</td>
                   <td className="weight">
-                    {pipe_ (
-                      e,
-                      RWA.weight,
-                      localizeWeight (l10n),
-                      localizeNumber (l10n)
-                    )}
-                    {" "}
-                    {translate (l10n) ("weightunit.short")}
+                    {translateP (staticData)
+                                ("general.weightvalue")
+                                (List (
+                                  pipe_ (
+                                    e,
+                                    RWA.weight,
+                                    localizeWeight (staticData),
+                                    localizeNumber (staticData)
+                                  )
+                                ))}
                   </td>
                 </tr>
               )),

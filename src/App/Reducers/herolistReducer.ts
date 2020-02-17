@@ -1,15 +1,15 @@
 import { equals } from "../../Data/Eq"
 import { ident } from "../../Data/Function"
 import { over, set } from "../../Data/Lens"
-import { bind, fromJust, isJust, Just, Maybe, maybe, Nothing } from "../../Data/Maybe"
-import { adjust, any, deleteLookupWithKey, insert, lookup, OrderedMap, sdelete } from "../../Data/OrderedMap"
-import { fromDefault, makeLenses, Record } from "../../Data/Record"
+import { bind, fromJust, isJust, Just, maybe } from "../../Data/Maybe"
+import { adjust, any, deleteLookupWithKey, insert, lookup, sdelete } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
 import { fst, snd } from "../../Data/Tuple"
 import * as HerolistActions from "../Actions/HerolistActions"
 import * as IOActions from "../Actions/IOActions"
 import * as ActionTypes from "../Constants/ActionTypes"
-import { getInitialHeroObject, HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
-import { User } from "../Models/Hero/heroTypeHelpers"
+import { HeroModel, HeroModelL } from "../Models/Hero/HeroModel"
+import { HeroesState, HeroesStateL } from "../Models/HeroesState"
 import { composeL } from "../Utilities/compose"
 import { pipe } from "../Utilities/pipe"
 import { reduceReducersC } from "../Utilities/reduceReducers"
@@ -25,52 +25,17 @@ type Action = IOActions.ReceiveInitialDataAction
             | HerolistActions.DuplicateHeroAction
             | HerolistActions.UpdateDateModifiedAction
 
-export interface HeroesState {
-  "@@name": "HeroesState"
-  heroes: OrderedMap<string, Record<UndoState<HeroModelRecord>>>
-  users: OrderedMap<string, User>
-  currentId: Maybe<string>
-}
-
-export const HeroesState =
-  fromDefault ("HeroesState")
-              <HeroesState> ({
-                heroes: OrderedMap.empty,
-                users: OrderedMap.empty,
-                currentId: Nothing,
-              })
-
-export const HeroesStateL = makeLenses (HeroesState)
-
 export const precedingHerolistReducer =
   (action: Action): ident<Record<HeroesState>> => {
     switch (action.type) {
       case ActionTypes.CREATE_HERO: {
-        const {
-          l10n,
-          el,
-          enableAllRuleBooks,
-          enabledRuleBooks,
-          id,
-          name,
-          sex,
-          totalAp,
-        } = action.payload
-
-        const hero = getInitialHeroObject (l10n)
-                                          (id)
-                                          (name)
-                                          (sex)
-                                          (el)
-                                          (totalAp)
-                                          (enableAllRuleBooks)
-                                          (enabledRuleBooks)
+        const { newHero } = action.payload
 
         return pipe (
-          set (HeroesStateL.currentId) (Just (id)),
+          set (HeroesStateL.currentId) (Just (HeroModel.A.id (newHero))),
           over (HeroesStateL.heroes)
-               (insert (id)
-                       (toHeroWithHistory (hero)))
+               (insert (HeroModel.A.id (newHero))
+                       (toHeroWithHistory (newHero)))
         )
       }
 

@@ -1,12 +1,12 @@
 import * as React from "react"
 import { List } from "../../../Data/List"
 import { Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { RadioOption } from "../../Models/View/RadioOption"
-import { L10nRecord } from "../../Models/Wiki/L10n"
-import { isStable } from "../../Selectors/envSelectors"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
-import { Locale, Theme } from "../../Utilities/Raw/JSON/Config"
+import { Theme } from "../../Utilities/Raw/JSON/Config"
 import { BorderButton } from "../Universal/BorderButton"
 import { Checkbox } from "../Universal/Checkbox"
 import { Dialog } from "../Universal/Dialog"
@@ -14,7 +14,7 @@ import { Dropdown } from "../Universal/Dropdown"
 import { SegmentedControls } from "../Universal/SegmentedControls"
 
 export interface SettingsOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   isSettingsOpen: boolean
   platform: string
   close (): void
@@ -27,6 +27,7 @@ export interface SettingsStateProps {
   theme: Theme
   isEditingHeroAfterCreationPhaseEnabled: boolean
   areAnimationsEnabled: boolean
+  languages: List<Record<DropdownOption<string>>>
 }
 
 export interface SettingsDispatchProps {
@@ -43,7 +44,7 @@ export const Settings: React.FC<Props> = props => {
   const {
     close,
     isEditingHeroAfterCreationPhaseEnabled,
-    l10n,
+    staticData,
     localeString,
     localeType,
     setLocale,
@@ -56,15 +57,16 @@ export const Settings: React.FC<Props> = props => {
     areAnimationsEnabled,
     platform,
     checkForUpdates,
+    languages,
   } = props
 
   return (
     <Dialog
       id="settings"
-      title={translate (l10n) ("settings")}
+      title={translate (staticData) ("settings.title")}
       buttons={[
         {
-          label: translate (l10n) ("close"),
+          label: translate (staticData) ("general.dialogs.donebtn"),
           onClick: saveConfig,
         },
       ]}
@@ -74,67 +76,46 @@ export const Settings: React.FC<Props> = props => {
       <Dropdown
         options={List (
           DropdownOption ({
-            name: translate (l10n) ("systemlanguage"),
+            name: translate (staticData) ("settings.systemlanguage"),
           }),
-          DropdownOption ({
-            id: Just (Locale.German),
-            name: "Deutsch (Deutschland)",
-          }),
-          DropdownOption ({
-            id: Just (Locale.English),
-            name: "English (United States)",
-          }),
-          DropdownOption ({
-            id: Just (Locale.Dutch),
-            name: "Nederlands (België)",
-          }),
-          DropdownOption ({
-            id: Just (Locale.French),
-            name: "Français (France)",
-            disabled: Just (isStable),
-          }),
-          DropdownOption ({
-            id: Just (Locale.Italian),
-            name: "Italiano (Italia)",
-            disabled: Just (isStable),
-          })
+          ...languages
         )}
         value={localeType === "default" ? Nothing : localeString}
-        label={translate (l10n) ("language")}
+        label={translate (staticData) ("settings.language")}
         onChange={setLocale}
         />
-      <p>{translate (l10n) ("languagehint")}</p>
+      <p>{translate (staticData) ("settings.languagehint")}</p>
       <SegmentedControls
         options={List (
           RadioOption ({
-            name: translate (l10n) ("dark"),
+            name: translate (staticData) ("settings.theme.dark"),
             value: Just (Theme.Dark),
           }),
           RadioOption ({
-            name: translate (l10n) ("light"),
+            name: translate (staticData) ("settings.theme.light"),
             value: Just (Theme.Light),
           })
         )}
         active={Just (theme)}
         onClick={setTheme}
-        label={translate (l10n) ("theme")}
+        label={translate (staticData) ("settings.theme")}
         />
       <Checkbox
         checked={isEditingHeroAfterCreationPhaseEnabled}
         className="editor-switch"
-        label={translate (l10n) ("enableeditingheroaftercreationphase")}
+        label={translate (staticData) ("settings.enableeditingheroaftercreationphase")}
         onClick={switchEnableEditingHeroAfterCreationPhase}
         />
       <Checkbox
         checked={areAnimationsEnabled}
         className="animations"
-        label={translate (l10n) ("showanimations")}
+        label={translate (staticData) ("settings.showanimations")}
         onClick={switchEnableAnimations}
         />
       {(platform === "win32" || platform === "darwin")
         ? (
           <BorderButton
-            label={translate (l10n) ("checkforupdates")}
+            label={translate (staticData) ("settings.checkforupdatesbtn")}
             onClick={checkForUpdates}
             autoWidth
             />

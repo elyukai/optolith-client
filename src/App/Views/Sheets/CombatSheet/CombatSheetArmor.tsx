@@ -4,11 +4,13 @@ import { notEquals } from "../../../../Data/Eq"
 import { fmap, fmapF } from "../../../../Data/Functor"
 import { flength, intercalate, List, map, notNull, replicateR, toArray } from "../../../../Data/List"
 import { catMaybes, ensure, Maybe, maybe, maybeRNull } from "../../../../Data/Maybe"
+import { lookup } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Armor } from "../../../Models/View/Armor"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { DerivedCharacteristic } from "../../../Models/Wiki/DerivedCharacteristic"
+import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { ndash } from "../../../Utilities/Chars"
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n"
+import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
 import { sign, toRoman } from "../../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
@@ -16,33 +18,61 @@ import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   armors: Maybe<List<Record<Armor>>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
+const SDA = StaticData.A
 const AA = Armor.A
 
 export const CombatSheetArmor: React.FC<Props> = props => {
-  const { l10n, armors: marmors } = props
+  const { staticData, armors: marmors } = props
 
-  const movement_tag = translate (l10n) ("movement.short")
-  const initiative_tag = translate (l10n) ("initiative.short")
+  const movement_tag = pipe_ (
+                         staticData,
+                         SDA.derivedCharacteristics,
+                         lookup ("MOV"),
+                         maybe ("") (DerivedCharacteristic.A.name)
+                       )
+
+  const initiative_tag = pipe_ (
+                         staticData,
+                         SDA.derivedCharacteristics,
+                         lookup ("INI"),
+                         maybe ("") (DerivedCharacteristic.A.name)
+                       )
 
   return (
     <TextBox
-      label={translate (l10n) ("armor")}
+      label={translate (staticData) ("sheets.combatsheet.armors.title")}
       className="armor"
       >
       <table>
         <thead>
           <tr>
-            <th className="name">{translate (l10n) ("armor")}</th>
-            <th className="st">{translate (l10n) ("sturdinessrating.short")}</th>
-            <th className="loss">{translate (l10n) ("wear.short")}</th>
-            <th className="pro">{translate (l10n) ("protection.short")}</th>
-            <th className="enc">{translate (l10n) ("encumbrance.short")}</th>
-            <th className="add-penalties">{translate (l10n) ("additionalpenalties")}</th>
-            <th className="weight">{translate (l10n) ("weight")}</th>
-            <th className="where">{translate (l10n) ("carriedwhereexamples")}</th>
+            <th className="name">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.armor")}
+            </th>
+            <th className="st">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.sturdinessrating")}
+            </th>
+            <th className="loss">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.wear")}
+            </th>
+            <th className="pro">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.protection")}
+            </th>
+            <th className="enc">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.encumbrance")}
+            </th>
+            <th className="add-penalties">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.movementinitiative")}
+            </th>
+            <th className="weight">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.weight")}
+            </th>
+            <th className="where">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.carriedwhereexamples")}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -71,17 +101,19 @@ export const CombatSheetArmor: React.FC<Props> = props => {
                                        (ensure (notNull) (addPenalties))}
                               </td>
                               <td className="weight">
-                                {pipe_ (
-                                  e,
-                                  AA.weight,
-                                  fmap (pipe (
-                                    localizeWeight (l10n),
-                                    localizeNumber (l10n)
-                                  )),
-                                  renderMaybe
-                                )}
-                                {" "}
-                                {translate (l10n) ("weightunit.short")}
+                                {translateP (staticData)
+                                            ("general.weightvalue")
+                                            (List (
+                                              pipe_ (
+                                                e,
+                                                AA.weight,
+                                                fmap (pipe (
+                                                  localizeWeight (staticData),
+                                                  localizeNumber (staticData)
+                                                )),
+                                                renderMaybe
+                                              )
+                                            ))}
                               </td>
                               <td className="where">
                                 <Textfit max={11} min={7} mode="single">

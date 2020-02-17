@@ -4,7 +4,7 @@ import { Pair } from "../../../Data/Tuple"
 
 export interface EditPrimaryAttributeDamageThreshold {
   "@@name": "EditPrimaryAttributeDamageThreshold"
-  primary: Maybe<string>
+  primary: Maybe<string | Pair<string, string>>
   threshold: string | Pair<string, string>
 }
 

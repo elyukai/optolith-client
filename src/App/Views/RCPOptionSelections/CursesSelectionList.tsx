@@ -5,10 +5,9 @@ import { OrderedMap, size, sum } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Pair } from "../../../Data/Tuple"
 import { Rules } from "../../Models/Hero/Rules"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { CursesSelection } from "../../Models/Wiki/professionSelections/CursesSelection"
 import { Spell } from "../../Models/Wiki/Spell"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translateP } from "../../Utilities/I18n"
 import { pipe_ } from "../../Utilities/pipe"
 import { filterByAvailability } from "../../Utilities/RulesUtils"
@@ -16,7 +15,7 @@ import { sortRecordsByName } from "../../Utilities/sortBy"
 import { getAllWikiEntriesByGroup } from "../../Utilities/WikiUtils"
 import { CursesSelectionListItem } from "./CursesSelectionListItem"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const CSA = CursesSelection.A
 const SA = Spell.A
 
@@ -31,18 +30,16 @@ export const isCursesSelectionValid =
   }
 
 const getCurses =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (rules: Record<Rules>) =>
     pipe_ (
-      getAllWikiEntriesByGroup (WA.spells (wiki)) (List (3)),
-      filterByAvailability (SA.src) (Pair (WA.books (wiki), rules)),
-      sortRecordsByName (l10n)
+      getAllWikiEntriesByGroup (SDA.spells (staticData)) (List (3)),
+      filterByAvailability (SA.src) (Pair (SDA.books (staticData), rules)),
+      sortRecordsByName (staticData)
     )
 
 interface Props {
-  l10n: L10nRecord
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   rules: Record<Rules>
   active: OrderedMap<string, number>
   ap_left: number
@@ -51,15 +48,19 @@ interface Props {
 }
 
 export const CursesSelectionList: React.FC<Props> = props => {
-  const { active, ap_left, l10n, rules, selection, adjustCurseValue, wiki } = props
+  const { active, ap_left, rules, selection, adjustCurseValue, staticData } = props
 
   const ap_total = CSA.value (selection)
 
-  const curses = getCurses (l10n) (wiki) (rules)
+  const curses = getCurses (staticData) (rules)
 
   return (
     <div className="curses list">
-      <h4>{translateP (l10n) ("cursestotalingapleft") (List (ap_total, ap_left))}</h4>
+      <h4>
+        {translateP (staticData)
+                    ("rcpselectoptions.cursestotalingapleft")
+                    (List (ap_total, ap_left))}
+      </h4>
       <ul>
         {pipe_ (
           curses,

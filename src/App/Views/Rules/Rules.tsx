@@ -1,13 +1,17 @@
 import * as React from "react"
 import { List } from "../../../Data/List"
-import { fromMaybe, isJust, Just, liftM2, Maybe, Nothing } from "../../../Data/Maybe"
+import { fromMaybe, isJust, Just, liftM2, Maybe, maybe, Nothing } from "../../../Data/Maybe"
+import { lookup } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
+import { OptionalRuleId } from "../../Constants/Ids"
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { Rules } from "../../Models/Hero/Rules"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { Book } from "../../Models/Wiki/Book"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { OptionalRule } from "../../Models/Wiki/OptionalRule"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
+import { pipe_ } from "../../Utilities/pipe"
 import { Locale } from "../../Utilities/Raw/JSON/Config"
 import { Checkbox } from "../Universal/Checkbox"
 import { Dropdown } from "../Universal/Dropdown"
@@ -15,14 +19,14 @@ import { Scroll } from "../Universal/Scroll"
 import { BookSelection } from "./BookSelection"
 
 export interface RulesOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   hero: HeroModelRecord
 }
 
 export interface RulesStateProps {
   sortedBooks: List<Record<Book>>
   isEnableLanguageSpecializationsDeactivatable: boolean
-  hero_locale: Locale
+  hero_locale: string
   mcurrent_guild_mage_spell: Maybe<Maybe<string>>
   all_spells_select_options: Maybe<List<Record<DropdownOption>>>
 }
@@ -44,7 +48,7 @@ export const RulesView: React.FC<Props> = props => {
     sortedBooks,
     changeAttributeValueLimit,
     changeHigherParadeValues,
-    l10n,
+    staticData,
     switchEnableAllRuleBooks,
     switchEnableRuleBook,
     isEnableLanguageSpecializationsDeactivatable,
@@ -78,21 +82,26 @@ export const RulesView: React.FC<Props> = props => {
   return (
     <div className="page" id="optional-rules">
       <Scroll>
-        <h3>{translate (l10n) ("rulebase")}</h3>
+        <h3>{translate (staticData) ("rules.rulebase")}</h3>
         <BookSelection
           allRuleBooksEnabled={allRuleBooksEnabled}
           enabledRuleBooks={enabledRuleBooks}
-          l10n={l10n}
+          staticData={staticData}
           sortedBooks={sortedBooks}
           switchEnableAllRuleBooks={switchEnableAllRuleBooks}
           switchEnableRuleBook={switchEnableRuleBook}
           />
-        <h3>{translate (l10n) ("optionalrules")}</h3>
+        <h3>{translate (staticData) ("rules.optionalrules")}</h3>
         <div className="extended">
           <Checkbox
             checked={areHigherParadeValuesEnabled}
             onClick={handleHigherParadeValues}
-            label={translate (l10n) ("higherdefensestats")}
+            label={pipe_ (
+              staticData,
+              StaticData.A.optionalRules,
+              lookup<string> (OptionalRuleId.HigherDefenseStats),
+              maybe ("") (OptionalRule.A.name)
+            )}
             />
           <Dropdown
             options={List (
@@ -105,19 +114,29 @@ export const RulesView: React.FC<Props> = props => {
             />
         </div>
         <Checkbox
-          checked={attributeValueLimit}
-          onClick={changeAttributeValueLimit}
-          label={translate (l10n) ("maximumattributescores")}
-          />
-        <Checkbox
           checked={enableLanguageSpecializations}
           onClick={switchEnableLanguageSpecializations}
-          label={translate (l10n) ("languagespecializations")}
+          label={pipe_ (
+            staticData,
+            StaticData.A.optionalRules,
+            lookup<string> (OptionalRuleId.LanguageSpecialization),
+            maybe ("") (OptionalRule.A.name)
+          )}
           disabled={isEnableLanguageSpecializationsDeactivatable}
           />
+        <Checkbox
+          checked={attributeValueLimit}
+          onClick={changeAttributeValueLimit}
+          label={pipe_ (
+            staticData,
+            StaticData.A.optionalRules,
+            lookup<string> (OptionalRuleId.MaximumAttributeScores),
+            maybe ("") (OptionalRule.A.name)
+          )}
+          />
         <div className="temporary-fixes">
-          <h3>{translate (l10n) ("manualherodatarepair")}</h3>
-          <p>{translate (l10n) ("manualherodatarepairexplanation")}</p>
+          <h3>{translate (staticData) ("rules.manualherodatarepair")}</h3>
+          <p>{translate (staticData) ("rules.manualherodatarepairexplanation")}</p>
           <Dropdown
             options={List (
               DropdownOption ({
@@ -138,7 +157,7 @@ export const RulesView: React.FC<Props> = props => {
               })
             )}
             value={hero_locale}
-            label={translate (l10n) ("language")}
+            label={translate (staticData) ("settings.language")}
             onChangeJust={setHeroLocale}
             />
           {fromMaybe (

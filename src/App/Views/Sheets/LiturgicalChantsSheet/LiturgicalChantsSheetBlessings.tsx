@@ -4,23 +4,23 @@ import { intercalate, List, map } from "../../../../Data/List"
 import { Maybe, maybeToNullable } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { BlessingCombined, BlessingCombinedA_ } from "../../../Models/View/BlessingCombined"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { sortStrings } from "../../../Utilities/sortBy"
 import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   blessings: Maybe<List<Record<BlessingCombined>>>
 }
 
 export const LiturgicalChantsSheetBlessings: React.FC<Props> = props => {
-  const { blessings, l10n } = props
+  const { blessings, staticData } = props
 
   return (
     <TextBox
-      label={translate (l10n) ("blessings")}
+      label={translate (staticData) ("sheets.chantssheet.blessings")}
       className="blessings activatable-list"
       >
       <div className="list">
@@ -28,7 +28,7 @@ export const LiturgicalChantsSheetBlessings: React.FC<Props> = props => {
           blessings,
           fmap (pipe (
             map (BlessingCombinedA_.name),
-            sortStrings (l10n),
+            sortStrings (staticData),
             intercalate (", ")
           )),
           maybeToNullable

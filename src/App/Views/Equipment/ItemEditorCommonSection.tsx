@@ -1,11 +1,14 @@
 import * as React from "react"
-import { consF, imap, List, map, take } from "../../../Data/List"
-import { isJust, isNothing, Just, Maybe } from "../../../Data/Maybe"
+import { consF, filter, List, map } from "../../../Data/List"
+import { any, isJust, isNothing, Just, Maybe } from "../../../Data/Maybe"
+import { lt } from "../../../Data/Num"
+import { elems } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { EditItem } from "../../Models/Hero/EditItem"
+import { NumIdName } from "../../Models/NumIdName"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { ItemTemplate, itemTemplateToDropdown } from "../../Models/Wiki/ItemTemplate"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils"
 import { pipe_ } from "../../Utilities/pipe"
@@ -18,7 +21,7 @@ import { TextField } from "../Universal/TextField"
 export interface ItemEditorCommonSectionProps {
   isInCreation: Maybe<boolean>
   item: Record<EditItem>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   templates: List<Record<ItemTemplate>>
   inputValidation: Record<ItemEditorInputValidation>
   setName (value: string): void
@@ -36,13 +39,14 @@ export interface ItemEditorCommonSectionProps {
 }
 
 const EIA = EditItem.A
+const NINA = NumIdName.A
 const IEIVA = ItemEditorInputValidation.A
 
 export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = props => {
   const {
     isInCreation,
     item,
-    l10n,
+    staticData,
     templates,
     inputValidation,
     setName,
@@ -62,20 +66,31 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
   const gr = EIA.gr (item)
   const locked = EIA.isTemplateLocked (item)
 
-  const GROUPS_SELECTION =
-    imap (index => (e: string) => DropdownOption ({ id: Just (index + 1), name: e }))
-         (translate (l10n) ("itemgroups"))
+  const all_groups = React.useMemo (
+    () => elems (StaticData.A.equipmentGroups (staticData)),
+    [ staticData ]
+  )
 
-  const IMP_GROUPS_SELECTION =
-    imap (index => (e: string) => DropdownOption ({ id: Just (index + 1), name: e }))
-         (take (2) (translate (l10n) ("itemgroups")))
+  const GROUPS_SELECTION = React.useMemo (
+    () => pipe_ (
+            all_groups,
+            map (x => DropdownOption ({ id: Just (NINA.id (x)), name: NINA.name (x) }))
+          ),
+    [ all_groups ]
+  )
+
+  const IMP_GROUPS_SELECTION = React.useMemo (
+    () => filter ((x: Record<DropdownOption<number>>) => any (lt (3)) (DropdownOption.A.id (x)))
+                 (GROUPS_SELECTION),
+    [ GROUPS_SELECTION ]
+  )
 
   const TEMPLATES =
     pipe_ (
       templates,
       map (itemTemplateToDropdown),
       consF (
-        DropdownOption ({ name: translate (l10n) ("none") })
+        DropdownOption ({ name: translate (staticData) ("general.none") })
       )
     )
 
@@ -85,14 +100,14 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
         <div className="row">
           <TextField
             className="number"
-            label={translate (l10n) ("number")}
+            label={translate (staticData) ("equipment.dialogs.addedit.number")}
             value={EIA.amount (item)}
             onChange={setAmount}
             valid={IEIVA.amount (inputValidation)}
             />
           <TextField
             className="name"
-            label={translate (l10n) ("name")}
+            label={translate (staticData) ("equipment.dialogs.addedit.name")}
             value={EIA.name (item)}
             onChange={setName}
             autoFocus={isInCreation}
@@ -103,7 +118,7 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
         <div className="row">
           <TextField
             className="price"
-            label={translate (l10n) ("price")}
+            label={translate (staticData) ("equipment.dialogs.addedit.price")}
             value={EIA.price (item)}
             onChange={setPrice}
             disabled={locked}
@@ -111,7 +126,7 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
             />
           <TextField
             className="weight"
-            label={translate (l10n) ("weight")}
+            label={translate (staticData) ("equipment.dialogs.addedit.weight")}
             value={EIA.weight (item)}
             onChange={setWeight}
             disabled={locked}
@@ -119,7 +134,7 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
             />
           <TextField
             className="where"
-            label={translate (l10n) ("carriedwhere")}
+            label={translate (staticData) ("equipment.dialogs.addedit.carriedwhere")}
             value={EIA.where (item)}
             onChange={setWhere}
             />
@@ -127,8 +142,8 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
         <div className="row">
           <Dropdown
             className="gr"
-            label={translate (l10n) ("itemgroup")}
-            hint={translate (l10n) ("itemgrouphint")}
+            label={translate (staticData) ("equipment.dialogs.addedit.itemgroup")}
+            hint={translate (staticData) ("equipment.dialogs.addedit.itemgrouphint")}
             value={Just (gr)}
             options={GROUPS_SELECTION}
             onChangeJust={setGroup}
@@ -141,14 +156,14 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
             <div className="row">
               <Checkbox
                 className="improvised-weapon"
-                label={translate (l10n) ("improvisedweapon")}
+                label={translate (staticData) ("equipment.dialogs.addedit.improvisedweapon")}
                 checked={isJust (EIA.improvisedWeaponGroup (item))}
                 onClick={switchIsImprovisedWeapon}
                 disabled={locked}
                 />
               <Dropdown
                 className="gr imp-gr"
-                hint={translate (l10n) ("improvisedweapongroup")}
+                hint={translate (staticData) ("equipment.dialogs.addedit.improvisedweapongroup")}
                 value={EIA.improvisedWeaponGroup (item)}
                 options={IMP_GROUPS_SELECTION}
                 onChangeJust={setImprovisedWeaponGroup}
@@ -161,8 +176,8 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
         <div className="row">
           <Dropdown
             className="template"
-            label={translate (l10n) ("template")}
-            hint={translate (l10n) ("none")}
+            label={translate (staticData) ("equipment.dialogs.addedit.template")}
+            hint={translate (staticData) ("general.none")}
             value={EIA.template (item)}
             options={TEMPLATES}
             onChangeJust={setTemplate}

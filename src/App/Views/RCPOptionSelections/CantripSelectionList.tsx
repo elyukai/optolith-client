@@ -1,19 +1,17 @@
 import * as React from "react"
-import { elemF, filter, List, map, subscript, toArray } from "../../../Data/List"
+import { elemF, filter, List, map, toArray } from "../../../Data/List"
 import { elems } from "../../../Data/OrderedMap"
 import { OrderedSet } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
 import { Tuple } from "../../../Data/Tuple"
 import { Cantrip } from "../../Models/Wiki/Cantrip"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { CantripsSelection } from "../../Models/Wiki/professionSelections/CantripsSelection"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate, translateP } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
-import { renderMaybe } from "../../Utilities/ReactUtils"
 import { CantripSelectionListItem } from "./CantripSelectionListItem"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const CSA = CantripsSelection.A
 const CA = Cantrip.A
 
@@ -23,32 +21,39 @@ export const isCantripsSelectionValid =
     Tuple (OrderedSet.size (actives) === CSA.amount (selection))
 
 const getCantrips =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (selection: Record<CantripsSelection>) =>
     filter (pipe (Cantrip.A.id, elemF (CSA.sid (selection))))
-           (elems (WA.cantrips (wiki)))
+           (elems (SDA.cantrips (wiki)))
 
 interface Props {
-  l10n: L10nRecord
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   active: OrderedSet<string>
   selection: Record<CantripsSelection>
   toggleCantripId (id: string): void
 }
 
 export const CantripSelectionList: React.FC<Props> = props => {
-  const { l10n, wiki, active, selection, toggleCantripId } = props
+  const { staticData, active, selection, toggleCantripId } = props
 
-  const nums = translate (l10n) ("cantripcounter")
-  const cantrips = React.useMemo (() => getCantrips (wiki) (selection), [ wiki, selection ])
+  const cantrips = React.useMemo (
+    () => getCantrips (staticData) (selection),
+    [ staticData, selection ]
+  )
+
   const amount = CSA.amount (selection)
+  const count = amount === 1
+                ? translate (staticData) ("rcpselectoptions.cantrip.one")
+                : amount === 2
+                ? translate (staticData) ("rcpselectoptions.cantrip.two")
+                : "..."
 
   return (
     <div className="cantrips list">
       <h4>
-        {translateP (l10n)
-                    ("cantripsfromlist")
-                    (List (renderMaybe (subscript (nums) (amount - 1))))}
+        {translateP (staticData)
+                    ("rcpselectoptions.cantripsfromlist")
+                    (List (count))}
       </h4>
       <ul>
         {pipe_ (

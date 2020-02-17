@@ -17,7 +17,7 @@ import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
 import { SkillCombined, SkillCombinedA_ } from "../../Models/View/SkillCombined"
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
 import { Skill } from "../../Models/Wiki/Skill"
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { isMaybeActive } from "../Activatable/isActive"
 import { flattenDependencies } from "../Dependencies/flattenDependencies"
 import { ifElse } from "../ifElse"
@@ -95,7 +95,7 @@ export const isSkillIncreasable =
  * Returns if the passed skill's skill rating can be decreased.
  */
 export const isSkillDecreasable =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (skill: Record<SkillCombined>): boolean => {
     // prerequisites of SA Craft Instruments:

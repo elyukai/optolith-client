@@ -2,18 +2,18 @@ import { connect } from "react-redux"
 import { Maybe } from "../../Data/Maybe"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as EquipmentActions from "../Actions/EquipmentActions"
-import { AppStateRecord } from "../Reducers/appReducer"
+import { AppStateRecord } from "../Models/AppState"
 import { getSortedTemplates } from "../Selectors/equipmentSelectors"
 import { getIsItemCreation, getItemEditorInstance, getWikiAttributes, getWikiCombatTechniques } from "../Selectors/stateSelectors"
 import { ItemEditor, ItemEditorDispatchProps, ItemEditorOwnProps, ItemEditorStateProps } from "../Views/Equipment/ItemEditor"
 
 const mapStateToProps =
-  (state: AppStateRecord, ownProps: ItemEditorOwnProps): ItemEditorStateProps => ({
+  (state: AppStateRecord): ItemEditorStateProps => ({
     attributes: getWikiAttributes (state),
     combatTechniques: getWikiCombatTechniques (state),
     isInCreation: getIsItemCreation (state),
     item: getItemEditorInstance (state),
-    templates: getSortedTemplates (state, ownProps),
+    templates: getSortedTemplates (state),
   })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): ItemEditorDispatchProps => ({

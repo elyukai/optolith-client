@@ -4,7 +4,7 @@ import { intercalate, List, map } from "../../../../Data/List"
 import { Maybe, maybeToNullable } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { CantripCombined, CantripCombinedA_ } from "../../../Models/View/CantripCombined"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { sortStrings } from "../../../Utilities/sortBy"
@@ -12,15 +12,15 @@ import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   cantrips: Maybe<List<Record<CantripCombined>>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 export const SpellsSheetCantrips: React.FC<Props> = props => {
-  const { cantrips, l10n } = props
+  const { cantrips, staticData } = props
 
   return (
     <TextBox
-      label={translate (l10n) ("cantrips")}
+      label={translate (staticData) ("sheets.spellssheet.cantrips")}
       className="cantrips activatable-list"
       >
       <div className="list">
@@ -28,7 +28,7 @@ export const SpellsSheetCantrips: React.FC<Props> = props => {
           cantrips,
           fmap (pipe (
             map (CantripCombinedA_.name),
-            sortStrings (l10n),
+            sortStrings (staticData),
             intercalate (", ")
           )),
           maybeToNullable

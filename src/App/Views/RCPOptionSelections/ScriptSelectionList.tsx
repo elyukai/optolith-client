@@ -10,35 +10,33 @@ import { SpecialAbilityId } from "../../Constants/Ids"
 import { Rules } from "../../Models/Hero/Rules"
 import { ScriptsSelectionListItemOptions } from "../../Models/View/ScriptsSelectionListItemOptions"
 import { Culture } from "../../Models/Wiki/Culture"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { findSelectOption } from "../../Utilities/Activatable/selectionUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { isAvailable } from "../../Utilities/RulesUtils"
 import { sortRecordsByName } from "../../Utilities/sortBy"
 import { ScriptSelectionListItem } from "./ScriptSelectionListItem"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const CA = Culture.A
 const SOA = SelectOption.A
 const SAA = SpecialAbility.A
 
-const isSOAvailable = (wiki: WikiModelRecord) => (rules: Record<Rules>) =>
-  isAvailable (SOA.src) (Pair (WA.books (wiki), rules))
+const isSOAvailable = (wiki: StaticDataRecord) => (rules: Record<Rules>) =>
+  isAvailable (SOA.src) (Pair (SDA.books (wiki), rules))
 
 const getScripts =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (rules: Record<Rules>) =>
   (culture: Record<Culture>) =>
   (mainScript: number) =>
   (isBuyingMainScriptEnabled: boolean) =>
   (isScriptSelectionNeeded: Pair<boolean, boolean>) =>
     pipe_ (
-      wiki,
-      WA.specialAbilities,
+      staticData,
+      SDA.specialAbilities,
       lookup (SpecialAbilityId.Literacy as string),
       bindF (Functn.join (wiki_scripts => pipe (
         SAA.select,
@@ -50,7 +48,8 @@ const getScripts =
             bindF (option => {
                     const optionId = SOA.id (option)
 
-                    if (typeof optionId === "number" && isSOAvailable (wiki) (rules) (option)) {
+                    if (typeof optionId === "number"
+                        && isSOAvailable (staticData) (rules) (option)) {
                       const maybeCost = SOA.cost (option)
 
                       if (isJust (maybeCost)) {
@@ -77,7 +76,7 @@ const getScripts =
                     return Nothing
                   })
           )),
-          sortRecordsByName (l10n)
+          sortRecordsByName (staticData)
         ))
       ))),
       fromMaybe (List ())
@@ -87,8 +86,7 @@ export const getScriptSelectionAPSpent = (selected_scripts: OrderedMap<number, n
   sum (selected_scripts)
 
 interface Props {
-  l10n: L10nRecord
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   rules: Record<Rules>
   active: OrderedMap<number, number>
   ap_left: number
@@ -106,16 +104,14 @@ export const ScriptSelectionList: React.FC<Props> = props => {
     culture,
     isBuyingMainScriptEnabled,
     isScriptSelectionNeeded,
-    l10n,
     mainScript,
     rules,
-    wiki,
+    staticData,
     toggleScript,
   } = props
 
   const scripts = React.useMemo (
-    () => getScripts (l10n)
-                     (wiki)
+    () => getScripts (staticData)
                      (rules)
                      (culture)
                      (mainScript)
@@ -125,10 +121,9 @@ export const ScriptSelectionList: React.FC<Props> = props => {
       culture,
       isBuyingMainScriptEnabled,
       isScriptSelectionNeeded,
-      l10n,
       mainScript,
       rules,
-      wiki,
+      staticData,
     ]
   )
 
@@ -138,7 +133,7 @@ export const ScriptSelectionList: React.FC<Props> = props => {
         scripts,
         map (options => (
           <ScriptSelectionListItem
-            l10n={l10n}
+            staticData={staticData}
             apLeft={ap_left}
             active={active}
             options={options}

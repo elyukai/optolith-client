@@ -1,5 +1,5 @@
 import { join } from "path"
-import { tryIO } from "../../Control/Exception"
+import { handleE } from "../../Control/Exception"
 import { eitherToMaybe } from "../../Data/Either"
 import { fmap } from "../../Data/Functor"
 import { and, bindF, ensure } from "../../Data/Maybe"
@@ -22,7 +22,8 @@ export const readUpdate =
   async () =>
     pipe_ (
       file_path,
-      tryIO (readFile),
+      readFile,
+      handleE,
       fmap (pipe (
         eitherToMaybe,
         bindF (parseJSON),
@@ -40,5 +41,6 @@ export const writeUpdate =
   pipe (
     (x: boolean) => ({ [property_name]: x }),
     JSON.stringify,
-    tryIO (writeFile (file_path))
+    writeFile (file_path),
+    handleE
   )

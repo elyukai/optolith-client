@@ -2,11 +2,10 @@ import * as React from "react"
 import { map } from "../../../Data/List"
 import { joinMaybeList, Maybe } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { pipe_ } from "../../Utilities/pipe"
 import { WikiCastingTime } from "./Elements/WikiCastingTime"
 import { WikiCost } from "./Elements/WikiCost"
@@ -22,20 +21,15 @@ import { WikiTargetCategory } from "./Elements/WikiTargetCategory"
 import { WikiBoxTemplate } from "./WikiBoxTemplate"
 
 export interface WikiLiturgicalChantInfoProps {
-  l10n: L10nRecord
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   x: Record<LiturgicalChant>
   liturgicalChantExtensions: Maybe<Record<SpecialAbility>>
 }
 
-const WA = WikiModel.A
 const LCA = LiturgicalChant.A
 
 export const WikiLiturgicalChantInfo: React.FC<WikiLiturgicalChantInfoProps> = props => {
-  const { l10n, liturgicalChantExtensions, x, wiki } = props
-
-  const attributes = WA.attributes (wiki)
-  const books = WA.books (wiki)
+  const { liturgicalChantExtensions, x, staticData } = props
 
   const mextensions = getExtensionsForEntry (LCA.id (x)) (liturgicalChantExtensions)
 
@@ -44,34 +38,31 @@ export const WikiLiturgicalChantInfo: React.FC<WikiLiturgicalChantInfoProps> = p
   return (
     <WikiBoxTemplate className="liturgicalchant" title={LCA.name (x)}>
       <WikiSkillCheck
-        attributes={attributes}
-        l10n={l10n}
+        staticData={staticData}
         x={x}
         acc={LCA}
         />
-      <WikiEffect l10n={l10n} x={x} acc={LCA} />
-      <WikiCastingTime l10n={l10n} x={x} acc={LCA} />
-      <WikiCost l10n={l10n} x={x} acc={LCA} />
-      <WikiRange l10n={l10n} x={x} acc={LCA} />
-      <WikiDuration l10n={l10n} x={x} acc={LCA} />
-      <WikiTargetCategory l10n={l10n} x={x} acc={LCA} />
-      <WikiLiturgicalChantTraditions l10n={l10n} x={x} acc={LCA} />
-      <WikiImprovementCost l10n={l10n} x={x} acc={LCA} />
+      <WikiEffect staticData={staticData} x={x} acc={LCA} />
+      <WikiCastingTime staticData={staticData} x={x} acc={LCA} />
+      <WikiCost staticData={staticData} x={x} acc={LCA} />
+      <WikiRange staticData={staticData} x={x} acc={LCA} />
+      <WikiDuration staticData={staticData} x={x} acc={LCA} />
+      <WikiTargetCategory staticData={staticData} x={x} acc={LCA} />
+      <WikiLiturgicalChantTraditions staticData={staticData} x={x} acc={LCA} />
+      <WikiImprovementCost staticData={staticData} x={x} acc={LCA} />
       <WikiSource
-        books={books}
-        l10n={l10n}
+        staticData={staticData}
         x={x}
         acc={LCA}
         />
       <WikiExtensions
-        l10n={l10n}
+        staticData={staticData}
         x={x}
         extensions={mextensions}
         acc={LCA}
         />
       <WikiSource
-        books={books}
-        l10n={l10n}
+        staticData={staticData}
         x={x}
         addSrcs={add_srcs}
         />

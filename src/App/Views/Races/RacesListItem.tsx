@@ -5,7 +5,6 @@ import { Record } from "../../../Data/Record"
 import { setTab } from "../../Actions/LocationActions"
 import { selectRace } from "../../Actions/RaceActions"
 import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { TabId } from "../../Utilities/LocationUtils"
 import { IconButton } from "../Universal/IconButton"
 import { ListItem } from "../Universal/ListItem"
@@ -16,7 +15,6 @@ import { ListItemValues } from "../Universal/ListItemValues"
 
 export interface RacesListItemProps {
   currentId: Maybe<string>
-  l10n: L10nRecord
   race: Record<RaceCombined>
 }
 

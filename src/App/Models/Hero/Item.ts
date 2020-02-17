@@ -42,8 +42,8 @@ export interface Item extends ItemBase {
   price: Maybe<number>
   pro: Maybe<number>
   range: Maybe<List<number>>
-  reloadTime: Maybe<string>
-  stp: Maybe<string>
+  reloadTime: Maybe<number | List<number>>
+  stp: Maybe<number | List<number>>
   weight: Maybe<number>
   stabilityMod: Maybe<number>
   note: Maybe<string>

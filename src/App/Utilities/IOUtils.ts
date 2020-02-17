@@ -5,7 +5,6 @@ import { fromMaybe, guard, joinMaybeList, Maybe, normalize, then } from "../../D
 import { divideBy, inc } from "../../Data/Num"
 import { bimap, fst, Pair, snd } from "../../Data/Tuple"
 import { pipe_ } from "./pipe"
-import { Locale } from "./Raw/JSON/Config"
 
 /**
  * Prints windows' web page as PDF with Chromium's preview printing custom settings.
@@ -41,14 +40,16 @@ export const showOpenDialog: (options: Electron.OpenDialogOptions) => Promise<Li
     joinMaybeList
   )
 
-export const getSystemLocale = (): Locale => {
+export const getSystemLocale = (): string => {
   const systemLocale = remote.app.getLocale ()
 
   return /^de/u .test (systemLocale)
-    ? Locale.German
+    ? "de-DE"
     : /^nl/u .test (systemLocale)
-    ? Locale.Dutch
-    : Locale.English
+    ? "nl-BE"
+    : /^fr/u .test (systemLocale)
+    ? "fr-FR"
+    : "en-US"
 }
 
 const byteTags = List ("", "K", "M", "G", "T")

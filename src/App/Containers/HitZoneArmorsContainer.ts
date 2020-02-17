@@ -2,7 +2,7 @@ import { connect } from "react-redux"
 import { Maybe } from "../../Data/Maybe"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as EquipmentActions from "../Actions/EquipmentActions"
-import { AppStateRecord } from "../Reducers/appReducer"
+import { AppStateRecord } from "../Models/AppState"
 import { getInitialStartingWealth } from "../Selectors/activatableSelectors"
 import { getHasCurrentNoAddedAP } from "../Selectors/adventurePointsSelectors"
 import { getCarryingCapacity } from "../Selectors/attributeSelectors"
@@ -14,7 +14,7 @@ const mapStateToProps = (
   state: AppStateRecord,
   ownProps: HitZoneArmorsOwnProps
 ): HitZoneArmorsStateProps => ({
-  armorZones: getFilteredHitZoneArmors (state, ownProps),
+  armorZones: getFilteredHitZoneArmors (state),
   carryingCapacity: getCarryingCapacity (state, ownProps),
   initialStartingWealth: getInitialStartingWealth (state),
   items: getItems (state),
@@ -23,8 +23,8 @@ const mapStateToProps = (
   hasNoAddedAP: getHasCurrentNoAddedAP (state),
   purse: getPurse (state),
   templates: getTemplates (state),
-  totalPrice: getTotalPrice (state, ownProps),
-  totalWeight: getTotalWeight (state, ownProps),
+  totalPrice: getTotalPrice (state),
+  totalWeight: getTotalWeight (state),
   filterText: getZoneArmorFilterText (state),
 })
 

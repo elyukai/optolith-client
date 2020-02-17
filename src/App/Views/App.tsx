@@ -1,15 +1,16 @@
 import * as React from "react"
 import { List, splitOn } from "../../Data/List"
-import { bind, ensure, fromMaybe, guardReplace, Just, listToMaybe, Maybe, maybe } from "../../Data/Maybe"
+import { fromMaybe, guardReplace, Just, listToMaybe, Maybe } from "../../Data/Maybe"
 import { AlertsContainer } from "../Containers/AlertsContainer"
 import { DownloaderContainer } from "../Containers/DownloaderContainer"
 import { NavigationBarContainer } from "../Containers/NavigationBarContainer"
 import { HeroModelRecord } from "../Models/Hero/HeroModel"
-import { L10n, L10nRecord } from "../Models/Wiki/L10n"
-import { LAST_LOADING_PHASE } from "../Reducers/isReadyReducer"
+import { L10n } from "../Models/Wiki/L10n"
+import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { classListMaybe } from "../Utilities/CSS"
 import { getSystemLocale } from "../Utilities/IOUtils"
 import { TabId } from "../Utilities/LocationUtils"
+import { pipe_ } from "../Utilities/pipe"
 import { Theme } from "../Utilities/Raw/JSON/Config"
 import { Router } from "./Router/Router"
 import { Scroll } from "./Universal/Scroll"
@@ -19,12 +20,13 @@ export interface AppOwnProps {}
 
 export interface AppStateProps {
   currentTab: TabId
-  l10n: Maybe<L10nRecord>
+  staticData: StaticDataRecord
   mhero: Maybe<HeroModelRecord>
   platform: string
   theme: Theme
   areAnimationsEnabled: boolean
-  loading_phase: number
+  isLoading: boolean
+  hasInitWithError: boolean
 }
 
 export interface AppDispatchProps {
@@ -57,7 +59,7 @@ export class App extends React.Component<AppProps, AppState> {
   render () {
     const {
       currentTab,
-      l10n: ml10n,
+      staticData,
       mhero,
       platform,
       theme,
@@ -70,7 +72,8 @@ export class App extends React.Component<AppProps, AppState> {
       enterFullscreen,
       leaveFullscreen,
       checkForUpdates,
-      loading_phase,
+      isLoading,
+      hasInitWithError,
     } = this.props
 
     const { hasError } = this.state
@@ -88,8 +91,8 @@ export class App extends React.Component<AppProps, AppState> {
       )
     }
 
-    return maybe
-      (
+    if (isLoading) {
+      return (
         <div
           id="body"
           className={classListMaybe (List (
@@ -125,22 +128,22 @@ export class App extends React.Component<AppProps, AppState> {
             />
         </div>
       )
-      ((l10n: L10nRecord) => (
+    }
+
+    if (hasInitWithError) {
+      return (
         <div
           id="body"
           className={classListMaybe (List (
             Just (`theme-${theme}`),
-            Just (`platform-${platform}`),
-            guardReplace (areAnimationsEnabled) ("show-animations")
+            Just (`platform-${platform}`)
           ))}
-          lang={fromMaybe ("") (listToMaybe (splitOn ("-") (L10n.A.id (l10n))))}
+          lang={fromMaybe ("") (listToMaybe (splitOn ("-") (getSystemLocale ())))}
           >
           <div className="background-image">
             <img src="images/background.svg" alt="" />
           </div>
-
           <AlertsContainer />
-          <DownloaderContainer l10n={l10n} />
           <TitleBar
             close={close}
             closeDuringLoad={closeDuringLoad}
@@ -150,24 +153,61 @@ export class App extends React.Component<AppProps, AppState> {
             minimize={minimize}
             platform={platform}
             restore={restore}
+            isLoading
             />
-
-          <section id="content">
-            <NavigationBarContainer
-              l10n={l10n}
-              checkForUpdates={checkForUpdates}
-              mhero={mhero}
-              platform={platform}
-              />
-            <Router
-              key={currentTab}
-              id={currentTab}
-              l10n={l10n}
-              mhero={mhero}
-              />
-          </section>
         </div>
-      ))
-      (bind (ml10n) (ensure (() => loading_phase === LAST_LOADING_PHASE)))
+      )
+    }
+
+    return (
+      <div
+        id="body"
+        className={classListMaybe (List (
+          Just (`theme-${theme}`),
+          Just (`platform-${platform}`),
+          guardReplace (areAnimationsEnabled) ("show-animations")
+        ))}
+        lang={pipe_ (
+          staticData,
+          StaticData.A.ui,
+          L10n.A.id,
+          splitOn ("-"),
+          listToMaybe,
+          fromMaybe ("")
+        )}
+        >
+        <div className="background-image">
+          <img src="images/background.svg" alt="" />
+        </div>
+
+        <AlertsContainer />
+        <DownloaderContainer staticData={staticData} />
+        <TitleBar
+          close={close}
+          closeDuringLoad={closeDuringLoad}
+          enterFullscreen={enterFullscreen}
+          leaveFullscreen={leaveFullscreen}
+          maximize={maximize}
+          minimize={minimize}
+          platform={platform}
+          restore={restore}
+          />
+
+        <section id="content">
+          <NavigationBarContainer
+            staticData={staticData}
+            checkForUpdates={checkForUpdates}
+            mhero={mhero}
+            platform={platform}
+            />
+          <Router
+            key={currentTab}
+            id={currentTab}
+            staticData={staticData}
+            mhero={mhero}
+            />
+        </section>
+      </div>
+    )
   }
 }

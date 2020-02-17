@@ -51,7 +51,6 @@ export const Dropdown: DropdownFC = <A extends DropdownKey> (props: Props<A>) =>
 
   const [ isOpen, setOpen ] = React.useState (false)
   const [ position, setPosition ] = React.useState<"top" | "bottom"> ("bottom")
-  const [ clickInside, setClickInside ] = React.useState (false)
   const containerRef = React.useRef<HTMLDivElement | null> (null)
 
   const handleSwitch = React.useCallback (
@@ -94,17 +93,16 @@ export const Dropdown: DropdownFC = <A extends DropdownKey> (props: Props<A>) =>
   )
 
   const handleOutsideClick = React.useCallback (
-    () => {
-      if (!clickInside && isOpen) {
+    (e: Event) => {
+      if (isOpen
+          && containerRef.current !== null
+          && e.target !== null
+          && !containerRef.current.contains (e.target as Node)) {
         setOpen (false)
       }
     },
-    [ clickInside, isOpen ]
+    [ isOpen ]
   )
-
-  const handleInsideFocus = React.useCallback (() => setClickInside (true), [ setClickInside ])
-
-  const handleInsideBlur = React.useCallback (() => setClickInside (false), [ setClickInside ])
 
   React.useEffect (
     () => {
@@ -189,12 +187,7 @@ export const Dropdown: DropdownFC = <A extends DropdownKey> (props: Props<A>) =>
       ref={containerRef}
       >
       {typeof label === "string" ? <Label text={label} disabled={normalizedDisabled} /> : null}
-      <div
-        onMouseDown={handleInsideFocus}
-        onMouseUp={handleInsideBlur}
-        onTouchStart={handleInsideFocus}
-        onTouchEnd={handleInsideBlur}
-        >
+      <div>
         {position === "top" && isOpen ? downElement : placeholder}
         <div
           onClick={handleSwitch}

@@ -212,7 +212,7 @@ export namespace Internals {
    * Return `True` if the given value is a `Left`-value, `False` otherwise.
    */
   export const isLeft =
-    <A, B> (x: Either<A, B>): x is Left<A> =>
+    <A> (x: Either<A, any>): x is Left<A> =>
       Object.getPrototypeOf (x) === LeftPrototype
 
   /**

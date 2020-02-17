@@ -8,14 +8,14 @@ import { RequireActivatable } from "./ActivatableRequirement"
 export interface CultureRequirement {
   "@@name": "CultureRequirement"
   id: "CULTURE"
-  value: number | List<number>
+  value: string | List<string>
 }
 
 export const CultureRequirement =
   fromDefault ("CultureRequirement")
               <CultureRequirement> ({
                 id: "CULTURE",
-                value: 0,
+                value: "",
               })
 
 export const isCultureRequirement =

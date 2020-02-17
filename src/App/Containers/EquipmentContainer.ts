@@ -3,7 +3,7 @@ import { Maybe } from "../../Data/Maybe"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as EquipmentActions from "../Actions/EquipmentActions"
 import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids"
-import { AppStateRecord } from "../Reducers/appReducer"
+import { AppStateRecord } from "../Models/AppState"
 import { getInitialStartingWealth } from "../Selectors/activatableSelectors"
 import { getHasCurrentNoAddedAP } from "../Selectors/adventurePointsSelectors"
 import { getCarryingCapacity } from "../Selectors/attributeSelectors"
@@ -19,13 +19,13 @@ const mapStateToProps =
     combatTechniques: getFilteredCombatTechniques (state, ownProps),
     carryingCapacity: getCarryingCapacity (state, ownProps),
     initialStartingWealth: getInitialStartingWealth (state),
-    items: getFilteredItems (state, ownProps),
+    items: getFilteredItems (state),
     hasNoAddedAP: getHasCurrentNoAddedAP (state),
     purse: getPurse (state),
     sortOrder: getEquipmentSortOrder (state),
     templates: getFilteredItemTemplates (state, ownProps),
-    totalPrice: getTotalPrice (state, ownProps),
-    totalWeight: getTotalWeight (state, ownProps),
+    totalPrice: getTotalPrice (state),
+    totalWeight: getTotalWeight (state),
     meleeItemTemplateCombatTechniqueFilter: getMeleeItemTemplateCombatTechniqueFilter (state),
     rangedItemTemplateCombatTechniqueFilter: getRangedItemTemplateCombatTechniqueFilter (state),
     filterText: getEquipmentFilterText (state),

@@ -1,6 +1,5 @@
 import { remote } from "electron"
 import { Just, Nothing } from "../../Data/Maybe"
-import { L10nRecord } from "../Models/Wiki/L10n"
 import { getIsHeroSection } from "../Selectors/uilocationSelectors"
 import { TabId } from "../Utilities/LocationUtils"
 import { isDialogOpen } from "../Utilities/SubwindowsUtils"
@@ -23,10 +22,10 @@ export const redoAccelerator = (): ReduxAction => (dispatch, getState) => {
   }
 }
 
-export const saveHeroAccelerator = (l10n: L10nRecord): ReduxAction<Promise<void>> =>
+export const saveHeroAccelerator: ReduxAction<Promise<void>> =
   async (dispatch, getState) => {
     if (!isDialogOpen () && getIsHeroSection (getState ())) {
-      await dispatch (saveHero (l10n) (Nothing))
+      await dispatch (saveHero (Nothing))
     }
   }
 

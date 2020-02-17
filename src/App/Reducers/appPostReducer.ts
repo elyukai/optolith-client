@@ -6,13 +6,14 @@ import { List, notElem } from "../../Data/List"
 import { and, elem, fromJust, isJust, isNothing, Just, maybe, or } from "../../Data/Maybe"
 import { insert, OrderedMap } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
-import { uncurry } from "../../Data/Tuple"
 import { uncurry3 } from "../../Data/Tuple/Curry"
 import { RedoAction, UndoAction } from "../Actions/HistoryActions"
 import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from "../Actions/IOActions"
 import * as ActionTypes from "../Constants/ActionTypes"
+import { AppStateRecord } from "../Models/AppState"
 import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
 import { User } from "../Models/Hero/heroTypeHelpers"
+import { HeroesStateL } from "../Models/HeroesState"
 import { getRuleBooksEnabledM } from "../Selectors/rulesSelectors"
 import { getCurrentCultureId, getCurrentHeroPresent, getCurrentPhase, getCurrentRaceId, getCurrentTab } from "../Selectors/stateSelectors"
 import { PHASE_1_PROFILE_TABS, PHASE_1_RCP_TABS } from "../Selectors/uilocationSelectors"
@@ -23,9 +24,7 @@ import { convertHero } from "../Utilities/Raw/JSON/Hero/Compat"
 import { convertFromRawHero } from "../Utilities/Raw/JSON/Hero/HeroFromJSON"
 import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils"
 import { UndoState } from "../Utilities/undo"
-import { AppStateRecord } from "./appReducer"
 import { appSlicesReducer } from "./appSlicesReducer"
-import { HeroesStateL } from "./herolistReducer"
 import { toHeroWithHistory } from "./heroReducer"
 import { uiReducer } from "./uiReducer"
 
@@ -47,11 +46,11 @@ const prepareHerolist =
       const hs = Object.entries (fromJust (rawHeroes)).reduce<Reduced> (
         ({ heroes, users }, [ key, hero ]) => pipe_ (
           hero,
-          uncurry (convertHero) (action.payload.tables),
+          convertHero (action.payload.staticData),
           maybe ({ heroes, users })
                 (compat_hero => pipe_ (
                   compat_hero,
-                  uncurry (convertFromRawHero) (action.payload.tables),
+                  convertFromRawHero (action.payload.staticData),
                   toHeroWithHistory,
                   hero_record => typeof compat_hero .player === "object"
                           ? {

@@ -6,9 +6,8 @@ import { Record } from "../../../Data/Record"
 import { Pair } from "../../../Data/Tuple"
 import { Rules } from "../../Models/Hero/Rules"
 import { Culture } from "../../Models/Wiki/Culture"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { LanguagesScriptsSelection } from "../../Models/Wiki/professionSelections/LanguagesScriptsSelection"
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translateP } from "../../Utilities/I18n"
 import { getLanguageSelectionAPSpent, LanguageSelectionList } from "./LanguageSelectionList"
 import { getScriptSelectionAPSpent, ScriptSelectionList } from "./ScriptSelectionList"
@@ -34,8 +33,7 @@ export const isLanguagesScriptsSelectionValid =
   }
 
 interface Props {
-  l10n: L10nRecord
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   rules: Record<Rules>
   ap_left: number
   culture: Record<Culture>
@@ -53,8 +51,7 @@ interface Props {
 
 export const LanguagesScriptsSelectionLists: React.FC<Props> = props => {
   const {
-    l10n,
-    wiki,
+    staticData,
     rules,
     ap_left,
     culture,
@@ -75,12 +72,13 @@ export const LanguagesScriptsSelectionLists: React.FC<Props> = props => {
   return (
     <div className="lang_lit list">
       <h4>
-        {translateP (l10n) ("languagesandliteracytotalingapleft") (List (ap_total, ap_left))}
+        {translateP (staticData)
+                    ("rcpselectoptions.languagesandliteracytotalingapleft")
+                    (List (ap_total, ap_left))}
       </h4>
       <div className="languages-scripts">
         <LanguageSelectionList
-          l10n={l10n}
-          wiki={wiki}
+          staticData={staticData}
           rules={rules}
           active={languagesActive}
           ap_left={ap_left}
@@ -90,8 +88,7 @@ export const LanguagesScriptsSelectionLists: React.FC<Props> = props => {
           adjustLanguage={adjustLanguage}
           />
         <ScriptSelectionList
-          l10n={l10n}
-          wiki={wiki}
+          staticData={staticData}
           rules={rules}
           active={scriptsActive}
           ap_left={ap_left}

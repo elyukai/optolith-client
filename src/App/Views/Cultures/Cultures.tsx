@@ -6,7 +6,7 @@ import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
 import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined"
 import { DropdownOption } from "../../Models/View/DropdownOption"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { CulturesSortOptions, CulturesVisibilityFilter } from "../../Utilities/Raw/JSON/Config"
@@ -25,7 +25,7 @@ import { CulturesListItem } from "./CulturesListItem"
 
 export interface CulturesOwnProps {
   hero: HeroModelRecord
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 export interface CulturesStateProps {
@@ -50,7 +50,7 @@ export type CulturesProps = CulturesStateProps & CulturesDispatchProps & Culture
 export const Cultures: React.FC<CulturesProps> = props => {
   const {
     cultures: mcultures,
-    l10n,
+    staticData,
     setSortOrder,
     setVisibilityFilter,
     sortOrder,
@@ -66,7 +66,7 @@ export const Cultures: React.FC<CulturesProps> = props => {
     <Page id="cultures">
       <Options>
         <SearchField
-          l10n={l10n}
+          staticData={staticData}
           value={filterText}
           onChange={setFilterText}
           fullWidth
@@ -77,11 +77,11 @@ export const Cultures: React.FC<CulturesProps> = props => {
           options={List (
             DropdownOption ({
               id: Just (CulturesVisibilityFilter.All),
-              name: translate (l10n) ("allcultures"),
+              name: translate (staticData) ("culture.filters.common.allcultures"),
             }),
             DropdownOption ({
               id: Just (CulturesVisibilityFilter.Common),
-              name: translate (l10n) ("commoncultures"),
+              name: translate (staticData) ("culture.filters.common.commoncultures"),
             })
           )}
           fullWidth
@@ -90,13 +90,13 @@ export const Cultures: React.FC<CulturesProps> = props => {
           sortOrder={sortOrder}
           sort={setSortOrder}
           options={List (SortNames.Name, SortNames.Cost)}
-          l10n={l10n}
+          staticData={staticData}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (staticData) ("culture.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />
@@ -107,7 +107,7 @@ export const Cultures: React.FC<CulturesProps> = props => {
               mcultures,
               ensure (notNull),
               maybe<NonNullable<React.ReactNode>>
-                (<ListPlaceholder l10n={l10n} type="cultures" noResults />)
+                (<ListPlaceholder staticData={staticData} type="cultures" noResults />)
                 (pipe (
                   map (culture => (
                     <CulturesListItem
@@ -124,7 +124,7 @@ export const Cultures: React.FC<CulturesProps> = props => {
           </ListView>
         </Scroll>
       </MainContent>
-      <WikiInfoContainer currentId={currentId} l10n={l10n} />
+      <WikiInfoContainer currentId={currentId} />
     </Page>
   )
 }

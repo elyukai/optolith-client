@@ -1,20 +1,20 @@
 import * as React from "react"
 import { fmap } from "../../../Data/Functor"
-import { List, map, subscriptF, toArray } from "../../../Data/List"
+import { List, map, toArray } from "../../../Data/List"
 import { fromMaybe } from "../../../Data/Maybe"
-import { elems, OrderedMap, sum } from "../../../Data/OrderedMap"
+import { elems, lookup, OrderedMap, sum } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Pair } from "../../../Data/Tuple"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { SkillsSelection } from "../../Models/Wiki/professionSelections/SkillsSelection"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
-import { translate, translateP } from "../../Utilities/I18n"
+import { SkillGroup } from "../../Models/Wiki/SkillGroup"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translateP } from "../../Utilities/I18n"
 import { pipe_ } from "../../Utilities/pipe"
 import { renderMaybe } from "../../Utilities/ReactUtils"
 import { sortRecordsByName } from "../../Utilities/sortBy"
 import { SkillSelectionListItem } from "./SkillSelectionListItem"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const SSA = SkillsSelection.A
 
 export const isSkillSelectionValid =
@@ -28,18 +28,16 @@ export const isSkillSelectionValid =
   }
 
 const getSkills =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
     pipe_ (
-      wiki,
-      WA.skills,
+      staticData,
+      SDA.skills,
       elems,
-      sortRecordsByName (l10n)
+      sortRecordsByName (staticData)
     )
 
 interface Props {
-  l10n: L10nRecord
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   active: OrderedMap<string, number>
   ap_left: number
   selection: Record<SkillsSelection>
@@ -48,23 +46,24 @@ interface Props {
 }
 
 export const SkillSelectionList: React.FC<Props> = props => {
-  const { active, addSkillPoint, ap_left, l10n, removeSkillPoint, selection, wiki } = props
+  const { active, addSkillPoint, ap_left, removeSkillPoint, selection, staticData } = props
 
   const ap_total = SSA.value (selection)
   const mgr = SSA.gr (selection)
 
-  const skills = getSkills (l10n) (wiki)
+  const skills = getSkills (staticData)
 
   return (
     <div className="skills list">
       <h4>
         {pipe_ (
-          translate (l10n) ("skillselectiongroups"),
-          subscriptF (fromMaybe (0) (mgr)),
-          fmap (gr_name => translateP (l10n)
-                                      ("skillselectionap")
+          staticData,
+          SDA.skillGroups,
+          lookup (fromMaybe (0) (mgr)),
+          fmap (gr => translateP (staticData)
+                                      ("rcpselectoptions.skillselectionap")
                                       (List<string | number> (
-                                        gr_name,
+                                        SkillGroup.A.name (gr),
                                         ap_total,
                                         ap_left
                                       ))),

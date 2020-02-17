@@ -18,9 +18,11 @@ jobs:
   include:
   # Test stage
   - stage: Test
+    os: linux
     install:
-      - npm ci
+      - sh ./.travis/InstallLinux.sh
     script:
+      - npm run ci:copyschemes
       - npm test
       - npm run lint
 

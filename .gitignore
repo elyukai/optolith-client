@@ -11,11 +11,8 @@ app/**/*.js.map
 !app/index.js
 /installer/
 electron-builder.env
-app/Database/**/*.xlsx
 *.map
-app/Database/de-DE/.~lock.l10n.xlsx#
-app/Database/.~lock.univ.xlsx#
-tablesSrc.json
+app/Database
 publishSettings.json
 
 .env*
@@ -24,3 +21,5 @@ Tables.zip
 tables/
 deploy/tablesSrc.json
 src/App/Utilities/YAML/Schema/
+.merlin
+/lib

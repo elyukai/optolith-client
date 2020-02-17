@@ -1,12 +1,12 @@
 import { REDO, UNDO } from "../Constants/ActionTypes"
-import { WikiModel } from "../Models/Wiki/WikiModel"
+import { StaticData } from "../Models/Wiki/WikiModel"
 import { getWikiBooks } from "../Selectors/stateSelectors"
 import { ReduxAction } from "./Actions"
 
 export interface UndoAction {
   type: UNDO
   payload: {
-    books: WikiModel["books"]
+    books: StaticData["books"]
   }
 }
 

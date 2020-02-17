@@ -18,9 +18,10 @@ import { ItemTemplate } from "./ItemTemplate"
 import { LiturgicalChant } from "./LiturgicalChant"
 import { ProfessionRequireActivatable, RequireActivatable } from "./prerequisites/ActivatableRequirement"
 import { CultureRequirement } from "./prerequisites/CultureRequirement"
-import { ProfessionRequireIncreasable, RequireIncreasable } from "./prerequisites/IncreasableRequirement"
+import { RequireIncreasable } from "./prerequisites/IncreasableRequirement"
 import { PactRequirement } from "./prerequisites/PactRequirement"
 import { RequirePrimaryAttribute } from "./prerequisites/PrimaryAttributeRequirement"
+import { ProfessionRequireIncreasable } from "./prerequisites/ProfessionRequireIncreasable"
 import { RaceRequirement } from "./prerequisites/RaceRequirement"
 import { SexRequirement } from "./prerequisites/SexRequirement"
 import { SocialPrerequisite } from "./prerequisites/SocialPrerequisite"
@@ -206,7 +207,7 @@ export interface AdvantageDisadvantageBase extends ActivatableBase {
   apValueAppend: Maybe<string>
 }
 
-export type CheckModifier = "SPI" | "TOU" | "SPI/2"
+export type CheckModifier = "SPI" | "TOU" | "SPI/2" | "SPI/TOU"
 
 export interface SkillExtension extends SelectOption {
   target: Just<string>

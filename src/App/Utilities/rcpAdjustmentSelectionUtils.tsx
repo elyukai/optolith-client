@@ -9,12 +9,11 @@ import { fst, Pair, snd } from "../../Data/Tuple"
 import { SpecialAbilityId } from "../Constants/Ids"
 import { DropdownOption } from "../Models/View/DropdownOption"
 import { Culture } from "../Models/Wiki/Culture"
-import { L10nRecord } from "../Models/Wiki/L10n"
 import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement"
 import { Profession } from "../Models/Wiki/Profession"
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
 import { SelectOption } from "../Models/Wiki/sub/SelectOption"
-import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { ProfessionPrerequisite } from "../Models/Wiki/wikiTypeHelpers"
 import { Checkbox } from "../Views/Universal/Checkbox"
 import { Dropdown } from "../Views/Universal/Dropdown"
@@ -22,14 +21,13 @@ import { findSelectOption } from "./Activatable/selectionUtils"
 import { translate } from "./I18n"
 import { pipe } from "./pipe"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const CA = Culture.A
 const PA = Profession.A
 const SOA = SelectOption.A
 
 export const getBuyScriptElement =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (culture: Record<Culture>) =>
   (isScriptSelectionNeeded: Pair<boolean, boolean>) =>
   (isBuyingMainScriptEnabled: boolean) =>
@@ -40,12 +38,12 @@ export const getBuyScriptElement =
           (() => {
             const selectionItem =
               pipe (
-                     WA.specialAbilities,
+                     SDA.specialAbilities,
                      lookup<string> (SpecialAbilityId.Literacy),
                      bindF (flip (findSelectOption)
                                  (listToMaybe (Culture.AL.scripts (culture))))
                    )
-                   (wiki)
+                   (staticData)
 
             const selectionItemName =
               fromMaybe ("") (fmap (SOA.name) (selectionItem))
@@ -59,7 +57,7 @@ export const getBuyScriptElement =
                 onClick={switchIsBuyingMainScriptEnabled}
                 disabled={isAnyLanguageOrScriptSelected}
                 >
-                {translate (l10n) ("buyscript")}
+                {translate (staticData) ("rcpselectoptions.buyscript")}
                 {
                   !snd (isScriptSelectionNeeded)
                   && Maybe.isJust (selectionItem)
@@ -73,18 +71,17 @@ export const getBuyScriptElement =
       : Nothing
 
 export const getMotherTongueSelectionElement =
-  (locale: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (culture: Record<Culture>) =>
   (isMotherTongueSelectionNeeded: boolean) =>
   (motherTongue: number) =>
   (isAnyLanguageOrScriptSelected: boolean) =>
   (setMotherTongue: (option: number) => void) =>
     pipe (
-           bindF (() => lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.Language)),
+           bindF (() => lookupF (SDA.specialAbilities (staticData)) (SpecialAbilityId.Language)),
            fmap ((wikiEntry: Record<SpecialAbility>) => (
                   <Dropdown
-                    hint={translate (locale) ("selectnativetongue")}
+                    hint={translate (staticData) ("rcpselectoptions.nativetongue.placeholder")}
                     value={motherTongue}
                     onChangeJust={setMotherTongue}
                     options={
@@ -107,8 +104,7 @@ export const getMotherTongueSelectionElement =
          (guard (isMotherTongueSelectionNeeded))
 
 export const getMainScriptSelectionElement =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (culture: Record<Culture>) =>
   (isScriptSelectionNeeded: Pair<boolean, boolean>) =>
   (mainScript: number) =>
@@ -116,10 +112,10 @@ export const getMainScriptSelectionElement =
   (isBuyingMainScriptEnabled: boolean) =>
   (setMainCulturalLiteracy: (option: number) => void) =>
     pipe (
-           bindF (() => lookupF (WA.specialAbilities (wiki)) (SpecialAbilityId.Literacy)),
+           bindF (() => lookupF (SDA.specialAbilities (staticData)) (SpecialAbilityId.Literacy)),
            fmap ((wikiEntry: Record<SpecialAbility>) => (
                   <Dropdown
-                    hint={translate (l10n) ("selectscript")}
+                    hint={translate (staticData) ("rcpselectoptions.script.placeholder")}
                     value={mainScript}
                     onChangeJust={setMainCulturalLiteracy}
                     options={
@@ -146,7 +142,7 @@ export const getMainScriptSelectionElement =
          (guard (snd (isScriptSelectionNeeded)))
 
 export const getGuildMageUnfamiliarSpellSelectionElement =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (mspells: Maybe<List<Record<DropdownOption>>>) =>
   (selected: Maybe<string>) =>
   (setGuildMageUnfamiliarSpell: (id: string) => void) =>
@@ -158,9 +154,12 @@ export const getGuildMageUnfamiliarSpellSelectionElement =
       ? fmapF (mspells)
               (spells => (
                 <div className="unfamiliar-spell">
-                  <h4>{translate (l10n) ("unfamiliarspellselectionfortraditionguildmage")}</h4>
+                  <h4>
+                    {translate (staticData)
+                               ("rcpselectoptions.unfamiliarspellselectionfortraditionguildmage")}
+                  </h4>
                   <Dropdown<string | number>
-                    hint={translate (l10n) ("selectaspell")}
+                    hint={translate (staticData) ("rcpselectoptions.unfamiliarspell.placeholder")}
                     value={selected}
                     onChangeJust={setGuildMageUnfamiliarSpell}
                     options={spells}

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Maybe } from "../../../Data/Maybe"
 import { EnergyId } from "../../Constants/Ids"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { isFunction } from "../../Utilities/typeCheckUtils"
 import { IconButton } from "../Universal/IconButton"
@@ -10,7 +10,7 @@ import { AttributesRemovePermanent } from "./AttributesRemovePermanent"
 import { PermanentPoints } from "./PermanentPoints"
 
 export interface AttributesPermanentListItemProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   id: EnergyId
   label: string
   name: string
@@ -32,7 +32,7 @@ export interface AttributesPermanentListItemProps {
 
 export const AttributesPermanentListItem: React.FC<AttributesPermanentListItemProps> = props => {
   const {
-    l10n,
+    staticData,
     id,
     label,
     name,
@@ -78,18 +78,18 @@ export const AttributesPermanentListItem: React.FC<AttributesPermanentListItemPr
             typeof boughtBack === "number"
             ? (
                 <p>
-                  {translate (l10n) ("losttotal")}
+                  {translate (staticData) ("attributes.derivedcharacteristics.tooltips.losttotal")}
                   {": "}
                   {lost}
                   <br />
-                  {translate (l10n) ("boughtback")}
+                  {translate (staticData) ("attributes.derivedcharacteristics.tooltips.boughtback")}
                   {": "}
                   {boughtBack}
                 </p>
               )
             : (
                 <p>
-                  {translate (l10n) ("losttotal")}
+                  {translate (staticData) ("attributes.derivedcharacteristics.tooltips.losttotal")}
                   {": "}
                   {lost}
                 </p>
@@ -111,7 +111,7 @@ export const AttributesPermanentListItem: React.FC<AttributesPermanentListItemPr
       <PermanentPoints
         id={String (id)}
         eid={id}
-        l10n={l10n}
+        staticData={staticData}
         permanentBoughtBack={Maybe (boughtBack)}
         permanentSpent={lost}
         isOpen={Maybe.elem (id) (getEditPermanentEnergy)}
@@ -132,7 +132,7 @@ export const AttributesPermanentListItem: React.FC<AttributesPermanentListItemPr
         )}
       <AttributesRemovePermanent
         remove={addLostPoints}
-        l10n={l10n}
+        staticData={staticData}
         isOpen={Maybe.elem (id) (getAddPermanentEnergy)}
         close={closeAddPermanentEnergyLoss}
         />

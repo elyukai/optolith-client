@@ -9,8 +9,8 @@ import { ActivatableDeactivationOptions } from "../../Models/Actions/Activatable
 import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { ActivatableAddList } from "../Activatable/ActivatableAddList"
 import { ActivatableRemoveList } from "../Activatable/ActivatableRemoveList"
@@ -26,7 +26,7 @@ import { Slidein } from "../Universal/Slidein"
 import { SortNames, SortOptions } from "../Universal/SortOptions"
 
 export interface SpecialAbilitiesOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   hero: HeroModelRecord
 }
 
@@ -62,7 +62,7 @@ export const SpecialAbilities: React.FC<Props> = props => {
     addToList,
     deactiveList,
     enableActiveItemHints,
-    l10n,
+    staticData,
     isRemovingEnabled,
     removeFromList,
     setSortOrder,
@@ -107,7 +107,7 @@ export const SpecialAbilities: React.FC<Props> = props => {
       <Slidein isOpen={isSlideinOpen} close={handleHideSlidein}>
         <Options>
           <SearchField
-            l10n={l10n}
+            staticData={staticData}
             value={inactiveFilterText}
             onChange={setInactiveFilterText}
             fullWidth
@@ -116,25 +116,28 @@ export const SpecialAbilities: React.FC<Props> = props => {
             sortOrder={sortOrder}
             sort={setSortOrder}
             options={List (SortNames.Name, SortNames.GroupName)}
-            l10n={l10n}
+            staticData={staticData}
             />
           <Checkbox
             checked={enableActiveItemHints}
             onClick={switchActiveItemHints}
             >
-            {translate (l10n) ("showactivated")}
+            {translate (staticData) ("general.filters.showactivatedentries")}
           </Checkbox>
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (l10n) ("name")}
+              {translate (staticData) ("specialabilities.header.name")}
             </ListHeaderTag>
             <ListHeaderTag className="group">
-              {translate (l10n) ("group")}
+              {translate (staticData) ("specialabilities.header.group")}
             </ListHeaderTag>
-            <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
-              {translate (l10n) ("adventurepoints.short")}
+            <ListHeaderTag
+              className="cost"
+              hint={translate (staticData) ("specialabilities.header.adventurepoints.tooltip")}
+              >
+              {translate (staticData) ("specialabilities.header.adventurepoints")}
             </ListHeaderTag>
             <ListHeaderTag className="btn-placeholder" />
             <ListHeaderTag className="btn-placeholder" />
@@ -142,16 +145,16 @@ export const SpecialAbilities: React.FC<Props> = props => {
           <ActivatableAddList
             addToList={addToList}
             inactiveList={deactiveList}
-            l10n={l10n}
+            staticData={staticData}
             selectForInfo={handleSlideinInfo}
             selectedForInfo={currentSlideinId}
             />
         </MainContent>
-        <WikiInfoContainer l10n={l10n} currentId={currentSlideinId} />
+        <WikiInfoContainer currentId={currentSlideinId} />
       </Slidein>
       <Options>
         <SearchField
-          l10n={l10n}
+          staticData={staticData}
           value={filterText}
           onChange={setFilterText}
           fullWidth
@@ -160,23 +163,26 @@ export const SpecialAbilities: React.FC<Props> = props => {
           sortOrder={sortOrder}
           sort={setSortOrder}
           options={List (SortNames.Name, SortNames.GroupName)}
-          l10n={l10n}
+          staticData={staticData}
           />
         <BorderButton
-          label={translate (l10n) ("add")}
+          label={translate (staticData) ("specialabilities.addbtn")}
           onClick={handleShowSlidein}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (staticData) ("specialabilities.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="group">
-            {translate (l10n) ("group")}
+            {translate (staticData) ("specialabilities.header.group")}
           </ListHeaderTag>
-          <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
-            {translate (l10n) ("adventurepoints.short")}
+          <ListHeaderTag
+            className="cost"
+            hint={translate (staticData) ("specialabilities.header.adventurepoints.tooltip")}
+            >
+            {translate (staticData) ("specialabilities.header.adventurepoints")}
           </ListHeaderTag>
           {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />
@@ -184,7 +190,7 @@ export const SpecialAbilities: React.FC<Props> = props => {
         <ActivatableRemoveList
           filterText={filterText}
           list={activeList}
-          l10n={l10n}
+          staticData={staticData}
           isRemovingEnabled={isRemovingEnabled}
           removeFromList={removeFromList}
           setLevel={setLevel}
@@ -192,7 +198,7 @@ export const SpecialAbilities: React.FC<Props> = props => {
           selectedForInfo={currentId}
           />
       </MainContent>
-      <WikiInfoContainer currentId={currentId} l10n={l10n} />
+      <WikiInfoContainer currentId={currentId} />
     </Page>
   )
 }

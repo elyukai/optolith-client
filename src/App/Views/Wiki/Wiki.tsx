@@ -1,9 +1,11 @@
 import * as React from "react"
 import { fmapF } from "../../../Data/Functor"
-import { cons, consF, imap, List, notNull } from "../../../Data/List"
+import { cons, consF, List, map, notNull } from "../../../Data/List"
 import { Just, Maybe, maybe, Nothing } from "../../../Data/Maybe"
+import { elems } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { NumIdName } from "../../Models/NumIdName"
 import { CultureCombined } from "../../Models/View/CultureCombined"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { ProfessionCombined } from "../../Models/View/ProfessionCombined"
@@ -14,14 +16,15 @@ import { Cantrip } from "../../Models/Wiki/Cantrip"
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
 import { Disadvantage } from "../../Models/Wiki/Disadvantage"
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
-import { L10nRecord } from "../../Models/Wiki/L10n"
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
 import { Skill } from "../../Models/Wiki/Skill"
+import { skillGroupToMediumNumIdName } from "../../Models/Wiki/SkillGroup"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { Spell } from "../../Models/Wiki/Spell"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { InlineWikiEntry } from "../../Models/Wiki/wikiTypeHelpers"
 import { translate } from "../../Utilities/I18n"
-import { pipe } from "../../Utilities/pipe"
+import { pipe, pipe_ } from "../../Utilities/pipe"
 import { sortRecordsByName } from "../../Utilities/sortBy"
 import { Dropdown } from "../Universal/Dropdown"
 import { ListPlaceholder } from "../Universal/ListPlaceholder"
@@ -32,12 +35,17 @@ import { Scroll } from "../Universal/Scroll"
 import { SearchField } from "../Universal/SearchField"
 import { WikiList } from "./WikiList"
 
+const SDA = StaticData.A
+
 const getSortedGroupsDef =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (def: string) =>
     pipe (
-      imap (i => (n: string) => DropdownOption ({ id: Just (i + 1), name: n })),
-      sortRecordsByName (l10n),
+      map ((n: Record<NumIdName>) => DropdownOption ({
+                                       id: Just (NumIdName.A.id (n)),
+                                       name: NumIdName.A.name (n),
+                                     })),
+      sortRecordsByName (staticData),
       consF (DropdownOption ({
               id: Nothing,
               name: def,
@@ -45,7 +53,7 @@ const getSortedGroupsDef =
     )
 
 export interface WikiOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 export interface WikiTabLists {
@@ -100,7 +108,7 @@ export const Wiki: React.FC<Props> = props => {
   const {
     category: maybeCategory,
     filterText,
-    l10n,
+    staticData,
     setCategory1,
     setCategory2,
     setFilter,
@@ -137,66 +145,58 @@ export const Wiki: React.FC<Props> = props => {
     <Page id="wiki">
       <Options>
         <SearchField
-          l10n={l10n}
+          staticData={staticData}
           onChange={setFilter}
           value={filterText}
           />
         <Dropdown
           value={maybeCategory}
           onChange={setCategory1}
-          hint={translate (l10n) ("chooseacategory")}
+          hint={translate (staticData) ("wiki.chooseacategory")}
           options={List (
             DropdownOption ({
               id: Just ("races"),
-              name: translate (l10n) ("races"),
+              name: translate (staticData) ("wiki.filters.races"),
             }),
             DropdownOption ({
               id: Just ("cultures"),
-              name: translate (l10n) ("cultures"),
+              name: translate (staticData) ("wiki.filters.cultures"),
             }),
             DropdownOption ({
               id: Just ("professions"),
-              name: translate (l10n) ("professions"),
+              name: translate (staticData) ("wiki.filters.professions"),
             }),
             DropdownOption ({
               id: Just ("advantages"),
-              name: translate (l10n) ("advantages"),
+              name: translate (staticData) ("wiki.filters.advantages"),
             }),
             DropdownOption ({
               id: Just ("disadvantages"),
-              name: translate (l10n) ("disadvantages"),
+              name: translate (staticData) ("wiki.filters.disadvantages"),
             }),
             DropdownOption ({
               id: Just ("skills"),
-              name: translate (l10n) ("skills"),
+              name: translate (staticData) ("wiki.filters.skills"),
             }),
             DropdownOption ({
               id: Just ("combatTechniques"),
-              name: translate (l10n) ("combattechniques"),
+              name: translate (staticData) ("wiki.filters.combattechniques"),
             }),
             DropdownOption ({
               id: Just ("specialAbilities"),
-              name: translate (l10n) ("specialabilities"),
+              name: translate (staticData) ("wiki.filters.specialabilities"),
             }),
             DropdownOption ({
               id: Just ("spells"),
-              name: translate (l10n) ("spells"),
-            }),
-            DropdownOption ({
-              id: Just ("cantrips"),
-              name: translate (l10n) ("cantrips"),
+              name: translate (staticData) ("wiki.filters.magic"),
             }),
             DropdownOption ({
               id: Just ("liturgicalChants"),
-              name: translate (l10n) ("liturgicalchants"),
-            }),
-            DropdownOption ({
-              id: Just ("blessings"),
-              name: translate (l10n) ("blessings"),
+              name: translate (staticData) ("wiki.filters.liturgicalchants"),
             }),
             DropdownOption ({
               id: Just ("itemTemplates"),
-              name: translate (l10n) ("items"),
+              name: translate (staticData) ("wiki.filters.itemtemplates"),
             })
           )}
           />
@@ -208,19 +208,19 @@ export const Wiki: React.FC<Props> = props => {
                 options={List (
                   DropdownOption ({
                     id: Nothing,
-                    name: translate (l10n) ("allprofessiongroups"),
+                    name: translate (staticData) ("profession.filters.groups.allprofessiongroups"),
                   }),
                   DropdownOption ({
                     id: Just (1),
-                    name: translate (l10n) ("mundaneprofessions"),
+                    name: translate (staticData) ("profession.filters.groups.mundaneprofessions"),
                   }),
                   DropdownOption ({
                     id: Just (2),
-                    name: translate (l10n) ("magicalprofessions"),
+                    name: translate (staticData) ("profession.filters.groups.magicalprofessions"),
                   }),
                   DropdownOption ({
                     id: Just (3),
-                    name: translate (l10n) ("blessedprofessions"),
+                    name: translate (staticData) ("profession.filters.groups.blessedprofessions"),
                   })
                 )}
                 fullWidth
@@ -232,9 +232,14 @@ export const Wiki: React.FC<Props> = props => {
             <Dropdown
               value={skillsGroup}
               onChange={setSkillsGroup}
-              options={getSortedGroupsDef (l10n)
-                                          (translate (l10n) ("allskills"))
-                                          (translate (l10n) ("skillgroups"))}
+              options={getSortedGroupsDef (staticData)
+                                          (translate (staticData) ("wiki.filters.skills.all"))
+                                          (pipe_ (
+                                            staticData,
+                                            SDA.skillGroups,
+                                            elems,
+                                            map (skillGroupToMediumNumIdName)
+                                          ))}
               fullWidth
               />
           )
@@ -244,9 +249,10 @@ export const Wiki: React.FC<Props> = props => {
               <Dropdown
                 value={combatTechniquesGroup}
                 onChange={setCombatTechniquesGroup}
-                options={getSortedGroupsDef (l10n)
-                                            (translate (l10n) ("allcombattechniques"))
-                                            (translate (l10n) ("combattechniquegroups"))}
+                options={getSortedGroupsDef (staticData)
+                                            (translate (staticData)
+                                                       ("wiki.filters.combattechniques.all"))
+                                            (elems (SDA.combatTechniqueGroups (staticData)))}
                 fullWidth
                 />
             )
@@ -259,7 +265,7 @@ export const Wiki: React.FC<Props> = props => {
                 options={cons (specialAbilityGroups)
                               (DropdownOption ({
                                 id: Nothing,
-                                name: translate (l10n) ("allspecialabilities"),
+                                name: translate (staticData) ("wiki.filters.specialabilities.all"),
                               }))}
                 fullWidth
                 />
@@ -270,9 +276,9 @@ export const Wiki: React.FC<Props> = props => {
               <Dropdown
                 value={spellsGroup}
                 onChange={setSpellsGroup}
-                options={getSortedGroupsDef (l10n)
-                                            (translate (l10n) ("allspells"))
-                                            (translate (l10n) ("spellgroups"))}
+                options={getSortedGroupsDef (staticData)
+                                            (translate (staticData) ("wiki.filters.magic.all"))
+                                            (elems (SDA.spellGroups (staticData)))}
                 fullWidth
                 />
             )
@@ -282,9 +288,10 @@ export const Wiki: React.FC<Props> = props => {
               <Dropdown
                 value={liturgicalChantsGroup}
                 onChange={setLiturgicalChantsGroup}
-                options={getSortedGroupsDef (l10n)
-                                            (translate (l10n) ("allliturgicalchants"))
-                                            (translate (l10n) ("liturgicalchantgroups"))}
+                options={getSortedGroupsDef (staticData)
+                                            (translate (staticData)
+                                                       ("wiki.filters.liturgicalchants.all"))
+                                            (elems (SDA.liturgicalChantGroups (staticData)))}
                 fullWidth
                 />
             )
@@ -294,9 +301,10 @@ export const Wiki: React.FC<Props> = props => {
               <Dropdown
                 value={itemTemplatesGroup}
                 onChange={setItemTemplatesGroup}
-                options={getSortedGroupsDef (l10n)
-                                            (translate (l10n) ("allitemtemplates"))
-                                            (translate (l10n) ("itemgroups"))}
+                options={getSortedGroupsDef (staticData)
+                                            (translate (staticData)
+                                                       ("wiki.filters.itemtemplates.all"))
+                                            (elems (SDA.equipmentGroups (staticData)))}
                 fullWidth
                 />
             )
@@ -304,18 +312,15 @@ export const Wiki: React.FC<Props> = props => {
       </Options>
       <MainContent>
         <Scroll>
-          {maybe (<ListPlaceholder wikiInitial l10n={l10n} type="wiki" />)
+          {maybe (<ListPlaceholder wikiInitial staticData={staticData} type="wiki" />)
                   ((xs: List<InlineWikiEntry>) =>
                     notNull (xs)
                       ? <WikiList list={xs} showInfo={handleShowInfo} currentInfoId={infoId} />
-                      : <ListPlaceholder noResults l10n={l10n} type="wiki" />)
+                      : <ListPlaceholder noResults staticData={staticData} type="wiki" />)
                   (mxs)}
         </Scroll>
       </MainContent>
-      <WikiInfoContainer
-        l10n={l10n}
-        currentId={infoId}
-        />
+      <WikiInfoContainer currentId={infoId} />
     </Page>
   )
 }

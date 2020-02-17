@@ -7,8 +7,8 @@ import { Pair } from "../../../../Data/Tuple"
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent"
 import { AttributeCombined } from "../../../Models/View/AttributeCombined"
 import { SkillCombined } from "../../../Models/View/SkillCombined"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
 import { Checkbox } from "../../Universal/Checkbox"
 import { Options } from "../../Universal/Options"
@@ -26,7 +26,7 @@ interface Props {
   checkAttributeValueVisibility: boolean
   languagesStateEntry: Maybe<Record<ActivatableDependent>>
   languagesWikiEntry: Maybe<Record<SpecialAbility>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   scriptsStateEntry: Maybe<Record<ActivatableDependent>>
   scriptsWikiEntry: Maybe<Record<SpecialAbility>>
   skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillCombined>>>>
@@ -40,7 +40,7 @@ export const SkillsSheet: React.FC<Props> = props => {
     checkAttributeValueVisibility,
     languagesStateEntry,
     languagesWikiEntry,
-    l10n,
+    staticData,
     scriptsStateEntry,
     scriptsWikiEntry,
     skillsByGroup,
@@ -55,19 +55,19 @@ export const SkillsSheet: React.FC<Props> = props => {
           checked={checkAttributeValueVisibility}
           onClick={switchAttributeValueVisibility}
           >
-          {translate (l10n) ("showattributevalues")}
+          {translate (staticData) ("sheets.showattributevalues")}
         </Checkbox>
       </Options>
       <Sheet
         id="skills-sheet"
-        title={translate (l10n) ("gamestats")}
+        title={translate (staticData) ("sheets.gamestatssheet.title")}
         attributes={attributes}
-        l10n={l10n}
+        staticData={staticData}
         >
         <SkillsSheetSkills
           attributes={attributes}
           checkAttributeValueVisibility={checkAttributeValueVisibility}
-          l10n={l10n}
+          staticData={staticData}
           skillsByGroup={skillsByGroup}
           skillGroupPages={skillGroupPages}
           />
@@ -76,20 +76,20 @@ export const SkillsSheet: React.FC<Props> = props => {
             <SkillsSheetLanguages
               languagesStateEntry={languagesStateEntry}
               languagesWikiEntry={languagesWikiEntry}
-              l10n={l10n}
+              staticData={staticData}
               />
             <SkillsSheetScripts
               scriptsStateEntry={scriptsStateEntry}
               scriptsWikiEntry={scriptsWikiEntry}
-              l10n={l10n}
+              staticData={staticData}
               />
           </div>
           <AttributeMods
             attributes={attributes}
-            l10n={l10n}
+            staticData={staticData}
             />
-          <SkillsSheetRoutineChecks l10n={l10n} />
-          <SkillsSheetQualityLevels l10n={l10n} />
+          <SkillsSheetRoutineChecks staticData={staticData} />
+          <SkillsSheetQualityLevels staticData={staticData} />
         </div>
       </Sheet>
     </SheetWrapper>

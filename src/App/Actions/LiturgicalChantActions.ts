@@ -1,22 +1,19 @@
 import { fmapF } from "../../Data/Functor"
-import { List } from "../../Data/List"
-import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe"
+import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe"
 import { lookup } from "../../Data/OrderedMap"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { HeroModel } from "../Models/Hero/HeroModel"
-import { L10nRecord } from "../Models/Wiki/L10n"
 import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
 import { getCurrentHeroPresent, getLiturgicalChants, getWikiLiturgicalChants } from "../Selectors/stateSelectors"
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
 import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUtils"
-import { translate, translateP } from "../Utilities/I18n"
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { ChantsSortOptions } from "../Utilities/Raw/JSON/Config"
 import { ReduxAction } from "./Actions"
-import { addAlert, AlertOptions } from "./AlertActions"
+import { addNotEnoughAPAlert } from "./AlertActions"
 
 export interface ActivateLiturgicalChantAction {
   type: ActionTypes.ACTIVATE_LITURGY
@@ -26,7 +23,6 @@ export interface ActivateLiturgicalChantAction {
 }
 
 export const addLiturgicalChant =
-  (l10n: L10nRecord) =>
   (id: string): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const state = getState ()
@@ -36,7 +32,7 @@ export const addLiturgicalChant =
     const missingAPForInc =
       pipe_ (
         mhero,
-        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { hero })),
         join,
         liftM2 (getMissingAP (getIsInCharacterCreation (state)))
                (fmapF (lookup (id) (wiki_liturgical_chants))
@@ -53,12 +49,7 @@ export const addLiturgicalChant =
       })
     }
     else {
-      const opts = AlertOptions ({
-        title: Just (translate (l10n) ("notenoughap")),
-        message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
-      })
-
-      await dispatch (addAlert (l10n) (opts))
+      await dispatch (addNotEnoughAPAlert (fromJust (missingAPForInc)))
     }
   }
 
@@ -70,7 +61,6 @@ export interface ActivateBlessingAction {
 }
 
 export const addBlessing =
-  (l10n: L10nRecord) =>
   (id: string): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const state = getState ()
@@ -79,7 +69,7 @@ export const addBlessing =
     const missingAP =
       pipe_ (
         mhero,
-        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { hero })),
         join,
         bindF (getMissingAP (getIsInCharacterCreation (state))
                             (1))
@@ -94,12 +84,7 @@ export const addBlessing =
       })
     }
     else {
-      const opts = AlertOptions ({
-        title: Just (translate (l10n) ("notenoughap")),
-        message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAP))),
-      })
-
-      await dispatch (addAlert (l10n) (opts))
+      await dispatch (addNotEnoughAPAlert (fromJust (missingAP)))
     }
   }
 
@@ -139,7 +124,6 @@ export interface AddLiturgicalChantPointAction {
 }
 
 export const addLiturgicalChantPoint =
-  (l10n: L10nRecord) =>
   (id: string): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const state = getState ()
@@ -150,7 +134,7 @@ export const addLiturgicalChantPoint =
     const missingAPForInc =
       pipe_ (
         mhero,
-        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { hero })),
         join,
         liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
                                                        (bind (mhero_liturgical_chants)
@@ -168,12 +152,7 @@ export const addLiturgicalChantPoint =
       })
     }
     else {
-      const opts = AlertOptions ({
-        title: Just (translate (l10n) ("notenoughap")),
-        message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
-      })
-
-      await dispatch (addAlert (l10n) (opts))
+      await dispatch (addNotEnoughAPAlert (fromJust (missingAPForInc)))
     }
   }
 

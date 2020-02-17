@@ -8,14 +8,14 @@ import { PersonalData } from "../../../Models/Hero/PersonalData"
 import { ActiveActivatable } from "../../../Models/View/ActiveActivatable"
 import { AdventurePointsCategories } from "../../../Models/View/AdventurePointsCategories"
 import { AttributeCombined } from "../../../Models/View/AttributeCombined"
-import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic"
 import { Advantage } from "../../../Models/Wiki/Advantage"
 import { Culture } from "../../../Models/Wiki/Culture"
 import { Disadvantage } from "../../../Models/Wiki/Disadvantage"
 import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
 import { Race } from "../../../Models/Wiki/Race"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { compressList } from "../../../Utilities/Activatable/activatableNameUtils"
 import { translate } from "../../../Utilities/I18n"
 import { pipe_ } from "../../../Utilities/pipe"
@@ -33,12 +33,12 @@ interface Props {
   attributes: List<Record<AttributeCombined>>
   avatar: Maybe<string>
   culture: Maybe<Record<Culture>>
-  derivedCharacteristics: List<Record<DerivedCharacteristic>>
+  derivedCharacteristics: List<DCPair>
   disadvantagesActive: Maybe<List<Record<ActiveActivatable<Disadvantage>>>>
   el: Maybe<Record<ExperienceLevel>>
   fatePointsModifier: number
   generalsaActive: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   name: Maybe<string>
   professionName: Maybe<string>
   profile: Maybe<Record<PersonalData>>
@@ -62,7 +62,7 @@ export const MainSheet: React.FC<Props> = props => {
     name,
     professionName,
     profile,
-    l10n,
+    staticData,
     printToPDF,
     race,
     sex,
@@ -73,30 +73,27 @@ export const MainSheet: React.FC<Props> = props => {
       <Options>
         <BorderButton
           className="print-document"
-          label={translate (l10n) ("printtopdf")}
+          label={translate (staticData) ("sheets.printtopdfbtn")}
           onClick={printToPDF}
           />
       </Options>
       <Sheet
         id="main-sheet"
-        title={translate (l10n) ("personaldata")}
+        title={translate (staticData) ("sheets.mainsheet.title")}
         attributes={attributes}
-        l10n={l10n}
+        staticData={staticData}
         >
         <MainSheetPersonalData
           ap={ap}
           avatar={avatar}
           culture={culture}
           el={el}
-          eyeColorTags={translate (l10n) ("eyecolors")}
-          hairColorTags={translate (l10n) ("haircolors")}
-          l10n={l10n}
+          staticData={staticData}
           name={name}
           professionName={professionName}
           profile={profile}
           race={race}
           sex={sex}
-          socialstatusTags={translate (l10n) ("socialstatuses")}
           />
         <div className="lower">
           <div className="lists">
@@ -105,8 +102,8 @@ export const MainSheet: React.FC<Props> = props => {
               fmap (advantagesActive => (
                 <TextBox
                   className="activatable-list"
-                  label={translate (l10n) ("advantages")}
-                  value={compressList (l10n) (advantagesActive)}
+                  label={translate (staticData) ("sheets.mainsheet.advantages")}
+                  value={compressList (staticData) (advantagesActive)}
                   />
               )),
               fromMaybe (null as React.ReactNode)
@@ -116,8 +113,8 @@ export const MainSheet: React.FC<Props> = props => {
               fmap (disadvantagesActive => (
                 <TextBox
                   className="activatable-list"
-                  label={translate (l10n) ("disadvantages")}
-                  value={compressList (l10n) (disadvantagesActive)}
+                  label={translate (staticData) ("sheets.mainsheet.disadvantages")}
+                  value={compressList (staticData) (disadvantagesActive)}
                   />
               )),
               fromMaybe (null as React.ReactNode)
@@ -127,8 +124,8 @@ export const MainSheet: React.FC<Props> = props => {
               fmap (generalsaActive => (
                 <TextBox
                   className="activatable-list"
-                  label={translate (l10n) ("generalspecialabilites")}
-                  value={compressList (l10n) (generalsaActive)}
+                  label={translate (staticData) ("sheets.mainsheet.generalspecialabilites")}
+                  value={compressList (staticData) (generalsaActive)}
                   />
               )),
               fromMaybe (null as React.ReactNode)
@@ -137,7 +134,7 @@ export const MainSheet: React.FC<Props> = props => {
           <MainSheetAttributes
             attributes={derivedCharacteristics}
             fatePointsModifier={fatePointsModifier}
-            l10n={l10n}
+            staticData={staticData}
             race={race}
             />
         </div>

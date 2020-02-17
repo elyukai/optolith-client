@@ -140,10 +140,10 @@ export const mapMagicalTradIdToNumId =
         return Just (MagicalTradition.Scharlatane)
 
       case SpecialAbilityId.TraditionArcaneBard:
-        return Just (MagicalTradition.Zauberbarden)
+        return Just (MagicalTradition.ArcaneBards)
 
       case SpecialAbilityId.TraditionArcaneDancer:
-        return Just (MagicalTradition.Zaubertaenzer)
+        return Just (MagicalTradition.ArcaneDancers)
 
       case SpecialAbilityId.TraditionIntuitiveMage:
         return Just (MagicalTradition.IntuitiveZauberer)
@@ -158,16 +158,16 @@ export const mapMagicalTradIdToNumId =
         return Just (MagicalTradition.Kristallomanten)
 
       case SpecialAbilityId.TraditionGeoden:
-        return Just (MagicalTradition.Geoden)
+        return Just (MagicalTradition.Geodes)
 
       case SpecialAbilityId.TraditionSchelme:
-        return Just (MagicalTradition.Schelme)
+        return Just (MagicalTradition.Rogues)
 
       case SpecialAbilityId.TraditionAnimisten:
-        return Just (MagicalTradition.Animisten)
+        return Just (MagicalTradition.Animists)
 
       case SpecialAbilityId.TraditionZibilijas:
-        return Just (MagicalTradition.Zibilijas)
+        return Just (MagicalTradition.Zibilija)
 
       case SpecialAbilityId.TraditionBrobimGeoden:
         return Just (MagicalTradition.BrobimGeoden)
@@ -199,10 +199,10 @@ export const mapMagicalNumIdToTradId =
       case MagicalTradition.Scharlatane:
         return Just (SpecialAbilityId.TraditionIllusionist)
 
-      case MagicalTradition.Zauberbarden:
+      case MagicalTradition.ArcaneBards:
         return Just (SpecialAbilityId.TraditionArcaneBard)
 
-      case MagicalTradition.Zaubertaenzer:
+      case MagicalTradition.ArcaneDancers:
         return Just (SpecialAbilityId.TraditionArcaneDancer)
 
       case MagicalTradition.IntuitiveZauberer:
@@ -217,16 +217,16 @@ export const mapMagicalNumIdToTradId =
       case MagicalTradition.Kristallomanten:
         return Just (SpecialAbilityId.TraditionKristallomanten)
 
-      case MagicalTradition.Geoden:
+      case MagicalTradition.Geodes:
         return Just (SpecialAbilityId.TraditionGeoden)
 
-      case MagicalTradition.Schelme:
+      case MagicalTradition.Rogues:
         return Just (SpecialAbilityId.TraditionSchelme)
 
-      case MagicalTradition.Animisten:
+      case MagicalTradition.Animists:
         return Just (SpecialAbilityId.TraditionAnimisten)
 
-      case MagicalTradition.Zibilijas:
+      case MagicalTradition.Zibilija:
         return Just (SpecialAbilityId.TraditionZibilijas)
 
       case MagicalTradition.BrobimGeoden:

@@ -1,22 +1,19 @@
-import { List } from "../../Data/List"
-import { bind, bindF, fromJust, isJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe"
+import { bind, bindF, fromJust, isJust, isNothing, join, liftM2 } from "../../Data/Maybe"
 import { lookup } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { HeroModel } from "../Models/Hero/HeroModel"
-import { L10nRecord } from "../Models/Wiki/L10n"
 import { Spell } from "../Models/Wiki/Spell"
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
 import { getCurrentHeroPresent, getSpells, getWikiSpells } from "../Selectors/stateSelectors"
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
 import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUtils"
-import { translate, translateP } from "../Utilities/I18n"
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
 import { pipe_ } from "../Utilities/pipe"
 import { SpellsSortOptions } from "../Utilities/Raw/JSON/Config"
 import { ReduxAction } from "./Actions"
-import { addAlert, AlertOptions } from "./AlertActions"
+import { addNotEnoughAPAlert } from "./AlertActions"
 
 export interface ActivateSpellAction {
   type: ActionTypes.ACTIVATE_SPELL
@@ -27,7 +24,6 @@ export interface ActivateSpellAction {
 }
 
 export const addSpell =
-  (l10n: L10nRecord) =>
   (id: string): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const state = getState ()
@@ -42,7 +38,7 @@ export const addSpell =
       const missingAPForInc =
         pipe_ (
           mhero,
-          bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
+          bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { hero })),
           join,
           bindF (getMissingAP (getIsInCharacterCreation (state))
                               (pipe_ (wiki_entry, Spell.A.ic, getICMultiplier)))
@@ -58,12 +54,7 @@ export const addSpell =
         })
       }
       else {
-        const opts = AlertOptions ({
-          title: Just (translate (l10n) ("notenoughap")),
-          message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
-        })
-
-        await dispatch (addAlert (l10n) (opts))
+        await dispatch (addNotEnoughAPAlert (fromJust (missingAPForInc)))
       }
     }
   }
@@ -76,7 +67,6 @@ export interface ActivateCantripAction {
 }
 
 export const addCantrip =
-  (l10n: L10nRecord) =>
   (id: string): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const state = getState ()
@@ -85,7 +75,7 @@ export const addCantrip =
     const missingAP =
       pipe_ (
         mhero,
-        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { hero })),
         join,
         bindF (getMissingAP (getIsInCharacterCreation (state))
                             (1))
@@ -100,12 +90,7 @@ export const addCantrip =
       })
     }
     else {
-      const opts = AlertOptions ({
-        title: Just (translate (l10n) ("notenoughap")),
-        message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAP))),
-      })
-
-      await dispatch (addAlert (l10n) (opts))
+      await dispatch (addNotEnoughAPAlert (fromJust (missingAP)))
     }
   }
 
@@ -160,7 +145,6 @@ export interface AddSpellPointAction {
 }
 
 export const addSpellPoint =
-  (l10n: L10nRecord) =>
   (id: string): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const state = getState ()
@@ -171,7 +155,7 @@ export const addSpellPoint =
     const missingAPForInc =
       pipe_ (
         mhero,
-        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { hero })),
         join,
         liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
                                                        (bind (mhero_spells)
@@ -189,12 +173,7 @@ export const addSpellPoint =
       })
     }
     else {
-      const opts = AlertOptions ({
-        title: Just (translate (l10n) ("notenoughap")),
-        message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
-      })
-
-      await dispatch (addAlert (l10n) (opts))
+      await dispatch (addNotEnoughAPAlert (fromJust (missingAPForInc)))
     }
   }
 

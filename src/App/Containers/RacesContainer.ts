@@ -1,7 +1,7 @@
 import { connect } from "react-redux"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as RaceActions from "../Actions/RaceActions"
-import { AppStateRecord } from "../Reducers/appReducer"
+import { AppStateRecord } from "../Models/AppState"
 import { getFilteredRaces } from "../Selectors/rcpSelectors"
 import { getCurrentRaceVariantId, getRaceId, getRacesFilterText } from "../Selectors/stateSelectors"
 import { getRacesSortOrder } from "../Selectors/uisettingsSelectors"

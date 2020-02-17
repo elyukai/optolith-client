@@ -4,7 +4,7 @@ import { ReduxDispatch } from "../Actions/Actions"
 import * as AttributesActions from "../Actions/AttributesActions"
 import * as SubwindowsActions from "../Actions/SubwindowsActions"
 import { EnergyId } from "../Constants/Ids"
-import { AppStateRecord } from "../Reducers/appReducer"
+import { AppStateRecord } from "../Models/AppState"
 import { getAdjustmentValue, getAttributesForView, getAttributeSum, getAvailableAdjustmentIds } from "../Selectors/attributeSelectors"
 import { getDerivedCharacteristics } from "../Selectors/derivedCharacteristicsSelectors"
 import { getMaxTotalAttributeValues } from "../Selectors/elSelectors"
@@ -27,24 +27,21 @@ const mapStateToProps =
     getAddPermanentEnergy: getAddPermanentEnergy (state),
   })
 
-const mapDispatchToProps = (
-  dispatch: ReduxDispatch,
-  { l10n }: AttributesOwnProps
-): AttributesDispatchProps => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch): AttributesDispatchProps => ({
   addPoint: async (id: string) => {
-    await dispatch (AttributesActions.addAttributePoint (l10n) (id))
+    await dispatch (AttributesActions.addAttributePoint (id))
   },
   removePoint: (id: string) => {
     dispatch (AttributesActions.removeAttributePoint (id))
   },
   addLifePoint: async () => {
-    await dispatch (AttributesActions.addLifePoint (l10n))
+    await dispatch (AttributesActions.addLifePoint)
   },
   addArcaneEnergyPoint: async () => {
-    await dispatch (AttributesActions.addArcaneEnergyPoint (l10n))
+    await dispatch (AttributesActions.addArcaneEnergyPoint)
   },
   addKarmaPoint: async () => {
-    await dispatch (AttributesActions.addKarmaPoint (l10n))
+    await dispatch (AttributesActions.addKarmaPoint)
   },
   removeLifePoint: () => {
     dispatch (AttributesActions.removeLifePoint ())
@@ -65,7 +62,7 @@ const mapDispatchToProps = (
     dispatch (AttributesActions.addLostLPPoints (value))
   },
   addBoughtBackAEPoint: async () => {
-    await dispatch (AttributesActions.addBoughtBackAEPoint (l10n))
+    await dispatch (AttributesActions.addBoughtBackAEPoint)
   },
   removeBoughtBackAEPoint: () => {
     dispatch (AttributesActions.removeBoughtBackAEPoint ())
@@ -80,7 +77,7 @@ const mapDispatchToProps = (
     dispatch (AttributesActions.addLostAEPoints (value))
   },
   addBoughtBackKPPoint: async () => {
-    await dispatch (AttributesActions.addBoughtBackKPPoint (l10n))
+    await dispatch (AttributesActions.addBoughtBackKPPoint)
   },
   removeBoughtBackKPPoint: () => {
     dispatch (AttributesActions.removeBoughtBackKPPoint ())

@@ -7,7 +7,7 @@ import * as HerolistActions from "../Actions/HerolistActions"
 import * as IOActions from "../Actions/IOActions"
 import * as LocationActions from "../Actions/LocationActions"
 import * as SubwindowsActions from "../Actions/SubwindowsActions"
-import { AppStateRecord } from "../Reducers/appReducer"
+import { AppStateRecord } from "../Models/AppState"
 import { getSortedBooks } from "../Selectors/bookSelectors"
 import { getSortedHerolist, getUnsavedHeroesById } from "../Selectors/herolistSelectors"
 import { getCurrentHeroPresent, getHerolistFilterText, getIsCharacterCreatorOpen, getUsers, getWiki, getWikiExperienceLevels } from "../Selectors/stateSelectors"
@@ -16,24 +16,21 @@ import { TabId } from "../Utilities/LocationUtils"
 import { HeroListSortOptions, HeroListVisibilityFilter } from "../Utilities/Raw/JSON/Config"
 import { Herolist, HerolistDispatchProps, HerolistOwnProps, HerolistStateProps } from "../Views/Heroes/Herolist"
 
-const mapStateToProps = (state: AppStateRecord, props: HerolistOwnProps) => ({
+const mapStateToProps = (state: AppStateRecord) => ({
   currentHero: getCurrentHeroPresent (state),
   experienceLevels: getWikiExperienceLevels (state),
   filterText: getHerolistFilterText (state),
-  list: getSortedHerolist (state, props),
+  list: getSortedHerolist (state),
   unsavedHeroesById: getUnsavedHeroesById (state),
   users: getUsers (state),
   sortOrder: getHerolistSortOrder (state),
   visibilityFilter: getHerolistVisibilityFilter (state),
   isCharacterCreatorOpen: getIsCharacterCreatorOpen (state),
-  sortedBooks: getSortedBooks (state, props),
+  sortedBooks: getSortedBooks (state),
   wiki: getWiki (state),
 })
 
-const mapDispatchToProps = (
-  dispatch: ReduxDispatch<Action>,
-  { l10n }: HerolistOwnProps
-) => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch<Action>) => ({
   loadHero (id: string) {
     dispatch (HerolistActions.loadHero (id))
   },
@@ -41,13 +38,13 @@ const mapDispatchToProps = (
     dispatch (LocationActions.setTab (TabId.Profile))
   },
   async saveHero (id: string) {
-    await dispatch (HerolistActions.saveHero (l10n) (Just (id)))
+    await dispatch (HerolistActions.saveHero (Just (id)))
   },
   saveHeroAsJSON (id: string) {
-    dispatch (HerolistActions.exportHeroValidate (l10n) (id))
+    dispatch (HerolistActions.exportHeroValidate (id))
   },
   async deleteHero (id: string) {
-    await dispatch (HerolistActions.deleteHeroValidate (l10n) (id))
+    await dispatch (HerolistActions.deleteHeroValidate (id))
   },
   duplicateHero (id: string) {
     dispatch (HerolistActions.duplicateHero (id))
@@ -59,15 +56,14 @@ const mapDispatchToProps = (
     enableAllRuleBooks: boolean,
     enabledRuleBooks: OrderedSet<string>
   ) {
-    dispatch (HerolistActions.createHero (l10n)
-                                         (name)
+    dispatch (HerolistActions.createHero (name)
                                          (sex)
                                          (el)
                                          (enableAllRuleBooks)
                                          (enabledRuleBooks))
   },
   async importHero () {
-    await dispatch (IOActions.requestHeroImport (l10n))
+    await dispatch (IOActions.requestHeroImport)
   },
   setSortOrder (id: HeroListSortOptions) {
     dispatch (HerolistActions.setHerolistSortOrder (id))

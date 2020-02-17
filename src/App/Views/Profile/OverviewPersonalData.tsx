@@ -6,7 +6,7 @@ import { Record } from "../../../Data/Record"
 import { SocialStatusId } from "../../Constants/Ids"
 import { PersonalData } from "../../Models/Hero/PersonalData"
 import { DropdownOption } from "../../Models/View/DropdownOption"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { renderMaybeWith } from "../../Utilities/ReactUtils"
 import { isEmptyOr, isFloat, isNaturalNumber } from "../../Utilities/RegexUtils"
@@ -19,7 +19,7 @@ const PDA = PersonalData.A
 const DOA = DropdownOption.A
 
 export interface OverviewPersonalDataOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   profile: Record<PersonalData>
   socialStatuses: List<Record<DropdownOption<SocialStatusId>>>
   sizeCalcStr: Maybe<string>
@@ -56,7 +56,7 @@ const wrapParenSpace = renderMaybeWith<string> (str => ` (${str})`)
 
 export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props => {
   const {
-    l10n,
+    staticData,
     profile,
     socialStatuses,
     sizeCalcStr,
@@ -97,28 +97,28 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
     <div className="personal-data">
       <div>
         <TextField
-          label={translate (l10n) ("family")}
+          label={translate (staticData) ("personaldata.family")}
           value={PDA.family (profile)}
           onChange={changeFamily}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("placeofbirth")}
+          label={translate (staticData) ("personaldata.placeofbirth")}
           value={PDA.placeOfBirth (profile)}
           onChange={changePlaceOfBirth}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("dateofbirth")}
+          label={translate (staticData) ("personaldata.dateofbirth")}
           value={PDA.dateOfBirth (profile)}
           onChange={changeDateOfBirth}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("age")}
+          label={translate (staticData) ("personaldata.age")}
           value={age}
           onChange={changeAge}
           valid={all (isEmptyOr (isNaturalNumber)) (age)}
@@ -126,7 +126,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </div>
       <InputButtonGroup className="reroll">
         <Dropdown
-          label={translate (l10n) ("haircolor")}
+          label={translate (staticData) ("personaldata.haircolor")}
           value={hair_color}
           onChange={changeHaircolor}
           options={hairColors}
@@ -136,7 +136,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <Dropdown
-          label={translate (l10n) ("eyecolor")}
+          label={translate (staticData) ("personaldata.eyecolor")}
           value={PDA.eyeColor (profile)}
           onChange={changeEyecolor}
           options={eyeColors}
@@ -145,7 +145,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
-          label={`${translate (l10n) ("size")}${wrapParenSpace (sizeCalcStr)}`}
+          label={`${translate (staticData) ("personaldata.size")}${wrapParenSpace (sizeCalcStr)}`}
           value={PDA.size (profile)}
           onChange={changeSize}
           valid={all (isEmptyOr (isFloat)) (size)}
@@ -154,7 +154,9 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
-          label={`${translate (l10n) ("weight")}${wrapParenSpace (weightCalcStr)}`}
+          label={
+            `${translate (staticData) ("personaldata.weight")}${wrapParenSpace (weightCalcStr)}`
+          }
           value={PDA.weight (profile)}
           onChange={changeWeight}
           valid={all (isEmptyOr (isNaturalNumber)) (weight)}
@@ -163,14 +165,14 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </InputButtonGroup>
       <div>
         <TextField
-          label={translate (l10n) ("title")}
+          label={translate (staticData) ("personaldata.title")}
           value={PDA.title (profile)}
           onChange={changeTitle}
           />
       </div>
       <div>
         <Dropdown
-          label={translate (l10n) ("socialstatus")}
+          label={translate (staticData) ("personaldata.socialstatus")}
           value={PDA.socialStatus (profile)}
           onChange={changeSocialStatus}
           options={socialStatuses}
@@ -178,21 +180,21 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("characteristics")}
+          label={translate (staticData) ("personaldata.characteristics")}
           value={PDA.characteristics (profile)}
           onChange={changeCharacteristics}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("otherinfo")}
+          label={translate (staticData) ("personaldata.otherinfo")}
           value={PDA.otherInfo (profile)}
           onChange={changeOtherInfo}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("cultureareaknowledge")}
+          label={translate (staticData) ("personaldata.cultureareaknowledge")}
           value={PDA.cultureAreaKnowledge (profile)}
           onChange={changeCultureAreaKnowledge}
           />

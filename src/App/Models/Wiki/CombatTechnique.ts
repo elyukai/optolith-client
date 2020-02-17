@@ -16,6 +16,7 @@ export interface CombatTechnique {
   bpr: number
   primary: List<string>
   special: Maybe<string>
+  hasNoParry: boolean
   src: List<Record<SourceLink>>
   errata: List<Record<Erratum>>
 }
@@ -31,6 +32,7 @@ export const CombatTechnique =
                 bpr: 0,
                 primary: List.empty,
                 special: Nothing,
+                hasNoParry: false,
                 src: List.empty,
                 errata: List (),
               })

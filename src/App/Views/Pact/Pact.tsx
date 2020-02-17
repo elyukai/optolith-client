@@ -1,18 +1,22 @@
 import * as React from "react"
 import { isNumber, isString } from "util"
 import { equals } from "../../../Data/Eq"
+import { flip } from "../../../Data/Function"
 import { fmap, fmapF } from "../../../Data/Functor"
-import { consF, drop, imap, notNullStr, subscript, take, unfoldr } from "../../../Data/List"
-import { and, bindF, ensure, fromJust, isJust, isNothing, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe"
-import { dec, gte, inc } from "../../../Data/Num"
+import { consF, drop, find, List, map, notNullStr, take } from "../../../Data/List"
+import { and, ap, bind, bindF, ensure, fromJust, isJust, isNothing, join, Just, Maybe, maybe } from "../../../Data/Maybe"
+import { gte } from "../../../Data/Num"
+import { elems, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { Pair } from "../../../Data/Tuple"
 import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { Pact } from "../../Models/Hero/Pact"
 import { DropdownOption } from "../../Models/View/DropdownOption"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { PactCategory } from "../../Models/Wiki/PactCategory"
+import { PactDomain } from "../../Models/Wiki/PactDomain"
+import { PactType } from "../../Models/Wiki/PactType"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
-import { toRoman } from "../../Utilities/NumberUtils"
+import { getCustomLevelElements } from "../../Utilities/levelUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { misNumberM, misStringM } from "../../Utilities/typeCheckUtils"
 import { Checkbox } from "../Universal/Checkbox"
@@ -20,8 +24,14 @@ import { Dropdown } from "../Universal/Dropdown"
 import { Page } from "../Universal/Page"
 import { TextField } from "../Universal/TextField"
 
+const SDA = StaticData.A
+const PA = Pact.A
+const PCA = PactCategory.A
+const PTA = PactType.A
+const PDA = PactDomain.A
+
 export interface PactSettingsOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   hero: HeroModelRecord
 }
 
@@ -53,11 +63,15 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
     setTargetDomain,
     setTargetName,
     setTargetType,
-    l10n,
+    staticData,
     isPactValid,
   } = props
 
-  const checked = maybe (false) (pipe (Pact.A.level, equals (0))) (mpact)
+  const checked = maybe (false) (pipe (PA.level, equals (0))) (mpact)
+
+  const pacts = SDA.pacts (staticData)
+
+  const mpact_category = pipe_ (mpact, bindF (pipe (PA.category, lookupF (pacts))))
 
   const setCustomTargetDomain =
     React.useCallback (
@@ -76,19 +90,20 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
       <div className="pact-content">
         {!isPactValid && isJust (mpact)
           ? (
-            <p>{translate (l10n) ("pactisincompletehint")}</p>
+            <p>{translate (staticData) ("pacts.pactisincompletehint")}</p>
           )
           : null}
         <Dropdown
-          label={translate (l10n) ("pactcategory")}
+          label={translate (staticData) ("pacts.pactcategory")}
           options={pipe_ (
-                          translate (l10n) ("pactcategories"),
-                          imap (i => (name: string) => DropdownOption ({
-                            id: Just (i + 1),
-                            name,
-                          })),
+                          pacts,
+                          elems,
+                          map ((pc: Record<PactCategory>) => DropdownOption ({
+                                                               id: Just (PactCategory.A.id (pc)),
+                                                               name: PactCategory.A.name (pc),
+                                                             })),
                           consF (DropdownOption ({
-                            name: translate (l10n) ("nopact"),
+                            name: translate (staticData) ("pacts.nopact"),
                           }))
                       )}
           onChange={setPactCategory}
@@ -98,35 +113,28 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
         {(maybe (false) (pipe (Pact.A.category, equals (2))) (mpact))
           ? (
             <Checkbox
-              label={translate (l10n) ("minorpact")}
+              label={translate (staticData) ("pacts.minorpact")}
               checked={checked}
               onClick={setLesserPactLevel}
-              disabled={!isPactEditable || isNothing (mpact)
-                || pipe (Pact.A.level, gte (2)) (fromJust (mpact))}
+              disabled={
+                !isPactEditable
+                || isNothing (mpact)
+                || pipe (Pact.A.level, gte (2)) (fromJust (mpact))
+              }
               />
           )
           : null}
         {maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
           ? (
             <Dropdown
-              label={translate (l10n) ("circleofdamnation")}
-              options={
-                unfoldr ((id: number) => id > 7
-                          ? Nothing
-                          : Just (
-                                Pair (
-                                  DropdownOption ({
-                                    id: Just (id),
-                                    name: toRoman (id),
-                                    disabled: Just (maybe (!isPactEditable)
-                                                          (pipe (Pact.A.level, gte (id)))
-                                                          (mpact)),
-                                  }),
-                                  inc (id)
-                                )
-                            ))
-                        (1)
-              }
+              label={translate (staticData) ("pacts.circleofdamnation")}
+              options={getCustomLevelElements (level => ({
+                                                disabled:
+                                                  Just (maybe (!isPactEditable)
+                                                              (pipe (Pact.A.level, gte (level)))
+                                                              (mpact)),
+                                              }))
+                                              (7)}
               onChange={setPactLevel}
               value={fmapF (mpact) (Pact.A.level)}
               disabled={isNothing (mpact) || pipe (Pact.A.level, equals (0)) (fromJust (mpact))}
@@ -134,75 +142,56 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
           )
           : (
             <Dropdown
-              label={translate (l10n) ("pactlevel")}
-              options={
-                unfoldr ((id: number) => id > 3
-                          ? Nothing
-                          : Just (
-                            Pair (
-                              DropdownOption ({
-                                id: Just (id),
-                                name: toRoman (id),
-                                disabled: Just (maybe (!isPactEditable)
-                                                      (pipe (Pact.A.level, gte (id)))
-                                                      (mpact)),
-                              }),
-                              inc (id)
-                            )
-                          ))
-                        (1)
-              }
+              label={translate (staticData) ("pacts.pactlevel")}
+              options={getCustomLevelElements (level => ({
+                                                disabled:
+                                                  Just (maybe (!isPactEditable)
+                                                              (pipe (Pact.A.level, gte (level)))
+                                                              (mpact)),
+                                              }))
+                                              (3)}
               onChange={setPactLevel}
               value={fmapF (mpact) (Pact.A.level)}
               disabled={isNothing (mpact)}
               />
           )}
-        {maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
-          ? (
-            <Dropdown
-              label={translate (l10n) ("demontype")}
-              options={(imap (i => (name: string) => DropdownOption ({
-                               id: Just (i + 1),
-                               name,
-                             }))
-                             (translate (l10n) ("demontypes")))}
-              onChange={setTargetType}
-              value={fmapF (mpact) (Pact.A.type)}
-              disabled={!isPactEditable || isNothing (mpact)}
-              />
-          )
-          : (
-            <Dropdown
-              label={translate (l10n) ("fairytype")}
-              options={imap (i => (name: string) => DropdownOption ({
-                              id: Just (i + 1),
-                              name,
-                            }))
-                            (translate (l10n) ("fairytypes"))}
-              onChange={setTargetType}
-              value={fmapF (mpact) (Pact.A.type)}
-              disabled={!isPactEditable || isNothing (mpact)}
-              />
+        <Dropdown
+          label={
+            maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
+            ? translate (staticData) ("pacts.demontype")
+            : translate (staticData) ("pacts.fairytype")
+          }
+          options={pipe_ (
+            mpact_category,
+            maybe (List<Record<DropdownOption<number>>> ())
+                  (pipe (
+                    PCA.types,
+                    map (pt => DropdownOption ({
+                                 id: Just (PTA.id (pt)),
+                                 name: PTA.name (pt),
+                               }))
+                  ))
           )}
+          onChange={setTargetType}
+          value={fmapF (mpact) (Pact.A.type)}
+          disabled={!isPactEditable || isNothing (mpact)}
+          />
         {maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
           ? (
             <Dropdown
-              label={translate (l10n) ("domain")}
-              options={
-                maybe (false) (pipe (Pact.A.type, equals (1))) (mpact)
-                ? take (12)
-                       (imap (i => (name: string) => DropdownOption ({
-                               id: Just (i + 1),
-                               name,
-                             }))
-                             (translate (l10n) ("demondomains")))
-                : drop (12)
-                       (imap (i => (name: string) => DropdownOption ({
-                         id: Just (i + 1),
-                         name,
-                       }))
-                       (translate (l10n) ("demondomains")))
-              }
+              label={translate (staticData) ("pacts.domain")}
+              options={pipe_ (
+                mpact_category,
+                maybe (List<Record<DropdownOption<number>>> ())
+                      (pipe (
+                        PCA.domains,
+                        map (pd => DropdownOption ({
+                                     id: Just (PDA.id (pd)),
+                                     name: PDA.name (pd),
+                                   }))
+                      )),
+                maybe (false) (pipe (Pact.A.type, equals (1))) (mpact) ? take (12) : drop (12)
+              )}
               onChange={setTargetDomain}
               value={pipe_ (mpact, fmap (Pact.A.domain), misNumberM)}
               disabled={
@@ -220,12 +209,18 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
           )
           : (
             <Dropdown
-              label={translate (l10n) ("domain")}
-              options={imap (i => (name: string) => DropdownOption ({
-                              id: Just (i + 1),
-                              name,
-                            }))
-                            (translate (l10n) ("fairydomains"))}
+              label={translate (staticData) ("pacts.domain")}
+              options={pipe_ (
+                mpact_category,
+                maybe (List<Record<DropdownOption<number>>> ())
+                      (pipe (
+                        PCA.domains,
+                        map (pd => DropdownOption ({
+                                     id: Just (PDA.id (pd)),
+                                     name: PDA.name (pd),
+                                   }))
+                      ))
+              )}
               onChange={setTargetDomain}
               value={pipe_ (mpact, fmap (Pact.A.domain), misNumberM)}
               disabled={
@@ -241,71 +236,38 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
               }
               />
           )}
-        {maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
-          ? (
-            <TextField
-              label={`${translate (l10n) ("domain")} (${translate (l10n) ("userdefined")})`}
-              hint={pipe_ (
-                mpact,
-                bindF (pipe (Pact.A.domain, ensure (isNumber))),
-                bindF (pipe (dec, subscript (translate (l10n) ("demondomains"))))
-              )}
-              onChange={setCustomTargetDomain}
-              value={pipe_ (mpact, fmap (Pact.A.domain), misStringM)}
-              disabled={
-                !isPactEditable
-                || isNothing (mpact)
-                || maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
-              }
-              />
-          )
-          : (
-            <TextField
-              label={`${translate (l10n) ("domain")} (${translate (l10n) ("userdefined")})`}
-              hint={pipe_ (
-                mpact,
-                bindF (pipe (Pact.A.domain, ensure (isNumber))),
-                bindF (pipe (dec, subscript (translate (l10n) ("fairydomains"))))
-              )}
-              onChange={setCustomTargetDomain}
-              value={pipe_ (mpact, fmap (Pact.A.domain), misStringM)}
-              disabled={
-                !isPactEditable
-                || isNothing (mpact)
-                || maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
-              }
-              />
+        <TextField
+          label={`${translate (staticData) ("pacts.domain")} (${translate (staticData) ("pacts.userdefined")})`}
+          hint={pipe_ (
+            bind (mpact) (pipe (Pact.A.domain, ensure (isNumber))),
+            ap (pipe_ (
+                  mpact_category,
+                  fmap (pipe (
+                    PCA.domains,
+                    flip ((domain: number) => find (pipe (PDA.id, equals (domain))))
+                  ))
+                )),
+            join,
+            fmap (PDA.name)
           )}
-        {maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
-          ? (
-            <TextField
-              label={translate (l10n) ("name")}
-              hint={pipe_ (
-                mpact,
-                bindF (pipe (Pact.A.domain, ensure (isNumber))),
-                bindF (pipe (dec, subscript (translate (l10n) ("demondomains"))))
-              )}
-              onChange={setTargetName}
-              value={fmapF (mpact) (Pact.A.name)}
-              disabled={
-                !isPactEditable
-                || isNothing (mpact)
-                || maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
-              }
-              />
-          )
-          : (
-            <TextField
-              label={translate (l10n) ("name")}
-              onChange={setTargetName}
-              value={fmapF (mpact) (Pact.A.name)}
-              disabled={
-                !isPactEditable
-                || isNothing (mpact)
-                || maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
-              }
-              />
-          )}
+          onChange={setCustomTargetDomain}
+          value={pipe_ (mpact, fmap (Pact.A.domain), misStringM)}
+          disabled={
+            !isPactEditable
+            || isNothing (mpact)
+            || maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
+          }
+          />
+        <TextField
+          label={translate (staticData) ("pacts.name")}
+          onChange={setTargetName}
+          value={fmapF (mpact) (Pact.A.name)}
+          disabled={
+            !isPactEditable
+            || isNothing (mpact)
+            || maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
+          }
+          />
       </div>
     </Page>
   )

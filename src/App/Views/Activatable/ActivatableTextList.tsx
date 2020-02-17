@@ -2,16 +2,16 @@ import * as React from "react"
 import { List } from "../../../Data/List"
 import { Record } from "../../../Data/Record"
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { compressList } from "../../Utilities/Activatable/activatableNameUtils"
 
 interface ActivatableTextListProps {
   list: List<Record<ActiveActivatable>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
-export const ActivatableTextList: React.FC<ActivatableTextListProps> = ({ l10n, list }) => (
+export const ActivatableTextList: React.FC<ActivatableTextListProps> = ({ staticData, list }) => (
   <div className="list">
-    {compressList (l10n) (list)}
+    {compressList (staticData) (list)}
   </div>
 )

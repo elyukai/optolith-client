@@ -21,11 +21,11 @@ import { ActiveActivatable, ActiveActivatableA_ } from "../Models/View/ActiveAct
 import { Advantage } from "../Models/Wiki/Advantage"
 import { Culture } from "../Models/Wiki/Culture"
 import { Disadvantage } from "../Models/Wiki/Disadvantage"
-import { L10nRecord } from "../Models/Wiki/L10n"
 import { Profession } from "../Models/Wiki/Profession"
 import { Race } from "../Models/Wiki/Race"
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
 import { SelectOption } from "../Models/Wiki/sub/SelectOption"
+import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { heroReducer } from "../Reducers/heroReducer"
 import { getAllActiveByCategory } from "../Utilities/Activatable/activatableActiveUtils"
 import { modifyByLevel } from "../Utilities/Activatable/activatableModifierUtils"
@@ -45,7 +45,7 @@ import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors"
 import { getAutomaticAdvantages, getCurrentCulture, getCurrentProfession, getRace } from "./rcpSelectors"
 import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors"
 import { getMagicalTraditionsFromWiki } from "./spellsSelectors"
-import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getHeroes, getLocaleAsProp, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from "./stateSelectors"
+import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getHeroes, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from "./stateSelectors"
 
 const AAA_ = ActiveActivatableA_
 const SAA = SpecialAbility.A
@@ -134,18 +134,16 @@ export const getMatchingScriptAndLangRelated = createMaybeSelector (
 
 export const getActive = <T extends ActivatableCategory>(category: T, addLevelToName: boolean) =>
   createMaybeSelector (
-    getLocaleAsProp,
     getWiki,
     getCurrentHeroPresent,
     getAutomaticAdvantages,
     getMatchingScriptAndLangRelated,
-    (l10n, wiki, mhero, automatic_advantages, matching_script_and_lang_related) =>
+    (staticData, mhero, automatic_advantages, matching_script_and_lang_related) =>
       fmapF (mhero) (getAllActiveByCategory (category)
                                             (addLevelToName)
                                             (automatic_advantages)
                                             (matching_script_and_lang_related)
-                                            (l10n)
-                                            (wiki))
+                                            (staticData))
   )
 
 export const getActiveMap =
@@ -155,18 +153,16 @@ export const getActiveMap =
     createMapSelectorP (getHeroes)
                        (
                          getWiki,
-                         getLocaleAsProp,
                          getAutomaticAdvantages,
                          getMatchingScriptAndLangRelated
                        )
                        (heroReducer.A.present)
-                       ((wiki, l10n, automatic_advantages, matching_script_and_lang_related) =>
+                       ((staticData, automatic_advantages, matching_script_and_lang_related) =>
                          getAllActiveByCategory (category)
                                                 (addLevelToName)
                                                 (automatic_advantages)
                                                 (matching_script_and_lang_related)
-                                                (l10n)
-                                                (wiki))
+                                                (staticData))
 
 export const getActiveForView = <T extends ActivatableCategory>(category: T) =>
   getActive (category, true)
@@ -262,14 +258,14 @@ export const getAdvantagesForEdit = mapCurrentHero (getAdvantagesForEditMap)
 export const getFilteredActiveAdvantages = createMaybeSelector (
   getAdvantagesForEdit,
   getAdvantagesFilterText,
-  getLocaleAsProp,
-  (madvantages, filterText, l10n) =>
+  getWiki,
+  (madvantages, filterText, staticData) =>
     fmapF (madvantages)
           (filterAndSortRecordsBy (0)
                                   <Record<ActiveActivatable<Advantage>>>
                                   ([ ActiveActivatableA_.name ])
                                   ([ comparingR (ActiveActivatableA_.name)
-                                                (compareLocale (l10n)) ])
+                                                (compareLocale (staticData)) ])
                                   (filterText))
 )
 
@@ -285,14 +281,14 @@ export const getDisadvantagesForEdit = mapCurrentHero (getDisadvantagesForEditMa
 export const getFilteredActiveDisadvantages = createMaybeSelector (
   getDisadvantagesForEdit,
   getDisadvantagesFilterText,
-  getLocaleAsProp,
-  (mdisadvantages, filterText, l10n) =>
+  getWiki,
+  (mdisadvantages, filterText, staticData) =>
     fmapF (mdisadvantages)
           (filterAndSortRecordsBy (0)
                                   <Record<ActiveActivatable<Disadvantage>>>
                                   ([ ActiveActivatableA_.name ])
                                   ([ comparingR (ActiveActivatableA_.name)
-                                                (compareLocale (l10n)) ])
+                                                (compareLocale (staticData)) ])
                                   (filterText))
 )
 
@@ -417,26 +413,26 @@ export const getBlessedTraditionForSheet = createMaybeSelector (
 )
 
 const getPropertyOrAspectKnowledgesForSheet =
-  uncurryN3 ((l10n: L10nRecord) => liftM2 ((wiki_entry: Record<SpecialAbility>) =>
-                                            pipe (
-                                              getActiveSelections,
-                                              mapMaybe (pipe (
-                                                Just,
-                                                getSelectOptionName (wiki_entry)
-                                              )),
-                                              sortStrings (l10n),
-                                              intercalate (", ")
-                                            )))
+  uncurryN3 ((staticData: StaticDataRecord) => liftM2 ((wiki_entry: Record<SpecialAbility>) =>
+                                                        pipe (
+                                                          getActiveSelections,
+                                                          mapMaybe (pipe (
+                                                            Just,
+                                                            getSelectOptionName (wiki_entry)
+                                                          )),
+                                                          sortStrings (staticData),
+                                                          intercalate (", ")
+                                                        )))
 
 export const getPropertyKnowledgesForSheet = createMaybeSelector (
-  getLocaleAsProp,
+  getWiki,
   mapGetToSlice (getWikiSpecialAbilities) (SpecialAbilityId.PropertyKnowledge),
   mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.PropertyKnowledge),
   getPropertyOrAspectKnowledgesForSheet
 )
 
 export const getAspectKnowledgesForSheet = createMaybeSelector (
-  getLocaleAsProp,
+  getWiki,
   mapGetToSlice (getWikiSpecialAbilities) (SpecialAbilityId.AspectKnowledge),
   mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.AspectKnowledge),
   getPropertyOrAspectKnowledgesForSheet

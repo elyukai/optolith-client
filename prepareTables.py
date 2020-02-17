@@ -38,9 +38,9 @@ def decryptTables():
 def prepareTables():
     print("Unpacking tables")
     # Unpack zip file
-    os.mkdir("tables")
+    os.mkdir("app/Database")
     with zipfile.ZipFile("Tables.zip", 'r') as zip_ref:
-        zip_ref.extractall("tables")
+        zip_ref.extractall("app/Database")
     print("Tables unpacked")
 
 

@@ -6,8 +6,8 @@ import { bindF, fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { getSelectOptionName } from "../../../Utilities/Activatable/selectionUtils"
 import { translate } from "../../../Utilities/I18n"
 import { pipe_ } from "../../../Utilities/pipe"
@@ -15,14 +15,14 @@ import { sortStrings } from "../../../Utilities/sortBy"
 import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   scriptsStateEntry: Maybe<Record<ActivatableDependent>>
   scriptsWikiEntry: Maybe<Record<SpecialAbility>>
 }
 
 export const SkillsSheetScripts: React.FC<Props> = props => {
   const {
-    l10n,
+    staticData,
     scriptsStateEntry: maybeScriptsStateEntry,
     scriptsWikiEntry: maybeScriptsWikiEntry,
   } = props
@@ -33,12 +33,12 @@ export const SkillsSheetScripts: React.FC<Props> = props => {
     fromMaybe (List<Record<ActiveObject>> ()),
     mapMaybe (activeObject => bindF (flip (getSelectOptionName) (ActiveObject.A.sid (activeObject)))
                                     (maybeScriptsWikiEntry)),
-    sortStrings (l10n),
+    sortStrings (staticData),
     intercalate (", ")
   )
 
   return (
-    <TextBox label={translate (l10n) ("knownscripts")}>
+    <TextBox label={translate (staticData) ("sheets.gamestatssheet.knownscripts.title")}>
       <div className="scripts-list">
         {scripts}
       </div>

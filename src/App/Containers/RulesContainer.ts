@@ -4,7 +4,7 @@ import { ReduxDispatch } from "../Actions/Actions"
 import { setHeroLocale } from "../Actions/ProfileActions"
 import * as RulesActions from "../Actions/RulesActions"
 import { setGuildMageUnfamiliarSpellId } from "../Actions/SpecialAbilitiesActions"
-import { AppStateRecord } from "../Reducers/appReducer"
+import { AppStateRecord } from "../Models/AppState"
 import { getGuildMageUnfamiliarSpellId } from "../Selectors/activatableSelectors"
 import { getSortedBooks } from "../Selectors/bookSelectors"
 import { isEnableLanguageSpecializationsDeactivatable } from "../Selectors/rulesSelectors"
@@ -15,7 +15,7 @@ import { RulesDispatchProps, RulesOwnProps, RulesStateProps, RulesView } from ".
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: RulesOwnProps): RulesStateProps => ({
-    sortedBooks: getSortedBooks (state, ownProps),
+    sortedBooks: getSortedBooks (state),
     isEnableLanguageSpecializationsDeactivatable:
       isEnableLanguageSpecializationsDeactivatable (state, ownProps),
     hero_locale: getHeroLocale (state, ownProps),

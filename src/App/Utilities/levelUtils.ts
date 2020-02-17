@@ -6,6 +6,7 @@ import { DropdownOption } from "../Models/View/DropdownOption"
 import { toRoman } from "./NumberUtils"
 
 const getElements =
+  (add_props: (level: number) => Partial<DropdownOption<number>>) =>
   (display_range: boolean) =>
   (max: number) =>
     unfoldr<Record<DropdownOption<number>>, number>
@@ -23,19 +24,26 @@ const getElements =
                               id: Just (current),
                               name: current > 1 && display_range
                                 ? `I–${toRoman (current)}`
-                                : toRoman (current) }))
+                                : toRoman (current),
+                              ...add_props (current),
+                            }))
             (current + 1)
         ))
 
 export const getLevelElements =
-  (max: number) => getElements (false) (max) (1)
+  (max: number) => getElements (() => ({})) (false) (max) (1)
+
+export const getCustomLevelElements =
+  (add_props: (level: number) => Partial<DropdownOption<number>>) =>
+  (max: number) =>
+    getElements (add_props) (false) (max) (1)
 
 export const getLevelElementsWithMin =
-  (min: number) => (max: number) => getElements (false) (max) (min)
+  (min: number) => (max: number) => getElements (() => ({})) (false) (max) (min)
 
 export const getLevelElementsWithMaybeRangeMin =
   (display_range: boolean) => (min: number) => (max: number) =>
-    getElements (display_range) (max) (min)
+    getElements (() => ({})) (display_range) (max) (min)
 
 export const getLevelElementsWithZero =
-  (max: number) => getElements (false) (max) (0)
+  (max: number) => getElements (() => ({})) (false) (max) (0)

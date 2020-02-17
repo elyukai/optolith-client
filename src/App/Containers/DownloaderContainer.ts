@@ -1,5 +1,5 @@
 import { connect } from "react-redux"
-import { AppStateRecord } from "../Reducers/appReducer"
+import { AppStateRecord } from "../Models/AppState"
 import { getUpdateDownloadProgress } from "../Selectors/stateSelectors"
 import { Downloader, DownloaderDispatchProps, DownloaderOwnProps, DownloaderStateProps } from "../Views/Downloader/Downloader"
 

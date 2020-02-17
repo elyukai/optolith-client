@@ -1,10 +1,12 @@
 import * as React from "react"
 import { ensure, maybe, Maybe, orN } from "../../../Data/Maybe"
 import { gt } from "../../../Data/Num"
+import { lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Item } from "../../Models/Hero/Item"
-import { L10nRecord } from "../../Models/Wiki/L10n"
-import { translate } from "../../Utilities/I18n"
+import { NumIdName } from "../../Models/NumIdName"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { pipe } from "../../Utilities/pipe"
 import { IconButton } from "../Universal/IconButton"
 import { ListItem } from "../Universal/ListItem"
 import { ListItemButtons } from "../Universal/ListItemButtons"
@@ -15,7 +17,7 @@ import { ListItemSeparator } from "../Universal/ListItemSeparator"
 export interface EquipmentListItemProps {
   add?: boolean
   data: Record<Item>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   selectedForInfo: Maybe<string>
   addTemplateToList (id: string): void
   deleteItem (id: string): void
@@ -32,7 +34,7 @@ export const EquipmentListItem: React.FC<EquipmentListItemProps> = props => {
     data,
     deleteItem,
     editItem,
-    l10n,
+    staticData,
     selectForInfo,
     selectedForInfo,
   } = props
@@ -86,7 +88,13 @@ export const EquipmentListItem: React.FC<EquipmentListItemProps> = props => {
         }
         />
       <ListItemSeparator />
-      <ListItemGroup list={translate (l10n) ("itemgroups")} index={IA.gr (data)} />
+      <ListItemGroup
+        group={IA.gr (data)}
+        getGroupName={pipe (
+          lookupF (StaticData.A.equipmentGroups (staticData)),
+          maybe ("") (NumIdName.A.name)
+        )}
+        />
       <ListItemButtons>
         <IconButton
           icon="&#xE90c;"

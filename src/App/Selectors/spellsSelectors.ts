@@ -8,7 +8,7 @@ import { lte } from "../../Data/Num"
 import { elems, lookup, lookupF } from "../../Data/OrderedMap"
 import { member } from "../../Data/OrderedSet"
 import { Record } from "../../Data/Record"
-import { fst, snd } from "../../Data/Tuple"
+import { fst, snd, Tuple } from "../../Data/Tuple"
 import { uncurryN, uncurryN3, uncurryN5 } from "../../Data/Tuple/Curry"
 import { MagicalGroup } from "../Constants/Groups"
 import { AdvantageId, Phase, SpecialAbilityId } from "../Constants/Ids"
@@ -19,10 +19,11 @@ import { CantripCombined } from "../Models/View/CantripCombined"
 import { SpellWithRequirements, SpellWithRequirementsL } from "../Models/View/SpellWithRequirements"
 import { Cantrip } from "../Models/Wiki/Cantrip"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
+import { MagicalTradition } from "../Models/Wiki/MagicalTradition"
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
 import { Spell, SpellL } from "../Models/Wiki/Spell"
 import { SelectOption, selectToDropdownOption } from "../Models/Wiki/sub/SelectOption"
-import { WikiModel } from "../Models/Wiki/WikiModel"
+import { StaticData } from "../Models/Wiki/WikiModel"
 import { getMagicalTraditionsHeroEntries } from "../Utilities/Activatable/traditionUtils"
 import { composeL } from "../Utilities/compose"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
@@ -35,14 +36,15 @@ import { sortByMulti, sortRecordsByName } from "../Utilities/sortBy"
 import { getStartEl } from "./elSelectors"
 import { getRuleBooksEnabled } from "./rulesSelectors"
 import { getCantripsSortOptions, getSpellsCombinedSortOptions, getSpellsSortOptions } from "./sortOptionsSelectors"
-import { getAdvantages, getCantrips, getHeroProp, getInactiveSpellsFilterText, getLocaleAsProp, getMaybeSpecialAbilities, getPhase, getSpecialAbilities, getSpellsFilterText, getTransferredUnfamiliarSpells, getWiki, getWikiCantrips, getWikiSpecialAbilities } from "./stateSelectors"
+import { getAdvantages, getCantrips, getHeroProp, getInactiveSpellsFilterText, getMaybeSpecialAbilities, getPhase, getSpecialAbilities, getSpellsFilterText, getTransferredUnfamiliarSpells, getWiki, getWikiCantrips, getWikiSpecialAbilities } from "./stateSelectors"
 import { getEnableActiveItemHints } from "./uisettingsSelectors"
 
 
 const HA = HeroModel.A
-const WA = WikiModel.A
+const SDA = StaticData.A
 const ELA = ExperienceLevel.A
 const ASDA = ActivatableSkillDependent.A
+const ADA = ActivatableDependent.A
 const CA = Cantrip.A
 const CCA = CantripCombined.A
 const SWRA = SpellWithRequirements.A
@@ -55,7 +57,29 @@ const SOA = SelectOption.A
 
 export const getMagicalTraditionsFromHero = createMaybeSelector (
   getSpecialAbilities,
-  getMagicalTraditionsHeroEntries
+  getMagicalTraditionsHeroEntries,
+)
+
+
+const combineTradition = (heroEntry: Record<ActivatableDependent>) =>
+                         (staticDataEntry: Record<SpecialAbility>) =>
+                         (tradEntry: Record<MagicalTradition>) =>
+                           Tuple (tradEntry, staticDataEntry, heroEntry)
+
+
+export const getMagicalTraditionStaticEntries = createMaybeSelector (
+  getWiki,
+  getSpecialAbilities,
+  uncurryN (staticData => pipe (
+    getMagicalTraditionsHeroEntries,
+    mapMaybe (x => pipe_ (
+                     staticData,
+                     SDA.magicalTraditions,
+                     lookup (ADA.id (x)),
+                     liftM2 (combineTradition (x))
+                            (lookup (ADA.id (x)) (SDA.specialAbilities (staticData)))
+                   ))
+  ))
 )
 
 
@@ -108,7 +132,7 @@ export const getActiveSpells = createMaybeSelector (
                     bindF (hero_entry =>
                             pipe_ (
                               wiki,
-                              WA.spells,
+                              SDA.spells,
                               lookup (ASDA.id (hero_entry)),
                               fmap (wiki_entry =>
                                 SpellWithRequirements ({
@@ -298,7 +322,6 @@ export const getFilteredActiveSpellsAndCantrips = createMaybeSelector (
   getActiveSpellsAndCantrips,
   getSpellsCombinedSortOptions,
   getSpellsFilterText,
-  getLocaleAsProp,
   (mcombineds, sort_options, filter_text) =>
     fmapF (mcombineds)
           (filterAndSortRecordsBy (0)
@@ -354,16 +377,16 @@ export const getSpellsForSheet = createMaybeSelector (
 
 
 export const getAllSpellsForManualGuildMageSelect = createMaybeSelector (
-  getLocaleAsProp,
+  getWiki,
   getRuleBooksEnabled,
   getWikiSpecialAbilities,
-  uncurryN3 (l10n => av => pipe (
+  uncurryN3 (staticData => av => pipe (
                              lookup<string> (SpecialAbilityId.TraditionGuildMages),
                              bindF (SAA.select),
                              fmap (pipe (
                                filterByAvailability (SOA.src) (av),
                                map (selectToDropdownOption),
-                               sortRecordsByName (l10n)
+                               sortRecordsByName (staticData)
                              ))
                            ))
 )

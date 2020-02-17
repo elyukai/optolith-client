@@ -5,8 +5,9 @@ import { List } from "../../Data/List"
 import { Just, Maybe, Nothing } from "../../Data/Maybe"
 import { fromDefault, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../Data/Record"
 import { ADD_ALERT, REMOVE_ALERT } from "../Constants/ActionTypes"
-import { L10nRecord } from "../Models/Wiki/L10n"
-import { translate } from "../Utilities/I18n"
+import { StaticDataRecord } from "../Models/Wiki/WikiModel"
+import { getWiki } from "../Selectors/stateSelectors"
+import { translate, translateP } from "../Utilities/I18n"
 import { ReduxAction } from "./Actions"
 
 
@@ -111,9 +112,8 @@ export const AlertOptions =
               })
 
 export const addAlert =
-  (l10n: L10nRecord) =>
   (opts: Record<AlertOptions>): ReduxAction<Promise<Maybe<void>>> =>
-  async dispatch =>
+  async (dispatch, getState) =>
     new Promise<Maybe<void>> (resolve => {
       dispatch<AddPromptAction> ({
         type: ADD_ALERT,
@@ -122,7 +122,7 @@ export const addAlert =
           message: AlertOptions.A.message (opts),
           buttons: List (
             PromptButton<void> ({
-              label: translate (l10n) ("ok"),
+              label: translate (getWiki (getState ())) ("general.dialogs.okbtn"),
               response: undefined,
             }),
           ),
@@ -135,13 +135,12 @@ export const addAlert =
 // ERROR ALERT
 
 enum ErrorAlertResponse {
- Copy, Ok
+  Copy, Ok
 }
 
 export const addErrorAlert =
-  (l10n: L10nRecord) =>
   (opts: Record<AlertOptions>): ReduxAction<Promise<Maybe<void>>> =>
-  async dispatch => {
+  async (dispatch, getState) => {
     const response = await new Promise<Maybe<ErrorAlertResponse>> (resolve => {
       dispatch<AddPromptAction> ({
         type: ADD_ALERT,
@@ -150,11 +149,11 @@ export const addErrorAlert =
           message: AlertOptions.A.message (opts),
           buttons: List (
             PromptButton<ErrorAlertResponse> ({
-              label: translate (l10n) ("copy"),
+              label: translate (getWiki (getState ())) ("general.dialogs.copybtn"),
               response: ErrorAlertResponse.Copy,
             }),
             PromptButton<ErrorAlertResponse> ({
-              label: translate (l10n) ("ok"),
+              label: translate (getWiki (getState ())) ("general.dialogs.okbtn"),
               response: ErrorAlertResponse.Ok,
             }),
           ),
@@ -170,20 +169,33 @@ export const addErrorAlert =
     return fmapF (response) ((): void => undefined)
   }
 
-const getDefaultErrorMsg =
-  (l10n: L10nRecord) =>
+/**
+ * Creates a message from the passed message and the passed error object that
+ * can be used as the content of an alert.
+ */
+export const getErrorMsg =
+  (staticData: StaticDataRecord) =>
   (message: string) =>
-  (error: Left<Error>) =>
-    `${message} (${translate (l10n) ("errorcode")}: ${JSON.stringify (fromLeft_ (error))})`
+  (error: Left<Error>): string =>
+    `${message} (${translate (staticData) ("general.errorcode")}: ${JSON.stringify (fromLeft_ (error))})`
 
 export const addDefaultErrorAlert =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (message: string) =>
   (error: Left<Error>) =>
-    addErrorAlert (l10n)
-                  (AlertOptions ({
-                    message: getDefaultErrorMsg (l10n) (message) (error),
-                    title: Just (translate (l10n) ("error")),
+    addErrorAlert (AlertOptions ({
+                    message: getErrorMsg (staticData) (message) (error),
+                    title: Just (translate (staticData) ("general.error")),
+                  }))
+
+export const addDefaultErrorAlertWithTitle =
+  (staticData: StaticDataRecord) =>
+  (title: string) =>
+  (message: string) =>
+  (error: Left<Error>) =>
+    addErrorAlert (AlertOptions ({
+                    message: getErrorMsg (staticData) (message) (error),
+                    title: Just (title),
                   }))
 
 
@@ -209,7 +221,7 @@ export const ConfirmOptions =
               })
 
 export const addConfirm =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (opts: Record<ConfirmOptions>): ReduxAction<Promise<Maybe<ConfirmResponse>>> =>
   async dispatch =>
     new Promise<Maybe<ConfirmResponse>> (resolve => {
@@ -221,21 +233,21 @@ export const addConfirm =
           buttons: ConfirmOptions.A.useYesNo (opts)
             ? List (
                 PromptButton<ConfirmResponse> ({
-                  label: translate (l10n) ("yes"),
+                  label: translate (staticData) ("general.dialogs.yesbtn"),
                   response: ConfirmResponse.Accepted,
                 }),
                 PromptButton<ConfirmResponse> ({
-                  label: translate (l10n) ("no"),
+                  label: translate (staticData) ("general.dialogs.nobtn"),
                   response: ConfirmResponse.Rejected,
                 })
               )
             : List (
                 PromptButton<ConfirmResponse> ({
-                  label: translate (l10n) ("ok"),
+                  label: translate (staticData) ("general.dialogs.okbtn"),
                   response: ConfirmResponse.Accepted,
                 }),
                 PromptButton<ConfirmResponse> ({
-                  label: translate (l10n) ("cancel"),
+                  label: translate (staticData) ("general.dialogs.cancelbtn"),
                   response: ConfirmResponse.Rejected,
                 })
               ),
@@ -254,3 +266,19 @@ export interface RemoveAlertAction {
 export const removeAlert = (): RemoveAlertAction => ({
   type: REMOVE_ALERT,
 })
+
+// Not enough AP alert
+
+export const addNotEnoughAPAlert =
+  (missing_ap: number): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
+    const staticData = getWiki (getState ())
+
+    await dispatch (addAlert (AlertOptions ({
+                               title: Just (translate (staticData)
+                                                      ("general.dialogs.notenoughap.title")),
+                               message: translateP (staticData)
+                                                   ("general.dialogs.notenoughap.message")
+                                                   (List (missing_ap)),
+                             })))
+  }

@@ -21,7 +21,7 @@ import { Cantrip } from "../../Models/Wiki/Cantrip"
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { Spell } from "../../Models/Wiki/Spell"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { modifyByLevel } from "../Activatable/activatableModifierUtils"
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils"
 import { mapMagicalTradIdToNumId } from "../Activatable/traditionUtils"
@@ -33,7 +33,7 @@ import { areSpellPrereqisitesMet } from "../Prerequisites/validatePrerequisitesU
 import { isNumber, misNumberM } from "../typeCheckUtils"
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const HA = HeroModel.A
 const ELA = ExperienceLevel.A
 const SA = Spell.A
@@ -139,7 +139,7 @@ export const countActiveSpellsPerProperty =
  * Check if the dependencies allow the passed spell to be decreased.
  */
 const isSpellDecreasableByDependencies =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (hero_entry: Record<ActivatableSkillDependent>) => {
     const flattenedDependencies =
@@ -156,7 +156,7 @@ const isSpellDecreasableByDependencies =
  * active.)
  */
 const isSpellDecreasableByPropertyKnowledges =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (spellsStateEntries: OrderedMap<string, Record<ActivatableSkillDependent>>) =>
   (propertyKnowledge: Maybe<Record<ActivatableDependent>>) =>
   (wiki_entry: Record<Spell>) =>
@@ -171,7 +171,7 @@ const isSpellDecreasableByPropertyKnowledges =
 
         fmap (
           pipe (
-            () => countActiveSpellsPerProperty (WA.spells (wiki))
+            () => countActiveSpellsPerProperty (SDA.spells (wiki))
                                                (spellsStateEntries),
             lookup (SA.property (wiki_entry)),
             sum,
@@ -186,7 +186,7 @@ const isSpellDecreasableByPropertyKnowledges =
  * Checks if the passed spell's skill rating can be decreased.
  */
 export const isSpellDecreasable =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (propertyKnowledge: Maybe<Record<ActivatableDependent>>) =>
   (wiki_entry: Record<Spell>) =>
@@ -240,7 +240,7 @@ export const isUnfamiliarSpell: (transferred_unfamiliar: List<Record<TransferUnf
  * Counts the active spells of the specified spell groups.
  */
 const countActiveSpellEntriesInGroups: (groups: List<number>) =>
-                                       (wiki: WikiModelRecord) =>
+                                       (wiki: StaticDataRecord) =>
                                        (hero: HeroModelRecord) => number =
   grs => wiki => pipe (
     HA.spells,
@@ -248,7 +248,7 @@ const countActiveSpellEntriesInGroups: (groups: List<number>) =>
     countWith (e => ASDA.active (e)
                     && pipe_ (
                       wiki,
-                      WA.spells,
+                      SDA.spells,
                       lookup (ASDA.id (e)),
                       maybe (false) (pipe (SA.gr, elemF (grs)))
                     ))
@@ -264,7 +264,7 @@ const countActiveSpellEntriesInGroups: (groups: List<number>) =>
  * any further addition of a spell or ritual.
  */
 export const isSpellsRitualsCountMaxReached =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (isLastTrad: (x: string) => boolean) => {
     // Count maximum for Intuitive Mages and Animisten
@@ -339,7 +339,7 @@ const isAnySpellActiveWithImpCostC =
  * Checks if a spell is valid to add when *Tradition (Intuitive Mage)* is used.
  */
 const isInactiveValidForIntuitiveMage =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (is_spell_max_count_reached: boolean) =>
   (wiki_entry: Record<Spell>) =>
@@ -356,7 +356,7 @@ const isInactiveValidForIntuitiveMage =
     && SA.ic (wiki_entry) < IC.D
 
     // Only one spell with IC C
-    && !(SA.ic (wiki_entry) === IC.C && isAnySpellActiveWithImpCostC (WA.spells (wiki))
+    && !(SA.ic (wiki_entry) === IC.C && isAnySpellActiveWithImpCostC (SDA.spells (wiki))
                                                                      (HA.spells (hero)))
 
 
@@ -394,7 +394,7 @@ const isInactiveValidForArcaneBardOrDancer =
  * Checks if a spell is valid to add when *Tradition (Animisten)* is used.
  */
 const isInactiveValidForAnimist =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (is_spell_max_count_reached: boolean) =>
   (wiki_entry: Record<Spell>) =>
@@ -404,7 +404,7 @@ const isInactiveValidForAnimist =
                                     (is_spell_max_count_reached)
                                     (wiki_entry)
                                     (mhero_entry)
-    || SA.gr (wiki_entry) === MagicalGroup.Animistenkräfte
+    || SA.gr (wiki_entry) === MagicalGroup.AnimistForces
 
 
 const consTradSpecificSpell =
@@ -423,12 +423,12 @@ const consTradSpecificSpell =
 
 export const getInactiveSpellsForIntuitiveMageOrAnimist =
   (isValid: typeof isInactiveValidForIntuitiveMage) =>
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (is_spell_max_count_reached: boolean): List<Record<SpellWithRequirements>> =>
     pipe_ (
       wiki,
-      WA.spells,
+      SDA.spells,
       foldrWithKey ((k: string) => (wiki_entry: Record<Spell>) => {
                      const mhero_entry = lookup (k) (HA.spells (hero))
 
@@ -455,7 +455,7 @@ export const getInactiveSpellsForIntuitiveMageOrAnimist =
  * Returns all valid inactive spells for intuitive mages.
  */
 export const getInactiveSpellsForIntuitiveMages =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (is_spell_max_count_reached: boolean): List<Record<SpellWithRequirements>> => {
     if (is_spell_max_count_reached) {
@@ -492,7 +492,7 @@ export const getInactiveSpellsForAnimist =
  * Returns all valid inactive spells for arcane bards or dancers.
  */
 export const getInactiveSpellsForArcaneBardOrDancer =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (isUnfamiliar: (spell_or_cantrip: Record<Spell> | Record<Cantrip>) => boolean) =>
   (trads_hero: List<Record<ActivatableDependent>>): List<Record<SpellWithRequirements>> => {
@@ -507,7 +507,7 @@ export const getInactiveSpellsForArcaneBardOrDancer =
 
     return pipe_ (
       wiki,
-      WA.spells,
+      SDA.spells,
       foldrWithKey ((k: string) => (wiki_entry: Record<Spell>) => {
                      const mhero_entry = lookup (k) (HA.spells (hero))
 
@@ -539,7 +539,7 @@ export const getInactiveSpellsForArcaneBardOrDancer =
  * Returns all valid inactive spells for arcane bards or dancers.
  */
 export const getInactiveSpellsForOtherTradition =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (is_spell_max_count_reached: boolean) =>
   (is_max_unfamiliar: boolean) =>
@@ -547,7 +547,7 @@ export const getInactiveSpellsForOtherTradition =
   List<Record<SpellWithRequirements>> =>
     pipe_ (
       wiki,
-      WA.spells,
+      SDA.spells,
       foldrWithKey ((k: string) => (wiki_entry: Record<Spell>) => {
                      const mhero_entry = lookup (k) (HA.spells (hero))
 

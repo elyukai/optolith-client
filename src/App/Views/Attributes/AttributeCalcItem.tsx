@@ -2,9 +2,11 @@ import * as React from "react"
 import { fmapF } from "../../../Data/Functor"
 import { bindF, ensure, fromJust, fromMaybe, isJust, liftM2, maybe, Maybe, or } from "../../../Data/Maybe"
 import { gt, subtractBy } from "../../../Data/Num"
-import { Record } from "../../../Data/Record"
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { fst, snd } from "../../../Data/Tuple"
+import { DerivedCharacteristicValues } from "../../Models/View/DerivedCharacteristicCombined"
+import { DerivedCharacteristic } from "../../Models/Wiki/DerivedCharacteristic"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { DCPair } from "../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../Utilities/I18n"
 import { sign, signNeg } from "../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
@@ -13,8 +15,8 @@ import { NumberBox } from "../Universal/NumberBox"
 import { AttributeBorder } from "./AttributeBorder"
 
 export interface AttributeCalcItemProps {
-  attribute: Record<DerivedCharacteristic>
-  l10n: L10nRecord
+  attribute: DCPair
+  staticData: StaticDataRecord
   isInCharacterCreation: boolean
   isRemovingEnabled: boolean
   addLifePoint (): void
@@ -26,11 +28,12 @@ export interface AttributeCalcItemProps {
 }
 
 const DCA = DerivedCharacteristic.A
+const DCVA = DerivedCharacteristicValues.A
 
 export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
   const {
     attribute,
-    l10n,
+    staticData,
     isInCharacterCreation,
     isRemovingEnabled,
     addLifePoint,
@@ -43,7 +46,7 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
 
   const handleAddMaxEnergyPoint = React.useCallback (
     () => {
-      switch (DCA.id (attribute)) {
+      switch (DCA.id (fst (attribute))) {
         case "LP":
           addLifePoint ()
           break
@@ -65,7 +68,7 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
 
   const handleRemoveMaxEnergyPoint = React.useCallback (
     () => {
-      switch (DCA.id (attribute)) {
+      switch (DCA.id (fst (attribute))) {
         case "LP":
             removeLifePoint ()
           break
@@ -85,27 +88,28 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
     [ removeArcaneEnergyPoint, removeKarmaPoint, removeLifePoint, attribute ]
   )
 
-  const base = DCA.base (attribute)
-  const mod = DCA.mod (attribute)
-  const mcurrent_add = DCA.currentAdd (attribute)
-  const mmax_add = DCA.maxAdd (attribute)
-  const has_value = isJust (DCA.value (attribute))
-  const value = maybe ("\u2013") (signNeg) (DCA.value (attribute))
-  const mpermanent_lost = DCA.permanentLost (attribute)
-  const mpermanent_redeemed = DCA.permanentRedeemed (attribute)
+  const base = DCVA.base (snd (attribute))
+  const mod = DCVA.mod (snd (attribute))
+  const mcurrent_add = DCVA.currentAdd (snd (attribute))
+  const mmax_add = DCVA.maxAdd (snd (attribute))
+  const has_value = isJust (DCVA.value (snd (attribute)))
+  const value = maybe ("\u2013") (signNeg) (DCVA.value (snd (attribute)))
+  const mpermanent_lost = DCVA.permanentLost (snd (attribute))
+  const mpermanent_redeemed = DCVA.permanentRedeemed (snd (attribute))
 
   return (
     <AttributeBorder
-      label={DCA.short (attribute)}
+      label={DCA.short (fst (attribute))}
       value={value}
       tooltip={(
         <div className="calc-attr-overlay">
           <h4>
-            <span>{DCA.name (attribute)}</span>
+            <span>{DCA.name (fst (attribute))}</span>
             <span>{value}</span>
           </h4>
           <p className="calc-text">
-            {DCA.calc (attribute)}
+            {fromMaybe (DCA.calc (fst (attribute)))
+                       (DCVA.calc (snd (attribute)))}
             {" = "}
             {fromMaybe<string | number> ("\u2013") (base)}
           </p>
@@ -115,7 +119,8 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
                 {isJust (mod)
                   ? (
                     <span className="mod">
-                      {translate (l10n) ("modifier")}
+                      {translate (staticData)
+                                 ("attributes.derivedcharacteristics.tooltips.modifier")}
                       {": "}
                       {sign (fromJust (mod))}
                       <br />
@@ -125,7 +130,8 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
                 {isJust (mcurrent_add) && !isInCharacterCreation
                   ? (
                     <span className="add">
-                      {translate (l10n) ("bought")}
+                      {translate (staticData)
+                                 ("attributes.derivedcharacteristics.tooltips.bought")}
                       {": "}
                       {fromJust (mcurrent_add)}
                       {" / "}

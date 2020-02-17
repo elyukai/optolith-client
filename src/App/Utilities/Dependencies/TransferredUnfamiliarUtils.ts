@@ -15,14 +15,14 @@ import { ActiveObjectWithId, toActiveObjectWithId } from "../../Models/ActiveEnt
 import { HeroModel, HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { TransferUnfamiliar, UnfamiliarGroup } from "../../Models/Hero/TransferUnfamiliar"
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { convertUIStateToActiveObject } from "../Activatable/activatableConvertUtils"
 import { getMagicalTraditionsHeroEntries } from "../Activatable/traditionUtils"
 import { isUnfamiliarSpell } from "../Increasable/spellUtils"
 import { pipe, pipe_ } from "../pipe"
 import { misStringM } from "../typeCheckUtils"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const HA = HeroModel.A
 const HL = HeroModelL
 const ELA = ExperienceLevel.A
@@ -128,7 +128,7 @@ const removeTradById = (id: string) => filter (pipe (ADA.id, equals (id)))
  */
 const removeUnfamiliarDepsById = (id: string) => filter (pipe (TUA.srcId, equals (id)))
 
-const getUnfamiliarCount: (wiki: WikiModelRecord) =>
+const getUnfamiliarCount: (wiki: StaticDataRecord) =>
                           (transferred_unfamiliar: List<Record<TransferUnfamiliar>>) =>
                           (trad_hero_entries: List<Record<ActivatableDependent>>) =>
                           (spells: List<Record<ActivatableSkillDependent>>) => number =
@@ -139,13 +139,13 @@ const getUnfamiliarCount: (wiki: WikiModelRecord) =>
                 pipe_ (
                   x,
                   ASDA.id,
-                  lookupF (WA.spells (wiki)),
+                  lookupF (SDA.spells (wiki)),
                   maybe (false)
                         (isUnfamiliarSpell (transferred_unfamiliar)
                                            (trad_hero_entries))
                 ))
 
-const getUnfamiliarCountAfter: (wiki: WikiModelRecord) =>
+const getUnfamiliarCountAfter: (wiki: StaticDataRecord) =>
                                (transferred_unfamiliar: List<Record<TransferUnfamiliar>>) =>
                                (trad_hero_entries: List<Record<ActivatableDependent>>) =>
                                (src_id: string) =>
@@ -164,7 +164,7 @@ const getUnfamiliarCountAfter: (wiki: WikiModelRecord) =>
  * because otherwise you'd have more unfamiliar spells than allowed by the
  * selected experience level during creation phase.
  */
-export const isEntryAllowingTransferUnfamiliarRemovable: (wiki: WikiModelRecord) =>
+export const isEntryAllowingTransferUnfamiliarRemovable: (wiki: StaticDataRecord) =>
                                                          (hero: HeroModelRecord) =>
                                                          (src_id: string) => boolean =
   wiki => hero => {
@@ -187,5 +187,5 @@ export const isEntryAllowingTransferUnfamiliarRemovable: (wiki: WikiModelRecord)
                                                                (spells)
                  ))
                  (lookup (HA.experienceLevel (hero))
-                         (WA.experienceLevels (wiki)))
+                         (SDA.experienceLevels (wiki)))
   }

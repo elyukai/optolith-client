@@ -3,11 +3,11 @@ import { List } from "../../../Data/List"
 import { Maybe, maybeRNull } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate, translateP } from "../../Utilities/I18n"
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   adventurePoints: Record<AdventurePointsCategories>
   maximumForMagicalAdvantagesDisadvantages: Maybe<number>
   isSpellcaster: boolean
@@ -18,7 +18,7 @@ const APCA = AdventurePointsCategories.A
 
 export const ApTooltip: React.FC<Props> = props => {
   const {
-    l10n,
+    staticData,
     adventurePoints: ap,
     maximumForMagicalAdvantagesDisadvantages,
     isSpellcaster,
@@ -27,22 +27,22 @@ export const ApTooltip: React.FC<Props> = props => {
 
   return (
     <div className="ap-details">
-      <h4>{translate (l10n) ("adventurepoints")}</h4>
+      <h4>{translate (staticData) ("header.aptooltip.title")}</h4>
       <p className="general">
-        <span>{translateP (l10n) ("totalap") (List (APCA.total (ap)))}</span>
-        <span>{translateP (l10n) ("apspent") (List (APCA.spent (ap)))}</span>
+        <span>{translateP (staticData) ("header.aptooltip.total") (List (APCA.total (ap)))}</span>
+        <span>{translateP (staticData) ("header.aptooltip.spent") (List (APCA.spent (ap)))}</span>
       </p>
       <hr />
       <p>
         <span>
-          {translateP (l10n)
-                      ("apspentonadvantages")
+          {translateP (staticData)
+                      ("header.aptooltip.spentonadvantages")
                       (List (APCA.spentOnAdvantages (ap), 80))}
         </span>
         <span>
           {APCA.spentOnMagicalAdvantages (ap) > 0
-            ? translateP (l10n)
-                         ("apspentonmagicadvantages")
+            ? translateP (staticData)
+                         ("header.aptooltip.spentonmagicadvantages")
                          (List (
                            APCA.spentOnMagicalAdvantages (ap),
                            Maybe.sum (maximumForMagicalAdvantagesDisadvantages)
@@ -51,20 +51,20 @@ export const ApTooltip: React.FC<Props> = props => {
         </span>
         <span>
           {APCA.spentOnBlessedAdvantages (ap) > 0
-            ? translateP (l10n)
-                         ("apspentonblessedadvantages")
+            ? translateP (staticData)
+                         ("header.aptooltip.spentonblessedadvantages")
                          (List (APCA.spentOnBlessedAdvantages (ap), 50))
             : null}
         </span>
         <span>
-          {translateP (l10n)
-                      ("apspentondisadvantages")
+          {translateP (staticData)
+                      ("header.aptooltip.spentondisadvantages")
                       (List (APCA.spentOnDisadvantages (ap), 80))}
         </span>
         <span>
           {APCA.spentOnMagicalDisadvantages (ap) > 0
-            ? translateP (l10n)
-                         ("apspentonmagicdisadvantages")
+            ? translateP (staticData)
+                         ("header.aptooltip.spentonmagicdisadvantages")
                          (List (
                            APCA.spentOnMagicalDisadvantages (ap),
                            Maybe.sum (maximumForMagicalAdvantagesDisadvantages)
@@ -73,8 +73,8 @@ export const ApTooltip: React.FC<Props> = props => {
         </span>
         <span>
           {APCA.spentOnBlessedDisadvantages (ap) > 0
-            ? translateP (l10n)
-                         ("apspentonblesseddisadvantages")
+            ? translateP (staticData)
+                         ("header.aptooltip.spentonblesseddisadvantages")
                          (List (APCA.spentOnBlessedDisadvantages (ap), 50))
             : null}
         </span>
@@ -82,34 +82,38 @@ export const ApTooltip: React.FC<Props> = props => {
       <hr />
       <p>
         <span>
-          {translateP (l10n) ("apspentonrace") (List (APCA.spentOnRace (ap), 80))}
+          {translateP (staticData)
+                      ("header.aptooltip.spentonrace")
+                      (List (APCA.spentOnRace (ap), 80))}
         </span>
         {maybeRNull ((spentOnProfession: number) => (
                       <span>
-                        {translateP (l10n) ("apspentonprofession") (List (spentOnProfession, 80))}
+                        {translateP (staticData)
+                                    ("header.aptooltip.spentonprofession")
+                                    (List (spentOnProfession, 80))}
                       </span>
                     ))
                     (APCA.spentOnProfession (ap))}
         <span>
-          {translateP (l10n)
-                      ("apspentonattributes")
+          {translateP (staticData)
+                      ("header.aptooltip.spentonattributes")
                       (List (APCA.spentOnAttributes (ap)))}
         </span>
         <span>
-          {translateP (l10n)
-                      ("apspentonskills")
+          {translateP (staticData)
+                      ("header.aptooltip.spentonskills")
                       (List (APCA.spentOnSkills (ap)))}
         </span>
         <span>
-          {translateP (l10n)
-                      ("apspentoncombattechniques")
+          {translateP (staticData)
+                      ("header.aptooltip.spentoncombattechniques")
                       (List (APCA.spentOnCombatTechniques (ap)))}
         </span>
         {isSpellcaster
           ? (
             <span>
-              {translateP (l10n)
-                          ("apspentonspells")
+              {translateP (staticData)
+                          ("header.aptooltip.spentonspells")
                           (List (APCA.spentOnSpells (ap)))}
             </span>
           )
@@ -117,8 +121,8 @@ export const ApTooltip: React.FC<Props> = props => {
         {isSpellcaster
           ? (
             <span>
-              {translateP (l10n)
-                          ("apspentoncantrips")
+              {translateP (staticData)
+                          ("header.aptooltip.spentoncantrips")
                           (List (APCA.spentOnCantrips (ap)))}
             </span>
           )
@@ -126,8 +130,8 @@ export const ApTooltip: React.FC<Props> = props => {
         {isBlessedOne
           ? (
             <span>
-              {translateP (l10n)
-                          ("apspentonliturgicalchants")
+              {translateP (staticData)
+                          ("header.aptooltip.spentonliturgicalchants")
                           (List (APCA.spentOnLiturgicalChants (ap)))}
             </span>
           )
@@ -135,20 +139,20 @@ export const ApTooltip: React.FC<Props> = props => {
         {isBlessedOne
           ? (
             <span>
-              {translateP (l10n)
-                          ("apspentonblessings")
+              {translateP (staticData)
+                          ("header.aptooltip.spentonblessings")
                           (List (APCA.spentOnBlessings (ap)))}
             </span>
           )
           : null}
         <span>
-          {translateP (l10n)
-                      ("apspentonspecialabilities")
+          {translateP (staticData)
+                      ("header.aptooltip.spentonspecialabilities")
                       (List (APCA.spentOnSpecialAbilities (ap)))}
         </span>
         <span>
-          {translateP (l10n)
-                      ("apspentonenergies")
+          {translateP (staticData)
+                      ("header.aptooltip.spentonenergies")
                       (List (APCA.spentOnEnergies (ap)))}
         </span>
       </p>

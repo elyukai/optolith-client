@@ -6,7 +6,7 @@ import { fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined"
 import { CombatTechniqueWithAttackParryBase, CombatTechniqueWithAttackParryBaseA_ } from "../../../Models/View/CombatTechniqueWithAttackParryBase"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils"
 import { ndash } from "../../../Utilities/Chars"
 import { translate } from "../../../Utilities/I18n"
@@ -16,40 +16,45 @@ import { TextBox } from "../../Universal/TextBox"
 interface Props {
   attributes: List<Record<AttributeCombined>>
   combatTechniques: Maybe<List<Record<CombatTechniqueWithAttackParryBase>>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 const CTWAPBA = CombatTechniqueWithAttackParryBase.A
 const CTWAPBA_ = CombatTechniqueWithAttackParryBaseA_
 
 export const CombatSheetTechniques: React.FC<Props> = props => {
-  const { attributes, combatTechniques: mcombat_techniques, l10n } = props
+  const { attributes, combatTechniques: mcombat_techniques, staticData } = props
 
   return (
     <TextBox
       className="combat-techniques"
-      label={translate (l10n) ("combattechniques")}
+      label={translate (staticData) ("sheets.combatsheet.combattechniquestable.title")}
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (l10n) ("combattechnique")}
+              {translate (staticData)
+                         ("sheets.combatsheet.combattechniquestable.labels.combattechnique")}
             </th>
             <th className="primary">
-              {translate (l10n) ("primaryattribute")}
+              {translate (staticData)
+                         ("sheets.combatsheet.combattechniquestable.labels.primaryattribute")}
             </th>
             <th className="ic">
-              {translate (l10n) ("improvementcost.short")}
+              {translate (staticData)
+                         ("sheets.combatsheet.combattechniquestable.labels.improvementcost")}
             </th>
             <th className="value">
-              {translate (l10n) ("combattechniquerating.short")}
+              {translate (staticData)
+                         ("sheets.combatsheet.combattechniquestable.labels.combattechniquerating")}
             </th>
             <th className="at">
-              {translate (l10n) ("attackrangecombat.short")}
+              {translate (staticData)
+                         ("sheets.combatsheet.combattechniquestable.labels.attackrangecombat")}
             </th>
             <th className="pa">
-              {translate (l10n) ("parry.short")}
+              {translate (staticData) ("sheets.combatsheet.combattechniquestable.labels.parry")}
             </th>
           </tr>
         </thead>

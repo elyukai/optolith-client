@@ -1,17 +1,19 @@
 import * as React from "react"
 import { fmapF } from "../../../Data/Functor"
-import { fromJust, isJust, Maybe } from "../../../Data/Maybe"
+import { List } from "../../../Data/List"
+import { fromMaybe, isJust, Maybe } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
 import { Purse } from "../../Models/Hero/Purse"
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n"
-import { localizeNumber, localizeWeight, translate } from "../../Utilities/I18n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { localizeNumber, localizeWeight, translate, translateP } from "../../Utilities/I18n"
+import { pipe } from "../../Utilities/pipe"
 import { TextField } from "../Universal/TextField"
 
 export interface PurseAndTotalsProps {
   carryingCapacity: number
   hasNoAddedAP: boolean
   initialStartingWealth: number
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   purse: Maybe<Record<Purse>>
   totalPrice: Maybe<number>
   totalWeight: Maybe<number>
@@ -28,7 +30,7 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
     carryingCapacity,
     hasNoAddedAP,
     initialStartingWealth,
-    l10n,
+    staticData,
     purse,
     totalPrice,
     totalWeight,
@@ -38,30 +40,52 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
     setKreutzers,
   } = props
 
-  const l10n_id = L10n.A.id (l10n)
+  const formatWeight = pipe (localizeWeight (staticData), localizeNumber (staticData))
+
+  const formatWeightM = pipe (fromMaybe (0), formatWeight)
+
+  const formatPrice = localizeNumber (staticData)
+
+  const formatPriceM = pipe (fromMaybe (0), formatPrice)
+
+  const total_price = translateP (staticData)
+                                 ("general.pricevalue")
+                                 (List (formatPriceM (totalPrice)))
+
+  const total_weight = translateP (staticData)
+                                  ("general.weightvalue")
+                                  (List (formatWeightM (totalWeight)))
+
+  const init_wealth = translateP (staticData)
+                                 ("general.pricevalue")
+                                 (List (formatPrice (initialStartingWealth)))
+
+  const carring_capacity = translateP (staticData)
+                                      ("general.pricevalue")
+                                      (List (formatWeight (carryingCapacity)))
 
   return (
     <>
       <div className="purse">
-        <h4>{translate (l10n) ("purse")}</h4>
+        <h4>{translate (staticData) ("equipment.purse.title")}</h4>
         <div className="fields">
           <TextField
-            label={translate (l10n) ("ducats")}
+            label={translate (staticData) ("equipment.purse.ducats")}
             value={fmapF (purse) (PA.d)}
             onChange={setDucates}
             />
           <TextField
-            label={translate (l10n) ("silverthalers")}
+            label={translate (staticData) ("equipment.purse.silverthalers")}
             value={fmapF (purse) (PA.s)}
             onChange={setSilverthalers}
             />
           <TextField
-            label={translate (l10n) ("halers")}
+            label={translate (staticData) ("equipment.purse.halers")}
             value={fmapF (purse) (PA.h)}
             onChange={setHellers}
             />
           <TextField
-            label={translate (l10n) ("kreutzers")}
+            label={translate (staticData) ("equipment.purse.kreutzers")}
             value={fmapF (purse) (PA.k)}
             onChange={setKreutzers}
             />
@@ -69,27 +93,28 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
       </div>
       <div className="total-points">
         <h4>
-          {hasNoAddedAP ? `${translate (l10n) ("initialstartingwealth")} & ` : ""}
-          {translate (l10n) ("carryingcapacity")}
+          {hasNoAddedAP
+            ? translate (staticData) ("equipment.purse.initialstartingwealthandcarryingcapacity")
+            : translate (staticData) ("equipment.purse.carryingcapacity")}
         </h4>
         <div className="fields">
           {hasNoAddedAP && isJust (totalPrice)
             ? (
               <div>
-                {localizeNumber (l10n_id) (fromJust (totalPrice))}
-                {" / "}
-                {localizeNumber (l10n_id) (initialStartingWealth)}
-                {" "}
-                {translate (l10n) ("priceunit")}
+                {translateP (staticData)
+                            ("general.pricevalue")
+                            (List (
+                              `${total_price} / ${init_wealth}`
+                            ))}
               </div>
             )
             : null}
           <div>
-            {localizeNumber (l10n_id) (localizeWeight (l10n_id) (totalWeight))}
-            {" / "}
-            {localizeNumber (l10n_id) (localizeWeight (l10n_id) (carryingCapacity))}
-            {" "}
-            {translate (l10n) ("weightunit.short")}
+            {translateP (staticData)
+                        ("general.weightvalue")
+                        (List (
+                          `${total_weight} / ${carring_capacity}`
+                        ))}
           </div>
         </div>
       </div>

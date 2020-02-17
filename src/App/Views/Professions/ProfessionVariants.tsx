@@ -10,8 +10,8 @@ import { Sex } from "../../Models/Hero/heroTypeHelpers"
 import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined"
 import { ProfessionVariantCombinedA_ } from "../../Models/View/ProfessionVariantCombined"
 import { RadioOption } from "../../Models/View/RadioOption"
-import { L10nRecord } from "../../Models/Wiki/L10n"
-import { translate } from "../../Utilities/I18n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate, translateP } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { getNameBySex } from "../../Utilities/rcpUtils"
 import { sortRecordsByName } from "../../Utilities/sortBy"
@@ -20,7 +20,7 @@ import { RadioButtonGroup } from "../Universal/RadioButtonGroup"
 export interface ProfessionVariantsProps {
   currentProfessionId: Maybe<string>
   currentProfessionVariantId: Maybe<string>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   professions: Maybe<List<Record<ProfessionCombined>>>
   sex: Maybe<Sex>
 }
@@ -33,7 +33,7 @@ export const ProfessionVariants: React.FC<ProfessionVariantsProps> = props => {
   const {
     currentProfessionId,
     currentProfessionVariantId,
-    l10n,
+    staticData,
     professions,
     sex: msex,
   } = props
@@ -55,18 +55,21 @@ export const ProfessionVariants: React.FC<ProfessionVariantsProps> = props => {
                fmap (pipe (
                  map (prof_var => {
                    const name = getNameBySex (sex) (PVCA_.name (prof_var))
-                   const ap_tag = translate (l10n) ("adventurepoints.short")
                    const ap = Maybe.sum (PCA_.ap (prof)) + PVCA_.ap (prof_var)
 
                    return RadioOption ({
-                     name: `${name} (${ap} ${ap_tag})`,
+                     name: translateP (staticData)
+                                      ("general.withapvalue")
+                                      (List<string | number> (name, ap)),
                      value: Just (PVCA_.id (prof_var)),
                    })
                  }),
-                 sortRecordsByName (l10n),
+                 sortRecordsByName (staticData),
                  PCA_.isVariantRequired (prof)
                    ? ident
-                   : consF (RadioOption ({ name: translate (l10n) ("novariant") }))
+                   : consF (RadioOption ({
+                              name: translate (staticData) ("profession.variants.novariant"),
+                            }))
                ))
              ))
            (msex)

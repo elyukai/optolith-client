@@ -11,7 +11,7 @@ import { Sex } from "../../Models/Hero/heroTypeHelpers"
 import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined"
 import { Book } from "../../Models/Wiki/Book"
 import { SourceLink } from "../../Models/Wiki/sub/SourceLink"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils"
 import { IconButton } from "../Universal/IconButton"
@@ -27,7 +27,7 @@ export interface ProfessionsListItemProps {
   currentProfessionVariantId: Maybe<string>
   profession: Record<ProfessionCombined>
   sex: Maybe<Sex>
-  wiki: WikiModelRecord
+  wiki: StaticDataRecord
   showAddSlidein (): void
 }
 
@@ -73,7 +73,7 @@ export const ProfessionsListItem: React.FC<ProfessionsListItemProps> = props => 
                 src,
                 mapMaybe (pipe (
                   SourceLink.A.id,
-                  lookupF (WikiModel.A.books (wiki)),
+                  lookupF (StaticData.A.books (wiki)),
                   fmap (book => <span key={Book.A.id (book)}>{Book.A.short (book)}</span>)
                 )),
                 toArray

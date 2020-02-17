@@ -1,6 +1,6 @@
 import { fmap } from "../../Data/Functor"
 import { set } from "../../Data/Lens"
-import { List, subscriptF } from "../../Data/List"
+import { subscriptF } from "../../Data/List"
 import { bind, bindF, ensure, fromJust, isJust, isNothing, join, Just, liftM2, Maybe } from "../../Data/Maybe"
 import { subtract } from "../../Data/Num"
 import { lookup } from "../../Data/OrderedMap"
@@ -13,7 +13,6 @@ import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDepende
 import { ActiveObjectWithIdL, toActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId"
 import { HeroModel } from "../Models/Hero/HeroModel"
 import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../Models/View/ActivatableNameCost"
-import { L10nRecord } from "../Models/Wiki/L10n"
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
@@ -22,12 +21,11 @@ import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors"
 import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils"
 import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils"
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
-import { translate, translateP } from "../Utilities/I18n"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { SpecialAbilitiesSortOptions } from "../Utilities/Raw/JSON/Config"
 import { getWikiEntry } from "../Utilities/WikiUtils"
 import { ReduxAction } from "./Actions"
-import { addAlert, AlertOptions } from "./AlertActions"
+import { addNotEnoughAPAlert } from "./AlertActions"
 
 export interface ActivateSpecialAbilityAction {
   type: ActionTypes.ACTIVATE_SPECIALABILITY
@@ -41,7 +39,6 @@ export interface ActivateSpecialAbilityAction {
  * Add a special ability with the provided activation properties (`args`).
  */
 export const addSpecialAbility =
-  (l10n: L10nRecord) =>
   (args: Record<ActivatableActivationOptions>): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const state = getState ()
@@ -66,7 +63,7 @@ export const addSpecialAbility =
         const mmissingAP =
           pipe_ (
             mhero,
-            bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
+            bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { hero })),
             join,
             bindF (getMissingAP (getIsInCharacterCreation (state))
                                 (current_cost))
@@ -79,12 +76,7 @@ export const addSpecialAbility =
           })
         }
         else {
-          const opts = AlertOptions ({
-            title: Just (translate (l10n) ("notenoughap")),
-            message: translateP (l10n) ("notenoughap.text") (List (fromJust (mmissingAP))),
-          })
-
-          await dispatch (addAlert (l10n) (opts))
+          await dispatch (addNotEnoughAPAlert (fromJust (mmissingAP)))
         }
       }
     }
@@ -146,7 +138,6 @@ export interface SetSpecialAbilityTierAction {
  * Change the current level of a special ability.
  */
 export const setSpecialAbilityLevel =
-  (l10n: L10nRecord) =>
   (current_id: string) =>
   (current_index: number) =>
   (next_level: number): ReduxAction<Promise<void>> =>
@@ -180,18 +171,17 @@ export const setSpecialAbilityLevel =
         const wiki_entry = fromJust (mwiki_entry)
         const active_entry = fromJust (mactive_entry)
 
-        const wiki = getWiki (state)
+        const staticData = getWiki (state)
 
         const getCostBorder =
           (isEntryToAdd: boolean) =>
             pipe (
               getNameCost (isEntryToAdd)
                           (getAutomaticAdvantages (state, { hero }))
-                          (l10n)
-                          (wiki)
+                          (staticData)
                           (hero),
               fmap (pipe (
-                convertPerTierCostToFinalCost (true) (l10n),
+                convertPerTierCostToFinalCost (true) (staticData),
                 ActivatableNameCost.A.finalCost as
                   (x: Record<ActivatableNameCostSafeCost>) => number
               ))
@@ -212,7 +202,7 @@ export const setSpecialAbilityLevel =
 
           const mmissingAP =
             pipe_ (
-              getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero }),
+              getAvailableAPMap (HeroModel.A.id (hero)) (state, { hero }),
               join,
               bindF (getMissingAP (getIsInCharacterCreation (state))
                                   (diff_cost))
@@ -233,12 +223,7 @@ export const setSpecialAbilityLevel =
             })
           }
           else {
-            const opts = AlertOptions ({
-              title: Just (translate (l10n) ("notenoughap")),
-              message: translateP (l10n) ("notenoughap.text") (List (fromJust (mmissingAP))),
-            })
-
-            await dispatch (addAlert (l10n) (opts))
+            await dispatch (addNotEnoughAPAlert (fromJust (mmissingAP)))
           }
         }
       }

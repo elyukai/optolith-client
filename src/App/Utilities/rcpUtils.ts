@@ -7,13 +7,13 @@ import { Record } from "../../Data/Record"
 import { show } from "../../Data/Show"
 import { ProfessionId, RaceId } from "../Constants/Ids"
 import { Sex } from "../Models/Hero/heroTypeHelpers"
-import { L10nRecord } from "../Models/Wiki/L10n"
 import { Profession } from "../Models/Wiki/Profession"
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
 import { Race } from "../Models/Wiki/Race"
 import { RaceVariant } from "../Models/Wiki/RaceVariant"
 import { Die } from "../Models/Wiki/sub/Die"
 import { NameBySex, nameBySexDef } from "../Models/Wiki/sub/NameBySex"
+import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { rollDiceFold, rollDiceR, rollDie } from "./dice"
 import { translate } from "./I18n"
 import { ifElse } from "./ifElse"
@@ -21,6 +21,7 @@ import { multiplyString, toInt } from "./NumberUtils"
 import { pipe, pipe_ } from "./pipe"
 
 const { id, sizeBase, sizeRandom, weightBase, weightRandom } = Race.AL
+const RVA = RaceVariant.A
 const { amount, sides } = Die.AL
 const { name, subname } = Profession.AL
 
@@ -39,12 +40,12 @@ export const rerollSize =
   (raceVariant: Maybe<Record<RaceVariant>>): Maybe<string> =>
     pipe (
       bindF (sizeBase),
-      altF (bindF (sizeBase) (raceVariant)),
+      altF (fmap (RVA.sizeBase) (raceVariant)),
       fmap (pipe (
         pipe_ (
           race,
           bindF (sizeRandom),
-          altF (bindF (sizeRandom) (raceVariant)),
+          altF (fmap (RVA.sizeRandom) (raceVariant)),
           fmap (foldr (pipe (rollDiceR, add)) (0)),
           sum,
           add
@@ -127,7 +128,7 @@ export const rerollWeightAndSize =
     rerollWeight (rerollSize (race) (raceVariant)) (race)
 
 export const getFullProfessionName =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (wikiProfessions: OrderedMap<string, Record<Profession>>) =>
   (wikiProfessionVariants: OrderedMap<string, Record<ProfessionVariant>>) =>
   (sex: Sex) =>
@@ -135,7 +136,7 @@ export const getFullProfessionName =
   (professionVariantId: Maybe<string>) =>
   (customProfessionName: Maybe<string>) => {
     if (elem<string> (ProfessionId.CustomProfession) (professionId)) {
-      return fromMaybe (translate (l10n) ("ownprofession"))
+      return fromMaybe (translate (staticData) ("profession.ownprofession"))
                        (customProfessionName)
     }
 

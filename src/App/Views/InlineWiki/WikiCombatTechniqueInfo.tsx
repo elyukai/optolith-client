@@ -7,8 +7,7 @@ import { Record } from "../../../Data/Record"
 import { Sex } from "../../Models/Hero/heroTypeHelpers"
 import { Attribute } from "../../Models/Wiki/Attribute"
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
-import { L10nRecord } from "../../Models/Wiki/L10n"
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { getICName } from "../../Utilities/AdventurePoints/improvementCostUtils"
 import { translate } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
@@ -18,28 +17,30 @@ import { WikiBoxTemplate } from "./WikiBoxTemplate"
 import { WikiProperty } from "./WikiProperty"
 
 export interface WikiCombatTechniqueInfoProps {
-  l10n: L10nRecord
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   x: Record<CombatTechnique>
   sex: Maybe<Sex>
 }
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const CTA = CombatTechnique.A
 
 export const WikiCombatTechniqueInfo: React.FC<WikiCombatTechniqueInfoProps> = props => {
-  const { x, l10n, wiki } = props
+  const { x, staticData } = props
 
-  const attributes = WA.attributes (wiki)
-  const books = WA.books (wiki)
+  const attributes = SDA.attributes (staticData)
 
   return (
     <WikiBoxTemplate className="combattechnique" title={CTA.name (x)}>
       {maybeRNullF (CTA.special (x))
                    (str => (
-                     <Markdown source={`**${translate (l10n) ("special")}:** ${str}`} />
+                     <Markdown
+                       source={
+                         `**${translate (staticData) ("inlinewiki.special")}:** ${str}`
+                       }
+                       />
                    ))}
-      <WikiProperty l10n={l10n} title="primaryattribute">
+      <WikiProperty staticData={staticData} title="inlinewiki.primaryattribute">
         {pipe_ (
           x,
           CTA.primary,
@@ -47,11 +48,12 @@ export const WikiCombatTechniqueInfo: React.FC<WikiCombatTechniqueInfoProps> = p
           intercalate ("/")
         )}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="improvementcost">{getICName (CTA.ic (x))}</WikiProperty>
+      <WikiProperty staticData={staticData} title="inlinewiki.improvementcost">
+        {getICName (CTA.ic (x))}
+      </WikiProperty>
       <WikiSource
-        books={books}
         x={x}
-        l10n={l10n}
+        staticData={staticData}
         acc={CTA}
         />
     </WikiBoxTemplate>

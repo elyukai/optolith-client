@@ -15,7 +15,7 @@ import { CombatTechniqueWithAttackParryBase, CombatTechniqueWithAttackParryBaseA
 import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements"
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
-import { WikiModelRecord } from "../Models/Wiki/WikiModel"
+import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { isMaybeActive } from "../Utilities/Activatable/isActive"
 import { getActiveSelections } from "../Utilities/Activatable/selectionUtils"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
@@ -30,7 +30,7 @@ import { getMaxAttributeValueByID } from "./attributeSelectors"
 import { getStartEl } from "./elSelectors"
 import { getRuleBooksEnabled } from "./rulesSelectors"
 import { getCombatTechniquesWithRequirementsSortOptions } from "./sortOptionsSelectors"
-import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getLocaleAsProp, getWiki, getWikiCombatTechniques } from "./stateSelectors"
+import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getWiki, getWikiCombatTechniques } from "./stateSelectors"
 
 const CTA = CombatTechnique.A
 const SDA = SkillDependent.A
@@ -79,11 +79,11 @@ const getParryBase =
   }
 
 export const getCombatTechniquesForSheet = createMaybeSelector (
-  getLocaleAsProp,
+  getWiki,
   getWikiCombatTechniques,
   getAttributes,
   getCombatTechniques,
-  uncurryN4 (l10n =>
+  uncurryN4 (staticData =>
              wiki_combat_techniques =>
              attributes =>
                fmap (combatTechniques =>
@@ -104,7 +104,7 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
                               })
                               (List.empty),
                    sortByMulti ([ comparingR (CombatTechniqueWithAttackParryBaseA_.name)
-                                             (compareLocale (l10n)) ])
+                                             (compareLocale (staticData)) ])
                  )))
 )
 
@@ -132,7 +132,7 @@ const getMaximum =
 
 const getMinimum =
   (hunterRequiresMinimum: boolean) =>
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (ct: Record<CombatTechniqueWithAttackParryBase>): number => {
     const curr_dependencies = pipe_ (ct, CTWAPBA.stateEntry, SDA.dependencies)

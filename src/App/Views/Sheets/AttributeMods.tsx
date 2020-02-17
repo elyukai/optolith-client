@@ -2,7 +2,7 @@ import * as React from "react"
 import { List, map, toArray } from "../../../Data/List"
 import { Record } from "../../../Data/Record"
 import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined"
-import { L10nRecord } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { sign } from "../../Utilities/NumberUtils"
 import { pipe_ } from "../../Utilities/pipe"
@@ -10,14 +10,14 @@ import { TextBox } from "../Universal/TextBox"
 import { AttributeModsListItem } from "./AttributeModsListItem"
 
 interface Props {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   attributes: List<Record<AttributeCombined>>
 }
 
-export const AttributeMods: React.FC<Props> = ({ attributes, l10n }) => (
+export const AttributeMods: React.FC<Props> = ({ attributes, staticData }) => (
   <TextBox
     className="attribute-mods"
-    label={translate (l10n) ("attributemodifiers")}
+    label={translate (staticData) ("sheets.attributemodifiers.title")}
     >
     <table>
       <thead>

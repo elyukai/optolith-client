@@ -6,8 +6,8 @@ import * as ConfigActions from "../Actions/ConfigActions"
 import * as DisAdvActions from "../Actions/DisAdvActions"
 import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions"
 import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions"
+import { AppStateRecord } from "../Models/AppState"
 import { HeroModel } from "../Models/Hero/HeroModel"
-import { AppStateRecord } from "../Reducers/appReducer"
 import { getDisadvantagesRating, getFilteredActiveDisadvantages } from "../Selectors/activatableSelectors"
 import { getAPObjectMap, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from "../Selectors/adventurePointsSelectors"
 import { getFilteredInactiveDisadvantages } from "../Selectors/combinedActivatablesSelectors"
@@ -34,10 +34,7 @@ const mapStateToProps =
     inactiveFilterText: getInactiveDisadvantagesFilterText (state),
   })
 
-const mapDispatchToProps = (
-  dispatch: ReduxDispatch,
-  { l10n }: DisadvantagesOwnProps
-): DisadvantagesDispatchProps => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch): DisadvantagesDispatchProps => ({
   switchRatingVisibility () {
     dispatch (DisAdvActions.switchRatingVisibility ())
   },
@@ -45,13 +42,13 @@ const mapDispatchToProps = (
     dispatch (ConfigActions.switchEnableActiveItemHints ())
   },
   async addToList (args: Record<ActivatableActivationOptions>) {
-    await dispatch (DisAdvActions.addDisAdvantage (l10n) (args))
+    await dispatch (DisAdvActions.addDisAdvantage (args))
   },
   async removeFromList (args: Record<ActivatableDeactivationOptions>) {
-    await dispatch (DisAdvActions.removeDisAdvantage (l10n) (args))
+    await dispatch (DisAdvActions.removeDisAdvantage (args))
   },
   async setLevel (id: string, index: number, level: number) {
-    await dispatch (DisAdvActions.setDisAdvantageLevel (l10n) (id) (index) (level))
+    await dispatch (DisAdvActions.setDisAdvantageLevel (id) (index) (level))
   },
   setFilterText (filterText: string) {
     dispatch (DisAdvActions.setActiveDisadvantagesFilterText (filterText))

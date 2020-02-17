@@ -1,18 +1,15 @@
-import { List } from "../../Data/List"
-import { bind, bindF, fromJust, isNothing, join, Just, liftM2 } from "../../Data/Maybe"
+import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe"
 import { lookup } from "../../Data/OrderedMap"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { HeroModel } from "../Models/Hero/HeroModel"
-import { L10nRecord } from "../Models/Wiki/L10n"
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
 import { getCombatTechniques, getCurrentHeroPresent, getWikiCombatTechniques } from "../Selectors/stateSelectors"
-import { translate, translateP } from "../Utilities/I18n"
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
 import { pipe_ } from "../Utilities/pipe"
 import { CombatTechniquesSortOptions } from "../Utilities/Raw/JSON/Config"
 import { ReduxAction } from "./Actions"
-import { addAlert, AlertOptions } from "./AlertActions"
+import { addNotEnoughAPAlert } from "./AlertActions"
 
 export interface AddCombatTechniquePointAction {
   type: ActionTypes.ADD_COMBATTECHNIQUE_POINT
@@ -22,7 +19,6 @@ export interface AddCombatTechniquePointAction {
 }
 
 export const addCombatTechniquePoint =
-  (l10n: L10nRecord) =>
   (id: string): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const state = getState ()
@@ -33,7 +29,7 @@ export const addCombatTechniquePoint =
     const missingAPForInc =
       pipe_ (
         mhero,
-        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { l10n, hero })),
+        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { hero })),
         join,
         liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
                                                        (bind (mhero_combat_techniques)
@@ -51,12 +47,7 @@ export const addCombatTechniquePoint =
       })
     }
     else {
-      const opts = AlertOptions ({
-        title: Just (translate (l10n) ("notenoughap")),
-        message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
-      })
-
-      await dispatch (addAlert (l10n) (opts))
+      await dispatch (addNotEnoughAPAlert (fromJust (missingAPForInc)))
     }
   }
 

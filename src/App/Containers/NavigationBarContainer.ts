@@ -6,8 +6,8 @@ import * as HistoryActions from "../Actions/HistoryActions"
 import * as InGameActions from "../Actions/InGameActions"
 import * as LocationActions from "../Actions/LocationActions"
 import * as SubwindowsActions from "../Actions/SubwindowsActions"
+import { AppStateRecord } from "../Models/AppState"
 import { HeroModel } from "../Models/Hero/HeroModel"
-import { AppStateRecord } from "../Reducers/appReducer"
 import { getAPObjectMap, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from "../Selectors/adventurePointsSelectors"
 import { getRedoAvailability, getUndoAvailability } from "../Selectors/currentHeroSelectors"
 import { getIsLiturgicalChantsTabAvailable } from "../Selectors/liturgicalChantsSelectors"
@@ -27,7 +27,7 @@ const mapStateToProps =
     isRemovingEnabled: getIsRemovingEnabled (state),
     isSettingsOpen: getIsSettingsOpen (state),
     isHeroSection: getIsHeroSection (state),
-    tabs: getTabs (state, ownProps),
+    tabs: getTabs (state),
     subtabs: getSubtabs (state, ownProps),
     adventurePoints: join (bind (ownProps.mhero)
                                 (hero => getAPObjectMap (HeroModel.A.id (hero))
@@ -38,7 +38,7 @@ const mapStateToProps =
     isBlessedOne: getIsLiturgicalChantsTabAvailable (state, ownProps),
   })
 
-const mapDispatchToProps = (dispatch: ReduxDispatch, ownProps: NavigationBarOwnProps) => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch) => ({
   setTab (id: TabId) {
     dispatch (LocationActions.setTab (id))
   },
@@ -49,7 +49,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch, ownProps: NavigationBarOwnP
     dispatch (HistoryActions.redo ())
   },
   async saveHero () {
-    await dispatch (HerolistActions.saveHero (ownProps.l10n) (Nothing))
+    await dispatch (HerolistActions.saveHero (Nothing))
   },
   openSettings () {
     dispatch (SubwindowsActions.openSettings ())

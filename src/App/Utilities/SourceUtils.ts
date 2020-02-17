@@ -10,14 +10,15 @@ import { Record } from "../../Data/Record"
 import { fst, isTuple, Pair, snd } from "../../Data/Tuple"
 import { upd2 } from "../../Data/Tuple/Update"
 import { Book } from "../Models/Wiki/Book"
-import { L10nRecord } from "../Models/Wiki/L10n"
 import { SourceLink } from "../Models/Wiki/sub/SourceLink"
 import { SourceLinks } from "../Models/Wiki/sub/SourceLinks"
+import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { ndash } from "./Chars"
 import { compareLocale } from "./I18n"
 import { pipe, pipe_ } from "./pipe"
 import { isNumber } from "./typeCheckUtils"
 
+const SDA = StaticData.A
 const BA = Book.A
 const SLA = SourceLink.A
 const SLsA = SourceLinks.A
@@ -85,27 +86,25 @@ const showPages =
   )
 
 export const showSources =
-  (l10n: L10nRecord) =>
-  (books: OrderedMap<string, Record<Book>>) =>
+  (staticData: StaticDataRecord) =>
     pipe (
       mapMaybe ((x: Record<SourceLinks>) =>
                  pipe_ (
                    x,
                    SLsA.id,
-                   lookupF (books),
+                   lookupF (SDA.books (staticData)),
                    fmap (pipe (BA.name, name => Pair (name, showPages (SLsA.pages (x)))))
                  )),
-      sortBy (on (compareLocale (l10n)) (fst)),
+      sortBy (on (compareLocale (staticData)) (fst)),
       map (x => `${fst (x)} ${snd (x)}`),
       intercalate ("; ")
     )
 
 export const combineShowSources =
-  (l10n: L10nRecord) =>
-  (books: OrderedMap<string, Record<Book>>) =>
+  (staticData: StaticDataRecord) =>
     pipe (
       mergeSources,
-      showSources (l10n) (books)
+      showSources (staticData)
     )
 
 export const mergeSourcesWithout:
@@ -130,10 +129,9 @@ export const mergeSourcesWithout:
     )
 
 export const combineShowSourcesWithout =
-  (l10n: L10nRecord) =>
-  (books: OrderedMap<string, Record<Book>>) =>
+  (staticData: StaticDataRecord) =>
   (without: List<List<Record<SourceLink>>>) =>
     pipe (
       mergeSourcesWithout (without),
-      showSources (l10n) (books)
+      showSources (staticData)
     )

@@ -372,3 +372,9 @@ export enum SocialStatusId {
   Noble = 4,
   Aristocracy = 5,
 }
+
+export enum OptionalRuleId {
+  MaximumAttributeScores = "OR_8",
+  LanguageSpecialization = "OR_15",
+  HigherDefenseStats = "OR_17",
+}

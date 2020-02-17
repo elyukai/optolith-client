@@ -3,16 +3,20 @@ import { equals } from "../../../../Data/Eq"
 import { find, List } from "../../../../Data/List"
 import { bindF, Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
+import { fst, snd } from "../../../../Data/Tuple"
 import { DCId } from "../../../Constants/Ids"
 import { ActiveActivatable } from "../../../Models/View/ActiveActivatable"
 import { AttributeCombined } from "../../../Models/View/AttributeCombined"
 import { CantripCombined } from "../../../Models/View/CantripCombined"
-import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic"
+import { DerivedCharacteristicValues } from "../../../Models/View/DerivedCharacteristicCombined"
 import { SpellWithRequirements } from "../../../Models/View/SpellWithRequirements"
-import { L10nRecord } from "../../../Models/Wiki/L10n"
+import { DerivedCharacteristic } from "../../../Models/Wiki/DerivedCharacteristic"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { DerivedCharacteristicId } from "../../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { Checkbox } from "../../Universal/Checkbox"
 import { Options } from "../../Universal/Options"
 import { AttributeMods } from "../AttributeMods"
@@ -28,8 +32,8 @@ export interface SpellsSheetProps {
   attributes: List<Record<AttributeCombined>>
   cantrips: Maybe<List<Record<CantripCombined>>>
   checkAttributeValueVisibility: boolean
-  derivedCharacteristics: List<Record<DerivedCharacteristic>>
-  l10n: L10nRecord
+  derivedCharacteristics: List<DCPair>
+  staticData: StaticDataRecord
   magicalPrimary: List<string>
   magicalSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   magicalTradition: string
@@ -44,7 +48,7 @@ export function SpellsSheet (props: SpellsSheetProps) {
     cantrips,
     checkAttributeValueVisibility,
     derivedCharacteristics,
-    l10n,
+    staticData,
     magicalPrimary,
     magicalSpecialAbilities,
     magicalTradition,
@@ -56,17 +60,21 @@ export function SpellsSheet (props: SpellsSheetProps) {
   const addHeader = List<Record<HeaderValue>> (
     HeaderValue ({
       id: "AE_MAX",
-      short: translate (l10n) ("aemax"),
+      short: translate (staticData) ("sheets.spellssheet.header.labels.aemax"),
       value:
         pipe_ (
           derivedCharacteristics,
-          find (pipe (DerivedCharacteristic.A.id, equals<DCId> (DCId.AE))),
-          bindF (DerivedCharacteristic.A.value)
+          find (pipe (
+            fst,
+            DerivedCharacteristic.A.id,
+            equals<DerivedCharacteristicId> (DCId.AE)
+          )),
+          bindF (pipe (snd, DerivedCharacteristicValues.A.value))
         ),
     }),
     HeaderValue ({
       id: "AE_CURRENT",
-      short: translate (l10n) ("current"),
+      short: translate (staticData) ("sheets.spellssheet.header.labels.aecurrent"),
     })
   )
 
@@ -77,39 +85,39 @@ export function SpellsSheet (props: SpellsSheetProps) {
           checked={checkAttributeValueVisibility}
           onClick={switchAttributeValueVisibility}
           >
-          {translate (l10n) ("showattributevalues")}
+          {translate (staticData) ("sheets.showattributevalues")}
         </Checkbox>
       </Options>
       <Sheet
         id="spells-sheet"
-        title={translate (l10n) ("spellsandrituals")}
+        title={translate (staticData) ("sheets.spellssheet.title")}
         addHeaderInfo={addHeader}
-        l10n={l10n}
+        staticData={staticData}
         attributes={attributes}
         >
         <div className="all">
           <SpellsSheetSpells
-            l10n={l10n}
+            staticData={staticData}
             attributes={attributes}
             checkAttributeValueVisibility={checkAttributeValueVisibility}
             spells={spells}
             />
           <AttributeMods
-            l10n={l10n}
+            staticData={staticData}
             attributes={attributes}
             />
           <SpellsSheetTraditionsProperties
-            l10n={l10n}
+            staticData={staticData}
             magicalPrimary={magicalPrimary}
             magicalTradition={magicalTradition}
             properties={properties}
             />
           <SpellsSheetSpecialAbilities
-            l10n={l10n}
+            staticData={staticData}
             magicalSpecialAbilities={magicalSpecialAbilities}
             />
           <SpellsSheetCantrips
-            l10n={l10n}
+            staticData={staticData}
             cantrips={cantrips}
             />
         </div>

@@ -1,4 +1,4 @@
-import { tryIO } from "../../Control/Exception"
+import { handleE } from "../../Control/Exception"
 import { Either, fromLeft_, fromRight_, isLeft, isRight } from "../../Data/Either"
 import { List } from "../../Data/List"
 import { elem, fromJust, isJust, Just, Maybe } from "../../Data/Maybe"
@@ -6,11 +6,10 @@ import { lookup } from "../../Data/OrderedMap"
 import { OrderedSet } from "../../Data/OrderedSet"
 import { bind } from "../../System/IO"
 import * as ActionTypes from "../Constants/ActionTypes"
-import { HeroModel } from "../Models/Hero/HeroModel"
+import { getInitialHeroObject, HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
-import { L10nRecord } from "../Models/Wiki/L10n"
 import { heroReducer } from "../Reducers/heroReducer"
-import { getHeroes, getWikiExperienceLevels } from "../Selectors/stateSelectors"
+import { getHeroes, getWiki, getWikiExperienceLevels } from "../Selectors/stateSelectors"
 import { translate, translateP } from "../Utilities/I18n"
 import { getNewIdByDate } from "../Utilities/IDUtils"
 import { pipe_ } from "../Utilities/pipe"
@@ -66,19 +65,11 @@ export const setHerolistVisibilityFilter =
 export interface CreateHeroAction {
   type: ActionTypes.CREATE_HERO
   payload: {
-    l10n: L10nRecord
-    id: string
-    name: string
-    sex: "m" | "f"
-    el: string
-    enableAllRuleBooks: boolean
-    enabledRuleBooks: OrderedSet<string>
-    totalAp: number
+    newHero: HeroModelRecord
   }
 }
 
 export const createHero =
-  (l10n: L10nRecord) =>
   (name: string) =>
   (sex: "m" | "f") =>
   (el: string) =>
@@ -93,17 +84,21 @@ export const createHero =
       const selectedExperienceLevel = fromJust (maybeSelectedExperienceLevel)
       const totalAp = ExperienceLevel.A.ap (selectedExperienceLevel)
 
+      const newId = `H_${getNewIdByDate ()}`
+
+      const newHero = getInitialHeroObject (getWiki (state))
+                                           (newId)
+                                           (name)
+                                           (sex)
+                                           (el)
+                                           (totalAp)
+                                           (enableAllRuleBooks)
+                                           (enabledRuleBooks)
+
       dispatch<CreateHeroAction> ({
         type: ActionTypes.CREATE_HERO,
         payload: {
-          l10n,
-          id: `H_${getNewIdByDate ()}`,
-          name,
-          sex,
-          el,
-          enableAllRuleBooks,
-          enabledRuleBooks,
-          totalAp,
+          newHero,
         },
       })
     }
@@ -123,14 +118,13 @@ export const loadHero = (id: string): LoadHeroAction => ({
   },
 })
 
-export const saveHeroes =
-  (l10n: L10nRecord): ReduxAction =>
-  async dispatch => {
-    await bind (dispatch (tryIO (requestAllHeroesSave (l10n))))
+export const saveHeroes: ReduxAction =
+  async (dispatch, getState) => {
+    await bind (handleE (dispatch (requestAllHeroesSave)))
                (async res => isRight (res)
-                             ? dispatch (addAlert (l10n)
-                                                  (AlertOptions ({
-                                                    message: translate (l10n) ("allsaved"),
+                             ? dispatch (addAlert (AlertOptions ({
+                                                    message: translate (getWiki (getState ()))
+                                                                       ("header.dialogs.allsaved"),
                                                   })))
                              : Promise.resolve ())
   }
@@ -143,20 +137,22 @@ export interface SaveHeroAction {
 }
 
 export const saveHero =
-  (l10n: L10nRecord) =>
   (id: Maybe<string>): ReduxAction<Promise<void>> =>
-    async dispatch => {
-      await bind (dispatch (tryIO (requestHeroSave (l10n) (id))))
+    async (dispatch, getState) => {
+      await bind (handleE (dispatch (requestHeroSave (id))))
                  (async res => {
                    if (isLeft (res)) {
                      const err = fromLeft_ (res)
 
+                     const title = translate (getWiki (getState ()))
+                                             ("header.dialogs.saveheroeserror.title")
+
                      const opts = AlertOptions ({
-                                    title: Just (translate (l10n) ("saveheroerror")),
+                                    title: Just (title),
                                     message: err .toString (),
                                   })
 
-                     await dispatch (addErrorAlert (l10n) (opts))
+                     await dispatch (addErrorAlert (opts))
                    }
                    else if (Either.any (isJust) (res)) {
                      const save_id = fromJust (fromRight_ (res))
@@ -173,10 +169,9 @@ export const saveHero =
     }
 
 export const exportHeroValidate =
-  (l10n: L10nRecord) =>
   (id: string): ReduxAction =>
   dispatch =>
-    dispatch (requestHeroExport (l10n) (id))
+    dispatch (requestHeroExport (id))
 
 export interface DeleteHeroAction {
   type: ActionTypes.DELETE_HERO
@@ -193,10 +188,10 @@ const deleteHero = (id: string): DeleteHeroAction => ({
 })
 
 export const deleteHeroValidate =
-  (l10n: L10nRecord) =>
   (id: string): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const state = getState ()
+    const staticData = getWiki (state)
     const heroes = getHeroes (state)
     const mhero = lookup (id) (heroes)
 
@@ -204,18 +199,18 @@ export const deleteHeroValidate =
       const hero = fromJust (mhero)
 
       const opts = ConfirmOptions ({
-        title: Just (translateP (l10n)
-                                ("deletehero")
+        title: Just (translateP (staticData)
+                                ("heroes.dialogs.deletehero.title")
                                 (List (pipe_ (hero, heroReducer.A.present, HeroModel.A.name)))),
-        message: translate (l10n) ("deletehero.text"),
+        message: translate (staticData) ("heroes.dialogs.deletehero.message"),
         useYesNo: true,
       })
 
-      const res = await dispatch (addConfirm (l10n) (opts))
+      const res = await dispatch (addConfirm (staticData) (opts))
 
       if (elem (ConfirmResponse.Accepted) (res)) {
         dispatch (deleteHero (id))
-        await dispatch (tryIO (requestHeroDeletion (l10n) (id)))
+        await handleE (dispatch (requestHeroDeletion (id)))
       }
     }
   }

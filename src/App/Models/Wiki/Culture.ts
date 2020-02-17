@@ -33,15 +33,11 @@ export interface Culture {
   uncommonDisadvantagesText: Maybe<string>
   commonSkills: List<string>
   uncommonSkills: List<string>
-
-  /**
-   * Markdown supported.
-   */
   commonNames: string
   culturalPackageSkills: List<Record<IncreaseSkill>>
-  category: Category
   src: List<Record<SourceLink>>
   errata: List<Record<Erratum>>
+  category: Category
 }
 
 export const Culture =

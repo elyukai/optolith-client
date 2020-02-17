@@ -1,6 +1,6 @@
 import { cnst, ident } from "../../Data/Function"
 import { set } from "../../Data/Lens"
-import { fromDefault, makeLenses, Record } from "../../Data/Record"
+import { Record } from "../../Data/Record"
 import { SetCombatTechniquesFilterTextAction } from "../Actions/CombatTechniquesActions"
 import { SetCulturesFilterTextAction } from "../Actions/CultureActions"
 import { SetActiveAdvantagesFilterTextAction, SetActiveDisadvantagesFilterTextAction, SetInactiveAdvantagesFilterTextAction, SetInactiveDisadvantagesFilterTextAction } from "../Actions/DisAdvActions"
@@ -14,6 +14,7 @@ import { SetSkillsFilterTextAction } from "../Actions/SkillActions"
 import { SetActiveSpecialAbilitiesFilterTextAction, SetInactiveSpecialAbilitiesFilterTextAction } from "../Actions/SpecialAbilitiesActions"
 import { SetActiveSpellsFilterTextAction, SetInactiveSpellsFilterTextAction } from "../Actions/SpellsActions"
 import * as ActionTypes from "../Constants/ActionTypes"
+import { FiltersState, FiltersStateL } from "../Models/FiltersState"
 
 type Action = SetTabAction
             | SetHerolistFilterTextAction
@@ -36,57 +37,6 @@ type Action = SetTabAction
             | SetRacesFilterTextAction
             | SetSkillsFilterTextAction
             | SetZoneArmorFilterTextAction
-
-export interface FiltersState {
-  "@@name": "FiltersState"
-  herolistFilterText: string
-  racesFilterText: string
-  culturesFilterText: string
-  professionsFilterText: string
-  advantagesFilterText: string
-  inactiveAdvantagesFilterText: string
-  disadvantagesFilterText: string
-  inactiveDisadvantagesFilterText: string
-  skillsFilterText: string
-  combatTechniquesFilterText: string
-  specialAbilitiesFilterText: string
-  inactiveSpecialAbilitiesFilterText: string
-  spellsFilterText: string
-  inactiveSpellsFilterText: string
-  liturgicalChantsFilterText: string
-  inactiveLiturgicalChantsFilterText: string
-  equipmentFilterText: string
-  itemTemplatesFilterText: string
-  hitZoneArmorFilterText: string
-  petsFilterText: string
-}
-
-export const FiltersState =
-  fromDefault ("FiltersState")
-              <FiltersState> ({
-                herolistFilterText: "",
-                racesFilterText: "",
-                culturesFilterText: "",
-                professionsFilterText: "",
-                advantagesFilterText: "",
-                inactiveAdvantagesFilterText: "",
-                disadvantagesFilterText: "",
-                inactiveDisadvantagesFilterText: "",
-                skillsFilterText: "",
-                combatTechniquesFilterText: "",
-                specialAbilitiesFilterText: "",
-                inactiveSpecialAbilitiesFilterText: "",
-                spellsFilterText: "",
-                inactiveSpellsFilterText: "",
-                liturgicalChantsFilterText: "",
-                inactiveLiturgicalChantsFilterText: "",
-                equipmentFilterText: "",
-                itemTemplatesFilterText: "",
-                hitZoneArmorFilterText: "",
-                petsFilterText: "",
-              })
-
-export const FiltersStateL = makeLenses (FiltersState)
 
 const rcpFiltersReducer =
   (action: Action): ident<Record<FiltersState>> => {

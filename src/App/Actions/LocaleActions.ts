@@ -6,7 +6,7 @@ import { Locale } from "../Utilities/Raw/JSON/Config"
 export interface SetLocaleAction {
   type: SET_LOCALE
   payload: {
-    locale: Locale
+    locale: string
     localeType: "default" | "set"
   }
 }
