@@ -47,7 +47,7 @@ def zipdir(path, ziph):
     for root, dirs, files in os.walk(path):
         for file in files:
             (p, extension) = os.path.splitext(file)
-            if extension == ".yaml" :
+            if extension == ".yaml" or extension == ".json" or extension == ".ts":
                 ziph.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), path))
 
 if __name__ == "__main__":

@@ -90,6 +90,7 @@
     "build:watch": "tsc --watch",
     "getstatic": "node ./deploy/getStaticData.js",
     "yaml:encrypt": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./encryptTables.ps1",
+    "yaml:decrypt": "py ./prepareTables.py",
     "ci:copyschemes": "node ./deploy/copySchemaCI.js",
     "cti": "node ./deploy/copyTablesOnly.js",
     "lint": "eslint \"src/\" --ext \".ts\" --ext \".tsx\"",

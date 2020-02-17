@@ -23,7 +23,6 @@ jobs:
       - sh ./.travis/InstallLinux.sh
     script:
       - npm run ci:copyschemes
-      - sh ./.travis/DebugFiles.sh
       - npm test
       - npm run lint
 
