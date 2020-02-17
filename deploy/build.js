@@ -18,8 +18,8 @@ module.exports = {
       // delete process.env.APPLEID
       // delete process.env.APPLEIDPASS
 
-      console.log ("Copy tables to directories...")
-      await copyTables ()
+      // console.log ("Copy tables to directories...")
+      // await copyTables ()
 
       console.log ("Building Optolith for Windows...")
       await builder.build ({ config, targets: builder.Platform.WINDOWS.createTarget () })
@@ -36,8 +36,8 @@ module.exports = {
       // delete process.env.APPLEID
       // delete process.env.APPLEIDPASS
 
-      console.log ("Copy tables to directories...")
-      await copyTables ()
+      // console.log ("Copy tables to directories...")
+      // await copyTables ()
 
       console.log ("Building Optolith for Linux...")
       await builder.build ({ config, targets: builder.Platform.LINUX.createTarget () })
@@ -48,8 +48,8 @@ module.exports = {
     },
   buildMac:
     async () => {
-      console.log ("Copy tables to directories...")
-      await copyTables ()
+      // console.log ("Copy tables to directories...")
+      // await copyTables ()
 
       console.log ("Building Optolith for OSX...")
       await builder.build ({ config, targets: builder.Platform.MAC.createTarget () })
