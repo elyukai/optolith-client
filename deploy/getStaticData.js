@@ -1,5 +1,6 @@
-const { copy, remove, existsSync } = require ("fs-extra")
-const { join } = require ("path")
+// @ts-check
+const { copy, remove, pathExists } = require ("fs-extra")
+const { join, resolve } = require ("path")
 
 
 /**
@@ -11,40 +12,38 @@ const { join } = require ("path")
  */
 const copySchema =
   async (src_dir, dest_dir) => {
-    const src = join (src_dir)
-
-    if (existsSync (src)) {
+    if (await pathExists (src_dir)) {
       await remove (dest_dir)
-      await copy (src, dest_dir)
+      await copy (src_dir, dest_dir)
 
-      console.log (`"${src}" contents copied to "${dest_dir}"!`)
+      console.log (`"${src_dir}" contents copied to "${dest_dir}"!`)
     }
   }
 
 
 const copyData =
   async (src_dir) => {
-    const src = join (src_dir, "Data")
+    if (await pathExists (src_dir)) {
+      const dest_dir = join ("app", "Database")
 
-    if (existsSync (src)) {
-      const dest = join ("app", "Database")
+      await remove (dest_dir)
+      await copy (src_dir, dest_dir)
 
-      await remove (dest)
-      await copy (src, dest)
-
-      console.log (`"${src}" contents copied to "${dest}"!`)
+      console.log (`"${src_dir}" contents copied to "${dest_dir}"!`)
     }
   }
 
 
 const getStaticData = async () => {
+  // @ts-ignore
   const { repository } = require ("./tablesSrc.json")
-  const src_dir = join (...repository, "Schema")
+  const data_src_dir = join (...repository, "Data")
+  const schema_src_dir = join (...repository, "Schema")
   console.log ("Copying most recent static data files...")
 
-  await copyData (src_dir)
-  await copySchema (src_dir, join ("app", "Database", "Schema"))
-  await copySchema (src_dir, join ("src", "App", "Utilities", "YAML", "Schema"))
+  await copyData (data_src_dir)
+  await copySchema (schema_src_dir, join ("app", "Database", "Schema"))
+  await copySchema (schema_src_dir, join ("src", "App", "Utilities", "YAML", "Schema"))
 
   console.log ("All files copied!")
 }
@@ -56,6 +55,7 @@ module.exports = {
 }
 
 
+// @ts-ignore
 if (require.main === module) {
   getStaticData ()
 }
