@@ -3,18 +3,25 @@ const { join } = require ("path")
 const { repository } = require ("./tablesSrc.json")
 
 
-const src_dir = join (...repository)
+const src_dir = join (...repository, "Schema")
 
 
-const copySchema =
-  async dest => {
-    const src = join (src_dir, "Schema")
+/**
+ * Copy schemes from one directory to another.
+ *
+ * @param {string} src_dir Source directory containing all schemes
+ * @param {string} dest_dir Destination directory where the contents will be
+ * copied to
+ */
+export const copySchema =
+  async (src_dir, dest_dir) => {
+    const src = join (src_dir)
 
     if (existsSync (src)) {
-      await remove (dest)
-      await copy (src, dest)
+      await remove (dest_dir)
+      await copy (src, dest_dir)
 
-      console.log (`"${src}" contents copied to "${dest}"!`)
+      console.log (`"${src}" contents copied to "${dest_dir}"!`)
     }
   }
 
@@ -38,8 +45,8 @@ const getStaticData = async () => {
   console.log ("Copying most recent static data files...")
 
   await copyData ()
-  await copySchema (join ("app", "Database", "Schema"))
-  await copySchema (join ("src", "App", "Utilities", "YAML", "Schema"))
+  await copySchema (src_dir, join ("app", "Database", "Schema"))
+  await copySchema (src_dir, join ("src", "App", "Utilities", "YAML", "Schema"))
 
   console.log ("All files copied!")
 }

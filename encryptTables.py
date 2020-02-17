@@ -47,7 +47,7 @@ def zipdir(path, ziph):
     for root, dirs, files in os.walk(path):
         for file in files:
             (p, extension) = os.path.splitext(file)
-            if extension == ".xlsx" :
+            if extension == ".yaml" :
                 ziph.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), path))
 
 if __name__ == "__main__":
