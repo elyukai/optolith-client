@@ -21,3 +21,5 @@ Tables.zip
 tables/
 deploy/tablesSrc.json
 src/App/Utilities/YAML/Schema/
+.merlin
+/lib

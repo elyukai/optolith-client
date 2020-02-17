@@ -81,11 +81,7 @@ export const Herolist: React.FC<HerolistProps> = props => {
   const xs = pipe_ (
     rawList,
     map (hero => (
-      <HerolistItemContainer
-        key={HeroModel.A.id (hero)}
-        hero={hero}
-        staticData={staticData}
-        />
+      <HerolistItemContainer key={HeroModel.A.id (hero)} hero={hero} />
     )),
     toArray
   )

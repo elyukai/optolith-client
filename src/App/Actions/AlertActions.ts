@@ -6,7 +6,8 @@ import { Just, Maybe, Nothing } from "../../Data/Maybe"
 import { fromDefault, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../Data/Record"
 import { ADD_ALERT, REMOVE_ALERT } from "../Constants/ActionTypes"
 import { StaticDataRecord } from "../Models/Wiki/WikiModel"
-import { translate } from "../Utilities/I18n"
+import { getWiki } from "../Selectors/stateSelectors"
+import { translate, translateP } from "../Utilities/I18n"
 import { ReduxAction } from "./Actions"
 
 
@@ -111,9 +112,8 @@ export const AlertOptions =
               })
 
 export const addAlert =
-  (staticData: StaticDataRecord) =>
   (opts: Record<AlertOptions>): ReduxAction<Promise<Maybe<void>>> =>
-  async dispatch =>
+  async (dispatch, getState) =>
     new Promise<Maybe<void>> (resolve => {
       dispatch<AddPromptAction> ({
         type: ADD_ALERT,
@@ -122,7 +122,7 @@ export const addAlert =
           message: AlertOptions.A.message (opts),
           buttons: List (
             PromptButton<void> ({
-              label: translate (staticData) ("general.dialogs.okbtn"),
+              label: translate (getWiki (getState ())) ("general.dialogs.okbtn"),
               response: undefined,
             }),
           ),
@@ -139,9 +139,8 @@ enum ErrorAlertResponse {
 }
 
 export const addErrorAlert =
-  (staticData: StaticDataRecord) =>
   (opts: Record<AlertOptions>): ReduxAction<Promise<Maybe<void>>> =>
-  async dispatch => {
+  async (dispatch, getState) => {
     const response = await new Promise<Maybe<ErrorAlertResponse>> (resolve => {
       dispatch<AddPromptAction> ({
         type: ADD_ALERT,
@@ -150,11 +149,11 @@ export const addErrorAlert =
           message: AlertOptions.A.message (opts),
           buttons: List (
             PromptButton<ErrorAlertResponse> ({
-              label: translate (staticData) ("general.dialogs.copybtn"),
+              label: translate (getWiki (getState ())) ("general.dialogs.copybtn"),
               response: ErrorAlertResponse.Copy,
             }),
             PromptButton<ErrorAlertResponse> ({
-              label: translate (staticData) ("general.dialogs.okbtn"),
+              label: translate (getWiki (getState ())) ("general.dialogs.okbtn"),
               response: ErrorAlertResponse.Ok,
             }),
           ),
@@ -184,8 +183,7 @@ export const addDefaultErrorAlert =
   (staticData: StaticDataRecord) =>
   (message: string) =>
   (error: Left<Error>) =>
-    addErrorAlert (staticData)
-                  (AlertOptions ({
+    addErrorAlert (AlertOptions ({
                     message: getErrorMsg (staticData) (message) (error),
                     title: Just (translate (staticData) ("general.error")),
                   }))
@@ -195,8 +193,7 @@ export const addDefaultErrorAlertWithTitle =
   (title: string) =>
   (message: string) =>
   (error: Left<Error>) =>
-    addErrorAlert (staticData)
-                  (AlertOptions ({
+    addErrorAlert (AlertOptions ({
                     message: getErrorMsg (staticData) (message) (error),
                     title: Just (title),
                   }))
@@ -269,3 +266,19 @@ export interface RemoveAlertAction {
 export const removeAlert = (): RemoveAlertAction => ({
   type: REMOVE_ALERT,
 })
+
+// Not enough AP alert
+
+export const addNotEnoughAPAlert =
+  (missing_ap: number): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
+    const staticData = getWiki (getState ())
+
+    await dispatch (addAlert (AlertOptions ({
+                               title: Just (translate (staticData)
+                                                      ("general.dialogs.notenoughap.title")),
+                               message: translateP (staticData)
+                                                   ("general.dialogs.notenoughap.message")
+                                                   (List (missing_ap)),
+                             })))
+  }

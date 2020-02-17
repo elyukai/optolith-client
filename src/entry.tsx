@@ -1,23 +1,29 @@
 import { ProgressInfo } from "builder-util-runtime"
-import { ipcRenderer } from "electron"
+import { ipcRenderer, remote } from "electron"
 import { UpdateInfo } from "electron-updater"
 import * as React from "react"
 import { render } from "react-dom"
 import { Provider } from "react-redux"
 import { Action, applyMiddleware, createStore, Store } from "redux"
 import thunk from "redux-thunk"
+import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from "./App/Actions/AcceleratorActions"
 import { ReduxDispatch } from "./App/Actions/Actions"
 import { addErrorAlert, AlertOptions } from "./App/Actions/AlertActions"
-import { setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from "./App/Actions/IOActions"
+import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from "./App/Actions/IOActions"
+import { showAbout } from "./App/Actions/LocationActions"
 import { AppContainer } from "./App/Containers/AppContainer"
 import { AppState, AppStateRecord } from "./App/Models/AppState"
 import { appReducer } from "./App/Reducers/appReducer"
 import { getWiki } from "./App/Selectors/stateSelectors"
+import { translate, translateP } from "./App/Utilities/I18n"
+import { addKeybinding } from "./App/Utilities/Keybindings"
 import { pipe } from "./App/Utilities/pipe"
-import { parseStaticData } from "./App/Utilities/YAML"
+import { isDialogOpen } from "./App/Utilities/SubwindowsUtils"
 import { flip } from "./Data/Function"
+import { List } from "./Data/List"
 import { Just } from "./Data/Maybe"
 import { uncurryN } from "./Data/Tuple/Curry"
+import { Unit } from "./Data/Unit"
 
 const nativeAppReducer =
   uncurryN (pipe ((x: AppStateRecord | undefined) => x === undefined ? AppState.default : x,
@@ -26,115 +32,107 @@ const nativeAppReducer =
 const store: Store<AppStateRecord, Action> & { dispatch: ReduxDispatch<Action> } =
   createStore (nativeAppReducer, applyMiddleware (thunk))
 
-const test = async () => {
-  await parseStaticData ("de-DE")
-}
+store
+  .dispatch (requestInitialData)
+  .then (() => {
+    const { getState, dispatch } = store
 
-test () .catch (() => undefined)
+    const staticData = getWiki (getState ())
 
-// store
-//   .dispatch (requestInitialData)
-//   .then (() => {
-//     const { getState, dispatch } = store
+    if (remote.process.platform === "darwin") {
+      const menuTemplate: Electron.MenuItemConstructorOptions[] = [
+        {
+          label: remote.app.getName (),
+          submenu: [
+            {
+              label: translateP (staticData)
+                                ("macosmenubar.aboutapp")
+                                (List (remote.app.getName ())),
+              click: () => dispatch (showAbout),
+            },
+            { type: "separator" },
+            { role: "hide" },
+            { role: "hideOthers" },
+            { role: "unhide" },
+            { type: "separator" },
+            {
+              label: translate (staticData) ("macosmenubar.quit"),
+              click: () => dispatch (requestClose (Just (remote.app.quit))),
+            },
+          ],
+        },
+        {
+          label: translate (staticData) ("macosmenubar.edit"),
+          submenu: [
+            { role: "cut" },
+            { role: "copy" },
+            { role: "paste" },
+            { role: "delete" },
+            { role: "selectAll" },
+          ],
+        },
+        {
+          label: translate (staticData) ("macosmenubar.view"),
+          submenu: [
+            { role: "togglefullscreen" },
+          ],
+        },
+        {
+          role: "window",
+          submenu: [
+            { role: "minimize" },
+            { type: "separator" },
+            { role: "front" },
+          ],
+        },
+      ]
 
-//     const maybeLocale = getLocaleMessages (getState ())
+      const menu = remote.Menu.buildFromTemplate (menuTemplate)
+      remote.Menu.setApplicationMenu (menu)
 
-//     if (isJust (maybeLocale)) {
-//       const locale = fromJust (maybeLocale)
+      store.subscribe (() => {
+        const areSubwindowsOpen = isDialogOpen ()
+        type MenuItems = Electron.MenuItemConstructorOptions[]
+        const appMenu = menuTemplate[0].submenu as MenuItems
+        appMenu[0].enabled = !areSubwindowsOpen
+        const currentMenu = remote.Menu.buildFromTemplate (menuTemplate)
+        remote.Menu.setApplicationMenu (currentMenu)
+      })
 
-//       if (remote.process.platform === "darwin") {
-//         const menuTemplate: Electron.MenuItemConstructorOptions[] = [
-//           {
-//             label: remote.app.getName (),
-//             submenu: [
-//               {
-//                 label: translateP (locale) ("aboutapp") (List (remote.app.getName ())),
-//                 click: () => dispatch (showAbout),
-//               },
-//               { type: "separator" },
-//               { role: "hide" },
-//               { role: "hideOthers" },
-//               { role: "unhide" },
-//               { type: "separator" },
-//               {
-//                 label: translate (locale) ("quit"),
-//                 click: () => dispatch (requestClose (Just (remote.app.quit))),
-//               },
-//             ],
-//           },
-//           {
-//             label: translate (locale) ("edit"),
-//             submenu: [
-//               { role: "cut" },
-//               { role: "copy" },
-//               { role: "paste" },
-//               { role: "delete" },
-//               { role: "selectAll" },
-//             ],
-//           },
-//           {
-//             label: translate (locale) ("view"),
-//             submenu: [
-//               { role: "togglefullscreen" },
-//             ],
-//           },
-//           {
-//             role: "window",
-//             submenu: [
-//               { role: "minimize" },
-//               { type: "separator" },
-//               { role: "front" },
-//             ],
-//           },
-//         ]
+      addKeybinding ("command+q", () => {
+        dispatch (quitAccelerator)
+      })
+    }
 
-//         const menu = remote.Menu.buildFromTemplate (menuTemplate)
-//         remote.Menu.setApplicationMenu (menu)
+    addKeybinding ("mod+s", async () => {
+      await dispatch (saveHeroAccelerator)
+    })
 
-//         store.subscribe (() => {
-//           const areSubwindowsOpen = isDialogOpen ()
-//           type MenuItems = Electron.MenuItemConstructorOptions[]
-//           const appMenu = menuTemplate[0].submenu as MenuItems
-//           appMenu[0].enabled = !areSubwindowsOpen
-//           const currentMenu = remote.Menu.buildFromTemplate (menuTemplate)
-//           remote.Menu.setApplicationMenu (currentMenu)
-//         })
+    addKeybinding ("mod+z", () => {
+      dispatch (undoAccelerator ())
+    })
 
-//         addKeybinding ("command+q", () => {
-//           dispatch (quitAccelerator)
-//         })
-//       }
+    addKeybinding ([ "mod+y", "mod+shift+z" ], () => {
+      dispatch (redoAccelerator ())
+    })
 
-//       addKeybinding ("mod+s", async () => {
-//         await dispatch (saveHeroAccelerator (locale))
-//       })
-//     }
+    addKeybinding ("mod+shift+z", () => {
+      dispatch (redoAccelerator ())
+    })
 
-//     addKeybinding ("mod+z", () => {
-//       dispatch (undoAccelerator ())
-//     })
+    addKeybinding ("mod+w", () => {
+      dispatch (backAccelerator ())
+    })
 
-//     addKeybinding ([ "mod+y", "mod+shift+z" ], () => {
-//       dispatch (redoAccelerator ())
-//     })
+    addKeybinding ("mod+o", () => {
+      dispatch (openSettingsAccelerator ())
+    })
 
-//     addKeybinding ("mod+shift+z", () => {
-//       dispatch (redoAccelerator ())
-//     })
+    ipcRenderer.send ("loading-done")
 
-//     addKeybinding ("mod+w", () => {
-//       dispatch (backAccelerator ())
-//     })
-
-//     addKeybinding ("mod+o", () => {
-//       dispatch (openSettingsAccelerator ())
-//     })
-
-//     ipcRenderer.send ("loading-done")
-
-//     return Unit
-//   })
-//   .catch (() => undefined)
+    return Unit
+  })
+  .catch (() => undefined)
 
 render (
   <Provider store={store}>
@@ -145,16 +143,14 @@ render (
 
 ipcRenderer.addListener ("update-available", (_event: Event, info: UpdateInfo) => {
   const dispatch = store.dispatch as ReduxDispatch
-  const staticData = getWiki (store.getState ())
 
-  dispatch (updateAvailable (staticData) (info))
+  dispatch (updateAvailable (info))
 })
 
 ipcRenderer.addListener ("update-not-available", () => {
   const dispatch = store.dispatch as ReduxDispatch
-  const staticData = getWiki (store.getState ())
 
-  dispatch (updateNotAvailable (staticData))
+  dispatch (updateNotAvailable)
 })
 
 ipcRenderer.addListener ("download-progress", (_event: Event, progressObj: ProgressInfo) => {
@@ -163,11 +159,9 @@ ipcRenderer.addListener ("download-progress", (_event: Event, progressObj: Progr
 
 ipcRenderer.addListener ("auto-updater-error", (_event: Event, err: Error) => {
   const dispatch = store.dispatch as ReduxDispatch
-  const staticData = getWiki (store.getState ())
 
   dispatch (setUpdateDownloadProgress ())
-  dispatch (addErrorAlert (staticData)
-                          (AlertOptions ({
+  dispatch (addErrorAlert (AlertOptions ({
                             title: Just ("Auto Update Error"),
                             message: `An error occured during auto-update.`
                               + ` (${JSON.stringify (err)})`,

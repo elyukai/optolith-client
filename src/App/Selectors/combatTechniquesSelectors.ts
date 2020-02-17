@@ -30,7 +30,7 @@ import { getMaxAttributeValueByID } from "./attributeSelectors"
 import { getStartEl } from "./elSelectors"
 import { getRuleBooksEnabled } from "./rulesSelectors"
 import { getCombatTechniquesWithRequirementsSortOptions } from "./sortOptionsSelectors"
-import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getLocaleAsProp, getWiki, getWikiCombatTechniques } from "./stateSelectors"
+import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getWiki, getWikiCombatTechniques } from "./stateSelectors"
 
 const CTA = CombatTechnique.A
 const SDA = SkillDependent.A
@@ -79,11 +79,11 @@ const getParryBase =
   }
 
 export const getCombatTechniquesForSheet = createMaybeSelector (
-  getLocaleAsProp,
+  getWiki,
   getWikiCombatTechniques,
   getAttributes,
   getCombatTechniques,
-  uncurryN4 (l10n =>
+  uncurryN4 (staticData =>
              wiki_combat_techniques =>
              attributes =>
                fmap (combatTechniques =>
@@ -104,7 +104,7 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
                               })
                               (List.empty),
                    sortByMulti ([ comparingR (CombatTechniqueWithAttackParryBaseA_.name)
-                                             (compareLocale (l10n)) ])
+                                             (compareLocale (staticData)) ])
                  )))
 )
 

@@ -13,31 +13,30 @@ import { Skills, SkillsDispatchProps, SkillsOwnProps, SkillsStateProps } from ".
 const mapStateToProps = (state: AppStateRecord, ownProps: SkillsOwnProps): SkillsStateProps => ({
   attributes: getAttributesForSheet (state, ownProps),
   isRemovingEnabled: getIsRemovingEnabled (state),
-  list: getFilteredSkills (state, ownProps),
+  list: getFilteredSkills (state),
   sortOrder: getSkillsSortOrder (state),
   filterText: getSkillsFilterText (state),
   ratingVisibility: getSkillsCultureRatingVisibility (state),
   skillRating: getSkillRating (state),
 })
 
-const mapDispatchToProps =
-  (dispatch: ReduxDispatch, { l10n }: SkillsOwnProps): SkillsDispatchProps => ({
-    async addPoint (id: string) {
-      await dispatch (SkillActions.addSkillPoint (l10n) (id))
-    },
-    removePoint (id: string) {
-      dispatch (SkillActions.removeSkillPoint (id))
-    },
-    setSortOrder (sortOrder: SkillsSortOptions) {
-      dispatch (SkillActions.setSkillsSortOrder (sortOrder))
-    },
-    switchRatingVisibility () {
-      dispatch (SkillActions.switchSkillRatingVisibility ())
-    },
-    setFilterText (filterText: string) {
-      dispatch (SkillActions.setSkillsFilterText (filterText))
-    },
-  })
+const mapDispatchToProps = (dispatch: ReduxDispatch): SkillsDispatchProps => ({
+  async addPoint (id: string) {
+    await dispatch (SkillActions.addSkillPoint (id))
+  },
+  removePoint (id: string) {
+    dispatch (SkillActions.removeSkillPoint (id))
+  },
+  setSortOrder (sortOrder: SkillsSortOptions) {
+    dispatch (SkillActions.setSkillsSortOrder (sortOrder))
+  },
+  switchRatingVisibility () {
+    dispatch (SkillActions.switchSkillRatingVisibility ())
+  },
+  setFilterText (filterText: string) {
+    dispatch (SkillActions.setSkillsFilterText (filterText))
+  },
+})
 
 export const connectSkills =
   connect<SkillsStateProps, SkillsDispatchProps, SkillsOwnProps, AppStateRecord> (

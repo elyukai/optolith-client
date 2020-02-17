@@ -10,6 +10,7 @@ import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRe
 import { RequireIncreasable } from "../../../Models/Wiki/prerequisites/IncreasableRequirement"
 import { PactRequirement } from "../../../Models/Wiki/prerequisites/PactRequirement"
 import { PrimaryAttributeType, RequirePrimaryAttribute } from "../../../Models/Wiki/prerequisites/PrimaryAttributeRequirement"
+import { ProfessionRequireIncreasable } from "../../../Models/Wiki/prerequisites/ProfessionRequireIncreasable"
 import { RaceRequirement } from "../../../Models/Wiki/prerequisites/RaceRequirement"
 import { SexRequirement } from "../../../Models/Wiki/prerequisites/SexRequirement"
 import { SocialPrerequisite } from "../../../Models/Wiki/prerequisites/SocialPrerequisite"
@@ -130,6 +131,14 @@ export const toIncreasablePrerequisite : (x : RawPrerequisites.IncreasableRequir
                                                   : x.id,
                                                 value: x.value,
                                               })
+
+
+export const toIncreasablePrerequisiteP : (x : RawPrerequisites.IncreasableRequirementForProfession)
+                                        => Record<ProfessionRequireIncreasable>
+                                        = x => ProfessionRequireIncreasable ({
+                                                 id: x.id,
+                                                 value: x.value,
+                                               })
 
 
 export const toPrerequisites : (univ : RawPrerequisites.Prerequisites)

@@ -18,13 +18,13 @@ const mapStateToProps = (state: AppStateRecord, props: HerolistItemOwnProps) => 
   ap: join (getAPObjectMap (HA.id (props .hero)) (state, props)),
   unsavedHeroesById: getUnsavedHeroesById (state),
   users: getUsers (state),
-  wiki: getWiki (state),
+  staticData: getWiki (state),
 })
 
 const mapDispatchToProps = (
   dispatch: ReduxDispatch<Action>,
-  { l10n, hero }: HerolistItemOwnProps
-) => ({
+  { hero }: HerolistItemOwnProps
+): HerolistItemDispatchProps => ({
   loadHero () {
     dispatch (HerolistActions.loadHero (HA.id (hero)))
   },
@@ -32,13 +32,13 @@ const mapDispatchToProps = (
     dispatch (LocationActions.setTab (TabId.Profile))
   },
   async saveHero () {
-    await dispatch (HerolistActions.saveHero (l10n) (Just (HA.id (hero))))
+    await dispatch (HerolistActions.saveHero (Just (HA.id (hero))))
   },
   saveHeroAsJSON () {
-    dispatch (HerolistActions.exportHeroValidate (l10n) (HA.id (hero)))
+    dispatch (HerolistActions.exportHeroValidate (HA.id (hero)))
   },
   async deleteHero () {
-    await dispatch (HerolistActions.deleteHeroValidate (l10n) (HA.id (hero)))
+    await dispatch (HerolistActions.deleteHeroValidate (HA.id (hero)))
   },
   duplicateHero () {
     dispatch (HerolistActions.duplicateHero (HA.id (hero)))

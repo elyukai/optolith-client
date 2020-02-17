@@ -7,22 +7,22 @@ import { getWikiCombatTechniquesGroup, getWikiFilterText, getWikiItemTemplatesGr
 import { getPreparedAdvantages, getPreparedBlessings, getPreparedCantrips, getPreparedCombatTechniques, getPreparedCultures, getPreparedDisadvantages, getPreparedItemTemplates, getPreparedLiturgicalChants, getPreparedProfessions, getPreparedRaces, getPreparedSkills, getPreparedSpecialAbilities, getPreparedSpells, getSpecialAbilityGroups } from "../Selectors/wikiSelectors"
 import { Wiki, WikiDispatchProps, WikiOwnProps, WikiStateProps } from "../Views/Wiki/Wiki"
 
-const mapStateToProps = (state: AppStateRecord, props: WikiOwnProps): WikiStateProps => ({
+const mapStateToProps = (state: AppStateRecord): WikiStateProps => ({
   filterText: getWikiFilterText (state),
   category: getWikiMainCategory (state),
-  races: getPreparedRaces (state, props),
-  cultures: getPreparedCultures (state, props),
-  professions: getPreparedProfessions (state, props),
-  advantages: getPreparedAdvantages (state, props),
-  disadvantages: getPreparedDisadvantages (state, props),
-  skills: getPreparedSkills (state, props),
-  combatTechniques: getPreparedCombatTechniques (state, props),
-  specialAbilities: getPreparedSpecialAbilities (state, props),
-  spells: getPreparedSpells (state, props),
-  cantrips: getPreparedCantrips (state, props),
-  liturgicalChants: getPreparedLiturgicalChants (state, props),
-  blessings: getPreparedBlessings (state, props),
-  itemTemplates: getPreparedItemTemplates (state, props),
+  races: getPreparedRaces (state),
+  cultures: getPreparedCultures (state),
+  professions: getPreparedProfessions (state),
+  advantages: getPreparedAdvantages (state),
+  disadvantages: getPreparedDisadvantages (state),
+  skills: getPreparedSkills (state),
+  combatTechniques: getPreparedCombatTechniques (state),
+  specialAbilities: getPreparedSpecialAbilities (state),
+  spells: getPreparedSpells (state),
+  cantrips: getPreparedCantrips (state),
+  liturgicalChants: getPreparedLiturgicalChants (state),
+  blessings: getPreparedBlessings (state),
+  itemTemplates: getPreparedItemTemplates (state),
   professionsGroup: getWikiProfessionsGroup (state),
   skillsGroup: getWikiSkillsGroup (state),
   combatTechniquesGroup: getWikiCombatTechniquesGroup (state),
@@ -30,7 +30,7 @@ const mapStateToProps = (state: AppStateRecord, props: WikiOwnProps): WikiStateP
   spellsGroup: getWikiSpellsGroup (state),
   liturgicalChantsGroup: getWikiLiturgicalChantsGroup (state),
   itemTemplatesGroup: getWikiItemTemplatesGroup (state),
-  specialAbilityGroups: getSpecialAbilityGroups (state, props),
+  specialAbilityGroups: getSpecialAbilityGroups (state),
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({

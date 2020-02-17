@@ -1,9 +1,10 @@
 import * as React from "react"
 import { Textfit } from "react-textfit"
 import { fmap, fmapF } from "../../../../Data/Functor"
-import { flength, List, map, replicateR, toArray } from "../../../../Data/List"
+import { flength, intercalate, List, map, replicateR, toArray } from "../../../../Data/List"
 import { fromMaybe, Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
+import { show } from "../../../../Data/Show"
 import { ShieldOrParryingWeapon } from "../../../Models/View/ShieldOrParryingWeapon"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
@@ -64,7 +65,13 @@ export const CombatSheetShields: React.FC<Props> = props => {
                     <Textfit max={11} min={7} mode="single">{SOPWA.name (e)}</Textfit>
                   </td>
                   <td className="str">
-                    {Maybe.fromMaybe<string | number> ("") (SOPWA.stp (e))}
+                    {pipe_ (
+                      e,
+                      SOPWA.stp,
+                      renderMaybeWith (x => typeof x === "object"
+                                            ? intercalate ("/") (x)
+                                            : show (x))
+                    )}
                   </td>
                   <td className="bf">{SOPWA.bf (e)}</td>
                   <td className="loss">

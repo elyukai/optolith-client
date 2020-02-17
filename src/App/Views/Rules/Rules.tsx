@@ -26,7 +26,7 @@ export interface RulesOwnProps {
 export interface RulesStateProps {
   sortedBooks: List<Record<Book>>
   isEnableLanguageSpecializationsDeactivatable: boolean
-  hero_locale: Locale
+  hero_locale: string
   mcurrent_guild_mage_spell: Maybe<Maybe<string>>
   all_spells_select_options: Maybe<List<Record<DropdownOption>>>
 }

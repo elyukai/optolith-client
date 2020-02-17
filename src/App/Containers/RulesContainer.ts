@@ -15,7 +15,7 @@ import { RulesDispatchProps, RulesOwnProps, RulesStateProps, RulesView } from ".
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: RulesOwnProps): RulesStateProps => ({
-    sortedBooks: getSortedBooks (state, ownProps),
+    sortedBooks: getSortedBooks (state),
     isEnableLanguageSpecializationsDeactivatable:
       isEnableLanguageSpecializationsDeactivatable (state, ownProps),
     hero_locale: getHeroLocale (state, ownProps),

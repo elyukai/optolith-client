@@ -36,7 +36,11 @@ export const parseStaticData : (locale : string) => Promise<Either<Error[], Stat
                                  const errs = fromLeft_ (estatic_data_by_file)
                                  console.log (errs)
 
-                                 return Left (Object.values (errs))
+                                 return Left (
+                                   Object.values (errs)
+                                     .filter<Error[]> (Array.isArray)
+                                     .flat (1)
+                                 )
                                }
 
                                console.log ("Files parsed")

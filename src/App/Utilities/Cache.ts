@@ -14,7 +14,6 @@ import { AppStateRecord } from "../Models/AppState"
 import { HeroModelRecord } from "../Models/Hero/HeroModel"
 import { HeroesState } from "../Models/HeroesState"
 import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories"
-import { L10nRecord } from "../Models/Wiki/L10n"
 import { getAPSpentMap, getAPSpentOnAdvantagesMap, getAPSpentOnAttributesMap, getAPSpentOnBlessedAdvantagesMap, getAPSpentOnBlessedDisadvantagesMap, getAPSpentOnBlessingsMap, getAPSpentOnCantripsMap, getAPSpentOnCombatTechniquesMap, getAPSpentOnDisadvantagesMap, getAPSpentOnEnergiesMap, getAPSpentOnLiturgicalChantsMap, getAPSpentOnMagicalAdvantagesMap, getAPSpentOnMagicalDisadvantagesMap, getAPSpentOnSkillsMap, getAPSpentOnSpecialAbilitiesMap, getAPSpentOnSpellsMap, getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { current_version, user_data_path } from "../Selectors/envSelectors"
 import { pipe, pipe_ } from "./pipe"
@@ -202,7 +201,7 @@ export const insertHeroesCache =
 export const forceCacheIsAvailable =
   (id: string) =>
   (state: AppStateRecord) =>
-  (props: { l10n: L10nRecord; hero: HeroModelRecord }) => {
+  (props: { hero: HeroModelRecord }) => {
     getAPSpentMap (id) (state, props)
     getAvailableAPMap (id) (state, props)
     getAPSpentOnAttributesMap (id) (state)

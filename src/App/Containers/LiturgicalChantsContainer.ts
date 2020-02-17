@@ -27,39 +27,38 @@ const mapStateToProps = (
   inactiveFilterText: getInactiveLiturgicalChantsFilterText (state),
 })
 
-const mapDispatchToProps =
-  (dispatch: ReduxDispatch, { l10n }: LiturgicalChantsOwnProps): LiturgicalChantsDispatchProps => ({
-    async addPoint (id: string) {
-      await dispatch (LiturgicalChantActions.addLiturgicalChantPoint (l10n) (id))
-    },
-    async addToList (id: string) {
-      await dispatch (LiturgicalChantActions.addLiturgicalChant (l10n) (id))
-    },
-    async addBlessingToList (id: string) {
-      await dispatch (LiturgicalChantActions.addBlessing (l10n) (id))
-    },
-    removePoint (id: string) {
-      dispatch (LiturgicalChantActions.removeLiturgicalChantPoint (id))
-    },
-    removeFromList (id: string) {
-      dispatch (LiturgicalChantActions.removeLiturgicalChant (id))
-    },
-    removeBlessingFromList (id: string) {
-      dispatch (LiturgicalChantActions.removeBlessing (id))
-    },
-    setSortOrder (sortOrder: ChantsSortOptions) {
-      dispatch (LiturgicalChantActions.setLiturgicalChantsSortOrder (sortOrder))
-    },
-    switchActiveItemHints () {
-      dispatch (ConfigActions.switchEnableActiveItemHints ())
-    },
-    setFilterText (filterText: string) {
-      dispatch (LiturgicalChantActions.setActiveLiturgicalChantsFilterText (filterText))
-    },
-    setInactiveFilterText (filterText: string) {
-      dispatch (LiturgicalChantActions.setInactiveLiturgicalChantsFilterText (filterText))
-    },
-  })
+const mapDispatchToProps = (dispatch: ReduxDispatch): LiturgicalChantsDispatchProps => ({
+  async addPoint (id: string) {
+    await dispatch (LiturgicalChantActions.addLiturgicalChantPoint (id))
+  },
+  async addToList (id: string) {
+    await dispatch (LiturgicalChantActions.addLiturgicalChant (id))
+  },
+  async addBlessingToList (id: string) {
+    await dispatch (LiturgicalChantActions.addBlessing (id))
+  },
+  removePoint (id: string) {
+    dispatch (LiturgicalChantActions.removeLiturgicalChantPoint (id))
+  },
+  removeFromList (id: string) {
+    dispatch (LiturgicalChantActions.removeLiturgicalChant (id))
+  },
+  removeBlessingFromList (id: string) {
+    dispatch (LiturgicalChantActions.removeBlessing (id))
+  },
+  setSortOrder (sortOrder: ChantsSortOptions) {
+    dispatch (LiturgicalChantActions.setLiturgicalChantsSortOrder (sortOrder))
+  },
+  switchActiveItemHints () {
+    dispatch (ConfigActions.switchEnableActiveItemHints ())
+  },
+  setFilterText (filterText: string) {
+    dispatch (LiturgicalChantActions.setActiveLiturgicalChantsFilterText (filterText))
+  },
+  setInactiveFilterText (filterText: string) {
+    dispatch (LiturgicalChantActions.setInactiveLiturgicalChantsFilterText (filterText))
+  },
+})
 
 export const connectLiturgicalChants =
   connect<

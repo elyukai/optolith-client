@@ -3,16 +3,19 @@ import { equals } from "../../../../Data/Eq"
 import { find, List } from "../../../../Data/List"
 import { bindF, Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
+import { snd } from "../../../../Data/Tuple"
 import { DCId } from "../../../Constants/Ids"
 import { ActiveActivatable } from "../../../Models/View/ActiveActivatable"
 import { AttributeCombined } from "../../../Models/View/AttributeCombined"
 import { BlessingCombined } from "../../../Models/View/BlessingCombined"
-import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic"
+import { DerivedCharacteristicValues } from "../../../Models/View/DerivedCharacteristicCombined"
 import { LiturgicalChantWithRequirements } from "../../../Models/View/LiturgicalChantWithRequirements"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { DerivedCharacteristicId } from "../../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { Checkbox } from "../../Universal/Checkbox"
 import { Options } from "../../Universal/Options"
 import { AttributeMods } from "../AttributeMods"
@@ -32,7 +35,7 @@ interface Props {
   blessedTradition: Maybe<string>
   blessings: Maybe<List<Record<BlessingCombined>>>
   checkAttributeValueVisibility: boolean
-  derivedCharacteristics: List<Record<DerivedCharacteristic>>
+  derivedCharacteristics: List<DCPair>
   liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
   staticData: StaticDataRecord
   switchAttributeValueVisibility (): void
@@ -60,8 +63,12 @@ export const LiturgicalChantsSheet: React.FC<Props> = props => {
       value:
         pipe_ (
           derivedCharacteristics,
-          find (pipe (DerivedCharacteristic.A.id, equals<DCId> (DCId.KP))),
-          bindF (DerivedCharacteristic.A.value)
+          find (pipe (
+            snd,
+            DerivedCharacteristicValues.A.id,
+            equals<DerivedCharacteristicId> (DCId.KP)
+          )),
+          bindF (pipe (snd, DerivedCharacteristicValues.A.value))
         ),
     }),
     HeaderValue ({

@@ -27,7 +27,7 @@ const mapStateToProps =
     isRemovingEnabled: getIsRemovingEnabled (state),
     isSettingsOpen: getIsSettingsOpen (state),
     isHeroSection: getIsHeroSection (state),
-    tabs: getTabs (state, ownProps),
+    tabs: getTabs (state),
     subtabs: getSubtabs (state, ownProps),
     adventurePoints: join (bind (ownProps.mhero)
                                 (hero => getAPObjectMap (HeroModel.A.id (hero))
@@ -38,7 +38,7 @@ const mapStateToProps =
     isBlessedOne: getIsLiturgicalChantsTabAvailable (state, ownProps),
   })
 
-const mapDispatchToProps = (dispatch: ReduxDispatch, ownProps: NavigationBarOwnProps) => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch) => ({
   setTab (id: TabId) {
     dispatch (LocationActions.setTab (id))
   },
@@ -49,7 +49,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch, ownProps: NavigationBarOwnP
     dispatch (HistoryActions.redo ())
   },
   async saveHero () {
-    await dispatch (HerolistActions.saveHero (ownProps.l10n) (Nothing))
+    await dispatch (HerolistActions.saveHero (Nothing))
   },
   openSettings () {
     dispatch (SubwindowsActions.openSettings ())

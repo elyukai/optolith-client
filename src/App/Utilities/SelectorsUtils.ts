@@ -2,11 +2,10 @@ import { ident } from "../../Data/Function"
 import { bindF, Maybe } from "../../Data/Maybe"
 import { lookup, OrderedMap } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
-import { uncurryN3 } from "../../Data/Tuple/Curry"
+import { uncurryN } from "../../Data/Tuple/Curry"
 import { AppState, AppStateRecord } from "../Models/AppState"
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
-import { L10nRecord } from "../Models/Wiki/L10n"
-import { getHeroProp, getLocaleAsProp } from "../Selectors/stateSelectors"
+import { getHeroProp } from "../Selectors/stateSelectors"
 import { PSelectorWithKey } from "./createMapSelector"
 import { createMaybeSelector } from "./createMaybeSelector"
 import { pipe } from "./pipe"
@@ -51,10 +50,9 @@ export const mapGetToSliceWithProps =
 
 export const mapCurrentHero =
   <R>
-  (mapSelector: PSelectorWithKey<AppStateRecord, { l10n: L10nRecord; hero: HeroModelRecord }, R>) =>
+  (mapSelector: PSelectorWithKey<AppStateRecord, { hero: HeroModelRecord }, R>) =>
   createMaybeSelector (
     ident as ident<AppStateRecord>,
     getHeroProp,
-    getLocaleAsProp,
-    uncurryN3 (state => hero => l10n => mapSelector (HeroModel.A.id (hero)) (state, { hero, l10n }))
+    uncurryN (state => hero => mapSelector (HeroModel.A.id (hero)) (state, { hero }))
   )

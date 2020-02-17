@@ -31,10 +31,7 @@ const mapStateToProps = (
   inactiveFilterText: getInactiveSpecialAbilitiesFilterText (state),
 })
 
-const mapDispatchToProps = (
-  dispatch: ReduxDispatch,
-  { l10n }: SpecialAbilitiesOwnProps
-): SpecialAbilitiesDispatchProps => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch): SpecialAbilitiesDispatchProps => ({
   setSortOrder (sortOrder: SpecialAbilitiesSortOptions) {
     dispatch (SpecialAbilitiesActions.setSpecialAbilitiesSortOrder (sortOrder))
   },
@@ -42,13 +39,13 @@ const mapDispatchToProps = (
     dispatch (ConfigActions.switchEnableActiveItemHints ())
   },
   async addToList (args: Record<ActivatableActivationOptions>) {
-    await dispatch (SpecialAbilitiesActions.addSpecialAbility (l10n) (args))
+    await dispatch (SpecialAbilitiesActions.addSpecialAbility (args))
   },
   removeFromList (args: Record<ActivatableDeactivationOptions>) {
     dispatch (SpecialAbilitiesActions.removeSpecialAbility (args))
   },
   async setLevel (id: string, index: number, level: number) {
-    await dispatch (SpecialAbilitiesActions.setSpecialAbilityLevel (l10n) (id) (index) (level))
+    await dispatch (SpecialAbilitiesActions.setSpecialAbilityLevel (id) (index) (level))
   },
   setFilterText (filterText: string) {
     dispatch (SpecialAbilitiesActions.setActiveSpecialAbilitiesFilterText (filterText))

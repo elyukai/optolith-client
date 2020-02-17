@@ -1,3 +1,4 @@
+import { List } from "../../../Data/List"
 import { Maybe, Nothing } from "../../../Data/Maybe"
 import { fromDefault } from "../../../Data/Record"
 
@@ -5,7 +6,7 @@ export interface ShieldOrParryingWeapon {
   "@@name": "ShieldOrParryingWeapon"
   id: string
   name: string
-  stp: Maybe<string>
+  stp: Maybe<number | List<number>>
   bf: number
   loss: Maybe<number>
   atMod: Maybe<number>

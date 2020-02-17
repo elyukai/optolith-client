@@ -30,7 +30,7 @@ const mapStateToProps =
     phase: getCurrentPhase (state),
     profession: getCurrentProfession (state),
     professionName: getCustomProfessionName (state),
-    fullProfessionName: getCurrentFullProfessionName (state, ownProps),
+    fullProfessionName: getCurrentFullProfessionName (state),
     profile: getProfile (state),
     race: getRace (state, ownProps),
     raceVariant: getCurrentRaceVariant (state),

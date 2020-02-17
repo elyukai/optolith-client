@@ -2,7 +2,6 @@ import * as fs from "fs"
 import * as path from "path"
 import * as React from "react"
 import { app_path, current_version } from "../../Selectors/envSelectors"
-import { Markdown } from "../Universal/Markdown"
 import { Page } from "../Universal/Page"
 import { Scroll } from "../Universal/Scroll"
 
@@ -29,7 +28,9 @@ export const ThirdPartyLicenses = () => {
           {current_version}
         </h2>
         <p>{"Third Party Software and Content Licenses"}</p>
-        <Markdown className="third-party-software-body" source={text} />
+        <pre className="third-party-software-body">
+          {text}
+        </pre>
       </Scroll>
     </Page>
   )

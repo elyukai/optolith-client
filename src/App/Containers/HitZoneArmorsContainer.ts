@@ -14,7 +14,7 @@ const mapStateToProps = (
   state: AppStateRecord,
   ownProps: HitZoneArmorsOwnProps
 ): HitZoneArmorsStateProps => ({
-  armorZones: getFilteredHitZoneArmors (state, ownProps),
+  armorZones: getFilteredHitZoneArmors (state),
   carryingCapacity: getCarryingCapacity (state, ownProps),
   initialStartingWealth: getInitialStartingWealth (state),
   items: getItems (state),
@@ -23,8 +23,8 @@ const mapStateToProps = (
   hasNoAddedAP: getHasCurrentNoAddedAP (state),
   purse: getPurse (state),
   templates: getTemplates (state),
-  totalPrice: getTotalPrice (state, ownProps),
-  totalWeight: getTotalWeight (state, ownProps),
+  totalPrice: getTotalPrice (state),
+  totalWeight: getTotalWeight (state),
   filterText: getZoneArmorFilterText (state),
 })
 

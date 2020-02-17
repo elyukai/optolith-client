@@ -35,8 +35,6 @@ const WikiUI = UIWikiState.A
 
 export const getCurrentTab = pipe (ASA.ui, UIA.location)
 
-export const getLoadingPhase = ASA.isReady
-
 export const getLocaleMessages = pipe (ASA.l10n, LSA.messages)
 export const getLocaleId = pipe (ASA.l10n, LSA.id)
 export const getLocaleType = pipe (ASA.l10n, LSA.type)

@@ -4,7 +4,7 @@ import { find, List } from "../../../Data/List"
 import { bindF, Maybe, maybeRNull } from "../../../Data/Maybe"
 import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { Pair } from "../../../Data/Tuple"
+import { fst, Pair, snd } from "../../../Data/Tuple"
 import { DCId } from "../../Constants/Ids"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
@@ -13,7 +13,6 @@ import { PersonalData } from "../../Models/Hero/PersonalData"
 import { Pet } from "../../Models/Hero/Pet"
 import { Purse } from "../../Models/Hero/Purse"
 import { Rules } from "../../Models/Hero/Rules"
-import { NumIdName } from "../../Models/NumIdName"
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
 import { Armor } from "../../Models/View/Armor"
@@ -21,7 +20,7 @@ import { AttributeCombined } from "../../Models/View/AttributeCombined"
 import { BlessingCombined } from "../../Models/View/BlessingCombined"
 import { CantripCombined } from "../../Models/View/CantripCombined"
 import { CombatTechniqueWithAttackParryBase } from "../../Models/View/CombatTechniqueWithAttackParryBase"
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic"
+import { DerivedCharacteristicValues } from "../../Models/View/DerivedCharacteristicCombined"
 import { HitZoneArmorForView } from "../../Models/View/HitZoneArmorForView"
 import { ItemForView } from "../../Models/View/ItemForView"
 import { LiturgicalChantWithRequirements } from "../../Models/View/LiturgicalChantWithRequirements"
@@ -31,14 +30,19 @@ import { ShieldOrParryingWeapon } from "../../Models/View/ShieldOrParryingWeapon
 import { SkillCombined } from "../../Models/View/SkillCombined"
 import { SpellWithRequirements } from "../../Models/View/SpellWithRequirements"
 import { Advantage } from "../../Models/Wiki/Advantage"
+import { Condition } from "../../Models/Wiki/Condition"
 import { Culture } from "../../Models/Wiki/Culture"
+import { DerivedCharacteristic } from "../../Models/Wiki/DerivedCharacteristic"
 import { Disadvantage } from "../../Models/Wiki/Disadvantage"
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
 import { Race } from "../../Models/Wiki/Race"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { State } from "../../Models/Wiki/State"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { DCPair } from "../../Selectors/derivedCharacteristicsSelectors"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { isBookEnabled } from "../../Utilities/RulesUtils"
+import { DerivedCharacteristicId } from "../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { Page } from "../Universal/Page"
 import { Scroll } from "../Universal/Scroll"
 import { BelongingsSheet } from "./BelongingsSheet/BelongingsSheet"
@@ -65,7 +69,7 @@ export interface SheetsStateProps {
   combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   combatTechniques: Maybe<List<Record<CombatTechniqueWithAttackParryBase>>>
   culture: Maybe<Record<Culture>>
-  derivedCharacteristics: List<Record<DerivedCharacteristic>>
+  derivedCharacteristics: List<DCPair>
   disadvantagesActive: Maybe<List<Record<ActiveActivatable<Disadvantage>>>>
   el: Maybe<Record<ExperienceLevel>>
   fatePointsModifier: number
@@ -103,8 +107,8 @@ export interface SheetsStateProps {
   blessedTradition: Maybe<string>
   blessings: Maybe<List<Record<BlessingCombined>>>
   liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
-  conditions: List<Record<NumIdName>>
-  states: List<Record<NumIdName>>
+  conditions: List<Record<Condition>>
+  states: List<Record<State>>
   books: StaticData["books"]
   skillGroupPages: OrderedMap<number, Pair<number, number>>
   skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillCombined>>>>
@@ -184,11 +188,13 @@ export const Sheets: React.FC<Props> = props => {
     liturgicalChants,
   } = props
 
-  const maybeArcaneEnergy = find (pipe (DerivedCharacteristic.A.id, equals<DCId> (DCId.AE)))
-                                 (derivedCharacteristics)
+  const maybeArcaneEnergy =
+    find<DCPair> (pipe (fst, DerivedCharacteristic.A.id, equals<DerivedCharacteristicId> (DCId.AE)))
+                 (derivedCharacteristics)
 
-  const maybeKarmaPoints = find (pipe (DerivedCharacteristic.A.id, equals<DCId> (DCId.KP)))
-                                (derivedCharacteristics)
+  const maybeKarmaPoints =
+    find<DCPair> (pipe (fst, DerivedCharacteristic.A.id, equals<DerivedCharacteristicId> (DCId.KP)))
+                 (derivedCharacteristics)
 
   return (
     <Page id="sheets">
@@ -268,7 +274,7 @@ export const Sheets: React.FC<Props> = props => {
           />
         {pipe_ (
           maybeArcaneEnergy,
-          bindF (DerivedCharacteristic.A.value),
+          bindF (pipe (snd, DerivedCharacteristicValues.A.value)),
           maybeRNull (() => (
                        <SpellsSheet
                          attributes={attributes}
@@ -287,7 +293,7 @@ export const Sheets: React.FC<Props> = props => {
         )}
         {pipe_ (
           maybeKarmaPoints,
-          bindF (DerivedCharacteristic.A.value),
+          bindF (pipe (snd, DerivedCharacteristicValues.A.value)),
           maybeRNull (() => (
                        <LiturgicalChantsSheet
                          aspects={aspects}

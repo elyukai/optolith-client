@@ -8,7 +8,7 @@ import { fst, snd } from "../../Data/Tuple"
 import * as HerolistActions from "../Actions/HerolistActions"
 import * as IOActions from "../Actions/IOActions"
 import * as ActionTypes from "../Constants/ActionTypes"
-import { getInitialHeroObject, HeroModel, HeroModelL } from "../Models/Hero/HeroModel"
+import { HeroModel, HeroModelL } from "../Models/Hero/HeroModel"
 import { HeroesState, HeroesStateL } from "../Models/HeroesState"
 import { composeL } from "../Utilities/compose"
 import { pipe } from "../Utilities/pipe"
@@ -29,31 +29,13 @@ export const precedingHerolistReducer =
   (action: Action): ident<Record<HeroesState>> => {
     switch (action.type) {
       case ActionTypes.CREATE_HERO: {
-        const {
-          l10n,
-          el,
-          enableAllRuleBooks,
-          enabledRuleBooks,
-          id,
-          name,
-          sex,
-          totalAp,
-        } = action.payload
-
-        const hero = getInitialHeroObject (l10n)
-                                          (id)
-                                          (name)
-                                          (sex)
-                                          (el)
-                                          (totalAp)
-                                          (enableAllRuleBooks)
-                                          (enabledRuleBooks)
+        const { newHero } = action.payload
 
         return pipe (
-          set (HeroesStateL.currentId) (Just (id)),
+          set (HeroesStateL.currentId) (Just (HeroModel.A.id (newHero))),
           over (HeroesStateL.heroes)
-               (insert (id)
-                       (toHeroWithHistory (hero)))
+               (insert (HeroModel.A.id (newHero))
+                       (toHeroWithHistory (newHero)))
         )
       }
 

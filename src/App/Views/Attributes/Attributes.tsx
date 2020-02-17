@@ -5,8 +5,8 @@ import { Record } from "../../../Data/Record"
 import { EnergyId } from "../../Constants/Ids"
 import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { AttributeWithRequirements } from "../../Models/View/AttributeWithRequirements"
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { DCPair } from "../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../Utilities/I18n"
 import { Page } from "../Universal/Page"
 import { Scroll } from "../Universal/Scroll"
@@ -22,7 +22,7 @@ export interface AttributesOwnProps {
 
 export interface AttributesStateProps {
   attributes: Maybe<List<Record<AttributeWithRequirements>>>
-  derived: List<Record<DerivedCharacteristic>>
+  derived: List<DCPair>
   isInCharacterCreation: boolean
   isRemovingEnabled: boolean
   maxTotalAttributeValues: Maybe<number>

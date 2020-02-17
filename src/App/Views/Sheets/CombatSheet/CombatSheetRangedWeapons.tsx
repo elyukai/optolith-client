@@ -4,6 +4,7 @@ import { fmap, fmapF } from "../../../../Data/Functor"
 import { flength, intercalate, List, map, replicateR, toArray } from "../../../../Data/List"
 import { fromMaybe, Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
+import { show } from "../../../../Data/Show"
 import { RangedWeapon } from "../../../Models/View/RangedWeapon"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
@@ -78,7 +79,13 @@ export const CombatSheetRangedWeapons: React.FC<Props> = props => {
                   </td>
                   <td className="combat-technique">{RWA.combatTechnique (e)}</td>
                   <td className="reload-time">
-                    {renderMaybe (RWA.reloadTime (e))}
+                    {pipe_ (
+                      e,
+                      RWA.reloadTime,
+                      renderMaybeWith (x => typeof x === "object"
+                                            ? intercalate ("/") (x)
+                                            : show (x))
+                    )}
                     {" "}
                     {translate (staticData) ("sheets.combatsheet.actions")}
                   </td>

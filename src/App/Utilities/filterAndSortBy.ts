@@ -1,6 +1,6 @@
 import { List } from "../../Data/List"
 import { Record, RecordIBase } from "../../Data/Record"
-import { L10nRecord } from "../Models/Wiki/L10n"
+import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { FilterAccessor, filterByMulti, filterRecordsByE, filterRecordsByName } from "./filterBy"
 import { pipe } from "./pipe"
 import { RecordWithName, sortByMulti, SortOptions, sortRecordsByName } from "./sortBy"
@@ -39,12 +39,12 @@ export const filterEAndSortRecordsBy =
  * A combination of `filterRecordsByE` and `sortRecordsBy`.
  */
 export const filterAndSortRecordsByName =
-  (locale: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (filterText: string) =>
   <A extends RecordWithName>
   (xs: List<Record<A>>) =>
     pipe (
            filterRecordsByName (filterText) as (xs: List<Record<A>>) => List<Record<A>>,
-           sortRecordsByName (locale)
+           sortRecordsByName (staticData)
          )
          (xs)

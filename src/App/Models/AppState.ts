@@ -10,7 +10,7 @@ export interface AppState {
   l10n: Record<LocaleState>
   ui: Record<UIState>
   wiki: Record<StaticData>
-  isReady: number
+  isLoading: boolean
 }
 
 export type AppStateRecord = Record<AppState>
@@ -22,5 +22,5 @@ export const AppState =
                 l10n: LocaleState.default,
                 ui: UIState.default,
                 wiki: StaticData.default,
-                isReady: 0,
+                isLoading: true,
               })

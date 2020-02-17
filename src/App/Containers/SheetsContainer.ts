@@ -43,21 +43,18 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): Sheet
   generalsaActive: getGeneralSpecialAbilitiesForSheet (state, ownProps),
   meleeWeapons: getMeleeWeapons (state, ownProps),
   name: getCurrentHeroName (state),
-  professionName: getCurrentFullProfessionName (state, ownProps),
-
-  // profession: getCurrentProfession (state),
-  // professionVariant: getCurrentProfessionVariant (state),
+  professionName: getCurrentFullProfessionName (state),
   profile: getProfile (state),
   race: getRace (state, ownProps),
   rangedWeapons: getRangedWeapons (state),
   sex: getSex (state),
   shieldsAndParryingWeapons: getShieldsAndParryingWeapons (state),
   skills: getAllSkills (state),
-  items: getAllItems (state, ownProps),
+  items: getAllItems (state),
   pet: getPet (state),
   purse: getPurse (state),
-  totalPrice: getTotalPrice (state, ownProps),
-  totalWeight: getTotalWeight (state, ownProps),
+  totalPrice: getTotalPrice (state),
+  totalWeight: getTotalWeight (state),
   languagesWikiEntry: mapGetToMaybeSlice (pipe (getWikiSpecialAbilities, Just))
                                          (SpecialAbilityId.Language)
                                          (state),
@@ -80,7 +77,7 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): Sheet
   blessedPrimary: getPrimaryBlessedAttributeForSheet (state, ownProps),
   blessedSpecialAbilities: getBlessedSpecialAbilitiesForSheet (state, ownProps),
   blessedTradition: getBlessedTraditionForSheet (state, ownProps),
-  blessings: getBlessingsForSheet (state, ownProps),
+  blessings: getBlessingsForSheet (state),
   liturgicalChants: getLiturgicalChantsForSheet (state, ownProps),
   conditions: getConditions (state, ownProps),
   states: getStates (state, ownProps),
@@ -89,12 +86,12 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): Sheet
   skillsByGroup: getSkillsByGroup (state),
 })
 
-const mapDispatchToProps = (dispatch: ReduxDispatch, { l10n }: SheetsOwnProps) => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch) => ({
   switchAttributeValueVisibility () {
     dispatch (SheetActions.switchAttributeValueVisibility ())
   },
   async printToPDF () {
-    await dispatch (IOActions.requestPrintHeroToPDF (l10n))
+    await dispatch (IOActions.requestPrintHeroToPDF)
   },
 })
 

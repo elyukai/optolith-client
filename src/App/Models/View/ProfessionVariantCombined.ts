@@ -1,7 +1,7 @@
 import { List } from "../../../Data/List"
 import { fromDefault, Record } from "../../../Data/Record"
 import { pipe } from "../../Utilities/pipe"
-import { ProfessionRequireIncreasable } from "../Wiki/prerequisites/IncreasableRequirement"
+import { ProfessionRequireIncreasable } from "../Wiki/prerequisites/ProfessionRequireIncreasable"
 import { ProfessionVariantSelections } from "../Wiki/professionSelections/ProfessionVariantAdjustmentSelections"
 import { ProfessionVariant } from "../Wiki/ProfessionVariant"
 import { ActivatableNameCostIsActive } from "./ActivatableNameCostIsActive"

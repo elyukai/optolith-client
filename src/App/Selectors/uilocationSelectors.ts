@@ -53,11 +53,11 @@ export const getTabs = createMaybeSelector (
           label: translate (staticData) ("header.tabs.heroes"),
           subTabs: List (),
         }),
-        NavigationBarTabOptions ({
-          id: TabId.Grouplist,
-          label: translate (staticData) ("header.tabs.groups"),
-          subTabs: List (),
-        }),
+        // NavigationBarTabOptions ({
+        //   id: TabId.Grouplist,
+        //   label: translate (staticData) ("header.tabs.groups"),
+        //   subTabs: List (),
+        // }),
         NavigationBarTabOptions ({
           id: TabId.Wiki,
           label: translate (staticData) ("header.tabs.wiki"),
@@ -232,11 +232,11 @@ export const getSubtabs = createMaybeSelector (
               label: translate (staticData) ("header.tabs.overview"),
               disabled: false,
             },
-            {
-              id: TabId.PersonalData,
-              label: translate (staticData) ("header.tabs.personaldata"),
-              disabled: true,
-            },
+            // {
+            //   id: TabId.PersonalData,
+            //   label: translate (staticData) ("header.tabs.personaldata"),
+            //   disabled: true,
+            // },
             {
               id: TabId.Rules,
               label: translate (staticData) ("header.tabs.rules"),
@@ -333,11 +333,11 @@ export const getSubtabs = createMaybeSelector (
                 label: translate (staticData) ("header.tabs.overview"),
                 disabled: false,
               },
-              {
-                id: TabId.PersonalData,
-                label: translate (staticData) ("header.tabs.personaldata"),
-                disabled: true,
-              },
+              // {
+              //   id: TabId.PersonalData,
+              //   label: translate (staticData) ("header.tabs.personaldata"),
+              //   disabled: true,
+              // },
               {
                 id: TabId.Rules,
                 label: translate (staticData) ("header.tabs.rules"),

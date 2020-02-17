@@ -10,7 +10,7 @@ import { Scroll } from "../Universal/Scroll"
 
 const getPath =
   (staticData: StaticDataRecord) =>
-    path.join (app_path, "app", "Database", L10n.A.id (StaticData.A.ui (staticData)), `FAQ.md`)
+    path.join (app_path, "app", "Docs", L10n.A.id (StaticData.A.ui (staticData)), `FAQ.md`)
 
 export interface HelpOwnProps {
   staticData: StaticDataRecord
@@ -33,7 +33,7 @@ export const Help: React.FC<HelpProps> = ({ staticData }) => {
         .then (setText)
         .catch (err => {
           console.error (err)
-          setText ("Last Changes could not be loaded")
+          setText ("FAQ could not be loaded")
         })
     },
     [ staticData ]

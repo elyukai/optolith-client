@@ -25,7 +25,6 @@ export interface AppStateProps {
   platform: string
   theme: Theme
   areAnimationsEnabled: boolean
-  loading_phase: number
   isLoading: boolean
 }
 

@@ -6,7 +6,6 @@ import { List, notElem } from "../../Data/List"
 import { and, elem, fromJust, isJust, isNothing, Just, maybe, or } from "../../Data/Maybe"
 import { insert, OrderedMap } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
-import { uncurry } from "../../Data/Tuple"
 import { uncurry3 } from "../../Data/Tuple/Curry"
 import { RedoAction, UndoAction } from "../Actions/HistoryActions"
 import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from "../Actions/IOActions"
@@ -47,11 +46,11 @@ const prepareHerolist =
       const hs = Object.entries (fromJust (rawHeroes)).reduce<Reduced> (
         ({ heroes, users }, [ key, hero ]) => pipe_ (
           hero,
-          uncurry (convertHero) (action.payload.tables),
+          convertHero (action.payload.staticData),
           maybe ({ heroes, users })
                 (compat_hero => pipe_ (
                   compat_hero,
-                  uncurry (convertFromRawHero) (action.payload.tables),
+                  convertFromRawHero (action.payload.staticData),
                   toHeroWithHistory,
                   hero_record => typeof compat_hero .player === "object"
                           ? {

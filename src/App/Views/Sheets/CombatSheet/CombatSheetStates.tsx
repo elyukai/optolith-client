@@ -2,7 +2,8 @@ import * as React from "react"
 import { List, map, splitAt, toArray } from "../../../../Data/List"
 import { Record } from "../../../../Data/Record"
 import { fst, snd } from "../../../../Data/Tuple"
-import { NumIdName } from "../../../Models/NumIdName"
+import { Condition } from "../../../Models/Wiki/Condition"
+import { State } from "../../../Models/Wiki/State"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
 import { toRoman } from "../../../Utilities/NumberUtils"
@@ -10,8 +11,8 @@ import { pipe_ } from "../../../Utilities/pipe"
 
 interface Props {
   staticData: StaticDataRecord
-  conditions: List<Record<NumIdName>>
-  states: List<Record<NumIdName>>
+  conditions: List<Record<Condition>>
+  states: List<Record<State>>
 }
 
 export const CombatSheetStates: React.FC<Props> = props => {
@@ -32,8 +33,8 @@ export const CombatSheetStates: React.FC<Props> = props => {
         {pipe_ (
           conditions,
           map (e => (
-            <div key={NumIdName.A.id (e)}>
-              <span>{NumIdName.A.name (e)}</span>
+            <div key={Condition.A.id (e)}>
+              <span>{Condition.A.name (e)}</span>
               <div>
                 <div />
               </div>
@@ -59,8 +60,8 @@ export const CombatSheetStates: React.FC<Props> = props => {
           statesSplit,
           fst,
           map (e => (
-            <div key={NumIdName.A.id (e)}>
-              <span>{NumIdName.A.name (e)}</span>
+            <div key={State.A.id (e)}>
+              <span>{State.A.name (e)}</span>
               <div>
                 <div />
               </div>
@@ -74,8 +75,8 @@ export const CombatSheetStates: React.FC<Props> = props => {
           statesSplit,
           snd,
           map (e => (
-            <div key={NumIdName.A.id (e)}>
-              <span>{NumIdName.A.name (e)}</span>
+            <div key={State.A.id (e)}>
+              <span>{State.A.name (e)}</span>
               <div>
                 <div />
               </div>

@@ -28,7 +28,7 @@ import { toSourceRefs } from "./ToSourceRefs"
 
 const toApplications : (x : [SkillUniv, SkillL10n]) => List<Record<Application>>
                      = pipe (
-                         ([ univ, l10n ]) => zipByIdLoose (univ.applications)
+                         ([ univ, l10n ]) => zipByIdLoose ((univ.applications ?? []))
                                                           (l10n.applications),
                          ([ xs, ys ]) : Pair<Record<Application>[], Record<Application>[]> =>
                            Pair (
@@ -99,7 +99,7 @@ const toSkill : YamlPairConverterE<SkillUniv, SkillL10n, string, Skill>
                       name: l10n.name,
                       check: List (univ.check1, univ.check2, univ.check3),
                       encumbrance: univ.enc,
-                      encumbranceDescription: Maybe (l10n.name),
+                      encumbranceDescription: Maybe (l10n.encDescription),
                       gr: univ.gr,
                       ic: icToInt (univ.ic),
                       applications,

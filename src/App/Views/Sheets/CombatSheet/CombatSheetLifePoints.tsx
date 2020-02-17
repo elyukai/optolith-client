@@ -2,18 +2,20 @@ import * as React from "react"
 import { equals } from "../../../../Data/Eq"
 import { find, List } from "../../../../Data/List"
 import { bindF, Just, Maybe, Nothing } from "../../../../Data/Maybe"
-import { Record } from "../../../../Data/Record"
+import { snd } from "../../../../Data/Tuple"
 import { DCId } from "../../../Constants/Ids"
-import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic"
+import { DerivedCharacteristicValues } from "../../../Models/View/DerivedCharacteristicCombined"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { DerivedCharacteristicId } from "../../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { Box } from "../../Universal/Box"
 import { LabelBox } from "../../Universal/LabelBox"
 import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
-  derivedCharacteristics: List<Record<DerivedCharacteristic>>
+  derivedCharacteristics: List<DCPair>
   staticData: StaticDataRecord
 }
 
@@ -23,8 +25,12 @@ export const CombatSheetLifePoints: React.FC<Props> = props => {
   const lifePoints =
     pipe_ (
       derivedCharacteristics,
-      find (pipe (DerivedCharacteristic.A.id, equals<DCId> (DCId.LP))),
-      bindF (DerivedCharacteristic.A.value),
+      find (pipe (
+        snd,
+        DerivedCharacteristicValues.A.id,
+        equals<DerivedCharacteristicId> (DCId.LP)
+      )),
+      bindF (pipe (snd, DerivedCharacteristicValues.A.value)),
       Maybe.sum
     )
 

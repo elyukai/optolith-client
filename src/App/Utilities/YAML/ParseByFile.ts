@@ -1,11 +1,11 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 import { MapEitherIO, mapMObjectIO } from "./MapEitherIOObject"
-import { YamlParser, YamlValidationError } from "./Parser"
+import { YamlParser } from "./Parser"
 import { YamlNameMap } from "./SchemaMap"
 
 export const parseByFile =
   (univParser : YamlParser) =>
-  async (l10nParser : YamlParser) : MapEitherIO<YamlValidationError, YamlNameMap> =>
+  async (l10nParser : YamlParser) : MapEitherIO<Error[], YamlNameMap> =>
     mapMObjectIO ({
       AdvantagesL10n:
         l10nParser ("Schema/Advantages/Advantages.l10n.schema.json"),

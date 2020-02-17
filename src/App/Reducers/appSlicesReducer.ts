@@ -1,7 +1,7 @@
 import { AppState } from "../Models/AppState"
 import { combineReducerRecord } from "../Utilities/combineReducerRecord"
 import { herolistReducer } from "./herolistReducer"
-import { isReadyReducer } from "./isReadyReducer"
+import { isLoadingReducer } from "./isReadyReducer"
 import { localeReducer } from "./localeReducer"
 import { uiReducer } from "./uiReducer"
 import { wikiReducer } from "./wikiReducer"
@@ -13,5 +13,5 @@ export const appSlicesReducer =
                          l10n: localeReducer,
                          ui: uiReducer,
                          wiki: wikiReducer,
-                         isReady: isReadyReducer,
+                         isLoading: isLoadingReducer,
                        })

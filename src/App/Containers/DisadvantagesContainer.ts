@@ -34,10 +34,7 @@ const mapStateToProps =
     inactiveFilterText: getInactiveDisadvantagesFilterText (state),
   })
 
-const mapDispatchToProps = (
-  dispatch: ReduxDispatch,
-  { l10n }: DisadvantagesOwnProps
-): DisadvantagesDispatchProps => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch): DisadvantagesDispatchProps => ({
   switchRatingVisibility () {
     dispatch (DisAdvActions.switchRatingVisibility ())
   },
@@ -45,13 +42,13 @@ const mapDispatchToProps = (
     dispatch (ConfigActions.switchEnableActiveItemHints ())
   },
   async addToList (args: Record<ActivatableActivationOptions>) {
-    await dispatch (DisAdvActions.addDisAdvantage (l10n) (args))
+    await dispatch (DisAdvActions.addDisAdvantage (args))
   },
   async removeFromList (args: Record<ActivatableDeactivationOptions>) {
-    await dispatch (DisAdvActions.removeDisAdvantage (l10n) (args))
+    await dispatch (DisAdvActions.removeDisAdvantage (args))
   },
   async setLevel (id: string, index: number, level: number) {
-    await dispatch (DisAdvActions.setDisAdvantageLevel (l10n) (id) (index) (level))
+    await dispatch (DisAdvActions.setDisAdvantageLevel (id) (index) (level))
   },
   setFilterText (filterText: string) {
     dispatch (DisAdvActions.setActiveDisadvantagesFilterText (filterText))

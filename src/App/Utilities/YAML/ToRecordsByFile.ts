@@ -3,7 +3,7 @@ import { Either, fromRight_, isLeft, Left, lefts, Right } from "../../../Data/Ei
 import { concatMap, fromArray, List, toArray } from "../../../Data/List"
 import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../Data/Record"
-import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { pipe_ } from "../pipe"
 import { toAdvantages } from "./Entries/ToAdvantages"
 import { toAnimistForces } from "./Entries/ToAnimistForces"
@@ -50,9 +50,11 @@ import { toRaces } from "./Entries/ToRaces"
 import { toRaceVariants } from "./Entries/ToRaceVariants"
 import { toReaches } from "./Entries/ToReaches"
 import { toRogueSpells } from "./Entries/ToRogueSpells"
+import { toSkillGroups } from "./Entries/ToSkillGroups"
 import { toSkills } from "./Entries/ToSkills"
 import { toSocialStatuses } from "./Entries/ToSocialStatuses"
 import { toSpecialAbilities } from "./Entries/ToSpecialAbilities"
+import { toSpecialAbilityGroups } from "./Entries/ToSpecialAbilityGroups"
 import { toSpellEnhancements } from "./Entries/ToSpellEnhancements"
 import { toSpellGroups } from "./Entries/ToSpellGroups"
 import { toSpells } from "./Entries/ToSpells"
@@ -99,101 +101,55 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                         const earmorTypes = toArmorTypes (mp)
                         const easpects = toAspects (mp)
                         const eattributes = toAttributes (mp)
-                        console.log ("attributes done")
                         const eblessedTraditions = toBlessedTraditions (mp)
-                        console.log ("blessedTraditions done")
                         const eblessings = toBlessings (mp)
-                        console.log ("blessings done")
                         const ebooks = toBooks (mp)
-                        console.log ("books done")
                         const ebrews = toBrews (mp)
-                        console.log ("brews done")
                         const ecantrips = toCantrips (mp)
-                        console.log ("cantrips done")
                         const ecombatSpecialAbilityGroups = toCombatSpecialAbilityGroups (mp)
-                        console.log ("combatSpecialAbilityGroups done")
                         const ecombatTechniqueGroups = toCombatTechniqueGroups (mp)
-                        console.log ("combatTechniqueGroups done")
                         const ecombatTechniques = toCombatTechniques (mp)
-                        console.log ("combatTechniques done")
                         const econditions = toConditions (mp)
-                        console.log ("conditions done")
                         const ecultures = toCultures (mp)
-                        console.log ("cultures done")
                         const ecurses = toCurses (mp)
-                        console.log ("curses done")
                         const ederivedCharacteristics = toDerivedCharacteristics (mp)
-                        console.log ("derivedCharacteristics done")
                         const edominationRituals = toDominationRituals (mp)
-                        console.log ("dominationRituals done")
                         const eelvenMagicalSongs = toElvenMagicalSongs (mp)
-                        console.log ("elvenMagicalSongs done")
                         const eitemTemplates = toItemTemplates (mp)
-                        console.log ("itemTemplates done")
                         const eequipmentGroups = toEquipmentGroups (mp)
-                        console.log ("equipmentGroups done")
                         const eequipmentPackages = toEquipmentPackages (mp)
-                        console.log ("equipmentPackages done")
                         const eexperienceLevels = toExperienceLevels (mp)
-                        console.log ("experienceLevels done")
                         const eeyeColors = toEyeColors (mp)
-                        console.log ("eyeColors done")
                         const efocusRules = toFocusRules (mp)
-                        console.log ("focusRules done")
                         const egeodeRituals = toGeodeRituals (mp)
-                        console.log ("geodeRituals done")
                         const ehairColors = toHairColors (mp)
-                        console.log ("hairColors done")
                         const eliturgicalChantEnhancements = toLiturgicalChantEnhancements (mp)
-                        console.log ("liturgicalChantEnhancements done")
                         const eliturgicalChantGroups = toLiturgicalChantGroups (mp)
-                        console.log ("liturgicalChantGroups done")
                         const eliturgicalChants = toLiturgicalChants (mp)
-                        console.log ("liturgicalChants done")
                         const emagicalDances = toMagicalDances (mp)
-                        console.log ("magicalDances done")
                         const emagicalMelodies = toMagicalMelodies (mp)
-                        console.log ("magicalMelodies done")
                         const emagicalTraditions = toMagicalTraditions (mp)
-                        console.log ("magicalTraditions done")
                         const eoptionalRules = toOptionalRules (mp)
-                        console.log ("optionalRules done")
                         const epacts = toPacts (mp)
-                        console.log ("pacts done")
                         const eprofessions = toProfessions (mp)
-                        console.log ("professions done")
                         const eprofessionVariants = toProfessionVariants (mp)
-                        console.log ("professionVariants done")
                         const eproperties = toProperties (mp)
-                        console.log ("properties done")
                         const eraces = toRaces (mp)
-                        console.log ("races done")
                         const eraceVariants = toRaceVariants (mp)
-                        console.log ("raceVariants done")
                         const ereaches = toReaches (mp)
-                        console.log ("reaches done")
                         const erogueSpells = toRogueSpells (mp)
-                        console.log ("rogueSpells done")
                         const eskills = toSkills (mp)
-                        console.log ("skills done")
+                        const eskillGroups = toSkillGroups (mp)
                         const esocialStatuses = toSocialStatuses (mp)
-                        console.log ("socialStatuses done")
+                        const especialAbilityGroups = toSpecialAbilityGroups (mp)
                         const espellEnhancements = toSpellEnhancements (mp)
-                        console.log ("spellEnhancements done")
                         const espellGroups = toSpellGroups (mp)
-                        console.log ("spellGroups done")
                         const espells = toSpells (mp)
-                        console.log ("spells done")
                         const estates = toStates (mp)
-                        console.log ("states done")
                         const esubjects = toSubjects (mp)
-                        console.log ("subjects done")
                         const etribes = toTribes (mp)
-                        console.log ("tribes done")
                         const ui = toUI (locale) (mp)
-                        console.log ("i done")
                         const ezibiljaRituals = toZibiljaRituals (mp)
-                        console.log ("zibiljaRituals done")
 
                         if (isLeft (eanimistForces)
                             || isLeft (earcaneBardTraditions)
@@ -239,7 +195,9 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                             || isLeft (ereaches)
                             || isLeft (erogueSpells)
                             || isLeft (eskills)
+                            || isLeft (eskillGroups)
                             || isLeft (esocialStatuses)
+                            || isLeft (especialAbilityGroups)
                             || isLeft (espellEnhancements)
                             || isLeft (espellGroups)
                             || isLeft (espells)
@@ -293,7 +251,9 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                               ereaches,
                               erogueSpells,
                               eskills,
+                              eskillGroups,
                               esocialStatuses,
+                              especialAbilityGroups,
                               espellEnhancements,
                               espellGroups,
                               espells,
@@ -354,7 +314,9 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                         const reaches = fromRight_ (ereaches)
                         const rogueSpells = fromRight_ (erogueSpells)
                         const skills = fromRight_ (eskills)
+                        const skillGroups = fromRight_ (eskillGroups)
                         const socialStatuses = fromRight_ (esocialStatuses)
+                        const specialAbilityGroups = fromRight_ (especialAbilityGroups)
                         const spellEnhancements = fromRight_ (espellEnhancements)
                         const spellGroups = fromRight_ (espellGroups)
                         const spells = fromRight_ (espells)
@@ -370,7 +332,6 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                                                          (skills)
                                                          (spells)
                                                          (mp)
-                        console.log ("advantages")
 
                         const edisadvantages = toDisadvantages (blessings)
                                                                (cantrips)
@@ -379,7 +340,6 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                                                                (skills)
                                                                (spells)
                                                                (mp)
-                        console.log ("disadvantages")
 
                         const especialAbilities = toSpecialAbilities (blessings)
                                                                      (cantrips)
@@ -390,7 +350,6 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                                                                      (spellEnhancements)
                                                                      (liturgicalChantEnhancements)
                                                                      (mp)
-                        console.log ("specialAbilities")
 
                         if (isLeft (eadvantages)
                             || isLeft (edisadvantages)
@@ -412,7 +371,7 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                         const disadvantages = fromRight_ (edisadvantages)
                         const specialAbilities = fromRight_ (especialAbilities)
 
-                        return Right (WikiModel ({
+                        return Right (StaticData ({
                           advantages,
                           animistForces,
                           arcaneBardTraditions,
@@ -458,9 +417,11 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                           raceVariants,
                           reaches,
                           rogueSpells,
+                          skillGroups,
                           skills,
                           socialStatuses,
                           specialAbilities,
+                          specialAbilityGroups,
                           spellEnhancements,
                           spellGroups,
                           spells,

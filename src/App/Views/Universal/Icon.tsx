@@ -8,11 +8,13 @@ interface Props {
 }
 
 export const Icon: React.FC<Props> = props => {
-  const { className } = props
+  const { className, children } = props
 
   return (
     <div
       className={classListMaybe (List (Just ("icon"), Maybe (className)))}
-      />
+      >
+      {children}
+    </div>
   )
 }

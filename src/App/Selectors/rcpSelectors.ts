@@ -57,7 +57,7 @@ import { filterByAvailability, filterByAvailabilityAndPred, isEntryFromCoreBook 
 import { getStartEl } from "./elSelectors"
 import { getRuleBooksEnabled } from "./rulesSelectors"
 import { getCulturesCombinedSortOptions, getProfessionsCombinedSortOptions, getRacesCombinedSortOptions } from "./sortOptionsSelectors"
-import { getCultureId, getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getProfessionsFilterText, getRaceId, getRacesFilterText, getRaceVariantId, getSex, getWiki, getWikiBooks, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors"
+import { getCultureId, getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getProfessionsFilterText, getRaceId, getRacesFilterText, getRaceVariantId, getSex, getWiki, getWikiBooks, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors"
 import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from "./uisettingsSelectors"
 
 const SDA = StaticData.A
@@ -822,17 +822,16 @@ export const getFilteredProfessions = createMaybeSelector (
 )
 
 export const getCurrentFullProfessionName = createMaybeSelector (
-  getLocaleAsProp,
   getWiki,
   getSex,
   getCurrentProfessionId,
   getCurrentProfessionVariantId,
   getCustomProfessionName,
-  (l10n, wiki, msex, mprof_id, mprof_var_id, mcustom_prof_name) =>
+  (staticData, msex, mprof_id, mprof_var_id, mcustom_prof_name) =>
     fmapF (msex)
-          (sex => getFullProfessionName (l10n)
-                                        (SDA.professions (wiki))
-                                        (SDA.professionVariants (wiki))
+          (sex => getFullProfessionName (staticData)
+                                        (SDA.professions (staticData))
+                                        (SDA.professionVariants (staticData))
                                         (sex)
                                         (mprof_id)
                                         (mprof_var_id)

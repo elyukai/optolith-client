@@ -1,69 +1,48 @@
 import { ident } from "../../Data/Function"
 import { fmap } from "../../Data/Functor"
-import { foldr, groupByKey, imap, List } from "../../Data/List"
+import { foldr, groupByKey } from "../../Data/List"
 import { fromMaybe, listToMaybe } from "../../Data/Maybe"
 import { max, min } from "../../Data/Num"
 import { elems, map } from "../../Data/OrderedMap"
 import { fst, isTuple, Pair, snd } from "../../Data/Tuple"
 import { upd1, upd2 } from "../../Data/Tuple/Update"
-import { fromIndexName } from "../Models/NumIdName"
 import { SkillCombinedA_ } from "../Models/View/SkillCombined"
+import { Condition } from "../Models/Wiki/Condition"
 import { Skill } from "../Models/Wiki/Skill"
+import { State } from "../Models/Wiki/State"
 import { SourceLink } from "../Models/Wiki/sub/SourceLink"
+import { StaticData } from "../Models/Wiki/WikiModel"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
-import { translate } from "../Utilities/I18n"
 import { pipe, pipe_ } from "../Utilities/pipe"
-import { sortStrings } from "../Utilities/sortBy"
+import { filterByAvailability } from "../Utilities/RulesUtils"
+import { sortRecordsByName } from "../Utilities/sortBy"
+import { getRuleBooksEnabled } from "./rulesSelectors"
 import { getAllSkills } from "./skillsSelectors"
-import { getLocaleAsProp, getWikiSkills } from "./stateSelectors"
+import { getWiki, getWikiSkills } from "./stateSelectors"
 
 export const getConditions = createMaybeSelector (
-  getLocaleAsProp,
-  l10n =>
+  getWiki,
+  getRuleBooksEnabled,
+  (staticData, availability) =>
     pipe_ (
-      List (
-        translate (l10n) ("animosity"),
-        translate (l10n) ("encumbrance"),
-        translate (l10n) ("intoxicated"),
-        translate (l10n) ("stupor"),
-        translate (l10n) ("rapture"),
-        translate (l10n) ("fear"),
-        translate (l10n) ("paralysis"),
-        translate (l10n) ("pain"),
-        translate (l10n) ("confusion")
-      ),
-      sortStrings (l10n),
-      imap (fromIndexName)
+      staticData,
+      StaticData.A.conditions,
+      elems,
+      filterByAvailability (Condition.A.src) (availability),
+      sortRecordsByName (staticData),
     )
 )
 
 export const getStates = createMaybeSelector (
-  getLocaleAsProp,
-  l10n =>
+  getWiki,
+  getRuleBooksEnabled,
+  (staticData, availability) =>
     pipe_ (
-      List (
-        translate (l10n) ("immobilized"),
-        translate (l10n) ("unconscious"),
-        translate (l10n) ("blind"),
-        translate (l10n) ("bloodlust"),
-        translate (l10n) ("burning"),
-        translate (l10n) ("cramped"),
-        translate (l10n) ("bound"),
-        translate (l10n) ("incapacitated"),
-        translate (l10n) ("diseased"),
-        translate (l10n) ("prone"),
-        translate (l10n) ("misfortune"),
-        translate (l10n) ("rage"),
-        translate (l10n) ("mute"),
-        translate (l10n) ("deaf"),
-        translate (l10n) ("surprised"),
-        translate (l10n) ("badsmell"),
-        translate (l10n) ("invisible"),
-        translate (l10n) ("poisoned"),
-        translate (l10n) ("petrified")
-      ),
-      sortStrings (l10n),
-      imap (fromIndexName)
+      staticData,
+      StaticData.A.states,
+      elems,
+      filterByAvailability (State.A.src) (availability),
+      sortRecordsByName (staticData),
     )
 )
 

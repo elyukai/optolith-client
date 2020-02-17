@@ -18,26 +18,25 @@ const mapStateToProps = (state: AppStateRecord): SettingsStateProps => ({
   theme: getTheme (state),
 })
 
-const mapDispatchToProps =
-  (dispatch: ReduxDispatch, ownProps: SettingsOwnProps): SettingsDispatchProps => ({
-    setTheme (theme: Maybe<Theme>) {
-      if (isJust (theme)) {
-        dispatch (ConfigActions.setTheme (fromJust (theme)))
-      }
-    },
-    switchEnableEditingHeroAfterCreationPhase () {
-      dispatch (ConfigActions.switchEnableEditingHeroAfterCreationPhase ())
-    },
-    async saveConfig () {
-      await dispatch (IOActions.requestConfigSave (ownProps.staticData))
-    },
-    setLocale (id: Maybe<Locale>) {
-      dispatch (LocaleActions.setLocale (id))
-    },
-    switchEnableAnimations () {
-      dispatch (ConfigActions.switchEnableAnimations ())
-    },
-  })
+const mapDispatchToProps = (dispatch: ReduxDispatch): SettingsDispatchProps => ({
+  setTheme (theme: Maybe<Theme>) {
+    if (isJust (theme)) {
+      dispatch (ConfigActions.setTheme (fromJust (theme)))
+    }
+  },
+  switchEnableEditingHeroAfterCreationPhase () {
+    dispatch (ConfigActions.switchEnableEditingHeroAfterCreationPhase ())
+  },
+  async saveConfig () {
+    await dispatch (IOActions.requestConfigSave)
+  },
+  setLocale (id: Maybe<Locale>) {
+    dispatch (LocaleActions.setLocale (id))
+  },
+  switchEnableAnimations () {
+    dispatch (ConfigActions.switchEnableAnimations ())
+  },
+})
 
 const connectSettings =
   connect<SettingsStateProps, SettingsDispatchProps, SettingsOwnProps, AppStateRecord> (

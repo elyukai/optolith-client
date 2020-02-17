@@ -2,17 +2,18 @@ import * as React from "react"
 import { List } from "../../../../Data/List"
 import { Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
-import { NumIdName } from "../../../Models/NumIdName"
 import { ActiveActivatable } from "../../../Models/View/ActiveActivatable"
 import { AttributeCombined } from "../../../Models/View/AttributeCombined"
 import { CombatTechniqueWithAttackParryBase } from "../../../Models/View/CombatTechniqueWithAttackParryBase"
-import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic"
 import { HitZoneArmorForView } from "../../../Models/View/HitZoneArmorForView"
 import { MeleeWeapon } from "../../../Models/View/MeleeWeapon"
 import { RangedWeapon } from "../../../Models/View/RangedWeapon"
 import { ShieldOrParryingWeapon } from "../../../Models/View/ShieldOrParryingWeapon"
+import { Condition } from "../../../Models/Wiki/Condition"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { State } from "../../../Models/Wiki/State"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../../Utilities/I18n"
 import { Options } from "../../Universal/Options"
 import { Sheet } from "../Sheet"
@@ -32,13 +33,13 @@ interface Props {
   attributes: List<Record<AttributeCombined>>
   combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   combatTechniques: Maybe<List<Record<CombatTechniqueWithAttackParryBase>>>
-  derivedCharacteristics: List<Record<DerivedCharacteristic>>
+  derivedCharacteristics: List<DCPair>
   staticData: StaticDataRecord
   meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
   rangedWeapons: Maybe<List<Record<RangedWeapon>>>
   shieldsAndParryingWeapons: Maybe<List<Record<ShieldOrParryingWeapon>>>
-  conditions: List<Record<NumIdName>>
-  states: List<Record<NumIdName>>
+  conditions: List<Record<Condition>>
+  states: List<Record<State>>
 }
 
 export const CombatSheetZones: React.FC<Props> = props => {

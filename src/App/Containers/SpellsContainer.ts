@@ -24,15 +24,15 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SpellsOwnProps): Spell
 })
 
 const mapDispatchToProps =
-  (dispatch: ReduxDispatch, { l10n }: SpellsOwnProps): SpellsDispatchProps => ({
+  (dispatch: ReduxDispatch): SpellsDispatchProps => ({
     async addPoint (id: string) {
-      await dispatch (SpellsActions.addSpellPoint (l10n) (id))
+      await dispatch (SpellsActions.addSpellPoint (id))
     },
     async addToList (id: string) {
-      await dispatch (SpellsActions.addSpell (l10n) (id))
+      await dispatch (SpellsActions.addSpell (id))
     },
     async addCantripToList (id: string) {
-      await dispatch (SpellsActions.addCantrip (l10n) (id))
+      await dispatch (SpellsActions.addCantrip (id))
     },
     removePoint (id: string) {
       dispatch (SpellsActions.removeSpellPoint (id))

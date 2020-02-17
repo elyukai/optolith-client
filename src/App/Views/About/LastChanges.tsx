@@ -13,7 +13,7 @@ const getPath =
     path.join (
       app_path,
       "app",
-      "Database",
+      "Docs",
       L10n.A.id (StaticData.A.ui (staticData)),
       "CHANGELOG.md"
     )

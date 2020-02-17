@@ -21,7 +21,7 @@ import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
 import { toErrata } from "./ToErrata"
-import { toActivatablePrerequisiteP, toCulturePrerequisite, toIncreasablePrerequisite, toRacePrerequisite, toSexPrerequisite } from "./ToPrerequisites"
+import { toActivatablePrerequisiteP, toCulturePrerequisite, toIncreasablePrerequisiteP, toRacePrerequisite, toSexPrerequisite } from "./ToPrerequisites"
 import { toCantripSO, toCombatTechniqueSOV, toCurseSO, toLanguageScriptSO, toSkillSO, toSkillSpecializationSOV, toTerrainKnowledgeSO } from "./ToProfessionSelectOptions"
 
 
@@ -88,7 +88,7 @@ const toPV : YamlPairConverterE<ProfessionVariantUniv, ProfessionVariantL10n, st
                        : univ.activatablePrerequisites .map (toActivatablePrerequisiteP)),
                    ...(univ.increasablePrerequisites === undefined
                        ? []
-                       : univ.increasablePrerequisites .map (toIncreasablePrerequisite)),
+                       : univ.increasablePrerequisites .map (toIncreasablePrerequisiteP)),
                  ),
                  precedingText: Maybe (l10n.precedingText),
                  fullText: Maybe (l10n.fullText),

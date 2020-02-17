@@ -1,25 +1,29 @@
 import * as React from "react"
 import { fmapF } from "../../../../Data/Functor"
 import { List, map, toArray } from "../../../../Data/List"
-import { Just, Maybe, Nothing } from "../../../../Data/Maybe"
+import { fromMaybe, Just, Maybe, Nothing } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
+import { fst, snd } from "../../../../Data/Tuple"
 import { DCId } from "../../../Constants/Ids"
-import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic"
+import { DerivedCharacteristicValues } from "../../../Models/View/DerivedCharacteristicCombined"
+import { DerivedCharacteristic } from "../../../Models/Wiki/DerivedCharacteristic"
 import { Race } from "../../../Models/Wiki/Race"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../../Utilities/I18n"
 import { pipe_ } from "../../../Utilities/pipe"
 import { MainSheetAttributesItem } from "./MainSheetAttributesItem"
 import { MainSheetFatePoints } from "./MainSheetFatePoints"
 
 interface Props {
-  attributes: List<Record<DerivedCharacteristic>>
+  attributes: List<DCPair>
   fatePointsModifier: number
   staticData: StaticDataRecord
   race: Maybe<Record<Race>>
 }
 
 const DCA = DerivedCharacteristic.A
+const DCVA = DerivedCharacteristicValues.A
 
 export const MainSheetAttributes: React.FC<Props> = props => {
   const { attributes, fatePointsModifier, race, staticData } = props
@@ -44,15 +48,15 @@ export const MainSheetAttributes: React.FC<Props> = props => {
         attributes,
         map (attribute => (
           <MainSheetAttributesItem
-            key={DCA.id (attribute)}
-            label={DCA.name (attribute)}
-            calc={DCA.calc (attribute)}
-            base={DCA.base (attribute)}
-            max={DCA.value (attribute)}
-            add={DCA.mod (attribute)}
-            purchased={DCA.currentAdd (attribute)}
+            key={DCA.id (fst (attribute))}
+            label={DCA.name (fst (attribute))}
+            calc={fromMaybe (DCA.calc (fst (attribute))) (DCVA.calc (snd (attribute)))}
+            base={DCVA.base (snd (attribute))}
+            max={DCVA.value (snd (attribute))}
+            add={DCVA.mod (snd (attribute))}
+            purchased={DCVA.currentAdd (snd (attribute))}
             subLabel={(() => {
-              switch (DCA.id (attribute)) {
+              switch (DCA.id (fst (attribute))) {
                 case DCId.LP:
                 case DCId.SPI:
                 case DCId.TOU:
@@ -75,7 +79,7 @@ export const MainSheetAttributes: React.FC<Props> = props => {
               }
             }) ()}
             subArray={(() => {
-              switch (DCA.id (attribute)) {
+              switch (DCA.id (fst (attribute))) {
                 case DCId.LP:
                   return Just (
                     List (
@@ -87,8 +91,8 @@ export const MainSheetAttributes: React.FC<Props> = props => {
                 case DCId.KP:
                   return Just (
                     List (
-                      Maybe.sum (DCA.permanentLost (attribute)),
-                      Maybe.sum (DCA.permanentRedeemed (attribute))
+                      Maybe.sum (DCVA.permanentLost (snd (attribute))),
+                      Maybe.sum (DCVA.permanentRedeemed (snd (attribute)))
                     )
                   )
 
@@ -118,10 +122,10 @@ export const MainSheetAttributes: React.FC<Props> = props => {
               }
             }) ()}
             empty={(() => {
-              switch (DCA.id (attribute)) {
+              switch (DCA.id (fst (attribute))) {
                 case DCId.AE:
                 case DCId.KP:
-                  return Just (Maybe.isNothing (DCA.value (attribute)))
+                  return Just (Maybe.isNothing (DCVA.value (snd (attribute))))
 
                 default:
                   return Nothing

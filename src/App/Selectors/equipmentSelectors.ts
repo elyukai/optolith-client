@@ -41,7 +41,7 @@ import { sortRecordsByName } from "../Utilities/sortBy"
 import { isNumber } from "../Utilities/typeCheckUtils"
 import { getRuleBooksEnabled } from "./rulesSelectors"
 import { getEquipmentSortOptions } from "./sortOptionsSelectors"
-import { getCurrentHeroPresent, getEquipmentFilterText, getEquipmentState, getHigherParadeValues, getHitZoneArmorsState, getItemsState, getItemTemplatesFilterText, getLocaleAsProp, getSpecialAbilities, getWiki, getWikiItemTemplates, getZoneArmorFilterText } from "./stateSelectors"
+import { getCurrentHeroPresent, getEquipmentFilterText, getEquipmentState, getHigherParadeValues, getHitZoneArmorsState, getItemsState, getItemTemplatesFilterText, getSpecialAbilities, getWiki, getWikiItemTemplates, getZoneArmorFilterText } from "./stateSelectors"
 
 const HA = HeroModel.A
 const SDA = StaticData.A
@@ -142,10 +142,10 @@ export const getHitZoneArmors = createMaybeSelector (
 export const getFilteredHitZoneArmors = createMaybeSelector (
   getHitZoneArmors,
   getZoneArmorFilterText,
-  getLocaleAsProp,
-  (mhitZoneArmors, filterText, l10n) =>
+  getWiki,
+  (mhitZoneArmors, filterText, staticData) =>
     fmapF (mhitZoneArmors)
-          (filterAndSortRecordsByName (l10n)
+          (filterAndSortRecordsByName (staticData)
                                       (filterText))
 )
 

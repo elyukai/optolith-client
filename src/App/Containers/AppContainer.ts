@@ -4,19 +4,19 @@ import { Action } from "redux"
 import { Nothing } from "../../Data/Maybe"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as IOActions from "../Actions/IOActions"
-import { AppStateRecord } from "../Models/AppState"
-import { getCurrentHeroPresent, getCurrentTab, getLoadingPhase, getLocaleMessages } from "../Selectors/stateSelectors"
+import { AppState, AppStateRecord } from "../Models/AppState"
+import { getCurrentHeroPresent, getCurrentTab, getWiki } from "../Selectors/stateSelectors"
 import { areAnimationsEnabled, getTheme } from "../Selectors/uisettingsSelectors"
 import { App, AppDispatchProps, AppOwnProps, AppStateProps } from "../Views/App"
 
 const mapStateToProps = (state: AppStateRecord): AppStateProps => ({
   currentTab: getCurrentTab (state),
   mhero: getCurrentHeroPresent (state),
-  l10n: getLocaleMessages (state),
+  staticData: getWiki (state),
   theme: getTheme (state),
+  isLoading: AppState.A.isLoading (state),
   areAnimationsEnabled: areAnimationsEnabled (state),
   platform: remote.process.platform,
-  loading_phase: getLoadingPhase (state),
 })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch<Action>) => ({
