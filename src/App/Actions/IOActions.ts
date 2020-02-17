@@ -21,6 +21,7 @@ import { IdPrefixes } from "../Constants/IdPrefixes"
 import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
 import { User } from "../Models/Hero/heroTypeHelpers"
 import { PetL } from "../Models/Hero/Pet"
+import { Locale as LocaleR } from "../Models/Locale"
 import { UISettingsState } from "../Models/UISettingsState"
 import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories"
 import { L10n } from "../Models/Wiki/L10n"
@@ -35,7 +36,7 @@ import { translate, translateP } from "../Utilities/I18n"
 import { getNewIdByDate, prefixId } from "../Utilities/IDUtils"
 import { bytify, getSystemLocale, showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
-import { Config, Locale, readConfig, writeConfig } from "../Utilities/Raw/JSON/Config"
+import { Config, readConfig, writeConfig } from "../Utilities/Raw/JSON/Config"
 import { convertHero } from "../Utilities/Raw/JSON/Hero/Compat"
 import { convertFromRawHero } from "../Utilities/Raw/JSON/Hero/HeroFromJSON"
 import { convertHeroesForSave, convertHeroForSave } from "../Utilities/Raw/JSON/Hero/HeroToJSON"
@@ -44,6 +45,7 @@ import { isBase64Image } from "../Utilities/RegexUtils"
 import { UndoState } from "../Utilities/undo"
 import { readUpdate, writeUpdate } from "../Utilities/Update"
 import { parseStaticData } from "../Utilities/YAML"
+import { getSupportedLanguages } from "../Utilities/YAML/SupportedLanguages"
 import { ReduxAction } from "./Actions"
 import { addAlert, addDefaultErrorAlert, addErrorAlert, addPrompt, AlertOptions, CustomPromptOptions, getErrorMsg, PromptButton } from "./AlertActions"
 import { updateDateModified } from "./HerolistActions"
@@ -73,9 +75,10 @@ const loadHeroes = async () =>
 interface InitialData {
   staticData: StaticDataRecord
   heroes: Maybe<RawHerolist>
-  defaultLocale: Locale
+  defaultLocale: string
   config: Maybe<Record<Config>>
   cache: Maybe<OrderedMap<string, APCache>>
+  availableLangs: OrderedMap<string, Record<LocaleR>>
 }
 
 export interface ReceiveInitialDataAction {
@@ -87,6 +90,14 @@ export const receiveInitialData = (data: InitialData): ReceiveInitialDataAction 
   type: ActionTypes.RECEIVE_INITIAL_DATA,
   payload: data,
 })
+
+const parseErrorsToPairStr = (es: Error[]) => pipe_ (
+                               es,
+                               fromArray,
+                               map (err => err.message),
+                               intercalate ("\n"),
+                               Pair ("YAML Error")
+                             )
 
 export const getInitialData =
   async (): Promise<Either<Pair<string, string>, InitialData>> => {
@@ -130,19 +141,21 @@ export const getInitialData =
     const mheroes = await loadHeroes ()
     const mcache = await readCache ()
 
+    const eavailable_langs = await getSupportedLanguages ()
+
+    if (isLeft (eavailable_langs)) {
+      return Left (parseErrorsToPairStr (fromLeft_ (eavailable_langs)))
+    }
+
+    const available_langs = fromRight_ (eavailable_langs)
+
     const eres = await parseStaticData (pipe_ (
                                          mconfig,
                                          bindF (Config.A.locale),
                                          fromMaybe (defaultLocale)
                                        ))
 
-    return bimap ((es: Error[]) => pipe_ (
-                                     es,
-                                     fromArray,
-                                     map (err => err.message),
-                                     intercalate ("\n"),
-                                     Pair ("YAML Error")
-                                   ))
+    return bimap (parseErrorsToPairStr)
                  ((staticData: StaticDataRecord): InitialData =>
                    ({
                      staticData,
@@ -150,6 +163,7 @@ export const getInitialData =
                      defaultLocale,
                      config: mconfig,
                      cache: mcache,
+                     availableLangs: available_langs,
                    }))
                  (eres)
   }
@@ -160,6 +174,14 @@ export interface SetLoadingDone {
 
 export const setLoadingDone = (): SetLoadingDone => ({
   type: ActionTypes.SET_LOADING_DONE,
+})
+
+export interface SetLoadingDoneWithError {
+  type: ActionTypes.SET_LOADING_DONE_WITH_ERROR
+}
+
+export const setLoadingDoneWithError = (): SetLoadingDoneWithError => ({
+  type: ActionTypes.SET_LOADING_DONE_WITH_ERROR,
 })
 
 export const requestInitialData: ReduxAction<Promise<void>> = async dispatch =>
@@ -206,6 +228,8 @@ export const requestInitialData: ReduxAction<Promise<void>> = async dispatch =>
                                               title: Just (fst (fromLeft_ (data))),
                                               message: snd (fromLeft_ (data)),
                                             })))
+
+              dispatch (setLoadingDoneWithError ())
 
               return Promise.resolve ()
             }

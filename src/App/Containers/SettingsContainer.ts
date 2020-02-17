@@ -5,6 +5,7 @@ import * as ConfigActions from "../Actions/ConfigActions"
 import * as IOActions from "../Actions/IOActions"
 import * as LocaleActions from "../Actions/LocaleActions"
 import { AppStateRecord } from "../Models/AppState"
+import { getUserSelectableSupportedLanguages } from "../Selectors/localeSelectors"
 import { getLocaleId, getLocaleType } from "../Selectors/stateSelectors"
 import { areAnimationsEnabled, getIsEditingHeroAfterCreationPhaseEnabled, getTheme } from "../Selectors/uisettingsSelectors"
 import { Locale, Theme } from "../Utilities/Raw/JSON/Config"
@@ -16,6 +17,7 @@ const mapStateToProps = (state: AppStateRecord): SettingsStateProps => ({
   isEditingHeroAfterCreationPhaseEnabled: getIsEditingHeroAfterCreationPhaseEnabled (state),
   areAnimationsEnabled: areAnimationsEnabled (state),
   theme: getTheme (state),
+  languages: getUserSelectableSupportedLanguages (state),
 })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): SettingsDispatchProps => ({

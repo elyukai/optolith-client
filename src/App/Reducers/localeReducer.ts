@@ -24,6 +24,7 @@ export const localeReducer =
           id: Just (id),
           type: isJust (mset_locale) ? "set" : "default",
           messages: Just (StaticData.A.ui (action.payload.staticData)),
+          availableLangs: action.payload.availableLangs,
         }))
       }
 

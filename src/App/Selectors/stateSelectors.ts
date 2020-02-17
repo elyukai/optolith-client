@@ -38,6 +38,7 @@ export const getCurrentTab = pipe (ASA.ui, UIA.location)
 export const getLocaleMessages = pipe (ASA.l10n, LSA.messages)
 export const getLocaleId = pipe (ASA.l10n, LSA.id)
 export const getLocaleType = pipe (ASA.l10n, LSA.type)
+export const getAvailableLanguages = pipe (ASA.l10n, LSA.availableLangs)
 
 export const getLocaleAsProp =
   (_: AppStateRecord, props: { l10n: L10nRecord }) => props.l10n

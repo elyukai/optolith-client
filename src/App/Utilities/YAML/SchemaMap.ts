@@ -85,6 +85,7 @@ import { SpellsL10n } from "./Schema/Spells/Spells.l10n"
 import { SpellsUniv } from "./Schema/Spells/Spells.univ"
 import { StatesL10n } from "./Schema/States/States.l10n"
 import { SubjectsL10n } from "./Schema/Subjects/Subjects.l10n"
+import { SupportedLanguages } from "./Schema/SupportedLanguages"
 import { TribesL10n } from "./Schema/Tribes/Tribes.l10n"
 import { UIL10n } from "./Schema/UI/UI.l10n"
 import { ZibiljaRitualsL10n } from "./Schema/ZibiljaRituals/ZibiljaRituals.l10n"
@@ -180,6 +181,7 @@ export interface YamlSchemaMap {
   "Schema/UI/UI.l10n.schema.json" : UIL10n
   "Schema/ZibiljaRituals/ZibiljaRituals.l10n.schema.json" : ZibiljaRitualsL10n
   "Schema/ZibiljaRituals/ZibiljaRituals.univ.schema.json" : ZibiljaRitualsUniv
+  "Schema/SupportedLanguages.schema.json" : SupportedLanguages
 }
 
 export type YamlSchemaId = keyof YamlSchemaMap
@@ -373,6 +375,7 @@ export const name_to_schema = {
   UIL10n: "Schema/UI/UI.l10n.schema.json",
   ZibiljaRitualsL10n: "Schema/ZibiljaRituals/ZibiljaRituals.l10n.schema.json",
   ZibiljaRitualsUniv: "Schema/ZibiljaRituals/ZibiljaRituals.univ.schema.json",
+  SupportedLanguages: "Schema/SupportedLanguages.schema.json",
 } as const
 
 export const schema_to_data : { [K in keyof YamlSchemaMap] : string } = {
@@ -465,6 +468,7 @@ export const schema_to_data : { [K in keyof YamlSchemaMap] : string } = {
   "Schema/UI/UI.l10n.schema.json": "UI.yaml",
   "Schema/ZibiljaRituals/ZibiljaRituals.l10n.schema.json": "ZibiljaRituals.yaml",
   "Schema/ZibiljaRituals/ZibiljaRituals.univ.schema.json": "ZibiljaRituals.yaml",
+  "Schema/SupportedLanguages.schema.json": "SupportedLanguages.yaml",
 }
 
 export const schema_ids : YamlSchemaId[] = [

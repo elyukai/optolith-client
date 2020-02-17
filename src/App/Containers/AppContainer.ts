@@ -15,6 +15,7 @@ const mapStateToProps = (state: AppStateRecord): AppStateProps => ({
   staticData: getWiki (state),
   theme: getTheme (state),
   isLoading: AppState.A.isLoading (state),
+  hasInitWithError: AppState.A.hasInitWithError (state),
   areAnimationsEnabled: areAnimationsEnabled (state),
   platform: remote.process.platform,
 })

@@ -26,6 +26,7 @@ export interface AppStateProps {
   theme: Theme
   areAnimationsEnabled: boolean
   isLoading: boolean
+  hasInitWithError: boolean
 }
 
 export interface AppDispatchProps {
@@ -72,6 +73,7 @@ export class App extends React.Component<AppProps, AppState> {
       leaveFullscreen,
       checkForUpdates,
       isLoading,
+      hasInitWithError,
     } = this.props
 
     const { hasError } = this.state
@@ -112,6 +114,35 @@ export class App extends React.Component<AppProps, AppState> {
             </div>
           </div>
 
+          <AlertsContainer />
+          <TitleBar
+            close={close}
+            closeDuringLoad={closeDuringLoad}
+            enterFullscreen={enterFullscreen}
+            leaveFullscreen={leaveFullscreen}
+            maximize={maximize}
+            minimize={minimize}
+            platform={platform}
+            restore={restore}
+            isLoading
+            />
+        </div>
+      )
+    }
+
+    if (hasInitWithError) {
+      return (
+        <div
+          id="body"
+          className={classListMaybe (List (
+            Just (`theme-${theme}`),
+            Just (`platform-${platform}`)
+          ))}
+          lang={fromMaybe ("") (listToMaybe (splitOn ("-") (getSystemLocale ())))}
+          >
+          <div className="background-image">
+            <img src="images/background.svg" alt="" />
+          </div>
           <AlertsContainer />
           <TitleBar
             close={close}

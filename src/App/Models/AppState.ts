@@ -11,6 +11,7 @@ export interface AppState {
   ui: Record<UIState>
   wiki: Record<StaticData>
   isLoading: boolean
+  hasInitWithError: boolean
 }
 
 export type AppStateRecord = Record<AppState>
@@ -23,4 +24,5 @@ export const AppState =
                 ui: UIState.default,
                 wiki: StaticData.default,
                 isLoading: true,
+                hasInitWithError: false,
               })

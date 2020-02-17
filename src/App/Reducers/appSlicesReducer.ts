@@ -1,7 +1,7 @@
 import { AppState } from "../Models/AppState"
 import { combineReducerRecord } from "../Utilities/combineReducerRecord"
 import { herolistReducer } from "./herolistReducer"
-import { isLoadingReducer } from "./isReadyReducer"
+import { hasInitWithErrorsReducer, isLoadingReducer } from "./isReadyReducer"
 import { localeReducer } from "./localeReducer"
 import { uiReducer } from "./uiReducer"
 import { wikiReducer } from "./wikiReducer"
@@ -14,4 +14,5 @@ export const appSlicesReducer =
                          ui: uiReducer,
                          wiki: wikiReducer,
                          isLoading: isLoadingReducer,
+                         hasInitWithError: hasInitWithErrorsReducer,
                        })

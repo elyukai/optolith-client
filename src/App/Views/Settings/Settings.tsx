@@ -1,12 +1,12 @@
 import * as React from "react"
 import { List } from "../../../Data/List"
 import { Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { RadioOption } from "../../Models/View/RadioOption"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
-import { isStable } from "../../Selectors/envSelectors"
 import { translate } from "../../Utilities/I18n"
-import { Locale, Theme } from "../../Utilities/Raw/JSON/Config"
+import { Theme } from "../../Utilities/Raw/JSON/Config"
 import { BorderButton } from "../Universal/BorderButton"
 import { Checkbox } from "../Universal/Checkbox"
 import { Dialog } from "../Universal/Dialog"
@@ -27,6 +27,7 @@ export interface SettingsStateProps {
   theme: Theme
   isEditingHeroAfterCreationPhaseEnabled: boolean
   areAnimationsEnabled: boolean
+  languages: List<Record<DropdownOption<string>>>
 }
 
 export interface SettingsDispatchProps {
@@ -56,6 +57,7 @@ export const Settings: React.FC<Props> = props => {
     areAnimationsEnabled,
     platform,
     checkForUpdates,
+    languages,
   } = props
 
   return (
@@ -76,28 +78,7 @@ export const Settings: React.FC<Props> = props => {
           DropdownOption ({
             name: translate (staticData) ("settings.systemlanguage"),
           }),
-          DropdownOption ({
-            id: Just (Locale.German),
-            name: "Deutsch (Deutschland)",
-          }),
-          DropdownOption ({
-            id: Just (Locale.English),
-            name: "English (United States)",
-          }),
-          DropdownOption ({
-            id: Just (Locale.Dutch),
-            name: "Nederlands (België)",
-          }),
-          DropdownOption ({
-            id: Just (Locale.French),
-            name: "Français (France)",
-            disabled: Just (isStable),
-          }),
-          DropdownOption ({
-            id: Just (Locale.Italian),
-            name: "Italiano (Italia)",
-            disabled: Just (isStable),
-          })
+          ...languages
         )}
         value={localeType === "default" ? Nothing : localeString}
         label={translate (staticData) ("settings.language")}
