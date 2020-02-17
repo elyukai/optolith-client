@@ -1,5 +1,6 @@
 // @ts-check
 const { L10n } = require ("../../../Models/Wiki/L10n")
+const { StaticData, StaticDataL } = require ("../../../Models/Wiki/WikiModel")
 const { ActiveActivatable } = require ("../../../Models/View/ActiveActivatable")
 const { ActivatableNameCost } = require ("../../../Models/View/ActivatableNameCost")
 const { ActiveObjectWithId } = require ("../../../Models/ActiveEntries/ActiveObjectWithId")
@@ -10,14 +11,15 @@ const { set } = require ("../../../../Data/Lens")
 const { Just, Nothing } = require ("../../../../Data/Maybe")
 const { List } = require ("../../../../Data/List")
 const { compressList } = require ("../activatableNameUtils")
+const { composeL } = require ("../../compose")
 const { DisadvantageId } = require ("../../../Constants/Ids")
 
 const L10nL = makeLenses (L10n)
 
-const L10nMockup = set (L10nL.id) ("de-DE") (L10n.default)
+const StaticDataMockup = set (composeL (StaticDataL.ui, L10nL.id)) ("de-DE") (StaticData.default)
 
 test ('compressList', () => {
-  expect (compressList (L10nMockup)
+  expect (compressList (StaticDataMockup)
                        (List ( ActiveActivatable ({
                                  nameAndCost: ActivatableNameCost ({
                                    active: ActiveObjectWithId ({
