@@ -1,9 +1,5 @@
 const { copy, remove, existsSync } = require ("fs-extra")
 const { join } = require ("path")
-const { repository } = require ("./tablesSrc.json")
-
-
-const src_dir = join (...repository, "Schema")
 
 
 /**
@@ -27,7 +23,7 @@ const copySchema =
 
 
 const copyData =
-  async () => {
+  async (src_dir) => {
     const src = join (src_dir, "Data")
 
     if (existsSync (src)) {
@@ -42,9 +38,11 @@ const copyData =
 
 
 const getStaticData = async () => {
+  const { repository } = require ("./tablesSrc.json")
+  const src_dir = join (...repository, "Schema")
   console.log ("Copying most recent static data files...")
 
-  await copyData ()
+  await copyData (src_dir)
   await copySchema (src_dir, join ("app", "Database", "Schema"))
   await copySchema (src_dir, join ("src", "App", "Utilities", "YAML", "Schema"))
 
