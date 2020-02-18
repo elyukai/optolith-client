@@ -1,6 +1,6 @@
 import { ident } from "../../../../../Data/Function"
 import { fmap, fmapF } from "../../../../../Data/Functor"
-import { List } from "../../../../../Data/List"
+import { isList, List } from "../../../../../Data/List"
 import { bind, elem, maybeToUndefined } from "../../../../../Data/Maybe"
 import { gt } from "../../../../../Data/Num"
 import { foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from "../../../../../Data/OrderedMap"
@@ -35,6 +35,7 @@ const { active } = ActivatableSkillDependent.AL
 const { active: activeList } = ActivatableDependent.AL
 const { items, hitZoneArmors: armorZones, purse } = Belongings.AL
 const PDA = PersonalData.A
+const PADTA = PrimaryAttributeDamageThreshold.A
 
 const {
   addedArcaneEnergyPoints,
@@ -116,8 +117,6 @@ const getLiturgicalChantsForSave = getValuesForSave (HA.liturgicalChants) (activ
 
 const getBlessingsForSave = pipe (HA.blessings, toArray)
 
-const { primary, threshold } = PrimaryAttributeDamageThreshold.AL
-
 const getBelongingsForSave = (hero: HeroModelRecord) =>
   ({
     items: toObjectWith
@@ -175,8 +174,20 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
           length: maybeToUndefined (length),
           pa: maybeToUndefined (pa),
           pro: maybeToUndefined (pro),
-          reloadTime: maybeToUndefined (reloadTime),
-          stp: maybeToUndefined (stp),
+          reloadTime: pipe_ (
+                        reloadTime,
+                        fmap (x => isList (x)
+                                   ? List.toArray (x)
+                                   : x),
+                        maybeToUndefined
+                      ),
+          stp: pipe_ (
+                 stp,
+                 fmap (x => isList (x)
+                            ? List.toArray (x)
+                            : x),
+                 maybeToUndefined
+               ),
           stabilityMod: maybeToUndefined (stabilityMod),
           ammunition: maybeToUndefined (ammunition),
           combatTechnique: maybeToUndefined (combatTechnique),
@@ -189,14 +200,25 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
           imp: maybeToUndefined (improvisedWeaponGroup),
           primaryThreshold:
             maybeToUndefined (fmapF (damageBonus)
-                             ((bonus): RawPrimaryAttributeDamageThreshold => ({
-                               primary: maybeToUndefined (primary (bonus)),
-                               threshold: ifElse<number | PNumNum, PNumNum> (isTuple)
-                                                                            <number | number[]>
-                                                                            (Tuple.toArray)
-                                                                            (ident)
-                                                                            (threshold (bonus)),
-                             }))),
+                             ((bonus): RawPrimaryAttributeDamageThreshold => {
+                               const primary = PADTA.primary (bonus)
+                               const threshold = PADTA.threshold (bonus)
+
+                               return {
+                                 primary: pipe_ (
+                                            primary,
+                                            fmap (x => isTuple (x)
+                                                       ? Tuple.toArray (x)
+                                                       : x),
+                                            maybeToUndefined
+                                          ),
+                                 threshold: ifElse<number | PNumNum, PNumNum> (isTuple)
+                                                                              <number | number[]>
+                                                                              (Tuple.toArray)
+                                                                              (ident)
+                                                                              (threshold),
+                               }
+                             })),
           range: maybeToUndefined (fmap<List<number>, number[]> (List.toArray) (range)),
         }
       })

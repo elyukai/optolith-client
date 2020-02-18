@@ -1,3 +1,21 @@
+## 1.3.0
+
+## Neue Features
+
+- Französische Version (inkl. Regelwerk)
+- Aventurisches Kompendium 2
+
+## Verbesserungen
+
+- Komplett neuer Datenbankunterbau und dadurch Ladezeitersparnis von ca. 50%
+
+## Fehlerbehebungen
+
+- Typo in ATTRIBUTO (Körperkraft), zweite Erweiterung behoben.
+- Wurfnetz war bei Schleudern anstelle bei Wurfwaffen hinterlegt.
+- Typo im Text der SF Abrichter behoben.
+- Die Anwendungskonfiguration wirft jetzt keine Fehler mehr hervor.
+
 ## 1.2.0
 
 Diese Release ist hauptsächlich für andere Sprachen, da es Optolith jetzt auch auf Niederländisch gibt und English an Büchern aufgeholt hat. Allerdings gibt es auch viele relevante Fehlerbehebungen und kleine Verbesserungen.

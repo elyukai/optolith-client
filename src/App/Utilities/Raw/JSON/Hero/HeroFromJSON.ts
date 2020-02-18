@@ -1,7 +1,7 @@
 import { cnst, flip, ident, join } from "../../../../../Data/Function"
 import { fmap, fmapF } from "../../../../../Data/Functor"
 import { foldr, fromArray, List } from "../../../../../Data/List"
-import { elem, fromMaybe, Maybe, maybe, Nothing } from "../../../../../Data/Maybe"
+import { elem, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../../../Data/Maybe"
 import { foldlWithKey, lookup, lookupF, OrderedMap } from "../../../../../Data/OrderedMap"
 import { insert, OrderedSet } from "../../../../../Data/OrderedSet"
 import { Record, StringKeyObject } from "../../../../../Data/Record"
@@ -216,7 +216,9 @@ const createHeroObject = (staticData: StaticDataRecord) => (hero: Raw.RawHero): 
                   Record<PrimaryAttributeDamageThreshold>
                 >
                   (primaryThreshold => PrimaryAttributeDamageThreshold ({
-                    primary: Maybe (primaryThreshold .primary),
+                    primary: typeof primaryThreshold.primary === "object"
+                             ? Just (Tuple.fromArray (primaryThreshold.primary))
+                             : Maybe (primaryThreshold.primary),
                     threshold: typeof primaryThreshold .threshold === "object"
                       ? Tuple.fromArray (primaryThreshold .threshold as [number, number])
                       : primaryThreshold .threshold,
@@ -232,8 +234,12 @@ const createHeroObject = (staticData: StaticDataRecord) => (hero: Raw.RawHero): 
               pro: Maybe (obj .pro),
               range: fmap<number[], List<number>> (List.fromArray)
                                                   (Maybe (obj .range)),
-              reloadTime: Maybe (obj .reloadTime),
-              stp: Maybe (obj .stp),
+              reloadTime: typeof obj.reloadTime === "object"
+                          ? Just (List.fromArray (obj.reloadTime))
+                          : Maybe (obj.reloadTime),
+              stp: typeof obj.stp === "object"
+                   ? Just (List.fromArray (obj.stp))
+                   : Maybe (obj.stp),
               weight: Maybe (obj .weight),
               stabilityMod: Maybe (obj .stabilityMod),
             }),
