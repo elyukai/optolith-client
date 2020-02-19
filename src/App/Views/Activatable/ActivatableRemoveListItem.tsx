@@ -1,6 +1,6 @@
 import * as React from "react"
 import { isString } from "util"
-import { notEquals } from "../../../Data/Eq"
+import { equals, notEquals } from "../../../Data/Eq"
 import { onF } from "../../../Data/Function"
 import { fmap, mapReplace } from "../../../Data/Functor"
 import { cons, flength, List } from "../../../Data/List"
@@ -209,14 +209,14 @@ const ActivatableRemoveListItemM =
       const curr_item = prevProps.item
       const next_item = nextProps.item
 
-      return onF (AAA_.level) (notEquals) (curr_item) (next_item)
-        || onF (AAA_.finalCost) (notEquals) (curr_item) (next_item)
-        || prevProps.isRemovingEnabled === !nextProps.isRemovingEnabled
-        || onF (AAA_.minLevel) (notEquals) (curr_item) (next_item)
-        || onF (AAA_.maxLevel) (notEquals) (curr_item) (next_item)
-        || onF (AAA_.name) (notEquals) (curr_item) (next_item)
-        || onF (AAA_.disabled) (notEquals) (curr_item) (next_item)
-        || !INTERNAL_shallowEquals (prevProps.selectedForInfo) (nextProps.selectedForInfo)
+      return onF (AAA_.level) (equals) (curr_item) (next_item)
+        && onF (AAA_.finalCost) (equals) (curr_item) (next_item)
+        && prevProps.isRemovingEnabled === nextProps.isRemovingEnabled
+        && onF (AAA_.minLevel) (equals) (curr_item) (next_item)
+        && onF (AAA_.maxLevel) (equals) (curr_item) (next_item)
+        && onF (AAA_.name) (equals) (curr_item) (next_item)
+        && onF (AAA_.disabled) (equals) (curr_item) (next_item)
+        && INTERNAL_shallowEquals (prevProps.selectedForInfo) (nextProps.selectedForInfo)
     }
   )
 

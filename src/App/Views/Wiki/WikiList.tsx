@@ -145,9 +145,9 @@ const WikiList: React.FC<Props> = ({ list, sex = "m", currentInfoId, showInfo })
 const MemoWikiList = React.memo (
   WikiList,
   (prevProps, nextProps) =>
-    nextProps.list !== prevProps.list
-    || nextProps.sex !== prevProps.sex
-    || nextProps.currentInfoId !== prevProps.currentInfoId
+    nextProps.list === prevProps.list
+    && nextProps.sex === prevProps.sex
+    && nextProps.currentInfoId === prevProps.currentInfoId
 )
 
 export { MemoWikiList as WikiList }

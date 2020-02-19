@@ -137,17 +137,17 @@ const SkillListItem: React.FC<Props> = props => {
 const MemoSkillListItem = React.memo (
   SkillListItem,
   (prevProps, nextProps) =>
-    prevProps.sr !== nextProps.sr
-    || prevProps.addText !== nextProps.addText
-    || prevProps.activateDisabled !== nextProps.activateDisabled
-    || prevProps.addDisabled !== nextProps.addDisabled
-    || prevProps.removeDisabled !== nextProps.removeDisabled
-    || prevProps.attributes !== nextProps.attributes
-    || prevProps.staticData !== nextProps.staticData
-    || prevProps.insertTopMargin !== nextProps.insertTopMargin
-    || prevProps.typ !== nextProps.typ
-    || prevProps.untyp !== nextProps.untyp
-    || !INTERNAL_shallowEquals (prevProps.selectedForInfo) (nextProps.selectedForInfo)
+    prevProps.sr === nextProps.sr
+    && prevProps.addText === nextProps.addText
+    && prevProps.activateDisabled === nextProps.activateDisabled
+    && prevProps.addDisabled === nextProps.addDisabled
+    && prevProps.removeDisabled === nextProps.removeDisabled
+    && prevProps.attributes === nextProps.attributes
+    && prevProps.staticData === nextProps.staticData
+    && prevProps.insertTopMargin === nextProps.insertTopMargin
+    && prevProps.typ === nextProps.typ
+    && prevProps.untyp === nextProps.untyp
+    && INTERNAL_shallowEquals (prevProps.selectedForInfo) (nextProps.selectedForInfo)
 )
 
 export { MemoSkillListItem as SkillListItem }
