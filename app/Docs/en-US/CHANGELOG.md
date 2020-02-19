@@ -1,3 +1,19 @@
+## 1.3.0
+
+## New Features
+
+- French version (incl. Core Rules) #34
+
+## Enhancements
+
+- Completely new database layer and thus start-up time reduction up to 50%
+
+## Bug Fixes
+
+- The maximum of CTs caused by their primary attributes has been fixed. #379
+- Cast-Net has had the CT Slings instead of Thrown Weapons. #345
+- The app config does not cause errors anymore. #358
+
 ## 1.2.0
 
 This release marks a big milestone for the English version as it includes all rule books released so far. This includes the **Compendium I**, **Magic of Aventuria** and more. Also, there are quite a few fixes.

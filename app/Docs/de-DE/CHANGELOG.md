@@ -2,8 +2,8 @@
 
 ## Neue Features
 
-- Französische Version (inkl. Regelwerk)
-- Aventurisches Kompendium 2
+- Französische Version (inkl. Regelwerk) #34
+- Aventurisches Kompendium 2 #93
 
 ## Verbesserungen
 
@@ -11,10 +11,12 @@
 
 ## Fehlerbehebungen
 
-- Typo in ATTRIBUTO (Körperkraft), zweite Erweiterung behoben.
-- Wurfnetz war bei Schleudern anstelle bei Wurfwaffen hinterlegt.
-- Typo im Text der SF Abrichter behoben.
-- Die Anwendungskonfiguration wirft jetzt keine Fehler mehr hervor.
+- Hexenblick und Elfenhaar sind jetzt nur noch für Hexen bzw. Elfen wählbar. #377
+- Die Obergrenze durch die Leiteigenschaft bei Kampftechniken funktioniert jetzt wieder. #379
+- Typo in ATTRIBUTO (Körperkraft), zweite Erweiterung behoben. #366
+- Wurfnetz war bei Schleudern anstelle bei Wurfwaffen hinterlegt. #345
+- Typo im Text der SF Abrichter behoben. #342
+- Die Anwendungskonfiguration wirft jetzt keine Fehler mehr hervor. #358
 
 ## 1.2.0
 
