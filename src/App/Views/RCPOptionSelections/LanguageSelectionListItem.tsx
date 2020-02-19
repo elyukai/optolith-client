@@ -1,6 +1,7 @@
 import * as React from "react"
 import { List } from "../../../Data/List"
 import { Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { min } from "../../../Data/Num"
 import { findWithDefault, member, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { DropdownOption } from "../../Models/View/DropdownOption"
@@ -45,7 +46,7 @@ export const LanguagesSelectionListItem: React.FC<Props> = props => {
   )
 
   const levelOptions = React.useMemo (
-    () => getLevelElements (apLeft - active_level * 2),
+    () => getLevelElements (min (apLeft / 2 + active_level) (3)),
     [ active_level, apLeft ]
   )
 
@@ -67,7 +68,7 @@ export const LanguagesSelectionListItem: React.FC<Props> = props => {
               options={List (
                 DropdownOption ({
                   id: Just (4),
-                  name: translate (staticData) ("rcpselectoptions.nativetongue.placeholder"),
+                  name: translate (staticData) ("specialabilities.nativetonguelevel"),
                 })
               )}
               disabled

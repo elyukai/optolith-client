@@ -1,11 +1,10 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 import { bindF, Right, second } from "../../../../Data/Either"
-import { List } from "../../../../Data/List"
-import { Maybe, Nothing } from "../../../../Data/Maybe"
+import { Maybe } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
-import { MagicalGroup, MagicalTradition } from "../../../Constants/Groups"
-import { Spell } from "../../../Models/Wiki/Spell"
+import { Tuple } from "../../../../Data/Tuple"
+import { ZibiljaRitual as ZR } from "../../../Models/Wiki/ZibiljaRitual"
 import { icToInt } from "../../AdventurePoints/improvementCostUtils"
 import { ndash } from "../../Chars"
 import { pipe } from "../../pipe"
@@ -21,20 +20,16 @@ import { toMarkdown } from "./ToMarkdown"
 import { toSourceRefs } from "./ToSourceRefs"
 
 
-const toZibiljaRitual : YamlPairConverterE<ZibiljaRitualUniv, ZibiljaRitualL10n, string, Spell>
-                      = ([ univ, l10n ]) => Right<[string, Record<Spell>]> ([
+const toZibiljaRitual : YamlPairConverterE<ZibiljaRitualUniv, ZibiljaRitualL10n, string, ZR>
+                      = ([ univ, l10n ]) => Right<[string, Record<ZR>]> ([
                           univ.id,
-                          Spell ({
+                          ZR ({
                             id: univ .id,
                             name: l10n.name,
-                            check: List (univ.check1, univ.check2, univ.check3),
+                            check: Tuple (univ.check1, univ.check2, univ.check3),
                             checkmod: Maybe (univ.checkMod),
-                            gr: MagicalGroup.ZibiljaRituals,
                             ic: icToInt (univ .ic),
                             property: univ.property,
-                            tradition: List (MagicalTradition.Zibilija),
-                            subtradition: List (),
-                            prerequisites: List (),
                             effect: toMarkdown (l10n.effect),
                             castingTime: ndash,
                             castingTimeShort: ndash,
@@ -51,12 +46,11 @@ const toZibiljaRitual : YamlPairConverterE<ZibiljaRitualUniv, ZibiljaRitualL10n,
                             target: l10n.target,
                             src: toSourceRefs (l10n.src),
                             errata: toErrata (l10n.errata),
-                            category: Nothing,
                           }),
                         ])
 
 
-export const toZibiljaRituals : YamlFileConverter<string, Record<Spell>>
+export const toZibiljaRituals : YamlFileConverter<string, Record<ZR>>
                               = pipe (
                                   (yaml_mp : YamlNameMap) => zipBy ("id")
                                                                    (yaml_mp.ZibiljaRitualsUniv)

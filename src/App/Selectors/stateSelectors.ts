@@ -17,7 +17,7 @@ import { SubWindowsState } from "../Models/SubWindowsState"
 import { UIState } from "../Models/UIState"
 import { UIWikiState } from "../Models/UIWikiState"
 import { L10nRecord } from "../Models/Wiki/L10n"
-import { StaticData } from "../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { heroReducer } from "../Reducers/heroReducer"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { pipe } from "../Utilities/pipe"
@@ -408,7 +408,7 @@ export const getWikiSpellsGroup =
   pipe (ASA.ui, UIA.wiki, WikiUI.spellsGroup)
 
 
-export const getWiki = ASA.wiki
+export const getWiki: (state: AppStateRecord) => StaticDataRecord = ASA.wiki
 
 const SDA = StaticData.A
 

@@ -15,7 +15,7 @@ export interface MagicalDance {
   "@@name": "MagicalDance"
   id: string
   name: string
-  nameByTradition: OrderedMap<number, NumIdName>
+  nameByTradition: OrderedMap<number, Record<NumIdName>>
   check: Tuple<[string, string, string]>
   ic: number
   property: Property

@@ -1,12 +1,11 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 import { bindF, Right, second } from "../../../../Data/Either"
-import { fromArray, List } from "../../../../Data/List"
-import { Maybe, Nothing } from "../../../../Data/Maybe"
+import { fromArray } from "../../../../Data/List"
+import { Maybe } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
-import { MagicalGroup, MagicalTradition } from "../../../Constants/Groups"
-import { Spell } from "../../../Models/Wiki/Spell"
-import { icToInt } from "../../AdventurePoints/improvementCostUtils"
+import { Tuple } from "../../../../Data/Tuple"
+import { GeodeRitual } from "../../../Models/Wiki/GeodeRitual"
 import { ndash } from "../../Chars"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
@@ -22,19 +21,15 @@ import { toActivatablePrerequisite } from "./ToPrerequisites"
 import { toSourceRefs } from "./ToSourceRefs"
 
 
-const toGeodeRitual : YamlPairConverterE<GeodeRitualUniv, GeodeRitualL10n, string, Spell>
-                    = ([ univ, l10n ]) => Right<[string, Record<Spell>]> ([
+const toGeodeRitual : YamlPairConverterE<GeodeRitualUniv, GeodeRitualL10n, string, GeodeRitual>
+                    = ([ univ, l10n ]) => Right<[string, Record<GeodeRitual>]> ([
                         univ.id,
-                        Spell ({
+                        GeodeRitual ({
                           id: univ .id,
                           name: l10n.name,
-                          check: List (univ.check1, univ.check2, univ.check3),
+                          check: Tuple (univ.check1, univ.check2, univ.check3),
                           checkmod: Maybe (univ.checkMod),
-                          gr: MagicalGroup.GeodeRituals,
-                          ic: icToInt ("B"),
                           property: univ.property,
-                          tradition: List (MagicalTradition.Geodes),
-                          subtradition: List (),
                           prerequisites: fromArray (
                             univ.activatablePrerequisites
                               .map (toActivatablePrerequisite)
@@ -42,25 +37,20 @@ const toGeodeRitual : YamlPairConverterE<GeodeRitualUniv, GeodeRitualL10n, strin
                           effect: toMarkdown (l10n.effect),
                           castingTime: ndash,
                           castingTimeShort: ndash,
-                          castingTimeNoMod: false,
                           cost: l10n.aeCost,
                           costShort: l10n.aeCostShort,
-                          costNoMod: false,
                           range: l10n.range,
                           rangeShort: l10n.rangeShort,
-                          rangeNoMod: false,
                           duration: l10n.duration,
                           durationShort: l10n.durationShort,
-                          durationNoMod: false,
                           target: l10n.target,
                           src: toSourceRefs (l10n.src),
                           errata: toErrata (l10n.errata),
-                          category: Nothing,
                         }),
                       ])
 
 
-export const toGeodeRituals : YamlFileConverter<string, Record<Spell>>
+export const toGeodeRituals : YamlFileConverter<string, Record<GeodeRitual>>
                             = pipe (
                                 (yaml_mp : YamlNameMap) => zipBy ("id")
                                                                  (yaml_mp.GeodeRitualsUniv)

@@ -1,13 +1,13 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 import { bindF, Right, second } from "../../../../Data/Either"
 import { List } from "../../../../Data/List"
-import { Maybe, Nothing } from "../../../../Data/Maybe"
+import { Maybe } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
-import { MagicalGroup, MagicalTradition } from "../../../Constants/Groups"
-import { Spell } from "../../../Models/Wiki/Spell"
+import { Tuple } from "../../../../Data/Tuple"
+import { SkillId } from "../../../Constants/Ids"
+import { ElvenMagicalSong as EMS } from "../../../Models/Wiki/ElvenMagicalSong"
 import { icToInt } from "../../AdventurePoints/improvementCostUtils"
-import { ndash } from "../../Chars"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
@@ -21,42 +21,29 @@ import { toMarkdown } from "./ToMarkdown"
 import { toSourceRefs } from "./ToSourceRefs"
 
 
-const toEMS : YamlPairConverterE<ElvenMagicalSongUniv, ElvenMagicalSongL10n, string, Spell>
-            = ([ univ, l10n ]) => Right<[string, Record<Spell>]> ([
+const toEMS : YamlPairConverterE<ElvenMagicalSongUniv, ElvenMagicalSongL10n, string, EMS>
+            = ([ univ, l10n ]) => Right<[string, Record<EMS>]> ([
                 univ.id,
-                Spell ({
+                EMS ({
                   id: univ .id,
                   name: l10n.name,
-                  check: List (univ.check1, univ.check2, univ.check3),
+                  check: Tuple (univ.check1, univ.check2, univ.check3),
                   checkmod: Maybe (univ.checkMod),
-                  gr: MagicalGroup.ElvenMagicalSongs,
+                  skill: univ.skill === undefined
+                         ? List (SkillId.Singing, SkillId.Music)
+                         : List (univ.skill),
                   ic: icToInt (univ .ic),
                   property: univ.property,
-                  tradition: List (MagicalTradition.Elves),
-                  subtradition: List (),
-                  prerequisites: List (),
                   effect: toMarkdown (l10n.effect),
-                  castingTime: ndash,
-                  castingTimeShort: ndash,
-                  castingTimeNoMod: false,
                   cost: l10n.aeCost,
                   costShort: l10n.aeCostShort,
-                  costNoMod: false,
-                  range: ndash,
-                  rangeShort: ndash,
-                  rangeNoMod: false,
-                  duration: ndash,
-                  durationShort: ndash,
-                  durationNoMod: false,
-                  target: ndash,
                   src: toSourceRefs (l10n.src),
                   errata: toErrata (l10n.errata),
-                  category: Nothing,
                 }),
               ])
 
 
-export const toElvenMagicalSongs : YamlFileConverter<string, Record<Spell>>
+export const toElvenMagicalSongs : YamlFileConverter<string, Record<EMS>>
                                  = pipe (
                                      (yaml_mp : YamlNameMap) =>
                                        zipBy ("id")

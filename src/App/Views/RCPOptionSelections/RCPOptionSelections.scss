@@ -1,0 +1,223 @@
+.rcp-selections {
+  section:not(:first-child) {
+    margin-top: 20px;
+  }
+
+  section.rcp-selectoptions--culture > h3 + * {
+    margin-top: 10px;
+  }
+
+  section.rcp-selectoptions--profession > *:not(h3) {
+    margin-top: 20px;
+  }
+
+  section.rcp-selectoptions--profession > h3 + * {
+    margin-top: 10px;
+  }
+
+  .spec {
+    > div {
+      display: flex;
+
+      > div:last-child:not(:first-child) {
+        margin-left: 11px;
+      }
+    }
+
+    .radiobutton-group {
+      width: 100%;
+    }
+  }
+
+  .languages-scripts {
+    display: flex;
+    gap: 20px;
+  }
+
+  ul.scripts,
+  ul.languages {
+    flex: 1 1 0;
+    position: relative;
+
+    > li {
+      display: flex;
+      width: 100%;
+      padding: 0;
+
+      .checkbox {
+        flex: 1 1 0;
+      }
+
+      &::before {
+        display: none;
+      }
+    }
+  }
+
+  ul.languages > li .dropdown {
+    flex: 0 0 60px;
+    margin: 0 0 0 20px;
+    width: 60px;
+  }
+
+  .list.curses, .list.skills {
+    li {
+      display: flex;
+      align-items: center;
+      height: 32px;
+      padding: 0;
+
+      &::before {
+        display: none;
+      }
+
+      &:hover {
+        background: var(--separator-color-transparent);
+      }
+
+      > .checkbox {
+        flex: 1 1 0;
+      }
+
+      > span {
+        margin: 0 11px;
+      }
+
+      > .btn {
+        padding: 0 14px 3px;
+        min-width: auto;
+        font-size: 16px;
+        flex: none;
+        margin-left: 4px;
+        height: 24px;
+        min-height: 24px;
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+
+  .cantrips > ul > li {
+    padding: 0;
+  }
+
+  .list.curses {
+    > div {
+      > .checkbox {
+        flex: 1 1 100%;
+
+        &:hover {
+          background: none;
+        }
+      }
+    }
+  }
+
+  .list.skills {
+    > div {
+      > .skillname {
+        flex: 1 1 100%;
+      }
+    }
+  }
+
+  .list.lang_lit {
+    > h4 > span {
+      &.error {
+        color: #aa1b32;
+      }
+    }
+
+    .languages-scripts {
+      display: flex;
+      align-items: flex-start;
+
+      > div {
+        flex: 1 1 100%;
+
+        > div {
+          display: flex;
+          align-items: center;
+
+          &:not(.disabled):hover {
+            background: var(--separator-color-transparent);
+          }
+
+          > .checkbox {
+            flex: 1 1 100%;
+
+            &:hover {
+              background: none;
+            }
+
+            &.disabled {
+              .icon {
+                .border {
+                  border: 1px solid var(--separator-color-transparent);
+                }
+
+                .hook {
+                  border-color: var(--separator-color-transparent);
+                }
+              }
+
+              .text {
+                color: var(--separator-color-halftransparent);
+              }
+            }
+          }
+
+          > .dropdown {
+            flex: none;
+            margin: 0;
+            line-height: 26px;
+            width: 60px;
+
+            > div > div {
+              &.value {
+                height: 28px;
+
+                &::before {
+                  top: 9px;
+                }
+
+                &::after {
+                  bottom: 9px;
+                }
+              }
+            }
+
+            &.bottom > div > .down {
+              top: 28px;
+            }
+
+            &.top > div > .down {
+              bottom: 28px;
+            }
+
+            &.disabled {
+              > div {
+                > .value {
+                  color: var(--separator-color-halftransparent);
+                  border-color: var(--separator-color-transparent);
+
+                  &::before, &::after {
+                    border-color: var(--separator-color-transparent);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .scripts {
+      margin-left: 20px;
+    }
+  }
+
+  .scroll-inner > .btn.btn-primary {
+    margin-top: 20px;
+  }
+}

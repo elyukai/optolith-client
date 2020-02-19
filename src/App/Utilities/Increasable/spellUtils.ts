@@ -5,7 +5,7 @@ import { fmap } from "../../../Data/Functor"
 import { all, any, consF, countWith, elemF, find, intersecting, List, minimum, notElem } from "../../../Data/List"
 import { and, bindF, elem, ensure, fromMaybe_, isJust, Just, listToMaybe, mapMaybe, Maybe, maybe, Nothing, sum } from "../../../Data/Maybe"
 import { gte, inc } from "../../../Data/Num"
-import { alter, elems, empty, filter, foldl, foldrWithKey, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { alter, elems, empty, filter, foldl, foldrWithKey, lookup, lookupF, OrderedMap, union } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { traceShowId } from "../../../Debug/Trace"
 import { IC, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
@@ -17,11 +17,20 @@ import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependen
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { TransferUnfamiliar, UnfamiliarGroup } from "../../Models/Hero/TransferUnfamiliar"
 import { SpellWithRequirements } from "../../Models/View/SpellWithRequirements"
+import { animistForceToSpell } from "../../Models/Wiki/AnimistForce"
 import { Cantrip } from "../../Models/Wiki/Cantrip"
+import { curseToSpell } from "../../Models/Wiki/Curse"
+import { dominationRitualToSpell } from "../../Models/Wiki/DominationRitual"
+import { elvenMagicalSongToSpell } from "../../Models/Wiki/ElvenMagicalSong"
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { geodeRitualToSpell } from "../../Models/Wiki/GeodeRitual"
+import { magicalDanceToSpell } from "../../Models/Wiki/MagicalDance"
+import { magicalMelodyToSpell } from "../../Models/Wiki/MagicalMelody"
+import { rogueSpellToSpell } from "../../Models/Wiki/RogueSpell"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { Spell } from "../../Models/Wiki/Spell"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { zibiljaRitualToSpell } from "../../Models/Wiki/ZibiljaRitual"
 import { modifyByLevel } from "../Activatable/activatableModifierUtils"
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils"
 import { mapMagicalTradIdToNumId } from "../Activatable/traditionUtils"
@@ -197,6 +206,61 @@ export const isSpellDecreasable =
                                               (propertyKnowledge)
                                               (wiki_entry)
                                               (hero_entry)
+
+
+export const combineSpellsAndMagicalActions = (staticData: StaticDataRecord) => pipe_ (
+                                                SDA.spells (staticData),
+                                                pipe_ (
+                                                  SDA.animistForces (staticData),
+                                                  OrderedMap.map (animistForceToSpell),
+                                                  union
+                                                ),
+                                                pipe_ (
+                                                  SDA.curses (staticData),
+                                                  OrderedMap.map (curseToSpell),
+                                                  union
+                                                ),
+                                                pipe_ (
+                                                  SDA.dominationRituals (staticData),
+                                                  OrderedMap.map (dominationRitualToSpell),
+                                                  union
+                                                ),
+                                                pipe_ (
+                                                  SDA.elvenMagicalSongs (staticData),
+                                                  OrderedMap.map (
+                                                    elvenMagicalSongToSpell (staticData)
+                                                  ),
+                                                  union
+                                                ),
+                                                pipe_ (
+                                                  SDA.geodeRituals (staticData),
+                                                  OrderedMap.map (geodeRitualToSpell),
+                                                  union
+                                                ),
+                                                pipe_ (
+                                                  SDA.magicalDances (staticData),
+                                                  OrderedMap.map (magicalDanceToSpell),
+                                                  union
+                                                ),
+                                                pipe_ (
+                                                  SDA.magicalMelodies (staticData),
+                                                  OrderedMap.map (
+                                                    magicalMelodyToSpell (staticData)
+                                                  ),
+                                                  union
+                                                ),
+                                                pipe_ (
+                                                  SDA.rogueSpells (staticData),
+                                                  OrderedMap.map (rogueSpellToSpell),
+                                                  union
+                                                ),
+                                                pipe_ (
+                                                  SDA.zibiljaRituals (staticData),
+                                                  OrderedMap.map (zibiljaRitualToSpell),
+                                                  union
+                                                )
+                                              )
+
 
 export const isUnfamiliarSpell: (transferred_unfamiliar: List<Record<TransferUnfamiliar>>) =>
                                 (trad_hero_entries: List<Record<ActivatableDependent>>) =>

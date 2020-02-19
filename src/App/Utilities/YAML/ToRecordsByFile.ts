@@ -1,9 +1,11 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 import { Either, fromRight_, isLeft, Left, lefts, Right } from "../../../Data/Either"
+import { set } from "../../../Data/Lens"
 import { concatMap, fromArray, List, toArray } from "../../../Data/List"
-import { OrderedMap, union } from "../../../Data/OrderedMap"
+import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../Data/Record"
-import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { StaticData, StaticDataL, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { combineSpellsAndMagicalActions } from "../Increasable/spellUtils"
 import { pipe_ } from "../pipe"
 import { toAdvantages } from "./Entries/ToAdvantages"
 import { toAnimistForces } from "./Entries/ToAnimistForces"
@@ -371,20 +373,7 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                         const disadvantages = fromRight_ (edisadvantages)
                         const specialAbilities = fromRight_ (especialAbilities)
 
-                        const spellsCombined = pipe_ (
-                          spells,
-                          union (animistForces),
-                          union (curses),
-                          union (dominationRituals),
-                          union (elvenMagicalSongs),
-                          union (geodeRituals),
-                          union (magicalDances),
-                          union (magicalMelodies),
-                          union (rogueSpells),
-                          union (zibiljaRituals),
-                        )
-
-                        return Right (StaticData ({
+                        const staticData = StaticData ({
                           advantages,
                           animistForces,
                           arcaneBardTraditions,
@@ -437,11 +426,15 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                           specialAbilityGroups,
                           spellEnhancements,
                           spellGroups,
-                          spells: spellsCombined,
+                          spells,
                           states,
                           subjects,
                           tribes,
                           ui,
                           zibiljaRituals,
-                        }))
+                        })
+
+                        return Right (set (StaticDataL.spells)
+                                          (combineSpellsAndMagicalActions (staticData))
+                                          (staticData))
                       }

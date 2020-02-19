@@ -441,62 +441,69 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
   return (
     <Slidein isOpen close={close} className="rcp-selections">
       <Scroll>
-        <h3>{translate (staticData) ("rcpselectoptions.race")}</h3>
-        <Dropdown
-          hint={translate (staticData) ("rcpselectoptions.selectattributeadjustment")}
-          value={attributeAdjustment}
-          onChangeJust={handleSetAttributeAdjustment}
-          options={mapMaybe (pipe (
-                              lookupF (SDA.attributes (staticData)),
-                              fmap (attr => DropdownOption ({
-                                  id: Just (AttrA.id (attr)),
-                                  name: `${AttrA.name (attr)} ${signed_attr_ajst_val}`,
-                                }))
-                            ))
-                            (snd (attributeAdjustmentSelection))}
-          />
-
-        <h3>{translate (staticData) ("rcpselectoptions.culture")}</h3>
-        <Checkbox
-          checked={useCulturePackage}
-          onClick={handleSwitchIsCulturalPackageEnabled}
-          >
-          {translateP (staticData)
-                      ("general.withapvalue")
-                      (List<string | number> (
-                        translate (staticData) ("rcpselectoptions.buyculturalpackage"),
-                        Culture.A.culturalPackageAdventurePoints (culture)
-                      ))}
-        </Checkbox>
-        {getMotherTongueSelectionElement (staticData)
+        <section className="rcp-selectoptions--race">
+          <h3>{translate (staticData) ("rcpselectoptions.race")}</h3>
+          <Dropdown
+            hint={translate (staticData) ("rcpselectoptions.selectattributeadjustment")}
+            value={attributeAdjustment}
+            onChangeJust={handleSetAttributeAdjustment}
+            options={mapMaybe (pipe (
+                                lookupF (SDA.attributes (staticData)),
+                                fmap (attr => DropdownOption ({
+                                    id: Just (AttrA.id (attr)),
+                                    name: `${AttrA.name (attr)} ${signed_attr_ajst_val}`,
+                                  }))
+                              ))
+                              (snd (attributeAdjustmentSelection))}
+            />
+        </section>
+        <section className="rcp-selectoptions--culture">
+          <h3>{translate (staticData) ("rcpselectoptions.culture")}</h3>
+          <Checkbox
+            checked={useCulturePackage}
+            onClick={handleSwitchIsCulturalPackageEnabled}
+            >
+            {translateP (staticData)
+                        ("general.withapvalue")
+                        (List<string | number> (
+                          translate (staticData) ("rcpselectoptions.buyculturalpackage"),
+                          Culture.A.culturalPackageAdventurePoints (culture)
+                        ))}
+          </Checkbox>
+          {getMotherTongueSelectionElement (staticData)
+                                           (culture)
+                                           (isMotherTongueSelectionNeeded)
+                                           (motherTongue)
+                                           (isAnyLanguageOrScriptSelected)
+                                           (setMotherTongue)}
+          {maybeToNullable (buyScriptElement)}
+          {getMainScriptSelectionElement (staticData)
                                          (culture)
-                                         (isMotherTongueSelectionNeeded)
-                                         (motherTongue)
+                                         (isScriptSelectionNeeded)
+                                         (mainScript)
                                          (isAnyLanguageOrScriptSelected)
-                                         (setMotherTongue)}
-        {maybeToNullable (buyScriptElement)}
-        {getMainScriptSelectionElement (staticData)
-                                       (culture)
-                                       (isScriptSelectionNeeded)
-                                       (mainScript)
-                                       (isAnyLanguageOrScriptSelected)
-                                       (isBuyingMainScriptEnabled)
-                                       (setMainScript)}
+                                         (isBuyingMainScriptEnabled)
+                                         (setMainScript)}
+        </section>
         {pipe_ (
           profession,
           Profession.A.id,
           notEquals<string> (ProfessionId.CustomProfession)
         )
-          ? <h3>{translate (staticData) ("rcpselectoptions.profession")}</h3>
+          ? (
+              <section className="rcp-selectoptions--profession">
+                <h3>{translate (staticData) ("rcpselectoptions.profession")}</h3>
+                {maybeToNullable (snd (skillSpecialization))}
+                {maybeToNullable (snd (languagesAndScripts))}
+                {maybeToNullable (snd (combatTechniques))}
+                {maybeToNullable (snd (curses))}
+                {maybeToNullable (guildMageUnfamiliarSpell)}
+                {maybeToNullable (snd (cantrips))}
+                {maybeToNullable (snd (skills))}
+                {maybeToNullable (snd (terrainKnowledge))}
+              </section>
+            )
           : null}
-        {maybeToNullable (snd (skillSpecialization))}
-        {maybeToNullable (snd (languagesAndScripts))}
-        {maybeToNullable (snd (combatTechniques))}
-        {maybeToNullable (snd (curses))}
-        {maybeToNullable (guildMageUnfamiliarSpell)}
-        {maybeToNullable (snd (cantrips))}
-        {maybeToNullable (snd (skills))}
-        {maybeToNullable (snd (terrainKnowledge))}
         <BorderButton
           label={translate (staticData) ("rcpselectoptions.completebtn")}
           primary

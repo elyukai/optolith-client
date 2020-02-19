@@ -3,6 +3,7 @@ import { fromDefault, makeLenses, Record } from "../../../Data/Record"
 import { DerivedCharacteristicId } from "../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { NumIdName } from "../NumIdName"
 import { Advantage } from "./Advantage"
+import { AnimistForce } from "./AnimistForce"
 import { Attribute } from "./Attribute"
 import { BlessedTradition } from "./BlessedTradition"
 import { Blessing } from "./Blessing"
@@ -11,14 +12,20 @@ import { Cantrip } from "./Cantrip"
 import { CombatTechnique } from "./CombatTechnique"
 import { Condition } from "./Condition"
 import { Culture } from "./Culture"
+import { Curse } from "./Curse"
 import { DerivedCharacteristic } from "./DerivedCharacteristic"
 import { Disadvantage } from "./Disadvantage"
+import { DominationRitual } from "./DominationRitual"
+import { ElvenMagicalSong } from "./ElvenMagicalSong"
 import { EquipmentPackage } from "./EquipmentPackage"
 import { ExperienceLevel } from "./ExperienceLevel"
 import { FocusRule } from "./FocusRule"
+import { GeodeRitual } from "./GeodeRitual"
 import { ItemTemplate } from "./ItemTemplate"
 import { L10n } from "./L10n"
 import { LiturgicalChant } from "./LiturgicalChant"
+import { MagicalDance } from "./MagicalDance"
+import { MagicalMelody } from "./MagicalMelody"
 import { MagicalTradition } from "./MagicalTradition"
 import { OptionalRule } from "./OptionalRule"
 import { PactCategory } from "./PactCategory"
@@ -26,19 +33,21 @@ import { Profession } from "./Profession"
 import { ProfessionVariant } from "./ProfessionVariant"
 import { Race } from "./Race"
 import { RaceVariant } from "./RaceVariant"
+import { RogueSpell } from "./RogueSpell"
 import { Skill } from "./Skill"
 import { SkillGroup } from "./SkillGroup"
 import { SpecialAbility } from "./SpecialAbility"
 import { Spell } from "./Spell"
 import { State } from "./State"
 import { SelectOption } from "./sub/SelectOption"
+import { ZibiljaRitual } from "./ZibiljaRitual"
 
 export type StaticDataRecord = Record<StaticData>
 
 export interface StaticData {
   "@@name": "StaticData"
   advantages: OrderedMap<string, Record<Advantage>>
-  animistForces: OrderedMap<string, Record<Spell>>
+  animistForces: OrderedMap<string, Record<AnimistForce>>
   arcaneBardTraditions: OrderedMap<number, Record<NumIdName>>
   arcaneDancerTraditions: OrderedMap<number, Record<NumIdName>>
   armorTypes: OrderedMap<number, Record<NumIdName>>
@@ -54,24 +63,24 @@ export interface StaticData {
   combatTechniques: OrderedMap<string, Record<CombatTechnique>>
   conditions: OrderedMap<string, Record<Condition>>
   cultures: OrderedMap<string, Record<Culture>>
-  curses: OrderedMap<string, Record<Spell>>
+  curses: OrderedMap<string, Record<Curse>>
   derivedCharacteristics: OrderedMap<DerivedCharacteristicId, Record<DerivedCharacteristic>>
   disadvantages: OrderedMap<string, Record<Disadvantage>>
-  dominationRituals: OrderedMap<string, Record<Spell>>
-  elvenMagicalSongs: OrderedMap<string, Record<Spell>>
+  dominationRituals: OrderedMap<string, Record<DominationRitual>>
+  elvenMagicalSongs: OrderedMap<string, Record<ElvenMagicalSong>>
   itemTemplates: OrderedMap<string, Record<ItemTemplate>>
   equipmentGroups: OrderedMap<number, Record<NumIdName>>
   equipmentPackages: OrderedMap<string, Record<EquipmentPackage>>
   experienceLevels: OrderedMap<string, Record<ExperienceLevel>>
   eyeColors: OrderedMap<number, Record<NumIdName>>
   focusRules: OrderedMap<string, Record<FocusRule>>
-  geodeRituals: OrderedMap<string, Record<Spell>>
+  geodeRituals: OrderedMap<string, Record<GeodeRitual>>
   hairColors: OrderedMap<number, Record<NumIdName>>
   liturgicalChantEnhancements: OrderedMap<number, Record<SelectOption>>
   liturgicalChantGroups: OrderedMap<number, Record<NumIdName>>
   liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
-  magicalDances: OrderedMap<string, Record<Spell>>
-  magicalMelodies: OrderedMap<string, Record<Spell>>
+  magicalDances: OrderedMap<string, Record<MagicalDance>>
+  magicalMelodies: OrderedMap<string, Record<MagicalMelody>>
   magicalTraditions: OrderedMap<string, Record<MagicalTradition>>
   optionalRules: OrderedMap<string, Record<OptionalRule>>
   pacts: OrderedMap<number, Record<PactCategory>>
@@ -81,7 +90,7 @@ export interface StaticData {
   races: OrderedMap<string, Record<Race>>
   raceVariants: OrderedMap<string, Record<RaceVariant>>
   reaches: OrderedMap<number, Record<NumIdName>>
-  rogueSpells: OrderedMap<string, Record<Spell>>
+  rogueSpells: OrderedMap<string, Record<RogueSpell>>
   skillGroups: OrderedMap<number, Record<SkillGroup>>
   skills: OrderedMap<string, Record<Skill>>
   socialStatuses: OrderedMap<number, Record<NumIdName>>
@@ -94,7 +103,7 @@ export interface StaticData {
   subjects: OrderedMap<number, Record<NumIdName>>
   tribes: OrderedMap<number, Record<NumIdName>>
   ui: Record<L10n>
-  zibiljaRituals: OrderedMap<string, Record<Spell>>
+  zibiljaRituals: OrderedMap<string, Record<ZibiljaRitual>>
 }
 
 export const StaticData =
