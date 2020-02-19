@@ -1,7 +1,7 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 import { Either, fromRight_, isLeft, Left, lefts, Right } from "../../../Data/Either"
 import { concatMap, fromArray, List, toArray } from "../../../Data/List"
-import { OrderedMap } from "../../../Data/OrderedMap"
+import { OrderedMap, union } from "../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../Data/Record"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { pipe_ } from "../pipe"
@@ -371,6 +371,19 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                         const disadvantages = fromRight_ (edisadvantages)
                         const specialAbilities = fromRight_ (especialAbilities)
 
+                        const spellsCombined = pipe_ (
+                          spells,
+                          union (animistForces),
+                          union (curses),
+                          union (dominationRituals),
+                          union (elvenMagicalSongs),
+                          union (geodeRituals),
+                          union (magicalDances),
+                          union (magicalMelodies),
+                          union (rogueSpells),
+                          union (zibiljaRituals),
+                        )
+
                         return Right (StaticData ({
                           advantages,
                           animistForces,
@@ -424,7 +437,7 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                           specialAbilityGroups,
                           spellEnhancements,
                           spellGroups,
-                          spells,
+                          spells: spellsCombined,
                           states,
                           subjects,
                           tribes,
