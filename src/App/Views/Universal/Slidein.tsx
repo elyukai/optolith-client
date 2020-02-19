@@ -20,7 +20,7 @@ export const Slidein: React.FC<Props> = props => {
       className={classListMaybe (List (Just ("slidein-backdrop"), Maybe (className)))}
       >
       <div className="slidein">
-        <div className="slidein-close" onClick={close}><div>{"&#xE5CD;"}</div></div>
+        <div className="slidein-close" onClick={close}><div>{"\uE5CD"}</div></div>
           <div className="slidein-content">
             {children}
           </div>

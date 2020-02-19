@@ -18,8 +18,8 @@ import { WikiProperty } from "../WikiProperty"
 const SDA = StaticData.A
 const DCA = DerivedCharacteristic.A
 
-const getSpiName = pipe (SDA.derivedCharacteristics, lookup ("SPI"), maybe ("") (DCA.name))
-const getTouName = pipe (SDA.derivedCharacteristics, lookup ("TOU"), maybe ("") (DCA.name))
+const getSpiName = pipe (SDA.derivedCharacteristics, lookup ("SPI"), maybe ("") (DCA.short))
+const getTouName = pipe (SDA.derivedCharacteristics, lookup ("TOU"), maybe ("") (DCA.short))
 
 export const getCheckModStr: (staticData: StaticDataRecord) => (id: CheckModifier) => string
                             = staticData => id => id === "SPI"

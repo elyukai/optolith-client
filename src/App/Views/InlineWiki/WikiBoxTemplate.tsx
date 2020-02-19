@@ -2,7 +2,6 @@ import * as React from "react"
 import { Scroll } from "../Universal/Scroll"
 
 export interface WikiBoxTemplateProps {
-  children?: React.ReactNode
   className: string
   subtitle?: React.ReactNode
   title: string

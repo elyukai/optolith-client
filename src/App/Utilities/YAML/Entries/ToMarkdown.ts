@@ -8,7 +8,8 @@ import { Maybe } from "../../../../Data/Maybe"
  * can be read by the Markdown parser in Optolith.
  */
 export const toMarkdown : (x : string) => string
-                        = x => x .replace ("\n", "\\n")
+                        = x => x
+                          // .replace ("\n", "\\n").replace (/\n$/u, "")
 
 
 /**
@@ -18,4 +19,4 @@ export const toMarkdown : (x : string) => string
  * Like `toMarkdown`, but works with optional strings.
  */
 export const toMarkdownM : (x : Maybe<string>) => Maybe<string>
-                         = fmap (x => x .replace ("\n", "\\n"))
+                         = fmap (toMarkdown)

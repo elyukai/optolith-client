@@ -10,7 +10,7 @@ export const NavigationBarBack: React.FC<Props> = props => {
   return (
     <div className="navigationbar-back">
       <div className="navigationbar-back-inner" onClick={handleSetTab}>
-        {"&#xE905;"}
+        {"\uE905"}
       </div>
     </div>
   )

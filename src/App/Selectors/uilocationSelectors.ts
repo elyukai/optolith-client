@@ -345,7 +345,7 @@ export const getSubtabs = createMaybeSelector (
               }
             ),
             Maybe.elem (3) (phase)
-              ? insertAt (2)
+              ? insertAt (1)
                          <SubTab> ({
                            id: TabId.CharacterSheet,
                            label: translate (staticData) ("header.tabs.charactersheet"),
@@ -360,7 +360,7 @@ export const getSubtabs = createMaybeSelector (
                         (List ("US25102", "US25008"))
                   ))
                   (mruleBooksEnabled)
-              ? insertAt (Maybe.elem (3) (phase) ? 3 : 2)
+              ? insertAt (Maybe.elem (3) (phase) ? 2 : 1)
                          <SubTab> ({
                            id: TabId.Pact,
                            label: translate (staticData) ("header.tabs.pact"),
