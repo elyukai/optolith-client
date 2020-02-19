@@ -41,7 +41,7 @@ interface Props {
   staticData: StaticDataRecord
   name: Maybe<string>
   professionName: Maybe<string>
-  profile: Maybe<Record<PersonalData>>
+  profile: Record<PersonalData>
   race: Maybe<Record<Race>>
   sex: Maybe<Sex>
   printToPDF (): void

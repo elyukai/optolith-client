@@ -31,7 +31,7 @@ const mapStateToProps =
     profession: getCurrentProfession (state),
     professionName: getCustomProfessionName (state),
     fullProfessionName: getCurrentFullProfessionName (state),
-    profile: getProfile (state),
+    profile: getProfile (state, ownProps),
     race: getRace (state, ownProps),
     raceVariant: getCurrentRaceVariant (state),
     sex: getSex (state),

@@ -80,7 +80,7 @@ export interface SheetsStateProps {
 
   // profession: Maybe<Record<Profession>>
   // professionVariant: Maybe<Record<ProfessionVariant>>
-  profile: Maybe<Record<PersonalData>>
+  profile: Record<PersonalData>
   race: Maybe<Record<Race>>
   rangedWeapons: Maybe<List<Record<RangedWeapon>>>
   sex: Maybe<Sex>

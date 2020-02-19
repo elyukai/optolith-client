@@ -44,7 +44,7 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): Sheet
   meleeWeapons: getMeleeWeapons (state, ownProps),
   name: getCurrentHeroName (state),
   professionName: getCurrentFullProfessionName (state),
-  profile: getProfile (state),
+  profile: getProfile (state, ownProps),
   race: getRace (state, ownProps),
   rangedWeapons: getRangedWeapons (state),
   sex: getSex (state),

@@ -136,7 +136,7 @@ export const getCurrentHeroName =
 
 
 export const getProfile =
-  pipe (getCurrentHeroPresent, fmap (HA.personalData))
+  pipe (getHeroProp, HA.personalData)
 
 const Pers = PersonalData.A
 

@@ -4,7 +4,6 @@ import { find, List } from "../../../Data/List"
 import { bind, fromJust, isJust, Maybe, maybe_, Nothing } from "../../../Data/Maybe"
 import { lookup, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { showP } from "../../../Data/Show"
 import { Category } from "../../Constants/Categories"
 import { IdPrefixes } from "../../Constants/IdPrefixes"
 import { Sex } from "../../Models/Hero/heroTypeHelpers"
@@ -148,12 +147,8 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
 
   const mx = getEntry (props) (mid)
 
-  console.log (showP (mx))
-
   if (isJust (mx)) {
     const x = fromJust (mx)
-
-    console.log (showP (x))
 
     if (Item.is (x) || ItemTemplate.is (x)) {
       return (
@@ -272,8 +267,6 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
     }
 
     if (Skill.is (x)) {
-      console.log (showP (x))
-
       return (
         <WikiInfoContentWrapper noWrapper={noWrapper}>
           <WikiSkillInfo

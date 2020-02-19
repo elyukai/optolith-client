@@ -1,6 +1,6 @@
 import * as React from "react"
 import { fmap, fmapF } from "../../../../Data/Functor"
-import { bind, bindF, Maybe } from "../../../../Data/Maybe"
+import { bindF, Maybe } from "../../../../Data/Maybe"
 import { lookupF } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Sex } from "../../../Models/Hero/heroTypeHelpers"
@@ -30,7 +30,7 @@ interface Props {
   staticData: StaticDataRecord
   name: Maybe<string>
   professionName: Maybe<string>
-  profile: Maybe<Record<PersonalData>>
+  profile: Record<PersonalData>
   race: Maybe<Record<Race>>
   sex: Maybe<Sex>
 }
@@ -44,7 +44,7 @@ export const MainSheetPersonalData: React.FC<Props> = props => {
     staticData,
     name,
     professionName,
-    profile: mprofile,
+    profile,
     race: maybeRace,
     sex,
   } = props
@@ -54,24 +54,24 @@ export const MainSheetPersonalData: React.FC<Props> = props => {
 
   const haircolorName =
     pipe_ (
-      mprofile,
-      bindF (PDA.hairColor),
+      profile,
+      PDA.hairColor,
       bindF (lookupF (SDA.hairColors (staticData))),
       fmap (NINA.name)
     )
 
   const eyecolorName =
     pipe_ (
-      mprofile,
-      bindF (PDA.eyeColor),
+      profile,
+      PDA.eyeColor,
       bindF (lookupF (SDA.eyeColors (staticData))),
       fmap (NINA.name)
     )
 
   const socialstatusName =
     pipe_ (
-      mprofile,
-      bindF (PDA.socialStatus),
+      profile,
+      PDA.socialStatus,
       bindF (lookupF (SDA.socialStatuses (staticData))),
       fmap (NINA.name)
     )
@@ -87,22 +87,22 @@ export const MainSheetPersonalData: React.FC<Props> = props => {
         <Plain
           className="family"
           label={translate (staticData) ("sheets.mainsheet.family")}
-          value={bind (mprofile) (PDA.family)}
+          value={PDA.family (profile)}
           />
         <Plain
           className="placeofbirth"
           label={translate (staticData) ("sheets.mainsheet.placeofbirth")}
-          value={bind (mprofile) (PDA.placeOfBirth)}
+          value={PDA.placeOfBirth (profile)}
           />
         <Plain
           className="dateofbirth"
           label={translate (staticData) ("sheets.mainsheet.dateofbirth")}
-          value={bind (mprofile) (PDA.dateOfBirth)}
+          value={PDA.dateOfBirth (profile)}
           />
         <Plain
           className="age"
           label={translate (staticData) ("sheets.mainsheet.age")}
-          value={bind (mprofile) (PDA.age)}
+          value={PDA.age (profile)}
           />
         <Plain
           className="sex"
@@ -118,8 +118,8 @@ export const MainSheetPersonalData: React.FC<Props> = props => {
           className="size"
           label={translate (staticData) ("sheets.mainsheet.size")}
           value={pipe_ (
-            mprofile,
-            bindF (PDA.size),
+            profile,
+            PDA.size,
             bindF (toInt),
             fmap (localizeSize (staticData))
           )}
@@ -128,8 +128,8 @@ export const MainSheetPersonalData: React.FC<Props> = props => {
           className="weight"
           label={translate (staticData) ("sheets.mainsheet.weight")}
           value={pipe_ (
-            mprofile,
-            bindF (PDA.weight),
+            profile,
+            PDA.weight,
             bindF (toInt),
             fmap (localizeWeight (staticData))
           )}
@@ -162,17 +162,17 @@ export const MainSheetPersonalData: React.FC<Props> = props => {
         <Plain
           className="title"
           label={translate (staticData) ("sheets.mainsheet.rank")}
-          value={bind (mprofile) (PDA.title)}
+          value={PDA.title (profile)}
           />
         <Plain
           className="characteristics"
           label={translate (staticData) ("sheets.mainsheet.characteristics")}
-          value={bind (mprofile) (PDA.characteristics)}
+          value={PDA.characteristics (profile)}
           />
         <Plain
           className="otherinfo"
           label={translate (staticData) ("sheets.mainsheet.otherinfo")}
-          value={bind (mprofile) (PDA.otherInfo)}
+          value={PDA.otherInfo (profile)}
           multi
           />
       </div>
