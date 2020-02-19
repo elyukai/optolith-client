@@ -1,7 +1,7 @@
 import { fmap } from "../../../Data/Functor"
 import { cons, elem, foldl, List, maximum } from "../../../Data/List"
 import { guard, Just, Maybe, maybe, then } from "../../../Data/Maybe"
-import { add, divideBy, max } from "../../../Data/Num"
+import { add, divideBy, max, min } from "../../../Data/Num"
 import { lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { CombatTechniqueGroup } from "../../Constants/Groups"
@@ -74,7 +74,7 @@ export const isIncreaseDisabled =
                                   (lookupF (SDA.experienceLevels (staticData))
                                            (HA.experienceLevel (state))))
 
-    const base_max = maybe (max_by_primary) (max (max_by_primary)) (mmax_by_el)
+    const base_max = maybe (max_by_primary) (min (max_by_primary)) (mmax_by_el)
 
     const exceptionalSkill = lookupF (HA.advantages (state))
                                      (AdvantageId.ExceptionalCombatTechnique)
