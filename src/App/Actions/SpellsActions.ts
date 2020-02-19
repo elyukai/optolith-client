@@ -3,10 +3,11 @@ import { lookup } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { HeroModel } from "../Models/Hero/HeroModel"
+import { Cantrip } from "../Models/Wiki/Cantrip"
 import { Spell } from "../Models/Wiki/Spell"
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
-import { getCurrentHeroPresent, getSpells, getWikiSpells } from "../Selectors/stateSelectors"
+import { getCurrentHeroPresent, getSpells, getWikiCantrips, getWikiSpells } from "../Selectors/stateSelectors"
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
 import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUtils"
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
@@ -63,6 +64,7 @@ export interface ActivateCantripAction {
   type: ActionTypes.ACTIVATE_CANTRIP
   payload: {
     id: string
+    wikiEntry: Record<Cantrip>
   }
 }
 
@@ -70,7 +72,10 @@ export const addCantrip =
   (id: string): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const state = getState ()
+    const cantrips = getWikiCantrips (state)
     const mhero = getCurrentHeroPresent (state)
+
+    const mwiki_cantrip = lookup (id) (cantrips)
 
     const missingAP =
       pipe_ (
@@ -81,16 +86,19 @@ export const addCantrip =
                             (1))
       )
 
-    if (isNothing (missingAP)) {
-      dispatch<ActivateCantripAction> ({
-        type: ActionTypes.ACTIVATE_CANTRIP,
-        payload: {
-          id,
-        },
-      })
-    }
-    else {
-      await dispatch (addNotEnoughAPAlert (fromJust (missingAP)))
+    if (isJust (mwiki_cantrip)) {
+      if (isNothing (missingAP)) {
+        dispatch<ActivateCantripAction> ({
+          type: ActionTypes.ACTIVATE_CANTRIP,
+          payload: {
+            id,
+            wikiEntry: fromJust (mwiki_cantrip),
+          },
+        })
+      }
+      else {
+        await dispatch (addNotEnoughAPAlert (fromJust (missingAP)))
+      }
     }
   }
 
@@ -127,15 +135,30 @@ export interface DeactivateCantripAction {
   type: ActionTypes.DEACTIVATE_CANTRIP
   payload: {
     id: string
+    wikiEntry: Record<Cantrip>
   }
 }
 
-export const removeCantrip = (id: string): DeactivateCantripAction => ({
-  type: ActionTypes.DEACTIVATE_CANTRIP,
-  payload: {
-    id,
-  },
-})
+export const removeCantrip =
+  (id: string): ReduxAction =>
+  (dispatch, getState) => {
+    const state = getState ()
+    const cantrips = getWikiCantrips (state)
+
+    const mwiki_cantrip = lookup (id) (cantrips)
+
+    if (isJust (mwiki_cantrip)) {
+      const wiki_entry = fromJust (mwiki_cantrip)
+
+      dispatch<DeactivateCantripAction> ({
+        type: ActionTypes.DEACTIVATE_CANTRIP,
+        payload: {
+          id,
+          wikiEntry: wiki_entry,
+        },
+      })
+    }
+  }
 
 export interface AddSpellPointAction {
   type: ActionTypes.ADD_SPELL_POINT

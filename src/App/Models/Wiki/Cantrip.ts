@@ -3,6 +3,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe"
 import { fromDefault, Record } from "../../../Data/Record"
 import { Category } from "../../Constants/Categories"
 import { Property } from "../../Constants/Groups"
+import { RequireActivatable } from "./prerequisites/ActivatableRequirement"
 import { Erratum } from "./sub/Errata"
 import { SourceLink } from "./sub/SourceLink"
 import { EntryWithCategory } from "./wikiTypeHelpers"
@@ -19,6 +20,7 @@ export interface Cantrip {
   duration: string
   target: string
   note: Maybe<string>
+  prerequisites: List<Record<RequireActivatable>>
   src: List<Record<SourceLink>>
   errata: List<Record<Erratum>>
 }
@@ -36,6 +38,7 @@ export const Cantrip =
                 duration: "",
                 target: "",
                 note: Nothing,
+                prerequisites: List (),
                 src: List.empty,
                 errata: List (),
               })

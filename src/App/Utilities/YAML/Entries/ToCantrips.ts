@@ -1,10 +1,11 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 import { bindF, Right, second } from "../../../../Data/Either"
-import { fromArray } from "../../../../Data/List"
+import { fromArray, List } from "../../../../Data/List"
 import { Maybe, Nothing } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Cantrip } from "../../../Models/Wiki/Cantrip"
+import { RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
@@ -15,6 +16,7 @@ import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
 import { toErrata } from "./ToErrata"
 import { toMarkdown } from "./ToMarkdown"
+import { toActivatablePrerequisite } from "./ToPrerequisites"
 import { toSourceRefs } from "./ToSourceRefs"
 
 
@@ -31,6 +33,10 @@ const toCantrip : YamlPairConverterE<CantripUniv, CantripL10n, string, Cantrip>
                       duration: l10n.duration,
                       target: l10n.target,
                       note: Maybe (l10n.note),
+                      prerequisites: List<Record<RequireActivatable>> (
+                        ...(univ.activatablePrerequisites ?? [])
+                          .map (toActivatablePrerequisite),
+                      ),
                       src: toSourceRefs (l10n.src),
                       errata: toErrata (l10n.errata),
                       category: Nothing,

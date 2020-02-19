@@ -25,6 +25,7 @@ import { PersonalData } from "../../../../Models/Hero/PersonalData"
 import { Pet } from "../../../../Models/Hero/Pet"
 import { Purse } from "../../../../Models/Hero/Purse"
 import { Rules } from "../../../../Models/Hero/Rules"
+import { Cantrip } from "../../../../Models/Wiki/Cantrip"
 import { L10n } from "../../../../Models/Wiki/L10n"
 import { Spell } from "../../../../Models/Wiki/Spell"
 import { PrimaryAttributeDamageThreshold } from "../../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
@@ -37,6 +38,8 @@ import { addDependencies } from "../../../Dependencies/dependencyUtils"
 import { getCategoryById } from "../../../IDUtils"
 import { pipe, pipe_ } from "../../../pipe"
 import * as Raw from "../../RawData"
+
+const HA = HeroModel.A
 
 interface ActivatableMaps {
   advantages: OrderedMap<string, Record<ActivatableDependent>>
@@ -341,8 +344,6 @@ const createHeroObject = (staticData: StaticDataRecord) => (hero: Raw.RawHero): 
     transferredUnfamiliarSpells: Nothing,
   })
 
-const { advantages, disadvantages, specialAbilities, spells } = HeroModel.AL
-
 const addDependenciesForReq =
   (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
   (active: Record<ActiveObjectWithId>) =>
@@ -379,9 +380,9 @@ export const convertFromRawHero =
   (hero: Raw.RawHero): HeroModelRecord => {
     const intermediateState = createHeroObject (staticData) (hero)
 
-    const activeAdvantages = getActiveFromState (advantages (intermediateState))
-    const activeDisadvantages = getActiveFromState (disadvantages (intermediateState))
-    const activeSpecialAbilities = getActiveFromState (specialAbilities (intermediateState))
+    const activeAdvantages = getActiveFromState (HA.advantages (intermediateState))
+    const activeDisadvantages = getActiveFromState (HA.disadvantages (intermediateState))
+    const activeSpecialAbilities = getActiveFromState (HA.specialAbilities (intermediateState))
 
     const ASDA = ActivatableSkillDependent.A
 
@@ -389,7 +390,9 @@ export const convertFromRawHero =
       OrderedMap.foldr<Record<ActivatableSkillDependent>, OrderedSet<string>>
         (spell => ASDA.active (spell) ? insert (ASDA.id (spell)) : ident)
         (OrderedSet.empty)
-        (spells (intermediateState))
+        (HA.spells (intermediateState))
+
+    const activeCantrips = HA.cantrips (intermediateState)
 
     return pipe_ (
       intermediateState,
@@ -413,6 +416,12 @@ export const convertFromRawHero =
                                maybe (ident as ident<HeroModelRecord>)
                                      (pipe (Spell.A.prerequisites, addDependencies (id)))
                                      (lookup (id) (StaticData.A.spells (staticData)))))
-           (activeSpells)
+           (activeSpells),
+
+      flip (OrderedSet.foldr ((id: string) =>
+                               maybe (ident as ident<HeroModelRecord>)
+                                     (pipe (Cantrip.A.prerequisites, addDependencies (id)))
+                                     (lookup (id) (StaticData.A.cantrips (staticData)))))
+           (activeCantrips)
     )
   }

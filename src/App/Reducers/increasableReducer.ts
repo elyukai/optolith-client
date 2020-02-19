@@ -11,6 +11,7 @@ import { ActivatableSkillDependentL, isActivatableSkillDependentUnused } from ".
 import { isAttributeDependentUnused } from "../Models/ActiveEntries/AttributeDependent"
 import { isCombatTechniqueSkillDependentUnused, isSkillDependentUnused } from "../Models/ActiveEntries/SkillDependent"
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { Cantrip } from "../Models/Wiki/Cantrip"
 import { Spell } from "../Models/Wiki/Spell"
 import { addDependencies, removeDependencies } from "../Utilities/Dependencies/dependencyUtils"
 import { adjustEntryDef, adjustRemoveEntryDef } from "../Utilities/heroStateUtils"
@@ -44,12 +45,16 @@ export const increasableReducer =
           adjustEntryDef (set (ActivatableSkillDependentL.active) (true))
                          (action.payload.id),
           addDependencies (action.payload.id)
-                          (Spell.AL.prerequisites (action.payload.wikiEntry))
+                          (Spell.A.prerequisites (action.payload.wikiEntry))
         )
       }
 
       case ActionTypes.ACTIVATE_CANTRIP: {
-        return over (HeroModelL.cantrips) (insert (action.payload.id))
+        return pipe (
+          over (HeroModelL.cantrips) (insert (action.payload.id)),
+          addDependencies (action.payload.id)
+                          (Cantrip.A.prerequisites (action.payload.wikiEntry))
+        )
       }
 
       case ActionTypes.ACTIVATE_LITURGY: {
@@ -67,12 +72,16 @@ export const increasableReducer =
                                (set (ActivatableSkillDependentL.active) (false))
                                (action.payload.id),
           removeDependencies (action.payload.id)
-                             (Spell.AL.prerequisites (action.payload.wikiEntry))
+                             (Spell.A.prerequisites (action.payload.wikiEntry))
         )
       }
 
       case ActionTypes.DEACTIVATE_CANTRIP: {
-        return over (HeroModelL.cantrips) (sdelete (action.payload.id))
+        return pipe (
+          over (HeroModelL.cantrips) (sdelete (action.payload.id)),
+          removeDependencies (action.payload.id)
+                             (Cantrip.A.prerequisites (action.payload.wikiEntry))
+        )
       }
 
       case ActionTypes.DEACTIVATE_LITURGY: {
