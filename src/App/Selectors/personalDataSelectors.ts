@@ -137,7 +137,7 @@ export const getAvailableEyeColorOptions = createMaybeSelector (
   uncurryN (staticData => pipe (
                             mapMaybe (id => pipe_ (
                                               id,
-                                              lookupF (StaticData.A.hairColors (staticData)),
+                                              lookupF (StaticData.A.eyeColors (staticData)),
                                               fmap (pipe (
                                                 NumIdName.A.name,
                                                 name => DropdownOption ({
