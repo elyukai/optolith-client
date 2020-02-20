@@ -20,15 +20,16 @@ const CTSSA = CombatTechniquesSecondSelection.A
 
 export const isCombatTechniqueSelectionValid =
   (actives: OrderedSet<string>) =>
+  (activeSeconds: OrderedSet<string>) =>
   (selection: Record<CombatTechniquesSelection>): Tuple<[boolean]> => {
     const first = OrderedSet.size (actives) === CTSA.amount (selection)
     const msecond = CTSA.second (selection)
 
     if (isJust (msecond)) {
-      return Tuple (first && OrderedSet.size (actives) === CTSSA.amount (fromJust (msecond)))
+      return Tuple (first && OrderedSet.size (activeSeconds) === CTSSA.amount (fromJust (msecond)))
     }
 
-    return Tuple (first && fnull (actives))
+    return Tuple (first && fnull (activeSeconds))
   }
 
 export const getCombatTechniques =
@@ -80,6 +81,7 @@ export const CombatTechniqueSelectionList: React.FC<Props> = props => {
           list,
           map (e => (
             <CombatTechniqueSelectionListItem
+              key={CTA.id (e)}
               active={activeFirst}
               amount={CTSA.amount (selection)}
               combatTechnique={e}
@@ -121,6 +123,7 @@ export const CombatTechniqueSelectionList: React.FC<Props> = props => {
             list,
             map (e => (
               <CombatTechniqueSelectionListItem
+                key={CTA.id (e)}
                 active={activeSecond}
                 amount={CTSSA.amount (second)}
                 combatTechnique={e}

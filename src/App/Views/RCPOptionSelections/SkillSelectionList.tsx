@@ -6,6 +6,7 @@ import { elems, lookup, OrderedMap, sum } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Pair } from "../../../Data/Tuple"
 import { SkillsSelection } from "../../Models/Wiki/professionSelections/SkillsSelection"
+import { Skill } from "../../Models/Wiki/Skill"
 import { SkillGroup } from "../../Models/Wiki/SkillGroup"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translateP } from "../../Utilities/I18n"
@@ -16,6 +17,7 @@ import { SkillSelectionListItem } from "./SkillSelectionListItem"
 
 const SDA = StaticData.A
 const SSA = SkillsSelection.A
+const SA = Skill.A
 
 export const isSkillSelectionValid =
   (skillsActive: OrderedMap<string, number>) =>
@@ -61,12 +63,12 @@ export const SkillSelectionList: React.FC<Props> = props => {
           SDA.skillGroups,
           lookup (fromMaybe (0) (mgr)),
           fmap (gr => translateP (staticData)
-                                      ("rcpselectoptions.skillselectionap")
-                                      (List<string | number> (
-                                        SkillGroup.A.name (gr),
-                                        ap_total,
-                                        ap_left
-                                      ))),
+                                 ("rcpselectoptions.skillselectionap")
+                                 (List<string | number> (
+                                   SkillGroup.A.name (gr),
+                                   ap_total,
+                                   ap_left
+                                 ))),
           renderMaybe
         )}
       </h4>
@@ -75,6 +77,7 @@ export const SkillSelectionList: React.FC<Props> = props => {
           skills,
           map (skill => (
             <SkillSelectionListItem
+              key={SA.id (skill)}
               active={active}
               ap_left={ap_left}
               skill={skill}

@@ -114,6 +114,7 @@ export const LanguageSelectionList: React.FC<Props> = props => {
         languages,
         map (options => (
           <LanguagesSelectionListItem
+            key={LanguagesSelectionListItemOptions.A.id (options)}
             staticData={staticData}
             apLeft={ap_left}
             active={active}

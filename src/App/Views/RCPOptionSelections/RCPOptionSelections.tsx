@@ -11,6 +11,7 @@ import { OrderedSet } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
 import { first, fst, Pair, second, snd } from "../../../Data/Tuple"
 import { sel2 } from "../../../Data/Tuple/Select"
+import { traceShowBoth } from "../../../Debug/Trace"
 import { ProfessionId } from "../../Constants/Ids"
 import { Selections as SelectionsInterface } from "../../Models/Hero/heroTypeHelpers"
 import { Rules } from "../../Models/Hero/Rules"
@@ -338,7 +339,8 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                (prof_sels)
 
   const combatTechniques =
-    getSelPair (isCombatTechniqueSelectionValid (combatTechniquesActive))
+    getSelPair (isCombatTechniqueSelectionValid (combatTechniquesActive)
+                                                (combatTechniquesSecondActive))
                (selection => (
                  <CombatTechniqueSelectionList
                    staticData={staticData}
@@ -419,14 +421,14 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                                                 (profession)
 
   const isConfirmingSelectionsDisabled =
-    !fst (skillSpecialization)
-    || !fst (languagesAndScripts)
-    || !fst (combatTechniques)
-    || !fst (cantrips)
-    || !fst (curses)
-    || !fst (skills)
-    || !fst (terrainKnowledge)
-    || isNothing (attributeAdjustment)
+    !traceShowBoth ("skillSpecialization") (fst (skillSpecialization))
+    || !traceShowBoth ("languagesAndScripts") (fst (languagesAndScripts))
+    || !traceShowBoth ("combatTechniques") (fst (combatTechniques))
+    || !traceShowBoth ("cantrips") (fst (cantrips))
+    || !traceShowBoth ("curses") (fst (curses))
+    || !traceShowBoth ("skills") (fst (skills))
+    || !traceShowBoth ("terrainKnowledge") (fst (terrainKnowledge))
+    || traceShowBoth ("attributeAdjustment") (isNothing (attributeAdjustment))
     || (isMotherTongueSelectionNeeded && motherTongue === 0)
     || (
       isBuyingMainScriptEnabled

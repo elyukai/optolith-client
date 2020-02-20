@@ -66,6 +66,7 @@ export const CursesSelectionList: React.FC<Props> = props => {
           curses,
           map (curse => (
             <CursesSelectionListItem
+              key={SA.id (curse)}
               apLeft={ap_left}
               curse={curse}
               active={active}

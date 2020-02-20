@@ -133,6 +133,7 @@ export const ScriptSelectionList: React.FC<Props> = props => {
         scripts,
         map (options => (
           <ScriptSelectionListItem
+            key={ScriptsSelectionListItemOptions.A.id (options)}
             staticData={staticData}
             apLeft={ap_left}
             active={active}
