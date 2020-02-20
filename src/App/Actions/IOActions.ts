@@ -561,7 +561,12 @@ export const loadImportedHero: ReduxAction<Promise<Maybe<RawHero>>> =
       maybe<Promise<Maybe<Either<Error, string>>>> (Promise.resolve (Nothing))
                                                    (pipe (IO.readFile, handleE, fmap (Just))),
       IO.bindF (pipe (
-        fmap (Either.bindF (tryParseJSON)),
+        fmap (
+          Either.bindF (pipe (
+            data => data.replace (/^\uFEFF/u, ""),
+            tryParseJSON
+          ))
+        ),
         async mres => {
           if (isNothing (mres)) {
             return Nothing
