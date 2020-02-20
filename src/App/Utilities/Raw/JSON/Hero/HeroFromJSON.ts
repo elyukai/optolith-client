@@ -196,6 +196,7 @@ const createHeroObject = (staticData: StaticDataRecord) => (hero: Raw.RawHero): 
               combatTechnique: Maybe (obj .combatTechnique),
               damageDiceSides: Maybe (obj .damageDiceSides),
               gr: obj .gr,
+              where: Maybe (obj .where),
               isParryingWeapon:
                 typeof obj .isParryingWeapon === "boolean" ? obj .isParryingWeapon : false,
               isTemplateLocked: obj .isTemplateLocked,

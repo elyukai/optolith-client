@@ -167,7 +167,7 @@ export const validateItemEditorInput = (item: Record<EditItem>) => {
   const validLength = isEmptyOr (isNaturalNumber) (EIA.length (item))
   const validMOVMod = isEmptyOr (isInteger) (EIA.movMod (item))
   const validNumber = isEmptyOr (isNaturalNumber) (EIA.amount (item))
-  const validPAMod = isInteger (EIA.pa (item))
+  const validPAMod = isEmptyOr (isInteger) (EIA.pa (item))
   const validPrice = isEmptyOr (isFloat) (EIA.price (item))
   const validPRO = isNaturalNumber (EIA.pro (item))
   const validRange1 = validateRange (0) (item)
