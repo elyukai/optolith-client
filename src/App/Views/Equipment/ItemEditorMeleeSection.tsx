@@ -368,7 +368,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
             <Checkbox
               className="twohanded-weapon"
               label={translate (staticData) ("equipment.dialogs.addedit.twohandedweapon")}
-              checked={!EIA.isTwoHandedWeapon (item)}
+              checked={EIA.isTwoHandedWeapon (item)}
               onClick={switchIsTwoHandedWeapon}
               disabled={locked}
               />

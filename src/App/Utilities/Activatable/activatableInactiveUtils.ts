@@ -241,8 +241,6 @@ const modifySelectOptions =
   (hero: HeroModelRecord) =>
   (hero_magical_traditions: List<Record<ActivatableDependent>>) =>
   (wiki_entry: Activatable) =>
-
-  // tslint:disable-next-line: cyclomatic-complexity
   (mhero_entry: Maybe<Record<ActivatableDependent>>): ident<Maybe<List<Record<SelectOption>>>> => {
     const current_id = AAL.id (wiki_entry)
 

@@ -78,7 +78,9 @@ const toMeleeItem = (univ : MeleeWeapon) : Partial<ItemTemplate> => ({
                            : Maybe (univ.structurePoints),
                       isParryingWeapon: univ.isParryingWeapon,
                       isTwoHandedWeapon: univ.isTwoHandedWeapon,
-                      improvisedWeaponGroup: Just (EquipmentGroup.MeleeWeapons),
+                      improvisedWeaponGroup: univ.isImprovisedWeapon
+                                             ? Just (EquipmentGroup.MeleeWeapons)
+                                             : Nothing,
                     })
 
 
@@ -103,7 +105,9 @@ const toRangedItem = (univ : RangedWeapon) : Partial<ItemTemplate> => ({
                                          ? fromArray (univ.reloadTime)
                                          : univ.reloadTime),
                        ammunition: Maybe (univ.ammunition),
-                       improvisedWeaponGroup: Just (EquipmentGroup.RangedWeapons),
+                       improvisedWeaponGroup: univ.isImprovisedWeapon
+                                              ? Just (EquipmentGroup.RangedWeapons)
+                                              : Nothing,
                      })
 
 
