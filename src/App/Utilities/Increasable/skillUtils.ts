@@ -28,7 +28,7 @@ const { specialAbilities, skills } = HeroModel.AL
 const { active } = ActivatableDependent.AL
 const { sid } = ActiveObject.AL
 const SCA = SkillCombined.A
-const { id, value, dependencies } = SkillCombinedA_
+const SCA_ = SkillCombinedA_
 const { maxSkillRating } = ExperienceLevel.AL
 
 /**
@@ -79,7 +79,7 @@ export const isSkillIncreasable =
   (attributes: OrderedMap<string, Record<AttributeDependent>>) =>
   (exceptionalSkill: Maybe<Record<ActivatableDependent>>) =>
   (skill: Record<SkillCombined>): boolean => {
-    const bonus = getExceptionalSkillBonus (id (skill)) (exceptionalSkill)
+    const bonus = getExceptionalSkillBonus (SCA_.id (skill)) (exceptionalSkill)
 
     const max = pipe (
                        getInitialMaximumList (attributes),
@@ -88,7 +88,7 @@ export const isSkillIncreasable =
                      )
                      (SCA.wikiEntry (skill))
 
-    return value (skill) < max + bonus
+    return SCA_.value (skill) < max + bonus
   }
 
 /**
@@ -101,7 +101,7 @@ export const isSkillDecreasable =
     // prerequisites of SA Craft Instruments:
     // Sum of Woodworking and Metalworking must be at least 12.
     if (
-      (SkillId.Woodworking === id (skill) || SkillId.Metalworking === id (skill))
+      (SkillId.Woodworking === SCA_.id (skill) || SkillId.Metalworking === SCA_.id (skill))
       && isMaybeActive (lookupF (specialAbilities (state)) (SpecialAbilityId.CraftInstruments))
     ) {
       const woodworkingRating =
@@ -118,10 +118,10 @@ export const isSkillDecreasable =
     }
 
     const flattenedDependencies =
-      flattenDependencies (wiki) (state) (dependencies (skill))
+      flattenDependencies (wiki) (state) (SCA_.dependencies (skill))
 
     // Basic validation
-    return value (skill) > maximumNonNegative (flattenedDependencies)
+    return SCA_.value (skill) > maximumNonNegative (flattenedDependencies)
   }
 
 export const isCommon =
