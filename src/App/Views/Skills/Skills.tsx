@@ -177,6 +177,7 @@ export const Skills: React.FC<Props> = props => {
                                   insertTopMargin={isTopMarginNeeded (sortOrder) (curr) (mprev)}
                                   attributes={attributes}
                                   staticData={staticData}
+                                  isRemovingEnabled={isRemovingEnabled}
                                   selectForInfo={showInfo}
                                   group={SWRA_.gr (curr)}
                                   getGroupName={pipe (

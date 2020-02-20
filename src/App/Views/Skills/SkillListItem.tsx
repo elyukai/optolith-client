@@ -40,6 +40,7 @@ interface Props {
   untyp?: boolean
   selectedForInfo: Maybe<string>
   staticData: StaticDataRecord
+  isRemovingEnabled: boolean
   activate? (id: string): void
   addPoint? (id: string): void
   removePoint? (id: string): void
@@ -72,6 +73,7 @@ const SkillListItem: React.FC<Props> = props => {
     untyp,
     selectedForInfo,
     staticData,
+    isRemovingEnabled,
     activate,
     addPoint,
     removePoint,
@@ -127,7 +129,7 @@ const SkillListItem: React.FC<Props> = props => {
         sr={sr}
         activate={activate}
         addPoint={addPoint}
-        removePoint={removePoint}
+        removePoint={isRemovingEnabled ? removePoint : undefined}
         selectForInfo={selectForInfo}
         />
     </ListItem>
@@ -147,6 +149,7 @@ const MemoSkillListItem = React.memo (
     && prevProps.insertTopMargin === nextProps.insertTopMargin
     && prevProps.typ === nextProps.typ
     && prevProps.untyp === nextProps.untyp
+    && prevProps.isRemovingEnabled === nextProps.isRemovingEnabled
     && INTERNAL_shallowEquals (prevProps.selectedForInfo) (nextProps.selectedForInfo)
 )
 

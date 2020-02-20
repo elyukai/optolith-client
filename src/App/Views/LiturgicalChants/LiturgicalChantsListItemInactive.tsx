@@ -72,6 +72,7 @@ export const LiturgicalChantsListItemInactive: FC = props => {
         insertTopMargin={insertTopMargin}
         attributes={attributes}
         staticData={staticData}
+        isRemovingEnabled={false}
         selectForInfo={selectForInfo}
         addText={
           sortOrder === "group"
@@ -100,6 +101,7 @@ export const LiturgicalChantsListItemInactive: FC = props => {
         insertTopMargin={insertTopMargin}
         attributes={attributes}
         staticData={staticData}
+        isRemovingEnabled={false}
         selectForInfo={selectForInfo}
         addText={add_text}
         selectedForInfo={currentInfoId}

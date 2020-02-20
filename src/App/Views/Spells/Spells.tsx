@@ -299,6 +299,7 @@ export const Spells: React.FC<Props> = props => {
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
                                       staticData={staticData}
+                                      isRemovingEnabled={isRemovingEnabled}
                                       selectForInfo={handleShowSlideinInfo}
                                       addText={
                                         sortOrder === "group"
@@ -334,6 +335,7 @@ export const Spells: React.FC<Props> = props => {
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
                                       staticData={staticData}
+                                      isRemovingEnabled={isRemovingEnabled}
                                       selectForInfo={handleShowSlideinInfo}
                                       addText={add_text}
                                       untyp={SWRAL.isUnfamiliar (curr)}
@@ -436,6 +438,7 @@ export const Spells: React.FC<Props> = props => {
                                     insertTopMargin={insertTopMargin}
                                     attributes={attributes}
                                     staticData={staticData}
+                                    isRemovingEnabled={isRemovingEnabled}
                                     selectForInfo={handleShowInfo}
                                     addText={
                                       sortOrder === "group"
@@ -477,6 +480,7 @@ export const Spells: React.FC<Props> = props => {
                                     insertTopMargin={insertTopMargin}
                                     attributes={attributes}
                                     staticData={staticData}
+                                    isRemovingEnabled={isRemovingEnabled}
                                     selectForInfo={handleShowInfo}
                                     addText={add_text}
                                     untyp={SWRAL.isUnfamiliar (curr)}

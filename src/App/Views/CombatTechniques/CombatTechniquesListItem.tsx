@@ -78,6 +78,7 @@ export const CombatTechniqueListItem: React.FC<CombatTechniqueListItemProps> = p
       )}
       attributes={attributes}
       staticData={staticData}
+      isRemovingEnabled={isRemovingEnabled}
       selectForInfo={selectForInfo}
       group={CTWRA_.gr (ct)}
       getGroupName={
