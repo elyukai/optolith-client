@@ -2,7 +2,7 @@ import { equals } from "../../Data/Eq"
 import { fmap } from "../../Data/Functor"
 import { set } from "../../Data/Lens"
 import { flength, fnull, head, intercalate, List, map, NonEmptyList, splitOn } from "../../Data/List"
-import { bindF, ensure, fromJust, Just, liftM2, mapM, mapMaybe, Maybe, maybe, Nothing, product } from "../../Data/Maybe"
+import { bindF, ensure, fromJust, fromMaybe, Just, liftM2, mapM, mapMaybe, Maybe, maybe, Nothing, product, sum } from "../../Data/Maybe"
 import { gt } from "../../Data/Num"
 import { Record } from "../../Data/Record"
 import { show } from "../../Data/Show"
@@ -13,9 +13,12 @@ import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryA
 import { HitZoneArmor } from "../Models/Hero/HitZoneArmor"
 import { fromItemTemplate, Item } from "../Models/Hero/Item"
 import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
+import { StaticDataRecord } from "../Models/Wiki/WikiModel"
+import { ndash } from "./Chars"
+import { translate } from "./I18n"
 import { ifElse } from "./ifElse"
 import { getLevelElementsWithZero } from "./levelUtils"
-import { toFloat, toInt } from "./NumberUtils"
+import { signZero, toFloat, toInt } from "./NumberUtils"
 import { pipe, pipe_ } from "./pipe"
 
 const IA = Item.A
@@ -217,3 +220,21 @@ export const fromItemTemplateEdit =
       itemToEditable,
       set (EditItemL.id) (new_id)
     )
+
+const getDice = (staticData: StaticDataRecord) => translate (staticData) ("general.dice")
+
+const combinedDamageValues = (staticData: StaticDataRecord) =>
+                             (flat: Maybe<number>) =>
+                             (n: number) =>
+                             (sides: number) =>
+                               `${n}${getDice (staticData)}${sides}${signZero (sum (flat))}`
+
+export const getDamageStr = (staticData: StaticDataRecord) =>
+                            (flat: Maybe<number>) =>
+                            (diceNumber: Maybe<number>) =>
+                            (diceSides: Maybe<number>): string =>
+                              fromMaybe (ndash)
+                                        (liftM2 (combinedDamageValues (staticData)
+                                                                      (flat))
+                                                (diceNumber)
+                                                (diceSides))

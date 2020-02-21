@@ -27,6 +27,7 @@ export const ListItem: React.FC<Props> = props => {
     noIncrease,
     recommended,
     unrecommended,
+    onClick,
   } = props
 
   return (
@@ -43,6 +44,7 @@ export const ListItem: React.FC<Props> = props => {
           guardReplace (orN (disabled)) ("disabled")
         ))
       }
+      onClick={onClick}
       >
       {orN (insertTopMargin) ? <div className="separator" /> : null}
       {children}

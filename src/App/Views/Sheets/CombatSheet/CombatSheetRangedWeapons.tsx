@@ -8,7 +8,8 @@ import { show } from "../../../../Data/Show"
 import { RangedWeapon } from "../../../Models/View/RangedWeapon"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
-import { signZero, toRoman } from "../../../Utilities/NumberUtils"
+import { getDamageStr } from "../../../Utilities/ItemUtils"
+import { toRoman } from "../../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
 import { TextBox } from "../../Universal/TextBox"
@@ -90,10 +91,10 @@ export const CombatSheetRangedWeapons: React.FC<Props> = props => {
                     {translate (staticData) ("sheets.combatsheet.actions")}
                   </td>
                   <td className="damage">
-                    {renderMaybe (RWA.damageDiceNumber (e))}
-                    {translate (staticData) ("general.dice")}
-                    {renderMaybe (RWA.damageDiceSides (e))}
-                    {signZero (Maybe.sum (RWA.damageFlat (e)))}
+                    {getDamageStr (staticData)
+                                  (RWA.damageFlat (e))
+                                  (RWA.damageDiceNumber (e))
+                                  (RWA.damageDiceSides (e))}
                   </td>
                   <td className="ammunition">
                     {renderMaybe (RWA.ammunition (e))}

@@ -19,8 +19,8 @@ import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAt
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { minus, ndash } from "../../Utilities/Chars"
 import { localizeNumber, localizeSize, localizeWeight, translate, translateP } from "../../Utilities/I18n"
-import { convertPrimaryAttributeToArray } from "../../Utilities/ItemUtils"
-import { sign, signZero } from "../../Utilities/NumberUtils"
+import { convertPrimaryAttributeToArray, getDamageStr } from "../../Utilities/ItemUtils"
+import { sign } from "../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils"
 import { Markdown } from "../Universal/Markdown"
@@ -202,10 +202,7 @@ export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
               <tr>
                 <td>{translate (staticData) ("inlinewiki.equipment.damage")}</td>
                 <td>
-                  {renderMaybe (damageDiceNumber)}
-                  {translate (staticData) ("general.dice")}
-                  {renderMaybe (damageDiceSides)}
-                  {renderMaybeWith (signZero) (damageFlat)}
+                  {getDamageStr (staticData) (damageFlat) (damageDiceNumber) (damageDiceSides)}
                 </td>
               </tr>
               <tr>
@@ -272,10 +269,7 @@ export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
               <tr>
                 <td>{translate (staticData) ("inlinewiki.equipment.damage")}</td>
                 <td>
-                  {renderMaybe (damageDiceNumber)}
-                  {translate (staticData) ("general.dice")}
-                  {renderMaybe (damageDiceSides)}
-                  {renderMaybeWith (signZero) (damageFlat)}
+                  {getDamageStr (staticData) (damageFlat) (damageDiceNumber) (damageDiceSides)}
                 </td>
               </tr>
               <tr>

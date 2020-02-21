@@ -2,7 +2,7 @@ import * as React from "react"
 import { Textfit } from "react-textfit"
 import { fmap, fmapF } from "../../../../Data/Functor"
 import { flength, intercalate, List, map, replicateR, subscriptF, toArray } from "../../../../Data/List"
-import { bindF, fromMaybe, Maybe } from "../../../../Data/Maybe"
+import { bindF, fromMaybe, Just, Maybe } from "../../../../Data/Maybe"
 import { lookupF } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { bimap, fst, isTuple, snd } from "../../../../Data/Tuple"
@@ -11,7 +11,8 @@ import { MeleeWeapon } from "../../../Models/View/MeleeWeapon"
 import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { ndash } from "../../../Utilities/Chars"
 import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
-import { sign, signZero, toRoman } from "../../../Utilities/NumberUtils"
+import { getDamageStr } from "../../../Utilities/ItemUtils"
+import { sign, toRoman } from "../../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
 import { TextBox } from "../../Universal/TextBox"
@@ -100,10 +101,10 @@ export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
                         : `${intercalate ("/") (MWA.primary (e))} ${primaryBonus}`}
                     </td>
                     <td className="damage">
-                      {renderMaybe (MWA.damageDiceNumber (e))}
-                      {translate (staticData) ("general.dice")}
-                      {renderMaybe (MWA.damageDiceSides (e))}
-                      {signZero (MWA.damageFlat (e))}
+                      {getDamageStr (staticData)
+                                    (Just (MWA.damageFlat (e)))
+                                    (MWA.damageDiceNumber (e))
+                                    (MWA.damageDiceSides (e))}
                     </td>
                     <td className="at-mod mod">
                       {sign (Maybe.sum (MWA.atMod (e)))}
