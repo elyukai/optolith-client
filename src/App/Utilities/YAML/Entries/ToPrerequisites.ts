@@ -1,10 +1,11 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 import { flip, ident } from "../../../../Data/Function"
 import { fmapF } from "../../../../Data/Functor"
-import { foldr, fromArray, List, map, NonEmptyList, notNull } from "../../../../Data/List"
+import { flength, fnull, foldr, fromArray, head, List, map, NonEmptyList, notNull } from "../../../../Data/List"
 import { catMaybes, Just, Maybe, Nothing } from "../../../../Data/Maybe"
-import { insert, OrderedMap } from "../../../../Data/OrderedMap"
+import { assocs, insert, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
+import { fst, snd } from "../../../../Data/Tuple"
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement"
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement"
 import { RequireIncreasable } from "../../../Models/Wiki/prerequisites/IncreasableRequirement"
@@ -185,7 +186,7 @@ type PrerequisitesByLevel = OrderedMap<number, PrerequisiteList>
 
 
 export const toLevelPrerequisites : (univ : RawPrerequisites.WithLevelPrerequisites)
-                                  => PrerequisitesByLevel
+                                  => PrerequisitesByLevel | List<AllRequirementObjects>
                                   = univ => pipe_ (
                                               OrderedMap.empty as PrerequisitesByLevel,
                                               mp => {
@@ -209,5 +210,15 @@ export const toLevelPrerequisites : (univ : RawPrerequisites.WithLevelPrerequisi
                                                                 toPrerequisites,
                                                                 insert (x.level)
                                                               )))
-                                                )
+                                                ),
+                                              mp => pipe_ (
+                                                      mp,
+                                                      assocs,
+                                                      acs => fnull (acs)
+                                                             ? List ()
+                                                             : flength (acs) === 1
+                                                               && fst (head (acs)) === 1
+                                                             ? snd (head (acs))
+                                                             : mp
+                                                    )
                                             )

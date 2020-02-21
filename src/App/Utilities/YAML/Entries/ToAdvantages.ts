@@ -1,9 +1,9 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 import { bindF, fromRight_, isLeft, Right, second } from "../../../../Data/Either"
 import { flip, ident } from "../../../../Data/Function"
-import { foldr, fromArray, notNull } from "../../../../Data/List"
+import { append, cons, foldr, fromArray, isList, List, notNull } from "../../../../Data/List"
 import { ensure, Just, Maybe, Nothing } from "../../../../Data/Maybe"
-import { fromMap, insert, OrderedMap } from "../../../../Data/OrderedMap"
+import { fromMap, insert, insertWith, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Advantage } from "../../../Models/Wiki/Advantage"
 import { Blessing } from "../../../Models/Wiki/Blessing"
@@ -12,6 +12,7 @@ import { CombatTechnique } from "../../../Models/Wiki/CombatTechnique"
 import { LiturgicalChant } from "../../../Models/Wiki/LiturgicalChant"
 import { Skill } from "../../../Models/Wiki/Skill"
 import { Spell } from "../../../Models/Wiki/Spell"
+import { AllRequirements } from "../../../Models/Wiki/wikiTypeHelpers"
 import { pipe, pipe_ } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
@@ -95,7 +96,17 @@ const toAdv : (blessings : OrderedMap<string, Record<Blessing>>)
                           : Maybe (univ.cost),
                     input: Maybe (l10n.input),
                     max: Maybe (univ.max),
-                    prerequisites: toLevelPrerequisites (univ),
+                    prerequisites: pipe_ (
+                      toLevelPrerequisites (univ),
+                      mp => univ.hasToBeCommonOrSuggestedByRCP
+                            ? isList (mp)
+                              ? cons <AllRequirements> (mp) ("RCP")
+                              : insertWith <List<AllRequirements>> (append)
+                                                                   (1)
+                                                                   (List ("RCP"))
+                                                                   (mp)
+                            : mp
+                    ),
                     prerequisitesText: Maybe (l10n.prerequisites),
                     prerequisitesTextIndex: prerequisitesIndex,
                     prerequisitesTextStart: Maybe (l10n.prerequisitesStart),

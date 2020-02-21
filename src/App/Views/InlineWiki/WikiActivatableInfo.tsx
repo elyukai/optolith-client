@@ -9,6 +9,7 @@ import { bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing,
 import { negate } from "../../../Data/Num"
 import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../Data/OrderedMap"
 import { Record, RecordI } from "../../../Data/Record"
+import { traceShowId } from "../../../Debug/Trace"
 import { Category } from "../../Constants/Categories"
 import { SpecialAbilityGroup } from "../../Constants/Groups"
 import { AdvantageId, SpecialAbilityId } from "../../Constants/Ids"
@@ -653,6 +654,8 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
 
   const addTextAfterOutsideList: <A> (xs: List<TypeofList | A>) => List<TypeofList | A> =
     xs => maybe (xs) (snoc (xs)) (mtext_after_outsidelist)
+
+  traceShowId (prerequisites)
 
   if (isOrderedMap (prerequisites)) {
     const levelList = rangeN (1, levels)
