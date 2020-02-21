@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useDispatch } from "react-redux"
-import { elem } from "../../../Data/List"
+import { elem, notNull } from "../../../Data/List"
 import { Record } from "../../../Data/Record"
 import { setTab } from "../../Actions/LocationActions"
 import { NavigationBarTabOptions } from "../../Models/View/NavigationBarTabOptions"
@@ -33,7 +33,7 @@ export const NavigationBarTab: React.FC<Props> = props => {
     [ dispatch, id ]
   )
 
-  const isActive = typeof subTabs === "object" ? elem (currentTab) (subTabs) : currentTab === id
+  const isActive = notNull (subTabs) ? elem (currentTab) (subTabs) : currentTab === id
 
   return (
     <Tab
