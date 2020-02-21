@@ -1,9 +1,11 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 import { Either, fromRight_, isLeft, Left, lefts, Right } from "../../../Data/Either"
-import { set } from "../../../Data/Lens"
+import { over, set } from "../../../Data/Lens"
 import { concatMap, fromArray, List, toArray } from "../../../Data/List"
-import { OrderedMap } from "../../../Data/OrderedMap"
+import { insert, OrderedMap } from "../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../Data/Record"
+import { ProfessionId } from "../../Constants/Ids"
+import { getCustomProfession } from "../../Models/Wiki/Profession"
 import { StaticData, StaticDataL, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { combineSpellsAndMagicalActions } from "../Increasable/spellUtils"
 import { pipe_ } from "../pipe"
@@ -434,7 +436,13 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                           zibiljaRituals,
                         })
 
-                        return Right (set (StaticDataL.spells)
-                                          (combineSpellsAndMagicalActions (staticData))
-                                          (staticData))
+                        return pipe_ (
+                          staticData,
+                          over (StaticDataL.professions)
+                               (insert<string> (ProfessionId.CustomProfession)
+                                               (getCustomProfession (staticData))),
+                          set (StaticDataL.spells)
+                              (combineSpellsAndMagicalActions (staticData)),
+                          Right
+                        )
                       }
