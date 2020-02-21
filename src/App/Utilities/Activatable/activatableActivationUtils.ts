@@ -7,10 +7,10 @@
  * @since 1.1.0
  */
 
-import { notEquals } from "../../../Data/Eq"
+import { equals, notEquals } from "../../../Data/Eq"
 import { ident } from "../../../Data/Function"
 import { over, set } from "../../../Data/Lens"
-import { append, consF, deleteAt, empty, List, modifyAt, subscriptF } from "../../../Data/List"
+import { append, consF, deleteAt, empty, find, List, modifyAt, subscriptF } from "../../../Data/List"
 import { alt, any, bindF, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe"
 import { isOrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
@@ -18,15 +18,19 @@ import { ActivatableDependent, ActivatableDependentL } from "../../Models/Active
 import { ActiveObject, ActiveObjectL } from "../../Models/ActiveEntries/ActiveObject"
 import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { Advantage } from "../../Models/Wiki/Advantage"
-import { Activatable, AllRequirementObjects, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
+import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
 import { addDependencies, removeDependencies } from "../Dependencies/dependencyUtils"
 import { adjustEntryDef } from "../heroStateUtils"
-import { pipe } from "../pipe"
+import { pipe, pipe_ } from "../pipe"
 import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites"
 import { getGeneratedPrerequisites } from "../Prerequisites/prerequisitesUtils"
 import { convertUIStateToActiveObject } from "./activatableConvertUtils"
 
+const AOA = ActiveObject.A
 const { tier } = ActiveObject.AL
+const AAL = Advantage.AL
+const SOA = SelectOption.A
 const { id, prerequisites } = Advantage.AL
 const { active } = ActivatableDependent.AL
 
@@ -34,6 +38,21 @@ const getStaticPrerequisites =
   (entry: Record<ActiveObject>) =>
     flattenPrerequisites (alt (tier (entry)) (Just (1)))
                          (Nothing)
+
+const getPrerequisitesFromSelectOption =
+  (wiki_entry: Activatable) =>
+  (entry: Record<ActiveObject>): List<AllRequirements> =>
+    pipe_ (
+      entry,
+      AOA.sid,
+      bindF (sid => pipe_ (
+                      wiki_entry,
+                      AAL.select,
+                      bindF (find (pipe (SOA.id, equals (sid))))
+                    )),
+      bindF (SOA.prerequisites),
+      fromMaybe (List ()),
+    )
 
 /**
  * Get matching flattened final static and dynamic prerequisites.
@@ -43,13 +62,17 @@ export const getCombinedPrerequisites =
   (wiki_entry: Activatable) =>
   (hero_entry: Maybe<Record<ActivatableDependent>>) =>
   (entry: Record<ActiveObject>): List<AllRequirements> =>
-    append (getStaticPrerequisites (entry)
-                                   (prerequisites (wiki_entry)))
-           (fromMaybe<List<AllRequirementObjects>> (empty)
-                                                   (getGeneratedPrerequisites (add)
-                                                                              (wiki_entry)
-                                                                              (hero_entry)
-                                                                              (entry)))
+    pipe_ (
+      getStaticPrerequisites (entry)
+                             (prerequisites (wiki_entry)),
+      append (getPrerequisitesFromSelectOption (wiki_entry)
+                                               (entry)),
+      append (fromMaybe<List<AllRequirements>> (empty)
+                                               (getGeneratedPrerequisites (add)
+                                                                          (wiki_entry)
+                                                                          (hero_entry)
+                                                                          (entry))),
+    )
 
 /**
  * Adds or removes active instance and related prerequisites based on passed

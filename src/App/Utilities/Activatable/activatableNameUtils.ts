@@ -12,7 +12,7 @@ import { equals } from "../../../Data/Eq"
 import { flip, thrush } from "../../../Data/Function"
 import { fmap } from "../../../Data/Functor"
 import { appendStr, elem, find, flength, groupByKey, intercalate, List, map, replaceStr, subscriptF } from "../../../Data/List"
-import { altF_, any, bind, bindF, elemF, ensure, fromMaybe, isJust, Just, liftM2, listToMaybe, maybe, Maybe, Nothing, thenF } from "../../../Data/Maybe"
+import { altF_, any, bind, bindF, elemF, ensure, fromJust, fromMaybe, isJust, Just, liftM2, listToMaybe, maybe, Maybe, Nothing, thenF } from "../../../Data/Maybe"
 import { elems, lookup, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
@@ -261,10 +261,22 @@ const getEntrySpecificNameAddition =
 
       default: {
         const current_sid = AOWIA.sid (hero_entry)
+        const current_sid2 = AOWIA.sid2 (hero_entry)
 
         // Text input
         if (isJust (AAL.input (wiki_entry)) && any (isString) (current_sid)) {
           return current_sid
+        }
+
+        // Select option and text input
+        if (isJust (AAL.select (wiki_entry))
+            && isJust (AAL.input (wiki_entry))
+            && isJust (current_sid)
+            && any (isString) (current_sid2)) {
+          const name1 = fromMaybe ("") (getSelectOptionName (wiki_entry) (current_sid))
+          const name2 = fromJust (current_sid2)
+
+          return Just (`${name1}: ${name2}`)
         }
 
         // Plain select option
