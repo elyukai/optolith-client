@@ -66,25 +66,24 @@ const changeActiveLength =
   (entry: Record<ActiveObject>) =>
   (wiki_entry: Activatable) =>
   (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
-  (hero: HeroModelRecord) =>
+    pipe (
+      // modify the list of `ActiveObjects` and pass the hero
+      // to `changeDependencies` so that it can apply all the
+      // dependencies to the updated hero
+      adjustEntryDef (over (ActivatableDependentL.active) (modifyActiveObjects))
+                     (id (wiki_entry)),
 
-                       // Source id
-    modifyDependencies (id (wiki_entry))
+                         // Source id
+      modifyDependencies (id (wiki_entry))
 
-                       // get the prerequisites that need to be applied as
-                       // dependencies to all objects the activation or
-                       // deactivation depends on
-                       (getCombinedPrerequisites (add)
-                                                 (wiki_entry)
-                                                 (mhero_entry)
-                                                 (entry))
-
-                       // modify the list of `ActiveObjects` and pass the hero
-                       // to `changeDependencies` so that it can apply all the
-                       // dependencies to the updated hero
-                       (adjustEntryDef (over (ActivatableDependentL.active) (modifyActiveObjects))
-                                       (id (wiki_entry))
-                                       (hero))
+                         // get the prerequisites that need to be applied as
+                         // dependencies to all objects the activation or
+                         // deactivation depends on
+                         (getCombinedPrerequisites (add)
+                                                   (wiki_entry)
+                                                   (mhero_entry)
+                                                   (entry))
+    )
 
 /**
  * Activates the entry with the given parameters and adds all needed

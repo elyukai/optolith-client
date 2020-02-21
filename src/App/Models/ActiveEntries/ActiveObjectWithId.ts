@@ -27,19 +27,18 @@ export const ActiveObjectWithId =
 
 export const ActiveObjectWithIdL = makeLenses (ActiveObjectWithId)
 
-export const toActiveObjectWithId =
-  (index: number) =>
-  (id: string) =>
-  (active: Record<ActiveObject>) =>
-    ActiveObjectWithId ({
-      id,
-      index,
-      cost: ActiveObject.A.cost (active),
-      sid: ActiveObject.A.sid (active),
-      sid2: ActiveObject.A.sid2 (active),
-      sid3: ActiveObject.A.sid3 (active),
-      tier: ActiveObject.A.tier (active),
-    })
+export const toActiveObjectWithId = (index: number) =>
+                                    (id: string) =>
+                                    (active: Record<ActiveObject>) =>
+                                      ActiveObjectWithId ({
+                                        id,
+                                        index,
+                                        cost: ActiveObject.A.cost (active),
+                                        sid: ActiveObject.A.sid (active),
+                                        sid2: ActiveObject.A.sid2 (active),
+                                        sid3: ActiveObject.A.sid3 (active),
+                                        tier: ActiveObject.A.tier (active),
+                                      })
 
 export const fromActiveObjectWithId =
   (active: Record<ActiveObjectWithId>) =>
