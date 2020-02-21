@@ -1,5 +1,5 @@
 import * as ActionTypes from "../Constants/ActionTypes"
-import { CulturesSortOptions, CulturesVisibilityFilter } from "../Utilities/Raw/JSON/Config"
+import { CulturesSortOptions, CulturesVisibilityFilter } from "../Models/Config"
 
 export interface SelectCultureAction {
   type: ActionTypes.SELECT_CULTURE

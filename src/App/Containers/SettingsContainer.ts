@@ -5,10 +5,10 @@ import * as ConfigActions from "../Actions/ConfigActions"
 import * as IOActions from "../Actions/IOActions"
 import * as LocaleActions from "../Actions/LocaleActions"
 import { AppStateRecord } from "../Models/AppState"
+import { Locale, Theme } from "../Models/Config"
 import { getUserSelectableSupportedLanguages } from "../Selectors/localeSelectors"
 import { getLocaleId, getLocaleType } from "../Selectors/stateSelectors"
 import { areAnimationsEnabled, getIsEditingHeroAfterCreationPhaseEnabled, getTheme } from "../Selectors/uisettingsSelectors"
-import { Locale, Theme } from "../Utilities/Raw/JSON/Config"
 import { Settings, SettingsDispatchProps, SettingsOwnProps, SettingsStateProps } from "../Views/Settings/Settings"
 
 const mapStateToProps = (state: AppStateRecord): SettingsStateProps => ({

@@ -3,12 +3,12 @@ import { ReduxDispatch } from "../Actions/Actions"
 import * as ConfigActions from "../Actions/ConfigActions"
 import * as SpellsActions from "../Actions/SpellsActions"
 import { AppStateRecord } from "../Models/AppState"
+import { SpellsSortOptions } from "../Models/Config"
 import { getAttributesForSheet } from "../Selectors/attributeSelectors"
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"
 import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrips, isNoSpellActivatable } from "../Selectors/spellsSelectors"
 import { getInactiveSpellsFilterText, getSpellsFilterText } from "../Selectors/stateSelectors"
 import { getEnableActiveItemHints, getSpellsSortOrder } from "../Selectors/uisettingsSelectors"
-import { SpellsSortOptions } from "../Utilities/Raw/JSON/Config"
 import { Spells, SpellsDispatchProps, SpellsOwnProps, SpellsStateProps } from "../Views/Spells/Spells"
 
 const mapStateToProps = (state: AppStateRecord, ownProps: SpellsOwnProps): SpellsStateProps => ({

@@ -1,261 +1,183 @@
-import { List } from "../../../../Data/List"
+import Ajv from "ajv"
+import { join } from "path"
+import { RawConfig } from "../../../../../app/Schema/Config/Config"
+import { handleE } from "../../../../Control/Exception"
+import { Either, fromLeft_, fromRight_, isLeft, Left, Right } from "../../../../Data/Either"
+import { fmap } from "../../../../Data/Functor"
 import { Just, Maybe, maybeToUndefined, Nothing } from "../../../../Data/Maybe"
-import { fromDefault, Record, toObject } from "../../../../Data/Record"
-import { fromJSBool, fromJSBoolM, fromJSEnum, fromJSEnumM, fromJSInArray, tryParseJSONRecord } from "../../../../Data/String/JSON"
-import { EquipmentGroup } from "../../../Constants/Groups"
+import { Record, toObject } from "../../../../Data/Record"
+import { IO, readFile } from "../../../../System/IO"
+import { AlertOptions } from "../../../Actions/AlertActions"
 import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../../../Constants/Ids"
+import { Config, CulturesVisibilityFilter, HeroListVisibilityFilter, ProfessionsVisibilityFilter, Theme } from "../../../Models/Config"
+import { app_path, user_data_path } from "../../../Selectors/envSelectors"
 import { SortNames } from "../../../Views/Universal/SortOptions"
-import { pipe } from "../../pipe"
-import { RawConfig } from "../RawData"
+import { pipe_ } from "../../pipe"
+import { parseYamlFile, validateJson } from "../../YAML/Parser"
 
-export type HeroListSortOptions = SortNames.Name
-                                | SortNames.DateModified
+const configSchemaPath = join (app_path, "app", "Schema", "Config", "Config.schema.json")
+const configPath = join (user_data_path, "config.json")
 
-export const HeroListSortOptions = List<HeroListSortOptions> (
-  SortNames.Name,
-  SortNames.DateModified,
-)
+const getConfigSchema = async (): IO<Either<Error, object>> => pipe_ (
+                          configSchemaPath,
+                          readFile,
+                          handleE,
+                          fmap (fmap<string, object> (JSON.parse))
+                        )
 
-export enum HeroListVisibilityFilter {
-  All = "all",
-  Own = "own",
-  Shared = "shared",
-}
+export const parseConfig = async () => {
+                             // Get config schema
+                             const econfigSchema = await getConfigSchema ()
 
-export type RacesSortOptions = SortNames.Name
-                             | SortNames.Cost
+                             if (isLeft (econfigSchema)) {
+                               return Left (AlertOptions ({
+                                 title: Just (`Config Schema Error`),
+                                 message: `The schema for the config file could not be loaded.`,
+                               }))
+                             }
 
-export const RacesSortOptions = List<RacesSortOptions> (
-  SortNames.Name,
-  SortNames.Cost,
-)
+                             const configSchema = fromRight_ (econfigSchema)
 
-export type CulturesSortOptions = SortNames.Name
-                                | SortNames.Cost
+                             const configSchemaId = (configSchema as any)["$id"] as string
 
-export const CulturesSortOptions = List<CulturesSortOptions> (
-  SortNames.Name,
-  SortNames.Cost,
-)
+                             // Parse config file
+                             const edata = await handleE (parseYamlFile (configPath))
 
-export enum CulturesVisibilityFilter {
-  All = "all",
-  Common = "common",
-}
+                             if (isLeft (edata)) {
+                               return Right (Config.default)
+                             }
 
-export type ProfessionsSortOptions = SortNames.Name
-                                   | SortNames.Cost
+                             const data = fromRight_ (edata)
 
-export const ProfessionsSortOptions = List<ProfessionsSortOptions> (
-  SortNames.Name,
-  SortNames.Cost,
-)
+                             const validator = new Ajv ({ allErrors: true })
+                               .addSchema (configSchema)
 
-export enum ProfessionsVisibilityFilter {
-  All = "all",
-  Common = "common",
-}
+                             // Validate config file contents
+                             const evalidated_data = validateJson (validator)
+                                                                  (configSchemaId)
+                                                                  <RawConfig> (data)
 
-export enum ProfessionsGroupVisibilityFilter {
-  All = 0,
-  Mundane = 1,
-  Magical = 2,
-  Blessed = 3,
-}
+                             if (isLeft (evalidated_data)) {
+                               const details =
+                                 fromLeft_ (evalidated_data)
+                                   .map (e => e.message)
+                                   .join ("\n")
 
-export type SkillsSortOptions = SortNames.Name
-                              | SortNames.Group
-                              | SortNames.IC
+                               return Left (AlertOptions ({
+                                 title: Just (`Config Invalidity error`),
+                                 message: `The file is not a valid Optolith config document.\nDetails:\n${details}`,
+                               }))
+                             }
 
-export const SkillsSortOptions = List<SkillsSortOptions> (
-  SortNames.Name,
-  SortNames.Group,
-  SortNames.IC,
-)
+                             const validated_data = fromRight_ (evalidated_data)
 
-export type SpecialAbilitiesSortOptions = SortNames.Name
-                                        | SortNames.GroupName
-
-export const SpecialAbilitiesSortOptions = List<SpecialAbilitiesSortOptions> (
-  SortNames.Name,
-  SortNames.GroupName,
-)
-
-export type CombatTechniquesSortOptions = SortNames.Name
-                                        | SortNames.Group
-                                        | SortNames.IC
-
-export const CombatTechniquesSortOptions = List<CombatTechniquesSortOptions> (
-  SortNames.Name,
-  SortNames.Group,
-  SortNames.IC,
-)
-
-export type SpellsSortOptions = SortNames.Name
-                              | SortNames.Group
-                              | SortNames.Property
-                              | SortNames.IC
-
-export const SpellsSortOptions = List<SpellsSortOptions> (
-  SortNames.Name,
-  SortNames.Group,
-  SortNames.Property,
-  SortNames.IC,
-)
-
-export type ChantsSortOptions = SortNames.Name
-                              | SortNames.Group
-                              | SortNames.IC
-
-export const ChantsSortOptions = List<ChantsSortOptions> (
-  SortNames.Name,
-  SortNames.Group,
-  SortNames.IC,
-)
-
-export type EquipmentSortOptions = SortNames.Name
-                                 | SortNames.GroupName
-                                 | SortNames.Where
-                                 | SortNames.Weight
-
-export const EquipmentSortOptions = List<EquipmentSortOptions> (
-  SortNames.Name,
-  SortNames.GroupName,
-  SortNames.Where,
-  SortNames.Weight,
-)
-
-export enum Locale {
-  German = "de-DE",
-  English = "en-US",
-  French = "fr-FR",
-  Dutch = "nl-BE",
-  Italian = "it-IT",
-}
-
-export enum Theme {
-  Light = "light",
-  Dark = "dark",
-}
-
-export interface Config {
-  "@@name": "Config"
-  herolistSortOrder: HeroListSortOptions
-  herolistVisibilityFilter: HeroListVisibilityFilter
-  racesSortOrder: RacesSortOptions
-  culturesSortOrder: CulturesSortOptions
-  culturesVisibilityFilter: CulturesVisibilityFilter
-  professionsSortOrder: ProfessionsSortOptions
-  professionsVisibilityFilter: ProfessionsVisibilityFilter
-  professionsGroupVisibilityFilter: ProfessionsGroupVisibilityFilter
-  advantagesDisadvantagesCultureRatingVisibility: boolean
-  talentsSortOrder: SkillsSortOptions
-  talentsCultureRatingVisibility: boolean
-  combatTechniquesSortOrder: CombatTechniquesSortOptions
-  specialAbilitiesSortOrder: SpecialAbilitiesSortOptions
-  spellsSortOrder: SpellsSortOptions
-  spellsUnfamiliarVisibility: boolean
-  liturgiesSortOrder: ChantsSortOptions
-  equipmentSortOrder: EquipmentSortOptions
-  equipmentGroupVisibilityFilter: EquipmentGroup
-  sheetCheckAttributeValueVisibility: Maybe<boolean>
-  enableActiveItemHints: boolean
-  locale: Maybe<string>
-  theme: Maybe<Theme>
-  enableEditingHeroAfterCreationPhase: Maybe<boolean>
-  meleeItemTemplatesCombatTechniqueFilter: Maybe<MeleeCombatTechniqueId>
-  rangedItemTemplatesCombatTechniqueFilter: Maybe<RangedCombatTechniqueId>
-  enableAnimations: Maybe<boolean>
-}
-
-export const Config =
-  fromDefault ("Config")
-              <Config> ({
-                herolistSortOrder: SortNames.Name,
-                herolistVisibilityFilter: HeroListVisibilityFilter.All,
-                racesSortOrder: SortNames.Name,
-                culturesSortOrder: SortNames.Name,
-                culturesVisibilityFilter: CulturesVisibilityFilter.Common,
-                professionsSortOrder: SortNames.Name,
-                professionsVisibilityFilter: ProfessionsVisibilityFilter.Common,
-                professionsGroupVisibilityFilter: ProfessionsGroupVisibilityFilter.All,
-                advantagesDisadvantagesCultureRatingVisibility: false,
-                talentsSortOrder: SortNames.Group,
-                talentsCultureRatingVisibility: false,
-                combatTechniquesSortOrder: SortNames.Name,
-                specialAbilitiesSortOrder: SortNames.Name,
-                spellsSortOrder: SortNames.Name,
-                spellsUnfamiliarVisibility: false,
-                liturgiesSortOrder: SortNames.Name,
-                equipmentSortOrder: SortNames.Name,
-                equipmentGroupVisibilityFilter: EquipmentGroup.MeleeWeapons,
-                sheetCheckAttributeValueVisibility: Just (false),
-                enableActiveItemHints: false,
-                locale: Nothing,
-                theme: Just (Theme.Dark),
-                enableEditingHeroAfterCreationPhase: Just (false),
-                meleeItemTemplatesCombatTechniqueFilter: Nothing,
-                rangedItemTemplatesCombatTechniqueFilter: Nothing,
-                enableAnimations: Just (false),
-              })
-
-export const readConfig =
-  tryParseJSONRecord <Config> ({
-                                herolistSortOrder: fromJSInArray (HeroListSortOptions)
-                                                                 ("HeroListSortOptions"),
-                                herolistVisibilityFilter: fromJSEnum ("HeroListVisibilityFilter")
-                                                                     (HeroListVisibilityFilter),
-                                racesSortOrder: fromJSInArray (RacesSortOptions)
-                                                              ("RacesSortOptions"),
-                                culturesSortOrder: fromJSInArray (CulturesSortOptions)
-                                                                 ("CulturesSortOptions"),
-                                culturesVisibilityFilter: fromJSEnum ("CulturesVisibilityFilter")
-                                                                     (CulturesVisibilityFilter),
-                                professionsSortOrder: fromJSInArray (ProfessionsSortOptions)
-                                                                    ("ProfessionsSortOptions"),
-                                professionsVisibilityFilter:
-                                  fromJSEnum ("ProfessionsVisibilityFilter")
-                                             (ProfessionsVisibilityFilter),
-                                professionsGroupVisibilityFilter:
-                                  fromJSEnum ("ProfessionsGroupVisibilityFilter")
-                                             (ProfessionsGroupVisibilityFilter),
-                                advantagesDisadvantagesCultureRatingVisibility: fromJSBool,
-                                talentsSortOrder: fromJSInArray (SkillsSortOptions)
-                                                                ("SkillsSortOptions"),
-                                talentsCultureRatingVisibility: fromJSBool,
-                                combatTechniquesSortOrder:
-                                  fromJSInArray (CombatTechniquesSortOptions)
-                                                ("CombatTechniquesSortOptions"),
-                                specialAbilitiesSortOrder:
-                                  pipe (
-                                    x => x === "group" ? SortNames.GroupName : x,
-                                    fromJSInArray (SpecialAbilitiesSortOptions)
-                                                  ("SpecialAbilitiesSortOptions")
-                                  ),
-                                spellsSortOrder: fromJSInArray (SpellsSortOptions)
-                                                               ("SpellsSortOptions"),
-                                spellsUnfamiliarVisibility: fromJSBool,
-                                liturgiesSortOrder: fromJSInArray (ChantsSortOptions)
-                                                                  ("ChantsSortOptions"),
-                                equipmentSortOrder: fromJSInArray (EquipmentSortOptions)
-                                                                  ("EquipmentSortOptions"),
-                                equipmentGroupVisibilityFilter: fromJSEnum ("EquipmentGroup")
-                                                                           (EquipmentGroup),
-                                sheetCheckAttributeValueVisibility: fromJSBoolM,
-                                enableActiveItemHints: fromJSBool,
-                                locale: fromJSEnumM ("Locale") (Locale),
-                                theme: fromJSEnumM ("Theme") (Theme),
-                                enableEditingHeroAfterCreationPhase: fromJSBoolM,
-                                meleeItemTemplatesCombatTechniqueFilter:
-                                  fromJSEnumM ("MeleeCombatTechniqueId")
-                                              (MeleeCombatTechniqueId),
-                                rangedItemTemplatesCombatTechniqueFilter:
-                                  fromJSEnumM ("RangedCombatTechniqueId")
-                                              (RangedCombatTechniqueId),
-                                enableAnimations: fromJSBoolM,
-                              })
-                              (Config)
-                              ("Config")
+                             return Right (Config ({
+                               herolistSortOrder:
+                                 validated_data.herolistSortOrder === "name"
+                                 ? SortNames.Name
+                                 : SortNames.DateModified,
+                               herolistVisibilityFilter:
+                                 validated_data.herolistVisibilityFilter === "all"
+                                 ? HeroListVisibilityFilter.All
+                                 : validated_data.herolistVisibilityFilter === "own"
+                                 ? HeroListVisibilityFilter.Own
+                                 : HeroListVisibilityFilter.Shared,
+                               racesSortOrder:
+                                 validated_data.racesSortOrder === "name"
+                                 ? SortNames.Name
+                                 : SortNames.Cost,
+                               culturesSortOrder:
+                                 validated_data.culturesSortOrder === "name"
+                                 ? SortNames.Name
+                                 : SortNames.Cost,
+                               culturesVisibilityFilter:
+                                 validated_data.culturesVisibilityFilter === "all"
+                                 ? CulturesVisibilityFilter.All
+                                 : CulturesVisibilityFilter.Common,
+                               professionsSortOrder:
+                                 validated_data.professionsSortOrder === "name"
+                                 ? SortNames.Name
+                                 : SortNames.Cost,
+                               professionsVisibilityFilter:
+                                 validated_data.professionsVisibilityFilter === "all"
+                                 ? ProfessionsVisibilityFilter.All
+                                 : ProfessionsVisibilityFilter.Common,
+                               professionsGroupVisibilityFilter:
+                                 validated_data.professionsGroupVisibilityFilter,
+                               advantagesDisadvantagesCultureRatingVisibility:
+                                 validated_data.advantagesDisadvantagesCultureRatingVisibility,
+                               talentsSortOrder:
+                                 validated_data.talentsSortOrder === "name"
+                                 ? SortNames.Name
+                                 : validated_data.talentsSortOrder === "group"
+                                 ? SortNames.Group
+                                 : SortNames.IC,
+                               talentsCultureRatingVisibility:
+                                 validated_data.talentsCultureRatingVisibility,
+                               combatTechniquesSortOrder:
+                                 validated_data.combatTechniquesSortOrder === "name"
+                                 ? SortNames.Name
+                                 : validated_data.combatTechniquesSortOrder === "group"
+                                 ? SortNames.Group
+                                 : SortNames.IC,
+                               specialAbilitiesSortOrder:
+                                 validated_data.specialAbilitiesSortOrder === "name"
+                                 ? SortNames.Name
+                                 : SortNames.GroupName,
+                               spellsSortOrder:
+                                 validated_data.spellsSortOrder === "name"
+                                 ? SortNames.Name
+                                 : validated_data.spellsSortOrder === "group"
+                                 ? SortNames.Group
+                                 : validated_data.spellsSortOrder === "property"
+                                 ? SortNames.Property
+                                 : SortNames.IC,
+                               spellsUnfamiliarVisibility:
+                                 validated_data.spellsUnfamiliarVisibility,
+                               liturgiesSortOrder:
+                                 validated_data.liturgiesSortOrder === "name"
+                                 ? SortNames.Name
+                                 : validated_data.liturgiesSortOrder === "group"
+                                 ? SortNames.Group
+                                 : SortNames.IC,
+                               equipmentSortOrder:
+                                 validated_data.equipmentSortOrder === "name"
+                                 ? SortNames.Name
+                                 : validated_data.equipmentSortOrder === "groupname"
+                                 ? SortNames.GroupName
+                                 : validated_data.equipmentSortOrder === "where"
+                                 ? SortNames.Where
+                                 : SortNames.Weight,
+                               equipmentGroupVisibilityFilter:
+                                 validated_data.equipmentGroupVisibilityFilter,
+                               sheetCheckAttributeValueVisibility:
+                                 Maybe (validated_data.sheetCheckAttributeValueVisibility),
+                               enableActiveItemHints:
+                                 validated_data.enableActiveItemHints,
+                               locale:
+                                 Maybe (validated_data.locale),
+                               theme:
+                                 validated_data.theme === "dark"
+                                 ? Just (Theme.Dark)
+                                 : validated_data.theme === "light"
+                                 ? Just (Theme.Light)
+                                 : Nothing,
+                               enableEditingHeroAfterCreationPhase:
+                                 Maybe (validated_data.enableEditingHeroAfterCreationPhase),
+                               meleeItemTemplatesCombatTechniqueFilter:
+                                 Maybe (
+                                   validated_data.meleeItemTemplatesCombatTechniqueFilter as
+                                     MeleeCombatTechniqueId | undefined
+                                 ),
+                               rangedItemTemplatesCombatTechniqueFilter:
+                                 Maybe (
+                                   validated_data.rangedItemTemplatesCombatTechniqueFilter as
+                                     RangedCombatTechniqueId | undefined
+                                 ),
+                               enableAnimations:
+                                 Maybe (validated_data.enableAnimations),
+                             }))
+                           }
 
 export const writeConfig = (x: Record<Config>): string => {
   const obj = toObject (x)

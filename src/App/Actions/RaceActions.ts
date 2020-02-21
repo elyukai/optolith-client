@@ -1,6 +1,6 @@
 import { Maybe } from "../../Data/Maybe"
 import * as ActionTypes from "../Constants/ActionTypes"
-import { RacesSortOptions } from "../Utilities/Raw/JSON/Config"
+import { RacesSortOptions } from "../Models/Config"
 
 export interface SelectRaceAction {
   type: ActionTypes.SELECT_RACE

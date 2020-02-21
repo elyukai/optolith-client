@@ -5,10 +5,10 @@ import { Record } from "../../Data/Record"
 import { ReceiveInitialDataAction } from "../Actions/IOActions"
 import { SetLocaleAction } from "../Actions/LocaleActions"
 import * as ActionTypes from "../Constants/ActionTypes"
+import { Config } from "../Models/Config"
 import { LocaleState, LocaleStateL } from "../Models/LocaleState"
 import { StaticData } from "../Models/Wiki/WikiModel"
 import { pipe } from "../Utilities/pipe"
-import { Config } from "../Utilities/Raw/JSON/Config"
 
 type Action = ReceiveInitialDataAction | SetLocaleAction
 

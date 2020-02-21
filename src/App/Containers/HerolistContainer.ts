@@ -8,12 +8,12 @@ import * as IOActions from "../Actions/IOActions"
 import * as LocationActions from "../Actions/LocationActions"
 import * as SubwindowsActions from "../Actions/SubwindowsActions"
 import { AppStateRecord } from "../Models/AppState"
+import { HeroListSortOptions, HeroListVisibilityFilter } from "../Models/Config"
 import { getSortedBooks } from "../Selectors/bookSelectors"
 import { getSortedHerolist, getUnsavedHeroesById } from "../Selectors/herolistSelectors"
 import { getCurrentHeroPresent, getHerolistFilterText, getIsCharacterCreatorOpen, getUsers, getWiki, getWikiExperienceLevels } from "../Selectors/stateSelectors"
 import { getHerolistSortOrder, getHerolistVisibilityFilter } from "../Selectors/uisettingsSelectors"
 import { TabId } from "../Utilities/LocationUtils"
-import { HeroListSortOptions, HeroListVisibilityFilter } from "../Utilities/Raw/JSON/Config"
 import { Herolist, HerolistDispatchProps, HerolistOwnProps, HerolistStateProps } from "../Views/Heroes/Herolist"
 
 const mapStateToProps = (state: AppStateRecord) => ({

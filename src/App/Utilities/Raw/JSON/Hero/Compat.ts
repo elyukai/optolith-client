@@ -1,4 +1,5 @@
 import { gte, lt, lte } from "semver"
+import { RawHero as RawHeroFromSchema } from "../../../../../../app/Schema/Hero/Hero"
 import { notP } from "../../../../../Data/Bool"
 import { fmap } from "../../../../../Data/Functor"
 import { all } from "../../../../../Data/List"
@@ -42,11 +43,11 @@ const convertLT =
       : hero as unknown as H2
 
 export const convertHero =
-  (staticData: StaticDataRecord): (orig_hero: RawHero) => Maybe<RawHero> =>
+  (staticData: StaticDataRecord): (orig_hero: RawHeroFromSchema) => Maybe<RawHero> =>
     pipe (
       shallowClone,
-      ensure ((hero: RawHero) => gte (hero .clientVersion, MIN_SUPPORTED_VERSION)
-                                 && lte (hero .clientVersion, MAX_SUPPORTED_VERSION)),
+      ensure ((hero: RawHeroFromSchema) => gte (hero .clientVersion, MIN_SUPPORTED_VERSION)
+                                           && lte (hero .clientVersion, MAX_SUPPORTED_VERSION)),
       fmap (pipe (
         pipe (
           convertLT ("0.51.1-alpha.2")
@@ -114,7 +115,7 @@ export const convertHero =
 
                       entry.clientVersion = "0.51.1"
 
-                      return entry
+                      return entry as RawHero_1_2_0_alpha_11
                     }),
           convertLT ("0.51.3-alpha.4")
                     (hero => {

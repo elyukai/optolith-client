@@ -24,7 +24,8 @@
   },
   "include": [
     "src/**/*",
-    "src/*"
+    "src/*",
+    "app/**/*.d.ts"
   ],
   "exclude": [
     "node_modules",

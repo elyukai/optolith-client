@@ -1,5 +1,5 @@
 import * as ActionTypes from "../Constants/ActionTypes"
-import { Theme } from "../Utilities/Raw/JSON/Config"
+import { Theme } from "../Models/Config"
 
 export interface SwitchEnableActiveItemHintsAction {
   type: ActionTypes.SWITCH_ENABLE_ACTIVE_ITEM_HINTS

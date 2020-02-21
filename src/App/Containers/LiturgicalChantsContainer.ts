@@ -3,12 +3,12 @@ import { ReduxDispatch } from "../Actions/Actions"
 import * as ConfigActions from "../Actions/ConfigActions"
 import * as LiturgicalChantActions from "../Actions/LiturgicalChantActions"
 import { AppStateRecord } from "../Models/AppState"
+import { ChantsSortOptions } from "../Models/Config"
 import { getAttributesForSheet } from "../Selectors/attributeSelectors"
 import { getBlessedTraditionNumericId, getFilteredActiveLiturgicalChantsAndBlessings, getFilteredInactiveLiturgicalChantsAndBlessings, isActivationDisabled } from "../Selectors/liturgicalChantsSelectors"
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"
 import { getInactiveLiturgicalChantsFilterText, getLiturgicalChantsFilterText } from "../Selectors/stateSelectors"
 import { getEnableActiveItemHints, getLiturgiesSortOrder } from "../Selectors/uisettingsSelectors"
-import { ChantsSortOptions } from "../Utilities/Raw/JSON/Config"
 import { LiturgicalChants, LiturgicalChantsDispatchProps, LiturgicalChantsOwnProps, LiturgicalChantsStateProps } from "../Views/LiturgicalChants/LiturgicalChants"
 
 const mapStateToProps = (

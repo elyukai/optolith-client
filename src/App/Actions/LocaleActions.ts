@@ -1,7 +1,7 @@
 import { fromMaybe, isNothing, Maybe } from "../../Data/Maybe"
 import { SET_LOCALE } from "../Constants/ActionTypes"
+import { Locale } from "../Models/Config"
 import { getSystemLocale } from "../Utilities/IOUtils"
-import { Locale } from "../Utilities/Raw/JSON/Config"
 
 export interface SetLocaleAction {
   type: SET_LOCALE

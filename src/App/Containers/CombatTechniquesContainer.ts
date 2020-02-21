@@ -2,12 +2,12 @@ import { connect } from "react-redux"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as CombatTechniquesActions from "../Actions/CombatTechniquesActions"
 import { AppStateRecord } from "../Models/AppState"
+import { CombatTechniquesSortOptions } from "../Models/Config"
 import { getAttributesForSheet } from "../Selectors/attributeSelectors"
 import { getFilteredCombatTechniques } from "../Selectors/combatTechniquesSelectors"
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"
 import { getCombatTechniquesFilterText } from "../Selectors/stateSelectors"
 import { getCombatTechniquesSortOrder } from "../Selectors/uisettingsSelectors"
-import { CombatTechniquesSortOptions } from "../Utilities/Raw/JSON/Config"
 import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnProps, CombatTechniquesStateProps } from "../Views/CombatTechniques/CombatTechniques"
 
 const mapStateToProps = (

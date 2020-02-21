@@ -2,10 +2,10 @@ import { connect } from "react-redux"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as RaceActions from "../Actions/RaceActions"
 import { AppStateRecord } from "../Models/AppState"
+import { RacesSortOptions } from "../Models/Config"
 import { getFilteredRaces } from "../Selectors/rcpSelectors"
 import { getCurrentRaceVariantId, getRaceId, getRacesFilterText } from "../Selectors/stateSelectors"
 import { getRacesSortOrder } from "../Selectors/uisettingsSelectors"
-import { RacesSortOptions } from "../Utilities/Raw/JSON/Config"
 import { Races, RacesDispatchProps, RacesOwnProps, RacesStateProps } from "../Views/Races/Races"
 
 const mapStateToProps = (state: AppStateRecord, ownProps: RacesOwnProps): RacesStateProps => ({

@@ -2,8 +2,8 @@ import { Maybe, Nothing } from "../../Data/Maybe"
 import { fromDefault, makeLenses } from "../../Data/Record"
 import { EquipmentGroup } from "../Constants/Groups"
 import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids"
-import { ChantsSortOptions, CombatTechniquesSortOptions, CulturesSortOptions, CulturesVisibilityFilter, EquipmentSortOptions, HeroListSortOptions, HeroListVisibilityFilter, ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter, RacesSortOptions, SkillsSortOptions, SpecialAbilitiesSortOptions, SpellsSortOptions, Theme } from "../Utilities/Raw/JSON/Config"
 import { SortNames } from "../Views/Universal/SortOptions"
+import { ChantsSortOptions, CombatTechniquesSortOptions, CulturesSortOptions, CulturesVisibilityFilter, EquipmentSortOptions, HeroListSortOptions, HeroListVisibilityFilter, ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter, RacesSortOptions, SkillsSortOptions, SpecialAbilitiesSortOptions, SpellsSortOptions, Theme } from "./Config"
 
 export interface UISettingsState {
   "@@name": "UISettingsState"

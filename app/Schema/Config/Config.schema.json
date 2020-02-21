@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "Schema/Config/Config.l10n.schema.json",
+  "$ref": "#/definitions/Config",
+  "definitions": {
+    "Config": {
+      "title": "RawConfig",
+      "type": "object",
+      "properties": {
+        "herolistSortOrder": {
+          "enum": ["name", "dateModified"]
+        },
+        "herolistVisibilityFilter": {
+          "enum": ["all", "own", "shared"]
+        },
+        "racesSortOrder": {
+          "enum": ["name", "cost"]
+        },
+        "culturesSortOrder": {
+          "enum": ["name", "cost"]
+        },
+        "culturesVisibilityFilter": {
+          "enum": ["all", "common"]
+        },
+        "professionsSortOrder": {
+          "enum": ["name", "cost"]
+        },
+        "professionsVisibilityFilter": {
+          "enum": ["all", "common"]
+        },
+        "professionsGroupVisibilityFilter": {
+          "enum": [0, 1, 2, 3]
+        },
+        "advantagesDisadvantagesCultureRatingVisibility": {
+          "type": "boolean"
+        },
+        "talentsSortOrder": {
+          "enum": ["name", "group", "ic"]
+        },
+        "talentsCultureRatingVisibility": {
+          "type": "boolean"
+        },
+        "combatTechniquesSortOrder": {
+          "enum": ["name", "group", "ic"]
+        },
+        "specialAbilitiesSortOrder": {
+          "enum": ["name", "group", "groupname"]
+        },
+        "spellsSortOrder": {
+          "enum": ["name", "group", "property", "ic"]
+        },
+        "spellsUnfamiliarVisibility": {
+          "type": "boolean"
+        },
+        "liturgiesSortOrder": {
+          "enum": ["name", "group", "ic"]
+        },
+        "equipmentSortOrder": {
+          "enum": ["name", "groupname", "where", "weight"]
+        },
+        "equipmentGroupVisibilityFilter": {
+          "type": "integer"
+        },
+        "sheetCheckAttributeValueVisibility": {
+          "type": "boolean"
+        },
+        "enableActiveItemHints": {
+          "type": "boolean"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "theme": {
+          "enum": ["light", "dark"]
+        },
+        "enableEditingHeroAfterCreationPhase": {
+          "type": "boolean"
+        },
+        "meleeItemTemplatesCombatTechniqueFilter": {
+          "type": "string"
+        },
+        "rangedItemTemplatesCombatTechniqueFilter": {
+          "type": "string"
+        },
+        "enableAnimations": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "herolistSortOrder",
+        "herolistVisibilityFilter",
+        "racesSortOrder",
+        "culturesSortOrder",
+        "culturesVisibilityFilter",
+        "professionsSortOrder",
+        "professionsVisibilityFilter",
+        "professionsGroupVisibilityFilter",
+        "advantagesDisadvantagesCultureRatingVisibility",
+        "talentsSortOrder",
+        "talentsCultureRatingVisibility",
+        "combatTechniquesSortOrder",
+        "specialAbilitiesSortOrder",
+        "spellsSortOrder",
+        "spellsUnfamiliarVisibility",
+        "liturgiesSortOrder",
+        "equipmentSortOrder",
+        "equipmentGroupVisibilityFilter",
+        "enableActiveItemHints"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

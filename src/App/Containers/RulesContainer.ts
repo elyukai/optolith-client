@@ -5,12 +5,12 @@ import { setHeroLocale } from "../Actions/ProfileActions"
 import * as RulesActions from "../Actions/RulesActions"
 import { setGuildMageUnfamiliarSpellId } from "../Actions/SpecialAbilitiesActions"
 import { AppStateRecord } from "../Models/AppState"
+import { Locale } from "../Models/Config"
 import { getGuildMageUnfamiliarSpellId } from "../Selectors/activatableSelectors"
 import { getSortedBooks } from "../Selectors/bookSelectors"
 import { isEnableLanguageSpecializationsDeactivatable } from "../Selectors/rulesSelectors"
 import { getAllSpellsForManualGuildMageSelect } from "../Selectors/spellsSelectors"
 import { getHeroLocale } from "../Selectors/stateSelectors"
-import { Locale } from "../Utilities/Raw/JSON/Config"
 import { RulesDispatchProps, RulesOwnProps, RulesStateProps, RulesView } from "../Views/Rules/Rules"
 
 const mapStateToProps =

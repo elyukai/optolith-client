@@ -4,7 +4,7 @@ import { UpdateInfo } from "electron-updater"
 import * as fs from "fs"
 import { extname, join } from "path"
 import { handleE, toMsg } from "../../Control/Exception"
-import { bimap, Either, either, eitherToMaybe, first, fromLeft_, fromRight_, isLeft, isRight, Left, Right } from "../../Data/Either"
+import { bimap, Either, eitherToMaybe, fromLeft_, fromRight_, isLeft, isRight, Left, Right } from "../../Data/Either"
 import { flip } from "../../Data/Function"
 import { fmap } from "../../Data/Functor"
 import { over } from "../../Data/Lens"
@@ -13,11 +13,11 @@ import { alt_, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNothing, Just
 import { any, filter, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap"
 import { notMember } from "../../Data/OrderedSet"
 import { Record, toObject } from "../../Data/Record"
-import { parseJSON, tryParseJSON } from "../../Data/String/JSON"
+import { parseJSON } from "../../Data/String/JSON"
 import { fst, Pair, snd } from "../../Data/Tuple"
 import * as IO from "../../System/IO"
 import * as ActionTypes from "../Constants/ActionTypes"
-import { IdPrefixes } from "../Constants/IdPrefixes"
+import { Config } from "../Models/Config"
 import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
 import { User } from "../Models/Hero/heroTypeHelpers"
 import { PetL } from "../Models/Hero/Pet"
@@ -33,14 +33,12 @@ import { getCurrentHeroId, getCurrentHeroName, getHeroes, getLocaleId, getUsers,
 import { getUISettingsState } from "../Selectors/uisettingsSelectors"
 import { APCache, deleteCache, forceCacheIsAvailable, insertAppStateCache, insertCacheMap, insertHeroesCache, readCache, toAPCache, writeCache } from "../Utilities/Cache"
 import { translate, translateP } from "../Utilities/I18n"
-import { getNewIdByDate, prefixId } from "../Utilities/IDUtils"
 import { bytify, getSystemLocale, showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
-import { Config, readConfig, writeConfig } from "../Utilities/Raw/JSON/Config"
-import { convertHero } from "../Utilities/Raw/JSON/Hero/Compat"
-import { convertFromRawHero } from "../Utilities/Raw/JSON/Hero/HeroFromJSON"
+import { parseConfig, writeConfig } from "../Utilities/Raw/JSON/Config"
+import { parseHero } from "../Utilities/Raw/JSON/Hero"
 import { convertHeroesForSave, convertHeroForSave } from "../Utilities/Raw/JSON/Hero/HeroToJSON"
-import { RawHero, RawHerolist } from "../Utilities/Raw/RawData"
+import { RawHerolist } from "../Utilities/Raw/RawData"
 import { isBase64Image } from "../Utilities/RegexUtils"
 import { UndoState } from "../Utilities/undo"
 import { readUpdate, writeUpdate } from "../Utilities/Update"
@@ -49,20 +47,6 @@ import { getSupportedLanguages } from "../Utilities/YAML/SupportedLanguages"
 import { ReduxAction } from "./Actions"
 import { addAlert, addDefaultErrorAlert, addErrorAlert, addPrompt, AlertOptions, CustomPromptOptions, getErrorMsg, PromptButton } from "./AlertActions"
 import { updateDateModified } from "./HerolistActions"
-
-
-// const getInstalledResourcesPath = (): string => remote.app.getAppPath ()
-
-const loadConfig = async () =>
-  pipe_ (
-    join (user_data_path, "config.json"),
-    IO.readFile,
-    handleE,
-    fmap (pipe (
-      first (err => err .message),
-      fmap (readConfig)
-    ))
-  )
 
 const loadHeroes = async () =>
   pipe_ (
@@ -99,8 +83,13 @@ const parseErrorsToPairStr = (es: Error[]) => pipe_ (
                                Pair ("YAML Error")
                              )
 
+const pairStrErrorToAlertOptions = (p: Pair<string, string>) => AlertOptions ({
+                                                                  title: Just (fst (p)),
+                                                                  message: snd (p),
+                                                                })
+
 export const getInitialData =
-  async (): Promise<Either<Pair<string, string>, InitialData>> => {
+  async (): Promise<Either<Record<AlertOptions>, InitialData>> => {
     const defaultLocale = getSystemLocale ()
 
     const did_update = await readUpdate ()
@@ -109,59 +98,50 @@ export const getInitialData =
       const deleted = await deleteCache ()
 
       if (isLeft (deleted)) {
-        return first (pipe (toMsg, Pair ("Error"))) (deleted)
+        return Left (AlertOptions ({
+                      title: Just ("Error"),
+                      message: toMsg (fromLeft_ (deleted)),
+                    }))
       }
     }
 
     const update_written = await writeUpdate (false)
 
     if (isLeft (update_written)) {
-      return first (pipe (toMsg, Pair ("Error"))) (update_written)
+      return Left (AlertOptions ({
+                    title: Just ("Error"),
+                    message: toMsg (fromLeft_ (update_written)),
+                  }))
     }
 
     // parsing error inside, missing file outside
-    const eeconfig = await loadConfig ()
+    const econfig = await parseConfig ()
 
-    // parsing error outside, missing file inside
-    const eeconfig_flipped = either ((file_err: string): typeof eeconfig => Right (Left (file_err)))
-                                    (either ((parse_err: string): typeof eeconfig =>
-                                              Left (parse_err))
-                                            ((c: Record<Config>) => Right (Right (c))))
-                                    (eeconfig)
-
-    if (isLeft (eeconfig_flipped)) {
-      const msg = fromLeft_ (eeconfig_flipped)
-
-      console.error (`Config parse error: ${msg}`)
-
-      return Left (Pair ("Config Error", msg))
+    if (isLeft (econfig)) {
+      return econfig
     }
 
-    const mconfig = eitherToMaybe (fromRight_ (eeconfig_flipped))
+    const config = fromRight_ (econfig)
     const mheroes = await loadHeroes ()
     const mcache = await readCache ()
 
     const eavailable_langs = await getSupportedLanguages ()
 
     if (isLeft (eavailable_langs)) {
-      return Left (parseErrorsToPairStr (fromLeft_ (eavailable_langs)))
+      return Left (pairStrErrorToAlertOptions (parseErrorsToPairStr (fromLeft_ (eavailable_langs))))
     }
 
     const available_langs = fromRight_ (eavailable_langs)
 
-    const eres = await parseStaticData (pipe_ (
-                                         mconfig,
-                                         bindF (Config.A.locale),
-                                         fromMaybe (defaultLocale)
-                                       ))
+    const eres = await parseStaticData (fromMaybe (defaultLocale) (Config.A.locale (config)))
 
-    return bimap (parseErrorsToPairStr)
+    return bimap (pipe (parseErrorsToPairStr, pairStrErrorToAlertOptions))
                  ((staticData: StaticDataRecord): InitialData =>
                    ({
                      staticData,
                      heroes: mheroes,
                      defaultLocale,
-                     config: mconfig,
+                     config: Just (config),
                      cache: mcache,
                      availableLangs: available_langs,
                    }))
@@ -220,18 +200,11 @@ export const requestInitialData: ReduxAction<Promise<void>> = async dispatch =>
 
                 dispatch2 (setLoadingDone ())
               })
-
-              return Promise.resolve ()
             }
             else {
-              await dispatch (addErrorAlert (AlertOptions ({
-                                              title: Just (fst (fromLeft_ (data))),
-                                              message: snd (fromLeft_ (data)),
-                                            })))
+              await dispatch (addErrorAlert (fromLeft_ (data)))
 
               dispatch (setLoadingDoneWithError ())
-
-              return Promise.resolve ()
             }
           })
 
@@ -552,49 +525,12 @@ export const requestHeroExport =
     }
   }
 
-export const loadImportedHero: ReduxAction<Promise<Maybe<RawHero>>> =
-  async (dispatch, getState) =>
+export const getHeroFilePath: () => Promise<Maybe<string>> =
+  async () =>
     pipe_ (
       await showOpenDialog ({ filters: [ { name: "JSON", extensions: [ "json" ] } ] }),
       listToMaybe,
       bindF (ensure (x => extname (x) === ".json")),
-      maybe<Promise<Maybe<Either<Error, string>>>> (Promise.resolve (Nothing))
-                                                   (pipe (IO.readFile, handleE, fmap (Just))),
-      IO.bindF (pipe (
-        fmap (
-          Either.bindF (pipe (
-            data => data.replace (/^\uFEFF/u, ""),
-            tryParseJSON
-          ))
-        ),
-        async mres => {
-          if (isNothing (mres)) {
-            return Nothing
-          }
-
-          const res = fromJust (mres)
-
-          if (isRight (res)) {
-            return Just (fromRight_ (res) as RawHero)
-          }
-
-          const staticData = getWiki (getState ())
-
-          const title = Just (translate (staticData) ("heroes.dialogs.importheroerror.title"))
-
-          const message = getErrorMsg (staticData)
-                                      (translate (staticData)
-                                                 ("heroes.dialogs.importheroerror.message"))
-                                      (res)
-
-          await dispatch (addErrorAlert (AlertOptions ({
-                                          title,
-                                          message,
-                                        })))
-
-          return Nothing
-        }
-      ))
     )
 
 export interface ReceiveImportedHeroAction {
@@ -606,46 +542,29 @@ export interface ReceiveImportedHeroAction {
 }
 
 export const receiveHeroImport =
-  (raw: RawHero): ReduxAction<Promise<void>> =>
-  async (dispatch, getState) => {
-    const newId = prefixId (IdPrefixes.HERO) (getNewIdByDate ())
-    const { player, avatar, ...other } = raw
-
-    const data: RawHero = {
-      ...other,
-      id: newId,
-      avatar: avatar !== undefined
-        && avatar.length > 0
-        && (isBase64Image (avatar) || await IO.existsFile (avatar.replace (/file:[\\/]+/u, "")))
-        ? avatar
-        : undefined,
-    }
-
-    const staticData = getWiki (getState ())
-
-    const mhero = pipe_ (
-      data,
-      convertHero (staticData),
-      fmap (convertFromRawHero (staticData)),
-    )
-
-    if (isJust (mhero)) {
-      dispatch<ReceiveImportedHeroAction> ({
-        type: ActionTypes.RECEIVE_IMPORTED_HERO,
-        payload: {
-          hero: fromJust (mhero),
-          player,
-        },
-      })
-    }
-  }
+  (hero: HeroModelRecord): ReceiveImportedHeroAction => ({
+    type: ActionTypes.RECEIVE_IMPORTED_HERO,
+    payload: {
+      hero,
+    },
+  })
 
 export const requestHeroImport: ReduxAction<Promise<void>> =
-  async dispatch => {
-    const mhero = await dispatch (loadImportedHero)
+  async (dispatch, getState) => {
+    const mfile_path = await getHeroFilePath ()
 
-    if (isJust (mhero)) {
-      await dispatch (receiveHeroImport (fromJust (mhero)))
+    if (isJust (mfile_path)) {
+      const staticData = getWiki (getState ())
+
+      const ehero = await parseHero (staticData)
+                                    (fromJust (mfile_path))
+
+      if (isLeft (ehero)) {
+        await dispatch (addErrorAlert (fromLeft_ (ehero)))
+      }
+      else {
+        dispatch (receiveHeroImport (fromRight_ (ehero)))
+      }
     }
   }
 

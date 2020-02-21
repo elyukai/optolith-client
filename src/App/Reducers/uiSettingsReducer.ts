@@ -18,8 +18,8 @@ import { SetSkillsSortOrderAction, SwitchSkillRatingVisibilityAction } from "../
 import { SetSpecialAbilitiesSortOrderAction } from "../Actions/SpecialAbilitiesActions"
 import { SetSpellsSortOrderAction } from "../Actions/SpellsActions"
 import * as ActionTypes from "../Constants/ActionTypes"
+import { Config, Theme } from "../Models/Config"
 import { UISettingsState, UISettingsStateL } from "../Models/UISettingsState"
-import { Config, Theme } from "../Utilities/Raw/JSON/Config"
 
 type Action = ReceiveInitialDataAction
             | SetCombatTechniquesSortOrderAction
