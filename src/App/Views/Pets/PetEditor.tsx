@@ -148,26 +148,31 @@ export function PetEditor (props: PetEditorProps) {
                 label={translate (staticData) ("pets.dialogs.addedit.name")}
                 value={EPA.name (pet)}
                 onChange={setName}
+                everyKeyDown
                 />
               <TextField
                 label={translate (staticData) ("pets.dialogs.addedit.sizecategory")}
                 value={EPA.size (pet)}
                 onChange={setSize}
+                everyKeyDown
                 />
               <TextField
                 label={translate (staticData) ("pets.dialogs.addedit.type")}
                 value={EPA.type (pet)}
                 onChange={setType}
+                everyKeyDown
                 />
               <TextField
                 label={translate (staticData) ("pets.dialogs.addedit.apspent")}
                 value={EPA.spentAp (pet)}
                 onChange={setSpentAp}
+                everyKeyDown
                 />
               <TextField
                 label={translate (staticData) ("pets.dialogs.addedit.totalap")}
                 value={EPA.totalAp (pet)}
                 onChange={setTotalAp}
+                everyKeyDown
                 />
             </div>
             <div className="row">
@@ -175,41 +180,49 @@ export function PetEditor (props: PetEditorProps) {
                 label={getAttrShort (attributes) (AttrId.Courage)}
                 value={EPA.cou (pet)}
                 onChange={setCourage}
+                everyKeyDown
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Sagacity)}
                 value={EPA.sgc (pet)}
                 onChange={setSagacity}
+                everyKeyDown
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Intuition)}
                 value={EPA.int (pet)}
                 onChange={setIntuition}
+                everyKeyDown
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Charisma)}
                 value={EPA.cha (pet)}
                 onChange={setCharisma}
+                everyKeyDown
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Dexterity)}
                 value={EPA.dex (pet)}
                 onChange={setDexterity}
+                everyKeyDown
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Agility)}
                 value={EPA.agi (pet)}
                 onChange={setAgility}
+                everyKeyDown
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Constitution)}
                 value={EPA.con (pet)}
                 onChange={setConstitution}
+                everyKeyDown
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Strength)}
                 value={EPA.str (pet)}
                 onChange={setStrength}
+                everyKeyDown
                 />
             </div>
             <div className="row">
@@ -217,36 +230,43 @@ export function PetEditor (props: PetEditorProps) {
                 label={getDCShort ("LP") (staticData)}
                 value={EPA.lp (pet)}
                 onChange={setLp}
+                everyKeyDown
                 />
               <TextField
                 label={getDCShort ("AE") (staticData)}
                 value={EPA.ae (pet)}
                 onChange={setAe}
+                everyKeyDown
                 />
               <TextField
                 label={getDCShort ("SPI") (staticData)}
                 value={EPA.spi (pet)}
                 onChange={setSpi}
+                everyKeyDown
                 />
               <TextField
                 label={getDCShort ("TOU") (staticData)}
                 value={EPA.tou (pet)}
                 onChange={setTou}
+                everyKeyDown
                 />
               <TextField
                 label={translate (staticData) ("pets.dialogs.addedit.protection")}
                 value={EPA.pro (pet)}
                 onChange={setPro}
+                everyKeyDown
                 />
               <TextField
                 label={getDCShort ("INI") (staticData)}
                 value={EPA.ini (pet)}
                 onChange={setIni}
+                everyKeyDown
                 />
               <TextField
                 label={getDCShort ("MOV") (staticData)}
                 value={EPA.mov (pet)}
                 onChange={setMov}
+                everyKeyDown
                 />
             </div>
             <div className="row">
@@ -254,26 +274,31 @@ export function PetEditor (props: PetEditorProps) {
                 label={translate (staticData) ("pets.dialogs.addedit.attackname")}
                 value={EPA.attack (pet)}
                 onChange={setAttack}
+                everyKeyDown
                 />
               <TextField
                 label={translate (staticData) ("pets.dialogs.addedit.attack")}
                 value={EPA.at (pet)}
                 onChange={setAt}
+                everyKeyDown
                 />
               <TextField
                 label={translate (staticData) ("pets.dialogs.addedit.parry")}
                 value={EPA.pa (pet)}
                 onChange={setPa}
+                everyKeyDown
                 />
               <TextField
                 label={translate (staticData) ("pets.dialogs.addedit.damagepoints")}
                 value={EPA.dp (pet)}
                 onChange={setDp}
+                everyKeyDown
                 />
               <TextField
                 label={translate (staticData) ("pets.dialogs.addedit.reach")}
                 value={EPA.reach (pet)}
                 onChange={setReach}
+                everyKeyDown
                 />
             </div>
             <div className="row">
@@ -281,16 +306,19 @@ export function PetEditor (props: PetEditorProps) {
                 label={translate (staticData) ("pets.dialogs.addedit.actions")}
                 value={EPA.actions (pet)}
                 onChange={setActions}
+                everyKeyDown
                 />
               <TextField
                 label={translate (staticData) ("pets.dialogs.addedit.skills")}
                 value={EPA.talents (pet)}
                 onChange={setSkills}
+                everyKeyDown
                 />
               <TextField
                 label={translate (staticData) ("pets.dialogs.addedit.specialabilities")}
                 value={EPA.skills (pet)}
                 onChange={setAbilities}
+                everyKeyDown
                 />
             </div>
             <div className="row">
@@ -298,6 +326,7 @@ export function PetEditor (props: PetEditorProps) {
                 label={translate (staticData) ("pets.dialogs.addedit.notes")}
                 value={EPA.notes (pet)}
                 onChange={setNotes}
+                everyKeyDown
                 />
             </div>
             {Maybe.elem (true) (isInCreation)

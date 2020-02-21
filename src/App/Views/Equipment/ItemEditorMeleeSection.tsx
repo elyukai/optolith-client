@@ -204,6 +204,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                       onChange={setFirstDamageThreshold}
                       disabled={lockedByNoCombatTechniqueOrLances}
                       valid={IEIVA.firstDamageThreshold (inputValidation)}
+                      everyKeyDown
                       />
                     <TextField
                       className="damage-threshold-part"
@@ -211,6 +212,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                       onChange={setSecondDamageThreshold}
                       disabled={lockedByNoCombatTechniqueOrLances}
                       valid={IEIVA.secondDamageThreshold (inputValidation)}
+                      everyKeyDown
                       />
                   </div>
                 )
@@ -222,6 +224,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                     onChange={setDamageThreshold}
                     disabled={lockedByNoCombatTechniqueOrLances}
                     valid={IEIVA.damageThreshold (inputValidation)}
+                    everyKeyDown
                     />
                 )
             }
@@ -264,6 +267,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                 onChange={setDamageDiceNumber}
                 disabled={locked}
                 valid={IEIVA.damageDiceNumber (inputValidation)}
+                everyKeyDown
                 />
               <Dropdown
                 className="damage-dice-sides"
@@ -279,6 +283,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                 onChange={setDamageFlat}
                 disabled={locked}
                 valid={IEIVA.damageFlat (inputValidation)}
+                everyKeyDown
                 />
             </div>
             <TextField
@@ -290,6 +295,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
               onChange={setStabilityModifier}
               disabled={locked}
               valid={IEIVA.stabilityMod (inputValidation)}
+              everyKeyDown
               />
             <Dropdown
               className="weapon-loss"
@@ -321,6 +327,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                 onChange={setAttack}
                 disabled={locked || elem<string> (CombatTechniqueId.Lances) (combatTechnique)}
                 valid={IEIVA.at (inputValidation)}
+                everyKeyDown
                 />
               <TextField
                 className="pa"
@@ -332,6 +339,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                   || elem<string> (CombatTechniqueId.Lances) (combatTechnique)
                 }
                 valid={IEIVA.pa (inputValidation)}
+                everyKeyDown
                 />
             </div>
           {
@@ -343,6 +351,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                   value={EIA.stp (item)}
                   onChange={setStructurePoints}
                   disabled={locked}
+                  everyKeyDown
                   />
               )
               : (
@@ -353,6 +362,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                   onChange={setLength}
                   disabled={locked}
                   valid={IEIVA.length (inputValidation)}
+                  everyKeyDown
                   />
               )
           }

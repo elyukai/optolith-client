@@ -80,6 +80,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
                 onChange={setProtection}
                 disabled={locked}
                 valid={IEIVA.pro (inputValidation)}
+                everyKeyDown
                 />
               <TextField
                 className="enc"
@@ -88,6 +89,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
                 onChange={setEncumbrance}
                 disabled={locked}
                 valid={IEIVA.enc (inputValidation)}
+                everyKeyDown
                 />
             </div>
             <Dropdown
@@ -110,6 +112,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
                 onChange={setStabilityModifier}
                 disabled={locked}
                 valid={IEIVA.stabilityMod (inputValidation)}
+                everyKeyDown
                 />
               <Dropdown
                 className="weapon-loss"
@@ -136,6 +139,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
                 onChange={setMovementModifier}
                 disabled={locked}
                 valid={IEIVA.mov (inputValidation)}
+                everyKeyDown
                 />
               <TextField
                 className="ini"
@@ -144,6 +148,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
                 onChange={setInitiativeModifier}
                 disabled={locked}
                 valid={IEIVA.ini (inputValidation)}
+                everyKeyDown
                 />
             </div>
             <Checkbox

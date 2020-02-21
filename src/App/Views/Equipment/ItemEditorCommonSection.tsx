@@ -104,6 +104,7 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
             value={EIA.amount (item)}
             onChange={setAmount}
             valid={IEIVA.amount (inputValidation)}
+            everyKeyDown
             />
           <TextField
             className="name"
@@ -113,6 +114,7 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
             autoFocus={isInCreation}
             disabled={locked}
             valid={IEIVA.name (inputValidation)}
+            everyKeyDown
             />
         </div>
         <div className="row">
@@ -123,6 +125,7 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
             onChange={setPrice}
             disabled={locked}
             valid={IEIVA.price (inputValidation)}
+            everyKeyDown
             />
           <TextField
             className="weight"
@@ -131,12 +134,14 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
             onChange={setWeight}
             disabled={locked}
             valid={IEIVA.weight (inputValidation)}
+            everyKeyDown
             />
           <TextField
             className="where"
             label={translate (staticData) ("equipment.dialogs.addedit.carriedwhere")}
             value={EIA.where (item)}
             onChange={setWhere}
+            everyKeyDown
             />
         </div>
         <div className="row">

@@ -117,6 +117,7 @@ export const HitZoneArmorEditor: React.FC<HitZoneArmorEditorProps> = props => {
             value={EHZAA.name (armorZonesEditor)}
             onChange={setName}
             autoFocus={Maybe.elem (true) (isInHitZoneArmorCreation)}
+            everyKeyDown
             />
         </div>
         <HitZoneArmorEditorRow
