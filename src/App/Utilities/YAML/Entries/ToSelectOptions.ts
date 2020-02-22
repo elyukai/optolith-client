@@ -203,13 +203,13 @@ export const resolveSOCats : (blessings : OrderedMap<string, Record<Blessing>>)
                                               : cat.category === "CANTRIPS"
                                               ? resolveCantrips (cas)
                                               : cat.category === "COMBAT_TECHNIQUES"
-                                              ? resolveCombatTechniques (cat.group) (cts)
+                                              ? resolveCombatTechniques (cat.groups) (cts)
                                               : cat.category === "LITURGICAL_CHANTS"
-                                              ? resolveLiturgicalChants (cat.group) (lcs)
+                                              ? resolveLiturgicalChants (cat.groups) (lcs)
                                               : cat.category === "SKILLS"
-                                              ? resolveSkills (cat.group) (sks)
-                                              : resolveSpells (cat.group) (sps))
-                                            (OrderedMap.empty)
+                                              ? resolveSkills (cat.groups) (sks)
+                                              : resolveSpells (cat.groups) (sps))
+                                            (OrderedMap.empty),
                                )
 
 
