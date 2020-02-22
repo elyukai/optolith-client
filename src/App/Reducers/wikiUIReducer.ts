@@ -27,8 +27,7 @@ export const wikiUIReducer =
       case ActionTypes.SET_WIKI_CATEGORY_1:
         return pipe (
           set (UIWikiStateL.category1) (Just (action.payload.category)),
-          set (UIWikiStateL.category2) (Nothing),
-          set (UIWikiStateL.filter) ("")
+          set (UIWikiStateL.category2) (Nothing)
         )
 
       case ActionTypes.SET_WIKI_CATEGORY_2:
