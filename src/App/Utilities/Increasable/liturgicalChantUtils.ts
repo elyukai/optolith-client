@@ -1,10 +1,11 @@
 import { cnst, ident, thrush } from "../../../Data/Function"
 import { fmap } from "../../../Data/Functor"
-import { all, any, append, consF, elemF, foldr, intercalate, List, minimum, notElem, notElemF } from "../../../Data/List"
+import { all, any, append, consF, fnull, foldr, intercalate, List, minimum, notElem, notElemF } from "../../../Data/List"
 import { and, bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, Just, mapMaybe, Maybe, maybe, maybeToList, Nothing, sum, thenF } from "../../../Data/Maybe"
 import { gte, inc, min } from "../../../Data/Num"
-import { alter, empty, filter, findWithDefault, foldl, fromArray, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { alter, empty, filter, find, findWithDefault, foldl, fromArray, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
+import { fst, Pair, snd } from "../../../Data/Tuple"
 import { Aspect, BlessedTradition } from "../../Constants/Groups"
 import { SpecialAbilityId } from "../../Constants/Ids"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
@@ -36,6 +37,7 @@ const LCAL = LiturgicalChant.AL
 const SAA = SpecialAbility.A
 const ASDA = ActivatableSkillDependent.A
 const LCWRA_ = LiturgicalChantWithRequirementsA_
+const BTA = BlessedTraditionR.A
 
 /**
  * Checks if the passed liturgical chant or blessing is valid for the current
@@ -353,6 +355,24 @@ export const LCBCA = {
   name: pipe (wikiEntryCombined, Blessing.AL.name),
 }
 
+
+const isAspectOfTraditionFromPair = (fromPair: <A> (x: Pair<A, A>) => A) =>
+                                    (trad: Record<BlessedTraditionR>) =>
+                                    (aspect: number): boolean =>
+                                      pipe_ (
+                                        trad,
+                                        BTA.aspects,
+                                        maybe (false)
+                                              (aspects => fromPair (aspects) === aspect)
+                                      )
+
+
+const isAspectOfTradition = (trad: Record<BlessedTraditionR>) =>
+                            (aspect: number): boolean =>
+                              isAspectOfTraditionFromPair (fst) (trad) (aspect)
+                              || isAspectOfTraditionFromPair (snd) (trad) (aspect)
+
+
 /**
  * Returns the Aspects string for list display.
  */
@@ -362,24 +382,30 @@ export const getAspectsStr =
   (mtradition_id: Maybe<BlessedTradition>): string =>
     pipe_ (
       mtradition_id,
-      fmap (pipe (
-        tradition_id =>
+      bindF (tradition_id => pipe_ (
+                               staticData,
+                               SDA.blessedTraditions,
+                               find (trad => BTA.numId (trad) === tradition_id)
+                             )),
+      fmap (tradition =>
+        pipe_ (
+          curr,
+          LCBCA.aspects,
           mapMaybe (pipe (
-                     ensure (elemF (getAspectsOfTradition (tradition_id))),
+                     ensure (isAspectOfTradition (tradition)),
                      bindF (lookupF (SDA.aspects (staticData))),
                      fmap (NumIdName.A.name)
-                   ))
-                   (LCBCA.aspects (curr)),
+                   )),
         List.elem (14) (LCBCA.tradition (curr))
-          ? maybe (ident as ident<List<string>>)
-                  <string> (consF)
-                  (pipe_ (
-                    staticData,
-                    SDA.blessedTraditions,
-                    lookup<string> (SpecialAbilityId.TraditionCultOfTheNamelessOne),
-                    fmap (BlessedTraditionR.A.name)
-                  ))
+          ? consF (BTA.name (tradition))
           : ident,
+        xs => fnull (xs)
+              ? mapMaybe (pipe (
+                           lookupF (SDA.aspects (staticData)),
+                           fmap (NumIdName.A.name)
+                         ))
+                         (LCBCA.aspects (curr))
+              : xs,
         sortStrings (staticData),
         intercalate (", ")
       )),
