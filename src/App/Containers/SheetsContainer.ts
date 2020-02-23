@@ -10,16 +10,18 @@ import { getAdvantagesForSheet, getAspectKnowledgesForSheet, getBlessedSpecialAb
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
 import { getAttributesForSheet, getPrimaryBlessedAttributeForSheet, getPrimaryMagicalAttributeForSheet } from "../Selectors/attributeSelectors"
 import { getCombatTechniquesForSheet } from "../Selectors/combatTechniquesSelectors"
+import { getCulture } from "../Selectors/cultureSelectors"
 import { getDerivedCharacteristics } from "../Selectors/derivedCharacteristicsSelectors"
 import { getStartEl } from "../Selectors/elSelectors"
 import { getAllItems, getArmors, getArmorZones, getMeleeWeapons, getRangedWeapons, getShieldsAndParryingWeapons, getTotalPrice, getTotalWeight } from "../Selectors/equipmentSelectors"
 import { getBlessingsForSheet, getLiturgicalChantsForSheet } from "../Selectors/liturgicalChantsSelectors"
 import { getPet } from "../Selectors/petsSelectors"
-import { getCurrentCulture, getCurrentFullProfessionName, getRace } from "../Selectors/rcpSelectors"
+import { getCurrentFullProfessionName } from "../Selectors/professionSelectors"
+import { getRace } from "../Selectors/raceSelectors"
 import { getConditions, getSkillPages, getSkillsByGroup, getStates } from "../Selectors/sheetSelectors"
 import { getAllSkills } from "../Selectors/skillsSelectors"
 import { getCantripsForSheet, getSpellsForSheet } from "../Selectors/spellsSelectors"
-import { getAvatar, getCurrentHeroName, getProfile, getPurse, getSex, getSpecialAbilities, getWikiBooks, getWikiSpecialAbilities } from "../Selectors/stateSelectors"
+import { getAvatar, getCurrentHeroName, getCurrentSex, getProfile, getPurse, getSpecialAbilities, getWikiBooks, getWikiSpecialAbilities } from "../Selectors/stateSelectors"
 import { getSheetCheckAttributeValueVisibility } from "../Selectors/uisettingsSelectors"
 import { pipe } from "../Utilities/pipe"
 import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils"
@@ -35,7 +37,7 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): Sheet
   checkAttributeValueVisibility: getSheetCheckAttributeValueVisibility (state),
   combatSpecialAbilities: getCombatSpecialAbilitiesForSheet (state, ownProps),
   combatTechniques: getCombatTechniquesForSheet (state, ownProps),
-  culture: getCurrentCulture (state),
+  culture: getCulture (state, ownProps),
   derivedCharacteristics: getDerivedCharacteristics (state, ownProps),
   disadvantagesActive: getDisadvantagesForSheet (state, ownProps),
   el: getStartEl (state),
@@ -47,7 +49,7 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): Sheet
   profile: getProfile (state, ownProps),
   race: getRace (state, ownProps),
   rangedWeapons: getRangedWeapons (state),
-  sex: getSex (state),
+  sex: getCurrentSex (state),
   shieldsAndParryingWeapons: getShieldsAndParryingWeapons (state),
   skills: getAllSkills (state),
   items: getAllItems (state),

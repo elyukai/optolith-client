@@ -41,8 +41,10 @@ import { mapCurrentHero, mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/
 import { blessedSpecialAbilityGroups, combatSpecialAbilityGroups, generalSpecialAbilityGroups, magicalSpecialAbilityGroups } from "../Utilities/sheetUtils"
 import { comparingR, sortStrings } from "../Utilities/sortBy"
 import { misNumberM, misStringM } from "../Utilities/typeCheckUtils"
+import { getCulture } from "./cultureSelectors"
 import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors"
-import { getAutomaticAdvantages, getCurrentCulture, getCurrentProfession, getRace } from "./rcpSelectors"
+import { getProfession } from "./professionSelectors"
+import { getAutomaticAdvantages, getRace } from "./raceSelectors"
 import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors"
 import { getMagicalTraditionsFromWiki } from "./spellsSelectors"
 import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getHeroes, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from "./stateSelectors"
@@ -178,8 +180,8 @@ const insertRating = flip (insert as insert<string, EntryRating>)
 
 export const getAdvantagesRating = createMaybeSelector (
   getRace,
-  getCurrentCulture,
-  getCurrentProfession,
+  getCulture,
+  getProfession,
   (mrace, mculture, mprofession) =>
     liftM3 ((r: Record<Race>) => (c: Record<Culture>) => (p: Record<Profession>) =>
              pipe_ (
@@ -213,8 +215,8 @@ export const getAdvantagesRating = createMaybeSelector (
 
 export const getDisadvantagesRating = createMaybeSelector (
   getRace,
-  getCurrentCulture,
-  getCurrentProfession,
+  getCulture,
+  getProfession,
   (mrace, mculture, mprofession) =>
     liftM3 ((r: Record<Race>) => (c: Record<Culture>) => (p: Record<Profession>) =>
              pipe_ (

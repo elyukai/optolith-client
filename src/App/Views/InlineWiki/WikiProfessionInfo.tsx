@@ -543,7 +543,17 @@ const getVariantPrerequisites =
           }),
       intersperse<React.ReactNode> (", "),
       ensure (notNull),
-      fmap (xs => `${translate (staticData) ("inlinewiki.prerequisites")}: ${xs}; `)
+      fmap (pipe (
+        toArray,
+        xs => (
+          <>
+            {translate (staticData) ("inlinewiki.prerequisites")}
+            {": "}
+            {xs}
+            {"; "}
+          </>
+        )
+      ))
     )
 
 interface VariantSpecialAbilitiesProps {
@@ -1072,12 +1082,11 @@ function Variant (props: VariantProps) {
       <span>
         {maybeRNullF (PVCA_.precedingText (variant))
                      (str => <span>{str}</span>)}
-        {maybe (<></>)
-               ((str: string) => (<>{str}</>))
-               (getVariantPrerequisites (staticData)
-                                        (attributes)
-                                        (skills)
-                                        (variant))}
+        {fromMaybe (<></>)
+                   (getVariantPrerequisites (staticData)
+                                            (attributes)
+                                            (skills)
+                                            (variant))}
         {pipe_ (
           List<Maybe<NonNullable<React.ReactNode>>> (
             ...getVariantSpecialAbilities (props),

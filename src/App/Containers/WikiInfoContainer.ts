@@ -1,7 +1,9 @@
 import { connect } from "react-redux"
 import { SpecialAbilityId } from "../Constants/Ids"
 import { AppStateRecord } from "../Models/AppState"
-import { getAllCultures, getAllProfessions, getAllRaces } from "../Selectors/rcpSelectors"
+import { getAllCultures } from "../Selectors/cultureSelectors"
+import { getAllProfessions } from "../Selectors/professionSelectors"
+import { getAllRaces } from "../Selectors/raceSelectors"
 import * as stateSelectors from "../Selectors/stateSelectors"
 import { mapGetToSlice } from "../Utilities/SelectorsUtils"
 import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps } from "../Views/InlineWiki/WikiInfo"
@@ -22,7 +24,7 @@ const mapStateToProps =
     scripts: mapGetToSlice (stateSelectors.getWikiSpecialAbilities)
                            (SpecialAbilityId.Literacy)
                            (state),
-    sex: stateSelectors.getSex (state),
+    sex: stateSelectors.getCurrentSex (state),
     spellExtensions: mapGetToSlice (stateSelectors.getWikiSpecialAbilities)
                                    (SpecialAbilityId.SpellEnhancement) (state),
     staticData: stateSelectors.getWiki (state),

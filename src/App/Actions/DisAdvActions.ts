@@ -24,7 +24,7 @@ import { RaceVariant } from "../Models/Wiki/RaceVariant"
 import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
-import { getAutomaticAdvantages, getCurrentRaceVariant, getRace } from "../Selectors/rcpSelectors"
+import { getAutomaticAdvantages, getRace, getRaceVariant } from "../Selectors/raceSelectors"
 import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors"
 import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils"
 import { isBlessedOrMagical } from "../Utilities/Activatable/checkActivatableUtils"
@@ -269,7 +269,7 @@ export const removeDisAdvantage =
                          ))
               ? bind (getRace (state, { hero }))
                      (race => {
-                       const mrace_var = getCurrentRaceVariant (state)
+                       const mrace_var = getRaceVariant (state, { hero })
 
                        const p = Pair (
                          pipe (

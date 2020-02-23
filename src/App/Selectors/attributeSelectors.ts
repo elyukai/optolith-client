@@ -25,7 +25,7 @@ import { pipe, pipe_ } from "../Utilities/pipe"
 import { mapTradHeroEntryToAttrCombined } from "../Utilities/primaryAttributeUtils"
 import { getCurrentEl, getStartEl } from "./elSelectors"
 import { getBlessedTraditionFromState } from "./liturgicalChantsSelectors"
-import { getRace } from "./rcpSelectors"
+import { getRace } from "./raceSelectors"
 import { getMagicalTraditionsFromHero } from "./spellsSelectors"
 import { getAttributes, getAttributeValueLimit, getCurrentAttributeAdjustmentId, getCurrentHeroPresent, getCurrentPhase, getHeroProp, getWiki, getWikiAttributes } from "./stateSelectors"
 

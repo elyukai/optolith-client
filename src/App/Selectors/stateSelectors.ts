@@ -144,6 +144,9 @@ export const getCultureAreaKnowledge =
   pipe (getCurrentHeroPresent, bindF (pipe (HA.personalData, Pers.cultureAreaKnowledge)))
 
 export const getSex =
+  pipe (getHeroProp, HA.sex)
+
+export const getCurrentSex =
   pipe (getCurrentHeroPresent, fmap (HA.sex))
 
 export const getSize =
@@ -205,11 +208,20 @@ export const getCultureId =
 export const getCurrentCultureId =
   pipe (getCurrentHeroPresent, bindF (HA.culture))
 
+export const getProfessionId =
+  pipe (getHeroProp, HA.profession)
+
 export const getCurrentProfessionId =
   pipe (getCurrentHeroPresent, bindF (HA.profession))
 
 export const getCustomProfessionName =
+  pipe (getHeroProp, HA.professionName)
+
+export const getCurrentCustomProfessionName =
   pipe (getCurrentHeroPresent, bindF (HA.professionName))
+
+export const getProfessionVariantId =
+  pipe (getHeroProp, HA.professionVariant)
 
 export const getCurrentProfessionVariantId =
   pipe (getCurrentHeroPresent, bindF (HA.professionVariant))

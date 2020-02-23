@@ -18,7 +18,8 @@ import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils"
 import { sortRecordsByName } from "../Utilities/sortBy"
-import { getCulture, getRace, getRaceVariant } from "./rcpSelectors"
+import { getCulture } from "./cultureSelectors"
+import { getRace, getRaceVariant } from "./raceSelectors"
 import { getDisadvantages, getSocialDependencies, getWiki } from "./stateSelectors"
 
 const CA = Culture.A

@@ -9,11 +9,13 @@ import { AppStateRecord } from "../Models/AppState"
 import { HeroModel } from "../Models/Hero/HeroModel"
 import { getAdvantagesForSheet, getDisadvantagesForSheet } from "../Selectors/activatableSelectors"
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
+import { getCulture } from "../Selectors/cultureSelectors"
 import { getStartEl } from "../Selectors/elSelectors"
 import { getAvailableEyeColorOptions, getAvailableHairColorOptions, getAvailableSocialStatuses } from "../Selectors/personalDataSelectors"
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"
-import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentRaceVariant, getRace, getRandomSizeCalcStr, getRandomWeightCalcStr } from "../Selectors/rcpSelectors"
-import { getAvatar, getCurrentHeroName, getCurrentPhase, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getProfile, getSex, getTotalAdventurePoints } from "../Selectors/stateSelectors"
+import { getCurrentFullProfessionName, getProfession } from "../Selectors/professionSelectors"
+import { getRace, getRaceVariant, getRandomSizeCalcStr, getRandomWeightCalcStr } from "../Selectors/raceSelectors"
+import { getAvatar, getCurrentCustomProfessionName, getCurrentHeroName, getCurrentPhase, getCurrentSex, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getProfile, getTotalAdventurePoints } from "../Selectors/stateSelectors"
 import { PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps, PersonalDataView } from "../Views/Profile/PersonalData"
 
 const mapStateToProps =
@@ -22,19 +24,19 @@ const mapStateToProps =
     apLeft: join (getAvailableAPMap (HeroModel.A.id (ownProps.hero)) (state, ownProps)),
     apTotal: getTotalAdventurePoints (state),
     avatar: getAvatar (state),
-    culture: getCurrentCulture (state),
+    culture: getCulture (state, ownProps),
     currentEl: getStartEl (state),
     disadvantages: getDisadvantagesForSheet (state, ownProps),
     isRemovingEnabled: getIsRemovingEnabled (state),
     name: getCurrentHeroName (state),
     phase: getCurrentPhase (state),
-    profession: getCurrentProfession (state),
-    professionName: getCustomProfessionName (state),
+    profession: getProfession (state, ownProps),
+    professionName: getCurrentCustomProfessionName (state),
     fullProfessionName: getCurrentFullProfessionName (state),
     profile: getProfile (state, ownProps),
     race: getRace (state, ownProps),
-    raceVariant: getCurrentRaceVariant (state),
-    sex: getSex (state),
+    raceVariant: getRaceVariant (state, ownProps),
+    sex: getCurrentSex (state),
     socialStatuses: getAvailableSocialStatuses (state, ownProps),
     isAddAdventurePointsOpen: getIsAddAdventurePointsOpen (state),
     isEditCharacterAvatarOpen: getIsEditCharacterAvatarOpen (state),

@@ -4,8 +4,8 @@ import * as CultureActions from "../Actions/CultureActions"
 import { setTab } from "../Actions/LocationActions"
 import { AppStateRecord } from "../Models/AppState"
 import { CulturesSortOptions, CulturesVisibilityFilter } from "../Models/Config"
-import { getFilteredCultures } from "../Selectors/rcpSelectors"
-import { getCulturesFilterText, getCurrentCultureId } from "../Selectors/stateSelectors"
+import { getFilteredCultures } from "../Selectors/cultureSelectors"
+import { getCultureId, getCulturesFilterText } from "../Selectors/stateSelectors"
 import { getCulturesSortOrder, getCulturesVisibilityFilter } from "../Selectors/uisettingsSelectors"
 import { TabId } from "../Utilities/LocationUtils"
 import { Cultures, CulturesDispatchProps, CulturesOwnProps, CulturesStateProps } from "../Views/Cultures/Cultures"
@@ -13,7 +13,7 @@ import { Cultures, CulturesDispatchProps, CulturesOwnProps, CulturesStateProps }
 const mapStateToProps =
   (state: AppStateRecord, ownProps: CulturesOwnProps): CulturesStateProps => ({
     cultures: getFilteredCultures (state, ownProps),
-    currentId: getCurrentCultureId (state),
+    currentId: getCultureId (state, ownProps),
     sortOrder: getCulturesSortOrder (state),
     visibilityFilter: getCulturesVisibilityFilter (state),
     filterText: getCulturesFilterText (state),

@@ -17,7 +17,7 @@ import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../Models/View
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
-import { getAutomaticAdvantages } from "../Selectors/rcpSelectors"
+import { getAutomaticAdvantages } from "../Selectors/raceSelectors"
 import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors"
 import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils"
 import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils"

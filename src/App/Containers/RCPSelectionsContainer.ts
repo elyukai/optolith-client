@@ -13,10 +13,12 @@ import { Profession } from "../Models/Wiki/Profession"
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
 import { Race } from "../Models/Wiki/Race"
 import { StaticDataRecord } from "../Models/Wiki/WikiModel"
-import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getRace } from "../Selectors/rcpSelectors"
 import { getAllSpellsForManualGuildMageSelect } from "../Selectors/spellsSelectors"
 import { getWiki } from "../Selectors/stateSelectors"
 import { RCPOptionSelectionsEnsure } from "../Views/RCPOptionSelections/RCPOptionSelectionsEnsure"
+import { getRace } from "../Selectors/raceSelectors"
+import { getCulture } from "../Selectors/cultureSelectors"
+import { getProfession, getProfessionVariant } from "../Selectors/professionSelectors"
 
 interface OwnProps {
   hero: HeroModelRecord
@@ -39,9 +41,9 @@ interface DispatchProps {
 const mapStateToProps =
   (state: AppStateRecord, ownProps: OwnProps): StateProps => ({
     race: getRace (state, ownProps),
-    culture: getCurrentCulture (state),
-    profession: getCurrentProfession (state),
-    professionVariant: getCurrentProfessionVariant (state),
+    culture: getCulture (state, ownProps),
+    profession: getProfession (state, ownProps),
+    professionVariant: getProfessionVariant (state, ownProps),
     staticData: getWiki (state),
     munfamiliar_spells: getAllSpellsForManualGuildMageSelect (state, ownProps),
   })

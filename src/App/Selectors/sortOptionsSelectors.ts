@@ -37,7 +37,7 @@ import { compareLocale, translate } from "../Utilities/I18n"
 import { pipe } from "../Utilities/pipe"
 import { comparingR, SortOptions } from "../Utilities/sortBy"
 import { isNumber, isString } from "../Utilities/typeCheckUtils"
-import { getSex, getWiki } from "./stateSelectors"
+import { getCurrentSex, getWiki } from "./stateSelectors"
 import * as uiSettingsSelectors from "./uisettingsSelectors"
 
 const compareName =
@@ -146,7 +146,7 @@ const getPlainProfAP = (x: List<number> | number) => isNumber (x) ? x : fnull (x
 export const getProfessionsCombinedSortOptions = createMaybeSelector (
   getWiki,
   uiSettingsSelectors.getProfessionsSortOrder,
-  getSex,
+  getCurrentSex,
   (staticData, sort_order, msex) =>
     maybe<SortOptions<Record<ProfessionCombined>>>
       ([])

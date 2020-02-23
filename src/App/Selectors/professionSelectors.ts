@@ -2,24 +2,21 @@ import { equals } from "../../Data/Eq"
 import { ident, thrush } from "../../Data/Function"
 import { fmap, fmapF } from "../../Data/Functor"
 import { over } from "../../Data/Lens"
-import { all, cons, Cons, consF, elemF, filter, find, foldr, intercalate, List, ListI, map, subscriptF } from "../../Data/List"
-import { alt, any, bind, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe"
-import { abs, add } from "../../Data/Num"
+import { all, cons, Cons, elemF, filter, find, foldr, List, ListI, map, sortBy, subscriptF } from "../../Data/List"
+import { bind, ensure, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe"
+import { add } from "../../Data/Num"
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
-import { PairF } from "../../Data/Tuple"
-import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Tuple/Curry"
+import { uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Tuple/Curry"
 import { Category } from "../Constants/Categories"
-import { ProfessionId, RaceId } from "../Constants/Ids"
+import { ProfessionId } from "../Constants/Ids"
 import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId"
 import { Sex } from "../Models/Hero/heroTypeHelpers"
 import { ActivatableNameCostIsActive } from "../Models/View/ActivatableNameCostIsActive"
-import { CultureCombined } from "../Models/View/CultureCombined"
 import { IncreasableForView } from "../Models/View/IncreasableForView"
 import { IncreasableListForView } from "../Models/View/IncreasableListForView"
 import { ProfessionCombined, ProfessionCombinedA_, ProfessionCombinedL } from "../Models/View/ProfessionCombined"
 import { ProfessionVariantCombined } from "../Models/View/ProfessionVariantCombined"
-import { RaceCombined } from "../Models/View/RaceCombined"
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
 import { Culture } from "../Models/Wiki/Culture"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
@@ -32,12 +29,9 @@ import { CombatTechniquesSelection, CombatTechniquesSelectionL } from "../Models
 import { ProfessionSelectionsL } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections"
 import { ProfessionVariantSelectionsL } from "../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections"
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
-import { Race, RaceL } from "../Models/Wiki/Race"
-import { RaceVariant, RaceVariantL } from "../Models/Wiki/RaceVariant"
 import { Skill } from "../Models/Wiki/Skill"
 import { Spell } from "../Models/Wiki/Spell"
 import { CommonProfession } from "../Models/Wiki/sub/CommonProfession"
-import { Die } from "../Models/Wiki/sub/Die"
 import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill"
 import { IncreaseSkillList } from "../Models/Wiki/sub/IncreaseSkillList"
 import { NameBySex } from "../Models/Wiki/sub/NameBySex"
@@ -45,30 +39,26 @@ import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers"
 import { getNameCostForWiki } from "../Utilities/Activatable/activatableActiveUtils"
 import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils"
-import { minus, plusmn } from "../Utilities/Chars"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
-import { translate } from "../Utilities/I18n"
+import { compareLocale } from "../Utilities/I18n"
 import { getCategoryById } from "../Utilities/IDUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { validateProfession } from "../Utilities/Prerequisites/validatePrerequisitesUtils"
 import { getFullProfessionName } from "../Utilities/rcpUtils"
 import { filterByAvailability, filterByAvailabilityAndPred, isEntryFromCoreBook } from "../Utilities/RulesUtils"
+import { comparingR } from "../Utilities/sortBy"
+import { isString } from "../Utilities/typeCheckUtils"
+import { getCurrentCulture } from "./cultureSelectors"
 import { getStartEl } from "./elSelectors"
 import { getRuleBooksEnabled } from "./rulesSelectors"
-import { getCulturesCombinedSortOptions, getProfessionsCombinedSortOptions, getRacesCombinedSortOptions } from "./sortOptionsSelectors"
-import { getCultureId, getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getProfessionsFilterText, getRaceId, getRacesFilterText, getRaceVariantId, getSex, getWiki, getWikiBooks, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors"
-import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from "./uisettingsSelectors"
+import { getProfessionsCombinedSortOptions } from "./sortOptionsSelectors"
+import { getCurrentCustomProfessionName, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentSex, getProfessionId, getProfessionsFilterText, getProfessionVariantId, getRaceId, getWiki, getWikiBooks, getWikiProfessions, getWikiProfessionVariants } from "./stateSelectors"
+import { getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from "./uisettingsSelectors"
 
 const SDA = StaticData.A
 const ELA = ExperienceLevel.A
-const RA = Race.A
-const RL = RaceL
-const RVA = RaceVariant.A
-const RVL = RaceVariantL
-const RCA = RaceCombined.A
 const CA = Culture.A
-const CCA = CultureCombined.A
 const PA = Profession.A
 const PVA = ProfessionVariant.A
 const PCA = ProfessionCombined.A
@@ -84,46 +74,18 @@ const PRIA = ProfessionRequireIncreasable.A
 const PSL = ProfessionSelectionsL
 const PVSL = ProfessionVariantSelectionsL
 
-export const getRace = createMaybeSelector (
-  getWikiRaces,
-  getRaceId,
-  (races, raceId) => bind (raceId)
-                          (lookupF (races))
+export const getProfession = createMaybeSelector (
+  getWikiProfessions,
+  getProfessionId,
+  (professions, professionId) => bind (professionId)
+                                      (lookupF (professions))
 )
 
-export const getCurrentRace = createMaybeSelector (
-  getWikiRaces,
-  getCurrentRaceId,
-  (races, raceId) => bind (raceId)
-                          (lookupF (races))
-)
-
-export const getRaceVariant = createMaybeSelector (
-  getWikiRaceVariants,
-  getRaceVariantId,
-  (raceVariants, raceVariantId) => bind (raceVariantId)
-                                        (lookupF (raceVariants))
-)
-
-export const getCurrentRaceVariant = createMaybeSelector (
-  getWikiRaceVariants,
-  getCurrentRaceVariantId,
-  (raceVariants, raceVariantId) => bind (raceVariantId)
-                                        (lookupF (raceVariants))
-)
-
-export const getCulture = createMaybeSelector (
-  getWikiCultures,
-  getCultureId,
-  (cultures, cultureId) => bind (cultureId)
-                                (lookupF (cultures))
-)
-
-export const getCurrentCulture = createMaybeSelector (
-  getWikiCultures,
-  getCurrentCultureId,
-  (cultures, cultureId) => bind (cultureId)
-                                (lookupF (cultures))
+export const getProfessionVariant = createMaybeSelector (
+  getWikiProfessionVariants,
+  getProfessionVariantId,
+  (professionVariants, professionVariantId) => bind (professionVariantId)
+                                                    (lookupF (professionVariants))
 )
 
 export const getCurrentProfession = createMaybeSelector (
@@ -138,112 +100,6 @@ export const getCurrentProfessionVariant = createMaybeSelector (
   getCurrentProfessionVariantId,
   (professionVariants, professionVariantId) => bind (professionVariantId)
                                                     (lookupF (professionVariants))
-)
-
-export const getAllRaces = createMaybeSelector (
-  getWikiCultures,
-  getWikiRaceVariants,
-  getWikiRaces,
-  uncurryN3 (cultures =>
-             race_variants => {
-               const getAvailableCulturesNames =
-                 mapMaybe (pipe (lookupF (cultures), fmap (CA.name)))
-
-               return pipe (
-                 elems,
-                 map (race =>
-                       RaceCombined ({
-                         mappedVariants:
-                           mapMaybe (pipe (
-                                      lookupF (race_variants),
-                                      fmap (over (RVL.commonCultures)
-                                                 (getAvailableCulturesNames))
-                                    ))
-                                    (RA.variants (race)),
-                         wikiEntry: over (RL.commonCultures)
-                                         (getAvailableCulturesNames)
-                                         (race),
-                       }))
-               )
-             })
-)
-
-export const getAvailableRaces = createMaybeSelector (
-  getRuleBooksEnabled,
-  getAllRaces,
-  uncurryN (filterByAvailability (pipe (RCA.wikiEntry, RA.src)))
-)
-
-export const getFilteredRaces = createMaybeSelector (
-  getRacesCombinedSortOptions,
-  getRacesFilterText,
-  getAvailableRaces,
-  uncurryN3 (filterAndSortRecordsBy (0) ([ pipe (RCA.wikiEntry, RA.name) ]))
-)
-
-export const getAllCultures = createMaybeSelector (
-  getWikiSkills,
-  getWikiCultures,
-  uncurryN (skills => pipe (
-                        elems,
-                        map (wiki_entry =>
-                              CultureCombined ({
-                                mappedCulturalPackageSkills:
-                                  mapMaybe ((x: Record<IncreaseSkill>) => pipe_ (
-                                             x,
-                                             ISA.id,
-                                             lookupF (skills),
-                                             fmap (PairF (ISA.value (x)))
-                                           ))
-                                           (CA.culturalPackageSkills (wiki_entry)),
-                                wikiEntry: wiki_entry,
-                              }))
-                      ))
-)
-
-export const getCommonCultures = createMaybeSelector (
-  getRace,
-  getCurrentRaceVariant,
-  (mrace, mrace_variant) => {
-    const mrace_cultures = fmapF (mrace) (RA.commonCultures)
-
-    const mrace_variant_cultures = fmapF (mrace_variant) (RVA.commonCultures)
-
-    return List (
-      ...fromMaybe (List<string> ()) (mrace_cultures),
-      ...fromMaybe (List<string> ()) (mrace_variant_cultures)
-    )
-  }
-)
-
-export const getAvailableCultures = createMaybeSelector (
-  getCommonCultures,
-  getCulturesVisibilityFilter,
-  getAllCultures,
-  getRuleBooksEnabled,
-  uncurryN4 (common_cultures =>
-             visibility =>
-             cs =>
-             av =>
-              visibility === "common"
-                ? filterByAvailability (pipe (CCA.wikiEntry, CA.src))
-                                       (av)
-                                       (filter (pipe (
-                                                 CCA.wikiEntry,
-                                                 CA.id,
-                                                 elemF (common_cultures)
-                                               ))
-                                               (cs))
-                : filterByAvailability (pipe (CCA.wikiEntry, CA.src))
-                                       (av)
-                                       (cs))
-)
-
-export const getFilteredCultures = createMaybeSelector (
-  getCulturesCombinedSortOptions,
-  getCulturesFilterText,
-  getAvailableCultures,
-  uncurryN3 (filterAndSortRecordsBy (0) ([ pipe (CCA.wikiEntry, CA.name) ]))
 )
 
 interface SkillGroupLists {
@@ -568,40 +424,44 @@ export const getAllProfessions = createMaybeSelector (
                      ListI<ProfessionCombined["mappedLiturgicalChants"]>
                    > (mapLiturgicalChant (staticData))),
           mappedVariants:
-            map ((v: Record<ProfessionVariant>) =>
-              ProfessionVariantCombined ({
-                mappedPrerequisites:
-                  imapMaybe (mapProfessionPrerequisite (staticData))
-                            (PVA.prerequisites (v)),
-                mappedSpecialAbilities:
-                  imapMaybe (mapProfessionSpecialAbility (staticData))
-                            (PVA.specialAbilities (v)),
-                mappedSelections:
-                  thrush (PVA.selections (v))
-                         (mapProfessionVariantSelection (staticData)),
-                mappedCombatTechniques:
-                  mapMaybe (mapCombatTechniquePrevious (staticData)
-                                                       (PA.combatTechniques (p)))
-                           (PVA.combatTechniques (v)),
-                mappedSkills:
-                  thrush (PVA.skills (v))
-                         (mapMaybe (mapSkillPrevious (staticData)
-                                                     (PA.skills (p)))),
-                mappedSpells:
-                  thrush (PVA.spells (v))
-                         (mapMaybe<
-                           ListI<Profession["spells"]>,
-                           ListI<ProfessionCombined["mappedSpells"]>
-                         > (mapSpellPrevious (staticData) (PA.spells (p)))),
-                mappedLiturgicalChants:
-                  thrush (PVA.liturgicalChants (v))
-                         (mapMaybe<
-                           ListI<Profession["liturgicalChants"]>,
-                           ListI<ProfessionCombined["mappedLiturgicalChants"]>
-                         > (mapLiturgicalChantPrevious (staticData) (PA.liturgicalChants (p)))),
-                wikiEntry: v,
-              }))
-                (filtered_variants),
+            pipe_ (
+              filtered_variants,
+              sortBy (comparingR (pipe (PVA.name, x => isString (x) ? x : NameBySex.A.m (x)))
+                                 (compareLocale (staticData))),
+              map ((v: Record<ProfessionVariant>) =>
+                ProfessionVariantCombined ({
+                  mappedPrerequisites:
+                    imapMaybe (mapProfessionPrerequisite (staticData))
+                              (PVA.prerequisites (v)),
+                  mappedSpecialAbilities:
+                    imapMaybe (mapProfessionSpecialAbility (staticData))
+                              (PVA.specialAbilities (v)),
+                  mappedSelections:
+                    thrush (PVA.selections (v))
+                           (mapProfessionVariantSelection (staticData)),
+                  mappedCombatTechniques:
+                    mapMaybe (mapCombatTechniquePrevious (staticData)
+                                                         (PA.combatTechniques (p)))
+                             (PVA.combatTechniques (v)),
+                  mappedSkills:
+                    thrush (PVA.skills (v))
+                           (mapMaybe (mapSkillPrevious (staticData)
+                                                       (PA.skills (p)))),
+                  mappedSpells:
+                    thrush (PVA.spells (v))
+                           (mapMaybe<
+                             ListI<Profession["spells"]>,
+                             ListI<ProfessionCombined["mappedSpells"]>
+                           > (mapSpellPrevious (staticData) (PA.spells (p)))),
+                  mappedLiturgicalChants:
+                    thrush (PVA.liturgicalChants (v))
+                           (mapMaybe<
+                             ListI<Profession["liturgicalChants"]>,
+                             ListI<ProfessionCombined["mappedLiturgicalChants"]>
+                           > (mapLiturgicalChantPrevious (staticData) (PA.liturgicalChants (p)))),
+                  wikiEntry: v,
+                }))
+            ),
           wikiEntry: p,
         })
       })
@@ -738,7 +598,7 @@ export const getCommonProfessions = createMaybeSelector (
   getStartEl,
   getRaceId,
   getCurrentCulture,
-  getSex,
+  getCurrentSex,
   uncurryN8 (wiki_books =>
              professions =>
              group_visibility =>
@@ -783,7 +643,7 @@ export const getAvailableProfessions = createMaybeSelector (
 export const getFilteredProfessions = createMaybeSelector (
   getProfessionsFilterText,
   getProfessionsCombinedSortOptions,
-  getSex,
+  getCurrentSex,
   getAvailableProfessions,
   uncurryN4 (filter_text =>
              sort_options =>
@@ -823,10 +683,10 @@ export const getFilteredProfessions = createMaybeSelector (
 
 export const getCurrentFullProfessionName = createMaybeSelector (
   getWiki,
-  getSex,
+  getCurrentSex,
   getCurrentProfessionId,
   getCurrentProfessionVariantId,
-  getCustomProfessionName,
+  getCurrentCustomProfessionName,
   (staticData, msex, mprof_id, mprof_var_id, mcustom_prof_name) =>
     fmapF (msex)
           (sex => getFullProfessionName (staticData)
@@ -836,74 +696,4 @@ export const getCurrentFullProfessionName = createMaybeSelector (
                                         (mprof_id)
                                         (mprof_var_id)
                                         (mcustom_prof_name))
-)
-
-const getSign = (x: number) => x < 0 ? minus : "+"
-
-export const getRandomSizeCalcStr = createMaybeSelector (
-  getWiki,
-  getRace,
-  getCurrentRaceVariant,
-  (staticData, mrace, mrace_var) => {
-    const msize_base = alt (bind (mrace) (RA.sizeBase))
-                           (fmapF (mrace_var) (RVA.sizeBase))
-
-    const msize_randoms = alt (bind (mrace) (RA.sizeRandom))
-                              (fmapF (mrace_var) (RVA.sizeRandom))
-
-    return liftM2 ((base: number) => (randoms: List<Record<Die>>) => {
-                    const dice_tag = translate (staticData) ("general.dice")
-
-                    return pipe_ (
-                      randoms,
-                      map (die => {
-                        const sides = Die.A.sides (die)
-                        const amount = Die.A.amount (die)
-                        const sign = getSign (sides)
-
-                        return `${sign} ${amount}${dice_tag}${abs (sides)}`
-                      }),
-                      consF (`${base}`),
-                      intercalate (" ")
-                    )
-                  })
-                  (msize_base)
-                  (msize_randoms)
-  }
-)
-
-export const getRandomWeightCalcStr = createMaybeSelector (
-  getWiki,
-  getRace,
-  (staticData, mrace) => {
-    const mweight_base = fmap (RA.weightBase) (mrace)
-    const mweight_randoms = fmap (RA.weightRandom) (mrace)
-    const is_humans = any (pipe (RA.id, equals<string> (RaceId.Humans))) (mrace)
-
-    return liftM2 ((base: number) => (randoms: List<Record<Die>>) => {
-                    const size_tag = translate (staticData) ("personaldata.size")
-                    const dice_tag = translate (staticData) ("general.dice")
-
-                    return pipe_ (
-                      randoms,
-                      map (die => {
-                        const sides = Die.A.sides (die)
-                        const amount = Die.A.amount (die)
-                        const sign = is_humans ? plusmn : getSign (sides)
-
-                        return `${sign} ${amount}${dice_tag}${abs (sides)}`
-                      }),
-                      consF (`${minus} ${base}`),
-                      consF (size_tag),
-                      intercalate (" ")
-                    )
-                  })
-                  (mweight_base)
-                  (mweight_randoms)
-  }
-)
-
-export const getAutomaticAdvantages = createMaybeSelector (
-  getRace,
-  maybe (List<string> ()) (RA.automaticAdvantages)
 )
