@@ -1,8 +1,8 @@
 import * as React from "react"
 import { ident } from "../../../../Data/Function"
 import { fmap } from "../../../../Data/Functor"
-import { consF, elem, flength, foldr, intercalate, List } from "../../../../Data/List"
-import { fromJust, fromMaybe, isNothing, Just, mapMaybe } from "../../../../Data/Maybe"
+import { consF, elem, foldr, intercalate, List } from "../../../../Data/List"
+import { fromJust, fromMaybe, isNothing, Just, mapMaybe, Maybe } from "../../../../Data/Maybe"
 import { alter, any, find, insert, lookupF, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { Aspect, BlessedTradition } from "../../../Constants/Groups"
@@ -10,7 +10,7 @@ import { NumIdName } from "../../../Models/NumIdName"
 import { BlessedTradition as BlessedTraditionR } from "../../../Models/Wiki/BlessedTradition"
 import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
-import { getAspectsOfTradition, getTraditionOfAspect } from "../../../Utilities/Increasable/liturgicalChantUtils"
+import { getTraditionOfAspect } from "../../../Utilities/Increasable/liturgicalChantUtils"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { sortStrings } from "../../../Utilities/sortBy"
 import { WikiProperty } from "../WikiProperty"
@@ -40,17 +40,17 @@ export const WikiLiturgicalChantTraditions: FC = props => {
     staticData,
   } = props
 
-  const getTrad = (numId: number) => find ((bt: Record<BlessedTraditionR>) =>
-                                            BTA.numId (bt) === numId)
-                                          (SDA.blessedTraditions (staticData))
+  const getTrad: (numId: number) => Maybe<Record<BlessedTraditionR>>
+                = numId => find ((bt: Record<BlessedTraditionR>) => BTA.numId (bt) === numId)
+                                (SDA.blessedTraditions (staticData))
 
   const getAspectName = pipe (lookupF (SDA.aspects (staticData)), fmap (NINA.name))
 
   const curr_traditions = acc.tradition (x)
+  const curr_aspects = acc.aspects (x)
 
   return pipe_ (
-    x,
-    acc.aspects,
+    curr_aspects,
     foldr ((asp: Aspect) => {
             const trad = getTraditionOfAspect (asp)
 
@@ -60,8 +60,15 @@ export const WikiLiturgicalChantTraditions: FC = props => {
               : ident as ident<OrderedMap<number, List<number>>>
           })
           (OrderedMap.empty),
+    elem (1) (curr_aspects) ? insert (1) (List (1)) : ident,
     elem (14) (curr_traditions) ? insert (14) (List ()) : ident,
     OrderedMap.foldrWithKey ((t: number) => (as: List<number>) => {
+                              if (t === 1) {
+                                return consF (
+                                  translate (staticData) ("liturgicalchants.aspects.general")
+                                )
+                              }
+
                               const mmain_trad = getTrad (t)
 
                               if (isNothing (mmain_trad)) {
@@ -70,7 +77,9 @@ export const WikiLiturgicalChantTraditions: FC = props => {
 
                               const main_trad = fromJust (mmain_trad)
 
-                              if (flength (getAspectsOfTradition (t)) < 2) {
+                              const mpossible_aspects = BTA.aspects (main_trad)
+
+                              if (isNothing (mpossible_aspects)) {
                                 return consF (BTA.name (main_trad))
                               }
 
@@ -80,7 +89,7 @@ export const WikiLiturgicalChantTraditions: FC = props => {
                                 intercalate (` ${translate (staticData) ("general.and")} `)
                                             (sortStrings (staticData) (mapped_aspects))
 
-                              return consF (`${main_trad} (${complete_aspects})`)
+                              return consF (`${BTA.name (main_trad)} (${complete_aspects})`)
                             })
                             (List ()),
     sortStrings (staticData),

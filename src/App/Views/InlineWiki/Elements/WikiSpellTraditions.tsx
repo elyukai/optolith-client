@@ -1,6 +1,7 @@
 import * as React from "react"
+import { ident } from "../../../../Data/Function"
 import { fmap } from "../../../../Data/Functor"
-import { elem, intercalate, List } from "../../../../Data/List"
+import { consF, elem, intercalate, List } from "../../../../Data/List"
 import { mapMaybe, Maybe } from "../../../../Data/Maybe"
 import { find, lookupF } from "../../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../../Data/Record"
@@ -8,6 +9,7 @@ import { MagicalTradition } from "../../../Constants/Groups"
 import { NumIdName } from "../../../Models/NumIdName"
 import { MagicalTradition as MagicalTraditionR } from "../../../Models/Wiki/MagicalTradition"
 import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { translate } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { sortStrings } from "../../../Utilities/sortBy"
 import { WikiProperty } from "../WikiProperty"
@@ -87,6 +89,9 @@ export const WikiSpellTraditions: FC = props => {
       {pipe_ (
         trad,
         mapMaybe (pipe (getTrad, fmap (MTA.name))),
+        elem (MagicalTradition.General) (trad)
+          ? consF (translate (staticData) ("spells.traditions.general"))
+          : ident,
         sortStrings (staticData),
         intercalate (", ")
       )}

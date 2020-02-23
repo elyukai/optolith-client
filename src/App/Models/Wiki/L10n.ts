@@ -715,6 +715,8 @@ export const L10n =
                 "spells.header.improvementcost": "",
                 "spells.header.improvementcost.tooltip": "",
                 "spells.groups.cantrip": "",
+                "spells.traditions.general": "",
+                "magicalactions.animistforces.tribes.general": "",
 
                 "inlinewiki.castingtime": "",
                 "inlinewiki.ritualtime": "",
@@ -754,6 +756,7 @@ export const L10n =
                 "liturgicalchants.header.improvementcost": "",
                 "liturgicalchants.header.improvementcost.tooltip": "",
                 "liturgicalchants.groups.blessing": "",
+                "liturgicalchants.aspects.general": "",
 
                 "inlinewiki.liturgicaltime": "",
                 "inlinewiki.ceremonialtime": "",
