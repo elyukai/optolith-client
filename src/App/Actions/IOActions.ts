@@ -443,28 +443,20 @@ export const requestHeroDeletion =
   }
 
 export const imgPathToBase64 =
-  (url: Maybe<string>): Maybe<string> => {
-    if (isJust (url)) {
-      const just_url = fromJust (url)
+  (path: string): Maybe<string> => {
+    if (path.length > 0 && !isBase64Image (path)) {
+      if (fs.existsSync (path)) {
+        const prefix = `data:image/${extname (path).slice (1)};base64,`
+        const file = fs.readFileSync (path)
+        const fileString = file.toString ("base64")
 
-      if (just_url.length > 0 && !isBase64Image (just_url)) {
-        const preparedUrl = just_url .replace (/file:[\\/]+/u, "")
-
-        if (fs.existsSync (preparedUrl)) {
-          const prefix = `data:image/${extname (just_url).slice (1)};base64,`
-          const file = fs.readFileSync (preparedUrl)
-          const fileString = file.toString ("base64")
-
-          return Just (prefix + fileString)
-        }
-
-        return Nothing
+        return Just (prefix + fileString)
       }
 
-      return url
+      return Nothing
     }
 
-    return url
+    return Just (path)
   }
 
 export const requestHeroExport =
@@ -481,8 +473,8 @@ export const requestHeroExport =
         lookup (id),
         fmap (pipe (
           heroReducer.A.present,
-          over (HeroModelL.avatar) (imgPathToBase64),
-          over (HeroModelL.pets) (OrderedMap.map (over (PetL.avatar) (imgPathToBase64))),
+          over (HeroModelL.avatar) (bindF (imgPathToBase64)),
+          over (HeroModelL.pets) (OrderedMap.map (over (PetL.avatar) (bindF (imgPathToBase64)))),
           convertHeroForSave (users)
         ))
       )

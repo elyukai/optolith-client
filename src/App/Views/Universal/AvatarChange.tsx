@@ -2,7 +2,7 @@ import * as path from "path"
 import * as React from "react"
 import { fmap, fmapF } from "../../../Data/Functor"
 import { head, notNull } from "../../../Data/List"
-import { ensure, fromJust, isJust, Just, orN } from "../../../Data/Maybe"
+import { ensure, fromJust, isJust, orN } from "../../../Data/Maybe"
 import { imgPathToBase64 } from "../../Actions/IOActions"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
@@ -26,7 +26,7 @@ const valid_extnames = valid_extensions .map (ext => `.${ext}`)
 export const AvatarChange: React.FC<Props> = props => {
   const { setPath, isOpen, staticData, title, close } = props
   const [ fileValid, setFileValid ] = React.useState (false)
-  const [ url, setUrl ] = React.useState ("")
+  const [ data, setData ] = React.useState ("")
   const [ prevIsOpen, setPrevIsOpen ] = React.useState (isOpen)
 
   const handleSelectFile = React.useCallback (
@@ -46,16 +46,16 @@ export const AvatarChange: React.FC<Props> = props => {
               fmap (pipe (
                 head,
                 path_to_image => {
-                  const new_url = imgPathToBase64 (Just (path_to_image))
+                  const new_data = imgPathToBase64 (path_to_image)
                   const ext = path.extname (path_to_image) .toLowerCase ()
 
-                  if (valid_extnames .includes (ext) && isJust (new_url)) {
+                  if (valid_extnames .includes (ext) && isJust (new_data)) {
                     setFileValid (true)
-                    setUrl (fromJust (new_url))
+                    setData (fromJust (new_data))
                   }
                   else {
                     setFileValid (false)
-                    setUrl ("")
+                    setData ("")
                   }
 
                   return path_to_image
@@ -66,22 +66,22 @@ export const AvatarChange: React.FC<Props> = props => {
   )
 
   const handleSubmit = React.useCallback (
-    () => setPath (url),
-    [ setPath, url ]
+    () => setPath (data),
+    [ setPath, data ]
   )
 
   const handleClose = React.useCallback (
     () => {
       setFileValid (false)
-      setUrl ("")
+      setData ("")
       close ()
     },
-    [ setFileValid, setUrl, close ]
+    [ setFileValid, setData, close ]
   )
 
   if (!isOpen && orN (prevIsOpen)) {
     setFileValid (false)
-    setUrl ("")
+    setData ("")
     setPrevIsOpen (false)
   }
 
@@ -95,7 +95,7 @@ export const AvatarChange: React.FC<Props> = props => {
       }
       buttons={[
         {
-          disabled: !fileValid || url === "",
+          disabled: !fileValid || data === "",
           label: translate (staticData) ("general.dialogs.applybtn"),
           onClick: handleSubmit,
         },
@@ -108,9 +108,9 @@ export const AvatarChange: React.FC<Props> = props => {
         onClick={handleSelectFile}
         />
       <AvatarWrapper
-        src={ensure ((unsafeUrl: string) => fileValid && unsafeUrl !== "") (url)}
+        src={ensure ((unsafeUrl: string) => fileValid && unsafeUrl !== "") (data)}
         />
-      {!fileValid && url !== ""
+      {!fileValid && data !== ""
         ? (
           <p>{translate (staticData) ("profile.dialogs.changeheroavatar.invalidfilewarning")}</p>
         )
