@@ -21,26 +21,10 @@ export const SkillsSheetRoutineChecks: React.FC<Props> = ({ staticData }) => (
     <table>
       <thead>
         <tr>
-          <th>
-            <div>
-              {translate (staticData) ("sheets.gamestatssheet.routinechecks.labels.checkmod")}
-            </div>
-          </th>
-          <th>
-            <div>
-              {translate (staticData) ("sheets.gamestatssheet.routinechecks.labels.neededsr")}
-            </div>
-          </th>
-          <th>
-            <div>
-              {translate (staticData) ("sheets.gamestatssheet.routinechecks.labels.checkmod")}
-            </div>
-          </th>
-          <th>
-            <div>
-              {translate (staticData) ("sheets.gamestatssheet.routinechecks.labels.neededsr")}
-            </div>
-          </th>
+          <th>{translate (staticData) ("sheets.gamestatssheet.routinechecks.labels.checkmod")}</th>
+          <th>{translate (staticData) ("sheets.gamestatssheet.routinechecks.labels.neededsr")}</th>
+          <th>{translate (staticData) ("sheets.gamestatssheet.routinechecks.labels.checkmod")}</th>
+          <th>{translate (staticData) ("sheets.gamestatssheet.routinechecks.labels.neededsr")}</th>
         </tr>
       </thead>
       <tbody>

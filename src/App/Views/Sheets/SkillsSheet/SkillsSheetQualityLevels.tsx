@@ -17,14 +17,10 @@ export const SkillsSheetQualityLevels: React.FC<Props> = ({ staticData }) => (
       <thead>
         <tr>
           <th>
-            <div>
-              {translate (staticData) ("sheets.gamestatssheet.qualitylevels.labels.skillpoints")}
-            </div>
+            {translate (staticData) ("sheets.gamestatssheet.qualitylevels.labels.skillpoints")}
           </th>
           <th>
-            <div>
-              {translate (staticData) ("sheets.gamestatssheet.qualitylevels.labels.qualitylevel")}
-            </div>
+            {translate (staticData) ("sheets.gamestatssheet.qualitylevels.labels.qualitylevel")}
           </th>
         </tr>
       </thead>

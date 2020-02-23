@@ -8,7 +8,6 @@ import { bindF, catMaybes, elem, ensure, fromMaybe_, guard, isJust, isNothing, J
 import { add, lt } from "../../../Data/Num"
 import { elems, foldrWithKey, lookup, lookupF, OrderedMap, union } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { traceShowId } from "../../../Debug/Trace"
 import { IC, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
@@ -330,8 +329,6 @@ export const isUnfamiliarSpell : (transferred_unfamiliar : List<Record<TransferU
     if (any (pipe (ADA.id, equals<string> (SpecialAbilityId.TraditionIntuitiveMage))) (trads)) {
       return cnst (false)
     }
-
-    traceShowId (transferred_unfamiliar)
 
     const active_trad_num_ids =
       pipe_ (
