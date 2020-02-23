@@ -2585,6 +2585,20 @@ export const lengthAtMost =
 List.lengthAtMost = lengthAtMost
 
 
+// Data.List.Unique
+
+
+/**
+ * `countElem` gets the number of occurrences of the specified element.
+ */
+export const countElem: <A> (x: A) => (xs: List<A>) => number
+                      = x => foldr (pipe (
+                                     equals (x),
+                                     equal => equal ? inc : ident as ident<number>
+                                   ))
+                                   (0)
+
+
 // TYPE HELPERS
 
 export type ListI<A> = A extends Cons<infer AI> ? AI : never

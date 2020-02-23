@@ -215,16 +215,18 @@ export interface SkillExtension extends SelectOption {
   effect: string
 }
 
-export type Activatable =
-  Record<Advantage> |
-  Record<Disadvantage> |
-  Record<SpecialAbility>
+export type Activatable = Record<Advantage>
+                        | Record<Disadvantage>
+                        | Record<SpecialAbility>
 
-export type Skillish =
-  Record<Spell> |
-  Record<LiturgicalChant> |
-  Record<Skill> |
-  Record<CombatTechnique>
+export type EntryWithCheck = Record<Spell>
+                           | Record<LiturgicalChant>
+                           | Record<Skill>
+
+export type Skillish = Record<Spell>
+                     | Record<LiturgicalChant>
+                     | Record<Skill>
+                     | Record<CombatTechnique>
 
 export type SID = string | number | NonEmptyList<number>
 

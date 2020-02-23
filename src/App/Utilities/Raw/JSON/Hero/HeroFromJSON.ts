@@ -28,11 +28,13 @@ import { Purse } from "../../../../Models/Hero/Purse"
 import { Rules } from "../../../../Models/Hero/Rules"
 import { Cantrip } from "../../../../Models/Wiki/Cantrip"
 import { L10n } from "../../../../Models/Wiki/L10n"
+import { SpecialAbility } from "../../../../Models/Wiki/SpecialAbility"
 import { Spell } from "../../../../Models/Wiki/Spell"
 import { PrimaryAttributeDamageThreshold } from "../../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
 import { StaticData, StaticDataRecord } from "../../../../Models/Wiki/WikiModel"
 import { Activatable } from "../../../../Models/Wiki/wikiTypeHelpers"
 import { getCombinedPrerequisites } from "../../../Activatable/activatableActivationUtils"
+import { addOtherSpecialAbilityDependenciesOnHeroInit } from "../../../Activatable/SpecialAbilityUtils"
 import { addDependencies } from "../../../Dependencies/dependencyUtils"
 import { getCategoryById } from "../../../IDUtils"
 import { pipe, pipe_ } from "../../../pipe"
@@ -346,6 +348,8 @@ const addActivatableEntriesWithDeps =
                     return hero
                   }
 
+                  const wiki_entry = fromJust (mwiki_entry)
+
                   return pipe_ (
                     hero,
 
@@ -366,9 +370,13 @@ const addActivatableEntriesWithDeps =
                     // Add dependencies for current ActiveObject
                     addDependencies (id)
                                     (getCombinedPrerequisites (true)
-                                                              (fromJust (mwiki_entry))
+                                                              (wiki_entry)
                                                               (mhero_entry)
-                                                              (fromActiveObjectWithId (active)))
+                                                              (fromActiveObjectWithId (active))),
+
+                    SpecialAbility.is (wiki_entry)
+                      ? addOtherSpecialAbilityDependenciesOnHeroInit (wiki_entry) (active)
+                      : ident
                   )
                 }))
 

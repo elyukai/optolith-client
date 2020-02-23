@@ -172,8 +172,8 @@ export const empty = Nothing
  * ```
  */
 export const guard =
-  (pred: boolean): Maybe<true> =>
-    pred ? pure<true> (true) : empty
+  (pred: boolean): Maybe<void> =>
+    pred ? pure<void> (undefined) : empty
 
 /**
  * `guard' :: (() -> Bool) -> Maybe ()`
@@ -195,8 +195,8 @@ export const guard =
  * Lazy version of `guard`.
  */
 export const guard_ =
-  (pred: () => boolean): Maybe<true> =>
-    pred () ? pure<true> (true) : empty
+  (pred: () => boolean): Maybe<void> =>
+    pred () ? pure<void> (undefined) : empty
 
 
 // MONAD

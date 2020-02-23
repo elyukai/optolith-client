@@ -2,12 +2,14 @@
 // @ts-check
 const { ident } = require('../Function');
 const { Internals } = require('../Internals');
-const { List } = require('../List')
+const L = require('../List')
 const { Pair } = require('../Tuple')
 const { Num } = require('../Num')
 const { OrderedMap } = require('../OrderedMap')
 const { fromDefault } = require('../Record')
 const { show } = require('../Show')
+
+const { List } = L
 
 const Just = Internals.Just
 const Nothing = Internals.Nothing
@@ -1107,4 +1109,24 @@ test ('lengthAtMost', () => {
     .toEqual (false)
   expect (() => List.lengthAtMost (-1) (List (1, 2)))
     .toThrow ()
+})
+
+describe ("Unique", () => {
+  describe ("countElem", () => {
+    it ("counts 0 if there is no matching element", () => {
+      expect (L.countElem (5) (List (1, 2, 3, 4))) .toBe (0)
+    })
+
+    it ("counts 1 if there is one matching element", () => {
+      expect (L.countElem (2) (List (1, 2, 3, 4))) .toBe (1)
+    })
+
+    it ("counts 2 if there are two matching element", () => {
+      expect (L.countElem (2) (List (1, 2, 3, 4, 2))) .toBe (2)
+    })
+
+    it ("counts 3 if there are three matching element", () => {
+      expect (L.countElem (2) (List (1, 2, 3, 2, 4, 2))) .toBe (3)
+    })
+  })
 })

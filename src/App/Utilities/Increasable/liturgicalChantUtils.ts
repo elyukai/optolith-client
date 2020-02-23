@@ -1,7 +1,7 @@
 import { cnst, ident, thrush } from "../../../Data/Function"
 import { fmap } from "../../../Data/Functor"
-import { all, any, consF, elemF, foldr, intercalate, List, minimum, notElem, notElemF } from "../../../Data/List"
-import { and, bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, Just, mapMaybe, Maybe, maybe, Nothing, sum, thenF } from "../../../Data/Maybe"
+import { all, any, append, consF, elemF, foldr, intercalate, List, minimum, notElem, notElemF } from "../../../Data/List"
+import { and, bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, Just, mapMaybe, Maybe, maybe, maybeToList, Nothing, sum, thenF } from "../../../Data/Maybe"
 import { gte, inc, min } from "../../../Data/Num"
 import { alter, empty, filter, findWithDefault, foldl, fromArray, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
@@ -28,7 +28,7 @@ import { ifElse } from "../ifElse"
 import { pipe, pipe_ } from "../pipe"
 import { sortStrings } from "../sortBy"
 import { isNumber } from "../typeCheckUtils"
-import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils"
+import { getExceptionalSkillBonus, getMaxSRByCheckAttrs, getMaxSRFromEL } from "./skillUtils"
 
 const SDA = StaticData.A
 const LCA = LiturgicalChant.A
@@ -85,17 +85,18 @@ export const isLiturgicalChantIncreasable =
   (attributes: OrderedMap<string, Record<AttributeDependent>>) =>
   (exceptionalSkill: Maybe<Record<ActivatableDependent>>) =>
   (aspectKnowledge: Maybe<Record<ActivatableDependent>>): boolean => {
-    const bonus = getExceptionalSkillBonus (LCA.id (wikiEntry)) (exceptionalSkill)
+    const bonus = getExceptionalSkillBonus (exceptionalSkill) (LCA.id (wikiEntry))
 
-    const max = pipe (
-                       getInitialMaximumList (attributes),
-                       putMaximumSkillRatingFromExperienceLevel (startEL) (phase),
-                       putAspectKnowledgeRestrictionMaximum (currentTradition)
-                                                            (aspectKnowledge)
-                                                            (wikiEntry),
-                       minimum
-                     )
-                     (wikiEntry)
+    const max = pipe_ (
+                  wikiEntry,
+                  getMaxSRByCheckAttrs (attributes),
+                  List,
+                  append (maybeToList (getMaxSRFromEL (startEL) (phase))),
+                  putAspectKnowledgeRestrictionMaximum (currentTradition)
+                                                       (aspectKnowledge)
+                                                       (wikiEntry),
+                  minimum
+                )
 
     return ASDA.value (stateEntry) < max + bonus
   }

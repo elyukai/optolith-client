@@ -1,12 +1,14 @@
+/* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 import { notP } from "../../../Data/Bool"
 import { equals } from "../../../Data/Eq"
-import { cnst, flip, ident, thrush } from "../../../Data/Function"
+import { cnst, flip, ident } from "../../../Data/Function"
 import { fmap } from "../../../Data/Functor"
-import { all, any, consF, countWith, elemF, find, intersecting, List, minimum, notElem } from "../../../Data/List"
-import { and, bindF, elem, ensure, fromMaybe_, isJust, Just, listToMaybe, mapMaybe, Maybe, maybe, Nothing, sum } from "../../../Data/Maybe"
-import { gte, inc } from "../../../Data/Num"
-import { alter, elems, empty, filter, foldl, foldrWithKey, lookup, lookupF, OrderedMap, union } from "../../../Data/OrderedMap"
+import { all, any, consF, countWith, countWithByKeyMaybe, elemF, find, intersecting, List, maximum, minimum, notElem, notNull } from "../../../Data/List"
+import { bindF, catMaybes, elem, ensure, fromMaybe_, guard, isJust, isNothing, Just, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe"
+import { add, lt } from "../../../Data/Num"
+import { elems, foldrWithKey, lookup, lookupF, OrderedMap, union } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
+import { traceShowId } from "../../../Debug/Trace"
 import { IC, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
@@ -33,13 +35,14 @@ import { zibiljaRitualToSpell } from "../../Models/Wiki/ZibiljaRitual"
 import { modifyByLevel } from "../Activatable/activatableModifierUtils"
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils"
 import { mapMagicalTradIdToNumId } from "../Activatable/traditionUtils"
-import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies"
+import { flattenDependencies } from "../Dependencies/flattenDependencies"
 import { getExperienceLevelAtStart } from "../ELUtils"
 import { ifElse } from "../ifElse"
 import { pipe, pipe_ } from "../pipe"
 import { areSpellPrereqisitesMet } from "../Prerequisites/validatePrerequisitesUtils"
 import { isNumber, misNumberM } from "../typeCheckUtils"
-import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils"
+import { getExceptionalSkillBonus, getMaxSRByCheckAttrs, getMaxSRFromEL } from "./skillUtils"
+
 
 const SDA = StaticData.A
 const HA = HeroModel.A
@@ -52,162 +55,220 @@ const SAA = SpecialAbility.A
 const TUA = TransferUnfamiliar.A
 const AOA = ActiveObject.A
 
+type ASD = ActivatableSkillDependent
+
+
 /**
  * `isActiveTradition id xs` checks if `id` is a tradition contained in the list
  * of active traditions `xs`.
  */
-const isActiveTradition =
-  (e: MagicalTradition) =>
-    find (pipe (
-           SAA.id,
-           mapMagicalTradIdToNumId,
-           elem (e)
-         ))
+const isActiveTradition = (e : MagicalTradition) =>
+                            find (pipe (
+                                   SAA.id,
+                                   mapMagicalTradIdToNumId,
+                                   elem (e)
+                                 ))
+
 
 /**
  * Checks if the passed spell or cantrip is valid for the current
  * active magical traditions.
  */
-export const isOwnTradition =
-  (activeTradition: List<Record<SpecialAbility>>) =>
-  (x: Record<Spell> | Record<Cantrip>): boolean =>
-    pipe (
-           SAL.tradition,
-           any (e => e === MagicalTradition.General
-                     || isJust (isActiveTradition (e) (activeTradition)))
-         )
-         (x)
+export const isOwnTradition = (activeTradition : List<Record<SpecialAbility>>) =>
+                              (wiki_entry : Record<Spell> | Record<Cantrip>) : boolean =>
+                                pipe (
+                                       SAL.tradition,
+                                       any (e => e === MagicalTradition.General
+                                                 || isJust (isActiveTradition (e)
+                                                                              (activeTradition)))
+                                     )
+                                     (wiki_entry)
+
 
 /**
-* Add a restriction to the list of maxima if there is no aspect knowledge
-* active for the passed liturgical chant.
-*/
-const putPropertyKnowledgeRestrictionMaximum =
-  (propertyKnowledge: Maybe<Record<ActivatableDependent>>) =>
-  (wiki_entry: Record<Spell>) =>
-    ifElse<List<number>>
-      (cnst (
-        and (fmap (notElem<string | number> (SA.property (wiki_entry)))
-                  (getActiveSelectionsMaybe (propertyKnowledge)))
-      ))
-      <List<number>>
-      (consF (14))
-      (ident)
+ * Returns the SR maximum if there is no property knowledge active for the passed
+ * spell.
+ */
+const getMaxSRFromPropertyKnowledge = (propertyKnowledge : Maybe<Record<ActivatableDependent>>) =>
+                                      (wiki_entry : Record<Spell>) : Maybe<number> =>
+                                        pipe_ (
+                                          propertyKnowledge,
+                                          getActiveSelectionsMaybe,
+                                          maybe (true)
+                                                (notElem <string | number> (
+                                                  SA.property (wiki_entry)
+                                                )),
+                                          hasRestriction => hasRestriction ? Just (14) : Nothing
+                                        )
+
+
+/**
+ * Returns the maximum skill rating for the passed spell.
+ */
+export const getSpellMax = (startEL : Record<ExperienceLevel>) =>
+                           (phase : number) =>
+                           (attributes : OrderedMap<string, Record<AttributeDependent>>) =>
+                           (exceptionalSkill : Maybe<Record<ActivatableDependent>>) =>
+                           (propertyKnowledge : Maybe<Record<ActivatableDependent>>) =>
+                           (wiki_entry : Record<Spell>) : number =>
+                             pipe_ (
+                               List (
+                                 Just (getMaxSRByCheckAttrs (attributes) (wiki_entry)),
+                                 getMaxSRFromEL (startEL) (phase),
+                                 getMaxSRFromPropertyKnowledge (propertyKnowledge) (wiki_entry)
+                               ),
+                               catMaybes,
+                               minimum,
+                               add (getExceptionalSkillBonus (exceptionalSkill)
+                                                             (SA.id (wiki_entry)))
+                             )
+
 
 /**
  * Checks if the passed spell's skill rating can be increased.
  */
-export const isSpellIncreasable =
-  (startEL: Record<ExperienceLevel>) =>
-  (phase: number) =>
-  (attributes: OrderedMap<string, Record<AttributeDependent>>) =>
-  (exceptionalSkill: Maybe<Record<ActivatableDependent>>) =>
-  (propertyKnowledge: Maybe<Record<ActivatableDependent>>) =>
-  (wiki_entry: Record<Spell>) =>
-  (hero_entry: Record<ActivatableSkillDependent>): boolean => {
-    const bonus = getExceptionalSkillBonus (SA.id (wiki_entry))
-                                           (exceptionalSkill)
+export const isSpellIncreasable = (startEL : Record<ExperienceLevel>) =>
+                                  (phase : number) =>
+                                  (attributes : HeroModel["attributes"]) =>
+                                  (exceptionalSkill : Maybe<Record<ActivatableDependent>>) =>
+                                  (propertyKnowledge : Maybe<Record<ActivatableDependent>>) =>
+                                  (wiki_entry : Record<Spell>) =>
+                                  (hero_entry : Record<ActivatableSkillDependent>) : boolean =>
+                                    ASDA.value (hero_entry) < getSpellMax (startEL)
+                                                                          (phase)
+                                                                          (attributes)
+                                                                          (exceptionalSkill)
+                                                                          (propertyKnowledge)
+                                                                          (wiki_entry)
 
-    const max = pipe (
-                      getInitialMaximumList (attributes),
-                      putMaximumSkillRatingFromExperienceLevel (startEL) (phase),
-                      putPropertyKnowledgeRestrictionMaximum (propertyKnowledge)
-                                                             (wiki_entry),
-                      minimum
-                    )
-                    (wiki_entry)
 
-    return ASDA.value (hero_entry) < max + bonus
-  }
+type SpellsAbove10ByProperty = OrderedMap<Property, number>
+
 
 /**
- * Counts the active spells for every property. A spell can only have one
- * property.
+ * Returns the lowest SR and it's occurences for every property. The values of
+ * the map are pairs where the first is the lowest SR and the second is the
+ * amount of spells at that exact SR.
  */
-export const countActiveSpellsPerProperty =
-  (wiki: OrderedMap<string, Record<Spell>>):
-  (hero: OrderedMap<string, Record<ActivatableSkillDependent>>) => OrderedMap<Property, number> =>
-    pipe (
-      filter (pipe (ASDA.value, gte (10))),
-      foldl ((acc: OrderedMap<Property, number>) => pipe (
-              ASDA.id,
-              lookupF (wiki),
-              maybe
-                (acc)
-                (pipe (
-                  SA.property,
-                  alter (pipe (sum, inc, Just)),
-                  thrush (acc)
-                ))
-            ))
-            (empty)
-    )
+export const spellsAbove10ByProperty : (wiki_spells : StaticData["spells"])
+                                     => (hero_spells : HeroModel["spells"])
+                                     => SpellsAbove10ByProperty
+                                     = wiki_spells =>
+                                         pipe (
+                                           elems,
+                                           countWithByKeyMaybe (pipe (
+                                                                 ASDA.id,
+                                                                 lookupF (wiki_spells),
+                                                                 fmap (SA.property)
+                                                               ))
+                                         )
 
-/**
- * Check if the dependencies allow the passed spell to be decreased.
- */
-const isSpellDecreasableByDependencies =
-  (wiki: StaticDataRecord) =>
-  (state: HeroModelRecord) =>
-  (hero_entry: Record<ActivatableSkillDependent>) => {
-    const flattenedDependencies =
-      flattenDependencies (wiki) (state) (ASDA.dependencies (hero_entry))
-
-    return ASDA.value (hero_entry) < 1
-      ? notElem<number | boolean> (true) (flattenedDependencies)
-      : ASDA.value (hero_entry) > filterAndMaximumNonNegative (flattenedDependencies)
-  }
 
 /**
  * Check if the active property knowledges allow the passed spell to be
  * decreased. (There must be at leased 3 spells of the respective property
  * active.)
  */
-const isSpellDecreasableByPropertyKnowledges =
-  (wiki: StaticDataRecord) =>
-  (spellsStateEntries: OrderedMap<string, Record<ActivatableSkillDependent>>) =>
-  (propertyKnowledge: Maybe<Record<ActivatableDependent>>) =>
-  (wiki_entry: Record<Spell>) =>
-  (hero_entry: Record<ActivatableSkillDependent>) =>
-    and (
-      pipe (
-        getActiveSelectionsMaybe,
+const getMinSRFromPropertyKnowledge = (property_counter : SpellsAbove10ByProperty) =>
+                                      (active_property_knowledges : Maybe<List<string | number>>) =>
+                                      (wiki_entry : Record<Spell>) =>
+                                      (hero_entry : Record<ASD>) : Maybe<number> =>
+                                        pipe_ (
+                                          active_property_knowledges,
 
-        // Check if spell is part of dependencies of active Property Knowledge
-        bindF<List<string | number>, List<string | number>>
-          (ensure (any (e => isNumber (e) && equals (e) (SA.property (wiki_entry))))),
+                                          // Is spell part of dependencies of any active Property
+                                          // Knowledge?
+                                          bindF (pipe (
+                                            any (e => isNumber (e)
+                                                      && e === SA.property (wiki_entry)),
+                                            guard
+                                          )),
 
-        fmap (
-          pipe (
-            () => countActiveSpellsPerProperty (SDA.spells (wiki))
-                                               (spellsStateEntries),
-            lookup (SA.property (wiki_entry)),
-            sum,
-            lowest => ASDA.value (hero_entry) !== 10 || lowest > 3
-          )
-        )
-      )
-      (propertyKnowledge)
-    )
+                                          // If yes, check if spell is above 10 and if there are not
+                                          // enough spells above 10 to allow a decrease below 10
+                                          bindF (() => pipe_ (
+                                            property_counter,
+                                            lookup (SA.property (wiki_entry)),
+                                            bindF (count => ASDA.value (hero_entry) >= 10
+                                                            && count <= 3
+                                                            ? Just (10)
+                                                            : Nothing)
+                                          ))
+                                        )
+
+
+/**
+ * Check if the dependencies allow the passed spell to be decreased.
+ */
+const getMinSRByDeps = (static_data : StaticDataRecord) =>
+                       (hero : HeroModelRecord) =>
+                       (hero_entry : Record<ActivatableSkillDependent>) : Maybe<number> =>
+                         pipe_ (
+                           hero_entry,
+                           ASDA.dependencies,
+                           flattenDependencies (static_data) (hero),
+                           mapMaybe (x => typeof x === "boolean"
+                                          ? x ? Just (0) : Nothing
+                                          : Just (x)),
+                           ensure (notNull),
+                           fmap (maximum)
+                         )
+
+
+/**
+ * Returns the minimum skill rating for the passed skill.
+ */
+export const getSpellMin = (static_data : StaticDataRecord) =>
+                           (hero : HeroModelRecord) =>
+                           (property_knowledge : Maybe<Record<ActivatableDependent>>) => {
+                             const property_counter =
+                               spellsAbove10ByProperty (SDA.spells (static_data))
+                                                       (HA.spells (hero))
+
+                             const active_property_knowledges =
+                               getActiveSelectionsMaybe (property_knowledge)
+
+                             return (wiki_entry : Record<Spell>) =>
+                                    (hero_entry : Record<ASD>) : Maybe<number> =>
+                                      pipe_ (
+                                        List (
+                                          getMinSRByDeps (static_data) (hero) (hero_entry),
+                                          getMinSRFromPropertyKnowledge (property_counter)
+                                                                        (active_property_knowledges)
+                                                                        (wiki_entry)
+                                                                        (hero_entry)
+                                        ),
+                                        catMaybes,
+                                        ensure (notNull),
+                                        fmap (maximum)
+                                      )
+                           }
+
 
 /**
  * Checks if the passed spell's skill rating can be decreased.
  */
-export const isSpellDecreasable =
-  (wiki: StaticDataRecord) =>
-  (state: HeroModelRecord) =>
-  (propertyKnowledge: Maybe<Record<ActivatableDependent>>) =>
-  (wiki_entry: Record<Spell>) =>
-  (hero_entry: Record<ActivatableSkillDependent>): boolean =>
-    isSpellDecreasableByDependencies (wiki) (state) (hero_entry)
-    && isSpellDecreasableByPropertyKnowledges (wiki)
-                                              (HeroModel.A.spells (state))
-                                              (propertyKnowledge)
-                                              (wiki_entry)
-                                              (hero_entry)
+export const isSpellDecreasable = (static_data : StaticDataRecord) =>
+                                  (hero : HeroModelRecord) =>
+                                  (property_knowledge : Maybe<Record<ActivatableDependent>>) => {
+                                    const getMin = getSpellMin (static_data)
+                                                               (hero)
+                                                               (property_knowledge)
+
+                                    return (wiki_entry : Record<Spell>) =>
+                                           (hero_entry : Record<ASD>) : boolean =>
+                                             pipe_ (
+                                               getMin (wiki_entry) (hero_entry),
+                                               min => ASDA.value (hero_entry) < 1
+                                                      ? isNothing (min)
+                                                      : maybe (true)
+                                                              (lt (ASDA.value (hero_entry)))
+                                                              (min)
+                                             )
+                                  }
 
 
-export const combineSpellsAndMagicalActions = (staticData: StaticDataRecord) => pipe_ (
+export const combineSpellsAndMagicalActions = (staticData : StaticDataRecord) => pipe_ (
                                                 SDA.spells (staticData),
                                                 pipe_ (
                                                   SDA.animistForces (staticData),
@@ -261,14 +322,16 @@ export const combineSpellsAndMagicalActions = (staticData: StaticDataRecord) => 
                                               )
 
 
-export const isUnfamiliarSpell: (transferred_unfamiliar: List<Record<TransferUnfamiliar>>) =>
-                                (trad_hero_entries: List<Record<ActivatableDependent>>) =>
-                                (spell_or_cantrip: Record<Spell> | Record<Cantrip>) => boolean =
+export const isUnfamiliarSpell : (transferred_unfamiliar : List<Record<TransferUnfamiliar>>) =>
+                                (trad_hero_entries : List<Record<ActivatableDependent>>) =>
+                                (spell_or_cantrip : Record<Spell> | Record<Cantrip>) => boolean =
   transferred_unfamiliar =>
   trads => {
     if (any (pipe (ADA.id, equals<string> (SpecialAbilityId.TraditionIntuitiveMage))) (trads)) {
       return cnst (false)
     }
+
+    traceShowId (transferred_unfamiliar)
 
     const active_trad_num_ids =
       pipe_ (
@@ -300,9 +363,9 @@ export const isUnfamiliarSpell: (transferred_unfamiliar: List<Record<TransferUnf
  *
  * Counts the active spells of the specified spell groups.
  */
-const countActiveSpellEntriesInGroups: (groups: List<number>) =>
-                                       (wiki: StaticDataRecord) =>
-                                       (hero: HeroModelRecord) => number =
+const countActiveSpellEntriesInGroups : (groups : List<number>) =>
+                                       (wiki : StaticDataRecord) =>
+                                       (hero : HeroModelRecord) => number =
   grs => wiki => pipe (
     HA.spells,
     elems,
@@ -325,9 +388,9 @@ const countActiveSpellEntriesInGroups: (groups: List<number>) =>
  * any further addition of a spell or ritual.
  */
 export const isSpellsRitualsCountMaxReached =
-  (wiki: StaticDataRecord) =>
-  (hero: HeroModelRecord) =>
-  (isLastTrad: (x: string) => boolean) => {
+  (wiki : StaticDataRecord) =>
+  (hero : HeroModelRecord) =>
+  (isLastTrad : (x : string) => boolean) => {
     // Count maximum for Intuitive Mages and Animisten
     const BASE_MAX_INTU_ANIM = 3
 
@@ -371,14 +434,14 @@ export const isSpellsRitualsCountMaxReached =
  * Takes a list of special ability wiki entries and returns a function that
  * checks if a passed ID belongs to a wiki entry from the list
  */
-export const isIdInSpecialAbilityList: (xs: List<Record<SpecialAbility>>) =>
-                                       (id: string) => boolean =
+export const isIdInSpecialAbilityList : (xs : List<Record<SpecialAbility>>) =>
+                                       (id : string) => boolean =
   flip (id => List.any (pipe (SAA.id, equals (id))))
 
 
 const isAnySpellActiveWithImpCostC =
-  (wiki_spells: OrderedMap<string, Record<Spell>>) =>
-    OrderedMap.any ((x: Record<ActivatableSkillDependent>) => ASDA.active (x)
+  (wiki_spells : OrderedMap<string, Record<Spell>>) =>
+    OrderedMap.any ((x : Record<ActivatableSkillDependent>) => ASDA.active (x)
                                                               && pipe_ (
                                                                 x,
                                                                 ASDA.id,
@@ -400,11 +463,11 @@ const isAnySpellActiveWithImpCostC =
  * Checks if a spell is valid to add when *Tradition (Intuitive Mage)* is used.
  */
 const isInactiveValidForIntuitiveMage =
-  (wiki: StaticDataRecord) =>
-  (hero: HeroModelRecord) =>
-  (is_spell_max_count_reached: boolean) =>
-  (wiki_entry: Record<Spell>) =>
-  (mhero_entry: Maybe<Record<ActivatableSkillDependent>>) =>
+  (wiki : StaticDataRecord) =>
+  (hero : HeroModelRecord) =>
+  (is_spell_max_count_reached : boolean) =>
+  (wiki_entry : Record<Spell>) =>
+  (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
     !is_spell_max_count_reached
 
     // Intuitive Mages can only learn spells
@@ -434,10 +497,10 @@ const isInactiveValidForIntuitiveMage =
  * *Tradition (Arcane Dancer)* is used.
  */
 const isInactiveValidForArcaneBardOrDancer =
-  (isUnfamiliar: (spell_or_cantrip: Record<Spell> | Record<Cantrip>) => boolean) =>
-  (msub_trad: Maybe<number>) =>
-  (wiki_entry: Record<Spell>) =>
-  (mhero_entry: Maybe<Record<ActivatableSkillDependent>>) =>
+  (isUnfamiliar : (spell_or_cantrip : Record<Spell> | Record<Cantrip>) => boolean) =>
+  (msub_trad : Maybe<number>) =>
+  (wiki_entry : Record<Spell>) =>
+  (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
     !isUnfamiliar (wiki_entry)
     && maybe (false) (elemF (SA.subtradition (wiki_entry))) (msub_trad)
     && Maybe.all (notP (ASDA.active)) (mhero_entry)
@@ -455,11 +518,11 @@ const isInactiveValidForArcaneBardOrDancer =
  * Checks if a spell is valid to add when *Tradition (Animisten)* is used.
  */
 const isInactiveValidForAnimist =
-  (wiki: StaticDataRecord) =>
-  (hero: HeroModelRecord) =>
-  (is_spell_max_count_reached: boolean) =>
-  (wiki_entry: Record<Spell>) =>
-  (mhero_entry: Maybe<Record<ActivatableSkillDependent>>) =>
+  (wiki : StaticDataRecord) =>
+  (hero : HeroModelRecord) =>
+  (is_spell_max_count_reached : boolean) =>
+  (wiki_entry : Record<Spell>) =>
+  (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
     isInactiveValidForIntuitiveMage (wiki)
                                     (hero)
                                     (is_spell_max_count_reached)
@@ -469,9 +532,9 @@ const isInactiveValidForAnimist =
 
 
 const consTradSpecificSpell =
-  (wiki_entry: Record<Spell>) =>
-  (mhero_entry: Maybe<Record<ActivatableSkillDependent>>) =>
-  (id: string) =>
+  (wiki_entry : Record<Spell>) =>
+  (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
+  (id : string) =>
     consF (SpellWithRequirements ({
       wikiEntry: wiki_entry,
       stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (id))
@@ -483,14 +546,14 @@ const consTradSpecificSpell =
 
 
 export const getInactiveSpellsForIntuitiveMageOrAnimist =
-  (isValid: typeof isInactiveValidForIntuitiveMage) =>
-  (wiki: StaticDataRecord) =>
-  (hero: HeroModelRecord) =>
-  (is_spell_max_count_reached: boolean): List<Record<SpellWithRequirements>> =>
+  (isValid : typeof isInactiveValidForIntuitiveMage) =>
+  (wiki : StaticDataRecord) =>
+  (hero : HeroModelRecord) =>
+  (is_spell_max_count_reached : boolean) : List<Record<SpellWithRequirements>> =>
     pipe_ (
       wiki,
       SDA.spells,
-      foldrWithKey ((k: string) => (wiki_entry: Record<Spell>) => {
+      foldrWithKey ((k : string) => (wiki_entry : Record<Spell>) => {
                      const mhero_entry = lookup (k) (HA.spells (hero))
 
                      if (areSpellPrereqisitesMet (wiki) (hero) (wiki_entry)
@@ -516,9 +579,9 @@ export const getInactiveSpellsForIntuitiveMageOrAnimist =
  * Returns all valid inactive spells for intuitive mages.
  */
 export const getInactiveSpellsForIntuitiveMages =
-  (wiki: StaticDataRecord) =>
-  (hero: HeroModelRecord) =>
-  (is_spell_max_count_reached: boolean): List<Record<SpellWithRequirements>> => {
+  (wiki : StaticDataRecord) =>
+  (hero : HeroModelRecord) =>
+  (is_spell_max_count_reached : boolean) : List<Record<SpellWithRequirements>> => {
     if (is_spell_max_count_reached) {
       return List<Record<SpellWithRequirements>> ()
     }
@@ -553,10 +616,10 @@ export const getInactiveSpellsForAnimist =
  * Returns all valid inactive spells for arcane bards or dancers.
  */
 export const getInactiveSpellsForArcaneBardOrDancer =
-  (wiki: StaticDataRecord) =>
-  (hero: HeroModelRecord) =>
-  (isUnfamiliar: (spell_or_cantrip: Record<Spell> | Record<Cantrip>) => boolean) =>
-  (trads_hero: List<Record<ActivatableDependent>>): List<Record<SpellWithRequirements>> => {
+  (wiki : StaticDataRecord) =>
+  (hero : HeroModelRecord) =>
+  (isUnfamiliar : (spell_or_cantrip : Record<Spell> | Record<Cantrip>) => boolean) =>
+  (trads_hero : List<Record<ActivatableDependent>>) : List<Record<SpellWithRequirements>> => {
     const msub_trad =
       pipe_ (
         trads_hero,
@@ -569,7 +632,7 @@ export const getInactiveSpellsForArcaneBardOrDancer =
     return pipe_ (
       wiki,
       SDA.spells,
-      foldrWithKey ((k: string) => (wiki_entry: Record<Spell>) => {
+      foldrWithKey ((k : string) => (wiki_entry : Record<Spell>) => {
                      const mhero_entry = lookup (k) (HA.spells (hero))
 
                      if (areSpellPrereqisitesMet (wiki) (hero) (wiki_entry)
@@ -600,16 +663,16 @@ export const getInactiveSpellsForArcaneBardOrDancer =
  * Returns all valid inactive spells for arcane bards or dancers.
  */
 export const getInactiveSpellsForOtherTradition =
-  (wiki: StaticDataRecord) =>
-  (hero: HeroModelRecord) =>
-  (is_spell_max_count_reached: boolean) =>
-  (is_max_unfamiliar: boolean) =>
-  (isUnfamiliar: (spell_or_cantrip: Record<Spell> | Record<Cantrip>) => boolean):
+  (wiki : StaticDataRecord) =>
+  (hero : HeroModelRecord) =>
+  (is_spell_max_count_reached : boolean) =>
+  (is_max_unfamiliar : boolean) =>
+  (isUnfamiliar : (spell_or_cantrip : Record<Spell> | Record<Cantrip>) => boolean) :
   List<Record<SpellWithRequirements>> =>
     pipe_ (
       wiki,
       SDA.spells,
-      foldrWithKey ((k: string) => (wiki_entry: Record<Spell>) => {
+      foldrWithKey ((k : string) => (wiki_entry : Record<Spell>) => {
                      const mhero_entry = lookup (k) (HA.spells (hero))
 
                      if ((!is_spell_max_count_reached || SA.gr (wiki_entry) > MagicalGroup.Rituals)

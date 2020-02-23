@@ -14,7 +14,7 @@ import { SkillWithRequirements, SkillWithRequirementsA_ } from "../../Models/Vie
 import { SkillGroup } from "../../Models/Wiki/SkillGroup"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
-import { isCommon, isUncommon } from "../../Utilities/Increasable/skillUtils"
+import { isSkillCommon, isSkillUncommon } from "../../Utilities/Increasable/skillUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { Checkbox } from "../Universal/Checkbox"
 import { ListView } from "../Universal/List"
@@ -159,11 +159,11 @@ export const Skills: React.FC<Props> = props => {
                                   id={SWRA_.id (curr)}
                                   typ={
                                     is_rating_visible
-                                    && isCommon (skillRating) (SWRA.wikiEntry (curr))
+                                    && isSkillCommon (skillRating) (SWRA.wikiEntry (curr))
                                   }
                                   untyp={
                                     is_rating_visible
-                                    && isUncommon (skillRating) (SWRA.wikiEntry (curr))
+                                    && isSkillUncommon (skillRating) (SWRA.wikiEntry (curr))
                                   }
                                   name={SWRA_.name (curr)}
                                   sr={SWRA_.value (curr)}

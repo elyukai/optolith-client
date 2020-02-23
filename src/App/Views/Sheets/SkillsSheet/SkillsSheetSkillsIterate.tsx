@@ -11,7 +11,7 @@ import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils"
 import { ndash } from "../../../Utilities/Chars"
 import { compareLocale, translate } from "../../../Utilities/I18n"
-import { getRoutineValue } from "../../../Utilities/Increasable/skillUtils"
+import { getMinCheckModForRoutine } from "../../../Utilities/Increasable/skillUtils"
 import { sign } from "../../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { comparingR, sortByMulti } from "../../../Utilities/sortBy"
@@ -57,7 +57,7 @@ export const iterateList =
           ? translate (staticData) ("sheets.gamestatssheet.skillstable.encumbrance.no")
           : translate (staticData) ("sheets.gamestatssheet.skillstable.encumbrance.maybe")
 
-        const mroutine = getRoutineValue (check_vals) (SkillCombinedA_.value (obj))
+        const mroutine = getMinCheckModForRoutine (check_vals) (SkillCombinedA_.value (obj))
 
         return (
           <tr key={SkillCombinedA_.id (obj)}>
