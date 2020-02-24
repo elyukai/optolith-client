@@ -21,5 +21,6 @@ Tables.zip
 tables/
 deploy/tablesSrc.json
 src/App/Utilities/YAML/Schema/
+/lib/bs/
 .merlin
-/lib
+.bsb.lock

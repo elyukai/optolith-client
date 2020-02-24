@@ -1,19 +1,25 @@
 {
   "name": "optolith-client",
   "version": "0.1.0",
-  "sources": {
-    "dir" : "src",
-    "subdirs" : true
-  },
+  "sources": [
+    "src",
+    "src/App/Utilities/AdventurePoints",
+    "src/Data"
+  ],
   "package-specs": {
     "module": "commonjs",
     "in-source": true
   },
   "suffix": ".bs.js",
   "bs-dependencies": [
+
   ],
   "warnings": {
     "error" : "+101"
   },
-  "refmt": 3
+  "namespace": true,
+  "refmt": 3,
+  "gentypeconfig": {
+    "language": "typescript"
+  }
 }
