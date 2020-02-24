@@ -1,5 +1,5 @@
 import { OrderedMap } from "../../../Data/OrderedMap"
-import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { fromDefault, makeLenses, Record, RecordCreator } from "../../../Data/Record"
 import { DerivedCharacteristicId } from "../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { NumIdName } from "../NumIdName"
 import { Advantage } from "./Advantage"
@@ -106,7 +106,7 @@ export interface StaticData {
   zibiljaRituals: OrderedMap<string, Record<ZibiljaRitual>>
 }
 
-export const StaticData =
+export const StaticData: RecordCreator<StaticData> =
   fromDefault ("StaticData")
               <StaticData> ({
                 advantages: OrderedMap.empty,

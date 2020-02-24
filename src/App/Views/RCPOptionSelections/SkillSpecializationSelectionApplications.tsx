@@ -1,29 +1,30 @@
 import * as React from "react"
 import { fromLeft_, fromRight_, isLeft, Left, Right } from "../../../Data/Either"
 import { fmap } from "../../../Data/Functor"
-import { flength, map } from "../../../Data/List"
-import { Just, Maybe, maybeToNullable } from "../../../Data/Maybe"
+import { filter, flength, map } from "../../../Data/List"
+import { isNothing, Just, Maybe, maybeToNullable } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
 import { fst, Pair, snd } from "../../../Data/Tuple"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { RadioOption } from "../../Models/View/RadioOption"
 import { Skill } from "../../Models/Wiki/Skill"
 import { Application } from "../../Models/Wiki/sub/Application"
-import { pipe_ } from "../../Utilities/pipe"
+import { pipe, pipe_ } from "../../Utilities/pipe"
 import { Dropdown } from "../Universal/Dropdown"
 import { RadioButtonGroup } from "../Universal/RadioButtonGroup"
 import { TextField } from "../Universal/TextField"
 
 const SA = Skill.A
+const AA = Application.A
 
 const applicationsToDropdown = map ((e: Record<Application>) => DropdownOption ({
-  id: Just (Application.A.id (e)),
-  name: Application.A.name (e),
+  id: Just (AA.id (e)),
+  name: AA.name (e),
 }))
 
 const applicationsToRadio = map ((e: Record<Application>) => RadioOption ({
-  name: Application.A.name (e),
-  value: Just (Application.A.id (e)),
+  name: AA.name (e),
+  value: Just (AA.id (e)),
 }))
 
 interface Props {
@@ -36,7 +37,10 @@ interface Props {
 export const SkillSpecializationSelectionApplications: React.FC<Props> = props => {
   const { active, setApplicationId, setApplicationString, skill } = props
 
-  const applications = SA.applications (skill)
+  const applications = pipe_ (
+                         SA.applications (skill),
+                         filter (pipe (AA.prerequisite, isNothing))
+                       )
   const mapplication_input = SA.applicationsInput (skill)
 
   const applicationOptions = React.useMemo (
