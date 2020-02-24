@@ -2,7 +2,7 @@
 name: New Book Data
 about: Implement a specific part of a (new) book
 title: 'Book: Section'
-labels: l10n, tables
+labels: 'Domain: Static Data, L10n'
 assignees: ''
 
 ---
