@@ -40,7 +40,7 @@ export enum SkillGroup {
   Craft = 5,
 }
 
-export enum CombatTechniqueGroup {
+export enum CombatTechniqueGroupId {
   Melee = 1,
   Ranged = 2,
 }

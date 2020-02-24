@@ -1,6 +1,6 @@
 import * as React from "react"
 import { List } from "../../../Data/List"
-import { fromJust, isJust, Maybe, or } from "../../../Data/Maybe"
+import { elem, fromJust, isJust, Maybe, or } from "../../../Data/Maybe"
 import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { EditItem } from "../../Models/Hero/EditItem"
@@ -135,9 +135,10 @@ export const ItemEditor: React.FC<ItemEditorProps> = props => {
   if (isJust (mitem)) {
     const item = fromJust (mitem)
 
-    const inputValidation = validateItemEditorInput (item)
+    const inputValidation = validateItemEditorInput (staticData) (item)
 
     const gr = EIA.gr (item)
+    const impGr = EIA.improvisedWeaponGroup (item)
     const locked = EIA.isTemplateLocked (item)
 
     return (
@@ -160,7 +161,9 @@ export const ItemEditor: React.FC<ItemEditorProps> = props => {
                 && (
                   typeof gr !== "number"
                   || (gr === 1 && !IEIVA.melee (inputValidation))
+                  || (elem (1) (impGr) && !IEIVA.melee (inputValidation))
                   || (gr === 2 && !IEIVA.ranged (inputValidation))
+                  || (elem (2) (impGr) && !IEIVA.ranged (inputValidation))
                   || (gr === 4 && !IEIVA.armor (inputValidation))
                   || !IEIVA.other (inputValidation)
                 )

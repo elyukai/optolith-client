@@ -117,7 +117,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
     || !isJust (combatTechnique)
     || fromJust (combatTechnique) === CombatTechniqueId.Lances
 
-  return (gr === 1 || elem (1) (EIA.improvisedWeaponGroup (item)))
+  return (gr === 1 || (elem (1) (EIA.improvisedWeaponGroup (item)) && gr > 4))
     ? (
       <>
         <Hr className="vertical" />

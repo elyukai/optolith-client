@@ -3,7 +3,7 @@ import { ident } from "../../Data/Function"
 import { fmap } from "../../Data/Functor"
 import { over, set, view } from "../../Data/Lens"
 import { insertAt, isList } from "../../Data/List"
-import { bind, bindF, ensure, fromJust, Just, maybe, Maybe, Nothing, thenF } from "../../Data/Maybe"
+import { bind, bindF, ensure, fromJust, isJust, Just, maybe, Maybe, Nothing } from "../../Data/Maybe"
 import { insert, lookup, map, sdelete } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { isTuple, Pair } from "../../Data/Tuple"
@@ -21,7 +21,7 @@ import { fromItemTemplate, Item } from "../Models/Hero/Item"
 import { PurseL } from "../Models/Hero/Purse"
 import { composeL } from "../Utilities/compose"
 import { editableToHitZoneArmor, editableToItem, fromItemTemplateEdit, hitZoneArmorToEditable, itemToEditable } from "../Utilities/ItemUtils"
-import { pipe } from "../Utilities/pipe"
+import { pipe, pipe_ } from "../Utilities/pipe"
 
 type Action = EquipmentActions.AddItemAction
             | EquipmentActions.AddItemTemplateAction
@@ -108,6 +108,8 @@ const {
 } = BelongingsL
 
 const { d, h, k, s } = PurseL
+
+const EIA = EditItem.A
 
 const {
   id: edit_id,
@@ -339,8 +341,13 @@ const itemGeneralReducer =
                                    (Just (action.payload.value)))
 
       case ActionTypes.SET_ITEM_GROUP:
-        return modifyEditItem (set (gr)
-                                   (action.payload.gr))
+        return modifyEditItem (item => pipe_ (
+                                item,
+                                set (gr) (action.payload.gr),
+                                EIA.gr (item) < 5 && action.payload.gr > 4
+                                ? set (improvisedWeaponGroup) (Nothing)
+                                : ident
+                              ))
 
       case ActionTypes.SET_ITEM_TEMPLATE:
         return modifyEditItem (set (template)
@@ -486,7 +493,7 @@ const itemOptionsReducer =
 
       case ActionTypes.SWITCH_IS_ITEM_IMPROVISED_WEAPON: {
         return modifyEditItem (over (improvisedWeaponGroup)
-                                    (thenF (Just (0))))
+                                    (x => isJust (x) ? Nothing : Just (1)))
       }
 
       case ActionTypes.SET_ITEM_IMPROVISED_WEAPON_GROUP: {

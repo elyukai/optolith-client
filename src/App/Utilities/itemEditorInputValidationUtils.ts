@@ -1,12 +1,16 @@
 import { fmap } from "../../Data/Functor"
 import { subscriptF } from "../../Data/List"
-import { elem, isJust, Nothing } from "../../Data/Maybe"
+import { elem, fromJust, isJust, maybe, Nothing } from "../../Data/Maybe"
+import { lookup } from "../../Data/OrderedMap"
 import { fromDefault, Record } from "../../Data/Record"
 import { fst, isTuple, snd } from "../../Data/Tuple"
+import { CombatTechniqueGroupId } from "../Constants/Groups"
 import { CombatTechniqueId } from "../Constants/Ids"
 import { EditItem } from "../Models/Hero/EditItem"
 import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold"
-import { pipe } from "./pipe"
+import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
+import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
+import { pipe, pipe_ } from "./pipe"
 import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from "./RegexUtils"
 
 export interface ItemEditorInputValidation {
@@ -91,9 +95,12 @@ const validateNoParryingWeapons =
     && IEIVA.weight (validSingle)
 
 const validateMeleeWeaponInput =
+  (staticData: StaticDataRecord) =>
   (item: Record<EditItem>) =>
-  (validSingle: Record<ItemEditorInputValidation>) =>
-    elem<string> (CombatTechniqueId.Lances) (EIA.combatTechnique (item))
+  (validSingle: Record<ItemEditorInputValidation>) => {
+    const combatTechnique = EIA.combatTechnique (item)
+
+    return elem<string> (CombatTechniqueId.Lances) (combatTechnique)
     ? validateNoParryingWeapons (validSingle)
     : IEIVA.at (validSingle)
       && IEIVA.damageDiceNumber (validSingle)
@@ -105,13 +112,24 @@ const validateMeleeWeaponInput =
       && IEIVA.price (validSingle)
       && IEIVA.stabilityMod (validSingle)
       && IEIVA.weight (validSingle)
-      && isJust (EIA.combatTechnique (item))
+      && isJust (combatTechnique)
+      && pipe_ (
+        staticData,
+        StaticData.A.combatTechniques,
+        lookup (fromJust (combatTechnique)),
+        maybe (false)
+              (pipe (CombatTechnique.A.gr, gr => gr === CombatTechniqueGroupId.Melee))
+      )
       && isJust (EIA.reach (item))
+  }
 
 const validateRangedWeaponInput =
+  (staticData: StaticDataRecord) =>
   (item: Record<EditItem>) =>
-  (validSingle: Record<ItemEditorInputValidation>) =>
-    IEIVA.damageDiceNumber (validSingle)
+  (validSingle: Record<ItemEditorInputValidation>) => {
+    const combatTechnique = EIA.combatTechnique (item)
+
+    return IEIVA.damageDiceNumber (validSingle)
     && IEIVA.damageFlat (validSingle)
     && IEIVA.length (validSingle)
     && IEIVA.amount (validSingle)
@@ -121,7 +139,15 @@ const validateRangedWeaponInput =
     && IEIVA.range3 (validSingle)
     && IEIVA.stabilityMod (validSingle)
     && IEIVA.weight (validSingle)
-    && isJust (EIA.combatTechnique (item))
+    && isJust (combatTechnique)
+    && pipe_ (
+      staticData,
+      StaticData.A.combatTechniques,
+      lookup (fromJust (combatTechnique)),
+      maybe (false)
+            (pipe (CombatTechnique.A.gr, gr => gr === CombatTechniqueGroupId.Ranged))
+    )
+  }
 
 const validateArmorInput =
   (item: Record<EditItem>) =>
@@ -142,7 +168,8 @@ const validateArmorInput =
  * Returns validation info for every input and combined validation for specific
  * item groups.
  */
-export const validateItemEditorInput = (item: Record<EditItem>) => {
+export const validateItemEditorInput = (staticData: StaticDataRecord) =>
+                                       (item: Record<EditItem>) => {
   const validName = EIA.name (item) .length > 0
   const validATMod = isInteger (EIA.at (item))
   const validDamageDiceNumber = isEmptyOr (isNaturalNumber) (EIA.damageDiceNumber (item))
@@ -205,9 +232,9 @@ export const validateItemEditorInput = (item: Record<EditItem>) => {
     other: Nothing,
   })
 
-  const validMelee = validateMeleeWeaponInput (item) (validSingle)
+  const validMelee = validateMeleeWeaponInput (staticData) (item) (validSingle)
 
-  const validRanged = validateRangedWeaponInput (item) (validSingle)
+  const validRanged = validateRangedWeaponInput (staticData) (item) (validSingle)
 
   const validArmor = validateArmorInput (item) (validSingle)
 

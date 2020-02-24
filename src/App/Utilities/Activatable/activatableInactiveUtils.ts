@@ -20,7 +20,7 @@ import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, Orde
 import { Record, RecordI } from "../../../Data/Record"
 import { filterMapListT, filterT, mapT } from "../../../Data/Transducer"
 import { fst, Pair, snd, Tuple } from "../../../Data/Tuple"
-import { CombatTechniqueGroup, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups"
+import { CombatTechniqueGroupId, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups"
 import { AdvantageId, DisadvantageId, SkillId, SpecialAbilityId } from "../../Constants/Ids"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
@@ -649,7 +649,7 @@ const modifyOtherOptions =
 
       case SpecialAbilityId.Hunter: {
         return pipe_ (
-          CombatTechniqueGroup.Ranged,
+          CombatTechniqueGroupId.Ranged,
           getAllEntriesByGroup (SDA.combatTechniques (wiki))
                                (HA.combatTechniques (hero)),
           filter (pipe (SkDA.value, gte (10))),

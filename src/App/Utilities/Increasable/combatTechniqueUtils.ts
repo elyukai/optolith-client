@@ -4,7 +4,7 @@ import { guard, Just, Maybe, maybe, then } from "../../../Data/Maybe"
 import { add, divideBy, max, min } from "../../../Data/Num"
 import { lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { CombatTechniqueGroup } from "../../Constants/Groups"
+import { CombatTechniqueGroupId } from "../../Constants/Groups"
 import { AdvantageId, AttrId, CombatTechniqueId } from "../../Constants/Ids"
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
@@ -45,7 +45,7 @@ export const getAttack =
     pipe (
       getCombatTechniqueRating,
       add (getPrimaryAttributeMod (state)
-                                  (CTA.gr (wikiEntry) === CombatTechniqueGroup.Ranged
+                                  (CTA.gr (wikiEntry) === CombatTechniqueGroupId.Ranged
                                     ? CTA.primary (wikiEntry)
                                     : List (AttrId.Courage)))
     )
@@ -54,7 +54,7 @@ export const getParry =
   (state: HeroModelRecord) =>
   (wikiEntry: Record<CombatTechnique>) =>
   (maybeStateEntry: Maybe<Record<SkillDependent>>): Maybe<number> =>
-    then (guard (CTA.gr (wikiEntry) !== CombatTechniqueGroup.Ranged
+    then (guard (CTA.gr (wikiEntry) !== CombatTechniqueGroupId.Ranged
                  && CTA.id (wikiEntry) !== CombatTechniqueId.ChainWeapons
                  && CTA.id (wikiEntry) !== CombatTechniqueId.Brawling))
          (Just (

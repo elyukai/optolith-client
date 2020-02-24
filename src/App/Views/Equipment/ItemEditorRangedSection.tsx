@@ -82,7 +82,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
       consF (DropdownOption ({ name: translate (staticData) ("general.none") }))
     )
 
-  return (gr === 2 || Maybe.elem (2) (EIA.improvisedWeaponGroup (item)))
+  return (gr === 2 || (Maybe.elem (2) (EIA.improvisedWeaponGroup (item)) && gr > 4))
     ? (
       <>
         <Hr className="vertical" />
