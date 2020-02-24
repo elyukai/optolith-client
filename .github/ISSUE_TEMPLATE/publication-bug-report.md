@@ -8,6 +8,7 @@ assignees: ''
 ---
 
 **Source (please complete the following information):**
+
 - Book: [e.g. Magic of Aventuria I]
 - Printing: [e.g. 1st]
 - Page(s): [e.g. 199]
