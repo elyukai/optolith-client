@@ -45,7 +45,8 @@ let getCost = (ic, sr) => getAPCostBaseByIC(ic) * getBaseMultiplier(ic, sr);
  * would not get the AP to get to that same SR.
  */
 let getAPForBounds = (ic, l, u) =>
-  Ix.range(l + 1, u) |> List.fold_right(sr => getCost(ic, sr) |> (+), _, 0);
+  Ix.range((l + 1, u))
+  |> List.fold_right(sr => getCost(ic, sr) |> (+), _, 0);
 
 /**
  * `getAPRange ic fromSR toSR` returns the AP cost for the given SR range.

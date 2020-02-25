@@ -5,6 +5,7 @@
     "src",
     "src/App/Models",
     "src/App/Models/Static",
+    "src/App/Utilities",
     "src/App/Utilities/AdventurePoints",
     "src/Data"
   ],

@@ -3,9 +3,4 @@
 
 
 // tslint:disable-next-line:interface-over-type-literal
-export type pages = 
-    { tag: "Page"; value: number }
-  | { tag: "Pages"; value: [number, number] };
-
-// tslint:disable-next-line:interface-over-type-literal
-export type t = { readonly id: string; readonly page: pages };
+export type t = { readonly id: string; readonly page: [number, number] };

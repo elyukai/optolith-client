@@ -3,8 +3,8 @@
 
 var List = require("bs-platform/lib/js/list.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
-var Ix$OptolithClient = require("../../../Data/Ix.bs.js");
-var Int$OptolithClient = require("../../../Data/Int.bs.js");
+var Ix$OptolithClient = require("../../Data/Ix.bs.js");
+var Int$OptolithClient = require("../../Data/Int.bs.js");
 
 function getAPCostBaseByIC(ic) {
   switch (ic) {
@@ -39,7 +39,10 @@ function getCost(ic, sr) {
 }
 
 function getAPForBounds(ic, l, u) {
-  var __x = Ix$OptolithClient.range(l + 1 | 0, u);
+  var __x = Ix$OptolithClient.range(/* tuple */[
+        l + 1 | 0,
+        u
+      ]);
   return List.fold_right((function (sr) {
                 var partial_arg = getCost(ic, sr);
                 return (function (param) {

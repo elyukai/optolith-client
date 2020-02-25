@@ -9,7 +9,6 @@ import { compare, dec, gt, gte, lte, min } from "../../../Data/Num"
 import { lookupF, OrderedMap, toList } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, Pair, snd } from "../../../Data/Tuple"
-import { IdPrefixes } from "../../Constants/IdPrefixes"
 import { ActivatableDependent, isActivatableDependent, isExtendedActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
@@ -39,7 +38,6 @@ import { isActive } from "../Activatable/isActive"
 import { isPactFromStateValid } from "../Activatable/pactUtils"
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils"
 import { getHeroStateItem } from "../heroStateUtils"
-import { prefixId } from "../IDUtils"
 import { pipe, pipe_ } from "../pipe"
 import { getPrimaryAttributeId } from "../primaryAttributeUtils"
 import { getAllWikiEntriesByGroup } from "../WikiUtils"
@@ -132,14 +130,11 @@ const isRaceValid =
     const active = RaceRequirement.A.active (req)
 
     if (isList (value)) {
-      return any (pipe (
-                         prefixId (IdPrefixes.RACES),
-                         equals (current_race_id)
-                       ))
+      return any (equals (current_race_id))
                  (value) === active
     }
 
-    return prefixId (IdPrefixes.RACES) (value) === current_race_id === active
+    return value === current_race_id === active
   }
 
 const isCultureValid =
@@ -148,14 +143,11 @@ const isCultureValid =
     const value = CultureRequirement.AL.value (req)
 
     if (isList (value)) {
-      return any (pipe (
-                         prefixId (IdPrefixes.CULTURES),
-                         equals (current_culture_id)
-                       ))
+      return any (equals (current_culture_id))
                  (value)
     }
 
-    return prefixId (IdPrefixes.CULTURES) (value) === current_culture_id
+    return value === current_culture_id
   }
 
 const hasSamePactCategory =
