@@ -40,28 +40,21 @@ let getBaseMultiplier = (ic, sr) =>
 let getCost = (ic, sr) => getAPCostBaseByIC(ic) * getBaseMultiplier(ic, sr);
 
 /**
+ * Returns the AP cost between the defined lower and upper SR. The AP cost for
+ * the lower bound are not included, as they would have been already paid or you
+ * would not get the AP to get to that same SR.
+ */
+let getAPForBounds = (ic, l, u) =>
+  Ix.range(l + 1, u) |> List.fold_right(sr => getCost(ic, sr) |> (+), _, 0);
+
+/**
  * `getAPRange ic fromSR toSR` returns the AP cost for the given SR range.
  */
 [@gentype]
 let getAPForRange = (ic, fromSR, toSR) =>
   fromSR < toSR
-    ? Ix.range((fromSR + 1, toSR))
-      |> List.fold_right(sr => getCost(ic, sr) |> (+), _, 0)
-    : fromSR > toSR
-        ? Ix.range((toSR + 1, fromSR))
-          |> List.fold_right(sr => getCost(ic, sr) |> (+), _, 0)
-        : 0;
-
-[@gentype]
-let intToIc = ic =>
-  switch (ic) {
-  | 1 => Some(A)
-  | 2 => Some(B)
-  | 3 => Some(C)
-  | 4 => Some(D)
-  | 5 => Some(E)
-  | _ => None
-  };
+    ? getAPForBounds(ic, fromSR, toSR)
+    : fromSR > toSR ? getAPForBounds(ic, toSR, fromSR) : 0;
 
 [@gentype]
 let icToStr = ic =>

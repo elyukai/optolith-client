@@ -2,19 +2,18 @@
 'use strict';
 
 
-function range(p) {
-  if (p[0] < p[1]) {
+function range(l, u) {
+  if (l > u) {
+    return /* [] */0;
+  } else if (l === u) {
     return /* :: */[
-            p[0],
-            range(/* tuple */[
-                  p[0] + 1 | 0,
-                  p[1]
-                ])
+            u,
+            /* [] */0
           ];
   } else {
     return /* :: */[
-            p[1],
-            /* [] */0
+            l,
+            range(l + 1 | 0, u)
           ];
   }
 }

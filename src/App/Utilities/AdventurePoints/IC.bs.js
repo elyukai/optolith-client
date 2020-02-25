@@ -38,48 +38,23 @@ function getCost(ic, sr) {
   return Caml_int32.imul(getAPCostBaseByIC(ic), getBaseMultiplier(ic, sr));
 }
 
-function getAPForRange(ic, fromSR, toSR) {
-  if (fromSR < toSR) {
-    var __x = Ix$OptolithClient.range(/* tuple */[
-          fromSR + 1 | 0,
-          toSR
-        ]);
-    return List.fold_right((function (sr) {
-                  var partial_arg = getCost(ic, sr);
-                  return (function (param) {
-                      return partial_arg + param | 0;
-                    });
-                }), __x, 0);
-  } else if (fromSR > toSR) {
-    var __x$1 = Ix$OptolithClient.range(/* tuple */[
-          toSR + 1 | 0,
-          fromSR
-        ]);
-    return List.fold_right((function (sr) {
-                  var partial_arg = getCost(ic, sr);
-                  return (function (param) {
-                      return partial_arg + param | 0;
-                    });
-                }), __x$1, 0);
-  } else {
-    return 0;
-  }
+function getAPForBounds(ic, l, u) {
+  var __x = Ix$OptolithClient.range(l + 1 | 0, u);
+  return List.fold_right((function (sr) {
+                var partial_arg = getCost(ic, sr);
+                return (function (param) {
+                    return partial_arg + param | 0;
+                  });
+              }), __x, 0);
 }
 
-function intToIc(ic) {
-  switch (ic) {
-    case 1 :
-        return /* A */0;
-    case 2 :
-        return /* B */1;
-    case 3 :
-        return /* C */2;
-    case 4 :
-        return /* D */3;
-    case 5 :
-        return /* E */4;
-    default:
-      return ;
+function getAPForRange(ic, fromSR, toSR) {
+  if (fromSR < toSR) {
+    return getAPForBounds(ic, fromSR, toSR);
+  } else if (fromSR > toSR) {
+    return getAPForBounds(ic, toSR, fromSR);
+  } else {
+    return 0;
   }
 }
 
@@ -103,7 +78,7 @@ exports.getAPCostBaseByIC = getAPCostBaseByIC;
 exports.getLastSRWithConstantCost = getLastSRWithConstantCost;
 exports.getBaseMultiplier = getBaseMultiplier;
 exports.getCost = getCost;
+exports.getAPForBounds = getAPForBounds;
 exports.getAPForRange = getAPForRange;
-exports.intToIc = intToIc;
 exports.icToStr = icToStr;
 /* No side effect */

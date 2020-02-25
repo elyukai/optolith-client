@@ -2,7 +2,7 @@
 name: Publication bug report
 about: Create a report of an bug in one of the official publications
 title: ''
-labels: 'Bug, Ulisses: Bug'
+labels: 'Bug, Domain: Static Data, Ulisses: Bug'
 assignees: ''
 
 ---
