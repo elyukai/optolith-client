@@ -13,22 +13,22 @@ const Curry = require('bs-platform/lib/es6/curry.js');
 const ICBS = require('./IC.bs');
 
 // tslint:disable-next-line:interface-over-type-literal
-export type ic = "A" | "B" | "C" | "D" | "E";
+export type t = "A" | "B" | "C" | "D" | "E";
 
 /** 
  * `getAPRange ic fromSR toSR` returns the AP cost for the given SR range.
   */
-export const getAPForRange: (ic:ic, fromSR:number, toSR:number) => number = function (Arg1: any, Arg2: any, Arg3: any) {
+export const getAPForRange: (ic:t, fromSR:number, toSR:number) => number = function (Arg1: any, Arg2: any, Arg3: any) {
   const result = Curry._3(ICBS.getAPForRange, $$toRE998253360[Arg1], Arg2, Arg3);
   return result
 };
 
-export const intToIc: (ic:number) => (null | undefined | ic) = function (Arg1: any) {
+export const intToIc: (ic:number) => (null | undefined | t) = function (Arg1: any) {
   const result = ICBS.intToIc(Arg1);
   return (result == null ? result : $$toJS998253360[result])
 };
 
-export const icToStr: (ic:ic) => string = function (Arg1: any) {
+export const icToStr: (ic:t) => string = function (Arg1: any) {
   const result = ICBS.icToStr($$toRE998253360[Arg1]);
   return result
 };

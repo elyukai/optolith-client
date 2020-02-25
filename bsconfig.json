@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "sources": [
     "src",
+    "src/App/Models",
+    "src/App/Models/Static",
     "src/App/Utilities/AdventurePoints",
     "src/Data"
   ],

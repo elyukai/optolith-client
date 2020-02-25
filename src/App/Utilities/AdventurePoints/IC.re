@@ -1,4 +1,4 @@
-type ic =
+type t =
   | A
   | B
   | C
