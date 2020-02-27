@@ -17,8 +17,8 @@ import { size } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
 import { Tuple } from "../../../Data/Tuple"
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select"
-import { SpecialAbilityGroup } from "../../Constants/Groups"
-import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { MagicalGroup, SpecialAbilityGroup } from "../../Constants/Groups"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
@@ -133,7 +133,7 @@ const isRemovalDisabledEntrySpecific =
     }
 
     switch (AAL.id (wiki_entry)) {
-      case AdvantageId.ExceptionalSkill: {
+      case AdvantageId.exceptionalSkill: {
         // value of target skill
         const mvalue =
           pipe_ (
@@ -155,7 +155,7 @@ const isRemovalDisabledEntrySpecific =
                                 (mstart_el)))
       }
 
-      case AdvantageId.ExceptionalCombatTechnique: {
+      case AdvantageId.exceptionalCombatTechnique: {
         // value of target combat technique
         const value =
           pipe_ (
@@ -170,7 +170,7 @@ const isRemovalDisabledEntrySpecific =
         return maybe (true) (pipe (ELA.maxCombatTechniqueRating, inc, lte (value))) (mstart_el)
       }
 
-      case SpecialAbilityId.Literacy: {
+      case SpecialAbilityId.literacy: {
         if (sel1 (matching_script_and_lang_related)) {
           const active_matching_scripts = sel2 (matching_script_and_lang_related)
 
@@ -186,7 +186,7 @@ const isRemovalDisabledEntrySpecific =
         }
       }
 
-      case SpecialAbilityId.Language: {
+      case SpecialAbilityId.language: {
         if (sel1 (matching_script_and_lang_related)) {
           const active_matching_languages = sel3 (matching_script_and_lang_related)
 
@@ -202,7 +202,7 @@ const isRemovalDisabledEntrySpecific =
         }
       }
 
-      case SpecialAbilityId.PropertyKnowledge:
+      case SpecialAbilityId.propertyKnowledge:
         return pipe_ (
           active,
           AOWIA.sid,
@@ -220,7 +220,7 @@ const isRemovalDisabledEntrySpecific =
                                            (HA.spells (hero)))
         )
 
-      case SpecialAbilityId.AspectKnowledge: {
+      case SpecialAbilityId.aspectKnowledge: {
         const all_aspcs = getActiveSelections (hero_entry)
 
         return pipe_ (
@@ -250,7 +250,7 @@ const isRemovalDisabledEntrySpecific =
         )
       }
 
-      case SpecialAbilityId.CombatStyleCombination: {
+      case SpecialAbilityId.combatStyleCombination: {
         const armedStyleActive = countActiveGroupEntries (wiki)
                                                          (hero)
                                                          (SpecialAbilityGroup.CombatStylesArmed)
@@ -269,7 +269,7 @@ const isRemovalDisabledEntrySpecific =
           || unarmedStyleActive >= 2
       }
 
-      case SpecialAbilityId.MagicStyleCombination: {
+      case SpecialAbilityId.magicStyleCombination: {
         const totalActive = countActiveGroupEntries (wiki) (hero) (13)
 
         // default is 1, but with this SA its 2. If it's 2 this SA is neccessary
@@ -279,9 +279,9 @@ const isRemovalDisabledEntrySpecific =
 
       // Extended Blessed Special Abilities that allow to learn liturgical
       // chants of different traditions
-      case SpecialAbilityId.Zugvoegel:
-      case SpecialAbilityId.JaegerinnenDerWeißenMaid:
-      case SpecialAbilityId.AnhaengerDesGueldenen: {
+      case SpecialAbilityId.zugvoegel:
+      case SpecialAbilityId.jaegerinnenDerWeissenMaid:
+      case SpecialAbilityId.anhaengerDesGueldenen: {
         const mblessed_tradition =
           getBlessedTraditionFromWiki (SDA.specialAbilities (wiki))
                                       (HA.specialAbilities (hero))
@@ -447,18 +447,44 @@ export const getSermonsAndVisionsCount =
     )
 
 const getEntrySpecificMinimumLevel =
-  (wiki: StaticDataRecord) =>
+  (staticData: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (x: Record<ActiveObjectWithId>): Maybe<number> => {
     switch (AOWIA.id (x)) {
-      case AdvantageId.LargeSpellSelection:
-        return pipe_ (hero, countActiveSkillEntries ("spells"), getMinLevelForIncreaseEntry (3))
+      case AdvantageId.largeSpellSelection:
+        return pipe_ (
+          hero,
+          countActiveSkillEntries ("spells"),
+          getMinLevelForIncreaseEntry (3)
+        )
 
-      case AdvantageId.ZahlreichePredigten:
-        return pipe_ (24, getSermonsAndVisionsCount (wiki) (hero), getMinLevelForIncreaseEntry (3))
+      case AdvantageId.zahlreichePredigten:
+        return pipe_ (
+          24,
+          getSermonsAndVisionsCount (staticData) (hero),
+          getMinLevelForIncreaseEntry (3)
+        )
 
-      case AdvantageId.ZahlreicheVisionen:
-        return pipe_ (27, getSermonsAndVisionsCount (wiki) (hero), getMinLevelForIncreaseEntry (3))
+      case AdvantageId.zahlreicheVisionen:
+        return pipe_ (
+          27,
+          getSermonsAndVisionsCount (staticData) (hero),
+          getMinLevelForIncreaseEntry (3)
+        )
+
+      case SpecialAbilityId.imitationszauberei:
+        return pipe_ (
+          hero,
+          HA.spells,
+          elems,
+          countWith (pipe (
+                      ASDA.id,
+                      lookupF (SDA.spells (staticData)),
+                      maybe (false)
+                            (pipe (SA.gr, gr => gr === MagicalGroup.Spells))
+                    )),
+          ensure (gt (0))
+        )
 
       default:
         return Nothing
@@ -470,16 +496,16 @@ const getEntrySpecificMaximumLevel =
   (hero: HeroModelRecord) =>
   (entry_id: string): Maybe<number> => {
     switch (entry_id) {
-      case DisadvantageId.SmallSpellSelection:
+      case DisadvantageId.smallSpellSelection:
         return pipe_ (hero, countActiveSkillEntries ("spells"), getMaxLevelForDecreaseEntry (3))
 
-      case DisadvantageId.WenigePredigten:
+      case DisadvantageId.wenigePredigten:
         return pipe_ (24, getSermonsAndVisionsCount (wiki) (hero), getMaxLevelForDecreaseEntry (3))
 
-      case DisadvantageId.WenigeVisionen:
+      case DisadvantageId.wenigeVisionen:
         return pipe_ (27, getSermonsAndVisionsCount (wiki) (hero), getMaxLevelForDecreaseEntry (3))
 
-      case SpecialAbilityId.DunklesAbbildDerBuendnisgabe:
+      case SpecialAbilityId.dunklesAbbildDerBuendnisgabe:
         return pipe_ (hero, HA.pact, fmap (PA.level))
 
       default:

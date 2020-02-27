@@ -10,3 +10,4 @@ export type t = {
   readonly isCore: boolean; 
   readonly isAdultContent: boolean
 };
+export type Publication = t;

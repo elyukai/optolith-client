@@ -1,15 +1,15 @@
 ## 1.3.0
 
-## Neue Features
+### Neue Features
 
 - Französische Version (inkl. Regelwerk) #34
 - Aventurisches Kompendium 2 #93
 
-## Verbesserungen
+### Verbesserungen
 
 - Komplett neuer Datenbankunterbau und dadurch Ladezeitersparnis von ca. 50%
 
-## Fehlerbehebungen
+### Fehlerbehebungen
 
 - Hexenblick und Elfenhaar sind jetzt nur noch für Hexen bzw. Elfen wählbar. #377
 - Die Obergrenze durch die Leiteigenschaft bei Kampftechniken funktioniert jetzt wieder. #379

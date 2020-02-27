@@ -1,3 +1,6 @@
+/**
+ * The Improvement Cost for an entry with a numeric value.
+ */
 type t =
   | A
   | B
@@ -51,13 +54,16 @@ let getAPForBounds = (ic, l, u) =>
 /**
  * `getAPRange ic fromSR toSR` returns the AP cost for the given SR range.
  */
-[@gentype]
+[@genType]
 let getAPForRange = (ic, fromSR, toSR) =>
   fromSR < toSR
     ? getAPForBounds(ic, fromSR, toSR)
     : fromSR > toSR ? getAPForBounds(ic, toSR, fromSR) : 0;
 
-[@gentype]
+/**
+ * Returns the name of the passed Improvement Cost.
+ */
+[@genType]
 let icToStr = ic =>
   switch (ic) {
   | A => "A"

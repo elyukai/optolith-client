@@ -3,11 +3,20 @@
   "version": "0.1.0",
   "sources": [
     "src",
+    "src/App/Actions",
+    "src/App/Constants",
+    "src/App/Containers",
     "src/App/Models",
     "src/App/Models/Static",
+    "src/App/Reducers",
+    "src/App/Selectors",
     "src/App/Utilities",
-    "src/App/Utilities/AdventurePoints",
-    "src/Data"
+    "src/App/Views",
+    "src/Control",
+    "src/Data",
+    "src/Debug",
+    "src/System",
+    "src/shims"
   ],
   "package-specs": {
     "module": "commonjs",
@@ -15,7 +24,7 @@
   },
   "suffix": ".bs.js",
   "bs-dependencies": [
-
+    "@glennsl/bs-json"
   ],
   "warnings": {
     "error" : "+101"
@@ -23,6 +32,10 @@
   "namespace": true,
   "refmt": 3,
   "gentypeconfig": {
-    "language": "typescript"
+    "language": "typescript",
+    "shims": {
+      "Js": "Js",
+      "ReasonPervasives": "ReasonPervasives"
+    }
   }
 }

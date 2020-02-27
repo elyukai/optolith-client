@@ -2,7 +2,7 @@
 import { bindF, fromRight_, isLeft, Right, second } from "../../../../Data/Either"
 import { flip, ident } from "../../../../Data/Function"
 import { append, cons, foldr, fromArray, isList, List, notNull } from "../../../../Data/List"
-import { ensure, Just, Maybe, Nothing } from "../../../../Data/Maybe"
+import { ensure, fromMaybe, Just, Maybe, Nothing } from "../../../../Data/Maybe"
 import { fromMap, insert, insertWith, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Advantage } from "../../../Models/Wiki/Advantage"
@@ -94,6 +94,7 @@ const toAdv : (blessings : OrderedMap<string, Record<Blessing>>)
                     cost: typeof univ.cost === "object"
                           ? Just (fromArray (univ.cost))
                           : Maybe (univ.cost),
+                    noMaxAPInfluence: fromMaybe (false) (Maybe (univ.noMaxAPInfluence)),
                     input: Maybe (l10n.input),
                     max: Maybe (univ.max),
                     prerequisites: pipe_ (

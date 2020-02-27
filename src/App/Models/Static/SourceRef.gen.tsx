@@ -4,3 +4,4 @@
 
 // tslint:disable-next-line:interface-over-type-literal
 export type t = { readonly id: string; readonly page: [number, number] };
+export type SourceRef = t;

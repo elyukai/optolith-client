@@ -2,7 +2,7 @@
 /* eslint-disable import/first */
 
 
-import {list} from './ReasonPervasives.gen';
+import {list} from '../../../../src/shims/ReasonPervasives.shim';
 
 import {t as Erratum_t} from './Erratum.gen';
 
@@ -16,3 +16,4 @@ export type t = {
   readonly src: list<SourceRef_t>; 
   readonly errata: list<Erratum_t>
 };
+export type OptionalRule = t;

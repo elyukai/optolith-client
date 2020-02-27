@@ -21,6 +21,9 @@ export const getAPForRange: (ic:t, fromSR:number, toSR:number) => number = funct
   return result
 };
 
+/** 
+ * Returns the name of the passed Improvement Cost.
+  */
 export const icToStr: (ic:t) => string = function (Arg1: any) {
   const result = ICBS.icToStr($$toRE998253360[Arg1]);
   return result

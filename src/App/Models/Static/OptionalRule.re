@@ -1,4 +1,4 @@
-[@gentype]
+[@gentype "OptionalRule"]
 type t = {
   id: string,
   name: string,

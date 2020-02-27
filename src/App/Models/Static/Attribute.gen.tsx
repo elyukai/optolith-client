@@ -8,3 +8,4 @@ export type t = {
   readonly name: string; 
   readonly short: string
 };
+export type Attribute = t;

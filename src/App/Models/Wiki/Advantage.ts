@@ -7,6 +7,7 @@ import { AdvantageDisadvantageBase, EntryWithCategory } from "./wikiTypeHelpers"
 
 export interface Advantage extends AdvantageDisadvantageBase {
   "@@name": "Advantage"
+  noMaxAPInfluence: boolean
 }
 
 export const Advantage =
@@ -15,6 +16,7 @@ export const Advantage =
                 id: "",
                 name: "",
                 cost: Nothing,
+                noMaxAPInfluence: false,
                 input: Nothing,
                 max: Nothing,
                 prerequisites: List.empty,

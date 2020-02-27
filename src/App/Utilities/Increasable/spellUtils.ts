@@ -4,12 +4,12 @@ import { equals } from "../../../Data/Eq"
 import { cnst, flip, ident } from "../../../Data/Function"
 import { fmap } from "../../../Data/Functor"
 import { all, any, consF, countWith, countWithByKeyMaybe, elemF, find, intersecting, List, maximum, minimum, notElem, notNull } from "../../../Data/List"
-import { bindF, catMaybes, elem, ensure, fromMaybe_, guard, isJust, isNothing, Just, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe"
+import { bindF, catMaybes, elem, ensure, fromMaybe, fromMaybe_, guard, isJust, isNothing, Just, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe"
 import { add, lt } from "../../../Data/Num"
 import { elems, foldrWithKey, lookup, lookupF, OrderedMap, union } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { IC, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
-import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
@@ -326,7 +326,7 @@ export const isUnfamiliarSpell : (transferred_unfamiliar : List<Record<TransferU
                                 (spell_or_cantrip : Record<Spell> | Record<Cantrip>) => boolean =
   transferred_unfamiliar =>
   trads => {
-    if (any (pipe (ADA.id, equals<string> (SpecialAbilityId.TraditionIntuitiveMage))) (trads)) {
+    if (any (pipe (ADA.id, equals<string> (SpecialAbilityId.traditionIntuitiveMage))) (trads)) {
       return cnst (false)
     }
 
@@ -398,9 +398,9 @@ export const isSpellsRitualsCountMaxReached =
                                                           (wiki)
                                                           (hero)
 
-    if (isLastTrad (SpecialAbilityId.TraditionIntuitiveMage)) {
-      const mbonus = lookup <string> (AdvantageId.LargeSpellSelection) (HA.advantages (hero))
-      const mmalus = lookup <string> (DisadvantageId.SmallSpellSelection) (HA.disadvantages (hero))
+    if (isLastTrad (SpecialAbilityId.traditionIntuitiveMage)) {
+      const mbonus = lookup (AdvantageId.largeSpellSelection) (HA.advantages (hero))
+      const mmalus = lookup (DisadvantageId.smallSpellSelection) (HA.disadvantages (hero))
 
       const max_spells = modifyByLevel (BASE_MAX_INTU_ANIM) (mbonus) (mmalus)
 
@@ -409,7 +409,22 @@ export const isSpellsRitualsCountMaxReached =
       }
     }
 
-    if (isLastTrad (SpecialAbilityId.TraditionAnimisten) && current_count >= BASE_MAX_INTU_ANIM) {
+    if (isLastTrad (SpecialAbilityId.traditionSchelme)) {
+      const max_spellworks = pipe_ (
+                               hero,
+                               HA.specialAbilities,
+                               lookup (SpecialAbilityId.imitationszauberei),
+                               bindF (pipe (ADA.active, listToMaybe)),
+                               bindF (AOA.tier),
+                               fromMaybe (0)
+                             )
+
+      if (current_count >= max_spellworks) {
+        return true
+      }
+    }
+
+    if (isLastTrad (SpecialAbilityId.traditionAnimisten) && current_count >= BASE_MAX_INTU_ANIM) {
       return true
     }
 
@@ -479,6 +494,27 @@ const isInactiveValidForIntuitiveMage =
     // Only one spell with IC C
     && !(SA.ic (wiki_entry) === IC.C && isAnySpellActiveWithImpCostC (SDA.spells (wiki))
                                                                      (HA.spells (hero)))
+
+const isInactiveValidForSchelme =
+  (is_spell_max_count_reached : boolean) =>
+  (wiki_entry : Record<Spell>) =>
+  (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
+    SA.gr (wiki_entry) === MagicalGroup.RogueSpells
+    || (
+      !is_spell_max_count_reached
+
+      // Schelme can only learn spells
+      && SA.gr (wiki_entry) === MagicalGroup.Spells
+
+      // Must be inactive
+      && Maybe.all (notP (ASDA.active)) (mhero_entry)
+
+      // No spells with IC D or C
+      && SA.ic (wiki_entry) < IC.C
+
+      // No property Demonic
+      && SA.property (wiki_entry) !== Property.Demonic
+    )
 
 
 /**
@@ -645,6 +681,29 @@ export const getInactiveSpellsForArcaneBardOrDancer =
                    (List ())
     )
   }
+
+
+export const getInactiveSpellsForSchelme =
+  (wiki : StaticDataRecord) =>
+  (hero : HeroModelRecord) =>
+  (is_spell_max_count_reached : boolean) : List<Record<SpellWithRequirements>> =>
+    pipe_ (
+      wiki,
+      SDA.spells,
+      foldrWithKey ((k : string) => (wiki_entry : Record<Spell>) => {
+                     const mhero_entry = lookup (k) (HA.spells (hero))
+
+                     if (areSpellPrereqisitesMet (wiki) (hero) (wiki_entry)
+                         && isInactiveValidForSchelme (is_spell_max_count_reached)
+                                                      (wiki_entry)
+                                                      (mhero_entry)) {
+                       return consTradSpecificSpell (wiki_entry) (mhero_entry) (k)
+                     }
+
+                     return ident as ident<List<Record<SpellWithRequirements>>>
+                   })
+                   (List ())
+    )
 
 
 /**
