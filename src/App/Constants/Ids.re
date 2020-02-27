@@ -1,3 +1,9 @@
+[@gentype "SID"]
+type selectOptionId =
+  | Numeric(int)
+  | Skill(string)
+  | CombatTechnique(string);
+
 module PhaseId = {
   [@gentype]
   let rcp = 1;
@@ -516,6 +522,8 @@ module SpecialAbilityId = {
   let grosseMeditation = "SA_772";
   [@gentype]
   let imitationszauberei = "SA_775";
+  [@gentype]
+  let kraftliniennutzung = "SA_781";
   [@gentype]
   let scholarDerHalleDesLebensZuNorburg = "SA_802";
   [@gentype]

@@ -9,6 +9,11 @@ export interface MagicalTradition {
   name: string
   primary: Maybe<AttrId>
   aeMod: Maybe<number>
+  canLearnCantrips: boolean
+  canLearnSpells: boolean
+  canLearnRituals: boolean
+  allowMultipleTraditions: boolean
+  isDisAdvAPMaxHalved: boolean
 }
 
 export const MagicalTradition =
@@ -19,4 +24,9 @@ export const MagicalTradition =
                 name: "",
                 primary: Nothing,
                 aeMod: Nothing,
+                canLearnCantrips: true,
+                canLearnSpells: true,
+                canLearnRituals: true,
+                allowMultipleTraditions: true,
+                isDisAdvAPMaxHalved: false,
               })

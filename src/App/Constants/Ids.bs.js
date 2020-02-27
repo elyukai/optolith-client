@@ -278,6 +278,7 @@ var SpecialAbilityId = {
   traditionZauberalchimisten: "SA_750",
   grosseMeditation: "SA_772",
   imitationszauberei: "SA_775",
+  kraftliniennutzung: "SA_781",
   scholarDerHalleDesLebensZuNorburg: "SA_802",
   scholarDesKreisesDerEinfuehlung: "SA_808",
   madaschwesternStil: "SA_821",

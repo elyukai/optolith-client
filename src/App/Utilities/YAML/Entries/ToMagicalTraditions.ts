@@ -25,6 +25,11 @@ const toMT : YamlPairConverterE<MagicalTraditionUniv, MagicalTraditionL10n, stri
                       name: l10n.name,
                       primary: Maybe (univ.primary) as Maybe<AttrId>,
                       aeMod: Maybe (univ.aeMod),
+                      canLearnCantrips: univ.canLearnCantrips,
+                      canLearnSpells: univ.canLearnSpells,
+                      canLearnRituals: univ.canLearnRituals,
+                      allowMultipleTraditions: univ.allowMultipleTraditions,
+                      isDisAdvAPMaxHalved: univ.isDisAdvAPMaxHalved,
                     }),
                   ])
 

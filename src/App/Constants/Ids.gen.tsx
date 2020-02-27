@@ -5,6 +5,13 @@
 // tslint:disable-next-line:no-var-requires
 const IdsBS = require('./Ids.bs');
 
+// tslint:disable-next-line:interface-over-type-literal
+export type selectOptionId = 
+    { tag: "Numeric"; value: number }
+  | { tag: "Skill"; value: string }
+  | { tag: "CombatTechnique"; value: string };
+export type SID = selectOptionId;
+
 export const PhaseId_rcp: number = IdsBS.PhaseId.rcp;
 
 export const PhaseId_creation: number = IdsBS.PhaseId.creation;
@@ -489,6 +496,8 @@ export const SpecialAbilityId_grosseMeditation: string = IdsBS.SpecialAbilityId.
 
 export const SpecialAbilityId_imitationszauberei: string = IdsBS.SpecialAbilityId.imitationszauberei;
 
+export const SpecialAbilityId_kraftliniennutzung: string = IdsBS.SpecialAbilityId.kraftliniennutzung;
+
 export const SpecialAbilityId_scholarDerHalleDesLebensZuNorburg: string = IdsBS.SpecialAbilityId.scholarDerHalleDesLebensZuNorburg;
 
 export const SpecialAbilityId_scholarDesKreisesDerEinfuehlung: string = IdsBS.SpecialAbilityId.scholarDesKreisesDerEinfuehlung;
@@ -771,6 +780,7 @@ export const SpecialAbilityId: {
   hoheWeihe: string; 
   wegDerKuenstlerin: string; 
   jaegerinnenDerWeissenMaid: string; 
+  kraftliniennutzung: string; 
   sozialeKompetenz: string; 
   traditionDruids: string; 
   madaschwesternStil: string; 

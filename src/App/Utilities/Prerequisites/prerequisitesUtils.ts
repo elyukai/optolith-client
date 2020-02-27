@@ -3,7 +3,7 @@ import { fmap } from "../../../Data/Functor"
 import { append, filter, find, flength, List, notNull } from "../../../Data/List"
 import { bindF, elemF, ensure, fromMaybe, joinMaybeList, Just, liftM2, Maybe, maybe, maybeToList, Nothing } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
-import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
 import { Advantage } from "../../Models/Wiki/Advantage"
@@ -11,8 +11,10 @@ import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableR
 import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement"
 import { Application } from "../../Models/Wiki/sub/Application"
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable, AllRequirementObjects, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
 import { findSelectOption } from "../Activatable/selectionUtils"
+import { getMagicalTraditionsWithRituals } from "../magicalTraditionUtils"
 import { pipe, pipe_ } from "../pipe"
 import { misStringM } from "../typeCheckUtils"
 
@@ -33,6 +35,7 @@ const SOA = SelectOption.A
  */
 export const getGeneratedPrerequisites =
   (add: boolean) =>
+  (static_data: StaticDataRecord) =>
   (wiki_entry: Activatable) =>
   (hero_entry: Maybe<Record<ActivatableDependent>>) =>
   (current: Record<ActiveObject>): Maybe<List<AllRequirementObjects>> => {
@@ -48,57 +51,57 @@ export const getGeneratedPrerequisites =
         )
 
     switch (AAL.id (wiki_entry)) {
-      case AdvantageId.Aptitude:
+      case AdvantageId.aptitude:
         return Just (List (
           RequireActivatable ({
-            id: DisadvantageId.Incompetent,
+            id: DisadvantageId.incompetent,
             active: false,
             sid,
           })
         ))
 
-      case AdvantageId.ExceptionalSkill:
+      case AdvantageId.exceptionalSkill:
         return Just (List (
           RequireActivatable ({
-            id: DisadvantageId.Incompetent,
+            id: DisadvantageId.incompetent,
             active: false,
             sid,
           })
         ))
 
-      case AdvantageId.MagicalAttunement:
+      case AdvantageId.magicalAttunement:
         return Just (List (
           RequireActivatable ({
-            id: DisadvantageId.MagicalRestriction,
+            id: DisadvantageId.magicalRestriction,
             active: false,
             sid,
           })
         ))
 
-      case DisadvantageId.MagicalRestriction:
+      case DisadvantageId.magicalRestriction:
         return Just (List (
           RequireActivatable ({
-            id: AdvantageId.MagicalAttunement,
+            id: AdvantageId.magicalAttunement,
             active: false,
             sid,
           })
         ))
 
-      case DisadvantageId.Incompetent:
+      case DisadvantageId.incompetent:
         return Just (List (
           RequireActivatable ({
-            id: AdvantageId.Aptitude,
+            id: AdvantageId.aptitude,
             active: false,
             sid,
           }),
           RequireActivatable ({
-            id: AdvantageId.ExceptionalSkill,
+            id: AdvantageId.exceptionalSkill,
             active: false,
             sid,
           })
         ))
 
-      case SpecialAbilityId.SkillSpecialization: {
+      case SpecialAbilityId.skillSpecialization: {
         const sameSkill = maybe (0)
                                 (pipe (
                                   ADA.active,
@@ -125,16 +128,16 @@ export const getGeneratedPrerequisites =
                     (findSelectOption (wiki_entry) (sid))
       }
 
-      case SpecialAbilityId.PropertyFocus:
+      case SpecialAbilityId.propertyFocus:
         return addToSelectOptionReqs (Just (List (
           RequireActivatable ({
-            id: SpecialAbilityId.PropertyKnowledge,
+            id: SpecialAbilityId.propertyKnowledge,
             active: true,
             sid,
           })
         )))
 
-      case SpecialAbilityId.AdaptionZauber:
+      case SpecialAbilityId.adaptionZauber:
         return pipe_ (
           sid,
           misStringM,
@@ -144,7 +147,7 @@ export const getGeneratedPrerequisites =
                             })))
         )
 
-      case SpecialAbilityId.FavoriteSpellwork:
+      case SpecialAbilityId.favoriteSpellwork:
         return pipe_ (
           sid,
           misStringM,
@@ -154,8 +157,8 @@ export const getGeneratedPrerequisites =
                             })))
         )
 
-      case SpecialAbilityId.SpellEnhancement:
-      case SpecialAbilityId.ChantEnhancement:
+      case SpecialAbilityId.spellEnhancement:
+      case SpecialAbilityId.chantEnhancement:
         return addToSelectOptionReqs (bindF ((option: Record<SelectOption>) =>
                                               liftM2 ((target: string) => (level: number) =>
                                                        List (
@@ -168,15 +171,30 @@ export const getGeneratedPrerequisites =
                                                      (SOA.level (option)))
                                             (findSelectOption (wiki_entry) (sid)))
 
-      case SpecialAbilityId.LanguageSpecializations: {
+      case SpecialAbilityId.languageSpecializations: {
         return addToSelectOptionReqs (Just (List (
           RequireActivatable ({
-            id: SpecialAbilityId.Language,
+            id: SpecialAbilityId.language,
             active: true,
             sid,
             tier: Just (3),
           })
         )))
+      }
+
+      case SpecialAbilityId.kraftliniennutzung: {
+        return pipe_ (
+          static_data,
+          getMagicalTraditionsWithRituals,
+          ensure (notNull),
+          fmap (xs => List (
+            RequireActivatable ({
+              id: xs,
+              active: true,
+            })
+          )),
+          addToSelectOptionReqs
+        )
       }
 
       default:
@@ -186,10 +204,15 @@ export const getGeneratedPrerequisites =
 
 export const addDynamicPrerequisites =
   (add: boolean) =>
+  (static_data: StaticDataRecord) =>
   (wiki_entry: Activatable) =>
   (hero_entry: Maybe<Record<ActivatableDependent>>) =>
   (static_prerequisites: List<AllRequirements>) =>
   (current: Record<ActiveObject>): List<AllRequirements> =>
     fromMaybe (static_prerequisites)
               (fmap (append (static_prerequisites))
-                    (getGeneratedPrerequisites (add) (wiki_entry) (hero_entry) (current)))
+                    (getGeneratedPrerequisites (add)
+                                               (static_data)
+                                               (wiki_entry)
+                                               (hero_entry)
+                                               (current)))
