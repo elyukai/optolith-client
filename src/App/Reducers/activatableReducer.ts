@@ -36,33 +36,37 @@ export const activatableReducer =
   (action: Action): ident<HeroModelRecord> => {
     switch (action.type) {
       case ActionTypes.ACTIVATE_DISADV: {
-        return activate (fst (action.payload))
-                        (AAETA.wikiEntry (snd (action.payload)))
-                        (AAETA.heroEntry (snd (action.payload)))
+        return activate (action.payload.args)
+                        (action.payload.staticData)
+                        (AAETA.wikiEntry (action.payload.entryType))
+                        (AAETA.heroEntry (action.payload.entryType))
       }
 
       case ActionTypes.ACTIVATE_SPECIALABILITY: {
         return pipe (
           addOtherSpecialAbilityDependenciesOnActivation (action),
-          activate (fst (action.payload))
-                   (pipe_ (action.payload, snd, fst))
-                   (pipe_ (action.payload, snd, snd))
+          activate (action.payload.args)
+                   (action.payload.staticData)
+                   (fst (action.payload.entryType))
+                   (snd (action.payload.entryType))
         )
       }
 
       case ActionTypes.DEACTIVATE_DISADV: {
-        return deactivate (pipe_ (action.payload, fst, ADOA.index))
-                          (ADETA.wikiEntry (snd (action.payload)))
-                          (ADETA.heroEntry (snd (action.payload)))
+        return deactivate (action.payload.staticData)
+                          (ADOA.index (action.payload.args))
+                          (ADETA.wikiEntry (action.payload.entryType))
+                          (ADETA.heroEntry (action.payload.entryType))
       }
 
       case ActionTypes.DEACTIVATE_SPECIALABILITY: {
         return pipe (
           removeOtherSpecialAbilityDependenciesOnDeletion (action),
-          deactivate (pipe_ (action.payload, fst, ADOA.index))
-                     (pipe_ (action.payload, snd, fst))
-                     (pipe_ (action.payload, snd, snd)),
-          pipe_ (action.payload, fst, ADOA.id) === SpecialAbilityId.Feuerschlucker
+          deactivate (action.payload.staticData)
+                     (ADOA.index (action.payload.args))
+                     (fst (action.payload.entryType))
+                     (snd (action.payload.entryType)),
+          ADOA.id (action.payload.args) === SpecialAbilityId.Feuerschlucker
             ? over (HeroModelL.combatTechniques)
                    (adjust (set (SkillDependentL.value) (6))
                            (CombatTechniqueId.SpittingFire as string))

@@ -32,7 +32,7 @@ import { Race } from "../Models/Wiki/Race"
 import { Skill } from "../Models/Wiki/Skill"
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
 import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill"
-import { StaticData } from "../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { Activatable, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers"
 import { getCombinedPrerequisites } from "../Utilities/Activatable/activatableActivationUtils"
 import { addOtherSpecialAbilityDependenciesOnRCPApplication } from "../Utilities/Activatable/SpecialAbilityUtils"
@@ -103,6 +103,7 @@ const foldIncSkillsIntoSRs = foldIntoSRsFrom (ISA.id) (ISA.value)
 // const modIdentityFn = ident (acc: ConcatenatedModifications) => acc
 
 const updateListToContainNewEntry =
+  (static_data: StaticDataRecord) =>
   (wiki_entry: Activatable) =>
   (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
   (active: Record<ActiveObject>): ident<HeroModelRecord> =>
@@ -115,6 +116,7 @@ const updateListToContainNewEntry =
                      (Advantage.AL.id (wiki_entry)),
       addDependencies (Advantage.AL.id (wiki_entry))
                       (getCombinedPrerequisites (true)
+                                                (static_data)
                                                 (wiki_entry)
                                                 (mhero_entry)
                                                 (active)),
@@ -501,7 +503,8 @@ const applyModifications =
 
                               const active = reqToActive (r)
 
-                              return updateListToContainNewEntry (wiki_entry)
+                              return updateListToContainNewEntry (action.payload.wiki)
+                                                                 (wiki_entry)
                                                                  (mhero_entry)
                                                                  (active)
                             }))
@@ -609,7 +612,8 @@ const applyModifications =
                                     return ident
                                   }
 
-                                  return updateListToContainNewEntry (wiki_entry)
+                                  return updateListToContainNewEntry (action.payload.wiki)
+                                                                     (wiki_entry)
                                                                      (mhero_entry)
                                                                      (active)
                                 }))

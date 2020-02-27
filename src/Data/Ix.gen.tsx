@@ -19,18 +19,6 @@ import {list} from '../../src/shims/ReasonPervasives.shim';
 export const range: (param:[number, number]) => list<number> = IxBS.range;
 
 /** 
- * Returns `True` the given subscript lies in the range defined the bounding
- * pair.
- *
- * The first argument `(l,u)` is a pair specifying the lower and upper bounds of
- * a contiguous subrange of values.
-  */
-export const inRange: <T1>(param:[T1, T1], x:T1) => boolean = function <T1>(Arg1: any, Arg2: any) {
-  const result = Curry._2(IxBS.inRange, Arg1, Arg2);
-  return result
-};
-
-/** 
  * The position of a subscript in the subrange.
  *
  * The first argument `(l,u)` is a pair specifying the lower and upper bounds of

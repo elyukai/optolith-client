@@ -370,6 +370,7 @@ const addActivatableEntriesWithDeps =
                     // Add dependencies for current ActiveObject
                     addDependencies (id)
                                     (getCombinedPrerequisites (true)
+                                                              (staticData)
                                                               (wiki_entry)
                                                               (mhero_entry)
                                                               (fromActiveObjectWithId (active))),

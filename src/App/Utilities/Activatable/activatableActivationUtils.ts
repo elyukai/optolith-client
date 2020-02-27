@@ -8,7 +8,7 @@
  */
 
 import { equals, notEquals } from "../../../Data/Eq"
-import { ident } from "../../../Data/Function"
+import { flip, ident } from "../../../Data/Function"
 import { over, set } from "../../../Data/Lens"
 import { append, consF, deleteAt, empty, find, List, modifyAt, subscriptF } from "../../../Data/List"
 import { alt, any, bindF, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe"
@@ -19,6 +19,7 @@ import { ActiveObject, ActiveObjectL } from "../../Models/ActiveEntries/ActiveOb
 import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { Advantage } from "../../Models/Wiki/Advantage"
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
 import { addDependencies, removeDependencies } from "../Dependencies/dependencyUtils"
 import { adjustEntryDef } from "../heroStateUtils"
@@ -59,6 +60,7 @@ const getPrerequisitesFromSelectOption =
  */
 export const getCombinedPrerequisites =
   (add: boolean) =>
+  (static_data: StaticDataRecord) =>
   (wiki_entry: Activatable) =>
   (hero_entry: Maybe<Record<ActivatableDependent>>) =>
   (entry: Record<ActiveObject>): List<AllRequirements> =>
@@ -69,6 +71,7 @@ export const getCombinedPrerequisites =
                                                (entry)),
       append (fromMaybe<List<AllRequirements>> (empty)
                                                (getGeneratedPrerequisites (add)
+                                                                          (static_data)
                                                                           (wiki_entry)
                                                                           (hero_entry)
                                                                           (entry))),
@@ -86,6 +89,7 @@ const changeActiveLength =
   (modifyDependencies: typeof addDependencies) =>
   (modifyActiveObjects: ident<List<Record<ActiveObject>>>) =>
   (add: boolean) =>
+  (static_data: StaticDataRecord) =>
   (entry: Record<ActiveObject>) =>
   (wiki_entry: Activatable) =>
   (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
@@ -103,6 +107,7 @@ const changeActiveLength =
                          // dependencies to all objects the activation or
                          // deactivation depends on
                          (getCombinedPrerequisites (add)
+                                                   (static_data)
                                                    (wiki_entry)
                                                    (mhero_entry)
                                                    (entry))
@@ -115,10 +120,10 @@ const changeActiveLength =
  */
 export const activateByObject =
   (entry: Record<ActiveObject>) =>
-    changeActiveLength (addDependencies)
-                       (consF (entry))
-                       (true)
-                       (entry)
+    flip (changeActiveLength (addDependencies)
+                             (consF (entry))
+                             (true))
+         (entry)
 
 /**
  * Activates the entry with the given parameters and adds all needed
@@ -136,6 +141,7 @@ export const activate = pipe (
  * @param index The index of the `ActiveObject` in `obj.active`.
  */
 export const deactivate =
+  (static_data: StaticDataRecord) =>
   (index: number) =>
   (wiki_entry: Activatable) =>
   (hero_entry: Record<ActivatableDependent>) =>
@@ -145,6 +151,7 @@ export const deactivate =
             changeActiveLength (removeDependencies)
                                (deleteAt (index))
                                (false)
+                               (static_data)
                                (active_entry)
                                (wiki_entry)
                                (Just (hero_entry))

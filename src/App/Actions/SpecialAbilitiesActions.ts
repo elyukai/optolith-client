@@ -1,20 +1,21 @@
 import { fmap } from "../../Data/Functor"
-import { set } from "../../Data/Lens"
+import { over, set } from "../../Data/Lens"
 import { subscriptF } from "../../Data/List"
 import { bind, bindF, ensure, fromJust, isJust, isNothing, join, Just, liftM2, Maybe } from "../../Data/Maybe"
-import { subtract } from "../../Data/Num"
+import { negate, subtract } from "../../Data/Num"
 import { lookup } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { Pair } from "../../Data/Tuple"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions"
-import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions"
+import { ActivatableDeactivationOptions, ActivatableDeactivationOptionsL } from "../Models/Actions/ActivatableDeactivationOptions"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObjectWithIdL, toActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId"
 import { SpecialAbilitiesSortOptions } from "../Models/Config"
 import { HeroModel } from "../Models/Hero/HeroModel"
 import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../Models/View/ActivatableNameCost"
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
 import { getAutomaticAdvantages } from "../Selectors/raceSelectors"
@@ -29,10 +30,11 @@ import { addNotEnoughAPAlert } from "./AlertActions"
 
 export interface ActivateSpecialAbilityAction {
   type: ActionTypes.ACTIVATE_SPECIALABILITY
-  payload: Pair<
-    Record<ActivatableActivationOptions>,
-    Pair<Record<SpecialAbility>, Maybe<Record<ActivatableDependent>>>
-  >
+  payload: {
+    args: Record<ActivatableActivationOptions>
+    entryType: Pair<Record<SpecialAbility>, Maybe<Record<ActivatableDependent>>>
+    staticData: StaticDataRecord
+  }
 }
 
 /**
@@ -42,6 +44,7 @@ export const addSpecialAbility =
   (args: Record<ActivatableActivationOptions>): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const state = getState ()
+    const static_data = getWiki (state)
 
     const mhero = getCurrentHeroPresent (state)
 
@@ -72,7 +75,11 @@ export const addSpecialAbility =
         if (isNothing (mmissingAP)) {
           dispatch<ActivateSpecialAbilityAction> ({
             type: ActionTypes.ACTIVATE_SPECIALABILITY,
-            payload: Pair (args, Pair (wiki_entry, mhero_entry)),
+            payload: {
+              args,
+              entryType: Pair (wiki_entry, mhero_entry),
+              staticData: static_data,
+            },
           })
         }
         else {
@@ -84,10 +91,11 @@ export const addSpecialAbility =
 
 export interface DeactivateSpecialAbilityAction {
   type: ActionTypes.DEACTIVATE_SPECIALABILITY
-  payload: Pair<
-    Record<ActivatableDeactivationOptions>,
-    Pair<Record<SpecialAbility>, Record<ActivatableDependent>>
-  >
+  payload: {
+    args: Record<ActivatableDeactivationOptions>
+    entryType: Pair<Record<SpecialAbility>, Record<ActivatableDependent>>
+    staticData: StaticDataRecord
+  }
 }
 
 /**
@@ -98,6 +106,7 @@ export const removeSpecialAbility =
   (args: Record<ActivatableDeactivationOptions>): ReduxAction =>
   (dispatch, getState) => {
     const state = getState ()
+    const static_data = getWiki (state)
 
     const mhero = getCurrentHeroPresent (state)
 
@@ -120,7 +129,11 @@ export const removeSpecialAbility =
 
         dispatch<DeactivateSpecialAbilityAction> ({
           type: ActionTypes.DEACTIVATE_SPECIALABILITY,
-          payload: Pair (args, Pair (wiki_entry, hero_entry)),
+          payload: {
+            args: over (ActivatableDeactivationOptionsL.cost) (negate) (args),
+            entryType: Pair (wiki_entry, hero_entry),
+            staticData: static_data,
+          },
         })
       }
     }

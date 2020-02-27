@@ -15,7 +15,6 @@ let rec range = ((l, u)) =>
  * The first argument `(l,u)` is a pair specifying the lower and upper bounds of
  * a contiguous subrange of values.
  */
-[@gentype]
 let inRange = ((l, u), x) => l <= x && x <= u;
 
 /**

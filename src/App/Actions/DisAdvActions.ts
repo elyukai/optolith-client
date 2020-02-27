@@ -106,7 +106,11 @@ const handleMissingAPForDisAdvantage =
 
 export interface ActivateDisAdvAction {
   type: ActionTypes.ACTIVATE_DISADV
-  payload: Pair<Record<ActivatableActivationOptions>, Record<ActivatableActivationEntryType>>
+  payload: {
+    args: Record<ActivatableActivationOptions>
+    entryType: Record<ActivatableActivationEntryType>
+    staticData: StaticDataRecord
+  }
 }
 
 /**
@@ -171,19 +175,19 @@ export const addDisAdvantage =
 
           dispatch<ActivateDisAdvAction> ({
             type: ActionTypes.ACTIVATE_DISADV,
-            payload:
-              Pair (
-                args,
-                ActivatableActivationEntryType ({
-                  eyeColor: fst (color),
-                  hairColor: snd (color),
-                  isBlessed: fst (entryType),
-                  isDisadvantage: is_disadvantage,
-                  isMagical: snd (entryType),
-                  heroEntry: mhero_entry,
-                  wikiEntry: wiki_entry,
-                })
-              ),
+            payload: {
+              args,
+              entryType: ActivatableActivationEntryType ({
+                eyeColor: fst (color),
+                hairColor: snd (color),
+                isBlessed: fst (entryType),
+                isDisadvantage: is_disadvantage,
+                isMagical: snd (entryType),
+                heroEntry: mhero_entry,
+                wikiEntry: wiki_entry,
+              }),
+              staticData: static_data,
+            },
           })
         }
 
@@ -202,7 +206,11 @@ export const addDisAdvantage =
 
 export interface DeactivateDisAdvAction {
   type: ActionTypes.DEACTIVATE_DISADV
-  payload: Pair<Record<ActivatableDeactivationOptions>, Record<ActivatableDeactivationEntryType>>
+  payload: {
+    args: Record<ActivatableDeactivationOptions>
+    entryType: Record<ActivatableDeactivationEntryType>
+    staticData: StaticDataRecord
+  }
 }
 
 /**
@@ -294,19 +302,19 @@ export const removeDisAdvantage =
 
           dispatch<DeactivateDisAdvAction> ({
             type: ActionTypes.DEACTIVATE_DISADV,
-            payload:
-              Pair (
-                over (ActivatableDeactivationOptionsL.cost) (negate) (args),
-                ActivatableDeactivationEntryType ({
-                  eyeColor: fmapF (color) (fst),
-                  hairColor: fmapF (color) (snd),
-                  isBlessed: fst (entryType),
-                  isDisadvantage: is_disadvantage,
-                  isMagical: snd (entryType),
-                  heroEntry: hero_entry,
-                  wikiEntry: wiki_entry,
-                })
-              ),
+            payload: {
+              args: over (ActivatableDeactivationOptionsL.cost) (negate) (args),
+              entryType: ActivatableDeactivationEntryType ({
+                eyeColor: fmapF (color) (fst),
+                hairColor: fmapF (color) (snd),
+                isBlessed: fst (entryType),
+                isDisadvantage: is_disadvantage,
+                isMagical: snd (entryType),
+                heroEntry: hero_entry,
+                wikiEntry: wiki_entry,
+              }),
+              staticData: static_data,
+            },
           })
         }
 
