@@ -417,6 +417,10 @@ module SpecialAbilityId = {
   [@gentype]
   let magicStyleCombination = "SA_266";
   [@gentype]
+  let harmoniezauberei = "SA_296";
+  [@gentype]
+  let matrixzauberei = "SA_303";
+  [@gentype]
   let traditionElves = "SA_345";
   [@gentype]
   let traditionDruids = "SA_346";

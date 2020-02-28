@@ -115,40 +115,59 @@ module IncreasableMultiEntryPrerequisite = {
   };
 };
 
-type professionDependency =
-  | Sex(SexPrerequisite.t)
-  | Race(RacePrerequisite.t)
-  | Culture(CulturePrerequisite.t);
+type tProfession = {
+  sex: option(SexPrerequisite.t),
+  race: option(RacePrerequisite.t),
+  culture: option(CulturePrerequisite.t),
+  activatable: list(ActivatablePrerequisite.t),
+  increasable: list(IncreasablePrerequisite.t),
+};
 
-type professionPrerequisite =
-  | Activatable(ActivatablePrerequisite.t)
-  | Increasable(IncreasablePrerequisite.t);
+type t = {
+  sex: option(SexPrerequisite.t),
+  race: option(RacePrerequisite.t),
+  culture: option(CulturePrerequisite.t),
+  pact: option(PactPrerequisite.t),
+  social: option(SocialPrerequisite.t),
+  primaryAttribute: option(PrimaryAttributePrerequisite.t),
+  activatable: list(ActivatablePrerequisite.t),
+  activatableMultiEntry: list(ActivatableMultiEntryPrerequisite.t),
+  activatableMultiSelect: list(ActivatableMultiSelectPrerequisite.t),
+  increasable: list(IncreasablePrerequisite.t),
+  increasableMultiEntry: list(IncreasableMultiEntryPrerequisite.t),
+};
 
-type t =
-  | Activatable(ActivatablePrerequisite.t)
-  | Increasable(IncreasablePrerequisite.t)
-  | PrimaryAttribute(PrimaryAttributePrerequisite.t)
-  | Sex(SexPrerequisite.t)
-  | Race(RacePrerequisite.t)
-  | Culture(CulturePrerequisite.t)
-  | Pact(PactPrerequisite.t)
-  | Social(SocialPrerequisite.t);
+type tWithLevel = {
+  sex: option(SexPrerequisite.t),
+  race: option(RacePrerequisite.t),
+  culture: option(CulturePrerequisite.t),
+  pact: option(PactPrerequisite.t),
+  social: option(SocialPrerequisite.t),
+  primaryAttribute: option(PrimaryAttributePrerequisite.t),
+  activatable: list(ActivatablePrerequisite.t),
+  activatableMultiEntry: list(ActivatableMultiEntryPrerequisite.t),
+  activatableMultiSelect: list(ActivatableMultiSelectPrerequisite.t),
+  increasable: list(IncreasablePrerequisite.t),
+  increasableMultiEntry: list(IncreasableMultiEntryPrerequisite.t),
+  levels: IntMap.t(t),
+};
 
-type tDisAdv =
-  | CommonSuggestedByRCP
-  | Activatable(ActivatablePrerequisite.t)
-  | Increasable(IncreasablePrerequisite.t)
-  | PrimaryAttribute(PrimaryAttributePrerequisite.t)
-  | Sex(SexPrerequisite.t)
-  | Race(RacePrerequisite.t)
-  | Culture(CulturePrerequisite.t)
-  | Pact(PactPrerequisite.t)
-  | Social(SocialPrerequisite.t);
+type commonSuggestedByRCP =
+  | Common
+  | Uncommon;
 
-type tWithLevel =
-  | Single(t)
-  | ByLevel(IntMap.t(t));
-
-type tWithLevelDisAdv =
-  | Single(tDisAdv)
-  | ByLevel(IntMap.t(tDisAdv));
+type tWithLevelDisAdv = {
+  commonSuggestedByRCP,
+  sex: option(SexPrerequisite.t),
+  race: option(RacePrerequisite.t),
+  culture: option(CulturePrerequisite.t),
+  pact: option(PactPrerequisite.t),
+  social: option(SocialPrerequisite.t),
+  primaryAttribute: option(PrimaryAttributePrerequisite.t),
+  activatable: list(ActivatablePrerequisite.t),
+  activatableMultiEntry: list(ActivatableMultiEntryPrerequisite.t),
+  activatableMultiSelect: list(ActivatableMultiSelectPrerequisite.t),
+  increasable: list(IncreasablePrerequisite.t),
+  increasableMultiEntry: list(IncreasableMultiEntryPrerequisite.t),
+  levels: IntMap.t(t),
+};

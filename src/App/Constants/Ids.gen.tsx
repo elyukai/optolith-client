@@ -390,6 +390,10 @@ export const SpecialAbilityId_traditionWitches: string = IdsBS.SpecialAbilityId.
 
 export const SpecialAbilityId_magicStyleCombination: string = IdsBS.SpecialAbilityId.magicStyleCombination;
 
+export const SpecialAbilityId_harmoniezauberei: string = IdsBS.SpecialAbilityId.harmoniezauberei;
+
+export const SpecialAbilityId_matrixzauberei: string = IdsBS.SpecialAbilityId.matrixzauberei;
+
 export const SpecialAbilityId_traditionElves: string = IdsBS.SpecialAbilityId.traditionElves;
 
 export const SpecialAbilityId_traditionDruids: string = IdsBS.SpecialAbilityId.traditionDruids;
@@ -776,6 +780,7 @@ export const SpecialAbilityId: {
   traditionChurchOfPhex: string; 
   traditionChurchOfFirun: string; 
   traditionChurchOfNandus: string; 
+  harmoniezauberei: string; 
   craftInstruments: string; 
   hoheWeihe: string; 
   wegDerKuenstlerin: string; 
@@ -821,6 +826,7 @@ export const SpecialAbilityId: {
   traditionChurchOfPraios: string; 
   predigtWiderMissgeschicke: string; 
   scholarDesKreisesDerEinfuehlung: string; 
+  matrixzauberei: string; 
   predigtDesWohlgefallens: string; 
   exorzist: string; 
   predigtDerGemeinschaft: string; 

@@ -6,7 +6,6 @@ import { append, countWith, filter, foldr, List, sdelete, subscriptF } from "../
 import { bindF, Just, liftM3, maybe, Maybe, Nothing } from "../../../Data/Maybe"
 import { elems, lookup, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { MagicalTradition } from "../../Constants/Groups"
 import { PhaseId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
@@ -36,7 +35,6 @@ const AOWIA = ActiveObjectWithId.A
 const AAOA = ActivatableActivationOptions.A
 const ADOA = ActivatableDeactivationOptions.A
 const SOA = SelectOption.A
-const SA = Spell.A
 
 const getTransferredUnfamiliarById: (active: Record<ActiveObjectWithId>) =>
                                     Maybe<List<Record<TransferUnfamiliar>>> =
@@ -199,14 +197,13 @@ export const isEntryAllowingTransferUnfamiliarRemovable: (wiki: StaticDataRecord
  * From a list of spell select options, only return the **unfamiliar** ones.
  */
 export const filterUnfamiliar =
+  (pred: (x: Record<Spell>) => boolean) =>
   (static_data: StaticDataRecord) =>
-  (active: MagicalTradition) =>
     filter ((x: Record<SelectOption>) =>
               pipe_ (
                 x,
                 SOA.id,
                 isStringM,
                 bindF (lookupF (SDA.spells (static_data))),
-                maybe (false)
-                      (pipe (SA.gr, gr => gr !== MagicalTradition.General && gr !== active))
+                maybe (false) (pred)
               ))

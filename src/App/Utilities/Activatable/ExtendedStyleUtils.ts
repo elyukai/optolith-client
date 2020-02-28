@@ -2,21 +2,29 @@ import { equals } from "../../../Data/Eq"
 import { flip, thrush } from "../../../Data/Function"
 import { fmap } from "../../../Data/Functor"
 import { Lens_, over, set, view } from "../../../Data/Lens"
-import { all, append, concatMap, elem, empty, filter, findIndex, foldr, isList, List, ListI, map, mapAccumL, modifyAt, partition, pure } from "../../../Data/List"
-import { alt_, and, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, Maybe, Nothing, or } from "../../../Data/Maybe"
+import { all, append, concatMap, cons, elem, empty, filter, findIndex, foldr, isList, List, ListI, map, mapAccumL, modifyAt, partition, pure } from "../../../Data/List"
+import { alt_, and, bindF, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, listToMaybe, Maybe, maybe, Nothing, or } from "../../../Data/Maybe"
 import { gt } from "../../../Data/Num"
+import { lookup } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, Pair, snd, uncurry } from "../../../Data/Tuple"
 import { SpecialAbilityGroup } from "../../Constants/Groups"
-import { HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { SpecialAbilityId } from "../../Constants/Ids.gen"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { HeroModel, HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { StyleDependency, StyleDependencyL } from "../../Models/Hero/StyleDependency"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { pipe, pipe_ } from "../pipe"
+import { misStringM } from "../typeCheckUtils"
 
+const HA = HeroModel.A
 const HL = HeroModelL
 
 const SAA = SpecialAbility.A
+const ADA = ActivatableDependent.A
 const SDA = StyleDependency.A
+const AOA = ActiveObject.A
 
 type StyleDependenciesLens = Lens_<HeroModelRecord, List<Record<StyleDependency>>>
 
@@ -110,6 +118,39 @@ const moveActiveInListToNew: (newxs: List<Record<StyleDependency>>) =>
     return Pair (newxs, x)
   }
 
+
+const getStyleDependencies =
+  (style_special_ability: Record<SpecialAbility>) =>
+  (hero: HeroModelRecord): Maybe<List<Record<StyleDependency>>> => {
+    const styleId = SAA.id (style_special_ability)
+
+    return pipe_ (
+      style_special_ability,
+      SAA.extended,
+      fmap (pipe (
+        map (x => StyleDependency ({ id: x, origin: styleId })),
+        xs => {
+          switch (styleId) {
+            case SpecialAbilityId.scholarDesMagierkollegsZuHoningen:
+              return pipe_ (
+                hero,
+                HA.specialAbilities,
+                lookup (SpecialAbilityId.scholarDesMagierkollegsZuHoningen),
+                bindF (pipe (ADA.active, listToMaybe)),
+                bindF (AOA.sid2),
+                misStringM,
+                maybe (xs) (id => cons (xs) (StyleDependency ({ id, origin: styleId })))
+              )
+
+            default:
+              return xs
+          }
+        }
+      ))
+    )
+  }
+
+
 /**
  * Adds extended special ability dependencies if the passed entry is a style
  * special ability.
@@ -123,12 +164,7 @@ export const addStyleExtendedSpecialAbilityDependencies =
   (hero: HeroModelRecord): HeroModelRecord => {
     const ml = lensByStyle (wiki_entry)
 
-    const mnewxs =
-      pipe_ (
-        wiki_entry,
-        SAA.extended,
-        fmap (map (x => StyleDependency ({ id: x, origin: SAA.id (wiki_entry) }))),
-      )
+    const mnewxs = getStyleDependencies (wiki_entry) (hero)
 
     type DependencyList = List<Record<StyleDependency>>
 

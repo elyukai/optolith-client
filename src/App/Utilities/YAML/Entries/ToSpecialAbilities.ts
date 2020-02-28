@@ -1,7 +1,7 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 import { bindF, fromRight_, isLeft, Right, second } from "../../../../Data/Either"
 import { flip, ident } from "../../../../Data/Function"
-import { foldr, fromArray, notNull } from "../../../../Data/List"
+import { foldr, fromArray, map, notNull } from "../../../../Data/List"
 import { ensure, Just, Maybe, Nothing } from "../../../../Data/Maybe"
 import { elems, fromMap, insert, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
@@ -112,7 +112,12 @@ const toSA : (blessings : OrderedMap<string, Record<Blessing>>)
                    select: selectOptions,
                    gr: univ.gr,
                    extended: typeof univ.extended === "object"
-                             ? Just (fromArray (univ.extended))
+                             ? pipe_ (
+                                univ.extended,
+                                fromArray,
+                                map (x => typeof x === "object" ? fromArray (x) : x),
+                                Just
+                              )
                              : Nothing,
                    subgr: Maybe (univ.subgr),
                    combatTechniques: typeof univ.combatTechniques === "object"

@@ -14,7 +14,7 @@ import { fmap, fmapF, mapReplace } from "../../../Data/Functor"
 import * as IntMap from "../../../Data/IntMap"
 import { over, set } from "../../../Data/Lens"
 import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, nub, subscript } from "../../../Data/List"
-import { all, ap, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, Maybe, maybe, maybeToList, Nothing, or, thenF } from "../../../Data/Maybe"
+import { all, ap, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, isNothing, join, Just, liftM2, listToMaybe, Maybe, maybe, maybeToList, Nothing, or, thenF } from "../../../Data/Maybe"
 import { add, gt, gte, inc, multiply } from "../../../Data/Num"
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap"
 import { Record, RecordI } from "../../../Data/Record"
@@ -49,7 +49,7 @@ import { pipe, pipe_ } from "../pipe"
 import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils"
 import { isEntryAvailable } from "../RulesUtils"
 import { sortRecordsByName } from "../sortBy"
-import { isNumber, isString, misNumberM, misStringM } from "../typeCheckUtils"
+import { isNumber, isString, isStringM, misNumberM, misStringM } from "../typeCheckUtils"
 import { getMaxLevelForDecreaseEntry, getSermonsAndVisionsCount } from "./activatableActiveValidationUtils"
 import { isAdditionDisabled } from "./activatableInactiveValidationUtils"
 import { modifyByLevel } from "./activatableModifierUtils"
@@ -394,7 +394,12 @@ const modifySelectOptions =
       }
 
       case SpecialAbilityId.traditionGuildMages: {
-        return fmap (filterUnfamiliar (staticData) (MagicalTradition.GuildMages))
+        return fmap (filterUnfamiliar (pipe (
+                                        SpA.tradition,
+                                        trads => notElem (MagicalTradition.General) (trads)
+                                                 && notElem (MagicalTradition.GuildMages) (trads)
+                                      ))
+                                      (staticData))
       }
 
       case SpecialAbilityId.propertyKnowledge: {
@@ -589,7 +594,53 @@ const modifySelectOptions =
       }
 
       case SpecialAbilityId.madaschwesternStil: {
-        return fmap (filterUnfamiliar (staticData) (MagicalTradition.Witches))
+        return fmap (filterUnfamiliar (pipe (
+                                        SpA.tradition,
+                                        trads => notElem (MagicalTradition.General) (trads)
+                                                 && notElem (MagicalTradition.Witches) (trads)
+                                      ))
+                                      (staticData))
+      }
+
+      case SpecialAbilityId.scholarDesMagierkollegsZuHoningen: {
+        const allowed_traditions = List (
+                                     MagicalTradition.Druids,
+                                     MagicalTradition.Elves,
+                                     MagicalTradition.Witches
+                                   )
+
+        const mtransferred_spell_trads = pipe_ (
+                                           HA.specialAbilities (hero),
+                                           lookup (SpecialAbilityId.traditionGuildMages),
+                                           bindF (pipe (ADA.active, listToMaybe)),
+                                           bindF (pipe (AOA.sid, isStringM)),
+                                           bindF (lookupF (SDA.spells (staticData))),
+                                           fmap (SpA.tradition)
+                                         )
+
+        if (isNothing (mtransferred_spell_trads)) {
+          return ident
+        }
+
+        const transferred_spell_trads = fromJust (mtransferred_spell_trads)
+
+        // Contains all allowed trads the first spell does not have
+        const trad_diff = filter (notElemF (transferred_spell_trads))
+                                 (allowed_traditions)
+
+        const has_transferred_all_traditions_allowed = fnull (trad_diff)
+
+        return fmap (filterUnfamiliar (pipe (
+                                        SpA.tradition,
+                                        has_transferred_all_traditions_allowed
+                                          ? trads =>
+                                              notElem (MagicalTradition.General) (trads)
+                                              && List.any (elemF (allowed_traditions)) (trads)
+                                          : trads =>
+                                              notElem (MagicalTradition.General) (trads)
+                                              && List.any (elemF (trad_diff)) (trads)
+                                      ))
+                                      (staticData))
       }
 
       default:

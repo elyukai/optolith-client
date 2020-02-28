@@ -5,13 +5,13 @@ import { Functn, ident } from "../../../Data/Function"
 import { fmap, fmapF } from "../../../Data/Functor"
 import { over, set } from "../../../Data/Lens"
 import { cons, countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, notNull, subscriptF, sum, take } from "../../../Data/List"
-import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, Maybe, maybe, Nothing, or, then, thenF } from "../../../Data/Maybe"
+import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, or, then, thenF } from "../../../Data/Maybe"
 import { dec, gte, max, min, multiply, negate } from "../../../Data/Num"
 import { elems, lookupF } from "../../../Data/OrderedMap"
 import { fromDefault, makeLenses, Record } from "../../../Data/Record"
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple"
 import { Category } from "../../Constants/Categories"
-import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
@@ -103,6 +103,7 @@ const PABYA = PropertiesAffectedByState.A
 const PABYL = PropertiesAffectedByStateL
 const IACEL = InactiveActivatableControlElementsL
 const NINA = NumIdName.A
+const SAA = SpecialAbility.A
 
 /**
  * @default Pair (Record ({ id, cost: 0 }), Record ())
@@ -186,24 +187,24 @@ export const getIdSpecificAffectedAndDispatchProps =
 
     switch (id) {
       // Entry with Skill selection (string id)
-      case AdvantageId.Aptitude:
-      case AdvantageId.ExceptionalSkill:
-      case AdvantageId.ExceptionalCombatTechnique:
-      case AdvantageId.WeaponAptitude:
-      case DisadvantageId.Incompetent:
-      case SpecialAbilityId.AdaptionZauber:
-      case SpecialAbilityId.FavoriteSpellwork:
-      case SpecialAbilityId.Forschungsgebiet:
-      case SpecialAbilityId.Expertenwissen:
-      case SpecialAbilityId.Wissensdurst:
-      case SpecialAbilityId.Lieblingsliturgie:
-      case SpecialAbilityId.WegDerGelehrten:
-      case SpecialAbilityId.WegDerKuenstlerin:
-      case SpecialAbilityId.Handwerkskunst:
-      case SpecialAbilityId.KindDerNatur:
-      case SpecialAbilityId.KoerperlichesGeschick:
-      case SpecialAbilityId.SozialeKompetenz:
-      case SpecialAbilityId.Universalgenie: {
+      case AdvantageId.aptitude:
+      case AdvantageId.exceptionalSkill:
+      case AdvantageId.exceptionalCombatTechnique:
+      case AdvantageId.weaponAptitude:
+      case DisadvantageId.incompetent:
+      case SpecialAbilityId.adaptionZauber:
+      case SpecialAbilityId.favoriteSpellwork:
+      case SpecialAbilityId.forschungsgebiet:
+      case SpecialAbilityId.expertenwissen:
+      case SpecialAbilityId.wissensdurst:
+      case SpecialAbilityId.lieblingsliturgie:
+      case SpecialAbilityId.wegDerGelehrten:
+      case SpecialAbilityId.wegDerKuenstlerin:
+      case SpecialAbilityId.handwerkskunst:
+      case SpecialAbilityId.kindDerNatur:
+      case SpecialAbilityId.koerperlichesGeschick:
+      case SpecialAbilityId.sozialeKompetenz:
+      case SpecialAbilityId.universalgenie: {
         return getPropsForEntryWithSkillSel (misStringM)
                                             (staticData)
                                             (mselected)
@@ -211,10 +212,10 @@ export const getIdSpecificAffectedAndDispatchProps =
                                             (id)
       }
 
-      case AdvantageId.ImmunityToPoison:
-      case AdvantageId.ImmunityToDisease:
-      case DisadvantageId.NegativeTrait:
-      case DisadvantageId.Maimed: {
+      case AdvantageId.immunityToPoison:
+      case AdvantageId.immunityToDisease:
+      case DisadvantageId.negativeTrait:
+      case DisadvantageId.maimed: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -228,7 +229,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case DisadvantageId.AfraidOf: {
+      case DisadvantageId.afraidOf: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -246,8 +247,8 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case DisadvantageId.Principles:
-      case DisadvantageId.Obligations: {
+      case DisadvantageId.principles:
+      case DisadvantageId.obligations: {
         const active_selections =
           joinMaybeList (getActiveSelectionsMaybe (IAA.heroEntry (entry)))
 
@@ -304,8 +305,8 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case AdvantageId.MagicalAttunement:
-      case DisadvantageId.MagicalRestriction: {
+      case AdvantageId.magicalAttunement:
+      case DisadvantageId.magicalRestriction: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -320,7 +321,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case AdvantageId.HatredOf: {
+      case AdvantageId.hatredOf: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -336,7 +337,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case DisadvantageId.PersonalityFlaw: {
+      case DisadvantageId.personalityFlaw: {
         const is_text_input_required = any (elemF (List<string | number> (7, 8))) (mselected)
 
         const isMaxActiveSelections =
@@ -381,8 +382,8 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case DisadvantageId.BadHabit:
-      case DisadvantageId.Stigma: {
+      case DisadvantageId.badHabit:
+      case DisadvantageId.stigma: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -392,7 +393,7 @@ export const getIdSpecificAffectedAndDispatchProps =
           }),
           PropertiesAffectedByState ({
             currentCost:
-              id === DisadvantageId.BadHabit
+              id === DisadvantageId.badHabit
                 ? pipe_ (
                     entry,
                     IAA.heroEntry,
@@ -411,7 +412,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.SkillSpecialization: {
+      case SpecialAbilityId.skillSpecialization: {
         const x = getCurrentSelectOption (entry) (mselected)
 
         const src = pipe_ (entry, IAA.wikiEntry, SAAL.src)
@@ -442,7 +443,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.Language: {
+      case SpecialAbilityId.language: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -463,7 +464,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.TraditionArcaneBard: {
+      case SpecialAbilityId.traditionArcaneBard: {
         return Pair (
           ActivatableActivationOptions ({
             id: IAA.id (entry),
@@ -488,7 +489,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.TraditionArcaneDancer: {
+      case SpecialAbilityId.traditionArcaneDancer: {
         return Pair (
           ActivatableActivationOptions ({
             id: IAA.id (entry),
@@ -513,7 +514,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.LanguageSpecializations: {
+      case SpecialAbilityId.languageSpecializations: {
         const moption = getCurrentSelectOption (entry) (mselected)
 
         const mspec_input = bind (moption) (SOA.specializationInput)
@@ -548,7 +549,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.Fachwissen: {
+      case SpecialAbilityId.fachwissen: {
         const getApps =
           (mother_id: Maybe<string | number>) =>
             pipe_ (
@@ -584,8 +585,41 @@ export const getIdSpecificAffectedAndDispatchProps =
                                                      (staticData)
                                                      (entry)
                                                      (mselected),
+            // Flipped ID passed to getApps is correct, because it need the
+            // *other* select option to filter
             secondSelectOptions: getApps (mselected3),
             thirdSelectOptions: getApps (mselected2),
+          })
+        )
+      }
+
+      case SpecialAbilityId.scholarDesMagierkollegsZuHoningen: {
+        const secondSelectOptions = pipe_ (
+                                      List (
+                                        SpecialAbilityId.harmoniezauberei,
+                                        SpecialAbilityId.matrixzauberei
+                                      ),
+                                      mapMaybe (lookupF (SDA.specialAbilities (staticData))),
+                                      map (x => SelectOption ({
+                                                  id: SAA.id (x),
+                                                  name: SAA.name (x),
+                                                  src: SAA.src (
+                                                    IAA.wikiEntry (entry) as Record<SpecialAbility>
+                                                  ),
+                                                  errata: Nothing,
+                                                }))
+                                    )
+
+        return Pair (
+          ActivatableActivationOptions ({
+            id,
+            selectOptionId1: mselected,
+            selectOptionId2: mselected2,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost: getPlainCostFromEntry (entry),
+            secondSelectOptions: Just (secondSelectOptions),
           })
         )
       }
@@ -774,7 +808,7 @@ export const getInactiveActivatableControlElements =
                 const levelOptions =
                   pipe_ (
                     getLevelElementsWithMin (min_level) (max_level),
-                    ls => SpecialAbilityId.Language === id && isEditingAllowed
+                    ls => SpecialAbilityId.language === id && isEditingAllowed
                           ? cons (ls)
                                  (DropdownOption ({
                                    id: Just (4),
@@ -786,7 +820,7 @@ export const getInactiveActivatableControlElements =
 
                 return pipe_ (
                   elements,
-                  set (([ DisadvantageId.Principles, DisadvantageId.Obligations ] as string[])
+                  set (([ DisadvantageId.principles, DisadvantageId.obligations ] as string[])
                         .includes (IAA.id (entry))
                         ? IACEL.levelElementBefore
                         : IACEL.levelElementAfter)
@@ -810,7 +844,7 @@ export const getInactiveActivatableControlElements =
         (ident as ident<Record<InactiveActivatableControlElements>>)
         (pipe_ (
           guard (notElem (IAA.id (entry))
-                         (List (DisadvantageId.Principles, DisadvantageId.Obligations))),
+                         (List (DisadvantageId.principles, DisadvantageId.obligations))),
           thenF (msels),
           fmap (pipe (
             map (selectToDropdownOption),
@@ -833,20 +867,20 @@ export const getInactiveActivatableControlElements =
         || (isJust (minput_desc) && isNothing (minput_text))
       )
       && notElem (IAA.id (entry))
-                 (List<string> (AdvantageId.MagicalAttunement,
-                                DisadvantageId.AfraidOf,
-                                DisadvantageId.MagicalRestriction,
-                                DisadvantageId.Principles,
-                                DisadvantageId.BadHabit,
-                                DisadvantageId.Stigma,
-                                DisadvantageId.Obligations))
+                 (List<string> (AdvantageId.magicalAttunement,
+                                DisadvantageId.afraidOf,
+                                DisadvantageId.magicalRestriction,
+                                DisadvantageId.principles,
+                                DisadvantageId.badHabit,
+                                DisadvantageId.stigma,
+                                DisadvantageId.obligations))
         ? set (IACEL.disabled) (Just (true))
         : ident,
       fromMaybe
         (ident as ident<Record<InactiveActivatableControlElements>>)
         (pipe_ (
           guard (notElem (IAA.id (entry))
-                         (List (AdvantageId.ImmunityToPoison, AdvantageId.ImmunityToDisease))),
+                         (List (AdvantageId.immunityToPoison, AdvantageId.immunityToDisease))),
           thenF (minput_desc),
           fmap (
             input =>
@@ -863,7 +897,7 @@ export const getInactiveActivatableControlElements =
                   )
           )
         )),
-      IAA.id (entry) === SpecialAbilityId.SkillSpecialization
+      IAA.id (entry) === SpecialAbilityId.skillSpecialization
         ? pipe (
             set (IACEL.inputElement)
                 (Just (

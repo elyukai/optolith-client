@@ -225,6 +225,8 @@ var SpecialAbilityId = {
   favoriteSpellwork: "SA_250",
   traditionWitches: "SA_255",
   magicStyleCombination: "SA_266",
+  harmoniezauberei: "SA_296",
+  matrixzauberei: "SA_303",
   traditionElves: "SA_345",
   traditionDruids: "SA_346",
   spellEnhancement: "SA_414",
