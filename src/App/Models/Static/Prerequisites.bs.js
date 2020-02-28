@@ -16,6 +16,8 @@ var PrimaryAttributePrerequisite = { };
 
 var ActivatablePrerequisite = { };
 
+var ActivatableSkillPrerequisite = { };
+
 var ActivatableMultiEntryPrerequisite = { };
 
 var ActivatableMultiSelectPrerequisite = { };
@@ -31,6 +33,7 @@ exports.SocialPrerequisite = SocialPrerequisite;
 exports.PactPrerequisite = PactPrerequisite;
 exports.PrimaryAttributePrerequisite = PrimaryAttributePrerequisite;
 exports.ActivatablePrerequisite = ActivatablePrerequisite;
+exports.ActivatableSkillPrerequisite = ActivatableSkillPrerequisite;
 exports.ActivatableMultiEntryPrerequisite = ActivatableMultiEntryPrerequisite;
 exports.ActivatableMultiSelectPrerequisite = ActivatableMultiSelectPrerequisite;
 exports.IncreasablePrerequisite = IncreasablePrerequisite;

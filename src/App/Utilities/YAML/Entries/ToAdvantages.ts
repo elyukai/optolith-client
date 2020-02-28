@@ -95,6 +95,8 @@ const toAdv : (blessings : OrderedMap<string, Record<Blessing>>)
                           ? Just (fromArray (univ.cost))
                           : Maybe (univ.cost),
                     noMaxAPInfluence: fromMaybe (false) (Maybe (univ.noMaxAPInfluence)),
+                    isExclusiveToArcaneSpellworks:
+                      fromMaybe (false) (Maybe (univ.isExclusiveToArcaneSpellworks)),
                     input: Maybe (l10n.input),
                     max: Maybe (univ.max),
                     prerequisites: pipe_ (

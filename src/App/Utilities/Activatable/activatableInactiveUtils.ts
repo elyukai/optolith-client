@@ -830,6 +830,7 @@ export const getInactiveView =
   (staticData: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (automatic_advantages: List<string>) =>
+  (required_apply_to_mag_actions: boolean) =>
   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (adventure_points: Record<AdventurePointsCategories>) =>
   (validExtendedSpecialAbilities: List<string>) =>
@@ -851,6 +852,7 @@ export const getInactiveView =
 
     const isNotValid = isAdditionDisabled (staticData)
                                           (hero)
+                                          (required_apply_to_mag_actions)
                                           (validExtendedSpecialAbilities)
                                           (matching_script_and_lang_related)
                                           (wiki_entry)

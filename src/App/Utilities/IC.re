@@ -54,7 +54,6 @@ let getAPForBounds = (ic, l, u) =>
 /**
  * `getAPRange ic fromSR toSR` returns the AP cost for the given SR range.
  */
-[@genType]
 let getAPForRange = (ic, fromSR, toSR) =>
   fromSR < toSR
     ? getAPForBounds(ic, fromSR, toSR)
@@ -63,7 +62,6 @@ let getAPForRange = (ic, fromSR, toSR) =>
 /**
  * Returns the name of the passed Improvement Cost.
  */
-[@genType]
 let icToStr = ic =>
   switch (ic) {
   | A => "A"

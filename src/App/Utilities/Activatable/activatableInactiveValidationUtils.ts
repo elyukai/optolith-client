@@ -231,6 +231,13 @@ const isInvalidExtendedSpecialAbility =
     CheckStyleUtils.isExtendedSpecialAbility (wiki_entry)
     && notElem (AAL.id (wiki_entry)) (validExtendedSpecialAbilities)
 
+const doesNotApplyToMagActionsThoughRequired =
+  (required_apply_to_mag_actions: boolean) =>
+  (wiki_entry: Activatable): boolean =>
+    SpecialAbility.is (wiki_entry)
+    ? false
+    : required_apply_to_mag_actions && Advantage.AL.isExclusiveToArcaneSpellworks (wiki_entry)
+
 /**
  * Checks if the given entry can be added.
  * @param obj
@@ -239,6 +246,7 @@ const isInvalidExtendedSpecialAbility =
 export const isAdditionDisabled =
   (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
+  (required_apply_to_mag_actions: boolean) =>
   (validExtendedSpecialAbilities: List<string>) =>
   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (wiki_entry: Activatable) =>
@@ -249,3 +257,4 @@ export const isAdditionDisabled =
     || hasReachedMaximumEntries (wiki_entry) (mhero_entry)
     || hasReachedImpossibleMaximumLevel (max_level)
     || isInvalidExtendedSpecialAbility (wiki_entry) (validExtendedSpecialAbilities)
+    || doesNotApplyToMagActionsThoughRequired (required_apply_to_mag_actions) (wiki_entry)

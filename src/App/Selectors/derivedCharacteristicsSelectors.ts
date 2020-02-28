@@ -29,9 +29,9 @@ import { pipe, pipe_ } from "../Utilities/pipe"
 import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils"
 import { mapGetToMaybeSlice, mapGetToSlice, mapGetToSliceWithProps } from "../Utilities/SelectorsUtils"
 import { getHighestPrimaryMagicalAttributeValue, getPrimaryBlessedAttribute } from "./attributeSelectors"
+import { getMagicalTraditionStaticEntries } from "./magicalTraditionSelectors"
 import { getRace } from "./raceSelectors"
 import { getRuleBooksEnabled } from "./rulesSelectors"
-import { getMagicalTraditionStaticEntries } from "./spellsSelectors"
 import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getDisadvantages, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getRules, getSpecialAbilities, getWiki } from "./stateSelectors"
 
 const SDA = StaticData.A

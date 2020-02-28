@@ -2,7 +2,7 @@
 import { bindF, fromRight_, isLeft, Right, second } from "../../../../Data/Either"
 import { flip, ident } from "../../../../Data/Function"
 import { append, cons, foldr, fromArray, isList, List, notNull } from "../../../../Data/List"
-import { ensure, Just, Maybe, Nothing } from "../../../../Data/Maybe"
+import { ensure, fromMaybe, Just, Maybe, Nothing } from "../../../../Data/Maybe"
 import { fromMap, insert, insertWith, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Blessing } from "../../../Models/Wiki/Blessing"
@@ -94,6 +94,8 @@ const toDisadv : (blessings : OrderedMap<string, Record<Blessing>>)
                        cost: typeof univ.cost === "object"
                              ? Just (fromArray (univ.cost))
                              : Maybe (univ.cost),
+                       isExclusiveToArcaneSpellworks:
+                         fromMaybe (false) (Maybe (univ.isExclusiveToArcaneSpellworks)),
                        input: Maybe (l10n.input),
                        max: Maybe (univ.max),
                        prerequisites: pipe_ (

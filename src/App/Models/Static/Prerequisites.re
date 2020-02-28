@@ -7,14 +7,12 @@ module SexPrerequisite = {
     | Male
     | Female;
 
-  [@gentype]
   type t = sex;
 };
 
 module RacePrerequisite = {
   type raceId = oneOrMany(string);
 
-  [@gentype]
   type t = {
     id: raceId,
     active: bool,
@@ -24,20 +22,15 @@ module RacePrerequisite = {
 module CulturePrerequisite = {
   type cultureId = oneOrMany(string);
 
-  [@gentype]
   type t = cultureId;
 };
 
 module SocialPrerequisite = {
-  [@gentype]
   type t = int;
 };
 
 module PactPrerequisite = {
-  [@gentype]
   type t = {
-    id: list(string),
-    value: int,
     category: int,
     domain: option(oneOrMany(int)),
     level: option(int),
@@ -49,7 +42,6 @@ module PrimaryAttributePrerequisite = {
     | Magical
     | Blessed;
 
-  [@gentype]
   type t = {
     value: int,
     scope: primaryAttributeType,
@@ -57,9 +49,13 @@ module PrimaryAttributePrerequisite = {
 };
 
 module ActivatablePrerequisite = {
-  [@gentype]
+  type id =
+    | Advantage(string)
+    | Disadvantage(string)
+    | SpecialAbility(string);
+
   type t = {
-    id: string,
+    id,
     active: bool,
     sid: option(Ids.selectOptionId),
     sid2: option(Ids.selectOptionId),
@@ -67,10 +63,20 @@ module ActivatablePrerequisite = {
   };
 };
 
-module ActivatableMultiEntryPrerequisite = {
-  [@gentype]
+module ActivatableSkillPrerequisite = {
+  type id =
+    | Spell(string)
+    | LiturgicalChant(string);
+
   type t = {
-    id: list(string),
+    id,
+    active: bool,
+  };
+};
+
+module ActivatableMultiEntryPrerequisite = {
+  type t = {
+    id: list(ActivatablePrerequisite.id),
     active: bool,
     sid: option(Ids.selectOptionId),
     sid2: option(Ids.selectOptionId),
@@ -79,9 +85,8 @@ module ActivatableMultiEntryPrerequisite = {
 };
 
 module ActivatableMultiSelectPrerequisite = {
-  [@gentype]
   type t = {
-    id: string,
+    id: ActivatablePrerequisite.id,
     active: bool,
     sid: list(Ids.selectOptionId),
     sid2: option(Ids.selectOptionId),
@@ -90,33 +95,35 @@ module ActivatableMultiSelectPrerequisite = {
 };
 
 module IncreasablePrerequisite = {
-  [@gentype]
+  type id =
+    | Attribute(string)
+    | Skill(string)
+    | CombatTechnique(string)
+    | Spell(string)
+    | LiturgicalChant(string);
+
   type t = {
-    id: string,
+    id,
     value: int,
   };
 };
 
 module IncreasableMultiEntryPrerequisite = {
-  [@gentype]
   type t = {
-    id: list(string),
+    id: list(IncreasablePrerequisite.id),
     value: int,
   };
 };
 
-[@gentype]
 type professionDependency =
   | Sex(SexPrerequisite.t)
   | Race(RacePrerequisite.t)
   | Culture(CulturePrerequisite.t);
 
-[@gentype]
 type professionPrerequisite =
   | Activatable(ActivatablePrerequisite.t)
   | Increasable(IncreasablePrerequisite.t);
 
-[@gentype]
 type t =
   | Activatable(ActivatablePrerequisite.t)
   | Increasable(IncreasablePrerequisite.t)
@@ -127,7 +134,6 @@ type t =
   | Pact(PactPrerequisite.t)
   | Social(SocialPrerequisite.t);
 
-[@gentype]
 type tDisAdv =
   | CommonSuggestedByRCP
   | Activatable(ActivatablePrerequisite.t)

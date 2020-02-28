@@ -1,4 +1,3 @@
-[@gentype "SelectOption"]
 type t = {
   id: Ids.selectOptionId,
   name: string,

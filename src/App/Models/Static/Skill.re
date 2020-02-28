@@ -1,5 +1,4 @@
 module Application = {
-  [@gentype "Application"]
   type t = {
     id: int,
     name: string,
@@ -8,7 +7,6 @@ module Application = {
 };
 
 module Use = {
-  [@gentype "Use"]
   type t = {
     id: int,
     name: string,
@@ -21,7 +19,6 @@ type encumbrance =
   | False
   | Maybe;
 
-[@gentype "Skill"]
 type t = {
   id: string,
   name: string,

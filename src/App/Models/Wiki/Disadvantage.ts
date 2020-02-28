@@ -7,6 +7,7 @@ import { AdvantageDisadvantageBase, EntryWithCategory } from "./wikiTypeHelpers"
 
 export interface Disadvantage extends AdvantageDisadvantageBase {
   "@@name": "Disadvantage"
+  isExclusiveToArcaneSpellworks: boolean
 }
 
 export const Disadvantage =
@@ -15,6 +16,7 @@ export const Disadvantage =
                 id: "",
                 name: "",
                 cost: Nothing,
+                isExclusiveToArcaneSpellworks: false,
                 input: Nothing,
                 max: Nothing,
                 prerequisites: List.empty,

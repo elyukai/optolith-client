@@ -1,4 +1,3 @@
-[@gentype "Publication"]
 type t = {
   id: string,
   name: string,

@@ -25,6 +25,7 @@ import { sortByMulti } from "../Utilities/sortBy"
 import { getWikiSliceGetterByCategory } from "../Utilities/WikiUtils"
 import { getMatchingScriptAndLangRelated } from "./activatableSelectors"
 import { getAPObjectMap } from "./adventurePointsSelectors"
+import { getAreDisAdvRequiredApplyToMagActionsOrApps } from "./magicalTraditionSelectors"
 import { getAutomaticAdvantages } from "./raceSelectors"
 import { EnabledSourceBooks, getRuleBooksEnabled } from "./rulesSelectors"
 import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors"
@@ -60,7 +61,8 @@ export const getInactiveForView =
                         stateSelectors.getWiki,
                         getMagicalTraditionsFromHero,
                         getAutomaticAdvantages,
-                        getMatchingScriptAndLangRelated
+                        getMatchingScriptAndLangRelated,
+                        getAreDisAdvRequiredApplyToMagActionsOrApps
                       )
                       (heroReducer.A.present)
                       (madventure_points =>
@@ -69,7 +71,8 @@ export const getInactiveForView =
                          staticData,
                          hero_magical_traditions,
                          automatic_advantages,
-                         matching_script_and_lang_rel
+                         matching_script_and_lang_rel,
+                         required_apply_to_mag_actions
                        ) =>
                        (hero): Inactives<T> =>
                          fmapF (join (madventure_points))
@@ -84,6 +87,7 @@ export const getInactiveForView =
                                                    getInactiveView (staticData)
                                                                    (hero)
                                                                    (automatic_advantages)
+                                                                   (required_apply_to_mag_actions)
                                                                    (matching_script_and_lang_rel)
                                                                    (adventure_points)
                                                                    (validExtendedSpecialAbilities)

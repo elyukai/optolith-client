@@ -30,6 +30,8 @@ const toMT : YamlPairConverterE<MagicalTraditionUniv, MagicalTraditionL10n, stri
                       canLearnRituals: univ.canLearnRituals,
                       allowMultipleTraditions: univ.allowMultipleTraditions,
                       isDisAdvAPMaxHalved: univ.isDisAdvAPMaxHalved,
+                      areDisAdvRequiredApplyToMagActionsOrApps:
+                        univ.areDisAdvRequiredApplyToMagActionsOrApps,
                     }),
                   ])
 

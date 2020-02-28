@@ -14,6 +14,7 @@ export interface MagicalTradition {
   canLearnRituals: boolean
   allowMultipleTraditions: boolean
   isDisAdvAPMaxHalved: boolean
+  areDisAdvRequiredApplyToMagActionsOrApps: boolean
 }
 
 export const MagicalTradition =
@@ -29,4 +30,5 @@ export const MagicalTradition =
                 canLearnRituals: true,
                 allowMultipleTraditions: true,
                 isDisAdvAPMaxHalved: false,
+                areDisAdvRequiredApplyToMagActionsOrApps: false,
               })
