@@ -20,7 +20,7 @@ import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, Orde
 import { Record, RecordI } from "../../../Data/Record"
 import { filterMapListT, filterT, mapT } from "../../../Data/Transducer"
 import { fst, Pair, snd, Tuple } from "../../../Data/Tuple"
-import { CombatTechniqueGroupId, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups"
+import { CombatTechniqueGroupId, MagicalTradition, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups"
 import { AdvantageId, DisadvantageId, SkillId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
@@ -40,6 +40,7 @@ import { SelectOption, SelectOptionL } from "../../Models/Wiki/sub/SelectOption"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
 import { composeT } from "../compose"
+import { filterUnfamiliar } from "../Dependencies/TransferredUnfamiliarUtils"
 import { countActiveGroupEntries } from "../entryGroupUtils"
 import { getAllEntriesByGroup } from "../heroStateUtils"
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils"
@@ -392,6 +393,10 @@ const modifySelectOptions =
         )))
       }
 
+      case SpecialAbilityId.traditionGuildMages: {
+        return fmap (filterUnfamiliar (staticData) (MagicalTradition.GuildMages))
+      }
+
       case SpecialAbilityId.propertyKnowledge: {
         const isValidProperty =
           filterT (pipe (SOA.id, elemF<string | number> (getPropsWith3Gte10 (staticData) (hero))))
@@ -581,6 +586,10 @@ const modifySelectOptions =
                   return cnst (Just (filterLanguages (current_select)))
                 })
         )
+      }
+
+      case SpecialAbilityId.madaschwesternStil: {
+        return fmap (filterUnfamiliar (staticData) (MagicalTradition.Witches))
       }
 
       default:

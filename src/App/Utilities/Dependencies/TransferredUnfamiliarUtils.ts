@@ -6,7 +6,8 @@ import { append, countWith, filter, foldr, List, sdelete, subscriptF } from "../
 import { bindF, Just, liftM3, maybe, Maybe, Nothing } from "../../../Data/Maybe"
 import { elems, lookup, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { Phase, SpecialAbilityId } from "../../Constants/Ids"
+import { MagicalTradition } from "../../Constants/Groups"
+import { PhaseId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
@@ -15,12 +16,14 @@ import { ActiveObjectWithId, toActiveObjectWithId } from "../../Models/ActiveEnt
 import { HeroModel, HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { TransferUnfamiliar, UnfamiliarGroup } from "../../Models/Hero/TransferUnfamiliar"
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { Spell } from "../../Models/Wiki/Spell"
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { convertUIStateToActiveObject } from "../Activatable/activatableConvertUtils"
 import { getMagicalTraditionsHeroEntries } from "../Activatable/traditionUtils"
 import { isUnfamiliarSpell } from "../Increasable/spellUtils"
 import { pipe, pipe_ } from "../pipe"
-import { misStringM } from "../typeCheckUtils"
+import { isStringM, misStringM } from "../typeCheckUtils"
 
 const SDA = StaticData.A
 const HA = HeroModel.A
@@ -32,6 +35,8 @@ const ASDA = ActivatableSkillDependent.A
 const AOWIA = ActiveObjectWithId.A
 const AAOA = ActivatableActivationOptions.A
 const ADOA = ActivatableDeactivationOptions.A
+const SOA = SelectOption.A
+const SA = Spell.A
 
 const getTransferredUnfamiliarById: (active: Record<ActiveObjectWithId>) =>
                                     Maybe<List<Record<TransferUnfamiliar>>> =
@@ -39,9 +44,9 @@ const getTransferredUnfamiliarById: (active: Record<ActiveObjectWithId>) =>
     const src_id = AOWIA.id (active)
 
     switch (src_id) {
-      case SpecialAbilityId.TraditionGuildMages:
-      case SpecialAbilityId.MadaschwesternStil:
-      case SpecialAbilityId.ScholarDesMagierkollegsZuHoningen:
+      case SpecialAbilityId.traditionGuildMages:
+      case SpecialAbilityId.madaschwesternStil:
+      case SpecialAbilityId.scholarDesMagierkollegsZuHoningen:
         return pipe_ (
           active,
           AOWIA.sid,
@@ -49,11 +54,11 @@ const getTransferredUnfamiliarById: (active: Record<ActiveObjectWithId>) =>
           fmap (id => List (TransferUnfamiliar ({ id, srcId: src_id })))
         )
 
-      case SpecialAbilityId.Zaubervariabilitaet:
+      case SpecialAbilityId.zaubervariabilitaet:
         return Just (List (TransferUnfamiliar ({ id: UnfamiliarGroup.Spells, srcId: src_id })))
 
-      case SpecialAbilityId.ScholarDerHalleDesLebensZuNorburg:
-      case SpecialAbilityId.ScholarDesKreisesDerEinfuehlung:
+      case SpecialAbilityId.scholarDerHalleDesLebensZuNorburg:
+      case SpecialAbilityId.scholarDesKreisesDerEinfuehlung:
         return liftM3 ((id1: string) => (id2: string) => (id3: string) =>
                         List (
                           TransferUnfamiliar ({ id: id1, srcId: src_id }),
@@ -168,7 +173,7 @@ export const isEntryAllowingTransferUnfamiliarRemovable: (wiki: StaticDataRecord
                                                          (hero: HeroModelRecord) =>
                                                          (src_id: string) => boolean =
   wiki => hero => {
-    if (HA.phase (hero) >= Phase.InGame) {
+    if (HA.phase (hero) >= PhaseId.inGame) {
       return cnst (true)
     }
 
@@ -189,3 +194,19 @@ export const isEntryAllowingTransferUnfamiliarRemovable: (wiki: StaticDataRecord
                  (lookup (HA.experienceLevel (hero))
                          (SDA.experienceLevels (wiki)))
   }
+
+/**
+ * From a list of spell select options, only return the **unfamiliar** ones.
+ */
+export const filterUnfamiliar =
+  (static_data: StaticDataRecord) =>
+  (active: MagicalTradition) =>
+    filter ((x: Record<SelectOption>) =>
+              pipe_ (
+                x,
+                SOA.id,
+                isStringM,
+                bindF (lookupF (SDA.spells (static_data))),
+                maybe (false)
+                      (pipe (SA.gr, gr => gr !== MagicalTradition.General && gr !== active))
+              ))
