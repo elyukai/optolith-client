@@ -8,7 +8,7 @@ import { Action, applyMiddleware, createStore, Store } from "redux"
 import thunk from "redux-thunk"
 import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from "./App/Actions/AcceleratorActions"
 import { ReduxDispatch } from "./App/Actions/Actions"
-import { addErrorAlert, AlertOptions } from "./App/Actions/AlertActions"
+import { addAlert, addErrorAlert, AlertOptions } from "./App/Actions/AlertActions"
 import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from "./App/Actions/IOActions"
 import { showAbout } from "./App/Actions/LocationActions"
 import { AppContainer } from "./App/Containers/AppContainer"
@@ -17,6 +17,7 @@ import { appReducer } from "./App/Reducers/appReducer"
 import { getWiki } from "./App/Selectors/stateSelectors"
 import { translate, translateP } from "./App/Utilities/I18n"
 import { addKeybinding } from "./App/Utilities/Keybindings"
+import { hasOwnProperty } from "./App/Utilities/Object"
 import { pipe } from "./App/Utilities/pipe"
 import { isDialogOpen } from "./App/Utilities/SubwindowsUtils"
 import { flip } from "./Data/Function"
@@ -157,14 +158,26 @@ ipcRenderer.addListener ("download-progress", (_event: Event, progressObj: Progr
   store.dispatch (setUpdateDownloadProgress (progressObj))
 })
 
-ipcRenderer.addListener ("auto-updater-error", (_event: Event, err: Error) => {
+const isError = (err: Error | {}): err is Error => hasOwnProperty ("name") (err)
+                                                   && hasOwnProperty ("message") (err)
+
+ipcRenderer.addListener ("auto-updater-error", (_event: Event, err: Error | {}) => {
   const dispatch = store.dispatch as ReduxDispatch
 
   dispatch (setUpdateDownloadProgress ())
-  dispatch (addErrorAlert (AlertOptions ({
-                            title: Just ("Auto Update Error"),
-                            message: `An error occured during auto-update.`
-                              + ` (${JSON.stringify (err)})`,
-                          })))
-    .catch (() => undefined)
+
+  if (isError (err)) {
+    dispatch (addErrorAlert (AlertOptions ({
+                              title: Just (`${err.name} during update`),
+                              message: `An error occured during auto-update:\n${err.message}`,
+                            })))
+      .catch (() => undefined)
+  }
+  else {
+    dispatch (addAlert (AlertOptions ({
+                         title: Just ("Server Error"),
+                         message: `The server does not respond.`,
+                       })))
+      .catch (() => undefined)
+  }
 })
