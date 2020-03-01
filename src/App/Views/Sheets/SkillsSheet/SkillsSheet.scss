@@ -108,7 +108,7 @@
 	.languages-list {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		grid-auto-rows: 1fr;
+		grid-auto-rows: auto;
 		list-style: none;
 		margin: 0;
 		padding: 0;
