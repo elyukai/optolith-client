@@ -1,7 +1,7 @@
 import * as React from "react"
 import { fmap, fmapF } from "../../../Data/Functor"
-import { isList, List, map, notNullStr } from "../../../Data/List"
-import { bind, ensure, fromJust, fromMaybe, isJust, isNothing, Just, mapMaybe, Maybe, maybeToNullable } from "../../../Data/Maybe"
+import { flength, isList, List, map, notNull, notNullStr } from "../../../Data/List"
+import { bindF, ensure, fromMaybe, isJust, Just, mapMaybe, Maybe, maybe, maybeToList, maybeToNullable } from "../../../Data/Maybe"
 import { lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, Pair, snd, Tuple } from "../../../Data/Tuple"
@@ -56,35 +56,28 @@ export const SkillSpecializationSelectionList: React.FC<Props> = props => {
 
   const all_skills = SDA.skills (staticData)
 
-  const mskills = React.useMemo (
-    () => fmapF (ensure (isList) (sid))
-                (mapMaybe (lookupF (all_skills))),
+  const skills = React.useMemo (
+    () => isList (sid)
+          ? mapMaybe (lookupF (all_skills)) (sid)
+          : maybeToList (lookupF (all_skills) (sid)),
     [ sid, all_skills ]
   )
 
-  const mactive_skill = bind (isString (sid) ? Just (sid) : activeSkillId)
-                             (lookupF (all_skills))
-
-  if (isNothing (mactive_skill)) {
-    return null
-  }
-
-  const active_skill = fromJust (mactive_skill)
-
   const name =
     pipe_ (
-      mskills,
+      skills,
+      ensure (notNull),
       fmap (pipe (
         map (Skill.A.name),
         localizeOrList (staticData)
       )),
-      fromMaybe (Skill.A.name (active_skill))
+      fromMaybe ("...")
     )
 
   const title = translateP (staticData) ("rcpselectoptions.skillspecialization") (List (name))
 
   const selectSkillElement =
-    fmapF (mskills)
+    fmapF (pipe_ (skills, ensure (xs => flength (xs) > 1)))
           (skillsList => (
             <div>
               <Dropdown
@@ -104,12 +97,19 @@ export const SkillSpecializationSelectionList: React.FC<Props> = props => {
     <div className="spec">
       <h4>{title}</h4>
       {maybeToNullable (selectSkillElement)}
-      <SkillSpecializationSelectionApplications
-        active={activeApplication}
-        skill={active_skill}
-        setApplicationId={setApplicationId}
-        setApplicationString={setApplicationString}
-        />
+      {pipe_ (
+        isString (sid) ? Just (sid) : activeSkillId,
+        bindF (lookupF (all_skills)),
+        maybe (null as React.ReactNode)
+              (active_skill => (
+                <SkillSpecializationSelectionApplications
+                  active={activeApplication}
+                  skill={active_skill}
+                  setApplicationId={setApplicationId}
+                  setApplicationString={setApplicationString}
+                  />
+              ))
+      )}
     </div>
   )
 }
