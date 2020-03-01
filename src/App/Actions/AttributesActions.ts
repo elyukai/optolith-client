@@ -1,13 +1,14 @@
 import { fmapF } from "../../Data/Functor"
 import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe"
 import { lookup } from "../../Data/OrderedMap"
+import { curryN } from "../../Data/Tuple/All"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { HeroModel } from "../Models/Hero/HeroModel"
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
 import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getCurrentHeroPresent, getWikiAttributes } from "../Selectors/stateSelectors"
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
-import { getIncreaseAP } from "../Utilities/AdventurePoints/improvementCostUtils"
+import { getAPForInc } from "../Utilities/IC.gen"
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { ReduxAction } from "./Actions"
@@ -83,7 +84,7 @@ export const addLifePoint: ReduxAction<Promise<void>> =
         liftM2 (pipe (
 
                  // get AP for added points
-                 getIncreaseAP (4),
+                 curryN (getAPForInc) ("D"),
 
                  // AP are passed to result and result finally gets the available AP
                  getMissingAP (getIsInCharacterCreation (state))
@@ -119,7 +120,7 @@ export const addArcaneEnergyPoint: ReduxAction<Promise<void>> =
         liftM2 (pipe (
 
                  // get AP for added points
-                 getIncreaseAP (4),
+                 curryN (getAPForInc) ("D"),
 
                  // AP are passed to result and result finally gets the available AP
                  getMissingAP (getIsInCharacterCreation (state))
@@ -155,7 +156,7 @@ export const addKarmaPoint: ReduxAction<Promise<void>> =
         liftM2 (pipe (
 
                  // get AP for added points
-                 getIncreaseAP (4),
+                 curryN (getAPForInc) ("D"),
 
                  // AP are passed to result and result finally gets the available AP
                  getMissingAP (getIsInCharacterCreation (state))

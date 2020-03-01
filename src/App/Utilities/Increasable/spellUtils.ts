@@ -5,7 +5,7 @@ import { cnst, flip, ident } from "../../../Data/Function"
 import { fmap } from "../../../Data/Functor"
 import { all, any, consF, countWith, countWithByKeyMaybe, elemF, find, intersecting, List, maximum, minimum, notElem, notNull } from "../../../Data/List"
 import { bindF, catMaybes, elem, ensure, fromMaybe, fromMaybe_, guard, isJust, isNothing, Just, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe"
-import { add, lt } from "../../../Data/Num"
+import { add, gte, lt } from "../../../Data/Num"
 import { elems, foldrWithKey, lookup, lookupF, OrderedMap, union } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { IC, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
@@ -156,8 +156,15 @@ export const spellsAbove10ByProperty : (wiki_spells : StaticData["spells"])
                                          pipe (
                                            elems,
                                            countWithByKeyMaybe (pipe (
-                                                                 ASDA.id,
-                                                                 lookupF (wiki_spells),
+                                                                 ensure (ASDA.active),
+                                                                 Maybe.find (pipe (
+                                                                   ASDA.value,
+                                                                   gte (10)
+                                                                 )),
+                                                                 bindF (pipe (
+                                                                   ASDA.id,
+                                                                   lookupF (wiki_spells)
+                                                                 )),
                                                                  fmap (SA.property)
                                                                ))
                                          )

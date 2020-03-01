@@ -35,7 +35,7 @@ let getLastSRWithConstantCost = ic => ic === E ? 14 : 12;
  * final cost for the given SR.
  */
 let getBaseMultiplier = (ic, sr) =>
-  sr - getLastSRWithConstantCost(ic) |> Int.max(1);
+  sr - getLastSRWithConstantCost(ic) + 1 |> Int.max(1);
 
 /**
  * Returns the AP cost for a single SR with a specific IC.
@@ -54,14 +54,25 @@ let getAPForBounds = (ic, l, u) =>
 /**
  * `getAPRange ic fromSR toSR` returns the AP cost for the given SR range.
  */
+[@gentype]
 let getAPForRange = (ic, fromSR, toSR) =>
   fromSR < toSR
     ? getAPForBounds(ic, fromSR, toSR)
-    : fromSR > toSR ? getAPForBounds(ic, toSR, fromSR) : 0;
+    : fromSR > toSR ? - getAPForBounds(ic, toSR, fromSR) : 0;
+
+[@gentype]
+let getAPForInc = (ic, fromSR) => getCost(ic, fromSR + 1);
+
+[@gentype]
+let getAPForDec = (ic, fromSR) => - getCost(ic, fromSR);
+
+[@gentype]
+let getAPForActivatation = getAPCostBaseByIC;
 
 /**
  * Returns the name of the passed Improvement Cost.
  */
+[@gentype]
 let icToStr = ic =>
   switch (ic) {
   | A => "A"

@@ -8,10 +8,10 @@ import { Sex } from "../../Models/Hero/heroTypeHelpers"
 import { Attribute } from "../../Models/Wiki/Attribute"
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
-import { getICName } from "../../Utilities/AdventurePoints/improvementCostUtils"
 import { translate } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { Markdown } from "../Universal/Markdown"
+import { WikiImprovementCost } from "./Elements/WikiImprovementCost"
 import { WikiSource } from "./Elements/WikiSource"
 import { WikiBoxTemplate } from "./WikiBoxTemplate"
 import { WikiProperty } from "./WikiProperty"
@@ -48,9 +48,7 @@ export const WikiCombatTechniqueInfo: React.FC<WikiCombatTechniqueInfoProps> = p
           intercalate ("/")
         )}
       </WikiProperty>
-      <WikiProperty staticData={staticData} title="inlinewiki.improvementcost">
-        {getICName (CTA.ic (x))}
-      </WikiProperty>
+      <WikiImprovementCost x={x} staticData={staticData} acc={CTA} />
       <WikiSource
         x={x}
         staticData={staticData}

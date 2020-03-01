@@ -1,5 +1,6 @@
 import * as React from "react"
-import { getICName } from "../../Utilities/AdventurePoints/improvementCostUtils"
+import { icFromJs } from "../../Constants/Groups"
+import { icToStr } from "../../Utilities/IC.gen"
 
 interface Props {
   ic?: number
@@ -11,7 +12,7 @@ export const SkillImprovementCost: React.FC<Props> = props => {
   if (typeof ic === "number") {
     return (
       <div className="ic">
-        {getICName (ic)}
+        {icToStr (icFromJs (ic))}
       </div>
     )
   }

@@ -15,7 +15,6 @@ import { appendStr, elem, filter, find, flength, groupByKey, intercalate, List, 
 import { altF_, any, bind, bindF, catMaybes, elemF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, listToMaybe, maybe, Maybe, Nothing, thenF } from "../../../Data/Maybe"
 import { elems, lookup, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { traceShowId } from "../../../Debug/Trace"
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
 import { NumIdName } from "../../Models/NumIdName"
@@ -279,7 +278,6 @@ const getEntrySpecificNameAddition =
                               getApp (AOWIA.sid2) (skill),
                               getApp (AOWIA.sid3) (skill)
                             ),
-                            traceShowId,
                             catMaybes,
                             ensure (xs => flength (xs) === 2),
                             fmap (pipe (

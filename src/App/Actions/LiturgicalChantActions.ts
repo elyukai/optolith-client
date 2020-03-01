@@ -2,6 +2,7 @@ import { fmapF } from "../../Data/Functor"
 import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe"
 import { lookup } from "../../Data/OrderedMap"
 import * as ActionTypes from "../Constants/ActionTypes"
+import { icFromJs } from "../Constants/Groups"
 import { ChantsSortOptions } from "../Models/Config"
 import { HeroModel } from "../Models/Hero/HeroModel"
 import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
@@ -9,7 +10,7 @@ import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
 import { getCurrentHeroPresent, getLiturgicalChants, getWikiLiturgicalChants } from "../Selectors/stateSelectors"
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
-import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUtils"
+import { getAPForActivatation } from "../Utilities/IC.gen"
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { ReduxAction } from "./Actions"
@@ -36,7 +37,7 @@ export const addLiturgicalChant =
         join,
         liftM2 (getMissingAP (getIsInCharacterCreation (state)))
                (fmapF (lookup (id) (wiki_liturgical_chants))
-                      (pipe (LiturgicalChant.A.ic, getICMultiplier))),
+                      (pipe (LiturgicalChant.A.ic, icFromJs, getAPForActivatation))),
         join
       )
 

@@ -3,7 +3,8 @@ import { Maybe, Nothing } from "../../../Data/Maybe"
 import { fromDefault, Record } from "../../../Data/Record"
 import { Tuple } from "../../../Data/Tuple"
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/All"
-import { MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
+import { icToJs, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
+import { t as IC } from "../../Utilities/IC.gen"
 import { Spell } from "./Spell"
 import { Erratum } from "./sub/Errata"
 import { SourceLink } from "./sub/SourceLink"
@@ -15,7 +16,7 @@ export interface ZibiljaRitual {
   name: string
   check: Tuple<[string, string, string]>
   checkmod: Maybe<CheckModifier>
-  ic: number
+  ic: IC
   property: Property
   effect: string
   castingTime: string
@@ -42,7 +43,7 @@ export const ZibiljaRitual =
                 name: "",
                 check: Tuple ("", "", ""),
                 checkmod: Nothing,
-                ic: 0,
+                ic: "A",
                 property: 0,
                 effect: "",
                 castingTime: "",
@@ -72,7 +73,7 @@ export const zibiljaRitualToSpell = (x: Record<ZibiljaRitual>): Record<Spell> =>
                                       ),
                                       checkmod: ZibiljaRitual.A.checkmod (x),
                                       gr: MagicalGroup.ZibiljaRituals,
-                                      ic: ZibiljaRitual.A.ic (x),
+                                      ic: icToJs (ZibiljaRitual.A.ic (x)),
                                       property: ZibiljaRitual.A.property (x),
                                       tradition: List (MagicalTradition.Zibilija),
                                       subtradition: List (),

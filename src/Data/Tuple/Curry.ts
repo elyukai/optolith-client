@@ -11,6 +11,15 @@ export const curryN =
     f (a, b)
 
 /**
+ * `curryN3 :: ((a, b, c) -> d) -> a -> b -> c -> d`
+ *
+ * `curryN3` converts an uncurried function to a curried function.
+ */
+export const curryN3 =
+  <A, B, C, D> (f: (a: A, b: B, c: C) => D) => (a: A) => (b: B) => (c: C): D =>
+    f (a, b, c)
+
+/**
  * `uncurryN :: (a -> b -> c) -> (a, b) -> c`
  *
  * `uncurryN` converts a curried function to a function on pairs.

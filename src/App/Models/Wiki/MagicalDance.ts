@@ -4,8 +4,9 @@ import { OrderedMap } from "../../../Data/OrderedMap"
 import { fromDefault, Record } from "../../../Data/Record"
 import { Tuple } from "../../../Data/Tuple"
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/All"
-import { MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
+import { icToJs, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
 import { ndash } from "../../Utilities/Chars"
+import { t as IC } from "../../Utilities/IC.gen"
 import { NumIdName } from "../NumIdName"
 import { Spell } from "./Spell"
 import { Erratum } from "./sub/Errata"
@@ -17,7 +18,7 @@ export interface MagicalDance {
   name: string
   nameByTradition: OrderedMap<number, Record<NumIdName>>
   check: Tuple<[string, string, string]>
-  ic: number
+  ic: IC
   property: Property
   musictraditions: List<number>
   effect: string
@@ -36,7 +37,7 @@ export const MagicalDance =
                 name: "",
                 nameByTradition: OrderedMap.empty,
                 check: Tuple ("", "", ""),
-                ic: 0,
+                ic: "A",
                 property: 0,
                 musictraditions: List.empty,
                 effect: "",
@@ -58,7 +59,7 @@ export const magicalDanceToSpell = (x: Record<MagicalDance>): Record<Spell> => S
                                      ),
                                      checkmod: Nothing,
                                      gr: MagicalGroup.MagicalDances,
-                                     ic: MagicalDance.A.ic (x),
+                                     ic: icToJs (MagicalDance.A.ic (x)),
                                      property: MagicalDance.A.property (x),
                                      tradition: List (MagicalTradition.ArcaneDancers),
                                      subtradition: MagicalDance.A.musictraditions (x),

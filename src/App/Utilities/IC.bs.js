@@ -31,7 +31,7 @@ function getLastSRWithConstantCost(ic) {
 }
 
 function getBaseMultiplier(ic, sr) {
-  return Int$OptolithClient.max(1, sr - getLastSRWithConstantCost(ic) | 0);
+  return Int$OptolithClient.max(1, (sr - getLastSRWithConstantCost(ic) | 0) + 1 | 0);
 }
 
 function getCost(ic, sr) {
@@ -55,10 +55,18 @@ function getAPForRange(ic, fromSR, toSR) {
   if (fromSR < toSR) {
     return getAPForBounds(ic, fromSR, toSR);
   } else if (fromSR > toSR) {
-    return getAPForBounds(ic, toSR, fromSR);
+    return -getAPForBounds(ic, toSR, fromSR) | 0;
   } else {
     return 0;
   }
+}
+
+function getAPForInc(ic, fromSR) {
+  return getCost(ic, fromSR + 1 | 0);
+}
+
+function getAPForDec(ic, fromSR) {
+  return -getCost(ic, fromSR) | 0;
 }
 
 function icToStr(ic) {
@@ -77,11 +85,16 @@ function icToStr(ic) {
   }
 }
 
+var getAPForActivatation = getAPCostBaseByIC;
+
 exports.getAPCostBaseByIC = getAPCostBaseByIC;
 exports.getLastSRWithConstantCost = getLastSRWithConstantCost;
 exports.getBaseMultiplier = getBaseMultiplier;
 exports.getCost = getCost;
 exports.getAPForBounds = getAPForBounds;
 exports.getAPForRange = getAPForRange;
+exports.getAPForInc = getAPForInc;
+exports.getAPForDec = getAPForDec;
+exports.getAPForActivatation = getAPForActivatation;
 exports.icToStr = icToStr;
 /* No side effect */

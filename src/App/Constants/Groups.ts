@@ -1,3 +1,5 @@
+import { t as _IC } from "../Utilities/IC.gen"
+
 export enum ProfessionGroup {
   Mundane = 1,
   Magical = 2,
@@ -30,6 +32,28 @@ export enum IC {
   C,
   D,
   E,
+}
+
+export const icFromJs = (x: IC): _IC => {
+  switch (x) {
+    case IC.A: return "A"
+    case IC.B: return "B"
+    case IC.C: return "C"
+    case IC.D: return "D"
+    case IC.E: return "E"
+    default: throw new TypeError (`icFromJs: ${x} is not an IC`)
+  }
+}
+
+export const icToJs = (x: _IC): IC => {
+  switch (x) {
+    case "A": return IC.A
+    case "B": return IC.B
+    case "C": return IC.C
+    case "D": return IC.D
+    case "E": return IC.E
+    default: throw new TypeError (`icToJs: ${x} is not an IC`)
+  }
 }
 
 export enum SkillGroup {

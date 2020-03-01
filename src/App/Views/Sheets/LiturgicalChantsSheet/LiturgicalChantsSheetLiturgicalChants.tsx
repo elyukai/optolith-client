@@ -6,16 +6,16 @@ import { consF, elem, flength, intercalate, List, map, replicateR, toArray } fro
 import { fromMaybe, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe"
 import { lookup } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
-import { BlessedTradition as BlessedTraditionId } from "../../../Constants/Groups"
+import { BlessedTradition as BlessedTraditionId, icFromJs } from "../../../Constants/Groups"
 import { SpecialAbilityId } from "../../../Constants/Ids"
 import { NumIdName } from "../../../Models/NumIdName"
 import { AttributeCombined } from "../../../Models/View/AttributeCombined"
 import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../../Models/View/LiturgicalChantWithRequirements"
 import { BlessedTradition } from "../../../Models/Wiki/BlessedTradition"
 import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
-import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils"
 import { minus } from "../../../Utilities/Chars"
 import { translate } from "../../../Utilities/I18n"
+import { icToStr } from "../../../Utilities/IC.gen"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils"
 import { sortStrings } from "../../../Utilities/sortBy"
@@ -148,7 +148,7 @@ export const LiturgicalChantsSheetLiturgicalChants: React.FC<Props> = props => {
                         )}
                       </Textfit>
                     </td>
-                    <td className="ic">{getICName (LCWRA_.ic (e))}</td>
+                    <td className="ic">{icToStr (icFromJs (LCWRA_.ic (e)))}</td>
                     <td className="effect" />
                     <td className="ref" />
                   </tr>

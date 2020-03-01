@@ -4,9 +4,9 @@ import { fromArray, List } from "../../../../Data/List"
 import { Maybe, Nothing } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
+import { icToJs } from "../../../Constants/Groups"
 import { Spell } from "../../../Models/Wiki/Spell"
 import { AllRequirementObjects } from "../../../Models/Wiki/wikiTypeHelpers"
-import { icToInt } from "../../AdventurePoints/improvementCostUtils"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
@@ -30,7 +30,7 @@ const toSpell : YamlPairConverterE<SpellUniv, SpellL10n, string, Spell>
                     check: List (univ.check1, univ.check2, univ.check3),
                     checkmod: Maybe (univ.checkMod),
                     gr: univ .gr,
-                    ic: icToInt (univ .ic),
+                    ic: icToJs (univ .ic),
                     property: univ.property,
                     tradition: fromArray (univ.traditions),
                     subtradition: List (),

@@ -7,10 +7,10 @@ import { fromMaybe, Just, Maybe, Nothing } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Pair, uncurry } from "../../../../Data/Tuple"
+import { icToJs } from "../../../Constants/Groups"
 import { Skill } from "../../../Models/Wiki/Skill"
 import { Application } from "../../../Models/Wiki/sub/Application"
 import { Use } from "../../../Models/Wiki/sub/Use"
-import { icToInt } from "../../AdventurePoints/improvementCostUtils"
 import { pipe, pipe_ } from "../../pipe"
 import { map } from "../Array"
 import { mapM } from "../Either"
@@ -101,7 +101,7 @@ const toSkill : YamlPairConverterE<SkillUniv, SkillL10n, string, Skill>
                       encumbrance: univ.enc,
                       encumbranceDescription: Maybe (l10n.encDescription),
                       gr: univ.gr,
-                      ic: icToInt (univ.ic),
+                      ic: icToJs (univ.ic),
                       applications,
                       applicationsInput: Maybe (l10n.applicationsInput),
                       uses,

@@ -7,7 +7,6 @@ import { Record } from "../../../../Data/Record"
 import { Tuple } from "../../../../Data/Tuple"
 import { SkillId } from "../../../Constants/Ids"
 import { ElvenMagicalSong as EMS } from "../../../Models/Wiki/ElvenMagicalSong"
-import { icToInt } from "../../AdventurePoints/improvementCostUtils"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
@@ -32,7 +31,7 @@ const toEMS : YamlPairConverterE<ElvenMagicalSongUniv, ElvenMagicalSongL10n, str
                   skill: univ.skill === undefined
                          ? List (SkillId.Singing, SkillId.Music)
                          : List (univ.skill),
-                  ic: icToInt (univ .ic),
+                  ic: univ .ic,
                   property: univ.property,
                   effect: toMarkdown (l10n.effect),
                   cost: l10n.aeCost,

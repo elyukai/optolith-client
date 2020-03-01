@@ -3,7 +3,8 @@ import { Maybe, Nothing } from "../../../Data/Maybe"
 import { fromDefault, Record } from "../../../Data/Record"
 import { Tuple } from "../../../Data/Tuple"
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/All"
-import { MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
+import { icToJs, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
+import { t as IC } from "../../Utilities/IC.gen"
 import { Spell } from "./Spell"
 import { Erratum } from "./sub/Errata"
 import { SourceLink } from "./sub/SourceLink"
@@ -15,7 +16,7 @@ export interface RogueSpell {
   name: string
   check: Tuple<[string, string, string]>
   checkmod: Maybe<CheckModifier>
-  ic: number
+  ic: IC
   property: Property
   effect: string
   castingTime: string
@@ -38,7 +39,7 @@ export const RogueSpell =
                 name: "",
                 check: Tuple ("", "", ""),
                 checkmod: Nothing,
-                ic: 0,
+                ic: "A",
                 property: 0,
                 effect: "",
                 castingTime: "",
@@ -64,7 +65,7 @@ export const rogueSpellToSpell = (x: Record<RogueSpell>): Record<Spell> => Spell
                                    ),
                                    checkmod: RogueSpell.A.checkmod (x),
                                    gr: MagicalGroup.RogueSpells,
-                                   ic: RogueSpell.A.ic (x),
+                                   ic: icToJs (RogueSpell.A.ic (x)),
                                    property: RogueSpell.A.property (x),
                                    tradition: List (MagicalTradition.Rogues),
                                    subtradition: List (),

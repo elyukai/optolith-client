@@ -28,7 +28,7 @@ import { getBlessedTradition, mapBlessedTradIdToNumId } from "../Utilities/Activ
 import { composeL } from "../Utilities/compose"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
-import { getAspectsOfTradition, isLiturgicalChantDecreasable, isLiturgicalChantIncreasable, isOwnTradition } from "../Utilities/Increasable/liturgicalChantUtils"
+import { getAspectsOfTradition, isLCDecreasable, isLCIncreasable, isOwnTradition } from "../Utilities/Increasable/liturgicalChantUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { filterByAvailability } from "../Utilities/RulesUtils"
 import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils"
@@ -103,20 +103,20 @@ export const getActiveLiturgicalChants = createMaybeSelector (
                                        fmap (wiki_entry =>
                                          LiturgicalChantWithRequirements ({
                                            isIncreasable:
-                                             isLiturgicalChantIncreasable (blessed_trad)
-                                                                          (wiki_entry)
-                                                                          (hero_entry)
-                                                                          (start_el)
-                                                                          (HA.phase (hero))
-                                                                          (HA.attributes (hero))
-                                                                          (mexceptional_skill)
-                                                                          (maspect_knowledge),
+                                             isLCIncreasable (blessed_trad)
+                                                             (start_el)
+                                                             (HA.phase (hero))
+                                                             (HA.attributes (hero))
+                                                             (mexceptional_skill)
+                                                             (maspect_knowledge)
+                                                             (wiki_entry)
+                                                             (hero_entry),
                                            isDecreasable:
-                                             isLiturgicalChantDecreasable (wiki)
-                                                                          (hero)
-                                                                          (maspect_knowledge)
-                                                                          (wiki_entry)
-                                                                          (hero_entry),
+                                             isLCDecreasable (wiki)
+                                                             (hero)
+                                                             (maspect_knowledge)
+                                                             (wiki_entry)
+                                                             (hero_entry),
                                            stateEntry: hero_entry,
                                            wikiEntry: wiki_entry,
                                          }))

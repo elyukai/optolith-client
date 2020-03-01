@@ -2,6 +2,7 @@ import { bind, bindF, fromJust, isJust, isNothing, join, liftM2 } from "../../Da
 import { lookup } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import * as ActionTypes from "../Constants/ActionTypes"
+import { icFromJs } from "../Constants/Groups"
 import { SpellsSortOptions } from "../Models/Config"
 import { HeroModel } from "../Models/Hero/HeroModel"
 import { Cantrip } from "../Models/Wiki/Cantrip"
@@ -10,7 +11,7 @@ import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
 import { getCurrentHeroPresent, getSpells, getWikiCantrips, getWikiSpells } from "../Selectors/stateSelectors"
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
-import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUtils"
+import { getAPForActivatation } from "../Utilities/IC.gen"
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
 import { pipe_ } from "../Utilities/pipe"
 import { ReduxAction } from "./Actions"
@@ -42,7 +43,7 @@ export const addSpell =
           bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { hero })),
           join,
           bindF (getMissingAP (getIsInCharacterCreation (state))
-                              (pipe_ (wiki_entry, Spell.A.ic, getICMultiplier)))
+                              (pipe_ (wiki_entry, Spell.A.ic, icFromJs, getAPForActivatation)))
         )
 
       if (isNothing (missingAPForInc)) {

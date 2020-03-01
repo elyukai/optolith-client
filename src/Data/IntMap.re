@@ -1,5 +1,7 @@
 module IntMap = Map.Make(Int32);
 
+type t('a) = IntMap.t('a);
+
 /**
  * Right-associative fold of a structure.
  */

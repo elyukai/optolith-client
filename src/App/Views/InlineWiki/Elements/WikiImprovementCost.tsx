@@ -1,7 +1,8 @@
 import * as React from "react"
 import { Record, RecordIBase } from "../../../../Data/Record"
+import { icFromJs } from "../../../Constants/Groups"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
-import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils"
+import { icToStr } from "../../../Utilities/IC.gen"
 import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
@@ -25,7 +26,7 @@ export const WikiImprovementCost: FC = props => {
 
   return (
     <WikiProperty staticData={staticData} title="inlinewiki.improvementcost">
-      {getICName (acc.ic (x))}
+      {icToStr (icFromJs (acc.ic (x)))}
     </WikiProperty>
   )
 }

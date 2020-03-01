@@ -5,7 +5,6 @@ import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Tuple } from "../../../../Data/Tuple"
 import { ZibiljaRitual as ZR } from "../../../Models/Wiki/ZibiljaRitual"
-import { icToInt } from "../../AdventurePoints/improvementCostUtils"
 import { ndash } from "../../Chars"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
@@ -28,7 +27,7 @@ const toZibiljaRitual : YamlPairConverterE<ZibiljaRitualUniv, ZibiljaRitualL10n,
                             name: l10n.name,
                             check: Tuple (univ.check1, univ.check2, univ.check3),
                             checkmod: Maybe (univ.checkMod),
-                            ic: icToInt (univ .ic),
+                            ic: univ .ic,
                             property: univ.property,
                             effect: toMarkdown (l10n.effect),
                             castingTime: ndash,
