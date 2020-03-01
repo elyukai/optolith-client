@@ -3,20 +3,44 @@
 ### Neue Features
 
 - Französische Version (inkl. Regelwerk) #34
+- Aventurische Magie 2 #41
 - Aventurisches Kompendium 2 #93
 
 ### Verbesserungen
 
+- Das Suchfeld im Wiki wird jetzt nicht mehr gelöscht, wenn man die Kategorie wechselt. #286
+- Wenn der Import eines Helden fehlschlägt, werden nun genauere Infos gegeben, was genau das Problem war. (inkompatible Version, invalide Datei, etc.) #343 #394
 - Komplett neuer Datenbankunterbau und dadurch Ladezeitersparnis von ca. 50%
 
 ### Fehlerbehebungen
 
-- Hexenblick und Elfenhaar sind jetzt nur noch für Hexen bzw. Elfen wählbar. #377
+- Die Sprachtabelle verzerrte das Layout, wenn Hjaldisch/Saga-Thorwalsch aktiv war. #419
+- SF *Zugvögel*: Statt Rahjaliturgien standen Travialiturgien zur Auswahl. #423
+- Die Texte bei den persönliche Daten auf dem Heldenbogen wurden teilweise beschnitten. #413
+- Die Profession *Schwarzmagier (Schüler des Demirion Ophenos)* hatte falsche AP-Kosten. #344
+- Die Ausrichtung des Gesamtgewichts auf dem Besitz-Bogen wurde behoben #291
+- Ein Gegenstand konnte nicht als improvisierte Waffe eingetragen werden #290
+- SF *Jägerinnen der weißen Maid*: Mögliche Liturgien zeigten keine Aspekte an #289
+- Die Infotabelle für Routineproben war nicht richtig ausgerichtet #214
+- Angst vor: Auswahl/eigener Text wurde auf dem Heldenbogen nicht angezeigt #213
+- Man konnte keine Bilder von einem Server als Bild importieren #229 
+- Das Hinzufügen von AP funktionierte nicht, wenn man nicht das Eingabefeld verlassen hat #341
+- Waffen, die keinen Schaden verursachen, zeigen nicht mehr nur "W" als Schaden #353
+- Keine Talentwertverringerung *Fährtensuche* mehr möglich bei Jäger (Kopfgeldjäger) #357
+- SF *Vorstoß* hatte KT Schwerter doppelt aufgeführt #355
+- Ein exportierter Held mit einer BOM konnte nicht gelesen werden #37
+- Gegenstandsänderungen konnten in bestimmten Situationen nicht gespeichert werden #389
+- Fehler behoben, dass das Feld "Wo getragen?" bei Gegenständen nicht gespeichert wurde #369
+- Die Zaubertricks Hexenblick und Elfenhaar sind jetzt nur noch für Hexen bzw. Elfen wählbar. #377
 - Die Obergrenze durch die Leiteigenschaft bei Kampftechniken funktioniert jetzt wieder. #379
 - Typo in ATTRIBUTO (Körperkraft), zweite Erweiterung behoben. #366
-- Wurfnetz war bei Schleudern anstelle bei Wurfwaffen hinterlegt. #345
-- Typo im Text der SF Abrichter behoben. #342
+- Wurfnetz war bei *Schleudern* anstelle bei *Wurfwaffen* hinterlegt. #345
+- Typo im Text der SF *Abrichter* behoben. #342
 - Die Anwendungskonfiguration wirft jetzt keine Fehler mehr hervor. #358
+
+### API
+
+Es gibt auf [GitHub](https://github.com/elyukai/optolith-client/tree/develop/app/Schema/Hero) jetzt ein einfaches Schema zum Validieren eines Helden. Ein vollständiges Schema ist in Arbeit; die unvollständige Variante findet sich ebenfalls im verlinkten Ordner.
 
 ## 1.2.0
 

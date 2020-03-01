@@ -1,18 +1,39 @@
 ## 1.3.0
 
-## New Features
+### New Features
 
 - French version (incl. Core Rules) #34
 
-## Enhancements
+### Enhancements
 
+- The search bar in wiki will not be cleared anymore if you switch the category. #286
+- If importing a hero fails you'll now get more detailed information about the cause of the problem. (Incompatible version, invalid file, ...) #343 #394
 - Completely new database layer and thus start-up time reduction up to 50%
 
-## Bug Fixes
+### Bug Fixes
 
+- Languages overflow on character sheet if Hjaldingsh is active. #419
+- Personal data font is truncated vertically on character sheet. #413
+- Profession *Black Mage (Demirion Ophenos's Student)* had wrong AP cost. #344
+- Fixed weight total alignment on belongings sheet #291 
+- An item could not be set as an improvised weapon #290 
+- Routine Checks table: wrong alignment #214 
+- Afraid of: Selection/Custom text did not appear on character sheet #213 
+- Could not upload profile image from windows network share #229 
+- Adding AP did not work if you didn't leave the input field #341 
+- Weapons that do not apply damage only showed "D" as Damage #353
+- There was no Skill Rating decrease possible for *Tracking* with SA Hunter #357
+- SA *Onslaught* lists CT *Swords* twice #355
+- Could not read exported hero with BOM #370
+- Item changes could be saved in certain situations #389
+- Fixed field "Carried where" on items not persisted #369
 - The maximum of CTs caused by their primary attributes has been fixed. #379
-- Cast-Net has had the CT Slings instead of Thrown Weapons. #345
+- Cast-Net has had the CT *Slings* instead of *Thrown Weapons*. #345
 - The app config does not cause errors anymore. #358
+
+### API
+
+As of now, there is a simple scheme for validating a hero available on [GitHub](https://github.com/elyukai/optolith-client/tree/develop/app/Schema/Hero). A complete schema is in the works; the incomplete version can also be found in the linked folder.
 
 ## 1.2.0
 
