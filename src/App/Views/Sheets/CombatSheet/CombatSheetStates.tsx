@@ -1,5 +1,6 @@
 import * as React from "react"
-import { List, map, splitAt, toArray } from "../../../../Data/List"
+import { flength, List, map, splitAt, toArray } from "../../../../Data/List"
+import { even } from "../../../../Data/Num"
 import { Record } from "../../../../Data/Record"
 import { fst, snd } from "../../../../Data/Tuple"
 import { Condition } from "../../../Models/Wiki/Condition"
@@ -18,7 +19,9 @@ interface Props {
 export const CombatSheetStates: React.FC<Props> = props => {
   const { staticData, conditions, states } = props
 
-  const statesSplit = splitAt (9) (states)
+  const len = flength (states)
+
+  const statesSplit = splitAt (even (len) ? len : Math.floor (len / 2)) (states)
 
   return (
     <div className="status">
