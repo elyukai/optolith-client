@@ -5,6 +5,7 @@ import { Record } from "../../Data/Record"
 import { MagicalTradition } from "../Models/Wiki/MagicalTradition"
 import { StaticData } from "../Models/Wiki/WikiModel"
 import { pipe, pipe_ } from "../Utilities/pipe"
+import { memoizeLast } from "./Memo"
 
 const SDA = StaticData.A
 const MTA = MagicalTradition.A

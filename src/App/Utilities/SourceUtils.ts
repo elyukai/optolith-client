@@ -1,8 +1,8 @@
-import { flip, on } from "../../Data/Function"
+import { flip, ident, on } from "../../Data/Function"
 import { fmap } from "../../Data/Functor"
 import { range } from "../../Data/Ix"
-import { consF, foldr, intercalate, List, map, reverse, setAt, sortBy } from "../../Data/List"
-import { listToMaybe, mapMaybe, maybe_ } from "../../Data/Maybe"
+import { consF, foldr, intercalate, List, map, notNull, reverse, setAt, sortBy } from "../../Data/List"
+import { ensure, listToMaybe, mapMaybe, maybe, maybe_ } from "../../Data/Maybe"
 import { compare } from "../../Data/Num"
 import { adjust, adjustDef, foldrWithKey, lookupF, OrderedMap } from "../../Data/OrderedMap"
 import { empty, insert, OrderedSet, sdelete, toList } from "../../Data/OrderedSet"
@@ -86,15 +86,14 @@ const showPages =
   )
 
 export const showSources =
-  (staticData: StaticDataRecord) =>
+  (staticData: StaticDataRecord): (xs: List<Record<SourceLinks>>) => string =>
     pipe (
-      mapMaybe ((x: Record<SourceLinks>) =>
-                 pipe_ (
-                   x,
-                   SLsA.id,
-                   lookupF (SDA.books (staticData)),
-                   fmap (pipe (BA.name, name => Pair (name, showPages (SLsA.pages (x)))))
-                 )),
+      mapMaybe (x => pipe_ (
+                 x,
+                 SLsA.id,
+                 lookupF (SDA.books (staticData)),
+                 fmap (pipe (BA.name, name => Pair (name, showPages (SLsA.pages (x)))))
+               )),
       sortBy (on (compareLocale (staticData)) (fst)),
       map (x => `${fst (x)} ${snd (x)}`),
       intercalate ("; ")
@@ -117,14 +116,17 @@ export const mergeSourcesWithout:
                            adjust (flip (foldr (sdelete)) (toList (x))) (k)))
            (foldr (unfoldSources) (OrderedMap.empty) (excludes)),
       foldrWithKey ((k: string) => (x: OrderedSet<number>) =>
-                    consF (SourceLinks ({
-                            id: k,
-                            pages: pipe_ (
-                              x,
-                              toList,
-                              groupSortInt
-                            ),
-                          })))
+                     pipe_ (
+                       x,
+                       toList,
+                       groupSortInt,
+                       ensure (notNull),
+                       maybe (ident as ident<List<Record<SourceLinks>>>)
+                             (pages => consF (SourceLinks ({
+                                               id: k,
+                                               pages,
+                                             })))
+                     ))
                   (List ())
     )
 

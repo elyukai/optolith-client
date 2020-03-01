@@ -1,11 +1,4 @@
-module Str = {
-  type t = string;
-  let compare = compare;
-};
-
-module StrMap = Map.Make(Str);
-
-include StrMap;
+module StrMap = Map.Make(String);
 
 /**
  * Right-associative fold of a structure.

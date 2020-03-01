@@ -1,7 +1,7 @@
 /**
  * Memoizes (only) the most recent parameter passed to the function.
  */
-const memoizeLast = <A, B> (f: (x: A) => B) => {
+export const memoizeLast = <A, B> (f: (x: A) => B) => {
   let last: [A, B] | undefined = undefined
 
   return (x: A): B => {

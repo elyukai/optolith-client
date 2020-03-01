@@ -1,11 +1,4 @@
-module Int = {
-  type t = int;
-  let compare = compare;
-};
-
-module IntMap = Map.Make(Int);
-
-include IntMap;
+module IntMap = Map.Make(Int32);
 
 /**
  * Right-associative fold of a structure.

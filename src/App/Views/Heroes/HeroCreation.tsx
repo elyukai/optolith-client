@@ -149,6 +149,7 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
         onChange={setName}
         fullWidth
         autoFocus
+        everyKeyDown
         />
       <SegmentedControls
         active={msex}

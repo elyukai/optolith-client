@@ -16,8 +16,6 @@ export interface RawHeroBase {
 }
 
 export interface RawHero_1_2_0_alpha_11 extends RawHeroBase {
-  readonly id: string
-  readonly name: string
   readonly locale?: string
   readonly avatar?: string
   readonly ap: {
