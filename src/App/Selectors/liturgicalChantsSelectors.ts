@@ -11,7 +11,7 @@ import { insert, member, OrderedSet } from "../../Data/OrderedSet"
 import { Record } from "../../Data/Record"
 import { fst, snd } from "../../Data/Tuple"
 import { uncurryN, uncurryN3, uncurryN4, uncurryN5, uncurryN6 } from "../../Data/Tuple/Curry"
-import { Aspect, IC } from "../Constants/Groups"
+import { Aspect, BlessedTradition, IC } from "../Constants/Groups"
 import { AdvantageId, SpecialAbilityId } from "../Constants/Ids"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
@@ -258,13 +258,11 @@ export const getAdditionalValidLiturgicalChants = createMaybeSelector (
       inactives =>
       actives => {
         if (isMaybeActive (zugvoegel)) {
-                        // Phex
-          return append (additionalInactiveListFilter (isTrad (6))
+          return append (additionalInactiveListFilter (isTrad (BlessedTradition.ChurchOfPhex))
                                                       (inactives)
                                                       (actives))
 
-                        // Travia
-                        (additionalInactiveListFilter (isTrad (9))
+                        (additionalInactiveListFilter (isTrad (BlessedTradition.ChurchOfRahja))
                                                       (inactives)
                                                       (actives))
         }
