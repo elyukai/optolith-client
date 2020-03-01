@@ -1,11 +1,11 @@
 import { fmap } from "../../Data/Functor"
-import { fnull, intercalate, List, NonEmptyList, subscript, unsnoc } from "../../Data/List"
-import { maybe, Maybe, normalize, sum } from "../../Data/Maybe"
+import { fnull, intercalate, List, NonEmptyList, notNull, subscript, unsnoc } from "../../Data/List"
+import { ensure, maybe, Maybe, normalize, sum } from "../../Data/Maybe"
 import { toOrdering } from "../../Data/Ord"
-import { fst, snd } from "../../Data/Tuple"
+import { first, fst, Pair, snd } from "../../Data/Tuple"
 import { L10n } from "../Models/Wiki/L10n"
 import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
-import { pipe } from "./pipe"
+import { pipe, pipe_ } from "./pipe"
 
 const SDA = StaticData.A
 
@@ -167,3 +167,38 @@ export const localizeOrList: (staticData: StaticDataRecord)
                                        : concatMultiple (staticData) (init) (snd (x))
                                    })
                            )
+
+const getFormattedSep = (type: "conjunction" | "disjunction") =>
+                        (static_data: StaticDataRecord): string =>
+                          type === "conjunction"
+                          ? translate (static_data) ("general.and")
+                          : translate (static_data) ("general.or")
+
+const joinWithSep = (type: "conjunction" | "disjunction") =>
+                    (static_data: StaticDataRecord) =>
+                    (str2: string | number) =>
+                    (str1: string): string =>
+                      `${str1} ${getFormattedSep (type) (static_data)} ${str2}`
+
+const forceStr = (x: string | number) => typeof x === "number" ? String (x) : x
+
+export const formatList = (type: "conjunction" | "disjunction") =>
+                          (static_data: StaticDataRecord) =>
+                          (xs: List<string | number>): string =>
+                            pipe_ (
+                              xs,
+                              unsnoc,
+                              maybe ("")
+                                    (pipe (
+                                      first (pipe (ensure (notNull), fmap (intercalate (", ")))),
+                                      (p: Pair<Maybe<string>, string | number>) =>
+                                        pipe_ (
+                                          p,
+                                          fst,
+                                          maybe (forceStr (snd (p)))
+                                                (joinWithSep (type)
+                                                             (static_data)
+                                                             (forceStr (snd (p))))
+                                        )
+                                    ))
+                            )

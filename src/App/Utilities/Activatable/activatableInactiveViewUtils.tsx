@@ -30,7 +30,6 @@ import { Dropdown } from "../../Views/Universal/Dropdown"
 import { TextField } from "../../Views/Universal/TextField"
 import { getActiveWithNoCustomCost } from "../AdventurePoints/activatableCostUtils"
 import { translate } from "../I18n"
-import { prefixSkill } from "../IDUtils"
 import { getLevelElementsWithMin } from "../levelUtils"
 import { toInt } from "../NumberUtils"
 import { pipe, pipe_ } from "../pipe"
@@ -554,10 +553,8 @@ export const getIdSpecificAffectedAndDispatchProps =
           (mother_id: Maybe<string | number>) =>
             pipe_ (
               mselected,
-              bindF (pipe (
-                prefixSkill,
-                lookupF (SDA.skills (staticData))
-              )),
+              misStringM,
+              bindF (lookupF (SDA.skills (staticData))),
               fmap (SkA.applications),
               joinMaybeList,
               maybe (ident as ident<List<Record<Application>>>)
@@ -760,6 +757,7 @@ export const insertFinalCurrentCost =
 interface InactiveActivatableControlElementsInputHandlers {
   handleSelect (option: Maybe<string | number>): void
   handleSecondSelect (option: Maybe<string | number>): void
+  handleThirdSelect (option: Maybe<string | number>): void
   handleLevel (option: Maybe<number>): void
   handleInput (text: string): void
   selectElementDisabled: boolean
@@ -775,12 +773,14 @@ export const getInactiveActivatableControlElements =
     const id = IAA.id (entry)
     const mselected = selectedOptions.selected
     const mselected2 = selectedOptions.selected2
+    const mselected3 = selectedOptions.selected3
     const minput_text = selectedOptions.input
     const mselected_level = selectedOptions.selectedTier
 
     const msels = pipe_ (props, snd, PABYA.firstSelectOptions, altF (IAA.selectOptions (entry)))
 
     const msels2 = pipe_ (props, snd, PABYA.secondSelectOptions)
+    const msels3 = pipe_ (props, snd, PABYA.thirdSelectOptions)
 
     const minput_desc =
       pipe_ (
@@ -924,26 +924,49 @@ export const getInactiveActivatableControlElements =
                        ))),
             set (IACEL.disabled) (Just (isNothing (mselected2) && isNothing (minput_text)))
           )
-        : maybe (ident as ident<Record<InactiveActivatableControlElements>>)
-                (pipe (
-                  map (selectToDropdownOption),
-                  sels2 =>
-                    set (IACEL.secondSelectElement)
-                        (Just (
-                          <Dropdown
-                            value={mselected2}
-                            onChange={inputHandlers.handleSecondSelect}
-                            options={sels2}
-                            disabled={isNothing (mselected)}
-                            />
-                        )),
-                  f => pipe (
-                    f,
-                    isNothing (mselected2)
-                      ? set (IACEL.disabled) (Just (true))
-                      : ident
-                  )
-                ))
-                (msels2)
+        : pipe (
+            maybe (ident as ident<Record<InactiveActivatableControlElements>>)
+                  (pipe (
+                    map (selectToDropdownOption),
+                    sels2 =>
+                      set (IACEL.secondSelectElement)
+                          (Just (
+                            <Dropdown
+                              value={mselected2}
+                              onChange={inputHandlers.handleSecondSelect}
+                              options={sels2}
+                              disabled={isNothing (mselected)}
+                              />
+                          )),
+                    f => pipe (
+                      f,
+                      isNothing (mselected2)
+                        ? set (IACEL.disabled) (Just (true))
+                        : ident
+                    )
+                  ))
+                  (msels2),
+            maybe (ident as ident<Record<InactiveActivatableControlElements>>)
+                  (pipe (
+                    map (selectToDropdownOption),
+                    sels3 =>
+                      set (IACEL.thirdSelectElement)
+                          (Just (
+                            <Dropdown
+                              value={mselected3}
+                              onChange={inputHandlers.handleThirdSelect}
+                              options={sels3}
+                              disabled={isNothing (mselected)}
+                              />
+                          )),
+                    f => pipe (
+                      f,
+                      isNothing (mselected3)
+                        ? set (IACEL.disabled) (Just (true))
+                        : ident
+                    )
+                  ))
+                  (msels3)
+        )
     )
   }

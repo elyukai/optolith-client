@@ -195,6 +195,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
                                             handleInput,
                                             handleSelect,
                                             handleSecondSelect: setSelected2,
+                                            handleThirdSelect: setSelected3,
                                             handleLevel,
                                             selectElementDisabled,
                                           })
