@@ -14,6 +14,7 @@
 
 ### Fehlerbehebungen
 
+- Der Cache für AP funktioniert jetzt wieder ordnungsgemäß, wenn man nicht alle Helden speichert. #416
 - Die Sprachtabelle verzerrte das Layout, wenn Hjaldisch/Saga-Thorwalsch aktiv war. #419
 - SF *Zugvögel*: Statt Rahjaliturgien standen Travialiturgien zur Auswahl. #423
 - Die Texte bei den persönliche Daten auf dem Heldenbogen wurden teilweise beschnitten. #413

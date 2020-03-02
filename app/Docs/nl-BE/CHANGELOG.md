@@ -12,6 +12,7 @@
 
 ### Fehlerbehebungen
 
+- Der Cache für AP funktioniert jetzt wieder ordnungsgemäß, wenn man nicht alle Helden speichert. #416
 - Die Sprachtabelle verzerrte das Layout, wenn Hjaldisch/Saga-Thorwalsch aktiv war. #419
 - Die Texte bei den persönliche Daten auf dem Heldenbogen wurden teilweise beschnitten. #413
 - Die Ausrichtung des Gesamtgewichts auf dem Besitz-Bogen wurde behoben #291

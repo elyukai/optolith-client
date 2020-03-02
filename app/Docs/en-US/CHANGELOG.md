@@ -12,6 +12,7 @@
 
 ### Bug Fixes
 
+- The cache for AP is now working properly after not saving all of the heroes. #416
 - Languages overflow on character sheet if Hjaldingsh is active. #419
 - Personal data font is truncated vertically on character sheet. #413
 - Profession *Black Mage (Demirion Ophenos's Student)* had wrong AP cost. #344
