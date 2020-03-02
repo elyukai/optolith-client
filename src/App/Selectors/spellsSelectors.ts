@@ -1,5 +1,5 @@
 import { notEquals } from "../../Data/Eq"
-import { cnst, thrush } from "../../Data/Function"
+import { cnst } from "../../Data/Function"
 import { fmap, fmapF } from "../../Data/Functor"
 import { set } from "../../Data/Lens"
 import { append, countWith, elemF, fnull, List, ListI, map, notNull, partition } from "../../Data/List"
@@ -9,7 +9,7 @@ import { elems, lookup, lookupF } from "../../Data/OrderedMap"
 import { member } from "../../Data/OrderedSet"
 import { Record } from "../../Data/Record"
 import { fst, snd } from "../../Data/Tuple"
-import { uncurryN, uncurryN3, uncurryN5 } from "../../Data/Tuple/Curry"
+import { uncurryN, uncurryN3, uncurryN4, uncurryN5 } from "../../Data/Tuple/Curry"
 import { MagicalGroup } from "../Constants/Groups"
 import { PhaseId } from "../Constants/Ids.bs"
 import { AdvantageId, SpecialAbilityId } from "../Constants/Ids.gen"
@@ -95,64 +95,90 @@ const getIsUnfamiliarSpell = createMaybeSelector (
 
 
 export const getActiveSpells = createMaybeSelector (
+  getMagicalTraditionsFromWiki,
   getStartEl,
   mapGetToMaybeSlice (getAdvantages) (AdvantageId.exceptionalSkill),
   mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.propertyKnowledge),
   getWiki,
   getHeroProp,
   getIsUnfamiliarSpell,
-  (mstart_el, mexceptional_skill, maproperty_knowledge, wiki, hero, isUnfamiliar) =>
-    fmap ((start_el: Record<ExperienceLevel>) =>
-           thrush (elems (HA.spells (hero)))
-                  (mapMaybe (pipe (
-                    ensure (ASDA.active),
-                    bindF (hero_entry =>
-                            pipe_ (
-                              wiki,
-                              SDA.spells,
-                              lookup (ASDA.id (hero_entry)),
-                              fmap (wiki_entry =>
-                                SpellWithRequirements ({
-                                  isIncreasable:
-                                    isSpellIncreasable (start_el)
-                                                       (HA.phase (hero))
-                                                       (HA.attributes (hero))
-                                                       (mexceptional_skill)
-                                                       (maproperty_knowledge)
-                                                       (wiki_entry)
-                                                       (hero_entry),
-                                  isDecreasable:
-                                    isSpellDecreasable (wiki)
-                                                       (hero)
-                                                       (maproperty_knowledge)
-                                                       (wiki_entry)
-                                                       (hero_entry),
-                                  isUnfamiliar: isUnfamiliar (wiki_entry),
-                                  stateEntry: hero_entry,
-                                  wikiEntry: wiki_entry,
-                                }))
-                            ))
-                  ))))
-         (mstart_el)
+  (trads, mstart_el, mexceptional_skill, maproperty_knowledge, wiki, hero, isUnfamiliar) => {
+    const isLastTrad = isIdInSpecialAbilityList (trads)
+
+    const isUnfamiliarCustom =
+      isLastTrad (SpecialAbilityId.traditionSchelme)
+      || isLastTrad (SpecialAbilityId.traditionZauberalchimisten)
+      ? () => false
+      : isUnfamiliar
+
+    return fmapF (mstart_el)
+                 (start_el =>
+                   pipe_ (
+                     hero,
+                     HA.spells,
+                     elems,
+                     mapMaybe (pipe (
+                       ensure (ASDA.active),
+                       bindF (hero_entry =>
+                               pipe_ (
+                                 wiki,
+                                 SDA.spells,
+                                 lookup (ASDA.id (hero_entry)),
+                                 fmap (wiki_entry =>
+                                   SpellWithRequirements ({
+                                     isIncreasable:
+                                       isSpellIncreasable (start_el)
+                                                          (HA.phase (hero))
+                                                          (HA.attributes (hero))
+                                                          (mexceptional_skill)
+                                                          (maproperty_knowledge)
+                                                          (wiki_entry)
+                                                          (hero_entry),
+                                     isDecreasable:
+                                       isSpellDecreasable (wiki)
+                                                          (hero)
+                                                          (maproperty_knowledge)
+                                                          (wiki_entry)
+                                                          (hero_entry),
+                                     isUnfamiliar: isUnfamiliarCustom (wiki_entry),
+                                     stateEntry: hero_entry,
+                                     wikiEntry: wiki_entry,
+                                   }))
+                               ))
+                    ))
+                   ))
+  }
 )
 
 
 export const getActiveAndInactiveCantrips = createMaybeSelector (
+  getMagicalTraditionsFromWiki,
   getIsUnfamiliarSpell,
   getWikiCantrips,
   getCantrips,
-  uncurryN3 (isUnfamiliar =>
-             wiki_cantrips => fmap (hero_cantrips => pipe_ (
-                                     wiki_cantrips,
-                                     elems,
-                                     map (wiki_entry => CantripCombined ({
-                                       wikiEntry: wiki_entry,
-                                       active: member (CA.id (wiki_entry))
-                                                      (hero_cantrips),
-                                       isUnfamiliar: isUnfamiliar (wiki_entry),
-                                     })),
-                                     partition (CCA.active)
-                                   )))
+  uncurryN4 (trads =>
+             isUnfamiliar =>
+             wiki_cantrips => {
+               const isLastTrad = isIdInSpecialAbilityList (trads)
+
+               const isUnfamiliarCustom =
+                 isLastTrad (SpecialAbilityId.traditionSchelme)
+                 || isLastTrad (SpecialAbilityId.traditionZauberalchimisten)
+                 ? () => false
+                 : isUnfamiliar
+
+               return fmap (hero_cantrips => pipe_ (
+                                               wiki_cantrips,
+                                               elems,
+                                               map (wiki_entry => CantripCombined ({
+                                                 wikiEntry: wiki_entry,
+                                                 active: member (CA.id (wiki_entry))
+                                                                (hero_cantrips),
+                                                 isUnfamiliar: isUnfamiliarCustom (wiki_entry),
+                                               })),
+                                               partition (CCA.active)
+                                             ))
+             })
 )
 
 
@@ -207,7 +233,7 @@ export const getInactiveSpells = createMaybeSelector (
     trads_hero =>
     hero =>
     trads_wiki =>
-    is_max_unfamiliar => {
+    (is_max_unfamiliar): List<Record<SpellWithRequirements>> => {
       const isLastTrad = isIdInSpecialAbilityList (trads_wiki)
 
       const is_spells_rituals_count_max_reached = isSpellsRitualsCountMaxReached (wiki)
@@ -227,6 +253,10 @@ export const getInactiveSpells = createMaybeSelector (
         return getInactiveSpellsForSchelme (wiki)
                                            (hero)
                                            (is_spells_rituals_count_max_reached)
+      }
+
+      if (isLastTrad (SpecialAbilityId.traditionZauberalchimisten)) {
+        return List ()
       }
 
       if (isLastTrad (SpecialAbilityId.traditionAnimisten)) {
