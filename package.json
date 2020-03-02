@@ -13,6 +13,7 @@
   "dependencies": {
     "@glennsl/bs-json": "5.0.2",
     "ajv": "6.11.0",
+    "bs-platform": "7.1.1",
     "classnames": "2.2.6",
     "electron-log": "3.0.5",
     "electron-updater": "4.0.6",
@@ -55,7 +56,6 @@
     "@typescript-eslint/eslint-plugin": "2.19.0",
     "@typescript-eslint/parser": "2.19.0",
     "basic-ftp": "3.8.1",
-    "bs-platform": "7.1.1",
     "custom-env": "1.0.2",
     "electron": "8.0.0",
     "electron-builder": "21.2.0",
