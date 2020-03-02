@@ -24,4 +24,4 @@ src/App/Utilities/YAML/Schema/
 /lib/bs/
 .merlin
 .bsb.lock
-.tsbuildinfo
+*.tsbuildinfo
