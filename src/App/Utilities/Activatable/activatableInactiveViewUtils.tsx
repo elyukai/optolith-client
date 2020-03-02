@@ -5,7 +5,7 @@ import { Functn, ident } from "../../../Data/Function"
 import { fmap, fmapF } from "../../../Data/Functor"
 import { over, set } from "../../../Data/Lens"
 import { cons, countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, notNull, subscriptF, sum, take } from "../../../Data/List"
-import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, or, then, thenF } from "../../../Data/Maybe"
+import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, maybeToUndefined, Nothing, or, then, thenF } from "../../../Data/Maybe"
 import { dec, gte, max, min, multiply, negate } from "../../../Data/Num"
 import { elems, lookupF } from "../../../Data/OrderedMap"
 import { fromDefault, makeLenses, Record } from "../../../Data/Record"
@@ -370,7 +370,7 @@ export const getIdSpecificAffectedAndDispatchProps =
               Just (
                 <TextField
                   hint={then (guard (is_text_input_required)) (name)}
-                  value={minput_text}
+                  value={maybeToUndefined (minput_text)}
                   onChange={inputHandlers.handleInput}
                   disabled={!is_text_input_required}
                   everyKeyDown
@@ -805,7 +805,7 @@ export const getInactiveActivatableControlElements =
                 const max_level =
                   fromMaybe (levels) (pipe_ (entry, IAA.maxLevel, fmap (min (levels))))
 
-                const levelOptions =
+                const levelOptions: List<Record<DropdownOption<number>>> =
                   pipe_ (
                     getLevelElementsWithMin (min_level) (max_level),
                     ls => SpecialAbilityId.language === id && isEditingAllowed
@@ -889,7 +889,7 @@ export const getInactiveActivatableControlElements =
                     Just (
                       <TextField
                         hint={input}
-                        value={minput_text}
+                        value={maybeToUndefined (minput_text)}
                         onChange={inputHandlers.handleInput}
                         everyKeyDown
                         />
@@ -903,7 +903,7 @@ export const getInactiveActivatableControlElements =
                 (Just (
                   <TextField
                     hint={fromMaybe ("") (minput_desc)}
-                    value={minput_text}
+                    value={maybeToUndefined (minput_text)}
                     onChange={inputHandlers.handleInput}
                     disabled={isNothing (minput_desc)}
                     everyKeyDown

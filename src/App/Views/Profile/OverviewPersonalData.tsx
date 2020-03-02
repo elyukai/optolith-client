@@ -1,7 +1,7 @@
 import * as React from "react"
 import { equals } from "../../../Data/Eq"
 import { flength, List } from "../../../Data/List"
-import { all, bind, listToMaybe, Maybe } from "../../../Data/Maybe"
+import { all, bind, listToMaybe, Maybe, maybeToUndefined } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
 import { SocialStatusId } from "../../Constants/Ids"
 import { PersonalData } from "../../Models/Hero/PersonalData"
@@ -98,28 +98,28 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       <div>
         <TextField
           label={translate (staticData) ("personaldata.family")}
-          value={PDA.family (profile)}
+          value={maybeToUndefined (PDA.family (profile))}
           onChange={changeFamily}
           />
       </div>
       <div>
         <TextField
           label={translate (staticData) ("personaldata.placeofbirth")}
-          value={PDA.placeOfBirth (profile)}
+          value={maybeToUndefined (PDA.placeOfBirth (profile))}
           onChange={changePlaceOfBirth}
           />
       </div>
       <div>
         <TextField
           label={translate (staticData) ("personaldata.dateofbirth")}
-          value={PDA.dateOfBirth (profile)}
+          value={maybeToUndefined (PDA.dateOfBirth (profile))}
           onChange={changeDateOfBirth}
           />
       </div>
       <div>
         <TextField
           label={translate (staticData) ("personaldata.age")}
-          value={age}
+          value={maybeToUndefined (age)}
           onChange={changeAge}
           valid={all (isEmptyOr (isNaturalNumber)) (age)}
           />
@@ -146,7 +146,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       <InputButtonGroup className="reroll">
         <TextField
           label={`${translate (staticData) ("personaldata.size")}${wrapParenSpace (sizeCalcStr)}`}
-          value={PDA.size (profile)}
+          value={maybeToUndefined (PDA.size (profile))}
           onChange={changeSize}
           valid={all (isEmptyOr (isFloat)) (size)}
           />
@@ -157,7 +157,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
           label={
             `${translate (staticData) ("personaldata.weight")}${wrapParenSpace (weightCalcStr)}`
           }
-          value={PDA.weight (profile)}
+          value={maybeToUndefined (PDA.weight (profile))}
           onChange={changeWeight}
           valid={all (isEmptyOr (isNaturalNumber)) (weight)}
           />
@@ -166,7 +166,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       <div>
         <TextField
           label={translate (staticData) ("personaldata.title")}
-          value={PDA.title (profile)}
+          value={maybeToUndefined (PDA.title (profile))}
           onChange={changeTitle}
           />
       </div>
@@ -181,21 +181,21 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       <div>
         <TextField
           label={translate (staticData) ("personaldata.characteristics")}
-          value={PDA.characteristics (profile)}
+          value={maybeToUndefined (PDA.characteristics (profile))}
           onChange={changeCharacteristics}
           />
       </div>
       <div>
         <TextField
           label={translate (staticData) ("personaldata.otherinfo")}
-          value={PDA.otherInfo (profile)}
+          value={maybeToUndefined (PDA.otherInfo (profile))}
           onChange={changeOtherInfo}
           />
       </div>
       <div>
         <TextField
           label={translate (staticData) ("personaldata.cultureareaknowledge")}
-          value={PDA.cultureAreaKnowledge (profile)}
+          value={maybeToUndefined (PDA.cultureAreaKnowledge (profile))}
           onChange={changeCultureAreaKnowledge}
           />
       </div>

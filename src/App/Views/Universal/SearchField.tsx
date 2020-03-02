@@ -13,7 +13,7 @@ interface Props {
   fullWidth?: boolean
   staticData: StaticDataRecord
   onChange (newText: string): void
-  value?: string | number | Maybe<string | number>
+  value?: string | number
   valid?: boolean
 }
 

@@ -2,7 +2,7 @@ import * as React from "react"
 import { equals } from "../../../Data/Eq"
 import { fmap } from "../../../Data/Functor"
 import { consF, List, map, subscript } from "../../../Data/List"
-import { ensure, Just, mapMaybe, Maybe } from "../../../Data/Maybe"
+import { ensure, Just, mapMaybe, Maybe, maybeToUndefined } from "../../../Data/Maybe"
 import { elems, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { EditItem } from "../../Models/Hero/EditItem"
@@ -169,7 +169,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               <TextField
                 className="range1"
                 label={translate (staticData) ("equipment.dialogs.addedit.rangeclose")}
-                value={subscript (EIA.range (item)) (0)}
+                value={maybeToUndefined (subscript (EIA.range (item)) (0))}
                 onChange={setRange (1)}
                 disabled={locked}
                 valid={IEIVA.range1 (inputValidation)}
@@ -178,7 +178,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               <TextField
                 className="range2"
                 label={translate (staticData) ("equipment.dialogs.addedit.rangemedium")}
-                value={subscript (EIA.range (item)) (1)}
+                value={maybeToUndefined (subscript (EIA.range (item)) (1))}
                 onChange={setRange (2)}
                 disabled={locked}
                 valid={IEIVA.range2 (inputValidation)}
@@ -187,7 +187,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               <TextField
                 className="range3"
                 label={translate (staticData) ("equipment.dialogs.addedit.rangefar")}
-                value={subscript (EIA.range (item)) (2)}
+                value={maybeToUndefined (subscript (EIA.range (item)) (2))}
                 onChange={setRange (3)}
                 disabled={locked}
                 valid={IEIVA.range3 (inputValidation)}

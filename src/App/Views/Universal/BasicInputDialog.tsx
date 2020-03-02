@@ -12,7 +12,7 @@ interface Dialog {
   isOpen: boolean
   title: string
   description: string
-  value: string | Maybe<string>
+  value: string | undefined
   invalid?: Maybe<string>
   acceptLabel: string
   rejectLabel: string

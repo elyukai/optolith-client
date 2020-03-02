@@ -1,6 +1,6 @@
 import * as React from "react"
 import { List, notNullStr } from "../../../Data/List"
-import { any, ensure, fromMaybe, guardReplace, isJust, isNothing, Just, Maybe, maybe, Nothing, orN } from "../../../Data/Maybe"
+import { any, ensure, fromMaybe, guardReplace, isJust, isNothing, Just, Maybe, maybe, maybeToUndefined, Nothing, orN } from "../../../Data/Maybe"
 import { lookup } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, snd } from "../../../Data/Tuple"
@@ -296,7 +296,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
         description={
           `${translate (staticData) ("advantagesdisadvantages.dialogs.customcost.for")} ${IAA.name (item)}`
         }
-        value={mcustom_cost_preview}
+        value={maybeToUndefined (mcustom_cost_preview)}
         acceptLabel={translate (staticData) ("general.dialogs.donebtn")}
         rejectLabel={translate (staticData) ("general.dialogs.deletebtn")}
         rejectDisabled={isNothing (mcustom_cost)}

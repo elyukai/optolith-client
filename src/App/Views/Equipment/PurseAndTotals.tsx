@@ -1,12 +1,12 @@
 import * as React from "react"
-import { fmapF } from "../../../Data/Functor"
+import { fmap } from "../../../Data/Functor"
 import { List } from "../../../Data/List"
-import { fromMaybe, isJust, Maybe } from "../../../Data/Maybe"
+import { fromMaybe, isJust, Maybe, maybeToUndefined } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
 import { Purse } from "../../Models/Hero/Purse"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { localizeNumber, localizeWeight, translate, translateP } from "../../Utilities/I18n"
-import { pipe } from "../../Utilities/pipe"
+import { pipe, pipe_ } from "../../Utilities/pipe"
 import { TextField } from "../Universal/TextField"
 
 export interface PurseAndTotalsProps {
@@ -71,22 +71,22 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
         <div className="fields">
           <TextField
             label={translate (staticData) ("equipment.purse.ducats")}
-            value={fmapF (purse) (PA.d)}
+            value={pipe_ (purse, fmap (PA.d), maybeToUndefined)}
             onChange={setDucates}
             />
           <TextField
             label={translate (staticData) ("equipment.purse.silverthalers")}
-            value={fmapF (purse) (PA.s)}
+            value={pipe_ (purse, fmap (PA.s), maybeToUndefined)}
             onChange={setSilverthalers}
             />
           <TextField
             label={translate (staticData) ("equipment.purse.halers")}
-            value={fmapF (purse) (PA.h)}
+            value={pipe_ (purse, fmap (PA.h), maybeToUndefined)}
             onChange={setHellers}
             />
           <TextField
             label={translate (staticData) ("equipment.purse.kreutzers")}
-            value={fmapF (purse) (PA.k)}
+            value={pipe_ (purse, fmap (PA.k), maybeToUndefined)}
             onChange={setKreutzers}
             />
         </div>

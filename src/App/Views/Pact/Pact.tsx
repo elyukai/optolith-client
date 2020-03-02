@@ -4,7 +4,7 @@ import { equals } from "../../../Data/Eq"
 import { flip } from "../../../Data/Function"
 import { fmap, fmapF } from "../../../Data/Functor"
 import { consF, drop, find, List, map, notNullStr, take } from "../../../Data/List"
-import { and, ap, bind, bindF, ensure, fromJust, isJust, isNothing, join, Just, Maybe, maybe } from "../../../Data/Maybe"
+import { and, ap, bind, bindF, ensure, fromJust, isJust, isNothing, join, Just, Maybe, maybe, maybeToUndefined } from "../../../Data/Maybe"
 import { gte } from "../../../Data/Num"
 import { elems, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
@@ -251,7 +251,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
             fmap (PDA.name)
           )}
           onChange={setCustomTargetDomain}
-          value={pipe_ (mpact, fmap (Pact.A.domain), misStringM)}
+          value={pipe_ (mpact, fmap (Pact.A.domain), misStringM, maybeToUndefined)}
           disabled={
             !isPactEditable
             || isNothing (mpact)
@@ -261,7 +261,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
         <TextField
           label={translate (staticData) ("pacts.name")}
           onChange={setTargetName}
-          value={fmapF (mpact) (Pact.A.name)}
+          value={maybeToUndefined (fmapF (mpact) (Pact.A.name))}
           disabled={
             !isPactEditable
             || isNothing (mpact)

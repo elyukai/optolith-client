@@ -1,6 +1,6 @@
 import * as React from "react"
 import { consF, filter, List, map } from "../../../Data/List"
-import { any, isJust, isNothing, Just, Maybe } from "../../../Data/Maybe"
+import { any, isJust, isNothing, Just, Maybe, maybeToUndefined } from "../../../Data/Maybe"
 import { lt } from "../../../Data/Num"
 import { elems } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
@@ -139,7 +139,7 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
           <TextField
             className="where"
             label={translate (staticData) ("equipment.dialogs.addedit.carriedwhere")}
-            value={EIA.where (item)}
+            value={maybeToUndefined (EIA.where (item))}
             onChange={setWhere}
             everyKeyDown
             />
