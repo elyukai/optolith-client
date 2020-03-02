@@ -7,6 +7,7 @@ export interface RawConfig {
   professionsSortOrder: "name" | "cost"
   professionsVisibilityFilter: "all" | "common"
   professionsGroupVisibilityFilter: 0 | 1 | 2 | 3
+  professionsFromExpansionsVisibility?: boolean
   advantagesDisadvantagesCultureRatingVisibility: boolean
   talentsSortOrder: "name" | "group" | "ic"
   talentsCultureRatingVisibility: boolean

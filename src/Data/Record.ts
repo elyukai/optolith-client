@@ -133,21 +133,12 @@ const makeAccessors =
 
 export const fromDefault =
   <Name extends string>(name: Name) =>
-  <A extends RecordIBase<Name>> (def: Required<Omit<A, "@@name">>): RecordCreator<A> => {
+  <A extends RecordIBase<Name>> (def: Omit<A, "@@name">): RecordCreator<A> => {
     const defaultValues = Object.freeze (Object.entries (def) .reduce<Required<A>> (
       (acc, [ key, value ]) => {
-        // tslint:disable-next-line: strict-type-predicates
         if (typeof key !== "string") {
           throw new TypeError (
             `Record key must be a String! Got ${show (key)} instead.`
-          )
-        }
-
-        // tslint:disable-next-line: strict-type-predicates
-        if (value === null || value === undefined) {
-          throw new TypeError (
-            `Record field must not be a nullable value! Got ${show (value)} at `
-            + `key ${show (key)} instead.`
           )
         }
 
@@ -273,18 +264,18 @@ export type Accessor<A extends RecordIBase<any>, K extends keyof A> =
   (r: Record<Pick<A, K> & { "@@name": string }>) => A[K]
 
 export type Accessors<A extends RecordIBase<any>> = {
-  [K in keyof OmitName<A>]: Accessor<A, K>
+  [K in keyof OmitName<Required<A>>]: Accessor<A, K>
 }
 
 export type StrictAccessor<A extends RecordIBase<any>, K extends keyof A> =
   (r: Record<A>) => A[K]
 
 export type StrictAccessors<A extends RecordIBase<any>> = {
-  [K in keyof OmitName<A>]: StrictAccessor<A, K>
+  [K in keyof OmitName<Required<A>>]: StrictAccessor<A, K>
 }
 
 export type Lenses<A extends RecordIBase<any>> = {
-  [K in keyof OmitName<A>]: Lens_<Record<A>, A[K]>
+  [K in keyof OmitName<Required<A>>]: Lens_<Record<A>, A[K]>
 }
 
 export interface UnsafeStringKeyObject<V> {

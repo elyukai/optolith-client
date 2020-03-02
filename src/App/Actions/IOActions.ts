@@ -10,28 +10,27 @@ import { fmap } from "../../Data/Functor"
 import { over } from "../../Data/Lens"
 import { appendStr, fromArray, intercalate, List, map, notNull } from "../../Data/List"
 import { alt_, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe"
-import { any, filter, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap"
+import { any, filter, keysSet, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
 import { notMember } from "../../Data/OrderedSet"
 import { Record, toObject } from "../../Data/Record"
 import { parseJSON } from "../../Data/String/JSON"
 import { fst, Pair, snd } from "../../Data/Tuple"
 import * as IO from "../../System/IO"
 import * as ActionTypes from "../Constants/ActionTypes"
+import { APCache } from "../Models/Cache"
 import { Config } from "../Models/Config"
 import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
 import { User } from "../Models/Hero/heroTypeHelpers"
 import { PetL } from "../Models/Hero/Pet"
 import { Locale as LocaleR } from "../Models/Locale"
 import { UISettingsState } from "../Models/UISettingsState"
-import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories"
 import { L10n } from "../Models/Wiki/L10n"
 import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { heroReducer } from "../Reducers/heroReducer"
-import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
 import { user_data_path } from "../Selectors/envSelectors"
 import { getCurrentHeroId, getCurrentHeroName, getHeroes, getLocaleId, getUsers, getWiki } from "../Selectors/stateSelectors"
 import { getUISettingsState } from "../Selectors/uisettingsSelectors"
-import { APCache, deleteCache, forceCacheIsAvailable, insertAppStateCache, insertCacheMap, insertHeroesCache, readCache, toAPCache, writeCache } from "../Utilities/Cache"
+import { deleteCache, forceCacheIsAvailable, insertAppStateCache, insertCacheMap, insertHeroesCache, prepareAPCache, prepareAPCacheForHero, readCache, writeCache } from "../Utilities/Cache"
 import { translate, translateP } from "../Utilities/I18n"
 import { bytify, getSystemLocale, showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
@@ -114,7 +113,6 @@ export const getInitialData =
                   }))
     }
 
-    // parsing error inside, missing file outside
     const econfig = await parseConfig ()
 
     if (isLeft (econfig)) {
@@ -313,21 +311,29 @@ const requestSaveAll =
     return configSavedDone && heroesSavedDone
   }
 
-export const requestSaveCache: ReduxAction<Promise<Either<Error, void>>> =
+export const requestSaveCache = (all_saved: boolean): ReduxAction<Promise<Either<Error, void>>> =>
   async (_, getState) =>
     pipe_ (
       getState (),
-      getHeroes,
-      mapMaybe (pipe (
-        heroReducer.A.present,
-        (hero): Maybe<Maybe<Record<AdventurePointsCategories>>> =>
-          getAPObjectMap (HeroModel.A.id (hero))
-                         (getState (), { hero }),
-        Maybe.join,
-        fmap (toAPCache)
-      )),
+      prepareAPCache (all_saved),
       writeCache
     )
+
+export interface ReceiveHeroSaveAction {
+  type: ActionTypes.RECEIVE_HERO_SAVE
+  payload: {
+    id: string
+    cache: APCache
+  }
+}
+
+const receiveHeroSave = (id: string, cache: APCache): ReceiveHeroSaveAction => ({
+  type: ActionTypes.RECEIVE_HERO_SAVE,
+  payload: {
+    id,
+    cache,
+  },
+})
 
 export const requestHeroSave =
   (mcurrent_id: Maybe<string>): ReduxAction<Promise<Maybe<string>>> =>
@@ -355,7 +361,9 @@ export const requestHeroSave =
         fmap (pipe (heroReducer.A.present, convertHeroForSave (users)))
       )
 
-    if (isJust (mhero)) {
+    const mcache = prepareAPCacheForHero (state, current_id)
+
+    if (isJust (mhero) && isJust (mcache)) {
       const hero = fromJust (mhero)
       const msaved_heroes = await loadHeroes ()
 
@@ -384,14 +392,35 @@ export const requestHeroSave =
 
             return Nothing
           }
-          else {
-            await dispatch (addAlert (AlertOptions ({
-                                       message: translate (static_data)
-                                                          ("heroes.dialogs.herosaved"),
-                                     })))
 
-            return Just (hero .id)
+          dispatch (receiveHeroSave (current_id, fromJust (mcache)))
+
+          const cacheRes =
+            await dispatch (async (_, getState2) => writeCache (prepareAPCache (false)
+                                                                               (getState2 ())))
+
+          if (isLeft (cacheRes)) {
+            const title = Just (translate (static_data) ("header.dialogs.saveheroeserror.title"))
+
+            const message = getErrorMsg (static_data)
+                                        (translate (static_data)
+                                                   ("header.dialogs.saveheroeserror.message"))
+                                        (cacheRes)
+
+            await dispatch (addErrorAlert (AlertOptions ({
+                                            title,
+                                            message,
+                                          })))
+
+            return Nothing
           }
+
+          await dispatch (addAlert (AlertOptions ({
+                                      message: translate (static_data)
+                                                        ("heroes.dialogs.herosaved"),
+                                    })))
+
+          return Just (hero .id)
         })
       )
     }
@@ -562,16 +591,21 @@ export const requestHeroImport: ReduxAction<Promise<void>> =
 
 const isAnyHeroUnsaved = pipe (getHeroes, any (pipe (heroReducer.A.past, notNull)))
 
-const close =
-  (staticData: StaticDataRecord) =>
-  (save_heroes: boolean) =>
-  (f: Maybe<() => void>): ReduxAction<Promise<void>> =>
+const close = (
+  staticData: StaticDataRecord,
+  save_heroes: boolean,
+  f: Maybe<() => void>
+): ReduxAction<Promise<void>> =>
   async dispatch => {
-    await dispatch (requestSaveCache)
-
     const all_saved = await dispatch (requestSaveAll (save_heroes))
 
+    console.log (`all_saved: ${all_saved}`)
+
     if (all_saved && save_heroes) {
+      console.log ("all_saved && save_heroes")
+
+      await dispatch (requestSaveCache (true))
+
       await dispatch (addAlert (AlertOptions ({
                                  message: translate (staticData) ("header.dialogs.allsaved"),
                                })))
@@ -583,6 +617,10 @@ const close =
       remote .getCurrentWindow () .close ()
     }
     else {
+      console.log ("!(all_saved && save_heroes)")
+
+      await dispatch (requestSaveCache (false))
+
       remote .getCurrentWindow () .close ()
     }
   }
@@ -600,7 +638,8 @@ export const requestClose =
     const safeToExit = !isAnyHeroUnsaved (state)
 
     if (safeToExit) {
-      await dispatch (close (staticData) (false) (optionalCall))
+      console.log ("SaveToExit")
+      await dispatch (close (staticData, false, optionalCall))
     }
     else {
       const opts = CustomPromptOptions ({
@@ -626,10 +665,15 @@ export const requestClose =
       const res = await dispatch (addPrompt (opts))
 
       if (elem (UnsavedActionsResponse.Quit) (res)) {
-        await dispatch (close (staticData) (false) (optionalCall))
+        console.log ("Quit")
+        await dispatch (close (staticData, false, optionalCall))
       }
       else if (elem (UnsavedActionsResponse.SaveAndQuit) (res)) {
-        await dispatch (close (staticData) (true) (optionalCall))
+        console.log ("SaveQuit")
+        await dispatch (close (staticData, true, optionalCall))
+      }
+      else {
+        console.log ("Cancel")
       }
     }
   }

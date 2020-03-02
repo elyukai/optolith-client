@@ -1,3 +1,4 @@
+import { cnst, ident } from "../../Data/Function"
 import { AppState } from "../Models/AppState"
 import { combineReducerRecord } from "../Utilities/combineReducerRecord"
 import { herolistReducer } from "./herolistReducer"
@@ -15,4 +16,5 @@ export const appSlicesReducer =
                          wiki: wikiReducer,
                          isLoading: isLoadingReducer,
                          hasInitWithError: hasInitWithErrorsReducer,
+                         cache: cnst (ident),
                        })

@@ -2,10 +2,6 @@ type cost =
   | Flat(int)
   | PerLevel(list(int));
 
-type overwritePrerequisite =
-  | Hide
-  | ReplaceWith(string);
-
 type t = {
   id: string,
   name: string,
@@ -21,7 +17,7 @@ type t = {
   actions: option(string),
   prerequisites: Prerequisites.tWithLevelDisAdv,
   prerequisitesText: option(string),
-  prerequisitesTextIndex: IntMap.t(overwritePrerequisite),
+  prerequisitesTextIndex: option(Prerequisites.tIndexWithLevel),
   prerequisitesTextStart: option(string),
   prerequisitesTextEnd: option(string),
   apValue: option(string),

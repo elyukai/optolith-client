@@ -1,4 +1,5 @@
-import { fromDefault, Record } from "../../Data/Record"
+import { fromDefault, makeLenses, Record } from "../../Data/Record"
+import { PresavedCache } from "./Cache"
 import { HeroesState } from "./HeroesState"
 import { LocaleState } from "./LocaleState"
 import { UIState } from "./UIState"
@@ -12,6 +13,7 @@ export interface AppState {
   wiki: Record<StaticData>
   isLoading: boolean
   hasInitWithError: boolean
+  cache: PresavedCache
 }
 
 export type AppStateRecord = Record<AppState>
@@ -25,4 +27,9 @@ export const AppState =
                 wiki: StaticData.default,
                 isLoading: true,
                 hasInitWithError: false,
+                cache: {
+                  ap: {},
+                },
               })
+
+export const AppStateL = makeLenses (AppState)

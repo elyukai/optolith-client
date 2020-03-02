@@ -4,13 +4,14 @@ import { fmapF } from "../../Data/Functor"
 import { over, set } from "../../Data/Lens"
 import { List, notElem } from "../../Data/List"
 import { and, elem, fromJust, isJust, isNothing, Just, maybe, or } from "../../Data/Maybe"
-import { insert, OrderedMap } from "../../Data/OrderedMap"
+import { insert, OrderedMap, toObjectWith } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { uncurry3 } from "../../Data/Tuple/Curry"
 import { RedoAction, UndoAction } from "../Actions/HistoryActions"
-import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from "../Actions/IOActions"
+import { ReceiveHeroSaveAction, ReceiveImportedHeroAction, ReceiveInitialDataAction } from "../Actions/IOActions"
 import * as ActionTypes from "../Constants/ActionTypes"
-import { AppStateRecord } from "../Models/AppState"
+import { AppStateL, AppStateRecord } from "../Models/AppState"
+import { PresavedCache } from "../Models/Cache"
 import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
 import { User } from "../Models/Hero/heroTypeHelpers"
 import { HeroesStateL } from "../Models/HeroesState"
@@ -32,6 +33,7 @@ type Action = ReceiveInitialDataAction
             | ReceiveImportedHeroAction
             | RedoAction
             | UndoAction
+            | ReceiveHeroSaveAction
 
 const prepareHerolist =
   (action: ReceiveInitialDataAction): ident<AppStateRecord> => {
@@ -110,10 +112,32 @@ export const appPostReducer =
   (previousState: AppStateRecord) => (action: Action): ident<AppStateRecord> => {
     switch (action.type) {
       case ActionTypes.RECEIVE_INITIAL_DATA:
-        return prepareHerolist (action)
+        return pipe (
+          prepareHerolist (action),
+          set (AppStateL.cache)
+              (pipe_ (
+                action.payload.cache,
+                maybe<PresavedCache> ({
+                                       ap: {},
+                                     })
+                                     (pipe (
+                                       toObjectWith (ident),
+                                       ap => ({ ap })
+                                     ))
+              ))
+        )
 
       case ActionTypes.RECEIVE_IMPORTED_HERO:
         return prepareImportedHero (action)
+
+      case ActionTypes.RECEIVE_HERO_SAVE:
+        return over (AppStateL.cache)
+                    (x => ({
+                      ap: {
+                        ...x?.ap,
+                        [action.payload.id]: action.payload.cache,
+                      },
+                    }))
 
       case ActionTypes.UNDO: {
         return join (state => {

@@ -171,3 +171,36 @@ type tWithLevelDisAdv = {
   increasableMultiEntry: list(IncreasableMultiEntryPrerequisite.t),
   levels: IntMap.t(t),
 };
+
+type overwritePrerequisite =
+  | Hide
+  | ReplaceWith(string);
+
+type tIndex = {
+  sex: option(overwritePrerequisite),
+  race: option(overwritePrerequisite),
+  culture: option(overwritePrerequisite),
+  pact: option(overwritePrerequisite),
+  social: option(overwritePrerequisite),
+  primaryAttribute: option(overwritePrerequisite),
+  activatable: IntMap.t(overwritePrerequisite),
+  activatableMultiEntry: IntMap.t(overwritePrerequisite),
+  activatableMultiSelect: IntMap.t(overwritePrerequisite),
+  increasable: IntMap.t(overwritePrerequisite),
+  increasableMultiEntry: IntMap.t(overwritePrerequisite),
+};
+
+type tIndexWithLevel = {
+  sex: option(overwritePrerequisite),
+  race: option(overwritePrerequisite),
+  culture: option(overwritePrerequisite),
+  pact: option(overwritePrerequisite),
+  social: option(overwritePrerequisite),
+  primaryAttribute: option(overwritePrerequisite),
+  activatable: IntMap.t(overwritePrerequisite),
+  activatableMultiEntry: IntMap.t(overwritePrerequisite),
+  activatableMultiSelect: IntMap.t(overwritePrerequisite),
+  increasable: IntMap.t(overwritePrerequisite),
+  increasableMultiEntry: IntMap.t(overwritePrerequisite),
+  levels: IntMap.t(tIndex),
+};

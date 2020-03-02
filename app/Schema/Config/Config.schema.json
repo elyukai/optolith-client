@@ -28,6 +28,9 @@
         "professionsVisibilityFilter": {
           "enum": ["all", "common"]
         },
+        "professionsFromExpansionsVisibility": {
+          "type": "boolean"
+        },
         "professionsGroupVisibilityFilter": {
           "enum": [0, 1, 2, 3]
         },

@@ -6,138 +6,158 @@ type t('a) =
 
 type maybe('a) = t('a);
 
-let (<$>) = (f, mx) =>
-  switch (mx) {
-  | Just(x) => x->f->Just
-  | Nothing => Nothing
-  };
-
-let (<*>) = (mf, mx) =>
-  switch (mf) {
-  | Just(f) =>
+module Functor = {
+  let (<$>) = (f, mx) =>
     switch (mx) {
     | Just(x) => x->f->Just
     | Nothing => Nothing
-    }
-  | Nothing => Nothing
-  };
+    };
+};
 
-let (<|>) = (mx, my) =>
-  switch (mx) {
-  | Nothing => my
-  | x => x
-  };
+module Applicative = {
+  open Functor;
 
-let guard = pred => pred ? Just() : Nothing;
+  let (<*>) = (mf, mx) =>
+    switch (mf) {
+    | Just(f) => f <$> mx
+    | Nothing => Nothing
+    };
+};
 
-let (>>=) = (mx, f) =>
-  switch (mx) {
-  | Just(x) => f(x)
-  | Nothing => Nothing
-  };
+module Alternative = {
+  let (<|>) = (mx, my) =>
+    switch (mx) {
+    | Nothing => my
+    | x => x
+    };
 
-let (=<<) = (f, mx) => mx >>= f;
+  let guard = pred => pred ? Just() : Nothing;
+};
 
-let (>>) = (x, y) => x >>= const(y);
+module Monad = {
+  open Functor;
 
-let (>=>) = (f, g, x) => x->f >>= g;
+  let (>>=) = (mx, f) =>
+    switch (mx) {
+    | Just(x) => f(x)
+    | Nothing => Nothing
+    };
 
-let join = x => x >>= id;
+  let (=<<) = (f, mx) => mx >>= f;
 
-let liftM2 = (f, mx, my) => mx >>= (x => f(x) <$> my);
+  let (>>) = (x, y) => x >>= const(y);
 
-let liftM3 = (f, mx, my, mz) => mx >>= (x => my >>= (y => f(x, y) <$> mz));
+  let (>=>) = (f, g, x) => x->f >>= g;
 
-let liftM4 = (f, mx, my, mz, ma) =>
-  mx >>= (x => my >>= (y => mz >>= (z => f(x, y, z) <$> ma)));
+  let join = x => x >>= id;
 
-let foldr = (f, init, mx) =>
-  switch (mx) {
-  | Just(x) => f(x, init)
-  | Nothing => init
-  };
+  let liftM2 = (f, mx, my) => mx >>= (x => f(x) <$> my);
 
-let foldl = (f, init, mx) =>
-  switch (mx) {
-  | Just(x) => f(init, x)
-  | Nothing => init
-  };
+  let liftM3 = (f, mx, my, mz) => mx >>= (x => my >>= (y => f(x, y) <$> mz));
 
-let toList = mx =>
-  switch (mx) {
-  | Just(x) => [x]
-  | Nothing => []
-  };
+  let liftM4 = (f, mx, my, mz, ma) =>
+    mx >>= (x => my >>= (y => mz >>= (z => f(x, y, z) <$> ma)));
+};
 
-let length = mx =>
-  switch (mx) {
-  | Just(_) => 1
-  | Nothing => 0
-  };
+module Foldable = {
+  let foldr = (f, init, mx) =>
+    switch (mx) {
+    | Just(x) => f(x, init)
+    | Nothing => init
+    };
 
-let elem = (e, mx) =>
-  switch (mx) {
-  | Just(x) => e === x
-  | Nothing => false
-  };
+  let foldl = (f, init, mx) =>
+    switch (mx) {
+    | Just(x) => f(init, x)
+    | Nothing => init
+    };
 
-let sum = mx =>
-  switch (mx) {
-  | Just(x) => x
-  | Nothing => 0
-  };
+  let toList = mx =>
+    switch (mx) {
+    | Just(x) => [x]
+    | Nothing => []
+    };
 
-let product = mx =>
-  switch (mx) {
-  | Just(x) => x
-  | Nothing => 1
-  };
+  let length = mx =>
+    switch (mx) {
+    | Just(_) => 1
+    | Nothing => 0
+    };
 
-let concat = mxs =>
-  switch (mxs) {
-  | Just(xs) => xs
-  | Nothing => []
-  };
+  let elem = (e, mx) =>
+    switch (mx) {
+    | Just(x) => e === x
+    | Nothing => false
+    };
 
-let concatMap = (f, mx) =>
-  switch (mx) {
-  | Just(x) => f(x)
-  | Nothing => []
-  };
+  let sum = mx =>
+    switch (mx) {
+    | Just(x) => x
+    | Nothing => 0
+    };
 
-let con = mx =>
-  switch (mx) {
-  | Just(x) => x
-  | Nothing => true
-  };
+  let product = mx =>
+    switch (mx) {
+    | Just(x) => x
+    | Nothing => 1
+    };
 
-let dis = mx =>
-  switch (mx) {
-  | Just(x) => x
-  | Nothing => false
-  };
+  let concat = mxs =>
+    switch (mxs) {
+    | Just(xs) => xs
+    | Nothing => []
+    };
 
-let any = (pred, mx) =>
-  switch (mx) {
-  | Just(x) => pred(x)
-  | Nothing => false
-  };
+  let concatMap = (f, mx) =>
+    switch (mx) {
+    | Just(x) => f(x)
+    | Nothing => []
+    };
 
-let all = (pred, mx) =>
-  switch (mx) {
-  | Just(x) => pred(x)
-  | Nothing => true
-  };
+  let con = mx =>
+    switch (mx) {
+    | Just(x) => x
+    | Nothing => true
+    };
 
-let notElem = (e, mx) => !elem(e, mx);
+  let dis = mx =>
+    switch (mx) {
+    | Just(x) => x
+    | Nothing => false
+    };
 
-let find = (pred, mx) =>
-  switch (mx) {
-  | Just(x) => pred(x) ? Just(x) : Nothing
-  | Nothing => Nothing
-  };
+  let any = (pred, mx) =>
+    switch (mx) {
+    | Just(x) => pred(x)
+    | Nothing => false
+    };
 
-let sappend = (mxs, mys) => mxs >>= (xs => List.append(xs) <$> mys);
+  let all = (pred, mx) =>
+    switch (mx) {
+    | Just(x) => pred(x)
+    | Nothing => true
+    };
+
+  let notElem = (e, mx) => !elem(e, mx);
+
+  let find = (pred, mx) =>
+    switch (mx) {
+    | Just(x) => pred(x) ? Just(x) : Nothing
+    | Nothing => Nothing
+    };
+};
+
+module Semigroup = {
+  let sappend = (mxs, mys) =>
+    switch (mxs) {
+    | Just(xs) =>
+      switch (mys) {
+      | Just(ys) => Just(List.append(xs, ys))
+      | Nothing => Nothing
+      }
+    | Nothing => Nothing
+    };
+};
 
 let fromMaybe = (def, mx) =>
   switch (mx) {
@@ -157,7 +177,7 @@ let listToMaybe = xs =>
   | [] => Nothing
   };
 
-let maybeToList = toList;
+let maybeToList = Foldable.toList;
 
 let catMaybes = xs =>
   List.fold_right(maybe(id, (x, xs) => [x, ...xs]), xs, []);

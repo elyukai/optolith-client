@@ -14,13 +14,21 @@ function $less$$great(f, mx) {
   }
 }
 
+var Functor = {
+  $less$$great: $less$$great
+};
+
 function $less$star$great(mf, mx) {
-  if (mf && mx) {
-    return /* Just */[Curry._1(mf[0], mx[0])];
+  if (mf) {
+    return $less$$great(mf[0], mx);
   } else {
     return /* Nothing */0;
   }
 }
+
+var Applicative = {
+  $less$star$great: $less$star$great
+};
 
 function $less$pipe$great(mx, my) {
   if (mx) {
@@ -37,6 +45,11 @@ function guard(pred) {
     return /* Nothing */0;
   }
 }
+
+var Alternative = {
+  $less$pipe$great: $less$pipe$great,
+  guard: guard
+};
 
 function $great$great$eq(mx, f) {
   if (mx) {
@@ -87,6 +100,17 @@ function liftM4(f, mx, my, mz, ma) {
                             }));
               }));
 }
+
+var Monad = {
+  $great$great$eq: $great$great$eq,
+  $eq$less$less: $eq$less$less,
+  $great$great: $great$great,
+  $great$eq$great: $great$eq$great,
+  join: join,
+  liftM2: liftM2,
+  liftM3: liftM3,
+  liftM4: liftM4
+};
 
 function foldr(f, init, mx) {
   if (mx) {
@@ -212,13 +236,35 @@ function find(pred, mx) {
   }
 }
 
+var Foldable = {
+  foldr: foldr,
+  foldl: foldl,
+  toList: toList,
+  length: length,
+  elem: elem,
+  sum: sum,
+  product: product,
+  concat: concat,
+  concatMap: concatMap,
+  con: con,
+  dis: dis,
+  any: any,
+  all: all,
+  notElem: notElem,
+  find: find
+};
+
 function sappend(mxs, mys) {
-  return $great$great$eq(mxs, (function (xs) {
-                return $less$$great((function (param) {
-                              return List.append(xs, param);
-                            }), mys);
-              }));
+  if (mxs && mys) {
+    return /* Just */[List.append(mxs[0], mys[0])];
+  } else {
+    return /* Nothing */0;
+  }
 }
+
+var Semigroup = {
+  sappend: sappend
+};
 
 function fromMaybe(def, mx) {
   if (mx) {
@@ -285,34 +331,12 @@ function optionToMaybe(mx) {
 
 var maybeToList = toList;
 
-exports.$less$$great = $less$$great;
-exports.$less$star$great = $less$star$great;
-exports.$less$pipe$great = $less$pipe$great;
-exports.guard = guard;
-exports.$great$great$eq = $great$great$eq;
-exports.$eq$less$less = $eq$less$less;
-exports.$great$great = $great$great;
-exports.$great$eq$great = $great$eq$great;
-exports.join = join;
-exports.liftM2 = liftM2;
-exports.liftM3 = liftM3;
-exports.liftM4 = liftM4;
-exports.foldr = foldr;
-exports.foldl = foldl;
-exports.toList = toList;
-exports.length = length;
-exports.elem = elem;
-exports.sum = sum;
-exports.product = product;
-exports.concat = concat;
-exports.concatMap = concatMap;
-exports.con = con;
-exports.dis = dis;
-exports.any = any;
-exports.all = all;
-exports.notElem = notElem;
-exports.find = find;
-exports.sappend = sappend;
+exports.Functor = Functor;
+exports.Applicative = Applicative;
+exports.Alternative = Alternative;
+exports.Monad = Monad;
+exports.Foldable = Foldable;
+exports.Semigroup = Semigroup;
 exports.fromMaybe = fromMaybe;
 exports.maybe = maybe;
 exports.listToMaybe = listToMaybe;

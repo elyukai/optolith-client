@@ -1009,6 +1009,15 @@ export const toObjectWith =
                                                 ({ })
                                                 (mp)
 
+
+export const fromObject = <A>(obj: StringKeyObject<A>) => fromMap (new Map (Object.entries (obj)))
+
+
+export const fromObjectWith =
+  <A, B> (f: (x: A) => B) =>
+  (obj: StringKeyObject<A>) =>
+    fromMap (new Map (Object.entries (obj) .map (([ k, v ]) => [ k, f (v) ])))
+
 /**
   * Transforms the `OrderedMap` instance into a native `Map`.
   */

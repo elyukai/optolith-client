@@ -61,11 +61,11 @@ export const parseConfig = async () => {
                                const details =
                                  fromLeft_ (evalidated_data)
                                    .map (e => e.message)
-                                   .join ("\n")
+                                   .join ("\n\n")
 
                                return Left (AlertOptions ({
                                  title: Just (`Config Invalidity error`),
-                                 message: `The file is not a valid Optolith config document.\nDetails:\n${details}`,
+                                 message: `The file is not a valid Optolith config document.\n\nDetails:\n\n${details}`,
                                }))
                              }
 
