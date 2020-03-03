@@ -1,9 +1,7 @@
 // @ts-check
 
 const builder = require ("electron-builder")
-const { copyTables } = require ("./copyTablesCICD.js")
 const { publishToServer } = require ("./publishToServer.js")
-const { notarize } = require ("./notarize.js")
 
 process.on ('unhandledRejection', error => {
   throw new Error (`Unhandled promise rejection: ${error .toString ()}`);

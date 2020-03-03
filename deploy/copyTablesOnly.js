@@ -1,1 +1,0 @@
-require ("./copyTables.js") .copyTables ()
