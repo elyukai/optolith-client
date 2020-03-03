@@ -4,6 +4,7 @@ export interface RawConfig {
   racesSortOrder: "name" | "cost"
   culturesSortOrder: "name" | "cost"
   culturesVisibilityFilter: "all" | "common"
+  culturesValueVisibility?: boolean
   professionsSortOrder: "name" | "cost"
   professionsVisibilityFilter: "all" | "common"
   professionsGroupVisibilityFilter: 0 | 1 | 2 | 3
