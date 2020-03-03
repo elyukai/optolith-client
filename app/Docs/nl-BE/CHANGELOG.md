@@ -1,35 +1,34 @@
 ## 1.3.0
 
-### Neue Features
+### Nieuwe features
 
-- Französische Version (inkl. Regelwerk) #34
+- Franse versie (incl. Regelwerk) #34
 
-### Verbesserungen
+### Verbeteringen
 
-- Das Suchfeld im Wiki wird jetzt nicht mehr gelöscht, wenn man die Kategorie wechselt. #286
-- Wenn der Import eines Helden fehlschlägt, werden nun genauere Infos gegeben, was genau das Problem war. (inkompatible Version, invalide Datei, etc.) #343 #394
-- Komplett neuer Datenbankunterbau und dadurch Ladezeitersparnis von ca. 50%
+- Het zoekveld in de Wiki wordt niet langer gewist als men van categorie wisselt. #286
+- Als het importeren van een held mislukt wordt nu gespecifieerd wat het probleem was (incompatibele versie, onbekend bestand, enz.) #343 #394
+- Volledig nieuwe databankstructuur. Daardoor 50% snellere laadtijd.
 
-### Fehlerbehebungen
+### Probleemoplossingen
 
-- Der Cache für AP funktioniert jetzt wieder ordnungsgemäß, wenn man nicht alle Helden speichert. #416
-- Die Sprachtabelle verzerrte das Layout, wenn Hjaldisch/Saga-Thorwalsch aktiv war. #419
-- Die Texte bei den persönliche Daten auf dem Heldenbogen wurden teilweise beschnitten. #413
-- Die Ausrichtung des Gesamtgewichts auf dem Besitz-Bogen wurde behoben #291
-- Ein Gegenstand konnte nicht als improvisierte Waffe eingetragen werden #290
-- Die Infotabelle für Routineproben war nicht richtig ausgerichtet #214
-- Angst vor: Auswahl/eigener Text wurde auf dem Heldenbogen nicht angezeigt #213
-- Man konnte keine Bilder von einem Server als Bild importieren #229
-- Das Hinzufügen von AP funktionierte nicht, wenn man nicht das Eingabefeld verlassen hat #341
-- Waffen, die keinen Schaden verursachen, zeigen nicht mehr nur "W" als Schaden #353
-- Keine Talentwertverringerung *Fährtensuche* mehr möglich bei Jäger (Kopfgeldjäger) #357
-- SF *Vorstoß* hatte KT Schwerter doppelt aufgeführt #355
-- Ein exportierter Held mit einer BOM konnte nicht gelesen werden #37
-- Gegenstandsänderungen konnten in bestimmten Situationen nicht gespeichert werden #389
-- Fehler behoben, dass das Feld "Wo getragen?" bei Gegenständen nicht gespeichert wurde #369
-- Die Obergrenze durch die Leiteigenschaft bei Kampftechniken funktioniert jetzt wieder. #379
-- Typo in ATTRIBUTO (Körperkraft), zweite Erweiterung behoben. #366
-- Die Anwendungskonfiguration wirft jetzt keine Fehler mehr hervor. #358
+- De taaltabel vervormde de lay-out als Hjaldings/Saga-Thorwals actief was. #419
+- De teksten bij de persoonlijke data op het heldendocument werden gedeeltelijk beknot. #413
+- Het totale gewicht is nu gealigneerd op de het uitrustingsdocument. #291
+- Een voorwerp kon niet worden opgenomen als geïmproviseerd wapen. #290
+- De infotabel voor routineproeven was niet correct gealigneerd. #214
+- Angst voor: keuze/eigen tekst werd niet getoond op het heldendocument. #213
+- Men kon geen prenten importeren van een server als karaktertekening.  #229
+- Het toevoegen van AP werkte niet als men het invoerveld niet verliet. #341
+- Wapens die geen schade veroorzaken, tonen niet langer enkel D als schade. #353
+- Geen talentvermindering op *Spoorzoeken* meer mogelijk bij jager (Premiejager). #357
+- Com *Uithaal* toonde GtW Zwaarden dubbel. #355
+- Een geëxporteerde held met een BOM kon niet worden gelezen. #37
+- Veranderingen aan voorwerpen konden onder bepaalde omstandigheden niet worden bewaard.  #389
+- Fout opgelost waarbij het veld "waar gedragen" niet bewaard werd bij voorwerpen. #369
+- De maximale waarde voor gevechtstechnieken door de hoofdeigenschap werkt weer. #379
+- Typo in ATTRIBUTO (Lichaamskracht), tweede uitbreiding verbeterd. #366
+- De toepassingsconfiguratie veroorzaakt geen fouten meer. #358
 
 ## 1.2.0
 

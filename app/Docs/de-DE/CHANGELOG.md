@@ -19,19 +19,19 @@
 - SF *Zugvögel*: Statt Rahjaliturgien standen Travialiturgien zur Auswahl. #423
 - Die Texte bei den persönliche Daten auf dem Heldenbogen wurden teilweise beschnitten. #413
 - Die Profession *Schwarzmagier (Schüler des Demirion Ophenos)* hatte falsche AP-Kosten. #344
-- Die Ausrichtung des Gesamtgewichts auf dem Besitz-Bogen wurde behoben #291
-- Ein Gegenstand konnte nicht als improvisierte Waffe eingetragen werden #290
-- SF *Jägerinnen der weißen Maid*: Mögliche Liturgien zeigten keine Aspekte an #289
-- Die Infotabelle für Routineproben war nicht richtig ausgerichtet #214
-- Angst vor: Auswahl/eigener Text wurde auf dem Heldenbogen nicht angezeigt #213
-- Man konnte keine Bilder von einem Server als Bild importieren #229
-- Das Hinzufügen von AP funktionierte nicht, wenn man nicht das Eingabefeld verlassen hat #341
-- Waffen, die keinen Schaden verursachen, zeigen nicht mehr nur "W" als Schaden #353
-- Keine Talentwertverringerung *Fährtensuche* mehr möglich bei Jäger (Kopfgeldjäger) #357
-- SF *Vorstoß* hatte KT Schwerter doppelt aufgeführt #355
-- Ein exportierter Held mit einer BOM konnte nicht gelesen werden #37
-- Gegenstandsänderungen konnten in bestimmten Situationen nicht gespeichert werden #389
-- Fehler behoben, dass das Feld "Wo getragen?" bei Gegenständen nicht gespeichert wurde #369
+- Die Ausrichtung des Gesamtgewichts auf dem Besitz-Bogen wurde behoben. #291
+- Ein Gegenstand konnte nicht als improvisierte Waffe eingetragen werden. #290
+- SF *Jägerinnen der weißen Maid*: Mögliche Liturgien zeigten keine Aspekte an. #289
+- Die Infotabelle für Routineproben war nicht richtig ausgerichtet. #214
+- Angst vor: Auswahl/eigener Text wurde auf dem Heldenbogen nicht angezeigt. #213
+- Man konnte keine Bilder von einem Server als Bild importieren. #229
+- Das Hinzufügen von AP funktionierte nicht, wenn man nicht das Eingabefeld verlassen hat. #341
+- Waffen, die keinen Schaden verursachen, zeigen nicht mehr nur "W" als Schaden. #353
+- Keine Talentwertverringerung *Fährtensuche* mehr möglich bei Jäger (Kopfgeldjäger). #357
+- SF *Vorstoß* hatte KT Schwerter doppelt aufgeführt. #355
+- Ein exportierter Held mit einer BOM konnte nicht gelesen werden. #37
+- Gegenstandsänderungen konnten in bestimmten Situationen nicht gespeichert werden. #389
+- Fehler behoben, dass das Feld "Wo getragen?" bei Gegenständen nicht gespeichert wurde. #369
 - Die Zaubertricks Hexenblick und Elfenhaar sind jetzt nur noch für Hexen bzw. Elfen wählbar. #377
 - Die Obergrenze durch die Leiteigenschaft bei Kampftechniken funktioniert jetzt wieder. #379
 - Typo in ATTRIBUTO (Körperkraft), zweite Erweiterung behoben. #366
