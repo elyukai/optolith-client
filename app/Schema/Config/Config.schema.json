@@ -22,6 +22,9 @@
         "culturesVisibilityFilter": {
           "enum": ["all", "common"]
         },
+        "culturesValueVisibility": {
+          "type": "boolean"
+        },
         "professionsSortOrder": {
           "enum": ["name", "cost"]
         },
