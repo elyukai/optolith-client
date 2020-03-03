@@ -1,8 +1,8 @@
-import { elem, OrderedSet } from "../../../Data/OrderedSet";
-import { fromDefault, Record } from "../../../Data/Record";
-import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
-import { Blessing } from "../Wiki/Blessing";
-import { LiturgicalChant } from "../Wiki/LiturgicalChant";
+import { elem, OrderedSet } from "../../../Data/OrderedSet"
+import { fromDefault, Record } from "../../../Data/Record"
+import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent"
+import { Blessing } from "../Wiki/Blessing"
+import { LiturgicalChant } from "../Wiki/LiturgicalChant"
 
 export interface LiturgicalChantCombined {
   "@@name": "LiturgicalChantCombined"

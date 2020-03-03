@@ -1,7 +1,7 @@
-import * as React from "react";
-import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers";
-import { IconButton } from "../Universal/IconButton";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers"
+import { IconButton } from "../Universal/IconButton"
+import { TextField } from "../Universal/TextField"
 
 interface Props {
   name: string
@@ -12,12 +12,12 @@ interface Props {
 export const OverviewNameChange: React.FC<Props> = props => {
   const { name: defaultName, change, cancel } = props
 
-  const [name, setName] = React.useState (defaultName)
+  const [ name, setName ] = React.useState (defaultName)
 
   const handleSubmit =
     React.useCallback (
       () => change (name),
-      [change, name]
+      [ change, name ]
     )
 
   const handleEnter =
@@ -27,7 +27,7 @@ export const OverviewNameChange: React.FC<Props> = props => {
           change (name)
         }
       },
-      [change, name]
+      [ change, name ]
     )
 
   return (
@@ -37,6 +37,7 @@ export const OverviewNameChange: React.FC<Props> = props => {
         onChange={setName}
         onKeyDown={handleEnter}
         autoFocus
+        everyKeyDown
         />
       <IconButton
         icon="&#xE90a;"

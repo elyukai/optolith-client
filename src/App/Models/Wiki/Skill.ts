@@ -1,11 +1,12 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { Application } from "./sub/Application";
-import { Erratum } from "./sub/Errata";
-import { SourceLink } from "./sub/SourceLink";
-import { EntryWithCategory } from "./wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { Application } from "./sub/Application"
+import { Erratum } from "./sub/Errata"
+import { SourceLink } from "./sub/SourceLink"
+import { Use } from "./sub/Use"
+import { EntryWithCategory } from "./wikiTypeHelpers"
 
 export interface Skill {
   "@@name": "Skill"
@@ -13,13 +14,13 @@ export interface Skill {
   name: string
   category: Category
   check: List<string>
-  encumbrance: string
+  encumbrance: "true" | "false" | "maybe"
   encumbranceDescription: Maybe<string>
   gr: number
   ic: number
   applications: List<Record<Application>>
   applicationsInput: Maybe<string>
-  uses: List<Record<Application>>
+  uses: List<Record<Use>>
   tools: Maybe<string>
   quality: string
   failed: string
@@ -36,7 +37,7 @@ export const Skill =
                 name: "",
                 category: Category.SKILLS,
                 check: List.empty,
-                encumbrance: "",
+                encumbrance: "maybe",
                 encumbranceDescription: Nothing,
                 gr: 0,
                 ic: 0,

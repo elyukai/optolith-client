@@ -1,46 +1,44 @@
-import * as path from "path";
-import * as React from "react";
-import { fmap, fmapF } from "../../../Data/Functor";
-import { head, notNull } from "../../../Data/List";
-import { ensure, fromJust, isJust, Just, orN } from "../../../Data/Maybe";
-import { imgPathToBase64 } from "../../Actions/IOActions";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { showOpenDialog } from "../../Utilities/IOUtils";
-import { pipe } from "../../Utilities/pipe";
-import { AvatarWrapper } from "./AvatarWrapper";
-import { BorderButton } from "./BorderButton";
-import { Dialog } from "./Dialog";
+import * as path from "path"
+import * as React from "react"
+import { fmap, fmapF } from "../../../Data/Functor"
+import { head, notNull } from "../../../Data/List"
+import { ensure, fromJust, isJust, orN } from "../../../Data/Maybe"
+import { imgPathToBase64 } from "../../Actions/IOActions"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { showOpenDialog } from "../../Utilities/IOUtils"
+import { pipe } from "../../Utilities/pipe"
+import { AvatarWrapper } from "./AvatarWrapper"
+import { BorderButton } from "./BorderButton"
+import { Dialog } from "./Dialog"
 
-export interface AvatarChangeProps {
-  l10n: L10nRecord
+interface Props {
+  staticData: StaticDataRecord
   title?: string
   isOpen: boolean
   setPath (path: string): void
   close: () => void
 }
 
-export interface AvatarChangeState {
-  url: string
-  fileValid: boolean
-}
-
-const valid_extensions = ["jpeg", "png", "jpg"]
+const valid_extensions = [ "jpeg", "png", "jpg" ]
 const valid_extnames = valid_extensions .map (ext => `.${ext}`)
 
-export const AvatarChange: React.FC<AvatarChangeProps> = props => {
-  const { setPath, isOpen, l10n, title, close } = props
-  const [fileValid, setFileValid] = React.useState (false)
-  const [url, setUrl] = React.useState ("")
-  const [prevIsOpen, setPrevIsOpen] = React.useState (isOpen)
+export const AvatarChange: React.FC<Props> = props => {
+  const { setPath, isOpen, staticData, title, close } = props
+  const [ fileValid, setFileValid ] = React.useState (false)
+  const [ data, setData ] = React.useState ("")
+  const [ prevIsOpen, setPrevIsOpen ] = React.useState (isOpen)
 
   const handleSelectFile = React.useCallback (
     async () =>
       fmapF (showOpenDialog ({
               filters: [
-                { name: translate (l10n) ("image"), extensions: valid_extensions },
-                { name: "JPG", extensions: ["jpeg", "jpg"] },
-                { name: "PNG", extensions: ["png"] },
+                {
+                  name: translate (staticData) ("profile.dialogs.changeheroavatar.imagefiletype"),
+                  extensions: valid_extensions,
+                },
+                { name: "JPG", extensions: [ "jpeg", "jpg" ] },
+                { name: "PNG", extensions: [ "png" ] },
               ],
             }))
             (pipe (
@@ -48,53 +46,57 @@ export const AvatarChange: React.FC<AvatarChangeProps> = props => {
               fmap (pipe (
                 head,
                 path_to_image => {
-                  const new_url = imgPathToBase64 (Just (path_to_image))
+                  const new_data = imgPathToBase64 (path_to_image)
                   const ext = path.extname (path_to_image) .toLowerCase ()
 
-                  if (valid_extnames .includes (ext) && isJust (new_url)) {
+                  if (valid_extnames .includes (ext) && isJust (new_data)) {
                     setFileValid (true)
-                    setUrl (fromJust (new_url))
+                    setData (fromJust (new_data))
                   }
                   else {
                     setFileValid (false)
-                    setUrl ("")
+                    setData ("")
                   }
 
                   return path_to_image
                 }
               ))
             )),
-    [l10n]
+    [ staticData ]
   )
 
   const handleSubmit = React.useCallback (
-    () => setPath (url),
-    [setPath, url]
+    () => setPath (data),
+    [ setPath, data ]
   )
 
   const handleClose = React.useCallback (
     () => {
       setFileValid (false)
-      setUrl ("")
+      setData ("")
       close ()
     },
-    [setFileValid, setUrl, close]
+    [ setFileValid, setData, close ]
   )
 
   if (!isOpen && orN (prevIsOpen)) {
     setFileValid (false)
-    setUrl ("")
+    setData ("")
     setPrevIsOpen (false)
   }
 
   return (
     <Dialog
       id="avatar-change"
-      title={title === undefined ? translate (l10n) ("changeheroavatar") : title}
+      title={
+        title === undefined
+        ? translate (staticData) ("profile.dialogs.changeheroavatar.title")
+        : title
+      }
       buttons={[
         {
-          disabled: !fileValid || url === "",
-          label: translate (l10n) ("apply"),
+          disabled: !fileValid || data === "",
+          label: translate (staticData) ("general.dialogs.applybtn"),
           onClick: handleSubmit,
         },
       ]}
@@ -102,15 +104,15 @@ export const AvatarChange: React.FC<AvatarChangeProps> = props => {
       isOpen={isOpen}
       >
       <BorderButton
-        label={translate (l10n) ("selectfile")}
+        label={translate (staticData) ("profile.dialogs.changeheroavatar.selectfilebtn")}
         onClick={handleSelectFile}
         />
       <AvatarWrapper
-        src={ensure ((unsafeUrl: string) => fileValid && unsafeUrl !== "") (url)}
+        src={ensure ((unsafeUrl: string) => fileValid && unsafeUrl !== "") (data)}
         />
-      {!fileValid && url !== ""
+      {!fileValid && data !== ""
         ? (
-          <p>{translate (l10n) ("changeheroavatar.invalidfile")}</p>
+          <p>{translate (staticData) ("profile.dialogs.changeheroavatar.invalidfilewarning")}</p>
         )
         : null}
     </Dialog>

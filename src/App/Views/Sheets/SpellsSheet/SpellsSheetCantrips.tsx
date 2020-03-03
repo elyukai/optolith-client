@@ -1,26 +1,26 @@
-import * as React from "react";
-import { fmap } from "../../../../Data/Functor";
-import { intercalate, List, map } from "../../../../Data/List";
-import { Maybe, maybeToNullable } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { CantripCombined, CantripCombinedA_ } from "../../../Models/View/CantripCombined";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { sortStrings } from "../../../Utilities/sortBy";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { fmap } from "../../../../Data/Functor"
+import { intercalate, List, map } from "../../../../Data/List"
+import { Maybe, maybeToNullable } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { CantripCombined, CantripCombinedA_ } from "../../../Models/View/CantripCombined"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { translate } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { sortStrings } from "../../../Utilities/sortBy"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface SpellsSheetCantripsProps {
+interface Props {
   cantrips: Maybe<List<Record<CantripCombined>>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
-export function SpellsSheetCantrips (props: SpellsSheetCantripsProps) {
-  const { cantrips, l10n } = props
+export const SpellsSheetCantrips: React.FC<Props> = props => {
+  const { cantrips, staticData } = props
 
   return (
     <TextBox
-      label={translate (l10n) ("cantrips")}
+      label={translate (staticData) ("sheets.spellssheet.cantrips")}
       className="cantrips activatable-list"
       >
       <div className="list">
@@ -28,7 +28,7 @@ export function SpellsSheetCantrips (props: SpellsSheetCantripsProps) {
           cantrips,
           fmap (pipe (
             map (CantripCombinedA_.name),
-            sortStrings (l10n),
+            sortStrings (staticData),
             intercalate (", ")
           )),
           maybeToNullable

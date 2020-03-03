@@ -7,18 +7,18 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "../App/Utilities/pipe";
-import { not } from "./Bool";
-import { Either, fromRight_, isLeft, Right } from "./Either";
-import { equals } from "./Eq";
-import { ident } from "./Function";
-import { fmapF } from "./Functor";
-import { Internals } from "./Internals";
-import { append, List } from "./List";
-import { bind, fromMaybe, Just, Maybe, maybe, maybe_ } from "./Maybe";
-import { add, multiply } from "./Num";
-import { show } from "./Show";
-import { Pair, Tuple } from "./Tuple";
+import { pipe } from "../App/Utilities/pipe"
+import { not } from "./Bool"
+import { Either, fromRight_, isLeft, Right } from "./Either"
+import { equals } from "./Eq"
+import { ident } from "./Function"
+import { fmapF } from "./Functor"
+import { Internals } from "./Internals"
+import { append, List } from "./List"
+import { bind, fromMaybe, Just, Maybe, maybe, maybe_ } from "./Maybe"
+import { add, multiply } from "./Num"
+import { show } from "./Show"
+import { Pair, Tuple } from "./Tuple"
 
 import _OrderedMap = Internals._OrderedMap
 import OrderedSet = Internals.OrderedSet
@@ -73,7 +73,7 @@ export const foldr =
   (f: (current: A) => (acc: B) => B) =>
   (initial: B) =>
   (xs: OrderedMap<any, A>): B =>
-    [...xs .value] .reduceRight<B> ((acc, e) => f (e [1]) (acc), initial)
+    [ ...xs .value ] .reduceRight<B> ((acc, e) => f (e [1]) (acc), initial)
 
 /**
  * `foldl :: (b -> a -> b) -> b -> Map k a -> b`
@@ -91,7 +91,7 @@ export const foldl =
   (f: (acc: B) => (current: A) => B) =>
   (initial: B) =>
   (xs: OrderedMap<any, A>): B =>
-    [...xs .value] .reduce<B> ((acc, e) => f (acc) (e [1]), initial)
+    [ ...xs .value ] .reduce<B> ((acc, e) => f (acc) (e [1]), initial)
 
 /**
  * `foldr1 :: (a -> a -> a) -> Map k a -> a`
@@ -106,7 +106,7 @@ export const foldr1 =
   (f: (current: A) => (acc: A) => A) =>
   (xs: OrderedMap<any, A>): A => {
     if (xs .value .size > 0) {
-      const arr = [...xs .value]
+      const arr = [ ...xs .value ]
       const _init = arr .slice (0, -1)
       const _last = arr [arr .length - 1]
 
@@ -129,7 +129,7 @@ export const foldl1 =
   (f: (acc: A) => (current: A) => A) =>
   (xs: OrderedMap<any, A>): A => {
     if (xs .value .size > 0) {
-      const [_head, ..._tail] = xs
+      const [ _head, ..._tail ] = xs
 
       return _tail .reduce<A> ((acc, e) => f (acc) (e [1]), _head [1])
     }
@@ -145,7 +145,7 @@ export const foldl1 =
 export const toList =
   <K, A>
   (xs: OrderedMap<K, A>): List<Pair<K, A>> =>
-    List.fromArray ([...xs .value] .map (([k, a]) => Pair (k, a)))
+    List.fromArray ([ ...xs .value ] .map (([ k, a ]) => Pair (k, a)))
 
 /**
  * `null :: Map k a -> Bool`
@@ -174,7 +174,7 @@ export const flength = (xs: OrderedMap<any, any>): number => xs .value .size
  */
 export const elem =
   <A> (e: A) => (xs: OrderedMap<any, A>): boolean =>
-    [...xs .value .values ()] .some (equals (e))
+    [ ...xs .value .values () ] .some (equals (e))
 
 /**
  * `elemF :: Eq a => Map k a -> a -> Bool`
@@ -239,9 +239,10 @@ export const concatMap =
   <K, A, B>
   (f: (value: A) => OrderedMap<K, B>) =>
   (xs: OrderedMap<K, A>): OrderedMap<K, B> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fromArray (
-      [...xs .value] .reduce<[K, B][]> (
-        (acc, e) => [...acc, ...f (e [1]) .value],
+      [ ...xs .value ] .reduce<[K, B][]> (
+        (acc, e) => [ ...acc, ...f (e [1]) .value ],
         []
       )
     )
@@ -255,7 +256,7 @@ export const concatMap =
  */
 export const and =
   (xs: OrderedMap<any, boolean>): boolean =>
-    [...xs .value .values ()] .every (ident)
+    [ ...xs .value .values () ] .every (ident)
 
 /**
  * `or :: Map k Bool -> Bool`
@@ -266,7 +267,7 @@ export const and =
  */
 export const or =
   (xs: OrderedMap<any, boolean>): boolean =>
-    [...xs .value .values ()] .some (ident)
+    [ ...xs .value .values () ] .some (ident)
 
 /**
  * `any :: (a -> Bool) -> Map k a -> Bool`
@@ -275,7 +276,7 @@ export const or =
  */
 export const any =
   <A> (f: (x: A) => boolean) => (xs: OrderedMap<any, A>): boolean =>
-    [...xs .value .values ()] .some (f)
+    [ ...xs .value .values () ] .some (f)
 
 /**
  * `all :: (a -> Bool) -> Map k a -> Bool`
@@ -284,7 +285,7 @@ export const any =
  */
 export const all =
   <A> (f: (x: A) => boolean) => (xs: OrderedMap<any, A>): boolean =>
-    [...xs .value .values ()] .every (f)
+    [ ...xs .value .values () ] .every (f)
 
 // Searches
 
@@ -329,7 +330,7 @@ interface Find {
  */
 export const find: Find =
   <A> (pred: (x: A) => boolean) => (xs: OrderedMap<any, A>): Maybe<A> =>
-    Maybe ([...xs .value .values ()] .find (pred))
+    Maybe ([ ...xs .value .values () ] .find (pred))
 
 
 // TRAVERSABLE
@@ -349,21 +350,23 @@ export const mapMEither =
   <K>
   (m: OrderedMap<K, A>): Either<E, OrderedMap<K, B>> => {
     if (fnull (m)) {
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       return Right (empty)
     }
 
     const arr: [K, B][] = []
 
-    for (const [key, value] of m .value) {
+    for (const [ key, value ] of m .value) {
       const res = f (value)
 
       if (isLeft (res)) {
         return res
       }
 
-      arr .push ([key, fromRight_ (res)])
+      arr .push ([ key, fromRight_ (res) ])
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return Right (fromArray (arr))
   }
 
@@ -461,7 +464,8 @@ export const empty = fromUniquePairs<any, any> ()
  */
 export const singleton =
   <K, A> (key: K) => (x: A): OrderedMap<K, A> =>
-    fromArray ([[key, x]])
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ [ key, x ] ])
 
 
 // INSERTION
@@ -479,7 +483,8 @@ export const insert =
   <A>
   (value: A) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    fromArray ([...mp .value, [key, value]])
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...mp .value, [ key, value ] ])
 
 export type insert<K, A> = (key: K) => (value: A) => (mp: OrderedMap<K, A>) => OrderedMap<K, A>
 
@@ -498,7 +503,8 @@ export const insertF =
   <K>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    fromArray ([...mp .value, [key, value]])
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...mp .value, [ key, value ] ])
 
 /**
  * `insertWith :: Ord k => (a -> a -> a) -> k -> a -> Map k a -> Map k a`
@@ -576,7 +582,8 @@ export const insertLookupWithKey =
  */
 const removeKey =
   <K> (key: K) => <A> (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    fromArray ([...mp .value] .filter (([k]) => k !== key))
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...mp .value ] .filter (([ k ]) => k !== key))
 
 /**
  * `delete :: Ord k => k -> Map k a -> Map k a`
@@ -724,7 +731,8 @@ export const union =
   <K, A>
   (t1: OrderedMap<K, A>) =>
   (t2: OrderedMap<K, A>): OrderedMap<K, A> =>
-    fromArray ([...t1, ...[...t2] .filter (([key]) => !t1 .value .has (key))])
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...t1, ...[ ...t2 ] .filter (([ key ]) => !t1 .value .has (key)) ])
 
 
 // MAP
@@ -738,7 +746,8 @@ export const map =
   <A, B>
   (f: (value: A) => B) =>
   <K> (xs: OrderedMap<K, A>): OrderedMap<K, B> =>
-    fromArray ([...xs .value] .map (([k, a]) => [k, f (a)] as [K, B]))
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...xs .value ] .map (([ k, a ]) => [ k, f (a) ] as [K, B]))
 
 /**
  * `mapWithKey :: (k -> a -> b) -> Map k a -> Map k b`
@@ -749,7 +758,8 @@ export const mapWithKey =
   <K, A, B>
   (f: (key: K) => (value: A) => B) =>
   (xs: OrderedMap<K, A>): OrderedMap<K, B> =>
-    fromArray ([...xs .value] .map (([k, a]) => [k, f (k) (a)] as [K, B]))
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...xs .value ] .map (([ k, a ]) => [ k, f (k) (a) ] as [K, B]))
 
 
 // FOLDS
@@ -766,7 +776,7 @@ export const foldrWithKey =
   (f: (key: K) => (current: A) => (acc: B) => B) =>
   (initial: B) =>
   (xs: OrderedMap<K, A>): B =>
-    [...xs .value] .reduceRight<B> (
+    [ ...xs .value ] .reduceRight<B> (
       (acc, e) => f (e [0]) (e [1]) (acc),
       initial
     )
@@ -783,7 +793,7 @@ export const foldlWithKey =
   (f: (acc: B) => (key: K) => (current: A) => B) =>
   (initial: B) =>
   (xs: OrderedMap<K, A>): B =>
-    [...xs .value] .reduce<B> (
+    [ ...xs .value ] .reduce<B> (
       (acc, e) => f (acc) (e [0]) (e [1]),
       initial
     )
@@ -815,7 +825,7 @@ export const keys =
  * Return all key/value pairs in the map.
  */
 export const assocs = <K, A> (mp: OrderedMap<K, A>): List<Pair<K, A>> =>
-  List.fromArray ([...mp] .map (p => Pair (...p)))
+  List.fromArray ([ ...mp ] .map (p => Pair (...p)))
 
 /**
  * `keysSet :: Map k a -> Set k`
@@ -835,7 +845,8 @@ export const fromSet =
   <K, A>
   (f: (key: K) => A) =>
   (ks: OrderedSet<K>): OrderedMap<K, A> =>
-    fromArray ([...ks] .map (k => [k, f (k)] as [K, A]))
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...ks ] .map (k => [ k, f (k) ] as [K, A]))
 
 
 // LISTS
@@ -852,6 +863,7 @@ export const fromSet =
  */
 export const fromList =
   <K, A> (xs: List<Pair<K, A>>): OrderedMap<K, A> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fromArray (List.toArray (List.map<Pair<K, A>, [K, A]> (Tuple.toArray) (xs)))
 
 
@@ -883,7 +895,8 @@ interface Filter {
 export const filter: Filter =
   <K, A>
   (pred: (x: A) => boolean) => (xs: OrderedMap<K, A>): OrderedMap<K, A> =>
-    fromArray ([...xs .value] .filter (([_, value]) => pred (value)))
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...xs .value ] .filter (([ _, value ]) => pred (value)))
 
 interface FilterWithKey {
 
@@ -915,7 +928,8 @@ export const filterWithKey: FilterWithKey =
   <K, A>
   (pred: (key: K) => (x: A) => boolean) =>
   (xs: OrderedMap<K, A>): OrderedMap<K, A> =>
-    fromArray ([...xs .value] .filter (([key, value]) => pred (key) (value)))
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...xs .value ] .filter (([ key, value ]) => pred (key) (value)))
 
 interface FilterWithKeyFPred<K, A> {
   <A1 extends A> (pred: (key: K) => (x: A) => x is A1): OrderedMap<K, A1>
@@ -933,7 +947,8 @@ export const filterWithKeyF =
   <K, A>
   (xs: OrderedMap<K, A>): FilterWithKeyFPred<K, A> =>
   (pred: (key: K) => (x: A) => boolean): OrderedMap<K, A> =>
-    fromArray ([...xs .value] .filter (([key, value]) => pred (key) (value)))
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    fromArray ([ ...xs .value ] .filter (([ key, value ]) => pred (key) (value)))
 
 /**
  * `mapMaybe :: (a -> Maybe b) -> Map k a -> Map k b`
@@ -945,10 +960,11 @@ export const mapMaybe =
   (f: (value: A) => Maybe<B>) =>
   <K>
   (mp: OrderedMap<K, A>): OrderedMap<K, B> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fromArray (
-      [...mp] .reduce<[K, B][]> (
-        (acc, [key, value]) => maybe (acc)
-                                     ((x: B) => [...acc, [key, x]])
+      [ ...mp ] .reduce<[K, B][]> (
+        (acc, [ key, value ]) => maybe (acc)
+                                     ((x: B) => [ ...acc, [ key, x ] ])
                                      (f (value)),
         []
       )
@@ -963,10 +979,11 @@ export const mapMaybeWithKey =
   <K, A, B>
   (f: (key: K) => (value: A) => Maybe<B>) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, B> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fromArray (
-      [...mp] .reduce<[K, B][]> (
-        (acc, [key, value]) => maybe (acc)
-                                     ((x: B) => [...acc, [key, x]])
+      [ ...mp ] .reduce<[K, B][]> (
+        (acc, [ key, value ]) => maybe (acc)
+                                     ((x: B) => [ ...acc, [ key, x ] ])
                                      (f (key) (value)),
         []
       )
@@ -991,6 +1008,15 @@ export const toObjectWith =
                                                 }))
                                                 ({ })
                                                 (mp)
+
+
+export const fromObject = <A>(obj: StringKeyObject<A>) => fromMap (new Map (Object.entries (obj)))
+
+
+export const fromObjectWith =
+  <A, B> (f: (x: A) => B) =>
+  (obj: StringKeyObject<A>) =>
+    fromMap (new Map (Object.entries (obj) .map (([ k, v ]) => [ k, f (v) ])))
 
 /**
   * Transforms the `OrderedMap` instance into a native `Map`.
@@ -1024,6 +1050,7 @@ export const lookup2 =
   <K> (key: K) =>
   (m1: OrderedMap<K, A>) =>
   (m2: OrderedMap<K, B>): Maybe<C> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     lookup2F (key) (m1) (m2) (f)
 
 /**
@@ -1071,14 +1098,14 @@ export const mapMEitherWithKey =
 
     const arr: [K, B][] = []
 
-    for (const [key, value] of m .value) {
+    for (const [ key, value ] of m .value) {
       const res = f (key) (value)
 
       if (isLeft (res)) {
         return res
       }
 
-      arr .push ([key, fromRight_ (res)])
+      arr .push ([ key, fromRight_ (res) ])
     }
 
     return Right (fromArray (arr))

@@ -1,72 +1,79 @@
-import * as React from "react";
-import { List, subscriptF } from "../../../../Data/List";
-import { bindF, fromMaybe, Maybe, maybe } from "../../../../Data/Maybe";
-import { lookup, OrderedMap } from "../../../../Data/OrderedMap";
-import { Record } from "../../../../Data/Record";
-import { Pair } from "../../../../Data/Tuple";
-import { AttributeCombined } from "../../../Models/View/AttributeCombined";
-import { SkillCombined } from "../../../Models/View/SkillCombined";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { pipe_ } from "../../../Utilities/pipe";
-import { TextBox } from "../../Universal/TextBox";
-import { iterateGroupHeaders } from "./SkillsSheetSkillsGroups";
-import { iterateList } from "./SkillsSheetSkillsIterate";
+import * as React from "react"
+import { List, subscriptF } from "../../../../Data/List"
+import { bindF, fromMaybe, Maybe, maybe } from "../../../../Data/Maybe"
+import { lookup, OrderedMap } from "../../../../Data/OrderedMap"
+import { Record } from "../../../../Data/Record"
+import { Pair } from "../../../../Data/Tuple"
+import { AttributeCombined } from "../../../Models/View/AttributeCombined"
+import { SkillCombined } from "../../../Models/View/SkillCombined"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { translate } from "../../../Utilities/I18n"
+import { pipe_ } from "../../../Utilities/pipe"
+import { TextBox } from "../../Universal/TextBox"
+import { iterateGroupHeaders } from "./SkillsSheetSkillsGroups"
+import { iterateList } from "./SkillsSheetSkillsIterate"
 
-export interface SkillsSheetSkillsProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillCombined>>>>
   skillGroupPages: OrderedMap<number, Pair<number, number>>
 }
 
 const EmptyRow = () => (
   <tr>
-    <td/>
-    <td/>
-    <td/>
-    <td/>
-    <td/>
-    <td/>
-    <td/>
+    <td />
+    <td />
+    <td />
+    <td />
+    <td />
+    <td />
+    <td />
   </tr>
 )
 
-export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
-  const { attributes, checkAttributeValueVisibility, l10n, skillsByGroup, skillGroupPages } = props
+export const SkillsSheetSkills: React.FC<Props> = props => {
+  const {
+    attributes,
+    checkAttributeValueVisibility,
+    staticData,
+    skillsByGroup,
+    skillGroupPages,
+  } = props
 
-  const groupHeaders = iterateGroupHeaders (l10n)
+  const groupHeaders = iterateGroupHeaders (staticData)
                                            (checkAttributeValueVisibility)
                                            (skillGroupPages)
                                            (attributes)
 
   return (
-    <TextBox label={translate (l10n) ("skills")}>
+    <TextBox label={translate (staticData) ("sheets.gamestatssheet.skillstable.title")}>
       <div className="upper">
         <table>
           <thead>
             <tr>
               <th className="name">
-                {translate (l10n) ("skill")}
+                {translate (staticData) ("sheets.gamestatssheet.skillstable.labels.skill")}
               </th>
               <th className="check">
-                {translate (l10n) ("check")}
+                {translate (staticData) ("sheets.gamestatssheet.skillstable.labels.check")}
               </th>
               <th className="enc">
-                {translate (l10n) ("encumbrance.short")}
+                {translate (staticData) ("sheets.gamestatssheet.skillstable.labels.encumbrance")}
               </th>
               <th className="ic">
-                {translate (l10n) ("improvementcost.short")}
+                {translate (staticData)
+                           ("sheets.gamestatssheet.skillstable.labels.improvementcost")}
               </th>
               <th className="sr">
-                {translate (l10n) ("skillrating.short")}
+                {translate (staticData) ("sheets.gamestatssheet.skillstable.labels.skillrating")}
               </th>
               <th className="routine">
-                {translate (l10n) ("routinechecks.short")}
+                {translate (staticData) ("sheets.gamestatssheet.skillstable.labels.routinechecks")}
               </th>
               <th className="comment">
-                {translate (l10n) ("notes")}
+                {translate (staticData) ("sheets.gamestatssheet.skillstable.labels.notes")}
               </th>
             </tr>
           </thead>
@@ -76,7 +83,7 @@ export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
               skillsByGroup,
               bindF (lookup (1)),
               maybe (null as React.ReactNode)
-                    (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+                    (iterateList (staticData) (checkAttributeValueVisibility) (attributes))
             )}
             <EmptyRow />
             {pipe_ (groupHeaders, subscriptF (1), fromMaybe (null as React.ReactNode))}
@@ -84,7 +91,7 @@ export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
               skillsByGroup,
               bindF (lookup (2)),
               maybe (null as React.ReactNode)
-                    (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+                    (iterateList (staticData) (checkAttributeValueVisibility) (attributes))
             )}
             <EmptyRow />
             {pipe_ (groupHeaders, subscriptF (2), fromMaybe (null as React.ReactNode))}
@@ -92,7 +99,7 @@ export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
               skillsByGroup,
               bindF (lookup (3)),
               maybe (null as React.ReactNode)
-                    (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+                    (iterateList (staticData) (checkAttributeValueVisibility) (attributes))
             )}
           </tbody>
         </table>
@@ -100,25 +107,26 @@ export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
           <thead>
             <tr>
               <th className="name">
-                {translate (l10n) ("skill")}
+                {translate (staticData) ("sheets.gamestatssheet.skillstable.labels.skill")}
               </th>
               <th className="check">
-                {translate (l10n) ("check")}
+                {translate (staticData) ("sheets.gamestatssheet.skillstable.labels.check")}
               </th>
               <th className="enc">
-                {translate (l10n) ("encumbrance.short")}
+                {translate (staticData) ("sheets.gamestatssheet.skillstable.labels.encumbrance")}
               </th>
               <th className="ic">
-                {translate (l10n) ("improvementcost.short")}
+                {translate (staticData)
+                           ("sheets.gamestatssheet.skillstable.labels.improvementcost")}
               </th>
               <th className="sr">
-                {translate (l10n) ("skillrating.short")}
+                {translate (staticData) ("sheets.gamestatssheet.skillstable.labels.skillrating")}
               </th>
               <th className="routine">
-                {translate (l10n) ("routinechecks.short")}
+                {translate (staticData) ("sheets.gamestatssheet.skillstable.labels.routinechecks")}
               </th>
               <th className="comment">
-                {translate (l10n) ("notes")}
+                {translate (staticData) ("sheets.gamestatssheet.skillstable.labels.notes")}
               </th>
             </tr>
           </thead>
@@ -128,7 +136,7 @@ export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
               skillsByGroup,
               bindF (lookup (4)),
               maybe (null as React.ReactNode)
-                    (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+                    (iterateList (staticData) (checkAttributeValueVisibility) (attributes))
             )}
             <EmptyRow />
             {pipe_ (groupHeaders, subscriptF (4), fromMaybe (null as React.ReactNode))}
@@ -136,7 +144,7 @@ export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
               skillsByGroup,
               bindF (lookup (5)),
               maybe (null as React.ReactNode)
-                    (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+                    (iterateList (staticData) (checkAttributeValueVisibility) (attributes))
             )}
           </tbody>
         </table>

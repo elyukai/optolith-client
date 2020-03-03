@@ -1,7 +1,7 @@
-import { notNull } from "../../Data/List";
-import { maybe } from "../../Data/Maybe";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { getCurrentHeroFuture, getCurrentHeroPast } from "./stateSelectors";
+import { notNull } from "../../Data/List"
+import { maybe } from "../../Data/Maybe"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { getCurrentHeroFuture, getCurrentHeroPast } from "./stateSelectors"
 
 const getStateHistoryAvailability = maybe (false) (notNull)
 

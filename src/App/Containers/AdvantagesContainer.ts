@@ -1,20 +1,20 @@
-import { connect } from "react-redux";
-import { join } from "../../Data/Maybe";
-import { Record } from "../../Data/Record";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as ConfigActions from "../Actions/ConfigActions";
-import * as DisAdvActions from "../Actions/DisAdvActions";
-import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
-import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getAdvantagesRating, getFilteredActiveAdvantages } from "../Selectors/activatableSelectors";
-import { getAPObjectMap, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from "../Selectors/adventurePointsSelectors";
-import { getFilteredInactiveAdvantages } from "../Selectors/combinedActivatablesSelectors";
-import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
-import { getAdvantages, getAdvantagesFilterText, getInactiveAdvantagesFilterText, getWikiAdvantages } from "../Selectors/stateSelectors";
-import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from "../Selectors/uisettingsSelectors";
-import { Advantages, AdvantagesDispatchProps, AdvantagesOwnProps, AdvantagesStateProps } from "../Views/DisAdvantages/Advantages";
+import { connect } from "react-redux"
+import { join } from "../../Data/Maybe"
+import { Record } from "../../Data/Record"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as ConfigActions from "../Actions/ConfigActions"
+import * as DisAdvActions from "../Actions/DisAdvActions"
+import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions"
+import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions"
+import { AppStateRecord } from "../Models/AppState"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { getAdvantagesRating, getFilteredActiveAdvantages } from "../Selectors/activatableSelectors"
+import { getAPObjectMap, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from "../Selectors/adventurePointsSelectors"
+import { getFilteredInactiveAdvantages } from "../Selectors/combinedActivatablesSelectors"
+import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"
+import { getAdvantagesFilterText, getInactiveAdvantagesFilterText } from "../Selectors/stateSelectors"
+import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from "../Selectors/uisettingsSelectors"
+import { Advantages, AdvantagesDispatchProps, AdvantagesOwnProps, AdvantagesStateProps } from "../Views/DisAdvantages/Advantages"
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: AdvantagesOwnProps): AdvantagesStateProps => ({
@@ -24,8 +24,6 @@ const mapStateToProps =
       join (getFilteredInactiveAdvantages (HeroModel.A.id (ownProps.hero)) (state, ownProps)),
     enableActiveItemHints: getEnableActiveItemHints (state),
     isRemovingEnabled: getIsRemovingEnabled (state),
-    stateEntries: getAdvantages (state),
-    wikiEntries: getWikiAdvantages (state),
     magicalMax: getMagicalAdvantagesDisadvantagesAdventurePointsMaximum (state),
     rating: getAdvantagesRating (state, ownProps),
     showRating: getAdvantagesDisadvantagesCultureRatingVisibility (state),
@@ -33,24 +31,21 @@ const mapStateToProps =
     inactiveFilterText: getInactiveAdvantagesFilterText (state),
   })
 
-const mapDispatchToProps = (
-  dispatch: ReduxDispatch,
-  { l10n: locale }: AdvantagesOwnProps
-): AdvantagesDispatchProps => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch): AdvantagesDispatchProps => ({
   switchRatingVisibility () {
     dispatch (DisAdvActions.switchRatingVisibility ())
   },
   switchActiveItemHints () {
     dispatch (ConfigActions.switchEnableActiveItemHints ())
   },
-  addToList (args: Record<ActivatableActivationOptions>) {
-    dispatch (DisAdvActions.addDisAdvantage (locale) (args))
+  async addToList (args: Record<ActivatableActivationOptions>) {
+    await dispatch (DisAdvActions.addDisAdvantage (args))
   },
-  removeFromList (args: Record<ActivatableDeactivationOptions>) {
-    dispatch (DisAdvActions.removeDisAdvantage (locale) (args))
+  async removeFromList (args: Record<ActivatableDeactivationOptions>) {
+    await dispatch (DisAdvActions.removeDisAdvantage (args))
   },
-  setLevel (id: string, index: number, level: number) {
-    dispatch (DisAdvActions.setDisAdvantageLevel (locale) (id) (index) (level))
+  async setLevel (id: string, index: number, level: number) {
+    await dispatch (DisAdvActions.setDisAdvantageLevel (id) (index) (level))
   },
   setFilterText (filterText: string) {
     dispatch (DisAdvActions.setActiveAdvantagesFilterText (filterText))

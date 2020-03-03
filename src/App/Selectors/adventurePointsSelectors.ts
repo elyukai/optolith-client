@@ -1,23 +1,23 @@
-import { cnst } from "../../Data/Function";
-import { fmap, fmapF } from "../../Data/Functor";
-import { foldr, List } from "../../Data/List";
-import { any, elem, fromJust, isJust, isMaybe, join, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe";
-import { add, subtract } from "../../Data/Num";
-import { Record } from "../../Data/Record";
-import { fst, snd } from "../../Data/Tuple";
-import { uncurryN3 } from "../../Data/Tuple/Curry";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories";
-import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
-import { heroReducer } from "../Reducers/heroReducer";
-import { getAPSpentForAdvantages, getAPSpentForAttributes, getAPSpentForBlessedAdvantages, getAPSpentForBlessedDisadvantages, getAPSpentForBlessings, getAPSpentForCantrips, getAPSpentForCombatTechniques, getAPSpentForDisadvantages, getAPSpentForEnergies, getAPSpentForLiturgicalChants, getAPSpentForMagicalAdvantages, getAPSpentForMagicalDisadvantages, getAPSpentForProfession, getAPSpentForRace, getAPSpentForSkills, getAPSpentForSpecialAbilities, getAPSpentForSpells } from "../Utilities/AdventurePoints/adventurePointsSumUtils";
-import { getDisAdvantagesSubtypeMax } from "../Utilities/AdventurePoints/adventurePointsUtils";
-import { createMapSelector, createMapSelectorS } from "../Utilities/createMapSelector";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { pipe } from "../Utilities/pipe";
-import { getAdvantagesForEditMap, getDisadvantagesForEditMap, getSpecialAbilitiesForEditMap } from "./activatableSelectors";
-import { getStartEl } from "./elSelectors";
-import { getCurrentHeroPresent, getHeroes, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells } from "./stateSelectors";
+import { cnst } from "../../Data/Function"
+import { fmap, fmapF } from "../../Data/Functor"
+import { foldr, List } from "../../Data/List"
+import { any, elem, fromJust, isJust, isMaybe, join, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe"
+import { add, subtract } from "../../Data/Num"
+import { Record } from "../../Data/Record"
+import { fst, snd } from "../../Data/Tuple"
+import { uncurryN3 } from "../../Data/Tuple/Curry"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories"
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
+import { heroReducer } from "../Reducers/heroReducer"
+import { getAPSpentForAdvantages, getAPSpentForAttributes, getAPSpentForBlessedAdvantages, getAPSpentForBlessedDisadvantages, getAPSpentForBlessings, getAPSpentForCantrips, getAPSpentForCombatTechniques, getAPSpentForDisadvantages, getAPSpentForEnergies, getAPSpentForLiturgicalChants, getAPSpentForMagicalAdvantages, getAPSpentForMagicalDisadvantages, getAPSpentForProfession, getAPSpentForRace, getAPSpentForSkills, getAPSpentForSpecialAbilities, getAPSpentForSpells } from "../Utilities/AdventurePoints/adventurePointsSumUtils"
+import { getDisAdvantagesSubtypeMax } from "../Utilities/AdventurePoints/adventurePointsUtils"
+import { createMapSelector, createMapSelectorS } from "../Utilities/createMapSelector"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { pipe } from "../Utilities/pipe"
+import { getAdvantagesForEditMap, getDisadvantagesForEditMap, getSpecialAbilitiesForEditMap } from "./activatableSelectors"
+import { getStartEl } from "./elSelectors"
+import { getCurrentHeroPresent, getHeroes, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells } from "./stateSelectors"
 
 const UA = heroReducer.A
 const HA = HeroModel.A

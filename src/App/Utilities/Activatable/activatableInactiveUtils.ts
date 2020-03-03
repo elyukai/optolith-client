@@ -7,79 +7,76 @@
  * @since 1.1.0
  */
 
-import { notP } from "../../../Data/Bool";
-import { equals, notEquals } from "../../../Data/Eq";
-import { cnst, flip, ident, thrush } from "../../../Data/Function";
-import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
-import * as IntMap from "../../../Data/IntMap";
-import { over, set } from "../../../Data/Lens";
-import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, nub, subscript } from "../../../Data/List";
-import { all, ap, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
-import { add, gt, gte, inc, multiply } from "../../../Data/Num";
-import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
-import { Record, RecordI } from "../../../Data/Record";
-import { filterMapListT, filterT, mapT } from "../../../Data/Transducer";
-import { fst, Pair, snd, Tuple } from "../../../Data/Tuple";
-import { CombatTechniqueGroup, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups";
-import { AdvantageId, DisadvantageId, SkillId, SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { Pact } from "../../Models/Hero/Pact";
-import { Rules } from "../../Models/Hero/Rules";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { InactiveActivatable, InactiveActivatableL } from "../../Models/View/InactiveActivatable";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { Skill } from "../../Models/Wiki/Skill";
-import { Spell } from "../../Models/Wiki/Spell";
-import { Application } from "../../Models/Wiki/sub/Application";
-import { SelectOption, SelectOptionL } from "../../Models/Wiki/sub/SelectOption";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
-import { composeT } from "../compose";
-import { countActiveGroupEntries } from "../entryGroupUtils";
-import { getAllEntriesByGroup } from "../heroStateUtils";
-import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
-import { isUnfamiliarSpell } from "../Increasable/spellUtils";
-import { pipe, pipe_ } from "../pipe";
-import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
-import { isEntryAvailable } from "../RulesUtils";
-import { sortRecordsByName } from "../sortBy";
-import { isNumber, isString, misNumberM, misStringM } from "../typeCheckUtils";
-import { getMaxLevelForDecreaseEntry, getSermonsAndVisionsCount } from "./activatableActiveValidationUtils";
-import { isAdditionDisabled } from "./activatableInactiveValidationUtils";
-import { modifyByLevel } from "./activatableModifierUtils";
-import { countActiveSkillEntries } from "./activatableSkillUtils";
-import { isMaybeActive } from "./isActive";
-import { getActiveSecondarySelections, getActiveSelections, getActiveSelectionsMaybe, getRequiredSelections } from "./selectionUtils";
-import { getBlessedTradition, getMagicalTraditionsHeroEntries, mapBlessedNumIdToTradId } from "./traditionUtils";
+import { notP } from "../../../Data/Bool"
+import { equals, notEquals } from "../../../Data/Eq"
+import { cnst, flip, ident } from "../../../Data/Function"
+import { fmap, fmapF, mapReplace } from "../../../Data/Functor"
+import * as IntMap from "../../../Data/IntMap"
+import { over, set } from "../../../Data/Lens"
+import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, nub, subscript } from "../../../Data/List"
+import { all, ap, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, Just, liftM2, listToMaybe, Maybe, maybe, maybeToList, Nothing, or, thenF } from "../../../Data/Maybe"
+import { add, gt, gte, inc, multiply } from "../../../Data/Num"
+import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap"
+import { Record, RecordI } from "../../../Data/Record"
+import { filterMapListT, filterT, mapT } from "../../../Data/Transducer"
+import { fst, Pair, snd, Tuple } from "../../../Data/Tuple"
+import { CombatTechniqueGroupId, MagicalTradition, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups"
+import { AdvantageId, DisadvantageId, SkillId, SpecialAbilityId } from "../../Constants/Ids.gen"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Pact } from "../../Models/Hero/Pact"
+import { Rules } from "../../Models/Hero/Rules"
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
+import { InactiveActivatable, InactiveActivatableL } from "../../Models/View/InactiveActivatable"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
+import { Skill } from "../../Models/Wiki/Skill"
+import { Spell } from "../../Models/Wiki/Spell"
+import { Application } from "../../Models/Wiki/sub/Application"
+import { SelectOption, SelectOptionL } from "../../Models/Wiki/sub/SelectOption"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
+import { composeT } from "../compose"
+import { filterUnfamiliar } from "../Dependencies/TransferredUnfamiliarUtils"
+import { countActiveGroupEntries } from "../entryGroupUtils"
+import { getAllEntriesByGroup } from "../heroStateUtils"
+import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils"
+import { isUnfamiliarSpell } from "../Increasable/spellUtils"
+import { pipe, pipe_ } from "../pipe"
+import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils"
+import { isEntryAvailable } from "../RulesUtils"
+import { sortRecordsByName } from "../sortBy"
+import { isNumber, isString, isStringM, misNumberM, misStringM } from "../typeCheckUtils"
+import { getMaxLevelForDecreaseEntry, getSermonsAndVisionsCount } from "./activatableActiveValidationUtils"
+import { isAdditionDisabled } from "./activatableInactiveValidationUtils"
+import { modifyByLevel } from "./activatableModifierUtils"
+import { countActiveSkillEntries } from "./activatableSkillUtils"
+import { isMaybeActive } from "./isActive"
+import { getActiveSecondarySelections, getActiveSelections, getActiveSelectionsMaybe, getRequiredSelections } from "./selectionUtils"
+import { getBlessedTradition, getMagicalTraditionsHeroEntries, mapBlessedNumIdToTradId } from "./traditionUtils"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const HA = HeroModel.A
-
 const AAL = Advantage.AL
-const { aspects, ic } = LiturgicalChant.AL
-const { property } = Spell.AL
-const { active, dependencies } = ActivatableDependent.AL
-const { value } = ActivatableSkillDependent.AL
-
+const LCA = LiturgicalChant.A
+const SpA = Spell.A
+const ADA = ActivatableDependent.A
+const ASDA = ActivatableSkillDependent.A
+const SkDA = SkillDependent.A
 const SOA = SelectOption.A
 const AppA = Application.A
 const AOA = ActiveObject.A
 const SpAL = Spell.AL
 const SA = Skill.A
 const RA = Rules.A
-
-const { cost: select_costL, applications, name: nameL } = SelectOptionL
-const { sid } = ActiveObject.AL
+const SOL = SelectOptionL
 const IAA = InactiveActivatable.A
 const IAL = InactiveActivatableL
-const { level: pact_level } = Pact.AL
-const { spentOnMagicalAdvantages, spentOnMagicalDisadvantages } = AdventurePointsCategories.AL
+const PA = Pact.A
+const APCA = AdventurePointsCategories.A
 
 /**
  * `isNotActive :: Maybe ActivatableDependent -> SelectOption -> Bool`
@@ -153,12 +150,12 @@ const incMapVal = alter (pipe (maybe (1) (inc), Just))
 
 const addChantToCounter =
   (chant: Record<LiturgicalChant>) =>
-    flip (foldr<number, IntMap.IntMap<number>> (flip (IntMap.insertWith (add)) (1)))
-         (aspects (chant))
+    flip (foldr (flip (IntMap.insertWith (add)) (1)))
+         (LCA.aspects (chant))
 
-const addSpellToCounter = pipe (property, incMapVal)
+const addSpellToCounter = pipe (SpA.property, incMapVal)
 
-const filterSkillsGte10 = filter<Record<ActivatableSkillDependent>> (pipe (value, gte (10)))
+const filterSkillsGte10 = filter (pipe (ASDA.value, gte (10)))
 
 const foldCounter =
   foldrWithKey<number, number, List<number>> (k => x => x >= 3 ? consF (k) : ident)
@@ -171,12 +168,12 @@ const foldCounter =
  * least SR 10 belong to.
  */
 const getPropsWith3Gte10 =
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
     pipe (
       HA.spells,
       elems,
       filterSkillsGte10,
-      mapByIdKeyMap (WA.spells (wiki)),
+      mapByIdKeyMap (SDA.spells (staticData)),
       foldr (addSpellToCounter) (OrderedMap.empty),
       foldCounter
     )
@@ -188,38 +185,75 @@ const getPropsWith3Gte10 =
  * SR 10 belong to.
  */
 const getAspectsWith3Gte10 =
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
     pipe (
       HA.liturgicalChants,
       elems,
       filterSkillsGte10,
-      mapByIdKeyMap (WA.liturgicalChants (wiki)),
+      mapByIdKeyMap (SDA.liturgicalChants (staticData)),
       foldr (addChantToCounter) (IntMap.empty),
       IntMap.foldrWithKey<number, List<number>> (k => x => x >= 3 ? consF (k) : ident)
                                                 (List.empty)
     )
 
+const isSocialSkill =
+  (staticData: StaticDataRecord) =>
+    pipe (
+      SOA.id,
+      ensure (isString),
+      bindF (lookupF (SDA.skills (staticData))),
+      fmap (pipe (SA.gr, equals (SkillGroup.Social))),
+      or
+    )
+
+const isAddExistSkillSpecAllowed =
+  (hero: HeroModelRecord) =>
+  (counter: OrderedMap<string | number, List<string | number>>) =>
+  (curr_select_id: string | number) =>
+    pipe_ (
+      curr_select_id,
+      ensure (isString),
+      bindF (lookupF (HA.skills (hero))),
+      liftM2 ((apps: List<string | number>) =>
+              (skill: Record<SkillDependent>) =>
+                flength (apps) < 3 && SkDA.value (skill) >= (flength (apps) + 1) * 6)
+             (lookupF (counter) (curr_select_id)),
+      or
+    )
+
+const isAddNotExistSkillSpecAllowed =
+  (hero: HeroModelRecord) =>
+  (curr_select_id: string | number) =>
+    pipe_ (
+      curr_select_id,
+      ensure (isString),
+      bindF (lookupF (HA.skills (hero))),
+      fmap (skill => SkDA.value (skill) >= 6),
+      or
+    )
+
+const is3or4 = (x: string | number): x is number => x === 3 || x === 4
+
 /**
  * Modifies the select options of specific entries to match current conditions.
  */
 const modifySelectOptions =
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (hero_magical_traditions: List<Record<ActivatableDependent>>) =>
   (wiki_entry: Activatable) =>
-  // tslint:disable-next-line: cyclomatic-complexity
   (mhero_entry: Maybe<Record<ActivatableDependent>>): ident<Maybe<List<Record<SelectOption>>>> => {
     const current_id = AAL.id (wiki_entry)
 
     const isAvailable =
       composeT (
-        filterT (isEntryAvailable (WA.books (wiki))
+        filterT (isEntryAvailable (SDA.books (staticData))
                                   (RA.enabledRuleBooks (HA.rules (hero)))
                                   (RA.enableAllRuleBooks (HA.rules (hero)))
                                   (SOA.src)),
         filterT (pipe (
           SOA.prerequisites,
-          Maybe.all (reqs => validatePrerequisites (wiki)
+          Maybe.all (reqs => validatePrerequisites (staticData)
                                                    (hero)
                                                    (reqs)
                                                    (current_id))
@@ -233,7 +267,7 @@ const modifySelectOptions =
       composeT (isAvailable, filterT (isNotRequired (mhero_entry)))
 
     switch (current_id) {
-      case AdvantageId.ExceptionalSkill: {
+      case AdvantageId.exceptionalSkill: {
         const hasLessThanTwoSameIdActiveSelections = filterT (areNoSameActive (mhero_entry))
 
         return fmap (filterMapListT (composeT (
@@ -242,7 +276,7 @@ const modifySelectOptions =
                                     )))
       }
 
-      case DisadvantageId.PersonalityFlaw: {
+      case DisadvantageId.personalityFlaw: {
         const unique_selections = maybe (List<number> ())
                                         (pipe (
                                           getActiveSelections,
@@ -273,29 +307,30 @@ const modifySelectOptions =
         return fmap (filterMapListT (filterOptions))
       }
 
-      case DisadvantageId.NegativeTrait:
-      case DisadvantageId.Maimed:
+      case DisadvantageId.negativeTrait:
+      case DisadvantageId.maimed:
         return fmap (filterMapListT (isNoRequiredOrActiveSelection))
 
-      case DisadvantageId.Incompetent: {
+      case DisadvantageId.incompetent: {
         const isAdvActive =
           pipe (lookupF (HA.advantages (hero)), isMaybeActive)
 
-        const isNotSocialSkill = notP (isSocialSkill (wiki))
+        const isNotSocialSkill = notP (isSocialSkill (staticData))
 
         return fmap (filterMapListT (composeT (
                                       isNoRequiredOrActiveSelection,
                                       filterT (e =>
+
                                         // Socially Adaptable and Inspire Confidence
                                         // require no Incompetence in social skills
-                                        (isAdvActive (AdvantageId.SociallyAdaptable)
-                                        || isAdvActive (AdvantageId.InspireConfidence)
+                                        (isAdvActive (AdvantageId.sociallyAdaptable)
+                                        || isAdvActive (AdvantageId.inspireConfidence)
                                           ? isNotSocialSkill (e)
                                           : true))
                                     )))
       }
 
-      case SpecialAbilityId.SkillSpecialization: {
+      case SpecialAbilityId.skillSpecialization: {
         const mcounter = getActiveSecondarySelections (mhero_entry)
 
         return fmap (filterMapListT (composeT (
@@ -326,15 +361,16 @@ const modifySelectOptions =
 
             const adjustSelectOption =
               pipe (
-                over (select_costL)
+                over (SOL.cost)
                      (isJust (mcounts)
+
                        // Increase cost if there are active specializations
                        // for the same skill
                        ? fmap (multiply (flength (fromJust (mcounts)) + 1))
 
                        // otherwise return current cost
                        : ident),
-                over (applications)
+                over (SOL.applications)
                      (fmap (filter (app => {
                                      const isInactive =
                                        all (notElem<number | string>
@@ -342,12 +378,10 @@ const modifySelectOptions =
                                            (mcounts)
 
                                      const arePrerequisitesMet =
-                                       all (pipe (
-                                             validatePrerequisites (wiki)
-                                                                   (hero),
-                                             thrush (current_id)
-                                           ))
-                                           (AppA.prerequisites (app))
+                                       validatePrerequisites (staticData)
+                                                             (hero)
+                                                             (maybeToList (AppA.prerequisite (app)))
+                                                             (current_id)
 
                                      return isInactive
                                        && arePrerequisitesMet
@@ -359,9 +393,18 @@ const modifySelectOptions =
         )))
       }
 
-      case SpecialAbilityId.PropertyKnowledge: {
+      case SpecialAbilityId.traditionGuildMages: {
+        return fmap (filterUnfamiliar (pipe (
+                                        SpA.tradition,
+                                        trads => notElem (MagicalTradition.General) (trads)
+                                                 && notElem (MagicalTradition.GuildMages) (trads)
+                                      ))
+                                      (staticData))
+      }
+
+      case SpecialAbilityId.propertyKnowledge: {
         const isValidProperty =
-          filterT (pipe (SOA.id, elemF<string | number> (getPropsWith3Gte10 (wiki) (hero))))
+          filterT (pipe (SOA.id, elemF<string | number> (getPropsWith3Gte10 (staticData) (hero))))
 
         return fmap (filterMapListT (composeT (
                                       isNoRequiredOrActiveSelection,
@@ -369,12 +412,12 @@ const modifySelectOptions =
                                     )))
       }
 
-      case SpecialAbilityId.PropertyFocus: {
+      case SpecialAbilityId.propertyFocus: {
         const isActivePropertyKnowledge =
           filterT (notP (pipe_ (
                           hero,
                           HA.specialAbilities,
-                          lookup<string> (SpecialAbilityId.PropertyKnowledge),
+                          lookup<string> (SpecialAbilityId.propertyKnowledge),
                           isNotActive
                         )))
 
@@ -384,8 +427,8 @@ const modifySelectOptions =
                                     )))
       }
 
-      case SpecialAbilityId.AspectKnowledge: {
-        const valid_aspects = getAspectsWith3Gte10 (wiki) (hero)
+      case SpecialAbilityId.aspectKnowledge: {
+        const valid_aspects = getAspectsWith3Gte10 (staticData) (hero)
 
         const isAspectValid = pipe (SOA.id, elemF<string | number> (valid_aspects))
 
@@ -407,7 +450,7 @@ const modifySelectOptions =
                      (getBlessedTradition (HA.specialAbilities (hero)))
       }
 
-      case SpecialAbilityId.AdaptionZauber: {
+      case SpecialAbilityId.adaptionZauber: {
         const isWikiEntryFromUnfamiliarTrad =
           isUnfamiliarSpell (HA.transferredUnfamiliarSpells (hero))
                             (hero_magical_traditions)
@@ -417,14 +460,14 @@ const modifySelectOptions =
             SOA.id,
             ensure (isString),
             bindF (lookupF (HA.spells (hero))),
-            maybe (false) (pipe (value, gte (10)))
+            maybe (false) (pipe (ASDA.value, gte (10)))
           )
 
         const isFromUnfamiliarTrad =
           pipe (
             SOA.id,
             ensure (isString),
-            bindF (lookupF (WA.spells (wiki))),
+            bindF (lookupF (SDA.spells (staticData))),
             maybe (false) (isWikiEntryFromUnfamiliarTrad)
           )
 
@@ -435,17 +478,17 @@ const modifySelectOptions =
                                     )))
       }
 
-      case SpecialAbilityId.SpellEnhancement:
-      case SpecialAbilityId.ChantEnhancement: {
-        const getTargetHeroEntry = current_id === SpecialAbilityId.SpellEnhancement
+      case SpecialAbilityId.spellEnhancement:
+      case SpecialAbilityId.chantEnhancement: {
+        const getTargetHeroEntry = current_id === SpecialAbilityId.spellEnhancement
           ? bindF (lookupF (HA.spells (hero)))
           : bindF (lookupF (HA.liturgicalChants (hero)))
 
         const getTargetWikiEntry:
           ((x: Maybe<string>) => Maybe<Record<Spell> | Record<LiturgicalChant>>) =
-          current_id === SpecialAbilityId.SpellEnhancement
-            ? bindF (lookupF (WA.spells (wiki)))
-            : bindF (lookupF (WA.liturgicalChants (wiki)))
+          current_id === SpecialAbilityId.spellEnhancement
+            ? bindF (lookupF (SDA.spells (staticData)))
+            : bindF (lookupF (SDA.liturgicalChants (staticData)))
 
         const isNotUnfamiliar =
           (x: Record<Spell> | Record<LiturgicalChant>) =>
@@ -462,7 +505,7 @@ const modifySelectOptions =
                                isJust (mtarget_wiki_entry)
                                && isJust (mtarget_hero_entry)
                                && isNotUnfamiliar (fromJust (mtarget_wiki_entry))
-                               && value (fromJust (mtarget_hero_entry))
+                               && ASDA.value (fromJust (mtarget_hero_entry))
                                   >= maybe (0)
                                            (pipe (multiply (4), add (4)))
                                            (SOA.level (e))
@@ -470,7 +513,7 @@ const modifySelectOptions =
                                const target_wiki_entry = fromJust (mtarget_wiki_entry)
 
                                return consF (
-                                 set (nameL)
+                                 set (SOL.name)
                                      (`${SpAL.name (target_wiki_entry)}: ${SOA.name (e)}`)
                                      (e)
                                )
@@ -481,19 +524,20 @@ const modifySelectOptions =
                            (List ()))
       }
 
-      case SpecialAbilityId.LanguageSpecializations: {
+      case SpecialAbilityId.languageSpecializations: {
         return pipe_ (
-          wiki,
-          WA.specialAbilities,
-          lookup<string> (SpecialAbilityId.Language),
+          staticData,
+          SDA.specialAbilities,
+          lookup<string> (SpecialAbilityId.language),
           bindF (AAL.select),
           maybe (cnst (Nothing) as ident<Maybe<List<Record<SelectOption>>>>)
                 (current_select => {
                   const available_langs =
+
                           // Pair: fst = sid, snd = current_level
                     maybe (List<Pair<number, number>> ())
                           (pipe (
-                            active,
+                            ADA.active,
                             foldr ((obj: Record<ActiveObject>) =>
                                     pipe_ (
                                       obj,
@@ -518,30 +562,30 @@ const modifySelectOptions =
                           (pipe_ (
                             hero,
                             HA.specialAbilities,
-                            lookup<string> (SpecialAbilityId.Language)
+                            lookup<string> (SpecialAbilityId.language)
                           ))
 
                   const filterLanguages =
                     foldr (isNoRequiredOrActiveSelection
-                            (e => {
-                              const lang =
-                                find ((l: Pair<number, number>) =>
-                                       fst (l) === SOA.id (e))
-                                     (available_langs)
+                          (e => {
+                            const lang =
+                              find ((l: Pair<number, number>) =>
+                                     fst (l) === SOA.id (e))
+                                   (available_langs)
 
-                              if (isJust (lang)) {
-                                const isMotherTongue =
-                                  snd (fromJust (lang)) === 4
+                            if (isJust (lang)) {
+                              const isMotherTongue =
+                                snd (fromJust (lang)) === 4
 
-                                if (isMotherTongue) {
-                                  return consF (set (select_costL) (Just (0)) (e))
-                                }
-
-                                return consF (e)
+                              if (isMotherTongue) {
+                                return consF (set (SOL.cost) (Just (0)) (e))
                               }
 
-                              return ident as ident<List<Record<SelectOption>>>
-                            }))
+                              return consF (e)
+                            }
+
+                            return ident as ident<List<Record<SelectOption>>>
+                          }))
                           (List ())
 
                   return cnst (Just (filterLanguages (current_select)))
@@ -549,271 +593,62 @@ const modifySelectOptions =
         )
       }
 
+      case SpecialAbilityId.madaschwesternStil: {
+        return fmap (filterUnfamiliar (pipe (
+                                        SpA.tradition,
+                                        trads => notElem (MagicalTradition.General) (trads)
+                                                 && notElem (MagicalTradition.Witches) (trads)
+                                      ))
+                                      (staticData))
+      }
+
+      case SpecialAbilityId.scholarDesMagierkollegsZuHoningen: {
+        const allowed_traditions = List (
+                                     MagicalTradition.Druids,
+                                     MagicalTradition.Elves,
+                                     MagicalTradition.Witches
+                                   )
+
+        const mtransferred_spell_trads = pipe_ (
+                                           HA.specialAbilities (hero),
+                                           lookup (SpecialAbilityId.traditionGuildMages),
+                                           bindF (pipe (ADA.active, listToMaybe)),
+                                           bindF (pipe (AOA.sid, isStringM)),
+                                           bindF (lookupF (SDA.spells (staticData))),
+                                           fmap (SpA.tradition)
+                                         )
+
+        if (isNothing (mtransferred_spell_trads)) {
+          return ident
+        }
+
+        const transferred_spell_trads = fromJust (mtransferred_spell_trads)
+
+        // Contains all allowed trads the first spell does not have
+        const trad_diff = filter (notElemF (transferred_spell_trads))
+                                 (allowed_traditions)
+
+        const has_transferred_all_traditions_allowed = fnull (trad_diff)
+
+        return fmap (filterUnfamiliar (pipe (
+                                        SpA.tradition,
+                                        has_transferred_all_traditions_allowed
+                                          ? trads =>
+                                              notElem (MagicalTradition.General) (trads)
+                                              && List.any (elemF (allowed_traditions)) (trads)
+                                          : trads =>
+                                              notElem (MagicalTradition.General) (trads)
+                                              && List.any (elemF (trad_diff)) (trads)
+                                      ))
+                                      (staticData))
+      }
+
       default:
         return fmap (filterMapListT (isNoRequiredOrActiveSelection))
     }
   }
 
-const isSocialSkill =
-  (wiki: WikiModelRecord) =>
-    pipe (
-      SOA.id,
-      ensure (isString),
-      bindF (lookupF (WA.skills (wiki))),
-      fmap (pipe (SA.gr, equals (SkillGroup.Social))),
-      or
-    )
-
-const isAddExistSkillSpecAllowed =
-  (hero: HeroModelRecord) =>
-  (counter: OrderedMap<string | number, List<string | number>>) =>
-  (curr_select_id: string | number) =>
-    pipe_ (
-      curr_select_id,
-      ensure (isString),
-      bindF (lookupF (HA.skills (hero))),
-      liftM2 ((apps: List<string | number>) =>
-              (skill: Record<SkillDependent>) =>
-                flength (apps) < 3 && value (skill) >= (flength (apps) + 1) * 6)
-             (lookupF (counter) (curr_select_id)),
-      or
-    )
-
-const isAddNotExistSkillSpecAllowed =
-  (hero: HeroModelRecord) =>
-  (curr_select_id: string | number) =>
-    pipe_ (
-      curr_select_id,
-      ensure (isString),
-      bindF (lookupF (HA.skills (hero))),
-      fmap (skill => value (skill) >= 6),
-      or
-    )
-
-const is3or4 = (x: string | number): x is number => x === 3 || x === 4
-
 type OtherOptionsModifier = ident<Record<InactiveActivatable>>
-
-const modifyOtherOptions =
-  (wiki: WikiModelRecord) =>
-  (hero: HeroModelRecord) =>
-  (adventure_points: Record<AdventurePointsCategories>) =>
-  (wiki_entry: Activatable) =>
-  (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<OtherOptionsModifier> => {
-    const current_id = AAL.id (wiki_entry)
-
-    switch (current_id) {
-      case DisadvantageId.WenigePredigten:
-        return pipe_ (
-          SpecialAbilityGroup.Predigten,
-          getSermonsAndVisionsCount (wiki) (hero),
-          getMaxLevelForDecreaseEntry (3),
-          set (IAL.maxLevel),
-          Just
-        )
-
-      case DisadvantageId.WenigeVisionen:
-        return pipe_ (
-          SpecialAbilityGroup.Visionen,
-          getSermonsAndVisionsCount (wiki) (hero),
-          getMaxLevelForDecreaseEntry (3),
-          set (IAL.maxLevel),
-          Just
-        )
-
-      case DisadvantageId.SmallSpellSelection: {
-        return pipe_ (
-          hero,
-          countActiveSkillEntries ("spells"),
-          getMaxLevelForDecreaseEntry (3),
-          set (IAL.maxLevel),
-          Just
-        )
-      }
-
-      case SpecialAbilityId.CraftInstruments: {
-        return join (liftM2 (
-                              (woodworking: Record<SkillDependent>) =>
-                              (metalworking: Record<SkillDependent>) =>
-                                value (woodworking) + value (metalworking) >= 12
-                                  ? Just (ident)
-                                  : Nothing
-                            )
-                            (pipe (HA.skills, lookup<string> (SkillId.Woodworking)) (hero))
-                            (pipe (HA.skills, lookup<string> (SkillId.Metalworking)) (hero)))
-      }
-
-      case SpecialAbilityId.Hunter: {
-        return pipe_ (
-          CombatTechniqueGroup.Ranged,
-          getAllEntriesByGroup (WA.combatTechniques (wiki))
-                               (HA.combatTechniques (hero)),
-          filter (pipe (value, gte (10))),
-          flength,
-          ensure (gt (0)),
-          mapReplace (ident)
-        )
-      }
-
-      case SpecialAbilityId.TraditionGuildMages:
-      case SpecialAbilityId.TraditionWitches:
-      case SpecialAbilityId.TraditionElves:
-      case SpecialAbilityId.TraditionDruids:
-      case SpecialAbilityId.TraditionIllusionist:
-      case SpecialAbilityId.TraditionQabalyaMage:
-      case SpecialAbilityId.TraditionGeoden:
-      case SpecialAbilityId.TraditionZauberalchimisten:
-      case SpecialAbilityId.TraditionSchelme:
-      case SpecialAbilityId.TraditionBrobimGeoden: {
-        return pipe (
-                      HA.specialAbilities,
-                      getMagicalTraditionsHeroEntries,
-                      ensure (List.fnull),
-                      mapReplace (ident)
-                    )
-                    (hero)
-      }
-
-      case SpecialAbilityId.PropertyKnowledge:
-      case SpecialAbilityId.AspectKnowledge: {
-        return pipe (
-                      AAL.cost,
-                      bindF<number | List<number>, List<number>> (ensure (isList)),
-                      bindF (costs => subscript (costs)
-                                                (maybe (0) (pipe (active, flength)) (mhero_entry))),
-                      fmap (pipe (Just, set (IAL.cost)))
-                    )
-                    (wiki_entry)
-      }
-
-      case SpecialAbilityId.TraditionChurchOfPraios:
-      case SpecialAbilityId.TraditionChurchOfRondra:
-      case SpecialAbilityId.TraditionChurchOfBoron:
-      case SpecialAbilityId.TraditionChurchOfHesinde:
-      case SpecialAbilityId.TraditionChurchOfPhex:
-      case SpecialAbilityId.TraditionChurchOfPeraine:
-      case SpecialAbilityId.TraditionChurchOfEfferd:
-      case SpecialAbilityId.TraditionChurchOfTravia:
-      case SpecialAbilityId.TraditionChurchOfFirun:
-      case SpecialAbilityId.TraditionChurchOfTsa:
-      case SpecialAbilityId.TraditionChurchOfIngerimm:
-      case SpecialAbilityId.TraditionChurchOfRahja:
-      case SpecialAbilityId.TraditionCultOfTheNamelessOne:
-      case SpecialAbilityId.TraditionChurchOfAves:
-      case SpecialAbilityId.TraditionChurchOfIfirn:
-      case SpecialAbilityId.TraditionChurchOfKor:
-      case SpecialAbilityId.TraditionChurchOfNandus:
-      case SpecialAbilityId.TraditionChurchOfSwafnir:
-      case SpecialAbilityId.TraditionCultOfNuminoru: {
-        return pipe_ (
-                       hero,
-                       HA.specialAbilities,
-                       getBlessedTradition,
-                       maybe<Maybe<OtherOptionsModifier>> (Just (ident)) (() => Nothing)
-                     )
-      }
-
-      case SpecialAbilityId.Recherchegespuer: {
-        return pipe (
-                      HA.specialAbilities,
-                      lookup<string> (SpecialAbilityId.Wissensdurst),
-                      fmap (active),
-                      bindF (listToMaybe),
-                      bindF (sid),
-                      misStringM,
-                      bindF (lookupF (WA.skills (wiki))),
-                      bindF (skill => pipe (
-                                             bindF<number | List<number>, List<number>>
-                                               (ensure (isList)),
-                                             fmap (pipe (
-                                                    map (add (ic (skill))),
-                                                    Just,
-                                                    set (IAL.cost)
-                                                  ))
-                                           )
-                                           (AAL.cost (wiki_entry)))
-                    )
-                    (hero)
-      }
-
-      case SpecialAbilityId.PredigtDerGemeinschaft:
-      case SpecialAbilityId.PredigtDerZuversicht:
-      case SpecialAbilityId.PredigtDesGottvertrauens:
-      case SpecialAbilityId.PredigtDesWohlgefallens:
-      case SpecialAbilityId.PredigtWiderMissgeschicke: {
-        return mapReplace (ident)
-                          (guard_ (() => {
-                                    const isAdvActive =
-                                      pipe (lookupF (HA.advantages (hero)), isMaybeActive)
-
-                                    const max =
-                                      getSermonOrVisionCountMax (hero)
-                                                                (AdvantageId.ZahlreichePredigten)
-                                                                (DisadvantageId.WenigePredigten)
-
-                                    const isLessThanMax =
-                                      countActiveGroupEntries (wiki)
-                                                              (hero)
-                                                              (SpecialAbilityGroup.Predigten) < max
-
-                                    return (isAdvActive (AdvantageId.Prediger) && isLessThanMax)
-                                      || isAdvActive (AdvantageId.Blessed)
-                                  }))
-      }
-
-      case SpecialAbilityId.VisionDerBestimmung:
-      case SpecialAbilityId.VisionDerEntrückung:
-      case SpecialAbilityId.VisionDerGottheit:
-      case SpecialAbilityId.VisionDesSchicksals:
-      case SpecialAbilityId.VisionDesWahrenGlaubens: {
-        return mapReplace (ident)
-                          (guard_ (() => {
-                                    const isAdvActive =
-                                      pipe (lookupF (HA.advantages (hero)), isMaybeActive)
-
-                                    const max =
-                                      getSermonOrVisionCountMax (hero)
-                                                                (AdvantageId.ZahlreicheVisionen)
-                                                                (DisadvantageId.WenigeVisionen)
-
-                                    const isLessThanMax =
-                                      countActiveGroupEntries (wiki)
-                                                              (hero)
-                                                              (SpecialAbilityGroup.Visionen) < max
-
-                                    return (isAdvActive (AdvantageId.Visionaer) && isLessThanMax)
-                                      || isAdvActive (AdvantageId.Blessed)
-                                  }))
-      }
-
-      case SpecialAbilityId.DunklesAbbildDerBuendnisgabe: {
-        return pipe (
-                      HA.pact,
-                      fmap (pipe (pact_level, Just, set (IAL.maxLevel)))
-                    )
-                    (hero)
-      }
-
-      case SpecialAbilityId.TraditionArcaneBard:
-      case SpecialAbilityId.TraditionArcaneDancer:
-      case SpecialAbilityId.TraditionIntuitiveMage:
-      case SpecialAbilityId.TraditionSavant:
-      case SpecialAbilityId.TraditionAnimisten: {
-        return mapReplace (ident)
-                          (guard (spentOnMagicalAdvantages (adventure_points) <= 25
-                                  && spentOnMagicalDisadvantages (adventure_points) <= 25
-                                  && pipe_ (
-                                      hero,
-                                      HA.specialAbilities,
-                                      getMagicalTraditionsHeroEntries,
-                                      fnull
-                                    )))
-      }
-
-      default:
-        return Just (ident)
-    }
-  }
 
 const getSermonOrVisionCountMax =
   (hero: HeroModelRecord) =>
@@ -823,16 +658,237 @@ const getSermonOrVisionCountMax =
                   (lookup (adv_id) (HA.advantages (hero)))
                   (lookup (disadv_id) (HA.disadvantages (hero)))
 
+const modifyOtherOptions =
+  (wiki: StaticDataRecord) =>
+  (hero: HeroModelRecord) =>
+  (adventure_points: Record<AdventurePointsCategories>) =>
+  (wiki_entry: Activatable) =>
+  (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<OtherOptionsModifier> => {
+    const current_id = AAL.id (wiki_entry)
+
+    switch (current_id) {
+      case DisadvantageId.wenigePredigten:
+        return pipe_ (
+          SpecialAbilityGroup.Predigten,
+          getSermonsAndVisionsCount (wiki) (hero),
+          getMaxLevelForDecreaseEntry (3),
+          set (IAL.maxLevel),
+          Just
+        )
+
+      case DisadvantageId.wenigeVisionen:
+        return pipe_ (
+          SpecialAbilityGroup.Visionen,
+          getSermonsAndVisionsCount (wiki) (hero),
+          getMaxLevelForDecreaseEntry (3),
+          set (IAL.maxLevel),
+          Just
+        )
+
+      case DisadvantageId.smallSpellSelection: {
+        return pipe_ (
+          hero,
+          countActiveSkillEntries ("spells"),
+          getMaxLevelForDecreaseEntry (3),
+          set (IAL.maxLevel),
+          Just
+        )
+      }
+
+      case SpecialAbilityId.craftInstruments: {
+        return join (liftM2 (
+                              (woodworking: Record<SkillDependent>) =>
+                              (metalworking: Record<SkillDependent>) =>
+                                SkDA.value (woodworking) + SkDA.value (metalworking) >= 12
+                                  ? Just (ident)
+                                  : Nothing
+                            )
+                            (pipe (HA.skills, lookup<string> (SkillId.woodworking)) (hero))
+                            (pipe (HA.skills, lookup<string> (SkillId.metalworking)) (hero)))
+      }
+
+      case SpecialAbilityId.hunter: {
+        return pipe_ (
+          CombatTechniqueGroupId.Ranged,
+          getAllEntriesByGroup (SDA.combatTechniques (wiki))
+                               (HA.combatTechniques (hero)),
+          filter (pipe (SkDA.value, gte (10))),
+          flength,
+          ensure (gt (0)),
+          mapReplace (ident)
+        )
+      }
+
+      case SpecialAbilityId.traditionGuildMages:
+      case SpecialAbilityId.traditionWitches:
+      case SpecialAbilityId.traditionElves:
+      case SpecialAbilityId.traditionDruids:
+      case SpecialAbilityId.traditionIllusionist:
+      case SpecialAbilityId.traditionQabalyaMage:
+      case SpecialAbilityId.traditionGeoden:
+      case SpecialAbilityId.traditionZauberalchimisten:
+      case SpecialAbilityId.traditionSchelme:
+      case SpecialAbilityId.traditionBrobimGeoden: {
+        return pipe_ (
+          hero,
+          HA.specialAbilities,
+          getMagicalTraditionsHeroEntries,
+          ensure (List.fnull),
+          mapReplace (ident)
+        )
+      }
+
+      case SpecialAbilityId.propertyKnowledge:
+      case SpecialAbilityId.aspectKnowledge: {
+        return pipe_ (
+          wiki_entry,
+          AAL.cost,
+          bindF<number | List<number>, List<number>> (ensure (isList)),
+          bindF (costs => subscript (costs)
+                                    (maybe (0)
+                                           (pipe (ADA.active, flength))
+                                           (mhero_entry))),
+          fmap (pipe (Just, set (IAL.cost)))
+        )
+      }
+
+      case SpecialAbilityId.traditionChurchOfPraios:
+      case SpecialAbilityId.traditionChurchOfRondra:
+      case SpecialAbilityId.traditionChurchOfBoron:
+      case SpecialAbilityId.traditionChurchOfHesinde:
+      case SpecialAbilityId.traditionChurchOfPhex:
+      case SpecialAbilityId.traditionChurchOfPeraine:
+      case SpecialAbilityId.traditionChurchOfEfferd:
+      case SpecialAbilityId.traditionChurchOfTravia:
+      case SpecialAbilityId.traditionChurchOfFirun:
+      case SpecialAbilityId.traditionChurchOfTsa:
+      case SpecialAbilityId.traditionChurchOfIngerimm:
+      case SpecialAbilityId.traditionChurchOfRahja:
+      case SpecialAbilityId.traditionCultOfTheNamelessOne:
+      case SpecialAbilityId.traditionChurchOfAves:
+      case SpecialAbilityId.traditionChurchOfIfirn:
+      case SpecialAbilityId.traditionChurchOfKor:
+      case SpecialAbilityId.traditionChurchOfNandus:
+      case SpecialAbilityId.traditionChurchOfSwafnir:
+      case SpecialAbilityId.traditionCultOfNuminoru: {
+        return pipe_ (
+          hero,
+          HA.specialAbilities,
+          getBlessedTradition,
+          x => isJust (x) ? Nothing : Just (ident)
+        )
+      }
+
+      case SpecialAbilityId.recherchegespuer: {
+        return pipe_ (
+          hero,
+          HA.specialAbilities,
+          lookup<string> (SpecialAbilityId.wissensdurst),
+          fmap (ADA.active),
+          bindF (listToMaybe),
+          bindF (AOA.sid),
+          misStringM,
+          bindF (lookupF (SDA.skills (wiki))),
+          bindF (skill => pipe (
+                                 bindF<number | List<number>, List<number>> (ensure (isList)),
+                                 fmap (pipe (
+                                        map (add (SA.ic (skill))),
+                                        Just,
+                                        set (IAL.cost)
+                                      ))
+                               )
+                               (AAL.cost (wiki_entry)))
+        )
+      }
+
+      case SpecialAbilityId.predigtDerGemeinschaft:
+      case SpecialAbilityId.predigtDerZuversicht:
+      case SpecialAbilityId.predigtDesGottvertrauens:
+      case SpecialAbilityId.predigtDesWohlgefallens:
+      case SpecialAbilityId.predigtWiderMissgeschicke: {
+        const isAdvActive =
+          pipe (lookupF (HA.advantages (hero)), isMaybeActive)
+
+        const max =
+          getSermonOrVisionCountMax (hero)
+                                    (AdvantageId.zahlreichePredigten)
+                                    (DisadvantageId.wenigePredigten)
+
+        const isLessThanMax =
+          countActiveGroupEntries (wiki)
+                                  (hero)
+                                  (SpecialAbilityGroup.Predigten) < max
+
+        return (isAdvActive (AdvantageId.prediger) && isLessThanMax)
+          || isAdvActive (AdvantageId.blessed)
+          ? Just (ident)
+          : Nothing
+      }
+
+      case SpecialAbilityId.visionDerBestimmung:
+      case SpecialAbilityId.visionDerEntrueckung:
+      case SpecialAbilityId.visionDerGottheit:
+      case SpecialAbilityId.visionDesSchicksals:
+      case SpecialAbilityId.visionDesWahrenGlaubens: {
+        const isAdvActive =
+          pipe (lookupF (HA.advantages (hero)), isMaybeActive)
+
+        const max =
+          getSermonOrVisionCountMax (hero)
+                                    (AdvantageId.zahlreicheVisionen)
+                                    (DisadvantageId.wenigeVisionen)
+
+        const isLessThanMax =
+          countActiveGroupEntries (wiki)
+                                  (hero)
+                                  (SpecialAbilityGroup.Visionen) < max
+
+        return (isAdvActive (AdvantageId.visionaer) && isLessThanMax)
+          || isAdvActive (AdvantageId.blessed)
+          ? Just (ident)
+          : Nothing
+      }
+
+      case SpecialAbilityId.dunklesAbbildDerBuendnisgabe: {
+        return pipe_ (
+          hero,
+          HA.pact,
+          fmap (pipe (PA.level, Just, set (IAL.maxLevel)))
+        )
+      }
+
+      case SpecialAbilityId.traditionArcaneBard:
+      case SpecialAbilityId.traditionArcaneDancer:
+      case SpecialAbilityId.traditionIntuitiveMage:
+      case SpecialAbilityId.traditionSavant:
+      case SpecialAbilityId.traditionAnimisten: {
+        return APCA.spentOnMagicalAdvantages (adventure_points) <= 25
+          && APCA.spentOnMagicalDisadvantages (adventure_points) <= 25
+          && pipe_ (
+              hero,
+              HA.specialAbilities,
+              getMagicalTraditionsHeroEntries,
+              fnull
+            )
+          ? Just (ident)
+          : Nothing
+      }
+
+      default:
+        return Just (ident)
+    }
+  }
+
 /**
  * Calculates whether an Activatable is valid to add or not and, if valid,
  * calculates and filters necessary properties and selection lists. Returns a
  * Maybe of the result or `undefined` if invalid.
  */
 export const getInactiveView =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (automatic_advantages: List<string>) =>
+  (required_apply_to_mag_actions: boolean) =>
   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
   (adventure_points: Record<AdventurePointsCategories>) =>
   (validExtendedSpecialAbilities: List<string>) =>
@@ -843,17 +899,18 @@ export const getInactiveView =
     const current_prerequisites = AAL.prerequisites (wiki_entry)
 
     const max_level = isOrderedMap (current_prerequisites)
-      ? validateLevel (wiki)
+      ? validateLevel (staticData)
                       (hero)
                       (current_prerequisites)
                       (maybe<ActivatableDependent["dependencies"]> (List ())
-                                                                   (dependencies)
+                                                                   (ADA.dependencies)
                                                                    (mhero_entry))
                       (current_id)
       : Nothing
 
-    const isNotValid = isAdditionDisabled (wiki)
+    const isNotValid = isAdditionDisabled (staticData)
                                           (hero)
+                                          (required_apply_to_mag_actions)
                                           (validExtendedSpecialAbilities)
                                           (matching_script_and_lang_related)
                                           (wiki_entry)
@@ -864,7 +921,7 @@ export const getInactiveView =
       return pipe_ (
         wiki_entry,
         AAL.select,
-        modifySelectOptions (wiki)
+        modifySelectOptions (staticData)
                             (hero)
                             (hero_magical_traditions)
                             (wiki_entry)
@@ -878,11 +935,11 @@ export const getInactiveView =
                                   heroEntry: mhero_entry,
                                   wikiEntry: wiki_entry as Record<RecordI<Activatable>>,
                                   selectOptions: fmapF (select_options)
-                                                       (sortRecordsByName (l10n)),
+                                                       (sortRecordsByName (staticData)),
                                   isAutomatic: List.elem (AAL.id (wiki_entry))
                                                          (automatic_advantages),
                                 })),
-        ap (modifyOtherOptions (wiki)
+        ap (modifyOtherOptions (staticData)
                                (hero)
                                (adventure_points)
                                (wiki_entry)

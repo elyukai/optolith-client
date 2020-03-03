@@ -1,19 +1,20 @@
-import { cnst, ident } from "../../Data/Function";
-import { set } from "../../Data/Lens";
-import { fromDefault, makeLenses, Record } from "../../Data/Record";
-import { SetCombatTechniquesFilterTextAction } from "../Actions/CombatTechniquesActions";
-import { SetCulturesFilterTextAction } from "../Actions/CultureActions";
-import { SetActiveAdvantagesFilterTextAction, SetActiveDisadvantagesFilterTextAction, SetInactiveAdvantagesFilterTextAction, SetInactiveDisadvantagesFilterTextAction } from "../Actions/DisAdvActions";
-import { SetEquipmentFilterTextAction, SetItemTemplatesFilterTextAction, SetZoneArmorFilterTextAction } from "../Actions/EquipmentActions";
-import { SetHerolistFilterTextAction } from "../Actions/HerolistActions";
-import { SetActiveLiturgicalChantsFilterTextAction, SetInactiveLiturgicalChantsFilterTextAction } from "../Actions/LiturgicalChantActions";
-import { SetTabAction } from "../Actions/LocationActions";
-import { SetProfessionsFilterTextAction } from "../Actions/ProfessionActions";
-import { SetRacesFilterTextAction } from "../Actions/RaceActions";
-import { SetSkillsFilterTextAction } from "../Actions/SkillActions";
-import { SetActiveSpecialAbilitiesFilterTextAction, SetInactiveSpecialAbilitiesFilterTextAction } from "../Actions/SpecialAbilitiesActions";
-import { SetActiveSpellsFilterTextAction, SetInactiveSpellsFilterTextAction } from "../Actions/SpellsActions";
-import { ActionTypes } from "../Constants/ActionTypes";
+import { cnst, ident } from "../../Data/Function"
+import { set } from "../../Data/Lens"
+import { Record } from "../../Data/Record"
+import { SetCombatTechniquesFilterTextAction } from "../Actions/CombatTechniquesActions"
+import { SetCulturesFilterTextAction } from "../Actions/CultureActions"
+import { SetActiveAdvantagesFilterTextAction, SetActiveDisadvantagesFilterTextAction, SetInactiveAdvantagesFilterTextAction, SetInactiveDisadvantagesFilterTextAction } from "../Actions/DisAdvActions"
+import { SetEquipmentFilterTextAction, SetItemTemplatesFilterTextAction, SetZoneArmorFilterTextAction } from "../Actions/EquipmentActions"
+import { SetHerolistFilterTextAction } from "../Actions/HerolistActions"
+import { SetActiveLiturgicalChantsFilterTextAction, SetInactiveLiturgicalChantsFilterTextAction } from "../Actions/LiturgicalChantActions"
+import { SetTabAction } from "../Actions/LocationActions"
+import { SetProfessionsFilterTextAction } from "../Actions/ProfessionActions"
+import { SetRacesFilterTextAction } from "../Actions/RaceActions"
+import { SetSkillsFilterTextAction } from "../Actions/SkillActions"
+import { SetActiveSpecialAbilitiesFilterTextAction, SetInactiveSpecialAbilitiesFilterTextAction } from "../Actions/SpecialAbilitiesActions"
+import { SetActiveSpellsFilterTextAction, SetInactiveSpellsFilterTextAction } from "../Actions/SpellsActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { FiltersState, FiltersStateL } from "../Models/FiltersState"
 
 type Action = SetTabAction
             | SetHerolistFilterTextAction
@@ -36,57 +37,6 @@ type Action = SetTabAction
             | SetRacesFilterTextAction
             | SetSkillsFilterTextAction
             | SetZoneArmorFilterTextAction
-
-export interface FiltersState {
-  "@@name": "FiltersState"
-  herolistFilterText: string
-  racesFilterText: string
-  culturesFilterText: string
-  professionsFilterText: string
-  advantagesFilterText: string
-  inactiveAdvantagesFilterText: string
-  disadvantagesFilterText: string
-  inactiveDisadvantagesFilterText: string
-  skillsFilterText: string
-  combatTechniquesFilterText: string
-  specialAbilitiesFilterText: string
-  inactiveSpecialAbilitiesFilterText: string
-  spellsFilterText: string
-  inactiveSpellsFilterText: string
-  liturgicalChantsFilterText: string
-  inactiveLiturgicalChantsFilterText: string
-  equipmentFilterText: string
-  itemTemplatesFilterText: string
-  hitZoneArmorFilterText: string
-  petsFilterText: string
-}
-
-export const FiltersState =
-  fromDefault ("FiltersState")
-              <FiltersState> ({
-                herolistFilterText: "",
-                racesFilterText: "",
-                culturesFilterText: "",
-                professionsFilterText: "",
-                advantagesFilterText: "",
-                inactiveAdvantagesFilterText: "",
-                disadvantagesFilterText: "",
-                inactiveDisadvantagesFilterText: "",
-                skillsFilterText: "",
-                combatTechniquesFilterText: "",
-                specialAbilitiesFilterText: "",
-                inactiveSpecialAbilitiesFilterText: "",
-                spellsFilterText: "",
-                inactiveSpellsFilterText: "",
-                liturgicalChantsFilterText: "",
-                inactiveLiturgicalChantsFilterText: "",
-                equipmentFilterText: "",
-                itemTemplatesFilterText: "",
-                hitZoneArmorFilterText: "",
-                petsFilterText: "",
-              })
-
-export const FiltersStateL = makeLenses (FiltersState)
 
 const rcpFiltersReducer =
   (action: Action): ident<Record<FiltersState>> => {
@@ -115,7 +65,7 @@ const disAdvantageFiltersReducer =
         return set (FiltersStateL.advantagesFilterText)
                    (action.payload.filterText)
 
-      case ActionTypes.SET_INACTIVE_ADVANTAGES_FILTER_TEXT:
+      case ActionTypes.SET_INAC_ADVANTAGES_FILTER_TEXT:
         return set (FiltersStateL.inactiveAdvantagesFilterText)
                    (action.payload.filterText)
 
@@ -123,7 +73,7 @@ const disAdvantageFiltersReducer =
         return set (FiltersStateL.disadvantagesFilterText)
                    (action.payload.filterText)
 
-      case ActionTypes.SET_INACTIVE_DISADVANTAGES_FILTER_TEXT:
+      case ActionTypes.SET_INAC_DISADVANTAGES_FILTER_TEXT:
         return set (FiltersStateL.inactiveDisadvantagesFilterText)
                    (action.payload.filterText)
 
@@ -147,7 +97,7 @@ const abilityFiltersReducer =
         return set (FiltersStateL.specialAbilitiesFilterText)
                    (action.payload.filterText)
 
-      case ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT:
+      case ActionTypes.SET_INAC_SAS_FILTER_TEXT:
         return set (FiltersStateL.inactiveSpecialAbilitiesFilterText)
                    (action.payload.filterText)
 
@@ -163,7 +113,7 @@ const abilityFiltersReducer =
         return set (FiltersStateL.liturgicalChantsFilterText)
                    (action.payload.filterText)
 
-      case ActionTypes.SET_INACTIVE_LITURGICAL_CHANTS_FILTER_TEXT:
+      case ActionTypes.SET_INAC_LCS_FILTER_TEXT:
         return set (FiltersStateL.inactiveLiturgicalChantsFilterText)
                    (action.payload.filterText)
 
@@ -208,19 +158,19 @@ export const filtersReducer =
         return rcpFiltersReducer (action)
 
       case ActionTypes.SET_ADVANTAGES_FILTER_TEXT:
-      case ActionTypes.SET_INACTIVE_ADVANTAGES_FILTER_TEXT:
+      case ActionTypes.SET_INAC_ADVANTAGES_FILTER_TEXT:
       case ActionTypes.SET_DISADVANTAGES_FILTER_TEXT:
-      case ActionTypes.SET_INACTIVE_DISADVANTAGES_FILTER_TEXT:
+      case ActionTypes.SET_INAC_DISADVANTAGES_FILTER_TEXT:
         return disAdvantageFiltersReducer (action)
 
       case ActionTypes.SET_SKILLS_FILTER_TEXT:
       case ActionTypes.SET_COMBAT_TECHNIQUES_FILTER_TEXT:
       case ActionTypes.SET_SPECIAL_ABILITIES_FILTER_TEXT:
-      case ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT:
+      case ActionTypes.SET_INAC_SAS_FILTER_TEXT:
       case ActionTypes.SET_SPELLS_FILTER_TEXT:
       case ActionTypes.SET_INACTIVE_SPELLS_FILTER_TEXT:
       case ActionTypes.SET_LITURGICAL_CHANTS_FILTER_TEXT:
-      case ActionTypes.SET_INACTIVE_LITURGICAL_CHANTS_FILTER_TEXT:
+      case ActionTypes.SET_INAC_LCS_FILTER_TEXT:
         return abilityFiltersReducer (action)
 
       case ActionTypes.SET_EQUIPMENT_FILTER_TEXT:

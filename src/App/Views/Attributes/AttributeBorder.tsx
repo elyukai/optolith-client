@@ -1,8 +1,8 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Just, Maybe } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
-import { TooltipToggle } from "../Universal/TooltipToggle";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Just, Maybe } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
+import { TooltipToggle } from "../Universal/TooltipToggle"
 
 export interface AttributeBorderProps {
   children?: React.ReactNode
@@ -25,7 +25,13 @@ export const AttributeBorder: React.FC<AttributeBorderProps> = props => {
       <TooltipToggle
         content={tooltip}
         margin={tooltipMargin}
-        target={<div className="value"><div className="value-inner"><div>{value}</div></div></div>}
+        target={
+          <div className="value">
+            <div className="value-inner">
+              <div>{value}</div>
+            </div>
+          </div>
+        }
         />
     )
 

@@ -1,4 +1,22 @@
-import { Tuple } from "../Tuple";
+import { Tuple } from "../Tuple"
+
+type FilterNumber<A> = Extract<A, number>
+
+const sel =
+  (fname: string) =>
+  <A extends any[]>
+  (x: Tuple<A>) =>
+  <I extends FilterNumber<keyof A>>
+  (i: I): A[I] => {
+    if (i > x .length - 1 || i < 0) {
+      throw new TypeError (
+        `${fname}: Tuple is of length ${x .length}, but you tried to access a `
+        + `value at position ${i}.`
+      )
+    }
+
+    return x .values [i as number]
+  }
 
 /**
  * `sel1 :: (a, ...) -> a`
@@ -35,21 +53,3 @@ export const sel3 =
 export const sel4 =
   <A extends any[]> (x: Tuple<A>): A[3] =>
     sel ("sel1") (x) (3 as FilterNumber<keyof A>)
-
-type FilterNumber<A> = Extract<A, number>
-
-const sel =
-  (fname: string) =>
-  <A extends any[]>
-  (x: Tuple<A>) =>
-  <I extends FilterNumber<keyof A>>
-  (i: I): A[I] => {
-    if (i > x .length - 1 || i < 0) {
-      throw new TypeError (
-        `${fname}: Tuple is of length ${x .length}, but you tried to access a `
-        + `value at position ${i}.`
-      )
-    }
-
-    return x .values [i as number]
-  }

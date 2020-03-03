@@ -1,7 +1,7 @@
-import { fromDefault } from "../../../../Data/Record";
-import { fst, Pair, snd } from "../../../../Data/Tuple";
-import { IdPrefixes } from "../../../Constants/IdPrefixes";
-import { prefixId } from "../../../Utilities/IDUtils";
+import { fromDefault } from "../../../../Data/Record"
+import { fst, Pair, snd } from "../../../../Data/Tuple"
+import { IdPrefixes } from "../../../Constants/IdPrefixes"
+import { prefixId } from "../../../Utilities/IDUtils"
 
 export interface IncreaseSkill {
   "@@name": "IncreaseSkill"

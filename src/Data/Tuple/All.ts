@@ -1,3 +1,3 @@
-export * from "./Curry";
-export * from "./Select";
-export * from "./Update";
+export * from "./Curry"
+export * from "./Select"
+export * from "./Update"

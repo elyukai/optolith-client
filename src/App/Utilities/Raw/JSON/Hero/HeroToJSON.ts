@@ -1,32 +1,32 @@
-import { ident } from "../../../../../Data/Function";
-import { fmap, fmapF } from "../../../../../Data/Functor";
-import { List } from "../../../../../Data/List";
-import { bind, elem, maybeToUndefined } from "../../../../../Data/Maybe";
-import { gt } from "../../../../../Data/Num";
-import { foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from "../../../../../Data/OrderedMap";
-import { toArray } from "../../../../../Data/OrderedSet";
-import { Record, StringKeyObject, toObject } from "../../../../../Data/Record";
-import { isTuple, Pair, Tuple } from "../../../../../Data/Tuple";
-import { ProfessionId } from "../../../../Constants/Ids";
-import { ActivatableDependent } from "../../../../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent } from "../../../../Models/ActiveEntries/ActivatableSkillDependent";
-import { ActiveObject } from "../../../../Models/ActiveEntries/ActiveObject";
-import { AttributeDependent } from "../../../../Models/ActiveEntries/AttributeDependent";
-import { Belongings } from "../../../../Models/Hero/Belongings";
-import { Energies } from "../../../../Models/Hero/Energies";
-import { HeroModel, HeroModelRecord } from "../../../../Models/Hero/HeroModel";
-import { ExtendedSkillDependent, User } from "../../../../Models/Hero/heroTypeHelpers";
-import { HitZoneArmor } from "../../../../Models/Hero/HitZoneArmor";
-import { Item } from "../../../../Models/Hero/Item";
-import { PersonalData } from "../../../../Models/Hero/PersonalData";
-import { Rules } from "../../../../Models/Hero/Rules";
-import { UndoableHero, UndoableHeroModelRecord } from "../../../../Models/Hero/UndoHero";
-import { PrimaryAttributeDamageThreshold } from "../../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
-import { current_version } from "../../../../Selectors/envSelectors";
-import { HeroStateMapKey } from "../../../heroStateUtils";
-import { ifElse } from "../../../ifElse";
-import { pipe, pipe_ } from "../../../pipe";
-import { RawActiveObject, RawArmorZone, RawCustomItem, RawHero, RawPet, RawPrimaryAttributeDamageThreshold } from "../../XLSX/RawData";
+import { ident } from "../../../../../Data/Function"
+import { fmap, fmapF } from "../../../../../Data/Functor"
+import { isList, List } from "../../../../../Data/List"
+import { bind, elem, maybeToUndefined } from "../../../../../Data/Maybe"
+import { gt } from "../../../../../Data/Num"
+import { foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from "../../../../../Data/OrderedMap"
+import { toArray } from "../../../../../Data/OrderedSet"
+import { Record, StringKeyObject, toObject } from "../../../../../Data/Record"
+import { isTuple, Pair, Tuple } from "../../../../../Data/Tuple"
+import { ProfessionId } from "../../../../Constants/Ids"
+import { ActivatableDependent } from "../../../../Models/ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent } from "../../../../Models/ActiveEntries/ActivatableSkillDependent"
+import { ActiveObject } from "../../../../Models/ActiveEntries/ActiveObject"
+import { AttributeDependent } from "../../../../Models/ActiveEntries/AttributeDependent"
+import { Belongings } from "../../../../Models/Hero/Belongings"
+import { Energies } from "../../../../Models/Hero/Energies"
+import { HeroModel, HeroModelRecord } from "../../../../Models/Hero/HeroModel"
+import { ExtendedSkillDependent, User } from "../../../../Models/Hero/heroTypeHelpers"
+import { HitZoneArmor } from "../../../../Models/Hero/HitZoneArmor"
+import { Item } from "../../../../Models/Hero/Item"
+import { PersonalData } from "../../../../Models/Hero/PersonalData"
+import { Rules } from "../../../../Models/Hero/Rules"
+import { UndoableHero, UndoableHeroModelRecord } from "../../../../Models/Hero/UndoHero"
+import { PrimaryAttributeDamageThreshold } from "../../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
+import { current_version } from "../../../../Selectors/envSelectors"
+import { HeroStateMapKey } from "../../../heroStateUtils"
+import { ifElse } from "../../../ifElse"
+import { pipe, pipe_ } from "../../../pipe"
+import { RawActiveObject, RawArmorZone, RawCustomItem, RawHero, RawPet, RawPrimaryAttributeDamageThreshold } from "../../RawData"
 
 const HA = HeroModel.A
 
@@ -35,6 +35,7 @@ const { active } = ActivatableSkillDependent.AL
 const { active: activeList } = ActivatableDependent.AL
 const { items, hitZoneArmors: armorZones, purse } = Belongings.AL
 const PDA = PersonalData.A
+const PADTA = PrimaryAttributeDamageThreshold.A
 
 const {
   addedArcaneEnergyPoints,
@@ -50,7 +51,7 @@ const { cost, sid, sid2, tier } = ActiveObject.AL
 const getAttributesForSave = (hero: HeroModelRecord): RawHero["attr"] =>
   ({
     values: foldl<Record<AttributeDependent>, { id: string; value: number }[]>
-      (acc => e => [...acc, { id: id (e), value: value (e) }])
+      (acc => e => [ ...acc, { id: id (e), value: value (e) } ])
       ([])
       (HA.attributes (hero)),
     attributeAdjustmentSelected: HA.attributeAdjustmentSelected (hero),
@@ -96,10 +97,10 @@ const getValuesForSave =
           return {
             ...acc,
             [key]: value (obj),
-          };
+          }
         }
 
-        return acc;
+        return acc
       })
       ({})
       (sliceGetter (hero) as OrderedMap<string, ExtendedSkillDependent>)
@@ -115,8 +116,6 @@ const getCantripsForSave = pipe (HA.cantrips, toArray)
 const getLiturgicalChantsForSave = getValuesForSave (HA.liturgicalChants) (active)
 
 const getBlessingsForSave = pipe (HA.blessings, toArray)
-
-const { primary, threshold } = PrimaryAttributeDamageThreshold.AL
 
 const getBelongingsForSave = (hero: HeroModelRecord) =>
   ({
@@ -175,8 +174,20 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
           length: maybeToUndefined (length),
           pa: maybeToUndefined (pa),
           pro: maybeToUndefined (pro),
-          reloadTime: maybeToUndefined (reloadTime),
-          stp: maybeToUndefined (stp),
+          reloadTime: pipe_ (
+                        reloadTime,
+                        fmap (x => isList (x)
+                                   ? List.toArray (x)
+                                   : x),
+                        maybeToUndefined
+                      ),
+          stp: pipe_ (
+                 stp,
+                 fmap (x => isList (x)
+                            ? List.toArray (x)
+                            : x),
+                 maybeToUndefined
+               ),
           stabilityMod: maybeToUndefined (stabilityMod),
           ammunition: maybeToUndefined (ammunition),
           combatTechnique: maybeToUndefined (combatTechnique),
@@ -189,14 +200,25 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
           imp: maybeToUndefined (improvisedWeaponGroup),
           primaryThreshold:
             maybeToUndefined (fmapF (damageBonus)
-                             ((bonus): RawPrimaryAttributeDamageThreshold => ({
-                               primary: maybeToUndefined (primary (bonus)),
-                               threshold: ifElse<number | PNumNum, PNumNum> (isTuple)
-                                                                            <number | number[]>
-                                                                            (Tuple.toArray)
-                                                                            (ident)
-                                                                            (threshold (bonus)),
-                             }))),
+                             ((bonus): RawPrimaryAttributeDamageThreshold => {
+                               const primary = PADTA.primary (bonus)
+                               const threshold = PADTA.threshold (bonus)
+
+                               return {
+                                 primary: pipe_ (
+                                            primary,
+                                            fmap (x => isTuple (x)
+                                                       ? Tuple.toArray (x)
+                                                       : x),
+                                            maybeToUndefined
+                                          ),
+                                 threshold: ifElse<number | PNumNum, PNumNum> (isTuple)
+                                                                              <number | number[]>
+                                                                              (Tuple.toArray)
+                                                                              (ident)
+                                                                              (threshold),
+                               }
+                             })),
           range: maybeToUndefined (fmap<List<number>, number[]> (List.toArray) (range)),
         }
       })

@@ -1,14 +1,14 @@
-import { Maybe, Nothing } from "../../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../../Data/Record";
-import { ProfessionSelectionIds } from "../wikiTypeHelpers";
-import { CantripsSelection } from "./CantripsSelection";
-import { CombatTechniquesSelection } from "./CombatTechniquesSelection";
-import { CursesSelection } from "./CursesSelection";
-import { LanguagesScriptsSelection } from "./LanguagesScriptsSelection";
-import { CombatTechniquesSecondSelection } from "./SecondCombatTechniquesSelection";
-import { SkillsSelection } from "./SkillsSelection";
-import { SpecializationSelection } from "./SpecializationSelection";
-import { TerrainKnowledgeSelection } from "./TerrainKnowledgeSelection";
+import { Maybe, Nothing } from "../../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../../Data/Record"
+import { ProfessionSelectionIds } from "../wikiTypeHelpers"
+import { CantripsSelection } from "./CantripsSelection"
+import { CombatTechniquesSelection } from "./CombatTechniquesSelection"
+import { CursesSelection } from "./CursesSelection"
+import { LanguagesScriptsSelection } from "./LanguagesScriptsSelection"
+import { CombatTechniquesSecondSelection } from "./SecondCombatTechniquesSelection"
+import { SkillsSelection } from "./SkillsSelection"
+import { SpecializationSelection } from "./SpecializationSelection"
+import { TerrainKnowledgeSelection } from "./TerrainKnowledgeSelection"
 
 export interface ProfessionSelections {
   "@@name": "ProfessionSelections"
@@ -21,6 +21,7 @@ export interface ProfessionSelections {
   [ProfessionSelectionIds.SKILLS]: Maybe<Record<SkillsSelection>>
   [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]: Maybe<Record<TerrainKnowledgeSelection>>
   [ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL]: boolean
+
   // [ProfessionSelectionIds.SPECIAL_ABILITY]: Maybe<Record<SpecialAbilitySelection>>
 }
 
@@ -36,6 +37,7 @@ export const ProfessionSelections =
                 [ProfessionSelectionIds.SKILLS]: Nothing,
                 [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]: Nothing,
                 [ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL]: false,
+
                 // [ProfessionSelectionIds.SPECIAL_ABILITY]: Nothing,
               })
 

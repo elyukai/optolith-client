@@ -1,82 +1,82 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
-import { ensure, fromMaybe, guardReplace, Just, Maybe } from "../../../../Data/Maybe";
-import { elems } from "../../../../Data/OrderedSet";
-import { Record } from "../../../../Data/Record";
-import { AttributeCombined } from "../../../Models/View/AttributeCombined";
-import { SpellWithRequirements, SpellWithRequirementsA_ } from "../../../Models/View/SpellWithRequirements";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
-import { minus } from "../../../Utilities/Chars";
-import { classListMaybe } from "../../../Utilities/CSS";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
-import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils";
-import { getCheckModStr } from "../../InlineWiki/Elements/WikiSkillCheck";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { flength, List, map, notNull, replicateR, toArray } from "../../../../Data/List"
+import { fromMaybe, guardReplace, Just, Maybe, maybe } from "../../../../Data/Maybe"
+import { lookup } from "../../../../Data/OrderedMap"
+import { Record } from "../../../../Data/Record"
+import { icFromJs } from "../../../Constants/Groups"
+import { NumIdName } from "../../../Models/NumIdName"
+import { AttributeCombined } from "../../../Models/View/AttributeCombined"
+import { SpellWithRequirements, SpellWithRequirementsA_ } from "../../../Models/View/SpellWithRequirements"
+import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { minus } from "../../../Utilities/Chars"
+import { classListMaybe } from "../../../Utilities/CSS"
+import { translate } from "../../../Utilities/I18n"
+import { icToStr } from "../../../Utilities/IC.gen"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { renderMaybeWith } from "../../../Utilities/ReactUtils"
+import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils"
+import { getCheckModStr } from "../../InlineWiki/Elements/WikiSkillCheck"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface SpellsSheetSpellsProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   spells: Maybe<List<Record<SpellWithRequirements>>>
 }
 
 const SWRA_ = SpellWithRequirementsA_
 
-export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
+export const SpellsSheetSpells: React.FC<Props> = props => {
   const {
     attributes,
     checkAttributeValueVisibility,
-    l10n,
+    staticData,
     spells: maybeSpells,
   } = props
 
-  const propertyNames = translate (l10n) ("propertylist")
-
   return (
     <TextBox
-      label={translate (l10n) ("spells")}
+      label={translate (staticData) ("sheets.spellssheet.spellstable.title")}
       className="skill-list"
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (l10n) ("spellorritual")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.spellorritual")}
             </th>
             <th className="check">
-              {translate (l10n) ("check")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.check")}
             </th>
             <th className="value">
-              {translate (l10n) ("skillrating.short")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.skillrating")}
             </th>
             <th className="cost">
-              {translate (l10n) ("cost")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.cost")}
             </th>
             <th className="cast-time">
-              {translate (l10n) ("castingtime")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.castingtime")}
             </th>
             <th className="range">
-              {translate (l10n) ("range")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.range")}
             </th>
             <th className="duration">
-              {translate (l10n) ("duration")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.duration")}
             </th>
             <th className="property">
-              {translate (l10n) ("property")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.property")}
             </th>
             <th className="ic">
-              {translate (l10n) ("improvementcost.short")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.improvementcost")}
             </th>
             <th className="effect">
-              {translate (l10n) ("effect")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.effect")}
             </th>
             <th className="ref">
-              {translate (l10n) ("page.short")}
+              {translate (staticData) ("sheets.spellssheet.spellstable.labels.pages")}
             </th>
           </tr>
         </thead>
@@ -104,7 +104,8 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
                       <Textfit max={11} min={7} mode="single">
                         {SWRA_.name (e)}
                         {notNull (SWRA_.tradition (e))
-                          ? ` (${translate (l10n) ("unfamiliarspell")})`
+                          ? ` (${translate (staticData)
+                                           ("sheets.spellssheet.spellstable.unfamiliarspell")})`
                           : ""}
                       </Textfit>
                     </td>
@@ -114,13 +115,8 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
                         {pipe_ (
                           e,
                           SWRA_.checkmod,
-                          elems,
-                          ensure (notNull),
-                          renderMaybeWith (pipe (
-                            map (getCheckModStr (l10n)),
-                            intercalate ("/"),
-                            str => ` (${minus}${str})`
-                          ))
+                          maybe ("")
+                                (pipe (getCheckModStr (staticData), str => ` (${minus}${str})`))
                         )}
                       </Textfit>
                     </td>
@@ -141,12 +137,14 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
                     </td>
                     <td className="property">
                       <Textfit max={11} min={7} mode="single">
-                        {renderMaybe (subscript (propertyNames) (SWRA_.property (e) - 1))}
+                        {renderMaybeWith (NumIdName.A.name)
+                                         (lookup (SWRA_.property (e))
+                                                 (StaticData.A.properties (staticData)))}
                       </Textfit>
                     </td>
-                    <td className="ic">{getICName (SWRA_.ic (e))}</td>
-                    <td className="effect"></td>
-                    <td className="ref"></td>
+                    <td className="ic">{icToStr (icFromJs (SWRA_.ic (e)))}</td>
+                    <td className="effect" />
+                    <td className="ref" />
                   </tr>
                 )
               }),
@@ -157,17 +155,17 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
           {replicateR (21 - Maybe.sum (fmapF (maybeSpells) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
-                          <td className="name"></td>
-                          <td className="check"></td>
-                          <td className="value"></td>
-                          <td className="cost"></td>
-                          <td className="cast-time"></td>
-                          <td className="range"></td>
-                          <td className="duration"></td>
-                          <td className="aspect"></td>
-                          <td className="ic"></td>
-                          <td className="effect"></td>
-                          <td className="ref"></td>
+                          <td className="name" />
+                          <td className="check" />
+                          <td className="value" />
+                          <td className="cost" />
+                          <td className="cast-time" />
+                          <td className="range" />
+                          <td className="duration" />
+                          <td className="aspect" />
+                          <td className="ic" />
+                          <td className="effect" />
+                          <td className="ref" />
                         </tr>
                       ))}
         </tbody>

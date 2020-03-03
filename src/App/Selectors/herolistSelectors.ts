@@ -1,23 +1,23 @@
-import { ident } from "../../Data/Function";
-import { map, notNull } from "../../Data/List";
-import { elems, foldr } from "../../Data/OrderedMap";
-import { insert, OrderedSet } from "../../Data/OrderedSet";
-import { uncurryN3 } from "../../Data/Tuple/Curry";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { heroReducer } from "../Reducers/heroReducer";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { getHerolistSortOptions } from "./sortOptionsSelectors";
-import { getHeroes, getHerolistFilterText } from "./stateSelectors";
+import { ident } from "../../Data/Function"
+import { map, notNull } from "../../Data/List"
+import { elems, foldr } from "../../Data/OrderedMap"
+import { insert, OrderedSet } from "../../Data/OrderedSet"
+import { uncurryN3 } from "../../Data/Tuple/Curry"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { heroReducer } from "../Reducers/heroReducer"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { getHerolistSortOptions } from "./sortOptionsSelectors"
+import { getHeroes, getHerolistFilterText } from "./stateSelectors"
 
 export const getHeroesArray = createMaybeSelector (
   getHeroes,
-  pipe (elems, map (heroReducer.A_.present))
+  pipe (elems, map (heroReducer.A.present))
 )
 
 type HeroWithUndo = typeof heroReducer.default
-const HRA = heroReducer.A_
+const HRA = heroReducer.A
 const HA = HeroModel.A
 
 export const getUnsavedHeroesById = createMaybeSelector (
@@ -37,5 +37,5 @@ export const getSortedHerolist = createMaybeSelector (
   getHerolistSortOptions,
   getHerolistFilterText,
   getHeroesArray,
-  uncurryN3 (filterAndSortRecordsBy (0) ([HA.name]))
+  uncurryN3 (filterAndSortRecordsBy (0) ([ HA.name ]))
 )

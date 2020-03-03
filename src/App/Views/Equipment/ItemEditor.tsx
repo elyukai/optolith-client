@@ -1,23 +1,23 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { fromJust, isJust, Maybe, or } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { EditItem } from "../../Models/Hero/EditItem";
-import { Attribute } from "../../Models/Wiki/Attribute";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { ItemEditorInputValidation, validateItemEditorInput } from "../../Utilities/itemEditorInputValidationUtils";
-import { Dialog } from "../Universal/Dialog";
-import { ItemEditorArmorSection } from "./ItemEditorArmorSection";
-import { ItemEditorCommonSection } from "./ItemEditorCommonSection";
-import { ItemEditorMeleeSection } from "./ItemEditorMeleeSection";
-import { ItemEditorRangedSection } from "./ItemEditorRangedSection";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { elem, fromJust, isJust, Maybe, or } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { EditItem } from "../../Models/Hero/EditItem"
+import { Attribute } from "../../Models/Wiki/Attribute"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { ItemEditorInputValidation, validateItemEditorInput } from "../../Utilities/itemEditorInputValidationUtils"
+import { Dialog } from "../Universal/Dialog"
+import { ItemEditorArmorSection } from "./ItemEditorArmorSection"
+import { ItemEditorCommonSection } from "./ItemEditorCommonSection"
+import { ItemEditorMeleeSection } from "./ItemEditorMeleeSection"
+import { ItemEditorRangedSection } from "./ItemEditorRangedSection"
 
 export interface ItemEditorOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 export interface ItemEditorStateProps {
@@ -79,9 +79,9 @@ export type ItemEditorProps = ItemEditorStateProps & ItemEditorDispatchProps & I
 const EIA = EditItem.A
 const IEIVA = ItemEditorInputValidation.A
 
-export function ItemEditor (props: ItemEditorProps) {
+export const ItemEditor: React.FC<ItemEditorProps> = props => {
   const {
-    l10n,
+    staticData,
     attributes,
     combatTechniques,
     isInCreation,
@@ -135,15 +135,20 @@ export function ItemEditor (props: ItemEditorProps) {
   if (isJust (mitem)) {
     const item = fromJust (mitem)
 
-    const inputValidation = validateItemEditorInput (item)
+    const inputValidation = validateItemEditorInput (staticData) (item)
 
     const gr = EIA.gr (item)
+    const impGr = EIA.improvisedWeaponGroup (item)
     const locked = EIA.isTemplateLocked (item)
 
     return (
       <Dialog
         id="item-editor"
-        title={or (isInCreation) ? translate (l10n) ("createitem") : translate (l10n) ("edititem")}
+        title={
+          or (isInCreation)
+          ? translate (staticData) ("equipment.dialogs.addedit.createitem")
+          : translate (staticData) ("equipment.dialogs.addedit.edititem")
+        }
         close={closeEditor}
         isOpen
         buttons={[
@@ -156,12 +161,14 @@ export function ItemEditor (props: ItemEditorProps) {
                 && (
                   typeof gr !== "number"
                   || (gr === 1 && !IEIVA.melee (inputValidation))
+                  || (elem (1) (impGr) && !IEIVA.melee (inputValidation))
                   || (gr === 2 && !IEIVA.ranged (inputValidation))
+                  || (elem (2) (impGr) && !IEIVA.ranged (inputValidation))
                   || (gr === 4 && !IEIVA.armor (inputValidation))
                   || !IEIVA.other (inputValidation)
                 )
               ),
-            label: translate (l10n) ("save"),
+            label: translate (staticData) ("general.dialogs.savebtn"),
             onClick: or (isInCreation) ? addToList : saveItem,
           },
         ]}
@@ -170,7 +177,7 @@ export function ItemEditor (props: ItemEditorProps) {
           item={item}
           inputValidation={inputValidation}
           isInCreation={isInCreation}
-          l10n={l10n}
+          staticData={staticData}
           templates={templates}
           setName={setName}
           setPrice={setPrice}
@@ -190,7 +197,7 @@ export function ItemEditor (props: ItemEditorProps) {
           inputValidation={inputValidation}
           attributes={attributes}
           combatTechniques={combatTechniques}
-          l10n={l10n}
+          staticData={staticData}
           setCombatTechnique={setCombatTechnique}
           setDamageDiceNumber={setDamageDiceNumber}
           setDamageDiceSides={setDamageDiceSides}
@@ -214,7 +221,7 @@ export function ItemEditor (props: ItemEditorProps) {
           item={item}
           inputValidation={inputValidation}
           combatTechniques={combatTechniques}
-          l10n={l10n}
+          staticData={staticData}
           templates={templates}
           setCombatTechnique={setCombatTechnique}
           setDamageDiceNumber={setDamageDiceNumber}
@@ -230,7 +237,7 @@ export function ItemEditor (props: ItemEditorProps) {
         <ItemEditorArmorSection
           item={item}
           inputValidation={inputValidation}
-          l10n={l10n}
+          staticData={staticData}
           setProtection={setProtection}
           setEncumbrance={setEncumbrance}
           setMovementModifier={setMovementModifier}

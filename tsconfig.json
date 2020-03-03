@@ -3,6 +3,7 @@
     "allowJs": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "incremental": true,
     "importHelpers": true,
     "jsx": "react",
     "lib": ["esnext", "dom"],
@@ -20,15 +21,15 @@
     "inlineSourceMap": true,
     "strict": true,
     "skipLibCheck": true,
-    "target": "esnext"
+    "target": "es2019"
   },
   "include": [
     "src/**/*",
-    "src/*"
+    "src/*",
+    "app/**/*.d.ts"
   ],
   "exclude": [
     "node_modules",
-    "src/data/*",
     "**/__tests__/**"
   ]
 }

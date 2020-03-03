@@ -1,23 +1,23 @@
-import * as React from "react";
-import { orN } from "../../../Data/Maybe";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
+import * as React from "react"
+import { orN } from "../../../Data/Maybe"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
 
-export interface RecommendedReferenceProps {
-  l10n: L10nRecord;
+interface Props {
+  staticData: StaticDataRecord
   strongly?: boolean
   unfamiliarSpells?: boolean
 }
 
-export function RecommendedReference (props: RecommendedReferenceProps) {
-  const { l10n, strongly, unfamiliarSpells } = props
+export const RecommendedReference: React.FC<Props> = props => {
+  const { staticData, strongly, unfamiliarSpells } = props
 
   if (orN (unfamiliarSpells)) {
     return (
       <div className="recommended-ref">
         <div className="unrec">
-          <div className="icon"></div>
-          <div className="name">{translate (l10n) ("unfamiliarspells")}</div>
+          <div className="icon" />
+          <div className="name">{translate (staticData) ("showfrequency.unfamiliarspells")}</div>
         </div>
       </div>
     )
@@ -28,18 +28,20 @@ export function RecommendedReference (props: RecommendedReferenceProps) {
       {orN (strongly)
         ? (
           <div className="strongly-recommended">
-            <div className="icon"></div>
-            <div className="name">{translate (l10n) ("stronglyrecommended")}</div>
+            <div className="icon" />
+            <div className="name">
+              {translate (staticData) ("showfrequency.stronglyrecommended")}
+            </div>
           </div>
         )
         : null}
       <div className="rec">
-        <div className="icon"></div>
-        <div className="name">{translate (l10n) ("common")}</div>
+        <div className="icon" />
+        <div className="name">{translate (staticData) ("showfrequency.common")}</div>
       </div>
       <div className="unrec">
-        <div className="icon"></div>
-        <div className="name">{translate (l10n) ("uncommon")}</div>
+        <div className="icon" />
+        <div className="name">{translate (staticData) ("showfrequency.uncommon")}</div>
       </div>
     </div>
   )

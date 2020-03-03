@@ -1,20 +1,20 @@
-import { connect } from "react-redux";
-import { join } from "../../Data/Maybe";
-import { Record } from "../../Data/Record";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as ConfigActions from "../Actions/ConfigActions";
-import * as SpecialAbilitiesActions from "../Actions/SpecialAbilitiesActions";
-import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
-import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions";
-import { HeroModel } from "../Models/Hero/HeroModel";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getFilteredActiveSpecialAbilities } from "../Selectors/activatableSelectors";
-import { getFilteredInactiveSpecialAbilities } from "../Selectors/combinedActivatablesSelectors";
-import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
-import { getInactiveSpecialAbilitiesFilterText, getSpecialAbilitiesFilterText, getWikiSpecialAbilities } from "../Selectors/stateSelectors";
-import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from "../Selectors/uisettingsSelectors";
-import { SpecialAbilitiesSortOptions } from "../Utilities/Raw/JSON/Config";
-import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnProps, SpecialAbilitiesStateProps } from "../Views/SpecialAbilities/SpecialAbilities";
+import { connect } from "react-redux"
+import { join } from "../../Data/Maybe"
+import { Record } from "../../Data/Record"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as ConfigActions from "../Actions/ConfigActions"
+import * as SpecialAbilitiesActions from "../Actions/SpecialAbilitiesActions"
+import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions"
+import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions"
+import { AppStateRecord } from "../Models/AppState"
+import { SpecialAbilitiesSortOptions } from "../Models/Config"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { getFilteredActiveSpecialAbilities } from "../Selectors/activatableSelectors"
+import { getFilteredInactiveSpecialAbilities } from "../Selectors/combinedActivatablesSelectors"
+import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"
+import { getInactiveSpecialAbilitiesFilterText, getSpecialAbilitiesFilterText, getWikiSpecialAbilities } from "../Selectors/stateSelectors"
+import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from "../Selectors/uisettingsSelectors"
+import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnProps, SpecialAbilitiesStateProps } from "../Views/SpecialAbilities/SpecialAbilities"
 
 const mapStateToProps = (
   state: AppStateRecord,
@@ -31,10 +31,7 @@ const mapStateToProps = (
   inactiveFilterText: getInactiveSpecialAbilitiesFilterText (state),
 })
 
-const mapDispatchToProps = (
-  dispatch: ReduxDispatch,
-  { l10n }: SpecialAbilitiesOwnProps
-): SpecialAbilitiesDispatchProps => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch): SpecialAbilitiesDispatchProps => ({
   setSortOrder (sortOrder: SpecialAbilitiesSortOptions) {
     dispatch (SpecialAbilitiesActions.setSpecialAbilitiesSortOrder (sortOrder))
   },
@@ -42,13 +39,13 @@ const mapDispatchToProps = (
     dispatch (ConfigActions.switchEnableActiveItemHints ())
   },
   async addToList (args: Record<ActivatableActivationOptions>) {
-    await dispatch (SpecialAbilitiesActions.addSpecialAbility (l10n) (args))
+    await dispatch (SpecialAbilitiesActions.addSpecialAbility (args))
   },
   removeFromList (args: Record<ActivatableDeactivationOptions>) {
     dispatch (SpecialAbilitiesActions.removeSpecialAbility (args))
   },
   async setLevel (id: string, index: number, level: number) {
-    await dispatch (SpecialAbilitiesActions.setSpecialAbilityLevel (l10n) (id) (index) (level))
+    await dispatch (SpecialAbilitiesActions.setSpecialAbilityLevel (id) (index) (level))
   },
   setFilterText (filterText: string) {
     dispatch (SpecialAbilitiesActions.setActiveSpecialAbilitiesFilterText (filterText))

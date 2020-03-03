@@ -1,31 +1,31 @@
-import * as React from "react";
-import { flip, thrush } from "../../../Data/Function";
-import { fmapF } from "../../../Data/Functor";
-import { fnull, List, map, toArray } from "../../../Data/List";
-import { all, fromJust, Maybe, normalize, or } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { ActivatableAddListItemContainer } from "../../Containers/InactiveActivatableContainer";
-import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
-import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
-import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
-import { ActivatableNameCost } from "../../Models/View/ActivatableNameCost";
-import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
-import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { getFullName } from "../../Utilities/Activatable/activatableNameUtils";
-import { pipe_ } from "../../Utilities/pipe";
-import { isInactiveRated } from "../../Utilities/ratingUtils";
-import { ListView } from "../Universal/List";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { Scroll } from "../Universal/Scroll";
+import * as React from "react"
+import { flip, thrush } from "../../../Data/Function"
+import { fmapF } from "../../../Data/Functor"
+import { fnull, List, map, toArray } from "../../../Data/List"
+import { all, fromJust, Maybe, normalize, or } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { ActivatableAddListItemContainer } from "../../Containers/InactiveActivatableContainer"
+import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
+import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
+import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
+import { ActivatableNameCost } from "../../Models/View/ActivatableNameCost"
+import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable"
+import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { getFullName } from "../../Utilities/Activatable/activatableNameUtils"
+import { pipe_ } from "../../Utilities/pipe"
+import { isInactiveRated } from "../../Utilities/ratingUtils"
+import { ListView } from "../Universal/List"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { Scroll } from "../Universal/Scroll"
 
 export interface ActivatableAddListProps {
   hideGroup?: boolean
   inactiveList: Maybe<List<Record<ActiveActivatable> | Record<InactiveActivatable>>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   rating?: Maybe<OrderedMap<string, EntryRating>>
   showRating?: boolean
   selectedForInfo: Maybe<string>
@@ -43,7 +43,7 @@ export function ActivatableAddList (props: ActivatableAddListProps) {
   const {
     hideGroup,
     inactiveList: minactives,
-    l10n,
+    staticData,
     rating,
     showRating: mshow_rating,
     selectedForInfo,
@@ -52,7 +52,7 @@ export function ActivatableAddList (props: ActivatableAddListProps) {
   } = props
 
   if (all (fnull) (minactives)) {
-    return <ListPlaceholder l10n={l10n} noResults type="inactiveSpecialAbilities" />
+    return <ListPlaceholder staticData={staticData} noResults type="inactiveSpecialAbilities" />
   }
 
   const normalizedRating = normalize (rating)
@@ -88,7 +88,6 @@ export function ActivatableAddList (props: ActivatableAddListProps) {
                 isImportant={or (fmapF (isRatedForItem) (thrush (EntryRating.Essential)))}
                 isTypical={or (fmapF (isRatedForItem) (thrush (EntryRating.Common)))}
                 isUntypical={or (fmapF (isRatedForItem) (thrush (EntryRating.Uncommon)))}
-                l10n={l10n}
                 selectedForInfo={selectedForInfo}
                 addToList={addToList}
                 selectForInfo={selectForInfo}

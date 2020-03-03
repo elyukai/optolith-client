@@ -1,5 +1,5 @@
-import { fromDefault, Record } from "../../../../Data/Record";
-import { AnyProfessionSelection, ProfessionSelectionIds } from "../wikiTypeHelpers";
+import { fromDefault } from "../../../../Data/Record"
+import { ProfessionSelectionIds } from "../wikiTypeHelpers"
 
 export interface LanguagesScriptsSelection {
   "@@name": "LanguagesScriptsSelection"
@@ -13,7 +13,3 @@ export const LanguagesScriptsSelection =
                 id: ProfessionSelectionIds.LANGUAGES_SCRIPTS,
                 value: 0,
               })
-
-export const isLanguagesScriptsSelection =
-  (obj: AnyProfessionSelection): obj is Record<LanguagesScriptsSelection> =>
-    LanguagesScriptsSelection.AL.id (obj) === ProfessionSelectionIds.LANGUAGES_SCRIPTS

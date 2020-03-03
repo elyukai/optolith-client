@@ -1,11 +1,11 @@
-import { List } from "../../../Data/List";
-import { Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { elem, OrderedSet } from "../../../Data/OrderedSet";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { DropdownOption } from "../../Views/Universal/Dropdown";
-import { ItemTemplate } from "../Wiki/ItemTemplate";
-import { PrimaryAttributeDamageThreshold } from "../Wiki/sub/PrimaryAttributeDamageThreshold";
-import { SourceLink } from "../Wiki/sub/SourceLink";
+import { List } from "../../../Data/List"
+import { Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { elem, OrderedSet } from "../../../Data/OrderedSet"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { DropdownOption } from "../View/DropdownOption"
+import { ItemTemplate } from "../Wiki/ItemTemplate"
+import { PrimaryAttributeDamageThreshold } from "../Wiki/sub/PrimaryAttributeDamageThreshold"
+import { SourceLink } from "../Wiki/sub/SourceLink"
 
 export interface ItemBase {
   name: string
@@ -42,8 +42,8 @@ export interface Item extends ItemBase {
   price: Maybe<number>
   pro: Maybe<number>
   range: Maybe<List<number>>
-  reloadTime: Maybe<string>
-  stp: Maybe<string>
+  reloadTime: Maybe<number | List<number>>
+  stp: Maybe<number | List<number>>
   weight: Maybe<number>
   stabilityMod: Maybe<number>
   note: Maybe<string>

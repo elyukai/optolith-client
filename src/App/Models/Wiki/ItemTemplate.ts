@@ -1,10 +1,10 @@
-import { List } from "../../../Data/List";
-import { Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
-import { DropdownOption } from "../../Views/Universal/Dropdown";
-import { Erratum } from "./sub/Errata";
-import { PrimaryAttributeDamageThreshold } from "./sub/PrimaryAttributeDamageThreshold";
-import { SourceLink } from "./sub/SourceLink";
+import { List } from "../../../Data/List"
+import { Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, Record } from "../../../Data/Record"
+import { DropdownOption } from "../View/DropdownOption"
+import { Erratum } from "./sub/Errata"
+import { PrimaryAttributeDamageThreshold } from "./sub/PrimaryAttributeDamageThreshold"
+import { SourceLink } from "./sub/SourceLink"
 
 export interface ItemTemplate {
   "@@name": "ItemTemplate"
@@ -36,9 +36,9 @@ export interface ItemTemplate {
   pro: Maybe<number>
   range: Maybe<List<number>>
   reach: Maybe<number>
-  reloadTime: Maybe<string>
+  reloadTime: Maybe<number | List<number>>
   stabilityMod: Maybe<number>
-  stp: Maybe<string>
+  stp: Maybe<number | List<number>>
   template: string
   weight: Maybe<number>
   note: Maybe<string>

@@ -6,17 +6,17 @@
  * @author Lukas Obermann
  */
 
-import { pipe, pipe_ } from "../App/Utilities/pipe";
-import { not } from "./Bool";
-import { equals } from "./Eq";
-import { ident, thrush } from "./Function";
-import { fmap, fmapF } from "./Functor";
-import { Internals } from "./Internals";
-import { add, inc, max, min, multiply } from "./Num";
-import { Compare, GT, isLTorEQ, LT, Ordering } from "./Ord";
-import { fromDefault, RecordBase } from "./Record";
-import { show } from "./Show";
-import { first, fst, Pair, second, snd } from "./Tuple";
+import { pipe, pipe_ } from "../App/Utilities/pipe"
+import { not } from "./Bool"
+import { equals } from "./Eq"
+import { ident, thrush } from "./Function"
+import { fmap, fmapF } from "./Functor"
+import { Internals } from "./Internals"
+import { add, inc, max, min, multiply } from "./Num"
+import { Compare, GT, isLTorEQ, LT, Ordering } from "./Ord"
+import { fromDefault, RecordBase } from "./Record"
+import { show } from "./Show"
+import { first, fst, Pair, second, snd } from "./Tuple"
 
 export import NonEmptyList = Internals.NonEmptyList
 export import Cons = Internals.Cons
@@ -38,34 +38,40 @@ const fromJust =
     throw new TypeError (`Cannot extract a value out of type Nothing.`)
   }
 
+const maybe =
+  <B> (def: B) =>
+  <A> (f: (x: A) => B) =>
+  (x: Maybe<A>) =>
+    isJust (x) ? f (x .value) : def
+
 const imapMaybe =
   <A, B>
   (f: (index: number) => (x: A) => Maybe<B>) =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     ifoldr<A, List<B>>
       (index => x => acc =>
         pipe_ (
           x,
           f (index),
           maybe<List<B>> (acc)
+                         // eslint-disable-next-line @typescript-eslint/no-use-before-define
                          (cons (acc))
         ))
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       (List.empty)
 
 const mapMaybe =
   <A, B>
   (f: (x: A) => Maybe<B>) =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     List.foldr<A, List<B>> (pipe (
                              f,
                              maybe<(xs: List<B>) => List<B>> (ident)
+                                                             // eslint-disable-next-line @typescript-eslint/no-use-before-define
                                                              (consF)
                            ))
+                           // eslint-disable-next-line @typescript-eslint/no-use-before-define
                            (List.empty)
-
-const maybe =
-  <B> (def: B) =>
-  <A> (f: (x: A) => B) =>
-  (x: Maybe<A>) =>
-    isJust (x) ? f (x .value) : def
 
 const fromMap =
   <K, A> (xs: ReadonlyMap<K, A>): OrderedMap<K, A> => {
@@ -130,6 +136,15 @@ export const pure = <A> (x: A) => Cons (x, Nil)
 
 List.pure = pure
 
+const mapAp =
+  <A, B>
+  (f: (x: A) => B) =>
+  (xs: List<B>) =>
+  (x: List<A>): List<B> =>
+    isNil (x)
+    ? xs
+    : Cons (f (x .x), mapAp (f) (xs) (x .xs))
+
 /**
  * `(<*>) :: [a -> b] -> [a] -> [b]`
  *
@@ -139,16 +154,8 @@ export const ap =
   <A, B> (fs: List<(x: A) => B>) => (xs: List<A>): List<B> =>
     isNil (fs) || isNil (xs)
     ? Nil
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     : mapAp<A, B> (head (fs)) (ap (fs .xs) (xs)) (xs)
-
-const mapAp =
-  <A, B>
-  (f: (x: A) => B) =>
-  (xs: List<B>) =>
-  (x: List<A>): List<B> =>
-    isNil (x)
-    ? xs
-    : Cons (f (x .x), mapAp (f) (xs) (x .xs))
 
 List.ap = ap
 
@@ -222,6 +229,7 @@ export const bind =
   <A, B> (xs: List<A>) => (f: (x: A) => List<B>): List<B> =>
     isNil (xs)
     ? Nil
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     : append (f (xs .x)) (bind<A, B> (xs .xs) (f))
 
 List.bind = bind
@@ -311,6 +319,12 @@ export const foldl =
 
 List.foldl = foldl
 
+const foldr1Safe =
+  <A> (f: (x: A) => (acc: A) => A) => (xs: Cons<A>): A =>
+    isNil (xs .xs)
+    ? xs .x
+    : f (xs .x) (foldr1Safe (f) (xs .xs))
+
 /**
  * `foldr1 :: (a -> a -> a) -> [a] -> a`
  *
@@ -330,11 +344,12 @@ export const foldr1 =
 
 List.foldr1 = foldr1
 
-const foldr1Safe =
-  <A> (f: (x: A) => (acc: A) => A) => (xs: Cons<A>): A =>
-    isNil (xs .xs)
-    ? xs .x
-    : f (xs .x) (foldr1Safe (f) (xs .xs))
+const foldl1Safe =
+  <A>
+  (f: (acc: A) => (x: A) => A) =>
+  (xs: List<A>) =>
+  (acc: A): A =>
+    isNil (xs) ? acc : foldl1Safe (f) (xs .xs) (f (acc) (xs .x))
 
 /**
  * `foldl1 :: (a -> a -> a) -> [a] -> a`
@@ -354,13 +369,6 @@ export const foldl1 =
   }
 
 List.foldl1 = foldl1
-
-const foldl1Safe =
-  <A>
-  (f: (acc: A) => (x: A) => A) =>
-  (xs: List<A>) =>
-  (acc: A): A =>
-    isNil (xs) ? acc : foldl1Safe (f) (xs .xs) (f (acc) (xs .x))
 
 /**
  * `toList :: [a] -> [a]`
@@ -607,6 +615,10 @@ List.find = find
 
 // BASIC FUNCTIONS
 
+const appendSafe =
+  <A> (xs1: List<A>) => (xs2: Cons<A>): Cons<A> =>
+    isNil (xs1) ? xs2 : Cons (xs1 .x, appendSafe (xs1 .xs) (xs2))
+
 /**
  * `(++) :: [a] -> [a] -> [a]`
  *
@@ -622,10 +634,6 @@ export const append =
     isNil (xs2) ? xs1 : isNil (xs1) ? xs2 : appendSafe (xs1) (xs2)
 
 export type append<A> = (xs1: List<A>) => (xs2: List<A>) => List<A>
-
-const appendSafe =
-  <A> (xs1: List<A>) => (xs2: Cons<A>): Cons<A> =>
-    isNil (xs1) ? xs2 : Cons (xs1 .x, appendSafe (xs1 .xs) (xs2))
 
 List.append = append
 
@@ -804,6 +812,13 @@ export const reverse =
 
 List.reverse = reverse
 
+const intersperseIterator =
+  <A> (x: A) => (xs: List<A>): List<A> =>
+    isNil (xs)
+    ? Nil
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    : pipe_ (intersperseIterator (x) (xs .xs), consF (xs .x), consF (x))
+
 /**
  * `intersperse :: a -> [a] -> [a]`
  *
@@ -821,12 +836,6 @@ export const intersperse =
     : isNil (xs .xs)
     ? xs
     : cons (intersperseIterator (x) (xs .xs)) (xs .x)
-
-const intersperseIterator =
-  <A> (x: A) => (xs: List<A>): List<A> =>
-    isNil (xs)
-    ? Nil
-    : pipe_ (intersperseIterator (x) (xs .xs), consF (xs .x), consF (x))
 
 List.intersperse = intersperse
 
@@ -847,6 +856,42 @@ export const intercalate =
     : xs .x .toString () + separator + intercalate (separator) (xs .xs)
 
 List.intercalate = intercalate
+
+
+const pick = <A> (xs: List<A>): List<Pair<A, List<A>>> =>
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  imap (i => (x: A) => Pair (x, deleteAt (i) (xs)))
+       (xs)
+
+/**
+ * ```haskell
+ * permutations :: [a] -> [[a]]
+ * ```
+ *
+ * The `permutations` function returns the list of all permutations of the
+ * argument.
+ *
+ * ```haskell
+ * >>> permutations "abc"
+ * ["abc","bac","cba","bca","cab","acb"]
+ * ```
+ *
+ * If the given list is empty, an empty list is returned by this function.
+ */
+export const permutations: <A> (xs: List<A>) => List<List<A>> =
+  <A> (xs: List<A>) => isNil (xs)
+                       ? List ()
+                       : isNil (xs .xs)
+                       ? List (xs)
+                       : pipe_ (
+                           xs,
+                           pick,
+                           // eslint-disable-next-line @typescript-eslint/no-use-before-define
+                           concatMap (p => map (consF (fst (p)))
+                                               (permutations (snd (p))))
+                         )
+
+List.permutations = permutations
 
 
 // BUILDING LISTS
@@ -871,6 +916,7 @@ export const scanl =
   (f: (acc: B) => (x: A) => B) =>
   (initial: B) =>
   (xs: List<A>): List<B> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     Cons (initial, scanlIterator (f) (initial) (xs))
 
 const scanlIterator =
@@ -972,6 +1018,7 @@ export const replicateR =
   (len: number) =>
   <A>
   (f: (index: number) => A): List<A> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     unfoldr ((index: number) => index < len ? Just (Pair (f (index), index + 1)) : Nothing)
             (0)
 
@@ -1150,6 +1197,7 @@ interface Filter {
  */
 export const filter: Filter =
   <A> (pred: (x: A) => boolean) => (xs: List<A>): List<A> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     foldr<A, List<A>> (x => pred (x) ? consF (x) : ident)
                       (Nil)
                       (xs)
@@ -1171,6 +1219,7 @@ export const partition =
   <A>
   (pred: (value: A) => boolean) =>
     foldr<A, Pair<List<A>, List<A>>>
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       (x => pred (x) ? first (consF (x)) : second (consF (x)))
       (Pair (Nil, Nil))
 
@@ -1226,6 +1275,14 @@ export const elemIndex =
 
 List.elemIndex = elemIndex
 
+const elemIndicesIndex =
+  <A> (x: A) => (index: number) => (xs: List<A>): List<number> =>
+    isNil (xs)
+    ? Nil
+    : equals (x) (xs .x)
+    ? Cons (index, elemIndicesIndex (x) (index + 1) (xs .xs))
+    : elemIndicesIndex (x) (index + 1) (xs .xs)
+
 /**
  * `elemIndices :: Eq a => a -> [a] -> [Int]`
  *
@@ -1235,14 +1292,6 @@ List.elemIndex = elemIndex
 export const elemIndices =
   <A> (x: A) => (xs: List<A>): List<number> =>
     elemIndicesIndex (x) (0) (xs)
-
-const elemIndicesIndex =
-  <A> (x: A) => (index: number) => (xs: List<A>): List<number> =>
-    isNil (xs)
-    ? Nil
-    : equals (x) (xs .x)
-    ? Cons (index, elemIndicesIndex (x) (index + 1) (xs .xs))
-    : elemIndicesIndex (x) (index + 1) (xs .xs)
 
 List.elemIndices = elemIndices
 
@@ -1263,16 +1312,6 @@ export const findIndex =
 
 List.findIndex = findIndex
 
-/**
- * `findIndices :: (a -> Bool) -> [a] -> [Int]`
- *
- * The `findIndices` function extends `findIndex`, by returning the indices of
- * all elements satisfying the predicate, in ascending order.
- */
-export const findIndices =
-  <A> (pred: (x: A) => boolean) => (xs: List<A>): List<number> =>
-    findIndicesIndex (pred) (0) (xs)
-
 const findIndicesIndex =
   <A>
   (pred: (x: A) => boolean) =>
@@ -1283,6 +1322,16 @@ const findIndicesIndex =
     : pred (xs .x)
     ? Cons (index, findIndicesIndex (pred) (index + 1) (xs .xs))
     : findIndicesIndex (pred) (index + 1) (xs .xs)
+
+/**
+ * `findIndices :: (a -> Bool) -> [a] -> [Int]`
+ *
+ * The `findIndices` function extends `findIndex`, by returning the indices of
+ * all elements satisfying the predicate, in ascending order.
+ */
+export const findIndices =
+  <A> (pred: (x: A) => boolean) => (xs: List<A>): List<number> =>
+    findIndicesIndex (pred) (0) (xs)
 
 List.findIndices = findIndices
 
@@ -1297,6 +1346,7 @@ List.findIndices = findIndices
  */
 export const zip =
   <A> (xs1: List<A>) => <B> (xs2: List<B>): List<Pair<A, B>> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     zipWith<A, B, Pair<A, B>> (Pair) (xs1) (xs2)
 
 List.zip = zip
@@ -1322,6 +1372,9 @@ List.zipWith = zipWith
 // SPECIAL LISTS
 
 // Functions on strings
+
+const lfEndRx = /\n$/u
+const lfRx = /\n/u
 
 /**
  * `lines :: String -> [String]`
@@ -1374,10 +1427,8 @@ export const lines =
   (x: string): List<string> =>
     x .length === 0
     ? empty
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     : fromArray (x .replace (lfEndRx, "") .split (lfRx))
-
-const lfEndRx = /\n$/u
-const lfRx = /\n/u
 
 List.lines = lines
 
@@ -1446,14 +1497,27 @@ List.intersect = intersect
 
 // ORDERED LISTS
 
-/**
- * `sortBy :: (a -> a -> Ordering) -> [a] -> [a]`
- *
- * The `sortBy` function is the non-overloaded version of `sort`.
- */
-export const sortBy =
-  <A> (f: (a: A) => (b: A) => Ordering) => (xs: List<A>): List<A> =>
-    sortByNodeMergeSort (f) (xs)
+const sortByGetMiddle = <A> (xs: List<A>): Pair<List<A>, List<A>> =>
+  splitAt (flength (xs) / 2) (xs)
+
+const sortBySortedMerge =
+  <A>
+  (f: (a: A) => (b: A) => Ordering) =>
+  (a: List<A>, b: List<A>): List<A> => {
+    // Base cases
+    if (isNil (a)) {
+      return b
+    }
+
+    if (isNil (b)) {
+      return a
+    }
+
+    // Pick either a or b, and recur
+    return isLTorEQ (f (head (a)) (head (b)))
+      ? Cons (head (a), sortBySortedMerge (f) (a .xs, b))
+      : Cons (head (b), sortBySortedMerge (f) (a, b .xs))
+  }
 
 const sortByNodeMergeSort =
   <A>
@@ -1477,27 +1541,14 @@ const sortByNodeMergeSort =
     return sortBySortedMerge (f) (left, right)
   }
 
-const sortBySortedMerge =
-  <A>
-  (f: (a: A) => (b: A) => Ordering) =>
-  (a: List<A>, b: List<A>): List<A> => {
-    // Base cases
-    if (isNil (a)) {
-      return b
-    }
-
-    if (isNil (b)) {
-      return a
-    }
-
-    // Pick either a or b, and recur
-    return isLTorEQ (f (head (a)) (head (b)))
-      ? Cons (head (a), sortBySortedMerge (f) (a .xs, b))
-      : Cons (head (b), sortBySortedMerge (f) (a, b .xs))
-  }
-
-const sortByGetMiddle = <A> (xs: List<A>): Pair<List<A>, List<A>> =>
-  splitAt (flength (xs) / 2) (xs)
+/**
+ * `sortBy :: (a -> a -> Ordering) -> [a] -> [a]`
+ *
+ * The `sortBy` function is the non-overloaded version of `sort`.
+ */
+export const sortBy =
+  <A> (f: (a: A) => (b: A) => Ordering) => (xs: List<A>): List<A> =>
+    sortByNodeMergeSort (f) (xs)
 
 List.sortBy = sortBy
 
@@ -1540,6 +1591,7 @@ List.minimumBy = minimumBy
  * ```
  */
 export const indexed = <A> (xs: List<A>): List<Pair<number, A>> =>
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   imap<A, Pair<number, A>> (Pair) (xs)
 
 List.indexed = indexed
@@ -1581,6 +1633,7 @@ export const deleteAtPair =
     ? Pair (Nothing, Nil)
     : index === 0
     ? Pair (Just (xs .x), xs .xs)
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     : second (consF (xs .x))
              (deleteAtPair (index - 1) (xs .xs))
 
@@ -1688,11 +1741,22 @@ List.insertAt = insertAt
  */
 export const imap =
   <A, B> (f: (index: number) => (x: A) => B) => (xs: List<A>): List<B> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     ifoldr (i => pipe (f (i), consF)) (Nil) (xs)
 
 List.imap = imap
 
 // Folds
+
+const ifoldrSafe =
+  <A, B>
+  (f: (index: number) => (current: A) => (acc: B) => B) =>
+  (index: number) =>
+  (acc: B) =>
+  (xs: List<A>): B =>
+    isNil (xs)
+    ? acc
+    : f (index) (xs .x) (ifoldrSafe (f) (index + 1) (acc) (xs .xs))
 
 /**
  * `ifoldr :: (Int -> a -> b -> b) -> b -> [a] -> b`
@@ -1706,17 +1770,17 @@ export const ifoldr =
   (xs: List<A>): B =>
     ifoldrSafe (f) (0) (initial) (xs)
 
-const ifoldrSafe =
+List.ifoldr = ifoldr
+
+const ifoldlIterator =
   <A, B>
-  (f: (index: number) => (current: A) => (acc: B) => B) =>
+  (f: (acc: B) => (index: number) => (current: A) => B) =>
   (index: number) =>
   (acc: B) =>
   (xs: List<A>): B =>
     isNil (xs)
     ? acc
-    : f (index) (xs .x) (ifoldrSafe (f) (index + 1) (acc) (xs .xs))
-
-List.ifoldr = ifoldr
+    : ifoldlIterator (f) (index + 1) (f (acc) (index) (xs .x)) (xs .xs)
 
 /**
  * `ifoldl :: Foldable t => (b -> Int -> a -> b) -> b -> t a -> b`
@@ -1734,26 +1798,7 @@ export const ifoldl =
   (xs: List<A>): B =>
     ifoldlIterator (f) (0) (initial) (xs)
 
-const ifoldlIterator =
-  <A, B>
-  (f: (acc: B) => (index: number) => (current: A) => B) =>
-  (index: number) =>
-  (acc: B) =>
-  (xs: List<A>): B =>
-    isNil (xs)
-    ? acc
-    : ifoldlIterator (f) (index + 1) (f (acc) (index) (xs .x)) (xs .xs)
-
 List.ifoldl = ifoldl
-
-/**
- * `iall :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
- *
- * Determines whether all elements of the structure satisfy the predicate.
- */
-export const iall =
-  <A> (f: (index: number) => (x: A) => boolean) => (xs: List<A>): boolean =>
-    iallIterator (f) (0) (xs)
 
 const iallIterator =
   <A>
@@ -1764,16 +1809,16 @@ const iallIterator =
     ? true
     : f (index) (xs .x) && iallIterator (f) (index + 1) (xs .xs)
 
-List.iall = iall
-
 /**
- * `iany :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
+ * `iall :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
  *
- * Determines whether any element of the structure satisfies the predicate.
+ * Determines whether all elements of the structure satisfy the predicate.
  */
-export const iany =
+export const iall =
   <A> (f: (index: number) => (x: A) => boolean) => (xs: List<A>): boolean =>
-    ianyIterator (f) (0) (xs)
+    iallIterator (f) (0) (xs)
+
+List.iall = iall
 
 const ianyIterator =
   <A>
@@ -1784,14 +1829,16 @@ const ianyIterator =
     ? false
     : f (index) (xs .x) || ianyIterator (f) (index + 1) (xs .xs)
 
-List.iany = iany
-
 /**
- * `iconcatMap :: (Int -> a -> [b]) -> [a] -> [b]`
+ * `iany :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
+ *
+ * Determines whether any element of the structure satisfies the predicate.
  */
-export const iconcatMap =
-  <A, B> (f: (index: number) => (x: A) => List<B>) => (xs: List<A>): List<B> =>
-    iconcatMapIterator (f) (0) (xs)
+export const iany =
+  <A> (f: (index: number) => (x: A) => boolean) => (xs: List<A>): boolean =>
+    ianyIterator (f) (0) (xs)
+
+List.iany = iany
 
 const iconcatMapIterator =
   <A, B>
@@ -1802,6 +1849,13 @@ const iconcatMapIterator =
     ? Nil
     : append (f (index) (xs .x))
              (iconcatMapIterator (f) (index + 1) (xs .xs))
+
+/**
+ * `iconcatMap :: (Int -> a -> [b]) -> [a] -> [b]`
+ */
+export const iconcatMap =
+  <A, B> (f: (index: number) => (x: A) => List<B>) => (xs: List<A>): List<B> =>
+    iconcatMapIterator (f) (0) (xs)
 
 List.iconcatMap = iconcatMap
 
@@ -1836,6 +1890,7 @@ interface Ifilter {
  */
 export const ifilter: Ifilter =
   <A> (pred: (index: number) => (x: A) => boolean) => (xs: List<A>): List<A> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     ifoldr<A, List<A>> (i => x => pred (i) (x) ? consF (x) : ident)
                        (Nil)
                        (xs)
@@ -1857,12 +1912,24 @@ export const ipartition =
   <A>
   (pred: (index: number) => (value: A) => boolean) =>
     ifoldr<A, Pair<List<A>, List<A>>>
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       (i => x => pred (i) (x) ? first (consF (x)) : second (consF (x)))
       (Pair (Nil, Nil))
 
 List.ipartition = ipartition
 
 // Search
+
+const ifindIterator =
+  <A>
+  (pred: (index: number) => (x: A) => boolean) =>
+  (index: number) =>
+  (xs: List<A>): Maybe<A> =>
+    isNil (xs)
+    ? Nothing
+    : pred (index) (xs .x)
+    ? Just (xs .x)
+    : ifindIterator (pred) (index + 1) (xs .xs)
 
 interface Ifind {
 
@@ -1898,18 +1965,18 @@ export const ifind: Ifind =
   <A> (pred: (index: number) => (x: A) => boolean) => (xs: List<A>): Maybe<A> =>
     ifindIterator (pred) (0) (xs)
 
-const ifindIterator =
+List.ifind = ifind
+
+const ifindIndexNode =
   <A>
   (pred: (index: number) => (x: A) => boolean) =>
   (index: number) =>
-  (xs: List<A>): Maybe<A> =>
+  (xs: List<A>): Maybe<number> =>
     isNil (xs)
     ? Nothing
     : pred (index) (xs .x)
-    ? Just (xs .x)
-    : ifindIterator (pred) (index + 1) (xs .xs)
-
-List.ifind = ifind
+    ? Just (index)
+    : ifindIndexNode (pred) (index + 1) (xs .xs)
 
 /**
  * `ifindIndex :: (Int -> a -> Bool) -> [a] -> Maybe Int`
@@ -1924,18 +1991,18 @@ export const ifindIndex =
   (xs: List<A>): Maybe<number> =>
     ifindIndexNode (pred) (0) (xs)
 
-const ifindIndexNode =
+List.ifindIndex = ifindIndex
+
+const ifindIndicesNode =
   <A>
   (pred: (index: number) => (x: A) => boolean) =>
   (index: number) =>
-  (xs: List<A>): Maybe<number> =>
+  (xs: List<A>): List<number> =>
     isNil (xs)
-    ? Nothing
+    ? Nil
     : pred (index) (xs .x)
-    ? Just (index)
-    : ifindIndexNode (pred) (index + 1) (xs .xs)
-
-List.ifindIndex = ifindIndex
+    ? Cons (index, ifindIndicesNode (pred) (index + 1) (xs .xs))
+    : ifindIndicesNode (pred) (index + 1) (xs .xs)
 
 /**
  * `ifindIndices :: (a -> Bool) -> [a] -> [Int]`
@@ -1948,17 +2015,6 @@ export const ifindIndices =
   (pred: (index: number) => (x: A) => boolean) =>
   (xs: List<A>): List<number> =>
     ifindIndicesNode (pred) (0) (xs)
-
-const ifindIndicesNode =
-  <A>
-  (pred: (index: number) => (x: A) => boolean) =>
-  (index: number) =>
-  (xs: List<A>): List<number> =>
-    isNil (xs)
-    ? Nil
-    : pred (index) (xs .x)
-    ? Cons (index, ifindIndicesNode (pred) (index + 1) (xs .xs))
-    : ifindIndicesNode (pred) (index + 1) (xs .xs)
 
 List.ifindIndices = ifindIndices
 
@@ -1976,6 +2032,8 @@ export const lower = (str: string) => str .toLowerCase ()
 
 List.lower = lower
 
+const spacesStartRx = /^\s+/u
+
 /**
  * `trimStart :: String -> String`
  *
@@ -1983,9 +2041,9 @@ List.lower = lower
  */
 export const trimStart = (str: string) => str .replace (spacesStartRx, "")
 
-const spacesStartRx = /^\s+/u
-
 List.trimStart = trimStart
+
+const spacesEndRx = /\s+$/u
 
 /**
  * `trimEnd :: String -> String`
@@ -1994,9 +2052,9 @@ List.trimStart = trimStart
  */
 export const trimEnd = (str: string) => str .replace (spacesEndRx, "")
 
-const spacesEndRx = /\s+$/u
-
 List.trimEnd = trimEnd
+
+const regexRx = /[.*+?^${}()|[\]\\]/gu
 
 /**
  * `escapeRegex :: String -> String`
@@ -2010,10 +2068,9 @@ List.trimEnd = trimEnd
  * ```
  */
 export const escapeRegex =
+
   // $& means the whole matched string
   (x: string) => x .replace (regexRx, "\\$&")
-
-const regexRx = /[.*+?^${}()|[\]\\]/gu
 
 List.escapeRegex = escapeRegex
 
@@ -2029,6 +2086,7 @@ List.escapeRegex = escapeRegex
  */
 export const splitOn =
   (del: string) => (x: string): List<string> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fromArray (x .split (del))
 
 List.splitOn = splitOn
@@ -2074,6 +2132,12 @@ export const list =
 
 List.list = list
 
+
+const unsnocSafe =
+  <A> (xs: Cons<A>): Pair<List<A>, A> =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    isNil (xs .xs) ? Pair (Nil, xs .x) : first (consF (xs .x)) (unsnocSafe (xs .xs))
+
 /**
  * `unsnoc :: [a] -> Maybe ([a], a)`
  *
@@ -2085,11 +2149,6 @@ export const unsnoc =
     isNil (xs)
       ? Nothing
       : Just (unsnocSafe (xs))
-
-
-const unsnocSafe =
-  <A> (xs: Cons<A>): Pair<List<A>, A> =>
-    isNil (xs .xs) ? Pair (Nil, xs .x) : first (consF (xs .x)) (unsnocSafe (xs .xs))
 
 List.unsnoc = unsnoc
 
@@ -2104,6 +2163,12 @@ export const consF = <A> (x: A) => (xs: List<A>): List<A> => cons (xs) (x)
 
 List.consF = consF
 
+const snocSafe =
+  <A> (xs: Cons<A>) => (x: A): Cons<A> =>
+    isNil (xs .xs)
+    ? Cons (xs .x, pure (x))
+    : Cons (xs .x, snocSafe (xs .xs) (x))
+
 /**
  * `snoc :: [a] -> a -> [a]`
  *
@@ -2112,12 +2177,6 @@ List.consF = consF
 export const snoc =
   <A> (xs: List<A>) => (x: A): List<A> =>
     isNil (xs) ? pure (x) : snocSafe (xs) (x)
-
-const snocSafe =
-  <A> (xs: Cons<A>) => (x: A): Cons<A> =>
-    isNil (xs .xs)
-    ? Cons (xs .x, pure (x))
-    : Cons (xs .x, snocSafe (xs .xs) (x))
 
 List.snoc = snoc
 
@@ -2287,7 +2346,7 @@ List.fromArray = fromArray
  * Converts a `List` to a native Array.
  */
 export const toArray = <A> (xs: List<A>): A[] =>
-  foldl<A, A[]> (arr => x => [...arr, x]) ([]) (xs)
+  foldl<A, A[]> (arr => x => [ ...arr, x ]) ([]) (xs)
 
 List.toArray = toArray
 
@@ -2460,6 +2519,19 @@ export const filterMulti =
 
 List.filterMulti = filterMulti
 
+const lengthAtLeastIter =
+  (min_len: number) => (len: number) => <A> (xs: List<A>): boolean => {
+    if (isNil (xs)) {
+      return false
+    }
+    else if (min_len === len + 1) {
+      return true
+    }
+    else {
+      return lengthAtLeastIter (min_len) (len + 1) (xs .xs)
+    }
+  }
+
 /**
  * `lengthAtLeast :: Int -> [a] -> Bool`
  */
@@ -2479,20 +2551,20 @@ export const lengthAtLeast =
     }
   }
 
-const lengthAtLeastIter =
-  (min_len: number) => (len: number) => <A> (xs: List<A>): boolean => {
+List.lengthAtLeast = lengthAtLeast
+
+const lengthAtMostIter =
+  (max_len: number) => (len: number) => <A> (xs: List<A>): boolean => {
     if (isNil (xs)) {
-      return false;
-    }
-    else if (min_len === len + 1) {
       return true
     }
+    else if (max_len < len + 1) {
+      return false
+    }
     else {
-      return lengthAtLeastIter (min_len) (len + 1) (xs .xs)
+      return lengthAtMostIter (max_len) (len + 1) (xs .xs)
     }
   }
-
-List.lengthAtLeast = lengthAtLeast
 
 /**
  * `lengthAtLeast :: Int -> [a] -> Bool`
@@ -2510,20 +2582,21 @@ export const lengthAtMost =
     }
   }
 
-const lengthAtMostIter =
-  (max_len: number) => (len: number) => <A> (xs: List<A>): boolean => {
-    if (isNil (xs)) {
-      return true;
-    }
-    else if (max_len < len + 1) {
-      return false
-    }
-    else {
-      return lengthAtMostIter (max_len) (len + 1) (xs .xs)
-    }
-  }
-
 List.lengthAtMost = lengthAtMost
+
+
+// Data.List.Unique
+
+
+/**
+ * `countElem` gets the number of occurrences of the specified element.
+ */
+export const countElem: <A> (x: A) => (xs: List<A>) => number
+                      = x => foldr (pipe (
+                                     equals (x),
+                                     equal => equal ? inc : ident as ident<number>
+                                   ))
+                                   (0)
 
 
 // TYPE HELPERS

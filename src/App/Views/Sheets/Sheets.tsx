@@ -1,57 +1,60 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { find, List } from "../../../Data/List";
-import { bindF, Maybe, maybeRNull } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Pair } from "../../../Data/Tuple";
-import { DCId } from "../../Constants/Ids";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { PersonalData } from "../../Models/Hero/PersonalData";
-import { Pet } from "../../Models/Hero/Pet";
-import { Purse } from "../../Models/Hero/Purse";
-import { Rules } from "../../Models/Hero/Rules";
-import { NumIdName } from "../../Models/NumIdName";
-import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { Armor } from "../../Models/View/Armor";
-import { AttributeCombined } from "../../Models/View/AttributeCombined";
-import { BlessingCombined } from "../../Models/View/BlessingCombined";
-import { CantripCombined } from "../../Models/View/CantripCombined";
-import { CombatTechniqueWithAttackParryBase } from "../../Models/View/CombatTechniqueWithAttackParryBase";
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
-import { HitZoneArmorForView } from "../../Models/View/HitZoneArmorForView";
-import { ItemForView } from "../../Models/View/ItemForView";
-import { LiturgicalChantWithRequirements } from "../../Models/View/LiturgicalChantWithRequirements";
-import { MeleeWeapon } from "../../Models/View/MeleeWeapon";
-import { RangedWeapon } from "../../Models/View/RangedWeapon";
-import { ShieldOrParryingWeapon } from "../../Models/View/ShieldOrParryingWeapon";
-import { SkillCombined } from "../../Models/View/SkillCombined";
-import { SpellWithRequirements } from "../../Models/View/SpellWithRequirements";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { Culture } from "../../Models/Wiki/Culture";
-import { Disadvantage } from "../../Models/Wiki/Disadvantage";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Race } from "../../Models/Wiki/Race";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { WikiModel } from "../../Models/Wiki/WikiModel";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { isBookEnabled } from "../../Utilities/RulesUtils";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { BelongingsSheet } from "./BelongingsSheet/BelongingsSheet";
-import { CombatSheet } from "./CombatSheet/CombatSheet";
-import { CombatSheetZones } from "./CombatSheet/CombatSheetZones";
-import { LiturgicalChantsSheet } from "./LiturgicalChantsSheet/LiturgicalChantsSheet";
-import { MainSheet } from "./MainSheet/MainSheet";
-import { SkillsSheet } from "./SkillsSheet/SkillsSheet";
-import { SpellsSheet } from "./SpellsSheet/SpellsSheet";
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { find, List } from "../../../Data/List"
+import { bindF, Maybe, maybeRNull } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { fst, Pair, snd } from "../../../Data/Tuple"
+import { DCId } from "../../Constants/Ids"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Sex } from "../../Models/Hero/heroTypeHelpers"
+import { PersonalData } from "../../Models/Hero/PersonalData"
+import { Pet } from "../../Models/Hero/Pet"
+import { Purse } from "../../Models/Hero/Purse"
+import { Rules } from "../../Models/Hero/Rules"
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
+import { Armor } from "../../Models/View/Armor"
+import { AttributeCombined } from "../../Models/View/AttributeCombined"
+import { BlessingCombined } from "../../Models/View/BlessingCombined"
+import { CantripCombined } from "../../Models/View/CantripCombined"
+import { CombatTechniqueWithAttackParryBase } from "../../Models/View/CombatTechniqueWithAttackParryBase"
+import { DerivedCharacteristicValues } from "../../Models/View/DerivedCharacteristicCombined"
+import { HitZoneArmorForView } from "../../Models/View/HitZoneArmorForView"
+import { ItemForView } from "../../Models/View/ItemForView"
+import { LiturgicalChantWithRequirements } from "../../Models/View/LiturgicalChantWithRequirements"
+import { MeleeWeapon } from "../../Models/View/MeleeWeapon"
+import { RangedWeapon } from "../../Models/View/RangedWeapon"
+import { ShieldOrParryingWeapon } from "../../Models/View/ShieldOrParryingWeapon"
+import { SkillCombined } from "../../Models/View/SkillCombined"
+import { SpellWithRequirements } from "../../Models/View/SpellWithRequirements"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { Condition } from "../../Models/Wiki/Condition"
+import { Culture } from "../../Models/Wiki/Culture"
+import { DerivedCharacteristic } from "../../Models/Wiki/DerivedCharacteristic"
+import { Disadvantage } from "../../Models/Wiki/Disadvantage"
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { Race } from "../../Models/Wiki/Race"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { State } from "../../Models/Wiki/State"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { DCPair } from "../../Selectors/derivedCharacteristicsSelectors"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { isBookEnabled } from "../../Utilities/RulesUtils"
+import { DerivedCharacteristicId } from "../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { BelongingsSheet } from "./BelongingsSheet/BelongingsSheet"
+import { CombatSheet } from "./CombatSheet/CombatSheet"
+import { CombatSheetZones } from "./CombatSheet/CombatSheetZones"
+import { LiturgicalChantsSheet } from "./LiturgicalChantsSheet/LiturgicalChantsSheet"
+import { MainSheet } from "./MainSheet/MainSheet"
+import { SkillsSheet } from "./SkillsSheet/SkillsSheet"
+import { SpellsSheet } from "./SpellsSheet/SpellsSheet"
 
 export interface SheetsOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   hero: HeroModelRecord
 }
 
@@ -66,7 +69,7 @@ export interface SheetsStateProps {
   combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   combatTechniques: Maybe<List<Record<CombatTechniqueWithAttackParryBase>>>
   culture: Maybe<Record<Culture>>
-  derivedCharacteristics: List<Record<DerivedCharacteristic>>
+  derivedCharacteristics: List<DCPair>
   disadvantagesActive: Maybe<List<Record<ActiveActivatable<Disadvantage>>>>
   el: Maybe<Record<ExperienceLevel>>
   fatePointsModifier: number
@@ -74,9 +77,10 @@ export interface SheetsStateProps {
   meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
   name: Maybe<string>
   professionName: Maybe<string>
+
   // profession: Maybe<Record<Profession>>
   // professionVariant: Maybe<Record<ProfessionVariant>>
-  profile: Maybe<Record<PersonalData>>
+  profile: Record<PersonalData>
   race: Maybe<Record<Race>>
   rangedWeapons: Maybe<List<Record<RangedWeapon>>>
   sex: Maybe<Sex>
@@ -103,9 +107,9 @@ export interface SheetsStateProps {
   blessedTradition: Maybe<string>
   blessings: Maybe<List<Record<BlessingCombined>>>
   liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
-  conditions: List<Record<NumIdName>>
-  states: List<Record<NumIdName>>
-  books: WikiModel["books"]
+  conditions: List<Record<Condition>>
+  states: List<Record<State>>
+  books: StaticData["books"]
   skillGroupPages: OrderedMap<number, Pair<number, number>>
   skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillCombined>>>>
 }
@@ -115,12 +119,12 @@ export interface SheetsDispatchProps {
   switchAttributeValueVisibility (): void
 }
 
-export type SheetsProps = SheetsStateProps & SheetsDispatchProps & SheetsOwnProps
+type Props = SheetsStateProps & SheetsDispatchProps & SheetsOwnProps
 
 const HA = HeroModel.A
 const RA = Rules.A
 
-export function Sheets (props: SheetsProps) {
+export const Sheets: React.FC<Props> = props => {
   const {
     derivedCharacteristics,
     books,
@@ -135,7 +139,7 @@ export function Sheets (props: SheetsProps) {
     el,
     fatePointsModifier,
     generalsaActive,
-    l10n,
+    staticData,
     name,
     professionName,
     profile,
@@ -184,11 +188,13 @@ export function Sheets (props: SheetsProps) {
     liturgicalChants,
   } = props
 
-  const maybeArcaneEnergy = find (pipe (DerivedCharacteristic.A.id, equals<DCId> (DCId.AE)))
-                                 (derivedCharacteristics)
+  const maybeArcaneEnergy =
+    find<DCPair> (pipe (fst, DerivedCharacteristic.A.id, equals<DerivedCharacteristicId> (DCId.AE)))
+                 (derivedCharacteristics)
 
-  const maybeKarmaPoints = find (pipe (DerivedCharacteristic.A.id, equals<DCId> (DCId.KP)))
-                                (derivedCharacteristics)
+  const maybeKarmaPoints =
+    find<DCPair> (pipe (fst, DerivedCharacteristic.A.id, equals<DerivedCharacteristicId> (DCId.KP)))
+                 (derivedCharacteristics)
 
   return (
     <Page id="sheets">
@@ -204,7 +210,7 @@ export function Sheets (props: SheetsProps) {
           el={el}
           fatePointsModifier={fatePointsModifier}
           generalsaActive={generalsaActive}
-          l10n={l10n}
+          staticData={staticData}
           name={name}
           professionName={professionName}
           profile={profile}
@@ -217,7 +223,7 @@ export function Sheets (props: SheetsProps) {
           checkAttributeValueVisibility={checkAttributeValueVisibility}
           languagesStateEntry={languagesStateEntry}
           languagesWikiEntry={languagesWikiEntry}
-          l10n={l10n}
+          staticData={staticData}
           scriptsStateEntry={scriptsStateEntry}
           scriptsWikiEntry={scriptsWikiEntry}
           skillsByGroup={skillsByGroup}
@@ -230,7 +236,7 @@ export function Sheets (props: SheetsProps) {
           combatSpecialAbilities={combatSpecialAbilities}
           combatTechniques={combatTechniques}
           derivedCharacteristics={derivedCharacteristics}
-          l10n={l10n}
+          staticData={staticData}
           meleeWeapons={meleeWeapons}
           rangedWeapons={rangedWeapons}
           shieldsAndParryingWeapons={shieldsAndParryingWeapons}
@@ -248,7 +254,7 @@ export function Sheets (props: SheetsProps) {
               combatSpecialAbilities={combatSpecialAbilities}
               combatTechniques={combatTechniques}
               derivedCharacteristics={derivedCharacteristics}
-              l10n={l10n}
+              staticData={staticData}
               meleeWeapons={meleeWeapons}
               rangedWeapons={rangedWeapons}
               shieldsAndParryingWeapons={shieldsAndParryingWeapons}
@@ -260,7 +266,7 @@ export function Sheets (props: SheetsProps) {
         <BelongingsSheet
           attributes={attributes}
           items={items}
-          l10n={l10n}
+          staticData={staticData}
           pet={pet}
           purse={purse}
           totalPrice={totalPrice}
@@ -268,14 +274,14 @@ export function Sheets (props: SheetsProps) {
           />
         {pipe_ (
           maybeArcaneEnergy,
-          bindF (DerivedCharacteristic.A.value),
+          bindF (pipe (snd, DerivedCharacteristicValues.A.value)),
           maybeRNull (() => (
                        <SpellsSheet
                          attributes={attributes}
                          cantrips={cantrips}
                          checkAttributeValueVisibility={checkAttributeValueVisibility}
                          derivedCharacteristics={derivedCharacteristics}
-                         l10n={l10n}
+                         staticData={staticData}
                          magicalPrimary={magicalPrimary}
                          magicalSpecialAbilities={magicalSpecialAbilities}
                          magicalTradition={magicalTradition}
@@ -287,7 +293,7 @@ export function Sheets (props: SheetsProps) {
         )}
         {pipe_ (
           maybeKarmaPoints,
-          bindF (DerivedCharacteristic.A.value),
+          bindF (pipe (snd, DerivedCharacteristicValues.A.value)),
           maybeRNull (() => (
                        <LiturgicalChantsSheet
                          aspects={aspects}
@@ -299,7 +305,7 @@ export function Sheets (props: SheetsProps) {
                          checkAttributeValueVisibility={checkAttributeValueVisibility}
                          derivedCharacteristics={derivedCharacteristics}
                          liturgicalChants={liturgicalChants}
-                         l10n={l10n}
+                         staticData={staticData}
                          switchAttributeValueVisibility={switchAttributeValueVisibility}
                          />
                      ))

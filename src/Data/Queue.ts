@@ -114,7 +114,7 @@ export const peek: <A> (qu: Queue<A>) => List<A> =
  * Returns the first element in the queue.
  */
 export const peekFst: <A> (qu: Queue<A>) => Maybe<A> =
-  ([head]) => Maybe (head)
+  ([ head ]) => Maybe (head)
 
 /**
  * ```haskell
@@ -150,4 +150,4 @@ export const enqueue: <A> (x: A) => (qu: Queue<A>) => Queue<A> =
  * queue.
  */
 export const dequeue: <A> (qu: Queue<A>) => Pair<Maybe<A>, Queue<A>> =
-  ([head, ...tail]) => Pair (Maybe (head), QueueC (...tail))
+  ([ head, ...tail ]) => Pair (Maybe (head), QueueC (...tail))

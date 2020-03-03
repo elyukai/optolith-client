@@ -1,50 +1,51 @@
-import { List, NonEmptyList } from "../../../Data/List";
-import { Just, Maybe } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { Item } from "../Hero/Item";
-import { CultureCombined } from "../View/CultureCombined";
-import { ProfessionCombined } from "../View/ProfessionCombined";
-import { RaceCombined } from "../View/RaceCombined";
-import { Advantage } from "./Advantage";
-import { Attribute } from "./Attribute";
-import { Blessing } from "./Blessing";
-import { Cantrip } from "./Cantrip";
-import { CombatTechnique } from "./CombatTechnique";
-import { Culture } from "./Culture";
-import { Disadvantage } from "./Disadvantage";
-import { ItemTemplate } from "./ItemTemplate";
-import { LiturgicalChant } from "./LiturgicalChant";
-import { ProfessionRequireActivatable, RequireActivatable } from "./prerequisites/ActivatableRequirement";
-import { CultureRequirement } from "./prerequisites/CultureRequirement";
-import { ProfessionRequireIncreasable, RequireIncreasable } from "./prerequisites/IncreasableRequirement";
-import { PactRequirement } from "./prerequisites/PactRequirement";
-import { RequirePrimaryAttribute } from "./prerequisites/PrimaryAttributeRequirement";
-import { RaceRequirement } from "./prerequisites/RaceRequirement";
-import { SexRequirement } from "./prerequisites/SexRequirement";
-import { SocialPrerequisite } from "./prerequisites/SocialPrerequisite";
-import { Profession } from "./Profession";
-import { CantripsSelection } from "./professionSelections/CantripsSelection";
-import { CombatTechniquesSelection } from "./professionSelections/CombatTechniquesSelection";
-import { CursesSelection } from "./professionSelections/CursesSelection";
-import { LanguagesScriptsSelection } from "./professionSelections/LanguagesScriptsSelection";
-import { VariantCombatTechniquesSelection } from "./professionSelections/RemoveCombatTechniquesSelection";
-import { VariantCombatTechniquesSecondSelection } from "./professionSelections/RemoveSecondCombatTechniquesSelection";
-import { VariantSpecializationSelection } from "./professionSelections/RemoveSpecializationSelection";
-import { CombatTechniquesSecondSelection } from "./professionSelections/SecondCombatTechniquesSelection";
-import { SkillsSelection } from "./professionSelections/SkillsSelection";
-import { SpecializationSelection } from "./professionSelections/SpecializationSelection";
-import { TerrainKnowledgeSelection } from "./professionSelections/TerrainKnowledgeSelection";
-import { ProfessionVariant } from "./ProfessionVariant";
-import { Race } from "./Race";
-import { RaceVariant } from "./RaceVariant";
-import { Skill } from "./Skill";
-import { SpecialAbility } from "./SpecialAbility";
-import { Spell } from "./Spell";
-import { Erratum } from "./sub/Errata";
-import { SelectOption } from "./sub/SelectOption";
-import { SourceLink } from "./sub/SourceLink";
+import { List, NonEmptyList } from "../../../Data/List"
+import { Just, Maybe } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { Item } from "../Hero/Item"
+import { CultureCombined } from "../View/CultureCombined"
+import { ProfessionCombined } from "../View/ProfessionCombined"
+import { RaceCombined } from "../View/RaceCombined"
+import { Advantage } from "./Advantage"
+import { Attribute } from "./Attribute"
+import { Blessing } from "./Blessing"
+import { Cantrip } from "./Cantrip"
+import { CombatTechnique } from "./CombatTechnique"
+import { Culture } from "./Culture"
+import { Disadvantage } from "./Disadvantage"
+import { ItemTemplate } from "./ItemTemplate"
+import { LiturgicalChant } from "./LiturgicalChant"
+import { ProfessionRequireActivatable, RequireActivatable } from "./prerequisites/ActivatableRequirement"
+import { CultureRequirement } from "./prerequisites/CultureRequirement"
+import { RequireIncreasable } from "./prerequisites/IncreasableRequirement"
+import { PactRequirement } from "./prerequisites/PactRequirement"
+import { RequirePrimaryAttribute } from "./prerequisites/PrimaryAttributeRequirement"
+import { ProfessionRequireIncreasable } from "./prerequisites/ProfessionRequireIncreasable"
+import { RaceRequirement } from "./prerequisites/RaceRequirement"
+import { SexRequirement } from "./prerequisites/SexRequirement"
+import { SocialPrerequisite } from "./prerequisites/SocialPrerequisite"
+import { Profession } from "./Profession"
+import { CantripsSelection } from "./professionSelections/CantripsSelection"
+import { CombatTechniquesSelection } from "./professionSelections/CombatTechniquesSelection"
+import { CursesSelection } from "./professionSelections/CursesSelection"
+import { LanguagesScriptsSelection } from "./professionSelections/LanguagesScriptsSelection"
+import { VariantCombatTechniquesSelection } from "./professionSelections/RemoveCombatTechniquesSelection"
+import { VariantCombatTechniquesSecondSelection } from "./professionSelections/RemoveSecondCombatTechniquesSelection"
+import { VariantSpecializationSelection } from "./professionSelections/RemoveSpecializationSelection"
+import { CombatTechniquesSecondSelection } from "./professionSelections/SecondCombatTechniquesSelection"
+import { SkillsSelection } from "./professionSelections/SkillsSelection"
+import { SpecializationSelection } from "./professionSelections/SpecializationSelection"
+import { TerrainKnowledgeSelection } from "./professionSelections/TerrainKnowledgeSelection"
+import { ProfessionVariant } from "./ProfessionVariant"
+import { Race } from "./Race"
+import { RaceVariant } from "./RaceVariant"
+import { Skill } from "./Skill"
+import { SpecialAbility } from "./SpecialAbility"
+import { Spell } from "./Spell"
+import { Erratum } from "./sub/Errata"
+import { SelectOption } from "./sub/SelectOption"
+import { SourceLink } from "./sub/SourceLink"
 
 export interface WikiEntryByCategory {
   "ADVANTAGES": Advantage
@@ -206,7 +207,7 @@ export interface AdvantageDisadvantageBase extends ActivatableBase {
   apValueAppend: Maybe<string>
 }
 
-export type CheckModifier = "SPI" | "TOU" | "SPI/2"
+export type CheckModifier = "SPI" | "TOU" | "SPI/2" | "SPI/TOU"
 
 export interface SkillExtension extends SelectOption {
   target: Just<string>
@@ -214,16 +215,18 @@ export interface SkillExtension extends SelectOption {
   effect: string
 }
 
-export type Activatable =
-  Record<Advantage> |
-  Record<Disadvantage> |
-  Record<SpecialAbility>
+export type Activatable = Record<Advantage>
+                        | Record<Disadvantage>
+                        | Record<SpecialAbility>
 
-export type Skillish =
-  Record<Spell> |
-  Record<LiturgicalChant> |
-  Record<Skill> |
-  Record<CombatTechnique>
+export type EntryWithCheck = Record<Spell>
+                           | Record<LiturgicalChant>
+                           | Record<Skill>
+
+export type Skillish = Record<Spell>
+                     | Record<LiturgicalChant>
+                     | Record<Skill>
+                     | Record<CombatTechnique>
 
 export type SID = string | number | NonEmptyList<number>
 

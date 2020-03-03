@@ -1,14 +1,16 @@
-import * as React from "react";
+import * as React from "react"
 
-export interface NavigationBarBackProps {
-  setTab (): void
+interface Props {
+  handleSetTab (): void
 }
 
-export function NavigationBarBack (props: NavigationBarBackProps) {
+export const NavigationBarBack: React.FC<Props> = props => {
+  const { handleSetTab } = props
+
   return (
     <div className="navigationbar-back">
-      <div className="navigationbar-back-inner" onClick={props.setTab}>
-        &#xE905;
+      <div className="navigationbar-back-inner" onClick={handleSetTab}>
+        {"\uE905"}
       </div>
     </div>
   )

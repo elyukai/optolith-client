@@ -1,10 +1,15 @@
-import { Either, isEither, Right } from "../Data/Either";
-import { Internals } from "../Data/Internals";
-import { isList, List, NonEmptyList } from "../Data/List";
-import { isMaybe, Just, Maybe } from "../Data/Maybe";
-import { showP } from "../Data/Show";
-import { isTagged, Tagged } from "../Data/Tagged";
-import { Identity } from "./Monad/Identity";
+import { Either, isEither, Right } from "../Data/Either"
+import { Internals } from "../Data/Internals"
+import { isList, List, NonEmptyList } from "../Data/List"
+import { isMaybe, Just, Maybe } from "../Data/Maybe"
+import { showP } from "../Data/Show"
+import { isTagged, Tagged } from "../Data/Tagged"
+import { Identity } from "./Monad/Identity"
+
+const instanceErrorMsg =
+  (fname: string) =>
+  (x: any) =>
+    `${fname}: missing instance of Applicative\n${showP (x)}`
 
 export type Applicative<A> = Maybe<A>
                            | List<A>
@@ -81,8 +86,3 @@ export const typeFromApplicative =
 
     throw new TypeError (instanceErrorMsg ("typeFromApplicative") (x))
   }
-
-const instanceErrorMsg =
-  (fname: string) =>
-  (x: any) =>
-    `${fname}: missing instance of Applicative\n${showP (x)}`

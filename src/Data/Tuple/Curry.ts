@@ -1,5 +1,5 @@
-import { Tuple } from "../Tuple";
-import { sel1, sel2, sel3 } from "./Select";
+import { Tuple } from "../Tuple"
+import { sel1, sel2, sel3 } from "./Select"
 
 /**
  * `curryN :: ((a, b) -> c) -> a -> b -> c`
@@ -9,6 +9,15 @@ import { sel1, sel2, sel3 } from "./Select";
 export const curryN =
   <A, B, C> (f: (x: A, y: B) => C) => (a: A) => (b: B): C =>
     f (a, b)
+
+/**
+ * `curryN3 :: ((a, b, c) -> d) -> a -> b -> c -> d`
+ *
+ * `curryN3` converts an uncurried function to a curried function.
+ */
+export const curryN3 =
+  <A, B, C, D> (f: (a: A, b: B, c: C) => D) => (a: A) => (b: B) => (c: C): D =>
+    f (a, b, c)
 
 /**
  * `uncurryN :: (a -> b -> c) -> (a, b) -> c`

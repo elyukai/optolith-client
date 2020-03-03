@@ -1,35 +1,36 @@
-import { flip } from "../../Data/Function";
-import { fmap, fmapF } from "../../Data/Functor";
-import { cons, fromArray, List } from "../../Data/List";
-import { join, mapMaybe, Maybe } from "../../Data/Maybe";
-import { elems, lookup } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { ActivatableCategory, Category } from "../Constants/Categories";
-import { SpecialAbilityId } from "../Constants/Ids";
-import { InactiveActivatable } from "../Models/View/InactiveActivatable";
-import { Advantage } from "../Models/Wiki/Advantage";
-import { Disadvantage } from "../Models/Wiki/Disadvantage";
-import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { SourceLink } from "../Models/Wiki/sub/SourceLink";
-import { Activatable, WikiEntryByCategory, WikiEntryRecordByCategory } from "../Models/Wiki/wikiTypeHelpers";
-import { heroReducer } from "../Reducers/heroReducer";
-import { getActivatableHeroSliceByCategory } from "../Utilities/Activatable/activatableActiveUtils";
-import { getInactiveView } from "../Utilities/Activatable/activatableInactiveUtils";
-import { getAllAvailableExtendedSpecialAbilities } from "../Utilities/Activatable/ExtendedStyleUtils";
-import { createMapMaybeSelector } from "../Utilities/createMapMaybeSelector";
-import { createMapSelector, ignore3rd } from "../Utilities/createMapSelector";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { pipe } from "../Utilities/pipe";
-import { filterByAvailability } from "../Utilities/RulesUtils";
-import { sortByMulti } from "../Utilities/sortBy";
-import { getWikiSliceGetterByCategory } from "../Utilities/WikiUtils";
-import { getMatchingScriptAndLangRelated } from "./activatableSelectors";
-import { getAPObjectMap } from "./adventurePointsSelectors";
-import { getAutomaticAdvantages } from "./rcpSelectors";
-import { EnabledSourceBooks, getRuleBooksEnabled } from "./rulesSelectors";
-import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
-import { getMagicalTraditionsFromHero } from "./spellsSelectors";
-import * as stateSelectors from "./stateSelectors";
+import { flip } from "../../Data/Function"
+import { fmap, fmapF } from "../../Data/Functor"
+import { cons, fromArray, List } from "../../Data/List"
+import { join, mapMaybe, Maybe } from "../../Data/Maybe"
+import { elems, lookup } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { ActivatableCategory, Category } from "../Constants/Categories"
+import { SpecialAbilityId } from "../Constants/Ids"
+import { InactiveActivatable } from "../Models/View/InactiveActivatable"
+import { Advantage } from "../Models/Wiki/Advantage"
+import { Disadvantage } from "../Models/Wiki/Disadvantage"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { SourceLink } from "../Models/Wiki/sub/SourceLink"
+import { Activatable, WikiEntryByCategory, WikiEntryRecordByCategory } from "../Models/Wiki/wikiTypeHelpers"
+import { heroReducer } from "../Reducers/heroReducer"
+import { getActivatableHeroSliceByCategory } from "../Utilities/Activatable/activatableActiveUtils"
+import { getInactiveView } from "../Utilities/Activatable/activatableInactiveUtils"
+import { getAllAvailableExtendedSpecialAbilities } from "../Utilities/Activatable/ExtendedStyleUtils"
+import { createMapMaybeSelector } from "../Utilities/createMapMaybeSelector"
+import { createMapSelector, ignore3rd } from "../Utilities/createMapSelector"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { pipe } from "../Utilities/pipe"
+import { filterByAvailability } from "../Utilities/RulesUtils"
+import { sortByMulti } from "../Utilities/sortBy"
+import { getWikiSliceGetterByCategory } from "../Utilities/WikiUtils"
+import { getMatchingScriptAndLangRelated } from "./activatableSelectors"
+import { getAPObjectMap } from "./adventurePointsSelectors"
+import { getAreDisAdvRequiredApplyToMagActionsOrApps } from "./magicalTraditionSelectors"
+import { getAutomaticAdvantages } from "./raceSelectors"
+import { EnabledSourceBooks, getRuleBooksEnabled } from "./rulesSelectors"
+import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors"
+import { getMagicalTraditionsFromHero } from "./spellsSelectors"
+import * as stateSelectors from "./stateSelectors"
 
 export const getExtendedSpecialAbilitiesToAdd = createMaybeSelector (
   stateSelectors.getBlessedStyleDependencies,
@@ -38,6 +39,7 @@ export const getExtendedSpecialAbilitiesToAdd = createMaybeSelector (
   stateSelectors.getSkillStyleDependencies,
   (...styleDependencies) =>
     cons (getAllAvailableExtendedSpecialAbilities (fromArray (styleDependencies)))
+
          // "Gebieter des [Aspekts]" is never listed as a dependency and thus
          // must be added manually
          (SpecialAbilityId.GebieterDesAspekts)
@@ -55,37 +57,37 @@ export const getInactiveForView =
     createMapSelector (stateSelectors.getHeroes)
                       (getAPObjectMap)
                       (
-                        stateSelectors.getLocaleAsProp,
                         getExtendedSpecialAbilitiesToAdd,
                         stateSelectors.getWiki,
                         getMagicalTraditionsFromHero,
                         getAutomaticAdvantages,
-                        getMatchingScriptAndLangRelated
+                        getMatchingScriptAndLangRelated,
+                        getAreDisAdvRequiredApplyToMagActionsOrApps
                       )
                       (heroReducer.A.present)
                       (madventure_points =>
                        (
-                         l10n,
                          validExtendedSpecialAbilities,
-                         wiki,
+                         staticData,
                          hero_magical_traditions,
                          automatic_advantages,
-                         matching_script_and_lang_rel
+                         matching_script_and_lang_rel,
+                         required_apply_to_mag_actions
                        ) =>
                        (hero): Inactives<T> =>
                          fmapF (join (madventure_points))
                                (adventure_points => {
                                  const wikiKey = getWikiSliceGetterByCategory (category)
-                                 const wikiSlice = wikiKey (wiki)
+                                 const wikiSlice = wikiKey (staticData)
 
                                  const stateSlice = getActivatableHeroSliceByCategory (category)
                                                                                       (hero)
 
                                  return mapMaybe ((wiki_entry: WikiEntryRecordByCategory[T]) =>
-                                                   getInactiveView (l10n)
-                                                                   (wiki)
+                                                   getInactiveView (staticData)
                                                                    (hero)
                                                                    (automatic_advantages)
+                                                                   (required_apply_to_mag_actions)
                                                                    (matching_script_and_lang_rel)
                                                                    (adventure_points)
                                                                    (validExtendedSpecialAbilities)

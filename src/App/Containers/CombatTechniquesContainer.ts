@@ -1,14 +1,14 @@
-import { connect } from "react-redux";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as CombatTechniquesActions from "../Actions/CombatTechniquesActions";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getAttributesForSheet } from "../Selectors/attributeSelectors";
-import { getFilteredCombatTechniques } from "../Selectors/combatTechniquesSelectors";
-import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
-import { getCombatTechniquesFilterText } from "../Selectors/stateSelectors";
-import { getCombatTechniquesSortOrder } from "../Selectors/uisettingsSelectors";
-import { CombatTechniquesSortOptions } from "../Utilities/Raw/JSON/Config";
-import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnProps, CombatTechniquesStateProps } from "../Views/CombatTechniques/CombatTechniques";
+import { connect } from "react-redux"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as CombatTechniquesActions from "../Actions/CombatTechniquesActions"
+import { AppStateRecord } from "../Models/AppState"
+import { CombatTechniquesSortOptions } from "../Models/Config"
+import { getAttributesForSheet } from "../Selectors/attributeSelectors"
+import { getFilteredCombatTechniques } from "../Selectors/combatTechniquesSelectors"
+import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"
+import { getCombatTechniquesFilterText } from "../Selectors/stateSelectors"
+import { getCombatTechniquesSortOrder } from "../Selectors/uisettingsSelectors"
+import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnProps, CombatTechniquesStateProps } from "../Views/CombatTechniques/CombatTechniques"
 
 const mapStateToProps = (
   state: AppStateRecord,
@@ -21,12 +21,9 @@ const mapStateToProps = (
   filterText: getCombatTechniquesFilterText (state),
 })
 
-const mapDispatchToProps = (
-  dispatch: ReduxDispatch,
-  { l10n }: CombatTechniquesOwnProps
-) => ({
-  addPoint (id: string) {
-    dispatch (CombatTechniquesActions.addCombatTechniquePoint (l10n) (id))
+const mapDispatchToProps = (dispatch: ReduxDispatch) => ({
+  async addPoint (id: string) {
+    await dispatch (CombatTechniquesActions.addCombatTechniquePoint (id))
   },
   removePoint (id: string) {
     dispatch (CombatTechniquesActions.removeCombatTechniquePoint (id))

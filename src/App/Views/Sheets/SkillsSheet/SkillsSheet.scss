@@ -108,7 +108,7 @@
 	.languages-list {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		grid-auto-rows: 1fr;
+		grid-auto-rows: auto;
 		list-style: none;
 		margin: 0;
 		padding: 0;
@@ -147,9 +147,8 @@
 			width: auto;
 		}
 
-		th div {
-			word-wrap: break-word;
-			white-space: pre;
+		th {
+      white-space: normal;
 		}
 
 		th, td {
@@ -193,7 +192,7 @@
 		}
 
 		th, td {
-			width: 11mm;
+      width: 11mm;
 
 			&:nth-child(2) {
 				border-right: 0.15mm solid grey;

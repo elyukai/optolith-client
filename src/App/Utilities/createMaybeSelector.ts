@@ -1,5 +1,5 @@
-import { createSelectorCreator, defaultMemoize } from "reselect";
-import { INTERNAL_shallowEquals, isMaybe } from "../../Data/Maybe";
+import { createSelectorCreator, defaultMemoize } from "reselect"
+import { INTERNAL_shallowEquals, isMaybe } from "../../Data/Maybe"
 
 export const createMaybeSelector = createSelectorCreator (
   defaultMemoize,

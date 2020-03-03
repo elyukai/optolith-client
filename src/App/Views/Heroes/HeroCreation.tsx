@@ -1,28 +1,30 @@
-import * as React from "react";
-import { List, map } from "../../../Data/List";
-import { fromJust, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe";
-import { elems, OrderedMap } from "../../../Data/OrderedMap";
-import { OrderedSet, toggle } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { Book } from "../../Models/Wiki/Book";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe_ } from "../../Utilities/pipe";
-import { BookSelection } from "../Rules/BookSelection";
-import { Dialog } from "../Universal/Dialog";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
-import { Hr } from "../Universal/Hr";
-import { Scroll } from "../Universal/Scroll";
-import { Option, SegmentedControls } from "../Universal/SegmentedControls";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { List, map } from "../../../Data/List"
+import { fromJust, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe"
+import { elems, OrderedMap } from "../../../Data/OrderedMap"
+import { OrderedSet, toggle } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { Sex } from "../../Models/Hero/heroTypeHelpers"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { RadioOption } from "../../Models/View/RadioOption"
+import { Book } from "../../Models/Wiki/Book"
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate, translateP } from "../../Utilities/I18n"
+import { pipe_ } from "../../Utilities/pipe"
+import { BookSelection } from "../Rules/BookSelection"
+import { Dialog } from "../Universal/Dialog"
+import { Dropdown } from "../Universal/Dropdown"
+import { Hr } from "../Universal/Hr"
+import { Scroll } from "../Universal/Scroll"
+import { SegmentedControls } from "../Universal/SegmentedControls"
+import { TextField } from "../Universal/TextField"
 
 const ELA = ExperienceLevel.A
 
 export interface HeroCreationProps {
   isOpen: boolean
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   experienceLevels: OrderedMap<string, Record<ExperienceLevel>>
   sortedBooks: List<Record<Book>>
   close (): void
@@ -47,19 +49,19 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
   const {
     createHero,
     experienceLevels: experienceLevelsMap,
-    l10n,
+    staticData,
     sortedBooks,
     isOpen,
     close,
   } = props
 
-  const [name, setName] = React.useState ("")
-  const [enableAllRuleBooks, setEnableAllRuleBooks] = React.useState (false)
-  const [enabledRuleBooks, setEnabledRuleBooks] =
+  const [ name, setName ] = React.useState ("")
+  const [ enableAllRuleBooks, setEnableAllRuleBooks ] = React.useState (false)
+  const [ enabledRuleBooks, setEnabledRuleBooks ] =
     React.useState<OrderedSet<string>> (OrderedSet.empty)
-  const [msex, setSex] = React.useState<Maybe<Sex>> (Nothing)
-  const [mel, setEL] = React.useState<Maybe<string>> (Nothing)
-  const [prevIsOpen, setPrevIsOpen] = React.useState (isOpen)
+  const [ msex, setSex ] = React.useState<Maybe<Sex>> (Nothing)
+  const [ mel, setEL ] = React.useState<Maybe<string>> (Nothing)
+  const [ prevIsOpen, setPrevIsOpen ] = React.useState (isOpen)
 
   const handleSubmit = React.useCallback (
     () => {
@@ -73,7 +75,7 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
         )
       }
     },
-    [createHero, enableAllRuleBooks, enabledRuleBooks, mel, msex, name]
+    [ createHero, enableAllRuleBooks, enabledRuleBooks, mel, msex, name ]
   )
 
   const handleClear = React.useCallback (
@@ -90,21 +92,21 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
       close ()
       handleClear ()
     },
-    [handleClear, close]
+    [ handleClear, close ]
   )
 
   const handleSwitchEnableAllRuleBooks = React.useCallback (
     () => {
       setEnableAllRuleBooks (!enableAllRuleBooks)
     },
-    [setEnableAllRuleBooks, enableAllRuleBooks]
+    [ setEnableAllRuleBooks, enableAllRuleBooks ]
   )
 
   const handleSwitchEnableRuleBook = React.useCallback (
     (id: string) => {
       setEnabledRuleBooks (toggle (id) (enabledRuleBooks))
     },
-    [setEnabledRuleBooks, enabledRuleBooks]
+    [ setEnabledRuleBooks, enabledRuleBooks ]
   )
 
   if (!isOpen && orN (prevIsOpen)) {
@@ -118,21 +120,23 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
       elems,
       map (e => DropdownOption ({
                   id: Just (ELA.id (e)),
-                  name: `${ELA.name (e)} (${ELA.ap (e)} ${translate (l10n) ("adventurepoints.short")})`,
+                  name: translateP (staticData)
+                                   ("general.withapvalue")
+                                   (List<string | number> (ELA.name (e), ELA.ap (e))),
                 }))
     )
 
   return (
     <Dialog
       id="herocreation"
-      title={translate (l10n) ("herocreation")}
+      title={translate (staticData) ("heroes.dialogs.herocreation.title")}
       close={handleClose}
       buttons={[
         {
           disabled: name === ""
                     || isNothing (msex)
                     || isNothing (mel),
-          label: translate (l10n) ("start"),
+          label: translate (staticData) ("heroes.dialogs.herocreation.startbtn"),
           onClick: handleSubmit,
           primary: true,
         },
@@ -140,23 +144,24 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
       isOpen={isOpen}
       >
       <TextField
-        hint={translate (l10n) ("nameofhero")}
+        hint={translate (staticData) ("heroes.dialogs.herocreation.nameofhero")}
         value={name}
         onChange={setName}
         fullWidth
         autoFocus
+        everyKeyDown
         />
       <SegmentedControls
         active={msex}
         onClick={setSex}
         options={List (
-          Option<Sex> ({
+          RadioOption<Sex> ({
             value: Just<Sex> ("m"),
-            name: translate (l10n) ("male"),
+            name: translate (staticData) ("heroes.dialogs.herocreation.sex.male"),
           }),
-          Option<Sex> ({
+          RadioOption<Sex> ({
             value: Just<Sex> ("f"),
-            name: translate (l10n) ("female"),
+            name: translate (staticData) ("heroes.dialogs.herocreation.sex.female"),
           })
         )}
         />
@@ -164,7 +169,7 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
         value={mel}
         onChange={setEL}
         options={experienceLevels}
-        hint={translate (l10n) ("selectexperiencelevel")}
+        hint={translate (staticData) ("heroes.dialogs.herocreation.experiencelevel.placeholder")}
         fullWidth
         />
       <Hr />
@@ -172,7 +177,7 @@ export const HeroCreation: React.FC<HeroCreationProps> = props => {
         <BookSelection
           allRuleBooksEnabled={enableAllRuleBooks}
           enabledRuleBooks={enabledRuleBooks}
-          l10n={l10n}
+          staticData={staticData}
           sortedBooks={sortedBooks}
           switchEnableAllRuleBooks={handleSwitchEnableAllRuleBooks}
           switchEnableRuleBook={handleSwitchEnableRuleBook}

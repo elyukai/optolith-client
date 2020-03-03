@@ -1,12 +1,13 @@
-import { List } from "../../../Data/List";
-import { Nothing } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { AdvantageDisadvantageBase, EntryWithCategory } from "./wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { Nothing } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { AdvantageDisadvantageBase, EntryWithCategory } from "./wikiTypeHelpers"
 
 export interface Disadvantage extends AdvantageDisadvantageBase {
   "@@name": "Disadvantage"
+  isExclusiveToArcaneSpellworks: boolean
 }
 
 export const Disadvantage =
@@ -15,6 +16,7 @@ export const Disadvantage =
                 id: "",
                 name: "",
                 cost: Nothing,
+                isExclusiveToArcaneSpellworks: false,
                 input: Nothing,
                 max: Nothing,
                 prerequisites: List.empty,

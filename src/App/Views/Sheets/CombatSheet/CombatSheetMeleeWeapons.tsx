@@ -1,55 +1,77 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, intercalate, List, map, replicateR, subscript, subscriptF, toArray } from "../../../../Data/List";
-import { bindF, fromMaybe, Maybe } from "../../../../Data/Maybe";
-import { dec } from "../../../../Data/Num";
-import { Record } from "../../../../Data/Record";
-import { bimap, fst, isTuple, snd } from "../../../../Data/Tuple";
-import { MeleeWeapon } from "../../../Models/View/MeleeWeapon";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { ndash } from "../../../Utilities/Chars";
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
-import { sign, signZero, toRoman } from "../../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { flength, intercalate, List, map, replicateR, subscriptF, toArray } from "../../../../Data/List"
+import { bindF, fromMaybe, Just, Maybe } from "../../../../Data/Maybe"
+import { lookupF } from "../../../../Data/OrderedMap"
+import { Record } from "../../../../Data/Record"
+import { bimap, fst, isTuple, snd } from "../../../../Data/Tuple"
+import { NumIdName } from "../../../Models/NumIdName"
+import { MeleeWeapon } from "../../../Models/View/MeleeWeapon"
+import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { ndash } from "../../../Utilities/Chars"
+import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
+import { getDamageStr } from "../../../Utilities/ItemUtils"
+import { sign, toRoman } from "../../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface CombatSheetMeleeWeaponsProps {
-  l10n: L10nRecord
+interface Props {
+  staticData: StaticDataRecord
   meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
 }
 
+const SDA = StaticData.A
 const MWA = MeleeWeapon.A
 
-export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
-  const { l10n, meleeWeapons: mmelee_weapons } = props
+export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
+  const { staticData, meleeWeapons: mmelee_weapons } = props
 
   return (
     <TextBox
-      label={translate (l10n) ("closecombatweapons")}
+      label={translate (staticData) ("sheets.combatsheet.closecombatweapons")}
       className="melee-weapons"
       >
       <table>
         <thead>
           <tr>
-            <th className="name">{translate (l10n) ("weapon")}</th>
+            <th className="name">
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.weapon")}
+            </th>
             <th className="combat-technique">
-              {translate (l10n) ("combattechnique")}
+              {translate (staticData)
+                         ("sheets.combatsheet.closecombatweapons.labels.combattechnique")}
             </th>
             <th className="damage-bonus">
-              {translate (l10n) ("damagebonus.medium")}
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.damagebonus")}
             </th>
-            <th className="damage">{translate (l10n) ("damagepoints.short")}</th>
+            <th className="damage">
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.damagepoints")}
+            </th>
             <th className="mod" colSpan={2}>
-              {translate (l10n) ("attackparrymodifier.short")}
+              {translate (staticData)
+                         ("sheets.combatsheet.closecombatweapons.labels.attackparrymodifier")}
             </th>
-            <th className="reach">{translate (l10n) ("reach")}</th>
-            <th className="bf">{translate (l10n) ("breakingpointrating.short")}</th>
-            <th className="loss">{translate (l10n) ("damaged.short")}</th>
-            <th className="at">{translate (l10n) ("attack.short")}</th>
-            <th className="pa">{translate (l10n) ("parry.short")}</th>
-            <th className="weight">{translate (l10n) ("weight")}</th>
+            <th className="reach">
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.reach")}
+            </th>
+            <th className="bf">
+              {translate (staticData)
+                         ("sheets.combatsheet.closecombatweapons.labels.breakingpointrating")}
+            </th>
+            <th className="loss">
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.damaged")}
+            </th>
+            <th className="at">
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.attack")}
+            </th>
+            <th className="pa">
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.parry")}
+            </th>
+            <th className="weight">
+              {translate (staticData) ("sheets.combatsheet.closecombatweapons.labels.weight")}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -79,10 +101,10 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
                         : `${intercalate ("/") (MWA.primary (e))} ${primaryBonus}`}
                     </td>
                     <td className="damage">
-                      {renderMaybe (MWA.damageDiceNumber (e))}
-                      {translate (l10n) ("dice.short")}
-                      {renderMaybe (MWA.damageDiceSides (e))}
-                      {signZero (MWA.damageFlat (e))}
+                      {getDamageStr (staticData)
+                                    (Just (MWA.damageFlat (e)))
+                                    (MWA.damageDiceNumber (e))
+                                    (MWA.damageDiceSides (e))}
                     </td>
                     <td className="at-mod mod">
                       {sign (Maybe.sum (MWA.atMod (e)))}
@@ -94,11 +116,8 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
                       {pipe_ (
                         e,
                         MWA.reach,
-                        bindF (pipe (
-                          dec,
-                          subscript (translate (l10n) ("reachlabels"))
-                        )),
-                        renderMaybe
+                        bindF (lookupF (SDA.reaches (staticData))),
+                        renderMaybeWith (NumIdName.A.name)
                       )}
                     </td>
                     <td className="bf">{MWA.bf (e)}</td>
@@ -110,14 +129,16 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
                       {fromMaybe<string | number> (ndash) (MWA.pa (e))}
                     </td>
                     <td className="weight">
-                      {pipe_ (
-                        e,
-                        MWA.weight,
-                        localizeWeight (l10n),
-                        localizeNumber (l10n)
-                      )}
-                      {" "}
-                      {translate (l10n) ("weightunit.short")}
+                      {translateP (staticData)
+                                  ("general.weightvalue")
+                                  (List (
+                                    pipe_ (
+                                      e,
+                                      MWA.weight,
+                                      localizeWeight (staticData),
+                                      localizeNumber (staticData)
+                                    )
+                                  ))}
                     </td>
                   </tr>
                 )

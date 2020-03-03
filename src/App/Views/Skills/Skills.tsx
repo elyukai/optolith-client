@@ -1,36 +1,48 @@
-import * as React from "react";
-import { notEquals } from "../../../Data/Eq";
-import { fmap } from "../../../Data/Functor";
-import { List, mapAccumL, notNull, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Pair, snd } from "../../../Data/Tuple";
-import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
-import { AttributeCombined } from "../../Models/View/AttributeCombined";
-import { SkillWithRequirements, SkillWithRequirementsA_ } from "../../Models/View/SkillWithRequirements";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { isCommon, isUncommon } from "../../Utilities/Increasable/skillUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { Checkbox } from "../Universal/Checkbox";
-import { ListView } from "../Universal/List";
-import { ListHeader } from "../Universal/ListHeader";
-import { ListHeaderTag } from "../Universal/ListHeaderTag";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { RecommendedReference } from "../Universal/RecommendedReference";
-import { Scroll } from "../Universal/Scroll";
-import { SearchField } from "../Universal/SearchField";
-import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { SkillListItem } from "./SkillListItem";
+import * as React from "react"
+import { notEquals } from "../../../Data/Eq"
+import { fmap } from "../../../Data/Functor"
+import { List, mapAccumL, notNull, toArray } from "../../../Data/List"
+import { bindF, ensure, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe"
+import { lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { Pair, snd } from "../../../Data/Tuple"
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
+import { AttributeCombined } from "../../Models/View/AttributeCombined"
+import { SkillWithRequirements, SkillWithRequirementsA_ } from "../../Models/View/SkillWithRequirements"
+import { SkillGroup } from "../../Models/Wiki/SkillGroup"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { isSkillCommon, isSkillUncommon } from "../../Utilities/Increasable/skillUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { Checkbox } from "../Universal/Checkbox"
+import { ListView } from "../Universal/List"
+import { ListHeader } from "../Universal/ListHeader"
+import { ListHeaderTag } from "../Universal/ListHeaderTag"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { RecommendedReference } from "../Universal/RecommendedReference"
+import { Scroll } from "../Universal/Scroll"
+import { SearchField } from "../Universal/SearchField"
+import { SortNames, SortOptions } from "../Universal/SortOptions"
+import { SkillListItem } from "./SkillListItem"
+
+type Element = Record<SkillWithRequirements>
+const SWRA = SkillWithRequirements.A
+const SWRA_ = SkillWithRequirementsA_
+
+const isTopMarginNeeded =
+  (sortOrder: string) =>
+  (curr: Element) =>
+  (mprev: Maybe<Element>) =>
+    sortOrder === "group"
+    && maybe (false) (pipe (SWRA_.gr, notEquals (SWRA_.gr (curr)))) (mprev)
 
 export interface SkillsOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   hero: HeroModelRecord
 }
 
@@ -52,28 +64,24 @@ export interface SkillsDispatchProps {
   removePoint (id: string): void
 }
 
-export type SkillsProps = SkillsStateProps & SkillsDispatchProps & SkillsOwnProps
+type Props = SkillsStateProps & SkillsDispatchProps & SkillsOwnProps
 
 export interface SkillsState {
   infoId: Maybe<string>
 }
 
-type Element = Record<SkillWithRequirements>
-const SWRA = SkillWithRequirements.A
-const SWRA_ = SkillWithRequirementsA_
-
-export const Skills: React.FC<SkillsProps> = props => {
-  const [infoId, setInfoId] = React.useState<Maybe<string>> (Nothing)
+export const Skills: React.FC<Props> = props => {
+  const [ infoId, setInfoId ] = React.useState<Maybe<string>> (Nothing)
 
   const showInfo = React.useCallback (
     (id: string) => setInfoId (Just (id)),
-    [setInfoId]
+    [ setInfoId ]
   )
 
   const {
     addPoint,
     attributes,
-    l10n,
+    staticData,
     isRemovingEnabled,
     ratingVisibility: is_rating_visible,
     removePoint,
@@ -90,7 +98,7 @@ export const Skills: React.FC<SkillsProps> = props => {
     <Page id="talents">
       <Options>
         <SearchField
-          l10n={l10n}
+          staticData={staticData}
           value={filterText}
           onChange={setFilterText}
           fullWidth
@@ -98,33 +106,39 @@ export const Skills: React.FC<SkillsProps> = props => {
         <SortOptions
           sortOrder={sortOrder}
           sort={setSortOrder}
-          l10n={l10n}
+          staticData={staticData}
           options={List (SortNames.Name, SortNames.Group, SortNames.IC)}
           />
         <Checkbox
           checked={is_rating_visible}
           onClick={switchRatingVisibility}
           >
-          {translate (l10n) ("commonskills")}
+          {translate (staticData) ("skills.commonskills")}
         </Checkbox>
-        {is_rating_visible ? <RecommendedReference l10n={l10n} /> : null}
+        {is_rating_visible ? <RecommendedReference staticData={staticData} /> : null}
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (staticData) ("skills.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="group">
-            {translate (l10n) ("group")}
+            {translate (staticData) ("skills.header.group")}
           </ListHeaderTag>
-          <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
-            {translate (l10n) ("skillrating.short")}
+          <ListHeaderTag
+            className="value"
+            hint={translate (staticData) ("skills.header.skillrating.tooltip")}
+            >
+            {translate (staticData) ("skills.header.skillrating")}
           </ListHeaderTag>
           <ListHeaderTag className="check">
-            {translate (l10n) ("check")}
+            {translate (staticData) ("skills.header.check")}
           </ListHeaderTag>
-          <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
-            {translate (l10n) ("improvementcost.short")}
+          <ListHeaderTag
+            className="ic"
+            hint={translate (staticData) ("skills.header.improvementcost.tooltip")}
+            >
+            {translate (staticData) ("skills.header.improvementcost")}
           </ListHeaderTag>
           {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />
@@ -145,11 +159,11 @@ export const Skills: React.FC<SkillsProps> = props => {
                                   id={SWRA_.id (curr)}
                                   typ={
                                     is_rating_visible
-                                    && isCommon (skillRating) (SWRA.wikiEntry (curr))
+                                    && isSkillCommon (skillRating) (SWRA.wikiEntry (curr))
                                   }
                                   untyp={
                                     is_rating_visible
-                                    && isUncommon (skillRating) (SWRA.wikiEntry (curr))
+                                    && isSkillUncommon (skillRating) (SWRA.wikiEntry (curr))
                                   }
                                   name={SWRA_.name (curr)}
                                   sr={SWRA_.value (curr)}
@@ -162,10 +176,14 @@ export const Skills: React.FC<SkillsProps> = props => {
                                   addFillElement
                                   insertTopMargin={isTopMarginNeeded (sortOrder) (curr) (mprev)}
                                   attributes={attributes}
-                                  l10n={l10n}
+                                  staticData={staticData}
+                                  isRemovingEnabled={isRemovingEnabled}
                                   selectForInfo={showInfo}
-                                  groupIndex={SWRA_.gr (curr)}
-                                  groupList={translate (l10n) ("skillgroups")}
+                                  group={SWRA_.gr (curr)}
+                                  getGroupName={pipe (
+                                    lookupF (StaticData.A.skillGroups (staticData)),
+                                    maybe ("") (SkillGroup.A.name)
+                                  )}
                                   selectedForInfo={infoId}
                                   />
                               )
@@ -175,19 +193,12 @@ export const Skills: React.FC<SkillsProps> = props => {
                 toArray,
                 arr => <>{arr}</>
               )),
-              fromMaybe (<ListPlaceholder l10n={l10n} type="skills" noResults />)
+              fromMaybe (<ListPlaceholder staticData={staticData} type="skills" noResults />)
             )}
           </ListView>
         </Scroll>
       </MainContent>
-      <WikiInfoContainer l10n={l10n} currentId={infoId} />
+      <WikiInfoContainer currentId={infoId} />
     </Page>
   )
 }
-
-const isTopMarginNeeded =
-  (sortOrder: string) =>
-  (curr: Element) =>
-  (mprev: Maybe<Element>) =>
-    sortOrder === "group"
-    && maybe (false) (pipe (SWRA_.gr, notEquals (SWRA_.gr (curr)))) (mprev)

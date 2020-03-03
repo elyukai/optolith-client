@@ -1,14 +1,13 @@
-import * as React from "react";
-import { Scroll } from "../Universal/Scroll";
+import * as React from "react"
+import { Scroll } from "../Universal/Scroll"
 
 export interface WikiBoxTemplateProps {
-  children?: React.ReactNode
   className: string
   subtitle?: React.ReactNode
   title: string
 }
 
-export function WikiBoxTemplate (props: WikiBoxTemplateProps) {
+export const WikiBoxTemplate: React.FC<WikiBoxTemplateProps> = props => {
   const {
     children,
     className,

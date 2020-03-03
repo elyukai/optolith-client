@@ -1,46 +1,64 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, List, map, replicateR, toArray } from "../../../../Data/List";
-import { fromMaybe, Maybe } from "../../../../Data/Maybe";
-import { Record } from "../../../../Data/Record";
-import { HitZoneArmorForView } from "../../../Models/View/HitZoneArmorForView";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { minus, ndash } from "../../../Utilities/Chars";
-import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { flength, List, map, replicateR, toArray } from "../../../../Data/List"
+import { fromMaybe, Maybe } from "../../../../Data/Maybe"
+import { Record } from "../../../../Data/Record"
+import { HitZoneArmorForView } from "../../../Models/View/HitZoneArmorForView"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { minus, ndash } from "../../../Utilities/Chars"
+import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface CombatSheetArmorZonesProps {
+interface Props {
   armorZones: Maybe<List<Record<HitZoneArmorForView>>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 const HZAFVA = HitZoneArmorForView.A
 
-export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
-  const { l10n, armorZones: mhit_zone_armors } = props
+export const CombatSheetArmorZones: React.FC<Props> = props => {
+  const { staticData, armorZones: mhit_zone_armors } = props
 
   return (
     <TextBox
-      label={translate (l10n) ("armor")}
+      label={translate (staticData) ("sheets.combatsheet.armors.title")}
       className="armor armor-zones"
       >
       <table>
         <thead>
           <tr>
-            <th className="name">{translate (l10n) ("armor")}</th>
-            <th className="zone">{translate (l10n) ("head.short")}</th>
-            <th className="zone">{translate (l10n) ("torso.short")}</th>
-            <th className="zone">{translate (l10n) ("leftarm.short")}</th>
-            <th className="zone">{translate (l10n) ("rightarm.short")}</th>
-            <th className="zone">{translate (l10n) ("leftleg.short")}</th>
-            <th className="zone">{translate (l10n) ("rightleg.short")}</th>
-            <th className="enc">{translate (l10n) ("encumbrance.short")}</th>
-            <th className="add-penalties">
-              {translate (l10n) ("additionalpenalties")}
+            <th className="name">
+              {translate (staticData) ("sheets.combatsheet.armors.title")}
             </th>
-            <th className="weight">{translate (l10n) ("weight")}</th>
+            <th className="zone">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.head")}
+            </th>
+            <th className="zone">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.torso")}
+            </th>
+            <th className="zone">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.leftarm")}
+            </th>
+            <th className="zone">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.rightarm")}
+            </th>
+            <th className="zone">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.leftleg")}
+            </th>
+            <th className="zone">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.rightleg")}
+            </th>
+            <th className="enc">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.encumbrance")}
+            </th>
+            <th className="add-penalties">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.movementinitiative")}
+            </th>
+            <th className="weight">
+              {translate (staticData) ("sheets.combatsheet.armors.labels.weight")}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -63,14 +81,16 @@ export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
                     {HZAFVA.addPenalties (e) ? `${minus}1/${minus}1` : ndash}
                   </td>
                   <td className="weight">
-                    {pipe_ (
-                      e,
-                      HZAFVA.weight,
-                      localizeWeight (l10n),
-                      localizeNumber (l10n)
-                    )}
-                    {" "}
-                    {translate (l10n) ("weightunit.short")}
+                    {translateP (staticData)
+                                ("general.weightvalue")
+                                (List (
+                                  pipe_ (
+                                    e,
+                                    HZAFVA.weight,
+                                    localizeWeight (staticData),
+                                    localizeNumber (staticData)
+                                  )
+                                ))}
                   </td>
                 </tr>
               )),
@@ -81,16 +101,16 @@ export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
           {replicateR (2 - Maybe.sum (fmapF (mhit_zone_armors) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
-                          <td className="name"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="zone"></td>
-                          <td className="enc"></td>
-                          <td className="add-penalties"></td>
-                          <td className="weight"></td>
+                          <td className="name" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="zone" />
+                          <td className="enc" />
+                          <td className="add-penalties" />
+                          <td className="weight" />
                         </tr>
                       ))}
         </tbody>

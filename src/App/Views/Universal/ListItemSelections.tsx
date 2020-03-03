@@ -1,10 +1,8 @@
-import * as React from "react";
+import * as React from "react"
 
-export interface ListItemSelectionsProps {
-  children?: React.ReactNode
-}
+interface Props { }
 
-export function ListItemSelections (props: ListItemSelectionsProps) {
+export const ListItemSelections: React.FC<Props> = props => {
   const { children } = props
 
   return (

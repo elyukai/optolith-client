@@ -1,13 +1,13 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault } from "../../../Data/Record";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault } from "../../../Data/Record"
 
 export interface RangedWeapon {
   "@@name": "RangedWeapon"
   id: string
   name: string
   combatTechnique: string
-  reloadTime: Maybe<string>
+  reloadTime: Maybe<number | List<number>>
   damageDiceNumber: Maybe<number>
   damageDiceSides: Maybe<number>
   damageFlat: Maybe<number>

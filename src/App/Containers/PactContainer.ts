@@ -1,11 +1,11 @@
-import { connect } from "react-redux";
-import { Maybe } from "../../Data/Maybe";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as PactActions from "../Actions/PactActions";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getIsPactValid, isPactEditable } from "../Selectors/pactSelectors";
-import { getPact } from "../Selectors/stateSelectors";
-import { PactSettings, PactSettingsDispatchProps, PactSettingsOwnProps, PactSettingsStateProps } from "../Views/Pact/Pact";
+import { connect } from "react-redux"
+import { Maybe } from "../../Data/Maybe"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as PactActions from "../Actions/PactActions"
+import { AppStateRecord } from "../Models/AppState"
+import { getIsPactValid, isPactEditable } from "../Selectors/pactSelectors"
+import { getPact } from "../Selectors/stateSelectors"
+import { PactSettings, PactSettingsDispatchProps, PactSettingsOwnProps, PactSettingsStateProps } from "../Views/Pact/Pact"
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: PactSettingsOwnProps): PactSettingsStateProps => ({

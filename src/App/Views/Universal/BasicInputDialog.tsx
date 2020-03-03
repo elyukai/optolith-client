@@ -1,18 +1,18 @@
-import * as React from "react";
-import { notNullStr } from "../../../Data/List";
-import { bindF, ensure, isJust, isNothing, Maybe, normalize, Nothing } from "../../../Data/Maybe";
-import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers";
-import { addKeybinding, removeKeybinding } from "../../Utilities/Keybindings";
-import { pipe_ } from "../../Utilities/pipe";
-import { Dialog } from "../Universal/Dialog";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { notNullStr } from "../../../Data/List"
+import { bindF, ensure, isJust, isNothing, Maybe, normalize, Nothing } from "../../../Data/Maybe"
+import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers"
+import { addKeybinding, removeKeybinding } from "../../Utilities/Keybindings"
+import { pipe_ } from "../../Utilities/pipe"
+import { Dialog } from "../Universal/Dialog"
+import { TextField } from "../Universal/TextField"
 
-interface BasicInputDialog {
+interface Dialog {
   id: string
   isOpen: boolean
   title: string
   description: string
-  value: string | Maybe<string>
+  value: string | undefined
   invalid?: Maybe<string>
   acceptLabel: string
   rejectLabel: string
@@ -23,7 +23,7 @@ interface BasicInputDialog {
   onChange: (new_text: string) => void
 }
 
-export const BasicInputDialog: React.FC<BasicInputDialog> = props => {
+export const BasicInputDialog: React.FC<Dialog> = props => {
   const {
     id,
     isOpen,
@@ -58,7 +58,7 @@ export const BasicInputDialog: React.FC<BasicInputDialog> = props => {
         onClose ()
       }
     },
-    [accept_disabled, input_empty, rejectDisabled, onAccept, onReject, onClose]
+    [ accept_disabled, input_empty, rejectDisabled, onAccept, onReject, onClose ]
   )
 
   React.useEffect (() => {

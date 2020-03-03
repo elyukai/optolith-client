@@ -1,36 +1,38 @@
-import * as React from "react";
-import { Maybe } from "../../../Data/Maybe";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListItemSeparator } from "../Universal/ListItemSeparator";
+import * as React from "react"
+import { Maybe } from "../../../Data/Maybe"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListItemSeparator } from "../Universal/ListItemSeparator"
 
-export interface WikiListItemProps {
+interface Props {
   id: string
   name: string
   currentInfoId: Maybe<string>
   showInfo (id: string): void
 }
 
-export class WikiListItem extends React.Component<WikiListItemProps> {
-  shouldComponentUpdate (nextProps: WikiListItemProps) {
-    const nextActive = Maybe.elem (nextProps.id) (nextProps.currentInfoId)
-    const active = Maybe.elem (this.props.id) (this.props.currentInfoId)
+const WikiListItem: React.FC<Props> = ({ id, name, currentInfoId, showInfo }) => {
+  const handleShow = React.useCallback (
+    () => showInfo (id),
+    [ id, showInfo ]
+  )
 
-    return nextActive !== active
-  }
-
-  render () {
-    const { id, name, currentInfoId, showInfo } = this.props
-
-    return (
-      <ListItem
-        key={id}
-        active={Maybe.elem (id) (currentInfoId)}
-        onClick={() => showInfo (id)}
-        >
-        <ListItemName name={name} />
-        <ListItemSeparator />
-      </ListItem>
-    )
-  }
+  return (
+    <ListItem
+      key={id}
+      active={Maybe.elem (id) (currentInfoId)}
+      onClick={handleShow}
+      >
+      <ListItemName name={name} />
+      <ListItemSeparator />
+    </ListItem>
+  )
 }
+
+const MemoWikiListItem = React.memo (
+  WikiListItem,
+  (prevProps, nextProps) => Maybe.elem (nextProps.id) (nextProps.currentInfoId)
+                            === Maybe.elem (prevProps.id) (prevProps.currentInfoId)
+)
+
+export { MemoWikiListItem as WikiListItem }

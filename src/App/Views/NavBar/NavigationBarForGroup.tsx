@@ -1,50 +1,73 @@
-import { remote } from "electron";
-import * as React from "react";
-import { SettingsContainer } from "../../Containers/SettingsContainer";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { TabId } from "../../Utilities/LocationUtils";
-import { BorderButton } from "../Universal/BorderButton";
-import { IconButton } from "../Universal/IconButton";
-import { Text } from "../Universal/Text";
-import { NavigationBarBack } from "./NavigationBarBack";
-import { NavigationBarLeft } from "./NavigationBarLeft";
-import { NavigationBarRight } from "./NavigationBarRight";
-import { NavigationBarWrapper } from "./NavigationBarWrapper";
+import { remote } from "electron"
+import * as React from "react"
+import { useDispatch } from "react-redux"
+import { setTab } from "../../Actions/LocationActions"
+import { SettingsContainer } from "../../Containers/SettingsContainer"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { TabId } from "../../Utilities/LocationUtils"
+import { BorderButton } from "../Universal/BorderButton"
+import { IconButton } from "../Universal/IconButton"
+import { Text } from "../Universal/Text"
+import { NavigationBarBack } from "./NavigationBarBack"
+import { NavigationBarLeft } from "./NavigationBarLeft"
+import { NavigationBarRight } from "./NavigationBarRight"
+import { NavigationBarWrapper } from "./NavigationBarWrapper"
 
-export interface NavigationBarForGroupProps {
-  l10n: L10nRecord
+interface Props {
+  staticData: StaticDataRecord
   groupName: string
   platform: string
   isSettingsOpen: boolean
   closeSettings (): void
   openSettings (): void
   saveGroup (): void
-  setTab (id: TabId): void
   checkForUpdates (): void
 }
 
 const toggleDevtools = remote.getCurrentWindow ().webContents.toggleDevTools
 
-export function NavigationBarForGroup (props: NavigationBarForGroupProps) {
-  const { closeSettings, groupName, l10n, openSettings, saveGroup, setTab } = props
+export const NavigationBarForGroup: React.FC<Props> = props => {
+  const {
+    staticData,
+    groupName,
+    platform,
+    isSettingsOpen,
+    closeSettings,
+    openSettings,
+    saveGroup,
+    checkForUpdates,
+  } = props
+
+  const dispatch = useDispatch ()
+
+  const handleSetTab = React.useCallback (
+    () => dispatch (setTab (TabId.Grouplist)),
+    [ dispatch ]
+  )
 
   return (
     <NavigationBarWrapper>
       <NavigationBarLeft>
-        <NavigationBarBack setTab={() => setTab (TabId.Grouplist)} />
+        <NavigationBarBack handleSetTab={handleSetTab} />
         <Text>{groupName}</Text>
       </NavigationBarLeft>
       <NavigationBarRight>
         <BorderButton
-          label={translate (l10n) ("save")}
+          label={translate (staticData) ("header.savebtn")}
           onClick={saveGroup}
           />
         <IconButton
           icon="&#xE906;"
           onClick={openSettings}
           />
-        <SettingsContainer {...props} close={closeSettings} />
+        <SettingsContainer
+          staticData={staticData}
+          isSettingsOpen={isSettingsOpen}
+          platform={platform}
+          close={closeSettings}
+          checkForUpdates={checkForUpdates}
+          />
         <IconButton
           icon="&#xE911;"
           onClick={toggleDevtools}

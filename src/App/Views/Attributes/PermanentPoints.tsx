@@ -1,16 +1,16 @@
-import * as React from "react";
-import { fromJust, isJust, Maybe } from "../../../Data/Maybe";
-import { EnergyId } from "../../Constants/Ids";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { isFunction } from "../../Utilities/typeCheckUtils";
-import { Dialog } from "../Universal/Dialog";
-import { IconButton } from "../Universal/IconButton";
+import * as React from "react"
+import { fromJust, isJust, Maybe } from "../../../Data/Maybe"
+import { EnergyId } from "../../Constants/Ids"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { isFunction } from "../../Utilities/typeCheckUtils"
+import { Dialog } from "../Universal/Dialog"
+import { IconButton } from "../Universal/IconButton"
 
 export interface PermanentPointsProps {
   id: string
   eid: EnergyId
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   permanentBoughtBack: Maybe<number>
   permanentSpent: number
   isOpen: boolean
@@ -25,7 +25,7 @@ export const PermanentPoints: React.FC<PermanentPointsProps> = props => {
   const {
     id,
     eid,
-    l10n,
+    staticData,
     addBoughtBackPoint,
     addLostPoint,
     permanentBoughtBack,
@@ -44,15 +44,15 @@ export const PermanentPoints: React.FC<PermanentPointsProps> = props => {
       className="permanent-points-editor"
       title={
         eid === EnergyId.AE
-          ? translate (l10n) ("arcaneenergylostpermanently")
+          ? translate (staticData) ("attributes.lostpermanently.arcaneenergy")
           : eid === EnergyId.KP
-          ? translate (l10n) ("karmapointslostpermanently")
-          : translate (l10n) ("lifepointslostpermanently")
+          ? translate (staticData) ("attributes.lostpermanently.karmapoints")
+          : translate (staticData) ("attributes.lostpermanently.lifepoints")
       }
       buttons={[
         {
           autoWidth: true,
-          label: translate (l10n) ("done"),
+          label: translate (staticData) ("general.dialogs.donebtn"),
         },
       ]}
       >
@@ -65,7 +65,7 @@ export const PermanentPoints: React.FC<PermanentPointsProps> = props => {
               <div className="column boughtback">
                 <div className="value">{fromJust (permanentBoughtBack)}</div>
                 <div className="description smallcaps">
-                  {translate (l10n) ("boughtback")}
+                  {translate (staticData) ("attributes.pointslostpermanentlyeditor.boughtback")}
                 </div>
                 <div className="buttons">
                   <IconButton
@@ -87,7 +87,9 @@ export const PermanentPoints: React.FC<PermanentPointsProps> = props => {
         }
         <div className="column lost">
           <div className="value">{permanentSpent}</div>
-          <div className="description smallcaps">{translate (l10n) ("spent")}</div>
+          <div className="description smallcaps">
+            {translate (staticData) ("attributes.pointslostpermanentlyeditor.spent")}
+          </div>
           <div className="buttons">
             <IconButton className="add" icon="&#xE908;" onClick={addLostPoint} />
             <IconButton

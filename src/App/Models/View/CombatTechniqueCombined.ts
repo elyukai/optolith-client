@@ -1,6 +1,6 @@
-import { fromDefault, Record } from "../../../Data/Record";
-import { SkillDependent } from "../ActiveEntries/SkillDependent";
-import { CombatTechnique } from "../Wiki/CombatTechnique";
+import { fromDefault, Record } from "../../../Data/Record"
+import { SkillDependent } from "../ActiveEntries/SkillDependent"
+import { CombatTechnique } from "../Wiki/CombatTechnique"
 
 export interface CombatTechniqueCombined {
   "@@name": "CombatTechniqueCombined"

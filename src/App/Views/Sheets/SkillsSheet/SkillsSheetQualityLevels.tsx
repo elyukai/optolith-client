@@ -1,30 +1,26 @@
-import * as React from "react";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { ndash } from "../../../Utilities/Chars";
-import { translate } from "../../../Utilities/I18n";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { ndash } from "../../../Utilities/Chars"
+import { translate } from "../../../Utilities/I18n"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface SkillsSheetQualityLevelsProps {
-  l10n: L10nRecord
+interface Props {
+  staticData: StaticDataRecord
 }
 
-export const SkillsSheetQualityLevels = ({ l10n }: SkillsSheetQualityLevelsProps) => (
+export const SkillsSheetQualityLevels: React.FC<Props> = ({ staticData }) => (
   <TextBox
     className="quality-levels"
-    label={translate (l10n) ("qualitylevels")}
+    label={translate (staticData) ("sheets.gamestatssheet.qualitylevels.title")}
     >
     <table>
       <thead>
         <tr>
           <th>
-            <div>
-              {translate (l10n) ("skillpoints.splitted")}
-            </div>
+            {translate (staticData) ("sheets.gamestatssheet.qualitylevels.labels.skillpoints")}
           </th>
           <th>
-            <div>
-              {translate (l10n) ("qualitylevel.splitted")}
-            </div>
+            {translate (staticData) ("sheets.gamestatssheet.qualitylevels.labels.qualitylevel")}
           </th>
         </tr>
       </thead>

@@ -1,28 +1,30 @@
-import { equals } from "../../../Data/Eq";
-import { cnst, ident } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { over } from "../../../Data/Lens";
-import { append, countWith, filter, foldr, List, sdelete, subscriptF } from "../../../Data/List";
-import { bindF, Just, liftM3, maybe, Maybe, Nothing } from "../../../Data/Maybe";
-import { elems, lookup, lookupF } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Phase, SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
-import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
-import { ActiveObjectWithId, toActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
-import { HeroModel, HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { TransferUnfamiliar, UnfamiliarGroup } from "../../Models/Hero/TransferUnfamiliar";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { convertUIStateToActiveObject } from "../Activatable/activatableConvertUtils";
-import { getMagicalTraditionsHeroEntries } from "../Activatable/traditionUtils";
-import { isUnfamiliarSpell } from "../Increasable/spellUtils";
-import { pipe, pipe_ } from "../pipe";
-import { misStringM } from "../typeCheckUtils";
+import { equals } from "../../../Data/Eq"
+import { cnst, ident } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { over } from "../../../Data/Lens"
+import { append, countWith, filter, foldr, List, sdelete, subscriptF } from "../../../Data/List"
+import { bindF, Just, liftM3, maybe, Maybe, Nothing } from "../../../Data/Maybe"
+import { elems, lookup, lookupF } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { PhaseId, SpecialAbilityId } from "../../Constants/Ids.gen"
+import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
+import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
+import { ActiveObjectWithId, toActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
+import { HeroModel, HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { TransferUnfamiliar, UnfamiliarGroup } from "../../Models/Hero/TransferUnfamiliar"
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { Spell } from "../../Models/Wiki/Spell"
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { convertUIStateToActiveObject } from "../Activatable/activatableConvertUtils"
+import { getMagicalTraditionsHeroEntries } from "../Activatable/traditionUtils"
+import { isUnfamiliarSpell } from "../Increasable/spellUtils"
+import { pipe, pipe_ } from "../pipe"
+import { isStringM, misStringM } from "../typeCheckUtils"
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const HA = HeroModel.A
 const HL = HeroModelL
 const ELA = ExperienceLevel.A
@@ -32,6 +34,7 @@ const ASDA = ActivatableSkillDependent.A
 const AOWIA = ActiveObjectWithId.A
 const AAOA = ActivatableActivationOptions.A
 const ADOA = ActivatableDeactivationOptions.A
+const SOA = SelectOption.A
 
 const getTransferredUnfamiliarById: (active: Record<ActiveObjectWithId>) =>
                                     Maybe<List<Record<TransferUnfamiliar>>> =
@@ -39,9 +42,9 @@ const getTransferredUnfamiliarById: (active: Record<ActiveObjectWithId>) =>
     const src_id = AOWIA.id (active)
 
     switch (src_id) {
-      case SpecialAbilityId.TraditionGuildMages:
-      case SpecialAbilityId.MadaschwesternStil:
-      case SpecialAbilityId.ScholarDesMagierkollegsZuHoningen:
+      case SpecialAbilityId.traditionGuildMages:
+      case SpecialAbilityId.madaschwesternStil:
+      case SpecialAbilityId.scholarDesMagierkollegsZuHoningen:
         return pipe_ (
           active,
           AOWIA.sid,
@@ -49,11 +52,11 @@ const getTransferredUnfamiliarById: (active: Record<ActiveObjectWithId>) =>
           fmap (id => List (TransferUnfamiliar ({ id, srcId: src_id })))
         )
 
-      case SpecialAbilityId.Zaubervariabilitaet:
+      case SpecialAbilityId.zaubervariabilitaet:
         return Just (List (TransferUnfamiliar ({ id: UnfamiliarGroup.Spells, srcId: src_id })))
 
-      case SpecialAbilityId.ScholarDerHalleDesLebensZuNorburg:
-      case SpecialAbilityId.ScholarDesKreisesDerEinfuehlung:
+      case SpecialAbilityId.scholarDerHalleDesLebensZuNorburg:
+      case SpecialAbilityId.scholarDesKreisesDerEinfuehlung:
         return liftM3 ((id1: string) => (id2: string) => (id3: string) =>
                         List (
                           TransferUnfamiliar ({ id: id1, srcId: src_id }),
@@ -121,17 +124,54 @@ export const removeTransferUnfamiliarDependencies:
                  (mnew_spells)
   }
 
+const removeTradById = (id: string) => filter (pipe (ADA.id, equals (id)))
+
+/**
+ * Remove all unfamiliar deps by the specified entry.
+ */
+const removeUnfamiliarDepsById = (id: string) => filter (pipe (TUA.srcId, equals (id)))
+
+const getUnfamiliarCount: (wiki: StaticDataRecord) =>
+                          (transferred_unfamiliar: List<Record<TransferUnfamiliar>>) =>
+                          (trad_hero_entries: List<Record<ActivatableDependent>>) =>
+                          (spells: List<Record<ActivatableSkillDependent>>) => number =
+  wiki =>
+  transferred_unfamiliar =>
+  trad_hero_entries =>
+    countWith ((x: Record<ActivatableSkillDependent>) =>
+                pipe_ (
+                  x,
+                  ASDA.id,
+                  lookupF (SDA.spells (wiki)),
+                  maybe (false)
+                        (isUnfamiliarSpell (transferred_unfamiliar)
+                                           (trad_hero_entries))
+                ))
+
+const getUnfamiliarCountAfter: (wiki: StaticDataRecord) =>
+                               (transferred_unfamiliar: List<Record<TransferUnfamiliar>>) =>
+                               (trad_hero_entries: List<Record<ActivatableDependent>>) =>
+                               (src_id: string) =>
+                               (spells: List<Record<ActivatableSkillDependent>>) => number =
+  wiki =>
+  transferred_unfamiliar =>
+  trad_hero_entries =>
+  src_id =>
+    getUnfamiliarCount (wiki)
+                       (removeUnfamiliarDepsById (src_id) (transferred_unfamiliar))
+                       (removeTradById (src_id) (trad_hero_entries))
+
 /**
  * Check if an entry that allows transferring unfamiliar entries into a familiar
  * tradition can be removed, because it might happen, that this is not allowed,
  * because otherwise you'd have more unfamiliar spells than allowed by the
  * selected experience level during creation phase.
  */
-export const isEntryAllowingTransferUnfamiliarRemovable: (wiki: WikiModelRecord) =>
+export const isEntryAllowingTransferUnfamiliarRemovable: (wiki: StaticDataRecord) =>
                                                          (hero: HeroModelRecord) =>
                                                          (src_id: string) => boolean =
   wiki => hero => {
-    if (HA.phase (hero) >= Phase.InGame) {
+    if (HA.phase (hero) >= PhaseId.inGame) {
       return cnst (true)
     }
 
@@ -150,42 +190,20 @@ export const isEntryAllowingTransferUnfamiliarRemovable: (wiki: WikiModelRecord)
                                                                (spells)
                  ))
                  (lookup (HA.experienceLevel (hero))
-                         (WA.experienceLevels (wiki)))
+                         (SDA.experienceLevels (wiki)))
   }
 
-const getUnfamiliarCountAfter: (wiki: WikiModelRecord) =>
-                               (transferred_unfamiliar: List<Record<TransferUnfamiliar>>) =>
-                               (trad_hero_entries: List<Record<ActivatableDependent>>) =>
-                               (src_id: string) =>
-                               (spells: List<Record<ActivatableSkillDependent>>) => number =
-  wiki =>
-  transferred_unfamiliar =>
-  trad_hero_entries =>
-  src_id =>
-    getUnfamiliarCount (wiki)
-                       (removeUnfamiliarDepsById (src_id) (transferred_unfamiliar))
-                       (removeTradById (src_id) (trad_hero_entries))
-
-const getUnfamiliarCount: (wiki: WikiModelRecord) =>
-                          (transferred_unfamiliar: List<Record<TransferUnfamiliar>>) =>
-                          (trad_hero_entries: List<Record<ActivatableDependent>>) =>
-                          (spells: List<Record<ActivatableSkillDependent>>) => number =
-  wiki =>
-  transferred_unfamiliar =>
-  trad_hero_entries =>
-    countWith ((x: Record<ActivatableSkillDependent>) =>
-                pipe_ (
-                  x,
-                  ASDA.id,
-                  lookupF (WA.spells (wiki)),
-                  maybe (false)
-                        (isUnfamiliarSpell (transferred_unfamiliar)
-                                           (trad_hero_entries))
-                ))
-
-const removeTradById = (id: string) => filter (pipe (ADA.id, equals (id)))
-
 /**
- * Remove all unfamiliar deps by the specified entry.
+ * From a list of spell select options, only return the **unfamiliar** ones.
  */
-const removeUnfamiliarDepsById = (id: string) => filter (pipe (TUA.srcId, equals (id)))
+export const filterUnfamiliar =
+  (pred: (x: Record<Spell>) => boolean) =>
+  (static_data: StaticDataRecord) =>
+    filter ((x: Record<SelectOption>) =>
+              pipe_ (
+                x,
+                SOA.id,
+                isStringM,
+                bindF (lookupF (SDA.spells (static_data))),
+                maybe (false) (pred)
+              ))

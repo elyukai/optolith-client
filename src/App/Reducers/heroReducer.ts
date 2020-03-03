@@ -1,21 +1,21 @@
-import { flip } from "../../Data/Function";
-import { set } from "../../Data/Lens";
-import { List } from "../../Data/List";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { reduceReducersC } from "../Utilities/reduceReducers";
-import { undo } from "../Utilities/undo";
-import { adventurePointsReducer } from "./adventurePointsReducer";
-import { applyRCPSelectionsReducer } from "./applyRCPSelectionsReducer";
-import { dependentReducer } from "./dependentReducer";
-import { energiesReducer } from "./energiesReducer";
-import { equipmentReducer } from "./equipmentReducer";
-import { pactReducer } from "./pactReducer";
-import { petsReducer } from "./petsReducer";
-import { phaseReducer } from "./phaseReducer";
-import { profileReducer } from "./profileReducer";
-import { rcpReducer } from "./rcpReducer";
-import { rulesReducer } from "./rulesReducer";
+import { flip } from "../../Data/Function"
+import { set } from "../../Data/Lens"
+import { List } from "../../Data/List"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { reduceReducersC } from "../Utilities/reduceReducers"
+import { undo } from "../Utilities/undo"
+import { adventurePointsReducer } from "./adventurePointsReducer"
+import { applyRCPSelectionsReducer } from "./applyRCPSelectionsReducer"
+import { dependentReducer } from "./dependentReducer"
+import { energiesReducer } from "./energiesReducer"
+import { equipmentReducer } from "./equipmentReducer"
+import { pactReducer } from "./pactReducer"
+import { petsReducer } from "./petsReducer"
+import { phaseReducer } from "./phaseReducer"
+import { profileReducer } from "./profileReducer"
+import { rcpReducer } from "./rcpReducer"
+import { rulesReducer } from "./rulesReducer"
 
 export const heroReducer =
   undo (List (
@@ -40,7 +40,7 @@ export const heroReducer =
          ActionTypes.SET_ITEM_DAMAGE_THRESHOLD,
          ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD,
          ActionTypes.SET_ITEM_SECOND_DAMAGE_THRESHOLD,
-         ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED,
+         ActionTypes.SWITCH_IS_ITEM_DT_SEPARATED,
          ActionTypes.SET_ITEM_ATTACK,
          ActionTypes.SET_ITEM_PARRY,
          ActionTypes.SET_ITEM_REACH,

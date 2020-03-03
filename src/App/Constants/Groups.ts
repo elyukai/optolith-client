@@ -1,3 +1,5 @@
+import { t as _IC } from "../Utilities/IC.gen"
+
 export enum ProfessionGroup {
   Mundane = 1,
   Magical = 2,
@@ -32,6 +34,28 @@ export enum IC {
   E,
 }
 
+export const icFromJs = (x: IC): _IC => {
+  switch (x) {
+    case IC.A: return "A"
+    case IC.B: return "B"
+    case IC.C: return "C"
+    case IC.D: return "D"
+    case IC.E: return "E"
+    default: throw new TypeError (`icFromJs: ${x} is not an IC`)
+  }
+}
+
+export const icToJs = (x: _IC): IC => {
+  switch (x) {
+    case "A": return IC.A
+    case "B": return IC.B
+    case "C": return IC.C
+    case "D": return IC.D
+    case "E": return IC.E
+    default: throw new TypeError (`icToJs: ${x} is not an IC`)
+  }
+}
+
 export enum SkillGroup {
   Physical = 1,
   Social = 2,
@@ -40,7 +64,7 @@ export enum SkillGroup {
   Craft = 5,
 }
 
-export enum CombatTechniqueGroup {
+export enum CombatTechniqueGroupId {
   Melee = 1,
   Ranged = 2,
 }
@@ -98,13 +122,13 @@ export enum MagicalGroup {
   Rituals = 2,
   Curses = 3,
   ElvenMagicalSongs = 4,
-  Zaubermelodien = 5,
-  Zaubertaenze = 6,
-  Herrschaftsrituale = 7,
-  Schelmenzauber = 8,
-  Animistenkräfte = 9,
-  Geodenrituale = 10,
-  Zibiljarituale = 11,
+  MagicalMelodies = 5,
+  MagicalDances = 6,
+  DominationRituals = 7,
+  RogueSpells = 8,
+  AnimistForces = 9,
+  GeodeRituals = 10,
+  ZibiljaRituals = 11,
 }
 
 export enum MagicalTradition {
@@ -114,17 +138,17 @@ export enum MagicalTradition {
   Elves = 4,
   Druids = 5,
   Scharlatane = 6,
-  Zauberbarden = 7,
-  Zaubertaenzer = 8,
+  ArcaneBards = 7,
+  ArcaneDancers = 8,
   IntuitiveZauberer = 9,
   Meistertalentierte = 10,
   Qabalyamagier = 11,
   Kristallomanten = 12,
-  Geoden = 13,
+  Geodes = 13,
   Alchimisten = 14,
-  Schelme = 15,
-  Animisten = 16,
-  Zibilijas = 17,
+  Rogues = 15,
+  Animists = 16,
+  Zibilija = 17,
   BrobimGeoden = 18,
 }
 

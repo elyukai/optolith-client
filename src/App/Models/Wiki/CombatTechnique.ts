@@ -1,10 +1,10 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { Erratum } from "./sub/Errata";
-import { SourceLink } from "./sub/SourceLink";
-import { EntryWithCategory } from "./wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { Erratum } from "./sub/Errata"
+import { SourceLink } from "./sub/SourceLink"
+import { EntryWithCategory } from "./wikiTypeHelpers"
 
 export interface CombatTechnique {
   "@@name": "CombatTechnique"
@@ -16,6 +16,7 @@ export interface CombatTechnique {
   bpr: number
   primary: List<string>
   special: Maybe<string>
+  hasNoParry: boolean
   src: List<Record<SourceLink>>
   errata: List<Record<Erratum>>
 }
@@ -31,6 +32,7 @@ export const CombatTechnique =
                 bpr: 0,
                 primary: List.empty,
                 special: Nothing,
+                hasNoParry: false,
                 src: List.empty,
                 errata: List (),
               })

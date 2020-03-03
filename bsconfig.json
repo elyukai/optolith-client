@@ -1,0 +1,44 @@
+{
+  "name": "optolith-client",
+  "version": "0.1.0",
+  "sources": [
+    { "dir": "src" },
+    { "dir": "src/App/Actions" },
+    { "dir": "src/App/Constants" },
+    { "dir": "src/App/Containers" },
+    { "dir": "src/App/Models" },
+    { "dir": "src/App/Models/Static" },
+    { "dir": "src/App/Reducers" },
+    { "dir": "src/App/Selectors" },
+    { "dir": "src/App/Utilities" },
+    { "dir": "src/App/Utilities/__tests__", "type": "dev" },
+    { "dir": "src/App/Views" },
+    { "dir": "src/Control" },
+    { "dir": "src/Data" },
+    { "dir": "src/Debug" },
+    { "dir": "src/System" },
+    { "dir": "src/shims" }
+  ],
+  "package-specs": {
+    "module": "commonjs",
+    "in-source": true
+  },
+  "suffix": ".bs.js",
+  "bs-dependencies": [
+    "@glennsl/bs-json",
+    "@glennsl/bs-jest"
+  ],
+  "warnings": {
+    "error" : "+101"
+  },
+  "namespace": true,
+  "refmt": 3,
+  "gentypeconfig": {
+    "module": "commonjs",
+    "language": "typescript",
+    "shims": {
+      "Js": "Js",
+      "ReasonPervasives": "ReasonPervasives"
+    }
+  }
+}

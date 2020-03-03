@@ -1,13 +1,13 @@
-import * as React from "react";
+import * as React from "react"
 
-export interface SkillRatingProps {
+interface Props {
   isNotActive?: boolean
   noIncrease?: boolean
   sr?: number
   addPoint? (id: string): void
 }
 
-export function SkillRating (props: SkillRatingProps) {
+export const SkillRating: React.FC<Props> = props => {
   const {
     isNotActive,
     noIncrease,

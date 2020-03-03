@@ -1,19 +1,24 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { find, List } from "../../../Data/List";
-import { bindF, ensure, isJust, Maybe, maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { DCId, EnergyId } from "../../Constants/Ids";
-import { DerivedCharacteristic, EnergyWithLoss } from "../../Models/View/DerivedCharacteristic";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { AttributesPermanentListItem } from "./AttributesPermanentListItem";
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { find, List } from "../../../Data/List"
+import { bindF, ensure, isJust, Maybe, maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { fst, Pair, snd } from "../../../Data/Tuple"
+import { DCId, EnergyId } from "../../Constants/Ids"
+import { DerivedCharacteristicValues, EnergyWithLoss } from "../../Models/View/DerivedCharacteristicCombined"
+import { DerivedCharacteristic } from "../../Models/Wiki/DerivedCharacteristic"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { DCPair } from "../../Selectors/derivedCharacteristicsSelectors"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { DerivedCharacteristicId } from "../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
+import { AttributesPermanentListItem } from "./AttributesPermanentListItem"
+
+type EWLPair = Pair<Record<DerivedCharacteristic>, Record<EnergyWithLoss>>
 
 export interface AttributesPermanentListProps {
-  derived: List<Record<DerivedCharacteristic>>
-  l10n: L10nRecord
-  isInCharacterCreation: boolean
+  derived: List<DCPair>
+  staticData: StaticDataRecord
   isRemovingEnabled: boolean
   getEditPermanentEnergy: Maybe<EnergyId>
   getAddPermanentEnergy: Maybe<EnergyId>
@@ -37,72 +42,119 @@ export interface AttributesPermanentListProps {
 }
 
 const DCA = DerivedCharacteristic.A
+const DCVA = DerivedCharacteristicValues.A
 
-export function AttributesPermanentList (props: AttributesPermanentListProps) {
-  const mlp = find (pipe (DCA.id, equals<DCId> (DCId.LP)))
-                   (props.derived) as Maybe<Record<EnergyWithLoss>>
+export const AttributesPermanentList: React.FC<AttributesPermanentListProps> = props => {
+  const {
+    derived,
+    staticData,
+    isRemovingEnabled,
+    getEditPermanentEnergy,
+    getAddPermanentEnergy,
+    addLostLPPoint,
+    removeLostLPPoint,
+    addLostLPPoints,
+    addBoughtBackAEPoint,
+    removeBoughtBackAEPoint,
+    addLostAEPoint,
+    removeLostAEPoint,
+    addLostAEPoints,
+    addBoughtBackKPPoint,
+    removeBoughtBackKPPoint,
+    addLostKPPoint,
+    removeLostKPPoint,
+    addLostKPPoints,
+    openAddPermanentEnergyLoss,
+    closeAddPermanentEnergyLoss,
+    openEditPermanentEnergy,
+    closeEditPermanentEnergy,
+  } = props
 
-  const mae = find (pipe (DCA.id, equals<DCId> (DCId.AE)))
-                   (props.derived) as Maybe<Record<EnergyWithLoss>>
+  const mlp = find<DCPair> (pipe (fst, DCA.id, equals<DerivedCharacteristicId> (DCId.LP)))
+                           (derived) as Maybe<EWLPair>
 
-  const mkp = find (pipe (DCA.id, equals<DCId> (DCId.KP)))
-                   (props.derived) as Maybe<Record<EnergyWithLoss>>
+  const mae = find<DCPair> (pipe (fst, DCA.id, equals<DerivedCharacteristicId> (DCId.AE)))
+                           (derived) as Maybe<EWLPair>
+
+  const mkp = find<DCPair> (pipe (fst, DCA.id, equals<DerivedCharacteristicId> (DCId.KP)))
+                           (derived) as Maybe<EWLPair>
 
   return (
     <div className="permanent">
       {
         maybe (<></>)
-              ((lp: Record<EnergyWithLoss>) => (
+              ((lp: Pair<Record<DerivedCharacteristic>, Record<EnergyWithLoss>>) => (
                 <AttributesPermanentListItem
-                  {...props}
+                  staticData={staticData}
                   id={EnergyId.LP}
-                  label={translate (props.l10n) ("lifepointslostpermanently.short")}
-                  name={translate (props.l10n) ("lifepointslostpermanently")}
-                  lost={Maybe.sum (DCA.permanentLost (lp))}
-                  addLostPoint={props.addLostLPPoint}
-                  addLostPoints={props.addLostLPPoints}
-                  removeLostPoint={props.removeLostLPPoint}
+                  label={translate (staticData) ("attributes.lostpermanently.lifepoints.short")}
+                  name={translate (staticData) ("attributes.lostpermanently.lifepoints")}
+                  lost={Maybe.sum (DCVA.permanentLost (snd (lp)))}
+                  isRemovingEnabled={isRemovingEnabled}
+                  getEditPermanentEnergy={getEditPermanentEnergy}
+                  getAddPermanentEnergy={getAddPermanentEnergy}
+                  addLostPoint={addLostLPPoint}
+                  addLostPoints={addLostLPPoints}
+                  removeLostPoint={removeLostLPPoint}
+                  openAddPermanentEnergyLoss={openAddPermanentEnergyLoss}
+                  closeAddPermanentEnergyLoss={closeAddPermanentEnergyLoss}
+                  openEditPermanentEnergy={openEditPermanentEnergy}
+                  closeEditPermanentEnergy={closeEditPermanentEnergy}
                   />
               ))
               (mlp)
       }
       {pipe_ (
         mae,
-        bindF (ensure (ae => isJust (DCA.value (ae)))),
+        bindF (ensure (ae => isJust (DCVA.value (snd (ae))))),
         maybe (<></>)
-              ((ae: Record<EnergyWithLoss>) => (
+              ((ae: Pair<Record<DerivedCharacteristic>, Record<EnergyWithLoss>>) => (
                 <AttributesPermanentListItem
-                  {...props}
+                  staticData={staticData}
                   id={EnergyId.AE}
-                  label={translate (props.l10n) ("arcaneenergylostpermanently.short")}
-                  name={translate (props.l10n) ("arcaneenergylostpermanently")}
-                  boughtBack={Maybe.sum (DCA.permanentRedeemed (ae))}
-                  lost={Maybe.sum (DCA.permanentLost (ae))}
-                  addBoughtBackPoint={props.addBoughtBackAEPoint}
-                  addLostPoint={props.addLostAEPoint}
-                  addLostPoints={props.addLostAEPoints}
-                  removeBoughtBackPoint={props.removeBoughtBackAEPoint}
-                  removeLostPoint={props.removeLostAEPoint}
+                  label={translate (staticData) ("attributes.lostpermanently.arcaneenergy.short")}
+                  name={translate (staticData) ("attributes.lostpermanently.arcaneenergy")}
+                  boughtBack={Maybe.sum (DCVA.permanentRedeemed (snd (ae)))}
+                  lost={Maybe.sum (DCVA.permanentLost (snd (ae)))}
+                  isRemovingEnabled={isRemovingEnabled}
+                  getEditPermanentEnergy={getEditPermanentEnergy}
+                  getAddPermanentEnergy={getAddPermanentEnergy}
+                  addBoughtBackPoint={addBoughtBackAEPoint}
+                  addLostPoint={addLostAEPoint}
+                  addLostPoints={addLostAEPoints}
+                  removeBoughtBackPoint={removeBoughtBackAEPoint}
+                  removeLostPoint={removeLostAEPoint}
+                  openAddPermanentEnergyLoss={openAddPermanentEnergyLoss}
+                  closeAddPermanentEnergyLoss={closeAddPermanentEnergyLoss}
+                  openEditPermanentEnergy={openEditPermanentEnergy}
+                  closeEditPermanentEnergy={closeEditPermanentEnergy}
                   />
               ))
       )}
       {pipe_ (
         mkp,
-        bindF (ensure (kp => isJust (DCA.value (kp)))),
+        bindF (ensure (kp => isJust (DCVA.value (snd (kp))))),
         maybe (<></>)
-              ((kp: Record<EnergyWithLoss>) => (
+              ((kp: Pair<Record<DerivedCharacteristic>, Record<EnergyWithLoss>>) => (
                 <AttributesPermanentListItem
-                  {...props}
+                  staticData={staticData}
                   id={EnergyId.KP}
-                  label={translate (props.l10n) ("karmapointslostpermanently.short")}
-                  name={translate (props.l10n) ("karmapointslostpermanently")}
-                  boughtBack={Maybe.sum (DCA.permanentRedeemed (kp))}
-                  lost={Maybe.sum (DCA.permanentLost (kp))}
-                  addBoughtBackPoint={props.addBoughtBackKPPoint}
-                  addLostPoint={props.addLostKPPoint}
-                  addLostPoints={props.addLostKPPoints}
-                  removeBoughtBackPoint={props.removeBoughtBackKPPoint}
-                  removeLostPoint={props.removeLostKPPoint}
+                  label={translate (staticData) ("attributes.lostpermanently.karmapoints.short")}
+                  name={translate (staticData) ("attributes.lostpermanently.karmapoints")}
+                  boughtBack={Maybe.sum (DCVA.permanentRedeemed (snd (kp)))}
+                  lost={Maybe.sum (DCVA.permanentLost (snd (kp)))}
+                  isRemovingEnabled={isRemovingEnabled}
+                  getEditPermanentEnergy={getEditPermanentEnergy}
+                  getAddPermanentEnergy={getAddPermanentEnergy}
+                  addBoughtBackPoint={addBoughtBackKPPoint}
+                  addLostPoint={addLostKPPoint}
+                  addLostPoints={addLostKPPoints}
+                  removeBoughtBackPoint={removeBoughtBackKPPoint}
+                  removeLostPoint={removeLostKPPoint}
+                  openAddPermanentEnergyLoss={openAddPermanentEnergyLoss}
+                  closeAddPermanentEnergyLoss={closeAddPermanentEnergyLoss}
+                  openEditPermanentEnergy={openEditPermanentEnergy}
+                  closeEditPermanentEnergy={closeEditPermanentEnergy}
                   />
               ))
       )}

@@ -1,15 +1,15 @@
-import { Maybe } from "../../Data/Maybe";
-import { ActionTypes } from "../Constants/ActionTypes";
+import { Maybe } from "../../Data/Maybe"
+import { SELECT_PROFESSION_VARIANT } from "../Constants/ActionTypes"
 
 export interface SelectProfessionVariantAction {
-  type: ActionTypes.SELECT_PROFESSION_VARIANT
+  type: SELECT_PROFESSION_VARIANT
   payload: {
-    id: Maybe<string>;
+    id: Maybe<string>
   }
 }
 
 export const selectProfessionVariant = (id: Maybe<string>): SelectProfessionVariantAction => ({
-  type: ActionTypes.SELECT_PROFESSION_VARIANT,
+  type: SELECT_PROFESSION_VARIANT,
   payload: {
     id,
   },

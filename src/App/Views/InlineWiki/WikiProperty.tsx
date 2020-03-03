@@ -1,20 +1,21 @@
-import * as React from "react";
-import { L10nKey, L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
+import * as React from "react"
+import { L10nKey } from "../../Models/Wiki/L10n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
 
 export interface WikiPropertyProps {
   children?: React.ReactNode
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   title: L10nKey
 }
 
 export function WikiProperty (props: WikiPropertyProps) {
-  const { children, l10n, title } = props
+  const { children, staticData, title } = props
 
   return (
     <p>
       <span>
-        {translate (l10n) (title)}
+        {translate (staticData) (title)}
         {children !== null && children !== undefined ? ": " : null}
       </span>
       {children !== null && children !== undefined ? <span>{children}</span> : null}

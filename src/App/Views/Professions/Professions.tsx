@@ -1,39 +1,39 @@
-import * as React from "react";
-import { List, map, notNull, toArray } from "../../../Data/List";
-import { bindF, ensure, Just, Maybe, maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { SelectionsContainer } from "../../Containers/RCPSelectionsContainer";
-import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { ProfessionsGroupVisibilityFilter, ProfessionsVisibilityFilter } from "../../Utilities/Raw/JSON/Config";
-import { Aside } from "../Universal/Aside";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
-import { ListView } from "../Universal/List";
-import { ListHeader } from "../Universal/ListHeader";
-import { ListHeaderTag } from "../Universal/ListHeaderTag";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { SearchField } from "../Universal/SearchField";
-import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { ProfessionsListItem } from "./ProfessionsListItem";
-import { ProfessionVariants } from "./ProfessionVariants";
+import * as React from "react"
+import { List, map, notNull, toArray } from "../../../Data/List"
+import { bindF, ensure, Just, Maybe, maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { SelectionsContainer } from "../../Containers/RCPSelectionsContainer"
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { ProfessionsGroupVisibilityFilter, ProfessionsVisibilityFilter } from "../../Models/Config"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Sex } from "../../Models/Hero/heroTypeHelpers"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { Aside } from "../Universal/Aside"
+import { Dropdown } from "../Universal/Dropdown"
+import { ListView } from "../Universal/List"
+import { ListHeader } from "../Universal/ListHeader"
+import { ListHeaderTag } from "../Universal/ListHeaderTag"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { SearchField } from "../Universal/SearchField"
+import { SortNames, SortOptions } from "../Universal/SortOptions"
+import { ProfessionsListItem } from "./ProfessionsListItem"
+import { ProfessionVariants } from "./ProfessionVariants"
 
 export interface ProfessionsOwnProps {
   hero: HeroModelRecord
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 export interface ProfessionsStateProps {
-  wiki: WikiModelRecord
+  wiki: StaticDataRecord
   currentProfessionId: Maybe<string>
   currentProfessionVariantId: Maybe<string>
   groupVisibilityFilter: number
@@ -48,7 +48,6 @@ export interface ProfessionsDispatchProps {
   setGroupVisibilityFilter (filter: ProfessionsGroupVisibilityFilter): void
   setSortOrder (sortOrder: SortNames): void
   setVisibilityFilter (filter: ProfessionsVisibilityFilter): void
-  switchExpansionVisibilityFilter (): void
   setFilterText (filterText: string): void
 }
 
@@ -65,7 +64,7 @@ export const Professions: React.FC<ProfessionsProps> = props => {
   const {
     currentProfessionId,
     groupVisibilityFilter,
-    l10n,
+    staticData,
     hero,
     professions,
     setGroupVisibilityFilter,
@@ -80,19 +79,26 @@ export const Professions: React.FC<ProfessionsProps> = props => {
     wiki,
   } = props
 
-  const [showAddSlidein, switchAddSlidein] = React.useState (false)
+  const [ showAddSlidein, switchAddSlidein ] = React.useState (false)
 
-  const handleCloseSlidein = React.useCallback (() => switchAddSlidein (false), [switchAddSlidein])
-  const handleShowSlidein = React.useCallback (() => switchAddSlidein (true), [switchAddSlidein])
+  const handleCloseSlidein = React.useCallback (
+    () => switchAddSlidein (false),
+    [ switchAddSlidein ]
+  )
+
+  const handleShowSlidein = React.useCallback (
+    () => switchAddSlidein (true),
+    [ switchAddSlidein ]
+  )
 
   return (
     <Page id="professions">
       {showAddSlidein
-        ? <SelectionsContainer close={handleCloseSlidein} l10n={l10n} hero={hero} />
+        ? <SelectionsContainer close={handleCloseSlidein} hero={hero} />
         : null}
       <Options>
         <SearchField
-          l10n={l10n}
+          staticData={staticData}
           value={filterText}
           onChange={setFilterText}
           fullWidth
@@ -103,11 +109,11 @@ export const Professions: React.FC<ProfessionsProps> = props => {
           options={List (
             DropdownOption ({
               id: Just (ProfessionsVisibilityFilter.All),
-              name: translate (l10n) ("allprofessions"),
+              name: translate (staticData) ("profession.filters.common.allprofessions"),
             }),
             DropdownOption ({
               id: Just (ProfessionsVisibilityFilter.Common),
-              name: translate (l10n) ("commonprofessions"),
+              name: translate (staticData) ("profession.filters.common.commonprofessions"),
             })
           )}
           fullWidth
@@ -118,19 +124,19 @@ export const Professions: React.FC<ProfessionsProps> = props => {
           options={List (
             DropdownOption ({
               id: Just (ProfessionsGroupVisibilityFilter.All),
-              name: translate (l10n) ("allprofessiongroups"),
+              name: translate (staticData) ("profession.filters.groups.allprofessiongroups"),
             }),
             DropdownOption ({
               id: Just (ProfessionsGroupVisibilityFilter.Mundane),
-              name: translate (l10n) ("mundaneprofessions"),
+              name: translate (staticData) ("profession.filters.groups.mundaneprofessions"),
             }),
             DropdownOption ({
               id: Just (ProfessionsGroupVisibilityFilter.Magical),
-              name: translate (l10n) ("magicalprofessions"),
+              name: translate (staticData) ("profession.filters.groups.magicalprofessions"),
             }),
             DropdownOption ({
               id: Just (ProfessionsGroupVisibilityFilter.Blessed),
-              name: translate (l10n) ("blessedprofessions"),
+              name: translate (staticData) ("profession.filters.groups.blessedprofessions"),
             })
           )}
           fullWidth
@@ -139,16 +145,19 @@ export const Professions: React.FC<ProfessionsProps> = props => {
           sortOrder={sortOrder}
           sort={setSortOrder}
           options={List (SortNames.Name, SortNames.Cost)}
-          l10n={l10n}
+          staticData={staticData}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (staticData) ("profession.header.name")}
           </ListHeaderTag>
-          <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
-            {translate (l10n) ("adventurepoints.short")}
+          <ListHeaderTag
+            className="cost"
+            hint={translate (staticData) ("profession.header.adventurepoints.tooltip")}
+            >
+            {translate (staticData) ("profession.header.adventurepoints")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder has-border" />
@@ -158,7 +167,13 @@ export const Professions: React.FC<ProfessionsProps> = props => {
             {pipe_ (
               professions,
               bindF (ensure (notNull)),
-              maybe<React.ReactNode> (<ListPlaceholder l10n={l10n} type="professions" noResults />)
+              maybe<React.ReactNode> (
+                                       <ListPlaceholder
+                                         staticData={staticData}
+                                         type="professions"
+                                         noResults
+                                         />
+                                     )
                                      (pipe (
                                        map ((profession: Record<ProfessionCombined>) => (
                                          <ProfessionsListItem
@@ -181,12 +196,11 @@ export const Professions: React.FC<ProfessionsProps> = props => {
         <ProfessionVariants
           currentProfessionId={currentProfessionId}
           currentProfessionVariantId={currentProfessionVariantId}
-          l10n={l10n}
+          staticData={staticData}
           professions={professions}
           sex={sex}
           />
         <WikiInfoContainer
-          l10n={l10n}
           currentId={currentProfessionId}
           noWrapper
           />

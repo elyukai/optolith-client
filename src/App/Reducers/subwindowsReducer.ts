@@ -1,14 +1,12 @@
-// tslint:disable-next-line:no-implicit-dependencies
-import { ProgressInfo } from "builder-util-runtime";
-import { cnst, ident } from "../../Data/Function";
-import { set } from "../../Data/Lens";
-import { Just, Maybe, Nothing } from "../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../Data/Record";
-import { SetUpdateDownloadProgressAction } from "../Actions/IOActions";
-import { SetTabAction } from "../Actions/LocationActions";
-import * as SubwindowsActions from "../Actions/SubwindowsActions";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { EnergyId } from "../Constants/Ids";
+import { cnst, ident } from "../../Data/Function"
+import { set } from "../../Data/Lens"
+import { Just, Maybe, Nothing } from "../../Data/Maybe"
+import { Record } from "../../Data/Record"
+import { SetUpdateDownloadProgressAction } from "../Actions/IOActions"
+import { SetTabAction } from "../Actions/LocationActions"
+import * as SubwindowsActions from "../Actions/SubwindowsActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { SubWindowsState, SubWindowsStateL } from "../Models/SubWindowsState"
 
 type Action = SetTabAction
             | SetUpdateDownloadProgressAction
@@ -26,33 +24,6 @@ type Action = SetTabAction
             | SubwindowsActions.OpenEditPetAvatarAction
             | SubwindowsActions.CloseEditCharacterAvatarAction
             | SubwindowsActions.CloseEditPetAvatarAction
-
-export interface SubWindowsState {
-  "@@name": "SubWindowsState"
-  editPermanentEnergy: Maybe<EnergyId>
-  addPermanentEnergy: Maybe<EnergyId>
-  updateDownloadProgress: Maybe<ProgressInfo>
-  isCharacterCreatorOpen: boolean
-  isAddAdventurePointsOpen: boolean
-  isSettingsOpen: boolean
-  isEditCharacterAvatarOpen: boolean
-  isEditPetAvatarOpen: boolean
-}
-
-export const SubWindowsState =
-  fromDefault ("SubWindowsState")
-              <SubWindowsState> ({
-                editPermanentEnergy: Nothing,
-                addPermanentEnergy: Nothing,
-                updateDownloadProgress: Nothing,
-                isCharacterCreatorOpen: false,
-                isAddAdventurePointsOpen: false,
-                isSettingsOpen: false,
-                isEditCharacterAvatarOpen: false,
-                isEditPetAvatarOpen: false,
-              })
-
-const SubWindowsStateL = makeLenses (SubWindowsState)
 
 export const subwindowsReducer =
   (action: Action): ident<Record<SubWindowsState>> => {

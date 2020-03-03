@@ -1,17 +1,14 @@
-import { ident } from "../../Data/Function";
-import { over, set } from "../../Data/Lens";
-import { isJust, Just, maybe_, Nothing } from "../../Data/Maybe";
-import { Record } from "../../Data/Record";
-import { snd } from "../../Data/Tuple";
-import * as DisAdvActions from "../Actions/DisAdvActions";
-import * as ProfileActions from "../Actions/ProfileActions";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
-import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType";
-import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { PersonalDataL } from "../Models/Hero/PersonalData";
-import { composeL } from "../Utilities/compose";
-import { pipe } from "../Utilities/pipe";
+import { ident } from "../../Data/Function"
+import { over, set } from "../../Data/Lens"
+import { isJust, Just, maybe_, Nothing } from "../../Data/Maybe"
+import * as DisAdvActions from "../Actions/DisAdvActions"
+import * as ProfileActions from "../Actions/ProfileActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType"
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { PersonalDataL } from "../Models/Hero/PersonalData"
+import { composeL } from "../Utilities/compose"
+import { pipe } from "../Utilities/pipe"
 
 type Action = ProfileActions.SetHeroNameAction
             | ProfileActions.SetHeroAvatarAction
@@ -103,14 +100,8 @@ const personalDataReducer =
 
       case ActionTypes.ACTIVATE_DISADV:
       case ActionTypes.DEACTIVATE_DISADV: {
-        type EntryTypes = Record<ActivatableActivationEntryType>
-                        | Record<ActivatableDeactivationEntryType>
-
-        const eyeColor =
-          ActivatableActivationEntryType.AL.eyeColor (snd<EntryTypes> (action.payload))
-
-        const hairColor =
-          ActivatableActivationEntryType.AL.hairColor (snd<EntryTypes> (action.payload))
+        const eyeColor = ActivatableActivationEntryType.AL.eyeColor (action.payload.entryType)
+        const hairColor = ActivatableActivationEntryType.AL.hairColor (action.payload.entryType)
 
         if (isJust (eyeColor) && isJust (hairColor)) {
           return over (HeroModelL.personalData)

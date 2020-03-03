@@ -1,0 +1,466 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "Schema/Hero/Hero.l10n.schema.json",
+  "$ref": "#/definitions/Hero",
+  "definitions": {
+    "Hero": {
+      "title": "RawHeroBase",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "A date in milliseconds with the \"H_\" prefix.",
+          "type": "string",
+          "pattern": "^H_[1-9]\\d*$"
+        },
+        "name": {
+          "description": "The name of the hero.",
+          "type": "string",
+          "minLength": 1
+        },
+        "clientVersion": {
+          "description": "The client version the hero was created with.",
+          "type": "string",
+          "minLength": 1,
+          "pattern": "(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-(\\w+)\\.(0|[1-9]\\d*))?"
+        },
+        "dateCreated": {
+          "description": "The date of creation.",
+          "type": "string",
+          "minLength": 1,
+          "format": "date-time"
+        },
+        "dateModified": {
+          "description": "The date of last modification.",
+          "type": "string",
+          "minLength": 1,
+          "format": "date-time"
+        },
+        "locale": {
+          "description": "The locale the hero was created with.",
+          "type": "string",
+          "pattern": "^[a-z]\\-[A-Z]$"
+        },
+        "avatar": {
+          "description": "A path to an image or a base64-encoded image.",
+          "type": "string",
+          "minLength": 1
+        },
+        "ap": {
+          "description": "A path to an image or a base64-encoded image.",
+          "type": "object",
+          "properties": {
+            "total": {
+              "description": "The amount of total AP.",
+              "type": "number",
+              "minimum": 1
+            }
+          },
+          "required": ["total"]
+        },
+        "r": {
+          "description": "The selected race's ID.",
+          "type": "string",
+          "pattern": "^R_[1-9]\\d*$"
+        },
+        "rv": {
+          "description": "The selected race variant's ID.",
+          "type": "string",
+          "pattern": "^RV_[1-9]\\d*$"
+        },
+        "c": {
+          "description": "The selected culture's ID.",
+          "type": "string",
+          "pattern": "^C_[1-9]\\d*$"
+        },
+        "isCulturalPackageActive": {
+          "description": "Has the cultural package been activated?",
+          "type": "boolean"
+        },
+        "p": {
+          "description": "The selected profession's ID.",
+          "type": "string",
+          "pattern": "^P_[1-9]\\d*$"
+        },
+        "professionName": {
+          "description": "The changed profession name for a Custom Profession.",
+          "type": "string",
+          "minLength": 1
+        },
+        "pv": {
+          "description": "The selected profession variant's ID.",
+          "type": "string",
+          "pattern": "^PV_[1-9]\\d*$"
+        },
+        "sex": {
+          "description": "The selected sex.",
+          "type": "string",
+          "enum": ["m", "f"]
+        },
+        "rules": {
+          "description": "The rules defined for this hero.",
+          "type": "object",
+          "properties": {
+            "higherParadeValues": {
+              "description": "Optional Rule Higher Parade Values. `0` means inactive.",
+              "type": "number",
+              "enum": [0, 2, 4]
+            },
+            "attributeValueLimit": {
+              "description": "Optional Rule Attribute Value Limit.",
+              "type": "boolean"
+            },
+            "enableAllRuleBooks": {
+              "description": "If all rule books except those with adult content are enabled.",
+              "type": "boolean"
+            },
+            "enabledRuleBooks": {
+              "description": "Explicitly enabled rule books.",
+              "type": "array",
+              "items": {
+                "description": "A book ID.",
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "enableLanguageSpecializations": {
+              "description": "Optional Rule Language Specializations",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "higherParadeValues",
+            "attributeValueLimit",
+            "enableLanguageSpecializations"
+          ]
+        },
+        "phase": {
+          "description": "The creation phase. `1` is RCP selection, `2` standard hero creation and `3` after hero creation.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "el": {
+          "description": "The selected experience level's ID.",
+          "type": "string",
+          "pattern": "^EL_[1-9]\\d*$"
+        },
+        "pers": {
+          "description": "Personal Data",
+          "type": "object",
+          "properties": {
+            "family": { "type": "string", "minLength": 1 },
+            "placeofbirth": { "type": "string", "minLength": 1 },
+            "dateofbirth": { "type": "string", "minLength": 1 },
+            "age": { "type": "string", "minLength": 1 },
+            "haircolor": { "type": "string", "minLength": 1 },
+            "eyecolor": { "type": "string", "minLength": 1 },
+            "size": { "type": "string", "minLength": 1 },
+            "weight": { "type": "string", "minLength": 1 },
+            "title": { "type": "string", "minLength": 1 },
+            "socialstatus": { "type": "number", "minimum": 1, "maximum": 5 },
+            "characteristics": { "type": "string", "minLength": 1 },
+            "otherinfo": { "type": "string", "minLength": 1 },
+            "cultureAreaKnowledge": { "type": "string", "minLength": 1 }
+          }
+        },
+        "activatable": {
+          "description": "A dictionary of active advantages, disadvantages and special abilities, where the key is the ID of the entry and the value are the options.",
+          "type": "object",
+          "patternProperties": {
+            "^(ADV|DISADV|SA)_[1-9]\\d*$": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sid": {
+                    "oneOf": [
+                      { "type": "string", "minLength": 1, "pattern": "^[A-Z]+_[1-9]\\d*$" },
+                      { "type": "integer", "minimum": 1 }
+                    ]
+                  },
+                  "sid2": {
+                    "oneOf": [
+                      { "type": "string", "minLength": 1, "pattern": "^[A-Z]+_[1-9]\\d*$" },
+                      { "type": "integer", "minimum": 1 }
+                    ]
+                  },
+                  "sid3": {
+                    "oneOf": [
+                      { "type": "string", "minLength": 1, "pattern": "^[A-Z]+_[1-9]\\d*$" },
+                      { "type": "integer", "minimum": 1 }
+                    ]
+                  },
+                  "tier": { "type": "integer", "minimum": 1 },
+                  "cost": { "type": "integer", "minimum": 0 }
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "attr": {
+          "description": "Attributes and energy settings. Either the older version with attribute values as tuples or the newer version with objects as attribute values and a separate value for the selected attribute with adjustment.",
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "values": {
+                  "description": "An array of attribute tuples. The first elememt is the ID, the second the value and the third the attribute adjustment.",
+                  "type": "array",
+                  "items": [
+                    {
+                      "description": "The attribute's ID.",
+                      "type": "string",
+                      "pattern": "^ATTR_[1-9]\\d*$"
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 8
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                },
+                "lp": { "type": "integer", "minimum": 0 },
+                "ae": { "type": "integer", "minimum": 0 },
+                "kp": { "type": "integer", "minimum": 0 },
+                "permanentLP": {
+                  "type": "object",
+                  "properties": {
+                    "lost": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "permanentAE": {
+                  "type": "object",
+                  "properties": {
+                    "lost": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "redeemed": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "permanentKP": {
+                  "type": "object",
+                  "properties": {
+                    "lost": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "redeemed": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "values",
+                "lp",
+                "ae",
+                "kp",
+                "permanentAE",
+                "permanentKP"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "values": {
+                  "description": "The list of attributes and their values.",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "The attribute's ID.",
+                      "type": "string",
+                      "pattern": "^ATTR_[1-9]\\d*$"
+                    },
+                    "value": {
+                      "type": "integer",
+                      "minimum": 8
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "attributeAdjustmentSelected": {
+                  "type": "string",
+                  "pattern": "^ATTR_[1-9]\\d*$"
+                },
+                "lp": { "type": "integer", "minimum": 0 },
+                "ae": { "type": "integer", "minimum": 0 },
+                "kp": { "type": "integer", "minimum": 0 },
+                "permanentLP": {
+                  "type": "object",
+                  "properties": {
+                    "lost": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "permanentAE": {
+                  "type": "object",
+                  "properties": {
+                    "lost": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "redeemed": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "permanentKP": {
+                  "type": "object",
+                  "properties": {
+                    "lost": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "redeemed": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "values",
+                "attributeAdjustmentSelected",
+                "lp",
+                "ae",
+                "kp",
+                "permanentAE",
+                "permanentKP"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "talents": {
+          "description": "A dictionary of active skills, where the key is the ID of the skill and the value is the SR.",
+          "type": "object",
+          "patternProperties": {
+            "^TAL_[1-9]\\d*$": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "ct": {
+          "description": "A dictionary of active combat techniques, where the key is the ID of the combat technique and the value is the CtR.",
+          "type": "object",
+          "patternProperties": {
+            "^CT_[1-9]\\d*$": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "spells": {
+          "description": "A dictionary of active spells, where the key is the ID of the spell and the value is the SR. A spell listed here is always activated, all others are inactive.",
+          "type": "object",
+          "patternProperties": {
+            "^CT_[1-9]\\d*$": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "cantrips": {
+          "description": "Activated cantrips by ID.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^CANTRIP_[1-9]\\d*$"
+          }
+        },
+        "liturgies": {
+          "description": "A dictionary of active liturgical chants, where the key is the ID of the liturgical chant and the value is the SR. A liturgical chant listed here is always activated, all others are inactive.",
+          "type": "object",
+          "patternProperties": {
+            "^LITURGY_[1-9]\\d*$": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "blessings": {
+          "description": "Activated blessings by ID.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^BLESSING_[1-9]\\d*$"
+          }
+        },
+        "belongings": {
+          "description": "The belongings of the hero.",
+          "type": "object",
+          "properties": {
+            "items": {
+              "description": "A dictionary of items, where the key is the ID of the item and the value are the item's values.",
+              "type": "object",
+              "patternProperties": {
+                "^ITEM_[1-9]\\d*$": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^ITEM_[1-9]\\d*$"
+                    },
+                    "price": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "weight": {
+                      "type": "number",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "items"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "clientVersion",
+        "dateCreated",
+        "dateModified",
+        "ap",
+        "sex",
+        "rules",
+        "phase",
+        "el",
+        "pers",
+        "activatable",
+        "attr",
+        "talents",
+        "ct",
+        "spells",
+        "cantrips",
+        "liturgies",
+        "blessings"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

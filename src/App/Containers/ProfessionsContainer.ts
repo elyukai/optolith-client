@@ -1,20 +1,20 @@
-import { connect } from "react-redux";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as ProfessionActions from "../Actions/ProfessionActions";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getFilteredProfessions } from "../Selectors/rcpSelectors";
-import { getCurrentProfessionId, getCurrentProfessionVariantId, getProfessionsFilterText, getSex, getWiki } from "../Selectors/stateSelectors";
-import { getProfessionsGroupVisibilityFilter, getProfessionsSortOrder, getProfessionsVisibilityFilter } from "../Selectors/uisettingsSelectors";
-import { ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter } from "../Utilities/Raw/JSON/Config";
-import { Professions, ProfessionsDispatchProps, ProfessionsOwnProps, ProfessionsStateProps } from "../Views/Professions/Professions";
+import { connect } from "react-redux"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as ProfessionActions from "../Actions/ProfessionActions"
+import { AppStateRecord } from "../Models/AppState"
+import { ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter } from "../Models/Config"
+import { getFilteredProfessions } from "../Selectors/professionSelectors"
+import { getCurrentSex, getProfessionId, getProfessionsFilterText, getProfessionVariantId, getWiki } from "../Selectors/stateSelectors"
+import { getProfessionsGroupVisibilityFilter, getProfessionsSortOrder, getProfessionsVisibilityFilter } from "../Selectors/uisettingsSelectors"
+import { Professions, ProfessionsDispatchProps, ProfessionsOwnProps, ProfessionsStateProps } from "../Views/Professions/Professions"
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: ProfessionsOwnProps): ProfessionsStateProps => ({
-    currentProfessionId: getCurrentProfessionId (state),
-    currentProfessionVariantId: getCurrentProfessionVariantId (state),
+    currentProfessionId: getProfessionId (state, ownProps),
+    currentProfessionVariantId: getProfessionVariantId (state, ownProps),
     groupVisibilityFilter: getProfessionsGroupVisibilityFilter (state),
     professions: getFilteredProfessions (state, ownProps),
-    sex: getSex (state),
+    sex: getCurrentSex (state),
     sortOrder: getProfessionsSortOrder (state),
     visibilityFilter: getProfessionsVisibilityFilter (state),
     filterText: getProfessionsFilterText (state),
@@ -30,9 +30,6 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): ProfessionsDispatchProps =
   },
   setGroupVisibilityFilter (filter: ProfessionsGroupVisibilityFilter) {
     dispatch (ProfessionActions.setProfessionsGroupVisibilityFilter (filter))
-  },
-  switchExpansionVisibilityFilter () {
-    dispatch (ProfessionActions.switchProfessionsExpansionVisibilityFilter ())
   },
   setFilterText (filterText: string) {
     dispatch (ProfessionActions.setProfessionsFilterText (filterText))

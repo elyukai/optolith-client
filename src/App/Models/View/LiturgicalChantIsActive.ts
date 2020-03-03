@@ -1,6 +1,6 @@
-import { fromDefault, Record } from "../../../Data/Record";
-import { LiturgicalChant } from "../Wiki/LiturgicalChant";
-import { IsActive } from "./viewTypeHelpers";
+import { fromDefault, Record } from "../../../Data/Record"
+import { LiturgicalChant } from "../Wiki/LiturgicalChant"
+import { IsActive } from "./viewTypeHelpers"
 
 export interface LiturgicalChantIsActive extends IsActive {
   "@@name": "LiturgicalChantIsActive"

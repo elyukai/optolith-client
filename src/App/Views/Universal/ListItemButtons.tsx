@@ -1,10 +1,8 @@
-import * as React from "react";
+import * as React from "react"
 
-export interface ListItemButtonsProps {
-  children?: React.ReactNode
-}
+interface Props { }
 
-export function ListItemButtons (props: ListItemButtonsProps) {
+export const ListItemButtons: React.FC<Props> = props => {
   const { children } = props
 
   return (

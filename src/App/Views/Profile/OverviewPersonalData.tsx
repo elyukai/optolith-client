@@ -1,24 +1,25 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { flength, List } from "../../../Data/List";
-import { all, bind, listToMaybe, Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { SocialStatusId } from "../../Constants/Ids";
-import { PersonalData } from "../../Models/Hero/PersonalData";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { renderMaybeWith } from "../../Utilities/ReactUtils";
-import { isEmptyOr, isFloat, isNaturalNumber } from "../../Utilities/RegexUtils";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
-import { IconButton } from "../Universal/IconButton";
-import { InputButtonGroup } from "../Universal/InputButtonGroup";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { flength, List } from "../../../Data/List"
+import { all, bind, listToMaybe, Maybe, maybeToUndefined } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { SocialStatusId } from "../../Constants/Ids"
+import { PersonalData } from "../../Models/Hero/PersonalData"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { renderMaybeWith } from "../../Utilities/ReactUtils"
+import { isEmptyOr, isFloat, isNaturalNumber } from "../../Utilities/RegexUtils"
+import { Dropdown } from "../Universal/Dropdown"
+import { IconButton } from "../Universal/IconButton"
+import { InputButtonGroup } from "../Universal/InputButtonGroup"
+import { TextField } from "../Universal/TextField"
 
 const PDA = PersonalData.A
 const DOA = DropdownOption.A
 
 export interface OverviewPersonalDataOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   profile: Record<PersonalData>
   socialStatuses: List<Record<DropdownOption<SocialStatusId>>>
   sizeCalcStr: Maybe<string>
@@ -55,7 +56,7 @@ const wrapParenSpace = renderMaybeWith<string> (str => ` (${str})`)
 
 export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props => {
   const {
-    l10n,
+    staticData,
     profile,
     socialStatuses,
     sizeCalcStr,
@@ -89,43 +90,43 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
   const is_hcsel_disabled = React.useMemo (
     () => flength (hairColors) === 1
           && equals (hair_color) (bind (listToMaybe (hairColors)) (DOA.id)),
-    [hairColors, hair_color]
+    [ hairColors, hair_color ]
   )
 
   return (
     <div className="personal-data">
       <div>
         <TextField
-          label={translate (l10n) ("family")}
-          value={PDA.family (profile)}
+          label={translate (staticData) ("personaldata.family")}
+          value={maybeToUndefined (PDA.family (profile))}
           onChange={changeFamily}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("placeofbirth")}
-          value={PDA.placeOfBirth (profile)}
+          label={translate (staticData) ("personaldata.placeofbirth")}
+          value={maybeToUndefined (PDA.placeOfBirth (profile))}
           onChange={changePlaceOfBirth}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("dateofbirth")}
-          value={PDA.dateOfBirth (profile)}
+          label={translate (staticData) ("personaldata.dateofbirth")}
+          value={maybeToUndefined (PDA.dateOfBirth (profile))}
           onChange={changeDateOfBirth}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("age")}
-          value={age}
+          label={translate (staticData) ("personaldata.age")}
+          value={maybeToUndefined (age)}
           onChange={changeAge}
           valid={all (isEmptyOr (isNaturalNumber)) (age)}
           />
       </div>
       <InputButtonGroup className="reroll">
         <Dropdown
-          label={translate (l10n) ("haircolor")}
+          label={translate (staticData) ("personaldata.haircolor")}
           value={hair_color}
           onChange={changeHaircolor}
           options={hairColors}
@@ -135,7 +136,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <Dropdown
-          label={translate (l10n) ("eyecolor")}
+          label={translate (staticData) ("personaldata.eyecolor")}
           value={PDA.eyeColor (profile)}
           onChange={changeEyecolor}
           options={eyeColors}
@@ -144,8 +145,8 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
-          label={`${translate (l10n) ("size")}${wrapParenSpace (sizeCalcStr)}`}
-          value={PDA.size (profile)}
+          label={`${translate (staticData) ("personaldata.size")}${wrapParenSpace (sizeCalcStr)}`}
+          value={maybeToUndefined (PDA.size (profile))}
           onChange={changeSize}
           valid={all (isEmptyOr (isFloat)) (size)}
           />
@@ -153,8 +154,10 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
-          label={`${translate (l10n) ("weight")}${wrapParenSpace (weightCalcStr)}`}
-          value={PDA.weight (profile)}
+          label={
+            `${translate (staticData) ("personaldata.weight")}${wrapParenSpace (weightCalcStr)}`
+          }
+          value={maybeToUndefined (PDA.weight (profile))}
           onChange={changeWeight}
           valid={all (isEmptyOr (isNaturalNumber)) (weight)}
           />
@@ -162,14 +165,14 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </InputButtonGroup>
       <div>
         <TextField
-          label={translate (l10n) ("title")}
-          value={PDA.title (profile)}
+          label={translate (staticData) ("personaldata.title")}
+          value={maybeToUndefined (PDA.title (profile))}
           onChange={changeTitle}
           />
       </div>
       <div>
         <Dropdown
-          label={translate (l10n) ("socialstatus")}
+          label={translate (staticData) ("personaldata.socialstatus")}
           value={PDA.socialStatus (profile)}
           onChange={changeSocialStatus}
           options={socialStatuses}
@@ -177,22 +180,22 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("characteristics")}
-          value={PDA.characteristics (profile)}
+          label={translate (staticData) ("personaldata.characteristics")}
+          value={maybeToUndefined (PDA.characteristics (profile))}
           onChange={changeCharacteristics}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("otherinfo")}
-          value={PDA.otherInfo (profile)}
+          label={translate (staticData) ("personaldata.otherinfo")}
+          value={maybeToUndefined (PDA.otherInfo (profile))}
           onChange={changeOtherInfo}
           />
       </div>
       <div>
         <TextField
-          label={translate (l10n) ("cultureareaknowledge")}
-          value={PDA.cultureAreaKnowledge (profile)}
+          label={translate (staticData) ("personaldata.cultureareaknowledge")}
+          value={maybeToUndefined (PDA.cultureAreaKnowledge (profile))}
           onChange={changeCultureAreaKnowledge}
           />
       </div>

@@ -1,42 +1,46 @@
-import * as React from "react";
-import { fmap } from "../../../Data/Functor";
-import { intercalate } from "../../../Data/List";
-import { mapMaybe, Maybe, maybeRNullF } from "../../../Data/Maybe";
-import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { Attribute } from "../../Models/Wiki/Attribute";
-import { Book } from "../../Models/Wiki/Book";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { getICName } from "../../Utilities/AdventurePoints/improvementCostUtils";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { Markdown } from "../Universal/Markdown";
-import { WikiSource } from "./Elements/WikiSource";
-import { WikiBoxTemplate } from "./WikiBoxTemplate";
-import { WikiProperty } from "./WikiProperty";
+import * as React from "react"
+import { fmap } from "../../../Data/Functor"
+import { intercalate } from "../../../Data/List"
+import { mapMaybe, Maybe, maybeRNullF } from "../../../Data/Maybe"
+import { lookupF } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { Sex } from "../../Models/Hero/heroTypeHelpers"
+import { Attribute } from "../../Models/Wiki/Attribute"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { Markdown } from "../Universal/Markdown"
+import { WikiImprovementCost } from "./Elements/WikiImprovementCost"
+import { WikiSource } from "./Elements/WikiSource"
+import { WikiBoxTemplate } from "./WikiBoxTemplate"
+import { WikiProperty } from "./WikiProperty"
 
 export interface WikiCombatTechniqueInfoProps {
-  attributes: OrderedMap<string, Record<Attribute>>
-  books: OrderedMap<string, Record<Book>>
+  staticData: StaticDataRecord
   x: Record<CombatTechnique>
-  l10n: L10nRecord
   sex: Maybe<Sex>
 }
 
+const SDA = StaticData.A
 const CTA = CombatTechnique.A
 
-export function WikiCombatTechniqueInfo (props: WikiCombatTechniqueInfoProps) {
-  const { attributes, x, l10n, books } = props
+export const WikiCombatTechniqueInfo: React.FC<WikiCombatTechniqueInfoProps> = props => {
+  const { x, staticData } = props
+
+  const attributes = SDA.attributes (staticData)
 
   return (
     <WikiBoxTemplate className="combattechnique" title={CTA.name (x)}>
       {maybeRNullF (CTA.special (x))
                    (str => (
-                     <Markdown source={`**${translate (l10n) ("special")}:** ${str}`} />
+                     <Markdown
+                       source={
+                         `**${translate (staticData) ("inlinewiki.special")}:** ${str}`
+                       }
+                       />
                    ))}
-      <WikiProperty l10n={l10n} title="primaryattribute">
+      <WikiProperty staticData={staticData} title="inlinewiki.primaryattribute">
         {pipe_ (
           x,
           CTA.primary,
@@ -44,11 +48,10 @@ export function WikiCombatTechniqueInfo (props: WikiCombatTechniqueInfoProps) {
           intercalate ("/")
         )}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="improvementcost">{getICName (CTA.ic (x))}</WikiProperty>
+      <WikiImprovementCost x={x} staticData={staticData} acc={CTA} />
       <WikiSource
-        books={books}
         x={x}
-        l10n={l10n}
+        staticData={staticData}
         acc={CTA}
         />
     </WikiBoxTemplate>

@@ -1,30 +1,31 @@
-import * as React from "react";
-import { List, map, notNull, toArray } from "../../../Data/List";
-import { ensure, Just, Maybe, maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { CulturesSortOptions, CulturesVisibilityFilter } from "../../Utilities/Raw/JSON/Config";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
-import { ListView } from "../Universal/List";
-import { ListHeader } from "../Universal/ListHeader";
-import { ListHeaderTag } from "../Universal/ListHeaderTag";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { SearchField } from "../Universal/SearchField";
-import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { CulturesListItem } from "./CulturesListItem";
+import * as React from "react"
+import { List, map, notNull, toArray } from "../../../Data/List"
+import { ensure, Just, Maybe, maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { CulturesSortOptions, CulturesVisibilityFilter } from "../../Models/Config"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { Dropdown } from "../Universal/Dropdown"
+import { ListView } from "../Universal/List"
+import { ListHeader } from "../Universal/ListHeader"
+import { ListHeaderTag } from "../Universal/ListHeaderTag"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { SearchField } from "../Universal/SearchField"
+import { SortNames, SortOptions } from "../Universal/SortOptions"
+import { CulturesListItem } from "./CulturesListItem"
 
 export interface CulturesOwnProps {
   hero: HeroModelRecord
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 export interface CulturesStateProps {
@@ -46,10 +47,10 @@ export interface CulturesDispatchProps {
 
 export type CulturesProps = CulturesStateProps & CulturesDispatchProps & CulturesOwnProps
 
-export function Cultures (props: CulturesProps) {
+export const Cultures: React.FC<CulturesProps> = props => {
   const {
     cultures: mcultures,
-    l10n,
+    staticData,
     setSortOrder,
     setVisibilityFilter,
     sortOrder,
@@ -65,7 +66,7 @@ export function Cultures (props: CulturesProps) {
     <Page id="cultures">
       <Options>
         <SearchField
-          l10n={l10n}
+          staticData={staticData}
           value={filterText}
           onChange={setFilterText}
           fullWidth
@@ -75,12 +76,12 @@ export function Cultures (props: CulturesProps) {
           onChangeJust={setVisibilityFilter}
           options={List (
             DropdownOption ({
-              id: Just ("all"),
-              name: translate (l10n) ("allcultures"),
+              id: Just (CulturesVisibilityFilter.All),
+              name: translate (staticData) ("culture.filters.common.allcultures"),
             }),
             DropdownOption ({
-              id: Just ("common"),
-              name: translate (l10n) ("commoncultures"),
+              id: Just (CulturesVisibilityFilter.Common),
+              name: translate (staticData) ("culture.filters.common.commoncultures"),
             })
           )}
           fullWidth
@@ -89,13 +90,13 @@ export function Cultures (props: CulturesProps) {
           sortOrder={sortOrder}
           sort={setSortOrder}
           options={List (SortNames.Name, SortNames.Cost)}
-          l10n={l10n}
+          staticData={staticData}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (staticData) ("culture.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />
@@ -106,7 +107,7 @@ export function Cultures (props: CulturesProps) {
               mcultures,
               ensure (notNull),
               maybe<NonNullable<React.ReactNode>>
-                (<ListPlaceholder l10n={l10n} type="cultures" noResults />)
+                (<ListPlaceholder staticData={staticData} type="cultures" noResults />)
                 (pipe (
                   map (culture => (
                     <CulturesListItem
@@ -123,7 +124,7 @@ export function Cultures (props: CulturesProps) {
           </ListView>
         </Scroll>
       </MainContent>
-      <WikiInfoContainer currentId={currentId} l10n={l10n} />
+      <WikiInfoContainer currentId={currentId} />
     </Page>
   )
 }

@@ -1,9 +1,9 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { guardReplace, Maybe, orN } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { guardReplace, Maybe, orN } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
 
-export interface ListItemProps {
+interface Props {
   active?: boolean
   children?: React.ReactNode
   className?: string
@@ -16,7 +16,7 @@ export interface ListItemProps {
   onClick? (): void
 }
 
-export function ListItem (props: ListItemProps) {
+export const ListItem: React.FC<Props> = props => {
   const {
     active,
     children,
@@ -27,12 +27,11 @@ export function ListItem (props: ListItemProps) {
     noIncrease,
     recommended,
     unrecommended,
-    ...other
+    onClick,
   } = props
 
   return (
     <li
-      {...other}
       className={
         classListMaybe (List (
           Maybe (className),
@@ -45,8 +44,9 @@ export function ListItem (props: ListItemProps) {
           guardReplace (orN (disabled)) ("disabled")
         ))
       }
+      onClick={onClick}
       >
-      {orN (insertTopMargin) ? <div className="separator"></div> : null}
+      {orN (insertTopMargin) ? <div className="separator" /> : null}
       {children}
     </li>
   )

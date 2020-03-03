@@ -1,10 +1,11 @@
-import * as React from "react";
-import { List, map } from "../../../Data/List";
-import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { sortRecordsByName } from "../../Utilities/sortBy";
-import { Option, RadioButtonGroup } from "./RadioButtonGroup";
+import * as React from "react"
+import { List, map } from "../../../Data/List"
+import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe"
+import { RadioOption } from "../../Models/View/RadioOption"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { sortRecordsByName } from "../../Utilities/sortBy"
+import { RadioButtonGroup } from "./RadioButtonGroup"
 
 export enum SortNames {
   Name = "name",
@@ -18,26 +19,26 @@ export enum SortNames {
   Weight = "weight",
 }
 
-export interface SortOptionsProps<A extends SortNames> {
-  l10n: L10nRecord
+interface Props<A extends SortNames> {
+  staticData: StaticDataRecord
   options: List<A>
   sortOrder: A
   sort (option: A): void
 }
 
-export function SortOptions <A extends SortNames> (props: SortOptionsProps<A>) {
-  const { l10n, options, sort, sortOrder } = props
+export const SortOptions = <A extends SortNames> (props: Props<A>): React.ReactElement => {
+  const { staticData, options, sort, sortOrder } = props
 
   const SORT_NAMES = {
-    [SortNames.Name]: translate (l10n) ("sortalphabetically"),
-    [SortNames.DateModified]: translate (l10n) ("sortbydatemodified"),
-    [SortNames.Group]: translate (l10n) ("sortbygroup"),
-    [SortNames.GroupName]: translate (l10n) ("sortbygroup"),
-    [SortNames.Where]: translate (l10n) ("sortbylocation"),
-    [SortNames.Cost]: translate (l10n) ("sortbycost"),
-    [SortNames.IC]: translate (l10n) ("sortbyimprovementcost"),
-    [SortNames.Property]: translate (l10n) ("sortbyproperty"),
-    [SortNames.Weight]: translate (l10n) ("sortbyweight"),
+    [SortNames.Name]: translate (staticData) ("general.filters.sort.alphabetically"),
+    [SortNames.DateModified]: translate (staticData) ("general.filters.sort.bydatemodified"),
+    [SortNames.Group]: translate (staticData) ("general.filters.sort.bygroup"),
+    [SortNames.GroupName]: translate (staticData) ("general.filters.sort.bygroup"),
+    [SortNames.Where]: translate (staticData) ("general.filters.sort.bylocation"),
+    [SortNames.Cost]: translate (staticData) ("general.filters.sort.bycost"),
+    [SortNames.IC]: translate (staticData) ("general.filters.sort.byimprovementcost"),
+    [SortNames.Property]: translate (staticData) ("general.filters.sort.byproperty"),
+    [SortNames.Weight]: translate (staticData) ("general.filters.sort.byweight"),
   }
 
   const handleClick =
@@ -47,7 +48,7 @@ export function SortOptions <A extends SortNames> (props: SortOptionsProps<A>) {
           sort (fromJust (option))
         }
       },
-      [sort]
+      [ sort ]
     )
 
   return (
@@ -55,8 +56,8 @@ export function SortOptions <A extends SortNames> (props: SortOptionsProps<A>) {
       active={sortOrder}
       onClick={handleClick}
       array={
-        sortRecordsByName (l10n)
-                          (map ((e: A) => Option ({ name: SORT_NAMES [e], value: Just (e) }))
+        sortRecordsByName (staticData)
+                          (map ((e: A) => RadioOption ({ name: SORT_NAMES [e], value: Just (e) }))
                                (options))
       }
       />

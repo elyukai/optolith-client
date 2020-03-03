@@ -1,18 +1,18 @@
-import { fmap } from "../../Data/Functor";
-import { and, Maybe } from "../../Data/Maybe";
-import { inc, lt } from "../../Data/Num";
-import { foldlWithKey, lookupF, OrderedMap } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { IdPrefixes } from "../Constants/IdPrefixes";
-import { ExperienceLevelId } from "../Constants/Ids";
-import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
-import { getNumericId, prefixId } from "./IDUtils";
-import { pipe } from "./pipe";
-import { WikiModelRecord, WikiModel } from "../Models/Wiki/WikiModel";
-import { HeroModel } from "../Models/Hero/HeroModel";
+import { fmap } from "../../Data/Functor"
+import { and, Maybe } from "../../Data/Maybe"
+import { inc, lt } from "../../Data/Num"
+import { foldlWithKey, lookupF, OrderedMap } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { IdPrefixes } from "../Constants/IdPrefixes"
+import { ExperienceLevelId } from "../Constants/Ids"
+import { HeroModel } from "../Models/Hero/HeroModel"
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
+import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
+import { getNumericId, prefixId } from "./IDUtils"
+import { pipe } from "./pipe"
 
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const HA = HeroModel.A
 const ELA = ExperienceLevel.A
 
@@ -62,6 +62,6 @@ export const getHigherExperienceLevelId =
  *
  * Returns the experience level selected before or during hero creation.
  */
-export const getExperienceLevelAtStart: (wiki: WikiModelRecord) =>
+export const getExperienceLevelAtStart: (wiki: StaticDataRecord) =>
                                         (r: Record<HeroModel>) => Maybe<Record<ExperienceLevel>> =
-  wiki => pipe (HA.experienceLevel, lookupF (WA.experienceLevels (wiki)))
+  wiki => pipe (HA.experienceLevel, lookupF (SDA.experienceLevels (wiki)))

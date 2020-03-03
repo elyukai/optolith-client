@@ -1,27 +1,28 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { fmap } from "../../../Data/Functor";
-import { consF, List, map, subscript } from "../../../Data/List";
-import { ensure, Just, mapMaybe, Maybe } from "../../../Data/Maybe";
-import { elems, OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { EditItem } from "../../Models/Hero/EditItem";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils";
-import { getLossLevelElements } from "../../Utilities/ItemUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
-import { Hr } from "../Universal/Hr";
-import { Label } from "../Universal/Label";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { equals } from "../../../Data/Eq"
+import { fmap } from "../../../Data/Functor"
+import { consF, List, map, subscript } from "../../../Data/List"
+import { ensure, Just, mapMaybe, Maybe, maybeToUndefined } from "../../../Data/Maybe"
+import { elems, OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { EditItem } from "../../Models/Hero/EditItem"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils"
+import { getLossLevelElements } from "../../Utilities/ItemUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { Dropdown } from "../Universal/Dropdown"
+import { Hr } from "../Universal/Hr"
+import { Label } from "../Universal/Label"
+import { TextField } from "../Universal/TextField"
 
 export interface ItemEditorRangedSectionProps {
   combatTechniques: OrderedMap<string, Record<CombatTechnique>>
   item: Record<EditItem>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   templates: List<Record<ItemTemplate>>
   inputValidation: Record<ItemEditorInputValidation>
   setCombatTechnique (id: string): void
@@ -42,12 +43,28 @@ const CTA = CombatTechnique.A
 const IEIVA = ItemEditorInputValidation.A
 
 export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
-  const { combatTechniques, inputValidation, item, l10n, templates } = props
+  const {
+    combatTechniques,
+    item,
+    staticData,
+    templates,
+    inputValidation,
+    setCombatTechnique,
+    setDamageDiceNumber,
+    setDamageDiceSides,
+    setDamageFlat,
+    setLength,
+    setRange,
+    setReloadTime,
+    setAmmunition,
+    setStabilityModifier,
+    setLoss,
+  } = props
 
   const dice =
     map ((id: number) => DropdownOption ({
                                            id: Just (id),
-                                           name: `${translate (l10n) ("dice.short")}${id}`,
+                                           name: `${translate (staticData) ("general.dice")}${id}`,
                                         }))
         (List (2, 3, 6))
 
@@ -62,10 +79,10 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
         ensure (pipe (ITA.gr, equals (3))),
         fmap (x => DropdownOption ({ id: Just (ITA.id (x)), name: ITA.name (x) }))
       )),
-      consF (DropdownOption ({ name: translate (l10n) ("none") }))
+      consF (DropdownOption ({ name: translate (staticData) ("general.none") }))
     )
 
-  return (gr === 2 || Maybe.elem (2) (EIA.improvisedWeaponGroup (item)))
+  return (gr === 2 || (Maybe.elem (2) (EIA.improvisedWeaponGroup (item)) && gr > 4))
     ? (
       <>
         <Hr className="vertical" />
@@ -73,8 +90,8 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
           <div className="row">
             <Dropdown
               className="combattechnique"
-              label={translate (l10n) ("combattechnique")}
-              hint={translate (l10n) ("none")}
+              label={translate (staticData) ("equipment.dialogs.addedit.combattechnique")}
+              hint={translate (staticData) ("general.none")}
               value={combatTechnique}
               options={pipe_ (
                 combatTechniques,
@@ -84,107 +101,120 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                   fmap (x => DropdownOption ({ id: Just (CTA.id (x)), name: CTA.name (x) }))
                 ))
               )}
-              onChangeJust={props.setCombatTechnique}
+              onChangeJust={setCombatTechnique}
               disabled={locked}
               required
               />
             <TextField
               className="reloadtime"
-              label={translate (l10n) ("reloadtime")}
+              label={translate (staticData) ("equipment.dialogs.addedit.reloadtime")}
               value={EIA.reloadTime (item)}
-              onChange={props.setReloadTime}
+              onChange={setReloadTime}
               disabled={locked}
+              everyKeyDown
               />
           </div>
           <div className="row">
             <div className="container">
-              <Label text={translate (l10n) ("damage")} disabled={locked} />
+              <Label
+                text={translate (staticData) ("equipment.dialogs.addedit.damage")}
+                disabled={locked}
+                />
               <TextField
                 className="damage-dice-number"
                 value={EIA.damageDiceNumber (item)}
-                onChange={props.setDamageDiceNumber}
+                onChange={setDamageDiceNumber}
                 disabled={locked}
                 valid={IEIVA.damageDiceNumber (inputValidation)}
+                everyKeyDown
                 />
               <Dropdown
                 className="damage-dice-sides"
-                hint={translate (l10n) ("dice.short")}
+                hint={translate (staticData) ("general.dice")}
                 value={EIA.damageDiceSides (item)}
                 options={dice}
-                onChangeJust={props.setDamageDiceSides}
+                onChangeJust={setDamageDiceSides}
                 disabled={locked}
                 />
               <TextField
                 className="damage-flat"
                 value={EIA.damageFlat (item)}
-                onChange={props.setDamageFlat}
+                onChange={setDamageFlat}
                 disabled={locked}
                 valid={IEIVA.damageFlat (inputValidation)}
+                everyKeyDown
                 />
             </div>
             <TextField
               className="stabilitymod"
-              label={translate (l10n) ("breakingpointratingmodifier.short")}
+              label={
+                translate (staticData) ("equipment.dialogs.addedit.breakingpointratingmodifier")
+              }
               value={EIA.stabilityMod (item)}
-              onChange={props.setStabilityModifier}
+              onChange={setStabilityModifier}
               disabled={locked}
               valid={IEIVA.stabilityMod (inputValidation)}
+              everyKeyDown
               />
             <Dropdown
               className="weapon-loss"
-              label={translate (l10n) ("damaged.short")}
+              label={translate (staticData) ("equipment.dialogs.addedit.damaged")}
               value={EIA.loss (item)}
               options={getLossLevelElements ()}
-              onChange={props.setLoss}
+              onChange={setLoss}
               />
           </div>
           <div className="row">
             <div className="container">
               <TextField
                 className="range1"
-                label={translate (l10n) ("rangeclose")}
-                value={subscript (EIA.range (item)) (0)}
-                onChange={props.setRange (1)}
+                label={translate (staticData) ("equipment.dialogs.addedit.rangeclose")}
+                value={maybeToUndefined (subscript (EIA.range (item)) (0))}
+                onChange={setRange (1)}
                 disabled={locked}
                 valid={IEIVA.range1 (inputValidation)}
+                everyKeyDown
                 />
               <TextField
                 className="range2"
-                label={translate (l10n) ("rangemedium")}
-                value={subscript (EIA.range (item)) (1)}
-                onChange={props.setRange (2)}
+                label={translate (staticData) ("equipment.dialogs.addedit.rangemedium")}
+                value={maybeToUndefined (subscript (EIA.range (item)) (1))}
+                onChange={setRange (2)}
                 disabled={locked}
                 valid={IEIVA.range2 (inputValidation)}
+                everyKeyDown
                 />
               <TextField
                 className="range3"
-                label={translate (l10n) ("rangefar")}
-                value={subscript (EIA.range (item)) (2)}
-                onChange={props.setRange (3)}
+                label={translate (staticData) ("equipment.dialogs.addedit.rangefar")}
+                value={maybeToUndefined (subscript (EIA.range (item)) (2))}
+                onChange={setRange (3)}
                 disabled={locked}
                 valid={IEIVA.range3 (inputValidation)}
+                everyKeyDown
                 />
             </div>
             <Dropdown
               className="ammunition"
-              label={translate (l10n) ("ammunition")}
-              hint={translate (l10n) ("none")}
+              label={translate (staticData) ("equipment.dialogs.addedit.ammunition")}
+              hint={translate (staticData) ("general.none")}
               value={EIA.ammunition (item)}
               options={AMMUNITION}
-              onChangeJust={props.setAmmunition}
+              onChangeJust={setAmmunition}
               disabled={locked}
               />
             <TextField
               className="length"
-              label={translate (l10n) ("length")}
+              label={translate (staticData) ("equipment.dialogs.addedit.lengthwithunit")}
               value={EIA.length (item)}
-              onChange={props.setLength}
+              onChange={setLength}
               disabled={locked}
               valid={IEIVA.length (inputValidation)}
+              everyKeyDown
               />
           </div>
         </div>
-    </>
-  )
-  : null
+      </>
+    )
+    : null
 }

@@ -1,30 +1,30 @@
-import * as React from "react";
-import { List, map, notNull, toArray } from "../../../Data/List";
-import { ensure, Maybe, maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { Aside } from "../Universal/Aside";
-import { ListView } from "../Universal/List";
-import { ListHeader } from "../Universal/ListHeader";
-import { ListHeaderTag } from "../Universal/ListHeaderTag";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { SearchField } from "../Universal/SearchField";
-import { SortNames, SortOptions } from "../Universal/SortOptions";
-import { RacesListItem } from "./RacesListItem";
-import { RaceVariants } from "./RaceVariants";
+import * as React from "react"
+import { List, map, notNull, toArray } from "../../../Data/List"
+import { ensure, Maybe, maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { Aside } from "../Universal/Aside"
+import { ListView } from "../Universal/List"
+import { ListHeader } from "../Universal/ListHeader"
+import { ListHeaderTag } from "../Universal/ListHeaderTag"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { SearchField } from "../Universal/SearchField"
+import { SortNames, SortOptions } from "../Universal/SortOptions"
+import { RacesListItem } from "./RacesListItem"
+import { RaceVariants } from "./RaceVariants"
 
 export interface RacesOwnProps {
   hero: HeroModelRecord
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
 export interface RacesStateProps {
@@ -43,12 +43,12 @@ export interface RacesDispatchProps {
 
 export type RacesProps = RacesStateProps & RacesDispatchProps & RacesOwnProps
 
-export function Races (props: RacesProps) {
+export const Races: React.FC<RacesProps> = props => {
   const {
     currentId,
     currentVariantId,
     filterText,
-    l10n,
+    staticData,
     races,
     sortOrder,
     setFilterText,
@@ -59,7 +59,7 @@ export function Races (props: RacesProps) {
     <Page id="races">
       <Options>
         <SearchField
-          l10n={l10n}
+          staticData={staticData}
           value={filterText}
           onChange={setFilterText}
           fullWidth
@@ -68,16 +68,19 @@ export function Races (props: RacesProps) {
           sortOrder={sortOrder}
           sort={setSortOrder}
           options={List (SortNames.Name, SortNames.Cost)}
-          l10n={l10n}
+          staticData={staticData}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
+            {translate (staticData) ("race.header.name")}
           </ListHeaderTag>
-          <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
-            {translate (l10n) ("adventurepoints.short")}
+          <ListHeaderTag
+            className="cost"
+            hint={translate (staticData) ("race.header.adventurepoints.tooltip")}
+            >
+            {translate (staticData) ("race.header.adventurepoints")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder has-border" />
@@ -89,7 +92,7 @@ export function Races (props: RacesProps) {
               ensure (notNull),
               maybe<React.ReactNode> (
                                        <ListPlaceholder
-                                         l10n={l10n}
+                                         staticData={staticData}
                                          type="races"
                                          noResults={filterText.length > 0}
                                          />
@@ -100,7 +103,6 @@ export function Races (props: RacesProps) {
                                            key={RaceCombinedA_.id (race)}
                                            race={race}
                                            currentId={currentId}
-                                           l10n={l10n}
                                            />
                                        )),
                                        toArray
@@ -113,12 +115,11 @@ export function Races (props: RacesProps) {
         <RaceVariants
           currentId={currentId}
           currentVariantId={currentVariantId}
-          l10n={l10n}
+          staticData={staticData}
           races={races}
           />
         <WikiInfoContainer
           currentId={currentId}
-          l10n={l10n}
           noWrapper
           />
       </Aside>

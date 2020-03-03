@@ -1,27 +1,25 @@
-import { not } from "../../Data/Bool";
-import { cnst, ident } from "../../Data/Function";
-import { over, set } from "../../Data/Lens";
-import { fromJust, fromMaybe, isJust, Maybe, Nothing } from "../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../Data/Record";
-import { SetCombatTechniquesSortOrderAction } from "../Actions/CombatTechniquesActions";
-import { SetThemeAction, SwitchEnableActiveItemHintsAction, SwitchEnableAnimationsAction, SwitchEnableEditingHeroAfterCreationPhaseAction } from "../Actions/ConfigActions";
-import { SetCulturesSortOrderAction, SetCulturesVisibilityFilterAction } from "../Actions/CultureActions";
-import { SwitchDisAdvRatingVisibilityAction } from "../Actions/DisAdvActions";
-import { SetItemsSortOrderAction, SetMeleeItemTemplatesCombatTechniqueFilterAction, SetRangedItemTemplatesCombatTechniqueFilterAction } from "../Actions/EquipmentActions";
-import { SetHerolistSortOrderAction, SetHerolistVisibilityFilterAction } from "../Actions/HerolistActions";
-import { ReceiveInitialDataAction } from "../Actions/IOActions";
-import { SetLiturgicalChantsSortOrderAction } from "../Actions/LiturgicalChantActions";
-import { SetProfessionsGroupVisibilityFilterAction, SetProfessionsSortOrderAction, SetProfessionsVisibilityFilterAction } from "../Actions/ProfessionActions";
-import { SetRacesSortOrderAction } from "../Actions/RaceActions";
-import { SwitchSheetAttributeValueVisibilityAction } from "../Actions/SheetActions";
-import { SetSkillsSortOrderAction, SwitchSkillRatingVisibilityAction } from "../Actions/SkillActions";
-import { SetSpecialAbilitiesSortOrderAction } from "../Actions/SpecialAbilitiesActions";
-import { SetSpellsSortOrderAction } from "../Actions/SpellsActions";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { EquipmentGroup } from "../Constants/Groups";
-import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids";
-import { ChantsSortOptions, CombatTechniquesSortOptions, Config, CulturesSortOptions, CulturesVisibilityFilter, EquipmentSortOptions, HeroListSortOptions, HeroListVisibilityFilter, ProfessionsGroupVisibilityFilter, ProfessionsSortOptions, ProfessionsVisibilityFilter, RacesSortOptions, SkillsSortOptions, SpecialAbilitiesSortOptions, SpellsSortOptions, Theme } from "../Utilities/Raw/JSON/Config";
-import { SortNames } from "../Views/Universal/SortOptions";
+import { not } from "../../Data/Bool"
+import { cnst, ident } from "../../Data/Function"
+import { over, set } from "../../Data/Lens"
+import { fromJust, fromMaybe, isJust } from "../../Data/Maybe"
+import { Record } from "../../Data/Record"
+import { SetCombatTechniquesSortOrderAction } from "../Actions/CombatTechniquesActions"
+import { SetThemeAction, SwitchEnableActiveItemHintsAction, SwitchEnableAnimationsAction, SwitchEnableEditingHeroAfterCreationPhaseAction } from "../Actions/ConfigActions"
+import { SetCulturesSortOrderAction, SetCulturesVisibilityFilterAction } from "../Actions/CultureActions"
+import { SwitchDisAdvRatingVisibilityAction } from "../Actions/DisAdvActions"
+import { SetItemsSortOrderAction, SetMeleeItemTemplatesCombatTechniqueFilterAction, SetRangedItemTemplatesCombatTechniqueFilterAction } from "../Actions/EquipmentActions"
+import { SetHerolistSortOrderAction, SetHerolistVisibilityFilterAction } from "../Actions/HerolistActions"
+import { ReceiveInitialDataAction } from "../Actions/IOActions"
+import { SetLiturgicalChantsSortOrderAction } from "../Actions/LiturgicalChantActions"
+import { SetProfessionsGroupVisibilityFilterAction, SetProfessionsSortOrderAction, SetProfessionsVisibilityFilterAction } from "../Actions/ProfessionActions"
+import { SetRacesSortOrderAction } from "../Actions/RaceActions"
+import { SwitchSheetAttributeValueVisibilityAction } from "../Actions/SheetActions"
+import { SetSkillsSortOrderAction, SwitchSkillRatingVisibilityAction } from "../Actions/SkillActions"
+import { SetSpecialAbilitiesSortOrderAction } from "../Actions/SpecialAbilitiesActions"
+import { SetSpellsSortOrderAction } from "../Actions/SpellsActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { Config, Theme } from "../Models/Config"
+import { UISettingsState, UISettingsStateL } from "../Models/UISettingsState"
 
 type Action = ReceiveInitialDataAction
             | SetCombatTechniquesSortOrderAction
@@ -48,101 +46,40 @@ type Action = ReceiveInitialDataAction
             | SetRangedItemTemplatesCombatTechniqueFilterAction
             | SwitchEnableAnimationsAction
 
-export interface UISettingsState {
-  "@@name": "UISettingsState"
-  herolistSortOrder: HeroListSortOptions
-  herolistVisibilityFilter: HeroListVisibilityFilter
-  racesSortOrder: RacesSortOptions
-  culturesSortOrder: CulturesSortOptions
-  culturesVisibilityFilter: CulturesVisibilityFilter
-  professionsSortOrder: ProfessionsSortOptions
-  professionsVisibilityFilter: ProfessionsVisibilityFilter
-  professionsGroupVisibilityFilter: ProfessionsGroupVisibilityFilter
-  advantagesDisadvantagesCultureRatingVisibility: boolean
-  talentsSortOrder: SkillsSortOptions
-  talentsCultureRatingVisibility: boolean
-  combatTechniquesSortOrder: CombatTechniquesSortOptions
-  specialAbilitiesSortOrder: SpecialAbilitiesSortOptions
-  spellsSortOrder: SpellsSortOptions
-  spellsUnfamiliarVisibility: boolean
-  liturgiesSortOrder: ChantsSortOptions
-  equipmentSortOrder: EquipmentSortOptions
-  equipmentGroupVisibilityFilter: EquipmentGroup
-  enableActiveItemHints: boolean
-  sheetCheckAttributeValueVisibility: boolean
-  theme: Theme
-  enableEditingHeroAfterCreationPhase: boolean
-  meleeItemTemplatesCombatTechniqueFilter: Maybe<MeleeCombatTechniqueId>
-  rangedItemTemplatesCombatTechniqueFilter: Maybe<RangedCombatTechniqueId>
-  enableAnimations: boolean
-}
-
-export const UISettingsState =
-  fromDefault ("UISettingsState")
-              <UISettingsState> ({
-                herolistSortOrder: SortNames.Name,
-                herolistVisibilityFilter: HeroListVisibilityFilter.All,
-                racesSortOrder: SortNames.Name,
-                culturesSortOrder: SortNames.Name,
-                culturesVisibilityFilter: CulturesVisibilityFilter.Common,
-                professionsSortOrder: SortNames.Name,
-                professionsVisibilityFilter: ProfessionsVisibilityFilter.Common,
-                professionsGroupVisibilityFilter: ProfessionsGroupVisibilityFilter.All,
-                advantagesDisadvantagesCultureRatingVisibility: false,
-                talentsSortOrder: SortNames.Group,
-                talentsCultureRatingVisibility: false,
-                combatTechniquesSortOrder: SortNames.Name,
-                specialAbilitiesSortOrder: SortNames.GroupName,
-                spellsSortOrder: SortNames.Name,
-                spellsUnfamiliarVisibility: false,
-                liturgiesSortOrder: SortNames.Name,
-                equipmentSortOrder: SortNames.Name,
-                equipmentGroupVisibilityFilter: EquipmentGroup.MeleeWeapons,
-                enableActiveItemHints: false,
-                sheetCheckAttributeValueVisibility: false,
-                theme: Theme.Dark,
-                enableEditingHeroAfterCreationPhase: false,
-                enableAnimations: true,
-                meleeItemTemplatesCombatTechniqueFilter: Nothing,
-                rangedItemTemplatesCombatTechniqueFilter: Nothing,
-              })
-
-const L = makeLenses (UISettingsState)
-
 const CA = Config.A
 
 const sortOrderReducer =
   (action: Action): ident<Record<UISettingsState>> => {
     switch (action.type) {
       case ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER:
-        return set (L.combatTechniquesSortOrder) (action.payload.sortOrder)
+        return set (UISettingsStateL.combatTechniquesSortOrder) (action.payload.sortOrder)
 
       case ActionTypes.SET_CULTURES_SORT_ORDER:
-        return set (L.culturesSortOrder) (action.payload.sortOrder)
+        return set (UISettingsStateL.culturesSortOrder) (action.payload.sortOrder)
 
       case ActionTypes.SET_ITEMS_SORT_ORDER:
-        return set (L.equipmentSortOrder) (action.payload.sortOrder)
+        return set (UISettingsStateL.equipmentSortOrder) (action.payload.sortOrder)
 
       case ActionTypes.SET_HEROLIST_SORT_ORDER:
-        return set (L.herolistSortOrder) (action.payload.sortOrder)
+        return set (UISettingsStateL.herolistSortOrder) (action.payload.sortOrder)
 
       case ActionTypes.SET_LITURGIES_SORT_ORDER:
-        return set (L.liturgiesSortOrder) (action.payload.sortOrder)
+        return set (UISettingsStateL.liturgiesSortOrder) (action.payload.sortOrder)
 
       case ActionTypes.SET_PROFESSIONS_SORT_ORDER:
-        return set (L.professionsSortOrder) (action.payload.sortOrder)
+        return set (UISettingsStateL.professionsSortOrder) (action.payload.sortOrder)
 
       case ActionTypes.SET_RACES_SORT_ORDER:
-        return set (L.racesSortOrder) (action.payload.sortOrder)
+        return set (UISettingsStateL.racesSortOrder) (action.payload.sortOrder)
 
       case ActionTypes.SET_SPECIALABILITIES_SORT_ORDER:
-        return set (L.specialAbilitiesSortOrder) (action.payload.sortOrder)
+        return set (UISettingsStateL.specialAbilitiesSortOrder) (action.payload.sortOrder)
 
       case ActionTypes.SET_SPELLS_SORT_ORDER:
-        return set (L.spellsSortOrder) (action.payload.sortOrder)
+        return set (UISettingsStateL.spellsSortOrder) (action.payload.sortOrder)
 
       case ActionTypes.SET_TALENTS_SORT_ORDER:
-        return set (L.talentsSortOrder) (action.payload.sortOrder)
+        return set (UISettingsStateL.talentsSortOrder) (action.payload.sortOrder)
 
       default:
         return ident
@@ -193,8 +130,8 @@ export const uiSettingsReducer =
         return ident
       }
 
-      case ActionTypes.SWITCH_SHEET_ATTRIBUTE_VALUE_VISIBILITY:
-        return over (L.sheetCheckAttributeValueVisibility) (not)
+      case ActionTypes.SWITCH_SHEET_ATTR_VALUE_VISIBILITY:
+        return over (UISettingsStateL.sheetCheckAttributeValueVisibility) (not)
 
       case ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER:
       case ActionTypes.SET_CULTURES_SORT_ORDER:
@@ -209,40 +146,42 @@ export const uiSettingsReducer =
         return sortOrderReducer (action)
 
       case ActionTypes.SWITCH_ENABLE_ACTIVE_ITEM_HINTS:
-        return over (L.enableActiveItemHints) (not)
+        return over (UISettingsStateL.enableActiveItemHints) (not)
 
       case ActionTypes.SET_CULTURES_VISIBILITY_FILTER:
-        return set (L.culturesVisibilityFilter) (action.payload.filter)
+        return set (UISettingsStateL.culturesVisibilityFilter) (action.payload.filter)
 
       case ActionTypes.SWITCH_DISADV_RATING_VISIBILITY:
-        return over (L.advantagesDisadvantagesCultureRatingVisibility) (not)
+        return over (UISettingsStateL.advantagesDisadvantagesCultureRatingVisibility) (not)
 
       case ActionTypes.SET_HEROLIST_VISIBILITY_FILTER:
-        return set (L.herolistVisibilityFilter) (action.payload.filterOption)
+        return set (UISettingsStateL.herolistVisibilityFilter) (action.payload.filterOption)
 
       case ActionTypes.SET_PROFESSIONS_VISIBILITY_FILTER:
-        return set (L.professionsVisibilityFilter) (action.payload.filter)
+        return set (UISettingsStateL.professionsVisibilityFilter) (action.payload.filter)
 
-      case ActionTypes.SET_PROFESSIONS_GROUP_VISIBILITY_FILTER:
-        return set (L.professionsGroupVisibilityFilter) (action.payload.filter)
+      case ActionTypes.SET_PROFESSIONS_GR_VISIBILITY_FILTER:
+        return set (UISettingsStateL.professionsGroupVisibilityFilter) (action.payload.filter)
 
       case ActionTypes.SWITCH_TALENT_RATING_VISIBILITY:
-        return over (L.talentsCultureRatingVisibility) (not)
+        return over (UISettingsStateL.talentsCultureRatingVisibility) (not)
 
       case ActionTypes.SET_THEME:
-        return set (L.theme) (action.payload.theme)
+        return set (UISettingsStateL.theme) (action.payload.theme)
 
-      case ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE:
-        return over (L.enableEditingHeroAfterCreationPhase) (not)
+      case ActionTypes.SWITCH_ENABLE_EDIT_AFTER_CREATION:
+        return over (UISettingsStateL.enableEditingHeroAfterCreationPhase) (not)
 
-      case ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER:
-        return set (L.meleeItemTemplatesCombatTechniqueFilter) (action.payload.filterOption)
+      case ActionTypes.SET_MELEE_ITEM_TEMPLATES_CT_FILTER:
+        return set (UISettingsStateL.meleeItemTemplatesCombatTechniqueFilter)
+                   (action.payload.filterOption)
 
-      case ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER:
-        return set (L.rangedItemTemplatesCombatTechniqueFilter) (action.payload.filterOption)
+      case ActionTypes.SET_RANGED_ITEM_TEMPLATES_CT_FILTER:
+        return set (UISettingsStateL.rangedItemTemplatesCombatTechniqueFilter)
+                   (action.payload.filterOption)
 
       case ActionTypes.SWITCH_ENABLE_ANIMATIONS:
-        return over (L.enableAnimations) (not)
+        return over (UISettingsStateL.enableAnimations) (not)
 
       default:
         return ident

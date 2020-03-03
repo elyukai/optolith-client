@@ -1,59 +1,59 @@
-import * as React from "react";
-import { Maybe, maybe } from "../../../Data/Maybe";
-import { AdvantagesContainer } from "../../Containers/AdvantagesContainer";
-import { AttributesContainer } from "../../Containers/AttributesContainer";
-import { CombatTechniquesContainer } from "../../Containers/CombatTechniquesContainer";
-import { CulturesContainer } from "../../Containers/CulturesContainer";
-import { DisadvantagesContainer } from "../../Containers/DisadvantagesContainer";
-import { EquipmentContainer } from "../../Containers/EquipmentContainer";
-import { HelpContainer } from "../../Containers/HelpContainer";
-import { HerolistContainer } from "../../Containers/HerolistContainer";
-import { HitZoneArmorsContainer } from "../../Containers/HitZoneArmorsContainer";
-import { LiturgicalChantsContainer } from "../../Containers/LiturgicalChantsContainer";
-import { PactContainer } from "../../Containers/PactContainer";
-import { PersonalDataContainer } from "../../Containers/PersonalDataContainer";
-import { PetsContainer } from "../../Containers/PetsContainer";
-import { ProfessionsContainer } from "../../Containers/ProfessionsContainer";
-import { RacesContainer } from "../../Containers/RacesContainer";
-import { RulesContainer } from "../../Containers/RulesContainer";
-import { SheetsContainer } from "../../Containers/SheetsContainer";
-import { SkillsContainer } from "../../Containers/SkillsContainer";
-import { SpecialAbilitiesContainer } from "../../Containers/SpecialAbilitiesContainer";
-import { SpellsContainer } from "../../Containers/SpellsContainer";
-import { WikiContainer } from "../../Containers/WikiContainer";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { TabId } from "../../Utilities/LocationUtils";
-import { Imprint } from "../About/Imprint";
-import { LastChanges } from "../About/LastChanges";
-import { ThirdPartyLicenses } from "../About/ThirdPartyLicenses";
-import { Grouplist } from "../Groups/Grouplist";
-import { MainContent } from "../Universal/MainContent";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
+import * as React from "react"
+import { Maybe, maybe } from "../../../Data/Maybe"
+import { AdvantagesContainer } from "../../Containers/AdvantagesContainer"
+import { AttributesContainer } from "../../Containers/AttributesContainer"
+import { CombatTechniquesContainer } from "../../Containers/CombatTechniquesContainer"
+import { CulturesContainer } from "../../Containers/CulturesContainer"
+import { DisadvantagesContainer } from "../../Containers/DisadvantagesContainer"
+import { EquipmentContainer } from "../../Containers/EquipmentContainer"
+import { HelpContainer } from "../../Containers/HelpContainer"
+import { HerolistContainer } from "../../Containers/HerolistContainer"
+import { HitZoneArmorsContainer } from "../../Containers/HitZoneArmorsContainer"
+import { LiturgicalChantsContainer } from "../../Containers/LiturgicalChantsContainer"
+import { PactContainer } from "../../Containers/PactContainer"
+import { PersonalDataContainer } from "../../Containers/PersonalDataContainer"
+import { PetsContainer } from "../../Containers/PetsContainer"
+import { ProfessionsContainer } from "../../Containers/ProfessionsContainer"
+import { RacesContainer } from "../../Containers/RacesContainer"
+import { RulesContainer } from "../../Containers/RulesContainer"
+import { SheetsContainer } from "../../Containers/SheetsContainer"
+import { SkillsContainer } from "../../Containers/SkillsContainer"
+import { SpecialAbilitiesContainer } from "../../Containers/SpecialAbilitiesContainer"
+import { SpellsContainer } from "../../Containers/SpellsContainer"
+import { WikiContainer } from "../../Containers/WikiContainer"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { TabId } from "../../Utilities/LocationUtils"
+import { Imprint } from "../About/Imprint"
+import { LastChanges } from "../About/LastChanges"
+import { ThirdPartyLicenses } from "../About/ThirdPartyLicenses"
+import { Grouplist } from "../Groups/Grouplist"
+import { MainContent } from "../Universal/MainContent"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
 
-export interface RouterProps {
+interface Props {
   id: TabId
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   mhero: Maybe<HeroModelRecord>
 }
 
-export interface RouterState {
+interface State {
   hasError?: {
-    error: Error;
-    info: any;
+    error: Error
+    info: any
   }
 }
 
-export class Router extends React.Component<RouterProps> {
-  state: RouterState = {}
+export class Router extends React.Component<Props> {
+  state: State = {}
 
   componentDidCatch (error: any, info: any) {
     this.setState (() => ({ hasError: { error, info } }))
   }
 
   render (): React.ReactNode {
-    const { id, l10n, mhero } = this.props
+    const { id, staticData, mhero } = this.props
     const { hasError } = this.state
 
     if (typeof hasError === "object") {
@@ -76,56 +76,92 @@ export class Router extends React.Component<RouterProps> {
         maybe (null as React.ReactNode) (f) (mhero)
 
     const VIEWS: { [K in TabId]: () => React.ReactNode } = {
-      [TabId.Herolist]: () => <HerolistContainer l10n={l10n} />,
+      [TabId.Herolist]: () => <HerolistContainer staticData={staticData} />,
       [TabId.Grouplist]: () => <Grouplist />,
-      [TabId.Wiki]: () => <WikiContainer l10n={l10n} />,
-      [TabId.Faq]: () => <HelpContainer l10n={l10n} />,
-      [TabId.Imprint]: () => <Imprint l10n={l10n} />,
+      [TabId.Wiki]: () => <WikiContainer staticData={staticData} />,
+      [TabId.Faq]: () => <HelpContainer staticData={staticData} />,
+      [TabId.Imprint]: () => <Imprint staticData={staticData} />,
       [TabId.ThirdPartyLicenses]: () => <ThirdPartyLicenses />,
-      [TabId.LastChanges]: () => <LastChanges l10n={l10n} />,
+      [TabId.LastChanges]: () => <LastChanges staticData={staticData} />,
 
       [TabId.Profile]:
-        () => unwrapWithHero (hero => <PersonalDataContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <PersonalDataContainer staticData={staticData} hero={hero} />
+                             )),
       [TabId.PersonalData]:
-        () => unwrapWithHero (hero => <PersonalDataContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <PersonalDataContainer staticData={staticData} hero={hero} />
+                             )),
       [TabId.CharacterSheet]:
-        () => unwrapWithHero (hero => <SheetsContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <SheetsContainer staticData={staticData} hero={hero} />
+                             )),
       [TabId.Pact]:
-        () => unwrapWithHero (hero => <PactContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <PactContainer staticData={staticData} hero={hero} />
+                             )),
       [TabId.Rules]:
-        () => unwrapWithHero (hero => <RulesContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <RulesContainer staticData={staticData} hero={hero} />
+                             )),
 
       [TabId.Races]:
-        () => unwrapWithHero (hero => <RacesContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <RacesContainer staticData={staticData} hero={hero} />
+                             )),
       [TabId.Cultures]:
-        () => unwrapWithHero (hero => <CulturesContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <CulturesContainer staticData={staticData} hero={hero} />
+                             )),
       [TabId.Professions]:
-        () => unwrapWithHero (hero => <ProfessionsContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <ProfessionsContainer staticData={staticData} hero={hero} />
+                             )),
 
       [TabId.Attributes]:
-        () => unwrapWithHero (hero => <AttributesContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <AttributesContainer staticData={staticData} hero={hero} />
+                             )),
 
       [TabId.Advantages]:
-        () => unwrapWithHero (hero => <AdvantagesContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <AdvantagesContainer staticData={staticData} hero={hero} />
+                             )),
       [TabId.Disadvantages]:
-        () => unwrapWithHero (hero => <DisadvantagesContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <DisadvantagesContainer staticData={staticData} hero={hero} />
+                             )),
 
       [TabId.Skills]:
-        () => unwrapWithHero (hero => <SkillsContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <SkillsContainer staticData={staticData} hero={hero} />
+                             )),
       [TabId.CombatTechniques]:
-        () => unwrapWithHero (hero => <CombatTechniquesContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <CombatTechniquesContainer staticData={staticData} hero={hero} />
+                             )),
       [TabId.SpecialAbilities]:
-        () => unwrapWithHero (hero => <SpecialAbilitiesContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <SpecialAbilitiesContainer staticData={staticData} hero={hero} />
+                             )),
       [TabId.Spells]:
-        () => unwrapWithHero (hero => <SpellsContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <SpellsContainer staticData={staticData} hero={hero} />
+                             )),
       [TabId.LiturgicalChants]:
-        () => unwrapWithHero (hero => <LiturgicalChantsContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <LiturgicalChantsContainer staticData={staticData} hero={hero} />
+                             )),
 
       [TabId.Equipment]:
-        () => unwrapWithHero (hero => <EquipmentContainer l10n={l10n} hero={hero} />),
+        () => unwrapWithHero (hero => (
+                               <EquipmentContainer staticData={staticData} hero={hero} />
+                             )),
       [TabId.ZoneArmor]:
-        () => unwrapWithHero (hero => <HitZoneArmorsContainer l10n={l10n} hero={hero} />),
-      [TabId.Pets]: () => <PetsContainer l10n={l10n} />,
+        () => unwrapWithHero (hero => (
+                               <HitZoneArmorsContainer staticData={staticData} hero={hero} />
+                             )),
+      [TabId.Pets]: () => <PetsContainer staticData={staticData} />,
 
       // master: <Master />
     }

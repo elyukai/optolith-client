@@ -1,25 +1,43 @@
-import * as React from "react";
-import { fmap } from "../../../Data/Functor";
-import { fromJust, isJust, isNothing, Maybe } from "../../../Data/Maybe";
-import { lookupF } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { AttrId } from "../../Constants/Ids";
-import { EditPet } from "../../Models/Hero/EditPet";
-import { Attribute } from "../../Models/Wiki/Attribute";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { WikiModel } from "../../Models/Wiki/WikiModel";
-import { translate } from "../../Utilities/I18n";
-import { pipe } from "../../Utilities/pipe";
-import { AvatarChange } from "../Universal/AvatarChange";
-import { AvatarWrapper } from "../Universal/AvatarWrapper";
-import { BorderButton } from "../Universal/BorderButton";
-import { Slidein } from "../Universal/Slidein";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { fmap } from "../../../Data/Functor"
+import { fromJust, isJust, isNothing, Maybe } from "../../../Data/Maybe"
+import { lookup, lookupF } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { AttrId } from "../../Constants/Ids"
+import { EditPet } from "../../Models/Hero/EditPet"
+import { Attribute } from "../../Models/Wiki/Attribute"
+import { DerivedCharacteristic } from "../../Models/Wiki/DerivedCharacteristic"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { pipe } from "../../Utilities/pipe"
+import { renderMaybe } from "../../Utilities/ReactUtils"
+import { DerivedCharacteristicId } from "../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
+import { AvatarChange } from "../Universal/AvatarChange"
+import { AvatarWrapper } from "../Universal/AvatarWrapper"
+import { BorderButton } from "../Universal/BorderButton"
+import { Slidein } from "../Universal/Slidein"
+import { TextField } from "../Universal/TextField"
+
+const SDA = StaticData.A
+const EPA = EditPet.A
+
+const getAttrShort =
+  (attrs: StaticData["attributes"]) =>
+    pipe (lookupF (attrs), fmap (Attribute.A.short), renderMaybe)
+
+const getDCShort =
+  (id: DerivedCharacteristicId) =>
+    pipe (
+      SDA.derivedCharacteristics,
+      lookup (id),
+      fmap (DerivedCharacteristic.A.short),
+      renderMaybe
+    )
 
 export interface PetEditorProps {
-  attributes: WikiModel["attributes"]
+  attributes: StaticData["attributes"]
   petInEditor: Maybe<Record<EditPet>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   isEditPetAvatarOpen: boolean
   isInCreation: Maybe<boolean>
 
@@ -62,204 +80,275 @@ export interface PetEditorProps {
   setNotes (notes: string): void
 }
 
-const EPA = EditPet.A
-
 export function PetEditor (props: PetEditorProps) {
-  const { attributes, petInEditor: mpet_in_editor, l10n, isInCreation } = props
+  const {
+    attributes,
+    petInEditor: mpet_in_editor,
+    staticData,
+    isEditPetAvatarOpen,
+    isInCreation,
+
+    closePetEditor,
+    addPet,
+    savePet,
+    openEditPetAvatar,
+    closeEditPetAvatar,
+
+    setAvatar,
+    deleteAvatar,
+    setName,
+    setSize,
+    setType,
+    setSpentAp,
+    setTotalAp,
+    setCourage,
+    setSagacity,
+    setIntuition,
+    setCharisma,
+    setDexterity,
+    setAgility,
+    setConstitution,
+    setStrength,
+    setLp,
+    setAe,
+    setSpi,
+    setTou,
+    setPro,
+    setIni,
+    setMov,
+    setAttack,
+    setAt,
+    setPa,
+    setDp,
+    setReach,
+    setActions,
+    setSkills,
+    setAbilities,
+    setNotes,
+  } = props
 
   if (isJust (mpet_in_editor)) {
     const pet = fromJust (mpet_in_editor)
 
     return (
-      <Slidein isOpen close={props.closePetEditor}>
+      <Slidein isOpen close={closePetEditor}>
         <div className="pet-edit">
           <div className="left">
-            <AvatarWrapper src={EPA.avatar (pet)} onClick={props.openEditPetAvatar} />
+            <AvatarWrapper src={EPA.avatar (pet)} onClick={openEditPetAvatar} />
             <BorderButton
               className="delete-avatar"
-              label={translate (l10n) ("deleteavatar")}
-              onClick={props .deleteAvatar}
+              label={translate (staticData) ("pets.dialogs.addedit.deleteavatarbtn")}
+              onClick={deleteAvatar}
               disabled={isNothing (EPA.avatar (pet))}
               />
           </div>
           <div className="right">
             <div className="row">
               <TextField
-                label={translate (l10n) ("name")}
+                label={translate (staticData) ("pets.dialogs.addedit.name")}
                 value={EPA.name (pet)}
-                onChange={props.setName}
+                onChange={setName}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("sizecategory")}
+                label={translate (staticData) ("pets.dialogs.addedit.sizecategory")}
                 value={EPA.size (pet)}
-                onChange={props.setSize}
+                onChange={setSize}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("type")}
+                label={translate (staticData) ("pets.dialogs.addedit.type")}
                 value={EPA.type (pet)}
-                onChange={props.setType}
+                onChange={setType}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("apspent.novar")}
+                label={translate (staticData) ("pets.dialogs.addedit.apspent")}
                 value={EPA.spentAp (pet)}
-                onChange={props.setSpentAp}
+                onChange={setSpentAp}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("totalap.novar")}
+                label={translate (staticData) ("pets.dialogs.addedit.totalap")}
                 value={EPA.totalAp (pet)}
-                onChange={props.setTotalAp}
+                onChange={setTotalAp}
+                everyKeyDown
                 />
             </div>
             <div className="row">
               <TextField
                 label={getAttrShort (attributes) (AttrId.Courage)}
                 value={EPA.cou (pet)}
-                onChange={props.setCourage}
+                onChange={setCourage}
+                everyKeyDown
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Sagacity)}
                 value={EPA.sgc (pet)}
-                onChange={props.setSagacity}
+                onChange={setSagacity}
+                everyKeyDown
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Intuition)}
                 value={EPA.int (pet)}
-                onChange={props.setIntuition}
+                onChange={setIntuition}
+                everyKeyDown
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Charisma)}
                 value={EPA.cha (pet)}
-                onChange={props.setCharisma}
+                onChange={setCharisma}
+                everyKeyDown
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Dexterity)}
                 value={EPA.dex (pet)}
-                onChange={props.setDexterity}
+                onChange={setDexterity}
+                everyKeyDown
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Agility)}
                 value={EPA.agi (pet)}
-                onChange={props.setAgility}
+                onChange={setAgility}
+                everyKeyDown
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Constitution)}
                 value={EPA.con (pet)}
-                onChange={props.setConstitution}
+                onChange={setConstitution}
+                everyKeyDown
                 />
               <TextField
                 label={getAttrShort (attributes) (AttrId.Strength)}
                 value={EPA.str (pet)}
-                onChange={props.setStrength}
+                onChange={setStrength}
+                everyKeyDown
                 />
             </div>
             <div className="row">
               <TextField
-                label={translate (l10n) ("lifepoints.short")}
+                label={getDCShort ("LP") (staticData)}
                 value={EPA.lp (pet)}
-                onChange={props.setLp}
+                onChange={setLp}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("arcaneenergy.short")}
+                label={getDCShort ("AE") (staticData)}
                 value={EPA.ae (pet)}
-                onChange={props.setAe}
+                onChange={setAe}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("spirit.short")}
+                label={getDCShort ("SPI") (staticData)}
                 value={EPA.spi (pet)}
-                onChange={props.setSpi}
+                onChange={setSpi}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("toughness.short")}
+                label={getDCShort ("TOU") (staticData)}
                 value={EPA.tou (pet)}
-                onChange={props.setTou}
+                onChange={setTou}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("protection.short")}
+                label={translate (staticData) ("pets.dialogs.addedit.protection")}
                 value={EPA.pro (pet)}
-                onChange={props.setPro}
+                onChange={setPro}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("initiative.short")}
+                label={getDCShort ("INI") (staticData)}
                 value={EPA.ini (pet)}
-                onChange={props.setIni}
+                onChange={setIni}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("movement.short")}
+                label={getDCShort ("MOV") (staticData)}
                 value={EPA.mov (pet)}
-                onChange={props.setMov}
+                onChange={setMov}
+                everyKeyDown
                 />
             </div>
             <div className="row">
               <TextField
-                label={translate (l10n) ("attack")}
+                label={translate (staticData) ("pets.dialogs.addedit.attackname")}
                 value={EPA.attack (pet)}
-                onChange={props.setAttack}
+                onChange={setAttack}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("attack.short")}
+                label={translate (staticData) ("pets.dialogs.addedit.attack")}
                 value={EPA.at (pet)}
-                onChange={props.setAt}
+                onChange={setAt}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("parry.short")}
+                label={translate (staticData) ("pets.dialogs.addedit.parry")}
                 value={EPA.pa (pet)}
-                onChange={props.setPa}
+                onChange={setPa}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("damagepoints.short")}
+                label={translate (staticData) ("pets.dialogs.addedit.damagepoints")}
                 value={EPA.dp (pet)}
-                onChange={props.setDp}
+                onChange={setDp}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("reach")}
+                label={translate (staticData) ("pets.dialogs.addedit.reach")}
                 value={EPA.reach (pet)}
-                onChange={props.setReach}
+                onChange={setReach}
+                everyKeyDown
                 />
             </div>
             <div className="row">
               <TextField
-                label={translate (l10n) ("actions")}
+                label={translate (staticData) ("pets.dialogs.addedit.actions")}
                 value={EPA.actions (pet)}
-                onChange={props.setActions}
+                onChange={setActions}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("skills")}
+                label={translate (staticData) ("pets.dialogs.addedit.skills")}
                 value={EPA.talents (pet)}
-                onChange={props.setSkills}
+                onChange={setSkills}
+                everyKeyDown
                 />
               <TextField
-                label={translate (l10n) ("specialabilities")}
+                label={translate (staticData) ("pets.dialogs.addedit.specialabilities")}
                 value={EPA.skills (pet)}
-                onChange={props.setAbilities}
+                onChange={setAbilities}
+                everyKeyDown
                 />
             </div>
             <div className="row">
               <TextField
-                label={translate (l10n) ("notes")}
+                label={translate (staticData) ("pets.dialogs.addedit.notes")}
                 value={EPA.notes (pet)}
-                onChange={props.setNotes}
+                onChange={setNotes}
+                everyKeyDown
                 />
             </div>
             {Maybe.elem (true) (isInCreation)
               ? (
                 <BorderButton
-                  label={translate (l10n) ("add")}
-                  onClick={props.addPet}
+                  label={translate (staticData) ("pets.dialogs.addedit.addbtn")}
+                  onClick={addPet}
                   />
               )
               : (
                 <BorderButton
-                  label={translate (l10n) ("save")}
-                  onClick={props.savePet}
+                  label={translate (staticData) ("pets.dialogs.addedit.savebtn")}
+                  onClick={savePet}
                   />
               )}
           </div>
         </div>
         <AvatarChange
-          l10n={l10n}
-          setPath={props.setAvatar}
-          close={props.closeEditPetAvatar}
-          isOpen={props.isEditPetAvatarOpen}
+          staticData={staticData}
+          setPath={setAvatar}
+          close={closeEditPetAvatar}
+          isOpen={isEditPetAvatarOpen}
           />
       </Slidein>
     )
@@ -267,7 +356,3 @@ export function PetEditor (props: PetEditorProps) {
 
   return null
 }
-
-const getAttrShort =
-  (attrs: WikiModel["attributes"]) =>
-    pipe (lookupF (attrs), fmap (Attribute.A.short))

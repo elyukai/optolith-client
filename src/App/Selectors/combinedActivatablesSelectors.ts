@@ -1,28 +1,28 @@
-import { fmapF } from "../../Data/Functor";
-import { append, List } from "../../Data/List";
-import { fromMaybe, Maybe } from "../../Data/Maybe";
-import { Accessor, Record, RecordI } from "../../Data/Record";
-import { ActiveActivatable } from "../Models/View/ActiveActivatable";
-import { InactiveActivatable } from "../Models/View/InactiveActivatable";
-import { Advantage } from "../Models/Wiki/Advantage";
-import { Disadvantage } from "../Models/Wiki/Disadvantage";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { Activatable } from "../Models/Wiki/wikiTypeHelpers";
-import { createMapMaybeSelector } from "../Utilities/createMapMaybeSelector";
-import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
-import { FilterAccessor } from "../Utilities/filterBy";
-import { compareLocale } from "../Utilities/I18n";
-import { pipe } from "../Utilities/pipe";
-import { comparingR, SortOptions } from "../Utilities/sortBy";
-import { getAdvantagesForEditMap, getDisadvantagesForEditMap, getSpecialAbilitiesForEditMap } from "./activatableSelectors";
-import { getDeactiveAdvantages, getDeactiveDisadvantages, getDeactiveSpecialAbilities } from "./inactiveActivatablesSelectors";
-import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
-import { getHeroes, getInactiveAdvantagesFilterText, getInactiveDisadvantagesFilterText, getInactiveSpecialAbilitiesFilterText, getLocaleAsProp } from "./stateSelectors";
-import { getEnableActiveItemHints } from "./uisettingsSelectors";
+import { fmapF } from "../../Data/Functor"
+import { append, List } from "../../Data/List"
+import { fromMaybe, Maybe } from "../../Data/Maybe"
+import { Accessor, Record, RecordI } from "../../Data/Record"
+import { ActiveActivatable } from "../Models/View/ActiveActivatable"
+import { InactiveActivatable } from "../Models/View/InactiveActivatable"
+import { Advantage } from "../Models/Wiki/Advantage"
+import { Disadvantage } from "../Models/Wiki/Disadvantage"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { StaticDataRecord } from "../Models/Wiki/WikiModel"
+import { Activatable } from "../Models/Wiki/wikiTypeHelpers"
+import { createMapMaybeSelector } from "../Utilities/createMapMaybeSelector"
+import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
+import { FilterAccessor } from "../Utilities/filterBy"
+import { compareLocale } from "../Utilities/I18n"
+import { pipe } from "../Utilities/pipe"
+import { comparingR, SortOptions } from "../Utilities/sortBy"
+import { getAdvantagesForEditMap, getDisadvantagesForEditMap, getSpecialAbilitiesForEditMap } from "./activatableSelectors"
+import { getDeactiveAdvantages, getDeactiveDisadvantages, getDeactiveSpecialAbilities } from "./inactiveActivatablesSelectors"
+import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors"
+import { getHeroes, getInactiveAdvantagesFilterText, getInactiveDisadvantagesFilterText, getInactiveSpecialAbilitiesFilterText, getWiki } from "./stateSelectors"
+import { getEnableActiveItemHints } from "./uisettingsSelectors"
 
 type getName = <A extends Advantage | Disadvantage | SpecialAbility>
-               (r: Record<{ "wikiEntry": Record<A>; "@@name": string; }>) => string
+               (r: Record<{ "wikiEntry": Record<A>; "@@name": string }>) => string
 const getName: getName = pipe (InactiveActivatable.AL.wikiEntry, Advantage.AL.name) as getName
 
 const getNameInWiki =
@@ -58,22 +58,23 @@ const getFilteredInactives =
                                      (filterText)
                                      (inactive))
 
-const sortByName = (l10n: L10nRecord) => [ comparingR (getName) (compareLocale (l10n)) ]
+const sortByName = (staticData: StaticDataRecord) => [ comparingR (getName)
+                                                                  (compareLocale (staticData)) ]
 
 export const getFilteredInactiveAdvantages =
   createMapMaybeSelector (getHeroes)
                          (getDeactiveAdvantages, getAdvantagesForEditMap)
                          (
                            getInactiveAdvantagesFilterText,
-                           getLocaleAsProp,
+                           getWiki,
                            getEnableActiveItemHints
                          )
                          ()
-                         ((minactive, mactive) => (filterText, l10n, areHintsEnabled) => () =>
+                         ((minactive, mactive) => (filterText, staticData, areHintsEnabled) => () =>
                            getFilteredInactives (minactive)
                                                 (mactive)
                                                 ([ getName ])
-                                                (sortByName (l10n))
+                                                (sortByName (staticData))
                                                 (filterText)
                                                 (areHintsEnabled))
 
@@ -82,15 +83,15 @@ export const getFilteredInactiveDisadvantages =
                          (getDeactiveDisadvantages, getDisadvantagesForEditMap)
                          (
                            getInactiveDisadvantagesFilterText,
-                           getLocaleAsProp,
+                           getWiki,
                            getEnableActiveItemHints
                          )
                          ()
-                         ((minactive, mactive) => (filterText, l10n, areHintsEnabled) => () =>
+                         ((minactive, mactive) => (filterText, staticData, areHintsEnabled) => () =>
                            getFilteredInactives (minactive)
                                                 (mactive)
                                                 ([ getName ])
-                                                (sortByName (l10n))
+                                                (sortByName (staticData))
                                                 (filterText)
                                                 (areHintsEnabled))
 

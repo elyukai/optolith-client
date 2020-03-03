@@ -1,40 +1,40 @@
-import * as React from "react";
-import { fmap } from "../../../Data/Functor";
-import { List } from "../../../Data/List";
-import { any, isNothing, Maybe, maybe, maybeRNull } from "../../../Data/Maybe";
-import { gt, lt } from "../../../Data/Num";
-import { Record } from "../../../Data/Record";
-import { ProfessionId, SocialStatusId } from "../../Constants/Ids";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { PersonalData } from "../../Models/Hero/PersonalData";
-import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { Culture } from "../../Models/Wiki/Culture";
-import { Disadvantage } from "../../Models/Wiki/Disadvantage";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Profession } from "../../Models/Wiki/Profession";
-import { Race } from "../../Models/Wiki/Race";
-import { RaceVariant } from "../../Models/Wiki/RaceVariant";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils";
-import { ActivatableTextList } from "../Activatable/ActivatableTextList";
-import { AvatarChange } from "../Universal/AvatarChange";
-import { AvatarWrapper } from "../Universal/AvatarWrapper";
-import { BorderButton } from "../Universal/BorderButton";
-import { DropdownOption } from "../Universal/Dropdown";
-import { EditText } from "../Universal/EditText";
-import { IconButton } from "../Universal/IconButton";
-import { Page } from "../Universal/Page";
-import { Scroll } from "../Universal/Scroll";
-import { VerticalList } from "../Universal/VerticalList";
-import { OverviewAddAP } from "./OverviewAddAP";
-import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from "./OverviewPersonalData";
+import * as React from "react"
+import { fmap } from "../../../Data/Functor"
+import { List } from "../../../Data/List"
+import { any, isNothing, Maybe, maybe, maybeRNull } from "../../../Data/Maybe"
+import { gt, lt } from "../../../Data/Num"
+import { Record } from "../../../Data/Record"
+import { ProfessionId, SocialStatusId } from "../../Constants/Ids"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Sex } from "../../Models/Hero/heroTypeHelpers"
+import { PersonalData } from "../../Models/Hero/PersonalData"
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { Culture } from "../../Models/Wiki/Culture"
+import { Disadvantage } from "../../Models/Wiki/Disadvantage"
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
+import { Profession } from "../../Models/Wiki/Profession"
+import { Race } from "../../Models/Wiki/Race"
+import { RaceVariant } from "../../Models/Wiki/RaceVariant"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate, translateP } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils"
+import { ActivatableTextList } from "../Activatable/ActivatableTextList"
+import { AvatarChange } from "../Universal/AvatarChange"
+import { AvatarWrapper } from "../Universal/AvatarWrapper"
+import { BorderButton } from "../Universal/BorderButton"
+import { EditText } from "../Universal/EditText"
+import { IconButton } from "../Universal/IconButton"
+import { Page } from "../Universal/Page"
+import { Scroll } from "../Universal/Scroll"
+import { VerticalList } from "../Universal/VerticalList"
+import { OverviewAddAP } from "./OverviewAddAP"
+import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from "./OverviewPersonalData"
 
 export interface PersonalDataOwnProps {
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   hero: HeroModelRecord
 }
 
@@ -51,7 +51,7 @@ export interface PersonalDataStateProps {
   profession: Maybe<Record<Profession>>
   professionName: Maybe<string>
   fullProfessionName: Maybe<string>
-  profile: Maybe<Record<PersonalData>>
+  profile: Record<PersonalData>
   race: Maybe<Record<Race>>
   raceVariant: Maybe<Record<RaceVariant>>
   sex: Maybe<Sex>
@@ -88,296 +88,305 @@ export interface PersonalDataState {
   editProfessionName: boolean
 }
 
-export class PersonalDataView extends React.Component<PersonalDataProps, PersonalDataState> {
-  state = {
-    editName: false,
-    editProfessionName: false,
-  }
+export const PersonalDataView: React.FC<PersonalDataProps> = props => {
+  const {
+    advantages: maybeAdvantages,
+    avatar,
+    apLeft,
+    apTotal,
+    culture,
+    currentEl,
+    disadvantages: maybeDisadvantages,
+    endCharacterCreation,
+    staticData,
+    name,
+    phase,
+    profession,
+    professionName,
+    fullProfessionName,
+    profile,
+    race,
+    raceVariant,
+    sex: maybeSex,
+    socialStatuses,
+    isAddAdventurePointsOpen,
+    isEditCharacterAvatarOpen,
+    openAddAdventurePoints,
+    openEditCharacterAvatar,
+    closeAddAdventurePoints,
+    closeEditCharacterAvatar,
+    setAvatar,
+    deleteAvatar,
+    changeFamily,
+    changePlaceOfBirth,
+    changeDateOfBirth,
+    changeAge,
+    changeHaircolor,
+    changeEyecolor,
+    changeSize,
+    changeWeight,
+    changeTitle,
+    changeSocialStatus,
+    changeCharacteristics,
+    changeOtherInfo,
+    changeCultureAreaKnowledge,
+    rerollHair,
+    rerollEyes,
+    rerollSize,
+    rerollWeight,
+    sizeCalcStr,
+    weightCalcStr,
+    isRemovingEnabled,
+    addAdventurePoints,
+    hairColors,
+    eyeColors,
+    setHeroName,
+    setCustomProfessionName,
+  } = props
 
-  changeName = (name: string) => {
-    const { setHeroName } = this.props
-    setHeroName (name)
-    this.setState ({ editName: false })
-  }
+  const [ isEditingName, setIsEditingName ] = React.useState (false)
+  const [ isEditingProfessionName, setIsEditingProfessionName ] = React.useState (false)
 
-  changeProfessionName = (name: string) => {
-    const { setCustomProfessionName } = this.props
-    setCustomProfessionName (name)
-    this.setState ({ editProfessionName: false })
-  }
+  const handleEditName = React.useCallback (
+    (new_name: string) => {
+      setHeroName (new_name)
+      setIsEditingName (false)
+    },
+    [ setHeroName ]
+  )
 
-  handleNameUpdate = () => this.setState ({ editName: true })
+  const handleEditProfessionName = React.useCallback (
+    (new_name: string) => {
+      setCustomProfessionName (new_name)
+      setIsEditingProfessionName (false)
+    },
+    [ setCustomProfessionName ]
+  )
 
-  editNameCancel = () => this.setState ({ editName: false })
+  const handleStartEditName = React.useCallback (
+    () => setIsEditingName (true),
+    [ setIsEditingName ]
+  )
 
-  handleProfessionNameUpdate = () => this.setState ({ editProfessionName: true })
+  const handleCancelEditName = React.useCallback (
+    () => setIsEditingName (false),
+    [ setIsEditingName ]
+  )
 
-  editProfessionNameCancel = () => this.setState ({ editProfessionName: false })
+  const handleStartEditProfessionName = React.useCallback (
+    () => setIsEditingProfessionName (true),
+    [ setIsEditingProfessionName ]
+  )
 
-  render () {
-    const {
-      advantages: maybeAdvantages,
-      avatar,
-      apLeft,
-      apTotal,
-      culture,
-      currentEl,
-      disadvantages: maybeDisadvantages,
-      endCharacterCreation,
-      l10n,
-      name,
-      phase,
+  const handleCancelEditProfessionName = React.useCallback (
+    () => setIsEditingProfessionName (false),
+    [ setIsEditingProfessionName ]
+  )
+
+  const isOwnProfession =
+    pipe_ (
       profession,
-      professionName,
-      fullProfessionName,
-      profile: maybeProfile,
-      race,
-      raceVariant,
-      sex: maybeSex,
-      socialStatuses,
-      isAddAdventurePointsOpen,
-      isEditCharacterAvatarOpen,
-      openAddAdventurePoints,
-      openEditCharacterAvatar,
-      closeAddAdventurePoints,
-      closeEditCharacterAvatar,
-      setAvatar,
-      deleteAvatar,
-      changeFamily,
-      changePlaceOfBirth,
-      changeDateOfBirth,
-      changeAge,
-      changeHaircolor,
-      changeEyecolor,
-      changeSize,
-      changeWeight,
-      changeTitle,
-      changeSocialStatus,
-      changeCharacteristics,
-      changeOtherInfo,
-      changeCultureAreaKnowledge,
-      rerollHair,
-      rerollEyes,
-      rerollSize,
-      rerollWeight,
-      sizeCalcStr,
-      weightCalcStr,
-      isRemovingEnabled,
-      addAdventurePoints,
-      hairColors,
-      eyeColors,
-    } = this.props
-
-    const {
-      editName,
-      editProfessionName,
-    } = this.state
-
-    const isOwnProfession =
-      pipe_ (
-        profession,
-        fmap (Profession.A.id),
-        Maybe.elem<string> (ProfessionId.CustomProfession)
-      )
-
-    const isProfessionUndefined = isNothing (profession)
-
-    const nameElement = editName ? (
-      <EditText
-        className="change-name"
-        cancel={this.editNameCancel}
-        submit={this.changeName}
-        text={renderMaybe (name)}
-        autoFocus
-        />
-    ) : (
-      <h1 className="confirm-edit">
-        {renderMaybe (name)}
-        <IconButton icon="&#xE90c;" onClick={this.handleNameUpdate} />
-      </h1>
+      fmap (Profession.A.id),
+      Maybe.elem<string> (ProfessionId.CustomProfession)
     )
 
-    const professionNameElement =
-      any (gt (1)) (phase) && isOwnProfession
-        ? (editProfessionName
-          ? (
-            <EditText
-              cancel={this.editProfessionNameCancel}
-              submit={this.changeProfessionName}
-              text={renderMaybe (professionName)}
-              />
-          )
-          : (
-            <BorderButton
-              className="edit-profession-name-btn"
-              label={translate (l10n) ("editprofessionname")}
-              onClick={this.handleProfessionNameUpdate}
-              />
-          ))
-        : null
+  const isProfessionUndefined = isNothing (profession)
 
-    return maybe (<></>)
-                 ((profile: Record<PersonalData>) => (
-                   <Page id="personal-data">
-                     <Scroll className="text">
-                       <div className="title-wrapper">
-                         <AvatarWrapper src={avatar} onClick={openEditCharacterAvatar} />
-                         <div className="text-wrapper">
-                           {nameElement}
-                           {
-                             isProfessionUndefined
-                             ? null
-                             : (
-                               <VerticalList className="rcp">
-                                 {
-                                   maybe (<></>)
-                                         ((sex: Sex) => (
-                                             <span>
-                                               {translate (l10n)
-                                                          (sex === "m" ? "male" : "female")}
-                                             </span>
-                                           ))
-                                         (maybeSex)
-                                 }
-                                 <span className="race">
-                                   {renderMaybeWith (Race.A.name) (race)}
-                                   {renderMaybeWith (pipe (
-                                                      RaceVariant.A.name,
-                                                      str => ` (${str})`
-                                                    ))
-                                                    (raceVariant)}
-                                 </span>
-                                 <span className="culture">
-                                   {renderMaybeWith (Culture.A.name) (culture)}
-                                 </span>
-                                 <span className="profession">
-                                   {renderMaybe (fullProfessionName)}
-                                 </span>
-                               </VerticalList>
-                             )
-                           }
-                           <VerticalList className="el">
-                             <span>
-                               {renderMaybeWith (ExperienceLevel.A.name) (currentEl)}
-                             </span>
-                             <span>
-                               {Maybe.sum (apTotal)}
-                               {" "}
-                               {translate (l10n) ("adventurepoints.short")}
-                             </span>
-                           </VerticalList>
-                         </div>
-                       </div>
-                       <div className="main-profile-actions">
-                         {
-                           Maybe.elem (3) (phase)
-                             ? (
-                                 <BorderButton
-                                   className="add-ap"
-                                   label={translate (l10n) ("addadventurepoints")}
-                                   onClick={openAddAdventurePoints}
-                                   />
-                               )
-                             : null
-                         }
-                         <BorderButton
-                           className="delete-avatar"
-                           label={translate (l10n) ("deleteavatar")}
-                           onClick={deleteAvatar}
-                           disabled={isNothing (avatar)}
-                           />
-                         {professionNameElement}
-                       </div>
-                       {
-                         isProfessionUndefined
-                         ? null
-                         : (
-                           <>
-                             <h3>{translate (l10n) ("personaldata")}</h3>
-                             <OverviewPersonalData
-                               profile={profile}
-                               socialStatuses={socialStatuses}
-                               sizeCalcStr={sizeCalcStr}
-                               weightCalcStr={weightCalcStr}
-                               l10n={l10n}
-                               changeFamily={changeFamily}
-                               changePlaceOfBirth={changePlaceOfBirth}
-                               changeDateOfBirth={changeDateOfBirth}
-                               changeAge={changeAge}
-                               changeHaircolor={changeHaircolor}
-                               changeEyecolor={changeEyecolor}
-                               changeSize={changeSize}
-                               changeWeight={changeWeight}
-                               changeTitle={changeTitle}
-                               changeSocialStatus={changeSocialStatus}
-                               changeCharacteristics={changeCharacteristics}
-                               changeOtherInfo={changeOtherInfo}
-                               changeCultureAreaKnowledge={changeCultureAreaKnowledge}
-                               rerollHair={rerollHair}
-                               rerollEyes={rerollEyes}
-                               rerollSize={rerollSize}
-                               rerollWeight={rerollWeight}
-                               hairColors={hairColors}
-                               eyeColors={eyeColors}
-                               />
-                           </>
-                         )
-                       }
-                       {
-                         Maybe.elem (2) (phase)
-                           ? (
-                             <div>
-                               <BorderButton
-                                 className="end-char-creation"
-                                 label={translate (l10n) ("endherocreation")}
-                                 onClick={endCharacterCreation}
-                                 primary
-                                 disabled={any (lt (0)) (apLeft) || any (gt (10)) (apLeft)}
-                                 />
-                             </div>
-                           )
-                           : null
-                       }
-                       {
-                         Maybe.elem (3) (phase)
-                           ? (
-                             <div>
-                               <h3>{translate (l10n) ("advantages")}</h3>
-                               {maybeRNull ((advantages: List<Record<ActiveActivatable>>) => (
-                                               <ActivatableTextList
-                                                 list={advantages}
-                                                 l10n={l10n}
-                                                 />
-                                             ))
-                                           (maybeAdvantages)}
-                               <h3>{translate (l10n) ("disadvantages")}</h3>
-                               {maybeRNull ((disadvantages: List<Record<ActiveActivatable>>) => (
-                                               <ActivatableTextList
-                                                 list={disadvantages}
-                                                 l10n={l10n}
-                                                 />
-                                             ))
-                                           (maybeDisadvantages)}
-                             </div>
-                           )
-                         : null
-                       }
-                     </Scroll>
-                     <OverviewAddAP
-                       close={closeAddAdventurePoints}
-                       isOpen={isAddAdventurePointsOpen}
-                       isRemovingEnabled={isRemovingEnabled}
-                       addAdventurePoints={addAdventurePoints}
-                       l10n={l10n}
-                       />
-                     <AvatarChange
-                       setPath={setAvatar}
-                       close={closeEditCharacterAvatar}
-                       isOpen={isEditCharacterAvatarOpen}
-                       l10n={l10n}
-                       />
-                   </Page>
-                 ))
-                 (maybeProfile)
-  }
+  const nameElement = isEditingName ? (
+    <EditText
+      className="change-name"
+      cancel={handleCancelEditName}
+      submit={handleEditName}
+      text={renderMaybe (name)}
+      autoFocus
+      />
+  ) : (
+    <h1 className="confirm-edit">
+      {renderMaybe (name)}
+      <IconButton icon="&#xE90c;" onClick={handleStartEditName} />
+    </h1>
+  )
+
+  const professionNameElement =
+    any (gt (1)) (phase) && isOwnProfession
+      ? (isEditingProfessionName
+        ? (
+          <EditText
+            cancel={handleCancelEditProfessionName}
+            submit={handleEditProfessionName}
+            text={renderMaybe (professionName)}
+            />
+        )
+        : (
+          <BorderButton
+            className="edit-profession-name-btn"
+            label={translate (staticData) ("profile.editprofessionnamebtn")}
+            onClick={handleStartEditProfessionName}
+            />
+        ))
+      : null
+
+  return (
+    <Page id="personal-data">
+      <Scroll className="text">
+        <div className="title-wrapper">
+          <AvatarWrapper src={avatar} onClick={openEditCharacterAvatar} />
+          <div className="text-wrapper">
+            {nameElement}
+            {
+              isProfessionUndefined
+              ? null
+              : (
+                <VerticalList className="rcp">
+                  {
+                    maybe (<></>)
+                          ((sex: Sex) => (
+                              <span>
+                                {translate (staticData)
+                                           (sex === "m"
+                                             ? "personaldata.sex.male"
+                                             : "personaldata.sex.female")}
+                              </span>
+                            ))
+                          (maybeSex)
+                  }
+                  <span className="race">
+                    {renderMaybeWith (Race.A.name) (race)}
+                    {renderMaybeWith (pipe (
+                                       RaceVariant.A.name,
+                                       str => ` (${str})`
+                                     ))
+                                     (raceVariant)}
+                  </span>
+                  <span className="culture">
+                    {renderMaybeWith (Culture.A.name) (culture)}
+                  </span>
+                  <span className="profession">
+                    {renderMaybe (fullProfessionName)}
+                  </span>
+                </VerticalList>
+              )
+            }
+            <VerticalList className="el">
+              <span>
+                {renderMaybeWith (ExperienceLevel.A.name) (currentEl)}
+              </span>
+              <span>
+                {translateP (staticData)
+                            ("general.apvalue.short")
+                            (List (Maybe.sum (apTotal)))}
+              </span>
+            </VerticalList>
+          </div>
+        </div>
+        <div className="main-profile-actions">
+          {
+            Maybe.elem (3) (phase)
+              ? (
+                  <BorderButton
+                    className="add-ap"
+                    label={translate (staticData) ("profile.addadventurepointsbtn")}
+                    onClick={openAddAdventurePoints}
+                    />
+                )
+              : null
+          }
+          <BorderButton
+            className="delete-avatar"
+            label={translate (staticData) ("profile.deleteavatarbtn")}
+            onClick={deleteAvatar}
+            disabled={isNothing (avatar)}
+            />
+          {professionNameElement}
+        </div>
+        {
+          isProfessionUndefined
+          ? null
+          : (
+            <>
+              <h3>{translate (staticData) ("personaldata.title")}</h3>
+              <OverviewPersonalData
+                profile={profile}
+                socialStatuses={socialStatuses}
+                sizeCalcStr={sizeCalcStr}
+                weightCalcStr={weightCalcStr}
+                staticData={staticData}
+                changeFamily={changeFamily}
+                changePlaceOfBirth={changePlaceOfBirth}
+                changeDateOfBirth={changeDateOfBirth}
+                changeAge={changeAge}
+                changeHaircolor={changeHaircolor}
+                changeEyecolor={changeEyecolor}
+                changeSize={changeSize}
+                changeWeight={changeWeight}
+                changeTitle={changeTitle}
+                changeSocialStatus={changeSocialStatus}
+                changeCharacteristics={changeCharacteristics}
+                changeOtherInfo={changeOtherInfo}
+                changeCultureAreaKnowledge={changeCultureAreaKnowledge}
+                rerollHair={rerollHair}
+                rerollEyes={rerollEyes}
+                rerollSize={rerollSize}
+                rerollWeight={rerollWeight}
+                hairColors={hairColors}
+                eyeColors={eyeColors}
+                />
+            </>
+          )
+        }
+        {
+          Maybe.elem (2) (phase)
+            ? (
+              <div>
+                <BorderButton
+                  className="end-char-creation"
+                  label={translate (staticData) ("profile.endherocreationbtn")}
+                  onClick={endCharacterCreation}
+                  primary
+                  disabled={any (lt (0)) (apLeft) || any (gt (10)) (apLeft)}
+                  />
+              </div>
+            )
+            : null
+        }
+        {
+          Maybe.elem (3) (phase)
+            ? (
+              <div>
+                <h3>{translate (staticData) ("profile.advantages")}</h3>
+                {maybeRNull ((advantages: List<Record<ActiveActivatable>>) => (
+                                <ActivatableTextList
+                                  list={advantages}
+                                  staticData={staticData}
+                                  />
+                              ))
+                            (maybeAdvantages)}
+                <h3>{translate (staticData) ("profile.disadvantages")}</h3>
+                {maybeRNull ((disadvantages: List<Record<ActiveActivatable>>) => (
+                                <ActivatableTextList
+                                  list={disadvantages}
+                                  staticData={staticData}
+                                  />
+                              ))
+                            (maybeDisadvantages)}
+              </div>
+            )
+          : null
+        }
+      </Scroll>
+      <OverviewAddAP
+        close={closeAddAdventurePoints}
+        isOpen={isAddAdventurePointsOpen}
+        isRemovingEnabled={isRemovingEnabled}
+        addAdventurePoints={addAdventurePoints}
+        staticData={staticData}
+        />
+      <AvatarChange
+        setPath={setAvatar}
+        close={closeEditCharacterAvatar}
+        isOpen={isEditCharacterAvatarOpen}
+        staticData={staticData}
+        />
+    </Page>
+  )
 }

@@ -1,28 +1,25 @@
-import * as React from "react";
-import { equals } from "../../../Data/Eq";
-import { List, map, notNullStrUndef, toArray } from "../../../Data/List";
-import { fromJust, fromMaybe, isJust, Maybe, normalize, or, orN } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { pipe_ } from "../../Utilities/pipe";
-import { Button } from "./Button";
-import { Label } from "./Label";
-import { Option, OptionValue } from "./RadioButtonGroup";
-import { Text } from "./Text";
+import * as React from "react"
+import { List, map, notNullStrUndef, toArray } from "../../../Data/List"
+import { fromMaybe, Maybe, normalize } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { RadioOption, RadioOptionValue } from "../../Models/View/RadioOption"
+import { pipe_ } from "../../Utilities/pipe"
+import { Label } from "./Label"
+import { SegmentedControlsItem } from "./SegmentedControlsItem"
 
-export { Option };
+const ROA = RadioOption.A
 
-const OA = Option.A
-
-export interface SegmentedControlsProps<T extends OptionValue> {
-  active: T | Maybe<T>
+interface Props<A extends RadioOptionValue> {
+  active: A | Maybe<A>
   disabled?: boolean
   label?: string
-  options: List<Record<Option<T>>>
-  onClick (option: Maybe<T>): void
-  onClickJust? (option: T): void
+  options: List<Record<RadioOption<A>>>
+  onClick (option: Maybe<A>): void
+  onClickJust? (option: A): void
 }
 
-export function SegmentedControls<T extends OptionValue> (props: SegmentedControlsProps<T>) {
+export const SegmentedControls = <A extends RadioOptionValue = RadioOptionValue>
+  (props: Props<A>): React.ReactElement => {
   const { active, disabled, label, onClick, onClickJust, options } = props
 
   const normalizedActive = normalize (active)
@@ -34,29 +31,16 @@ export function SegmentedControls<T extends OptionValue> (props: SegmentedContro
         {
           pipe_ (
             options,
-            map (option => {
-              const value = OA.value (option) as Maybe<T>
-
-              return (
-                <Button
-                  key={
-                    fromMaybe<React.Key> ("__default__") (value)
-                  }
-                  active={equals (normalizedActive) (value)}
-                  onClick={() => {
-                    onClick (value)
-
-                    if (onClickJust && isJust (value)) {
-                      onClickJust (fromJust (value))
-                    }
-                  }}
-                  disabled={or (OA.disabled (option)) || orN (disabled)}
-                  autoWidth
-                >
-                  <Text>{OA.name (option)}</Text>
-                </Button>
-              )
-            }),
+            map (option => (
+              <SegmentedControlsItem
+                key={fromMaybe<React.Key> ("__default__") (ROA.value (option) as Maybe<A>)}
+                active={normalizedActive}
+                disabled={disabled}
+                onClick={onClick}
+                onClickJust={onClickJust}
+                option={option}
+                />
+            )),
             toArray
           )
         }

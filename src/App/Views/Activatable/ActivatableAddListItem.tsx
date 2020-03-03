@@ -1,29 +1,30 @@
-import * as React from "react";
-import { List, notNullStr } from "../../../Data/List";
-import { any, ensure, fromMaybe, guardReplace, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { fst, snd } from "../../../Data/Tuple";
-import { AdvantageId, DisadvantageId } from "../../Constants/Ids";
-import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
-import { HeroModel } from "../../Models/Hero/HeroModel";
-import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, InactiveActivatableControlElements, insertFinalCurrentCost, PropertiesAffectedByState } from "../../Utilities/Activatable/activatableInactiveViewUtils";
-import { classListMaybe } from "../../Utilities/CSS";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { renderMaybeWith } from "../../Utilities/ReactUtils";
-import { BasicInputDialog } from "../Universal/BasicInputDialog";
-import { IconButton } from "../Universal/IconButton";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemButtons } from "../Universal/ListItemButtons";
-import { ListItemGroup } from "../Universal/ListItemGroup";
-import { ListItemLeft } from "../Universal/ListItemLeft";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListItemSeparator } from "../Universal/ListItemSeparator";
-import { ListItemValues } from "../Universal/ListItemValues";
+import * as React from "react"
+import { List, notNullStr } from "../../../Data/List"
+import { any, ensure, fromMaybe, guardReplace, isJust, isNothing, Just, Maybe, maybe, maybeToUndefined, Nothing, orN } from "../../../Data/Maybe"
+import { lookup } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { fst, snd } from "../../../Data/Tuple"
+import { AdvantageId, DisadvantageId } from "../../Constants/Ids"
+import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
+import { HeroModel } from "../../Models/Hero/HeroModel"
+import { NumIdName } from "../../Models/NumIdName"
+import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, InactiveActivatableControlElements, insertFinalCurrentCost, PropertiesAffectedByState } from "../../Utilities/Activatable/activatableInactiveViewUtils"
+import { classListMaybe } from "../../Utilities/CSS"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { renderMaybeWith } from "../../Utilities/ReactUtils"
+import { BasicInputDialog } from "../Universal/BasicInputDialog"
+import { IconButton } from "../Universal/IconButton"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemButtons } from "../Universal/ListItemButtons"
+import { ListItemGroup } from "../Universal/ListItemGroup"
+import { ListItemLeft } from "../Universal/ListItemLeft"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListItemSeparator } from "../Universal/ListItemSeparator"
+import { ListItemValues } from "../Universal/ListItemValues"
 
 export interface ActivatableAddListItemOwnProps {
   item: Record<InactiveActivatable>
@@ -31,7 +32,6 @@ export interface ActivatableAddListItemOwnProps {
   isTypical?: boolean
   isUntypical?: boolean
   hideGroup?: boolean
-  l10n: L10nRecord
   selectedForInfo: Maybe<string>
   addToList (args: Record<ActivatableActivationOptions>): void
   selectForInfo (id: string): void
@@ -39,7 +39,7 @@ export interface ActivatableAddListItemOwnProps {
 
 export interface ActivatableAddListItemStateProps {
   skills: Maybe<HeroModel["skills"]>
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   isEditingAllowed: boolean
 }
 
@@ -70,24 +70,23 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
     isTypical,
     isUntypical,
     hideGroup,
-    l10n,
     selectForInfo,
     selectedForInfo,
-    wiki,
+    staticData,
     addToList,
     isEditingAllowed,
   } = props
 
   const id = IAA.id (item)
 
-  const [mselected, setSelected] = React.useState<Maybe<string | number>> (Nothing)
-  const [mselected2, setSelected2] = React.useState<Maybe<string | number>> (Nothing)
-  const [mselected3, setSelected3] = React.useState<Maybe<string | number>> (Nothing)
-  const [mselected_level, setSelectedLevel] = React.useState<Maybe<number>> (Nothing)
-  const [minput, setInput] = React.useState<Maybe<string>> (Nothing)
-  const [mcustom_cost, setCustomCost] = React.useState<Maybe<string>> (Nothing)
-  const [mcustom_cost_preview, setCustomCostPreview] = React.useState<Maybe<string>> (Nothing)
-  const [showCustomCostDialog, setShowCustomCostDialog] = React.useState<boolean> (false)
+  const [ mselected, setSelected ] = React.useState<Maybe<string | number>> (Nothing)
+  const [ mselected2, setSelected2 ] = React.useState<Maybe<string | number>> (Nothing)
+  const [ mselected3, setSelected3 ] = React.useState<Maybe<string | number>> (Nothing)
+  const [ mselected_level, setSelectedLevel ] = React.useState<Maybe<number>> (Nothing)
+  const [ minput, setInput ] = React.useState<Maybe<string>> (Nothing)
+  const [ mcustom_cost, setCustomCost ] = React.useState<Maybe<string>> (Nothing)
+  const [ mcustom_cost_preview, setCustomCostPreview ] = React.useState<Maybe<string>> (Nothing)
+  const [ showCustomCostDialog, setShowCustomCostDialog ] = React.useState<boolean> (false)
 
   const handleSelect =
     React.useCallback (
@@ -96,7 +95,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
         setSelected2 (Nothing)
         setSelected3 (Nothing)
       },
-      [setSelected, setSelected2, setSelected3]
+      [ setSelected, setSelected2, setSelected3 ]
     )
 
   const handleLevel =
@@ -112,13 +111,13 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
           }
         }
       },
-      [setSelectedLevel, setSelected, id]
+      [ setSelectedLevel, setSelected, id ]
     )
 
   const handleInput =
     React.useCallback (
       (input: string) => setInput (ensure (notNullStr) (input)),
-      [setInput]
+      [ setInput ]
     )
 
   const handleShowCustomCostDialog =
@@ -127,31 +126,31 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
         setShowCustomCostDialog (orN (hideGroup))
         setCustomCostPreview (mcustom_cost)
       },
-      [setShowCustomCostDialog, setCustomCostPreview, hideGroup, mcustom_cost]
+      [ setShowCustomCostDialog, setCustomCostPreview, hideGroup, mcustom_cost ]
     )
 
   const handleCloseCustomCostDialog =
     React.useCallback (
       () => setShowCustomCostDialog (false),
-      [setShowCustomCostDialog]
+      [ setShowCustomCostDialog ]
     )
 
   const handleSetCustomCost =
     React.useCallback (
       () => setCustomCost (mcustom_cost_preview),
-      [setCustomCost, mcustom_cost_preview]
+      [ setCustomCost, mcustom_cost_preview ]
     )
 
   const handleSetCustomCostPreview =
     React.useCallback (
       pipe (ensure (notNullStr), setCustomCostPreview),
-      [setCustomCostPreview]
+      [ setCustomCostPreview ]
     )
 
   const handleDeleteCustomCost =
     React.useCallback (
       () => setCustomCost (Nothing),
-      [setCustomCost]
+      [ setCustomCost ]
     )
 
   const selectElementDisabled =
@@ -181,8 +180,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
                                             handleSelect,
                                             selectElementDisabled,
                                           })
-                                          (l10n)
-                                          (wiki)
+                                          (staticData)
                                           (item)
                                           (selectedOptions)
 
@@ -191,12 +189,13 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
                                             (propsAndActivationArgs)
 
   const controlElements =
-    getInactiveActivatableControlElements (l10n)
+    getInactiveActivatableControlElements (staticData)
                                           (isEditingAllowed)
                                           ({
                                             handleInput,
                                             handleSelect,
                                             handleSecondSelect: setSelected2,
+                                            handleThirdSelect: setSelected3,
                                             handleLevel,
                                             selectElementDisabled,
                                           })
@@ -246,7 +245,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
   const handleSelectForInfo =
     React.useCallback (
       () => selectForInfo (id),
-      [selectForInfo, id]
+      [ selectForInfo, id ]
     )
 
   return (
@@ -270,8 +269,12 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
         ? null
         : (
           <ListItemGroup
-            list={translate (l10n) ("specialabilitygroups")}
-            index={pipe_ (item, IAA.wikiEntry, SpecialAbility.AL.gr)}
+            text={pipe_ (
+              staticData,
+              StaticData.A.specialAbilityGroups,
+              lookup (pipe_ (item, IAA.wikiEntry, SpecialAbility.AL.gr)),
+              maybe ("") (NumIdName.A.name)
+            )}
             />
         )}
       <ListItemValues>
@@ -289,11 +292,13 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
       <BasicInputDialog
         id="custom-cost-dialog"
         isOpen={showCustomCostDialog}
-        title={translate (l10n) ("customcost")}
-        description={`${translate (l10n) ("customcostfor")} ${IAA.name (item)}`}
-        value={mcustom_cost_preview}
-        acceptLabel={translate (l10n) ("done")}
-        rejectLabel={translate (l10n) ("delete")}
+        title={translate (staticData) ("advantagesdisadvantages.dialogs.customcost.title")}
+        description={
+          `${translate (staticData) ("advantagesdisadvantages.dialogs.customcost.for")} ${IAA.name (item)}`
+        }
+        value={maybeToUndefined (mcustom_cost_preview)}
+        acceptLabel={translate (staticData) ("general.dialogs.donebtn")}
+        rejectLabel={translate (staticData) ("general.dialogs.deletebtn")}
         rejectDisabled={isNothing (mcustom_cost)}
         onClose={handleCloseCustomCostDialog}
         onAccept={handleSetCustomCost}

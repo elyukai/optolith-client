@@ -4,12 +4,17 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "../../App/Utilities/pipe";
-import { bimap, Either, either, first, Left, Right, second } from "../Either";
-import { ident } from "../Function";
-import { isMarket, Market } from "../Market";
-import { showP } from "../Show";
-import { isTagged, Tagged } from "../Tagged";
+import { pipe } from "../../App/Utilities/pipe"
+import { bimap, Either, either, first, Left, Right, second } from "../Either"
+import { ident } from "../Function"
+import { isMarket, Market } from "../Market"
+import { showP } from "../Show"
+import { isTagged, Tagged } from "../Tagged"
+
+const instanceErrorMsg =
+  (fname: string) =>
+  (x: any) =>
+    `${fname}: missing instance of Choice\n${showP (x)}`
 
 export type Choice<A, B> = Market<any, any, A, B>
                          | Tagged<A, B>
@@ -80,8 +85,3 @@ export const right_: ChoiceRight_ =
 
     throw new TypeError (instanceErrorMsg ("left'") (x))
   }
-
-const instanceErrorMsg =
-  (fname: string) =>
-  (x: any) =>
-    `${fname}: missing instance of Choice\n${showP (x)}`

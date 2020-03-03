@@ -1,23 +1,23 @@
-import { ident } from "../../Data/Function";
-import { over, set } from "../../Data/Lens";
-import { modifyAt } from "../../Data/List";
-import { Just } from "../../Data/Maybe";
-import { adjust } from "../../Data/OrderedMap";
-import { fst, snd } from "../../Data/Tuple";
-import * as DisAdvActions from "../Actions/DisAdvActions";
-import * as SpecialAbilitiesActions from "../Actions/SpecialAbilitiesActions";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids";
-import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
-import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType";
-import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions";
-import { ActivatableDependentL } from "../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObjectL } from "../Models/ActiveEntries/ActiveObject";
-import { SkillDependentL } from "../Models/ActiveEntries/SkillDependent";
-import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { activate, deactivate, setLevel } from "../Utilities/Activatable/activatableActivationUtils";
-import { addOtherSpecialAbilityDependenciesOnActivation, removeOtherSpecialAbilityDependenciesOnDeletion } from "../Utilities/Activatable/SpecialAbilityUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
+import { ident } from "../../Data/Function"
+import { over, set } from "../../Data/Lens"
+import { modifyAt } from "../../Data/List"
+import { Just } from "../../Data/Maybe"
+import { adjust } from "../../Data/OrderedMap"
+import { fst, snd } from "../../Data/Tuple"
+import * as DisAdvActions from "../Actions/DisAdvActions"
+import * as SpecialAbilitiesActions from "../Actions/SpecialAbilitiesActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids"
+import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType"
+import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType"
+import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions"
+import { ActivatableDependentL } from "../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObjectL } from "../Models/ActiveEntries/ActiveObject"
+import { SkillDependentL } from "../Models/ActiveEntries/SkillDependent"
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { activate, deactivate, setLevel } from "../Utilities/Activatable/activatableActivationUtils"
+import { addOtherSpecialAbilityDependenciesOnActivation, removeOtherSpecialAbilityDependenciesOnDeletion } from "../Utilities/Activatable/SpecialAbilityUtils"
+import { pipe, pipe_ } from "../Utilities/pipe"
 
 type Action = DisAdvActions.ActivateDisAdvAction
             | DisAdvActions.DeactivateDisAdvAction
@@ -36,33 +36,37 @@ export const activatableReducer =
   (action: Action): ident<HeroModelRecord> => {
     switch (action.type) {
       case ActionTypes.ACTIVATE_DISADV: {
-        return activate (fst (action.payload))
-                        (AAETA.wikiEntry (snd (action.payload)))
-                        (AAETA.heroEntry (snd (action.payload)))
+        return activate (action.payload.args)
+                        (action.payload.staticData)
+                        (AAETA.wikiEntry (action.payload.entryType))
+                        (AAETA.heroEntry (action.payload.entryType))
       }
 
       case ActionTypes.ACTIVATE_SPECIALABILITY: {
         return pipe (
           addOtherSpecialAbilityDependenciesOnActivation (action),
-          activate (fst (action.payload))
-                   (pipe_ (action.payload, snd, fst))
-                   (pipe_ (action.payload, snd, snd))
+          activate (action.payload.args)
+                   (action.payload.staticData)
+                   (fst (action.payload.entryType))
+                   (snd (action.payload.entryType))
         )
       }
 
       case ActionTypes.DEACTIVATE_DISADV: {
-        return deactivate (pipe_ (action.payload, fst, ADOA.index))
-                          (ADETA.wikiEntry (snd (action.payload)))
-                          (ADETA.heroEntry (snd (action.payload)))
+        return deactivate (action.payload.staticData)
+                          (ADOA.index (action.payload.args))
+                          (ADETA.wikiEntry (action.payload.entryType))
+                          (ADETA.heroEntry (action.payload.entryType))
       }
 
       case ActionTypes.DEACTIVATE_SPECIALABILITY: {
         return pipe (
           removeOtherSpecialAbilityDependenciesOnDeletion (action),
-          deactivate (pipe_ (action.payload, fst, ADOA.index))
-                     (pipe_ (action.payload, snd, fst))
-                     (pipe_ (action.payload, snd, snd)),
-          pipe_ (action.payload, fst, ADOA.id) === SpecialAbilityId.Feuerschlucker
+          deactivate (action.payload.staticData)
+                     (ADOA.index (action.payload.args))
+                     (fst (action.payload.entryType))
+                     (snd (action.payload.entryType)),
+          ADOA.id (action.payload.args) === SpecialAbilityId.Feuerschlucker
             ? over (HeroModelL.combatTechniques)
                    (adjust (set (SkillDependentL.value) (6))
                            (CombatTechniqueId.SpittingFire as string))
@@ -84,7 +88,7 @@ export const activatableReducer =
                         (pipe_ (action.payload, snd, snd))
       }
 
-      case ActionTypes.SET_TRADITION_GUILD_MAGE_UNFAMILIAR_SPELL_ID: {
+      case ActionTypes.SET_TRAD_GUILD_MAGE_UNFAM_SPELL_ID: {
         return over (HL.specialAbilities)
                     (adjust (over (ActivatableDependentL.active)
                                   (modifyAt (0)

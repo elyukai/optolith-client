@@ -1,4 +1,4 @@
-import { pipe } from "../App/Utilities/pipe";
+import { pipe } from "../App/Utilities/pipe"
 
 /**
  * @module Data.Bool

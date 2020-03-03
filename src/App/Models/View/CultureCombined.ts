@@ -1,9 +1,9 @@
-import { List } from "../../../Data/List";
-import { fromDefault, Record } from "../../../Data/Record";
-import { Pair } from "../../../Data/Tuple";
-import { pipe } from "../../Utilities/pipe";
-import { Culture } from "../Wiki/Culture";
-import { Skill } from "../Wiki/Skill";
+import { List } from "../../../Data/List"
+import { fromDefault, Record } from "../../../Data/Record"
+import { Pair } from "../../../Data/Tuple"
+import { pipe } from "../../Utilities/pipe"
+import { Culture } from "../Wiki/Culture"
+import { Skill } from "../Wiki/Skill"
 
 export interface CultureCombined {
   "@@name": "CultureCombined"

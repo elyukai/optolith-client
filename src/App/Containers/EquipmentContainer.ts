@@ -1,31 +1,31 @@
-import { connect } from "react-redux";
-import { Maybe } from "../../Data/Maybe";
-import { ReduxDispatch } from "../Actions/Actions";
-import * as EquipmentActions from "../Actions/EquipmentActions";
-import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { getInitialStartingWealth } from "../Selectors/activatableSelectors";
-import { getHasCurrentNoAddedAP } from "../Selectors/adventurePointsSelectors";
-import { getCarryingCapacity } from "../Selectors/attributeSelectors";
-import { getFilteredCombatTechniques } from "../Selectors/combatTechniquesSelectors";
-import { getAvailableSortedEquipmentGroups, getFilteredItems, getFilteredItemTemplates, getTotalPrice, getTotalWeight } from "../Selectors/equipmentSelectors";
-import { getEquipmentFilterText, getItemTemplatesFilterText, getPurse } from "../Selectors/stateSelectors";
-import { getEquipmentSortOrder, getMeleeItemTemplateCombatTechniqueFilter, getRangedItemTemplateCombatTechniqueFilter } from "../Selectors/uisettingsSelectors";
-import { EquipmentSortOptions } from "../Utilities/Raw/JSON/Config";
-import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStateProps } from "../Views/Equipment/Equipment";
+import { connect } from "react-redux"
+import { Maybe } from "../../Data/Maybe"
+import { ReduxDispatch } from "../Actions/Actions"
+import * as EquipmentActions from "../Actions/EquipmentActions"
+import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids"
+import { AppStateRecord } from "../Models/AppState"
+import { EquipmentSortOptions } from "../Models/Config"
+import { getInitialStartingWealth } from "../Selectors/activatableSelectors"
+import { getHasCurrentNoAddedAP } from "../Selectors/adventurePointsSelectors"
+import { getCarryingCapacity } from "../Selectors/attributeSelectors"
+import { getFilteredCombatTechniques } from "../Selectors/combatTechniquesSelectors"
+import { getAvailableSortedEquipmentGroups, getFilteredItems, getFilteredItemTemplates, getTotalPrice, getTotalWeight } from "../Selectors/equipmentSelectors"
+import { getEquipmentFilterText, getItemTemplatesFilterText, getPurse } from "../Selectors/stateSelectors"
+import { getEquipmentSortOrder, getMeleeItemTemplateCombatTechniqueFilter, getRangedItemTemplateCombatTechniqueFilter } from "../Selectors/uisettingsSelectors"
+import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStateProps } from "../Views/Equipment/Equipment"
 
 const mapStateToProps =
   (state: AppStateRecord, ownProps: EquipmentOwnProps): EquipmentStateProps => ({
     combatTechniques: getFilteredCombatTechniques (state, ownProps),
     carryingCapacity: getCarryingCapacity (state, ownProps),
     initialStartingWealth: getInitialStartingWealth (state),
-    items: getFilteredItems (state, ownProps),
+    items: getFilteredItems (state),
     hasNoAddedAP: getHasCurrentNoAddedAP (state),
     purse: getPurse (state),
     sortOrder: getEquipmentSortOrder (state),
     templates: getFilteredItemTemplates (state, ownProps),
-    totalPrice: getTotalPrice (state, ownProps),
-    totalWeight: getTotalWeight (state, ownProps),
+    totalPrice: getTotalPrice (state),
+    totalWeight: getTotalWeight (state),
     meleeItemTemplateCombatTechniqueFilter: getMeleeItemTemplateCombatTechniqueFilter (state),
     rangedItemTemplateCombatTechniqueFilter: getRangedItemTemplateCombatTechniqueFilter (state),
     filterText: getEquipmentFilterText (state),

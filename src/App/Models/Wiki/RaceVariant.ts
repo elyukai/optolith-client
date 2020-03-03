@@ -1,10 +1,9 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { Die } from "./sub/Die";
-import { Erratum } from "./sub/Errata";
-import { EntryWithCategory } from "./wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { Die } from "./sub/Die"
+import { EntryWithCategory } from "./wikiTypeHelpers"
 
 export interface RaceVariant {
   "@@name": "RaceVariant"
@@ -19,12 +18,11 @@ export interface RaceVariant {
   uncommonAdvantagesText: Maybe<string>
   uncommonDisadvantages: List<string>
   uncommonDisadvantagesText: Maybe<string>
-  hairColors: Maybe<List<number>>
-  eyeColors: Maybe<List<number>>
-  sizeBase: Maybe<number>
-  sizeRandom: Maybe<List<Record<Die>>>
+  hairColors: List<number>
+  eyeColors: List<number>
+  sizeBase: number
+  sizeRandom: List<Record<Die>>
   category: Category
-  errata: List<Record<Erratum>>
 }
 
 export const RaceVariant =
@@ -41,12 +39,11 @@ export const RaceVariant =
                 uncommonAdvantagesText: Nothing,
                 uncommonDisadvantages: List.empty,
                 uncommonDisadvantagesText: Nothing,
-                hairColors: Nothing,
-                eyeColors: Nothing,
-                sizeBase: Nothing,
-                sizeRandom: Nothing,
+                hairColors: List (),
+                eyeColors: List (),
+                sizeBase: 0,
+                sizeRandom: List (),
                 category: Category.RACE_VARIANTS,
-                errata: List (),
               })
 
 export const RaceVariantL = makeLenses (RaceVariant)

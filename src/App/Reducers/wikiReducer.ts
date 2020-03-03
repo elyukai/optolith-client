@@ -1,18 +1,17 @@
-import { cnst, ident } from "../../Data/Function";
-import { snd } from "../../Data/Tuple";
-import { ReceiveInitialDataAction } from "../Actions/IOActions";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { WikiModelRecord } from "../Models/Wiki/WikiModel";
+import { cnst, ident } from "../../Data/Function"
+import { ReceiveInitialDataAction } from "../Actions/IOActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 
 type Action = ReceiveInitialDataAction
 
 export const wikiReducer =
-  (action: Action): ident<WikiModelRecord> => {
+  (action: Action): ident<StaticDataRecord> => {
     switch (action.type) {
       case ActionTypes.RECEIVE_INITIAL_DATA: {
-        const { tables } = action.payload
+        const { staticData } = action.payload
 
-        return cnst (snd (tables))
+        return cnst (staticData)
       }
 
       default:

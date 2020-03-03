@@ -1,7 +1,7 @@
-import { fromDefault, Record } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
-import { Cantrip } from "../Wiki/Cantrip";
-import { IsActive } from "./viewTypeHelpers";
+import { fromDefault, Record } from "../../../Data/Record"
+import { pipe } from "../../Utilities/pipe"
+import { Cantrip } from "../Wiki/Cantrip"
+import { IsActive } from "./viewTypeHelpers"
 
 export interface CantripCombined extends IsActive {
   "@@name": "CantripCombined"

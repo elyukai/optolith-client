@@ -1,6 +1,6 @@
-import { List } from "../../../../Data/List";
-import { fromDefault, Record } from "../../../../Data/Record";
-import { AnyProfessionSelection, ProfessionSelectionIds } from "../wikiTypeHelpers";
+import { List } from "../../../../Data/List"
+import { fromDefault } from "../../../../Data/Record"
+import { ProfessionSelectionIds } from "../wikiTypeHelpers"
 
 export interface CantripsSelection {
   "@@name": "CantripsSelection"
@@ -16,7 +16,3 @@ export const CantripsSelection =
                 amount: 0,
                 sid: List.empty,
               })
-
-export const isCantripsSelection =
-  (obj: AnyProfessionSelection): obj is Record<CantripsSelection> =>
-    CantripsSelection.AL.id (obj) === ProfessionSelectionIds.CANTRIPS

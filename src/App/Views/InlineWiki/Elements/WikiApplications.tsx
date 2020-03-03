@@ -1,18 +1,18 @@
-import * as React from "react";
-import { fmap } from "../../../../Data/Functor";
-import { fnull, intercalate, List, notNull } from "../../../../Data/List";
-import { bindF, ensure, isNothing, listToMaybe, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe";
-import { member, OrderedMap } from "../../../../Data/OrderedMap";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { Advantage } from "../../../Models/Wiki/Advantage";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
-import { Application } from "../../../Models/Wiki/sub/Application";
-import { pipe } from "../../../Utilities/pipe";
-import { sortStrings } from "../../../Utilities/sortBy";
-import { isString } from "../../../Utilities/typeCheckUtils";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { fmap } from "../../../../Data/Functor"
+import { fnull, intercalate, List, notNull } from "../../../../Data/List"
+import { bindF, ensure, isNothing, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe"
+import { member, OrderedMap } from "../../../../Data/OrderedMap"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { Advantage } from "../../../Models/Wiki/Advantage"
+import { RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement"
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { Application } from "../../../Models/Wiki/sub/Application"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { pipe } from "../../../Utilities/pipe"
+import { sortStrings } from "../../../Utilities/sortBy"
+import { isString } from "../../../Utilities/typeCheckUtils"
+import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
   applications: (r: Record<A>) => List<Record<Application>>
@@ -23,19 +23,21 @@ export interface WikiApplicationsProps<A extends RecordIBase<any>> {
   advantages: OrderedMap<string, Record<Advantage>>
   x: Record<A>
   acc: Accessors<A>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   showNewApplications?: boolean
   specialAbilities: OrderedMap<string, Record<SpecialAbility>>
 }
 
 const AA = Application.A
 
-export function WikiApplications <A extends RecordIBase<any>> (props: WikiApplicationsProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiApplicationsProps<A>) => ReturnType<React.FC>
+
+export const WikiApplications: FC = props => {
   const {
     advantages,
     x,
     acc,
-    l10n,
+    staticData,
     showNewApplications = false,
     specialAbilities,
   } = props
@@ -48,9 +50,7 @@ export function WikiApplications <A extends RecordIBase<any>> (props: WikiApplic
       const new_apps =
         mapMaybe (pipe (
                    ensure (pipe (
-                     AA.prerequisites,
-                     bindF (listToMaybe),
-                     bindF (ensure (RequireActivatable.is)),
+                     AA.prerequisite,
                      bindF (pipe (RequireActivatable.A.id, ensure (isString))),
                      maybe (false)
                            (id => member (id) (advantages) || member (id) (specialAbilities))
@@ -63,23 +63,23 @@ export function WikiApplications <A extends RecordIBase<any>> (props: WikiApplic
         return null
       }
 
-      const sorted_new_apps = sortStrings (l10n) (new_apps)
+      const sorted_new_apps = sortStrings (staticData) (new_apps)
 
       return (
-        <WikiProperty l10n={l10n} title="newapplications">
+        <WikiProperty staticData={staticData} title="inlinewiki.newapplications">
           {intercalate (", ") (sorted_new_apps)}
         </WikiProperty>
       )
     }
 
     const default_apps =
-      mapMaybe (pipe (ensure (pipe (AA.prerequisites, isNothing)), fmap (AA.name)))
+      mapMaybe (pipe (ensure (pipe (AA.prerequisite, isNothing)), fmap (AA.name)))
                (applications)
 
-    const sorted_default_apps = sortStrings (l10n) (default_apps)
+    const sorted_default_apps = sortStrings (staticData) (default_apps)
 
     return (
-      <WikiProperty l10n={l10n} title="applications">
+      <WikiProperty staticData={staticData} title="inlinewiki.applications">
         {intercalate (", ") (sorted_default_apps)}
         {maybe ("") ((input: string) => `, ${input}`) (applicationsInput)}
       </WikiProperty>

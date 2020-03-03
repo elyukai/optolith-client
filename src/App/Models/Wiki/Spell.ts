@@ -1,19 +1,18 @@
-import { List } from "../../../Data/List";
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { MagicalTradition, Property } from "../../Constants/Groups";
-import { Erratum } from "./sub/Errata";
-import { SourceLink } from "./sub/SourceLink";
-import { AllRequirementObjects, CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { MagicalTradition, Property } from "../../Constants/Groups"
+import { Erratum } from "./sub/Errata"
+import { SourceLink } from "./sub/SourceLink"
+import { AllRequirementObjects, CheckModifier, EntryWithCategory } from "./wikiTypeHelpers"
 
 export interface Spell {
   "@@name": "Spell"
   id: string
   name: string
-  category: Category
   check: List<string>
-  checkmod: OrderedSet<CheckModifier>
+  checkmod: Maybe<CheckModifier>
   gr: number
   ic: number
   property: Property
@@ -36,6 +35,7 @@ export interface Spell {
   target: string
   src: List<Record<SourceLink>>
   errata: List<Record<Erratum>>
+  category: Category
 }
 
 export const Spell =
@@ -43,9 +43,8 @@ export const Spell =
               <Spell> ({
                 id: "",
                 name: "",
-                category: Category.SPELLS,
                 check: List.empty,
-                checkmod: OrderedSet.empty,
+                checkmod: Nothing,
                 gr: 0,
                 ic: 0,
                 property: 0,
@@ -68,6 +67,7 @@ export const Spell =
                 target: "",
                 src: List.empty,
                 errata: List (),
+                category: Category.SPELLS,
               })
 
 export const SpellL = makeLenses (Spell)

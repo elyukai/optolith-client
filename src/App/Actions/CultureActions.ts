@@ -1,10 +1,10 @@
-import { ActionTypes } from "../Constants/ActionTypes";
-import { CulturesSortOptions, CulturesVisibilityFilter } from "../Utilities/Raw/JSON/Config";
+import * as ActionTypes from "../Constants/ActionTypes"
+import { CulturesSortOptions, CulturesVisibilityFilter } from "../Models/Config"
 
 export interface SelectCultureAction {
   type: ActionTypes.SELECT_CULTURE
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -18,7 +18,7 @@ export const selectCulture = (id: string): SelectCultureAction => ({
 export interface SetCulturesSortOrderAction {
   type: ActionTypes.SET_CULTURES_SORT_ORDER
   payload: {
-    sortOrder: CulturesSortOptions;
+    sortOrder: CulturesSortOptions
   }
 }
 
@@ -32,7 +32,7 @@ export const setSortOrder = (sortOrder: CulturesSortOptions): SetCulturesSortOrd
 export interface SetCulturesVisibilityFilterAction {
   type: ActionTypes.SET_CULTURES_VISIBILITY_FILTER
   payload: {
-    filter: CulturesVisibilityFilter;
+    filter: CulturesVisibilityFilter
   }
 }
 
@@ -55,7 +55,7 @@ export const switchValueVisibilityFilter = (): SwitchCultureValueVisibilityActio
 export interface SetCulturesFilterTextAction {
   type: ActionTypes.SET_CULTURES_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 

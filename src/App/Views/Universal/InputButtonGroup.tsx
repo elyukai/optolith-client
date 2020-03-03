@@ -1,17 +1,17 @@
-import * as React from "react";
-import { classListMaybe } from "../../Utilities/CSS";
-import { List } from "../../../Data/List";
-import { Just, Maybe } from "../../../Data/Maybe";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Just, Maybe } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
 
-export interface InputButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+interface Props {
   className?: string
 }
 
-export function InputButtonGroup (props: InputButtonGroupProps) {
-  const { className, children, ...other } = props
+export const InputButtonGroup: React.FC<Props> = props => {
+  const { className, children } = props
 
   return (
-    <div className={classListMaybe (List (Just ("btn-group"), Maybe (className)))} {...other}>
+    <div className={classListMaybe (List (Just ("btn-group"), Maybe (className)))}>
       {children}
     </div>
   )

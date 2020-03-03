@@ -1,24 +1,26 @@
-import { join } from "path";
-import { tryIO } from "../../Control/Exception";
-import { Either, eitherToMaybe, Right } from "../../Data/Either";
-import { ident } from "../../Data/Function";
-import { fmap } from "../../Data/Functor";
-import { all, fromArray, List } from "../../Data/List";
-import { bindF, ensure, mapM, Maybe } from "../../Data/Maybe";
-import { fromList, OrderedMap, toObjectWith } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { parseJSON } from "../../Data/String/JSON";
-import { Pair, Tuple } from "../../Data/Tuple";
-import { deleteFile, existsFile, readFile, writeFile } from "../../System/IO";
-import { HeroModelRecord } from "../Models/Hero/HeroModel";
-import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { AppStateRecord } from "../Reducers/appReducer";
-import { HeroesState } from "../Reducers/herolistReducer";
-import { getAPSpentMap, getAPSpentOnAdvantagesMap, getAPSpentOnAttributesMap, getAPSpentOnBlessedAdvantagesMap, getAPSpentOnBlessedDisadvantagesMap, getAPSpentOnBlessingsMap, getAPSpentOnCantripsMap, getAPSpentOnCombatTechniquesMap, getAPSpentOnDisadvantagesMap, getAPSpentOnEnergiesMap, getAPSpentOnLiturgicalChantsMap, getAPSpentOnMagicalAdvantagesMap, getAPSpentOnMagicalDisadvantagesMap, getAPSpentOnSkillsMap, getAPSpentOnSpecialAbilitiesMap, getAPSpentOnSpellsMap, getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
-import { current_version, user_data_path } from "../Selectors/envSelectors";
-import { pipe, pipe_ } from "./pipe";
-import { isObject } from "./typeCheckUtils";
+import { join } from "path"
+import { handleE } from "../../Control/Exception"
+import { Either, eitherToMaybe, Right } from "../../Data/Either"
+import { ident } from "../../Data/Function"
+import { fmap } from "../../Data/Functor"
+import { all, fromArray, List } from "../../Data/List"
+import { bindF, ensure, mapM, Maybe } from "../../Data/Maybe"
+import { fromList, lookup, mapMaybe, OrderedMap, toObjectWith } from "../../Data/OrderedMap"
+import { Record, StringKeyObject } from "../../Data/Record"
+import { parseJSON } from "../../Data/String/JSON"
+import { Pair, Tuple } from "../../Data/Tuple"
+import { deleteFile, existsFile, readFile, writeFile } from "../../System/IO"
+import { AppState, AppStateRecord } from "../Models/AppState"
+import { APCache, Cache, PresavedCache } from "../Models/Cache"
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { HeroesState } from "../Models/HeroesState"
+import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories"
+import { heroReducer } from "../Reducers/heroReducer"
+import { getAPObjectMap, getAPSpentMap, getAPSpentOnAdvantagesMap, getAPSpentOnAttributesMap, getAPSpentOnBlessedAdvantagesMap, getAPSpentOnBlessedDisadvantagesMap, getAPSpentOnBlessingsMap, getAPSpentOnCantripsMap, getAPSpentOnCombatTechniquesMap, getAPSpentOnDisadvantagesMap, getAPSpentOnEnergiesMap, getAPSpentOnLiturgicalChantsMap, getAPSpentOnMagicalAdvantagesMap, getAPSpentOnMagicalDisadvantagesMap, getAPSpentOnSkillsMap, getAPSpentOnSpecialAbilitiesMap, getAPSpentOnSpellsMap, getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
+import { current_version, user_data_path } from "../Selectors/envSelectors"
+import { getHeroes } from "../Selectors/stateSelectors"
+import { pipe, pipe_ } from "./pipe"
+import { isObject } from "./typeCheckUtils"
 
 const file_path = join (user_data_path, "cache.json")
 
@@ -26,28 +28,6 @@ const file_path = join (user_data_path, "cache.json")
  * Key in cache file to store adventure points.
  */
 export const AP_KEY = "ap"
-
-const APP_VERSION_KEY = "appVersion"
-
-export interface APCache {
-  spent: number
-  available?: number
-  spentOnAdvantages?: number | [number, number]
-  spentOnMagicalAdvantages?: number | [number, number]
-  spentOnBlessedAdvantages?: number | [number, number]
-  spentOnDisadvantages?: number | [number, number]
-  spentOnMagicalDisadvantages?: number | [number, number]
-  spentOnBlessedDisadvantages?: number | [number, number]
-  spentOnSpecialAbilities?: number
-  spentOnAttributes: number
-  spentOnSkills: number
-  spentOnCombatTechniques: number
-  spentOnSpells: number
-  spentOnLiturgicalChants: number
-  spentOnCantrips: number
-  spentOnBlessings: number
-  spentOnEnergies: number
-}
 
 const ap_cache_keys: List<keyof APCache> =
   List (
@@ -78,7 +58,8 @@ export const readCache =
   async () =>
     pipe_ (
       file_path,
-      tryIO (readFile),
+      readFile,
+      handleE,
       fmap (pipe (
         eitherToMaybe,
         bindF (parseJSON),
@@ -104,24 +85,25 @@ export const readCache =
 
 export const writeCache =
   pipe (
-    toObjectWith (ident as ident<APCache>),
-    m => ({
-      [APP_VERSION_KEY]: current_version,
-      [AP_KEY]: m,
+    (m: PresavedCache["ap"]): Cache => ({
+      appVersion: current_version,
+      ap: m,
     }),
     JSON.stringify,
-    tryIO (writeFile (file_path))
+    writeFile (file_path),
+    handleE
   )
 
 export const deleteCache: () => Promise<Either<Error, void>> =
   async () => await existsFile (file_path)
-              ? tryIO (deleteFile) (file_path)
+              ? pipe_ (file_path, deleteFile, handleE)
               : Right<void> (undefined)
 
-export const insertCacheMap =
-  (map: OrderedMap<string, APCache>) => {
-    OrderedMap.mapWithKey<string, APCache, void> (insertCacheAt) (map)
-  }
+const fromNumOrPair =
+  (x: number | [number, number]) => typeof x === "number" ? Pair (x, x) : Pair (...x)
+
+const unsafeFromNumOrPair =
+  (x: number | [number, number] | undefined) => fmap (fromNumOrPair) (Maybe (x))
 
 export const insertCacheAt =
   (key_str: string) =>
@@ -170,11 +152,10 @@ export const insertCacheAt =
                                                 (Maybe (cache.spentOnSpecialAbilities))
   }
 
-const unsafeFromNumOrPair =
-  (x: number | [number, number] | undefined) => fmap (fromNumOrPair) (Maybe (x))
-
-const fromNumOrPair =
-  (x: number | [number, number]) => typeof x === "number" ? Pair (x, x) : Pair (...x)
+export const insertCacheMap =
+  (map: OrderedMap<string, APCache>) => {
+    OrderedMap.mapWithKey<string, APCache, void> (insertCacheAt) (map)
+  }
 
 export const insertHeroesCache =
   (hs: HeroesState["heroes"]) => {
@@ -200,7 +181,7 @@ export const insertHeroesCache =
 export const forceCacheIsAvailable =
   (id: string) =>
   (state: AppStateRecord) =>
-  (props: { l10n: L10nRecord; hero: HeroModelRecord }) => {
+  (props: { hero: HeroModelRecord }) => {
     getAPSpentMap (id) (state, props)
     getAvailableAPMap (id) (state, props)
     getAPSpentOnAttributesMap (id) (state)
@@ -241,7 +222,7 @@ export const insertAppStateCache =
     getAPSpentOnSpecialAbilitiesMap .setState (s)
   }
 
-export const toAPCache =
+const toAPCache =
   (s: Record<AdventurePointsCategories>): APCache => ({
     spent: AdventurePointsCategories.A.spent (s),
     available: AdventurePointsCategories.A.available (s),
@@ -261,3 +242,45 @@ export const toAPCache =
     spentOnMagicalDisadvantages: AdventurePointsCategories.A.spentOnMagicalDisadvantages (s),
     spentOnSpecialAbilities: AdventurePointsCategories.A.spentOnSpecialAbilities (s),
   })
+
+const deriveNewAPCache = (state: AppStateRecord): StringKeyObject<APCache> =>
+  pipe_ (
+    state,
+    getHeroes,
+    mapMaybe (pipe (
+      heroReducer.A.present,
+      (hero): Maybe<Maybe<Record<AdventurePointsCategories>>> =>
+        getAPObjectMap (HeroModel.A.id (hero)) (state, { hero }),
+      Maybe.join,
+      fmap (toAPCache)
+    )),
+    toObjectWith (ident)
+  )
+
+export const prepareAPCache =
+  (all_saved: boolean) =>
+  (state: AppStateRecord): StringKeyObject<APCache> =>
+    all_saved
+    ? deriveNewAPCache (state)
+    : {
+      ...deriveNewAPCache (state),
+      ...pipe_ (
+        state,
+        AppState.A.cache,
+        x => x.ap
+      ),
+    }
+
+
+export const prepareAPCacheForHero = (state: AppStateRecord, hero_id: string): Maybe<APCache> =>
+  pipe_ (
+    state,
+    getHeroes,
+    lookup (hero_id),
+    bindF (pipe (
+      heroReducer.A.present,
+      hero => getAPObjectMap (HeroModel.A.id (hero)) (state, { hero })
+    )),
+    Maybe.join,
+    fmap (toAPCache),
+  )

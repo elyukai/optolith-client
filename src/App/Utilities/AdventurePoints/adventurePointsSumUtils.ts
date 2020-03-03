@@ -1,43 +1,47 @@
-import { equals } from "../../../Data/Eq";
-import { cnst, ident, join } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { elem, filter, List, sum } from "../../../Data/List";
-import { bindF, ensure, maybe, Maybe, thenF } from "../../../Data/Maybe";
-import { add, multiply } from "../../../Data/Num";
-import { foldr, lookupF } from "../../../Data/OrderedMap";
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { bimap, first, fst, Pair, second, snd, Tuple } from "../../../Data/Tuple";
-import { Category } from "../../Constants/Categories";
-import { AdvantageIdsNoMaxInfl } from "../../Constants/Ids";
-import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
-import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
-import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
-import { Energies } from "../../Models/Hero/Energies";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { PermanentEnergyLossAndBoughtBack } from "../../Models/Hero/PermanentEnergyLossAndBoughtBack";
-import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { Disadvantage } from "../../Models/Wiki/Disadvantage";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { Profession } from "../../Models/Wiki/Profession";
-import { ProfessionVariant } from "../../Models/Wiki/ProfessionVariant";
-import { Race } from "../../Models/Wiki/Race";
-import { Skill } from "../../Models/Wiki/Skill";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { Spell } from "../../Models/Wiki/Spell";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getAllActiveByCategory } from "../Activatable/activatableActiveUtils";
-import { pipe, pipe_ } from "../pipe";
-import { getAdventurePointsSpentDifference } from "./adventurePointsUtils";
-import { getAPRange } from "./improvementCostUtils";
+import { equals } from "../../../Data/Eq"
+import { cnst, ident, join } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { elem, filter, List, sum } from "../../../Data/List"
+import { bindF, ensure, maybe, Maybe, thenF } from "../../../Data/Maybe"
+import { add, multiply } from "../../../Data/Num"
+import { foldr, lookupF } from "../../../Data/OrderedMap"
+import { OrderedSet } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { bimap, first, fst, Pair, second, snd, Tuple } from "../../../Data/Tuple"
+import { curryN3 } from "../../../Data/Tuple/Curry"
+import { Category } from "../../Constants/Categories"
+import { icFromJs } from "../../Constants/Groups"
+import { AdvantageIdsNoMaxInfl } from "../../Constants/Ids"
+import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
+import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
+import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
+import { Energies } from "../../Models/Hero/Energies"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { PermanentEnergyLossAndBoughtBack } from "../../Models/Hero/PermanentEnergyLossAndBoughtBack"
+import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable"
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { Disadvantage } from "../../Models/Wiki/Disadvantage"
+import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
+import { Profession } from "../../Models/Wiki/Profession"
+import { ProfessionVariant } from "../../Models/Wiki/ProfessionVariant"
+import { Race } from "../../Models/Wiki/Race"
+import { Skill } from "../../Models/Wiki/Skill"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { Spell } from "../../Models/Wiki/Spell"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { getAllActiveByCategory } from "../Activatable/activatableActiveUtils"
+import { getAPForActivatation, getAPForRange } from "../IC.gen"
+import { pipe, pipe_ } from "../pipe"
+import { getAdventurePointsSpentDifference } from "./adventurePointsUtils"
+
+const SDA = StaticData.A
+const HA = HeroModel.A
 
 // Attributes
 
-const getAPForAttribute = pipe (AttributeDependent.A.value, getAPRange (5) (8))
+const getAPForAttribute = pipe (AttributeDependent.A.value, curryN3 (getAPForRange) ("E") (8))
 
 export const getAPSpentForAttributes = foldr (pipe (getAPForAttribute, add)) (0)
 
@@ -45,12 +49,12 @@ export const getAPSpentForAttributes = foldr (pipe (getAPForAttribute, add)) (0)
 
 const getAPForSkill =
   (x: Record<Skill>) =>
-    pipe (SkillDependent.A.value, getAPRange (Skill.A.ic (x)) (0))
+    pipe (SkillDependent.A.value, curryN3 (getAPForRange) (icFromJs (Skill.A.ic (x))) (0))
 
 type skillsFold = (x: Record<SkillDependent>) => (s: number) => number
 
 export const getAPSpentForSkills =
-  (xmap: WikiModel["skills"]) =>
+  (xmap: StaticData["skills"]) =>
     foldr (join (pipe (
                         SkillDependent.A.id,
                         lookupF (xmap),
@@ -63,10 +67,10 @@ export const getAPSpentForSkills =
 
 const getAPForCombatTechnique =
   (x: Record<CombatTechnique>) =>
-    pipe (SkillDependent.A.value, getAPRange (CombatTechnique.A.ic (x)) (6))
+    pipe (SkillDependent.A.value, curryN3 (getAPForRange) (icFromJs (CombatTechnique.A.ic (x))) (6))
 
 export const getAPSpentForCombatTechniques =
-  (xmap: WikiModel["combatTechniques"]) =>
+  (xmap: StaticData["combatTechniques"]) =>
     foldr (join (pipe (
                         SkillDependent.A.id,
                         lookupF (xmap),
@@ -84,15 +88,15 @@ const getAPForSpellOrChant =
       ? pipe_ (
           asd,
           ActivatableSkillDependent.A.value,
-          getAPRange (Spell.AL.ic (x)) (0),
-          add (Spell.AL.ic (x))
+          curryN3 (getAPForRange) (icFromJs (Spell.AL.ic (x))) (0),
+          add (getAPForActivatation (icFromJs (Spell.AL.ic (x))))
         )
       : 0
 
 type actSkillsFold = (x: Record<ActivatableSkillDependent>) => (s: number) => number
 
 export const getAPSpentForSpells =
-  (xmap: WikiModel["spells"]) =>
+  (xmap: StaticData["spells"]) =>
     foldr (join (pipe (
                         ActivatableSkillDependent.A.id,
                         lookupF (xmap),
@@ -102,7 +106,7 @@ export const getAPSpentForSpells =
           (0)
 
 export const getAPSpentForLiturgicalChants =
-  (xmap: WikiModel["liturgicalChants"]) =>
+  (xmap: StaticData["liturgicalChants"]) =>
     foldr (join (pipe (
                         ActivatableSkillDependent.A.id,
                         lookupF (xmap),
@@ -134,7 +138,7 @@ const AAA_ = ActiveActivatableA_
  *   this max. But automatic advantages are relevant here.
  */
 export const getAPSpentForAdvantages =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (xmap: HeroModel["advantages"]) =>
   (active: List<ActiveAdvantage>) =>
     pipe_ (
@@ -153,7 +157,7 @@ export const getAPSpentForAdvantages =
     )
 
 export const getAPSpentForMagicalAdvantages =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (xmap: HeroModel["advantages"]) =>
     pipe (
       filter<ActiveAdvantage> (pipe (
@@ -165,7 +169,7 @@ export const getAPSpentForMagicalAdvantages =
     )
 
 export const getAPSpentForBlessedAdvantages =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (xmap: HeroModel["advantages"]) =>
     pipe (
       filter<ActiveAdvantage> (pipe (
@@ -180,7 +184,7 @@ export const getAPSpentForBlessedAdvantages =
  * Returns (AP spent on disadvantages, actual AP lost)
  */
 export const getAPSpentForDisadvantages =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (xmap: HeroModel["disadvantages"]) =>
   (active: List<ActiveDisadvantage>): Pair<number, number> =>
     pipe_ (
@@ -197,7 +201,7 @@ export const getAPSpentForDisadvantages =
     )
 
 export const getAPSpentForMagicalDisadvantages =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (xmap: HeroModel["disadvantages"]) =>
     pipe (
       filter<ActiveDisadvantage> (pipe (
@@ -209,7 +213,7 @@ export const getAPSpentForMagicalDisadvantages =
     )
 
 export const getAPSpentForBlessedDisadvantages =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (xmap: HeroModel["disadvantages"]) =>
     pipe (
       filter<ActiveDisadvantage> (pipe (
@@ -221,7 +225,7 @@ export const getAPSpentForBlessedDisadvantages =
     )
 
 export const getAPSpentForSpecialAbilities =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (xmap: HeroModel["specialAbilities"]) =>
   (active: List<ActiveSpecialAbility>) =>
     pipe_ (
@@ -237,13 +241,13 @@ export const getAPSpentForSpecialAbilities =
 export const getAPSpentForEnergies =
   (energies: Record<Energies>) => {
     const addedArcaneEnergyCost =
-      pipe_ (energies, Energies.A.addedArcaneEnergyPoints, getAPRange (4) (0))
+      pipe_ (energies, Energies.A.addedArcaneEnergyPoints, curryN3 (getAPForRange) ("D") (0))
 
     const addedKarmaPointsCost =
-      pipe_ (energies, Energies.A.addedKarmaPoints, getAPRange (4) (0))
+      pipe_ (energies, Energies.A.addedKarmaPoints, curryN3 (getAPForRange) ("D") (0))
 
     const addedLifePointsCost =
-      pipe_ (energies, Energies.A.addedLifePoints, getAPRange (4) (0))
+      pipe_ (energies, Energies.A.addedLifePoints, curryN3 (getAPForRange) ("D") (0))
 
     const boughtBackArcaneEnergyCost =
       pipe_ (
@@ -271,9 +275,9 @@ export const getAPSpentForEnergies =
   }
 
 export const getAPSpentForRace =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
     pipe (
-      bindF (lookupF (WikiModel.A.races (wiki))),
+      bindF (lookupF (SDA.races (wiki))),
       maybe (0) (Race.A.ap)
     )
 
@@ -282,19 +286,19 @@ export const getAPSpentForRace =
  * phase.
  */
 export const getAPSpentForProfession =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (mprofId: Maybe<string>) =>
   (mprofVarId: Maybe<string>) =>
     pipe (
       ensure (equals (1)),
       thenF (mprofId),
-      bindF (lookupF (WikiModel.A.professions (wiki))),
+      bindF (lookupF (SDA.professions (wiki))),
       fmap (pipe (
         Profession.A.ap,
         Maybe.sum,
         add (pipe_ (
           mprofVarId,
-          bindF (lookupF (WikiModel.A.professionVariants (wiki))),
+          bindF (lookupF (SDA.professionVariants (wiki))),
           fmap (ProfessionVariant.A.ap),
           Maybe.sum
         ))
@@ -302,110 +306,109 @@ export const getAPSpentForProfession =
     )
 
 export const getAPObject =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (automatic_advantages: List<string>) =>
   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) => {
-    const total = HeroModel.A.adventurePointsTotal (hero)
+    const total = HA.adventurePointsTotal (hero)
 
-    const spentOnAttributes = getAPSpentForAttributes (HeroModel.A.attributes (hero))
+    const spentOnAttributes = getAPSpentForAttributes (HA.attributes (hero))
 
-    const spentOnSkills = getAPSpentForSkills (WikiModel.A.skills (wiki))
-                                              (HeroModel.A.skills (hero))
+    const spentOnSkills = getAPSpentForSkills (SDA.skills (staticData))
+                                              (HA.skills (hero))
 
     const spentOnCombatTechniques =
-      getAPSpentForCombatTechniques (WikiModel.A.combatTechniques (wiki))
-                                    (HeroModel.A.combatTechniques (hero))
+      getAPSpentForCombatTechniques (SDA.combatTechniques (staticData))
+                                    (HA.combatTechniques (hero))
 
-    const spentOnSpells = getAPSpentForSpells (WikiModel.A.spells (wiki))
-                                              (HeroModel.A.spells (hero))
+    const spentOnSpells = getAPSpentForSpells (SDA.spells (staticData))
+                                              (HA.spells (hero))
 
     const spentOnLiturgicalChants =
-      getAPSpentForLiturgicalChants (WikiModel.A.liturgicalChants (wiki))
-                                    (HeroModel.A.liturgicalChants (hero))
+      getAPSpentForLiturgicalChants (SDA.liturgicalChants (staticData))
+                                    (HA.liturgicalChants (hero))
 
-    const spentOnCantrips = getAPSpentForCantrips (HeroModel.A.cantrips (hero))
+    const spentOnCantrips = getAPSpentForCantrips (HA.cantrips (hero))
 
-    const spentOnBlessings = getAPSpentForBlessings (HeroModel.A.blessings (hero))
+    const spentOnBlessings = getAPSpentForBlessings (HA.blessings (hero))
 
-    const spentOnEnergies = getAPSpentForEnergies (HeroModel.A.energies (hero))
+    const spentOnEnergies = getAPSpentForEnergies (HA.energies (hero))
 
-    const spentOnRace = getAPSpentForRace (wiki) (HeroModel.A.race (hero))
+    const spentOnRace = getAPSpentForRace (staticData) (HA.race (hero))
 
-    const spentOnProfession = getAPSpentForProfession (wiki)
-                                                      (HeroModel.A.profession (hero))
-                                                      (HeroModel.A.professionVariant (hero))
-                                                      (HeroModel.A.phase (hero))
+    const spentOnProfession = getAPSpentForProfession (staticData)
+                                                      (HA.profession (hero))
+                                                      (HA.professionVariant (hero))
+                                                      (HA.phase (hero))
+
     const spentOnSpecialAbilities =
-      getAPSpentForSpecialAbilities (wiki)
-                                    (HeroModel.A.specialAbilities (hero))
+      getAPSpentForSpecialAbilities (staticData)
+                                    (HA.specialAbilities (hero))
                                     (getAllActiveByCategory (Category.SPECIAL_ABILITIES)
                                                             (false)
                                                             (automatic_advantages)
                                                             (matching_script_and_lang_related)
-                                                            (l10n)
-                                                            (wiki)
+                                                            (staticData)
                                                             (hero))
+
     const spentOnAdvantages =
-        getAPSpentForAdvantages (wiki)
-                                (HeroModel.A.advantages (hero))
+        getAPSpentForAdvantages (staticData)
+                                (HA.advantages (hero))
                                 (getAllActiveByCategory (Category.ADVANTAGES)
                                                         (false)
                                                         (automatic_advantages)
                                                         (matching_script_and_lang_related)
-                                                        (l10n)
-                                                        (wiki)
+                                                        (staticData)
                                                         (hero))
+
     const spentOnMagicalAdvantages =
-        getAPSpentForMagicalAdvantages (wiki)
-                                        (HeroModel.A.advantages (hero))
-                                        (getAllActiveByCategory (Category.ADVANTAGES)
-                                                                (false)
-                                                                (automatic_advantages)
-                                                                (matching_script_and_lang_related)
-                                                                (l10n)
-                                                                (wiki)
-                                                                (hero))
+        getAPSpentForMagicalAdvantages (staticData)
+                                       (HA.advantages (hero))
+                                       (getAllActiveByCategory (Category.ADVANTAGES)
+                                                               (false)
+                                                               (automatic_advantages)
+                                                               (matching_script_and_lang_related)
+                                                               (staticData)
+                                                               (hero))
+
     const spentOnBlessedAdvantages =
-        getAPSpentForBlessedAdvantages (wiki)
-                                        (HeroModel.A.advantages (hero))
+        getAPSpentForBlessedAdvantages (staticData)
+                                        (HA.advantages (hero))
                                         (getAllActiveByCategory (Category.ADVANTAGES)
                                                                 (false)
                                                                 (automatic_advantages)
                                                                 (matching_script_and_lang_related)
-                                                                (l10n)
-                                                                (wiki)
+                                                                (staticData)
                                                                 (hero))
+
     const spentOnDisadvantages =
-        getAPSpentForDisadvantages (wiki)
-                                    (HeroModel.A.disadvantages (hero))
+        getAPSpentForDisadvantages (staticData)
+                                    (HA.disadvantages (hero))
                                     (getAllActiveByCategory (Category.DISADVANTAGES)
                                                             (false)
                                                             (automatic_advantages)
                                                             (matching_script_and_lang_related)
-                                                            (l10n)
-                                                            (wiki)
+                                                            (staticData)
                                                             (hero))
+
     const spentOnMagicalDisadvantages =
-        getAPSpentForMagicalDisadvantages (wiki)
-                                          (HeroModel.A.disadvantages (hero))
+        getAPSpentForMagicalDisadvantages (staticData)
+                                          (HA.disadvantages (hero))
                                           (getAllActiveByCategory (Category.DISADVANTAGES)
                                                                   (false)
                                                                   (automatic_advantages)
                                                                   (matching_script_and_lang_related)
-                                                                  (l10n)
-                                                                  (wiki)
+                                                                  (staticData)
                                                                   (hero))
+
     const spentOnBlessedDisadvantages =
-        getAPSpentForBlessedDisadvantages (wiki)
-                                          (HeroModel.A.disadvantages (hero))
+        getAPSpentForBlessedDisadvantages (staticData)
+                                          (HA.disadvantages (hero))
                                           (getAllActiveByCategory (Category.DISADVANTAGES)
                                                                   (false)
                                                                   (automatic_advantages)
                                                                   (matching_script_and_lang_related)
-                                                                  (l10n)
-                                                                  (wiki)
+                                                                  (staticData)
                                                                   (hero))
 
     const spent =

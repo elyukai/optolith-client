@@ -1,22 +1,30 @@
-import { equals } from "../../../Data/Eq";
-import { flip, thrush } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
-import { Lens_, over, set, view } from "../../../Data/Lens";
-import { all, append, concatMap, elem, empty, filter, findIndex, foldr, isList, List, ListI, map, mapAccumL, modifyAt, partition, pure } from "../../../Data/List";
-import { alt_, and, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, Maybe, Nothing, or } from "../../../Data/Maybe";
-import { gt } from "../../../Data/Num";
-import { Record } from "../../../Data/Record";
-import { fst, Pair, snd, uncurry } from "../../../Data/Tuple";
-import { SpecialAbilityGroup } from "../../Constants/Groups";
-import { HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { StyleDependency, StyleDependencyL } from "../../Models/Hero/StyleDependency";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { pipe, pipe_ } from "../pipe";
+import { equals } from "../../../Data/Eq"
+import { flip, thrush } from "../../../Data/Function"
+import { fmap } from "../../../Data/Functor"
+import { Lens_, over, set, view } from "../../../Data/Lens"
+import { all, append, concatMap, cons, elem, empty, filter, findIndex, foldr, isList, List, ListI, map, mapAccumL, modifyAt, partition, pure } from "../../../Data/List"
+import { alt_, and, bindF, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, listToMaybe, Maybe, maybe, Nothing, or } from "../../../Data/Maybe"
+import { gt } from "../../../Data/Num"
+import { lookup } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { fst, Pair, snd, uncurry } from "../../../Data/Tuple"
+import { SpecialAbilityGroup } from "../../Constants/Groups"
+import { SpecialAbilityId } from "../../Constants/Ids.gen"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { HeroModel, HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { StyleDependency, StyleDependencyL } from "../../Models/Hero/StyleDependency"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { pipe, pipe_ } from "../pipe"
+import { misStringM } from "../typeCheckUtils"
 
+const HA = HeroModel.A
 const HL = HeroModelL
 
 const SAA = SpecialAbility.A
+const ADA = ActivatableDependent.A
 const SDA = StyleDependency.A
+const AOA = ActiveObject.A
 
 type StyleDependenciesLens = Lens_<HeroModelRecord, List<Record<StyleDependency>>>
 
@@ -74,41 +82,6 @@ const lensByExtended =
     }
   }
 
-/**
- * Adds extended special ability dependencies if the passed entry is a style
- * special ability.
- * @param hero Dependent instances state slice.
- * @param wiki_entry The special ability you want to add extended entry
- * dependencies for.
- * @returns Changed state slice.
- */
-export const addStyleExtendedSpecialAbilityDependencies =
-  (wiki_entry: Record<SpecialAbility>) =>
-  (hero: HeroModelRecord): HeroModelRecord => {
-    const ml = lensByStyle (wiki_entry)
-
-    const mnewxs =
-      pipe_ (
-        wiki_entry,
-        SAA.extended,
-        fmap (map (x => StyleDependency ({ id: x, origin: SAA.id (wiki_entry) }))),
-      )
-
-    type DependencyList = List<Record<StyleDependency>>
-
-    return fromMaybe (hero)
-                     (liftM2 ((l: StyleDependenciesLens) => (newxs: DependencyList) =>
-                               over (l)
-                                    (pipe (
-                                      mapAccumL (moveActiveInListToNew)
-                                                (newxs),
-                                      uncurry (append)
-                                    ))
-                                    (hero))
-                             (ml)
-                             (mnewxs))
-  }
-
 const moveActiveInListToNew: (newxs: List<Record<StyleDependency>>) =>
                              (x: Record<StyleDependency>) =>
                              Pair<List<Record<StyleDependency>>, Record<StyleDependency>> =
@@ -145,6 +118,89 @@ const moveActiveInListToNew: (newxs: List<Record<StyleDependency>>) =>
     return Pair (newxs, x)
   }
 
+
+const getStyleDependencies =
+  (style_special_ability: Record<SpecialAbility>) =>
+  (hero: HeroModelRecord): Maybe<List<Record<StyleDependency>>> => {
+    const styleId = SAA.id (style_special_ability)
+
+    return pipe_ (
+      style_special_ability,
+      SAA.extended,
+      fmap (pipe (
+        map (x => StyleDependency ({ id: x, origin: styleId })),
+        xs => {
+          switch (styleId) {
+            case SpecialAbilityId.scholarDesMagierkollegsZuHoningen:
+              return pipe_ (
+                hero,
+                HA.specialAbilities,
+                lookup (SpecialAbilityId.scholarDesMagierkollegsZuHoningen),
+                bindF (pipe (ADA.active, listToMaybe)),
+                bindF (AOA.sid2),
+                misStringM,
+                maybe (xs) (id => cons (xs) (StyleDependency ({ id, origin: styleId })))
+              )
+
+            default:
+              return xs
+          }
+        }
+      ))
+    )
+  }
+
+
+/**
+ * Adds extended special ability dependencies if the passed entry is a style
+ * special ability.
+ * @param hero Dependent instances state slice.
+ * @param wiki_entry The special ability you want to add extended entry
+ * dependencies for.
+ * @returns Changed state slice.
+ */
+export const addStyleExtendedSpecialAbilityDependencies =
+  (wiki_entry: Record<SpecialAbility>) =>
+  (hero: HeroModelRecord): HeroModelRecord => {
+    const ml = lensByStyle (wiki_entry)
+
+    const mnewxs = getStyleDependencies (wiki_entry) (hero)
+
+    type DependencyList = List<Record<StyleDependency>>
+
+    return fromMaybe (hero)
+                     (liftM2 ((l: StyleDependenciesLens) => (newxs: DependencyList) =>
+                               over (l)
+                                    (pipe (
+                                      mapAccumL (moveActiveInListToNew)
+                                                (newxs),
+                                      uncurry (append)
+                                    ))
+                                    (hero))
+                             (ml)
+                             (mnewxs))
+  }
+
+const getIndexForExtendedSpecialAbilityDependency =
+  (wiki_entry: Record<SpecialAbility>) =>
+  (xs: List<Record<StyleDependency>>) =>
+
+         // Checks if requested entry is plain dependency
+    alt_ (findIndex (pipe (SDA.id, equals<string | List<string>> (SAA.id (wiki_entry))))
+                    (xs))
+
+         /**
+          * Otherwise check if the requested entry is part of a list of
+          * options.
+          */
+         (() => findIndex ((e: ListI<typeof xs>) => {
+                            const e_id = SDA.id (e)
+
+                            return isList (e_id)
+                              && elem (SAA.id (wiki_entry)) (e_id)
+                          })
+                          (xs))
+
 /**
  * Modifies a `StyleDependency` object to show a extended special ability has
  * been added.
@@ -169,25 +225,6 @@ export const addExtendedSpecialAbilityDependency =
                       (xs))
                    (hero))
             (lensByExtended (wiki_entry)))
-
-const getIndexForExtendedSpecialAbilityDependency =
-  (wiki_entry: Record<SpecialAbility>) =>
-  (xs: List<Record<StyleDependency>>) =>
-         // Checks if requested entry is plain dependency
-    alt_ (findIndex (pipe (SDA.id, equals<string | List<string>> (SAA.id (wiki_entry))))
-                    (xs))
-
-         /**
-          * Otherwise check if the requested entry is part of a list of
-          * options.
-          */
-         (() => findIndex ((e: ListI<typeof xs>) => {
-                            const e_id = SDA.id (e)
-
-                            return isList (e_id)
-                              && elem (SAA.id (wiki_entry)) (e_id)
-                          })
-                          (xs))
 
 /**
  * A combination of `addStyleExtendedSpecialAbilityDependencies` and

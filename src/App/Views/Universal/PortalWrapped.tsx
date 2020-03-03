@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Portal } from "react-portal";
-import { List } from "../../../Data/List";
-import { Just, Maybe } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
+import * as React from "react"
+import { Portal } from "react-portal"
+import { List } from "../../../Data/List"
+import { Just, Maybe } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
 
 interface CallBackProps extends React.Props<any> {
   closePortal (): void
@@ -31,12 +31,9 @@ export interface PortalWrappedStateProps {
 
 export interface PortalWrappedDispatchProps {}
 
-export type PortalWrappedProps =
-  PortalWrappedStateProps
-  & PortalWrappedDispatchProps
-  & PortalWrappedOwnProps
+type Props = PortalWrappedStateProps & PortalWrappedDispatchProps & PortalWrappedOwnProps
 
-export function PortalWrapped (props: PortalWrappedProps) {
+export const PortalWrapped: React.FC<Props> = props => {
   const {
     children,
     className,

@@ -1,32 +1,32 @@
-import * as React from "react";
-import { List } from "../../../../Data/List";
-import { Maybe } from "../../../../Data/Maybe";
-import { OrderedMap } from "../../../../Data/OrderedMap";
-import { Record } from "../../../../Data/Record";
-import { Pair } from "../../../../Data/Tuple";
-import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
-import { AttributeCombined } from "../../../Models/View/AttributeCombined";
-import { SkillCombined } from "../../../Models/View/SkillCombined";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
-import { translate } from "../../../Utilities/I18n";
-import { Checkbox } from "../../Universal/Checkbox";
-import { Options } from "../../Universal/Options";
-import { AttributeMods } from "../AttributeMods";
-import { Sheet } from "../Sheet";
-import { SheetWrapper } from "../SheetWrapper";
-import { SkillsSheetLanguages } from "./SkillsSheetLanguages";
-import { SkillsSheetQualityLevels } from "./SkillsSheetQualityLevels";
-import { SkillsSheetRoutineChecks } from "./SkillsSheetRoutineChecks";
-import { SkillsSheetScripts } from "./SkillsSheetScripts";
-import { SkillsSheetSkills } from "./SkillsSheetSkills";
+import * as React from "react"
+import { List } from "../../../../Data/List"
+import { Maybe } from "../../../../Data/Maybe"
+import { OrderedMap } from "../../../../Data/OrderedMap"
+import { Record } from "../../../../Data/Record"
+import { Pair } from "../../../../Data/Tuple"
+import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent"
+import { AttributeCombined } from "../../../Models/View/AttributeCombined"
+import { SkillCombined } from "../../../Models/View/SkillCombined"
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { translate } from "../../../Utilities/I18n"
+import { Checkbox } from "../../Universal/Checkbox"
+import { Options } from "../../Universal/Options"
+import { AttributeMods } from "../AttributeMods"
+import { Sheet } from "../Sheet"
+import { SheetWrapper } from "../SheetWrapper"
+import { SkillsSheetLanguages } from "./SkillsSheetLanguages"
+import { SkillsSheetQualityLevels } from "./SkillsSheetQualityLevels"
+import { SkillsSheetRoutineChecks } from "./SkillsSheetRoutineChecks"
+import { SkillsSheetScripts } from "./SkillsSheetScripts"
+import { SkillsSheetSkills } from "./SkillsSheetSkills"
 
-export interface SkillsSheetProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
   languagesStateEntry: Maybe<Record<ActivatableDependent>>
   languagesWikiEntry: Maybe<Record<SpecialAbility>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   scriptsStateEntry: Maybe<Record<ActivatableDependent>>
   scriptsWikiEntry: Maybe<Record<SpecialAbility>>
   skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillCombined>>>>
@@ -34,13 +34,13 @@ export interface SkillsSheetProps {
   switchAttributeValueVisibility (): void
 }
 
-export function SkillsSheet (props: SkillsSheetProps) {
+export const SkillsSheet: React.FC<Props> = props => {
   const {
     attributes,
     checkAttributeValueVisibility,
     languagesStateEntry,
     languagesWikiEntry,
-    l10n,
+    staticData,
     scriptsStateEntry,
     scriptsWikiEntry,
     skillsByGroup,
@@ -55,19 +55,19 @@ export function SkillsSheet (props: SkillsSheetProps) {
           checked={checkAttributeValueVisibility}
           onClick={switchAttributeValueVisibility}
           >
-          {translate (l10n) ("showattributevalues")}
+          {translate (staticData) ("sheets.showattributevalues")}
         </Checkbox>
       </Options>
       <Sheet
         id="skills-sheet"
-        title={translate (l10n) ("gamestats")}
+        title={translate (staticData) ("sheets.gamestatssheet.title")}
         attributes={attributes}
-        l10n={l10n}
+        staticData={staticData}
         >
         <SkillsSheetSkills
           attributes={attributes}
           checkAttributeValueVisibility={checkAttributeValueVisibility}
-          l10n={l10n}
+          staticData={staticData}
           skillsByGroup={skillsByGroup}
           skillGroupPages={skillGroupPages}
           />
@@ -76,20 +76,20 @@ export function SkillsSheet (props: SkillsSheetProps) {
             <SkillsSheetLanguages
               languagesStateEntry={languagesStateEntry}
               languagesWikiEntry={languagesWikiEntry}
-              l10n={l10n}
+              staticData={staticData}
               />
             <SkillsSheetScripts
               scriptsStateEntry={scriptsStateEntry}
               scriptsWikiEntry={scriptsWikiEntry}
-              l10n={l10n}
+              staticData={staticData}
               />
           </div>
           <AttributeMods
             attributes={attributes}
-            l10n={l10n}
+            staticData={staticData}
             />
-          <SkillsSheetRoutineChecks l10n={l10n} />
-          <SkillsSheetQualityLevels l10n={l10n} />
+          <SkillsSheetRoutineChecks staticData={staticData} />
+          <SkillsSheetQualityLevels staticData={staticData} />
         </div>
       </Sheet>
     </SheetWrapper>

@@ -7,14 +7,19 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "../App/Utilities/pipe";
-import { Identity, runIdentity } from "../Control/Monad/Identity";
-import { cnst } from "./Function";
-import { Const } from "./Functor/Const";
-import { Internals } from "./Internals";
-import { isMarket, Market } from "./Market";
-import { show, showP } from "./Show";
-import { Pair } from "./Tuple";
+import { pipe } from "../App/Utilities/pipe"
+import { Identity, runIdentity } from "../Control/Monad/Identity"
+import { cnst } from "./Function"
+import { Const } from "./Functor/Const"
+import { Internals } from "./Internals"
+import { isMarket, Market } from "./Market"
+import { show, showP } from "./Show"
+import { Pair } from "./Tuple"
+
+const instanceErrorMsg =
+  (fname: string) =>
+  (x: any) =>
+    `${fname}: missing instance of Functor\n${showP (x)}`
 
 import Just = Internals.Just
 import Maybe = Internals.Maybe
@@ -56,6 +61,7 @@ export type FunctorMap<A, B> =
 export const fmap =
   <A, B>
   (f: (x: A) => B): FunctorMap<A, B> =>
+
   // tslint:disable-next-line: cyclomatic-complexity
   (x: Functor<any>): any => {
     if (Internals.isList (x)) {
@@ -74,7 +80,7 @@ export const fmap =
     }
 
     if (Internals.isOrderedMap (x)) {
-      return mapFromArray (show) ([...x .value] .map (([k, a]) => [k, f (a)] as [any, B]))
+      return mapFromArray (show) ([ ...x .value ] .map (([ k, a ]) => [ k, f (a) ] as [any, B]))
     }
 
     if (Internals.isConst (x)) {
@@ -214,8 +220,3 @@ export const fmapF: fmapF =
  * efficient version.
  */
 export const mapReplace = <A> (x: A) => fmap<any, A> (cnst (x))
-
-const instanceErrorMsg =
-  (fname: string) =>
-  (x: any) =>
-    `${fname}: missing instance of Functor\n${showP (x)}`

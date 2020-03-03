@@ -1,36 +1,36 @@
-import { thrush } from "../../Data/Function";
-import { fmap, fmapF } from "../../Data/Functor";
-import { cons, consF, elem, List, map, maximum } from "../../Data/List";
-import { fromJust, isJust, Just, liftM2, Maybe, Nothing, or } from "../../Data/Maybe";
-import { add, divideBy, gt, max, subtractBy } from "../../Data/Num";
-import { findWithDefault, foldrWithKey, lookup } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { uncurryN, uncurryN4 } from "../../Data/Tuple/Curry";
-import { IdPrefixes } from "../Constants/IdPrefixes";
-import { AdvantageId, SpecialAbilityId } from "../Constants/Ids";
-import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
-import { createSkillDependentWithValue6, SkillDependent } from "../Models/ActiveEntries/SkillDependent";
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { CombatTechniqueWithAttackParryBase, CombatTechniqueWithAttackParryBaseA_ } from "../Models/View/CombatTechniqueWithAttackParryBase";
-import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements";
-import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
-import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
-import { WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { isMaybeActive } from "../Utilities/Activatable/isActive";
-import { getActiveSelections } from "../Utilities/Activatable/selectionUtils";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies";
-import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
-import { compareLocale } from "../Utilities/I18n";
-import { prefixId } from "../Utilities/IDUtils";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { filterByAvailabilityAndPred } from "../Utilities/RulesUtils";
-import { comparingR, sortByMulti } from "../Utilities/sortBy";
-import { getMaxAttributeValueByID } from "./attributeSelectors";
-import { getStartEl } from "./elSelectors";
-import { getRuleBooksEnabled } from "./rulesSelectors";
-import { getCombatTechniquesWithRequirementsSortOptions } from "./sortOptionsSelectors";
-import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getLocaleAsProp, getWiki, getWikiCombatTechniques } from "./stateSelectors";
+import { thrush } from "../../Data/Function"
+import { fmap, fmapF } from "../../Data/Functor"
+import { cons, consF, elem, List, map, maximum } from "../../Data/List"
+import { fromJust, isJust, Just, liftM2, Maybe, Nothing, or } from "../../Data/Maybe"
+import { add, divideBy, gt, max, subtractBy } from "../../Data/Num"
+import { findWithDefault, foldrWithKey, lookup } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { uncurryN, uncurryN4 } from "../../Data/Tuple/Curry"
+import { IdPrefixes } from "../Constants/IdPrefixes"
+import { AdvantageId, SpecialAbilityId } from "../Constants/Ids"
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
+import { createSkillDependentWithValue6, SkillDependent } from "../Models/ActiveEntries/SkillDependent"
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { CombatTechniqueWithAttackParryBase, CombatTechniqueWithAttackParryBaseA_ } from "../Models/View/CombatTechniqueWithAttackParryBase"
+import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements"
+import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
+import { StaticDataRecord } from "../Models/Wiki/WikiModel"
+import { isMaybeActive } from "../Utilities/Activatable/isActive"
+import { getActiveSelections } from "../Utilities/Activatable/selectionUtils"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies"
+import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
+import { compareLocale } from "../Utilities/I18n"
+import { prefixId } from "../Utilities/IDUtils"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { filterByAvailabilityAndPred } from "../Utilities/RulesUtils"
+import { comparingR, sortByMulti } from "../Utilities/sortBy"
+import { getMaxAttributeValueByID } from "./attributeSelectors"
+import { getStartEl } from "./elSelectors"
+import { getRuleBooksEnabled } from "./rulesSelectors"
+import { getCombatTechniquesWithRequirementsSortOptions } from "./sortOptionsSelectors"
+import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getWiki, getWikiCombatTechniques } from "./stateSelectors"
 
 const CTA = CombatTechnique.A
 const SDA = SkillDependent.A
@@ -79,11 +79,11 @@ const getParryBase =
   }
 
 export const getCombatTechniquesForSheet = createMaybeSelector (
-  getLocaleAsProp,
+  getWiki,
   getWikiCombatTechniques,
   getAttributes,
   getCombatTechniques,
-  uncurryN4 (l10n =>
+  uncurryN4 (staticData =>
              wiki_combat_techniques =>
              attributes =>
                fmap (combatTechniques =>
@@ -104,7 +104,7 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
                               })
                               (List.empty),
                    sortByMulti ([ comparingR (CombatTechniqueWithAttackParryBaseA_.name)
-                                             (compareLocale (l10n)) ])
+                                             (compareLocale (staticData)) ])
                  )))
 )
 
@@ -132,7 +132,7 @@ const getMaximum =
 
 const getMinimum =
   (hunterRequiresMinimum: boolean) =>
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (ct: Record<CombatTechniqueWithAttackParryBase>): number => {
     const curr_dependencies = pipe_ (ct, CTWAPBA.stateEntry, SDA.dependencies)

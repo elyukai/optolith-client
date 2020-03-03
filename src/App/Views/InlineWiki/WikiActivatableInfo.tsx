@@ -1,63 +1,60 @@
-import * as React from "react";
-import { Either, eitherToMaybe, invertEither, Left, Right } from "../../../Data/Either";
-import { cnst, flip, ident, join } from "../../../Data/Function";
-import { fmap, fmapF } from "../../../Data/Functor";
-import { rangeN } from "../../../Data/Ix";
-import { over, set } from "../../../Data/Lens";
-import { any, append, appendStr, consF, elem, fnull, head, ifoldr, imap, intercalate, intersperse, isList, List, map, NonEmptyList, notNull, notNullStr, snoc, snocF, subscript, toArray } from "../../../Data/List";
-import { bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, mapMaybe, maybe, Maybe, maybeRNull, maybeRNullF, Nothing } from "../../../Data/Maybe";
-import { dec, negate } from "../../../Data/Num";
-import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../Data/OrderedMap";
-import { fromDefault, makeLenses, Record, RecordI, RecordIBase } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { SpecialAbilityGroup } from "../../Constants/Groups";
-import { AdvantageId, SpecialAbilityId } from "../../Constants/Ids";
-import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
-import { ActivatableNameCost, ActivatableNameCostA_ } from "../../Models/View/ActivatableNameCost";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { Attribute } from "../../Models/Wiki/Attribute";
-import { Book } from "../../Models/Wiki/Book";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
-import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
-import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
-import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite";
-import { Profession } from "../../Models/Wiki/Profession";
-import { Race } from "../../Models/Wiki/Race";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
-import { getNameCostForWiki } from "../../Utilities/Activatable/activatableActiveUtils";
-import { getName } from "../../Utilities/Activatable/activatableNameUtils";
-import { isExtendedSpecialAbility } from "../../Utilities/Activatable/checkStyleUtils";
-import { isBlessedTradId, isMagicalTradId } from "../../Utilities/Activatable/traditionUtils";
-import { putLevelName } from "../../Utilities/AdventurePoints/activatableCostUtils";
-import { nbsp } from "../../Utilities/Chars";
-import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
-import { getCategoryById, prefixRace } from "../../Utilities/IDUtils";
-import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { renderMaybe } from "../../Utilities/ReactUtils";
-import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy";
-import { isNumber, isString, misNumberM, misStringM } from "../../Utilities/typeCheckUtils";
-import { getWikiEntry } from "../../Utilities/WikiUtils";
-import { Markdown } from "../Universal/Markdown";
-import { WikiCombatTechniques } from "./Elements/WikiCombatTechniques";
-import { WikiSource } from "./Elements/WikiSource";
-import { WikiBoxTemplate } from "./WikiBoxTemplate";
-import { WikiProperty } from "./WikiProperty";
+import * as React from "react"
+import { Either, eitherToMaybe, invertEither, Left, Right } from "../../../Data/Either"
+import { cnst, flip, ident, join } from "../../../Data/Function"
+import { fmap, fmapF } from "../../../Data/Functor"
+import { rangeN } from "../../../Data/Ix"
+import { over, set } from "../../../Data/Lens"
+import { any, append, appendStr, consF, elem, fnull, head, ifoldr, imap, intercalate, intersperse, isList, List, map, notNull, notNullStr, snoc, snocF, toArray } from "../../../Data/List"
+import { bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, mapMaybe, maybe, Maybe, maybeRNull, maybeRNullF, Nothing } from "../../../Data/Maybe"
+import { negate } from "../../../Data/Num"
+import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../Data/OrderedMap"
+import { Record, RecordI } from "../../../Data/Record"
+import { traceShowId } from "../../../Debug/Trace"
+import { Category } from "../../Constants/Categories"
+import { SpecialAbilityGroup } from "../../Constants/Groups"
+import { AdvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
+import { NumIdName } from "../../Models/NumIdName"
+import { ActivatableNameCost, ActivatableNameCostA_ } from "../../Models/View/ActivatableNameCost"
+import { ActivatablePrerequisiteText } from "../../Models/View/ActivatablePrerequisiteText"
+import { ActivatablePrerequisiteObjects, ActivatableStringObject, CategorizedPrerequisites, CategorizedPrerequisitesL, IncreasablePrerequisiteObjects, PrimaryAttributePrerequisiteObjects, RacePrerequisiteObjects, RCPPrerequisiteObjects, ReplacedPrerequisite, SocialPrerequisiteObjects } from "../../Models/View/CategorizedPrerequisites"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { Attribute } from "../../Models/Wiki/Attribute"
+import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement"
+import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement"
+import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement"
+import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement"
+import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite"
+import { Profession } from "../../Models/Wiki/Profession"
+import { Race } from "../../Models/Wiki/Race"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
+import { getNameCostForWiki } from "../../Utilities/Activatable/activatableActiveUtils"
+import { getName } from "../../Utilities/Activatable/activatableNameUtils"
+import { isExtendedSpecialAbility } from "../../Utilities/Activatable/checkStyleUtils"
+import { isBlessedTradId, isMagicalTradId } from "../../Utilities/Activatable/traditionUtils"
+import { putLevelName } from "../../Utilities/AdventurePoints/activatableCostUtils"
+import { nbsp } from "../../Utilities/Chars"
+import { localizeOrList, translate, translateP } from "../../Utilities/I18n"
+import { getCategoryById, prefixRace } from "../../Utilities/IDUtils"
+import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { renderMaybe } from "../../Utilities/ReactUtils"
+import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy"
+import { isNumber, isString, misNumberM, misStringM } from "../../Utilities/typeCheckUtils"
+import { getWikiEntry } from "../../Utilities/WikiUtils"
+import { Markdown } from "../Universal/Markdown"
+import { WikiCombatTechniques } from "./Elements/WikiCombatTechniques"
+import { WikiSource } from "./Elements/WikiSource"
+import { WikiBoxTemplate } from "./WikiBoxTemplate"
+import { WikiProperty } from "./WikiProperty"
 
-export interface WikiActivatableInfoProps {
-  attributes: OrderedMap<string, Record<Attribute>>
-  books: OrderedMap<string, Record<Book>>
-  wiki: WikiModelRecord
-  x: Activatable
-  l10n: L10nRecord
-  specialAbilities: OrderedMap<string, Record<SpecialAbility>>
-}
-
+const CIA = CategorizedPrerequisites.A
+const CIL = CategorizedPrerequisitesL
+const APTA = ActivatablePrerequisiteText.A
+const SDA = StaticData.A
 const AcA = { ...Advantage.AL, ...SpecialAbility.AL }
 const SAA = SpecialAbility.A
 const RAA = RequireActivatable.A
@@ -65,601 +62,23 @@ const RAAL = RequireActivatable.AL
 const RIA = RequireIncreasable.A
 const RPAA = RequirePrimaryAttribute.A
 const AAL = Advantage.AL
-const WA = WikiModel.A
 const SPA = SocialPrerequisite.A
 
-export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => {
-  const { x, l10n, specialAbilities, wiki, books } = props
-
-  const cost = getCost (l10n) (x)
-  const cost_elem = <Markdown source={cost} />
-
-  const source_elem = (
-    <WikiSource<RecordI<Activatable>>
-      books={books}
-      l10n={l10n}
-      x={x}
-      acc={AcA}
-      />
-  )
-
-  if (SpecialAbility.is (x)) {
-    const header_name_levels =
-      maybe ("")
-            ((levels: number) => levels < 2 ? " I" : ` I-${toRoman (levels)}`)
-            (SAA.tiers (x))
-
-    const header_full_name = fromMaybe (SAA.name (x)) (SAA.nameInWiki (x))
-
-    const header_name = `${header_full_name}${header_name_levels}`
-
-    const header_sub_name =
-      maybe (null as React.ReactNode)
-            ((subgr: string) => (
-              <p className="title">
-                {subgr}
-              </p>
-            ))
-            (bind (SAA.subgr (x))
-                  (pipe (dec, subscript (translate (l10n) ("combatspecialabilitygroups")))))
-
-    switch (SAA.gr (x)) {
-      case SpecialAbilityGroup.StaffEnchantments:
-      case SpecialAbilityGroup.Bannschwert:
-      case SpecialAbilityGroup.Dolch:
-      case SpecialAbilityGroup.Instrument:
-      case SpecialAbilityGroup.Gewand:
-      case SpecialAbilityGroup.Kugel:
-      case SpecialAbilityGroup.Stecken:
-      case SpecialAbilityGroup.Magierkugel:
-      case SpecialAbilityGroup.Narrenkappe:
-      case SpecialAbilityGroup.Schelmenspielzeug:
-      case SpecialAbilityGroup.Alchimistenschale:
-      case SpecialAbilityGroup.WaffenzauberAnimisten:
-      case SpecialAbilityGroup.Sichelrituale:
-      case SpecialAbilityGroup.Ringzauber:
-      case SpecialAbilityGroup.Chronikzauber:
-        return (
-          <WikiBoxTemplate
-            className="specialability"
-            title={header_name}
-            subtitle={header_sub_name}
-            >
-            {maybeRNullF (SAA.effect (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
-                         ))}
-            {maybeRNullF (SAA.volume (x))
-                         (str => (
-                           <WikiProperty l10n={l10n} title="volume">
-                             {str}
-                           </WikiProperty>
-                         ))}
-            {maybeRNullF (SAA.aeCost (x))
-                         (str => (
-                           <WikiProperty l10n={l10n} title="aecost">
-                             {str}
-                           </WikiProperty>
-                         ))}
-            {isNothing (SAA.aeCost (x)) && isNothing (SAA.bindingCost (x))
-              ? <WikiProperty l10n={l10n} title="aecost">{translate (l10n) ("none")}</WikiProperty>
-              : null}
-            {maybeRNullF (SAA.bindingCost (x))
-                         (str => (
-                           <WikiProperty l10n={l10n} title="bindingcost">
-                             {str}
-                           </WikiProperty>
-                         ))}
-            {maybeRNullF (bind (misNumberM (SAA.property (x)))
-                               (pipe (dec, subscript (translate (l10n) ("propertylist")))))
-                         (str => (
-                           <WikiProperty l10n={l10n} title="property">
-                             {str}
-                           </WikiProperty>
-                         ))}
-            <PrerequisitesText
-              l10n={l10n}
-              wiki={wiki}
-              x={x}
-              />
-            {cost_elem}
-            {source_elem}
-          </WikiBoxTemplate>
-        )
-
-      case SpecialAbilityGroup.Zeremonialgegenstände:
-        return (
-          <WikiBoxTemplate
-            className="specialability"
-            title={header_name}
-            subtitle={header_sub_name}
-            >
-            {maybeRNullF (SAA.effect (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
-                         ))}
-            {maybeRNullF (SAA.aspect (x))
-                         (aspect => (
-                           <WikiProperty l10n={l10n} title="aspect">
-                             {isNumber (aspect)
-                               ? fromMaybe ("")
-                                           (subscript (translate (l10n) ("aspectlist"))
-                                                      (aspect - 1))
-                               : aspect}
-                           </WikiProperty>
-                         ))}
-            <PrerequisitesText
-              l10n={l10n}
-              wiki={wiki}
-              x={x}
-              />
-            {cost_elem}
-            {source_elem}
-          </WikiBoxTemplate>
-        )
-
-      case SpecialAbilityGroup.ProtectiveWardingCircles:
-        return (
-          <WikiBoxTemplate
-            className="specialability"
-            title={header_name}
-            subtitle={header_sub_name}
-            >
-            <WikiProperty l10n={l10n} title="aecost">
-              {renderMaybe (SAA.aeCost (x))}
-            </WikiProperty>
-            <WikiProperty l10n={l10n} title="protectivecircle">
-              {renderMaybe (SAA.protectiveCircle (x))}
-            </WikiProperty>
-            <WikiProperty l10n={l10n} title="wardingcircle">
-              {renderMaybe (SAA.wardingCircle (x))}
-            </WikiProperty>
-            {cost_elem}
-            {source_elem}
-          </WikiBoxTemplate>
-        )
-
-      case SpecialAbilityGroup.MagicalTraditions:
-      case SpecialAbilityGroup.BlessedTraditions:
-        return (
-          <WikiBoxTemplate
-            className="specialability"
-            title={header_name}
-            subtitle={header_sub_name}
-            >
-            <Markdown source={renderMaybe (SAA.rules (x))} />
-            <PrerequisitesText
-              l10n={l10n}
-              wiki={wiki}
-              x={x}
-              />
-            {cost_elem}
-            {source_elem}
-          </WikiBoxTemplate>
-        )
-
-      case SpecialAbilityGroup.CombatStylesArmed:
-      case SpecialAbilityGroup.CombatStylesUnarmed: {
-        return (
-          <WikiBoxTemplate
-            className="specialability"
-            title={header_name}
-            subtitle={header_sub_name}
-            >
-            {maybeRNullF (SAA.rules (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
-                         ))}
-            {maybeRNullF (SAA.extended (x))
-                         (es => {
-                           const tag = translate (l10n) ("extendedcombatspecialabilities")
-                           const names = pipe_ (
-                            es,
-                            mapMaybe (pipe (
-                              ensure (isString),
-                              bindF (lookupF (specialAbilities)),
-                              fmap (SAA.name)
-                            )),
-                            sortStrings (l10n),
-                            intercalate (", ")
-                           )
-
-                           return (
-                             <Markdown source={`**${tag}:** ${names}`} />
-                           )
-                         })}
-            {maybeRNullF (SAA.penalty (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("penalty")}:** ${str}`} />
-                         ))}
-            <WikiCombatTechniques
-              acc={SAA}
-              combatTechniques={WA.combatTechniques (wiki)}
-              l10n={l10n}
-              x={x}
-              />
-            <PrerequisitesText
-              l10n={l10n}
-              wiki={wiki}
-              x={x}
-              />
-            {cost_elem}
-            {source_elem}
-          </WikiBoxTemplate>
-        )
-      }
-
-      case SpecialAbilityGroup.MagicalStyles:
-        return (
-          <WikiBoxTemplate
-            className="specialability"
-            title={header_name}
-            subtitle={header_sub_name}
-            >
-            {maybeRNullF (SAA.rules (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
-                         ))}
-            {maybeRNullF (SAA.extended (x))
-                         (es => {
-                           const tag = translate (l10n) ("extendedmagicalspecialabilities")
-                           const names = pipe_ (
-                            es,
-                            mapMaybe (pipe (
-                              ensure (isString),
-                              bindF (lookupF (specialAbilities)),
-                              fmap (SAA.name)
-                            )),
-                            sortStrings (l10n),
-                            intercalate (", ")
-                           )
-
-                           return (
-                             <Markdown source={`**${tag}:** ${names}`} />
-                           )
-                         })}
-            <PrerequisitesText
-              l10n={l10n}
-              wiki={wiki}
-              x={x}
-              />
-            {cost_elem}
-            {source_elem}
-          </WikiBoxTemplate>
-        )
-
-      case SpecialAbilityGroup.BlessedStyles: {
-        const SA_639 = lookup<string> (SpecialAbilityId.GebieterDesAspekts) (specialAbilities)
-
-        const add_extended =
-          pipe_ (
-            SA_639,
-            bindF (SAA.select),
-            fmap (mapMaybe (join ((option: Record<SelectOption>) =>
-                                   pipe (
-                                     SelectOption.A.prerequisites,
-                                     bindF (ensure (any (e => {
-                                                     if (!RequireActivatable.is (e)) {
-                                                       return false
-                                                     }
-
-                                                     const req_ids = RAAL.id (e)
-
-                                                     return isString (req_ids)
-                                                       ? req_ids === SAA.id (x)
-                                                       : elem (SAA.id (x)) (req_ids)
-                                                   }))),
-                                     fmap (() => ActiveObjectWithId ({
-                                                   id: SpecialAbilityId.GebieterDesAspekts,
-                                                   index: 0,
-                                                   sid: Just (SelectOption.A.id (option)),
-                                                 }))
-                                   )))),
-            joinMaybeList
-          )
-
-        return (
-          <WikiBoxTemplate
-            className="specialability"
-            title={header_name}
-            subtitle={header_sub_name}
-            >
-            {maybeRNullF (SAA.rules (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
-                         ))}
-            {maybeRNullF (SAA.extended (x))
-                         (pipe (
-                           mapMaybe (pipe (
-                             ensure (isString),
-                             bindF (lookupF (specialAbilities)),
-                             fmap (SAA.name)
-                           )),
-                           append (mapMaybe (pipe (
-                                              getNameCostForWiki (l10n) (wiki),
-                                              fmap (ActivatableNameCostA_.name)
-                                            ))
-                                            (add_extended)),
-                           sortStrings (l10n),
-                           intercalate (", "),
-                           str => {
-                             const tag = translate (l10n) ("extendedblessedtspecialabilities")
-
-                             return (
-                               <Markdown source={`**${tag}:** ${str}`} />
-                             )
-                           }
-                         ))}
-            <PrerequisitesText
-              l10n={l10n}
-              wiki={wiki}
-              x={x}
-              />
-            {cost_elem}
-            {source_elem}
-          </WikiBoxTemplate>
-        )
-      }
-
-      case SpecialAbilityGroup.SkillStyles:
-        return (
-          <WikiBoxTemplate
-            className="specialability"
-            title={header_name}
-            subtitle={header_sub_name}
-            >
-            {maybeRNullF (SAA.rules (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
-                         ))}
-            {maybeRNullF (SAA.extended (x))
-                         (es => {
-                           const tag = translate (l10n) ("extendedskillspecialabilities")
-                           const names = pipe_ (
-                            es,
-                            mapMaybe (pipe (
-                              ensure (isString),
-                              bindF (lookupF (specialAbilities)),
-                              fmap (SAA.name)
-                            )),
-                            sortStrings (l10n),
-                            intercalate (", ")
-                           )
-
-                           return (
-                             <Markdown source={`**${tag}:** ${names}`} />
-                           )
-                         })}
-            <PrerequisitesText
-              l10n={l10n}
-              wiki={wiki}
-              x={x}
-              />
-            {cost_elem}
-            {source_elem}
-          </WikiBoxTemplate>
-        )
-
-      case SpecialAbilityGroup.Hexenkessel:
-        return (
-          <WikiBoxTemplate
-            className="specialability"
-            title={header_name}
-            subtitle={header_sub_name}
-            >
-            {maybeRNullF (SAA.effect (x))
-                          (str => (
-                            <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
-                          ))}
-            {maybeRNullF (SAA.volume (x))
-                          (str => (
-                            <WikiProperty l10n={l10n} title="volume">
-                              {str}
-                            </WikiProperty>
-                          ))}
-            {maybeRNullF (bind (misNumberM (SAA.brew (x)))
-                                (pipe (dec, subscript (translate (l10n) ("brews")))))
-                          (str => (
-                            <WikiProperty l10n={l10n} title="brew">
-                              {str}
-                            </WikiProperty>
-                          ))}
-            {maybeRNullF (SAA.aeCost (x))
-                          (str => (
-                            <WikiProperty l10n={l10n} title="aecost">
-                              {str}
-                            </WikiProperty>
-                          ))}
-            {isNothing (SAA.aeCost (x)) && isNothing (SAA.bindingCost (x))
-              ? <WikiProperty l10n={l10n} title="aecost">{translate (l10n) ("none")}</WikiProperty>
-              : null}
-            {maybeRNullF (SAA.bindingCost (x))
-                          (str => (
-                            <WikiProperty l10n={l10n} title="bindingcost">
-                              {str}
-                            </WikiProperty>
-                          ))}
-            {maybeRNullF (bind (misNumberM (SAA.property (x)))
-                                (pipe (dec, subscript (translate (l10n) ("propertylist")))))
-                          (str => (
-                            <WikiProperty l10n={l10n} title="property">
-                              {str}
-                            </WikiProperty>
-                          ))}
-            <PrerequisitesText
-              l10n={l10n}
-              wiki={wiki}
-              x={x}
-              />
-            {cost_elem}
-            {source_elem}
-          </WikiBoxTemplate>
-        )
-
-      case SpecialAbilityGroup.Paktgeschenke:
-        return (
-          <WikiBoxTemplate
-            className="specialability"
-            title={header_name}
-            subtitle={header_sub_name}
-            >
-            {maybeRNullF (SAA.rules (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
-                         ))}
-            {maybeRNullF (SAA.effect (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
-                         ))}
-            <PrerequisitesText
-              l10n={l10n}
-              wiki={wiki}
-              x={x}
-              />
-            {cost_elem}
-            {source_elem}
-          </WikiBoxTemplate>
-        )
-
-      case SpecialAbilityGroup.Combat:
-      case SpecialAbilityGroup.CombatExtended:
-        return (
-          <WikiBoxTemplate
-            className="specialability"
-            title={header_name}
-            subtitle={header_sub_name}
-            >
-            {maybeRNullF (SAA.rules (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
-                         ))}
-            {maybeRNullF (SAA.effect (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
-                         ))}
-            {maybeRNullF (SAA.penalty (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("penalty")}:** ${str}`} />
-                         ))}
-            <WikiCombatTechniques
-              acc={SAA}
-              combatTechniques={WA.combatTechniques (wiki)}
-              l10n={l10n}
-              x={x}
-              />
-            {maybeRNullF (SAA.aeCost (x))
-                         (str => (
-                           <WikiProperty l10n={l10n} title="aecost">
-                             {str}
-                           </WikiProperty>
-                         ))}
-            <PrerequisitesText
-              l10n={l10n}
-              wiki={wiki}
-              x={x}
-              />
-            {cost_elem}
-            {source_elem}
-          </WikiBoxTemplate>
-        )
-
-      default:
-        return (
-          <WikiBoxTemplate
-            className="specialability"
-            title={header_name}
-            subtitle={header_sub_name}
-            >
-            {maybeRNullF (SAA.rules (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
-                         ))}
-            {maybeRNullF (SAA.effect (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
-                         ))}
-            {maybeRNullF (SAA.penalty (x))
-                         (str => (
-                           <Markdown source={`**${translate (l10n) ("penalty")}:** ${str}`} />
-                         ))}
-            {maybeRNullF (SAA.aeCost (x))
-                         (str => (
-                           <WikiProperty l10n={l10n} title="aecost">
-                             {str}
-                           </WikiProperty>
-                         ))}
-            <PrerequisitesText
-              l10n={l10n}
-              wiki={wiki}
-              x={x}
-              />
-            {cost_elem}
-            {source_elem}
-          </WikiBoxTemplate>
-        )
-    }
-  }
-  else {
-    const header_name_levels =
-      maybe ("")
-            ((levels: number) => levels < 2 ? " I" : ` I-${toRoman (levels)}`)
-            (AAL.tiers (x))
-
-    const header_full_name = AAL.name (x)
-
-    const rs = AAL.prerequisites (x)
-
-    const has_rcp =
-      isOrderedMap (rs)
-        ? maybe (false) (elem<AllRequirements> ("RCP")) (lookup (1) (rs))
-        : elem<AllRequirements> ("RCP") (rs)
-
-    const header_rcp = has_rcp ? " (*)" : ""
-
-    const header_name = `${header_full_name}${header_name_levels}${header_rcp}`
-
-    return (
-      <WikiBoxTemplate className="disadv" title={header_name}>
-        <Markdown source={`**${translate (l10n) ("rules")}:** ${AAL.rules (x)}`} />
-        {maybeRNullF (AcA.range (x))
-                     (str => (
-                       <WikiProperty l10n={l10n} title="range">
-                         {str}
-                       </WikiProperty>
-                     ))}
-        {maybeRNullF (AcA.actions (x))
-                     (str => (
-                       <WikiProperty l10n={l10n} title="actions">
-                         {str}
-                       </WikiProperty>
-                     ))}
-        <PrerequisitesText
-          l10n={l10n}
-          wiki={wiki}
-          x={x}
-          />
-        {cost_elem}
-        {source_elem}
-      </WikiBoxTemplate>
-    )
-  }
-}
-
 const getCost =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (x: Activatable) => {
     const apValue = AcA.apValue (x)
     const apValueAppend = AcA.apValueAppend (x)
     const mcost = AcA.cost (x)
 
     return pipe_ (
-      `**${translate (l10n) ("apvalue")}:** `,
+      `**${translate (staticData) ("inlinewiki.apvalue")}:** `,
       str => {
         if (isJust (apValue)) {
           return `${str}${fromJust (apValue)}`
         }
 
-        const ap_str = translate (l10n) ("adventurepoints")
+        const ap_str = translate (staticData) ("inlinewiki.adventurepoints")
 
         if (isJust (mcost)) {
           const cost = fromJust (mcost)
@@ -670,7 +89,7 @@ const getCost =
                 ? map (negate) (cost)
                 : cost
 
-            const level_str = translate (l10n) ("level")
+            const level_str = translate (staticData) ("inlinewiki.level")
 
             const level_nums =
               pipe_ (abs_cost, imap (pipe (toRomanFromIndex, cnst)), intercalate ("/"))
@@ -685,7 +104,7 @@ const getCost =
           const plain_str = `${str}${abs_cost} ${ap_str}`
 
           return isJust (AcA.tiers (x))
-            ? `${plain_str} ${translate (l10n) ("perlevel")}`
+            ? `${plain_str} ${translate (staticData) ("inlinewiki.perlevel")}`
             : plain_str
         }
 
@@ -696,587 +115,6 @@ const getCost =
             (apValueAppend)
     )
   }
-
-export interface PrerequisitesTextProps {
-  x: Activatable
-  l10n: L10nRecord
-  wiki: WikiModelRecord
-}
-
-export function PrerequisitesText (props: PrerequisitesTextProps) {
-  const { x, l10n } = props
-
-  const prerequisitesText = AAL.prerequisitesText (x)
-  const prerequisitesTextIndex = AAL.prerequisitesTextIndex (x)
-
-  if (isJust (prerequisitesText)) {
-    return (
-      <Markdown
-        source={`**${translate (l10n) ("prerequisites")}:** ${fromJust (prerequisitesText)}`}
-        />
-    )
-  }
-
-  const levels = Maybe.product (AAL.tiers (x))
-  const prerequisites = AAL.prerequisites (x)
-  const prerequisitesTextEnd = AAL.prerequisitesTextEnd (x)
-  const prerequisitesTextStart = AAL.prerequisitesTextStart (x)
-
-  type TypeofMaybeList = Maybe<JSX.Element | string>
-  type TypeofList = JSX.Element | string
-
-  const mtext_before = fmapF (prerequisitesTextStart)
-                             (y => <Markdown key="before" source={y} noWrapper />)
-
-  /**
-   * `Right`: Will need a comma before if there are elements before the text.
-   * `Left`: Must not get a comma before the text.
-   */
-  const mtext_after = fmapF (prerequisitesTextEnd)
-                            ((y): Either<JSX.Element, JSX.Element> =>
-                              /^(?: |,|\.)/u .test (y)
-                                ? Left (<Markdown key="after" source={y} noWrapper />)
-                                : Right (<Markdown key="after" source={y} noWrapper />))
-
-  const mtext_after_insidelist = bind (mtext_after) (eitherToMaybe)
-  const mtext_after_outsidelist = bind (mtext_after) (pipe (invertEither, eitherToMaybe))
-
-  const addTextAfterOutsideList: <A> (xs: List<TypeofList | A>) => List<TypeofList | A> =
-    xs => maybe (xs) (snoc (xs)) (mtext_after_outsidelist)
-
-  if (isOrderedMap (prerequisites)) {
-    const levelList = rangeN (1, levels)
-
-    return (
-      <p>
-        <span>
-          {translate (l10n) ("prerequisites")}
-          {": "}
-        </span>
-        <span>
-          {pipe_ (
-            List<Maybe<TypeofList>> (
-              mtext_before,
-              notMember (1) (prerequisites)
-                ? Just (`${translate (l10n) ("level")} I: ${translate (l10n) ("none")} `)
-                : Nothing,
-              ...map ((lvl: number) => {
-                  const prereqForLevel = lookup (lvl) (prerequisites)
-                  const not_empty = Maybe.any (notNull) (prereqForLevel)
-
-                  const level_num_str = `${translate (l10n) ("level")} ${toRoman (lvl)}: `
-
-                  const requires_last_str =
-                    lvl > 1
-                    ? `${not_empty ? ", " : ""}${AAL.name (x)}${nbsp}${toRoman (lvl - 1)}`
-                    : ""
-
-                  return Just (
-                    <React.Fragment key={lvl}>
-                      {level_num_str}
-                      {maybeRNull ((rs: List<AllRequirements>) =>
-                                    pipe_ (
-                                      getPrerequisites (rs) (prerequisitesTextIndex) (props),
-                                      catMaybes,
-                                      intersperse<TypeofList> (", "),
-                                      toArray,
-                                      e => <>{e}</>
-                                    ))
-                                  (prereqForLevel)}
-                      {requires_last_str}
-                    </React.Fragment>
-                  )
-                })
-                (levelList),
-              mtext_after_insidelist
-            ),
-            catMaybes,
-            intersperse<TypeofList> ("; "),
-            addTextAfterOutsideList,
-            ensure (notNull),
-            maybe<React.ReactNode> (translate (l10n) ("none")) (toArray)
-          )}
-        </span>
-      </p>
-    )
-  }
-  else {
-    return (
-      <p>
-        <span>
-          {translate (l10n) ("prerequisites")}
-          {": "}
-        </span>
-        <span>
-          {pipe_ (
-            getPrerequisites (prerequisites) (prerequisitesTextIndex) (props),
-            consF<TypeofMaybeList> (mtext_before),
-            snocF<TypeofMaybeList> (mtext_after_insidelist),
-            catMaybes,
-            intersperse<JSX.Element | string> (", "),
-            addTextAfterOutsideList,
-            ensure (notNull),
-            maybe<React.ReactNode> (translate (l10n) ("none")) (toArray)
-          )}
-        </span>
-      </p>
-    )
-  }
-}
-
-export interface PrerequisitesProps {
-  x: Activatable
-  l10n: L10nRecord
-  wiki: WikiModelRecord
-}
-
-const getPrerequisites =
-  (rs: List<AllRequirements>) =>
-  (req_text_index: OrderedMap<number, string | false>) =>
-  (props: PrerequisitesProps): List<Maybe<JSX.Element | string>> => {
-    const { x, l10n, wiki } = props
-
-    if (fnull (rs) && !isExtendedSpecialAbility (x)) {
-      return List<Maybe<JSX.Element | string>> (
-        Just (translate (l10n) ("none"))
-      )
-    }
-
-    const items = getCategorizedItems (req_text_index) (rs)
-
-    const rcp = CIA.rcp (items)
-    const casterBlessedOne = CIA.casterBlessedOne (items)
-    const traditions = CIA.traditions (items)
-    const attributes = CIA.attributes (items)
-    const primaryAttribute = CIA.primaryAttribute (items)
-    const skills = CIA.skills (items)
-    const activeSkills = CIA.activeSkills (items)
-    const otherActiveSpecialAbilities = CIA.otherActiveSpecialAbilities (items)
-    const inactiveSpecialAbilities = CIA.inactiveSpecialAbilities (items)
-    const otherActiveAdvantages = CIA.otherActiveAdvantages (items)
-    const inactiveAdvantages = CIA.inactiveAdvantages (items)
-    const activeDisadvantages = CIA.activeDisadvantages (items)
-    const inactiveDisadvantages = CIA.inactiveDisadvantages (items)
-    const race = CIA.race (items)
-    const social = CIA.social (items)
-
-    const category = AAL.category (x)
-    const gr = AAL.gr (x)
-
-    return List<Maybe<JSX.Element | string>> (
-      (isString (rcp) ? notNullStr (rcp) : rcp)
-        ? Just (getPrerequisitesRCPText (l10n) (x) (rcp))
-        : Nothing,
-      ...getPrerequisitesActivatablesText (l10n) (wiki) (casterBlessedOne),
-      ...getPrerequisitesActivatablesText (l10n) (wiki) (traditions),
-      getPrerequisitesAttributesText (l10n) (WikiModel.A.attributes (wiki)) (attributes),
-      fmap (getPrerequisitesPrimaryAttributeText (l10n)) (primaryAttribute),
-      getPrerequisitesSkillsText (l10n) (wiki) (skills),
-      getPrerequisitesActivatedSkillsText (l10n) (wiki) (activeSkills),
-      ...getPrerequisitesActivatablesText (l10n) (wiki) (otherActiveSpecialAbilities),
-      ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveSpecialAbilities),
-      ...getPrerequisitesActivatablesText (l10n) (wiki) (otherActiveAdvantages),
-      ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveAdvantages),
-      ...getPrerequisitesActivatablesText (l10n) (wiki) (activeDisadvantages),
-      ...getPrerequisitesActivatablesText (l10n) (wiki) (inactiveDisadvantages),
-      fmap (getPrerequisitesRaceText (l10n) (WikiModel.A.races (wiki))) (race),
-      fmap (getSocialPrerequisiteText (l10n)) (social),
-      category === Category.SPECIAL_ABILITIES
-        ? (gr === 11
-          ? Just (translate (l10n) ("appropriatecombatstylespecialability"))
-          : gr === 14
-          ? Just (translate (l10n) ("appropriatemagicalstylespecialability"))
-          : gr === 26
-          ? Just (translate (l10n) ("appropriateblessedstylespecialability"))
-          : Nothing)
-        : Nothing
-    )
-  }
-
-interface ActivatableStringObject {
-  id: string
-  active: boolean
-  value: string
-}
-
-type ReplacedPrerequisite<T extends RecordIBase<any> = RequireActivatable> = Record<T> | string
-type ActivatablePrerequisiteObjects = Record<RequireActivatable> | ActivatableStringObject
-type PrimaryAttributePrerequisiteObjects = Record<RequirePrimaryAttribute> | string
-type IncreasablePrerequisiteObjects = Record<RequireIncreasable> | string
-type RacePrerequisiteObjects = Record<RaceRequirement> | string
-type SocialPrerequisiteObjects = Record<SocialPrerequisite> | string
-type RCPPrerequisiteObjects = boolean | string
-
-const getPrerequisitesRCPText =
-  (l10n: L10nRecord) =>
-  (x: Activatable) =>
-  (options: RCPPrerequisiteObjects) => {
-    if (isString (options)) {
-      return <span>{options}</span>
-    }
-    else {
-      const category = AAL.category (x)
-      const name = translateP (l10n)
-                              ("racecultureorprofessionrequiresautomaticorsuggested")
-                              (List (
-                                AAL.name (x),
-                                category === Category.ADVANTAGES
-                                  ? translate (l10n) ("advantage")
-                                  : translate (l10n) ("disadvantage")
-                              ))
-
-      return <span>{name}</span>
-    }
-  }
-
-const getPrerequisitesAttributesText =
-  (l10n: L10nRecord) =>
-  (attrs: OrderedMap<string, Record<Attribute>>) => {
-    const getAttrAbbrv = pipe (lookupF (attrs), fmap (Attribute.A.short))
-
-    return pipe (
-      ensure (notNull as notNull<IncreasablePrerequisiteObjects>),
-      fmap (pipe (
-        map (e => {
-          if (RequireIncreasable.is (e)) {
-            const ids = RIA.id (e)
-            const value = RIA.value (e)
-
-            if (isList (ids)) {
-              const name = pipe_ (ids, mapMaybe (getAttrAbbrv), localizeOrList (l10n))
-
-              return `${name} ${value}`
-            }
-            else {
-              const name = pipe_ (ids, getAttrAbbrv, fromMaybe (""))
-
-              return `${name} ${value}`
-            }
-          }
-          else {
-            return e
-          }
-        }),
-        sortStrings (l10n),
-        intercalate (", ")
-      ))
-    )
-  }
-
-const getPrerequisitesPrimaryAttributeText =
-  (l10n: L10nRecord) =>
-  (x: PrimaryAttributePrerequisiteObjects) => (
-    <span>
-      {isString (x)
-        ? x
-        : `${translate (l10n) ("primaryattributeofthetradition")} ${RPAA.value (x)}`}
-    </span>
-  )
-
-const getPrerequisitesSkillsText =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
-    pipe (
-      ensure (notNull as notNull<IncreasablePrerequisiteObjects>),
-      fmap (pipe (
-        map (e => {
-          if (RequireIncreasable.is (e)) {
-            const ids = RIA.id (e)
-            const value = RIA.value (e)
-
-            if (isList (ids)) {
-              const name = pipe_ (ids, mapMaybe (getNameById (wiki)), localizeOrList (l10n))
-
-              return `${name} ${value}`
-            }
-            else {
-              const name = pipe_ (ids, getNameById (wiki), fromMaybe (""))
-
-              return `${name} ${value}`
-            }
-          }
-          else {
-            return e
-          }
-        }),
-        sortStrings (l10n),
-        intercalate (", ")
-      ))
-    )
-
-const getPrerequisitesActivatedSkillsTextCategoryAdd =
-  (l10n: L10nRecord) =>
-  (id: string) => {
-    const isCategory = Maybe.elemF (getCategoryById (id))
-
-    return isCategory (Category.LITURGICAL_CHANTS)
-      ? translate (l10n) ("knowledgeofliturgicalchant")
-      : translate (l10n) ("knowledgeofspell")
-  }
-
-const getNameById =
-  (wiki: WikiModelRecord) =>
-    pipe (getWikiEntry (wiki), bindF (pipe (Profession.AL.name, ensure (isString))))
-
-const getPrerequisitesActivatedSkillsText =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
-    pipe (
-      ensure (notNull as notNull<ActivatablePrerequisiteObjects>),
-      fmap (pipe (
-        map (e => {
-          if (RequireActivatable.is (e)) {
-            const ids = RAA.id (e)
-
-            if (isList (ids)) {
-              const category_add =
-                getPrerequisitesActivatedSkillsTextCategoryAdd (l10n) (head (ids))
-
-              const name = pipe_ (ids, mapMaybe (getNameById (wiki)), localizeOrList (l10n))
-
-              return `${category_add} ${name}`
-            }
-            else {
-              const category_add =
-                getPrerequisitesActivatedSkillsTextCategoryAdd (l10n) (ids)
-
-              const name = pipe_ (ids, getNameById (wiki), fromMaybe (""))
-
-              return `${category_add} ${name}`
-            }
-          }
-          else {
-            return e .value
-          }
-        }),
-        sortStrings (l10n),
-        intercalate (", ")
-      ))
-    )
-
-interface ActivatablePrerequisiteText {
-  "@@name": "ActivatablePrerequisiteText"
-  id: string | NonEmptyList<string>
-  active: boolean
-  name: string
-}
-
-const ActivatablePrerequisiteText =
-  fromDefault ("ActivatablePrerequisiteText") <ActivatablePrerequisiteText> ({
-                id: "",
-                active: false,
-                name: "",
-              })
-
-const APTA = ActivatablePrerequisiteText.A
-
-const getPrerequisitesActivatablesCategoryAdd =
-  (l10n: L10nRecord) =>
-    pipe (
-      getCategoryById,
-      Maybe.elemF,
-      isCategory =>
-        isCategory (Category.ADVANTAGES)
-          ? `${translate (l10n) ("advantage")} `
-          : isCategory (Category.DISADVANTAGES)
-          ? `${translate (l10n) ("disadvantage")} `
-          : ""
-    )
-
-const mapPrerequisitesActivatablesTextElem =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
-  (sid: Maybe<string | number>) =>
-  (sid2: Maybe<string | number>) =>
-  (level: Maybe<number>) =>
-    pipe (
-      getWikiEntry (wiki),
-      bindF (a => {
-        const curr_id = AAL.id (a)
-
-        const category_add = getPrerequisitesActivatablesCategoryAdd (l10n) (curr_id)
-
-        const active = ActiveObjectWithId ({
-          id: curr_id,
-          sid,
-          sid2,
-          tier: level,
-          index: 0,
-        })
-
-        const mcombined_name =
-          fmapF (getName (l10n) (wiki) (active))
-                (naming => putLevelName (true)
-                                        (l10n)
-                                        (ActivatableNameCost ({
-                                          active,
-                                          naming,
-                                          finalCost: 0,
-                                          isAutomatic: false,
-                                        })))
-
-        return fmapF (mcombined_name)
-                     (combined_name =>
-                       `${category_add}${ActivatableNameCostA_.name (combined_name)}`)
-      })
-    )
-
-const getPrerequisitesActivatablesText =
-  (l10n: L10nRecord) =>
-  (wiki: WikiModelRecord) =>
-    pipe (
-      map ((x: ActivatablePrerequisiteObjects) => {
-        if (RequireActivatable.is (x)) {
-          const id = RAA.id (x)
-          const active = RAA.active (x)
-          const msid = RAA.sid (x)
-          const msid2 = RAA.sid2 (x)
-          const mlevel = RAA.tier (x)
-
-          const name =
-            pipe_ (
-              msid,
-              bindF (ensure ((a): a is string | number => !isList (a))),
-              sid => isList (id)
-                           ? pipe_ (
-                               id,
-                               mapMaybe (mapPrerequisitesActivatablesTextElem (l10n)
-                                                                              (wiki)
-                                                                              (sid)
-                                                                              (msid2)
-                                                                              (mlevel)),
-                               localizeOrList (l10n)
-                             )
-                           : fromMaybe ("")
-                                       (mapPrerequisitesActivatablesTextElem (l10n)
-                                                                             (wiki)
-                                                                             (sid)
-                                                                             (msid2)
-                                                                             (mlevel)
-                                                                             (id))
-            )
-
-          return ActivatablePrerequisiteText ({
-            id,
-            active,
-            name,
-          })
-        }
-        else {
-          const { id, active, value } = x
-          const category_add = getPrerequisitesActivatablesCategoryAdd (l10n) (id)
-
-          return ActivatablePrerequisiteText ({
-            id,
-            active,
-            name: `${category_add}${value}`,
-          })
-        }
-      }),
-      sortRecordsByName (l10n),
-      map ((x): Just<string | JSX.Element> => {
-        const id = APTA.id (x)
-        const name = APTA.name (x)
-        const active = APTA.active (x)
-
-        if (active) {
-          return Just (name)
-        }
-        else {
-          return Just (
-            <span
-              key={notNullStr (name) ? name : isString (id) ? id : ""}
-              className="disabled"
-              >
-              {name}
-            </span>
-          )
-        }
-      })
-    )
-
-const getPrerequisitesRaceText =
-  (l10n: L10nRecord) =>
-  (races: OrderedMap<string, Record<Race>>) =>
-  (race: RacePrerequisiteObjects) => {
-    if (isString (race)) {
-      return <span>{race}</span>
-    }
-
-    const race_tag = translate (l10n) ("race")
-
-    const value = RaceRequirement.A.value (race)
-    const active = RaceRequirement.A.active (race)
-
-    if (isList (value)) {
-      const curr_races =
-        pipe_ (
-          value,
-          mapMaybe (pipe (prefixRace, lookupF (races), fmap (Race.A.name))),
-          localizeOrList (l10n)
-        )
-
-      return <span className={active ? "" : "disabled"}>{`${race_tag} ${curr_races}`}</span>
-    }
-    else {
-      const curr_race = pipe_ (value, prefixRace, lookupF (races), maybe ("") (Race.A.name))
-
-      return <span className={active ? "" : "disabled"}>{`${race_tag} ${curr_race}`}</span>
-    }
-  }
-
-const getSocialPrerequisiteText: (l10n: L10nRecord) =>
-                                 (x: SocialPrerequisiteObjects) => string =
-  l10n => x => isString (x)
-               ? x
-               : translateP (l10n)
-                            ("socialstatusxorhigher")
-                            (List (
-                              fromMaybe<string | number> (SPA.value (x))
-                                                         (subscript (L10n.A.socialstatuses (l10n))
-                                                                    (SPA.value (x) - 1))
-                            ))
-
-interface CategorizedItems {
-  "@@name": "CategorizedItems"
-  rcp: RCPPrerequisiteObjects
-  casterBlessedOne: List<ActivatablePrerequisiteObjects>
-  traditions: List<ActivatablePrerequisiteObjects>
-  attributes: List<ReplacedPrerequisite<RequireIncreasable>>
-  primaryAttribute: Maybe<ReplacedPrerequisite<RequirePrimaryAttribute>>
-  skills: List<ReplacedPrerequisite<RequireIncreasable>>
-  activeSkills: List<ActivatablePrerequisiteObjects>
-  otherActiveSpecialAbilities: List<ActivatablePrerequisiteObjects>
-  inactiveSpecialAbilities: List<ActivatablePrerequisiteObjects>
-  otherActiveAdvantages: List<ActivatablePrerequisiteObjects>
-  inactiveAdvantages: List<ActivatablePrerequisiteObjects>
-  activeDisadvantages: List<ActivatablePrerequisiteObjects>
-  inactiveDisadvantages: List<ActivatablePrerequisiteObjects>
-  race: Maybe<RacePrerequisiteObjects>
-  social: Maybe<SocialPrerequisiteObjects>
-}
-
-const CategorizedItems =
-  fromDefault ("CategorizedItems") <CategorizedItems> ({
-                rcp: false,
-                casterBlessedOne: List (),
-                traditions: List (),
-                attributes: List (),
-                primaryAttribute: Nothing,
-                skills: List (),
-                activeSkills: List (),
-                otherActiveSpecialAbilities: List (),
-                inactiveSpecialAbilities: List (),
-                otherActiveAdvantages: List (),
-                inactiveAdvantages: List (),
-                activeDisadvantages: List (),
-                inactiveDisadvantages: List (),
-                race: Nothing,
-                social: Nothing,
-              })
-
-const CIA = CategorizedItems.A
-const CIL = makeLenses (CategorizedItems)
 
 const isCasterOrBlessedOneId =
   (x: string) => x === AdvantageId.Blessed || x === AdvantageId.Spellcaster
@@ -1298,9 +136,25 @@ const getActivatablePrerequisite =
                                                               (RAA.id (e)))
                                                       (misStringM (index_special)))
 
+const getSocialPrerequisiteText: (staticData: StaticDataRecord) =>
+                                 (x: SocialPrerequisiteObjects) => string =
+  staticData => x => isString (x)
+                     ? x
+                     : translateP (staticData)
+                                  ("inlinewiki.socialstatusxorhigher")
+                                  (List (
+                                    pipe_ (
+                                      x,
+                                      SPA.value,
+                                      lookupF (SDA.socialStatuses (staticData)),
+                                      maybe <string | number> (SPA.value (x))
+                                                              (NumIdName.A.name)
+                                    )
+                                  ))
+
 export const getCategorizedItems =
   (req_text_index: OrderedMap<number, string | false>) =>
-  ifoldr (i => (e: AllRequirements): ident<Record<CategorizedItems>> => {
+  ifoldr (i => (e: AllRequirements): ident<Record<CategorizedPrerequisites>> => {
            const index_special = lookup (i) (req_text_index)
 
            if (Maybe.elem<string | false> (false) (index_special)) {
@@ -1379,4 +233,1137 @@ export const getCategorizedItems =
 
            return ident
          })
-         (CategorizedItems.default)
+         (CategorizedPrerequisites.default)
+
+const getPrerequisitesActivatablesCategoryAdd =
+  (staticData: StaticDataRecord) =>
+    pipe (
+      getCategoryById,
+      Maybe.elemF,
+      isCategory =>
+        isCategory (Category.ADVANTAGES)
+          ? `${translate (staticData) ("inlinewiki.advantage")} `
+          : isCategory (Category.DISADVANTAGES)
+          ? `${translate (staticData) ("inlinewiki.disadvantage")} `
+          : ""
+    )
+
+const getPrerequisitesRCPText =
+  (staticData: StaticDataRecord) =>
+  (x: Activatable) =>
+  (options: RCPPrerequisiteObjects) => {
+    if (isString (options)) {
+      return <span>{options}</span>
+    }
+    else {
+      const category = AAL.category (x)
+      const name = translateP (staticData)
+                              ("inlinewiki.racecultureorprofessionrequiresautomaticorsuggested")
+                              (List (
+                                AAL.name (x),
+                                category === Category.ADVANTAGES
+                                  ? translate (staticData) ("inlinewiki.advantage")
+                                  : translate (staticData) ("inlinewiki.disadvantage")
+                              ))
+
+      return <span>{name}</span>
+    }
+  }
+
+const mapPrerequisitesActivatablesTextElem =
+  (staticData: StaticDataRecord) =>
+  (sid: Maybe<string | number>) =>
+  (sid2: Maybe<string | number>) =>
+  (level: Maybe<number>) =>
+    pipe (
+      getWikiEntry (staticData),
+      bindF (a => {
+        const curr_id = AAL.id (a)
+
+        const category_add = getPrerequisitesActivatablesCategoryAdd (staticData) (curr_id)
+
+        const active = ActiveObjectWithId ({
+          id: curr_id,
+          sid,
+          sid2,
+          tier: level,
+          index: 0,
+        })
+
+        const mcombined_name =
+          fmapF (getName (staticData) (active))
+                (naming => putLevelName (true)
+                                        (staticData)
+                                        (ActivatableNameCost ({
+                                          active,
+                                          naming,
+                                          finalCost: 0,
+                                          isAutomatic: false,
+                                        })))
+
+        return fmapF (mcombined_name)
+                     (combined_name =>
+                       `${category_add}${ActivatableNameCostA_.name (combined_name)}`)
+      })
+    )
+
+const getPrerequisitesActivatablesText =
+  (staticData: StaticDataRecord) =>
+    pipe (
+      map ((x: ActivatablePrerequisiteObjects) => {
+        if (RequireActivatable.is (x)) {
+          const id = RAA.id (x)
+          const active = RAA.active (x)
+          const msid = RAA.sid (x)
+          const msid2 = RAA.sid2 (x)
+          const mlevel = RAA.tier (x)
+
+          const name =
+            pipe_ (
+              msid,
+              bindF (ensure ((a): a is string | number => !isList (a))),
+              sid => isList (id)
+                           ? pipe_ (
+                               id,
+                               mapMaybe (mapPrerequisitesActivatablesTextElem (staticData)
+                                                                              (sid)
+                                                                              (msid2)
+                                                                              (mlevel)),
+                               localizeOrList (staticData)
+                             )
+                           : fromMaybe ("")
+                                       (mapPrerequisitesActivatablesTextElem (staticData)
+                                                                             (sid)
+                                                                             (msid2)
+                                                                             (mlevel)
+                                                                             (id))
+            )
+
+          return ActivatablePrerequisiteText ({
+            id,
+            active,
+            name,
+          })
+        }
+        else {
+          const { id, active, value } = x
+          const category_add = getPrerequisitesActivatablesCategoryAdd (staticData) (id)
+
+          return ActivatablePrerequisiteText ({
+            id,
+            active,
+            name: `${category_add}${value}`,
+          })
+        }
+      }),
+      sortRecordsByName (staticData),
+      map ((x): Just<string | JSX.Element> => {
+        const id = APTA.id (x)
+        const name = APTA.name (x)
+        const active = APTA.active (x)
+
+        if (active) {
+          return Just (name)
+        }
+        else {
+          return Just (
+            <span
+              key={notNullStr (name) ? name : isString (id) ? id : ""}
+              className="disabled"
+              >
+              {name}
+            </span>
+          )
+        }
+      })
+    )
+
+const getPrerequisitesAttributesText =
+  (staticData: StaticDataRecord) => {
+    const attrs = SDA.attributes (staticData)
+    const getAttrAbbrv = pipe (lookupF (attrs), fmap (Attribute.A.short))
+
+    return pipe (
+      ensure (notNull as notNull<IncreasablePrerequisiteObjects>),
+      fmap (pipe (
+        map (e => {
+          if (RequireIncreasable.is (e)) {
+            const ids = RIA.id (e)
+            const value = RIA.value (e)
+
+            if (isList (ids)) {
+              const name = pipe_ (ids, mapMaybe (getAttrAbbrv), localizeOrList (staticData))
+
+              return `${name} ${value}`
+            }
+            else {
+              const name = pipe_ (ids, getAttrAbbrv, fromMaybe (""))
+
+              return `${name} ${value}`
+            }
+          }
+          else {
+            return e
+          }
+        }),
+        sortStrings (staticData),
+        intercalate (", ")
+      ))
+    )
+  }
+
+const getPrerequisitesPrimaryAttributeText =
+  (staticData: StaticDataRecord) =>
+  (x: PrimaryAttributePrerequisiteObjects) => (
+    <span>
+      {isString (x)
+        ? x
+        : `${translate (staticData) ("inlinewiki.primaryattributeofthetradition")} ${RPAA.value (x)}`}
+    </span>
+  )
+
+const getNameById =
+  (wiki: StaticDataRecord) =>
+    pipe (getWikiEntry (wiki), bindF (pipe (Profession.AL.name, ensure (isString))))
+
+const getPrerequisitesSkillsText =
+  (staticData: StaticDataRecord) =>
+    pipe (
+      ensure (notNull as notNull<IncreasablePrerequisiteObjects>),
+      fmap (pipe (
+        map (e => {
+          if (RequireIncreasable.is (e)) {
+            const ids = RIA.id (e)
+            const value = RIA.value (e)
+
+            if (isList (ids)) {
+              const name = pipe_ (
+                             ids,
+                             mapMaybe (getNameById (staticData)),
+                             localizeOrList (staticData)
+                           )
+
+              return `${name} ${value}`
+            }
+            else {
+              const name = pipe_ (ids, getNameById (staticData), fromMaybe (""))
+
+              return `${name} ${value}`
+            }
+          }
+          else {
+            return e
+          }
+        }),
+        sortStrings (staticData),
+        intercalate (", ")
+      ))
+    )
+
+const getPrerequisitesActivatedSkillsTextCategoryAdd =
+  (staticData: StaticDataRecord) =>
+  (id: string) => {
+    const isCategory = Maybe.elemF (getCategoryById (id))
+
+    return isCategory (Category.LITURGICAL_CHANTS)
+      ? translate (staticData) ("inlinewiki.knowledgeofliturgicalchant")
+      : translate (staticData) ("inlinewiki.knowledgeofspell")
+  }
+
+const getPrerequisitesActivatedSkillsText =
+  (staticData: StaticDataRecord) =>
+    pipe (
+      ensure (notNull as notNull<ActivatablePrerequisiteObjects>),
+      fmap (pipe (
+        map (e => {
+          if (RequireActivatable.is (e)) {
+            const ids = RAA.id (e)
+
+            if (isList (ids)) {
+              const category_add = getPrerequisitesActivatedSkillsTextCategoryAdd (staticData)
+                                                                                  (head (ids))
+
+              const name = pipe_ (
+                             ids,
+                             mapMaybe (getNameById (staticData)),
+                             localizeOrList (staticData)
+                           )
+
+              return `${category_add} ${name}`
+            }
+            else {
+              const category_add = getPrerequisitesActivatedSkillsTextCategoryAdd (staticData) (ids)
+
+              const name = pipe_ (ids, getNameById (staticData), fromMaybe (""))
+
+              return `${category_add} ${name}`
+            }
+          }
+          else {
+            return e .value
+          }
+        }),
+        sortStrings (staticData),
+        intercalate (", ")
+      ))
+    )
+
+const getPrerequisitesRaceText =
+  (staticData: StaticDataRecord) =>
+  (race: RacePrerequisiteObjects) => {
+    if (isString (race)) {
+      return <span>{race}</span>
+    }
+
+    const races = SDA.races (staticData)
+
+    const race_tag = translate (staticData) ("inlinewiki.race")
+
+    const value = RaceRequirement.A.value (race)
+    const active = RaceRequirement.A.active (race)
+
+    if (isList (value)) {
+      const curr_races =
+        pipe_ (
+          value,
+          mapMaybe (pipe (prefixRace, lookupF (races), fmap (Race.A.name))),
+          localizeOrList (staticData)
+        )
+
+      return <span className={active ? "" : "disabled"}>{`${race_tag} ${curr_races}`}</span>
+    }
+    else {
+      const curr_race = pipe_ (value, prefixRace, lookupF (races), maybe ("") (Race.A.name))
+
+      return <span className={active ? "" : "disabled"}>{`${race_tag} ${curr_race}`}</span>
+    }
+  }
+
+export interface PrerequisitesProps {
+  x: Activatable
+  staticData: StaticDataRecord
+}
+
+const getPrerequisites =
+  (rs: List<AllRequirements>) =>
+  (req_text_index: OrderedMap<number, string | false>) =>
+  (props: PrerequisitesProps): List<Maybe<JSX.Element | string>> => {
+    const { x, staticData } = props
+
+    if (fnull (rs) && !isExtendedSpecialAbility (x)) {
+      return List<Maybe<JSX.Element | string>> (
+        Just (translate (staticData) ("general.none"))
+      )
+    }
+
+    const items = getCategorizedItems (req_text_index) (rs)
+
+    const rcp = CIA.rcp (items)
+    const casterBlessedOne = CIA.casterBlessedOne (items)
+    const traditions = CIA.traditions (items)
+    const attributes = CIA.attributes (items)
+    const primaryAttribute = CIA.primaryAttribute (items)
+    const skills = CIA.skills (items)
+    const activeSkills = CIA.activeSkills (items)
+    const otherActiveSpecialAbilities = CIA.otherActiveSpecialAbilities (items)
+    const inactiveSpecialAbilities = CIA.inactiveSpecialAbilities (items)
+    const otherActiveAdvantages = CIA.otherActiveAdvantages (items)
+    const inactiveAdvantages = CIA.inactiveAdvantages (items)
+    const activeDisadvantages = CIA.activeDisadvantages (items)
+    const inactiveDisadvantages = CIA.inactiveDisadvantages (items)
+    const race = CIA.race (items)
+    const social = CIA.social (items)
+
+    const category = AAL.category (x)
+    const gr = AAL.gr (x)
+
+    return List<Maybe<JSX.Element | string>> (
+      (isString (rcp) ? notNullStr (rcp) : rcp)
+        ? Just (getPrerequisitesRCPText (staticData) (x) (rcp))
+        : Nothing,
+      ...getPrerequisitesActivatablesText (staticData) (casterBlessedOne),
+      ...getPrerequisitesActivatablesText (staticData) (traditions),
+      getPrerequisitesAttributesText (staticData) (attributes),
+      fmap (getPrerequisitesPrimaryAttributeText (staticData)) (primaryAttribute),
+      getPrerequisitesSkillsText (staticData) (skills),
+      getPrerequisitesActivatedSkillsText (staticData) (activeSkills),
+      ...getPrerequisitesActivatablesText (staticData) (otherActiveSpecialAbilities),
+      ...getPrerequisitesActivatablesText (staticData) (inactiveSpecialAbilities),
+      ...getPrerequisitesActivatablesText (staticData) (otherActiveAdvantages),
+      ...getPrerequisitesActivatablesText (staticData) (inactiveAdvantages),
+      ...getPrerequisitesActivatablesText (staticData) (activeDisadvantages),
+      ...getPrerequisitesActivatablesText (staticData) (inactiveDisadvantages),
+      fmap (getPrerequisitesRaceText (staticData)) (race),
+      fmap (getSocialPrerequisiteText (staticData)) (social),
+      category === Category.SPECIAL_ABILITIES
+        ? (gr === SpecialAbilityGroup.CombatExtended
+          ? Just (translate (staticData) ("inlinewiki.appropriatecombatstylespecialability"))
+          : gr === SpecialAbilityGroup.MagicalExtended
+          ? Just (translate (staticData) ("inlinewiki.appropriatemagicalstylespecialability"))
+          : gr === SpecialAbilityGroup.KarmaExtended
+          ? Just (translate (staticData) ("inlinewiki.appropriateblessedstylespecialability"))
+          : gr === SpecialAbilityGroup.SkillExtended
+          ? Just (translate (staticData) ("inlinewiki.appropriateskillstylespecialability"))
+          : Nothing)
+        : Nothing
+    )
+  }
+
+export interface PrerequisitesTextProps {
+  x: Activatable
+  staticData: StaticDataRecord
+}
+
+export function PrerequisitesText (props: PrerequisitesTextProps) {
+  const { x, staticData } = props
+
+  const prerequisitesText = AAL.prerequisitesText (x)
+  const prerequisitesTextIndex = AAL.prerequisitesTextIndex (x)
+
+  if (isJust (prerequisitesText)) {
+    return (
+      <Markdown
+        source={`**${translate (staticData) ("inlinewiki.prerequisites")}:** ${fromJust (prerequisitesText)}`}
+        />
+    )
+  }
+
+  const levels = Maybe.product (AAL.tiers (x))
+  const prerequisites = AAL.prerequisites (x)
+  const prerequisitesTextEnd = AAL.prerequisitesTextEnd (x)
+  const prerequisitesTextStart = AAL.prerequisitesTextStart (x)
+
+  type TypeofMaybeList = Maybe<JSX.Element | string>
+  type TypeofList = JSX.Element | string
+
+  const mtext_before = fmapF (prerequisitesTextStart)
+                             (y => <Markdown key="before" source={y} noWrapper />)
+
+  /**
+   * `Right`: Will need a comma before if there are elements before the text.
+   * `Left`: Must not get a comma before the text.
+   */
+  const mtext_after = fmapF (prerequisitesTextEnd)
+                            ((y): Either<JSX.Element, JSX.Element> =>
+                              /^(?: |,|\.)/u .test (y)
+                                ? Left (<Markdown key="after" source={y} noWrapper />)
+                                : Right (<Markdown key="after" source={y} noWrapper />))
+
+  const mtext_after_insidelist = bind (mtext_after) (eitherToMaybe)
+  const mtext_after_outsidelist = bind (mtext_after) (pipe (invertEither, eitherToMaybe))
+
+  const addTextAfterOutsideList: <A> (xs: List<TypeofList | A>) => List<TypeofList | A> =
+    xs => maybe (xs) (snoc (xs)) (mtext_after_outsidelist)
+
+  traceShowId (prerequisites)
+
+  if (isOrderedMap (prerequisites)) {
+    const levelList = rangeN (1, levels)
+
+    return (
+      <p>
+        <span>
+          {translate (staticData) ("inlinewiki.prerequisites")}
+          {": "}
+        </span>
+        <span>
+          {pipe_ (
+            List<Maybe<TypeofList>> (
+              mtext_before,
+              notMember (1) (prerequisites)
+                ? Just (`${translate (staticData) ("inlinewiki.level")} I: ${translate (staticData) ("general.none")} `)
+                : Nothing,
+              ...map ((lvl: number) => {
+                  const prereqForLevel = lookup (lvl) (prerequisites)
+                  const not_empty = Maybe.any (notNull) (prereqForLevel)
+
+                  const level_num_str = `${translate (staticData) ("inlinewiki.level")} ${toRoman (lvl)}: `
+
+                  const requires_last_str =
+                    lvl > 1
+                    ? `${not_empty ? ", " : ""}${AAL.name (x)}${nbsp}${toRoman (lvl - 1)}`
+                    : ""
+
+                  return Just (
+                    <React.Fragment key={lvl}>
+                      {level_num_str}
+                      {maybeRNull ((rs: List<AllRequirements>) =>
+                                    pipe_ (
+                                      getPrerequisites (rs) (prerequisitesTextIndex) (props),
+                                      catMaybes,
+                                      intersperse<TypeofList> (", "),
+                                      toArray,
+                                      e => <>{e}</>
+                                    ))
+                                  (prereqForLevel)}
+                      {requires_last_str}
+                    </React.Fragment>
+                  )
+                })
+                (levelList),
+              mtext_after_insidelist
+            ),
+            catMaybes,
+            intersperse<TypeofList> ("; "),
+            addTextAfterOutsideList,
+            ensure (notNull),
+            maybe<React.ReactNode> (translate (staticData) ("general.none")) (toArray)
+          )}
+        </span>
+      </p>
+    )
+  }
+  else {
+    return (
+      <p>
+        <span>
+          {translate (staticData) ("inlinewiki.prerequisites")}
+          {": "}
+        </span>
+        <span>
+          {pipe_ (
+            getPrerequisites (prerequisites) (prerequisitesTextIndex) (props),
+            consF<TypeofMaybeList> (mtext_before),
+            snocF<TypeofMaybeList> (mtext_after_insidelist),
+            catMaybes,
+            intersperse<JSX.Element | string> (", "),
+            addTextAfterOutsideList,
+            ensure (notNull),
+            maybe<React.ReactNode> (translate (staticData) ("general.none")) (toArray)
+          )}
+        </span>
+      </p>
+    )
+  }
+}
+
+export interface WikiActivatableInfoProps {
+  staticData: StaticDataRecord
+  x: Activatable
+}
+
+export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => {
+  const { x, staticData } = props
+
+  const specialAbilities = SDA.specialAbilities (staticData)
+
+  const cost = getCost (staticData) (x)
+  const cost_elem = <Markdown source={cost} />
+
+  const source_elem = (
+    <WikiSource<RecordI<Activatable>>
+      staticData={staticData}
+      x={x}
+      acc={AcA}
+      />
+  )
+
+  if (SpecialAbility.is (x)) {
+    const header_name_levels =
+      maybe ("")
+            ((levels: number) => levels < 2 ? " I" : ` I-${toRoman (levels)}`)
+            (SAA.tiers (x))
+
+    const header_full_name = fromMaybe (SAA.name (x)) (SAA.nameInWiki (x))
+
+    const header_name = `${header_full_name}${header_name_levels}`
+
+    const header_sub_name =
+      maybe (null as React.ReactNode)
+            (pipe (
+              NumIdName.A.name,
+              subgr => (
+                <p className="title">
+                  {subgr}
+                </p>
+              )
+            ))
+            (bind (SAA.subgr (x))
+                  (lookupF (SDA.combatSpecialAbilityGroups (staticData))))
+
+    switch (SAA.gr (x)) {
+      case SpecialAbilityGroup.StaffEnchantments:
+      case SpecialAbilityGroup.Bannschwert:
+      case SpecialAbilityGroup.Dolch:
+      case SpecialAbilityGroup.Instrument:
+      case SpecialAbilityGroup.Gewand:
+      case SpecialAbilityGroup.Kugel:
+      case SpecialAbilityGroup.Stecken:
+      case SpecialAbilityGroup.Magierkugel:
+      case SpecialAbilityGroup.Narrenkappe:
+      case SpecialAbilityGroup.Schelmenspielzeug:
+      case SpecialAbilityGroup.Alchimistenschale:
+      case SpecialAbilityGroup.WaffenzauberAnimisten:
+      case SpecialAbilityGroup.Sichelrituale:
+      case SpecialAbilityGroup.Ringzauber:
+      case SpecialAbilityGroup.Chronikzauber:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.effect (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.effect")}:** ${str}`}
+                             />
+                         ))}
+            {maybeRNullF (SAA.volume (x))
+                         (str => (
+                           <WikiProperty staticData={staticData} title="inlinewiki.volume">
+                             {str}
+                           </WikiProperty>
+                         ))}
+            {maybeRNullF (SAA.aeCost (x))
+                         (str => (
+                           <WikiProperty staticData={staticData} title="inlinewiki.aecost">
+                             {str}
+                           </WikiProperty>
+                         ))}
+            {isNothing (SAA.aeCost (x)) && isNothing (SAA.bindingCost (x))
+              ? (
+                  <WikiProperty staticData={staticData} title="inlinewiki.aecost">
+                    {translate (staticData) ("general.none")}
+                  </WikiProperty>
+                )
+              : null}
+            {maybeRNullF (SAA.bindingCost (x))
+                         (str => (
+                           <WikiProperty staticData={staticData} title="inlinewiki.bindingcost">
+                             {str}
+                           </WikiProperty>
+                         ))}
+            {maybeRNullF (bind (misNumberM (SAA.property (x)))
+                               (lookupF (SDA.properties (staticData))))
+                         (pipe (
+                           NumIdName.A.name,
+                           str => (
+                             <WikiProperty staticData={staticData} title="inlinewiki.property">
+                               {str}
+                             </WikiProperty>
+                           )
+                         ))}
+            <PrerequisitesText
+              staticData={staticData}
+              x={x}
+              />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
+      case SpecialAbilityGroup.Zeremonialgegenstände:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.effect (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.effect")}:** ${str}`}
+                             />
+                         ))}
+            {maybeRNullF (SAA.aspect (x))
+                         (aspect => (
+                           <WikiProperty staticData={staticData} title="inlinewiki.aspect">
+                             {isNumber (aspect)
+                               ? pipe_ (
+                                   aspect,
+                                   lookupF (SDA.aspects (staticData)),
+                                   maybe ("") (NumIdName.A.name)
+                                 )
+                               : aspect}
+                           </WikiProperty>
+                         ))}
+            <PrerequisitesText
+              staticData={staticData}
+              x={x}
+              />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
+      case SpecialAbilityGroup.ProtectiveWardingCircles:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            <WikiProperty staticData={staticData} title="inlinewiki.aecost">
+              {renderMaybe (SAA.aeCost (x))}
+            </WikiProperty>
+            <WikiProperty staticData={staticData} title="inlinewiki.protectivecircle">
+              {renderMaybe (SAA.protectiveCircle (x))}
+            </WikiProperty>
+            <WikiProperty staticData={staticData} title="inlinewiki.wardingcircle">
+              {renderMaybe (SAA.wardingCircle (x))}
+            </WikiProperty>
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
+      case SpecialAbilityGroup.MagicalTraditions:
+      case SpecialAbilityGroup.BlessedTraditions:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            <Markdown source={renderMaybe (SAA.rules (x))} />
+            <PrerequisitesText
+              staticData={staticData}
+              x={x}
+              />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
+      case SpecialAbilityGroup.CombatStylesArmed:
+      case SpecialAbilityGroup.CombatStylesUnarmed: {
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.rule")}:** ${str}`}
+                             />
+                         ))}
+            {maybeRNullF (SAA.extended (x))
+                         (es => {
+                           const tag = translate (staticData)
+                                                 ("inlinewiki.extendedcombatspecialabilities")
+
+                           const names = pipe_ (
+                            es,
+                            mapMaybe (pipe (
+                              ensure (isString),
+                              bindF (lookupF (specialAbilities)),
+                              fmap (SAA.name)
+                            )),
+                            sortStrings (staticData),
+                            intercalate (", ")
+                           )
+
+                           return (
+                             <Markdown source={`**${tag}:** ${names}`} />
+                           )
+                         })}
+            {maybeRNullF (SAA.penalty (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.penalty")}:** ${str}`}
+                             />
+                         ))}
+            <WikiCombatTechniques
+              acc={SAA}
+              combatTechniques={SDA.combatTechniques (staticData)}
+              staticData={staticData}
+              x={x}
+              />
+            <PrerequisitesText
+              staticData={staticData}
+              x={x}
+              />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+      }
+
+      case SpecialAbilityGroup.MagicalStyles:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.rule")}:** ${str}`}
+                             />
+                         ))}
+            {maybeRNullF (SAA.extended (x))
+                         (es => {
+                           const tag = translate (staticData)
+                                                 ("inlinewiki.extendedmagicalspecialabilities")
+
+                           const names = pipe_ (
+                             es,
+                             mapMaybe (pipe (
+                               ensure (isString),
+                               bindF (lookupF (specialAbilities)),
+                               fmap (SAA.name)
+                             )),
+                             sortStrings (staticData),
+                             intercalate (", ")
+                           )
+
+                           return (
+                             <Markdown source={`**${tag}:** ${names}`} />
+                           )
+                         })}
+            <PrerequisitesText
+              staticData={staticData}
+              x={x}
+              />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
+      case SpecialAbilityGroup.BlessedStyles: {
+        const SA_639 = lookup<string> (SpecialAbilityId.GebieterDesAspekts) (specialAbilities)
+
+        const add_extended =
+          pipe_ (
+            SA_639,
+            bindF (SAA.select),
+            fmap (mapMaybe (join ((option: Record<SelectOption>) =>
+                                   pipe (
+                                     SelectOption.A.prerequisites,
+                                     bindF (ensure (any (e => {
+                                                     if (!RequireActivatable.is (e)) {
+                                                       return false
+                                                     }
+
+                                                     const req_ids = RAAL.id (e)
+
+                                                     return isString (req_ids)
+                                                       ? req_ids === SAA.id (x)
+                                                       : elem (SAA.id (x)) (req_ids)
+                                                   }))),
+                                     fmap (() => ActiveObjectWithId ({
+                                                   id: SpecialAbilityId.GebieterDesAspekts,
+                                                   index: 0,
+                                                   sid: Just (SelectOption.A.id (option)),
+                                                 }))
+                                   )))),
+            joinMaybeList
+          )
+
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.rule")}:** ${str}`}
+                             />
+                         ))}
+            {maybeRNullF (SAA.extended (x))
+                         (pipe (
+                           mapMaybe (pipe (
+                             ensure (isString),
+                             bindF (lookupF (specialAbilities)),
+                             fmap (SAA.name)
+                           )),
+                           append (mapMaybe (pipe (
+                                              getNameCostForWiki (staticData),
+                                              fmap (ActivatableNameCostA_.name)
+                                            ))
+                                            (add_extended)),
+                           sortStrings (staticData),
+                           intercalate (", "),
+                           str => {
+                             const tag = translate (staticData)
+                                                   ("inlinewiki.extendedblessedspecialabilities")
+
+                             return (
+                               <Markdown source={`**${tag}:** ${str}`} />
+                             )
+                           }
+                         ))}
+            <PrerequisitesText
+              staticData={staticData}
+              x={x}
+              />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+      }
+
+      case SpecialAbilityGroup.SkillStyles:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.rule")}:** ${str}`}
+                             />
+                         ))}
+            {maybeRNullF (SAA.extended (x))
+                         (es => {
+                           const tag = translate (staticData)
+                                                 ("inlinewiki.extendedskillspecialabilities")
+                           const names = pipe_ (
+                             es,
+                             mapMaybe (pipe (
+                               ensure (isString),
+                               bindF (lookupF (specialAbilities)),
+                               fmap (SAA.name)
+                             )),
+                             sortStrings (staticData),
+                             intercalate (", ")
+                           )
+
+                           return (
+                             <Markdown source={`**${tag}:** ${names}`} />
+                           )
+                         })}
+            <PrerequisitesText
+              staticData={staticData}
+              x={x}
+              />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
+      case SpecialAbilityGroup.Hexenkessel:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.effect (x))
+                          (str => (
+                            <Markdown
+                              source={`**${translate (staticData) ("inlinewiki.effect")}:** ${str}`}
+                              />
+                          ))}
+            {maybeRNullF (SAA.volume (x))
+                          (str => (
+                            <WikiProperty staticData={staticData} title="inlinewiki.volume">
+                              {str}
+                            </WikiProperty>
+                          ))}
+            {maybeRNullF (bind (misNumberM (SAA.brew (x)))
+                               (lookupF (SDA.brews (staticData))))
+                         (pipe (
+                           NumIdName.A.name,
+                           str => (
+                             <WikiProperty staticData={staticData} title="inlinewiki.brew">
+                               {str}
+                             </WikiProperty>
+                           )
+                         ))}
+            {maybeRNullF (SAA.aeCost (x))
+                          (str => (
+                            <WikiProperty staticData={staticData} title="inlinewiki.aecost">
+                              {str}
+                            </WikiProperty>
+                          ))}
+            {isNothing (SAA.aeCost (x)) && isNothing (SAA.bindingCost (x))
+              ? (
+                  <WikiProperty staticData={staticData} title="inlinewiki.aecost">
+                    {translate (staticData) ("general.none")}
+                  </WikiProperty>
+                )
+              : null}
+            {maybeRNullF (SAA.bindingCost (x))
+                          (str => (
+                            <WikiProperty staticData={staticData} title="inlinewiki.bindingcost">
+                              {str}
+                            </WikiProperty>
+                          ))}
+            {maybeRNullF (bind (misNumberM (SAA.property (x)))
+                               (lookupF (SDA.properties (staticData))))
+                         (pipe (
+                           NumIdName.A.name,
+                           str => (
+                             <WikiProperty staticData={staticData} title="inlinewiki.property">
+                               {str}
+                             </WikiProperty>
+                           )
+                         ))}
+            <PrerequisitesText
+              staticData={staticData}
+              x={x}
+              />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
+      case SpecialAbilityGroup.Paktgeschenke:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.rule")}:** ${str}`}
+                             />
+                         ))}
+            {maybeRNullF (SAA.effect (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.effect")}:** ${str}`}
+                             />
+                         ))}
+            <PrerequisitesText
+              staticData={staticData}
+              x={x}
+              />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
+      case SpecialAbilityGroup.Combat:
+      case SpecialAbilityGroup.CombatExtended:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.rule")}:** ${str}`}
+                             />
+                         ))}
+            {maybeRNullF (SAA.effect (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.effect")}:** ${str}`}
+                             />
+                         ))}
+            {maybeRNullF (SAA.penalty (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.penalty")}:** ${str}`}
+                             />
+                         ))}
+            <WikiCombatTechniques
+              acc={SAA}
+              combatTechniques={SDA.combatTechniques (staticData)}
+              staticData={staticData}
+              x={x}
+              />
+            {maybeRNullF (SAA.aeCost (x))
+                         (str => (
+                           <WikiProperty staticData={staticData} title="inlinewiki.aecost">
+                             {str}
+                           </WikiProperty>
+                         ))}
+            <PrerequisitesText
+              staticData={staticData}
+              x={x}
+              />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
+      default:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.rule")}:** ${str}`}
+                             />
+                         ))}
+            {maybeRNullF (SAA.effect (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.effect")}:** ${str}`}
+                             />
+                         ))}
+            {maybeRNullF (SAA.penalty (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (staticData) ("inlinewiki.penalty")}:** ${str}`}
+                             />
+                         ))}
+            {maybeRNullF (SAA.aeCost (x))
+                         (str => (
+                           <WikiProperty staticData={staticData} title="inlinewiki.aecost">
+                             {str}
+                           </WikiProperty>
+                         ))}
+            <PrerequisitesText
+              staticData={staticData}
+              x={x}
+              />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+    }
+  }
+  else {
+    const header_name_levels =
+      maybe ("")
+            ((levels: number) => levels < 2 ? " I" : ` I-${toRoman (levels)}`)
+            (AAL.tiers (x))
+
+    const header_full_name = AAL.name (x)
+
+    const rs = AAL.prerequisites (x)
+
+    const has_rcp =
+      isOrderedMap (rs)
+        ? maybe (false) (elem<AllRequirements> ("RCP")) (lookup (1) (rs))
+        : elem<AllRequirements> ("RCP") (rs)
+
+    const header_rcp = has_rcp ? " (*)" : ""
+
+    const header_name = `${header_full_name}${header_name_levels}${header_rcp}`
+
+    return (
+      <WikiBoxTemplate className="disadv" title={header_name}>
+        <Markdown source={`**${translate (staticData) ("inlinewiki.rule")}:** ${AAL.rules (x)}`} />
+        {maybeRNullF (AcA.range (x))
+                     (str => (
+                       <WikiProperty staticData={staticData} title="inlinewiki.range">
+                         {str}
+                       </WikiProperty>
+                     ))}
+        {maybeRNullF (AcA.actions (x))
+                     (str => (
+                       <WikiProperty staticData={staticData} title="inlinewiki.actions">
+                         {str}
+                       </WikiProperty>
+                     ))}
+        <PrerequisitesText
+          staticData={staticData}
+          x={x}
+          />
+        {cost_elem}
+        {source_elem}
+      </WikiBoxTemplate>
+    )
+  }
+}

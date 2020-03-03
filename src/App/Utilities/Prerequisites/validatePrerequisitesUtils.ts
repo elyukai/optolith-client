@@ -1,55 +1,53 @@
-import { not } from "../../../Data/Bool";
-import { equals } from "../../../Data/Eq";
-import { flip, on, thrush } from "../../../Data/Function";
-import { fmap, fmapF } from "../../../Data/Functor";
-import { set } from "../../../Data/Lens";
-import { all, any, concat, elem, elemF, foldl, isList, List, map, sortBy } from "../../../Data/List";
-import { and, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../Data/Maybe";
-import { compare, dec, gt, gte, lte, min } from "../../../Data/Num";
-import { lookupF, OrderedMap, toList } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { fst, Pair, snd } from "../../../Data/Tuple";
-import { IdPrefixes } from "../../Constants/IdPrefixes";
-import { ActivatableDependent, isActivatableDependent, isExtendedActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
-import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
-import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { ActivatableDependency, Dependent, Sex } from "../../Models/Hero/heroTypeHelpers";
-import { Pact } from "../../Models/Hero/Pact";
-import { PersonalData } from "../../Models/Hero/PersonalData";
-import { Culture } from "../../Models/Wiki/Culture";
-import { RequireActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { CultureRequirement, isCultureRequirement } from "../../Models/Wiki/prerequisites/CultureRequirement";
-import { RequireIncreasable, RequireIncreasableL } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { PactRequirement } from "../../Models/Wiki/prerequisites/PactRequirement";
-import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
-import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
-import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement";
-import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite";
-import { Profession } from "../../Models/Wiki/Profession";
-import { Race } from "../../Models/Wiki/Race";
-import { Skill } from "../../Models/Wiki/Skill";
-import { Spell } from "../../Models/Wiki/Spell";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { AllRequirements, ProfessionDependency, SID } from "../../Models/Wiki/wikiTypeHelpers";
-import { isActive } from "../Activatable/isActive";
-import { isPactFromStateValid } from "../Activatable/pactUtils";
-import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
-import { getHeroStateItem } from "../heroStateUtils";
-import { prefixId } from "../IDUtils";
-import { pipe, pipe_ } from "../pipe";
-import { getPrimaryAttributeId } from "../primaryAttributeUtils";
-import { getAllWikiEntriesByGroup } from "../WikiUtils";
+import { not } from "../../../Data/Bool"
+import { equals } from "../../../Data/Eq"
+import { flip, on, thrush } from "../../../Data/Function"
+import { fmap, fmapF } from "../../../Data/Functor"
+import { set } from "../../../Data/Lens"
+import { all, any, concat, elem, elemF, foldl, isList, List, map, sortBy } from "../../../Data/List"
+import { and, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../Data/Maybe"
+import { compare, dec, gt, gte, lte, min } from "../../../Data/Num"
+import { lookupF, OrderedMap, toList } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { fst, Pair, snd } from "../../../Data/Tuple"
+import { ActivatableDependent, isActivatableDependent, isExtendedActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
+import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject"
+import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { ActivatableDependency, Dependent, Sex } from "../../Models/Hero/heroTypeHelpers"
+import { Pact } from "../../Models/Hero/Pact"
+import { PersonalData } from "../../Models/Hero/PersonalData"
+import { Culture } from "../../Models/Wiki/Culture"
+import { RequireActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement"
+import { CultureRequirement, isCultureRequirement } from "../../Models/Wiki/prerequisites/CultureRequirement"
+import { RequireIncreasable, RequireIncreasableL } from "../../Models/Wiki/prerequisites/IncreasableRequirement"
+import { PactRequirement } from "../../Models/Wiki/prerequisites/PactRequirement"
+import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement"
+import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement"
+import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement"
+import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite"
+import { Profession } from "../../Models/Wiki/Profession"
+import { Race } from "../../Models/Wiki/Race"
+import { Skill } from "../../Models/Wiki/Skill"
+import { Spell } from "../../Models/Wiki/Spell"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { AllRequirements, ProfessionDependency, SID } from "../../Models/Wiki/wikiTypeHelpers"
+import { isActive } from "../Activatable/isActive"
+import { isPactFromStateValid } from "../Activatable/pactUtils"
+import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils"
+import { getHeroStateItem } from "../heroStateUtils"
+import { pipe, pipe_ } from "../pipe"
+import { getPrimaryAttributeId } from "../primaryAttributeUtils"
+import { getAllWikiEntriesByGroup } from "../WikiUtils"
 
-type Validator = (wiki: WikiModelRecord) =>
+type Validator = (wiki: StaticDataRecord) =>
                  (state: HeroModelRecord) =>
                  (req: AllRequirements) =>
                  (sourceId: string) => boolean
 
-const WA = WikiModel.A
+const SDA = StaticData.A
 const HA = HeroModel.A
 const PDA = PersonalData.A
 const SA = Spell.A
@@ -60,56 +58,56 @@ const DOA = DependencyObject.A
 const SDAL = SkillDependent.AL
 
 const getAllRaceEntries =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
     pipe (
       HA.race,
-      bindF (lookupF (WA.races (wiki))),
+      bindF (lookupF (SDA.races (wiki))),
       fmap (
         selectedRace => concat (
           List (
-            Race.AL.stronglyRecommendedAdvantages (selectedRace),
-            Race.AL.automaticAdvantages (selectedRace),
-            Race.AL.stronglyRecommendedAdvantages (selectedRace),
-            Race.AL.stronglyRecommendedDisadvantages (selectedRace),
-            Race.AL.commonAdvantages (selectedRace),
-            Race.AL.commonDisadvantages (selectedRace)
+            Race.A.stronglyRecommendedAdvantages (selectedRace),
+            Race.A.automaticAdvantages (selectedRace),
+            Race.A.stronglyRecommendedAdvantages (selectedRace),
+            Race.A.stronglyRecommendedDisadvantages (selectedRace),
+            Race.A.commonAdvantages (selectedRace),
+            Race.A.commonDisadvantages (selectedRace)
           )
         )
       )
     )
 
 const getAllCultureEntries =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
     pipe (
       HA.culture,
-      bindF (lookupF (WA.cultures (wiki))),
+      bindF (lookupF (SDA.cultures (wiki))),
       fmap (
         selectedCulture => concat (
           List (
-            Culture.AL.commonAdvantages (selectedCulture),
-            Culture.AL.commonDisadvantages (selectedCulture)
+            Culture.A.commonAdvantages (selectedCulture),
+            Culture.A.commonDisadvantages (selectedCulture)
           )
         )
       )
     )
 
 const getAllProfessionEntries =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
     pipe (
       HA.profession,
-      bindF (lookupF (WA.professions (wiki))),
+      bindF (lookupF (SDA.professions (wiki))),
       fmap (
         selectedProfession => concat (
           List (
-            Profession.AL.suggestedAdvantages (selectedProfession),
-            Profession.AL.suggestedDisadvantages (selectedProfession)
+            Profession.A.suggestedAdvantages (selectedProfession),
+            Profession.A.suggestedDisadvantages (selectedProfession)
           )
         )
       )
     )
 
 const isRCPValid =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (sourceId: string): boolean =>
     any (elem (sourceId))
@@ -132,14 +130,11 @@ const isRaceValid =
     const active = RaceRequirement.A.active (req)
 
     if (isList (value)) {
-      return any (pipe (
-                         prefixId (IdPrefixes.RACES),
-                         equals (current_race_id)
-                       ))
+      return any (equals (current_race_id))
                  (value) === active
     }
 
-    return prefixId (IdPrefixes.RACES) (value) === current_race_id === active
+    return value === current_race_id === active
   }
 
 const isCultureValid =
@@ -148,14 +143,11 @@ const isCultureValid =
     const value = CultureRequirement.AL.value (req)
 
     if (isList (value)) {
-      return any (pipe (
-                         prefixId (IdPrefixes.CULTURES),
-                         equals (current_culture_id)
-                       ))
+      return any (equals (current_culture_id))
                  (value)
     }
 
-    return prefixId (IdPrefixes.CULTURES) (value) === current_culture_id
+    return value === current_culture_id
   }
 
 const hasSamePactCategory =
@@ -198,8 +190,10 @@ const hasNeededPactDomain =
   }
 
 const hasNeededPactLevel = (state: Record<Pact>) => (req: Record<PactRequirement>) =>
+
   // Fulfills the level requirement
   or (fmap (lte (Pact.A.level (state))) (PactRequirement.A.level (req)))
+
   // Its a lesser Pact and the needed Pact-Level is "1"
   || (
     or (fmap (lte (1)) (PactRequirement.A.level (req)))
@@ -235,7 +229,7 @@ const isSocialPrerequisiteValid: (hero: Record<HeroModel>) =>
     )
 
 const isIncreasableValid =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (sourceId: string) =>
   (req: Record<RequireIncreasable>) =>
@@ -299,7 +293,7 @@ const isNeededLevelGiven =
     )
 
 const isActivatableValid =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (sourceId: string) =>
   (req: Record<RequireActivatable>) =>
@@ -331,7 +325,7 @@ const isActivatableValid =
                                const arr =
                                  map (Skill.AL.id)
                                      (getAllWikiEntriesByGroup
-                                       (WA.skills (wiki))
+                                       (SDA.skills (wiki))
                                        (maybeToList (
                                          RAA.sid2 (req) as Maybe<number>
                                        )))
@@ -380,7 +374,7 @@ const isActivatableValid =
  * @param pact A valid `Pact` object or `undefined`.
  */
 export const validateObject =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (req: AllRequirements) =>
   (sourceId: string): boolean =>
@@ -410,7 +404,7 @@ export const validateObject =
  * @param pact A valid `Pact` object or `undefined`.
  */
 export const validatePrerequisites =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (prerequisites: List<AllRequirements>) =>
   (sourceId: string): boolean =>
@@ -426,7 +420,7 @@ export const validatePrerequisites =
  * Checks if all prerequisites of the passed spell are met.
  */
 export const areSpellPrereqisitesMet =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (entry: Record<Spell>) =>
     validatePrerequisites (wiki)
@@ -453,7 +447,7 @@ const skipLevelCheck =
  * @param sourceId The id of the entry the requirement objects belong to.
  */
 export const validateLevel =
-  (wiki: WikiModelRecord) =>
+  (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (requirements: OrderedMap<number, List<AllRequirements>>) =>
   (dependencies: List<ActivatableDependency>) =>
@@ -462,32 +456,43 @@ export const validateLevel =
       requirements,
       toList,
       sortBy (on (compare) (fst)),
+
       // first check the prerequisites:
       foldl ((max: Maybe<number>) => (entry: Pair<number, List<AllRequirements>>) =>
+
               // if `max` is lower than the current level (from `entry`), just
               // skip the prerequisite validation
               !skipLevelCheck (entry) (max)
+
               // otherwise, validate them
               && !validatePrerequisites (wiki) (state) (snd (entry)) (sourceId)
+
                 // if *not* valid, set the max to be lower than the actual
                 // current level (because it must not be reached)
                 ? Just (fst (entry) - 1)
+
                 // otherwise, just pass the previous max value
                 : max)
             (Nothing),
+
       // then, check the dependencies
       flip (foldl ((max: Maybe<number>) => (dep: ActivatableDependency) =>
+
                     // If `dep` prohibits higher level:
                     // - it can only be contained in a record
                     Record.isRecord (dep)
+
                     // - and it must be *prohibited*, so `active` must be `false`
                     && Maybe.elem (false) (DOA.active (dep))
                       ? pipe_ (
                           dep,
+
                           // get the current prohibited level
                           DOA.tier,
+
                                 // - if its a Nothing, do nothing
                           maybe (max)
+
                                 // - otherwise decrease the level by one (the
                                 // actual level must not be reached) and then
                                 // take the lower one, if both the current and
@@ -495,6 +500,7 @@ export const validateLevel =
                                 // current.
                                 (pipe (dec, level => Just (maybe (level) (min (level)) (max))))
                         )
+
                       // otherwise, dont do anything
                       : max))
            (dependencies)

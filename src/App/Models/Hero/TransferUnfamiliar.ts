@@ -1,4 +1,4 @@
-import { fromDefault } from "../../../Data/Record";
+import { fromDefault } from "../../../Data/Record"
 
 /**
  * The `TransferUnfamiliar` record describes a spell by `id` that is not an

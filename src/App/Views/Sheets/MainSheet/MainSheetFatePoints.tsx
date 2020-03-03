@@ -1,34 +1,34 @@
-import * as React from "react";
-import { Just, Nothing } from "../../../../Data/Maybe";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { LabelBox } from "../../Universal/LabelBox";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Just, Nothing } from "../../../../Data/Maybe"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { translate } from "../../../Utilities/I18n"
+import { LabelBox } from "../../Universal/LabelBox"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface SkillsSheetLanguagesProps {
+interface Props {
   fatePointsModifier: number
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
-export function MainSheetFatePoints (props: SkillsSheetLanguagesProps) {
-  const { fatePointsModifier, l10n } = props
+export const MainSheetFatePoints: React.FC<Props> = props => {
+  const { fatePointsModifier, staticData } = props
 
   return (
-    <TextBox className="fate-points" label={translate (l10n) ("fatepoints")}>
+    <TextBox className="fate-points" label={translate (staticData) ("sheets.mainsheet.fatepoints")}>
       <LabelBox
-        label={translate (l10n) ("value")}
+        label={translate (staticData) ("sheets.mainsheet.derivedcharacteristics.labels.value")}
         value={Just (3)}
         />
       <LabelBox
-        label={translate (l10n) ("bonus")}
+        label={translate (staticData) ("sheets.mainsheet.derivedcharacteristics.labels.bonus")}
         value={Just (fatePointsModifier)}
         />
       <LabelBox
-        label={translate (l10n) ("max")}
+        label={translate (staticData) ("sheets.mainsheet.derivedcharacteristics.labels.max")}
         value={Just (fatePointsModifier + 3)}
         />
       <LabelBox
-        label={translate (l10n) ("current")}
+        label={translate (staticData) ("sheets.mainsheet.derivedcharacteristics.labels.current")}
         value={Nothing}
         />
     </TextBox>

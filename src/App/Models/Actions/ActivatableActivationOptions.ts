@@ -1,5 +1,5 @@
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses } from "../../../Data/Record";
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses } from "../../../Data/Record"
 
 export interface ActivatableActivationOptions {
   "@@name": "ActivatableActivationOptions"
@@ -12,11 +12,6 @@ export interface ActivatableActivationOptions {
   cost: number
   customCost: Maybe<number>
 }
-
-// export interface ActivatableActivatePayload extends ActivatableActivateOptions {
-//   wiki: Activatable
-//   instance?: Record<ActivatableDependent>
-// }
 
 export const ActivatableActivationOptions =
   fromDefault ("ActivatableActivationOptions")

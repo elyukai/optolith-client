@@ -1,5 +1,5 @@
-import { ReactElement, ReactNode } from "react";
-import { fromMaybe, maybe, Maybe } from "../../Data/Maybe";
+import { ReactElement, ReactNode } from "react"
+import { fromMaybe, maybe, Maybe } from "../../Data/Maybe"
 
 export interface ChildrenProps {
   children?: ReactNode

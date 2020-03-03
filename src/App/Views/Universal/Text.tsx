@@ -1,8 +1,8 @@
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Just, Maybe } from "../../../Data/Maybe";
-import { classListMaybe } from "../../Utilities/CSS";
-import { ChildrenProps } from "../../Utilities/ReactUtils";
+import * as React from "react"
+import { List } from "../../../Data/List"
+import { Just, Maybe } from "../../../Data/Maybe"
+import { classListMaybe } from "../../Utilities/CSS"
+import { ChildrenProps } from "../../Utilities/ReactUtils"
 
 export interface TextProps extends ChildrenProps {
   className?: string
@@ -11,7 +11,7 @@ export interface TextProps extends ChildrenProps {
   onMouseDown?: () => void
 }
 
-const TextBase: React.RefForwardingComponent<HTMLDivElement, TextProps> = (props, ref) => {
+const Text: React.RefForwardingComponent<HTMLDivElement, TextProps> = (props, ref) => {
   const { children, className, onMouseOut, onMouseOver, onMouseDown } = props
 
   return (
@@ -27,4 +27,6 @@ const TextBase: React.RefForwardingComponent<HTMLDivElement, TextProps> = (props
   )
 }
 
-export const Text = React.forwardRef (TextBase)
+const TextRef = React.forwardRef (Text)
+
+export { TextRef as Text }

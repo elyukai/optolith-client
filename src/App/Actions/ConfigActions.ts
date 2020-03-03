@@ -1,5 +1,5 @@
-import { ActionTypes } from "../Constants/ActionTypes";
-import { Theme } from "../Utilities/Raw/JSON/Config";
+import * as ActionTypes from "../Constants/ActionTypes"
+import { Theme } from "../Models/Config"
 
 export interface SwitchEnableActiveItemHintsAction {
   type: ActionTypes.SWITCH_ENABLE_ACTIVE_ITEM_HINTS
@@ -12,7 +12,7 @@ export const switchEnableActiveItemHints = (): SwitchEnableActiveItemHintsAction
 export interface SetThemeAction {
   type: ActionTypes.SET_THEME
   payload: {
-    theme: Theme;
+    theme: Theme
   }
 }
 
@@ -24,12 +24,12 @@ export const setTheme = (theme: Theme): SetThemeAction => ({
 })
 
 export interface SwitchEnableEditingHeroAfterCreationPhaseAction {
-  type: ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE
+  type: ActionTypes.SWITCH_ENABLE_EDIT_AFTER_CREATION
 }
 
 export const switchEnableEditingHeroAfterCreationPhase =
   (): SwitchEnableEditingHeroAfterCreationPhaseAction => ({
-    type: ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE,
+    type: ActionTypes.SWITCH_ENABLE_EDIT_AFTER_CREATION,
   })
 
 export interface SwitchEnableAnimationsAction {

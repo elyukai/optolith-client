@@ -1,10 +1,51 @@
-import * as React from "react";
-import { Record, RecordIBase } from "../../../../Data/Record";
-import { Category } from "../../../Constants/Categories";
-import { BlessedGroup, MagicalGroup } from "../../../Constants/Groups";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { translate } from "../../../Utilities/I18n";
-import { WikiProperty } from "../WikiProperty";
+import * as React from "react"
+import { Record, RecordIBase } from "../../../../Data/Record"
+import { Category } from "../../../Constants/Categories"
+import { BlessedGroup, MagicalGroup } from "../../../Constants/Groups"
+import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { translate } from "../../../Utilities/I18n"
+import { WikiProperty } from "../WikiProperty"
+
+type NameKey = "inlinewiki.castingtime"
+             | "inlinewiki.ritualtime"
+             | "inlinewiki.lengthoftime"
+             | "inlinewiki.liturgicaltime"
+             | "inlinewiki.ceremonialtime"
+
+type ModKey = "inlinewiki.youcannotuseamodificationonthisspellscastingtime"
+            | "inlinewiki.youcannotuseamodificationonthisspellsritualtime"
+            | "inlinewiki.youcannotuseamodificationonthischantsliturgicaltime"
+            | "inlinewiki.youcannotuseamodificationonthischantsceremonialtime"
+
+const getNameKey =
+  (category: Category) =>
+  (gr: number): NameKey =>
+    (category === Category.SPELLS
+     && (gr === MagicalGroup.Rituals
+         || gr === MagicalGroup.DominationRituals
+         || gr === MagicalGroup.GeodeRituals
+         || gr === MagicalGroup.ZibiljaRituals))
+    ? "inlinewiki.ritualtime"
+    : (category === Category.SPELLS
+       && (gr === MagicalGroup.MagicalMelodies || gr === MagicalGroup.MagicalDances))
+    ? "inlinewiki.lengthoftime"
+    : category === Category.LITURGICAL_CHANTS && gr === BlessedGroup.LiturgicalChants
+    ? "inlinewiki.liturgicaltime"
+    : category === Category.LITURGICAL_CHANTS && gr === BlessedGroup.Ceremonies
+    ? "inlinewiki.ceremonialtime"
+    : "inlinewiki.castingtime"
+
+const nameKeyToModKey =
+  (x: NameKey): ModKey =>
+    x === "inlinewiki.castingtime"
+    ? "inlinewiki.youcannotuseamodificationonthisspellscastingtime"
+    : x === "inlinewiki.ritualtime"
+    ? "inlinewiki.youcannotuseamodificationonthisspellsritualtime"
+    : x === "inlinewiki.lengthoftime"
+    ? "inlinewiki.youcannotuseamodificationonthisspellscastingtime"
+    : x === "inlinewiki.liturgicaltime"
+    ? "inlinewiki.youcannotuseamodificationonthischantsliturgicaltime"
+    : "inlinewiki.youcannotuseamodificationonthischantsceremonialtime"
 
 interface Accessors<A extends RecordIBase<any>> {
   castingTime: (r: Record<A>) => string
@@ -16,14 +57,16 @@ interface Accessors<A extends RecordIBase<any>> {
 export interface WikiCastingTimeProps<A extends RecordIBase<any>> {
   x: Record<A>
   acc: Accessors<A>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
-export function WikiCastingTime<A extends RecordIBase<any>> (props: WikiCastingTimeProps<A>) {
+type FC = <A extends RecordIBase<any>> (props: WikiCastingTimeProps<A>) => ReturnType<React.FC>
+
+export const WikiCastingTime: FC = props => {
   const {
     x,
     acc,
-    l10n,
+    staticData,
   } = props
 
   const category = acc.category (x)
@@ -34,50 +77,9 @@ export function WikiCastingTime<A extends RecordIBase<any>> (props: WikiCastingT
   const keyNoMod = nameKeyToModKey (key)
 
   return (
-    <WikiProperty l10n={l10n} title={key}>
+    <WikiProperty staticData={staticData} title={key}>
       {acc.castingTime (x)}
-      {isNoModAllowed ? ` (${translate (l10n) (keyNoMod)})` : ""}
+      {isNoModAllowed ? ` (${translate (staticData) (keyNoMod)})` : ""}
     </WikiProperty>
   )
 }
-
-type NameKey = "castingtime"
-             | "ritualtime"
-             | "lengthoftime"
-             | "liturgicaltime"
-             | "ceremonialtime"
-
-type ModKey = "youcannotuseamodificationonthisspellscastingtime"
-            | "youcannotuseamodificationonthisspellsritualtime"
-            | "youcannotuseamodificationonthischantsliturgicaltime"
-            | "youcannotuseamodificationonthischantsceremonialtime"
-
-const getNameKey =
-  (category: Category) =>
-  (gr: number): NameKey =>
-    (category === Category.SPELLS
-     && (gr === MagicalGroup.Rituals
-         || gr === MagicalGroup.Herrschaftsrituale
-         || gr === MagicalGroup.Geodenrituale
-         || gr === MagicalGroup.Zibiljarituale))
-    ? "ritualtime"
-    : (category === Category.SPELLS
-       && (gr === MagicalGroup.Zaubermelodien || gr === MagicalGroup.Zaubertaenze))
-    ? "lengthoftime"
-    : category === Category.LITURGICAL_CHANTS && gr === BlessedGroup.LiturgicalChants
-    ? "liturgicaltime"
-    : category === Category.LITURGICAL_CHANTS && gr === BlessedGroup.Ceremonies
-    ? "ceremonialtime"
-    : "castingtime"
-
-const nameKeyToModKey =
-  (x: NameKey): ModKey =>
-    x === "castingtime"
-    ? "youcannotuseamodificationonthisspellscastingtime"
-    : x === "ritualtime"
-    ? "youcannotuseamodificationonthisspellsritualtime"
-    : x === "lengthoftime"
-    ? "youcannotuseamodificationonthisspellscastingtime"
-    : x === "liturgicaltime"
-    ? "youcannotuseamodificationonthischantsliturgicaltime"
-    : "youcannotuseamodificationonthischantsceremonialtime"

@@ -1,21 +1,21 @@
-import { not } from "../../Data/Bool";
-import { cnst } from "../../Data/Function";
-import { fmap } from "../../Data/Functor";
-import { Lens_, over, view } from "../../Data/Lens";
-import { elemF, filter, fromArray, List } from "../../Data/List";
-import { bindF, ensure, fromMaybe, Just, liftM2, Maybe, Nothing, or } from "../../Data/Maybe";
-import { alter, elems, insert, lookup, lookupF, OrderedMap, sdelete, update } from "../../Data/OrderedMap";
-import { IdPrefixes } from "../Constants/IdPrefixes";
-import { createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
-import { createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
-import { AttributeDependent, createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
-import { createPlainSkillDependent, createSkillDependentWithValue6 } from "../Models/ActiveEntries/SkillDependent";
-import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { Dependent } from "../Models/Hero/heroTypeHelpers";
-import { Skill } from "../Models/Wiki/Skill";
-import { EntryWithGroup } from "../Models/Wiki/wikiTypeHelpers";
-import { getIdPrefix } from "./IDUtils";
-import { pipe } from "./pipe";
+import { not } from "../../Data/Bool"
+import { cnst } from "../../Data/Function"
+import { fmap } from "../../Data/Functor"
+import { Lens_, over, view } from "../../Data/Lens"
+import { elemF, filter, fromArray, List } from "../../Data/List"
+import { bindF, ensure, fromMaybe, Just, liftM2, Maybe, Nothing, or } from "../../Data/Maybe"
+import { alter, elems, insert, lookup, lookupF, OrderedMap, sdelete, update } from "../../Data/OrderedMap"
+import { IdPrefixes } from "../Constants/IdPrefixes"
+import { createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
+import { createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
+import { AttributeDependent, createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
+import { createPlainSkillDependent, createSkillDependentWithValue6 } from "../Models/ActiveEntries/SkillDependent"
+import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { Dependent } from "../Models/Hero/heroTypeHelpers"
+import { Skill } from "../Models/Wiki/Skill"
+import { EntryWithGroup } from "../Models/Wiki/wikiTypeHelpers"
+import { getIdPrefix } from "./IDUtils"
+import { pipe } from "./pipe"
 
 export type HeroStateMapKey = "advantages"
                             | "attributes"

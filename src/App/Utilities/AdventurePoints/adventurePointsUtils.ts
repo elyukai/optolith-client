@@ -1,29 +1,30 @@
-import { bool_ } from "../../../Data/Bool";
-import { equals } from "../../../Data/Eq";
-import { ident } from "../../../Data/Function";
-import { fmap, fmapF } from "../../../Data/Functor";
-import { any, countWith, countWithByKeyMaybe, elemF, find, flength, foldl, foldr, isList, List, notElem, subscript, take } from "../../../Data/List";
-import { all, altF, bind, bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing, or, sum, then } from "../../../Data/Maybe";
-import { add, gt, inc, lt, multiply, negate, subtractBy } from "../../../Data/Num";
-import { alter, empty, findWithDefault, lookup, OrderedMap } from "../../../Data/OrderedMap";
-import { fromDefault, Record } from "../../../Data/Record";
-import { fst, Pair, snd } from "../../../Data/Tuple";
-import { AdvantageIdsNoMaxInfl, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { ActiveActivatable, ActiveActivatableAL_, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { Disadvantage } from "../../Models/Wiki/Disadvantage";
-import { Skill } from "../../Models/Wiki/Skill";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
-import { getSelectOptionCost } from "../Activatable/selectionUtils";
-import { getMagicalTraditionsHeroEntries } from "../Activatable/traditionUtils";
-import { pipe, pipe_ } from "../pipe";
-import { misNumberM, misStringM } from "../typeCheckUtils";
-import { compareMaxLevel, compareSubMaxLevel, getActiveWithNoCustomCost } from "./activatableCostUtils";
+import { bool_ } from "../../../Data/Bool"
+import { equals } from "../../../Data/Eq"
+import { ident } from "../../../Data/Function"
+import { fmap, fmapF } from "../../../Data/Functor"
+import { any, countWith, countWithByKeyMaybe, elemF, find, flength, foldl, foldr, isList, List, notElem, subscript, take } from "../../../Data/List"
+import { all, altF, bind, bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing, or, sum, then } from "../../../Data/Maybe"
+import { add, gt, inc, lt, multiply, negate, subtractBy } from "../../../Data/Num"
+import { alter, empty, findWithDefault, lookup, OrderedMap } from "../../../Data/OrderedMap"
+import { fromDefault, Record } from "../../../Data/Record"
+import { fst, Pair, snd } from "../../../Data/Tuple"
+import { AdvantageIdsNoMaxInfl, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { ActiveActivatable, ActiveActivatableAL_, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable"
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
+import { Disadvantage } from "../../Models/Wiki/Disadvantage"
+import { Skill } from "../../Models/Wiki/Skill"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
+import { getSelectOptionCost } from "../Activatable/selectionUtils"
+import { getMagicalTraditionsHeroEntries } from "../Activatable/traditionUtils"
+import { pipe, pipe_ } from "../pipe"
+import { misNumberM, misStringM } from "../typeCheckUtils"
+import { compareMaxLevel, compareSubMaxLevel, getActiveWithNoCustomCost } from "./activatableCostUtils"
 
+const SDA = StaticData.A
 const AP = AdventurePointsCategories.AL
 const AAA = ActiveActivatable.A
 const AOA = ActiveObject.A
@@ -159,6 +160,7 @@ export const getMissingAPForDisAdvantage =
     // (magical/blessed)
     const subMissing =
       isInCharacterCreation && notElem (id) (AdvantageIdsNoMaxInfl)
+
         // (current + spent) - max > 0 => invalid
         ? bind (subCurrentAPSpent)
                (pipe (
@@ -171,6 +173,7 @@ export const getMissingAPForDisAdvantage =
     // Checks if there are enough AP below the max for advantages/disadvantages
     const mainMissing =
       isInCharacterCreation && notElem (id) (AdvantageIdsNoMaxInfl)
+
         // (current + spent) - max > 0 => invalid
         ? ensure (gt (0)) (currentAPSpent + normalizedCost - 80)
         : Nothing
@@ -185,7 +188,7 @@ export const getMissingAPForDisAdvantage =
 
 const getPrinciplesObligationsDiff =
   (id: string) =>
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
   (entries: List<Record<ActiveActivatable>>): number => {
     if (any (pipe (ActiveActivatableAL_.id, equals (id))) (entries)) {
@@ -209,8 +212,8 @@ const getPrinciplesObligationsDiff =
 
           const mbase_cost =
             pipe_ (
-              wiki,
-              WikiModel.A.disadvantages,
+              staticData,
+              SDA.disadvantages,
               lookup (id),
               bindF (Disadvantage.A.cost),
               misNumberM
@@ -312,7 +315,7 @@ const getPersonalityFlawsDiff =
     )
 
 const getBadHabitsDiff =
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
   (entries: List<Record<ActiveActivatable>>): number =>
     any (pipe (ActiveActivatableAL_.id, equals<string> (DisadvantageId.BadHabit))) (entries)
@@ -320,6 +323,7 @@ const getBadHabitsDiff =
         hero_slice,
         lookup<string> (DisadvantageId.PersonalityFlaw),
         fmap (pipe (
+
           // get current active
           ActivatableDependent.A.active,
           getActiveWithNoCustomCost,
@@ -327,8 +331,8 @@ const getBadHabitsDiff =
           gt (3),
           bool_ (() => 0)
                 (() => pipe_ (
-                  wiki,
-                  WikiModel.A.disadvantages,
+                  staticData,
+                  SDA.disadvantages,
                   lookup<string> (DisadvantageId.BadHabit),
                   bindF (Disadvantage.A.cost),
                   misNumberM,
@@ -340,7 +344,7 @@ const getBadHabitsDiff =
       : 0
 
 const getSkillSpecializationsDiff =
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
   (entries: List<Record<ActiveActivatable>>): number => {
     if (any (pipe (ActiveActivatableAL_.id, equals<string> (SpecialAbilityId.SkillSpecialization)))
@@ -390,7 +394,7 @@ const getSkillSpecializationsDiff =
                                     // be done
                                     if (all (lt (count)) (lookup (current_sid) (m))) {
                                       const mskill =
-                                        pipe_ (wiki, WikiModel.A.skills, lookup (current_sid))
+                                        pipe_ (staticData, SDA.skills, lookup (current_sid))
 
                                       return Pair (
                                         fst (p) + sum (fmap (getSingleDiff (m)
@@ -428,15 +432,15 @@ const getAspectKnowledgeDiff =
  * The returned number modifies the current AP spent.
  */
 export const getAdventurePointsSpentDifference =
-  (wiki: WikiModelRecord) =>
+  (staticData: StaticDataRecord) =>
   (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
   (entries: List<Record<ActiveActivatable>>): number => {
     const adventurePointsSpentDifferences = List (
-      getPrinciplesObligationsDiff (DisadvantageId.Principles) (wiki) (hero_slice) (entries),
-      getPrinciplesObligationsDiff (DisadvantageId.Obligations) (wiki) (hero_slice) (entries),
+      getPrinciplesObligationsDiff (DisadvantageId.Principles) (staticData) (hero_slice) (entries),
+      getPrinciplesObligationsDiff (DisadvantageId.Obligations) (staticData) (hero_slice) (entries),
       getPersonalityFlawsDiff (entries),
-      getBadHabitsDiff (wiki) (hero_slice) (entries),
-      getSkillSpecializationsDiff (wiki) (hero_slice) (entries),
+      getBadHabitsDiff (staticData) (hero_slice) (entries),
+      getSkillSpecializationsDiff (staticData) (hero_slice) (entries),
       getPropertyKnowledgeDiff (entries),
       getAspectKnowledgeDiff (entries)
     )

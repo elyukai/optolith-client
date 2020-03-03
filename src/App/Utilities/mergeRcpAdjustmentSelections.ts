@@ -1,15 +1,15 @@
-import { fmap } from "../../Data/Functor";
-import { bindF, ensure, Just, Maybe, maybe, or } from "../../Data/Maybe";
-import { Record } from "../../Data/Record";
-import { Profession } from "../Models/Wiki/Profession";
-import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
-import { ProfessionSelections } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
-import { ProfessionVariantSelections } from "../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
-import { CombatTechniquesSecondSelection } from "../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
-import { SpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection";
-import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
-import { ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
-import { pipe, pipe_ } from "./pipe";
+import { fmap } from "../../Data/Functor"
+import { bindF, ensure, Just, Maybe, maybe, or } from "../../Data/Maybe"
+import { Record } from "../../Data/Record"
+import { Profession } from "../Models/Wiki/Profession"
+import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection"
+import { ProfessionSelections } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections"
+import { ProfessionVariantSelections } from "../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections"
+import { CombatTechniquesSecondSelection } from "../Models/Wiki/professionSelections/SecondCombatTechniquesSelection"
+import { SpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection"
+import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
+import { ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers"
+import { pipe, pipe_ } from "./pipe"
 
 const PA = Profession.A
 const PSA = ProfessionSelections.A

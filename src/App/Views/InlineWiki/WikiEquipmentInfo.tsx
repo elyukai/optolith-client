@@ -1,50 +1,57 @@
-import * as React from "react";
-import { fmap, fmapF } from "../../../Data/Functor";
-import { elemF, intercalate, List, notElem, notNull, subscript } from "../../../Data/List";
-import { alt_, bind, bindF, ensure, fromMaybe, imapMaybe, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNullF, Nothing } from "../../../Data/Maybe";
-import { dec, gt } from "../../../Data/Num";
-import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { fromDefault, Record } from "../../../Data/Record";
-import { fst, isTuple, snd } from "../../../Data/Tuple";
-import { CombatTechniqueId } from "../../Constants/Ids";
-import { Item } from "../../Models/Hero/Item";
-import { Attribute } from "../../Models/Wiki/Attribute";
-import { Book } from "../../Models/Wiki/Book";
-import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
-import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
-import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
-import { SourceLink } from "../../Models/Wiki/sub/SourceLink";
-import { minus, ndash } from "../../Utilities/Chars";
-import { localizeNumber, localizeSize, localizeWeight, translate } from "../../Utilities/I18n";
-import { convertPrimaryAttributeToArray } from "../../Utilities/ItemUtils";
-import { sign, signZero } from "../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils";
-import { Markdown } from "../Universal/Markdown";
-import { WikiSource } from "./Elements/WikiSource";
-import { WikiBoxTemplate } from "./WikiBoxTemplate";
+import * as React from "react"
+import { fmap, fmapF } from "../../../Data/Functor"
+import { elemF, intercalate, List, notElem, notNull } from "../../../Data/List"
+import { alt_, bind, bindF, ensure, fromMaybe, imapMaybe, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNullF, Nothing } from "../../../Data/Maybe"
+import { gt } from "../../../Data/Num"
+import { lookup, lookupF } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { show } from "../../../Data/Show"
+import { fst, isTuple, snd } from "../../../Data/Tuple"
+import { CombatTechniqueId } from "../../Constants/Ids"
+import { Item } from "../../Models/Hero/Item"
+import { NumIdName } from "../../Models/NumIdName"
+import { SrcOnly } from "../../Models/View/SrcOnly"
+import { Attribute } from "../../Models/Wiki/Attribute"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
+import { DerivedCharacteristic } from "../../Models/Wiki/DerivedCharacteristic"
+import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
+import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { minus, ndash } from "../../Utilities/Chars"
+import { localizeNumber, localizeSize, localizeWeight, translate, translateP } from "../../Utilities/I18n"
+import { convertPrimaryAttributeToArray, getDamageStr } from "../../Utilities/ItemUtils"
+import { sign } from "../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils"
+import { Markdown } from "../Universal/Markdown"
+import { WikiSource } from "./Elements/WikiSource"
+import { WikiBoxTemplate } from "./WikiBoxTemplate"
 
-export interface WikiEquipmentInfoProps {
-  attributes: OrderedMap<string, Record<Attribute>>
-  books: OrderedMap<string, Record<Book>>
-  combatTechniques: OrderedMap<string, Record<CombatTechnique>>
-  x: Record<ItemTemplate> | Record<Item>
-  l10n: L10nRecord
-  itemTemplates: OrderedMap<string, Record<ItemTemplate>>
-}
-
+const SDA = StaticData.A
 const ITAL = ItemTemplate.AL
 const ITA = ItemTemplate.A
 const IA = Item.A
 const PADTA = PrimaryAttributeDamageThreshold.A
 const CTA = CombatTechnique.A
 const AA = Attribute.A
+const DCA = DerivedCharacteristic.A
 
-// tslint:disable-next-line: cyclomatic-complexity
-export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
-  const { attributes, x, l10n, combatTechniques, itemTemplates, books } = props
-  const locale = L10n.A.id (l10n)
+const ensureNatural = bindF (ensure (gt (0)))
+const getIniName = pipe (SDA.derivedCharacteristics, lookup ("INI"), maybe ("") (DCA.name))
+const getMovName = pipe (SDA.derivedCharacteristics, lookup ("MOV"), maybe ("") (DCA.name))
+
+export interface WikiEquipmentInfoProps {
+  x: Record<ItemTemplate> | Record<Item>
+  staticData: StaticDataRecord
+}
+
+export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
+  const { x, staticData } = props
+
+  const attributes = SDA.attributes (staticData)
+  const combatTechniques = SDA.combatTechniques (staticData)
+  const itemTemplates = SDA.itemTemplates (staticData)
+
   const gr = ITAL.gr (x)
   const name = ITAL.name (x)
   const mprice = ITAL.price (x)
@@ -84,8 +91,8 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
   const addPenaltiesArr =
     addPenalties
       ? List (
-          `${minus}${Maybe.sum (movMod) + 1} ${translate (l10n) ("movement.short")}`,
-          `${minus}${Maybe.sum (iniMod) + 1} ${translate (l10n) ("initiative.short")}`
+          `${minus}${Maybe.sum (movMod) + 1} ${getMovName (staticData)}`,
+          `${minus}${Maybe.sum (iniMod) + 1} ${getIniName (staticData)}`
         )
       : List<string> ()
 
@@ -129,11 +136,17 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
     maybe (null as React.ReactNode)
           ((weight: number) => (
             <tr>
-              <td>{translate (l10n) ("weight")}</td>
+              <td>{translate (staticData) ("inlinewiki.equipment.weight")}</td>
               <td>
-                {pipe_ (weight, localizeWeight (locale), localizeNumber (locale))}
-                {" "}
-                {translate (l10n) ("weightunit.short")}
+                {translateP (staticData)
+                            ("general.weightvalue")
+                            (List (
+                              pipe_ (
+                                weight,
+                                localizeWeight (staticData),
+                                localizeNumber (staticData)
+                              )
+                            ))}
               </td>
             </tr>
           ))
@@ -143,11 +156,11 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
     maybe (null as React.ReactNode)
           ((price: number) => (
             <tr>
-              <td>{translate (l10n) ("price")}</td>
+              <td>{translate (staticData) ("inlinewiki.equipment.price")}</td>
               <td>
-                {localizeNumber (locale) (price)}
-                {" "}
-                {translate (l10n) ("priceunit")}
+                {translateP (staticData)
+                            ("general.pricevalue")
+                            (List (localizeNumber (staticData) (price)))}
               </td>
             </tr>
           ))
@@ -158,11 +171,15 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
       className="item"
       title={name}
       subtitle={gr === 3
-                  ? <p className="title">{translate (l10n) ("ammunition")}</p>
-                  : null}
+                ? (
+                    <p className="title">
+                      {translate (staticData) ("inlinewiki.equipment.ammunition")}
+                    </p>
+                  )
+                : null}
       >
       {gr === 3
-        ? <p className="ammunition">{translate (l10n) ("ammunition")}</p>
+        ? <p className="ammunition">{translate (staticData) ("inlinewiki.equipment.ammunition")}</p>
         : null}
       {notElem (gr) (List (1, 2, 4))
         ? (
@@ -179,37 +196,39 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
           <table className="melee">
             <tbody>
               <tr>
-                <td>{translate (l10n) ("combattechnique")}</td>
+                <td>{translate (staticData) ("inlinewiki.equipment.combattechnique")}</td>
                 <td>{renderMaybeWith (CTA.name) (mcombat_technique)}</td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("damage")}</td>
+                <td>{translate (staticData) ("inlinewiki.equipment.damage")}</td>
                 <td>
-                  {renderMaybe (damageDiceNumber)}
-                  {translate (l10n) ("dice.short")}
-                  {renderMaybe (damageDiceSides)}
-                  {renderMaybeWith (signZero) (damageFlat)}
+                  {getDamageStr (staticData) (damageFlat) (damageDiceNumber) (damageDiceSides)}
                 </td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("primaryattributeanddamagethreshold.short")}</td>
+                <td>
+                  {translate (staticData)
+                             ("inlinewiki.equipment.primaryattributeanddamagethreshold")}
+                </td>
                 <td>{isLancesCT ? ndash : renderMaybe (mpadt)}</td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("attackparrymodifier.short")}</td>
+                <td>{translate (staticData) ("inlinewiki.equipment.attackparrymodifier")}</td>
                 <td>
-                  {isLancesCT ? ndash : `${renderMaybeWith (sign) (at)}/${maybe (ndash) (sign) (pa)}`}
+                  {isLancesCT
+                    ? ndash
+                    : `${renderMaybeWith (sign) (at)}/${maybe (ndash) (sign) (pa)}`}
                 </td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("reach")}</td>
+                <td>{translate (staticData) ("inlinewiki.equipment.reach")}</td>
                 <td>
                   {isLancesCT
                   ? ndash
                   : pipe_ (
                       reach,
-                      bindF (pipe (dec, subscript (translate (l10n) ("reachlabels")))),
-                      renderMaybe
+                      bindF (lookupF (SDA.reaches (staticData))),
+                      renderMaybeWith (NumIdName.A.name)
                     )}
                 </td>
               </tr>
@@ -218,12 +237,17 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
                 ? null
                 : (
                   <tr>
-                    <td>{translate (l10n) ("length")}</td>
+                    <td>{translate (staticData) ("inlinewiki.equipment.length")}</td>
                     <td>
-                      {renderMaybeWith (pipe (localizeSize (locale), localizeNumber (locale)))
-                                      (mlength)}
-                      {" "}
-                      {translate (l10n) ("lengthunit")}
+                      {translateP (staticData)
+                                  ("general.lengthvalue")
+                                  (List (
+                                    renderMaybeWith (pipe (
+                                                      localizeSize (staticData),
+                                                      localizeNumber (staticData)
+                                                    ))
+                                                    (mlength)
+                                  ))}
                     </td>
                   </tr>
                 )}
@@ -237,44 +261,54 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
           <table className="ranged">
             <tbody>
               <tr>
-                <td>{translate (l10n) ("combattechnique")}</td>
+                <td>{translate (staticData) ("inlinewiki.equipment.combattechnique")}</td>
                 <td>
                   {renderMaybeWith (CTA.name) (mcombat_technique)}
                 </td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("damage")}</td>
+                <td>{translate (staticData) ("inlinewiki.equipment.damage")}</td>
                 <td>
-                  {renderMaybe (damageDiceNumber)}
-                  {translate (l10n) ("dice.short")}
-                  {renderMaybe (damageDiceSides)}
-                  {renderMaybeWith (signZero) (damageFlat)}
+                  {getDamageStr (staticData) (damageFlat) (damageDiceNumber) (damageDiceSides)}
                 </td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("reloadtime")}</td>
+                <td>{translate (staticData) ("inlinewiki.equipment.reloadtime")}</td>
                 <td>
-                  {renderMaybe (reloadTime)}
-                  {" "}
-                  {translate (l10n) ("actions.short")}
+                  {translateP (staticData)
+                              ("inlinewiki.equipment.actionsvalue")
+                              (List (renderMaybeWith ((rt: number | List<number>) =>
+                                                       typeof rt === "object"
+                                                       ? intercalate ("/") (rt)
+                                                       : show (rt))
+                                                     (reloadTime)))}
                 </td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("range")}</td>
+                <td>{translate (staticData) ("inlinewiki.equipment.range")}</td>
                 <td>{renderMaybeWith (intercalate ("/")) (range)}</td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("ammunition")}</td>
-                <td>{maybe (translate (l10n) ("none")) (ITAL.name) (ammunitionTemplate)}</td>
+                <td>{translate (staticData) ("inlinewiki.equipment.ammunition")}</td>
+                <td>
+                  {maybe (translate (staticData) ("general.none"))
+                         (ITAL.name)
+                         (ammunitionTemplate)}
+                </td>
               </tr>
               {weightElement}
               <tr>
-                <td>{translate (l10n) ("length")}</td>
+                <td>{translate (staticData) ("inlinewiki.equipment.length")}</td>
                 <td>
-                  {renderMaybeWith (pipe (localizeSize (locale), localizeNumber (locale)))
-                                   (mlength)}
-                  {" "}
-                  {translate (l10n) ("lengthunit")}
+                  {translateP (staticData)
+                              ("general.lengthvalue")
+                              (List (
+                                renderMaybeWith (pipe (
+                                                  localizeSize (staticData),
+                                                  localizeNumber (staticData)
+                                                ))
+                                                (mlength)
+                              ))}
                 </td>
               </tr>
               {priceElement}
@@ -287,17 +321,17 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
           <table className="armor">
             <tbody>
               <tr>
-                <td>{translate (l10n) ("protection.short")}</td>
+                <td>{translate (staticData) ("inlinewiki.equipment.protection")}</td>
                 <td>{renderMaybe (pro)}</td>
               </tr>
               <tr>
-                <td>{translate (l10n) ("encumbrance.short")}</td>
+                <td>{translate (staticData) ("inlinewiki.equipment.encumbrance")}</td>
                 <td>{renderMaybe (enc)}</td>
               </tr>
               {weightElement}
               {priceElement}
               <tr>
-                <td>{translate (l10n) ("additionalpenalties")}</td>
+                <td>{translate (staticData) ("inlinewiki.equipment.additionalpenalties")}</td>
                 <td>{maybe (ndash) (intercalate (", ")) (ensure (notNull) (addPenaltiesArr))}</td>
               </tr>
             </tbody>
@@ -306,20 +340,24 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
         : null}
       {maybeRNullF (mnote)
                    (str => (
-                     <Markdown source={`**${translate (l10n) ("notes")}:** ${str}`} />
+                     <Markdown
+                       source={`**${translate (staticData) ("inlinewiki.equipment.note")}:** ${str}`}
+                       />
                    ))}
       {maybeRNullF (mrules)
                    (str => (
-                     <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
+                     <Markdown
+                       source={`**${translate (staticData) ("inlinewiki.equipment.rules")}:** ${str}`}
+                       />
                    ))}
       {maybeRNullF (madvantage)
                    (str => {
                      const tag =
                        ITAL.gr (x) === 4
-                         ? translate (l10n) ("armoradvantage")
-                         : translate (l10n) ("weaponadvantage")
+                         ? translate (staticData) ("inlinewiki.equipment.armoradvantage")
+                         : translate (staticData) ("inlinewiki.equipment.weaponadvantage")
 
-                     const val = fromMaybe (translate (l10n) ("none")) (str)
+                     const val = fromMaybe (translate (staticData) ("general.none")) (str)
 
                      return (
                        <Markdown source={`**${tag}:** ${val}`} />
@@ -329,10 +367,10 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
                    (str => {
                      const tag =
                        ITAL.gr (x) === 4
-                         ? translate (l10n) ("armordisadvantage")
-                         : translate (l10n) ("weapondisadvantage")
+                         ? translate (staticData) ("inlinewiki.equipment.armordisadvantage")
+                         : translate (staticData) ("inlinewiki.equipment.weapondisadvantage")
 
-                     const val = fromMaybe (translate (l10n) ("none")) (str)
+                     const val = fromMaybe (translate (staticData) ("general.none")) (str)
 
                      return (
                        <Markdown source={`**${tag}:** ${val}`} />
@@ -341,24 +379,11 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
       {maybeRNullF (msrc)
                    (src => (
                      <WikiSource
-                       books={books}
-                       l10n={l10n}
-                       x={SrcObj ({ src })}
-                       acc={SrcObj.A}
+                       staticData={staticData}
+                       x={SrcOnly ({ src })}
+                       acc={SrcOnly.A}
                        />
                    ))}
     </WikiBoxTemplate>
   )
 }
-
-interface SrcObj {
-  "@@name": "SrcObj"
-  src: List<Record<SourceLink>>
-}
-
-const SrcObj = fromDefault ("SrcObj")
-                           <SrcObj> ({
-                             src: List<Record<SourceLink>> (),
-                           })
-
-const ensureNatural = bindF (ensure (gt (0)))

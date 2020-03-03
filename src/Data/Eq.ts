@@ -4,12 +4,12 @@
  * @author Lukas Obermann
  */
 
-import { on } from "./Function";
-import { Internals } from "./Internals";
-import { RecordIBase } from "./Record";
-import { show } from "./Show";
-import { curry, Pair } from "./Tuple";
-import { curryN } from "./Tuple/Curry";
+import { on } from "./Function"
+import { Internals } from "./Internals"
+import { RecordIBase } from "./Record"
+import { show } from "./Show"
+import { curry, Pair } from "./Tuple"
+import { curryN } from "./Tuple/Curry"
 
 import Maybe = Internals.Maybe
 import Record = Internals.Record
@@ -25,25 +25,69 @@ const flength = (xs: OrderedSet<any>): number => xs .value .size
 
 export const elem =
   <A> (e: A) => (xs: OrderedSet<A>): boolean =>
-    [...xs .value] .some (equals (e))
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    [ ...xs .value ] .some (equals (e))
 
 export const all =
   <A> (f: (x: A) => boolean) => (xs: OrderedSet<A>): boolean =>
-    [...xs .value] .every (f)
+    [ ...xs .value ] .every (f)
+
+const getRecordField = <A extends RecordIBase<any>> (key: keyof A) => (r: Record<A>) => {
+  if (elem (key as string) (r .keys)) {
+    const specifiedValue = r .values [key]
+
+    // tslint:disable-next-line: strict-type-predicates
+    if (specifiedValue !== null && specifiedValue !== undefined) {
+      return specifiedValue as A[typeof key]
+    }
+
+    return r .defaultValues [key]
+  }
+
+  throw new TypeError (`Key ${show (key)} is not in Record ${show (r)}!`)
+}
+
+/**
+ * `foldrWithKey :: (Key -> a -> b -> b) -> b -> IntMap a -> b`
+ *
+ * Right-associative fold of a structure.
+ */
+const foldrWithKey =
+  <K, A, B>
+  (f: (key: K) => (current: A) => (acc: B) => B) =>
+  (init: B) =>
+  (mp: Map<K, A>): B =>
+    isTip (mp)
+    ? init
+    : foldrWithKey (f) (f (mp .key) (mp .value) (foldrWithKey (f) (init) (mp .right))) (mp .left)
+
+/**
+ * `size :: IntMap a -> Int`
+ *
+ * The number of elements in the map.
+ */
+const size = (mp: Map<any, any>) => isTip (mp) ? 0 : mp .size
+
+/**
+ * `assocs :: IntMap a -> [(Key, a)]`
+ *
+ * Return all key/value pairs in the map.
+ */
+const assocs =
+  <K, A> (mp: Map<K, A>): List<Pair<K, A>> =>
+    foldrWithKey<K, A, List<Pair<K, A>>> (curry (curryN (Internals.Cons))) (List ()) (mp)
 
 /**
  * `(==) :: a -> a -> Bool`
  *
  * Returns if both given values are equal.
  */
-export const equals =
-  // tslint:disable-next-line: cyclomatic-complexity
-  <A> (x1: A) => (x2: A): boolean => {
+export const equals = <A> (x1: A) => (x2: A): boolean => {
     if (Internals.isMaybe (x1)) {
       return Internals.isMaybe (x2)
         && (
-          Internals.isNothing (x1) && Internals.isNothing (x2 as unknown as Maybe<any>)
-          || Internals.isJust (x1) && Internals.isJust (x2) && equals (x1 .value) (x2 .value)
+          (Internals.isNothing (x1) && Internals.isNothing (x2 as unknown as Maybe<any>))
+          || (Internals.isJust (x1) && Internals.isJust (x2) && equals (x1 .value) (x2 .value))
         )
     }
 
@@ -56,12 +100,11 @@ export const equals =
     if (Internals.isList (x1)) {
       const equalsCons =
         (xs1: any, xs2: any): boolean =>
-          Internals.isNil (xs1)
-          && Internals.isNil (xs2)
-          || !Internals.isNil (xs1)
-          && !Internals.isNil (xs2)
-          && equals (xs1 .x) (xs2 .x)
-          && equalsCons (xs1 .xs, xs2 .xs)
+          (Internals.isNil (xs1) && Internals.isNil (xs2))
+          || (!Internals.isNil (xs1)
+            && !Internals.isNil (xs2)
+            && equals (xs1 .x) (xs2 .x)
+            && equalsCons (xs1 .xs, xs2 .xs))
 
       return Internals.isList (x2) && equalsCons (x1, x2)
     }
@@ -84,8 +127,8 @@ export const equals =
 
     if (Internals.isOrderedSet (x1)) {
       if (Internals.isOrderedSet (x2)) {
-        const firstValues = [...x1]
-        const secondValues = [...x2]
+        const firstValues = [ ...x1 ]
+        const secondValues = [ ...x2 ]
 
         return flength (x1) === flength (x2)
           && firstValues .every ((e, i) => equals (e) (secondValues [i]))
@@ -96,12 +139,12 @@ export const equals =
 
     if (Internals.isOrderedMap (x1)) {
       if (Internals.isOrderedMap (x2)) {
-        const firstValues = [...x1]
-        const secondValues = [...x2]
+        const firstValues = [ ...x1 ]
+        const secondValues = [ ...x2 ]
 
         return flengthMap (x1) === flengthMap (x2)
           && firstValues .every (
-            ([k, v], i) => {
+            ([ k, v ], i) => {
               const second = secondValues [i]
 
               return equals (k) (second [0]) && equals (v) (second [1])
@@ -169,36 +212,6 @@ export const equals =
     return x1 === x2
   }
 
-/**
- * `foldrWithKey :: (Key -> a -> b -> b) -> b -> IntMap a -> b`
- *
- * Right-associative fold of a structure.
- */
-const foldrWithKey =
-  <K, A, B>
-  (f: (key: K) => (current: A) => (acc: B) => B) =>
-  (init: B) =>
-  (mp: Map<K, A>): B =>
-    isTip (mp)
-    ? init
-    : foldrWithKey (f) (f (mp .key) (mp .value) (foldrWithKey (f) (init) (mp .right))) (mp .left)
-
-/**
- * `size :: IntMap a -> Int`
- *
- * The number of elements in the map.
- */
-const size = (mp: Map<any, any>) => isTip (mp) ? 0 : mp .size
-
-/**
- * `assocs :: IntMap a -> [(Key, a)]`
- *
- * Return all key/value pairs in the map.
- */
-const assocs =
-  <K, A> (mp: Map<K, A>): List<Pair<K, A>> =>
-    foldrWithKey<K, A, List<Pair<K, A>>> (curry (curryN (Internals.Cons))) (List ()) (mp)
-
 // const equalsMap = (mp1: Map<any, any>) => (mp2: Map<any, any>): boolean =>
 //   isTip (mp1) === isTip (mp2)
 //   && (
@@ -220,21 +233,6 @@ export type equals<A> = (x1: A) => (x2: A) => boolean
 export const notEquals =
   <A> (m1: A) => (m2: A): boolean =>
     !equals (m1) (m2)
-
-const getRecordField = <A extends RecordIBase<any>> (key: keyof A) => (r: Record<A>) => {
-  if (elem (key as string) (r .keys)) {
-    const specifiedValue = r .values [key]
-
-    // tslint:disable-next-line: strict-type-predicates
-    if (specifiedValue !== null && specifiedValue !== undefined) {
-      return specifiedValue as A[typeof key]
-    }
-
-    return r .defaultValues [key]
-  }
-
-  throw new TypeError (`Key ${show (key)} is not in Record ${show (r)}!`)
-}
 
 
 // NAMESPACED FUNCTIONS

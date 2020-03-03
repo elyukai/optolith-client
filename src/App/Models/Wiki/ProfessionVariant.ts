@@ -1,14 +1,14 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement";
-import { ProfessionVariantSelections } from "./professionSelections/ProfessionVariantAdjustmentSelections";
-import { Erratum } from "./sub/Errata";
-import { IncreaseSkill } from "./sub/IncreaseSkill";
-import { IncreaseSkillList } from "./sub/IncreaseSkillList";
-import { NameBySex } from "./sub/NameBySex";
-import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite } from "./wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement"
+import { ProfessionVariantSelections } from "./professionSelections/ProfessionVariantAdjustmentSelections"
+import { Erratum } from "./sub/Errata"
+import { IncreaseSkill } from "./sub/IncreaseSkill"
+import { IncreaseSkillList } from "./sub/IncreaseSkillList"
+import { NameBySex } from "./sub/NameBySex"
+import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite } from "./wikiTypeHelpers"
 
 export interface ProfessionVariant {
   "@@name": "ProfessionVariant"

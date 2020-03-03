@@ -1,18 +1,19 @@
-import { fromJust, isJust, Just, Maybe, Nothing } from "../../Data/Maybe";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { SocialStatusId } from "../Constants/Ids";
-import { HeroModelRecord } from "../Models/Hero/HeroModel";
-import { getAvailableEyeColorIds, getAvailableHairColorIds } from "../Selectors/personalDataSelectors";
-import { getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
-import { getSize, getWeight } from "../Selectors/stateSelectors";
-import { Locale } from "../Utilities/Raw/JSON/Config";
-import * as RCPUtils from "../Utilities/rcpUtils";
-import { ReduxAction } from "./Actions";
+import { fnullStr } from "../../Data/List"
+import { fromJust, isJust, Just, Maybe, Nothing } from "../../Data/Maybe"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { SocialStatusId } from "../Constants/Ids"
+import { Locale } from "../Models/Config"
+import { HeroModelRecord } from "../Models/Hero/HeroModel"
+import { getAvailableEyeColorIds, getAvailableHairColorIds } from "../Selectors/personalDataSelectors"
+import { getCurrentRace, getCurrentRaceVariant } from "../Selectors/raceSelectors"
+import { getSize, getWeight } from "../Selectors/stateSelectors"
+import * as RCPUtils from "../Utilities/rcpUtils"
+import { ReduxAction } from "./Actions"
 
 export interface SetHeroNameAction {
   type: ActionTypes.SET_HERO_NAME
   payload: {
-    name: string;
+    name: string
   }
 }
 
@@ -26,7 +27,7 @@ export const setHeroName = (name: string): SetHeroNameAction => ({
 export interface SetCustomProfessionNameAction {
   type: ActionTypes.SET_CUSTOM_PROFESSION_NAME
   payload: {
-    name: string;
+    name: string
   }
 }
 
@@ -40,7 +41,7 @@ export const setCustomProfessionName = (name: string): SetCustomProfessionNameAc
 export interface SetHeroAvatarAction {
   type: ActionTypes.SET_HERO_AVATAR
   payload: {
-    url: string;
+    url: string
   }
 }
 
@@ -62,7 +63,7 @@ export const deleteHeroAvatar = (): DeleteHeroAvatarAction => ({
 export interface SetFamilyAction {
   type: ActionTypes.SET_FAMILY
   payload: {
-    family: string;
+    family: string
   }
 }
 
@@ -76,7 +77,7 @@ export const setFamily = (family: string): SetFamilyAction => ({
 export interface SetPlaceOfBirthAction {
   type: ActionTypes.SET_PLACEOFBIRTH
   payload: {
-    placeofbirth: string;
+    placeofbirth: string
   }
 }
 
@@ -90,7 +91,7 @@ export const setPlaceOfBirth = (placeofbirth: string): SetPlaceOfBirthAction => 
 export interface SetDateOfBirthAction {
   type: ActionTypes.SET_DATEOFBIRTH
   payload: {
-    dateofbirth: string;
+    dateofbirth: string
   }
 }
 
@@ -104,7 +105,7 @@ export const setDateOfBirth = (dateofbirth: string): SetDateOfBirthAction => ({
 export interface SetAgeAction {
   type: ActionTypes.SET_AGE
   payload: {
-    age: string;
+    age: string
   }
 }
 
@@ -118,7 +119,7 @@ export const setAge = (age: string): SetAgeAction => ({
 export interface SetHairColorAction {
   type: ActionTypes.SET_HAIRCOLOR
   payload: {
-    haircolor: number;
+    haircolor: number
   }
 }
 
@@ -132,7 +133,7 @@ export const setHairColor = (haircolor: number): SetHairColorAction => ({
 export interface SetEyeColorAction {
   type: ActionTypes.SET_EYECOLOR
   payload: {
-    eyecolor: number;
+    eyecolor: number
   }
 }
 
@@ -146,8 +147,8 @@ export const setEyeColor = (eyecolor: number): SetEyeColorAction => ({
 export interface SetSizeAction {
   type: ActionTypes.SET_SIZE
   payload: {
-    size: string;
-    weight: Maybe<string>;
+    size: string
+    weight: Maybe<string>
   }
 }
 
@@ -162,8 +163,8 @@ export const setSize = (size: string) => (weight: Maybe<string>): SetSizeAction 
 export interface SetWeightAction {
   type: ActionTypes.SET_WEIGHT
   payload: {
-    size: Maybe<string>;
-    weight: string;
+    size: Maybe<string>
+    weight: string
   }
 }
 
@@ -226,14 +227,13 @@ export const rerollWeight: ReduxAction =
     const prevSize = getSize (state)
 
     // If the heroes size hasn't been set by the user:
-    if (!isJust (prevSize) || (isJust (prevSize) && fromJust(prevSize).length === 0)) {
-
+    if (!isJust (prevSize) || (isJust (prevSize) && fnullStr (fromJust (prevSize)))) {
       const race_variant = getCurrentRaceVariant (state)
       const initialWeightAndSize = RCPUtils.rerollWeightAndSize (race) (race_variant)
       if (isJust (initialWeightAndSize.weight)) {
-        dispatch (setWeight (fromJust(initialWeightAndSize.weight)) (initialWeightAndSize.size))
+        dispatch (setWeight (fromJust (initialWeightAndSize.weight)) (initialWeightAndSize.size))
       }
-    } 
+    }
     else {
       const { weight, size } = RCPUtils.rerollWeight (prevSize) (race)
 
@@ -246,7 +246,7 @@ export const rerollWeight: ReduxAction =
 export interface SetTitleAction {
   type: ActionTypes.SET_TITLE
   payload: {
-    title: string;
+    title: string
   }
 }
 
@@ -260,7 +260,7 @@ export const setTitle = (title: string): SetTitleAction => ({
 export interface SetSocialStatusAction {
   type: ActionTypes.SET_SOCIALSTATUS
   payload: {
-    socialstatus: SocialStatusId;
+    socialstatus: SocialStatusId
   }
 }
 
@@ -274,7 +274,7 @@ export const setSocialStatus = (socialstatus: SocialStatusId): SetSocialStatusAc
 export interface SetCharacteristicsAction {
   type: ActionTypes.SET_CHARACTERISTICS
   payload: {
-    characteristics: string;
+    characteristics: string
   }
 }
 
@@ -288,7 +288,7 @@ export const setCharacteristics = (characteristics: string): SetCharacteristicsA
 export interface SetOtherInfoAction {
   type: ActionTypes.SET_OTHERINFO
   payload: {
-    otherinfo: string;
+    otherinfo: string
   }
 }
 
@@ -302,7 +302,7 @@ export const setOtherInfo = (otherinfo: string): SetOtherInfoAction => ({
 export interface SetCultureAreaKnowledge {
   type: ActionTypes.SET_CULTURE_AREA_KNOWLEDGE
   payload: {
-    cultureAreaKnowledge: string;
+    cultureAreaKnowledge: string
   }
 }
 
@@ -324,7 +324,7 @@ export const endHeroCreation = (): EndHeroCreationAction => ({
 export interface AddAdventurePointsAction {
   type: ActionTypes.ADD_ADVENTURE_POINTS
   payload: {
-    amount: number;
+    amount: number
   }
 }
 
@@ -338,7 +338,7 @@ export const addAdventurePoints = (amount: number): AddAdventurePointsAction => 
 export interface SetHeroLocaleAction {
   type: ActionTypes.SET_HERO_LOCALE
   payload: {
-    locale: Locale;
+    locale: Locale
   }
 }
 

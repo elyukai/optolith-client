@@ -1,33 +1,39 @@
-import { remote } from "electron";
-import * as React from "react";
-import { List } from "../../../Data/List";
-import { Maybe, maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { SettingsContainer } from "../../Containers/SettingsContainer";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { SubTab } from "../../Models/Hero/heroTypeHelpers";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { TabId } from "../../Utilities/LocationUtils";
-import { signNeg } from "../../Utilities/NumberUtils";
-import { pipe } from "../../Utilities/pipe";
-import { AvatarWrapper } from "../Universal/AvatarWrapper";
-import { BorderButton } from "../Universal/BorderButton";
-import { IconButton } from "../Universal/IconButton";
-import { Text } from "../Universal/Text";
-import { TooltipToggle } from "../Universal/TooltipToggle";
-import { ApTooltip } from "./ApTooltip";
-import { NavigationBarBack } from "./NavigationBarBack";
-import { NavigationBarLeft } from "./NavigationBarLeft";
-import { NavigationBarRight } from "./NavigationBarRight";
-import { NavigationBarSubTabs } from "./NavigationBarSubTabs";
-import { NavigationBarTabProps, NavigationBarTabs } from "./NavigationBarTabs";
-import { NavigationBarWrapper } from "./NavigationBarWrapper";
+import { remote } from "electron"
+import * as React from "react"
+import { fmap } from "../../../Data/Functor"
+import { List } from "../../../Data/List"
+import { fromMaybe, Maybe, maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { SettingsContainer } from "../../Containers/SettingsContainer"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { SubTab } from "../../Models/Hero/heroTypeHelpers"
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
+import { NavigationBarTabOptions } from "../../Models/View/NavigationBarTabOptions"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate, translateP } from "../../Utilities/I18n"
+import { TabId } from "../../Utilities/LocationUtils"
+import { signNeg } from "../../Utilities/NumberUtils"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { AvatarWrapper } from "../Universal/AvatarWrapper"
+import { BorderButton } from "../Universal/BorderButton"
+import { IconButton } from "../Universal/IconButton"
+import { Text } from "../Universal/Text"
+import { TooltipToggle } from "../Universal/TooltipToggle"
+import { ApTooltip } from "./ApTooltip"
+import { NavigationBarBack } from "./NavigationBarBack"
+import { NavigationBarLeft } from "./NavigationBarLeft"
+import { NavigationBarRight } from "./NavigationBarRight"
+import { NavigationBarSubTabs } from "./NavigationBarSubTabs"
+import { NavigationBarTabs } from "./NavigationBarTabs"
+import { NavigationBarWrapper } from "./NavigationBarWrapper"
+
+const toggleDevtools = () => {
+  remote.getCurrentWindow ().webContents.toggleDevTools ()
+}
 
 export interface NavigationBarOwnProps {
   mhero: Maybe<HeroModelRecord>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   platform: string
   checkForUpdates (): void
 }
@@ -40,7 +46,7 @@ export interface NavigationBarStateProps {
   isUndoAvailable: boolean
   isSettingsOpen: boolean
   isHeroSection: boolean
-  tabs: List<NavigationBarTabProps>
+  tabs: List<Record<NavigationBarTabOptions>>
   subtabs: Maybe<List<SubTab>>
   adventurePoints: Maybe<Record<AdventurePointsCategories>>
   maximumForMagicalAdvantagesDisadvantages: Maybe<number>
@@ -70,7 +76,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
     closeSettings,
     isHeroSection,
     avatar,
-    l10n,
+    staticData,
     undo,
     isRedoAvailable,
     isUndoAvailable,
@@ -86,7 +92,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
     checkForUpdates,
   } = props
 
-  const handleHerolistTab = React.useCallback (() => setTab (TabId.Herolist), [setTab])
+  const handleHerolistTab = React.useCallback (() => setTab (TabId.Herolist), [ setTab ])
 
   return (
     <>
@@ -95,7 +101,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
           {isHeroSection
             ? (
               <>
-                <NavigationBarBack setTab={handleHerolistTab} />
+                <NavigationBarBack handleSetTab={handleHerolistTab} />
                 <AvatarWrapper src={avatar} />
               </>
             )
@@ -103,7 +109,6 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
           <NavigationBarTabs
             currentTab={currentTab}
             tabs={tabs}
-            setTab={setTab}
             />
         </NavigationBarLeft>
         <NavigationBarRight>
@@ -111,8 +116,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
             ? (
               <>
                 {maybe (<Text className="collected-ap">
-                          {"X "}
-                          {translate (l10n) ("adventurepoints.short")}
+                          {translateP (staticData) ("header.apleft") (List ("X"))}
                         </Text>)
                         ((ap: Record<AdventurePointsCategories>) => (
                           <TooltipToggle
@@ -121,7 +125,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
                             content={
                               <ApTooltip
                                 adventurePoints={ap}
-                                l10n={l10n}
+                                staticData={staticData}
                                 maximumForMagicalAdvantagesDisadvantages={
                                   maximumForMagicalAdvantagesDisadvantages
                                 }
@@ -131,14 +135,18 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
                             }
                             target={
                               <Text className="collected-ap">
-                                {maybe<string | number > ("")
-                                                         (pipe (
-                                                           AdventurePointsCategories.A.available,
-                                                           signNeg
-                                                         ))
-                                                         (m_ap)}
-                                {" "}
-                                {translate (l10n) ("adventurepoints.short")}
+                                {translateP (staticData)
+                                            ("header.apleft")
+                                            (List (
+                                              pipe_ (
+                                                m_ap,
+                                                fmap (pipe (
+                                                  AdventurePointsCategories.A.available,
+                                                  signNeg
+                                                )),
+                                                fromMaybe <string | number > ("")
+                                              )
+                                            ))}
                               </Text>
                             }
                             />
@@ -155,7 +163,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
                   disabled={!isRedoAvailable}
                   />
                 <BorderButton
-                  label={translate (l10n) ("save")}
+                  label={translate (staticData) ("header.savebtn")}
                   onClick={saveHero}
                   />
               </>
@@ -166,7 +174,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
             onClick={openSettings}
             />
           <SettingsContainer
-            l10n={l10n}
+            staticData={staticData}
             isSettingsOpen={isSettingsOpen}
             platform={platform}
             close={closeSettings}
@@ -189,8 +197,4 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
              (msubtabs)}
     </>
   )
-}
-
-function toggleDevtools () {
-  remote.getCurrentWindow ().webContents.toggleDevTools ()
 }

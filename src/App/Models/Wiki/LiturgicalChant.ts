@@ -1,12 +1,11 @@
-import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { Aspect, BlessedGroup, BlessedTradition } from "../../Constants/Groups";
-import { Erratum } from "./sub/Errata";
-import { SourceLink } from "./sub/SourceLink";
-import { CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { Aspect, BlessedGroup, BlessedTradition } from "../../Constants/Groups"
+import { Erratum } from "./sub/Errata"
+import { SourceLink } from "./sub/SourceLink"
+import { CheckModifier, EntryWithCategory } from "./wikiTypeHelpers"
 
 export interface LiturgicalChant {
   "@@name": "LiturgicalChant"
@@ -16,7 +15,7 @@ export interface LiturgicalChant {
   aspects: List<Aspect>
   category: Category
   check: List<string>
-  checkmod: OrderedSet<CheckModifier>
+  checkmod: Maybe<CheckModifier>
   gr: BlessedGroup
   ic: number
   tradition: List<BlessedTradition>
@@ -47,7 +46,7 @@ export const LiturgicalChant =
                 aspects: List.empty,
                 category: Category.LITURGICAL_CHANTS,
                 check: List.empty,
-                checkmod: OrderedSet.empty,
+                checkmod: Nothing,
                 gr: 0,
                 ic: 0,
                 tradition: List.empty,

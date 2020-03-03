@@ -1,5 +1,5 @@
-import { ident } from "./Function";
-import { List } from "./List";
+import { ident } from "./Function"
+import { List } from "./List"
 
 export const mapT = <A, B> (f: (x: A) => B): Transducer<A, B> => g => x => g (f (x))
 

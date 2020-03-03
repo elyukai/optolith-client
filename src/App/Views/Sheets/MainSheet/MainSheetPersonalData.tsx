@@ -1,56 +1,52 @@
-import * as React from "react";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { List, subscript } from "../../../../Data/List";
-import { bind, bindF, Maybe } from "../../../../Data/Maybe";
-import { dec } from "../../../../Data/Num";
-import { Record } from "../../../../Data/Record";
-import { Sex } from "../../../Models/Hero/heroTypeHelpers";
-import { PersonalData } from "../../../Models/Hero/PersonalData";
-import { AdventurePointsCategories } from "../../../Models/View/AdventurePointsCategories";
-import { Culture } from "../../../Models/Wiki/Culture";
-import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { Race } from "../../../Models/Wiki/Race";
-import { localizeSize, localizeWeight, translate } from "../../../Utilities/I18n";
-import { toInt } from "../../../Utilities/NumberUtils";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { Avatar } from "../../Universal/Avatar";
-import { LabelBox } from "../../Universal/LabelBox";
-import { Plain } from "../../Universal/Plain";
+import * as React from "react"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { bindF, Maybe } from "../../../../Data/Maybe"
+import { lookupF } from "../../../../Data/OrderedMap"
+import { Record } from "../../../../Data/Record"
+import { Sex } from "../../../Models/Hero/heroTypeHelpers"
+import { PersonalData } from "../../../Models/Hero/PersonalData"
+import { NumIdName } from "../../../Models/NumIdName"
+import { AdventurePointsCategories } from "../../../Models/View/AdventurePointsCategories"
+import { Culture } from "../../../Models/Wiki/Culture"
+import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel"
+import { Race } from "../../../Models/Wiki/Race"
+import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { localizeSize, localizeWeight, translate } from "../../../Utilities/I18n"
+import { toInt } from "../../../Utilities/NumberUtils"
+import { pipe_ } from "../../../Utilities/pipe"
+import { Avatar } from "../../Universal/Avatar"
+import { LabelBox } from "../../Universal/LabelBox"
+import { Plain } from "../../Universal/Plain"
 
+const SDA = StaticData.A
 const PDA = PersonalData.A
+const NINA = NumIdName.A
 
-export interface MainSheetPersonalDataProps {
+interface Props {
   ap: Maybe<Record<AdventurePointsCategories>>
   avatar: Maybe<string>
   culture: Maybe<Record<Culture>>
   el: Maybe<Record<ExperienceLevel>>
-  eyeColorTags: List<string>
-  hairColorTags: List<string>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   name: Maybe<string>
   professionName: Maybe<string>
-  profile: Maybe<Record<PersonalData>>
+  profile: Record<PersonalData>
   race: Maybe<Record<Race>>
   sex: Maybe<Sex>
-  socialstatusTags: List<string>
 }
 
-export function MainSheetPersonalData (props: MainSheetPersonalDataProps) {
+export const MainSheetPersonalData: React.FC<Props> = props => {
   const {
     ap,
     avatar,
     culture: maybeCulture,
     el: maybeExperienceLevel,
-    eyeColorTags,
-    hairColorTags,
-    l10n,
+    staticData,
     name,
     professionName,
-    profile: mprofile,
+    profile,
     race: maybeRace,
     sex,
-    socialstatusTags,
   } = props
 
   const raceName = fmapF (maybeRace) (Race.A.name)
@@ -58,23 +54,26 @@ export function MainSheetPersonalData (props: MainSheetPersonalDataProps) {
 
   const haircolorName =
     pipe_ (
-      mprofile,
-      bindF (PDA.hairColor),
-      bindF (pipe (dec, subscript (hairColorTags)))
+      profile,
+      PDA.hairColor,
+      bindF (lookupF (SDA.hairColors (staticData))),
+      fmap (NINA.name)
     )
 
   const eyecolorName =
     pipe_ (
-      mprofile,
-      bindF (PDA.eyeColor),
-      bindF (pipe (dec, subscript (eyeColorTags)))
+      profile,
+      PDA.eyeColor,
+      bindF (lookupF (SDA.eyeColors (staticData))),
+      fmap (NINA.name)
     )
 
   const socialstatusName =
     pipe_ (
-      mprofile,
-      bindF (PDA.socialStatus),
-      bindF (pipe (dec, subscript (socialstatusTags)))
+      profile,
+      PDA.socialStatus,
+      bindF (lookupF (SDA.socialStatuses (staticData))),
+      fmap (NINA.name)
     )
 
   return (
@@ -82,116 +81,126 @@ export function MainSheetPersonalData (props: MainSheetPersonalDataProps) {
       <div className="info">
         <Plain
           className="name"
-          label={translate (l10n) ("name")}
+          label={translate (staticData) ("sheets.mainsheet.name")}
           value={name}
           />
         <Plain
           className="family"
-          label={translate (l10n) ("family")}
-          value={bind (mprofile) (PDA.family)}
+          label={translate (staticData) ("sheets.mainsheet.family")}
+          value={PDA.family (profile)}
           />
         <Plain
           className="placeofbirth"
-          label={translate (l10n) ("placeofbirth")}
-          value={bind (mprofile) (PDA.placeOfBirth)}
+          label={translate (staticData) ("sheets.mainsheet.placeofbirth")}
+          value={PDA.placeOfBirth (profile)}
           />
         <Plain
           className="dateofbirth"
-          label={translate (l10n) ("dateofbirth")}
-          value={bind (mprofile) (PDA.dateOfBirth)}
+          label={translate (staticData) ("sheets.mainsheet.dateofbirth")}
+          value={PDA.dateOfBirth (profile)}
           />
         <Plain
           className="age"
-          label={translate (l10n) ("age")}
-          value={bind (mprofile) (PDA.age)}
+          label={translate (staticData) ("sheets.mainsheet.age")}
+          value={PDA.age (profile)}
           />
         <Plain
           className="sex"
-          label={translate (l10n) ("sex")}
+          label={translate (staticData) ("sheets.mainsheet.sex")}
           value={sex}
           />
         <Plain
           className="race"
-          label={translate (l10n) ("race")}
+          label={translate (staticData) ("sheets.mainsheet.race")}
           value={raceName}
           />
         <Plain
           className="size"
-          label={translate (l10n) ("size")}
-          value={pipe_ (mprofile, bindF (PDA.size), bindF (toInt), fmap (localizeSize (l10n)))}
+          label={translate (staticData) ("sheets.mainsheet.size")}
+          value={pipe_ (
+            profile,
+            PDA.size,
+            bindF (toInt),
+            fmap (localizeSize (staticData))
+          )}
           />
         <Plain
           className="weight"
-          label={translate (l10n) ("weight")}
-          value={pipe_ (mprofile, bindF (PDA.weight), bindF (toInt), fmap (localizeWeight (l10n)))}
+          label={translate (staticData) ("sheets.mainsheet.weight")}
+          value={pipe_ (
+            profile,
+            PDA.weight,
+            bindF (toInt),
+            fmap (localizeWeight (staticData))
+          )}
           />
         <Plain
           className="haircolor"
-          label={translate (l10n) ("haircolor")}
+          label={translate (staticData) ("sheets.mainsheet.haircolor")}
           value={haircolorName}
           />
         <Plain
           className="eyecolor"
-          label={translate (l10n) ("eyecolor")}
+          label={translate (staticData) ("sheets.mainsheet.eyecolor")}
           value={eyecolorName}
           />
         <Plain
           className="culture"
-          label={translate (l10n) ("culture")}
+          label={translate (staticData) ("sheets.mainsheet.culture")}
           value={cultureName}
           />
         <Plain
           className="socialstatus"
-          label={translate (l10n) ("socialstatus")}
+          label={translate (staticData) ("sheets.mainsheet.socialstatus")}
           value={socialstatusName}
           />
         <Plain
           className="profession"
-          label={translate (l10n) ("profession")}
+          label={translate (staticData) ("sheets.mainsheet.profession")}
           value={professionName}
           />
         <Plain
           className="title"
-          label={translate (l10n) ("title")}
-          value={bind (mprofile) (PDA.title)}
+          label={translate (staticData) ("sheets.mainsheet.rank")}
+          value={PDA.title (profile)}
           />
         <Plain
           className="characteristics"
-          label={translate (l10n) ("characteristics")}
-          value={bind (mprofile) (PDA.characteristics)}
+          label={translate (staticData) ("sheets.mainsheet.characteristics")}
+          value={PDA.characteristics (profile)}
           />
         <Plain
           className="otherinfo"
-          label={translate (l10n) ("otherinfo")}
-          value={bind (mprofile) (PDA.otherInfo)}
+          label={translate (staticData) ("sheets.mainsheet.otherinfo")}
+          value={PDA.otherInfo (profile)}
           multi
           />
       </div>
       <div className="ap-portrait">
         <LabelBox
           className="el"
-          label={translate (l10n) ("experiencelevel")}
+          label={translate (staticData) ("sheets.mainsheet.experiencelevellabel")}
           value={fmapF (maybeExperienceLevel) (ExperienceLevel.A.name)}
           />
         <LabelBox
           className="ap-total"
-          label={translate (l10n) ("totalap.novar")}
+          label={translate (staticData) ("sheets.mainsheet.totalaplabel")}
           value={fmapF (ap) (AdventurePointsCategories.A.total)}
           />
         <LabelBox
           className="portrait"
-          label={translate (l10n) ("avatar")}
+          label={translate (staticData) ("sheets.mainsheet.avatarlabel")}
           >
           <Avatar src={avatar} img />
         </LabelBox>
         <LabelBox
           className="ap-available"
-          label={translate (l10n) ("apcollected")}
+          label={translate (staticData) ("sheets.mainsheet.apcollectedlabel")}
           value={fmapF (ap) (AdventurePointsCategories.A.available)}
           />
         <LabelBox
           className="ap-used"
-          label={translate (l10n) ("apspent.novar")}
+          label={translate (staticData) ("sheets.mainsheet.apspentlabel")}
           value={fmapF (ap) (AdventurePointsCategories.A.spent)}
           />
       </div>

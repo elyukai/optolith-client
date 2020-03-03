@@ -134,7 +134,7 @@ test ('empty', () => {
 
 test ('guard', () => {
   expect (Maybe.guard (true))
-    .toEqual (Just (true))
+    .toEqual (Just ())
   expect (Maybe.guard (false))
     .toEqual (Nothing)
 })

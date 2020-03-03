@@ -1,27 +1,27 @@
-import { not } from "../../Data/Bool";
-import { ident } from "../../Data/Function";
-import { fmap } from "../../Data/Functor";
-import { over, set, view } from "../../Data/Lens";
-import { insertAt, isList } from "../../Data/List";
-import { bind, bindF, ensure, fromJust, Just, maybe, Maybe, Nothing, thenF } from "../../Data/Maybe";
-import { insert, lookup, map, sdelete } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { isTuple, Pair } from "../../Data/Tuple";
-import { upd1, upd2 } from "../../Data/Tuple/Update";
-import * as EquipmentActions from "../Actions/EquipmentActions";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { CombatTechniqueId } from "../Constants/Ids";
-import { BelongingsL } from "../Models/Hero/Belongings";
-import { EditHitZoneArmor, EditHitZoneArmorL, EditHitZoneArmorSafe, ensureHitZoneArmorId } from "../Models/Hero/EditHitZoneArmor";
-import { EditItem, EditItemL, EditItemSafe, ensureEditId } from "../Models/Hero/EditItem";
-import { EditPrimaryAttributeDamageThreshold, EditPrimaryAttributeDamageThresholdL } from "../Models/Hero/EditPrimaryAttributeDamageThreshold";
-import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { HitZoneArmor, HitZoneArmorL } from "../Models/Hero/HitZoneArmor";
-import { fromItemTemplate, Item } from "../Models/Hero/Item";
-import { PurseL } from "../Models/Hero/Purse";
-import { composeL } from "../Utilities/compose";
-import { editableToHitZoneArmor, editableToItem, fromItemTemplateEdit, hitZoneArmorToEditable, itemToEditable } from "../Utilities/ItemUtils";
-import { pipe } from "../Utilities/pipe";
+import { not } from "../../Data/Bool"
+import { ident } from "../../Data/Function"
+import { fmap } from "../../Data/Functor"
+import { over, set, view } from "../../Data/Lens"
+import { insertAt, isList } from "../../Data/List"
+import { bind, bindF, ensure, fromJust, isJust, Just, maybe, Maybe, Nothing } from "../../Data/Maybe"
+import { insert, lookup, map, sdelete } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { isTuple, Pair } from "../../Data/Tuple"
+import { upd1, upd2 } from "../../Data/Tuple/Update"
+import * as EquipmentActions from "../Actions/EquipmentActions"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { CombatTechniqueId } from "../Constants/Ids"
+import { BelongingsL } from "../Models/Hero/Belongings"
+import { EditHitZoneArmor, EditHitZoneArmorL, EditHitZoneArmorSafe, ensureHitZoneArmorId } from "../Models/Hero/EditHitZoneArmor"
+import { EditItem, EditItemL, EditItemSafe, ensureEditId } from "../Models/Hero/EditItem"
+import { EditPrimaryAttributeDamageThreshold, EditPrimaryAttributeDamageThresholdL } from "../Models/Hero/EditPrimaryAttributeDamageThreshold"
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { HitZoneArmor, HitZoneArmorL } from "../Models/Hero/HitZoneArmor"
+import { fromItemTemplate, Item } from "../Models/Hero/Item"
+import { PurseL } from "../Models/Hero/Purse"
+import { composeL } from "../Utilities/compose"
+import { editableToHitZoneArmor, editableToItem, fromItemTemplateEdit, hitZoneArmorToEditable, itemToEditable } from "../Utilities/ItemUtils"
+import { pipe, pipe_ } from "../Utilities/pipe"
 
 type Action = EquipmentActions.AddItemAction
             | EquipmentActions.AddItemTemplateAction
@@ -108,6 +108,8 @@ const {
 } = BelongingsL
 
 const { d, h, k, s } = PurseL
+
+const EIA = EditItem.A
 
 const {
   id: edit_id,
@@ -243,6 +245,7 @@ const equipmentManagingReducer =
                               (insert (fromJust (view (edit_id) (edit_item) as Just<string>))
                                       (
                                         editableToItem (edit_item)
+
                                         // TODO: does not handle locked
                                         // templated anymore
                                       )),
@@ -291,6 +294,7 @@ const equipmentManagingReducer =
                            (sdelete (id_to_remove)),
                       over (hitZoneArmors)
                            (map (pipe (
+
                                   // Remove hit zone from armor if hit zone
                                   // contains removed item
                                   over (head) (bindF (ensureNotId)),
@@ -337,8 +341,13 @@ const itemGeneralReducer =
                                    (Just (action.payload.value)))
 
       case ActionTypes.SET_ITEM_GROUP:
-        return modifyEditItem (set (gr)
-                                   (action.payload.gr))
+        return modifyEditItem (item => pipe_ (
+                                item,
+                                set (gr) (action.payload.gr),
+                                EIA.gr (item) < 5 && action.payload.gr > 4
+                                ? set (improvisedWeaponGroup) (Nothing)
+                                : ident
+                              ))
 
       case ActionTypes.SET_ITEM_TEMPLATE:
         return modifyEditItem (set (template)
@@ -467,7 +476,7 @@ const itemDetailsReducer =
 const itemOptionsReducer =
   (action: Action): ident<HeroModelRecord> => {
     switch (action.type) {
-      case ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED: {
+      case ActionTypes.SWITCH_IS_ITEM_DT_SEPARATED: {
         return modifyEditItem (over (composeL (damageBonus, threshold))
                                     (xs => isTuple (xs) ? "" : Pair ("", "")))
       }
@@ -484,7 +493,7 @@ const itemOptionsReducer =
 
       case ActionTypes.SWITCH_IS_ITEM_IMPROVISED_WEAPON: {
         return modifyEditItem (over (improvisedWeaponGroup)
-                                    (thenF (Just (0))))
+                                    (x => isJust (x) ? Nothing : Just (1)))
       }
 
       case ActionTypes.SET_ITEM_IMPROVISED_WEAPON_GROUP: {
@@ -768,7 +777,7 @@ export const equipmentReducer =
       case ActionTypes.SET_ITEM_LOSS:
         return itemDetailsReducer (action)
 
-      case ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED:
+      case ActionTypes.SWITCH_IS_ITEM_DT_SEPARATED:
       case ActionTypes.SWITCH_IS_ITEM_PARRYING_WEAPON:
       case ActionTypes.SWITCH_IS_ITEM_TWO_HANDED_WEAPON:
       case ActionTypes.SWITCH_IS_ITEM_IMPROVISED_WEAPON:

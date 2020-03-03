@@ -1,38 +1,42 @@
-import * as React from "react";
-import { fmap } from "../../../Data/Functor";
-import { bindF, fromMaybe, Just, Maybe } from "../../../Data/Maybe";
-import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { notMember, OrderedSet } from "../../../Data/OrderedSet";
-import { Record } from "../../../Data/Record";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { User } from "../../Models/Hero/heroTypeHelpers";
-import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { Culture } from "../../Models/Wiki/Culture";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Race } from "../../Models/Wiki/Race";
-import { RaceVariant } from "../../Models/Wiki/RaceVariant";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { getFullProfessionName } from "../../Utilities/rcpUtils";
-import { renderMaybeWith } from "../../Utilities/ReactUtils";
-import { AvatarWrapper } from "../Universal/AvatarWrapper";
-import { BorderButton } from "../Universal/BorderButton";
-import { IconButton } from "../Universal/IconButton";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemButtons } from "../Universal/ListItemButtons";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListItemSeparator } from "../Universal/ListItemSeparator";
-import { VerticalList } from "../Universal/VerticalList";
+import * as React from "react"
+import { fmap } from "../../../Data/Functor"
+import { bindF, fromMaybe, Just, Maybe } from "../../../Data/Maybe"
+import { lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { notMember, OrderedSet } from "../../../Data/OrderedSet"
+import { Record } from "../../../Data/Record"
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { User } from "../../Models/Hero/heroTypeHelpers"
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
+import { Culture } from "../../Models/Wiki/Culture"
+import { Race } from "../../Models/Wiki/Race"
+import { RaceVariant } from "../../Models/Wiki/RaceVariant"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { getFullProfessionName } from "../../Utilities/rcpUtils"
+import { renderMaybeWith } from "../../Utilities/ReactUtils"
+import { AvatarWrapper } from "../Universal/AvatarWrapper"
+import { BorderButton } from "../Universal/BorderButton"
+import { IconButton } from "../Universal/IconButton"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemButtons } from "../Universal/ListItemButtons"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListItemSeparator } from "../Universal/ListItemSeparator"
+import { VerticalList } from "../Universal/VerticalList"
+
+const SDA = StaticData.A
+const HA = HeroModel.A
+const RA = Race.A
+const RVA = RaceVariant.A
+const CA = Culture.A
 
 export interface HerolistItemOwnProps {
   hero: HeroModelRecord
-  l10n: L10nRecord
 }
 
 export interface HerolistItemStateProps {
   ap: Maybe<Record<AdventurePointsCategories>>
-  wiki: WikiModelRecord
+  staticData: StaticDataRecord
   users: OrderedMap<string, User>
   unsavedHeroesById: OrderedSet<string>
 }
@@ -50,14 +54,13 @@ export type HerolistItemProps = HerolistItemStateProps
                               & HerolistItemDispatchProps
                               & HerolistItemOwnProps
 
-export function HerolistItem (props: HerolistItemProps) {
+export const HerolistItem: React.FC<HerolistItemProps> = props => {
   const {
     ap: map,
     hero,
-    wiki,
+    staticData,
     users,
     unsavedHeroesById,
-    l10n,
     loadHero,
     saveHero,
     saveHeroAsJSON,
@@ -65,16 +68,16 @@ export function HerolistItem (props: HerolistItemProps) {
     duplicateHero,
   } = props
 
-  const id = HeroModel.A.id (hero)
+  const id = HA.id (hero)
 
   return (
     <ListItem>
-      <AvatarWrapper src={HeroModel.A.avatar (hero)} />
+      <AvatarWrapper src={HA.avatar (hero)} />
       <ListItemName
-        name={HeroModel.A.name (hero)}
+        name={HA.name (hero)}
         addName={pipe_ (
           hero,
-          HeroModel.A.player,
+          HA.player,
           bindF (lookupF (users)),
           fmap (user => user.displayName)
         )}
@@ -84,43 +87,43 @@ export function HerolistItem (props: HerolistItemProps) {
           <span className="race">
             {pipe_ (
               hero,
-              HeroModel.A.race,
-              bindF (lookupF (WikiModel.A.races (wiki))),
-              fmap (Race.A.name),
+              HA.race,
+              bindF (lookupF (SDA.races (staticData))),
+              fmap (RA.name),
               fromMaybe ("")
             )}
             {pipe_ (
               hero,
-              HeroModel.A.raceVariant,
-              bindF (lookupF (WikiModel.A.raceVariants (wiki))),
-              fmap (pipe (RaceVariant.A.name, x => ` (${x})`)),
+              HA.raceVariant,
+              bindF (lookupF (SDA.raceVariants (staticData))),
+              fmap (pipe (RVA.name, x => ` (${x})`)),
               fromMaybe ("")
             )}
           </span>
           <span className="culture">
             {pipe_ (
               hero,
-              HeroModel.A.culture,
-              bindF (lookupF (WikiModel.A.cultures (wiki))),
-              fmap (Culture.A.name),
+              HA.culture,
+              bindF (lookupF (SDA.cultures (staticData))),
+              fmap (CA.name),
               fromMaybe ("")
             )}
           </span>
           <span className="profession">
-            {getFullProfessionName (l10n)
-                                   (WikiModel.A.professions (wiki))
-                                   (WikiModel.A.professionVariants (wiki))
-                                   (HeroModel.A.sex (hero))
-                                   (HeroModel.A.profession (hero))
-                                   (HeroModel.A.professionVariant (hero))
-                                   (HeroModel.A.professionName (hero))}
+            {getFullProfessionName (staticData)
+                                   (SDA.professions (staticData))
+                                   (SDA.professionVariants (staticData))
+                                   (HA.sex (hero))
+                                   (HA.profession (hero))
+                                   (HA.professionVariant (hero))
+                                   (HA.professionName (hero))}
           </span>
           <span className="totalap">
             {renderMaybeWith (AdventurePointsCategories.A.spent) (map)}
             {" / "}
             {renderMaybeWith (AdventurePointsCategories.A.total) (map)}
             {" "}
-            {translate (l10n) ("adventurepoints.short")}
+            {translate (staticData) ("heroes.list.adventurepoints")}
           </span>
         </VerticalList>
       </ListItemName>
@@ -128,29 +131,29 @@ export function HerolistItem (props: HerolistItemProps) {
       <ListItemButtons>
         <BorderButton
           className="save"
-          label={translate (l10n) ("save")}
+          label={translate (staticData) ("heroes.saveherobtn")}
           onClick={saveHero}
           disabled={notMember (id) (unsavedHeroesById)}
           />
         <IconButton
           icon="&#xE907;"
           onClick={duplicateHero}
-          hint={Just (translate (l10n) ("duplicatehero"))}
+          hint={Just (translate (staticData) ("heroes.duplicateherobtn"))}
           />
         <IconButton
           icon="&#xE914;"
           onClick={saveHeroAsJSON}
-          hint={Just (translate (l10n) ("exportheroasjson"))}
+          hint={Just (translate (staticData) ("heroes.exportheroasjsonbtn"))}
           />
         <IconButton
           icon="&#xE90b;"
           onClick={deleteHero}
-          hint={Just (translate (l10n) ("deletehero.novar"))}
+          hint={Just (translate (staticData) ("heroes.deleteherobtn"))}
           />
         <IconButton
           icon="&#xE90e;"
           onClick={loadHero}
-          hint={Just (translate (l10n) ("openhero"))}
+          hint={Just (translate (staticData) ("heroes.openherobtn"))}
           />
       </ListItemButtons>
     </ListItem>

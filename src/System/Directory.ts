@@ -7,11 +7,11 @@
  * @see IO
  */
 
-import * as fs from "fs";
-import { homedir } from "os";
-import { join } from "path";
-import { fromArray, List } from "../Data/List";
-import { fromMaybe, Maybe } from "../Data/Maybe";
+import * as fs from "fs"
+import { homedir } from "os"
+import { join } from "path"
+import { fromArray, List } from "../Data/List"
+import { fromMaybe, Maybe } from "../Data/Maybe"
 
 type FilePath = string
 
@@ -90,6 +90,8 @@ export const getDirectoryContents: (path: string) => Promise<List<string>> =
  */
 export const getHomeDirectory: Promise<FilePath> = Promise.resolve (homedir ())
 
+const getEnvSave = (name: string) => fromMaybe ("") (Maybe (process .env [name]))
+
 /**
  * ```haskell
  * getAppUserDataDirectory :: String -> IO FilePath
@@ -107,5 +109,3 @@ export const getAppUserDataDirectory: (appname: string) => Promise<FilePath> =
                      ? join (getEnvSave ("HOME"), "Library", "Application Support", "appname")
                      : join (getEnvSave ("HOME"), ".config", appname)
                    )
-
-const getEnvSave = (name: string) => fromMaybe ("") (Maybe (process .env [name]))

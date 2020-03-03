@@ -1,13 +1,14 @@
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses } from "../../../Data/Record";
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses } from "../../../Data/Record"
+import { RawActiveObject } from "../../Utilities/Raw/RawData"
 
 export interface ActiveObject {
   "@@name": "ActiveObject"
-  sid: Maybe<string | number>;
-  sid2: Maybe<string | number>;
-  sid3: Maybe<string | number>;
-  tier: Maybe<number>;
-  cost: Maybe<number>;
+  sid: Maybe<string | number>
+  sid2: Maybe<string | number>
+  sid3: Maybe<string | number>
+  tier: Maybe<number>
+  cost: Maybe<number>
 }
 
 export const ActiveObject =
@@ -21,3 +22,11 @@ export const ActiveObject =
               })
 
 export const ActiveObjectL = makeLenses (ActiveObject)
+
+export const activeObjectFromRaw = (x: RawActiveObject) => ActiveObject ({
+                                                             cost: Maybe (x.cost),
+                                                             sid: Maybe (x.sid),
+                                                             sid2: Maybe (x.sid2),
+                                                             sid3: Maybe (x.sid3),
+                                                             tier: Maybe (x.tier),
+                                                           })

@@ -1,7 +1,7 @@
-import { fromDefault, Record } from "../../../Data/Record";
-import { pipe } from "../../Utilities/pipe";
-import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
-import { Attribute } from "../Wiki/Attribute";
+import { fromDefault, Record } from "../../../Data/Record"
+import { pipe } from "../../Utilities/pipe"
+import { AttributeDependent } from "../ActiveEntries/AttributeDependent"
+import { Attribute } from "../Wiki/Attribute"
 
 export interface AttributeCombined {
   "@@name": "AttributeCombined"

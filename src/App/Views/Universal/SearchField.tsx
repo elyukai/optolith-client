@@ -1,23 +1,23 @@
-import * as React from "react";
-import { Maybe } from "../../../Data/Maybe";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { TextField } from "./TextField";
+import * as React from "react"
+import { Maybe } from "../../../Data/Maybe"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { TextField } from "./TextField"
 
-export interface SearchFieldProps {
+interface Props {
   autoFocus?: boolean | Maybe<boolean>
   className?: string
   countCurrent?: number
   countMax?: number
   disabled?: boolean
   fullWidth?: boolean
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   onChange (newText: string): void
-  value?: string | number | Maybe<string | number>
+  value?: string | number
   valid?: boolean
 }
 
-export const SearchField: React.FC<SearchFieldProps> = props => {
+export const SearchField: React.FC<Props> = props => {
   const {
     autoFocus,
     className,
@@ -28,7 +28,7 @@ export const SearchField: React.FC<SearchFieldProps> = props => {
     onChange,
     valid,
     value,
-    l10n,
+    staticData,
   } = props
 
   return (
@@ -44,7 +44,7 @@ export const SearchField: React.FC<SearchFieldProps> = props => {
       valid={valid}
       value={value}
       everyKeyDown
-      hint={translate (l10n) ("search")}
+      hint={translate (staticData) ("general.filters.searchfield.placeholder")}
       />
   )
 }

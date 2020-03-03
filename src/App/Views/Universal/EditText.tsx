@@ -1,10 +1,10 @@
-import * as React from "react";
-import { fnullStr, List, notNullStr } from "../../../Data/List";
-import { fromMaybe, Just, Maybe } from "../../../Data/Maybe";
-import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers";
-import { classListMaybe } from "../../Utilities/CSS";
-import { IconButton } from "./IconButton";
-import { TextField } from "./TextField";
+import * as React from "react"
+import { fnullStr, List, notNullStr } from "../../../Data/List"
+import { fromMaybe, Just, Maybe } from "../../../Data/Maybe"
+import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers"
+import { classListMaybe } from "../../Utilities/CSS"
+import { IconButton } from "./IconButton"
+import { TextField } from "./TextField"
 
 export interface EditTextProps {
   autoFocus?: boolean
@@ -17,12 +17,12 @@ export interface EditTextProps {
 export const EditText: React.FC<EditTextProps> = props => {
   const { autoFocus, className, text: defaultText, submit, cancel } = props
 
-  const [text, setText] = React.useState (fromMaybe ("") (Maybe (defaultText)))
+  const [ text, setText ] = React.useState (fromMaybe ("") (Maybe (defaultText)))
 
   const handleSubmit =
     React.useCallback (
       () => notNullStr (text) ? submit (text) : undefined,
-      [submit, text]
+      [ submit, text ]
     )
 
   const handleEnter =
@@ -32,7 +32,7 @@ export const EditText: React.FC<EditTextProps> = props => {
           submit (text)
         }
       },
-      [submit, text]
+      [ submit, text ]
     )
 
   return (
@@ -49,6 +49,7 @@ export const EditText: React.FC<EditTextProps> = props => {
         onChange={setText}
         onKeyDown={handleEnter}
         autoFocus={autoFocus}
+        everyKeyDown
         />
       <IconButton
         icon="&#xE90a;"

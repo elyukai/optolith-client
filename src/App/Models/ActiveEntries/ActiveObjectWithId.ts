@@ -1,16 +1,16 @@
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { ActiveObject } from "./ActiveObject";
+import { Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { ActiveObject } from "./ActiveObject"
 
 export interface ActiveObjectWithId {
   "@@name": "ActiveObjectWithId"
   id: string
   index: number
-  sid: Maybe<string | number>;
-  sid2: Maybe<string | number>;
-  sid3: Maybe<string | number>;
-  tier: Maybe<number>;
-  cost: Maybe<number>;
+  sid: Maybe<string | number>
+  sid2: Maybe<string | number>
+  sid3: Maybe<string | number>
+  tier: Maybe<number>
+  cost: Maybe<number>
 }
 
 export const ActiveObjectWithId =
@@ -27,19 +27,18 @@ export const ActiveObjectWithId =
 
 export const ActiveObjectWithIdL = makeLenses (ActiveObjectWithId)
 
-export const toActiveObjectWithId =
-  (index: number) =>
-  (id: string) =>
-  (active: Record<ActiveObject>) =>
-    ActiveObjectWithId ({
-      id,
-      index,
-      cost: ActiveObject.A.cost (active),
-      sid: ActiveObject.A.sid (active),
-      sid2: ActiveObject.A.sid2 (active),
-      sid3: ActiveObject.A.sid3 (active),
-      tier: ActiveObject.A.tier (active),
-    })
+export const toActiveObjectWithId = (index: number) =>
+                                    (id: string) =>
+                                    (active: Record<ActiveObject>) =>
+                                      ActiveObjectWithId ({
+                                        id,
+                                        index,
+                                        cost: ActiveObject.A.cost (active),
+                                        sid: ActiveObject.A.sid (active),
+                                        sid2: ActiveObject.A.sid2 (active),
+                                        sid3: ActiveObject.A.sid3 (active),
+                                        tier: ActiveObject.A.tier (active),
+                                      })
 
 export const fromActiveObjectWithId =
   (active: Record<ActiveObjectWithId>) =>

@@ -1,21 +1,24 @@
-import * as React from "react";
-import { imap } from "../../../Data/List";
-import { Just, Maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { EditItem } from "../../Models/Hero/EditItem";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils";
-import { getLossLevelElements } from "../../Utilities/ItemUtils";
-import { sortRecordsByName } from "../../Utilities/sortBy";
-import { Checkbox } from "../Universal/Checkbox";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
-import { Hr } from "../Universal/Hr";
-import { TextField } from "../Universal/TextField";
+import * as React from "react"
+import { map } from "../../../Data/List"
+import { Just, Maybe } from "../../../Data/Maybe"
+import { elems } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { EditItem } from "../../Models/Hero/EditItem"
+import { NumIdName } from "../../Models/NumIdName"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils"
+import { getLossLevelElements } from "../../Utilities/ItemUtils"
+import { pipe_ } from "../../Utilities/pipe"
+import { Checkbox } from "../Universal/Checkbox"
+import { Dropdown } from "../Universal/Dropdown"
+import { Hr } from "../Universal/Hr"
+import { TextField } from "../Universal/TextField"
 
 export interface ItemEditorArmorSectionProps {
   item: Record<EditItem>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   inputValidation: Record<ItemEditorInputValidation>
   setProtection (value: string): void
   setEncumbrance (value: string): void
@@ -34,7 +37,7 @@ const IEIVA = ItemEditorInputValidation.A
 export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = props => {
   const {
     item,
-    l10n,
+    staticData,
     inputValidation,
     setProtection,
     setEncumbrance,
@@ -50,13 +53,18 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
   const gr = EIA.gr (item)
   const locked = EIA.isTemplateLocked (item)
 
-  const armorTypes =
-    sortRecordsByName (l10n)
-                      (imap (index => (e: string) => DropdownOption ({
-                                                                       id: Just (index + 1),
-                                                                       name: e,
-                                                                    }))
-                            (translate (l10n) ("armortypes")))
+  const armorTypes = React.useMemo (
+    () => pipe_ (
+            staticData,
+            StaticData.A.armorTypes,
+            elems,
+            map (e => DropdownOption ({
+                         id: Just (NumIdName.A.id (e)),
+                         name: NumIdName.A.name (e),
+                      }))
+          ),
+    [ staticData ]
+  )
 
   return gr === 4
     ? (
@@ -67,25 +75,27 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
             <div className="container">
               <TextField
                 className="pro"
-                label={translate (l10n) ("protection.short")}
+                label={translate (staticData) ("equipment.dialogs.addedit.protection")}
                 value={EIA.pro (item)}
                 onChange={setProtection}
                 disabled={locked}
                 valid={IEIVA.pro (inputValidation)}
+                everyKeyDown
                 />
               <TextField
                 className="enc"
-                label={translate (l10n) ("encumbrance.short")}
+                label={translate (staticData) ("equipment.dialogs.addedit.encumbrance")}
                 value={EIA.enc (item)}
                 onChange={setEncumbrance}
                 disabled={locked}
                 valid={IEIVA.enc (inputValidation)}
+                everyKeyDown
                 />
             </div>
             <Dropdown
               className="armor-type"
-              label={translate (l10n) ("armortype")}
-              hint={translate (l10n) ("none")}
+              label={translate (staticData) ("equipment.dialogs.addedit.armortype")}
+              hint={translate (staticData) ("general.none")}
               value={EIA.armorType (item)}
               options={armorTypes}
               onChangeJust={setArmorType}
@@ -97,15 +107,16 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
             <div className="container armor-loss-container">
               <TextField
                 className="stabilitymod"
-                label={translate (l10n) ("sturdinessmodifier.short")}
+                label={translate (staticData) ("equipment.dialogs.addedit.sturdinessmodifier")}
                 value={EIA.stabilityMod (item)}
                 onChange={setStabilityModifier}
                 disabled={locked}
                 valid={IEIVA.stabilityMod (inputValidation)}
+                everyKeyDown
                 />
               <Dropdown
                 className="weapon-loss"
-                label={translate (l10n) ("wear")}
+                label={translate (staticData) ("equipment.dialogs.addedit.wear")}
                 value={EIA.loss (item)}
                 options={getLossLevelElements ()}
                 onChange={setLoss}
@@ -113,7 +124,7 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
             </div>
             <Checkbox
               className="only-zones"
-              label={translate (l10n) ("hitzonearmoronly")}
+              label={translate (staticData) ("equipment.dialogs.addedit.hitzonearmoronly")}
               checked={EIA.forArmorZoneOnly (item)}
               onClick={switchIsForArmorZonesOnly}
               disabled={locked}
@@ -123,24 +134,26 @@ export const ItemEditorArmorSection: React.FC<ItemEditorArmorSectionProps> = pro
             <div className="container">
               <TextField
                 className="mov"
-                label={translate (l10n) ("movementmodifier.short")}
+                label={translate (staticData) ("equipment.dialogs.addedit.movementmodifier")}
                 value={EIA.movMod (item)}
                 onChange={setMovementModifier}
                 disabled={locked}
                 valid={IEIVA.mov (inputValidation)}
+                everyKeyDown
                 />
               <TextField
                 className="ini"
-                label={translate (l10n) ("initiativemodifier.short")}
+                label={translate (staticData) ("equipment.dialogs.addedit.initiativemodifier")}
                 value={EIA.iniMod (item)}
                 onChange={setInitiativeModifier}
                 disabled={locked}
                 valid={IEIVA.ini (inputValidation)}
+                everyKeyDown
                 />
             </div>
             <Checkbox
               className="add-penalties"
-              label={translate (l10n) ("additionalpenalties")}
+              label={translate (staticData) ("equipment.dialogs.addedit.additionalpenalties")}
               checked={EIA.addPenalties (item)}
               onClick={setHasAdditionalPenalties}
               disabled={locked}

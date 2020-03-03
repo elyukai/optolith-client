@@ -1,20 +1,20 @@
-import { List } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
-import { OrderedSet } from "../../../Data/OrderedSet";
-import { Record, RecordI } from "../../../Data/Record";
-import { Pair } from "../../../Data/Tuple";
-import { TabId } from "../../Utilities/LocationUtils";
-import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
-import { ActiveObject } from "../ActiveEntries/ActiveObject";
-import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
-import { DependencyObject } from "../ActiveEntries/DependencyObject";
-import { SkillDependent } from "../ActiveEntries/SkillDependent";
-import { ProfessionSelections } from "../Wiki/professionSelections/ProfessionAdjustmentSelections";
-import * as Wiki from "../Wiki/wikiTypeHelpers";
-import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamageThreshold";
-import { SkillOptionalDependency } from "./SkillOptionalDependency";
+import { List } from "../../../Data/List"
+import { Maybe } from "../../../Data/Maybe"
+import { OrderedMap } from "../../../Data/OrderedMap"
+import { OrderedSet } from "../../../Data/OrderedSet"
+import { Record, RecordI } from "../../../Data/Record"
+import { Pair } from "../../../Data/Tuple"
+import { TabId } from "../../Utilities/LocationUtils"
+import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent"
+import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent"
+import { ActiveObject } from "../ActiveEntries/ActiveObject"
+import { AttributeDependent } from "../ActiveEntries/AttributeDependent"
+import { DependencyObject } from "../ActiveEntries/DependencyObject"
+import { SkillDependent } from "../ActiveEntries/SkillDependent"
+import { ProfessionSelections } from "../Wiki/professionSelections/ProfessionAdjustmentSelections"
+import * as Wiki from "../Wiki/wikiTypeHelpers"
+import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamageThreshold"
+import { SkillOptionalDependency } from "./SkillOptionalDependency"
 
 export type ExtendedSkillDependent = Record<SkillDependent>
                                    | Record<ActivatableSkillDependent>
@@ -150,5 +150,6 @@ export interface SubTab {
   id: TabId
   label: string
   disabled: boolean
+
   // element: JSX.Element
 }

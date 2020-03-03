@@ -1,32 +1,33 @@
-import * as React from "react";
-import { useDispatch } from "react-redux";
-import { find, List, map, notNull } from "../../../Data/List";
-import { bindF, ensure, Just, Maybe, maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { selectRaceVariant } from "../../Actions/RaceActions";
-import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { RaceVariant } from "../../Models/Wiki/RaceVariant";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { sortRecordsByName } from "../../Utilities/sortBy";
-import { Option, RadioButtonGroup } from "../Universal/RadioButtonGroup";
+import * as React from "react"
+import { useDispatch } from "react-redux"
+import { find, List, map, notNull } from "../../../Data/List"
+import { bindF, ensure, Just, Maybe, maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { selectRaceVariant } from "../../Actions/RaceActions"
+import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined"
+import { RadioOption } from "../../Models/View/RadioOption"
+import { RaceVariant } from "../../Models/Wiki/RaceVariant"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { sortRecordsByName } from "../../Utilities/sortBy"
+import { RadioButtonGroup } from "../Universal/RadioButtonGroup"
 
 export interface RaceVariantsProps {
   currentId: Maybe<string>
   currentVariantId: Maybe<string>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   races: List<Record<RaceCombined>>
 }
 
 export const RaceVariants: React.FC<RaceVariantsProps> = props => {
-  const { currentId, currentVariantId, l10n, races } = props
+  const { currentId, currentVariantId, staticData, races } = props
 
   const dispatch = useDispatch ()
 
   const handleSelectRaceVariant =
     React.useCallback (
       (id: string) => dispatch (selectRaceVariant (id)),
-      [dispatch]
+      [ dispatch ]
     )
 
   return pipe_ (
@@ -34,11 +35,11 @@ export const RaceVariants: React.FC<RaceVariantsProps> = props => {
     find (pipe (RaceCombinedA_.id, Maybe.elemF (currentId))),
     bindF (pipe (
       RaceCombined.A.mappedVariants,
-      map (e => Option ({
+      map (e => RadioOption ({
         name: RaceVariant.A.name (e),
         value: Just (RaceVariant.A.id (e)),
       })),
-      sortRecordsByName (l10n),
+      sortRecordsByName (staticData),
       ensure (notNull)
     )),
     maybe (<></>)

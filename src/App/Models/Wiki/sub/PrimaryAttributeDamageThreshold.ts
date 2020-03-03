@@ -1,10 +1,10 @@
-import { Maybe, Nothing } from "../../../../Data/Maybe";
-import { fromDefault } from "../../../../Data/Record";
-import { Pair } from "../../../../Data/Tuple";
+import { Maybe, Nothing } from "../../../../Data/Maybe"
+import { fromDefault } from "../../../../Data/Record"
+import { Pair } from "../../../../Data/Tuple"
 
 export interface PrimaryAttributeDamageThreshold {
   "@@name": "PrimaryAttributeDamageThreshold"
-  primary: Maybe<string>
+  primary: Maybe<string | Pair<string, string>>
   threshold: number | Pair<number, number>
 }
 

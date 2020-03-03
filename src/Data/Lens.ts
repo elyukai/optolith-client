@@ -14,13 +14,13 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "../App/Utilities/pipe";
-import { Identity, runIdentity } from "../Control/Monad/Identity";
-import { cnst } from "./Function";
-import { fmap } from "./Functor";
-import { Const, getConst } from "./Functor/Const";
-// import { List } from "./List";
-import { fst, Pair, snd } from "./Tuple";
+import { pipe } from "../App/Utilities/pipe"
+import { Identity, runIdentity } from "../Control/Monad/Identity"
+import { cnst } from "./Function"
+import { fmap } from "./Functor"
+import { Const, getConst } from "./Functor/Const"
+import { fst, Pair, snd } from "./Tuple"
+
 
 // S and T can be read as Source type and Target type
 
@@ -52,6 +52,7 @@ type Setter_ <S, A> = Setter<S, S, A, A>
  */
 export interface Lens <S, T, A, B>
   extends Setter<S, T, A, B>, Getter<S, T, A, B> {
+
   // extends Setter<S, T, A, B>, Getter<S, T, A, B>, Traversal<S, T, A, B> {
   (lift: (x: A) => Const<A, B>): (m: S) => Const<A, T>
   (lift: (x: A) => Identity<B>): (m: S) => Identity<T>

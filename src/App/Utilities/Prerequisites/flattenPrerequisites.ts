@@ -1,12 +1,12 @@
-import { cnst } from "../../../Data/Function";
-import { inRange } from "../../../Data/Ix";
-import { concat } from "../../../Data/List";
-import { fromJust, isJust, Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { inc, lte, minmax } from "../../../Data/Num";
-import { elems, filterWithKey, isOrderedMap } from "../../../Data/OrderedMap";
-import { first } from "../../../Data/Tuple";
-import { ActivatablePrerequisites, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers";
-import { pipe } from "../pipe";
+import { cnst } from "../../../Data/Function"
+import { inRange } from "../../../Data/Ix"
+import { concat } from "../../../Data/List"
+import { fromJust, isJust, Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { inc, lte, minmax } from "../../../Data/Num"
+import { elems, filterWithKey, isOrderedMap } from "../../../Data/OrderedMap"
+import { first } from "../../../Data/Tuple"
+import { ActivatablePrerequisites, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers"
+import { pipe } from "../pipe"
 
 const keyInRangePred =
   (mnew_level: Maybe<number>) =>
@@ -18,12 +18,14 @@ const keyInRangePred =
 
       return inRange (first (inc) (minmax (new_level) (old_level)))
     }
+
     // Used for activating an entry
     else if (isJust (mnew_level)) {
       const new_level = fromJust (mnew_level)
 
       return lte (new_level)
     }
+
     // Used for deactivating an entry
     else if (isJust (mold_level)) {
       const old_level = fromJust (mold_level)

@@ -1,13 +1,12 @@
-import { fromDefault } from "../../../../Data/Record";
-import { SocialStatusId } from "../../../Constants/Ids";
+import { fromDefault } from "../../../../Data/Record"
 
 export interface SocialPrerequisite {
   "@@name": "SocialPrerequisite"
-  value: SocialStatusId
+  value: number
 }
 
 export const SocialPrerequisite =
   fromDefault ("SocialPrerequisite")
               <SocialPrerequisite> ({
-                value: SocialStatusId.Free,
+                value: 1,
               })

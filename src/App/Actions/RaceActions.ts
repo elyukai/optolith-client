@@ -1,12 +1,12 @@
-import { Maybe } from "../../Data/Maybe";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { RacesSortOptions } from "../Utilities/Raw/JSON/Config";
+import { Maybe } from "../../Data/Maybe"
+import * as ActionTypes from "../Constants/ActionTypes"
+import { RacesSortOptions } from "../Models/Config"
 
 export interface SelectRaceAction {
   type: ActionTypes.SELECT_RACE
   payload: {
-    id: string;
-    variantId: Maybe<string>;
+    id: string
+    variantId: Maybe<string>
   }
 }
 
@@ -21,7 +21,7 @@ export const selectRace = (id: string) => (variantId: Maybe<string>): SelectRace
 export interface SetRaceVariantAction {
   type: ActionTypes.SET_RACE_VARIANT
   payload: {
-    id: string;
+    id: string
   }
 }
 
@@ -35,7 +35,7 @@ export const selectRaceVariant = (id: string): SetRaceVariantAction => ({
 export interface SetRacesSortOrderAction {
   type: ActionTypes.SET_RACES_SORT_ORDER
   payload: {
-    sortOrder: RacesSortOptions;
+    sortOrder: RacesSortOptions
   }
 }
 
@@ -57,7 +57,7 @@ export const switchRaceValueVisibilityFilter = (): SwitchRaceValueVisibilityActi
 export interface SetRacesFilterTextAction {
   type: ActionTypes.SET_RACES_FILTER_TEXT
   payload: {
-    filterText: string;
+    filterText: string
   }
 }
 

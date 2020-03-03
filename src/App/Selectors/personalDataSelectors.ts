@@ -1,31 +1,36 @@
-import { ident } from "../../Data/Function";
-import { fmap } from "../../Data/Functor";
-import { elem, filter, imap, List, map, minimum, notNull, nub, subscript } from "../../Data/List";
-import { alt, any, bind, ensure, Just, liftM2, mapMaybe, maybe } from "../../Data/Maybe";
-import { dec } from "../../Data/Num";
-import { fst, Pair, snd } from "../../Data/Tuple";
-import { curryN, uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
-import { DisadvantageId, SocialStatusId } from "../Constants/Ids";
-import { Culture } from "../Models/Wiki/Culture";
-import { Race } from "../Models/Wiki/Race";
-import { RaceVariant } from "../Models/Wiki/RaceVariant";
-import { getActiveSelections } from "../Utilities/Activatable/selectionUtils";
-import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { translate } from "../Utilities/I18n";
-import { pipe, pipe_ } from "../Utilities/pipe";
-import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
-import { sortRecordsByName } from "../Utilities/sortBy";
-import { DropdownOption } from "../Views/Universal/Dropdown";
-import { getCulture, getRace, getRaceVariant } from "./rcpSelectors";
-import { getDisadvantages, getLocaleAsProp, getSocialDependencies } from "./stateSelectors";
+import { ident } from "../../Data/Function"
+import { fmap, fmapF } from "../../Data/Functor"
+import { consF, elem, filter, List, map, minimum, notNull, nub } from "../../Data/List"
+import { alt, any, bind, ensure, Just, liftM2, mapMaybe, maybe } from "../../Data/Maybe"
+import { foldr, lookupF } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { fst, Pair, snd } from "../../Data/Tuple"
+import { curryN, uncurryN, uncurryN3 } from "../../Data/Tuple/Curry"
+import { DisadvantageId, SocialStatusId } from "../Constants/Ids"
+import { NumIdName } from "../Models/NumIdName"
+import { DropdownOption } from "../Models/View/DropdownOption"
+import { Culture } from "../Models/Wiki/Culture"
+import { Race } from "../Models/Wiki/Race"
+import { RaceVariant } from "../Models/Wiki/RaceVariant"
+import { StaticData } from "../Models/Wiki/WikiModel"
+import { getActiveSelections } from "../Utilities/Activatable/selectionUtils"
+import { createMaybeSelector } from "../Utilities/createMaybeSelector"
+import { pipe, pipe_ } from "../Utilities/pipe"
+import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils"
+import { sortRecordsByName } from "../Utilities/sortBy"
+import { getCulture } from "./cultureSelectors"
+import { getRace, getRaceVariant } from "./raceSelectors"
+import { getDisadvantages, getSocialDependencies, getWiki } from "./stateSelectors"
 
 const CA = Culture.A
 
 const getSocialStatusAssocs = createMaybeSelector (
-  getLocaleAsProp,
-  l10n =>
-    imap (index => (name: string) => Pair (indexToSocialStatusId (index), name))
-         (translate (l10n) ("socialstatuses"))
+  getWiki,
+  pipe (
+    StaticData.A.socialStatuses,
+    foldr ((x: Record<NumIdName>) => consF (Pair (NumIdName.A.id (x), NumIdName.A.name (x))))
+          (List ())
+  )
 )
 
 const getMinimumSocialStatus = createMaybeSelector (
@@ -35,17 +40,6 @@ const getMinimumSocialStatus = createMaybeSelector (
     fmap (minimum)
   )
 )
-
-const indexToSocialStatusId: (index: number) => SocialStatusId =
-  i => {
-    switch (i) {
-      case 0: return SocialStatusId.NotFree
-      case 2: return SocialStatusId.LesserNoble
-      case 3: return SocialStatusId.Noble
-      case 4: return SocialStatusId.Aristocracy
-      default: return SocialStatusId.Free
-    }
-  }
 
 const getAvailableSocialStatusesTuples = createMaybeSelector (
   getCulture,
@@ -96,25 +90,27 @@ export const getAvailableHairColorIds = createMaybeSelector (
     return maybe (List<number> ())
                  <List<number>> (nub)
                  (alt (bind (mrace) (Race.A.hairColors))
-                      (bind (mrace_variant) (RaceVariant.A.hairColors)))
+                      (fmapF (mrace_variant) (RaceVariant.A.hairColors)))
   }
 )
 
 export const getAvailableHairColorOptions = createMaybeSelector (
-  getLocaleAsProp,
+  getWiki,
   getAvailableHairColorIds,
-  uncurryN (l10n => pipe (
-                      mapMaybe (id => pipe_ (
-                                        id,
-                                        dec,
-                                        subscript (translate (l10n) ("haircolors")),
-                                        fmap (name => DropdownOption ({
-                                                        id: Just (id),
-                                                        name,
-                                                      }))
-                                      )),
-                      sortRecordsByName (l10n)
-                    ))
+  uncurryN (staticData => pipe (
+                            mapMaybe (id => pipe_ (
+                                              id,
+                                              lookupF (StaticData.A.hairColors (staticData)),
+                                              fmap (pipe (
+                                                NumIdName.A.name,
+                                                name => DropdownOption ({
+                                                          id: Just (id),
+                                                          name,
+                                                        })
+                                              ))
+                                            )),
+                            sortRecordsByName (staticData)
+                          ))
 )
 
 export const getAvailableEyeColorIds = createMaybeSelector (
@@ -132,23 +128,25 @@ export const getAvailableEyeColorIds = createMaybeSelector (
     return maybe (List<number> ())
                  <List<number>> (nub)
                  (alt (bind (mrace) (Race.A.eyeColors))
-                      (bind (mrace_variant) (RaceVariant.A.eyeColors)))
+                      (fmapF (mrace_variant) (RaceVariant.A.eyeColors)))
   }
 )
 
 export const getAvailableEyeColorOptions = createMaybeSelector (
-  getLocaleAsProp,
+  getWiki,
   getAvailableEyeColorIds,
-  uncurryN (l10n => pipe (
-                      mapMaybe (id => pipe_ (
-                                        id,
-                                        dec,
-                                        subscript (translate (l10n) ("eyecolors")),
-                                        fmap (name => DropdownOption ({
-                                                        id: Just (id),
-                                                        name,
-                                                      }))
-                                      )),
-                      sortRecordsByName (l10n)
-                    ))
+  uncurryN (staticData => pipe (
+                            mapMaybe (id => pipe_ (
+                                              id,
+                                              lookupF (StaticData.A.eyeColors (staticData)),
+                                              fmap (pipe (
+                                                NumIdName.A.name,
+                                                name => DropdownOption ({
+                                                          id: Just (id),
+                                                          name,
+                                                        })
+                                              ))
+                                            )),
+                            sortRecordsByName (staticData)
+                          ))
 )

@@ -1,15 +1,77 @@
-import { filter, List } from "../../../Data/List";
-import { bindF, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
-import { elems, find, lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { Record } from "../../../Data/Record";
-import { BlessedTradition, MagicalTradition } from "../../Constants/Groups";
-import { SpecialAbilityId } from "../../Constants/Ids";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { pipe } from "../pipe";
-import { isActive } from "./isActive";
+import { filter, List } from "../../../Data/List"
+import { bindF, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe"
+import { elems, find, lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { BlessedTradition, MagicalTradition } from "../../Constants/Groups"
+import { SpecialAbilityId } from "../../Constants/Ids"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
+import { pipe } from "../pipe"
+import { isActive } from "./isActive"
 
 const ADA = ActivatableDependent.A
+
+/**
+ * Checks if an ID is a magical tradition's id.
+ */
+export const isMagicalTradId =
+  (tradition_id: string): boolean => {
+    switch (tradition_id) {
+      case SpecialAbilityId.TraditionGuildMages:
+      case SpecialAbilityId.TraditionWitches:
+      case SpecialAbilityId.TraditionElves:
+      case SpecialAbilityId.TraditionDruids:
+      case SpecialAbilityId.TraditionIllusionist:
+      case SpecialAbilityId.TraditionArcaneBard:
+      case SpecialAbilityId.TraditionArcaneDancer:
+      case SpecialAbilityId.TraditionIntuitiveMage:
+      case SpecialAbilityId.TraditionSavant:
+      case SpecialAbilityId.TraditionQabalyaMage:
+      case SpecialAbilityId.TraditionZauberalchimisten:
+      case SpecialAbilityId.TraditionKristallomanten:
+      case SpecialAbilityId.TraditionGeoden:
+      case SpecialAbilityId.TraditionSchelme:
+      case SpecialAbilityId.TraditionAnimisten:
+      case SpecialAbilityId.TraditionZibilijas:
+      case SpecialAbilityId.TraditionBrobimGeoden:
+        return true
+
+      default:
+        return false
+    }
+  }
+
+/**
+ * Checks if an ID is a blessed tradition's id.
+ */
+export const isBlessedTradId =
+  (tradition_id: string): boolean => {
+    switch (tradition_id) {
+      case SpecialAbilityId.TraditionChurchOfPraios:
+      case SpecialAbilityId.TraditionChurchOfRondra:
+      case SpecialAbilityId.TraditionChurchOfBoron:
+      case SpecialAbilityId.TraditionChurchOfHesinde:
+      case SpecialAbilityId.TraditionChurchOfPhex:
+      case SpecialAbilityId.TraditionChurchOfPeraine:
+      case SpecialAbilityId.TraditionChurchOfEfferd:
+      case SpecialAbilityId.TraditionChurchOfTravia:
+      case SpecialAbilityId.TraditionChurchOfFirun:
+      case SpecialAbilityId.TraditionChurchOfTsa:
+      case SpecialAbilityId.TraditionChurchOfIngerimm:
+      case SpecialAbilityId.TraditionChurchOfRahja:
+      case SpecialAbilityId.TraditionCultOfTheNamelessOne:
+      case SpecialAbilityId.TraditionChurchOfAves:
+      case SpecialAbilityId.TraditionChurchOfIfirn:
+      case SpecialAbilityId.TraditionChurchOfKor:
+      case SpecialAbilityId.TraditionChurchOfNandus:
+      case SpecialAbilityId.TraditionChurchOfSwafnir:
+      case SpecialAbilityId.TraditionCultOfNuminoru:
+        return true
+
+      default:
+        return false
+    }
+  }
 
 const isActiveMagicalTradition =
   (e: Record<ActivatableDependent>) => isMagicalTradId (ADA.id (e)) && isActive (e)
@@ -53,36 +115,6 @@ export const getBlessedTraditionFromWiki =
     pipe (getBlessedTradition, bindF (pipe (ADA.id, lookupF (wiki))))
 
 /**
- * Checks if an ID is a magical tradition's id.
- */
-export const isMagicalTradId =
-  (tradition_id: string): boolean => {
-    switch (tradition_id) {
-      case SpecialAbilityId.TraditionGuildMages:
-      case SpecialAbilityId.TraditionWitches:
-      case SpecialAbilityId.TraditionElves:
-      case SpecialAbilityId.TraditionDruids:
-      case SpecialAbilityId.TraditionIllusionist:
-      case SpecialAbilityId.TraditionArcaneBard:
-      case SpecialAbilityId.TraditionArcaneDancer:
-      case SpecialAbilityId.TraditionIntuitiveMage:
-      case SpecialAbilityId.TraditionSavant:
-      case SpecialAbilityId.TraditionQabalyaMage:
-      case SpecialAbilityId.TraditionZauberalchimisten:
-      case SpecialAbilityId.TraditionKristallomanten:
-      case SpecialAbilityId.TraditionGeoden:
-      case SpecialAbilityId.TraditionSchelme:
-      case SpecialAbilityId.TraditionAnimisten:
-      case SpecialAbilityId.TraditionZibilijas:
-      case SpecialAbilityId.TraditionBrobimGeoden:
-        return true
-
-      default:
-        return false
-    }
-  }
-
-/**
  * Map a magical tradition's ID to a numeric magical tradition ID used by
  * spells.
  *
@@ -108,10 +140,10 @@ export const mapMagicalTradIdToNumId =
         return Just (MagicalTradition.Scharlatane)
 
       case SpecialAbilityId.TraditionArcaneBard:
-        return Just (MagicalTradition.Zauberbarden)
+        return Just (MagicalTradition.ArcaneBards)
 
       case SpecialAbilityId.TraditionArcaneDancer:
-        return Just (MagicalTradition.Zaubertaenzer)
+        return Just (MagicalTradition.ArcaneDancers)
 
       case SpecialAbilityId.TraditionIntuitiveMage:
         return Just (MagicalTradition.IntuitiveZauberer)
@@ -126,16 +158,16 @@ export const mapMagicalTradIdToNumId =
         return Just (MagicalTradition.Kristallomanten)
 
       case SpecialAbilityId.TraditionGeoden:
-        return Just (MagicalTradition.Geoden)
+        return Just (MagicalTradition.Geodes)
 
       case SpecialAbilityId.TraditionSchelme:
-        return Just (MagicalTradition.Schelme)
+        return Just (MagicalTradition.Rogues)
 
       case SpecialAbilityId.TraditionAnimisten:
-        return Just (MagicalTradition.Animisten)
+        return Just (MagicalTradition.Animists)
 
       case SpecialAbilityId.TraditionZibilijas:
-        return Just (MagicalTradition.Zibilijas)
+        return Just (MagicalTradition.Zibilija)
 
       case SpecialAbilityId.TraditionBrobimGeoden:
         return Just (MagicalTradition.BrobimGeoden)
@@ -167,10 +199,10 @@ export const mapMagicalNumIdToTradId =
       case MagicalTradition.Scharlatane:
         return Just (SpecialAbilityId.TraditionIllusionist)
 
-      case MagicalTradition.Zauberbarden:
+      case MagicalTradition.ArcaneBards:
         return Just (SpecialAbilityId.TraditionArcaneBard)
 
-      case MagicalTradition.Zaubertaenzer:
+      case MagicalTradition.ArcaneDancers:
         return Just (SpecialAbilityId.TraditionArcaneDancer)
 
       case MagicalTradition.IntuitiveZauberer:
@@ -185,16 +217,16 @@ export const mapMagicalNumIdToTradId =
       case MagicalTradition.Kristallomanten:
         return Just (SpecialAbilityId.TraditionKristallomanten)
 
-      case MagicalTradition.Geoden:
+      case MagicalTradition.Geodes:
         return Just (SpecialAbilityId.TraditionGeoden)
 
-      case MagicalTradition.Schelme:
+      case MagicalTradition.Rogues:
         return Just (SpecialAbilityId.TraditionSchelme)
 
-      case MagicalTradition.Animisten:
+      case MagicalTradition.Animists:
         return Just (SpecialAbilityId.TraditionAnimisten)
 
-      case MagicalTradition.Zibilijas:
+      case MagicalTradition.Zibilija:
         return Just (SpecialAbilityId.TraditionZibilijas)
 
       case MagicalTradition.BrobimGeoden:
@@ -202,38 +234,6 @@ export const mapMagicalNumIdToTradId =
 
       default:
         return Nothing
-    }
-  }
-
-/**
- * Checks if an ID is a blessed tradition's id.
- */
-export const isBlessedTradId =
-  (tradition_id: string): boolean => {
-    switch (tradition_id) {
-      case SpecialAbilityId.TraditionChurchOfPraios:
-      case SpecialAbilityId.TraditionChurchOfRondra:
-      case SpecialAbilityId.TraditionChurchOfBoron:
-      case SpecialAbilityId.TraditionChurchOfHesinde:
-      case SpecialAbilityId.TraditionChurchOfPhex:
-      case SpecialAbilityId.TraditionChurchOfPeraine:
-      case SpecialAbilityId.TraditionChurchOfEfferd:
-      case SpecialAbilityId.TraditionChurchOfTravia:
-      case SpecialAbilityId.TraditionChurchOfFirun:
-      case SpecialAbilityId.TraditionChurchOfTsa:
-      case SpecialAbilityId.TraditionChurchOfIngerimm:
-      case SpecialAbilityId.TraditionChurchOfRahja:
-      case SpecialAbilityId.TraditionCultOfTheNamelessOne:
-      case SpecialAbilityId.TraditionChurchOfAves:
-      case SpecialAbilityId.TraditionChurchOfIfirn:
-      case SpecialAbilityId.TraditionChurchOfKor:
-      case SpecialAbilityId.TraditionChurchOfNandus:
-      case SpecialAbilityId.TraditionChurchOfSwafnir:
-      case SpecialAbilityId.TraditionCultOfNuminoru:
-        return true
-
-      default:
-        return false
     }
   }
 

@@ -1,12 +1,12 @@
-import * as React from "react";
-import { append, List, map, toArray } from "../../../Data/List";
-import { Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
-import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { translate } from "../../Utilities/I18n";
-import { pipe_ } from "../../Utilities/pipe";
-import { SheetHeaderAttribute } from "./SheetHeaderAttribute";
+import * as React from "react"
+import { append, List, map, toArray } from "../../../Data/List"
+import { Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, Record } from "../../../Data/Record"
+import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { pipe_ } from "../../Utilities/pipe"
+import { SheetHeaderAttribute } from "./SheetHeaderAttribute"
 
 export interface HeaderValue {
   "@@name": "HeaderValue"
@@ -22,15 +22,15 @@ export const HeaderValue =
                 value: Nothing,
               })
 
-export interface SheetHeaderProps {
+interface Props {
   add?: List<Record<HeaderValue>>
   attributes: List<Record<AttributeCombined>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
   title: string
 }
 
-export function SheetHeader (props: SheetHeaderProps) {
-  const { add = List<Record<HeaderValue>> (), attributes, l10n, title } = props
+export const SheetHeader: React.FC<Props> = props => {
+  const { add = List<Record<HeaderValue>> (), attributes, staticData, title } = props
 
   const list: List<Record<HeaderValue>> =
     append (map ((attr: Record<AttributeCombined>) =>
@@ -45,7 +45,7 @@ export function SheetHeader (props: SheetHeaderProps) {
   return (
     <div className="sheet-header">
       <div className="sheet-title">
-        <h1>{translate (l10n) ("charactersheet")}</h1>
+        <h1>{translate (staticData) ("sheets.charactersheet")}</h1>
         <p>{title}</p>
         <img src="images/icon.svg" alt="" />
       </div>

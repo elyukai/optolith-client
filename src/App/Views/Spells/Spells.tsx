@@ -1,80 +1,42 @@
-import * as React from "react";
-import { notEquals } from "../../../Data/Eq";
-import { fmap } from "../../../Data/Functor";
-import { List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, guard, Just, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
-import { dec } from "../../../Data/Num";
-import { Record } from "../../../Data/Record";
-import { Pair, snd } from "../../../Data/Tuple";
-import { Property } from "../../Constants/Groups";
-import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { AttributeCombined } from "../../Models/View/AttributeCombined";
-import { CantripCombined, CantripCombinedA_ } from "../../Models/View/CantripCombined";
-import { SpellWithRequirements, SpellWithRequirementsA_ } from "../../Models/View/SpellWithRequirements";
-import { Cantrip } from "../../Models/Wiki/Cantrip";
-import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Spell } from "../../Models/Wiki/Spell";
-import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
-import { SpellsSortOptions } from "../../Utilities/Raw/JSON/Config";
-import { renderMaybe } from "../../Utilities/ReactUtils";
-import { SkillListItem } from "../Skills/SkillListItem";
-import { BorderButton } from "../Universal/BorderButton";
-import { Checkbox } from "../Universal/Checkbox";
-import { ListView } from "../Universal/List";
-import { ListHeader } from "../Universal/ListHeader";
-import { ListHeaderTag } from "../Universal/ListHeaderTag";
-import { ListItem } from "../Universal/ListItem";
-import { ListItemName } from "../Universal/ListItemName";
-import { ListPlaceholder } from "../Universal/ListPlaceholder";
-import { MainContent } from "../Universal/MainContent";
-import { Options } from "../Universal/Options";
-import { Page } from "../Universal/Page";
-import { RecommendedReference } from "../Universal/RecommendedReference";
-import { Scroll } from "../Universal/Scroll";
-import { SearchField } from "../Universal/SearchField";
-import { Slidein } from "../Universal/Slidein";
-import { SortNames, SortOptions } from "../Universal/SortOptions";
-
-export interface SpellsOwnProps {
-  l10n: L10nRecord
-  hero: HeroModelRecord
-}
-
-export interface SpellsStateProps {
-  activeList: Maybe<List<Record<SpellWithRequirements> | Record<CantripCombined>>>
-  addSpellsDisabled: boolean
-  attributes: List<Record<AttributeCombined>>
-  enableActiveItemHints: boolean
-  filterText: string
-  inactiveFilterText: string
-  inactiveList: Maybe<List<Record<SpellWithRequirements> | Record<CantripCombined>>>
-  isRemovingEnabled: boolean
-  sortOrder: SortNames
-}
-
-export interface SpellsDispatchProps {
-  setSortOrder (sortOrder: SortNames): void
-  switchActiveItemHints (): void
-  addPoint (id: string): void
-  addToList (id: string): void
-  addCantripToList (id: string): void
-  removePoint (id: string): void
-  removeFromList (id: string): void
-  removeCantripFromList (id: string): void
-  setFilterText (filterText: string): void
-  setInactiveFilterText (filterText: string): void
-}
-
-export type SpellsProps = SpellsStateProps & SpellsDispatchProps & SpellsOwnProps
-
-export interface SpellsState {
-  showAddSlidein: boolean
-  currentId: Maybe<string>
-  currentSlideinId: Maybe<string>
-}
+import * as React from "react"
+import { notEquals } from "../../../Data/Eq"
+import { fmap } from "../../../Data/Functor"
+import { List, mapAccumL, notNull, notNullStr, toArray } from "../../../Data/List"
+import { bindF, ensure, fromMaybe, Just, Maybe, maybe, Nothing, or } from "../../../Data/Maybe"
+import { lookup, lookupF } from "../../../Data/OrderedMap"
+import { Record } from "../../../Data/Record"
+import { Pair, snd } from "../../../Data/Tuple"
+import { Property } from "../../Constants/Groups"
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
+import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
+import { SpellsSortOptions } from "../../Models/Config"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { NumIdName } from "../../Models/NumIdName"
+import { AttributeCombined } from "../../Models/View/AttributeCombined"
+import { CantripCombined, CantripCombinedA_ } from "../../Models/View/CantripCombined"
+import { SpellWithRequirements, SpellWithRequirementsA_ } from "../../Models/View/SpellWithRequirements"
+import { Cantrip } from "../../Models/Wiki/Cantrip"
+import { Spell } from "../../Models/Wiki/Spell"
+import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { translate } from "../../Utilities/I18n"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { SkillListItem } from "../Skills/SkillListItem"
+import { BorderButton } from "../Universal/BorderButton"
+import { Checkbox } from "../Universal/Checkbox"
+import { ListView } from "../Universal/List"
+import { ListHeader } from "../Universal/ListHeader"
+import { ListHeaderTag } from "../Universal/ListHeaderTag"
+import { ListItem } from "../Universal/ListItem"
+import { ListItemName } from "../Universal/ListItemName"
+import { ListPlaceholder } from "../Universal/ListPlaceholder"
+import { MainContent } from "../Universal/MainContent"
+import { Options } from "../Universal/Options"
+import { Page } from "../Universal/Page"
+import { RecommendedReference } from "../Universal/RecommendedReference"
+import { Scroll } from "../Universal/Scroll"
+import { SearchField } from "../Universal/SearchField"
+import { Slidein } from "../Universal/Slidein"
+import { SortNames, SortOptions } from "../Universal/SortOptions"
 
 const SWRA = SpellWithRequirements.A
 const SWRAL = SpellWithRequirements.AL
@@ -120,7 +82,82 @@ const SCCA = {
 
 const isCantrip = CantripCombined.is
 
-export const Spells: React.FC<SpellsProps> = props => {
+const isTopMarginNeeded =
+  (sortOrder: string) =>
+  (curr: Combined) =>
+  (mprev: Maybe<Combined>) =>
+    pipe_ (
+      mprev,
+      bindF (ensure (
+        () => sortOrder === "group" && SCCA.active (curr)
+      )),
+      fmap (prev =>
+             (!isCantrip (prev) && isCantrip (curr))
+             || (isCantrip (prev) && !isCantrip (curr))
+             || (!isCantrip (prev)
+                 && !isCantrip (curr)
+                 && notEquals (SCCA.gr (prev)) (SCCA.gr (curr)))),
+      or
+    )
+
+const getPropertyStr =
+  (staticData: StaticDataRecord) =>
+  (curr: Combined) =>
+    pipe_ (
+      curr,
+      SCCA.property,
+      lookupF (StaticData.A.properties (staticData)),
+      maybe ("") (NumIdName.A.name)
+    )
+
+const getSpellAddText =
+  (staticData: StaticDataRecord) =>
+  (sortOrder: string) =>
+  (property_str: string) =>
+  (curr: Record<SpellWithRequirements>) =>
+    sortOrder === "group"
+    ? pipe_ (
+        staticData,
+        StaticData.A.spellGroups,
+        lookup (SWRA_.gr (curr)),
+        maybe (property_str)
+              (pipe (NumIdName.A.name, gr_str => `${property_str} / ${gr_str}`))
+      )
+    : property_str
+
+export interface SpellsOwnProps {
+  staticData: StaticDataRecord
+  hero: HeroModelRecord
+}
+
+export interface SpellsStateProps {
+  activeList: Maybe<List<Record<SpellWithRequirements> | Record<CantripCombined>>>
+  addSpellsDisabled: boolean
+  attributes: List<Record<AttributeCombined>>
+  enableActiveItemHints: boolean
+  filterText: string
+  inactiveFilterText: string
+  inactiveList: Maybe<List<Record<SpellWithRequirements> | Record<CantripCombined>>>
+  isRemovingEnabled: boolean
+  sortOrder: SortNames
+}
+
+export interface SpellsDispatchProps {
+  setSortOrder (sortOrder: SortNames): void
+  switchActiveItemHints (): void
+  addPoint (id: string): void
+  addToList (id: string): void
+  addCantripToList (id: string): void
+  removePoint (id: string): void
+  removeFromList (id: string): void
+  removeCantripFromList (id: string): void
+  setFilterText (filterText: string): void
+  setInactiveFilterText (filterText: string): void
+}
+
+type Props = SpellsStateProps & SpellsDispatchProps & SpellsOwnProps
+
+export const Spells: React.FC<Props> = props => {
   const {
     addSpellsDisabled,
     addPoint,
@@ -130,7 +167,7 @@ export const Spells: React.FC<SpellsProps> = props => {
     attributes,
     inactiveList,
     activeList,
-    l10n,
+    staticData,
     isRemovingEnabled,
     removeFromList,
     removeCantripFromList,
@@ -144,13 +181,13 @@ export const Spells: React.FC<SpellsProps> = props => {
     setInactiveFilterText,
   } = props
 
-  const [showAddSlidein, setShowAddSlidein] = React.useState (false)
-  const [currentId, setCurrenId] = React.useState<Maybe<string>> (Nothing)
-  const [currentSlideinId, setCurrentSlideinId] = React.useState<Maybe<string>> (Nothing)
+  const [ showAddSlidein, setShowAddSlidein ] = React.useState (false)
+  const [ currentId, setCurrenId ] = React.useState<Maybe<string>> (Nothing)
+  const [ currentSlideinId, setCurrentSlideinId ] = React.useState<Maybe<string>> (Nothing)
 
   const handleShowSlidein = React.useCallback (
     () => setShowAddSlidein (true),
-    [setShowAddSlidein]
+    [ setShowAddSlidein ]
   )
 
   const handleHideSlidein = React.useCallback (
@@ -159,17 +196,17 @@ export const Spells: React.FC<SpellsProps> = props => {
       setCurrentSlideinId (Nothing)
       setShowAddSlidein (false)
     },
-    [setInactiveFilterText, setCurrentSlideinId, setShowAddSlidein]
+    [ setInactiveFilterText, setCurrentSlideinId, setShowAddSlidein ]
   )
 
   const handleShowInfo = React.useCallback (
     (id: string) => setCurrenId (Just (id)),
-    [setCurrenId]
+    [ setCurrenId ]
   )
 
   const handleShowSlideinInfo = React.useCallback (
     (id: string) => setCurrentSlideinId (Just (id)),
-    [setCurrentSlideinId]
+    [ setCurrentSlideinId ]
   )
 
   return (
@@ -177,7 +214,7 @@ export const Spells: React.FC<SpellsProps> = props => {
       <Slidein isOpen={showAddSlidein} close={handleHideSlidein} className="adding-spells">
         <Options>
           <SearchField
-            l10n={l10n}
+            staticData={staticData}
             value={inactiveFilterText}
             onChange={setInactiveFilterText}
             fullWidth
@@ -186,36 +223,39 @@ export const Spells: React.FC<SpellsProps> = props => {
             sortOrder={sortOrder}
             sort={setSortOrder}
             options={SpellsSortOptions}
-            l10n={l10n}
+            staticData={staticData}
             />
           <Checkbox
             checked={enableActiveItemHints}
             onClick={switchActiveItemHints}
             >
-            {translate (l10n) ("showactivated")}
+            {translate (staticData) ("general.filters.showactivatedentries")}
           </Checkbox>
-          <RecommendedReference l10n={l10n} unfamiliarSpells />
+          <RecommendedReference staticData={staticData} unfamiliarSpells />
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (l10n) ("name")}
-              {" ("}
-              {translate (l10n) ("unfamiliartraditions")}
-              {")"}
+              {translate (staticData) ("spells.header.name")}
             </ListHeaderTag>
             <ListHeaderTag className="group">
-              {translate (l10n) ("property")}
-              {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
+              {translate (staticData) ("spells.header.property")}
+              {sortOrder === "group" ? ` / ${translate (staticData) ("spells.header.group")}` : null}
             </ListHeaderTag>
             <ListHeaderTag className="check">
-              {translate (l10n) ("check")}
+              {translate (staticData) ("spells.header.check")}
             </ListHeaderTag>
-            <ListHeaderTag className="mod" hint={translate (l10n) ("checkmodifier")}>
-              {translate (l10n) ("checkmodifier.short")}
+            <ListHeaderTag
+              className="mod"
+              hint={translate (staticData) ("spells.header.checkmodifier.tooltip")}
+              >
+              {translate (staticData) ("spells.header.checkmodifier")}
             </ListHeaderTag>
-            <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
-              {translate (l10n) ("improvementcost.short")}
+            <ListHeaderTag
+              className="ic"
+              hint={translate (staticData) ("spells.header.improvementcost.tooltip")}
+              >
+              {translate (staticData) ("spells.header.improvementcost")}
             </ListHeaderTag>
             {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
             <ListHeaderTag className="btn-placeholder" />
@@ -229,7 +269,7 @@ export const Spells: React.FC<SpellsProps> = props => {
                   mapAccumL ((mprev: Maybe<Combined>) => (curr: Combined) => {
                               const insertTopMargin = isTopMarginNeeded (sortOrder) (curr) (mprev)
 
-                              const propertyName = getPropertyStr (l10n) (curr)
+                              const propertyName = getPropertyStr (staticData) (curr)
 
                               if (SCCA.active (curr)) {
                                 return Pair<Maybe<Combined>, JSX.Element> (
@@ -258,11 +298,12 @@ export const Spells: React.FC<SpellsProps> = props => {
                                       addFillElement
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
-                                      l10n={l10n}
+                                      staticData={staticData}
+                                      isRemovingEnabled={isRemovingEnabled}
                                       selectForInfo={handleShowSlideinInfo}
                                       addText={
                                         sortOrder === "group"
-                                          ? `${propertyName} / ${translate (l10n) ("cantrip")}`
+                                          ? `${propertyName} / ${translate (staticData) ("spells.groups.cantrip")}`
                                           : propertyName
                                       }
                                       untyp={SWRAL.isUnfamiliar (curr)}
@@ -272,7 +313,7 @@ export const Spells: React.FC<SpellsProps> = props => {
                                 )
                               }
                               else {
-                                const add_text = getSpellAddText (l10n)
+                                const add_text = getSpellAddText (staticData)
                                                                  (sortOrder)
                                                                  (propertyName)
                                                                  (curr)
@@ -293,7 +334,8 @@ export const Spells: React.FC<SpellsProps> = props => {
                                       ic={SWRA_.ic (curr)}
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
-                                      l10n={l10n}
+                                      staticData={staticData}
+                                      isRemovingEnabled={isRemovingEnabled}
                                       selectForInfo={handleShowSlideinInfo}
                                       addText={add_text}
                                       untyp={SWRAL.isUnfamiliar (curr)}
@@ -309,17 +351,17 @@ export const Spells: React.FC<SpellsProps> = props => {
                   arr => <>{arr}</>
                 )),
                 fromMaybe (
-                  <ListPlaceholder l10n={l10n} type="inactiveSpells" noResults />
+                  <ListPlaceholder staticData={staticData} type="inactiveSpells" noResults />
                 )
               )}
             </ListView>
           </Scroll>
         </MainContent>
-       <WikiInfoContainer currentId={currentSlideinId} l10n={l10n} />
+       <WikiInfoContainer currentId={currentSlideinId} />
       </Slidein>
       <Options>
         <SearchField
-          l10n={l10n}
+          staticData={staticData}
           value={filterText}
           onChange={setFilterText}
           fullWidth
@@ -328,37 +370,43 @@ export const Spells: React.FC<SpellsProps> = props => {
           sortOrder={sortOrder}
           sort={setSortOrder}
           options={SpellsSortOptions}
-          l10n={l10n}
+          staticData={staticData}
           />
         <BorderButton
-          label={translate (l10n) ("add")}
+          label={translate (staticData) ("spells.addbtn")}
           onClick={handleShowSlidein}
           />
-        <RecommendedReference l10n={l10n} unfamiliarSpells />
+        <RecommendedReference staticData={staticData} unfamiliarSpells />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (l10n) ("name")}
-            {" ("}
-            {translate (l10n) ("unfamiliartraditions")}
-            {")"}
+            {translate (staticData) ("spells.header.name")}
           </ListHeaderTag>
           <ListHeaderTag className="group">
-            {translate (l10n) ("property")}
-            {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
+            {translate (staticData) ("spells.header.property")}
+            {sortOrder === "group" ? ` / ${translate (staticData) ("spells.header.group")}` : null}
           </ListHeaderTag>
-          <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
-            {translate (l10n) ("skillrating.short")}
+          <ListHeaderTag
+            className="value"
+            hint={translate (staticData) ("spells.header.skillrating.tooltip")}
+            >
+            {translate (staticData) ("spells.header.skillrating")}
           </ListHeaderTag>
           <ListHeaderTag className="check">
-            {translate (l10n) ("check")}
+            {translate (staticData) ("spells.header.check")}
           </ListHeaderTag>
-          <ListHeaderTag className="mod" hint={translate (l10n) ("checkmodifier")}>
-            {translate (l10n) ("checkmodifier.short")}
+          <ListHeaderTag
+            className="mod"
+            hint={translate (staticData) ("spells.header.checkmodifier.tooltip")}
+            >
+            {translate (staticData) ("spells.header.checkmodifier")}
           </ListHeaderTag>
-          <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
-            {translate (l10n) ("improvementcost.short")}
+          <ListHeaderTag
+            className="ic"
+            hint={translate (staticData) ("spells.header.improvementcost.tooltip")}
+            >
+            {translate (staticData) ("spells.header.improvementcost")}
           </ListHeaderTag>
           {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />
@@ -373,7 +421,7 @@ export const Spells: React.FC<SpellsProps> = props => {
                 mapAccumL ((mprev: Maybe<Combined>) => (curr: Combined) => {
                             const insertTopMargin = isTopMarginNeeded (sortOrder) (curr) (mprev)
 
-                            const propertyName = getPropertyStr (l10n) (curr)
+                            const propertyName = getPropertyStr (staticData) (curr)
 
                             if (isCantrip (curr)) {
                               return Pair<Maybe<Combined>, JSX.Element> (
@@ -389,11 +437,12 @@ export const Spells: React.FC<SpellsProps> = props => {
                                     noIncrease
                                     insertTopMargin={insertTopMargin}
                                     attributes={attributes}
-                                    l10n={l10n}
+                                    staticData={staticData}
+                                    isRemovingEnabled={isRemovingEnabled}
                                     selectForInfo={handleShowInfo}
                                     addText={
                                       sortOrder === "group"
-                                        ? `${propertyName} / ${translate (l10n) ("cantrip")}`
+                                        ? `${propertyName} / ${translate (staticData) ("spells.groups.cantrip")}`
                                         : propertyName
                                     }
                                     untyp={SWRAL.isUnfamiliar (curr)}
@@ -403,7 +452,7 @@ export const Spells: React.FC<SpellsProps> = props => {
                               )
                             }
                             else {
-                              const add_text = getSpellAddText (l10n)
+                              const add_text = getSpellAddText (staticData)
                                                                (sortOrder)
                                                                (propertyName)
                                                                (curr)
@@ -430,7 +479,8 @@ export const Spells: React.FC<SpellsProps> = props => {
                                     sr={SWRA_.value (curr)}
                                     insertTopMargin={insertTopMargin}
                                     attributes={attributes}
-                                    l10n={l10n}
+                                    staticData={staticData}
+                                    isRemovingEnabled={isRemovingEnabled}
                                     selectForInfo={handleShowInfo}
                                     addText={add_text}
                                     untyp={SWRAL.isUnfamiliar (curr)}
@@ -447,7 +497,7 @@ export const Spells: React.FC<SpellsProps> = props => {
               )),
               fromMaybe (
                 <ListPlaceholder
-                  l10n={l10n}
+                  staticData={staticData}
                   type="spells"
                   noResults={notNullStr (filterText)}
                   />
@@ -456,47 +506,7 @@ export const Spells: React.FC<SpellsProps> = props => {
           </ListView>
         </Scroll>
       </MainContent>
-      <WikiInfoContainer currentId={currentId} l10n={l10n} />
+      <WikiInfoContainer currentId={currentId} />
     </Page>
   )
 }
-
-const isTopMarginNeeded =
-  (sortOrder: string) =>
-  (curr: Combined) =>
-  (mprev: Maybe<Combined>) =>
-    pipe_ (
-      mprev,
-      bindF (ensure (
-        () => sortOrder === "group" && SCCA.active (curr)
-      )),
-      fmap (prev =>
-             (!isCantrip (prev) && isCantrip (curr))
-             || (isCantrip (prev) && !isCantrip (curr))
-             || (!isCantrip (prev)
-                 && !isCantrip (curr)
-                 && notEquals (SCCA.gr (prev)) (SCCA.gr (curr)))),
-      or
-    )
-
-const getPropertyStr =
-  (l10n: L10nRecord) =>
-  (curr: Combined) =>
-    pipe_ (
-      curr,
-      SCCA.property,
-      dec,
-      subscript (translate (l10n) ("propertylist")),
-      renderMaybe
-    )
-
-const getSpellAddText =
-  (l10n: L10nRecord) =>
-  (sortOrder: string) =>
-  (property_str: string) =>
-  (curr: Record<SpellWithRequirements>) =>
-    pipe_ (
-      guard (sortOrder === "group"),
-      thenF (subscript (translate (l10n) ("spellgroups")) (dec (SWRA_.gr (curr)))),
-      maybe (property_str) (gr_str => `${property_str} / ${gr_str}`)
-    )

@@ -1,21 +1,22 @@
-import { clipboard } from "electron";
-import { fromLeft_, Left } from "../../Data/Either";
-import { fmapF } from "../../Data/Functor";
-import { List } from "../../Data/List";
-import { Just, Maybe, Nothing } from "../../Data/Maybe";
-import { fromDefault, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../Data/Record";
-import { ActionTypes } from "../Constants/ActionTypes";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { translate } from "../Utilities/I18n";
-import { ReduxAction } from "./Actions";
+import { clipboard } from "electron"
+import { fromLeft_, Left } from "../../Data/Either"
+import { fmapF } from "../../Data/Functor"
+import { List } from "../../Data/List"
+import { Just, Maybe, Nothing } from "../../Data/Maybe"
+import { fromDefault, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../Data/Record"
+import { ADD_ALERT, REMOVE_ALERT } from "../Constants/ActionTypes"
+import { StaticDataRecord } from "../Models/Wiki/WikiModel"
+import { getWiki } from "../Selectors/stateSelectors"
+import { translate, translateP } from "../Utilities/I18n"
+import { ReduxAction } from "./Actions"
 
 
 // BASIC INTERFACES
 
 export interface PromptOptions<A> {
-  "@@name": "PromptOptions",
-  title: Maybe<string>,
-  message: string,
+  "@@name": "PromptOptions"
+  title: Maybe<string>
+  message: string
   buttons: List<Record<PromptButton<A>>>
   resolve: (response: Maybe<A>) => void
 }
@@ -34,7 +35,7 @@ export const PromptOptions: PromptOptionsCreator =
               })
 
 export interface PromptButton<A> {
-  "@@name": "PromptButton",
+  "@@name": "PromptButton"
   label: string
   critical: Maybe<boolean>
   response: A
@@ -53,7 +54,7 @@ export const PromptButton: PromptButtonCreator =
               })
 
 export interface AddPromptAction {
-  type: ActionTypes.ADD_ALERT
+  type: ADD_ALERT
   payload: Record<PromptOptions<any>>
 }
 
@@ -61,9 +62,9 @@ export interface AddPromptAction {
 // CUSTOMIZABLE PROMPT
 
 export interface CustomPromptOptions<A> {
-  "@@name": "CustomPromptOptions",
-  title: Maybe<string>,
-  message: string,
+  "@@name": "CustomPromptOptions"
+  title: Maybe<string>
+  message: string
   buttons: List<Record<PromptButton<A>>>
 }
 
@@ -84,7 +85,7 @@ export const addPrompt =
   async dispatch =>
     new Promise<Maybe<A>> (resolve => {
       dispatch<AddPromptAction> ({
-        type: ActionTypes.ADD_ALERT,
+        type: ADD_ALERT,
         payload: PromptOptions<A> ({
           title: CustomPromptOptions.A.title (opts),
           message: CustomPromptOptions.A.message (opts),
@@ -98,9 +99,9 @@ export const addPrompt =
 // ALERT
 
 export interface AlertOptions {
-  "@@name": "AlertOptions",
-  title: Maybe<string>,
-  message: string,
+  "@@name": "AlertOptions"
+  title: Maybe<string>
+  message: string
 }
 
 export const AlertOptions =
@@ -111,18 +112,17 @@ export const AlertOptions =
               })
 
 export const addAlert =
-  (l10n: L10nRecord) =>
   (opts: Record<AlertOptions>): ReduxAction<Promise<Maybe<void>>> =>
-  async dispatch =>
+  async (dispatch, getState) =>
     new Promise<Maybe<void>> (resolve => {
       dispatch<AddPromptAction> ({
-        type: ActionTypes.ADD_ALERT,
+        type: ADD_ALERT,
         payload: PromptOptions ({
           title: AlertOptions.A.title (opts),
           message: AlertOptions.A.message (opts),
           buttons: List (
             PromptButton<void> ({
-              label: translate (l10n) ("ok"),
+              label: translate (getWiki (getState ())) ("general.dialogs.okbtn"),
               response: undefined,
             }),
           ),
@@ -134,25 +134,26 @@ export const addAlert =
 
 // ERROR ALERT
 
-enum ErrorAlertResponse { Copy, Ok }
+enum ErrorAlertResponse {
+  Copy, Ok
+}
 
 export const addErrorAlert =
-  (l10n: L10nRecord) =>
   (opts: Record<AlertOptions>): ReduxAction<Promise<Maybe<void>>> =>
-  async dispatch => {
+  async (dispatch, getState) => {
     const response = await new Promise<Maybe<ErrorAlertResponse>> (resolve => {
       dispatch<AddPromptAction> ({
-        type: ActionTypes.ADD_ALERT,
+        type: ADD_ALERT,
         payload: PromptOptions ({
           title: AlertOptions.A.title (opts),
           message: AlertOptions.A.message (opts),
           buttons: List (
             PromptButton<ErrorAlertResponse> ({
-              label: translate (l10n) ("copy"),
+              label: translate (getWiki (getState ())) ("general.dialogs.copybtn"),
               response: ErrorAlertResponse.Copy,
             }),
             PromptButton<ErrorAlertResponse> ({
-              label: translate (l10n) ("ok"),
+              label: translate (getWiki (getState ())) ("general.dialogs.okbtn"),
               response: ErrorAlertResponse.Ok,
             }),
           ),
@@ -168,32 +169,47 @@ export const addErrorAlert =
     return fmapF (response) ((): void => undefined)
   }
 
+/**
+ * Creates a message from the passed message and the passed error object that
+ * can be used as the content of an alert.
+ */
+export const getErrorMsg =
+  (staticData: StaticDataRecord) =>
+  (message: string) =>
+  (error: Left<Error>): string =>
+    `${message} (${translate (staticData) ("general.errorcode")}: ${JSON.stringify (fromLeft_ (error))})`
+
 export const addDefaultErrorAlert =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (message: string) =>
   (error: Left<Error>) =>
-    addErrorAlert (l10n)
-                  (AlertOptions ({
-                    message: getDefaultErrorMsg (l10n) (message) (error),
-                    title: Just (translate (l10n) ("error")),
+    addErrorAlert (AlertOptions ({
+                    message: getErrorMsg (staticData) (message) (error),
+                    title: Just (translate (staticData) ("general.error")),
                   }))
 
-const getDefaultErrorMsg =
-  (l10n: L10nRecord) =>
+export const addDefaultErrorAlertWithTitle =
+  (staticData: StaticDataRecord) =>
+  (title: string) =>
   (message: string) =>
   (error: Left<Error>) =>
-    `${message} (${translate (l10n) ("errorcode")}: ${JSON.stringify (fromLeft_ (error))})`
+    addErrorAlert (AlertOptions ({
+                    message: getErrorMsg (staticData) (message) (error),
+                    title: Just (title),
+                  }))
 
 
 // CONFIRM
 
-export enum ConfirmResponse { Accepted, Rejected }
+export enum ConfirmResponse {
+ Accepted, Rejected
+}
 
 export interface ConfirmOptions {
-  "@@name": "ConfirmOptions",
-  title: Maybe<string>,
-  message: string,
-  useYesNo: boolean,
+  "@@name": "ConfirmOptions"
+  title: Maybe<string>
+  message: string
+  useYesNo: boolean
 }
 
 export const ConfirmOptions =
@@ -205,33 +221,33 @@ export const ConfirmOptions =
               })
 
 export const addConfirm =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
   (opts: Record<ConfirmOptions>): ReduxAction<Promise<Maybe<ConfirmResponse>>> =>
   async dispatch =>
     new Promise<Maybe<ConfirmResponse>> (resolve => {
       dispatch<AddPromptAction> ({
-        type: ActionTypes.ADD_ALERT,
+        type: ADD_ALERT,
         payload: PromptOptions ({
           title: ConfirmOptions.A.title (opts),
           message: ConfirmOptions.A.message (opts),
           buttons: ConfirmOptions.A.useYesNo (opts)
             ? List (
                 PromptButton<ConfirmResponse> ({
-                  label: translate (l10n) ("yes"),
+                  label: translate (staticData) ("general.dialogs.yesbtn"),
                   response: ConfirmResponse.Accepted,
                 }),
                 PromptButton<ConfirmResponse> ({
-                  label: translate (l10n) ("no"),
+                  label: translate (staticData) ("general.dialogs.nobtn"),
                   response: ConfirmResponse.Rejected,
                 })
               )
             : List (
                 PromptButton<ConfirmResponse> ({
-                  label: translate (l10n) ("ok"),
+                  label: translate (staticData) ("general.dialogs.okbtn"),
                   response: ConfirmResponse.Accepted,
                 }),
                 PromptButton<ConfirmResponse> ({
-                  label: translate (l10n) ("cancel"),
+                  label: translate (staticData) ("general.dialogs.cancelbtn"),
                   response: ConfirmResponse.Rejected,
                 })
               ),
@@ -244,9 +260,25 @@ export const addConfirm =
 // REMOVE CURRENT ALERT
 
 export interface RemoveAlertAction {
-  type: ActionTypes.REMOVE_ALERT
+  type: REMOVE_ALERT
 }
 
 export const removeAlert = (): RemoveAlertAction => ({
-  type: ActionTypes.REMOVE_ALERT,
+  type: REMOVE_ALERT,
 })
+
+// Not enough AP alert
+
+export const addNotEnoughAPAlert =
+  (missing_ap: number): ReduxAction<Promise<void>> =>
+  async (dispatch, getState) => {
+    const staticData = getWiki (getState ())
+
+    await dispatch (addAlert (AlertOptions ({
+                               title: Just (translate (staticData)
+                                                      ("general.dialogs.notenoughap.title")),
+                               message: translateP (staticData)
+                                                   ("general.dialogs.notenoughap.message")
+                                                   (List (missing_ap)),
+                             })))
+  }

@@ -1,18 +1,18 @@
-import { List } from "../../../Data/List";
-import { Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { Category } from "../../Constants/Categories";
-import { ProfessionId } from "../../Constants/Ids";
-import { translate } from "../../Utilities/I18n";
-import { L10nRecord } from "./L10n";
-import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement";
-import { ProfessionSelections } from "./professionSelections/ProfessionAdjustmentSelections";
-import { Erratum } from "./sub/Errata";
-import { IncreaseSkill } from "./sub/IncreaseSkill";
-import { IncreaseSkillList } from "./sub/IncreaseSkillList";
-import { NameBySex } from "./sub/NameBySex";
-import { SourceLink } from "./sub/SourceLink";
-import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite } from "./wikiTypeHelpers";
+import { List } from "../../../Data/List"
+import { Just, Maybe, Nothing } from "../../../Data/Maybe"
+import { fromDefault, makeLenses, Record } from "../../../Data/Record"
+import { Category } from "../../Constants/Categories"
+import { ProfessionId } from "../../Constants/Ids"
+import { translate } from "../../Utilities/I18n"
+import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement"
+import { ProfessionSelections } from "./professionSelections/ProfessionAdjustmentSelections"
+import { Erratum } from "./sub/Errata"
+import { IncreaseSkill } from "./sub/IncreaseSkill"
+import { IncreaseSkillList } from "./sub/IncreaseSkillList"
+import { NameBySex } from "./sub/NameBySex"
+import { SourceLink } from "./sub/SourceLink"
+import { StaticDataRecord } from "./WikiModel"
+import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite } from "./wikiTypeHelpers"
 
 export interface Profession {
   "@@name": "Profession"
@@ -41,7 +41,6 @@ export interface Profession {
   unsuitableDisadvantagesText: Maybe<string>
   isVariantRequired: boolean
   variants: List<string>
-  category: Category
   gr: number
 
   /**
@@ -51,6 +50,7 @@ export interface Profession {
   subgr: number
   src: List<Record<SourceLink>>
   errata: List<Record<Erratum>>
+  category: Category
 }
 
 export const Profession =
@@ -94,10 +94,10 @@ export const isProfession =
   (r: EntryWithCategory) => Profession.AL.category (r) === Category.PROFESSIONS
 
 export const getCustomProfession =
-  (l10n: L10nRecord) =>
+  (staticData: StaticDataRecord) =>
     Profession ({
       id: ProfessionId.CustomProfession,
-      name: translate (l10n) ("ownprofession"),
+      name: translate (staticData) ("profession.ownprofession"),
       subname: Nothing,
       ap: Just (0),
       dependencies: Nothing,

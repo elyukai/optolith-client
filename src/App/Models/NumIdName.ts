@@ -1,4 +1,6 @@
-import { fromDefault } from "../../Data/Record";
+import { Just } from "../../Data/Maybe"
+import { fromDefault, Record } from "../../Data/Record"
+import { DropdownOption } from "./View/DropdownOption"
 
 export interface NumIdName {
   "@@name": "NumIdName"
@@ -18,3 +20,8 @@ export const NumIdName =
  */
 export const fromIndexName =
   (index: number) => (name: string) => NumIdName ({ id: index + 1, name })
+
+export const numIdNameToDropdown = (x: Record<NumIdName>) => DropdownOption<number> ({
+                                                               id: Just (NumIdName.A.id (x)),
+                                                               name: NumIdName.A.name (x),
+                                                             })

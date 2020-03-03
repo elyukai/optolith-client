@@ -1,3 +1,4 @@
+/* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 /**
  * @module Control.Exception
  *
@@ -7,45 +8,37 @@
  * @see IO
  */
 
-import { Either, Left, Right } from "../Data/Either";
+import { pipe } from "../App/Utilities/pipe"
+import { Either, either, Left, Right } from "../Data/Either"
+import { bindF, pure } from "../System/IO"
 
-export const toMsg = (err: Error) => err .message
+
+export const toMsg : (err : Error) => string
+                   = err => err .message
+
 
 /**
- * `catch :: Exception e => IO a -> (e -> IO a) -> IO a`
+ * `handle :: Exception e => (e -> IO a) -> IO a -> IO a`
  *
  * This is the simplest of the exception-catching functions. It takes a single
  * argument, runs it, and if an exception is raised the "handler" is executed,
  * with the value of the exception passed as an argument. Otherwise, the result
  * is returned as normal.
  */
-export const catchIO: <A> (x: () => Promise<A>) => (f: (err: Error) => Promise<A>) => Promise<A> =
-  x => async f => {
-    try {
-      return x ()
-    }
-    catch (err) {
-      return f (err)
-    }
-  }
+export const handle : <A> (f : (err : Error) => Promise<A>) => (x : Promise<A>) => Promise<A>
+                    = f => async x => x .catch (f)
+
 
 /**
- * `try :: Exception e => IO a -> IO (Either e a)`
+ * `handleE :: Exception e => IO a -> IO (Either e a)`
  *
- * Similar to `catch`, but returns an `Either` result which is `(Right a)` if no
+ * Similar to `handle`, but returns an `Either` result which is `(Right a)` if no
  * exception was raised, or `(Left ex)` if an exception was raised and its value
  * is `ex`.
  */
-export const tryIO: <A extends any[], B> (x: (...p: A) => Promise<B>) =>
-                    (...p: A) => Promise<Either<Error, B>> =
-  x => async (...p) => {
-    try {
-      return Right (await x (...p))
-    }
-    catch (err) {
-      return Left (err)
-    }
-  }
+export const handleE : <A> (x : Promise<A>) => Promise<Either<Error, A>>
+                     = async x => x .then (Right) .catch (Left)
+
 
 /**
  * `trySync :: Exception e => (a -> b) -> (e -> b) -> (() -> a) -> b`
@@ -56,15 +49,31 @@ export const tryIO: <A extends any[], B> (x: (...p: A) => Promise<B>) =>
  *
  * Similar to `try {} catch {]`, but functional.
  */
-export const trySync:
-  <A, B> (success: (x: A) => B) => (failure: (x: Error) => B) => (toTry: () => A) => B =
-    f => g => h => {
-      try {
-        const a = h ()
+export const trySync : <A, B> (success : (x : A) => B)
+                     => (failure : (x : Error) => B)
+                     => <C> (toTry : (x : C) => A)
+                     => (x : C)
+                     => B
+                     = f => g => h => x => {
+                       try {
+                         const a = h (x)
 
-        return f (a)
-      }
-      catch (err) {
-        return g (err)
-      }
-    }
+                         return f (a)
+                       }
+                       catch (err) {
+                         return g (err)
+                       }
+                     }
+
+
+/**
+ * `pipeEx` takes a function and an `IO` with an `Either` containing a possible
+ * error. If the `Either` contains an error, it is returned. Otherwise, the
+ * value is passed to the given function whose return value will be returned.
+ *
+ * This way you can pipe functions that may result in errors.
+ */
+export const pipeEx : <A, B> (f : (x : A) => Promise<Either<Error, B>>)
+                    => (x : Promise<Either<Error, A>>)
+                    => Promise<Either<Error, B>>
+                    = f => bindF (either <Error, ReturnType<typeof f>> (pipe (Left, pure)) (f))

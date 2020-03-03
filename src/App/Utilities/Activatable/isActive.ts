@@ -1,8 +1,8 @@
-import { notNull } from "../../../Data/List";
-import { Just, Maybe, maybe } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { pipe } from "../pipe";
+import { notNull } from "../../../Data/List"
+import { Just, Maybe, maybe } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
+import { pipe } from "../pipe"
 
 const { active } = ActivatableDependent.AL
 

@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "Schema/Hero/Hero.l10n.schema.json",
+  "$ref": "#/definitions/Hero",
+  "definitions": {
+    "Hero": {
+      "title": "RawHeroBase",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "A date in milliseconds with the \"H_\" prefix.",
+          "type": "string",
+          "pattern": "^H_[1-9]\\d*$"
+        },
+        "name": {
+          "description": "The name of the hero.",
+          "type": "string",
+          "minLength": 1
+        },
+        "clientVersion": {
+          "description": "The client version the hero was created with.",
+          "type": "string",
+          "minLength": 1,
+          "pattern": "(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-(\\w+)\\.(0|[1-9]\\d*))?"
+        },
+        "dateCreated": {
+          "description": "The date of creation.",
+          "type": "string",
+          "minLength": 1,
+          "format": "date-time"
+        },
+        "dateModified": {
+          "description": "The date of last modification.",
+          "type": "string",
+          "minLength": 1,
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "name", "clientVersion", "dateCreated", "dateModified"],
+      "additionalProperties": true
+    }
+  }
+}

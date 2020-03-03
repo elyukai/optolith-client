@@ -1,88 +1,89 @@
-import * as React from "react";
-import { Textfit } from "react-textfit";
-import { ident } from "../../../../Data/Function";
-import { fmap, fmapF } from "../../../../Data/Functor";
-import { consF, elem, flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
-import { ensure, fromMaybe, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe";
-import { dec } from "../../../../Data/Num";
-import { elems } from "../../../../Data/OrderedSet";
-import { Record } from "../../../../Data/Record";
-import { BlessedTradition } from "../../../Constants/Groups";
-import { AttributeCombined } from "../../../Models/View/AttributeCombined";
-import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../../Models/View/LiturgicalChantWithRequirements";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
-import { minus } from "../../../Utilities/Chars";
-import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybeWith } from "../../../Utilities/ReactUtils";
-import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils";
-import { sortStrings } from "../../../Utilities/sortBy";
-import { getCheckModStr } from "../../InlineWiki/Elements/WikiSkillCheck";
-import { TextBox } from "../../Universal/TextBox";
+import * as React from "react"
+import { Textfit } from "react-textfit"
+import { ident } from "../../../../Data/Function"
+import { fmap, fmapF } from "../../../../Data/Functor"
+import { consF, elem, flength, intercalate, List, map, replicateR, toArray } from "../../../../Data/List"
+import { fromMaybe, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe"
+import { lookup } from "../../../../Data/OrderedMap"
+import { Record } from "../../../../Data/Record"
+import { BlessedTradition as BlessedTraditionId, icFromJs } from "../../../Constants/Groups"
+import { SpecialAbilityId } from "../../../Constants/Ids"
+import { NumIdName } from "../../../Models/NumIdName"
+import { AttributeCombined } from "../../../Models/View/AttributeCombined"
+import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../../Models/View/LiturgicalChantWithRequirements"
+import { BlessedTradition } from "../../../Models/Wiki/BlessedTradition"
+import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
+import { minus } from "../../../Utilities/Chars"
+import { translate } from "../../../Utilities/I18n"
+import { icToStr } from "../../../Utilities/IC.gen"
+import { pipe, pipe_ } from "../../../Utilities/pipe"
+import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils"
+import { sortStrings } from "../../../Utilities/sortBy"
+import { getCheckModStr } from "../../InlineWiki/Elements/WikiSkillCheck"
+import { TextBox } from "../../Universal/TextBox"
 
-export interface LiturgicalChantsSheetLiturgicalChantsProps {
+interface Props {
   attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
   liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
-  l10n: L10nRecord
+  staticData: StaticDataRecord
 }
 
+const SDA = StaticData.A
+const BTA = BlessedTradition.A
+const NINA = NumIdName.A
 const LCWRA_ = LiturgicalChantWithRequirementsA_
 
-export function LiturgicalChantsSheetLiturgicalChants (
-  props: LiturgicalChantsSheetLiturgicalChantsProps
-) {
+export const LiturgicalChantsSheetLiturgicalChants: React.FC<Props> = props => {
   const {
     attributes,
     checkAttributeValueVisibility,
-    l10n,
+    staticData,
     liturgicalChants: maybeLiturgicalChants,
   } = props
 
-  const aspectNames = translate (l10n) ("aspectlist")
-  const traditionNames = translate (l10n) ("blessedtraditions")
+  const getAspect = (id: number) => pipe_ (staticData, SDA.aspects, lookup (id), fmap (NINA.name))
 
   return (
     <TextBox
-      label={translate (l10n) ("liturgicalchantsandceremonies")}
+      label={translate (staticData) ("sheets.chantssheet.chantstable.title")}
       className="skill-list"
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (l10n) ("liturgicalchantsandceremonies")}
+              {translate (staticData) ("sheets.chantssheet.chantstable.labels.chant")}
             </th>
             <th className="check">
-              {translate (l10n) ("check")}
+              {translate (staticData) ("sheets.chantssheet.chantstable.labels.check")}
             </th>
             <th className="value">
-              {translate (l10n) ("skillrating.short")}
+              {translate (staticData) ("sheets.chantssheet.chantstable.labels.skillrating")}
             </th>
             <th className="cost">
-              {translate (l10n) ("cost")}
+              {translate (staticData) ("sheets.chantssheet.chantstable.labels.cost")}
             </th>
             <th className="cast-time">
-              {translate (l10n) ("liturgicaltime")}
+              {translate (staticData) ("sheets.chantssheet.chantstable.labels.castingtime")}
             </th>
             <th className="range">
-              {translate (l10n) ("range")}
+              {translate (staticData) ("sheets.chantssheet.chantstable.labels.range")}
             </th>
             <th className="duration">
-              {translate (l10n) ("duration")}
+              {translate (staticData) ("sheets.chantssheet.chantstable.labels.duration")}
             </th>
             <th className="aspect">
-              {translate (l10n) ("aspect")}
+              {translate (staticData) ("sheets.chantssheet.chantstable.labels.aspect")}
             </th>
             <th className="ic">
-              {translate (l10n) ("improvementcost.short")}
+              {translate (staticData) ("sheets.chantssheet.chantstable.labels.improvementcost")}
             </th>
             <th className="effect">
-              {translate (l10n) ("effect")}
+              {translate (staticData) ("sheets.chantssheet.chantstable.labels.effect")}
             </th>
             <th className="ref">
-              {translate (l10n) ("page.short")}
+              {translate (staticData) ("sheets.chantssheet.chantstable.labels.pages")}
             </th>
           </tr>
         </thead>
@@ -110,13 +111,8 @@ export function LiturgicalChantsSheetLiturgicalChants (
                         {pipe_ (
                           e,
                           LCWRA_.checkmod,
-                          elems,
-                          ensure (notNull),
-                          renderMaybeWith (pipe (
-                            map (getCheckModStr (l10n)),
-                            intercalate ("/"),
-                            str => ` (${minus}${str})`
-                          ))
+                          maybe ("")
+                                (pipe (getCheckModStr (staticData), str => ` (${minus}${str})`))
                         )}
                       </Textfit>
                     </td>
@@ -140,19 +136,19 @@ export function LiturgicalChantsSheetLiturgicalChants (
                         {pipe_ (
                           e,
                           LCWRA_.aspects,
-                          mapMaybe (pipe (dec, subscript (aspectNames))),
-                          elem (BlessedTradition.CultOfTheNamelessOne) (LCWRA_.tradition (e))
+                          mapMaybe (getAspect),
+                          elem (BlessedTraditionId.CultOfTheNamelessOne) (LCWRA_.tradition (e))
                             ? maybe (ident as ident<List<string>>)
-                                    (consF as (x: string) => ident<List<string>>)
-                                    (subscript (traditionNames)
-                                               (BlessedTradition.CultOfTheNamelessOne - 1))
+                                    (pipe (BTA.name, consF))
+                                    (lookup<string> (SpecialAbilityId.TraditionCultOfTheNamelessOne)
+                                                    (SDA.blessedTraditions (staticData)))
                             : ident,
-                          sortStrings (l10n),
+                          sortStrings (staticData),
                           intercalate (", ")
                         )}
                       </Textfit>
                     </td>
-                    <td className="ic">{getICName (LCWRA_.ic (e))}</td>
+                    <td className="ic">{icToStr (icFromJs (LCWRA_.ic (e)))}</td>
                     <td className="effect" />
                     <td className="ref" />
                   </tr>
