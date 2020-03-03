@@ -19,7 +19,7 @@
 - Ein Gegenstand konnte nicht als improvisierte Waffe eingetragen werden #290
 - Die Infotabelle für Routineproben war nicht richtig ausgerichtet #214
 - Angst vor: Auswahl/eigener Text wurde auf dem Heldenbogen nicht angezeigt #213
-- Man konnte keine Bilder von einem Server als Bild importieren #229 
+- Man konnte keine Bilder von einem Server als Bild importieren #229
 - Das Hinzufügen von AP funktionierte nicht, wenn man nicht das Eingabefeld verlassen hat #341
 - Waffen, die keinen Schaden verursachen, zeigen nicht mehr nur "W" als Schaden #353
 - Keine Talentwertverringerung *Fährtensuche* mehr möglich bei Jäger (Kopfgeldjäger) #357

@@ -24,7 +24,7 @@
 - SF *Jägerinnen der weißen Maid*: Mögliche Liturgien zeigten keine Aspekte an #289
 - Die Infotabelle für Routineproben war nicht richtig ausgerichtet #214
 - Angst vor: Auswahl/eigener Text wurde auf dem Heldenbogen nicht angezeigt #213
-- Man konnte keine Bilder von einem Server als Bild importieren #229 
+- Man konnte keine Bilder von einem Server als Bild importieren #229
 - Das Hinzufügen von AP funktionierte nicht, wenn man nicht das Eingabefeld verlassen hat #341
 - Waffen, die keinen Schaden verursachen, zeigen nicht mehr nur "W" als Schaden #353
 - Keine Talentwertverringerung *Fährtensuche* mehr möglich bei Jäger (Kopfgeldjäger) #357
@@ -41,7 +41,7 @@
 
 ### API
 
-Es gibt auf [GitHub](https://github.com/elyukai/optolith-client/tree/develop/app/Schema/Hero) jetzt ein einfaches Schema zum Validieren eines Helden. Ein vollständiges Schema ist in Arbeit; die unvollständige Variante findet sich ebenfalls im verlinkten Ordner.
+Es gibt auf [GitHub](https://github.com/elyukai/optolith-client/tree/master/app/Schema/Hero) jetzt ein einfaches Schema zum Validieren eines Helden. Ein vollständiges Schema ist in Arbeit; die unfertige Version davon findet sich ebenfalls im verlinkten Ordner.
 
 ## 1.2.0
 
