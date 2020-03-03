@@ -1,3 +1,11 @@
+## 1.3.1
+
+### Fehlerbehebungen
+
+- In der französischen Version fehlten alle Einträge, die zur Heldenerschaffung nötig sind (Spezies etc.). Sie waren vorhanden, wurden aber nicht in der Liste angezeigt. #449
+- Es gab Fehler, weil die Config unbekannte Keys hatte, wodurch Optolith nicht startete. #450
+- Auf dem Heldenbogen wurden Status nur in einer Spalte dargestellt, wenn es eine gerade Anzahl war. #448
+
 ## 1.3.0
 
 ### Neue Features
