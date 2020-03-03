@@ -25,7 +25,6 @@ import { convertHero } from "../Utilities/Raw/JSON/Hero/Compat"
 import { convertFromRawHero } from "../Utilities/Raw/JSON/Hero/HeroFromJSON"
 import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils"
 import { UndoState } from "../Utilities/undo"
-import { appSlicesReducer } from "./appSlicesReducer"
 import { toHeroWithHistory } from "./heroReducer"
 import { uiReducer } from "./uiReducer"
 
@@ -71,7 +70,7 @@ const prepareHerolist =
         }
       )
 
-      return over (appSlicesReducer.L.herolist)
+      return over (AppStateL.herolist)
                   (pipe (
                     set (HeroesStateL.heroes) (hs.heroes),
                     set (HeroesStateL.users) (hs.users)
@@ -91,7 +90,7 @@ const prepareImportedHero =
                                                     (Just (player.id))
                                                     (hero))
 
-      return over (appSlicesReducer.L.herolist)
+      return over (AppStateL.herolist)
                   (pipe (
                     over (HeroesStateL.heroes)
                          (insert (HeroModel.A.id (hero)) (undoStateWithPlayer)),
@@ -103,7 +102,7 @@ const prepareImportedHero =
 
     const undoState = toHeroWithHistory (hero)
 
-    return over (composeL (appSlicesReducer.L.herolist, HeroesStateL.heroes))
+    return over (composeL (AppStateL.herolist, HeroesStateL.heroes))
                 (insert (HeroModel.A.id (hero)) (undoState))
                 (state)
   }
@@ -145,17 +144,17 @@ export const appPostReducer =
 
           if (isNothing (getCurrentCultureId (state))
               && current_tab === TabId.Professions) {
-            return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
+            return set (composeL (AppStateL.ui, uiReducer.L.location))
                        (TabId.Cultures)
           }
           else if (isNothing (getCurrentRaceId (state)) && current_tab === TabId.Cultures) {
-            return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
+            return set (composeL (AppStateL.ui, uiReducer.L.location))
                        (TabId.Races)
           }
           else if (elem (1) (getCurrentPhase (state))
                    && notElem (current_tab) (PHASE_1_PROFILE_TABS)
                    && notElem (current_tab) (PHASE_1_RCP_TABS)) {
-            return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
+            return set (composeL (AppStateL.ui, uiReducer.L.location))
                        (TabId.Professions)
           }
 
@@ -173,7 +172,7 @@ export const appPostReducer =
                               notP (flip (uncurry3 (isBookEnabled)) ("US25208"))
                             )))
               && current_tab === TabId.ZoneArmor) {
-            return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
+            return set (composeL (AppStateL.ui, uiReducer.L.location))
                        (TabId.Equipment)
           }
 
@@ -188,12 +187,12 @@ export const appPostReducer =
           if (elem (2) (getCurrentPhase (previousState))
               && elem (3) (getCurrentPhase (state))
               && List.elem (current_tab) (List (TabId.Advantages, TabId.Disadvantages))) {
-            return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
+            return set (composeL (AppStateL.ui, uiReducer.L.location))
                        (TabId.Profile)
           }
           else if (elem (2) (getCurrentPhase (state))
                    && List.elem (current_tab) (PHASE_1_RCP_TABS)) {
-            return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
+            return set (composeL (AppStateL.ui, uiReducer.L.location))
                        (TabId.Attributes)
           }
 
