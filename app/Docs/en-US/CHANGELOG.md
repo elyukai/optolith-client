@@ -16,25 +16,25 @@
 - Languages overflow on character sheet if Hjaldingsh is active. #419
 - Personal data font is truncated vertically on character sheet. #413
 - Profession *Black Mage (Demirion Ophenos's Student)* had wrong AP cost. #344
-- Fixed weight total alignment on belongings sheet #291 
-- An item could not be set as an improvised weapon #290 
-- Routine Checks table: wrong alignment #214 
-- Afraid of: Selection/Custom text did not appear on character sheet #213 
-- Could not upload profile image from windows network share #229 
-- Adding AP did not work if you didn't leave the input field #341 
-- Weapons that do not apply damage only showed "D" as Damage #353
-- There was no Skill Rating decrease possible for *Tracking* with SA Hunter #357
-- SA *Onslaught* lists CT *Swords* twice #355
-- Could not read exported hero with BOM #370
-- Item changes could be saved in certain situations #389
-- Fixed field "Carried where" on items not persisted #369
+- Fixed weight total alignment on belongings sheet. #291
+- An item could not be set as an improvised weapon. #290
+- Routine Checks table: wrong alignment. #214
+- Afraid of: Selection/Custom text did not appear on character sheet. #213
+- Could not upload profile image from windows network share. #229
+- Adding AP did not work if you didn't leave the input field. #341
+- Weapons that do not apply damage only showed "D" as Damage. #353
+- There was no Skill Rating decrease possible for *Tracking* with SA Hunter. #357
+- SA *Onslaught* lists CT *Swords* twice. #355
+- Could not read exported hero with BOM. #370
+- Item changes could be saved in certain situations. #389
+- Fixed field "Carried where" on items not persisted. #369
 - The maximum of CTs caused by their primary attributes has been fixed. #379
 - Cast-Net has had the CT *Slings* instead of *Thrown Weapons*. #345
 - The app config does not cause errors anymore. #358
 
 ### API
 
-As of now, there is a simple scheme for validating a hero available on [GitHub](https://github.com/elyukai/optolith-client/tree/develop/app/Schema/Hero). A complete schema is in the works; the incomplete version can also be found in the linked folder.
+As of now, there is a simple scheme for validating a hero available on [GitHub](https://github.com/elyukai/optolith-client/tree/master/app/Schema/Hero). A complete schema is in the works; the unfinished version thereof can also be found in the linked folder.
 
 ## 1.2.0
 
@@ -216,18 +216,18 @@ But now it’s time for the changelog of this version:
 
 ## 1.0.0
 
-#### New Features / Breaking Changes
+### New Features / Breaking Changes
 
 - New app name: Optolyth (long version: Optolyth Character Generator)
 - Linux 32-bit build available.
 - Applications that can be purchased using advantages or special abilities can be used for a skill specialization. They are listed in the wiki below *New Applications*, too.
 
-#### Rules/Crunch
+### Rules/Crunch
 
 - Language Specializations can be activated as an Optional Rule in the Rules tab.
 - Added missing entries for *Immunity to [poison/disease]* from **Core Rules** and **Aventuria Almanach**.
 
-#### Bug Fixes / Other
+### Bug Fixes / Other
 
 - Multiline texts are now multiline on character sheet.
 - If advantage *Stigma (Albino)* is purchased the (lists of available) hair and eye colors change.
