@@ -26,10 +26,28 @@ function $eq$less$less(f, mx) {
   return mx.then(Curry.__1(f));
 }
 
+function mapM(f, xs) {
+  if (xs) {
+    var ys = xs[1];
+    var mx = Curry._1(f, xs[0]);
+    return mx.then((function (z) {
+                  return $less$$great((function (zs) {
+                                return /* :: */[
+                                        z,
+                                        zs
+                                      ];
+                              }), mapM(f, ys));
+                }));
+  } else {
+    return Promise.resolve(/* [] */0);
+  }
+}
+
 var Monad = {
   pure: pure,
   $great$great$eq: $great$great$eq,
-  $eq$less$less: $eq$less$less
+  $eq$less$less: $eq$less$less,
+  mapM: mapM
 };
 
 function readFile(path) {

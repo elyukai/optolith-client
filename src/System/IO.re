@@ -51,11 +51,21 @@ module Functor = {
 };
 
 module Monad = {
+  open Functor;
+
   let pure = Js.Promise.resolve;
 
   let (>>=) = (mx, f) => Js.Promise.then_(f, mx);
 
   let (=<<) = (f, mx) => mx >>= f;
+
+  let rec mapM = (f, xs) =>
+    switch (xs) {
+    | [] => pure ([])
+    | [x, ...ys] =>
+      x
+      |> f >>= (z => (zs => [z, ...zs]) <$> mapM(f, ys))
+    };
 };
 
 type filePath = string;

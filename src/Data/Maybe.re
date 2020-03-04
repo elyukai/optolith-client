@@ -47,6 +47,16 @@ module Monad = {
 
   let (>>) = (x, y) => x >>= const(y);
 
+  let rec mapM = (f, xs) =>
+    switch (xs) {
+    | [] => Just([])
+    | [x, ...ys] =>
+      switch (f(x)) {
+      | Just(z) => (zs => [z, ...zs]) <$> mapM(f, ys)
+      | Nothing => Nothing
+      }
+    };
+
   let (>=>) = (f, g, x) => x->f >>= g;
 
   let join = x => x >>= id;

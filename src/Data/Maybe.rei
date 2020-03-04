@@ -47,6 +47,13 @@ module Monad: {
   let (>>): (t('a), t('b)) => t('b);
 
   /**
+   * Maps a function over all values of the list. Returns a `Just` of the
+   * results, if the function returned `Just`s for all elements. Otherwise
+   * returns `Nothing`.
+   */
+  let mapM: ('b => t('a), list('b)) => t(list('a));
+
+  /**
    * Takes a value and applies two functions that may fail (return `Nothing`).
    * Returns a `Just` of the result value or a `Nothing` if one of the functions
    * failed.

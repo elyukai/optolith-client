@@ -69,6 +69,25 @@ function $great$great(x, y) {
               }));
 }
 
+function mapM(f, xs) {
+  if (xs) {
+    var match = Curry._1(f, xs[0]);
+    if (match) {
+      var z = match[0];
+      return $less$$great((function (zs) {
+                    return /* :: */[
+                            z,
+                            zs
+                          ];
+                  }), mapM(f, xs[1]));
+    } else {
+      return /* Nothing */0;
+    }
+  } else {
+    return /* Just */[/* [] */0];
+  }
+}
+
 function $great$eq$great(f, g, x) {
   return $great$great$eq(Curry._1(f, x), g);
 }
@@ -105,6 +124,7 @@ var Monad = {
   $great$great$eq: $great$great$eq,
   $eq$less$less: $eq$less$less,
   $great$great: $great$great,
+  mapM: mapM,
   $great$eq$great: $great$eq$great,
   join: join,
   liftM2: liftM2,

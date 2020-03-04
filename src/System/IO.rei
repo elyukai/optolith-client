@@ -26,6 +26,13 @@ module Monad: {
    * action.
    */
   let (=<<): ('a => t('b), t('a)) => t('b);
+
+  /**
+   * Maps a function over all values of the list. Returns an `IO` of the
+   * results. If one of the `IO`s contains an exception, the first exception
+   * will be returned.
+   */
+  let mapM: ('b => Js.Promise.t('a), list('b)) => Js.Promise.t(list('a));
 };
 
 type filePath = string;
