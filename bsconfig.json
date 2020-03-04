@@ -2,6 +2,7 @@
   "name": "optolith-client",
   "version": "0.1.0",
   "sources": [
+    { "dir": "deploy" },
     { "dir": "src" },
     { "dir": "src/App/Actions" },
     { "dir": "src/App/Constants" },
