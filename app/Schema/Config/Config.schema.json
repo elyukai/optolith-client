@@ -16,6 +16,9 @@
         "racesSortOrder": {
           "enum": ["name", "cost"]
         },
+        "racesValueVisibility": {
+          "type": "boolean"
+        },
         "culturesSortOrder": {
           "enum": ["name", "cost"]
         },
