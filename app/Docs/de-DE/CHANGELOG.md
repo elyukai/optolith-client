@@ -1,3 +1,9 @@
+## 1.3.2
+
+- SF Kraftkontrolle hatte als Voraussetzung statt Leiteigenschaft 15 Leiteigenschaft 13. #471
+- Fehler bei Drittanbieterlizenzen behoben. #471
+- Typo im Namen des Hardas-Stils korrigiert. #469
+
 ## 1.3.1
 
 ### Fehlerbehebungen
