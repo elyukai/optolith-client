@@ -1,5 +1,12 @@
 ## 1.3.2
 
+### Fehlerbehebungen
+
+- SF *Waldritter-Stil* war nicht wählbar. #478
+- SF *Angetäuschter Angriff* hatte als Voraussetzung KK 15 statt GE 15. #481
+- Die `config.json` hat immer noch bei vielen Fehler geworfen. Das Problem sollte nun endgültig gebannt sein. #476
+- In sehr seltenen Fällen wurden Teile der Heldendatei oder die gesamte Heldendatei gelöscht. Das Schreiben von Heldendateien wurde daher komplett neu geschrieben und zusammengefasst, um weiteren Fehlern vorzubeugen. #477
+- Fehlenden Garethi-Dialekt *Nostrisch* hinzugefügt. #480
 - SF Kraftkontrolle hatte als Voraussetzung statt Leiteigenschaft 15 Leiteigenschaft 13. #471
 - Fehler bei Drittanbieterlizenzen behoben. #471
 - Typo im Namen des Hardas-Stils korrigiert. #469

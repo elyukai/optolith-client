@@ -1,5 +1,10 @@
 ## 1.3.2
 
+### Bug Fixes
+
+- The `config.json` has still thrown errors for many users. The problem should be fixed, finally. #476
+- In very rare situations parts of the heroes file or the whole heroes file have been deleted. Because of this, saving heroes has been completely rewritten and condensed to prevent further issues. #477
+- Added missing Garethi dialect *Nostrian*. #480
 - Fixed prerequisites for SA Energy Control. #471
 - Fixed third-party licenses. #471
 - Fixed disadvantages with select options could not be bought. #470
