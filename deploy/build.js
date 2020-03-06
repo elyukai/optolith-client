@@ -69,7 +69,8 @@ const config = {
     output: "dist"
   },
   files: [
-    "app/**/*"
+    "app/**/*",
+    "LICENSE"
   ],
   win: {
     target: [

@@ -9,7 +9,7 @@ import { SetCulturesSortOrderAction, SetCulturesVisibilityFilterAction } from ".
 import { SwitchDisAdvRatingVisibilityAction } from "../Actions/DisAdvActions"
 import { SetItemsSortOrderAction, SetMeleeItemTemplatesCombatTechniqueFilterAction, SetRangedItemTemplatesCombatTechniqueFilterAction } from "../Actions/EquipmentActions"
 import { SetHerolistSortOrderAction, SetHerolistVisibilityFilterAction } from "../Actions/HerolistActions"
-import { ReceiveInitialDataAction } from "../Actions/IOActions"
+import { ReceiveInitialDataAction } from "../Actions/InitializationActions"
 import { SetLiturgicalChantsSortOrderAction } from "../Actions/LiturgicalChantActions"
 import { SetProfessionsGroupVisibilityFilterAction, SetProfessionsSortOrderAction, SetProfessionsVisibilityFilterAction } from "../Actions/ProfessionActions"
 import { SetRacesSortOrderAction } from "../Actions/RaceActions"

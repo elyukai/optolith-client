@@ -69,7 +69,8 @@ const config = {
     output: "dist/insider"
   },
   files: [
-    "app/**/*"
+    "app/**/*",
+    "LICENSE"
   ],
   asarUnpack: "app/Database/**/*",
   win: {

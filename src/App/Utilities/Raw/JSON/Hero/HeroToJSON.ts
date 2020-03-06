@@ -1,7 +1,7 @@
 import { ident } from "../../../../../Data/Function"
 import { fmap, fmapF } from "../../../../../Data/Functor"
 import { isList, List } from "../../../../../Data/List"
-import { bind, elem, maybeToUndefined } from "../../../../../Data/Maybe"
+import { elem, maybeToUndefined } from "../../../../../Data/Maybe"
 import { gt } from "../../../../../Data/Num"
 import { foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from "../../../../../Data/OrderedMap"
 import { toArray } from "../../../../../Data/OrderedSet"
@@ -15,7 +15,7 @@ import { AttributeDependent } from "../../../../Models/ActiveEntries/AttributeDe
 import { Belongings } from "../../../../Models/Hero/Belongings"
 import { Energies } from "../../../../Models/Hero/Energies"
 import { HeroModel, HeroModelRecord } from "../../../../Models/Hero/HeroModel"
-import { ExtendedSkillDependent, User } from "../../../../Models/Hero/heroTypeHelpers"
+import { ExtendedSkillDependent } from "../../../../Models/Hero/heroTypeHelpers"
 import { HitZoneArmor } from "../../../../Models/Hero/HitZoneArmor"
 import { Item } from "../../../../Models/Hero/Item"
 import { PersonalData } from "../../../../Models/Hero/PersonalData"
@@ -289,7 +289,6 @@ const getPetsForSave = pipe (
 )
 
 export const convertHeroForSave =
-  (users: OrderedMap<string, User>) =>
   (hero: HeroModelRecord): RawHero => {
     const {
       dateCreated,
@@ -311,9 +310,6 @@ export const convertHeroForSave =
       locale,
     } = toObject (hero)
 
-    const maybeUser = bind (HA.player (hero))
-                           (OrderedMap.lookupF<string, User> (users))
-
     const obj: RawHero = {
       clientVersion: current_version,
       dateCreated: dateCreated .toJSON (),
@@ -321,7 +317,6 @@ export const convertHeroForSave =
       id: id (hero),
       phase,
       locale,
-      player: maybeToUndefined (maybeUser),
       name,
       avatar: maybeToUndefined (avatar),
       ap: {
@@ -376,7 +371,6 @@ export const convertHeroForSave =
 const { present } = UndoableHero.AL
 
 export const convertHeroesForSave =
-  (users: OrderedMap<string, User>) =>
   (heroes: OrderedMap<string, UndoableHeroModelRecord>) =>
-    toObjectWith (pipe (present, convertHeroForSave (users)))
+    toObjectWith (pipe (present, convertHeroForSave))
                  (heroes)

@@ -1,3 +1,9 @@
+## 1.3.2
+
+- Fixed prerequisites for SA Energy Control. #471
+- Fixed third-party licenses. #471
+- Fixed disadvantages with select options could not be bought. #470
+
 ## 1.3.1
 
 ### Bug Fixes

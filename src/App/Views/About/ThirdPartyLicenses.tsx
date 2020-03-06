@@ -14,7 +14,7 @@ export const ThirdPartyLicenses = () => {
         .then (setText)
         .catch (err => {
           console.error (err)
-          setText ("Last Changes could not be loaded")
+          setText ("Third-party licenses could not be loaded")
         })
     },
     []

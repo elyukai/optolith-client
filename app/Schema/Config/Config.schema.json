@@ -8,13 +8,16 @@
       "type": "object",
       "properties": {
         "herolistSortOrder": {
-          "enum": ["name", "dateModified"]
+          "enum": ["name", "datemodified", "dateModified"]
         },
         "herolistVisibilityFilter": {
           "enum": ["all", "own", "shared"]
         },
         "racesSortOrder": {
           "enum": ["name", "cost"]
+        },
+        "racesValueVisibility": {
+          "type": "boolean"
         },
         "culturesSortOrder": {
           "enum": ["name", "cost"]
