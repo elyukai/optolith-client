@@ -9,8 +9,10 @@ import thunk from "redux-thunk"
 import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from "./App/Actions/AcceleratorActions"
 import { ReduxDispatch } from "./App/Actions/Actions"
 import { addAlert, addErrorAlert, AlertOptions } from "./App/Actions/AlertActions"
-import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from "./App/Actions/IOActions"
+import { requestInitialData } from "./App/Actions/InitializationActions"
+import { requestClose } from "./App/Actions/IOActions"
 import { showAbout } from "./App/Actions/LocationActions"
+import { setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from "./App/Actions/UpdateActions"
 import { AppContainer } from "./App/Containers/AppContainer"
 import { AppState, AppStateRecord } from "./App/Models/AppState"
 import { appReducer } from "./App/Reducers/appReducer"
@@ -151,7 +153,7 @@ ipcRenderer.addListener ("update-available", (_event: Event, info: UpdateInfo) =
 ipcRenderer.addListener ("update-not-available", () => {
   const dispatch = store.dispatch as ReduxDispatch
 
-  dispatch (updateNotAvailable)
+  dispatch (updateNotAvailable ())
 })
 
 ipcRenderer.addListener ("download-progress", (_event: Event, progressObj: ProgressInfo) => {

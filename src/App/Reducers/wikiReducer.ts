@@ -1,5 +1,5 @@
 import { cnst, ident } from "../../Data/Function"
-import { ReceiveInitialDataAction } from "../Actions/IOActions"
+import { ReceiveInitialDataAction } from "../Actions/InitializationActions"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 
