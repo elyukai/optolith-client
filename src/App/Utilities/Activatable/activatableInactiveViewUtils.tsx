@@ -373,7 +373,6 @@ export const getIdSpecificAffectedAndDispatchProps =
                   value={maybeToUndefined (minput_text)}
                   onChange={inputHandlers.handleInput}
                   disabled={!is_text_input_required}
-                  everyKeyDown
                   />
               ),
             disabled: Just (is_text_input_required && isNothing (minput_text)),
@@ -891,7 +890,6 @@ export const getInactiveActivatableControlElements =
                         hint={input}
                         value={maybeToUndefined (minput_text)}
                         onChange={inputHandlers.handleInput}
-                        everyKeyDown
                         />
                     )
                   )
@@ -906,7 +904,6 @@ export const getInactiveActivatableControlElements =
                     value={maybeToUndefined (minput_text)}
                     onChange={inputHandlers.handleInput}
                     disabled={isNothing (minput_desc)}
-                    everyKeyDown
                     />
                 )),
             set (IACEL.secondSelectElement)

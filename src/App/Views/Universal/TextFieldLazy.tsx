@@ -5,8 +5,8 @@ import { Maybe, orN } from "../../../Data/Maybe"
 import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers"
 import { TextFieldContainer } from "./TextFieldContainer"
 
-export interface TextFieldProps {
-  autoFocus?: boolean | Maybe<boolean>
+interface Props {
+  autoFocus?: boolean
   className?: string
   countCurrent?: number
   countMax?: number
@@ -23,7 +23,7 @@ export interface TextFieldProps {
   onKeyUp? (event: InputKeyEvent): void
 }
 
-export const TextField: React.FC<TextFieldProps> = props => {
+export const TextFieldLazy: React.FC<Props> = props => {
   const {
     autoFocus,
     className,
@@ -32,21 +32,29 @@ export const TextField: React.FC<TextFieldProps> = props => {
     disabled,
     error,
     fullWidth,
+    hint,
     label,
     onChange,
     onKeyDown,
     onKeyUp,
     type = "text",
     valid,
-    value = "",
-    hint,
+    value: defaultValue = "",
   } = props
 
   const inputRef = React.useRef<HTMLInputElement | null> (null)
 
+  const [ value, setValue ] = React.useState (defaultValue)
+  const [ prevValue, setPrevValue ] = React.useState (defaultValue)
+
+  if (prevValue !== defaultValue) {
+    setValue (defaultValue)
+    setPrevValue (defaultValue)
+  }
+
   React.useEffect (
     () => {
-      if (Maybe.elem (true) (Maybe.normalize (autoFocus)) && inputRef.current !== null) {
+      if (orN (autoFocus) && inputRef.current !== null) {
         inputRef.current.focus ()
       }
     },
@@ -57,10 +65,20 @@ export const TextField: React.FC<TextFieldProps> = props => {
     React.useCallback (
       (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!orN (disabled)) {
+          setValue (e.target.value)
+        }
+      },
+      [ disabled ]
+    )
+
+  const handleBlur =
+    React.useCallback (
+      (e: React.FocusEvent<HTMLInputElement>) => {
+        if (!orN (disabled) && defaultValue !== value) {
           onChange (e.target.value)
         }
       },
-      [ disabled, onChange ]
+      [ defaultValue, disabled, onChange, value ]
     )
 
   return (
@@ -84,6 +102,7 @@ export const TextField: React.FC<TextFieldProps> = props => {
         onKeyUp={orN (disabled) ? undefined : onKeyUp}
         readOnly={disabled}
         ref={inputRef}
+        onBlur={handleBlur}
         />
     </TextFieldContainer>
   )
