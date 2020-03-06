@@ -19,7 +19,7 @@ export const TextFieldHint: React.FC<Props> =
         className={
           classListMaybe (List (
             Just ("textfield-hint"),
-            guardReplace (isFieldEmpty) ("hide")
+            guardReplace (!isFieldEmpty) ("hide")
           ))
         }
         >
