@@ -2,6 +2,10 @@
 
 ### Fehlerbehebungen
 
+- Berufsgeheimnisse aus der *Rüstkammer der Streitenden Königreiche* fehlten. #474
+- SF *Bindung des Bannschwerts* hatte keine Kosten. #490
+- *Götter & Kulte* war bei den meisten Geweihtenprofessionen auf FW 6. #475
+- Auf dem PDF wurde die Zustand/Status-Tabelle abgeschnitten, was aber nicht in der PDF-Vorschaut in Optolith der Fall war. #473
 - SF *Waldritter-Stil* war nicht wählbar. #478
 - SF *Angetäuschter Angriff* hatte als Voraussetzung KK 15 statt GE 15. #481
 - Die `config.json` hat immer noch bei vielen Fehler geworfen. Das Problem sollte nun endgültig gebannt sein. #476

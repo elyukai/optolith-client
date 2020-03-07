@@ -2,6 +2,8 @@
 
 ### Probleemoplossingen
 
+- *Religion* was on SR 6 for most of the Blessed One professions. #475
+- States were overflowing on character sheet PDF but not in Optolith. #473
 - The `config.json` has still thrown errors for many users. The problem should be fixed, finally. #476
 - In very rare situations parts of the heroes file or the whole heroes file have been deleted. Because of this, saving heroes has been completely rewritten and condensed to prevent further issues. #477
 - Added missing Garethi dialect *Nostrian*. #480
