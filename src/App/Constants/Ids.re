@@ -1,3 +1,38 @@
+[@gentype "Id"]
+type id =
+  | ExperienceLevel(int)
+  | Race(int)
+  | Culture(int)
+  | Profession(int)
+  | Attribute(int)
+  | Advantage(int)
+  | Disadvantage(int)
+  | Skill(int)
+  | CombatTechnique(int)
+  | Spell(int)
+  | Curse(int)
+  | ElvenMagicalSong(int)
+  | DominationRitual(int)
+  | MagicalMelody(int)
+  | MagicalDance(int)
+  | RogueSpell(int)
+  | AnimistForce(int)
+  | GeodeRitual(int)
+  | ZibiljaRitual(int)
+  | Cantrip(int)
+  | LiturgicalChant(int)
+  | Blessing(int)
+  | SpecialAbility(int)
+  | Item(int)
+  | EquipmentPackage(int)
+  | HitZoneArmor(int)
+  | Familiar(int)
+  | Animal(int)
+  | FocusRule(int)
+  | OptionalRule(int)
+  | Condition(int)
+  | State(int);
+
 [@gentype "SID"]
 type selectOptionId =
   | Numeric(int)

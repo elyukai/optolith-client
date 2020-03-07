@@ -6,6 +6,42 @@
 const IdsBS = require('./Ids.bs');
 
 // tslint:disable-next-line:interface-over-type-literal
+export type id = 
+    { tag: "ExperienceLevel"; value: number }
+  | { tag: "Race"; value: number }
+  | { tag: "Culture"; value: number }
+  | { tag: "Profession"; value: number }
+  | { tag: "Attribute"; value: number }
+  | { tag: "Advantage"; value: number }
+  | { tag: "Disadvantage"; value: number }
+  | { tag: "Skill"; value: number }
+  | { tag: "CombatTechnique"; value: number }
+  | { tag: "Spell"; value: number }
+  | { tag: "Curse"; value: number }
+  | { tag: "ElvenMagicalSong"; value: number }
+  | { tag: "DominationRitual"; value: number }
+  | { tag: "MagicalMelody"; value: number }
+  | { tag: "MagicalDance"; value: number }
+  | { tag: "RogueSpell"; value: number }
+  | { tag: "AnimistForce"; value: number }
+  | { tag: "GeodeRitual"; value: number }
+  | { tag: "ZibiljaRitual"; value: number }
+  | { tag: "Cantrip"; value: number }
+  | { tag: "LiturgicalChant"; value: number }
+  | { tag: "Blessing"; value: number }
+  | { tag: "SpecialAbility"; value: number }
+  | { tag: "Item"; value: number }
+  | { tag: "EquipmentPackage"; value: number }
+  | { tag: "HitZoneArmor"; value: number }
+  | { tag: "Familiar"; value: number }
+  | { tag: "Animal"; value: number }
+  | { tag: "FocusRule"; value: number }
+  | { tag: "OptionalRule"; value: number }
+  | { tag: "Condition"; value: number }
+  | { tag: "State"; value: number };
+export type Id = id;
+
+// tslint:disable-next-line:interface-over-type-literal
 export type selectOptionId = 
     { tag: "Numeric"; value: number }
   | { tag: "Skill"; value: string }
