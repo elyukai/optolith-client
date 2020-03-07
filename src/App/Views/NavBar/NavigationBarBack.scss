@@ -6,7 +6,8 @@
 	align-items: center;
 
 	> div {
-		@include size(32px);
+    width: 32px;
+    height: 32px;
 		font: 32px TDE Heroes;
 		color: var(--accent-color);
 

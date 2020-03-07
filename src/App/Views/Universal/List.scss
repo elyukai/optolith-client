@@ -90,8 +90,9 @@ ul.list-wrapper {
 		}
 
 		> .separator {
-			position: absolute;
-			@include size(12px);
+      position: absolute;
+      width: 12px;
+      height: 12px;
 			border: 1px solid var(--separator-color-transparent);
 			transform: rotate(45deg);
 			top: -30px;
@@ -124,12 +125,11 @@ ul.list-wrapper {
 		}
 
 		.avatar-wrapper {
-			$size: 48px;
-			$padding: 2px;
 			margin-right: 14px;
 			z-index: 1;
-			flex: none;
-			@include size($size);
+      flex: none;
+      width: 48px;
+      height: 48px;
 		}
 
 		> .left {
@@ -305,16 +305,16 @@ ul.list-wrapper {
 				}
 
 				&.custom-cost {
-					$distance: -5px;
+					--distance: -5px;
 
 					&::after {
-						bottom: $distance;
-						right: $distance;
+						bottom: var(--distance);
+						right: var(--distance);
 					}
 
 					&::before {
-						top: $distance;
-						left: $distance;
+						top: var(--distance);
+						left: var(--distance);
 					}
 				}
 			}
@@ -331,17 +331,17 @@ ul.list-wrapper {
 					border-color: var(--accent-color);
 				}
 
-				$distance: -1px;
+				--distance: -1px;
 
 				&::after {
-					bottom: $distance;
-					right: $distance;
+					bottom: var(--distance);
+					right: var(--distance);
 					border-width: 0 1px 1px 0;
 				}
 
 				&::before {
-					top: $distance;
-					left: $distance;
+					top: var(--distance);
+					left: var(--distance);
 					border-width: 1px 0 0 1px;
 				}
 			}

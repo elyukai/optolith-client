@@ -3,13 +3,13 @@
 
 	&::before {
 		position: absolute;
-		@include calc(width, "100% - 70px");
+		width: calc(100% - 70px);
 		height: 1px;
 		content: "";
 		background: #3c3732;
 		// background: #3a322b;
 		// background: #1f282d;
-		top: $titlebar-height;
+		top: var(--titlebar-height);
 		left: 35px;
 	}
 }

@@ -1,20 +1,139 @@
-@include font-face('Material', 'fonts/Material/MaterialIcons-Regular', normal, normal, $file-formats: ttf);
-@include font-face('TDE Heroes', 'fonts/TDE Heroes', normal, normal, $file-formats: ttf);
-@include font-face('Alegreya', 'fonts/Alegreya-Bold', 700, normal, $file-formats: ttf);
-@include font-face('Alegreya', 'fonts/Alegreya-BoldItalic', 700, italic, $file-formats: ttf);
-@include font-face('Alegreya', 'fonts/Alegreya-Regular', 400, normal, $file-formats: ttf);
-@include font-face('Alegreya SC', 'fonts/AlegreyaSC-Bold', 700, normal, $file-formats: ttf);
-@include font-face('Alegreya SC', 'fonts/AlegreyaSC-Regular', 400, normal, $file-formats: ttf);
-@include font-face('Alegreya Sans', 'fonts/AlegreyaSans-Bold', 700, normal, $file-formats: ttf);
-@include font-face('Alegreya Sans', 'fonts/AlegreyaSans-BoldItalic', 700, italic, $file-formats: ttf);
-@include font-face('Alegreya Sans', 'fonts/AlegreyaSans-ExtraBold', 900, normal, $file-formats: ttf);
-@include font-face('Alegreya Sans', 'fonts/AlegreyaSans-ExtraBoldItalic', 900, italic, $file-formats: ttf);
-@include font-face('Alegreya Sans', 'fonts/AlegreyaSans-Italic', 400, italic, $file-formats: ttf);
-@include font-face('Alegreya Sans', 'fonts/AlegreyaSans-Medium', 500, normal, $file-formats: ttf);
-@include font-face('Alegreya Sans', 'fonts/AlegreyaSans-MediumItalic', 500, italic, $file-formats: ttf);
-@include font-face('Alegreya Sans', 'fonts/AlegreyaSans-Regular', 400, normal, $file-formats: ttf);
-@include font-face('Alegreya Sans SC', 'fonts/AlegreyaSansSC-Italic', 400, italic, $file-formats: ttf);
-@include font-face('Alegreya Sans SC', 'fonts/AlegreyaSansSC-Medium', 500, normal, $file-formats: ttf);
-@include font-face('Alegreya Sans SC', 'fonts/AlegreyaSansSC-MediumItalic', 500, italic, $file-formats: ttf);
-@include font-face('Alegreya Sans SC', 'fonts/AlegreyaSansSC-Regular', 400, normal, $file-formats: ttf);
-@include font-face('Gentium Basic', 'fonts/GentiumBasic-Regular', 400, normal, $file-formats: ttf);
+@font-face {
+  font-family: "Material";
+  font-weight: normal;
+  font-style: normal;
+  src: url("fonts/Material/MaterialIcons-Regular.ttf");
+}
+
+@font-face {
+  font-family: "TDE Heroes";
+  font-weight: normal;
+  font-style: normal;
+  src: url("fonts/TDE Heroes.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya";
+  font-weight: 400;
+  font-style: normal;
+  src: url("fonts/Alegreya-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya";
+  font-weight: 700;
+  font-style: normal;
+  src: url("fonts/Alegreya-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya";
+  font-weight: 700;
+  font-style: italic;
+  src: url("fonts/Alegreya-BoldItalic.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya SC";
+  font-weight: 400;
+  font-style: normal;
+  src: url("fonts/AlegreyaSC-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya SC";
+  font-weight: 700;
+  font-style: normal;
+  src: url("fonts/AlegreyaSC-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  font-weight: 400;
+  font-style: normal;
+  src: url("fonts/AlegreyaSans-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  font-weight: 400;
+  font-style: italic;
+  src: url("fonts/AlegreyaSans-Italic.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  font-weight: 500;
+  font-style: normal;
+  src: url("fonts/AlegreyaSans-Medium.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  font-weight: 500;
+  font-style: italic;
+  src: url("fonts/AlegreyaSans-MediumItalic.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  font-weight: 700;
+  font-style: normal;
+  src: url("fonts/AlegreyaSans-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  font-weight: 700;
+  font-style: italic;
+  src: url("fonts/AlegreyaSans-BoldItalic.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  font-weight: 900;
+  font-style: normal;
+  src: url("fonts/AlegreyaSans-ExtraBold.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  font-weight: 900;
+  font-style: italic;
+  src: url("fonts/AlegreyaSans-ExtraBoldItalic.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya Sans SC";
+  font-weight: 400;
+  font-style: normal;
+  src: url("fonts/AlegreyaSansSC-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya Sans SC";
+  font-weight: 400;
+  font-style: italic;
+  src: url("fonts/AlegreyaSansSC-Italic.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya Sans SC";
+  font-weight: 500;
+  font-style: normal;
+  src: url("fonts/AlegreyaSansSC-Medium.ttf");
+}
+
+@font-face {
+  font-family: "Alegreya Sans SC";
+  font-weight: 500;
+  font-style: italic;
+  src: url("fonts/AlegreyaSansSC-MediumItalic.ttf");
+}
+
+@font-face {
+  font-family: "Gentium Basic";
+  font-weight: 400;
+  font-style: normal;
+  src: url("fonts/GentiumBasic-Regular.ttf");
+}

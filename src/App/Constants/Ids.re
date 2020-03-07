@@ -591,3 +591,10 @@ module OptionalRuleId = {
   [@gentype]
   let higherDefenseStats = "OR_17";
 };
+
+module ConditionId = {
+  [@gentype]
+  let sikaryanVerlust = "COND_11";
+  [@gentype]
+  let daemonischeAuszehrung = "COND_14";
+};

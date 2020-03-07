@@ -558,6 +558,10 @@ export const OptionalRuleId_languageSpecialization: string = IdsBS.OptionalRuleI
 
 export const OptionalRuleId_higherDefenseStats: string = IdsBS.OptionalRuleId.higherDefenseStats;
 
+export const ConditionId_sikaryanVerlust: string = IdsBS.ConditionId.sikaryanVerlust;
+
+export const ConditionId_daemonischeAuszehrung: string = IdsBS.ConditionId.daemonischeAuszehrung;
+
 export const ExperienceLevelId: {
   masterly: string; 
   inexperienced: string; 
@@ -746,6 +750,8 @@ export const DisadvantageId: {
   decreasedToughness: string; 
   personalityFlaw: string
 } = IdsBS.DisadvantageId
+
+export const ConditionId: { sikaryanVerlust: string; daemonischeAuszehrung: string } = IdsBS.ConditionId
 
 export const RaceId: {
   humans: string; 

@@ -10,8 +10,8 @@
 
 		&::before, &::after {
 			position: absolute;
-			content: "";
-			@include calc(height, "100% + 2px");
+      content: "";
+      height: calc(100% + 2px);
 			width: 1px;
 			background: var(--accent-color);
 			z-index: 10;

@@ -7,7 +7,7 @@
 
 .sheet-title {
 	flex: 1 1 100%;
-	height: 50px;
+	height: 12mm;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -18,8 +18,8 @@
 	}
 
 	p {
-		font: 17px/13px Alegreya SC;
-		margin-top: 5px;
+		font: 13pt/0.9 "Alegreya SC";
+		margin-top: 1.4mm;
 	}
 
 	img {
@@ -27,7 +27,7 @@
 		width: 3cm;
 		opacity: .2;
 		left: calc(50% - 1.5cm);
-		top: -1.5cm;
+		top: -16mm;
 	}
 }
 

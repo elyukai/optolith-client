@@ -1,5 +1,6 @@
 #avatar-change {
 	.avatar-wrapper {
-		@include size(64px);
+    width: 64px;
+    height: 64px;
 	}
 }

@@ -1,7 +1,7 @@
 import { connect } from "react-redux"
 import { join, Just } from "../../Data/Maybe"
 import { ReduxDispatch } from "../Actions/Actions"
-import * as IOActions from "../Actions/IOActions"
+import { requestPrintHeroToPDF } from "../Actions/PrintActions"
 import * as SheetActions from "../Actions/SheetActions"
 import { SpecialAbilityId } from "../Constants/Ids"
 import { AppStateRecord } from "../Models/AppState"
@@ -93,7 +93,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch) => ({
     dispatch (SheetActions.switchAttributeValueVisibility ())
   },
   async printToPDF () {
-    await dispatch (IOActions.requestPrintHeroToPDF)
+    await dispatch (requestPrintHeroToPDF ())
   },
 })
 

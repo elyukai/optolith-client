@@ -2,11 +2,11 @@ import { remote } from "electron"
 import * as fs from "fs"
 import { extname, join } from "path"
 import { handleE } from "../../Control/Exception"
-import { Either, fromLeft_, fromRight_, isLeft, isRight, Right } from "../../Data/Either"
+import { Either, fromLeft_, fromRight_, isLeft, isRight } from "../../Data/Either"
 import { flip } from "../../Data/Function"
 import { fmap } from "../../Data/Functor"
 import { over } from "../../Data/Lens"
-import { appendStr, List, notNull } from "../../Data/List"
+import { List, notNull } from "../../Data/List"
 import { alt_, bindF, elem, ensure, fromJust, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe"
 import { any, lookup, OrderedMap } from "../../Data/OrderedMap"
 import { toObject } from "../../Data/Record"
@@ -23,11 +23,11 @@ import { UISettingsState } from "../Models/UISettingsState"
 import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { heroReducer } from "../Reducers/heroReducer"
 import { user_data_path } from "../Selectors/envSelectors"
-import { getCurrentHeroId, getCurrentHeroName, getHeroes, getLocaleId, getWiki } from "../Selectors/stateSelectors"
+import { getCurrentHeroId, getHeroes, getLocaleId, getWiki } from "../Selectors/stateSelectors"
 import { getUISettingsState } from "../Selectors/uisettingsSelectors"
 import { prepareAPCache, prepareAPCacheForHero, writeCache } from "../Utilities/Cache"
 import { translate } from "../Utilities/I18n"
-import { showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils"
+import { showOpenDialog, showSaveDialog } from "../Utilities/IOUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { writeConfig } from "../Utilities/Raw/JSON/Config"
 import { parseHero } from "../Utilities/Raw/JSON/Hero"
@@ -35,7 +35,7 @@ import { convertHeroForSave } from "../Utilities/Raw/JSON/Hero/HeroToJSON"
 import { isBase64Image } from "../Utilities/RegexUtils"
 import { deleteHeroFromFile, saveAllHeroesToFile, saveHeroToFile } from "../Utilities/SaveHeroes"
 import { ReduxAction } from "./Actions"
-import { addAlert, addDefaultErrorAlert, addErrorAlert, addPrompt, AlertOptions, CustomPromptOptions, getErrorMsg, PromptButton } from "./AlertActions"
+import { addAlert, addErrorAlert, addPrompt, AlertOptions, CustomPromptOptions, getErrorMsg, PromptButton } from "./AlertActions"
 
 const UISSA = UISettingsState.A
 
@@ -490,46 +490,5 @@ export const requestClose =
       else {
         console.log ("Cancel")
       }
-    }
-  }
-
-const getDefaultPDFName = pipe (
-  getCurrentHeroName,
-  maybe ("")
-        (flip (appendStr) (".pdf"))
-)
-
-export const requestPrintHeroToPDF: ReduxAction<Promise<void>> =
-  async (dispatch, getState) => {
-    const staticData = getWiki (getState ())
-
-    const data = await windowPrintToPDF ({
-                         marginsType: 1,
-                         pageSize: "A4",
-                         printBackground: true,
-                       })
-
-    const path = await showSaveDialog ({
-                   title: translate (staticData) ("sheets.dialogs.pdfexportsavelocation.title"),
-                   defaultPath: getDefaultPDFName (getState ()),
-                   filters: [
-                     { name: "PDF", extensions: [ "pdf" ] },
-                   ],
-                 })
-
-    const res = await maybe (Promise.resolve<Either<Error, void>> (Right (undefined)))
-                            (pipe (flip (IO.writeFile) (data), handleE))
-                            (path)
-
-    if (isRight (res) && isJust (path)) {
-      await dispatch (addAlert (AlertOptions ({
-                                 message: translate (staticData) ("sheets.dialogs.pdfsaved"),
-                               })))
-    }
-    else if (isLeft (res)) {
-      await dispatch (addDefaultErrorAlert (staticData)
-                                           (translate (staticData)
-                                                      ("sheets.dialogs.pdfsaveerror.title"))
-                                           (res))
     }
   }

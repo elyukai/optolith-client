@@ -161,17 +161,17 @@
 
 	&.invalid:not(.disabled) {
 		label {
-			color: $unrecommended1;
+			color: var(--uncommon-bright-color);
 		}
 
 		> div {
 			> .value {
 				border-image: none;
-				border-color: $unrecommended2;
-				color: $unrecommended1;
+				border-color: var(--uncommon-dark-color);
+				color: var(--uncommon-bright-color);
 
 				&::before, &::after {
-					border-color: $unrecommended1 $unrecommended1 transparent transparent;
+					border-color: var(--uncommon-bright-color) var(--uncommon-bright-color) transparent transparent;
 				}
 			}
 		}

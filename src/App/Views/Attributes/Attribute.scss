@@ -74,7 +74,8 @@
 		padding: 1px;
 
 		> div {
-			@include size(45px);
+      width: 45px;
+      height: 45px;
 			text-align: center;
 			font: bold 28px/45px Alegreya Sans;
 			font-variant-numeric: lining-nums;

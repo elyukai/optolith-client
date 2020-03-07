@@ -317,6 +317,11 @@ var OptionalRuleId = {
   higherDefenseStats: "OR_17"
 };
 
+var ConditionId = {
+  sikaryanVerlust: "COND_11",
+  daemonischeAuszehrung: "COND_14"
+};
+
 exports.PhaseId = PhaseId;
 exports.ExperienceLevelId = ExperienceLevelId;
 exports.RaceId = RaceId;
@@ -331,4 +336,5 @@ exports.CombatTechniqueId = CombatTechniqueId;
 exports.SpecialAbilityId = SpecialAbilityId;
 exports.SocialStatusId = SocialStatusId;
 exports.OptionalRuleId = OptionalRuleId;
+exports.ConditionId = ConditionId;
 /* No side effect */
