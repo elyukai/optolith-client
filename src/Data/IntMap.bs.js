@@ -13,6 +13,125 @@ function foldr(f, initial, mp) {
   return Curry._3(IntMap.fold, f, mp, initial);
 }
 
+function height(x) {
+  if (x) {
+    return x[0];
+  } else {
+    return 0;
+  }
+}
+
+function slope(x) {
+  if (x) {
+    return height(x[3]) - height(x[1]) | 0;
+  } else {
+    return 0;
+  }
+}
+
+function rotateright(x) {
+  if (x) {
+    var match = x[1];
+    if (match) {
+      var t2 = match[3];
+      return /* Bin */[
+              height(t2) + 2 | 0,
+              match[1],
+              match[2],
+              /* Bin */[
+                height(t2) + 1 | 0,
+                t2,
+                x[2],
+                x[3]
+              ]
+            ];
+    } else {
+      return x;
+    }
+  } else {
+    return x;
+  }
+}
+
+function rotateleft(x) {
+  if (x) {
+    var match = x[3];
+    if (match) {
+      var t2 = match[1];
+      return /* Bin */[
+              height(t2) + 2 | 0,
+              /* Bin */[
+                height(t2) + 1 | 0,
+                x[1],
+                x[2],
+                t2
+              ],
+              match[2],
+              match[3]
+            ];
+    } else {
+      return x;
+    }
+  } else {
+    return x;
+  }
+}
+
+function rebalance(mp) {
+  if (mp) {
+    var tright = mp[3];
+    var x = mp[2];
+    var tleft = mp[1];
+    var h = mp[0];
+    var slope_main = slope(/* Bin */[
+          h,
+          tleft,
+          x,
+          tright
+        ]);
+    if (slope_main === 0 || slope_main === -1) {
+      return /* Bin */[
+              h,
+              tleft,
+              x,
+              tright
+            ];
+    } else if (slope_main === -2) {
+      return rotateright(/* Bin */[
+                  h,
+                  tleft,
+                  x,
+                  tright
+                ]);
+    } else if (slope_main === 1 && slope(tright) === 0) {
+      return rotateleft(/* Bin */[
+                  h,
+                  tleft,
+                  x,
+                  tright
+                ]);
+    } else {
+      return rotateleft(/* Bin */[
+                  h,
+                  tleft,
+                  x,
+                  rotateright(tright)
+                ]);
+    }
+  } else {
+    return /* Tip */0;
+  }
+}
+
+var Experimental = {
+  height: height,
+  slope: slope,
+  rotateright: rotateright,
+  rotateleft: rotateleft,
+  rebalance: rebalance
+};
+
 exports.IntMap = IntMap;
 exports.foldr = foldr;
+exports.Experimental = Experimental;
 /* IntMap Not a pure module */
