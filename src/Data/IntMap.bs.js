@@ -4,6 +4,9 @@
 var $$Map = require("bs-platform/lib/js/map.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Int32 = require("bs-platform/lib/js/int32.js");
+var Int$OptolithClient = require("./Int.bs.js");
+var ListH$OptolithClient = require("./ListH.bs.js");
+var Function$OptolithClient = require("./Function.bs.js");
 
 var IntMap = $$Map.Make({
       compare: Int32.compare
@@ -21,6 +24,15 @@ function height(x) {
   }
 }
 
+function bin(l, p, r) {
+  return /* Bin */[
+          Function$OptolithClient.on(Int$OptolithClient.max, height, l, r) + 1 | 0,
+          l,
+          p,
+          r
+        ];
+}
+
 function slope(x) {
   if (x) {
     return height(x[3]) - height(x[1]) | 0;
@@ -33,18 +45,7 @@ function rotateright(x) {
   if (x) {
     var match = x[1];
     if (match) {
-      var t2 = match[3];
-      return /* Bin */[
-              height(t2) + 2 | 0,
-              match[1],
-              match[2],
-              /* Bin */[
-                height(t2) + 1 | 0,
-                t2,
-                x[2],
-                x[3]
-              ]
-            ];
+      return bin(match[1], match[2], bin(match[3], x[2], x[3]));
     } else {
       return x;
     }
@@ -57,18 +58,7 @@ function rotateleft(x) {
   if (x) {
     var match = x[3];
     if (match) {
-      var t2 = match[1];
-      return /* Bin */[
-              height(t2) + 2 | 0,
-              /* Bin */[
-                height(t2) + 1 | 0,
-                x[1],
-                x[2],
-                t2
-              ],
-              match[2],
-              match[3]
-            ];
+      return bin(bin(x[1], x[2], match[1]), match[2], match[3]);
     } else {
       return x;
     }
@@ -123,12 +113,89 @@ function rebalance(mp) {
   }
 }
 
+function insert(k, x, mp) {
+  if (mp) {
+    var tright = mp[3];
+    var match = mp[2];
+    var k0 = match[0];
+    var tleft = mp[1];
+    if (k === k0) {
+      return /* Bin */[
+              mp[0],
+              tleft,
+              /* tuple */[
+                k,
+                x
+              ],
+              tright
+            ];
+    } else {
+      var x0 = match[1];
+      if (k < k0) {
+        return rebalance(bin(insert(k, x, tleft), /* tuple */[
+                        k0,
+                        x0
+                      ], tright));
+      } else {
+        return rebalance(bin(tleft, /* tuple */[
+                        k0,
+                        x0
+                      ], insert(k, x, tright)));
+      }
+    }
+  } else {
+    return /* Bin */[
+            1,
+            /* Tip */0,
+            /* tuple */[
+              k,
+              x
+            ],
+            /* Tip */0
+          ];
+  }
+}
+
+function foldr$1(f, _initial, _mp) {
+  while(true) {
+    var mp = _mp;
+    var initial = _initial;
+    if (mp) {
+      _mp = mp[1];
+      _initial = Curry._2(f, mp[2][1], foldr$1(f, initial, mp[3]));
+      continue ;
+    } else {
+      return initial;
+    }
+  };
+}
+
+function toList(mp) {
+  return foldr$1((function (x, xs) {
+                return /* :: */[
+                        x,
+                        xs
+                      ];
+              }), /* [] */0, mp);
+}
+
+function fromList(ps) {
+  return ListH$OptolithClient.Foldable.foldr((function (p, mp) {
+                return insert(p[0], p[1], mp);
+              }), /* Tip */0, ps);
+}
+
 var Experimental = {
   height: height,
+  bin: bin,
   slope: slope,
   rotateright: rotateright,
   rotateleft: rotateleft,
-  rebalance: rebalance
+  rebalance: rebalance,
+  insert: insert,
+  foldr: foldr$1,
+  toList: toList,
+  fromList: fromList
 };
 
 exports.IntMap = IntMap;

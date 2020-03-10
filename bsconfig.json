@@ -8,7 +8,6 @@
     { "dir": "src/App/Constants" },
     { "dir": "src/App/Containers" },
     { "dir": "src/App/Models" },
-    { "dir": "src/App/Models/Static" },
     { "dir": "src/App/Reducers" },
     { "dir": "src/App/Selectors" },
     { "dir": "src/App/Utilities" },
@@ -16,6 +15,7 @@
     { "dir": "src/App/Views" },
     { "dir": "src/Control" },
     { "dir": "src/Data" },
+    { "dir": "src/Data/__tests__", "type": "dev" },
     { "dir": "src/Debug" },
     { "dir": "src/System" },
     { "dir": "src/shims" }

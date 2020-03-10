@@ -211,7 +211,7 @@ export const makeLenses =
     Object.freeze (
       foldl<string, Lenses<A>> (acc => key => ({
                                  ...acc,
-                                 [key]: lens<Record<A>, A[typeof key]> (record.AL [key])
+                                 [key]: lens<Record<A>, A[typeof key]> (record.A [key])
                                                                        (setter (key)),
                                }))
                                ({} as Lenses<A>)

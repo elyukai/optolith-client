@@ -8,12 +8,16 @@ type t('a) = IntMap.t('a);
 let foldr = (f, initial, mp) => IntMap.fold(f, mp, initial);
 
 module Experimental = {
+  open Function;
+
+  type key = int;
+  type height = int;
+
   /**
-   * `Bin` includes the height, the left subtree, the (key, value) and the
-   * right subtree. The lowest key is on the left.
+   * The lowest key is on the left.
    */
   type t('a) =
-    | Bin(int, t('a), (int, 'a), t('a))
+    | Bin(height, t('a), (key, 'a), t('a))
     | Tip;
 
   /**
@@ -24,6 +28,8 @@ module Experimental = {
     | Bin(h, _, _, _) => h
     | Tip => 0
     };
+
+  let bin = (l, p, r) => Bin(on(Int.max, height, l, r) + 1, l, p, r);
 
   /**
    * Returns the slope of the passed node. The "Slope" is the difference in
@@ -63,8 +69,7 @@ module Experimental = {
    */
   let rotateright = x =>
     switch (x) {
-    | Bin(_, Bin(_, t1, x, t2), y, t3) =>
-      Bin(height(t2) + 2, t1, x, Bin(height(t2) + 1, t2, y, t3))
+    | Bin(_, Bin(_, t1, x, t2), y, t3) => bin(t1, x, bin(t2, y, t3))
     | x => x
     };
 
@@ -73,8 +78,7 @@ module Experimental = {
    */
   let rotateleft = x =>
     switch (x) {
-    | Bin(_, t1, x, Bin(_, t2, y, t3)) =>
-      Bin(height(t2) + 2, Bin(height(t2) + 1, t1, x, t2), y, t3)
+    | Bin(_, t1, x, Bin(_, t2, y, t3)) => bin(bin(t1, x, t2), y, t3)
     | x => x
     };
 
@@ -108,4 +112,35 @@ module Experimental = {
         );
       };
     };
+
+  let rec insert = (k, x, mp) =>
+    switch (mp) {
+    // if empty, create a single node with empty subtrees
+    | Tip => Bin(1, Tip, (k, x), Tip)
+    | Bin(h, tleft, (k0, x0), tright) =>
+      if (k === k0) {
+        Bin(h, tleft, (k, x), tright);
+      } else if (k < k0) {
+        rebalance(bin(insert(k, x, tleft), (k0, x0), tright));
+      } else {
+        rebalance(bin(tleft, (k0, x0), insert(k, x, tright)));
+      }
+    };
+
+  /**
+   * Right-associative fold of a structure.
+   */
+  let rec foldr = (f, initial, mp) =>
+    switch (mp) {
+    | Tip => initial
+    | Bin(_, l, (_, x), r) => foldr(f, f(x, foldr(f, initial, r)), l)
+    };
+
+  /**
+   * List of elements of a structure, from left to right.
+   */
+  let toList = mp => foldr((x, xs) => [x, ...xs], [], mp);
+
+  let fromList = ps =>
+    ListH.Foldable.foldr((p, mp) => insert(fst(p), snd(p), mp), Tip, ps);
 };

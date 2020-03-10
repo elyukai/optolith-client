@@ -1,7 +1,6 @@
 // @ts-check
 
 require("dotenv").config()
-const ftp = require ("basic-ftp")
 const Client = require ("ssh2-sftp-client")
 const fs = require ("fs")
 const path = require ("path")
