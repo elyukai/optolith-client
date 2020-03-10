@@ -165,7 +165,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </InputButtonGroup>
       <div>
         <TextFieldLazy
-          label={translate (staticData) ("personaldata.title")}
+          label={translate (staticData) ("personaldata.rank")}
           value={maybeToUndefined (PDA.title (profile))}
           onChange={changeTitle}
           />
