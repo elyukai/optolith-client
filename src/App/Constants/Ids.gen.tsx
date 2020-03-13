@@ -43,9 +43,9 @@ export type Id = id;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type selectOptionId = 
-    { tag: "Numeric"; value: number }
-  | { tag: "Skill"; value: string }
-  | { tag: "CombatTechnique"; value: string };
+    { tag: "Generic"; value: number }
+  | { tag: "Skill"; value: number }
+  | { tag: "CombatTechnique"; value: number };
 export type SID = selectOptionId;
 
 export const PhaseId_rcp: number = IdsBS.PhaseId.rcp;

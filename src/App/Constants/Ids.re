@@ -35,9 +35,9 @@ type id =
 
 [@gentype "SID"]
 type selectOptionId =
-  | Numeric(int)
-  | Skill(string)
-  | CombatTechnique(string);
+  | Generic(int)
+  | Skill(int)
+  | CombatTechnique(int);
 
 module PhaseId = {
   [@gentype]
@@ -245,6 +245,7 @@ module DisadvantageId = {
 };
 
 module SkillId = {
+  // Physical
   [@gentype]
   let flying = "TAL_1";
   [@gentype]
@@ -273,6 +274,7 @@ module SkillId = {
   let stealth = "TAL_13";
   [@gentype]
   let carousing = "TAL_14";
+  // Social
   [@gentype]
   let persuasion = "TAL_15";
   [@gentype]
@@ -291,6 +293,7 @@ module SkillId = {
   let disguise = "TAL_22";
   [@gentype]
   let willpower = "TAL_23";
+  // Nature
   [@gentype]
   let tracking = "TAL_24";
   [@gentype]
@@ -305,6 +308,7 @@ module SkillId = {
   let animalLore = "TAL_29";
   [@gentype]
   let survival = "TAL_30";
+  // Knowledge
   [@gentype]
   let gambling = "TAL_31";
   [@gentype]
@@ -329,6 +333,7 @@ module SkillId = {
   let sphereLore = "TAL_41";
   [@gentype]
   let astronomy = "TAL_42";
+  // Craft
   [@gentype]
   let alchemy = "TAL_43";
   [@gentype]

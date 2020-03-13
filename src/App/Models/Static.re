@@ -26,7 +26,7 @@ module Prerequisites = {
   };
 
   module RacePrerequisite = {
-    type raceId = oneOrMany(string);
+    type raceId = oneOrMany(int);
 
     type t = {
       id: raceId,
@@ -35,7 +35,7 @@ module Prerequisites = {
   };
 
   module CulturePrerequisite = {
-    type cultureId = oneOrMany(string);
+    type cultureId = oneOrMany(int);
 
     type t = cultureId;
   };
@@ -65,9 +65,9 @@ module Prerequisites = {
 
   module ActivatablePrerequisite = {
     type id =
-      | Advantage(string)
-      | Disadvantage(string)
-      | SpecialAbility(string);
+      | Advantage(int)
+      | Disadvantage(int)
+      | SpecialAbility(int);
 
     type t = {
       id,
@@ -80,8 +80,8 @@ module Prerequisites = {
 
   module ActivatableSkillPrerequisite = {
     type id =
-      | Spell(string)
-      | LiturgicalChant(string);
+      | Spell(int)
+      | LiturgicalChant(int);
 
     type t = {
       id,
@@ -111,11 +111,11 @@ module Prerequisites = {
 
   module IncreasablePrerequisite = {
     type id =
-      | Attribute(string)
-      | Skill(string)
-      | CombatTechnique(string)
-      | Spell(string)
-      | LiturgicalChant(string);
+      | Attribute(int)
+      | Skill(int)
+      | CombatTechnique(int)
+      | Spell(int)
+      | LiturgicalChant(int);
 
     type t = {
       id,
@@ -244,9 +244,9 @@ module Skill = {
     | Maybe;
 
   type t = {
-    id: string,
+    id: int,
     name: string,
-    check: list(string),
+    check: list(int),
     encumbrance,
     encumbranceDescription: option(string),
     gr: int,
@@ -293,7 +293,7 @@ module Advantage = {
     | PerLevel(list(int));
 
   type t = {
-    id: string,
+    id: int,
     name: string,
     cost,
     noMaxAPInfluence: bool,
@@ -318,11 +318,13 @@ module Advantage = {
   };
 };
 
-module AnimistForce = {};
+module AnimistForce = {
+  // TODO: AnimistForce
+};
 
 module Attribute = {
   type t = {
-    id: string,
+    id: int,
     name: string,
     short: string,
   };
@@ -330,24 +332,28 @@ module Attribute = {
 
 module BlessedTradition = {
   type t = {
-    id: string,
+    id: int,
     numId: int,
     name: string,
-    primary: string,
+    primary: int,
     aspects: option((int, int)),
   };
 };
 
-module Blessing = {};
+module Blessing = {
+  // TODO: Blessing
+};
 
-module Cantrip = {};
+module Cantrip = {
+  // TODO: Cantrip
+};
 
 module CombatTechnique = {
   type t = {
-    id: string,
+    id: int,
     name: string,
     ic: IC.t,
-    primary: list(string),
+    primary: list(int),
     special: option(string),
     hasNoParry: bool,
     bpr: int,
@@ -359,7 +365,7 @@ module CombatTechnique = {
 
 module Condition = {
   type t = {
-    id: string,
+    id: int,
     name: string,
     description: option(string),
     levelColumnDescription: option(string),
@@ -371,7 +377,7 @@ module Condition = {
 
 module Culture = {
   type commonProfessionId =
-    | Profession(string)
+    | Profession(int)
     | ProfessionGroup(int);
 
   type commonProfessions =
@@ -381,13 +387,13 @@ module Culture = {
 
   module IncreaseSkill = {
     type t = {
-      id: string,
+      id: int,
       value: int,
     };
   };
 
   type t = {
-    id: string,
+    id: int,
     name: string,
     culturalPackageAdventurePoints: int,
     languages: list(int),
@@ -403,16 +409,16 @@ module Culture = {
     commonMundaneProfessions: option(string),
     commonMagicProfessions: option(string),
     commonBlessedProfessions: option(string),
-    commonAdvantages: list(string),
+    commonAdvantages: list(int),
     commonAdvantagesText: option(string),
-    commonDisadvantages: list(string),
+    commonDisadvantages: list(int),
     commonDisadvantagesText: option(string),
-    uncommonAdvantages: list(string),
+    uncommonAdvantages: list(int),
     uncommonAdvantagesText: option(string),
-    uncommonDisadvantages: list(string),
+    uncommonDisadvantages: list(int),
     uncommonDisadvantagesText: option(string),
-    commonSkills: list(string),
-    uncommonSkills: list(string),
+    commonSkills: list(int),
+    uncommonSkills: list(int),
     commonNames: string,
     culturalPackageSkills: list(IncreaseSkill.t),
     src: list(SourceRef.t),
@@ -420,7 +426,9 @@ module Culture = {
   };
 };
 
-module Curse = {};
+module Curse = {
+  // TODO: Curse
+};
 
 module DerivedCharacteristic = {
   type t = {
@@ -435,7 +443,7 @@ module DerivedCharacteristic = {
 
 module Disadvantage = {
   type t = {
-    id: string,
+    id: int,
     name: string,
     cost: Advantage.cost,
     noMaxAPInfluence: bool,
@@ -460,13 +468,17 @@ module Disadvantage = {
   };
 };
 
-module DominationRitual = {};
+module DominationRitual = {
+  // TODO: DominationRitual
+};
 
-module ElvenMagicalSong = {};
+module ElvenMagicalSong = {
+  // TODO: ElvenMagicalSong
+};
 
 module EquipmentPackage = {
   type t = {
-    id: string,
+    id: int,
     name: string,
     items: StrMap.t(int),
     src: list(SourceRef.t),
@@ -476,7 +488,7 @@ module EquipmentPackage = {
 
 module ExperienceLevel = {
   type t = {
-    id: string,
+    id: int,
     name: string,
     ap: int,
     maxAttributeValue: int,
@@ -490,7 +502,7 @@ module ExperienceLevel = {
 
 module FocusRule = {
   type t = {
-    id: string,
+    id: int,
     name: string,
     level: int,
     subject: int,
@@ -500,22 +512,32 @@ module FocusRule = {
   };
 };
 
-module GeodeRitual = {};
+module GeodeRitual = {
+  // TODO: GeodeRitual
+};
 
-module Item = {};
+module Item = {
+  // TODO: Item
+};
 
-module LiturgicalChant = {};
+module LiturgicalChant = {
+  // TODO: LiturgicalChant
+};
 
-module MagicalDance = {};
+module MagicalDance = {
+  // TODO: MagicalDance
+};
 
-module MagicalMelody = {};
+module MagicalMelody = {
+  // TODO: MagicalMelody
+};
 
 module MagicalTradition = {
   type t = {
-    id: string,
+    id: int,
     numId: option(int),
     name: string,
-    primary: option(string),
+    primary: option(int),
     aeMod: option(float),
     canLearnCantrips: bool,
     canLearnSpells: bool,
@@ -526,11 +548,13 @@ module MagicalTradition = {
   };
 };
 
-module Messages = {};
+module Messages = {
+  // TODO: Messages
+};
 
 module OptionalRule = {
   type t = {
-    id: string,
+    id: int,
     name: string,
     description: string,
     src: list(SourceRef.t),
@@ -608,7 +632,7 @@ module Profession = {
 
   module IncreaseSkillList = {
     type t = {
-      id: list(string),
+      id: list(int),
       value: int,
     };
   };
@@ -707,7 +731,7 @@ module Profession = {
 
   module Variant = {
     type t = {
-      id: string,
+      id: int,
       name,
       ap: int,
       prerequisites: Prerequisites.tProfession,
@@ -717,7 +741,7 @@ module Profession = {
       skills: list(Culture.IncreaseSkill.t),
       spells: list(skillIncrease),
       liturgicalChants: list(skillIncrease),
-      blessings: list(string),
+      blessings: list(int),
       precedingText: option(string),
       fullText: option(string),
       concludingText: option(string),
@@ -726,7 +750,7 @@ module Profession = {
   };
 
   type t = {
-    id: string,
+    id: int,
     name,
     subname: option(name),
     ap: option(int),
@@ -739,14 +763,14 @@ module Profession = {
     skills: list(Culture.IncreaseSkill.t),
     spells: list(skillIncrease),
     liturgicalChants: list(skillIncrease),
-    blessings: list(string),
-    suggestedAdvantages: list(string),
+    blessings: list(int),
+    suggestedAdvantages: list(int),
     suggestedAdvantagesText: option(string),
-    suggestedDisadvantages: list(string),
+    suggestedDisadvantages: list(int),
     suggestedDisadvantagesText: option(string),
-    unsuitableAdvantages: list(string),
+    unsuitableAdvantages: list(int),
     unsuitableAdvantagesText: option(string),
-    unsuitableDisadvantages: list(string),
+    unsuitableDisadvantages: list(int),
     unsuitableDisadvantagesText: option(string),
     isVariantRequired: bool,
     variants: list(Variant.t),
@@ -781,16 +805,16 @@ module Race = {
 
   module Variant = {
     type t = {
-      id: string,
+      id: int,
       name: string,
-      commonCultures: list(string),
-      commonAdvantages: list(string),
+      commonCultures: list(int),
+      commonAdvantages: list(int),
       commonAdvantagesText: option(string),
-      commonDisadvantages: list(string),
+      commonDisadvantages: list(int),
       commonDisadvantagesText: option(string),
-      uncommonAdvantages: list(string),
+      uncommonAdvantages: list(int),
       uncommonAdvantagesText: option(string),
-      uncommonDisadvantages: list(string),
+      uncommonDisadvantages: list(int),
       uncommonDisadvantagesText: option(string),
       hairColors: list(int),
       eyeColors: list(int),
@@ -800,30 +824,30 @@ module Race = {
   };
 
   type t = {
-    id: string,
+    id: int,
     name: string,
     ap: int,
     lp: int,
     spi: int,
     tou: int,
     mov: int,
-    attributeAdjustments: list((string, int)),
-    attributeAdjustmentsSelection: (int, list(string)),
+    attributeAdjustments: IntMap.t(int),
+    attributeAdjustmentsSelection: (int, list(int)),
     attributeAdjustmentsText: string,
-    commonCultures: list(string),
-    automaticAdvantages: list(string),
+    commonCultures: list(int),
+    automaticAdvantages: list(int),
     automaticAdvantagesText: option(string),
-    stronglyRecommendedAdvantages: list(string),
+    stronglyRecommendedAdvantages: list(int),
     stronglyRecommendedAdvantagesText: option(string),
-    stronglyRecommendedDisadvantages: list(string),
+    stronglyRecommendedDisadvantages: list(int),
     stronglyRecommendedDisadvantagesText: option(string),
-    commonAdvantages: list(string),
+    commonAdvantages: list(int),
     commonAdvantagesText: option(string),
-    commonDisadvantages: list(string),
+    commonDisadvantages: list(int),
     commonDisadvantagesText: option(string),
-    uncommonAdvantages: list(string),
+    uncommonAdvantages: list(int),
     uncommonAdvantagesText: option(string),
-    uncommonDisadvantages: list(string),
+    uncommonDisadvantages: list(int),
     uncommonDisadvantagesText: option(string),
     hairColors: option(list(int)),
     eyeColors: option(list(int)),
@@ -837,7 +861,9 @@ module Race = {
   };
 };
 
-module RogueSpell = {};
+module RogueSpell = {
+  // TODO: RogueSpell
+};
 
 module SkillGroup = {
   type t = {
@@ -847,13 +873,17 @@ module SkillGroup = {
   };
 };
 
-module SpecialAbility = {};
+module SpecialAbility = {
+  // TODO: SpecialAbility
+};
 
-module Spell = {};
+module Spell = {
+  // TODO: Spell
+};
 
 module State = {
   type t = {
-    id: string,
+    id: int,
     name: string,
     description: string,
     src: list(SourceRef.t),
@@ -861,7 +891,9 @@ module State = {
   };
 };
 
-module ZibiljaRitual = {};
+module ZibiljaRitual = {
+  // TODO: ZibiljaRitual
+};
 
 type t = {
   // advantages: StrMap.t(Advantage.t),
