@@ -187,36 +187,39 @@ module Prerequisites = {
     levels: IntMap.t(t),
   };
 
-  type overwritePrerequisite =
+  [@genType "OverridePrerequisite"]
+  type overridePrerequisite =
     | Hide
     | ReplaceWith(string);
 
+  [@genType]
   type tIndex = {
-    sex: option(overwritePrerequisite),
-    race: option(overwritePrerequisite),
-    culture: option(overwritePrerequisite),
-    pact: option(overwritePrerequisite),
-    social: option(overwritePrerequisite),
-    primaryAttribute: option(overwritePrerequisite),
-    activatable: IntMap.t(overwritePrerequisite),
-    activatableMultiEntry: IntMap.t(overwritePrerequisite),
-    activatableMultiSelect: IntMap.t(overwritePrerequisite),
-    increasable: IntMap.t(overwritePrerequisite),
-    increasableMultiEntry: IntMap.t(overwritePrerequisite),
+    sex: option(overridePrerequisite),
+    race: option(overridePrerequisite),
+    culture: option(overridePrerequisite),
+    pact: option(overridePrerequisite),
+    social: option(overridePrerequisite),
+    primaryAttribute: option(overridePrerequisite),
+    activatable: IntMap.t(overridePrerequisite),
+    activatableMultiEntry: IntMap.t(overridePrerequisite),
+    activatableMultiSelect: IntMap.t(overridePrerequisite),
+    increasable: IntMap.t(overridePrerequisite),
+    increasableMultiEntry: IntMap.t(overridePrerequisite),
   };
 
+  [@genType]
   type tIndexWithLevel = {
-    sex: option(overwritePrerequisite),
-    race: option(overwritePrerequisite),
-    culture: option(overwritePrerequisite),
-    pact: option(overwritePrerequisite),
-    social: option(overwritePrerequisite),
-    primaryAttribute: option(overwritePrerequisite),
-    activatable: IntMap.t(overwritePrerequisite),
-    activatableMultiEntry: IntMap.t(overwritePrerequisite),
-    activatableMultiSelect: IntMap.t(overwritePrerequisite),
-    increasable: IntMap.t(overwritePrerequisite),
-    increasableMultiEntry: IntMap.t(overwritePrerequisite),
+    sex: option(overridePrerequisite),
+    race: option(overridePrerequisite),
+    culture: option(overridePrerequisite),
+    pact: option(overridePrerequisite),
+    social: option(overridePrerequisite),
+    primaryAttribute: option(overridePrerequisite),
+    activatable: IntMap.t(overridePrerequisite),
+    activatableMultiEntry: IntMap.t(overridePrerequisite),
+    activatableMultiSelect: IntMap.t(overridePrerequisite),
+    increasable: IntMap.t(overridePrerequisite),
+    increasableMultiEntry: IntMap.t(overridePrerequisite),
     levels: IntMap.t(tIndex),
   };
 };

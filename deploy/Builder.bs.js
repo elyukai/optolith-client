@@ -47,20 +47,26 @@ function publishToServer(channel, os) {
   if (channel) {
     switch (os) {
       case /* Windows */0 :
+          (/^OptolithInsiderSetup_(.+)\.exe$/);
           break;
       case /* OSX */1 :
+          (/^OptolithInsider_(.+)\.(?:zip|dmg)$/);
           break;
       case /* Linux */2 :
+          (/^OptolithInsider_(.+)\.(?:AppImage|tar\.gz)$/);
           break;
       
     }
   } else {
     switch (os) {
       case /* Windows */0 :
+          (/^OptolithSetup_(.+)\.exe$/);
           break;
       case /* OSX */1 :
+          (/^Optolith_(.+)\.(?:zip|dmg)$/);
           break;
       case /* Linux */2 :
+          (/^Optolith_(.+)\.(?:AppImage|tar\.gz)$/);
           break;
       
     }

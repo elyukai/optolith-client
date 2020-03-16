@@ -4,6 +4,7 @@ import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Category } from "../../Constants/Categories"
 import { Item } from "../Hero/Item"
+import { OverridePrerequisite } from "../Static.gen"
 import { CultureCombined } from "../View/CultureCombined"
 import { ProfessionCombined } from "../View/ProfessionCombined"
 import { RaceCombined } from "../View/RaceCombined"
@@ -176,6 +177,26 @@ export type LevelAwarePrerequisites =
   ActivatablePrerequisites |
   OrderedMap<number, ActivatablePrerequisites>
 
+
+type Prerequisites_tIndex = Readonly<{
+  sex?: OverridePrerequisite
+  race?: OverridePrerequisite
+  culture?: OverridePrerequisite
+  pact?: OverridePrerequisite
+  social?: OverridePrerequisite
+  primaryAttribute?: OverridePrerequisite
+  activatable: OrderedMap<number, OverridePrerequisite>
+  activatableMultiEntry: OrderedMap<number, OverridePrerequisite>
+  activatableMultiSelect: OrderedMap<number, OverridePrerequisite>
+  increasable: OrderedMap<number, OverridePrerequisite>
+  increasableMultiEntry: OrderedMap<number, OverridePrerequisite>
+}>
+
+
+export type PrerequisitesIndex = Readonly<Prerequisites_tIndex & {
+  levels: OrderedMap<number, Prerequisites_tIndex>
+}>
+
 export interface ActivatableBase {
   id: string
   name: string
@@ -188,7 +209,7 @@ export interface ActivatableBase {
   /**
    * 0-based index as key!
    */
-  prerequisitesTextIndex: OrderedMap<number, string | false>
+  prerequisitesTextIndex: PrerequisitesIndex
   prerequisitesTextStart: Maybe<string>
   prerequisitesTextEnd: Maybe<string>
   tiers: Maybe<number>
