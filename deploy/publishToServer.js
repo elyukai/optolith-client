@@ -25,13 +25,13 @@ const semver = require ("semver");
  */
 const publishToServer =
   async (channel, os) => {
-    // if (channel !== "stable" && channel !== "insider") {
-    //   throw new TypeError (`publishToServer requires a specified channel ("stable" or "insider"), but it received ${channel .toString ()}`)
-    // }
+    if (channel !== "stable" && channel !== "insider") {
+      throw new TypeError (`publishToServer requires a specified channel ("stable" or "insider"), but it received ${channel}`)
+    }
 
-    // if (os !== "win" && os !== "osx" && os !== "linux") {
-    //   throw new TypeError (`publishToServer requires a specified OS ("win", "osx" or "linux"), but it received ${os .toString ()}`)
-    // }
+    if (os !== "win" && os !== "osx" && os !== "linux") {
+      throw new TypeError (`publishToServer requires a specified OS ("win", "osx" or "linux"), but it received ${os}`)
+    }
 
     const subFolder = os === "win" ? "win" : os === "linux" ? "linux" : "mac"
 
@@ -64,7 +64,7 @@ const publishToServer =
       ? os === "win"
         ? /**
         * @param {string} v Version
-        */ v => [`OptolithInsiderSetup_${v}.exe`]
+        */ v => [`OptolithInsiderSetup_${v}.exe`, `OptolithInsiderSetup_${v}.exe.blockmap`]
         : os === "linux"
         ? /**
         * @param {string} v Version
@@ -75,7 +75,7 @@ const publishToServer =
       : os === "win"
         ? /**
         * @param {string} v Version
-        */ v => [`OptolithSetup_${v}.exe`]
+        */ v => [`OptolithSetup_${v}.exe`, `OptolithSetup_${v}.exe.blockmap`]
         : os === "linux"
         ? /**
         * @param {string} v Version
