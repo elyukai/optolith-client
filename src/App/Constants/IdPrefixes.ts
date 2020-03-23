@@ -14,7 +14,6 @@ export enum IdPrefixes {
   ITEM = "ITEM",
   ITEM_TEMPLATE = "ITEMTPL",
   LITURGICAL_CHANTS = "LITURGY",
-  PET = "PET",
   PROFESSION_VARIANTS = "PV",
   PROFESSIONS = "P",
   RACE_VARIANTS = "RV",
@@ -22,6 +21,13 @@ export enum IdPrefixes {
   SPECIAL_ABILITIES = "SA",
   SPELLS = "SPELL",
   SKILLS = "TAL",
+  EQUIPMENT_PACKAGE = "ITEMPKG",
+  FAMILIAR = "PET",
+  ANIMAL = "PET",
+  FOCUS_RULE = "FR",
+  OPTIONAL_RULE = "OR",
+  CONDITION = "COND",
+  STATE = "STATE",
 }
 
 type IdPrefixesByCategory = {

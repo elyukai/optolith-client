@@ -13,7 +13,7 @@
   "dependencies": {
     "@glennsl/bs-json": "5.0.2",
     "ajv": "6.11.0",
-    "bs-platform": "7.2.1",
+    "bs-platform": "7.2.2",
     "electron-log": "4.0.7",
     "electron-updater": "4.2.4",
     "electron-window-state": "5.0.3",
@@ -26,6 +26,7 @@
     "react-portal": "4.2.1",
     "react-redux": "7.2.0",
     "react-textfit": "1.1.0",
+    "reason-react": "0.7.0",
     "redux": "4.0.5",
     "redux-thunk": "2.3.0",
     "remark-breaks": "1.0.3",
@@ -36,7 +37,7 @@
     "yaml": "1.8.0"
   },
   "devDependencies": {
-    "@glennsl/bs-jest": "0.4.10",
+    "@glennsl/bs-jest": "^0.5.0",
     "@types/classnames": "2.2.10",
     "@types/jest": "25.1.4",
     "@types/mousetrap": "1.6.3",
@@ -59,7 +60,7 @@
     "eslint-plugin-react": "7.19.0",
     "eslint-plugin-react-hooks": "2.5.0",
     "fs-extra": "8.1.0",
-    "gentype": "3.14.0",
+    "gentype": "3.16.0",
     "jest": "25.1.0",
     "madge": "3.8.0",
     "sass": "1.26.2",

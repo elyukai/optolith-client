@@ -10,5 +10,10 @@ function max(x, y) {
   }
 }
 
+function show(x) {
+  return x.toString();
+}
+
 exports.max = max;
+exports.show = show;
 /* No side effect */

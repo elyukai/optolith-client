@@ -1,4 +1,7 @@
+open GenericHelpers;
+
 module SourceRef = {
+  [@genType "SourceRef"]
   type t = {
     id: string,
     page: (int, int),
@@ -6,6 +9,7 @@ module SourceRef = {
 };
 
 module Erratum = {
+  [@genType "Erratum"]
   type t = {
     date: Js.Date.t,
     description: string,
@@ -13,21 +17,20 @@ module Erratum = {
 };
 
 module Prerequisites = {
-  type oneOrMany('a) =
-    | Single('a)
-    | OneOf(list('a));
-
   module SexPrerequisite = {
+    [@genType "Sex"]
     type sex =
       | Male
       | Female;
 
+    [@genType "SexPrerequisite"]
     type t = sex;
   };
 
   module RacePrerequisite = {
-    type raceId = oneOrMany(int);
+    type raceId = oneOrManyArr(int);
 
+    [@genType "RacePrerequisite"]
     type t = {
       id: raceId,
       active: bool,
@@ -35,19 +38,22 @@ module Prerequisites = {
   };
 
   module CulturePrerequisite = {
-    type cultureId = oneOrMany(int);
+    type cultureId = oneOrManyArr(int);
 
+    [@genType "CulturePrerequisite"]
     type t = cultureId;
   };
 
   module SocialPrerequisite = {
+    [@genType "SocialPrerequisite"]
     type t = int;
   };
 
   module PactPrerequisite = {
+    [@genType "PactPrerequisite"]
     type t = {
       category: int,
-      domain: option(oneOrMany(int)),
+      domain: option(oneOrManyArr(int)),
       level: option(int),
     };
   };
@@ -57,6 +63,7 @@ module Prerequisites = {
       | Magical
       | Blessed;
 
+    [@genType "PrimaryAttributePrerequisite"]
     type t = {
       value: int,
       scope: primaryAttributeType,
@@ -69,6 +76,7 @@ module Prerequisites = {
       | Disadvantage(int)
       | SpecialAbility(int);
 
+    [@genType "ActivatablePrerequisite"]
     type t = {
       id,
       active: bool,
@@ -83,6 +91,7 @@ module Prerequisites = {
       | Spell(int)
       | LiturgicalChant(int);
 
+    [@genType "ActivatableSkillPrerequisite"]
     type t = {
       id,
       active: bool,
@@ -90,8 +99,9 @@ module Prerequisites = {
   };
 
   module ActivatableMultiEntryPrerequisite = {
+    [@genType "ActivatableMultiEntryPrerequisite"]
     type t = {
-      id: list(ActivatablePrerequisite.id),
+      id: array(ActivatablePrerequisite.id),
       active: bool,
       sid: option(Ids.selectOptionId),
       sid2: option(Ids.selectOptionId),
@@ -100,10 +110,11 @@ module Prerequisites = {
   };
 
   module ActivatableMultiSelectPrerequisite = {
+    [@genType "ActivatableMultiSelectPrerequisite"]
     type t = {
       id: ActivatablePrerequisite.id,
       active: bool,
-      sid: list(Ids.selectOptionId),
+      sid: array(Ids.selectOptionId),
       sid2: option(Ids.selectOptionId),
       tier: option(int),
     };
@@ -117,6 +128,7 @@ module Prerequisites = {
       | Spell(int)
       | LiturgicalChant(int);
 
+    [@genType "IncreasablePrerequisite"]
     type t = {
       id,
       value: int,
@@ -124,8 +136,9 @@ module Prerequisites = {
   };
 
   module IncreasableMultiEntryPrerequisite = {
+    [@genType "IncreasableMultiEntryPrerequisite"]
     type t = {
-      id: list(IncreasablePrerequisite.id),
+      id: array(IncreasablePrerequisite.id),
       value: int,
     };
   };
@@ -134,10 +147,11 @@ module Prerequisites = {
     sex: option(SexPrerequisite.t),
     race: option(RacePrerequisite.t),
     culture: option(CulturePrerequisite.t),
-    activatable: list(ActivatablePrerequisite.t),
-    increasable: list(IncreasablePrerequisite.t),
+    activatable: array(ActivatablePrerequisite.t),
+    increasable: array(IncreasablePrerequisite.t),
   };
 
+  [@genType "Prerequisites"]
   type t = {
     sex: option(SexPrerequisite.t),
     race: option(RacePrerequisite.t),
@@ -145,11 +159,11 @@ module Prerequisites = {
     pact: option(PactPrerequisite.t),
     social: option(SocialPrerequisite.t),
     primaryAttribute: option(PrimaryAttributePrerequisite.t),
-    activatable: list(ActivatablePrerequisite.t),
-    activatableMultiEntry: list(ActivatableMultiEntryPrerequisite.t),
-    activatableMultiSelect: list(ActivatableMultiSelectPrerequisite.t),
-    increasable: list(IncreasablePrerequisite.t),
-    increasableMultiEntry: list(IncreasableMultiEntryPrerequisite.t),
+    activatable: array(ActivatablePrerequisite.t),
+    activatableMultiEntry: array(ActivatableMultiEntryPrerequisite.t),
+    activatableMultiSelect: array(ActivatableMultiSelectPrerequisite.t),
+    increasable: array(IncreasablePrerequisite.t),
+    increasableMultiEntry: array(IncreasableMultiEntryPrerequisite.t),
   };
 
   type tWithLevel = {
@@ -159,31 +173,27 @@ module Prerequisites = {
     pact: option(PactPrerequisite.t),
     social: option(SocialPrerequisite.t),
     primaryAttribute: option(PrimaryAttributePrerequisite.t),
-    activatable: list(ActivatablePrerequisite.t),
-    activatableMultiEntry: list(ActivatableMultiEntryPrerequisite.t),
-    activatableMultiSelect: list(ActivatableMultiSelectPrerequisite.t),
-    increasable: list(IncreasablePrerequisite.t),
-    increasableMultiEntry: list(IncreasableMultiEntryPrerequisite.t),
+    activatable: array(ActivatablePrerequisite.t),
+    activatableMultiEntry: array(ActivatableMultiEntryPrerequisite.t),
+    activatableMultiSelect: array(ActivatableMultiSelectPrerequisite.t),
+    increasable: array(IncreasablePrerequisite.t),
+    increasableMultiEntry: array(IncreasableMultiEntryPrerequisite.t),
     levels: IntMap.t(t),
   };
 
-  type commonSuggestedByRCP =
-    | Common
-    | Uncommon;
-
   type tWithLevelDisAdv = {
-    commonSuggestedByRCP,
+    commonSuggestedByRCP: bool,
     sex: option(SexPrerequisite.t),
     race: option(RacePrerequisite.t),
     culture: option(CulturePrerequisite.t),
     pact: option(PactPrerequisite.t),
     social: option(SocialPrerequisite.t),
     primaryAttribute: option(PrimaryAttributePrerequisite.t),
-    activatable: list(ActivatablePrerequisite.t),
-    activatableMultiEntry: list(ActivatableMultiEntryPrerequisite.t),
-    activatableMultiSelect: list(ActivatableMultiSelectPrerequisite.t),
-    increasable: list(IncreasablePrerequisite.t),
-    increasableMultiEntry: list(IncreasableMultiEntryPrerequisite.t),
+    activatable: array(ActivatablePrerequisite.t),
+    activatableMultiEntry: array(ActivatableMultiEntryPrerequisite.t),
+    activatableMultiSelect: array(ActivatableMultiSelectPrerequisite.t),
+    increasable: array(IncreasablePrerequisite.t),
+    increasableMultiEntry: array(IncreasableMultiEntryPrerequisite.t),
     levels: IntMap.t(t),
   };
 
@@ -192,7 +202,6 @@ module Prerequisites = {
     | Hide
     | ReplaceWith(string);
 
-  [@genType]
   type tIndex = {
     sex: option(overridePrerequisite),
     race: option(overridePrerequisite),
@@ -207,7 +216,6 @@ module Prerequisites = {
     increasableMultiEntry: IntMap.t(overridePrerequisite),
   };
 
-  [@genType]
   type tIndexWithLevel = {
     sex: option(overridePrerequisite),
     race: option(overridePrerequisite),

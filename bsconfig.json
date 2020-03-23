@@ -13,6 +13,7 @@
     { "dir": "src/App/Utilities" },
     { "dir": "src/App/Utilities/__tests__", "type": "dev" },
     { "dir": "src/App/Views" },
+    { "dir": "src/App/Views/Universal" },
     { "dir": "src/Control" },
     { "dir": "src/Data" },
     { "dir": "src/Data/__tests__", "type": "dev" },
@@ -27,8 +28,12 @@
   "suffix": ".bs.js",
   "bs-dependencies": [
     "@glennsl/bs-json",
-    "@glennsl/bs-jest"
+    "@glennsl/bs-jest",
+    "reason-react"
   ],
+  "reason": {
+    "react-jsx": 3
+  },
   "warnings": {
     "error" : "+101"
   },

@@ -185,12 +185,14 @@ let catMaybes = xs =>
 let mapMaybe = (f, xs) =>
   List.fold_right(maybe(id, (x, xs) => [x, ...xs]) <- f, xs, []);
 
+[@gentype]
 let maybeToOption = mx =>
   switch (mx) {
   | Just(x) => Some(x)
   | Nothing => None
   };
 
+[@gentype]
 let optionToMaybe = mx =>
   switch (mx) {
   | Some(x) => Just(x)

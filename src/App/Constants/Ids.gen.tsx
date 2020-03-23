@@ -42,11 +42,49 @@ export type id =
 export type Id = id;
 
 // tslint:disable-next-line:interface-over-type-literal
+export type activatableId = 
+    { tag: "Advantage"; value: number }
+  | { tag: "Disadvantage"; value: number }
+  | { tag: "SpecialAbility"; value: number };
+export type ActivatableId = activatableId;
+
+// tslint:disable-next-line:interface-over-type-literal
+export type activatableAndSkillId = 
+    { tag: "Advantage"; value: number }
+  | { tag: "Disadvantage"; value: number }
+  | { tag: "SpecialAbility"; value: number }
+  | { tag: "Spell"; value: number }
+  | { tag: "LiturgicalChant"; value: number };
+export type ActivatableAndSkillId = activatableAndSkillId;
+
+// tslint:disable-next-line:interface-over-type-literal
+export type activatableSkillId = 
+    { tag: "Spell"; value: number }
+  | { tag: "LiturgicalChant"; value: number };
+export type ActivatableSkillId = activatableSkillId;
+
+// tslint:disable-next-line:interface-over-type-literal
+export type skillId = 
+    { tag: "Skill"; value: number }
+  | { tag: "CombatTechnique"; value: number };
+export type SkillId = skillId;
+
+// tslint:disable-next-line:interface-over-type-literal
 export type selectOptionId = 
     { tag: "Generic"; value: number }
   | { tag: "Skill"; value: number }
-  | { tag: "CombatTechnique"; value: number };
-export type SID = selectOptionId;
+  | { tag: "CombatTechnique"; value: number }
+  | { tag: "Spell"; value: number }
+  | { tag: "Cantrip"; value: number }
+  | { tag: "LiturgicalChant"; value: number }
+  | { tag: "Blessing"; value: number };
+export type SelectOptionId = selectOptionId;
+
+// tslint:disable-next-line:interface-over-type-literal
+export type hitZoneArmorZoneItemId = 
+    { tag: "Template"; value: number }
+  | { tag: "Custom"; value: number };
+export type HitZoneArmorZoneItemId = hitZoneArmorZoneItemId;
 
 export const PhaseId_rcp: number = IdsBS.PhaseId.rcp;
 

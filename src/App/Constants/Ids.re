@@ -33,11 +33,44 @@ type id =
   | Condition(int)
   | State(int);
 
-[@gentype "SID"]
+[@gentype "ActivatableId"]
+type activatableId =
+  | Advantage(int)
+  | Disadvantage(int)
+  | SpecialAbility(int);
+
+[@gentype "ActivatableAndSkillId"]
+type activatableAndSkillId =
+  | Advantage(int)
+  | Disadvantage(int)
+  | SpecialAbility(int)
+  | Spell(int)
+  | LiturgicalChant(int);
+
+[@gentype "ActivatableSkillId"]
+type activatableSkillId =
+  | Spell(int)
+  | LiturgicalChant(int);
+
+[@gentype "SkillId"]
+type skillId =
+  | Skill(int)
+  | CombatTechnique(int);
+
+[@gentype "SelectOptionId"]
 type selectOptionId =
   | Generic(int)
   | Skill(int)
-  | CombatTechnique(int);
+  | CombatTechnique(int)
+  | Spell(int)
+  | Cantrip(int)
+  | LiturgicalChant(int)
+  | Blessing(int);
+
+[@gentype "HitZoneArmorZoneItemId"]
+type hitZoneArmorZoneItemId =
+  | Template(int)
+  | Custom(int);
 
 module PhaseId = {
   [@gentype]

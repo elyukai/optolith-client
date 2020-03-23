@@ -1,7 +1,9 @@
+[@gentype "Maybe"]
 type t('a) =
   | Just('a)
   | Nothing;
 
+[@gentype "Maybe_"]
 type maybe('a) = t('a);
 
 module Functor: {

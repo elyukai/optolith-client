@@ -1,6 +1,6 @@
 import { List } from "../../../Data/List"
 import { Nothing } from "../../../Data/Maybe"
-import { OrderedMap } from "../../../Data/OrderedMap"
+import { empty } from "../../../Data/OrderedMap"
 import { fromDefault, makeLenses, Record } from "../../../Data/Record"
 import { Category } from "../../Constants/Categories"
 import { AdvantageDisadvantageBase, EntryWithCategory } from "./wikiTypeHelpers"
@@ -21,7 +21,14 @@ export const Disadvantage =
                 max: Nothing,
                 prerequisites: List.empty,
                 prerequisitesText: Nothing,
-                prerequisitesTextIndex: OrderedMap.empty,
+                prerequisitesTextIndex: {
+                  activatable: empty,
+                  activatableMultiEntry: empty,
+                  activatableMultiSelect: empty,
+                  increasable: empty,
+                  increasableMultiEntry: empty,
+                  levels: empty,
+                },
                 prerequisitesTextStart: Nothing,
                 prerequisitesTextEnd: Nothing,
                 tiers: Nothing,
