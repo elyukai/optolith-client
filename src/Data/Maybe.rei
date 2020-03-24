@@ -58,6 +58,7 @@ module Monad: {
   /**
    * Removes one level of monadic structure.
    */
+  [@genType]
   let join: t(t('a)) => t('a);
 
   /**

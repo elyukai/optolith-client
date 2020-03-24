@@ -12,6 +12,7 @@
     { "dir": "src/App/Selectors" },
     { "dir": "src/App/Utilities" },
     { "dir": "src/App/Utilities/__tests__", "type": "dev" },
+    { "dir": "src/App/Utilities/YAML" },
     { "dir": "src/App/Views" },
     { "dir": "src/App/Views/Universal" },
     { "dir": "src/Control" },

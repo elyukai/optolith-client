@@ -2,11 +2,12 @@
 'use strict';
 
 var $$Set = require("bs-platform/lib/js/set.js");
-var Int32 = require("bs-platform/lib/js/int32.js");
+var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 
-var IntSet = $$Set.Make({
-      compare: Int32.compare
+var compare = Caml_obj.caml_compare;
+
+$$Set.Make({
+      compare: compare
     });
 
-exports.IntSet = IntSet;
-/* IntSet Not a pure module */
+/*  Not a pure module */

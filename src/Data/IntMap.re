@@ -1,16 +1,264 @@
-module IntMap = Map.Make(Int32);
+type key = int;
+
+module IntMap =
+  Map.Make({
+    type t = key;
+    let compare = compare;
+  });
 
 type t('a) = IntMap.t('a);
 
-/**
- * Right-associative fold of a structure.
- */
-let foldr = (f, initial, mp) => IntMap.fold(f, mp, initial);
+type intmap('a) = t('a);
+
+module Foldable = {
+  open Function;
+
+  let foldr = (f, initial, mp) =>
+    IntMap.fold((_, v, acc) => f(v, acc), mp, initial);
+
+  let foldl = (f, initial, mp) =>
+    IntMap.fold((_, v, acc) => f(acc, v), mp, initial);
+
+  let toList = IntMap.bindings;
+
+  let null = mp => IntMap.is_empty(mp);
+
+  let length = IntMap.cardinal;
+
+  let elem = (e, mp) => IntMap.exists((_, x) => e == x, mp);
+
+  let sum = mp => foldr((+), 0, mp);
+
+  let product = mp => foldr(( * ), 1, mp);
+
+  let maximum = mp => foldr(Js.Math.max_int, Js.Int.min, mp);
+
+  let minimum = mp => foldr(Js.Math.min_int, Js.Int.max, mp);
+
+  let concat = mp => foldl(List.append, [], mp);
+
+  let concatMap = (f, mp) =>
+    IntMap.fold(
+      (_, v, acc) => IntMap.union((_, x, _) => Some(x), acc, f(v)),
+      mp,
+      IntMap.empty,
+    );
+
+  let con = mp => IntMap.for_all(const(id), mp);
+
+  let dis = mp => !IntMap.for_all(const((!)), mp);
+
+  let any = (pred, mp) => !IntMap.for_all((_, x) => x |> pred |> (!), mp);
+
+  let all = (pred, mp) => IntMap.for_all((_, x) => x |> pred, mp);
+
+  let notElem = (e, mp) => !elem(e, mp);
+
+  let find = (pred, mp) =>
+    IntMap.find_first_opt(key => key |> flip(IntMap.find, mp) |> pred, mp)
+    |> Maybe.optionToMaybe
+    |> Maybe.Functor.(<$>)(snd);
+};
+
+// QUERY
+
+let size = IntMap.cardinal;
+
+let member = IntMap.mem;
+
+let notMember = (key, mp) => !member(key, mp);
+
+let lookup = (key, mp) =>
+  IntMap.find_first_opt(k => k == key, mp)
+  |> Maybe.optionToMaybe
+  |> Maybe.Functor.(<$>)(snd);
+
+let findWithDefault = (def, key, mp) =>
+  mp |> lookup(key) |> Maybe.fromMaybe(def);
+
+// CONSTRUCTION
+
+let empty = IntMap.empty;
+
+let singleton = IntMap.singleton;
+
+// INSERTION
+
+let insert = IntMap.add;
+
+let insertWith = (f, key, value, mp) =>
+  insert(key, Maybe.maybe(value, f(value), lookup(key, mp)), mp);
+
+let insertWithKey = (f, key, value, mp) =>
+  insert(key, Maybe.maybe(value, f(key, value), lookup(key, mp)), mp);
+
+let insertLookupWithKey = (f, key, value, mp) => {
+  let old = lookup(key, mp);
+
+  (old, insert(key, Maybe.maybe(value, f(key, value), old), mp));
+};
+
+// DELETE/UPDATE
+
+let delete = IntMap.remove;
+
+let adjust = (f, key, mp) =>
+  IntMap.update(
+    key,
+    mx =>
+      switch (mx) {
+      | Some(x) => Some(f(x))
+      | None => None
+      },
+    mp,
+  );
+
+let adjustWithKey = (f, key, mp) =>
+  IntMap.update(
+    key,
+    mx =>
+      switch (mx) {
+      | Some(x) => Some(f(key, x))
+      | None => None
+      },
+    mp,
+  );
+
+let update = (f, key, mp) =>
+  IntMap.update(
+    key,
+    mx =>
+      switch (mx) {
+      | Some(x) => Maybe.maybeToOption(f(x))
+      | None => None
+      },
+    mp,
+  );
+
+let updateWithKey = (f, key, mp) =>
+  IntMap.update(
+    key,
+    mx =>
+      switch (mx) {
+      | Some(x) => Maybe.maybeToOption(f(key, x))
+      | None => None
+      },
+    mp,
+  );
+
+let updateLookupWithKey = (f, key, mp) => {
+  let old = lookup(key, mp);
+
+  (
+    old,
+    IntMap.update(
+      key,
+      mx =>
+        switch (mx) {
+        | Some(x) => Maybe.maybeToOption(f(key, x))
+        | None => None
+        },
+      mp,
+    ),
+  );
+};
+
+let alter = (f, key, mp) =>
+  IntMap.update(
+    key,
+    mx => mx |> Maybe.optionToMaybe |> f |> Maybe.maybeToOption,
+    mp,
+  );
+
+// COMBINE
+
+let union = (mp1, mp2) => IntMap.union((_, x, _) => Some(x), mp1, mp2);
+
+// MAP
+
+let map = IntMap.map;
+
+let mapWithKey = IntMap.mapi;
+
+// FOLDS
+
+let foldrWithKey = (f, initial, mp) =>
+  IntMap.fold((key, v, acc) => f(key, v, acc), mp, initial);
+
+let foldlWithKey = (f, initial, mp) =>
+  IntMap.fold((key, v, acc) => f(acc, key, v), mp, initial);
+
+// CONVERSION
+
+let elems = mp => mp |> IntMap.bindings |> List.map(snd);
+
+let keys = mp => mp |> IntMap.bindings |> List.map(fst);
+
+let assocs = IntMap.bindings;
+
+// let keysSet :: Map k a -> Set k;
+
+// let fromSet :: (k -> a) -> Set k -> Map k a;
+
+// LISTS
+
+let fromList = ps => List.fold_right(((k, v)) => insert(k, v), ps, empty);
+
+// FILTER
+
+let filter = (pred, mp) => IntMap.filter((_, x) => pred(x), mp);
+
+let filterWithKey = IntMap.filter;
+
+let mapMaybe = (f, mp) =>
+  IntMap.fold(
+    (k, x, acc) =>
+      switch (f(x)) {
+      | Maybe.Just(y) => insert(k, y, acc)
+      | Maybe.Nothing => acc
+      },
+    mp,
+    empty,
+  );
+
+let mapMaybeWithKey = (f, mp) =>
+  IntMap.fold(
+    (k, x, acc) =>
+      switch (f(k, x)) {
+      | Maybe.Just(y) => insert(k, y, acc)
+      | Maybe.Nothing => acc
+      },
+    mp,
+    empty,
+  );
+
+module Traversable = {
+  let%private rec mapMEitherHelper = (f, xs) =>
+    switch (xs) {
+    | [] => Either.Right([])
+    | [(k, v), ...ys] =>
+      let new_value = f(v);
+
+      switch (new_value) {
+      | Either.Right(z) =>
+        switch (mapMEitherHelper(f, ys)) {
+        | Right(zs) => Right([(k, z), ...zs])
+        | Left(l) => Left(l)
+        }
+      | Left(l) => Left(l)
+      };
+    };
+
+  let mapMEither = (f, mp) =>
+    mp
+    |> Foldable.toList
+    |> mapMEitherHelper(f)
+    |> Either.Functor.(<$>)(fromList);
+};
 
 module Experimental = {
   open Function;
 
-  type key = int;
   type height = int;
 
   /**

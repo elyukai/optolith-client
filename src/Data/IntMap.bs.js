@@ -2,203 +2,375 @@
 'use strict';
 
 var $$Map = require("bs-platform/lib/js/map.js");
+var List = require("bs-platform/lib/js/list.js");
+var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var Int32 = require("bs-platform/lib/js/int32.js");
-var Int$OptolithClient = require("./Int.bs.js");
-var ListH$OptolithClient = require("./ListH.bs.js");
+var Js_int = require("bs-platform/lib/js/js_int.js");
+var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
+var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
+var Caml_option = require("bs-platform/lib/js/caml_option.js");
+var Maybe$OptolithClient = require("./Maybe.bs.js");
+var Either$OptolithClient = require("./Either.bs.js");
 var Function$OptolithClient = require("./Function.bs.js");
 
+var compare = Caml_obj.caml_compare;
+
 var IntMap = $$Map.Make({
-      compare: Int32.compare
+      compare: compare
     });
 
 function foldr(f, initial, mp) {
-  return Curry._3(IntMap.fold, f, mp, initial);
+  return Curry._3(IntMap.fold, (function (param, v, acc) {
+                return Curry._2(f, v, acc);
+              }), mp, initial);
 }
 
-function height(x) {
-  if (x) {
-    return x[0];
-  } else {
-    return 0;
-  }
+function foldl(f, initial, mp) {
+  return Curry._3(IntMap.fold, (function (param, v, acc) {
+                return Curry._2(f, acc, v);
+              }), mp, initial);
 }
 
-function bin(l, p, r) {
-  return /* Bin */[
-          Function$OptolithClient.on(Int$OptolithClient.max, height, l, r) + 1 | 0,
-          l,
-          p,
-          r
+var toList = IntMap.bindings;
+
+function $$null(mp) {
+  return Curry._1(IntMap.is_empty, mp);
+}
+
+function elem(e, mp) {
+  return Curry._2(IntMap.exists, (function (param, x) {
+                return Caml_obj.caml_equal(e, x);
+              }), mp);
+}
+
+function sum(mp) {
+  return foldr((function (prim, prim$1) {
+                return prim + prim$1 | 0;
+              }), 0, mp);
+}
+
+function product(mp) {
+  return foldr(Caml_int32.imul, 1, mp);
+}
+
+function maximum(mp) {
+  return foldr((function (prim, prim$1) {
+                return Math.max(prim, prim$1);
+              }), Js_int.min, mp);
+}
+
+function minimum(mp) {
+  return foldr((function (prim, prim$1) {
+                return Math.min(prim, prim$1);
+              }), Js_int.max, mp);
+}
+
+function concat(mp) {
+  return foldl(List.append, /* [] */0, mp);
+}
+
+function concatMap(f, mp) {
+  return Curry._3(IntMap.fold, (function (param, v, acc) {
+                return Curry._3(IntMap.union, (function (param, x, param$1) {
+                              return Caml_option.some(x);
+                            }), acc, Curry._1(f, v));
+              }), mp, IntMap.empty);
+}
+
+function con(mp) {
+  return Curry._2(IntMap.for_all, (function (param) {
+                return Function$OptolithClient.$$const(Function$OptolithClient.id, param);
+              }), mp);
+}
+
+function dis(mp) {
+  return !Curry._2(IntMap.for_all, (function (param) {
+                return Function$OptolithClient.$$const((function (prim) {
+                              return !prim;
+                            }), param);
+              }), mp);
+}
+
+function any(pred, mp) {
+  return !Curry._2(IntMap.for_all, (function (param, x) {
+                return !Curry._1(pred, x);
+              }), mp);
+}
+
+function all(pred, mp) {
+  return Curry._2(IntMap.for_all, (function (param, x) {
+                return Curry._1(pred, x);
+              }), mp);
+}
+
+function notElem(e, mp) {
+  return !elem(e, mp);
+}
+
+function find(pred, mp) {
+  return Maybe$OptolithClient.Functor.$less$$great((function (prim) {
+                return prim[1];
+              }), Maybe$OptolithClient.optionToMaybe(Curry._2(IntMap.find_first_opt, (function (key) {
+                        return Curry._1(pred, Function$OptolithClient.flip(IntMap.find, mp, key));
+                      }), mp)));
+}
+
+var Foldable_length = IntMap.cardinal;
+
+var Foldable = {
+  foldr: foldr,
+  foldl: foldl,
+  toList: toList,
+  $$null: $$null,
+  length: Foldable_length,
+  elem: elem,
+  sum: sum,
+  product: product,
+  maximum: maximum,
+  minimum: minimum,
+  concat: concat,
+  concatMap: concatMap,
+  con: con,
+  dis: dis,
+  any: any,
+  all: all,
+  notElem: notElem,
+  find: find
+};
+
+var member = IntMap.mem;
+
+function notMember(key, mp) {
+  return !Curry._2(member, key, mp);
+}
+
+function lookup(key, mp) {
+  return Maybe$OptolithClient.Functor.$less$$great((function (prim) {
+                return prim[1];
+              }), Maybe$OptolithClient.optionToMaybe(Curry._2(IntMap.find_first_opt, (function (k) {
+                        return k === key;
+                      }), mp)));
+}
+
+function findWithDefault(def, key, mp) {
+  return Maybe$OptolithClient.fromMaybe(def, lookup(key, mp));
+}
+
+var empty = IntMap.empty;
+
+var insert = IntMap.add;
+
+function insertWith(f, key, value, mp) {
+  return Curry._3(insert, key, Maybe$OptolithClient.maybe(value, Curry._1(f, value), lookup(key, mp)), mp);
+}
+
+function insertWithKey(f, key, value, mp) {
+  return Curry._3(insert, key, Maybe$OptolithClient.maybe(value, Curry._2(f, key, value), lookup(key, mp)), mp);
+}
+
+function insertLookupWithKey(f, key, value, mp) {
+  var old = lookup(key, mp);
+  return /* tuple */[
+          old,
+          Curry._3(insert, key, Maybe$OptolithClient.maybe(value, Curry._2(f, key, value), old), mp)
         ];
 }
 
-function slope(x) {
-  if (x) {
-    return height(x[3]) - height(x[1]) | 0;
-  } else {
-    return 0;
-  }
+function adjust(f, key, mp) {
+  return Curry._3(IntMap.update, key, (function (mx) {
+                if (mx !== undefined) {
+                  return Caml_option.some(Curry._1(f, Caml_option.valFromOption(mx)));
+                }
+                
+              }), mp);
 }
 
-function rotateright(x) {
-  if (x) {
-    var match = x[1];
-    if (match) {
-      return bin(match[1], match[2], bin(match[3], x[2], x[3]));
-    } else {
-      return x;
-    }
-  } else {
-    return x;
-  }
+function adjustWithKey(f, key, mp) {
+  return Curry._3(IntMap.update, key, (function (mx) {
+                if (mx !== undefined) {
+                  return Caml_option.some(Curry._2(f, key, Caml_option.valFromOption(mx)));
+                }
+                
+              }), mp);
 }
 
-function rotateleft(x) {
-  if (x) {
-    var match = x[3];
-    if (match) {
-      return bin(bin(x[1], x[2], match[1]), match[2], match[3]);
-    } else {
-      return x;
-    }
-  } else {
-    return x;
-  }
+function update(f, key, mp) {
+  return Curry._3(IntMap.update, key, (function (mx) {
+                if (mx !== undefined) {
+                  return Maybe$OptolithClient.maybeToOption(Curry._1(f, Caml_option.valFromOption(mx)));
+                }
+                
+              }), mp);
 }
 
-function rebalance(mp) {
-  if (mp) {
-    var tright = mp[3];
-    var x = mp[2];
-    var tleft = mp[1];
-    var h = mp[0];
-    var slope_main = slope(/* Bin */[
-          h,
-          tleft,
-          x,
-          tright
-        ]);
-    if (slope_main === 0 || slope_main === -1) {
-      return /* Bin */[
-              h,
-              tleft,
-              x,
-              tright
-            ];
-    } else if (slope_main === -2) {
-      return rotateright(/* Bin */[
-                  h,
-                  tleft,
-                  x,
-                  tright
-                ]);
-    } else if (slope_main === 1 && slope(tright) === 0) {
-      return rotateleft(/* Bin */[
-                  h,
-                  tleft,
-                  x,
-                  tright
-                ]);
-    } else {
-      return rotateleft(/* Bin */[
-                  h,
-                  tleft,
-                  x,
-                  rotateright(tright)
-                ]);
-    }
-  } else {
-    return /* Tip */0;
-  }
+function updateWithKey(f, key, mp) {
+  return Curry._3(IntMap.update, key, (function (mx) {
+                if (mx !== undefined) {
+                  return Maybe$OptolithClient.maybeToOption(Curry._2(f, key, Caml_option.valFromOption(mx)));
+                }
+                
+              }), mp);
 }
 
-function insert(k, x, mp) {
-  if (mp) {
-    var tright = mp[3];
-    var match = mp[2];
-    var k0 = match[0];
-    var tleft = mp[1];
-    if (k === k0) {
-      return /* Bin */[
-              mp[0],
-              tleft,
-              /* tuple */[
-                k,
-                x
-              ],
-              tright
-            ];
-    } else {
-      var x0 = match[1];
-      if (k < k0) {
-        return rebalance(bin(insert(k, x, tleft), /* tuple */[
-                        k0,
-                        x0
-                      ], tright));
-      } else {
-        return rebalance(bin(tleft, /* tuple */[
-                        k0,
-                        x0
-                      ], insert(k, x, tright)));
-      }
-    }
-  } else {
-    return /* Bin */[
-            1,
-            /* Tip */0,
-            /* tuple */[
-              k,
-              x
-            ],
-            /* Tip */0
-          ];
-  }
+function updateLookupWithKey(f, key, mp) {
+  var old = lookup(key, mp);
+  return /* tuple */[
+          old,
+          Curry._3(IntMap.update, key, (function (mx) {
+                  if (mx !== undefined) {
+                    return Maybe$OptolithClient.maybeToOption(Curry._2(f, key, Caml_option.valFromOption(mx)));
+                  }
+                  
+                }), mp)
+        ];
 }
 
-function foldr$1(f, _initial, _mp) {
-  while(true) {
-    var mp = _mp;
-    var initial = _initial;
-    if (mp) {
-      _mp = mp[1];
-      _initial = Curry._2(f, mp[2][1], foldr$1(f, initial, mp[3]));
-      continue ;
-    } else {
-      return initial;
-    }
-  };
+function alter(f, key, mp) {
+  return Curry._3(IntMap.update, key, (function (mx) {
+                return Maybe$OptolithClient.maybeToOption(Curry._1(f, Maybe$OptolithClient.optionToMaybe(mx)));
+              }), mp);
 }
 
-function toList(mp) {
-  return foldr$1((function (x, xs) {
-                return /* :: */[
-                        x,
-                        xs
-                      ];
-              }), /* [] */0, mp);
+function union(mp1, mp2) {
+  return Curry._3(IntMap.union, (function (param, x, param$1) {
+                return Caml_option.some(x);
+              }), mp1, mp2);
+}
+
+function foldrWithKey(f, initial, mp) {
+  return Curry._3(IntMap.fold, Curry.__3(f), mp, initial);
+}
+
+function foldlWithKey(f, initial, mp) {
+  return Curry._3(IntMap.fold, (function (key, v, acc) {
+                return Curry._3(f, acc, key, v);
+              }), mp, initial);
+}
+
+function elems(mp) {
+  return List.map((function (prim) {
+                return prim[1];
+              }), Curry._1(IntMap.bindings, mp));
+}
+
+function keys(mp) {
+  return List.map((function (prim) {
+                return prim[0];
+              }), Curry._1(IntMap.bindings, mp));
 }
 
 function fromList(ps) {
-  return ListH$OptolithClient.Foldable.foldr((function (p, mp) {
-                return insert(p[0], p[1], mp);
-              }), /* Tip */0, ps);
+  return List.fold_right((function (param) {
+                return Curry._2(insert, param[0], param[1]);
+              }), ps, empty);
 }
 
-var Experimental = {
-  height: height,
-  bin: bin,
-  slope: slope,
-  rotateright: rotateright,
-  rotateleft: rotateleft,
-  rebalance: rebalance,
-  insert: insert,
-  foldr: foldr$1,
-  toList: toList,
-  fromList: fromList
+function filter(pred, mp) {
+  return Curry._2(IntMap.filter, (function (param, x) {
+                return Curry._1(pred, x);
+              }), mp);
+}
+
+function mapMaybe(f, mp) {
+  return Curry._3(IntMap.fold, (function (k, x, acc) {
+                var match = Curry._1(f, x);
+                if (match) {
+                  return Curry._3(insert, k, match[0], acc);
+                } else {
+                  return acc;
+                }
+              }), mp, empty);
+}
+
+function mapMaybeWithKey(f, mp) {
+  return Curry._3(IntMap.fold, (function (k, x, acc) {
+                var match = Curry._2(f, k, x);
+                if (match) {
+                  return Curry._3(insert, k, match[0], acc);
+                } else {
+                  return acc;
+                }
+              }), mp, empty);
+}
+
+function mapMEitherHelper(f, xs) {
+  if (xs) {
+    var match = xs[0];
+    var new_value = Curry._1(f, match[1]);
+    if (new_value.tag) {
+      var match$1 = mapMEitherHelper(f, xs[1]);
+      if (match$1.tag) {
+        return /* Right */Block.__(1, [/* :: */[
+                    /* tuple */[
+                      match[0],
+                      new_value[0]
+                    ],
+                    match$1[0]
+                  ]]);
+      } else {
+        return /* Left */Block.__(0, [match$1[0]]);
+      }
+    } else {
+      return /* Left */Block.__(0, [new_value[0]]);
+    }
+  } else {
+    return /* Right */Block.__(1, [/* [] */0]);
+  }
+}
+
+function mapMEither(f, mp) {
+  return Either$OptolithClient.Functor.$less$$great(fromList, mapMEitherHelper(f, Curry._1(toList, mp)));
+}
+
+var Traversable = {
+  mapMEither: mapMEither
 };
 
-exports.IntMap = IntMap;
-exports.foldr = foldr;
-exports.Experimental = Experimental;
+var size = IntMap.cardinal;
+
+var singleton = IntMap.singleton;
+
+var $$delete = IntMap.remove;
+
+var map = IntMap.map;
+
+var mapWithKey = IntMap.mapi;
+
+var assocs = IntMap.bindings;
+
+var filterWithKey = IntMap.filter;
+
+exports.Foldable = Foldable;
+exports.size = size;
+exports.member = member;
+exports.notMember = notMember;
+exports.lookup = lookup;
+exports.findWithDefault = findWithDefault;
+exports.empty = empty;
+exports.singleton = singleton;
+exports.insert = insert;
+exports.insertWith = insertWith;
+exports.insertWithKey = insertWithKey;
+exports.insertLookupWithKey = insertLookupWithKey;
+exports.$$delete = $$delete;
+exports.adjust = adjust;
+exports.adjustWithKey = adjustWithKey;
+exports.update = update;
+exports.updateWithKey = updateWithKey;
+exports.updateLookupWithKey = updateLookupWithKey;
+exports.alter = alter;
+exports.union = union;
+exports.map = map;
+exports.mapWithKey = mapWithKey;
+exports.foldrWithKey = foldrWithKey;
+exports.foldlWithKey = foldlWithKey;
+exports.elems = elems;
+exports.keys = keys;
+exports.assocs = assocs;
+exports.fromList = fromList;
+exports.filter = filter;
+exports.filterWithKey = filterWithKey;
+exports.mapMaybe = mapMaybe;
+exports.mapMaybeWithKey = mapMaybeWithKey;
+exports.Traversable = Traversable;
 /* IntMap Not a pure module */

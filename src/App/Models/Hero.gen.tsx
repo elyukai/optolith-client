@@ -2,6 +2,8 @@
 /* eslint-disable import/first */
 
 
+import {Prerequisites_SexPrerequisite_sex as Static_Prerequisites_SexPrerequisite_sex} from './Static.gen';
+
 import {activatableAndSkillId as Ids_activatableAndSkillId} from '../../../src/App/Constants/Ids.gen';
 
 import {activatableId as Ids_activatableId} from '../../../src/App/Constants/Ids.gen';
@@ -19,6 +21,10 @@ import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/
 import {selectOptionId as Ids_selectOptionId} from '../../../src/App/Constants/Ids.gen';
 
 import {skillId as Ids_skillId} from '../../../src/App/Constants/Ids.gen';
+
+import {t as IntMap_t} from '../../../src/shims/IntMap.gen';
+
+import {t as IntSet_t} from '../../../src/shims/IntSet.gen';
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Phase_t = "Outline" | "Definition" | "Advancement";
@@ -360,3 +366,48 @@ export type TransferUnfamiliarId = TransferUnfamiliar_id;
 // tslint:disable-next-line:interface-over-type-literal
 export type TransferUnfamiliar_t = { readonly id: TransferUnfamiliar_id; readonly srcId: number };
 export type TransferUnfamiliar = TransferUnfamiliar_t;
+
+// tslint:disable-next-line:interface-over-type-literal
+export type t = {
+  readonly name: string; 
+  readonly dateCreated: Date; 
+  readonly dateModified: Date; 
+  readonly adventurePointsTotal: number; 
+  readonly experienceLevel: number; 
+  readonly sex: Static_Prerequisites_SexPrerequisite_sex; 
+  readonly phase: Phase_t; 
+  readonly locale: string; 
+  readonly avatar: Maybe_maybe<string>; 
+  readonly race: Maybe_maybe<number>; 
+  readonly raceVariant: Maybe_maybe<RaceCultureProfession_baseOrWithVariant>; 
+  readonly culture: Maybe_maybe<number>; 
+  readonly isCulturalPackageActive: boolean; 
+  readonly profession: Maybe_maybe<RaceCultureProfession_baseOrWithVariant>; 
+  readonly professionName: Maybe_maybe<string>; 
+  readonly rules: Rules_t; 
+  readonly personalData: PersonalData_t; 
+  readonly advantages: IntMap_t<DisAdvantage_t>; 
+  readonly disadvantages: IntMap_t<DisAdvantage_t>; 
+  readonly specialAbilities: IntMap_t<SpecialAbility_t>; 
+  readonly attributes: IntMap_t<Attribute_t>; 
+  readonly attributeAdjustmentSelected: number; 
+  readonly energies: Energies_t; 
+  readonly skills: IntMap_t<Skill_t>; 
+  readonly combatTechniques: IntMap_t<Skill_t>; 
+  readonly spells: IntMap_t<ActivatableSkill_t>; 
+  readonly liturgicalChants: IntMap_t<ActivatableSkill_t>; 
+  readonly cantrips: IntSet_t; 
+  readonly blessings: IntSet_t; 
+  readonly items: list<Item_t>; 
+  readonly hitZoneArmors: list<HitZoneArmor_t>; 
+  readonly purse: Purse_t; 
+  readonly pets: list<Pet_t>; 
+  readonly pact: Maybe_maybe<Pact_t>; 
+  readonly combatStyleDependencies: list<Styles_Dependency_t>; 
+  readonly magicalStyleDependencies: list<Styles_Dependency_t>; 
+  readonly blessedStyleDependencies: list<Styles_Dependency_t>; 
+  readonly skillStyleDependencies: list<Styles_Dependency_t>; 
+  readonly socialStatusDependencies: list<number>; 
+  readonly transferredUnfamiliarSpells: list<TransferUnfamiliar_t>
+};
+export type Hero = t;
