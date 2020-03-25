@@ -2,9 +2,13 @@
 /* eslint-disable import/first */
 
 
-import {oneOrManyArr as GenericHelpers_oneOrManyArr} from '../../../src/App/Utilities/GenericHelpers.gen';
+import {list} from '../../../src/shims/ReasonPervasives.shim';
+
+import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/GenericHelpers.gen';
 
 import {selectOptionId as Ids_selectOptionId} from '../../../src/App/Constants/Ids.gen';
+
+import {t as Maybe_t} from '../../../src/Data/Maybe.gen';
 
 // tslint:disable-next-line:interface-over-type-literal
 export type SourceRef_t = { readonly id: string; readonly page: [number, number] };
@@ -15,93 +19,93 @@ export type Erratum_t = { readonly date: Date; readonly description: string };
 export type Erratum = Erratum_t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_SexPrerequisite_sex = "Male" | "Female";
-export type Sex = Prerequisites_SexPrerequisite_sex;
+export type Prerequisites_Sex_sex = "Male" | "Female";
+export type Sex = Prerequisites_Sex_sex;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_SexPrerequisite_t = Prerequisites_SexPrerequisite_sex;
-export type SexPrerequisite = Prerequisites_SexPrerequisite_t;
+export type Prerequisites_Sex_t = Prerequisites_Sex_sex;
+export type SexPrerequisite = Prerequisites_Sex_t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_RacePrerequisite_raceId = GenericHelpers_oneOrManyArr<number>;
+export type Prerequisites_Race_raceId = GenericHelpers_oneOrMany<number>;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_RacePrerequisite_t = { readonly id: Prerequisites_RacePrerequisite_raceId; readonly active: boolean };
-export type RacePrerequisite = Prerequisites_RacePrerequisite_t;
+export type Prerequisites_Race_t = { readonly id: Prerequisites_Race_raceId; readonly active: boolean };
+export type RacePrerequisite = Prerequisites_Race_t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_CulturePrerequisite_cultureId = GenericHelpers_oneOrManyArr<number>;
+export type Prerequisites_Culture_cultureId = GenericHelpers_oneOrMany<number>;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_CulturePrerequisite_t = Prerequisites_CulturePrerequisite_cultureId;
-export type CulturePrerequisite = Prerequisites_CulturePrerequisite_t;
+export type Prerequisites_Culture_t = Prerequisites_Culture_cultureId;
+export type CulturePrerequisite = Prerequisites_Culture_t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_SocialPrerequisite_t = number;
-export type SocialPrerequisite = Prerequisites_SocialPrerequisite_t;
+export type Prerequisites_SocialStatus_t = number;
+export type SocialPrerequisite = Prerequisites_SocialStatus_t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_PactPrerequisite_t = {
+export type Prerequisites_Pact_t = {
   readonly category: number; 
-  readonly domain?: GenericHelpers_oneOrManyArr<number>; 
-  readonly level?: number
+  readonly domain: Maybe_t<GenericHelpers_oneOrMany<number>>; 
+  readonly level: Maybe_t<number>
 };
-export type PactPrerequisite = Prerequisites_PactPrerequisite_t;
+export type PactPrerequisite = Prerequisites_Pact_t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_PrimaryAttributePrerequisite_primaryAttributeType = "Magical" | "Blessed";
+export type Prerequisites_PrimaryAttribute_primaryAttributeType = "Magical" | "Blessed";
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_PrimaryAttributePrerequisite_t = { readonly value: number; readonly scope: Prerequisites_PrimaryAttributePrerequisite_primaryAttributeType };
-export type PrimaryAttributePrerequisite = Prerequisites_PrimaryAttributePrerequisite_t;
+export type Prerequisites_PrimaryAttribute_t = { readonly value: number; readonly scope: Prerequisites_PrimaryAttribute_primaryAttributeType };
+export type PrimaryAttributePrerequisite = Prerequisites_PrimaryAttribute_t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_ActivatablePrerequisite_id = 
+export type Prerequisites_Activatable_id = 
     { tag: "Advantage"; value: number }
   | { tag: "Disadvantage"; value: number }
   | { tag: "SpecialAbility"; value: number };
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_ActivatablePrerequisite_t = {
-  readonly id: Prerequisites_ActivatablePrerequisite_id; 
+export type Prerequisites_Activatable_t = {
+  readonly id: Prerequisites_Activatable_id; 
   readonly active: boolean; 
-  readonly sid?: Ids_selectOptionId; 
-  readonly sid2?: Ids_selectOptionId; 
-  readonly tier?: number
+  readonly sid: Maybe_t<Ids_selectOptionId>; 
+  readonly sid2: Maybe_t<Ids_selectOptionId>; 
+  readonly tier: Maybe_t<number>
 };
-export type ActivatablePrerequisite = Prerequisites_ActivatablePrerequisite_t;
+export type ActivatablePrerequisite = Prerequisites_Activatable_t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_ActivatableSkillPrerequisite_id = 
+export type Prerequisites_ActivatableSkill_id = 
     { tag: "Spell"; value: number }
   | { tag: "LiturgicalChant"; value: number };
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_ActivatableSkillPrerequisite_t = { readonly id: Prerequisites_ActivatableSkillPrerequisite_id; readonly active: boolean };
-export type ActivatableSkillPrerequisite = Prerequisites_ActivatableSkillPrerequisite_t;
+export type Prerequisites_ActivatableSkill_t = { readonly id: Prerequisites_ActivatableSkill_id; readonly active: boolean };
+export type ActivatableSkillPrerequisite = Prerequisites_ActivatableSkill_t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_ActivatableMultiEntryPrerequisite_t = {
-  readonly id: Prerequisites_ActivatablePrerequisite_id[]; 
+export type Prerequisites_ActivatableMultiEntry_t = {
+  readonly id: list<Prerequisites_Activatable_id>; 
   readonly active: boolean; 
-  readonly sid?: Ids_selectOptionId; 
-  readonly sid2?: Ids_selectOptionId; 
-  readonly tier?: number
+  readonly sid: Maybe_t<Ids_selectOptionId>; 
+  readonly sid2: Maybe_t<Ids_selectOptionId>; 
+  readonly tier: Maybe_t<number>
 };
-export type ActivatableMultiEntryPrerequisite = Prerequisites_ActivatableMultiEntryPrerequisite_t;
+export type ActivatableMultiEntryPrerequisite = Prerequisites_ActivatableMultiEntry_t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_ActivatableMultiSelectPrerequisite_t = {
-  readonly id: Prerequisites_ActivatablePrerequisite_id; 
+export type Prerequisites_ActivatableMultiSelect_t = {
+  readonly id: Prerequisites_Activatable_id; 
   readonly active: boolean; 
-  readonly sid: Ids_selectOptionId[]; 
-  readonly sid2?: Ids_selectOptionId; 
-  readonly tier?: number
+  readonly sid: list<Ids_selectOptionId>; 
+  readonly sid2: Maybe_t<Ids_selectOptionId>; 
+  readonly tier: Maybe_t<number>
 };
-export type ActivatableMultiSelectPrerequisite = Prerequisites_ActivatableMultiSelectPrerequisite_t;
+export type ActivatableMultiSelectPrerequisite = Prerequisites_ActivatableMultiSelect_t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_IncreasablePrerequisite_id = 
+export type Prerequisites_Increasable_id = 
     { tag: "Attribute"; value: number }
   | { tag: "Skill"; value: number }
   | { tag: "CombatTechnique"; value: number }
@@ -109,26 +113,26 @@ export type Prerequisites_IncreasablePrerequisite_id =
   | { tag: "LiturgicalChant"; value: number };
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_IncreasablePrerequisite_t = { readonly id: Prerequisites_IncreasablePrerequisite_id; readonly value: number };
-export type IncreasablePrerequisite = Prerequisites_IncreasablePrerequisite_t;
+export type Prerequisites_Increasable_t = { readonly id: Prerequisites_Increasable_id; readonly value: number };
+export type IncreasablePrerequisite = Prerequisites_Increasable_t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Prerequisites_IncreasableMultiEntryPrerequisite_t = { readonly id: Prerequisites_IncreasablePrerequisite_id[]; readonly value: number };
-export type IncreasableMultiEntryPrerequisite = Prerequisites_IncreasableMultiEntryPrerequisite_t;
+export type Prerequisites_IncreasableMultiEntry_t = { readonly id: list<Prerequisites_Increasable_id>; readonly value: number };
+export type IncreasableMultiEntryPrerequisite = Prerequisites_IncreasableMultiEntry_t;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Prerequisites_t = {
-  readonly sex?: Prerequisites_SexPrerequisite_t; 
-  readonly race?: Prerequisites_RacePrerequisite_t; 
-  readonly culture?: Prerequisites_CulturePrerequisite_t; 
-  readonly pact?: Prerequisites_PactPrerequisite_t; 
-  readonly social?: Prerequisites_SocialPrerequisite_t; 
-  readonly primaryAttribute?: Prerequisites_PrimaryAttributePrerequisite_t; 
-  readonly activatable: Prerequisites_ActivatablePrerequisite_t[]; 
-  readonly activatableMultiEntry: Prerequisites_ActivatableMultiEntryPrerequisite_t[]; 
-  readonly activatableMultiSelect: Prerequisites_ActivatableMultiSelectPrerequisite_t[]; 
-  readonly increasable: Prerequisites_IncreasablePrerequisite_t[]; 
-  readonly increasableMultiEntry: Prerequisites_IncreasableMultiEntryPrerequisite_t[]
+  readonly sex: Maybe_t<Prerequisites_Sex_t>; 
+  readonly race: Maybe_t<Prerequisites_Race_t>; 
+  readonly culture: Maybe_t<Prerequisites_Culture_t>; 
+  readonly pact: Maybe_t<Prerequisites_Pact_t>; 
+  readonly social: Maybe_t<Prerequisites_SocialStatus_t>; 
+  readonly primaryAttribute: Maybe_t<Prerequisites_PrimaryAttribute_t>; 
+  readonly activatable: list<Prerequisites_Activatable_t>; 
+  readonly activatableMultiEntry: list<Prerequisites_ActivatableMultiEntry_t>; 
+  readonly activatableMultiSelect: list<Prerequisites_ActivatableMultiSelect_t>; 
+  readonly increasable: list<Prerequisites_Increasable_t>; 
+  readonly increasableMultiEntry: list<Prerequisites_IncreasableMultiEntry_t>
 };
 export type Prerequisites = Prerequisites_t;
 
@@ -153,6 +157,6 @@ export type Patron_t = {
   readonly category: number; 
   readonly skills: [number, number, number]; 
   readonly limitedToCultures: number[]; 
-  readonly isLimitedToCulturesReverse?: boolean
+  readonly isLimitedToCulturesReverse: Maybe_t<boolean>
 };
 export type Patron = Patron_t;

@@ -57,7 +57,7 @@ var Zip = {
 };
 
 function fromJson(yaml) {
-  return toMapIntegrity(RawEntries$OptolithClient.AspectsL10n.fromYaml(yaml));
+  return toMapIntegrity(RawEntries$OptolithClient.AspectsL10n.fromJson(yaml));
 }
 
 var Aspects = {
@@ -86,7 +86,7 @@ function fromJson$1(yaml) {
                     return x.id;
                   }), (function (x) {
                     return x.id;
-                  }), merge, RawEntries$OptolithClient.ExperienceLevelsUniv.fromYaml(yaml), RawEntries$OptolithClient.ExperienceLevelsL10n.fromYaml(yaml)));
+                  }), merge, RawEntries$OptolithClient.ExperienceLevelsUniv.fromJson(yaml), RawEntries$OptolithClient.ExperienceLevelsL10n.fromJson(yaml)));
 }
 
 var ExperienceLevels = {

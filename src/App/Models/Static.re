@@ -17,7 +17,7 @@ module Erratum = {
 };
 
 module Prerequisites = {
-  module SexPrerequisite = {
+  module Sex = {
     [@genType "Sex"]
     type sex =
       | Male
@@ -27,8 +27,8 @@ module Prerequisites = {
     type t = sex;
   };
 
-  module RacePrerequisite = {
-    type raceId = oneOrManyArr(int);
+  module Race = {
+    type raceId = oneOrMany(int);
 
     [@genType "RacePrerequisite"]
     type t = {
@@ -37,28 +37,28 @@ module Prerequisites = {
     };
   };
 
-  module CulturePrerequisite = {
-    type cultureId = oneOrManyArr(int);
+  module Culture = {
+    type cultureId = oneOrMany(int);
 
     [@genType "CulturePrerequisite"]
     type t = cultureId;
   };
 
-  module SocialPrerequisite = {
+  module SocialStatus = {
     [@genType "SocialPrerequisite"]
     type t = int;
   };
 
-  module PactPrerequisite = {
+  module Pact = {
     [@genType "PactPrerequisite"]
     type t = {
       category: int,
-      domain: option(oneOrManyArr(int)),
-      level: option(int),
+      domain: Maybe.t(oneOrMany(int)),
+      level: Maybe.t(int),
     };
   };
 
-  module PrimaryAttributePrerequisite = {
+  module PrimaryAttribute = {
     type primaryAttributeType =
       | Magical
       | Blessed;
@@ -70,7 +70,7 @@ module Prerequisites = {
     };
   };
 
-  module ActivatablePrerequisite = {
+  module Activatable = {
     type id =
       | Advantage(int)
       | Disadvantage(int)
@@ -80,13 +80,13 @@ module Prerequisites = {
     type t = {
       id,
       active: bool,
-      sid: option(Ids.selectOptionId),
-      sid2: option(Ids.selectOptionId),
-      tier: option(int),
+      sid: Maybe.t(Ids.selectOptionId),
+      sid2: Maybe.t(Ids.selectOptionId),
+      tier: Maybe.t(int),
     };
   };
 
-  module ActivatableSkillPrerequisite = {
+  module ActivatableSkill = {
     type id =
       | Spell(int)
       | LiturgicalChant(int);
@@ -98,29 +98,29 @@ module Prerequisites = {
     };
   };
 
-  module ActivatableMultiEntryPrerequisite = {
+  module ActivatableMultiEntry = {
     [@genType "ActivatableMultiEntryPrerequisite"]
     type t = {
-      id: array(ActivatablePrerequisite.id),
+      id: list(Activatable.id),
       active: bool,
-      sid: option(Ids.selectOptionId),
-      sid2: option(Ids.selectOptionId),
-      tier: option(int),
+      sid: Maybe.t(Ids.selectOptionId),
+      sid2: Maybe.t(Ids.selectOptionId),
+      tier: Maybe.t(int),
     };
   };
 
-  module ActivatableMultiSelectPrerequisite = {
+  module ActivatableMultiSelect = {
     [@genType "ActivatableMultiSelectPrerequisite"]
     type t = {
-      id: ActivatablePrerequisite.id,
+      id: Activatable.id,
       active: bool,
-      sid: array(Ids.selectOptionId),
-      sid2: option(Ids.selectOptionId),
-      tier: option(int),
+      sid: list(Ids.selectOptionId),
+      sid2: Maybe.t(Ids.selectOptionId),
+      tier: Maybe.t(int),
     };
   };
 
-  module IncreasablePrerequisite = {
+  module Increasable = {
     type id =
       | Attribute(int)
       | Skill(int)
@@ -135,65 +135,65 @@ module Prerequisites = {
     };
   };
 
-  module IncreasableMultiEntryPrerequisite = {
+  module IncreasableMultiEntry = {
     [@genType "IncreasableMultiEntryPrerequisite"]
     type t = {
-      id: array(IncreasablePrerequisite.id),
+      id: list(Increasable.id),
       value: int,
     };
   };
 
   type tProfession = {
-    sex: option(SexPrerequisite.t),
-    race: option(RacePrerequisite.t),
-    culture: option(CulturePrerequisite.t),
-    activatable: array(ActivatablePrerequisite.t),
-    increasable: array(IncreasablePrerequisite.t),
+    sex: Maybe.t(Sex.t),
+    race: Maybe.t(Race.t),
+    culture: Maybe.t(Culture.t),
+    activatable: list(Activatable.t),
+    increasable: list(Increasable.t),
   };
 
   [@genType "Prerequisites"]
   type t = {
-    sex: option(SexPrerequisite.t),
-    race: option(RacePrerequisite.t),
-    culture: option(CulturePrerequisite.t),
-    pact: option(PactPrerequisite.t),
-    social: option(SocialPrerequisite.t),
-    primaryAttribute: option(PrimaryAttributePrerequisite.t),
-    activatable: array(ActivatablePrerequisite.t),
-    activatableMultiEntry: array(ActivatableMultiEntryPrerequisite.t),
-    activatableMultiSelect: array(ActivatableMultiSelectPrerequisite.t),
-    increasable: array(IncreasablePrerequisite.t),
-    increasableMultiEntry: array(IncreasableMultiEntryPrerequisite.t),
+    sex: Maybe.t(Sex.t),
+    race: Maybe.t(Race.t),
+    culture: Maybe.t(Culture.t),
+    pact: Maybe.t(Pact.t),
+    social: Maybe.t(SocialStatus.t),
+    primaryAttribute: Maybe.t(PrimaryAttribute.t),
+    activatable: list(Activatable.t),
+    activatableMultiEntry: list(ActivatableMultiEntry.t),
+    activatableMultiSelect: list(ActivatableMultiSelect.t),
+    increasable: list(Increasable.t),
+    increasableMultiEntry: list(IncreasableMultiEntry.t),
   };
 
   type tWithLevel = {
-    sex: option(SexPrerequisite.t),
-    race: option(RacePrerequisite.t),
-    culture: option(CulturePrerequisite.t),
-    pact: option(PactPrerequisite.t),
-    social: option(SocialPrerequisite.t),
-    primaryAttribute: option(PrimaryAttributePrerequisite.t),
-    activatable: array(ActivatablePrerequisite.t),
-    activatableMultiEntry: array(ActivatableMultiEntryPrerequisite.t),
-    activatableMultiSelect: array(ActivatableMultiSelectPrerequisite.t),
-    increasable: array(IncreasablePrerequisite.t),
-    increasableMultiEntry: array(IncreasableMultiEntryPrerequisite.t),
+    sex: Maybe.t(Sex.t),
+    race: Maybe.t(Race.t),
+    culture: Maybe.t(Culture.t),
+    pact: Maybe.t(Pact.t),
+    social: Maybe.t(SocialStatus.t),
+    primaryAttribute: Maybe.t(PrimaryAttribute.t),
+    activatable: list(Activatable.t),
+    activatableMultiEntry: list(ActivatableMultiEntry.t),
+    activatableMultiSelect: list(ActivatableMultiSelect.t),
+    increasable: list(Increasable.t),
+    increasableMultiEntry: list(IncreasableMultiEntry.t),
     levels: IntMap.t(t),
   };
 
   type tWithLevelDisAdv = {
     commonSuggestedByRCP: bool,
-    sex: option(SexPrerequisite.t),
-    race: option(RacePrerequisite.t),
-    culture: option(CulturePrerequisite.t),
-    pact: option(PactPrerequisite.t),
-    social: option(SocialPrerequisite.t),
-    primaryAttribute: option(PrimaryAttributePrerequisite.t),
-    activatable: array(ActivatablePrerequisite.t),
-    activatableMultiEntry: array(ActivatableMultiEntryPrerequisite.t),
-    activatableMultiSelect: array(ActivatableMultiSelectPrerequisite.t),
-    increasable: array(IncreasablePrerequisite.t),
-    increasableMultiEntry: array(IncreasableMultiEntryPrerequisite.t),
+    sex: Maybe.t(Sex.t),
+    race: Maybe.t(Race.t),
+    culture: Maybe.t(Culture.t),
+    pact: Maybe.t(Pact.t),
+    social: Maybe.t(SocialStatus.t),
+    primaryAttribute: Maybe.t(PrimaryAttribute.t),
+    activatable: list(Activatable.t),
+    activatableMultiEntry: list(ActivatableMultiEntry.t),
+    activatableMultiSelect: list(ActivatableMultiSelect.t),
+    increasable: list(Increasable.t),
+    increasableMultiEntry: list(IncreasableMultiEntry.t),
     levels: IntMap.t(t),
   };
 
@@ -203,12 +203,12 @@ module Prerequisites = {
     | ReplaceWith(string);
 
   type tIndex = {
-    sex: option(overridePrerequisite),
-    race: option(overridePrerequisite),
-    culture: option(overridePrerequisite),
-    pact: option(overridePrerequisite),
-    social: option(overridePrerequisite),
-    primaryAttribute: option(overridePrerequisite),
+    sex: Maybe.t(overridePrerequisite),
+    race: Maybe.t(overridePrerequisite),
+    culture: Maybe.t(overridePrerequisite),
+    pact: Maybe.t(overridePrerequisite),
+    social: Maybe.t(overridePrerequisite),
+    primaryAttribute: Maybe.t(overridePrerequisite),
     activatable: IntMap.t(overridePrerequisite),
     activatableMultiEntry: IntMap.t(overridePrerequisite),
     activatableMultiSelect: IntMap.t(overridePrerequisite),
@@ -217,12 +217,12 @@ module Prerequisites = {
   };
 
   type tIndexWithLevel = {
-    sex: option(overridePrerequisite),
-    race: option(overridePrerequisite),
-    culture: option(overridePrerequisite),
-    pact: option(overridePrerequisite),
-    social: option(overridePrerequisite),
-    primaryAttribute: option(overridePrerequisite),
+    sex: Maybe.t(overridePrerequisite),
+    race: Maybe.t(overridePrerequisite),
+    culture: Maybe.t(overridePrerequisite),
+    pact: Maybe.t(overridePrerequisite),
+    social: Maybe.t(overridePrerequisite),
+    primaryAttribute: Maybe.t(overridePrerequisite),
     activatable: IntMap.t(overridePrerequisite),
     activatableMultiEntry: IntMap.t(overridePrerequisite),
     activatableMultiSelect: IntMap.t(overridePrerequisite),
@@ -237,7 +237,7 @@ module Skill = {
     type t = {
       id: int,
       name: string,
-      prerequisite: option(Prerequisites.ActivatablePrerequisite.t),
+      prerequisite: Maybe.t(Prerequisites.Activatable.t),
     };
   };
 
@@ -245,7 +245,7 @@ module Skill = {
     type t = {
       id: int,
       name: string,
-      prerequisite: Prerequisites.ActivatablePrerequisite.t,
+      prerequisite: Prerequisites.Activatable.t,
     };
   };
 
@@ -259,13 +259,13 @@ module Skill = {
     name: string,
     check: list(int),
     encumbrance,
-    encumbranceDescription: option(string),
+    encumbranceDescription: Maybe.t(string),
     gr: int,
     ic: IC.t,
     applications: list(Application.t),
-    applicationsInput: option(string),
+    applicationsInput: Maybe.t(string),
     uses: list(Use.t),
-    tools: option(string),
+    tools: Maybe.t(string),
     quality: string,
     failed: string,
     critical: string,
@@ -279,20 +279,20 @@ module SelectOption = {
   type t = {
     id: Ids.selectOptionId,
     name: string,
-    cost: option(int),
-    prerequisites: option(unit),
-    description: option(string),
-    isSecret: option(bool),
-    languages: option(list(int)),
-    continent: option(int),
-    isExtinct: option(bool),
-    specializations: option(list(string)),
-    specializationInput: option(string),
-    gr: option(int),
-    level: option(int),
-    target: option(string),
-    applications: option(list(Skill.Application.t)),
-    applicationInput: option(string),
+    cost: Maybe.t(int),
+    prerequisites: Maybe.t(unit),
+    description: Maybe.t(string),
+    isSecret: Maybe.t(bool),
+    languages: Maybe.t(list(int)),
+    continent: Maybe.t(int),
+    isExtinct: Maybe.t(bool),
+    specializations: Maybe.t(list(string)),
+    specializationInput: Maybe.t(string),
+    gr: Maybe.t(int),
+    level: Maybe.t(int),
+    target: Maybe.t(string),
+    applications: Maybe.t(list(Skill.Application.t)),
+    applicationInput: Maybe.t(string),
     src: list(SourceRef.t),
     errata: list(Erratum.t),
   };
@@ -309,20 +309,20 @@ module Advantage = {
     cost,
     noMaxAPInfluence: bool,
     isExclusiveToArcaneSpellworks: bool,
-    input: option(string),
-    max: option(int),
-    levels: option(int),
-    select: option(list(SelectOption.t)),
+    input: Maybe.t(string),
+    max: Maybe.t(int),
+    levels: Maybe.t(int),
+    select: Maybe.t(list(SelectOption.t)),
     rules: string,
-    range: option(string),
-    actions: option(string),
+    range: Maybe.t(string),
+    actions: Maybe.t(string),
     prerequisites: Prerequisites.tWithLevelDisAdv,
-    prerequisitesText: option(string),
-    prerequisitesTextIndex: option(Prerequisites.tIndexWithLevel),
-    prerequisitesTextStart: option(string),
-    prerequisitesTextEnd: option(string),
-    apValue: option(string),
-    apValueAppend: option(string),
+    prerequisitesText: Maybe.t(string),
+    prerequisitesTextIndex: Maybe.t(Prerequisites.tIndexWithLevel),
+    prerequisitesTextStart: Maybe.t(string),
+    prerequisitesTextEnd: Maybe.t(string),
+    apValue: Maybe.t(string),
+    apValueAppend: Maybe.t(string),
     gr: int,
     src: list(SourceRef.t),
     errata: list(Erratum.t),
@@ -347,7 +347,7 @@ module BlessedTradition = {
     numId: int,
     name: string,
     primary: int,
-    aspects: option((int, int)),
+    aspects: Maybe.t((int, int)),
   };
 };
 
@@ -365,7 +365,7 @@ module CombatTechnique = {
     name: string,
     ic: IC.t,
     primary: list(int),
-    special: option(string),
+    special: Maybe.t(string),
     hasNoParry: bool,
     bpr: int,
     gr: int,
@@ -378,8 +378,8 @@ module Condition = {
   type t = {
     id: int,
     name: string,
-    description: option(string),
-    levelColumnDescription: option(string),
+    description: Maybe.t(string),
+    levelColumnDescription: Maybe.t(string),
     levelDescriptions: (string, string, string, string),
     src: list(SourceRef.t),
     errata: list(Erratum.t),
@@ -417,17 +417,17 @@ module Culture = {
       commonProfessions,
       commonProfessions,
     ),
-    commonMundaneProfessions: option(string),
-    commonMagicProfessions: option(string),
-    commonBlessedProfessions: option(string),
+    commonMundaneProfessions: Maybe.t(string),
+    commonMagicProfessions: Maybe.t(string),
+    commonBlessedProfessions: Maybe.t(string),
     commonAdvantages: list(int),
-    commonAdvantagesText: option(string),
+    commonAdvantagesText: Maybe.t(string),
     commonDisadvantages: list(int),
-    commonDisadvantagesText: option(string),
+    commonDisadvantagesText: Maybe.t(string),
     uncommonAdvantages: list(int),
-    uncommonAdvantagesText: option(string),
+    uncommonAdvantagesText: Maybe.t(string),
     uncommonDisadvantages: list(int),
-    uncommonDisadvantagesText: option(string),
+    uncommonDisadvantagesText: Maybe.t(string),
     commonSkills: list(int),
     uncommonSkills: list(int),
     commonNames: string,
@@ -447,8 +447,8 @@ module DerivedCharacteristic = {
     name: string,
     short: string,
     calc: string,
-    calcHalfPrimary: option(string),
-    calcNoPrimary: option(string),
+    calcHalfPrimary: Maybe.t(string),
+    calcNoPrimary: Maybe.t(string),
   };
 };
 
@@ -459,20 +459,20 @@ module Disadvantage = {
     cost: Advantage.cost,
     noMaxAPInfluence: bool,
     isExclusiveToArcaneSpellworks: bool,
-    input: option(string),
-    max: option(int),
-    levels: option(int),
-    select: option(list(SelectOption.t)),
+    input: Maybe.t(string),
+    max: Maybe.t(int),
+    levels: Maybe.t(int),
+    select: Maybe.t(list(SelectOption.t)),
     rules: string,
-    range: option(string),
-    actions: option(string),
+    range: Maybe.t(string),
+    actions: Maybe.t(string),
     prerequisites: Prerequisites.tWithLevelDisAdv,
-    prerequisitesText: option(string),
-    prerequisitesTextIndex: option(Prerequisites.tIndexWithLevel),
-    prerequisitesTextStart: option(string),
-    prerequisitesTextEnd: option(string),
-    apValue: option(string),
-    apValueAppend: option(string),
+    prerequisitesText: Maybe.t(string),
+    prerequisitesTextIndex: Maybe.t(Prerequisites.tIndexWithLevel),
+    prerequisitesTextStart: Maybe.t(string),
+    prerequisitesTextEnd: Maybe.t(string),
+    apValue: Maybe.t(string),
+    apValueAppend: Maybe.t(string),
     gr: int,
     src: list(SourceRef.t),
     errata: list(Erratum.t),
@@ -546,10 +546,10 @@ module MagicalMelody = {
 module MagicalTradition = {
   type t = {
     id: int,
-    numId: option(int),
+    numId: Maybe.t(int),
     name: string,
-    primary: option(int),
-    aeMod: option(float),
+    primary: Maybe.t(int),
+    aeMod: Maybe.t(float),
     canLearnCantrips: bool,
     canLearnSpells: bool,
     canLearnRituals: bool,
@@ -629,7 +629,7 @@ module Patron = {
    * cultures in `limitedToCultures`. Does not have an effect if
    * `limitedToCultures` is not defined.
    */
-    isLimitedToCulturesReverse: option(bool),
+    isLimitedToCulturesReverse: Maybe.t(bool),
   };
 };
 
@@ -649,10 +649,14 @@ module Profession = {
   };
 
   module Options = {
+    type variantOverride('a) =
+      | Remove
+      | Overwrite('a);
+
     module CantripSelection = {
       type t = {
         amount: int,
-        sid: list(string),
+        sid: list(int),
       };
     };
 
@@ -665,13 +669,11 @@ module Profession = {
       type t = {
         amount: int,
         value: int,
-        second: option(second),
-        sid: list(string),
+        second: Maybe.t(second),
+        sid: list(int),
       };
 
-      type tForVariant =
-        | Remove
-        | Overwrite(t);
+      type tForVariant = variantOverride(t);
     };
 
     module CurseSelection = {
@@ -681,15 +683,13 @@ module Profession = {
     module LanguageScriptSelection = {
       type t = int;
 
-      type tForVariant =
-        | Remove
-        | Overwrite(t);
+      type tForVariant = variantOverride(t);
     };
 
     module SkillSpecializationSelection = {
-      type t =
-        | Single(string)
-        | OneOf(list(string));
+      type t = GenericHelpers.oneOrMany(int);
+
+      type tForVariant = variantOverride(t);
     };
 
     module SkillSelection = {
@@ -697,7 +697,7 @@ module Profession = {
         /**
      * If specified, only choose from skills of the specified group.
      */
-        gr: option(int),
+        gr: Maybe.t(int),
         /**
      * The AP value the user can spend.
      */
@@ -710,24 +710,24 @@ module Profession = {
     };
 
     type t = {
-      cantrips: option(CantripSelection.t),
-      combatTechniques: option(CombatTechniqueSelection.t),
-      curses: option(CurseSelection.t),
-      languagesScripts: option(LanguageScriptSelection.t),
-      skillSpecialization: option(SkillSpecializationSelection.t),
-      skills: option(SkillSelection.t),
-      terrainKnowledge: option(TerrainKnowledgeSelection.t),
+      cantrips: Maybe.t(CantripSelection.t),
+      combatTechniques: Maybe.t(CombatTechniqueSelection.t),
+      curses: Maybe.t(CurseSelection.t),
+      languagesScripts: Maybe.t(LanguageScriptSelection.t),
+      skillSpecialization: Maybe.t(SkillSpecializationSelection.t),
+      skills: Maybe.t(SkillSelection.t),
+      terrainKnowledge: Maybe.t(TerrainKnowledgeSelection.t),
       guildMageUnfamiliarSpell: bool,
     };
 
     type tForVariant = {
-      cantrips: option(CantripSelection.t),
-      combatTechniques: option(CombatTechniqueSelection.tForVariant),
-      curses: option(CurseSelection.t),
-      languagesScripts: option(LanguageScriptSelection.tForVariant),
-      skillSpecialization: option(SkillSpecializationSelection.t),
-      skills: option(SkillSelection.t),
-      terrainKnowledge: option(TerrainKnowledgeSelection.t),
+      cantrips: Maybe.t(CantripSelection.t),
+      combatTechniques: Maybe.t(CombatTechniqueSelection.tForVariant),
+      curses: Maybe.t(CurseSelection.t),
+      languagesScripts: Maybe.t(LanguageScriptSelection.tForVariant),
+      skillSpecialization: Maybe.t(SkillSpecializationSelection.tForVariant),
+      skills: Maybe.t(SkillSelection.t),
+      terrainKnowledge: Maybe.t(TerrainKnowledgeSelection.t),
       guildMageUnfamiliarSpell: bool,
     };
   };
@@ -747,15 +747,15 @@ module Profession = {
       ap: int,
       prerequisites: Prerequisites.tProfession,
       selections: Options.tForVariant,
-      specialAbilities: list(Prerequisites.ActivatablePrerequisite.t),
+      specialAbilities: list(Prerequisites.Activatable.t),
       combatTechniques: list(Culture.IncreaseSkill.t),
       skills: list(Culture.IncreaseSkill.t),
       spells: list(skillIncrease),
       liturgicalChants: list(skillIncrease),
       blessings: list(int),
-      precedingText: option(string),
-      fullText: option(string),
-      concludingText: option(string),
+      precedingText: Maybe.t(string),
+      fullText: Maybe.t(string),
+      concludingText: Maybe.t(string),
       errata: list(Erratum.t),
     };
   };
@@ -763,26 +763,26 @@ module Profession = {
   type t = {
     id: int,
     name,
-    subname: option(name),
-    ap: option(int),
+    subname: Maybe.t(name),
+    ap: Maybe.t(int),
     prerequisites: Prerequisites.tProfession,
-    prerequisitesStart: option(string),
-    prerequisitesEnd: option(string),
+    prerequisitesStart: Maybe.t(string),
+    prerequisitesEnd: Maybe.t(string),
     selections: Options.t,
-    specialAbilities: list(Prerequisites.ActivatablePrerequisite.t),
+    specialAbilities: list(Prerequisites.Activatable.t),
     combatTechniques: list(Culture.IncreaseSkill.t),
     skills: list(Culture.IncreaseSkill.t),
     spells: list(skillIncrease),
     liturgicalChants: list(skillIncrease),
     blessings: list(int),
     suggestedAdvantages: list(int),
-    suggestedAdvantagesText: option(string),
+    suggestedAdvantagesText: Maybe.t(string),
     suggestedDisadvantages: list(int),
-    suggestedDisadvantagesText: option(string),
+    suggestedDisadvantagesText: Maybe.t(string),
     unsuitableAdvantages: list(int),
-    unsuitableAdvantagesText: option(string),
+    unsuitableAdvantagesText: Maybe.t(string),
     unsuitableDisadvantages: list(int),
-    unsuitableDisadvantagesText: option(string),
+    unsuitableDisadvantagesText: Maybe.t(string),
     isVariantRequired: bool,
     variants: list(Variant.t),
     gr: int,
@@ -820,13 +820,13 @@ module Race = {
       name: string,
       commonCultures: list(int),
       commonAdvantages: list(int),
-      commonAdvantagesText: option(string),
+      commonAdvantagesText: Maybe.t(string),
       commonDisadvantages: list(int),
-      commonDisadvantagesText: option(string),
+      commonDisadvantagesText: Maybe.t(string),
       uncommonAdvantages: list(int),
-      uncommonAdvantagesText: option(string),
+      uncommonAdvantagesText: Maybe.t(string),
       uncommonDisadvantages: list(int),
-      uncommonDisadvantagesText: option(string),
+      uncommonDisadvantagesText: Maybe.t(string),
       hairColors: list(int),
       eyeColors: list(int),
       sizeBase: int,
@@ -847,23 +847,23 @@ module Race = {
     attributeAdjustmentsText: string,
     commonCultures: list(int),
     automaticAdvantages: list(int),
-    automaticAdvantagesText: option(string),
+    automaticAdvantagesText: Maybe.t(string),
     stronglyRecommendedAdvantages: list(int),
-    stronglyRecommendedAdvantagesText: option(string),
+    stronglyRecommendedAdvantagesText: Maybe.t(string),
     stronglyRecommendedDisadvantages: list(int),
-    stronglyRecommendedDisadvantagesText: option(string),
+    stronglyRecommendedDisadvantagesText: Maybe.t(string),
     commonAdvantages: list(int),
-    commonAdvantagesText: option(string),
+    commonAdvantagesText: Maybe.t(string),
     commonDisadvantages: list(int),
-    commonDisadvantagesText: option(string),
+    commonDisadvantagesText: Maybe.t(string),
     uncommonAdvantages: list(int),
-    uncommonAdvantagesText: option(string),
+    uncommonAdvantagesText: Maybe.t(string),
     uncommonDisadvantages: list(int),
-    uncommonDisadvantagesText: option(string),
-    hairColors: option(list(int)),
-    eyeColors: option(list(int)),
-    sizeBase: option(int),
-    sizeRandom: option(list(Die.t)),
+    uncommonDisadvantagesText: Maybe.t(string),
+    hairColors: Maybe.t(list(int)),
+    eyeColors: Maybe.t(list(int)),
+    sizeBase: Maybe.t(int),
+    sizeRandom: Maybe.t(list(Die.t)),
     weightBase: int,
     weightRandom: list(Die.t),
     variants: list(Variant.t),

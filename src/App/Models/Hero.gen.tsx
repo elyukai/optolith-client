@@ -2,7 +2,7 @@
 /* eslint-disable import/first */
 
 
-import {Prerequisites_SexPrerequisite_sex as Static_Prerequisites_SexPrerequisite_sex} from './Static.gen';
+import {Prerequisites_Sex_sex as Static_Prerequisites_Sex_sex} from './Static.gen';
 
 import {activatableAndSkillId as Ids_activatableAndSkillId} from '../../../src/App/Constants/Ids.gen';
 
@@ -374,7 +374,7 @@ export type t = {
   readonly dateModified: Date; 
   readonly adventurePointsTotal: number; 
   readonly experienceLevel: number; 
-  readonly sex: Static_Prerequisites_SexPrerequisite_sex; 
+  readonly sex: Static_Prerequisites_Sex_sex; 
   readonly phase: Phase_t; 
   readonly locale: string; 
   readonly avatar: Maybe_maybe<string>; 

@@ -456,7 +456,7 @@ type t = {
   dateModified: Js.Date.t,
   adventurePointsTotal: int,
   experienceLevel: int,
-  sex: Static.Prerequisites.SexPrerequisite.sex,
+  sex: Static.Prerequisites.Sex.sex,
   phase: Phase.t,
   locale: string,
   avatar: maybe(string),

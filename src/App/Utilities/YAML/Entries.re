@@ -64,7 +64,7 @@ module Zip = {
 module Aspects = {
   open Integrity.Entity;
 
-  let fromJson = yaml => AspectsL10n.fromYaml(yaml) |> toMapIntegrity;
+  let fromJson = yaml => AspectsL10n.fromJson(yaml) |> toMapIntegrity;
 };
 
 module ExperienceLevels = {
@@ -92,8 +92,8 @@ module ExperienceLevels = {
       (x: ExperienceLevelsUniv.t) => x.id,
       (x: ExperienceLevelsL10n.t) => x.id,
       merge,
-      ExperienceLevelsUniv.fromYaml(yaml),
-      ExperienceLevelsL10n.fromYaml(yaml),
+      ExperienceLevelsUniv.fromJson(yaml),
+      ExperienceLevelsL10n.fromJson(yaml),
     )
     |> toMapIntegrity;
 };

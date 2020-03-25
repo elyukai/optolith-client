@@ -6,43 +6,43 @@ var SourceRef = { };
 
 var Erratum = { };
 
-var SexPrerequisite = { };
+var Sex = { };
 
-var RacePrerequisite = { };
+var Race = { };
 
-var CulturePrerequisite = { };
+var Culture = { };
 
-var SocialPrerequisite = { };
+var SocialStatus = { };
 
-var PactPrerequisite = { };
+var Pact = { };
 
-var PrimaryAttributePrerequisite = { };
+var PrimaryAttribute = { };
 
-var ActivatablePrerequisite = { };
+var Activatable = { };
 
-var ActivatableSkillPrerequisite = { };
+var ActivatableSkill = { };
 
-var ActivatableMultiEntryPrerequisite = { };
+var ActivatableMultiEntry = { };
 
-var ActivatableMultiSelectPrerequisite = { };
+var ActivatableMultiSelect = { };
 
-var IncreasablePrerequisite = { };
+var Increasable = { };
 
-var IncreasableMultiEntryPrerequisite = { };
+var IncreasableMultiEntry = { };
 
 var Prerequisites = {
-  SexPrerequisite: SexPrerequisite,
-  RacePrerequisite: RacePrerequisite,
-  CulturePrerequisite: CulturePrerequisite,
-  SocialPrerequisite: SocialPrerequisite,
-  PactPrerequisite: PactPrerequisite,
-  PrimaryAttributePrerequisite: PrimaryAttributePrerequisite,
-  ActivatablePrerequisite: ActivatablePrerequisite,
-  ActivatableSkillPrerequisite: ActivatableSkillPrerequisite,
-  ActivatableMultiEntryPrerequisite: ActivatableMultiEntryPrerequisite,
-  ActivatableMultiSelectPrerequisite: ActivatableMultiSelectPrerequisite,
-  IncreasablePrerequisite: IncreasablePrerequisite,
-  IncreasableMultiEntryPrerequisite: IncreasableMultiEntryPrerequisite
+  Sex: Sex,
+  Race: Race,
+  Culture: Culture,
+  SocialStatus: SocialStatus,
+  Pact: Pact,
+  PrimaryAttribute: PrimaryAttribute,
+  Activatable: Activatable,
+  ActivatableSkill: ActivatableSkill,
+  ActivatableMultiEntry: ActivatableMultiEntry,
+  ActivatableMultiSelect: ActivatableMultiSelect,
+  Increasable: Increasable,
+  IncreasableMultiEntry: IncreasableMultiEntry
 };
 
 var Application = { };
@@ -74,7 +74,7 @@ var Condition = { };
 
 var IncreaseSkill = { };
 
-var Culture = {
+var Culture$1 = {
   IncreaseSkill: IncreaseSkill
 };
 
@@ -161,7 +161,7 @@ var Die = { };
 
 var Variant$1 = { };
 
-var Race = {
+var Race$1 = {
   Die: Die,
   Variant: Variant$1
 };
@@ -191,7 +191,7 @@ exports.Blessing = Blessing;
 exports.Cantrip = Cantrip;
 exports.CombatTechnique = CombatTechnique;
 exports.Condition = Condition;
-exports.Culture = Culture;
+exports.Culture = Culture$1;
 exports.Curse = Curse;
 exports.DerivedCharacteristic = DerivedCharacteristic;
 exports.Disadvantage = Disadvantage;
@@ -212,7 +212,7 @@ exports.PactCategory = PactCategory;
 exports.Patron = Patron;
 exports.Profession = Profession;
 exports.Publication = Publication;
-exports.Race = Race;
+exports.Race = Race$1;
 exports.RogueSpell = RogueSpell;
 exports.SkillGroup = SkillGroup;
 exports.SpecialAbility = SpecialAbility;
