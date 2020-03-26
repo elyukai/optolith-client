@@ -5,6 +5,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
+var Maybe$OptolithClient = require("../../../Data/Maybe.bs.js");
 
 function $$const(x, json) {
   if (Caml_obj.caml_equal(json, x)) {
@@ -225,12 +226,21 @@ var Id = {
 };
 
 function l10n(json) {
+  var first = Json_decode.field("firstPage", Json_decode.$$int, json);
+  var mlast = Json_decode.field("lastPage", (function (param) {
+          return maybe(Json_decode.$$int, param);
+        }), json);
   return {
           id: Json_decode.field("id", Json_decode.string, json),
-          firstPage: Json_decode.field("firstPage", Json_decode.$$int, json),
-          lastPage: Json_decode.field("lastPage", (function (param) {
-                  return maybe(Json_decode.$$int, param);
-                }), json)
+          page: Maybe$OptolithClient.maybe(/* tuple */[
+                first,
+                first
+              ], (function (last) {
+                  return /* tuple */[
+                          first,
+                          last
+                        ];
+                }), mlast)
         };
 }
 
@@ -249,8 +259,10 @@ function l10n$1(json) {
         };
 }
 
-function fromJson$1(param) {
-  return Json_decode.list(l10n$1, param);
+function fromJson$1(json) {
+  return Maybe$OptolithClient.fromMaybe(/* [] */0, maybe((function (param) {
+                    return Json_decode.list(l10n$1, param);
+                  }), json));
 }
 
 var Errata = {
@@ -578,18 +590,45 @@ var Prerequisites = {
   IncreasableMultiEntry: IncreasableMultiEntry
 };
 
+function fromJson$12(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.$$int, json),
+          name: Json_decode.field("name", Json_decode.string, json),
+          description: Json_decode.field("description", (function (param) {
+                  return maybe(Json_decode.string, param);
+                }), json)
+        };
+}
+
+var SelectOptionsL10n = {
+  fromJson: fromJson$12
+};
+
+function fromJson$13(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.$$int, json),
+          cost: Json_decode.field("cost", (function (param) {
+                  return maybe(Json_decode.$$int, param);
+                }), json)
+        };
+}
+
+var SelectOptionsUniv = {
+  fromJson: fromJson$13
+};
+
 function l10n$2(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
-function fromJson$12(yaml) {
-  return Json_decode.list(l10n$2, yaml.experienceLevelsL10n);
+function fromJson$14(yaml) {
+  return Json_decode.list(l10n$2, yaml.advantagesL10n);
 }
 
-var SelectOptionsL10n = {
-  fromJson: fromJson$12
+var AdvantagesL10n = {
+  fromJson: fromJson$14
 };
 
 function univ(json) {
@@ -598,12 +637,12 @@ function univ(json) {
         };
 }
 
-function fromJson$13(yaml) {
-  return Json_decode.list(univ, yaml.experienceLevelsUniv);
+function fromJson$15(yaml) {
+  return Json_decode.list(univ, yaml.advantagesUniv);
 }
 
-var ProfessionSelectOptionsUniv = {
-  fromJson: fromJson$13
+var AdvantagesUniv = {
+  fromJson: fromJson$15
 };
 
 function l10n$3(json) {
@@ -612,12 +651,12 @@ function l10n$3(json) {
         };
 }
 
-function fromJson$14(yaml) {
-  return Json_decode.list(l10n$3, yaml.experienceLevelsL10n);
+function fromJson$16(yaml) {
+  return Json_decode.list(l10n$3, yaml.animistForcesL10n);
 }
 
-var AdvantagesL10n = {
-  fromJson: fromJson$14
+var AnimistForcesL10n = {
+  fromJson: fromJson$16
 };
 
 function univ$1(json) {
@@ -626,40 +665,27 @@ function univ$1(json) {
         };
 }
 
-function fromJson$15(yaml) {
-  return Json_decode.list(univ$1, yaml.experienceLevelsUniv);
-}
-
-var AdvantagesUniv = {
-  fromJson: fromJson$15
-};
-
-function l10n$4(json) {
-  return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
-        };
-}
-
-function fromJson$16(yaml) {
-  return Json_decode.list(l10n$4, yaml.experienceLevelsL10n);
-}
-
-var AnimistForcesL10n = {
-  fromJson: fromJson$16
-};
-
-function univ$2(json) {
-  return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
-        };
-}
-
 function fromJson$17(yaml) {
-  return Json_decode.list(univ$2, yaml.experienceLevelsUniv);
+  return Json_decode.list(univ$1, yaml.animistForcesUniv);
 }
 
 var AnimistForcesUniv = {
   fromJson: fromJson$17
+};
+
+function l10n$4(json) {
+  return /* tuple */[
+          Json_decode.field("id", Json_decode.$$int, json),
+          Json_decode.field("name", Json_decode.string, json)
+        ];
+}
+
+function fromJson$18(yaml) {
+  return Json_decode.list(l10n$4, yaml.arcaneBardTraditionsL10n);
+}
+
+var ArcaneBardTraditionsL10n = {
+  fromJson: fromJson$18
 };
 
 function l10n$5(json) {
@@ -669,12 +695,12 @@ function l10n$5(json) {
         ];
 }
 
-function fromJson$18(yaml) {
-  return Json_decode.list(l10n$5, yaml.arcaneBardTraditionsL10n);
+function fromJson$19(yaml) {
+  return Json_decode.list(l10n$5, yaml.arcaneDancerTraditionsL10n);
 }
 
-var ArcaneBardTraditionsL10n = {
-  fromJson: fromJson$18
+var ArcaneDancerTraditionsL10n = {
+  fromJson: fromJson$19
 };
 
 function l10n$6(json) {
@@ -684,12 +710,12 @@ function l10n$6(json) {
         ];
 }
 
-function fromJson$19(yaml) {
-  return Json_decode.list(l10n$6, yaml.arcaneDancerTraditionsL10n);
+function fromJson$20(yaml) {
+  return Json_decode.list(l10n$6, yaml.armorTypesL10n);
 }
 
-var ArcaneDancerTraditionsL10n = {
-  fromJson: fromJson$19
+var ArmorTypesL10n = {
+  fromJson: fromJson$20
 };
 
 function l10n$7(json) {
@@ -699,41 +725,57 @@ function l10n$7(json) {
         ];
 }
 
-function fromJson$20(yaml) {
-  return Json_decode.list(l10n$7, yaml.armorTypesL10n);
-}
-
-var ArmorTypesL10n = {
-  fromJson: fromJson$20
-};
-
-function l10n$8(json) {
-  return /* tuple */[
-          Json_decode.field("id", Json_decode.$$int, json),
-          Json_decode.field("name", Json_decode.string, json)
-        ];
-}
-
 function fromJson$21(yaml) {
-  return Json_decode.list(l10n$8, yaml.aspectsL10n);
+  return Json_decode.list(l10n$7, yaml.aspectsL10n);
 }
 
 var AspectsL10n = {
   fromJson: fromJson$21
 };
 
+function l10n$8(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.$$int, json),
+          name: Json_decode.field("name", Json_decode.string, json),
+          short: Json_decode.field("short", Json_decode.string, json)
+        };
+}
+
+function fromJson$22(yaml) {
+  return Json_decode.list(l10n$8, yaml.attributesL10n);
+}
+
+var AttributesL10n = {
+  fromJson: fromJson$22
+};
+
 function l10n$9(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.$$int, json),
+          name: Json_decode.field("name", Json_decode.string, json)
+        };
+}
+
+function fromJson$23(yaml) {
+  return Json_decode.list(l10n$9, yaml.blessedTraditionsL10n);
+}
+
+var BlessedTraditionsL10n = {
+  fromJson: fromJson$23
+};
+
+function univ$2(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
-function fromJson$22(yaml) {
-  return Json_decode.list(l10n$9, yaml.experienceLevelsL10n);
+function fromJson$24(yaml) {
+  return Json_decode.list(univ$2, yaml.blessedTraditionsUniv);
 }
 
-var AttributesL10n = {
-  fromJson: fromJson$22
+var BlessedTraditionsUniv = {
+  fromJson: fromJson$24
 };
 
 function l10n$10(json) {
@@ -742,12 +784,12 @@ function l10n$10(json) {
         };
 }
 
-function fromJson$23(yaml) {
-  return Json_decode.list(l10n$10, yaml.experienceLevelsL10n);
+function fromJson$25(yaml) {
+  return Json_decode.list(l10n$10, yaml.blessingsL10n);
 }
 
-var BlessedTraditionsL10n = {
-  fromJson: fromJson$23
+var BlessingsL10n = {
+  fromJson: fromJson$25
 };
 
 function univ$3(json) {
@@ -756,26 +798,41 @@ function univ$3(json) {
         };
 }
 
-function fromJson$24(yaml) {
-  return Json_decode.list(univ$3, yaml.experienceLevelsUniv);
+function fromJson$26(yaml) {
+  return Json_decode.list(univ$3, yaml.blessingsUniv);
 }
 
-var BlessedTraditionsUniv = {
-  fromJson: fromJson$24
+var BlessingsUniv = {
+  fromJson: fromJson$26
 };
 
 function l10n$11(json) {
+  return /* tuple */[
+          Json_decode.field("id", Json_decode.$$int, json),
+          Json_decode.field("name", Json_decode.string, json)
+        ];
+}
+
+function fromJson$27(yaml) {
+  return Json_decode.list(l10n$11, yaml.brewsL10n);
+}
+
+var BrewsL10n = {
+  fromJson: fromJson$27
+};
+
+function l10n$12(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
-function fromJson$25(yaml) {
-  return Json_decode.list(l10n$11, yaml.experienceLevelsL10n);
+function fromJson$28(yaml) {
+  return Json_decode.list(l10n$12, yaml.cantripsL10n);
 }
 
-var BlessingsL10n = {
-  fromJson: fromJson$25
+var CantripsL10n = {
+  fromJson: fromJson$28
 };
 
 function univ$4(json) {
@@ -784,55 +841,27 @@ function univ$4(json) {
         };
 }
 
-function fromJson$26(yaml) {
-  return Json_decode.list(univ$4, yaml.experienceLevelsUniv);
+function fromJson$29(yaml) {
+  return Json_decode.list(univ$4, yaml.cantripsUniv);
 }
 
-var BlessingsUniv = {
-  fromJson: fromJson$26
+var CantripsUniv = {
+  fromJson: fromJson$29
 };
 
-function l10n$12(json) {
+function l10n$13(json) {
   return /* tuple */[
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
 }
 
-function fromJson$27(yaml) {
-  return Json_decode.list(l10n$12, yaml.brewsL10n);
+function fromJson$30(yaml) {
+  return Json_decode.list(l10n$13, yaml.combatSpecialAbilityGroupsL10n);
 }
 
-var BrewsL10n = {
-  fromJson: fromJson$27
-};
-
-function l10n$13(json) {
-  return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
-        };
-}
-
-function fromJson$28(yaml) {
-  return Json_decode.list(l10n$13, yaml.experienceLevelsL10n);
-}
-
-var CantripsL10n = {
-  fromJson: fromJson$28
-};
-
-function univ$5(json) {
-  return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
-        };
-}
-
-function fromJson$29(yaml) {
-  return Json_decode.list(univ$5, yaml.experienceLevelsUniv);
-}
-
-var CantripsUniv = {
-  fromJson: fromJson$29
+var CombatSpecialAbilityGroupsL10n = {
+  fromJson: fromJson$30
 };
 
 function l10n$14(json) {
@@ -842,27 +871,40 @@ function l10n$14(json) {
         ];
 }
 
-function fromJson$30(yaml) {
-  return Json_decode.list(l10n$14, yaml.combatSpecialAbilityGroupsL10n);
-}
-
-var CombatSpecialAbilityGroupsL10n = {
-  fromJson: fromJson$30
-};
-
-function l10n$15(json) {
-  return /* tuple */[
-          Json_decode.field("id", Json_decode.$$int, json),
-          Json_decode.field("name", Json_decode.string, json)
-        ];
-}
-
 function fromJson$31(yaml) {
-  return Json_decode.list(l10n$15, yaml.combatTechniqueGroupsL10n);
+  return Json_decode.list(l10n$14, yaml.combatTechniqueGroupsL10n);
 }
 
 var CombatTechniqueGroupsL10n = {
   fromJson: fromJson$31
+};
+
+function l10n$15(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.$$int, json)
+        };
+}
+
+function fromJson$32(yaml) {
+  return Json_decode.list(l10n$15, yaml.combatTechniquesL10n);
+}
+
+var CombatTechniquesL10n = {
+  fromJson: fromJson$32
+};
+
+function univ$5(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.$$int, json)
+        };
+}
+
+function fromJson$33(yaml) {
+  return Json_decode.list(univ$5, yaml.combatTechniquesUniv);
+}
+
+var CombatTechniquesUniv = {
+  fromJson: fromJson$33
 };
 
 function l10n$16(json) {
@@ -871,26 +913,12 @@ function l10n$16(json) {
         };
 }
 
-function fromJson$32(yaml) {
-  return Json_decode.list(l10n$16, yaml.experienceLevelsL10n);
+function fromJson$34(yaml) {
+  return Json_decode.list(l10n$16, yaml.conditionsL10n);
 }
 
-var CombatTechniquesL10n = {
-  fromJson: fromJson$32
-};
-
-function univ$6(json) {
-  return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
-        };
-}
-
-function fromJson$33(yaml) {
-  return Json_decode.list(univ$6, yaml.experienceLevelsUniv);
-}
-
-var CombatTechniquesUniv = {
-  fromJson: fromJson$33
+var ConditionsL10n = {
+  fromJson: fromJson$34
 };
 
 function l10n$17(json) {
@@ -899,12 +927,26 @@ function l10n$17(json) {
         };
 }
 
-function fromJson$34(yaml) {
-  return Json_decode.list(l10n$17, yaml.experienceLevelsL10n);
+function fromJson$35(yaml) {
+  return Json_decode.list(l10n$17, yaml.culturesL10n);
 }
 
-var ConditionsL10n = {
-  fromJson: fromJson$34
+var CulturesL10n = {
+  fromJson: fromJson$35
+};
+
+function univ$6(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.$$int, json)
+        };
+}
+
+function fromJson$36(yaml) {
+  return Json_decode.list(univ$6, yaml.culturesUniv);
+}
+
+var CulturesUniv = {
+  fromJson: fromJson$36
 };
 
 function l10n$18(json) {
@@ -913,12 +955,12 @@ function l10n$18(json) {
         };
 }
 
-function fromJson$35(yaml) {
-  return Json_decode.list(l10n$18, yaml.experienceLevelsL10n);
+function fromJson$37(yaml) {
+  return Json_decode.list(l10n$18, yaml.cursesL10n);
 }
 
-var CulturesL10n = {
-  fromJson: fromJson$35
+var CursesL10n = {
+  fromJson: fromJson$37
 };
 
 function univ$7(json) {
@@ -927,12 +969,12 @@ function univ$7(json) {
         };
 }
 
-function fromJson$36(yaml) {
-  return Json_decode.list(univ$7, yaml.experienceLevelsUniv);
+function fromJson$38(yaml) {
+  return Json_decode.list(univ$7, yaml.cursesUniv);
 }
 
-var CulturesUniv = {
-  fromJson: fromJson$36
+var CursesUniv = {
+  fromJson: fromJson$38
 };
 
 function l10n$19(json) {
@@ -941,26 +983,12 @@ function l10n$19(json) {
         };
 }
 
-function fromJson$37(yaml) {
-  return Json_decode.list(l10n$19, yaml.experienceLevelsL10n);
+function fromJson$39(yaml) {
+  return Json_decode.list(l10n$19, yaml.derivedCharacteristicsL10n);
 }
 
-var CursesL10n = {
-  fromJson: fromJson$37
-};
-
-function univ$8(json) {
-  return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
-        };
-}
-
-function fromJson$38(yaml) {
-  return Json_decode.list(univ$8, yaml.experienceLevelsUniv);
-}
-
-var CursesUniv = {
-  fromJson: fromJson$38
+var DerivedCharacteristicsL10n = {
+  fromJson: fromJson$39
 };
 
 function l10n$20(json) {
@@ -969,12 +997,26 @@ function l10n$20(json) {
         };
 }
 
-function fromJson$39(yaml) {
-  return Json_decode.list(l10n$20, yaml.experienceLevelsL10n);
+function fromJson$40(yaml) {
+  return Json_decode.list(l10n$20, yaml.disadvantagesL10n);
 }
 
-var DerivedCharacteristicsL10n = {
-  fromJson: fromJson$39
+var DisadvantagesL10n = {
+  fromJson: fromJson$40
+};
+
+function univ$8(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.$$int, json)
+        };
+}
+
+function fromJson$41(yaml) {
+  return Json_decode.list(univ$8, yaml.disadvantagesUniv);
+}
+
+var DisadvantagesUniv = {
+  fromJson: fromJson$41
 };
 
 function l10n$21(json) {
@@ -983,12 +1025,12 @@ function l10n$21(json) {
         };
 }
 
-function fromJson$40(yaml) {
-  return Json_decode.list(l10n$21, yaml.experienceLevelsL10n);
+function fromJson$42(yaml) {
+  return Json_decode.list(l10n$21, yaml.dominationRitualsL10n);
 }
 
-var DisadvantagesL10n = {
-  fromJson: fromJson$40
+var DominationRitualsL10n = {
+  fromJson: fromJson$42
 };
 
 function univ$9(json) {
@@ -997,12 +1039,12 @@ function univ$9(json) {
         };
 }
 
-function fromJson$41(yaml) {
-  return Json_decode.list(univ$9, yaml.experienceLevelsUniv);
+function fromJson$43(yaml) {
+  return Json_decode.list(univ$9, yaml.dominationRitualsUniv);
 }
 
-var DisadvantagesUniv = {
-  fromJson: fromJson$41
+var DominationRitualsUniv = {
+  fromJson: fromJson$43
 };
 
 function l10n$22(json) {
@@ -1011,12 +1053,12 @@ function l10n$22(json) {
         };
 }
 
-function fromJson$42(yaml) {
-  return Json_decode.list(l10n$22, yaml.experienceLevelsL10n);
+function fromJson$44(yaml) {
+  return Json_decode.list(l10n$22, yaml.elvenMagicalSongsL10n);
 }
 
-var DominationRitualsL10n = {
-  fromJson: fromJson$42
+var ElvenMagicalSongsL10n = {
+  fromJson: fromJson$44
 };
 
 function univ$10(json) {
@@ -1025,12 +1067,12 @@ function univ$10(json) {
         };
 }
 
-function fromJson$43(yaml) {
-  return Json_decode.list(univ$10, yaml.experienceLevelsUniv);
+function fromJson$45(yaml) {
+  return Json_decode.list(univ$10, yaml.elvenMagicalSongsUniv);
 }
 
-var DominationRitualsUniv = {
-  fromJson: fromJson$43
+var ElvenMagicalSongsUniv = {
+  fromJson: fromJson$45
 };
 
 function l10n$23(json) {
@@ -1039,12 +1081,12 @@ function l10n$23(json) {
         };
 }
 
-function fromJson$44(yaml) {
-  return Json_decode.list(l10n$23, yaml.experienceLevelsL10n);
+function fromJson$46(yaml) {
+  return Json_decode.list(l10n$23, yaml.equipmentL10n);
 }
 
-var ElvenMagicalSongsL10n = {
-  fromJson: fromJson$44
+var EquipmentL10n = {
+  fromJson: fromJson$46
 };
 
 function univ$11(json) {
@@ -1053,26 +1095,41 @@ function univ$11(json) {
         };
 }
 
-function fromJson$45(yaml) {
-  return Json_decode.list(univ$11, yaml.experienceLevelsUniv);
+function fromJson$47(yaml) {
+  return Json_decode.list(univ$11, yaml.equipmentUniv);
 }
 
-var ElvenMagicalSongsUniv = {
-  fromJson: fromJson$45
+var EquipmentUniv = {
+  fromJson: fromJson$47
 };
 
 function l10n$24(json) {
+  return /* tuple */[
+          Json_decode.field("id", Json_decode.$$int, json),
+          Json_decode.field("name", Json_decode.string, json)
+        ];
+}
+
+function fromJson$48(yaml) {
+  return Json_decode.list(l10n$24, yaml.equipmentGroupsL10n);
+}
+
+var EquipmentGroupsL10n = {
+  fromJson: fromJson$48
+};
+
+function l10n$25(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
-function fromJson$46(yaml) {
-  return Json_decode.list(l10n$24, yaml.experienceLevelsL10n);
+function fromJson$49(yaml) {
+  return Json_decode.list(l10n$25, yaml.equipmentPackagesL10n);
 }
 
-var EquipmentL10n = {
-  fromJson: fromJson$46
+var EquipmentPackagesL10n = {
+  fromJson: fromJson$49
 };
 
 function univ$12(json) {
@@ -1081,58 +1138,15 @@ function univ$12(json) {
         };
 }
 
-function fromJson$47(yaml) {
-  return Json_decode.list(univ$12, yaml.experienceLevelsUniv);
-}
-
-var EquipmentUniv = {
-  fromJson: fromJson$47
-};
-
-function l10n$25(json) {
-  return /* tuple */[
-          Json_decode.field("id", Json_decode.$$int, json),
-          Json_decode.field("name", Json_decode.string, json)
-        ];
-}
-
-function fromJson$48(yaml) {
-  return Json_decode.list(l10n$25, yaml.equipmentGroupsL10n);
-}
-
-var EquipmentGroupsL10n = {
-  fromJson: fromJson$48
-};
-
-function l10n$26(json) {
-  return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
-        };
-}
-
-function fromJson$49(yaml) {
-  return Json_decode.list(l10n$26, yaml.experienceLevelsL10n);
-}
-
-var EquipmentPackagesL10n = {
-  fromJson: fromJson$49
-};
-
-function univ$13(json) {
-  return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
-        };
-}
-
 function fromJson$50(yaml) {
-  return Json_decode.list(univ$13, yaml.experienceLevelsUniv);
+  return Json_decode.list(univ$12, yaml.equipmentPackagesUniv);
 }
 
 var EquipmentPackagesUniv = {
   fromJson: fromJson$50
 };
 
-function l10n$27(json) {
+function l10n$26(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
           name: Json_decode.field("name", Json_decode.string, json)
@@ -1140,14 +1154,14 @@ function l10n$27(json) {
 }
 
 function fromJson$51(yaml) {
-  return Json_decode.list(l10n$27, yaml.experienceLevelsL10n);
+  return Json_decode.list(l10n$26, yaml.experienceLevelsL10n);
 }
 
 var ExperienceLevelsL10n = {
   fromJson: fromJson$51
 };
 
-function univ$14(json) {
+function univ$13(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
           ap: Json_decode.field("ap", Json_decode.$$int, json),
@@ -1161,14 +1175,14 @@ function univ$14(json) {
 }
 
 function fromJson$52(yaml) {
-  return Json_decode.list(univ$14, yaml.experienceLevelsUniv);
+  return Json_decode.list(univ$13, yaml.experienceLevelsUniv);
 }
 
 var ExperienceLevelsUniv = {
   fromJson: fromJson$52
 };
 
-function l10n$28(json) {
+function l10n$27(json) {
   return /* tuple */[
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
@@ -1176,11 +1190,39 @@ function l10n$28(json) {
 }
 
 function fromJson$53(yaml) {
-  return Json_decode.list(l10n$28, yaml.eyeColorsL10n);
+  return Json_decode.list(l10n$27, yaml.eyeColorsL10n);
 }
 
 var EyeColorsL10n = {
   fromJson: fromJson$53
+};
+
+function l10n$28(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.$$int, json)
+        };
+}
+
+function fromJson$54(yaml) {
+  return Json_decode.list(l10n$28, yaml.focusRulesL10n);
+}
+
+var FocusRulesL10n = {
+  fromJson: fromJson$54
+};
+
+function univ$14(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.$$int, json)
+        };
+}
+
+function fromJson$55(yaml) {
+  return Json_decode.list(univ$14, yaml.focusRulesUniv);
+}
+
+var FocusRulesUniv = {
+  fromJson: fromJson$55
 };
 
 function l10n$29(json) {
@@ -1189,12 +1231,12 @@ function l10n$29(json) {
         };
 }
 
-function fromJson$54(yaml) {
-  return Json_decode.list(l10n$29, yaml.experienceLevelsL10n);
+function fromJson$56(yaml) {
+  return Json_decode.list(l10n$29, yaml.geodeRitualsL10n);
 }
 
-var FocusRulesL10n = {
-  fromJson: fromJson$54
+var GeodeRitualsL10n = {
+  fromJson: fromJson$56
 };
 
 function univ$15(json) {
@@ -1203,26 +1245,41 @@ function univ$15(json) {
         };
 }
 
-function fromJson$55(yaml) {
-  return Json_decode.list(univ$15, yaml.experienceLevelsUniv);
+function fromJson$57(yaml) {
+  return Json_decode.list(univ$15, yaml.geodeRitualsUniv);
 }
 
-var FocusRulesUniv = {
-  fromJson: fromJson$55
+var GeodeRitualsUniv = {
+  fromJson: fromJson$57
 };
 
 function l10n$30(json) {
+  return /* tuple */[
+          Json_decode.field("id", Json_decode.$$int, json),
+          Json_decode.field("name", Json_decode.string, json)
+        ];
+}
+
+function fromJson$58(yaml) {
+  return Json_decode.list(l10n$30, yaml.hairColorsL10n);
+}
+
+var HairColorsL10n = {
+  fromJson: fromJson$58
+};
+
+function l10n$31(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
-function fromJson$56(yaml) {
-  return Json_decode.list(l10n$30, yaml.experienceLevelsL10n);
+function fromJson$59(yaml) {
+  return Json_decode.list(l10n$31, yaml.liturgicalChantEnhancementsL10n);
 }
 
-var GeodeRitualsL10n = {
-  fromJson: fromJson$56
+var LiturgicalChantEnhancementsL10n = {
+  fromJson: fromJson$59
 };
 
 function univ$16(json) {
@@ -1231,41 +1288,41 @@ function univ$16(json) {
         };
 }
 
-function fromJson$57(yaml) {
-  return Json_decode.list(univ$16, yaml.experienceLevelsUniv);
+function fromJson$60(yaml) {
+  return Json_decode.list(univ$16, yaml.liturgicalChantEnhancementsUniv);
 }
 
-var GeodeRitualsUniv = {
-  fromJson: fromJson$57
+var LiturgicalChantEnhancementsUniv = {
+  fromJson: fromJson$60
 };
 
-function l10n$31(json) {
+function l10n$32(json) {
   return /* tuple */[
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
 }
 
-function fromJson$58(yaml) {
-  return Json_decode.list(l10n$31, yaml.hairColorsL10n);
+function fromJson$61(yaml) {
+  return Json_decode.list(l10n$32, yaml.liturgicalChantGroupsL10n);
 }
 
-var HairColorsL10n = {
-  fromJson: fromJson$58
+var LiturgicalChantGroupsL10n = {
+  fromJson: fromJson$61
 };
 
-function l10n$32(json) {
+function l10n$33(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
-function fromJson$59(yaml) {
-  return Json_decode.list(l10n$32, yaml.experienceLevelsL10n);
+function fromJson$62(yaml) {
+  return Json_decode.list(l10n$33, yaml.liturgicalChantsL10n);
 }
 
-var LiturgicalChantEnhancementsL10n = {
-  fromJson: fromJson$59
+var LiturgicalChantsL10n = {
+  fromJson: fromJson$62
 };
 
 function univ$17(json) {
@@ -1274,27 +1331,12 @@ function univ$17(json) {
         };
 }
 
-function fromJson$60(yaml) {
-  return Json_decode.list(univ$17, yaml.experienceLevelsUniv);
+function fromJson$63(yaml) {
+  return Json_decode.list(univ$17, yaml.liturgicalChantsUniv);
 }
 
-var LiturgicalChantEnhancementsUniv = {
-  fromJson: fromJson$60
-};
-
-function l10n$33(json) {
-  return /* tuple */[
-          Json_decode.field("id", Json_decode.$$int, json),
-          Json_decode.field("name", Json_decode.string, json)
-        ];
-}
-
-function fromJson$61(yaml) {
-  return Json_decode.list(l10n$33, yaml.liturgicalChantGroupsL10n);
-}
-
-var LiturgicalChantGroupsL10n = {
-  fromJson: fromJson$61
+var LiturgicalChantsUniv = {
+  fromJson: fromJson$63
 };
 
 function l10n$34(json) {
@@ -1303,12 +1345,12 @@ function l10n$34(json) {
         };
 }
 
-function fromJson$62(yaml) {
-  return Json_decode.list(l10n$34, yaml.experienceLevelsL10n);
+function fromJson$64(yaml) {
+  return Json_decode.list(l10n$34, yaml.magicalDancesL10n);
 }
 
-var LiturgicalChantsL10n = {
-  fromJson: fromJson$62
+var MagicalDancesL10n = {
+  fromJson: fromJson$64
 };
 
 function univ$18(json) {
@@ -1317,12 +1359,12 @@ function univ$18(json) {
         };
 }
 
-function fromJson$63(yaml) {
-  return Json_decode.list(univ$18, yaml.experienceLevelsUniv);
+function fromJson$65(yaml) {
+  return Json_decode.list(univ$18, yaml.magicalDancesUniv);
 }
 
-var LiturgicalChantsUniv = {
-  fromJson: fromJson$63
+var MagicalDancesUniv = {
+  fromJson: fromJson$65
 };
 
 function l10n$35(json) {
@@ -1331,12 +1373,12 @@ function l10n$35(json) {
         };
 }
 
-function fromJson$64(yaml) {
-  return Json_decode.list(l10n$35, yaml.experienceLevelsL10n);
+function fromJson$66(yaml) {
+  return Json_decode.list(l10n$35, yaml.magicalMelodiesL10n);
 }
 
-var MagicalDancesL10n = {
-  fromJson: fromJson$64
+var MagicalMelodiesL10n = {
+  fromJson: fromJson$66
 };
 
 function univ$19(json) {
@@ -1345,12 +1387,12 @@ function univ$19(json) {
         };
 }
 
-function fromJson$65(yaml) {
-  return Json_decode.list(univ$19, yaml.experienceLevelsUniv);
+function fromJson$67(yaml) {
+  return Json_decode.list(univ$19, yaml.magicalMelodiesUniv);
 }
 
-var MagicalDancesUniv = {
-  fromJson: fromJson$65
+var MagicalMelodiesUniv = {
+  fromJson: fromJson$67
 };
 
 function l10n$36(json) {
@@ -1359,12 +1401,12 @@ function l10n$36(json) {
         };
 }
 
-function fromJson$66(yaml) {
-  return Json_decode.list(l10n$36, yaml.experienceLevelsL10n);
+function fromJson$68(yaml) {
+  return Json_decode.list(l10n$36, yaml.magicalTraditionsL10n);
 }
 
-var MagicalMelodiesL10n = {
-  fromJson: fromJson$66
+var MagicalTraditionsL10n = {
+  fromJson: fromJson$68
 };
 
 function univ$20(json) {
@@ -1373,12 +1415,12 @@ function univ$20(json) {
         };
 }
 
-function fromJson$67(yaml) {
-  return Json_decode.list(univ$20, yaml.experienceLevelsUniv);
+function fromJson$69(yaml) {
+  return Json_decode.list(univ$20, yaml.magicalTraditionsUniv);
 }
 
-var MagicalMelodiesUniv = {
-  fromJson: fromJson$67
+var MagicalTraditionsUniv = {
+  fromJson: fromJson$69
 };
 
 function l10n$37(json) {
@@ -1387,26 +1429,12 @@ function l10n$37(json) {
         };
 }
 
-function fromJson$68(yaml) {
-  return Json_decode.list(l10n$37, yaml.experienceLevelsL10n);
+function fromJson$70(yaml) {
+  return Json_decode.list(l10n$37, yaml.optionalRulesL10n);
 }
 
-var MagicalTraditionsL10n = {
-  fromJson: fromJson$68
-};
-
-function univ$21(json) {
-  return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
-        };
-}
-
-function fromJson$69(yaml) {
-  return Json_decode.list(univ$21, yaml.experienceLevelsUniv);
-}
-
-var MagicalTraditionsUniv = {
-  fromJson: fromJson$69
+var OptionalRulesL10n = {
+  fromJson: fromJson$70
 };
 
 function l10n$38(json) {
@@ -1415,12 +1443,12 @@ function l10n$38(json) {
         };
 }
 
-function fromJson$70(yaml) {
-  return Json_decode.list(l10n$38, yaml.experienceLevelsL10n);
+function fromJson$71(yaml) {
+  return Json_decode.list(l10n$38, yaml.pactsL10n);
 }
 
-var OptionalRulesL10n = {
-  fromJson: fromJson$70
+var PactsL10n = {
+  fromJson: fromJson$71
 };
 
 function l10n$39(json) {
@@ -1429,22 +1457,8 @@ function l10n$39(json) {
         };
 }
 
-function fromJson$71(yaml) {
-  return Json_decode.list(l10n$39, yaml.experienceLevelsL10n);
-}
-
-var PactsL10n = {
-  fromJson: fromJson$71
-};
-
-function l10n$40(json) {
-  return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
-        };
-}
-
 function fromJson$72(yaml) {
-  return Json_decode.list(l10n$40, yaml.experienceLevelsL10n);
+  return Json_decode.list(l10n$39, yaml.professionsL10n);
 }
 
 var ProfessionsL10n = {
@@ -1532,14 +1546,14 @@ var Options = {
   TerrainKnowledge: TerrainKnowledge
 };
 
-function univ$22(json) {
+function univ$21(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
 function fromJson$77(yaml) {
-  return Json_decode.list(univ$22, yaml.experienceLevelsUniv);
+  return Json_decode.list(univ$21, yaml.professionsUniv);
 }
 
 var ProfessionsUniv = {
@@ -1547,14 +1561,14 @@ var ProfessionsUniv = {
   fromJson: fromJson$77
 };
 
-function l10n$41(json) {
+function l10n$40(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
 function fromJson$78(yaml) {
-  return Json_decode.list(l10n$41, yaml.experienceLevelsL10n);
+  return Json_decode.list(l10n$40, yaml.professionVariantsL10n);
 }
 
 var ProfessionVariantsL10n = {
@@ -1638,14 +1652,14 @@ var Options$1 = {
   CombatTechniques: CombatTechniques$1
 };
 
-function univ$23(json) {
+function univ$22(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
 function fromJson$81(yaml) {
-  return Json_decode.list(univ$23, yaml.experienceLevelsUniv);
+  return Json_decode.list(univ$22, yaml.professionVariantsUniv);
 }
 
 var ProfessionVariantsUniv = {
@@ -1653,7 +1667,7 @@ var ProfessionVariantsUniv = {
   fromJson: fromJson$81
 };
 
-function l10n$42(json) {
+function l10n$41(json) {
   return /* tuple */[
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
@@ -1661,11 +1675,29 @@ function l10n$42(json) {
 }
 
 function fromJson$82(yaml) {
-  return Json_decode.list(l10n$42, yaml.propertiesL10n);
+  return Json_decode.list(l10n$41, yaml.propertiesL10n);
 }
 
 var PropertiesL10n = {
   fromJson: fromJson$82
+};
+
+function l10n$42(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.string, json),
+          name: Json_decode.field("name", Json_decode.string, json),
+          short: Json_decode.field("short", Json_decode.string, json),
+          isCore: Json_decode.field("isCore", Json_decode.bool, json),
+          isAdultContent: Json_decode.field("isAdultContent", Json_decode.bool, json)
+        };
+}
+
+function fromJson$83(json) {
+  return Json_decode.list(l10n$42, json.booksL10n);
+}
+
+var PublicationsL10n = {
+  fromJson: fromJson$83
 };
 
 function l10n$43(json) {
@@ -1674,12 +1706,26 @@ function l10n$43(json) {
         };
 }
 
-function fromJson$83(yaml) {
-  return Json_decode.list(l10n$43, yaml.experienceLevelsL10n);
+function fromJson$84(yaml) {
+  return Json_decode.list(l10n$43, yaml.racesL10n);
 }
 
-var PublicationsL10n = {
-  fromJson: fromJson$83
+var RacesL10n = {
+  fromJson: fromJson$84
+};
+
+function univ$23(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.$$int, json)
+        };
+}
+
+function fromJson$85(yaml) {
+  return Json_decode.list(univ$23, yaml.racesUniv);
+}
+
+var RacesUniv = {
+  fromJson: fromJson$85
 };
 
 function l10n$44(json) {
@@ -1688,12 +1734,12 @@ function l10n$44(json) {
         };
 }
 
-function fromJson$84(yaml) {
-  return Json_decode.list(l10n$44, yaml.experienceLevelsL10n);
+function fromJson$86(yaml) {
+  return Json_decode.list(l10n$44, yaml.raceVariantsL10n);
 }
 
-var RacesL10n = {
-  fromJson: fromJson$84
+var RaceVariantL10n = {
+  fromJson: fromJson$86
 };
 
 function univ$24(json) {
@@ -1702,26 +1748,41 @@ function univ$24(json) {
         };
 }
 
-function fromJson$85(yaml) {
-  return Json_decode.list(univ$24, yaml.experienceLevelsUniv);
+function fromJson$87(yaml) {
+  return Json_decode.list(univ$24, yaml.raceVariantsUniv);
 }
 
-var RacesUniv = {
-  fromJson: fromJson$85
+var RaceVariantUniv = {
+  fromJson: fromJson$87
 };
 
 function l10n$45(json) {
+  return /* tuple */[
+          Json_decode.field("id", Json_decode.$$int, json),
+          Json_decode.field("name", Json_decode.string, json)
+        ];
+}
+
+function fromJson$88(yaml) {
+  return Json_decode.list(l10n$45, yaml.reachesL10n);
+}
+
+var ReachesL10n = {
+  fromJson: fromJson$88
+};
+
+function l10n$46(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
-function fromJson$86(yaml) {
-  return Json_decode.list(l10n$45, yaml.experienceLevelsL10n);
+function fromJson$89(yaml) {
+  return Json_decode.list(l10n$46, yaml.rogueSpellsL10n);
 }
 
-var RaceVariantL10n = {
-  fromJson: fromJson$86
+var RogueSpellsL10n = {
+  fromJson: fromJson$89
 };
 
 function univ$25(json) {
@@ -1730,41 +1791,41 @@ function univ$25(json) {
         };
 }
 
-function fromJson$87(yaml) {
-  return Json_decode.list(univ$25, yaml.experienceLevelsUniv);
+function fromJson$90(yaml) {
+  return Json_decode.list(univ$25, yaml.rogueSpellsUniv);
 }
 
-var RaceVariantUniv = {
-  fromJson: fromJson$87
+var RogueSpellsUniv = {
+  fromJson: fromJson$90
 };
 
-function l10n$46(json) {
+function l10n$47(json) {
   return /* tuple */[
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
 }
 
-function fromJson$88(yaml) {
-  return Json_decode.list(l10n$46, yaml.reachesL10n);
+function fromJson$91(yaml) {
+  return Json_decode.list(l10n$47, yaml.skillGroupsL10n);
 }
 
-var ReachesL10n = {
-  fromJson: fromJson$88
+var SkillGroupsL10n = {
+  fromJson: fromJson$91
 };
 
-function l10n$47(json) {
+function l10n$48(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
-function fromJson$89(yaml) {
-  return Json_decode.list(l10n$47, yaml.experienceLevelsL10n);
+function fromJson$92(yaml) {
+  return Json_decode.list(l10n$48, yaml.skillsL10n);
 }
 
-var RogueSpellsL10n = {
-  fromJson: fromJson$89
+var SkillsL10n = {
+  fromJson: fromJson$92
 };
 
 function univ$26(json) {
@@ -1773,41 +1834,41 @@ function univ$26(json) {
         };
 }
 
-function fromJson$90(yaml) {
-  return Json_decode.list(univ$26, yaml.experienceLevelsUniv);
+function fromJson$93(yaml) {
+  return Json_decode.list(univ$26, yaml.skillsUniv);
 }
 
-var RogueSpellsUniv = {
-  fromJson: fromJson$90
+var SkillsUniv = {
+  fromJson: fromJson$93
 };
 
-function l10n$48(json) {
+function l10n$49(json) {
   return /* tuple */[
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
 }
 
-function fromJson$91(yaml) {
-  return Json_decode.list(l10n$48, yaml.skillGroupsL10n);
+function fromJson$94(yaml) {
+  return Json_decode.list(l10n$49, yaml.socialStatusesL10n);
 }
 
-var SkillGroupsL10n = {
-  fromJson: fromJson$91
+var SocialStatusesL10n = {
+  fromJson: fromJson$94
 };
 
-function l10n$49(json) {
+function l10n$50(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
-function fromJson$92(yaml) {
-  return Json_decode.list(l10n$49, yaml.experienceLevelsL10n);
+function fromJson$95(yaml) {
+  return Json_decode.list(l10n$50, yaml.specialAbilitiesL10n);
 }
 
-var SkillsL10n = {
-  fromJson: fromJson$92
+var SpecialAbilitiesL10n = {
+  fromJson: fromJson$95
 };
 
 function univ$27(json) {
@@ -1816,41 +1877,41 @@ function univ$27(json) {
         };
 }
 
-function fromJson$93(yaml) {
-  return Json_decode.list(univ$27, yaml.experienceLevelsUniv);
+function fromJson$96(yaml) {
+  return Json_decode.list(univ$27, yaml.specialAbilitiesUniv);
 }
 
-var SkillsUniv = {
-  fromJson: fromJson$93
+var SpecialAbilitiesUniv = {
+  fromJson: fromJson$96
 };
 
-function l10n$50(json) {
+function l10n$51(json) {
   return /* tuple */[
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
 }
 
-function fromJson$94(yaml) {
-  return Json_decode.list(l10n$50, yaml.socialStatusesL10n);
+function fromJson$97(yaml) {
+  return Json_decode.list(l10n$51, yaml.specialAbilityGroupsL10n);
 }
 
-var SocialStatusesL10n = {
-  fromJson: fromJson$94
+var SpecialAbilityGroupsL10n = {
+  fromJson: fromJson$97
 };
 
-function l10n$51(json) {
+function l10n$52(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
-function fromJson$95(yaml) {
-  return Json_decode.list(l10n$51, yaml.experienceLevelsL10n);
+function fromJson$98(yaml) {
+  return Json_decode.list(l10n$52, yaml.spellEnhancementsL10n);
 }
 
-var SpecialAbilitiesL10n = {
-  fromJson: fromJson$95
+var SpellEnhancementsL10n = {
+  fromJson: fromJson$98
 };
 
 function univ$28(json) {
@@ -1859,41 +1920,41 @@ function univ$28(json) {
         };
 }
 
-function fromJson$96(yaml) {
-  return Json_decode.list(univ$28, yaml.experienceLevelsUniv);
+function fromJson$99(yaml) {
+  return Json_decode.list(univ$28, yaml.spellEnhancementsUniv);
 }
 
-var SpecialAbilitiesUniv = {
-  fromJson: fromJson$96
+var SpellEnhancementsUniv = {
+  fromJson: fromJson$99
 };
 
-function l10n$52(json) {
+function l10n$53(json) {
   return /* tuple */[
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
 }
 
-function fromJson$97(yaml) {
-  return Json_decode.list(l10n$52, yaml.specialAbilityGroupsL10n);
+function fromJson$100(yaml) {
+  return Json_decode.list(l10n$53, yaml.spellGroupsL10n);
 }
 
-var SpecialAbilityGroupsL10n = {
-  fromJson: fromJson$97
+var SpellGroupsL10n = {
+  fromJson: fromJson$100
 };
 
-function l10n$53(json) {
+function l10n$54(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
-function fromJson$98(yaml) {
-  return Json_decode.list(l10n$53, yaml.experienceLevelsL10n);
+function fromJson$101(yaml) {
+  return Json_decode.list(l10n$54, yaml.spellsL10n);
 }
 
-var SpellEnhancementsL10n = {
-  fromJson: fromJson$98
+var SpellsL10n = {
+  fromJson: fromJson$101
 };
 
 function univ$29(json) {
@@ -1902,72 +1963,33 @@ function univ$29(json) {
         };
 }
 
-function fromJson$99(yaml) {
-  return Json_decode.list(univ$29, yaml.experienceLevelsUniv);
-}
-
-var SpellEnhancementsUniv = {
-  fromJson: fromJson$99
-};
-
-function l10n$54(json) {
-  return /* tuple */[
-          Json_decode.field("id", Json_decode.$$int, json),
-          Json_decode.field("name", Json_decode.string, json)
-        ];
-}
-
-function fromJson$100(yaml) {
-  return Json_decode.list(l10n$54, yaml.spellGroupsL10n);
-}
-
-var SpellGroupsL10n = {
-  fromJson: fromJson$100
-};
-
-function l10n$55(json) {
-  return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
-        };
-}
-
-function fromJson$101(yaml) {
-  return Json_decode.list(l10n$55, yaml.experienceLevelsL10n);
-}
-
-var SpellsL10n = {
-  fromJson: fromJson$101
-};
-
-function univ$30(json) {
-  return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
-        };
-}
-
 function fromJson$102(yaml) {
-  return Json_decode.list(univ$30, yaml.experienceLevelsUniv);
+  return Json_decode.list(univ$29, yaml.spellsUniv);
 }
 
 var SpellsUniv = {
   fromJson: fromJson$102
 };
 
-function l10n$56(json) {
+function l10n$55(json) {
   return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
+          id: Json_decode.field("id", Json_decode.$$int, json),
+          name: Json_decode.field("name", Json_decode.string, json),
+          description: Json_decode.field("description", Json_decode.string, json),
+          src: Json_decode.list(l10n, json),
+          errata: fromJson$1(json)
         };
 }
 
 function fromJson$103(yaml) {
-  return Json_decode.list(l10n$56, yaml.experienceLevelsL10n);
+  return Json_decode.list(l10n$55, yaml.statesL10n);
 }
 
 var StatesL10n = {
   fromJson: fromJson$103
 };
 
-function l10n$57(json) {
+function l10n$56(json) {
   return /* tuple */[
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
@@ -1975,28 +1997,29 @@ function l10n$57(json) {
 }
 
 function fromJson$104(yaml) {
-  return Json_decode.list(l10n$57, yaml.subjectsL10n);
+  return Json_decode.list(l10n$56, yaml.subjectsL10n);
 }
 
 var SubjectsL10n = {
   fromJson: fromJson$104
 };
 
-function l10n$58(json) {
-  return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
-        };
+function l10n$57(json) {
+  return /* tuple */[
+          Json_decode.field("id", Json_decode.string, json),
+          Json_decode.field("name", Json_decode.string, json)
+        ];
 }
 
-function fromJson$105(yaml) {
-  return Json_decode.list(l10n$58, yaml.experienceLevelsL10n);
+function fromJson$105(param) {
+  return Json_decode.list(l10n$57, param);
 }
 
 var SupportedLanguagesL10n = {
   fromJson: fromJson$105
 };
 
-function l10n$59(json) {
+function l10n$58(json) {
   return /* tuple */[
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
@@ -2004,11 +2027,25 @@ function l10n$59(json) {
 }
 
 function fromJson$106(yaml) {
-  return Json_decode.list(l10n$59, yaml.tribesL10n);
+  return Json_decode.list(l10n$58, yaml.tribesL10n);
 }
 
 var TribesL10n = {
   fromJson: fromJson$106
+};
+
+function l10n$59(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.$$int, json)
+        };
+}
+
+function fromJson$107(yaml) {
+  return Json_decode.list(l10n$59, yaml.uiL10n);
+}
+
+var UI = {
+  fromJson: fromJson$107
 };
 
 function l10n$60(json) {
@@ -2017,36 +2054,22 @@ function l10n$60(json) {
         };
 }
 
-function fromJson$107(yaml) {
-  return Json_decode.list(l10n$60, yaml.experienceLevelsL10n);
-}
-
-var UI = {
-  fromJson: fromJson$107
-};
-
-function l10n$61(json) {
-  return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
-        };
-}
-
 function fromJson$108(yaml) {
-  return Json_decode.list(l10n$61, yaml.experienceLevelsL10n);
+  return Json_decode.list(l10n$60, yaml.zibiljaRitualsL10n);
 }
 
 var ZibiljaRitualsL10n = {
   fromJson: fromJson$108
 };
 
-function univ$31(json) {
+function univ$30(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json)
         };
 }
 
 function fromJson$109(yaml) {
-  return Json_decode.list(univ$31, yaml.experienceLevelsUniv);
+  return Json_decode.list(univ$30, yaml.zibiljaRitualsUniv);
 }
 
 var ZibiljaRitualsUniv = {
@@ -2061,7 +2084,7 @@ exports.SourceRefs = SourceRefs;
 exports.Errata = Errata;
 exports.Prerequisites = Prerequisites;
 exports.SelectOptionsL10n = SelectOptionsL10n;
-exports.ProfessionSelectOptionsUniv = ProfessionSelectOptionsUniv;
+exports.SelectOptionsUniv = SelectOptionsUniv;
 exports.AdvantagesL10n = AdvantagesL10n;
 exports.AdvantagesUniv = AdvantagesUniv;
 exports.AnimistForcesL10n = AnimistForcesL10n;

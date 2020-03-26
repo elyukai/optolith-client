@@ -587,17 +587,17 @@ module Patron = {
     [@genType "PatronCategory"]
     type t = {
       /**
-     * The patron category's ID.
-     */
+       * The patron category's ID.
+       */
       id: int,
       /**
-     * The name of the patron category.
-     */
+       * The name of the patron category.
+       */
       name: string,
       /**
-     * The list of cultures where patrons from this category can be the primary
-     * patron.
-     */
+       * The list of cultures where patrons from this category can be the primary
+       * patron.
+       */
       primaryPatronCultures: array(int),
     };
   };
@@ -605,30 +605,30 @@ module Patron = {
   [@genType "Patron"]
   type t = {
     /**
-   * The patron's ID.
-   */
+     * The patron's ID.
+     */
     id: int,
     /**
-   * The name of the patron.
-   */
+     * The name of the patron.
+     */
     name: string,
     /**
-   * The category of the patron.
-   */
+     * The category of the patron.
+     */
     category: int,
     /**
-   * The patron-specific skills.
-   */
+     * The patron-specific skills.
+     */
     skills: (int, int, int),
     /**
-   * If defined, the patron is limited to the listed cultures.
-   */
+     * If defined, the patron is limited to the listed cultures.
+     */
     limitedToCultures: array(int),
     /**
-   * If `true`, the patron is limited to every culture *except* the listed
-   * cultures in `limitedToCultures`. Does not have an effect if
-   * `limitedToCultures` is not defined.
-   */
+     * If `true`, the patron is limited to every culture *except* the listed
+     * cultures in `limitedToCultures`. Does not have an effect if
+     * `limitedToCultures` is not defined.
+     */
     isLimitedToCulturesReverse: Maybe.t(bool),
   };
 };
@@ -704,12 +704,12 @@ module Profession = {
     module SkillSelection = {
       type t = {
         /**
-     * If specified, only choose from skills of the specified group.
-     */
+         * If specified, only choose from skills of the specified group.
+         */
         gr: Maybe.t(int),
         /**
-     * The AP value the user can spend.
-     */
+         * The AP value the user can spend.
+         */
         value: int,
       };
     };
@@ -796,9 +796,9 @@ module Profession = {
     variants: list(Variant.t),
     gr: int,
     /**
-   * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the
-   * Twelve Gods" or "Fighter".
-   */
+     * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the
+     * Twelve Gods" or "Fighter".
+     */
     subgr: int,
     src: list(SourceRef.t),
     errata: list(Erratum.t),

@@ -160,33 +160,30 @@ module Id = {
 };
 
 module SourceRefs = {
-  type t = {
-    id: string,
-    firstPage: int,
-    lastPage: Maybe.t(int),
-  };
+  type t = Static.SourceRef.t;
 
-  let%private l10n = json => {
+  let%private l10n = (json): t => {
     id: json |> field("id", string),
-    firstPage: json |> field("firstPage", int),
-    lastPage: json |> field("lastPage", maybe(int)),
+    page: {
+      let first = json |> field("firstPage", int);
+      let mlast = json |> field("lastPage", maybe(int));
+
+      Maybe.maybe((first, first), last => (first, last), mlast);
+    },
   };
 
   let fromJson = list(l10n);
 };
 
 module Errata = {
-  type t = {
-    date: Js.Date.t,
-    description: string,
-  };
+  type t = Static.Erratum.t;
 
-  let%private l10n = json => {
+  let%private l10n = (json): t => {
     date: json |> field("id", date),
     description: json |> field("id", string),
   };
 
-  let fromJson = list(l10n);
+  let fromJson = json => json |> maybe(list(l10n)) |> Maybe.fromMaybe([]);
 };
 
 module Prerequisites = {
@@ -379,23 +376,29 @@ module Prerequisites = {
 };
 
 module SelectOptionsL10n = {
-  // TODO
+  type t = {
+    id: int,
+    name: string,
+    description: Maybe.t(string),
+  };
 
-  type t = {id: int};
-
-  let%private l10n = json => {id: json |> field("id", int)};
-
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = json => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+    description: json |> field("description", maybe(string)),
+  };
 };
 
-module ProfessionSelectOptionsUniv = {
-  // TODO
+module SelectOptionsUniv = {
+  type t = {
+    id: int,
+    cost: Maybe.t(int),
+  };
 
-  type t = {id: int};
-
-  let%private univ = json => {id: json |> field("id", int)};
-
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = json => {
+    id: json |> field("id", int),
+    cost: json |> field("cost", maybe(int)),
+  };
 };
 
 module AdvantagesL10n = {
@@ -405,7 +408,7 @@ module AdvantagesL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.advantagesL10n |> list(l10n);
 };
 
 module AdvantagesUniv = {
@@ -415,7 +418,7 @@ module AdvantagesUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.advantagesUniv |> list(univ);
 };
 
 module AnimistForcesL10n = {
@@ -425,7 +428,7 @@ module AnimistForcesL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.animistForcesL10n |> list(l10n);
 };
 
 module AnimistForcesUniv = {
@@ -435,7 +438,7 @@ module AnimistForcesUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.animistForcesUniv |> list(univ);
 };
 
 module ArcaneBardTraditionsL10n = {
@@ -475,33 +478,47 @@ module AspectsL10n = {
 };
 
 module AttributesL10n = {
-  // TODO
+  type t = Static.Attribute.t;
 
-  type t = {id: int};
+  let%private l10n = (json): t => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+    short: json |> field("short", string),
+  };
 
-  let%private l10n = json => {id: json |> field("id", int)};
-
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.attributesL10n |> list(l10n);
 };
 
 module BlessedTraditionsL10n = {
-  // TODO
+  type t = {
+    id: int,
+    name: string,
+  };
 
-  type t = {id: int};
+  let%private l10n = (json): t => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+  };
 
-  let%private l10n = json => {id: json |> field("id", int)};
-
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.blessedTraditionsL10n |> list(l10n);
 };
 
 module BlessedTraditionsUniv = {
   // TODO
 
-  type t = {id: int};
+  type t = {
+    numId: int,
+    id: int,
+    primary: int,
+    aspects: Maybe.t((int, int)),
+  };
 
-  let%private univ = json => {id: json |> field("id", int)};
+  let%private univ = (json): t => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+  };
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.blessedTraditionsUniv |> list(univ);
 };
 
 module BlessingsL10n = {
@@ -511,7 +528,7 @@ module BlessingsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.blessingsL10n |> list(l10n);
 };
 
 module BlessingsUniv = {
@@ -521,7 +538,7 @@ module BlessingsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.blessingsUniv |> list(univ);
 };
 
 module BrewsL10n = {
@@ -540,7 +557,7 @@ module CantripsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.cantripsL10n |> list(l10n);
 };
 
 module CantripsUniv = {
@@ -550,7 +567,7 @@ module CantripsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.cantripsUniv |> list(univ);
 };
 
 module CombatSpecialAbilityGroupsL10n = {
@@ -578,7 +595,7 @@ module CombatTechniquesL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.combatTechniquesL10n |> list(l10n);
 };
 
 module CombatTechniquesUniv = {
@@ -588,7 +605,7 @@ module CombatTechniquesUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.combatTechniquesUniv |> list(univ);
 };
 
 module ConditionsL10n = {
@@ -598,7 +615,7 @@ module ConditionsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.conditionsL10n |> list(l10n);
 };
 
 module CulturesL10n = {
@@ -608,7 +625,7 @@ module CulturesL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.culturesL10n |> list(l10n);
 };
 
 module CulturesUniv = {
@@ -618,7 +635,7 @@ module CulturesUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.culturesUniv |> list(univ);
 };
 
 module CursesL10n = {
@@ -628,7 +645,7 @@ module CursesL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.cursesL10n |> list(l10n);
 };
 
 module CursesUniv = {
@@ -638,7 +655,7 @@ module CursesUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.cursesUniv |> list(univ);
 };
 
 module DerivedCharacteristicsL10n = {
@@ -648,7 +665,7 @@ module DerivedCharacteristicsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.derivedCharacteristicsL10n |> list(l10n);
 };
 
 module DisadvantagesL10n = {
@@ -658,7 +675,7 @@ module DisadvantagesL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.disadvantagesL10n |> list(l10n);
 };
 
 module DisadvantagesUniv = {
@@ -668,7 +685,7 @@ module DisadvantagesUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.disadvantagesUniv |> list(univ);
 };
 
 module DominationRitualsL10n = {
@@ -678,7 +695,7 @@ module DominationRitualsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.dominationRitualsL10n |> list(l10n);
 };
 
 module DominationRitualsUniv = {
@@ -688,7 +705,7 @@ module DominationRitualsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.dominationRitualsUniv |> list(univ);
 };
 
 module ElvenMagicalSongsL10n = {
@@ -698,7 +715,7 @@ module ElvenMagicalSongsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.elvenMagicalSongsL10n |> list(l10n);
 };
 
 module ElvenMagicalSongsUniv = {
@@ -708,7 +725,7 @@ module ElvenMagicalSongsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.elvenMagicalSongsUniv |> list(univ);
 };
 
 module EquipmentL10n = {
@@ -718,7 +735,7 @@ module EquipmentL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.equipmentL10n |> list(l10n);
 };
 
 module EquipmentUniv = {
@@ -728,7 +745,7 @@ module EquipmentUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.equipmentUniv |> list(univ);
 };
 
 module EquipmentGroupsL10n = {
@@ -747,7 +764,7 @@ module EquipmentPackagesL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.equipmentPackagesL10n |> list(l10n);
 };
 
 module EquipmentPackagesUniv = {
@@ -757,7 +774,7 @@ module EquipmentPackagesUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.equipmentPackagesUniv |> list(univ);
 };
 
 module ExperienceLevelsL10n = {
@@ -817,7 +834,7 @@ module FocusRulesL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.focusRulesL10n |> list(l10n);
 };
 
 module FocusRulesUniv = {
@@ -827,7 +844,7 @@ module FocusRulesUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.focusRulesUniv |> list(univ);
 };
 
 module GeodeRitualsL10n = {
@@ -837,7 +854,7 @@ module GeodeRitualsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.geodeRitualsL10n |> list(l10n);
 };
 
 module GeodeRitualsUniv = {
@@ -847,7 +864,7 @@ module GeodeRitualsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.geodeRitualsUniv |> list(univ);
 };
 
 module HairColorsL10n = {
@@ -866,7 +883,7 @@ module LiturgicalChantEnhancementsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.liturgicalChantEnhancementsL10n |> list(l10n);
 };
 
 module LiturgicalChantEnhancementsUniv = {
@@ -876,7 +893,7 @@ module LiturgicalChantEnhancementsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.liturgicalChantEnhancementsUniv |> list(univ);
 };
 
 module LiturgicalChantGroupsL10n = {
@@ -895,7 +912,7 @@ module LiturgicalChantsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.liturgicalChantsL10n |> list(l10n);
 };
 
 module LiturgicalChantsUniv = {
@@ -905,7 +922,7 @@ module LiturgicalChantsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.liturgicalChantsUniv |> list(univ);
 };
 
 module MagicalDancesL10n = {
@@ -915,7 +932,7 @@ module MagicalDancesL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.magicalDancesL10n |> list(l10n);
 };
 
 module MagicalDancesUniv = {
@@ -925,7 +942,7 @@ module MagicalDancesUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.magicalDancesUniv |> list(univ);
 };
 
 module MagicalMelodiesL10n = {
@@ -935,7 +952,7 @@ module MagicalMelodiesL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.magicalMelodiesL10n |> list(l10n);
 };
 
 module MagicalMelodiesUniv = {
@@ -945,7 +962,7 @@ module MagicalMelodiesUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.magicalMelodiesUniv |> list(univ);
 };
 
 module MagicalTraditionsL10n = {
@@ -955,7 +972,7 @@ module MagicalTraditionsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.magicalTraditionsL10n |> list(l10n);
 };
 
 module MagicalTraditionsUniv = {
@@ -965,7 +982,7 @@ module MagicalTraditionsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.magicalTraditionsUniv |> list(univ);
 };
 
 module OptionalRulesL10n = {
@@ -975,7 +992,7 @@ module OptionalRulesL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.optionalRulesL10n |> list(l10n);
 };
 
 module PactsL10n = {
@@ -985,7 +1002,7 @@ module PactsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.pactsL10n |> list(l10n);
 };
 
 module ProfessionsL10n = {
@@ -995,7 +1012,7 @@ module ProfessionsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.professionsL10n |> list(l10n);
 };
 
 module ProfessionsUniv = {
@@ -1058,7 +1075,7 @@ module ProfessionsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.professionsUniv |> list(univ);
 };
 
 module ProfessionVariantsL10n = {
@@ -1068,7 +1085,7 @@ module ProfessionVariantsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.professionVariantsL10n |> list(l10n);
 };
 
 module ProfessionVariantsUniv = {
@@ -1126,7 +1143,7 @@ module ProfessionVariantsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.professionVariantsUniv |> list(univ);
 };
 
 module PropertiesL10n = {
@@ -1139,13 +1156,17 @@ module PropertiesL10n = {
 };
 
 module PublicationsL10n = {
-  // TODO
+  type t = Static.Publication.t;
 
-  type t = {id: int};
+  let%private l10n = (json): t => {
+    id: json |> field("id", string),
+    name: json |> field("name", string),
+    short: json |> field("short", string),
+    isCore: json |> field("isCore", bool),
+    isAdultContent: json |> field("isAdultContent", bool),
+  };
 
-  let%private l10n = json => {id: json |> field("id", int)};
-
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = json => json.booksL10n |> list(l10n);
 };
 
 module RacesL10n = {
@@ -1155,7 +1176,7 @@ module RacesL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.racesL10n |> list(l10n);
 };
 
 module RacesUniv = {
@@ -1165,7 +1186,7 @@ module RacesUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.racesUniv |> list(univ);
 };
 
 module RaceVariantL10n = {
@@ -1175,7 +1196,7 @@ module RaceVariantL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.raceVariantsL10n |> list(l10n);
 };
 
 module RaceVariantUniv = {
@@ -1185,7 +1206,7 @@ module RaceVariantUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.raceVariantsUniv |> list(univ);
 };
 
 module ReachesL10n = {
@@ -1204,7 +1225,7 @@ module RogueSpellsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.rogueSpellsL10n |> list(l10n);
 };
 
 module RogueSpellsUniv = {
@@ -1214,7 +1235,7 @@ module RogueSpellsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.rogueSpellsUniv |> list(univ);
 };
 
 module SkillGroupsL10n = {
@@ -1233,7 +1254,7 @@ module SkillsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.skillsL10n |> list(l10n);
 };
 
 module SkillsUniv = {
@@ -1243,7 +1264,7 @@ module SkillsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.skillsUniv |> list(univ);
 };
 
 module SocialStatusesL10n = {
@@ -1262,7 +1283,7 @@ module SpecialAbilitiesL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.specialAbilitiesL10n |> list(l10n);
 };
 
 module SpecialAbilitiesUniv = {
@@ -1272,7 +1293,7 @@ module SpecialAbilitiesUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.specialAbilitiesUniv |> list(univ);
 };
 
 module SpecialAbilityGroupsL10n = {
@@ -1291,7 +1312,7 @@ module SpellEnhancementsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.spellEnhancementsL10n |> list(l10n);
 };
 
 module SpellEnhancementsUniv = {
@@ -1301,7 +1322,7 @@ module SpellEnhancementsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.spellEnhancementsUniv |> list(univ);
 };
 
 module SpellGroupsL10n = {
@@ -1320,7 +1341,7 @@ module SpellsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.spellsL10n |> list(l10n);
 };
 
 module SpellsUniv = {
@@ -1330,17 +1351,21 @@ module SpellsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.spellsUniv |> list(univ);
 };
 
 module StatesL10n = {
-  // TODO
+  type t = Static.State.t;
 
-  type t = {id: int};
+  let%private l10n = (json): t => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+    description: json |> field("description", string),
+    src: json |> SourceRefs.fromJson,
+    errata: json |> Errata.fromJson,
+  };
 
-  let%private l10n = json => {id: json |> field("id", int)};
-
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.statesL10n |> list(l10n);
 };
 
 module SubjectsL10n = {
@@ -1353,13 +1378,12 @@ module SubjectsL10n = {
 };
 
 module SupportedLanguagesL10n = {
-  // TODO
+  let%private l10n = json => (
+    json |> field("id", string),
+    json |> field("name", string),
+  );
 
-  type t = {id: int};
-
-  let%private l10n = json => {id: json |> field("id", int)};
-
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = list(l10n);
 };
 
 module TribesL10n = {
@@ -1378,7 +1402,7 @@ module UI = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.uiL10n |> list(l10n);
 };
 
 module ZibiljaRitualsL10n = {
@@ -1388,7 +1412,7 @@ module ZibiljaRitualsL10n = {
 
   let%private l10n = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsL10n |> list(l10n);
+  let fromJson = yaml => yaml.zibiljaRitualsL10n |> list(l10n);
 };
 
 module ZibiljaRitualsUniv = {
@@ -1398,5 +1422,5 @@ module ZibiljaRitualsUniv = {
 
   let%private univ = json => {id: json |> field("id", int)};
 
-  let fromJson = yaml => yaml.experienceLevelsUniv |> list(univ);
+  let fromJson = yaml => yaml.zibiljaRitualsUniv |> list(univ);
 };
