@@ -407,11 +407,17 @@ function selectOptionId(json) {
 
 function fromJson$6(json) {
   return {
-          id: id(json),
-          active: Json_decode.bool(json),
-          sid: maybe(selectOptionId, json),
-          sid2: maybe(selectOptionId, json),
-          tier: maybe(Json_decode.$$int, json)
+          id: Json_decode.field("id", id, json),
+          active: Json_decode.field("active", Json_decode.bool, json),
+          sid: Json_decode.field("sid", (function (param) {
+                  return maybe(selectOptionId, param);
+                }), json),
+          sid2: Json_decode.field("sid2", (function (param) {
+                  return maybe(selectOptionId, param);
+                }), json),
+          level: Json_decode.field("level", (function (param) {
+                  return maybe(Json_decode.$$int, param);
+                }), json)
         };
 }
 
@@ -423,11 +429,19 @@ var Activatable = {
 
 function fromJson$7(json) {
   return {
-          id: Json_decode.list(id, json),
-          active: Json_decode.bool(json),
-          sid: maybe(selectOptionId, json),
-          sid2: maybe(selectOptionId, json),
-          tier: maybe(Json_decode.$$int, json)
+          id: Json_decode.field("id", (function (param) {
+                  return Json_decode.list(id, param);
+                }), json),
+          active: Json_decode.field("active", Json_decode.bool, json),
+          sid: Json_decode.field("sid", (function (param) {
+                  return maybe(selectOptionId, param);
+                }), json),
+          sid2: Json_decode.field("sid2", (function (param) {
+                  return maybe(selectOptionId, param);
+                }), json),
+          level: Json_decode.field("level", (function (param) {
+                  return maybe(Json_decode.$$int, param);
+                }), json)
         };
 }
 
@@ -437,11 +451,17 @@ var ActivatableMultiEntry = {
 
 function fromJson$8(json) {
   return {
-          id: id(json),
-          active: Json_decode.bool(json),
-          sid: Json_decode.list(selectOptionId, json),
-          sid2: maybe(selectOptionId, json),
-          tier: maybe(Json_decode.$$int, json)
+          id: Json_decode.field("id", id, json),
+          active: Json_decode.field("active", Json_decode.bool, json),
+          sid: Json_decode.field("sid", (function (param) {
+                  return Json_decode.list(selectOptionId, param);
+                }), json),
+          sid2: Json_decode.field("sid2", (function (param) {
+                  return maybe(selectOptionId, param);
+                }), json),
+          level: Json_decode.field("tier", (function (param) {
+                  return maybe(Json_decode.$$int, param);
+                }), json)
         };
 }
 
@@ -469,8 +489,8 @@ function id$1(json) {
 
 function fromJson$9(json) {
   return {
-          id: id$1(json),
-          active: Json_decode.bool(json)
+          id: Json_decode.field("id", id$1, json),
+          active: Json_decode.field("active", Json_decode.bool, json)
         };
 }
 
@@ -520,8 +540,8 @@ function increasableId(json) {
 
 function fromJson$10(json) {
   return {
-          id: increasableId(json),
-          value: Json_decode.$$int(json)
+          id: Json_decode.field("id", increasableId, json),
+          value: Json_decode.field("value", Json_decode.$$int, json)
         };
 }
 
@@ -532,8 +552,10 @@ var Increasable = {
 
 function fromJson$11(json) {
   return {
-          id: Json_decode.list(increasableId, json),
-          value: Json_decode.$$int(json)
+          id: Json_decode.field("id", (function (param) {
+                  return Json_decode.list(increasableId, param);
+                }), json),
+          value: Json_decode.field("value", Json_decode.$$int, json)
         };
 }
 
@@ -1439,17 +1461,21 @@ var LanguagesAndScripts = {
 
 function second(json) {
   return {
-          amount: Json_decode.$$int(json),
-          value: Json_decode.$$int(json)
+          amount: Json_decode.field("amount", Json_decode.$$int, json),
+          value: Json_decode.field("value", Json_decode.$$int, json)
         };
 }
 
 function fromJson$73(json) {
   return {
-          amount: Json_decode.$$int(json),
-          value: Json_decode.$$int(json),
-          second: maybe(second, json),
-          sid: Json_decode.list(Json_decode.$$int, json)
+          amount: Json_decode.field("amount", Json_decode.$$int, json),
+          value: Json_decode.field("value", Json_decode.$$int, json),
+          second: Json_decode.field("second", (function (param) {
+                  return maybe(second, param);
+                }), json),
+          sid: Json_decode.field("sid", (function (param) {
+                  return Json_decode.list(Json_decode.$$int, param);
+                }), json)
         };
 }
 
@@ -1460,8 +1486,10 @@ var CombatTechniques = {
 
 function fromJson$74(json) {
   return {
-          amount: Json_decode.$$int(json),
-          sid: Json_decode.list(Json_decode.$$int, json)
+          amount: Json_decode.field("amount", Json_decode.$$int, json),
+          sid: Json_decode.field("sid", (function (param) {
+                  return Json_decode.list(Json_decode.$$int, param);
+                }), json)
         };
 }
 
@@ -1475,8 +1503,10 @@ var Curses = {
 
 function fromJson$75(json) {
   return {
-          gr: maybe(Json_decode.$$int, json),
-          value: Json_decode.$$int(json)
+          gr: Json_decode.field("gr", (function (param) {
+                  return maybe(Json_decode.$$int, param);
+                }), json),
+          value: Json_decode.field("value", Json_decode.$$int, json)
         };
 }
 
@@ -1553,24 +1583,49 @@ var SkillSpecialization$1 = {
   fromJson: fromJson$79
 };
 
-var LanguagesAndScripts$1 = {
-  fromJson: Json_decode.$$int
-};
-
 function second$1(json) {
-  return {
-          amount: Json_decode.$$int(json),
-          value: Json_decode.$$int(json)
-        };
+  return Json_decode.oneOf(/* :: */[
+              (function (json) {
+                  return /* Override */[second(json)];
+                }),
+              /* :: */[
+                (function (json) {
+                    return Json_decode.map((function (param) {
+                                  return /* Remove */0;
+                                }), (function (param) {
+                                  return $$const(false, param);
+                                }), json);
+                  }),
+                /* [] */0
+              ]
+            ], json);
 }
 
 function fromJson$80(json) {
-  return {
-          amount: Json_decode.$$int(json),
-          value: Json_decode.$$int(json),
-          second: maybe(second$1, json),
-          sid: Json_decode.list(Json_decode.$$int, json)
-        };
+  return Json_decode.oneOf(/* :: */[
+              (function (json) {
+                  return /* Override */[{
+                            amount: Json_decode.field("amount", Json_decode.$$int, json),
+                            value: Json_decode.field("value", Json_decode.$$int, json),
+                            second: Json_decode.field("second", (function (param) {
+                                    return maybe(second$1, param);
+                                  }), json),
+                            sid: Json_decode.field("sid", (function (param) {
+                                    return Json_decode.list(Json_decode.$$int, param);
+                                  }), json)
+                          }];
+                }),
+              /* :: */[
+                (function (json) {
+                    return Json_decode.map((function (param) {
+                                  return /* Remove */0;
+                                }), (function (param) {
+                                  return $$const(false, param);
+                                }), json);
+                  }),
+                /* [] */0
+              ]
+            ], json);
 }
 
 var CombatTechniques$1 = {
@@ -1578,15 +1633,9 @@ var CombatTechniques$1 = {
   fromJson: fromJson$80
 };
 
-var Curses$1 = {
-  fromJson: Json_decode.$$int
-};
-
 var Options$1 = {
   SkillSpecialization: SkillSpecialization$1,
-  LanguagesAndScripts: LanguagesAndScripts$1,
-  CombatTechniques: CombatTechniques$1,
-  Curses: Curses$1
+  CombatTechniques: CombatTechniques$1
 };
 
 function univ$23(json) {

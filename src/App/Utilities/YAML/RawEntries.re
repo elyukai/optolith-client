@@ -286,11 +286,11 @@ module Prerequisites = {
          ]);
 
     let fromJson = (json): t => {
-      id: json |> id,
-      active: json |> bool,
-      sid: json |> maybe(selectOptionId),
-      sid2: json |> maybe(selectOptionId),
-      tier: json |> maybe(int),
+      id: json |> field("id", id),
+      active: json |> field("active", bool),
+      sid: json |> field("sid", maybe(selectOptionId)),
+      sid2: json |> field("sid2", maybe(selectOptionId)),
+      level: json |> field("level", maybe(int)),
     };
   };
 
@@ -298,11 +298,11 @@ module Prerequisites = {
     type t = Static.Prerequisites.ActivatableMultiEntry.t;
 
     let fromJson = (json): t => {
-      id: json |> list(Activatable.id),
-      active: json |> bool,
-      sid: json |> maybe(Activatable.selectOptionId),
-      sid2: json |> maybe(Activatable.selectOptionId),
-      tier: json |> maybe(int),
+      id: json |> field("id", list(Activatable.id)),
+      active: json |> field("active", bool),
+      sid: json |> field("sid", maybe(Activatable.selectOptionId)),
+      sid2: json |> field("sid2", maybe(Activatable.selectOptionId)),
+      level: json |> field("level", maybe(int)),
     };
   };
 
@@ -310,11 +310,11 @@ module Prerequisites = {
     type t = Static.Prerequisites.ActivatableMultiSelect.t;
 
     let fromJson = (json): t => {
-      id: json |> Activatable.id,
-      active: json |> bool,
-      sid: json |> list(Activatable.selectOptionId),
-      sid2: json |> maybe(Activatable.selectOptionId),
-      tier: json |> maybe(int),
+      id: json |> field("id", Activatable.id),
+      active: json |> field("active", bool),
+      sid: json |> field("sid", list(Activatable.selectOptionId)),
+      sid2: json |> field("sid2", maybe(Activatable.selectOptionId)),
+      level: json |> field("tier", maybe(int)),
     };
   };
 
@@ -334,7 +334,10 @@ module Prerequisites = {
            ),
          ]);
 
-    let fromJson = (json): t => {id: json |> id, active: json |> bool};
+    let fromJson = (json): t => {
+      id: json |> field("id", id),
+      active: json |> field("active", bool),
+    };
   };
 
   module Increasable = {
@@ -360,8 +363,8 @@ module Prerequisites = {
          ]);
 
     let fromJson = (json): t => {
-      id: json |> increasableId,
-      value: json |> int,
+      id: json |> field("id", increasableId),
+      value: json |> field("value", int),
     };
   };
 
@@ -369,8 +372,8 @@ module Prerequisites = {
     type t = Static.Prerequisites.IncreasableMultiEntry.t;
 
     let fromJson = (json): t => {
-      id: json |> list(Increasable.increasableId),
-      value: json |> int,
+      id: json |> field("id", list(Increasable.increasableId)),
+      value: json |> field("value", int),
     };
   };
 };
@@ -1012,15 +1015,15 @@ module ProfessionsUniv = {
       type second = Static.Profession.Options.CombatTechniqueSelection.second;
 
       let second = (json): second => {
-        amount: json |> int,
-        value: json |> int,
+        amount: json |> field("amount", int),
+        value: json |> field("value", int),
       };
 
       let fromJson = (json): t => {
-        amount: json |> int,
-        value: json |> int,
-        second: json |> maybe(second),
-        sid: json |> list(int),
+        amount: json |> field("amount", int),
+        value: json |> field("value", int),
+        second: json |> field("second", maybe(second)),
+        sid: json |> field("sid", list(int)),
       };
     };
 
@@ -1028,8 +1031,8 @@ module ProfessionsUniv = {
       type t = Static.Profession.Options.CantripSelection.t;
 
       let fromJson = (json): t => {
-        amount: json |> int,
-        sid: json |> list(int),
+        amount: json |> field("amount", int),
+        sid: json |> field("sid", list(int)),
       };
     };
 
@@ -1041,8 +1044,8 @@ module ProfessionsUniv = {
       type t = Static.Profession.Options.SkillSelection.t;
 
       let fromJson = (json): t => {
-        gr: json |> maybe(int),
-        value: json |> int,
+        gr: json |> field("gr", maybe(int)),
+        value: json |> field("value", int),
       };
     };
 
@@ -1086,29 +1089,36 @@ module ProfessionVariantsUniv = {
            ]);
     };
 
-    module LanguagesAndScripts = {
-      let fromJson = int;
-    };
-
     module CombatTechniques = {
-      type t = Static.Profession.Options.CombatTechniqueSelection.t;
-      type second = Static.Profession.Options.CombatTechniqueSelection.second;
+      type t = Static.Profession.Options.CombatTechniqueSelection.tForVariant;
+      type main = Static.Profession.Options.CombatTechniqueSelection.tWithReplace;
+      type second = Static.Profession.Options.CombatTechniqueSelection.secondForVariant;
 
-      let second = (json): second => {
-        amount: json |> int,
-        value: json |> int,
-      };
+      let second = json =>
+        json
+        |> oneOf([
+             json =>
+               json
+               |> ProfessionsUniv.Options.CombatTechniques.second
+               |> ((x) => (Override(x): second)),
+             json => json |> map(_: second => Remove, const(false)),
+           ]);
 
-      let fromJson = (json): t => {
-        amount: json |> int,
-        value: json |> int,
-        second: json |> maybe(second),
-        sid: json |> list(int),
-      };
-    };
-
-    module Curses = {
-      let fromJson = int;
+      let fromJson = json =>
+        json
+        |> oneOf([
+             json =>
+               (
+                 {
+                   amount: json |> field("amount", int),
+                   value: json |> field("value", int),
+                   second: json |> field("second", maybe(second)),
+                   sid: json |> field("sid", list(int)),
+                 }: main
+               )
+               |> ((x) => (Override(x): t)),
+             json => json |> map(_: t => Remove, const(false)),
+           ]);
     };
   };
 

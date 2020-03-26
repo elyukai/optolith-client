@@ -82,7 +82,7 @@ module Prerequisites = {
       active: bool,
       sid: Maybe.t(Ids.selectOptionId),
       sid2: Maybe.t(Ids.selectOptionId),
-      tier: Maybe.t(int),
+      level: Maybe.t(int),
     };
   };
 
@@ -105,7 +105,7 @@ module Prerequisites = {
       active: bool,
       sid: Maybe.t(Ids.selectOptionId),
       sid2: Maybe.t(Ids.selectOptionId),
-      tier: Maybe.t(int),
+      level: Maybe.t(int),
     };
   };
 
@@ -116,7 +116,7 @@ module Prerequisites = {
       active: bool,
       sid: list(Ids.selectOptionId),
       sid2: Maybe.t(Ids.selectOptionId),
-      tier: Maybe.t(int),
+      level: Maybe.t(int),
     };
   };
 
@@ -673,7 +673,16 @@ module Profession = {
         sid: list(int),
       };
 
-      type tForVariant = variantOverride(t);
+      type secondForVariant = variantOverride(second);
+
+      type tWithReplace = {
+        amount: int,
+        value: int,
+        second: Maybe.t(secondForVariant),
+        sid: list(int),
+      };
+
+      type tForVariant = variantOverride(tWithReplace);
     };
 
     module CurseSelection = {

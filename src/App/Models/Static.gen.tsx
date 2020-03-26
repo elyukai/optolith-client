@@ -71,7 +71,7 @@ export type Prerequisites_Activatable_t = {
   readonly active: boolean; 
   readonly sid: Maybe_t<Ids_selectOptionId>; 
   readonly sid2: Maybe_t<Ids_selectOptionId>; 
-  readonly tier: Maybe_t<number>
+  readonly level: Maybe_t<number>
 };
 export type ActivatablePrerequisite = Prerequisites_Activatable_t;
 
@@ -90,7 +90,7 @@ export type Prerequisites_ActivatableMultiEntry_t = {
   readonly active: boolean; 
   readonly sid: Maybe_t<Ids_selectOptionId>; 
   readonly sid2: Maybe_t<Ids_selectOptionId>; 
-  readonly tier: Maybe_t<number>
+  readonly level: Maybe_t<number>
 };
 export type ActivatableMultiEntryPrerequisite = Prerequisites_ActivatableMultiEntry_t;
 
@@ -100,7 +100,7 @@ export type Prerequisites_ActivatableMultiSelect_t = {
   readonly active: boolean; 
   readonly sid: list<Ids_selectOptionId>; 
   readonly sid2: Maybe_t<Ids_selectOptionId>; 
-  readonly tier: Maybe_t<number>
+  readonly level: Maybe_t<number>
 };
 export type ActivatableMultiSelectPrerequisite = Prerequisites_ActivatableMultiSelect_t;
 
