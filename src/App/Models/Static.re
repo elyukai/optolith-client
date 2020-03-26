@@ -651,7 +651,7 @@ module Profession = {
   module Options = {
     type variantOverride('a) =
       | Remove
-      | Overwrite('a);
+      | Override('a);
 
     module CantripSelection = {
       type t = {

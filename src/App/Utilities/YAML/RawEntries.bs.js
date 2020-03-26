@@ -3,15 +3,16 @@
 
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 
-function conststr(str, json) {
-  if (json === str) {
-    return str;
+function $$const(x, json) {
+  if (Caml_obj.caml_equal(json, x)) {
+    return x;
   } else {
     throw [
           Json_decode.DecodeError,
-          "Expected \"" + (str + ("\", but received: " + JSON.stringify(json)))
+          "Expected \"" + (JSON.stringify(json) + ("\", but received: " + JSON.stringify(json)))
         ];
   }
 }
@@ -53,7 +54,7 @@ function oneOrManyInt(param) {
 function generic(str, json) {
   return /* tuple */[
             Json_decode.field("scope", (function (param) {
-                    return conststr(str, param);
+                    return $$const(str, param);
                   }), json),
             Json_decode.field("value", Json_decode.$$int, json)
           ][1];
@@ -1457,10 +1458,48 @@ var CombatTechniques = {
   fromJson: fromJson$73
 };
 
+function fromJson$74(json) {
+  return {
+          amount: Json_decode.$$int(json),
+          sid: Json_decode.list(Json_decode.$$int, json)
+        };
+}
+
+var Cantrips = {
+  fromJson: fromJson$74
+};
+
+var Curses = {
+  fromJson: Json_decode.$$int
+};
+
+function fromJson$75(json) {
+  return {
+          gr: maybe(Json_decode.$$int, json),
+          value: Json_decode.$$int(json)
+        };
+}
+
+var Skills = {
+  fromJson: fromJson$75
+};
+
+function fromJson$76(param) {
+  return Json_decode.list(Json_decode.$$int, param);
+}
+
+var TerrainKnowledge = {
+  fromJson: fromJson$76
+};
+
 var Options = {
   SkillSpecialization: SkillSpecialization,
   LanguagesAndScripts: LanguagesAndScripts,
-  CombatTechniques: CombatTechniques
+  CombatTechniques: CombatTechniques,
+  Cantrips: Cantrips,
+  Curses: Curses,
+  Skills: Skills,
+  TerrainKnowledge: TerrainKnowledge
 };
 
 function univ$22(json) {
@@ -1469,13 +1508,13 @@ function univ$22(json) {
         };
 }
 
-function fromJson$74(yaml) {
+function fromJson$77(yaml) {
   return Json_decode.list(univ$22, yaml.experienceLevelsUniv);
 }
 
 var ProfessionsUniv = {
   Options: Options,
-  fromJson: fromJson$74
+  fromJson: fromJson$77
 };
 
 function l10n$41(json) {
@@ -1484,12 +1523,70 @@ function l10n$41(json) {
         };
 }
 
-function fromJson$75(yaml) {
+function fromJson$78(yaml) {
   return Json_decode.list(l10n$41, yaml.experienceLevelsL10n);
 }
 
 var ProfessionVariantsL10n = {
-  fromJson: fromJson$75
+  fromJson: fromJson$78
+};
+
+function fromJson$79(json) {
+  return Json_decode.oneOf(/* :: */[
+              (function (json) {
+                  return /* Override */[oneOrManyInt(json)];
+                }),
+              /* :: */[
+                (function (json) {
+                    return Json_decode.map((function (param) {
+                                  return /* Remove */0;
+                                }), (function (param) {
+                                  return $$const(false, param);
+                                }), json);
+                  }),
+                /* [] */0
+              ]
+            ], json);
+}
+
+var SkillSpecialization$1 = {
+  fromJson: fromJson$79
+};
+
+var LanguagesAndScripts$1 = {
+  fromJson: Json_decode.$$int
+};
+
+function second$1(json) {
+  return {
+          amount: Json_decode.$$int(json),
+          value: Json_decode.$$int(json)
+        };
+}
+
+function fromJson$80(json) {
+  return {
+          amount: Json_decode.$$int(json),
+          value: Json_decode.$$int(json),
+          second: maybe(second$1, json),
+          sid: Json_decode.list(Json_decode.$$int, json)
+        };
+}
+
+var CombatTechniques$1 = {
+  second: second$1,
+  fromJson: fromJson$80
+};
+
+var Curses$1 = {
+  fromJson: Json_decode.$$int
+};
+
+var Options$1 = {
+  SkillSpecialization: SkillSpecialization$1,
+  LanguagesAndScripts: LanguagesAndScripts$1,
+  CombatTechniques: CombatTechniques$1,
+  Curses: Curses$1
 };
 
 function univ$23(json) {
@@ -1498,12 +1595,13 @@ function univ$23(json) {
         };
 }
 
-function fromJson$76(yaml) {
+function fromJson$81(yaml) {
   return Json_decode.list(univ$23, yaml.experienceLevelsUniv);
 }
 
 var ProfessionVariantsUniv = {
-  fromJson: fromJson$76
+  Options: Options$1,
+  fromJson: fromJson$81
 };
 
 function l10n$42(json) {
@@ -1513,12 +1611,12 @@ function l10n$42(json) {
         ];
 }
 
-function fromJson$77(yaml) {
+function fromJson$82(yaml) {
   return Json_decode.list(l10n$42, yaml.propertiesL10n);
 }
 
 var PropertiesL10n = {
-  fromJson: fromJson$77
+  fromJson: fromJson$82
 };
 
 function l10n$43(json) {
@@ -1527,12 +1625,12 @@ function l10n$43(json) {
         };
 }
 
-function fromJson$78(yaml) {
+function fromJson$83(yaml) {
   return Json_decode.list(l10n$43, yaml.experienceLevelsL10n);
 }
 
 var PublicationsL10n = {
-  fromJson: fromJson$78
+  fromJson: fromJson$83
 };
 
 function l10n$44(json) {
@@ -1541,12 +1639,12 @@ function l10n$44(json) {
         };
 }
 
-function fromJson$79(yaml) {
+function fromJson$84(yaml) {
   return Json_decode.list(l10n$44, yaml.experienceLevelsL10n);
 }
 
 var RacesL10n = {
-  fromJson: fromJson$79
+  fromJson: fromJson$84
 };
 
 function univ$24(json) {
@@ -1555,12 +1653,12 @@ function univ$24(json) {
         };
 }
 
-function fromJson$80(yaml) {
+function fromJson$85(yaml) {
   return Json_decode.list(univ$24, yaml.experienceLevelsUniv);
 }
 
 var RacesUniv = {
-  fromJson: fromJson$80
+  fromJson: fromJson$85
 };
 
 function l10n$45(json) {
@@ -1569,12 +1667,12 @@ function l10n$45(json) {
         };
 }
 
-function fromJson$81(yaml) {
+function fromJson$86(yaml) {
   return Json_decode.list(l10n$45, yaml.experienceLevelsL10n);
 }
 
 var RaceVariantL10n = {
-  fromJson: fromJson$81
+  fromJson: fromJson$86
 };
 
 function univ$25(json) {
@@ -1583,12 +1681,12 @@ function univ$25(json) {
         };
 }
 
-function fromJson$82(yaml) {
+function fromJson$87(yaml) {
   return Json_decode.list(univ$25, yaml.experienceLevelsUniv);
 }
 
 var RaceVariantUniv = {
-  fromJson: fromJson$82
+  fromJson: fromJson$87
 };
 
 function l10n$46(json) {
@@ -1598,12 +1696,12 @@ function l10n$46(json) {
         ];
 }
 
-function fromJson$83(yaml) {
+function fromJson$88(yaml) {
   return Json_decode.list(l10n$46, yaml.reachesL10n);
 }
 
 var ReachesL10n = {
-  fromJson: fromJson$83
+  fromJson: fromJson$88
 };
 
 function l10n$47(json) {
@@ -1612,12 +1710,12 @@ function l10n$47(json) {
         };
 }
 
-function fromJson$84(yaml) {
+function fromJson$89(yaml) {
   return Json_decode.list(l10n$47, yaml.experienceLevelsL10n);
 }
 
 var RogueSpellsL10n = {
-  fromJson: fromJson$84
+  fromJson: fromJson$89
 };
 
 function univ$26(json) {
@@ -1626,12 +1724,12 @@ function univ$26(json) {
         };
 }
 
-function fromJson$85(yaml) {
+function fromJson$90(yaml) {
   return Json_decode.list(univ$26, yaml.experienceLevelsUniv);
 }
 
 var RogueSpellsUniv = {
-  fromJson: fromJson$85
+  fromJson: fromJson$90
 };
 
 function l10n$48(json) {
@@ -1641,12 +1739,12 @@ function l10n$48(json) {
         ];
 }
 
-function fromJson$86(yaml) {
+function fromJson$91(yaml) {
   return Json_decode.list(l10n$48, yaml.skillGroupsL10n);
 }
 
 var SkillGroupsL10n = {
-  fromJson: fromJson$86
+  fromJson: fromJson$91
 };
 
 function l10n$49(json) {
@@ -1655,12 +1753,12 @@ function l10n$49(json) {
         };
 }
 
-function fromJson$87(yaml) {
+function fromJson$92(yaml) {
   return Json_decode.list(l10n$49, yaml.experienceLevelsL10n);
 }
 
 var SkillsL10n = {
-  fromJson: fromJson$87
+  fromJson: fromJson$92
 };
 
 function univ$27(json) {
@@ -1669,12 +1767,12 @@ function univ$27(json) {
         };
 }
 
-function fromJson$88(yaml) {
+function fromJson$93(yaml) {
   return Json_decode.list(univ$27, yaml.experienceLevelsUniv);
 }
 
 var SkillsUniv = {
-  fromJson: fromJson$88
+  fromJson: fromJson$93
 };
 
 function l10n$50(json) {
@@ -1684,12 +1782,12 @@ function l10n$50(json) {
         ];
 }
 
-function fromJson$89(yaml) {
+function fromJson$94(yaml) {
   return Json_decode.list(l10n$50, yaml.socialStatusesL10n);
 }
 
 var SocialStatusesL10n = {
-  fromJson: fromJson$89
+  fromJson: fromJson$94
 };
 
 function l10n$51(json) {
@@ -1698,12 +1796,12 @@ function l10n$51(json) {
         };
 }
 
-function fromJson$90(yaml) {
+function fromJson$95(yaml) {
   return Json_decode.list(l10n$51, yaml.experienceLevelsL10n);
 }
 
 var SpecialAbilitiesL10n = {
-  fromJson: fromJson$90
+  fromJson: fromJson$95
 };
 
 function univ$28(json) {
@@ -1712,12 +1810,12 @@ function univ$28(json) {
         };
 }
 
-function fromJson$91(yaml) {
+function fromJson$96(yaml) {
   return Json_decode.list(univ$28, yaml.experienceLevelsUniv);
 }
 
 var SpecialAbilitiesUniv = {
-  fromJson: fromJson$91
+  fromJson: fromJson$96
 };
 
 function l10n$52(json) {
@@ -1727,12 +1825,12 @@ function l10n$52(json) {
         ];
 }
 
-function fromJson$92(yaml) {
+function fromJson$97(yaml) {
   return Json_decode.list(l10n$52, yaml.specialAbilityGroupsL10n);
 }
 
 var SpecialAbilityGroupsL10n = {
-  fromJson: fromJson$92
+  fromJson: fromJson$97
 };
 
 function l10n$53(json) {
@@ -1741,12 +1839,12 @@ function l10n$53(json) {
         };
 }
 
-function fromJson$93(yaml) {
+function fromJson$98(yaml) {
   return Json_decode.list(l10n$53, yaml.experienceLevelsL10n);
 }
 
 var SpellEnhancementsL10n = {
-  fromJson: fromJson$93
+  fromJson: fromJson$98
 };
 
 function univ$29(json) {
@@ -1755,12 +1853,12 @@ function univ$29(json) {
         };
 }
 
-function fromJson$94(yaml) {
+function fromJson$99(yaml) {
   return Json_decode.list(univ$29, yaml.experienceLevelsUniv);
 }
 
 var SpellEnhancementsUniv = {
-  fromJson: fromJson$94
+  fromJson: fromJson$99
 };
 
 function l10n$54(json) {
@@ -1770,12 +1868,12 @@ function l10n$54(json) {
         ];
 }
 
-function fromJson$95(yaml) {
+function fromJson$100(yaml) {
   return Json_decode.list(l10n$54, yaml.spellGroupsL10n);
 }
 
 var SpellGroupsL10n = {
-  fromJson: fromJson$95
+  fromJson: fromJson$100
 };
 
 function l10n$55(json) {
@@ -1784,12 +1882,12 @@ function l10n$55(json) {
         };
 }
 
-function fromJson$96(yaml) {
+function fromJson$101(yaml) {
   return Json_decode.list(l10n$55, yaml.experienceLevelsL10n);
 }
 
 var SpellsL10n = {
-  fromJson: fromJson$96
+  fromJson: fromJson$101
 };
 
 function univ$30(json) {
@@ -1798,12 +1896,12 @@ function univ$30(json) {
         };
 }
 
-function fromJson$97(yaml) {
+function fromJson$102(yaml) {
   return Json_decode.list(univ$30, yaml.experienceLevelsUniv);
 }
 
 var SpellsUniv = {
-  fromJson: fromJson$97
+  fromJson: fromJson$102
 };
 
 function l10n$56(json) {
@@ -1812,12 +1910,12 @@ function l10n$56(json) {
         };
 }
 
-function fromJson$98(yaml) {
+function fromJson$103(yaml) {
   return Json_decode.list(l10n$56, yaml.experienceLevelsL10n);
 }
 
 var StatesL10n = {
-  fromJson: fromJson$98
+  fromJson: fromJson$103
 };
 
 function l10n$57(json) {
@@ -1827,12 +1925,12 @@ function l10n$57(json) {
         ];
 }
 
-function fromJson$99(yaml) {
+function fromJson$104(yaml) {
   return Json_decode.list(l10n$57, yaml.subjectsL10n);
 }
 
 var SubjectsL10n = {
-  fromJson: fromJson$99
+  fromJson: fromJson$104
 };
 
 function l10n$58(json) {
@@ -1841,12 +1939,12 @@ function l10n$58(json) {
         };
 }
 
-function fromJson$100(yaml) {
+function fromJson$105(yaml) {
   return Json_decode.list(l10n$58, yaml.experienceLevelsL10n);
 }
 
 var SupportedLanguagesL10n = {
-  fromJson: fromJson$100
+  fromJson: fromJson$105
 };
 
 function l10n$59(json) {
@@ -1856,12 +1954,12 @@ function l10n$59(json) {
         ];
 }
 
-function fromJson$101(yaml) {
+function fromJson$106(yaml) {
   return Json_decode.list(l10n$59, yaml.tribesL10n);
 }
 
 var TribesL10n = {
-  fromJson: fromJson$101
+  fromJson: fromJson$106
 };
 
 function l10n$60(json) {
@@ -1870,12 +1968,12 @@ function l10n$60(json) {
         };
 }
 
-function fromJson$102(yaml) {
+function fromJson$107(yaml) {
   return Json_decode.list(l10n$60, yaml.experienceLevelsL10n);
 }
 
 var UI = {
-  fromJson: fromJson$102
+  fromJson: fromJson$107
 };
 
 function l10n$61(json) {
@@ -1884,12 +1982,12 @@ function l10n$61(json) {
         };
 }
 
-function fromJson$103(yaml) {
+function fromJson$108(yaml) {
   return Json_decode.list(l10n$61, yaml.experienceLevelsL10n);
 }
 
 var ZibiljaRitualsL10n = {
-  fromJson: fromJson$103
+  fromJson: fromJson$108
 };
 
 function univ$31(json) {
@@ -1898,15 +1996,15 @@ function univ$31(json) {
         };
 }
 
-function fromJson$104(yaml) {
+function fromJson$109(yaml) {
   return Json_decode.list(univ$31, yaml.experienceLevelsUniv);
 }
 
 var ZibiljaRitualsUniv = {
-  fromJson: fromJson$104
+  fromJson: fromJson$109
 };
 
-exports.conststr = conststr;
+exports.$$const = $$const;
 exports.maybe = maybe;
 exports.oneOrManyInt = oneOrManyInt;
 exports.Id = Id;

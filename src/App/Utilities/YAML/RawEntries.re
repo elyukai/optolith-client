@@ -94,13 +94,16 @@ type yamlData = {
   zibiljaRitualsUniv: Js.Json.t,
 };
 
-let conststr = (str: string, json) =>
-  if ((Obj.magic(json): Js.String.t) == str) {
-    str;
+let const = (x: 'a, json) =>
+  if ((Obj.magic(json): 'a) == x) {
+    x;
   } else {
     raise(
       DecodeError(
-        "Expected \"" ++ str ++ "\", but received: " ++ _stringify(json),
+        "Expected \""
+        ++ _stringify(json)
+        ++ "\", but received: "
+        ++ _stringify(json),
       ),
     );
   };
@@ -120,7 +123,7 @@ let oneOrManyInt =
 
 module Id = {
   let generic = (str, json) =>
-    (field("scope", conststr(str), json), field("value", int, json)) |> snd;
+    (field("scope", const(str), json), field("value", int, json)) |> snd;
 
   let experienceLevel = generic("ExperienceLevel");
   let race = generic("Race");
@@ -1020,6 +1023,32 @@ module ProfessionsUniv = {
         sid: json |> list(int),
       };
     };
+
+    module Cantrips = {
+      type t = Static.Profession.Options.CantripSelection.t;
+
+      let fromJson = (json): t => {
+        amount: json |> int,
+        sid: json |> list(int),
+      };
+    };
+
+    module Curses = {
+      let fromJson = int;
+    };
+
+    module Skills = {
+      type t = Static.Profession.Options.SkillSelection.t;
+
+      let fromJson = (json): t => {
+        gr: json |> maybe(int),
+        value: json |> int,
+      };
+    };
+
+    module TerrainKnowledge = {
+      let fromJson = list(int);
+    };
   };
 
   type t = {id: int};
@@ -1041,6 +1070,47 @@ module ProfessionVariantsL10n = {
 
 module ProfessionVariantsUniv = {
   // TODO
+
+  module Options = {
+    module SkillSpecialization = {
+      type t = Static.Profession.Options.SkillSpecializationSelection.tForVariant;
+
+      let fromJson = json =>
+        json
+        |> oneOf([
+             json =>
+               json
+               |> ProfessionsUniv.Options.SkillSpecialization.fromJson
+               |> ((x) => (Override(x): t)),
+             json => json |> map(_: t => Remove, const(false)),
+           ]);
+    };
+
+    module LanguagesAndScripts = {
+      let fromJson = int;
+    };
+
+    module CombatTechniques = {
+      type t = Static.Profession.Options.CombatTechniqueSelection.t;
+      type second = Static.Profession.Options.CombatTechniqueSelection.second;
+
+      let second = (json): second => {
+        amount: json |> int,
+        value: json |> int,
+      };
+
+      let fromJson = (json): t => {
+        amount: json |> int,
+        value: json |> int,
+        second: json |> maybe(second),
+        sid: json |> list(int),
+      };
+    };
+
+    module Curses = {
+      let fromJson = int;
+    };
+  };
 
   type t = {id: int};
 
