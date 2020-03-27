@@ -504,8 +504,6 @@ module BlessedTraditionsL10n = {
 };
 
 module BlessedTraditionsUniv = {
-  // TODO
-
   type t = {
     numId: int,
     id: int,
@@ -514,8 +512,10 @@ module BlessedTraditionsUniv = {
   };
 
   let%private univ = (json): t => {
+    numId: json |> field("numId", int),
     id: json |> field("id", int),
-    name: json |> field("name", string),
+    primary: json |> field("primary", int),
+    aspects: json |> field("aspects", maybe(pair(int, int))),
   };
 
   let fromJson = yaml => yaml.blessedTraditionsUniv |> list(univ);
@@ -524,9 +524,27 @@ module BlessedTraditionsUniv = {
 module BlessingsL10n = {
   // TODO
 
-  type t = {id: int};
+  type t = {
+    id: int,
+    name: string,
+    effect: string,
+    range: string,
+    duration: string,
+    target: string,
+    src: list(Static.SourceRef.t),
+    errata: list(Static.Erratum.t),
+  };
 
-  let%private l10n = json => {id: json |> field("id", int)};
+  let%private l10n = json => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+    effect: json |> field("effect", string),
+    range: json |> field("range", string),
+    duration: json |> field("duration", string),
+    target: json |> field("target", string),
+    src: json |> SourceRefs.fromJson,
+    errata: json |> Errata.fromJson,
+  };
 
   let fromJson = yaml => yaml.blessingsL10n |> list(l10n);
 };

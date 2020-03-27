@@ -766,7 +766,14 @@ var BlessedTraditionsL10n = {
 
 function univ$2(json) {
   return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
+          numId: Json_decode.field("numId", Json_decode.$$int, json),
+          id: Json_decode.field("id", Json_decode.$$int, json),
+          primary: Json_decode.field("primary", Json_decode.$$int, json),
+          aspects: Json_decode.field("aspects", (function (param) {
+                  return maybe((function (param) {
+                                return Json_decode.pair(Json_decode.$$int, Json_decode.$$int, param);
+                              }), param);
+                }), json)
         };
 }
 
@@ -780,7 +787,14 @@ var BlessedTraditionsUniv = {
 
 function l10n$10(json) {
   return {
-          id: Json_decode.field("id", Json_decode.$$int, json)
+          id: Json_decode.field("id", Json_decode.$$int, json),
+          name: Json_decode.field("name", Json_decode.string, json),
+          effect: Json_decode.field("effect", Json_decode.string, json),
+          range: Json_decode.field("range", Json_decode.string, json),
+          duration: Json_decode.field("duration", Json_decode.string, json),
+          target: Json_decode.field("target", Json_decode.string, json),
+          src: Json_decode.list(l10n, json),
+          errata: fromJson$1(json)
         };
 }
 
