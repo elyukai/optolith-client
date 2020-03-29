@@ -389,6 +389,16 @@ module SelectOptionsL10n = {
   };
 };
 
+module ICUniv = {
+  let fromJson =
+    oneOf([
+      map(_ => IC.A, const("A")),
+      map(_ => IC.B, const("B")),
+      map(_ => IC.C, const("C")),
+      map(_ => IC.D, const("D")),
+    ]);
+};
+
 module SelectOptionsUniv = {
   type t = {
     id: int,
@@ -522,8 +532,6 @@ module BlessedTraditionsUniv = {
 };
 
 module BlessingsL10n = {
-  // TODO
-
   type t = {
     id: int,
     name: string,
@@ -550,11 +558,15 @@ module BlessingsL10n = {
 };
 
 module BlessingsUniv = {
-  // TODO
+  type t = {
+    id: int,
+    traditions: list(int),
+  };
 
-  type t = {id: int};
-
-  let%private univ = json => {id: json |> field("id", int)};
+  let%private univ = json => {
+    id: json |> field("id", int),
+    traditions: json |> field("traditions", list(int)),
+  };
 
   let fromJson = yaml => yaml.blessingsUniv |> list(univ);
 };
@@ -569,21 +581,51 @@ module BrewsL10n = {
 };
 
 module CantripsL10n = {
-  // TODO
+  type t = {
+    id: int,
+    name: string,
+    effect: string,
+    range: string,
+    duration: string,
+    target: string,
+    src: list(Static.SourceRef.t),
+    errata: list(Static.Erratum.t),
+  };
 
-  type t = {id: int};
-
-  let%private l10n = json => {id: json |> field("id", int)};
+  let%private l10n = json => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+    effect: json |> field("effect", string),
+    range: json |> field("range", string),
+    duration: json |> field("duration", string),
+    target: json |> field("target", string),
+    src: json |> SourceRefs.fromJson,
+    errata: json |> Errata.fromJson,
+  };
 
   let fromJson = yaml => yaml.cantripsL10n |> list(l10n);
 };
 
 module CantripsUniv = {
-  // TODO
+  type t = {
+    id: int,
+    traditions: list(int),
+    property: int,
+    activatablePrerequisites: list(Static.Prerequisites.Activatable.t),
+  };
 
-  type t = {id: int};
-
-  let%private univ = json => {id: json |> field("id", int)};
+  let%private univ = json => {
+    id: json |> field("id", int),
+    traditions: json |> field("traditions", list(int)),
+    property: json |> field("property", int),
+    activatablePrerequisites:
+      json
+      |> field(
+           "activatablePrerequisites",
+           maybe(list(Prerequisites.Activatable.fromJson)),
+         )
+      |> Maybe.fromMaybe([]),
+  };
 
   let fromJson = yaml => yaml.cantripsUniv |> list(univ);
 };
@@ -607,31 +649,65 @@ module CombatTechniqueGroupsL10n = {
 };
 
 module CombatTechniquesL10n = {
-  // TODO
+  type t = {
+    id: int,
+    name: string,
+    special: Maybe.t(string),
+    src: list(Static.SourceRef.t),
+    errata: list(Static.Erratum.t),
+  };
 
-  type t = {id: int};
-
-  let%private l10n = json => {id: json |> field("id", int)};
+  let%private l10n = json => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+    special: json |> field("special", maybe(string)),
+    src: json |> field("src", SourceRefs.fromJson),
+    errata: json |> field("errata", Errata.fromJson),
+  };
 
   let fromJson = yaml => yaml.combatTechniquesL10n |> list(l10n);
 };
 
 module CombatTechniquesUniv = {
-  // TODO
+  type t = {
+    id: int,
+    ic: IC.t,
+    primary: list(int),
+    bpr: int,
+    hasNoParry: bool,
+    gr: int,
+  };
 
-  type t = {id: int};
-
-  let%private univ = json => {id: json |> field("id", int)};
+  let%private univ = json => {
+    id: json |> field("id", int),
+    ic: json |> field("ic", ICUniv.fromJson),
+    primary: json |> field("primary", list(int)),
+    bpr: json |> field("bpr", int),
+    hasNoParry:
+      json |> field("hasNoParry", maybe(bool)) |> Maybe.fromMaybe(false),
+    gr: json |> field("gr", int),
+  };
 
   let fromJson = yaml => yaml.combatTechniquesUniv |> list(univ);
 };
 
 module ConditionsL10n = {
-  // TODO
+  type t = Static.Condition.t;
 
-  type t = {id: int};
-
-  let%private l10n = json => {id: json |> field("id", int)};
+  let%private l10n = (json): t => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+    description: json |> field("description", maybe(string)),
+    levelDescriptions: (
+      json |> field("level1", string),
+      json |> field("level2", string),
+      json |> field("level3", string),
+      json |> field("level4", string),
+    ),
+    levelColumnDescription: json |> field("levelDescription", maybe(string)),
+    src: json |> field("src", SourceRefs.fromJson),
+    errata: json |> field("errata", Errata.fromJson),
+  };
 
   let fromJson = yaml => yaml.conditionsL10n |> list(l10n);
 };
@@ -677,11 +753,16 @@ module CursesUniv = {
 };
 
 module DerivedCharacteristicsL10n = {
-  // TODO
+  type t = Static.DerivedCharacteristic.t;
 
-  type t = {id: int};
-
-  let%private l10n = json => {id: json |> field("id", int)};
+  let%private l10n = (json): t => {
+    id: json |> field("id", string),
+    name: json |> field("name", string),
+    short: json |> field("short", string),
+    calc: json |> field("calc", string),
+    calcHalfPrimary: json |> field("calcHalfPrimary", maybe(string)),
+    calcNoPrimary: json |> field("calcNoPrimary", maybe(string)),
+  };
 
   let fromJson = yaml => yaml.derivedCharacteristicsL10n |> list(l10n);
 };
@@ -778,9 +859,15 @@ module EquipmentGroupsL10n = {
 module EquipmentPackagesL10n = {
   // TODO
 
-  type t = {id: int};
+  type t = {
+    id: int,
+    name: string,
+  };
 
-  let%private l10n = json => {id: json |> field("id", int)};
+  let%private l10n = json => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+  };
 
   let fromJson = yaml => yaml.equipmentPackagesL10n |> list(l10n);
 };
