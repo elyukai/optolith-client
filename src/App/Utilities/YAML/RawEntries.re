@@ -1762,167 +1762,210 @@ module TribesL10n = {
 };
 
 module UI = {
+  module MacOSMenuBar = {
+    type t = {
+      /**
+       * - **0**: Name of the app
+       */
+      aboutapp: string,
+      preferences: string,
+      quit: string,
+      edit: string,
+      view: string,
+    };
+  };
+
+  module Initialization = {
+    type t = {
+      loadtableserror: string,
+    };
+  };
+
+  module Header = {
+    module Tabs = {
+      type t = {
+        heroes: string,
+        groups: string,
+        wiki: string,
+        faq: string,
+        about: string,
+        imprint: string,
+        thirdpartylicenses: string,
+        lastchanges: string,
+        profile: string,
+        overview: string,
+        personaldata: string,
+        charactersheet: string,
+        pact: string,
+        rules: string,
+        racecultureandprofession: string,
+        race: string,
+        culture: string,
+        profession: string,
+        attributes: string,
+        advantagesanddisadvantages: string,
+        advantages: string,
+        disadvantages: string,
+        abilities: string,
+        skills: string,
+        combattechniques: string,
+        specialabilities: string,
+        spells: string,
+        liturgicalchants: string,
+        belongings: string,
+        equipment: string,
+        hitzonearmor: string,
+        pets: string,
+      };
+    };
+
+    module APTooltip = {
+      type t = {
+        title: string,
+
+        /**
+         * - **0**: AP Total
+         */
+        total: string,
+
+        /**
+         * - **0**: AP Spent
+         */
+        spent: string,
+
+        /**
+         * - **0**: Current AP spent on advantages
+         * - **1**: Maximum possible AP spent on advantages
+         */
+        spentonadvantages: string,
+
+        /**
+         * - **0**: Current AP spent on magic advantages
+         * - **1**: Maximum possible AP spent on magic advantages
+         */
+        spentonmagicadvantages: string,
+
+        /**
+         * - **0**: Current AP spent on blessed advantages
+         * - **1**: Maximum possible AP spent on blessed advantages
+         */
+        spentonblessedadvantages: string,
+
+        /**
+         * - **0**: Current AP spent on disadvantages
+         * - **1**: Maximum possible AP spent on disadvantages
+         */
+        spentondisadvantages: string,
+
+        /**
+         * - **0**: Current AP spent on magic disadvantages
+         * - **1**: Maximum possible AP spent on magic disadvantages
+         */
+        spentonmagicdisadvantages: string,
+
+        /**
+         * - **0**: Current AP spent on blessed disadvantages
+         * - **1**: Maximum possible AP spent on blessed disadvantages
+         */
+        spentonblesseddisadvantages: string,
+
+        /**
+         * - **0**: AP spent on race
+         */
+        spentonrace: string,
+
+        /**
+         * - **0**: AP spent on profession
+         */
+        spentonprofession: string,
+
+        /**
+         * - **0**: AP spent on attributes
+         */
+        spentonattributes: string,
+
+        /**
+         * - **0**: AP spent on skills
+         */
+        spentonskills: string,
+
+        /**
+         * - **0**: AP spent on combat techniques
+         */
+        spentoncombattechniques: string,
+
+        /**
+         * - **0**: AP spent on spells
+         */
+        spentonspells: string,
+
+        /**
+         * - **0**: AP spent on cantrips
+         */
+        spentoncantrips: string,
+
+        /**
+         * - **0**: AP spent on liturgical chants
+         */
+        spentonliturgicalchants: string,
+
+        /**
+         * - **0**: AP spent on blessings
+         */
+        spentonblessings: string,
+
+        /**
+         * - **0**: AP spent on special abilities
+         */
+        spentonspecialabilities: string,
+
+        /**
+         * - **0**: AP spent on energies (LP/AE/KP)
+         */
+        spentonenergies: string,
+      };
+    };
+
+    module Dialogs = {
+      module SaveConfigError = {
+        type t = {
+          title: string,
+          message: string,
+        }
+      };
+
+      module SaveHeroesError = {
+        type t = {
+          title: string,
+          message: string,
+        }
+      };
+
+      type t = {
+        herosaved: string,
+        allsaved: string,
+        everythingelsesaved: string,
+        saveconfigerror: SaveConfigError.t,
+        saveheroeserror: SaveHeroesError.t,
+      }
+    };
+
+    type t = {
+      tabs: Tabs.t,
+      /**
+       * - **0**: AP left
+       */
+      apleft: string,
+      savebtn: string,
+      aptooltip: APTooltip.t,
+      dialogs: Dialogs.t,
+    };
+  };
+
   type t = {
-    /**
-     * - **0**: Name of the app
-     */
-    macosmenubar_aboutapp: string,
-    macosmenubar_preferences: string,
-    macosmenubar_quit: string,
-    macosmenubar_edit: string,
-    macosmenubar_view: string,
-
-    initialization_loadtableserror: string,
-
-    header_tabs_heroes: string,
-    header_tabs_groups: string,
-    header_tabs_wiki: string,
-    header_tabs_faq: string,
-    header_tabs_about: string,
-    header_tabs_imprint: string,
-    header_tabs_thirdpartylicenses: string,
-    header_tabs_lastchanges: string,
-    header_tabs_profile: string,
-    header_tabs_overview: string,
-    header_tabs_personaldata: string,
-    header_tabs_charactersheet: string,
-    header_tabs_pact: string,
-    header_tabs_rules: string,
-    header_tabs_racecultureandprofession: string,
-    header_tabs_race: string,
-    header_tabs_culture: string,
-    header_tabs_profession: string,
-    header_tabs_attributes: string,
-    header_tabs_advantagesanddisadvantages: string,
-    header_tabs_advantages: string,
-    header_tabs_disadvantages: string,
-    header_tabs_abilities: string,
-    header_tabs_skills: string,
-    header_tabs_combattechniques: string,
-    header_tabs_specialabilities: string,
-    header_tabs_spells: string,
-    header_tabs_liturgicalchants: string,
-    header_tabs_belongings: string,
-    header_tabs_equipment: string,
-    header_tabs_hitzonearmor: string,
-    header_tabs_pets: string,
-
-    /**
-     * - **0**: AP left
-     */
-    header_apleft: string,
-    header_savebtn: string,
-
-    header_aptooltip_title: string,
-
-    /**
-     * - **0**: AP Total
-     */
-    header_aptooltip_total: string,
-
-    /**
-     * - **0**: AP Spent
-     */
-    header_aptooltip_spent: string,
-
-    /**
-     * - **0**: Current AP spent on advantages
-     * - **1**: Maximum possible AP spent on advantages
-     */
-    header_aptooltip_spentonadvantages: string,
-
-    /**
-     * - **0**: Current AP spent on magic advantages
-     * - **1**: Maximum possible AP spent on magic advantages
-     */
-    header_aptooltip_spentonmagicadvantages: string,
-
-    /**
-     * - **0**: Current AP spent on blessed advantages
-     * - **1**: Maximum possible AP spent on blessed advantages
-     */
-    header_aptooltip_spentonblessedadvantages: string,
-
-    /**
-     * - **0**: Current AP spent on disadvantages
-     * - **1**: Maximum possible AP spent on disadvantages
-     */
-    header_aptooltip_spentondisadvantages: string,
-
-    /**
-     * - **0**: Current AP spent on magic disadvantages
-     * - **1**: Maximum possible AP spent on magic disadvantages
-     */
-    header_aptooltip_spentonmagicdisadvantages: string,
-
-    /**
-     * - **0**: Current AP spent on blessed disadvantages
-     * - **1**: Maximum possible AP spent on blessed disadvantages
-     */
-    header_aptooltip_spentonblesseddisadvantages: string,
-
-    /**
-     * - **0**: AP spent on race
-     */
-    header_aptooltip_spentonrace: string,
-
-    /**
-     * - **0**: AP spent on profession
-     */
-    header_aptooltip_spentonprofession: string,
-
-    /**
-     * - **0**: AP spent on attributes
-     */
-    header_aptooltip_spentonattributes: string,
-
-    /**
-     * - **0**: AP spent on skills
-     */
-    header_aptooltip_spentonskills: string,
-
-    /**
-     * - **0**: AP spent on combat techniques
-     */
-    header_aptooltip_spentoncombattechniques: string,
-
-    /**
-     * - **0**: AP spent on spells
-     */
-    header_aptooltip_spentonspells: string,
-
-    /**
-     * - **0**: AP spent on cantrips
-     */
-    header_aptooltip_spentoncantrips: string,
-
-    /**
-     * - **0**: AP spent on liturgical chants
-     */
-    header_aptooltip_spentonliturgicalchants: string,
-
-    /**
-     * - **0**: AP spent on blessings
-     */
-    header_aptooltip_spentonblessings: string,
-
-    /**
-     * - **0**: AP spent on special abilities
-     */
-    header_aptooltip_spentonspecialabilities: string,
-
-    /**
-     * - **0**: AP spent on energies (LP/AE/KP)
-     */
-    header_aptooltip_spentonenergies: string,
-
-    header_dialogs_herosaved: string,
-    header_dialogs_allsaved: string,
-    header_dialogs_everythingelsesaved: string,
-    header_dialogs_saveconfigerror_title: string,
-    header_dialogs_saveconfigerror_message: string,
-    header_dialogs_saveheroeserror_title: string,
-    header_dialogs_saveheroeserror_message: string,
+    macosmenubar: MacOSMenuBar.t,
+    initialization: Initialization.t,
+    header: Header.t,
 
     /**
      * - **0**: Weight in kg
@@ -2915,77 +2958,89 @@ module UI = {
   };
 
   let%private l10n = json => {
-    macosmenubar_aboutapp: json |> field("macosmenubar.aboutapp", string),
-    macosmenubar_preferences: json |> field("macosmenubar.preferences", string),
-    macosmenubar_quit: json |> field("macosmenubar.quit", string),
-    macosmenubar_edit: json |> field("macosmenubar.edit", string),
-    macosmenubar_view: json |> field("macosmenubar.view", string),
-
-    initialization_loadtableserror: json |> field("initialization.loadtableserror", string),
-
-    header_tabs_heroes: json |> field("header.tabs.heroes", string),
-    header_tabs_groups: json |> field("header.tabs.groups", string),
-    header_tabs_wiki: json |> field("header.tabs.wiki", string),
-    header_tabs_faq: json |> field("header.tabs.faq", string),
-    header_tabs_about: json |> field("header.tabs.about", string),
-    header_tabs_imprint: json |> field("header.tabs.imprint", string),
-    header_tabs_thirdpartylicenses: json |> field("header.tabs.thirdpartylicenses", string),
-    header_tabs_lastchanges: json |> field("header.tabs.lastchanges", string),
-    header_tabs_profile: json |> field("header.tabs.profile", string),
-    header_tabs_overview: json |> field("header.tabs.overview", string),
-    header_tabs_personaldata: json |> field("header.tabs.personaldata", string),
-    header_tabs_charactersheet: json |> field("header.tabs.charactersheet", string),
-    header_tabs_pact: json |> field("header.tabs.pact", string),
-    header_tabs_rules: json |> field("header.tabs.rules", string),
-    header_tabs_racecultureandprofession: json |> field("header.tabs.racecultureandprofession", string),
-    header_tabs_race: json |> field("header.tabs.race", string),
-    header_tabs_culture: json |> field("header.tabs.culture", string),
-    header_tabs_profession: json |> field("header.tabs.profession", string),
-    header_tabs_attributes: json |> field("header.tabs.attributes", string),
-    header_tabs_advantagesanddisadvantages: json |> field("header.tabs.advantagesanddisadvantages", string),
-    header_tabs_advantages: json |> field("header.tabs.advantages", string),
-    header_tabs_disadvantages: json |> field("header.tabs.disadvantages", string),
-    header_tabs_abilities: json |> field("header.tabs.abilities", string),
-    header_tabs_skills: json |> field("header.tabs.skills", string),
-    header_tabs_combattechniques: json |> field("header.tabs.combattechniques", string),
-    header_tabs_specialabilities: json |> field("header.tabs.specialabilities", string),
-    header_tabs_spells: json |> field("header.tabs.spells", string),
-    header_tabs_liturgicalchants: json |> field("header.tabs.liturgicalchants", string),
-    header_tabs_belongings: json |> field("header.tabs.belongings", string),
-    header_tabs_equipment: json |> field("header.tabs.equipment", string),
-    header_tabs_hitzonearmor: json |> field("header.tabs.hitzonearmor", string),
-    header_tabs_pets: json |> field("header.tabs.pets", string),
-    header_apleft: json |> field("header.apleft", string),
-    header_savebtn: json |> field("header.savebtn", string),
-
-    header_aptooltip_title: json |> field("header.aptooltip.title", string),
-    header_aptooltip_total: json |> field("header.aptooltip.total", string),
-    header_aptooltip_spent: json |> field("header.aptooltip.spent", string),
-    header_aptooltip_spentonadvantages: json |> field("header.aptooltip.spentonadvantages", string),
-    header_aptooltip_spentonmagicadvantages: json |> field("header.aptooltip.spentonmagicadvantages", string),
-    header_aptooltip_spentonblessedadvantages: json |> field("header.aptooltip.spentonblessedadvantages", string),
-    header_aptooltip_spentondisadvantages: json |> field("header.aptooltip.spentondisadvantages", string),
-    header_aptooltip_spentonmagicdisadvantages: json |> field("header.aptooltip.spentonmagicdisadvantages", string),
-    header_aptooltip_spentonblesseddisadvantages: json |> field("header.aptooltip.spentonblesseddisadvantages", string),
-    header_aptooltip_spentonrace: json |> field("header.aptooltip.spentonrace", string),
-    header_aptooltip_spentonprofession: json |> field("header.aptooltip.spentonprofession", string),
-    header_aptooltip_spentonattributes: json |> field("header.aptooltip.spentonattributes", string),
-    header_aptooltip_spentonskills: json |> field("header.aptooltip.spentonskills", string),
-    header_aptooltip_spentoncombattechniques: json |> field("header.aptooltip.spentoncombattechniques", string),
-    header_aptooltip_spentonspells: json |> field("header.aptooltip.spentonspells", string),
-    header_aptooltip_spentoncantrips: json |> field("header.aptooltip.spentoncantrips", string),
-    header_aptooltip_spentonliturgicalchants: json |> field("header.aptooltip.spentonliturgicalchants", string),
-    header_aptooltip_spentonblessings: json |> field("header.aptooltip.spentonblessings", string),
-    header_aptooltip_spentonspecialabilities: json |> field("header.aptooltip.spentonspecialabilities", string),
-    header_aptooltip_spentonenergies: json |> field("header.aptooltip.spentonenergies", string),
-
-    header_dialogs_herosaved: json |> field("header.dialogs.herosaved", string),
-    header_dialogs_allsaved: json |> field("header.dialogs.allsaved", string),
-    header_dialogs_everythingelsesaved: json |> field("header.dialogs.everythingelsesaved", string),
-    header_dialogs_saveconfigerror_title: json |> field("header.dialogs.saveconfigerror.title", string),
-    header_dialogs_saveconfigerror_message: json |> field("header.dialogs.saveconfigerror.message", string),
-    header_dialogs_saveheroeserror_title: json |> field("header.dialogs.saveheroeserror.title", string),
-    header_dialogs_saveheroeserror_message: json |> field("header.dialogs.saveheroeserror.message", string),
+    macosmenubar: {
+      aboutapp: json |> field("macosmenubar.aboutapp", string),
+      preferences: json |> field("macosmenubar.preferences", string),
+      quit: json |> field("macosmenubar.quit", string),
+      edit: json |> field("macosmenubar.edit", string),
+      view: json |> field("macosmenubar.view", string),
+    },
+    initialization: {
+      loadtableserror: json |> field("initialization.loadtableserror", string),
+    },
+    header: {
+      tabs: {
+        heroes: json |> field("header.tabs.heroes", string),
+        groups: json |> field("header.tabs.groups", string),
+        wiki: json |> field("header.tabs.wiki", string),
+        faq: json |> field("header.tabs.faq", string),
+        about: json |> field("header.tabs.about", string),
+        imprint: json |> field("header.tabs.imprint", string),
+        thirdpartylicenses: json |> field("header.tabs.thirdpartylicenses", string),
+        lastchanges: json |> field("header.tabs.lastchanges", string),
+        profile: json |> field("header.tabs.profile", string),
+        overview: json |> field("header.tabs.overview", string),
+        personaldata: json |> field("header.tabs.personaldata", string),
+        charactersheet: json |> field("header.tabs.charactersheet", string),
+        pact: json |> field("header.tabs.pact", string),
+        rules: json |> field("header.tabs.rules", string),
+        racecultureandprofession: json |> field("header.tabs.racecultureandprofession", string),
+        race: json |> field("header.tabs.race", string),
+        culture: json |> field("header.tabs.culture", string),
+        profession: json |> field("header.tabs.profession", string),
+        attributes: json |> field("header.tabs.attributes", string),
+        advantagesanddisadvantages: json |> field("header.tabs.advantagesanddisadvantages", string),
+        advantages: json |> field("header.tabs.advantages", string),
+        disadvantages: json |> field("header.tabs.disadvantages", string),
+        abilities: json |> field("header.tabs.abilities", string),
+        skills: json |> field("header.tabs.skills", string),
+        combattechniques: json |> field("header.tabs.combattechniques", string),
+        specialabilities: json |> field("header.tabs.specialabilities", string),
+        spells: json |> field("header.tabs.spells", string),
+        liturgicalchants: json |> field("header.tabs.liturgicalchants", string),
+        belongings: json |> field("header.tabs.belongings", string),
+        equipment: json |> field("header.tabs.equipment", string),
+        hitzonearmor: json |> field("header.tabs.hitzonearmor", string),
+        pets: json |> field("header.tabs.pets", string),
+      },
+      apleft: json |> field("header.apleft", string),
+      savebtn: json |> field("header.savebtn", string),
+      aptooltip: {
+        title: json |> field("header.aptooltip.title", string),
+        total: json |> field("header.aptooltip.total", string),
+        spent: json |> field("header.aptooltip.spent", string),
+        spentonadvantages: json |> field("header.aptooltip.spentonadvantages", string),
+        spentonmagicadvantages: json |> field("header.aptooltip.spentonmagicadvantages", string),
+        spentonblessedadvantages: json |> field("header.aptooltip.spentonblessedadvantages", string),
+        spentondisadvantages: json |> field("header.aptooltip.spentondisadvantages", string),
+        spentonmagicdisadvantages: json |> field("header.aptooltip.spentonmagicdisadvantages", string),
+        spentonblesseddisadvantages: json |> field("header.aptooltip.spentonblesseddisadvantages", string),
+        spentonrace: json |> field("header.aptooltip.spentonrace", string),
+        spentonprofession: json |> field("header.aptooltip.spentonprofession", string),
+        spentonattributes: json |> field("header.aptooltip.spentonattributes", string),
+        spentonskills: json |> field("header.aptooltip.spentonskills", string),
+        spentoncombattechniques: json |> field("header.aptooltip.spentoncombattechniques", string),
+        spentonspells: json |> field("header.aptooltip.spentonspells", string),
+        spentoncantrips: json |> field("header.aptooltip.spentoncantrips", string),
+        spentonliturgicalchants: json |> field("header.aptooltip.spentonliturgicalchants", string),
+        spentonblessings: json |> field("header.aptooltip.spentonblessings", string),
+        spentonspecialabilities: json |> field("header.aptooltip.spentonspecialabilities", string),
+        spentonenergies: json |> field("header.aptooltip.spentonenergies", string),
+      },
+      dialogs: {
+        herosaved: json |> field("header.dialogs.herosaved", string),
+        allsaved: json |> field("header.dialogs.allsaved", string),
+        everythingelsesaved: json |> field("header.dialogs.everythingelsesaved", string),
+        saveconfigerror: {
+          title: json |> field("header.dialogs.saveconfigerror.title", string),
+          message: json |> field("header.dialogs.saveconfigerror.message", string),
+        },
+        saveheroeserror: {
+          title: json |> field("header.dialogs.saveheroeserror.title", string),
+          message: json |> field("header.dialogs.saveheroeserror.message", string),
+        },
+      },
+    },
     general_weightvalue: json |> field("general.weightvalue", string),
     general_pricevalue: json |> field("general.pricevalue", string),
     general_lengthvalue: json |> field("general.lengthvalue", string),

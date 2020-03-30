@@ -2409,75 +2409,114 @@ var TribesL10n = {
   fromJson: fromJson$107
 };
 
+var MacOSMenuBar = { };
+
+var Initialization = { };
+
+var Tabs = { };
+
+var APTooltip = { };
+
+var SaveConfigError = { };
+
+var SaveHeroesError = { };
+
+var Dialogs = {
+  SaveConfigError: SaveConfigError,
+  SaveHeroesError: SaveHeroesError
+};
+
+var Header = {
+  Tabs: Tabs,
+  APTooltip: APTooltip,
+  Dialogs: Dialogs
+};
+
 function l10n$59(json) {
   return {
-          macosmenubar_aboutapp: Json_decode.field("macosmenubar.aboutapp", Json_decode.string, json),
-          macosmenubar_preferences: Json_decode.field("macosmenubar.preferences", Json_decode.string, json),
-          macosmenubar_quit: Json_decode.field("macosmenubar.quit", Json_decode.string, json),
-          macosmenubar_edit: Json_decode.field("macosmenubar.edit", Json_decode.string, json),
-          macosmenubar_view: Json_decode.field("macosmenubar.view", Json_decode.string, json),
-          initialization_loadtableserror: Json_decode.field("initialization.loadtableserror", Json_decode.string, json),
-          header_tabs_heroes: Json_decode.field("header.tabs.heroes", Json_decode.string, json),
-          header_tabs_groups: Json_decode.field("header.tabs.groups", Json_decode.string, json),
-          header_tabs_wiki: Json_decode.field("header.tabs.wiki", Json_decode.string, json),
-          header_tabs_faq: Json_decode.field("header.tabs.faq", Json_decode.string, json),
-          header_tabs_about: Json_decode.field("header.tabs.about", Json_decode.string, json),
-          header_tabs_imprint: Json_decode.field("header.tabs.imprint", Json_decode.string, json),
-          header_tabs_thirdpartylicenses: Json_decode.field("header.tabs.thirdpartylicenses", Json_decode.string, json),
-          header_tabs_lastchanges: Json_decode.field("header.tabs.lastchanges", Json_decode.string, json),
-          header_tabs_profile: Json_decode.field("header.tabs.profile", Json_decode.string, json),
-          header_tabs_overview: Json_decode.field("header.tabs.overview", Json_decode.string, json),
-          header_tabs_personaldata: Json_decode.field("header.tabs.personaldata", Json_decode.string, json),
-          header_tabs_charactersheet: Json_decode.field("header.tabs.charactersheet", Json_decode.string, json),
-          header_tabs_pact: Json_decode.field("header.tabs.pact", Json_decode.string, json),
-          header_tabs_rules: Json_decode.field("header.tabs.rules", Json_decode.string, json),
-          header_tabs_racecultureandprofession: Json_decode.field("header.tabs.racecultureandprofession", Json_decode.string, json),
-          header_tabs_race: Json_decode.field("header.tabs.race", Json_decode.string, json),
-          header_tabs_culture: Json_decode.field("header.tabs.culture", Json_decode.string, json),
-          header_tabs_profession: Json_decode.field("header.tabs.profession", Json_decode.string, json),
-          header_tabs_attributes: Json_decode.field("header.tabs.attributes", Json_decode.string, json),
-          header_tabs_advantagesanddisadvantages: Json_decode.field("header.tabs.advantagesanddisadvantages", Json_decode.string, json),
-          header_tabs_advantages: Json_decode.field("header.tabs.advantages", Json_decode.string, json),
-          header_tabs_disadvantages: Json_decode.field("header.tabs.disadvantages", Json_decode.string, json),
-          header_tabs_abilities: Json_decode.field("header.tabs.abilities", Json_decode.string, json),
-          header_tabs_skills: Json_decode.field("header.tabs.skills", Json_decode.string, json),
-          header_tabs_combattechniques: Json_decode.field("header.tabs.combattechniques", Json_decode.string, json),
-          header_tabs_specialabilities: Json_decode.field("header.tabs.specialabilities", Json_decode.string, json),
-          header_tabs_spells: Json_decode.field("header.tabs.spells", Json_decode.string, json),
-          header_tabs_liturgicalchants: Json_decode.field("header.tabs.liturgicalchants", Json_decode.string, json),
-          header_tabs_belongings: Json_decode.field("header.tabs.belongings", Json_decode.string, json),
-          header_tabs_equipment: Json_decode.field("header.tabs.equipment", Json_decode.string, json),
-          header_tabs_hitzonearmor: Json_decode.field("header.tabs.hitzonearmor", Json_decode.string, json),
-          header_tabs_pets: Json_decode.field("header.tabs.pets", Json_decode.string, json),
-          header_apleft: Json_decode.field("header.apleft", Json_decode.string, json),
-          header_savebtn: Json_decode.field("header.savebtn", Json_decode.string, json),
-          header_aptooltip_title: Json_decode.field("header.aptooltip.title", Json_decode.string, json),
-          header_aptooltip_total: Json_decode.field("header.aptooltip.total", Json_decode.string, json),
-          header_aptooltip_spent: Json_decode.field("header.aptooltip.spent", Json_decode.string, json),
-          header_aptooltip_spentonadvantages: Json_decode.field("header.aptooltip.spentonadvantages", Json_decode.string, json),
-          header_aptooltip_spentonmagicadvantages: Json_decode.field("header.aptooltip.spentonmagicadvantages", Json_decode.string, json),
-          header_aptooltip_spentonblessedadvantages: Json_decode.field("header.aptooltip.spentonblessedadvantages", Json_decode.string, json),
-          header_aptooltip_spentondisadvantages: Json_decode.field("header.aptooltip.spentondisadvantages", Json_decode.string, json),
-          header_aptooltip_spentonmagicdisadvantages: Json_decode.field("header.aptooltip.spentonmagicdisadvantages", Json_decode.string, json),
-          header_aptooltip_spentonblesseddisadvantages: Json_decode.field("header.aptooltip.spentonblesseddisadvantages", Json_decode.string, json),
-          header_aptooltip_spentonrace: Json_decode.field("header.aptooltip.spentonrace", Json_decode.string, json),
-          header_aptooltip_spentonprofession: Json_decode.field("header.aptooltip.spentonprofession", Json_decode.string, json),
-          header_aptooltip_spentonattributes: Json_decode.field("header.aptooltip.spentonattributes", Json_decode.string, json),
-          header_aptooltip_spentonskills: Json_decode.field("header.aptooltip.spentonskills", Json_decode.string, json),
-          header_aptooltip_spentoncombattechniques: Json_decode.field("header.aptooltip.spentoncombattechniques", Json_decode.string, json),
-          header_aptooltip_spentonspells: Json_decode.field("header.aptooltip.spentonspells", Json_decode.string, json),
-          header_aptooltip_spentoncantrips: Json_decode.field("header.aptooltip.spentoncantrips", Json_decode.string, json),
-          header_aptooltip_spentonliturgicalchants: Json_decode.field("header.aptooltip.spentonliturgicalchants", Json_decode.string, json),
-          header_aptooltip_spentonblessings: Json_decode.field("header.aptooltip.spentonblessings", Json_decode.string, json),
-          header_aptooltip_spentonspecialabilities: Json_decode.field("header.aptooltip.spentonspecialabilities", Json_decode.string, json),
-          header_aptooltip_spentonenergies: Json_decode.field("header.aptooltip.spentonenergies", Json_decode.string, json),
-          header_dialogs_herosaved: Json_decode.field("header.dialogs.herosaved", Json_decode.string, json),
-          header_dialogs_allsaved: Json_decode.field("header.dialogs.allsaved", Json_decode.string, json),
-          header_dialogs_everythingelsesaved: Json_decode.field("header.dialogs.everythingelsesaved", Json_decode.string, json),
-          header_dialogs_saveconfigerror_title: Json_decode.field("header.dialogs.saveconfigerror.title", Json_decode.string, json),
-          header_dialogs_saveconfigerror_message: Json_decode.field("header.dialogs.saveconfigerror.message", Json_decode.string, json),
-          header_dialogs_saveheroeserror_title: Json_decode.field("header.dialogs.saveheroeserror.title", Json_decode.string, json),
-          header_dialogs_saveheroeserror_message: Json_decode.field("header.dialogs.saveheroeserror.message", Json_decode.string, json),
+          macosmenubar: {
+            aboutapp: Json_decode.field("macosmenubar.aboutapp", Json_decode.string, json),
+            preferences: Json_decode.field("macosmenubar.preferences", Json_decode.string, json),
+            quit: Json_decode.field("macosmenubar.quit", Json_decode.string, json),
+            edit: Json_decode.field("macosmenubar.edit", Json_decode.string, json),
+            view: Json_decode.field("macosmenubar.view", Json_decode.string, json)
+          },
+          initialization: {
+            loadtableserror: Json_decode.field("initialization.loadtableserror", Json_decode.string, json)
+          },
+          header: {
+            tabs: {
+              heroes: Json_decode.field("header.tabs.heroes", Json_decode.string, json),
+              groups: Json_decode.field("header.tabs.groups", Json_decode.string, json),
+              wiki: Json_decode.field("header.tabs.wiki", Json_decode.string, json),
+              faq: Json_decode.field("header.tabs.faq", Json_decode.string, json),
+              about: Json_decode.field("header.tabs.about", Json_decode.string, json),
+              imprint: Json_decode.field("header.tabs.imprint", Json_decode.string, json),
+              thirdpartylicenses: Json_decode.field("header.tabs.thirdpartylicenses", Json_decode.string, json),
+              lastchanges: Json_decode.field("header.tabs.lastchanges", Json_decode.string, json),
+              profile: Json_decode.field("header.tabs.profile", Json_decode.string, json),
+              overview: Json_decode.field("header.tabs.overview", Json_decode.string, json),
+              personaldata: Json_decode.field("header.tabs.personaldata", Json_decode.string, json),
+              charactersheet: Json_decode.field("header.tabs.charactersheet", Json_decode.string, json),
+              pact: Json_decode.field("header.tabs.pact", Json_decode.string, json),
+              rules: Json_decode.field("header.tabs.rules", Json_decode.string, json),
+              racecultureandprofession: Json_decode.field("header.tabs.racecultureandprofession", Json_decode.string, json),
+              race: Json_decode.field("header.tabs.race", Json_decode.string, json),
+              culture: Json_decode.field("header.tabs.culture", Json_decode.string, json),
+              profession: Json_decode.field("header.tabs.profession", Json_decode.string, json),
+              attributes: Json_decode.field("header.tabs.attributes", Json_decode.string, json),
+              advantagesanddisadvantages: Json_decode.field("header.tabs.advantagesanddisadvantages", Json_decode.string, json),
+              advantages: Json_decode.field("header.tabs.advantages", Json_decode.string, json),
+              disadvantages: Json_decode.field("header.tabs.disadvantages", Json_decode.string, json),
+              abilities: Json_decode.field("header.tabs.abilities", Json_decode.string, json),
+              skills: Json_decode.field("header.tabs.skills", Json_decode.string, json),
+              combattechniques: Json_decode.field("header.tabs.combattechniques", Json_decode.string, json),
+              specialabilities: Json_decode.field("header.tabs.specialabilities", Json_decode.string, json),
+              spells: Json_decode.field("header.tabs.spells", Json_decode.string, json),
+              liturgicalchants: Json_decode.field("header.tabs.liturgicalchants", Json_decode.string, json),
+              belongings: Json_decode.field("header.tabs.belongings", Json_decode.string, json),
+              equipment: Json_decode.field("header.tabs.equipment", Json_decode.string, json),
+              hitzonearmor: Json_decode.field("header.tabs.hitzonearmor", Json_decode.string, json),
+              pets: Json_decode.field("header.tabs.pets", Json_decode.string, json)
+            },
+            apleft: Json_decode.field("header.apleft", Json_decode.string, json),
+            savebtn: Json_decode.field("header.savebtn", Json_decode.string, json),
+            aptooltip: {
+              title: Json_decode.field("header.aptooltip.title", Json_decode.string, json),
+              total: Json_decode.field("header.aptooltip.total", Json_decode.string, json),
+              spent: Json_decode.field("header.aptooltip.spent", Json_decode.string, json),
+              spentonadvantages: Json_decode.field("header.aptooltip.spentonadvantages", Json_decode.string, json),
+              spentonmagicadvantages: Json_decode.field("header.aptooltip.spentonmagicadvantages", Json_decode.string, json),
+              spentonblessedadvantages: Json_decode.field("header.aptooltip.spentonblessedadvantages", Json_decode.string, json),
+              spentondisadvantages: Json_decode.field("header.aptooltip.spentondisadvantages", Json_decode.string, json),
+              spentonmagicdisadvantages: Json_decode.field("header.aptooltip.spentonmagicdisadvantages", Json_decode.string, json),
+              spentonblesseddisadvantages: Json_decode.field("header.aptooltip.spentonblesseddisadvantages", Json_decode.string, json),
+              spentonrace: Json_decode.field("header.aptooltip.spentonrace", Json_decode.string, json),
+              spentonprofession: Json_decode.field("header.aptooltip.spentonprofession", Json_decode.string, json),
+              spentonattributes: Json_decode.field("header.aptooltip.spentonattributes", Json_decode.string, json),
+              spentonskills: Json_decode.field("header.aptooltip.spentonskills", Json_decode.string, json),
+              spentoncombattechniques: Json_decode.field("header.aptooltip.spentoncombattechniques", Json_decode.string, json),
+              spentonspells: Json_decode.field("header.aptooltip.spentonspells", Json_decode.string, json),
+              spentoncantrips: Json_decode.field("header.aptooltip.spentoncantrips", Json_decode.string, json),
+              spentonliturgicalchants: Json_decode.field("header.aptooltip.spentonliturgicalchants", Json_decode.string, json),
+              spentonblessings: Json_decode.field("header.aptooltip.spentonblessings", Json_decode.string, json),
+              spentonspecialabilities: Json_decode.field("header.aptooltip.spentonspecialabilities", Json_decode.string, json),
+              spentonenergies: Json_decode.field("header.aptooltip.spentonenergies", Json_decode.string, json)
+            },
+            dialogs: {
+              herosaved: Json_decode.field("header.dialogs.herosaved", Json_decode.string, json),
+              allsaved: Json_decode.field("header.dialogs.allsaved", Json_decode.string, json),
+              everythingelsesaved: Json_decode.field("header.dialogs.everythingelsesaved", Json_decode.string, json),
+              saveconfigerror: {
+                title: Json_decode.field("header.dialogs.saveconfigerror.title", Json_decode.string, json),
+                message: Json_decode.field("header.dialogs.saveconfigerror.message", Json_decode.string, json)
+              },
+              saveheroeserror: {
+                title: Json_decode.field("header.dialogs.saveheroeserror.title", Json_decode.string, json),
+                message: Json_decode.field("header.dialogs.saveheroeserror.message", Json_decode.string, json)
+              }
+            }
+          },
           general_weightvalue: Json_decode.field("general.weightvalue", Json_decode.string, json),
           general_pricevalue: Json_decode.field("general.pricevalue", Json_decode.string, json),
           general_lengthvalue: Json_decode.field("general.lengthvalue", Json_decode.string, json),
@@ -3236,6 +3275,9 @@ function fromJson$108(yaml) {
 }
 
 var UI = {
+  MacOSMenuBar: MacOSMenuBar,
+  Initialization: Initialization,
+  Header: Header,
   fromJson: fromJson$108
 };
 
