@@ -266,6 +266,22 @@ var Semigroup = {
   sappend: sappend
 };
 
+function isJust(m) {
+  if (m) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function isNothing(m) {
+  if (m) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 function fromMaybe(def, mx) {
   if (mx) {
     return mx[0];
@@ -337,6 +353,8 @@ exports.Alternative = Alternative;
 exports.Monad = Monad;
 exports.Foldable = Foldable;
 exports.Semigroup = Semigroup;
+exports.isJust = isJust;
+exports.isNothing = isNothing;
 exports.fromMaybe = fromMaybe;
 exports.maybe = maybe;
 exports.listToMaybe = listToMaybe;

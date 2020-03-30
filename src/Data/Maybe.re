@@ -159,6 +159,16 @@ module Semigroup = {
     };
 };
 
+let isJust = m => switch m {
+  | Just(_) => true
+  | Nothing => false
+};
+
+let isNothing = m => switch m {
+  | Just(_) => false
+  | Nothing => true
+};
+
 let fromMaybe = (def, mx) =>
   switch (mx) {
   | Just(x) => x

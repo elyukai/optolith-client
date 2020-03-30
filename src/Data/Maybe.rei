@@ -168,6 +168,16 @@ module Semigroup: {
 /**
  *
  */
+let isJust: t('a) => bool;
+
+/**
+ *
+ */
+let isNothing: t('a) => bool;
+
+/**
+ *
+ */
 let fromMaybe: ('a, t('a)) => 'a;
 
 /**
