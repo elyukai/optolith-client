@@ -10,7 +10,6 @@ module Functor: {
   /**
    * Lift a function to apply to the wrapped value.
    */
-  [@genType "fmap"]
   let (<$>): ('a => 'b, t('a)) => t('b);
 };
 

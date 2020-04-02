@@ -403,7 +403,7 @@ export const getDerivedCharacteristicsMap = createMaybeSelector (
                     case "MOV":
                       return Just (Pair (x, MOV))
                     case "WT":
-                      return isWoundThresholdEnabled ? Nothing : Just (Pair (x, WT))
+                      return isWoundThresholdEnabled ? Just (Pair (x, WT)) : Nothing
                     default:
                       return Nothing
                   }

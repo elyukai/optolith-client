@@ -285,11 +285,12 @@ const modifySelectOptions =
                                         ))
                                         (mhero_entry)
 
-        const isPrejudiceAndActive: (x: Record<SelectOption>) => boolean =
-          x => SOA.id (x) === 7 && elem (7) (unique_selections)
+        const isInfiniteActive: (id: number) => (x: Record<SelectOption>) => boolean =
+          id => x => SOA.id (x) === id && elem (id) (unique_selections)
 
-        const isUnworldlyAndActive: (x: Record<SelectOption>) => boolean =
-          x => SOA.id (x) === 8 && elem (8) (unique_selections)
+        const isPrejudiceAndActive = isInfiniteActive (7)
+
+        const isUnworldlyAndActive = isInfiniteActive (8)
 
         const isNotActiveAndMaxNotReached: (x: Record<SelectOption>) => boolean =
           x => isNotActive (mhero_entry) (x)
