@@ -10,6 +10,7 @@ module Functor: {
   /**
    * Lift a function to apply to the wrapped value.
    */
+  [@genType "fmap"]
   let (<$>): ('a => 'b, t('a)) => t('b);
 };
 
@@ -58,7 +59,7 @@ module Monad: {
   /**
    * Removes one level of monadic structure.
    */
-  [@genType]
+  [@genType "join"]
   let join: t(t('a)) => t('a);
 
   /**
@@ -208,9 +209,11 @@ let mapMaybe: ('a => t('b), list('a)) => list('b);
 /**
  *
  */
+[@genType]
 let maybeToOption: t('a) => option('a);
 
 /**
  *
  */
+[@genType]
 let optionToMaybe: option('a) => t('a);

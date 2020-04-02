@@ -755,15 +755,10 @@ function l10n$3(json) {
           id: Json_decode.field("id", Json_decode.$$int, json),
           name: Json_decode.field("name", Json_decode.string, json),
           effect: Json_decode.field("effect", Json_decode.string, json),
-          castingTime: Json_decode.field("castingTime", Json_decode.string, json),
-          castingTimeShort: Json_decode.field("castingTimeShort", Json_decode.string, json),
           aeCost: Json_decode.field("aeCost", Json_decode.string, json),
           aeCostShort: Json_decode.field("aeCostShort", Json_decode.string, json),
-          range: Json_decode.field("range", Json_decode.string, json),
-          rangeShort: Json_decode.field("rangeShort", Json_decode.string, json),
           duration: Json_decode.field("duration", Json_decode.string, json),
           durationShort: Json_decode.field("durationShort", Json_decode.string, json),
-          target: Json_decode.field("target", Json_decode.string, json),
           src: Json_decode.field("src", fromJson, json),
           errata: Json_decode.field("errata", fromJson$1, json)
         };
@@ -780,34 +775,16 @@ var AnimistForcesL10n = {
 function univ$1(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          check: /* tuple */[
-            Json_decode.field("check1", Json_decode.$$int, json),
-            Json_decode.field("check2", Json_decode.$$int, json),
-            Json_decode.field("check3", Json_decode.$$int, json)
-          ],
-          checkMod: Json_decode.field("checkMod", (function (param) {
-                  return maybe(fromJson$15, param);
-                }), json),
-          ic: Json_decode.field("ic", fromJson$13, json),
-          traditions: Json_decode.field("traditions", (function (param) {
-                  return Json_decode.list(Json_decode.$$int, param);
-                }), json),
+          check1: Json_decode.field("check1", Json_decode.$$int, json),
+          check2: Json_decode.field("check2", Json_decode.$$int, json),
+          check3: Json_decode.field("check3", Json_decode.$$int, json),
           property: Json_decode.field("property", Json_decode.$$int, json),
-          castingTimeNoMod: Json_decode.field("castingTimeNoMod", Json_decode.bool, json),
-          aeCostNoMod: Json_decode.field("aeCostNoMod", Json_decode.bool, json),
-          rangeNoMod: Json_decode.field("rangeNoMod", Json_decode.bool, json),
-          durationNoMod: Json_decode.field("durationNoMod", Json_decode.bool, json),
-          activatablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("activatablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$6, param);
-                                  }), param);
-                    }), json)),
-          increasablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("increasablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$10, param);
-                                  }), param);
-                    }), json)),
-          gr: Json_decode.field("gr", Json_decode.$$int, json)
+          tribes: Json_decode.field("tribes", (function (param) {
+                  return maybe((function (param) {
+                                return Json_decode.list(Json_decode.$$int, param);
+                              }), param);
+                }), json),
+          ic: Json_decode.field("ic", fromJson$13, json)
         };
 }
 
@@ -1012,11 +989,11 @@ function univ$4(json) {
                   return Json_decode.list(Json_decode.$$int, param);
                 }), json),
           property: Json_decode.field("property", Json_decode.$$int, json),
-          activatablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("activatablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$6, param);
-                                  }), param);
-                    }), json))
+          activatablePrerequisites: Json_decode.field("activatablePrerequisites", (function (param) {
+                  return maybe((function (param) {
+                                return Json_decode.list(fromJson$6, param);
+                              }), param);
+                }), json)
         };
 }
 
@@ -1086,9 +1063,9 @@ function univ$5(json) {
                   return Json_decode.list(Json_decode.$$int, param);
                 }), json),
           bpr: Json_decode.field("bpr", Json_decode.$$int, json),
-          hasNoParry: Maybe$OptolithClient.fromMaybe(false, Json_decode.field("hasNoParry", (function (param) {
-                      return maybe(Json_decode.bool, param);
-                    }), json)),
+          hasNoParry: Json_decode.field("hasNoParry", (function (param) {
+                  return maybe(Json_decode.bool, param);
+                }), json),
           gr: Json_decode.field("gr", Json_decode.$$int, json)
         };
 }
@@ -1163,15 +1140,10 @@ function l10n$18(json) {
           id: Json_decode.field("id", Json_decode.$$int, json),
           name: Json_decode.field("name", Json_decode.string, json),
           effect: Json_decode.field("effect", Json_decode.string, json),
-          castingTime: Json_decode.field("castingTime", Json_decode.string, json),
-          castingTimeShort: Json_decode.field("castingTimeShort", Json_decode.string, json),
           aeCost: Json_decode.field("aeCost", Json_decode.string, json),
           aeCostShort: Json_decode.field("aeCostShort", Json_decode.string, json),
-          range: Json_decode.field("range", Json_decode.string, json),
-          rangeShort: Json_decode.field("rangeShort", Json_decode.string, json),
           duration: Json_decode.field("duration", Json_decode.string, json),
           durationShort: Json_decode.field("durationShort", Json_decode.string, json),
-          target: Json_decode.field("target", Json_decode.string, json),
           src: Json_decode.field("src", fromJson, json),
           errata: Json_decode.field("errata", fromJson$1, json)
         };
@@ -1188,34 +1160,13 @@ var CursesL10n = {
 function univ$7(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          check: /* tuple */[
-            Json_decode.field("check1", Json_decode.$$int, json),
-            Json_decode.field("check2", Json_decode.$$int, json),
-            Json_decode.field("check3", Json_decode.$$int, json)
-          ],
+          check1: Json_decode.field("check1", Json_decode.$$int, json),
+          check2: Json_decode.field("check2", Json_decode.$$int, json),
+          check3: Json_decode.field("check3", Json_decode.$$int, json),
           checkMod: Json_decode.field("checkMod", (function (param) {
                   return maybe(fromJson$15, param);
                 }), json),
-          ic: Json_decode.field("ic", fromJson$13, json),
-          traditions: Json_decode.field("traditions", (function (param) {
-                  return Json_decode.list(Json_decode.$$int, param);
-                }), json),
-          property: Json_decode.field("property", Json_decode.$$int, json),
-          castingTimeNoMod: Json_decode.field("castingTimeNoMod", Json_decode.bool, json),
-          aeCostNoMod: Json_decode.field("aeCostNoMod", Json_decode.bool, json),
-          rangeNoMod: Json_decode.field("rangeNoMod", Json_decode.bool, json),
-          durationNoMod: Json_decode.field("durationNoMod", Json_decode.bool, json),
-          activatablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("activatablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$6, param);
-                                  }), param);
-                    }), json)),
-          increasablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("increasablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$10, param);
-                                  }), param);
-                    }), json)),
-          gr: Json_decode.field("gr", Json_decode.$$int, json)
+          property: Json_decode.field("property", Json_decode.$$int, json)
         };
 }
 
@@ -1283,15 +1234,10 @@ function l10n$21(json) {
           id: Json_decode.field("id", Json_decode.$$int, json),
           name: Json_decode.field("name", Json_decode.string, json),
           effect: Json_decode.field("effect", Json_decode.string, json),
-          castingTime: Json_decode.field("castingTime", Json_decode.string, json),
-          castingTimeShort: Json_decode.field("castingTimeShort", Json_decode.string, json),
           aeCost: Json_decode.field("aeCost", Json_decode.string, json),
           aeCostShort: Json_decode.field("aeCostShort", Json_decode.string, json),
-          range: Json_decode.field("range", Json_decode.string, json),
-          rangeShort: Json_decode.field("rangeShort", Json_decode.string, json),
           duration: Json_decode.field("duration", Json_decode.string, json),
           durationShort: Json_decode.field("durationShort", Json_decode.string, json),
-          target: Json_decode.field("target", Json_decode.string, json),
           src: Json_decode.field("src", fromJson, json),
           errata: Json_decode.field("errata", fromJson$1, json)
         };
@@ -1308,34 +1254,13 @@ var DominationRitualsL10n = {
 function univ$9(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          check: /* tuple */[
-            Json_decode.field("check1", Json_decode.$$int, json),
-            Json_decode.field("check2", Json_decode.$$int, json),
-            Json_decode.field("check3", Json_decode.$$int, json)
-          ],
+          check1: Json_decode.field("check1", Json_decode.$$int, json),
+          check2: Json_decode.field("check2", Json_decode.$$int, json),
+          check3: Json_decode.field("check3", Json_decode.$$int, json),
           checkMod: Json_decode.field("checkMod", (function (param) {
                   return maybe(fromJson$15, param);
                 }), json),
-          ic: Json_decode.field("ic", fromJson$13, json),
-          traditions: Json_decode.field("traditions", (function (param) {
-                  return Json_decode.list(Json_decode.$$int, param);
-                }), json),
-          property: Json_decode.field("property", Json_decode.$$int, json),
-          castingTimeNoMod: Json_decode.field("castingTimeNoMod", Json_decode.bool, json),
-          aeCostNoMod: Json_decode.field("aeCostNoMod", Json_decode.bool, json),
-          rangeNoMod: Json_decode.field("rangeNoMod", Json_decode.bool, json),
-          durationNoMod: Json_decode.field("durationNoMod", Json_decode.bool, json),
-          activatablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("activatablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$6, param);
-                                  }), param);
-                    }), json)),
-          increasablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("increasablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$10, param);
-                                  }), param);
-                    }), json)),
-          gr: Json_decode.field("gr", Json_decode.$$int, json)
+          property: Json_decode.field("property", Json_decode.$$int, json)
         };
 }
 
@@ -1352,15 +1277,8 @@ function l10n$22(json) {
           id: Json_decode.field("id", Json_decode.$$int, json),
           name: Json_decode.field("name", Json_decode.string, json),
           effect: Json_decode.field("effect", Json_decode.string, json),
-          castingTime: Json_decode.field("castingTime", Json_decode.string, json),
-          castingTimeShort: Json_decode.field("castingTimeShort", Json_decode.string, json),
           aeCost: Json_decode.field("aeCost", Json_decode.string, json),
           aeCostShort: Json_decode.field("aeCostShort", Json_decode.string, json),
-          range: Json_decode.field("range", Json_decode.string, json),
-          rangeShort: Json_decode.field("rangeShort", Json_decode.string, json),
-          duration: Json_decode.field("duration", Json_decode.string, json),
-          durationShort: Json_decode.field("durationShort", Json_decode.string, json),
-          target: Json_decode.field("target", Json_decode.string, json),
           src: Json_decode.field("src", fromJson, json),
           errata: Json_decode.field("errata", fromJson$1, json)
         };
@@ -1377,34 +1295,17 @@ var ElvenMagicalSongsL10n = {
 function univ$10(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          check: /* tuple */[
-            Json_decode.field("check1", Json_decode.$$int, json),
-            Json_decode.field("check2", Json_decode.$$int, json),
-            Json_decode.field("check3", Json_decode.$$int, json)
-          ],
+          check1: Json_decode.field("check1", Json_decode.$$int, json),
+          check2: Json_decode.field("check2", Json_decode.$$int, json),
+          check3: Json_decode.field("check3", Json_decode.$$int, json),
           checkMod: Json_decode.field("checkMod", (function (param) {
                   return maybe(fromJson$15, param);
                 }), json),
-          ic: Json_decode.field("ic", fromJson$13, json),
-          traditions: Json_decode.field("traditions", (function (param) {
-                  return Json_decode.list(Json_decode.$$int, param);
+          skill: Json_decode.field("skill", (function (param) {
+                  return maybe(Json_decode.$$int, param);
                 }), json),
           property: Json_decode.field("property", Json_decode.$$int, json),
-          castingTimeNoMod: Json_decode.field("castingTimeNoMod", Json_decode.bool, json),
-          aeCostNoMod: Json_decode.field("aeCostNoMod", Json_decode.bool, json),
-          rangeNoMod: Json_decode.field("rangeNoMod", Json_decode.bool, json),
-          durationNoMod: Json_decode.field("durationNoMod", Json_decode.bool, json),
-          activatablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("activatablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$6, param);
-                                  }), param);
-                    }), json)),
-          increasablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("increasablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$10, param);
-                                  }), param);
-                    }), json)),
-          gr: Json_decode.field("gr", Json_decode.$$int, json)
+          ic: Json_decode.field("ic", fromJson$13, json)
         };
 }
 
@@ -1480,9 +1381,9 @@ var EquipmentPackagesL10n = {
 function item$1(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          amount: Maybe$OptolithClient.fromMaybe(1, Json_decode.field("amount", (function (param) {
-                      return maybe(Json_decode.$$int, param);
-                    }), json))
+          amount: Json_decode.field("amount", (function (param) {
+                  return maybe(Json_decode.$$int, param);
+                }), json)
         };
 }
 
@@ -1593,8 +1494,8 @@ function l10n$29(json) {
           id: Json_decode.field("id", Json_decode.$$int, json),
           name: Json_decode.field("name", Json_decode.string, json),
           effect: Json_decode.field("effect", Json_decode.string, json),
-          castingTime: Json_decode.field("castingTime", Json_decode.string, json),
-          castingTimeShort: Json_decode.field("castingTimeShort", Json_decode.string, json),
+          ritualTime: Json_decode.field("ritualTimee", Json_decode.string, json),
+          ritualTimeShort: Json_decode.field("ritualTimeShort", Json_decode.string, json),
           aeCost: Json_decode.field("aeCost", Json_decode.string, json),
           aeCostShort: Json_decode.field("aeCostShort", Json_decode.string, json),
           range: Json_decode.field("range", Json_decode.string, json),
@@ -1618,34 +1519,18 @@ var GeodeRitualsL10n = {
 function univ$15(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          check: /* tuple */[
-            Json_decode.field("check1", Json_decode.$$int, json),
-            Json_decode.field("check2", Json_decode.$$int, json),
-            Json_decode.field("check3", Json_decode.$$int, json)
-          ],
+          check1: Json_decode.field("check1", Json_decode.$$int, json),
+          check2: Json_decode.field("check2", Json_decode.$$int, json),
+          check3: Json_decode.field("check3", Json_decode.$$int, json),
           checkMod: Json_decode.field("checkMod", (function (param) {
                   return maybe(fromJson$15, param);
                 }), json),
-          ic: Json_decode.field("ic", fromJson$13, json),
-          traditions: Json_decode.field("traditions", (function (param) {
-                  return Json_decode.list(Json_decode.$$int, param);
-                }), json),
           property: Json_decode.field("property", Json_decode.$$int, json),
-          castingTimeNoMod: Json_decode.field("castingTimeNoMod", Json_decode.bool, json),
-          aeCostNoMod: Json_decode.field("aeCostNoMod", Json_decode.bool, json),
-          rangeNoMod: Json_decode.field("rangeNoMod", Json_decode.bool, json),
-          durationNoMod: Json_decode.field("durationNoMod", Json_decode.bool, json),
-          activatablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("activatablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$6, param);
-                                  }), param);
-                    }), json)),
-          increasablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("increasablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$10, param);
-                                  }), param);
-                    }), json)),
-          gr: Json_decode.field("gr", Json_decode.$$int, json)
+          activatablePrerequisites: Json_decode.field("activatablePrerequisites", (function (param) {
+                  return maybe((function (param) {
+                                return Json_decode.list(fromJson$6, param);
+                              }), param);
+                }), json)
         };
 }
 
@@ -1842,11 +1727,9 @@ var MagicalDancesL10n = {
 function univ$18(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          check: /* tuple */[
-            Json_decode.field("check1", Json_decode.$$int, json),
-            Json_decode.field("check2", Json_decode.$$int, json),
-            Json_decode.field("check3", Json_decode.$$int, json)
-          ],
+          check1: Json_decode.field("check1", Json_decode.$$int, json),
+          check2: Json_decode.field("check2", Json_decode.$$int, json),
+          check3: Json_decode.field("check3", Json_decode.$$int, json),
           checkMod: Json_decode.field("checkMod", (function (param) {
                   return maybe(fromJson$15, param);
                 }), json),
@@ -1859,16 +1742,16 @@ function univ$18(json) {
           aeCostNoMod: Json_decode.field("aeCostNoMod", Json_decode.bool, json),
           rangeNoMod: Json_decode.field("rangeNoMod", Json_decode.bool, json),
           durationNoMod: Json_decode.field("durationNoMod", Json_decode.bool, json),
-          activatablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("activatablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$6, param);
-                                  }), param);
-                    }), json)),
-          increasablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("increasablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$10, param);
-                                  }), param);
-                    }), json)),
+          activatablePrerequisites: Json_decode.field("activatablePrerequisites", (function (param) {
+                  return maybe((function (param) {
+                                return Json_decode.list(fromJson$6, param);
+                              }), param);
+                }), json),
+          increasablePrerequisites: Json_decode.field("increasablePrerequisites", (function (param) {
+                  return maybe((function (param) {
+                                return Json_decode.list(fromJson$10, param);
+                              }), param);
+                }), json),
           gr: Json_decode.field("gr", Json_decode.$$int, json)
         };
 }
@@ -1911,11 +1794,9 @@ var MagicalMelodiesL10n = {
 function univ$19(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          check: /* tuple */[
-            Json_decode.field("check1", Json_decode.$$int, json),
-            Json_decode.field("check2", Json_decode.$$int, json),
-            Json_decode.field("check3", Json_decode.$$int, json)
-          ],
+          check1: Json_decode.field("check1", Json_decode.$$int, json),
+          check2: Json_decode.field("check2", Json_decode.$$int, json),
+          check3: Json_decode.field("check3", Json_decode.$$int, json),
           checkMod: Json_decode.field("checkMod", (function (param) {
                   return maybe(fromJson$15, param);
                 }), json),
@@ -1928,16 +1809,16 @@ function univ$19(json) {
           aeCostNoMod: Json_decode.field("aeCostNoMod", Json_decode.bool, json),
           rangeNoMod: Json_decode.field("rangeNoMod", Json_decode.bool, json),
           durationNoMod: Json_decode.field("durationNoMod", Json_decode.bool, json),
-          activatablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("activatablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$6, param);
-                                  }), param);
-                    }), json)),
-          increasablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("increasablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$10, param);
-                                  }), param);
-                    }), json)),
+          activatablePrerequisites: Json_decode.field("activatablePrerequisites", (function (param) {
+                  return maybe((function (param) {
+                                return Json_decode.list(fromJson$6, param);
+                              }), param);
+                }), json),
+          increasablePrerequisites: Json_decode.field("increasablePrerequisites", (function (param) {
+                  return maybe((function (param) {
+                                return Json_decode.list(fromJson$10, param);
+                              }), param);
+                }), json),
           gr: Json_decode.field("gr", Json_decode.$$int, json)
         };
 }
@@ -2397,11 +2278,9 @@ var RogueSpellsL10n = {
 function univ$25(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          check: /* tuple */[
-            Json_decode.field("check1", Json_decode.$$int, json),
-            Json_decode.field("check2", Json_decode.$$int, json),
-            Json_decode.field("check3", Json_decode.$$int, json)
-          ],
+          check1: Json_decode.field("check1", Json_decode.$$int, json),
+          check2: Json_decode.field("check2", Json_decode.$$int, json),
+          check3: Json_decode.field("check3", Json_decode.$$int, json),
           checkMod: Json_decode.field("checkMod", (function (param) {
                   return maybe(fromJson$15, param);
                 }), json),
@@ -2414,16 +2293,16 @@ function univ$25(json) {
           aeCostNoMod: Json_decode.field("aeCostNoMod", Json_decode.bool, json),
           rangeNoMod: Json_decode.field("rangeNoMod", Json_decode.bool, json),
           durationNoMod: Json_decode.field("durationNoMod", Json_decode.bool, json),
-          activatablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("activatablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$6, param);
-                                  }), param);
-                    }), json)),
-          increasablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("increasablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$10, param);
-                                  }), param);
-                    }), json)),
+          activatablePrerequisites: Json_decode.field("activatablePrerequisites", (function (param) {
+                  return maybe((function (param) {
+                                return Json_decode.list(fromJson$6, param);
+                              }), param);
+                }), json),
+          increasablePrerequisites: Json_decode.field("increasablePrerequisites", (function (param) {
+                  return maybe((function (param) {
+                                return Json_decode.list(fromJson$10, param);
+                              }), param);
+                }), json),
           gr: Json_decode.field("gr", Json_decode.$$int, json)
         };
 }
@@ -2781,11 +2660,9 @@ var SpellsL10n = {
 function univ$29(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          check: /* tuple */[
-            Json_decode.field("check1", Json_decode.$$int, json),
-            Json_decode.field("check2", Json_decode.$$int, json),
-            Json_decode.field("check3", Json_decode.$$int, json)
-          ],
+          check1: Json_decode.field("check1", Json_decode.$$int, json),
+          check2: Json_decode.field("check2", Json_decode.$$int, json),
+          check3: Json_decode.field("check3", Json_decode.$$int, json),
           checkMod: Json_decode.field("checkMod", (function (param) {
                   return maybe(fromJson$15, param);
                 }), json),
@@ -2798,16 +2675,16 @@ function univ$29(json) {
           aeCostNoMod: Json_decode.field("aeCostNoMod", Json_decode.bool, json),
           rangeNoMod: Json_decode.field("rangeNoMod", Json_decode.bool, json),
           durationNoMod: Json_decode.field("durationNoMod", Json_decode.bool, json),
-          activatablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("activatablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$6, param);
-                                  }), param);
-                    }), json)),
-          increasablePrerequisites: Maybe$OptolithClient.fromMaybe(/* [] */0, Json_decode.field("increasablePrerequisites", (function (param) {
-                      return maybe((function (param) {
-                                    return Json_decode.list(fromJson$10, param);
-                                  }), param);
-                    }), json)),
+          activatablePrerequisites: Json_decode.field("activatablePrerequisites", (function (param) {
+                  return maybe((function (param) {
+                                return Json_decode.list(fromJson$6, param);
+                              }), param);
+                }), json),
+          increasablePrerequisites: Json_decode.field("increasablePrerequisites", (function (param) {
+                  return maybe((function (param) {
+                                return Json_decode.list(fromJson$10, param);
+                              }), param);
+                }), json),
           gr: Json_decode.field("gr", Json_decode.$$int, json)
         };
 }

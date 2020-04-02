@@ -10,6 +10,9 @@ const $$toRE1024164449: { [key: string]: any } = {"Nothing": 0};
 const CreateBucklescriptBlock = require('bs-platform/lib/js/block.js');
 
 // tslint:disable-next-line:no-var-requires
+const Curry = require('bs-platform/lib/js/curry.js');
+
+// tslint:disable-next-line:no-var-requires
 const MaybeBS = require('./Maybe.bs');
 
 // tslint:disable-next-line:interface-over-type-literal
@@ -19,6 +22,18 @@ export type Maybe<a> = t<a>;
 // tslint:disable-next-line:interface-over-type-literal
 export type maybe<a> = t<a>;
 export type Maybe_<a> = maybe<a>;
+
+/** 
+   * Lift a function to apply to the wrapped value.
+    */
+export const Functor_fmap: <a,b>(_1:((_1:a) => b), _2:t<a>) => t<b> = function <a,b>(Arg1: any, Arg2: any) {
+  const result = Curry._2(MaybeBS.Functor.<$>, Arg1, typeof(Arg2) === 'object'
+    ? CreateBucklescriptBlock.__(0, [Arg2.value])
+    : $$toRE1024164449[Arg2]);
+  return typeof(result) === 'object'
+    ? {tag:"Just", value:result[0]}
+    : $$toJS1024164449[result]
+};
 
 /** 
    * Removes one level of monadic structure.
@@ -34,4 +49,26 @@ export const Monad_join: <a>(_1:t<t<a>>) => t<a> = function <a>(Arg1: any) {
     : $$toJS1024164449[result]
 };
 
+/** 
+ *
+  */
+export const maybeToOption: <a>(_1:t<a>) => (null | undefined | a) = function <a>(Arg1: any) {
+  const result = MaybeBS.maybeToOption(typeof(Arg1) === 'object'
+    ? CreateBucklescriptBlock.__(0, [Arg1.value])
+    : $$toRE1024164449[Arg1]);
+  return result
+};
+
+/** 
+ *
+  */
+export const optionToMaybe: <a>(_1:(null | undefined | a)) => t<a> = function <a>(Arg1: any) {
+  const result = MaybeBS.optionToMaybe((Arg1 == null ? undefined : Arg1));
+  return typeof(result) === 'object'
+    ? {tag:"Just", value:result[0]}
+    : $$toJS1024164449[result]
+};
+
 export const Monad: { join: <a>(_1:t<t<a>>) => t<a> } = MaybeBS.Monad
+
+export const Functor: { fmap: <a,b>(_1:((_1:a) => b), _2:t<a>) => t<b> } = MaybeBS.Functor
