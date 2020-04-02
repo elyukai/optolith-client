@@ -4,6 +4,7 @@ import { fromArray, List } from "../../../../Data/List"
 import { catMaybes, Just, Maybe, Nothing } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
+import { traceShowBoth } from "../../../../Debug/Trace"
 import { Profession } from "../../../Models/Wiki/Profession"
 import { ProfessionSelections } from "../../../Models/Wiki/professionSelections/ProfessionAdjustmentSelections"
 import { IncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill"
@@ -74,17 +75,18 @@ const toProfession : YamlPairConverterE<ProfessionUniv, ProfessionL10n, string, 
                          name: toNameBySex (l10n.name),
                          subname: toNameBySexM (l10n.subname),
                          ap: Maybe (univ.cost),
-                         dependencies: catMaybes (List<Maybe<ProfessionDependency>> (
-                           univ.sexPrerequisite === undefined
+                         dependencies: traceShowBoth (l10n.name)
+                         (catMaybes (List<Maybe<ProfessionDependency>> (
+                           univ.sexDependency === undefined
                              ? Nothing
-                             : Just (toSexPrerequisite (univ.sexPrerequisite)),
-                           univ.racePrerequisite === undefined
+                             : Just (toSexPrerequisite (univ.sexDependency)),
+                           univ.raceDependency === undefined
                              ? Nothing
-                             : Just (toRacePrerequisite (univ.racePrerequisite)),
-                           univ.culturePrerequisite === undefined
+                             : Just (toRacePrerequisite (univ.raceDependency)),
+                           univ.cultureDependency === undefined
                              ? Nothing
-                             : Just (toCulturePrerequisite (univ.culturePrerequisite))
-                         )),
+                             : Just (toCulturePrerequisite (univ.cultureDependency))
+                         ))),
                          prerequisites: List<ProfessionPrerequisite> (
                            ...(univ.activatablePrerequisites === undefined
                                ? []
