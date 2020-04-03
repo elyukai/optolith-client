@@ -71,7 +71,7 @@ const publishToServer =
         */ v => [`OptolithInsider_${v}.AppImage`, `OptolithInsider_${v}.tar.gz`]
         : /**
         * @param {string} v Version
-        */ v => [`OptolithInsider_${v}.dmg`, `OptolithInsider_${v}.zip`]
+        */ v => [`OptolithInsider_${v}.dmg`, `OptolithInsider_${v}.dmg.blockmap`, `OptolithInsider_${v}.zip`]
       : os === "win"
         ? /**
         * @param {string} v Version
@@ -82,7 +82,7 @@ const publishToServer =
         */ v => [`Optolith_${v}.AppImage`, `Optolith_${v}.tar.gz`]
         : /**
         * @param {string} v Version
-        */ v => [`Optolith_${v}.dmg`, `Optolith_${v}.zip`]
+        */ v => [`Optolith_${v}.dmg`, `Optolith_${v}.dmg.blockmap`, `Optolith_${v}.zip`]
 
     const allFiles = await fs.promises.readdir (path.join (...distPath))
 

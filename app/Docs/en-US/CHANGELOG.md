@@ -2,6 +2,7 @@
 
 ### Bug Fixes
 
+- Combat Techniques from books other than Core Rules were missing in combat techniques tab. #543
 - Description of combat technique selection for profession variants does not render properly. #539
 - Profession *Lanisto*: Skill Specialization selection referenced the wrong skill. #537
 - Professions did not react to dependencies. #507

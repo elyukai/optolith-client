@@ -1,6 +1,6 @@
 import { ident, thrush } from "../../Data/Function"
 import { fmap, fmapF } from "../../Data/Functor"
-import { cons, consF, elem, fnull, List, map, maximum } from "../../Data/List"
+import { cons, consF, elem, filter, fnull, List, map, maximum } from "../../Data/List"
 import { fromJust, isJust, Just, liftM2, Maybe, maybe, Nothing, or } from "../../Data/Maybe"
 import { add, divideBy, gt, max, subtractBy } from "../../Data/Num"
 import { findWithDefault, foldrWithKey, lookup } from "../../Data/OrderedMap"
@@ -79,7 +79,7 @@ const getParryBase =
                  + getPrimaryAttrMod (attributes) (CTA.primary (wiki_entry)))
   }
 
-export const getCombatTechniquesForSheet = createMaybeSelector (
+export const getCombatTechniquesForView = createMaybeSelector (
   getWiki,
   getWikiCombatTechniques,
   getAttributes,
@@ -109,17 +109,6 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
                                     ident<List<Record<CombatTechniqueWithAttackParryBase>>>
                                 }
 
-                                if (SDA.value (hero_entry) === 6
-                                    && !isEntryFromCoreBook (CTA.src)
-                                                            (StaticData.A.books (staticData))
-                                                            (wiki_entry)) {
-                                  // Entry has not been increased yet and is not
-                                  // from Core Rules: Hide it, because it's very
-                                  // unlikely it will ever be used
-                                  return ident as
-                                    ident<List<Record<CombatTechniqueWithAttackParryBase>>>
-                                }
-
                                 return consF (CombatTechniqueWithAttackParryBase ({
                                   at: getAttackBase (attributes) (wiki_entry) (hero_entry),
                                   pa: getParryBase (attributes) (wiki_entry) (hero_entry),
@@ -131,6 +120,16 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
                    sortByMulti ([ comparingR (CombatTechniqueWithAttackParryBaseA_.name)
                                              (compareLocale (staticData)) ])
                  )))
+)
+
+export const getCombatTechniquesForSheet = createMaybeSelector (
+  getWiki,
+  getCombatTechniquesForView,
+  uncurryN (staticData =>
+             fmap (filter (x => SDA.value (CTWAPBA.stateEntry (x)) > 6
+                                || isEntryFromCoreBook (CTA.src)
+                                                       (StaticData.A.books (staticData))
+                                                       (CTWAPBA.wikiEntry (x)))))
 )
 
 const getMaximum =
@@ -178,7 +177,7 @@ const getValue = pipe (CTWAPBA.stateEntry, SDA.value)
 type CTWAPB = CombatTechniqueWithAttackParryBase
 
 export const getAllCombatTechniques = createMaybeSelector (
-  getCombatTechniquesForSheet,
+  getCombatTechniquesForView,
   getCurrentHeroPresent,
   getStartEl,
   getWiki,
