@@ -744,20 +744,21 @@ const getVariantCombatTechniquesSelection =
         const vamount = CombatTechniquesSelection.A.amount (variant_sel)
         const vvalue = CombatTechniquesSelection.A.value (variant_sel)
 
-        const tag = translateP (staticData)
-                               ("inlinewiki.combattechniquesecondselection")
-                               (List<string | number> (
-                                vamount === 1
-                                ? translate (staticData) ("inlinewiki.combattechnique.one")
-                                : vamount === 2
-                                ? translate (staticData) ("inlinewiki.combattechnique.two")
-                                : "...",
-                                 vvalue + 6
-                               ))
-
         const joinedList = pipe_ (vsid, sortStrings (staticData), intercalate (", "))
 
-        return Just (`${tag}${joinedList}`)
+        const tag = translateP (staticData)
+                               ("inlinewiki.combattechniqueselection")
+                               (List<string | number> (
+                                 vamount === 1
+                                 ? translate (staticData) ("inlinewiki.combattechnique.one")
+                                 : vamount === 2
+                                 ? translate (staticData) ("inlinewiki.combattechnique.two")
+                                 : "...",
+                                 vvalue + 6,
+                                 joinedList
+                               ))
+
+        return Just (`${tag}`)
       }
     }
 
