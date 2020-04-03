@@ -362,9 +362,9 @@ rules:
   "@typescript-eslint/no-extra-semi": 2
   no-unused-expressions: 0
   "@typescript-eslint/no-unused-expressions": 2
-  "@typescript-eslint/no-unused-vars":
+  "@typescript-eslint/no-unused-vars-experimental":
     - 2
-    - varsIgnorePattern: "^_"
+    - ignoredNamesRegex: "^_"
   "@typescript-eslint/no-use-before-define": 2
   no-useless-constructor: 0
   "@typescript-eslint/no-useless-constructor": 2
