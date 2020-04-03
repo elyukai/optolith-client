@@ -22,6 +22,10 @@
 - Fehler bei Drittanbieterlizenzen behoben. #471
 - Typo im Namen des Hardas-Stils korrigiert. #469
 
+### Bekannte Fehler
+
+- Einige Einträge, die komplexere Voraussetzungen haben, können diese Voraussetzungen falsch *anzeigen*, sie aber trotzdem richtig *verwenden*.
+
 ## 1.3.1
 
 ### Fehlerbehebungen

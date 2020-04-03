@@ -13,6 +13,10 @@
 - Fixed prerequisites for SA Energy Control. #471
 - Fixed third-party licenses. #471
 
+### Known Issues
+
+- Some of the entries with more complex prerequisites might *display* them wrong but *handle* them correct.
+
 ## 1.3.1
 
 ### Probleemoplossingen

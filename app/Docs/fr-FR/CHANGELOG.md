@@ -14,6 +14,10 @@
 - Fixed third-party licenses. #471
 - Fixed disadvantages with select options could not be bought. #470
 
+### Known Issues
+
+- Some of the entries with more complex prerequisites might *display* them wrong but *handle* them correct.
+
 ## 1.3.1
 
 ### Bug Fixes
