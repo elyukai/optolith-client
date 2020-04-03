@@ -1,11 +1,12 @@
-import { ident } from "../../Data/Function"
 import { fmap, fmapF } from "../../Data/Functor"
-import { consF, elem, filter, List, map, minimum, notNull, nub } from "../../Data/List"
-import { alt, any, bind, ensure, Just, liftM2, mapMaybe, maybe } from "../../Data/Maybe"
+import { consF, elem, elemF, List, map, minimum, notNull, nub } from "../../Data/List"
+import { alt, any, bind, ensure, fromJust, isJust, Just, mapMaybe, maybe } from "../../Data/Maybe"
+import { gte } from "../../Data/Num"
 import { foldr, lookupF } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
+import { filterMapListT, filterT, idT, Transducer } from "../../Data/Transducer"
 import { fst, Pair, snd } from "../../Data/Tuple"
-import { curryN, uncurryN, uncurryN3 } from "../../Data/Tuple/Curry"
+import { uncurryN } from "../../Data/Tuple/Curry"
 import { DisadvantageId, SocialStatusId } from "../Constants/Ids"
 import { NumIdName } from "../Models/NumIdName"
 import { DropdownOption } from "../Models/View/DropdownOption"
@@ -14,6 +15,7 @@ import { Race } from "../Models/Wiki/Race"
 import { RaceVariant } from "../Models/Wiki/RaceVariant"
 import { StaticData } from "../Models/Wiki/WikiModel"
 import { getActiveSelections } from "../Utilities/Activatable/selectionUtils"
+import { composeT } from "../Utilities/compose"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils"
@@ -41,21 +43,22 @@ const getMinimumSocialStatus = createMaybeSelector (
   )
 )
 
+type Social = Pair<SocialStatusId, string>
+
 const getAvailableSocialStatusesTuples = createMaybeSelector (
   getCulture,
   getMinimumSocialStatus,
   getSocialStatusAssocs,
-  uncurryN3 (curryN (pipe (
-    uncurryN (liftM2 (culture => min => filter <Pair<SocialStatusId, string>>
-                                               (pipe (
-                                                 fst,
-                                                 id => id >= min
-                                                       && elem (id) (CA.socialStatus (culture))
-                                               )))),
-    maybe (ident as ident<List<Pair<SocialStatusId, string>>>)
-          <ident<List<Pair<SocialStatusId, string>>>>
-          (ident)
-  )))
+  (mculture, mmin, xs): List<Social> =>
+    filterMapListT (composeT (
+      isJust (mculture)
+        ? filterT<Social> (pipe (fst, elemF (CA.socialStatus (fromJust (mculture)))))
+        : idT as Transducer<Social, Social>,
+      isJust (mmin)
+        ? filterT<Social> (pipe (fst, gte (fromJust (mmin))))
+        : idT
+    ))
+    (xs)
 )
 
 export const getAvailableSocialStatuses = createMaybeSelector (
