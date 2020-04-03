@@ -2,6 +2,9 @@
 
 ### Probleemoplossingen
 
+- Description of combat technique selection for profession variants does not render properly. #539
+- Professions did not react to dependencies. #507
+- Textfield „Title“ in personal data had wrong label. #492
 - *Religion* was on SR 6 for most of the Blessed One professions. #475
 - States were overflowing on character sheet PDF but not in Optolith. #473
 - The `config.json` has still thrown errors for many users. The problem should be fixed, finally. #476

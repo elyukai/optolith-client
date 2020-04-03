@@ -2,6 +2,13 @@
 
 ### Fehlerbehebungen
 
+- Die Beschreibung der Kampftechnikauswahl bei Professionsvarianten wurde nicht richtig angezeigt.
+- Die Sozialstatusvoraussetzung für *Herrschaftsanspruch* funktionierte nicht.
+- Profession *Lanisto*: Die Fertigkeitsspezialisierung galt für das falsche Talent.
+- Professionen haben ihre Abhängigkeiten nicht beachtet.
+- In den persönlichen Daten hatte das Textfeld „Titel“ die falsche Beschriftung.
+- Falsche Volumenangaben in der Effektbeschreibung des Zaubers *Manifesto*.
+- Profession *Hazaqi*: *Steinbearbeitung* 4 ist jetzt *Stoffbearbeiung* 4.
 - Berufsgeheimnisse aus der *Rüstkammer der Streitenden Königreiche* fehlten. #474
 - SF *Bindung des Bannschwerts* hatte keine Kosten. #490
 - *Götter & Kulte* war bei den meisten Geweihtenprofessionen auf FW 6. #475

@@ -2,6 +2,13 @@
 
 ### Bug Fixes
 
+- Description of combat technique selection for profession variants does not render properly. #539
+- Profession *Lanisto*: Skill Specialization selection referenced the wrong skill. #537
+- Professions did not react to dependencies. #507
+- *Old Adersin Style* missing from **Aventuria Armory**. #499
+- Professions' section header "Combat Techniques" is German ("Kampftechniken"). #500
+- Textfield „Title“ in personal data had wrong label. #492
+- Profession *Hazaqi*: *Earthencraft* 4 is now *Clothworking* 4. #496
 - Trade Secrets from *Armory of the Warring Kingdoms* were missing. #474
 - SA *Binding of the Spell-Sword* had no costs. #490
 - *Religion* was on SR 6 for most of the Blessed One professions. #475
@@ -11,6 +18,10 @@
 - Added missing Garethi dialect *Nostrian*. #480
 - Fixed prerequisites for SA Energy Control. #471
 - Fixed third-party licenses. #471
+
+### Known Issues
+
+- Some of the entries with more complex prerequisites might *display* them wrong but *handle* them correct.
 
 ## 1.3.1
 
