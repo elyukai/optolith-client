@@ -12,9 +12,7 @@ function tL10n(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
           name: Json_decode.field("name", Json_decode.string, json),
-          special: Json_decode.field("special", (function (param) {
-                  return JsonStrict$OptolithClient.maybe(Json_decode.string, param);
-                }), json),
+          special: JsonStrict$OptolithClient.optionalField("special", Json_decode.string, json),
           src: Json_decode.field("src", Static_SourceRef$OptolithClient.Decode.list, json),
           errata: Json_decode.field("errata", Static_Erratum$OptolithClient.Decode.list, json)
         };
@@ -23,14 +21,12 @@ function tL10n(json) {
 function tUniv(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          ic: Json_decode.field("ic", IC$OptolithClient.Decode.ic, json),
+          ic: Json_decode.field("ic", IC$OptolithClient.Decode.t, json),
           primary: Json_decode.field("primary", (function (param) {
                   return Json_decode.list(Json_decode.$$int, param);
                 }), json),
           bpr: Json_decode.field("bpr", Json_decode.$$int, json),
-          hasNoParry: Json_decode.field("hasNoParry", (function (param) {
-                  return JsonStrict$OptolithClient.maybe(Json_decode.bool, param);
-                }), json),
+          hasNoParry: JsonStrict$OptolithClient.optionalField("hasNoParry", Json_decode.bool, json),
           gr: Json_decode.field("gr", Json_decode.$$int, json)
         };
 }

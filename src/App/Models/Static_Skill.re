@@ -35,6 +35,12 @@ type t = {
   errata: list(Static_Erratum.t),
 };
 
+type group = {
+  id: int,
+  name: string,
+  fullName: string,
+};
+
 module Decode = {
   open Json.Decode;
   open JsonStrict;
@@ -128,8 +134,14 @@ module Decode = {
     check1: json |> field("check1", int),
     check2: json |> field("check2", int),
     check3: json |> field("check3", int),
-    ic: json |> field("ic", IC.Decode.ic),
+    ic: json |> field("ic", IC.Decode.t),
     enc: json |> field("enc", encumbranceUniv),
     gr: json |> field("gr", int),
+  };
+
+  let group = json => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+    fullName: json |> field("fullName", string),
   };
 };

@@ -52,9 +52,9 @@ module Decode = {
     traditions: json |> field("traditions", list(int)),
     activatablePrerequisites:
       json
-      |> field(
+      |> optionalField(
            "activatablePrerequisites",
-           maybe(list(Static_Prerequisites.Decode.activatable)),
+           list(Static_Prerequisites.Decode.activatable),
          ),
   };
 

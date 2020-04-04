@@ -4,59 +4,13 @@
 
 var Advantage = { };
 
-var AnimistForce = { };
-
-var Blessing = { };
-
-var Cantrip = { };
-
-var Condition = { };
-
 var IncreaseSkill = { };
 
 var Culture = {
   IncreaseSkill: IncreaseSkill
 };
 
-var Curse = { };
-
-var DerivedCharacteristic = { };
-
 var Disadvantage = { };
-
-var DominationRitual = { };
-
-var ElvenMagicalSong = { };
-
-var EquipmentPackage = { };
-
-var ExperienceLevel = { };
-
-var FocusRule = { };
-
-var GeodeRitual = { };
-
-var Item = { };
-
-var LiturgicalChant = { };
-
-var MagicalDance = { };
-
-var MagicalMelody = { };
-
-var MagicalTradition = { };
-
-var Messages = { };
-
-var OptionalRule = { };
-
-var PactCategory = { };
-
-var Category = { };
-
-var Patron = {
-  Category: Category
-};
 
 var NameBySex = { };
 
@@ -95,8 +49,6 @@ var Profession = {
   Variant: Variant
 };
 
-var Publication = { };
-
 var Die = { };
 
 var Variant$1 = { };
@@ -105,18 +57,6 @@ var Race = {
   Die: Die,
   Variant: Variant$1
 };
-
-var RogueSpell = { };
-
-var SkillGroup = { };
-
-var SpecialAbility = { };
-
-var Spell = { };
-
-var State = { };
-
-var ZibiljaRitual = { };
 
 var SourceRef = /* alias */0;
 
@@ -128,11 +68,65 @@ var Skill = /* alias */0;
 
 var SelectOption = /* alias */0;
 
+var AnimistForce = /* alias */0;
+
 var Attribute = /* alias */0;
 
 var BlessedTradition = /* alias */0;
 
+var Blessing = /* alias */0;
+
+var Cantrip = /* alias */0;
+
 var CombatTechnique = /* alias */0;
+
+var Condition = /* alias */0;
+
+var Curse = /* alias */0;
+
+var DerivedCharacteristic = /* alias */0;
+
+var DominationRitual = /* alias */0;
+
+var ElvenMagicalSong = /* alias */0;
+
+var EquipmentPackage = /* alias */0;
+
+var ExperienceLevel = /* alias */0;
+
+var FocusRule = /* alias */0;
+
+var GeodeRitual = /* alias */0;
+
+var Item = /* alias */0;
+
+var LiturgicalChant = /* alias */0;
+
+var MagicalDance = /* alias */0;
+
+var MagicalMelody = /* alias */0;
+
+var MagicalTradition = /* alias */0;
+
+var Messages = /* alias */0;
+
+var OptionalRule = /* alias */0;
+
+var PactCategory = /* alias */0;
+
+var Patron = /* alias */0;
+
+var Publication = /* alias */0;
+
+var RogueSpell = /* alias */0;
+
+var SpecialAbility = /* alias */0;
+
+var Spell = /* alias */0;
+
+var State = /* alias */0;
+
+var ZibiljaRitual = /* alias */0;
 
 exports.SourceRef = SourceRef;
 exports.Erratum = Erratum;
@@ -170,7 +164,6 @@ exports.Profession = Profession;
 exports.Publication = Publication;
 exports.Race = Race;
 exports.RogueSpell = RogueSpell;
-exports.SkillGroup = SkillGroup;
 exports.SpecialAbility = SpecialAbility;
 exports.Spell = Spell;
 exports.State = State;

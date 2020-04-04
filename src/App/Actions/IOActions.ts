@@ -428,16 +428,14 @@ const close = (
       if (isJust (f)) {
         fromJust (f) ()
       }
-
-      remote .getCurrentWindow () .close ()
     }
     else {
       console.log ("!(all_saved && save_heroes)")
 
       await dispatch (requestSaveCache (false))
-
-      remote .getCurrentWindow () .close ()
     }
+
+    remote .getCurrentWindow () .close ()
   }
 
 

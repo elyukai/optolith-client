@@ -31,7 +31,7 @@ module Decode = {
     id: json |> field("id", int),
     numId: json |> field("numId", int),
     primary: json |> field("primary", int),
-    aspects: json |> field("aspects", maybe(pair(int, int))),
+    aspects: json |> optionalField("aspects", pair(int, int)),
   };
 
   let t = (univ, l10n) => {

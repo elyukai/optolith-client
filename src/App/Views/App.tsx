@@ -116,15 +116,13 @@ export class App extends React.Component<AppProps, AppState> {
 
           <AlertsContainer />
           <TitleBar
-            close={close}
-            closeDuringLoad={closeDuringLoad}
+            close={closeDuringLoad}
             enterFullscreen={enterFullscreen}
             leaveFullscreen={leaveFullscreen}
             maximize={maximize}
             minimize={minimize}
             platform={platform}
             restore={restore}
-            isLoading
             />
         </div>
       )
@@ -145,15 +143,13 @@ export class App extends React.Component<AppProps, AppState> {
           </div>
           <AlertsContainer />
           <TitleBar
-            close={close}
-            closeDuringLoad={closeDuringLoad}
+            close={closeDuringLoad}
             enterFullscreen={enterFullscreen}
             leaveFullscreen={leaveFullscreen}
             maximize={maximize}
             minimize={minimize}
             platform={platform}
             restore={restore}
-            isLoading
             />
         </div>
       )
@@ -184,7 +180,6 @@ export class App extends React.Component<AppProps, AppState> {
         <DownloaderContainer staticData={staticData} />
         <TitleBar
           close={close}
-          closeDuringLoad={closeDuringLoad}
           enterFullscreen={enterFullscreen}
           leaveFullscreen={leaveFullscreen}
           maximize={maximize}

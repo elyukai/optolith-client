@@ -2,14 +2,22 @@
 'use strict';
 
 var Curry = require("bs-platform/lib/js/curry.js");
+var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 
 function maybe(decode, json) {
-  if (json === undefined) {
+  if (json === undefined || json === null) {
     return /* Nothing */0;
   } else {
     return /* Just */[Curry._1(decode, json)];
   }
 }
 
+function optionalField(key, decode, json) {
+  return Json_decode.field(key, (function (param) {
+                return maybe(decode, param);
+              }), json);
+}
+
 exports.maybe = maybe;
+exports.optionalField = optionalField;
 /* No side effect */

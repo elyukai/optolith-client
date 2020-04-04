@@ -96,9 +96,17 @@ function tUniv(json) {
           check1: Json_decode.field("check1", Json_decode.$$int, json),
           check2: Json_decode.field("check2", Json_decode.$$int, json),
           check3: Json_decode.field("check3", Json_decode.$$int, json),
-          ic: Json_decode.field("ic", IC$OptolithClient.Decode.ic, json),
+          ic: Json_decode.field("ic", IC$OptolithClient.Decode.t, json),
           enc: Json_decode.field("enc", encumbranceUniv, json),
           gr: Json_decode.field("gr", Json_decode.$$int, json)
+        };
+}
+
+function group(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.$$int, json),
+          name: Json_decode.field("name", Json_decode.string, json),
+          fullName: Json_decode.field("fullName", Json_decode.string, json)
         };
 }
 
@@ -109,7 +117,8 @@ var Decode = {
   applicationUniv: applicationUniv,
   useUniv: useUniv,
   encumbranceUniv: encumbranceUniv,
-  tUniv: tUniv
+  tUniv: tUniv,
+  group: group
 };
 
 exports.Decode = Decode;

@@ -16,10 +16,8 @@ function tUniv(json) {
           id: Json_decode.field("id", Json_decode.$$int, json),
           numId: Json_decode.field("numId", Json_decode.$$int, json),
           primary: Json_decode.field("primary", Json_decode.$$int, json),
-          aspects: Json_decode.field("aspects", (function (param) {
-                  return JsonStrict$OptolithClient.maybe((function (param) {
-                                return Json_decode.pair(Json_decode.$$int, Json_decode.$$int, param);
-                              }), param);
+          aspects: JsonStrict$OptolithClient.optionalField("aspects", (function (param) {
+                  return Json_decode.pair(Json_decode.$$int, Json_decode.$$int, param);
                 }), json)
         };
 }

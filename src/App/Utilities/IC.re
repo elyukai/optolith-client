@@ -85,7 +85,7 @@ let icToStr = ic =>
 module Decode = {
   open Json.Decode;
 
-  let ic = json =>
+  let t = json =>
     json
     |> string
     |> (

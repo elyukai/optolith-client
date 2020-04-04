@@ -26,7 +26,7 @@ module Decode = {
   let tL10n = json => {
     id: json |> field("id", int),
     name: json |> field("name", string),
-    special: json |> field("special", maybe(string)),
+    special: json |> optionalField("special", string),
     src: json |> field("src", Static_SourceRef.Decode.list),
     errata: json |> field("errata", Static_Erratum.Decode.list),
   };
@@ -42,10 +42,10 @@ module Decode = {
 
   let tUniv = json => {
     id: json |> field("id", int),
-    ic: json |> field("ic", IC.Decode.ic),
+    ic: json |> field("ic", IC.Decode.t),
     primary: json |> field("primary", list(int)),
     bpr: json |> field("bpr", int),
-    hasNoParry: json |> field("hasNoParry", maybe(bool)),
+    hasNoParry: json |> optionalField("hasNoParry", bool),
     gr: json |> field("gr", int),
   };
 

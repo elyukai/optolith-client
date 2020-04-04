@@ -1,5 +1,3 @@
-open GenericHelpers;
-
 module SourceRef = Static_SourceRef;
 module Erratum = Static_Erratum;
 module Prerequisites = Static_Prerequisites;
@@ -37,34 +35,13 @@ module Advantage = {
   };
 };
 
-module AnimistForce = {
-  // TODO: AnimistForce
-};
-
+module AnimistForce = Static_AnimistForce;
 module Attribute = Static_Attribute;
 module BlessedTradition = Static_BlessedTradition;
-
-module Blessing = {
-  // TODO: Blessing
-};
-
-module Cantrip = {
-  // TODO: Cantrip
-};
-
+module Blessing = Static_Blessing;
+module Cantrip = Static_Cantrip;
 module CombatTechnique = Static_CombatTechnique;
-
-module Condition = {
-  type t = {
-    id: int,
-    name: string,
-    description: Maybe.t(string),
-    levelColumnDescription: Maybe.t(string),
-    levelDescriptions: (string, string, string, string),
-    src: list(SourceRef.t),
-    errata: list(Erratum.t),
-  };
-};
+module Condition = Static_Condition;
 
 module Culture = {
   type commonProfessionId =
@@ -117,20 +94,8 @@ module Culture = {
   };
 };
 
-module Curse = {
-  // TODO: Curse
-};
-
-module DerivedCharacteristic = {
-  type t = {
-    id: string,
-    name: string,
-    short: string,
-    calc: string,
-    calcHalfPrimary: Maybe.t(string),
-    calcNoPrimary: Maybe.t(string),
-  };
-};
+module Curse = Static_Curse;
+module DerivedCharacteristic = Static_DerivedCharacteristic;
 
 module Disadvantage = {
   type t = {
@@ -159,159 +124,21 @@ module Disadvantage = {
   };
 };
 
-module DominationRitual = {
-  // TODO: DominationRitual
-};
-
-module ElvenMagicalSong = {
-  // TODO: ElvenMagicalSong
-};
-
-module EquipmentPackage = {
-  type t = {
-    id: int,
-    name: string,
-    items: StrMap.t(int),
-    src: list(SourceRef.t),
-    errata: list(Erratum.t),
-  };
-};
-
-module ExperienceLevel = {
-  type t = {
-    id: int,
-    name: string,
-    ap: int,
-    maxAttributeValue: int,
-    maxSkillRating: int,
-    maxCombatTechniqueRating: int,
-    maxTotalAttributeValues: int,
-    maxSpellsLiturgicalChants: int,
-    maxUnfamiliarSpells: int,
-  };
-};
-
-module FocusRule = {
-  type t = {
-    id: int,
-    name: string,
-    level: int,
-    subject: int,
-    description: string,
-    src: list(SourceRef.t),
-    errata: list(Erratum.t),
-  };
-};
-
-module GeodeRitual = {
-  // TODO: GeodeRitual
-};
-
-module Item = {
-  // TODO: Item
-};
-
-module LiturgicalChant = {
-  // TODO: LiturgicalChant
-};
-
-module MagicalDance = {
-  // TODO: MagicalDance
-};
-
-module MagicalMelody = {
-  // TODO: MagicalMelody
-};
-
-module MagicalTradition = {
-  type t = {
-    id: int,
-    numId: Maybe.t(int),
-    name: string,
-    primary: Maybe.t(int),
-    aeMod: Maybe.t(float),
-    canLearnCantrips: bool,
-    canLearnSpells: bool,
-    canLearnRituals: bool,
-    allowMultipleTraditions: bool,
-    isDisAdvAPMaxHalved: bool,
-    areDisAdvRequiredApplyToMagActionsOrApps: bool,
-  };
-};
-
-module Messages = {
-  // TODO: Messages
-};
-
-module OptionalRule = {
-  type t = {
-    id: int,
-    name: string,
-    description: string,
-    src: list(SourceRef.t),
-    errata: list(Erratum.t),
-  };
-};
-
-module PactCategory = {
-  type t = {
-    id: int,
-    name: string,
-    types: IntMap.t(string),
-    domains: IntMap.t(string),
-  };
-};
-
-module Patron = {
-  module Category = {
-    [@genType "PatronCategory"]
-    type t = {
-      /**
-       * The patron category's ID.
-       */
-      id: int,
-      /**
-       * The name of the patron category.
-       */
-      name: string,
-      /**
-       * The list of cultures where patrons from this category can be the primary
-       * patron.
-       */
-      primaryPatronCultures: array(int),
-    };
-  };
-
-  [@genType "Patron"]
-  type t = {
-    /**
-     * The patron's ID.
-     */
-    id: int,
-    /**
-     * The name of the patron.
-     */
-    name: string,
-    /**
-     * The category of the patron.
-     */
-    category: int,
-    /**
-     * The patron-specific skills.
-     */
-    skills: (int, int, int),
-    /**
-     * If defined, the patron is limited to the listed cultures.
-     */
-    limitedToCultures: array(int),
-    /**
-     * If `true`, the patron is limited to every culture *except* the listed
-     * cultures in `limitedToCultures`. Does not have an effect if
-     * `limitedToCultures` is not defined.
-     */
-    isLimitedToCulturesReverse: Maybe.t(bool),
-  };
-};
+module DominationRitual = Static_DominationRitual;
+module ElvenMagicalSong = Static_ElvenMagicalSong;
+module EquipmentPackage = Static_EquipmentPackage;
+module ExperienceLevel = Static_ExperienceLevel;
+module FocusRule = Static_FocusRule;
+module GeodeRitual = Static_GeodeRitual;
+module Item = Static_Item;
+module LiturgicalChant = Static_LiturgicalChant;
+module MagicalDance = Static_MagicalDance;
+module MagicalMelody = Static_MagicalMelody;
+module MagicalTradition = Static_MagicalTradition;
+module Messages = Static_Messages;
+module OptionalRule = Static_OptionalRule;
+module PactCategory = Static_Pact;
+module Patron = Static_Patron;
 
 module Profession = {
   module NameBySex = {
@@ -485,15 +312,7 @@ module Profession = {
   };
 };
 
-module Publication = {
-  type t = {
-    id: string,
-    name: string,
-    short: string,
-    isCore: bool,
-    isAdultContent: bool,
-  };
-};
+module Publication = Static_Publication;
 
 module Race = {
   module Die = {
@@ -561,39 +380,11 @@ module Race = {
   };
 };
 
-module RogueSpell = {
-  // TODO: RogueSpell
-};
-
-module SkillGroup = {
-  type t = {
-    id: int,
-    name: string,
-    fullName: string,
-  };
-};
-
-module SpecialAbility = {
-  // TODO: SpecialAbility
-};
-
-module Spell = {
-  // TODO: Spell
-};
-
-module State = {
-  type t = {
-    id: int,
-    name: string,
-    description: string,
-    src: list(SourceRef.t),
-    errata: list(Erratum.t),
-  };
-};
-
-module ZibiljaRitual = {
-  // TODO: ZibiljaRitual
-};
+module RogueSpell = Static_RogueSpell;
+module SpecialAbility = Static_SpecialAbility;
+module Spell = Static_Spell;
+module State = Static_State;
+module ZibiljaRitual = Static_ZibiljaRitual;
 
 type t = {
   // advantages: StrMap.t(Advantage.t),

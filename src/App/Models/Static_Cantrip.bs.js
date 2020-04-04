@@ -29,10 +29,8 @@ function tUniv(json) {
           traditions: Json_decode.field("traditions", (function (param) {
                   return Json_decode.list(Json_decode.$$int, param);
                 }), json),
-          activatablePrerequisites: Json_decode.field("activatablePrerequisites", (function (param) {
-                  return JsonStrict$OptolithClient.maybe((function (param) {
-                                return Json_decode.list(Static_Prerequisites$OptolithClient.Decode.activatable, param);
-                              }), param);
+          activatablePrerequisites: JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
+                  return Json_decode.list(Static_Prerequisites$OptolithClient.Decode.activatable, param);
                 }), json)
         };
 }

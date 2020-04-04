@@ -86,7 +86,7 @@ function icToStr(ic) {
   }
 }
 
-function ic(json) {
+function t(json) {
   var x = Json_decode.string(json);
   switch (x) {
     case "A" :
@@ -108,7 +108,7 @@ function ic(json) {
 }
 
 var Decode = {
-  ic: ic
+  t: t
 };
 
 var getAPForActivatation = getAPCostBaseByIC;
