@@ -2,79 +2,19 @@
 'use strict';
 
 
-var SourceRef = { };
-
-var Erratum = { };
-
-var Sex = { };
-
-var Race = { };
-
-var Culture = { };
-
-var SocialStatus = { };
-
-var Pact = { };
-
-var PrimaryAttribute = { };
-
-var Activatable = { };
-
-var ActivatableSkill = { };
-
-var ActivatableMultiEntry = { };
-
-var ActivatableMultiSelect = { };
-
-var Increasable = { };
-
-var IncreasableMultiEntry = { };
-
-var Prerequisites = {
-  Sex: Sex,
-  Race: Race,
-  Culture: Culture,
-  SocialStatus: SocialStatus,
-  Pact: Pact,
-  PrimaryAttribute: PrimaryAttribute,
-  Activatable: Activatable,
-  ActivatableSkill: ActivatableSkill,
-  ActivatableMultiEntry: ActivatableMultiEntry,
-  ActivatableMultiSelect: ActivatableMultiSelect,
-  Increasable: Increasable,
-  IncreasableMultiEntry: IncreasableMultiEntry
-};
-
-var Application = { };
-
-var Use = { };
-
-var Skill = {
-  Application: Application,
-  Use: Use
-};
-
-var SelectOption = { };
-
 var Advantage = { };
 
 var AnimistForce = { };
-
-var Attribute = { };
-
-var BlessedTradition = { };
 
 var Blessing = { };
 
 var Cantrip = { };
 
-var CombatTechnique = { };
-
 var Condition = { };
 
 var IncreaseSkill = { };
 
-var Culture$1 = {
+var Culture = {
   IncreaseSkill: IncreaseSkill
 };
 
@@ -161,7 +101,7 @@ var Die = { };
 
 var Variant$1 = { };
 
-var Race$1 = {
+var Race = {
   Die: Die,
   Variant: Variant$1
 };
@@ -178,6 +118,22 @@ var State = { };
 
 var ZibiljaRitual = { };
 
+var SourceRef = /* alias */0;
+
+var Erratum = /* alias */0;
+
+var Prerequisites = /* alias */0;
+
+var Skill = /* alias */0;
+
+var SelectOption = /* alias */0;
+
+var Attribute = /* alias */0;
+
+var BlessedTradition = /* alias */0;
+
+var CombatTechnique = /* alias */0;
+
 exports.SourceRef = SourceRef;
 exports.Erratum = Erratum;
 exports.Prerequisites = Prerequisites;
@@ -191,7 +147,7 @@ exports.Blessing = Blessing;
 exports.Cantrip = Cantrip;
 exports.CombatTechnique = CombatTechnique;
 exports.Condition = Condition;
-exports.Culture = Culture$1;
+exports.Culture = Culture;
 exports.Curse = Curse;
 exports.DerivedCharacteristic = DerivedCharacteristic;
 exports.Disadvantage = Disadvantage;
@@ -212,7 +168,7 @@ exports.PactCategory = PactCategory;
 exports.Patron = Patron;
 exports.Profession = Profession;
 exports.Publication = Publication;
-exports.Race = Race$1;
+exports.Race = Race;
 exports.RogueSpell = RogueSpell;
 exports.SkillGroup = SkillGroup;
 exports.SpecialAbility = SpecialAbility;

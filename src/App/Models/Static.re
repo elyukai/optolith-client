@@ -1,302 +1,10 @@
 open GenericHelpers;
 
-module SourceRef = {
-  [@genType "SourceRef"]
-  type t = {
-    id: string,
-    page: (int, int),
-  };
-};
-
-module Erratum = {
-  [@genType "Erratum"]
-  type t = {
-    date: Js.Date.t,
-    description: string,
-  };
-};
-
-module Prerequisites = {
-  module Sex = {
-    [@genType "Sex"]
-    type sex =
-      | Male
-      | Female;
-
-    [@genType "SexPrerequisite"]
-    type t = sex;
-  };
-
-  module Race = {
-    type raceId = oneOrMany(int);
-
-    [@genType "RacePrerequisite"]
-    type t = {
-      id: raceId,
-      active: bool,
-    };
-  };
-
-  module Culture = {
-    type cultureId = oneOrMany(int);
-
-    [@genType "CulturePrerequisite"]
-    type t = cultureId;
-  };
-
-  module SocialStatus = {
-    [@genType "SocialPrerequisite"]
-    type t = int;
-  };
-
-  module Pact = {
-    [@genType "PactPrerequisite"]
-    type t = {
-      category: int,
-      domain: Maybe.t(oneOrMany(int)),
-      level: Maybe.t(int),
-    };
-  };
-
-  module PrimaryAttribute = {
-    type primaryAttributeType =
-      | Magical
-      | Blessed;
-
-    [@genType "PrimaryAttributePrerequisite"]
-    type t = {
-      value: int,
-      scope: primaryAttributeType,
-    };
-  };
-
-  module Activatable = {
-    type id =
-      | Advantage(int)
-      | Disadvantage(int)
-      | SpecialAbility(int);
-
-    [@genType "ActivatablePrerequisite"]
-    type t = {
-      id,
-      active: bool,
-      sid: Maybe.t(Ids.selectOptionId),
-      sid2: Maybe.t(Ids.selectOptionId),
-      level: Maybe.t(int),
-    };
-  };
-
-  module ActivatableSkill = {
-    type id =
-      | Spell(int)
-      | LiturgicalChant(int);
-
-    [@genType "ActivatableSkillPrerequisite"]
-    type t = {
-      id,
-      active: bool,
-    };
-  };
-
-  module ActivatableMultiEntry = {
-    [@genType "ActivatableMultiEntryPrerequisite"]
-    type t = {
-      id: list(Activatable.id),
-      active: bool,
-      sid: Maybe.t(Ids.selectOptionId),
-      sid2: Maybe.t(Ids.selectOptionId),
-      level: Maybe.t(int),
-    };
-  };
-
-  module ActivatableMultiSelect = {
-    [@genType "ActivatableMultiSelectPrerequisite"]
-    type t = {
-      id: Activatable.id,
-      active: bool,
-      sid: list(Ids.selectOptionId),
-      sid2: Maybe.t(Ids.selectOptionId),
-      level: Maybe.t(int),
-    };
-  };
-
-  module Increasable = {
-    type id =
-      | Attribute(int)
-      | Skill(int)
-      | CombatTechnique(int)
-      | Spell(int)
-      | LiturgicalChant(int);
-
-    [@genType "IncreasablePrerequisite"]
-    type t = {
-      id,
-      value: int,
-    };
-  };
-
-  module IncreasableMultiEntry = {
-    [@genType "IncreasableMultiEntryPrerequisite"]
-    type t = {
-      id: list(Increasable.id),
-      value: int,
-    };
-  };
-
-  type tProfession = {
-    sex: Maybe.t(Sex.t),
-    race: Maybe.t(Race.t),
-    culture: Maybe.t(Culture.t),
-    activatable: list(Activatable.t),
-    increasable: list(Increasable.t),
-  };
-
-  [@genType "Prerequisites"]
-  type t = {
-    sex: Maybe.t(Sex.t),
-    race: Maybe.t(Race.t),
-    culture: Maybe.t(Culture.t),
-    pact: Maybe.t(Pact.t),
-    social: Maybe.t(SocialStatus.t),
-    primaryAttribute: Maybe.t(PrimaryAttribute.t),
-    activatable: list(Activatable.t),
-    activatableMultiEntry: list(ActivatableMultiEntry.t),
-    activatableMultiSelect: list(ActivatableMultiSelect.t),
-    increasable: list(Increasable.t),
-    increasableMultiEntry: list(IncreasableMultiEntry.t),
-  };
-
-  type tWithLevel = {
-    sex: Maybe.t(Sex.t),
-    race: Maybe.t(Race.t),
-    culture: Maybe.t(Culture.t),
-    pact: Maybe.t(Pact.t),
-    social: Maybe.t(SocialStatus.t),
-    primaryAttribute: Maybe.t(PrimaryAttribute.t),
-    activatable: list(Activatable.t),
-    activatableMultiEntry: list(ActivatableMultiEntry.t),
-    activatableMultiSelect: list(ActivatableMultiSelect.t),
-    increasable: list(Increasable.t),
-    increasableMultiEntry: list(IncreasableMultiEntry.t),
-    levels: IntMap.t(t),
-  };
-
-  type tWithLevelDisAdv = {
-    commonSuggestedByRCP: bool,
-    sex: Maybe.t(Sex.t),
-    race: Maybe.t(Race.t),
-    culture: Maybe.t(Culture.t),
-    pact: Maybe.t(Pact.t),
-    social: Maybe.t(SocialStatus.t),
-    primaryAttribute: Maybe.t(PrimaryAttribute.t),
-    activatable: list(Activatable.t),
-    activatableMultiEntry: list(ActivatableMultiEntry.t),
-    activatableMultiSelect: list(ActivatableMultiSelect.t),
-    increasable: list(Increasable.t),
-    increasableMultiEntry: list(IncreasableMultiEntry.t),
-    levels: IntMap.t(t),
-  };
-
-  [@genType "OverridePrerequisite"]
-  type overridePrerequisite =
-    | Hide
-    | ReplaceWith(string);
-
-  type tIndex = {
-    sex: Maybe.t(overridePrerequisite),
-    race: Maybe.t(overridePrerequisite),
-    culture: Maybe.t(overridePrerequisite),
-    pact: Maybe.t(overridePrerequisite),
-    social: Maybe.t(overridePrerequisite),
-    primaryAttribute: Maybe.t(overridePrerequisite),
-    activatable: IntMap.t(overridePrerequisite),
-    activatableMultiEntry: IntMap.t(overridePrerequisite),
-    activatableMultiSelect: IntMap.t(overridePrerequisite),
-    increasable: IntMap.t(overridePrerequisite),
-    increasableMultiEntry: IntMap.t(overridePrerequisite),
-  };
-
-  type tIndexWithLevel = {
-    sex: Maybe.t(overridePrerequisite),
-    race: Maybe.t(overridePrerequisite),
-    culture: Maybe.t(overridePrerequisite),
-    pact: Maybe.t(overridePrerequisite),
-    social: Maybe.t(overridePrerequisite),
-    primaryAttribute: Maybe.t(overridePrerequisite),
-    activatable: IntMap.t(overridePrerequisite),
-    activatableMultiEntry: IntMap.t(overridePrerequisite),
-    activatableMultiSelect: IntMap.t(overridePrerequisite),
-    increasable: IntMap.t(overridePrerequisite),
-    increasableMultiEntry: IntMap.t(overridePrerequisite),
-    levels: IntMap.t(tIndex),
-  };
-};
-
-module Skill = {
-  module Application = {
-    type t = {
-      id: int,
-      name: string,
-      prerequisite: Maybe.t(Prerequisites.Activatable.t),
-    };
-  };
-
-  module Use = {
-    type t = {
-      id: int,
-      name: string,
-      prerequisite: Prerequisites.Activatable.t,
-    };
-  };
-
-  type encumbrance =
-    | True
-    | False
-    | Maybe;
-
-  type t = {
-    id: int,
-    name: string,
-    check: list(int),
-    encumbrance,
-    encumbranceDescription: Maybe.t(string),
-    gr: int,
-    ic: IC.t,
-    applications: list(Application.t),
-    applicationsInput: Maybe.t(string),
-    uses: list(Use.t),
-    tools: Maybe.t(string),
-    quality: string,
-    failed: string,
-    critical: string,
-    botch: string,
-    src: list(SourceRef.t),
-    errata: list(Erratum.t),
-  };
-};
-
-module SelectOption = {
-  type t = {
-    id: Ids.selectOptionId,
-    name: string,
-    cost: Maybe.t(int),
-    prerequisites: Maybe.t(unit),
-    description: Maybe.t(string),
-    isSecret: Maybe.t(bool),
-    languages: Maybe.t(list(int)),
-    continent: Maybe.t(int),
-    isExtinct: Maybe.t(bool),
-    specializations: Maybe.t(list(string)),
-    specializationInput: Maybe.t(string),
-    gr: Maybe.t(int),
-    level: Maybe.t(int),
-    target: Maybe.t(string),
-    applications: Maybe.t(list(Skill.Application.t)),
-    applicationInput: Maybe.t(string),
-    src: list(SourceRef.t),
-    errata: list(Erratum.t),
-  };
-};
+module SourceRef = Static_SourceRef;
+module Erratum = Static_Erratum;
+module Prerequisites = Static_Prerequisites;
+module Skill = Static_Skill;
+module SelectOption = Static_SelectOption;
 
 module Advantage = {
   type cost =
@@ -333,23 +41,8 @@ module AnimistForce = {
   // TODO: AnimistForce
 };
 
-module Attribute = {
-  type t = {
-    id: int,
-    name: string,
-    short: string,
-  };
-};
-
-module BlessedTradition = {
-  type t = {
-    id: int,
-    numId: int,
-    name: string,
-    primary: int,
-    aspects: Maybe.t((int, int)),
-  };
-};
+module Attribute = Static_Attribute;
+module BlessedTradition = Static_BlessedTradition;
 
 module Blessing = {
   // TODO: Blessing
@@ -359,20 +52,7 @@ module Cantrip = {
   // TODO: Cantrip
 };
 
-module CombatTechnique = {
-  type t = {
-    id: int,
-    name: string,
-    ic: IC.t,
-    primary: list(int),
-    special: Maybe.t(string),
-    hasNoParry: bool,
-    bpr: int,
-    gr: int,
-    src: list(SourceRef.t),
-    errata: list(Erratum.t),
-  };
-};
+module CombatTechnique = Static_CombatTechnique;
 
 module Condition = {
   type t = {
@@ -756,7 +436,7 @@ module Profession = {
       ap: int,
       prerequisites: Prerequisites.tProfession,
       selections: Options.tForVariant,
-      specialAbilities: list(Prerequisites.Activatable.t),
+      // specialAbilities: list(Prerequisites.Activatable.t),
       combatTechniques: list(Culture.IncreaseSkill.t),
       skills: list(Culture.IncreaseSkill.t),
       spells: list(skillIncrease),
@@ -778,7 +458,7 @@ module Profession = {
     prerequisitesStart: Maybe.t(string),
     prerequisitesEnd: Maybe.t(string),
     selections: Options.t,
-    specialAbilities: list(Prerequisites.Activatable.t),
+    // specialAbilities: list(Prerequisites.Activatable.t),
     combatTechniques: list(Culture.IncreaseSkill.t),
     skills: list(Culture.IncreaseSkill.t),
     spells: list(skillIncrease),

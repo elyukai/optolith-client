@@ -61,6 +61,7 @@ module Zip = {
     };
 };
 
+/*
 module Aspects = {
   open Integrity.Entity;
 
@@ -97,3 +98,4 @@ module ExperienceLevels = {
     )
     |> toMapIntegrity;
 };
+*/

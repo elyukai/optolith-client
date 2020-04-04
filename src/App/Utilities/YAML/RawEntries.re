@@ -2,7 +2,7 @@ open Json.Decode;
 
 [@bs.val] external _stringify: Js.Json.t => string = "JSON.stringify";
 
-type yamlData = {
+/*type yamlData = {
   advantagesL10n: Js.Json.t,
   advantagesUniv: Js.Json.t,
   animistForcesL10n: Js.Json.t,
@@ -157,246 +157,6 @@ module Id = {
   let optionalRule = generic("OptionalRule");
   let condition = generic("Condition");
   let state = generic("State");
-};
-
-module SourceRefs = {
-  type t = Static.SourceRef.t;
-
-  let%private l10n = (json): t => {
-    id: json |> field("id", string),
-    page: {
-      let first = json |> field("firstPage", int);
-      let mlast = json |> field("lastPage", maybe(int));
-
-      Maybe.maybe((first, first), last => (first, last), mlast);
-    },
-  };
-
-  let fromJson = list(l10n);
-};
-
-module Errata = {
-  type t = Static.Erratum.t;
-
-  let%private l10n = (json): t => {
-    date: json |> field("id", date),
-    description: json |> field("id", string),
-  };
-
-  let fromJson = json => json |> maybe(list(l10n)) |> Maybe.fromMaybe([]);
-};
-
-module Prerequisites = {
-  module Sex = {
-    type t = Static.Prerequisites.Sex.sex;
-
-    let%private sexEnum = (str): t =>
-      switch (str) {
-      | "m" => Male
-      | "f" => Female
-      | _ => raise(DecodeError("Unknown sex prerequisite: " ++ str))
-      };
-
-    let fromJson = json => json |> string |> sexEnum;
-  };
-
-  module Race = {
-    type t = Static.Prerequisites.Race.t;
-
-    let fromJson =
-      oneOf([
-        (json) => ({id: json |> oneOrManyInt, active: true}: t),
-        (json) => (
-          {
-            id: json |> field("id", oneOrManyInt),
-            active: json |> field("active", bool),
-          }: t
-        ),
-      ]);
-  };
-
-  module Culture = {
-    type t = Static.Prerequisites.Culture.t;
-
-    let fromJson = oneOrManyInt;
-  };
-
-  module PrimaryAttribute = {
-    type t = Static.Prerequisites.PrimaryAttribute.t;
-    type primaryType = Static.Prerequisites.PrimaryAttribute.primaryAttributeType;
-
-    let%private typeEnum = (str): primaryType =>
-      switch (str) {
-      | "blessed" => Blessed
-      | "magical" => Magical
-      | _ => raise(DecodeError("Unknown primary attribute type: " ++ str))
-      };
-
-    let fromJson = (json): t => {
-      scope: json |> field("type", string) |> typeEnum,
-      value: json |> field("value", int),
-    };
-  };
-
-  module Pact = {
-    type t = Static.Prerequisites.Pact.t;
-
-    let fromJson = (json): t => {
-      category: json |> field("category", int),
-      domain: json |> field("domain", maybe(oneOrManyInt)),
-      level: json |> field("level", maybe(int)),
-    };
-  };
-
-  module SocialStatus = {
-    type t = Static.Prerequisites.SocialStatus.t;
-
-    let fromJson = int;
-  };
-
-  module Activatable = {
-    type t = Static.Prerequisites.Activatable.t;
-
-    let id = json =>
-      json
-      |> oneOf([
-           map(
-             x => Static.Prerequisites.Activatable.Advantage(x),
-             Id.advantage,
-           ),
-           map(
-             x => Static.Prerequisites.Activatable.Disadvantage(x),
-             Id.disadvantage,
-           ),
-           map(
-             x => Static.Prerequisites.Activatable.SpecialAbility(x),
-             Id.specialAbility,
-           ),
-         ]);
-
-    let selectOptionId = (json): Ids.selectOptionId =>
-      json
-      |> oneOf([
-           map(x => Ids.Generic(x), int),
-           map(x => Ids.Skill(x), Id.skill),
-           map(x => Ids.CombatTechnique(x), Id.combatTechnique),
-         ]);
-
-    let fromJson = (json): t => {
-      id: json |> field("id", id),
-      active: json |> field("active", bool),
-      sid: json |> field("sid", maybe(selectOptionId)),
-      sid2: json |> field("sid2", maybe(selectOptionId)),
-      level: json |> field("level", maybe(int)),
-    };
-  };
-
-  module ActivatableMultiEntry = {
-    type t = Static.Prerequisites.ActivatableMultiEntry.t;
-
-    let fromJson = (json): t => {
-      id: json |> field("id", list(Activatable.id)),
-      active: json |> field("active", bool),
-      sid: json |> field("sid", maybe(Activatable.selectOptionId)),
-      sid2: json |> field("sid2", maybe(Activatable.selectOptionId)),
-      level: json |> field("level", maybe(int)),
-    };
-  };
-
-  module ActivatableMultiSelect = {
-    type t = Static.Prerequisites.ActivatableMultiSelect.t;
-
-    let fromJson = (json): t => {
-      id: json |> field("id", Activatable.id),
-      active: json |> field("active", bool),
-      sid: json |> field("sid", list(Activatable.selectOptionId)),
-      sid2: json |> field("sid2", maybe(Activatable.selectOptionId)),
-      level: json |> field("tier", maybe(int)),
-    };
-  };
-
-  module ActivatableSkill = {
-    type t = Static.Prerequisites.ActivatableSkill.t;
-
-    let id = json =>
-      json
-      |> oneOf([
-           map(
-             x => Static.Prerequisites.ActivatableSkill.Spell(x),
-             Id.spell,
-           ),
-           map(
-             x => Static.Prerequisites.ActivatableSkill.LiturgicalChant(x),
-             Id.liturgicalChant,
-           ),
-         ]);
-
-    let fromJson = (json): t => {
-      id: json |> field("id", id),
-      active: json |> field("active", bool),
-    };
-  };
-
-  module Increasable = {
-    type t = Static.Prerequisites.Increasable.t;
-
-    let increasableId = json =>
-      json
-      |> oneOf([
-           map(
-             x => Static.Prerequisites.Increasable.Attribute(x),
-             Id.attribute,
-           ),
-           map(x => Static.Prerequisites.Increasable.Skill(x), Id.skill),
-           map(
-             x => Static.Prerequisites.Increasable.CombatTechnique(x),
-             Id.combatTechnique,
-           ),
-           map(x => Static.Prerequisites.Increasable.Spell(x), Id.spell),
-           map(
-             x => Static.Prerequisites.Increasable.LiturgicalChant(x),
-             Id.liturgicalChant,
-           ),
-         ]);
-
-    let fromJson = (json): t => {
-      id: json |> field("id", increasableId),
-      value: json |> field("value", int),
-    };
-  };
-
-  module IncreasableMultiEntry = {
-    type t = Static.Prerequisites.IncreasableMultiEntry.t;
-
-    let fromJson = (json): t => {
-      id: json |> field("id", list(Increasable.increasableId)),
-      value: json |> field("value", int),
-    };
-  };
-};
-
-module SelectOptionsL10n = {
-  type t = {
-    id: int,
-    name: string,
-    description: Maybe.t(string),
-  };
-
-  let fromJson = json => {
-    id: json |> field("id", int),
-    name: json |> field("name", string),
-    description: json |> field("description", maybe(string)),
-  };
-};
-
-module ICUniv = {
-  let fromJson =
-    oneOf([
-      map(_ => IC.A, const("A")),
-      map(_ => IC.B, const("B")),
-      map(_ => IC.C, const("C")),
-      map(_ => IC.D, const("D")),
-    ]);
 };
 
 module SelectOptionsUniv = {
@@ -745,19 +505,28 @@ module CombatTechniquesUniv = {
 };
 
 module ConditionsL10n = {
-  type t = Static.Condition.t;
+  type t = {
+    id: int,
+    name: string,
+    description: Maybe.t(string),
+    level1: string,
+    level2: string,
+    level3: string,
+    level4: string,
+    levelDescription: Maybe.t(string),
+    src: list(Static.SourceRef.t),
+    errata: list(Static.Erratum.t),
+  };
 
-  let%private l10n = (json): t => {
+  let%private l10n = json => {
     id: json |> field("id", int),
     name: json |> field("name", string),
     description: json |> field("description", maybe(string)),
-    levelDescriptions: (
-      json |> field("level1", string),
-      json |> field("level2", string),
-      json |> field("level3", string),
-      json |> field("level4", string),
-    ),
-    levelColumnDescription: json |> field("levelDescription", maybe(string)),
+    level1: json |> field("level1", string),
+    level2: json |> field("level2", string),
+    level3: json |> field("level3", string),
+    level4: json |> field("level4", string),
+    levelDescription: json |> field("levelDescription", maybe(string)),
     src: json |> field("src", SourceRefs.fromJson),
     errata: json |> field("errata", Errata.fromJson),
   };
@@ -766,11 +535,39 @@ module ConditionsL10n = {
 };
 
 module CulturesL10n = {
-  // TODO
+  type t = {
+    id: int,
+    name: string,
+    areaKnowledge: string,
+    areaKnowledgeShort: string,
+    commonMundaneProfessions: Maybe.t(string),
+    commonMagicalProfessions: Maybe.t(string),
+    commonBlessedProfessions: Maybe.t(string),
+    commonAdvantages: Maybe.t(string),
+    commonDisadvantages: Maybe.t(string),
+    uncommonAdvantages: Maybe.t(string),
+    uncommonDisadvantages: Maybe.t(string),
+    commonNames: string,
+  };
 
-  type t = {id: int};
-
-  let%private l10n = json => {id: json |> field("id", int)};
+  let%private l10n = json => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+    areaKnowledge: json |> field("areaKnowledge", string),
+    areaKnowledgeShort: json |> field("areaKnowledgeShort", string),
+    commonMundaneProfessions:
+      json |> field("commonMundaneProfessions", maybe(string)),
+    commonMagicalProfessions:
+      json |> field("commonMagicalProfessions", maybe(string)),
+    commonBlessedProfessions:
+      json |> field("commonBlessedProfessions", maybe(string)),
+    commonAdvantages: json |> field("commonAdvantages", maybe(string)),
+    commonDisadvantages: json |> field("commonDisadvantages", maybe(string)),
+    uncommonAdvantages: json |> field("uncommonAdvantages", maybe(string)),
+    uncommonDisadvantages:
+      json |> field("uncommonDisadvantages", maybe(string)),
+    commonNames: json |> field("commonNames", string),
+  };
 
   let fromJson = yaml => yaml.culturesL10n |> list(l10n);
 };
@@ -778,7 +575,32 @@ module CulturesL10n = {
 module CulturesUniv = {
   // TODO
 
-  type t = {id: int};
+  type exceptions =
+    | Single(int)
+    | Group(int);
+
+  // let%private exceptions = maybe(list(oneOf([])))
+
+  type t = {
+    id: int,
+    // languages: list(int),
+    // literacy: Maybe.t(list(int)),
+    // social: list(int),
+    // commonMundaneProfessionsAll: boolean,
+    // commonMundaneProfessionsExceptions: maybe(list(exception)),
+    // commonMagicalProfessionsAll: boolean,
+    // commonMagicalProfessionsExceptions: maybe(list(exception)),
+    // commonBlessedProfessionsAll: boolean,
+    // commonBlessedProfessionsExceptions: maybe(list(exception)),
+    // commonAdvantages: Maybe.t(list(int)),
+    // commonDisadvantages: Maybe.t(list(int)),
+    // uncommonAdvantages: Maybe.t(list(int)),
+    // uncommonDisadvantages: Maybe.t(list(int)),
+    // commonSkills: list(int),
+    // uncommonSkills: Maybe.t(list(int)),
+    // culturalPackageCost: int,
+    // culturalPackageSkills: list((int, int)),
+  };
 
   let%private univ = json => {id: json |> field("id", int)};
 
@@ -997,7 +819,6 @@ module EquipmentGroupsL10n = {
   let%private l10n = json => (
     json |> field("id", int),
     json |> field("name", string),
-    id,
   );
 
   let fromJson = yaml => yaml.equipmentGroupsL10n |> list(l10n);
@@ -1319,36 +1140,15 @@ module LiturgicalChantGroupsL10n = {
 };
 
 module LiturgicalChantsL10n = {
-  // TODO
-
-  type t = {id: int};
-
-  let%private l10n = json => {id: json |> field("id", int)};
-
-  let fromJson = yaml => yaml.liturgicalChantsL10n |> list(l10n);
-};
-
-module LiturgicalChantsUniv = {
-  // TODO
-
-  type t = {id: int};
-
-  let%private univ = json => {id: json |> field("id", int)};
-
-  let fromJson = yaml => yaml.liturgicalChantsUniv |> list(univ);
-};
-
-module MagicalDancesL10n = {
-  // TODO
-
   type t = {
     id: int,
     name: string,
+    nameShort: Maybe.t(string),
     effect: string,
     castingTime: string,
     castingTimeShort: string,
-    aeCost: string,
-    aeCostShort: string,
+    kpCost: string,
+    kpCostShort: string,
     range: string,
     rangeShort: string,
     duration: string,
@@ -1361,16 +1161,89 @@ module MagicalDancesL10n = {
   let%private l10n = json => {
     id: json |> field("id", int),
     name: json |> field("name", string),
+    nameShort: json |> field("nameShort", maybe(string)),
     effect: json |> field("effect", string),
     castingTime: json |> field("castingTime", string),
     castingTimeShort: json |> field("castingTimeShort", string),
-    aeCost: json |> field("aeCost", string),
-    aeCostShort: json |> field("aeCostShort", string),
+    kpCost: json |> field("kpCost", string),
+    kpCostShort: json |> field("kpCostShort", string),
     range: json |> field("range", string),
     rangeShort: json |> field("rangeShort", string),
     duration: json |> field("duration", string),
     durationShort: json |> field("durationShort", string),
     target: json |> field("target", string),
+    src: json |> field("src", SourceRefs.fromJson),
+    errata: json |> field("errata", Errata.fromJson),
+  };
+
+  let fromJson = yaml => yaml.liturgicalChantsL10n |> list(l10n);
+};
+
+module LiturgicalChantsUniv = {
+  type t = {
+    id: int,
+    check1: int,
+    check2: int,
+    check3: int,
+    checkMod: Maybe.t(CheckModifier.Spells.t),
+    ic: IC.t,
+    traditions: list(int),
+    aspects: Maybe.t(list(int)),
+    castingTimeNoMod: bool,
+    kpCostNoMod: bool,
+    rangeNoMod: bool,
+    durationNoMod: bool,
+    gr: int,
+  };
+
+  let%private univ = json => {
+    id: json |> field("id", int),
+    check1: json |> field("check1", int),
+    check2: json |> field("check2", int),
+    check3: json |> field("check3", int),
+    checkMod:
+      json |> field("checkMod", maybe(CheckModifier.Spells.fromJson)),
+    ic: json |> field("ic", ICUniv.fromJson),
+    traditions: json |> field("traditions", list(int)),
+    aspects: json |> field("aspects", maybe(list(int))),
+    castingTimeNoMod: json |> field("castingTimeNoMod", bool),
+    kpCostNoMod: json |> field("kpCostNoMod", bool),
+    rangeNoMod: json |> field("rangeNoMod", bool),
+    durationNoMod: json |> field("durationNoMod", bool),
+    gr: json |> field("gr", int),
+  };
+
+  let fromJson = yaml => yaml.liturgicalChantsUniv |> list(univ);
+};
+
+module MagicalDancesL10n = {
+  let nameByTradition = json => (
+    json |> field("id", int),
+    json |> field("name", string),
+  );
+
+  type t = {
+    id: int,
+    name: string,
+    nameByTradition: list((int, string)),
+    effect: string,
+    duration: string,
+    durationShort: string,
+    aeCost: string,
+    aeCostShort: string,
+    src: list(Static.SourceRef.t),
+    errata: list(Static.Erratum.t),
+  };
+
+  let%private l10n = json => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+    nameByTradition: json |> field("nameByTradition", list(nameByTradition)),
+    effect: json |> field("effect", string),
+    duration: json |> field("duration", string),
+    durationShort: json |> field("durationShort", string),
+    aeCost: json |> field("aeCost", string),
+    aeCostShort: json |> field("aeCostShort", string),
     src: json |> field("src", SourceRefs.fromJson),
     errata: json |> field("errata", Errata.fromJson),
   };
@@ -1379,24 +1252,14 @@ module MagicalDancesL10n = {
 };
 
 module MagicalDancesUniv = {
-  // TODO
-
   type t = {
     id: int,
     check1: int,
     check2: int,
     check3: int,
-    checkMod: Maybe.t(CheckModifier.Spells.t),
-    ic: IC.t,
-    traditions: list(int),
+    musictraditions: list(int),
     property: int,
-    castingTimeNoMod: bool,
-    aeCostNoMod: bool,
-    rangeNoMod: bool,
-    durationNoMod: bool,
-    activatablePrerequisites: Maybe.t(list(Prerequisites.Activatable.t)),
-    increasablePrerequisites: Maybe.t(list(Prerequisites.Increasable.t)),
-    gr: int,
+    ic: IC.t,
   };
 
   let%private univ = json => {
@@ -1404,49 +1267,29 @@ module MagicalDancesUniv = {
     check1: json |> field("check1", int),
     check2: json |> field("check2", int),
     check3: json |> field("check3", int),
-    checkMod:
-      json |> field("checkMod", maybe(CheckModifier.Spells.fromJson)),
-    ic: json |> field("ic", ICUniv.fromJson),
-    traditions: json |> field("traditions", list(int)),
+    musictraditions: json |> field("musictraditions", list(int)),
     property: json |> field("property", int),
-    castingTimeNoMod: json |> field("castingTimeNoMod", bool),
-    aeCostNoMod: json |> field("aeCostNoMod", bool),
-    rangeNoMod: json |> field("rangeNoMod", bool),
-    durationNoMod: json |> field("durationNoMod", bool),
-    activatablePrerequisites:
-      json
-      |> field(
-           "activatablePrerequisites",
-           maybe(list(Prerequisites.Activatable.fromJson)),
-         ),
-    increasablePrerequisites:
-      json
-      |> field(
-           "increasablePrerequisites",
-           maybe(list(Prerequisites.Increasable.fromJson)),
-         ),
-    gr: json |> field("gr", int),
+    ic: json |> field("ic", ICUniv.fromJson),
   };
 
   let fromJson = yaml => yaml.magicalDancesUniv |> list(univ);
 };
 
 module MagicalMelodiesL10n = {
-  // TODO
+  let nameByTradition = json => (
+    json |> field("id", int),
+    json |> field("name", string),
+  );
 
   type t = {
     id: int,
     name: string,
+    nameByTradition: list((int, string)),
     effect: string,
-    castingTime: string,
-    castingTimeShort: string,
-    aeCost: string,
-    aeCostShort: string,
-    range: string,
-    rangeShort: string,
     duration: string,
     durationShort: string,
-    target: string,
+    aeCost: string,
+    aeCostShort: string,
     src: list(Static.SourceRef.t),
     errata: list(Static.Erratum.t),
   };
@@ -1454,16 +1297,12 @@ module MagicalMelodiesL10n = {
   let%private l10n = json => {
     id: json |> field("id", int),
     name: json |> field("name", string),
+    nameByTradition: json |> field("nameByTradition", list(nameByTradition)),
     effect: json |> field("effect", string),
-    castingTime: json |> field("castingTime", string),
-    castingTimeShort: json |> field("castingTimeShort", string),
-    aeCost: json |> field("aeCost", string),
-    aeCostShort: json |> field("aeCostShort", string),
-    range: json |> field("range", string),
-    rangeShort: json |> field("rangeShort", string),
     duration: json |> field("duration", string),
     durationShort: json |> field("durationShort", string),
-    target: json |> field("target", string),
+    aeCost: json |> field("aeCost", string),
+    aeCostShort: json |> field("aeCostShort", string),
     src: json |> field("src", SourceRefs.fromJson),
     errata: json |> field("errata", Errata.fromJson),
   };
@@ -1472,24 +1311,15 @@ module MagicalMelodiesL10n = {
 };
 
 module MagicalMelodiesUniv = {
-  // TODO
-
   type t = {
     id: int,
     check1: int,
     check2: int,
     check3: int,
-    checkMod: Maybe.t(CheckModifier.Spells.t),
-    ic: IC.t,
-    traditions: list(int),
+    skill: Maybe.t(int),
+    musictraditions: list(int),
     property: int,
-    castingTimeNoMod: bool,
-    aeCostNoMod: bool,
-    rangeNoMod: bool,
-    durationNoMod: bool,
-    activatablePrerequisites: Maybe.t(list(Prerequisites.Activatable.t)),
-    increasablePrerequisites: Maybe.t(list(Prerequisites.Increasable.t)),
-    gr: int,
+    ic: IC.t,
   };
 
   let%private univ = json => {
@@ -1497,28 +1327,20 @@ module MagicalMelodiesUniv = {
     check1: json |> field("check1", int),
     check2: json |> field("check2", int),
     check3: json |> field("check3", int),
-    checkMod:
-      json |> field("checkMod", maybe(CheckModifier.Spells.fromJson)),
-    ic: json |> field("ic", ICUniv.fromJson),
-    traditions: json |> field("traditions", list(int)),
+    skill:
+      json
+      |> field(
+           "checkMod",
+           maybe(
+             oneOf([
+               map(_ => 9, const("TAL_9")),
+               map(_ => 56, const("TAL_56")),
+             ]),
+           ),
+         ),
+    musictraditions: json |> field("musictraditions", list(int)),
     property: json |> field("property", int),
-    castingTimeNoMod: json |> field("castingTimeNoMod", bool),
-    aeCostNoMod: json |> field("aeCostNoMod", bool),
-    rangeNoMod: json |> field("rangeNoMod", bool),
-    durationNoMod: json |> field("durationNoMod", bool),
-    activatablePrerequisites:
-      json
-      |> field(
-           "activatablePrerequisites",
-           maybe(list(Prerequisites.Activatable.fromJson)),
-         ),
-    increasablePrerequisites:
-      json
-      |> field(
-           "increasablePrerequisites",
-           maybe(list(Prerequisites.Increasable.fromJson)),
-         ),
-    gr: json |> field("gr", int),
+    ic: json |> field("ic", ICUniv.fromJson),
   };
 
   let fromJson = yaml => yaml.magicalMelodiesUniv |> list(univ);
@@ -1786,41 +1608,248 @@ module PublicationsL10n = {
 };
 
 module RacesL10n = {
-  // TODO
+  type t = {
+    id: int,
+    name: string,
+    attributeAdjustments: string,
+    automaticAdvantages: Maybe.t(string),
+    stronglyRecommendedAdvantages: Maybe.t(string),
+    stronglyRecommendedDisadvantages: Maybe.t(string),
+    commonAdvantages: Maybe.t(string),
+    commonDisadvantages: Maybe.t(string),
+    uncommonAdvantages: Maybe.t(string),
+    uncommonDisadvantages: Maybe.t(string),
+    src: list(Static.SourceRef.t),
+    errata: list(Static.Erratum.t),
+  };
 
-  type t = {id: int};
-
-  let%private l10n = json => {id: json |> field("id", int)};
+  let%private l10n = json => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+    attributeAdjustments: json |> field("attributeAdjustments", string),
+    automaticAdvantages: json |> field("automaticAdvantages", maybe(string)),
+    stronglyRecommendedAdvantages:
+      json |> field("stronglyRecommendedAdvantages", maybe(string)),
+    stronglyRecommendedDisadvantages:
+      json |> field("stronglyRecommendedDisadvantages", maybe(string)),
+    commonAdvantages: json |> field("commonAdvantages", maybe(string)),
+    commonDisadvantages: json |> field("commonDisadvantages", maybe(string)),
+    uncommonAdvantages: json |> field("uncommonAdvantages", maybe(string)),
+    uncommonDisadvantages:
+      json |> field("uncommonDisadvantages", maybe(string)),
+    src: json |> SourceRefs.fromJson,
+    errata: json |> Errata.fromJson,
+  };
 
   let fromJson = yaml => yaml.racesL10n |> list(l10n);
 };
 
 module RacesUniv = {
-  // TODO
+  let die = (json): Static.Race.Die.t => {
+    amount: json |> field("amount", int),
+    sides: json |> field("sides", int),
+  };
 
-  type t = {id: int};
+  type raceWithVariants = {
+    id: int,
+    cost: int,
+    lp: int,
+    spi: int,
+    tou: int,
+    mov: int,
+    attributeAdjustments: Maybe.t(list((int, int))),
+    attributeAdjustmentsSelectionValue: int,
+    attributeAdjustmentsSelectionList: list(int),
+    automaticAdvantages: Maybe.t(list(int)),
+    stronglyRecommendedAdvantages: Maybe.t(list(int)),
+    stronglyRecommendedDisadvantages: Maybe.t(list(int)),
+    commonAdvantages: Maybe.t(list(int)),
+    commonDisadvantages: Maybe.t(list(int)),
+    uncommonAdvantages: Maybe.t(list(int)),
+    uncommonDisadvantages: Maybe.t(list(int)),
+    weightBase: int,
+    weightRandom: list(Static.Race.Die.t),
+    variants: list(int),
+  };
 
-  let%private univ = json => {id: json |> field("id", int)};
+  type raceWithoutVariants = {
+    id: int,
+    cost: int,
+    lp: int,
+    spi: int,
+    tou: int,
+    mov: int,
+    attributeAdjustments: Maybe.t(list((int, int))),
+    attributeAdjustmentsSelectionValue: int,
+    attributeAdjustmentsSelectionList: list(int),
+    automaticAdvantages: Maybe.t(list(int)),
+    stronglyRecommendedAdvantages: Maybe.t(list(int)),
+    stronglyRecommendedDisadvantages: Maybe.t(list(int)),
+    commonAdvantages: Maybe.t(list(int)),
+    commonDisadvantages: Maybe.t(list(int)),
+    uncommonAdvantages: Maybe.t(list(int)),
+    uncommonDisadvantages: Maybe.t(list(int)),
+    weightBase: int,
+    weightRandom: list(Static.Race.Die.t),
+    commonCultures: list(int),
+    hairColors: list(int),
+    eyeColors: list(int),
+    sizeBase: int,
+    sizeRandom: list(Static.Race.Die.t),
+  };
+
+  type t =
+    | RaceWithVariants(raceWithVariants)
+    | RaceWithoutVariants(raceWithoutVariants);
+
+  let%private univ = json =>
+    json
+    |> oneOf([
+         json =>
+           {
+             id: json |> field("id", int),
+             cost: json |> field("cost", int),
+             lp: json |> field("lp", int),
+             spi: json |> field("spi", int),
+             tou: json |> field("tou", int),
+             mov: json |> field("mov", int),
+             attributeAdjustments:
+               json
+               |> field(
+                    "attributeAdjustments",
+                    maybe(list(pair(int, int))),
+                  ),
+             attributeAdjustmentsSelectionValue:
+               json |> field("attributeAdjustmentsSelectionValue", int),
+             attributeAdjustmentsSelectionList:
+               json |> field("attributeAdjustmentsSelectionList", list(int)),
+             automaticAdvantages:
+               json |> field("automaticAdvantages", maybe(list(int))),
+             stronglyRecommendedAdvantages:
+               json
+               |> field("stronglyRecommendedAdvantages", maybe(list(int))),
+             stronglyRecommendedDisadvantages:
+               json
+               |> field(
+                    "stronglyRecommendedDisadvantages",
+                    maybe(list(int)),
+                  ),
+             commonAdvantages:
+               json |> field("commonAdvantages", maybe(list(int))),
+             commonDisadvantages:
+               json |> field("commonDisadvantages", maybe(list(int))),
+             uncommonAdvantages:
+               json |> field("uncommonAdvantages", maybe(list(int))),
+             uncommonDisadvantages:
+               json |> field("uncommonDisadvantages", maybe(list(int))),
+             weightBase: json |> field("weightBase", int),
+             weightRandom: json |> field("weightRandom", list(die)),
+             variants: json |> field("variants", list(int)),
+           }
+           |> (x => RaceWithVariants(x)),
+         json =>
+           {
+             id: json |> field("id", int),
+             cost: json |> field("cost", int),
+             lp: json |> field("lp", int),
+             spi: json |> field("spi", int),
+             tou: json |> field("tou", int),
+             mov: json |> field("mov", int),
+             attributeAdjustments:
+               json
+               |> field(
+                    "attributeAdjustments",
+                    maybe(list(pair(int, int))),
+                  ),
+             attributeAdjustmentsSelectionValue:
+               json |> field("attributeAdjustmentsSelectionValue", int),
+             attributeAdjustmentsSelectionList:
+               json |> field("attributeAdjustmentsSelectionList", list(int)),
+             automaticAdvantages:
+               json |> field("automaticAdvantages", maybe(list(int))),
+             stronglyRecommendedAdvantages:
+               json
+               |> field("stronglyRecommendedAdvantages", maybe(list(int))),
+             stronglyRecommendedDisadvantages:
+               json
+               |> field(
+                    "stronglyRecommendedDisadvantages",
+                    maybe(list(int)),
+                  ),
+             commonAdvantages:
+               json |> field("commonAdvantages", maybe(list(int))),
+             commonDisadvantages:
+               json |> field("commonDisadvantages", maybe(list(int))),
+             uncommonAdvantages:
+               json |> field("uncommonAdvantages", maybe(list(int))),
+             uncommonDisadvantages:
+               json |> field("uncommonDisadvantages", maybe(list(int))),
+             weightBase: json |> field("weightBase", int),
+             weightRandom: json |> field("weightRandom", list(die)),
+             commonCultures: json |> field("commonCultures", list(int)),
+             hairColors: json |> field("hairColors", list(int)),
+             eyeColors: json |> field("eyeColors", list(int)),
+             sizeBase: json |> field("sizeBase", int),
+             sizeRandom: json |> field("sizeRandom", list(die)),
+           }
+           |> (x => RaceWithoutVariants(x)),
+       ]);
 
   let fromJson = yaml => yaml.racesUniv |> list(univ);
 };
 
 module RaceVariantL10n = {
-  // TODO
+  type t = {
+    id: int,
+    name: string,
+    commonAdvantages: Maybe.t(string),
+    commonDisadvantages: Maybe.t(string),
+    uncommonAdvantages: Maybe.t(string),
+    uncommonDisadvantages: Maybe.t(string),
+  };
 
-  type t = {id: int};
-
-  let%private l10n = json => {id: json |> field("id", int)};
+  let%private l10n = json => {
+    id: json |> field("id", int),
+    name: json |> field("name", string),
+    commonAdvantages: json |> field("commonAdvantages", maybe(string)),
+    commonDisadvantages: json |> field("commonDisadvantages", maybe(string)),
+    uncommonAdvantages: json |> field("uncommonAdvantages", maybe(string)),
+    uncommonDisadvantages:
+      json |> field("uncommonDisadvantages", maybe(string)),
+  };
 
   let fromJson = yaml => yaml.raceVariantsL10n |> list(l10n);
 };
 
 module RaceVariantUniv = {
-  // TODO
+  type t = {
+    id: int,
+    commonCultures: list(int),
+    commonAdvantages: Maybe.t(list(int)),
+    commonDisadvantages: Maybe.t(list(int)),
+    uncommonAdvantages: Maybe.t(list(int)),
+    uncommonDisadvantages: Maybe.t(list(int)),
+    hairColors: list(int),
+    eyeColors: list(int),
+    sizeBase: int,
+    sizeRandom: list(Static.Race.Die.t),
+  };
 
-  type t = {id: int};
-
-  let%private univ = json => {id: json |> field("id", int)};
+  let%private univ = json => {
+    id: json |> field("id", int),
+    commonCultures: json |> field("commonCultures", list(int)),
+    commonAdvantages: json |> field("commonAdvantages", maybe(list(int))),
+    commonDisadvantages:
+      json |> field("commonDisadvantages", maybe(list(int))),
+    uncommonAdvantages:
+      json |> field("uncommonAdvantages", maybe(list(int))),
+    uncommonDisadvantages:
+      json |> field("uncommonDisadvantages", maybe(list(int))),
+    hairColors: json |> field("hairColors", list(int)),
+    eyeColors: json |> field("eyeColors", list(int)),
+    sizeBase: json |> field("sizeBase", int),
+    sizeRandom: json |> field("sizeRandom", list(RacesUniv.die)),
+  };
 
   let fromJson = yaml => yaml.raceVariantsUniv |> list(univ);
 };
@@ -1880,15 +1909,7 @@ module RogueSpellsUniv = {
     check3: int,
     checkMod: Maybe.t(CheckModifier.Spells.t),
     ic: IC.t,
-    traditions: list(int),
     property: int,
-    castingTimeNoMod: bool,
-    aeCostNoMod: bool,
-    rangeNoMod: bool,
-    durationNoMod: bool,
-    activatablePrerequisites: Maybe.t(list(Prerequisites.Activatable.t)),
-    increasablePrerequisites: Maybe.t(list(Prerequisites.Increasable.t)),
-    gr: int,
   };
 
   let%private univ = json => {
@@ -1899,25 +1920,7 @@ module RogueSpellsUniv = {
     checkMod:
       json |> field("checkMod", maybe(CheckModifier.Spells.fromJson)),
     ic: json |> field("ic", ICUniv.fromJson),
-    traditions: json |> field("traditions", list(int)),
     property: json |> field("property", int),
-    castingTimeNoMod: json |> field("castingTimeNoMod", bool),
-    aeCostNoMod: json |> field("aeCostNoMod", bool),
-    rangeNoMod: json |> field("rangeNoMod", bool),
-    durationNoMod: json |> field("durationNoMod", bool),
-    activatablePrerequisites:
-      json
-      |> field(
-           "activatablePrerequisites",
-           maybe(list(Prerequisites.Activatable.fromJson)),
-         ),
-    increasablePrerequisites:
-      json
-      |> field(
-           "increasablePrerequisites",
-           maybe(list(Prerequisites.Increasable.fromJson)),
-         ),
-    gr: json |> field("gr", int),
   };
 
   let fromJson = yaml => yaml.rogueSpellsUniv |> list(univ);
@@ -2389,3 +2392,4 @@ module ZibiljaRitualsUniv = {
 
   let fromJson = yaml => yaml.zibiljaRitualsUniv |> list(univ);
 };
+*/

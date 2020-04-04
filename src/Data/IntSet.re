@@ -9,3 +9,11 @@ module IntSet =
 type t = IntSet.t;
 
 type intset = t;
+
+// CONSTRUCTION
+
+let empty = IntSet.empty;
+
+let singleton = IntSet.singleton;
+
+let fromList = IntSet.of_list;

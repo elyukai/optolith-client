@@ -2,8 +2,6 @@
 /* eslint-disable import/first */
 
 
-import {Prerequisites_Sex_sex as Static_Prerequisites_Sex_sex} from './Static.gen';
-
 import {activatableAndSkillId as Ids_activatableAndSkillId} from '../../../src/App/Constants/Ids.gen';
 
 import {activatableId as Ids_activatableId} from '../../../src/App/Constants/Ids.gen';
@@ -25,6 +23,8 @@ import {skillId as Ids_skillId} from '../../../src/App/Constants/Ids.gen';
 import {t as IntMap_t} from '../../../src/shims/IntMap.gen';
 
 import {t as IntSet_t} from '../../../src/shims/IntSet.gen';
+
+import {t as Sex_t} from './Sex.gen';
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Phase_t = "Outline" | "Definition" | "Advancement";
@@ -374,7 +374,7 @@ export type t = {
   readonly dateModified: Date; 
   readonly adventurePointsTotal: number; 
   readonly experienceLevel: number; 
-  readonly sex: Static_Prerequisites_Sex_sex; 
+  readonly sex: Sex_t; 
   readonly phase: Phase_t; 
   readonly locale: string; 
   readonly avatar: Maybe_maybe<string>; 

@@ -81,3 +81,22 @@ let icToStr = ic =>
   | D => "D"
   | E => "E"
   };
+
+module Decode = {
+  open Json.Decode;
+
+  let ic = json =>
+    json
+    |> string
+    |> (
+      x =>
+        switch (x) {
+        | "A" => A
+        | "B" => B
+        | "C" => C
+        | "D" => D
+        | "E" => E
+        | _ => raise(DecodeError("Unknown improvement cost: " ++ x))
+        }
+    );
+};

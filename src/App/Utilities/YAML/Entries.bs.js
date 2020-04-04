@@ -6,7 +6,6 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Caml_option = require("bs-platform/lib/js/caml_option.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var IntMap$OptolithClient = require("../../../Data/IntMap.bs.js");
-var RawEntries$OptolithClient = require("./RawEntries.bs.js");
 
 function toMapIntegrity(xs) {
   return List.fold_right((function (param, mp) {
@@ -56,45 +55,6 @@ var Zip = {
   zipBy: zipBy
 };
 
-function fromJson(yaml) {
-  return toMapIntegrity(RawEntries$OptolithClient.AspectsL10n.fromJson(yaml));
-}
-
-var Aspects = {
-  fromJson: fromJson
-};
-
-function merge(l10n, univ) {
-  return /* tuple */[
-          univ.id,
-          {
-            id: univ.id,
-            name: l10n.name,
-            ap: univ.ap,
-            maxAttributeValue: univ.maxAttributeValue,
-            maxSkillRating: univ.maxSkillRating,
-            maxCombatTechniqueRating: univ.maxCombatTechniqueRating,
-            maxTotalAttributeValues: univ.maxTotalAttributeValues,
-            maxSpellsLiturgicalChants: univ.maxSpellsLiturgicalChants,
-            maxUnfamiliarSpells: univ.maxUnfamiliarSpells
-          }
-        ];
-}
-
-function fromJson$1(yaml) {
-  return toMapIntegrity(zipBy((function (x) {
-                    return x.id;
-                  }), (function (x) {
-                    return x.id;
-                  }), merge, RawEntries$OptolithClient.ExperienceLevelsUniv.fromJson(yaml), RawEntries$OptolithClient.ExperienceLevelsL10n.fromJson(yaml)));
-}
-
-var ExperienceLevels = {
-  fromJson: fromJson$1
-};
-
 exports.Integrity = Integrity;
 exports.Zip = Zip;
-exports.Aspects = Aspects;
-exports.ExperienceLevels = ExperienceLevels;
 /* IntMap-OptolithClient Not a pure module */

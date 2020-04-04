@@ -6,8 +6,17 @@ var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 
 var compare = Caml_obj.caml_compare;
 
-$$Set.Make({
+var IntSet = $$Set.Make({
       compare: compare
     });
 
-/*  Not a pure module */
+var empty = IntSet.empty;
+
+var singleton = IntSet.singleton;
+
+var fromList = IntSet.of_list;
+
+exports.empty = empty;
+exports.singleton = singleton;
+exports.fromList = fromList;
+/* IntSet Not a pure module */
