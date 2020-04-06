@@ -1,18 +1,17 @@
 ## 1.3.2
 
-### Bug Fixes
+### Bugs rectifiés
 
-- Description of combat technique selection for profession variants does not render properly. #539
-- Professions did not react to dependencies. #507
-- Textfield „Title“ in personal data had wrong label. #492
-- *Religion* was on SR 6 for most of the Blessed One professions. #475
-- States were overflowing on character sheet PDF but not in Optolith. #473
-- The `config.json` has still thrown errors for many users. The problem should be fixed, finally. #476
-- In very rare situations parts of the heroes file or the whole heroes file have been deleted. Because of this, saving heroes has been completely rewritten and condensed to prevent further issues. #477
-- Added missing Garethi dialect *Nostrian*. #480
-- Fixed prerequisites for SA Energy Control. #471
-- Fixed third-party licenses. #471
-- Fixed disadvantages with select options could not be bought. #470
+- La description de la sélection des techniques de combat pour les variantes de professions n'est pas rendue correctement. #539
+- Les professions ne tenaient pas compte des conditions prérequises. #507
+- Le champ de texte "Titre" des données personnelles était mal renseigné. #492
+- *Religion* avait une VC 6 pour la plupart des professions cléricales. #475
+- Les États débordaient de la feuille de personnage en PDF mais pas dans Optolith. #473
+- Le `config.json` a encore provoqué des erreurs pour de nombreux utilisateurs. Le problème devrait être réglé, finalement. #476
+- Dans de très rares cas, des parties d'un fichier de héros ou la totalité d'un fichier de héros ont été effacées. C'est pour cette raison que la sauvegarde des héros a été complètement réécrite et condensée pour éviter d'autres problèmes. #477
+- Rajout du dialecte Garethi manquant *Nostrien*. #480
+- Rectification des licences tierces. #471
+- Rectification des désavantages avec des options à choisir qui ne pouvaient pas être achetés. #470
 
 ### Known Issues
 
@@ -20,11 +19,11 @@
 
 ## 1.3.1
 
-### Bug Fixes
+### Bugs rectifiés
 
-- In the French version, you were not able to create characters, because you could not choose any publication, race, ... #449
-- There was an error thrown by "unknown keys" in the config. #450
-- On character sheet, states were only displayed in one column if the amount of states was even. #448
+- Dans la version française, vous ne pouviez pas créer de personnages, car vous ne pouviez choisir aucune publication, aucune race, ... #449
+- Il y a eu une erreur due à des "clés inconnues" dans la configuration. #450
+- Sur la feuille de personnage, les états n'étaient affichés dans une seule colonne que si le nombre d'états était pair. #448
 
 ## 1.3.0
 

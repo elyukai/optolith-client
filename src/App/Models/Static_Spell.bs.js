@@ -37,43 +37,47 @@ function enhancementLevel1Univ(json) {
         };
 }
 
+function level3Prerequisite(json) {
+  var x = Json_decode.$$int(json);
+  if (x !== 1) {
+    throw [
+          Json_decode.DecodeError,
+          "Unknown level 2 prerequisite: " + Int$OptolithClient.show(x)
+        ];
+  } else {
+    return 1;
+  }
+}
+
 function enhancementLevel2Univ(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
           cost: Json_decode.field("cost", Json_decode.$$int, json),
-          requirePrevious: Maybe$OptolithClient.isJust(JsonStrict$OptolithClient.optionalField("previousRequirement", (function (json) {
-                      var x = Json_decode.$$int(json);
-                      if (x !== 1) {
-                        throw [
-                              Json_decode.DecodeError,
-                              "Unknown level 2 prerequisite: " + Int$OptolithClient.show(x)
-                            ];
-                      } else {
-                        return 1;
-                      }
-                    }), json))
+          requireLevel1: Maybe$OptolithClient.isJust(JsonStrict$OptolithClient.optionalField("previousRequirement", level3Prerequisite, json))
         };
+}
+
+function level3Prerequisite$1(json) {
+  var x = Json_decode.$$int(json);
+  if (x !== 1) {
+    if (x !== 2) {
+      throw [
+            Json_decode.DecodeError,
+            "Unknown level 3 prerequisite: " + Int$OptolithClient.show(x)
+          ];
+    } else {
+      return /* Second */1;
+    }
+  } else {
+    return /* First */0;
+  }
 }
 
 function enhancementLevel3Univ(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
           cost: Json_decode.field("cost", Json_decode.$$int, json),
-          requirePrevious: JsonStrict$OptolithClient.optionalField("previousRequirement", (function (json) {
-                  var x = Json_decode.$$int(json);
-                  if (x !== 1) {
-                    if (x !== 2) {
-                      throw [
-                            Json_decode.DecodeError,
-                            "Unknown level 3 prerequisite: " + Int$OptolithClient.show(x)
-                          ];
-                    } else {
-                      return /* Second */1;
-                    }
-                  } else {
-                    return /* First */0;
-                  }
-                }), json)
+          requirePrevious: JsonStrict$OptolithClient.optionalField("previousRequirement", level3Prerequisite$1, json)
         };
 }
 
@@ -100,7 +104,7 @@ function enhancement(univ, l10n) {
             name: l10n.level2.name,
             effect: l10n.level2.effect,
             cost: univ.level2.cost,
-            requirePrevious: univ.level2.requirePrevious
+            requireLevel1: univ.level2.requireLevel1
           },
           level3: {
             id: univ.level3.id,
@@ -199,6 +203,7 @@ var Decode = {
   enhancementL10n: enhancementL10n,
   enhancementLevel1Univ: enhancementLevel1Univ,
   enhancementLevel2Univ: enhancementLevel2Univ,
+  level3Prerequisite: level3Prerequisite$1,
   enhancementLevel3Univ: enhancementLevel3Univ,
   enhancementUniv: enhancementUniv,
   enhancement: enhancement,

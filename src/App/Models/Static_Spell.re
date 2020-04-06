@@ -10,7 +10,7 @@ type enhancementLevel2 = {
   name: string,
   effect: string,
   cost: int,
-  requirePrevious: bool,
+  requireLevel1: bool,
 };
 
 type level3Prerequisite =
@@ -110,30 +110,29 @@ module Decode = {
   type enhancementLevel2Univ = {
     id: int,
     cost: int,
-    requirePrevious: bool,
+    requireLevel1: bool,
   };
+
+  let level3Prerequisite = json =>
+    json
+    |> int
+    |> (
+      x =>
+        switch (x) {
+        | 1 => 1
+        | y =>
+          raise(
+            DecodeError("Unknown level 2 prerequisite: " ++ Int.show(y)),
+          )
+        }
+    );
 
   let enhancementLevel2Univ = json => {
     id: json |> field("id", int),
     cost: json |> field("cost", int),
-    requirePrevious:
+    requireLevel1:
       json
-      |> optionalField("previousRequirement", json =>
-           json
-           |> int
-           |> (
-             x =>
-               switch (x) {
-               | 1 => 1
-               | y =>
-                 raise(
-                   DecodeError(
-                     "Unknown level 2 prerequisite: " ++ Int.show(y),
-                   ),
-                 )
-               }
-           )
-         )
+      |> optionalField("previousRequirement", level3Prerequisite)
       |> Maybe.isJust,
   };
 
@@ -143,28 +142,26 @@ module Decode = {
     requirePrevious: Maybe.t(level3Prerequisite),
   };
 
+  let level3Prerequisite = json =>
+    json
+    |> int
+    |> (
+      x =>
+        switch (x) {
+        | 1 => First
+        | 2 => Second
+        | y =>
+          raise(
+            DecodeError("Unknown level 3 prerequisite: " ++ Int.show(y)),
+          )
+        }
+    );
+
   let enhancementLevel3Univ = json => {
     id: json |> field("id", int),
     cost: json |> field("cost", int),
     requirePrevious:
-      json
-      |> optionalField("previousRequirement", json =>
-           json
-           |> int
-           |> (
-             x =>
-               switch (x) {
-               | 1 => First
-               | 2 => Second
-               | y =>
-                 raise(
-                   DecodeError(
-                     "Unknown level 3 prerequisite: " ++ Int.show(y),
-                   ),
-                 )
-               }
-           )
-         ),
+      json |> optionalField("previousRequirement", level3Prerequisite),
   };
 
   type enhancementUniv = {
@@ -194,7 +191,7 @@ module Decode = {
       name: l10n.level2.name,
       effect: l10n.level2.effect,
       cost: univ.level2.cost,
-      requirePrevious: univ.level2.requirePrevious,
+      requireLevel1: univ.level2.requireLevel1,
     },
     level3: {
       id: univ.level3.id,
