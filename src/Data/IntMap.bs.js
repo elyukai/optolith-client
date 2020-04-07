@@ -341,6 +341,7 @@ var assocs = IntMap.bindings;
 var filterWithKey = IntMap.filter;
 
 exports.Foldable = Foldable;
+exports.Traversable = Traversable;
 exports.size = size;
 exports.member = member;
 exports.notMember = notMember;
@@ -372,5 +373,4 @@ exports.filter = filter;
 exports.filterWithKey = filterWithKey;
 exports.mapMaybe = mapMaybe;
 exports.mapMaybeWithKey = mapMaybeWithKey;
-exports.Traversable = Traversable;
 /* IntMap Not a pure module */

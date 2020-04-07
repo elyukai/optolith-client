@@ -1,4 +1,4 @@
-type Empty = "Empty"
+type Empty = "EmptyMap"
 
 type Node<a> = {
   tag: "Node"
@@ -6,3 +6,5 @@ type Node<a> = {
 }
 
 export type t<a> = Empty | Node<a>
+
+export type empty = t<any>

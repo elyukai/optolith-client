@@ -49,15 +49,6 @@ var Profession = {
   Variant: Variant
 };
 
-var Die = { };
-
-var Variant$1 = { };
-
-var Race = {
-  Die: Die,
-  Variant: Variant$1
-};
-
 var SourceRef = /* alias */0;
 
 var Erratum = /* alias */0;
@@ -117,6 +108,8 @@ var PactCategory = /* alias */0;
 var Patron = /* alias */0;
 
 var Publication = /* alias */0;
+
+var Race = /* alias */0;
 
 var RogueSpell = /* alias */0;
 

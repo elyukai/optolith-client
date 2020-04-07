@@ -1,4 +1,4 @@
-type Empty = "Empty"
+type Empty = "EmptySet"
 
 type Node = {
   tag: "Node"

@@ -313,73 +313,7 @@ module Profession = {
 };
 
 module Publication = Static_Publication;
-
-module Race = {
-  module Die = {
-    type t = {
-      amount: int,
-      sides: int,
-    };
-  };
-
-  module Variant = {
-    type t = {
-      id: int,
-      name: string,
-      commonCultures: list(int),
-      commonAdvantages: list(int),
-      commonAdvantagesText: Maybe.t(string),
-      commonDisadvantages: list(int),
-      commonDisadvantagesText: Maybe.t(string),
-      uncommonAdvantages: list(int),
-      uncommonAdvantagesText: Maybe.t(string),
-      uncommonDisadvantages: list(int),
-      uncommonDisadvantagesText: Maybe.t(string),
-      hairColors: list(int),
-      eyeColors: list(int),
-      sizeBase: int,
-      sizeRandom: list(Die.t),
-    };
-  };
-
-  type t = {
-    id: int,
-    name: string,
-    ap: int,
-    lp: int,
-    spi: int,
-    tou: int,
-    mov: int,
-    attributeAdjustments: IntMap.t(int),
-    attributeAdjustmentsSelection: (int, list(int)),
-    attributeAdjustmentsText: string,
-    commonCultures: list(int),
-    automaticAdvantages: list(int),
-    automaticAdvantagesText: Maybe.t(string),
-    stronglyRecommendedAdvantages: list(int),
-    stronglyRecommendedAdvantagesText: Maybe.t(string),
-    stronglyRecommendedDisadvantages: list(int),
-    stronglyRecommendedDisadvantagesText: Maybe.t(string),
-    commonAdvantages: list(int),
-    commonAdvantagesText: Maybe.t(string),
-    commonDisadvantages: list(int),
-    commonDisadvantagesText: Maybe.t(string),
-    uncommonAdvantages: list(int),
-    uncommonAdvantagesText: Maybe.t(string),
-    uncommonDisadvantages: list(int),
-    uncommonDisadvantagesText: Maybe.t(string),
-    hairColors: Maybe.t(list(int)),
-    eyeColors: Maybe.t(list(int)),
-    sizeBase: Maybe.t(int),
-    sizeRandom: Maybe.t(list(Die.t)),
-    weightBase: int,
-    weightRandom: list(Die.t),
-    variants: list(Variant.t),
-    src: list(SourceRef.t),
-    errata: list(Erratum.t),
-  };
-};
-
+module Race = Static_Race;
 module RogueSpell = Static_RogueSpell;
 module SpecialAbility = Static_SpecialAbility;
 module Spell = Static_Spell;
@@ -428,8 +362,7 @@ type t = {
   // professionVariants: IntMap.t(ProfessionVariant.t),
   properties: IntMap.t(string),
   publications: StrMap.t(Publication.t),
-  // races: IntMap.t(Race),
-  // raceVariants: IntMap.t(RaceVariant.t),
+  races: IntMap.t(Race.t),
   reaches: IntMap.t(string),
   rogueSpells: IntMap.t(RogueSpell.t),
   skillGroups: IntMap.t(Skill.group),
