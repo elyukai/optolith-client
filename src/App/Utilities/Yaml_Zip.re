@@ -37,6 +37,50 @@ let rec zipBy =
     }
   };
 
+let rec zipByPartition =
+        (
+          showKey,
+          mapBoth,
+          mapSingle,
+          getKeyFromOptional,
+          getKeyFromRequired,
+          optionals: list('a),
+          requireds: list('b),
+        ) =>
+  switch (requireds) {
+  | [] => ([], [])
+  | [r, ...rs] =>
+    switch (
+      List.find_opt(
+        o => o |> getKeyFromOptional |> (k => k == getKeyFromRequired(r)),
+        optionals,
+      )
+    ) {
+    | Some(o) =>
+      zipByPartition(
+        showKey,
+        mapBoth,
+        mapSingle,
+        getKeyFromOptional,
+        getKeyFromRequired,
+        optionals,
+        rs,
+      )
+      |> (((mergeds, singles)) => ([mapBoth(o, r), ...mergeds], singles))
+    | None =>
+      zipByPartition(
+        showKey,
+        mapBoth,
+        mapSingle,
+        getKeyFromOptional,
+        getKeyFromRequired,
+        optionals,
+        rs,
+      )
+      |> (((mergeds, singles)) => (mergeds, [mapSingle(r), ...singles]))
+    }
+  };
+
 /*
  module Aspects = {
    open Integrity.Entity;

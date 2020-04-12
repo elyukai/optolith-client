@@ -2,53 +2,6 @@
 'use strict';
 
 
-var Advantage = { };
-
-var IncreaseSkill = { };
-
-var Culture = {
-  IncreaseSkill: IncreaseSkill
-};
-
-var Disadvantage = { };
-
-var NameBySex = { };
-
-var IncreaseSkillList = { };
-
-var CantripSelection = { };
-
-var CombatTechniqueSelection = { };
-
-var CurseSelection = { };
-
-var LanguageScriptSelection = { };
-
-var SkillSpecializationSelection = { };
-
-var SkillSelection = { };
-
-var TerrainKnowledgeSelection = { };
-
-var Options = {
-  CantripSelection: CantripSelection,
-  CombatTechniqueSelection: CombatTechniqueSelection,
-  CurseSelection: CurseSelection,
-  LanguageScriptSelection: LanguageScriptSelection,
-  SkillSpecializationSelection: SkillSpecializationSelection,
-  SkillSelection: SkillSelection,
-  TerrainKnowledgeSelection: TerrainKnowledgeSelection
-};
-
-var Variant = { };
-
-var Profession = {
-  NameBySex: NameBySex,
-  IncreaseSkillList: IncreaseSkillList,
-  Options: Options,
-  Variant: Variant
-};
-
 var SourceRef = /* alias */0;
 
 var Erratum = /* alias */0;
@@ -58,6 +11,8 @@ var Prerequisites = /* alias */0;
 var Skill = /* alias */0;
 
 var SelectOption = /* alias */0;
+
+var Advantage = /* alias */0;
 
 var AnimistForce = /* alias */0;
 
@@ -73,9 +28,13 @@ var CombatTechnique = /* alias */0;
 
 var Condition = /* alias */0;
 
+var Culture = /* alias */0;
+
 var Curse = /* alias */0;
 
 var DerivedCharacteristic = /* alias */0;
+
+var Disadvantage = /* alias */0;
 
 var DominationRitual = /* alias */0;
 
@@ -106,6 +65,8 @@ var OptionalRule = /* alias */0;
 var PactCategory = /* alias */0;
 
 var Patron = /* alias */0;
+
+var Profession = /* alias */0;
 
 var Publication = /* alias */0;
 

@@ -466,7 +466,7 @@ module SpecialAbilityId = {
   [@gentype]
   let improvedDodge = "SA_64";
   [@gentype]
-  let traditionGuildMages = "SA_70";
+  let traditionGuildMages = 70;
   [@gentype]
   let propertyKnowledge = "SA_72";
   [@gentype]

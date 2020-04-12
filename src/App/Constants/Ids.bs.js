@@ -213,7 +213,7 @@ var SpecialAbilityId = {
   language: "SA_29",
   combatReflexes: "SA_51",
   improvedDodge: "SA_64",
-  traditionGuildMages: "SA_70",
+  traditionGuildMages: 70,
   propertyKnowledge: "SA_72",
   propertyFocus: "SA_81",
   aspectKnowledge: "SA_87",

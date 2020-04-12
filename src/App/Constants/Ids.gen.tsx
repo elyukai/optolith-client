@@ -440,7 +440,7 @@ export const SpecialAbilityId_combatReflexes: string = IdsBS.SpecialAbilityId.co
 
 export const SpecialAbilityId_improvedDodge: string = IdsBS.SpecialAbilityId.improvedDodge;
 
-export const SpecialAbilityId_traditionGuildMages: string = IdsBS.SpecialAbilityId.traditionGuildMages;
+export const SpecialAbilityId_traditionGuildMages: number = IdsBS.SpecialAbilityId.traditionGuildMages;
 
 export const SpecialAbilityId_propertyKnowledge: string = IdsBS.SpecialAbilityId.propertyKnowledge;
 
@@ -874,7 +874,7 @@ export const SpecialAbilityId: {
   recherchegespuer: string; 
   visionDerGottheit: string; 
   traditionChurchOfBoron: string; 
-  traditionGuildMages: string; 
+  traditionGuildMages: number; 
   traditionGeoden: string; 
   dunklesAbbildDerBuendnisgabe: string; 
   grosseMeditation: string; 

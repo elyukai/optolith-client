@@ -2,6 +2,7 @@
 'use strict';
 
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
+var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/YAML/JsonStrict.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
@@ -11,24 +12,91 @@ function tL10n(json) {
   return {
           id: Json_decode.field("id", Static_Prerequisites$OptolithClient.Decode.selectOptionId, json),
           name: Json_decode.field("name", Json_decode.string, json),
-          description: Json_decode.field("description", (function (param) {
-                  return JsonStrict$OptolithClient.maybe(Json_decode.string, param);
+          description: JsonStrict$OptolithClient.optionalField("description", Json_decode.string, json),
+          specializations: JsonStrict$OptolithClient.optionalField("specializations", (function (param) {
+                  return Json_decode.list(Json_decode.string, param);
                 }), json),
-          specializations: Json_decode.field("specializations", (function (param) {
-                  return JsonStrict$OptolithClient.maybe((function (param) {
-                                return Json_decode.list(Json_decode.string, param);
-                              }), param);
-                }), json),
-          specializationInput: Json_decode.field("specializationInput", (function (param) {
-                  return JsonStrict$OptolithClient.maybe(Json_decode.string, param);
-                }), json),
+          specializationInput: JsonStrict$OptolithClient.optionalField("specializationInput", Json_decode.string, json),
           src: Json_decode.field("src", Static_SourceRef$OptolithClient.Decode.list, json),
           errata: Json_decode.field("errata", Static_Erratum$OptolithClient.Decode.list, json)
         };
 }
 
+function tUniv(json) {
+  return {
+          id: Json_decode.field("id", Static_Prerequisites$OptolithClient.Decode.selectOptionId, json),
+          cost: JsonStrict$OptolithClient.optionalField("cost", Json_decode.$$int, json),
+          sexPrerequisite: JsonStrict$OptolithClient.optionalField("sexPrerequisite", Static_Prerequisites$OptolithClient.Decode.sex, json),
+          racePrerequisite: JsonStrict$OptolithClient.optionalField("racePrerequisite", Static_Prerequisites$OptolithClient.Decode.race, json),
+          culturePrerequisite: JsonStrict$OptolithClient.optionalField("culturePrerequisite", Static_Prerequisites$OptolithClient.Decode.culture, json),
+          pactPrerequisite: JsonStrict$OptolithClient.optionalField("pactPrerequisite", Static_Prerequisites$OptolithClient.Decode.pact, json),
+          socialPrerequisite: JsonStrict$OptolithClient.optionalField("socialPrerequisite", Static_Prerequisites$OptolithClient.Decode.socialStatus, json),
+          primaryAttributePrerequisite: JsonStrict$OptolithClient.optionalField("primaryAttributePrerequisite", Static_Prerequisites$OptolithClient.Decode.primaryAttribute, json),
+          activatablePrerequisite: JsonStrict$OptolithClient.optionalField("activatablePrerequisite", (function (param) {
+                  return Json_decode.list(Static_Prerequisites$OptolithClient.Decode.activatable, param);
+                }), json),
+          activatableMultiEntryPrerequisite: JsonStrict$OptolithClient.optionalField("activatableMultiEntryPrerequisite", (function (param) {
+                  return Json_decode.list(Static_Prerequisites$OptolithClient.Decode.activatableMultiEntry, param);
+                }), json),
+          activatableMultiSelectPrerequisite: JsonStrict$OptolithClient.optionalField("activatableMultiSelectPrerequisite", (function (param) {
+                  return Json_decode.list(Static_Prerequisites$OptolithClient.Decode.activatableMultiSelect, param);
+                }), json),
+          increasablePrerequisite: JsonStrict$OptolithClient.optionalField("increasablePrerequisite", (function (param) {
+                  return Json_decode.list(Static_Prerequisites$OptolithClient.Decode.increasable, param);
+                }), json),
+          increasableMultiEntryPrerequisite: JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisite", (function (param) {
+                  return Json_decode.list(Static_Prerequisites$OptolithClient.Decode.increasableMultiEntry, param);
+                }), json),
+          isSecret: JsonStrict$OptolithClient.optionalField("isSecret", Json_decode.bool, json),
+          languages: JsonStrict$OptolithClient.optionalField("languages", (function (param) {
+                  return Json_decode.list(Json_decode.$$int, param);
+                }), json),
+          continent: JsonStrict$OptolithClient.optionalField("continent", Json_decode.$$int, json),
+          isExtinct: JsonStrict$OptolithClient.optionalField("isExtinct", Json_decode.bool, json),
+          animalGr: JsonStrict$OptolithClient.optionalField("animalGr", Json_decode.$$int, json),
+          animalLevel: JsonStrict$OptolithClient.optionalField("animalLevel", Json_decode.$$int, json)
+        };
+}
+
+function t(univ, l10n) {
+  return {
+          id: univ.id,
+          name: l10n.name,
+          cost: univ.cost,
+          prerequisites: {
+            sex: univ.sexPrerequisite,
+            race: univ.racePrerequisite,
+            culture: univ.culturePrerequisite,
+            pact: univ.pactPrerequisite,
+            social: univ.socialPrerequisite,
+            primaryAttribute: univ.primaryAttributePrerequisite,
+            activatable: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.activatablePrerequisite),
+            activatableMultiEntry: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.activatableMultiEntryPrerequisite),
+            activatableMultiSelect: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.activatableMultiSelectPrerequisite),
+            increasable: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.increasablePrerequisite),
+            increasableMultiEntry: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.increasableMultiEntryPrerequisite)
+          },
+          description: l10n.description,
+          isSecret: univ.isSecret,
+          languages: univ.languages,
+          continent: univ.continent,
+          isExtinct: univ.isExtinct,
+          specializations: l10n.specializations,
+          specializationInput: l10n.specializationInput,
+          animalGr: univ.animalGr,
+          animalLevel: univ.animalLevel,
+          target: /* Nothing */0,
+          applications: /* Nothing */0,
+          applicationInput: /* Nothing */0,
+          src: l10n.src,
+          errata: l10n.errata
+        };
+}
+
 var Decode = {
-  tL10n: tL10n
+  tL10n: tL10n,
+  tUniv: tUniv,
+  t: t
 };
 
 exports.Decode = Decode;

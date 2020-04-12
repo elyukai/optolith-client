@@ -12,7 +12,7 @@ module Decode = {
     id: json |> field("id", string),
     page: {
       let first = json |> field("firstPage", int);
-      let mlast = json |> field("lastPage", maybe(int));
+      let mlast = json |> optionalField("lastPage", int);
 
       Maybe.maybe((first, first), last => (first, last), mlast);
     },

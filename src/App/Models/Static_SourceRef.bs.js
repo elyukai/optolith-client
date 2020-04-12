@@ -7,9 +7,7 @@ var JsonStrict$OptolithClient = require("../Utilities/YAML/JsonStrict.bs.js");
 
 function t(json) {
   var first = Json_decode.field("firstPage", Json_decode.$$int, json);
-  var mlast = Json_decode.field("lastPage", (function (param) {
-          return JsonStrict$OptolithClient.maybe(Json_decode.$$int, param);
-        }), json);
+  var mlast = JsonStrict$OptolithClient.optionalField("lastPage", Json_decode.$$int, json);
   return {
           id: Json_decode.field("id", Json_decode.string, json),
           page: Maybe$OptolithClient.maybe(/* tuple */[

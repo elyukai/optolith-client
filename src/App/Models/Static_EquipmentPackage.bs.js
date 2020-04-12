@@ -40,7 +40,7 @@ function t(univ, l10n) {
           name: l10n.name,
           items: Curry._2(IntMap$OptolithClient.map, (function (param) {
                   return Maybe$OptolithClient.fromMaybe(1, param);
-                }), IntMap$OptolithClient.fromList(univ.items)),
+                }), Curry._1(IntMap$OptolithClient.fromList, univ.items)),
           src: l10n.src,
           errata: l10n.errata
         };

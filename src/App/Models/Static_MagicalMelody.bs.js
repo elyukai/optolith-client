@@ -53,7 +53,7 @@ function t(univ, l10n) {
   return {
           id: univ.id,
           name: l10n.name,
-          nameByTradition: IntMap$OptolithClient.fromList(l10n.nameByTradition),
+          nameByTradition: Curry._1(IntMap$OptolithClient.fromList, l10n.nameByTradition),
           check: /* tuple */[
             univ.check1,
             univ.check2,

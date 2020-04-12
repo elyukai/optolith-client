@@ -4,9 +4,63 @@ module Functor = {
     | [] => []
     | [y, ...ys] => [f(y), ...f <$> ys]
     };
+
+  let (<&>) = (xs, f) => f <$> xs;
+};
+
+module Applicative = {
+  open Functor;
+
+  let rec (<*>) = (fs, xs) =>
+    switch (fs) {
+    | [] => []
+    | gs =>
+      switch (xs) {
+      | [] => []
+      | [x, ...ys] => ((f => f(x)) <$> gs) @ (fs <*> ys)
+      }
+    };
+};
+
+module Alternative = {
+  let (<|>) = (xs, ys) =>
+    switch (xs) {
+    | [] => ys
+    | xs => xs
+    };
+
+  let guard = pred => pred ? [()] : [];
+};
+
+module Monad = {
+  open Function;
+  open Functor;
+
+  let rec (>>=) = (xs, f) =>
+    switch (xs) {
+    | [] => []
+    | [y, ...ys] => f(y) @ (ys >>= f)
+    };
+
+  let (=<<) = (f, mx) => mx >>= f;
+
+  let (>>) = (x, y) => x >>= const(y);
+
+  let (>=>) = (f, g, x) => x->f >>= g;
+
+  let join = x => x >>= id;
+
+  let liftM2 = (f, mx, my) => mx >>= (x => f(x) <$> my);
+
+  let liftM3 = (f, mx, my, mz) => mx >>= (x => my >>= (y => f(x, y) <$> mz));
+
+  let liftM4 = (f, mx, my, mz, ma) =>
+    mx >>= (x => my >>= (y => mz >>= (z => f(x, y, z) <$> ma)));
 };
 
 module Foldable = {
+  open Monad;
+
   /**
    * Right-associative fold of a structure.
    *
@@ -61,6 +115,62 @@ module Foldable = {
     switch (xs) {
     | [] => invalid_arg("Cannot apply foldl1 to an empty list.")
     | [y, ...ys] => foldl(f, y, ys)
+    };
+
+  let toList = (xs): list('a) => xs;
+
+  let null = xs =>
+    switch (xs) {
+    | [] => true
+    | _ => false
+    };
+
+  let length = xs => List.length(xs);
+
+  let elem = (e, xs) => List.exists(x => e == x, xs);
+
+  let sum = xs => foldr((+), 0, xs);
+
+  let product = xs => foldr(( * ), 1, xs);
+
+  let maximum = xs => foldr(Js.Math.max_int, Js.Int.min, xs);
+
+  let minimum = xs => foldr(Js.Math.min_int, Js.Int.max, xs);
+
+  let concat = xss => join(xss);
+
+  let concatMap = (f, xs) => xs >>= f;
+
+  let rec con = xs =>
+    switch (xs) {
+    | [] => true
+    | [y, ...ys] => y && con(ys)
+    };
+
+  let rec dis = xs =>
+    switch (xs) {
+    | [] => false
+    | [y, ...ys] => y || dis(ys)
+    };
+
+  let rec any = (f, xs) =>
+    switch (xs) {
+    | [] => false
+    | [y, ...ys] => f(y) || any(f, ys)
+    };
+
+  let rec all = (f, xs) =>
+    switch (xs) {
+    | [] => true
+    | [y, ...ys] => f(y) && all(f, ys)
+    };
+
+  let notElem = (e, xs) => !elem(e, xs);
+
+  let rec find = (f, xs) =>
+    switch (xs) {
+    | [] => Maybe.Nothing
+    | [y, ...ys] => f(y) ? Maybe.Just(y) : find(f, ys)
     };
 };
 

@@ -11,3 +11,17 @@ let maybe = (decode: decoder('a), json) =>
   };
 
 let optionalField = (key, decode, json) => field(key, maybe(decode), json);
+
+let const = (x: 'a, json) =>
+  if ((Obj.magic(json): 'a) == x) {
+    x;
+  } else {
+    raise(
+      DecodeError(
+        "Expected \""
+        ++ _stringify(json)
+        ++ "\", but received: "
+        ++ _stringify(json),
+      ),
+    );
+  };

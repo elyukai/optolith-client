@@ -3,38 +3,7 @@ module Erratum = Static_Erratum;
 module Prerequisites = Static_Prerequisites;
 module Skill = Static_Skill;
 module SelectOption = Static_SelectOption;
-
-module Advantage = {
-  type cost =
-    | Flat(int)
-    | PerLevel(list(int));
-
-  type t = {
-    id: int,
-    name: string,
-    cost,
-    noMaxAPInfluence: bool,
-    isExclusiveToArcaneSpellworks: bool,
-    input: Maybe.t(string),
-    max: Maybe.t(int),
-    levels: Maybe.t(int),
-    select: Maybe.t(list(SelectOption.t)),
-    rules: string,
-    range: Maybe.t(string),
-    actions: Maybe.t(string),
-    prerequisites: Prerequisites.tWithLevelDisAdv,
-    prerequisitesText: Maybe.t(string),
-    prerequisitesTextIndex: Maybe.t(Prerequisites.tIndexWithLevel),
-    prerequisitesTextStart: Maybe.t(string),
-    prerequisitesTextEnd: Maybe.t(string),
-    apValue: Maybe.t(string),
-    apValueAppend: Maybe.t(string),
-    gr: int,
-    src: list(SourceRef.t),
-    errata: list(Erratum.t),
-  };
-};
-
+module Advantage = Static_Advantage;
 module AnimistForce = Static_AnimistForce;
 module Attribute = Static_Attribute;
 module BlessedTradition = Static_BlessedTradition;
@@ -42,88 +11,10 @@ module Blessing = Static_Blessing;
 module Cantrip = Static_Cantrip;
 module CombatTechnique = Static_CombatTechnique;
 module Condition = Static_Condition;
-
-module Culture = {
-  type commonProfessionId =
-    | Profession(int)
-    | ProfessionGroup(int);
-
-  type commonProfessions =
-    | All
-    | OneOf(list(commonProfessionId))
-    | ExceptFor(list(commonProfessionId));
-
-  module IncreaseSkill = {
-    type t = {
-      id: int,
-      value: int,
-    };
-  };
-
-  type t = {
-    id: int,
-    name: string,
-    culturalPackageAdventurePoints: int,
-    languages: list(int),
-    scripts: list(int),
-    socialStatus: list(int),
-    areaKnowledge: string,
-    areaKnowledgeShort: string,
-    commonProfessions: (
-      commonProfessions,
-      commonProfessions,
-      commonProfessions,
-    ),
-    commonMundaneProfessions: Maybe.t(string),
-    commonMagicProfessions: Maybe.t(string),
-    commonBlessedProfessions: Maybe.t(string),
-    commonAdvantages: list(int),
-    commonAdvantagesText: Maybe.t(string),
-    commonDisadvantages: list(int),
-    commonDisadvantagesText: Maybe.t(string),
-    uncommonAdvantages: list(int),
-    uncommonAdvantagesText: Maybe.t(string),
-    uncommonDisadvantages: list(int),
-    uncommonDisadvantagesText: Maybe.t(string),
-    commonSkills: list(int),
-    uncommonSkills: list(int),
-    commonNames: string,
-    culturalPackageSkills: list(IncreaseSkill.t),
-    src: list(SourceRef.t),
-    errata: list(Erratum.t),
-  };
-};
-
+module Culture = Static_Culture;
 module Curse = Static_Curse;
 module DerivedCharacteristic = Static_DerivedCharacteristic;
-
-module Disadvantage = {
-  type t = {
-    id: int,
-    name: string,
-    cost: Advantage.cost,
-    noMaxAPInfluence: bool,
-    isExclusiveToArcaneSpellworks: bool,
-    input: Maybe.t(string),
-    max: Maybe.t(int),
-    levels: Maybe.t(int),
-    select: Maybe.t(list(SelectOption.t)),
-    rules: string,
-    range: Maybe.t(string),
-    actions: Maybe.t(string),
-    prerequisites: Prerequisites.tWithLevelDisAdv,
-    prerequisitesText: Maybe.t(string),
-    prerequisitesTextIndex: Maybe.t(Prerequisites.tIndexWithLevel),
-    prerequisitesTextStart: Maybe.t(string),
-    prerequisitesTextEnd: Maybe.t(string),
-    apValue: Maybe.t(string),
-    apValueAppend: Maybe.t(string),
-    gr: int,
-    src: list(SourceRef.t),
-    errata: list(Erratum.t),
-  };
-};
-
+module Disadvantage = Static_Disadvantage;
 module DominationRitual = Static_DominationRitual;
 module ElvenMagicalSong = Static_ElvenMagicalSong;
 module EquipmentPackage = Static_EquipmentPackage;
@@ -139,179 +30,7 @@ module Messages = Static_Messages;
 module OptionalRule = Static_OptionalRule;
 module PactCategory = Static_Pact;
 module Patron = Static_Patron;
-
-module Profession = {
-  module NameBySex = {
-    type t = {
-      m: string,
-      f: string,
-    };
-  };
-
-  module IncreaseSkillList = {
-    type t = {
-      id: list(int),
-      value: int,
-    };
-  };
-
-  module Options = {
-    type variantOverride('a) =
-      | Remove
-      | Override('a);
-
-    module CantripSelection = {
-      type t = {
-        amount: int,
-        sid: list(int),
-      };
-    };
-
-    module CombatTechniqueSelection = {
-      type second = {
-        amount: int,
-        value: int,
-      };
-
-      type t = {
-        amount: int,
-        value: int,
-        second: Maybe.t(second),
-        sid: list(int),
-      };
-
-      type secondForVariant = variantOverride(second);
-
-      type tWithReplace = {
-        amount: int,
-        value: int,
-        second: Maybe.t(secondForVariant),
-        sid: list(int),
-      };
-
-      type tForVariant = variantOverride(tWithReplace);
-    };
-
-    module CurseSelection = {
-      type t = int;
-    };
-
-    module LanguageScriptSelection = {
-      type t = int;
-
-      type tForVariant = variantOverride(t);
-    };
-
-    module SkillSpecializationSelection = {
-      type t = GenericHelpers.oneOrMany(int);
-
-      type tForVariant = variantOverride(t);
-    };
-
-    module SkillSelection = {
-      type t = {
-        /**
-         * If specified, only choose from skills of the specified group.
-         */
-        gr: Maybe.t(int),
-        /**
-         * The AP value the user can spend.
-         */
-        value: int,
-      };
-    };
-
-    module TerrainKnowledgeSelection = {
-      type t = list(int);
-    };
-
-    type t = {
-      cantrips: Maybe.t(CantripSelection.t),
-      combatTechniques: Maybe.t(CombatTechniqueSelection.t),
-      curses: Maybe.t(CurseSelection.t),
-      languagesScripts: Maybe.t(LanguageScriptSelection.t),
-      skillSpecialization: Maybe.t(SkillSpecializationSelection.t),
-      skills: Maybe.t(SkillSelection.t),
-      terrainKnowledge: Maybe.t(TerrainKnowledgeSelection.t),
-      guildMageUnfamiliarSpell: bool,
-    };
-
-    type tForVariant = {
-      cantrips: Maybe.t(CantripSelection.t),
-      combatTechniques: Maybe.t(CombatTechniqueSelection.tForVariant),
-      curses: Maybe.t(CurseSelection.t),
-      languagesScripts: Maybe.t(LanguageScriptSelection.tForVariant),
-      skillSpecialization: Maybe.t(SkillSpecializationSelection.tForVariant),
-      skills: Maybe.t(SkillSelection.t),
-      terrainKnowledge: Maybe.t(TerrainKnowledgeSelection.t),
-      guildMageUnfamiliarSpell: bool,
-    };
-  };
-
-  type name =
-    | Const(string)
-    | BySex(NameBySex.t);
-
-  type skillIncrease =
-    | Flat(Culture.IncreaseSkill.t)
-    | Selection(IncreaseSkillList.t);
-
-  module Variant = {
-    type t = {
-      id: int,
-      name,
-      ap: int,
-      prerequisites: Prerequisites.tProfession,
-      selections: Options.tForVariant,
-      // specialAbilities: list(Prerequisites.Activatable.t),
-      combatTechniques: list(Culture.IncreaseSkill.t),
-      skills: list(Culture.IncreaseSkill.t),
-      spells: list(skillIncrease),
-      liturgicalChants: list(skillIncrease),
-      blessings: list(int),
-      precedingText: Maybe.t(string),
-      fullText: Maybe.t(string),
-      concludingText: Maybe.t(string),
-      errata: list(Erratum.t),
-    };
-  };
-
-  type t = {
-    id: int,
-    name,
-    subname: Maybe.t(name),
-    ap: Maybe.t(int),
-    prerequisites: Prerequisites.tProfession,
-    prerequisitesStart: Maybe.t(string),
-    prerequisitesEnd: Maybe.t(string),
-    selections: Options.t,
-    // specialAbilities: list(Prerequisites.Activatable.t),
-    combatTechniques: list(Culture.IncreaseSkill.t),
-    skills: list(Culture.IncreaseSkill.t),
-    spells: list(skillIncrease),
-    liturgicalChants: list(skillIncrease),
-    blessings: list(int),
-    suggestedAdvantages: list(int),
-    suggestedAdvantagesText: Maybe.t(string),
-    suggestedDisadvantages: list(int),
-    suggestedDisadvantagesText: Maybe.t(string),
-    unsuitableAdvantages: list(int),
-    unsuitableAdvantagesText: Maybe.t(string),
-    unsuitableDisadvantages: list(int),
-    unsuitableDisadvantagesText: Maybe.t(string),
-    isVariantRequired: bool,
-    variants: list(Variant.t),
-    gr: int,
-    /**
-     * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the
-     * Twelve Gods" or "Fighter".
-     */
-    subgr: int,
-    src: list(SourceRef.t),
-    errata: list(Erratum.t),
-  };
-};
-
+module Profession = Static_Profession;
 module Publication = Static_Publication;
 module Race = Static_Race;
 module RogueSpell = Static_RogueSpell;
@@ -336,7 +55,7 @@ type t = {
   combatTechniqueGroups: IntMap.t(string),
   combatTechniques: IntMap.t(CombatTechnique.t),
   conditions: IntMap.t(Condition.t),
-  // cultures: IntMap.t(Culture.t),
+  cultures: IntMap.t(Culture.t),
   curses: IntMap.t(Curse.t),
   derivedCharacteristics: IntMap.t(DerivedCharacteristic.t),
   // disadvantages: IntMap.t(Disadvantage.t),
@@ -358,8 +77,7 @@ type t = {
   magicalTraditions: IntMap.t(MagicalTradition.t),
   optionalRules: IntMap.t(OptionalRule.t),
   pacts: IntMap.t(PactCategory.t),
-  // professions: IntMap.t(Profession.t),
-  // professionVariants: IntMap.t(ProfessionVariant.t),
+  professions: IntMap.t(Profession.t),
   properties: IntMap.t(string),
   publications: StrMap.t(Publication.t),
   races: IntMap.t(Race.t),

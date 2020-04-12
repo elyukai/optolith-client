@@ -243,7 +243,7 @@ function t(univ, l10n) {
         }]);
   } else {
     tmp = /* WithVariants */Block.__(0, [{
-          variants: IntMap$OptolithClient.fromList(Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, variant, (function (x) {
+          variants: Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, variant, (function (x) {
                       return x.id;
                     }), (function (x) {
                       return x.id;
