@@ -75,6 +75,18 @@ Example:
 
 ### First run
 
+Run Build
+
+```
+npm run re:build
+```
+
+Import YAML files.
+
+```
+npm run getstatic
+```
+
 Compile the source code. `ts:` is for TypeScript, `re:` for Reason/OCaml.
 
 ```
@@ -87,12 +99,6 @@ npm run re:build
 ```
 npm run ts:watch
 npm run re:watch
-```
-
-Import YAML files.
-
-```
-npm run getstatic
 ```
 
 Run the app:
