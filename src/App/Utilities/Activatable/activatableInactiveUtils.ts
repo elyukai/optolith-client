@@ -45,6 +45,7 @@ import { composeT } from "../compose"
 import { filterUnfamiliar } from "../Dependencies/TransferredUnfamiliarUtils"
 import { countActiveGroupEntries } from "../entryGroupUtils"
 import { getAllEntriesByGroup } from "../heroStateUtils"
+import { prefixSA } from "../IDUtils"
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils"
 import { isUnfamiliarSpell } from "../Increasable/spellUtils"
 import { pipe, pipe_ } from "../pipe"
@@ -401,7 +402,7 @@ const modifySelectOptions =
         )))
       }
 
-      case SpecialAbilityId.traditionGuildMages: {
+      case prefixSA (SpecialAbilityId.traditionGuildMages): {
         return fmap (filterUnfamiliar (pipe (
                                         SpA.tradition,
                                         trads => notElem (MagicalTradition.General) (trads)
@@ -619,7 +620,7 @@ const modifySelectOptions =
 
         const mtransferred_spell_trads = pipe_ (
                                            HA.specialAbilities (hero),
-                                           lookup (SpecialAbilityId.traditionGuildMages),
+                                           lookup (prefixSA (SpecialAbilityId.traditionGuildMages)),
                                            bindF (pipe (ADA.active, listToMaybe)),
                                            bindF (pipe (AOA.sid, isStringM)),
                                            bindF (lookupF (SDA.spells (staticData))),
@@ -727,7 +728,7 @@ const modifyOtherOptions =
         )
       }
 
-      case SpecialAbilityId.traditionGuildMages:
+      case prefixSA (SpecialAbilityId.traditionGuildMages):
       case SpecialAbilityId.traditionWitches:
       case SpecialAbilityId.traditionElves:
       case SpecialAbilityId.traditionDruids:

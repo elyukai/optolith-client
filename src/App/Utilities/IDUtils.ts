@@ -49,6 +49,11 @@ export const prefixCT = prefixId (IdPrefixes.COMBAT_TECHNIQUES)
 export const prefixCantrip = prefixId (IdPrefixes.CANTRIPS)
 
 /**
+ * Create a special ability id.
+ */
+export const prefixSA = prefixId (IdPrefixes.SPECIAL_ABILITIES)
+
+/**
  * Create a item template id.
  */
 export const prefixItemTpl = prefixId (IdPrefixes.ITEM_TEMPLATE)

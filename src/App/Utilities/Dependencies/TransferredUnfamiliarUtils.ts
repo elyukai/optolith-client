@@ -20,6 +20,7 @@ import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { convertUIStateToActiveObject } from "../Activatable/activatableConvertUtils"
 import { getMagicalTraditionsHeroEntries } from "../Activatable/traditionUtils"
+import { prefixSA } from "../IDUtils"
 import { isUnfamiliarSpell } from "../Increasable/spellUtils"
 import { pipe, pipe_ } from "../pipe"
 import { isStringM, misStringM } from "../typeCheckUtils"
@@ -42,7 +43,7 @@ const getTransferredUnfamiliarById: (active: Record<ActiveObjectWithId>) =>
     const src_id = AOWIA.id (active)
 
     switch (src_id) {
-      case SpecialAbilityId.traditionGuildMages:
+      case prefixSA (SpecialAbilityId.traditionGuildMages):
       case SpecialAbilityId.madaschwesternStil:
       case SpecialAbilityId.scholarDesMagierkollegsZuHoningen:
         return pipe_ (
