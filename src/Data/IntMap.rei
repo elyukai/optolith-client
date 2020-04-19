@@ -67,6 +67,9 @@ module Traversable: {
   let mapMEither: ('a => Either.t('b, 'c), t('a)) => Either.t('b, t('c));
 };
 
+[@genType "fnull"]
+let null: t('a) => bool;
+
 [@genType]
 let size: t('a) => int;
 
@@ -148,6 +151,9 @@ let assocs: t('a) => list((key, 'a));
 
 [@genType]
 let fromList: list((key, 'a)) => t('a);
+
+[@genType]
+let fromArray: array((key, 'a)) => t('a);
 
 [@genType]
 let filter: ('a => bool, t('a)) => t('a);

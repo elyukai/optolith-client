@@ -14,6 +14,8 @@ var Foldable = IntMap.Foldable;
 
 var Traversable = IntMap.Traversable;
 
+var $$null = IntMap.$$null;
+
 var size = IntMap.size;
 
 var member = IntMap.member;
@@ -68,6 +70,8 @@ var assocs = IntMap.assocs;
 
 var fromList = IntMap.fromList;
 
+var fromArray = IntMap.fromArray;
+
 var filter = IntMap.filter;
 
 var filterWithKey = IntMap.filterWithKey;
@@ -78,6 +82,7 @@ var mapMaybeWithKey = IntMap.mapMaybeWithKey;
 
 exports.Foldable = Foldable;
 exports.Traversable = Traversable;
+exports.$$null = $$null;
 exports.size = size;
 exports.member = member;
 exports.notMember = notMember;
@@ -105,6 +110,7 @@ exports.elems = elems;
 exports.keys = keys;
 exports.assocs = assocs;
 exports.fromList = fromList;
+exports.fromArray = fromArray;
 exports.filter = filter;
 exports.filterWithKey = filterWithKey;
 exports.mapMaybe = mapMaybe;

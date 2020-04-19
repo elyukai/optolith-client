@@ -107,6 +107,8 @@ export const Traversable_mapMEither: <a,b,c>(_1:((_1:a) => Either_t<b,c>), _2:t<
     : {tag:"Right", value:result[0]}
 };
 
+export const fnull: <a>(_1:t<a>) => boolean = IntMapBS.null;
+
 export const size: <a>(_1:t<a>) => number = IntMapBS.size;
 
 export const member: <a>(_1:key, _2:t<a>) => boolean = function <a>(Arg1: any, Arg2: any) {
@@ -249,6 +251,8 @@ export const keys: <a>(_1:t<a>) => list<key> = IntMapBS.keys;
 export const assocs: <a>(_1:t<a>) => list<[key, a]> = IntMapBS.assocs;
 
 export const fromList: <a>(_1:list<[key, a]>) => t<a> = IntMapBS.fromList;
+
+export const fromArray: <a>(_1:Array<[key, a]>) => t<a> = IntMapBS.fromArray;
 
 export const filter: <a>(_1:((_1:a) => boolean), _2:t<a>) => t<a> = function <a>(Arg1: any, Arg2: any) {
   const result = Curry._2(IntMapBS.filter, Arg1, Arg2);

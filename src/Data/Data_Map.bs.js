@@ -3,6 +3,7 @@
 
 var $$Map = require("bs-platform/lib/js/map.js");
 var List = require("bs-platform/lib/js/list.js");
+var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Js_int = require("bs-platform/lib/js/js_int.js");
@@ -115,6 +116,9 @@ function Make(funarg) {
     notElem: notElem,
     find: find
   };
+  var $$null$1 = function (mp) {
+    return Curry._1(TypedMap.is_empty, mp);
+  };
   var member = TypedMap.mem;
   var notMember = function (key, mp) {
     return !Curry._2(member, key, mp);
@@ -221,6 +225,11 @@ function Make(funarg) {
                   return Curry._2(insert, param[0], param[1]);
                 }), ps, empty);
   };
+  var fromArray = function (ps) {
+    return $$Array.fold_right((function (param) {
+                  return Curry._2(insert, param[0], param[1]);
+                }), ps, empty);
+  };
   var filter = function (pred, mp) {
     return Curry._2(TypedMap.filter, (function (param, x) {
                   return Curry._1(pred, x);
@@ -279,6 +288,7 @@ function Make(funarg) {
   return {
           Foldable: Foldable,
           Traversable: Traversable,
+          $$null: $$null$1,
           size: TypedMap.cardinal,
           member: member,
           notMember: notMember,
@@ -306,6 +316,7 @@ function Make(funarg) {
           keys: keys,
           assocs: TypedMap.bindings,
           fromList: fromList,
+          fromArray: fromArray,
           filter: filter,
           filterWithKey: TypedMap.filter,
           mapMaybe: mapMaybe,

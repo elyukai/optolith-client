@@ -66,6 +66,8 @@ module Make = (Key: Comparable) => {
 
   // QUERY
 
+  let null = mp => TypedMap.is_empty(mp);
+
   let size = TypedMap.cardinal;
 
   let member = TypedMap.mem;
@@ -208,6 +210,9 @@ module Make = (Key: Comparable) => {
 
   let fromList = ps =>
     List.fold_right(((k, v)) => insert(k, v), ps, empty);
+
+  let fromArray = ps =>
+    Array.fold_right(((k, v)) => insert(k, v), ps, empty);
 
   // FILTER
 
