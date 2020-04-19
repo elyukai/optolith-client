@@ -1,14 +1,15 @@
-name: TypeScript/Reason CI Tests
+name: TS/RE Tests
 
 on:
   push:
-    branches: [ develop ]
+    branches: 
+    - develop
   pull_request:
-    branches: [ develop ]
+    branches:
+    - develop
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,8 +19,8 @@ jobs:
       with:
         node-version: 12.x
     - run: npm ci
-    - run: npm run ts:build --if-present
-    - run: npm run re:build --if-present
+    - run: npm run re:build
+    - run: npm run ts:build
     - run: npm test
       env:
         CI: true
