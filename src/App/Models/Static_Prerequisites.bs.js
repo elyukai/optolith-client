@@ -270,6 +270,75 @@ function increasableMultiEntry(json) {
         };
 }
 
+function replacementAtIndex(json) {
+  return /* tuple */[
+          Json_decode.field("index", Json_decode.$$int, json),
+          Json_decode.field("replacement", Json_decode.string, json)
+        ];
+}
+
+function tIndexL10n(json) {
+  return {
+          sex: JsonStrict$OptolithClient.optionalField("sexPrerequisite", Json_decode.string, json),
+          race: JsonStrict$OptolithClient.optionalField("racePrerequisite", Json_decode.string, json),
+          culture: JsonStrict$OptolithClient.optionalField("culturePrerequisite", Json_decode.string, json),
+          pact: JsonStrict$OptolithClient.optionalField("pactPrerequisite", Json_decode.string, json),
+          social: JsonStrict$OptolithClient.optionalField("socialStatusPrerequisite", Json_decode.string, json),
+          primaryAttribute: JsonStrict$OptolithClient.optionalField("primaryAttributePrerequisite", Json_decode.string, json),
+          activatable: JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
+                  return Json_decode.list(replacementAtIndex, param);
+                }), json),
+          activatableMultiEntry: JsonStrict$OptolithClient.optionalField("activatableMultiEntryPrerequisites", (function (param) {
+                  return Json_decode.list(replacementAtIndex, param);
+                }), json),
+          activatableMultiSelect: JsonStrict$OptolithClient.optionalField("activatableMultiSelectPrerequisites", (function (param) {
+                  return Json_decode.list(replacementAtIndex, param);
+                }), json),
+          increasable: JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
+                  return Json_decode.list(replacementAtIndex, param);
+                }), json),
+          increasableMultiEntry: JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
+                  return Json_decode.list(replacementAtIndex, param);
+                }), json)
+        };
+}
+
+function tIndexL10nAtLevel(json) {
+  return /* tuple */[
+          Json_decode.field("level", Json_decode.$$int, json),
+          Json_decode.field("hide", tIndexL10n, json)
+        ];
+}
+
+function tIndexWithLevelL10n(json) {
+  return {
+          sex: JsonStrict$OptolithClient.optionalField("sexPrerequisite", Json_decode.string, json),
+          race: JsonStrict$OptolithClient.optionalField("racePrerequisite", Json_decode.string, json),
+          culture: JsonStrict$OptolithClient.optionalField("culturePrerequisite", Json_decode.string, json),
+          pact: JsonStrict$OptolithClient.optionalField("pactPrerequisite", Json_decode.string, json),
+          social: JsonStrict$OptolithClient.optionalField("socialStatusPrerequisite", Json_decode.string, json),
+          primaryAttribute: JsonStrict$OptolithClient.optionalField("primaryAttributePrerequisite", Json_decode.string, json),
+          activatable: JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
+                  return Json_decode.list(replacementAtIndex, param);
+                }), json),
+          activatableMultiEntry: JsonStrict$OptolithClient.optionalField("activatableMultiEntryPrerequisites", (function (param) {
+                  return Json_decode.list(replacementAtIndex, param);
+                }), json),
+          activatableMultiSelect: JsonStrict$OptolithClient.optionalField("activatableMultiSelectPrerequisites", (function (param) {
+                  return Json_decode.list(replacementAtIndex, param);
+                }), json),
+          increasable: JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
+                  return Json_decode.list(replacementAtIndex, param);
+                }), json),
+          increasableMultiEntry: JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
+                  return Json_decode.list(replacementAtIndex, param);
+                }), json),
+          levels: JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
+                  return Json_decode.list(tIndexL10nAtLevel, param);
+                }), json)
+        };
+}
+
 var Decode = {
   oneOrManyInt: oneOrManyInt,
   sex: sex,
@@ -288,7 +357,11 @@ var Decode = {
   activatableSkill: activatableSkill,
   increasableId: increasableId,
   increasable: increasable,
-  increasableMultiEntry: increasableMultiEntry
+  increasableMultiEntry: increasableMultiEntry,
+  replacementAtIndex: replacementAtIndex,
+  tIndexL10n: tIndexL10n,
+  tIndexL10nAtLevel: tIndexL10nAtLevel,
+  tIndexWithLevelL10n: tIndexWithLevelL10n
 };
 
 exports.Decode = Decode;

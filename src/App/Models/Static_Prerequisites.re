@@ -347,4 +347,117 @@ module Decode = {
     id: json |> field("id", list(increasableId)),
     value: json |> field("value", int),
   };
+
+  let replacementAtIndex = json => (
+    json |> field("index", int),
+    json |> field("replacement", string),
+  );
+
+  type tIndexL10n = {
+    sex: Maybe.t(string),
+    race: Maybe.t(string),
+    culture: Maybe.t(string),
+    pact: Maybe.t(string),
+    social: Maybe.t(string),
+    primaryAttribute: Maybe.t(string),
+    activatable: Maybe.t(list((int, string))),
+    activatableMultiEntry: Maybe.t(list((int, string))),
+    activatableMultiSelect: Maybe.t(list((int, string))),
+    increasable: Maybe.t(list((int, string))),
+    increasableMultiEntry: Maybe.t(list((int, string))),
+  };
+
+  let tIndexL10n = json => {
+    sex: json |> optionalField("sexPrerequisite", string),
+    race: json |> optionalField("racePrerequisite", string),
+    culture: json |> optionalField("culturePrerequisite", string),
+    pact: json |> optionalField("pactPrerequisite", string),
+    social: json |> optionalField("socialStatusPrerequisite", string),
+    primaryAttribute:
+      json |> optionalField("primaryAttributePrerequisite", string),
+    activatable:
+      json
+      |> optionalField("activatablePrerequisites", list(replacementAtIndex)),
+    activatableMultiEntry:
+      json
+      |> optionalField(
+           "activatableMultiEntryPrerequisites",
+           list(replacementAtIndex),
+         ),
+    activatableMultiSelect:
+      json
+      |> optionalField(
+           "activatableMultiSelectPrerequisites",
+           list(replacementAtIndex),
+         ),
+    increasable:
+      json
+      |> optionalField("increasablePrerequisites", list(replacementAtIndex)),
+    increasableMultiEntry:
+      json
+      |> optionalField(
+           "increasableMultiEntryPrerequisites",
+           list(replacementAtIndex),
+         ),
+  };
+
+  let tIndexL10nAtLevel = json => (
+    json |> field("level", int),
+    json |> field("hide", tIndexL10n),
+  );
+
+  type tIndexWithLevelL10n = {
+    sex: Maybe.t(string),
+    race: Maybe.t(string),
+    culture: Maybe.t(string),
+    pact: Maybe.t(string),
+    social: Maybe.t(string),
+    primaryAttribute: Maybe.t(string),
+    activatable: Maybe.t(list((int, string))),
+    activatableMultiEntry: Maybe.t(list((int, string))),
+    activatableMultiSelect: Maybe.t(list((int, string))),
+    increasable: Maybe.t(list((int, string))),
+    increasableMultiEntry: Maybe.t(list((int, string))),
+    levels: Maybe.t(list((int, tIndexL10n))),
+  };
+
+  let tIndexWithLevelL10n = json => {
+    sex: json |> optionalField("sexPrerequisite", string),
+    race: json |> optionalField("racePrerequisite", string),
+    culture: json |> optionalField("culturePrerequisite", string),
+    pact: json |> optionalField("pactPrerequisite", string),
+    social: json |> optionalField("socialStatusPrerequisite", string),
+    primaryAttribute:
+      json |> optionalField("primaryAttributePrerequisite", string),
+    activatable:
+      json
+      |> optionalField("activatablePrerequisites", list(replacementAtIndex)),
+    activatableMultiEntry:
+      json
+      |> optionalField(
+           "activatableMultiEntryPrerequisites",
+           list(replacementAtIndex),
+         ),
+    activatableMultiSelect:
+      json
+      |> optionalField(
+           "activatableMultiSelectPrerequisites",
+           list(replacementAtIndex),
+         ),
+    increasable:
+      json
+      |> optionalField("increasablePrerequisites", list(replacementAtIndex)),
+    increasableMultiEntry:
+      json
+      |> optionalField(
+           "increasableMultiEntryPrerequisites",
+           list(replacementAtIndex),
+         ),
+    levels:
+      json
+      |> optionalField(
+           "increasableMultiEntryPrerequisites",
+           list(tIndexL10nAtLevel),
+         ),
+  };
 };

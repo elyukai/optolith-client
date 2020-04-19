@@ -43,13 +43,13 @@ Due to licensing, the YAML files containing the crunch elements from the books a
 
 Clone the repo.
 
-```
+```sh
 git clone https://github.com/elyukai/optolith-client.git
 ```
 
 Make sure Node.js (lastest version) is installed and run
 
-```
+```sh
 npm i
 ```
 
@@ -75,29 +75,31 @@ Example:
 
 ### First run
 
+Import YAML files.
+
+```sh
+npm run getstatic
+```
+
 Compile the source code. `ts:` is for TypeScript, `re:` for Reason/OCaml.
 
-```
-npm run ts:build
+You have to run the Reason build first as it generates TypeScript files.
+
+```sh
 npm run re:build
+npm run ts:build
 ```
 
 &hellip;or watch it for better performance for subsequent compiling on save.
 
-```
-npm run ts:watch
+```sh
 npm run re:watch
-```
-
-Import YAML files.
-
-```
-npm run getstatic
+npm run ts:watch
 ```
 
 Run the app:
 
-```
+```sh
 npm start
 ```
 
@@ -105,7 +107,7 @@ npm start
 
 To compile the SCSS files, use
 
-```
+```sh
 npm run css:build
 ```
 
@@ -113,12 +115,12 @@ npm run css:build
 
 Clean the files built by the Reason compiler.
 
-```
+```sh
 npm run re:clean
 ```
 
 Lint all project TS files using ESLint.
 
-```
+```sh
 npm run lint
 ```
