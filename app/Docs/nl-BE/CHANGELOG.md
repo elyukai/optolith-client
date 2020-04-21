@@ -2,28 +2,28 @@
 
 ### Probleemoplossingen
 
-- Description of combat technique selection for profession variants does not render properly. #539
-- Professions did not react to dependencies. #507
-- Textfield „Title“ in personal data had wrong label. #492
-- *Religion* was on SR 6 for most of the Blessed One professions. #475
-- States were overflowing on character sheet PDF but not in Optolith. #473
-- The `config.json` has still thrown errors for many users. The problem should be fixed, finally. #476
-- In very rare situations parts of the heroes file or the whole heroes file have been deleted. Because of this, saving heroes has been completely rewritten and condensed to prevent further issues. #477
-- Added missing Garethi dialect *Nostrian*. #480
-- Fixed prerequisites for SA Energy Control. #471
-- Fixed third-party licenses. #471
+- Beschrijving van gevechtstechnieken selectie voor beroepsvarianten wordt niet correct getoond. #539
+- Beroepen reageerden niet correct op vereisten. #507
+- Het tekstveld "Titel" in de persoonlijk data had een verkeerd label. #492
+- *Goden & Kulten* was 6 voor de meeste Gewijde beroepen. #475
+- Statussen waren te lang op je helden dokument PDF maar niet in Optolith. #473
+- De `config.json` had nog altijd fouten voor veel gebruikers. Het probleem zou eindelijk opgelost moeten zijn. #476
+- In hele zeldzame situaties werd de helden file geheel of gedeeltelijk verwijderd. Het saven van helden is geheel herschreven en compacter gemaakt om verdere problemen te voorkomen. #477
+- Voeg het ontbrekende Garethi dialect *Nostrian* toe. #480
+- Vereisten van de Competentie Energie Controle zijn aangepast. #471
+- Derde parij licenses zijn aangepast. #471
 
-### Known Issues
+### Bekende problemen
 
-- Some of the entries with more complex prerequisites might *display* them wrong but *handle* them correct.
+- Sommige elementen met complexe vereisten worden verkeerd getoont maar wel correct behandeld.
 
 ## 1.3.1
 
 ### Probleemoplossingen
 
-- In the French version, you were not able to create characters, because you could not choose any publication, race, ... #449
-- There was an error thrown by "unknown keys" in the config. #450
-- On character sheet, states were only displayed in one column if the amount of states was even. #448
+- In de franse versie kon je geen helden maken, want je kon geen publicaties, ras, ... kiezen #449
+- Er werd een error gemeld voor "unknown keys" in de config. #450
+- Op je helden document werden staten enkel getoond in een enkele kolom als het aantal staten even was. #448
 
 ## 1.3.0
 
