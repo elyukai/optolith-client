@@ -11,7 +11,7 @@
 - In hele zeldzame situaties werd de helden file geheel of gedeeltelijk verwijderd. Het saven van helden is geheel herschreven en compacter gemaakt om verdere problemen te voorkomen. #477
 - Voeg het ontbrekende Garethi dialect *Nostrian* toe. #480
 - Vereisten van de Competentie Energie Controle zijn aangepast. #471
-- Derde parij licenses zijn aangepast. #471
+- Derde parij licenties zijn aangepast. #471
 
 ### Bekende problemen
 
