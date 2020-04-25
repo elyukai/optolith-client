@@ -9,9 +9,3 @@ export type oneOrMany<a> =
     { tag: "One"; value: a }
   | { tag: "Many"; value: list<a> };
 export type OneOrMany<a> = oneOrMany<a>;
-
-// tslint:disable-next-line:interface-over-type-literal
-export type oneOrManyArr<a> = 
-    { tag: "One"; value: a }
-  | { tag: "Many"; value: a[] };
-export type OneOrManyArr<a> = oneOrManyArr<a>;

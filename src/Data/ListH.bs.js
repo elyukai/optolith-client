@@ -7,6 +7,7 @@ var Js_int = require("bs-platform/lib/js/js_int.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
 var Pervasives = require("bs-platform/lib/js/pervasives.js");
+var Maybe$OptolithClient = require("./Maybe.bs.js");
 var Function$OptolithClient = require("./Function.bs.js");
 
 function $less$$great(f, xs) {
@@ -325,6 +326,21 @@ var Foldable = {
   find: find
 };
 
+function $less$plus$great(x, xs) {
+  return /* :: */[
+          x,
+          xs
+        ];
+}
+
+function lookup(k, xs) {
+  return Maybe$OptolithClient.Functor.$less$amp$great(find((function (param) {
+                    return Caml_obj.caml_equal(k, param[0]);
+                  }), xs), (function (prim) {
+                return prim[1];
+              }));
+}
+
 var map = $less$$great;
 
 exports.Functor = Functor;
@@ -332,5 +348,9 @@ exports.Applicative = Applicative;
 exports.Alternative = Alternative;
 exports.Monad = Monad;
 exports.Foldable = Foldable;
+exports.$less$plus$great = $less$plus$great;
 exports.map = map;
+exports.elem = elem;
+exports.notElem = notElem;
+exports.lookup = lookup;
 /* No side effect */

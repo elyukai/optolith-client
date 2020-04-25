@@ -1,71 +1,71 @@
 [@gentype "Id"]
-type id =
-  | ExperienceLevel(int)
-  | Race(int)
-  | Culture(int)
-  | Profession(int)
-  | Attribute(int)
-  | Advantage(int)
-  | Disadvantage(int)
-  | Skill(int)
-  | CombatTechnique(int)
-  | Spell(int)
-  | Curse(int)
-  | ElvenMagicalSong(int)
-  | DominationRitual(int)
-  | MagicalMelody(int)
-  | MagicalDance(int)
-  | RogueSpell(int)
-  | AnimistForce(int)
-  | GeodeRitual(int)
-  | ZibiljaRitual(int)
-  | Cantrip(int)
-  | LiturgicalChant(int)
-  | Blessing(int)
-  | SpecialAbility(int)
-  | Item(int)
-  | EquipmentPackage(int)
-  | HitZoneArmor(int)
-  | Familiar(int)
-  | Animal(int)
-  | FocusRule(int)
-  | OptionalRule(int)
-  | Condition(int)
-  | State(int);
+type id = [
+  | `ExperienceLevel(int)
+  | `Race(int)
+  | `Culture(int)
+  | `Profession(int)
+  | `Attribute(int)
+  | `Advantage(int)
+  | `Disadvantage(int)
+  | `Skill(int)
+  | `CombatTechnique(int)
+  | `Spell(int)
+  | `Curse(int)
+  | `ElvenMagicalSong(int)
+  | `DominationRitual(int)
+  | `MagicalMelody(int)
+  | `MagicalDance(int)
+  | `RogueSpell(int)
+  | `AnimistForce(int)
+  | `GeodeRitual(int)
+  | `ZibiljaRitual(int)
+  | `Cantrip(int)
+  | `LiturgicalChant(int)
+  | `Blessing(int)
+  | `SpecialAbility(int)
+  | `Item(int)
+  | `EquipmentPackage(int)
+  | `HitZoneArmor(int)
+  | `Familiar(int)
+  | `Animal(int)
+  | `FocusRule(int)
+  | `OptionalRule(int)
+  | `Condition(int)
+  | `State(int)
+];
 
 [@gentype "ActivatableId"]
-type activatableId =
-  | Advantage(int)
-  | Disadvantage(int)
-  | SpecialAbility(int);
+type activatableId = [
+  | `Advantage(int)
+  | `Disadvantage(int)
+  | `SpecialAbility(int)
+];
 
 [@gentype "ActivatableAndSkillId"]
-type activatableAndSkillId =
-  | Advantage(int)
-  | Disadvantage(int)
-  | SpecialAbility(int)
-  | Spell(int)
-  | LiturgicalChant(int);
+type activatableAndSkillId = [
+  | `Advantage(int)
+  | `Disadvantage(int)
+  | `SpecialAbility(int)
+  | `Spell(int)
+  | `LiturgicalChant(int)
+];
 
 [@gentype "ActivatableSkillId"]
-type activatableSkillId =
-  | Spell(int)
-  | LiturgicalChant(int);
+type activatableSkillId = [ | `Spell(int) | `LiturgicalChant(int)];
 
 [@gentype "SkillId"]
-type skillId =
-  | Skill(int)
-  | CombatTechnique(int);
+type skillId = [ | `Skill(int) | `CombatTechnique(int)];
 
 [@gentype "SelectOptionId"]
-type selectOptionId =
-  | Generic(int)
-  | Skill(int)
-  | CombatTechnique(int)
-  | Spell(int)
-  | Cantrip(int)
-  | LiturgicalChant(int)
-  | Blessing(int);
+type selectOptionId = [
+  | `Generic(int)
+  | `Skill(int)
+  | `CombatTechnique(int)
+  | `Spell(int)
+  | `Cantrip(int)
+  | `LiturgicalChant(int)
+  | `Blessing(int)
+];
 
 [@gentype "HitZoneArmorZoneItemId"]
 type hitZoneArmorZoneItemId =

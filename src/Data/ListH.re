@@ -174,4 +174,19 @@ module Foldable = {
     };
 };
 
+// Basic Functions
+
+let (<+>) = (x, xs) => [x, ...xs];
+
+// List transformations
+
 let map = Functor.(<$>);
+
+// Searching Lists
+
+let elem = Foldable.elem;
+
+let notElem = Foldable.notElem;
+
+let lookup = (k, xs) =>
+  Maybe.Functor.(Foldable.find(((k', _)) => k == k', xs) <&> snd);

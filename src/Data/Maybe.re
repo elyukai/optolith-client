@@ -12,6 +12,8 @@ module Functor = {
     | Just(x) => x->f->Just
     | Nothing => Nothing
     };
+
+  let (<&>) = (xs, f) => f <$> xs;
 };
 
 module Applicative = {

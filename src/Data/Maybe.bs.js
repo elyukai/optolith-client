@@ -14,8 +14,13 @@ function $less$$great(f, mx) {
   }
 }
 
+function $less$amp$great(xs, f) {
+  return $less$$great(f, xs);
+}
+
 var Functor = {
-  $less$$great: $less$$great
+  $less$$great: $less$$great,
+  $less$amp$great: $less$amp$great
 };
 
 function $less$star$great(mf, mx) {

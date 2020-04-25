@@ -40,7 +40,7 @@ module State = Static_State;
 module ZibiljaRitual = Static_ZibiljaRitual;
 
 type t = {
-  // advantages: IntMap.t(Advantage.t),
+  advantages: IntMap.t(Advantage.t),
   animistForces: IntMap.t(AnimistForce.t),
   arcaneBardTraditions: IntMap.t(string),
   arcaneDancerTraditions: IntMap.t(string),
@@ -58,10 +58,10 @@ type t = {
   cultures: IntMap.t(Culture.t),
   curses: IntMap.t(Curse.t),
   derivedCharacteristics: IntMap.t(DerivedCharacteristic.t),
-  // disadvantages: IntMap.t(Disadvantage.t),
+  disadvantages: IntMap.t(Disadvantage.t),
   dominationRituals: IntMap.t(DominationRitual.t),
   elvenMagicalSongs: IntMap.t(ElvenMagicalSong.t),
-  // itemTemplates: IntMap.t(ItemTemplate.t),
+  items: IntMap.t(Item.t),
   equipmentGroups: IntMap.t(string),
   equipmentPackages: IntMap.t(EquipmentPackage.t),
   experienceLevels: IntMap.t(ExperienceLevel.t),
@@ -75,6 +75,7 @@ type t = {
   magicalDances: IntMap.t(MagicalDance.t),
   magicalMelodies: IntMap.t(MagicalMelody.t),
   magicalTraditions: IntMap.t(MagicalTradition.t),
+  messages: Messages.t,
   optionalRules: IntMap.t(OptionalRule.t),
   pacts: IntMap.t(PactCategory.t),
   professions: IntMap.t(Profession.t),
@@ -86,7 +87,7 @@ type t = {
   skillGroups: IntMap.t(Skill.group),
   skills: IntMap.t(Skill.t),
   socialStatuses: IntMap.t(string),
-  // specialAbilities: IntMap.t(SpecialAbility.t),
+  specialAbilities: IntMap.t(SpecialAbility.t),
   specialAbilityGroups: IntMap.t(string),
   spellEnhancements: IntMap.t(SelectOption.t),
   spellGroups: IntMap.t(string),
@@ -94,6 +95,5 @@ type t = {
   states: IntMap.t(State.t),
   subjects: IntMap.t(string),
   tribes: IntMap.t(string),
-  // ui: L10n,
   zibiljaRituals: IntMap.t(ZibiljaRitual.t),
 };

@@ -209,7 +209,10 @@ function variant(univ, l10n) {
               skill: univ.skillSelectOptions,
               guildMageUnfamiliarSpell: Maybe$OptolithClient.maybe(false, (function (param) {
                       return ListH$OptolithClient.Foldable.any((function (x) {
-                                    if (Caml_obj.caml_equal(x.id, /* SpecialAbility */Block.__(2, [Ids$OptolithClient.SpecialAbilityId.traditionGuildMages]))) {
+                                    if (Caml_obj.caml_equal(x.id, /* `SpecialAbility */[
+                                            -789492591,
+                                            Ids$OptolithClient.SpecialAbilityId.traditionGuildMages
+                                          ])) {
                                       return x.active;
                                     } else {
                                       return false;
@@ -355,7 +358,10 @@ function t(univ, l10n) {
             skill: univ.skillSelectOptions,
             guildMageUnfamiliarSpell: Maybe$OptolithClient.maybe(false, (function (param) {
                     return ListH$OptolithClient.Foldable.any((function (x) {
-                                  if (Caml_obj.caml_equal(x.id, /* SpecialAbility */Block.__(2, [Ids$OptolithClient.SpecialAbilityId.traditionGuildMages]))) {
+                                  if (Caml_obj.caml_equal(x.id, /* `SpecialAbility */[
+                                          -789492591,
+                                          Ids$OptolithClient.SpecialAbilityId.traditionGuildMages
+                                        ])) {
                                     return x.active;
                                   } else {
                                     return false;

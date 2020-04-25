@@ -75,4 +75,4 @@ var Decode = {
 };
 
 exports.Decode = Decode;
-/* No side effect */
+/* Static_Prerequisites-OptolithClient Not a pure module */

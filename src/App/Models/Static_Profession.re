@@ -373,7 +373,8 @@ module Decode = {
           Maybe.maybe(
             false,
             ListH.Foldable.any((x: Static_Prerequisites.activatable) =>
-              x.id == SpecialAbility(Ids.SpecialAbilityId.traditionGuildMages)
+              x.id
+              == `SpecialAbility(Ids.SpecialAbilityId.traditionGuildMages)
               && x.active
             ),
             univ.activatablePrerequisites,
@@ -602,7 +603,7 @@ module Decode = {
         Maybe.maybe(
           false,
           ListH.Foldable.any((x: Static_Prerequisites.activatable) =>
-            x.id == SpecialAbility(Ids.SpecialAbilityId.traditionGuildMages)
+            x.id == `SpecialAbility(Ids.SpecialAbilityId.traditionGuildMages)
             && x.active
           ),
           univ.activatablePrerequisites,
