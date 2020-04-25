@@ -1496,7 +1496,7 @@ type petsAddEdit = {
   deleteAvatarBtn: string,
   name: string,
   sizeCategory: string,
-  type: string,
+  type_: string,
   apSpent: string,
   totalAp: string,
   protection: string,
