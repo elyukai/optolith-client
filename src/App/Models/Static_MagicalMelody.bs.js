@@ -6,7 +6,7 @@ var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var IC$OptolithClient = require("../Utilities/IC.bs.js");
 var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
 var IntSet$OptolithClient = require("../../Data/IntSet.bs.js");
-var JsonStrict$OptolithClient = require("../Utilities/YAML/JsonStrict.bs.js");
+var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
 

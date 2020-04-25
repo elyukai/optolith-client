@@ -2,7 +2,6 @@
 'use strict';
 
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var RawUIMessages$OptolithClient = require("./RawUIMessages.bs.js");
 
 function l10n(json) {
   return /* tuple */[
@@ -274,18 +273,6 @@ var TribesL10n = {
   fromJson: fromJson$17
 };
 
-function fromJson$18(yaml) {
-  return Json_decode.list(RawUIMessages$OptolithClient.l10n, yaml.uiL10n);
-}
-
-var UI = {
-  MacOSMenuBar: RawUIMessages$OptolithClient.MacOSMenuBar,
-  Initialization: RawUIMessages$OptolithClient.Initialization,
-  Header: RawUIMessages$OptolithClient.Header,
-  l10n: RawUIMessages$OptolithClient.l10n,
-  fromJson: fromJson$18
-};
-
 exports.ArcaneBardTraditionsL10n = ArcaneBardTraditionsL10n;
 exports.ArcaneDancerTraditionsL10n = ArcaneDancerTraditionsL10n;
 exports.ArmorTypesL10n = ArmorTypesL10n;
@@ -304,5 +291,4 @@ exports.SpellGroupsL10n = SpellGroupsL10n;
 exports.SubjectsL10n = SubjectsL10n;
 exports.SupportedLanguagesL10n = SupportedLanguagesL10n;
 exports.TribesL10n = TribesL10n;
-exports.UI = UI;
 /* No side effect */

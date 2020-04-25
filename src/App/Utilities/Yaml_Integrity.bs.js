@@ -4,8 +4,8 @@
 var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var IntMap$OptolithClient = require("../../../Data/IntMap.bs.js");
-var IntSet$OptolithClient = require("../../../Data/IntSet.bs.js");
+var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var IntSet$OptolithClient = require("../../Data/IntSet.bs.js");
 
 function uniquePairs(xs) {
   return List.fold_right((function (param, mp) {

@@ -3,7 +3,7 @@
 
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
-var JsonStrict$OptolithClient = require("../Utilities/YAML/JsonStrict.bs.js");
+var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
 
 function categoryL10n(json) {
   return {

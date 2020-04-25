@@ -3,7 +3,7 @@
 
 var Block = require("bs-platform/lib/js/block.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var JsonStrict$OptolithClient = require("../Utilities/YAML/JsonStrict.bs.js");
+var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
 var Static_SelectOption$OptolithClient = require("./Static_SelectOption.bs.js");

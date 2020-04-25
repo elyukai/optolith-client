@@ -7,7 +7,7 @@ var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var ListH$OptolithClient = require("../../Data/ListH.bs.js");
 var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
 var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
-var JsonStrict$OptolithClient = require("../Utilities/YAML/JsonStrict.bs.js");
+var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
 
 function partial_arg_000(param) {
   return Json_decode.map((function (id) {

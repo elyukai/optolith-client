@@ -9,7 +9,7 @@ var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
 var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
 var IntSet$OptolithClient = require("../../Data/IntSet.bs.js");
 var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
-var JsonStrict$OptolithClient = require("../Utilities/YAML/JsonStrict.bs.js");
+var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
 

@@ -253,9 +253,3 @@ module TribesL10n = {
 
   let fromJson = yaml => yaml.tribesL10n |> list(l10n);
 };
-
-module UI = {
-  include RawUIMessages;
-
-  let fromJson = yaml => yaml.uiL10n |> list(l10n);
-};

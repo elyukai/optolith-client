@@ -2,7 +2,7 @@
 'use strict';
 
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var JsonStrict$OptolithClient = require("../Utilities/YAML/JsonStrict.bs.js");
+var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
 
 function tL10n(json) {
   return {
