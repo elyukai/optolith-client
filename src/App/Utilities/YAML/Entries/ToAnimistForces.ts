@@ -44,7 +44,7 @@ export const toAnimistForces : YamlFileConverter<string, Record<AnimistForce>>
                                  (yaml_mp : YamlNameMap) => zipBy ("id")
                                                                   (yaml_mp.AnimistForcesUniv)
                                                                   (yaml_mp.AnimistForcesL10n)
-                                                                  (yaml_mp.AnimistForcesDefault),
+                                                                  (yaml_mp.AnimistForcesL10nDefault),
                                  bindF (pipe (
                                    mapM (toAnimistForce),
                                    bindF (toMapIntegrity),

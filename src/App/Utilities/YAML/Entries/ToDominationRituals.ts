@@ -44,7 +44,7 @@ export const toDominationRituals : YamlFileConverter<string, Record<DR>>
                                        zipBy ("id")
                                              (yaml_mp.DominationRitualsUniv)
                                              (yaml_mp.DominationRitualsL10n)
-                                             (yaml_mp.DominationRitualsDefault),
+                                             (yaml_mp.DominationRitualsL10nDefault),
                                      bindF (pipe (
                                        mapM (toDR),
                                        bindF (toMapIntegrity),

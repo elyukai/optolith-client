@@ -18,7 +18,7 @@ const toSpellGroup : (x : SpellGroupL10n) => [number, Record<NumIdName>]
 export const toSpellGroups : YamlFileConverter<number, Record<NumIdName>>
                            = pipe (
                                yaml_mp => mergeBy("id")
-                                                 (yaml_mp.SpellGroupsDefault)
+                                                 (yaml_mp.SpellGroupsL10nDefault)
                                                  (yaml_mp.SpellGroupsL10n),
                                map (toSpellGroup),
                                toMapIntegrity,

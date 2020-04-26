@@ -203,7 +203,7 @@ export const toItemTemplates : YamlFileConverter<string, Record<ItemTemplate>>
                                    zipBy ("id")
                                          (yaml_mp.EquipmentUniv)
                                          (yaml_mp.EquipmentL10n)
-                                         (yaml_mp.EquipmentDefault),
+                                         (yaml_mp.EquipmentL10nDefault),
                                  bindF (pipe (
                                    mapM (toItemTemplate),
                                    bindF (toMapIntegrity),

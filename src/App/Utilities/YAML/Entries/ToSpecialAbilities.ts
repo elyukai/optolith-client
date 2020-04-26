@@ -162,7 +162,7 @@ export const toSpecialAbilities : (blessings : OrderedMap<string, Record<Blessin
                                     (yaml_mp : YamlNameMap) => zipBy ("id")
                                                                      (yaml_mp.SpecialAbilitiesUniv)
                                                                      (yaml_mp.SpecialAbilitiesL10n)
-                                                                     (yaml_mp.SpecialAbilitiesDefault),
+                                                                     (yaml_mp.SpecialAbilitiesL10nDefault),
                                     bindF (pipe (
                                       mapM (toSA (blessings)
                                                  (cantrips)

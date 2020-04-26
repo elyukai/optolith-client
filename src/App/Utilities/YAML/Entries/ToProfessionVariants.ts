@@ -152,7 +152,7 @@ export const toProfessionVariants : YamlFileConverter<string, Record<ProfessionV
                                         zipBy ("id")
                                               (yaml_mp.ProfessionVariantsUniv)
                                               (yaml_mp.ProfessionVariantsL10n)
-                                              (yaml_mp.ProfessionVariantsDefault),
+                                              (yaml_mp.ProfessionVariantsL10nDefault),
                                       bindF (pipe (
                                         mapM (toPV),
                                         bindF (toMapIntegrity),

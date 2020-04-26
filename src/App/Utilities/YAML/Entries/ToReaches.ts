@@ -18,7 +18,7 @@ const toReach : (x : ReachL10n) => [number, Record<NumIdName>]
 export const toReaches : YamlFileConverter<number, Record<NumIdName>>
                        = pipe (
                            yaml_mp => mergeBy("id")
-                                             (yaml_mp.ReachesDefault)
+                                             (yaml_mp.ReachesL10nDefault)
                                              (yaml_mp.ReachesL10n),
                            map (toReach),
                            toMapIntegrity,

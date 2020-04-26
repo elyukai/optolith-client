@@ -13,7 +13,7 @@ import { mergeBy } from "../ZipById"
 export const toBooks : YamlFileConverter<string, Record<Book>>
                      = pipe (
                        yaml_mp => mergeBy("id")
-                                         (yaml_mp.BooksDefault)
+                                         (yaml_mp.BooksL10nDefault)
                                          (yaml_mp.BooksL10n),
                        map ((x) : [string, Record<Book>] => [ x .id, Book (x) ]),
                        toMapIntegrity,

@@ -55,7 +55,7 @@ export const toGeodeRituals : YamlFileConverter<string, Record<GeodeRitual>>
                                 (yaml_mp : YamlNameMap) => zipBy ("id")
                                                                  (yaml_mp.GeodeRitualsUniv)
                                                                  (yaml_mp.GeodeRitualsL10n)
-                                                                 (yaml_mp.GeodeRitualsDefault),
+                                                                 (yaml_mp.GeodeRitualsL10nDefault),
                                 bindF (pipe (
                                   mapM (toGeodeRitual),
                                   bindF (toMapIntegrity),

@@ -29,7 +29,7 @@ const toPact : (l10n : PactL10n) => [number, Record<PactCategory>]
 export const toPacts : YamlFileConverter<number, Record<PactCategory>>
                           = pipe (
                               yaml_mp => mergeBy("id")
-                                                (yaml_mp.PactsDefault)
+                                                (yaml_mp.PactsL10nDefault)
                                                 (yaml_mp.PactsL10n),
                               map (toPact),
                               toMapIntegrity,

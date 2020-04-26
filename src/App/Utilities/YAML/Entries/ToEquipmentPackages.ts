@@ -34,7 +34,7 @@ export const toEquipmentPackages : YamlFileConverter<string, Record<EquipmentPac
                                        zipBy ("id")
                                              (yaml_mp.EquipmentPackagesUniv)
                                              (yaml_mp.EquipmentPackagesL10n)
-                                             (yaml_mp.EquipmentPackagesDefault),
+                                             (yaml_mp.EquipmentPackagesL10nDefault),
                                      bindF (pipe (
                                        mapM (toEPKG),
                                        bindF (toMapIntegrity),

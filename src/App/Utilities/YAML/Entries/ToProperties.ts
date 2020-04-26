@@ -18,7 +18,7 @@ const toProperty : (x : PropertyL10n) => [number, Record<NumIdName>]
 export const toProperties : YamlFileConverter<number, Record<NumIdName>>
                           = pipe (
                               yaml_mp => mergeBy("id")
-                                                (yaml_mp.PropertiesDefault)
+                                                (yaml_mp.PropertiesL10nDefault)
                                                 (yaml_mp.PropertiesL10n),
                               map (toProperty),
                               toMapIntegrity,

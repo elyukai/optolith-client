@@ -18,7 +18,7 @@ const toCombatSAGroup : (x : CombatSpecialAbilityGroupL10n) => [number, Record<N
 export const toCombatSpecialAbilityGroups : YamlFileConverter<number, Record<NumIdName>>
                                     = pipe (
                                         yaml_mp => mergeBy("id")
-                                                          (yaml_mp.CombatSpecialAbilityGroupsDefault)
+                                                          (yaml_mp.CombatSpecialAbilityGroupsL10nDefault)
                                                           (yaml_mp.CombatSpecialAbilityGroupsL10n),
                                         map (toCombatSAGroup),
                                         toMapIntegrity,

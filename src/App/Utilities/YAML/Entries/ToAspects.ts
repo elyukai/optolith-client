@@ -18,7 +18,7 @@ const toAspect : (x : AspectL10n) => [number, Record<NumIdName>]
 export const toAspects : YamlFileConverter<number, Record<NumIdName>>
                        = pipe (
                            yaml_mp => mergeBy("id")
-                                             (yaml_mp.AspectsDefault)
+                                             (yaml_mp.AspectsL10nDefault)
                                              (yaml_mp.AspectsL10n),
                            map (toAspect),
                            toMapIntegrity,

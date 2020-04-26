@@ -49,7 +49,7 @@ export const toCantrips : YamlFileConverter<string, Record<Cantrip>>
                           (yaml_mp : YamlNameMap) => zipBy ("id")
                                                            (yaml_mp.CantripsUniv)
                                                            (yaml_mp.CantripsL10n)
-                                                           (yaml_mp.CantripsDefault),
+                                                           (yaml_mp.CantripsL10nDefault),
                           bindF (pipe (
                             mapM (toCantrip),
                             bindF (toMapIntegrity),

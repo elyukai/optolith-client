@@ -32,7 +32,7 @@ const toDC : (l10n : DerivedCharacteristicL10n) => [DCId, Record<DerivedCharacte
 export const toDerivedCharacteristics : YamlFileConverter<DCId, Record<DerivedCharacteristic>>
                                       = pipe (
                                           yaml_mp => mergeBy("id")
-                                                            (yaml_mp.DerivedCharacteristicsDefault)
+                                                            (yaml_mp.DerivedCharacteristicsL10nDefault)
                                                             (yaml_mp.DerivedCharacteristicsL10n),
                                           map (toDC),
                                           toMapIntegrity,

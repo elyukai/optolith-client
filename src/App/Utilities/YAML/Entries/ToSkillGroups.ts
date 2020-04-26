@@ -18,7 +18,7 @@ const toSkillGroup : (x : SkillGroupL10n) => [number, Record<SkillGroup>]
 export const toSkillGroups : YamlFileConverter<number, Record<SkillGroup>>
                            = pipe (
                                yaml_mp => mergeBy("id")
-                                                 (yaml_mp.SkillGroupsDefault)
+                                                 (yaml_mp.SkillGroupsL10nDefault)
                                                  (yaml_mp.SkillGroupsL10n),
                                map (toSkillGroup),
                                toMapIntegrity,

@@ -29,7 +29,7 @@ const toState : (l10n : StateL10n) => [string, Record<State>]
 export const toStates : YamlFileConverter<string, Record<State>>
                       = pipe (
                           yaml_mp => mergeBy("id")
-                                            (yaml_mp.StatesDefault)
+                                            (yaml_mp.StatesL10nDefault)
                                             (yaml_mp.StatesL10n),
                           map (toState),
                           toMapIntegrity,

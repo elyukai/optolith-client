@@ -18,7 +18,7 @@ const toHairColor : (x : HairColorL10n) => [number, Record<NumIdName>]
 export const toHairColors : YamlFileConverter<number, Record<NumIdName>>
                           = pipe (
                               yaml_mp => mergeBy("id")
-                                                (yaml_mp.HairColorsDefault)
+                                                (yaml_mp.HairColorsL10nDefault)
                                                 (yaml_mp.HairColorsL10n),
                               map (toHairColor),
                               toMapIntegrity,

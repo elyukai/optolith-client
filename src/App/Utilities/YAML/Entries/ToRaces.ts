@@ -182,7 +182,7 @@ export const toRaces : YamlFileConverter<string, Record<Race>>
                            zipBy ("id")
                                  (yaml_mp.RacesUniv)
                                  (yaml_mp.RacesL10n)
-                                 (yaml_mp.RacesDefault),
+                                 (yaml_mp.RacesL10nDefault),
                          bindF (pipe (
                            map (toRace),
                            toMapIntegrity,

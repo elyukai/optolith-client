@@ -124,7 +124,7 @@ export const toSkills : YamlFileConverter<string, Record<Skill>>
                           (yaml_mp : YamlNameMap) => zipBy ("id")
                                                            (yaml_mp.SkillsUniv)
                                                            (yaml_mp.SkillsL10n)
-                                                           (yaml_mp.SkillsDefault),
+                                                           (yaml_mp.SkillsL10nDefault),
                           bindF (pipe (
                             mapM (toSkill),
                             bindF (toMapIntegrity),

@@ -36,7 +36,7 @@ export const toExperienceLevels : YamlFileConverter<string, Record<ExperienceLev
                                       zipBy ("id")
                                             (yaml_mp.ExperienceLevelsUniv)
                                             (yaml_mp.ExperienceLevelsL10n)
-                                            (yaml_mp.ExperienceLevelsDefault),
+                                            (yaml_mp.ExperienceLevelsL10nDefault),
                                     bindF (pipe (
                                       mapM (toEL),
                                       bindF (toMapIntegrity),

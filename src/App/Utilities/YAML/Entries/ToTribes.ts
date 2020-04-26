@@ -18,7 +18,7 @@ const toTribe : (x : TribeL10n) => [number, Record<NumIdName>]
 export const toTribes : YamlFileConverter<number, Record<NumIdName>>
                       = pipe (
                           yaml_mp => mergeBy("id")
-                                            (yaml_mp.TribesDefault)
+                                            (yaml_mp.TribesL10nDefault)
                                             (yaml_mp.TribesL10n),
                           map (toTribe),
                           toMapIntegrity,

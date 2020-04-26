@@ -7,7 +7,6 @@ import { parseByFile } from "./YAML/ParseByFile"
 import { readYamlL10n, readYamlUniv } from "./YAML/Parser"
 import { getAllSchemes } from "./YAML/Schemes"
 import { toWiki } from "./YAML/ToRecordsByFile"
-import { traceShowId } from "../../Debug/Trace"
 
 export const parseStaticData : (locale : string) => Promise<Either<Error[], StaticDataRecord>>
                              = async locale => {

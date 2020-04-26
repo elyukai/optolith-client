@@ -18,7 +18,7 @@ const toEyeColor : (x : EyeColorL10n) => [number, Record<NumIdName>]
 export const toEyeColors : YamlFileConverter<number, Record<NumIdName>>
                          = pipe (
                              yaml_mp => mergeBy("id")
-                                               (yaml_mp.EyeColorsDefault)
+                                               (yaml_mp.EyeColorsL10nDefault)
                                                (yaml_mp.EyeColorsL10n),
                              map (toEyeColor),
                              toMapIntegrity,

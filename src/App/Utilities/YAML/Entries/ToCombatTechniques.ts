@@ -43,7 +43,7 @@ export const toCombatTechniques : YamlFileConverter<string, Record<CombatTechniq
                                       zipBy ("id")
                                             (yaml_mp.CombatTechniquesUniv)
                                             (yaml_mp.CombatTechniquesL10n)
-                                            (yaml_mp.CombatTechniquesDefault),
+                                            (yaml_mp.CombatTechniquesL10nDefault),
                                     bindF (pipe (
                                       map (toCT),
                                       toMapIntegrity,
