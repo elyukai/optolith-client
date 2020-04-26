@@ -8,6 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { SubjectL10n } from "../Schema/Subjects/Subjects.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toSubject : (x : SubjectL10n) => [number, Record<NumIdName>]
@@ -16,7 +17,9 @@ const toSubject : (x : SubjectL10n) => [number, Record<NumIdName>]
 
 export const toSubjects : YamlFileConverter<number, Record<NumIdName>>
                         = pipe (
-                            yaml_mp => yaml_mp.SubjectsL10n,
+                            yaml_mp => mergeBy("id")
+                                              (yaml_mp.SubjectsDefault)
+                                              (yaml_mp.SubjectsL10n),
                             map (toSubject),
                             toMapIntegrity,
                             second (fromMap)

@@ -8,6 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { SpellGroupL10n } from "../Schema/SpellGroups/SpellGroups.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toSpellGroup : (x : SpellGroupL10n) => [number, Record<NumIdName>]
@@ -16,7 +17,9 @@ const toSpellGroup : (x : SpellGroupL10n) => [number, Record<NumIdName>]
 
 export const toSpellGroups : YamlFileConverter<number, Record<NumIdName>>
                            = pipe (
-                               yaml_mp => yaml_mp.SpellGroupsL10n,
+                               yaml_mp => mergeBy("id")
+                                                 (yaml_mp.SpellGroupsDefault)
+                                                 (yaml_mp.SpellGroupsL10n),
                                map (toSpellGroup),
                                toMapIntegrity,
                                second (fromMap)

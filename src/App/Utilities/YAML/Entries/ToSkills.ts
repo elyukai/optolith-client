@@ -60,6 +60,7 @@ const toUses : (x : [SkillUniv, SkillL10n]) => Either<Error[], List<Record<Use>>
                    : pipe_ (
                        zipBy ("id")
                              (univ.uses)
+                             (l10n.uses)
                              (l10n.uses),
                        second (Just)
                      ),
@@ -122,7 +123,8 @@ export const toSkills : YamlFileConverter<string, Record<Skill>>
                       = pipe (
                           (yaml_mp : YamlNameMap) => zipBy ("id")
                                                            (yaml_mp.SkillsUniv)
-                                                           (yaml_mp.SkillsL10n),
+                                                           (yaml_mp.SkillsL10n)
+                                                           (yaml_mp.SkillsDefault),
                           bindF (pipe (
                             mapM (toSkill),
                             bindF (toMapIntegrity),

@@ -8,6 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { SocialStatusL10n } from "../Schema/SocialStatuses/SocialStatuses.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toSocialStatus : (x : SocialStatusL10n) => [number, Record<NumIdName>]
@@ -16,7 +17,9 @@ const toSocialStatus : (x : SocialStatusL10n) => [number, Record<NumIdName>]
 
 export const toSocialStatuses : YamlFileConverter<number, Record<NumIdName>>
                                     = pipe (
-                                        yaml_mp => yaml_mp.SocialStatusesL10n,
+                                        yaml_mp => mergeBy("id")
+                                                          (yaml_mp.SocialStatusesDefault)
+                                                          (yaml_mp.SocialStatusesL10n),
                                         map (toSocialStatus),
                                         toMapIntegrity,
                                         second (fromMap)

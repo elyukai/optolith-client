@@ -12,6 +12,30 @@ export type ObjectWithKey<K extends string, A extends string | number> = {
   [B in K] : A
 }
 
+/**
+ * merges two arrays by the property name 'key'. If the element exists in main, it
+ * will be used, if not the element from def will be used.
+ */
+export const mergeBy : <K extends string> (key : K)
+                  => <A extends string | number, B extends ObjectWithKey<K, A>> (def: B[])
+                  => (main : B[])
+                  => B[]
+                  = key => def => main => {
+                    type A1 = ArrayValue<typeof def> extends ObjectWithKey<string, infer A>
+                    ? A
+                    : never
+                    const result : ArrayValue<typeof def>[] = []
+
+                    for (const d of def)
+                    {
+                      const m = main.find (x => (x[key] as A1) === (d[key] as A1))
+
+                      result.push ( (m === undefined) ? d : m )
+                    }
+
+                    return result;
+                  }
+
 
 /**
  * `zipById key os rs` zips two arrays by the property named `key`. There must
@@ -22,8 +46,9 @@ export type ObjectWithKey<K extends string, A extends string | number> = {
 export const zipBy : <K extends string> (key : K)
                    => <A extends string | number, B extends ObjectWithKey<K, A>> (os : B[])
                    => <C extends ObjectWithKey<K, A>> (rs : C[])
+                   => (gs : C[])
                    => Either<Error[], [B, C][]>
-                   = key => os => rs => {
+                   = key => os => rs => gs => {
                      type A1 = ArrayValue<typeof os> extends ObjectWithKey<string, infer A>
                                ? A
                                : never
@@ -34,14 +59,20 @@ export const zipBy : <K extends string> (key : K)
                      const errs : Error[]
                                 = []
 
-                     for (const r of rs) {
-                       const o = os .find (x => (x[key] as A1) === (r[key] as A1))
+                     for (const g of gs) {
+                       const r = rs .find (x => (x[key] as A1) === (g[key] as A1))
+                       const o = os .find (x => (x[key] as A1) === (g[key] as A1))
 
                        if (o === undefined) {
                          errs.push (new Error (`zipById: No matching entry found for "${JSON.stringify (r)}"`))
                        }
+                       else if ( r === undefined) {
+                         // no local translation found, fall back to german.
+                         ress.push([ o, g ])
+                       }
                        else {
-                         ress.push ([ o, r ])
+                        // local translation found
+                        ress.push ([ o, r ])
                        }
                      }
 

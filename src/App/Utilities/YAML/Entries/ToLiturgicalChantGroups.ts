@@ -8,6 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { LiturgicalChantGroupL10n } from "../Schema/LiturgicalChantGroups/LiturgicalChantGroups.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toLiturgicalChantGroup : (x : LiturgicalChantGroupL10n) => [number, Record<NumIdName>]
@@ -16,7 +17,9 @@ const toLiturgicalChantGroup : (x : LiturgicalChantGroupL10n) => [number, Record
 
 export const toLiturgicalChantGroups : YamlFileConverter<number, Record<NumIdName>>
                                     = pipe (
-                                        yaml_mp => yaml_mp.LiturgicalChantGroupsL10n,
+                                        yaml_mp => mergeBy("id")
+                                                          (yaml_mp.LiturgicalChantGroupsDefault)
+                                                          (yaml_mp.LiturgicalChantGroupsL10n),
                                         map (toLiturgicalChantGroup),
                                         toMapIntegrity,
                                         second (fromMap)

@@ -8,6 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { AspectL10n } from "../Schema/Aspects/Aspects.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toAspect : (x : AspectL10n) => [number, Record<NumIdName>]
@@ -16,7 +17,9 @@ const toAspect : (x : AspectL10n) => [number, Record<NumIdName>]
 
 export const toAspects : YamlFileConverter<number, Record<NumIdName>>
                        = pipe (
-                           yaml_mp => yaml_mp.AspectsL10n,
+                           yaml_mp => mergeBy("id")
+                                             (yaml_mp.AspectsDefault)
+                                             (yaml_mp.AspectsL10n),
                            map (toAspect),
                            toMapIntegrity,
                            second (fromMap)

@@ -171,7 +171,8 @@ export const toProfessions : YamlFileConverter<string, Record<Profession>>
                                (yaml_mp : YamlNameMap) =>
                                  zipBy ("id")
                                        (yaml_mp.ProfessionsUniv)
-                                       (yaml_mp.ProfessionsL10n),
+                                       (yaml_mp.ProfessionsL10n)
+                                       (yaml_mp.ProfessionsDefault),
                                bindF (pipe (
                                  mapM (toProfession),
                                  bindF (toMapIntegrity),

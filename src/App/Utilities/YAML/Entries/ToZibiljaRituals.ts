@@ -53,7 +53,8 @@ export const toZibiljaRituals : YamlFileConverter<string, Record<ZR>>
                               = pipe (
                                   (yaml_mp : YamlNameMap) => zipBy ("id")
                                                                    (yaml_mp.ZibiljaRitualsUniv)
-                                                                   (yaml_mp.ZibiljaRitualsL10n),
+                                                                   (yaml_mp.ZibiljaRitualsL10n)
+                                                                   (yaml_mp.ZibiljaRitualsDefault),
                                   bindF (pipe (
                                     mapM (toZibiljaRitual),
                                     bindF (toMapIntegrity),

@@ -8,6 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { CombatTechniqueGroupL10n } from "../Schema/CombatTechniqueGroups/CombatTechniqueGroups.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toCombatTechniqueGroup : (x : CombatTechniqueGroupL10n) => [number, Record<NumIdName>]
@@ -16,7 +17,9 @@ const toCombatTechniqueGroup : (x : CombatTechniqueGroupL10n) => [number, Record
 
 export const toCombatTechniqueGroups : YamlFileConverter<number, Record<NumIdName>>
                                     = pipe (
-                                        yaml_mp => yaml_mp.CombatTechniqueGroupsL10n,
+                                        yaml_mp => mergeBy("id")
+                                                          (yaml_mp.CombatTechniqueGroupsDefault)
+                                                          (yaml_mp.CombatTechniqueGroupsL10n),
                                         map (toCombatTechniqueGroup),
                                         toMapIntegrity,
                                         second (fromMap)

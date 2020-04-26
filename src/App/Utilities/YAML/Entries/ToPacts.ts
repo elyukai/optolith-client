@@ -11,6 +11,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { PactL10n } from "../Schema/Pacts/Pacts.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toPact : (l10n : PactL10n) => [number, Record<PactCategory>]
@@ -27,7 +28,9 @@ const toPact : (l10n : PactL10n) => [number, Record<PactCategory>]
 
 export const toPacts : YamlFileConverter<number, Record<PactCategory>>
                           = pipe (
-                              yaml_mp => yaml_mp.PactsL10n,
+                              yaml_mp => mergeBy("id")
+                                                (yaml_mp.PactsDefault)
+                                                (yaml_mp.PactsL10n),
                               map (toPact),
                               toMapIntegrity,
                               second (fromMap)

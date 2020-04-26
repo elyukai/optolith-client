@@ -193,93 +193,151 @@ export type YamlSchemaId = keyof YamlSchemaMap
 
 export interface YamlNameMap {
   AdvantagesL10n : AdvantagesL10n
+  AdvantagesDefault : AdvantagesL10n
   AdvantagesUniv : AdvantagesUniv
   AnimistForcesL10n : AnimistForcesL10n
+  AnimistForcesDefault : AnimistForcesL10n
   AnimistForcesUniv : AnimistForcesUniv
   ArcaneBardTraditionsL10n : ArcaneBardTraditionsL10n
+  ArcaneBardTraditionsDefault : ArcaneBardTraditionsL10n
   ArcaneDancerTraditionsL10n : ArcaneDancerTraditionsL10n
+  ArcaneDancerTraditionsDefault : ArcaneDancerTraditionsL10n
   ArmorTypesL10n : ArmorTypesL10n
+  ArmorTypesDefault : ArmorTypesL10n
   AspectsL10n : AspectsL10n
+  AspectsDefault : AspectsL10n
   AttributesL10n : AttributesL10n
+  AttributesDefault : AttributesL10n
   BlessedTraditionsL10n : BlessedTraditionsL10n
+  BlessedTraditionsDefault : BlessedTraditionsL10n
   BlessedTraditionsUniv : BlessedTraditionsUniv
   BlessingsL10n : BlessingsL10n
+  BlessingsDefault : BlessingsL10n
   BlessingsUniv : BlessingsUniv
   BooksL10n : BooksL10n
+  BooksDefault : BooksL10n
   BrewsL10n : BrewsL10n
+  BrewsDefault : BrewsL10n
   CantripsL10n : CantripsL10n
+  CantripsDefault : CantripsL10n
   CantripsUniv : CantripsUniv
   CombatSpecialAbilityGroupsL10n : CombatSpecialAbilityGroupsL10n
+  CombatSpecialAbilityGroupsDefault : CombatSpecialAbilityGroupsL10n
   CombatTechniqueGroupsL10n : CombatTechniqueGroupsL10n
+  CombatTechniqueGroupsDefault : CombatTechniqueGroupsL10n
   CombatTechniquesL10n : CombatTechniquesL10n
+  CombatTechniquesDefault : CombatTechniquesL10n
   CombatTechniquesUniv : CombatTechniquesUniv
   ConditionsL10n : ConditionsL10n
+  ConditionsDefault : ConditionsL10n
   CulturesL10n : CulturesL10n
+  CulturesDefault : CulturesL10n
   CulturesUniv : CulturesUniv
   CursesL10n : CursesL10n
+  CursesDefault : CursesL10n
   CursesUniv : CursesUniv
   DerivedCharacteristicsL10n : DerivedCharacteristicsL10n
+  DerivedCharacteristicsDefault : DerivedCharacteristicsL10n
   DisadvantagesL10n : DisadvantagesL10n
+  DisadvantagesDefault : DisadvantagesL10n
   DisadvantagesUniv : DisadvantagesUniv
   DominationRitualsL10n : DominationRitualsL10n
+  DominationRitualsDefault : DominationRitualsL10n
   DominationRitualsUniv : DominationRitualsUniv
   ElvenMagicalSongsL10n : ElvenMagicalSongsL10n
+  ElvenMagicalSongsDefault : ElvenMagicalSongsL10n
   ElvenMagicalSongsUniv : ElvenMagicalSongsUniv
   EquipmentL10n : EquipmentL10n
+  EquipmentDefault : EquipmentL10n
   EquipmentUniv : EquipmentUniv
   EquipmentGroupsL10n : EquipmentGroupsL10n
+  EquipmentGroupsDefault : EquipmentGroupsL10n
   EquipmentPackagesL10n : EquipmentPackagesL10n
+  EquipmentPackagesDefault : EquipmentPackagesL10n
   EquipmentPackagesUniv : EquipmentPackagesUniv
   ExperienceLevelsL10n : ExperienceLevelsL10n
+  ExperienceLevelsDefault : ExperienceLevelsL10n
   ExperienceLevelsUniv : ExperienceLevelsUniv
   EyeColorsL10n : EyeColorsL10n
+  EyeColorsDefault : EyeColorsL10n
   FocusRulesL10n : FocusRulesL10n
+  FocusRulesDefault : FocusRulesL10n
   FocusRulesUniv : FocusRulesUniv
   GeodeRitualsL10n : GeodeRitualsL10n
+  GeodeRitualsDefault : GeodeRitualsL10n
   GeodeRitualsUniv : GeodeRitualsUniv
   HairColorsL10n : HairColorsL10n
+  HairColorsDefault : HairColorsL10n
   LiturgicalChantEnhancementsL10n : LiturgicalChantEnhancementsL10n
+  LiturgicalChantEnhancementsDefault : LiturgicalChantEnhancementsL10n
   LiturgicalChantEnhancementsUniv : LiturgicalChantEnhancementsUniv
   LiturgicalChantGroupsL10n : LiturgicalChantGroupsL10n
+  LiturgicalChantGroupsDefault : LiturgicalChantGroupsL10n
   LiturgicalChantsL10n : LiturgicalChantsL10n
+  LiturgicalChantsDefault : LiturgicalChantsL10n
   LiturgicalChantsUniv : LiturgicalChantsUniv
   MagicalDancesL10n : MagicalDancesL10n
+  MagicalDancesDefault : MagicalDancesL10n
   MagicalDancesUniv : MagicalDancesUniv
   MagicalMelodiesL10n : MagicalMelodiesL10n
+  MagicalMelodiesDefault : MagicalMelodiesL10n
   MagicalMelodiesUniv : MagicalMelodiesUniv
   MagicalTraditionsL10n : MagicalTraditionsL10n
+  MagicalTraditionsDefault : MagicalTraditionsL10n
   MagicalTraditionsUniv : MagicalTraditionsUniv
   OptionalRulesL10n : OptionalRulesL10n
+  OptionalRulesDefault : OptionalRulesL10n
   PactsL10n : PactsL10n
+  PactsDefault : PactsL10n
   ProfessionsL10n : ProfessionsL10n
+  ProfessionsDefault : ProfessionsL10n
   ProfessionsUniv : ProfessionsUniv
   ProfessionVariantsL10n : ProfessionVariantsL10n
+  ProfessionVariantsDefault : ProfessionVariantsL10n
   ProfessionVariantsUniv : ProfessionVariantsUniv
   PropertiesL10n : PropertiesL10n
+  PropertiesDefault : PropertiesL10n
   RacesL10n : RacesL10n
+  RacesDefault : RacesL10n
   RacesUniv : RacesUniv
   RaceVariantsL10n : RaceVariantsL10n
+  RaceVariantsDefault : RaceVariantsL10n
   RaceVariantsUniv : RaceVariantsUniv
   ReachesL10n : ReachesL10n
+  ReachesDefault : ReachesL10n
   RogueSpellsL10n : RogueSpellsL10n
+  RogueSpellsDefault : RogueSpellsL10n
   RogueSpellsUniv : RogueSpellsUniv
   SkillGroupsL10n : SkillGroupsL10n
+  SkillGroupsDefault : SkillGroupsL10n
   SkillsL10n : SkillsL10n
+  SkillsDefault : SkillsL10n
   SkillsUniv : SkillsUniv
   SocialStatusesL10n : SocialStatusesL10n
+  SocialStatusesDefault : SocialStatusesL10n
   SpecialAbilitiesL10n : SpecialAbilitiesL10n
+  SpecialAbilitiesDefault : SpecialAbilitiesL10n
   SpecialAbilitiesUniv : SpecialAbilitiesUniv
   SpecialAbilityGroupsL10n : SpecialAbilityGroupsL10n
+  SpecialAbilityGroupsDefault : SpecialAbilityGroupsL10n
   SpellEnhancementsL10n : SpellEnhancementsL10n
+  SpellEnhancementsDefault : SpellEnhancementsL10n
   SpellEnhancementsUniv : SpellEnhancementsUniv
   SpellGroupsL10n : SpellGroupsL10n
+  SpellGroupsDefault : SpellGroupsL10n
   SpellsL10n : SpellsL10n
+  SpellsDefault : SpellsL10n
   SpellsUniv : SpellsUniv
   StatesL10n : StatesL10n
+  StatesDefault : StatesL10n
   SubjectsL10n : SubjectsL10n
+  SubjectsDefault : SubjectsL10n
   TribesL10n : TribesL10n
+  TribesDefault : TribesL10n
   UIL10n : UIL10n
+  UIDefault : UIL10n
   ZibiljaRitualsL10n : ZibiljaRitualsL10n
+  ZibiljaRitualsDefault : ZibiljaRitualsL10n
   ZibiljaRitualsUniv : ZibiljaRitualsUniv
 }
 

@@ -8,6 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { PropertyL10n } from "../Schema/Properties/Properties.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toProperty : (x : PropertyL10n) => [number, Record<NumIdName>]
@@ -16,7 +17,9 @@ const toProperty : (x : PropertyL10n) => [number, Record<NumIdName>]
 
 export const toProperties : YamlFileConverter<number, Record<NumIdName>>
                           = pipe (
-                              yaml_mp => yaml_mp.PropertiesL10n,
+                              yaml_mp => mergeBy("id")
+                                                (yaml_mp.PropertiesDefault)
+                                                (yaml_mp.PropertiesL10n),
                               map (toProperty),
                               toMapIntegrity,
                               second (fromMap)

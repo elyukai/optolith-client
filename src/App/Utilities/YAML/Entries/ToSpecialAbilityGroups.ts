@@ -8,6 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { SpecialAbilityGroupL10n } from "../Schema/SpecialAbilityGroups/SpecialAbilityGroups.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toSpecialAbilityGroup : (x : SpecialAbilityGroupL10n) => [number, Record<NumIdName>]
@@ -16,7 +17,9 @@ const toSpecialAbilityGroup : (x : SpecialAbilityGroupL10n) => [number, Record<N
 
 export const toSpecialAbilityGroups : YamlFileConverter<number, Record<NumIdName>>
                                     = pipe (
-                                        yaml_mp => yaml_mp.SpecialAbilityGroupsL10n,
+                                        yaml_mp => mergeBy("id")
+                                                          (yaml_mp.SpecialAbilityGroupsDefault)
+                                                          (yaml_mp.SpecialAbilityGroupsL10n),
                                         map (toSpecialAbilityGroup),
                                         toMapIntegrity,
                                         second (fromMap)

@@ -79,7 +79,8 @@ export const toCultures : YamlFileConverter<string, Record<Culture>>
                             (yaml_mp : YamlNameMap) =>
                               zipBy ("id")
                                     (yaml_mp.CulturesUniv)
-                                    (yaml_mp.CulturesL10n),
+                                    (yaml_mp.CulturesL10n)
+                                    (yaml_mp.CulturesDefault),
                             bindF (pipe (
                               mapM (toCulture),
                               bindF (toMapIntegrity),

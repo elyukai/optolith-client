@@ -10,6 +10,7 @@ import { StateL10n } from "../Schema/States/States.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { toErrata } from "./ToErrata"
 import { toSourceRefs } from "./ToSourceRefs"
+import { mergeBy } from "../ZipById"
 
 
 const toState : (l10n : StateL10n) => [string, Record<State>]
@@ -27,7 +28,9 @@ const toState : (l10n : StateL10n) => [string, Record<State>]
 
 export const toStates : YamlFileConverter<string, Record<State>>
                       = pipe (
-                          yaml_mp => yaml_mp.StatesL10n,
+                          yaml_mp => mergeBy("id")
+                                            (yaml_mp.StatesDefault)
+                                            (yaml_mp.StatesL10n),
                           map (toState),
                           toMapIntegrity,
                           second (fromMap)

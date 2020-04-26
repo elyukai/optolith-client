@@ -8,6 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { ReachL10n } from "../Schema/Reaches/Reaches.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toReach : (x : ReachL10n) => [number, Record<NumIdName>]
@@ -16,7 +17,9 @@ const toReach : (x : ReachL10n) => [number, Record<NumIdName>]
 
 export const toReaches : YamlFileConverter<number, Record<NumIdName>>
                        = pipe (
-                           yaml_mp => yaml_mp.ReachesL10n,
+                           yaml_mp => mergeBy("id")
+                                             (yaml_mp.ReachesDefault)
+                                             (yaml_mp.ReachesL10n),
                            map (toReach),
                            toMapIntegrity,
                            second (fromMap)

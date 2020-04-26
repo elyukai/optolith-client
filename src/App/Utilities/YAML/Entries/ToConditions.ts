@@ -12,6 +12,7 @@ import { ConditionL10n } from "../Schema/Conditions/Conditions.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { toErrata } from "./ToErrata"
 import { toSourceRefs } from "./ToSourceRefs"
+import { mergeBy } from "../ZipById"
 
 
 const toCondition : (l10n : ConditionL10n) => [string, Record<Condition>]
@@ -36,7 +37,9 @@ const toCondition : (l10n : ConditionL10n) => [string, Record<Condition>]
 
 export const toConditions : YamlFileConverter<string, Record<Condition>>
                           = pipe (
-                              yaml_mp => yaml_mp.ConditionsL10n,
+                              yaml_mp => mergeBy("id")
+                                                (yaml_mp.ConditionsDefault)
+                                                (yaml_mp.ConditionsL10n),
                               map (toCondition),
                               toMapIntegrity,
                               second (fromMap)

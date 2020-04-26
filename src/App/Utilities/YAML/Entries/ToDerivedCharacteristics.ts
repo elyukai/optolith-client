@@ -9,6 +9,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { DerivedCharacteristicId, DerivedCharacteristicL10n } from "../Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 type DCId = DerivedCharacteristicId
@@ -30,7 +31,9 @@ const toDC : (l10n : DerivedCharacteristicL10n) => [DCId, Record<DerivedCharacte
 
 export const toDerivedCharacteristics : YamlFileConverter<DCId, Record<DerivedCharacteristic>>
                                       = pipe (
-                                          yaml_mp => yaml_mp.DerivedCharacteristicsL10n,
+                                          yaml_mp => mergeBy("id")
+                                                            (yaml_mp.DerivedCharacteristicsDefault)
+                                                            (yaml_mp.DerivedCharacteristicsL10n),
                                           map (toDC),
                                           toMapIntegrity,
                                           second (fromMap)

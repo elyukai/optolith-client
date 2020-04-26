@@ -10,6 +10,7 @@ import { OptionalRuleL10n } from "../Schema/OptionalRules/OptionalRules.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { toErrata } from "./ToErrata"
 import { toSourceRefs } from "./ToSourceRefs"
+import { mergeBy } from "../ZipById"
 
 
 const toOptionalRule : (l10n : OptionalRuleL10n) => [string, Record<OptionalRule>]
@@ -27,7 +28,9 @@ const toOptionalRule : (l10n : OptionalRuleL10n) => [string, Record<OptionalRule
 
 export const toOptionalRules : YamlFileConverter<string, Record<OptionalRule>>
                              = pipe (
-                                 yaml_mp => yaml_mp.OptionalRulesL10n,
+                                 yaml_mp => mergeBy("id")
+                                                   (yaml_mp.OptionalRulesDefault)
+                                                   (yaml_mp.OptionalRulesL10n),
                                  map (toOptionalRule),
                                  toMapIntegrity,
                                  second (fromMap)
