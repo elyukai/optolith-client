@@ -65,8 +65,8 @@ export const toSpells : YamlFileConverter<string, Record<Spell>>
                       = pipe (
                           (yaml_mp : YamlNameMap) => zipBy ("id")
                                                            (yaml_mp.SpellsUniv)
-                                                           (yaml_mp.SpellsL10n)
-                                                           (yaml_mp.SpellsL10nDefault),
+                                                           (yaml_mp.SpellsL10nDefault)
+                                                           (yaml_mp.SpellsL10n),
                           bindF (pipe (
                             mapM (toSpell),
                             bindF (toMapIntegrity),

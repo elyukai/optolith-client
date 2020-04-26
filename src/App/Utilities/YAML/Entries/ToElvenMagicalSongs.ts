@@ -47,8 +47,8 @@ export const toElvenMagicalSongs : YamlFileConverter<string, Record<EMS>>
                                      (yaml_mp : YamlNameMap) =>
                                        zipBy ("id")
                                              (yaml_mp.ElvenMagicalSongsUniv)
-                                             (yaml_mp.ElvenMagicalSongsL10n)
-                                             (yaml_mp.ElvenMagicalSongsL10nDefault),
+                                             (yaml_mp.ElvenMagicalSongsL10nDefault)
+                                             (yaml_mp.ElvenMagicalSongsL10n),
                                      bindF (pipe (
                                        mapM (toEMS),
                                        bindF (toMapIntegrity),

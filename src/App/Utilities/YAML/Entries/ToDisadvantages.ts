@@ -123,8 +123,8 @@ export const toDisadvantages : (blessings : OrderedMap<string, Record<Blessing>>
                                spells => pipe (
                                  (yaml_mp : YamlNameMap) => zipBy ("id")
                                                                   (yaml_mp.DisadvantagesUniv)
-                                                                  (yaml_mp.DisadvantagesL10n)
-                                                                  (yaml_mp.DisadvantagesL10nDefault),
+                                                                  (yaml_mp.DisadvantagesL10nDefault)
+                                                                  (yaml_mp.DisadvantagesL10n),
                                  bindF (pipe (
                                    mapM (toDisadv (blessings)
                                                   (cantrips)

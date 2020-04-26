@@ -45,10 +45,10 @@ export const mergeBy : <K extends string> (key : K)
  */
 export const zipBy : <K extends string> (key : K)
                    => <A extends string | number, B extends ObjectWithKey<K, A>> (os : B[])
-                   => <C extends ObjectWithKey<K, A>> (rs : C[])
-                   => (gs : C[])
+                   => <C extends ObjectWithKey<K, A>> (gs : C[])
+                   => (rs : C[]|undefined)
                    => Either<Error[], [B, C][]>
-                   = key => os => rs => gs => {
+                   = key => os => gs => rs => {
                      type A1 = ArrayValue<typeof os> extends ObjectWithKey<string, infer A>
                                ? A
                                : never
@@ -60,7 +60,7 @@ export const zipBy : <K extends string> (key : K)
                                 = []
 
                      for (const g of gs) {
-                       const r = rs .find (x => (x[key] as A1) === (g[key] as A1))
+                       const r = (rs !== undefined) ? rs .find (x => (x[key] as A1) === (g[key] as A1)) : undefined
                        const o = os .find (x => (x[key] as A1) === (g[key] as A1))
 
                        if (o === undefined) {

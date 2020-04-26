@@ -58,8 +58,8 @@ export const toLiturgicalChants : YamlFileConverter<string, Record<LiturgicalCha
                                     (yaml_mp : YamlNameMap) =>
                                       zipBy ("id")
                                             (yaml_mp.LiturgicalChantsUniv)
-                                            (yaml_mp.LiturgicalChantsL10n)
-                                            (yaml_mp.LiturgicalChantsL10nDefault),
+                                            (yaml_mp.LiturgicalChantsL10nDefault)
+                                            (yaml_mp.LiturgicalChantsL10n),
                                     bindF (pipe (
                                       mapM (toLC),
                                       bindF (toMapIntegrity),

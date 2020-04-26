@@ -36,8 +36,8 @@ export const toBlessedTraditions : YamlFileConverter<string, Record<BlessedTradi
                                      (yaml_mp : YamlNameMap) =>
                                        zipBy ("id")
                                              (yaml_mp.BlessedTraditionsUniv)
-                                             (yaml_mp.BlessedTraditionsL10n)
-                                             (yaml_mp.BlessedTraditionsL10nDefault),
+                                             (yaml_mp.BlessedTraditionsL10nDefault)
+                                             (yaml_mp.BlessedTraditionsL10n),
                                      bindF (pipe (
                                        mapM (toBT),
                                        bindF (toMapIntegrity),

@@ -35,8 +35,8 @@ export const toFocusRules : YamlFileConverter<string, Record<FocusRule>>
                               (yaml_mp : YamlNameMap) =>
                                 zipBy ("id")
                                       (yaml_mp.FocusRulesUniv)
-                                      (yaml_mp.FocusRulesL10n)
-                                      (yaml_mp.FocusRulesL10nDefault),
+                                      (yaml_mp.FocusRulesL10nDefault)
+                                      (yaml_mp.FocusRulesL10n),
                               bindF (pipe (
                                 mapM (toFocusRule),
                                 bindF (toMapIntegrity),

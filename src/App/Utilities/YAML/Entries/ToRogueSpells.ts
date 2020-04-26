@@ -48,8 +48,8 @@ export const toRogueSpells : YamlFileConverter<string, Record<RogueSpell>>
                            = pipe (
                                (yaml_mp : YamlNameMap) => zipBy ("id")
                                                                 (yaml_mp.RogueSpellsUniv)
-                                                                (yaml_mp.RogueSpellsL10n)
-                                                                (yaml_mp.RogueSpellsL10nDefault),
+                                                                (yaml_mp.RogueSpellsL10nDefault)
+                                                                (yaml_mp.RogueSpellsL10n),
                                bindF (pipe (
                                  mapM (toRogueSpell),
                                  bindF (toMapIntegrity),

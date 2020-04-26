@@ -34,7 +34,6 @@ export const parseStaticData : (locale : string) => Promise<Either<Error[], Stat
                                                                               (l10n_parser)
                                                                               (default_parser)
 
-
                                if (isLeft (estatic_data_by_file)) {
                                  const errs = fromLeft_ (estatic_data_by_file)
                                  console.log (errs)
