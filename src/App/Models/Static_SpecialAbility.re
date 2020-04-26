@@ -208,57 +208,87 @@ module Decode = {
         spells,
         univ,
         l10n,
-      ) => {
-    id: univ.id,
-    name: l10n.name,
-    nameInWiki: l10n.nameInWiki,
-    levels: univ.levels,
-    max: univ.max,
-    rules: l10n.rules,
-    effect: l10n.effect,
-    selectOptions:
-      univ.selectOptionCategories
-      |> Static_SelectOption.Decode.resolveCategories(
-           blessings,
-           cantrips,
-           combatTechniques,
-           liturgicalChants,
-           skills,
-           spells,
-         )
-      |> Static_SelectOption.Decode.mergeSelectOptions(
-           l10n.selectOptions,
-           univ.selectOptions,
-         ),
-    input: l10n.input,
-    penalty: l10n.penalty,
-    combatTechniques: univ.combatTechniques,
-    combatTechniquesText: l10n.combatTechniques,
-    aeCost: l10n.aeCost,
-    protectiveCircle: l10n.protectiveCircle,
-    wardingCircle: l10n.wardingCircle,
-    volume: l10n.volume,
-    bindingCost: l10n.bindingCost,
-    property: univ.property,
-    propertyText: l10n.property,
-    aspect: univ.aspect,
-    brew: univ.brew,
-    extended: univ.extended,
-    prerequisites: univ.prerequisites,
-    prerequisitesText: l10n.prerequisites,
-    prerequisitesTextIndex:
-      Static_Prerequisites.Decode.tIndexWithLevel(
-        univ.prerequisitesIndex,
-        l10n.prerequisitesIndex,
+      ) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      nameInWiki: l10n.nameInWiki,
+      levels: univ.levels,
+      max: univ.max,
+      rules: l10n.rules,
+      effect: l10n.effect,
+      selectOptions:
+        univ.selectOptionCategories
+        |> Static_SelectOption.Decode.resolveCategories(
+             blessings,
+             cantrips,
+             combatTechniques,
+             liturgicalChants,
+             skills,
+             spells,
+           )
+        |> Static_SelectOption.Decode.mergeSelectOptions(
+             l10n.selectOptions,
+             univ.selectOptions,
+           ),
+      input: l10n.input,
+      penalty: l10n.penalty,
+      combatTechniques: univ.combatTechniques,
+      combatTechniquesText: l10n.combatTechniques,
+      aeCost: l10n.aeCost,
+      protectiveCircle: l10n.protectiveCircle,
+      wardingCircle: l10n.wardingCircle,
+      volume: l10n.volume,
+      bindingCost: l10n.bindingCost,
+      property: univ.property,
+      propertyText: l10n.property,
+      aspect: univ.aspect,
+      brew: univ.brew,
+      extended: univ.extended,
+      prerequisites: univ.prerequisites,
+      prerequisitesText: l10n.prerequisites,
+      prerequisitesTextIndex:
+        Static_Prerequisites.Decode.tIndexWithLevel(
+          univ.prerequisitesIndex,
+          l10n.prerequisitesIndex,
+        ),
+      prerequisitesTextStart: l10n.prerequisitesStart,
+      prerequisitesTextEnd: l10n.prerequisitesEnd,
+      apValue: univ.cost,
+      apValueText: l10n.apValue,
+      apValueTextAppend: l10n.apValueAppend,
+      gr: univ.gr,
+      subgr: univ.subgr,
+      src: l10n.src,
+      errata: l10n.errata,
+    },
+  );
+
+  let all =
+      (
+        blessings,
+        cantrips,
+        combatTechniques,
+        liturgicalChants,
+        skills,
+        spells,
+        yamlData: Yaml_Raw.yamlData,
+      ) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t(
+        blessings,
+        cantrips,
+        combatTechniques,
+        liturgicalChants,
+        skills,
+        spells,
       ),
-    prerequisitesTextStart: l10n.prerequisitesStart,
-    prerequisitesTextEnd: l10n.prerequisitesEnd,
-    apValue: univ.cost,
-    apValueText: l10n.apValue,
-    apValueTextAppend: l10n.apValueAppend,
-    gr: univ.gr,
-    subgr: univ.subgr,
-    src: l10n.src,
-    errata: l10n.errata,
-  };
+      x => x.id,
+      x => x.id,
+      yamlData.specialAbilitiesUniv |> list(tUniv),
+      yamlData.specialAbilitiesL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

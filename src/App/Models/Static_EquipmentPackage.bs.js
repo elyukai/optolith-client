@@ -3,8 +3,10 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
+var Int$OptolithClient = require("../../Data/Int.bs.js");
 var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
 var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
@@ -35,21 +37,33 @@ function tUniv(json) {
 }
 
 function t(univ, l10n) {
-  return {
-          id: univ.id,
-          name: l10n.name,
-          items: Curry._2(IntMap$OptolithClient.map, (function (param) {
-                  return Maybe$OptolithClient.fromMaybe(1, param);
-                }), Curry._1(IntMap$OptolithClient.fromList, univ.items)),
-          src: l10n.src,
-          errata: l10n.errata
-        };
+  return /* tuple */[
+          univ.id,
+          {
+            id: univ.id,
+            name: l10n.name,
+            items: Curry._2(IntMap$OptolithClient.map, (function (param) {
+                    return Maybe$OptolithClient.fromMaybe(1, param);
+                  }), Curry._1(IntMap$OptolithClient.fromList, univ.items)),
+            src: l10n.src,
+            errata: l10n.errata
+          }
+        ];
+}
+
+function all(yamlData) {
+  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, t, (function (x) {
+                    return x.id;
+                  }), (function (x) {
+                    return x.id;
+                  }), Json_decode.list(tUniv, yamlData.equipmentPackagesUniv), Json_decode.list(tL10n, yamlData.equipmentPackagesL10n)));
 }
 
 var Decode = {
   tL10n: tL10n,
   tUniv: tUniv,
-  t: t
+  t: t,
+  all: all
 };
 
 exports.Decode = Decode;

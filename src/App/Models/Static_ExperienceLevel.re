@@ -46,15 +46,29 @@ module Decode = {
     maxUnfamiliarSpells: json |> field("maxUnfamiliarSpells", int),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    ap: univ.ap,
-    maxAttributeValue: univ.maxAttributeValue,
-    maxSkillRating: univ.maxSkillRating,
-    maxCombatTechniqueRating: univ.maxCombatTechniqueRating,
-    maxTotalAttributeValues: univ.maxTotalAttributeValues,
-    maxSpellsLiturgicalChants: univ.maxSpellsLiturgicalChants,
-    maxUnfamiliarSpells: univ.maxUnfamiliarSpells,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      ap: univ.ap,
+      maxAttributeValue: univ.maxAttributeValue,
+      maxSkillRating: univ.maxSkillRating,
+      maxCombatTechniqueRating: univ.maxCombatTechniqueRating,
+      maxTotalAttributeValues: univ.maxTotalAttributeValues,
+      maxSpellsLiturgicalChants: univ.maxSpellsLiturgicalChants,
+      maxUnfamiliarSpells: univ.maxUnfamiliarSpells,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.experienceLevelsUniv |> list(tUniv),
+      yamlData.experienceLevelsL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

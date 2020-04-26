@@ -59,18 +59,32 @@ module Decode = {
     property: json |> field("property", int),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    check: (univ.check1, univ.check2, univ.check3),
-    checkMod: univ.checkMod,
-    effect: l10n.effect,
-    aeCost: l10n.aeCost,
-    aeCostShort: l10n.aeCostShort,
-    duration: l10n.duration,
-    durationShort: l10n.durationShort,
-    property: univ.property,
-    src: l10n.src,
-    errata: l10n.errata,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      check: (univ.check1, univ.check2, univ.check3),
+      checkMod: univ.checkMod,
+      effect: l10n.effect,
+      aeCost: l10n.aeCost,
+      aeCostShort: l10n.aeCostShort,
+      duration: l10n.duration,
+      durationShort: l10n.durationShort,
+      property: univ.property,
+      src: l10n.src,
+      errata: l10n.errata,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.cursesUniv |> list(tUniv),
+      yamlData.cursesL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

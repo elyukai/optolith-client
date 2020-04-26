@@ -3,7 +3,10 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
+var Int$OptolithClient = require("../../Data/Int.bs.js");
+var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
 var IntSet$OptolithClient = require("../../Data/IntSet.bs.js");
+var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
 
@@ -30,24 +33,36 @@ function tUniv(json) {
 }
 
 function t(univ, l10n) {
-  return {
-          id: univ.id,
-          name: l10n.name,
-          effect: l10n.effect,
-          range: l10n.range,
-          duration: l10n.duration,
-          target: l10n.target,
-          traditions: Curry._1(IntSet$OptolithClient.fromList, univ.traditions),
-          src: l10n.src,
-          errata: l10n.errata
-        };
+  return /* tuple */[
+          univ.id,
+          {
+            id: univ.id,
+            name: l10n.name,
+            effect: l10n.effect,
+            range: l10n.range,
+            duration: l10n.duration,
+            target: l10n.target,
+            traditions: Curry._1(IntSet$OptolithClient.fromList, univ.traditions),
+            src: l10n.src,
+            errata: l10n.errata
+          }
+        ];
+}
+
+function all(yamlData) {
+  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, t, (function (x) {
+                    return x.id;
+                  }), (function (x) {
+                    return x.id;
+                  }), Json_decode.list(tUniv, yamlData.blessingsUniv), Json_decode.list(tL10n, yamlData.blessingsL10n)));
 }
 
 var Decode = {
   tL10n: tL10n,
   tUniv: tUniv,
-  t: t
+  t: t,
+  all: all
 };
 
 exports.Decode = Decode;
-/* IntSet-OptolithClient Not a pure module */
+/* IntMap-OptolithClient Not a pure module */

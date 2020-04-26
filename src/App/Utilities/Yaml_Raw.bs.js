@@ -82,7 +82,10 @@ function getUnivStaticData(param) {
                                                                         var skills = param[2];
                                                                         var rogueSpells = param[1];
                                                                         var raceVariants = param[0];
-                                                                        return IO$OptolithClient.Functor.$less$amp$great(readUnivYaml("ZibiljaRituals"), (function (zibiljaRituals) {
+                                                                        return IO$OptolithClient.Functor.$less$amp$great(Promise.all(/* tuple */[
+                                                                                        readUnivYaml("ZibiljaRituals"),
+                                                                                        readUnivYaml("Patrons")
+                                                                                      ]), (function (param) {
                                                                                       return {
                                                                                               advantages: Yaml.parse(advantages),
                                                                                               animistForces: Yaml.parse(animistForces),
@@ -105,6 +108,7 @@ function getUnivStaticData(param) {
                                                                                               magicalDances: Yaml.parse(magicalDances),
                                                                                               magicalMelodies: Yaml.parse(magicalMelodies),
                                                                                               magicalTraditions: Yaml.parse(magicalTraditions),
+                                                                                              patrons: Yaml.parse(param[1]),
                                                                                               professions: Yaml.parse(professions),
                                                                                               professionVariants: Yaml.parse(professionVariants),
                                                                                               races: Yaml.parse(races),
@@ -114,7 +118,7 @@ function getUnivStaticData(param) {
                                                                                               specialAbilities: Yaml.parse(specialAbilities),
                                                                                               spellEnhancements: Yaml.parse(spellEnhancements),
                                                                                               spells: Yaml.parse(spells),
-                                                                                              zibiljaRituals: Yaml.parse(zibiljaRituals)
+                                                                                              zibiljaRituals: Yaml.parse(param[0])
                                                                                             };
                                                                                     }));
                                                                       }));
@@ -259,7 +263,8 @@ function getLocaleSpecificStaticData(locale) {
                                                                                                                                                 readL10nYaml(locale, "Subjects"),
                                                                                                                                                 readL10nYaml(locale, "Tribes"),
                                                                                                                                                 readL10nYaml(locale, "UI"),
-                                                                                                                                                readL10nYaml(locale, "ZibiljaRituals")
+                                                                                                                                                readL10nYaml(locale, "ZibiljaRituals"),
+                                                                                                                                                readL10nYaml(locale, "Patrons")
                                                                                                                                               ]), (function (param) {
                                                                                                                                               return {
                                                                                                                                                       advantages: Yaml.parse(advantages),
@@ -300,6 +305,7 @@ function getLocaleSpecificStaticData(locale) {
                                                                                                                                                       magicalTraditions: Yaml.parse(magicalTraditions),
                                                                                                                                                       optionalRules: Yaml.parse(optionalRules),
                                                                                                                                                       pacts: Yaml.parse(pacts),
+                                                                                                                                                      patrons: Yaml.parse(param[4]),
                                                                                                                                                       professions: Yaml.parse(professions),
                                                                                                                                                       professionVariants: Yaml.parse(professionVariants),
                                                                                                                                                       properties: Yaml.parse(properties),
@@ -400,6 +406,8 @@ function getStaticData(locale) {
                         magicalTraditionsUniv: univ.magicalTraditions,
                         optionalRulesL10n: l10n.optionalRules,
                         pactsL10n: l10n.pacts,
+                        patronsL10n: l10n.patrons,
+                        patronsUniv: univ.patrons,
                         professionsL10n: l10n.professions,
                         professionsUniv: univ.professions,
                         professionVariantsL10n: l10n.professionVariants,

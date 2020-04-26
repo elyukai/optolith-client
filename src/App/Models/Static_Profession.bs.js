@@ -335,65 +335,76 @@ function tUniv(json) {
 }
 
 function t(univ, l10n) {
-  return {
-          id: univ.id,
-          name: l10n.name,
-          subname: l10n.subname,
-          cost: univ.cost,
-          prerequisites: {
-            sex: univ.sexDependency,
-            race: univ.raceDependency,
-            culture: univ.cultureDependency,
-            activatable: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.activatablePrerequisites),
-            increasable: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.increasablePrerequisites)
-          },
-          prerequisitesStart: l10n.prerequisitesStart,
-          options: {
-            skillSpecialization: univ.skillSpecializationSelectOptions,
-            languageScript: univ.languageScriptSelectOptions,
-            combatTechnique: univ.combatTechniqueSelectOptions,
-            cantrip: univ.cantripSelectOptions,
-            curse: univ.curseSelectOptions,
-            terrainKnowledge: univ.terrainKnowledgeSelectOptions,
-            skill: univ.skillSelectOptions,
-            guildMageUnfamiliarSpell: Maybe$OptolithClient.maybe(false, (function (param) {
-                    return ListH$OptolithClient.Foldable.any((function (x) {
-                                  if (Caml_obj.caml_equal(x.id, /* `SpecialAbility */[
-                                          -789492591,
-                                          Ids$OptolithClient.SpecialAbilityId.traditionGuildMages
-                                        ])) {
-                                    return x.active;
-                                  } else {
-                                    return false;
-                                  }
-                                }), param);
-                  }), univ.activatablePrerequisites)
-          },
-          specialAbilities: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.specialAbilities),
-          combatTechniques: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.combatTechniques),
-          skills: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.skills),
-          spells: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.spells),
-          liturgicalChants: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.liturgicalChants),
-          blessings: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.blessings),
-          suggestedAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.suggestedAdvantages),
-          suggestedAdvantagesText: l10n.suggestedAdvantages,
-          suggestedDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.suggestedDisadvantages),
-          suggestedDisadvantagesText: l10n.suggestedDisadvantages,
-          unsuitableAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.unsuitableAdvantages),
-          unsuitableAdvantagesText: l10n.unsuitableAdvantages,
-          unsuitableDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.unsuitableDisadvantages),
-          unsuitableDisadvantagesText: l10n.unsuitableDisadvantages,
-          variants: Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, variant, (function (x) {
-                      return x.id;
-                    }), (function (x) {
-                      return x.id;
-                    }), Maybe$OptolithClient.fromMaybe(/* [] */0, univ.variants), Maybe$OptolithClient.fromMaybe(/* [] */0, l10n.variants))),
-          isVariantRequired: univ.isVariantRequired,
-          gr: univ.gr,
-          sgr: univ.sgr,
-          src: l10n.src,
-          errata: l10n.errata
-        };
+  return /* tuple */[
+          univ.id,
+          {
+            id: univ.id,
+            name: l10n.name,
+            subname: l10n.subname,
+            cost: univ.cost,
+            prerequisites: {
+              sex: univ.sexDependency,
+              race: univ.raceDependency,
+              culture: univ.cultureDependency,
+              activatable: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.activatablePrerequisites),
+              increasable: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.increasablePrerequisites)
+            },
+            prerequisitesStart: l10n.prerequisitesStart,
+            options: {
+              skillSpecialization: univ.skillSpecializationSelectOptions,
+              languageScript: univ.languageScriptSelectOptions,
+              combatTechnique: univ.combatTechniqueSelectOptions,
+              cantrip: univ.cantripSelectOptions,
+              curse: univ.curseSelectOptions,
+              terrainKnowledge: univ.terrainKnowledgeSelectOptions,
+              skill: univ.skillSelectOptions,
+              guildMageUnfamiliarSpell: Maybe$OptolithClient.maybe(false, (function (param) {
+                      return ListH$OptolithClient.Foldable.any((function (x) {
+                                    if (Caml_obj.caml_equal(x.id, /* `SpecialAbility */[
+                                            -789492591,
+                                            Ids$OptolithClient.SpecialAbilityId.traditionGuildMages
+                                          ])) {
+                                      return x.active;
+                                    } else {
+                                      return false;
+                                    }
+                                  }), param);
+                    }), univ.activatablePrerequisites)
+            },
+            specialAbilities: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.specialAbilities),
+            combatTechniques: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.combatTechniques),
+            skills: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.skills),
+            spells: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.spells),
+            liturgicalChants: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.liturgicalChants),
+            blessings: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.blessings),
+            suggestedAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.suggestedAdvantages),
+            suggestedAdvantagesText: l10n.suggestedAdvantages,
+            suggestedDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.suggestedDisadvantages),
+            suggestedDisadvantagesText: l10n.suggestedDisadvantages,
+            unsuitableAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.unsuitableAdvantages),
+            unsuitableAdvantagesText: l10n.unsuitableAdvantages,
+            unsuitableDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.unsuitableDisadvantages),
+            unsuitableDisadvantagesText: l10n.unsuitableDisadvantages,
+            variants: Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, variant, (function (x) {
+                        return x.id;
+                      }), (function (x) {
+                        return x.id;
+                      }), Maybe$OptolithClient.fromMaybe(/* [] */0, univ.variants), Maybe$OptolithClient.fromMaybe(/* [] */0, l10n.variants))),
+            isVariantRequired: univ.isVariantRequired,
+            gr: univ.gr,
+            sgr: univ.sgr,
+            src: l10n.src,
+            errata: l10n.errata
+          }
+        ];
+}
+
+function all(yamlData) {
+  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, t, (function (x) {
+                    return x.id;
+                  }), (function (x) {
+                    return x.id;
+                  }), Json_decode.list(tUniv, yamlData.professionsUniv), Json_decode.list(tL10n, yamlData.professionsL10n)));
 }
 
 var Decode = {
@@ -416,7 +427,8 @@ var Decode = {
   variant: variant,
   tL10n: tL10n,
   tUniv: tUniv,
-  t: t
+  t: t,
+  all: all
 };
 
 exports.Decode = Decode;

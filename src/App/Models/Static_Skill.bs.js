@@ -6,6 +6,7 @@ var Pervasives = require("bs-platform/lib/js/pervasives.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var IC$OptolithClient = require("../Utilities/IC.bs.js");
 var Int$OptolithClient = require("../../Data/Int.bs.js");
+var ListH$OptolithClient = require("../../Data/ListH.bs.js");
 var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
 var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
 var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
@@ -155,32 +156,43 @@ function t(univ, l10n) {
         }), (function (prim) {
           return prim[0];
         }), Maybe$OptolithClient.fromMaybe(/* [] */0, univ.applications), l10n.applications);
-  return {
-          id: univ.id,
-          name: l10n.name,
-          check: /* tuple */[
-            univ.check1,
-            univ.check2,
-            univ.check3
-          ],
-          encumbrance: tmp,
-          gr: univ.gr,
-          ic: univ.ic,
-          applications: Curry._1(IntMap$OptolithClient.fromList, Pervasives.$at(param[1], param[0])),
-          applicationsInput: l10n.applicationsInput,
-          uses: Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, use, (function (prim) {
-                      return prim[0];
-                    }), (function (prim) {
-                      return prim[0];
-                    }), Maybe$OptolithClient.fromMaybe(/* [] */0, univ.uses), Maybe$OptolithClient.fromMaybe(/* [] */0, l10n.uses))),
-          tools: l10n.tools,
-          quality: l10n.quality,
-          failed: l10n.failed,
-          critical: l10n.critical,
-          botch: l10n.botch,
-          src: l10n.src,
-          errata: l10n.errata
-        };
+  return /* tuple */[
+          univ.id,
+          {
+            id: univ.id,
+            name: l10n.name,
+            check: /* tuple */[
+              univ.check1,
+              univ.check2,
+              univ.check3
+            ],
+            encumbrance: tmp,
+            gr: univ.gr,
+            ic: univ.ic,
+            applications: Curry._1(IntMap$OptolithClient.fromList, Pervasives.$at(param[1], param[0])),
+            applicationsInput: l10n.applicationsInput,
+            uses: Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, use, (function (prim) {
+                        return prim[0];
+                      }), (function (prim) {
+                        return prim[0];
+                      }), Maybe$OptolithClient.fromMaybe(/* [] */0, univ.uses), Maybe$OptolithClient.fromMaybe(/* [] */0, l10n.uses))),
+            tools: l10n.tools,
+            quality: l10n.quality,
+            failed: l10n.failed,
+            critical: l10n.critical,
+            botch: l10n.botch,
+            src: l10n.src,
+            errata: l10n.errata
+          }
+        ];
+}
+
+function all(yamlData) {
+  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, t, (function (x) {
+                    return x.id;
+                  }), (function (x) {
+                    return x.id;
+                  }), Json_decode.list(tUniv, yamlData.skillsUniv), Json_decode.list(tL10n, yamlData.skillsL10n)));
 }
 
 function group(json) {
@@ -189,6 +201,15 @@ function group(json) {
           name: Json_decode.field("name", Json_decode.string, json),
           fullName: Json_decode.field("fullName", Json_decode.string, json)
         };
+}
+
+function groups(yamlData) {
+  return Curry._1(IntMap$OptolithClient.fromList, ListH$OptolithClient.map((function (x) {
+                    return /* tuple */[
+                            x.id,
+                            x
+                          ];
+                  }), Json_decode.list(group, yamlData.skillGroupsL10n)));
 }
 
 var Decode = {
@@ -203,7 +224,9 @@ var Decode = {
   application: application,
   use: use,
   t: t,
-  group: group
+  all: all,
+  group: group,
+  groups: groups
 };
 
 exports.Decode = Decode;

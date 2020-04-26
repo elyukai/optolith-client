@@ -472,7 +472,7 @@ export const SpecialAbilityId_traditionElves: string = IdsBS.SpecialAbilityId.tr
 
 export const SpecialAbilityId_traditionDruids: string = IdsBS.SpecialAbilityId.traditionDruids;
 
-export const SpecialAbilityId_spellEnhancement: string = IdsBS.SpecialAbilityId.spellEnhancement;
+export const SpecialAbilityId_spellEnhancement: number = IdsBS.SpecialAbilityId.spellEnhancement;
 
 export const SpecialAbilityId_forschungsgebiet: string = IdsBS.SpecialAbilityId.forschungsgebiet;
 
@@ -514,7 +514,7 @@ export const SpecialAbilityId_anhaengerDesGueldenen: string = IdsBS.SpecialAbili
 
 export const SpecialAbilityId_gebieterDesAspekts: string = IdsBS.SpecialAbilityId.gebieterDesAspekts;
 
-export const SpecialAbilityId_chantEnhancement: string = IdsBS.SpecialAbilityId.chantEnhancement;
+export const SpecialAbilityId_chantEnhancement: number = IdsBS.SpecialAbilityId.chantEnhancement;
 
 export const SpecialAbilityId_dunklesAbbildDerBuendnisgabe: string = IdsBS.SpecialAbilityId.dunklesAbbildDerBuendnisgabe;
 
@@ -856,7 +856,7 @@ export const SpecialAbilityId: {
   visionDerBestimmung: string; 
   visionDerEntrueckung: string; 
   languageSpecializations: string; 
-  chantEnhancement: string; 
+  chantEnhancement: number; 
   traditionChurchOfPhex: string; 
   traditionChurchOfFirun: string; 
   traditionChurchOfNandus: string; 
@@ -933,7 +933,7 @@ export const SpecialAbilityId: {
   improvedDodge: string; 
   traditionQabalyaMage: string; 
   aspectKnowledge: string; 
-  spellEnhancement: string; 
+  spellEnhancement: number; 
   traditionSchelme: string; 
   predigtDerZuversicht: string; 
   traditionChurchOfTsa: string; 

@@ -267,65 +267,81 @@ module Decode = {
     },
   );
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    cost: univ.cost,
-    lp: univ.lp,
-    spi: univ.spi,
-    tou: univ.tou,
-    mov: univ.mov,
-    attributeAdjustments:
-      univ.attributeAdjustments |> Maybe.maybe(IntMap.empty, IntMap.fromList),
-    attributeAdjustmentsSelectionValue:
-      univ.attributeAdjustmentsSelectionValue,
-    attributeAdjustmentsSelectionList:
-      univ.attributeAdjustmentsSelectionList |> IntSet.fromList,
-    attributeAdjustmentsText: l10n.attributeAdjustments,
-    automaticAdvantages: univ.automaticAdvantages |> Maybe.fromMaybe([]),
-    automaticAdvantagesText: l10n.automaticAdvantages,
-    stronglyRecommendedAdvantages:
-      univ.stronglyRecommendedAdvantages |> Maybe.fromMaybe([]),
-    stronglyRecommendedAdvantagesText: l10n.stronglyRecommendedAdvantages,
-    stronglyRecommendedDisadvantages:
-      univ.stronglyRecommendedDisadvantages |> Maybe.fromMaybe([]),
-    stronglyRecommendedDisadvantagesText:
-      l10n.stronglyRecommendedDisadvantages,
-    commonAdvantages: univ.commonAdvantages |> Maybe.fromMaybe([]),
-    commonAdvantagesText: l10n.commonAdvantages,
-    commonDisadvantages: univ.commonDisadvantages |> Maybe.fromMaybe([]),
-    commonDisadvantagesText: l10n.commonDisadvantages,
-    uncommonAdvantages: univ.uncommonAdvantages |> Maybe.fromMaybe([]),
-    uncommonAdvantagesText: l10n.uncommonDisadvantages,
-    uncommonDisadvantages: univ.uncommonDisadvantages |> Maybe.fromMaybe([]),
-    uncommonDisadvantagesText: l10n.uncommonDisadvantages,
-    weightBase: univ.weightBase,
-    weightRandom: univ.weightRandom,
-    variantOptions:
-      switch (univ.variantOptions) {
-      | WithVariants(withVariants) =>
-        WithVariants({
-          variants:
-            Yaml_Zip.zipBy(
-              Int.show,
-              variant,
-              x => x.id,
-              x => x.id,
-              withVariants.variants,
-              l10n.variants |> Maybe.fromMaybe([]),
-            )
-            |> IntMap.fromList,
-        })
-      | WithoutVariants(withoutVariants) =>
-        WithoutVariants({
-          commonCultures: withoutVariants.commonCultures |> IntSet.fromList,
-          hairColors: withoutVariants.hairColors,
-          eyeColors: withoutVariants.eyeColors,
-          sizeBase: withoutVariants.sizeBase,
-          sizeRandom: withoutVariants.sizeRandom,
-        })
-      },
-    src: l10n.src,
-    errata: l10n.errata,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      cost: univ.cost,
+      lp: univ.lp,
+      spi: univ.spi,
+      tou: univ.tou,
+      mov: univ.mov,
+      attributeAdjustments:
+        univ.attributeAdjustments
+        |> Maybe.maybe(IntMap.empty, IntMap.fromList),
+      attributeAdjustmentsSelectionValue:
+        univ.attributeAdjustmentsSelectionValue,
+      attributeAdjustmentsSelectionList:
+        univ.attributeAdjustmentsSelectionList |> IntSet.fromList,
+      attributeAdjustmentsText: l10n.attributeAdjustments,
+      automaticAdvantages: univ.automaticAdvantages |> Maybe.fromMaybe([]),
+      automaticAdvantagesText: l10n.automaticAdvantages,
+      stronglyRecommendedAdvantages:
+        univ.stronglyRecommendedAdvantages |> Maybe.fromMaybe([]),
+      stronglyRecommendedAdvantagesText: l10n.stronglyRecommendedAdvantages,
+      stronglyRecommendedDisadvantages:
+        univ.stronglyRecommendedDisadvantages |> Maybe.fromMaybe([]),
+      stronglyRecommendedDisadvantagesText:
+        l10n.stronglyRecommendedDisadvantages,
+      commonAdvantages: univ.commonAdvantages |> Maybe.fromMaybe([]),
+      commonAdvantagesText: l10n.commonAdvantages,
+      commonDisadvantages: univ.commonDisadvantages |> Maybe.fromMaybe([]),
+      commonDisadvantagesText: l10n.commonDisadvantages,
+      uncommonAdvantages: univ.uncommonAdvantages |> Maybe.fromMaybe([]),
+      uncommonAdvantagesText: l10n.uncommonDisadvantages,
+      uncommonDisadvantages:
+        univ.uncommonDisadvantages |> Maybe.fromMaybe([]),
+      uncommonDisadvantagesText: l10n.uncommonDisadvantages,
+      weightBase: univ.weightBase,
+      weightRandom: univ.weightRandom,
+      variantOptions:
+        switch (univ.variantOptions) {
+        | WithVariants(withVariants) =>
+          WithVariants({
+            variants:
+              Yaml_Zip.zipBy(
+                Int.show,
+                variant,
+                x => x.id,
+                x => x.id,
+                withVariants.variants,
+                l10n.variants |> Maybe.fromMaybe([]),
+              )
+              |> IntMap.fromList,
+          })
+        | WithoutVariants(withoutVariants) =>
+          WithoutVariants({
+            commonCultures: withoutVariants.commonCultures |> IntSet.fromList,
+            hairColors: withoutVariants.hairColors,
+            eyeColors: withoutVariants.eyeColors,
+            sizeBase: withoutVariants.sizeBase,
+            sizeRandom: withoutVariants.sizeRandom,
+          })
+        },
+      src: l10n.src,
+      errata: l10n.errata,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.racesUniv |> list(tUniv),
+      yamlData.racesL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

@@ -39,11 +39,25 @@ module Decode = {
     items: json |> field("items", list(item)),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    items: IntMap.fromList(univ.items) |> IntMap.map(Maybe.fromMaybe(1)),
-    src: l10n.src,
-    errata: l10n.errata,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      items: IntMap.fromList(univ.items) |> IntMap.map(Maybe.fromMaybe(1)),
+      src: l10n.src,
+      errata: l10n.errata,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.equipmentPackagesUniv |> list(tUniv),
+      yamlData.equipmentPackagesL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

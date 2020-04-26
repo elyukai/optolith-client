@@ -77,24 +77,38 @@ module Decode = {
     ic: json |> field("ic", IC.Decode.t),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    check: (univ.check1, univ.check2, univ.check3),
-    checkMod: univ.checkMod,
-    effect: l10n.effect,
-    castingTime: l10n.castingTime,
-    castingTimeShort: l10n.castingTimeShort,
-    aeCost: l10n.aeCost,
-    aeCostShort: l10n.aeCostShort,
-    range: l10n.range,
-    rangeShort: l10n.rangeShort,
-    duration: l10n.duration,
-    durationShort: l10n.durationShort,
-    target: l10n.target,
-    property: univ.property,
-    ic: univ.ic,
-    src: l10n.src,
-    errata: l10n.errata,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      check: (univ.check1, univ.check2, univ.check3),
+      checkMod: univ.checkMod,
+      effect: l10n.effect,
+      castingTime: l10n.castingTime,
+      castingTimeShort: l10n.castingTimeShort,
+      aeCost: l10n.aeCost,
+      aeCostShort: l10n.aeCostShort,
+      range: l10n.range,
+      rangeShort: l10n.rangeShort,
+      duration: l10n.duration,
+      durationShort: l10n.durationShort,
+      target: l10n.target,
+      property: univ.property,
+      ic: univ.ic,
+      src: l10n.src,
+      errata: l10n.errata,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.rogueSpellsUniv |> list(tUniv),
+      yamlData.rogueSpellsL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

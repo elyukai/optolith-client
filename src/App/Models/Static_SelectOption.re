@@ -20,7 +20,7 @@ type t = {
   specializationInput: Maybe.t(string),
   animalGr: Maybe.t(int),
   animalLevel: Maybe.t(int),
-  target: Maybe.t(string),
+  target: Maybe.t(int),
   wikiEntry: Maybe.t(wikiEntry),
   src: list(Static_SourceRef.t),
   errata: list(Static_Erratum.t),

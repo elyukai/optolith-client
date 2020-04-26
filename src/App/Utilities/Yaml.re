@@ -9,10 +9,10 @@ let parseStaticData = locale => {
   Js.Console.timeStart("parseStaticData");
 
   locale
-  |> Raw.getStaticData
+  |> Yaml_Raw.getStaticData
   <&> (
     yamlData => {
-      let res = Decode.decode(yamlData);
+      let res = Yaml_Decode.decode(yamlData);
 
       Js.Console.log("Parsing static data done!");
 
@@ -20,5 +20,6 @@ let parseStaticData = locale => {
 
       res;
     }
-  );
+  )
+  |> Exception.handleE;
 };

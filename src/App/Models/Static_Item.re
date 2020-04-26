@@ -202,13 +202,27 @@ module Decode = {
     gr: json |> field("gr", int),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    price: univ.price,
-    weight: univ.weight,
-    special: univ.special,
-    info: l10n.info,
-    gr: univ.gr,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      price: univ.price,
+      weight: univ.weight,
+      special: univ.special,
+      info: l10n.info,
+      gr: univ.gr,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.equipmentUniv |> list(tUniv),
+      yamlData.equipmentL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

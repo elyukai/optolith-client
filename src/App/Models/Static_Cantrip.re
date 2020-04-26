@@ -58,17 +58,31 @@ module Decode = {
          ),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    effect: l10n.effect,
-    range: l10n.range,
-    duration: l10n.duration,
-    target: l10n.target,
-    property: univ.property,
-    traditions: IntSet.fromList(univ.traditions),
-    activatablePrerequisites: univ.activatablePrerequisites,
-    src: l10n.src,
-    errata: l10n.errata,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      effect: l10n.effect,
+      range: l10n.range,
+      duration: l10n.duration,
+      target: l10n.target,
+      property: univ.property,
+      traditions: IntSet.fromList(univ.traditions),
+      activatablePrerequisites: univ.activatablePrerequisites,
+      src: l10n.src,
+      errata: l10n.errata,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.cantripsUniv |> list(tUniv),
+      yamlData.cantripsL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

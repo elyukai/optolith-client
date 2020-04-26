@@ -2,7 +2,11 @@
 'use strict';
 
 var Block = require("bs-platform/lib/js/block.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
+var Int$OptolithClient = require("../../Data/Int.bs.js");
+var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
 var GenericHelpers$OptolithClient = require("../Utilities/GenericHelpers.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
@@ -195,15 +199,26 @@ function tUniv(json) {
 }
 
 function t(univ, l10n) {
-  return {
-          id: univ.id,
-          name: l10n.name,
-          price: univ.price,
-          weight: univ.weight,
-          special: univ.special,
-          info: l10n.info,
-          gr: univ.gr
-        };
+  return /* tuple */[
+          univ.id,
+          {
+            id: univ.id,
+            name: l10n.name,
+            price: univ.price,
+            weight: univ.weight,
+            special: univ.special,
+            info: l10n.info,
+            gr: univ.gr
+          }
+        ];
+}
+
+function all(yamlData) {
+  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, t, (function (x) {
+                    return x.id;
+                  }), (function (x) {
+                    return x.id;
+                  }), Json_decode.list(tUniv, yamlData.equipmentUniv), Json_decode.list(tL10n, yamlData.equipmentL10n)));
 }
 
 var Decode = {
@@ -219,8 +234,9 @@ var Decode = {
   armor: armor,
   special: special,
   tUniv: tUniv,
-  t: t
+  t: t,
+  all: all
 };
 
 exports.Decode = Decode;
-/* No side effect */
+/* IntMap-OptolithClient Not a pure module */

@@ -148,37 +148,52 @@ module Decode = {
       json |> field("culturalPackageSkills", list(pair(int, int))),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    language: univ.languages,
-    script: univ.literacy,
-    areaKnowledge: l10n.areaKnowledge,
-    areaKnowledgeShort: l10n.areaKnowledgeShort,
-    socialStatus: univ.social,
-    commonMundaneProfessionsAll: univ.commonMundaneProfessionsAll,
-    commonMundaneProfessionsExceptions:
-      univ.commonMundaneProfessionsExceptions,
-    commonMundaneProfessionsText: l10n.commonMundaneProfessions,
-    commonMagicProfessionsAll: univ.commonMagicalProfessionsAll,
-    commonMagicProfessionsExceptions: univ.commonMagicalProfessionsExceptions,
-    commonMagicProfessionsText: l10n.commonMagicalProfessions,
-    commonBlessedProfessionsAll: univ.commonBlessedProfessionsAll,
-    commonBlessedProfessionsExceptions:
-      univ.commonBlessedProfessionsExceptions,
-    commonBlessedProfessionsText: l10n.commonBlessedProfessions,
-    commonAdvantages: univ.commonAdvantages,
-    commonAdvantagesText: l10n.commonAdvantages,
-    commonDisadvantages: univ.commonDisadvantages,
-    commonDisadvantagesText: l10n.commonDisadvantages,
-    uncommonAdvantages: univ.uncommonAdvantages,
-    uncommonAdvantagesText: l10n.uncommonAdvantages,
-    uncommonDisadvantages: univ.uncommonDisadvantages,
-    uncommonDisadvantagesText: l10n.uncommonDisadvantages,
-    commonSkills: univ.commonSkills,
-    uncommonSkills: univ.uncommonSkills,
-    commonNames: l10n.commonNames,
-    culturalPackageCost: univ.culturalPackageCost,
-    culturalPackageSkills: univ.culturalPackageSkills |> IntMap.fromList,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      language: univ.languages,
+      script: univ.literacy,
+      areaKnowledge: l10n.areaKnowledge,
+      areaKnowledgeShort: l10n.areaKnowledgeShort,
+      socialStatus: univ.social,
+      commonMundaneProfessionsAll: univ.commonMundaneProfessionsAll,
+      commonMundaneProfessionsExceptions:
+        univ.commonMundaneProfessionsExceptions,
+      commonMundaneProfessionsText: l10n.commonMundaneProfessions,
+      commonMagicProfessionsAll: univ.commonMagicalProfessionsAll,
+      commonMagicProfessionsExceptions:
+        univ.commonMagicalProfessionsExceptions,
+      commonMagicProfessionsText: l10n.commonMagicalProfessions,
+      commonBlessedProfessionsAll: univ.commonBlessedProfessionsAll,
+      commonBlessedProfessionsExceptions:
+        univ.commonBlessedProfessionsExceptions,
+      commonBlessedProfessionsText: l10n.commonBlessedProfessions,
+      commonAdvantages: univ.commonAdvantages,
+      commonAdvantagesText: l10n.commonAdvantages,
+      commonDisadvantages: univ.commonDisadvantages,
+      commonDisadvantagesText: l10n.commonDisadvantages,
+      uncommonAdvantages: univ.uncommonAdvantages,
+      uncommonAdvantagesText: l10n.uncommonAdvantages,
+      uncommonDisadvantages: univ.uncommonDisadvantages,
+      uncommonDisadvantagesText: l10n.uncommonDisadvantages,
+      commonSkills: univ.commonSkills,
+      uncommonSkills: univ.uncommonSkills,
+      commonNames: l10n.commonNames,
+      culturalPackageCost: univ.culturalPackageCost,
+      culturalPackageSkills: univ.culturalPackageSkills |> IntMap.fromList,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.culturesUniv |> list(tUniv),
+      yamlData.culturesL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

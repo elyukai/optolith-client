@@ -204,6 +204,16 @@ module Decode = {
     errata: l10n.errata,
   };
 
+  let enhancements = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      enhancement,
+      x => x.target,
+      x => x.target,
+      yamlData.spellEnhancementsUniv |> list(enhancementUniv),
+      yamlData.spellEnhancementsL10n |> list(enhancementL10n),
+    );
+
   type tL10n = {
     id: int,
     name: string,
@@ -286,32 +296,46 @@ module Decode = {
     gr: json |> field("gr", int),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    check: (univ.check1, univ.check2, univ.check3),
-    checkMod: univ.checkMod,
-    effect: l10n.effect,
-    castingTime: l10n.castingTime,
-    castingTimeShort: l10n.castingTimeShort,
-    castingTimeNoMod: univ.castingTimeNoMod,
-    aeCost: l10n.aeCost,
-    aeCostShort: l10n.aeCostShort,
-    aeCostNoMod: univ.aeCostNoMod,
-    range: l10n.range,
-    rangeShort: l10n.rangeShort,
-    rangeNoMod: univ.rangeNoMod,
-    duration: l10n.duration,
-    durationShort: l10n.durationShort,
-    durationNoMod: univ.durationNoMod,
-    target: l10n.target,
-    property: univ.property,
-    traditions: univ.traditions,
-    ic: univ.ic,
-    activatablePrerequisites: univ.activatablePrerequisites,
-    increasablePrerequisites: univ.increasablePrerequisites,
-    gr: univ.gr,
-    src: l10n.src,
-    errata: l10n.errata,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      check: (univ.check1, univ.check2, univ.check3),
+      checkMod: univ.checkMod,
+      effect: l10n.effect,
+      castingTime: l10n.castingTime,
+      castingTimeShort: l10n.castingTimeShort,
+      castingTimeNoMod: univ.castingTimeNoMod,
+      aeCost: l10n.aeCost,
+      aeCostShort: l10n.aeCostShort,
+      aeCostNoMod: univ.aeCostNoMod,
+      range: l10n.range,
+      rangeShort: l10n.rangeShort,
+      rangeNoMod: univ.rangeNoMod,
+      duration: l10n.duration,
+      durationShort: l10n.durationShort,
+      durationNoMod: univ.durationNoMod,
+      target: l10n.target,
+      property: univ.property,
+      traditions: univ.traditions,
+      ic: univ.ic,
+      activatablePrerequisites: univ.activatablePrerequisites,
+      increasablePrerequisites: univ.increasablePrerequisites,
+      gr: univ.gr,
+      src: l10n.src,
+      errata: l10n.errata,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.spellsUniv |> list(tUniv),
+      yamlData.spellsL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

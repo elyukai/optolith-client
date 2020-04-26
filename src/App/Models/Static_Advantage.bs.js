@@ -2,7 +2,11 @@
 'use strict';
 
 var Block = require("bs-platform/lib/js/block.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
+var Int$OptolithClient = require("../../Data/Int.bs.js");
+var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
@@ -73,39 +77,53 @@ function tUniv(json) {
 }
 
 function t(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, univ, l10n) {
-  return {
-          id: univ.id,
-          name: l10n.name,
-          nameInWiki: l10n.nameInWiki,
-          noMaxAPInfluence: univ.noMaxAPInfluence,
-          isExclusiveToArcaneSpellworks: univ.isExclusiveToArcaneSpellworks,
-          levels: univ.levels,
-          max: univ.max,
-          rules: l10n.rules,
-          selectOptions: Static_SelectOption$OptolithClient.Decode.mergeSelectOptions(l10n.selectOptions, univ.selectOptions, Static_SelectOption$OptolithClient.Decode.resolveCategories(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, univ.selectOptionCategories)),
-          input: l10n.input,
-          range: l10n.range,
-          actions: l10n.actions,
-          prerequisites: univ.prerequisites,
-          prerequisitesText: l10n.prerequisites,
-          prerequisitesTextIndex: Static_Prerequisites$OptolithClient.Decode.tIndexWithLevel(univ.prerequisitesIndex, l10n.prerequisitesIndex),
-          prerequisitesTextStart: l10n.prerequisitesStart,
-          prerequisitesTextEnd: l10n.prerequisitesEnd,
-          apValue: univ.cost,
-          apValueText: l10n.apValue,
-          apValueTextAppend: l10n.apValueAppend,
-          gr: univ.gr,
-          src: l10n.src,
-          errata: l10n.errata
-        };
+  return /* tuple */[
+          univ.id,
+          {
+            id: univ.id,
+            name: l10n.name,
+            nameInWiki: l10n.nameInWiki,
+            noMaxAPInfluence: univ.noMaxAPInfluence,
+            isExclusiveToArcaneSpellworks: univ.isExclusiveToArcaneSpellworks,
+            levels: univ.levels,
+            max: univ.max,
+            rules: l10n.rules,
+            selectOptions: Static_SelectOption$OptolithClient.Decode.mergeSelectOptions(l10n.selectOptions, univ.selectOptions, Static_SelectOption$OptolithClient.Decode.resolveCategories(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, univ.selectOptionCategories)),
+            input: l10n.input,
+            range: l10n.range,
+            actions: l10n.actions,
+            prerequisites: univ.prerequisites,
+            prerequisitesText: l10n.prerequisites,
+            prerequisitesTextIndex: Static_Prerequisites$OptolithClient.Decode.tIndexWithLevel(univ.prerequisitesIndex, l10n.prerequisitesIndex),
+            prerequisitesTextStart: l10n.prerequisitesStart,
+            prerequisitesTextEnd: l10n.prerequisitesEnd,
+            apValue: univ.cost,
+            apValueText: l10n.apValue,
+            apValueTextAppend: l10n.apValueAppend,
+            gr: univ.gr,
+            src: l10n.src,
+            errata: l10n.errata
+          }
+        ];
+}
+
+function all(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, yamlData) {
+  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, (function (param, param$1) {
+                    return t(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, param, param$1);
+                  }), (function (x) {
+                    return x.id;
+                  }), (function (x) {
+                    return x.id;
+                  }), Json_decode.list(tUniv, yamlData.advantagesUniv), Json_decode.list(tL10n, yamlData.advantagesL10n)));
 }
 
 var Decode = {
   tL10n: tL10n,
   cost: cost,
   tUniv: tUniv,
-  t: t
+  t: t,
+  all: all
 };
 
 exports.Decode = Decode;
-/* Static_SelectOption-OptolithClient Not a pure module */
+/* IntMap-OptolithClient Not a pure module */

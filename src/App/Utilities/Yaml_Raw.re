@@ -27,6 +27,7 @@ type univYamlData = {
   magicalDances: Js.Json.t,
   magicalMelodies: Js.Json.t,
   magicalTraditions: Js.Json.t,
+  patrons: Js.Json.t,
   professions: Js.Json.t,
   professionVariants: Js.Json.t,
   races: Js.Json.t,
@@ -140,9 +141,12 @@ let getUnivStaticData = () =>
                         spells,
                       ),
                     ) =>
-                      readUnivYaml("ZibiljaRituals")
+                      Js.Promise.all2((
+                        readUnivYaml("ZibiljaRituals"),
+                        readUnivYaml("Patrons"),
+                      ))
                       <&> (
-                        zibiljaRituals => {
+                        ((zibiljaRituals, patrons)) => {
                           advantages: advantages |> Parser.parse,
                           animistForces: animistForces |> Parser.parse,
                           blessedTraditions: blessedTraditions |> Parser.parse,
@@ -165,6 +169,7 @@ let getUnivStaticData = () =>
                           magicalDances: magicalDances |> Parser.parse,
                           magicalMelodies: magicalMelodies |> Parser.parse,
                           magicalTraditions: magicalTraditions |> Parser.parse,
+                          patrons: patrons |> Parser.parse,
                           professions: professions |> Parser.parse,
                           professionVariants:
                             professionVariants |> Parser.parse,
@@ -223,6 +228,7 @@ type l10nYamlData = {
   magicalTraditions: Js.Json.t,
   optionalRules: Js.Json.t,
   pacts: Js.Json.t,
+  patrons: Js.Json.t,
   professions: Js.Json.t,
   professionVariants: Js.Json.t,
   properties: Js.Json.t,
@@ -416,7 +422,7 @@ let getLocaleSpecificStaticData = locale =>
                                         states,
                                       ),
                                     ) =>
-                                      Js.Promise.all4((
+                                      Js.Promise.all5((
                                         readL10nYaml(locale, "Subjects"),
                                         readL10nYaml(locale, "Tribes"),
                                         readL10nYaml(locale, "UI"),
@@ -424,6 +430,7 @@ let getLocaleSpecificStaticData = locale =>
                                           locale,
                                           "ZibiljaRituals",
                                         ),
+                                        readL10nYaml(locale, "Patrons"),
                                       ))
                                       <&> (
                                         (
@@ -432,6 +439,7 @@ let getLocaleSpecificStaticData = locale =>
                                             tribes,
                                             ui,
                                             zibiljaRituals,
+                                            patrons,
                                           ),
                                         ) => {
                                           advantages:
@@ -507,6 +515,7 @@ let getLocaleSpecificStaticData = locale =>
                                           optionalRules:
                                             optionalRules |> Parser.parse,
                                           pacts: pacts |> Parser.parse,
+                                          patrons: patrons |> Parser.parse,
                                           professions:
                                             professions |> Parser.parse,
                                           professionVariants:
@@ -612,6 +621,8 @@ type yamlData = {
   magicalTraditionsUniv: Js.Json.t,
   optionalRulesL10n: Js.Json.t,
   pactsL10n: Js.Json.t,
+  patronsL10n: Js.Json.t,
+  patronsUniv: Js.Json.t,
   professionsL10n: Js.Json.t,
   professionsUniv: Js.Json.t,
   professionVariantsL10n: Js.Json.t,
@@ -707,6 +718,8 @@ let getStaticData = locale =>
       magicalTraditionsUniv: univ.magicalTraditions,
       optionalRulesL10n: l10n.optionalRules,
       pactsL10n: l10n.pacts,
+      patronsL10n: l10n.patrons,
+      patronsUniv: univ.patrons,
       professionsL10n: l10n.professions,
       professionsUniv: univ.professions,
       professionVariantsL10n: l10n.professionVariants,

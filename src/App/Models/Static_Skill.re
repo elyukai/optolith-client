@@ -154,52 +154,72 @@ module Decode = {
     {id: fst(univ), name: snd(l10n), prerequisite: snd(univ)}: use,
   );
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    check: (univ.check1, univ.check2, univ.check3),
-    encumbrance:
-      switch (univ.enc) {
-      | True => True
-      | False => False
-      | Maybe => Maybe(l10n.encDescription)
-      },
-    gr: univ.gr,
-    ic: univ.ic,
-    applications:
-      Yaml_Zip.zipByPartition(
-        Int.show,
-        newApplication,
-        application,
-        fst,
-        fst,
-        univ.applications |> Maybe.fromMaybe([]),
-        l10n.applications,
-      )
-      |> (((mergeds, singles)) => singles @ mergeds |> IntMap.fromList),
-    applicationsInput: l10n.applicationsInput,
-    uses:
-      Yaml_Zip.zipBy(
-        Int.show,
-        use,
-        fst,
-        fst,
-        univ.uses |> Maybe.fromMaybe([]),
-        l10n.uses |> Maybe.fromMaybe([]),
-      )
-      |> IntMap.fromList,
-    tools: l10n.tools,
-    quality: l10n.quality,
-    failed: l10n.failed,
-    critical: l10n.critical,
-    botch: l10n.botch,
-    src: l10n.src,
-    errata: l10n.errata,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      check: (univ.check1, univ.check2, univ.check3),
+      encumbrance:
+        switch (univ.enc) {
+        | True => True
+        | False => False
+        | Maybe => Maybe(l10n.encDescription)
+        },
+      gr: univ.gr,
+      ic: univ.ic,
+      applications:
+        Yaml_Zip.zipByPartition(
+          Int.show,
+          newApplication,
+          application,
+          fst,
+          fst,
+          univ.applications |> Maybe.fromMaybe([]),
+          l10n.applications,
+        )
+        |> (((mergeds, singles)) => singles @ mergeds |> IntMap.fromList),
+      applicationsInput: l10n.applicationsInput,
+      uses:
+        Yaml_Zip.zipBy(
+          Int.show,
+          use,
+          fst,
+          fst,
+          univ.uses |> Maybe.fromMaybe([]),
+          l10n.uses |> Maybe.fromMaybe([]),
+        )
+        |> IntMap.fromList,
+      tools: l10n.tools,
+      quality: l10n.quality,
+      failed: l10n.failed,
+      critical: l10n.critical,
+      botch: l10n.botch,
+      src: l10n.src,
+      errata: l10n.errata,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.skillsUniv |> list(tUniv),
+      yamlData.skillsL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 
   let group = json => {
     id: json |> field("id", int),
     name: json |> field("name", string),
     fullName: json |> field("fullName", string),
   };
+
+  let groups = (yamlData: Yaml_Raw.yamlData) =>
+    yamlData.skillGroupsL10n
+    |> list(group)
+    |> ListH.map((x: group) => (x.id, x))
+    |> IntMap.fromList;
 };

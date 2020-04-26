@@ -57,7 +57,7 @@ type t = {
   conditions: IntMap.t(Condition.t),
   cultures: IntMap.t(Culture.t),
   curses: IntMap.t(Curse.t),
-  derivedCharacteristics: IntMap.t(DerivedCharacteristic.t),
+  derivedCharacteristics: StrMap.t(DerivedCharacteristic.t),
   disadvantages: IntMap.t(Disadvantage.t),
   dominationRituals: IntMap.t(DominationRitual.t),
   elvenMagicalSongs: IntMap.t(ElvenMagicalSong.t),

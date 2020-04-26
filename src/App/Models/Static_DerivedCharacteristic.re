@@ -19,4 +19,10 @@ module Decode = {
     calcHalfPrimary: json |> optionalField("calcHalfPrimary", string),
     calcNoPrimary: json |> optionalField("calcNoPrimary", string),
   };
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    yamlData.derivedCharacteristicsL10n
+    |> list(t)
+    |> ListH.map(x => (x.id, x))
+    |> StrMap.fromList;
 };

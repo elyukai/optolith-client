@@ -53,18 +53,32 @@ module Decode = {
       json |> field("areDisAdvRequiredApplyToMagActionsOrApps", bool),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    numId: univ.numId,
-    name: l10n.name,
-    primary: univ.primary,
-    aeMod: univ.aeMod,
-    canLearnCantrips: univ.canLearnCantrips,
-    canLearnSpells: univ.canLearnSpells,
-    canLearnRituals: univ.canLearnRituals,
-    allowMultipleTraditions: univ.allowMultipleTraditions,
-    isDisAdvAPMaxHalved: univ.isDisAdvAPMaxHalved,
-    areDisAdvRequiredApplyToMagActionsOrApps:
-      univ.areDisAdvRequiredApplyToMagActionsOrApps,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      numId: univ.numId,
+      name: l10n.name,
+      primary: univ.primary,
+      aeMod: univ.aeMod,
+      canLearnCantrips: univ.canLearnCantrips,
+      canLearnSpells: univ.canLearnSpells,
+      canLearnRituals: univ.canLearnRituals,
+      allowMultipleTraditions: univ.allowMultipleTraditions,
+      isDisAdvAPMaxHalved: univ.isDisAdvAPMaxHalved,
+      areDisAdvRequiredApplyToMagActionsOrApps:
+        univ.areDisAdvRequiredApplyToMagActionsOrApps,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.magicalTraditionsUniv |> list(tUniv),
+      yamlData.magicalTraditionsL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

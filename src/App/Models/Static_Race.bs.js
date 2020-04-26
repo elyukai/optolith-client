@@ -250,38 +250,49 @@ function t(univ, l10n) {
                     }), match[0].variants, Maybe$OptolithClient.fromMaybe(/* [] */0, l10n.variants)))
         }]);
   }
-  return {
-          id: univ.id,
-          name: l10n.name,
-          cost: univ.cost,
-          lp: univ.lp,
-          spi: univ.spi,
-          tou: univ.tou,
-          mov: univ.mov,
-          attributeAdjustments: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.attributeAdjustments),
-          attributeAdjustmentsSelectionValue: univ.attributeAdjustmentsSelectionValue,
-          attributeAdjustmentsSelectionList: Curry._1(IntSet$OptolithClient.fromList, univ.attributeAdjustmentsSelectionList),
-          attributeAdjustmentsText: l10n.attributeAdjustments,
-          automaticAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.automaticAdvantages),
-          automaticAdvantagesText: l10n.automaticAdvantages,
-          stronglyRecommendedAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.stronglyRecommendedAdvantages),
-          stronglyRecommendedAdvantagesText: l10n.stronglyRecommendedAdvantages,
-          stronglyRecommendedDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.stronglyRecommendedDisadvantages),
-          stronglyRecommendedDisadvantagesText: l10n.stronglyRecommendedDisadvantages,
-          commonAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.commonAdvantages),
-          commonAdvantagesText: l10n.commonAdvantages,
-          commonDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.commonDisadvantages),
-          commonDisadvantagesText: l10n.commonDisadvantages,
-          uncommonAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.uncommonAdvantages),
-          uncommonAdvantagesText: l10n.uncommonDisadvantages,
-          uncommonDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.uncommonDisadvantages),
-          uncommonDisadvantagesText: l10n.uncommonDisadvantages,
-          weightBase: univ.weightBase,
-          weightRandom: univ.weightRandom,
-          variantOptions: tmp,
-          src: l10n.src,
-          errata: l10n.errata
-        };
+  return /* tuple */[
+          univ.id,
+          {
+            id: univ.id,
+            name: l10n.name,
+            cost: univ.cost,
+            lp: univ.lp,
+            spi: univ.spi,
+            tou: univ.tou,
+            mov: univ.mov,
+            attributeAdjustments: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.attributeAdjustments),
+            attributeAdjustmentsSelectionValue: univ.attributeAdjustmentsSelectionValue,
+            attributeAdjustmentsSelectionList: Curry._1(IntSet$OptolithClient.fromList, univ.attributeAdjustmentsSelectionList),
+            attributeAdjustmentsText: l10n.attributeAdjustments,
+            automaticAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.automaticAdvantages),
+            automaticAdvantagesText: l10n.automaticAdvantages,
+            stronglyRecommendedAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.stronglyRecommendedAdvantages),
+            stronglyRecommendedAdvantagesText: l10n.stronglyRecommendedAdvantages,
+            stronglyRecommendedDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.stronglyRecommendedDisadvantages),
+            stronglyRecommendedDisadvantagesText: l10n.stronglyRecommendedDisadvantages,
+            commonAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.commonAdvantages),
+            commonAdvantagesText: l10n.commonAdvantages,
+            commonDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.commonDisadvantages),
+            commonDisadvantagesText: l10n.commonDisadvantages,
+            uncommonAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.uncommonAdvantages),
+            uncommonAdvantagesText: l10n.uncommonDisadvantages,
+            uncommonDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.uncommonDisadvantages),
+            uncommonDisadvantagesText: l10n.uncommonDisadvantages,
+            weightBase: univ.weightBase,
+            weightRandom: univ.weightRandom,
+            variantOptions: tmp,
+            src: l10n.src,
+            errata: l10n.errata
+          }
+        ];
+}
+
+function all(yamlData) {
+  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, t, (function (x) {
+                    return x.id;
+                  }), (function (x) {
+                    return x.id;
+                  }), Json_decode.list(tUniv, yamlData.racesUniv), Json_decode.list(tL10n, yamlData.racesL10n)));
 }
 
 var Decode = {
@@ -294,7 +305,8 @@ var Decode = {
   variantOptionsUniv: variantOptionsUniv,
   tUniv: tUniv,
   variant: variant,
-  t: t
+  t: t,
+  all: all
 };
 
 exports.Decode = Decode;

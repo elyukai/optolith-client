@@ -12,4 +12,10 @@ module Decode = {
     name: json |> field("name", string),
     short: json |> field("short", string),
   };
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    yamlData.attributesL10n
+    |> list(t)
+    |> ListH.map(x => (x.id, x))
+    |> IntMap.fromList;
 };

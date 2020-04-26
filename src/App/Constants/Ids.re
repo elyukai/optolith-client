@@ -498,7 +498,7 @@ module SpecialAbilityId = {
   [@gentype]
   let traditionDruids = "SA_346";
   [@gentype]
-  let spellEnhancement = "SA_414";
+  let spellEnhancement = 414;
   [@gentype]
   let forschungsgebiet = "SA_472";
   [@gentype]
@@ -540,7 +540,7 @@ module SpecialAbilityId = {
   [@gentype]
   let gebieterDesAspekts = "SA_639";
   [@gentype]
-  let chantEnhancement = "SA_663";
+  let chantEnhancement = 663;
   [@gentype]
   let dunklesAbbildDerBuendnisgabe = "SA_667";
   [@gentype]

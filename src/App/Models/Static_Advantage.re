@@ -143,46 +143,76 @@ module Decode = {
         spells,
         univ,
         l10n,
-      ) => {
-    id: univ.id,
-    name: l10n.name,
-    nameInWiki: l10n.nameInWiki,
-    noMaxAPInfluence: univ.noMaxAPInfluence,
-    isExclusiveToArcaneSpellworks: univ.isExclusiveToArcaneSpellworks,
-    levels: univ.levels,
-    max: univ.max,
-    rules: l10n.rules,
-    selectOptions:
-      univ.selectOptionCategories
-      |> Static_SelectOption.Decode.resolveCategories(
-           blessings,
-           cantrips,
-           combatTechniques,
-           liturgicalChants,
-           skills,
-           spells,
-         )
-      |> Static_SelectOption.Decode.mergeSelectOptions(
-           l10n.selectOptions,
-           univ.selectOptions,
-         ),
-    input: l10n.input,
-    range: l10n.range,
-    actions: l10n.actions,
-    prerequisites: univ.prerequisites,
-    prerequisitesText: l10n.prerequisites,
-    prerequisitesTextIndex:
-      Static_Prerequisites.Decode.tIndexWithLevel(
-        univ.prerequisitesIndex,
-        l10n.prerequisitesIndex,
+      ) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      nameInWiki: l10n.nameInWiki,
+      noMaxAPInfluence: univ.noMaxAPInfluence,
+      isExclusiveToArcaneSpellworks: univ.isExclusiveToArcaneSpellworks,
+      levels: univ.levels,
+      max: univ.max,
+      rules: l10n.rules,
+      selectOptions:
+        univ.selectOptionCategories
+        |> Static_SelectOption.Decode.resolveCategories(
+             blessings,
+             cantrips,
+             combatTechniques,
+             liturgicalChants,
+             skills,
+             spells,
+           )
+        |> Static_SelectOption.Decode.mergeSelectOptions(
+             l10n.selectOptions,
+             univ.selectOptions,
+           ),
+      input: l10n.input,
+      range: l10n.range,
+      actions: l10n.actions,
+      prerequisites: univ.prerequisites,
+      prerequisitesText: l10n.prerequisites,
+      prerequisitesTextIndex:
+        Static_Prerequisites.Decode.tIndexWithLevel(
+          univ.prerequisitesIndex,
+          l10n.prerequisitesIndex,
+        ),
+      prerequisitesTextStart: l10n.prerequisitesStart,
+      prerequisitesTextEnd: l10n.prerequisitesEnd,
+      apValue: univ.cost,
+      apValueText: l10n.apValue,
+      apValueTextAppend: l10n.apValueAppend,
+      gr: univ.gr,
+      src: l10n.src,
+      errata: l10n.errata,
+    },
+  );
+
+  let all =
+      (
+        blessings,
+        cantrips,
+        combatTechniques,
+        liturgicalChants,
+        skills,
+        spells,
+        yamlData: Yaml_Raw.yamlData,
+      ) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t(
+        blessings,
+        cantrips,
+        combatTechniques,
+        liturgicalChants,
+        skills,
+        spells,
       ),
-    prerequisitesTextStart: l10n.prerequisitesStart,
-    prerequisitesTextEnd: l10n.prerequisitesEnd,
-    apValue: univ.cost,
-    apValueText: l10n.apValue,
-    apValueTextAppend: l10n.apValueAppend,
-    gr: univ.gr,
-    src: l10n.src,
-    errata: l10n.errata,
-  };
+      x => x.id,
+      x => x.id,
+      yamlData.advantagesUniv |> list(tUniv),
+      yamlData.advantagesL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };
