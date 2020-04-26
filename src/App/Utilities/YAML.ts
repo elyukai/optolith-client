@@ -7,6 +7,7 @@ import { parseByFile } from "./YAML/ParseByFile"
 import { readYamlL10n, readYamlUniv } from "./YAML/Parser"
 import { getAllSchemes } from "./YAML/Schemes"
 import { toWiki } from "./YAML/ToRecordsByFile"
+import { traceShowId } from "../../Debug/Trace"
 
 export const parseStaticData : (locale : string) => Promise<Either<Error[], StaticDataRecord>>
                              = async locale => {
@@ -28,9 +29,12 @@ export const parseStaticData : (locale : string) => Promise<Either<Error[], Stat
 
                                const univ_parser = readYamlUniv (validator)
                                const l10n_parser = readYamlL10n (locale) (validator)
+                               const default_parser = readYamlL10n("de-DE") (validator)
 
                                const estatic_data_by_file = await parseByFile (univ_parser)
                                                                               (l10n_parser)
+                                                                              (default_parser)
+
 
                                if (isLeft (estatic_data_by_file)) {
                                  const errs = fromLeft_ (estatic_data_by_file)
