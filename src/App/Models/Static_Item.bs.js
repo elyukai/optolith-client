@@ -5,6 +5,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Int$OptolithClient = require("../../Data/Int.bs.js");
+var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
 var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
 var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
@@ -71,12 +72,12 @@ function agilityStrength(json) {
 }
 
 function partial_arg_000(json) {
-  return /* Default */Block.__(0, [Json_decode.$$int(json)]);
+  return /* DefaultAttribute */Block.__(0, [Json_decode.$$int(json)]);
 }
 
 var partial_arg_001 = /* :: */[
   (function (json) {
-      return /* NewAttribute */Block.__(1, [newAttribute(json)]);
+      return /* DifferentAttribute */Block.__(1, [newAttribute(json)]);
     }),
   /* :: */[
     (function (json) {
@@ -91,17 +92,19 @@ var partial_arg = /* :: */[
   partial_arg_001
 ];
 
-function damageThreshold(param) {
+function primaryAttributeDamageThreshold(param) {
   return Json_decode.oneOf(partial_arg, param);
 }
 
 function meleeWeapon(json) {
   return {
           combatTechnique: Json_decode.field("combatTechnique", Json_decode.$$int, json),
-          damageDiceNumber: Json_decode.field("damageDiceNumber", Json_decode.$$int, json),
-          damageDiceSides: Json_decode.field("damageDiceSides", Json_decode.$$int, json),
-          damageFlat: JsonStrict$OptolithClient.optionalField("damageFlat", Json_decode.$$int, json),
-          damageThreshold: JsonStrict$OptolithClient.optionalField("damageThreshold", damageThreshold, json),
+          damage: {
+            amount: Json_decode.field("damageDiceNumber", Json_decode.$$int, json),
+            sides: Json_decode.field("damageDiceSides", Json_decode.$$int, json),
+            flat: JsonStrict$OptolithClient.optionalField("damageFlat", Json_decode.$$int, json)
+          },
+          primaryAttributeDamageThreshold: JsonStrict$OptolithClient.optionalField("damageThreshold", primaryAttributeDamageThreshold, json),
           at: JsonStrict$OptolithClient.optionalField("at", Json_decode.$$int, json),
           pa: JsonStrict$OptolithClient.optionalField("pa", Json_decode.$$int, json),
           reach: JsonStrict$OptolithClient.optionalField("reach", Json_decode.$$int, json),
@@ -116,9 +119,13 @@ function meleeWeapon(json) {
 function rangedWeapon(json) {
   return {
           combatTechnique: Json_decode.field("combatTechnique", Json_decode.$$int, json),
-          damageDiceNumber: JsonStrict$OptolithClient.optionalField("damageDiceNumber", Json_decode.$$int, json),
-          damageDiceSides: JsonStrict$OptolithClient.optionalField("damageDiceSides", Json_decode.$$int, json),
-          damageFlat: JsonStrict$OptolithClient.optionalField("damageFlat", Json_decode.$$int, json),
+          damage: Maybe$OptolithClient.Monad.liftM2((function (amount, sides) {
+                  return {
+                          amount: amount,
+                          sides: sides,
+                          flat: JsonStrict$OptolithClient.optionalField("damageFlat", Json_decode.$$int, json)
+                        };
+                }), JsonStrict$OptolithClient.optionalField("damageDiceNumber", Json_decode.$$int, json), JsonStrict$OptolithClient.optionalField("damageDiceSides", Json_decode.$$int, json)),
           length: JsonStrict$OptolithClient.optionalField("length", Json_decode.$$int, json),
           range: /* tuple */[
             Json_decode.field("closeRange", Json_decode.$$int, json),
@@ -227,7 +234,7 @@ var Decode = {
   mundaneItem: mundaneItem,
   newAttribute: newAttribute,
   agilityStrength: agilityStrength,
-  damageThreshold: damageThreshold,
+  primaryAttributeDamageThreshold: primaryAttributeDamageThreshold,
   meleeWeapon: meleeWeapon,
   rangedWeapon: rangedWeapon,
   combinedWeapon: combinedWeapon,

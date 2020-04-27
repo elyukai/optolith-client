@@ -21,17 +21,21 @@ type agilityStrength = {
   strength: int,
 };
 
-type damageThreshold =
-  | Default(int)
-  | NewAttribute(newAttribute)
+type primaryAttributeDamageThreshold =
+  | DefaultAttribute(int)
+  | DifferentAttribute(newAttribute)
   | AgilityStrength(agilityStrength);
+
+type damage = {
+  amount: int,
+  sides: int,
+  flat: Maybe.t(int),
+};
 
 type meleeWeapon = {
   combatTechnique: int,
-  damageDiceNumber: int,
-  damageDiceSides: int,
-  damageFlat: Maybe.t(int),
-  damageThreshold: Maybe.t(damageThreshold),
+  damage,
+  primaryAttributeDamageThreshold: Maybe.t(primaryAttributeDamageThreshold),
   at: Maybe.t(int),
   pa: Maybe.t(int),
   reach: Maybe.t(int),
@@ -44,9 +48,7 @@ type meleeWeapon = {
 
 type rangedWeapon = {
   combatTechnique: int,
-  damageDiceNumber: Maybe.t(int),
-  damageDiceSides: Maybe.t(int),
-  damageFlat: Maybe.t(int),
+  damage: Maybe.t(damage),
   length: Maybe.t(int),
   range: (int, int, int),
   reloadTime: oneOrMany(int),
@@ -125,20 +127,23 @@ module Decode = {
   let agilityStrength = json =>
     json |> pair(int, int) |> (x => {agility: fst(x), strength: snd(x)});
 
-  let damageThreshold =
+  let primaryAttributeDamageThreshold =
     oneOf([
-      json => json |> int |> (x => Default(x)),
-      json => json |> newAttribute |> (x => NewAttribute(x)),
+      json => json |> int |> (x => DefaultAttribute(x)),
+      json => json |> newAttribute |> (x => DifferentAttribute(x)),
       json => json |> agilityStrength |> (x => AgilityStrength(x)),
     ]);
 
   let meleeWeapon = json => {
     combatTechnique: json |> field("combatTechnique", int),
-    damageDiceNumber: json |> field("damageDiceNumber", int),
-    damageDiceSides: json |> field("damageDiceSides", int),
-    damageFlat: json |> optionalField("damageFlat", int),
-    damageThreshold:
-      json |> optionalField("damageThreshold", damageThreshold),
+    damage: {
+      amount: json |> field("damageDiceNumber", int),
+      sides: json |> field("damageDiceSides", int),
+      flat: json |> optionalField("damageFlat", int),
+    },
+    primaryAttributeDamageThreshold:
+      json
+      |> optionalField("damageThreshold", primaryAttributeDamageThreshold),
     at: json |> optionalField("at", int),
     pa: json |> optionalField("pa", int),
     reach: json |> optionalField("reach", int),
@@ -149,21 +154,26 @@ module Decode = {
     isImprovisedWeapon: json |> field("isImprovisedWeapon", bool),
   };
 
-  let rangedWeapon = json => {
-    combatTechnique: json |> field("combatTechnique", int),
-    damageDiceNumber: json |> optionalField("damageDiceNumber", int),
-    damageDiceSides: json |> optionalField("damageDiceSides", int),
-    damageFlat: json |> optionalField("damageFlat", int),
-    length: json |> optionalField("length", int),
-    range: (
-      json |> field("closeRange", int),
-      json |> field("mediumRange", int),
-      json |> field("farRange", int),
-    ),
-    reloadTime: json |> field("reloadTime", oneOrMany(int)),
-    ammunition: json |> optionalField("ammunition", int),
-    isImprovisedWeapon: json |> field("isImprovisedWeapon", bool),
-  };
+  let rangedWeapon = json =>
+    Maybe.Monad.{
+      combatTechnique: json |> field("combatTechnique", int),
+      damage:
+        liftM2(
+          (amount, sides) =>
+            {amount, sides, flat: json |> optionalField("damageFlat", int)},
+          json |> optionalField("damageDiceNumber", int),
+          json |> optionalField("damageDiceSides", int),
+        ),
+      length: json |> optionalField("length", int),
+      range: (
+        json |> field("closeRange", int),
+        json |> field("mediumRange", int),
+        json |> field("farRange", int),
+      ),
+      reloadTime: json |> field("reloadTime", oneOrMany(int)),
+      ammunition: json |> optionalField("ammunition", int),
+      isImprovisedWeapon: json |> field("isImprovisedWeapon", bool),
+    };
 
   let combinedWeapon = json => (
     json |> field("melee", meleeWeapon),
