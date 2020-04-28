@@ -350,6 +350,14 @@ function optionToMaybe(mx) {
   }
 }
 
+function ensure(pred, x) {
+  if (Curry._1(pred, x)) {
+    return /* Just */[x];
+  } else {
+    return /* Nothing */0;
+  }
+}
+
 var maybeToList = toList;
 
 exports.Functor = Functor;
@@ -368,4 +376,5 @@ exports.catMaybes = catMaybes;
 exports.mapMaybe = mapMaybe;
 exports.maybeToOption = maybeToOption;
 exports.optionToMaybe = optionToMaybe;
+exports.ensure = ensure;
 /* No side effect */

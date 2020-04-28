@@ -1,7 +1,7 @@
 open GenericHelpers;
 
 [@genType "SexPrerequisite"]
-type sex = Sex.t;
+type sex = Hero.sex;
 
 [@genType "RacePrerequisite"]
 type race = {

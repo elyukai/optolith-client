@@ -341,7 +341,38 @@ function lookup(k, xs) {
               }));
 }
 
+function filter(pred, xs) {
+  return foldr((function (x) {
+                if (Curry._1(pred, x)) {
+                  return (function (param) {
+                      return /* :: */[
+                              x,
+                              param
+                            ];
+                    });
+                } else {
+                  return Function$OptolithClient.id;
+                }
+              }), /* [] */0, xs);
+}
+
+function $less$bang$bang$great(xs, i) {
+  return Maybe$OptolithClient.optionToMaybe(List.nth_opt(xs, i));
+}
+
+function notNull(xs) {
+  return !(
+          xs ? false : true
+        );
+}
+
+var Extra = {
+  notNull: notNull
+};
+
 var map = $less$$great;
+
+var $bang$bang = List.nth;
 
 exports.Functor = Functor;
 exports.Applicative = Applicative;
@@ -353,4 +384,8 @@ exports.map = map;
 exports.elem = elem;
 exports.notElem = notElem;
 exports.lookup = lookup;
+exports.filter = filter;
+exports.$bang$bang = $bang$bang;
+exports.$less$bang$bang$great = $less$bang$bang$great;
+exports.Extra = Extra;
 /* No side effect */

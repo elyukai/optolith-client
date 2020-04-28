@@ -218,3 +218,5 @@ let maybeToOption: t('a) => option('a);
  */
 [@genType]
 let optionToMaybe: option('a) => t('a);
+
+let ensure: ('a => bool, 'a) => t('a);

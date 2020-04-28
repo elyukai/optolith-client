@@ -166,6 +166,103 @@ module DCId = {
 };
 
 module AdvantageId = {
+  type t =
+    | Aptitude // Begabung
+    | Nimble // Flink
+    | Blessed
+    | Luck
+    | ExceptionalSkill
+    | ExceptionalCombatTechnique
+    | IncreasedAstralPower
+    | IncreasedKarmaPoints
+    | IncreasedLifePoints
+    | IncreasedSpirit
+    | IncreasedToughness
+    | ImmunityToPoison
+    | ImmunityToDisease
+    | MagicalAttunement
+    | Rich
+    | SociallyAdaptable
+    | InspireConfidence
+    | WeaponAptitude
+    | Spellcaster
+    | Unyielding // Eisern
+    | LargeSpellSelection
+    | HatredOf
+    | Prediger
+    | Visionaer
+    | ZahlreichePredigten
+    | ZahlreicheVisionen
+    | LeichterGang
+    | Einkommen
+    | Other(int);
+
+  let fromInt = id =>
+    switch (id) {
+    | 4 => Aptitude
+    | 9 => Nimble
+    | 12 => Blessed
+    | 14 => Luck
+    | 16 => ExceptionalSkill
+    | 17 => ExceptionalCombatTechnique
+    | 23 => IncreasedAstralPower
+    | 24 => IncreasedKarmaPoints
+    | 25 => IncreasedLifePoints
+    | 26 => IncreasedSpirit
+    | 27 => IncreasedToughness
+    | 28 => ImmunityToPoison
+    | 29 => ImmunityToDisease
+    | 32 => MagicalAttunement
+    | 36 => Rich
+    | 40 => SociallyAdaptable
+    | 46 => InspireConfidence
+    | 47 => WeaponAptitude
+    | 50 => Spellcaster
+    | 54 => Unyielding
+    | 58 => LargeSpellSelection
+    | 68 => HatredOf
+    | 77 => Prediger
+    | 78 => Visionaer
+    | 79 => ZahlreichePredigten
+    | 80 => ZahlreicheVisionen
+    | 92 => LeichterGang
+    | 99 => Einkommen
+    | x => Other(x)
+    };
+
+  let toInt = id =>
+    switch (id) {
+    | Aptitude => 4
+    | Nimble => 9
+    | Blessed => 12
+    | Luck => 14
+    | ExceptionalSkill => 16
+    | ExceptionalCombatTechnique => 17
+    | IncreasedAstralPower => 23
+    | IncreasedKarmaPoints => 24
+    | IncreasedLifePoints => 25
+    | IncreasedSpirit => 26
+    | IncreasedToughness => 27
+    | ImmunityToPoison => 28
+    | ImmunityToDisease => 29
+    | MagicalAttunement => 32
+    | Rich => 36
+    | SociallyAdaptable => 40
+    | InspireConfidence => 46
+    | WeaponAptitude => 47
+    | Spellcaster => 50
+    | Unyielding => 54
+    | LargeSpellSelection => 58
+    | HatredOf => 68
+    | Prediger => 77
+    | Visionaer => 78
+    | ZahlreichePredigten => 79
+    | ZahlreicheVisionen => 80
+    | LeichterGang => 92
+    | Einkommen => 99
+    | Other(x) => x
+    };
+
   [@gentype]
   let aptitude = "ADV_4"; // Begabung
   [@gentype]

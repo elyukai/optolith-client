@@ -190,3 +190,16 @@ let notElem = Foldable.notElem;
 
 let lookup = (k, xs) =>
   Maybe.Functor.(Foldable.find(((k', _)) => k == k', xs) <&> snd);
+
+// Searching with a predicate
+
+let filter = (pred, xs) =>
+  Foldable.foldr(x => pred(x) ? (<+>)(x) : Function.id, [], xs);
+
+let (!!) = List.nth;
+
+let (<!!>) = (xs, i) => List.nth_opt(xs, i) |> Maybe.optionToMaybe;
+
+module Extra = {
+  let notNull = xs => xs |> Foldable.null |> (!);
+};

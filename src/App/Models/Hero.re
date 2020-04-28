@@ -7,12 +7,18 @@ type phase =
   | Definition
   | Advancement;
 
+[@genType "Sex"]
+type sex =
+  | Male
+  | Female;
+
 [@genType "BaseOrWithVariant"]
 type baseOrWithVariant =
   | Base(int)
   | WithVariant(int, int);
 
 module Rules = {
+  [@genType "ActiveRule"]
   type activeRule = {
     id: int,
     options: list(int),
@@ -49,12 +55,6 @@ module Activatable = {
   type single = {
     options: list(Ids.selectOptionId),
     level: maybe(int),
-  };
-
-  [@genType "ActivatableSingleCustomCost"]
-  type singleWithCustomCost = {
-    options: list(Ids.selectOptionId),
-    level: maybe(int),
     customCost: maybe(int),
   };
 
@@ -66,23 +66,8 @@ module Activatable = {
     options: list(oneOrMany(Ids.selectOptionId)),
     level: maybe(int),
   };
-};
 
-module DisAdvantage = {
-  open Activatable;
-
-  [@genType "DisAdvantage"]
-  type t = {
-    id: int,
-    active: list(singleWithCustomCost),
-    dependencies: list(dependency),
-  };
-};
-
-module SpecialAbility = {
-  open Activatable;
-
-  [@genType "SpecialAbility"]
+  [@genType "Activatable"]
   type t = {
     id: int,
     active: list(single),
@@ -154,7 +139,7 @@ module Skill = {
   [@genType "Skill"]
   type t = {
     id: int,
-    value: maybe(int),
+    value: int,
     dependencies: list(dependency),
   };
 };
@@ -411,7 +396,7 @@ type t = {
   dateModified: Js.Date.t,
   adventurePointsTotal: int,
   experienceLevel: int,
-  sex: Sex.t,
+  sex,
   phase,
   locale: string,
   avatar: maybe(string),
@@ -423,9 +408,9 @@ type t = {
   professionName: maybe(string),
   rules: Rules.t,
   personalData,
-  advantages: IntMap.t(DisAdvantage.t),
-  disadvantages: IntMap.t(DisAdvantage.t),
-  specialAbilities: IntMap.t(SpecialAbility.t),
+  advantages: IntMap.t(Activatable.t),
+  disadvantages: IntMap.t(Activatable.t),
+  specialAbilities: IntMap.t(Activatable.t),
   attributes: IntMap.t(Attribute.t),
   attributeAdjustmentSelected: int,
   energies: Energies.t,

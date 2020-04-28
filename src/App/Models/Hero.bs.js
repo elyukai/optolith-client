@@ -6,10 +6,6 @@ var Rules = { };
 
 var Activatable = { };
 
-var DisAdvantage = { };
-
-var SpecialAbility = { };
-
 var Attribute = { };
 
 var Energies = { };
@@ -26,8 +22,6 @@ var TransferUnfamiliar = { };
 
 exports.Rules = Rules;
 exports.Activatable = Activatable;
-exports.DisAdvantage = DisAdvantage;
-exports.SpecialAbility = SpecialAbility;
 exports.Attribute = Attribute;
 exports.Energies = Energies;
 exports.ActivatableSkill = ActivatableSkill;

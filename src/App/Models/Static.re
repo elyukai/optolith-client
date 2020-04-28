@@ -97,3 +97,8 @@ type t = {
   tribes: IntMap.t(string),
   zibiljaRituals: IntMap.t(ZibiljaRitual.t),
 };
+
+type activatable =
+  | Advantage(Advantage.t)
+  | Disadvantage(Disadvantage.t)
+  | SpecialAbility(SpecialAbility.t);

@@ -59,7 +59,207 @@ var DCId = {
   woundThreshold: "WT"
 };
 
+function fromInt(id) {
+  switch (id) {
+    case 4 :
+        return /* Aptitude */0;
+    case 9 :
+        return /* Nimble */1;
+    case 12 :
+        return /* Blessed */2;
+    case 14 :
+        return /* Luck */3;
+    case 16 :
+        return /* ExceptionalSkill */4;
+    case 17 :
+        return /* ExceptionalCombatTechnique */5;
+    case 23 :
+        return /* IncreasedAstralPower */6;
+    case 24 :
+        return /* IncreasedKarmaPoints */7;
+    case 25 :
+        return /* IncreasedLifePoints */8;
+    case 26 :
+        return /* IncreasedSpirit */9;
+    case 27 :
+        return /* IncreasedToughness */10;
+    case 28 :
+        return /* ImmunityToPoison */11;
+    case 29 :
+        return /* ImmunityToDisease */12;
+    case 32 :
+        return /* MagicalAttunement */13;
+    case 36 :
+        return /* Rich */14;
+    case 40 :
+        return /* SociallyAdaptable */15;
+    case 46 :
+        return /* InspireConfidence */16;
+    case 47 :
+        return /* WeaponAptitude */17;
+    case 50 :
+        return /* Spellcaster */18;
+    case 54 :
+        return /* Unyielding */19;
+    case 58 :
+        return /* LargeSpellSelection */20;
+    case 68 :
+        return /* HatredOf */21;
+    case 77 :
+        return /* Prediger */22;
+    case 78 :
+        return /* Visionaer */23;
+    case 79 :
+        return /* ZahlreichePredigten */24;
+    case 80 :
+        return /* ZahlreicheVisionen */25;
+    case 92 :
+        return /* LeichterGang */26;
+    case 5 :
+    case 6 :
+    case 7 :
+    case 8 :
+    case 10 :
+    case 11 :
+    case 13 :
+    case 15 :
+    case 18 :
+    case 19 :
+    case 20 :
+    case 21 :
+    case 22 :
+    case 30 :
+    case 31 :
+    case 33 :
+    case 34 :
+    case 35 :
+    case 37 :
+    case 38 :
+    case 39 :
+    case 41 :
+    case 42 :
+    case 43 :
+    case 44 :
+    case 45 :
+    case 48 :
+    case 49 :
+    case 51 :
+    case 52 :
+    case 53 :
+    case 55 :
+    case 56 :
+    case 57 :
+    case 59 :
+    case 60 :
+    case 61 :
+    case 62 :
+    case 63 :
+    case 64 :
+    case 65 :
+    case 66 :
+    case 67 :
+    case 69 :
+    case 70 :
+    case 71 :
+    case 72 :
+    case 73 :
+    case 74 :
+    case 75 :
+    case 76 :
+    case 81 :
+    case 82 :
+    case 83 :
+    case 84 :
+    case 85 :
+    case 86 :
+    case 87 :
+    case 88 :
+    case 89 :
+    case 90 :
+    case 91 :
+    case 93 :
+    case 94 :
+    case 95 :
+    case 96 :
+    case 97 :
+    case 98 :
+        return /* Other */[id];
+    case 99 :
+        return /* Einkommen */27;
+    default:
+      return /* Other */[id];
+  }
+}
+
+function toInt(id) {
+  if (typeof id === "number") {
+    switch (id) {
+      case /* Aptitude */0 :
+          return 4;
+      case /* Nimble */1 :
+          return 9;
+      case /* Blessed */2 :
+          return 12;
+      case /* Luck */3 :
+          return 14;
+      case /* ExceptionalSkill */4 :
+          return 16;
+      case /* ExceptionalCombatTechnique */5 :
+          return 17;
+      case /* IncreasedAstralPower */6 :
+          return 23;
+      case /* IncreasedKarmaPoints */7 :
+          return 24;
+      case /* IncreasedLifePoints */8 :
+          return 25;
+      case /* IncreasedSpirit */9 :
+          return 26;
+      case /* IncreasedToughness */10 :
+          return 27;
+      case /* ImmunityToPoison */11 :
+          return 28;
+      case /* ImmunityToDisease */12 :
+          return 29;
+      case /* MagicalAttunement */13 :
+          return 32;
+      case /* Rich */14 :
+          return 36;
+      case /* SociallyAdaptable */15 :
+          return 40;
+      case /* InspireConfidence */16 :
+          return 46;
+      case /* WeaponAptitude */17 :
+          return 47;
+      case /* Spellcaster */18 :
+          return 50;
+      case /* Unyielding */19 :
+          return 54;
+      case /* LargeSpellSelection */20 :
+          return 58;
+      case /* HatredOf */21 :
+          return 68;
+      case /* Prediger */22 :
+          return 77;
+      case /* Visionaer */23 :
+          return 78;
+      case /* ZahlreichePredigten */24 :
+          return 79;
+      case /* ZahlreicheVisionen */25 :
+          return 80;
+      case /* LeichterGang */26 :
+          return 92;
+      case /* Einkommen */27 :
+          return 99;
+      
+    }
+  } else {
+    return id[0];
+  }
+}
+
 var AdvantageId = {
+  fromInt: fromInt,
+  toInt: toInt,
   aptitude: "ADV_4",
   nimble: "ADV_9",
   blessed: "ADV_12",

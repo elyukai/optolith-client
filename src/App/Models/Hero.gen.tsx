@@ -24,17 +24,23 @@ import {t as IntMap_t} from '../../../src/shims/IntMap.gen';
 
 import {t as IntSet_t} from '../../../src/shims/IntSet.gen';
 
-import {t as Sex_t} from './Sex.gen';
-
 // tslint:disable-next-line:interface-over-type-literal
 export type phase = "Outline" | "Definition" | "Advancement";
 export type Phase = phase;
+
+// tslint:disable-next-line:interface-over-type-literal
+export type sex = "Male" | "Female";
+export type Sex = sex;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type baseOrWithVariant = 
     { tag: "Base"; value: number }
   | { tag: "WithVariant"; value: [number, number] };
 export type BaseOrWithVariant = baseOrWithVariant;
+
+// tslint:disable-next-line:interface-over-type-literal
+export type Rules_activeRule = { readonly id: number; readonly options: list<number> };
+export type ActiveRule = Rules_activeRule;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Rules_t = {
@@ -64,16 +70,12 @@ export type personalData = {
 export type PersonalData = personalData;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Activatable_single = { readonly options: list<Ids_selectOptionId>; readonly level: Maybe_maybe<number> };
-export type ActivatableSingle = Activatable_single;
-
-// tslint:disable-next-line:interface-over-type-literal
-export type Activatable_singleWithCustomCost = {
+export type Activatable_single = {
   readonly options: list<Ids_selectOptionId>; 
   readonly level: Maybe_maybe<number>; 
   readonly customCost: Maybe_maybe<number>
 };
-export type ActivatableSingleCustomCost = Activatable_singleWithCustomCost;
+export type ActivatableSingle = Activatable_single;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Activatable_dependency = {
@@ -86,20 +88,12 @@ export type Activatable_dependency = {
 export type ActivatableDependency = Activatable_dependency;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type DisAdvantage_t = {
-  readonly id: number; 
-  readonly active: list<Activatable_singleWithCustomCost>; 
-  readonly dependencies: list<Activatable_dependency>
-};
-export type DisAdvantage = DisAdvantage_t;
-
-// tslint:disable-next-line:interface-over-type-literal
-export type SpecialAbility_t = {
+export type Activatable_t = {
   readonly id: number; 
   readonly active: list<Activatable_single>; 
   readonly dependencies: list<Activatable_dependency>
 };
-export type SpecialAbility = SpecialAbility_t;
+export type Activatable = Activatable_t;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Attribute_dependency = {
@@ -163,7 +157,7 @@ export type SkillDependency = Skill_dependency;
 // tslint:disable-next-line:interface-over-type-literal
 export type Skill_t = {
   readonly id: number; 
-  readonly value: Maybe_maybe<number>; 
+  readonly value: number; 
   readonly dependencies: list<Skill_dependency>
 };
 export type Skill = Skill_t;
@@ -362,7 +356,7 @@ export type t = {
   readonly dateModified: Date; 
   readonly adventurePointsTotal: number; 
   readonly experienceLevel: number; 
-  readonly sex: Sex_t; 
+  readonly sex: sex; 
   readonly phase: phase; 
   readonly locale: string; 
   readonly avatar: Maybe_maybe<string>; 
@@ -374,9 +368,9 @@ export type t = {
   readonly professionName: Maybe_maybe<string>; 
   readonly rules: Rules_t; 
   readonly personalData: personalData; 
-  readonly advantages: IntMap_t<DisAdvantage_t>; 
-  readonly disadvantages: IntMap_t<DisAdvantage_t>; 
-  readonly specialAbilities: IntMap_t<SpecialAbility_t>; 
+  readonly advantages: IntMap_t<Activatable_t>; 
+  readonly disadvantages: IntMap_t<Activatable_t>; 
+  readonly specialAbilities: IntMap_t<Activatable_t>; 
   readonly attributes: IntMap_t<Attribute_t>; 
   readonly attributeAdjustmentSelected: number; 
   readonly energies: Energies_t; 

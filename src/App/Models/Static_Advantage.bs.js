@@ -5,6 +5,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Int$OptolithClient = require("../../Data/Int.bs.js");
+var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
 var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
 var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
@@ -83,8 +84,8 @@ function t(blessings, cantrips, combatTechniques, liturgicalChants, skills, spel
             id: univ.id,
             name: l10n.name,
             nameInWiki: l10n.nameInWiki,
-            noMaxAPInfluence: univ.noMaxAPInfluence,
-            isExclusiveToArcaneSpellworks: univ.isExclusiveToArcaneSpellworks,
+            noMaxAPInfluence: Maybe$OptolithClient.fromMaybe(false, univ.noMaxAPInfluence),
+            isExclusiveToArcaneSpellworks: Maybe$OptolithClient.fromMaybe(false, univ.isExclusiveToArcaneSpellworks),
             levels: univ.levels,
             max: univ.max,
             rules: l10n.rules,

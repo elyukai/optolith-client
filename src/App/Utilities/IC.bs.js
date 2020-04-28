@@ -113,11 +113,6 @@ var Decode = {
 
 var getAPForActivatation = getAPCostBaseByIC;
 
-exports.getAPCostBaseByIC = getAPCostBaseByIC;
-exports.getLastSRWithConstantCost = getLastSRWithConstantCost;
-exports.getBaseMultiplier = getBaseMultiplier;
-exports.getCost = getCost;
-exports.getAPForBounds = getAPForBounds;
 exports.getAPForRange = getAPForRange;
 exports.getAPForInc = getAPForInc;
 exports.getAPForDec = getAPForDec;
