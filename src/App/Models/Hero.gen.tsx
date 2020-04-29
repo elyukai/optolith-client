@@ -70,8 +70,19 @@ export type personalData = {
 export type PersonalData = personalData;
 
 // tslint:disable-next-line:interface-over-type-literal
+export type Activatable_option = 
+    { tag: "Generic"; value: number }
+  | { tag: "Skill"; value: number }
+  | { tag: "CombatTechnique"; value: number }
+  | { tag: "Spell"; value: number }
+  | { tag: "Cantrip"; value: number }
+  | { tag: "LiturgicalChant"; value: number }
+  | { tag: "Blessing"; value: number }
+  | { tag: "CustomInput"; value: string };
+
+// tslint:disable-next-line:interface-over-type-literal
 export type Activatable_single = {
-  readonly options: list<Ids_selectOptionId>; 
+  readonly options: list<Activatable_option>; 
   readonly level: Maybe_maybe<number>; 
   readonly customCost: Maybe_maybe<number>
 };

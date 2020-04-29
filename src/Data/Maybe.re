@@ -13,7 +13,7 @@ module Functor = {
     | Nothing => Nothing
     };
 
-  let (<&>) = (xs, f) => f <$> xs;
+  let (<&>) = (mx, f) => f <$> mx;
 };
 
 module Applicative = {

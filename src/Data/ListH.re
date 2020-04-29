@@ -174,6 +174,80 @@ module Foldable = {
     };
 };
 
+module Index = {
+  let%private rec indexedAux = (i, xs) =>
+    switch (xs) {
+    | [] => []
+    | [x, ...xs] => [(i, x), ...indexedAux(i + 1, xs)]
+    };
+
+  let indexed = xs => indexedAux(0, xs);
+
+  let rec deleteAt = (index, xs) =>
+    index < 0
+      ? xs
+      : (
+        switch (xs) {
+        | [] => []
+        | [_, ...xs] when index === 0 => xs
+        | [x, ...xs] => [x, ...deleteAt(index - 1, xs)]
+        }
+      );
+
+  let rec setAt = (index, e, xs) =>
+    index < 0
+      ? xs
+      : (
+        switch (xs) {
+        | [] => []
+        | [_, ...xs] when index === 0 => [e, ...xs]
+        | [x, ...xs] => [x, ...setAt(index - 1, e, xs)]
+        }
+      );
+
+  let rec modifyAt = (index, f, xs) =>
+    index < 0
+      ? xs
+      : (
+        switch (xs) {
+        | [] => []
+        | [x, ...xs] when index === 0 => [f(x), ...xs]
+        | [x, ...xs] => [x, ...modifyAt(index - 1, f, xs)]
+        }
+      );
+
+  let rec updateAt = (index, f, xs) =>
+    index < 0
+      ? xs
+      : (
+        switch (xs) {
+        | [] => []
+        | [x, ...xs] when index === 0 =>
+          Maybe.maybe(xs, x' => [x', ...xs], f(x))
+        | [x, ...xs] => [x, ...updateAt(index - 1, f, xs)]
+        }
+      );
+
+  let rec insertAt = (index, e, xs) =>
+    index < 0
+      ? xs
+      : (
+        switch (xs) {
+        | [] => []
+        | xs when index === 0 => [e, ...xs]
+        | [x, ...xs] => [x, ...insertAt(index - 1, e, xs)]
+        }
+      );
+
+  let%private rec imapAux = (f, i, xs) =>
+    switch (xs) {
+    | [] => []
+    | [x, ...xs] => [f(i, x), ...imapAux(f, i + 1, xs)]
+    };
+
+  let imap = (f, xs) => imapAux(f, 0, xs);
+};
+
 // Basic Functions
 
 let (<+>) = (x, xs) => [x, ...xs];
@@ -181,6 +255,30 @@ let (<+>) = (x, xs) => [x, ...xs];
 // List transformations
 
 let map = Functor.(<$>);
+
+let reverse = xs => Foldable.foldl(Function.flip((<+>)), [], xs);
+
+let rec intercalate = (separator, xs) =>
+  switch (xs) {
+  | [] => ""
+  | [x] => x
+  | [x, ...xs] => x ++ separator ++ intercalate(separator, xs)
+  };
+
+let%private permutationsPick = xs =>
+  Index.imap((i, x) => (x, Index.deleteAt(i, xs)), xs);
+
+let rec permutations = xs =>
+  switch (xs) {
+  | [] => []
+  | [x] => [[x]]
+  | xs =>
+    xs
+    |> permutationsPick
+    |> Foldable.concatMap(((x', xs')) =>
+         map((<+>)(x'), permutations(xs'))
+       )
+  };
 
 // Searching Lists
 
@@ -202,4 +300,23 @@ let (<!!>) = (xs, i) => List.nth_opt(xs, i) |> Maybe.optionToMaybe;
 
 module Extra = {
   let notNull = xs => xs |> Foldable.null |> (!);
+
+  let list = (def, f, xs) =>
+    switch (xs) {
+    | [] => def
+    | [x, ...xs] => f(x, xs)
+    };
+
+  let rec unsnoc = xs =>
+    Maybe.(
+      switch (xs) {
+      | [] => Nothing
+      | [x] => Just(([], x))
+      | [x, ...xs] =>
+        switch (unsnoc(xs)) {
+        | Just((a, b)) => Just((x <+> a, b))
+        | Nothing => Nothing
+        }
+      }
+    );
 };

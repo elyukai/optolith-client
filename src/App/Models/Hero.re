@@ -51,9 +51,20 @@ type personalData = {
 };
 
 module Activatable = {
+  type option = [
+    | `Generic(int)
+    | `Skill(int)
+    | `CombatTechnique(int)
+    | `Spell(int)
+    | `Cantrip(int)
+    | `LiturgicalChant(int)
+    | `Blessing(int)
+    | `CustomInput(string)
+  ];
+
   [@genType "ActivatableSingle"]
   type single = {
-    options: list(Ids.selectOptionId),
+    options: list(option),
     level: maybe(int),
     customCost: maybe(int),
   };

@@ -14,8 +14,8 @@ function $less$$great(f, mx) {
   }
 }
 
-function $less$amp$great(xs, f) {
-  return $less$$great(f, xs);
+function $less$amp$great(mx, f) {
+  return $less$$great(f, mx);
 }
 
 var Functor = {

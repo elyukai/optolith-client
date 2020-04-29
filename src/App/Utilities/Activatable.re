@@ -1,6 +1,6 @@
 type singleWithId = {
   id: int,
-  options: list(Ids.selectOptionId),
+  options: list(Hero.Activatable.option),
   level: Maybe.t(int),
   customCost: Maybe.t(int),
 };
@@ -11,6 +11,8 @@ type singleWithId = {
 let isActive = (x: Hero.Activatable.t) => ListH.Extra.notNull(x.active);
 
 module Convert = {
+  open Maybe;
+
   let heroEntryToSingles = (x: Hero.Activatable.t) =>
     x.active
     |> ListH.map((s: Hero.Activatable.single) =>
@@ -97,6 +99,19 @@ module Convert = {
    export interface ActiveObjectAny extends ActiveObject {
      [key: string]: any
    } */
+
+  let activatableOptionToSelectOptionId =
+      (id: Hero.Activatable.option): maybe(Ids.selectOptionId) =>
+    switch (id) {
+    | `Generic(x) => Just(`Generic(x))
+    | `Skill(x) => Just(`Skill(x))
+    | `CombatTechnique(x) => Just(`CombatTechnique(x))
+    | `Spell(x) => Just(`Spell(x))
+    | `Cantrip(x) => Just(`Cantrip(x))
+    | `LiturgicalChant(x) => Just(`LiturgicalChant(x))
+    | `Blessing(x) => Just(`Blessing(x))
+    | `CustomInput(_) => Nothing
+    };
 };
 
 module SelectOptions = {
@@ -104,18 +119,25 @@ module SelectOptions = {
   open Maybe;
   open Maybe.Functor;
 
+  let x = 3 + 4;
+  let y = 3 + 4;
+
   /**
    * Get a selection option with the given id from given wiki entry. Returns
    * `Nothing` if not found.
    */
-  let findSelectOption = (x: Static.activatable, id: Ids.selectOptionId) =>
-    SelectOptionMap.lookup(
-      id,
-      switch (x) {
-      | Advantage(y) => y.selectOptions
-      | Disadvantage(y) => y.selectOptions
-      | SpecialAbility(y) => y.selectOptions
-      },
+  let getSelectOption = (x: Static.activatable, id: Hero.Activatable.option) =>
+    Maybe.Monad.(
+      id
+      |> Convert.activatableOptionToSelectOptionId
+      >>= Function.flip(
+            SelectOptionMap.lookup,
+            switch (x) {
+            | Advantage(y) => y.selectOptions
+            | Disadvantage(y) => y.selectOptions
+            | SpecialAbility(y) => y.selectOptions
+            },
+          )
     );
 
   /**
@@ -123,14 +145,14 @@ module SelectOptions = {
    * Returns `Nothing` if not found.
    */
   let getSelectOptionName = (x, id) =>
-    id |> findSelectOption(x) <&> (y => y.name);
+    id |> getSelectOption(x) <&> (y => y.name);
 
   /**
    * Get a selection option's cost with the given id from given wiki entry.
    * Returns `Nothing` if not found.
    */
   let getSelectOptionCost = (x, id) =>
-    id |> findSelectOption(x) <&> (y => y.cost);
+    id |> getSelectOption(x) <&> (y => y.cost);
 
   /**
    * Get all first select option IDs from the given entry.
@@ -183,6 +205,7 @@ module Names = {
   open Maybe.Functor;
   open Maybe.Monad;
   open Static;
+  open Function;
 
   /* /**
     * Returns the name of the given object. If the object is a string, it returns
@@ -212,53 +235,296 @@ module Names = {
        return result .groups .subname
      }*/
 
+  let%private getOption1 = heroEntry => heroEntry.options |> listToMaybe;
+  let%private getOption2 = heroEntry => ListH.(heroEntry.options <!!> 1);
+
+  let%private getCustomInput = (option: Hero.Activatable.option) =>
+    switch (option) {
+    | `CustomInput(x) => Just(x)
+    | `Generic(_)
+    | `Skill(_)
+    | `CombatTechnique(_)
+    | `Spell(_)
+    | `LiturgicalChant(_)
+    | `Cantrip(_)
+    | `Blessing(_) => Nothing
+    };
+
+  let%private getGenericId = (option: Hero.Activatable.option) =>
+    switch (option) {
+    | `Generic(x) => Just(x)
+    | `Skill(_)
+    | `CombatTechnique(_)
+    | `Spell(_)
+    | `LiturgicalChant(_)
+    | `Cantrip(_)
+    | `Blessing(_)
+    | `CustomInput(_) => Nothing
+    };
+
   let%private lookupMap = (k, mp, f) => f <$> IntMap.lookup(k, mp);
 
-  let%private getNameFromSkillSpellOrChant = (staticData, heroEntry) =>
-    heroEntry.options
-    |> listToMaybe
-    >>= (
-      sid =>
-        switch (sid) {
-        | `Skill(id) => lookupMap(id, staticData.skills, x => x.name)
-        | `Spell(id) => lookupMap(id, staticData.spells, x => x.name)
-        | `LiturgicalChant(id) =>
-          lookupMap(id, staticData.liturgicalChants, x => x.name)
-        | _ => Nothing
-        }
-    );
+  let%private getSkillFromOption =
+              (staticData, option: Hero.Activatable.option) =>
+    switch (option) {
+    | `Skill(id) => IntMap.lookup(id, staticData.skills)
+    | `Generic(_)
+    | `CombatTechnique(_)
+    | `Spell(_)
+    | `LiturgicalChant(_)
+    | `Cantrip(_)
+    | `Blessing(_)
+    | `CustomInput(_) => Nothing
+    };
 
-  let%private getNameFromCombatTechnique = (staticData, heroEntry) =>
-    heroEntry.options
-    |> listToMaybe
-    >>= (
-      sid =>
-        switch (sid) {
-        | `CombatTechnique(id) =>
-          lookupMap(id, staticData.combatTechniques, x => x.name)
-        | _ => Nothing
-        }
-    );
-
+  /**
+   * A lot of entries have customization options: Text input, select option or
+   * both. This function creates a string that can be appended to the `name`
+   * property of the respective record to create the full active name.
+   */
   let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
     switch (staticEntry) {
     | Advantage(entry) =>
-      switch (Ids.AdvantageId.fromInt(heroEntry.id)) {
+      switch (Ids.AdvantageId.fromInt(entry.id)) {
       | Aptitude
       | ExceptionalSkill =>
-        getNameFromSkillSpellOrChant(staticData, heroEntry)
+        heroEntry
+        |> getOption1
+        >>= (
+          sid =>
+            switch (sid) {
+            | `Skill(id) => lookupMap(id, staticData.skills, x => x.name)
+            | `Spell(id) => lookupMap(id, staticData.spells, x => x.name)
+            | `LiturgicalChant(id) =>
+              lookupMap(id, staticData.liturgicalChants, x => x.name)
+            | `Generic(_)
+            | `CombatTechnique(_)
+            | `Cantrip(_)
+            | `Blessing(_)
+            | `CustomInput(_) => Nothing
+            }
+        )
       | ExceptionalCombatTechnique
-      | WeaponAptitude => getNameFromCombatTechnique(staticData, heroEntry)
+      | WeaponAptitude =>
+        heroEntry
+        |> getOption1
+        >>= (
+          sid =>
+            switch (sid) {
+            | `CombatTechnique(id) =>
+              lookupMap(id, staticData.combatTechniques, x => x.name)
+            | `Generic(_)
+            | `Skill(_)
+            | `Spell(_)
+            | `LiturgicalChant(_)
+            | `Cantrip(_)
+            | `Blessing(_)
+            | `CustomInput(_) => Nothing
+            }
+        )
+      | HatredOf =>
+        heroEntry
+        |> getOption1
+        >>= SelectOptions.getSelectOption(staticEntry)
+        |> liftM2(
+             (type_, frequency: Static.SelectOption.t) =>
+               type_ ++ " (" ++ frequency.name ++ ")",
+             getOption2(heroEntry) >>= getCustomInput,
+           )
       | _ => Nothing
       }
-    | Disadvantage(_) => Nothing
-    | SpecialAbility(_) => Nothing
+    | Disadvantage(entry) =>
+      switch (Ids.DisadvantageId.fromInt(entry.id)) {
+      | Incompetent =>
+        heroEntry
+        |> getOption1
+        >>= getSkillFromOption(staticData)
+        <&> (x => x.name)
+      | PersonalityFlaw =>
+        heroEntry
+        |> getOption1
+        >>= SelectOptions.getSelectOption(staticEntry)
+        <&> (
+          option1 =>
+            (
+              switch (option1.id) {
+              // Get the input if Prejudice or Unworldly is selected
+              | `Generic(7 | 8) => heroEntry |> getOption2 >>= getCustomInput
+              // Otherwise ignore any additional options
+              | `Generic(_)
+              | `Skill(_)
+              | `CombatTechnique(_)
+              | `Spell(_)
+              | `LiturgicalChant(_)
+              | `Cantrip(_)
+              | `Blessing(_) => Nothing
+              }
+            )
+            |> maybe(option1.name, specialInput =>
+                 option1.name ++ ": " ++ specialInput
+               )
+        )
+      | _ => Nothing
+      }
+    | SpecialAbility(entry) =>
+      switch (Ids.SpecialAbilityId.fromInt(entry.id)) {
+      | AdaptionZauber
+      | FavoriteSpellwork =>
+        heroEntry
+        |> getOption1
+        >>= (
+          sid =>
+            switch (sid) {
+            | `Spell(id) => lookupMap(id, staticData.spells, x => x.name)
+            | `Generic(_)
+            | `Skill(_)
+            | `CombatTechnique(_)
+            | `LiturgicalChant(_)
+            | `Cantrip(_)
+            | `Blessing(_)
+            | `CustomInput(_) => Nothing
+            }
+        )
+      | TraditionSavant
+      | Forschungsgebiet
+      | Expertenwissen
+      | Wissensdurst
+      | Recherchegespuer =>
+        heroEntry
+        |> getOption1
+        >>= getSkillFromOption(staticData)
+        <&> (x => x.name)
+      | Lieblingsliturgie =>
+        heroEntry
+        |> getOption1
+        >>= (
+          sid =>
+            switch (sid) {
+            | `LiturgicalChant(id) =>
+              lookupMap(id, staticData.liturgicalChants, x => x.name)
+            | `Generic(_)
+            | `Skill(_)
+            | `CombatTechnique(_)
+            | `Spell(_)
+            | `Cantrip(_)
+            | `Blessing(_)
+            | `CustomInput(_) => Nothing
+            }
+        )
+      | SkillSpecialization =>
+        heroEntry
+        |> getOption1
+        >>= getSkillFromOption(staticData)
+        >>= (
+          skill =>
+            heroEntry
+            |> getOption2
+            >>= (
+              option2 =>
+                (
+                  switch (option2) {
+                  // If input string use input
+                  | `CustomInput(x) => Just(x)
+                  // Otherwise lookup application name
+                  | `Generic(id) =>
+                    skill.applications
+                    |> IntMap.Foldable.find((a: Skill.application) =>
+                         a.id === id
+                       )
+                    <&> (a => a.name)
+                  | `Skill(_)
+                  | `CombatTechnique(_)
+                  | `Spell(_)
+                  | `LiturgicalChant(_)
+                  | `Cantrip(_)
+                  | `Blessing(_) => Nothing
+                  }
+                )
+                // Merge skill name and application name
+                <&> (appName => skill.name ++ ": " ++ appName)
+            )
+        )
+      | Exorzist =>
+        switch (heroEntry.level) {
+        | Just(1) =>
+          heroEntry
+          |> getOption1
+          >>= SelectOptions.getSelectOptionName(staticEntry)
+        | _ => Nothing
+        }
+      | SpellEnhancement as entryId
+      | ChantEnhancement as entryId =>
+        heroEntry
+        |> getOption1
+        >>= SelectOptions.getSelectOption(staticEntry)
+        >>= (
+          enhancement =>
+            enhancement.target
+            >>= (
+              id =>
+                (
+                  switch (entryId) {
+                  | SpellEnhancement =>
+                    IntMap.lookup(id, staticData.spells) <&> (x => x.name)
+                  | _ =>
+                    IntMap.lookup(id, staticData.liturgicalChants)
+                    <&> (x => x.name)
+                  }
+                )
+                <&> (targetName => targetName ++ ": " ++ enhancement.name)
+            )
+        )
+      | TraditionArcaneBard =>
+        heroEntry
+        |> getOption1
+        >>= getGenericId
+        >>= flip(IntMap.lookup, staticData.arcaneBardTraditions)
+      | TraditionArcaneDancer =>
+        heroEntry
+        |> getOption1
+        >>= getGenericId
+        >>= flip(IntMap.lookup, staticData.arcaneDancerTraditions)
+      | LanguageSpecializations =>
+        liftM2(
+          SelectOptions.getSelectOption,
+          IntMap.lookup(
+            Ids.SpecialAbilityId.toInt(Language),
+            staticData.specialAbilities,
+          )
+          <&> (specialAbility => SpecialAbility(specialAbility)),
+          getOption1(heroEntry),
+        )
+        |> join
+        >>= (
+          language =>
+            heroEntry
+            |> getOption2
+            >>= (
+              option2 =>
+                (
+                  switch (option2) {
+                  | `CustomInput(str) => Just(str)
+                  | `Generic(specializationId) =>
+                    language.specializations
+                    >>= (
+                      specializations =>
+                        ListH.(specializations <!!> specializationId - 1)
+                    )
+                  | `Skill(_)
+                  | `CombatTechnique(_)
+                  | `Spell(_)
+                  | `LiturgicalChant(_)
+                  | `Cantrip(_)
+                  | `Blessing(_) => Nothing
+                  }
+                )
+                <&> (specialization => language.name ++ ": " ++ specialization)
+            )
+        )
+      | _ => Nothing
+      }
     };
-  /* /**
-    * A lot of entries have customization options: Text input, select option or
-    * both. This function creates a string that can be appended to the `name`
-    * property of the respective record to create the full active name.
-    */
+  /*
    const getEntrySpecificNameAddition =
      (staticData: StaticDataRecord) =>
      (wiki_entry: Activatable) =>
