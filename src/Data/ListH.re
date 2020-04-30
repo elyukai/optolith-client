@@ -298,6 +298,8 @@ let (!!) = List.nth;
 
 let (<!!>) = (xs, i) => List.nth_opt(xs, i) |> Maybe.optionToMaybe;
 
+let sortBy = f => List.sort((a, b) => f(a, b) |> Ord.fromOrdering);
+
 module Extra = {
   let notNull = xs => xs |> Foldable.null |> (!);
 
@@ -318,5 +320,29 @@ module Extra = {
         | Nothing => Nothing
         }
       }
+    );
+
+  /**
+   * Escape a string that may contain `Regex`-specific notation for use in
+   * regular expressions.
+   *
+   * ```haskell
+   * escapeRegex "." == "\."
+   * escapeRegex "This (or that)." == "This \(or that\)\."
+   * ```
+   */
+  let escapeRegex =
+    // $& means the whole matched string
+    Js.String.replaceByRe([%re "/[.*+?^${}()|[\\]\\\\]/gu"], "\\$&");
+
+  /**
+   * Replace a subsequence everywhere it occurs. The first argument must not be
+   * the empty string.
+   */
+  let replaceStr = (old_subseq: string, new_subseq: string, x: string) =>
+    Js.String.replaceByRe(
+      Js.Re.fromStringWithFlags(escapeRegex(old_subseq), ~flags="gu"),
+      new_subseq,
+      x,
     );
 };

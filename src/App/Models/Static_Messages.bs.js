@@ -3,8 +3,9 @@
 
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 
-function t(json) {
+function t(locale, json) {
   return {
+          id: locale,
           macosmenubar_aboutapp: Json_decode.field("macosmenubar.aboutapp", Json_decode.string, json),
           macosmenubar_preferences: Json_decode.field("macosmenubar.preferences", Json_decode.string, json),
           macosmenubar_quit: Json_decode.field("macosmenubar.quit", Json_decode.string, json),

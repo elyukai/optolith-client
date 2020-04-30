@@ -256,7 +256,7 @@ let%private spellEnhancements = xs =>
     |> IntMap.fromList
   );
 
-let decode = (yamlData: Yaml_Raw.yamlData): Static.t => {
+let decode = (locale, yamlData: Yaml_Raw.yamlData): Static.t => {
   let animistForces = Static.AnimistForce.Decode.all(yamlData);
   let arcaneBardTraditions = idNames(yamlData.arcaneBardTraditionsL10n);
   let arcaneDancerTraditions = idNames(yamlData.arcaneDancerTraditionsL10n);
@@ -295,7 +295,7 @@ let decode = (yamlData: Yaml_Raw.yamlData): Static.t => {
   let magicalDances = Static.MagicalDance.Decode.all(yamlData);
   let magicalMelodies = Static.MagicalMelody.Decode.all(yamlData);
   let magicalTraditions = Static.MagicalTradition.Decode.all(yamlData);
-  let messages = Static.Messages.Decode.t(yamlData.uiL10n);
+  let messages = Static.Messages.Decode.t(locale, yamlData.uiL10n);
   let optionalRules = Static.OptionalRule.Decode.all(yamlData);
   let pacts = Static.PactCategory.Decode.all(yamlData);
   let professions = Static.Profession.Decode.all(yamlData);

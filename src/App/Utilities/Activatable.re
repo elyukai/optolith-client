@@ -103,14 +103,26 @@ module Convert = {
   let activatableOptionToSelectOptionId =
       (id: Hero.Activatable.option): maybe(Ids.selectOptionId) =>
     switch (id) {
-    | `Generic(x) => Just(`Generic(x))
-    | `Skill(x) => Just(`Skill(x))
-    | `CombatTechnique(x) => Just(`CombatTechnique(x))
-    | `Spell(x) => Just(`Spell(x))
-    | `Cantrip(x) => Just(`Cantrip(x))
-    | `LiturgicalChant(x) => Just(`LiturgicalChant(x))
-    | `Blessing(x) => Just(`Blessing(x))
+    | `Generic(_) as id
+    | `Skill(_) as id
+    | `CombatTechnique(_) as id
+    | `Spell(_) as id
+    | `Cantrip(_) as id
+    | `LiturgicalChant(_) as id
+    | `Blessing(_) as id => Just(id)
     | `CustomInput(_) => Nothing
+    };
+
+  let isSelectOptionId = (id: Hero.Activatable.option) =>
+    switch (id) {
+    | `Generic(_)
+    | `Skill(_)
+    | `CombatTechnique(_)
+    | `Spell(_)
+    | `Cantrip(_)
+    | `LiturgicalChant(_)
+    | `Blessing(_) => true
+    | `CustomInput(_) => false
     };
 };
 
@@ -207,36 +219,9 @@ module Names = {
   open Static;
   open Function;
 
-  /* /**
-    * Returns the name of the given object. If the object is a string, it returns
-    * the string.
-    */
-   export const getFullName =
-     (obj: string | Record<ActiveActivatable>): string => {
-       if (typeof obj === "string") {
-         return obj
-       }
-
-       return AAA_.name (obj)
-     }
-
-   /**
-    * Accepts the full special ability name and returns only the text between
-    * parentheses. If no parentheses were found, returns an empty string.
-    */
-   export const getBracketedNameFromFullName =
-     (full_name: string): string => {
-       const result = /\((?<subname>.+)\)/u .exec (full_name)
-
-       if (result === null || result .groups === undefined) {
-         return ""
-       }
-
-       return result .groups .subname
-     }*/
-
   let%private getOption1 = heroEntry => heroEntry.options |> listToMaybe;
   let%private getOption2 = heroEntry => ListH.(heroEntry.options <!!> 1);
+  let%private getOption3 = heroEntry => ListH.(heroEntry.options <!!> 2);
 
   let%private getCustomInput = (option: Hero.Activatable.option) =>
     switch (option) {
@@ -277,12 +262,73 @@ module Names = {
     | `CustomInput(_) => Nothing
     };
 
+  let%private getDefaultNameAddition = (staticEntry, heroEntry) => {
+    let input =
+      switch (staticEntry) {
+      | Advantage(entry) => entry.input
+      | Disadvantage(entry) => entry.input
+      | SpecialAbility(entry) => entry.input
+      };
+
+    let selectOptions =
+      switch (staticEntry) {
+      | Advantage(entry) => entry.selectOptions
+      | Disadvantage(entry) => entry.selectOptions
+      | SpecialAbility(entry) => entry.selectOptions
+      };
+
+    let sid = heroEntry |> getOption1;
+    let sid2 = heroEntry |> getOption2;
+
+    switch (input, sid, sid2) {
+    // Text input
+    | (Just(_), Just(`CustomInput(str)), Nothing) => Just(str)
+    // Select option and text input
+    | (
+        Just(_),
+        Just(
+          `Generic(_) as id | `Skill(_) as id | `CombatTechnique(_) as id |
+          `Spell(_) as id |
+          `LiturgicalChant(_) as id |
+          `Cantrip(_) as id |
+          `Blessing(_) as id,
+        ),
+        Just(`CustomInput(str)),
+      )
+        when SelectOption.SelectOptionMap.size(selectOptions) > 0 =>
+      Just(
+        (
+          id
+          |> SelectOptions.getSelectOptionName(staticEntry)
+          |> fromMaybe("")
+        )
+        ++ ": "
+        ++ str,
+      )
+    // Plain select option
+    | (
+        Nothing,
+        Just(
+          `Generic(_) as id | `Skill(_) as id | `CombatTechnique(_) as id |
+          `Spell(_) as id |
+          `LiturgicalChant(_) as id |
+          `Cantrip(_) as id |
+          `Blessing(_) as id,
+        ),
+        Nothing,
+      ) =>
+      SelectOptions.getSelectOptionName(staticEntry, id)
+    | _ => Nothing
+    };
+  };
+
   /**
    * A lot of entries have customization options: Text input, select option or
    * both. This function creates a string that can be appended to the `name`
    * property of the respective record to create the full active name.
    */
-  let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
+  let%private getEntrySpecificNameAddition =
+              (staticData, staticEntry, heroEntry) =>
     switch (staticEntry) {
     | Advantage(entry) =>
       switch (Ids.AdvantageId.fromInt(entry.id)) {
@@ -331,7 +377,7 @@ module Names = {
                type_ ++ " (" ++ frequency.name ++ ")",
              getOption2(heroEntry) >>= getCustomInput,
            )
-      | _ => Nothing
+      | _ => getDefaultNameAddition(staticEntry, heroEntry)
       }
     | Disadvantage(entry) =>
       switch (Ids.DisadvantageId.fromInt(entry.id)) {
@@ -364,7 +410,7 @@ module Names = {
                  option1.name ++ ": " ++ specialInput
                )
         )
-      | _ => Nothing
+      | _ => getDefaultNameAddition(staticEntry, heroEntry)
       }
     | SpecialAbility(entry) =>
       switch (Ids.SpecialAbilityId.fromInt(entry.id)) {
@@ -521,251 +567,48 @@ module Names = {
                 <&> (specialization => language.name ++ ": " ++ specialization)
             )
         )
-      | _ => Nothing
+      | Fachwissen =>
+        heroEntry
+        |> getOption1
+        >>= getSkillFromOption(staticData)
+        >>= (
+          skill => {
+            let applications =
+              skill.applications
+              |> IntMap.filter((app: Skill.application) =>
+                   app.prerequisite |> isNothing
+                 );
+
+            [heroEntry |> getOption2, heroEntry |> getOption3]
+            |> mapMaybe(option =>
+                 option
+                 >>= getGenericId
+                 >>= (
+                   opt =>
+                     applications
+                     |> IntMap.Foldable.find((app: Skill.application) =>
+                          app.id === opt
+                        )
+                     <&> (app => app.name)
+                 )
+               )
+            |> ensure(apps => apps |> ListH.Foldable.length |> (===)(2))
+            <&> (
+              apps =>
+                apps
+                |> Sort.sortStrings(staticData)
+                |> Intl.ListFormat.format(Conjunction, staticData)
+                |> (appsStr => skill.name ++ ": " ++ appsStr)
+            );
+          }
+        )
+      | _ => getDefaultNameAddition(staticEntry, heroEntry)
       }
     };
+
+  let%private addSndInParens = snd =>
+    ListH.Extra.replaceStr(")", ": " ++ snd ++ ")");
   /*
-   const getEntrySpecificNameAddition =
-     (staticData: StaticDataRecord) =>
-     (wiki_entry: Activatable) =>
-     (hero_entry: Record<ActiveObjectWithId>): Maybe<string> => {
-       switch (AOWIA.id (hero_entry)) {
-         // Entry with Skill selection (string id)
-         case AdvantageId.aptitude:
-         case AdvantageId.exceptionalSkill:
-         case AdvantageId.exceptionalCombatTechnique:
-         case AdvantageId.weaponAptitude:
-         case DisadvantageId.incompetent:
-         case SpecialAbilityId.adaptionZauber:
-         case SpecialAbilityId.favoriteSpellwork:
-         case SpecialAbilityId.forschungsgebiet:
-         case SpecialAbilityId.expertenwissen:
-         case SpecialAbilityId.wissensdurst:
-         case SpecialAbilityId.recherchegespuer:
-         case SpecialAbilityId.lieblingsliturgie:
-           return pipe (
-                         AOWIA.sid,
-                         misStringM,
-                         bindF (getWikiEntry (staticData)),
-                         bindF<EntryWithCategory, SkillishEntry> (ensure (isSkillishWikiEntry)),
-                         fmap (SAL.name)
-                       )
-                       (hero_entry)
-
-         case AdvantageId.hatredOf:
-           return pipe (
-                         AOWIA.sid,
-                         findSelectOption (wiki_entry),
-                         liftM2 ((type: string | number) => (frequency: Record<SelectOption>) =>
-                                 `${type} (${SOA.name (frequency)})`)
-                               (AOWIA.sid2 (hero_entry))
-                       )
-                       (hero_entry)
-
-         case DisadvantageId.personalityFlaw:
-           return pipe (
-                         AOWIA.sid,
-                         getSelectOptionName (wiki_entry),
-                         fmap (option_name => maybe (option_name)
-
-                                                   // if there is additional input, add to name
-                                                   ((specialInput: string | number) =>
-                                                     `${option_name}: ${specialInput}`)
-                                                   (pipe (
-                                                           AOWIA.sid,
-
-                                                           // Check if the select option allows
-                                                           // additional input
-                                                           bindF<SID, number> (
-                                                             ensure (
-                                                               (x): x is number => isNumber (x)
-                                                                 && elem (x) (List (7, 8))
-                                                             )
-                                                           ),
-                                                           bindF (() => AOWIA.sid2 (hero_entry))
-                                                         )
-                                                         (hero_entry)))
-                       )
-                       (hero_entry)
-
-         case SpecialAbilityId.skillSpecialization:
-           return pipe (
-                         AOWIA.sid,
-                         misStringM,
-                         bindF (lookupF (SDA.skills (staticData))),
-                         bindF (skill => pipe (
-                                           AOWIA.sid2,
-
-                                           // If input string use input
-                                           misStringM,
-
-                                           // Otherwise lookup application name
-                                           altF_ (() => pipe (
-                                                               SA.applications,
-                                                               find<Record<Application>> (pipe (
-                                                                 Application.AL.id,
-                                                                 elemF (AOWIA.sid2 (hero_entry))
-                                                               )),
-                                                               fmap (AA.name)
-                                                             )
-                                                             (skill)),
-
-                                           // Merge skill name and application name
-                                           fmap (appl => `${SA.name (skill)}: ${appl}`)
-                                         )
-                                         (hero_entry))
-                       )
-                       (hero_entry)
-
-         case SpecialAbilityId.exorzist:
-           return pipe_ (
-             hero_entry,
-             AOWIA.tier,
-             Maybe.product,
-             ensure (equals (1)),
-             thenF (AOWIA.sid (hero_entry)),
-             findSelectOption (wiki_entry),
-             fmap (SOA.name)
-           )
-
-         case prefixSA (SpecialAbilityId.spellEnhancement):
-         case prefixSA (SpecialAbilityId.chantEnhancement):
-           return pipe (
-                         AOWIA.sid,
-                         findSelectOption (wiki_entry),
-                         bindF (ext => pipe (
-                                             bindF ((target_id: string) => {
-                                               const acc =
-                                                 AOWIA.id (hero_entry)
-                                                 === prefixSA (SpecialAbilityId.spellEnhancement)
-                                                   ? SDA.spells
-                                                   : SDA.liturgicalChants
-
-                                               return lookupF<string, ActivatableSkillEntry>
-                                                 (acc (staticData))
-                                                 (target_id)
-                                             }),
-                                             fmap (
-                                               target_entry =>
-                                                 `${SAL.name (target_entry)}: ${SOA.name (ext)}`
-                                             )
-                                           )
-                                           (SOA.target (ext)))
-                       )
-                       (hero_entry)
-
-         case SpecialAbilityId.traditionArcaneBard: {
-           return pipe (
-                         AOWIA.sid2,
-                         misNumberM,
-                         bindF (lookupF (SDA.arcaneBardTraditions (staticData))),
-                         fmap (NumIdName.A.name)
-                       )
-                       (hero_entry)
-         }
-
-         case SpecialAbilityId.traditionArcaneDancer: {
-           return pipe (
-                         AOWIA.sid2,
-                         misNumberM,
-                         bindF (lookupF (SDA.arcaneDancerTraditions (staticData))),
-                         fmap (NumIdName.A.name)
-                       )
-                       (hero_entry)
-         }
-
-         case SpecialAbilityId.traditionSavant:
-           return pipe (
-                         AOWIA.sid,
-                         misStringM,
-                         bindF (lookupF (SDA.skills (staticData))),
-                         fmap (SA.name)
-                       )
-                       (hero_entry)
-
-         case SpecialAbilityId.languageSpecializations:
-           return pipe (
-                         SDA.specialAbilities,
-                         lookup<string> (SpecialAbilityId.language),
-                         bindF (pipe (
-                           findSelectOption,
-                           thrush (AOWIA.sid (hero_entry))
-                         )),
-                         bindF (lang => pipe (
-                                               AOWIA.sid2,
-                                               bindF (
-                                                 ifElse<string | number, string>
-                                                   (isString)
-                                                   <Maybe<string>>
-                                                   (Just)
-                                                   (spec_id => bind (SOA.specializations (lang))
-                                                                   (subscriptF (spec_id - 1)))
-                                               ),
-                                               fmap (spec => `${SOA.name (lang)}: ${spec}`)
-                                             )
-                                             (hero_entry))
-                       )
-                       (staticData)
-
-         case SpecialAbilityId.fachwissen: {
-           const getApp = (getSid: (r: Record<ActiveObjectWithId>) => Maybe<string | number>) =>
-                           pipe (
-                             SA.applications,
-                             filter (pipe (AA.prerequisite, isNothing)),
-                             find (pipe (AA.id, elemF (getSid (hero_entry)))),
-                             fmap (AA.name)
-                           )
-
-           return pipe_ (
-             hero_entry,
-             AOWIA.sid,
-             misStringM,
-             bindF (lookupF (SDA.skills (staticData))),
-             bindF (skill => pipe_ (
-                               List (
-                                 getApp (AOWIA.sid2) (skill),
-                                 getApp (AOWIA.sid3) (skill)
-                               ),
-                               catMaybes,
-                               ensure (xs => flength (xs) === 2),
-                               fmap (pipe (
-                                 sortStrings (staticData),
-                                 formatList ("conjunction") (staticData),
-                                 apps => `${SA.name (skill)}: ${apps}}`
-                               ))
-                             ))
-           )
-         }
-
-         default: {
-           const current_sid = AOWIA.sid (hero_entry)
-           const current_sid2 = AOWIA.sid2 (hero_entry)
-
-           // Text input
-           if (isJust (AAL.input (wiki_entry)) && any (isString) (current_sid)) {
-             return current_sid
-           }
-
-           // Select option and text input
-           if (isJust (AAL.select (wiki_entry))
-               && isJust (AAL.input (wiki_entry))
-               && isJust (current_sid)
-               && any (isString) (current_sid2)) {
-             const name1 = fromMaybe ("") (getSelectOptionName (wiki_entry) (current_sid))
-             const name2 = fromJust (current_sid2)
-
-             return Just (`${name1}: ${name2}`)
-           }
-
-           // Plain select option
-           if (isJust (AAL.select (wiki_entry))) {
-             return getSelectOptionName (wiki_entry) (current_sid)
-           }
-
-           return Nothing
-         }
-       }
-     }
 
    const addSndinParenthesis = (snd: string) => replaceStr (")") (`: ${snd})`)
 

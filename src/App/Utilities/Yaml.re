@@ -12,7 +12,7 @@ let parseStaticData = locale => {
   |> Yaml_Raw.getStaticData
   <&> (
     yamlData => {
-      let res = Yaml_Decode.decode(yamlData);
+      let res = Yaml_Decode.decode(locale, yamlData);
 
       Js.Console.log("Parsing static data done!");
 

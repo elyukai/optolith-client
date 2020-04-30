@@ -368,7 +368,7 @@ function spellEnhancements(xs) {
                   })));
 }
 
-function decode(yamlData) {
+function decode(locale, yamlData) {
   var animistForces = Static_AnimistForce$OptolithClient.Decode.all(yamlData);
   var arcaneBardTraditions = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.arcaneBardTraditionsL10n));
   var arcaneDancerTraditions = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.arcaneDancerTraditionsL10n));
@@ -402,7 +402,7 @@ function decode(yamlData) {
   var magicalDances = Static_MagicalDance$OptolithClient.Decode.all(yamlData);
   var magicalMelodies = Static_MagicalMelody$OptolithClient.Decode.all(yamlData);
   var magicalTraditions = Static_MagicalTradition$OptolithClient.Decode.all(yamlData);
-  var messages = Static_Messages$OptolithClient.Decode.t(yamlData.uiL10n);
+  var messages = Static_Messages$OptolithClient.Decode.t(locale, yamlData.uiL10n);
   var optionalRules = Static_OptionalRule$OptolithClient.Decode.all(yamlData);
   var pacts = Static_Pact$OptolithClient.Decode.all(yamlData);
   var professions = Static_Profession$OptolithClient.Decode.all(yamlData);

@@ -9,7 +9,7 @@ var Yaml_Decode$OptolithClient = require("./Yaml_Decode.bs.js");
 function parseStaticData(locale) {
   console.time("parseStaticData");
   return Exception$OptolithClient.handleE(IO$OptolithClient.Functor.$less$amp$great(Yaml_Raw$OptolithClient.getStaticData(locale), (function (yamlData) {
-                    var res = Yaml_Decode$OptolithClient.decode(yamlData);
+                    var res = Yaml_Decode$OptolithClient.decode(locale, yamlData);
                     console.log("Parsing static data done!");
                     console.timeEnd("parseStaticData");
                     return res;

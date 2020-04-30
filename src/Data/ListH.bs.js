@@ -7,6 +7,7 @@ var Js_int = require("bs-platform/lib/js/js_int.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
 var Pervasives = require("bs-platform/lib/js/pervasives.js");
+var Ord$OptolithClient = require("./Ord.bs.js");
 var Maybe$OptolithClient = require("./Maybe.bs.js");
 var Function$OptolithClient = require("./Function.bs.js");
 
@@ -563,6 +564,14 @@ function $less$bang$bang$great(xs, i) {
   return Maybe$OptolithClient.optionToMaybe(List.nth_opt(xs, i));
 }
 
+function sortBy(f) {
+  return (function (param) {
+      return List.sort((function (a, b) {
+                    return Ord$OptolithClient.fromOrdering(Curry._2(f, a, b));
+                  }), param);
+    });
+}
+
 function notNull(xs) {
   return !(
           xs ? false : true
@@ -606,10 +615,22 @@ function unsnoc(xs) {
   }
 }
 
+var partial_arg = /[.*+?^${}()|[\]\\]/gu;
+
+function escapeRegex(param) {
+  return param.replace(partial_arg, "\\$&");
+}
+
+function replaceStr(old_subseq, new_subseq, x) {
+  return x.replace(new RegExp(Curry._1(escapeRegex, old_subseq), "gu"), new_subseq);
+}
+
 var Extra = {
   notNull: notNull,
   list: list,
-  unsnoc: unsnoc
+  unsnoc: unsnoc,
+  escapeRegex: escapeRegex,
+  replaceStr: replaceStr
 };
 
 var map = $less$$great;
@@ -633,5 +654,6 @@ exports.lookup = lookup;
 exports.filter = filter;
 exports.$bang$bang = $bang$bang;
 exports.$less$bang$bang$great = $less$bang$bang$great;
+exports.sortBy = sortBy;
 exports.Extra = Extra;
 /* No side effect */

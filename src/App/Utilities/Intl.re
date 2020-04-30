@@ -1,4 +1,4 @@
-module List = {
+module ListFormat = {
   open Static;
   open Maybe;
 
@@ -15,6 +15,15 @@ module List = {
   let%private joinLastWithSeparator = (type_, staticData, lastStr, initStr) =>
     initStr ++ " " ++ getSeparator(type_, staticData) ++ " " ++ lastStr;
 
+  /**
+   * Formats a list language-specific by joining it's items.
+   *
+   * ```reason
+   * let staticData = { messages: { id: "en-US", ... }, ...};
+   *
+   * format(Disjunction, staticData, ["1", "2", "3"]) === "1, 2 or 3"
+   * ```
+   */
   let format = (type_, staticData, xs) =>
     switch (xs) {
     | [] => ""
@@ -28,4 +37,18 @@ module List = {
            |> joinLastWithSeparator(type_, staticData, last)
          )
     };
+};
+
+module Collator = {
+  type t;
+
+  type options = {numeric: option(bool)};
+
+  [@bs.scope "Intl"] [@bs.val] external create: string => t = "Collator";
+  [@bs.scope "Intl"] [@bs.val]
+  external createWithOptions: (string, options) => t = "Collator";
+  [@bs.send] external compareN: (t, string, string) => int = "compare";
+
+  let compare = (collator, a, b) =>
+    compareN(collator, a, b) |> Ord.toOrdering;
 };
