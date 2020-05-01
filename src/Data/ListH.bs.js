@@ -4,9 +4,11 @@
 var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Js_int = require("bs-platform/lib/js/js_int.js");
+var $$String = require("bs-platform/lib/js/string.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
 var Pervasives = require("bs-platform/lib/js/pervasives.js");
+var Int$OptolithClient = require("./Int.bs.js");
 var Ord$OptolithClient = require("./Ord.bs.js");
 var Maybe$OptolithClient = require("./Maybe.bs.js");
 var Function$OptolithClient = require("./Function.bs.js");
@@ -545,6 +547,10 @@ function lookup(k, xs) {
               }));
 }
 
+function isInfixOf(x, y) {
+  return x.includes(y);
+}
+
 function filter(pred, xs) {
   return foldr((function (x) {
                 if (Curry._1(pred, x)) {
@@ -564,6 +570,23 @@ function $less$bang$bang$great(xs, i) {
   return Maybe$OptolithClient.optionToMaybe(List.nth_opt(xs, i));
 }
 
+function $$delete(e, _xs) {
+  while(true) {
+    var xs = _xs;
+    if (xs) {
+      var xs$1 = xs[1];
+      if (Caml_obj.caml_equal(e, xs[0])) {
+        return xs$1;
+      } else {
+        _xs = xs$1;
+        continue ;
+      }
+    } else {
+      return /* [] */0;
+    }
+  };
+}
+
 function sortBy(f) {
   return (function (param) {
       return List.sort((function (a, b) {
@@ -571,6 +594,18 @@ function sortBy(f) {
                   }), param);
     });
 }
+
+function countBy(f, xs) {
+  return foldr((function (x) {
+                if (Curry._1(f, x)) {
+                  return Int$OptolithClient.inc;
+                } else {
+                  return Function$OptolithClient.id;
+                }
+              }), 0, xs);
+}
+
+var lower = $$String.lowercase_ascii;
 
 function notNull(xs) {
   return !(
@@ -626,6 +661,7 @@ function replaceStr(old_subseq, new_subseq, x) {
 }
 
 var Extra = {
+  lower: lower,
   notNull: notNull,
   list: list,
   unsnoc: unsnoc,
@@ -651,9 +687,12 @@ exports.permutations = permutations;
 exports.elem = elem;
 exports.notElem = notElem;
 exports.lookup = lookup;
+exports.isInfixOf = isInfixOf;
 exports.filter = filter;
 exports.$bang$bang = $bang$bang;
 exports.$less$bang$bang$great = $less$bang$bang$great;
+exports.$$delete = $$delete;
 exports.sortBy = sortBy;
+exports.countBy = countBy;
 exports.Extra = Extra;
 /* No side effect */

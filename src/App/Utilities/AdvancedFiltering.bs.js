@@ -6,6 +6,28 @@ var Intl$OptolithClient = require("./Intl.bs.js");
 var ListH$OptolithClient = require("../../Data/ListH.bs.js");
 var Function$OptolithClient = require("../../Data/Function.bs.js");
 
+function searchByMulti(searchAccessors, filterText, xs) {
+  if (searchAccessors) {
+    return ListH$OptolithClient.filter((function (x) {
+                  return ListH$OptolithClient.Foldable.any((function (pred) {
+                                if (pred.tag) {
+                                  return ListH$OptolithClient.Foldable.any((function (x$prime) {
+                                                return ListH$OptolithClient.isInfixOf(ListH$OptolithClient.Extra.lower(filterText), ListH$OptolithClient.Extra.lower(x$prime));
+                                              }), Curry._1(pred[0], x));
+                                } else {
+                                  return ListH$OptolithClient.isInfixOf(ListH$OptolithClient.Extra.lower(filterText), ListH$OptolithClient.Extra.lower(Curry._1(pred[0], x)));
+                                }
+                              }), searchAccessors);
+                }), xs);
+  } else {
+    return xs;
+  }
+}
+
+function searchStrings(filterText, xs) {
+  return ListH$OptolithClient.Foldable.elem(filterText, xs);
+}
+
 function sortByMulti(sortOptions, xs) {
   if (ListH$OptolithClient.Foldable.length(xs) < 2 || ListH$OptolithClient.Foldable.$$null(sortOptions)) {
     return xs;
@@ -51,6 +73,13 @@ function sortStrings(staticData, xs) {
                 }))(xs);
 }
 
+function searchAndSortByMulti(searchAccessors, sortOptions, filterText, xs) {
+  return sortByMulti(sortOptions, searchByMulti(searchAccessors, filterText, xs));
+}
+
+exports.searchByMulti = searchByMulti;
+exports.searchStrings = searchStrings;
 exports.sortByMulti = sortByMulti;
 exports.sortStrings = sortStrings;
+exports.searchAndSortByMulti = searchAndSortByMulti;
 /* No side effect */

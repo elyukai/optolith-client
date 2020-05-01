@@ -13,6 +13,14 @@ function max(x, y) {
   }
 }
 
+function min(x, y) {
+  if (x < y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
 function inc(x) {
   return x + 1 | 0;
 }
@@ -44,6 +52,7 @@ function readMaybe(x) {
 }
 
 exports.max = max;
+exports.min = min;
 exports.inc = inc;
 exports.dec = dec;
 exports.negate = negate;

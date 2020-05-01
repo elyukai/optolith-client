@@ -6,8 +6,6 @@ import {activatableAndSkillId as Ids_activatableAndSkillId} from '../../../src/A
 
 import {activatableId as Ids_activatableId} from '../../../src/App/Constants/Ids.gen';
 
-import {activatableSkillId as Ids_activatableSkillId} from '../../../src/App/Constants/Ids.gen';
-
 import {hitZoneArmorZoneItemId as Ids_hitZoneArmorZoneItemId} from '../../../src/App/Constants/Ids.gen';
 
 import {list} from '../../../src/shims/ReasonPervasives.shim';
@@ -17,8 +15,6 @@ import {maybe as Maybe_maybe} from '../../../src/Data/Maybe.gen';
 import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/GenericHelpers.gen';
 
 import {selectOptionId as Ids_selectOptionId} from '../../../src/App/Constants/Ids.gen';
-
-import {skillId as Ids_skillId} from '../../../src/App/Constants/Ids.gen';
 
 import {t as IntMap_t} from '../../../src/shims/IntMap.gen';
 
@@ -144,7 +140,7 @@ export type Energies = Energies_t;
 // tslint:disable-next-line:interface-over-type-literal
 export type ActivatableSkill_dependency = {
   readonly source: Ids_activatableAndSkillId; 
-  readonly target: GenericHelpers_oneOrMany<Ids_activatableSkillId>; 
+  readonly target: GenericHelpers_oneOrMany<number>; 
   readonly value: Maybe_maybe<number>
 };
 export type ActivatableSkillDependency = ActivatableSkill_dependency;
@@ -160,7 +156,7 @@ export type ActivatableSkill = ActivatableSkill_t;
 // tslint:disable-next-line:interface-over-type-literal
 export type Skill_dependency = {
   readonly source: Ids_activatableId; 
-  readonly target: GenericHelpers_oneOrMany<Ids_skillId>; 
+  readonly target: GenericHelpers_oneOrMany<number>; 
   readonly value: number
 };
 export type SkillDependency = Skill_dependency;

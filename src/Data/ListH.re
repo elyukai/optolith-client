@@ -289,6 +289,25 @@ let notElem = Foldable.notElem;
 let lookup = (k, xs) =>
   Maybe.Functor.(Foldable.find(((k', _)) => k == k', xs) <&> snd);
 
+// Predicates
+
+/**
+ * The `isInfixOf` function takes two strings and returns `True` if the first
+ * string is contained, wholly and intact, anywhere within the second.
+ *
+ * ```haskell
+ * >>> isInfixOf "Haskell" "I really like Haskell."
+ * True
+ * ```
+ *
+ * ```haskell
+ * >>> isInfixOf "Ial" "I really like Haskell."
+ * False
+ * ```
+ *
+ */
+let isInfixOf = (x: string, y: string) => Js.String.includes(y, x);
+
 // Searching with a predicate
 
 let filter = (pred, xs) =>
@@ -298,17 +317,64 @@ let (!!) = List.nth;
 
 let (<!!>) = (xs, i) => List.nth_opt(xs, i) |> Maybe.optionToMaybe;
 
+// "Set" operations
+
+/**
+ * `delete x` removes the first occurrence of `x` from its list argument.
+ */
+let rec delete = (e, xs) =>
+  switch (xs) {
+  | [] => []
+  | [x, ...xs] => e == x ? xs : delete(e, xs)
+  };
+
+// Ordered lists
+
 let sortBy = f => List.sort((a, b) => f(a, b) |> Ord.fromOrdering);
 
+let countBy = (f, xs) =>
+  Foldable.foldr(
+    x =>
+      if (f(x)) {
+        Int.inc;
+      } else {
+        Function.id;
+      },
+    0,
+    xs,
+  );
+
 module Extra = {
+  /**
+   * Convert a string to lower case.
+   */
+  let lower = str => String.lowercase_ascii(str);
+
+  /**
+   * A composition of `not` and `null`. Checks if a list has at least one
+   * element.
+   */
   let notNull = xs => xs |> Foldable.null |> (!);
 
+  /**
+   * Non-recursive transform over a list, like `maybe`.
+   *
+   * ```haskell
+   * list 1 (\v _ -> v - 2) [5,6,7] == 3
+   * list 1 (\v _ -> v - 2) []      == 1
+   * nil cons xs -> maybe nil (uncurry cons) (uncons xs) == list nil cons xs
+   * ```
+   */
   let list = (def, f, xs) =>
     switch (xs) {
     | [] => def
     | [x, ...xs] => f(x, xs)
     };
 
+  /**
+   * If the list is empty returns `Nothing`, otherwise returns the `init` and
+   * the `last`.
+   */
   let rec unsnoc = xs =>
     Maybe.(
       switch (xs) {

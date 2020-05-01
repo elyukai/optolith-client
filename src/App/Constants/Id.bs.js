@@ -4,7 +4,7 @@
 var Pervasives = require("bs-platform/lib/js/pervasives.js");
 var Int$OptolithClient = require("../../Data/Int.bs.js");
 
-function unsafeFromInt(id) {
+function unsafePhaseFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 2 || switcher < 0) {
     return Pervasives.invalid_arg("unsafeFromInt: " + (Int$OptolithClient.show(id) + " is not a valid phase"));
@@ -13,19 +13,11 @@ function unsafeFromInt(id) {
   }
 }
 
-function toInt(id) {
+function phaseToInt(id) {
   return id + 1 | 0;
 }
 
-var Phase = {
-  unsafeFromInt: unsafeFromInt,
-  toInt: toInt,
-  rcp: 1,
-  creation: 2,
-  inGame: 3
-};
-
-function unsafeFromInt$1(id) {
+function unsafeExperienceLevelFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 6 || switcher < 0) {
     return Pervasives.invalid_arg("unsafeFromInt: " + (Int$OptolithClient.show(id) + " is not a valid experience level"));
@@ -34,41 +26,11 @@ function unsafeFromInt$1(id) {
   }
 }
 
-function toInt$1(id) {
+function experienceLevelToInt(id) {
   return id + 1 | 0;
 }
 
-var ExperienceLevelId = {
-  unsafeFromInt: unsafeFromInt$1,
-  toInt: toInt$1,
-  inexperienced: "EL_1",
-  ordinary: "EL_2",
-  experienced: "EL_3",
-  competent: "EL_4",
-  masterly: "EL_5",
-  brilliant: "EL_6",
-  legendary: "EL_7"
-};
-
-var RaceId = {
-  humans: "R_1",
-  elves: "R_2",
-  halfElves: "R_3",
-  dwarves: "R_4"
-};
-
-var CultureId = {
-  gladeElves: "C_19",
-  firnelves: "C_20",
-  woodElves: "C_21",
-  steppenelfen: "C_28"
-};
-
-var ProfessionId = {
-  customProfession: "P_0"
-};
-
-function unsafeFromInt$2(id) {
+function unsafeAttributeFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 7 || switcher < 0) {
     return Pervasives.invalid_arg("unsafeFromInt: " + (Int$OptolithClient.show(id) + " is not a valid attribute"));
@@ -77,36 +39,60 @@ function unsafeFromInt$2(id) {
   }
 }
 
-function toInt$2(id) {
+function attributeToInt(id) {
   return id + 1 | 0;
 }
 
-var AttrId = {
-  unsafeFromInt: unsafeFromInt$2,
-  toInt: toInt$2,
-  courage: "ATTR_1",
-  sagacity: "ATTR_2",
-  intuition: "ATTR_3",
-  charisma: "ATTR_4",
-  dexterity: "ATTR_5",
-  agility: "ATTR_6",
-  constitution: "ATTR_7",
-  strength: "ATTR_8"
-};
+function unsafeDerivedCharacteristicFromString(id) {
+  switch (id) {
+    case "AE" :
+        return /* ArcaneEnergy */1;
+    case "DO" :
+        return /* Dodge */5;
+    case "INI" :
+        return /* Initiative */6;
+    case "KP" :
+        return /* KarmaPoints */2;
+    case "LP" :
+        return /* LifePoints */0;
+    case "MOV" :
+        return /* Movement */7;
+    case "SPI" :
+        return /* Spirit */3;
+    case "TOU" :
+        return /* Toughness */4;
+    case "WT" :
+        return /* WoundThreshold */8;
+    default:
+      return Pervasives.invalid_arg("unsafeFromInt: " + (id + " is not a valid derived characteristic"));
+  }
+}
 
-var DCId = {
-  lifePoints: "LP",
-  arcaneEnergy: "AE",
-  karmaPoints: "KP",
-  spirit: "SPI",
-  toughness: "TOU",
-  dodge: "DO",
-  initiative: "INI",
-  movement: "MOV",
-  woundThreshold: "WT"
-};
+function derivedCharacteristicToString(id) {
+  switch (id) {
+    case /* LifePoints */0 :
+        return "LP";
+    case /* ArcaneEnergy */1 :
+        return "AE";
+    case /* KarmaPoints */2 :
+        return "KP";
+    case /* Spirit */3 :
+        return "SPI";
+    case /* Toughness */4 :
+        return "TOU";
+    case /* Dodge */5 :
+        return "DO";
+    case /* Initiative */6 :
+        return "INI";
+    case /* Movement */7 :
+        return "MOV";
+    case /* WoundThreshold */8 :
+        return "WT";
+    
+  }
+}
 
-function fromInt(id) {
+function advantageFromInt(id) {
   switch (id) {
     case 4 :
         return /* Aptitude */0;
@@ -238,7 +224,7 @@ function fromInt(id) {
   }
 }
 
-function toInt$3(id) {
+function advantageToInt(id) {
   if (typeof id === "number") {
     switch (id) {
       case /* Aptitude */0 :
@@ -304,40 +290,7 @@ function toInt$3(id) {
   }
 }
 
-var AdvantageId = {
-  fromInt: fromInt,
-  toInt: toInt$3,
-  aptitude: "ADV_4",
-  nimble: "ADV_9",
-  blessed: "ADV_12",
-  luck: "ADV_14",
-  exceptionalSkill: "ADV_16",
-  exceptionalCombatTechnique: "ADV_17",
-  increasedAstralPower: "ADV_23",
-  increasedKarmaPoints: "ADV_24",
-  increasedLifePoints: "ADV_25",
-  increasedSpirit: "ADV_26",
-  increasedToughness: "ADV_27",
-  immunityToPoison: "ADV_28",
-  immunityToDisease: "ADV_29",
-  magicalAttunement: "ADV_32",
-  rich: "ADV_36",
-  sociallyAdaptable: "ADV_40",
-  inspireConfidence: "ADV_46",
-  weaponAptitude: "ADV_47",
-  spellcaster: "ADV_50",
-  unyielding: "ADV_54",
-  largeSpellSelection: "ADV_58",
-  hatredOf: "ADV_68",
-  prediger: "ADV_77",
-  visionaer: "ADV_78",
-  zahlreichePredigten: "ADV_79",
-  zahlreicheVisionen: "ADV_80",
-  leichterGang: "ADV_92",
-  einkommen: "ADV_99"
-};
-
-function fromInt$1(id) {
+function disadvantageFromInt(id) {
   switch (id) {
     case 1 :
         return /* AfraidOf */0;
@@ -443,7 +396,7 @@ function fromInt$1(id) {
   }
 }
 
-function toInt$4(id) {
+function disadvantageToInt(id) {
   if (typeof id === "number") {
     switch (id) {
       case /* AfraidOf */0 :
@@ -503,37 +456,7 @@ function toInt$4(id) {
   }
 }
 
-var DisadvantageId = {
-  fromInt: fromInt$1,
-  toInt: toInt$4,
-  afraidOf: "DISADV_1",
-  poor: "DISADV_2",
-  slow: "DISADV_4",
-  noFlyingBalm: "DISADV_17",
-  noFamiliar: "DISADV_18",
-  magicalRestriction: "DISADV_24",
-  decreasedArcanePower: "DISADV_26",
-  decreasedKarmaPoints: "DISADV_27",
-  decreasedLifePoints: "DISADV_28",
-  decreasedSpirit: "DISADV_29",
-  decreasedToughness: "DISADV_30",
-  badLuck: "DISADV_31",
-  personalityFlaw: "DISADV_33",
-  principles: "DISADV_34",
-  badHabit: "DISADV_36",
-  negativeTrait: "DISADV_37",
-  stigma: "DISADV_45",
-  deaf: "DISADV_47",
-  incompetent: "DISADV_48",
-  obligations: "DISADV_50",
-  maimed: "DISADV_51",
-  brittleBones: "DISADV_56",
-  smallSpellSelection: "DISADV_59",
-  wenigePredigten: "DISADV_72",
-  wenigeVisionen: "DISADV_73"
-};
-
-function fromInt$2(id) {
+function unsafeSkillFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 58 || switcher < 0) {
     return Pervasives.invalid_arg("fromInt: " + (Int$OptolithClient.show(id) + " is not a valid skill"));
@@ -542,98 +465,130 @@ function fromInt$2(id) {
   }
 }
 
-function toInt$5(id) {
+function skillToInt(id) {
   return id + 1 | 0;
 }
 
-var SkillId = {
-  fromInt: fromInt$2,
-  toInt: toInt$5,
-  flying: "TAL_1",
-  gaukelei: "TAL_2",
-  climbing: "TAL_3",
-  bodyControl: "TAL_4",
-  featOfStrength: "TAL_5",
-  riding: "TAL_6",
-  swimming: "TAL_7",
-  selfControl: "TAL_8",
-  singing: "TAL_9",
-  perception: "TAL_10",
-  dancing: "TAL_11",
-  pickpocket: "TAL_12",
-  stealth: "TAL_13",
-  carousing: "TAL_14",
-  persuasion: "TAL_15",
-  seduction: "TAL_16",
-  intimidation: "TAL_17",
-  etiquette: "TAL_18",
-  streetwise: "TAL_19",
-  empathy: "TAL_20",
-  fastTalk: "TAL_21",
-  disguise: "TAL_22",
-  willpower: "TAL_23",
-  tracking: "TAL_24",
-  ropes: "TAL_25",
-  fishing: "TAL_26",
-  orienting: "TAL_27",
-  plantLore: "TAL_28",
-  animalLore: "TAL_29",
-  survival: "TAL_30",
-  gambling: "TAL_31",
-  geography: "TAL_32",
-  history: "TAL_33",
-  religions: "TAL_34",
-  warfare: "TAL_35",
-  magicalLore: "TAL_36",
-  mechanics: "TAL_37",
-  math: "TAL_38",
-  law: "TAL_39",
-  mythsAndLegends: "TAL_40",
-  sphereLore: "TAL_41",
-  astronomy: "TAL_42",
-  alchemy: "TAL_43",
-  sailing: "TAL_44",
-  driving: "TAL_45",
-  commerce: "TAL_46",
-  treatPoison: "TAL_47",
-  treatDisease: "TAL_48",
-  treatSoul: "TAL_49",
-  treatWounds: "TAL_50",
-  woodworking: "TAL_51",
-  prepareFood: "TAL_52",
-  leatherworking: "TAL_53",
-  artisticAbility: "TAL_54",
-  metalworking: "TAL_55",
-  music: "TAL_56",
-  pickLocks: "TAL_57",
-  earthencraft: "TAL_58",
-  clothworking: "TAL_59"
-};
+function combatTechniqueFromInt(id) {
+  switch (id) {
+    case 1 :
+        return /* Crossbows */0;
+    case 2 :
+        return /* Bows */1;
+    case 3 :
+        return /* Daggers */2;
+    case 4 :
+        return /* FencingWeapons */3;
+    case 5 :
+        return /* ImpactWeapons */4;
+    case 6 :
+        return /* ChainWeapons */5;
+    case 7 :
+        return /* Lances */6;
+    case 8 :
+        return /* Other */[id];
+    case 9 :
+        return /* Brawling */7;
+    case 10 :
+        return /* Shields */8;
+    case 11 :
+        return /* Slings */9;
+    case 12 :
+        return /* Swords */10;
+    case 13 :
+        return /* Polearms */11;
+    case 14 :
+        return /* ThrownWeapons */12;
+    case 15 :
+        return /* TwoHandedImpactWeapons */13;
+    case 16 :
+        return /* TwoHandedSwords */14;
+    case 17 :
+        return /* SpittingFire */15;
+    case 18 :
+        return /* Blowguns */16;
+    case 19 :
+        return /* Discuses */17;
+    case 20 :
+        return /* Faecher */18;
+    case 21 :
+        return /* Spiesswaffen */19;
+    default:
+      return /* Other */[id];
+  }
+}
 
-var CombatTechniqueId = {
-  crossbows: "CT_1",
-  bows: "CT_2",
-  daggers: "CT_3",
-  fencingWeapons: "CT_4",
-  impactWeapons: "CT_5",
-  chainWeapons: "CT_6",
-  lances: "CT_7",
-  brawling: "CT_9",
-  shields: "CT_10",
-  slings: "CT_11",
-  swords: "CT_12",
-  polearms: "CT_13",
-  thrownWeapons: "CT_14",
-  twoHandedImpactWeapons: "CT_15",
-  twoHandedSwords: "CT_16",
-  spittingFire: "CT_17",
-  blowguns: "CT_18",
-  discuses: "CT_19",
-  faecher: "CT_20",
-  spiesswaffen: "CT_21"
-};
+function combatTechniqueToInt(id) {
+  if (typeof id === "number") {
+    switch (id) {
+      case /* Crossbows */0 :
+          return 1;
+      case /* Bows */1 :
+          return 2;
+      case /* Daggers */2 :
+          return 3;
+      case /* FencingWeapons */3 :
+          return 4;
+      case /* ImpactWeapons */4 :
+          return 5;
+      case /* ChainWeapons */5 :
+          return 6;
+      case /* Lances */6 :
+          return 7;
+      case /* Brawling */7 :
+          return 9;
+      case /* Shields */8 :
+          return 10;
+      case /* Slings */9 :
+          return 11;
+      case /* Swords */10 :
+          return 12;
+      case /* Polearms */11 :
+          return 13;
+      case /* ThrownWeapons */12 :
+          return 14;
+      case /* TwoHandedImpactWeapons */13 :
+          return 15;
+      case /* TwoHandedSwords */14 :
+          return 16;
+      case /* SpittingFire */15 :
+          return 17;
+      case /* Blowguns */16 :
+          return 18;
+      case /* Discuses */17 :
+          return 19;
+      case /* Faecher */18 :
+          return 20;
+      case /* Spiesswaffen */19 :
+          return 21;
+      
+    }
+  } else {
+    return id[0];
+  }
+}
 
-function fromInt$3(id) {
+function unsafeCombatTechniqueGroupFromInt(id) {
+  if (id !== 1) {
+    if (id !== 2) {
+      return Pervasives.invalid_arg("unsafeCombatTechniqueGroupFromInt: " + (Int$OptolithClient.show(id) + " is not a valid combat technique group"));
+    } else {
+      return /* Ranged */1;
+    }
+  } else {
+    return /* Melee */0;
+  }
+}
+
+function combatTechniqueGroupToInt(id) {
+  if (id) {
+    return 2;
+  } else {
+    return 1;
+  }
+}
+
+function specialAbilityFromInt(id) {
   if (id >= 623) {
     if (id >= 1069) {
       if (id < 1222) {
@@ -1125,7 +1080,7 @@ function fromInt$3(id) {
   }
 }
 
-function toInt$6(id) {
+function specialAbilityToInt(id) {
   if (typeof id === "number") {
     switch (id) {
       case /* SkillSpecialization */0 :
@@ -1329,140 +1284,24 @@ function toInt$6(id) {
   }
 }
 
-var SpecialAbilityId = {
-  fromInt: fromInt$3,
-  toInt: toInt$6,
-  skillSpecialization: "SA_9",
-  terrainKnowledge: "SA_12",
-  craftInstruments: "SA_17",
-  hunter: "SA_18",
-  areaKnowledge: "SA_22",
-  literacy: "SA_27",
-  language: "SA_29",
-  combatReflexes: "SA_51",
-  improvedDodge: "SA_64",
-  traditionGuildMages: 70,
-  propertyKnowledge: "SA_72",
-  propertyFocus: "SA_81",
-  aspectKnowledge: "SA_87",
-  traditionChurchOfPraios: "SA_86",
-  feuerschlucker: "SA_109",
-  combatStyleCombination: "SA_164",
-  adaptionZauber: "SA_231",
-  exorzist: "SA_240",
-  favoriteSpellwork: "SA_250",
-  traditionWitches: "SA_255",
-  magicStyleCombination: "SA_266",
-  harmoniezauberei: "SA_296",
-  matrixzauberei: "SA_303",
-  traditionElves: "SA_345",
-  traditionDruids: "SA_346",
-  spellEnhancement: 414,
-  forschungsgebiet: "SA_472",
-  expertenwissen: "SA_473",
-  wissensdurst: "SA_531",
-  recherchegespuer: "SA_533",
-  predigtDerGemeinschaft: "SA_544",
-  predigtDerZuversicht: "SA_545",
-  predigtDesGottvertrauens: "SA_546",
-  predigtDesWohlgefallens: "SA_547",
-  predigtWiderMissgeschicke: "SA_548",
-  visionDerBestimmung: "SA_549",
-  visionDerEntrueckung: "SA_550",
-  visionDerGottheit: "SA_551",
-  visionDesSchicksals: "SA_552",
-  visionDesWahrenGlaubens: "SA_553",
-  hoheWeihe: "SA_563",
-  lieblingsliturgie: "SA_569",
-  zugvoegel: "SA_623",
-  jaegerinnenDerWeissenMaid: "SA_625",
-  anhaengerDesGueldenen: "SA_632",
-  gebieterDesAspekts: "SA_639",
-  chantEnhancement: 663,
-  dunklesAbbildDerBuendnisgabe: "SA_667",
-  traditionIllusionist: "SA_676",
-  traditionArcaneBard: "SA_677",
-  traditionArcaneDancer: "SA_678",
-  traditionIntuitiveMage: "SA_679",
-  traditionSavant: "SA_680",
-  traditionQabalyaMage: "SA_681",
-  traditionChurchOfRondra: "SA_682",
-  traditionChurchOfBoron: "SA_683",
-  traditionChurchOfHesinde: "SA_684",
-  traditionChurchOfPhex: "SA_685",
-  traditionChurchOfPeraine: "SA_686",
-  traditionChurchOfEfferd: "SA_687",
-  traditionChurchOfTravia: "SA_688",
-  traditionChurchOfFirun: "SA_689",
-  traditionChurchOfTsa: "SA_690",
-  traditionChurchOfIngerimm: "SA_691",
-  traditionChurchOfRahja: "SA_692",
-  traditionCultOfTheNamelessOne: "SA_693",
-  traditionChurchOfAves: "SA_694",
-  traditionChurchOfIfirn: "SA_695",
-  traditionChurchOfKor: "SA_696",
-  traditionChurchOfNandus: "SA_697",
-  traditionChurchOfSwafnir: "SA_698",
-  languageSpecializations: "SA_699",
-  traditionSchelme: "SA_726",
-  traditionZauberalchimisten: "SA_750",
-  grosseMeditation: "SA_772",
-  imitationszauberei: "SA_775",
-  kraftliniennutzung: "SA_781",
-  scholarDerHalleDesLebensZuNorburg: "SA_802",
-  scholarDesKreisesDerEinfuehlung: "SA_808",
-  madaschwesternStil: "SA_821",
-  garetherGossenStil: "SA_901",
-  wegDerGelehrten: "SA_1040",
-  traditionCultOfNuminoru: "SA_1049",
-  wegDerKuenstlerin: "SA_1069",
-  wegDerSchreiberin: "SA_1075",
-  fachwissen: "SA_1100",
-  handwerkskunst: "SA_1108",
-  kindDerNatur: "SA_1110",
-  koerperlichesGeschick: "SA_1112",
-  sozialeKompetenz: "SA_1123",
-  universalgenie: "SA_1127",
-  scholarDesMagierkollegsZuHoningen: "SA_1147",
-  traditionAnimisten: "SA_1221",
-  traditionGeoden: "SA_1255",
-  traditionZibilijas: "SA_1293",
-  zaubervariabilitaet: "SA_1391",
-  traditionBrobimGeoden: "SA_1438"
-};
-
-var SocialStatusId = {
-  notFree: 1,
-  free: 2,
-  lesserNoble: 3,
-  noble: 4,
-  aristocracy: 5
-};
-
-var OptionalRuleId = {
-  maximumAttributeScores: "OR_8",
-  languageSpecialization: "OR_15",
-  higherDefenseStats: "OR_17"
-};
-
-var ConditionId = {
-  sikaryanVerlust: "COND_11",
-  daemonischeAuszehrung: "COND_14"
-};
-
-exports.Phase = Phase;
-exports.ExperienceLevelId = ExperienceLevelId;
-exports.RaceId = RaceId;
-exports.CultureId = CultureId;
-exports.ProfessionId = ProfessionId;
-exports.AttrId = AttrId;
-exports.DCId = DCId;
-exports.AdvantageId = AdvantageId;
-exports.DisadvantageId = DisadvantageId;
-exports.SkillId = SkillId;
-exports.CombatTechniqueId = CombatTechniqueId;
-exports.SpecialAbilityId = SpecialAbilityId;
-exports.SocialStatusId = SocialStatusId;
-exports.OptionalRuleId = OptionalRuleId;
-exports.ConditionId = ConditionId;
+exports.unsafePhaseFromInt = unsafePhaseFromInt;
+exports.phaseToInt = phaseToInt;
+exports.unsafeExperienceLevelFromInt = unsafeExperienceLevelFromInt;
+exports.experienceLevelToInt = experienceLevelToInt;
+exports.unsafeAttributeFromInt = unsafeAttributeFromInt;
+exports.attributeToInt = attributeToInt;
+exports.unsafeDerivedCharacteristicFromString = unsafeDerivedCharacteristicFromString;
+exports.derivedCharacteristicToString = derivedCharacteristicToString;
+exports.advantageFromInt = advantageFromInt;
+exports.advantageToInt = advantageToInt;
+exports.disadvantageFromInt = disadvantageFromInt;
+exports.disadvantageToInt = disadvantageToInt;
+exports.unsafeSkillFromInt = unsafeSkillFromInt;
+exports.skillToInt = skillToInt;
+exports.combatTechniqueFromInt = combatTechniqueFromInt;
+exports.combatTechniqueToInt = combatTechniqueToInt;
+exports.unsafeCombatTechniqueGroupFromInt = unsafeCombatTechniqueGroupFromInt;
+exports.combatTechniqueGroupToInt = combatTechniqueGroupToInt;
+exports.specialAbilityFromInt = specialAbilityFromInt;
+exports.specialAbilityToInt = specialAbilityToInt;
 /* No side effect */

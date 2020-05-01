@@ -3,6 +3,8 @@
  */
 let max = (x: int, y: int) => x > y ? x : y;
 
+let min = (x: int, y: int) => x < y ? x : y;
+
 let inc = (x: int) => x + 1;
 
 let dec = (x: int) => x - 1;

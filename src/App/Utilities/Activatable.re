@@ -5,10 +5,9 @@ type singleWithId = {
   customCost: Maybe.t(int),
 };
 
-/**
- * Is an Activatable entry active?
- */
 let isActive = (x: Hero.Activatable.t) => ListH.Extra.notNull(x.active);
+
+let isActiveM = Maybe.maybe(false, isActive);
 
 module Convert = {
   open Maybe;
@@ -112,17 +111,30 @@ module Convert = {
     | `Blessing(_) as id => Just(id)
     | `CustomInput(_) => Nothing
     };
+};
 
-  let isSelectOptionId = (id: Hero.Activatable.option) =>
-    switch (id) {
-    | `Generic(_)
-    | `Skill(_)
-    | `CombatTechnique(_)
-    | `Spell(_)
-    | `Cantrip(_)
-    | `LiturgicalChant(_)
-    | `Blessing(_) => true
-    | `CustomInput(_) => false
+module Accessors = {
+  open Static;
+
+  let name = x =>
+    switch (x) {
+    | Advantage(y) => y.name
+    | Disadvantage(y) => y.name
+    | SpecialAbility(y) => y.name
+    };
+
+  let selectOptions = x =>
+    switch (x) {
+    | Advantage(y) => y.selectOptions
+    | Disadvantage(y) => y.selectOptions
+    | SpecialAbility(y) => y.selectOptions
+    };
+
+  let input = x =>
+    switch (x) {
+    | Advantage(y) => y.input
+    | Disadvantage(y) => y.input
+    | SpecialAbility(y) => y.input
     };
 };
 
@@ -130,27 +142,12 @@ module SelectOptions = {
   open Static.SelectOption;
   open Maybe;
   open Maybe.Functor;
+  open Maybe.Monad;
 
-  let x = 3 + 4;
-  let y = 3 + 4;
-
-  /**
-   * Get a selection option with the given id from given wiki entry. Returns
-   * `Nothing` if not found.
-   */
-  let getSelectOption = (x: Static.activatable, id: Hero.Activatable.option) =>
-    Maybe.Monad.(
-      id
-      |> Convert.activatableOptionToSelectOptionId
-      >>= Function.flip(
-            SelectOptionMap.lookup,
-            switch (x) {
-            | Advantage(y) => y.selectOptions
-            | Disadvantage(y) => y.selectOptions
-            | SpecialAbility(y) => y.selectOptions
-            },
-          )
-    );
+  let getSelectOption = (x, id) =>
+    id
+    |> Convert.activatableOptionToSelectOptionId
+    >>= Function.flip(SelectOptionMap.lookup, Accessors.selectOptions(x));
 
   /**
    * Get a selection option's name with the given id from given wiki entry.
@@ -164,7 +161,7 @@ module SelectOptions = {
    * Returns `Nothing` if not found.
    */
   let getSelectOptionCost = (x, id) =>
-    id |> getSelectOption(x) <&> (y => y.cost);
+    id |> getSelectOption(x) >>= (y => y.cost);
 
   /**
    * Get all first select option IDs from the given entry.
@@ -219,11 +216,11 @@ module Names = {
   open Static;
   open Function;
 
-  let%private getOption1 = heroEntry => heroEntry.options |> listToMaybe;
-  let%private getOption2 = heroEntry => ListH.(heroEntry.options <!!> 1);
-  let%private getOption3 = heroEntry => ListH.(heroEntry.options <!!> 2);
+  let getOption1 = heroEntry => heroEntry.options |> listToMaybe;
+  let getOption2 = heroEntry => ListH.(heroEntry.options <!!> 1);
+  let getOption3 = heroEntry => ListH.(heroEntry.options <!!> 2);
 
-  let%private getCustomInput = (option: Hero.Activatable.option) =>
+  let getCustomInput = (option: Hero.Activatable.option) =>
     switch (option) {
     | `CustomInput(x) => Just(x)
     | `Generic(_)
@@ -235,7 +232,7 @@ module Names = {
     | `Blessing(_) => Nothing
     };
 
-  let%private getGenericId = (option: Hero.Activatable.option) =>
+  let getGenericId = (option: Hero.Activatable.option) =>
     switch (option) {
     | `Generic(x) => Just(x)
     | `Skill(_)
@@ -247,10 +244,9 @@ module Names = {
     | `CustomInput(_) => Nothing
     };
 
-  let%private lookupMap = (k, mp, f) => f <$> IntMap.lookup(k, mp);
+  let lookupMap = (k, mp, f) => f <$> IntMap.lookup(k, mp);
 
-  let%private getSkillFromOption =
-              (staticData, option: Hero.Activatable.option) =>
+  let getSkillFromOption = (staticData, option: Hero.Activatable.option) =>
     switch (option) {
     | `Skill(id) => IntMap.lookup(id, staticData.skills)
     | `Generic(_)
@@ -262,20 +258,9 @@ module Names = {
     | `CustomInput(_) => Nothing
     };
 
-  let%private getDefaultNameAddition = (staticEntry, heroEntry) => {
-    let input =
-      switch (staticEntry) {
-      | Advantage(entry) => entry.input
-      | Disadvantage(entry) => entry.input
-      | SpecialAbility(entry) => entry.input
-      };
-
-    let selectOptions =
-      switch (staticEntry) {
-      | Advantage(entry) => entry.selectOptions
-      | Disadvantage(entry) => entry.selectOptions
-      | SpecialAbility(entry) => entry.selectOptions
-      };
+  let getDefaultNameAddition = (staticEntry, heroEntry) => {
+    let input = Accessors.input(staticEntry);
+    let selectOptions = Accessors.selectOptions(staticEntry);
 
     let sid = heroEntry |> getOption1;
     let sid2 = heroEntry |> getOption2;
@@ -327,8 +312,7 @@ module Names = {
    * both. This function creates a string that can be appended to the `name`
    * property of the respective record to create the full active name.
    */
-  let%private getEntrySpecificNameAddition =
-              (staticData, staticEntry, heroEntry) =>
+  let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
     switch (staticEntry) {
     | Advantage(entry) =>
       switch (Ids.AdvantageId.fromInt(entry.id)) {
@@ -368,7 +352,7 @@ module Names = {
             | `CustomInput(_) => Nothing
             }
         )
-      | HatredOf =>
+      | HatredFor =>
         heroEntry
         |> getOption1
         >>= SelectOptions.getSelectOption(staticEntry)
@@ -596,7 +580,7 @@ module Names = {
             <&> (
               apps =>
                 apps
-                |> Sort.sortStrings(staticData)
+                |> AdvancedFiltering.sortStrings(staticData)
                 |> Intl.ListFormat.format(Conjunction, staticData)
                 |> (appsStr => skill.name ++ ": " ++ appsStr)
             );
@@ -606,100 +590,84 @@ module Names = {
       }
     };
 
-  let%private addSndInParens = snd =>
-    ListH.Extra.replaceStr(")", ": " ++ snd ++ ")");
+  /**
+   * Some entries cannot use the default `name` property from wiki entries. The
+   * value returned by may not use the default `name` property. For all entries
+   * that do not need to handle a specific display format, the default `name`
+   * property is used.
+   */
+  let getEntrySpecificNameReplacements =
+      (staticEntry, heroEntry, nameAddition) => {
+    let name = Accessors.name(staticEntry);
+
+    let mapNameAddition = f => maybe(name, f, nameAddition);
+
+    let mapDefaultWithParens = () =>
+      mapNameAddition(add => name ++ " (" ++ add ++ ")");
+    let mapDefaultWithoutParens = () =>
+      mapNameAddition(add => name ++ " " ++ add);
+
+    let addSndInParens = snd =>
+      ListH.Extra.replaceStr(")", ": " ++ snd ++ ")");
+
+    switch (staticEntry) {
+    | Advantage(entry) =>
+      switch (Ids.AdvantageId.fromInt(entry.id)) {
+      | ImmunityToPoison
+      | ImmunityToDisease
+      | HatredFor => mapDefaultWithoutParens()
+      | _ => mapDefaultWithParens()
+      }
+    | Disadvantage(entry) =>
+      switch (Ids.DisadvantageId.fromInt(entry.id)) {
+      | AfraidOf => mapDefaultWithoutParens()
+      | Principles
+      | Obligations =>
+        nameAddition
+        |> liftM2(
+             (level, nameAddition) =>
+               name ++ " " ++ level ++ " (" ++ nameAddition ++ ")",
+             heroEntry.level >>= Integers.intToRoman,
+           )
+        |> fromMaybe(name)
+      | _ => mapDefaultWithParens()
+      }
+    | SpecialAbility(entry) =>
+      switch (Ids.SpecialAbilityId.fromInt(entry.id)) {
+      | GebieterDesAspekts => mapDefaultWithoutParens()
+      | TraditionArcaneBard
+      | TraditionArcaneDancer
+      | TraditionSavant => mapNameAddition(flip(addSndInParens, name))
+      | _ => mapDefaultWithParens()
+      }
+    };
+  };
+
+  type combinedName = {
+    name: string,
+    baseName: string,
+    addName: maybe(string),
+    levelName: maybe(string),
+  };
+
+  /**
+   * Returns name, splitted and combined, of advantage/disadvantage/special
+   * ability as a Maybe (in case the wiki entry does not exist).
+   */
+  let getName = (staticData, staticEntry, heroEntry) => {
+    let addName =
+      getEntrySpecificNameAddition(staticData, staticEntry, heroEntry);
+    let fullName =
+      getEntrySpecificNameReplacements(staticEntry, heroEntry, addName);
+
+    {
+      name: fullName,
+      baseName: Accessors.name(staticEntry),
+      addName,
+      levelName: Nothing,
+    };
+  };
   /*
-
-   const addSndinParenthesis = (snd: string) => replaceStr (")") (`: ${snd})`)
-
-   /**
-    * Some entries cannot use the default `name` property from wiki entries. The
-    * value returned by may not use the default `name` property. For all entries
-    * that do not need to handle a specific display format, the default `name`
-    * property is used.
-    */
-   const getEntrySpecificNameReplacements =
-     (staticData: StaticDataRecord) =>
-     (wiki_entry: Activatable) =>
-     (hero_entry: Record<ActiveObjectWithId>) =>
-     (mname_add: Maybe<string>): string => {
-       const def = fromMaybe (AAL.name (wiki_entry))
-
-       const maybeMap = (f: (x: string) => string) => maybe (AAL.name (wiki_entry))
-                                                           (f)
-                                                           (mname_add)
-
-       switch (AAL.id (wiki_entry)) {
-         case AdvantageId.immunityToPoison:
-         case AdvantageId.immunityToDisease:
-           return maybeMap (
-             name_add => `${translate (staticData) ("advantagesdisadvantages.immunityto")} ${name_add}`
-           )
-
-         case AdvantageId.hatredOf:
-           return maybeMap (
-             name_add => `${translate (staticData) ("advantagesdisadvantages.hatredfor")} ${name_add}`
-           )
-
-         case DisadvantageId.afraidOf:
-           return maybeMap (
-             name_add => `${translate (staticData) ("advantagesdisadvantages.afraidof")} ${name_add}`
-           )
-
-         case DisadvantageId.principles:
-         case DisadvantageId.obligations:
-           return def (liftM2 ((level: number) => (name_add: string) =>
-                               `${AAL.name (wiki_entry)} ${toRoman (level)} (${name_add})`)
-                             (AOWIA.tier (hero_entry))
-                             (mname_add))
-
-         case SpecialAbilityId.gebieterDesAspekts:
-           return maybeMap (name_add => `${AAL.name (wiki_entry)} ${name_add}`)
-
-         case SpecialAbilityId.traditionArcaneBard:
-         case SpecialAbilityId.traditionArcaneDancer:
-         case SpecialAbilityId.traditionSavant: {
-           return maybeMap (flip (addSndinParenthesis) (AAL.name (wiki_entry)))
-         }
-
-         default:
-           return maybeMap (name_add => `${AAL.name (wiki_entry)} (${name_add})`)
-       }
-     }
-
-   /**
-    * Returns name, splitted and combined, of advantage/disadvantage/special
-    * ability as a Maybe (in case the wiki entry does not exist).
-    * @param instance The ActiveObject with origin id.
-    * @param wiki The current hero's state.
-    * @param l10n The locale-dependent messages.
-    */
-   export const getName =
-     (staticData: StaticDataRecord) =>
-     (hero_entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableCombinedName>> =>
-       pipe (
-             AOWIA.id,
-             getWikiEntry (staticData),
-             bindF<EntryWithCategory, Activatable> (ensure (isActivatableWikiEntry)),
-             fmap ((wiki_entry: Activatable) => {
-               const maddName = getEntrySpecificNameAddition (staticData)
-                                                             (wiki_entry)
-                                                             (hero_entry)
-
-               const fullName = getEntrySpecificNameReplacements (staticData)
-                                                                 (wiki_entry)
-                                                                 (hero_entry)
-                                                                 (maddName)
-
-               return ActivatableCombinedName ({
-                 name: fullName,
-                 baseName: AAL.name (wiki_entry),
-                 addName: maddName,
-               })
-             })
-           )
-           (hero_entry)
-
    /**
     * `compressList :: L10n -> [ActiveActivatable] -> String`
     *
@@ -746,5 +714,6 @@ module Names = {
                      intercalate (", ")
                    )
                    (grouped_xs)
-     } */
+     }
+   */
 };

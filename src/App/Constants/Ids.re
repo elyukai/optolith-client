@@ -84,7 +84,10 @@ module Phase = {
     | 1 => Outline
     | 2 => Definition
     | 3 => Advancement
-    | x => invalid_arg("fromInt: " ++ Int.show(x) ++ " is not a valid phase")
+    | x =>
+      invalid_arg(
+        "unsafeFromInt: " ++ Int.show(x) ++ " is not a valid phase",
+      )
     };
 
   let toInt = id =>
@@ -123,7 +126,7 @@ module ExperienceLevelId = {
     | 7 => Legendary
     | x =>
       invalid_arg(
-        "fromInt: " ++ Int.show(x) ++ " is not a valid experience level",
+        "unsafeFromInt: " ++ Int.show(x) ++ " is not a valid experience level",
       )
     };
 
@@ -182,6 +185,44 @@ module ProfessionId = {
 };
 
 module AttrId = {
+  type t =
+    | Courage
+    | Sagacity
+    | Intuition
+    | Charisma
+    | Dexterity
+    | Agility
+    | Constitution
+    | Strength;
+
+  let unsafeFromInt = id =>
+    switch (id) {
+    | 1 => Courage
+    | 2 => Sagacity
+    | 3 => Intuition
+    | 4 => Charisma
+    | 5 => Dexterity
+    | 6 => Agility
+    | 7 => Constitution
+    | 8 => Strength
+    | x =>
+      invalid_arg(
+        "unsafeFromInt: " ++ Int.show(x) ++ " is not a valid attribute",
+      )
+    };
+
+  let toInt = id =>
+    switch (id) {
+    | Courage => 1
+    | Sagacity => 2
+    | Intuition => 3
+    | Charisma => 4
+    | Dexterity => 5
+    | Agility => 6
+    | Constitution => 7
+    | Strength => 8
+    };
+
   [@gentype]
   let courage = "ATTR_1";
   [@gentype]
@@ -244,7 +285,7 @@ module AdvantageId = {
     | Spellcaster
     | Unyielding // Eisern
     | LargeSpellSelection
-    | HatredOf
+    | HatredFor
     | Prediger
     | Visionaer
     | ZahlreichePredigten
@@ -276,7 +317,7 @@ module AdvantageId = {
     | 50 => Spellcaster
     | 54 => Unyielding
     | 58 => LargeSpellSelection
-    | 68 => HatredOf
+    | 68 => HatredFor
     | 77 => Prediger
     | 78 => Visionaer
     | 79 => ZahlreichePredigten
@@ -309,7 +350,7 @@ module AdvantageId = {
     | Spellcaster => 50
     | Unyielding => 54
     | LargeSpellSelection => 58
-    | HatredOf => 68
+    | HatredFor => 68
     | Prediger => 77
     | Visionaer => 78
     | ZahlreichePredigten => 79

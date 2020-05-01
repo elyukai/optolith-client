@@ -127,7 +127,7 @@ module ActivatableSkill = {
   [@genType "ActivatableSkillDependency"]
   type dependency = {
     source: Ids.activatableAndSkillId,
-    target: oneOrMany(Ids.activatableSkillId),
+    target: oneOrMany(int),
     value: maybe(int),
   };
 
@@ -143,7 +143,7 @@ module Skill = {
   [@genType "SkillDependency"]
   type dependency = {
     source: Ids.activatableId,
-    target: oneOrMany(Ids.skillId),
+    target: oneOrMany(int),
     value: int,
   };
 
