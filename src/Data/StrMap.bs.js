@@ -78,6 +78,10 @@ var mapMaybe = StrMap.mapMaybe;
 
 var mapMaybeWithKey = StrMap.mapMaybeWithKey;
 
+var countBy = StrMap.countBy;
+
+var countByM = StrMap.countByM;
+
 exports.StrMap = StrMap;
 exports.Foldable = Foldable;
 exports.Traversable = Traversable;
@@ -114,4 +118,6 @@ exports.filter = filter;
 exports.filterWithKey = filterWithKey;
 exports.mapMaybe = mapMaybe;
 exports.mapMaybeWithKey = mapMaybeWithKey;
+exports.countBy = countBy;
+exports.countByM = countByM;
 /* StrMap Not a pure module */

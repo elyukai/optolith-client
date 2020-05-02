@@ -84,7 +84,9 @@ let unsafePhaseFromInt = id =>
   | 2 => Definition
   | 3 => Advancement
   | x =>
-    invalid_arg("unsafeFromInt: " ++ Int.show(x) ++ " is not a valid phase")
+    invalid_arg(
+      "unsafePhaseFromInt: " ++ Int.show(x) ++ " is not a valid phase",
+    )
   };
 
 let phaseToInt = id =>
@@ -114,7 +116,9 @@ let unsafeExperienceLevelFromInt = id =>
   | 7 => Legendary
   | x =>
     invalid_arg(
-      "unsafeFromInt: " ++ Int.show(x) ++ " is not a valid experience level",
+      "unsafeExperienceLevelFromInt: "
+      ++ Int.show(x)
+      ++ " is not a valid experience level",
     )
   };
 
@@ -151,7 +155,7 @@ let unsafeAttributeFromInt = id =>
   | 8 => Strength
   | x =>
     invalid_arg(
-      "unsafeFromInt: " ++ Int.show(x) ++ " is not a valid attribute",
+      "unsafeAttributeFromInt: " ++ Int.show(x) ++ " is not a valid attribute",
     )
   };
 
@@ -191,7 +195,9 @@ let unsafeDerivedCharacteristicFromString = id =>
   | "WT" => WoundThreshold
   | x =>
     invalid_arg(
-      "unsafeFromInt: " ++ x ++ " is not a valid derived characteristic",
+      "unsafeDerivedCharacteristicFromString: "
+      ++ x
+      ++ " is not a valid derived characteristic",
     )
   };
 
@@ -520,7 +526,10 @@ let unsafeSkillFromInt = id =>
   | 57 => PickLocks
   | 58 => Earthencraft
   | 59 => Clothworking
-  | x => invalid_arg("fromInt: " ++ Int.show(x) ++ " is not a valid skill")
+  | x =>
+    invalid_arg(
+      "unsafeSkillFromInt: " ++ Int.show(x) ++ " is not a valid skill",
+    )
   };
 
 let skillToInt = id =>
@@ -679,6 +688,55 @@ let combatTechniqueGroupToInt = id =>
   switch (id) {
   | Melee => 1
   | Ranged => 2
+  };
+
+type property =
+  | AntiMagic
+  | Demonic
+  | Influence
+  | Elemental
+  | Healing
+  | Clairvoyance
+  | Illusion
+  | Spheres
+  | Objekt
+  | Telekinesis
+  | Transformation
+  | Temporal
+  | Other(int);
+
+let propertyFromInt = id =>
+  switch (id) {
+  | 1 => AntiMagic
+  | 2 => Demonic
+  | 3 => Influence
+  | 4 => Elemental
+  | 5 => Healing
+  | 6 => Clairvoyance
+  | 7 => Illusion
+  | 8 => Spheres
+  | 9 => Objekt
+  | 10 => Telekinesis
+  | 11 => Transformation
+  | 12 => Temporal
+  | x => Other(x)
+  };
+
+let propertyToInt = id =>
+  switch (id) {
+  | AntiMagic => 1
+  | Demonic => 2
+  | Influence => 3
+  | Elemental => 4
+  | Healing => 5
+  | Clairvoyance => 6
+  | Illusion => 7
+  | Spheres => 8
+  | Objekt => 9
+  | Telekinesis => 10
+  | Transformation => 11
+  | Temporal => 12
+  | Other(x) => x
   };
 
 type specialAbility =

@@ -10,6 +10,8 @@ var Js_int = require("bs-platform/lib/js/js_int.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
 var Caml_option = require("bs-platform/lib/js/caml_option.js");
+var Int$OptolithClient = require("./Int.bs.js");
+var ListH$OptolithClient = require("./ListH.bs.js");
 var Maybe$OptolithClient = require("./Maybe.bs.js");
 var Either$OptolithClient = require("./Either.bs.js");
 var Function$OptolithClient = require("./Function.bs.js");
@@ -255,6 +257,27 @@ function Make(funarg) {
                   }
                 }), mp, empty);
   };
+  var countBy = function (f, xs) {
+    return ListH$OptolithClient.Foldable.foldr((function (x) {
+                  var partial_arg = Curry._1(f, x);
+                  return (function (param) {
+                      return alter((function (acc) {
+                                    return /* Just */[Maybe$OptolithClient.maybe(1, Int$OptolithClient.inc, acc)];
+                                  }), partial_arg, param);
+                    });
+                }), empty, xs);
+  };
+  var countByM = function (f, xs) {
+    return ListH$OptolithClient.Foldable.foldr((function (x) {
+                  return Maybe$OptolithClient.maybe(Function$OptolithClient.id, (function (key) {
+                                return (function (param) {
+                                    return alter((function (acc) {
+                                                  return /* Just */[Maybe$OptolithClient.maybe(1, Int$OptolithClient.inc, acc)];
+                                                }), key, param);
+                                  });
+                              }), Curry._1(f, x));
+                }), empty, xs);
+  };
   var mapMEitherHelper = function (f, xs) {
     if (xs) {
       var match = xs[0];
@@ -320,7 +343,9 @@ function Make(funarg) {
           filter: filter,
           filterWithKey: TypedMap.filter,
           mapMaybe: mapMaybe,
-          mapMaybeWithKey: mapMaybeWithKey
+          mapMaybeWithKey: mapMaybeWithKey,
+          countBy: countBy,
+          countByM: countByM
         };
 }
 

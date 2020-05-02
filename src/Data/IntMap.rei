@@ -166,3 +166,20 @@ let mapMaybe: ('a => Maybe.t('b), t('a)) => t('b);
 
 [@genType]
 let mapMaybeWithKey: ((key, 'a) => Maybe.t('b), t('a)) => t('b);
+
+/**
+ * Takes a function and a list. The function is mapped over the list and the
+ * return value is used as the key which's value is increased by one every
+ * time the value is returned. This way, you can count elements grouped by
+ * the value the mapping function returns.
+ */
+let countBy: ('a => key, list('a)) => t(int);
+
+/**
+ * Takes a function and a list. The function is mapped over the list and for
+ * each `Just` it returns, the value at the key contained in the `Just` is
+ * increased by one. This way, you can count elements grouped by the value
+ * the mapping function returns, but you can also ignore values, which is
+ * not possible with `countBy`.
+ */
+let countByM: ('a => Maybe.t(key), list('a)) => t(int);

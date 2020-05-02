@@ -158,7 +158,6 @@ function tUniv(json) {
           kpCostNoMod: Json_decode.field("kpCostNoMod", Json_decode.bool, json),
           rangeNoMod: Json_decode.field("rangeNoMod", Json_decode.bool, json),
           durationNoMod: Json_decode.field("durationNoMod", Json_decode.bool, json),
-          property: Json_decode.field("property", Json_decode.$$int, json),
           traditions: Json_decode.field("traditions", (function (param) {
                   return Json_decode.list(Json_decode.$$int, param);
                 }), json),
@@ -196,9 +195,8 @@ function t(univ, l10n) {
             durationShort: l10n.durationShort,
             durationNoMod: univ.durationNoMod,
             target: l10n.target,
-            property: univ.property,
             traditions: univ.traditions,
-            aspects: univ.aspects,
+            aspects: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.aspects),
             ic: univ.ic,
             gr: univ.gr,
             src: l10n.src,

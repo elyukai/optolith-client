@@ -58,10 +58,10 @@ module Skills = {
    * list created by `getInitialMaximumList` if the hero is in character
    * creation phase.
    */
-  let getMaxSrFromEl = (el: Static.ExperienceLevel.t, phase: Ids.Phase.t) =>
+  let getMaxSrFromEl = (startEl: Static.ExperienceLevel.t, phase: Ids.Phase.t) =>
     switch (phase) {
     | Outline
-    | Definition => Just(el.maxSkillRating)
+    | Definition => Just(startEl.maxSkillRating)
     | Advancement => Nothing
     };
 
@@ -69,10 +69,16 @@ module Skills = {
    * Returns the maximum skill rating for the passed skill.
    */
   let getMax =
-      (~el, ~phase, ~attrs, ~exceptionalSkill, ~staticEntry: Static.Skill.t) =>
+      (
+        ~startEl,
+        ~phase,
+        ~heroAttrs,
+        ~exceptionalSkill,
+        ~staticEntry: Static.Skill.t,
+      ) =>
     [
-      Just(getMaxSrByCheckAttrs(attrs, staticEntry.check)),
-      getMaxSrFromEl(el, phase),
+      Just(getMaxSrByCheckAttrs(heroAttrs, staticEntry.check)),
+      getMaxSrFromEl(startEl, phase),
     ]
     |> catMaybes
     |> ListH.Foldable.minimum
@@ -85,15 +91,15 @@ module Skills = {
    */
   let isIncreasable =
       (
-        ~el,
+        ~startEl,
         ~phase,
-        ~attrs,
+        ~heroAttrs,
         ~exceptionalSkill,
         ~staticEntry,
         ~heroEntry: Hero.Skill.t,
       ) =>
     heroEntry.value
-    < getMax(~el, ~phase, ~attrs, ~exceptionalSkill, ~staticEntry);
+    < getMax(~startEl, ~phase, ~heroAttrs, ~exceptionalSkill, ~staticEntry);
 
   let getMinSrByCraftInstruments =
       (craftInstruments, skills, staticEntry: Static.Skill.t) =>
@@ -106,12 +112,13 @@ module Skills = {
           let minimumSum = 12;
 
           let otherSkillId =
-            switch (skillId) {
-            | Woodworking => Metalworking
-            | Metalworking => Woodworking
-            // Case will never happen but it fixes the compiler warning
-            | _ => Woodworking
-            };
+            [@warning "-8"]
+            (
+              switch (skillId) {
+              | Woodworking => Metalworking
+              | Metalworking => Woodworking
+              }
+            );
 
           let otherSkillRating =
             skills |> IntMap.lookup(skillToInt(otherSkillId)) |> getValueDef;
@@ -127,7 +134,7 @@ module Skills = {
    */
   let getMinSrByDeps = (heroSkills, heroEntry: Hero.Skill.t) =>
     heroEntry.dependencies
-    |> Dependencies.flatten(
+    |> Dependencies.flattenSkill(
          id => heroSkills |> IntMap.lookup(id) |> getValueDef,
          heroEntry.id,
        )
@@ -289,15 +296,15 @@ module CombatTechniques = {
    */
   let getMax =
       (
-        ~el,
+        ~startEl,
         ~phase,
-        ~attrs,
+        ~heroAttrs,
         ~exceptionalCombatTechnique,
         ~staticEntry: Static.CombatTechnique.t,
       ) =>
     [
-      Just(getMaxPrimaryAttributeValueById(attrs, staticEntry.primary)),
-      getMaxCtrFromEl(el, phase),
+      Just(getMaxPrimaryAttributeValueById(heroAttrs, staticEntry.primary)),
+      getMaxCtrFromEl(startEl, phase),
     ]
     |> catMaybes
     |> ListH.Foldable.minimum
@@ -314,15 +321,21 @@ module CombatTechniques = {
    */
   let isIncreasable =
       (
-        ~el,
+        ~startEl,
         ~phase,
-        ~attrs,
+        ~heroAttrs,
         ~exceptionalCombatTechnique,
         ~staticEntry,
         ~heroEntry: Hero.Skill.t,
       ) =>
     heroEntry.value
-    < getMax(~el, ~phase, ~attrs, ~exceptionalCombatTechnique, ~staticEntry);
+    < getMax(
+        ~startEl,
+        ~phase,
+        ~heroAttrs,
+        ~exceptionalCombatTechnique,
+        ~staticEntry,
+      );
 
   let getMinCtrByHunter =
       (onlyOneCombatTechniqueForHunter, staticEntry: Static.CombatTechnique.t) =>
@@ -335,7 +348,7 @@ module CombatTechniques = {
    */
   let getMinCtrByDeps = (heroCombatTechniques, heroEntry: Hero.Skill.t) =>
     heroEntry.dependencies
-    |> Dependencies.flatten(
+    |> Dependencies.flattenSkill(
          id => heroCombatTechniques |> IntMap.lookup(id) |> getValueDef,
          heroEntry.id,
        )
@@ -384,6 +397,459 @@ module CombatTechniques = {
       );
 };
 
-module Spells = {};
+module Spells = {
+  open Maybe;
+  open Maybe.Functor;
+  open Maybe.Monad;
+  open Hero.ActivatableSkill;
 
-module LiturgicalChants = {};
+  /**
+   * Takes a spell's hero entry that might not exist and returns the
+   * value of that spell. Note: If the spell is not yet
+   * defined, it's value is `Nothing`.
+   */
+  let getValueDef = maybe(Inactive, (x: Hero.ActivatableSkill.t) => x.value);
+
+  let flattenValue = value =>
+    switch (value) {
+    | Active(sr) => sr
+    | Inactive => 0
+    };
+
+  let isActive =
+    maybe(false, (x: Hero.ActivatableSkill.t) =>
+      switch (x.value) {
+      | Active(_) => true
+      | Inactive => false
+      }
+    );
+
+  /**
+   * Returns the SR maximum if there is no property knowledge active for the passed
+   * spell.
+   */
+  let getMaxSrFromPropertyKnowledge =
+      (propertyKnowledge, staticEntry: Static.Spell.t) =>
+    propertyKnowledge
+    <&> Activatable.SelectOptions.getActiveSelections
+    |> maybe(true, ListH.Foldable.notElem(`Generic(staticEntry.property)))
+    |> (hasRestriction => hasRestriction ? Just(14) : Nothing);
+
+  /**
+   * Returns the maximum skill rating for the passed spell.
+   */
+  let getMax =
+      (
+        ~startEl,
+        ~phase,
+        ~heroAttrs,
+        ~exceptionalSkill,
+        ~propertyKnowledge,
+        ~staticEntry: Static.Spell.t,
+      ) =>
+    [
+      Just(Skills.getMaxSrByCheckAttrs(heroAttrs, staticEntry.check)),
+      Skills.getMaxSrFromEl(startEl, phase),
+      getMaxSrFromPropertyKnowledge(propertyKnowledge, staticEntry),
+    ]
+    |> catMaybes
+    |> ListH.Foldable.minimum
+    |> (+)(
+         Skills.getExceptionalSkillBonus(
+           exceptionalSkill,
+           `Spell(staticEntry.id),
+         ),
+       );
+
+  /**
+   * Checks if the passed spell's skill rating can be increased.
+   */
+  let isIncreasable =
+      (
+        ~startEl,
+        ~phase,
+        ~heroAttrs,
+        ~exceptionalSkill,
+        ~propertyKnowledge,
+        ~staticEntry,
+        ~heroEntry: Hero.ActivatableSkill.t,
+      ) =>
+    flattenValue(heroEntry.value)
+    < getMax(
+        ~startEl,
+        ~phase,
+        ~heroAttrs,
+        ~exceptionalSkill,
+        ~propertyKnowledge,
+        ~staticEntry,
+      );
+
+  /**
+   * Returns a list of spells with SR >= 10, grouped by their property.
+   */
+  let getValidSpellsForPropertyKnowledgeCounter = (staticSpells, heroSpells) =>
+    heroSpells
+    |> IntMap.elems
+    |> IntMap.countByM((x: Hero.ActivatableSkill.t) =>
+         switch (x.value) {
+         | Active(value) =>
+           value
+           |> ensure((>)(10))
+           >>= (_ => IntMap.lookup(x.id, staticSpells))
+           <&> ((spell: Static.Spell.t) => spell.property)
+         | Inactive => Nothing
+         }
+       );
+
+  /**
+   * Check if the active property knowledges allow the passed spell to be
+   * decreased. (There must be at leased 3 spells of the respective property
+   * active.)
+   */
+  let getMinSrFromPropertyKnowledge =
+      (
+        counter,
+        activePropertyKnowledges,
+        staticEntry: Static.Spell.t,
+        heroEntry: Hero.ActivatableSkill.t,
+      ) =>
+    activePropertyKnowledges
+    // Is spell part of dependencies of any active Property
+    // Knowledge?
+    |> ListH.Foldable.any((sid: Hero.Activatable.option) =>
+         switch (sid) {
+         | `Generic(x) => x === staticEntry.property
+         | _ => false
+         }
+       )
+    // If yes, check if spell is above 10 and if there are not
+    // enough spells above 10 to allow a decrease below 10
+    |> (
+      hasActivePropertyKnowledge =>
+        hasActivePropertyKnowledge
+          ? counter
+            |> IntMap.lookup(staticEntry.property)
+            >>= (
+              count =>
+                flattenValue(heroEntry.value) >= 10 && count <= 3
+                  ? Just(10) : Nothing
+            )
+          : Nothing
+    );
+
+  /**
+   * Check if the dependencies allow the passed spell to be decreased.
+   */
+  let getMinSrByDeps = (heroSpells, heroEntry: Hero.ActivatableSkill.t) =>
+    heroEntry.dependencies
+    |> Dependencies.flattenActivatableSkill(
+         id => heroSpells |> IntMap.lookup(id) |> getValueDef,
+         heroEntry.id,
+       )
+    |> ensure(ListH.Extra.notNull)
+    >>= ListH.Foldable.foldr(
+          (d, acc) =>
+            switch (d) {
+            | Inactive => Just(Inactive)
+            | Active(next) =>
+              maybe(
+                Just(Active(next)),
+                prev =>
+                  switch (prev) {
+                  | Inactive => Just(Inactive)
+                  | Active(prev) => Just(Active(Int.max(prev, next)))
+                  },
+                acc,
+              )
+            },
+          Nothing,
+        );
+
+  /**
+   * Returns the minimum skill rating for the passed skill.
+   *
+   * Optimized for when the three first params are only called once in a loop,
+   * as more expensive calculations are cached then.
+   */
+  let getMin = (~propertyKnowledge, ~staticSpells, ~heroSpells) => {
+    let counter =
+      getValidSpellsForPropertyKnowledgeCounter(staticSpells, heroSpells);
+    let activePropertyKnowledges =
+      Activatable.SelectOptions.getActiveSelections(propertyKnowledge);
+
+    (~staticEntry, ~heroEntry) =>
+      [
+        getMinSrByDeps(heroSpells, heroEntry)
+        >>= (
+          x =>
+            switch (x) {
+            | Active(value) => Just(value)
+            | Inactive => Nothing
+            }
+        ),
+        getMinSrFromPropertyKnowledge(
+          counter,
+          activePropertyKnowledges,
+          staticEntry,
+          heroEntry,
+        ),
+      ]
+      |> catMaybes
+      |> ensure(ListH.Extra.notNull)
+      <&> ListH.Foldable.maximum;
+  };
+
+  /**
+   * Returns if the passed spell's skill rating can be decreased.
+   */
+  let isDecreasable = (~propertyKnowledge, ~staticSpells, ~heroSpells) => {
+    let getMinCached = getMin(~propertyKnowledge, ~staticSpells, ~heroSpells);
+
+    (~staticEntry, ~heroEntry: Hero.ActivatableSkill.t) =>
+      flattenValue(heroEntry.value)
+      > (getMinCached(~staticEntry, ~heroEntry) |> fromMaybe(0));
+  };
+};
+
+module LiturgicalChants = {
+  open Maybe;
+  open Maybe.Functor;
+  open Maybe.Monad;
+  open Hero.ActivatableSkill;
+
+  /**
+   * Takes a liturgical chant's hero entry that might not exist and returns the
+   * value of that liturgical chant. Note: If the liturgical chant is not yet
+   * defined, it's value is `Nothing`.
+   */
+  let getValueDef = maybe(Inactive, (x: Hero.ActivatableSkill.t) => x.value);
+
+  let flattenValue = value =>
+    switch (value) {
+    | Active(sr) => sr
+    | Inactive => 0
+    };
+
+  let isActive =
+    maybe(false, (x: Hero.ActivatableSkill.t) =>
+      switch (x.value) {
+      | Active(_) => true
+      | Inactive => false
+      }
+    );
+
+  /**
+   * Returns the SR maximum if there is no aspect knowledge active for the
+   * passed spell.
+   */
+  let getMaxSrFromAspectKnowledge =
+      (aspectKnowledge, staticEntry: Static.LiturgicalChant.t) =>
+    aspectKnowledge
+    <&> Activatable.SelectOptions.getActiveSelections
+    |> maybe(true, actives =>
+         ListH.Foldable.all(
+           aspect => ListH.Foldable.notElem(`Generic(aspect), actives),
+           staticEntry.aspects,
+         )
+       )
+    |> (hasRestriction => hasRestriction ? Just(14) : Nothing);
+
+  /**
+   * Returns the maximum skill rating for the passed spell.
+   */
+  let getMax =
+      (
+        ~startEl,
+        ~phase,
+        ~heroAttrs,
+        ~exceptionalSkill,
+        ~aspectKnowledge,
+        ~staticEntry: Static.LiturgicalChant.t,
+      ) =>
+    [
+      Just(Skills.getMaxSrByCheckAttrs(heroAttrs, staticEntry.check)),
+      Skills.getMaxSrFromEl(startEl, phase),
+      getMaxSrFromAspectKnowledge(aspectKnowledge, staticEntry),
+    ]
+    |> catMaybes
+    |> ListH.Foldable.minimum
+    |> (+)(
+         Skills.getExceptionalSkillBonus(
+           exceptionalSkill,
+           `Spell(staticEntry.id),
+         ),
+       );
+
+  /**
+   * Checks if the passed spell's skill rating can be increased.
+   */
+  let isIncreasable =
+      (
+        ~startEl,
+        ~phase,
+        ~heroAttrs,
+        ~exceptionalSkill,
+        ~aspectKnowledge,
+        ~staticEntry,
+        ~heroEntry: Hero.ActivatableSkill.t,
+      ) =>
+    flattenValue(heroEntry.value)
+    < getMax(
+        ~startEl,
+        ~phase,
+        ~heroAttrs,
+        ~exceptionalSkill,
+        ~aspectKnowledge,
+        ~staticEntry,
+      );
+
+  /**
+   * Returns a list of liturgical chants with SR >= 10, grouped by their aspect.
+   */
+  let getValidLiturgicalChantsForAspectKnowledgeCounter =
+      (staticLiturgicalChants, heroLiturgicalChants) =>
+    heroLiturgicalChants
+    |> IntMap.Foldable.foldr(
+         (x: Hero.ActivatableSkill.t, acc) =>
+           switch (x.value) {
+           | Active(value) =>
+             value
+             |> ensure((>)(10))
+             >>= (_ => IntMap.lookup(x.id, staticLiturgicalChants))
+             |> maybe(acc, (chant: Static.LiturgicalChant.t) =>
+                  ListH.Foldable.foldr(
+                    aspect =>
+                      IntMap.alter(
+                        count =>
+                          count |> fromMaybe(0) |> Int.inc |> (x => Just(x)),
+                        aspect,
+                      ),
+                    acc,
+                    chant.aspects,
+                  )
+                )
+           | Inactive => acc
+           },
+         IntMap.empty,
+       );
+
+  /**
+   * Check if the active property knowledges allow the passed spell to be
+   * decreased. (There must be at leased 3 spells of the respective property
+   * active.)
+   */
+  let getMinSrFromAspectKnowledge =
+      (
+        counter,
+        activeAspectKnowledges,
+        staticEntry: Static.LiturgicalChant.t,
+        heroEntry: Hero.ActivatableSkill.t,
+      ) =>
+    activeAspectKnowledges
+    // Is liturgical chant part of dependencies of any active Aspect Knowledge?
+    |> ListH.Foldable.any((sid: Hero.Activatable.option) =>
+         switch (sid) {
+         | `Generic(x) => ListH.Foldable.elem(x, staticEntry.aspects)
+         | _ => false
+         }
+       )
+    // If yes, check if spell is above 10 and if there are not enough spells
+    // above 10 to allow a decrease below 10
+    |> (
+      hasActiveAspectKnowledge =>
+        hasActiveAspectKnowledge
+          ? staticEntry.aspects
+            |> ListH.Foldable.any(aspect =>
+                 IntMap.lookup(aspect, counter)
+                 |> maybe(false, count =>
+                      flattenValue(heroEntry.value) >= 10 && count <= 3
+                    )
+               )
+            |> (isRequired => isRequired ? Just(10) : Nothing)
+          : Nothing
+    );
+
+  /**
+   * Check if the dependencies allow the passed spell to be decreased.
+   */
+  let getMinSrByDeps =
+      (heroLiturgicalChants, heroEntry: Hero.ActivatableSkill.t) =>
+    heroEntry.dependencies
+    |> Dependencies.flattenActivatableSkill(
+         id => heroLiturgicalChants |> IntMap.lookup(id) |> getValueDef,
+         heroEntry.id,
+       )
+    |> ensure(ListH.Extra.notNull)
+    >>= ListH.Foldable.foldr(
+          (d, acc) =>
+            switch (d) {
+            | Inactive => Just(Inactive)
+            | Active(next) =>
+              maybe(
+                Just(Active(next)),
+                prev =>
+                  switch (prev) {
+                  | Inactive => Just(Inactive)
+                  | Active(prev) => Just(Active(Int.max(prev, next)))
+                  },
+                acc,
+              )
+            },
+          Nothing,
+        );
+
+  /**
+   * Returns the minimum skill rating for the passed skill.
+   *
+   * Optimized for when the three first params are only called once in a loop,
+   * as more expensive calculations are cached then.
+   */
+  let getMin =
+      (~aspectKnowledge, ~staticLiturgicalChants, ~heroLiturgicalChants) => {
+    let counter =
+      getValidLiturgicalChantsForAspectKnowledgeCounter(
+        staticLiturgicalChants,
+        heroLiturgicalChants,
+      );
+    let activeAspectKnowledges =
+      Activatable.SelectOptions.getActiveSelections(aspectKnowledge);
+
+    (~staticEntry, ~heroEntry) =>
+      [
+        getMinSrByDeps(heroLiturgicalChants, heroEntry)
+        >>= (
+          x =>
+            switch (x) {
+            | Active(value) => Just(value)
+            | Inactive => Nothing
+            }
+        ),
+        getMinSrFromAspectKnowledge(
+          counter,
+          activeAspectKnowledges,
+          staticEntry,
+          heroEntry,
+        ),
+      ]
+      |> catMaybes
+      |> ensure(ListH.Extra.notNull)
+      <&> ListH.Foldable.maximum;
+  };
+
+  /**
+   * Returns if the passed spell's skill rating can be decreased.
+   */
+  let isDecreasable =
+      (~aspectKnowledge, ~staticLiturgicalChants, ~heroLiturgicalChants) => {
+    let getMinCached =
+      getMin(
+        ~aspectKnowledge,
+        ~staticLiturgicalChants,
+        ~heroLiturgicalChants,
+      );
+
+    (~staticEntry, ~heroEntry: Hero.ActivatableSkill.t) =>
+      flattenValue(heroEntry.value)
+      > (getMinCached(~staticEntry, ~heroEntry) |> fromMaybe(0));
+  };
+};

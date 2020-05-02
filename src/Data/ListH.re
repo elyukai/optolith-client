@@ -332,6 +332,8 @@ let rec delete = (e, xs) =>
 
 let sortBy = f => List.sort((a, b) => f(a, b) |> Ord.fromOrdering);
 
+// Count by predicate
+
 let countBy = (f, xs) =>
   Foldable.foldr(
     x =>

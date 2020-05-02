@@ -242,6 +242,35 @@ module Make = (Key: Comparable) => {
       empty,
     );
 
+  // Counting
+
+  let countBy = (f, xs) =>
+    ListH.Foldable.foldr(
+      x =>
+        x
+        |> f
+        |> alter(acc =>
+             acc |> Maybe.maybe(1, Int.inc) |> (x => Maybe.Just(x))
+           ),
+      empty,
+      xs,
+    );
+
+  let countByM = (f, xs) =>
+    ListH.Foldable.foldr(
+      x =>
+        x
+        |> f
+        |> Maybe.maybe(Function.id, key =>
+             alter(
+               acc => acc |> Maybe.maybe(1, Int.inc) |> (x => Maybe.Just(x)),
+               key,
+             )
+           ),
+      empty,
+      xs,
+    );
+
   module Traversable = {
     let%private rec mapMEitherHelper = (f, xs) =>
       switch (xs) {

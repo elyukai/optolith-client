@@ -138,17 +138,22 @@ export type Energies_t = {
 export type Energies = Energies_t;
 
 // tslint:disable-next-line:interface-over-type-literal
+export type ActivatableSkill_value = 
+    "Inactive"
+  | { tag: "Active"; value: number };
+
+// tslint:disable-next-line:interface-over-type-literal
 export type ActivatableSkill_dependency = {
   readonly source: Ids_activatableAndSkillId; 
   readonly target: GenericHelpers_oneOrMany<number>; 
-  readonly value: Maybe_maybe<number>
+  readonly value: ActivatableSkill_value
 };
 export type ActivatableSkillDependency = ActivatableSkill_dependency;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type ActivatableSkill_t = {
   readonly id: number; 
-  readonly value: Maybe_maybe<number>; 
+  readonly value: ActivatableSkill_value; 
   readonly dependencies: list<ActivatableSkill_dependency>
 };
 export type ActivatableSkill = ActivatableSkill_t;

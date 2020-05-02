@@ -194,12 +194,12 @@ module Sum = {
     foldr(
       (x: Hero.ActivatableSkill.t) =>
         switch (x.value) {
-        | Just(value) =>
+        | Active(value) =>
           lookup(x.id, staticData.spells)
           |> maybe(id, (staticEntry: Spell.t) =>
                value |> IC.getAPForRange(staticEntry.ic, 0) |> (+)
              )
-        | Nothing => id
+        | Inactive => id
         },
       0,
     );
@@ -208,12 +208,12 @@ module Sum = {
     foldr(
       (x: Hero.ActivatableSkill.t) =>
         switch (x.value) {
-        | Just(value) =>
+        | Active(value) =>
           lookup(x.id, staticData.liturgicalChants)
           |> maybe(id, (staticEntry: LiturgicalChant.t) =>
                value |> IC.getAPForRange(staticEntry.ic, 0) |> (+)
              )
-        | Nothing => id
+        | Inactive => id
         },
       0,
     );

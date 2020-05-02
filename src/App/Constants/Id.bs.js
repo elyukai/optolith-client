@@ -7,7 +7,7 @@ var Int$OptolithClient = require("../../Data/Int.bs.js");
 function unsafePhaseFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 2 || switcher < 0) {
-    return Pervasives.invalid_arg("unsafeFromInt: " + (Int$OptolithClient.show(id) + " is not a valid phase"));
+    return Pervasives.invalid_arg("unsafePhaseFromInt: " + (Int$OptolithClient.show(id) + " is not a valid phase"));
   } else {
     return switcher;
   }
@@ -20,7 +20,7 @@ function phaseToInt(id) {
 function unsafeExperienceLevelFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 6 || switcher < 0) {
-    return Pervasives.invalid_arg("unsafeFromInt: " + (Int$OptolithClient.show(id) + " is not a valid experience level"));
+    return Pervasives.invalid_arg("unsafeExperienceLevelFromInt: " + (Int$OptolithClient.show(id) + " is not a valid experience level"));
   } else {
     return switcher;
   }
@@ -33,7 +33,7 @@ function experienceLevelToInt(id) {
 function unsafeAttributeFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 7 || switcher < 0) {
-    return Pervasives.invalid_arg("unsafeFromInt: " + (Int$OptolithClient.show(id) + " is not a valid attribute"));
+    return Pervasives.invalid_arg("unsafeAttributeFromInt: " + (Int$OptolithClient.show(id) + " is not a valid attribute"));
   } else {
     return switcher;
   }
@@ -64,7 +64,7 @@ function unsafeDerivedCharacteristicFromString(id) {
     case "WT" :
         return /* WoundThreshold */8;
     default:
-      return Pervasives.invalid_arg("unsafeFromInt: " + (id + " is not a valid derived characteristic"));
+      return Pervasives.invalid_arg("unsafeDerivedCharacteristicFromString: " + (id + " is not a valid derived characteristic"));
   }
 }
 
@@ -459,7 +459,7 @@ function disadvantageToInt(id) {
 function unsafeSkillFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 58 || switcher < 0) {
-    return Pervasives.invalid_arg("fromInt: " + (Int$OptolithClient.show(id) + " is not a valid skill"));
+    return Pervasives.invalid_arg("unsafeSkillFromInt: " + (Int$OptolithClient.show(id) + " is not a valid skill"));
   } else {
     return switcher;
   }
@@ -585,6 +585,23 @@ function combatTechniqueGroupToInt(id) {
     return 2;
   } else {
     return 1;
+  }
+}
+
+function propertyFromInt(id) {
+  var switcher = id - 1 | 0;
+  if (switcher > 11 || switcher < 0) {
+    return /* Other */[id];
+  } else {
+    return switcher;
+  }
+}
+
+function propertyToInt(id) {
+  if (typeof id === "number") {
+    return id + 1 | 0;
+  } else {
+    return id[0];
   }
 }
 
@@ -1302,6 +1319,8 @@ exports.combatTechniqueFromInt = combatTechniqueFromInt;
 exports.combatTechniqueToInt = combatTechniqueToInt;
 exports.unsafeCombatTechniqueGroupFromInt = unsafeCombatTechniqueGroupFromInt;
 exports.combatTechniqueGroupToInt = combatTechniqueGroupToInt;
+exports.propertyFromInt = propertyFromInt;
+exports.propertyToInt = propertyToInt;
 exports.specialAbilityFromInt = specialAbilityFromInt;
 exports.specialAbilityToInt = specialAbilityToInt;
 /* No side effect */

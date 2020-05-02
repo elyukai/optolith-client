@@ -124,17 +124,21 @@ module Energies = {
 };
 
 module ActivatableSkill = {
+  type value =
+    | Inactive
+    | Active(int);
+
   [@genType "ActivatableSkillDependency"]
   type dependency = {
     source: Ids.activatableAndSkillId,
     target: oneOrMany(int),
-    value: maybe(int),
+    value,
   };
 
   [@genType "ActivatableSkill"]
   type t = {
     id: int,
-    value: maybe(int),
+    value,
     dependencies: list(dependency),
   };
 };
