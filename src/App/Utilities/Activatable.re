@@ -136,6 +136,13 @@ module Accessors = {
     | Disadvantage(y) => y.input
     | SpecialAbility(y) => y.input
     };
+
+  let apValue = x =>
+    switch (x) {
+    | Advantage(y) => y.apValue
+    | Disadvantage(y) => y.apValue
+    | SpecialAbility(y) => y.apValue
+    };
 };
 
 module SelectOptions = {
@@ -209,54 +216,55 @@ module SelectOptions = {
   //     ))
 };
 
+let getOption1 = heroEntry => heroEntry.options |> Maybe.listToMaybe;
+let getOption2 = heroEntry => ListH.(heroEntry.options <!!> 1);
+let getOption3 = heroEntry => ListH.(heroEntry.options <!!> 2);
+
+let getCustomInput = (option: Hero.Activatable.option) =>
+  switch (option) {
+  | `CustomInput(x) => Maybe.Just(x)
+  | `Generic(_)
+  | `Skill(_)
+  | `CombatTechnique(_)
+  | `Spell(_)
+  | `LiturgicalChant(_)
+  | `Cantrip(_)
+  | `Blessing(_) => Nothing
+  };
+
+let getGenericId = (option: Hero.Activatable.option) =>
+  switch (option) {
+  | `Generic(x) => Maybe.Just(x)
+  | `Skill(_)
+  | `CombatTechnique(_)
+  | `Spell(_)
+  | `LiturgicalChant(_)
+  | `Cantrip(_)
+  | `Blessing(_)
+  | `CustomInput(_) => Nothing
+  };
+
+let lookupMap = (k, mp, f) => Maybe.Functor.(f <$> IntMap.lookup(k, mp));
+
+let getSkillFromOption =
+    (staticData: Static.t, option: Hero.Activatable.option) =>
+  switch (option) {
+  | `Skill(id) => IntMap.lookup(id, staticData.skills)
+  | `Generic(_)
+  | `CombatTechnique(_)
+  | `Spell(_)
+  | `LiturgicalChant(_)
+  | `Cantrip(_)
+  | `Blessing(_)
+  | `CustomInput(_) => Nothing
+  };
+
 module Names = {
   open Maybe;
   open Maybe.Functor;
   open Maybe.Monad;
   open Static;
   open Function;
-
-  let getOption1 = heroEntry => heroEntry.options |> listToMaybe;
-  let getOption2 = heroEntry => ListH.(heroEntry.options <!!> 1);
-  let getOption3 = heroEntry => ListH.(heroEntry.options <!!> 2);
-
-  let getCustomInput = (option: Hero.Activatable.option) =>
-    switch (option) {
-    | `CustomInput(x) => Just(x)
-    | `Generic(_)
-    | `Skill(_)
-    | `CombatTechnique(_)
-    | `Spell(_)
-    | `LiturgicalChant(_)
-    | `Cantrip(_)
-    | `Blessing(_) => Nothing
-    };
-
-  let getGenericId = (option: Hero.Activatable.option) =>
-    switch (option) {
-    | `Generic(x) => Just(x)
-    | `Skill(_)
-    | `CombatTechnique(_)
-    | `Spell(_)
-    | `LiturgicalChant(_)
-    | `Cantrip(_)
-    | `Blessing(_)
-    | `CustomInput(_) => Nothing
-    };
-
-  let lookupMap = (k, mp, f) => f <$> IntMap.lookup(k, mp);
-
-  let getSkillFromOption = (staticData, option: Hero.Activatable.option) =>
-    switch (option) {
-    | `Skill(id) => IntMap.lookup(id, staticData.skills)
-    | `Generic(_)
-    | `CombatTechnique(_)
-    | `Spell(_)
-    | `LiturgicalChant(_)
-    | `Cantrip(_)
-    | `Blessing(_)
-    | `CustomInput(_) => Nothing
-    };
 
   let getDefaultNameAddition = (staticEntry, heroEntry) => {
     let input = Accessors.input(staticEntry);
@@ -716,4 +724,351 @@ module Names = {
                    (grouped_xs)
      }
    */
+};
+
+module AdventurePoints = {
+  open Maybe;
+  open Maybe.Functor;
+  open Maybe.Monad;
+  open Static;
+  open Function;
+
+  /**
+   * Returns the value(s) how the spent AP value would change after removing the
+   * respective entry.
+   *
+   * @param isEntryToAdd If `entry` has not been added to the list of active
+   * entries yet, this must be `true`, otherwise `false`.
+   */
+  let getEntrySpecificCost =
+      (
+        isEntryToAdd,
+        staticData,
+        hero,
+        staticEntry,
+        heroEntry,
+        singleHeroEntry,
+      ) => {
+    open ListH;
+
+    let sid1 = singleHeroEntry |> getOption1;
+    let level = singleHeroEntry.level;
+    let apValue =
+      staticEntry |> Accessors.apValue |> fromMaybe(Static.Advantage.Flat(0));
+
+    switch (staticEntry) {
+    | Advantage(entry) =>
+      switch (Ids.AdvantageId.fromInt(entry.id)) {
+      | Aptitude
+      | ExceptionalSkill =>
+        heroEntry
+        |> getOption1
+        >>= (
+          sid =>
+            switch (sid, apValue) {
+            | (`Skill(id), PerLevel(apValues)) =>
+              IntMap.lookup(id, staticData.skills)
+              >>= (static => apValues <!!> IC.icToIx(static.ic))
+            | (`Spell(id), PerLevel(apValues)) =>
+              IntMap.lookup(id, staticData.spells)
+              >>= (static => apValues <!!> IC.icToIx(static.ic))
+            | (`LiturgicalChant(id), PerLevel(apValues)) =>
+              IntMap.lookup(id, staticData.liturgicalChants)
+              >>= (static => apValues <!!> IC.icToIx(static.ic))
+            | _ => Nothing
+            }
+        )
+      | ExceptionalCombatTechnique
+      | WeaponAptitude =>
+        heroEntry
+        |> getOption1
+        >>= (
+          sid =>
+            switch (sid, apValue) {
+            | (`CombatTechnique(id), PerLevel(apValues)) =>
+              IntMap.lookup(id, staticData.combatTechniques)
+              >>= (static => apValues <!!> IC.icToIx(static.ic))
+            | _ => Nothing
+            }
+        )
+      | _ => Nothing
+      }
+    | Disadvantage(entry) =>
+      switch (Ids.DisadvantageId.fromInt(entry.id)) {
+      | Incompetent =>
+        heroEntry
+        |> getOption1
+        >>= (
+          sid =>
+            switch (sid, apValue) {
+            | (`Skill(id), PerLevel(apValues)) =>
+              IntMap.lookup(id, staticData.skills)
+              >>= (static => apValues <!!> IC.icToIx(static.ic))
+            | _ => Nothing
+            }
+        )
+      | _ => Nothing
+      }
+    | SpecialAbility(entry) =>
+      switch (Ids.SpecialAbilityId.fromInt(entry.id)) {
+      | AdaptionZauber
+      | _ => Nothing
+      }
+    };
+  };
+  //     const current_id = AOWIA.id (entry)
+  //     const mcurrent_sid = AOWIA.sid (entry)
+  //     const mcurrent_level = AOWIA.tier (entry)
+  //     const mcurrent_cost = AAL.cost (wiki_entry)
+  //     const all_active = joinMaybeList (fmap (ActivatableDependent.A.active) (hero_entry))
+  //     switch (current_id) {
+  //       // Entry with Skill selection
+  //       case AdvantageId.Aptitude:
+  //       case AdvantageId.ExceptionalSkill:
+  //       case AdvantageId.ExceptionalCombatTechnique:
+  //       case AdvantageId.WeaponAptitude:
+  //       case DisadvantageId.Incompetent:
+  //       case SpecialAbilityId.AdaptionZauber:
+  //       case SpecialAbilityId.FavoriteSpellwork:
+  //       case SpecialAbilityId.Forschungsgebiet:
+  //       case SpecialAbilityId.Expertenwissen:
+  //       case SpecialAbilityId.Wissensdurst:
+  //       case SpecialAbilityId.Lieblingsliturgie:
+  //       case SpecialAbilityId.WegDerGelehrten:
+  //       case SpecialAbilityId.WegDerKuenstlerin:
+  //       case SpecialAbilityId.Fachwissen:
+  //       case SpecialAbilityId.Handwerkskunst:
+  //       case SpecialAbilityId.KindDerNatur:
+  //       case SpecialAbilityId.KoerperlichesGeschick:
+  //       case SpecialAbilityId.SozialeKompetenz:
+  //       case SpecialAbilityId.Universalgenie: {
+  //         return getCostForEntryWithSkillSel (misStringM)
+  //                                           (wiki)
+  //                                           (mcurrent_sid)
+  //                                           (mcurrent_cost)
+  //       }
+  //       case DisadvantageId.PersonalityFlaw: {
+  //         if (
+  //           // 7 = "Prejudice" => more than one entry possible
+  //           // more than one entry of Prejudice does not contribute to AP spent
+  //           isPersonalityFlawNotPaid (7) (1) (isEntryToAdd) (all_active) (mcurrent_sid)
+  //           // 8 = "Unworldly" => more than one entry possible
+  //           // more than two entries of Unworldly do not contribute to AP spent
+  //           || isPersonalityFlawNotPaid (8) (2) (isEntryToAdd) (all_active) (mcurrent_sid)
+  //         ) {
+  //           return Just (0)
+  //         }
+  //         return getSelectOptionCost (wiki_entry) (mcurrent_sid)
+  //       }
+  //       case DisadvantageId.Principles:
+  //       case DisadvantageId.Obligations: {
+  //         const current_max_level = foldl (compareMaxLevel)
+  //                                         (0)
+  //                                         (all_active)
+  //         const current_second_max_level = foldl (compareSubMaxLevel (current_max_level))
+  //                                               (0)
+  //                                               (all_active)
+  //         if (isNothing (mcurrent_level)) {
+  //           return Nothing
+  //         }
+  //         const current_level = fromJust (mcurrent_level)
+  //         if (
+  //           // If the entry is not the one with the highest level, adding or
+  //           // removing it won't affect AP spent at all
+  //           current_max_level > current_level
+  //           // If there is more than one entry on the same level if this entry is
+  //           // active, it won't affect AP spent at all. Thus, if the entry is to
+  //           // be added, there must be at least one (> 0) entry for this rule to
+  //           // take effect.
+  //           || countWith (pipe (ActiveObject.AL.tier, elem (current_level)))
+  //                       (all_active) > (isEntryToAdd ? 0 : 1)
+  //         ) {
+  //           return Nothing
+  //         }
+  //         // Otherwise, the level difference results in the cost.
+  //         return fmapF (misNumberM (mcurrent_cost))
+  //                     (multiply (current_level - current_second_max_level))
+  //       }
+  //       case DisadvantageId.BadHabit: {
+  //         // more than three entries cannot contribute to AP spent; entries with
+  //         // custom cost are ignored for the rule's effect
+  //         if (countWith (pipe (ActiveObject.AL.cost, isNothing))
+  //                       (all_active) > (isEntryToAdd ? 2 : 3)) {
+  //           return Nothing
+  //         }
+  //         return mcurrent_cost
+  //       }
+  //       case SpecialAbilityId.SkillSpecialization: {
+  //         return pipe_ (
+  //           mcurrent_sid,
+  //           misStringM,
+  //           bindF (
+  //             current_sid =>
+  //               fmapF (lookup (current_sid)
+  //                             (StaticData.A.skills (wiki)))
+  //                     (skill =>
+  //                       // Multiply number of final occurences of the
+  //                       // same skill...
+  //                       (countWith ((e: Record<ActiveObject>) =>
+  //                                   pipe (
+  //                                         ActiveObject.AL.sid,
+  //                                         elem<string | number> (current_sid)
+  //                                       )
+  //                                       (e)
+  //                                   // Entries with custom cost are ignored for the rule
+  //                                   && isNothing (ActiveObject.AL.cost (e)))
+  //                                 (all_active) + (isEntryToAdd ? 1 : 0))
+  //                       // ...with the skill's IC
+  //                       * Skill.AL.ic (skill))
+  //           )
+  //         )
+  //       }
+  //       case SpecialAbilityId.Language: {
+  //         // Native Tongue (level 4) does not cost anything
+  //         return elem (4) (mcurrent_level) ? Nothing : mcurrent_cost
+  //       }
+  //       case SpecialAbilityId.PropertyKnowledge:
+  //       case SpecialAbilityId.AspectKnowledge: {
+  //         // Does not include custom cost activations in terms of calculated cost
+  //         const amount = countWith (pipe (ActiveObject.AL.cost, isNothing))
+  //                                 (all_active)
+  //         const index = amount + (isEntryToAdd ? 0 : -1)
+  //         if (isNothing (mcurrent_cost)) {
+  //           return Nothing
+  //         }
+  //         const current_cost = fromJust (mcurrent_cost)
+  //         return isList (current_cost) ? subscript (current_cost) (index) : Nothing
+  //       }
+  //       case SpecialAbilityId.TraditionWitches: {
+  //         // There are two disadvantages that, when active, decrease the cost of
+  //         // this tradition by 10 AP each
+  //         const decreaseCost = (id: string) => (cost: number) =>
+  //           isDisadvantageActive (id) (hero) ? cost - 10 : cost
+  //         return pipe_ (
+  //           mcurrent_cost,
+  //           misNumberM,
+  //           fmap (pipe (
+  //             decreaseCost (DisadvantageId.NoFlyingBalm),
+  //             decreaseCost (DisadvantageId.NoFamiliar)
+  //           ))
+  //         )
+  //       }
+  //       case SpecialAbilityId.Recherchegespuer: {
+  //         // The AP cost for this SA consist of two parts: AP based on the IC of
+  //         // the main subject (from "SA_531"/Wissensdurst) in addition to AP based
+  //         // on the IC of the side subject selected in this SA.
+  //         const mhero_entry_SA_531 = lookup<string> (SpecialAbilityId.Wissensdurst)
+  //                                                   (HA.specialAbilities (hero))
+  //         if (isNothing (mhero_entry_SA_531)) {
+  //           return Nothing
+  //         }
+  //         if (isNothing (mcurrent_cost) || isNothing (mcurrent_cost)) {
+  //           return Nothing
+  //         }
+  //         const current_cost = fromJust (mcurrent_cost)
+  //         if (isNumber (current_cost)) {
+  //           return Nothing
+  //         }
+  //         const hero_entry_SA_531 = fromJust (mhero_entry_SA_531)
+  //         const getCostFromHeroEntry =
+  //           pipe (
+  //             ActiveObject.AL.sid,
+  //             misStringM,
+  //             bindF (lookupF (StaticData.A.skills (wiki))),
+  //             bindF (pipe (Skill.A.ic, dec, subscript (current_cost)))
+  //           )
+  //         return liftM2 (add)
+  //                       (getCostFromHeroEntry (entry))
+  //                       (pipe_ (
+  //                         hero_entry_SA_531,
+  //                         ActivatableDependent.A.active,
+  //                         listToMaybe,
+  //                         bindF (getCostFromHeroEntry)
+  //                       ))
+  //       }
+  //       case SpecialAbilityId.LanguageSpecializations: {
+  //         if (isNothing (mcurrent_sid)) {
+  //           return Nothing
+  //         }
+  //         const current_sid = fromJust (mcurrent_sid)
+  //         return pipe (
+  //                       HA.specialAbilities,
+  //                       lookup<string> (SpecialAbilityId.Language),
+  //                       bindF (pipe (
+  //                         ActivatableDependent.A.active,
+  //                         // Get the `ActiveObject` for the corresponding language
+  //                         find (pipe (ActiveObject.A.sid, elem (current_sid)))
+  //                       )),
+  //                       bindF (ActiveObject.A.tier),
+  //                       // If it's a native language, it costs nothing, otherwise
+  //                       // the default SA's AP
+  //                       bindF (level => level === 4 ? Nothing : misNumberM (mcurrent_cost))
+  //                     )
+  //                     (hero)
+  //       }
+  //       default: {
+  //         if (any (notNull) (Advantage.AL.select (wiki_entry)) && isNothing (mcurrent_cost)) {
+  //           return getSelectOptionCost (wiki_entry) (mcurrent_sid)
+  //         }
+  //         return mcurrent_cost
+  //       }
+  //     }
+  //   }
+  // /**
+  //  * Returns the AP value and if the entry is an automatic entry
+  //  */
+  // const getTotalCost =
+  //   (isEntryToAdd: boolean) =>
+  //   (automatic_advantages: List<string>) =>
+  //   (wiki: StaticDataRecord) =>
+  //   (hero: HeroModelRecord) =>
+  //   (entry: Record<ActiveObjectWithId>) =>
+  //   (hero_entry: Maybe<Record<ActivatableDependent>>) =>
+  //   (wiki_entry: Activatable): Pair<number | List<number>, boolean> => {
+  //     const custom_cost = AOWIA.cost (entry)
+  //     const is_automatic = List.elem (AAL.id (wiki_entry)) (automatic_advantages)
+  //     if (isJust (custom_cost)) {
+  //       const is_disadvantage = Disadvantage.is (wiki_entry)
+  //       return Pair (is_disadvantage ? -fromJust (custom_cost) : fromJust (custom_cost), is_automatic)
+  //     }
+  //     const mentry_specifc_cost = getEntrySpecificCost (isEntryToAdd)
+  //                                                     (wiki)
+  //                                                     (hero)
+  //                                                     (wiki_entry)
+  //                                                     (hero_entry)
+  //                                                     (entry)
+  //     const current_cost = fromMaybe<number | List<number>> (0) (mentry_specifc_cost)
+  //     if (isDisadvantage (wiki_entry)) {
+  //       return Pair (
+  //         isList (current_cost) ? map (negate) (current_cost) : -current_cost,
+  //         is_automatic
+  //       )
+  //     }
+  //     return Pair (current_cost, is_automatic)
+  //   }
+  // /**
+  //  * Returns the AP you get when removing the ActiveObject.
+  //  *
+  //  * @param isEntryToAdd If `entry` has not been added to the list of active
+  //  * entries yet, this must be `true`, otherwise `false`.
+  //  */
+  // export const getCost =
+  //   (isEntryToAdd: boolean) =>
+  //   (automatic_advantages: List<string>) =>
+  //   (wiki: StaticDataRecord) =>
+  //   (hero: HeroModelRecord) =>
+  //   (entry: Record<ActiveObjectWithId>): Maybe<Pair<number | List<number>, boolean>> => {
+  //     const current_id = AOWIA.id (entry)
+  //     return pipe_ (
+  //       getWikiEntry (wiki) (current_id),
+  //       bindF (ensure (isActivatableWikiEntry)),
+  //       fmap (getTotalCost (isEntryToAdd)
+  //                         (automatic_advantages)
+  //                         (wiki)
+  //                         (hero)
+  //                         (entry)
+  //                         (bind (getHeroStateItem (hero) (current_id))
+  //                               (ensure (isActivatableDependent))))
+  //     )
+  //   }
 };

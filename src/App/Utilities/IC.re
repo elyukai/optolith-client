@@ -83,6 +83,19 @@ let icToStr = ic =>
   | E => "E"
   };
 
+/**
+ * Returns an index used for getting the IC-based cost for an Activatable entry.
+ */
+[@gentype]
+let icToIx = ic =>
+  switch (ic) {
+  | A => 0
+  | B => 1
+  | C => 2
+  | D => 3
+  | E => 4
+  };
+
 module Decode = {
   open Json.Decode;
 

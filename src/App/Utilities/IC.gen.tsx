@@ -43,3 +43,11 @@ export const icToStr: (ic:t) => string = function (Arg1: any) {
   const result = ICBS.icToStr($$toRE998253360[Arg1]);
   return result
 };
+
+/** 
+ * Returns an index used for getting the IC-based cost for an Activatable entry.
+  */
+export const icToIx: (ic:t) => number = function (Arg1: any) {
+  const result = ICBS.icToIx($$toRE998253360[Arg1]);
+  return result
+};

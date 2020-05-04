@@ -86,6 +86,10 @@ function icToStr(ic) {
   }
 }
 
+function icToIx(ic) {
+  return ic;
+}
+
 function t(json) {
   var x = Json_decode.string(json);
   switch (x) {
@@ -118,5 +122,6 @@ exports.getAPForInc = getAPForInc;
 exports.getAPForDec = getAPForDec;
 exports.getAPForActivatation = getAPForActivatation;
 exports.icToStr = icToStr;
+exports.icToIx = icToIx;
 exports.Decode = Decode;
 /* No side effect */

@@ -71,10 +71,22 @@ function input(x) {
   }
 }
 
+function apValue(x) {
+  switch (x.tag | 0) {
+    case /* Advantage */0 :
+    case /* Disadvantage */1 :
+        return x[0].apValue;
+    case /* SpecialAbility */2 :
+        return x[0].apValue;
+    
+  }
+}
+
 var Accessors = {
   name: name,
   selectOptions: selectOptions,
-  input: input
+  input: input,
+  apValue: apValue
 };
 
 function getSelectOption(x, id) {

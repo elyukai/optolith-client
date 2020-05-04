@@ -1,7 +1,3 @@
-type cost =
-  | Flat(int)
-  | PerLevel(list(int));
-
 type t = {
   id: int,
   name: string,
@@ -20,7 +16,7 @@ type t = {
   prerequisitesTextIndex: Static_Prerequisites.tIndexWithLevel,
   prerequisitesTextStart: Maybe.t(string),
   prerequisitesTextEnd: Maybe.t(string),
-  apValue: Maybe.t(cost),
+  apValue: Maybe.t(Static_Advantage.cost),
   apValueText: Maybe.t(string),
   apValueTextAppend: Maybe.t(string),
   gr: int,
@@ -81,15 +77,11 @@ module Decode = {
     errata: json |> field("errata", Static_Erratum.Decode.list),
   };
 
-  let cost =
-    oneOf([
-      json => json |> int |> (x => Flat(x)),
-      json => json |> list(int) |> (x => PerLevel(x)),
-    ]);
+  let cost = Static_Advantage.Decode.cost;
 
   type tUniv = {
     id: int,
-    cost: Maybe.t(cost),
+    cost: Maybe.t(Static_Advantage.cost),
     noMaxAPInfluence: Maybe.t(bool),
     isExclusiveToArcaneSpellworks: Maybe.t(bool),
     levels: Maybe.t(int),
