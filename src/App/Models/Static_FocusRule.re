@@ -39,13 +39,27 @@ module Decode = {
     subject: json |> field("subject", int),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    level: univ.level,
-    subject: univ.subject,
-    description: l10n.description,
-    src: l10n.src,
-    errata: l10n.errata,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      level: univ.level,
+      subject: univ.subject,
+      description: l10n.description,
+      src: l10n.src,
+      errata: l10n.errata,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.focusRulesUniv |> list(tUniv),
+      yamlData.focusRulesL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

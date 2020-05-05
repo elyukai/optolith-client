@@ -487,15 +487,15 @@ const modifySelectOptions =
                                     )))
       }
 
-      case SpecialAbilityId.spellEnhancement:
-      case SpecialAbilityId.chantEnhancement: {
-        const getTargetHeroEntry = current_id === SpecialAbilityId.spellEnhancement
+      case prefixSA (SpecialAbilityId.spellEnhancement):
+      case prefixSA (SpecialAbilityId.chantEnhancement): {
+        const getTargetHeroEntry = current_id === prefixSA (SpecialAbilityId.spellEnhancement)
           ? bindF (lookupF (HA.spells (hero)))
           : bindF (lookupF (HA.liturgicalChants (hero)))
 
         const getTargetWikiEntry:
           ((x: Maybe<string>) => Maybe<Record<Spell> | Record<LiturgicalChant>>) =
-          current_id === SpecialAbilityId.spellEnhancement
+          current_id === prefixSA (SpecialAbilityId.spellEnhancement)
             ? bindF (lookupF (SDA.spells (staticData)))
             : bindF (lookupF (SDA.liturgicalChants (staticData)))
 

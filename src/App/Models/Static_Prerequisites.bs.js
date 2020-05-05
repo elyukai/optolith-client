@@ -4,7 +4,10 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var JsonStrict$OptolithClient = require("../Utilities/YAML/JsonStrict.bs.js");
+var ListH$OptolithClient = require("../../Data/ListH.bs.js");
+var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
+var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
 
 function partial_arg_000(param) {
   return Json_decode.map((function (id) {
@@ -111,11 +114,20 @@ function activatableId(json) {
   var scope = Json_decode.field("scope", Json_decode.string, json);
   switch (scope) {
     case "Advantage" :
-        return /* Advantage */Block.__(0, [Json_decode.$$int(json)]);
+        return /* `Advantage */[
+                -41058677,
+                Json_decode.$$int(json)
+              ];
     case "Disadvantage" :
-        return /* Disadvantage */Block.__(1, [Json_decode.$$int(json)]);
+        return /* `Disadvantage */[
+                255955901,
+                Json_decode.$$int(json)
+              ];
     case "SpecialAbility" :
-        return /* SpecialAbility */Block.__(2, [Json_decode.$$int(json)]);
+        return /* `SpecialAbility */[
+                -789492591,
+                Json_decode.$$int(json)
+              ];
     default:
       throw [
             Json_decode.DecodeError,
@@ -128,17 +140,35 @@ function scopedSelectOptionId(json) {
   var scope = Json_decode.field("scope", Json_decode.string, json);
   switch (scope) {
     case "Blessing" :
-        return /* Blessing */Block.__(6, [Json_decode.$$int(json)]);
+        return /* `Blessing */[
+                797131559,
+                Json_decode.$$int(json)
+              ];
     case "Cantrip" :
-        return /* Cantrip */Block.__(4, [Json_decode.$$int(json)]);
+        return /* `Cantrip */[
+                -841776939,
+                Json_decode.$$int(json)
+              ];
     case "CombatTechnique" :
-        return /* CombatTechnique */Block.__(2, [Json_decode.$$int(json)]);
+        return /* `CombatTechnique */[
+                -920806756,
+                Json_decode.$$int(json)
+              ];
     case "LiturgicalChant" :
-        return /* LiturgicalChant */Block.__(5, [Json_decode.$$int(json)]);
+        return /* `LiturgicalChant */[
+                -384382742,
+                Json_decode.$$int(json)
+              ];
     case "Skill" :
-        return /* Skill */Block.__(1, [Json_decode.$$int(json)]);
+        return /* `Skill */[
+                290194801,
+                Json_decode.$$int(json)
+              ];
     case "Spell" :
-        return /* Spell */Block.__(3, [Json_decode.$$int(json)]);
+        return /* `Spell */[
+                345443720,
+                Json_decode.$$int(json)
+              ];
     default:
       throw [
             Json_decode.DecodeError,
@@ -151,7 +181,10 @@ function selectOptionId(json) {
   return Json_decode.oneOf(/* :: */[
               (function (param) {
                   return Json_decode.map((function (x) {
-                                return /* Generic */Block.__(0, [x]);
+                                return /* `Generic */[
+                                        61643255,
+                                        x
+                                      ];
                               }), Json_decode.$$int, param);
                 }),
               /* :: */[
@@ -215,9 +248,15 @@ function activatableSkillId(json) {
   var scope = Json_decode.field("scope", Json_decode.string, json);
   switch (scope) {
     case "LiturgicalChant" :
-        return /* LiturgicalChant */Block.__(1, [Json_decode.$$int(json)]);
+        return /* `LiturgicalChant */[
+                -384382742,
+                Json_decode.$$int(json)
+              ];
     case "Spell" :
-        return /* Spell */Block.__(0, [Json_decode.$$int(json)]);
+        return /* `Spell */[
+                345443720,
+                Json_decode.$$int(json)
+              ];
     default:
       throw [
             Json_decode.DecodeError,
@@ -237,15 +276,30 @@ function increasableId(json) {
   var scope = Json_decode.field("scope", Json_decode.string, json);
   switch (scope) {
     case "Attribute" :
-        return /* Attribute */Block.__(0, [Json_decode.$$int(json)]);
+        return /* `Attribute */[
+                482562044,
+                Json_decode.$$int(json)
+              ];
     case "CombatTechnique" :
-        return /* CombatTechnique */Block.__(2, [Json_decode.$$int(json)]);
+        return /* `CombatTechnique */[
+                -920806756,
+                Json_decode.$$int(json)
+              ];
     case "LiturgicalChant" :
-        return /* LiturgicalChant */Block.__(4, [Json_decode.$$int(json)]);
+        return /* `LiturgicalChant */[
+                -384382742,
+                Json_decode.$$int(json)
+              ];
     case "Skill" :
-        return /* Skill */Block.__(1, [Json_decode.$$int(json)]);
+        return /* `Skill */[
+                290194801,
+                Json_decode.$$int(json)
+              ];
     case "Spell" :
-        return /* Spell */Block.__(3, [Json_decode.$$int(json)]);
+        return /* `Spell */[
+                345443720,
+                Json_decode.$$int(json)
+              ];
     default:
       throw [
             Json_decode.DecodeError,
@@ -267,6 +321,112 @@ function increasableMultiEntry(json) {
                   return Json_decode.list(increasableId, param);
                 }), json),
           value: Json_decode.field("value", Json_decode.$$int, json)
+        };
+}
+
+function tProfession(json) {
+  return {
+          sex: JsonStrict$OptolithClient.optionalField("sexPrerequisite", sex, json),
+          race: JsonStrict$OptolithClient.optionalField("racePrerequisite", race, json),
+          culture: JsonStrict$OptolithClient.optionalField("culturePrerequisite", oneOrManyInt, json),
+          activatable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
+                      return Json_decode.list(activatable, param);
+                    }), json)),
+          increasable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
+                      return Json_decode.list(increasable, param);
+                    }), json))
+        };
+}
+
+function t(json) {
+  return {
+          sex: JsonStrict$OptolithClient.optionalField("sexPrerequisite", sex, json),
+          race: JsonStrict$OptolithClient.optionalField("racePrerequisite", race, json),
+          culture: JsonStrict$OptolithClient.optionalField("culturePrerequisite", oneOrManyInt, json),
+          pact: JsonStrict$OptolithClient.optionalField("pactPrerequisite", pact, json),
+          social: JsonStrict$OptolithClient.optionalField("socialStatusPrerequisite", Json_decode.$$int, json),
+          primaryAttribute: JsonStrict$OptolithClient.optionalField("primaryAttributePrerequisite", primaryAttribute, json),
+          activatable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
+                      return Json_decode.list(activatable, param);
+                    }), json)),
+          activatableMultiEntry: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiEntryPrerequisites", (function (param) {
+                      return Json_decode.list(activatableMultiEntry, param);
+                    }), json)),
+          activatableMultiSelect: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiSelectPrerequisites", (function (param) {
+                      return Json_decode.list(activatableMultiSelect, param);
+                    }), json)),
+          increasable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
+                      return Json_decode.list(increasable, param);
+                    }), json)),
+          increasableMultiEntry: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
+                      return Json_decode.list(increasableMultiEntry, param);
+                    }), json))
+        };
+}
+
+function level(json) {
+  return /* tuple */[
+          Json_decode.field("level", Json_decode.$$int, json),
+          t(json)
+        ];
+}
+
+function tWithLevel(json) {
+  return {
+          sex: JsonStrict$OptolithClient.optionalField("sexPrerequisite", sex, json),
+          race: JsonStrict$OptolithClient.optionalField("racePrerequisite", race, json),
+          culture: JsonStrict$OptolithClient.optionalField("culturePrerequisite", oneOrManyInt, json),
+          pact: JsonStrict$OptolithClient.optionalField("pactPrerequisite", pact, json),
+          social: JsonStrict$OptolithClient.optionalField("socialStatusPrerequisite", Json_decode.$$int, json),
+          primaryAttribute: JsonStrict$OptolithClient.optionalField("primaryAttributePrerequisite", primaryAttribute, json),
+          activatable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
+                      return Json_decode.list(activatable, param);
+                    }), json)),
+          activatableMultiEntry: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiEntryPrerequisites", (function (param) {
+                      return Json_decode.list(activatableMultiEntry, param);
+                    }), json)),
+          activatableMultiSelect: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiSelectPrerequisites", (function (param) {
+                      return Json_decode.list(activatableMultiSelect, param);
+                    }), json)),
+          increasable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
+                      return Json_decode.list(increasable, param);
+                    }), json)),
+          increasableMultiEntry: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
+                      return Json_decode.list(increasableMultiEntry, param);
+                    }), json)),
+          levels: Curry._1(IntMap$OptolithClient.fromList, Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("levelPrerequisites", (function (param) {
+                          return Json_decode.list(level, param);
+                        }), json)))
+        };
+}
+
+function tWithLevelDisAdv(json) {
+  return {
+          commonSuggestedByRCP: Json_decode.field("hasToBeCommonOrSuggestedByRCP", Json_decode.bool, json),
+          sex: JsonStrict$OptolithClient.optionalField("sexPrerequisite", sex, json),
+          race: JsonStrict$OptolithClient.optionalField("racePrerequisite", race, json),
+          culture: JsonStrict$OptolithClient.optionalField("culturePrerequisite", oneOrManyInt, json),
+          pact: JsonStrict$OptolithClient.optionalField("pactPrerequisite", pact, json),
+          social: JsonStrict$OptolithClient.optionalField("socialStatusPrerequisite", Json_decode.$$int, json),
+          primaryAttribute: JsonStrict$OptolithClient.optionalField("primaryAttributePrerequisite", primaryAttribute, json),
+          activatable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
+                      return Json_decode.list(activatable, param);
+                    }), json)),
+          activatableMultiEntry: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiEntryPrerequisites", (function (param) {
+                      return Json_decode.list(activatableMultiEntry, param);
+                    }), json)),
+          activatableMultiSelect: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiSelectPrerequisites", (function (param) {
+                      return Json_decode.list(activatableMultiSelect, param);
+                    }), json)),
+          increasable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
+                      return Json_decode.list(increasable, param);
+                    }), json)),
+          increasableMultiEntry: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
+                      return Json_decode.list(increasableMultiEntry, param);
+                    }), json)),
+          levels: Curry._1(IntMap$OptolithClient.fromList, Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("levelPrerequisites", (function (param) {
+                          return Json_decode.list(level, param);
+                        }), json)))
         };
 }
 
@@ -303,6 +463,113 @@ function tIndexL10n(json) {
         };
 }
 
+function tIndexUniv(json) {
+  return {
+          sex: JsonStrict$OptolithClient.optionalField("sexPrerequisite", Json_decode.bool, json),
+          race: JsonStrict$OptolithClient.optionalField("racePrerequisite", Json_decode.bool, json),
+          culture: JsonStrict$OptolithClient.optionalField("culturePrerequisite", Json_decode.bool, json),
+          pact: JsonStrict$OptolithClient.optionalField("pactPrerequisite", Json_decode.bool, json),
+          social: JsonStrict$OptolithClient.optionalField("socialStatusPrerequisite", Json_decode.bool, json),
+          primaryAttribute: JsonStrict$OptolithClient.optionalField("primaryAttributePrerequisite", Json_decode.bool, json),
+          activatable: JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
+                  return Json_decode.list(Json_decode.$$int, param);
+                }), json),
+          activatableMultiEntry: JsonStrict$OptolithClient.optionalField("activatableMultiEntryPrerequisites", (function (param) {
+                  return Json_decode.list(Json_decode.$$int, param);
+                }), json),
+          activatableMultiSelect: JsonStrict$OptolithClient.optionalField("activatableMultiSelectPrerequisites", (function (param) {
+                  return Json_decode.list(Json_decode.$$int, param);
+                }), json),
+          increasable: JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
+                  return Json_decode.list(Json_decode.$$int, param);
+                }), json),
+          increasableMultiEntry: JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
+                  return Json_decode.list(Json_decode.$$int, param);
+                }), json)
+        };
+}
+
+function mergeSingleOverride(univ, l10n) {
+  return Maybe$OptolithClient.Alternative.$less$pipe$great(Maybe$OptolithClient.Functor.$less$amp$great(l10n, (function (x) {
+                    return /* ReplaceWith */[x];
+                  })), Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                    if (x) {
+                      return /* Just */[/* Hide */0];
+                    } else {
+                      return /* Nothing */0;
+                    }
+                  })));
+}
+
+function mergeMapOverride(univ, l10n) {
+  var mp = ListH$OptolithClient.Foldable.foldr((function (x) {
+          return Curry._2(IntMap$OptolithClient.insert, x, /* Hide */0);
+        }), IntMap$OptolithClient.empty, Maybe$OptolithClient.fromMaybe(/* [] */0, univ));
+  return ListH$OptolithClient.Foldable.foldr((function (param) {
+                return Curry._2(IntMap$OptolithClient.insert, param[0], /* ReplaceWith */[param[1]]);
+              }), mp, Maybe$OptolithClient.fromMaybe(/* [] */0, l10n));
+}
+
+function tIndex(univ, l10n) {
+  return {
+          sex: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.sex;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.sex;
+                    }))),
+          race: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.race;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.race;
+                    }))),
+          culture: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.culture;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.culture;
+                    }))),
+          pact: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.pact;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.pact;
+                    }))),
+          social: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.social;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.social;
+                    }))),
+          primaryAttribute: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.primaryAttribute;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.primaryAttribute;
+                    }))),
+          activatable: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.activatable;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.activatable;
+                    }))),
+          activatableMultiEntry: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.activatableMultiEntry;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.activatableMultiEntry;
+                    }))),
+          activatableMultiSelect: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.activatableMultiSelect;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.activatableMultiSelect;
+                    }))),
+          increasable: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.increasable;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.increasable;
+                    }))),
+          increasableMultiEntry: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.increasableMultiEntry;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.increasableMultiEntry;
+                    })))
+        };
+}
+
 function tIndexL10nAtLevel(json) {
   return /* tuple */[
           Json_decode.field("level", Json_decode.$$int, json),
@@ -333,9 +600,135 @@ function tIndexWithLevelL10n(json) {
           increasableMultiEntry: JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
                   return Json_decode.list(replacementAtIndex, param);
                 }), json),
-          levels: JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
+          levels: JsonStrict$OptolithClient.optionalField("levels", (function (param) {
                   return Json_decode.list(tIndexL10nAtLevel, param);
                 }), json)
+        };
+}
+
+function tIndexUnivAtLevel(json) {
+  return /* tuple */[
+          Json_decode.field("level", Json_decode.$$int, json),
+          Json_decode.field("hide", tIndexUniv, json)
+        ];
+}
+
+function tIndexWithLevelUniv(json) {
+  return {
+          sex: JsonStrict$OptolithClient.optionalField("sexPrerequisite", Json_decode.bool, json),
+          race: JsonStrict$OptolithClient.optionalField("racePrerequisite", Json_decode.bool, json),
+          culture: JsonStrict$OptolithClient.optionalField("culturePrerequisite", Json_decode.bool, json),
+          pact: JsonStrict$OptolithClient.optionalField("pactPrerequisite", Json_decode.bool, json),
+          social: JsonStrict$OptolithClient.optionalField("socialStatusPrerequisite", Json_decode.bool, json),
+          primaryAttribute: JsonStrict$OptolithClient.optionalField("primaryAttributePrerequisite", Json_decode.bool, json),
+          activatable: JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
+                  return Json_decode.list(Json_decode.$$int, param);
+                }), json),
+          activatableMultiEntry: JsonStrict$OptolithClient.optionalField("activatableMultiEntryPrerequisites", (function (param) {
+                  return Json_decode.list(Json_decode.$$int, param);
+                }), json),
+          activatableMultiSelect: JsonStrict$OptolithClient.optionalField("activatableMultiSelectPrerequisites", (function (param) {
+                  return Json_decode.list(Json_decode.$$int, param);
+                }), json),
+          increasable: JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
+                  return Json_decode.list(Json_decode.$$int, param);
+                }), json),
+          increasableMultiEntry: JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
+                  return Json_decode.list(Json_decode.$$int, param);
+                }), json),
+          levels: JsonStrict$OptolithClient.optionalField("levels", (function (param) {
+                  return Json_decode.list(tIndexUnivAtLevel, param);
+                }), json)
+        };
+}
+
+function mergeIndexLevels(univ, l10n) {
+  var mp = ListH$OptolithClient.Foldable.foldr((function (param) {
+          return Curry._2(IntMap$OptolithClient.insert, param[0], /* tuple */[
+                      /* Just */[param[1]],
+                      /* Nothing */0
+                    ]);
+        }), IntMap$OptolithClient.empty, Maybe$OptolithClient.fromMaybe(/* [] */0, univ));
+  return Curry._2(IntMap$OptolithClient.map, (function (param) {
+                return tIndex(param[0], param[1]);
+              }), ListH$OptolithClient.Foldable.foldr((function (param) {
+                    var x = param[1];
+                    return Curry._2(IntMap$OptolithClient.alter, (function (my) {
+                                  return /* Just */[Maybe$OptolithClient.maybe(/* tuple */[
+                                                /* Nothing */0,
+                                                /* Just */[x]
+                                              ], (function (y) {
+                                                  return /* tuple */[
+                                                          y[0],
+                                                          /* Just */[x]
+                                                        ];
+                                                }), my)];
+                                }), param[0]);
+                  }), mp, Maybe$OptolithClient.fromMaybe(/* [] */0, l10n)));
+}
+
+function tIndexWithLevel(univ, l10n) {
+  return {
+          sex: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.sex;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.sex;
+                    }))),
+          race: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.race;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.race;
+                    }))),
+          culture: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.culture;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.culture;
+                    }))),
+          pact: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.pact;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.pact;
+                    }))),
+          social: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.social;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.social;
+                    }))),
+          primaryAttribute: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.primaryAttribute;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.primaryAttribute;
+                    }))),
+          activatable: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.activatable;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.activatable;
+                    }))),
+          activatableMultiEntry: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.activatableMultiEntry;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.activatableMultiEntry;
+                    }))),
+          activatableMultiSelect: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.activatableMultiSelect;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.activatableMultiSelect;
+                    }))),
+          increasable: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.increasable;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.increasable;
+                    }))),
+          increasableMultiEntry: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.increasableMultiEntry;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.increasableMultiEntry;
+                    }))),
+          levels: mergeIndexLevels(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                      return x.levels;
+                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                      return x.levels;
+                    })))
         };
 }
 
@@ -358,11 +751,39 @@ var Decode = {
   increasableId: increasableId,
   increasable: increasable,
   increasableMultiEntry: increasableMultiEntry,
+  tProfession: tProfession,
+  t: t,
+  level: level,
+  tWithLevel: tWithLevel,
+  tWithLevelDisAdv: tWithLevelDisAdv,
   replacementAtIndex: replacementAtIndex,
   tIndexL10n: tIndexL10n,
+  tIndexUniv: tIndexUniv,
+  mergeSingleOverride: mergeSingleOverride,
+  mergeMapOverride: mergeMapOverride,
+  tIndex: tIndex,
   tIndexL10nAtLevel: tIndexL10nAtLevel,
-  tIndexWithLevelL10n: tIndexWithLevelL10n
+  tIndexWithLevelL10n: tIndexWithLevelL10n,
+  tIndexUnivAtLevel: tIndexUnivAtLevel,
+  tIndexWithLevelUniv: tIndexWithLevelUniv,
+  mergeIndexLevels: mergeIndexLevels,
+  tIndexWithLevel: tIndexWithLevel
 };
 
+var empty = {
+  sex: /* Nothing */0,
+  race: /* Nothing */0,
+  culture: /* Nothing */0,
+  pact: /* Nothing */0,
+  social: /* Nothing */0,
+  primaryAttribute: /* Nothing */0,
+  activatable: /* [] */0,
+  activatableMultiEntry: /* [] */0,
+  activatableMultiSelect: /* [] */0,
+  increasable: /* [] */0,
+  increasableMultiEntry: /* [] */0
+};
+
+exports.empty = empty;
 exports.Decode = Decode;
-/* No side effect */
+/* IntMap-OptolithClient Not a pure module */

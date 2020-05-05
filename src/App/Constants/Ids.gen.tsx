@@ -86,11 +86,15 @@ export type hitZoneArmorZoneItemId =
   | { tag: "Custom"; value: number };
 export type HitZoneArmorZoneItemId = hitZoneArmorZoneItemId;
 
-export const PhaseId_rcp: number = IdsBS.PhaseId.rcp;
+// tslint:disable-next-line:interface-over-type-literal
+export type Phase_t = "Outline" | "Definition" | "Advancement";
+export type Phase = Phase_t;
 
-export const PhaseId_creation: number = IdsBS.PhaseId.creation;
+export const Phase_rcp: number = IdsBS.Phase.rcp;
 
-export const PhaseId_inGame: number = IdsBS.PhaseId.inGame;
+export const Phase_creation: number = IdsBS.Phase.creation;
+
+export const Phase_inGame: number = IdsBS.Phase.inGame;
 
 export const ExperienceLevelId_inexperienced: string = IdsBS.ExperienceLevelId.inexperienced;
 
@@ -472,7 +476,7 @@ export const SpecialAbilityId_traditionElves: string = IdsBS.SpecialAbilityId.tr
 
 export const SpecialAbilityId_traditionDruids: string = IdsBS.SpecialAbilityId.traditionDruids;
 
-export const SpecialAbilityId_spellEnhancement: string = IdsBS.SpecialAbilityId.spellEnhancement;
+export const SpecialAbilityId_spellEnhancement: number = IdsBS.SpecialAbilityId.spellEnhancement;
 
 export const SpecialAbilityId_forschungsgebiet: string = IdsBS.SpecialAbilityId.forschungsgebiet;
 
@@ -514,7 +518,7 @@ export const SpecialAbilityId_anhaengerDesGueldenen: string = IdsBS.SpecialAbili
 
 export const SpecialAbilityId_gebieterDesAspekts: string = IdsBS.SpecialAbilityId.gebieterDesAspekts;
 
-export const SpecialAbilityId_chantEnhancement: string = IdsBS.SpecialAbilityId.chantEnhancement;
+export const SpecialAbilityId_chantEnhancement: number = IdsBS.SpecialAbilityId.chantEnhancement;
 
 export const SpecialAbilityId_dunklesAbbildDerBuendnisgabe: string = IdsBS.SpecialAbilityId.dunklesAbbildDerBuendnisgabe;
 
@@ -729,6 +733,12 @@ export const CultureId: {
   steppenelfen: string
 } = IdsBS.CultureId
 
+export const Phase: {
+  creation: number; 
+  inGame: number; 
+  rcp: number
+} = IdsBS.Phase
+
 export const AdvantageId: {
   luck: string; 
   exceptionalSkill: string; 
@@ -759,12 +769,6 @@ export const AdvantageId: {
   increasedToughness: string; 
   magicalAttunement: string
 } = IdsBS.AdvantageId
-
-export const PhaseId: {
-  creation: number; 
-  inGame: number; 
-  rcp: number
-} = IdsBS.PhaseId
 
 export const CombatTechniqueId: {
   discuses: string; 
@@ -856,7 +860,7 @@ export const SpecialAbilityId: {
   visionDerBestimmung: string; 
   visionDerEntrueckung: string; 
   languageSpecializations: string; 
-  chantEnhancement: string; 
+  chantEnhancement: number; 
   traditionChurchOfPhex: string; 
   traditionChurchOfFirun: string; 
   traditionChurchOfNandus: string; 
@@ -933,7 +937,7 @@ export const SpecialAbilityId: {
   improvedDodge: string; 
   traditionQabalyaMage: string; 
   aspectKnowledge: string; 
-  spellEnhancement: string; 
+  spellEnhancement: number; 
   traditionSchelme: string; 
   predigtDerZuversicht: string; 
   traditionChurchOfTsa: string; 

@@ -12,6 +12,8 @@ module Functor = {
     | Just(x) => x->f->Just
     | Nothing => Nothing
     };
+
+  let (<&>) = (mx, f) => f <$> mx;
 };
 
 module Applicative = {
@@ -208,3 +210,5 @@ let optionToMaybe = mx =>
   | Some(x) => Just(x)
   | None => Nothing
   };
+
+let ensure = (pred, x) => pred(x) ? Just(x) : Nothing;

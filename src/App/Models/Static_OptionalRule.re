@@ -16,4 +16,10 @@ module Decode = {
     src: json |> field("src", Static_SourceRef.Decode.list),
     errata: json |> field("errata", Static_Erratum.Decode.list),
   };
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    yamlData.optionalRulesL10n
+    |> list(t)
+    |> ListH.map(x => (x.id, x))
+    |> IntMap.fromList;
 };

@@ -16,4 +16,10 @@ module Decode = {
     isCore: json |> field("isCore", bool),
     isAdultContent: json |> field("isAdultContent", bool),
   };
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    yamlData.booksL10n
+    |> list(t)
+    |> ListH.map(x => (x.id, x))
+    |> StrMap.fromList;
 };

@@ -8,14 +8,14 @@ import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/
 
 import {selectOptionId as Ids_selectOptionId} from '../../../src/App/Constants/Ids.gen';
 
+import {sex as Hero_sex} from './Hero.gen';
+
 import {t as IntMap_t} from '../../../src/shims/IntMap.gen';
 
 import {t as Maybe_t} from '../../../src/Data/Maybe.gen';
 
-import {t as Sex_t} from './Sex.gen';
-
 // tslint:disable-next-line:interface-over-type-literal
-export type sex = Sex_t;
+export type sex = Hero_sex;
 export type SexPrerequisite = sex;
 
 // tslint:disable-next-line:interface-over-type-literal

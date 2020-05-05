@@ -4,8 +4,10 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
+var Int$OptolithClient = require("../../Data/Int.bs.js");
 var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
-var JsonStrict$OptolithClient = require("../Utilities/YAML/JsonStrict.bs.js");
+var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
+var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
 
 function tL10n(json) {
   return {
@@ -91,44 +93,56 @@ function tUniv(json) {
 }
 
 function t(univ, l10n) {
-  return {
-          id: univ.id,
-          name: l10n.name,
-          language: univ.languages,
-          script: univ.literacy,
-          areaKnowledge: l10n.areaKnowledge,
-          areaKnowledgeShort: l10n.areaKnowledgeShort,
-          socialStatus: univ.social,
-          commonMundaneProfessionsAll: univ.commonMundaneProfessionsAll,
-          commonMundaneProfessionsExceptions: univ.commonMundaneProfessionsExceptions,
-          commonMundaneProfessionsText: l10n.commonMundaneProfessions,
-          commonMagicProfessionsAll: univ.commonMagicalProfessionsAll,
-          commonMagicProfessionsExceptions: univ.commonMagicalProfessionsExceptions,
-          commonMagicProfessionsText: l10n.commonMagicalProfessions,
-          commonBlessedProfessionsAll: univ.commonBlessedProfessionsAll,
-          commonBlessedProfessionsExceptions: univ.commonBlessedProfessionsExceptions,
-          commonBlessedProfessionsText: l10n.commonBlessedProfessions,
-          commonAdvantages: univ.commonAdvantages,
-          commonAdvantagesText: l10n.commonAdvantages,
-          commonDisadvantages: univ.commonDisadvantages,
-          commonDisadvantagesText: l10n.commonDisadvantages,
-          uncommonAdvantages: univ.uncommonAdvantages,
-          uncommonAdvantagesText: l10n.uncommonAdvantages,
-          uncommonDisadvantages: univ.uncommonDisadvantages,
-          uncommonDisadvantagesText: l10n.uncommonDisadvantages,
-          commonSkills: univ.commonSkills,
-          uncommonSkills: univ.uncommonSkills,
-          commonNames: l10n.commonNames,
-          culturalPackageCost: univ.culturalPackageCost,
-          culturalPackageSkills: Curry._1(IntMap$OptolithClient.fromList, univ.culturalPackageSkills)
-        };
+  return /* tuple */[
+          univ.id,
+          {
+            id: univ.id,
+            name: l10n.name,
+            language: univ.languages,
+            script: univ.literacy,
+            areaKnowledge: l10n.areaKnowledge,
+            areaKnowledgeShort: l10n.areaKnowledgeShort,
+            socialStatus: univ.social,
+            commonMundaneProfessionsAll: univ.commonMundaneProfessionsAll,
+            commonMundaneProfessionsExceptions: univ.commonMundaneProfessionsExceptions,
+            commonMundaneProfessionsText: l10n.commonMundaneProfessions,
+            commonMagicProfessionsAll: univ.commonMagicalProfessionsAll,
+            commonMagicProfessionsExceptions: univ.commonMagicalProfessionsExceptions,
+            commonMagicProfessionsText: l10n.commonMagicalProfessions,
+            commonBlessedProfessionsAll: univ.commonBlessedProfessionsAll,
+            commonBlessedProfessionsExceptions: univ.commonBlessedProfessionsExceptions,
+            commonBlessedProfessionsText: l10n.commonBlessedProfessions,
+            commonAdvantages: univ.commonAdvantages,
+            commonAdvantagesText: l10n.commonAdvantages,
+            commonDisadvantages: univ.commonDisadvantages,
+            commonDisadvantagesText: l10n.commonDisadvantages,
+            uncommonAdvantages: univ.uncommonAdvantages,
+            uncommonAdvantagesText: l10n.uncommonAdvantages,
+            uncommonDisadvantages: univ.uncommonDisadvantages,
+            uncommonDisadvantagesText: l10n.uncommonDisadvantages,
+            commonSkills: univ.commonSkills,
+            uncommonSkills: univ.uncommonSkills,
+            commonNames: l10n.commonNames,
+            culturalPackageCost: univ.culturalPackageCost,
+            culturalPackageSkills: Curry._1(IntMap$OptolithClient.fromList, univ.culturalPackageSkills)
+          }
+        ];
+}
+
+function all(yamlData) {
+  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, t, (function (x) {
+                    return x.id;
+                  }), (function (x) {
+                    return x.id;
+                  }), Json_decode.list(tUniv, yamlData.culturesUniv), Json_decode.list(tL10n, yamlData.culturesL10n)));
 }
 
 var Decode = {
   tL10n: tL10n,
   frequencyException: frequencyException,
   tUniv: tUniv,
-  t: t
+  t: t,
+  all: all
 };
 
 exports.Decode = Decode;

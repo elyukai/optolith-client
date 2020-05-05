@@ -11,6 +11,8 @@ module Functor: {
    * Lift a function to apply to the wrapped value.
    */
   let (<$>): ('a => 'b, t('a)) => t('b);
+
+  let (<&>): (t('a), 'a => 'b) => t('b);
 };
 
 module Applicative: {
@@ -216,3 +218,5 @@ let maybeToOption: t('a) => option('a);
  */
 [@genType]
 let optionToMaybe: option('a) => t('a);
+
+let ensure: ('a => bool, 'a) => t('a);

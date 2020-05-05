@@ -53,9 +53,8 @@ type t = {
   durationShort: string,
   durationNoMod: bool,
   target: string,
-  property: int,
   traditions: list(int),
-  aspects: Maybe.t(list(int)),
+  aspects: list(int),
   ic: IC.t,
   gr: int,
   src: list(Static_SourceRef.t),
@@ -203,6 +202,16 @@ module Decode = {
     errata: l10n.errata,
   };
 
+  let enhancements = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      enhancement,
+      x => x.target,
+      x => x.target,
+      yamlData.liturgicalChantEnhancementsUniv |> list(enhancementUniv),
+      yamlData.liturgicalChantEnhancementsL10n |> list(enhancementL10n),
+    );
+
   type tL10n = {
     id: int,
     name: string,
@@ -247,7 +256,6 @@ module Decode = {
     kpCostNoMod: bool,
     rangeNoMod: bool,
     durationNoMod: bool,
-    property: int,
     traditions: list(int),
     aspects: Maybe.t(list(int)),
     ic: IC.t,
@@ -264,38 +272,50 @@ module Decode = {
     kpCostNoMod: json |> field("kpCostNoMod", bool),
     rangeNoMod: json |> field("rangeNoMod", bool),
     durationNoMod: json |> field("durationNoMod", bool),
-    property: json |> field("property", int),
     traditions: json |> field("traditions", list(int)),
     aspects: json |> optionalField("traditions", list(int)),
     ic: json |> field("ic", IC.Decode.t),
     gr: json |> field("gr", int),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    check: (univ.check1, univ.check2, univ.check3),
-    checkMod: univ.checkMod,
-    effect: l10n.effect,
-    castingTime: l10n.castingTime,
-    castingTimeShort: l10n.castingTimeShort,
-    castingTimeNoMod: univ.castingTimeNoMod,
-    kpCost: l10n.kpCost,
-    kpCostShort: l10n.kpCostShort,
-    kpCostNoMod: univ.kpCostNoMod,
-    range: l10n.range,
-    rangeShort: l10n.rangeShort,
-    rangeNoMod: univ.rangeNoMod,
-    duration: l10n.duration,
-    durationShort: l10n.durationShort,
-    durationNoMod: univ.durationNoMod,
-    target: l10n.target,
-    property: univ.property,
-    traditions: univ.traditions,
-    aspects: univ.aspects,
-    ic: univ.ic,
-    gr: univ.gr,
-    src: l10n.src,
-    errata: l10n.errata,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      check: (univ.check1, univ.check2, univ.check3),
+      checkMod: univ.checkMod,
+      effect: l10n.effect,
+      castingTime: l10n.castingTime,
+      castingTimeShort: l10n.castingTimeShort,
+      castingTimeNoMod: univ.castingTimeNoMod,
+      kpCost: l10n.kpCost,
+      kpCostShort: l10n.kpCostShort,
+      kpCostNoMod: univ.kpCostNoMod,
+      range: l10n.range,
+      rangeShort: l10n.rangeShort,
+      rangeNoMod: univ.rangeNoMod,
+      duration: l10n.duration,
+      durationShort: l10n.durationShort,
+      durationNoMod: univ.durationNoMod,
+      target: l10n.target,
+      traditions: univ.traditions,
+      aspects: univ.aspects |> Maybe.fromMaybe([]),
+      ic: univ.ic,
+      gr: univ.gr,
+      src: l10n.src,
+      errata: l10n.errata,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.liturgicalChantsUniv |> list(tUniv),
+      yamlData.liturgicalChantsL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

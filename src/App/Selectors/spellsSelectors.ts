@@ -11,8 +11,7 @@ import { Record } from "../../Data/Record"
 import { fst, snd } from "../../Data/Tuple"
 import { uncurryN, uncurryN3, uncurryN4, uncurryN5 } from "../../Data/Tuple/Curry"
 import { MagicalGroup } from "../Constants/Groups"
-import { PhaseId } from "../Constants/Ids.bs"
-import { AdvantageId, SpecialAbilityId } from "../Constants/Ids.gen"
+import { AdvantageId, Phase, SpecialAbilityId } from "../Constants/Ids.gen"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
 import { HeroModel } from "../Models/Hero/HeroModel"
@@ -216,7 +215,7 @@ const isUnfamiliarSpellsActivationDisabled = createMaybeSelector (
   getPhase,
   getUnfamiliarSpellsCount,
   getStartEl,
-  uncurryN3 (phase => count => phase > PhaseId.creation
+  uncurryN3 (phase => count => phase > Phase.creation
                                ? cnst (false)
                                : maybe (false)
                                        (pipe (ELA.maxUnfamiliarSpells, lte (count))))

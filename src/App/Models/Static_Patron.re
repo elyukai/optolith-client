@@ -70,13 +70,27 @@ module Decode = {
       json |> optionalField("isLimitedToCulturesReverse", bool),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    category: univ.category,
-    skills: univ.skills,
-    limitedToCultures: univ.limitedToCultures,
-    isLimitedToCulturesReverse:
-      univ.isLimitedToCulturesReverse |> Maybe.fromMaybe(false),
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      category: univ.category,
+      skills: univ.skills,
+      limitedToCultures: univ.limitedToCultures,
+      isLimitedToCulturesReverse:
+        univ.isLimitedToCulturesReverse |> Maybe.fromMaybe(false),
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.patronsUniv |> list(tUniv),
+      yamlData.patronsL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

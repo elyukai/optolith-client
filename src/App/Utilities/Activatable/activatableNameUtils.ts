@@ -27,6 +27,7 @@ import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable, ActivatableSkillEntry, EntryWithCategory, SID, SkillishEntry } from "../../Models/Wiki/wikiTypeHelpers"
 import { formatList, translate } from "../I18n"
+import { prefixSA } from "../IDUtils"
 import { ifElse } from "../ifElse"
 import { toRoman } from "../NumberUtils"
 import { pipe, pipe_ } from "../pipe"
@@ -180,8 +181,8 @@ const getEntrySpecificNameAddition =
           fmap (SOA.name)
         )
 
-      case SpecialAbilityId.spellEnhancement:
-      case SpecialAbilityId.chantEnhancement:
+      case prefixSA (SpecialAbilityId.spellEnhancement):
+      case prefixSA (SpecialAbilityId.chantEnhancement):
         return pipe (
                       AOWIA.sid,
                       findSelectOption (wiki_entry),
@@ -189,7 +190,7 @@ const getEntrySpecificNameAddition =
                                            bindF ((target_id: string) => {
                                              const acc =
                                                AOWIA.id (hero_entry)
-                                               === SpecialAbilityId.spellEnhancement
+                                               === prefixSA (SpecialAbilityId.spellEnhancement)
                                                  ? SDA.spells
                                                  : SDA.liturgicalChants
 

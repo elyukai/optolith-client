@@ -80,6 +80,10 @@ var mapMaybe = IntMap.mapMaybe;
 
 var mapMaybeWithKey = IntMap.mapMaybeWithKey;
 
+var countBy = IntMap.countBy;
+
+var countByM = IntMap.countByM;
+
 exports.Foldable = Foldable;
 exports.Traversable = Traversable;
 exports.$$null = $$null;
@@ -115,4 +119,6 @@ exports.filter = filter;
 exports.filterWithKey = filterWithKey;
 exports.mapMaybe = mapMaybe;
 exports.mapMaybeWithKey = mapMaybeWithKey;
+exports.countBy = countBy;
+exports.countByM = countByM;
 /* IntMap Not a pure module */

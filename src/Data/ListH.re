@@ -174,4 +174,243 @@ module Foldable = {
     };
 };
 
+module Index = {
+  let%private rec indexedAux = (i, xs) =>
+    switch (xs) {
+    | [] => []
+    | [x, ...xs] => [(i, x), ...indexedAux(i + 1, xs)]
+    };
+
+  let indexed = xs => indexedAux(0, xs);
+
+  let rec deleteAt = (index, xs) =>
+    index < 0
+      ? xs
+      : (
+        switch (xs) {
+        | [] => []
+        | [_, ...xs] when index === 0 => xs
+        | [x, ...xs] => [x, ...deleteAt(index - 1, xs)]
+        }
+      );
+
+  let rec setAt = (index, e, xs) =>
+    index < 0
+      ? xs
+      : (
+        switch (xs) {
+        | [] => []
+        | [_, ...xs] when index === 0 => [e, ...xs]
+        | [x, ...xs] => [x, ...setAt(index - 1, e, xs)]
+        }
+      );
+
+  let rec modifyAt = (index, f, xs) =>
+    index < 0
+      ? xs
+      : (
+        switch (xs) {
+        | [] => []
+        | [x, ...xs] when index === 0 => [f(x), ...xs]
+        | [x, ...xs] => [x, ...modifyAt(index - 1, f, xs)]
+        }
+      );
+
+  let rec updateAt = (index, f, xs) =>
+    index < 0
+      ? xs
+      : (
+        switch (xs) {
+        | [] => []
+        | [x, ...xs] when index === 0 =>
+          Maybe.maybe(xs, x' => [x', ...xs], f(x))
+        | [x, ...xs] => [x, ...updateAt(index - 1, f, xs)]
+        }
+      );
+
+  let rec insertAt = (index, e, xs) =>
+    index < 0
+      ? xs
+      : (
+        switch (xs) {
+        | [] => []
+        | xs when index === 0 => [e, ...xs]
+        | [x, ...xs] => [x, ...insertAt(index - 1, e, xs)]
+        }
+      );
+
+  let%private rec imapAux = (f, i, xs) =>
+    switch (xs) {
+    | [] => []
+    | [x, ...xs] => [f(i, x), ...imapAux(f, i + 1, xs)]
+    };
+
+  let imap = (f, xs) => imapAux(f, 0, xs);
+};
+
+// Basic Functions
+
+let (<+>) = (x, xs) => [x, ...xs];
+
+// List transformations
+
 let map = Functor.(<$>);
+
+let reverse = xs => Foldable.foldl(Function.flip((<+>)), [], xs);
+
+let rec intercalate = (separator, xs) =>
+  switch (xs) {
+  | [] => ""
+  | [x] => x
+  | [x, ...xs] => x ++ separator ++ intercalate(separator, xs)
+  };
+
+let%private permutationsPick = xs =>
+  Index.imap((i, x) => (x, Index.deleteAt(i, xs)), xs);
+
+let rec permutations = xs =>
+  switch (xs) {
+  | [] => []
+  | [x] => [[x]]
+  | xs =>
+    xs
+    |> permutationsPick
+    |> Foldable.concatMap(((x', xs')) =>
+         map((<+>)(x'), permutations(xs'))
+       )
+  };
+
+// Searching Lists
+
+let elem = Foldable.elem;
+
+let notElem = Foldable.notElem;
+
+let lookup = (k, xs) =>
+  Maybe.Functor.(Foldable.find(((k', _)) => k == k', xs) <&> snd);
+
+// Predicates
+
+/**
+ * The `isInfixOf` function takes two strings and returns `True` if the first
+ * string is contained, wholly and intact, anywhere within the second.
+ *
+ * ```haskell
+ * >>> isInfixOf "Haskell" "I really like Haskell."
+ * True
+ * ```
+ *
+ * ```haskell
+ * >>> isInfixOf "Ial" "I really like Haskell."
+ * False
+ * ```
+ *
+ */
+let isInfixOf = (x: string, y: string) => Js.String.includes(y, x);
+
+// Searching with a predicate
+
+let filter = (pred, xs) =>
+  Foldable.foldr(x => pred(x) ? (<+>)(x) : Function.id, [], xs);
+
+let (!!) = List.nth;
+
+let (<!!>) = (xs, i) => List.nth_opt(xs, i) |> Maybe.optionToMaybe;
+
+// "Set" operations
+
+/**
+ * `delete x` removes the first occurrence of `x` from its list argument.
+ */
+let rec delete = (e, xs) =>
+  switch (xs) {
+  | [] => []
+  | [x, ...xs] => e == x ? xs : delete(e, xs)
+  };
+
+// Ordered lists
+
+let sortBy = f => List.sort((a, b) => f(a, b) |> Ord.fromOrdering);
+
+// Count by predicate
+
+let countBy = (f, xs) =>
+  Foldable.foldr(
+    x =>
+      if (f(x)) {
+        Int.inc;
+      } else {
+        Function.id;
+      },
+    0,
+    xs,
+  );
+
+module Extra = {
+  /**
+   * Convert a string to lower case.
+   */
+  let lower = str => String.lowercase_ascii(str);
+
+  /**
+   * A composition of `not` and `null`. Checks if a list has at least one
+   * element.
+   */
+  let notNull = xs => xs |> Foldable.null |> (!);
+
+  /**
+   * Non-recursive transform over a list, like `maybe`.
+   *
+   * ```haskell
+   * list 1 (\v _ -> v - 2) [5,6,7] == 3
+   * list 1 (\v _ -> v - 2) []      == 1
+   * nil cons xs -> maybe nil (uncurry cons) (uncons xs) == list nil cons xs
+   * ```
+   */
+  let list = (def, f, xs) =>
+    switch (xs) {
+    | [] => def
+    | [x, ...xs] => f(x, xs)
+    };
+
+  /**
+   * If the list is empty returns `Nothing`, otherwise returns the `init` and
+   * the `last`.
+   */
+  let rec unsnoc = xs =>
+    Maybe.(
+      switch (xs) {
+      | [] => Nothing
+      | [x] => Just(([], x))
+      | [x, ...xs] =>
+        switch (unsnoc(xs)) {
+        | Just((a, b)) => Just((x <+> a, b))
+        | Nothing => Nothing
+        }
+      }
+    );
+
+  /**
+   * Escape a string that may contain `Regex`-specific notation for use in
+   * regular expressions.
+   *
+   * ```haskell
+   * escapeRegex "." == "\."
+   * escapeRegex "This (or that)." == "This \(or that\)\."
+   * ```
+   */
+  let escapeRegex =
+    // $& means the whole matched string
+    Js.String.replaceByRe([%re "/[.*+?^${}()|[\\]\\\\]/gu"], "\\$&");
+
+  /**
+   * Replace a subsequence everywhere it occurs. The first argument must not be
+   * the empty string.
+   */
+  let replaceStr = (old_subseq: string, new_subseq: string, x: string) =>
+    Js.String.replaceByRe(
+      Js.Re.fromStringWithFlags(escapeRegex(old_subseq), ~flags="gu"),
+      new_subseq,
+      x,
+    );
+};

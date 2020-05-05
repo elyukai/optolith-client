@@ -4,9 +4,13 @@
 var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Js_int = require("bs-platform/lib/js/js_int.js");
+var $$String = require("bs-platform/lib/js/string.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
 var Pervasives = require("bs-platform/lib/js/pervasives.js");
+var Int$OptolithClient = require("./Int.bs.js");
+var Ord$OptolithClient = require("./Ord.bs.js");
+var Maybe$OptolithClient = require("./Maybe.bs.js");
 var Function$OptolithClient = require("./Function.bs.js");
 
 function $less$$great(f, xs) {
@@ -325,12 +329,370 @@ var Foldable = {
   find: find
 };
 
+function indexedAux(i, xs) {
+  if (xs) {
+    return /* :: */[
+            /* tuple */[
+              i,
+              xs[0]
+            ],
+            indexedAux(i + 1 | 0, xs[1])
+          ];
+  } else {
+    return /* [] */0;
+  }
+}
+
+function indexed(xs) {
+  return indexedAux(0, xs);
+}
+
+function deleteAt(index, xs) {
+  if (index < 0) {
+    return xs;
+  } else if (xs) {
+    var xs$1 = xs[1];
+    if (index === 0) {
+      return xs$1;
+    } else {
+      return /* :: */[
+              xs[0],
+              deleteAt(index - 1 | 0, xs$1)
+            ];
+    }
+  } else {
+    return /* [] */0;
+  }
+}
+
+function setAt(index, e, xs) {
+  if (index < 0) {
+    return xs;
+  } else if (xs) {
+    var xs$1 = xs[1];
+    if (index === 0) {
+      return /* :: */[
+              e,
+              xs$1
+            ];
+    } else {
+      return /* :: */[
+              xs[0],
+              setAt(index - 1 | 0, e, xs$1)
+            ];
+    }
+  } else {
+    return /* [] */0;
+  }
+}
+
+function modifyAt(index, f, xs) {
+  if (index < 0) {
+    return xs;
+  } else if (xs) {
+    var xs$1 = xs[1];
+    var x = xs[0];
+    if (index === 0) {
+      return /* :: */[
+              Curry._1(f, x),
+              xs$1
+            ];
+    } else {
+      return /* :: */[
+              x,
+              modifyAt(index - 1 | 0, f, xs$1)
+            ];
+    }
+  } else {
+    return /* [] */0;
+  }
+}
+
+function updateAt(index, f, xs) {
+  if (index < 0) {
+    return xs;
+  } else if (xs) {
+    var xs$1 = xs[1];
+    var x = xs[0];
+    if (index === 0) {
+      return Maybe$OptolithClient.maybe(xs$1, (function (x$prime) {
+                    return /* :: */[
+                            x$prime,
+                            xs$1
+                          ];
+                  }), Curry._1(f, x));
+    } else {
+      return /* :: */[
+              x,
+              updateAt(index - 1 | 0, f, xs$1)
+            ];
+    }
+  } else {
+    return /* [] */0;
+  }
+}
+
+function insertAt(index, e, xs) {
+  if (index < 0) {
+    return xs;
+  } else if (xs) {
+    if (index === 0) {
+      return /* :: */[
+              e,
+              xs
+            ];
+    } else {
+      return /* :: */[
+              xs[0],
+              insertAt(index - 1 | 0, e, xs[1])
+            ];
+    }
+  } else {
+    return /* [] */0;
+  }
+}
+
+function imapAux(f, i, xs) {
+  if (xs) {
+    return /* :: */[
+            Curry._2(f, i, xs[0]),
+            imapAux(f, i + 1 | 0, xs[1])
+          ];
+  } else {
+    return /* [] */0;
+  }
+}
+
+function imap(f, xs) {
+  return imapAux(f, 0, xs);
+}
+
+var Index = {
+  indexed: indexed,
+  deleteAt: deleteAt,
+  setAt: setAt,
+  modifyAt: modifyAt,
+  updateAt: updateAt,
+  insertAt: insertAt,
+  imap: imap
+};
+
+function $less$plus$great(x, xs) {
+  return /* :: */[
+          x,
+          xs
+        ];
+}
+
+function reverse(xs) {
+  return foldl((function (param, param$1) {
+                return Function$OptolithClient.flip($less$plus$great, param, param$1);
+              }), /* [] */0, xs);
+}
+
+function intercalate(separator, xs) {
+  if (xs) {
+    var xs$1 = xs[1];
+    var x = xs[0];
+    if (xs$1) {
+      return x + (separator + intercalate(separator, xs$1));
+    } else {
+      return x;
+    }
+  } else {
+    return "";
+  }
+}
+
+function permutationsPick(xs) {
+  return imapAux((function (i, x) {
+                return /* tuple */[
+                        x,
+                        deleteAt(i, xs)
+                      ];
+              }), 0, xs);
+}
+
+function permutations(xs) {
+  if (xs) {
+    if (xs[1]) {
+      return $great$great$eq(permutationsPick(xs), (function (param) {
+                    var x$prime = param[0];
+                    return $less$$great((function (param) {
+                                  return /* :: */[
+                                          x$prime,
+                                          param
+                                        ];
+                                }), permutations(param[1]));
+                  }));
+    } else {
+      return /* :: */[
+              /* :: */[
+                xs[0],
+                /* [] */0
+              ],
+              /* [] */0
+            ];
+    }
+  } else {
+    return /* [] */0;
+  }
+}
+
+function lookup(k, xs) {
+  return Maybe$OptolithClient.Functor.$less$amp$great(find((function (param) {
+                    return Caml_obj.caml_equal(k, param[0]);
+                  }), xs), (function (prim) {
+                return prim[1];
+              }));
+}
+
+function isInfixOf(x, y) {
+  return x.includes(y);
+}
+
+function filter(pred, xs) {
+  return foldr((function (x) {
+                if (Curry._1(pred, x)) {
+                  return (function (param) {
+                      return /* :: */[
+                              x,
+                              param
+                            ];
+                    });
+                } else {
+                  return Function$OptolithClient.id;
+                }
+              }), /* [] */0, xs);
+}
+
+function $less$bang$bang$great(xs, i) {
+  return Maybe$OptolithClient.optionToMaybe(List.nth_opt(xs, i));
+}
+
+function $$delete(e, _xs) {
+  while(true) {
+    var xs = _xs;
+    if (xs) {
+      var xs$1 = xs[1];
+      if (Caml_obj.caml_equal(e, xs[0])) {
+        return xs$1;
+      } else {
+        _xs = xs$1;
+        continue ;
+      }
+    } else {
+      return /* [] */0;
+    }
+  };
+}
+
+function sortBy(f) {
+  return (function (param) {
+      return List.sort((function (a, b) {
+                    return Ord$OptolithClient.fromOrdering(Curry._2(f, a, b));
+                  }), param);
+    });
+}
+
+function countBy(f, xs) {
+  return foldr((function (x) {
+                if (Curry._1(f, x)) {
+                  return Int$OptolithClient.inc;
+                } else {
+                  return Function$OptolithClient.id;
+                }
+              }), 0, xs);
+}
+
+var lower = $$String.lowercase_ascii;
+
+function notNull(xs) {
+  return !(
+          xs ? false : true
+        );
+}
+
+function list(def, f, xs) {
+  if (xs) {
+    return Curry._2(f, xs[0], xs[1]);
+  } else {
+    return def;
+  }
+}
+
+function unsnoc(xs) {
+  if (xs) {
+    var xs$1 = xs[1];
+    var x = xs[0];
+    if (xs$1) {
+      var match = unsnoc(xs$1);
+      if (match) {
+        var match$1 = match[0];
+        return /* Just */[/* tuple */[
+                  /* :: */[
+                    x,
+                    match$1[0]
+                  ],
+                  match$1[1]
+                ]];
+      } else {
+        return /* Nothing */0;
+      }
+    } else {
+      return /* Just */[/* tuple */[
+                /* [] */0,
+                x
+              ]];
+    }
+  } else {
+    return /* Nothing */0;
+  }
+}
+
+var partial_arg = /[.*+?^${}()|[\]\\]/gu;
+
+function escapeRegex(param) {
+  return param.replace(partial_arg, "\\$&");
+}
+
+function replaceStr(old_subseq, new_subseq, x) {
+  return x.replace(new RegExp(Curry._1(escapeRegex, old_subseq), "gu"), new_subseq);
+}
+
+var Extra = {
+  lower: lower,
+  notNull: notNull,
+  list: list,
+  unsnoc: unsnoc,
+  escapeRegex: escapeRegex,
+  replaceStr: replaceStr
+};
+
 var map = $less$$great;
+
+var $bang$bang = List.nth;
 
 exports.Functor = Functor;
 exports.Applicative = Applicative;
 exports.Alternative = Alternative;
 exports.Monad = Monad;
 exports.Foldable = Foldable;
+exports.Index = Index;
+exports.$less$plus$great = $less$plus$great;
 exports.map = map;
+exports.reverse = reverse;
+exports.intercalate = intercalate;
+exports.permutations = permutations;
+exports.elem = elem;
+exports.notElem = notElem;
+exports.lookup = lookup;
+exports.isInfixOf = isInfixOf;
+exports.filter = filter;
+exports.$bang$bang = $bang$bang;
+exports.$less$bang$bang$great = $less$bang$bang$great;
+exports.$$delete = $$delete;
+exports.sortBy = sortBy;
+exports.countBy = countBy;
+exports.Extra = Extra;
 /* No side effect */

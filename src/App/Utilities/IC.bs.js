@@ -86,6 +86,10 @@ function icToStr(ic) {
   }
 }
 
+function icToIx(ic) {
+  return ic;
+}
+
 function t(json) {
   var x = Json_decode.string(json);
   switch (x) {
@@ -113,15 +117,11 @@ var Decode = {
 
 var getAPForActivatation = getAPCostBaseByIC;
 
-exports.getAPCostBaseByIC = getAPCostBaseByIC;
-exports.getLastSRWithConstantCost = getLastSRWithConstantCost;
-exports.getBaseMultiplier = getBaseMultiplier;
-exports.getCost = getCost;
-exports.getAPForBounds = getAPForBounds;
 exports.getAPForRange = getAPForRange;
 exports.getAPForInc = getAPForInc;
 exports.getAPForDec = getAPForDec;
 exports.getAPForActivatation = getAPForActivatation;
 exports.icToStr = icToStr;
+exports.icToIx = icToIx;
 exports.Decode = Decode;
 /* No side effect */

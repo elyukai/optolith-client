@@ -34,11 +34,25 @@ module Decode = {
     aspects: json |> optionalField("aspects", pair(int, int)),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    numId: univ.numId,
-    name: l10n.name,
-    primary: univ.primary,
-    aspects: univ.aspects,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      numId: univ.numId,
+      name: l10n.name,
+      primary: univ.primary,
+      aspects: univ.aspects,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.blessedTraditionsUniv |> list(tUniv),
+      yamlData.blessedTraditionsL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

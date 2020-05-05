@@ -49,16 +49,30 @@ module Decode = {
     gr: json |> field("gr", int),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    ic: univ.ic,
-    primary: univ.primary,
-    special: l10n.special,
-    hasNoParry: Maybe.fromMaybe(false, univ.hasNoParry),
-    bpr: univ.bpr,
-    gr: univ.gr,
-    src: l10n.src,
-    errata: l10n.errata,
-  };
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      ic: univ.ic,
+      primary: univ.primary,
+      special: l10n.special,
+      hasNoParry: Maybe.fromMaybe(false, univ.hasNoParry),
+      bpr: univ.bpr,
+      gr: univ.gr,
+      src: l10n.src,
+      errata: l10n.errata,
+    },
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.combatTechniquesUniv |> list(tUniv),
+      yamlData.combatTechniquesL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };

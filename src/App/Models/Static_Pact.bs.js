@@ -3,6 +3,7 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
+var ListH$OptolithClient = require("../../Data/ListH.bs.js");
 var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
@@ -36,10 +37,20 @@ function t(json) {
         };
 }
 
+function all(yamlData) {
+  return Curry._1(IntMap$OptolithClient.fromList, ListH$OptolithClient.map((function (x) {
+                    return /* tuple */[
+                            x.id,
+                            x
+                          ];
+                  }), Json_decode.list(t, yamlData.pactsL10n)));
+}
+
 var Decode = {
   type_: type_,
   domain: domain,
-  t: t
+  t: t,
+  all: all
 };
 
 exports.Decode = Decode;

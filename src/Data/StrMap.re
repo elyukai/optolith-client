@@ -1,8 +1,5 @@
-module StrMap = Map.Make(String);
+module StrMap = Data_Map.Make(String);
 
-type t('a) = StrMap.t('a);
+include StrMap;
 
-/**
- * Right-associative fold of a structure.
- */
-let foldr = (f, initial, mp) => StrMap.fold(f, mp, initial);
+type strmap('a) = t('a);

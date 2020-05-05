@@ -6,7 +6,7 @@ import { append, countWith, filter, foldr, List, sdelete, subscriptF } from "../
 import { bindF, Just, liftM3, maybe, Maybe, Nothing } from "../../../Data/Maybe"
 import { elems, lookup, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { PhaseId, SpecialAbilityId } from "../../Constants/Ids.gen"
+import { Phase, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
@@ -172,7 +172,7 @@ export const isEntryAllowingTransferUnfamiliarRemovable: (wiki: StaticDataRecord
                                                          (hero: HeroModelRecord) =>
                                                          (src_id: string) => boolean =
   wiki => hero => {
-    if (HA.phase (hero) >= PhaseId.inGame) {
+    if (HA.phase (hero) >= Phase.inGame) {
       return cnst (true)
     }
 

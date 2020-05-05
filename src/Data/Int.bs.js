@@ -13,6 +13,34 @@ function max(x, y) {
   }
 }
 
+function min(x, y) {
+  if (x < y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function inc(x) {
+  return x + 1 | 0;
+}
+
+function dec(x) {
+  return x - 1 | 0;
+}
+
+function negate(x) {
+  return -x | 0;
+}
+
+function abs(x) {
+  if (x < 0) {
+    return -x | 0;
+  } else {
+    return x;
+  }
+}
+
 function show(prim) {
   return prim.toString();
 }
@@ -24,6 +52,11 @@ function readMaybe(x) {
 }
 
 exports.max = max;
+exports.min = min;
+exports.inc = inc;
+exports.dec = dec;
+exports.negate = negate;
+exports.abs = abs;
 exports.show = show;
 exports.read = read;
 exports.readMaybe = readMaybe;

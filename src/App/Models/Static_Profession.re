@@ -373,7 +373,8 @@ module Decode = {
           Maybe.maybe(
             false,
             ListH.Foldable.any((x: Static_Prerequisites.activatable) =>
-              x.id == SpecialAbility(Ids.SpecialAbilityId.traditionGuildMages)
+              x.id
+              == `SpecialAbility(Ids.SpecialAbilityId.traditionGuildMages)
               && x.active
             ),
             univ.activatablePrerequisites,
@@ -577,69 +578,84 @@ module Decode = {
     sgr: json |> field("sgr", int),
   };
 
-  let t = (univ, l10n) => {
-    id: univ.id,
-    name: l10n.name,
-    subname: l10n.subname,
-    cost: univ.cost,
-    prerequisites: {
-      sex: univ.sexDependency,
-      race: univ.raceDependency,
-      culture: univ.cultureDependency,
-      activatable: univ.activatablePrerequisites |> Maybe.fromMaybe([]),
-      increasable: univ.increasablePrerequisites |> Maybe.fromMaybe([]),
-    },
-    prerequisitesStart: l10n.prerequisitesStart,
-    options: {
-      skillSpecialization: univ.skillSpecializationSelectOptions,
-      languageScript: univ.languageScriptSelectOptions,
-      combatTechnique: univ.combatTechniqueSelectOptions,
-      cantrip: univ.cantripSelectOptions,
-      curse: univ.curseSelectOptions,
-      terrainKnowledge: univ.terrainKnowledgeSelectOptions,
-      skill: univ.skillSelectOptions,
-      guildMageUnfamiliarSpell:
-        Maybe.maybe(
-          false,
-          ListH.Foldable.any((x: Static_Prerequisites.activatable) =>
-            x.id == SpecialAbility(Ids.SpecialAbilityId.traditionGuildMages)
-            && x.active
+  let t = (univ, l10n) => (
+    univ.id,
+    {
+      id: univ.id,
+      name: l10n.name,
+      subname: l10n.subname,
+      cost: univ.cost,
+      prerequisites: {
+        sex: univ.sexDependency,
+        race: univ.raceDependency,
+        culture: univ.cultureDependency,
+        activatable: univ.activatablePrerequisites |> Maybe.fromMaybe([]),
+        increasable: univ.increasablePrerequisites |> Maybe.fromMaybe([]),
+      },
+      prerequisitesStart: l10n.prerequisitesStart,
+      options: {
+        skillSpecialization: univ.skillSpecializationSelectOptions,
+        languageScript: univ.languageScriptSelectOptions,
+        combatTechnique: univ.combatTechniqueSelectOptions,
+        cantrip: univ.cantripSelectOptions,
+        curse: univ.curseSelectOptions,
+        terrainKnowledge: univ.terrainKnowledgeSelectOptions,
+        skill: univ.skillSelectOptions,
+        guildMageUnfamiliarSpell:
+          Maybe.maybe(
+            false,
+            ListH.Foldable.any((x: Static_Prerequisites.activatable) =>
+              x.id
+              == `SpecialAbility(Ids.SpecialAbilityId.traditionGuildMages)
+              && x.active
+            ),
+            univ.activatablePrerequisites,
           ),
-          univ.activatablePrerequisites,
-        ),
+      },
+      specialAbilities: univ.specialAbilities |> Maybe.fromMaybe([]),
+      combatTechniques:
+        univ.combatTechniques |> Maybe.maybe(IntMap.empty, IntMap.fromList),
+      skills: univ.skills |> Maybe.maybe(IntMap.empty, IntMap.fromList),
+      spells: univ.spells |> Maybe.maybe(IntMap.empty, IntMap.fromList),
+      liturgicalChants:
+        univ.liturgicalChants |> Maybe.maybe(IntMap.empty, IntMap.fromList),
+      blessings: univ.blessings |> Maybe.fromMaybe([]),
+      suggestedAdvantages: univ.suggestedAdvantages |> Maybe.fromMaybe([]),
+      suggestedAdvantagesText: l10n.suggestedAdvantages,
+      suggestedDisadvantages:
+        univ.suggestedDisadvantages |> Maybe.fromMaybe([]),
+      suggestedDisadvantagesText: l10n.suggestedDisadvantages,
+      unsuitableAdvantages: univ.unsuitableAdvantages |> Maybe.fromMaybe([]),
+      unsuitableAdvantagesText: l10n.unsuitableAdvantages,
+      unsuitableDisadvantages:
+        univ.unsuitableDisadvantages |> Maybe.fromMaybe([]),
+      unsuitableDisadvantagesText: l10n.unsuitableDisadvantages,
+      variants:
+        Yaml_Zip.zipBy(
+          Int.show,
+          variant,
+          x => x.id,
+          x => x.id,
+          univ.variants |> Maybe.fromMaybe([]),
+          l10n.variants |> Maybe.fromMaybe([]),
+        )
+        |> IntMap.fromList,
+      isVariantRequired: univ.isVariantRequired,
+      gr: univ.gr,
+      sgr: univ.sgr,
+      src: l10n.src,
+      errata: l10n.errata,
     },
-    specialAbilities: univ.specialAbilities |> Maybe.fromMaybe([]),
-    combatTechniques:
-      univ.combatTechniques |> Maybe.maybe(IntMap.empty, IntMap.fromList),
-    skills: univ.skills |> Maybe.maybe(IntMap.empty, IntMap.fromList),
-    spells: univ.spells |> Maybe.maybe(IntMap.empty, IntMap.fromList),
-    liturgicalChants:
-      univ.liturgicalChants |> Maybe.maybe(IntMap.empty, IntMap.fromList),
-    blessings: univ.blessings |> Maybe.fromMaybe([]),
-    suggestedAdvantages: univ.suggestedAdvantages |> Maybe.fromMaybe([]),
-    suggestedAdvantagesText: l10n.suggestedAdvantages,
-    suggestedDisadvantages:
-      univ.suggestedDisadvantages |> Maybe.fromMaybe([]),
-    suggestedDisadvantagesText: l10n.suggestedDisadvantages,
-    unsuitableAdvantages: univ.unsuitableAdvantages |> Maybe.fromMaybe([]),
-    unsuitableAdvantagesText: l10n.unsuitableAdvantages,
-    unsuitableDisadvantages:
-      univ.unsuitableDisadvantages |> Maybe.fromMaybe([]),
-    unsuitableDisadvantagesText: l10n.unsuitableDisadvantages,
-    variants:
-      Yaml_Zip.zipBy(
-        Int.show,
-        variant,
-        x => x.id,
-        x => x.id,
-        univ.variants |> Maybe.fromMaybe([]),
-        l10n.variants |> Maybe.fromMaybe([]),
-      )
-      |> IntMap.fromList,
-    isVariantRequired: univ.isVariantRequired,
-    gr: univ.gr,
-    sgr: univ.sgr,
-    src: l10n.src,
-    errata: l10n.errata,
-  };
+  );
+
+  let all = (yamlData: Yaml_Raw.yamlData) =>
+    Yaml_Zip.zipBy(
+      Int.show,
+      t,
+      x => x.id,
+      x => x.id,
+      yamlData.professionsUniv |> list(tUniv),
+      yamlData.professionsL10n |> list(tL10n),
+    )
+    |> IntMap.fromList;
 };
