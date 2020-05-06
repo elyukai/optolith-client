@@ -83,7 +83,7 @@
     "re:clean": "bsb -clean-world",
     "getstatic": "node ./deploy/getStaticData.js",
     "yaml:encrypt": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./encryptTables.ps1",
-    "yaml:decrypt": "py ./prepareTables.py",
+    "yaml:decrypt": "python ./prepareTables.py",
     "ci:copyschemes": "node ./deploy/copySchemaCI.js",
     "lint": "eslint \"src/\" --ext \".ts\" --ext \".tsx\"",
     "start": "electron .",
