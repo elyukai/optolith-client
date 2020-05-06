@@ -147,7 +147,12 @@ const mapStateToProps = (state: AppStateRecord) => ({
 })
 
 const connectDialog =
-  connect<DialogStateProps, DialogDispatchProps, DialogOwnProps, AppStateRecord> (
+  connect<
+    DialogStateProps,
+    DialogDispatchProps,
+    React.PropsWithChildren<DialogOwnProps>,
+    AppStateRecord
+  > (
     mapStateToProps
   )
 

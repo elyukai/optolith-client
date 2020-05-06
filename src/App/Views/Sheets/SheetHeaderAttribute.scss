@@ -4,8 +4,9 @@
 	outline-width: 0.55mm;
 	outline-style: solid;
 	outline-color: transparent;
-	border: 0.3mm solid black;
-	@include size(12mm);
+  border: 0.3mm solid black;
+  width: 12mm;
+  height: 12mm;
 
 	&.ATTR_1 {
 		outline-color: red;
@@ -44,17 +45,17 @@
 	}
 
 	.label {
-		font: bold 10px/14px Alegreya;
+		font: bold 8pt/1.2 Alegreya;
 		color: black;
 		letter-spacing: 0.05em;
 		display: block;
 		top: 0;
-		padding: 2px 6px 0;
+		padding: 0.6mm 1.1mm 0;
 	}
 
 	.value {
 		text-align: center;
-		font: bold 21px/24px Alegreya Sans;
+		font: bold 16pt/1.2 Alegreya Sans;
 		color: black;
 		letter-spacing: 0.05em;
 		display: block;

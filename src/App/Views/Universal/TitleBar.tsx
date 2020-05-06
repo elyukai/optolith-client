@@ -5,12 +5,10 @@ import { TitleBarWrapper } from "./TitleBarWrapper"
 
 interface Props {
   platform: string
-  isLoading?: boolean
   minimize (): void
   maximize (): void
   restore (): void
   close (): void
-  closeDuringLoad (): void
   enterFullscreen (): void
   leaveFullscreen (): void
 }
@@ -25,9 +23,7 @@ export const TitleBar: React.FC<Props> = props => {
     restore,
     enterFullscreen,
     leaveFullscreen,
-    isLoading,
     close,
-    closeDuringLoad,
   } = props
 
   const [ isMaximized, setIsMaximized ] = React.useState (win .isMaximized ())
@@ -72,23 +68,11 @@ export const TitleBar: React.FC<Props> = props => {
     [ handleMaximized, handleFullScreen, handleFocused ]
   )
 
-  const handleClose = React.useCallback (
-    () => {
-      if (isLoading === true) {
-        closeDuringLoad ()
-      }
-      else {
-        close ()
-      }
-    },
-    [ isLoading, close, closeDuringLoad ]
-  )
-
   if (platform === "darwin") {
     return (
       <TitleBarWrapper isFocused={isFocused}>
         <div className="macos-hover-area">
-          <TitleBarButton icon="&#xE900;" onClick={handleClose} className="close" />
+          <TitleBarButton icon="&#xE900;" onClick={close} className="close" />
           <TitleBarButton icon="&#xE903;" onClick={minimize} className="minimize" />
           {
             isFullScreen
@@ -109,7 +93,7 @@ export const TitleBar: React.FC<Props> = props => {
       {isMaximized
         ? <TitleBarButton icon="&#xE902;" onClick={restore} className="restore" />
         : null}
-      <TitleBarButton icon="&#xE900;" onClick={handleClose} className="close" />
+      <TitleBarButton icon="&#xE900;" onClick={close} className="close" />
     </TitleBarWrapper>
   )
 }

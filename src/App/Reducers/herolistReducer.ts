@@ -6,6 +6,7 @@ import { adjust, any, deleteLookupWithKey, insert, lookup, sdelete } from "../..
 import { Record } from "../../Data/Record"
 import { fst, snd } from "../../Data/Tuple"
 import * as HerolistActions from "../Actions/HerolistActions"
+import { ReceiveInitialDataAction } from "../Actions/InitializationActions"
 import * as IOActions from "../Actions/IOActions"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { HeroModel, HeroModelL } from "../Models/Hero/HeroModel"
@@ -16,8 +17,11 @@ import { reduceReducersC } from "../Utilities/reduceReducers"
 import { UndoState } from "../Utilities/undo"
 import { heroReducer, toHeroWithHistory } from "./heroReducer"
 
-type Action = IOActions.ReceiveInitialDataAction
+type Action = ReceiveInitialDataAction
             | IOActions.ReceiveImportedHeroAction
+            | IOActions.ReceiveAllHeroesSaveAction
+            | IOActions.ReceiveHeroSaveAction
+            | IOActions.ReceiveDeleteHeroAction
             | HerolistActions.CreateHeroAction
             | HerolistActions.LoadHeroAction
             | HerolistActions.SaveHeroAction
@@ -99,6 +103,20 @@ export const precedingHerolistReducer =
                     (adjust (set (composeL (heroReducer.L.present, HeroModelL.dateModified))
                                  (dateModified))
                             (id))
+      }
+
+      case ActionTypes.RECEIVE_HERO_SAVE: {
+        const { id, updatedHero } = action.payload
+
+        return over (HeroesStateL.heroes)
+                    (insert (id) (updatedHero))
+      }
+
+      case ActionTypes.RECEIVE_ALL_HEROES_SAVE:
+      case ActionTypes.RECEIVE_DELETE_HERO: {
+        const { updatedHeroes } = action.payload
+
+        return set (HeroesStateL.heroes) (updatedHeroes)
       }
 
       default:

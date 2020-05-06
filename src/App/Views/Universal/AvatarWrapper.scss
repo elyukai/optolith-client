@@ -4,14 +4,15 @@
 	position: relative;
 
 	> .avatar {
-		@include size(100%);
+    width: 100%;
+    height: 100%;
 	}
 
 	&::after {
 		content: "";
 		position: absolute;
-		@include calc(width, "100% + 8px");
-		@include calc(height, "100% + 8px");
+		width: calc(100% + 8px);
+		height: calc(100% + 8px);
 		border: 1px solid var(--accent-color);
 		border-radius: 50%;
 		top: -5px;

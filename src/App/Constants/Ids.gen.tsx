@@ -6,17 +6,95 @@
 const IdsBS = require('./Ids.bs');
 
 // tslint:disable-next-line:interface-over-type-literal
+export type id = 
+    { tag: "ExperienceLevel"; value: number }
+  | { tag: "Race"; value: number }
+  | { tag: "Culture"; value: number }
+  | { tag: "Profession"; value: number }
+  | { tag: "Attribute"; value: number }
+  | { tag: "Advantage"; value: number }
+  | { tag: "Disadvantage"; value: number }
+  | { tag: "Skill"; value: number }
+  | { tag: "CombatTechnique"; value: number }
+  | { tag: "Spell"; value: number }
+  | { tag: "Curse"; value: number }
+  | { tag: "ElvenMagicalSong"; value: number }
+  | { tag: "DominationRitual"; value: number }
+  | { tag: "MagicalMelody"; value: number }
+  | { tag: "MagicalDance"; value: number }
+  | { tag: "RogueSpell"; value: number }
+  | { tag: "AnimistForce"; value: number }
+  | { tag: "GeodeRitual"; value: number }
+  | { tag: "ZibiljaRitual"; value: number }
+  | { tag: "Cantrip"; value: number }
+  | { tag: "LiturgicalChant"; value: number }
+  | { tag: "Blessing"; value: number }
+  | { tag: "SpecialAbility"; value: number }
+  | { tag: "Item"; value: number }
+  | { tag: "EquipmentPackage"; value: number }
+  | { tag: "HitZoneArmor"; value: number }
+  | { tag: "Familiar"; value: number }
+  | { tag: "Animal"; value: number }
+  | { tag: "FocusRule"; value: number }
+  | { tag: "OptionalRule"; value: number }
+  | { tag: "Condition"; value: number }
+  | { tag: "State"; value: number };
+export type Id = id;
+
+// tslint:disable-next-line:interface-over-type-literal
+export type activatableId = 
+    { tag: "Advantage"; value: number }
+  | { tag: "Disadvantage"; value: number }
+  | { tag: "SpecialAbility"; value: number };
+export type ActivatableId = activatableId;
+
+// tslint:disable-next-line:interface-over-type-literal
+export type activatableAndSkillId = 
+    { tag: "Advantage"; value: number }
+  | { tag: "Disadvantage"; value: number }
+  | { tag: "SpecialAbility"; value: number }
+  | { tag: "Spell"; value: number }
+  | { tag: "LiturgicalChant"; value: number };
+export type ActivatableAndSkillId = activatableAndSkillId;
+
+// tslint:disable-next-line:interface-over-type-literal
+export type activatableSkillId = 
+    { tag: "Spell"; value: number }
+  | { tag: "LiturgicalChant"; value: number };
+export type ActivatableSkillId = activatableSkillId;
+
+// tslint:disable-next-line:interface-over-type-literal
+export type skillId = 
+    { tag: "Skill"; value: number }
+  | { tag: "CombatTechnique"; value: number };
+export type SkillId = skillId;
+
+// tslint:disable-next-line:interface-over-type-literal
 export type selectOptionId = 
-    { tag: "Numeric"; value: number }
-  | { tag: "Skill"; value: string }
-  | { tag: "CombatTechnique"; value: string };
-export type SID = selectOptionId;
+    { tag: "Generic"; value: number }
+  | { tag: "Skill"; value: number }
+  | { tag: "CombatTechnique"; value: number }
+  | { tag: "Spell"; value: number }
+  | { tag: "Cantrip"; value: number }
+  | { tag: "LiturgicalChant"; value: number }
+  | { tag: "Blessing"; value: number };
+export type SelectOptionId = selectOptionId;
 
-export const PhaseId_rcp: number = IdsBS.PhaseId.rcp;
+// tslint:disable-next-line:interface-over-type-literal
+export type hitZoneArmorZoneItemId = 
+    { tag: "Template"; value: number }
+  | { tag: "Custom"; value: number };
+export type HitZoneArmorZoneItemId = hitZoneArmorZoneItemId;
 
-export const PhaseId_creation: number = IdsBS.PhaseId.creation;
+// tslint:disable-next-line:interface-over-type-literal
+export type Phase_t = "Outline" | "Definition" | "Advancement";
+export type Phase = Phase_t;
 
-export const PhaseId_inGame: number = IdsBS.PhaseId.inGame;
+export const Phase_rcp: number = IdsBS.Phase.rcp;
+
+export const Phase_creation: number = IdsBS.Phase.creation;
+
+export const Phase_inGame: number = IdsBS.Phase.inGame;
 
 export const ExperienceLevelId_inexperienced: string = IdsBS.ExperienceLevelId.inexperienced;
 
@@ -366,7 +444,7 @@ export const SpecialAbilityId_combatReflexes: string = IdsBS.SpecialAbilityId.co
 
 export const SpecialAbilityId_improvedDodge: string = IdsBS.SpecialAbilityId.improvedDodge;
 
-export const SpecialAbilityId_traditionGuildMages: string = IdsBS.SpecialAbilityId.traditionGuildMages;
+export const SpecialAbilityId_traditionGuildMages: number = IdsBS.SpecialAbilityId.traditionGuildMages;
 
 export const SpecialAbilityId_propertyKnowledge: string = IdsBS.SpecialAbilityId.propertyKnowledge;
 
@@ -398,7 +476,7 @@ export const SpecialAbilityId_traditionElves: string = IdsBS.SpecialAbilityId.tr
 
 export const SpecialAbilityId_traditionDruids: string = IdsBS.SpecialAbilityId.traditionDruids;
 
-export const SpecialAbilityId_spellEnhancement: string = IdsBS.SpecialAbilityId.spellEnhancement;
+export const SpecialAbilityId_spellEnhancement: number = IdsBS.SpecialAbilityId.spellEnhancement;
 
 export const SpecialAbilityId_forschungsgebiet: string = IdsBS.SpecialAbilityId.forschungsgebiet;
 
@@ -440,7 +518,7 @@ export const SpecialAbilityId_anhaengerDesGueldenen: string = IdsBS.SpecialAbili
 
 export const SpecialAbilityId_gebieterDesAspekts: string = IdsBS.SpecialAbilityId.gebieterDesAspekts;
 
-export const SpecialAbilityId_chantEnhancement: string = IdsBS.SpecialAbilityId.chantEnhancement;
+export const SpecialAbilityId_chantEnhancement: number = IdsBS.SpecialAbilityId.chantEnhancement;
 
 export const SpecialAbilityId_dunklesAbbildDerBuendnisgabe: string = IdsBS.SpecialAbilityId.dunklesAbbildDerBuendnisgabe;
 
@@ -558,6 +636,10 @@ export const OptionalRuleId_languageSpecialization: string = IdsBS.OptionalRuleI
 
 export const OptionalRuleId_higherDefenseStats: string = IdsBS.OptionalRuleId.higherDefenseStats;
 
+export const ConditionId_sikaryanVerlust: string = IdsBS.ConditionId.sikaryanVerlust;
+
+export const ConditionId_daemonischeAuszehrung: string = IdsBS.ConditionId.daemonischeAuszehrung;
+
 export const ExperienceLevelId: {
   masterly: string; 
   inexperienced: string; 
@@ -651,6 +733,12 @@ export const CultureId: {
   steppenelfen: string
 } = IdsBS.CultureId
 
+export const Phase: {
+  creation: number; 
+  inGame: number; 
+  rcp: number
+} = IdsBS.Phase
+
 export const AdvantageId: {
   luck: string; 
   exceptionalSkill: string; 
@@ -681,12 +769,6 @@ export const AdvantageId: {
   increasedToughness: string; 
   magicalAttunement: string
 } = IdsBS.AdvantageId
-
-export const PhaseId: {
-  creation: number; 
-  inGame: number; 
-  rcp: number
-} = IdsBS.PhaseId
 
 export const CombatTechniqueId: {
   discuses: string; 
@@ -747,6 +829,8 @@ export const DisadvantageId: {
   personalityFlaw: string
 } = IdsBS.DisadvantageId
 
+export const ConditionId: { sikaryanVerlust: string; daemonischeAuszehrung: string } = IdsBS.ConditionId
+
 export const RaceId: {
   humans: string; 
   elves: string; 
@@ -776,7 +860,7 @@ export const SpecialAbilityId: {
   visionDerBestimmung: string; 
   visionDerEntrueckung: string; 
   languageSpecializations: string; 
-  chantEnhancement: string; 
+  chantEnhancement: number; 
   traditionChurchOfPhex: string; 
   traditionChurchOfFirun: string; 
   traditionChurchOfNandus: string; 
@@ -794,7 +878,7 @@ export const SpecialAbilityId: {
   recherchegespuer: string; 
   visionDerGottheit: string; 
   traditionChurchOfBoron: string; 
-  traditionGuildMages: string; 
+  traditionGuildMages: number; 
   traditionGeoden: string; 
   dunklesAbbildDerBuendnisgabe: string; 
   grosseMeditation: string; 
@@ -853,7 +937,7 @@ export const SpecialAbilityId: {
   improvedDodge: string; 
   traditionQabalyaMage: string; 
   aspectKnowledge: string; 
-  spellEnhancement: string; 
+  spellEnhancement: number; 
   traditionSchelme: string; 
   predigtDerZuversicht: string; 
   traditionChurchOfTsa: string; 

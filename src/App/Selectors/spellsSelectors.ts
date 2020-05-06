@@ -11,8 +11,7 @@ import { Record } from "../../Data/Record"
 import { fst, snd } from "../../Data/Tuple"
 import { uncurryN, uncurryN3, uncurryN4, uncurryN5 } from "../../Data/Tuple/Curry"
 import { MagicalGroup } from "../Constants/Groups"
-import { PhaseId } from "../Constants/Ids.bs"
-import { AdvantageId, SpecialAbilityId } from "../Constants/Ids.gen"
+import { AdvantageId, Phase, SpecialAbilityId } from "../Constants/Ids.gen"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
 import { HeroModel } from "../Models/Hero/HeroModel"
@@ -28,6 +27,7 @@ import { getMagicalTraditionsHeroEntries } from "../Utilities/Activatable/tradit
 import { composeL } from "../Utilities/compose"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
+import { prefixSA } from "../Utilities/IDUtils"
 import { getInactiveSpellsForAnimist, getInactiveSpellsForArcaneBardOrDancer, getInactiveSpellsForIntuitiveMages, getInactiveSpellsForOtherTradition, getInactiveSpellsForSchelme, isIdInSpecialAbilityList, isSpellDecreasable, isSpellIncreasable, isSpellsRitualsCountMaxReached, isUnfamiliarSpell } from "../Utilities/Increasable/spellUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { filterByAvailability } from "../Utilities/RulesUtils"
@@ -215,7 +215,7 @@ const isUnfamiliarSpellsActivationDisabled = createMaybeSelector (
   getPhase,
   getUnfamiliarSpellsCount,
   getStartEl,
-  uncurryN3 (phase => count => phase > PhaseId.creation
+  uncurryN3 (phase => count => phase > Phase.creation
                                ? cnst (false)
                                : maybe (false)
                                        (pipe (ELA.maxUnfamiliarSpells, lte (count))))
@@ -394,7 +394,7 @@ export const getAllSpellsForManualGuildMageSelect = createMaybeSelector (
   getRuleBooksEnabled,
   getWikiSpecialAbilities,
   uncurryN3 (staticData => av => pipe (
-                             lookup<string> (SpecialAbilityId.traditionGuildMages),
+                             lookup (prefixSA (SpecialAbilityId.traditionGuildMages)),
                              bindF (SAA.select),
                              fmap (pipe (
                                filterByAvailability (SOA.src) (av),

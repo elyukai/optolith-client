@@ -1,4 +1,3 @@
-@import "bourbon/bourbon";
 @import "Variables";
 
 @import "Fonts";
@@ -18,10 +17,10 @@
 }
 
 a {
-	color: $link-color1;
+	color: var(--link);
 
 	&:hover {
-		color: $link-color2;
+		color: var(--link-hover);
 	}
 }
 

@@ -57,7 +57,6 @@ export const SkillSpecializationSelectionApplications: React.FC<Props> = props =
              hint={input}
              value={snd (active)}
              onChange={setApplicationString}
-             everyKeyDown
              />
          )),
     maybeToNullable

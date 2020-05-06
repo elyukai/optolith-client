@@ -72,15 +72,15 @@ const toPV : YamlPairConverterE<ProfessionVariantUniv, ProfessionVariantL10n, st
                  name: toNameBySex (l10n.name),
                  ap: univ.cost,
                  dependencies: catMaybes (List<Maybe<ProfessionDependency>> (
-                   univ.sexPrerequisite === undefined
+                   univ.sexDependency === undefined
                      ? Nothing
-                     : Just (toSexPrerequisite (univ.sexPrerequisite)),
-                   univ.racePrerequisite === undefined
+                     : Just (toSexPrerequisite (univ.sexDependency)),
+                   univ.raceDependency === undefined
                      ? Nothing
-                     : Just (toRacePrerequisite (univ.racePrerequisite)),
-                   univ.culturePrerequisite === undefined
+                     : Just (toRacePrerequisite (univ.raceDependency)),
+                   univ.cultureDependency === undefined
                      ? Nothing
-                     : Just (toCulturePrerequisite (univ.culturePrerequisite))
+                     : Just (toCulturePrerequisite (univ.cultureDependency))
                  )),
                  prerequisites: List<ProfessionPrerequisite> (
                    ...(univ.activatablePrerequisites === undefined

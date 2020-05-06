@@ -12,6 +12,8 @@ module Functor = {
     | Just(x) => x->f->Just
     | Nothing => Nothing
     };
+
+  let (<&>) = (mx, f) => f <$> mx;
 };
 
 module Applicative = {
@@ -159,6 +161,18 @@ module Semigroup = {
     };
 };
 
+let isJust = m =>
+  switch (m) {
+  | Just(_) => true
+  | Nothing => false
+  };
+
+let isNothing = m =>
+  switch (m) {
+  | Just(_) => false
+  | Nothing => true
+  };
+
 let fromMaybe = (def, mx) =>
   switch (mx) {
   | Just(x) => x
@@ -196,3 +210,5 @@ let optionToMaybe = mx =>
   | Some(x) => Just(x)
   | None => Nothing
   };
+
+let ensure = (pred, x) => pred(x) ? Just(x) : Nothing;

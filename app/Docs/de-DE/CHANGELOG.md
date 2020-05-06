@@ -1,3 +1,41 @@
+## 1.3.2
+
+### Fehlerbehebungen
+
+- SF Wege der Gelehrten: Es fehlten einige Auswahlmöglichkeiten. #517
+- Neue Kampftechniken aus Büchern abseits des Regelwerks fehlten im Kampftechniken-Tab. #543
+- Die Beschreibung der Kampftechnikauswahl bei Professionsvarianten wurde nicht richtig angezeigt.
+- Die Sozialstatusvoraussetzung für *Herrschaftsanspruch* funktionierte nicht.
+- Profession *Lanisto*: Die Fertigkeitsspezialisierung galt für das falsche Talent.
+- Professionen haben ihre Abhängigkeiten nicht beachtet.
+- In den persönlichen Daten hatte das Textfeld „Titel“ die falsche Beschriftung.
+- Falsche Volumenangaben in der Effektbeschreibung des Zaubers *Manifesto*.
+- Profession *Hazaqi*: *Steinbearbeitung* 4 ist jetzt *Stoffbearbeiung* 4.
+- Berufsgeheimnisse aus der *Rüstkammer der Streitenden Königreiche* fehlten. #474
+- SF *Bindung des Bannschwerts* hatte keine Kosten. #490
+- *Götter & Kulte* war bei den meisten Geweihtenprofessionen auf FW 6. #475
+- Auf dem PDF wurde die Zustand/Status-Tabelle abgeschnitten, was aber nicht in der PDF-Vorschaut in Optolith der Fall war. #473
+- SF *Waldritter-Stil* war nicht wählbar. #478
+- SF *Angetäuschter Angriff* hatte als Voraussetzung KK 15 statt GE 15. #481
+- Die `config.json` hat immer noch bei vielen Fehler geworfen. Das Problem sollte nun endgültig gebannt sein. #476
+- In sehr seltenen Fällen wurden Teile der Heldendatei oder die gesamte Heldendatei gelöscht. Das Schreiben von Heldendateien wurde daher komplett neu geschrieben und zusammengefasst, um weiteren Fehlern vorzubeugen. #477
+- Fehlenden Garethi-Dialekt *Nostrisch* hinzugefügt. #480
+- SF Kraftkontrolle hatte als Voraussetzung statt Leiteigenschaft 15 Leiteigenschaft 13. #471
+- Fehler bei Drittanbieterlizenzen behoben. #471
+- Typo im Namen des Hardas-Stils korrigiert. #469
+
+### Bekannte Fehler
+
+- Einige Einträge, die komplexere Voraussetzungen haben, können diese Voraussetzungen falsch *anzeigen*, sie aber trotzdem richtig *verwenden*.
+
+## 1.3.1
+
+### Fehlerbehebungen
+
+- In der französischen Version fehlten alle Einträge, die zur Heldenerschaffung nötig sind (Spezies etc.). Sie waren vorhanden, wurden aber nicht in der Liste angezeigt. #449
+- Es gab Fehler, weil die Config unbekannte Keys hatte, wodurch Optolith nicht startete. #450
+- Auf dem Heldenbogen wurden Status nur in einer Spalte dargestellt, wenn es eine gerade Anzahl war. #448
+
 ## 1.3.0
 
 ### Neue Features

@@ -1,5 +1,5 @@
 import { fmap } from "../../../Data/Functor"
-import { over, set } from "../../../Data/Lens"
+import { over } from "../../../Data/Lens"
 import { fromMaybe, Maybe } from "../../../Data/Maybe"
 import { dec, inc } from "../../../Data/Num"
 import { Record } from "../../../Data/Record"
@@ -14,14 +14,6 @@ import { Skill } from "../../Models/Wiki/Skill"
 import { IncreasableEntry } from "../../Models/Wiki/wikiTypeHelpers"
 import { getMissingAP } from "../AdventurePoints/adventurePointsUtils"
 import { getAPForInc } from "../IC.gen"
-
-export const setPoints =
-  <T extends ValueBasedDependent> (instance: T) => (x: number): T =>
-    isAttributeDependent (instance)
-    ? set (AttributeDependentL.value) (x) (instance) as T
-    : isActivatableSkillDependent (instance)
-    ? set (ActivatableSkillDependentL.value) (x) (instance) as T
-    : set (SkillDependentL.value) (x) (instance as Record<SkillDependent>) as T
 
 export const addPoint =
   <T extends ValueBasedDependent>(instance: T): T =>

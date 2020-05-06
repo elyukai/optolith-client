@@ -41,7 +41,11 @@ export const createDirectory: (path: FilePath) => Promise<void> =
  * all parent directories if they are missing.
  */
 export const createDirectoryIfMissing: (parents: boolean) => (path: FilePath) => Promise<void> =
-  recursive => async path => fs .promises .mkdir (path, { recursive })
+  recursive => async path => {
+    await fs .promises .mkdir (path, { recursive })
+
+    return undefined
+  }
 
 /**
  * ```haskell

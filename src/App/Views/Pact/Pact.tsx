@@ -22,7 +22,7 @@ import { misNumberM, misStringM } from "../../Utilities/typeCheckUtils"
 import { Checkbox } from "../Universal/Checkbox"
 import { Dropdown } from "../Universal/Dropdown"
 import { Page } from "../Universal/Page"
-import { TextField } from "../Universal/TextField"
+import { TextFieldLazy } from "../Universal/TextFieldLazy"
 
 const SDA = StaticData.A
 const PA = Pact.A
@@ -236,7 +236,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
               }
               />
           )}
-        <TextField
+        <TextFieldLazy
           label={`${translate (staticData) ("pacts.domain")} (${translate (staticData) ("pacts.userdefined")})`}
           hint={pipe_ (
             bind (mpact) (pipe (Pact.A.domain, ensure (isNumber))),
@@ -258,7 +258,7 @@ export const PactSettings: React.FC<PactSettingsProps> = props => {
             || maybe (false) (pipe (Pact.A.category, equals (2))) (mpact)
           }
           />
-        <TextField
+        <TextFieldLazy
           label={translate (staticData) ("pacts.name")}
           onChange={setTargetName}
           value={maybeToUndefined (fmapF (mpact) (Pact.A.name))}

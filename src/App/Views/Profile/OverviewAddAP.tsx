@@ -63,7 +63,6 @@ export const OverviewAddAP: React.FC<OverviewAddAPProps> = props => {
         onChange={setValue}
         fullWidth
         valid={isRemovingEnabled ? isInteger (value) : isNaturalNumber (value) && value !== "0"}
-        everyKeyDown
         />
     </Dialog>
   )

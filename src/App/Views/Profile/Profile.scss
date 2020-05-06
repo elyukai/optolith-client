@@ -1,116 +1,119 @@
 #personal-data {
-	.title-wrapper {
-		margin-top: 11px;
-		display: flex;
-		align-items: center;
+  .title-wrapper {
+    margin-top: 11px;
+    display: flex;
+    align-items: center;
 
-		.avatar-wrapper {
-			flex: 1 0 auto;
-			border-width: 4px;
-			@include size(150px);
+    .avatar-wrapper {
+      flex: 1 0 auto;
+      border-width: 4px;
+      width: 150px;
+      height: 150px;
 
-			&:hover {
-				cursor: pointer;
+      &:hover {
+        cursor: pointer;
 
-				.avatar {
-					box-shadow: 0 0 0 71px var(--separator-color-transparent) inset;
+        .avatar {
+          box-shadow: 0 0 0 71px var(--separator-color-transparent) inset;
 
-					&::after {
-						display: block;
-					}
-				}
-			}
+          &::after {
+            display: block;
+          }
+        }
+      }
 
-			&:not(.no-avatar) .avatar::after {
-				top: 43px;
-				left: 43px;
-			}
-		}
+      &:not(.no-avatar) .avatar::after {
+        top: 43px;
+        left: 43px;
+      }
+    }
 
-		.avatar::after {
-			position: absolute;
-			top: 39px;
-			left: 39px;
-			display: none;
-			content: "\E91a";
-			@include size(64px);
-			font: 64px/64px TDE Heroes;
-			color: var(--headings-color);
-			text-align: center;
-		}
+    .avatar::after {
+      position: absolute;
+      top: 39px;
+      left: 39px;
+      display: none;
+      content: "\E91a";
+      width: 64px;
+      height: 64px;
+      font: 64px/64px TDE Heroes;
+      color: var(--headings-color);
+      text-align: center;
+    }
 
-		.text-wrapper {
-			flex: 1 1 100%;
-			margin-left: 26px;
+    .text-wrapper {
+      flex: 1 1 100%;
+      margin-left: 26px;
 
-			$size: 38px;
+      --size: 38px;
 
-			> h1 {
-				margin: 0;
-				font: 400 #{$size}/#{$size} Alegreya Sans;
-				letter-spacing: 0.025em;
-				color: var(--headings-color);
-			}
+      > h1 {
+        margin: 0;
+        font: 400 var(--size)/var(--size) Alegreya Sans;
+        letter-spacing: 0.025em;
+        color: var(--headings-color);
+      }
 
-			> h1, > div.change-name {
-				height: $size;
-			}
+      > h1, > div.change-name {
+        height: var(--size);
+      }
 
-			> div:not(.change-name) {
-				margin: 4px 0 0;
+      > div:not(.change-name) {
+        margin: 4px 0 0;
 
-				span:last-child {
-					font-weight: 500;
-				}
-			}
-		}
-	}
+        span:last-child {
+          font-weight: 500;
+        }
+      }
+    }
+  }
 
-	.main-profile-actions {
-		display: flex;
-		margin-top: 20px;
+  .main-profile-actions {
+    display: flex;
+    margin-top: 20px;
 
-		> div {
-			margin: 0 10px 0 0;
-		}
-	}
+    > div {
+      margin: 0 10px 0 0;
+    }
+  }
 
-	.add-ap {
-		margin-top: 20px;
-	}
+  .add-ap {
+    margin-top: 20px;
+  }
 
-	.personal-data {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
-		margin-top: 10px;
+  .personal-data {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+    margin-top: 10px;
 
-		> div {
-			display: flex;
-			margin-right: 22px;
-			margin-bottom: 10px;
-			align-items: flex-end;
+    > div {
+      display: flex;
+      margin-right: 22px;
+      margin-bottom: 10px;
+      align-items: flex-end;
 
-			&:not(.btn-group) {
-				padding-right: 43px;
-			}
+      &:not(.btn-group) {
+        padding-right: 43px;
+      }
 
-			> .textfield, > .dropdown {
-				width: 100%;
-			}
+      > .textfield, > .dropdown {
+        width: 100%;
+      }
 
-			> .btn {
-				flex: none;
-			}
-		}
-	}
+      > .btn {
+        flex: none;
+      }
+    }
+  }
 
-	.end-char-creation, .delete-char {
-		margin-top: 20px;
-	}
+  .end-char-creation, .delete-char {
+    margin-top: 20px;
+  }
 }
 
 #profileavatarchange {
-	.avatar-wrapper {
-		@include size(64px);
-	}
+  .avatar-wrapper {
+    width: 64px;
+    height: 64px;
+  }
 }

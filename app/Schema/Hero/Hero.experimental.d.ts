@@ -10,17 +10,17 @@ export interface RawHero {
   name: string
 
   /**
-   * The client version the hero was created with.
+   * The date of creation.
    */
   dateCreated: string
 
   /**
-   * The date of creation.
+   * The date of last modification.
    */
   dateModified: string
 
   /**
-   * The date of last modification.
+   * The client version the hero was created with.
    */
   clientVersion: string
 
@@ -119,11 +119,6 @@ export interface RawHero {
    * `3` after hero creation.
    */
   phase: number
-
-  /**
-   * The selected experience level's ID.
-   */
-  el: string
 
   /**
    * Personal Data

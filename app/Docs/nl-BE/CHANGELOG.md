@@ -1,3 +1,30 @@
+## 1.3.2
+
+### Probleemoplossingen
+
+- Beschrijving van gevechtstechnieken selectie voor beroepsvarianten wordt niet correct getoond. #539
+- Beroepen reageerden niet correct op vereisten. #507
+- Het tekstveld "Titel" in de persoonlijk data had een verkeerd label. #492
+- *Goden & Kulten* was 6 voor de meeste Gewijde beroepen. #475
+- Statussen waren te lang op je helden dokument PDF maar niet in Optolith. #473
+- De `config.json` had nog altijd fouten voor veel gebruikers. Het probleem zou eindelijk opgelost moeten zijn. #476
+- In hele zeldzame situaties werd de helden file geheel of gedeeltelijk verwijderd. Het saven van helden is geheel herschreven en compacter gemaakt om verdere problemen te voorkomen. #477
+- Voeg het ontbrekende Garethi dialect *Nostrian* toe. #480
+- Vereisten van de Competentie Energie Controle zijn aangepast. #471
+- Derde parij licenties zijn aangepast. #471
+
+### Bekende problemen
+
+- Sommige elementen met complexe vereisten worden verkeerd getoont maar wel correct behandeld.
+
+## 1.3.1
+
+### Probleemoplossingen
+
+- In de franse versie kon je geen helden maken, want je kon geen publicaties, ras, ... kiezen #449
+- Er werd een error gemeld voor "unknown keys" in de config. #450
+- Op je helden document werden staten enkel getoond in een enkele kolom als het aantal staten even was. #448
+
 ## 1.3.0
 
 ### Nieuwe features

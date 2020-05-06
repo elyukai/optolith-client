@@ -1,7 +1,8 @@
 export interface RawConfig {
-  herolistSortOrder: "name" | "dateModified"
+  herolistSortOrder: "name" | "datemodified" | "dateModified"
   herolistVisibilityFilter: "all" | "own" | "shared"
   racesSortOrder: "name" | "cost"
+  racesValueVisibility?: boolean
   culturesSortOrder: "name" | "cost"
   culturesVisibilityFilter: "all" | "common"
   culturesValueVisibility?: boolean

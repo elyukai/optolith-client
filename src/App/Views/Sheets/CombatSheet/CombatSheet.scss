@@ -37,7 +37,7 @@
       }
 
       &.primary, &.ic {
-        font: 11px/1 Alegreya SC;
+        font: 11px/1 "Alegreya SC";
       }
 
       &.at {
@@ -324,7 +324,7 @@
         border-bottom: 0.3mm solid grey;
 
         h4 {
-          font: bold 13px/4.5mm Alegreya SC;
+          font: bold 13px/4.5mm "Alegreya SC";
           letter-spacing: 0;
           text-transform: none;
           color: black;
@@ -345,7 +345,7 @@
         }
 
         > div > div {
-          border: 0.45mm solid black;
+          border: 0.75pt solid black;
           height: 100%;
           width: 100%;
           background-color: white;

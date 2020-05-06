@@ -190,7 +190,8 @@
 					margin-right: -3mm;
 
 					> div {
-						@include size(8mm);
+            width: 8mm;
+            height: 8mm;
 						border: 0.3mm solid black;
 						font: 21px/7.4mm Alegreya Sans;
 						text-align: center;

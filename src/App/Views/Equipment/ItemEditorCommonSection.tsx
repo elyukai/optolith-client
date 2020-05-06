@@ -1,6 +1,6 @@
 import * as React from "react"
 import { consF, filter, List, map } from "../../../Data/List"
-import { any, isJust, isNothing, Just, Maybe, maybeToUndefined } from "../../../Data/Maybe"
+import { any, isJust, isNothing, Just, Maybe, maybeToUndefined, or } from "../../../Data/Maybe"
 import { lt } from "../../../Data/Num"
 import { elems } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
@@ -104,17 +104,15 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
             value={EIA.amount (item)}
             onChange={setAmount}
             valid={IEIVA.amount (inputValidation)}
-            everyKeyDown
             />
           <TextField
             className="name"
             label={translate (staticData) ("equipment.dialogs.addedit.name")}
             value={EIA.name (item)}
             onChange={setName}
-            autoFocus={isInCreation}
+            autoFocus={or (isInCreation)}
             disabled={locked}
             valid={IEIVA.name (inputValidation)}
-            everyKeyDown
             />
         </div>
         <div className="row">
@@ -125,7 +123,6 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
             onChange={setPrice}
             disabled={locked}
             valid={IEIVA.price (inputValidation)}
-            everyKeyDown
             />
           <TextField
             className="weight"
@@ -134,14 +131,12 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
             onChange={setWeight}
             disabled={locked}
             valid={IEIVA.weight (inputValidation)}
-            everyKeyDown
             />
           <TextField
             className="where"
             label={translate (staticData) ("equipment.dialogs.addedit.carriedwhere")}
             value={maybeToUndefined (EIA.where (item))}
             onChange={setWhere}
-            everyKeyDown
             />
         </div>
         <div className="row">

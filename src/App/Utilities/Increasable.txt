@@ -1,0 +1,1530 @@
+module Attributes = {
+  open Maybe;
+  open Hero.Attribute;
+
+  /**
+   * Takes an attribute's hero entry that might not exist and returns the value
+   * of that attribute. Note: If the attribute is not yet defined, it's value is
+   * `8`.
+   */
+  let getValueDef = maybe(8, x => x.value);
+
+  /**
+   * Takes a skill check's attribute triple and returns it's values.
+   */
+  let getSkillCheckValues = (mp, (a1, a2, a3)) => (
+    IntMap.lookup(a1, mp) |> getValueDef,
+    IntMap.lookup(a2, mp) |> getValueDef,
+    IntMap.lookup(a3, mp) |> getValueDef,
+  );
+};
+
+module Skills = {
+  open Maybe;
+  open Hero.Activatable;
+
+  let getExceptionalSkillBonus = (exceptionalSkill, id) =>
+    maybe(
+      0,
+      (x: Hero.Activatable.t) =>
+        x.active
+        |> ListH.countBy(a =>
+             a.options |> listToMaybe |> Maybe.Foldable.elem(`Skill(id))
+           ),
+      exceptionalSkill,
+    );
+  //
+  //
+  // /**
+  //  * Creates the base for a list for calculating the maximum of a skill based on
+  //  * the skill check's atrributes' values.
+  //  */
+  // export const getMaxSRByCheckAttrs = (attrs : HeroModel["attributes"]) =>
+  //                                     (wiki_entry : EntryWithCheck) : number =>
+  //                                       pipe_ (
+  //                                         wiki_entry,
+  //                                         SAL.check,
+  //                                         getSkillCheckValues (attrs),
+  //                                         consF (8),
+  //                                         maximum,
+  //                                         add (2)
+  //                                       )
+  //
+  //
+  // /**
+  //  * Adds the maximum skill rating defined by the chosen experience level to the
+  //  * list created by `getInitialMaximumList` if the hero is in character creation
+  //  * phase.
+  //  */
+  // export const getMaxSRFromEL = (startEL : Record<ExperienceLevel>) =>
+  //                               (phase : number) : Maybe<number> =>
+  //                                 phase < 3 ? Just (ELA.maxSkillRating (startEL)) : Nothing
+  //
+  //
+  // /**
+  //  * Returns the maximum skill rating for the passed skill.
+  //  */
+  // export const getSkillMax = (startEL : Record<ExperienceLevel>) =>
+  //                           (phase : number) =>
+  //                           (attributes : OrderedMap<string, Record<AttributeDependent>>) =>
+  //                           (exceptionalSkill : Maybe<Record<ActivatableDependent>>) =>
+  //                           (wiki_entry : Record<Skill>) : number =>
+  //                             pipe_ (
+  //                               List (
+  //                                 Just (getMaxSRByCheckAttrs (attributes) (wiki_entry)),
+  //                                 getMaxSRFromEL (startEL) (phase)
+  //                               ),
+  //                               catMaybes,
+  //                               minimum,
+  //                               add (getExceptionalSkillBonus (exceptionalSkill)
+  //                                                             (SA.id (wiki_entry)))
+  //                             )
+  //
+  //
+  // /**
+  //  * Returns if the passed skill's skill rating can be increased.
+  //  */
+  // export const isSkillIncreasable = (startEL : Record<ExperienceLevel>) =>
+  //                                   (phase : number) =>
+  //                                   (attrs : OrderedMap<string, Record<AttributeDependent>>) =>
+  //                                   (exceptionalSkill : Maybe<Record<ActivatableDependent>>) =>
+  //                                   (entry : Record<SkillCombined>) : boolean =>
+  //                                     SCA_.value (entry) < getSkillMax (startEL)
+  //                                                                     (phase)
+  //                                                                     (attrs)
+  //                                                                     (exceptionalSkill)
+  //                                                                     (SCA.wikiEntry (entry))
+  //
+  //
+  // const getMinSRByCraftInstruments = (state : HeroModelRecord) =>
+  //                                   (entry : Record<SkillCombined>) : Maybe<number> => {
+  //                                     const id = SCA_.id (entry)
+  //                                     const { CraftInstruments } = SpecialAbilityId
+  //
+  //                                     if ((id === SkillId.Woodworking || id === SkillId.Metalworking)
+  //                                         && isMaybeActive (lookupF (HA.specialAbilities (state))
+  //                                                                   (CraftInstruments))) {
+  //                                       // Sum of Woodworking and Metalworking must be at least 12.
+  //                                       const MINIMUM_SUM = 12
+  //
+  //                                       const otherSkillId = id === SkillId.Woodworking
+  //                                                             ? SkillId.Metalworking
+  //                                                             : SkillId.Woodworking
+  //
+  //                                       const otherSkillRating = pipe_ (
+  //                                                                   state,
+  //                                                                   HA.skills,
+  //                                                                   lookup <string> (otherSkillId),
+  //                                                                   fmap (SDA.value),
+  //                                                                   sum
+  //                                                                 )
+  //
+  //                                       return Just (MINIMUM_SUM - otherSkillRating)
+  //                                     }
+  //
+  //                                     return Nothing
+  //                                   }
+  //
+  //
+  // /**
+  //  * Check if the dependencies allow the passed skill to be decreased.
+  //  */
+  // const getMinSRByDeps = (staticData : StaticDataRecord) =>
+  //                       (hero : HeroModelRecord) =>
+  //                       (entry : Record<SkillCombined>) : Maybe<number> =>
+  //                         pipe_ (
+  //                           entry,
+  //                           SCA_.dependencies,
+  //                           flattenDependencies (staticData) (hero),
+  //                           ensure (notNull),
+  //                           fmap (maximum)
+  //                         )
+  //
+  //
+  // /**
+  //  * Returns the minimum skill rating for the passed skill.
+  //  */
+  // export const getSkillMin = (staticData : StaticDataRecord) =>
+  //                           (hero : HeroModelRecord) =>
+  //                           (entry : Record<SkillCombined>) : Maybe<number> =>
+  //                             pipe_ (
+  //                               List (
+  //                                 getMinSRByDeps (staticData) (hero) (entry),
+  //                                 getMinSRByCraftInstruments (hero) (entry)
+  //                               ),
+  //                               catMaybes,
+  //                               ensure (notNull),
+  //                               fmap (maximum)
+  //                             )
+  //
+  //
+  // /**
+  //  * Returns if the passed skill's skill rating can be decreased.
+  //  */
+  // export const isSkillDecreasable = (staticData : StaticDataRecord) =>
+  //                                   (hero : HeroModelRecord) =>
+  //                                   (entry : Record<SkillCombined>) : boolean =>
+  //                                     SCA_.value (entry) > sum (getSkillMin (staticData)
+  //                                                                           (hero)
+  //                                                                           (entry))
+  //
+  //
+  // const hasSkillFrequencyRating = (category : EntryRating) =>
+  //                                 (rating : OrderedMap<string, EntryRating>) =>
+  //                                   pipe (
+  //                                     SA.id,
+  //                                     lookupF (rating),
+  //                                     elem <EntryRating> (category)
+  //                                   )
+  //
+  //
+  // /**
+  //  * Is the skill common in the hero's culture?
+  //  */
+  // export const isSkillCommon : (rating : OrderedMap<string, EntryRating>)
+  //                           => (wiki_entry : Record<Skill>)
+  //                           => boolean
+  //                           = hasSkillFrequencyRating (EntryRating.Common)
+  //
+  //
+  // /**
+  //  * Is the skill uncommon in the hero's culture?
+  //  */
+  // export const isSkillUncommon : (rating : OrderedMap<string, EntryRating>)
+  //                             => (wiki_entry : Record<Skill>)
+  //                             => boolean
+  //                             = hasSkillFrequencyRating (EntryRating.Uncommon)
+  //
+  //
+  // const ROUTINE_ATTR_THRESHOLD = 13
+  //
+  //
+  // /**
+  //  * Returns the total of missing attribute points for a routine check without
+  //  * using the optional rule for routine checks, because the minimum attribute
+  //  * value is 13 in that case.
+  //  */
+  // const getMissingPoints = (checkAttributeValues : List<number>) =>
+  //                           foldr ((attr : number) : ident<number> =>
+  //                                   attr < ROUTINE_ATTR_THRESHOLD
+  //                                   ? add (ROUTINE_ATTR_THRESHOLD - attr)
+  //                                   : ident)
+  //                                 (0)
+  //                                 (checkAttributeValues)
+  //
+  //
+  // /**
+  //  * Returns the minimum check modifier from which a routine check is possible
+  //  * without using the optional rule for routine checks.
+  //  */
+  // const getBaseMinCheckMod = (sr : number) => -Math.floor ((sr - 1) / 3) + 3
+  //
+  //
+  // /**
+  //  * Returns the minimum check modifier from which a routine check is possible for
+  //  * the passed skill rating. Returns `Nothing` if no routine check is possible,
+  //  * otherwise a `Just` of a pair, where the first value is the minimum check
+  //  * modifier and the second a boolean, where `True` states that the minimum check
+  //  * modifier is only valid when using the optional rule for routine checks, thus
+  //  * otherwise a routine check would not be possible.
+  //  */
+  // export const getMinCheckModForRoutine : (checkAttributeValues : List<number>)
+  //                                       => (skillRating : number)
+  //                                       => Maybe<Pair<number, boolean>>
+  //                                       = checkAttrValues =>
+  //                                         pipe (
+  //                                           // Routine checks do only work if the SR is larger than 0
+  //                                           ensure (gt (0)),
+  //                                           bindF (sr => {
+  //                                             const missingPoints = getMissingPoints (checkAttrValues)
+  //                                             const checkModThreshold = getBaseMinCheckMod (sr)
+  //
+  //                                             const dependentCheckMod = checkModThreshold
+  //                                                                       + missingPoints
+  //
+  //                                             return dependentCheckMod < 4
+  //                                               ? Just (Pair (dependentCheckMod, missingPoints > 0))
+  //                                               : Nothing
+  //                                           })
+  //                                         )
+};
+
+module CombatTechniques = {
+  // const getMaxPrimaryAttributeValueById =
+  //   (state: HeroModelRecord) =>
+  //     foldl<string, number> (currentMax => pipe (
+  //                             lookupF (HA.attributes (state)),
+  //                             maybe (currentMax) (pipe (ADA.value, max (currentMax)))
+  //                           ))
+  //                           (0)
+  //
+  // const calculatePrimaryAttributeMod = pipe (add (-8), divideBy (3), Math.floor, max (0))
+  //
+  // export const getPrimaryAttributeMod =
+  //   (state: HeroModelRecord) =>
+  //     pipe (getMaxPrimaryAttributeValueById (state), calculatePrimaryAttributeMod)
+  //
+  // const getCombatTechniqueRating = maybe (6) (SkDA.value)
+  //
+  // export const getAttack =
+  //   (state: HeroModelRecord) =>
+  //   (wikiEntry: Record<CombatTechnique>) =>
+  //     pipe (
+  //       getCombatTechniqueRating,
+  //       add (getPrimaryAttributeMod (state)
+  //                                   (CTA.gr (wikiEntry) === CombatTechniqueGroupId.Ranged
+  //                                     ? CTA.primary (wikiEntry)
+  //                                     : List (AttrId.Courage)))
+  //     )
+  //
+  // export const getParry =
+  //   (state: HeroModelRecord) =>
+  //   (wikiEntry: Record<CombatTechnique>) =>
+  //   (maybeStateEntry: Maybe<Record<SkillDependent>>): Maybe<number> =>
+  //     then (guard (CTA.gr (wikiEntry) !== CombatTechniqueGroupId.Ranged
+  //                 && CTA.id (wikiEntry) !== CombatTechniqueId.ChainWeapons
+  //                 && CTA.id (wikiEntry) !== CombatTechniqueId.Brawling))
+  //         (Just (
+  //           Math.round (getCombatTechniqueRating (maybeStateEntry) / 2)
+  //           + getPrimaryAttributeMod (state) (CTA.primary (wikiEntry))
+  //         ))
+  //
+  // export const isIncreaseDisabled =
+  //   (staticData: StaticDataRecord) =>
+  //   (state: HeroModelRecord) =>
+  //   (wikiEntry: Record<CombatTechnique>) =>
+  //   (instance: Record<SkillDependent>): boolean => {
+  //     const max_by_primary = getMaxPrimaryAttributeValueById (state) (CTA.primary (wikiEntry)) + 2
+  //
+  //     const mmax_by_el = then (guard (HA.phase (state) < 3))
+  //                             (fmap (ELA.maxCombatTechniqueRating)
+  //                                   (lookupF (SDA.experienceLevels (staticData))
+  //                                           (HA.experienceLevel (state))))
+  //
+  //     const base_max = maybe (max_by_primary) (min (max_by_primary)) (mmax_by_el)
+  //
+  //     const exceptionalSkill = lookupF (HA.advantages (state))
+  //                                     (AdvantageId.ExceptionalCombatTechnique)
+  //
+  //     const bonus = pipe (
+  //                         getActiveSelectionsMaybe,
+  //                         fmap (elem<string | number> (SkDA.id (instance))),
+  //                         Maybe.elem<boolean> (true),
+  //                         x => x ? 1 : 0
+  //                       )
+  //                       (exceptionalSkill)
+  //
+  //     return SkDA.value (instance) >= base_max + bonus
+  //   }
+  //
+  // export const isDecreaseDisabled =
+  //   (staticData: StaticDataRecord) =>
+  //   (state: HeroModelRecord) =>
+  //   (wikiEntry: Record<CombatTechnique>) =>
+  //   (instance: Record<SkillDependent>) =>
+  //   (onlyOneCombatTechniqueForHunter: boolean): boolean => {
+  //     const disabledByHunter =
+  //       onlyOneCombatTechniqueForHunter
+  //       && CTA.gr (wikiEntry) === 2
+  //       && SkDA.value (instance) === 10
+  //
+  //     return disabledByHunter
+  //       || SkDA.value (instance) <= maximum (cons (flattenDependencies (staticData)
+  //                                                                     (state)
+  //                                                                     (SkDA.dependencies (instance)))
+  //                                                 (6))
+  //   }
+};
+
+module Spells = {
+  // /**
+  //  * `isActiveTradition id xs` checks if `id` is a tradition contained in the list
+  //  * of active traditions `xs`.
+  //  */
+  // const isActiveTradition = (e : MagicalTradition) =>
+  //                             find (pipe (
+  //                                   SAA.id,
+  //                                   mapMagicalTradIdToNumId,
+  //                                   elem (e)
+  //                                 ))
+  //
+  //
+  // /**
+  //  * Checks if the passed spell or cantrip is valid for the current
+  //  * active magical traditions.
+  //  */
+  // export const isOwnTradition = (activeTradition : List<Record<SpecialAbility>>) =>
+  //                               (wiki_entry : Record<Spell> | Record<Cantrip>) : boolean =>
+  //                                 pipe (
+  //                                       SAL.tradition,
+  //                                       any (e => e === MagicalTradition.General
+  //                                                 || isJust (isActiveTradition (e)
+  //                                                                               (activeTradition)))
+  //                                     )
+  //                                     (wiki_entry)
+  //
+  //
+  // /**
+  //  * Returns the SR maximum if there is no property knowledge active for the passed
+  //  * spell.
+  //  */
+  // const getMaxSRFromPropertyKnowledge = (propertyKnowledge : Maybe<Record<ActivatableDependent>>) =>
+  //                                       (wiki_entry : Record<Spell>) : Maybe<number> =>
+  //                                         pipe_ (
+  //                                           propertyKnowledge,
+  //                                           getActiveSelectionsMaybe,
+  //                                           maybe (true)
+  //                                                 (notElem <string | number> (
+  //                                                   SA.property (wiki_entry)
+  //                                                 )),
+  //                                           hasRestriction => hasRestriction ? Just (14) : Nothing
+  //                                         )
+  //
+  //
+  // /**
+  //  * Returns the maximum skill rating for the passed spell.
+  //  */
+  // export const getSpellMax = (startEL : Record<ExperienceLevel>) =>
+  //                           (phase : number) =>
+  //                           (attributes : OrderedMap<string, Record<AttributeDependent>>) =>
+  //                           (exceptionalSkill : Maybe<Record<ActivatableDependent>>) =>
+  //                           (propertyKnowledge : Maybe<Record<ActivatableDependent>>) =>
+  //                           (wiki_entry : Record<Spell>) : number =>
+  //                             pipe_ (
+  //                               List (
+  //                                 Just (getMaxSRByCheckAttrs (attributes) (wiki_entry)),
+  //                                 getMaxSRFromEL (startEL) (phase),
+  //                                 getMaxSRFromPropertyKnowledge (propertyKnowledge) (wiki_entry)
+  //                               ),
+  //                               catMaybes,
+  //                               minimum,
+  //                               add (getExceptionalSkillBonus (exceptionalSkill)
+  //                                                             (SA.id (wiki_entry)))
+  //                             )
+  //
+  //
+  // /**
+  //  * Checks if the passed spell's skill rating can be increased.
+  //  */
+  // export const isSpellIncreasable = (startEL : Record<ExperienceLevel>) =>
+  //                                   (phase : number) =>
+  //                                   (attributes : HeroModel["attributes"]) =>
+  //                                   (exceptionalSkill : Maybe<Record<ActivatableDependent>>) =>
+  //                                   (propertyKnowledge : Maybe<Record<ActivatableDependent>>) =>
+  //                                   (wiki_entry : Record<Spell>) =>
+  //                                   (hero_entry : Record<ActivatableSkillDependent>) : boolean =>
+  //                                     ASDA.value (hero_entry) < getSpellMax (startEL)
+  //                                                                           (phase)
+  //                                                                           (attributes)
+  //                                                                           (exceptionalSkill)
+  //                                                                           (propertyKnowledge)
+  //                                                                           (wiki_entry)
+  //
+  //
+  // type SpellsAbove10ByProperty = OrderedMap<Property, number>
+  //
+  //
+  // /**
+  //  * Returns the lowest SR and it's occurences for every property. The values of
+  //  * the map are pairs where the first is the lowest SR and the second is the
+  //  * amount of spells at that exact SR.
+  //  */
+  // export const spellsAbove10ByProperty : (wiki_spells : StaticData["spells"])
+  //                                     => (hero_spells : HeroModel["spells"])
+  //                                     => SpellsAbove10ByProperty
+  //                                     = wiki_spells =>
+  //                                         pipe (
+  //                                           elems,
+  //                                           countWithByKeyMaybe (pipe (
+  //                                                                 ensure (ASDA.active),
+  //                                                                 Maybe.find (pipe (
+  //                                                                   ASDA.value,
+  //                                                                   gte (10)
+  //                                                                 )),
+  //                                                                 bindF (pipe (
+  //                                                                   ASDA.id,
+  //                                                                   lookupF (wiki_spells)
+  //                                                                 )),
+  //                                                                 fmap (SA.property)
+  //                                                               ))
+  //                                         )
+  //
+  //
+  // /**
+  //  * Check if the active property knowledges allow the passed spell to be
+  //  * decreased. (There must be at leased 3 spells of the respective property
+  //  * active.)
+  //  */
+  // const getMinSRFromPropertyKnowledge = (property_counter : SpellsAbove10ByProperty) =>
+  //                                       (active_property_knowledges : Maybe<List<string | number>>) =>
+  //                                       (wiki_entry : Record<Spell>) =>
+  //                                       (hero_entry : Record<ASD>) : Maybe<number> =>
+  //                                         pipe_ (
+  //                                           active_property_knowledges,
+  //
+  //                                           // Is spell part of dependencies of any active Property
+  //                                           // Knowledge?
+  //                                           bindF (pipe (
+  //                                             any (e => isNumber (e)
+  //                                                       && e === SA.property (wiki_entry)),
+  //                                             guard
+  //                                           )),
+  //
+  //                                           // If yes, check if spell is above 10 and if there are not
+  //                                           // enough spells above 10 to allow a decrease below 10
+  //                                           bindF (() => pipe_ (
+  //                                             property_counter,
+  //                                             lookup (SA.property (wiki_entry)),
+  //                                             bindF (count => ASDA.value (hero_entry) >= 10
+  //                                                             && count <= 3
+  //                                                             ? Just (10)
+  //                                                             : Nothing)
+  //                                           ))
+  //                                         )
+  //
+  //
+  // /**
+  //  * Check if the dependencies allow the passed spell to be decreased.
+  //  */
+  // const getMinSRByDeps = (static_data : StaticDataRecord) =>
+  //                       (hero : HeroModelRecord) =>
+  //                       (hero_entry : Record<ActivatableSkillDependent>) : Maybe<number> =>
+  //                         pipe_ (
+  //                           hero_entry,
+  //                           ASDA.dependencies,
+  //                           flattenDependencies (static_data) (hero),
+  //                           mapMaybe (x => typeof x === "boolean"
+  //                                           ? x ? Just (0) : Nothing
+  //                                           : Just (x)),
+  //                           ensure (notNull),
+  //                           fmap (maximum)
+  //                         )
+  //
+  //
+  // /**
+  //  * Returns the minimum skill rating for the passed skill.
+  //  */
+  // export const getSpellMin = (static_data : StaticDataRecord) =>
+  //                           (hero : HeroModelRecord) =>
+  //                           (property_knowledge : Maybe<Record<ActivatableDependent>>) => {
+  //                             const property_counter =
+  //                               spellsAbove10ByProperty (SDA.spells (static_data))
+  //                                                       (HA.spells (hero))
+  //
+  //                             const active_property_knowledges =
+  //                               getActiveSelectionsMaybe (property_knowledge)
+  //
+  //                             return (wiki_entry : Record<Spell>) =>
+  //                                     (hero_entry : Record<ASD>) : Maybe<number> =>
+  //                                       pipe_ (
+  //                                         List (
+  //                                           getMinSRByDeps (static_data) (hero) (hero_entry),
+  //                                           getMinSRFromPropertyKnowledge (property_counter)
+  //                                                                         (active_property_knowledges)
+  //                                                                         (wiki_entry)
+  //                                                                         (hero_entry)
+  //                                         ),
+  //                                         catMaybes,
+  //                                         ensure (notNull),
+  //                                         fmap (maximum)
+  //                                       )
+  //                           }
+  //
+  //
+  // /**
+  //  * Checks if the passed spell's skill rating can be decreased.
+  //  */
+  // export const isSpellDecreasable = (static_data : StaticDataRecord) =>
+  //                                   (hero : HeroModelRecord) =>
+  //                                   (property_knowledge : Maybe<Record<ActivatableDependent>>) => {
+  //                                     const getMin = getSpellMin (static_data)
+  //                                                               (hero)
+  //                                                               (property_knowledge)
+  //
+  //                                     return (wiki_entry : Record<Spell>) =>
+  //                                           (hero_entry : Record<ASD>) : boolean =>
+  //                                             pipe_ (
+  //                                               getMin (wiki_entry) (hero_entry),
+  //                                               min => ASDA.value (hero_entry) < 1
+  //                                                       ? isNothing (min)
+  //                                                       : maybe (true)
+  //                                                               (lt (ASDA.value (hero_entry)))
+  //                                                               (min)
+  //                                             )
+  //                                   }
+  //
+  //
+  // export const combineSpellsAndMagicalActions = (staticData : StaticDataRecord) => pipe_ (
+  //                                                 SDA.spells (staticData),
+  //                                                 pipe_ (
+  //                                                   SDA.animistForces (staticData),
+  //                                                   OrderedMap.map (animistForceToSpell),
+  //                                                   union
+  //                                                 ),
+  //                                                 pipe_ (
+  //                                                   SDA.curses (staticData),
+  //                                                   OrderedMap.map (curseToSpell),
+  //                                                   union
+  //                                                 ),
+  //                                                 pipe_ (
+  //                                                   SDA.dominationRituals (staticData),
+  //                                                   OrderedMap.map (dominationRitualToSpell),
+  //                                                   union
+  //                                                 ),
+  //                                                 pipe_ (
+  //                                                   SDA.elvenMagicalSongs (staticData),
+  //                                                   OrderedMap.map (
+  //                                                     elvenMagicalSongToSpell (staticData)
+  //                                                   ),
+  //                                                   union
+  //                                                 ),
+  //                                                 pipe_ (
+  //                                                   SDA.geodeRituals (staticData),
+  //                                                   OrderedMap.map (geodeRitualToSpell),
+  //                                                   union
+  //                                                 ),
+  //                                                 pipe_ (
+  //                                                   SDA.magicalDances (staticData),
+  //                                                   OrderedMap.map (magicalDanceToSpell),
+  //                                                   union
+  //                                                 ),
+  //                                                 pipe_ (
+  //                                                   SDA.magicalMelodies (staticData),
+  //                                                   OrderedMap.map (
+  //                                                     magicalMelodyToSpell (staticData)
+  //                                                   ),
+  //                                                   union
+  //                                                 ),
+  //                                                 pipe_ (
+  //                                                   SDA.rogueSpells (staticData),
+  //                                                   OrderedMap.map (rogueSpellToSpell),
+  //                                                   union
+  //                                                 ),
+  //                                                 pipe_ (
+  //                                                   SDA.zibiljaRituals (staticData),
+  //                                                   OrderedMap.map (zibiljaRitualToSpell),
+  //                                                   union
+  //                                                 )
+  //                                               )
+  //
+  //
+  // export const isUnfamiliarSpell : (transferred_unfamiliar : List<Record<TransferUnfamiliar>>) =>
+  //                                 (trad_hero_entries : List<Record<ActivatableDependent>>) =>
+  //                                 (spell_or_cantrip : Record<Spell> | Record<Cantrip>) => boolean =
+  //   transferred_unfamiliar =>
+  //   trads => {
+  //     if (any (pipe (ADA.id, equals<string> (SpecialAbilityId.traditionIntuitiveMage))) (trads)) {
+  //       return cnst (false)
+  //     }
+  //
+  //     const active_trad_num_ids =
+  //       pipe_ (
+  //         trads,
+  //         mapMaybe (pipe (ADA.id, mapMagicalTradIdToNumId)),
+  //         consF (MagicalTradition.General),
+  //         ifElse (List.elem (MagicalTradition.Qabalyamagier))
+  //               (consF<MagicalTradition> (MagicalTradition.GuildMages))
+  //               (ident)
+  //       )
+  //
+  //     const isNoTraditionActive = notP (intersecting (active_trad_num_ids))
+  //
+  //     return x => {
+  //       const id = SAL.id (x)
+  //       const possible_traditions = SAL.tradition (x)
+  //
+  //       return all (pipe (TUA.id, trans_id => trans_id !== id && trans_id !== UnfamiliarGroup.Spells))
+  //                 (transferred_unfamiliar)
+  //         && isNoTraditionActive (possible_traditions)
+  //     }
+  //   }
+  //
+  //
+  // /**
+  //  * ```haskell
+  //  * countActiveSpellEntriesInGroups :: [Int] -> Wiki -> Hero -> Int
+  //  * ```
+  //  *
+  //  * Counts the active spells of the specified spell groups.
+  //  */
+  // const countActiveSpellEntriesInGroups : (groups : List<number>) =>
+  //                                       (wiki : StaticDataRecord) =>
+  //                                       (hero : HeroModelRecord) => number =
+  //   grs => wiki => pipe (
+  //     HA.spells,
+  //     elems,
+  //     countWith (e => ASDA.active (e)
+  //                     && pipe_ (
+  //                       wiki,
+  //                       SDA.spells,
+  //                       lookup (ASDA.id (e)),
+  //                       maybe (false) (pipe (SA.gr, elemF (grs)))
+  //                     ))
+  //   )
+  //
+  //
+  // /**
+  //  * ```haskell
+  //  * isSpellsRitualsCountMaxReached :: Wiki -> Hero -> (String -> Bool) -> Bool
+  //  * ```
+  //  *
+  //  * Checks if the maximum for spells and rituals is reached which would disallow
+  //  * any further addition of a spell or ritual.
+  //  */
+  // export const isSpellsRitualsCountMaxReached =
+  //   (wiki : StaticDataRecord) =>
+  //   (hero : HeroModelRecord) =>
+  //   (isLastTrad : (x : string) => boolean) => {
+  //     // Count maximum for Intuitive Mages and Animisten
+  //     const BASE_MAX_INTU_ANIM = 3
+  //
+  //     const current_count = countActiveSpellEntriesInGroups (List (
+  //                                                             MagicalGroup.Spells,
+  //                                                             MagicalGroup.Rituals
+  //                                                           ))
+  //                                                           (wiki)
+  //                                                           (hero)
+  //
+  //     if (isLastTrad (SpecialAbilityId.traditionIntuitiveMage)) {
+  //       const mbonus = lookup (AdvantageId.largeSpellSelection) (HA.advantages (hero))
+  //       const mmalus = lookup (DisadvantageId.smallSpellSelection) (HA.disadvantages (hero))
+  //
+  //       const max_spells = modifyByLevel (BASE_MAX_INTU_ANIM) (mbonus) (mmalus)
+  //
+  //       if (current_count >= max_spells) {
+  //         return true
+  //       }
+  //     }
+  //
+  //     if (isLastTrad (SpecialAbilityId.traditionSchelme)) {
+  //       const max_spellworks = pipe_ (
+  //                               hero,
+  //                               HA.specialAbilities,
+  //                               lookup (SpecialAbilityId.imitationszauberei),
+  //                               bindF (pipe (ADA.active, listToMaybe)),
+  //                               bindF (AOA.tier),
+  //                               fromMaybe (0)
+  //                             )
+  //
+  //       if (current_count >= max_spellworks) {
+  //         return true
+  //       }
+  //     }
+  //
+  //     if (isLastTrad (SpecialAbilityId.traditionAnimisten) && current_count >= BASE_MAX_INTU_ANIM) {
+  //       return true
+  //     }
+  //
+  //     const maxSpellsLiturgicalChants =
+  //       pipe_ (
+  //         hero,
+  //         getExperienceLevelAtStart (wiki),
+  //         maybe (0) (ELA.maxSpellsLiturgicalChants)
+  //       )
+  //
+  //     return HA.phase (hero) < 3 && current_count >= maxSpellsLiturgicalChants
+  //   }
+  //
+  // /**
+  //  * ```haskell
+  //  * isIdInSpecialAbilityList :: [SpecialAbility] -> String -> Bool
+  //  * ```
+  //  *
+  //  * Takes a list of special ability wiki entries and returns a function that
+  //  * checks if a passed ID belongs to a wiki entry from the list
+  //  */
+  // export const isIdInSpecialAbilityList : (xs : List<Record<SpecialAbility>>) =>
+  //                                       (id : string) => boolean =
+  //   flip (id => List.any (pipe (SAA.id, equals (id))))
+  //
+  //
+  // const isAnySpellActiveWithImpCostC =
+  //   (wiki_spells : OrderedMap<string, Record<Spell>>) =>
+  //     OrderedMap.any ((x : Record<ActivatableSkillDependent>) => ASDA.active (x)
+  //                                                               && pipe_ (
+  //                                                                 x,
+  //                                                                 ASDA.id,
+  //                                                                 lookupF (wiki_spells),
+  //                                                                 maybe (false)
+  //                                                                       (pipe (SA.ic, equals (IC.C)))
+  //                                                               ))
+  //
+  //
+  // /**
+  //  * ```haskell
+  //  * isInactiveValidForIntuitiveMage :: Wiki
+  //  *                                 -> Hero
+  //  *                                 -> Bool
+  //  *                                 -> Spell
+  //  *                                 -> Maybe ActivatableSkillDependent
+  //  * ```
+  //  *
+  //  * Checks if a spell is valid to add when *Tradition (Intuitive Mage)* is used.
+  //  */
+  // const isInactiveValidForIntuitiveMage =
+  //   (wiki : StaticDataRecord) =>
+  //   (hero : HeroModelRecord) =>
+  //   (is_spell_max_count_reached : boolean) =>
+  //   (wiki_entry : Record<Spell>) =>
+  //   (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
+  //     !is_spell_max_count_reached
+  //
+  //     // Intuitive Mages can only learn spells
+  //     && SA.gr (wiki_entry) === MagicalGroup.Spells
+  //
+  //     // Must be inactive
+  //     && Maybe.all (notP (ASDA.active)) (mhero_entry)
+  //
+  //     // No spells with IC D
+  //     && SA.ic (wiki_entry) < IC.D
+  //
+  //     // Only one spell with IC C
+  //     && !(SA.ic (wiki_entry) === IC.C && isAnySpellActiveWithImpCostC (SDA.spells (wiki))
+  //                                                                     (HA.spells (hero)))
+  //
+  // const isInactiveValidForSchelme =
+  //   (is_spell_max_count_reached : boolean) =>
+  //   (wiki_entry : Record<Spell>) =>
+  //   (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
+  //     SA.gr (wiki_entry) === MagicalGroup.RogueSpells
+  //     || (
+  //       !is_spell_max_count_reached
+  //
+  //       // Schelme can only learn spells
+  //       && SA.gr (wiki_entry) === MagicalGroup.Spells
+  //
+  //       // Must be inactive
+  //       && Maybe.all (notP (ASDA.active)) (mhero_entry)
+  //
+  //       // No spells with IC D or C
+  //       && SA.ic (wiki_entry) < IC.C
+  //
+  //       // No property Demonic
+  //       && SA.property (wiki_entry) !== Property.Demonic
+  //     )
+  //
+  //
+  // /**
+  //  * ```haskell
+  //  * isInactiveValidForArcaneBardOrDancer :: Wiki
+  //  *                                     -> Hero
+  //  *                                     -> Bool
+  //  *                                     -> Spell
+  //  *                                     -> Maybe ActivatableSkillDependent
+  //  * ```
+  //  *
+  //  * Checks if a spell is valid to add when *Tradition (Arcane Bard)* or
+  //  * *Tradition (Arcane Dancer)* is used.
+  //  */
+  // const isInactiveValidForArcaneBardOrDancer =
+  //   (isUnfamiliar : (spell_or_cantrip : Record<Spell> | Record<Cantrip>) => boolean) =>
+  //   (msub_trad : Maybe<number>) =>
+  //   (wiki_entry : Record<Spell>) =>
+  //   (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
+  //     !isUnfamiliar (wiki_entry)
+  //     && maybe (false) (elemF (SA.subtradition (wiki_entry))) (msub_trad)
+  //     && Maybe.all (notP (ASDA.active)) (mhero_entry)
+  //
+  //
+  // /**
+  //  * ```haskell
+  //  * isInactiveValidForAnimists :: Wiki
+  //  *                            -> Hero
+  //  *                            -> Bool
+  //  *                            -> Spell
+  //  *                            -> Maybe ActivatableSkillDependent
+  //  * ```
+  //  *
+  //  * Checks if a spell is valid to add when *Tradition (Animisten)* is used.
+  //  */
+  // const isInactiveValidForAnimist =
+  //   (wiki : StaticDataRecord) =>
+  //   (hero : HeroModelRecord) =>
+  //   (is_spell_max_count_reached : boolean) =>
+  //   (wiki_entry : Record<Spell>) =>
+  //   (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
+  //     isInactiveValidForIntuitiveMage (wiki)
+  //                                     (hero)
+  //                                     (is_spell_max_count_reached)
+  //                                     (wiki_entry)
+  //                                     (mhero_entry)
+  //     || SA.gr (wiki_entry) === MagicalGroup.AnimistForces
+  //
+  //
+  // const consTradSpecificSpell =
+  //   (wiki_entry : Record<Spell>) =>
+  //   (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
+  //   (id : string) =>
+  //     consF (SpellWithRequirements ({
+  //       wikiEntry: wiki_entry,
+  //       stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (id))
+  //                             (mhero_entry),
+  //       isUnfamiliar: false,
+  //       isDecreasable: Nothing,
+  //       isIncreasable: Nothing,
+  //     }))
+  //
+  //
+  // export const getInactiveSpellsForIntuitiveMageOrAnimist =
+  //   (isValid : typeof isInactiveValidForIntuitiveMage) =>
+  //   (wiki : StaticDataRecord) =>
+  //   (hero : HeroModelRecord) =>
+  //   (is_spell_max_count_reached : boolean) : List<Record<SpellWithRequirements>> =>
+  //     pipe_ (
+  //       wiki,
+  //       SDA.spells,
+  //       foldrWithKey ((k : string) => (wiki_entry : Record<Spell>) => {
+  //                     const mhero_entry = lookup (k) (HA.spells (hero))
+  //
+  //                     if (areSpellPrereqisitesMet (wiki) (hero) (wiki_entry)
+  //                         && isValid (wiki)
+  //                                     (hero)
+  //                                     (is_spell_max_count_reached)
+  //                                     (wiki_entry)
+  //                                     (mhero_entry)) {
+  //                       return consTradSpecificSpell (wiki_entry) (mhero_entry) (k)
+  //                     }
+  //
+  //                     return ident as ident<List<Record<SpellWithRequirements>>>
+  //                   })
+  //                   (List ())
+  //     )
+  //
+  //
+  // /**
+  //  * ```haskell
+  //  * getInactiveSpellsForIntuitiveMages :: Wiki -> Hero -> Bool -> [SpellWithRequirements]
+  //  * ```
+  //  *
+  //  * Returns all valid inactive spells for intuitive mages.
+  //  */
+  // export const getInactiveSpellsForIntuitiveMages =
+  //   (wiki : StaticDataRecord) =>
+  //   (hero : HeroModelRecord) =>
+  //   (is_spell_max_count_reached : boolean) : List<Record<SpellWithRequirements>> => {
+  //     if (is_spell_max_count_reached) {
+  //       return List<Record<SpellWithRequirements>> ()
+  //     }
+  //
+  //     return getInactiveSpellsForIntuitiveMageOrAnimist (isInactiveValidForIntuitiveMage)
+  //                                                       (wiki)
+  //                                                       (hero)
+  //                                                       (is_spell_max_count_reached)
+  //   }
+  //
+  //
+  // /**
+  //  * ```haskell
+  //  * getInactiveSpellsForAnimists :: Wiki -> Hero -> Bool -> [SpellWithRequirements]
+  //  * ```
+  //  *
+  //  * Returns all valid inactive spells for animists.
+  //  */
+  // export const getInactiveSpellsForAnimist =
+  //   getInactiveSpellsForIntuitiveMageOrAnimist (isInactiveValidForAnimist)
+  //
+  //
+  // /**
+  //  * ```haskell
+  //  * getInactiveSpellsForAnimists :: Wiki
+  //  *                              -> Hero
+  //  *                              -> ((Spell | Cantrip) -> Bool)
+  //  *                              -> [ActivatableDependent]
+  //  *                              -> [SpellWithRequirements]
+  //  * ```
+  //  *
+  //  * Returns all valid inactive spells for arcane bards or dancers.
+  //  */
+  // export const getInactiveSpellsForArcaneBardOrDancer =
+  //   (wiki : StaticDataRecord) =>
+  //   (hero : HeroModelRecord) =>
+  //   (isUnfamiliar : (spell_or_cantrip : Record<Spell> | Record<Cantrip>) => boolean) =>
+  //   (trads_hero : List<Record<ActivatableDependent>>) : List<Record<SpellWithRequirements>> => {
+  //     const msub_trad =
+  //       pipe_ (
+  //         trads_hero,
+  //         listToMaybe,
+  //         bindF (pipe (ADA.active, listToMaybe)),
+  //         bindF (AOA.sid),
+  //         misNumberM
+  //       )
+  //
+  //     return pipe_ (
+  //       wiki,
+  //       SDA.spells,
+  //       foldrWithKey ((k : string) => (wiki_entry : Record<Spell>) => {
+  //                     const mhero_entry = lookup (k) (HA.spells (hero))
+  //
+  //                     if (areSpellPrereqisitesMet (wiki) (hero) (wiki_entry)
+  //                         && isInactiveValidForArcaneBardOrDancer (isUnfamiliar)
+  //                                                                 (msub_trad)
+  //                                                                 (wiki_entry)
+  //                                                                 (mhero_entry)) {
+  //                       return consTradSpecificSpell (wiki_entry) (mhero_entry) (k)
+  //                     }
+  //
+  //                     return ident as ident<List<Record<SpellWithRequirements>>>
+  //                   })
+  //                   (List ())
+  //     )
+  //   }
+  //
+  //
+  // export const getInactiveSpellsForSchelme =
+  //   (wiki : StaticDataRecord) =>
+  //   (hero : HeroModelRecord) =>
+  //   (is_spell_max_count_reached : boolean) : List<Record<SpellWithRequirements>> =>
+  //     pipe_ (
+  //       wiki,
+  //       SDA.spells,
+  //       foldrWithKey ((k : string) => (wiki_entry : Record<Spell>) => {
+  //                     const mhero_entry = lookup (k) (HA.spells (hero))
+  //
+  //                     if (areSpellPrereqisitesMet (wiki) (hero) (wiki_entry)
+  //                         && isInactiveValidForSchelme (is_spell_max_count_reached)
+  //                                                       (wiki_entry)
+  //                                                       (mhero_entry)) {
+  //                       return consTradSpecificSpell (wiki_entry) (mhero_entry) (k)
+  //                     }
+  //
+  //                     return ident as ident<List<Record<SpellWithRequirements>>>
+  //                   })
+  //                   (List ())
+  //     )
+  //
+  //
+  // /**
+  //  * ```haskell
+  //  * getInactiveSpellsForOtherTradition :: Wiki
+  //  *                                    -> Hero
+  //  *                                    -> Bool
+  //  *                                    -> Bool
+  //  *                                    -> ((Spell | Cantrip) -> Bool)
+  //  *                                    -> [SpellWithRequirements]
+  //  * ```
+  //  *
+  //  * Returns all valid inactive spells for arcane bards or dancers.
+  //  */
+  // export const getInactiveSpellsForOtherTradition =
+  //   (wiki : StaticDataRecord) =>
+  //   (hero : HeroModelRecord) =>
+  //   (is_spell_max_count_reached : boolean) =>
+  //   (is_max_unfamiliar : boolean) =>
+  //   (isUnfamiliar : (spell_or_cantrip : Record<Spell> | Record<Cantrip>) => boolean) :
+  //   List<Record<SpellWithRequirements>> =>
+  //     pipe_ (
+  //       wiki,
+  //       SDA.spells,
+  //       foldrWithKey ((k : string) => (wiki_entry : Record<Spell>) => {
+  //                     const mhero_entry = lookup (k) (HA.spells (hero))
+  //
+  //                     if ((!is_spell_max_count_reached || SA.gr (wiki_entry) > MagicalGroup.Rituals)
+  //                         && areSpellPrereqisitesMet (wiki) (hero) (wiki_entry)
+  //                         && (!isUnfamiliar (wiki_entry)
+  //                             || (SA.gr (wiki_entry) <= MagicalGroup.Rituals && !is_max_unfamiliar))
+  //                         && Maybe.all (notP (ASDA.active)) (mhero_entry)) {
+  //                       return consF (SpellWithRequirements ({
+  //                         wikiEntry: wiki_entry,
+  //                         stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (k))
+  //                                                 (mhero_entry),
+  //                         isUnfamiliar: isUnfamiliar (wiki_entry),
+  //                         isDecreasable: Nothing,
+  //                         isIncreasable: Nothing,
+  //                       }))
+  //                     }
+  //
+  //                     return ident as ident<List<Record<SpellWithRequirements>>>
+  //                   })
+  //                   (List ())
+  //     )
+};
+
+module LiturgicalChants = {
+  // /**
+  //  * Checks if the passed liturgical chant or blessing is valid for the current
+  //  * active blessed tradition.
+  //  */
+  // export const isOwnTradition =
+  //   (blessedTradition : Record<SpecialAbility>) =>
+  //   (entry : Record<LiturgicalChant> | Record<Blessing>) : boolean => {
+  //     const numeric_tradition_id = mapBlessedTradIdToNumId (SAA.id (blessedTradition))
+  //
+  //     return any<BlessedTradition> (e => e === BlessedTradition.General
+  //                                       || elem<BlessedTradition> (e) (numeric_tradition_id))
+  //                                 (LCAL.tradition (entry))
+  //   }
+  //
+  //
+  // /**
+  //  * Returns the SR maximum if there is no aspect knowledge active for the passed
+  //  * liturgical chant.
+  //  */
+  // const getMaxSRFromAspectKnowledge = (current_tradition : Record<SpecialAbility>) =>
+  //                                     (aspect_knowledge : Maybe<Record<ActivatableDependent>>) =>
+  //                                     (wiki_entry : Record<LiturgicalChant>) : Maybe<number> =>
+  //                                       // is not nameless tradition
+  //                                       SAA.id (current_tradition)
+  //                                         === SpecialAbilityId.TraditionCultOfTheNamelessOne
+  //                                       ? Nothing
+  //                                       // no aspect knowledge active for the current chant
+  //                                       : pipe_ (
+  //                                         aspect_knowledge,
+  //                                         getActiveSelectionsMaybe,
+  //                                         maybe (true)
+  //                                               (all (notElemF<string | number> (
+  //                                                     LCA.aspects (wiki_entry)
+  //                                                   ))),
+  //                                         hasRestriction => hasRestriction ? Just (14) : Nothing
+  //                                       )
+  //
+  //
+  // /**
+  //  * Returns the maximum skill rating for the passed liturgical chant.
+  //  */
+  // export const getSpellMax = (current_tradition : Record<SpecialAbility>) =>
+  //                           (startEL : Record<ExperienceLevel>) =>
+  //                           (phase : number) =>
+  //                           (attributes : OrderedMap<string, Record<AttributeDependent>>) =>
+  //                           (exceptional_skill : Maybe<Record<ActivatableDependent>>) =>
+  //                           (aspect_knowledge : Maybe<Record<ActivatableDependent>>) =>
+  //                           (wiki_entry : Record<LiturgicalChant>) : number =>
+  //                             pipe_ (
+  //                               List (
+  //                                 Just (getMaxSRByCheckAttrs (attributes) (wiki_entry)),
+  //                                 getMaxSRFromEL (startEL) (phase),
+  //                                 getMaxSRFromAspectKnowledge (current_tradition)
+  //                                                             (aspect_knowledge)
+  //                                                             (wiki_entry)
+  //                               ),
+  //                               catMaybes,
+  //                               minimum,
+  //                               add (getExceptionalSkillBonus (exceptional_skill)
+  //                                                             (LCA.id (wiki_entry)))
+  //                             )
+  //
+  //
+  // /**
+  //  * Checks if the passed liturgical chant's skill rating can be increased.
+  //  */
+  // export const isLCIncreasable = (currentTradition : Record<SpecialAbility>) =>
+  //                               (startEL : Record<ExperienceLevel>) =>
+  //                               (phase : number) =>
+  //                               (attributes : HeroModel["attributes"]) =>
+  //                               (exceptionalSkill : Maybe<Record<ActivatableDependent>>) =>
+  //                               (propertyKnowledge : Maybe<Record<ActivatableDependent>>) =>
+  //                               (wiki_entry : Record<LiturgicalChant>) =>
+  //                               (hero_entry : Record<ActivatableSkillDependent>) : boolean =>
+  //                                 ASDA.value (hero_entry)
+  //                                   < getSpellMax (currentTradition)
+  //                                                 (startEL)
+  //                                                 (phase)
+  //                                                 (attributes)
+  //                                                 (exceptionalSkill)
+  //                                                 (propertyKnowledge)
+  //                                                 (wiki_entry)
+  //
+  //
+  // type LiturgicalChantsAbove10ByAspect = OrderedMap<Aspect, number>
+  //
+  //
+  // /**
+  //  * Returns the lowest SR and it's occurences for every aspect. The values of
+  //  * the map are pairs where the first is the lowest SR and the second is the
+  //  * amount of liturgical chants at that exact SR.
+  //  */
+  // export const chantsAbove10ByAspect : (wiki_chants : StaticData["liturgicalChants"])
+  //                                   => (hero_chants : HeroModel["liturgicalChants"])
+  //                                   => LiturgicalChantsAbove10ByAspect
+  //                                   = wiki_chants =>
+  //                                       pipe (
+  //                                         elems,
+  //                                         concatMap (pipe (
+  //                                           ensure (ASDA.active),
+  //                                           Maybe.find (pipe (
+  //                                             ASDA.value,
+  //                                             gte (10)
+  //                                           )),
+  //                                           bindF (pipe (
+  //                                             ASDA.id,
+  //                                             lookupF (wiki_chants)
+  //                                           )),
+  //                                           maybe (List<Aspect> ())
+  //                                                 (LCA.aspects)
+  //                                         )),
+  //                                         count
+  //                                       )
+  //
+  //
+  // /**
+  //  * Check if the active aspect knowledges allow the passed liturgical chant to be
+  //  * decreased. (There must be at leased 3 liturgical chants of the respective
+  //  * aspect active.)
+  //  */
+  // const getMinSRFromAspectKnowledge = (aspect_counter : LiturgicalChantsAbove10ByAspect) =>
+  //                                     (active_aspect_knowledges : Maybe<List<string | number>>) =>
+  //                                     (wiki_entry : Record<LiturgicalChant>) =>
+  //                                     (hero_entry : Record<ASD>) : Maybe<number> =>
+  //                                       pipe_ (
+  //                                         active_aspect_knowledges,
+  //
+  //                                         // Is chant part of dependencies of any active Aspect
+  //                                         // Knowledge?
+  //                                         maybe (false)
+  //                                               (any (e => isNumber (e)
+  //                                                         && List.elem (e)
+  //                                                                       (LCA.aspects (wiki_entry))))
+  //                                       )
+  //
+  //                                       // If yes, check if chant is above 10 and if there are not
+  //                                       // enough chants above 10 to allow a decrease below 10
+  //                                       ? pipe_ (
+  //                                           wiki_entry,
+  //                                           LCA.aspects,
+  //                                           mapMaybe (lookupF (aspect_counter)),
+  //                                           ensure (notNull),
+  //                                           bindF (pipe (
+  //                                             minimum,
+  //                                             counter => ASDA.value (hero_entry) >= 10
+  //                                                       && counter <= 3
+  //                                                       ? Just (10)
+  //                                                       : Nothing
+  //                                           ))
+  //                                         )
+  //                                       : Nothing
+  //
+  //
+  // /**
+  //  * Check if the dependencies allow the passed liturgical chant to be decreased.
+  //  */
+  // const getMinSRByDeps = (static_data : StaticDataRecord) =>
+  //                       (hero : HeroModelRecord) =>
+  //                       (hero_entry : Record<ActivatableSkillDependent>) : Maybe<number> =>
+  //                         pipe_ (
+  //                           hero_entry,
+  //                           ASDA.dependencies,
+  //                           flattenDependencies (static_data) (hero),
+  //                           mapMaybe (x => typeof x === "boolean"
+  //                                           ? x ? Just (0) : Nothing
+  //                                           : Just (x)),
+  //                           ensure (notNull),
+  //                           fmap (maximum)
+  //                         )
+  //
+  //
+  // /**
+  //  * Returns the minimum skill rating for the passed skill.
+  //  */
+  // export const getLCMin = (static_data : StaticDataRecord) =>
+  //                         (hero : HeroModelRecord) =>
+  //                         (aspect_knowledge : Maybe<Record<ActivatableDependent>>) => {
+  //                           const aspect_counter =
+  //                             chantsAbove10ByAspect (SDA.liturgicalChants (static_data))
+  //                                                   (HA.liturgicalChants (hero))
+  //
+  //                           const active_aspect_knowledges =
+  //                             getActiveSelectionsMaybe (aspect_knowledge)
+  //
+  //                           return (wiki_entry : Record<LiturgicalChant>) =>
+  //                                 (hero_entry : Record<ASD>) : Maybe<number> =>
+  //                                   pipe_ (
+  //                                     List (
+  //                                       getMinSRByDeps (static_data) (hero) (hero_entry),
+  //                                       getMinSRFromAspectKnowledge (aspect_counter)
+  //                                                                   (active_aspect_knowledges)
+  //                                                                   (wiki_entry)
+  //                                                                   (hero_entry)
+  //                                     ),
+  //                                     catMaybes,
+  //                                     ensure (notNull),
+  //                                     fmap (maximum)
+  //                                   )
+  //                         }
+  //
+  //
+  // /**
+  //  * Checks if the passed spell's skill rating can be decreased.
+  //  */
+  // export const isLCDecreasable = (static_data : StaticDataRecord) =>
+  //                               (hero : HeroModelRecord) =>
+  //                               (aspect_knowledge : Maybe<Record<ActivatableDependent>>) => {
+  //                                 const getMin = getLCMin (static_data)
+  //                                                         (hero)
+  //                                                         (aspect_knowledge)
+  //
+  //                                 return (wiki_entry : Record<LiturgicalChant>) =>
+  //                                         (hero_entry : Record<ASD>) : boolean =>
+  //                                           pipe_ (
+  //                                             getMin (wiki_entry) (hero_entry),
+  //                                             min => ASDA.value (hero_entry) < 1
+  //                                                   ? isNothing (min)
+  //                                                   : maybe (true)
+  //                                                           (lt (ASDA.value (hero_entry)))
+  //                                                           (min)
+  //                                           )
+  //                               }
+  //
+  //
+  // /**
+  //  * Keys are aspects and their value is the respective tradition.
+  //  */
+  // const traditionsByAspect = fromArray<Aspect, BlessedTradition> ([
+  //   [ Aspect.General, BlessedTradition.General ],
+  //   [ Aspect.AntiMagic, BlessedTradition.ChurchOfPraios ],
+  //   [ Aspect.Order, BlessedTradition.ChurchOfPraios ],
+  //   [ Aspect.Shield, BlessedTradition.ChurchOfRondra ],
+  //   [ Aspect.Storm, BlessedTradition.ChurchOfRondra ],
+  //   [ Aspect.Death, BlessedTradition.ChurchOfBoron ],
+  //   [ Aspect.Dream, BlessedTradition.ChurchOfBoron ],
+  //   [ Aspect.Magic, BlessedTradition.ChurchOfHesinde ],
+  //   [ Aspect.Knowledge, BlessedTradition.ChurchOfHesinde ],
+  //   [ Aspect.Commerce, BlessedTradition.ChurchOfPhex ],
+  //   [ Aspect.Shadow, BlessedTradition.ChurchOfPhex ],
+  //   [ Aspect.Healing, BlessedTradition.ChurchOfPeraine ],
+  //   [ Aspect.Agriculture, BlessedTradition.ChurchOfPeraine ],
+  //   [ Aspect.Wind, BlessedTradition.ChurchOfEfferd ],
+  //   [ Aspect.Wogen, BlessedTradition.ChurchOfEfferd ],
+  //   [ Aspect.Freundschaft, BlessedTradition.ChurchOfTravia ],
+  //   [ Aspect.Heim, BlessedTradition.ChurchOfTravia ],
+  //   [ Aspect.Jagd, BlessedTradition.ChurchOfFirun ],
+  //   [ Aspect.Kaelte, BlessedTradition.ChurchOfFirun ],
+  //   [ Aspect.Freiheit, BlessedTradition.ChurchOfTsa ],
+  //   [ Aspect.Wandel, BlessedTradition.ChurchOfTsa ],
+  //   [ Aspect.Feuer, BlessedTradition.ChurchOfIngerimm ],
+  //   [ Aspect.Handwerk, BlessedTradition.ChurchOfIngerimm ],
+  //   [ Aspect.Ekstase, BlessedTradition.ChurchOfRahja ],
+  //   [ Aspect.Harmonie, BlessedTradition.ChurchOfRahja ],
+  //   [ Aspect.Reise, BlessedTradition.ChurchOfAves ],
+  //   [ Aspect.Schicksal, BlessedTradition.ChurchOfAves ],
+  //   [ Aspect.Hilfsbereitschaft, BlessedTradition.ChurchOfIfirn ],
+  //   [ Aspect.Natur, BlessedTradition.ChurchOfIfirn ],
+  //   [ Aspect.GuterKampf, BlessedTradition.ChurchOfKor ],
+  //   [ Aspect.GutesGold, BlessedTradition.ChurchOfKor ],
+  //   [ Aspect.Bildung, BlessedTradition.ChurchOfNandus ],
+  //   [ Aspect.Erkenntnis, BlessedTradition.ChurchOfNandus ],
+  //   [ Aspect.Kraft, BlessedTradition.ChurchOfSwafnir ],
+  //   [ Aspect.Tapferkeit, BlessedTradition.ChurchOfSwafnir ],
+  //   [ Aspect.ReissenderStrudel, BlessedTradition.CultOfNuminoru ],
+  //   [ Aspect.UnendlicheTiefe, BlessedTradition.CultOfNuminoru ],
+  //   [ Aspect.Begierde, BlessedTradition.Levthankult ],
+  //   [ Aspect.Rausch, BlessedTradition.Levthankult ],
+  // ])
+  //
+  // /**
+  //  * Returns the tradition id used by chants. To get the tradition SId for the
+  //  * actual special ability, you have to decrease the return value by 1.
+  //  * @param aspectId The id used for chants or Aspect Knowledge.
+  //  */
+  // export const getTraditionOfAspect =
+  //   (key : Aspect) => findWithDefault (BlessedTradition.General) (key) (traditionsByAspect)
+  //
+  // /**
+  //  * Keys are traditions and their values are their respective aspects
+  //  */
+  // const aspectsByTradition = fromArray<BlessedTradition, List<Aspect>> ([
+  //   [ BlessedTradition.General, List () ],
+  //   [ BlessedTradition.ChurchOfPraios, List (Aspect.AntiMagic, Aspect.Order) ],
+  //   [ BlessedTradition.ChurchOfRondra, List (Aspect.Shield, Aspect.Storm) ],
+  //   [ BlessedTradition.ChurchOfBoron, List (Aspect.Death, Aspect.Dream) ],
+  //   [ BlessedTradition.ChurchOfHesinde, List (Aspect.Magic, Aspect.Knowledge) ],
+  //   [ BlessedTradition.ChurchOfPhex, List (Aspect.Commerce, Aspect.Shadow) ],
+  //   [ BlessedTradition.ChurchOfPeraine, List (Aspect.Healing, Aspect.Agriculture) ],
+  //   [ BlessedTradition.ChurchOfEfferd, List (Aspect.Wind, Aspect.Wogen) ],
+  //   [ BlessedTradition.ChurchOfTravia, List (Aspect.Freundschaft, Aspect.Heim) ],
+  //   [ BlessedTradition.ChurchOfFirun, List (Aspect.Jagd, Aspect.Kaelte) ],
+  //   [ BlessedTradition.ChurchOfTsa, List (Aspect.Freiheit, Aspect.Wandel) ],
+  //   [ BlessedTradition.ChurchOfIngerimm, List (Aspect.Feuer, Aspect.Handwerk) ],
+  //   [ BlessedTradition.ChurchOfRahja, List (Aspect.Ekstase, Aspect.Harmonie) ],
+  //   [ BlessedTradition.CultOfTheNamelessOne, List () ],
+  //   [ BlessedTradition.ChurchOfAves, List (Aspect.Reise, Aspect.Schicksal) ],
+  //   [ BlessedTradition.ChurchOfIfirn, List (Aspect.Hilfsbereitschaft, Aspect.Natur) ],
+  //   [ BlessedTradition.ChurchOfKor, List (Aspect.GuterKampf, Aspect.GutesGold) ],
+  //   [ BlessedTradition.ChurchOfNandus, List (Aspect.Bildung, Aspect.Erkenntnis) ],
+  //   [ BlessedTradition.ChurchOfSwafnir, List (Aspect.Kraft, Aspect.Tapferkeit) ],
+  //   [ BlessedTradition.CultOfNuminoru, List (Aspect.ReissenderStrudel, Aspect.UnendlicheTiefe) ],
+  //   [ BlessedTradition.Levthankult, List (Aspect.Begierde, Aspect.Rausch) ],
+  // ])
+  //
+  // /**
+  //  * Return the aspect ids used for chants and Aspect Knowledge.
+  //  * @param traditionId The id used by chants. If you only have the SId from the
+  //  * actual special ability, you have to increase the value by 1 before passing
+  //  * it.
+  //  */
+  // export const getAspectsOfTradition = pipe (
+  //   (key : BlessedTradition) => findWithDefault (List<Aspect> ()) (key) (aspectsByTradition),
+  //   consF<Aspect> (Aspect.General)
+  // )
+  //
+  // export type LiturgicalChantBlessingCombined = Record<LiturgicalChantWithRequirements>
+  //                                             | Record<BlessingCombined>
+  //
+  // const wikiEntryCombined =
+  //   (x : LiturgicalChantBlessingCombined) : Record<LiturgicalChant> | Record<Blessing> =>
+  //     LiturgicalChantWithRequirements.is (x)
+  //       ? LiturgicalChantWithRequirements.A.wikiEntry (x)
+  //       : BlessingCombined.A.wikiEntry (x)
+  //
+  // /**
+  //  * Combined `LiturgicalChantWithRequirements` and `BlessingCombined` accessors.
+  //  */
+  // export const LCBCA = {
+  //   active: (x : LiturgicalChantBlessingCombined) : boolean =>
+  //     LiturgicalChantWithRequirements.is (x)
+  //       ? pipe_ (
+  //           x,
+  //           LiturgicalChantWithRequirements.A.stateEntry,
+  //           ActivatableSkillDependent.A.active
+  //         )
+  //       : BlessingCombined.A.active (x),
+  //   gr: (x : LiturgicalChantBlessingCombined) : Maybe<number> =>
+  //     LiturgicalChantWithRequirements.is (x)
+  //       ? pipe_ (
+  //           x,
+  //           LiturgicalChantWithRequirements.A.wikiEntry,
+  //           LiturgicalChant.A.gr,
+  //           Just
+  //         )
+  //       : Nothing,
+  //   aspects: (x : LiturgicalChantBlessingCombined) : List<number> =>
+  //     LiturgicalChantWithRequirements.is (x)
+  //       ? pipe_ (
+  //           x,
+  //           LiturgicalChantWithRequirements.A.wikiEntry,
+  //           LiturgicalChant.A.aspects
+  //         )
+  //       : List (1),
+  //   tradition: (x : LiturgicalChantBlessingCombined) : List<number> =>
+  //     LiturgicalChantWithRequirements.is (x)
+  //       ? pipe_ (
+  //           x,
+  //           LiturgicalChantWithRequirements.A.wikiEntry,
+  //           LiturgicalChant.A.tradition
+  //         )
+  //       : List (1),
+  //   id: pipe (wikiEntryCombined, Blessing.AL.id),
+  //   name: pipe (wikiEntryCombined, Blessing.AL.name),
+  // }
+  //
+  //
+  // const isAspectOfTraditionFromPair = (fromPair : <A> (x : Pair<A, A>) => A) =>
+  //                                     (trad : Record<BlessedTraditionR>) =>
+  //                                     (aspect : number) : boolean =>
+  //                                       pipe_ (
+  //                                         trad,
+  //                                         BTA.aspects,
+  //                                         maybe (false)
+  //                                               (aspects => fromPair (aspects) === aspect)
+  //                                       )
+  //
+  //
+  // const isAspectOfTradition = (trad : Record<BlessedTraditionR>) =>
+  //                             (aspect : number) : boolean =>
+  //                               isAspectOfTraditionFromPair (fst) (trad) (aspect)
+  //                               || isAspectOfTraditionFromPair (snd) (trad) (aspect)
+  //
+  //
+  // /**
+  //  * Returns the Aspects string for list display.
+  //  */
+  // export const getAspectsStr =
+  //   (staticData : StaticDataRecord) =>
+  //   (curr : LiturgicalChantBlessingCombined) =>
+  //   (mtradition_id : Maybe<BlessedTradition>) : string =>
+  //     pipe_ (
+  //       mtradition_id,
+  //       bindF (tradition_id => pipe_ (
+  //                               staticData,
+  //                               SDA.blessedTraditions,
+  //                               find (trad => BTA.numId (trad) === tradition_id)
+  //                             )),
+  //       fmap (tradition =>
+  //         pipe_ (
+  //           curr,
+  //           LCBCA.aspects,
+  //           mapMaybe (pipe (
+  //                     ensure (isAspectOfTradition (tradition)),
+  //                     bindF (lookupF (SDA.aspects (staticData))),
+  //                     fmap (NumIdName.A.name)
+  //                   )),
+  //         List.elem (14) (LCBCA.tradition (curr))
+  //           ? consF (BTA.name (tradition))
+  //           : ident,
+  //         xs => fnull (xs)
+  //               ? mapMaybe (pipe (
+  //                           lookupF (SDA.aspects (staticData)),
+  //                           fmap (NumIdName.A.name)
+  //                         ))
+  //                         (LCBCA.aspects (curr))
+  //               : xs,
+  //         sortStrings (staticData),
+  //         intercalate (", ")
+  //       )),
+  //       fromMaybe ("")
+  //     )
+  //
+  // /**
+  //  * Returns the final Group/Aspects string for list display.
+  //  */
+  // export const getLCAddText =
+  //   (staticData : StaticDataRecord) =>
+  //   (sortOrder : ChantsSortOptions) =>
+  //   (aspects_str : string) =>
+  //   (curr : Record<LiturgicalChantWithRequirements>) =>
+  //     pipe_ (
+  //       guard (sortOrder === "group"),
+  //       thenF (lookup (LCWRA_.gr (curr))
+  //                     (SDA.liturgicalChantGroups (staticData))),
+  //       maybe (aspects_str)
+  //             (pipe (NumIdName.A.name, gr_str => `${aspects_str} / ${gr_str}`))
+  //     )
+};
+
+// export const addPoint =
+//   <T extends ValueBasedDependent>(instance: T): T =>
+//     isAttributeDependent (instance)
+//     ? over (AttributeDependentL.value) (inc) (instance) as T
+//     : isActivatableSkillDependent (instance)
+//     ? over (ActivatableSkillDependentL.value) (inc) (instance) as T
+//     : over (SkillDependentL.value) (inc) (instance as Record<SkillDependent>) as T
+//
+// export const removePoint =
+//   <T extends ValueBasedDependent>(instance: T): T =>
+//     isAttributeDependent (instance)
+//     ? over (AttributeDependentL.value) (dec) (instance) as T
+//     : isActivatableSkillDependent (instance)
+//     ? over (ActivatableSkillDependentL.value) (dec) (instance) as T
+//     : over (SkillDependentL.value) (dec) (instance as Record<SkillDependent>) as T
+//
+// export const getBaseValueByCategory =
+//   (current_category: Category) => {
+//     switch (current_category) {
+//       case Category.ATTRIBUTES:
+//         return 8
+//
+//       case Category.COMBAT_TECHNIQUES:
+//         return 6
+//
+//       default:
+//         return 0
+//     }
+//   }
+//
+// const { category, ic } = Skill.AL
+// const { value } = SkillDependent.AL
+//
+// const getValueFromHeroStateEntry =
+//   (wikiEntry: IncreasableEntry) =>
+//   (maybeEntry: Maybe<ValueBasedDependent>) =>
+//     fromMaybe (getBaseValueByCategory (category (wikiEntry as Record<Skill>)))
+//               (fmap (value) (maybeEntry))
+//
+// export const getAreSufficientAPAvailableForIncrease =
+//   (negativeApValid: boolean) =>
+//   <T extends ValueBasedDependent>
+//   (instance: Maybe<T>) =>
+//   (wikiEntry: IncreasableEntry) =>
+//     getMissingAP (negativeApValid)
+//                  (getAPForInc (
+//                    isAttribute (wikiEntry) ? "E" : icFromJs (ic (wikiEntry)),
+//                    getValueFromHeroStateEntry (wikiEntry) (instance)
+//                  ))

@@ -64,12 +64,12 @@
 
 	&.invalid:not(.disabled) {
 		label {
-			color: $unrecommended1;
+			color: var(--uncommon-bright-color);
 		}
 
 		input, textarea {
-			border: 1px solid $unrecommended2;
-			color: $unrecommended1;
+			border: 1px solid var(--uncommon-dark-color);
+			color: var(--uncommon-bright-color);
 		}
 	}
 

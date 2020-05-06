@@ -98,7 +98,6 @@ export const BasicInputDialog: React.FC<Dialog> = props => {
         onChange={onChange}
         fullWidth
         autoFocus
-        everyKeyDown
         error={invalid}
         onKeyUp={handleKeyUp}
         />

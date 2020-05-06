@@ -10,7 +10,7 @@ import { pipe } from "../Utilities/pipe"
 import { ReduxAction } from "./Actions"
 
 const getNewIdFromCurrentPets: (x: Just<OrderedMap<string, Record<Pet>>>) => string =
-  pipe (fromJust, keys, getNewId, prefixId (IdPrefixes.PET))
+  pipe (fromJust, keys, getNewId, prefixId (IdPrefixes.ANIMAL))
 
 export interface AddPetAction {
   type: ActionTypes.ADD_PET

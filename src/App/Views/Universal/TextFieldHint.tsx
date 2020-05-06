@@ -7,11 +7,11 @@ import { pipe_ } from "../../Utilities/pipe"
 
 interface Props {
   hint: Maybe<string> | string | undefined
-  value: string
+  isFieldEmpty: boolean
 }
 
 export const TextFieldHint: React.FC<Props> =
-  ({ hint: mhint, value }) => pipe_ (
+  ({ hint: mhint, isFieldEmpty }) => pipe_ (
     mhint,
     normalize,
     fmap (hint => (
@@ -19,7 +19,7 @@ export const TextFieldHint: React.FC<Props> =
         className={
           classListMaybe (List (
             Just ("textfield-hint"),
-            guardReplace (value !== "") ("hide")
+            guardReplace (!isFieldEmpty) ("hide")
           ))
         }
         >

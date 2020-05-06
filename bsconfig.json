@@ -2,19 +2,22 @@
   "name": "optolith-client",
   "version": "0.1.0",
   "sources": [
+    { "dir": "deploy" },
     { "dir": "src" },
     { "dir": "src/App/Actions" },
     { "dir": "src/App/Constants" },
     { "dir": "src/App/Containers" },
     { "dir": "src/App/Models" },
-    { "dir": "src/App/Models/Static" },
     { "dir": "src/App/Reducers" },
     { "dir": "src/App/Selectors" },
     { "dir": "src/App/Utilities" },
     { "dir": "src/App/Utilities/__tests__", "type": "dev" },
+    { "dir": "src/App/Utilities/YAML" },
     { "dir": "src/App/Views" },
+    { "dir": "src/App/Views/Universal" },
     { "dir": "src/Control" },
     { "dir": "src/Data" },
+    { "dir": "src/Data/__tests__", "type": "dev" },
     { "dir": "src/Debug" },
     { "dir": "src/System" },
     { "dir": "src/shims" }
@@ -26,8 +29,12 @@
   "suffix": ".bs.js",
   "bs-dependencies": [
     "@glennsl/bs-json",
-    "@glennsl/bs-jest"
+    "@glennsl/bs-jest",
+    "reason-react"
   ],
+  "reason": {
+    "react-jsx": 3
+  },
   "warnings": {
     "error" : "+101"
   },

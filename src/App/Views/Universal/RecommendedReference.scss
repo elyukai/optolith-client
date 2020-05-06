@@ -8,7 +8,8 @@
 	}
 
 	.icon {
-		@include size(11px);
+    width: 11px;
+    height: 11px;
 		border-radius: 50%;
 		margin-right: 11px;
 		border-width: 2px;

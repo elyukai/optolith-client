@@ -1,3 +1,37 @@
+## 1.3.2
+
+### Bug Fixes
+
+- Combat Techniques from books other than Core Rules were missing in combat techniques tab. #543
+- Description of combat technique selection for profession variants does not render properly. #539
+- Profession *Lanisto*: Skill Specialization selection referenced the wrong skill. #537
+- Professions did not react to dependencies. #507
+- *Old Adersin Style* missing from **Aventuria Armory**. #499
+- Professions' section header "Combat Techniques" is German ("Kampftechniken"). #500
+- Textfield „Title“ in personal data had wrong label. #492
+- Profession *Hazaqi*: *Earthencraft* 4 is now *Clothworking* 4. #496
+- Trade Secrets from *Armory of the Warring Kingdoms* were missing. #474
+- SA *Binding of the Spell-Sword* had no costs. #490
+- *Religion* was on SR 6 for most of the Blessed One professions. #475
+- States were overflowing on character sheet PDF but not in Optolith. #473
+- The `config.json` has still thrown errors for many users. The problem should be fixed, finally. #476
+- In very rare situations parts of the heroes file or the whole heroes file have been deleted. Because of this, saving heroes has been completely rewritten and condensed to prevent further issues. #477
+- Added missing Garethi dialect *Nostrian*. #480
+- Fixed prerequisites for SA Energy Control. #471
+- Fixed third-party licenses. #471
+
+### Known Issues
+
+- Some of the entries with more complex prerequisites might *display* them wrong but *handle* them correct.
+
+## 1.3.1
+
+### Bug Fixes
+
+- In the French version, you were not able to create characters, because you could not choose any publication, race, ... #449
+- There was an error thrown by "unknown keys" in the config. #450
+- On character sheet, states were only displayed in one column if the amount of states was even. #448
+
 ## 1.3.0
 
 ### New Features

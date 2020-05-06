@@ -1,11 +1,12 @@
 import { ident } from "../../Data/Function"
 import { fmap } from "../../Data/Functor"
-import { foldr, groupByKey } from "../../Data/List"
+import { filter, foldr, groupByKey } from "../../Data/List"
 import { fromMaybe, listToMaybe } from "../../Data/Maybe"
 import { max, min } from "../../Data/Num"
 import { elems, map } from "../../Data/OrderedMap"
 import { fst, isTuple, Pair, snd } from "../../Data/Tuple"
 import { upd1, upd2 } from "../../Data/Tuple/Update"
+import { ConditionId } from "../Constants/Ids.gen"
 import { SkillCombinedA_ } from "../Models/View/SkillCombined"
 import { Condition } from "../Models/Wiki/Condition"
 import { Skill } from "../Models/Wiki/Skill"
@@ -20,6 +21,8 @@ import { getRuleBooksEnabled } from "./rulesSelectors"
 import { getAllSkills } from "./skillsSelectors"
 import { getWiki, getWikiSkills } from "./stateSelectors"
 
+const CA = Condition.A
+
 export const getConditions = createMaybeSelector (
   getWiki,
   getRuleBooksEnabled,
@@ -28,7 +31,9 @@ export const getConditions = createMaybeSelector (
       staticData,
       StaticData.A.conditions,
       elems,
-      filterByAvailability (Condition.A.src) (availability),
+      filter (x => CA.id (x) !== ConditionId.sikaryanVerlust
+                   && CA.id (x) !== ConditionId.daemonischeAuszehrung),
+      filterByAvailability (CA.src) (availability),
       sortRecordsByName (staticData),
     )
 )

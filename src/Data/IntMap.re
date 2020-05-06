@@ -1,8 +1,9 @@
-module IntMap = Map.Make(Int32);
+module IntMap =
+  Data_Map.Make({
+    type t = int;
+    let compare = compare;
+  });
 
-type t('a) = IntMap.t('a);
+include IntMap;
 
-/**
- * Right-associative fold of a structure.
- */
-let foldr = (f, initial, mp) => IntMap.fold(f, mp, initial);
+type intmap('a) = t('a);

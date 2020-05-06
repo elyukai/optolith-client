@@ -3,6 +3,7 @@
 
 var List = require("bs-platform/lib/js/list.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
+var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Ix$OptolithClient = require("../../Data/Ix.bs.js");
 var Int$OptolithClient = require("../../Data/Int.bs.js");
 
@@ -85,16 +86,42 @@ function icToStr(ic) {
   }
 }
 
+function icToIx(ic) {
+  return ic;
+}
+
+function t(json) {
+  var x = Json_decode.string(json);
+  switch (x) {
+    case "A" :
+        return /* A */0;
+    case "B" :
+        return /* B */1;
+    case "C" :
+        return /* C */2;
+    case "D" :
+        return /* D */3;
+    case "E" :
+        return /* E */4;
+    default:
+      throw [
+            Json_decode.DecodeError,
+            "Unknown improvement cost: " + x
+          ];
+  }
+}
+
+var Decode = {
+  t: t
+};
+
 var getAPForActivatation = getAPCostBaseByIC;
 
-exports.getAPCostBaseByIC = getAPCostBaseByIC;
-exports.getLastSRWithConstantCost = getLastSRWithConstantCost;
-exports.getBaseMultiplier = getBaseMultiplier;
-exports.getCost = getCost;
-exports.getAPForBounds = getAPForBounds;
 exports.getAPForRange = getAPForRange;
 exports.getAPForInc = getAPForInc;
 exports.getAPForDec = getAPForDec;
 exports.getAPForActivatation = getAPForActivatation;
 exports.icToStr = icToStr;
+exports.icToIx = icToIx;
+exports.Decode = Decode;
 /* No side effect */

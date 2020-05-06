@@ -49,7 +49,6 @@ export const EditText: React.FC<EditTextProps> = props => {
         onChange={setText}
         onKeyDown={handleEnter}
         autoFocus={autoFocus}
-        everyKeyDown
         />
       <IconButton
         icon="&#xE90a;"

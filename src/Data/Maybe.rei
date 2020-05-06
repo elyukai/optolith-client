@@ -1,7 +1,9 @@
+[@gentype "Maybe"]
 type t('a) =
   | Just('a)
   | Nothing;
 
+[@gentype "Maybe_"]
 type maybe('a) = t('a);
 
 module Functor: {
@@ -9,6 +11,8 @@ module Functor: {
    * Lift a function to apply to the wrapped value.
    */
   let (<$>): ('a => 'b, t('a)) => t('b);
+
+  let (<&>): (t('a), 'a => 'b) => t('b);
 };
 
 module Applicative: {
@@ -56,6 +60,7 @@ module Monad: {
   /**
    * Removes one level of monadic structure.
    */
+  [@genType "join"]
   let join: t(t('a)) => t('a);
 
   /**
@@ -165,6 +170,16 @@ module Semigroup: {
 /**
  *
  */
+let isJust: t('a) => bool;
+
+/**
+ *
+ */
+let isNothing: t('a) => bool;
+
+/**
+ *
+ */
 let fromMaybe: ('a, t('a)) => 'a;
 
 /**
@@ -195,9 +210,13 @@ let mapMaybe: ('a => t('b), list('a)) => list('b);
 /**
  *
  */
+[@genType]
 let maybeToOption: t('a) => option('a);
 
 /**
  *
  */
+[@genType]
 let optionToMaybe: option('a) => t('a);
+
+let ensure: ('a => bool, 'a) => t('a);

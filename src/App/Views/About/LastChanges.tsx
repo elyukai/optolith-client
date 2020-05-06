@@ -31,7 +31,7 @@ export const LastChanges: React.FC<LastChangesProps> = ({ staticData }) => {
         .then (setText)
         .catch (err => {
           console.error (err)
-          setText ("Last Changes could not be loaded")
+          setText ("Changelog could not be loaded")
         })
     },
     [ staticData ]

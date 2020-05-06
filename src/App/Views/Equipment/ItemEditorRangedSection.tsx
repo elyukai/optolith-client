@@ -111,7 +111,6 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               value={EIA.reloadTime (item)}
               onChange={setReloadTime}
               disabled={locked}
-              everyKeyDown
               />
           </div>
           <div className="row">
@@ -126,7 +125,6 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 onChange={setDamageDiceNumber}
                 disabled={locked}
                 valid={IEIVA.damageDiceNumber (inputValidation)}
-                everyKeyDown
                 />
               <Dropdown
                 className="damage-dice-sides"
@@ -142,7 +140,6 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 onChange={setDamageFlat}
                 disabled={locked}
                 valid={IEIVA.damageFlat (inputValidation)}
-                everyKeyDown
                 />
             </div>
             <TextField
@@ -154,7 +151,6 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               onChange={setStabilityModifier}
               disabled={locked}
               valid={IEIVA.stabilityMod (inputValidation)}
-              everyKeyDown
               />
             <Dropdown
               className="weapon-loss"
@@ -173,7 +169,6 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 onChange={setRange (1)}
                 disabled={locked}
                 valid={IEIVA.range1 (inputValidation)}
-                everyKeyDown
                 />
               <TextField
                 className="range2"
@@ -182,7 +177,6 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 onChange={setRange (2)}
                 disabled={locked}
                 valid={IEIVA.range2 (inputValidation)}
-                everyKeyDown
                 />
               <TextField
                 className="range3"
@@ -191,7 +185,6 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 onChange={setRange (3)}
                 disabled={locked}
                 valid={IEIVA.range3 (inputValidation)}
-                everyKeyDown
                 />
             </div>
             <Dropdown
@@ -210,7 +203,6 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               onChange={setLength}
               disabled={locked}
               valid={IEIVA.length (inputValidation)}
-              everyKeyDown
               />
           </div>
         </div>

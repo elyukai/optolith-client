@@ -5,7 +5,7 @@
 }
 
 .navigationbar-inner {
-	height: $titlebar-height;
+	height: var(--navigationbar-height);
 	width: 100%;
 	display: flex;
 	position: relative;

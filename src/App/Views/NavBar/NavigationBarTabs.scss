@@ -7,7 +7,7 @@
 	align-self: stretch;
 
 	.tab {
-		font: bold 15px/#{$titlebar-height} Alegreya SC;
+		font: bold 15px/var(--navigationbar-height) Alegreya SC;
 		// font: bold 18px/#{$titlebar-height} Alegreya SC;
 		flex: 0 1 auto;
 		letter-spacing: 0.1em;
