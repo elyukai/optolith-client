@@ -2,6 +2,7 @@
 
 ### Fehlerbehebungen
 
+- SF Wege der Gelehrten: Es fehlten einige Auswahlmöglichkeiten. #517
 - Neue Kampftechniken aus Büchern abseits des Regelwerks fehlten im Kampftechniken-Tab. #543
 - Die Beschreibung der Kampftechnikauswahl bei Professionsvarianten wurde nicht richtig angezeigt.
 - Die Sozialstatusvoraussetzung für *Herrschaftsanspruch* funktionierte nicht.
