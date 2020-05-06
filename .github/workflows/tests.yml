@@ -18,6 +18,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
+    - run: sh ./.travis/InstallLinux.sh
     - run: npm ci
     - run: npm run yaml:decrypt
     - run: npm run ci:copyschemes
