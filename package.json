@@ -69,12 +69,12 @@
     "typescript": "3.8.3"
   },
   "scripts": {
-    "prerelease:win": "set NODE_ENV=development && node ./deploy/buildInsiderWin.js",
-    "prerelease:linux": "NODE_ENV=development node ./deploy/buildInsiderLinux.js",
-    "prerelease:osx": "NODE_ENV=development node ./deploy/buildInsiderMac.js",
-    "release:win": "set NODE_ENV=production && node ./deploy/buildWin.js",
-    "release:linux": "NODE_ENV=production node ./deploy/buildLinux.js",
-    "release:osx": "NODE_ENV=production node ./deploy/buildMac.js",
+    "insider:win": "set NODE_ENV=development && node ./deploy/buildInsiderWin.js",
+    "insider:linux": "NODE_ENV=development node ./deploy/buildInsiderLinux.js",
+    "insider:osx": "NODE_ENV=development node ./deploy/buildInsiderMac.js",
+    "stable:win": "set NODE_ENV=production && node ./deploy/buildWin.js",
+    "stable:linux": "NODE_ENV=production node ./deploy/buildLinux.js",
+    "stable:osx": "NODE_ENV=production node ./deploy/buildMac.js",
     "css:build": "node --experimental-modules ./deploy/buildSass.mjs",
     "ts:build": "tsc",
     "ts:watch": "tsc --watch",
