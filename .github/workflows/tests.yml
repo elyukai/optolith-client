@@ -21,6 +21,8 @@ jobs:
     - run: sh ./.travis/InstallLinux.sh
     - run: npm ci
     - run: npm run yaml:decrypt
+      env:
+        OPTOLITH_KEY: ${{ secrets.OPTOLITH_KEY }}
     - run: npm run ci:copyschemes
     - run: npm run re:build
     - run: npm run ts:build
