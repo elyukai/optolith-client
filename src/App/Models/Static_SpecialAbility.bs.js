@@ -7,6 +7,7 @@ var Int$OptolithClient = require("../../Data/Int.bs.js");
 var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
 var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
+var GenericHelpers$OptolithClient = require("../Utilities/GenericHelpers.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_Advantage$OptolithClient = require("./Static_Advantage.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
@@ -74,6 +75,7 @@ function combatTechniques(param) {
 }
 
 function tUniv(json) {
+  var partial_arg = GenericHelpers$OptolithClient.Decode.oneOrMany(Json_decode.$$int);
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
           cost: JsonStrict$OptolithClient.optionalField("cost", cost, json),
@@ -86,7 +88,7 @@ function tUniv(json) {
                   return Json_decode.list(Static_SelectOption$OptolithClient.Decode.tUniv, param);
                 }), json),
           extended: JsonStrict$OptolithClient.optionalField("extended", (function (param) {
-                  return Json_decode.list(Json_decode.$$int, param);
+                  return Json_decode.list(partial_arg, param);
                 }), json),
           combatTechniques: JsonStrict$OptolithClient.optionalField("combatTechniques", combatTechniques, json),
           property: JsonStrict$OptolithClient.optionalField("property", Json_decode.$$int, json),

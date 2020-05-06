@@ -1,3 +1,5 @@
+open GenericHelpers;
+
 type combatTechniques =
   | List(list(int))
   | All
@@ -28,7 +30,7 @@ type t = {
   propertyText: Maybe.t(string),
   aspect: Maybe.t(int),
   brew: Maybe.t(int),
-  extended: Maybe.t(list(int)),
+  extended: Maybe.t(list(oneOrMany(int))),
   prerequisites: Static_Prerequisites.tWithLevel,
   prerequisitesText: Maybe.t(string),
   prerequisitesTextIndex: Static_Prerequisites.tIndexWithLevel,
@@ -46,6 +48,7 @@ type t = {
 module Decode = {
   open Json.Decode;
   open JsonStrict;
+  open GenericHelpers.Decode;
 
   type tL10n = {
     id: int,
@@ -120,7 +123,7 @@ module Decode = {
     selectOptionCategories:
       Maybe.t(list(Static_SelectOption.Decode.categoryWithGroups)),
     selectOptions: Maybe.t(list(Static_SelectOption.Decode.tUniv)),
-    extended: Maybe.t(list(int)),
+    extended: Maybe.t(list(oneOrMany(int))),
     combatTechniques: Maybe.t(combatTechniques),
     property: Maybe.t(int),
     aspect: Maybe.t(int),
@@ -173,7 +176,7 @@ module Decode = {
            "selectOptions",
            list(Static_SelectOption.Decode.tUniv),
          ),
-    extended: json |> optionalField("extended", list(int)),
+    extended: json |> optionalField("extended", list(oneOrMany(int))),
     combatTechniques:
       json |> optionalField("combatTechniques", combatTechniques),
     property: json |> optionalField("property", int),
