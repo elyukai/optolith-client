@@ -18,22 +18,13 @@ export const Imprint = (props: ImprintProps) => {
 
         <h3>{"Lukas Obermann"}</h3>
         <p>
-          {"Ballastbrücke 29"}
+          {"Duburger Straße 13"}
           <br />
-          {"24937 Flensburg"}
+          {"24939 Flensburg"}
           <br />
           {"Germany"}
           <br />
           <a href="mailto:support@optolith.app">{"support@optolith.app"}</a>
-        </p>
-
-        <h3>{"Thore Schuchardt"}</h3>
-        <p>
-          {"Lehmberg 7b"}
-          <br />
-          {"24361 Groß Wittensee"}
-          <br />
-          {"Germany"}
         </p>
       </Scroll>
     </Page>
