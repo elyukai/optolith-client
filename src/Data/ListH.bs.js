@@ -547,6 +547,17 @@ function lookup(k, xs) {
               }));
 }
 
+function take(n, xs) {
+  if (n <= 0 || !xs) {
+    return /* [] */0;
+  } else {
+    return /* :: */[
+            xs[0],
+            take(n - 1 | 0, xs[1])
+          ];
+  }
+}
+
 function isInfixOf(x, y) {
   return x.includes(y);
 }
@@ -687,6 +698,7 @@ exports.permutations = permutations;
 exports.elem = elem;
 exports.notElem = notElem;
 exports.lookup = lookup;
+exports.take = take;
 exports.isInfixOf = isInfixOf;
 exports.filter = filter;
 exports.$bang$bang = $bang$bang;
