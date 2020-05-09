@@ -7,7 +7,7 @@ import { Purse } from "../../Models/Hero/Purse"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { localizeNumber, localizeWeight, translate, translateP } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
-import { TextField } from "../Universal/TextField"
+import { TextFieldLazy } from "../Universal/TextFieldLazy"
 
 export interface PurseAndTotalsProps {
   carryingCapacity: number
@@ -69,22 +69,22 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
       <div className="purse">
         <h4>{translate (staticData) ("equipment.purse.title")}</h4>
         <div className="fields">
-          <TextField
+          <TextFieldLazy
             label={translate (staticData) ("equipment.purse.ducats")}
             value={pipe_ (purse, fmap (PA.d), maybeToUndefined)}
             onChange={setDucates}
             />
-          <TextField
+          <TextFieldLazy
             label={translate (staticData) ("equipment.purse.silverthalers")}
             value={pipe_ (purse, fmap (PA.s), maybeToUndefined)}
             onChange={setSilverthalers}
             />
-          <TextField
+          <TextFieldLazy
             label={translate (staticData) ("equipment.purse.halers")}
             value={pipe_ (purse, fmap (PA.h), maybeToUndefined)}
             onChange={setHellers}
             />
-          <TextField
+          <TextFieldLazy
             label={translate (staticData) ("equipment.purse.kreutzers")}
             value={pipe_ (purse, fmap (PA.k), maybeToUndefined)}
             onChange={setKreutzers}

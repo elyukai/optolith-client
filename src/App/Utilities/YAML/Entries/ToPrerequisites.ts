@@ -6,6 +6,7 @@ import { catMaybes, Just, Maybe, Nothing } from "../../../../Data/Maybe"
 import { assocs, insert, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { fst, snd } from "../../../../Data/Tuple"
+import { OverridePrerequisite } from "../../../Models/Static_Prerequisites.gen"
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement"
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement"
 import { RequireIncreasable } from "../../../Models/Wiki/prerequisites/IncreasableRequirement"
@@ -15,8 +16,9 @@ import { ProfessionRequireIncreasable } from "../../../Models/Wiki/prerequisites
 import { RaceRequirement } from "../../../Models/Wiki/prerequisites/RaceRequirement"
 import { SexRequirement } from "../../../Models/Wiki/prerequisites/SexRequirement"
 import { SocialPrerequisite } from "../../../Models/Wiki/prerequisites/SocialPrerequisite"
-import { AllRequirementObjects } from "../../../Models/Wiki/wikiTypeHelpers"
+import { AllRequirementObjects, PrerequisitesIndex } from "../../../Models/Wiki/wikiTypeHelpers"
 import { pipe, pipe_ } from "../../pipe"
+import { PrerequisiteIndexReplacement } from "../Schema/Advantages/Advantages.l10n"
 import * as RawPrerequisites from "../Schema/Prerequisites/Prerequisites"
 
 
@@ -222,3 +224,102 @@ export const toLevelPrerequisites : (univ : RawPrerequisites.WithLevelPrerequisi
                                                              : mp
                                                     )
                                             )
+
+
+const createReplaceWith = (value : string) => ({ tag: "ReplaceWith", value }) as const
+
+
+const combineSingleIndex = (univ ?: boolean, l10n ?: string) : OverridePrerequisite | undefined =>
+                             typeof l10n === "string"
+                             ? createReplaceWith (l10n)
+                             : univ === true
+                             ? "Hide" as const
+                             : undefined
+
+
+const combinedIndexMap = (univ ?: number[], l10n ?: PrerequisiteIndexReplacement[]) =>
+  pipe_ (
+    OrderedMap.empty as OrderedMap<number, OverridePrerequisite>,
+    univ === undefined
+    ? ident
+    : flip (foldr ((k : number) => insert (k) <OverridePrerequisite> ("Hide")))
+           (fromArray (univ)),
+    l10n === undefined
+    ? ident
+    : flip (foldr ((x : PrerequisiteIndexReplacement) =>
+                    insert (x.index) <OverridePrerequisite> (createReplaceWith (x.replacement))))
+          (fromArray (l10n))
+  )
+
+
+const getPrerequisitesIndexLevel =
+  (univ : RawPrerequisites.HidePrerequisites, l10n : RawPrerequisites.ReplacePrerequisites) => ({
+    sex: combineSingleIndex (univ.sexPrerequisite, l10n.sexPrerequisite),
+    race: combineSingleIndex (univ.racePrerequisite, l10n.racePrerequisite),
+    culture: combineSingleIndex (univ.culturePrerequisite, l10n.culturePrerequisite),
+    pact: combineSingleIndex (univ.pactPrerequisite, l10n.pactPrerequisite),
+    social: combineSingleIndex (univ.socialStatusPrerequisite, l10n.socialStatusPrerequisite),
+    primaryAttribute: combineSingleIndex (
+                        univ.primaryAttributePrerequisite,
+                        l10n.primaryAttributePrerequisite
+                      ),
+    activatable: combinedIndexMap (univ.activatablePrerequisites, l10n.activatablePrerequisites),
+    activatableMultiEntry: OrderedMap.empty,
+    activatableMultiSelect: OrderedMap.empty,
+    increasable: combinedIndexMap (univ.activatablePrerequisites, l10n.activatablePrerequisites),
+    increasableMultiEntry: OrderedMap.empty,
+  })
+
+
+type PrereqIndexPair = readonly [
+  RawPrerequisites.HidePrerequisites,
+  RawPrerequisites.ReplacePrerequisites
+]
+
+
+const getPrerequisitesIndexForLevels = (
+  univ ?: RawPrerequisites.HidePrerequisitesAtLevel[],
+  l10n ?: RawPrerequisites.ReplacePrerequisitesAtLevel[]
+) => {
+    const combined = (l10n ?? [])
+      .reduce<ReadonlyMap<number, PrereqIndexPair>> (
+        (mp, { level, hide }) => {
+          const from_map = mp.get (level)
+
+          if (from_map === undefined) {
+            return new Map ([
+              ...mp,
+              [ level, [ {}, hide ] as PrereqIndexPair ] as const,
+            ])
+          }
+          else {
+            return new Map ([ ...mp, [ level, [ from_map[0], hide ] as const ] ])
+          }
+        },
+        new Map (
+          (univ ?? [])
+            .map (e => [ e.level, [ e, {} ] as PrereqIndexPair ] as const)
+        )
+      )
+
+    const arr = [ ...combined ]
+
+    const res_arr = arr.map (
+      ([ level, [ univ_e, l10n_e ] ]) =>
+        [ level, getPrerequisitesIndexLevel (univ_e, l10n_e) ] as const
+    )
+
+    return OrderedMap.fromArray (res_arr)
+  }
+
+
+export const getPrerequisitesIndex = (
+  univ : RawPrerequisites.HidePrerequisitesWithLevel | undefined,
+  l10n : RawPrerequisites.ReplacePrerequisitesWithLevel | undefined
+) : PrerequisitesIndex => ({
+    ...getPrerequisitesIndexLevel (univ ?? {}, l10n ?? {}),
+    levels: getPrerequisitesIndexForLevels (
+              univ?.levels,
+              l10n?.levels
+            ),
+  })

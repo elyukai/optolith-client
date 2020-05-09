@@ -13,7 +13,7 @@ import { isEmptyOr, isFloat, isNaturalNumber } from "../../Utilities/RegexUtils"
 import { Dropdown } from "../Universal/Dropdown"
 import { IconButton } from "../Universal/IconButton"
 import { InputButtonGroup } from "../Universal/InputButtonGroup"
-import { TextField } from "../Universal/TextField"
+import { TextFieldLazy } from "../Universal/TextFieldLazy"
 
 const PDA = PersonalData.A
 const DOA = DropdownOption.A
@@ -96,28 +96,28 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
   return (
     <div className="personal-data">
       <div>
-        <TextField
+        <TextFieldLazy
           label={translate (staticData) ("personaldata.family")}
           value={maybeToUndefined (PDA.family (profile))}
           onChange={changeFamily}
           />
       </div>
       <div>
-        <TextField
+        <TextFieldLazy
           label={translate (staticData) ("personaldata.placeofbirth")}
           value={maybeToUndefined (PDA.placeOfBirth (profile))}
           onChange={changePlaceOfBirth}
           />
       </div>
       <div>
-        <TextField
+        <TextFieldLazy
           label={translate (staticData) ("personaldata.dateofbirth")}
           value={maybeToUndefined (PDA.dateOfBirth (profile))}
           onChange={changeDateOfBirth}
           />
       </div>
       <div>
-        <TextField
+        <TextFieldLazy
           label={translate (staticData) ("personaldata.age")}
           value={maybeToUndefined (age)}
           onChange={changeAge}
@@ -144,7 +144,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
         <IconButton icon="&#xE913;" onClick={rerollEyes} />
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
-        <TextField
+        <TextFieldLazy
           label={`${translate (staticData) ("personaldata.size")}${wrapParenSpace (sizeCalcStr)}`}
           value={maybeToUndefined (PDA.size (profile))}
           onChange={changeSize}
@@ -153,7 +153,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
         <IconButton icon="&#xE913;" onClick={rerollSize} />
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
-        <TextField
+        <TextFieldLazy
           label={
             `${translate (staticData) ("personaldata.weight")}${wrapParenSpace (weightCalcStr)}`
           }
@@ -164,8 +164,8 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
         <IconButton icon="&#xE913;" onClick={rerollWeight} />
       </InputButtonGroup>
       <div>
-        <TextField
-          label={translate (staticData) ("personaldata.title")}
+        <TextFieldLazy
+          label={translate (staticData) ("personaldata.rank")}
           value={maybeToUndefined (PDA.title (profile))}
           onChange={changeTitle}
           />
@@ -179,21 +179,21 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
           />
       </div>
       <div>
-        <TextField
+        <TextFieldLazy
           label={translate (staticData) ("personaldata.characteristics")}
           value={maybeToUndefined (PDA.characteristics (profile))}
           onChange={changeCharacteristics}
           />
       </div>
       <div>
-        <TextField
+        <TextFieldLazy
           label={translate (staticData) ("personaldata.otherinfo")}
           value={maybeToUndefined (PDA.otherInfo (profile))}
           onChange={changeOtherInfo}
           />
       </div>
       <div>
-        <TextField
+        <TextFieldLazy
           label={translate (staticData) ("personaldata.cultureareaknowledge")}
           value={maybeToUndefined (PDA.cultureAreaKnowledge (profile))}
           onChange={changeCultureAreaKnowledge}

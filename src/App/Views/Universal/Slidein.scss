@@ -19,7 +19,7 @@
 		position: relative;
 		background: var(--background-color);
 		border-top: 1px solid var(--accent-color);
-		height: calc(100% - #{$titlebar-height + 30px});
+		height: calc(100% - var(--navigationbar-height) + 30px);
 		width: 100%;
 		bottom: 0;
 		right: 0;

@@ -13,7 +13,7 @@ interface Props {
   fullWidth?: boolean
   staticData: StaticDataRecord
   onChange (newText: string): void
-  value?: string | number
+  value?: string
   valid?: boolean
 }
 
@@ -43,7 +43,6 @@ export const SearchField: React.FC<Props> = props => {
       type="text"
       valid={valid}
       value={value}
-      everyKeyDown
       hint={translate (staticData) ("general.filters.searchfield.placeholder")}
       />
   )

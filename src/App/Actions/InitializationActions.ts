@@ -8,6 +8,7 @@ import { bindF, fromJust, fromMaybe, isJust, Just, Maybe } from "../../Data/Mayb
 import { filter, keysSet, OrderedMap } from "../../Data/OrderedMap"
 import { notMember } from "../../Data/OrderedSet"
 import { Record } from "../../Data/Record"
+import { show } from "../../Data/Show"
 import { parseJSON } from "../../Data/String/JSON"
 import { fst, Pair, snd } from "../../Data/Tuple"
 import * as IO from "../../System/IO"
@@ -96,6 +97,8 @@ export const requestInitialData: ReduxAction<Promise<void>> = async (dispatch, g
                                       message: toMsg (fromLeft_ (err)),
                                     })))
 
+  console.log (did_update)
+
   if (did_update) {
     const deleted = await deleteCache ()
 
@@ -105,6 +108,8 @@ export const requestInitialData: ReduxAction<Promise<void>> = async (dispatch, g
   }
 
   const update_written = await writeUpdate (false)
+
+  console.log (show (update_written))
 
   if (isLeft (update_written)) {
     return dispatchError (update_written)
@@ -117,6 +122,8 @@ export const requestInitialData: ReduxAction<Promise<void>> = async (dispatch, g
   }
 
   const config = fromRight_ (econfig)
+
+  console.log (show (config))
 
   const mheroes = await pipe_ (
     join (user_data_path, "heroes.json"),
@@ -165,6 +172,8 @@ export const requestInitialData: ReduxAction<Promise<void>> = async (dispatch, g
   }
 
   dispatch (receiveInitialData (initial_data))
+
+  console.log ("Dispatched initial data")
 
   insertAppStateCache (getState ())
   insertHeroesCache (getHeroes (getState ()))

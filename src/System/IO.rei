@@ -7,6 +7,8 @@ module Functor: {
    * Maps a function over the result of an IO action.
    */
   let (<$>): ('a => 'b, t('a)) => t('b);
+
+  let (<&>): (t('a), 'a => 'b) => t('b);
 };
 
 module Monad: {

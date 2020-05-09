@@ -48,6 +48,8 @@ type io('a) = t('a);
 module Functor = {
   let (<$>) = (f, m) =>
     Js.Promise.then_(x => f(x) |> Js.Promise.resolve, m);
+
+  let (<&>) = (m, f) => f <$> m;
 };
 
 module Monad = {

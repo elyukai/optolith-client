@@ -1,6 +1,5 @@
-$modal-padding: 24px;
-
 .modal-backdrop {
+  --modal-padding: 24px;
 	position: fixed;
 	top: 1px;
 	bottom: 1px;
@@ -98,7 +97,7 @@ $modal-padding: 24px;
 		}
 
 		.modal-header {
-			padding: $modal-padding $modal-padding $modal-padding * 5/8;
+			padding: var(--modal-padding) var(--modal-padding) calc(var(--modal-padding) * 5 / 8);
 
 			.modal-header-inner {
 				font: bold 20px/24px Alegreya SC;
@@ -130,7 +129,7 @@ $modal-padding: 24px;
 				color: var(--text-color);
 				font: 500 11px/16px Alegreya Sans;
 				letter-spacing: 0.05em;
-				padding: 0 $modal-padding 55px;
+				padding: 0 var(--modal-padding) 55px;
 
 				p {
 					margin-top: 14px;

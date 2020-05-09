@@ -3,13 +3,14 @@
 	padding: 22px 35px;
 
 	.left {
-		$width: 150px;
+		--size: 150px;
 		flex: none;
-		width: $width;
+		width: var(--size);
 
 		.avatar-wrapper {
-			flex: 1 0 auto;
-			@include size($width);
+      flex: 1 0 auto;
+      width: var(--size);
+      height: var(--size);
 
 			&:hover {
 				cursor: pointer;
@@ -43,8 +44,9 @@
 			top: 39px;
 			left: 39px;
 			display: none;
-			content: "\E91a";
-			@include size(64px);
+      content: "\E91a";
+      width: 64px;
+      height: 64px;
 			font: 64px/64px TDE Heroes;
 			color: var(--headings-color);
 			text-align: center;

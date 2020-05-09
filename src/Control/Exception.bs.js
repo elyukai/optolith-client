@@ -5,19 +5,18 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var IO$OptolithClient = require("../System/IO.bs.js");
 
-function $$catch(prim, prim$1) {
-  return prim$1.catch(Curry.__1(prim));
+function handle(f, x) {
+  return x.catch(Curry.__1(f));
 }
 
-function try_(x) {
-  var prim = IO$OptolithClient.Monad.$great$great$eq(x, (function (x) {
-          return IO$OptolithClient.Monad.pure(/* Right */Block.__(1, [x]));
-        }));
-  return prim.catch((function (x) {
+function handleE(x) {
+  return x.then((function (x) {
+                  return IO$OptolithClient.Monad.pure(/* Right */Block.__(1, [x]));
+                })).catch((function (x) {
                 return IO$OptolithClient.Monad.pure(/* Left */Block.__(0, [x]));
               }));
 }
 
-exports.$$catch = $$catch;
-exports.try_ = try_;
+exports.handle = handle;
+exports.handleE = handleE;
 /* IO-OptolithClient Not a pure module */

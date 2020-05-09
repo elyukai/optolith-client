@@ -1,13 +1,13 @@
-import { thrush } from "../../Data/Function"
+import { ident, thrush } from "../../Data/Function"
 import { fmap, fmapF } from "../../Data/Functor"
-import { cons, consF, elem, List, map, maximum } from "../../Data/List"
-import { fromJust, isJust, Just, liftM2, Maybe, Nothing, or } from "../../Data/Maybe"
+import { cons, consF, elem, filter, fnull, List, map, maximum } from "../../Data/List"
+import { fromJust, isJust, Just, liftM2, Maybe, maybe, Nothing, or } from "../../Data/Maybe"
 import { add, divideBy, gt, max, subtractBy } from "../../Data/Num"
 import { findWithDefault, foldrWithKey, lookup } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
-import { uncurryN, uncurryN4 } from "../../Data/Tuple/Curry"
+import { uncurryN, uncurryN5 } from "../../Data/Tuple/Curry"
 import { IdPrefixes } from "../Constants/IdPrefixes"
-import { AdvantageId, SpecialAbilityId } from "../Constants/Ids"
+import { AdvantageId, CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids.gen"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { createSkillDependentWithValue6, SkillDependent } from "../Models/ActiveEntries/SkillDependent"
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
@@ -15,7 +15,7 @@ import { CombatTechniqueWithAttackParryBase, CombatTechniqueWithAttackParryBaseA
 import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements"
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
-import { StaticDataRecord } from "../Models/Wiki/WikiModel"
+import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { isMaybeActive } from "../Utilities/Activatable/isActive"
 import { getActiveSelections } from "../Utilities/Activatable/selectionUtils"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
@@ -24,18 +24,19 @@ import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
 import { compareLocale } from "../Utilities/I18n"
 import { prefixId } from "../Utilities/IDUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
-import { filterByAvailabilityAndPred } from "../Utilities/RulesUtils"
+import { filterByAvailabilityAndPred, isEntryFromCoreBook } from "../Utilities/RulesUtils"
 import { comparingR, sortByMulti } from "../Utilities/sortBy"
 import { getMaxAttributeValueByID } from "./attributeSelectors"
 import { getStartEl } from "./elSelectors"
 import { getRuleBooksEnabled } from "./rulesSelectors"
 import { getCombatTechniquesWithRequirementsSortOptions } from "./sortOptionsSelectors"
-import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getWiki, getWikiCombatTechniques } from "./stateSelectors"
+import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getSpecialAbilities, getWiki, getWikiCombatTechniques } from "./stateSelectors"
 
 const CTA = CombatTechnique.A
 const SDA = SkillDependent.A
 const CTWAPBA = CombatTechniqueWithAttackParryBase.A
 const CTWRA = CombatTechniqueWithRequirements.A
+const ADA = ActivatableDependent.A
 
 /**
  * Calculate the AT or PA mod by passing the current attributes' state as well
@@ -78,15 +79,17 @@ const getParryBase =
                  + getPrimaryAttrMod (attributes) (CTA.primary (wiki_entry)))
   }
 
-export const getCombatTechniquesForSheet = createMaybeSelector (
+export const getCombatTechniquesForView = createMaybeSelector (
   getWiki,
   getWikiCombatTechniques,
   getAttributes,
+  getSpecialAbilities,
   getCombatTechniques,
-  uncurryN4 (staticData =>
+  uncurryN5 (staticData =>
              wiki_combat_techniques =>
              attributes =>
-               fmap (combatTechniques =>
+             special_abilities =>
+               fmap ((combatTechniques): List<Record<CombatTechniqueWithAttackParryBase>> =>
                  pipe_ (
                    wiki_combat_techniques,
                    foldrWithKey ((id: string) => (wiki_entry: Record<CombatTechnique>) => {
@@ -94,6 +97,17 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
                                   findWithDefault (createSkillDependentWithValue6 (id))
                                                   (id)
                                                   (combatTechniques)
+
+                                if (id === CombatTechniqueId.spittingFire
+                                    && maybe (true)
+                                             (pipe (ADA.active, fnull))
+                                             (lookup (SpecialAbilityId.feuerschlucker)
+                                                     (special_abilities))) {
+                                  // If SF Feuerschlucker is not active, do not
+                                  // show CT Spitting Fire
+                                  return ident as
+                                    ident<List<Record<CombatTechniqueWithAttackParryBase>>>
+                                }
 
                                 return consF (CombatTechniqueWithAttackParryBase ({
                                   at: getAttackBase (attributes) (wiki_entry) (hero_entry),
@@ -106,6 +120,16 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
                    sortByMulti ([ comparingR (CombatTechniqueWithAttackParryBaseA_.name)
                                              (compareLocale (staticData)) ])
                  )))
+)
+
+export const getCombatTechniquesForSheet = createMaybeSelector (
+  getWiki,
+  getCombatTechniquesForView,
+  uncurryN (staticData =>
+             fmap (filter (x => SDA.value (CTWAPBA.stateEntry (x)) > 6
+                                || isEntryFromCoreBook (CTA.src)
+                                                       (StaticData.A.books (staticData))
+                                                       (CTWAPBA.wikiEntry (x)))))
 )
 
 const getMaximum =
@@ -153,17 +177,17 @@ const getValue = pipe (CTWAPBA.stateEntry, SDA.value)
 type CTWAPB = CombatTechniqueWithAttackParryBase
 
 export const getAllCombatTechniques = createMaybeSelector (
-  getCombatTechniquesForSheet,
+  getCombatTechniquesForView,
   getCurrentHeroPresent,
   getStartEl,
   getWiki,
   (mcombat_techniques, mhero, mstartEl, wiki) =>
     liftM2 ((combatTechniques: List<Record<CTWAPB>>) => (hero: HeroModelRecord) => {
              const exceptionalCombatTechnique =
-              lookup<string> (AdvantageId.ExceptionalCombatTechnique)
+              lookup<string> (AdvantageId.exceptionalCombatTechnique)
                              (HeroModel.A.advantages (hero))
 
-             const hunter = lookup<string> (SpecialAbilityId.Hunter)
+             const hunter = lookup<string> (SpecialAbilityId.hunter)
                                            (HeroModel.A.specialAbilities (hero))
 
              const hunterRequiresMinimum =

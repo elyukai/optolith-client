@@ -6,7 +6,7 @@ import { append, countWith, filter, foldr, List, sdelete, subscriptF } from "../
 import { bindF, Just, liftM3, maybe, Maybe, Nothing } from "../../../Data/Maybe"
 import { elems, lookup, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { PhaseId, SpecialAbilityId } from "../../Constants/Ids.gen"
+import { Phase, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
@@ -20,6 +20,7 @@ import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { convertUIStateToActiveObject } from "../Activatable/activatableConvertUtils"
 import { getMagicalTraditionsHeroEntries } from "../Activatable/traditionUtils"
+import { prefixSA } from "../IDUtils"
 import { isUnfamiliarSpell } from "../Increasable/spellUtils"
 import { pipe, pipe_ } from "../pipe"
 import { isStringM, misStringM } from "../typeCheckUtils"
@@ -42,7 +43,7 @@ const getTransferredUnfamiliarById: (active: Record<ActiveObjectWithId>) =>
     const src_id = AOWIA.id (active)
 
     switch (src_id) {
-      case SpecialAbilityId.traditionGuildMages:
+      case prefixSA (SpecialAbilityId.traditionGuildMages):
       case SpecialAbilityId.madaschwesternStil:
       case SpecialAbilityId.scholarDesMagierkollegsZuHoningen:
         return pipe_ (
@@ -171,7 +172,7 @@ export const isEntryAllowingTransferUnfamiliarRemovable: (wiki: StaticDataRecord
                                                          (hero: HeroModelRecord) =>
                                                          (src_id: string) => boolean =
   wiki => hero => {
-    if (HA.phase (hero) >= PhaseId.inGame) {
+    if (HA.phase (hero) >= Phase.inGame) {
       return cnst (true)
     }
 

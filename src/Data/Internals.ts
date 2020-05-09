@@ -514,7 +514,7 @@ export namespace Internals {
    */
   export const mapFromArray =
     (show: (x: any) => string) =>
-    <K, A> (xs: readonly [K, A][]): OrderedMap<K, A> => {
+    <K, A> (xs: readonly (readonly [K, A])[]): OrderedMap<K, A> => {
       if (Array.isArray (xs)) {
         return _OrderedMap (new Map (xs))
       }

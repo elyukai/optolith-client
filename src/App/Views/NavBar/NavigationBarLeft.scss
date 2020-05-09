@@ -9,8 +9,9 @@
 
 		&.avatar-wrapper {
 			flex-shrink: 0;
-			align-self: center;
-			@include size($avatar-height);
+      align-self: center;
+      width: 40px;
+      height: 40px;
 			margin-left: 28px;
 			margin-right: 4px;
 		}

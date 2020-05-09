@@ -11,7 +11,6 @@ import { HeroModel, HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroMo
 import { ActivatableDependency, ExtendedSkillDependency, SkillDependency } from "../../Models/Hero/heroTypeHelpers"
 import { SkillOptionalDependency } from "../../Models/Hero/SkillOptionalDependency"
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement"
-import { isDependentPrerequisite } from "../../Models/Wiki/prerequisites/DependentRequirement"
 import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement"
 import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement"
 import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite"
@@ -163,34 +162,31 @@ const modifyDependencies =
   (modifyActivatableDependency: ModifyActivatableDependency) =>
   (sourceId: string) =>
     flip (foldr ((x: AllRequirements): ident<Record<HeroModel>> => {
-                  if (isDependentPrerequisite (x)) {
-                    if (RequirePrimaryAttribute.is (x)) {
-                      return putPrimaryAttributeDependency (modifyAttributeDependency)
-                                                           (x)
-                    }
-
-                    if (RequireIncreasable.is (x)) {
-                      return putIncreasableDependency (modifyAttributeDependency)
-                                                      (modifySkillDependency)
-                                                      (modifyActivatableSkillDependency)
-                                                      (sourceId)
-                                                      (x)
-                    }
-
-                    if (
-                      RequireActivatable.is (x)
-                      && notEquals (RAA.sid (x)) (Just ("GR"))
-                    ) {
-                      return putActivatableDependency (modifyActivatableDependency)
-                                                      (sourceId)
-                                                      (x)
-                    }
+                  if (RequirePrimaryAttribute.is (x)) {
+                    return putPrimaryAttributeDependency (modifyAttributeDependency)
+                                                          (x)
+                  }
+                  else if (RequireIncreasable.is (x)) {
+                    return putIncreasableDependency (modifyAttributeDependency)
+                                                    (modifySkillDependency)
+                                                    (modifyActivatableSkillDependency)
+                                                    (sourceId)
+                                                    (x)
+                  }
+                  else if (
+                    RequireActivatable.is (x)
+                    && notEquals (RAA.sid (x)) (Just ("GR"))
+                  ) {
+                    return putActivatableDependency (modifyActivatableDependency)
+                                                    (sourceId)
+                                                    (x)
                   }
                   else if (SocialPrerequisite.is (x)) {
                     return modifySocialDependency (isToAdd) (x)
                   }
-
-                  return ident
+                  else {
+                    return ident
+                  }
                 }))
 
 /**

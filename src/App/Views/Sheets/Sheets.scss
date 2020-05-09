@@ -70,11 +70,11 @@ table {
 	}
 
 	h1 {
-		font: italic bold 24px/22px Alegreya;
+		font: italic bold 18pt/0.9 Alegreya;
 	}
 
 	h2 {
-		font: 17px/13px Alegreya SC;
+		font: 17px/13px "Alegreya SC";
 		text-transform: none;
 		letter-spacing: 0;
 	}
@@ -94,14 +94,14 @@ table {
 
 	th {
 		height: 5mm;
-		border-width: 0.3mm 0;
-		font: bold 10px/1 Alegreya SC;
+		border-width: 0.75pt 0;
+		font: bold 10px/1 "Alegreya SC";
 		border-color: grey;
 	}
 
 	td {
 		height: 4.5mm;
-		border-width: 0 0 0.15mm;
+		border-width: 0 0 0.25pt;
 		font: 500 11px/4.35mm Alegreya Sans;
 	}
 

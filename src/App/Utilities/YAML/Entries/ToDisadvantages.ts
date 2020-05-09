@@ -1,9 +1,8 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 import { bindF, fromRight_, isLeft, Right, second } from "../../../../Data/Either"
-import { flip, ident } from "../../../../Data/Function"
-import { append, cons, foldr, fromArray, isList, List, notNull } from "../../../../Data/List"
+import { append, cons, fromArray, isList, List, notNull } from "../../../../Data/List"
 import { ensure, fromMaybe, Just, Maybe, Nothing } from "../../../../Data/Maybe"
-import { fromMap, insert, insertWith, OrderedMap } from "../../../../Data/OrderedMap"
+import { fromMap, insertWith, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Blessing } from "../../../Models/Wiki/Blessing"
 import { Cantrip } from "../../../Models/Wiki/Cantrip"
@@ -18,35 +17,14 @@ import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { DisadvantageL10n } from "../Schema/Disadvantages/Disadvantages.l10n"
 import { DisadvantageUniv } from "../Schema/Disadvantages/Disadvantages.univ"
-import { PrerequisiteIndexReplacement } from "../Schema/SpecialAbilities/SpecialAbilities.l10n"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
 import { toErrata } from "./ToErrata"
 import { toMarkdown } from "./ToMarkdown"
-import { toLevelPrerequisites } from "./ToPrerequisites"
+import { getPrerequisitesIndex, toLevelPrerequisites } from "./ToPrerequisites"
 import { mergeSOs, resolveSOCats } from "./ToSelectOptions"
 import { toSourceRefs } from "./ToSourceRefs"
-
-
-type PrerequisitesIndex = OrderedMap<number, false | string>
-
-
-const getPrerequisitesIndex : (univ : DisadvantageUniv)
-                            => (l10n : DisadvantageL10n)
-                            => PrerequisitesIndex
-                            = univ => l10n => pipe_ (
-                                OrderedMap.empty as OrderedMap<number, false | string>,
-                                univ.prerequisitesIndex === undefined
-                                ? ident
-                                : flip (foldr ((k : number) => insert (k) <false | string> (false)))
-                                       (fromArray (univ.prerequisitesIndex)),
-                                l10n.prerequisitesIndex === undefined
-                                ? ident
-                                : flip (foldr ((x : PrerequisiteIndexReplacement) =>
-                                                 insert (x.index) <false | string> (x.replacement)))
-                                       (fromArray (l10n.prerequisitesIndex))
-                              )
 
 
 const toDisadv : (blessings : OrderedMap<string, Record<Blessing>>)
@@ -82,7 +60,10 @@ const toDisadv : (blessings : OrderedMap<string, Record<Blessing>>)
 
                    const selectOptions = fromRight_ (eselectOptions)
 
-                   const prerequisitesIndex = getPrerequisitesIndex (univ) (l10n)
+                   const prerequisitesIndex = getPrerequisitesIndex (
+                                                univ.prerequisitesIndex,
+                                                l10n.prerequisitesIndex
+                                              )
 
                    return Right<[string, Record<Disadvantage>]> ([
                      univ.id,

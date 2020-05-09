@@ -14,8 +14,13 @@ function $less$$great(f, mx) {
   }
 }
 
+function $less$amp$great(mx, f) {
+  return $less$$great(f, mx);
+}
+
 var Functor = {
-  $less$$great: $less$$great
+  $less$$great: $less$$great,
+  $less$amp$great: $less$amp$great
 };
 
 function $less$star$great(mf, mx) {
@@ -286,6 +291,22 @@ var Semigroup = {
   sappend: sappend
 };
 
+function isJust(m) {
+  if (m) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function isNothing(m) {
+  if (m) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 function fromMaybe(def, mx) {
   if (mx) {
     return mx[0];
@@ -349,6 +370,14 @@ function optionToMaybe(mx) {
   }
 }
 
+function ensure(pred, x) {
+  if (Curry._1(pred, x)) {
+    return /* Just */[x];
+  } else {
+    return /* Nothing */0;
+  }
+}
+
 var maybeToList = toList;
 
 exports.Functor = Functor;
@@ -357,6 +386,8 @@ exports.Alternative = Alternative;
 exports.Monad = Monad;
 exports.Foldable = Foldable;
 exports.Semigroup = Semigroup;
+exports.isJust = isJust;
+exports.isNothing = isNothing;
 exports.fromMaybe = fromMaybe;
 exports.maybe = maybe;
 exports.listToMaybe = listToMaybe;
@@ -365,4 +396,5 @@ exports.catMaybes = catMaybes;
 exports.mapMaybe = mapMaybe;
 exports.maybeToOption = maybeToOption;
 exports.optionToMaybe = optionToMaybe;
+exports.ensure = ensure;
 /* No side effect */

@@ -37,7 +37,6 @@ export const OverviewNameChange: React.FC<Props> = props => {
         onChange={setName}
         onKeyDown={handleEnter}
         autoFocus
-        everyKeyDown
         />
       <IconButton
         icon="&#xE90a;"

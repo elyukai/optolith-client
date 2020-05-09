@@ -70,7 +70,7 @@
 			label {
 				display: block;
 				width: 32mm;
-				font: bold 10px/9mm Alegreya SC;
+				font: bold 10px/9mm "Alegreya SC";
 				color: black;
 				padding: 0;
 			}
@@ -217,8 +217,9 @@
 			.avatar-wrapper {
 				border: 0.3mm solid black;
 				background: none;
-				padding: 0;
-				@include size(24mm);
+        padding: 0;
+        width: 24mm;
+        height: 24mm;
 
 				> .avatar {
 					width: calc(100% + 0.15mm);
