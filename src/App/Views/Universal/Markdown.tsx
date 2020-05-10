@@ -2,9 +2,9 @@ import * as React from "react"
 import { List } from "../../../Data/List"
 import { Just, Maybe, orN } from "../../../Data/Maybe"
 import { classListMaybe } from "../../Utilities/CSS"
-import Ph = require ("remark-breaks")
-import ReactMarkdown = require ("react-markdown")
-import HTMLParser = require ("react-markdown/plugins/html-parser")
+import Ph from "remark-breaks"
+import ReactMarkdown from "react-markdown"
+import HTMLParser from "react-markdown/plugins/html-parser"
 
 const parseHtml = HTMLParser ({
   isValidNode: (node: any) => node.type !== "script",

@@ -9,6 +9,7 @@ npm-debug.log*
 app/**/*.js
 app/**/*.js.map
 !app/index.js
+!app/esmPreload.js
 /installer/
 electron-builder.env
 *.map
