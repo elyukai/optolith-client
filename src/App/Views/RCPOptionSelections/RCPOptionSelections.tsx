@@ -83,12 +83,12 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
     React.useState<OrderedSet<string>> (OrderedSet.empty)
   const [ combatTechniquesSecondActive, setCombatTechniquesSecond ] =
     React.useState<OrderedSet<string>> (OrderedSet.empty)
-  const [ cursesActive, setCurses ] = React.useState<OrderedMap<string, number>> (OrderedMap.empty)
+  const [ cursesActive, setCurses ] = React.useState<StrMap<number>> (OrderedMap.empty)
   const [ languagesActive, setLanguages ] =
     React.useState<OrderedMap<number, number>> (OrderedMap.empty)
   const [ scriptsActive, setScripts ] =
     React.useState<OrderedMap<number, number>> (OrderedMap.empty)
-  const [ skillsActive, setSkills ] = React.useState<OrderedMap<string, number>> (OrderedMap.empty)
+  const [ skillsActive, setSkills ] = React.useState<StrMap<number>> (OrderedMap.empty)
 
   // first: selection id, second: user input
   const [ specialization, setSpecialization ] =

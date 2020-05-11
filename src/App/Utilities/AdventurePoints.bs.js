@@ -3,29 +3,28 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var IC$OptolithClient = require("./IC.bs.js");
-var Int$OptolithClient = require("../../Data/Int.bs.js");
-var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
-var Function$OptolithClient = require("../../Data/Function.bs.js");
+var Ley_Int$OptolithClient = require("../../Data/Ley_Int.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
+var Ley_Option$OptolithClient = require("../../Data/Ley_Option.bs.js");
 var Traditions$OptolithClient = require("./Traditions.bs.js");
+var Ley_Function$OptolithClient = require("../../Data/Ley_Function.bs.js");
 
 function getMissingAp(isInCharacterCreation, apAvailable, apCost) {
   if (apCost > 0 && !isInCharacterCreation && apCost > apAvailable) {
-    return /* Just */[apCost - apAvailable | 0];
-  } else {
-    return /* Nothing */0;
+    return apCost - apAvailable | 0;
   }
+  
 }
 
 function getDisAdvantagesSubtypeMax(staticData, hero, isMagical) {
   if (isMagical) {
-    return Maybe$OptolithClient.maybe(50, (function (param) {
+    return Ley_Option$OptolithClient.option(50, (function (param) {
                   if (param[2].isDisAdvAPMaxHalved) {
                     return 25;
                   } else {
                     return 50;
                   }
-                }), Maybe$OptolithClient.listToMaybe(Traditions$OptolithClient.Magical.getEntries(staticData, hero.specialAbilities)));
+                }), Ley_Option$OptolithClient.listToOption(Traditions$OptolithClient.Magical.getEntries(staticData, hero.specialAbilities)));
   } else {
     return 50;
   }
@@ -34,18 +33,18 @@ function getDisAdvantagesSubtypeMax(staticData, hero, isMagical) {
 function getDisAdvantageSubtypeApSpent(apCategories, isDisadvantage, isMagical, isBlessed) {
   if (isDisadvantage) {
     if (isMagical) {
-      return /* Just */[apCategories.spentOnMagicalDisadvantages];
+      return apCategories.spentOnMagicalDisadvantages;
     } else if (isBlessed) {
-      return /* Just */[apCategories.spentOnBlessedDisadvantages];
+      return apCategories.spentOnBlessedDisadvantages;
     } else {
-      return /* Nothing */0;
+      return ;
     }
   } else if (isMagical) {
-    return /* Just */[apCategories.spentOnMagicalAdvantages];
+    return apCategories.spentOnMagicalAdvantages;
   } else if (isBlessed) {
-    return /* Just */[apCategories.spentOnBlessedAdvantages];
+    return apCategories.spentOnBlessedAdvantages;
   } else {
-    return /* Nothing */0;
+    return ;
   }
 }
 
@@ -56,15 +55,15 @@ function getMissingApForDisAdvantage(staticData, hero, isInCharacterCreation, ap
   var apSpent = isDisadvantage ? apCategories.spentOnDisadvantages : apCategories.spentOnAdvantages;
   var mApSpentSubtype = getDisAdvantageSubtypeApSpent(apCategories, isDisadvantage, isMagical, isBlessed);
   var subtypeMax = getDisAdvantagesSubtypeMax(staticData, hero, isMagical);
-  var absoluteApCost = Int$OptolithClient.abs(apCost);
-  var missingApForSubtype = isInCharacterCreation && !noMaxAPInfluence ? Maybe$OptolithClient.Monad.$great$great$eq(mApSpentSubtype, (function (apSpentSubtype) {
-            return Maybe$OptolithClient.ensure((function (param) {
+  var absoluteApCost = Ley_Int$OptolithClient.abs(apCost);
+  var missingApForSubtype = isInCharacterCreation && !noMaxAPInfluence ? Ley_Option$OptolithClient.Monad.$great$great$eq(mApSpentSubtype, (function (apSpentSubtype) {
+            return Ley_Option$OptolithClient.ensure((function (param) {
                           return 0 < param;
                         }), (apSpentSubtype + absoluteApCost | 0) - subtypeMax | 0);
-          })) : /* Nothing */0;
-  var missingApForMain = isInCharacterCreation && !noMaxAPInfluence ? Maybe$OptolithClient.ensure((function (param) {
+          })) : undefined;
+  var missingApForMain = isInCharacterCreation && !noMaxAPInfluence ? Ley_Option$OptolithClient.ensure((function (param) {
             return 0 < param;
-          }), (apSpent + absoluteApCost | 0) - 80 | 0) : /* Nothing */0;
+          }), (apSpent + absoluteApCost | 0) - 80 | 0) : undefined;
   var missingApForTotal = getMissingAp(isInCharacterCreation, apCategories.available, apCost);
   return {
           totalMissing: missingApForTotal,
@@ -73,7 +72,7 @@ function getMissingApForDisAdvantage(staticData, hero, isInCharacterCreation, ap
         };
 }
 
-var getApSpentOnAttributes = Curry._2(IntMap$OptolithClient.Foldable.foldr, (function (x) {
+var getApSpentOnAttributes = Curry._2(Ley_IntMap$OptolithClient.Foldable.foldr, (function (x) {
         var partial_arg = IC$OptolithClient.getAPForRange(/* E */4, 8, x.value);
         return (function (param) {
             return partial_arg + param | 0;
@@ -81,57 +80,57 @@ var getApSpentOnAttributes = Curry._2(IntMap$OptolithClient.Foldable.foldr, (fun
       }), 0);
 
 function getApSpentOnSkills(staticData) {
-  return Curry._2(IntMap$OptolithClient.Foldable.foldr, (function (x) {
-                return Maybe$OptolithClient.maybe(Function$OptolithClient.id, (function (staticEntry) {
+  return Curry._2(Ley_IntMap$OptolithClient.Foldable.foldr, (function (x) {
+                return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, (function (staticEntry) {
                               var partial_arg = IC$OptolithClient.getAPForRange(staticEntry.ic, 0, x.value);
                               return (function (param) {
                                   return partial_arg + param | 0;
                                 });
-                            }), Curry._2(IntMap$OptolithClient.lookup, x.id, staticData.skills));
+                            }), Curry._2(Ley_IntMap$OptolithClient.lookup, x.id, staticData.skills));
               }), 0);
 }
 
 function getApSpentOnCombatTechniques(staticData) {
-  return Curry._2(IntMap$OptolithClient.Foldable.foldr, (function (x) {
-                return Maybe$OptolithClient.maybe(Function$OptolithClient.id, (function (staticEntry) {
+  return Curry._2(Ley_IntMap$OptolithClient.Foldable.foldr, (function (x) {
+                return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, (function (staticEntry) {
                               var partial_arg = IC$OptolithClient.getAPForRange(staticEntry.ic, 6, x.value);
                               return (function (param) {
                                   return partial_arg + param | 0;
                                 });
-                            }), Curry._2(IntMap$OptolithClient.lookup, x.id, staticData.combatTechniques));
+                            }), Curry._2(Ley_IntMap$OptolithClient.lookup, x.id, staticData.combatTechniques));
               }), 0);
 }
 
 function getApSpentOnSpells(staticData) {
-  return Curry._2(IntMap$OptolithClient.Foldable.foldr, (function (x) {
+  return Curry._2(Ley_IntMap$OptolithClient.Foldable.foldr, (function (x) {
                 var match = x.value;
                 if (match) {
                   var value = match[0];
-                  return Maybe$OptolithClient.maybe(Function$OptolithClient.id, (function (staticEntry) {
+                  return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, (function (staticEntry) {
                                 var partial_arg = IC$OptolithClient.getAPForRange(staticEntry.ic, 0, value);
                                 return (function (param) {
                                     return partial_arg + param | 0;
                                   });
-                              }), Curry._2(IntMap$OptolithClient.lookup, x.id, staticData.spells));
+                              }), Curry._2(Ley_IntMap$OptolithClient.lookup, x.id, staticData.spells));
                 } else {
-                  return Function$OptolithClient.id;
+                  return Ley_Function$OptolithClient.id;
                 }
               }), 0);
 }
 
 function getApSpentOnLiturgicalChants(staticData) {
-  return Curry._2(IntMap$OptolithClient.Foldable.foldr, (function (x) {
+  return Curry._2(Ley_IntMap$OptolithClient.Foldable.foldr, (function (x) {
                 var match = x.value;
                 if (match) {
                   var value = match[0];
-                  return Maybe$OptolithClient.maybe(Function$OptolithClient.id, (function (staticEntry) {
+                  return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, (function (staticEntry) {
                                 var partial_arg = IC$OptolithClient.getAPForRange(staticEntry.ic, 0, value);
                                 return (function (param) {
                                     return partial_arg + param | 0;
                                   });
-                              }), Curry._2(IntMap$OptolithClient.lookup, x.id, staticData.liturgicalChants));
+                              }), Curry._2(Ley_IntMap$OptolithClient.lookup, x.id, staticData.liturgicalChants));
                 } else {
-                  return Function$OptolithClient.id;
+                  return Ley_Function$OptolithClient.id;
                 }
               }), 0);
 }
@@ -142,8 +141,8 @@ var Sum = {
   getApSpentOnCombatTechniques: getApSpentOnCombatTechniques,
   getApSpentOnSpells: getApSpentOnSpells,
   getApSpentOnLiturgicalChants: getApSpentOnLiturgicalChants,
-  getApSpentOnCantrips: IntMap$OptolithClient.size,
-  getAPSpentOnBlessings: IntMap$OptolithClient.size
+  getApSpentOnCantrips: Ley_IntMap$OptolithClient.size,
+  getAPSpentOnBlessings: Ley_IntMap$OptolithClient.size
 };
 
 exports.getMissingAp = getMissingAp;

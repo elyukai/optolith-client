@@ -3,7 +3,6 @@ import { flip, thrush } from "../../../Data/Function"
 import { fmapF } from "../../../Data/Functor"
 import { fnull, List, map, toArray } from "../../../Data/List"
 import { all, fromJust, Maybe, normalize, or } from "../../../Data/Maybe"
-import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { ActivatableAddListItemContainer } from "../../Containers/InactiveActivatableContainer"
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
@@ -26,7 +25,7 @@ export interface ActivatableAddListProps {
   hideGroup?: boolean
   inactiveList: Maybe<List<Record<ActiveActivatable> | Record<InactiveActivatable>>>
   staticData: StaticDataRecord
-  rating?: Maybe<OrderedMap<string, EntryRating>>
+  rating?: Maybe<StrMap<EntryRating>>
   showRating?: boolean
   selectedForInfo: Maybe<string>
   addToList (args: Record<ActivatableActivationOptions>): void

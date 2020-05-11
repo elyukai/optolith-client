@@ -1,5 +1,5 @@
 module Attributes = {
-  open Maybe;
+  open Ley.Option;
   open Hero.Attribute;
 
   /**
@@ -7,39 +7,40 @@ module Attributes = {
    * of that attribute. Note: If the attribute is not yet defined, it's value is
    * `8`.
    */
-  let getValueDef = maybe(8, x => x.value);
+  let getValueDef = option(8, x => x.value);
 
   /**
    * Takes a skill check's attribute triple and returns it's values.
    */
   let getSkillCheckValues = (mp, (a1, a2, a3)) => (
-    IntMap.lookup(a1, mp) |> getValueDef,
-    IntMap.lookup(a2, mp) |> getValueDef,
-    IntMap.lookup(a3, mp) |> getValueDef,
+    Ley.IntMap.lookup(a1, mp) |> getValueDef,
+    Ley.IntMap.lookup(a2, mp) |> getValueDef,
+    Ley.IntMap.lookup(a3, mp) |> getValueDef,
   );
 };
 
 module Skills = {
-  open Maybe;
-  open Maybe.Functor;
+  open Ley.Option;
+  open Ley.Option.Functor;
+  open Ley.List;
   open Hero.Activatable;
 
   /**
    * Takes a skill's hero entry that might not exist and returns the value of
    * that skill. Note: If the skill is not yet defined, it's value is `0`.
    */
-  let getValueDef = maybe(8, (x: Hero.Skill.t) => x.value);
+  let getValueDef = option(8, (x: Hero.Skill.t) => x.value);
 
   /**
    * Get the SR maximum bonus from an active Exceptional Skill advantage.
    */
   let getExceptionalSkillBonus = (exceptionalSkill, id) =>
-    maybe(
+    option(
       0,
       (x: Hero.Activatable.t) =>
         x.active
-        |> ListH.countBy((a: Hero.Activatable.single) =>
-             a.options |> listToMaybe |> Maybe.Foldable.elem(id)
+        |> countBy((a: Hero.Activatable.single) =>
+             a.options |> listToOption |> Ley.Option.Foldable.elem(id)
            ),
       exceptionalSkill,
     );
@@ -51,7 +52,7 @@ module Skills = {
   let getMaxSrByCheckAttrs = (mp, check) =>
     check
     |> Attributes.getSkillCheckValues(mp)
-    |> (((a1, a2, a3)) => ListH.Foldable.maximum([a1, a2, a3]) + 2);
+    |> (((a1, a2, a3)) => Ley.List.Foldable.maximum([a1, a2, a3]) + 2);
 
   /**
    * Adds the maximum skill rating defined by the chosen experience level to the
@@ -61,8 +62,8 @@ module Skills = {
   let getMaxSrFromEl = (startEl: Static.ExperienceLevel.t, phase: Ids.Phase.t) =>
     switch (phase) {
     | Outline
-    | Definition => Just(startEl.maxSkillRating)
-    | Advancement => Nothing
+    | Definition => Some(startEl.maxSkillRating)
+    | Advancement => None
     };
 
   /**
@@ -77,11 +78,11 @@ module Skills = {
         ~staticEntry: Static.Skill.t,
       ) =>
     [
-      Just(getMaxSrByCheckAttrs(heroAttrs, staticEntry.check)),
+      Some(getMaxSrByCheckAttrs(heroAttrs, staticEntry.check)),
       getMaxSrFromEl(startEl, phase),
     ]
-    |> catMaybes
-    |> ListH.Foldable.minimum
+    |> catOptions
+    |> Ley.List.Foldable.minimum
     |> (+)(
          getExceptionalSkillBonus(exceptionalSkill, `Skill(staticEntry.id)),
        );
@@ -121,10 +122,12 @@ module Skills = {
             );
 
           let otherSkillRating =
-            skills |> IntMap.lookup(skillToInt(otherSkillId)) |> getValueDef;
+            skills
+            |> Ley.IntMap.lookup(skillToInt(otherSkillId))
+            |> getValueDef;
 
-          Just(minimumSum - otherSkillRating);
-        | _ => Nothing
+          Some(minimumSum - otherSkillRating);
+        | _ => None
         };
       }
     );
@@ -135,11 +138,11 @@ module Skills = {
   let getMinSrByDeps = (heroSkills, heroEntry: Hero.Skill.t) =>
     heroEntry.dependencies
     |> Dependencies.flattenSkill(
-         id => heroSkills |> IntMap.lookup(id) |> getValueDef,
+         id => heroSkills |> Ley.IntMap.lookup(id) |> getValueDef,
          heroEntry.id,
        )
-    |> ensure(ListH.Extra.notNull)
-    <&> ListH.Foldable.maximum;
+    |> ensure(Ley.List.Extra.notNull)
+    <&> Ley.List.Foldable.maximum;
 
   /**
    * Returns the minimum skill rating for the passed skill.
@@ -149,9 +152,9 @@ module Skills = {
       getMinSrByDeps(heroSkills, heroEntry),
       getMinSrByCraftInstruments(craftInstruments, heroSkills, staticEntry),
     ]
-    |> catMaybes
-    |> ensure(ListH.Extra.notNull)
-    <&> ListH.Foldable.maximum;
+    |> catOptions
+    |> ensure(Ley.List.Extra.notNull)
+    <&> Ley.List.Foldable.maximum;
 
   /**
    * Returns if the passed skill's skill rating can be decreased.
@@ -161,11 +164,11 @@ module Skills = {
     heroEntry.value
     > (
         getMin(~craftInstruments, ~heroSkills, ~staticEntry, ~heroEntry)
-        |> fromMaybe(0)
+        |> fromOption(0)
       );
 
   module Routine = {
-    open Maybe.Monad;
+    open Ley.Option.Monad;
 
     let attributeThreshold = 13;
 
@@ -176,8 +179,8 @@ module Skills = {
      */
     let getMissingPoints = ((a1, a2, a3)) =>
       [a1, a2, a3]
-      |> ListH.map(a => attributeThreshold - a |> Int.max(0))
-      |> ListH.Foldable.sum;
+      |> Ley.List.map(a => attributeThreshold - a |> Ley.Int.max(0))
+      |> Ley.List.Foldable.sum;
 
     /**
      * Returns the minimum check modifier from which a routine check is possible
@@ -188,8 +191,8 @@ module Skills = {
 
     /**
      * Returns the minimum check modifier from which a routine check is possible for
-     * the passed skill rating. Returns `Nothing` if no routine check is possible,
-     * otherwise a `Just` of a pair, where the first value is the minimum check
+     * the passed skill rating. Returns `None` if no routine check is possible,
+     * otherwise a `Some` of a pair, where the first value is the minimum check
      * modifier and the second a boolean, where `True` states that the minimum check
      * modifier is only valid when using the optional rule for routine checks, thus
      * otherwise a routine check would not be possible.
@@ -206,24 +209,24 @@ module Skills = {
           let dependentCheckMod = checkModThreshold + missingPoints;
 
           dependentCheckMod < 4
-            ? Just((dependentCheckMod, missingPoints > 0)) : Nothing;
+            ? Some((dependentCheckMod, missingPoints > 0)) : None;
         }
       );
   };
 };
 
 module CombatTechniques = {
-  open ListH;
-  open Maybe;
-  open Maybe.Functor;
+  open Ley.List;
+  open Ley.Option;
+  open Ley.Option.Functor;
 
   let getMaxPrimaryAttributeValueById = (heroAttrs, ps) =>
     ps
-    |> map(p => IntMap.lookup(p, heroAttrs) |> Attributes.getValueDef)
+    |> map(p => Ley.IntMap.lookup(p, heroAttrs) |> Attributes.getValueDef)
     |> (<+>)(0)
-    |> ListH.Foldable.maximum;
+    |> Ley.List.Foldable.maximum;
 
-  let attributeValueToMod = value => Int.max(0, (value - 8) / 3);
+  let attributeValueToMod = value => Ley.Int.max(0, (value - 8) / 3);
 
   let getPrimaryAttributeMod = (heroAttrs, ps) =>
     ps |> getMaxPrimaryAttributeValueById(heroAttrs) |> attributeValueToMod;
@@ -233,7 +236,7 @@ module CombatTechniques = {
    * value of that combat technique. Note: If the combat technique is not yet
    * defined, it's value is `6`.
    */
-  let getValueDef = maybe(6, (x: Hero.Skill.t) => x.value);
+  let getValueDef = option(6, (x: Hero.Skill.t) => x.value);
 
   let getAttack =
       (heroAttrs, staticEntry: Static.CombatTechnique.t, heroEntry) =>
@@ -251,7 +254,7 @@ module CombatTechniques = {
     staticEntry.gr === Id.combatTechniqueGroupToInt(Melee)
     && staticEntry.id !== Id.combatTechniqueToInt(ChainWeapons)
     && staticEntry.id !== Id.combatTechniqueToInt(Brawling)
-      ? Just(
+      ? Some(
           heroEntry
           |> getValueDef
           |> Js.Int.toFloat
@@ -260,34 +263,34 @@ module CombatTechniques = {
           |> Js.Math.floor
           |> (+)(getPrimaryAttributeMod(heroAttrs, staticEntry.primary)),
         )
-      : Nothing;
+      : None;
 
   /**
    * Get the CtR maximum bonus from an active Exceptional Combat Technique
    * advantage.
    */
   let getExceptionalCombatTechniqueBonus = (exceptionalCombatTechnique, id) =>
-    maybe(
+    option(
       0,
       (x: Hero.Activatable.t) =>
         x.active
-        |> listToMaybe
+        |> listToOption
         <&> (
           a =>
             a.options
-            |> listToMaybe
-            |> Maybe.Foldable.elem(`CombatTechnique(id))
+            |> listToOption
+            |> Ley.Option.Foldable.elem(`CombatTechnique(id))
             |> (hasBonus => hasBonus ? 1 : 0)
         )
-        |> fromMaybe(0),
+        |> fromOption(0),
       exceptionalCombatTechnique,
     );
 
   let getMaxCtrFromEl = (el: Static.ExperienceLevel.t, phase: Ids.Phase.t) =>
     switch (phase) {
     | Outline
-    | Definition => Just(el.maxCombatTechniqueRating)
-    | Advancement => Nothing
+    | Definition => Some(el.maxCombatTechniqueRating)
+    | Advancement => None
     };
 
   /**
@@ -303,11 +306,11 @@ module CombatTechniques = {
         ~staticEntry: Static.CombatTechnique.t,
       ) =>
     [
-      Just(getMaxPrimaryAttributeValueById(heroAttrs, staticEntry.primary)),
+      Some(getMaxPrimaryAttributeValueById(heroAttrs, staticEntry.primary)),
       getMaxCtrFromEl(startEl, phase),
     ]
-    |> catMaybes
-    |> ListH.Foldable.minimum
+    |> catOptions
+    |> Ley.List.Foldable.minimum
     |> (+)(
          getExceptionalCombatTechniqueBonus(
            exceptionalCombatTechnique,
@@ -341,7 +344,7 @@ module CombatTechniques = {
       (onlyOneCombatTechniqueForHunter, staticEntry: Static.CombatTechnique.t) =>
     onlyOneCombatTechniqueForHunter
     && staticEntry.gr === Id.combatTechniqueGroupToInt(Ranged)
-      ? Just(10) : Nothing;
+      ? Some(10) : None;
 
   /**
    * Check if the dependencies allow the passed combat technique to be decreased.
@@ -349,11 +352,11 @@ module CombatTechniques = {
   let getMinCtrByDeps = (heroCombatTechniques, heroEntry: Hero.Skill.t) =>
     heroEntry.dependencies
     |> Dependencies.flattenSkill(
-         id => heroCombatTechniques |> IntMap.lookup(id) |> getValueDef,
+         id => heroCombatTechniques |> Ley.IntMap.lookup(id) |> getValueDef,
          heroEntry.id,
        )
-    |> ensure(ListH.Extra.notNull)
-    <&> ListH.Foldable.maximum;
+    |> ensure(Ley.List.Extra.notNull)
+    <&> Ley.List.Foldable.maximum;
 
   /**
    * Returns the minimum combat technique rating for the passed combat
@@ -370,9 +373,9 @@ module CombatTechniques = {
       getMinCtrByDeps(heroCombatTechniques, heroEntry),
       getMinCtrByHunter(onlyOneCombatTechniqueForHunter, staticEntry),
     ]
-    |> catMaybes
-    |> ensure(ListH.Extra.notNull)
-    <&> ListH.Foldable.maximum;
+    |> catOptions
+    |> ensure(Ley.List.Extra.notNull)
+    <&> Ley.List.Foldable.maximum;
 
   /**
    * Returns if the passed combat technique's combat technique rating can be
@@ -393,22 +396,22 @@ module CombatTechniques = {
           ~staticEntry,
           ~heroEntry,
         )
-        |> fromMaybe(6)
+        |> fromOption(6)
       );
 };
 
 module Spells = {
-  open Maybe;
-  open Maybe.Functor;
-  open Maybe.Monad;
+  open Ley.Option;
+  open Ley.Option.Functor;
+  open Ley.Option.Monad;
   open Hero.ActivatableSkill;
 
   /**
    * Takes a spell's hero entry that might not exist and returns the
    * value of that spell. Note: If the spell is not yet
-   * defined, it's value is `Nothing`.
+   * defined, it's value is `None`.
    */
-  let getValueDef = maybe(Inactive, (x: Hero.ActivatableSkill.t) => x.value);
+  let getValueDef = option(Inactive, (x: Hero.ActivatableSkill.t) => x.value);
 
   let flattenValue = value =>
     switch (value) {
@@ -417,7 +420,7 @@ module Spells = {
     };
 
   let isActive =
-    maybe(false, (x: Hero.ActivatableSkill.t) =>
+    option(false, (x: Hero.ActivatableSkill.t) =>
       switch (x.value) {
       | Active(_) => true
       | Inactive => false
@@ -432,8 +435,11 @@ module Spells = {
       (propertyKnowledge, staticEntry: Static.Spell.t) =>
     propertyKnowledge
     <&> Activatable.SelectOptions.getActiveSelections
-    |> maybe(true, ListH.Foldable.notElem(`Generic(staticEntry.property)))
-    |> (hasRestriction => hasRestriction ? Just(14) : Nothing);
+    |> option(
+         true,
+         Ley.List.Foldable.notElem(`Generic(staticEntry.property)),
+       )
+    |> (hasRestriction => hasRestriction ? Some(14) : None);
 
   /**
    * Returns the maximum skill rating for the passed spell.
@@ -448,12 +454,12 @@ module Spells = {
         ~staticEntry: Static.Spell.t,
       ) =>
     [
-      Just(Skills.getMaxSrByCheckAttrs(heroAttrs, staticEntry.check)),
+      Some(Skills.getMaxSrByCheckAttrs(heroAttrs, staticEntry.check)),
       Skills.getMaxSrFromEl(startEl, phase),
       getMaxSrFromPropertyKnowledge(propertyKnowledge, staticEntry),
     ]
-    |> catMaybes
-    |> ListH.Foldable.minimum
+    |> catOptions
+    |> Ley.List.Foldable.minimum
     |> (+)(
          Skills.getExceptionalSkillBonus(
            exceptionalSkill,
@@ -489,15 +495,15 @@ module Spells = {
    */
   let getValidSpellsForPropertyKnowledgeCounter = (staticSpells, heroSpells) =>
     heroSpells
-    |> IntMap.elems
-    |> IntMap.countByM((x: Hero.ActivatableSkill.t) =>
+    |> Ley.IntMap.elems
+    |> Ley.IntMap.countByM((x: Hero.ActivatableSkill.t) =>
          switch (x.value) {
          | Active(value) =>
            value
            |> ensure((>)(10))
-           >>= (_ => IntMap.lookup(x.id, staticSpells))
+           >>= (_ => Ley.IntMap.lookup(x.id, staticSpells))
            <&> ((spell: Static.Spell.t) => spell.property)
-         | Inactive => Nothing
+         | Inactive => None
          }
        );
 
@@ -516,7 +522,7 @@ module Spells = {
     activePropertyKnowledges
     // Is spell part of dependencies of any active Property
     // Knowledge?
-    |> ListH.Foldable.any((sid: Hero.Activatable.option) =>
+    |> Ley.List.Foldable.any((sid: Hero.Activatable.option) =>
          switch (sid) {
          | `Generic(x) => x === staticEntry.property
          | _ => false
@@ -528,13 +534,13 @@ module Spells = {
       hasActivePropertyKnowledge =>
         hasActivePropertyKnowledge
           ? counter
-            |> IntMap.lookup(staticEntry.property)
+            |> Ley.IntMap.lookup(staticEntry.property)
             >>= (
               count =>
                 flattenValue(heroEntry.value) >= 10 && count <= 3
-                  ? Just(10) : Nothing
+                  ? Some(10) : None
             )
-          : Nothing
+          : None
     );
 
   /**
@@ -543,26 +549,26 @@ module Spells = {
   let getMinSrByDeps = (heroSpells, heroEntry: Hero.ActivatableSkill.t) =>
     heroEntry.dependencies
     |> Dependencies.flattenActivatableSkill(
-         id => heroSpells |> IntMap.lookup(id) |> getValueDef,
+         id => heroSpells |> Ley.IntMap.lookup(id) |> getValueDef,
          heroEntry.id,
        )
-    |> ensure(ListH.Extra.notNull)
-    >>= ListH.Foldable.foldr(
+    |> ensure(Ley.List.Extra.notNull)
+    >>= Ley.List.Foldable.foldr(
           (d, acc) =>
             switch (d) {
-            | Inactive => Just(Inactive)
+            | Inactive => Some(Inactive)
             | Active(next) =>
-              maybe(
-                Just(Active(next)),
+              option(
+                Some(Active(next)),
                 prev =>
                   switch (prev) {
-                  | Inactive => Just(Inactive)
-                  | Active(prev) => Just(Active(Int.max(prev, next)))
+                  | Inactive => Some(Inactive)
+                  | Active(prev) => Some(Active(Ley.Int.max(prev, next)))
                   },
                 acc,
               )
             },
-          Nothing,
+          None,
         );
 
   /**
@@ -583,8 +589,8 @@ module Spells = {
         >>= (
           x =>
             switch (x) {
-            | Active(value) => Just(value)
-            | Inactive => Nothing
+            | Active(value) => Some(value)
+            | Inactive => None
             }
         ),
         getMinSrFromPropertyKnowledge(
@@ -594,9 +600,9 @@ module Spells = {
           heroEntry,
         ),
       ]
-      |> catMaybes
-      |> ensure(ListH.Extra.notNull)
-      <&> ListH.Foldable.maximum;
+      |> catOptions
+      |> ensure(Ley.List.Extra.notNull)
+      <&> Ley.List.Foldable.maximum;
   };
 
   /**
@@ -607,22 +613,22 @@ module Spells = {
 
     (~staticEntry, ~heroEntry: Hero.ActivatableSkill.t) =>
       flattenValue(heroEntry.value)
-      > (getMinCached(~staticEntry, ~heroEntry) |> fromMaybe(0));
+      > (getMinCached(~staticEntry, ~heroEntry) |> fromOption(0));
   };
 };
 
 module LiturgicalChants = {
-  open Maybe;
-  open Maybe.Functor;
-  open Maybe.Monad;
+  open Ley.Option;
+  open Ley.Option.Functor;
+  open Ley.Option.Monad;
   open Hero.ActivatableSkill;
 
   /**
    * Takes a liturgical chant's hero entry that might not exist and returns the
    * value of that liturgical chant. Note: If the liturgical chant is not yet
-   * defined, it's value is `Nothing`.
+   * defined, it's value is `None`.
    */
-  let getValueDef = maybe(Inactive, (x: Hero.ActivatableSkill.t) => x.value);
+  let getValueDef = option(Inactive, (x: Hero.ActivatableSkill.t) => x.value);
 
   let flattenValue = value =>
     switch (value) {
@@ -631,7 +637,7 @@ module LiturgicalChants = {
     };
 
   let isActive =
-    maybe(false, (x: Hero.ActivatableSkill.t) =>
+    option(false, (x: Hero.ActivatableSkill.t) =>
       switch (x.value) {
       | Active(_) => true
       | Inactive => false
@@ -646,13 +652,13 @@ module LiturgicalChants = {
       (aspectKnowledge, staticEntry: Static.LiturgicalChant.t) =>
     aspectKnowledge
     <&> Activatable.SelectOptions.getActiveSelections
-    |> maybe(true, actives =>
-         ListH.Foldable.all(
-           aspect => ListH.Foldable.notElem(`Generic(aspect), actives),
+    |> option(true, actives =>
+         Ley.List.Foldable.all(
+           aspect => Ley.List.Foldable.notElem(`Generic(aspect), actives),
            staticEntry.aspects,
          )
        )
-    |> (hasRestriction => hasRestriction ? Just(14) : Nothing);
+    |> (hasRestriction => hasRestriction ? Some(14) : None);
 
   /**
    * Returns the maximum skill rating for the passed spell.
@@ -667,12 +673,12 @@ module LiturgicalChants = {
         ~staticEntry: Static.LiturgicalChant.t,
       ) =>
     [
-      Just(Skills.getMaxSrByCheckAttrs(heroAttrs, staticEntry.check)),
+      Some(Skills.getMaxSrByCheckAttrs(heroAttrs, staticEntry.check)),
       Skills.getMaxSrFromEl(startEl, phase),
       getMaxSrFromAspectKnowledge(aspectKnowledge, staticEntry),
     ]
-    |> catMaybes
-    |> ListH.Foldable.minimum
+    |> catOptions
+    |> Ley.List.Foldable.minimum
     |> (+)(
          Skills.getExceptionalSkillBonus(
            exceptionalSkill,
@@ -709,19 +715,22 @@ module LiturgicalChants = {
   let getValidLiturgicalChantsForAspectKnowledgeCounter =
       (staticLiturgicalChants, heroLiturgicalChants) =>
     heroLiturgicalChants
-    |> IntMap.Foldable.foldr(
+    |> Ley.IntMap.Foldable.foldr(
          (x: Hero.ActivatableSkill.t, acc) =>
            switch (x.value) {
            | Active(value) =>
              value
              |> ensure((>)(10))
-             >>= (_ => IntMap.lookup(x.id, staticLiturgicalChants))
-             |> maybe(acc, (chant: Static.LiturgicalChant.t) =>
-                  ListH.Foldable.foldr(
+             >>= (_ => Ley.IntMap.lookup(x.id, staticLiturgicalChants))
+             |> option(acc, (chant: Static.LiturgicalChant.t) =>
+                  Ley.List.Foldable.foldr(
                     aspect =>
-                      IntMap.alter(
+                      Ley.IntMap.alter(
                         count =>
-                          count |> fromMaybe(0) |> Int.inc |> (x => Just(x)),
+                          count
+                          |> fromOption(0)
+                          |> Ley.Int.inc
+                          |> (x => Some(x)),
                         aspect,
                       ),
                     acc,
@@ -730,7 +739,7 @@ module LiturgicalChants = {
                 )
            | Inactive => acc
            },
-         IntMap.empty,
+         Ley.IntMap.empty,
        );
 
   /**
@@ -747,9 +756,9 @@ module LiturgicalChants = {
       ) =>
     activeAspectKnowledges
     // Is liturgical chant part of dependencies of any active Aspect Knowledge?
-    |> ListH.Foldable.any((sid: Hero.Activatable.option) =>
+    |> Ley.List.Foldable.any((sid: Hero.Activatable.option) =>
          switch (sid) {
-         | `Generic(x) => ListH.Foldable.elem(x, staticEntry.aspects)
+         | `Generic(x) => Ley.List.Foldable.elem(x, staticEntry.aspects)
          | _ => false
          }
        )
@@ -759,14 +768,14 @@ module LiturgicalChants = {
       hasActiveAspectKnowledge =>
         hasActiveAspectKnowledge
           ? staticEntry.aspects
-            |> ListH.Foldable.any(aspect =>
-                 IntMap.lookup(aspect, counter)
-                 |> maybe(false, count =>
+            |> Ley.List.Foldable.any(aspect =>
+                 Ley.IntMap.lookup(aspect, counter)
+                 |> option(false, count =>
                       flattenValue(heroEntry.value) >= 10 && count <= 3
                     )
                )
-            |> (isRequired => isRequired ? Just(10) : Nothing)
-          : Nothing
+            |> (isRequired => isRequired ? Some(10) : None)
+          : None
     );
 
   /**
@@ -776,26 +785,26 @@ module LiturgicalChants = {
       (heroLiturgicalChants, heroEntry: Hero.ActivatableSkill.t) =>
     heroEntry.dependencies
     |> Dependencies.flattenActivatableSkill(
-         id => heroLiturgicalChants |> IntMap.lookup(id) |> getValueDef,
+         id => heroLiturgicalChants |> Ley.IntMap.lookup(id) |> getValueDef,
          heroEntry.id,
        )
-    |> ensure(ListH.Extra.notNull)
-    >>= ListH.Foldable.foldr(
+    |> ensure(Ley.List.Extra.notNull)
+    >>= Ley.List.Foldable.foldr(
           (d, acc) =>
             switch (d) {
-            | Inactive => Just(Inactive)
+            | Inactive => Some(Inactive)
             | Active(next) =>
-              maybe(
-                Just(Active(next)),
+              option(
+                Some(Active(next)),
                 prev =>
                   switch (prev) {
-                  | Inactive => Just(Inactive)
-                  | Active(prev) => Just(Active(Int.max(prev, next)))
+                  | Inactive => Some(Inactive)
+                  | Active(prev) => Some(Active(Ley.Int.max(prev, next)))
                   },
                 acc,
               )
             },
-          Nothing,
+          None,
         );
 
   /**
@@ -820,8 +829,8 @@ module LiturgicalChants = {
         >>= (
           x =>
             switch (x) {
-            | Active(value) => Just(value)
-            | Inactive => Nothing
+            | Active(value) => Some(value)
+            | Inactive => None
             }
         ),
         getMinSrFromAspectKnowledge(
@@ -831,9 +840,9 @@ module LiturgicalChants = {
           heroEntry,
         ),
       ]
-      |> catMaybes
-      |> ensure(ListH.Extra.notNull)
-      <&> ListH.Foldable.maximum;
+      |> catOptions
+      |> ensure(Ley.List.Extra.notNull)
+      <&> Ley.List.Foldable.maximum;
   };
 
   /**
@@ -850,6 +859,6 @@ module LiturgicalChants = {
 
     (~staticEntry, ~heroEntry: Hero.ActivatableSkill.t) =>
       flattenValue(heroEntry.value)
-      > (getMinCached(~staticEntry, ~heroEntry) |> fromMaybe(0));
+      > (getMinCached(~staticEntry, ~heroEntry) |> fromOption(0));
   };
 };

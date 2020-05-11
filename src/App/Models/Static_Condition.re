@@ -1,8 +1,8 @@
 type t = {
   id: int,
   name: string,
-  description: Maybe.t(string),
-  levelColumnDescription: Maybe.t(string),
+  description: option(string),
+  levelColumnDescription: option(string),
   levelDescriptions: (string, string, string, string),
   src: list(Static_SourceRef.t),
   errata: list(Static_Erratum.t),
@@ -30,6 +30,6 @@ module Decode = {
   let all = (yamlData: Yaml_Raw.yamlData) =>
     yamlData.conditionsL10n
     |> list(t)
-    |> ListH.map(x => (x.id, x))
-    |> IntMap.fromList;
+    |> Ley.List.map(x => (x.id, x))
+    |> Ley.IntMap.fromList;
 };

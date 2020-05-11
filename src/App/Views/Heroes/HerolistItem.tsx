@@ -1,7 +1,7 @@
 import * as React from "react"
 import { fmap } from "../../../Data/Functor"
 import { bindF, fromMaybe, Just, Maybe } from "../../../Data/Maybe"
-import { lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { lookupF } from "../../../Data/OrderedMap"
 import { notMember, OrderedSet } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
@@ -37,7 +37,7 @@ export interface HerolistItemOwnProps {
 export interface HerolistItemStateProps {
   ap: Maybe<Record<AdventurePointsCategories>>
   staticData: StaticDataRecord
-  users: OrderedMap<string, User>
+  users: StrMap<User>
   unsavedHeroesById: OrderedSet<string>
 }
 

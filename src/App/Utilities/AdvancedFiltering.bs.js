@@ -3,19 +3,19 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var Intl$OptolithClient = require("./Intl.bs.js");
-var ListH$OptolithClient = require("../../Data/ListH.bs.js");
-var Function$OptolithClient = require("../../Data/Function.bs.js");
+var Ley_List$OptolithClient = require("../../Data/Ley_List.bs.js");
+var Ley_Function$OptolithClient = require("../../Data/Ley_Function.bs.js");
 
 function searchByMulti(searchAccessors, filterText, xs) {
   if (searchAccessors) {
-    return ListH$OptolithClient.filter((function (x) {
-                  return ListH$OptolithClient.Foldable.any((function (pred) {
+    return Ley_List$OptolithClient.filter((function (x) {
+                  return Ley_List$OptolithClient.Foldable.any((function (pred) {
                                 if (pred.tag) {
-                                  return ListH$OptolithClient.Foldable.any((function (x$prime) {
-                                                return ListH$OptolithClient.isInfixOf(ListH$OptolithClient.Extra.lower(filterText), ListH$OptolithClient.Extra.lower(x$prime));
+                                  return Ley_List$OptolithClient.Foldable.any((function (x$prime) {
+                                                return Ley_List$OptolithClient.isInfixOf(Ley_List$OptolithClient.Extra.lower(filterText), Ley_List$OptolithClient.Extra.lower(x$prime));
                                               }), Curry._1(pred[0], x));
                                 } else {
-                                  return ListH$OptolithClient.isInfixOf(ListH$OptolithClient.Extra.lower(filterText), ListH$OptolithClient.Extra.lower(Curry._1(pred[0], x)));
+                                  return Ley_List$OptolithClient.isInfixOf(Ley_List$OptolithClient.Extra.lower(filterText), Ley_List$OptolithClient.Extra.lower(Curry._1(pred[0], x)));
                                 }
                               }), searchAccessors);
                 }), xs);
@@ -25,24 +25,24 @@ function searchByMulti(searchAccessors, filterText, xs) {
 }
 
 function searchStrings(filterText, xs) {
-  return ListH$OptolithClient.Foldable.elem(filterText, xs);
+  return Ley_List$OptolithClient.Foldable.elem(filterText, xs);
 }
 
 function sortByMulti(sortOptions, xs) {
-  if (ListH$OptolithClient.Foldable.length(xs) < 2 || ListH$OptolithClient.Foldable.$$null(sortOptions)) {
+  if (Ley_List$OptolithClient.Foldable.length(xs) < 2 || Ley_List$OptolithClient.Foldable.$$null(sortOptions)) {
     return xs;
   } else {
-    var sortFunctions = ListH$OptolithClient.map((function (x) {
+    var sortFunctions = Ley_List$OptolithClient.map((function (x) {
             if (x.reverse) {
               var partial_arg = x.compare;
               return (function (param, param$1) {
-                  return Function$OptolithClient.flip(partial_arg, param, param$1);
+                  return Ley_Function$OptolithClient.flip(partial_arg, param, param$1);
                 });
             } else {
               return x.compare;
             }
           }), sortOptions);
-    return ListH$OptolithClient.sortBy((function (param, param$1) {
+    return Ley_List$OptolithClient.sortBy((function (param, param$1) {
                     var _sortFunctions = sortFunctions;
                     var a = param;
                     var b = param$1;
@@ -68,7 +68,7 @@ function sortStrings(staticData, xs) {
   var partial_arg = Intl$OptolithClient.Collator.createWithOptions(staticData.messages.id, {
         numeric: true
       });
-  return ListH$OptolithClient.sortBy((function (param, param$1) {
+  return Ley_List$OptolithClient.sortBy((function (param, param$1) {
                   return Intl$OptolithClient.Collator.compare(partial_arg, param, param$1);
                 }))(xs);
 }

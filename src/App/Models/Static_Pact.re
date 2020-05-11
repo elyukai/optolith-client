@@ -1,8 +1,8 @@
 type t = {
   id: int,
   name: string,
-  types: IntMap.t(string),
-  domains: IntMap.t(string),
+  types: Ley.IntMap.t(string),
+  domains: Ley.IntMap.t(string),
   src: list(Static_SourceRef.t),
   errata: list(Static_Erratum.t),
 };
@@ -23,8 +23,8 @@ module Decode = {
   let t = json => {
     id: json |> field("id", int),
     name: json |> field("name", string),
-    types: json |> field("types", list(type_)) |> IntMap.fromList,
-    domains: json |> field("domains", list(domain)) |> IntMap.fromList,
+    types: json |> field("types", list(type_)) |> Ley.IntMap.fromList,
+    domains: json |> field("domains", list(domain)) |> Ley.IntMap.fromList,
     src: json |> field("src", Static_SourceRef.Decode.list),
     errata: json |> field("errata", Static_Erratum.Decode.list),
   };
@@ -32,6 +32,6 @@ module Decode = {
   let all = (yamlData: Yaml_Raw.yamlData) =>
     yamlData.pactsL10n
     |> list(t)
-    |> ListH.map(x => (x.id, x))
-    |> IntMap.fromList;
+    |> Ley.List.map(x => (x.id, x))
+    |> Ley.IntMap.fromList;
 };

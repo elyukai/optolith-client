@@ -1,6 +1,5 @@
-import { fmap } from "../../Data/Functor"
 import { List } from "../../Data/List"
-import { bind, bindF, Maybe } from "../../Data/Maybe"
+import { bind, bindF, fmap, Maybe } from "../../Data/Maybe"
 import { lookupF } from "../../Data/OrderedMap"
 import { peekFst } from "../../Data/Queue"
 import { Record } from "../../Data/Record"

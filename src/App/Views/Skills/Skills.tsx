@@ -3,7 +3,7 @@ import { notEquals } from "../../../Data/Eq"
 import { fmap } from "../../../Data/Functor"
 import { List, mapAccumL, notNull, toArray } from "../../../Data/List"
 import { bindF, ensure, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe"
-import { lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Pair, snd } from "../../../Data/Tuple"
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
@@ -53,7 +53,7 @@ export interface SkillsStateProps {
   sortOrder: SortNames
   filterText: string
   ratingVisibility: boolean
-  skillRating: OrderedMap<string, EntryRating>
+  skillRating: StrMap<EntryRating>
 }
 
 export interface SkillsDispatchProps {

@@ -1,7 +1,6 @@
 import * as React from "react"
 import { List } from "../../../Data/List"
 import { Maybe } from "../../../Data/Maybe"
-import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
@@ -28,7 +27,7 @@ export interface AdvantagesStateProps {
   >>
   enableActiveItemHints: boolean
   magicalMax: Maybe<number>
-  rating: Maybe<OrderedMap<string, EntryRating>>
+  rating: Maybe<StrMap<EntryRating>>
   showRating: boolean
   isRemovingEnabled: boolean
   filterText: string

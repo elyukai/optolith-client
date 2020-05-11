@@ -29,7 +29,7 @@ type combatTechniqueSecondOption = {
 type combatTechniqueOption = {
   amount: int,
   value: int,
-  second: Maybe.t(combatTechniqueSecondOption),
+  second: option(combatTechniqueSecondOption),
   sid: list(int),
 };
 
@@ -48,7 +48,7 @@ type skillOption = {
   /**
    * If specified, only choose from skills of the specified group.
    */
-  gr: Maybe.t(int),
+  gr: option(int),
   /**
    * The AP value the user can spend.
    */
@@ -56,24 +56,24 @@ type skillOption = {
 };
 
 type options = {
-  skillSpecialization: Maybe.t(skillSpecializationOption),
-  languageScript: Maybe.t(languageAndScriptOption),
-  combatTechnique: Maybe.t(combatTechniqueOption),
-  cantrip: Maybe.t(cantripOption),
-  curse: Maybe.t(curseOption),
-  terrainKnowledge: Maybe.t(terrainKnowledgeOption),
-  skill: Maybe.t(skillOption),
+  skillSpecialization: option(skillSpecializationOption),
+  languageScript: option(languageAndScriptOption),
+  combatTechnique: option(combatTechniqueOption),
+  cantrip: option(cantripOption),
+  curse: option(curseOption),
+  terrainKnowledge: option(terrainKnowledgeOption),
+  skill: option(skillOption),
   guildMageUnfamiliarSpell: bool,
 };
 
 type variantOptions = {
-  skillSpecialization: Maybe.t(variantSkillSpecializationOption),
-  languageScript: Maybe.t(variantLanguageAndScriptOption),
-  combatTechnique: Maybe.t(variantCombatTechniqueOption),
-  cantrip: Maybe.t(cantripOption),
-  curse: Maybe.t(curseOption),
-  terrainKnowledge: Maybe.t(terrainKnowledgeOption),
-  skill: Maybe.t(skillOption),
+  skillSpecialization: option(variantSkillSpecializationOption),
+  languageScript: option(variantLanguageAndScriptOption),
+  combatTechnique: option(variantCombatTechniqueOption),
+  cantrip: option(cantripOption),
+  curse: option(curseOption),
+  terrainKnowledge: option(terrainKnowledgeOption),
+  skill: option(skillOption),
   guildMageUnfamiliarSpell: bool,
 };
 
@@ -84,40 +84,40 @@ type variant = {
   prerequisites: Static_Prerequisites.tProfession,
   options: variantOptions,
   specialAbilities: list(Static_Prerequisites.activatable),
-  combatTechniques: IntMap.t(int),
-  skills: IntMap.t(int),
-  spells: IntMap.t(GenericHelpers.oneOrMany(int)),
-  liturgicalChants: IntMap.t(GenericHelpers.oneOrMany(int)),
+  combatTechniques: Ley.IntMap.t(int),
+  skills: Ley.IntMap.t(int),
+  spells: Ley.IntMap.t(GenericHelpers.oneOrMany(int)),
+  liturgicalChants: Ley.IntMap.t(GenericHelpers.oneOrMany(int)),
   blessings: list(int),
-  precedingText: Maybe.t(string),
-  fullText: Maybe.t(string),
-  concludingText: Maybe.t(string),
+  precedingText: option(string),
+  fullText: option(string),
+  concludingText: option(string),
   errata: list(Static_Erratum.t),
 };
 
 type t = {
   id: int,
   name,
-  subname: Maybe.t(name),
+  subname: option(name),
   cost: int,
   prerequisites: Static_Prerequisites.tProfession,
-  prerequisitesStart: Maybe.t(string),
+  prerequisitesStart: option(string),
   options,
   specialAbilities: list(Static_Prerequisites.activatable),
-  combatTechniques: IntMap.t(int),
-  skills: IntMap.t(int),
-  spells: IntMap.t(GenericHelpers.oneOrMany(int)),
-  liturgicalChants: IntMap.t(GenericHelpers.oneOrMany(int)),
+  combatTechniques: Ley.IntMap.t(int),
+  skills: Ley.IntMap.t(int),
+  spells: Ley.IntMap.t(GenericHelpers.oneOrMany(int)),
+  liturgicalChants: Ley.IntMap.t(GenericHelpers.oneOrMany(int)),
   blessings: list(int),
   suggestedAdvantages: list(int),
-  suggestedAdvantagesText: Maybe.t(string),
+  suggestedAdvantagesText: option(string),
   suggestedDisadvantages: list(int),
-  suggestedDisadvantagesText: Maybe.t(string),
+  suggestedDisadvantagesText: option(string),
   unsuitableAdvantages: list(int),
-  unsuitableAdvantagesText: Maybe.t(string),
+  unsuitableAdvantagesText: option(string),
   unsuitableDisadvantages: list(int),
-  unsuitableDisadvantagesText: Maybe.t(string),
-  variants: IntMap.t(variant),
+  unsuitableDisadvantagesText: option(string),
+  variants: Ley.IntMap.t(variant),
   isVariantRequired: bool,
   gr: int,
   /**
@@ -147,11 +147,10 @@ module Decode = {
   type variantL10n = {
     id: int,
     name,
-    activatablePrerequisites:
-      Maybe.t(list(Static_Prerequisites.activatable)),
-    precedingText: Maybe.t(string),
-    fullText: Maybe.t(string),
-    concludingText: Maybe.t(string),
+    activatablePrerequisites: option(list(Static_Prerequisites.activatable)),
+    precedingText: option(string),
+    fullText: option(string),
+    concludingText: option(string),
     errata: list(Static_Erratum.t),
   };
 
@@ -220,27 +219,25 @@ module Decode = {
   type variantUniv = {
     id: int,
     cost: int,
-    sexDependency: Maybe.t(Static_Prerequisites.sex),
-    raceDependency: Maybe.t(Static_Prerequisites.race),
-    cultureDependency: Maybe.t(Static_Prerequisites.culture),
-    activatablePrerequisites:
-      Maybe.t(list(Static_Prerequisites.activatable)),
-    increasablePrerequisites:
-      Maybe.t(list(Static_Prerequisites.increasable)),
+    sexDependency: option(Static_Prerequisites.sex),
+    raceDependency: option(Static_Prerequisites.race),
+    cultureDependency: option(Static_Prerequisites.culture),
+    activatablePrerequisites: option(list(Static_Prerequisites.activatable)),
+    increasablePrerequisites: option(list(Static_Prerequisites.increasable)),
     skillSpecializationSelectOptions:
-      Maybe.t(variantSkillSpecializationOption),
-    languageScriptSelectOptions: Maybe.t(variantLanguageAndScriptOption),
-    combatTechniqueSelectOptions: Maybe.t(variantCombatTechniqueOption),
-    cantripSelectOptions: Maybe.t(cantripOption),
-    curseSelectOptions: Maybe.t(curseOption),
-    terrainKnowledgeSelectOptions: Maybe.t(terrainKnowledgeOption),
-    skillSelectOptions: Maybe.t(skillOption),
-    specialAbilities: Maybe.t(list(Static_Prerequisites.activatable)),
-    combatTechniques: Maybe.t(list((int, int))),
-    skills: Maybe.t(list((int, int))),
-    spells: Maybe.t(list((int, GenericHelpers.oneOrMany(int)))),
-    liturgicalChants: Maybe.t(list((int, GenericHelpers.oneOrMany(int)))),
-    blessings: Maybe.t(list(int)),
+      option(variantSkillSpecializationOption),
+    languageScriptSelectOptions: option(variantLanguageAndScriptOption),
+    combatTechniqueSelectOptions: option(variantCombatTechniqueOption),
+    cantripSelectOptions: option(cantripOption),
+    curseSelectOptions: option(curseOption),
+    terrainKnowledgeSelectOptions: option(terrainKnowledgeOption),
+    skillSelectOptions: option(skillOption),
+    specialAbilities: option(list(Static_Prerequisites.activatable)),
+    combatTechniques: option(list((int, int))),
+    skills: option(list((int, int))),
+    spells: option(list((int, GenericHelpers.oneOrMany(int)))),
+    liturgicalChants: option(list((int, GenericHelpers.oneOrMany(int)))),
+    blessings: option(list(int)),
   };
 
   let variantUniv = json => {
@@ -358,8 +355,10 @@ module Decode = {
         sex: univ.sexDependency,
         race: univ.raceDependency,
         culture: univ.cultureDependency,
-        activatable: univ.activatablePrerequisites |> Maybe.fromMaybe([]),
-        increasable: univ.increasablePrerequisites |> Maybe.fromMaybe([]),
+        activatable:
+          univ.activatablePrerequisites |> Ley.Option.fromOption([]),
+        increasable:
+          univ.increasablePrerequisites |> Ley.Option.fromOption([]),
       },
       options: {
         skillSpecialization: univ.skillSpecializationSelectOptions,
@@ -370,9 +369,9 @@ module Decode = {
         terrainKnowledge: univ.terrainKnowledgeSelectOptions,
         skill: univ.skillSelectOptions,
         guildMageUnfamiliarSpell:
-          Maybe.maybe(
+          Ley.Option.option(
             false,
-            ListH.Foldable.any((x: Static_Prerequisites.activatable) =>
+            Ley.List.Foldable.any((x: Static_Prerequisites.activatable) =>
               x.id
               == `SpecialAbility(Ids.SpecialAbilityId.traditionGuildMages)
               && x.active
@@ -380,14 +379,20 @@ module Decode = {
             univ.activatablePrerequisites,
           ),
       },
-      specialAbilities: univ.specialAbilities |> Maybe.fromMaybe([]),
+      specialAbilities: univ.specialAbilities |> Ley.Option.fromOption([]),
       combatTechniques:
-        univ.combatTechniques |> Maybe.maybe(IntMap.empty, IntMap.fromList),
-      skills: univ.skills |> Maybe.maybe(IntMap.empty, IntMap.fromList),
-      spells: univ.spells |> Maybe.maybe(IntMap.empty, IntMap.fromList),
+        univ.combatTechniques
+        |> Ley.Option.option(Ley.IntMap.empty, Ley.IntMap.fromList),
+      skills:
+        univ.skills
+        |> Ley.Option.option(Ley.IntMap.empty, Ley.IntMap.fromList),
+      spells:
+        univ.spells
+        |> Ley.Option.option(Ley.IntMap.empty, Ley.IntMap.fromList),
       liturgicalChants:
-        univ.liturgicalChants |> Maybe.maybe(IntMap.empty, IntMap.fromList),
-      blessings: univ.blessings |> Maybe.fromMaybe([]),
+        univ.liturgicalChants
+        |> Ley.Option.option(Ley.IntMap.empty, Ley.IntMap.fromList),
+      blessings: univ.blessings |> Ley.Option.fromOption([]),
       precedingText: l10n.precedingText,
       fullText: l10n.fullText,
       concludingText: l10n.concludingText,
@@ -398,15 +403,14 @@ module Decode = {
   type tL10n = {
     id: int,
     name,
-    subname: Maybe.t(name),
-    activatablePrerequisites:
-      Maybe.t(list(Static_Prerequisites.activatable)),
-    prerequisitesStart: Maybe.t(string),
-    suggestedAdvantages: Maybe.t(string),
-    suggestedDisadvantages: Maybe.t(string),
-    unsuitableAdvantages: Maybe.t(string),
-    unsuitableDisadvantages: Maybe.t(string),
-    variants: Maybe.t(list(variantL10n)),
+    subname: option(name),
+    activatablePrerequisites: option(list(Static_Prerequisites.activatable)),
+    prerequisitesStart: option(string),
+    suggestedAdvantages: option(string),
+    suggestedDisadvantages: option(string),
+    unsuitableAdvantages: option(string),
+    unsuitableDisadvantages: option(string),
+    variants: option(list(variantL10n)),
     src: list(Static_SourceRef.t),
     errata: list(Static_Erratum.t),
   };
@@ -437,31 +441,29 @@ module Decode = {
   type tUniv = {
     id: int,
     cost: int,
-    sexDependency: Maybe.t(Static_Prerequisites.sex),
-    raceDependency: Maybe.t(Static_Prerequisites.race),
-    cultureDependency: Maybe.t(Static_Prerequisites.culture),
-    activatablePrerequisites:
-      Maybe.t(list(Static_Prerequisites.activatable)),
-    increasablePrerequisites:
-      Maybe.t(list(Static_Prerequisites.increasable)),
-    skillSpecializationSelectOptions: Maybe.t(skillSpecializationOption),
-    languageScriptSelectOptions: Maybe.t(languageAndScriptOption),
-    combatTechniqueSelectOptions: Maybe.t(combatTechniqueOption),
-    cantripSelectOptions: Maybe.t(cantripOption),
-    curseSelectOptions: Maybe.t(curseOption),
-    terrainKnowledgeSelectOptions: Maybe.t(terrainKnowledgeOption),
-    skillSelectOptions: Maybe.t(skillOption),
-    specialAbilities: Maybe.t(list(Static_Prerequisites.activatable)),
-    combatTechniques: Maybe.t(list((int, int))),
-    skills: Maybe.t(list((int, int))),
-    spells: Maybe.t(list((int, GenericHelpers.oneOrMany(int)))),
-    liturgicalChants: Maybe.t(list((int, GenericHelpers.oneOrMany(int)))),
-    blessings: Maybe.t(list(int)),
-    suggestedAdvantages: Maybe.t(list(int)),
-    suggestedDisadvantages: Maybe.t(list(int)),
-    unsuitableAdvantages: Maybe.t(list(int)),
-    unsuitableDisadvantages: Maybe.t(list(int)),
-    variants: Maybe.t(list(variantUniv)),
+    sexDependency: option(Static_Prerequisites.sex),
+    raceDependency: option(Static_Prerequisites.race),
+    cultureDependency: option(Static_Prerequisites.culture),
+    activatablePrerequisites: option(list(Static_Prerequisites.activatable)),
+    increasablePrerequisites: option(list(Static_Prerequisites.increasable)),
+    skillSpecializationSelectOptions: option(skillSpecializationOption),
+    languageScriptSelectOptions: option(languageAndScriptOption),
+    combatTechniqueSelectOptions: option(combatTechniqueOption),
+    cantripSelectOptions: option(cantripOption),
+    curseSelectOptions: option(curseOption),
+    terrainKnowledgeSelectOptions: option(terrainKnowledgeOption),
+    skillSelectOptions: option(skillOption),
+    specialAbilities: option(list(Static_Prerequisites.activatable)),
+    combatTechniques: option(list((int, int))),
+    skills: option(list((int, int))),
+    spells: option(list((int, GenericHelpers.oneOrMany(int)))),
+    liturgicalChants: option(list((int, GenericHelpers.oneOrMany(int)))),
+    blessings: option(list(int)),
+    suggestedAdvantages: option(list(int)),
+    suggestedDisadvantages: option(list(int)),
+    unsuitableAdvantages: option(list(int)),
+    unsuitableDisadvantages: option(list(int)),
+    variants: option(list(variantUniv)),
     isVariantRequired: bool,
     gr: int,
     sgr: int,
@@ -589,8 +591,10 @@ module Decode = {
         sex: univ.sexDependency,
         race: univ.raceDependency,
         culture: univ.cultureDependency,
-        activatable: univ.activatablePrerequisites |> Maybe.fromMaybe([]),
-        increasable: univ.increasablePrerequisites |> Maybe.fromMaybe([]),
+        activatable:
+          univ.activatablePrerequisites |> Ley.Option.fromOption([]),
+        increasable:
+          univ.increasablePrerequisites |> Ley.Option.fromOption([]),
       },
       prerequisitesStart: l10n.prerequisitesStart,
       options: {
@@ -602,9 +606,9 @@ module Decode = {
         terrainKnowledge: univ.terrainKnowledgeSelectOptions,
         skill: univ.skillSelectOptions,
         guildMageUnfamiliarSpell:
-          Maybe.maybe(
+          Ley.Option.option(
             false,
-            ListH.Foldable.any((x: Static_Prerequisites.activatable) =>
+            Ley.List.Foldable.any((x: Static_Prerequisites.activatable) =>
               x.id
               == `SpecialAbility(Ids.SpecialAbilityId.traditionGuildMages)
               && x.active
@@ -612,34 +616,42 @@ module Decode = {
             univ.activatablePrerequisites,
           ),
       },
-      specialAbilities: univ.specialAbilities |> Maybe.fromMaybe([]),
+      specialAbilities: univ.specialAbilities |> Ley.Option.fromOption([]),
       combatTechniques:
-        univ.combatTechniques |> Maybe.maybe(IntMap.empty, IntMap.fromList),
-      skills: univ.skills |> Maybe.maybe(IntMap.empty, IntMap.fromList),
-      spells: univ.spells |> Maybe.maybe(IntMap.empty, IntMap.fromList),
+        univ.combatTechniques
+        |> Ley.Option.option(Ley.IntMap.empty, Ley.IntMap.fromList),
+      skills:
+        univ.skills
+        |> Ley.Option.option(Ley.IntMap.empty, Ley.IntMap.fromList),
+      spells:
+        univ.spells
+        |> Ley.Option.option(Ley.IntMap.empty, Ley.IntMap.fromList),
       liturgicalChants:
-        univ.liturgicalChants |> Maybe.maybe(IntMap.empty, IntMap.fromList),
-      blessings: univ.blessings |> Maybe.fromMaybe([]),
-      suggestedAdvantages: univ.suggestedAdvantages |> Maybe.fromMaybe([]),
+        univ.liturgicalChants
+        |> Ley.Option.option(Ley.IntMap.empty, Ley.IntMap.fromList),
+      blessings: univ.blessings |> Ley.Option.fromOption([]),
+      suggestedAdvantages:
+        univ.suggestedAdvantages |> Ley.Option.fromOption([]),
       suggestedAdvantagesText: l10n.suggestedAdvantages,
       suggestedDisadvantages:
-        univ.suggestedDisadvantages |> Maybe.fromMaybe([]),
+        univ.suggestedDisadvantages |> Ley.Option.fromOption([]),
       suggestedDisadvantagesText: l10n.suggestedDisadvantages,
-      unsuitableAdvantages: univ.unsuitableAdvantages |> Maybe.fromMaybe([]),
+      unsuitableAdvantages:
+        univ.unsuitableAdvantages |> Ley.Option.fromOption([]),
       unsuitableAdvantagesText: l10n.unsuitableAdvantages,
       unsuitableDisadvantages:
-        univ.unsuitableDisadvantages |> Maybe.fromMaybe([]),
+        univ.unsuitableDisadvantages |> Ley.Option.fromOption([]),
       unsuitableDisadvantagesText: l10n.unsuitableDisadvantages,
       variants:
         Yaml_Zip.zipBy(
-          Int.show,
+          Ley.Int.show,
           variant,
           x => x.id,
           x => x.id,
-          univ.variants |> Maybe.fromMaybe([]),
-          l10n.variants |> Maybe.fromMaybe([]),
+          univ.variants |> Ley.Option.fromOption([]),
+          l10n.variants |> Ley.Option.fromOption([]),
         )
-        |> IntMap.fromList,
+        |> Ley.IntMap.fromList,
       isVariantRequired: univ.isVariantRequired,
       gr: univ.gr,
       sgr: univ.sgr,
@@ -650,12 +662,12 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.professionsUniv |> list(tUniv),
       yamlData.professionsL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

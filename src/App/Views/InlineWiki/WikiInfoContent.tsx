@@ -2,7 +2,7 @@ import * as React from "react"
 import { equals } from "../../../Data/Eq"
 import { find, List } from "../../../Data/List"
 import { bind, fromJust, isJust, Maybe, maybe_, Nothing } from "../../../Data/Maybe"
-import { lookup, OrderedMap } from "../../../Data/OrderedMap"
+import { lookup } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Category } from "../../Constants/Categories"
 import { IdPrefixes } from "../../Constants/IdPrefixes"
@@ -117,7 +117,7 @@ export interface WikiInfoContentStateProps {
   combinedRaces: List<Record<RaceCombined>>
   combinedCultures: List<Record<CultureCombined>>
   combinedProfessions: List<Record<ProfessionCombined>>
-  items: Maybe<OrderedMap<string, Record<Item>>>
+  items: Maybe<StrMap<Record<Item>>>
   languages: Maybe<Record<SpecialAbility>>
   liturgicalChantExtensions: Maybe<Record<SpecialAbility>>
   scripts: Maybe<Record<SpecialAbility>>

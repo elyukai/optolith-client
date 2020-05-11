@@ -3,7 +3,7 @@ import { equals } from "../../../Data/Eq"
 import { fmap } from "../../../Data/Functor"
 import { consF, List, map, subscript } from "../../../Data/List"
 import { ensure, Just, mapMaybe, Maybe, maybeToUndefined } from "../../../Data/Maybe"
-import { elems, OrderedMap } from "../../../Data/OrderedMap"
+import { elems } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { EditItem } from "../../Models/Hero/EditItem"
 import { DropdownOption } from "../../Models/View/DropdownOption"
@@ -20,7 +20,7 @@ import { Label } from "../Universal/Label"
 import { TextField } from "../Universal/TextField"
 
 export interface ItemEditorRangedSectionProps {
-  combatTechniques: OrderedMap<string, Record<CombatTechnique>>
+  combatTechniques: StrMap<Record<CombatTechnique>>
   item: Record<EditItem>
   staticData: StaticDataRecord
   templates: List<Record<ItemTemplate>>

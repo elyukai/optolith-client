@@ -153,7 +153,7 @@ export const insertCacheAt =
   }
 
 export const insertCacheMap =
-  (map: OrderedMap<string, APCache>) => {
+  (map: StrMap<APCache>) => {
     OrderedMap.mapWithKey<string, APCache, void> (insertCacheAt) (map)
   }
 

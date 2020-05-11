@@ -40,8 +40,8 @@ const prepareHerolist =
     const { heroes: rawHeroes } = action.payload
 
     interface Reduced {
-      heroes: OrderedMap<string, Record<UndoState<HeroModelRecord>>>
-      users: OrderedMap<string, User>
+      heroes: StrMap<Record<UndoState<HeroModelRecord>>>
+      users: StrMap<User>
     }
 
     if (isJust (rawHeroes)) {

@@ -2,6 +2,12 @@
 /* eslint-disable import/first */
 
 
+import {IntMap_t as Ley_IntMap_t} from '../../../src/Data/Ley.gen';
+
+import {IntSet_t as Ley_IntSet_t} from '../../../src/Data/Ley.gen';
+
+import {Option_t as Ley_Option_t} from '../../../src/Data/Ley.gen';
+
 import {activatableAndSkillId as Ids_activatableAndSkillId} from '../../../src/App/Constants/Ids.gen';
 
 import {activatableId as Ids_activatableId} from '../../../src/App/Constants/Ids.gen';
@@ -10,15 +16,9 @@ import {hitZoneArmorZoneItemId as Ids_hitZoneArmorZoneItemId} from '../../../src
 
 import {list} from '../../../src/shims/ReasonPervasives.shim';
 
-import {maybe as Maybe_maybe} from '../../../src/Data/Maybe.gen';
-
 import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/GenericHelpers.gen';
 
 import {selectOptionId as Ids_selectOptionId} from '../../../src/App/Constants/Ids.gen';
-
-import {t as IntMap_t} from '../../../src/shims/IntMap.gen';
-
-import {t as IntSet_t} from '../../../src/shims/IntSet.gen';
 
 // tslint:disable-next-line:interface-over-type-literal
 export type phase = "Outline" | "Definition" | "Advancement";
@@ -49,19 +49,19 @@ export type Rules = Rules_t;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type personalData = {
-  readonly family: Maybe_maybe<string>; 
-  readonly placeOfBirth: Maybe_maybe<string>; 
-  readonly dateOfBirth: Maybe_maybe<string>; 
-  readonly age: Maybe_maybe<string>; 
-  readonly hairColor: Maybe_maybe<number>; 
-  readonly eyeColor: Maybe_maybe<number>; 
-  readonly size: Maybe_maybe<string>; 
-  readonly weight: Maybe_maybe<string>; 
-  readonly title: Maybe_maybe<string>; 
-  readonly socialStatus: Maybe_maybe<number>; 
-  readonly characteristics: Maybe_maybe<string>; 
-  readonly otherInfo: Maybe_maybe<string>; 
-  readonly cultureAreaKnowledge: Maybe_maybe<string>
+  readonly family?: string; 
+  readonly placeOfBirth?: string; 
+  readonly dateOfBirth?: string; 
+  readonly age?: string; 
+  readonly hairColor?: number; 
+  readonly eyeColor?: number; 
+  readonly size?: string; 
+  readonly weight?: string; 
+  readonly title?: string; 
+  readonly socialStatus?: number; 
+  readonly characteristics?: string; 
+  readonly otherInfo?: string; 
+  readonly cultureAreaKnowledge?: string
 };
 export type PersonalData = personalData;
 
@@ -79,8 +79,8 @@ export type Activatable_option =
 // tslint:disable-next-line:interface-over-type-literal
 export type Activatable_single = {
   readonly options: list<Activatable_option>; 
-  readonly level: Maybe_maybe<number>; 
-  readonly customCost: Maybe_maybe<number>
+  readonly level: Ley_Option_t<number>; 
+  readonly customCost: Ley_Option_t<number>
 };
 export type ActivatableSingle = Activatable_single;
 
@@ -90,7 +90,7 @@ export type Activatable_dependency = {
   readonly target: GenericHelpers_oneOrMany<Ids_activatableId>; 
   readonly active: boolean; 
   readonly options: list<GenericHelpers_oneOrMany<Ids_selectOptionId>>; 
-  readonly level: Maybe_maybe<number>
+  readonly level: Ley_Option_t<number>
 };
 export type ActivatableDependency = Activatable_dependency;
 
@@ -106,7 +106,7 @@ export type Activatable = Activatable_t;
 export type Attribute_dependency = {
   readonly source: Ids_activatableId; 
   readonly target: GenericHelpers_oneOrMany<number>; 
-  readonly value: Maybe_maybe<number>
+  readonly value?: number
 };
 export type AttributeDependency = Attribute_dependency;
 
@@ -175,7 +175,7 @@ export type Skill_t = {
 export type Skill = Skill_t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Item_mundaneItem = { readonly structurePoints: Maybe_maybe<GenericHelpers_oneOrMany<number>> };
+export type Item_mundaneItem = { readonly structurePoints?: GenericHelpers_oneOrMany<number> };
 export type MundaneItem = Item_mundaneItem;
 
 // tslint:disable-next-line:interface-over-type-literal
@@ -189,7 +189,7 @@ export type PrimaryAttributeDamageThreshold = Item_primaryAttributeDamageThresho
 export type Item_damage = {
   readonly amount: number; 
   readonly sides: number; 
-  readonly flat: Maybe_maybe<number>
+  readonly flat?: number
 };
 export type Damage = Item_damage;
 
@@ -197,30 +197,30 @@ export type Damage = Item_damage;
 export type Item_meleeWeapon = {
   readonly combatTechnique: number; 
   readonly damage: Item_damage; 
-  readonly primaryAttributeDamageThreshold: Maybe_maybe<Item_primaryAttributeDamageThreshold>; 
-  readonly at: Maybe_maybe<number>; 
-  readonly pa: Maybe_maybe<number>; 
-  readonly reach: Maybe_maybe<number>; 
-  readonly length: Maybe_maybe<number>; 
-  readonly structurePoints: Maybe_maybe<GenericHelpers_oneOrMany<number>>; 
-  readonly breakingPointRatingMod: Maybe_maybe<number>; 
+  readonly primaryAttributeDamageThreshold?: Item_primaryAttributeDamageThreshold; 
+  readonly at?: number; 
+  readonly pa?: number; 
+  readonly reach?: number; 
+  readonly length?: number; 
+  readonly structurePoints?: GenericHelpers_oneOrMany<number>; 
+  readonly breakingPointRatingMod?: number; 
   readonly isParryingWeapon: boolean; 
   readonly isTwoHandedWeapon: boolean; 
   readonly isImprovisedWeapon: boolean; 
-  readonly damaged: Maybe_maybe<number>
+  readonly damaged?: number
 };
 export type MeleeWeapon = Item_meleeWeapon;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Item_rangedWeapon = {
   readonly combatTechnique: number; 
-  readonly damage: Maybe_maybe<Item_damage>; 
-  readonly length: Maybe_maybe<number>; 
+  readonly damage?: Item_damage; 
+  readonly length?: number; 
   readonly range: [number, number, number]; 
   readonly reloadTime: GenericHelpers_oneOrMany<number>; 
-  readonly ammunition: Maybe_maybe<number>; 
+  readonly ammunition?: number; 
   readonly isImprovisedWeapon: boolean; 
-  readonly damaged: Maybe_maybe<number>
+  readonly damaged?: number
 };
 export type RangedWeapon = Item_rangedWeapon;
 
@@ -229,12 +229,12 @@ export type Item_armor = {
   readonly protection: number; 
   readonly encumbrance: number; 
   readonly hasAdditionalPenalties: boolean; 
-  readonly iniMod: Maybe_maybe<number>; 
-  readonly movMod: Maybe_maybe<number>; 
-  readonly sturdinessMod: Maybe_maybe<number>; 
+  readonly iniMod?: number; 
+  readonly movMod?: number; 
+  readonly sturdinessMod?: number; 
   readonly armorType: number; 
-  readonly wear: Maybe_maybe<number>; 
-  readonly isHitZoneArmorOnly: Maybe_maybe<boolean>
+  readonly wear?: number; 
+  readonly isHitZoneArmorOnly?: boolean
 };
 export type Armor = Item_armor;
 
@@ -250,13 +250,13 @@ export type Special = Item_special;
 // tslint:disable-next-line:interface-over-type-literal
 export type Item_t = {
   readonly id: number; 
-  readonly amount: Maybe_maybe<number>; 
-  readonly price: Maybe_maybe<number>; 
-  readonly weight: Maybe_maybe<number>; 
-  readonly template: Maybe_maybe<number>; 
+  readonly amount?: number; 
+  readonly price?: number; 
+  readonly weight?: number; 
+  readonly template?: number; 
   readonly isTemplateLocked: boolean; 
-  readonly carriedWhere: Maybe_maybe<string>; 
-  readonly special: Maybe_maybe<Item_special>; 
+  readonly carriedWhere?: string; 
+  readonly special?: Item_special; 
   readonly gr: number
 };
 export type Item = Item_t;
@@ -265,18 +265,18 @@ export type Item = Item_t;
 export type hitZoneArmor = {
   readonly id: number; 
   readonly name: string; 
-  readonly head: Maybe_maybe<Ids_hitZoneArmorZoneItemId>; 
-  readonly headWear: Maybe_maybe<number>; 
-  readonly leftArm: Maybe_maybe<Ids_hitZoneArmorZoneItemId>; 
-  readonly leftArmWear: Maybe_maybe<number>; 
-  readonly rightArm: Maybe_maybe<Ids_hitZoneArmorZoneItemId>; 
-  readonly rightArmWear: Maybe_maybe<number>; 
-  readonly torso: Maybe_maybe<Ids_hitZoneArmorZoneItemId>; 
-  readonly torsoWear: Maybe_maybe<number>; 
-  readonly leftLeg: Maybe_maybe<Ids_hitZoneArmorZoneItemId>; 
-  readonly leftLegWear: Maybe_maybe<number>; 
-  readonly rightLeg: Maybe_maybe<Ids_hitZoneArmorZoneItemId>; 
-  readonly rightLegWear: Maybe_maybe<number>
+  readonly head?: Ids_hitZoneArmorZoneItemId; 
+  readonly headWear?: number; 
+  readonly leftArm?: Ids_hitZoneArmorZoneItemId; 
+  readonly leftArmWear?: number; 
+  readonly rightArm?: Ids_hitZoneArmorZoneItemId; 
+  readonly rightArmWear?: number; 
+  readonly torso?: Ids_hitZoneArmorZoneItemId; 
+  readonly torsoWear?: number; 
+  readonly leftLeg?: Ids_hitZoneArmorZoneItemId; 
+  readonly leftLegWear?: number; 
+  readonly rightLeg?: Ids_hitZoneArmorZoneItemId; 
+  readonly rightLegWear?: number
 };
 export type HitZoneArmor = hitZoneArmor;
 
@@ -293,35 +293,35 @@ export type Purse = purse;
 export type pet = {
   readonly id: number; 
   readonly name: string; 
-  readonly avatar: Maybe_maybe<string>; 
-  readonly size: Maybe_maybe<string>; 
-  readonly type: Maybe_maybe<string>; 
-  readonly attack: Maybe_maybe<string>; 
-  readonly dp: Maybe_maybe<string>; 
-  readonly reach: Maybe_maybe<string>; 
-  readonly actions: Maybe_maybe<string>; 
-  readonly skills: Maybe_maybe<string>; 
-  readonly abilities: Maybe_maybe<string>; 
-  readonly notes: Maybe_maybe<string>; 
-  readonly spentAp: Maybe_maybe<string>; 
-  readonly totalAp: Maybe_maybe<string>; 
-  readonly cou: Maybe_maybe<string>; 
-  readonly sgc: Maybe_maybe<string>; 
-  readonly int: Maybe_maybe<string>; 
-  readonly cha: Maybe_maybe<string>; 
-  readonly dex: Maybe_maybe<string>; 
-  readonly agi: Maybe_maybe<string>; 
-  readonly con: Maybe_maybe<string>; 
-  readonly str: Maybe_maybe<string>; 
-  readonly lp: Maybe_maybe<string>; 
-  readonly ae: Maybe_maybe<string>; 
-  readonly spi: Maybe_maybe<string>; 
-  readonly tou: Maybe_maybe<string>; 
-  readonly pro: Maybe_maybe<string>; 
-  readonly ini: Maybe_maybe<string>; 
-  readonly mov: Maybe_maybe<string>; 
-  readonly at: Maybe_maybe<string>; 
-  readonly pa: Maybe_maybe<string>
+  readonly avatar?: string; 
+  readonly size?: string; 
+  readonly type?: string; 
+  readonly attack?: string; 
+  readonly dp?: string; 
+  readonly reach?: string; 
+  readonly actions?: string; 
+  readonly skills?: string; 
+  readonly abilities?: string; 
+  readonly notes?: string; 
+  readonly spentAp?: string; 
+  readonly totalAp?: string; 
+  readonly cou?: string; 
+  readonly sgc?: string; 
+  readonly int?: string; 
+  readonly cha?: string; 
+  readonly dex?: string; 
+  readonly agi?: string; 
+  readonly con?: string; 
+  readonly str?: string; 
+  readonly lp?: string; 
+  readonly ae?: string; 
+  readonly spi?: string; 
+  readonly tou?: string; 
+  readonly pro?: string; 
+  readonly ini?: string; 
+  readonly mov?: string; 
+  readonly at?: string; 
+  readonly pa?: string
 };
 export type Pet = pet;
 
@@ -344,7 +344,7 @@ export type Pact = Pact_t;
 // tslint:disable-next-line:interface-over-type-literal
 export type styleDependency = {
   readonly id: GenericHelpers_oneOrMany<number>; 
-  readonly active: Maybe_maybe<number>; 
+  readonly active?: number; 
   readonly origin: number
 };
 export type StyleDependency = styleDependency;
@@ -371,32 +371,32 @@ export type t = {
   readonly sex: sex; 
   readonly phase: phase; 
   readonly locale: string; 
-  readonly avatar: Maybe_maybe<string>; 
-  readonly race: Maybe_maybe<number>; 
-  readonly raceVariant: Maybe_maybe<baseOrWithVariant>; 
-  readonly culture: Maybe_maybe<number>; 
+  readonly avatar?: string; 
+  readonly race?: number; 
+  readonly raceVariant?: baseOrWithVariant; 
+  readonly culture?: number; 
   readonly isCulturalPackageActive: boolean; 
-  readonly profession: Maybe_maybe<baseOrWithVariant>; 
-  readonly professionName: Maybe_maybe<string>; 
+  readonly profession?: baseOrWithVariant; 
+  readonly professionName?: string; 
   readonly rules: Rules_t; 
   readonly personalData: personalData; 
-  readonly advantages: IntMap_t<Activatable_t>; 
-  readonly disadvantages: IntMap_t<Activatable_t>; 
-  readonly specialAbilities: IntMap_t<Activatable_t>; 
-  readonly attributes: IntMap_t<Attribute_t>; 
+  readonly advantages: Ley_IntMap_t<Activatable_t>; 
+  readonly disadvantages: Ley_IntMap_t<Activatable_t>; 
+  readonly specialAbilities: Ley_IntMap_t<Activatable_t>; 
+  readonly attributes: Ley_IntMap_t<Attribute_t>; 
   readonly attributeAdjustmentSelected: number; 
   readonly energies: Energies_t; 
-  readonly skills: IntMap_t<Skill_t>; 
-  readonly combatTechniques: IntMap_t<Skill_t>; 
-  readonly spells: IntMap_t<ActivatableSkill_t>; 
-  readonly liturgicalChants: IntMap_t<ActivatableSkill_t>; 
-  readonly cantrips: IntSet_t; 
-  readonly blessings: IntSet_t; 
+  readonly skills: Ley_IntMap_t<Skill_t>; 
+  readonly combatTechniques: Ley_IntMap_t<Skill_t>; 
+  readonly spells: Ley_IntMap_t<ActivatableSkill_t>; 
+  readonly liturgicalChants: Ley_IntMap_t<ActivatableSkill_t>; 
+  readonly cantrips: Ley_IntSet_t; 
+  readonly blessings: Ley_IntSet_t; 
   readonly items: list<Item_t>; 
   readonly hitZoneArmors: list<hitZoneArmor>; 
   readonly purse: purse; 
   readonly pets: list<pet>; 
-  readonly pact: Maybe_maybe<Pact_t>; 
+  readonly pact?: Pact_t; 
   readonly combatStyleDependencies: list<styleDependency>; 
   readonly magicalStyleDependencies: list<styleDependency>; 
   readonly blessedStyleDependencies: list<styleDependency>; 

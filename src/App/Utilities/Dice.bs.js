@@ -3,10 +3,10 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var Js_math = require("bs-platform/lib/js/js_math.js");
-var Int$OptolithClient = require("../../Data/Int.bs.js");
+var Ley_Int$OptolithClient = require("../../Data/Ley_Int.bs.js");
 
 function rollDie(sides) {
-  return Int$OptolithClient.inc(Js_math.floor(Math.random() * sides));
+  return Ley_Int$OptolithClient.inc(Js_math.floor(Math.random() * sides));
 }
 
 function $neg$pipe(a, b) {
@@ -18,7 +18,7 @@ function $neg$pipe(a, b) {
 }
 
 function rollDiceAux(amount, sides) {
-  if (Int$OptolithClient.abs(amount) <= 1) {
+  if (Ley_Int$OptolithClient.abs(amount) <= 1) {
     return /* :: */[
             rollDie(sides),
             /* [] */0
@@ -36,7 +36,7 @@ function rollDice(param) {
 }
 
 function rollDiceSumAux(amount, sides) {
-  if (Int$OptolithClient.abs(amount) <= 1) {
+  if (Ley_Int$OptolithClient.abs(amount) <= 1) {
     return rollDie(sides);
   } else {
     return rollDie(sides) + rollDiceSumAux($neg$pipe(amount, 1), sides) | 0;
@@ -48,7 +48,7 @@ function rollDiceSum(param) {
 }
 
 function rollDiceSumMapAux(map, amount, sides) {
-  if (Int$OptolithClient.abs(amount) <= 1) {
+  if (Ley_Int$OptolithClient.abs(amount) <= 1) {
     return Curry._2(map, {
                 amount: amount,
                 sides: sides

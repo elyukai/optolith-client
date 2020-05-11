@@ -3,7 +3,7 @@ type t = {
   name: string,
   ic: IC.t,
   primary: list(int),
-  special: Maybe.t(string),
+  special: option(string),
   hasNoParry: bool,
   bpr: int,
   gr: int,
@@ -18,7 +18,7 @@ module Decode = {
   type tL10n = {
     id: int,
     name: string,
-    special: Maybe.t(string),
+    special: option(string),
     src: list(Static_SourceRef.t),
     errata: list(Static_Erratum.t),
   };
@@ -36,7 +36,7 @@ module Decode = {
     ic: IC.t,
     primary: list(int),
     bpr: int,
-    hasNoParry: Maybe.t(bool),
+    hasNoParry: option(bool),
     gr: int,
   };
 
@@ -57,7 +57,7 @@ module Decode = {
       ic: univ.ic,
       primary: univ.primary,
       special: l10n.special,
-      hasNoParry: Maybe.fromMaybe(false, univ.hasNoParry),
+      hasNoParry: Ley.Option.fromOption(false, univ.hasNoParry),
       bpr: univ.bpr,
       gr: univ.gr,
       src: l10n.src,
@@ -67,12 +67,12 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.combatTechniquesUniv |> list(tUniv),
       yamlData.combatTechniquesL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

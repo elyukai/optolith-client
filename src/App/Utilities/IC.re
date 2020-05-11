@@ -35,7 +35,7 @@ let%private getLastSRWithConstantCost = ic => ic === E ? 14 : 12;
  * final cost for the given SR.
  */
 let%private getBaseMultiplier = (ic, sr) =>
-  sr - getLastSRWithConstantCost(ic) + 1 |> Int.max(1);
+  sr - getLastSRWithConstantCost(ic) + 1 |> Ley.Int.max(1);
 
 /**
  * Returns the AP cost for a single SR with a specific IC.
@@ -49,7 +49,7 @@ let%private getCost = (ic, sr) =>
  * would not get the AP to get to that same SR.
  */
 let%private getAPForBounds = (ic, l, u) =>
-  Ix.range((l + 1, u))
+  Ley.Ix.range((l + 1, u))
   |> List.fold_right(sr => getCost(ic, sr) |> (+), _, 0);
 
 /**

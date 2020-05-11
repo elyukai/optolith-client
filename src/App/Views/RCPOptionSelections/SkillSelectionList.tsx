@@ -2,7 +2,7 @@ import * as React from "react"
 import { fmap } from "../../../Data/Functor"
 import { List, map, toArray } from "../../../Data/List"
 import { fromMaybe } from "../../../Data/Maybe"
-import { elems, lookup, OrderedMap, sum } from "../../../Data/OrderedMap"
+import { elems, lookup, sum } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Pair } from "../../../Data/Tuple"
 import { SkillsSelection } from "../../Models/Wiki/professionSelections/SkillsSelection"
@@ -20,7 +20,7 @@ const SSA = SkillsSelection.A
 const SA = Skill.A
 
 export const isSkillSelectionValid =
-  (skillsActive: OrderedMap<string, number>) =>
+  (skillsActive: StrMap<number>) =>
   (selection: Record<SkillsSelection>): Pair<boolean, number> => {
     const ap_total = SSA.value (selection)
     const ap_spent = sum (skillsActive)
@@ -40,7 +40,7 @@ const getSkills =
 
 interface Props {
   staticData: StaticDataRecord
-  active: OrderedMap<string, number>
+  active: StrMap<number>
   ap_left: number
   selection: Record<SkillsSelection>
   addSkillPoint (id: string): void

@@ -1,6 +1,6 @@
 open Jest;
 open Expect;
-open IntMap;
+open Ley.IntMap;
 
 let from1to5 =
   fromList([(1, "a"), (2, "b"), (4, "d"), (3, "c"), (5, "e")]);

@@ -2,8 +2,8 @@
 'use strict';
 
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
+var Ley_Option$OptolithClient = require("../../Data/Ley_Option.bs.js");
 
 function t(json) {
   return {
@@ -13,7 +13,7 @@ function t(json) {
 }
 
 function list(json) {
-  return Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.maybe((function (param) {
+  return Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.maybe((function (param) {
                     return Json_decode.list(t, param);
                   }), json));
 }

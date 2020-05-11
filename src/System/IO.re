@@ -49,7 +49,13 @@ module Functor = {
   let (<$>) = (f, m) =>
     Js.Promise.then_(x => f(x) |> Js.Promise.resolve, m);
 
+  [@genType]
+  let fmap = (<$>);
+
   let (<&>) = (m, f) => f <$> m;
+
+  [@genType]
+  let fmapF = (<&>);
 };
 
 module Monad = {
@@ -63,10 +69,8 @@ module Monad = {
 
   let rec mapM = (f, xs) =>
     switch (xs) {
-    | [] => pure ([])
-    | [x, ...ys] =>
-      x
-      |> f >>= (z => (zs => [z, ...zs]) <$> mapM(f, ys))
+    | [] => pure([])
+    | [x, ...ys] => x |> f >>= (z => (zs => [z, ...zs]) <$> mapM(f, ys))
     };
 };
 

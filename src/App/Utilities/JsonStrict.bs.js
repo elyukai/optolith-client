@@ -3,13 +3,14 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
+var Caml_option = require("bs-platform/lib/js/caml_option.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 
 function maybe(decode, json) {
   if (json === undefined || json === null) {
-    return /* Nothing */0;
+    return ;
   } else {
-    return /* Just */[Curry._1(decode, json)];
+    return Caml_option.some(Curry._1(decode, json));
   }
 }
 

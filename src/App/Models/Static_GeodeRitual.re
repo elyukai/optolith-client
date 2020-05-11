@@ -2,7 +2,7 @@ type t = {
   id: int,
   name: string,
   check: (int, int, int),
-  checkMod: Maybe.t(CheckModifier.t),
+  checkMod: option(CheckModifier.t),
   effect: string,
   ritualTime: string,
   ritualTimeShort: string,
@@ -14,7 +14,7 @@ type t = {
   durationShort: string,
   target: string,
   property: int,
-  activatablePrerequisites: Maybe.t(list(Static_Prerequisites.activatable)),
+  activatablePrerequisites: option(list(Static_Prerequisites.activatable)),
   src: list(Static_SourceRef.t),
   errata: list(Static_Erratum.t),
 };
@@ -62,10 +62,9 @@ module Decode = {
     check1: int,
     check2: int,
     check3: int,
-    checkMod: Maybe.t(CheckModifier.t),
+    checkMod: option(CheckModifier.t),
     property: int,
-    activatablePrerequisites:
-      Maybe.t(list(Static_Prerequisites.activatable)),
+    activatablePrerequisites: option(list(Static_Prerequisites.activatable)),
   };
 
   let tUniv = json => {
@@ -109,12 +108,12 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.geodeRitualsUniv |> list(tUniv),
       yamlData.geodeRitualsL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

@@ -5,7 +5,7 @@ import { over } from "../../Data/Lens"
 import { all, cons, Cons, elemF, filter, find, foldr, List, ListI, map, sortBy, subscriptF } from "../../Data/List"
 import { bind, ensure, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe"
 import { add } from "../../Data/Num"
-import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
+import { elems, lookup, lookupF } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Tuple/Curry"
 import { Category } from "../Constants/Categories"
@@ -204,7 +204,7 @@ const mapProfessionVariantSelection =
 
 const mapIncreaseSkill =
   <a>
-  (wikiAcc: (w: StaticDataRecord) => OrderedMap<string, a>) =>
+  (wikiAcc: (w: StaticDataRecord) => StrMap<a>) =>
   (nameAcc: (x: a) => string) =>
   (staticData: StaticDataRecord) =>
   (e: Record<IncreaseSkill>) =>
@@ -225,7 +225,7 @@ const mapIncreaseSkill =
 
 const mapIncreaseSkillOrList =
   <a>
-  (wikiAcc: (w: StaticDataRecord) => OrderedMap<string, a>) =>
+  (wikiAcc: (w: StaticDataRecord) => StrMap<a>) =>
   (nameAcc: (x: a) => string) =>
   (staticData: StaticDataRecord) =>
   (e: Record<IncreaseSkill> | Record<IncreaseSkillList>) =>
@@ -255,7 +255,7 @@ const mapLiturgicalChant = mapIncreaseSkillOrList (SDA.liturgicalChants) (LCA.na
 const mapIncreaseSkillPrevious =
   (base: number) =>
   <A>
-  (wikiAcc: (w: StaticDataRecord) => OrderedMap<string, A>) =>
+  (wikiAcc: (w: StaticDataRecord) => StrMap<A>) =>
   (nameAcc: (x: A) => string) =>
   (staticData: StaticDataRecord) =>
   (main_xs: List<Record<IncreaseSkill> | Record<IncreaseSkillList>>) =>
@@ -293,7 +293,7 @@ const mapIncreaseSkillPrevious =
 const mapIncreaseSkillListPrevious =
   (base: number) =>
   <A>
-  (wikiAcc: (w: StaticDataRecord) => OrderedMap<string, A>) =>
+  (wikiAcc: (w: StaticDataRecord) => StrMap<A>) =>
   (nameAcc: (x: A) => string) =>
   (staticData: StaticDataRecord) =>
   (main_xs: List<Record<IncreaseSkill> | Record<IncreaseSkillList>>) =>

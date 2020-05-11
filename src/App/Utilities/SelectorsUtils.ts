@@ -1,6 +1,6 @@
 import { ident } from "../../Data/Function"
 import { bindF, Maybe } from "../../Data/Maybe"
-import { lookup, OrderedMap } from "../../Data/OrderedMap"
+import { lookup } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { uncurryN } from "../../Data/Tuple/Curry"
 import { AppState, AppStateRecord } from "../Models/AppState"
@@ -10,9 +10,9 @@ import { PSelectorWithKey } from "./createMapSelector"
 import { createMaybeSelector } from "./createMaybeSelector"
 import { pipe } from "./pipe"
 
-export type MaybeSliceSelector<A> = (state: AppStateRecord) => Maybe<OrderedMap<string, A>>
-export type SliceSelector<A, B extends any[]> = (...args: B) => OrderedMap<string, A>
-export type SlicePropsSelector<A, P> = (state: AppStateRecord, props: P) => OrderedMap<string, A>
+export type MaybeSliceSelector<A> = (state: AppStateRecord) => Maybe<StrMap<A>>
+export type SliceSelector<A, B extends any[]> = (...args: B) => StrMap<A>
+export type SlicePropsSelector<A, P> = (state: AppStateRecord, props: P) => StrMap<A>
 
 // type Args<A> = A extends (...args: infer B) => any ? B : never
 

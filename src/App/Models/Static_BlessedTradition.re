@@ -3,7 +3,7 @@ type t = {
   numId: int,
   name: string,
   primary: int,
-  aspects: Maybe.t((int, int)),
+  aspects: option((int, int)),
 };
 
 module Decode = {
@@ -24,7 +24,7 @@ module Decode = {
     id: int,
     numId: int,
     primary: int,
-    aspects: Maybe.t((int, int)),
+    aspects: option((int, int)),
   };
 
   let tUniv = json => {
@@ -47,12 +47,12 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.blessedTraditionsUniv |> list(tUniv),
       yamlData.blessedTraditionsL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

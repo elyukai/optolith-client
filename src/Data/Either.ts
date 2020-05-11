@@ -12,21 +12,22 @@
  * @author Lukas Obermann
  */
 
-import { ifElse } from "../App/Utilities/ifElse"
-import { pipe } from "../App/Utilities/pipe"
-import { ident } from "./Function"
-import { fmap, fmapF } from "./Functor"
-import { Internals } from "./Internals"
-import { cons, consF, List } from "./List"
-import { fromJust, isJust, Just, Maybe, Nothing } from "./Maybe"
-import { Pair, Tuple } from "./Tuple"
+import * as ReResult from "./Ley_Result.gen"
+import { List } from "./List"
+import { Maybe } from "./Maybe"
+import { Pair } from "./Tuple"
+import { uncurryN } from "./Tuple/All"
 
-export import Left = Internals.Left
-export import Right = Internals.Right
-export import isLeft = Internals.isLeft
-export import isRight = Internals.isRight
+export type Left<L> = { tag: "Error"; value: L }
+export const Left = <L> (x: L): Left<L> => ({ tag: "Error", value: x })
+
+export type Right<R> = { tag: "Ok"; value: R }
+export const Right = <R> (x: R): Right<R> => ({ tag: "Ok", value: x })
 
 export type Either<A, B> = Left<A> | Right<B>
+
+export const isLeft = <L, R> (e: Either<L, R>): e is Left<L> => e.tag === "Error"
+export const isRight = <L, R> (e: Either<L, R>): e is Right<R> => e.tag === "Ok"
 
 /**
  * @module Data.Either.Extra
@@ -51,7 +52,7 @@ export const fromLeft =
   <A>
   (def: A) =>
   (x: Either<A, any>): A =>
-    isLeft (x) ? x .value : def
+    ReResult.Extra_fromError (def, x)
 
 /**
  * `fromRight :: b -> Either a b -> b`
@@ -66,7 +67,7 @@ export const fromRight =
   <B>
   (def: B) =>
   (x: Either<any, B>): B =>
-    isRight (x) ? x .value : def
+    ReResult.Extra_fromOk (def, x)
 
 /**
  * `fromEither :: Either a a -> a`
@@ -79,7 +80,7 @@ export const fromRight =
 export const fromEither =
   <A>
   (x: Either<A, A>): A =>
-    isRight (x) ? x .value : x .value
+    ReResult.Extra_fromResult (x)
 
 /**
  * `fromLeft' :: Either l r -> l`
@@ -95,13 +96,8 @@ export const fromEither =
  */
 export const fromLeft_ =
   <L>
-  (x: Left<L>): L => {
-    if (isLeft (x)) {
-      return x .value
-    }
-
-    throw new TypeError (`Cannot extract a Left value out of ${x}.`)
-  }
+  (x: Left<L>): L =>
+    ReResult.Extra_fromError_ (x)
 
 /**
  * `fromRight' :: Either l r -> r`
@@ -117,13 +113,8 @@ export const fromLeft_ =
  */
 export const fromRight_ =
   <R>
-  (x: Right<R>): R => {
-    if (isRight (x)) {
-      return x .value
-    }
-
-    throw new TypeError (`Cannot extract a Right value out of ${x}.`)
-  }
+  (x: Right<R>): R =>
+    ReResult.Extra_fromOk_ (x)
 
 /**
  * `eitherToMaybe :: Either a b -> Maybe b`
@@ -136,7 +127,7 @@ export const fromRight_ =
 export const eitherToMaybe =
   <B>
   (x: Either<any, B>): Maybe<B> =>
-    isRight (x) ? Just (x .value) : Nothing
+    ReResult.Extra_resultToOption (x)
 
 /**
  * `maybeToEither :: a -> Maybe b -> Either a b`
@@ -151,7 +142,7 @@ export const maybeToEither =
   <A>
   (left: A) =>
   <B> (x: Maybe<B>): Either<A, B> =>
-    isJust (x) ? Right (fromJust (x)) : Left (left)
+    ReResult.Extra_optionToResult (left, x)
 
 /**
  * `maybeToEither' :: (() -> a) -> Maybe b -> Either a b`
@@ -169,7 +160,24 @@ export const maybeToEither_ =
   (left: () => A) =>
   <B>
   (x: Maybe<B>): Either<A, B> =>
-    isJust (x) ? Right (fromJust (x)) : Left (left ())
+    ReResult.Extra_optionToResult_ (left, x)
+
+
+// FUNCTOR
+
+/**
+ * `fmap :: (a -> b) -> f a -> f b`
+ */
+export const fmap =
+  <A, B> (f: (x: A) => B) => <E> (x: Either<E, A>): Either<E, B> =>
+    ReResult.Functor_fmap (f, x)
+
+/**
+ * `fmapF :: f a -> (a -> b) -> f b`
+ */
+export const fmapF =
+  <E, A> (x: Either<E, A>) => <B> (f: (x: A) => B): Either<E, B> =>
+    ReResult.Functor_fmap (f, x)
 
 
 // BIFUNCTOR
@@ -183,9 +191,7 @@ export const bimap =
   <C, D>
   (fRight: (r: C) => D) =>
   (x: Either<A, C>): Either<B, D> =>
-    isRight (x)
-      ? Right (fRight (x .value))
-      : Left (fLeft (x .value))
+    ReResult.Bifunctor_bimap (fLeft, fRight, x)
 
 /**
  * `first :: (a -> b) -> Either a c -> Either b c`
@@ -194,9 +200,7 @@ export const first =
   <A, B>
   (f: (l: A) => B) =>
   <C> (x: Either<A, C>): Either<B, C> =>
-    isLeft (x)
-      ? Left (f (x .value))
-      : x
+    ReResult.Bifunctor_first (f, x)
 
 /**
  * `second :: (b -> c) -> Either a b -> Either a c`
@@ -206,9 +210,7 @@ export const second =
   (f: (r: B) => C) =>
   <A>
   (x: Either<A, B>): Either<A, C> =>
-    isRight (x)
-      ? Right (f (x .value))
-      : x
+    ReResult.Bifunctor_second (f, x)
 
 
 // APPLICATIVE
@@ -228,7 +230,7 @@ export const pure = Right
 export const ap =
   <E, A, B>
   (f: Either<E, (x: A) => B>) => (x: Either<E, A>): Either<E, B> =>
-    isRight (f) ? fmap (f .value) (x) : f
+    ReResult.Applicative_ap (f, x)
 
 
 // MONAD
@@ -241,7 +243,7 @@ export const bind =
   (x: Either<E, A>) =>
   <B>
   (f: (x: A) => Either<E, B>): Either<E, B> =>
-    isRight (x) ? f (x .value) : x
+    ReResult.Monad_bind (x, f)
 
 /**
  * `(=<<) :: (a -> Either e b) -> Either e a -> Either e b`
@@ -250,7 +252,7 @@ export const bindF =
   <E, A, B>
   (f: (x: A) => Either<E, B>) =>
   (x: Either<E, A>): Either<E, B> =>
-    bind (x) (f)
+    ReResult.Monad_bindF (f, x)
 
 /**
  * `(>>) :: Either e a -> Either e b -> Either e b`
@@ -265,7 +267,7 @@ export const then =
   <E, B>
   (x: Either<E, any>) =>
   (y: Either<E, B>): Either<E, B> =>
-    bind (x) (_ => y)
+    ReResult.Monad_then (x, y)
 
 /**
  * `(>=>) :: (a -> Either e b) -> (b -> Either e c) -> a -> Either e c`
@@ -276,7 +278,8 @@ export const kleisli =
   <E, A, B, C>
   (f: (x: A) => Either<E, B>) =>
   (g: (x: B) => Either<E, C>) =>
-    pipe (f, bindF (g))
+  (x: A): Either<E, C> =>
+    ReResult.Monad_kleisli (f, g, x)
 
 /**
  * `join :: Either e (Either e a) -> Either e a`
@@ -287,7 +290,7 @@ export const kleisli =
  */
 export const join =
   <E, A> (x: Either<E, Either<E, A>>): Either<E, A> =>
-    bind (x) (ident)
+    ReResult.Monad_join (x)
 
 /**
  * `mapM :: (a -> Either e b) -> [a] -> Either e [b]`
@@ -302,15 +305,7 @@ export const mapM =
   <E, A, B>
   (f: (x: A) => Either<E, B>) =>
   (xs: List<A>): Either<E, List<B>> =>
-    List.fnull (xs)
-    ? Right (List.empty)
-    : ifElse<Either<E, B>, Left<E>>
-      (isLeft)
-      <Either<E, List<B>>>
-      (ident)
-      (y => second (consF (fromRight_ (y)))
-                   (mapM (f) (xs .xs)))
-      (f (xs .x))
+    ReResult.Monad_mapM (f, xs)
 
 /**
  * `liftM2 :: (a1 -> a2 -> r) -> Either e a1 -> Either e a2 -> Either e r`
@@ -324,7 +319,7 @@ export const liftM2 =
   <E>
   (x1: Either<E, A1>) =>
   (x2: Either<E, A2>): Either<E, B> =>
-    bind (x1) (pipe (f, fmapF (x2)))
+    ReResult.Monad_liftM2 (uncurryN (f), x1, x2)
 
 /**
  * `liftM2F :: Either e a1 -> Either e a2 -> (a1 -> a2 -> r) -> Either e r`
@@ -341,7 +336,7 @@ export const liftM2F =
   (x2: Either<E, A2>) =>
   <B>
   (f: (a1: A1) => (a2: A2) => B): Either<E, B> =>
-    bind (x1) (pipe (f, fmapF (x2)))
+    ReResult.Monad_liftM2 (uncurryN (f), x1, x2)
 
 
 // FOLDABLE
@@ -356,7 +351,7 @@ export const foldr =
   (f: (x: A0) => (acc: B) => B) =>
   (initial: B) =>
   (x: Either<any, A0>): B =>
-    isRight (x) ? f (x .value) (initial) : initial
+    ReResult.Foldable_foldr (uncurryN (f), initial, x)
 
 /**
  * `foldl :: (b -> a0 -> b) -> b -> Either a a0 -> b`
@@ -368,7 +363,7 @@ export const foldl =
   (f: (acc: B) => (x: A0) => B) =>
   (initial: B) =>
   (x: Either<any, A0>): B =>
-    isRight (x) ? f (initial) (x .value) : initial
+    ReResult.Foldable_foldl (uncurryN (f), initial, x)
 
 /**
  * `toList :: Either a a0 -> [a0]`
@@ -377,7 +372,7 @@ export const foldl =
  */
 export const toList =
   <A0> (x: Either<any, A0>): List<A0> =>
-    isRight (x) ? List (x .value) : List.empty
+    ReResult.Foldable_toList (x)
 
 /**
  * `null :: Either a a0 -> Bool`
@@ -386,7 +381,7 @@ export const toList =
  * for structures that are similar to cons-lists, because there is no general
  * way to do better.
  */
-export const fnull = isLeft
+export const fnull = ReResult.Foldable_fnull
 
 /**
  * `length :: Either a a0 -> Int`
@@ -395,7 +390,7 @@ export const fnull = isLeft
  * implementation is optimized for structures that are similar to cons-lists,
  * because there is no general way to do better.
  */
-export const flength = (x: Either<any, any>): number => isRight (x) ? 1 : 0
+export const flength = (x: Either<any, any>): number => ReResult.Foldable_flength (x)
 
 /**
  * `elem :: Eq a0 => a0 -> Either a a0 -> Bool`
@@ -406,7 +401,7 @@ export const flength = (x: Either<any, any>): number => isRight (x) ? 1 : 0
  */
 export const elem =
   <A0> (x: A0) => (y: Either<any, A0>): boolean =>
-    isRight (y) && x === y .value
+    ReResult.Foldable_elem (x, y)
 
 /**
  * `elemF :: Eq a0 => Either a a0 -> a0 -> Bool`
@@ -417,21 +412,22 @@ export const elem =
  *
  * Flipped version of `elem`.
  */
-export const elemF = <A> (y: Either<A, A>) => (x: A): boolean => elem (x) (y)
+export const elemF = <A> (y: Either<A, A>) => (x: A): boolean =>
+  ReResult.Foldable_elem (x, y)
 
 /**
  * `sum :: Num a => Either a a0 -> a`
  *
  * The `sum` function computes the sum of the numbers of a structure.
  */
-export const sum = fromRight (0)
+export const sum = ReResult.Foldable_sum
 
 /**
  * `product :: Num a => Either a a0 -> a`
  *
  * The `product` function computes the product of the numbers of a structure.
  */
-export const product = fromRight (1)
+export const product = ReResult.Foldable_product
 
 // Specialized folds
 
@@ -442,7 +438,7 @@ export const product = fromRight (1)
  */
 export const concat =
   <A0>(x: Either<any, List<A0>>): List<A0> =>
-    fromRight<List<A0>> (List.empty) (x)
+    ReResult.Foldable_concat (x)
 
 /**
  * `concatMap :: (a0 -> [b]) -> Either a a0 -> [b]`
@@ -452,7 +448,7 @@ export const concat =
  */
 export const concatMap =
   <A0, B> (f: (x: A0) => List<B>) => (x: Either<any, A0>): List<B> =>
-    fromRight<List<B>> (List.empty) (fmap (f) (x))
+    ReResult.Foldable_concatMap (f, x)
 
 /**
  * `and :: Either a Bool -> Bool`
@@ -461,7 +457,7 @@ export const concatMap =
  * `True`, the container must be finite `False`, however, results from a
  * `False` value finitely far from the left end.
  */
-export const and = fromRight (true)
+export const and = ReResult.Foldable_and
 
 /**
  * `or :: Either a Bool -> Bool`
@@ -470,7 +466,7 @@ export const and = fromRight (true)
  * `False`, the container must be finite `True`, however, results from a
  * `True` value finitely far from the left end.
  */
-export const or = fromRight (false)
+export const or = ReResult.Foldable_or
 
 interface Any {
 
@@ -500,7 +496,7 @@ interface Any {
  */
 export const any: Any =
   <A0>(f: (x: A0) => boolean) => (x: Either<any, A0>): x is Right<A0> =>
-    fromRight (false) (fmap (f) (x))
+    ReResult.Foldable_any (f, x)
 
 /**
  * `all :: (a0 -> Bool) -> Either a a0 -> Bool`
@@ -509,7 +505,7 @@ export const any: Any =
  */
 export const all =
   <A0>(f: (x: A0) => boolean) => (x: Either<any, A0>): boolean =>
-    fromRight (true) (fmap (f) (x))
+    ReResult.Foldable_all (f, x)
 
 // Searches
 
@@ -520,7 +516,7 @@ export const all =
  */
 export const notElem =
   <A0> (x: A0) => (y: Either<any, A0>): boolean =>
-    !elem (x) (y)
+    ReResult.Foldable_notElem (x, y)
 
 interface Find {
 
@@ -554,88 +550,7 @@ export const find: Find =
   <A>
   (pred: (x: A) => boolean) =>
   (x: Either<any, A>): Maybe<A> =>
-    isRight (x) && pred (x .value) ? Just (x .value) : Nothing
-
-
-// ORD
-
-/**
- * `(>) :: Either a b -> Either a b -> Bool`
- *
- * Returns if the *second* value is greater than the first value.
- *
- * If the second value is a `Right` and the first is a `Left`, `(>)` always
- * returns `True`.
- *
- * If the second value is a `Left` and the first is a `Right`, `(>)` always
- * returns `False`.
- */
-export const gt =
-  <A extends number | string, B extends number | string>
-  (m1: Either<A, B>) =>
-  (m2: Either<A, B>): boolean =>
-    (isRight (m2) && isLeft (m1))
-    || (isRight (m1) && isRight (m2) && m2 .value > m1 .value)
-    || (isLeft (m1) && isLeft (m2) && m2 .value > m1 .value)
-
-/**
- * `(<) :: Either a b -> Either a b -> Bool`
- *
- * Returns if the *second* value is lower than the first value.
- *
- * If the second value is a `Left` and the first is a `Right`, `(<)` always
- * returns `True`.
- *
- * If the second value is a `Right` and the first is a `Left`, `(<)` always
- * returns `False`.
- */
-export const lt =
-  <A extends number | string, B extends number | string>
-  (m1: Either<A, B>) =>
-  (m2: Either<A, B>): boolean =>
-    (isLeft (m2) && isRight (m1))
-    || (isRight (m1) && isRight (m2) && m2 .value < m1 .value)
-    || (isLeft (m1) && isLeft (m2) && m2 .value < m1 .value)
-
-/**
- * `(>=) :: Either a b -> Either a b -> Bool`
- *
- * Returns if the *second* value is greater than or equals the first
- * value.
- *
- * If the second value is a `Right` and the first is a `Left`, `(>=)` always
- * returns `True`.
- *
- * If the second value is a `Left` and the first is a `Right`, `(>=)` always
- * returns `False`.
- */
-export const gte =
-  <A extends number | string, B extends number | string>
-  (m1: Either<A, B>) =>
-  (m2: Either<A, B>): boolean =>
-    (isRight (m2) && isLeft (m1))
-    || (isRight (m1) && isRight (m2) && m2 .value >= m1 .value)
-    || (isLeft (m1) && isLeft (m2) && m2 .value >= m1 .value)
-
-/**
- * `(<=) :: Either a b -> Either a b -> Bool`
- *
- * Returns if the *second* value is lower than or equals the second
- * value.
- *
- * If the second value is a `Left` and the first is a `Right`, `(<=)` always
- * returns `True`.
- *
- * If the second value is a `Right` and the first is a `Left`, `(<=)` always
- * returns `False`.
- */
-export const lte =
-  <A extends number | string, B extends number | string>
-  (m1: Either<A, B>) =>
-  (m2: Either<A, B>): boolean =>
-    (isLeft (m2) && isRight (m1))
-    || (isRight (m1) && isRight (m2) && m2 .value <= m1 .value)
-    || (isLeft (m1) && isLeft (m2) && m2 .value <= m1 .value)
+    ReResult.Foldable_find (pred, x)
 
 
 // EITHER FUNCTIONS (PART 2)
@@ -652,7 +567,7 @@ export const either =
   <B>
   (fRight: (r: B) => C) =>
   (x: Either<A, B>): C =>
-    isRight (x) ? fRight (x .value) : fLeft (x .value)
+    ReResult.result (fLeft, fRight, x)
 
 /**
  * `lefts :: [Either a b] -> [a]`
@@ -662,11 +577,7 @@ export const either =
  */
 export const lefts =
   <A, B> (xs: List<Either<A, B>>): List<A> =>
-    List.foldr<Either<A, B>, List<A>> (x => acc => isLeft (x)
-                                                   ? cons (acc) (x .value)
-                                                   : acc)
-                                      (List.empty)
-                                      (xs)
+    ReResult.errors (xs)
 
 /**
  * `rights :: [Either a b] -> [b]`
@@ -676,11 +587,7 @@ export const lefts =
  */
 export const rights =
   <A, B> (xs: List<Either<A, B>>): List<B> =>
-    List.foldr<Either<A, B>, List<B>> (x => acc => isRight (x)
-                                                   ? cons (acc) (x .value)
-                                                   : acc)
-                                      (List.empty)
-                                      (xs)
+    ReResult.oks (xs)
 
 /**
  * `partitionEithers :: [Either a b] -> ([a], [b])`
@@ -691,47 +598,11 @@ export const rights =
  */
 export const partitionEithers =
   <A, B> (xs: List<Either<A, B>>): Pair<List<A>, List<B>> =>
-    List.foldr<Either<A, B>, Pair<List<A>, List<B>>>
-      (x => isRight (x)
-            ? Tuple.second (consF (x .value))
-            : Tuple.first (consF (x .value)))
-      (Pair<List<A>, List<B>> (List.empty, List.empty))
-      (xs)
+    ReResult.partitionResults (xs)
 
 
 // CUSTOM FUNCTIONS
 
-export import isEither = Internals.isEither
-
-const imapMIndex =
-  (i: number) =>
-  <E, A, B>
-  (f: (i: number) => (x: A) => Either<E, B>) =>
-  (xs: List<A>): Either<E, List<B>> =>
-    List.fnull (xs)
-    ? Right (List.empty)
-    : ifElse<Either<E, B>, Left<E>>
-      (isLeft)
-      <Either<E, List<B>>>
-      (ident)
-      (y => second (consF (fromRight_ (y)))
-                   (imapMIndex (i + 1) (f) (xs .xs)))
-      (f (i) (xs .x))
-
-/**
- * `imapM :: (Int -> a -> Either e b) -> [a] -> Either e [b]`
- *
- * `imapM f xs` takes a function and a list and maps the function over every
- * element in the list. If the function returns a `Left`, it is immediately
- * returned by the function. If `f` did not return any `Left`, the list of
- * unwrapped return values is returned as a `Right`. If `xs` is empty,
- * `Right []` is returned.
- */
-export const imapM =
-  <E, A, B>
-  (f: (index: number) => (x: A) => Either<E, B>) =>
-  (xs: List<A>): Either<E, List<B>> =>
-    imapMIndex (0) (f) (xs)
 
 /**
  * `invertEither :: Either l r -> Either r l`
@@ -740,7 +611,7 @@ export const imapM =
  */
 export const invertEither =
   <L, R> (x: Either<L, R>): Either<R, L> =>
-    isLeft (x) ? Right (x .value) : Left (x .value)
+    ReResult.swap (x)
 
 
 // TYPE HELPERS
@@ -797,11 +668,6 @@ export const Either = {
   notElem,
   find,
 
-  gt,
-  lt,
-  gte,
-  lte,
-
   isLeft,
   isRight,
   either,
@@ -809,7 +675,5 @@ export const Either = {
   rights,
   partitionEithers,
 
-  isEither,
-  imapM,
   invertEither,
 }

@@ -359,7 +359,7 @@ export const toWiki : (locale : string) => (mp : YamlNameMap) => Either<Error[],
                             || isLeft (edisadvantages)
                             || isLeft (especialAbilities)) {
                           return pipe_ (
-                            List<Either<Error[], OrderedMap<string, Record<any>>>> (
+                            List<Either<Error[], StrMap<Record<any>>>> (
                               eadvantages,
                               edisadvantages,
                               especialAbilities,

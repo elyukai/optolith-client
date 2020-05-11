@@ -12,7 +12,7 @@ let handle = (f: Js.Promise.error => IO.t('a), x: IO.t('a)): IO.t('a) =>
  * exception was raised, or `(Left ex)` if an exception was raised and its value
  * is `ex`.
  */
-let handleE = (x: IO.t('a)): IO.t(Either.t(Js.Promise.error, 'a)) =>
+let handleE = (x: IO.t('a)): IO.t(result('a, Js.Promise.error)) =>
   x
-  |> Js.Promise.then_(x => Either.Right(x) |> IO.Monad.pure)
-  |> Js.Promise.catch(x => Either.Left(x) |> IO.Monad.pure);
+  |> Js.Promise.then_(x => Ok(x) |> IO.Monad.pure)
+  |> Js.Promise.catch(x => Error(x) |> IO.Monad.pure);

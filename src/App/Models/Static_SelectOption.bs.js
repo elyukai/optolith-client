@@ -4,13 +4,13 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var Int$OptolithClient = require("../../Data/Int.bs.js");
-var ListH$OptolithClient = require("../../Data/ListH.bs.js");
-var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
-var Data_Map$OptolithClient = require("../../Data/Data_Map.bs.js");
-var Function$OptolithClient = require("../../Data/Function.bs.js");
+var Ley_Int$OptolithClient = require("../../Data/Ley_Int.bs.js");
+var Ley_Map$OptolithClient = require("../../Data/Ley_Map.bs.js");
+var Ley_List$OptolithClient = require("../../Data/Ley_List.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
+var Ley_Option$OptolithClient = require("../../Data/Ley_Option.bs.js");
+var Ley_Function$OptolithClient = require("../../Data/Ley_Function.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
 var Static_Prerequisites$OptolithClient = require("./Static_Prerequisites.bs.js");
@@ -59,27 +59,27 @@ function showId(id) {
   if (variant >= 61643255) {
     if (variant >= 345443720) {
       if (variant >= 797131559) {
-        return "Blessing(" + (Int$OptolithClient.show(id[1]) + ")");
+        return "Blessing(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
       } else {
-        return "Spell(" + (Int$OptolithClient.show(id[1]) + ")");
+        return "Spell(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
       }
     } else if (variant >= 290194801) {
-      return "Skill(" + (Int$OptolithClient.show(id[1]) + ")");
+      return "Skill(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
     } else {
-      return "Generic(" + (Int$OptolithClient.show(id[1]) + ")");
+      return "Generic(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
     }
   } else if (variant !== -841776939) {
     if (variant >= -384382742) {
-      return "LiturgicalChant(" + (Int$OptolithClient.show(id[1]) + ")");
+      return "LiturgicalChant(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
     } else {
-      return "CombatTechnique(" + (Int$OptolithClient.show(id[1]) + ")");
+      return "CombatTechnique(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
     }
   } else {
-    return "Cantrip(" + (Int$OptolithClient.show(id[1]) + ")");
+    return "Cantrip(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
   }
 }
 
-var SelectOptionMap = Data_Map$OptolithClient.Make(Ord);
+var SelectOptionMap = Ley_Map$OptolithClient.Make(Ord);
 
 function tL10n(json) {
   return {
@@ -126,8 +126,8 @@ function t(univ, l10n) {
           specializationInput: l10n.specializationInput,
           animalGr: univ.animalGr,
           animalLevel: univ.animalLevel,
-          target: /* Nothing */0,
-          wikiEntry: /* Nothing */0,
+          target: undefined,
+          wikiEntry: undefined,
           src: l10n.src,
           errata: l10n.errata
         };
@@ -169,19 +169,19 @@ function entryToSelectOption(id, name, wikiEntry, src, errata) {
   return {
           id: id,
           name: name,
-          cost: /* Nothing */0,
+          cost: undefined,
           prerequisites: Static_Prerequisites$OptolithClient.empty,
-          description: /* Nothing */0,
-          isSecret: /* Nothing */0,
-          languages: /* Nothing */0,
-          continent: /* Nothing */0,
-          isExtinct: /* Nothing */0,
-          specializations: /* Nothing */0,
-          specializationInput: /* Nothing */0,
-          animalGr: /* Nothing */0,
-          animalLevel: /* Nothing */0,
-          target: /* Nothing */0,
-          wikiEntry: /* Just */[wikiEntry],
+          description: undefined,
+          isSecret: undefined,
+          languages: undefined,
+          continent: undefined,
+          isExtinct: undefined,
+          specializations: undefined,
+          specializationInput: undefined,
+          animalGr: undefined,
+          animalLevel: undefined,
+          target: undefined,
+          wikiEntry: wikiEntry,
           src: src,
           errata: errata
         };
@@ -192,19 +192,19 @@ function insertEntry(s) {
 }
 
 function resolveWithoutGroups(f, mp, xs) {
-  return Curry._3(IntMap$OptolithClient.Foldable.foldr, (function (x) {
+  return Curry._3(Ley_IntMap$OptolithClient.Foldable.foldr, (function (x) {
                 var s = Curry._1(f, x);
                 return Curry._2(SelectOptionMap.insert, s.id, s);
               }), xs, mp);
 }
 
 function resolveGroups(f, g, grs, mp, xs) {
-  return Curry._3(IntMap$OptolithClient.Foldable.foldr, (function (x) {
-                if (ListH$OptolithClient.Foldable.elem(Curry._1(g, x), grs)) {
+  return Curry._3(Ley_IntMap$OptolithClient.Foldable.foldr, (function (x) {
+                if (Ley_List$OptolithClient.Foldable.elem(Curry._1(g, x), grs)) {
                   var s = Curry._1(f, x);
                   return Curry._2(SelectOptionMap.insert, s.id, s);
                 } else {
-                  return Function$OptolithClient.id;
+                  return Ley_Function$OptolithClient.id;
                 }
               }), xs, mp);
 }
@@ -239,8 +239,8 @@ function combatTechniqueToSelectOption(x) {
 }
 
 function resolveCombatTechniques(mgrs) {
-  if (mgrs) {
-    var grs = mgrs[0];
+  if (mgrs !== undefined) {
+    var grs = mgrs;
     return (function (param, param$1) {
         return resolveGroups(combatTechniqueToSelectOption, (function (x) {
                       return x.gr;
@@ -261,8 +261,8 @@ function liturgicalChantToSelectOption(x) {
 }
 
 function resolveLiturgicalChants(mgrs) {
-  if (mgrs) {
-    var grs = mgrs[0];
+  if (mgrs !== undefined) {
+    var grs = mgrs;
     return (function (param, param$1) {
         return resolveGroups(liturgicalChantToSelectOption, (function (x) {
                       return x.gr;
@@ -283,8 +283,8 @@ function skillToSelectOption(x) {
 }
 
 function resolveSkills(mgrs) {
-  if (mgrs) {
-    var grs = mgrs[0];
+  if (mgrs !== undefined) {
+    var grs = mgrs;
     return (function (param, param$1) {
         return resolveGroups(skillToSelectOption, (function (x) {
                       return x.gr;
@@ -305,8 +305,8 @@ function spellToSelectOption(x) {
 }
 
 function resolveSpells(mgrs) {
-  if (mgrs) {
-    var grs = mgrs[0];
+  if (mgrs !== undefined) {
+    var grs = mgrs;
     return (function (param, param$1) {
         return resolveGroups(spellToSelectOption, (function (x) {
                       return x.gr;
@@ -320,7 +320,7 @@ function resolveSpells(mgrs) {
 }
 
 function resolveCategories(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, categories) {
-  return ListH$OptolithClient.Foldable.foldr((function (cat) {
+  return Ley_List$OptolithClient.Foldable.foldr((function (cat) {
                 var match = cat.category;
                 switch (match) {
                   case /* Blessings */0 :
@@ -353,26 +353,26 @@ function resolveCategories(blessings, cantrips, combatTechniques, liturgicalChan
                         });
                   
                 }
-              }), SelectOptionMap.empty, Maybe$OptolithClient.fromMaybe(/* [] */0, categories));
+              }), SelectOptionMap.empty, Ley_Option$OptolithClient.fromOption(/* [] */0, categories));
 }
 
 function l10nToSelectOption(l10n) {
   return {
           id: l10n.id,
           name: l10n.name,
-          cost: /* Nothing */0,
+          cost: undefined,
           prerequisites: Static_Prerequisites$OptolithClient.empty,
           description: l10n.description,
-          isSecret: /* Nothing */0,
-          languages: /* Nothing */0,
-          continent: /* Nothing */0,
-          isExtinct: /* Nothing */0,
+          isSecret: undefined,
+          languages: undefined,
+          continent: undefined,
+          isExtinct: undefined,
           specializations: l10n.specializations,
           specializationInput: l10n.specializationInput,
-          animalGr: /* Nothing */0,
-          animalLevel: /* Nothing */0,
-          target: /* Nothing */0,
-          wikiEntry: /* Nothing */0,
+          animalGr: undefined,
+          animalLevel: undefined,
+          target: undefined,
+          wikiEntry: undefined,
           src: l10n.src,
           errata: l10n.errata
         };
@@ -382,17 +382,17 @@ function mergeUnivIntoSelectOption(univ, x) {
   return {
           id: x.id,
           name: x.name,
-          cost: Maybe$OptolithClient.Alternative.$less$pipe$great(univ.cost, x.cost),
+          cost: Ley_Option$OptolithClient.Alternative.$less$pipe$great(univ.cost, x.cost),
           prerequisites: univ.prerequisites,
           description: x.description,
-          isSecret: Maybe$OptolithClient.Alternative.$less$pipe$great(univ.isSecret, x.isSecret),
-          languages: Maybe$OptolithClient.Alternative.$less$pipe$great(univ.languages, x.languages),
-          continent: Maybe$OptolithClient.Alternative.$less$pipe$great(univ.continent, x.continent),
-          isExtinct: Maybe$OptolithClient.Alternative.$less$pipe$great(univ.isExtinct, x.isExtinct),
+          isSecret: Ley_Option$OptolithClient.Alternative.$less$pipe$great(univ.isSecret, x.isSecret),
+          languages: Ley_Option$OptolithClient.Alternative.$less$pipe$great(univ.languages, x.languages),
+          continent: Ley_Option$OptolithClient.Alternative.$less$pipe$great(univ.continent, x.continent),
+          isExtinct: Ley_Option$OptolithClient.Alternative.$less$pipe$great(univ.isExtinct, x.isExtinct),
           specializations: x.specializations,
           specializationInput: x.specializationInput,
-          animalGr: Maybe$OptolithClient.Alternative.$less$pipe$great(univ.animalGr, x.animalGr),
-          animalLevel: Maybe$OptolithClient.Alternative.$less$pipe$great(univ.animalLevel, x.animalLevel),
+          animalGr: Ley_Option$OptolithClient.Alternative.$less$pipe$great(univ.animalGr, x.animalGr),
+          animalLevel: Ley_Option$OptolithClient.Alternative.$less$pipe$great(univ.animalLevel, x.animalLevel),
           target: x.target,
           wikiEntry: x.wikiEntry,
           src: x.src,
@@ -401,14 +401,14 @@ function mergeUnivIntoSelectOption(univ, x) {
 }
 
 function mergeSelectOptions(ml10ns, munivs, fromCategories) {
-  return Curry._1(Maybe$OptolithClient.maybe(Function$OptolithClient.id, (function (univs, mp) {
-                    return ListH$OptolithClient.Foldable.foldr((function (univ, mp$prime) {
+  return Curry._1(Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, (function (univs, mp) {
+                    return Ley_List$OptolithClient.Foldable.foldr((function (univ, mp$prime) {
                                   return Curry._3(SelectOptionMap.adjust, (function (param) {
                                                 return mergeUnivIntoSelectOption(univ, param);
                                               }), univ.id, mp$prime);
                                 }), mp, univs);
-                  }), munivs), Curry._1(Maybe$OptolithClient.maybe(Function$OptolithClient.id, (function (l10ns, mp) {
-                        return ListH$OptolithClient.Foldable.foldr((function (l10n, mp$prime) {
+                  }), munivs), Curry._1(Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, (function (l10ns, mp) {
+                        return Ley_List$OptolithClient.Foldable.foldr((function (l10n, mp$prime) {
                                       if (Curry._2(SelectOptionMap.member, l10n.id, mp$prime)) {
                                         throw [
                                               Json_decode.DecodeError,

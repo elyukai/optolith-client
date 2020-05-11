@@ -20,7 +20,7 @@ const toEPKG : YamlPairConverterE<EquipmentPackageUniv, EquipmentPackageL10n, st
                     EquipmentPackage ({
                       id: univ.id,
                       name: l10n.name,
-                      items: univ.items.reduce<OrderedMap<string, number>> (
+                      items: univ.items.reduce<StrMap<number>> (
                         (acc, { id, amount = 1 }) => insert (id) (amount) (acc),
                         OrderedMap.empty
                       ),

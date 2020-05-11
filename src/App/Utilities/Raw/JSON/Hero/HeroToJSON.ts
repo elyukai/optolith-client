@@ -3,7 +3,7 @@ import { fmap, fmapF } from "../../../../../Data/Functor"
 import { isList, List } from "../../../../../Data/List"
 import { elem, maybeToUndefined } from "../../../../../Data/Maybe"
 import { gt } from "../../../../../Data/Num"
-import { foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from "../../../../../Data/OrderedMap"
+import { foldl, foldlWithKey, OrderedMapValueElement, toObjectWith, union } from "../../../../../Data/OrderedMap"
 import { toArray } from "../../../../../Data/OrderedSet"
 import { Record, StringKeyObject, toObject } from "../../../../../Data/Record"
 import { isTuple, Pair, Tuple } from "../../../../../Data/Tuple"
@@ -103,7 +103,7 @@ const getValuesForSave =
         return acc
       })
       ({})
-      (sliceGetter (hero) as OrderedMap<string, ExtendedSkillDependent>)
+      (sliceGetter (hero) as StrMap<ExtendedSkillDependent>)
 
 const getSkillsForSave = getValuesForSave (HA.skills) (pipe (value, gt (0)))
 
@@ -371,6 +371,6 @@ export const convertHeroForSave =
 const { present } = UndoableHero.AL
 
 export const convertHeroesForSave =
-  (heroes: OrderedMap<string, UndoableHeroModelRecord>) =>
+  (heroes: StrMap<UndoableHeroModelRecord>) =>
     toObjectWith (pipe (present, convertHeroForSave))
                  (heroes)

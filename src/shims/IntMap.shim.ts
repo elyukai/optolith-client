@@ -1,7 +1,7 @@
-type Empty = "EmptyMap"
+type Empty = "EmptyIntMap"
 
 type Node<a> = {
-  tag: "Node"
+  tag: "IntMapNode"
   value: { l: t<a>; v: number; d: a; r: t<a>; h: number }
 }
 

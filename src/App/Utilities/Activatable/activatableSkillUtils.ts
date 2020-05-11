@@ -4,14 +4,14 @@
  * @author Lukas Obermann
  */
 
-import { filter, OrderedMap, size } from "../../../Data/OrderedMap"
+import { filter, size } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { pipe } from "../pipe"
 
 type ActivatableSkillEntriesAccessor =
-  (hero: HeroModelRecord) => OrderedMap<string, Record<ActivatableSkillDependent>>
+  (hero: HeroModelRecord) => StrMap<Record<ActivatableSkillDependent>>
 
 const { active } = ActivatableSkillDependent.AL
 

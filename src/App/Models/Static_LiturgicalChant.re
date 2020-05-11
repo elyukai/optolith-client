@@ -22,7 +22,7 @@ type enhancementLevel3 = {
   name: string,
   effect: string,
   cost: int,
-  requirePrevious: Maybe.t(level3Prerequisite),
+  requirePrevious: option(level3Prerequisite),
 };
 
 type enhancement = {
@@ -38,7 +38,7 @@ type t = {
   id: int,
   name: string,
   check: (int, int, int),
-  checkMod: Maybe.t(CheckModifier.t),
+  checkMod: option(CheckModifier.t),
   effect: string,
   castingTime: string,
   castingTimeShort: string,
@@ -120,7 +120,7 @@ module Decode = {
         | 1 => 1
         | y =>
           raise(
-            DecodeError("Unknown level 2 prerequisite: " ++ Int.show(y)),
+            DecodeError("Unknown level 2 prerequisite: " ++ Ley.Int.show(y)),
           )
         }
     );
@@ -131,13 +131,13 @@ module Decode = {
     requireLevel1:
       json
       |> optionalField("previousRequirement", level3Prerequisite)
-      |> Maybe.isJust,
+      |> Ley.Option.isSome,
   };
 
   type enhancementLevel3Univ = {
     id: int,
     cost: int,
-    requirePrevious: Maybe.t(level3Prerequisite),
+    requirePrevious: option(level3Prerequisite),
   };
 
   let level3Prerequisite = json =>
@@ -150,7 +150,7 @@ module Decode = {
         | 2 => Second
         | y =>
           raise(
-            DecodeError("Unknown level 3 prerequisite: " ++ Int.show(y)),
+            DecodeError("Unknown level 3 prerequisite: " ++ Ley.Int.show(y)),
           )
         }
     );
@@ -204,7 +204,7 @@ module Decode = {
 
   let enhancements = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       enhancement,
       x => x.target,
       x => x.target,
@@ -251,13 +251,13 @@ module Decode = {
     check1: int,
     check2: int,
     check3: int,
-    checkMod: Maybe.t(CheckModifier.t),
+    checkMod: option(CheckModifier.t),
     castingTimeNoMod: bool,
     kpCostNoMod: bool,
     rangeNoMod: bool,
     durationNoMod: bool,
     traditions: list(int),
-    aspects: Maybe.t(list(int)),
+    aspects: option(list(int)),
     ic: IC.t,
     gr: int,
   };
@@ -300,7 +300,7 @@ module Decode = {
       durationNoMod: univ.durationNoMod,
       target: l10n.target,
       traditions: univ.traditions,
-      aspects: univ.aspects |> Maybe.fromMaybe([]),
+      aspects: univ.aspects |> Ley.Option.fromOption([]),
       ic: univ.ic,
       gr: univ.gr,
       src: l10n.src,
@@ -310,12 +310,12 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.liturgicalChantsUniv |> list(tUniv),
       yamlData.liturgicalChantsL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

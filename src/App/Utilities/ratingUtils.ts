@@ -1,5 +1,5 @@
 import { bind, elem, Maybe } from "../../Data/Maybe"
-import { lookup, OrderedMap } from "../../Data/OrderedMap"
+import { lookup } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { EntryRating } from "../Models/Hero/heroTypeHelpers"
 import { ActiveActivatable, ActiveActivatableAL_ } from "../Models/View/ActiveActivatable"
@@ -7,7 +7,7 @@ import { InactiveActivatable } from "../Models/View/InactiveActivatable"
 
 export const isActiveRated =
   (showRating: boolean) =>
-  (rating: Maybe<OrderedMap<string, EntryRating>>) =>
+  (rating: Maybe<StrMap<EntryRating>>) =>
   (item: Record<ActiveActivatable>) =>
   (category: EntryRating) =>
     showRating
@@ -16,7 +16,7 @@ export const isActiveRated =
 
 export const isInactiveRated =
   (showRating: boolean) =>
-  (rating: Maybe<OrderedMap<string, EntryRating>>) =>
+  (rating: Maybe<StrMap<EntryRating>>) =>
   (item: Record<InactiveActivatable>) =>
   (category: EntryRating) =>
     showRating

@@ -1,7 +1,6 @@
 import * as React from "react"
 import { List } from "../../../Data/List"
 import { Just, Maybe, Nothing } from "../../../Data/Maybe"
-import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
@@ -36,7 +35,7 @@ export interface SpecialAbilitiesStateProps {
     Record<ActiveActivatable<SpecialAbility>>
     | Record<InactiveActivatable<SpecialAbility>>
   >>
-  wikiEntries: OrderedMap<string, Record<SpecialAbility>>
+  wikiEntries: StrMap<Record<SpecialAbility>>
   enableActiveItemHints: boolean
   isRemovingEnabled: boolean
   sortOrder: SortNames

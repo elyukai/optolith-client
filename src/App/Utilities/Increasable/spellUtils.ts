@@ -106,7 +106,7 @@ const getMaxSRFromPropertyKnowledge = (propertyKnowledge : Maybe<Record<Activata
  */
 export const getSpellMax = (startEL : Record<ExperienceLevel>) =>
                            (phase : number) =>
-                           (attributes : OrderedMap<string, Record<AttributeDependent>>) =>
+                           (attributes : StrMap<Record<AttributeDependent>>) =>
                            (exceptionalSkill : Maybe<Record<ActivatableDependent>>) =>
                            (propertyKnowledge : Maybe<Record<ActivatableDependent>>) =>
                            (wiki_entry : Record<Spell>) : number =>
@@ -459,7 +459,7 @@ export const isIdInSpecialAbilityList : (xs : List<Record<SpecialAbility>>) =>
 
 
 const isAnySpellActiveWithImpCostC =
-  (wiki_spells : OrderedMap<string, Record<Spell>>) =>
+  (wiki_spells : StrMap<Record<Spell>>) =>
     OrderedMap.any ((x : Record<ActivatableSkillDependent>) => ASDA.active (x)
                                                               && pipe_ (
                                                                 x,

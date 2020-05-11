@@ -47,7 +47,7 @@ import { getWikiEntry, isActivatableWikiEntry } from "../Utilities/WikiUtils"
 interface ConcatenatedModifications {
   "@@name": "ConcatenatedModifications"
   hero: HeroModelRecord
-  skillRatingList: OrderedMap<string, number>
+  skillRatingList: StrMap<number>
   skillActivateList: OrderedSet<string>
   activatable: List<Record<ProfessionRequireActivatable>>
   languages: OrderedMap<number, number>
@@ -394,7 +394,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
 
     // - Curses
     over (CML.skillRatingList)
-         (flip (foldrWithKey (flip<number, string, ident<OrderedMap<string, number>>> (addToSRs)))
+         (flip (foldrWithKey (flip<number, string, ident<StrMap<number>>> (addToSRs)))
                (P.curses)),
 
     over (CML.skillActivateList)
@@ -404,7 +404,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
     // - Skills
     over (CML.skillRatingList)
          (flip (foldrWithKey ((id: string) => (value: number) =>
-                               maybe (ident as ident<OrderedMap<string, number>>)
+                               maybe (ident as ident<StrMap<number>>)
                                      ((r: Record<Skill>) => addToSRs (value / SA.ic (r)) (id))
                                      (lookup (id) (WA.skills (P.wiki)))))
                              (P.skills)),

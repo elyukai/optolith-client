@@ -14,5 +14,5 @@ module Decode = {
   };
 
   let list = json =>
-    json |> maybe(Json.Decode.list(t)) |> Maybe.fromMaybe([]);
+    json |> maybe(Json.Decode.list(t)) |> Ley.Option.fromOption([]);
 };

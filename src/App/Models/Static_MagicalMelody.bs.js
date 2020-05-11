@@ -4,11 +4,11 @@
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var IC$OptolithClient = require("../Utilities/IC.bs.js");
-var Int$OptolithClient = require("../../Data/Int.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
-var IntSet$OptolithClient = require("../../Data/IntSet.bs.js");
+var Ley_Int$OptolithClient = require("../../Data/Ley_Int.bs.js");
 var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
+var Ley_IntSet$OptolithClient = require("../../Data/Ley_IntSet.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
 
@@ -57,7 +57,7 @@ function t(univ, l10n) {
           {
             id: univ.id,
             name: l10n.name,
-            nameByTradition: Curry._1(IntMap$OptolithClient.fromList, l10n.nameByTradition),
+            nameByTradition: Curry._1(Ley_IntMap$OptolithClient.fromList, l10n.nameByTradition),
             check: /* tuple */[
               univ.check1,
               univ.check2,
@@ -69,7 +69,7 @@ function t(univ, l10n) {
             aeCost: l10n.aeCost,
             aeCostShort: l10n.aeCostShort,
             skill: univ.skill,
-            musictraditions: Curry._1(IntSet$OptolithClient.fromList, univ.musictraditions),
+            musictraditions: Curry._1(Ley_IntSet$OptolithClient.fromList, univ.musictraditions),
             property: univ.property,
             ic: univ.ic,
             src: l10n.src,
@@ -79,7 +79,7 @@ function t(univ, l10n) {
 }
 
 function all(yamlData) {
-  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, t, (function (x) {
+  return Curry._1(Ley_IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Ley_Int$OptolithClient.show, t, (function (x) {
                     return x.id;
                   }), (function (x) {
                     return x.id;
@@ -95,4 +95,4 @@ var Decode = {
 };
 
 exports.Decode = Decode;
-/* IntMap-OptolithClient Not a pure module */
+/* Ley_IntMap-OptolithClient Not a pure module */

@@ -37,5 +37,5 @@ module Collator: {
   /**
    * Compares values by using the passed collator.
    */
-  let compare: (t, string, string) => Ord.ordering;
+  let compare: (t, string, string) => Ley.Ord.ordering;
 };

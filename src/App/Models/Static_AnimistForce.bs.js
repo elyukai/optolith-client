@@ -4,11 +4,11 @@
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var IC$OptolithClient = require("../Utilities/IC.bs.js");
-var Int$OptolithClient = require("../../Data/Int.bs.js");
-var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var Ley_Int$OptolithClient = require("../../Data/Ley_Int.bs.js");
 var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
+var Ley_Option$OptolithClient = require("../../Data/Ley_Option.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
 
@@ -58,7 +58,7 @@ function t(univ, l10n) {
             aeCostShort: l10n.aeCostShort,
             duration: l10n.duration,
             durationShort: l10n.durationShort,
-            tribes: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.tribes),
+            tribes: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.tribes),
             property: univ.property,
             ic: univ.ic,
             src: l10n.src,
@@ -68,7 +68,7 @@ function t(univ, l10n) {
 }
 
 function all(yamlData) {
-  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, t, (function (x) {
+  return Curry._1(Ley_IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Ley_Int$OptolithClient.show, t, (function (x) {
                     return x.id;
                   }), (function (x) {
                     return x.id;
@@ -83,4 +83,4 @@ var Decode = {
 };
 
 exports.Decode = Decode;
-/* IntMap-OptolithClient Not a pure module */
+/* Ley_IntMap-OptolithClient Not a pure module */

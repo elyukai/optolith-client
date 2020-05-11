@@ -4,7 +4,7 @@ import { fmap } from "../../../Data/Functor"
 import { consF, countWith, foldr, List, maximum, minimum, notNull } from "../../../Data/List"
 import { bindF, catMaybes, elem, ensure, Just, maybe, Maybe, Nothing, sum } from "../../../Data/Maybe"
 import { add, gt } from "../../../Data/Num"
-import { lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { lookup, lookupF } from "../../../Data/OrderedMap"
 import { } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
 import { Pair } from "../../../Data/Tuple"
@@ -86,7 +86,7 @@ export const getMaxSRFromEL = (startEL : Record<ExperienceLevel>) =>
  */
 export const getSkillMax = (startEL : Record<ExperienceLevel>) =>
                            (phase : number) =>
-                           (attributes : OrderedMap<string, Record<AttributeDependent>>) =>
+                           (attributes : StrMap<Record<AttributeDependent>>) =>
                            (exceptionalSkill : Maybe<Record<ActivatableDependent>>) =>
                            (wiki_entry : Record<Skill>) : number =>
                              pipe_ (
@@ -106,7 +106,7 @@ export const getSkillMax = (startEL : Record<ExperienceLevel>) =>
  */
 export const isSkillIncreasable = (startEL : Record<ExperienceLevel>) =>
                                   (phase : number) =>
-                                  (attrs : OrderedMap<string, Record<AttributeDependent>>) =>
+                                  (attrs : StrMap<Record<AttributeDependent>>) =>
                                   (exceptionalSkill : Maybe<Record<ActivatableDependent>>) =>
                                   (entry : Record<SkillCombined>) : boolean =>
                                     SCA_.value (entry) < getSkillMax (startEL)
@@ -190,7 +190,7 @@ export const isSkillDecreasable = (staticData : StaticDataRecord) =>
 
 
 const hasSkillFrequencyRating = (category : EntryRating) =>
-                                (rating : OrderedMap<string, EntryRating>) =>
+                                (rating : StrMap<EntryRating>) =>
                                   pipe (
                                     SA.id,
                                     lookupF (rating),
@@ -201,7 +201,7 @@ const hasSkillFrequencyRating = (category : EntryRating) =>
 /**
  * Is the skill common in the hero's culture?
  */
-export const isSkillCommon : (rating : OrderedMap<string, EntryRating>)
+export const isSkillCommon : (rating : StrMap<EntryRating>)
                            => (wiki_entry : Record<Skill>)
                            => boolean
                            = hasSkillFrequencyRating (EntryRating.Common)
@@ -210,7 +210,7 @@ export const isSkillCommon : (rating : OrderedMap<string, EntryRating>)
 /**
  * Is the skill uncommon in the hero's culture?
  */
-export const isSkillUncommon : (rating : OrderedMap<string, EntryRating>)
+export const isSkillUncommon : (rating : StrMap<EntryRating>)
                              => (wiki_entry : Record<Skill>)
                              => boolean
                              = hasSkillFrequencyRating (EntryRating.Uncommon)

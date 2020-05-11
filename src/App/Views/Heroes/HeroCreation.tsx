@@ -1,7 +1,7 @@
 import * as React from "react"
 import { List, map } from "../../../Data/List"
 import { fromJust, isJust, isNothing, Just, Maybe, Nothing, orN } from "../../../Data/Maybe"
-import { elems, OrderedMap } from "../../../Data/OrderedMap"
+import { elems } from "../../../Data/OrderedMap"
 import { OrderedSet, toggle } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
 import { Sex } from "../../Models/Hero/heroTypeHelpers"
@@ -25,7 +25,7 @@ const ELA = ExperienceLevel.A
 export interface HeroCreationProps {
   isOpen: boolean
   staticData: StaticDataRecord
-  experienceLevels: OrderedMap<string, Record<ExperienceLevel>>
+  experienceLevels: StrMap<Record<ExperienceLevel>>
   sortedBooks: List<Record<Book>>
   close (): void
   createHero (

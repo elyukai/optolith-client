@@ -1,20 +1,18 @@
 type singleWithId = {
   id: int,
   options: list(Hero.Activatable.option),
-  level: Maybe.t(int),
-  customCost: Maybe.t(int),
+  level: option(int),
+  customCost: option(int),
 };
 
-let isActive = (x: Hero.Activatable.t) => ListH.Extra.notNull(x.active);
+let isActive = (x: Hero.Activatable.t) => Ley.List.Extra.notNull(x.active);
 
-let isActiveM = Maybe.maybe(false, isActive);
+let isActiveM = Ley.Option.option(false, isActive);
 
 module Convert = {
-  open Maybe;
-
   let heroEntryToSingles = (x: Hero.Activatable.t) =>
     x.active
-    |> ListH.map((s: Hero.Activatable.single) =>
+    |> Ley.List.map((s: Hero.Activatable.single) =>
          {
            id: x.id,
            options: s.options,
@@ -58,7 +56,7 @@ module Convert = {
              sid2: or (fmap (elemF (List<number | string> (7, 8)))
                            (selectOptionId1))
                ? input
-               : Nothing,
+               : None,
              cost: customCost,
            })
          : id === SpecialAbilityId.SkillSpecialization
@@ -68,7 +66,7 @@ module Convert = {
                                        (selectOptionId2),
              cost: customCost,
            })
-         : isJust (input) && isJust (selectOptionId1)
+         : isSome (input) && isSome (selectOptionId1)
          ? ActiveObject ({
              sid: selectOptionId1,
              sid2: input,
@@ -79,7 +77,7 @@ module Convert = {
          : ActiveObject ({
              sid: alt<number | string> (input)
                                        (selectOptionId1),
-             sid2: then (guard (isJust (input) || isJust (selectOptionId1)))
+             sid2: then (guard (isSome (input) || isSome (selectOptionId1)))
                        (selectOptionId2),
              sid3: selectOptionId3,
              tier: level,
@@ -108,7 +106,7 @@ module Convert = {
    } */
 
   let activatableOptionToSelectOptionId =
-      (id: Hero.Activatable.option): maybe(Ids.selectOptionId) =>
+      (id: Hero.Activatable.option): option(Ids.selectOptionId) =>
     switch (id) {
     | `Generic(_) as id
     | `Skill(_) as id
@@ -116,8 +114,8 @@ module Convert = {
     | `Spell(_) as id
     | `Cantrip(_) as id
     | `LiturgicalChant(_) as id
-    | `Blessing(_) as id => Just(id)
-    | `CustomInput(_) => Nothing
+    | `Blessing(_) as id => Some(id)
+    | `CustomInput(_) => None
     };
 };
 
@@ -155,25 +153,25 @@ module Accessors = {
 
 module SelectOptions = {
   open Static.SelectOption;
-  open Maybe;
-  open Maybe.Functor;
-  open Maybe.Monad;
+  open Ley.Option;
+  open Ley.Option.Functor;
+  open Ley.Option.Monad;
 
   let getSelectOption = (x, id) =>
     id
     |> Convert.activatableOptionToSelectOptionId
-    >>= Function.flip(SelectOptionMap.lookup, Accessors.selectOptions(x));
+    >>= Ley.Function.flip(SelectOptionMap.lookup, Accessors.selectOptions(x));
 
   /**
    * Get a selection option's name with the given id from given wiki entry.
-   * Returns `Nothing` if not found.
+   * Returns `None` if not found.
    */
   let getSelectOptionName = (x, id) =>
     id |> getSelectOption(x) <&> (y => y.name);
 
   /**
    * Get a selection option's cost with the given id from given wiki entry.
-   * Returns `Nothing` if not found.
+   * Returns `None` if not found.
    */
   let getSelectOptionCost = (x, id) =>
     id |> getSelectOption(x) >>= (y => y.cost);
@@ -183,7 +181,7 @@ module SelectOptions = {
    */
   let getActiveSelections = (x: Hero.Activatable.t) =>
     x.active
-    |> mapMaybe((y: Hero.Activatable.single) => y.options |> listToMaybe);
+    |> mapOption((y: Hero.Activatable.single) => y.options |> listToOption);
   // type SecondarySelections = OrderedMap<number | string, List<string | number>>
   //
   // /**
@@ -195,12 +193,12 @@ module SelectOptions = {
   //   fmap (pipe (
   //               ADA.active,
   //               foldl ((map: SecondarySelections) => (selection: Record<ActiveObject>) =>
-  //                       fromMaybe (map)
+  //                       fromOption (map)
   //                                 (liftM2<string | number, string | number, SecondarySelections>
   //                                   (id => id2 => alter<List<string | number>>
   //                                     (pipe (
   //                                       fmap (consF (id2)),
-  //                                       altF (Just (List (id2)))
+  //                                       altF (Some (List (id2)))
   //                                     ))
   //                                     (id)
   //                                     (map))
@@ -214,66 +212,68 @@ module SelectOptions = {
   //  * @param obj The entry.
   //  */
   // export const getRequiredSelections:
-  //   (m: Maybe<Record<ActivatableDependent>>) => Maybe<List<string | number | List<number>>> =
+  //   (m: Option<Record<ActivatableDependent>>) => Option<List<string | number | List<number>>> =
   //     fmap (pipe (
   //       ADA.dependencies,
-  //       mapMaybe<ActivatableDependency, string | number | List<number>> (pipe (
+  //       mapOption<ActivatableDependency, string | number | List<number>> (pipe (
   //         ensure (isRecord),
   //         bindF (DependencyObject.A.sid)
   //       ))
   //     ))
 };
 
-let getOption = (index, heroEntry) => ListH.(heroEntry.options <!!> index);
-let getOption1 = heroEntry => heroEntry.options |> Maybe.listToMaybe;
+let getOption = (index, heroEntry) =>
+  Ley.List.Safe.atMay(heroEntry.options, index);
+let getOption1 = heroEntry => heroEntry.options |> Ley.Option.listToOption;
 let getOption2 = getOption(1);
 let getOption3 = getOption(2);
 
 let getCustomInput = (option: Hero.Activatable.option) =>
   switch (option) {
-  | `CustomInput(x) => Maybe.Just(x)
+  | `CustomInput(x) => Some(x)
   | `Generic(_)
   | `Skill(_)
   | `CombatTechnique(_)
   | `Spell(_)
   | `LiturgicalChant(_)
   | `Cantrip(_)
-  | `Blessing(_) => Nothing
+  | `Blessing(_) => None
   };
 
 let getGenericId = (option: Hero.Activatable.option) =>
   switch (option) {
-  | `Generic(x) => Maybe.Just(x)
+  | `Generic(x) => Some(x)
   | `Skill(_)
   | `CombatTechnique(_)
   | `Spell(_)
   | `LiturgicalChant(_)
   | `Cantrip(_)
   | `Blessing(_)
-  | `CustomInput(_) => Nothing
+  | `CustomInput(_) => None
   };
 
-let lookupMap = (k, mp, f) => Maybe.Functor.(f <$> IntMap.lookup(k, mp));
+let lookupMap = (k, mp, f) =>
+  Ley.Option.Functor.(f <$> Ley.IntMap.lookup(k, mp));
 
 let getSkillFromOption =
     (staticData: Static.t, option: Hero.Activatable.option) =>
   switch (option) {
-  | `Skill(id) => IntMap.lookup(id, staticData.skills)
+  | `Skill(id) => Ley.IntMap.lookup(id, staticData.skills)
   | `Generic(_)
   | `CombatTechnique(_)
   | `Spell(_)
   | `LiturgicalChant(_)
   | `Cantrip(_)
   | `Blessing(_)
-  | `CustomInput(_) => Nothing
+  | `CustomInput(_) => None
   };
 
 module Names = {
-  open Maybe;
-  open Maybe.Functor;
-  open Maybe.Monad;
+  open Ley.Option;
+  open Ley.Option.Functor;
+  open Ley.Option.Monad;
   open Static;
-  open Function;
+  open Ley.Function;
 
   let getDefaultNameAddition = (staticEntry, heroEntry) => {
     let input = Accessors.input(staticEntry);
@@ -284,43 +284,43 @@ module Names = {
 
     switch (input, sid, sid2) {
     // Text input
-    | (Just(_), Just(`CustomInput(str)), Nothing) => Just(str)
+    | (Some(_), Some(`CustomInput(str)), None) => Some(str)
     // Select option and text input
     | (
-        Just(_),
-        Just(
+        Some(_),
+        Some(
           `Generic(_) as id | `Skill(_) as id | `CombatTechnique(_) as id |
           `Spell(_) as id |
           `LiturgicalChant(_) as id |
           `Cantrip(_) as id |
           `Blessing(_) as id,
         ),
-        Just(`CustomInput(str)),
+        Some(`CustomInput(str)),
       )
         when SelectOption.SelectOptionMap.size(selectOptions) > 0 =>
-      Just(
+      Some(
         (
           id
           |> SelectOptions.getSelectOptionName(staticEntry)
-          |> fromMaybe("")
+          |> fromOption("")
         )
         ++ ": "
         ++ str,
       )
     // Plain select option
     | (
-        Nothing,
-        Just(
+        None,
+        Some(
           `Generic(_) as id | `Skill(_) as id | `CombatTechnique(_) as id |
           `Spell(_) as id |
           `LiturgicalChant(_) as id |
           `Cantrip(_) as id |
           `Blessing(_) as id,
         ),
-        Nothing,
+        None,
       ) =>
       SelectOptions.getSelectOptionName(staticEntry, id)
-    | _ => Nothing
+    | _ => None
     };
   };
 
@@ -348,7 +348,7 @@ module Names = {
             | `CombatTechnique(_)
             | `Cantrip(_)
             | `Blessing(_)
-            | `CustomInput(_) => Nothing
+            | `CustomInput(_) => None
             }
         )
       | ExceptionalCombatTechnique
@@ -366,7 +366,7 @@ module Names = {
             | `LiturgicalChant(_)
             | `Cantrip(_)
             | `Blessing(_)
-            | `CustomInput(_) => Nothing
+            | `CustomInput(_) => None
             }
         )
       | HatredFor =>
@@ -404,10 +404,10 @@ module Names = {
               | `Spell(_)
               | `LiturgicalChant(_)
               | `Cantrip(_)
-              | `Blessing(_) => Nothing
+              | `Blessing(_) => None
               }
             )
-            |> maybe(option1.name, specialInput =>
+            |> option(option1.name, specialInput =>
                  option1.name ++ ": " ++ specialInput
                )
         )
@@ -429,7 +429,7 @@ module Names = {
             | `LiturgicalChant(_)
             | `Cantrip(_)
             | `Blessing(_)
-            | `CustomInput(_) => Nothing
+            | `CustomInput(_) => None
             }
         )
       | TraditionSavant
@@ -455,7 +455,7 @@ module Names = {
             | `Spell(_)
             | `Cantrip(_)
             | `Blessing(_)
-            | `CustomInput(_) => Nothing
+            | `CustomInput(_) => None
             }
         )
       | SkillSpecialization =>
@@ -471,11 +471,11 @@ module Names = {
                 (
                   switch (option2) {
                   // If input string use input
-                  | `CustomInput(x) => Just(x)
+                  | `CustomInput(x) => Some(x)
                   // Otherwise lookup application name
                   | `Generic(id) =>
                     skill.applications
-                    |> IntMap.Foldable.find((a: Skill.application) =>
+                    |> Ley.IntMap.Foldable.find((a: Skill.application) =>
                          a.id === id
                        )
                     <&> (a => a.name)
@@ -484,7 +484,7 @@ module Names = {
                   | `Spell(_)
                   | `LiturgicalChant(_)
                   | `Cantrip(_)
-                  | `Blessing(_) => Nothing
+                  | `Blessing(_) => None
                   }
                 )
                 // Merge skill name and application name
@@ -493,11 +493,11 @@ module Names = {
         )
       | Exorzist =>
         switch (heroEntry.level) {
-        | Just(1) =>
+        | Some(1) =>
           heroEntry
           |> getOption1
           >>= SelectOptions.getSelectOptionName(staticEntry)
-        | _ => Nothing
+        | _ => None
         }
       | SpellEnhancement as entryId
       | ChantEnhancement as entryId =>
@@ -512,9 +512,9 @@ module Names = {
                 (
                   switch (entryId) {
                   | SpellEnhancement =>
-                    IntMap.lookup(id, staticData.spells) <&> (x => x.name)
+                    Ley.IntMap.lookup(id, staticData.spells) <&> (x => x.name)
                   | _ =>
-                    IntMap.lookup(id, staticData.liturgicalChants)
+                    Ley.IntMap.lookup(id, staticData.liturgicalChants)
                     <&> (x => x.name)
                   }
                 )
@@ -525,16 +525,16 @@ module Names = {
         heroEntry
         |> getOption1
         >>= getGenericId
-        >>= flip(IntMap.lookup, staticData.arcaneBardTraditions)
+        >>= flip(Ley.IntMap.lookup, staticData.arcaneBardTraditions)
       | TraditionArcaneDancer =>
         heroEntry
         |> getOption1
         >>= getGenericId
-        >>= flip(IntMap.lookup, staticData.arcaneDancerTraditions)
+        >>= flip(Ley.IntMap.lookup, staticData.arcaneDancerTraditions)
       | LanguageSpecializations =>
         liftM2(
           SelectOptions.getSelectOption,
-          IntMap.lookup(
+          Ley.IntMap.lookup(
             Ids.SpecialAbilityId.toInt(Language),
             staticData.specialAbilities,
           )
@@ -550,19 +550,22 @@ module Names = {
               option2 =>
                 (
                   switch (option2) {
-                  | `CustomInput(str) => Just(str)
+                  | `CustomInput(str) => Some(str)
                   | `Generic(specializationId) =>
                     language.specializations
                     >>= (
                       specializations =>
-                        ListH.(specializations <!!> specializationId - 1)
+                        Ley.List.Safe.atMay(
+                          specializations,
+                          specializationId - 1,
+                        )
                     )
                   | `Skill(_)
                   | `CombatTechnique(_)
                   | `Spell(_)
                   | `LiturgicalChant(_)
                   | `Cantrip(_)
-                  | `Blessing(_) => Nothing
+                  | `Blessing(_) => None
                   }
                 )
                 <&> (specialization => language.name ++ ": " ++ specialization)
@@ -576,24 +579,24 @@ module Names = {
           skill => {
             let applications =
               skill.applications
-              |> IntMap.filter((app: Skill.application) =>
-                   app.prerequisite |> isNothing
+              |> Ley.IntMap.filter((app: Skill.application) =>
+                   app.prerequisite |> isNone
                  );
 
             [heroEntry |> getOption2, heroEntry |> getOption3]
-            |> mapMaybe(option =>
+            |> mapOption(option =>
                  option
                  >>= getGenericId
                  >>= (
                    opt =>
                      applications
-                     |> IntMap.Foldable.find((app: Skill.application) =>
+                     |> Ley.IntMap.Foldable.find((app: Skill.application) =>
                           app.id === opt
                         )
                      <&> (app => app.name)
                  )
                )
-            |> ensure(apps => apps |> ListH.Foldable.length |> (===)(2))
+            |> ensure(apps => apps |> Ley.List.Foldable.length |> (===)(2))
             <&> (
               apps =>
                 apps
@@ -608,7 +611,7 @@ module Names = {
     };
 
   let getDisAdvLevelStr = level =>
-    level |> Integers.intToRoman |> fromMaybe(Int.show(level));
+    level |> Integers.intToRoman |> fromOption(Ley.Int.show(level));
 
   let getSpecialAbilityLevelStr = level =>
     (level > 1 ? "I" ++ Chars.nobr ++ "–" ++ Chars.nobr : "")
@@ -622,16 +625,16 @@ module Names = {
    */
   let getLevelName = (staticData, staticEntry, singleHeroEntry) =>
     switch (staticEntry, singleHeroEntry.level) {
-    | (Advantage(_), Just(level))
-    | (Disadvantage(_), Just(level)) => Just(getDisAdvLevelStr(level))
-    | (SpecialAbility(staticEntry), Just(level)) =>
+    | (Advantage(_), Some(level))
+    | (Disadvantage(_), Some(level)) => Some(getDisAdvLevelStr(level))
+    | (SpecialAbility(staticEntry), Some(level)) =>
       switch (Id.specialAbilityFromInt(staticEntry.id)) {
       // Language level 4 = Native Tongue and thus needs a special name
       | Language when level === 4 =>
-        Just(staticData.messages.specialabilities_nativetonguelevel)
-      | _ => Just(getSpecialAbilityLevelStr(level))
+        Some(staticData.messages.specialabilities_nativetonguelevel)
+      | _ => Some(getSpecialAbilityLevelStr(level))
       }
-    | _ => Nothing
+    | _ => None
     };
 
   /**
@@ -645,9 +648,9 @@ module Names = {
     let name = Accessors.name(staticEntry);
 
     let flatLevelName =
-      addLevelToName ? maybe("", (++)(Chars.nbsp), levelName) : "";
+      addLevelToName ? option("", (++)(Chars.nbsp), levelName) : "";
 
-    let mapNameAddition = f => maybe(name, f, nameAddition);
+    let mapNameAddition = f => option(name, f, nameAddition);
 
     let mapDefaultWithParens = () =>
       mapNameAddition(add => name ++ " (" ++ add ++ ")");
@@ -656,7 +659,7 @@ module Names = {
       mapNameAddition(add => name ++ " " ++ add);
 
     let addSndInParens = snd =>
-      ListH.Extra.replaceStr(")", ": " ++ snd ++ ")");
+      Ley.List.Extra.replaceStr(")", ": " ++ snd ++ ")");
 
     switch (staticEntry) {
     | Advantage(entry) =>
@@ -671,7 +674,7 @@ module Names = {
       | AfraidOf => mapDefaultWithoutParens() ++ flatLevelName
       | Principles
       | Obligations =>
-        maybe(
+        option(
           name ++ flatLevelName,
           nameAddition => name ++ flatLevelName ++ " (" ++ nameAddition ++ ")",
           nameAddition,
@@ -692,13 +695,13 @@ module Names = {
   type combinedName = {
     name: string,
     baseName: string,
-    addName: maybe(string),
-    levelName: maybe(string),
+    addName: option(string),
+    levelName: option(string),
   };
 
   /**
    * Returns name, splitted and combined, of advantage/disadvantage/special
-   * ability as a Maybe (in case the wiki entry does not exist).
+   * ability as a Option (in case the wiki entry does not exist).
    */
   let getName = (~addLevelToName, staticData, staticEntry, heroEntry) => {
     let addName =
@@ -738,29 +741,29 @@ module Names = {
                      map (
                        ifElse<List<Record<ActiveActivatable>>>
                          (xs_group => flength (xs_group) === 1)
-                         (pipe (listToMaybe, maybe ("") (AAA_.name)))
+                         (pipe (listToOption, Option ("") (AAA_.name)))
                          (xs_group => pipe (
                                              map ((x: Record<ActiveActivatable>) => {
                                                const levelPart =
                                                  pipe (
                                                        AAA_.level,
                                                        fmap (pipe (toRoman, appendStr (" "))),
-                                                       fromMaybe ("")
+                                                       fromOption ("")
                                                      )
                                                      (x)
 
                                                const selectOptionPart =
-                                                 fromMaybe ("") (AAA_.addName (x))
+                                                 fromOption ("") (AAA_.addName (x))
 
                                                return selectOptionPart + levelPart
                                              }),
                                              sortStrings (staticData),
                                              intercalate (", "),
                                              x => ` (${x})`,
-                                             x => maybe ("")
+                                             x => option ("")
                                                        ((r: Record<ActiveActivatable>) =>
                                                          AAA_.baseName (r) + x)
-                                                       (listToMaybe (xs_group))
+                                                       (listToOption (xs_group))
                                            )
                                            (xs_group))
                      ),
@@ -773,47 +776,49 @@ module Names = {
 };
 
 module AdventurePoints = {
-  open Maybe;
-  open Maybe.Functor;
-  open Maybe.Monad;
+  open Ley.Option;
+  open Ley.Option.Functor;
+  open Ley.Option.Monad;
   open Static;
-  open Function;
+  open Ley.Function;
 
   let ensureFlat =
     fun
-    | Static.Advantage.Flat(x) => Just(x)
-    | Static.Advantage.PerLevel(_) => Nothing;
+    | Static.Advantage.Flat(x) => Some(x)
+    | Static.Advantage.PerLevel(_) => None;
 
   let ensurePerLevel =
     fun
-    | Static.Advantage.Flat(_) => Nothing
-    | Static.Advantage.PerLevel(x) => Just(x);
+    | Static.Advantage.Flat(_) => None
+    | Static.Advantage.PerLevel(x) => Some(x);
 
   let getDefaultEntryCost = (staticEntry, singleHeroEntry) => {
-    open ListH;
+    open Ley.List;
 
     let sid1 = singleHeroEntry |> getOption1;
-    let level = fromMaybe(1, singleHeroEntry.level);
+    let level = fromOption(1, singleHeroEntry.level);
     let apValue =
-      staticEntry |> Accessors.apValue |> fromMaybe(Static.Advantage.Flat(0));
+      staticEntry
+      |> Accessors.apValue
+      |> fromOption(Static.Advantage.Flat(0));
 
     let optionApValue =
       sid1 >>= SelectOptions.getSelectOptionCost(staticEntry);
 
     switch (optionApValue) {
-    | Just(x) => Just(x)
-    | Nothing =>
+    | Some(x) => Some(x)
+    | None =>
       switch (apValue) {
-      | Flat(x) => Just(x * level)
+      | Flat(x) => Some(x * level)
       | PerLevel(xs) =>
         switch (staticEntry) {
         | Advantage(_)
-        | Disadvantage(_) => xs <!!> level - 1
+        | Disadvantage(_) => Ley.List.Safe.atMay(xs, level - 1)
         | SpecialAbility(_) =>
           xs
-          |> ListH.take(Int.max(1, level))
-          |> ListH.Foldable.sum
-          |> (x => Just(x))
+          |> take(Ley.Int.max(1, level))
+          |> Ley.List.Foldable.sum
+          |> (x => Some(x))
         }
       }
     };
@@ -835,12 +840,14 @@ module AdventurePoints = {
         heroEntry: Hero.Activatable.t,
         singleHeroEntry,
       ) => {
-    open ListH;
+    open Ley.List;
 
     let sid1 = singleHeroEntry |> getOption1;
     let level = singleHeroEntry.level;
     let apValue =
-      staticEntry |> Accessors.apValue |> fromMaybe(Static.Advantage.Flat(0));
+      staticEntry
+      |> Accessors.apValue
+      |> fromOption(Static.Advantage.Flat(0));
 
     switch (staticEntry) {
     | Advantage(entry) =>
@@ -853,15 +860,21 @@ module AdventurePoints = {
           sid =>
             switch (sid, apValue) {
             | (`Skill(id), PerLevel(apValues)) =>
-              IntMap.lookup(id, staticData.skills)
-              >>= (static => apValues <!!> IC.icToIx(static.ic))
+              Ley.IntMap.lookup(id, staticData.skills)
+              >>= (
+                static => Ley.List.Safe.atMay(apValues, IC.icToIx(static.ic))
+              )
             | (`Spell(id), PerLevel(apValues)) =>
-              IntMap.lookup(id, staticData.spells)
-              >>= (static => apValues <!!> IC.icToIx(static.ic))
+              Ley.IntMap.lookup(id, staticData.spells)
+              >>= (
+                static => Ley.List.Safe.atMay(apValues, IC.icToIx(static.ic))
+              )
             | (`LiturgicalChant(id), PerLevel(apValues)) =>
-              IntMap.lookup(id, staticData.liturgicalChants)
-              >>= (static => apValues <!!> IC.icToIx(static.ic))
-            | _ => Nothing
+              Ley.IntMap.lookup(id, staticData.liturgicalChants)
+              >>= (
+                static => Ley.List.Safe.atMay(apValues, IC.icToIx(static.ic))
+              )
+            | _ => None
             }
         )
       | ExceptionalCombatTechnique
@@ -872,9 +885,11 @@ module AdventurePoints = {
           sid =>
             switch (sid, apValue) {
             | (`CombatTechnique(id), PerLevel(apValues)) =>
-              IntMap.lookup(id, staticData.combatTechniques)
-              >>= (static => apValues <!!> IC.icToIx(static.ic))
-            | _ => Nothing
+              Ley.IntMap.lookup(id, staticData.combatTechniques)
+              >>= (
+                static => Ley.List.Safe.atMay(apValues, IC.icToIx(static.ic))
+              )
+            | _ => None
             }
         )
       | _ => getDefaultEntryCost(staticEntry, singleHeroEntry)
@@ -883,22 +898,22 @@ module AdventurePoints = {
       switch (Ids.DisadvantageId.fromInt(entry.id)) {
       | PersonalityFlaw =>
         switch (sid1) {
-        | Just(`Generic(selected_option)) =>
+        | Some(`Generic(selected_option)) =>
           let matchOption = (target_option, current) =>
             switch (current) {
-            | Just(`Generic(x)) => x === target_option
+            | Some(`Generic(x)) => x === target_option
             | _ => false
             };
 
           let isPersonalityFlawNotPaid = (target_option, paid_entries_max) =>
             target_option === selected_option
-            && ListH.countBy(
+            && Ley.List.countBy(
                  (e: Hero.Activatable.single) =>
                    e.options
-                   |> listToMaybe
+                   |> listToOption
                    |> matchOption(target_option)
                    // Entries with custom cost are ignored for the rule
-                   && isNothing(e.customCost),
+                   && isNone(e.customCost),
                  heroEntry.active,
                )
             > (isEntryToAdd ? paid_entries_max - 1 : paid_entries_max);
@@ -913,14 +928,14 @@ module AdventurePoints = {
           // return 0.
           if (isPersonalityFlawNotPaid(7, 1)
               || isPersonalityFlawNotPaid(8, 2)) {
-            Just(0);
+            Some(0);
           } else {
             SelectOptions.getSelectOptionCost(
               staticEntry,
               `Generic(selected_option),
             );
           };
-        | _ => Nothing
+        | _ => None
         }
       | Principles
       | Obligations =>
@@ -931,12 +946,12 @@ module AdventurePoints = {
             // moment.
             let (maxLevel, sndMaxLevel) =
               heroEntry.active
-              |> ListH.Foldable.foldr(
+              |> Ley.List.Foldable.foldr(
                    (active: Hero.Activatable.single, (prevMax, prevSndMax)) =>
                      switch (active.level, active.customCost) {
                      // Only get the maximum from the current and the previous level, if
                      // the current has no custom cost
-                     | (Just(activeLevel), Nothing) =>
+                     | (Some(activeLevel), None) =>
                        if (activeLevel > prevMax) {
                          (activeLevel, prevMax);
                        } else {
@@ -958,11 +973,11 @@ module AdventurePoints = {
             if (maxLevel > level
                 || countBy(
                      (e: Hero.Activatable.single) =>
-                       Maybe.Foldable.elem(level, e.level),
+                       Ley.Option.Foldable.elem(level, e.level),
                      heroEntry.active,
                    )
                 > (isEntryToAdd ? 0 : 1)) {
-              Nothing;
+              None;
             } else {
               // Otherwise, the level difference results in the cost.
               apValue |> ensureFlat <&> ( * )(level - sndMaxLevel);
@@ -972,9 +987,9 @@ module AdventurePoints = {
       | BadHabit =>
         apValue
         |> ensureFlat
-        |> Maybe.Foldable.find(_ =>
+        |> Ley.Option.Foldable.find(_ =>
              countBy(
-               (e: Hero.Activatable.single) => isNothing(e.customCost),
+               (e: Hero.Activatable.single) => isNone(e.customCost),
                heroEntry.active,
              )
              > (isEntryToAdd ? 2 : 3)
@@ -986,9 +1001,11 @@ module AdventurePoints = {
           sid =>
             switch (sid, apValue) {
             | (`Skill(id), PerLevel(apValues)) =>
-              IntMap.lookup(id, staticData.skills)
-              >>= (static => apValues <!!> IC.icToIx(static.ic))
-            | _ => Nothing
+              Ley.IntMap.lookup(id, staticData.skills)
+              >>= (
+                static => Ley.List.Safe.atMay(apValues, IC.icToIx(static.ic))
+              )
+            | _ => None
             }
         )
       | _ => getDefaultEntryCost(staticEntry, singleHeroEntry)
@@ -1006,10 +1023,10 @@ module AdventurePoints = {
               countBy(
                 (e: Hero.Activatable.single) =>
                   e.options
-                  |> listToMaybe
-                  |> Maybe.Foldable.elem(`Skill(skill.id))
+                  |> listToOption
+                  |> Ley.Option.Foldable.elem(`Skill(skill.id))
                   // Entries with custom cost are ignored for the rule
-                  && isNothing(e.customCost),
+                  && isNone(e.customCost),
                 heroEntry.active,
               )
               + (isEntryToAdd ? 1 : 0)
@@ -1022,7 +1039,7 @@ module AdventurePoints = {
         >>= (
           fun
           // Native Tongue (level 4) does not cost anything
-          | 4 => Just(0)
+          | 4 => Some(0)
           | level => apValue |> ensureFlat <&> ( * )(level)
         )
       | PropertyKnowledge
@@ -1034,20 +1051,20 @@ module AdventurePoints = {
             // Ignore custom cost activations in terms of calculated cost
             let amountActive =
               countBy(
-                (e: Hero.Activatable.single) => isNothing(e.customCost),
+                (e: Hero.Activatable.single) => isNone(e.customCost),
                 heroEntry.active,
               );
 
             let index = amountActive + (isEntryToAdd ? 0 : (-1));
 
-            apPerLevel <!!> index;
+            Ley.List.Safe.atMay(apPerLevel, index);
           }
         )
       | TraditionWitches =>
         // There are two disadvantages that, when active, decrease the cost of
         // this tradition by 10 AP each
         let decreaseCost = (id, cost) =>
-          hero.disadvantages |> IntMap.lookup(id) |> isActiveM
+          hero.disadvantages |> Ley.IntMap.lookup(id) |> isActiveM
             ? cost - 10 : cost;
 
         apValue
@@ -1066,9 +1083,11 @@ module AdventurePoints = {
           sid =>
             switch (sid, apValue) {
             | (`Spell(id), PerLevel(apValues)) =>
-              IntMap.lookup(id, staticData.spells)
-              >>= (static => apValues <!!> IC.icToIx(static.ic))
-            | _ => Nothing
+              Ley.IntMap.lookup(id, staticData.spells)
+              >>= (
+                static => Ley.List.Safe.atMay(apValues, IC.icToIx(static.ic))
+              )
+            | _ => None
             }
         )
       | Lieblingsliturgie =>
@@ -1078,9 +1097,11 @@ module AdventurePoints = {
           sid =>
             switch (sid, apValue) {
             | (`LiturgicalChant(id), PerLevel(apValues)) =>
-              IntMap.lookup(id, staticData.liturgicalChants)
-              >>= (static => apValues <!!> IC.icToIx(static.ic))
-            | _ => Nothing
+              Ley.IntMap.lookup(id, staticData.liturgicalChants)
+              >>= (
+                static => Ley.List.Safe.atMay(apValues, IC.icToIx(static.ic))
+              )
+            | _ => None
             }
         )
       | Forschungsgebiet
@@ -1100,9 +1121,11 @@ module AdventurePoints = {
           sid =>
             switch (sid, apValue) {
             | (`Skill(id), PerLevel(apValues)) =>
-              IntMap.lookup(id, staticData.skills)
-              >>= (static => apValues <!!> IC.icToIx(static.ic))
-            | _ => Nothing
+              Ley.IntMap.lookup(id, staticData.skills)
+              >>= (
+                static => Ley.List.Safe.atMay(apValues, IC.icToIx(static.ic))
+              )
+            | _ => None
             }
         )
       | Recherchegespuer =>
@@ -1111,7 +1134,7 @@ module AdventurePoints = {
         // on the IC of the side subject selected in this SA.
 
         hero.specialAbilities
-        |> IntMap.lookup(Id.specialAbilityToInt(Wissensdurst))
+        |> Ley.IntMap.lookup(Id.specialAbilityToInt(Wissensdurst))
         >>= (
           wissensdurst =>
             apValue
@@ -1122,7 +1145,10 @@ module AdventurePoints = {
                   entry
                   |> getOption1
                   >>= getSkillFromOption(staticData)
-                  >>= (skill => apPerLevel <!!> IC.icToIx(skill.ic));
+                  >>= (
+                    skill =>
+                      Ley.List.Safe.atMay(apPerLevel, IC.icToIx(skill.ic))
+                  );
 
                 liftM2(
                   (+),
@@ -1130,7 +1156,7 @@ module AdventurePoints = {
                   getCostFromHeroEntry(singleHeroEntry),
                   // Cost for main subject from Wissensdurst
                   wissensdurst.active
-                  |> listToMaybe
+                  |> listToOption
                   >>= (
                     fst =>
                       fst
@@ -1151,15 +1177,15 @@ module AdventurePoints = {
             >>= (
               languageId =>
                 hero.specialAbilities
-                |> IntMap.lookup(Id.specialAbilityToInt(Language))
+                |> Ley.IntMap.lookup(Id.specialAbilityToInt(Language))
                 >>= (
                   language =>
                     language.active
-                    |> ListH.Foldable.find((e: Hero.Activatable.single) =>
+                    |> Ley.List.Foldable.find((e: Hero.Activatable.single) =>
                          e.options
-                         |> listToMaybe
+                         |> listToOption
                          >>= getGenericId
-                         |> Maybe.Foldable.elem(languageId)
+                         |> Ley.Option.Foldable.elem(languageId)
                        )
                     >>= (
                       selectedLanguage =>
@@ -1194,18 +1220,18 @@ module AdventurePoints = {
         heroEntry: Hero.Activatable.t,
         singleHeroEntry,
       ) => {
-    let isAutomatic = ListH.elem(singleHeroEntry.id, automaticAdvantages);
+    let isAutomatic = Ley.List.elem(singleHeroEntry.id, automaticAdvantages);
 
     let modifyAbs =
       switch (staticEntry) {
-      | Disadvantage(_) => Int.negate
+      | Disadvantage(_) => Ley.Int.negate
       | Advantage(_)
       | SpecialAbility(_) => id
       };
 
     switch (singleHeroEntry.customCost) {
-    | Just(customCost) => (modifyAbs(customCost), isAutomatic)
-    | Nothing =>
+    | Some(customCost) => (modifyAbs(customCost), isAutomatic)
+    | None =>
       getEntrySpecificCost(
         ~isEntryToAdd,
         staticData,
@@ -1214,7 +1240,7 @@ module AdventurePoints = {
         heroEntry,
         singleHeroEntry,
       )
-      |> fromMaybe(0)
+      |> fromOption(0)
       |> modifyAbs
       |> (apValue => (apValue, isAutomatic))
     };

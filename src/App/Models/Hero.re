@@ -1,4 +1,3 @@
-open Maybe;
 open GenericHelpers;
 
 [@genType "Phase"]
@@ -35,19 +34,19 @@ module Rules = {
 
 [@genType "PersonalData"]
 type personalData = {
-  family: maybe(string),
-  placeOfBirth: maybe(string),
-  dateOfBirth: maybe(string),
-  age: maybe(string),
-  hairColor: maybe(int),
-  eyeColor: maybe(int),
-  size: maybe(string),
-  weight: maybe(string),
-  title: maybe(string),
-  socialStatus: maybe(int),
-  characteristics: maybe(string),
-  otherInfo: maybe(string),
-  cultureAreaKnowledge: maybe(string),
+  family: option(string),
+  placeOfBirth: option(string),
+  dateOfBirth: option(string),
+  age: option(string),
+  hairColor: option(int),
+  eyeColor: option(int),
+  size: option(string),
+  weight: option(string),
+  title: option(string),
+  socialStatus: option(int),
+  characteristics: option(string),
+  otherInfo: option(string),
+  cultureAreaKnowledge: option(string),
 };
 
 module Activatable = {
@@ -65,8 +64,8 @@ module Activatable = {
   [@genType "ActivatableSingle"]
   type single = {
     options: list(option),
-    level: maybe(int),
-    customCost: maybe(int),
+    level: Ley.Option.t(int),
+    customCost: Ley.Option.t(int),
   };
 
   [@genType "ActivatableDependency"]
@@ -75,7 +74,7 @@ module Activatable = {
     target: oneOrMany(Ids.activatableId),
     active: bool,
     options: list(oneOrMany(Ids.selectOptionId)),
-    level: maybe(int),
+    level: Ley.Option.t(int),
   };
 
   [@genType "Activatable"]
@@ -91,7 +90,7 @@ module Attribute = {
   type dependency = {
     source: Ids.activatableId,
     target: oneOrMany(int),
-    value: maybe(int),
+    value: option(int),
   };
 
   [@genType "Attribute"]
@@ -161,7 +160,7 @@ module Skill = {
 
 module Item = {
   [@genType "MundaneItem"]
-  type mundaneItem = {structurePoints: maybe(oneOrMany(int))};
+  type mundaneItem = {structurePoints: option(oneOrMany(int))};
 
   [@genType "PrimaryAttributeDamageThreshold"]
   type primaryAttributeDamageThreshold =
@@ -173,36 +172,36 @@ module Item = {
   type damage = {
     amount: int,
     sides: int,
-    flat: maybe(int),
+    flat: option(int),
   };
 
   [@genType "MeleeWeapon"]
   type meleeWeapon = {
     combatTechnique: int,
     damage,
-    primaryAttributeDamageThreshold: maybe(primaryAttributeDamageThreshold),
-    at: maybe(int),
-    pa: maybe(int),
-    reach: maybe(int),
-    length: maybe(int),
-    structurePoints: maybe(oneOrMany(int)),
-    breakingPointRatingMod: maybe(int),
+    primaryAttributeDamageThreshold: option(primaryAttributeDamageThreshold),
+    at: option(int),
+    pa: option(int),
+    reach: option(int),
+    length: option(int),
+    structurePoints: option(oneOrMany(int)),
+    breakingPointRatingMod: option(int),
     isParryingWeapon: bool,
     isTwoHandedWeapon: bool,
     isImprovisedWeapon: bool,
-    damaged: maybe(int),
+    damaged: option(int),
   };
 
   [@genType "RangedWeapon"]
   type rangedWeapon = {
     combatTechnique: int,
-    damage: maybe(damage),
-    length: maybe(int),
+    damage: option(damage),
+    length: option(int),
     range: (int, int, int),
     reloadTime: oneOrMany(int),
-    ammunition: maybe(int),
+    ammunition: option(int),
     isImprovisedWeapon: bool,
-    damaged: maybe(int),
+    damaged: option(int),
   };
 
   [@genType "Armor"]
@@ -210,12 +209,12 @@ module Item = {
     protection: int,
     encumbrance: int,
     hasAdditionalPenalties: bool,
-    iniMod: maybe(int),
-    movMod: maybe(int),
-    sturdinessMod: maybe(int),
+    iniMod: option(int),
+    movMod: option(int),
+    sturdinessMod: option(int),
     armorType: int,
-    wear: maybe(int),
-    isHitZoneArmorOnly: maybe(bool),
+    wear: option(int),
+    isHitZoneArmorOnly: option(bool),
   };
 
   [@genType "Special"]
@@ -229,13 +228,13 @@ module Item = {
   [@genType "Item"]
   type t = {
     id: int,
-    amount: maybe(int),
-    price: maybe(int),
-    weight: maybe(int),
-    template: maybe(int),
+    amount: option(int),
+    price: option(int),
+    weight: option(int),
+    template: option(int),
     isTemplateLocked: bool,
-    carriedWhere: maybe(string),
-    special: maybe(special),
+    carriedWhere: option(string),
+    special: option(special),
     gr: int,
   };
 };
@@ -254,62 +253,62 @@ type hitZoneArmor = {
    * ID of the armor at zone *head*. Can be either a template ID or the ID of an
    * armor from `items`.
    */
-  head: maybe(Ids.hitZoneArmorZoneItemId),
+  head: option(Ids.hitZoneArmorZoneItemId),
   /**
    * The level of wear at zone *head*, if any. Ignores `wear` if custom armor is
    * used, even if `headWear` is not defined.
    */
-  headWear: maybe(int),
+  headWear: option(int),
   /**
    * ID of the armor at zone *left arm*. Can be either a template ID or the ID
    * of an armor from `items`.
    */
-  leftArm: maybe(Ids.hitZoneArmorZoneItemId),
+  leftArm: option(Ids.hitZoneArmorZoneItemId),
   /**
    * The level of wear at zone *left arm*, if any. Ignores `wear` if custom
    * armor is used, even if `leftArmWear` is not defined.
    */
-  leftArmWear: maybe(int),
+  leftArmWear: option(int),
   /**
    * ID of the armor at zone *right arm*. Can be either a template ID or the ID
    * of an item from `items`.
    */
-  rightArm: maybe(Ids.hitZoneArmorZoneItemId),
+  rightArm: option(Ids.hitZoneArmorZoneItemId),
   /**
    * The level of wear at zone *right arm*, if any. Ignores `wear` if custom
    * armor is used, even if `rightArmWear` is not defined.
    */
-  rightArmWear: maybe(int),
+  rightArmWear: option(int),
   /**
    * ID of the armor at zone *torso*. Can be either a template ID or the ID of
    * an armor from `items`.
    */
-  torso: maybe(Ids.hitZoneArmorZoneItemId),
+  torso: option(Ids.hitZoneArmorZoneItemId),
   /**
    * The level of wear at zone *torso*, if any. Ignores `wear` if custom armor
    * is used, even if `torsoWear` is not defined.
    */
-  torsoWear: maybe(int),
+  torsoWear: option(int),
   /**
    * ID of the armor at zone *left leg*. Can be either a template ID or the ID
    * of an armor from `items`.
    */
-  leftLeg: maybe(Ids.hitZoneArmorZoneItemId),
+  leftLeg: option(Ids.hitZoneArmorZoneItemId),
   /**
    * The level of wear at zone *left leg*, if any. Ignores `wear` if custom
    * armor is used, even if `leftLegWear` is not defined.
    */
-  leftLegWear: maybe(int),
+  leftLegWear: option(int),
   /**
    * ID of the armor at zone *right leg*. Can be either a template ID or the ID
    * of an armor from `items`.
    */
-  rightLeg: maybe(Ids.hitZoneArmorZoneItemId),
+  rightLeg: option(Ids.hitZoneArmorZoneItemId),
   /**
    * The level of wear at zone *right leg*, if any. Ignores `wear` if custom
    * armor is used, even if `rightLegWear` is not defined.
    */
-  rightLegWear: maybe(int),
+  rightLegWear: option(int),
 };
 
 [@genType "Purse"]
@@ -324,36 +323,36 @@ type purse = {
 type pet = {
   id: int,
   name: string,
-  avatar: maybe(string),
-  size: maybe(string),
+  avatar: option(string),
+  size: option(string),
   [@bs.as "type"]
-  type_: maybe(string),
-  attack: maybe(string),
-  dp: maybe(string),
-  reach: maybe(string),
-  actions: maybe(string),
-  skills: maybe(string),
-  abilities: maybe(string),
-  notes: maybe(string),
-  spentAp: maybe(string),
-  totalAp: maybe(string),
-  cou: maybe(string),
-  sgc: maybe(string),
-  int: maybe(string),
-  cha: maybe(string),
-  dex: maybe(string),
-  agi: maybe(string),
-  con: maybe(string),
-  str: maybe(string),
-  lp: maybe(string),
-  ae: maybe(string),
-  spi: maybe(string),
-  tou: maybe(string),
-  pro: maybe(string),
-  ini: maybe(string),
-  mov: maybe(string),
-  at: maybe(string),
-  pa: maybe(string),
+  type_: option(string),
+  attack: option(string),
+  dp: option(string),
+  reach: option(string),
+  actions: option(string),
+  skills: option(string),
+  abilities: option(string),
+  notes: option(string),
+  spentAp: option(string),
+  totalAp: option(string),
+  cou: option(string),
+  sgc: option(string),
+  int: option(string),
+  cha: option(string),
+  dex: option(string),
+  agi: option(string),
+  con: option(string),
+  str: option(string),
+  lp: option(string),
+  ae: option(string),
+  spi: option(string),
+  tou: option(string),
+  pro: option(string),
+  ini: option(string),
+  mov: option(string),
+  at: option(string),
+  pa: option(string),
 };
 
 module Pact = {
@@ -382,7 +381,7 @@ type styleDependency = {
   /**
    * If a ability meets a given id, then `Just id`, otherwise `Nothing`.
    */
-  active: maybe(int),
+  active: option(int),
   /**
    * The style's id.
    */
@@ -414,32 +413,32 @@ type t = {
   sex,
   phase,
   locale: string,
-  avatar: maybe(string),
-  race: maybe(int),
-  raceVariant: maybe(baseOrWithVariant),
-  culture: maybe(int),
+  avatar: option(string),
+  race: option(int),
+  raceVariant: option(baseOrWithVariant),
+  culture: option(int),
   isCulturalPackageActive: bool,
-  profession: maybe(baseOrWithVariant),
-  professionName: maybe(string),
+  profession: option(baseOrWithVariant),
+  professionName: option(string),
   rules: Rules.t,
   personalData,
-  advantages: IntMap.t(Activatable.t),
-  disadvantages: IntMap.t(Activatable.t),
-  specialAbilities: IntMap.t(Activatable.t),
-  attributes: IntMap.t(Attribute.t),
+  advantages: Ley.IntMap.t(Activatable.t),
+  disadvantages: Ley.IntMap.t(Activatable.t),
+  specialAbilities: Ley.IntMap.t(Activatable.t),
+  attributes: Ley.IntMap.t(Attribute.t),
   attributeAdjustmentSelected: int,
   energies: Energies.t,
-  skills: IntMap.t(Skill.t),
-  combatTechniques: IntMap.t(Skill.t),
-  spells: IntMap.t(ActivatableSkill.t),
-  liturgicalChants: IntMap.t(ActivatableSkill.t),
-  cantrips: IntSet.t,
-  blessings: IntSet.t,
+  skills: Ley.IntMap.t(Skill.t),
+  combatTechniques: Ley.IntMap.t(Skill.t),
+  spells: Ley.IntMap.t(ActivatableSkill.t),
+  liturgicalChants: Ley.IntMap.t(ActivatableSkill.t),
+  cantrips: Ley.IntSet.t,
+  blessings: Ley.IntSet.t,
   items: list(Item.t),
   hitZoneArmors: list(hitZoneArmor),
   purse,
   pets: list(pet),
-  pact: maybe(Pact.t),
+  pact: option(Pact.t),
   combatStyleDependencies: list(styleDependency),
   magicalStyleDependencies: list(styleDependency),
   blessedStyleDependencies: list(styleDependency),

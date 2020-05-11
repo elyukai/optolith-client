@@ -14,7 +14,7 @@ type t = {
  * @example rollDice (6) // D6
  */
 let rollDie = sides =>
-  Js.Math.floor(Js.Math.random() *. Js.Int.toFloat(sides)) |> Int.inc;
+  Js.Math.floor(Js.Math.random() *. Js.Int.toFloat(sides)) |> Ley.Int.inc;
 
 /**
  * Subtract the second from the *absolute* value of the first while keeping it's
@@ -28,7 +28,7 @@ let rollDie = sides =>
 let (-|) = (a, b) => a >= 0 ? a - b : a + b;
 
 let rec rollDiceAux = (~amount, ~sides) =>
-  Int.abs(amount) <= 1
+  Ley.Int.abs(amount) <= 1
     ? [rollDie(sides)]
     : [rollDie(sides), ...rollDiceAux(~amount=amount -| 1, ~sides)];
 
@@ -39,7 +39,7 @@ let rec rollDiceAux = (~amount, ~sides) =>
 let rollDice = ({amount, sides}) => rollDiceAux(~amount, ~sides);
 
 let rec rollDiceSumAux = (~amount, ~sides) =>
-  Int.abs(amount) <= 1
+  Ley.Int.abs(amount) <= 1
     ? rollDie(sides)
     : rollDie(sides) + rollDiceSumAux(~amount=amount -| 1, ~sides);
 
@@ -50,7 +50,7 @@ let rec rollDiceSumAux = (~amount, ~sides) =>
 let rollDiceSum = ({amount, sides}) => rollDiceSumAux(~amount, ~sides);
 
 let rec rollDiceSumMapAux = (~map: (t, int) => int, ~amount, ~sides) =>
-  Int.abs(amount) <= 1
+  Ley.Int.abs(amount) <= 1
     ? rollDie(sides) |> map({amount, sides})
     : (rollDie(sides) |> map({amount, sides}))
       + rollDiceSumMapAux(~map, ~amount=amount -| 1, ~sides);

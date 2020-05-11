@@ -1,7 +1,7 @@
 import { ParametricSelector, Selector } from "reselect"
 import { cnst } from "../../Data/Function"
 import { fromJust, INTERNAL_shallowEquals, isMaybe, isNothing, Just, Maybe, Nothing, Some } from "../../Data/Maybe"
-import { fromMap, lookup, OrderedMap, toMap } from "../../Data/OrderedMap"
+import { fromMap, lookup, toMap } from "../../Data/OrderedMap"
 
 const maybeEquals =
   (x: any, y: any) =>
@@ -34,7 +34,7 @@ const maybeEquals =
 export const createMapSelectorDebug =
   (debug: boolean) =>
   <S, P1, V extends Some>
-  (mapSelector: PSelector<S, P1, OrderedMap<string, V>>) =>
+  (mapSelector: PSelector<S, P1, StrMap<V>>) =>
   <K extends PSelectorWithKey<S, any, any>[]>
   (...globalSelectorsWithKey: K) =>
   <G extends PSelector<S, any, any>[]>
@@ -45,7 +45,7 @@ export const createMapSelectorDebug =
   (fold: Callback<S, V, K, G, M, R>): CreatedParametricSelector<S, P, V, R> => {
     let prevState: S | undefined = undefined
 
-    let prevMap: OrderedMap<string, V> | undefined = undefined
+    let prevMap: StrMap<V> | undefined = undefined
 
     const prevValues: Map<string, V> = new Map ()
 
@@ -157,11 +157,11 @@ export const createMapSelectorDebug =
       }
     g.getCache = () => fromMap (resMap)
     g.setCache =
-      (m: OrderedMap<string, R>) => {
+      (m: StrMap<R>) => {
         resMap = toMap (m) as Map<string, R>
         resMap .forEach ((v, k) => justResMap .set (k, Just (v)))
       }
-    g.setBaseMap = (m: OrderedMap<string, V>) => {
+    g.setBaseMap = (m: StrMap<V>) => {
  prevMap = m
 }
     g.setState = (s: S) => {
@@ -196,7 +196,7 @@ export const createMapSelector = createMapSelectorDebug (false)
  */
 export const createMapSelectorS =
   <S, V extends Some>
-  (mapSelector: Selector<S, OrderedMap<string, V>>) =>
+  (mapSelector: Selector<S, StrMap<V>>) =>
   <G extends Selector<S, any>[]>
   (...globalSelectors: G) =>
   <M extends Selector<V, any>[]>
@@ -232,7 +232,7 @@ export const createMapSelectorS =
  */
 export const createMapSelectorP =
   <S, P1, V extends Some>
-  (mapSelector: PSelector<S, P1, OrderedMap<string, V>>) =>
+  (mapSelector: PSelector<S, P1, StrMap<V>>) =>
   <G extends PSelector<S, any, any>[]>
   (...globalSelectors: G) =>
   <M extends PSelector<V, any, any>[]>
@@ -291,9 +291,9 @@ type CallbackWithoutKeys
 interface Cache<S, V, R> {
   getCacheAt (key_str: string): Maybe<R>
   setCacheAt (key_str: string): (x: R) => void
-  getCache (): OrderedMap<string, R>
-  setCache (m: OrderedMap<string, R>): void
-  setBaseMap (m: OrderedMap<string, V>): void
+  getCache (): StrMap<R>
+  setCache (m: StrMap<R>): void
+  setBaseMap (m: StrMap<V>): void
   setState (s: S): void
 }
 

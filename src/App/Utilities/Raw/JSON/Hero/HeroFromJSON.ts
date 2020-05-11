@@ -48,7 +48,7 @@ const AOWIA = ActiveObjectWithId.A
 const ASDA = ActivatableSkillDependent.A
 
 const getDependentSkills =
-  (source: StringKeyObject<number>): OrderedMap<string, Record<SkillDependent>> =>
+  (source: StringKeyObject<number>): StrMap<Record<SkillDependent>> =>
     OrderedMap.fromArray (
       Object.entries (source) .map<[string, Record<SkillDependent>]> (
         ([ id, value ]) => [ id, createSkillDependentWithValue (value) (id) ]
@@ -56,7 +56,7 @@ const getDependentSkills =
     )
 
 const getActivatableDependentSkills =
-  (source: StringKeyObject<number>): OrderedMap<string, Record<ActivatableSkillDependent>> =>
+  (source: StringKeyObject<number>): StrMap<Record<ActivatableSkillDependent>> =>
     OrderedMap.fromArray (
       Object.entries (source) .map<[string, Record<ActivatableSkillDependent>]> (
         ([ id, value ]) => [ id, createActivatableSkillDependentWithValue (value) (id) ]

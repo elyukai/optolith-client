@@ -2,14 +2,12 @@ import { join } from "path"
 import { handleE, toMsg } from "../../Control/Exception"
 import { eitherToMaybe, fromLeft_, fromRight_, isLeft, Left } from "../../Data/Either"
 import { flip } from "../../Data/Function"
-import { fmap } from "../../Data/Functor"
 import { fromArray, intercalate, map } from "../../Data/List"
 import { bindF, fromJust, fromMaybe, isJust, Just, Maybe } from "../../Data/Maybe"
-import { filter, keysSet, OrderedMap } from "../../Data/OrderedMap"
-import { notMember } from "../../Data/OrderedSet"
 import { Record } from "../../Data/Record"
 import { show } from "../../Data/Show"
 import { parseJSON } from "../../Data/String/JSON"
+import { StrMap } from "../../Data/StrMap"
 import { fst, Pair, snd } from "../../Data/Tuple"
 import * as IO from "../../System/IO"
 import * as ActionTypes from "../Constants/ActionTypes"
@@ -37,8 +35,8 @@ interface InitialData {
   heroes: Maybe<RawHerolist>
   defaultLocale: string
   config: Maybe<Record<Config>>
-  cache: Maybe<OrderedMap<string, APCache>>
-  availableLangs: OrderedMap<string, Record<LocaleR>>
+  cache: Maybe<StrMap<APCache>>
+  availableLangs: StrMap<Record<LocaleR>>
 }
 
 const parseErrorsToPairStr = (es: Error[]) => pipe_ (
@@ -129,7 +127,7 @@ export const requestInitialData: ReduxAction<Promise<void>> = async (dispatch, g
     join (user_data_path, "heroes.json"),
     IO.readFile,
     handleE,
-    fmap (pipe (eitherToMaybe, bindF (parseJSON as (x: string) => Maybe<RawHerolist>)))
+    IO.fmap (pipe (eitherToMaybe, bindF (parseJSON as (x: string) => Maybe<RawHerolist>)))
   )
 
   const mcache = await readCache ()

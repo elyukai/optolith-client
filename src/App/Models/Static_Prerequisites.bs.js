@@ -4,10 +4,10 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var ListH$OptolithClient = require("../../Data/ListH.bs.js");
-var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var Ley_List$OptolithClient = require("../../Data/Ley_List.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
+var Ley_Option$OptolithClient = require("../../Data/Ley_Option.bs.js");
 
 function partial_arg_000(param) {
   return Json_decode.map((function (id) {
@@ -329,10 +329,10 @@ function tProfession(json) {
           sex: JsonStrict$OptolithClient.optionalField("sexPrerequisite", sex, json),
           race: JsonStrict$OptolithClient.optionalField("racePrerequisite", race, json),
           culture: JsonStrict$OptolithClient.optionalField("culturePrerequisite", oneOrManyInt, json),
-          activatable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
+          activatable: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
                       return Json_decode.list(activatable, param);
                     }), json)),
-          increasable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
+          increasable: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
                       return Json_decode.list(increasable, param);
                     }), json))
         };
@@ -346,19 +346,19 @@ function t(json) {
           pact: JsonStrict$OptolithClient.optionalField("pactPrerequisite", pact, json),
           social: JsonStrict$OptolithClient.optionalField("socialStatusPrerequisite", Json_decode.$$int, json),
           primaryAttribute: JsonStrict$OptolithClient.optionalField("primaryAttributePrerequisite", primaryAttribute, json),
-          activatable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
+          activatable: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
                       return Json_decode.list(activatable, param);
                     }), json)),
-          activatableMultiEntry: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiEntryPrerequisites", (function (param) {
+          activatableMultiEntry: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiEntryPrerequisites", (function (param) {
                       return Json_decode.list(activatableMultiEntry, param);
                     }), json)),
-          activatableMultiSelect: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiSelectPrerequisites", (function (param) {
+          activatableMultiSelect: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiSelectPrerequisites", (function (param) {
                       return Json_decode.list(activatableMultiSelect, param);
                     }), json)),
-          increasable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
+          increasable: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
                       return Json_decode.list(increasable, param);
                     }), json)),
-          increasableMultiEntry: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
+          increasableMultiEntry: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
                       return Json_decode.list(increasableMultiEntry, param);
                     }), json))
         };
@@ -379,22 +379,22 @@ function tWithLevel(json) {
           pact: JsonStrict$OptolithClient.optionalField("pactPrerequisite", pact, json),
           social: JsonStrict$OptolithClient.optionalField("socialStatusPrerequisite", Json_decode.$$int, json),
           primaryAttribute: JsonStrict$OptolithClient.optionalField("primaryAttributePrerequisite", primaryAttribute, json),
-          activatable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
+          activatable: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
                       return Json_decode.list(activatable, param);
                     }), json)),
-          activatableMultiEntry: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiEntryPrerequisites", (function (param) {
+          activatableMultiEntry: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiEntryPrerequisites", (function (param) {
                       return Json_decode.list(activatableMultiEntry, param);
                     }), json)),
-          activatableMultiSelect: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiSelectPrerequisites", (function (param) {
+          activatableMultiSelect: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiSelectPrerequisites", (function (param) {
                       return Json_decode.list(activatableMultiSelect, param);
                     }), json)),
-          increasable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
+          increasable: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
                       return Json_decode.list(increasable, param);
                     }), json)),
-          increasableMultiEntry: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
+          increasableMultiEntry: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
                       return Json_decode.list(increasableMultiEntry, param);
                     }), json)),
-          levels: Curry._1(IntMap$OptolithClient.fromList, Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("levelPrerequisites", (function (param) {
+          levels: Curry._1(Ley_IntMap$OptolithClient.fromList, Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("levelPrerequisites", (function (param) {
                           return Json_decode.list(level, param);
                         }), json)))
         };
@@ -409,22 +409,22 @@ function tWithLevelDisAdv(json) {
           pact: JsonStrict$OptolithClient.optionalField("pactPrerequisite", pact, json),
           social: JsonStrict$OptolithClient.optionalField("socialStatusPrerequisite", Json_decode.$$int, json),
           primaryAttribute: JsonStrict$OptolithClient.optionalField("primaryAttributePrerequisite", primaryAttribute, json),
-          activatable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
+          activatable: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
                       return Json_decode.list(activatable, param);
                     }), json)),
-          activatableMultiEntry: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiEntryPrerequisites", (function (param) {
+          activatableMultiEntry: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiEntryPrerequisites", (function (param) {
                       return Json_decode.list(activatableMultiEntry, param);
                     }), json)),
-          activatableMultiSelect: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiSelectPrerequisites", (function (param) {
+          activatableMultiSelect: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("activatableMultiSelectPrerequisites", (function (param) {
                       return Json_decode.list(activatableMultiSelect, param);
                     }), json)),
-          increasable: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
+          increasable: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
                       return Json_decode.list(increasable, param);
                     }), json)),
-          increasableMultiEntry: Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
+          increasableMultiEntry: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("increasableMultiEntryPrerequisites", (function (param) {
                       return Json_decode.list(increasableMultiEntry, param);
                     }), json)),
-          levels: Curry._1(IntMap$OptolithClient.fromList, Maybe$OptolithClient.fromMaybe(/* [] */0, JsonStrict$OptolithClient.optionalField("levelPrerequisites", (function (param) {
+          levels: Curry._1(Ley_IntMap$OptolithClient.fromList, Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("levelPrerequisites", (function (param) {
                           return Json_decode.list(level, param);
                         }), json)))
         };
@@ -490,81 +490,80 @@ function tIndexUniv(json) {
 }
 
 function mergeSingleOverride(univ, l10n) {
-  return Maybe$OptolithClient.Alternative.$less$pipe$great(Maybe$OptolithClient.Functor.$less$amp$great(l10n, (function (x) {
+  return Ley_Option$OptolithClient.Alternative.$less$pipe$great(Ley_Option$OptolithClient.Functor.$less$amp$great(l10n, (function (x) {
                     return /* ReplaceWith */[x];
-                  })), Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+                  })), Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                     if (x) {
-                      return /* Just */[/* Hide */0];
-                    } else {
-                      return /* Nothing */0;
+                      return /* Hide */0;
                     }
+                    
                   })));
 }
 
 function mergeMapOverride(univ, l10n) {
-  var mp = ListH$OptolithClient.Foldable.foldr((function (x) {
-          return Curry._2(IntMap$OptolithClient.insert, x, /* Hide */0);
-        }), IntMap$OptolithClient.empty, Maybe$OptolithClient.fromMaybe(/* [] */0, univ));
-  return ListH$OptolithClient.Foldable.foldr((function (param) {
-                return Curry._2(IntMap$OptolithClient.insert, param[0], /* ReplaceWith */[param[1]]);
-              }), mp, Maybe$OptolithClient.fromMaybe(/* [] */0, l10n));
+  var mp = Ley_List$OptolithClient.Foldable.foldr((function (x) {
+          return Curry._2(Ley_IntMap$OptolithClient.insert, x, /* Hide */0);
+        }), Ley_IntMap$OptolithClient.empty, Ley_Option$OptolithClient.fromOption(/* [] */0, univ));
+  return Ley_List$OptolithClient.Foldable.foldr((function (param) {
+                return Curry._2(Ley_IntMap$OptolithClient.insert, param[0], /* ReplaceWith */[param[1]]);
+              }), mp, Ley_Option$OptolithClient.fromOption(/* [] */0, l10n));
 }
 
 function tIndex(univ, l10n) {
   return {
-          sex: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          sex: mergeSingleOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.sex;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.sex;
                     }))),
-          race: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          race: mergeSingleOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.race;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.race;
                     }))),
-          culture: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          culture: mergeSingleOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.culture;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.culture;
                     }))),
-          pact: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          pact: mergeSingleOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.pact;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.pact;
                     }))),
-          social: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          social: mergeSingleOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.social;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.social;
                     }))),
-          primaryAttribute: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          primaryAttribute: mergeSingleOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.primaryAttribute;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.primaryAttribute;
                     }))),
-          activatable: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          activatable: mergeMapOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.activatable;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.activatable;
                     }))),
-          activatableMultiEntry: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          activatableMultiEntry: mergeMapOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.activatableMultiEntry;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.activatableMultiEntry;
                     }))),
-          activatableMultiSelect: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          activatableMultiSelect: mergeMapOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.activatableMultiSelect;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.activatableMultiSelect;
                     }))),
-          increasable: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          increasable: mergeMapOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.increasable;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.increasable;
                     }))),
-          increasableMultiEntry: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          increasableMultiEntry: mergeMapOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.increasableMultiEntry;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.increasableMultiEntry;
                     })))
         };
@@ -643,90 +642,90 @@ function tIndexWithLevelUniv(json) {
 }
 
 function mergeIndexLevels(univ, l10n) {
-  var mp = ListH$OptolithClient.Foldable.foldr((function (param) {
-          return Curry._2(IntMap$OptolithClient.insert, param[0], /* tuple */[
-                      /* Just */[param[1]],
-                      /* Nothing */0
+  var mp = Ley_List$OptolithClient.Foldable.foldr((function (param) {
+          return Curry._2(Ley_IntMap$OptolithClient.insert, param[0], /* tuple */[
+                      param[1],
+                      undefined
                     ]);
-        }), IntMap$OptolithClient.empty, Maybe$OptolithClient.fromMaybe(/* [] */0, univ));
-  return Curry._2(IntMap$OptolithClient.map, (function (param) {
+        }), Ley_IntMap$OptolithClient.empty, Ley_Option$OptolithClient.fromOption(/* [] */0, univ));
+  return Curry._2(Ley_IntMap$OptolithClient.map, (function (param) {
                 return tIndex(param[0], param[1]);
-              }), ListH$OptolithClient.Foldable.foldr((function (param) {
+              }), Ley_List$OptolithClient.Foldable.foldr((function (param) {
                     var x = param[1];
-                    return Curry._2(IntMap$OptolithClient.alter, (function (my) {
-                                  return /* Just */[Maybe$OptolithClient.maybe(/* tuple */[
-                                                /* Nothing */0,
-                                                /* Just */[x]
-                                              ], (function (y) {
-                                                  return /* tuple */[
-                                                          y[0],
-                                                          /* Just */[x]
-                                                        ];
-                                                }), my)];
+                    return Curry._2(Ley_IntMap$OptolithClient.alter, (function (my) {
+                                  return Ley_Option$OptolithClient.option(/* tuple */[
+                                              undefined,
+                                              x
+                                            ], (function (y) {
+                                                return /* tuple */[
+                                                        y[0],
+                                                        x
+                                                      ];
+                                              }), my);
                                 }), param[0]);
-                  }), mp, Maybe$OptolithClient.fromMaybe(/* [] */0, l10n)));
+                  }), mp, Ley_Option$OptolithClient.fromOption(/* [] */0, l10n)));
 }
 
 function tIndexWithLevel(univ, l10n) {
   return {
-          sex: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          sex: mergeSingleOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.sex;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.sex;
                     }))),
-          race: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          race: mergeSingleOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.race;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.race;
                     }))),
-          culture: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          culture: mergeSingleOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.culture;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.culture;
                     }))),
-          pact: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          pact: mergeSingleOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.pact;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.pact;
                     }))),
-          social: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          social: mergeSingleOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.social;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.social;
                     }))),
-          primaryAttribute: mergeSingleOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          primaryAttribute: mergeSingleOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.primaryAttribute;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.primaryAttribute;
                     }))),
-          activatable: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          activatable: mergeMapOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.activatable;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.activatable;
                     }))),
-          activatableMultiEntry: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          activatableMultiEntry: mergeMapOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.activatableMultiEntry;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.activatableMultiEntry;
                     }))),
-          activatableMultiSelect: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          activatableMultiSelect: mergeMapOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.activatableMultiSelect;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.activatableMultiSelect;
                     }))),
-          increasable: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          increasable: mergeMapOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.increasable;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.increasable;
                     }))),
-          increasableMultiEntry: mergeMapOverride(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          increasableMultiEntry: mergeMapOverride(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.increasableMultiEntry;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.increasableMultiEntry;
                     }))),
-          levels: mergeIndexLevels(Maybe$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
+          levels: mergeIndexLevels(Ley_Option$OptolithClient.Monad.$great$great$eq(univ, (function (x) {
                       return x.levels;
-                    })), Maybe$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
+                    })), Ley_Option$OptolithClient.Monad.$great$great$eq(l10n, (function (x) {
                       return x.levels;
                     })))
         };
@@ -771,12 +770,12 @@ var Decode = {
 };
 
 var empty = {
-  sex: /* Nothing */0,
-  race: /* Nothing */0,
-  culture: /* Nothing */0,
-  pact: /* Nothing */0,
-  social: /* Nothing */0,
-  primaryAttribute: /* Nothing */0,
+  sex: undefined,
+  race: undefined,
+  culture: undefined,
+  pact: undefined,
+  social: undefined,
+  primaryAttribute: undefined,
   activatable: /* [] */0,
   activatableMultiEntry: /* [] */0,
   activatableMultiSelect: /* [] */0,
@@ -786,4 +785,4 @@ var empty = {
 
 exports.empty = empty;
 exports.Decode = Decode;
-/* IntMap-OptolithClient Not a pure module */
+/* Ley_IntMap-OptolithClient Not a pure module */

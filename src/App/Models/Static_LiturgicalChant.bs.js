@@ -4,11 +4,11 @@
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var IC$OptolithClient = require("../Utilities/IC.bs.js");
-var Int$OptolithClient = require("../../Data/Int.bs.js");
-var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var Ley_Int$OptolithClient = require("../../Data/Ley_Int.bs.js");
 var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
+var Ley_Option$OptolithClient = require("../../Data/Ley_Option.bs.js");
 var CheckModifier$OptolithClient = require("./CheckModifier.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
@@ -44,7 +44,7 @@ function level3Prerequisite(json) {
   if (x !== 1) {
     throw [
           Json_decode.DecodeError,
-          "Unknown level 2 prerequisite: " + Int$OptolithClient.show(x)
+          "Unknown level 2 prerequisite: " + Ley_Int$OptolithClient.show(x)
         ];
   } else {
     return 1;
@@ -55,7 +55,7 @@ function enhancementLevel2Univ(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
           cost: Json_decode.field("cost", Json_decode.$$int, json),
-          requireLevel1: Maybe$OptolithClient.isJust(JsonStrict$OptolithClient.optionalField("previousRequirement", level3Prerequisite, json))
+          requireLevel1: Ley_Option$OptolithClient.isSome(JsonStrict$OptolithClient.optionalField("previousRequirement", level3Prerequisite, json))
         };
 }
 
@@ -65,7 +65,7 @@ function level3Prerequisite$1(json) {
     if (x !== 2) {
       throw [
             Json_decode.DecodeError,
-            "Unknown level 3 prerequisite: " + Int$OptolithClient.show(x)
+            "Unknown level 3 prerequisite: " + Ley_Int$OptolithClient.show(x)
           ];
     } else {
       return /* Second */1;
@@ -121,7 +121,7 @@ function enhancement(univ, l10n) {
 }
 
 function enhancements(yamlData) {
-  return Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, enhancement, (function (x) {
+  return Yaml_Zip$OptolithClient.zipBy(Ley_Int$OptolithClient.show, enhancement, (function (x) {
                 return x.target;
               }), (function (x) {
                 return x.target;
@@ -196,7 +196,7 @@ function t(univ, l10n) {
             durationNoMod: univ.durationNoMod,
             target: l10n.target,
             traditions: univ.traditions,
-            aspects: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.aspects),
+            aspects: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.aspects),
             ic: univ.ic,
             gr: univ.gr,
             src: l10n.src,
@@ -206,7 +206,7 @@ function t(univ, l10n) {
 }
 
 function all(yamlData) {
-  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, t, (function (x) {
+  return Curry._1(Ley_IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Ley_Int$OptolithClient.show, t, (function (x) {
                     return x.id;
                   }), (function (x) {
                     return x.id;
@@ -230,4 +230,4 @@ var Decode = {
 };
 
 exports.Decode = Decode;
-/* IntMap-OptolithClient Not a pure module */
+/* Ley_IntMap-OptolithClient Not a pure module */

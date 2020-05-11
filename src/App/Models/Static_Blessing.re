@@ -5,7 +5,7 @@ type t = {
   range: string,
   duration: string,
   target: string,
-  traditions: IntSet.t,
+  traditions: Ley.IntSet.t,
   src: list(Static_SourceRef.t),
   errata: list(Static_Erratum.t),
 };
@@ -54,7 +54,7 @@ module Decode = {
       range: l10n.range,
       duration: l10n.duration,
       target: l10n.target,
-      traditions: IntSet.fromList(univ.traditions),
+      traditions: Ley.IntSet.fromList(univ.traditions),
       src: l10n.src,
       errata: l10n.errata,
     },
@@ -62,12 +62,12 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.blessingsUniv |> list(tUniv),
       yamlData.blessingsL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

@@ -3,7 +3,6 @@ import { flip, thrush } from "../../../Data/Function"
 import { fmapF } from "../../../Data/Functor"
 import { fnull, List, map, toArray } from "../../../Data/List"
 import { all, fromJust, Maybe, normalize, or } from "../../../Data/Maybe"
-import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
 import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
@@ -22,7 +21,7 @@ export interface ActivatableRemoveListProps {
   list: Maybe<List<Record<ActiveActivatable>>>
   staticData: StaticDataRecord
   isRemovingEnabled: boolean
-  rating?: Maybe<OrderedMap<string, EntryRating>>
+  rating?: Maybe<StrMap<EntryRating>>
   showRating?: boolean
   selectedForInfo: Maybe<string>
   setLevel (id: string, index: number, level: number): void

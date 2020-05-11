@@ -2,15 +2,15 @@
 'use strict';
 
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
+var Ley_Option$OptolithClient = require("../../Data/Ley_Option.bs.js");
 
 function t(json) {
   var first = Json_decode.field("firstPage", Json_decode.$$int, json);
   var mlast = JsonStrict$OptolithClient.optionalField("lastPage", Json_decode.$$int, json);
   return {
           id: Json_decode.field("id", Json_decode.string, json),
-          page: Maybe$OptolithClient.maybe(/* tuple */[
+          page: Ley_Option$OptolithClient.option(/* tuple */[
                 first,
                 first
               ], (function (last) {

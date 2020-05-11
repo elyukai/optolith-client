@@ -46,64 +46,64 @@ export type StaticDataRecord = Record<StaticData>
 
 export interface StaticData {
   "@@name": "StaticData"
-  advantages: OrderedMap<string, Record<Advantage>>
-  animistForces: OrderedMap<string, Record<AnimistForce>>
+  advantages: StrMap<Record<Advantage>>
+  animistForces: StrMap<Record<AnimistForce>>
   arcaneBardTraditions: OrderedMap<number, Record<NumIdName>>
   arcaneDancerTraditions: OrderedMap<number, Record<NumIdName>>
   armorTypes: OrderedMap<number, Record<NumIdName>>
   aspects: OrderedMap<number, Record<NumIdName>>
-  attributes: OrderedMap<string, Record<Attribute>>
-  blessedTraditions: OrderedMap<string, Record<BlessedTradition>>
-  blessings: OrderedMap<string, Record<Blessing>>
-  books: OrderedMap<string, Record<Book>>
+  attributes: StrMap<Record<Attribute>>
+  blessedTraditions: StrMap<Record<BlessedTradition>>
+  blessings: StrMap<Record<Blessing>>
+  books: StrMap<Record<Book>>
   brews: OrderedMap<number, Record<NumIdName>>
-  cantrips: OrderedMap<string, Record<Cantrip>>
+  cantrips: StrMap<Record<Cantrip>>
   combatSpecialAbilityGroups: OrderedMap<number, Record<NumIdName>>
   combatTechniqueGroups: OrderedMap<number, Record<NumIdName>>
-  combatTechniques: OrderedMap<string, Record<CombatTechnique>>
-  conditions: OrderedMap<string, Record<Condition>>
-  cultures: OrderedMap<string, Record<Culture>>
-  curses: OrderedMap<string, Record<Curse>>
+  combatTechniques: StrMap<Record<CombatTechnique>>
+  conditions: StrMap<Record<Condition>>
+  cultures: StrMap<Record<Culture>>
+  curses: StrMap<Record<Curse>>
   derivedCharacteristics: OrderedMap<DerivedCharacteristicId, Record<DerivedCharacteristic>>
-  disadvantages: OrderedMap<string, Record<Disadvantage>>
-  dominationRituals: OrderedMap<string, Record<DominationRitual>>
-  elvenMagicalSongs: OrderedMap<string, Record<ElvenMagicalSong>>
-  itemTemplates: OrderedMap<string, Record<ItemTemplate>>
+  disadvantages: StrMap<Record<Disadvantage>>
+  dominationRituals: StrMap<Record<DominationRitual>>
+  elvenMagicalSongs: StrMap<Record<ElvenMagicalSong>>
+  itemTemplates: StrMap<Record<ItemTemplate>>
   equipmentGroups: OrderedMap<number, Record<NumIdName>>
-  equipmentPackages: OrderedMap<string, Record<EquipmentPackage>>
-  experienceLevels: OrderedMap<string, Record<ExperienceLevel>>
+  equipmentPackages: StrMap<Record<EquipmentPackage>>
+  experienceLevels: StrMap<Record<ExperienceLevel>>
   eyeColors: OrderedMap<number, Record<NumIdName>>
-  focusRules: OrderedMap<string, Record<FocusRule>>
-  geodeRituals: OrderedMap<string, Record<GeodeRitual>>
+  focusRules: StrMap<Record<FocusRule>>
+  geodeRituals: StrMap<Record<GeodeRitual>>
   hairColors: OrderedMap<number, Record<NumIdName>>
   liturgicalChantEnhancements: OrderedMap<number, Record<SelectOption>>
   liturgicalChantGroups: OrderedMap<number, Record<NumIdName>>
-  liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
-  magicalDances: OrderedMap<string, Record<MagicalDance>>
-  magicalMelodies: OrderedMap<string, Record<MagicalMelody>>
-  magicalTraditions: OrderedMap<string, Record<MagicalTradition>>
-  optionalRules: OrderedMap<string, Record<OptionalRule>>
+  liturgicalChants: StrMap<Record<LiturgicalChant>>
+  magicalDances: StrMap<Record<MagicalDance>>
+  magicalMelodies: StrMap<Record<MagicalMelody>>
+  magicalTraditions: StrMap<Record<MagicalTradition>>
+  optionalRules: StrMap<Record<OptionalRule>>
   pacts: OrderedMap<number, Record<PactCategory>>
-  professions: OrderedMap<string, Record<Profession>>
-  professionVariants: OrderedMap<string, Record<ProfessionVariant>>
+  professions: StrMap<Record<Profession>>
+  professionVariants: StrMap<Record<ProfessionVariant>>
   properties: OrderedMap<number, Record<NumIdName>>
-  races: OrderedMap<string, Record<Race>>
-  raceVariants: OrderedMap<string, Record<RaceVariant>>
+  races: StrMap<Record<Race>>
+  raceVariants: StrMap<Record<RaceVariant>>
   reaches: OrderedMap<number, Record<NumIdName>>
-  rogueSpells: OrderedMap<string, Record<RogueSpell>>
+  rogueSpells: StrMap<Record<RogueSpell>>
   skillGroups: OrderedMap<number, Record<SkillGroup>>
-  skills: OrderedMap<string, Record<Skill>>
+  skills: StrMap<Record<Skill>>
   socialStatuses: OrderedMap<number, Record<NumIdName>>
-  specialAbilities: OrderedMap<string, Record<SpecialAbility>>
+  specialAbilities: StrMap<Record<SpecialAbility>>
   specialAbilityGroups: OrderedMap<number, Record<NumIdName>>
   spellEnhancements: OrderedMap<number, Record<SelectOption>>
   spellGroups: OrderedMap<number, Record<NumIdName>>
-  spells: OrderedMap<string, Record<Spell>>
-  states: OrderedMap<string, Record<State>>
+  spells: StrMap<Record<Spell>>
+  states: StrMap<Record<State>>
   subjects: OrderedMap<number, Record<NumIdName>>
   tribes: OrderedMap<number, Record<NumIdName>>
   ui: Record<L10n>
-  zibiljaRituals: OrderedMap<string, Record<ZibiljaRitual>>
+  zibiljaRituals: StrMap<Record<ZibiljaRitual>>
 }
 
 export const StaticData: RecordCreator<StaticData> =

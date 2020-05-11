@@ -2,12 +2,12 @@
 'use strict';
 
 var Pervasives = require("bs-platform/lib/js/pervasives.js");
-var Int$OptolithClient = require("../../Data/Int.bs.js");
+var Ley_Int$OptolithClient = require("../../Data/Ley_Int.bs.js");
 
 function unsafeFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 2 || switcher < 0) {
-    return Pervasives.invalid_arg("unsafeFromInt: " + (Int$OptolithClient.show(id) + " is not a valid phase"));
+    return Pervasives.invalid_arg("unsafeFromInt: " + (Ley_Int$OptolithClient.show(id) + " is not a valid phase"));
   } else {
     return switcher;
   }
@@ -28,7 +28,7 @@ var Phase = {
 function unsafeFromInt$1(id) {
   var switcher = id - 1 | 0;
   if (switcher > 6 || switcher < 0) {
-    return Pervasives.invalid_arg("unsafeFromInt: " + (Int$OptolithClient.show(id) + " is not a valid experience level"));
+    return Pervasives.invalid_arg("unsafeFromInt: " + (Ley_Int$OptolithClient.show(id) + " is not a valid experience level"));
   } else {
     return switcher;
   }
@@ -71,7 +71,7 @@ var ProfessionId = {
 function unsafeFromInt$2(id) {
   var switcher = id - 1 | 0;
   if (switcher > 7 || switcher < 0) {
-    return Pervasives.invalid_arg("unsafeFromInt: " + (Int$OptolithClient.show(id) + " is not a valid attribute"));
+    return Pervasives.invalid_arg("unsafeFromInt: " + (Ley_Int$OptolithClient.show(id) + " is not a valid attribute"));
   } else {
     return switcher;
   }
@@ -536,7 +536,7 @@ var DisadvantageId = {
 function fromInt$2(id) {
   var switcher = id - 1 | 0;
   if (switcher > 58 || switcher < 0) {
-    return Pervasives.invalid_arg("fromInt: " + (Int$OptolithClient.show(id) + " is not a valid skill"));
+    return Pervasives.invalid_arg("fromInt: " + (Ley_Int$OptolithClient.show(id) + " is not a valid skill"));
   } else {
     return switcher;
   }

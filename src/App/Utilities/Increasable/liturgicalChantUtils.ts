@@ -89,7 +89,7 @@ const getMaxSRFromAspectKnowledge = (current_tradition : Record<SpecialAbility>)
 export const getSpellMax = (current_tradition : Record<SpecialAbility>) =>
                            (startEL : Record<ExperienceLevel>) =>
                            (phase : number) =>
-                           (attributes : OrderedMap<string, Record<AttributeDependent>>) =>
+                           (attributes : StrMap<Record<AttributeDependent>>) =>
                            (exceptional_skill : Maybe<Record<ActivatableDependent>>) =>
                            (aspect_knowledge : Maybe<Record<ActivatableDependent>>) =>
                            (wiki_entry : Record<LiturgicalChant>) : number =>

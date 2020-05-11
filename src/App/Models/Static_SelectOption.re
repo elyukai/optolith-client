@@ -9,19 +9,19 @@ type wikiEntry =
 type t = {
   id: Ids.selectOptionId,
   name: string,
-  cost: Maybe.t(int),
+  cost: option(int),
   prerequisites: Static_Prerequisites.t,
-  description: Maybe.t(string),
-  isSecret: Maybe.t(bool),
-  languages: Maybe.t(list(int)),
-  continent: Maybe.t(int),
-  isExtinct: Maybe.t(bool),
-  specializations: Maybe.t(list(string)),
-  specializationInput: Maybe.t(string),
-  animalGr: Maybe.t(int),
-  animalLevel: Maybe.t(int),
-  target: Maybe.t(int),
-  wikiEntry: Maybe.t(wikiEntry),
+  description: option(string),
+  isSecret: option(bool),
+  languages: option(list(int)),
+  continent: option(int),
+  isExtinct: option(bool),
+  specializations: option(list(string)),
+  specializationInput: option(string),
+  animalGr: option(int),
+  animalLevel: option(int),
+  target: option(int),
+  wikiEntry: option(wikiEntry),
   src: list(Static_SourceRef.t),
   errata: list(Static_Erratum.t),
 };
@@ -69,16 +69,16 @@ module Ord = {
 
 let showId = (id: Ids.selectOptionId) =>
   switch (id) {
-  | `Generic(x) => "Generic(" ++ Int.show(x) ++ ")"
-  | `Skill(x) => "Skill(" ++ Int.show(x) ++ ")"
-  | `CombatTechnique(x) => "CombatTechnique(" ++ Int.show(x) ++ ")"
-  | `Spell(x) => "Spell(" ++ Int.show(x) ++ ")"
-  | `Cantrip(x) => "Cantrip(" ++ Int.show(x) ++ ")"
-  | `LiturgicalChant(x) => "LiturgicalChant(" ++ Int.show(x) ++ ")"
-  | `Blessing(x) => "Blessing(" ++ Int.show(x) ++ ")"
+  | `Generic(x) => "Generic(" ++ Ley.Int.show(x) ++ ")"
+  | `Skill(x) => "Skill(" ++ Ley.Int.show(x) ++ ")"
+  | `CombatTechnique(x) => "CombatTechnique(" ++ Ley.Int.show(x) ++ ")"
+  | `Spell(x) => "Spell(" ++ Ley.Int.show(x) ++ ")"
+  | `Cantrip(x) => "Cantrip(" ++ Ley.Int.show(x) ++ ")"
+  | `LiturgicalChant(x) => "LiturgicalChant(" ++ Ley.Int.show(x) ++ ")"
+  | `Blessing(x) => "Blessing(" ++ Ley.Int.show(x) ++ ")"
   };
 
-module SelectOptionMap = Data_Map.Make(Ord);
+module SelectOptionMap = Ley.Map.Make(Ord);
 
 type map = SelectOptionMap.t(t);
 
@@ -89,9 +89,9 @@ module Decode = {
   type tL10n = {
     id: Ids.selectOptionId,
     name: string,
-    description: Maybe.t(string),
-    specializations: Maybe.t(list(string)),
-    specializationInput: Maybe.t(string),
+    description: option(string),
+    specializations: option(list(string)),
+    specializationInput: option(string),
     src: list(Static_SourceRef.t),
     errata: list(Static_Erratum.t),
   };
@@ -108,14 +108,14 @@ module Decode = {
 
   type tUniv = {
     id: Ids.selectOptionId,
-    cost: Maybe.t(int),
+    cost: option(int),
     prerequisites: Static_Prerequisites.t,
-    isSecret: Maybe.t(bool),
-    languages: Maybe.t(list(int)),
-    continent: Maybe.t(int),
-    isExtinct: Maybe.t(bool),
-    animalGr: Maybe.t(int),
-    animalLevel: Maybe.t(int),
+    isSecret: option(bool),
+    languages: option(list(int)),
+    continent: option(int),
+    isExtinct: option(bool),
+    animalGr: option(int),
+    animalLevel: option(int),
   };
 
   let tUniv = json => {
@@ -144,8 +144,8 @@ module Decode = {
     specializationInput: l10n.specializationInput,
     animalGr: univ.animalGr,
     animalLevel: univ.animalLevel,
-    target: Maybe.Nothing,
-    wikiEntry: Maybe.Nothing,
+    target: None,
+    wikiEntry: None,
     src: l10n.src,
     errata: l10n.errata,
   };
@@ -176,7 +176,7 @@ module Decode = {
 
   type categoryWithGroups = {
     category,
-    groups: Maybe.t(list(int)),
+    groups: option(list(int)),
   };
 
   let categoryWithGroups = json => {
@@ -187,19 +187,19 @@ module Decode = {
   let entryToSelectOption = (~id, ~name, ~wikiEntry, ~src, ~errata) => {
     id,
     name,
-    cost: Maybe.Nothing,
+    cost: None,
     prerequisites: Static_Prerequisites.empty,
-    description: Maybe.Nothing,
-    isSecret: Maybe.Nothing,
-    languages: Maybe.Nothing,
-    continent: Maybe.Nothing,
-    isExtinct: Maybe.Nothing,
-    specializations: Maybe.Nothing,
-    specializationInput: Maybe.Nothing,
-    animalGr: Maybe.Nothing,
-    animalLevel: Maybe.Nothing,
-    target: Maybe.Nothing,
-    wikiEntry: Maybe.Just(wikiEntry),
+    description: None,
+    isSecret: None,
+    languages: None,
+    continent: None,
+    isExtinct: None,
+    specializations: None,
+    specializationInput: None,
+    animalGr: None,
+    animalLevel: None,
+    target: None,
+    wikiEntry: Some(wikiEntry),
     src,
     errata,
   };
@@ -207,12 +207,13 @@ module Decode = {
   let insertEntry = (s: t) => SelectOptionMap.insert(s.id, s);
 
   let resolveWithoutGroups = (f, mp, xs) =>
-    IntMap.Foldable.foldr(x => x |> f |> insertEntry, xs, mp);
+    Ley.IntMap.Foldable.foldr(x => x |> f |> insertEntry, xs, mp);
 
   let resolveGroups = (f, g, grs, mp, xs) =>
-    IntMap.Foldable.foldr(
+    Ley.IntMap.Foldable.foldr(
       x =>
-        ListH.Foldable.elem(g(x), grs) ? x |> f |> insertEntry : Function.id,
+        Ley.List.Foldable.elem(g(x), grs)
+          ? x |> f |> insertEntry : Ley.Function.id,
       xs,
       mp,
     );
@@ -250,9 +251,9 @@ module Decode = {
 
   let resolveCombatTechniques = mgrs =>
     switch (mgrs) {
-    | Maybe.Just(grs) =>
+    | Some(grs) =>
       resolveGroups(combatTechniqueToSelectOption, x => x.gr, grs)
-    | Maybe.Nothing => resolveWithoutGroups(combatTechniqueToSelectOption)
+    | None => resolveWithoutGroups(combatTechniqueToSelectOption)
     };
 
   let liturgicalChantToSelectOption = (x: Static_LiturgicalChant.t) =>
@@ -266,9 +267,9 @@ module Decode = {
 
   let resolveLiturgicalChants = mgrs =>
     switch (mgrs) {
-    | Maybe.Just(grs) =>
+    | Some(grs) =>
       resolveGroups(liturgicalChantToSelectOption, x => x.gr, grs)
-    | Maybe.Nothing => resolveWithoutGroups(liturgicalChantToSelectOption)
+    | None => resolveWithoutGroups(liturgicalChantToSelectOption)
     };
 
   let skillToSelectOption = (x: Static_Skill.t) =>
@@ -282,8 +283,8 @@ module Decode = {
 
   let resolveSkills = mgrs =>
     switch (mgrs) {
-    | Maybe.Just(grs) => resolveGroups(skillToSelectOption, x => x.gr, grs)
-    | Maybe.Nothing => resolveWithoutGroups(skillToSelectOption)
+    | Some(grs) => resolveGroups(skillToSelectOption, x => x.gr, grs)
+    | None => resolveWithoutGroups(skillToSelectOption)
     };
 
   let spellToSelectOption = (x: Static_Spell.t) =>
@@ -297,8 +298,8 @@ module Decode = {
 
   let resolveSpells = mgrs =>
     switch (mgrs) {
-    | Maybe.Just(grs) => resolveGroups(spellToSelectOption, x => x.gr, grs)
-    | Maybe.Nothing => resolveWithoutGroups(spellToSelectOption)
+    | Some(grs) => resolveGroups(spellToSelectOption, x => x.gr, grs)
+    | None => resolveWithoutGroups(spellToSelectOption)
     };
 
   /**
@@ -316,8 +317,8 @@ module Decode = {
         categories,
       ) =>
     categories
-    |> Maybe.fromMaybe([])
-    |> ListH.Foldable.foldr(
+    |> Ley.Option.fromOption([])
+    |> Ley.List.Foldable.foldr(
          cat =>
            switch (cat.category) {
            | Blessings => resolveBlessings(blessings)
@@ -335,25 +336,25 @@ module Decode = {
   let l10nToSelectOption = (l10n: tL10n) => {
     id: l10n.id,
     name: l10n.name,
-    cost: Maybe.Nothing,
+    cost: None,
     prerequisites: Static_Prerequisites.empty,
     description: l10n.description,
-    isSecret: Maybe.Nothing,
-    languages: Maybe.Nothing,
-    continent: Maybe.Nothing,
-    isExtinct: Maybe.Nothing,
+    isSecret: None,
+    languages: None,
+    continent: None,
+    isExtinct: None,
     specializations: l10n.specializations,
     specializationInput: l10n.specializationInput,
-    animalGr: Maybe.Nothing,
-    animalLevel: Maybe.Nothing,
-    target: Maybe.Nothing,
-    wikiEntry: Maybe.Nothing,
+    animalGr: None,
+    animalLevel: None,
+    target: None,
+    wikiEntry: None,
     src: l10n.src,
     errata: l10n.errata,
   };
 
   let mergeUnivIntoSelectOption = (univ: tUniv, x: t) =>
-    Maybe.Alternative.{
+    Ley.Option.Alternative.{
       id: x.id,
       name: x.name,
       cost: univ.cost <|> x.cost,
@@ -375,10 +376,10 @@ module Decode = {
 
   let mergeSelectOptions = (ml10ns, munivs, fromCategories) =>
     fromCategories
-    |> Maybe.maybe(
-         Function.id,
+    |> Ley.Option.option(
+         Ley.Function.id,
          (l10ns, mp) =>
-           ListH.Foldable.foldr(
+           Ley.List.Foldable.foldr(
              (l10n: tL10n, mp') =>
                if (SelectOptionMap.member(l10n.id, mp')) {
                  raise(
@@ -400,10 +401,10 @@ module Decode = {
            ),
          ml10ns,
        )
-    |> Maybe.maybe(
-         Function.id,
+    |> Ley.Option.option(
+         Ley.Function.id,
          (univs, mp) =>
-           ListH.Foldable.foldr(
+           Ley.List.Foldable.foldr(
              (univ: tUniv, mp') =>
                SelectOptionMap.adjust(
                  mergeUnivIntoSelectOption(univ),

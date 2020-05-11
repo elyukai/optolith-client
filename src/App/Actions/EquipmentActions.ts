@@ -1,6 +1,5 @@
-import { fmap } from "../../Data/Functor"
-import { bindF, fromJust, isJust, Just, Maybe } from "../../Data/Maybe"
-import { keys, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
+import { bindF, fmap, fromJust, isJust, Just, Maybe } from "../../Data/Maybe"
+import { keys, lookup, lookupF } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { IdPrefixes } from "../Constants/IdPrefixes"
@@ -15,11 +14,11 @@ import { getNewId, prefixId } from "../Utilities/IDUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { ReduxAction } from "./Actions"
 
-const getNewIdFromCurrentItems: (x: Just<OrderedMap<string, Record<Item>>>) => string =
+const getNewIdFromCurrentItems: (x: Just<StrMap<Record<Item>>>) => string =
   pipe (fromJust, keys, getNewId, prefixId (IdPrefixes.ITEM))
 
 const getNewIdFromCurrentHitZoneArmors:
-  (x: Just<OrderedMap<string, Record<HitZoneArmor>>>) => string =
+  (x: Just<StrMap<Record<HitZoneArmor>>>) => string =
   pipe (fromJust, keys, getNewId, prefixId (IdPrefixes.HIT_ZONE_ARMOR))
 
 export interface AddItemAction {

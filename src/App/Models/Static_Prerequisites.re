@@ -18,8 +18,8 @@ type socialStatus = int;
 [@genType "PactPrerequisite"]
 type pact = {
   category: int,
-  domain: Maybe.t(oneOrMany(int)),
-  level: Maybe.t(int),
+  domain: option(oneOrMany(int)),
+  level: option(int),
 };
 
 type primaryAttributeType =
@@ -42,9 +42,9 @@ type activatableId = [
 type activatable = {
   id: activatableId,
   active: bool,
-  sid: Maybe.t(Ids.selectOptionId),
-  sid2: Maybe.t(Ids.selectOptionId),
-  level: Maybe.t(int),
+  sid: option(Ids.selectOptionId),
+  sid2: option(Ids.selectOptionId),
+  level: option(int),
 };
 
 type activatableSkillId = [ | `Spell(int) | `LiturgicalChant(int)];
@@ -59,9 +59,9 @@ type activatableSkill = {
 type activatableMultiEntry = {
   id: list(activatableId),
   active: bool,
-  sid: Maybe.t(Ids.selectOptionId),
-  sid2: Maybe.t(Ids.selectOptionId),
-  level: Maybe.t(int),
+  sid: option(Ids.selectOptionId),
+  sid2: option(Ids.selectOptionId),
+  level: option(int),
 };
 
 [@genType "ActivatableMultiSelectPrerequisite"]
@@ -69,8 +69,8 @@ type activatableMultiSelect = {
   id: activatableId,
   active: bool,
   sid: list(Ids.selectOptionId),
-  sid2: Maybe.t(Ids.selectOptionId),
-  level: Maybe.t(int),
+  sid2: option(Ids.selectOptionId),
+  level: option(int),
 };
 
 type increasableId = [
@@ -95,21 +95,21 @@ type increasableMultiEntry = {
 
 [@genType "PrerequisitesForProfession"]
 type tProfession = {
-  sex: Maybe.t(sex),
-  race: Maybe.t(race),
-  culture: Maybe.t(culture),
+  sex: option(sex),
+  race: option(race),
+  culture: option(culture),
   activatable: list(activatable),
   increasable: list(increasable),
 };
 
 [@genType "Prerequisites"]
 type t = {
-  sex: Maybe.t(sex),
-  race: Maybe.t(race),
-  culture: Maybe.t(culture),
-  pact: Maybe.t(pact),
-  social: Maybe.t(socialStatus),
-  primaryAttribute: Maybe.t(primaryAttribute),
+  sex: option(sex),
+  race: option(race),
+  culture: option(culture),
+  pact: option(pact),
+  social: option(socialStatus),
+  primaryAttribute: option(primaryAttribute),
   activatable: list(activatable),
   activatableMultiEntry: list(activatableMultiEntry),
   activatableMultiSelect: list(activatableMultiSelect),
@@ -118,12 +118,12 @@ type t = {
 };
 
 let empty = {
-  sex: Maybe.Nothing,
-  race: Maybe.Nothing,
-  culture: Maybe.Nothing,
-  pact: Maybe.Nothing,
-  social: Maybe.Nothing,
-  primaryAttribute: Maybe.Nothing,
+  sex: None,
+  race: None,
+  culture: None,
+  pact: None,
+  social: None,
+  primaryAttribute: None,
   activatable: [],
   activatableMultiEntry: [],
   activatableMultiSelect: [],
@@ -133,35 +133,35 @@ let empty = {
 
 [@genType "PrerequisitesWithLevels"]
 type tWithLevel = {
-  sex: Maybe.t(sex),
-  race: Maybe.t(race),
-  culture: Maybe.t(culture),
-  pact: Maybe.t(pact),
-  social: Maybe.t(socialStatus),
-  primaryAttribute: Maybe.t(primaryAttribute),
+  sex: option(sex),
+  race: option(race),
+  culture: option(culture),
+  pact: option(pact),
+  social: option(socialStatus),
+  primaryAttribute: option(primaryAttribute),
   activatable: list(activatable),
   activatableMultiEntry: list(activatableMultiEntry),
   activatableMultiSelect: list(activatableMultiSelect),
   increasable: list(increasable),
   increasableMultiEntry: list(increasableMultiEntry),
-  levels: IntMap.t(t),
+  levels: Ley.IntMap.t(t),
 };
 
 [@genType "PrerequisitesForDisAdvWithLevels"]
 type tWithLevelDisAdv = {
   commonSuggestedByRCP: bool,
-  sex: Maybe.t(sex),
-  race: Maybe.t(race),
-  culture: Maybe.t(culture),
-  pact: Maybe.t(pact),
-  social: Maybe.t(socialStatus),
-  primaryAttribute: Maybe.t(primaryAttribute),
+  sex: option(sex),
+  race: option(race),
+  culture: option(culture),
+  pact: option(pact),
+  social: option(socialStatus),
+  primaryAttribute: option(primaryAttribute),
   activatable: list(activatable),
   activatableMultiEntry: list(activatableMultiEntry),
   activatableMultiSelect: list(activatableMultiSelect),
   increasable: list(increasable),
   increasableMultiEntry: list(increasableMultiEntry),
-  levels: IntMap.t(t),
+  levels: Ley.IntMap.t(t),
 };
 
 [@genType "OverridePrerequisite"]
@@ -171,41 +171,41 @@ type overridePrerequisite =
 
 [@genType "OverridePrerequisites"]
 type tIndex = {
-  sex: Maybe.t(overridePrerequisite),
-  race: Maybe.t(overridePrerequisite),
-  culture: Maybe.t(overridePrerequisite),
-  pact: Maybe.t(overridePrerequisite),
-  social: Maybe.t(overridePrerequisite),
-  primaryAttribute: Maybe.t(overridePrerequisite),
-  activatable: IntMap.t(overridePrerequisite),
-  activatableMultiEntry: IntMap.t(overridePrerequisite),
-  activatableMultiSelect: IntMap.t(overridePrerequisite),
-  increasable: IntMap.t(overridePrerequisite),
-  increasableMultiEntry: IntMap.t(overridePrerequisite),
+  sex: option(overridePrerequisite),
+  race: option(overridePrerequisite),
+  culture: option(overridePrerequisite),
+  pact: option(overridePrerequisite),
+  social: option(overridePrerequisite),
+  primaryAttribute: option(overridePrerequisite),
+  activatable: Ley.IntMap.t(overridePrerequisite),
+  activatableMultiEntry: Ley.IntMap.t(overridePrerequisite),
+  activatableMultiSelect: Ley.IntMap.t(overridePrerequisite),
+  increasable: Ley.IntMap.t(overridePrerequisite),
+  increasableMultiEntry: Ley.IntMap.t(overridePrerequisite),
 };
 
 [@genType "OverridePrerequisitesWithLevels"]
 type tIndexWithLevel = {
-  sex: Maybe.t(overridePrerequisite),
-  race: Maybe.t(overridePrerequisite),
-  culture: Maybe.t(overridePrerequisite),
-  pact: Maybe.t(overridePrerequisite),
-  social: Maybe.t(overridePrerequisite),
-  primaryAttribute: Maybe.t(overridePrerequisite),
-  activatable: IntMap.t(overridePrerequisite),
-  activatableMultiEntry: IntMap.t(overridePrerequisite),
-  activatableMultiSelect: IntMap.t(overridePrerequisite),
-  increasable: IntMap.t(overridePrerequisite),
-  increasableMultiEntry: IntMap.t(overridePrerequisite),
-  levels: IntMap.t(tIndex),
+  sex: option(overridePrerequisite),
+  race: option(overridePrerequisite),
+  culture: option(overridePrerequisite),
+  pact: option(overridePrerequisite),
+  social: option(overridePrerequisite),
+  primaryAttribute: option(overridePrerequisite),
+  activatable: Ley.IntMap.t(overridePrerequisite),
+  activatableMultiEntry: Ley.IntMap.t(overridePrerequisite),
+  activatableMultiSelect: Ley.IntMap.t(overridePrerequisite),
+  increasable: Ley.IntMap.t(overridePrerequisite),
+  increasableMultiEntry: Ley.IntMap.t(overridePrerequisite),
+  levels: Ley.IntMap.t(tIndex),
 };
 
 module Decode = {
   open Json.Decode;
   open JsonStrict;
-  open Maybe.Functor;
-  open Maybe.Monad;
-  open Maybe.Alternative;
+  open Ley.Option.Functor;
+  open Ley.Option.Monad;
+  open Ley.Option.Alternative;
 
   let oneOrManyInt =
     oneOf([
@@ -372,11 +372,11 @@ module Decode = {
     activatable:
       json
       |> optionalField("activatablePrerequisites", list(activatable))
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     increasable:
       json
       |> optionalField("increasablePrerequisites", list(increasable))
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
   };
 
   let t = (json): t => {
@@ -390,32 +390,32 @@ module Decode = {
     activatable:
       json
       |> optionalField("activatablePrerequisites", list(activatable))
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     activatableMultiEntry:
       json
       |> optionalField(
            "activatableMultiEntryPrerequisites",
            list(activatableMultiEntry),
          )
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     activatableMultiSelect:
       json
       |> optionalField(
            "activatableMultiSelectPrerequisites",
            list(activatableMultiSelect),
          )
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     increasable:
       json
       |> optionalField("increasablePrerequisites", list(increasable))
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     increasableMultiEntry:
       json
       |> optionalField(
            "increasableMultiEntryPrerequisites",
            list(increasableMultiEntry),
          )
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
   };
 
   let level = json => (json |> field("level", int), json |> t);
@@ -431,37 +431,37 @@ module Decode = {
     activatable:
       json
       |> optionalField("activatablePrerequisites", list(activatable))
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     activatableMultiEntry:
       json
       |> optionalField(
            "activatableMultiEntryPrerequisites",
            list(activatableMultiEntry),
          )
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     activatableMultiSelect:
       json
       |> optionalField(
            "activatableMultiSelectPrerequisites",
            list(activatableMultiSelect),
          )
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     increasable:
       json
       |> optionalField("increasablePrerequisites", list(increasable))
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     increasableMultiEntry:
       json
       |> optionalField(
            "increasableMultiEntryPrerequisites",
            list(increasableMultiEntry),
          )
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     levels:
       json
       |> optionalField("levelPrerequisites", list(level))
-      |> Maybe.fromMaybe([])
-      |> IntMap.fromList,
+      |> Ley.Option.fromOption([])
+      |> Ley.IntMap.fromList,
   };
 
   let tWithLevelDisAdv = json => {
@@ -477,37 +477,37 @@ module Decode = {
     activatable:
       json
       |> optionalField("activatablePrerequisites", list(activatable))
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     activatableMultiEntry:
       json
       |> optionalField(
            "activatableMultiEntryPrerequisites",
            list(activatableMultiEntry),
          )
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     activatableMultiSelect:
       json
       |> optionalField(
            "activatableMultiSelectPrerequisites",
            list(activatableMultiSelect),
          )
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     increasable:
       json
       |> optionalField("increasablePrerequisites", list(increasable))
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     increasableMultiEntry:
       json
       |> optionalField(
            "increasableMultiEntryPrerequisites",
            list(increasableMultiEntry),
          )
-      |> Maybe.fromMaybe([]),
+      |> Ley.Option.fromOption([]),
     levels:
       json
       |> optionalField("levelPrerequisites", list(level))
-      |> Maybe.fromMaybe([])
-      |> IntMap.fromList,
+      |> Ley.Option.fromOption([])
+      |> Ley.IntMap.fromList,
   };
 
   let replacementAtIndex = json => (
@@ -516,17 +516,17 @@ module Decode = {
   );
 
   type tIndexL10n = {
-    sex: Maybe.t(string),
-    race: Maybe.t(string),
-    culture: Maybe.t(string),
-    pact: Maybe.t(string),
-    social: Maybe.t(string),
-    primaryAttribute: Maybe.t(string),
-    activatable: Maybe.t(list((int, string))),
-    activatableMultiEntry: Maybe.t(list((int, string))),
-    activatableMultiSelect: Maybe.t(list((int, string))),
-    increasable: Maybe.t(list((int, string))),
-    increasableMultiEntry: Maybe.t(list((int, string))),
+    sex: option(string),
+    race: option(string),
+    culture: option(string),
+    pact: option(string),
+    social: option(string),
+    primaryAttribute: option(string),
+    activatable: option(list((int, string))),
+    activatableMultiEntry: option(list((int, string))),
+    activatableMultiSelect: option(list((int, string))),
+    increasable: option(list((int, string))),
+    increasableMultiEntry: option(list((int, string))),
   };
 
   let tIndexL10n = json => {
@@ -564,17 +564,17 @@ module Decode = {
   };
 
   type tIndexUniv = {
-    sex: Maybe.t(bool),
-    race: Maybe.t(bool),
-    culture: Maybe.t(bool),
-    pact: Maybe.t(bool),
-    social: Maybe.t(bool),
-    primaryAttribute: Maybe.t(bool),
-    activatable: Maybe.t(list(int)),
-    activatableMultiEntry: Maybe.t(list(int)),
-    activatableMultiSelect: Maybe.t(list(int)),
-    increasable: Maybe.t(list(int)),
-    increasableMultiEntry: Maybe.t(list(int)),
+    sex: option(bool),
+    race: option(bool),
+    culture: option(bool),
+    pact: option(bool),
+    social: option(bool),
+    primaryAttribute: option(bool),
+    activatable: option(list(int)),
+    activatableMultiEntry: option(list(int)),
+    activatableMultiSelect: option(list(int)),
+    increasable: option(list(int)),
+    increasableMultiEntry: option(list(int)),
   };
 
   let tIndexUniv = json => {
@@ -600,29 +600,29 @@ module Decode = {
   let mergeSingleOverride = (univ, l10n) =>
     l10n
     <&> (x => ReplaceWith(x))
-    <|> (univ >>= (x => x ? Just(Hide) : Nothing));
+    <|> (univ >>= (x => x ? Some(Hide) : None));
 
   let mergeMapOverride = (univ, l10n) =>
-    IntMap.empty
+    Ley.IntMap.empty
     |> (
       mp =>
-        ListH.Foldable.foldr(
-          x => IntMap.insert(x, Hide),
+        Ley.List.Foldable.foldr(
+          x => Ley.IntMap.insert(x, Hide),
           mp,
-          univ |> Maybe.fromMaybe([]),
+          univ |> Ley.Option.fromOption([]),
         )
         |> (
           mp =>
-            ListH.Foldable.foldr(
+            Ley.List.Foldable.foldr(
               ((k, replacement)) =>
-                IntMap.insert(k, ReplaceWith(replacement)),
+                Ley.IntMap.insert(k, ReplaceWith(replacement)),
               mp,
-              l10n |> Maybe.fromMaybe([]),
+              l10n |> Ley.Option.fromOption([]),
             )
         )
     );
 
-  let tIndex = (univ, l10n: Maybe.t(tIndexL10n)): tIndex => {
+  let tIndex = (univ, l10n: option(tIndexL10n)): tIndex => {
     sex: mergeSingleOverride(univ >>= (x => x.sex), l10n >>= (x => x.sex)),
     race: mergeSingleOverride(univ >>= (x => x.race), l10n >>= (x => x.race)),
     culture:
@@ -671,18 +671,18 @@ module Decode = {
   );
 
   type tIndexWithLevelL10n = {
-    sex: Maybe.t(string),
-    race: Maybe.t(string),
-    culture: Maybe.t(string),
-    pact: Maybe.t(string),
-    social: Maybe.t(string),
-    primaryAttribute: Maybe.t(string),
-    activatable: Maybe.t(list((int, string))),
-    activatableMultiEntry: Maybe.t(list((int, string))),
-    activatableMultiSelect: Maybe.t(list((int, string))),
-    increasable: Maybe.t(list((int, string))),
-    increasableMultiEntry: Maybe.t(list((int, string))),
-    levels: Maybe.t(list((int, tIndexL10n))),
+    sex: option(string),
+    race: option(string),
+    culture: option(string),
+    pact: option(string),
+    social: option(string),
+    primaryAttribute: option(string),
+    activatable: option(list((int, string))),
+    activatableMultiEntry: option(list((int, string))),
+    activatableMultiSelect: option(list((int, string))),
+    increasable: option(list((int, string))),
+    increasableMultiEntry: option(list((int, string))),
+    levels: option(list((int, tIndexL10n))),
   };
 
   let tIndexWithLevelL10n = json => {
@@ -726,18 +726,18 @@ module Decode = {
   );
 
   type tIndexWithLevelUniv = {
-    sex: Maybe.t(bool),
-    race: Maybe.t(bool),
-    culture: Maybe.t(bool),
-    pact: Maybe.t(bool),
-    social: Maybe.t(bool),
-    primaryAttribute: Maybe.t(bool),
-    activatable: Maybe.t(list(int)),
-    activatableMultiEntry: Maybe.t(list(int)),
-    activatableMultiSelect: Maybe.t(list(int)),
-    increasable: Maybe.t(list(int)),
-    increasableMultiEntry: Maybe.t(list(int)),
-    levels: Maybe.t(list((int, tIndexUniv))),
+    sex: option(bool),
+    race: option(bool),
+    culture: option(bool),
+    pact: option(bool),
+    social: option(bool),
+    primaryAttribute: option(bool),
+    activatable: option(list(int)),
+    activatableMultiEntry: option(list(int)),
+    activatableMultiSelect: option(list(int)),
+    increasable: option(list(int)),
+    increasableMultiEntry: option(list(int)),
+    levels: option(list((int, tIndexUniv))),
   };
 
   let tIndexWithLevelUniv = json => {
@@ -767,37 +767,37 @@ module Decode = {
    * Inserts all univs first, then adds the l10ns and finally merges them.
    */
   let mergeIndexLevels = (univ, l10n) =>
-    IntMap.empty
+    Ley.IntMap.empty
     |> (
       mp =>
-        ListH.Foldable.foldr(
-          ((k, x)) => IntMap.insert(k, (Maybe.Just(x), Maybe.Nothing)),
+        Ley.List.Foldable.foldr(
+          ((k, x)) => Ley.IntMap.insert(k, (Some(x), None)),
           mp,
-          univ |> Maybe.fromMaybe([]),
+          univ |> Ley.Option.fromOption([]),
         )
         |> (
           mp =>
-            ListH.Foldable.foldr(
+            Ley.List.Foldable.foldr(
               ((k, x)) =>
-                IntMap.alter(
+                Ley.IntMap.alter(
                   my =>
-                    Maybe.maybe(
-                      (Maybe.Nothing, Maybe.Just(x)),
-                      y => (fst(y), Maybe.Just(x)),
+                    Ley.Option.option(
+                      (None, Some(x)),
+                      y => (fst(y), Some(x)),
                       my,
                     )
-                    |> (y => Maybe.Just(y)),
+                    |> (y => Some(y)),
                   k,
                 ),
               mp,
-              l10n |> Maybe.fromMaybe([]),
+              l10n |> Ley.Option.fromOption([]),
             )
-            |> IntMap.map(((muniv, ml10n)) => tIndex(muniv, ml10n))
+            |> Ley.IntMap.map(((muniv, ml10n)) => tIndex(muniv, ml10n))
         )
     );
 
   let tIndexWithLevel =
-      (univ, l10n: Maybe.t(tIndexWithLevelL10n)): tIndexWithLevel => {
+      (univ, l10n: option(tIndexWithLevelL10n)): tIndexWithLevel => {
     sex: mergeSingleOverride(univ >>= (x => x.sex), l10n >>= (x => x.sex)),
     race: mergeSingleOverride(univ >>= (x => x.race), l10n >>= (x => x.race)),
     culture:

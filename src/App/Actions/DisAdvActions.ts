@@ -1,7 +1,6 @@
-import { fmap, fmapF } from "../../Data/Functor"
 import { over, set } from "../../Data/Lens"
 import { List, subscriptF, uncons } from "../../Data/List"
-import { altF_, bind, bindF, elem, ensure, fromJust, isJust, join, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe"
+import { altF_, bind, bindF, elem, ensure, fmap, fmapF, fromJust, isJust, join, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe"
 import { negate, subtract } from "../../Data/Num"
 import { lookup } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"

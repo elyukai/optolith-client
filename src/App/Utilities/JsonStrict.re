@@ -5,9 +5,9 @@ open Json.Decode;
 let maybe = (decode: decoder('a), json) =>
   if ((Obj.magic(json): Js.undefined('a)) == Js.undefined
       || (Obj.magic(json): Js.null('a)) == Js.null) {
-    Maybe.Nothing;
+    None;
   } else {
-    Maybe.Just(decode(json));
+    Some(decode(json));
   };
 
 let optionalField = (key, decode, json) => field(key, maybe(decode), json);

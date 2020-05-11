@@ -86,7 +86,7 @@ module Phase = {
     | 3 => Advancement
     | x =>
       invalid_arg(
-        "unsafeFromInt: " ++ Int.show(x) ++ " is not a valid phase",
+        "unsafeFromInt: " ++ Ley.Int.show(x) ++ " is not a valid phase",
       )
     };
 
@@ -126,7 +126,9 @@ module ExperienceLevelId = {
     | 7 => Legendary
     | x =>
       invalid_arg(
-        "unsafeFromInt: " ++ Int.show(x) ++ " is not a valid experience level",
+        "unsafeFromInt: "
+        ++ Ley.Int.show(x)
+        ++ " is not a valid experience level",
       )
     };
 
@@ -207,7 +209,7 @@ module AttrId = {
     | 8 => Strength
     | x =>
       invalid_arg(
-        "unsafeFromInt: " ++ Int.show(x) ++ " is not a valid attribute",
+        "unsafeFromInt: " ++ Ley.Int.show(x) ++ " is not a valid attribute",
       )
     };
 
@@ -687,7 +689,8 @@ module SkillId = {
     | 57 => PickLocks
     | 58 => Earthencraft
     | 59 => Clothworking
-    | x => invalid_arg("fromInt: " ++ Int.show(x) ++ " is not a valid skill")
+    | x =>
+      invalid_arg("fromInt: " ++ Ley.Int.show(x) ++ " is not a valid skill")
     };
 
   let toInt = id =>

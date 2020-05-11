@@ -2,7 +2,7 @@ type t = {
   id: int,
   name: string,
   check: (int, int, int),
-  checkMod: Maybe.t(CheckModifier.t),
+  checkMod: option(CheckModifier.t),
   effect: string,
   castingTime: string,
   castingTimeShort: string,
@@ -62,7 +62,7 @@ module Decode = {
     check1: int,
     check2: int,
     check3: int,
-    checkMod: Maybe.t(CheckModifier.t),
+    checkMod: option(CheckModifier.t),
     property: int,
     ic: IC.t,
   };
@@ -103,12 +103,12 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.rogueSpellsUniv |> list(tUniv),
       yamlData.rogueSpellsL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

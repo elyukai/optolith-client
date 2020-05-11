@@ -2,12 +2,12 @@
 'use strict';
 
 var Pervasives = require("bs-platform/lib/js/pervasives.js");
-var Int$OptolithClient = require("../../Data/Int.bs.js");
+var Ley_Int$OptolithClient = require("../../Data/Ley_Int.bs.js");
 
 function unsafePhaseFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 2 || switcher < 0) {
-    return Pervasives.invalid_arg("unsafePhaseFromInt: " + (Int$OptolithClient.show(id) + " is not a valid phase"));
+    return Pervasives.invalid_arg("unsafePhaseFromInt: " + (Ley_Int$OptolithClient.show(id) + " is not a valid phase"));
   } else {
     return switcher;
   }
@@ -20,7 +20,7 @@ function phaseToInt(id) {
 function unsafeExperienceLevelFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 6 || switcher < 0) {
-    return Pervasives.invalid_arg("unsafeExperienceLevelFromInt: " + (Int$OptolithClient.show(id) + " is not a valid experience level"));
+    return Pervasives.invalid_arg("unsafeExperienceLevelFromInt: " + (Ley_Int$OptolithClient.show(id) + " is not a valid experience level"));
   } else {
     return switcher;
   }
@@ -33,7 +33,7 @@ function experienceLevelToInt(id) {
 function unsafeAttributeFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 7 || switcher < 0) {
-    return Pervasives.invalid_arg("unsafeAttributeFromInt: " + (Int$OptolithClient.show(id) + " is not a valid attribute"));
+    return Pervasives.invalid_arg("unsafeAttributeFromInt: " + (Ley_Int$OptolithClient.show(id) + " is not a valid attribute"));
   } else {
     return switcher;
   }
@@ -459,7 +459,7 @@ function disadvantageToInt(id) {
 function unsafeSkillFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 58 || switcher < 0) {
-    return Pervasives.invalid_arg("unsafeSkillFromInt: " + (Int$OptolithClient.show(id) + " is not a valid skill"));
+    return Pervasives.invalid_arg("unsafeSkillFromInt: " + (Ley_Int$OptolithClient.show(id) + " is not a valid skill"));
   } else {
     return switcher;
   }
@@ -571,7 +571,7 @@ function combatTechniqueToInt(id) {
 function unsafeCombatTechniqueGroupFromInt(id) {
   if (id !== 1) {
     if (id !== 2) {
-      return Pervasives.invalid_arg("unsafeCombatTechniqueGroupFromInt: " + (Int$OptolithClient.show(id) + " is not a valid combat technique group"));
+      return Pervasives.invalid_arg("unsafeCombatTechniqueGroupFromInt: " + (Ley_Int$OptolithClient.show(id) + " is not a valid combat technique group"));
     } else {
       return /* Ranged */1;
     }

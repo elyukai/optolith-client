@@ -1,7 +1,6 @@
 import * as React from "react"
 import { List } from "../../../Data/List"
 import { elem, fromJust, isJust, Maybe, or } from "../../../Data/Maybe"
-import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { EditItem } from "../../Models/Hero/EditItem"
 import { Attribute } from "../../Models/Wiki/Attribute"
@@ -21,8 +20,8 @@ export interface ItemEditorOwnProps {
 }
 
 export interface ItemEditorStateProps {
-  attributes: OrderedMap<string, Record<Attribute>>
-  combatTechniques: OrderedMap<string, Record<CombatTechnique>>
+  attributes: StrMap<Record<Attribute>>
+  combatTechniques: StrMap<Record<CombatTechnique>>
   isInCreation: Maybe<boolean>
   item: Maybe<Record<EditItem>>
   templates: List<Record<ItemTemplate>>

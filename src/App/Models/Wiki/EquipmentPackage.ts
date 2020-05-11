@@ -5,7 +5,7 @@ export interface EquipmentPackage {
   "@@name": "EquipmentPackage"
   id: string
   name: string
-  items: OrderedMap<string, number>
+  items: StrMap<number>
 }
 
 export const EquipmentPackage =

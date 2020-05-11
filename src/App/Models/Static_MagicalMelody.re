@@ -1,15 +1,15 @@
 type t = {
   id: int,
   name: string,
-  nameByTradition: IntMap.t(string),
+  nameByTradition: Ley.IntMap.t(string),
   check: (int, int, int),
   effect: string,
   duration: string,
   durationShort: string,
   aeCost: string,
   aeCostShort: string,
-  skill: Maybe.t(int),
-  musictraditions: IntSet.t,
+  skill: option(int),
+  musictraditions: Ley.IntSet.t,
   property: int,
   ic: IC.t,
   src: list(Static_SourceRef.t),
@@ -56,7 +56,7 @@ module Decode = {
     check1: int,
     check2: int,
     check3: int,
-    skill: Maybe.t(int),
+    skill: option(int),
     musictraditions: list(int),
     property: int,
     ic: IC.t,
@@ -78,7 +78,7 @@ module Decode = {
     {
       id: univ.id,
       name: l10n.name,
-      nameByTradition: l10n.nameByTradition |> IntMap.fromList,
+      nameByTradition: l10n.nameByTradition |> Ley.IntMap.fromList,
       check: (univ.check1, univ.check2, univ.check3),
       effect: l10n.effect,
       duration: l10n.duration,
@@ -86,7 +86,7 @@ module Decode = {
       aeCost: l10n.aeCost,
       aeCostShort: l10n.aeCostShort,
       skill: univ.skill,
-      musictraditions: univ.musictraditions |> IntSet.fromList,
+      musictraditions: univ.musictraditions |> Ley.IntSet.fromList,
       property: univ.property,
       ic: univ.ic,
       src: l10n.src,
@@ -96,12 +96,12 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.magicalMelodiesUniv |> list(tUniv),
       yamlData.magicalMelodiesL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

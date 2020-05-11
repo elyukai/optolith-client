@@ -20,6 +20,6 @@ module Decode = {
   let all = (yamlData: Yaml_Raw.yamlData) =>
     yamlData.booksL10n
     |> list(t)
-    |> ListH.map(x => (x.id, x))
-    |> StrMap.fromList;
+    |> Ley.List.map(x => (x.id, x))
+    |> Ley.StrMap.fromList;
 };

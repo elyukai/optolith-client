@@ -47,21 +47,21 @@ export interface HeroModel {
   sex: Sex
   experienceLevel: string
   personalData: Record<PersonalData>
-  advantages: OrderedMap<string, Record<ActivatableDependent>>
-  disadvantages: OrderedMap<string, Record<ActivatableDependent>>
-  specialAbilities: OrderedMap<string, Record<ActivatableDependent>>
-  attributes: OrderedMap<string, Record<AttributeDependent>>
+  advantages: StrMap<Record<ActivatableDependent>>
+  disadvantages: StrMap<Record<ActivatableDependent>>
+  specialAbilities: StrMap<Record<ActivatableDependent>>
+  attributes: StrMap<Record<AttributeDependent>>
   attributeAdjustmentSelected: string
   energies: Record<Energies>
-  skills: OrderedMap<string, Record<SkillDependent>>
-  combatTechniques: OrderedMap<string, Record<SkillDependent>>
-  spells: OrderedMap<string, Record<ActivatableSkillDependent>>
+  skills: StrMap<Record<SkillDependent>>
+  combatTechniques: StrMap<Record<SkillDependent>>
+  spells: StrMap<Record<ActivatableSkillDependent>>
   cantrips: OrderedSet<string>
-  liturgicalChants: OrderedMap<string, Record<ActivatableSkillDependent>>
+  liturgicalChants: StrMap<Record<ActivatableSkillDependent>>
   blessings: OrderedSet<string>
   belongings: Record<Belongings>
   rules: Record<Rules>
-  pets: OrderedMap<string, Record<Pet>>
+  pets: StrMap<Record<Pet>>
   petInEditor: Maybe<Record<EditPet>>
   isInPetCreation: boolean
   pact: Maybe<Record<Pact>>

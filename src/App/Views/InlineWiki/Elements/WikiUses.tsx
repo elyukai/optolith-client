@@ -1,6 +1,5 @@
 import * as React from "react"
 import { intercalate, List, map, notNull } from "../../../../Data/List"
-import { OrderedMap } from "../../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { Advantage } from "../../../Models/Wiki/Advantage"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
@@ -14,11 +13,11 @@ interface Accessors<A extends RecordIBase<any>> {
 }
 
 export interface WikiUsesProps<A extends RecordIBase<any>> {
-  advantages: OrderedMap<string, Record<Advantage>>
+  advantages: StrMap<Record<Advantage>>
   x: Record<A>
   acc: Accessors<A>
   staticData: StaticDataRecord
-  specialAbilities: OrderedMap<string, Record<SpecialAbility>>
+  specialAbilities: StrMap<Record<SpecialAbility>>
 }
 
 const UA = Use.A

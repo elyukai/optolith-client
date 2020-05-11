@@ -1,6 +1,6 @@
 import { any, filter, fnull, List } from "../../Data/List"
 import { fromJust, isJust, Maybe } from "../../Data/Maybe"
-import { lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
+import { lookup, lookupF } from "../../Data/OrderedMap"
 import { member, OrderedSet } from "../../Data/OrderedSet"
 import { Record } from "../../Data/Record"
 import { fst, snd, Tuple } from "../../Data/Tuple"
@@ -24,7 +24,7 @@ export const sourceBooksPairToTuple =
  * Returns if a book is currently enabled.
  */
 export const isBookEnabled =
-  (booksMap: OrderedMap<string, Record<Book>>) =>
+  (booksMap: StrMap<Record<Book>>) =>
   (enabledRuleBooks: OrderedSet<string>) =>
   (areAllRuleBooksEnabled: boolean) =>
   (id: string): boolean => {
@@ -52,7 +52,7 @@ export const isAvailable =
     pipe (f, any (pipe (SLA.id, uncurry3 (isBookEnabled) (sourceBooksPairToTuple (availablility)))))
 
 export const isAvailableF =
-  (booksMap: OrderedMap<string, Record<Book>>) =>
+  (booksMap: StrMap<Record<Book>>) =>
   (enabledRuleBooks: OrderedSet<string>) =>
   (areAllRuleBooksEnabled: boolean) =>
   <A>
@@ -82,7 +82,7 @@ export const filterByAvailability =
     filter<A> (e => fnull (f (e)) || isAvailable (f) (availablility) (e))
 
 export const isEntryAvailable =
-  (booksMap: OrderedMap<string, Record<Book>>) =>
+  (booksMap: StrMap<Record<Book>>) =>
   (enabledRuleBooks: OrderedSet<string>) =>
   (areAllRuleBooksEnabled: boolean) =>
   <A> (f: (x: A) => List<Record<SourceLink>>) =>
@@ -91,7 +91,7 @@ export const isEntryAvailable =
     || isAvailableF (booksMap) (enabledRuleBooks) (areAllRuleBooksEnabled) (f) (x)
 
 export const filterByAvailabilityF =
-  (booksMap: OrderedMap<string, Record<Book>>) =>
+  (booksMap: StrMap<Record<Book>>) =>
   (enabledRuleBooks: OrderedSet<string>) =>
   (areAllRuleBooksEnabled: boolean) =>
   <A> (f: (x: A) => List<Record<SourceLink>>) =>

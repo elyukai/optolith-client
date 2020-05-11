@@ -2,6 +2,8 @@
 /* eslint-disable import/first */
 
 
+import {IntMap_t as Ley_IntMap_t} from '../../../src/Data/Ley.gen';
+
 import {list} from '../../../src/shims/ReasonPervasives.shim';
 
 import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/GenericHelpers.gen';
@@ -9,10 +11,6 @@ import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/
 import {selectOptionId as Ids_selectOptionId} from '../../../src/App/Constants/Ids.gen';
 
 import {sex as Hero_sex} from './Hero.gen';
-
-import {t as IntMap_t} from '../../../src/shims/IntMap.gen';
-
-import {t as Maybe_t} from '../../../src/Data/Maybe.gen';
 
 // tslint:disable-next-line:interface-over-type-literal
 export type sex = Hero_sex;
@@ -33,8 +31,8 @@ export type SocialPrerequisite = socialStatus;
 // tslint:disable-next-line:interface-over-type-literal
 export type pact = {
   readonly category: number; 
-  readonly domain: Maybe_t<GenericHelpers_oneOrMany<number>>; 
-  readonly level: Maybe_t<number>
+  readonly domain?: GenericHelpers_oneOrMany<number>; 
+  readonly level?: number
 };
 export type PactPrerequisite = pact;
 
@@ -55,9 +53,9 @@ export type activatableId =
 export type activatable = {
   readonly id: activatableId; 
   readonly active: boolean; 
-  readonly sid: Maybe_t<Ids_selectOptionId>; 
-  readonly sid2: Maybe_t<Ids_selectOptionId>; 
-  readonly level: Maybe_t<number>
+  readonly sid?: Ids_selectOptionId; 
+  readonly sid2?: Ids_selectOptionId; 
+  readonly level?: number
 };
 export type ActivatablePrerequisite = activatable;
 
@@ -74,9 +72,9 @@ export type ActivatableSkillPrerequisite = activatableSkill;
 export type activatableMultiEntry = {
   readonly id: list<activatableId>; 
   readonly active: boolean; 
-  readonly sid: Maybe_t<Ids_selectOptionId>; 
-  readonly sid2: Maybe_t<Ids_selectOptionId>; 
-  readonly level: Maybe_t<number>
+  readonly sid?: Ids_selectOptionId; 
+  readonly sid2?: Ids_selectOptionId; 
+  readonly level?: number
 };
 export type ActivatableMultiEntryPrerequisite = activatableMultiEntry;
 
@@ -85,8 +83,8 @@ export type activatableMultiSelect = {
   readonly id: activatableId; 
   readonly active: boolean; 
   readonly sid: list<Ids_selectOptionId>; 
-  readonly sid2: Maybe_t<Ids_selectOptionId>; 
-  readonly level: Maybe_t<number>
+  readonly sid2?: Ids_selectOptionId; 
+  readonly level?: number
 };
 export type ActivatableMultiSelectPrerequisite = activatableMultiSelect;
 
@@ -108,9 +106,9 @@ export type IncreasableMultiEntryPrerequisite = increasableMultiEntry;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type tProfession = {
-  readonly sex: Maybe_t<sex>; 
-  readonly race: Maybe_t<race>; 
-  readonly culture: Maybe_t<culture>; 
+  readonly sex?: sex; 
+  readonly race?: race; 
+  readonly culture?: culture; 
   readonly activatable: list<activatable>; 
   readonly increasable: list<increasable>
 };
@@ -118,12 +116,12 @@ export type PrerequisitesForProfession = tProfession;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type t = {
-  readonly sex: Maybe_t<sex>; 
-  readonly race: Maybe_t<race>; 
-  readonly culture: Maybe_t<culture>; 
-  readonly pact: Maybe_t<pact>; 
-  readonly social: Maybe_t<socialStatus>; 
-  readonly primaryAttribute: Maybe_t<primaryAttribute>; 
+  readonly sex?: sex; 
+  readonly race?: race; 
+  readonly culture?: culture; 
+  readonly pact?: pact; 
+  readonly social?: socialStatus; 
+  readonly primaryAttribute?: primaryAttribute; 
   readonly activatable: list<activatable>; 
   readonly activatableMultiEntry: list<activatableMultiEntry>; 
   readonly activatableMultiSelect: list<activatableMultiSelect>; 
@@ -134,36 +132,36 @@ export type Prerequisites = t;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type tWithLevel = {
-  readonly sex: Maybe_t<sex>; 
-  readonly race: Maybe_t<race>; 
-  readonly culture: Maybe_t<culture>; 
-  readonly pact: Maybe_t<pact>; 
-  readonly social: Maybe_t<socialStatus>; 
-  readonly primaryAttribute: Maybe_t<primaryAttribute>; 
+  readonly sex?: sex; 
+  readonly race?: race; 
+  readonly culture?: culture; 
+  readonly pact?: pact; 
+  readonly social?: socialStatus; 
+  readonly primaryAttribute?: primaryAttribute; 
   readonly activatable: list<activatable>; 
   readonly activatableMultiEntry: list<activatableMultiEntry>; 
   readonly activatableMultiSelect: list<activatableMultiSelect>; 
   readonly increasable: list<increasable>; 
   readonly increasableMultiEntry: list<increasableMultiEntry>; 
-  readonly levels: IntMap_t<t>
+  readonly levels: Ley_IntMap_t<t>
 };
 export type PrerequisitesWithLevels = tWithLevel;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type tWithLevelDisAdv = {
   readonly commonSuggestedByRCP: boolean; 
-  readonly sex: Maybe_t<sex>; 
-  readonly race: Maybe_t<race>; 
-  readonly culture: Maybe_t<culture>; 
-  readonly pact: Maybe_t<pact>; 
-  readonly social: Maybe_t<socialStatus>; 
-  readonly primaryAttribute: Maybe_t<primaryAttribute>; 
+  readonly sex?: sex; 
+  readonly race?: race; 
+  readonly culture?: culture; 
+  readonly pact?: pact; 
+  readonly social?: socialStatus; 
+  readonly primaryAttribute?: primaryAttribute; 
   readonly activatable: list<activatable>; 
   readonly activatableMultiEntry: list<activatableMultiEntry>; 
   readonly activatableMultiSelect: list<activatableMultiSelect>; 
   readonly increasable: list<increasable>; 
   readonly increasableMultiEntry: list<increasableMultiEntry>; 
-  readonly levels: IntMap_t<t>
+  readonly levels: Ley_IntMap_t<t>
 };
 export type PrerequisitesForDisAdvWithLevels = tWithLevelDisAdv;
 
@@ -175,33 +173,33 @@ export type OverridePrerequisite = overridePrerequisite;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type tIndex = {
-  readonly sex: Maybe_t<overridePrerequisite>; 
-  readonly race: Maybe_t<overridePrerequisite>; 
-  readonly culture: Maybe_t<overridePrerequisite>; 
-  readonly pact: Maybe_t<overridePrerequisite>; 
-  readonly social: Maybe_t<overridePrerequisite>; 
-  readonly primaryAttribute: Maybe_t<overridePrerequisite>; 
-  readonly activatable: IntMap_t<overridePrerequisite>; 
-  readonly activatableMultiEntry: IntMap_t<overridePrerequisite>; 
-  readonly activatableMultiSelect: IntMap_t<overridePrerequisite>; 
-  readonly increasable: IntMap_t<overridePrerequisite>; 
-  readonly increasableMultiEntry: IntMap_t<overridePrerequisite>
+  readonly sex?: overridePrerequisite; 
+  readonly race?: overridePrerequisite; 
+  readonly culture?: overridePrerequisite; 
+  readonly pact?: overridePrerequisite; 
+  readonly social?: overridePrerequisite; 
+  readonly primaryAttribute?: overridePrerequisite; 
+  readonly activatable: Ley_IntMap_t<overridePrerequisite>; 
+  readonly activatableMultiEntry: Ley_IntMap_t<overridePrerequisite>; 
+  readonly activatableMultiSelect: Ley_IntMap_t<overridePrerequisite>; 
+  readonly increasable: Ley_IntMap_t<overridePrerequisite>; 
+  readonly increasableMultiEntry: Ley_IntMap_t<overridePrerequisite>
 };
 export type OverridePrerequisites = tIndex;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type tIndexWithLevel = {
-  readonly sex: Maybe_t<overridePrerequisite>; 
-  readonly race: Maybe_t<overridePrerequisite>; 
-  readonly culture: Maybe_t<overridePrerequisite>; 
-  readonly pact: Maybe_t<overridePrerequisite>; 
-  readonly social: Maybe_t<overridePrerequisite>; 
-  readonly primaryAttribute: Maybe_t<overridePrerequisite>; 
-  readonly activatable: IntMap_t<overridePrerequisite>; 
-  readonly activatableMultiEntry: IntMap_t<overridePrerequisite>; 
-  readonly activatableMultiSelect: IntMap_t<overridePrerequisite>; 
-  readonly increasable: IntMap_t<overridePrerequisite>; 
-  readonly increasableMultiEntry: IntMap_t<overridePrerequisite>; 
-  readonly levels: IntMap_t<tIndex>
+  readonly sex?: overridePrerequisite; 
+  readonly race?: overridePrerequisite; 
+  readonly culture?: overridePrerequisite; 
+  readonly pact?: overridePrerequisite; 
+  readonly social?: overridePrerequisite; 
+  readonly primaryAttribute?: overridePrerequisite; 
+  readonly activatable: Ley_IntMap_t<overridePrerequisite>; 
+  readonly activatableMultiEntry: Ley_IntMap_t<overridePrerequisite>; 
+  readonly activatableMultiSelect: Ley_IntMap_t<overridePrerequisite>; 
+  readonly increasable: Ley_IntMap_t<overridePrerequisite>; 
+  readonly increasableMultiEntry: Ley_IntMap_t<overridePrerequisite>; 
+  readonly levels: Ley_IntMap_t<tIndex>
 };
 export type OverridePrerequisitesWithLevels = tIndexWithLevel;

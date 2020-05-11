@@ -2,11 +2,11 @@
 'use strict';
 
 var Curry = require("bs-platform/lib/js/curry.js");
-var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
+var Ley_Option$OptolithClient = require("../../Data/Ley_Option.bs.js");
 
 function hasFrequencyRating(currentEntryRating, ratingMap, id) {
-  return Maybe$OptolithClient.Foldable.elem(currentEntryRating, Curry._2(IntMap$OptolithClient.lookup, id, ratingMap));
+  return Ley_Option$OptolithClient.Foldable.elem(currentEntryRating, Curry._2(Ley_IntMap$OptolithClient.lookup, id, ratingMap));
 }
 
 function isCommon(param, param$1) {
@@ -20,4 +20,4 @@ function isUncommon(param, param$1) {
 exports.hasFrequencyRating = hasFrequencyRating;
 exports.isCommon = isCommon;
 exports.isUncommon = isUncommon;
-/* IntMap-OptolithClient Not a pure module */
+/* Ley_IntMap-OptolithClient Not a pure module */

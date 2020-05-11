@@ -20,7 +20,7 @@ import { toPrerequisites } from "./ToPrerequisites"
 import { toSourceRefs } from "./ToSourceRefs"
 
 
-type InsertMap = ident<OrderedMap<string, Record<SelectOption>>>
+type InsertMap = ident<StrMap<Record<SelectOption>>>
 
 
 const blessingToSelectOption : (attr : Record<Blessing>) => Record<SelectOption>
@@ -32,7 +32,7 @@ const blessingToSelectOption : (attr : Record<Blessing>) => Record<SelectOption>
                                     })
 
 
-const resolveBlessings : (blessings : OrderedMap<string, Record<Blessing>>)
+const resolveBlessings : (blessings : StrMap<Record<Blessing>>)
                        => InsertMap
                        = flip (foldr (x => pipe_ (
                                              x,
@@ -50,7 +50,7 @@ const cantripToSelectOption : (cantrip : Record<Cantrip>) => Record<SelectOption
                                    })
 
 
-const resolveCantrips : (cantrips : OrderedMap<string, Record<Cantrip>>)
+const resolveCantrips : (cantrips : StrMap<Record<Cantrip>>)
                       => InsertMap
                       = flip (foldr (x => pipe_ (
                                             x,
@@ -70,7 +70,7 @@ const ctToSelectOption : (combatTechnique : Record<CombatTechnique>) => Record<S
 
 
 const resolveCombatTechniques : (gr : number[] | undefined)
-                              => (combatTechniques : OrderedMap<string, Record<CombatTechnique>>)
+                              => (combatTechniques : StrMap<Record<CombatTechnique>>)
                               => InsertMap
                               = gr => gr === undefined
                                       ? flip (foldr ((x : Record<CombatTechnique>) =>
@@ -100,7 +100,7 @@ const lcToSelectOption : (liturgicalChant : Record<LiturgicalChant>) => Record<S
 
 
 const resolveLiturgicalChants : (gr : number[] | undefined)
-                              => (liturgicalChants : OrderedMap<string, Record<LiturgicalChant>>)
+                              => (liturgicalChants : StrMap<Record<LiturgicalChant>>)
                               => InsertMap
                               = gr => gr === undefined
                                       ? flip (foldr ((x : Record<LiturgicalChant>) =>
@@ -132,7 +132,7 @@ const skillToSelectOption : (skill : Record<Skill>) => Record<SelectOption>
 
 
 const resolveSkills : (gr : number[] | undefined)
-                    => (skills : OrderedMap<string, Record<Skill>>)
+                    => (skills : StrMap<Record<Skill>>)
                     => InsertMap
                     = gr => gr === undefined
                             ? flip (foldr ((x : Record<Skill>) =>
@@ -162,7 +162,7 @@ const spellToSelectOption : (spell : Record<Spell>) => Record<SelectOption>
 
 
 const resolveSpells : (gr : number[] | undefined)
-                    => (spells : OrderedMap<string, Record<Spell>>)
+                    => (spells : StrMap<Record<Spell>>)
                     => InsertMap
                     = gr => gr === undefined
                             ? flip (foldr ((x : Record<Spell>) =>
@@ -185,14 +185,14 @@ const resolveSpells : (gr : number[] | undefined)
  * Takes an array of select option categories and resolves them into a list of
  * select options.
  */
-export const resolveSOCats : (blessings : OrderedMap<string, Record<Blessing>>)
-                           => (cantrips : OrderedMap<string, Record<Cantrip>>)
-                           => (combatTechniques : OrderedMap<string, Record<CombatTechnique>>)
-                           => (liturgicalChants : OrderedMap<string, Record<LiturgicalChant>>)
-                           => (skills : OrderedMap<string, Record<Skill>>)
-                           => (spells : OrderedMap<string, Record<Spell>>)
+export const resolveSOCats : (blessings : StrMap<Record<Blessing>>)
+                           => (cantrips : StrMap<Record<Cantrip>>)
+                           => (combatTechniques : StrMap<Record<CombatTechnique>>)
+                           => (liturgicalChants : StrMap<Record<LiturgicalChant>>)
+                           => (skills : StrMap<Record<Skill>>)
+                           => (spells : StrMap<Record<Spell>>)
                            => (categories : SelectOptionCategoryUniv[] | undefined)
-                           => OrderedMap<string, Record<SelectOption>>
+                           => StrMap<Record<SelectOption>>
                            = bs => cas => cts => lcs => sks => sps =>
                                pipe (
                                  xs => xs === undefined ? [] : xs,
@@ -255,7 +255,7 @@ const mergeUnivIntoL10n : (univ : SpecialAbilitySelectOptionUniv) => ident<Recor
 
 export const mergeSOs : (sosL10n : SpecialAbilitySelectOptionL10n[] | undefined)
                       => (sosUniv : SpecialAbilitySelectOptionUniv[] | undefined)
-                      => (soCatMap : OrderedMap<string, Record<SelectOption>>)
+                      => (soCatMap : StrMap<Record<SelectOption>>)
                       => Either<Error[], List<Record<SelectOption>>>
                       = sosL10n => sosUniv => soCatMap => {
                           const mp : Map<string | number, Record<SelectOption>>

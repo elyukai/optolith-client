@@ -1,7 +1,7 @@
 import * as React from "react"
 import { isNothing, maybe } from "../../../Data/Maybe"
 import { divideBy } from "../../../Data/Num"
-import { lookup, OrderedMap } from "../../../Data/OrderedMap"
+import { lookup } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { icFromJs } from "../../Constants/Groups"
 import { Skill } from "../../Models/Wiki/Skill"
@@ -12,7 +12,7 @@ import { BorderButton } from "../Universal/BorderButton"
 const SA = Skill.A
 
 interface Props {
-  active: OrderedMap<string, number>
+  active: StrMap<number>
   ap_left: number
   skill: Record<Skill>
   addSkillPoint: (id: string) => void

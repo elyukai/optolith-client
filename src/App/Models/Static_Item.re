@@ -1,15 +1,15 @@
 open GenericHelpers;
 
 type info = {
-  note: Maybe.t(string),
-  rules: Maybe.t(string),
-  advantage: Maybe.t(string),
-  disadvantage: Maybe.t(string),
+  note: option(string),
+  rules: option(string),
+  advantage: option(string),
+  disadvantage: option(string),
   src: list(Static_SourceRef.t),
   errata: list(Static_Erratum.t),
 };
 
-type mundaneItem = {structurePoints: Maybe.t(oneOrMany(int))};
+type mundaneItem = {structurePoints: option(oneOrMany(int))};
 
 type newAttribute = {
   attribute: int,
@@ -29,18 +29,18 @@ type primaryAttributeDamageThreshold =
 type damage = {
   amount: int,
   sides: int,
-  flat: Maybe.t(int),
+  flat: option(int),
 };
 
 type meleeWeapon = {
   combatTechnique: int,
   damage,
-  primaryAttributeDamageThreshold: Maybe.t(primaryAttributeDamageThreshold),
-  at: Maybe.t(int),
-  pa: Maybe.t(int),
-  reach: Maybe.t(int),
-  length: Maybe.t(int),
-  structurePoints: Maybe.t(int),
+  primaryAttributeDamageThreshold: option(primaryAttributeDamageThreshold),
+  at: option(int),
+  pa: option(int),
+  reach: option(int),
+  length: option(int),
+  structurePoints: option(int),
   isParryingWeapon: bool,
   isTwoHandedWeapon: bool,
   isImprovisedWeapon: bool,
@@ -48,11 +48,11 @@ type meleeWeapon = {
 
 type rangedWeapon = {
   combatTechnique: int,
-  damage: Maybe.t(damage),
-  length: Maybe.t(int),
+  damage: option(damage),
+  length: option(int),
   range: (int, int, int),
   reloadTime: oneOrMany(int),
-  ammunition: Maybe.t(int),
+  ammunition: option(int),
   isImprovisedWeapon: bool,
 };
 
@@ -73,9 +73,9 @@ type special =
 type t = {
   id: int,
   name: string,
-  price: Maybe.t(int),
-  weight: Maybe.t(int),
-  special: Maybe.t(special),
+  price: option(int),
+  weight: option(int),
+  special: option(special),
   info: list(info),
   gr: int,
 };
@@ -155,7 +155,7 @@ module Decode = {
   };
 
   let rangedWeapon = json =>
-    Maybe.Monad.{
+    Ley.Option.Monad.{
       combatTechnique: json |> field("combatTechnique", int),
       damage:
         liftM2(
@@ -198,9 +198,9 @@ module Decode = {
 
   type tUniv = {
     id: int,
-    price: Maybe.t(int),
-    weight: Maybe.t(int),
-    special: Maybe.t(special),
+    price: option(int),
+    weight: option(int),
+    special: option(special),
     gr: int,
   };
 
@@ -227,12 +227,12 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.equipmentUniv |> list(tUniv),
       yamlData.equipmentL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

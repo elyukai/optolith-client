@@ -14,7 +14,7 @@ module Decode = {
       let first = json |> field("firstPage", int);
       let mlast = json |> optionalField("lastPage", int);
 
-      Maybe.maybe((first, first), last => (first, last), mlast);
+      Ley.Option.option((first, first), last => (first, last), mlast);
     },
   };
 

@@ -10,9 +10,9 @@
 import { fmap } from "../../../Data/Functor"
 import { List } from "../../../Data/List"
 import { liftM2, liftM4, mapMaybe, Maybe } from "../../../Data/Maybe"
-import { lookup, OrderedMap } from "../../../Data/OrderedMap"
+import { lookup } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { fst, Pair, snd, Tuple } from "../../../Data/Tuple"
+import { fst, Pair, snd } from "../../../Data/Tuple"
 import { ActivatableCategory, Category } from "../../Constants/Categories"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
@@ -41,7 +41,7 @@ const HA = HeroModel.A
  */
 export const getActivatableHeroSliceByCategory =
   (category: ActivatableCategory) =>
-  (hero: HeroModelRecord): OrderedMap<string, Record<ActivatableDependent>> =>
+  (hero: HeroModelRecord): StrMap<Record<ActivatableDependent>> =>
     category === Category.ADVANTAGES
     ? HA.advantages (hero)
     : category === Category.DISADVANTAGES
@@ -62,12 +62,12 @@ type ActivatableWikiSliceByCategory<A extends ActivatableCategory> =
 export const getActivatableWikiSliceByCategory =
   <A extends ActivatableCategory>
   (category: A) =>
-  (wiki: StaticDataRecord): OrderedMap<string, ActivatableWikiSliceByCategory<A>> =>
+  (wiki: StaticDataRecord): StrMap<ActivatableWikiSliceByCategory<A>> =>
     category === Category.ADVANTAGES
-    ? SDA.advantages (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
+    ? SDA.advantages (wiki) as StrMap<ActivatableWikiSliceByCategory<A>>
     : category === Category.DISADVANTAGES
-    ? SDA.disadvantages (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
-    : SDA.specialAbilities (wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>
+    ? SDA.disadvantages (wiki) as StrMap<ActivatableWikiSliceByCategory<A>>
+    : SDA.specialAbilities (wiki) as StrMap<ActivatableWikiSliceByCategory<A>>
 
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing

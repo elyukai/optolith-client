@@ -1,24 +1,24 @@
 type t = {
   id: int,
   name: string,
-  nameInWiki: Maybe.t(string),
+  nameInWiki: option(string),
   noMaxAPInfluence: bool,
   isExclusiveToArcaneSpellworks: bool,
-  levels: Maybe.t(int),
-  max: Maybe.t(int),
+  levels: option(int),
+  max: option(int),
   rules: string,
   selectOptions: Static_SelectOption.map,
-  input: Maybe.t(string),
-  range: Maybe.t(string),
-  actions: Maybe.t(string),
+  input: option(string),
+  range: option(string),
+  actions: option(string),
   prerequisites: Static_Prerequisites.tWithLevelDisAdv,
-  prerequisitesText: Maybe.t(string),
+  prerequisitesText: option(string),
   prerequisitesTextIndex: Static_Prerequisites.tIndexWithLevel,
-  prerequisitesTextStart: Maybe.t(string),
-  prerequisitesTextEnd: Maybe.t(string),
-  apValue: Maybe.t(Static_Advantage.cost),
-  apValueText: Maybe.t(string),
-  apValueTextAppend: Maybe.t(string),
+  prerequisitesTextStart: option(string),
+  prerequisitesTextEnd: option(string),
+  apValue: option(Static_Advantage.cost),
+  apValueText: option(string),
+  apValueTextAppend: option(string),
   gr: int,
   src: list(Static_SourceRef.t),
   errata: list(Static_Erratum.t),
@@ -31,19 +31,19 @@ module Decode = {
   type tL10n = {
     id: int,
     name: string,
-    nameInWiki: Maybe.t(string),
+    nameInWiki: option(string),
     rules: string,
-    selectOptions: Maybe.t(list(Static_SelectOption.Decode.tL10n)),
-    input: Maybe.t(string),
-    range: Maybe.t(string),
-    actions: Maybe.t(string),
-    prerequisites: Maybe.t(string),
+    selectOptions: option(list(Static_SelectOption.Decode.tL10n)),
+    input: option(string),
+    range: option(string),
+    actions: option(string),
+    prerequisites: option(string),
     prerequisitesIndex:
-      Maybe.t(Static_Prerequisites.Decode.tIndexWithLevelL10n),
-    prerequisitesStart: Maybe.t(string),
-    prerequisitesEnd: Maybe.t(string),
-    apValue: Maybe.t(string),
-    apValueAppend: Maybe.t(string),
+      option(Static_Prerequisites.Decode.tIndexWithLevelL10n),
+    prerequisitesStart: option(string),
+    prerequisitesEnd: option(string),
+    apValue: option(string),
+    apValueAppend: option(string),
     src: list(Static_SourceRef.t),
     errata: list(Static_Erratum.t),
   };
@@ -81,17 +81,17 @@ module Decode = {
 
   type tUniv = {
     id: int,
-    cost: Maybe.t(Static_Advantage.cost),
-    noMaxAPInfluence: Maybe.t(bool),
-    isExclusiveToArcaneSpellworks: Maybe.t(bool),
-    levels: Maybe.t(int),
-    max: Maybe.t(int),
+    cost: option(Static_Advantage.cost),
+    noMaxAPInfluence: option(bool),
+    isExclusiveToArcaneSpellworks: option(bool),
+    levels: option(int),
+    max: option(int),
     selectOptionCategories:
-      Maybe.t(list(Static_SelectOption.Decode.categoryWithGroups)),
-    selectOptions: Maybe.t(list(Static_SelectOption.Decode.tUniv)),
+      option(list(Static_SelectOption.Decode.categoryWithGroups)),
+    selectOptions: option(list(Static_SelectOption.Decode.tUniv)),
     prerequisites: Static_Prerequisites.tWithLevelDisAdv,
     prerequisitesIndex:
-      Maybe.t(Static_Prerequisites.Decode.tIndexWithLevelUniv),
+      option(Static_Prerequisites.Decode.tIndexWithLevelUniv),
     gr: int,
   };
 
@@ -141,9 +141,9 @@ module Decode = {
       id: univ.id,
       name: l10n.name,
       nameInWiki: l10n.nameInWiki,
-      noMaxAPInfluence: univ.noMaxAPInfluence |> Maybe.fromMaybe(false),
+      noMaxAPInfluence: univ.noMaxAPInfluence |> Ley.Option.fromOption(false),
       isExclusiveToArcaneSpellworks:
-        univ.isExclusiveToArcaneSpellworks |> Maybe.fromMaybe(false),
+        univ.isExclusiveToArcaneSpellworks |> Ley.Option.fromOption(false),
       levels: univ.levels,
       max: univ.max,
       rules: l10n.rules,
@@ -193,7 +193,7 @@ module Decode = {
         yamlData: Yaml_Raw.yamlData,
       ) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t(
         blessings,
         cantrips,
@@ -207,5 +207,5 @@ module Decode = {
       yamlData.disadvantagesUniv |> list(tUniv),
       yamlData.disadvantagesL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

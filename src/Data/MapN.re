@@ -65,9 +65,9 @@ module Foldable = {
        )
     |> Native.make;
 
-  let con = mp => mp |> Native.values |> Js.Array.every(Function.id);
+  let con = mp => mp |> Native.values |> Js.Array.every(Ley_Function.id);
 
-  let dis = mp => mp |> Native.values |> Js.Array.some(Function.id);
+  let dis = mp => mp |> Native.values |> Js.Array.some(Ley_Function.id);
 
   let any = (pred, mp) => mp |> Native.values |> Js.Array.some(pred);
 
@@ -75,24 +75,23 @@ module Foldable = {
 
   let notElem = (e, mp) => !elem(e, mp);
 
-  let find = (pred, mp) =>
-    mp |> Native.values |> Js.Array.find(pred) |> Maybe.optionToMaybe;
+  let find = (pred, mp) => mp |> Native.values |> Js.Array.find(pred);
 };
 
 module Traversable = {
   let%private rec mapMEitherHelper = (f, xs) =>
     switch (xs) {
-    | [] => Either.Right([])
+    | [] => Ok([])
     | [(k, v), ...ys] =>
       let new_value = f(v);
 
       switch (new_value) {
-      | Either.Right(z) =>
+      | Ok(z) =>
         switch (mapMEitherHelper(f, ys)) {
-        | Right(zs) => Right([(k, z), ...zs])
-        | Left(l) => Left(l)
+        | Ok(zs) => Ok([(k, z), ...zs])
+        | Error(l) => Error(l)
         }
-      | Left(l) => Left(l)
+      | Error(l) => Error(l)
       };
     };
 
@@ -100,7 +99,7 @@ module Traversable = {
     mp
     |> Foldable.toList
     |> mapMEitherHelper(f)
-    |> Either.Functor.(<$>)(xs => xs |> Array.of_list |> Native.make);
+    |> Ley_Result.Functor.(<$>)(xs => xs |> Array.of_list |> Native.make);
 };
 
 // QUERY
@@ -116,8 +115,7 @@ let lookup = (key, mp) =>
   mp
   |> Native.entries
   |> Js.Array.find(((k, _)) => k == key)
-  |> Maybe.optionToMaybe
-  |> Maybe.Functor.(<$>)(snd);
+  |> Ley_Option.Functor.(<$>)(snd);
 
 let findWithDefault = (def, key, mp) =>
-  mp |> lookup(key) |> Maybe.fromMaybe(def);
+  mp |> lookup(key) |> Ley_Option.fromOption(def);

@@ -4,12 +4,12 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var Int$OptolithClient = require("../../Data/Int.bs.js");
-var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
-var IntSet$OptolithClient = require("../../Data/IntSet.bs.js");
+var Ley_Int$OptolithClient = require("../../Data/Ley_Int.bs.js");
 var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
+var Ley_IntSet$OptolithClient = require("../../Data/Ley_IntSet.bs.js");
+var Ley_Option$OptolithClient = require("../../Data/Ley_Option.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
 
@@ -212,14 +212,14 @@ function variant(univ, l10n) {
           {
             id: univ.id,
             name: l10n.name,
-            commonCultures: Curry._1(IntSet$OptolithClient.fromList, univ.commonCultures),
-            commonAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.commonAdvantages),
+            commonCultures: Curry._1(Ley_IntSet$OptolithClient.fromList, univ.commonCultures),
+            commonAdvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.commonAdvantages),
             commonAdvantagesText: l10n.commonAdvantages,
-            commonDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.commonDisadvantages),
+            commonDisadvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.commonDisadvantages),
             commonDisadvantagesText: l10n.commonDisadvantages,
-            uncommonAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.uncommonAdvantages),
+            uncommonAdvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.uncommonAdvantages),
             uncommonAdvantagesText: l10n.uncommonAdvantages,
-            uncommonDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.uncommonDisadvantages),
+            uncommonDisadvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.uncommonDisadvantages),
             uncommonDisadvantagesText: l10n.uncommonDisadvantages,
             hairColors: univ.hairColors,
             eyeColors: univ.eyeColors,
@@ -235,7 +235,7 @@ function t(univ, l10n) {
   if (match.tag) {
     var withoutVariants = match[0];
     tmp = /* WithoutVariants */Block.__(1, [{
-          commonCultures: Curry._1(IntSet$OptolithClient.fromList, withoutVariants.commonCultures),
+          commonCultures: Curry._1(Ley_IntSet$OptolithClient.fromList, withoutVariants.commonCultures),
           hairColors: withoutVariants.hairColors,
           eyeColors: withoutVariants.eyeColors,
           sizeBase: withoutVariants.sizeBase,
@@ -243,11 +243,11 @@ function t(univ, l10n) {
         }]);
   } else {
     tmp = /* WithVariants */Block.__(0, [{
-          variants: Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, variant, (function (x) {
+          variants: Curry._1(Ley_IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Ley_Int$OptolithClient.show, variant, (function (x) {
                       return x.id;
                     }), (function (x) {
                       return x.id;
-                    }), match[0].variants, Maybe$OptolithClient.fromMaybe(/* [] */0, l10n.variants)))
+                    }), match[0].variants, Ley_Option$OptolithClient.fromOption(/* [] */0, l10n.variants)))
         }]);
   }
   return /* tuple */[
@@ -260,23 +260,23 @@ function t(univ, l10n) {
             spi: univ.spi,
             tou: univ.tou,
             mov: univ.mov,
-            attributeAdjustments: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.attributeAdjustments),
+            attributeAdjustments: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, Ley_IntMap$OptolithClient.fromList, univ.attributeAdjustments),
             attributeAdjustmentsSelectionValue: univ.attributeAdjustmentsSelectionValue,
-            attributeAdjustmentsSelectionList: Curry._1(IntSet$OptolithClient.fromList, univ.attributeAdjustmentsSelectionList),
+            attributeAdjustmentsSelectionList: Curry._1(Ley_IntSet$OptolithClient.fromList, univ.attributeAdjustmentsSelectionList),
             attributeAdjustmentsText: l10n.attributeAdjustments,
-            automaticAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.automaticAdvantages),
+            automaticAdvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.automaticAdvantages),
             automaticAdvantagesText: l10n.automaticAdvantages,
-            stronglyRecommendedAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.stronglyRecommendedAdvantages),
+            stronglyRecommendedAdvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.stronglyRecommendedAdvantages),
             stronglyRecommendedAdvantagesText: l10n.stronglyRecommendedAdvantages,
-            stronglyRecommendedDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.stronglyRecommendedDisadvantages),
+            stronglyRecommendedDisadvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.stronglyRecommendedDisadvantages),
             stronglyRecommendedDisadvantagesText: l10n.stronglyRecommendedDisadvantages,
-            commonAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.commonAdvantages),
+            commonAdvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.commonAdvantages),
             commonAdvantagesText: l10n.commonAdvantages,
-            commonDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.commonDisadvantages),
+            commonDisadvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.commonDisadvantages),
             commonDisadvantagesText: l10n.commonDisadvantages,
-            uncommonAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.uncommonAdvantages),
+            uncommonAdvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.uncommonAdvantages),
             uncommonAdvantagesText: l10n.uncommonDisadvantages,
-            uncommonDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.uncommonDisadvantages),
+            uncommonDisadvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.uncommonDisadvantages),
             uncommonDisadvantagesText: l10n.uncommonDisadvantages,
             weightBase: univ.weightBase,
             weightRandom: univ.weightRandom,
@@ -288,7 +288,7 @@ function t(univ, l10n) {
 }
 
 function all(yamlData) {
-  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, t, (function (x) {
+  return Curry._1(Ley_IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Ley_Int$OptolithClient.show, t, (function (x) {
                     return x.id;
                   }), (function (x) {
                     return x.id;
@@ -310,4 +310,4 @@ var Decode = {
 };
 
 exports.Decode = Decode;
-/* IntMap-OptolithClient Not a pure module */
+/* Ley_IntMap-OptolithClient Not a pure module */

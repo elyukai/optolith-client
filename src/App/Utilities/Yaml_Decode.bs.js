@@ -4,8 +4,8 @@
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Ids$OptolithClient = require("../Constants/Ids.bs.js");
-var ListH$OptolithClient = require("../../Data/ListH.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var Ley_List$OptolithClient = require("../../Data/Ley_List.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
 var Static_Item$OptolithClient = require("../Models/Static_Item.bs.js");
 var Static_Pact$OptolithClient = require("../Models/Static_Pact.bs.js");
 var Static_Race$OptolithClient = require("../Models/Static_Race.bs.js");
@@ -51,7 +51,7 @@ function idName(json) {
 }
 
 function liturgicalChantEnhancements(xs) {
-  return Curry._1(IntMap$OptolithClient.fromList, ListH$OptolithClient.Monad.$great$great$eq(xs, (function (x) {
+  return Curry._1(Ley_IntMap$OptolithClient.fromList, Ley_List$OptolithClient.Monad.$great$great$eq(xs, (function (x) {
                     var match = x.level3.requirePrevious;
                     return /* :: */[
                             /* tuple */[
@@ -62,19 +62,19 @@ function liturgicalChantEnhancements(xs) {
                                   x.level1.id
                                 ],
                                 name: x.level1.name,
-                                cost: /* Just */[x.level1.cost],
+                                cost: x.level1.cost,
                                 prerequisites: Static_Prerequisites$OptolithClient.empty,
-                                description: /* Just */[x.level1.effect],
-                                isSecret: /* Nothing */0,
-                                languages: /* Nothing */0,
-                                continent: /* Nothing */0,
-                                isExtinct: /* Nothing */0,
-                                specializations: /* Nothing */0,
-                                specializationInput: /* Nothing */0,
-                                animalGr: /* Nothing */0,
-                                animalLevel: /* Nothing */0,
-                                target: /* Just */[x.target],
-                                wikiEntry: /* Nothing */0,
+                                description: x.level1.effect,
+                                isSecret: undefined,
+                                languages: undefined,
+                                continent: undefined,
+                                isExtinct: undefined,
+                                specializations: undefined,
+                                specializationInput: undefined,
+                                animalGr: undefined,
+                                animalLevel: undefined,
+                                target: x.target,
+                                wikiEntry: undefined,
                                 src: x.src,
                                 errata: x.errata
                               }
@@ -88,7 +88,7 @@ function liturgicalChantEnhancements(xs) {
                                     x.level2.id
                                   ],
                                   name: x.level2.name,
-                                  cost: /* Just */[x.level2.cost],
+                                  cost: x.level2.cost,
                                   prerequisites: {
                                     sex: Static_Prerequisites$OptolithClient.empty.sex,
                                     race: Static_Prerequisites$OptolithClient.empty.race,
@@ -103,12 +103,12 @@ function liturgicalChantEnhancements(xs) {
                                             Ids$OptolithClient.SpecialAbilityId.chantEnhancement
                                           ],
                                           active: true,
-                                          sid: /* Just */[/* `Generic */[
-                                              61643255,
-                                              x.level1.id
-                                            ]],
-                                          sid2: /* Nothing */0,
-                                          level: /* Nothing */0
+                                          sid: /* `Generic */[
+                                            61643255,
+                                            x.level1.id
+                                          ],
+                                          sid2: undefined,
+                                          level: undefined
                                         },
                                         /* [] */0
                                       ] : /* [] */0,
@@ -117,17 +117,17 @@ function liturgicalChantEnhancements(xs) {
                                     increasable: Static_Prerequisites$OptolithClient.empty.increasable,
                                     increasableMultiEntry: Static_Prerequisites$OptolithClient.empty.increasableMultiEntry
                                   },
-                                  description: /* Just */[x.level2.effect],
-                                  isSecret: /* Nothing */0,
-                                  languages: /* Nothing */0,
-                                  continent: /* Nothing */0,
-                                  isExtinct: /* Nothing */0,
-                                  specializations: /* Nothing */0,
-                                  specializationInput: /* Nothing */0,
-                                  animalGr: /* Nothing */0,
-                                  animalLevel: /* Nothing */0,
-                                  target: /* Just */[x.target],
-                                  wikiEntry: /* Nothing */0,
+                                  description: x.level2.effect,
+                                  isSecret: undefined,
+                                  languages: undefined,
+                                  continent: undefined,
+                                  isExtinct: undefined,
+                                  specializations: undefined,
+                                  specializationInput: undefined,
+                                  animalGr: undefined,
+                                  animalLevel: undefined,
+                                  target: x.target,
+                                  wikiEntry: undefined,
                                   src: x.src,
                                   errata: x.errata
                                 }
@@ -141,7 +141,7 @@ function liturgicalChantEnhancements(xs) {
                                       x.level3.id
                                     ],
                                     name: x.level3.name,
-                                    cost: /* Just */[x.level3.cost],
+                                    cost: x.level3.cost,
                                     prerequisites: {
                                       sex: Static_Prerequisites$OptolithClient.empty.sex,
                                       race: Static_Prerequisites$OptolithClient.empty.race,
@@ -149,20 +149,20 @@ function liturgicalChantEnhancements(xs) {
                                       pact: Static_Prerequisites$OptolithClient.empty.pact,
                                       social: Static_Prerequisites$OptolithClient.empty.social,
                                       primaryAttribute: Static_Prerequisites$OptolithClient.empty.primaryAttribute,
-                                      activatable: match ? (
-                                          match[0] ? /* :: */[
+                                      activatable: match !== undefined ? (
+                                          match ? /* :: */[
                                               {
                                                 id: /* `SpecialAbility */[
                                                   -789492591,
                                                   Ids$OptolithClient.SpecialAbilityId.chantEnhancement
                                                 ],
                                                 active: true,
-                                                sid: /* Just */[/* `Generic */[
-                                                    61643255,
-                                                    x.level2.id
-                                                  ]],
-                                                sid2: /* Nothing */0,
-                                                level: /* Nothing */0
+                                                sid: /* `Generic */[
+                                                  61643255,
+                                                  x.level2.id
+                                                ],
+                                                sid2: undefined,
+                                                level: undefined
                                               },
                                               /* [] */0
                                             ] : /* :: */[
@@ -172,12 +172,12 @@ function liturgicalChantEnhancements(xs) {
                                                   Ids$OptolithClient.SpecialAbilityId.chantEnhancement
                                                 ],
                                                 active: true,
-                                                sid: /* Just */[/* `Generic */[
-                                                    61643255,
-                                                    x.level1.id
-                                                  ]],
-                                                sid2: /* Nothing */0,
-                                                level: /* Nothing */0
+                                                sid: /* `Generic */[
+                                                  61643255,
+                                                  x.level1.id
+                                                ],
+                                                sid2: undefined,
+                                                level: undefined
                                               },
                                               /* [] */0
                                             ]
@@ -187,17 +187,17 @@ function liturgicalChantEnhancements(xs) {
                                       increasable: Static_Prerequisites$OptolithClient.empty.increasable,
                                       increasableMultiEntry: Static_Prerequisites$OptolithClient.empty.increasableMultiEntry
                                     },
-                                    description: /* Just */[x.level3.effect],
-                                    isSecret: /* Nothing */0,
-                                    languages: /* Nothing */0,
-                                    continent: /* Nothing */0,
-                                    isExtinct: /* Nothing */0,
-                                    specializations: /* Nothing */0,
-                                    specializationInput: /* Nothing */0,
-                                    animalGr: /* Nothing */0,
-                                    animalLevel: /* Nothing */0,
-                                    target: /* Just */[x.target],
-                                    wikiEntry: /* Nothing */0,
+                                    description: x.level3.effect,
+                                    isSecret: undefined,
+                                    languages: undefined,
+                                    continent: undefined,
+                                    isExtinct: undefined,
+                                    specializations: undefined,
+                                    specializationInput: undefined,
+                                    animalGr: undefined,
+                                    animalLevel: undefined,
+                                    target: x.target,
+                                    wikiEntry: undefined,
                                     src: x.src,
                                     errata: x.errata
                                   }
@@ -210,7 +210,7 @@ function liturgicalChantEnhancements(xs) {
 }
 
 function spellEnhancements(xs) {
-  return Curry._1(IntMap$OptolithClient.fromList, ListH$OptolithClient.Monad.$great$great$eq(xs, (function (x) {
+  return Curry._1(Ley_IntMap$OptolithClient.fromList, Ley_List$OptolithClient.Monad.$great$great$eq(xs, (function (x) {
                     var match = x.level3.requirePrevious;
                     return /* :: */[
                             /* tuple */[
@@ -221,19 +221,19 @@ function spellEnhancements(xs) {
                                   x.level1.id
                                 ],
                                 name: x.level1.name,
-                                cost: /* Just */[x.level1.cost],
+                                cost: x.level1.cost,
                                 prerequisites: Static_Prerequisites$OptolithClient.empty,
-                                description: /* Just */[x.level1.effect],
-                                isSecret: /* Nothing */0,
-                                languages: /* Nothing */0,
-                                continent: /* Nothing */0,
-                                isExtinct: /* Nothing */0,
-                                specializations: /* Nothing */0,
-                                specializationInput: /* Nothing */0,
-                                animalGr: /* Nothing */0,
-                                animalLevel: /* Nothing */0,
-                                target: /* Just */[x.target],
-                                wikiEntry: /* Nothing */0,
+                                description: x.level1.effect,
+                                isSecret: undefined,
+                                languages: undefined,
+                                continent: undefined,
+                                isExtinct: undefined,
+                                specializations: undefined,
+                                specializationInput: undefined,
+                                animalGr: undefined,
+                                animalLevel: undefined,
+                                target: x.target,
+                                wikiEntry: undefined,
                                 src: x.src,
                                 errata: x.errata
                               }
@@ -247,7 +247,7 @@ function spellEnhancements(xs) {
                                     x.level2.id
                                   ],
                                   name: x.level2.name,
-                                  cost: /* Just */[x.level2.cost],
+                                  cost: x.level2.cost,
                                   prerequisites: {
                                     sex: Static_Prerequisites$OptolithClient.empty.sex,
                                     race: Static_Prerequisites$OptolithClient.empty.race,
@@ -262,12 +262,12 @@ function spellEnhancements(xs) {
                                             Ids$OptolithClient.SpecialAbilityId.spellEnhancement
                                           ],
                                           active: true,
-                                          sid: /* Just */[/* `Generic */[
-                                              61643255,
-                                              x.level1.id
-                                            ]],
-                                          sid2: /* Nothing */0,
-                                          level: /* Nothing */0
+                                          sid: /* `Generic */[
+                                            61643255,
+                                            x.level1.id
+                                          ],
+                                          sid2: undefined,
+                                          level: undefined
                                         },
                                         /* [] */0
                                       ] : /* [] */0,
@@ -276,17 +276,17 @@ function spellEnhancements(xs) {
                                     increasable: Static_Prerequisites$OptolithClient.empty.increasable,
                                     increasableMultiEntry: Static_Prerequisites$OptolithClient.empty.increasableMultiEntry
                                   },
-                                  description: /* Just */[x.level2.effect],
-                                  isSecret: /* Nothing */0,
-                                  languages: /* Nothing */0,
-                                  continent: /* Nothing */0,
-                                  isExtinct: /* Nothing */0,
-                                  specializations: /* Nothing */0,
-                                  specializationInput: /* Nothing */0,
-                                  animalGr: /* Nothing */0,
-                                  animalLevel: /* Nothing */0,
-                                  target: /* Just */[x.target],
-                                  wikiEntry: /* Nothing */0,
+                                  description: x.level2.effect,
+                                  isSecret: undefined,
+                                  languages: undefined,
+                                  continent: undefined,
+                                  isExtinct: undefined,
+                                  specializations: undefined,
+                                  specializationInput: undefined,
+                                  animalGr: undefined,
+                                  animalLevel: undefined,
+                                  target: x.target,
+                                  wikiEntry: undefined,
                                   src: x.src,
                                   errata: x.errata
                                 }
@@ -300,7 +300,7 @@ function spellEnhancements(xs) {
                                       x.level3.id
                                     ],
                                     name: x.level3.name,
-                                    cost: /* Just */[x.level3.cost],
+                                    cost: x.level3.cost,
                                     prerequisites: {
                                       sex: Static_Prerequisites$OptolithClient.empty.sex,
                                       race: Static_Prerequisites$OptolithClient.empty.race,
@@ -308,20 +308,20 @@ function spellEnhancements(xs) {
                                       pact: Static_Prerequisites$OptolithClient.empty.pact,
                                       social: Static_Prerequisites$OptolithClient.empty.social,
                                       primaryAttribute: Static_Prerequisites$OptolithClient.empty.primaryAttribute,
-                                      activatable: match ? (
-                                          match[0] ? /* :: */[
+                                      activatable: match !== undefined ? (
+                                          match ? /* :: */[
                                               {
                                                 id: /* `SpecialAbility */[
                                                   -789492591,
                                                   Ids$OptolithClient.SpecialAbilityId.spellEnhancement
                                                 ],
                                                 active: true,
-                                                sid: /* Just */[/* `Generic */[
-                                                    61643255,
-                                                    x.level2.id
-                                                  ]],
-                                                sid2: /* Nothing */0,
-                                                level: /* Nothing */0
+                                                sid: /* `Generic */[
+                                                  61643255,
+                                                  x.level2.id
+                                                ],
+                                                sid2: undefined,
+                                                level: undefined
                                               },
                                               /* [] */0
                                             ] : /* :: */[
@@ -331,12 +331,12 @@ function spellEnhancements(xs) {
                                                   Ids$OptolithClient.SpecialAbilityId.spellEnhancement
                                                 ],
                                                 active: true,
-                                                sid: /* Just */[/* `Generic */[
-                                                    61643255,
-                                                    x.level1.id
-                                                  ]],
-                                                sid2: /* Nothing */0,
-                                                level: /* Nothing */0
+                                                sid: /* `Generic */[
+                                                  61643255,
+                                                  x.level1.id
+                                                ],
+                                                sid2: undefined,
+                                                level: undefined
                                               },
                                               /* [] */0
                                             ]
@@ -346,17 +346,17 @@ function spellEnhancements(xs) {
                                       increasable: Static_Prerequisites$OptolithClient.empty.increasable,
                                       increasableMultiEntry: Static_Prerequisites$OptolithClient.empty.increasableMultiEntry
                                     },
-                                    description: /* Just */[x.level3.effect],
-                                    isSecret: /* Nothing */0,
-                                    languages: /* Nothing */0,
-                                    continent: /* Nothing */0,
-                                    isExtinct: /* Nothing */0,
-                                    specializations: /* Nothing */0,
-                                    specializationInput: /* Nothing */0,
-                                    animalGr: /* Nothing */0,
-                                    animalLevel: /* Nothing */0,
-                                    target: /* Just */[x.target],
-                                    wikiEntry: /* Nothing */0,
+                                    description: x.level3.effect,
+                                    isSecret: undefined,
+                                    languages: undefined,
+                                    continent: undefined,
+                                    isExtinct: undefined,
+                                    specializations: undefined,
+                                    specializationInput: undefined,
+                                    animalGr: undefined,
+                                    animalLevel: undefined,
+                                    target: x.target,
+                                    wikiEntry: undefined,
                                     src: x.src,
                                     errata: x.errata
                                   }
@@ -370,17 +370,17 @@ function spellEnhancements(xs) {
 
 function decode(locale, yamlData) {
   var animistForces = Static_AnimistForce$OptolithClient.Decode.all(yamlData);
-  var arcaneBardTraditions = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.arcaneBardTraditionsL10n));
-  var arcaneDancerTraditions = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.arcaneDancerTraditionsL10n));
-  var armorTypes = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.armorTypesL10n));
-  var aspects = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.aspectsL10n));
+  var arcaneBardTraditions = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.arcaneBardTraditionsL10n));
+  var arcaneDancerTraditions = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.arcaneDancerTraditionsL10n));
+  var armorTypes = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.armorTypesL10n));
+  var aspects = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.aspectsL10n));
   var attributes = Static_Attribute$OptolithClient.Decode.all(yamlData);
   var blessedTraditions = Static_BlessedTradition$OptolithClient.Decode.all(yamlData);
   var blessings = Static_Blessing$OptolithClient.Decode.all(yamlData);
-  var brews = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.brewsL10n));
+  var brews = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.brewsL10n));
   var cantrips = Static_Cantrip$OptolithClient.Decode.all(yamlData);
-  var combatSpecialAbilityGroups = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.combatSpecialAbilityGroupsL10n));
-  var combatTechniqueGroups = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.combatTechniqueGroupsL10n));
+  var combatSpecialAbilityGroups = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.combatSpecialAbilityGroupsL10n));
+  var combatTechniqueGroups = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.combatTechniqueGroupsL10n));
   var combatTechniques = Static_CombatTechnique$OptolithClient.Decode.all(yamlData);
   var conditions = Static_Condition$OptolithClient.Decode.all(yamlData);
   var cultures = Static_Culture$OptolithClient.Decode.all(yamlData);
@@ -389,15 +389,15 @@ function decode(locale, yamlData) {
   var dominationRituals = Static_DominationRitual$OptolithClient.Decode.all(yamlData);
   var elvenMagicalSongs = Static_ElvenMagicalSong$OptolithClient.Decode.all(yamlData);
   var items = Static_Item$OptolithClient.Decode.all(yamlData);
-  var equipmentGroups = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.equipmentGroupsL10n));
+  var equipmentGroups = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.equipmentGroupsL10n));
   var equipmentPackages = Static_EquipmentPackage$OptolithClient.Decode.all(yamlData);
   var experienceLevels = Static_ExperienceLevel$OptolithClient.Decode.all(yamlData);
-  var eyeColors = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.eyeColorsL10n));
+  var eyeColors = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.eyeColorsL10n));
   var focusRules = Static_FocusRule$OptolithClient.Decode.all(yamlData);
   var geodeRituals = Static_GeodeRitual$OptolithClient.Decode.all(yamlData);
-  var hairColors = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.hairColorsL10n));
+  var hairColors = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.hairColorsL10n));
   var liturgicalChantEnhancements$1 = liturgicalChantEnhancements(Static_LiturgicalChant$OptolithClient.Decode.enhancements(yamlData));
-  var liturgicalChantGroups = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.liturgicalChantGroupsL10n));
+  var liturgicalChantGroups = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.liturgicalChantGroupsL10n));
   var liturgicalChants = Static_LiturgicalChant$OptolithClient.Decode.all(yamlData);
   var magicalDances = Static_MagicalDance$OptolithClient.Decode.all(yamlData);
   var magicalMelodies = Static_MagicalMelody$OptolithClient.Decode.all(yamlData);
@@ -406,21 +406,21 @@ function decode(locale, yamlData) {
   var optionalRules = Static_OptionalRule$OptolithClient.Decode.all(yamlData);
   var pacts = Static_Pact$OptolithClient.Decode.all(yamlData);
   var professions = Static_Profession$OptolithClient.Decode.all(yamlData);
-  var properties = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.propertiesL10n));
+  var properties = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.propertiesL10n));
   var publications = Static_Publication$OptolithClient.Decode.all(yamlData);
   var races = Static_Race$OptolithClient.Decode.all(yamlData);
-  var reaches = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.reachesL10n));
+  var reaches = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.reachesL10n));
   var rogueSpells = Static_RogueSpell$OptolithClient.Decode.all(yamlData);
   var skillGroups = Static_Skill$OptolithClient.Decode.groups(yamlData);
   var skills = Static_Skill$OptolithClient.Decode.all(yamlData);
-  var socialStatuses = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.socialStatusesL10n));
-  var specialAbilityGroups = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.specialAbilityGroupsL10n));
+  var socialStatuses = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.socialStatusesL10n));
+  var specialAbilityGroups = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.specialAbilityGroupsL10n));
   var spellEnhancements$1 = spellEnhancements(Static_Spell$OptolithClient.Decode.enhancements(yamlData));
-  var spellGroups = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.spellGroupsL10n));
+  var spellGroups = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.spellGroupsL10n));
   var spells = Static_Spell$OptolithClient.Decode.all(yamlData);
   var states = Static_State$OptolithClient.Decode.all(yamlData);
-  var subjects = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.subjectsL10n));
-  var tribes = Curry._1(IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.tribesL10n));
+  var subjects = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.subjectsL10n));
+  var tribes = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.tribesL10n));
   var zibiljaRituals = Static_ZibiljaRitual$OptolithClient.Decode.all(yamlData);
   var advantages = Static_Advantage$OptolithClient.Decode.all(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, yamlData);
   var disadvantages = Static_Disadvantage$OptolithClient.Decode.all(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, yamlData);
@@ -486,4 +486,4 @@ function decode(locale, yamlData) {
 }
 
 exports.decode = decode;
-/* IntMap-OptolithClient Not a pure module */
+/* Ley_IntMap-OptolithClient Not a pure module */

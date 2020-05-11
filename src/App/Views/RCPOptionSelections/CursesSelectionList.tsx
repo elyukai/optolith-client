@@ -1,7 +1,7 @@
 import * as React from "react"
 import { List, map, toArray } from "../../../Data/List"
 import { Maybe } from "../../../Data/Maybe"
-import { OrderedMap, size, sum } from "../../../Data/OrderedMap"
+import { size, sum } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Pair } from "../../../Data/Tuple"
 import { Rules } from "../../Models/Hero/Rules"
@@ -20,7 +20,7 @@ const CSA = CursesSelection.A
 const SA = Spell.A
 
 export const isCursesSelectionValid =
-  (actives: OrderedMap<string, number>) =>
+  (actives: StrMap<number>) =>
   (selection: Record<CursesSelection>): Pair<boolean, number> => {
     const ap_total = CSA.value (selection)
     const ap_spent = (size (actives) + sum (actives)) * 2
@@ -41,7 +41,7 @@ const getCurses =
 interface Props {
   staticData: StaticDataRecord
   rules: Record<Rules>
-  active: OrderedMap<string, number>
+  active: StrMap<number>
   ap_left: number
   selection: Record<CursesSelection>
   adjustCurseValue: (id: string) => (method: Maybe<"add" | "remove">) => void

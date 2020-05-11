@@ -4,7 +4,8 @@ type t =
   | Essential;
 
 let hasFrequencyRating = (currentEntryRating, ratingMap, id) =>
-  IntMap.lookup(id, ratingMap) |> Maybe.Foldable.elem(currentEntryRating);
+  Ley.IntMap.lookup(id, ratingMap)
+  |> Ley.Option.Foldable.elem(currentEntryRating);
 
 /**
  * Is the entry common in the hero's race, culture or profession?

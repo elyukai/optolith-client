@@ -1,3 +1,4 @@
+[@genType.ignoreInterface]
 type t('a) = Js.Promise.t('a);
 
 type io('a) = t('a);

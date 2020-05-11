@@ -51,10 +51,10 @@ export interface Selections {
   cantrips: OrderedSet<string>
   combatTechniques: OrderedSet<string>
   combatTechniquesSecond: OrderedSet<string>
-  curses: OrderedMap<string, number>
+  curses: StrMap<number>
   languages: OrderedMap<number, number>
   scripts: OrderedMap<number, number>
-  skills: OrderedMap<string, number>
+  skills: StrMap<number>
   specialization: Maybe<number | string>
   specializationSkillId: Maybe<string>
   terrainKnowledge: Maybe<number>

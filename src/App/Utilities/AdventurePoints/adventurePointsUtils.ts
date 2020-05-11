@@ -189,7 +189,7 @@ export const getMissingAPForDisAdvantage =
 const getPrinciplesObligationsDiff =
   (id: string) =>
   (staticData: StaticDataRecord) =>
-  (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  (hero_slice: StrMap<Record<ActivatableDependent>>) =>
   (entries: List<Record<ActiveActivatable>>): number => {
     if (any (pipe (ActiveActivatableAL_.id, equals (id))) (entries)) {
       return pipe_ (
@@ -316,7 +316,7 @@ const getPersonalityFlawsDiff =
 
 const getBadHabitsDiff =
   (staticData: StaticDataRecord) =>
-  (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  (hero_slice: StrMap<Record<ActivatableDependent>>) =>
   (entries: List<Record<ActiveActivatable>>): number =>
     any (pipe (ActiveActivatableAL_.id, equals<string> (DisadvantageId.BadHabit))) (entries)
       ? sum (pipe_ (
@@ -345,7 +345,7 @@ const getBadHabitsDiff =
 
 const getSkillSpecializationsDiff =
   (staticData: StaticDataRecord) =>
-  (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  (hero_slice: StrMap<Record<ActivatableDependent>>) =>
   (entries: List<Record<ActiveActivatable>>): number => {
     if (any (pipe (ActiveActivatableAL_.id, equals<string> (SpecialAbilityId.SkillSpecialization)))
             (entries)) {
@@ -365,13 +365,13 @@ const getSkillSpecializationsDiff =
 
           // Calculates the diff for a single skill specialization
           const getSingleDiff =
-            (accMap: OrderedMap<string, number>) =>
+            (accMap: StrMap<number>) =>
             (sid: string) =>
             (counter: number) =>
             (skill: Record<Skill>) =>
               Skill.A.ic (skill) * (getFlatSkillDone (sid) (accMap) + 1 - counter)
 
-          type TrackingPair = Pair<number, OrderedMap<string, number>>
+          type TrackingPair = Pair<number, StrMap<number>>
 
           // Iterates through the counter and sums up all cost differences for
           // each specialization.
@@ -433,7 +433,7 @@ const getAspectKnowledgeDiff =
  */
 export const getAdventurePointsSpentDifference =
   (staticData: StaticDataRecord) =>
-  (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  (hero_slice: StrMap<Record<ActivatableDependent>>) =>
   (entries: List<Record<ActiveActivatable>>): number => {
     const adventurePointsSpentDifferences = List (
       getPrinciplesObligationsDiff (DisadvantageId.Principles) (staticData) (hero_slice) (entries),

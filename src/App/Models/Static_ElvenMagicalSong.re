@@ -2,11 +2,11 @@ type t = {
   id: int,
   name: string,
   check: (int, int, int),
-  checkMod: Maybe.t(CheckModifier.t),
+  checkMod: option(CheckModifier.t),
   effect: string,
   aeCost: string,
   aeCostShort: string,
-  skill: Maybe.t(int),
+  skill: option(int),
   property: int,
   ic: IC.t,
   src: list(Static_SourceRef.t),
@@ -42,8 +42,8 @@ module Decode = {
     check1: int,
     check2: int,
     check3: int,
-    checkMod: Maybe.t(CheckModifier.t),
-    skill: Maybe.t(int),
+    checkMod: option(CheckModifier.t),
+    skill: option(int),
     property: int,
     ic: IC.t,
   };
@@ -79,12 +79,12 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.elvenMagicalSongsUniv |> list(tUniv),
       yamlData.elvenMagicalSongsL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { isJust, isNothing, Just, Maybe, maybe, maybeRNullF, Nothing } from "../../../Data/Maybe"
 import { lte } from "../../../Data/Num"
-import { lookup, OrderedMap } from "../../../Data/OrderedMap"
+import { lookup } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Spell } from "../../Models/Wiki/Spell"
 import { minus } from "../../Utilities/Chars"
@@ -13,7 +13,7 @@ const SA = Spell.A
 interface Props {
   apLeft: number
   curse: Record<Spell>
-  active: OrderedMap<string, number>
+  active: StrMap<number>
   adjustCurseValue: (id: string) => (method: Maybe<"add" | "remove">) => void
 }
 

@@ -48,7 +48,7 @@ module Decode = {
     check2: int,
     check3: int,
     property: int,
-    tribes: Maybe.t(list(int)),
+    tribes: option(list(int)),
     ic: IC.t,
   };
 
@@ -73,7 +73,7 @@ module Decode = {
       aeCostShort: l10n.aeCostShort,
       duration: l10n.duration,
       durationShort: l10n.durationShort,
-      tribes: univ.tribes |> Maybe.fromMaybe([]),
+      tribes: univ.tribes |> Ley.Option.fromOption([]),
       property: univ.property,
       ic: univ.ic,
       src: l10n.src,
@@ -83,12 +83,12 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.animistForcesUniv |> list(tUniv),
       yamlData.animistForcesL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

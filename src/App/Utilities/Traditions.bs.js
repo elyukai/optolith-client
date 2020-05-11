@@ -2,13 +2,13 @@
 'use strict';
 
 var Curry = require("bs-platform/lib/js/curry.js");
-var ListH$OptolithClient = require("../../Data/ListH.bs.js");
-var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var Ley_List$OptolithClient = require("../../Data/Ley_List.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
+var Ley_Option$OptolithClient = require("../../Data/Ley_Option.bs.js");
 var Activatable$OptolithClient = require("./Activatable.bs.js");
 
 function isActiveTradition(staticData, x) {
-  if (Curry._2(IntMap$OptolithClient.member, x.id, staticData.magicalTraditions)) {
+  if (Curry._2(Ley_IntMap$OptolithClient.member, x.id, staticData.magicalTraditions)) {
     return Activatable$OptolithClient.isActive(x);
   } else {
     return false;
@@ -16,45 +16,43 @@ function isActiveTradition(staticData, x) {
 }
 
 function getHeroEntries(staticData, mp) {
-  return ListH$OptolithClient.filter((function (param) {
+  return Ley_List$OptolithClient.filter((function (param) {
                 return isActiveTradition(staticData, param);
-              }), Curry._1(IntMap$OptolithClient.elems, mp));
+              }), Curry._1(Ley_IntMap$OptolithClient.elems, mp));
 }
 
 function getStaticEntries(staticData, mp) {
-  return Maybe$OptolithClient.mapMaybe((function (trad) {
+  return Ley_Option$OptolithClient.mapOption((function (trad) {
                 if (isActiveTradition(staticData, trad)) {
-                  return Curry._2(IntMap$OptolithClient.lookup, trad.id, staticData.specialAbilities);
-                } else {
-                  return /* Nothing */0;
+                  return Curry._2(Ley_IntMap$OptolithClient.lookup, trad.id, staticData.specialAbilities);
                 }
-              }), Curry._1(IntMap$OptolithClient.elems, mp));
+                
+              }), Curry._1(Ley_IntMap$OptolithClient.elems, mp));
 }
 
 function getEntries(staticData, mp) {
-  return Maybe$OptolithClient.mapMaybe((function (trad) {
+  return Ley_Option$OptolithClient.mapOption((function (trad) {
                 if (isActiveTradition(staticData, trad)) {
-                  return Maybe$OptolithClient.Monad.liftM2((function (staticEntry, traditionEntry) {
+                  return Ley_Option$OptolithClient.Monad.liftM2((function (staticEntry, traditionEntry) {
                                 return /* tuple */[
                                         staticEntry,
                                         trad,
                                         traditionEntry
                                       ];
-                              }), Curry._2(IntMap$OptolithClient.lookup, trad.id, staticData.specialAbilities), Curry._2(IntMap$OptolithClient.lookup, trad.id, staticData.magicalTraditions));
-                } else {
-                  return /* Nothing */0;
+                              }), Curry._2(Ley_IntMap$OptolithClient.lookup, trad.id, staticData.specialAbilities), Curry._2(Ley_IntMap$OptolithClient.lookup, trad.id, staticData.magicalTraditions));
                 }
-              }), Curry._1(IntMap$OptolithClient.elems, mp));
+                
+              }), Curry._1(Ley_IntMap$OptolithClient.elems, mp));
 }
 
 function idToNumId(staticData, id) {
-  return Maybe$OptolithClient.Functor.$less$amp$great(Curry._2(IntMap$OptolithClient.lookup, id, staticData.magicalTraditions), (function (x) {
+  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(Ley_IntMap$OptolithClient.lookup, id, staticData.magicalTraditions), (function (x) {
                 return x.numId;
               }));
 }
 
 function numIdToId(staticData, id) {
-  return Maybe$OptolithClient.Functor.$less$amp$great(Curry._2(IntMap$OptolithClient.Foldable.find, (function (trad) {
+  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(Ley_IntMap$OptolithClient.Foldable.find, (function (trad) {
                     return trad.numId === id;
                   }), staticData.magicalTraditions), (function (x) {
                 return x.id;
@@ -70,10 +68,10 @@ var Magical = {
 };
 
 function getHeroEntry(staticData, mp) {
-  return Curry._2(IntMap$OptolithClient.Foldable.find, (function (param) {
+  return Curry._2(Ley_IntMap$OptolithClient.Foldable.find, (function (param) {
                 var staticData$1 = staticData;
                 var x = param;
-                if (Curry._2(IntMap$OptolithClient.member, x.id, staticData$1.blessedTraditions)) {
+                if (Curry._2(Ley_IntMap$OptolithClient.member, x.id, staticData$1.blessedTraditions)) {
                   return Activatable$OptolithClient.isActive(x);
                 } else {
                   return false;
@@ -82,31 +80,31 @@ function getHeroEntry(staticData, mp) {
 }
 
 function getStaticEntry(staticData, mp) {
-  return Maybe$OptolithClient.Monad.$great$great$eq(getHeroEntry(staticData, mp), (function (trad) {
-                return Curry._2(IntMap$OptolithClient.lookup, trad.id, staticData.specialAbilities);
+  return Ley_Option$OptolithClient.Monad.$great$great$eq(getHeroEntry(staticData, mp), (function (trad) {
+                return Curry._2(Ley_IntMap$OptolithClient.lookup, trad.id, staticData.specialAbilities);
               }));
 }
 
 function getEntry(staticData, mp) {
-  return Maybe$OptolithClient.Monad.$great$great$eq(getHeroEntry(staticData, mp), (function (trad) {
-                return Maybe$OptolithClient.Monad.liftM2((function (staticEntry, traditionEntry) {
+  return Ley_Option$OptolithClient.Monad.$great$great$eq(getHeroEntry(staticData, mp), (function (trad) {
+                return Ley_Option$OptolithClient.Monad.liftM2((function (staticEntry, traditionEntry) {
                               return /* tuple */[
                                       staticEntry,
                                       trad,
                                       traditionEntry
                                     ];
-                            }), Curry._2(IntMap$OptolithClient.lookup, trad.id, staticData.specialAbilities), Curry._2(IntMap$OptolithClient.lookup, trad.id, staticData.magicalTraditions));
+                            }), Curry._2(Ley_IntMap$OptolithClient.lookup, trad.id, staticData.specialAbilities), Curry._2(Ley_IntMap$OptolithClient.lookup, trad.id, staticData.magicalTraditions));
               }));
 }
 
 function idToNumId$1(staticData, id) {
-  return Maybe$OptolithClient.Functor.$less$amp$great(Curry._2(IntMap$OptolithClient.lookup, id, staticData.blessedTraditions), (function (x) {
+  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(Ley_IntMap$OptolithClient.lookup, id, staticData.blessedTraditions), (function (x) {
                 return x.numId;
               }));
 }
 
 function numIdToId$1(staticData, id) {
-  return Maybe$OptolithClient.Functor.$less$amp$great(Curry._2(IntMap$OptolithClient.Foldable.find, (function (trad) {
+  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(Ley_IntMap$OptolithClient.Foldable.find, (function (trad) {
                     return trad.numId === id;
                   }), staticData.blessedTraditions), (function (x) {
                 return x.id;
@@ -123,4 +121,4 @@ var Blessed = {
 
 exports.Magical = Magical;
 exports.Blessed = Blessed;
-/* IntMap-OptolithClient Not a pure module */
+/* Ley_IntMap-OptolithClient Not a pure module */

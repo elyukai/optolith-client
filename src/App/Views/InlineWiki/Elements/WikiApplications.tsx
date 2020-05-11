@@ -2,7 +2,7 @@ import * as React from "react"
 import { fmap } from "../../../../Data/Functor"
 import { fnull, intercalate, List, notNull } from "../../../../Data/List"
 import { bindF, ensure, isNothing, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe"
-import { member, OrderedMap } from "../../../../Data/OrderedMap"
+import { member } from "../../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { Advantage } from "../../../Models/Wiki/Advantage"
 import { RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement"
@@ -20,12 +20,12 @@ interface Accessors<A extends RecordIBase<any>> {
 }
 
 export interface WikiApplicationsProps<A extends RecordIBase<any>> {
-  advantages: OrderedMap<string, Record<Advantage>>
+  advantages: StrMap<Record<Advantage>>
   x: Record<A>
   acc: Accessors<A>
   staticData: StaticDataRecord
   showNewApplications?: boolean
-  specialAbilities: OrderedMap<string, Record<SpecialAbility>>
+  specialAbilities: StrMap<Record<SpecialAbility>>
 }
 
 const AA = Application.A

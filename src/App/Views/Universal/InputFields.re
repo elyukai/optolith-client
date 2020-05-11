@@ -5,7 +5,7 @@ module Integer = {
   let isRoughValid = Js.Re.test_(roughCheck);
   let isStrictValid = Js.Re.test_(strictCheck);
 
-  let unsafeInputToInt = input => input === "" ? 0 : Int.read(input);
+  let unsafeInputToInt = input => input === "" ? 0 : Ley_Int.read(input);
 
   let make = (~value, ~onChange) => {
     let (internalValue, setInternalValue) = React.useState(() => value);

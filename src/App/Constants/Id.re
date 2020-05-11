@@ -85,7 +85,7 @@ let unsafePhaseFromInt = id =>
   | 3 => Advancement
   | x =>
     invalid_arg(
-      "unsafePhaseFromInt: " ++ Int.show(x) ++ " is not a valid phase",
+      "unsafePhaseFromInt: " ++ Ley.Int.show(x) ++ " is not a valid phase",
     )
   };
 
@@ -117,7 +117,7 @@ let unsafeExperienceLevelFromInt = id =>
   | x =>
     invalid_arg(
       "unsafeExperienceLevelFromInt: "
-      ++ Int.show(x)
+      ++ Ley.Int.show(x)
       ++ " is not a valid experience level",
     )
   };
@@ -155,7 +155,9 @@ let unsafeAttributeFromInt = id =>
   | 8 => Strength
   | x =>
     invalid_arg(
-      "unsafeAttributeFromInt: " ++ Int.show(x) ++ " is not a valid attribute",
+      "unsafeAttributeFromInt: "
+      ++ Ley.Int.show(x)
+      ++ " is not a valid attribute",
     )
   };
 
@@ -528,7 +530,7 @@ let unsafeSkillFromInt = id =>
   | 59 => Clothworking
   | x =>
     invalid_arg(
-      "unsafeSkillFromInt: " ++ Int.show(x) ++ " is not a valid skill",
+      "unsafeSkillFromInt: " ++ Ley.Int.show(x) ++ " is not a valid skill",
     )
   };
 
@@ -679,7 +681,7 @@ let unsafeCombatTechniqueGroupFromInt = id =>
   | x =>
     invalid_arg(
       "unsafeCombatTechniqueGroupFromInt: "
-      ++ Int.show(x)
+      ++ Ley.Int.show(x)
       ++ " is not a valid combat technique group",
     )
   };

@@ -1,7 +1,7 @@
 import { fmap } from "../../Data/Functor"
 import { and, Maybe } from "../../Data/Maybe"
 import { inc, lt } from "../../Data/Num"
-import { foldlWithKey, lookupF, OrderedMap } from "../../Data/OrderedMap"
+import { foldlWithKey, lookupF } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { IdPrefixes } from "../Constants/IdPrefixes"
 import { ExperienceLevelId } from "../Constants/Ids"
@@ -21,7 +21,7 @@ const ELA = ExperienceLevel.A
  * Returns the experience level that fits the given AP value.
  */
 export const getExperienceLevelIdByAp =
-  (experience_levels: OrderedMap<string, Record<ExperienceLevel>>) =>
+  (experience_levels: StrMap<Record<ExperienceLevel>>) =>
   (current_ap: number) =>
     foldlWithKey<string, Record<ExperienceLevel>, string>
       (result => id => el => {
@@ -43,7 +43,7 @@ export const getExperienceLevelIdByAp =
  * @param ap The AP value you want to get the corresponding EL for.
  */
 export const getExperienceLevelNumericIdByAp =
-  (experienceLevels: OrderedMap<string, Record<ExperienceLevel>>) =>
+  (experienceLevels: StrMap<Record<ExperienceLevel>>) =>
     pipe (getExperienceLevelIdByAp (experienceLevels), getNumericId)
 
 

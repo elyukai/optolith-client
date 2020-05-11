@@ -3,7 +3,7 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
-var Int$OptolithClient = require("../../../Data/Int.bs.js");
+var Ley_Int$OptolithClient = require("../../../Data/Ley_Int.bs.js");
 
 var roughCheck = /-?[0-9]*/g;
 
@@ -21,7 +21,7 @@ function unsafeInputToInt(input) {
   if (input === "") {
     return 0;
   } else {
-    return Int$OptolithClient.read(input);
+    return Ley_Int$OptolithClient.read(input);
   }
 }
 

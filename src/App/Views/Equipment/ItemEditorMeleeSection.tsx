@@ -3,7 +3,7 @@ import { equals } from "../../../Data/Eq"
 import { fmap } from "../../../Data/Functor"
 import { flength, intercalate, isList, List, map } from "../../../Data/List"
 import { bindF, elem, ensure, fromJust, isJust, isNothing, Just, mapMaybe, Maybe, maybe, or } from "../../../Data/Maybe"
-import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { elems, lookup, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, isTuple, snd } from "../../../Data/Tuple"
 import { AttrId, CombatTechniqueId } from "../../Constants/Ids"
@@ -26,8 +26,8 @@ import { Label } from "../Universal/Label"
 import { TextField } from "../Universal/TextField"
 
 export interface ItemEditorMeleeSectionProps {
-  attributes: OrderedMap<string, Record<Attribute>>
-  combatTechniques: OrderedMap<string, Record<CombatTechnique>>
+  attributes: StrMap<Record<Attribute>>
+  combatTechniques: StrMap<Record<CombatTechnique>>
   item: Record<EditItem>
   staticData: StaticDataRecord
   inputValidation: Record<ItemEditorInputValidation>
@@ -58,7 +58,7 @@ const CTA = CombatTechnique.A
 const AA = Attribute.A
 
 const shortOrEmpty =
-  (attrs: OrderedMap<string, Record<Attribute>>) => pipe (lookupF (attrs), maybe ("") (AA.short))
+  (attrs: StrMap<Record<Attribute>>) => pipe (lookupF (attrs), maybe ("") (AA.short))
 
 export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = props => {
   const {

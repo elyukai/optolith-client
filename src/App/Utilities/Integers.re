@@ -26,4 +26,4 @@ let romanNumbers = [
  * toRoman 3 == Just "III"
  * ```
  */
-let intToRoman = x => ListH.(romanNumbers <!!> x - 1);
+let intToRoman = x => Ley.List.Safe.atMay(romanNumbers, x - 1);

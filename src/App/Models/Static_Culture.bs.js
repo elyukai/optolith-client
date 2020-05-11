@@ -4,10 +4,10 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var Int$OptolithClient = require("../../Data/Int.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var Ley_Int$OptolithClient = require("../../Data/Ley_Int.bs.js");
 var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
 
 function tL10n(json) {
   return {
@@ -124,13 +124,13 @@ function t(univ, l10n) {
             uncommonSkills: univ.uncommonSkills,
             commonNames: l10n.commonNames,
             culturalPackageCost: univ.culturalPackageCost,
-            culturalPackageSkills: Curry._1(IntMap$OptolithClient.fromList, univ.culturalPackageSkills)
+            culturalPackageSkills: Curry._1(Ley_IntMap$OptolithClient.fromList, univ.culturalPackageSkills)
           }
         ];
 }
 
 function all(yamlData) {
-  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, t, (function (x) {
+  return Curry._1(Ley_IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Ley_Int$OptolithClient.show, t, (function (x) {
                     return x.id;
                   }), (function (x) {
                     return x.id;
@@ -146,4 +146,4 @@ var Decode = {
 };
 
 exports.Decode = Decode;
-/* IntMap-OptolithClient Not a pure module */
+/* Ley_IntMap-OptolithClient Not a pure module */

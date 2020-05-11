@@ -9,7 +9,7 @@ export interface LocaleState {
   id: Maybe<string>
   type: "default" | "set"
   messages: Maybe<L10nRecord>
-  availableLangs: OrderedMap<string, Record<Locale>>
+  availableLangs: StrMap<Record<Locale>>
 }
 
 export const LocaleState =

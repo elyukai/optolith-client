@@ -14,11 +14,6 @@ function $less$amp$great(m, f) {
   return $less$$great(f, m);
 }
 
-var Functor = {
-  $less$$great: $less$$great,
-  $less$amp$great: $less$amp$great
-};
-
 function pure(prim) {
   return Promise.resolve(prim);
 }
@@ -78,6 +73,11 @@ function existsFile(path) {
 function copyFile(origin, dest) {
   return Fs.promises.copyFile(origin, dest);
 }
+
+var Functor = {
+  $less$$great: $less$$great,
+  $less$amp$great: $less$amp$great
+};
 
 exports.Functor = Functor;
 exports.Monad = Monad;

@@ -6,7 +6,7 @@ import { fmap } from "../../Data/Functor"
 import { set } from "../../Data/Lens"
 import { append, consF, List, notNull, reverse, unsnoc } from "../../Data/List"
 import { fromJust, isNothing, maybe } from "../../Data/Maybe"
-import { filter, lookup, map, OrderedMap } from "../../Data/OrderedMap"
+import { filter, lookup, map } from "../../Data/OrderedMap"
 import { fst, snd } from "../../Data/Tuple"
 import { IO, pure, writeFile } from "../../System/IO"
 import { HeroModel, HeroModelL } from "../Models/Hero/HeroModel"
@@ -20,7 +20,7 @@ import { convertHeroesForSave } from "./Raw/JSON/Hero/HeroToJSON"
 const UHA = UndoableHero.A
 const HA = HeroModel.A
 
-type HeroesMap = OrderedMap<string, Hero>
+type HeroesMap = StrMap<Hero>
 
 const writeHeroesToFile = writeFile (join (user_data_path, "heroes.json"))
 

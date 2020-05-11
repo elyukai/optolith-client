@@ -2,7 +2,6 @@ import * as React from "react"
 import { fmapF } from "../../../Data/Functor"
 import { List } from "../../../Data/List"
 import { fromMaybe, Just, Maybe, Nothing, orN } from "../../../Data/Maybe"
-import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer"
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
@@ -37,7 +36,7 @@ export interface AdvantagesDisadvantagesProps {
   >>
   enableActiveItemHints: boolean
   magicalMax: Maybe<number>
-  rating: Maybe<OrderedMap<string, EntryRating>>
+  rating: Maybe<StrMap<EntryRating>>
   showRating: boolean
   isRemovingEnabled: boolean
   filterText: string

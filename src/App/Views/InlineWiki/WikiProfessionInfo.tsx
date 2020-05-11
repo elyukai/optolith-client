@@ -5,7 +5,7 @@ import { fmap, fmapF } from "../../../Data/Functor"
 import { append, cons, consF, deleteAt, find, findIndex, flength, foldr, imap, intercalate, intersperse, isList, List, ListI, map, NonEmptyList, notElem, notNull, reverse, snoc, sortBy, toArray, uncons, unconsSafe, unsafeIndex } from "../../../Data/List"
 import { alt_, any, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe"
 import { compare, dec, gt, inc } from "../../../Data/Num"
-import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { elems, lookup, lookupF } from "../../../Data/OrderedMap"
 import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet"
 import { fromDefault, Record } from "../../../Data/Record"
 import { show } from "../../../Data/Show"
@@ -82,7 +82,7 @@ const SGA = SkillGroup.A
 
 const getSpecializationSelection =
   (staticData: StaticDataRecord) =>
-  (skills: OrderedMap<string, Record<Skill>>) =>
+  (skills: StrMap<Record<Skill>>) =>
   (profession: Record<ProfessionCombined>): Maybe<string> =>
     pipe_ (
       profession,
@@ -234,7 +234,7 @@ const getCombatTechniquesSelection =
 
 const getTerrainKnowledgeSelection =
   (staticData: StaticDataRecord) =>
-  (specialAbilities: OrderedMap<string, Record<SpecialAbility>>) =>
+  (specialAbilities: StrMap<Record<SpecialAbility>>) =>
   (profession: Record<ProfessionCombined>): Maybe<string> =>
     pipe_ (
       profession,
@@ -252,8 +252,8 @@ const getTerrainKnowledgeSelection =
 
 const getSpells =
   (staticData: StaticDataRecord) =>
-  (cantrips: OrderedMap<string, Record<Cantrip>>) =>
-  (spells: OrderedMap<string, Record<Spell>>) =>
+  (cantrips: StrMap<Record<Cantrip>>) =>
+  (spells: StrMap<Record<Spell>>) =>
   (profession: Record<ProfessionCombined>): Maybe<string> => {
     const cantrips_str =
       pipe_ (
@@ -321,8 +321,8 @@ const getSpells =
 
 const getLiturgicalChants =
   (staticData: StaticDataRecord) =>
-  (blessings: OrderedMap<string, Record<Blessing>>) =>
-  (liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>) =>
+  (blessings: StrMap<Record<Blessing>>) =>
+  (liturgicalChants: StrMap<Record<LiturgicalChant>>) =>
   (profession: Record<ProfessionCombined>): Maybe<string> =>
     pipe_ (
       profession,
@@ -489,8 +489,8 @@ const VariantPrerequisiteIntermediate =
 
 const getVariantPrerequisites =
   (staticData: StaticDataRecord) =>
-  (attributes: OrderedMap<string, Record<Attribute>>) =>
-  (skills: OrderedMap<string, Record<Skill>>) =>
+  (attributes: StrMap<Record<Attribute>>) =>
+  (skills: StrMap<Record<Skill>>) =>
   (variant: Record<ProfessionVariantCombined>) =>
     pipe_ (
       variant,
@@ -620,7 +620,7 @@ const getVariantLanguagesLiteracySelection =
 
 interface VariantSpecializationSelectionProps {
   staticData: StaticDataRecord
-  skills: OrderedMap<string, Record<Skill>>
+  skills: StrMap<Record<Skill>>
   specializationSelectionString: Maybe<string>
   variant: Record<ProfessionVariantCombined>
 }
@@ -866,7 +866,7 @@ const combineSpells: (mapped_spells: List<CombinedMappedSpell>) => CombinedSpell
 
 interface VariantSkillsSelectionProps {
   staticData: StaticDataRecord
-  liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
+  liturgicalChants: StrMap<Record<LiturgicalChant>>
   variant: Record<ProfessionVariantCombined>
 }
 
@@ -967,15 +967,15 @@ function VariantListHeader (props: VariantListHeaderProps): JSX.Element {
 }
 
 interface VariantListProps {
-  attributes: OrderedMap<string, Record<Attribute>>
+  attributes: StrMap<Record<Attribute>>
   combatTechniquesSelectionString: Maybe<string>
-  liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
+  liturgicalChants: StrMap<Record<LiturgicalChant>>
   staticData: StaticDataRecord
   profession: Record<ProfessionCombined>
   sex: Maybe<Sex>
-  skills: OrderedMap<string, Record<Skill>>
+  skills: StrMap<Record<Skill>>
   specializationSelectionString: Maybe<string>
-  spells: OrderedMap<string, Record<Spell>>
+  spells: StrMap<Record<Spell>>
 }
 
 function VariantList (props: VariantListProps): JSX.Element | null {
@@ -1028,15 +1028,15 @@ function VariantList (props: VariantListProps): JSX.Element | null {
 }
 
 interface VariantProps {
-  attributes: OrderedMap<string, Record<Attribute>>
+  attributes: StrMap<Record<Attribute>>
   combatTechniquesSelectionString: Maybe<string>
-  liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
+  liturgicalChants: StrMap<Record<LiturgicalChant>>
   staticData: StaticDataRecord
   profession: Record<ProfessionCombined>
   sex: Maybe<Sex>
-  skills: OrderedMap<string, Record<Skill>>
+  skills: StrMap<Record<Skill>>
   specializationSelectionString: Maybe<string>
-  spells: OrderedMap<string, Record<Spell>>
+  spells: StrMap<Record<Spell>>
   variant: Record<ProfessionVariantCombined>
 }
 

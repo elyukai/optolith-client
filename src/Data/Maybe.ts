@@ -15,23 +15,25 @@
  */
 
 import { ReactNode } from "react"
-import { ifElse } from "../App/Utilities/ifElse"
 import { pipe } from "../App/Utilities/pipe"
-import { cnst, flip, ident } from "./Function"
-import { fmap, fmapF } from "./Functor"
-import { Internals } from "./Internals"
-import { cons, consF, head, ifoldr, List } from "./List"
-import * as Math from "./Num"
-
-export import Just = Internals.Just
-export import Nothing = Internals.Nothing
-export import isJust = Internals.isJust
-export import isNothing = Internals.isNothing
+import { flip } from "./Function"
+import * as ReOption from "./Ley_Option.gen"
+import { cons, ifoldr, List } from "./List"
+import { uncurryN, uncurryN3, uncurryN4, uncurryN5 } from "./Tuple/All"
 
 
 // CONSTRUCTORS
 
-export type Maybe<A> = Just<A> | Nothing
+export type Just<A> = A
+export const Just = <A> (x: A): Just<A> => x
+
+export type Nothing = null | undefined
+export const Nothing: Nothing = undefined
+
+export type Maybe<A> = ReOption.Option<A>
+
+export const isJust = <A> (x: Maybe<A>): x is Just<A> => ReOption.isSome (x)
+export const isNothing = <A> (x: Maybe<A>): x is Nothing => ReOption.isNone (x)
 
 /**
  * `Maybe :: a -> Maybe a`
@@ -54,13 +56,7 @@ export const Maybe =
  * @throws TypeError
  */
 export const fromJust =
-  <A> (x: Just<A>): A => {
-    if (isJust (x)) {
-      return x.value
-    }
-
-    throw new TypeError (`Cannot extract a value out of type Nothing.`)
-  }
+  <A> (x: Just<A>): A => ReOption.fromSome (x)
 
 /**
  * `fromMaybe :: a -> Maybe a -> a`
@@ -71,7 +67,7 @@ export const fromJust =
  */
 export const fromMaybe =
   <A> (def: A) => (x: Maybe<A>): A =>
-    isJust (x) ? x .value : def
+    ReOption.fromOption (def, x)
 
 /**
  * `fromMaybe' :: (() -> a) -> Maybe a -> a`
@@ -84,7 +80,24 @@ export const fromMaybe =
  */
 export const fromMaybe_ =
   <A> (def: () => A) => (x: Maybe<A>): A =>
-    isJust (x) ? x .value : def ()
+    ReOption.isSome (x) ? ReOption.fromSome (x) : def ()
+
+
+// FUNCTOR
+
+/**
+ * `fmap :: (a -> b) -> f a -> f b`
+ */
+export const fmap =
+  <A, B> (f: (x: A) => B) => (x: Maybe<A>): Maybe<B> =>
+    ReOption.Functor_fmap (f, x)
+
+/**
+ * `fmapF :: f a -> (a -> b) -> f b`
+ */
+export const fmapF =
+  <A> (x: Maybe<A>) => <B> (f: (x: A) => B): Maybe<B> =>
+    ReOption.Functor_fmap (f, x)
 
 
 // APPLICATIVE
@@ -94,7 +107,7 @@ export const fromMaybe_ =
  *
  * Lift a value.
  */
-export const pure = Just
+export const pure = ReOption.Monad_return
 
 /**
  * `(<*>) :: Maybe (a -> b) -> Maybe a -> Maybe b`
@@ -105,7 +118,7 @@ export const ap =
   <A, B>
   (f: Maybe<(x: A) => B>) =>
   (x: Maybe<A>): Maybe<B> =>
-    isJust (f) ? fmap (f .value) (x) : f
+    ReOption.Applicative_ap (f, x)
 
 
 // ALTERNATIVE
@@ -117,7 +130,7 @@ export const ap =
  */
 export const alt =
   <A> (x: Maybe<A>) => (y: Maybe<A>): Maybe<A> =>
-    isJust (x) ? x : y
+    ReOption.Alternative_alt (x, y)
 
 /**
  * `alt' :: Maybe a -> Maybe a -> Maybe a`
@@ -128,7 +141,7 @@ export const alt =
  */
 export const alt_ =
   <A> (x: Maybe<A>) => (g: () => Maybe<A>): Maybe<A> =>
-    isJust (x) ? x : g ()
+    ReOption.isSome (x) ? x : g ()
 
 /**
  * `altF :: Maybe a -> Maybe a -> Maybe a`
@@ -139,7 +152,7 @@ export const alt_ =
  */
 export const altF =
   <A> (y: Maybe<A>) => (x: Maybe<A>): Maybe<A> =>
-    alt (x) (y)
+    ReOption.Alternative_alt (x, y)
 
 /**
  * `altF' :: Maybe a -> Maybe a -> Maybe a`
@@ -150,7 +163,7 @@ export const altF =
  */
 export const altF_ =
   <A> (g: () => Maybe<A>) => (x: Maybe<A>): Maybe<A> =>
-    alt_ (x) (g)
+    ReOption.isSome (x) ? x : g ()
 
 /**
  * `empty :: Maybe a`
@@ -173,7 +186,7 @@ export const empty = Nothing
  */
 export const guard =
   (pred: boolean): Maybe<void> =>
-    pred ? pure<void> (undefined) : empty
+    ReOption.Alternative_guard (pred)
 
 /**
  * `guard' :: (() -> Bool) -> Maybe ()`
@@ -209,7 +222,7 @@ export const bind =
   (x: Maybe<A>) =>
   <B>
   (f: (x: A) => Maybe<B>): Maybe<B> =>
-    isJust (x) ? f (x .value) : x
+    ReOption.Monad_bind (x, f)
 
 /**
  * `(=<<) :: Monad m => (a -> m b) -> m a -> m b`
@@ -218,7 +231,7 @@ export const bindF =
   <A, B>
   (f: (x: A) => Maybe<B>) =>
   (x: Maybe<A>): Maybe<B> =>
-    bind<A> (x) (f)
+    ReOption.Monad_bindF (f, x)
 
 /**
  * `(>>) :: Maybe a -> Maybe b -> Maybe b`
@@ -231,7 +244,7 @@ export const bindF =
  */
 export const then =
   (x: Maybe<any>) => <A> (y: Maybe<A>): Maybe<A> =>
-    bind<any> (x) (_ => y)
+    ReOption.Monad_then (x, y)
 
 /**
  * `(<<) :: Maybe a -> Maybe b -> Maybe a`
@@ -241,7 +254,7 @@ export const then =
  */
 export const thenF =
   <A> (x: Maybe<A>) => (y: Maybe<any>): Maybe<A> =>
-    bind<any> (y) (_ => x)
+    ReOption.Monad_thenF (x, y)
 
 /**
  * `(>=>) :: (a -> Maybe b) -> (b -> Maybe c) -> a -> Maybe c`
@@ -253,7 +266,8 @@ export const kleisli =
   (f: (x: A) => Maybe<B>) =>
   <C>
   (g: (x: B) => Maybe<C>) =>
-    pipe (f, bindF (g))
+  (x: A): Maybe<C> =>
+    ReOption.Monad_kleisli (f, g, x)
 
 /**
  * `join :: Maybe (Maybe a) -> Maybe a`
@@ -264,7 +278,7 @@ export const kleisli =
  */
 export const join =
   <A> (x: Maybe<Maybe<A>>): Maybe<A> =>
-    bind<Maybe<A>> (x) (ident)
+    ReOption.Monad_join (x)
 
 export type join<A> = (x: Maybe<Maybe<A>>) => Maybe<A>
 
@@ -281,15 +295,7 @@ export const mapM =
   <A, B>
   (f: (x: A) => Maybe<B>) =>
   (xs: List<A>): Maybe<List<B>> =>
-    List.fnull (xs)
-    ? Just (List.empty)
-    : ifElse<Maybe<B>, Nothing>
-      (isNothing)
-      <Maybe<List<B>>>
-      (cnst (Nothing))
-      (y => fmap<List<B>, List<B>> (consF (fromJust (y)))
-                                   (mapM (f) (xs .xs)))
-      (f (xs .x))
+    ReOption.Monad_mapM (f, xs)
 
 /**
  * `liftM2 :: (a1 -> a2 -> r) -> Maybe a1 -> Maybe a2 -> Maybe r`
@@ -302,7 +308,7 @@ export const liftM2 =
   (f: (a1: A1) => (a2: A2) => B) =>
   (x1: Maybe<A1>) =>
   (x2: Maybe<A2>): Maybe<B> =>
-    bind<A1> (x1) (pipe (f, fmapF (x2)))
+    ReOption.Monad_liftM2 (uncurryN (f), x1, x2)
 
 /**
  * `liftM3 :: (a1 -> a2 -> a3 -> r) -> Maybe a1 -> Maybe a2 -> Maybe a3 -> Maybe r`
@@ -316,7 +322,7 @@ export const liftM3 =
   (x1: Maybe<A1>) =>
   (x2: Maybe<A2>) =>
   (x3: Maybe<A3>): Maybe<B> =>
-    bind<A1> (x1) (a1 => liftM2 (f (a1)) (x2) (x3))
+    ReOption.Monad_liftM3 (uncurryN3 (f), x1, x2, x3)
 
 /**
  * `liftM4 :: Maybe m => (a1 -> a2 -> a3 -> a4 -> r) -> m a1 -> m a2 -> m a3 ->
@@ -332,7 +338,7 @@ export const liftM4 =
   (x2: Maybe<A2>) =>
   (x3: Maybe<A3>) =>
   (x4: Maybe<A4>): Maybe<B> =>
-    bind<A1> (x1) (a1 => liftM3 (f (a1)) (x2) (x3) (x4))
+    ReOption.Monad_liftM4 (uncurryN4 (f), x1, x2, x3, x4)
 
 /**
  * `liftM5 :: Maybe m => (a1 -> a2 -> a3 -> a4 -> a5 -> r) -> m a1 -> m a2 -> m
@@ -349,7 +355,7 @@ export const liftM5 =
   (x3: Maybe<A3>) =>
   (x4: Maybe<A4>) =>
   (x5: Maybe<A5>): Maybe<B> =>
-    bind<A1> (x1) (a1 => liftM4 (f (a1)) (x2) (x3) (x4) (x5))
+    ReOption.Monad_liftM5 (uncurryN5 (f), x1, x2, x3, x4, x5)
 
 
 // FOLDABLE
@@ -364,7 +370,7 @@ export const foldr =
   (f: (x: A) => (acc: B) => B) =>
   (initial: B) =>
   (x: Maybe<A>): B =>
-    isJust (x) ? f (x .value) (initial) : initial
+    ReOption.Foldable_foldr (uncurryN (f), initial, x)
 
 /**
  * `foldl :: (b -> a -> b) -> b -> Maybe a -> b`
@@ -376,7 +382,7 @@ export const foldl =
   (f: (acc: B) => (x: A) => B) =>
   (initial: B) =>
   (x: Maybe<A>): B =>
-    isNothing (x) ? initial : f (initial) (x .value)
+    ReOption.Foldable_foldl (uncurryN (f), initial, x)
 
 /**
  * `toList :: Maybe a -> [a]`
@@ -385,7 +391,7 @@ export const foldl =
  */
 export const toList =
   <A>(x: Maybe<A>): List<A> =>
-    isJust (x) ? List.pure (x .value) : List.empty
+    ReOption.Foldable_toList (x)
 
 /**
  * `null :: Maybe a -> Bool`
@@ -394,7 +400,7 @@ export const toList =
  * for structures that are similar to cons-lists, because there is no general
  * way to do better.
  */
-export const fnull = isNothing
+export const fnull = ReOption.Foldable_fnull
 
 /**
  * `length :: Maybe a -> Int`
@@ -403,7 +409,7 @@ export const fnull = isNothing
  * implementation is optimized for structures that are similar to cons-lists,
  * because there is no general way to do better.
  */
-export const flength = (x: Maybe<any>): number => isJust (x) ? 1 : 0
+export const flength = (x: Maybe<any>): number => ReOption.Foldable_flength (x)
 
 /**
  * `elem :: Eq a => a -> Maybe a -> Bool`
@@ -414,7 +420,7 @@ export const flength = (x: Maybe<any>): number => isJust (x) ? 1 : 0
  */
 export const elem =
   <A> (x: A) => (y: Maybe<A>): boolean =>
-    isJust (y) && x === y .value
+    ReOption.Foldable_elem (x, y)
 
 /**
  * `elemF :: Eq a => Maybe a -> a -> Bool`
@@ -427,21 +433,21 @@ export const elem =
  */
 export const elemF =
   <A> (y: Maybe<A>) => (x: A): boolean =>
-    elem (x) (y)
+    ReOption.Foldable_elem (x, y)
 
 /**
  * `sum :: Num a => Maybe a -> a`
  *
  * The `sum` function computes the sum of the numbers of a structure.
  */
-export const sum = fromMaybe (0)
+export const sum = ReOption.Foldable_sum
 
 /**
  * `product :: Num a => Maybe a -> a`
  *
  * The `product` function computes the product of the numbers of a structure.
  */
-export const product = fromMaybe (1)
+export const product = ReOption.Foldable_product
 
 // Specialized folds
 
@@ -452,7 +458,7 @@ export const product = fromMaybe (1)
  */
 export const concat =
   <A>(x: Maybe<List<A>>): List<A> =>
-    fromMaybe<List<A>> (List.empty) (x)
+    ReOption.Foldable_concat (x)
 
 /**
  * `concatMap :: (a -> [b]) -> Maybe a -> [b]`
@@ -464,7 +470,7 @@ export const concatMap =
   <A, B>
   (f: (x: A) => List<B>) =>
   (x: Maybe<A>): List<B> =>
-    fromMaybe<List<B>> (List.empty) (fmap (f) (x))
+    ReOption.Foldable_concatMap (f, x)
 
 /**
  * `and :: Maybe Bool -> Bool`
@@ -478,7 +484,7 @@ export const concatMap =
  * and Just x  = x
  * ```
  */
-export const and = fromMaybe (true)
+export const and = ReOption.Foldable_and
 
 /**
  * `or :: Maybe Bool -> Bool`
@@ -492,7 +498,7 @@ export const and = fromMaybe (true)
  * or Just x  = x
  * ```
  */
-export const or = fromMaybe (false)
+export const or = ReOption.Foldable_or
 
 interface Any {
   <A, A1 extends A>
@@ -518,7 +524,7 @@ export const any: Any =
   <A>
   (f: (x: A) => boolean) =>
   (x: Maybe<A>): x is Just<A> =>
-    fromMaybe (false) (fmap (f) (x))
+    ReOption.Foldable_any (f, x)
 
 interface All {
   <A, A1 extends A> (f: (x: A) => x is A1): (x: Maybe<A>) => x is Maybe<A1>
@@ -539,8 +545,7 @@ export const all = (
   <A>
   (f: (x: A) => boolean) =>
   (x: Maybe<A>): boolean =>
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    maybe (true) (f) (x)
+    ReOption.Foldable_all (f, x)
 ) as All
 
 // Searches
@@ -552,7 +557,7 @@ export const all = (
  */
 export const notElem =
   <A> (e: A) => (m: Maybe<A>): boolean =>
-    !elem (e) (m)
+    ReOption.Foldable_notElem (e, m)
 
 interface Find {
 
@@ -584,56 +589,7 @@ interface Find {
  */
 export const find: Find =
   <A> (pred: (x: A) => boolean) => (x: Maybe<A>): Maybe<A> =>
-    isJust (x) && pred (x .value) ? x : Nothing
-
-
-// ORD
-
-/**
- * `(>) :: Maybe a -> Maybe a -> Bool`
- *
- * Returns if the *second* value is greater than the first value.
- *
- * If one of the values is `Nothing`, `(>)` always returns `false`.
- */
-export const gt =
-  (x: Maybe<number>) => (y: Maybe<number>): boolean =>
-    fromMaybe (false) (liftM2 (Math.gt) (x) (y))
-
-/**
- * `(<) :: Maybe a -> Maybe a -> Bool`
- *
- * Returns if the *second* value is lower than the first value.
- *
- * If one of the values is `Nothing`, `(<)` always returns `false`.
- */
-export const lt =
-  (x: Maybe<number>) => (y: Maybe<number>): boolean =>
-    fromMaybe (false) (liftM2 (Math.lt) (x) (y))
-
-/**
- * `(>=) :: Maybe a -> Maybe a -> Bool`
- *
- * Returns if the *second* value is greater than or equals the first
- * value.
- *
- * If one of the values is `Nothing`, `(>=)` always returns `false`.
- */
-export const gte =
-  (x: Maybe<number>) => (y: Maybe<number>): boolean =>
-    fromMaybe (false) (liftM2 (Math.gte) (x) (y))
-
-/**
- * `(<=) :: Maybe a -> Maybe a -> Bool`
- *
- * Returns if the *second* value is lower than or equals the first
- * value.
- *
- * If one of the values is `Nothing`, `(<=)` always returns `false`.
- */
-export const lte =
-  (x: Maybe<number>) => (y: Maybe<number>): boolean =>
-    fromMaybe (false) (liftM2 (Math.lte) (x) (y))
+    ReOption.Foldable_find (pred, x)
 
 
 // SEMIGROUP
@@ -647,9 +603,7 @@ export const lte =
  */
 export const mappend =
   <A> (x: Maybe<List<A>>) => (y: Maybe<List<A>>): Maybe<List<A>> =>
-    isJust (x) && isJust (y)
-      ? Just (List.append (fromJust (x)) (fromJust (y)))
-      : x
+    ReOption.Semigroup_sappend (x, y)
 
 
 // MAYBE FUNCTIONS (PART 2)
@@ -665,7 +619,8 @@ export const mappend =
 export const maybe =
   <B> (def: B) =>
   <A> (f: (x: A) => B) =>
-    foldl<A, B> (() => f) (def)
+  (x: Maybe<A>): B =>
+    ReOption.option (def, f, x)
 
 /**
  * `listToMaybe :: [a] -> Maybe a`
@@ -675,7 +630,7 @@ export const maybe =
  */
 export const listToMaybe =
   <A> (xs: List<A>): Maybe<A> =>
-    List.fnull (xs) ? Nothing : Just (head (xs))
+    ReOption.listToOption (xs)
 
 /**
  * `maybeToList :: Maybe a -> [a]`
@@ -683,7 +638,7 @@ export const listToMaybe =
  * The `maybeToList` function returns an empty list when given `Nothing` or a
  * singleton list when not given `Nothing`.
  */
-export const maybeToList = toList
+export const maybeToList = ReOption.optionToList
 
 /**
  * `catMaybes :: [Maybe a] -> [a]`
@@ -692,12 +647,7 @@ export const maybeToList = toList
  * the `Just` values.
  */
 export const catMaybes =
-  <A>
-  (xs: List<Maybe<A>>): List<A> =>
-    List.foldr<Maybe<A>, List<A>> (maybe<(xs: List<A>) => List<A>> (ident)
-                                                                   (consF))
-                                  (List.empty)
-                                  (xs)
+  <A> (xs: List<Maybe<A>>): List<A> => ReOption.catOptions (xs)
 
 /**
  * `mapMaybe :: (a -> Maybe b) -> [a] -> [b]`
@@ -708,34 +658,11 @@ export const catMaybes =
  * `Just b`, then `b` is included in the result list.
  */
 export const mapMaybe =
-  <A, B>
-  (f: (x: A) => Maybe<B>) =>
-    List.foldr<A, List<B>> (pipe (
-                             f,
-                             maybe<(xs: List<B>) => List<B>> (ident)
-                                                             (consF)
-                           ))
-                           (List.empty)
+  <A, B> (f: (x: A) => Maybe<B>) => (xs: List<A>): List<B> =>
+    ReOption.mapOption (f, xs)
 
 
 // CUSTOM MAYBE FUNCTIONS
-
-export import isMaybe = Internals.isMaybe
-
-Maybe.isMaybe = isMaybe
-
-/**
- * `normalize :: (a | Maybe a) -> Maybe a`
- *
- * Creates a new `Maybe` from the given nullable value. If the value is
- * already an instance of `Maybe`, it will just return the value.
- */
-export const normalize =
-  <A>
-  (x: A | Nullable | Maybe<A>): Maybe<A> =>
-    isMaybe (x) ? x : Maybe (x)
-
-Maybe.normalize = normalize
 
 interface Ensure {
 
@@ -772,7 +699,7 @@ export const ensure: Ensure =
   <A>
   (pred: (x: A) => boolean) =>
   (x: A): Maybe<A> =>
-    pred (x) ? Just (x) : Nothing
+    ReOption.ensure (pred, x)
 
 Maybe.ensure = ensure
 
@@ -806,7 +733,7 @@ Maybe.imapMaybe = imapMaybe
 export const maybeToNullable =
   <A>
   (x: Maybe<A>): A | null =>
-    isJust (x) ? x .value : null
+    ReOption.isSome (x) ? ReOption.fromSome (x) : null
 
 Maybe.maybeToNullable = maybeToNullable
 
@@ -819,7 +746,7 @@ Maybe.maybeToNullable = maybeToNullable
 export const maybeToUndefined =
   <A>
   (x: Maybe<A>): A | undefined =>
-    isJust (x) ? x .value : undefined
+    ReOption.isSome (x) ? ReOption.fromSome (x) : undefined
 
 Maybe.maybeToUndefined = maybeToUndefined
 
@@ -842,8 +769,12 @@ export const INTERNAL_shallowEquals =
   <A>
   (x: Maybe<A>) =>
   (y: Maybe<A>) =>
-    (isNothing (x) && isNothing (y))
-    || (isJust (x) && isJust (y) && x .value === y .value)
+    (ReOption.isNone (x) && ReOption.isNone (y))
+    || (
+      ReOption.isSome (x)
+      && ReOption.isSome (y)
+      && ReOption.fromSome (x) === ReOption.fromSome (y)
+    )
 
 // REACT-SPECIFIC FUNCTIONS
 
@@ -910,7 +841,6 @@ Maybe.orN = orN
 // NAMESPACED FUNCTIONS
 
 Maybe.Just = Just
-Maybe.Nothing = Nothing
 Maybe.fromNullable = Maybe
 
 Maybe.pure = pure
@@ -920,7 +850,6 @@ Maybe.alt = alt
 Maybe.alt_ = alt_
 Maybe.altF = altF
 Maybe.altF_ = altF_
-Maybe.empty = empty
 Maybe.guard = guard
 Maybe.guard_ = guard_
 
@@ -953,16 +882,11 @@ Maybe.all = all
 Maybe.notElem = notElem
 Maybe.find = find
 
-Maybe.isJust = isJust
-Maybe.isNothing = isNothing
+Maybe.isJust = ReOption.isSome
+Maybe.isNothing = ReOption.isNone
 Maybe.fromJust = fromJust
 Maybe.fromMaybe = fromMaybe
 Maybe.fromMaybe_ = fromMaybe_
-
-Maybe.gt = gt
-Maybe.lt = lt
-Maybe.gte = gte
-Maybe.lte = lte
 
 Maybe.maybe = maybe
 Maybe.maybe_ = maybe_
@@ -974,7 +898,7 @@ Maybe.mapMaybe = mapMaybe
 
 // TYPE HELPERS
 
-export type MaybeI<A> = A extends Internals.Maybe<infer AI> ? AI : never
+export type MaybeI<A> = A extends Maybe<infer AI> ? AI : never
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Some = string | number | boolean | object | symbol

@@ -9,9 +9,9 @@ var Js_int = require("bs-platform/lib/js/js_int.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
 var Caml_option = require("bs-platform/lib/js/caml_option.js");
-var Maybe$OptolithClient = require("./Maybe.bs.js");
-var Either$OptolithClient = require("./Either.bs.js");
-var Function$OptolithClient = require("./Function.bs.js");
+var Ley_Option$OptolithClient = require("./Ley_Option.bs.js");
+var Ley_Result$OptolithClient = require("./Ley_Result.bs.js");
+var Ley_Function$OptolithClient = require("./Ley_Function.bs.js");
 
 function entries(x) {
   return Array.from(x.entries());
@@ -95,11 +95,11 @@ function concatMap(f, mp) {
 }
 
 function con(mp) {
-  return Array.from(mp.values()).every(Function$OptolithClient.id);
+  return Array.from(mp.values()).every(Ley_Function$OptolithClient.id);
 }
 
 function dis(mp) {
-  return Array.from(mp.values()).some(Function$OptolithClient.id);
+  return Array.from(mp.values()).some(Ley_Function$OptolithClient.id);
 }
 
 function any(pred, mp) {
@@ -115,7 +115,7 @@ function notElem(e, mp) {
 }
 
 function find(pred, mp) {
-  return Maybe$OptolithClient.optionToMaybe(Caml_option.undefined_to_opt(Array.from(mp.values()).find(Curry.__1(pred))));
+  return Caml_option.undefined_to_opt(Array.from(mp.values()).find(Curry.__1(pred)));
 }
 
 var Foldable = {
@@ -144,28 +144,28 @@ function mapMEitherHelper(f, xs) {
     var match = xs[0];
     var new_value = Curry._1(f, match[1]);
     if (new_value.tag) {
+      return /* Error */Block.__(1, [new_value[0]]);
+    } else {
       var match$1 = mapMEitherHelper(f, xs[1]);
       if (match$1.tag) {
-        return /* Right */Block.__(1, [/* :: */[
+        return /* Error */Block.__(1, [match$1[0]]);
+      } else {
+        return /* Ok */Block.__(0, [/* :: */[
                     /* tuple */[
                       match[0],
                       new_value[0]
                     ],
                     match$1[0]
                   ]]);
-      } else {
-        return /* Left */Block.__(0, [match$1[0]]);
       }
-    } else {
-      return /* Left */Block.__(0, [new_value[0]]);
     }
   } else {
-    return /* Right */Block.__(1, [/* [] */0]);
+    return /* Ok */Block.__(0, [/* [] */0]);
   }
 }
 
 function mapMEither(f, mp) {
-  return Either$OptolithClient.Functor.$less$$great((function (xs) {
+  return Ley_Result$OptolithClient.Functor.$less$$great((function (xs) {
                 return new Map($$Array.of_list(xs));
               }), mapMEitherHelper(f, $$Array.to_list(Array.from(mp.entries()))));
 }
@@ -191,15 +191,15 @@ function notMember(key, mp) {
 }
 
 function lookup(key, mp) {
-  return Maybe$OptolithClient.Functor.$less$$great((function (prim) {
+  return Ley_Option$OptolithClient.Functor.$less$$great((function (prim) {
                 return prim[1];
-              }), Maybe$OptolithClient.optionToMaybe(Caml_option.undefined_to_opt(Array.from(mp.entries()).find((function (param) {
-                            return Caml_obj.caml_equal(param[0], key);
-                          })))));
+              }), Caml_option.undefined_to_opt(Array.from(mp.entries()).find((function (param) {
+                        return Caml_obj.caml_equal(param[0], key);
+                      }))));
 }
 
 function findWithDefault(def, key, mp) {
-  return Maybe$OptolithClient.fromMaybe(def, lookup(key, mp));
+  return Ley_Option$OptolithClient.fromOption(def, lookup(key, mp));
 }
 
 exports.Native = Native;

@@ -2,7 +2,7 @@ import { fmap } from "../../Data/Functor"
 import { flength, foldr, List, subscript } from "../../Data/List"
 import { altF, bindF, elem, fromMaybe, liftM2, Maybe, sum } from "../../Data/Maybe"
 import { add, dec, lt, odd, subtract, subtractBy } from "../../Data/Num"
-import { lookupF, OrderedMap } from "../../Data/OrderedMap"
+import { lookupF } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { show } from "../../Data/Show"
 import { ProfessionId, RaceId } from "../Constants/Ids"
@@ -129,8 +129,8 @@ export const rerollWeightAndSize =
 
 export const getFullProfessionName =
   (staticData: StaticDataRecord) =>
-  (wikiProfessions: OrderedMap<string, Record<Profession>>) =>
-  (wikiProfessionVariants: OrderedMap<string, Record<ProfessionVariant>>) =>
+  (wikiProfessions: StrMap<Record<Profession>>) =>
+  (wikiProfessionVariants: StrMap<Record<ProfessionVariant>>) =>
   (sex: Sex) =>
   (professionId: Maybe<string>) =>
   (professionVariantId: Maybe<string>) =>

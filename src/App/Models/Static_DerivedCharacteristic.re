@@ -3,8 +3,8 @@ type t = {
   name: string,
   short: string,
   calc: string,
-  calcHalfPrimary: Maybe.t(string),
-  calcNoPrimary: Maybe.t(string),
+  calcHalfPrimary: option(string),
+  calcNoPrimary: option(string),
 };
 
 module Decode = {
@@ -23,6 +23,6 @@ module Decode = {
   let all = (yamlData: Yaml_Raw.yamlData) =>
     yamlData.derivedCharacteristicsL10n
     |> list(t)
-    |> ListH.map(x => (x.id, x))
-    |> StrMap.fromList;
+    |> Ley.List.map(x => (x.id, x))
+    |> Ley.StrMap.fromList;
 };

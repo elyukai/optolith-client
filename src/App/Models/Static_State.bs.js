@@ -3,9 +3,9 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var ListH$OptolithClient = require("../../Data/ListH.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var Ley_List$OptolithClient = require("../../Data/Ley_List.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
 
@@ -20,7 +20,7 @@ function t(json) {
 }
 
 function all(yamlData) {
-  return Curry._1(IntMap$OptolithClient.fromList, ListH$OptolithClient.map((function (x) {
+  return Curry._1(Ley_IntMap$OptolithClient.fromList, Ley_List$OptolithClient.map((function (x) {
                     return /* tuple */[
                             x.id,
                             x
@@ -34,4 +34,4 @@ var Decode = {
 };
 
 exports.Decode = Decode;
-/* IntMap-OptolithClient Not a pure module */
+/* Ley_IntMap-OptolithClient Not a pure module */

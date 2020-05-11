@@ -1,4 +1,4 @@
-open Maybe;
+open Ley.Option;
 
 type categories = {
   total: int,
@@ -20,19 +20,19 @@ type categories = {
   spentOnSpecialAbilities: int,
   spentOnEnergies: int,
   spentOnRace: int,
-  spentOnProfession: maybe(int),
+  spentOnProfession: option(int),
 };
 
 let%private defaultDisAdvantagesMax = 80;
 let%private defaultDisAdvantagesSubtypeMax = 50;
 
 /**
- * Checks if there are enough AP available. If there are, returns `Nothing`.
- * Otherwise returns a `Just` of the missing AP.
+ * Checks if there are enough AP available. If there are, returns `None`.
+ * Otherwise returns a `Some` of the missing AP.
  */
 let getMissingAp = (~isInCharacterCreation, ~apAvailable, ~apCost) =>
   apCost > 0 && !isInCharacterCreation
-    ? apCost <= apAvailable ? Nothing : Just(apCost - apAvailable) : Nothing;
+    ? apCost <= apAvailable ? None : Some(apCost - apAvailable) : None;
 
 /**
  * Returns the maximum AP value you can spend on magical/blessed
@@ -42,8 +42,8 @@ let getDisAdvantagesSubtypeMax = (staticData, hero: Hero.t, isMagical) =>
   isMagical
     ? hero.specialAbilities
       |> Traditions.Magical.getEntries(staticData)
-      |> listToMaybe
-      |> maybe(
+      |> listToOption
+      |> option(
            defaultDisAdvantagesSubtypeMax,
            ((_, _, trad: Static.MagicalTradition.t)) =>
            trad.isDisAdvAPMaxHalved
@@ -53,20 +53,20 @@ let getDisAdvantagesSubtypeMax = (staticData, hero: Hero.t, isMagical) =>
     : defaultDisAdvantagesSubtypeMax;
 
 type missingApForDisAdvantage = {
-  totalMissing: maybe(int),
-  mainMissing: maybe(int),
-  subMissing: maybe(int),
+  totalMissing: option(int),
+  mainMissing: option(int),
+  subMissing: option(int),
 };
 
 let%private getDisAdvantageSubtypeApSpent =
             (~apCategories, ~isDisadvantage, ~isMagical, ~isBlessed) =>
   isDisadvantage
     ? isMagical
-        ? Just(apCategories.spentOnMagicalDisadvantages)
-        : isBlessed ? Just(apCategories.spentOnBlessedDisadvantages) : Nothing
+        ? Some(apCategories.spentOnMagicalDisadvantages)
+        : isBlessed ? Some(apCategories.spentOnBlessedDisadvantages) : None
     : isMagical
-        ? Just(apCategories.spentOnMagicalAdvantages)
-        : isBlessed ? Just(apCategories.spentOnBlessedAdvantages) : Nothing;
+        ? Some(apCategories.spentOnMagicalAdvantages)
+        : isBlessed ? Some(apCategories.spentOnBlessedAdvantages) : None;
 
 type disAdvantageStatic =
   | Advantage(Static.Advantage.t)
@@ -115,33 +115,33 @@ let getMissingApForDisAdvantage =
 
   // A disadvantage has negative cost, but the sum to check is always positive
   // (to be able to use one function for both advantages and disadvantages)
-  let absoluteApCost = Int.abs(apCost);
+  let absoluteApCost = Ley.Int.abs(apCost);
 
   // Checks if there are enough AP below the max for the subtype (magical/blessed)
   let missingApForSubtype =
     isInCharacterCreation && !noMaxAPInfluence
       // (current + spent) - max > 0 => invalid
-      ? Maybe.Monad.(
+      ? Ley.Option.Monad.(
           mApSpentSubtype
           >>= (
             apSpentSubtype =>
-              Maybe.ensure(
+              Ley.Option.ensure(
                 (<)(0),
                 apSpentSubtype + absoluteApCost - subtypeMax,
               )
           )
         )
-      : Nothing;
+      : None;
 
   // Checks if there are enough AP below the max for advantages/disadvantages
   let missingApForMain =
     isInCharacterCreation && !noMaxAPInfluence
       // (current + spent) - max > 0 => invalid
-      ? Maybe.ensure(
+      ? Ley.Option.ensure(
           (<)(0),
           apSpent + absoluteApCost - defaultDisAdvantagesMax,
         )
-      : Nothing;
+      : None;
 
   // Checks if there are enough AP available in total
   let missingApForTotal =
@@ -160,9 +160,9 @@ let getMissingApForDisAdvantage =
 
 module Sum = {
   open Static;
-  open Function;
-  open IntMap;
-  open IntMap.Foldable;
+  open Ley.Function;
+  open Ley.IntMap;
+  open Ley.IntMap.Foldable;
 
   let getApSpentOnAttributes =
     foldr(
@@ -174,7 +174,7 @@ module Sum = {
     foldr(
       (x: Hero.Skill.t) =>
         lookup(x.id, staticData.skills)
-        |> maybe(id, (staticEntry: Skill.t) =>
+        |> option(id, (staticEntry: Skill.t) =>
              x.value |> IC.getAPForRange(staticEntry.ic, 0) |> (+)
            ),
       0,
@@ -184,7 +184,7 @@ module Sum = {
     foldr(
       (x: Hero.Skill.t) =>
         lookup(x.id, staticData.combatTechniques)
-        |> maybe(id, (staticEntry: CombatTechnique.t) =>
+        |> option(id, (staticEntry: CombatTechnique.t) =>
              x.value |> IC.getAPForRange(staticEntry.ic, 6) |> (+)
            ),
       0,
@@ -196,7 +196,7 @@ module Sum = {
         switch (x.value) {
         | Active(value) =>
           lookup(x.id, staticData.spells)
-          |> maybe(id, (staticEntry: Spell.t) =>
+          |> option(id, (staticEntry: Spell.t) =>
                value |> IC.getAPForRange(staticEntry.ic, 0) |> (+)
              )
         | Inactive => id
@@ -210,7 +210,7 @@ module Sum = {
         switch (x.value) {
         | Active(value) =>
           lookup(x.id, staticData.liturgicalChants)
-          |> maybe(id, (staticEntry: LiturgicalChant.t) =>
+          |> option(id, (staticEntry: LiturgicalChant.t) =>
                value |> IC.getAPForRange(staticEntry.ic, 0) |> (+)
              )
         | Inactive => id
@@ -379,7 +379,7 @@ module Sum = {
   //   (wiki: StaticDataRecord) =>
   //     pipe (
   //       bindF (lookupF (SDA.races (wiki))),
-  //       maybe (0) (Race.A.ap)
+  //       option (0) (Race.A.ap)
   //     )
   //
   // /**
@@ -388,20 +388,20 @@ module Sum = {
   //  */
   // export const getAPSpentForProfession =
   //   (wiki: StaticDataRecord) =>
-  //   (mprofId: Maybe<string>) =>
-  //   (mprofVarId: Maybe<string>) =>
+  //   (mprofId: Option<string>) =>
+  //   (mprofVarId: Option<string>) =>
   //     pipe (
   //       ensure (equals (1)),
   //       thenF (mprofId),
   //       bindF (lookupF (SDA.professions (wiki))),
   //       fmap (pipe (
   //         Profession.A.ap,
-  //         Maybe.sum,
+  //         Option.sum,
   //         add (pipe_ (
   //           mprofVarId,
   //           bindF (lookupF (SDA.professionVariants (wiki))),
   //           fmap (ProfessionVariant.A.ap),
-  //           Maybe.sum
+  //           Option.sum
   //         ))
   //       ))
   //     )
@@ -409,7 +409,7 @@ module Sum = {
   // const getPrinciplesObligationsDiff =
   //   (id: string) =>
   //   (staticData: StaticDataRecord) =>
-  //   (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  //   (hero_slice: StrMap<Record<ActivatableDependent>>) =>
   //   (entries: List<Record<ActiveActivatable>>): number => {
   //     if (any (pipe (ActiveActivatableAL_.id, equals (id))) (entries)) {
   //       return pipe_ (
@@ -460,8 +460,8 @@ module Sum = {
   //
   //         const mcost = pipe_ (entry, ActiveActivatable.AL.wikiEntry, Disadvantage.AL.cost)
   //
-  //         if (isJust (mcost)) {
-  //           const cost = fromJust (mcost)
+  //         if (isSome (mcost)) {
+  //           const cost = fromSome (mcost)
   //
   //           if (isList (cost)) {
   //             const actualAPSum = pipe_ (cost, take (current_active_length), List.sum)
@@ -499,10 +499,10 @@ module Sum = {
   //   (current_sid: number | string) =>
   //   (current_entries: number): number =>
   //     current_sid === sid && current_entries > paid_entries
-  //     ? maybe (0)
+  //     ? option (0)
   //             (pipe (multiply (paid_entries), negate))
   //             (getSelectOptionCost (AAA.wikiEntry (entry) as Activatable)
-  //                                  (Just (sid)))
+  //                                  (Some (sid)))
   //     : 0
   //
   // const getPersonalityFlawsDiff =
@@ -516,7 +516,7 @@ module Sum = {
   //       fmap (entry => pipe_ (
   //         entry,
   //         ActiveActivatableA_.active,
-  //         countWithByKeyMaybe (e => then (guard (isNothing (AOA.cost (e))))
+  //         countWithByKeyOption (e => then (guard (isNone (AOA.cost (e))))
   //                                        (AOA.sid (e))),
   //         OrderedMap.foldrWithKey ((sid: string | number) => (val: number) =>
   //                                   pipe_ (
@@ -531,12 +531,12 @@ module Sum = {
   //       )),
   //
   //       // If no Personality Flaw was found, there's no diff.
-  //       Maybe.sum
+  //       Option.sum
   //     )
   //
   // const getBadHabitsDiff =
   //   (staticData: StaticDataRecord) =>
-  //   (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  //   (hero_slice: StrMap<Record<ActivatableDependent>>) =>
   //   (entries: List<Record<ActiveActivatable>>): number =>
   //     any (pipe (ActiveActivatableAL_.id, equals<string> (DisadvantageId.BadHabit))) (entries)
   //       ? sum (pipe_ (
@@ -565,7 +565,7 @@ module Sum = {
   //
   // const getSkillSpecializationsDiff =
   //   (staticData: StaticDataRecord) =>
-  //   (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  //   (hero_slice: StrMap<Record<ActivatableDependent>>) =>
   //   (entries: List<Record<ActiveActivatable>>): number => {
   //     if (any (pipe (ActiveActivatableAL_.id, equals<string> (SpecialAbilityId.SkillSpecialization)))
   //             (entries)) {
@@ -577,7 +577,7 @@ module Sum = {
   //
   //           // Count how many specializations are for the same skill
   //           const sameSkill =
-  //             countWithByKeyMaybe (pipe (ActiveObject.A.sid, misStringM))
+  //             countWithByKeyOption (pipe (ActiveObject.A.sid, misStringM))
   //                                 (current_active)
   //
   //           // Return the accumulated value, otherwise 0.
@@ -585,13 +585,13 @@ module Sum = {
   //
   //           // Calculates the diff for a single skill specialization
   //           const getSingleDiff =
-  //             (accMap: OrderedMap<string, number>) =>
+  //             (accMap: StrMap<number>) =>
   //             (sid: string) =>
   //             (counter: number) =>
   //             (skill: Record<Skill>) =>
   //               Skill.A.ic (skill) * (getFlatSkillDone (sid) (accMap) + 1 - counter)
   //
-  //           type TrackingPair = Pair<number, OrderedMap<string, number>>
+  //           type TrackingPair = Pair<number, StrMap<number>>
   //
   //           // Iterates through the counter and sums up all cost differences for
   //           // each specialization.
@@ -608,7 +608,7 @@ module Sum = {
   //                                     const m = snd (p)
   //
   //                                     // Check if the value in the map is either
-  //                                     // Nothing or a Just of a lower number than
+  //                                     // None or a Some of a lower number than
   //                                     // the complete counter
   //                                     // => which means there are still actions to
   //                                     // be done
@@ -621,7 +621,7 @@ module Sum = {
   //                                                                            (current_sid)
   //                                                                            (count))
   //                                                             (mskill)),
-  //                                         alter (pipe (altF (Just (0)), fmap (inc)))
+  //                                         alter (pipe (altF (Some (0)), fmap (inc)))
   //                                               (current_sid)
   //                                               (m)
   //                                       )
@@ -629,7 +629,7 @@ module Sum = {
   //
   //                                     return p
   //                                   })),
-  //                     fromMaybe<ident<TrackingPair>> (ident)
+  //                     fromOption<ident<TrackingPair>> (ident)
   //                   ))
   //                   (Pair (0, empty))
   //                   (current_active)
@@ -653,7 +653,7 @@ module Sum = {
   //  */
   // export const getAdventurePointsSpentDifference =
   //   (staticData: StaticDataRecord) =>
-  //   (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  //   (hero_slice: StrMap<Record<ActivatableDependent>>) =>
   //   (entries: List<Record<ActiveActivatable>>): number => {
   //     const adventurePointsSpentDifferences = List (
   //       getPrinciplesObligationsDiff (DisadvantageId.Principles) (staticData) (hero_slice) (entries),
@@ -784,7 +784,7 @@ module Sum = {
   //       + spentOnBlessings
   //       + spentOnEnergies
   //       + spentOnRace
-  //       + Maybe.sum (spentOnProfession)
+  //       + Option.sum (spentOnProfession)
   //       + spentOnSpecialAbilities
   //       + snd (spentOnAdvantages)
   //       + snd (spentOnMagicalAdvantages)

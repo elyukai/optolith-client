@@ -4,8 +4,8 @@
 type singleWithId = {
   id: int,
   options: list(Hero.Activatable.option),
-  level: Maybe.t(int),
-  customCost: Maybe.t(int),
+  level: option(int),
+  customCost: option(int),
 };
 
 /**
@@ -16,7 +16,7 @@ let isActive: Hero.Activatable.t => bool;
 /**
  * Is an Activatable, where the entry may not be created, active?
  */
-let isActiveM: Maybe.t(Hero.Activatable.t) => bool;
+let isActiveM: option(Hero.Activatable.t) => bool;
 
 module Convert: {
   /**
@@ -29,7 +29,7 @@ module Convert: {
 module Accessors: {
   let name: Static.activatable => string;
   let selectOptions: Static.activatable => Static.SelectOption.map;
-  let input: Static.activatable => Maybe.t(string);
+  let input: Static.activatable => option(string);
 };
 
 module SelectOptions: {
@@ -39,21 +39,21 @@ module SelectOptions: {
    */
   let getSelectOption:
     (Static.activatable, Hero.Activatable.option) =>
-    Maybe.t(Static.SelectOption.t);
+    option(Static.SelectOption.t);
 
   /**
    * Get a select option's name with the given id from given static entry.
    * Returns `Nothing` if not found.
    */
   let getSelectOptionName:
-    (Static.activatable, Hero.Activatable.option) => Maybe.t(string);
+    (Static.activatable, Hero.Activatable.option) => option(string);
 
   /**
    * Get a select option's cost with the given id from given static entry.
    * Returns `Nothing` if not found.
    */
   let getSelectOptionCost:
-    (Static.activatable, Hero.Activatable.option) => Maybe.t(int);
+    (Static.activatable, Hero.Activatable.option) => option(int);
 
   /**
    * Get all first select option IDs from the given entry.
@@ -71,8 +71,8 @@ module Names: {
   type combinedName = {
     name: string,
     baseName: string,
-    addName: Maybe.t(string),
-    levelName: Maybe.t(string),
+    addName: option(string),
+    levelName: option(string),
   };
 
   /**

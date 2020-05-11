@@ -1,5 +1,4 @@
-import { fmapF } from "../../Data/Functor"
-import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe"
+import { bind, bindF, fmapF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe"
 import { lookup } from "../../Data/OrderedMap"
 import { curryN } from "../../Data/Tuple/All"
 import * as ActionTypes from "../Constants/ActionTypes"

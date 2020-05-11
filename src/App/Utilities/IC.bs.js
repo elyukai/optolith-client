@@ -4,8 +4,8 @@
 var List = require("bs-platform/lib/js/list.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var Ix$OptolithClient = require("../../Data/Ix.bs.js");
-var Int$OptolithClient = require("../../Data/Int.bs.js");
+var Ley_Ix$OptolithClient = require("../../Data/Ley_Ix.bs.js");
+var Ley_Int$OptolithClient = require("../../Data/Ley_Int.bs.js");
 
 function getAPCostBaseByIC(ic) {
   switch (ic) {
@@ -32,7 +32,7 @@ function getLastSRWithConstantCost(ic) {
 }
 
 function getBaseMultiplier(ic, sr) {
-  return Int$OptolithClient.max(1, (sr - getLastSRWithConstantCost(ic) | 0) + 1 | 0);
+  return Ley_Int$OptolithClient.max(1, (sr - getLastSRWithConstantCost(ic) | 0) + 1 | 0);
 }
 
 function getCost(ic, sr) {
@@ -40,7 +40,7 @@ function getCost(ic, sr) {
 }
 
 function getAPForBounds(ic, l, u) {
-  var __x = Ix$OptolithClient.range(/* tuple */[
+  var __x = Ley_Ix$OptolithClient.range(/* tuple */[
         l + 1 | 0,
         u
       ]);

@@ -1,7 +1,6 @@
 import * as React from "react"
 import { List, map, toArray } from "../../../Data/List"
 import { Just, Maybe } from "../../../Data/Maybe"
-import { OrderedMap } from "../../../Data/OrderedMap"
 import { OrderedSet } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
 import { HerolistItemContainer } from "../../Containers/HerolistItemContainer"
@@ -28,7 +27,7 @@ export interface HerolistOwnProps {
 }
 
 export interface HerolistStateProps {
-  experienceLevels: OrderedMap<string, Record<ExperienceLevel>>
+  experienceLevels: StrMap<Record<ExperienceLevel>>
   filterText: string
   list: List<HeroModelRecord>
   visibilityFilter: string

@@ -1,6 +1,6 @@
 import { fmapF } from "../../Data/Functor"
 import { bind, bindF, fromMaybe, Just, listToMaybe, Maybe, Nothing } from "../../Data/Maybe"
-import { lookup, OrderedMap } from "../../Data/OrderedMap"
+import { lookup } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { AttrId, SpecialAbilityId } from "../Constants/Ids"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
@@ -73,7 +73,7 @@ const getPrimAttrIdByTradId =
  * @param type 1 = magical, 2 = blessed
  */
 export const getPrimaryAttributeId =
-  (state: OrderedMap<string, Record<ActivatableDependent>>) =>
+  (state: StrMap<Record<ActivatableDependent>>) =>
   (type: PrimaryAttributeType): Maybe<AttrId> => {
     switch (type) {
       case PrimaryAttributeType.Magical:
@@ -90,8 +90,8 @@ export const getPrimaryAttributeId =
   }
 
 const getAttributeCombined =
-  (wiki_attributes: OrderedMap<string, Record<Attribute>>) =>
-  (hero_attributes: OrderedMap<string, Record<AttributeDependent>>) =>
+  (wiki_attributes: StrMap<Record<Attribute>>) =>
+  (hero_attributes: StrMap<Record<AttributeDependent>>) =>
   (id: AttrId) =>
     fmapF (lookup<string> (id) (wiki_attributes))
           (wiki_entry => AttributeCombined ({
@@ -105,8 +105,8 @@ const getAttributeCombined =
  * corresponding primary attribute.
  */
 export const mapTradHeroEntryToAttrCombined =
-  (wiki_attributes: OrderedMap<string, Record<Attribute>>) =>
-  (hero_attributes: OrderedMap<string, Record<AttributeDependent>>) =>
+  (wiki_attributes: StrMap<Record<Attribute>>) =>
+  (hero_attributes: StrMap<Record<AttributeDependent>>) =>
     pipe (
       ADA.id,
       getPrimAttrIdByTradId,

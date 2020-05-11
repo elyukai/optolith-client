@@ -4,7 +4,7 @@ import { fmap } from "../../Data/Functor"
 import { Lens_, over, view } from "../../Data/Lens"
 import { elemF, filter, fromArray, List } from "../../Data/List"
 import { bindF, ensure, fromMaybe, Just, liftM2, Maybe, Nothing, or } from "../../Data/Maybe"
-import { alter, elems, insert, lookup, lookupF, OrderedMap, sdelete, update } from "../../Data/OrderedMap"
+import { alter, elems, insert, lookup, lookupF, sdelete, update } from "../../Data/OrderedMap"
 import { IdPrefixes } from "../Constants/IdPrefixes"
 import { createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
@@ -195,7 +195,7 @@ export const getHeroStateItem =
   (id: string) =>
     pipe (
            fmap ((lens: HeroStateMapLens) => view (lens) (hero)) as
-             (l: Maybe<HeroStateMapLens>) => Maybe<OrderedMap<string, Dependent>>,
+             (l: Maybe<HeroStateMapLens>) => Maybe<StrMap<Dependent>>,
            bindF (lookup (id))
          )
          (getHeroStateMapLensById (id))
@@ -307,9 +307,9 @@ export const updateSliceEntry =
  * Filters the passed `list` by the specified groups.
  */
 export const getAllEntriesByGroup =
-  (wiki_slice: OrderedMap<string, EntryWithGroup>) =>
+  (wiki_slice: StrMap<EntryWithGroup>) =>
   <I extends Dependent = Dependent>
-  (hero_slice: OrderedMap<string, I>) =>
+  (hero_slice: StrMap<I>) =>
   (...groups: number[]): List<I> =>
     filter<I> (pipe (
                 AttributeDependent.AL.id,

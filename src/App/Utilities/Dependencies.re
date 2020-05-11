@@ -1,4 +1,4 @@
-open Maybe;
+open Ley.Option;
 
 /**
  * `flattenDependencies(getValueForTargetId, id, dependencies)` flattens the
@@ -8,23 +8,23 @@ open Maybe;
  * result is a plain `List` of all non-optional dependencies.
  */
 let flattenSkill = (getValueForTargetId, id, dependencies) =>
-  mapMaybe(
+  mapOption(
     (dep: Hero.Skill.dependency) =>
       switch (dep.target) {
-      | One(_) => Just(dep.value)
+      | One(_) => Some(dep.value)
       | Many(targets) =>
         targets
-        |> ListH.delete(id)
-        |> ListH.map(getValueForTargetId)
+        |> Ley.List.delete(id)
+        |> Ley.List.map(getValueForTargetId)
         // Check if the dependency is met by another entry so that it can be
         // ignored currently
-        |> ListH.Foldable.any(value => value >= dep.value)
+        |> Ley.List.Foldable.any(value => value >= dep.value)
         |> (
           isMatchedByOtherEntry =>
             if (isMatchedByOtherEntry) {
-              Nothing;
+              None;
             } else {
-              Just(dep.value);
+              Some(dep.value);
             }
         )
       },
@@ -33,17 +33,17 @@ let flattenSkill = (getValueForTargetId, id, dependencies) =>
 
 let flattenActivatableSkill = (getValueForTargetId, id, dependencies) =>
   Hero.ActivatableSkill.(
-    mapMaybe(
+    mapOption(
       (dep: dependency) =>
         switch (dep.target) {
-        | One(_) => Just(dep.value)
+        | One(_) => Some(dep.value)
         | Many(targets) =>
           targets
-          |> ListH.delete(id)
-          |> ListH.map(getValueForTargetId)
+          |> Ley.List.delete(id)
+          |> Ley.List.map(getValueForTargetId)
           // Check if the dependency is met by another entry so that it can be
           // ignored currently
-          |> ListH.Foldable.any(value =>
+          |> Ley.List.Foldable.any(value =>
                switch (value, dep.value) {
                // If dependency requires an active entry, the other entry must
                // have at least the required value
@@ -59,9 +59,9 @@ let flattenActivatableSkill = (getValueForTargetId, id, dependencies) =>
           |> (
             isMatchedByOtherEntry =>
               if (isMatchedByOtherEntry) {
-                Nothing;
+                None;
               } else {
-                Just(dep.value);
+                Some(dep.value);
               }
           )
         },

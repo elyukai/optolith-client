@@ -2,10 +2,10 @@ let%private idName = json =>
   Json.Decode.(json |> field("id", int), json |> field("name", string));
 
 let%private idNames = json =>
-  Json.Decode.(json |> list(idName)) |> IntMap.fromList;
+  Json.Decode.(json |> list(idName)) |> Ley.IntMap.fromList;
 
 let%private liturgicalChantEnhancements = xs =>
-  ListH.Monad.(
+  Ley.List.Monad.(
     xs
     >>= (
       (x: Static.LiturgicalChant.enhancement) => (
@@ -15,19 +15,19 @@ let%private liturgicalChantEnhancements = xs =>
             {
               id: `Generic(x.level1.id),
               name: x.level1.name,
-              cost: Maybe.Just(x.level1.cost),
+              cost: Some(x.level1.cost),
               prerequisites: Static_Prerequisites.empty,
-              description: Maybe.Just(x.level1.effect),
-              isSecret: Maybe.Nothing,
-              languages: Maybe.Nothing,
-              continent: Maybe.Nothing,
-              isExtinct: Maybe.Nothing,
-              specializations: Maybe.Nothing,
-              specializationInput: Maybe.Nothing,
-              animalGr: Maybe.Nothing,
-              animalLevel: Maybe.Nothing,
-              target: Maybe.Just(x.target),
-              wikiEntry: Maybe.Nothing,
+              description: Some(x.level1.effect),
+              isSecret: None,
+              languages: None,
+              continent: None,
+              isExtinct: None,
+              specializations: None,
+              specializationInput: None,
+              animalGr: None,
+              animalLevel: None,
+              target: Some(x.target),
+              wikiEntry: None,
               src: x.src,
               errata: x.errata,
             },
@@ -37,7 +37,7 @@ let%private liturgicalChantEnhancements = xs =>
             {
               id: `Generic(x.level2.id),
               name: x.level2.name,
-              cost: Maybe.Just(x.level2.cost),
+              cost: Some(x.level2.cost),
               prerequisites: {
                 ...Static_Prerequisites.empty,
                 activatable:
@@ -49,24 +49,24 @@ let%private liturgicalChantEnhancements = xs =>
                             Ids.SpecialAbilityId.chantEnhancement,
                           ),
                         active: true,
-                        sid: Maybe.Just(`Generic(x.level1.id)),
-                        sid2: Maybe.Nothing,
-                        level: Maybe.Nothing,
+                        sid: Some(`Generic(x.level1.id)),
+                        sid2: None,
+                        level: None,
                       },
                     ]
                     : [],
               },
-              description: Maybe.Just(x.level2.effect),
-              isSecret: Maybe.Nothing,
-              languages: Maybe.Nothing,
-              continent: Maybe.Nothing,
-              isExtinct: Maybe.Nothing,
-              specializations: Maybe.Nothing,
-              specializationInput: Maybe.Nothing,
-              animalGr: Maybe.Nothing,
-              animalLevel: Maybe.Nothing,
-              target: Maybe.Just(x.target),
-              wikiEntry: Maybe.Nothing,
+              description: Some(x.level2.effect),
+              isSecret: None,
+              languages: None,
+              continent: None,
+              isExtinct: None,
+              specializations: None,
+              specializationInput: None,
+              animalGr: None,
+              animalLevel: None,
+              target: Some(x.target),
+              wikiEntry: None,
               src: x.src,
               errata: x.errata,
             },
@@ -76,49 +76,49 @@ let%private liturgicalChantEnhancements = xs =>
             {
               id: `Generic(x.level3.id),
               name: x.level3.name,
-              cost: Maybe.Just(x.level3.cost),
+              cost: Some(x.level3.cost),
               prerequisites: {
                 ...Static_Prerequisites.empty,
                 activatable:
                   switch (x.level3.requirePrevious) {
-                  | Maybe.Just(First) => [
+                  | Some(First) => [
                       {
                         id:
                           `SpecialAbility(
                             Ids.SpecialAbilityId.chantEnhancement,
                           ),
                         active: true,
-                        sid: Maybe.Just(`Generic(x.level1.id)),
-                        sid2: Maybe.Nothing,
-                        level: Maybe.Nothing,
+                        sid: Some(`Generic(x.level1.id)),
+                        sid2: None,
+                        level: None,
                       },
                     ]
-                  | Maybe.Just(Second) => [
+                  | Some(Second) => [
                       {
                         id:
                           `SpecialAbility(
                             Ids.SpecialAbilityId.chantEnhancement,
                           ),
                         active: true,
-                        sid: Maybe.Just(`Generic(x.level2.id)),
-                        sid2: Maybe.Nothing,
-                        level: Maybe.Nothing,
+                        sid: Some(`Generic(x.level2.id)),
+                        sid2: None,
+                        level: None,
                       },
                     ]
-                  | Maybe.Nothing => []
+                  | None => []
                   },
               },
-              description: Maybe.Just(x.level3.effect),
-              isSecret: Maybe.Nothing,
-              languages: Maybe.Nothing,
-              continent: Maybe.Nothing,
-              isExtinct: Maybe.Nothing,
-              specializations: Maybe.Nothing,
-              specializationInput: Maybe.Nothing,
-              animalGr: Maybe.Nothing,
-              animalLevel: Maybe.Nothing,
-              target: Maybe.Just(x.target),
-              wikiEntry: Maybe.Nothing,
+              description: Some(x.level3.effect),
+              isSecret: None,
+              languages: None,
+              continent: None,
+              isExtinct: None,
+              specializations: None,
+              specializationInput: None,
+              animalGr: None,
+              animalLevel: None,
+              target: Some(x.target),
+              wikiEntry: None,
               src: x.src,
               errata: x.errata,
             },
@@ -127,11 +127,11 @@ let%private liturgicalChantEnhancements = xs =>
           list((int, Static_SelectOption.t))
       )
     )
-    |> IntMap.fromList
+    |> Ley.IntMap.fromList
   );
 
 let%private spellEnhancements = xs =>
-  ListH.Monad.(
+  Ley.List.Monad.(
     xs
     >>= (
       (x: Static.Spell.enhancement) => (
@@ -141,19 +141,19 @@ let%private spellEnhancements = xs =>
             {
               id: `Generic(x.level1.id),
               name: x.level1.name,
-              cost: Maybe.Just(x.level1.cost),
+              cost: Some(x.level1.cost),
               prerequisites: Static_Prerequisites.empty,
-              description: Maybe.Just(x.level1.effect),
-              isSecret: Maybe.Nothing,
-              languages: Maybe.Nothing,
-              continent: Maybe.Nothing,
-              isExtinct: Maybe.Nothing,
-              specializations: Maybe.Nothing,
-              specializationInput: Maybe.Nothing,
-              animalGr: Maybe.Nothing,
-              animalLevel: Maybe.Nothing,
-              target: Maybe.Just(x.target),
-              wikiEntry: Maybe.Nothing,
+              description: Some(x.level1.effect),
+              isSecret: None,
+              languages: None,
+              continent: None,
+              isExtinct: None,
+              specializations: None,
+              specializationInput: None,
+              animalGr: None,
+              animalLevel: None,
+              target: Some(x.target),
+              wikiEntry: None,
               src: x.src,
               errata: x.errata,
             },
@@ -163,7 +163,7 @@ let%private spellEnhancements = xs =>
             {
               id: `Generic(x.level2.id),
               name: x.level2.name,
-              cost: Maybe.Just(x.level2.cost),
+              cost: Some(x.level2.cost),
               prerequisites: {
                 ...Static_Prerequisites.empty,
                 activatable:
@@ -175,24 +175,24 @@ let%private spellEnhancements = xs =>
                             Ids.SpecialAbilityId.spellEnhancement,
                           ),
                         active: true,
-                        sid: Maybe.Just(`Generic(x.level1.id)),
-                        sid2: Maybe.Nothing,
-                        level: Maybe.Nothing,
+                        sid: Some(`Generic(x.level1.id)),
+                        sid2: None,
+                        level: None,
                       },
                     ]
                     : [],
               },
-              description: Maybe.Just(x.level2.effect),
-              isSecret: Maybe.Nothing,
-              languages: Maybe.Nothing,
-              continent: Maybe.Nothing,
-              isExtinct: Maybe.Nothing,
-              specializations: Maybe.Nothing,
-              specializationInput: Maybe.Nothing,
-              animalGr: Maybe.Nothing,
-              animalLevel: Maybe.Nothing,
-              target: Maybe.Just(x.target),
-              wikiEntry: Maybe.Nothing,
+              description: Some(x.level2.effect),
+              isSecret: None,
+              languages: None,
+              continent: None,
+              isExtinct: None,
+              specializations: None,
+              specializationInput: None,
+              animalGr: None,
+              animalLevel: None,
+              target: Some(x.target),
+              wikiEntry: None,
               src: x.src,
               errata: x.errata,
             },
@@ -202,49 +202,49 @@ let%private spellEnhancements = xs =>
             {
               id: `Generic(x.level3.id),
               name: x.level3.name,
-              cost: Maybe.Just(x.level3.cost),
+              cost: Some(x.level3.cost),
               prerequisites: {
                 ...Static_Prerequisites.empty,
                 activatable:
                   switch (x.level3.requirePrevious) {
-                  | Maybe.Just(First) => [
+                  | Some(First) => [
                       {
                         id:
                           `SpecialAbility(
                             Ids.SpecialAbilityId.spellEnhancement,
                           ),
                         active: true,
-                        sid: Maybe.Just(`Generic(x.level1.id)),
-                        sid2: Maybe.Nothing,
-                        level: Maybe.Nothing,
+                        sid: Some(`Generic(x.level1.id)),
+                        sid2: None,
+                        level: None,
                       },
                     ]
-                  | Maybe.Just(Second) => [
+                  | Some(Second) => [
                       {
                         id:
                           `SpecialAbility(
                             Ids.SpecialAbilityId.spellEnhancement,
                           ),
                         active: true,
-                        sid: Maybe.Just(`Generic(x.level2.id)),
-                        sid2: Maybe.Nothing,
-                        level: Maybe.Nothing,
+                        sid: Some(`Generic(x.level2.id)),
+                        sid2: None,
+                        level: None,
                       },
                     ]
-                  | Maybe.Nothing => []
+                  | None => []
                   },
               },
-              description: Maybe.Just(x.level3.effect),
-              isSecret: Maybe.Nothing,
-              languages: Maybe.Nothing,
-              continent: Maybe.Nothing,
-              isExtinct: Maybe.Nothing,
-              specializations: Maybe.Nothing,
-              specializationInput: Maybe.Nothing,
-              animalGr: Maybe.Nothing,
-              animalLevel: Maybe.Nothing,
-              target: Maybe.Just(x.target),
-              wikiEntry: Maybe.Nothing,
+              description: Some(x.level3.effect),
+              isSecret: None,
+              languages: None,
+              continent: None,
+              isExtinct: None,
+              specializations: None,
+              specializationInput: None,
+              animalGr: None,
+              animalLevel: None,
+              target: Some(x.target),
+              wikiEntry: None,
               src: x.src,
               errata: x.errata,
             },
@@ -253,7 +253,7 @@ let%private spellEnhancements = xs =>
           list((int, Static_SelectOption.t))
       )
     )
-    |> IntMap.fromList
+    |> Ley.IntMap.fromList
   );
 
 let decode = (locale, yamlData: Yaml_Raw.yamlData): Static.t => {

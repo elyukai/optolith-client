@@ -1,7 +1,7 @@
 type application = {
   id: int,
   name: string,
-  prerequisite: Maybe.t(Static_Prerequisites.activatable),
+  prerequisite: option(Static_Prerequisites.activatable),
 };
 
 type use = {
@@ -13,7 +13,7 @@ type use = {
 type encumbrance =
   | True
   | False
-  | Maybe(Maybe.t(string));
+  | Maybe(option(string));
 
 type t = {
   id: int,
@@ -22,10 +22,10 @@ type t = {
   encumbrance,
   gr: int,
   ic: IC.t,
-  applications: IntMap.t(application),
-  applicationsInput: Maybe.t(string),
-  uses: IntMap.t(use),
-  tools: Maybe.t(string),
+  applications: Ley.IntMap.t(application),
+  applicationsInput: option(string),
+  uses: Ley.IntMap.t(use),
+  tools: option(string),
   quality: string,
   failed: string,
   critical: string,
@@ -58,10 +58,10 @@ module Decode = {
     id: int,
     name: string,
     applications: list((int, string)),
-    applicationsInput: Maybe.t(string),
-    uses: Maybe.t(list((int, string))),
-    encDescription: Maybe.t(string),
-    tools: Maybe.t(string),
+    applicationsInput: option(string),
+    uses: option(list((int, string))),
+    encDescription: option(string),
+    tools: option(string),
     quality: string,
     failed: string,
     critical: string,
@@ -116,8 +116,8 @@ module Decode = {
 
   type tUniv = {
     id: int,
-    applications: Maybe.t(list((int, Static_Prerequisites.activatable))),
-    uses: Maybe.t(list((int, Static_Prerequisites.activatable))),
+    applications: option(list((int, Static_Prerequisites.activatable))),
+    uses: option(list((int, Static_Prerequisites.activatable))),
     check1: int,
     check2: int,
     check3: int,
@@ -141,12 +141,12 @@ module Decode = {
 
   let newApplication = (univ, l10n) => (
     fst(univ),
-    {id: fst(univ), name: snd(l10n), prerequisite: Maybe.Just(snd(univ))}: application,
+    {id: fst(univ), name: snd(l10n), prerequisite: Some(snd(univ))}: application,
   );
 
   let application = l10n => (
     fst(l10n),
-    {id: fst(l10n), name: snd(l10n), prerequisite: Maybe.Nothing}: application,
+    {id: fst(l10n), name: snd(l10n), prerequisite: None}: application,
   );
 
   let use = (univ, l10n) => (
@@ -170,26 +170,26 @@ module Decode = {
       ic: univ.ic,
       applications:
         Yaml_Zip.zipByPartition(
-          Int.show,
+          Ley.Int.show,
           newApplication,
           application,
           fst,
           fst,
-          univ.applications |> Maybe.fromMaybe([]),
+          univ.applications |> Ley.Option.fromOption([]),
           l10n.applications,
         )
-        |> (((mergeds, singles)) => singles @ mergeds |> IntMap.fromList),
+        |> (((mergeds, singles)) => singles @ mergeds |> Ley.IntMap.fromList),
       applicationsInput: l10n.applicationsInput,
       uses:
         Yaml_Zip.zipBy(
-          Int.show,
+          Ley.Int.show,
           use,
           fst,
           fst,
-          univ.uses |> Maybe.fromMaybe([]),
-          l10n.uses |> Maybe.fromMaybe([]),
+          univ.uses |> Ley.Option.fromOption([]),
+          l10n.uses |> Ley.Option.fromOption([]),
         )
-        |> IntMap.fromList,
+        |> Ley.IntMap.fromList,
       tools: l10n.tools,
       quality: l10n.quality,
       failed: l10n.failed,
@@ -202,14 +202,14 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.skillsUniv |> list(tUniv),
       yamlData.skillsL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 
   let group = json => {
     id: json |> field("id", int),
@@ -220,6 +220,6 @@ module Decode = {
   let groups = (yamlData: Yaml_Raw.yamlData) =>
     yamlData.skillGroupsL10n
     |> list(group)
-    |> ListH.map((x: group) => (x.id, x))
-    |> IntMap.fromList;
+    |> Ley.List.map((x: group) => (x.id, x))
+    |> Ley.IntMap.fromList;
 };

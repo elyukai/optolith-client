@@ -4,32 +4,32 @@
 var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
-var IntSet$OptolithClient = require("../../Data/IntSet.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
+var Ley_IntSet$OptolithClient = require("../../Data/Ley_IntSet.bs.js");
 
 function uniquePairs(xs) {
   return List.fold_right((function (param, mp) {
                 var k = param[0];
-                if (Curry._2(IntMap$OptolithClient.member, k, mp)) {
+                if (Curry._2(Ley_IntMap$OptolithClient.member, k, mp)) {
                   throw [
                         Json_decode.DecodeError,
                         "toMapIntegrity: Key " + (k.toString() + "is set twice")
                       ];
                 }
-                return Curry._3(IntMap$OptolithClient.insert, k, param[1], mp);
-              }), xs, IntMap$OptolithClient.empty);
+                return Curry._3(Ley_IntMap$OptolithClient.insert, k, param[1], mp);
+              }), xs, Ley_IntMap$OptolithClient.empty);
 }
 
 function uniqueList(xs) {
   return List.fold_right((function (x, s) {
-                if (Curry._1(IntSet$OptolithClient.member(x), s)) {
+                if (Curry._2(Ley_IntSet$OptolithClient.member, x, s)) {
                   throw [
                         Json_decode.DecodeError,
                         "toMapIntegrity: Key " + (x.toString() + "is set twice")
                       ];
                 }
-                return Curry._2(IntSet$OptolithClient.insert, x, s);
-              }), xs, IntSet$OptolithClient.empty);
+                return Curry._2(Ley_IntSet$OptolithClient.insert, x, s);
+              }), xs, Ley_IntSet$OptolithClient.empty);
 }
 
 var Entity = {
@@ -38,4 +38,4 @@ var Entity = {
 };
 
 exports.Entity = Entity;
-/* IntMap-OptolithClient Not a pure module */
+/* Ley_IntMap-OptolithClient Not a pure module */

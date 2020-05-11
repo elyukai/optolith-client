@@ -58,7 +58,7 @@ module Decode = {
     category: int,
     skills: (int, int, int),
     limitedToCultures: list(int),
-    isLimitedToCulturesReverse: Maybe.t(bool),
+    isLimitedToCulturesReverse: option(bool),
   };
 
   let tUniv = json => {
@@ -79,18 +79,18 @@ module Decode = {
       skills: univ.skills,
       limitedToCultures: univ.limitedToCultures,
       isLimitedToCulturesReverse:
-        univ.isLimitedToCulturesReverse |> Maybe.fromMaybe(false),
+        univ.isLimitedToCulturesReverse |> Ley.Option.fromOption(false),
     },
   );
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.patronsUniv |> list(tUniv),
       yamlData.patronsL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

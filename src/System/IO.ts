@@ -13,6 +13,7 @@
 
 import * as fs from "fs"
 import { showP } from "../Data/Show"
+import * as ReIO from "./IO.gen"
 
 
 // CONSTRUCTOR
@@ -34,6 +35,24 @@ export type IO<A> = Promise<A>
  */
 export const pure : <A> (x : A) => IO<A>
                   = async x => Promise.resolve (x)
+
+
+// FUNCTOR
+
+/**
+ * `fmap :: (a -> b) -> f a -> f b`
+ */
+export const fmap =
+  <A, B> (f : (x : A) => B) => async (x : IO<A>) : IO<B> =>
+    ReIO.Functor_fmap (f, x)
+
+/**
+ * `fmapF :: f a -> (a -> b) -> f b`
+ */
+export const fmapF =
+  // eslint-disable-next-line @typescript-eslint/require-await
+  <A> (x : IO<A>) => async <B> (f : (x : A) => B) : IO<B> =>
+    ReIO.Functor_fmapF (x, f)
 
 
 // MONAD

@@ -96,7 +96,7 @@ export const getMagicalTraditionsHeroEntries =
  * @param list
  */
 export const getMagicalTraditionsFromWiki =
-  (wiki: OrderedMap<string, Record<SpecialAbility>>) =>
+  (wiki: StrMap<Record<SpecialAbility>>) =>
     pipe (getMagicalTraditionsHeroEntries, mapMaybe (pipe (ADA.id, lookupF (wiki))))
 
 /**
@@ -111,7 +111,7 @@ export const getBlessedTradition = find (isActiveBlessedTradition)
  * @param list
  */
 export const getBlessedTraditionFromWiki =
-  (wiki: OrderedMap<string, Record<SpecialAbility>>) =>
+  (wiki: StrMap<Record<SpecialAbility>>) =>
     pipe (getBlessedTradition, bindF (pipe (ADA.id, lookupF (wiki))))
 
 /**

@@ -1,6 +1,6 @@
-open ListH;
-open Function;
-open Ord;
+open Ley.List;
+open Ley.Function;
+open Ley.Ord;
 
 type searchAccessor('a) =
   | Flat('a => string)
@@ -75,7 +75,7 @@ let sortByMulti = (sortOptions, xs) =>
  * locale.
  */
 let sortStrings = (staticData: Static.t, xs) =>
-  ListH.sortBy(
+  sortBy(
     Intl.Collator.compare(
       Intl.Collator.createWithOptions(
         staticData.messages.id,

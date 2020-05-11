@@ -1,5 +1,5 @@
 type action =
-  | SetLocale(Either.t(string, string))
+  | SetLocale(result(string, string))
   | SwitchActiveItemHints
   | SetTheme(FilterOptions.theme)
   | SwitchEditingHeroAfterCreationPhase
@@ -32,7 +32,7 @@ type action =
   | SetCultureAreaKnowledge(string)
   | AddAdventurePoints(int)
   | EndHeroCreation
-  | SetPactCategory(Maybe.t(int))
+  | SetPactCategory(option(int))
   | SetPactLevel(int)
   | SetPactTargetType(int)
   | SetTargetDomain(int)

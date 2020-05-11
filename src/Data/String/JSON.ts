@@ -6,7 +6,7 @@ import { bimap, bindF, Either, eitherToMaybe, first, fromLeft_, fromRight_, isLe
 import { ident } from "../Function"
 import { elem, fromArray, List } from "../List"
 import { Maybe, Nothing } from "../Maybe"
-import { empty, insert, OrderedMap } from "../OrderedMap"
+import { empty, insert } from "../OrderedMap"
 import { OmitName, Record, RecordBase, RecordIBase } from "../Record"
 
 /**
@@ -234,12 +234,12 @@ export const fromJSArray =
 export const fromJSDict =
   <A> (validator: GetJSON<A>) =>
   <B> (f: (x: A) => B) =>
-  (expected: string): GetJSON<OrderedMap<string, B>> =>
+  (expected: string): GetJSON<StrMap<B>> =>
   x => {
     if (typeof x === "object" && x !== null) {
       const assocs = Object.entries (x)
 
-      let validated: OrderedMap<string, B> = empty
+      let validated: StrMap<B> = empty
 
       for (const [ key, value ] of assocs) {
         const k =

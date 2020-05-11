@@ -2,7 +2,7 @@ import { thrush } from "../../Data/Function"
 import { fmap } from "../../Data/Functor"
 import { elem, elemF, filter, fromArray, List } from "../../Data/List"
 import { bindF, Maybe } from "../../Data/Maybe"
-import { elems, lookupF, OrderedMap, OrderedMapValueElement } from "../../Data/OrderedMap"
+import { elems, lookupF, OrderedMapValueElement } from "../../Data/OrderedMap"
 import { member, Record } from "../../Data/Record"
 import { show } from "../../Data/Show"
 import { ActivatableCategories, Category, SkillishCategories } from "../Constants/Categories"
@@ -69,7 +69,7 @@ export const getWikiSliceGetterByCategory =
 export const getWikiEntryWithGetter =
   (wiki: StaticDataRecord) =>
   <G extends typeof StaticData.AL[WikiKeyByCategory[Category]]> (getter: G) =>
-    lookupF ((getter as (wiki: StaticDataRecord) => OrderedMap<string, Entry>) (wiki)) as
+    lookupF ((getter as (wiki: StaticDataRecord) => StrMap<Entry>) (wiki)) as
       (id: string) => Maybe<OrderedMapValueElement<ReturnType<G>>>
 
 export const getWikiEntry =
@@ -78,10 +78,10 @@ export const getWikiEntry =
            getCategoryById,
            fmap (getWikiSliceGetterByCategory as
                   (category: Category) => (wiki: StaticDataRecord) =>
-                    OrderedMap<string, EntryWithCategory>),
+                    StrMap<EntryWithCategory>),
            bindF (pipe (
                    getWikiEntryWithGetter (wiki) as
-                     (g: (wiki: StaticDataRecord) => OrderedMap<string, EntryWithCategory>) =>
+                     (g: (wiki: StaticDataRecord) => StrMap<EntryWithCategory>) =>
                        (id: string) => Maybe<EntryWithCategory>,
                    thrush (id)
                  ))
@@ -90,14 +90,14 @@ export const getWikiEntry =
 
 export const getAllWikiEntriesByGroup =
   <T extends EntryWithGroup = EntryWithGroup>
-  (wiki: OrderedMap<string, T>) =>
+  (wiki: StrMap<T>) =>
   (groups: List<number>): List<T> =>
     filter<T> (pipe (Skill.AL.gr, elemF (groups)))
               (elems (wiki))
 
 export const getAllWikiEntriesByVariadicGroups =
   <T extends EntryWithGroup = EntryWithGroup>
-  (wiki: OrderedMap<string, T>, ...groups: number[]): List<T> =>
+  (wiki: StrMap<T>, ...groups: number[]): List<T> =>
     filter<T> (pipe (Skill.AL.gr, elemF (fromArray (groups))))
               (elems (wiki))
 

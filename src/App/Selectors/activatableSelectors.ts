@@ -174,7 +174,7 @@ export const getActiveForEditView = <T extends ActivatableCategory>(category: T)
 
 export const getActiveForViewMap = getActiveMap (true)
 
-type RatingMap = OrderedMap<string, EntryRating>
+type RatingMap = StrMap<EntryRating>
 
 const insertRating = flip (insert as insert<string, EntryRating>)
 

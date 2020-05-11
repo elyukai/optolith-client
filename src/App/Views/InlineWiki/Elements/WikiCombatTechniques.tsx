@@ -2,7 +2,7 @@ import * as React from "react"
 import { fmap } from "../../../../Data/Functor"
 import { intercalate, notNull } from "../../../../Data/List"
 import { fromJust, isJust, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe"
-import { lookupF, OrderedMap } from "../../../../Data/OrderedMap"
+import { lookupF } from "../../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { CombatTechnique } from "../../../Models/Wiki/CombatTechnique"
 import { SpecialAbilityCombatTechniqueGroup, SpecialAbilityCombatTechniques } from "../../../Models/Wiki/SpecialAbility"
@@ -18,7 +18,7 @@ interface Accessors<A extends RecordIBase<any>> {
 }
 
 export interface WikiCombatTechniquesProps<A extends RecordIBase<any>> {
-  combatTechniques: OrderedMap<string, Record<CombatTechnique>>
+  combatTechniques: StrMap<Record<CombatTechnique>>
   x: Record<A>
   acc: Accessors<A>
   staticData: StaticDataRecord

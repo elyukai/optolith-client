@@ -7,17 +7,9 @@
  * @author Lukas Obermann
  */
 
-import { cons, List } from "./List"
-import { inc } from "./Num"
-import { show } from "./Show"
-import { fst, Pair, snd } from "./Tuple"
-
-
-// MODULE HELPER FUNCTIONS
-
-const buildRangeList =
-  (u: number) => (x: number) => (xs: List<number>): List<number> =>
-    x > u ? xs : cons (buildRangeList (u) (inc (x)) (xs)) (x)
+import * as ReIx from "./Ley_Ix.gen"
+import { List } from "./List"
+import { Pair } from "./Tuple"
 
 
 /**
@@ -30,7 +22,7 @@ const buildRangeList =
  */
 export const range =
   (b: Pair<number, number>): List<number> =>
-    buildRangeList (snd (b)) (fst (b)) (List.empty)
+    ReIx.range (b)
 
 
 /**
@@ -45,7 +37,7 @@ export const range =
  */
 export const rangeN =
   (l: number, u: number): List<number> =>
-    buildRangeList (u) (l) (List.empty)
+    ReIx.range ([ l, u ])
 
 
 /**
@@ -59,7 +51,7 @@ export const rangeN =
  */
 export const inRange =
   (b: Pair<number, number>) => (x: number): boolean =>
-    x >= fst (b) && x <= snd (b)
+    ReIx.inRange (b, x)
 
 
 /**
@@ -71,15 +63,8 @@ export const inRange =
  * a contiguous subrange of values.
  */
 export const index =
-  (b: Pair<number, number>) => (x: number): number => {
-    if (inRange (b) (x)) {
-      return x - fst (b)
-    }
-
-    throw new RangeError (
-      `Ix.index: Index (${show (x)}) out of range (${show (b)}`
-    )
-  }
+  (b: Pair<number, number>) => (x: number): number =>
+    ReIx.index (b, x)
 
 
 /**
@@ -95,7 +80,7 @@ export const index =
  */
 export const inRangeN =
   (l: number, u: number) => (x: number): boolean =>
-    x >= l && x <= u
+    ReIx.inRange ([ l, u ], x)
 
 
 /**
@@ -108,7 +93,7 @@ export const inRangeN =
  */
 export const rangeSize =
   (b: Pair<number, number>): number =>
-    fst (b) <= snd (b) ? snd (b) - fst (b) + 1 : 0
+    ReIx.rangeSize (b)
 
 
 // NAMESPACED FUNCTIONS

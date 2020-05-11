@@ -2,7 +2,7 @@
 import { bindF, fromRight_, isLeft, Right, second } from "../../../../Data/Either"
 import { append, cons, fromArray, isList, List, notNull } from "../../../../Data/List"
 import { ensure, fromMaybe, Just, Maybe, Nothing } from "../../../../Data/Maybe"
-import { fromMap, insertWith, OrderedMap } from "../../../../Data/OrderedMap"
+import { fromMap, insertWith } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Blessing } from "../../../Models/Wiki/Blessing"
 import { Cantrip } from "../../../Models/Wiki/Cantrip"
@@ -27,12 +27,12 @@ import { mergeSOs, resolveSOCats } from "./ToSelectOptions"
 import { toSourceRefs } from "./ToSourceRefs"
 
 
-const toDisadv : (blessings : OrderedMap<string, Record<Blessing>>)
-               => (cantrips : OrderedMap<string, Record<Cantrip>>)
-               => (combatTechniques : OrderedMap<string, Record<CombatTechnique>>)
-               => (liturgicalChants : OrderedMap<string, Record<LiturgicalChant>>)
-               => (skills : OrderedMap<string, Record<Skill>>)
-               => (spells : OrderedMap<string, Record<Spell>>)
+const toDisadv : (blessings : StrMap<Record<Blessing>>)
+               => (cantrips : StrMap<Record<Cantrip>>)
+               => (combatTechniques : StrMap<Record<CombatTechnique>>)
+               => (liturgicalChants : StrMap<Record<LiturgicalChant>>)
+               => (skills : StrMap<Record<Skill>>)
+               => (spells : StrMap<Record<Spell>>)
                => YamlPairConverterE<DisadvantageUniv, DisadvantageL10n, string, Disadvantage>
                = blessings =>
                  cantrips =>
@@ -108,12 +108,12 @@ const toDisadv : (blessings : OrderedMap<string, Record<Blessing>>)
                  }
 
 
-export const toDisadvantages : (blessings : OrderedMap<string, Record<Blessing>>)
-                             => (cantrips : OrderedMap<string, Record<Cantrip>>)
-                             => (combatTechniques : OrderedMap<string, Record<CombatTechnique>>)
-                             => (liturgicalChants : OrderedMap<string, Record<LiturgicalChant>>)
-                             => (skills : OrderedMap<string, Record<Skill>>)
-                             => (spells : OrderedMap<string, Record<Spell>>)
+export const toDisadvantages : (blessings : StrMap<Record<Blessing>>)
+                             => (cantrips : StrMap<Record<Cantrip>>)
+                             => (combatTechniques : StrMap<Record<CombatTechnique>>)
+                             => (liturgicalChants : StrMap<Record<LiturgicalChant>>)
+                             => (skills : StrMap<Record<Skill>>)
+                             => (spells : StrMap<Record<Spell>>)
                              => YamlFileConverter<string, Record<Disadvantage>>
                              = blessings =>
                                cantrips =>

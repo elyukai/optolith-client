@@ -7,8 +7,8 @@ import { User } from "./Hero/heroTypeHelpers"
 
 export interface HeroesState {
   "@@name": "HeroesState"
-  heroes: OrderedMap<string, Record<UndoState<HeroModelRecord>>>
-  users: OrderedMap<string, User>
+  heroes: StrMap<Record<UndoState<HeroModelRecord>>>
+  users: StrMap<User>
   currentId: Maybe<string>
 }
 

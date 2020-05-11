@@ -6,25 +6,25 @@ type die = {
 type variant = {
   id: int,
   name: string,
-  commonCultures: IntSet.t,
+  commonCultures: Ley.IntSet.t,
   commonAdvantages: list(int),
-  commonAdvantagesText: Maybe.t(string),
+  commonAdvantagesText: option(string),
   commonDisadvantages: list(int),
-  commonDisadvantagesText: Maybe.t(string),
+  commonDisadvantagesText: option(string),
   uncommonAdvantages: list(int),
-  uncommonAdvantagesText: Maybe.t(string),
+  uncommonAdvantagesText: option(string),
   uncommonDisadvantages: list(int),
-  uncommonDisadvantagesText: Maybe.t(string),
+  uncommonDisadvantagesText: option(string),
   hairColors: list(int),
   eyeColors: list(int),
   sizeBase: int,
   sizeRandom: list(die),
 };
 
-type withVariants = {variants: IntMap.t(variant)};
+type withVariants = {variants: Ley.IntMap.t(variant)};
 
 type withoutVariants = {
-  commonCultures: IntSet.t,
+  commonCultures: Ley.IntSet.t,
   hairColors: list(int),
   eyeColors: list(int),
   sizeBase: int,
@@ -43,24 +43,24 @@ type t = {
   spi: int,
   tou: int,
   mov: int,
-  attributeAdjustments: IntMap.t(int),
+  attributeAdjustments: Ley.IntMap.t(int),
   attributeAdjustmentsSelectionValue: int,
-  attributeAdjustmentsSelectionList: IntSet.t,
+  attributeAdjustmentsSelectionList: Ley.IntSet.t,
   attributeAdjustmentsText: string,
   automaticAdvantages: list(int),
-  automaticAdvantagesText: Maybe.t(string),
+  automaticAdvantagesText: option(string),
   stronglyRecommendedAdvantages: list(int),
-  stronglyRecommendedAdvantagesText: Maybe.t(string),
+  stronglyRecommendedAdvantagesText: option(string),
   stronglyRecommendedDisadvantages: list(int),
-  stronglyRecommendedDisadvantagesText: Maybe.t(string),
+  stronglyRecommendedDisadvantagesText: option(string),
   commonAdvantages: list(int),
-  commonAdvantagesText: Maybe.t(string),
+  commonAdvantagesText: option(string),
   commonDisadvantages: list(int),
-  commonDisadvantagesText: Maybe.t(string),
+  commonDisadvantagesText: option(string),
   uncommonAdvantages: list(int),
-  uncommonAdvantagesText: Maybe.t(string),
+  uncommonAdvantagesText: option(string),
   uncommonDisadvantages: list(int),
-  uncommonDisadvantagesText: Maybe.t(string),
+  uncommonDisadvantagesText: option(string),
   weightBase: int,
   weightRandom: list(die),
   variantOptions,
@@ -75,10 +75,10 @@ module Decode = {
   type variantL10n = {
     id: int,
     name: string,
-    commonAdvantages: Maybe.t(string),
-    commonDisadvantages: Maybe.t(string),
-    uncommonAdvantages: Maybe.t(string),
-    uncommonDisadvantages: Maybe.t(string),
+    commonAdvantages: option(string),
+    commonDisadvantages: option(string),
+    uncommonAdvantages: option(string),
+    uncommonDisadvantages: option(string),
   };
 
   let variantL10n = json => {
@@ -95,14 +95,14 @@ module Decode = {
     id: int,
     name: string,
     attributeAdjustments: string,
-    automaticAdvantages: Maybe.t(string),
-    stronglyRecommendedAdvantages: Maybe.t(string),
-    stronglyRecommendedDisadvantages: Maybe.t(string),
-    commonAdvantages: Maybe.t(string),
-    commonDisadvantages: Maybe.t(string),
-    uncommonAdvantages: Maybe.t(string),
-    uncommonDisadvantages: Maybe.t(string),
-    variants: Maybe.t(list(variantL10n)),
+    automaticAdvantages: option(string),
+    stronglyRecommendedAdvantages: option(string),
+    stronglyRecommendedDisadvantages: option(string),
+    commonAdvantages: option(string),
+    commonDisadvantages: option(string),
+    uncommonAdvantages: option(string),
+    uncommonDisadvantages: option(string),
+    variants: option(list(variantL10n)),
     src: list(Static_SourceRef.t),
     errata: list(Static_Erratum.t),
   };
@@ -134,10 +134,10 @@ module Decode = {
   type variantUniv = {
     id: int,
     commonCultures: list(int),
-    commonAdvantages: Maybe.t(list(int)),
-    commonDisadvantages: Maybe.t(list(int)),
-    uncommonAdvantages: Maybe.t(list(int)),
-    uncommonDisadvantages: Maybe.t(list(int)),
+    commonAdvantages: option(list(int)),
+    commonDisadvantages: option(list(int)),
+    uncommonAdvantages: option(list(int)),
+    uncommonDisadvantages: option(list(int)),
     hairColors: list(int),
     eyeColors: list(int),
     sizeBase: int,
@@ -199,16 +199,16 @@ module Decode = {
     spi: int,
     tou: int,
     mov: int,
-    attributeAdjustments: Maybe.t(list((int, int))),
+    attributeAdjustments: option(list((int, int))),
     attributeAdjustmentsSelectionValue: int,
     attributeAdjustmentsSelectionList: list(int),
-    automaticAdvantages: Maybe.t(list(int)),
-    stronglyRecommendedAdvantages: Maybe.t(list(int)),
-    stronglyRecommendedDisadvantages: Maybe.t(list(int)),
-    commonAdvantages: Maybe.t(list(int)),
-    commonDisadvantages: Maybe.t(list(int)),
-    uncommonAdvantages: Maybe.t(list(int)),
-    uncommonDisadvantages: Maybe.t(list(int)),
+    automaticAdvantages: option(list(int)),
+    stronglyRecommendedAdvantages: option(list(int)),
+    stronglyRecommendedDisadvantages: option(list(int)),
+    commonAdvantages: option(list(int)),
+    commonDisadvantages: option(list(int)),
+    uncommonAdvantages: option(list(int)),
+    uncommonDisadvantages: option(list(int)),
     weightBase: int,
     weightRandom: list(die),
     variantOptions: variantOptionsUniv,
@@ -250,15 +250,17 @@ module Decode = {
     {
       id: univ.id,
       name: l10n.name,
-      commonCultures: univ.commonCultures |> IntSet.fromList,
-      commonAdvantages: univ.commonAdvantages |> Maybe.fromMaybe([]),
+      commonCultures: univ.commonCultures |> Ley.IntSet.fromList,
+      commonAdvantages: univ.commonAdvantages |> Ley.Option.fromOption([]),
       commonAdvantagesText: l10n.commonAdvantages,
-      commonDisadvantages: univ.commonDisadvantages |> Maybe.fromMaybe([]),
+      commonDisadvantages:
+        univ.commonDisadvantages |> Ley.Option.fromOption([]),
       commonDisadvantagesText: l10n.commonDisadvantages,
-      uncommonAdvantages: univ.uncommonAdvantages |> Maybe.fromMaybe([]),
+      uncommonAdvantages:
+        univ.uncommonAdvantages |> Ley.Option.fromOption([]),
       uncommonAdvantagesText: l10n.uncommonAdvantages,
       uncommonDisadvantages:
-        univ.uncommonDisadvantages |> Maybe.fromMaybe([]),
+        univ.uncommonDisadvantages |> Ley.Option.fromOption([]),
       uncommonDisadvantagesText: l10n.uncommonDisadvantages,
       hairColors: univ.hairColors,
       eyeColors: univ.eyeColors,
@@ -279,29 +281,32 @@ module Decode = {
       mov: univ.mov,
       attributeAdjustments:
         univ.attributeAdjustments
-        |> Maybe.maybe(IntMap.empty, IntMap.fromList),
+        |> Ley.Option.option(Ley.IntMap.empty, Ley.IntMap.fromList),
       attributeAdjustmentsSelectionValue:
         univ.attributeAdjustmentsSelectionValue,
       attributeAdjustmentsSelectionList:
-        univ.attributeAdjustmentsSelectionList |> IntSet.fromList,
+        univ.attributeAdjustmentsSelectionList |> Ley.IntSet.fromList,
       attributeAdjustmentsText: l10n.attributeAdjustments,
-      automaticAdvantages: univ.automaticAdvantages |> Maybe.fromMaybe([]),
+      automaticAdvantages:
+        univ.automaticAdvantages |> Ley.Option.fromOption([]),
       automaticAdvantagesText: l10n.automaticAdvantages,
       stronglyRecommendedAdvantages:
-        univ.stronglyRecommendedAdvantages |> Maybe.fromMaybe([]),
+        univ.stronglyRecommendedAdvantages |> Ley.Option.fromOption([]),
       stronglyRecommendedAdvantagesText: l10n.stronglyRecommendedAdvantages,
       stronglyRecommendedDisadvantages:
-        univ.stronglyRecommendedDisadvantages |> Maybe.fromMaybe([]),
+        univ.stronglyRecommendedDisadvantages |> Ley.Option.fromOption([]),
       stronglyRecommendedDisadvantagesText:
         l10n.stronglyRecommendedDisadvantages,
-      commonAdvantages: univ.commonAdvantages |> Maybe.fromMaybe([]),
+      commonAdvantages: univ.commonAdvantages |> Ley.Option.fromOption([]),
       commonAdvantagesText: l10n.commonAdvantages,
-      commonDisadvantages: univ.commonDisadvantages |> Maybe.fromMaybe([]),
+      commonDisadvantages:
+        univ.commonDisadvantages |> Ley.Option.fromOption([]),
       commonDisadvantagesText: l10n.commonDisadvantages,
-      uncommonAdvantages: univ.uncommonAdvantages |> Maybe.fromMaybe([]),
+      uncommonAdvantages:
+        univ.uncommonAdvantages |> Ley.Option.fromOption([]),
       uncommonAdvantagesText: l10n.uncommonDisadvantages,
       uncommonDisadvantages:
-        univ.uncommonDisadvantages |> Maybe.fromMaybe([]),
+        univ.uncommonDisadvantages |> Ley.Option.fromOption([]),
       uncommonDisadvantagesText: l10n.uncommonDisadvantages,
       weightBase: univ.weightBase,
       weightRandom: univ.weightRandom,
@@ -311,18 +316,19 @@ module Decode = {
           WithVariants({
             variants:
               Yaml_Zip.zipBy(
-                Int.show,
+                Ley.Int.show,
                 variant,
                 x => x.id,
                 x => x.id,
                 withVariants.variants,
-                l10n.variants |> Maybe.fromMaybe([]),
+                l10n.variants |> Ley.Option.fromOption([]),
               )
-              |> IntMap.fromList,
+              |> Ley.IntMap.fromList,
           })
         | WithoutVariants(withoutVariants) =>
           WithoutVariants({
-            commonCultures: withoutVariants.commonCultures |> IntSet.fromList,
+            commonCultures:
+              withoutVariants.commonCultures |> Ley.IntSet.fromList,
             hairColors: withoutVariants.hairColors,
             eyeColors: withoutVariants.eyeColors,
             sizeBase: withoutVariants.sizeBase,
@@ -336,12 +342,12 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.racesUniv |> list(tUniv),
       yamlData.racesL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

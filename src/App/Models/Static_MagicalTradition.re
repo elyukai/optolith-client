@@ -1,9 +1,9 @@
 type t = {
   id: int,
-  numId: Maybe.t(int),
+  numId: option(int),
   name: string,
-  primary: Maybe.t(int),
-  aeMod: Maybe.t(float),
+  primary: option(int),
+  aeMod: option(float),
   canLearnCantrips: bool,
   canLearnSpells: bool,
   canLearnRituals: bool,
@@ -28,9 +28,9 @@ module Decode = {
 
   type tUniv = {
     id: int,
-    numId: Maybe.t(int),
-    primary: Maybe.t(int),
-    aeMod: Maybe.t(float),
+    numId: option(int),
+    primary: option(int),
+    aeMod: option(float),
     canLearnCantrips: bool,
     canLearnSpells: bool,
     canLearnRituals: bool,
@@ -73,12 +73,12 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.magicalTraditionsUniv |> list(tUniv),
       yamlData.magicalTraditionsL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

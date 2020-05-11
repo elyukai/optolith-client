@@ -11,9 +11,9 @@ function handle(f, x) {
 
 function handleE(x) {
   return x.then((function (x) {
-                  return IO$OptolithClient.Monad.pure(/* Right */Block.__(1, [x]));
+                  return IO$OptolithClient.Monad.pure(/* Ok */Block.__(0, [x]));
                 })).catch((function (x) {
-                return IO$OptolithClient.Monad.pure(/* Left */Block.__(0, [x]));
+                return IO$OptolithClient.Monad.pure(/* Error */Block.__(1, [x]));
               }));
 }
 

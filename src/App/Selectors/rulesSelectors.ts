@@ -1,5 +1,4 @@
 import { fmap } from "../../Data/Functor"
-import { OrderedMap } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { Pair } from "../../Data/Tuple"
 import { uncurryN } from "../../Data/Tuple/Curry"
@@ -11,7 +10,7 @@ import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { mapGetToSlice } from "../Utilities/SelectorsUtils"
 import { getRules, getRulesM, getSpecialAbilities, getWikiBooks } from "./stateSelectors"
 
-export type EnabledSourceBooks = Pair<OrderedMap<string, Record<Book>>, Record<Rules>>
+export type EnabledSourceBooks = Pair<StrMap<Record<Book>>, Record<Rules>>
 
 export const getRuleBooksEnabled = createMaybeSelector (
   getWikiBooks,

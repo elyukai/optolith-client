@@ -2,7 +2,6 @@ import Ajv from "ajv"
 import { handleE } from "../../../Control/Exception"
 import { Either, fromLeft_, fromRight_, isLeft, Left } from "../../../Data/Either"
 import { fmap } from "../../../Data/Functor"
-import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { readFile } from "../../../System/IO"
 import { Locale } from "../../Models/Locale"
@@ -11,7 +10,7 @@ import { toSupportedLanguages } from "./Entries/ToSupportedLanguages"
 import { readYaml } from "./Parser"
 import { schemeIdToPath } from "./Schemes"
 
-type SupportedLanguagesResult = Either<Error[], OrderedMap<string, Record<Locale>>>
+type SupportedLanguagesResult = Either<Error[], StrMap<Record<Locale>>>
 
 export const getSupportedLanguages = async (): Promise<SupportedLanguagesResult> => {
   const eschema = await pipe_ (

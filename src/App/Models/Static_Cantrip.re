@@ -6,8 +6,8 @@ type t = {
   duration: string,
   target: string,
   property: int,
-  traditions: IntSet.t,
-  activatablePrerequisites: Maybe.t(list(Static_Prerequisites.activatable)),
+  traditions: Ley.IntSet.t,
+  activatablePrerequisites: option(list(Static_Prerequisites.activatable)),
   src: list(Static_SourceRef.t),
   errata: list(Static_Erratum.t),
 };
@@ -42,8 +42,7 @@ module Decode = {
     id: int,
     property: int,
     traditions: list(int),
-    activatablePrerequisites:
-      Maybe.t(list(Static_Prerequisites.activatable)),
+    activatablePrerequisites: option(list(Static_Prerequisites.activatable)),
   };
 
   let tUniv = json => {
@@ -68,7 +67,7 @@ module Decode = {
       duration: l10n.duration,
       target: l10n.target,
       property: univ.property,
-      traditions: IntSet.fromList(univ.traditions),
+      traditions: Ley.IntSet.fromList(univ.traditions),
       activatablePrerequisites: univ.activatablePrerequisites,
       src: l10n.src,
       errata: l10n.errata,
@@ -77,12 +76,12 @@ module Decode = {
 
   let all = (yamlData: Yaml_Raw.yamlData) =>
     Yaml_Zip.zipBy(
-      Int.show,
+      Ley.Int.show,
       t,
       x => x.id,
       x => x.id,
       yamlData.cantripsUniv |> list(tUniv),
       yamlData.cantripsL10n |> list(tL10n),
     )
-    |> IntMap.fromList;
+    |> Ley.IntMap.fromList;
 };

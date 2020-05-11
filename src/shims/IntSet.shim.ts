@@ -1,7 +1,7 @@
-type Empty = "EmptySet"
+type Empty = "EmptyIntSet"
 
 type Node = {
-  tag: "Node"
+  tag: "IntSetNode"
   value: { l: t; v: number; r: t; h: number }
 }
 

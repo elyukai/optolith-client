@@ -1,6 +1,6 @@
 module ListFormat = {
   open Static;
-  open Maybe;
+  open Ley.Option;
 
   type formatType =
     | Conjunction
@@ -30,10 +30,10 @@ module ListFormat = {
     | [x] => x
     | xs =>
       xs
-      |> ListH.Extra.unsnoc
-      |> maybe("", ((init, last)) =>
+      |> Ley.List.Extra.unsnoc
+      |> option("", ((init, last)) =>
            init
-           |> ListH.intercalate(", ")
+           |> Ley.List.intercalate(", ")
            |> joinLastWithSeparator(type_, staticData, last)
          )
     };
@@ -50,5 +50,5 @@ module Collator = {
   [@bs.send] external compareN: (t, string, string) => int = "compare";
 
   let compare = (collator, a, b) =>
-    compareN(collator, a, b) |> Ord.toOrdering;
+    compareN(collator, a, b) |> Ley.Ord.toOrdering;
 };

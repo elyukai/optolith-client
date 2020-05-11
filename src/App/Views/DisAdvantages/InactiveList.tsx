@@ -1,7 +1,6 @@
 import * as React from "react"
 import { List } from "../../../Data/List"
 import { Maybe } from "../../../Data/Maybe"
-import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
 import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
@@ -16,7 +15,7 @@ interface InactiveListProps {
     | Record<InactiveActivatable>
   >>
   staticData: StaticDataRecord
-  rating: Maybe<OrderedMap<string, EntryRating>>
+  rating: Maybe<StrMap<EntryRating>>
   showRating: boolean
   selectedForInfo: Maybe<string>
   addToList (args: Record<ActivatableActivationOptions>): void

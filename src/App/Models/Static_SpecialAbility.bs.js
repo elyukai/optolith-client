@@ -3,10 +3,10 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var Int$OptolithClient = require("../../Data/Int.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var Ley_Int$OptolithClient = require("../../Data/Ley_Int.bs.js");
 var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
 var GenericHelpers$OptolithClient = require("../Utilities/GenericHelpers.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_Advantage$OptolithClient = require("./Static_Advantage.bs.js");
@@ -57,7 +57,7 @@ var partial_arg_001 = /* :: */[
       if (switcher > 4 || switcher < 0) {
         throw [
               Json_decode.DecodeError,
-              "Unknown combat technique category: " + Int$OptolithClient.show(x)
+              "Unknown combat technique category: " + Ley_Int$OptolithClient.show(x)
             ];
       }
       return switcher;
@@ -144,7 +144,7 @@ function t(blessings, cantrips, combatTechniques, liturgicalChants, skills, spel
 }
 
 function all(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, yamlData) {
-  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, (function (param, param$1) {
+  return Curry._1(Ley_IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Ley_Int$OptolithClient.show, (function (param, param$1) {
                     return t(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, param, param$1);
                   }), (function (x) {
                     return x.id;
@@ -163,4 +163,4 @@ var Decode = {
 };
 
 exports.Decode = Decode;
-/* IntMap-OptolithClient Not a pure module */
+/* Ley_IntMap-OptolithClient Not a pure module */

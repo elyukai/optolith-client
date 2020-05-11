@@ -85,9 +85,9 @@ export const getFilteredSkills = createMaybeSelector (
 
 export const getSkillRating = createMaybeSelector (
   getCurrentCulture,
-  maybe (OrderedMap.empty as OrderedMap<string, EntryRating>)
+  maybe (OrderedMap.empty as StrMap<EntryRating>)
         (c => pipe_ (
-          OrderedMap.empty as OrderedMap<string, EntryRating>,
+          OrderedMap.empty as StrMap<EntryRating>,
           flip (foldr (insertF<EntryRating> (EntryRating.Common)))
                (CA.commonSkills (c)),
           flip (foldr (insertF<EntryRating> (EntryRating.Uncommon)))

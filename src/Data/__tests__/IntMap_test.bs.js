@@ -3,9 +3,9 @@
 
 var Jest = require("@glennsl/bs-jest/src/jest.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var IntMap$OptolithClient = require("../IntMap.bs.js");
+var Ley_IntMap$OptolithClient = require("../Ley_IntMap.bs.js");
 
-var from1to5 = Curry._1(IntMap$OptolithClient.fromList, /* :: */[
+var from1to5 = Curry._1(Ley_IntMap$OptolithClient.fromList, /* :: */[
       /* tuple */[
         1,
         "a"
@@ -37,7 +37,7 @@ var from1to5 = Curry._1(IntMap$OptolithClient.fromList, /* :: */[
       ]
     ]);
 
-var from1to11 = Curry._1(IntMap$OptolithClient.fromList, /* :: */[
+var from1to11 = Curry._1(Ley_IntMap$OptolithClient.fromList, /* :: */[
       /* tuple */[
         9,
         "i"
@@ -173,16 +173,16 @@ Jest.describe("Foldable", (function (param) {
                                 ]
                               ]
                             ]
-                          ], Jest.Expect.expect(Curry._1(IntMap$OptolithClient.Foldable.toList, from1to11)));
+                          ], Jest.Expect.expect(Curry._1(Ley_IntMap$OptolithClient.Foldable.toList, from1to11)));
               }));
         return Jest.describe("all", (function (param) {
                       Jest.test("returns true if the predicate matches all elements in the map", (function (param) {
-                              return Jest.Expect.toBe(true, Jest.Expect.expect(Curry._2(IntMap$OptolithClient.Foldable.all, (function (x) {
+                              return Jest.Expect.toBe(true, Jest.Expect.expect(Curry._2(Ley_IntMap$OptolithClient.Foldable.all, (function (x) {
                                                     return x < "f";
                                                   }), from1to5)));
                             }));
                       return Jest.test("returns false if the predicate does not match at least one element in the map", (function (param) {
-                                    return Jest.Expect.toBe(false, Jest.Expect.expect(Curry._2(IntMap$OptolithClient.Foldable.all, (function (x) {
+                                    return Jest.Expect.toBe(false, Jest.Expect.expect(Curry._2(Ley_IntMap$OptolithClient.Foldable.all, (function (x) {
                                                           return x < "e";
                                                         }), from1to5)));
                                   }));

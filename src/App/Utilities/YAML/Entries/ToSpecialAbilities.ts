@@ -28,12 +28,12 @@ import { mergeSOs, resolveSOCats } from "./ToSelectOptions"
 import { toSourceRefs } from "./ToSourceRefs"
 
 
-const toSA : (blessings : OrderedMap<string, Record<Blessing>>)
-           => (cantrips : OrderedMap<string, Record<Cantrip>>)
-           => (combatTechniques : OrderedMap<string, Record<CombatTechnique>>)
-           => (liturgicalChants : OrderedMap<string, Record<LiturgicalChant>>)
-           => (skills : OrderedMap<string, Record<Skill>>)
-           => (spells : OrderedMap<string, Record<Spell>>)
+const toSA : (blessings : StrMap<Record<Blessing>>)
+           => (cantrips : StrMap<Record<Cantrip>>)
+           => (combatTechniques : StrMap<Record<CombatTechnique>>)
+           => (liturgicalChants : StrMap<Record<LiturgicalChant>>)
+           => (skills : StrMap<Record<Skill>>)
+           => (spells : StrMap<Record<Spell>>)
            => (spell_enhancements : OrderedMap<number, Record<SelectOption>>)
            => (lc_enhancements : OrderedMap<number, Record<SelectOption>>)
            => YamlPairConverterE<SpecialAbilityUniv, SpecialAbilityL10n, string, SpecialAbility>
@@ -142,12 +142,12 @@ const toSA : (blessings : OrderedMap<string, Record<Blessing>>)
              }
 
 
-export const toSpecialAbilities : (blessings : OrderedMap<string, Record<Blessing>>)
-                                => (cantrips : OrderedMap<string, Record<Cantrip>>)
-                                => (combatTechniques : OrderedMap<string, Record<CombatTechnique>>)
-                                => (liturgicalChants : OrderedMap<string, Record<LiturgicalChant>>)
-                                => (skills : OrderedMap<string, Record<Skill>>)
-                                => (spells : OrderedMap<string, Record<Spell>>)
+export const toSpecialAbilities : (blessings : StrMap<Record<Blessing>>)
+                                => (cantrips : StrMap<Record<Cantrip>>)
+                                => (combatTechniques : StrMap<Record<CombatTechnique>>)
+                                => (liturgicalChants : StrMap<Record<LiturgicalChant>>)
+                                => (skills : StrMap<Record<Skill>>)
+                                => (spells : StrMap<Record<Spell>>)
                                 => (spell_enhancements : OrderedMap<number, Record<SelectOption>>)
                                 => (lc_enhancements : OrderedMap<number, Record<SelectOption>>)
                                 => YamlFileConverter<string, Record<SpecialAbility>>

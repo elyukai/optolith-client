@@ -2,7 +2,7 @@ import * as React from "react"
 import { fmap } from "../../../Data/Functor"
 import { map, toArray } from "../../../Data/List"
 import { fromMaybe, Maybe } from "../../../Data/Maybe"
-import { elems, OrderedMap, size } from "../../../Data/OrderedMap"
+import { elems, size } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { EditPet } from "../../Models/Hero/EditPet"
 import { Pet } from "../../Models/Hero/Pet"
@@ -24,8 +24,8 @@ export interface PetsOwnProps {
 }
 
 export interface PetsStateProps {
-  attributes: OrderedMap<string, Record<Attribute>>
-  pets: Maybe<OrderedMap<string, Record<Pet>>>
+  attributes: StrMap<Record<Attribute>>
+  pets: Maybe<StrMap<Record<Pet>>>
   petInEditor: Maybe<Record<EditPet>>
   isEditPetAvatarOpen: boolean
   isInCreation: Maybe<boolean>

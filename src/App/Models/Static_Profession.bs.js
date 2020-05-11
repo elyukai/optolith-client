@@ -6,12 +6,12 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Ids$OptolithClient = require("../Constants/Ids.bs.js");
-var Int$OptolithClient = require("../../Data/Int.bs.js");
-var ListH$OptolithClient = require("../../Data/ListH.bs.js");
-var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
-var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
+var Ley_Int$OptolithClient = require("../../Data/Ley_Int.bs.js");
+var Ley_List$OptolithClient = require("../../Data/Ley_List.bs.js");
 var Yaml_Zip$OptolithClient = require("../Utilities/Yaml_Zip.bs.js");
 var JsonStrict$OptolithClient = require("../Utilities/JsonStrict.bs.js");
+var Ley_IntMap$OptolithClient = require("../../Data/Ley_IntMap.bs.js");
+var Ley_Option$OptolithClient = require("../../Data/Ley_Option.bs.js");
 var Static_Erratum$OptolithClient = require("./Static_Erratum.bs.js");
 var Static_SourceRef$OptolithClient = require("./Static_SourceRef.bs.js");
 var Static_Prerequisites$OptolithClient = require("./Static_Prerequisites.bs.js");
@@ -196,8 +196,8 @@ function variant(univ, l10n) {
               sex: univ.sexDependency,
               race: univ.raceDependency,
               culture: univ.cultureDependency,
-              activatable: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.activatablePrerequisites),
-              increasable: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.increasablePrerequisites)
+              activatable: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.activatablePrerequisites),
+              increasable: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.increasablePrerequisites)
             },
             options: {
               skillSpecialization: univ.skillSpecializationSelectOptions,
@@ -207,8 +207,8 @@ function variant(univ, l10n) {
               curse: univ.curseSelectOptions,
               terrainKnowledge: univ.terrainKnowledgeSelectOptions,
               skill: univ.skillSelectOptions,
-              guildMageUnfamiliarSpell: Maybe$OptolithClient.maybe(false, (function (param) {
-                      return ListH$OptolithClient.Foldable.any((function (x) {
+              guildMageUnfamiliarSpell: Ley_Option$OptolithClient.option(false, (function (param) {
+                      return Ley_List$OptolithClient.Foldable.any((function (x) {
                                     if (Caml_obj.caml_equal(x.id, /* `SpecialAbility */[
                                             -789492591,
                                             Ids$OptolithClient.SpecialAbilityId.traditionGuildMages
@@ -220,12 +220,12 @@ function variant(univ, l10n) {
                                   }), param);
                     }), univ.activatablePrerequisites)
             },
-            specialAbilities: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.specialAbilities),
-            combatTechniques: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.combatTechniques),
-            skills: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.skills),
-            spells: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.spells),
-            liturgicalChants: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.liturgicalChants),
-            blessings: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.blessings),
+            specialAbilities: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.specialAbilities),
+            combatTechniques: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, Ley_IntMap$OptolithClient.fromList, univ.combatTechniques),
+            skills: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, Ley_IntMap$OptolithClient.fromList, univ.skills),
+            spells: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, Ley_IntMap$OptolithClient.fromList, univ.spells),
+            liturgicalChants: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, Ley_IntMap$OptolithClient.fromList, univ.liturgicalChants),
+            blessings: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.blessings),
             precedingText: l10n.precedingText,
             fullText: l10n.fullText,
             concludingText: l10n.concludingText,
@@ -346,8 +346,8 @@ function t(univ, l10n) {
               sex: univ.sexDependency,
               race: univ.raceDependency,
               culture: univ.cultureDependency,
-              activatable: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.activatablePrerequisites),
-              increasable: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.increasablePrerequisites)
+              activatable: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.activatablePrerequisites),
+              increasable: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.increasablePrerequisites)
             },
             prerequisitesStart: l10n.prerequisitesStart,
             options: {
@@ -358,8 +358,8 @@ function t(univ, l10n) {
               curse: univ.curseSelectOptions,
               terrainKnowledge: univ.terrainKnowledgeSelectOptions,
               skill: univ.skillSelectOptions,
-              guildMageUnfamiliarSpell: Maybe$OptolithClient.maybe(false, (function (param) {
-                      return ListH$OptolithClient.Foldable.any((function (x) {
+              guildMageUnfamiliarSpell: Ley_Option$OptolithClient.option(false, (function (param) {
+                      return Ley_List$OptolithClient.Foldable.any((function (x) {
                                     if (Caml_obj.caml_equal(x.id, /* `SpecialAbility */[
                                             -789492591,
                                             Ids$OptolithClient.SpecialAbilityId.traditionGuildMages
@@ -371,25 +371,25 @@ function t(univ, l10n) {
                                   }), param);
                     }), univ.activatablePrerequisites)
             },
-            specialAbilities: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.specialAbilities),
-            combatTechniques: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.combatTechniques),
-            skills: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.skills),
-            spells: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.spells),
-            liturgicalChants: Maybe$OptolithClient.maybe(IntMap$OptolithClient.empty, IntMap$OptolithClient.fromList, univ.liturgicalChants),
-            blessings: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.blessings),
-            suggestedAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.suggestedAdvantages),
+            specialAbilities: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.specialAbilities),
+            combatTechniques: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, Ley_IntMap$OptolithClient.fromList, univ.combatTechniques),
+            skills: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, Ley_IntMap$OptolithClient.fromList, univ.skills),
+            spells: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, Ley_IntMap$OptolithClient.fromList, univ.spells),
+            liturgicalChants: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, Ley_IntMap$OptolithClient.fromList, univ.liturgicalChants),
+            blessings: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.blessings),
+            suggestedAdvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.suggestedAdvantages),
             suggestedAdvantagesText: l10n.suggestedAdvantages,
-            suggestedDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.suggestedDisadvantages),
+            suggestedDisadvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.suggestedDisadvantages),
             suggestedDisadvantagesText: l10n.suggestedDisadvantages,
-            unsuitableAdvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.unsuitableAdvantages),
+            unsuitableAdvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.unsuitableAdvantages),
             unsuitableAdvantagesText: l10n.unsuitableAdvantages,
-            unsuitableDisadvantages: Maybe$OptolithClient.fromMaybe(/* [] */0, univ.unsuitableDisadvantages),
+            unsuitableDisadvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.unsuitableDisadvantages),
             unsuitableDisadvantagesText: l10n.unsuitableDisadvantages,
-            variants: Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, variant, (function (x) {
+            variants: Curry._1(Ley_IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Ley_Int$OptolithClient.show, variant, (function (x) {
                         return x.id;
                       }), (function (x) {
                         return x.id;
-                      }), Maybe$OptolithClient.fromMaybe(/* [] */0, univ.variants), Maybe$OptolithClient.fromMaybe(/* [] */0, l10n.variants))),
+                      }), Ley_Option$OptolithClient.fromOption(/* [] */0, univ.variants), Ley_Option$OptolithClient.fromOption(/* [] */0, l10n.variants))),
             isVariantRequired: univ.isVariantRequired,
             gr: univ.gr,
             sgr: univ.sgr,
@@ -400,7 +400,7 @@ function t(univ, l10n) {
 }
 
 function all(yamlData) {
-  return Curry._1(IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Int$OptolithClient.show, t, (function (x) {
+  return Curry._1(Ley_IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Ley_Int$OptolithClient.show, t, (function (x) {
                     return x.id;
                   }), (function (x) {
                     return x.id;
@@ -432,4 +432,4 @@ var Decode = {
 };
 
 exports.Decode = Decode;
-/* IntMap-OptolithClient Not a pure module */
+/* Ley_IntMap-OptolithClient Not a pure module */
