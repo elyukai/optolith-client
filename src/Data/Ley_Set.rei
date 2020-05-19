@@ -22,10 +22,12 @@ module Make:
       [@genType]
       let toList: t => list(key);
 
-      [@genType "fnull"]
+      [@genType]
+      [@genType.as "fnull"]
       let null: t => bool;
 
-      [@genType "flength"]
+      [@genType]
+      [@genType.as "flength"]
       let length: t => int;
 
       [@genType]
@@ -63,7 +65,8 @@ module Make:
     [@genType]
     let insert: (key, t) => t;
 
-    [@genType "sdelete"]
+    [@genType]
+    [@genType.as "sdelete"]
     let delete: (key, t) => t;
 
     [@genType]

@@ -61,3 +61,11 @@ let rec rollDiceSumMapAux = (~map: (t, int) => int, ~amount, ~sides) =>
  */
 let rollDiceSumMap = (f: (t, int) => int, {amount, sides}) =>
   rollDiceSumMapAux(~map=f, ~amount, ~sides);
+
+module Decode = {
+  let t = json =>
+    Json.Decode.{
+      amount: json |> field("amount", int),
+      sides: json |> field("sides", int),
+    };
+};

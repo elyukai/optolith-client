@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "RogueSpell"]
 type t = {
   id: int,
   name: string,

@@ -1,5 +1,7 @@
 open GenericHelpers;
 
+[@genType]
+[@genType.as "ApplicableCombatTechniques"]
 type combatTechniques =
   | List(list(int))
   | All
@@ -8,6 +10,8 @@ type combatTechniques =
   | MeleeWithParry
   | OneHandedMelee;
 
+[@genType]
+[@genType.as "SpecialAbilities"]
 type t = {
   id: int,
   name: string,

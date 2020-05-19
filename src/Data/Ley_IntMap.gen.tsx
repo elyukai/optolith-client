@@ -3,10 +3,10 @@
 
 
 // tslint:disable-next-line:no-var-requires
-const CreateBucklescriptBlock = require('bs-platform/lib/js/block.js');
+const CreateBucklescriptBlock = require('bs-platform/lib/es6/block.js');
 
 // tslint:disable-next-line:no-var-requires
-const Curry = require('bs-platform/lib/js/curry.js');
+const Curry = require('bs-platform/lib/es6/curry.js');
 
 // tslint:disable-next-line:no-var-requires
 const Ley_IntMapBS = require('./Ley_IntMap.bs');
@@ -292,30 +292,3 @@ export const groupBy: <a>(_1:((_1:a) => key), _2:list<a>) => t<list<a>> = functi
   const result = Curry._2(Ley_IntMapBS.groupBy, Arg1, Arg2);
   return result
 };
-
-export const Foldable: {
-  minimum: (_1:t<number>) => number; 
-  foldl: <a,b>(_1:((_1:a, _2:b) => a), _2:a, _3:t<b>) => a; 
-  flength: <a>(_1:t<a>) => number; 
-  product: (_1:t<number>) => number; 
-  concat: <a>(_1:t<list<a>>) => list<a>; 
-  elem: <a>(_1:a, _2:t<a>) => boolean; 
-  concatMap: <a,b>(_1:((_1:a) => t<b>), _2:t<a>) => t<b>; 
-  and: (_1:t<boolean>) => boolean; 
-  sum: (_1:t<number>) => number; 
-  notElem: <a>(_1:a, _2:t<a>) => boolean; 
-  toList: <a>(_1:t<a>) => list<[key, a]>; 
-  fnull: <a>(_1:t<a>) => boolean; 
-  any: <a>(_1:((_1:a) => boolean), _2:t<a>) => boolean; 
-  maximum: (_1:t<number>) => number; 
-  or: (_1:t<boolean>) => boolean; 
-  find: <a>(_1:((_1:a) => boolean), _2:t<a>) => (null | undefined | a); 
-  foldr: <a,b>(_1:((_1:a, _2:b) => b), _2:b, _3:t<a>) => b; 
-  all: <a>(_1:((_1:a) => boolean), _2:t<a>) => boolean
-} = Ley_IntMapBS.Foldable
-
-export const Traversable: { mapMEither: <a,b,c>(_1:((_1:a) => 
-    { tag: "Ok"; value: b }
-  | { tag: "Error"; value: c }), _2:t<a>) => 
-    { tag: "Ok"; value: t<b> }
-  | { tag: "Error"; value: c } } = Ley_IntMapBS.Traversable

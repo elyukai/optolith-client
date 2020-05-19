@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "DominationRitual"]
 type t = {
   id: int,
   name: string,

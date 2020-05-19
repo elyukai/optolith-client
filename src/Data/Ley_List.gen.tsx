@@ -2,8 +2,10 @@
 /* eslint-disable import/first */
 
 
+const $$toRE259611490: { [key: string]: any } = {"LT": 0, "EQ": 1, "GT": 2};
+
 // tslint:disable-next-line:no-var-requires
-const Curry = require('bs-platform/lib/js/curry.js');
+const Curry = require('bs-platform/lib/es6/curry.js');
 
 // tslint:disable-next-line:no-var-requires
 const Ley_ListBS = require('./Ley_List.bs');
@@ -774,8 +776,11 @@ export const intersect: <T1>(xs:list<T1>, ys:list<T1>) => list<T1> = function <T
  * The `sortBy` function sorts all elements in the passed list using the passed
  * comparison function.
   */
-export const sortBy: <T1>(f:((_1:T1, _2:T1) => Ley_Ord_ordering), _2:list<T1>) => list<T1> = function <T1>(Arg1: any, Arg2: any) {
-  const result = Curry._2(Ley_ListBS.sortBy, Arg1, Arg2);
+export const sortBy: <T1>(f:((_1:T1, _2:T1) => Ley_Ord_ordering), _2:list<T1>) => list<T1> = function <T1>(Arg1: any, Arg21: any) {
+  const result = Curry._2(Ley_ListBS.sortBy, function (Arg11: any, Arg2: any) {
+      const result1 = Arg1(Arg11, Arg2);
+      return $$toRE259611490[result1]
+    }, Arg21);
   return result
 };
 
@@ -783,8 +788,11 @@ export const sortBy: <T1>(f:((_1:T1, _2:T1) => Ley_Ord_ordering), _2:list<T1>) =
  * The largest element of a non-empty structure with respect to the given
  * comparison function.
   */
-export const maximumBy: <T1>(f:((_1:T1, _2:T1) => Ley_Ord_ordering), xs:list<T1>) => T1 = function <T1>(Arg1: any, Arg2: any) {
-  const result = Curry._2(Ley_ListBS.maximumBy, Arg1, Arg2);
+export const maximumBy: <T1>(f:((_1:T1, _2:T1) => Ley_Ord_ordering), xs:list<T1>) => T1 = function <T1>(Arg1: any, Arg21: any) {
+  const result = Curry._2(Ley_ListBS.maximumBy, function (Arg11: any, Arg2: any) {
+      const result1 = Arg1(Arg11, Arg2);
+      return $$toRE259611490[result1]
+    }, Arg21);
   return result
 };
 
@@ -792,8 +800,11 @@ export const maximumBy: <T1>(f:((_1:T1, _2:T1) => Ley_Ord_ordering), xs:list<T1>
  * The least element of a non-empty structure with respect to the given
  * comparison function.
   */
-export const minimumBy: <T1>(f:((_1:T1, _2:T1) => Ley_Ord_ordering), xs:list<T1>) => T1 = function <T1>(Arg1: any, Arg2: any) {
-  const result = Curry._2(Ley_ListBS.minimumBy, Arg1, Arg2);
+export const minimumBy: <T1>(f:((_1:T1, _2:T1) => Ley_Ord_ordering), xs:list<T1>) => T1 = function <T1>(Arg1: any, Arg21: any) {
+  const result = Curry._2(Ley_ListBS.minimumBy, function (Arg11: any, Arg2: any) {
+      const result1 = Arg1(Arg11, Arg2);
+      return $$toRE259611490[result1]
+    }, Arg21);
   return result
 };
 
@@ -931,82 +942,3 @@ export const Safe_atMay: <T1>(xs:list<T1>, i:number) => (null | undefined | T1) 
   const result = Curry._2(Ley_ListBS.Safe.atMay, Arg1, Arg2);
   return result
 };
-
-export const Monad: {
-  liftM3: <T1,T2,T3,T4>(f:((_1:T1, _2:T2, _3:T3) => T4), mx:list<T1>, my:list<T2>, mz:list<T3>) => list<T4>; 
-  kleisli: <T1,T2,T3>(_1:((_1:T1) => list<T2>), _2:((_1:T2) => list<T3>), _3:T1) => list<T3>; 
-  liftM2: <T1,T2,T3>(f:((_1:T1, _2:T2) => T3), mx:list<T1>, my:list<T2>) => list<T3>; 
-  join: <T1>(x:list<list<T1>>) => list<T1>; 
-  bindF: <T1,T2>(_1:((_1:T1) => list<T2>), _2:list<T1>) => list<T2>; 
-  liftM4: <T1,T2,T3,T4,T5>(f:((_1:T1, _2:T2, _3:T3, _4:T4) => T5), mx:list<T1>, my:list<T2>, mz:list<T3>, ma:list<T4>) => list<T5>; 
-  bind: <T1,T2>(_1:list<T1>, _2:((_1:T1) => list<T2>)) => list<T2>; 
-  then: <T1,T2>(_1:list<T1>, _2:list<T2>) => list<T2>
-} = Ley_ListBS.Monad
-
-export const Functor: { fmapF: <T1,T2>(_1:list<T1>, _2:((_1:T1) => T2)) => list<T2>; fmap: <T1,T2>(_1:((_1:T1) => T2), _2:list<T1>) => list<T2> } = Ley_ListBS.Functor
-
-export const Foldable: {
-  minimum: (xs:list<number>) => number; 
-  foldl: <T1,T2>(f:((_1:T1, _2:T2) => T1), initial:T1, xs:list<T2>) => T1; 
-  foldl1: <T1>(f:((_1:T1, _2:T1) => T1), xs:list<T1>) => T1; 
-  flength: <T1>(xs:list<T1>) => number; 
-  product: (xs:list<number>) => number; 
-  concat: <T1>(xss:list<list<T1>>) => list<T1>; 
-  elem: <T1>(e:T1, xs:list<T1>) => boolean; 
-  concatMap: <T1,T2>(f:((_1:T1) => list<T2>), xs:list<T1>) => list<T2>; 
-  and: (xs:list<boolean>) => boolean; 
-  sum: (xs:list<number>) => number; 
-  notElem: <T1>(e:T1, xs:list<T1>) => boolean; 
-  foldr1: <T1>(f:((_1:T1, _2:T1) => T1), xs:list<T1>) => T1; 
-  toList: <a>(xs:list<a>) => list<a>; 
-  fnull: <T1>(xs:list<T1>) => boolean; 
-  any: <T1>(f:((_1:T1) => boolean), xs:list<T1>) => boolean; 
-  maximum: (xs:list<number>) => number; 
-  or: (xs:list<boolean>) => boolean; 
-  find: <T1>(f:((_1:T1) => boolean), xs:list<T1>) => (null | undefined | T1); 
-  foldr: <T1,T2>(f:((_1:T1, _2:T2) => T2), initial:T2, xs:list<T1>) => T2; 
-  all: <T1>(f:((_1:T1) => boolean), xs:list<T1>) => boolean
-} = Ley_ListBS.Foldable
-
-export const Extra: {
-  splitOn: (del:string, x:string) => list<string>; 
-  replaceStr: (old_subseq:string, new_subseq:string, x:string) => string; 
-  snoc: <T1>(xs:list<T1>, x:T1) => list<T1>; 
-  firstJust: <T1,T2>(pred:((_1:T1) => (null | undefined | T2)), xs:list<T1>) => (null | undefined | T2); 
-  unsnoc: <T1>(xs:list<T1>) => (null | undefined | [list<T1>, T1]); 
-  trimEnd: (str:string) => string; 
-  list: <T1,T2>(def:T1, f:((_1:T2, _2:list<T2>) => T1), xs:list<T2>) => T1; 
-  notNull: <T1>(xs:list<T1>) => boolean; 
-  lower: (str:string) => string; 
-  trimStart: (str:string) => string; 
-  notNullStr: (xs:string) => boolean; 
-  escapeRegex: (_1:string) => string; 
-  replaceStrRe: (old_subseq_rx:Js_re_t, new_subseq:string, x:string) => string
-} = Ley_ListBS.Extra
-
-export const Index: {
-  ifilter: <T1>(pred:((_1:number, _2:T1) => boolean), xs:list<T1>) => list<T1>; 
-  indexed: <T1>(xs:list<T1>) => list<[number, T1]>; 
-  ifoldr: <T1,T2>(f:((_1:number, _2:T1, _3:T2) => T2), initial:T2, xs:list<T1>) => T2; 
-  imap: <T1,T2>(f:((_1:number, _2:T1) => T2), xs:list<T1>) => list<T2>; 
-  ifoldl: <T1,T2>(f:((_1:T1, _2:number, _3:T2) => T1), initial:T1, xs:list<T2>) => T1; 
-  ipartition: <T1>(pred:((_1:number, _2:T1) => boolean), xs:list<T1>) => [list<T1>, list<T1>]; 
-  ifindIndices: <T1>(pred:((_1:number, _2:T1) => boolean), xs:list<T1>) => list<number>; 
-  deleteAtPair: <T1>(index:number, xs:list<T1>) => [(null | undefined | T1), list<T1>]; 
-  updateAt: <T1>(index:number, f:((_1:T1) => Ley_Option_t<T1>), xs:list<T1>) => list<T1>; 
-  iall: <T1>(f:((_1:number, _2:T1) => boolean), xs:list<T1>) => boolean; 
-  iany: <T1>(f:((_1:number, _2:T1) => boolean), xs:list<T1>) => boolean; 
-  ifind: <T1>(pred:((_1:number, _2:T1) => boolean), xs:list<T1>) => (null | undefined | T1); 
-  deleteAt: <T1>(index:number, xs:list<T1>) => list<T1>; 
-  modifyAt: <T1>(index:number, f:((_1:T1) => T1), xs:list<T1>) => list<T1>; 
-  insertAt: <T1>(index:number, e:T1, xs:list<T1>) => list<T1>; 
-  iconcatMap: <T1,T2>(f:((_1:number, _2:T1) => list<T2>), xs:list<T1>) => list<T2>; 
-  ifindIndex: <T1>(pred:((_1:number, _2:T1) => boolean), xs:list<T1>) => (null | undefined | number); 
-  setAt: <T1>(index:number, e:T1, xs:list<T1>) => list<T1>
-} = Ley_ListBS.Index
-
-export const Alternative: { guard: (pred:boolean) => list<void>; alt: <T1>(_1:list<T1>, _2:list<T1>) => list<T1> } = Ley_ListBS.Alternative
-
-export const Safe: { atMay: <T1>(xs:list<T1>, i:number) => (null | undefined | T1) } = Ley_ListBS.Safe
-
-export const Applicative: { ap: <T1,T2>(_1:list<((_1:T1) => T2)>, _2:list<T1>) => list<T2> } = Ley_ListBS.Applicative

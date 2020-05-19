@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "ExperienceLevel"]
 type t = {
   id: int,
   name: string,

@@ -1,20 +1,28 @@
+[@genType]
+[@genType.as "Application"]
 type application = {
   id: int,
   name: string,
   prerequisite: option(Static_Prerequisites.activatable),
 };
 
+[@genType]
+[@genType.as "Use"]
 type use = {
   id: int,
   name: string,
   prerequisite: Static_Prerequisites.activatable,
 };
 
+[@genType]
+[@genType.as "Encumbrance"]
 type encumbrance =
   | True
   | False
   | Maybe(option(string));
 
+[@genType]
+[@genType.as "Skill"]
 type t = {
   id: int,
   name: string,
@@ -34,6 +42,8 @@ type t = {
   errata: list(Static_Erratum.t),
 };
 
+[@genType]
+[@genType.as "SkillGroup"]
 type group = {
   id: int,
   name: string,

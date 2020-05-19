@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "BlessedTradition"]
 type t = {
   id: int,
   numId: int,

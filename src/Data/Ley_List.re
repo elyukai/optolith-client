@@ -65,7 +65,8 @@ module Monad = {
 
   let (>>) = (x, y) => x >>= const(y);
 
-  [@genType "then"]
+  [@genType]
+  [@genType.as "then"]
   let then_ = (>>);
 
   let (>=>) = (f, g, x) => x->f >>= g;
@@ -153,14 +154,16 @@ module Foldable = {
   [@genType]
   let toList = (xs): list('a) => xs;
 
-  [@genType "fnull"]
+  [@genType]
+  [@genType.as "fnull"]
   let null = xs =>
     switch (xs) {
     | [] => true
     | _ => false
     };
 
-  [@genType "flength"]
+  [@genType]
+  [@genType.as "flength"]
   let length = xs => List.length(xs);
 
   [@genType]
@@ -184,14 +187,16 @@ module Foldable = {
   [@genType]
   let concatMap = (f, xs) => xs >>= f;
 
-  [@genType "and"]
+  [@genType]
+  [@genType.as "and"]
   let rec con = xs =>
     switch (xs) {
     | [] => true
     | [y, ...ys] => y && con(ys)
     };
 
-  [@genType "or"]
+  [@genType]
+  [@genType.as "or"]
   let rec dis = xs =>
     switch (xs) {
     | [] => false
@@ -1053,7 +1058,8 @@ let nub = xs =>
 /**
  * `delete x` removes the first occurrence of `x` from its list argument.
  */
-[@genType "sdelete"]
+[@genType]
+[@genType.as "sdelete"]
 let rec delete = (e, xs) =>
   switch (xs) {
   | [] => []

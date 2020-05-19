@@ -3,71 +3,92 @@ type key = string;
 [@genType.import "../shims/StrMap.shim"]
 type t('a);
 
-[@genType "StrMap"]
+[@genType]
+[@genType.as "StrMap"]
 type strmap('a) = t('a);
 
 module Foldable: {
-  [@genType "foldr"]
+  [@genType]
+  [@genType.as "foldr"]
   let foldr: (('a, 'b) => 'b, 'b, t('a)) => 'b;
 
-  [@genType "foldl"]
+  [@genType]
+  [@genType.as "foldl"]
   let foldl: (('a, 'b) => 'a, 'a, t('b)) => 'a;
 
-  [@genType "toList"]
+  [@genType]
+  [@genType.as "toList"]
   let toList: t('a) => list((key, 'a));
 
-  [@genType "fnull"]
+  [@genType]
+  [@genType.as "fnull"]
   let null: t('a) => bool;
 
-  [@genType "flength"]
+  [@genType]
+  [@genType.as "flength"]
   let length: t('a) => int;
 
-  [@genType "elem"]
+  [@genType]
+  [@genType.as "elem"]
   let elem: ('a, t('a)) => bool;
 
-  [@genType "sum"]
+  [@genType]
+  [@genType.as "sum"]
   let sum: t(int) => int;
 
-  [@genType "product"]
+  [@genType]
+  [@genType.as "product"]
   let product: t(int) => int;
 
-  [@genType "maximum"]
+  [@genType]
+  [@genType.as "maximum"]
   let maximum: t(int) => int;
 
-  [@genType "minimum"]
+  [@genType]
+  [@genType.as "minimum"]
   let minimum: t(int) => int;
 
-  [@genType "concat"]
+  [@genType]
+  [@genType.as "concat"]
   let concat: t(list('a)) => list('a);
 
-  [@genType "concatMap"]
+  [@genType]
+  [@genType.as "concatMap"]
   let concatMap: ('a => t('b), t('a)) => t('b);
 
-  [@genType "and"]
+  [@genType]
+  [@genType.as "and"]
   let con: t(bool) => bool;
 
-  [@genType "or"]
+  [@genType]
+  [@genType.as "or"]
   let dis: t(bool) => bool;
 
-  [@genType "any"]
+  [@genType]
+  [@genType.as "any"]
   let any: ('a => bool, t('a)) => bool;
 
-  [@genType "all"]
+  [@genType]
+  [@genType.as "all"]
   let all: ('a => bool, t('a)) => bool;
 
-  [@genType "notElem"]
+  [@genType]
+  [@genType.as "notElem"]
   let notElem: ('a, t('a)) => bool;
 
-  [@genType "find"]
+  [@genType]
+  [@genType.as "find"]
   let find: ('a => bool, t('a)) => option('a);
 };
 
 module Traversable: {
-  [@genType "mapMEither"]
+  [@genType]
+  [@genType.as "mapMEither"]
   let mapMEither: ('a => result('b, 'c), t('a)) => result(t('b), 'c);
 };
 
-[@genType "fnull"]
+[@genType]
+[@genType.as "fnull"]
 let null: t('a) => bool;
 
 [@genType]
@@ -103,7 +124,8 @@ let insertWithKey: ((key, 'a, 'a) => 'a, key, 'a, t('a)) => t('a);
 let insertLookupWithKey:
   ((key, 'a, 'a) => 'a, key, 'a, t('a)) => (option('a), t('a));
 
-[@genType "sdelete"]
+[@genType]
+[@genType.as "sdelete"]
 let delete: (key, t('a)) => t('a);
 
 [@genType]

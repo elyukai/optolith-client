@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "OptionalRule"]
 type t = {
   id: int,
   name: string,

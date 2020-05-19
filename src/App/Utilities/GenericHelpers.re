@@ -1,4 +1,5 @@
-[@genType "OneOrMany"]
+[@genType]
+[@genType.as "OneOrMany"]
 type oneOrMany('a) =
   | One('a)
   | Many(list('a));

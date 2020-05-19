@@ -5,7 +5,7 @@
 const $$toRE998253360: { [key: string]: any } = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4};
 
 // tslint:disable-next-line:no-var-requires
-const Curry = require('bs-platform/lib/js/curry.js');
+const Curry = require('bs-platform/lib/es6/curry.js');
 
 // tslint:disable-next-line:no-var-requires
 const ICBS = require('./IC.bs');

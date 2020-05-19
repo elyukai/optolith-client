@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "Disadvantage"]
 type t = {
   id: int,
   name: string,

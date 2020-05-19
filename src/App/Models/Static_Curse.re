@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "Curse"]
 type t = {
   id: int,
   name: string,

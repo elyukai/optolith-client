@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "CombatTechnique"]
 type t = {
   id: int,
   name: string,

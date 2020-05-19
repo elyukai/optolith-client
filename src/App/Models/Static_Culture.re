@@ -1,7 +1,11 @@
+[@genType]
+[@genType.as "FrequencyException"]
 type frequencyException =
   | Single(int)
   | Group(int);
 
+[@genType]
+[@genType.as "Culture"]
 type t = {
   id: int,
   name: string,

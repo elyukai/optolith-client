@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "MagicalDance"]
 type t = {
   id: int,
   name: string,

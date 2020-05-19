@@ -1,4 +1,5 @@
-[@genType "Erratum"]
+[@genType]
+[@genType.as "Erratum"]
 type t = {
   date: Js.Date.t,
   description: string,

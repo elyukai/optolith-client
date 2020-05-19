@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "Cantrip"]
 type t = {
   id: int,
   name: string,

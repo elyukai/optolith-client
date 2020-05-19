@@ -6,7 +6,6 @@ import { Item } from "./Item"
 import { Purse } from "./Purse"
 
 export interface Belongings {
-  "@@name": "Belongings"
   items: StrMap<Item>
   itemInEditor?: EditItem
   isInItemCreation: boolean

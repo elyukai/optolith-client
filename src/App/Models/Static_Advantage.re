@@ -1,7 +1,11 @@
+[@genType]
+[@genType.as "ApValue"]
 type cost =
   | Flat(int)
   | PerLevel(list(int));
 
+[@genType]
+[@genType.as "Advantage"]
 type t = {
   id: int,
   name: string,

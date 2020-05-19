@@ -1,4 +1,5 @@
-[@genType "SourceRef"]
+[@genType]
+[@genType.as "SourceRef"]
 type t = {
   id: string,
   page: (int, int),

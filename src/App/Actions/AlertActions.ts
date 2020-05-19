@@ -1,10 +1,9 @@
 import { clipboard } from "electron"
 import { fromLeft_, Left } from "../../Data/Either"
 import { List } from "../../Data/List"
-import { fmapF, Just, Maybe, Nothing } from "../../Data/Maybe"
-import { fromDefault, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../Data/Record"
+import { fmapF, Just, Maybe } from "../../Data/Maybe"
 import { ADD_ALERT, REMOVE_ALERT } from "../Constants/ActionTypes"
-import { StaticDataRecord } from "../Models/Wiki/WikiModel"
+import { Static } from "../Models/Static.gen"
 import { getWiki } from "../Selectors/stateSelectors"
 import { translate, translateP } from "../Utilities/I18n"
 import { ReduxAction } from "./Actions"
@@ -13,84 +12,42 @@ import { ReduxAction } from "./Actions"
 // BASIC INTERFACES
 
 export interface PromptOptions<A> {
-  "@@name": "PromptOptions"
-  title: Maybe<string>
+  title?: string
   message: string
-  buttons: List<Record<PromptButton<A>>>
-  resolve: (response: Maybe<A>) => void
+  buttons: List<PromptButton<A>>
+  resolve: (response?: A) => void
 }
-
-interface PromptOptionsCreator extends RecordCreator<PromptOptions<any>> {
-  <A> (x: PartialMaybeOrNothing<OmitName<PromptOptions<A>>>): Record<PromptOptions<A>>
-}
-
-export const PromptOptions: PromptOptionsCreator =
-  fromDefault ("PromptOptions")
-              <PromptOptions<any>> ({
-                title: Nothing,
-                message: "",
-                buttons: List (),
-                resolve: () => Nothing,
-              })
 
 export interface PromptButton<A> {
-  "@@name": "PromptButton"
   label: string
-  critical: Maybe<boolean>
+  critical?: boolean
   response: A
 }
 
-interface PromptButtonCreator extends RecordCreator<PromptButton<any>> {
-  <A> (x: PartialMaybeOrNothing<OmitName<PromptButton<A>>>): Record<PromptButton<A>>
-}
-
-export const PromptButton: PromptButtonCreator =
-  fromDefault ("PromptButton")
-              <PromptButton<any>> ({
-                label: "",
-                critical: Nothing,
-                response: 0,
-              })
-
-export interface AddPromptAction {
+export interface AddPromptAction<A> {
   type: ADD_ALERT
-  payload: Record<PromptOptions<any>>
+  payload: PromptOptions<A>
 }
 
 
 // CUSTOMIZABLE PROMPT
 
 export interface CustomPromptOptions<A> {
-  "@@name": "CustomPromptOptions"
-  title: Maybe<string>
+  title?: string
   message: string
-  buttons: List<Record<PromptButton<A>>>
+  buttons: List<PromptButton<A>>
 }
-
-interface CustomPromptOptionsCreator extends RecordCreator<CustomPromptOptions<any>> {
-  <A> (x: PartialMaybeOrNothing<OmitName<CustomPromptOptions<A>>>): Record<CustomPromptOptions<A>>
-}
-
-export const CustomPromptOptions: CustomPromptOptionsCreator =
-  fromDefault ("CustomPromptOptions")
-              <CustomPromptOptions<any>> ({
-                title: Nothing,
-                message: "",
-                buttons: List (),
-              })
 
 export const addPrompt =
-  <A> (opts: Record<CustomPromptOptions<A>>): ReduxAction<Promise<Maybe<A>>> =>
+  <A> (opts: CustomPromptOptions<A>): ReduxAction<Promise<Maybe<A>>> =>
   async dispatch =>
     new Promise<Maybe<A>> (resolve => {
-      dispatch<AddPromptAction> ({
+      dispatch<AddPromptAction<A>> ({
         type: ADD_ALERT,
-        payload: PromptOptions<A> ({
-          title: CustomPromptOptions.A.title (opts),
-          message: CustomPromptOptions.A.message (opts),
-          buttons: CustomPromptOptions.A.buttons (opts),
+        payload: {
+          ...opts,
           resolve,
-        }),
+        },
       })
     })
 
@@ -98,35 +55,26 @@ export const addPrompt =
 // ALERT
 
 export interface AlertOptions {
-  "@@name": "AlertOptions"
-  title: Maybe<string>
+  title?: string
   message: string
 }
 
-export const AlertOptions =
-  fromDefault ("AlertOptions")
-              <AlertOptions> ({
-                title: Nothing,
-                message: "",
-              })
-
 export const addAlert =
-  (opts: Record<AlertOptions>): ReduxAction<Promise<Maybe<void>>> =>
+  (opts: AlertOptions): ReduxAction<Promise<Maybe<void>>> =>
   async (dispatch, getState) =>
     new Promise<Maybe<void>> (resolve => {
-      dispatch<AddPromptAction> ({
+      dispatch<AddPromptAction<void>> ({
         type: ADD_ALERT,
-        payload: PromptOptions ({
-          title: AlertOptions.A.title (opts),
-          message: AlertOptions.A.message (opts),
+        payload: {
+          ...opts,
           buttons: List (
-            PromptButton<void> ({
+            {
               label: translate (getWiki (getState ())) ("general.dialogs.okbtn"),
               response: undefined,
-            }),
+            },
           ),
           resolve,
-        }),
+        },
       })
     })
 
@@ -138,31 +86,30 @@ enum ErrorAlertResponse {
 }
 
 export const addErrorAlert =
-  (opts: Record<AlertOptions>): ReduxAction<Promise<Maybe<void>>> =>
+  (opts: AlertOptions): ReduxAction<Promise<Maybe<void>>> =>
   async (dispatch, getState) => {
     const response = await new Promise<Maybe<ErrorAlertResponse>> (resolve => {
-      dispatch<AddPromptAction> ({
+      dispatch<AddPromptAction<ErrorAlertResponse>> ({
         type: ADD_ALERT,
-        payload: PromptOptions ({
-          title: AlertOptions.A.title (opts),
-          message: AlertOptions.A.message (opts),
+        payload: {
+          ...opts,
           buttons: List (
-            PromptButton<ErrorAlertResponse> ({
+            {
               label: translate (getWiki (getState ())) ("general.dialogs.copybtn"),
               response: ErrorAlertResponse.Copy,
-            }),
-            PromptButton<ErrorAlertResponse> ({
+            },
+            {
               label: translate (getWiki (getState ())) ("general.dialogs.okbtn"),
               response: ErrorAlertResponse.Ok,
-            }),
+            },
           ),
           resolve,
-        }),
+        },
       })
     })
 
     if (Maybe.elem (ErrorAlertResponse.Copy) (response)) {
-      clipboard.writeText (AlertOptions.A.message (opts))
+      clipboard.writeText (opts.message)
     }
 
     return fmapF (response) ((): void => undefined)
@@ -173,29 +120,29 @@ export const addErrorAlert =
  * can be used as the content of an alert.
  */
 export const getErrorMsg =
-  (staticData: StaticDataRecord) =>
+  (staticData: Static) =>
   (message: string) =>
   (error: Left<Error>): string =>
     `${message} (${translate (staticData) ("general.errorcode")}: ${JSON.stringify (fromLeft_ (error))})`
 
 export const addDefaultErrorAlert =
-  (staticData: StaticDataRecord) =>
+  (staticData: Static) =>
   (message: string) =>
   (error: Left<Error>) =>
-    addErrorAlert (AlertOptions ({
+    addErrorAlert ({
                     message: getErrorMsg (staticData) (message) (error),
                     title: Just (translate (staticData) ("general.error")),
-                  }))
+                  })
 
 export const addDefaultErrorAlertWithTitle =
-  (staticData: StaticDataRecord) =>
+  (staticData: Static) =>
   (title: string) =>
   (message: string) =>
   (error: Left<Error>) =>
-    addErrorAlert (AlertOptions ({
+    addErrorAlert ({
                     message: getErrorMsg (staticData) (message) (error),
                     title: Just (title),
-                  }))
+                  })
 
 
 // CONFIRM
@@ -205,19 +152,10 @@ export enum ConfirmResponse {
 }
 
 export interface ConfirmOptions {
-  "@@name": "ConfirmOptions"
-  title: Maybe<string>
+  title?: string
   message: string
   useYesNo: boolean
 }
-
-export const ConfirmOptions =
-  fromDefault ("ConfirmOptions")
-              <ConfirmOptions> ({
-                title: Nothing,
-                message: "",
-                useYesNo: false,
-              })
 
 export const addConfirm =
   (staticData: StaticDataRecord) =>

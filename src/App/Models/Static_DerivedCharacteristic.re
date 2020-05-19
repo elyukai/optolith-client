@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "DerivedCharacteristic"]
 type t = {
   id: string,
   name: string,

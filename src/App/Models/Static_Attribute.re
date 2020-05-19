@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "Attribute"]
 type t = {
   id: int,
   name: string,

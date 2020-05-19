@@ -1,5 +1,7 @@
 open GenericHelpers;
 
+[@genType]
+[@genType.as "ItemInfo"]
 type info = {
   note: option(string),
   rules: option(string),
@@ -9,29 +11,41 @@ type info = {
   errata: list(Static_Erratum.t),
 };
 
+[@genType]
+[@genType.as "MundaneItem"]
 type mundaneItem = {structurePoints: option(oneOrMany(int))};
 
+[@genType]
+[@genType.as "NewAttribute"]
 type newAttribute = {
   attribute: int,
   threshold: int,
 };
 
+[@genType]
+[@genType.as "AgilityStrength"]
 type agilityStrength = {
   agility: int,
   strength: int,
 };
 
+[@genType]
+[@genType.as "PrimaryAttributeDamageThreshold"]
 type primaryAttributeDamageThreshold =
   | DefaultAttribute(int)
   | DifferentAttribute(newAttribute)
   | AgilityStrength(agilityStrength);
 
+[@genType]
+[@genType.as "Damage"]
 type damage = {
   amount: int,
   sides: int,
   flat: option(int),
 };
 
+[@genType]
+[@genType.as "MeleeWeapon"]
 type meleeWeapon = {
   combatTechnique: int,
   damage,
@@ -46,6 +60,8 @@ type meleeWeapon = {
   isImprovisedWeapon: bool,
 };
 
+[@genType]
+[@genType.as "RangedWeapon"]
 type rangedWeapon = {
   combatTechnique: int,
   damage: option(damage),
@@ -56,6 +72,8 @@ type rangedWeapon = {
   isImprovisedWeapon: bool,
 };
 
+[@genType]
+[@genType.as "Armor"]
 type armor = {
   protection: int,
   encumbrance: int,
@@ -63,6 +81,8 @@ type armor = {
   armorType: int,
 };
 
+[@genType]
+[@genType.as "ItemSpecial"]
 type special =
   | MundaneItem(mundaneItem)
   | MeleeWeapon(meleeWeapon)
@@ -70,6 +90,8 @@ type special =
   | CombinedWeapon(meleeWeapon, rangedWeapon)
   | Armor(armor);
 
+[@genType]
+[@genType.as "Item"]
 type t = {
   id: int,
   name: string,

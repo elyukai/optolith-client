@@ -1,6 +1,7 @@
 open Ley_Function;
 
-[@gentype "Option"]
+[@genType]
+[@genType.as "Option"]
 type t('a) = option('a);
 
 module Functor = {
@@ -68,12 +69,14 @@ module Monad = {
 
   let (>>) = (x, y) => x >>= const(y);
 
-  [@genType "then"]
+  [@genType]
+  [@genType.as "then"]
   let then_ = (>>);
 
   let (<<) = (x, y) => const(x) =<< y;
 
-  [@genType "thenF"]
+  [@genType]
+  [@genType.as "thenF"]
   let thenF = (<<);
 
   [@genType]
@@ -133,13 +136,15 @@ module Foldable = {
     | None => []
     };
 
-  [@genType "fnull"]
+  [@genType]
+  [@genType.as "fnull"]
   let null =
     fun
     | None => true
     | Some(_) => false;
 
-  [@genType "flength"]
+  [@genType]
+  [@genType.as "flength"]
   let length = mx =>
     switch (mx) {
     | Some(_) => 1
@@ -181,14 +186,16 @@ module Foldable = {
     | None => []
     };
 
-  [@genType "and"]
+  [@genType]
+  [@genType.as "and"]
   let con = mx =>
     switch (mx) {
     | Some(x) => x
     | None => true
     };
 
-  [@genType "or"]
+  [@genType]
+  [@genType.as "or"]
   let dis = mx =>
     switch (mx) {
     | Some(x) => x

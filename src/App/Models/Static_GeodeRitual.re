@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "GeodeRitual"]
 type t = {
   id: int,
   name: string,

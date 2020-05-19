@@ -16,7 +16,7 @@ let rec range = ((l, u)) =>
  * a contiguous subrange of values.
  */
 [@genType]
-let inRange = ((l, u), x) => l <= x && x <= u;
+let inRange = ((l, u), x: int) => l <= x && x <= u;
 
 /**
  * The position of a subscript in the subrange.

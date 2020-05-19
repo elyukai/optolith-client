@@ -3,7 +3,7 @@
 
 
 // tslint:disable-next-line:no-var-requires
-const Curry = require('bs-platform/lib/js/curry.js');
+const Curry = require('bs-platform/lib/es6/curry.js');
 
 // tslint:disable-next-line:no-var-requires
 const IOBS = require('./IO.bs');
@@ -17,5 +17,3 @@ export const Functor_fmapF: <T1,T2>(_1:Promise<T1>, _2:((_1:T1) => T2)) => Promi
   const result = Curry._2(IOBS.Functor.fmapF, Arg1, Arg2);
   return result
 };
-
-export const Functor: { fmapF: <T1,T2>(_1:Promise<T1>, _2:((_1:T1) => T2)) => Promise<T2>; fmap: <T1,T2>(_1:((_1:T1) => T2), _2:Promise<T1>) => Promise<T2> } = IOBS.Functor

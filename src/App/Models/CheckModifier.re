@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "CheckModifier"]
 type t =
   | SPI
   | DOUBLE_SPI

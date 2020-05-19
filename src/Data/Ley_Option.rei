@@ -87,6 +87,14 @@ module Monad: {
    */
   let liftM4:
     (('a, 'b, 'c, 'd) => 'e, t('a), t('b), t('c), t('d)) => t('e);
+
+  /**
+   * Lift a function to be applied to five wrapped values and returns a `Just`
+   * of the result if all values are `Just`s, otherwise `Nothing`.
+   */
+  let liftM5:
+    (('a, 'b, 'c, 'd, 'e) => 'f, t('a), t('b), t('c), t('d), t('e)) =>
+    t('f);
 };
 
 module Foldable: {
@@ -136,22 +144,24 @@ module Foldable: {
   let concatMap: ('a => list('b), t('a)) => list('b);
 
   /**
-   *
+   * If the value is a `Some`, returns the contained value, otherwise `true`.
    */
   let con: t(bool) => bool;
 
   /**
-   *
+   * If the value is a `Some`, returns the contained value, otherwise `false`.
    */
   let dis: t(bool) => bool;
 
   /**
-   *
+   * If the passed `option` is a `Some`, returns the return value of the
+   * predicate function applied to the contained value, otherwise `false`;
    */
   let any: ('a => bool, t('a)) => bool;
 
   /**
-   *
+   * If the passed `option` is a `Some`, returns the return value of the
+   * predicate function applied to the contained value, otherwise `true`;
    */
   let all: ('a => bool, t('a)) => bool;
 

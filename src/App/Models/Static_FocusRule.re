@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "FocusRule"]
 type t = {
   id: int,
   name: string,

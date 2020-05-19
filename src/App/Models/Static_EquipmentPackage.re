@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "EquipmentPackage"]
 type t = {
   id: int,
   name: string,

@@ -39,6 +39,8 @@ module Spell = Static_Spell;
 module State = Static_State;
 module ZibiljaRitual = Static_ZibiljaRitual;
 
+[@genType]
+[@genType.as "Static"]
 type t = {
   advantages: Ley.IntMap.t(Advantage.t),
   animistForces: Ley.IntMap.t(AnimistForce.t),
@@ -98,6 +100,8 @@ type t = {
   zibiljaRituals: Ley.IntMap.t(ZibiljaRitual.t),
 };
 
+[@genType]
+[@genType.as "Activatable"]
 type activatable =
   | Advantage(Advantage.t)
   | Disadvantage(Disadvantage.t)

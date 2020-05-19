@@ -34,6 +34,8 @@ type enhancement = {
   errata: list(Static_Erratum.t),
 };
 
+[@genType]
+[@genType.as "LiturgicalChant"]
 type t = {
   id: int,
   name: string,

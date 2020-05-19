@@ -26,3 +26,5 @@ let rollDiceSum: t => int;
  * function is then used to calculate the sum of all results.
  */
 let rollDiceSumMap: ((t, int) => int, t) => int;
+
+module Decode: {let t: Js.Json.t => t;};

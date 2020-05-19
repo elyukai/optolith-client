@@ -1,9 +1,13 @@
+[@genType]
+[@genType.as "PatronCategory"]
 type category = {
   id: int,
   name: string,
   primaryPatronCultures: list(int),
 };
 
+[@genType]
+[@genType.as "Patron"]
 type t = {
   id: int,
   name: string,

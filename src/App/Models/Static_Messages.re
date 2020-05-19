@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "Messages"]
 type t = {
   id: string,
   macosmenubar_aboutapp: string,

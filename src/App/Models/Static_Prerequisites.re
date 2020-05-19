@@ -1,21 +1,26 @@
 open GenericHelpers;
 
-[@genType "SexPrerequisite"]
+[@genType]
+[@genType.as "SexPrerequisite"]
 type sex = Hero.sex;
 
-[@genType "RacePrerequisite"]
+[@genType]
+[@genType.as "RacePrerequisite"]
 type race = {
   id: oneOrMany(int),
   active: bool,
 };
 
-[@genType "CulturePrerequisite"]
+[@genType]
+[@genType.as "CulturePrerequisite"]
 type culture = oneOrMany(int);
 
-[@genType "SocialPrerequisite"]
+[@genType]
+[@genType.as "SocialPrerequisite"]
 type socialStatus = int;
 
-[@genType "PactPrerequisite"]
+[@genType]
+[@genType.as "PactPrerequisite"]
 type pact = {
   category: int,
   domain: option(oneOrMany(int)),
@@ -26,7 +31,8 @@ type primaryAttributeType =
   | Magical
   | Blessed;
 
-[@genType "PrimaryAttributePrerequisite"]
+[@genType]
+[@genType.as "PrimaryAttributePrerequisite"]
 type primaryAttribute = {
   value: int,
   scope: primaryAttributeType,
@@ -38,7 +44,8 @@ type activatableId = [
   | `SpecialAbility(int)
 ];
 
-[@genType "ActivatablePrerequisite"]
+[@genType]
+[@genType.as "ActivatablePrerequisite"]
 type activatable = {
   id: activatableId,
   active: bool,
@@ -49,13 +56,15 @@ type activatable = {
 
 type activatableSkillId = [ | `Spell(int) | `LiturgicalChant(int)];
 
-[@genType "ActivatableSkillPrerequisite"]
+[@genType]
+[@genType.as "ActivatableSkillPrerequisite"]
 type activatableSkill = {
   id: activatableSkillId,
   active: bool,
 };
 
-[@genType "ActivatableMultiEntryPrerequisite"]
+[@genType]
+[@genType.as "ActivatableMultiEntryPrerequisite"]
 type activatableMultiEntry = {
   id: list(activatableId),
   active: bool,
@@ -64,7 +73,8 @@ type activatableMultiEntry = {
   level: option(int),
 };
 
-[@genType "ActivatableMultiSelectPrerequisite"]
+[@genType]
+[@genType.as "ActivatableMultiSelectPrerequisite"]
 type activatableMultiSelect = {
   id: activatableId,
   active: bool,
@@ -81,19 +91,22 @@ type increasableId = [
   | `LiturgicalChant(int)
 ];
 
-[@genType "IncreasablePrerequisite"]
+[@genType]
+[@genType.as "IncreasablePrerequisite"]
 type increasable = {
   id: increasableId,
   value: int,
 };
 
-[@genType "IncreasableMultiEntryPrerequisite"]
+[@genType]
+[@genType.as "IncreasableMultiEntryPrerequisite"]
 type increasableMultiEntry = {
   id: list(increasableId),
   value: int,
 };
 
-[@genType "PrerequisitesForProfession"]
+[@genType]
+[@genType.as "PrerequisitesForProfession"]
 type tProfession = {
   sex: option(sex),
   race: option(race),
@@ -102,7 +115,8 @@ type tProfession = {
   increasable: list(increasable),
 };
 
-[@genType "Prerequisites"]
+[@genType]
+[@genType.as "Prerequisites"]
 type t = {
   sex: option(sex),
   race: option(race),
@@ -131,7 +145,8 @@ let empty = {
   increasableMultiEntry: [],
 };
 
-[@genType "PrerequisitesWithLevels"]
+[@genType]
+[@genType.as "PrerequisitesWithLevels"]
 type tWithLevel = {
   sex: option(sex),
   race: option(race),
@@ -147,7 +162,8 @@ type tWithLevel = {
   levels: Ley.IntMap.t(t),
 };
 
-[@genType "PrerequisitesForDisAdvWithLevels"]
+[@genType]
+[@genType.as "PrerequisitesForDisAdvWithLevels"]
 type tWithLevelDisAdv = {
   commonSuggestedByRCP: bool,
   sex: option(sex),
@@ -164,12 +180,14 @@ type tWithLevelDisAdv = {
   levels: Ley.IntMap.t(t),
 };
 
-[@genType "OverridePrerequisite"]
+[@genType]
+[@genType.as "OverridePrerequisite"]
 type overridePrerequisite =
   | Hide
   | ReplaceWith(string);
 
-[@genType "OverridePrerequisites"]
+[@genType]
+[@genType.as "OverridePrerequisites"]
 type tIndex = {
   sex: option(overridePrerequisite),
   race: option(overridePrerequisite),
@@ -184,7 +202,8 @@ type tIndex = {
   increasableMultiEntry: Ley.IntMap.t(overridePrerequisite),
 };
 
-[@genType "OverridePrerequisitesWithLevels"]
+[@genType]
+[@genType.as "OverridePrerequisitesWithLevels"]
 type tIndexWithLevel = {
   sex: option(overridePrerequisite),
   race: option(overridePrerequisite),

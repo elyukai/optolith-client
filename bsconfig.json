@@ -1,4 +1,5 @@
 {
+  "$schema": "https://bucklescript.github.io/bucklescript/docson/build-schema.json",
   "name": "optolith-client",
   "version": "0.1.0",
   "sources": [
@@ -23,7 +24,7 @@
     { "dir": "src/shims" }
   ],
   "package-specs": {
-    "module": "commonjs",
+    "module": "es6",
     "in-source": true
   },
   "suffix": ".bs.js",
@@ -41,7 +42,7 @@
   "namespace": true,
   "refmt": 3,
   "gentypeconfig": {
-    "module": "commonjs",
+    "module": "es6",
     "language": "typescript",
     "shims": {
       "Js": "Js",

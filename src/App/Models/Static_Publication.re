@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "Publication"]
 type t = {
   id: string,
   name: string,

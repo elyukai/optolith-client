@@ -3,7 +3,8 @@ type key = int;
 [@genType.import "../shims/IntSet.shim"]
 type t;
 
-[@genType "IntSet"]
+[@genType]
+[@genType.as "IntSet"]
 type intset = t;
 
 module Foldable: {
@@ -16,10 +17,12 @@ module Foldable: {
   [@genType]
   let toList: t => list(key);
 
-  [@genType "fnull"]
+  [@genType]
+  [@genType.as "fnull"]
   let null: t => bool;
 
-  [@genType "flength"]
+  [@genType]
+  [@genType.as "flength"]
   let length: t => int;
 
   [@genType]
@@ -69,7 +72,8 @@ let fromList: list(key) => t;
 [@genType]
 let insert: (key, t) => t;
 
-[@genType "sdelete"]
+[@genType]
+[@genType.as "sdelete"]
 let delete: (key, t) => t;
 
 [@genType]

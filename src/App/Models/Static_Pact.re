@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "PactCategory"]
 type t = {
   id: int,
   name: string,

@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "Blessing"]
 type t = {
   id: int,
   name: string,

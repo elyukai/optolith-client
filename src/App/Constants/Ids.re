@@ -1,4 +1,5 @@
-[@gentype "Id"]
+[@genType]
+[@genType.as "Id"]
 type id = [
   | `ExperienceLevel(int)
   | `Race(int)
@@ -34,14 +35,16 @@ type id = [
   | `State(int)
 ];
 
-[@gentype "ActivatableId"]
+[@genType]
+[@genType.as "ActivatableId"]
 type activatableId = [
   | `Advantage(int)
   | `Disadvantage(int)
   | `SpecialAbility(int)
 ];
 
-[@gentype "ActivatableAndSkillId"]
+[@genType]
+[@genType.as "ActivatableAndSkillId"]
 type activatableAndSkillId = [
   | `Advantage(int)
   | `Disadvantage(int)
@@ -50,13 +53,16 @@ type activatableAndSkillId = [
   | `LiturgicalChant(int)
 ];
 
-[@gentype "ActivatableSkillId"]
+[@genType]
+[@genType.as "ActivatableSkillId"]
 type activatableSkillId = [ | `Spell(int) | `LiturgicalChant(int)];
 
-[@gentype "SkillId"]
+[@genType]
+[@genType.as "SkillId"]
 type skillId = [ | `Skill(int) | `CombatTechnique(int)];
 
-[@gentype "SelectOptionId"]
+[@genType]
+[@genType.as "SelectOptionId"]
 type selectOptionId = [
   | `Generic(int)
   | `Skill(int)
@@ -67,13 +73,15 @@ type selectOptionId = [
   | `Blessing(int)
 ];
 
-[@gentype "HitZoneArmorZoneItemId"]
+[@genType]
+[@genType.as "HitZoneArmorZoneItemId"]
 type hitZoneArmorZoneItemId =
   | Template(int)
   | Custom(int);
 
 module Phase = {
-  [@gentype "Phase"]
+  [@genType]
+  [@genType.as "Phase"]
   type t =
     | Outline
     | Definition

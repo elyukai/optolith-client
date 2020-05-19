@@ -3,7 +3,7 @@
 
 
 // tslint:disable-next-line:no-var-requires
-const Curry = require('bs-platform/lib/js/curry.js');
+const Curry = require('bs-platform/lib/es6/curry.js');
 
 // tslint:disable-next-line:no-var-requires
 const Ley_OptionBS = require('./Ley_Option.bs');
@@ -24,7 +24,7 @@ export const Functor_fmapF: <T1,T2>(_1:(null | undefined | T1), _2:((_1:T1) => T
   return result
 };
 
-export const Applicative_ap: <T1,T2>(_1:(null | undefined | ((_1:T1) => T2)), _2:(null | undefined | T1)) => (null | undefined | T2) = function <T1,T2>(Arg1: any, Arg2: any) {
+export const Applicative_ap: <T1,T2>(_1:(null | undefined | (((_1:T1) => T2))), _2:(null | undefined | T1)) => (null | undefined | T2) = function <T1,T2>(Arg1: any, Arg2: any) {
   const result = Curry._2(Ley_OptionBS.Applicative.ap, (Arg1 == null ? undefined : Arg1), (Arg2 == null ? undefined : Arg2));
   return result
 };
@@ -247,45 +247,3 @@ export const imapOption: <T1,T2>(f:((_1:number, _2:T1) => (null | undefined | T2
     }, Arg21);
   return result
 };
-
-export const Monad: {
-  liftM3: <T1,T2,T3,T4>(f:((_1:T1, _2:T2, _3:T3) => T4), mx:(null | undefined | T1), my:(null | undefined | T2), mz:(null | undefined | T3)) => (null | undefined | T4); 
-  kleisli: <T1,T2,T3>(_1:((_1:T1) => (null | undefined | T2)), _2:((_1:T2) => (null | undefined | T3)), _3:T1) => (null | undefined | T3); 
-  liftM2: <T1,T2,T3>(f:((_1:T1, _2:T2) => T3), mx:(null | undefined | T1), my:(null | undefined | T2)) => (null | undefined | T3); 
-  return: <T1>(x:T1) => (null | undefined | T1); 
-  join: <T1>(x:(null | undefined | (null | undefined | T1))) => (null | undefined | T1); 
-  bindF: <T1,T2>(_1:((_1:T1) => (null | undefined | T2)), _2:(null | undefined | T1)) => (null | undefined | T2); 
-  liftM4: <T1,T2,T3,T4,T5>(f:((_1:T1, _2:T2, _3:T3, _4:T4) => T5), mx:(null | undefined | T1), my:(null | undefined | T2), mz:(null | undefined | T3), ma:(null | undefined | T4)) => (null | undefined | T5); 
-  bind: <T1,T2>(_1:(null | undefined | T1), _2:((_1:T1) => (null | undefined | T2))) => (null | undefined | T2); 
-  thenF: <T1,T2>(_1:(null | undefined | T1), _2:(null | undefined | T2)) => (null | undefined | T1); 
-  then: <T1,T2>(_1:(null | undefined | T1), _2:(null | undefined | T2)) => (null | undefined | T2); 
-  mapM: <T1,T2>(f:((_1:T1) => (null | undefined | T2)), xs:list<T1>) => (null | undefined | list<T2>); 
-  liftM5: <T1,T2,T3,T4,T5,T6>(f:((_1:T1, _2:T2, _3:T3, _4:T4, _5:T5) => T6), mx:(null | undefined | T1), my:(null | undefined | T2), mz:(null | undefined | T3), ma:(null | undefined | T4), mb:(null | undefined | T5)) => (null | undefined | T6)
-} = Ley_OptionBS.Monad
-
-export const Semigroup: { sappend: <T1>(mxs:(null | undefined | list<T1>), mys:(null | undefined | list<T1>)) => (null | undefined | list<T1>) } = Ley_OptionBS.Semigroup
-
-export const Functor: { fmapF: <T1,T2>(_1:(null | undefined | T1), _2:((_1:T1) => T2)) => (null | undefined | T2); fmap: <T1,T2>(_1:((_1:T1) => T2), _2:(null | undefined | T1)) => (null | undefined | T2) } = Ley_OptionBS.Functor
-
-export const Foldable: {
-  foldl: <T1,T2>(f:((_1:T1, _2:T2) => T1), init:T1, mx:(null | undefined | T2)) => T1; 
-  flength: <T1>(mx:(null | undefined | T1)) => number; 
-  product: (mx:(null | undefined | number)) => number; 
-  concat: <T1>(mxs:(null | undefined | list<T1>)) => list<T1>; 
-  elem: <T1>(e:T1, mx:(null | undefined | T1)) => boolean; 
-  concatMap: <T1,T2>(f:((_1:T1) => list<T2>), mx:(null | undefined | T1)) => list<T2>; 
-  and: (mx:(null | undefined | boolean)) => boolean; 
-  sum: (mx:(null | undefined | number)) => number; 
-  notElem: <T1>(e:T1, mx:(null | undefined | T1)) => boolean; 
-  toList: <T1>(mx:(null | undefined | T1)) => list<T1>; 
-  fnull: <T1>(_1:(null | undefined | T1)) => boolean; 
-  any: <T1>(pred:((_1:T1) => boolean), mx:(null | undefined | T1)) => boolean; 
-  or: (mx:(null | undefined | boolean)) => boolean; 
-  find: <T1>(pred:((_1:T1) => boolean), mx:(null | undefined | T1)) => (null | undefined | T1); 
-  foldr: <T1,T2>(f:((_1:T1, _2:T2) => T2), init:T2, mx:(null | undefined | T1)) => T2; 
-  all: <T1>(pred:((_1:T1) => boolean), mx:(null | undefined | T1)) => boolean
-} = Ley_OptionBS.Foldable
-
-export const Alternative: { guard: (pred:boolean) => (null | undefined | void); alt: <T1>(_1:(null | undefined | T1), _2:(null | undefined | T1)) => (null | undefined | T1) } = Ley_OptionBS.Alternative
-
-export const Applicative: { ap: <T1,T2>(_1:(null | undefined | ((_1:T1) => T2)), _2:(null | undefined | T1)) => (null | undefined | T2) } = Ley_OptionBS.Applicative

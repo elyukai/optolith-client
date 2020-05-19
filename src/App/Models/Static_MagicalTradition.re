@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "MagicalTradition"]
 type t = {
   id: int,
   numId: option(int),

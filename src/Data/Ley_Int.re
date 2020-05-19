@@ -17,4 +17,4 @@ let show = Js.Int.toString;
 
 let read = int_of_string;
 
-let readMaybe = x => x |> int_of_string_opt;
+let readOption = int_of_string_opt;

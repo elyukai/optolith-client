@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "State"]
 type t = {
   id: int,
   name: string,

@@ -3,7 +3,7 @@
 
 
 // tslint:disable-next-line:no-var-requires
-const Curry = require('bs-platform/lib/js/curry.js');
+const Curry = require('bs-platform/lib/es6/curry.js');
 
 // tslint:disable-next-line:no-var-requires
 const Ley_StrSetBS = require('./Ley_StrSet.bs');
@@ -128,17 +128,3 @@ export const map: (_1:((_1:key) => key), _2:t) => t = function (Arg1: any, Arg2:
 };
 
 export const elems: (_1:t) => list<key> = Ley_StrSetBS.elems;
-
-export const Foldable: {
-  foldl: <a>(_1:((_1:a, _2:key) => a), _2:a, _3:t) => a; 
-  flength: (_1:t) => number; 
-  elem: (_1:key, _2:t) => boolean; 
-  concatMap: (_1:((_1:key) => t), _2:t) => t; 
-  notElem: (_1:key, _2:t) => boolean; 
-  toList: (_1:t) => list<key>; 
-  fnull: (_1:t) => boolean; 
-  any: (_1:((_1:key) => boolean), _2:t) => boolean; 
-  find: (_1:((_1:key) => boolean), _2:t) => (null | undefined | key); 
-  foldr: <a>(_1:((_1:key, _2:a) => a), _2:a, _3:t) => a; 
-  all: (_1:((_1:key) => boolean), _2:t) => boolean
-} = Ley_StrSetBS.Foldable

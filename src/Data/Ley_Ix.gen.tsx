@@ -3,7 +3,7 @@
 
 
 // tslint:disable-next-line:no-var-requires
-const Curry = require('bs-platform/lib/js/curry.js');
+const Curry = require('bs-platform/lib/es6/curry.js');
 
 // tslint:disable-next-line:no-var-requires
 const Ley_IxBS = require('./Ley_Ix.bs');
@@ -25,7 +25,7 @@ export const range: (param:[number, number]) => list<number> = Ley_IxBS.range;
  * The first argument `(l,u)` is a pair specifying the lower and upper bounds of
  * a contiguous subrange of values.
   */
-export const inRange: <T1>(param:[T1, T1], x:T1) => boolean = function <T1>(Arg1: any, Arg2: any) {
+export const inRange: (param:[number, number], x:number) => boolean = function (Arg1: any, Arg2: any) {
   const result = Curry._2(Ley_IxBS.inRange, Arg1, Arg2);
   return result
 };

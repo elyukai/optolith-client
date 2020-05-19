@@ -1,31 +1,49 @@
+[@genType]
+[@genType.as "NameBySex"]
 type nameBySex = {
   m: string,
   f: string,
 };
 
+[@genType]
+[@genType.as "ProfessionName"]
 type name =
   | Const(string)
   | BySex(nameBySex);
 
+[@genType]
+[@genType.as "VariantOverride"]
 type variantOverride('a) =
   | Remove
   | Override('a);
 
+[@genType]
+[@genType.as "SkillSpecializationOption"]
 type skillSpecializationOption = GenericHelpers.oneOrMany(int);
 
+[@genType]
+[@genType.as "VariantSkillSpecializationOption"]
 type variantSkillSpecializationOption =
   variantOverride(skillSpecializationOption);
 
+[@genType]
+[@genType.as "LanguageAndScriptOption"]
 type languageAndScriptOption = int;
 
+[@genType]
+[@genType.as "VariantLanguageAndScriptOption"]
 type variantLanguageAndScriptOption =
   variantOverride(languageAndScriptOption);
 
+[@genType]
+[@genType.as "CombatTechniqueSecondOption"]
 type combatTechniqueSecondOption = {
   amount: int,
   value: int,
 };
 
+[@genType]
+[@genType.as "CombatTechniqueOption"]
 type combatTechniqueOption = {
   amount: int,
   value: int,
@@ -33,17 +51,27 @@ type combatTechniqueOption = {
   sid: list(int),
 };
 
+[@genType]
+[@genType.as "VariantCombatTechniqueOption"]
 type variantCombatTechniqueOption = variantOverride(combatTechniqueOption);
 
+[@genType]
+[@genType.as "CantripOption"]
 type cantripOption = {
   amount: int,
   sid: list(int),
 };
 
+[@genType]
+[@genType.as "CurseOption"]
 type curseOption = int;
 
+[@genType]
+[@genType.as "TerrainKnowledgeOption"]
 type terrainKnowledgeOption = list(int);
 
+[@genType]
+[@genType.as "SkillOption"]
 type skillOption = {
   /**
    * If specified, only choose from skills of the specified group.
@@ -55,6 +83,8 @@ type skillOption = {
   value: int,
 };
 
+[@genType]
+[@genType.as "ProfessionOptions"]
 type options = {
   skillSpecialization: option(skillSpecializationOption),
   languageScript: option(languageAndScriptOption),
@@ -66,6 +96,8 @@ type options = {
   guildMageUnfamiliarSpell: bool,
 };
 
+[@genType]
+[@genType.as "ProfessionVariantOptions"]
 type variantOptions = {
   skillSpecialization: option(variantSkillSpecializationOption),
   languageScript: option(variantLanguageAndScriptOption),
@@ -77,6 +109,8 @@ type variantOptions = {
   guildMageUnfamiliarSpell: bool,
 };
 
+[@genType]
+[@genType.as "ProfessionVariant"]
 type variant = {
   id: int,
   name,
@@ -95,6 +129,8 @@ type variant = {
   errata: list(Static_Erratum.t),
 };
 
+[@genType]
+[@genType.as "Profession"]
 type t = {
   id: int,
   name,

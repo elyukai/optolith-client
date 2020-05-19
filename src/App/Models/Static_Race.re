@@ -1,8 +1,5 @@
-type die = {
-  amount: int,
-  sides: int,
-};
-
+[@genType]
+[@genType.as "RaceVariant"]
 type variant = {
   id: int,
   name: string,
@@ -18,23 +15,31 @@ type variant = {
   hairColors: list(int),
   eyeColors: list(int),
   sizeBase: int,
-  sizeRandom: list(die),
+  sizeRandom: list(Dice.t),
 };
 
+[@genType]
+[@genType.as "RaceWithVariantsOptions"]
 type withVariants = {variants: Ley.IntMap.t(variant)};
 
+[@genType]
+[@genType.as "RaceWithoutVariantsOptions"]
 type withoutVariants = {
   commonCultures: Ley.IntSet.t,
   hairColors: list(int),
   eyeColors: list(int),
   sizeBase: int,
-  sizeRandom: list(die),
+  sizeRandom: list(Dice.t),
 };
 
+[@genType]
+[@genType.as "RaceVariantOptions"]
 type variantOptions =
   | WithVariants(withVariants)
   | WithoutVariants(withoutVariants);
 
+[@genType]
+[@genType.as "Race"]
 type t = {
   id: int,
   name: string,
@@ -62,7 +67,7 @@ type t = {
   uncommonDisadvantages: list(int),
   uncommonDisadvantagesText: option(string),
   weightBase: int,
-  weightRandom: list(die),
+  weightRandom: list(Dice.t),
   variantOptions,
   src: list(Static_SourceRef.t),
   errata: list(Static_Erratum.t),
@@ -126,11 +131,6 @@ module Decode = {
     errata: json |> field("errata", Static_Erratum.Decode.list),
   };
 
-  let die = json => {
-    amount: json |> field("amount", int),
-    sides: json |> field("sides", int),
-  };
-
   type variantUniv = {
     id: int,
     commonCultures: list(int),
@@ -141,7 +141,7 @@ module Decode = {
     hairColors: list(int),
     eyeColors: list(int),
     sizeBase: int,
-    sizeRandom: list(die),
+    sizeRandom: list(Dice.t),
   };
 
   let variantUniv = json => {
@@ -157,7 +157,7 @@ module Decode = {
     hairColors: json |> field("hairColors", list(int)),
     eyeColors: json |> field("eyeColors", list(int)),
     sizeBase: json |> field("sizeBase", int),
-    sizeRandom: json |> field("sizeRandom", list(die)),
+    sizeRandom: json |> field("sizeRandom", list(Dice.Decode.t)),
   };
 
   type withVariantsUniv = {variants: list(variantUniv)};
@@ -171,7 +171,7 @@ module Decode = {
     hairColors: list(int),
     eyeColors: list(int),
     sizeBase: int,
-    sizeRandom: list(die),
+    sizeRandom: list(Dice.t),
   };
 
   let withoutVariantsUniv = json => {
@@ -179,7 +179,7 @@ module Decode = {
     hairColors: json |> field("hairColors", list(int)),
     eyeColors: json |> field("eyeColors", list(int)),
     sizeBase: json |> field("sizeBase", int),
-    sizeRandom: json |> field("sizeRandom", list(die)),
+    sizeRandom: json |> field("sizeRandom", list(Dice.Decode.t)),
   };
 
   type variantOptionsUniv =
@@ -210,7 +210,7 @@ module Decode = {
     uncommonAdvantages: option(list(int)),
     uncommonDisadvantages: option(list(int)),
     weightBase: int,
-    weightRandom: list(die),
+    weightRandom: list(Dice.t),
     variantOptions: variantOptionsUniv,
   };
 
@@ -241,7 +241,7 @@ module Decode = {
     uncommonDisadvantages:
       json |> field("uncommonDisadvantages", maybe(list(int))),
     weightBase: json |> field("weightBase", int),
-    weightRandom: json |> field("weightRandom", list(die)),
+    weightRandom: json |> field("weightRandom", list(Dice.Decode.t)),
     variantOptions: json |> variantOptionsUniv,
   };
 

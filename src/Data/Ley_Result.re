@@ -1,4 +1,5 @@
-[@genType "Result"]
+[@genType]
+[@genType.as "Result"]
 type t('l, 'r) = result('r, 'l);
 
 module Extra = {
@@ -200,7 +201,8 @@ module Monad = {
 
   let (>>) = (x, y) => x >>= const(y);
 
-  [@genType "then"]
+  [@genType]
+  [@genType.as "then"]
   let then_ = (>>);
 
   let (>=>) = (f, g, x) => x->f >>= g;
@@ -255,14 +257,16 @@ module Foldable = {
     | Error(_) => []
     };
 
-  [@genType "fnull"]
+  [@genType]
+  [@genType.as "fnull"]
   let null = mx =>
     switch (mx) {
     | Ok(_) => false
     | Error(_) => true
     };
 
-  [@genType "flength"]
+  [@genType]
+  [@genType.as "flength"]
   let length = mx =>
     switch (mx) {
     | Ok(_) => 1
@@ -304,14 +308,16 @@ module Foldable = {
     | Error(_) => []
     };
 
-  [@genType "and"]
+  [@genType]
+  [@genType.as "and"]
   let con = mx =>
     switch (mx) {
     | Ok(x) => x
     | Error(_) => true
     };
 
-  [@genType "or"]
+  [@genType]
+  [@genType.as "or"]
   let dis = mx =>
     switch (mx) {
     | Ok(x) => x

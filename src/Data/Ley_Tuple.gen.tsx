@@ -3,7 +3,7 @@
 
 
 // tslint:disable-next-line:no-var-requires
-const Curry = require('bs-platform/lib/js/curry.js');
+const Curry = require('bs-platform/lib/es6/curry.js');
 
 // tslint:disable-next-line:no-var-requires
 const Ley_TupleBS = require('./Ley_Tuple.bs');
@@ -37,9 +37,3 @@ export const snd: <T1,T2>(param:[T1, T2]) => T2 = Ley_TupleBS.snd;
  * Swap the components of a pair.
   */
 export const swap: <T1,T2>(param:[T1, T2]) => [T2, T1] = Ley_TupleBS.swap;
-
-export const Bifunctor: {
-  first: <T1,T2,T3>(f:((_1:T1) => T2), param:[T1, T3]) => [T2, T3]; 
-  second: <T1,T2,T3>(f:((_1:T1) => T2), param:[T3, T1]) => [T3, T2]; 
-  bimap: <T1,T2,T3,T4>(f:((_1:T1) => T2), g:((_1:T3) => T4), param:[T1, T3]) => [T2, T4]
-} = Ley_TupleBS.Bifunctor

@@ -18,11 +18,9 @@ import {list} from '../../../src/shims/ReasonPervasives.shim';
 
 import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/GenericHelpers.gen';
 
-import {selectOptionId as Ids_selectOptionId} from '../../../src/App/Constants/Ids.gen';
+import {phase as Id_phase} from '../../../src/App/Constants/Id.gen';
 
-// tslint:disable-next-line:interface-over-type-literal
-export type phase = "Outline" | "Definition" | "Advancement";
-export type Phase = phase;
+import {selectOptionId as Ids_selectOptionId} from '../../../src/App/Constants/Ids.gen';
 
 // tslint:disable-next-line:interface-over-type-literal
 export type sex = "Male" | "Female";
@@ -369,7 +367,7 @@ export type t = {
   readonly adventurePointsTotal: number; 
   readonly experienceLevel: number; 
   readonly sex: sex; 
-  readonly phase: phase; 
+  readonly phase: Id_phase; 
   readonly locale: string; 
   readonly avatar?: string; 
   readonly race?: number; 

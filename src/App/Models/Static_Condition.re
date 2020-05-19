@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "Condition"]
 type t = {
   id: int,
   name: string,

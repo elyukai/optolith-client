@@ -1,3 +1,5 @@
+[@genType]
+[@genType.as "SelectOptionStaticEntry"]
 type wikiEntry =
   | Blessing(Static_Blessing.t)
   | Cantrip(Static_Cantrip.t)
@@ -6,6 +8,8 @@ type wikiEntry =
   | Skill(Static_Skill.t)
   | Spell(Static_Spell.t);
 
+[@genType]
+[@genType.as "SelectOption"]
 type t = {
   id: Ids.selectOptionId,
   name: string,
@@ -80,6 +84,8 @@ let showId = (id: Ids.selectOptionId) =>
 
 module SelectOptionMap = Ley.Map.Make(Ord);
 
+[@genType]
+[@genType.as "SelectOptionMap"]
 type map = SelectOptionMap.t(t);
 
 module Decode = {

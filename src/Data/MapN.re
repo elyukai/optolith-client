@@ -1,4 +1,5 @@
-[@genType "OrderedMap"]
+[@genType]
+[@genType.as "OrderedMap"]
 type t('k, 'a);
 
 module Native = {
