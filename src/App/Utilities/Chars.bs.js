@@ -11,12 +11,15 @@ var nbsp = "\u00A0";
 
 var plusmn = "\u00B1";
 
+var closeIcon = "\uE5CD";
+
 export {
   ndash ,
   minus ,
   nobr ,
   nbsp ,
   plusmn ,
+  closeIcon ,
   
 }
 /* No side effect */

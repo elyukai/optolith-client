@@ -9,3 +9,9 @@ let fold = xs => xs |> Ley.Option.catOptions |> Ley.List.intercalate(" ");
  */
 let cond = (className: string, condition) =>
   condition ? Some(className) : None;
+
+/**
+ * A helper function to add a safe class (that cannot be optional) to the list
+ * of classes.
+ */
+let safe = Ley.Option.Monad.return;

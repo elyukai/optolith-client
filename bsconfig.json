@@ -31,12 +31,14 @@
   "bs-dependencies": [
     "@glennsl/bs-json",
     "@glennsl/bs-jest",
+    "bs-webapi",
     "reason-react"
   ],
   "reason": {
     "react-jsx": 3
   },
   "warnings": {
+    "number" : "+102",
     "error" : "+101"
   },
   "namespace": true,

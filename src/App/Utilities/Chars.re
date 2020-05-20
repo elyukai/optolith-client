@@ -32,3 +32,5 @@ let nbsp = {js|\u00A0|js};
  * Plus/minus sign.
  */
 let plusmn = {js|\u00B1|js};
+
+let closeIcon = {js|\uE5CD|js};

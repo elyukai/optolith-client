@@ -1,6 +1,6 @@
 module Label = {
   [@react.component]
-  let make = (~name, ~labelText="") =>
+  let make = (~name, ~labelText) =>
     labelText
     |> Ley.Option.ensure(Ley.List.Extra.notNullStr)
     |> Ley.Option.option(React.null, str => {
@@ -61,7 +61,7 @@ module Integer = {
   let make =
       (
         ~name,
-        ~label,
+        ~label="",
         ~value,
         ~onChange,
         ~placeholder="",
@@ -172,9 +172,9 @@ module String = {
   let make =
       (
         ~name,
-        ~label,
+        ~label="",
         ~value,
-        ~onChange,
+        ~onChange: string => unit,
         ~placeholder="",
         ~isLazy=false,
         ~required=false,

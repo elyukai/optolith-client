@@ -11,8 +11,7 @@ import * as Ley_Option$OptolithClient from "../../../Data/Ley_Option.bs.js";
 
 function TextField$Label(Props) {
   var name = Props.name;
-  var labelTextOpt = Props.labelText;
-  var labelText = labelTextOpt !== undefined ? labelTextOpt : "";
+  var labelText = Props.labelText;
   return Ley_Option$OptolithClient.option(null, (function (str) {
                 return React.createElement("label", {
                             htmlFor: name
@@ -73,7 +72,7 @@ function isValid(min, max, invalidChecks, convertedValue) {
 
 function TextField$Integer(Props) {
   var name = Props.name;
-  var label = Props.label;
+  var labelOpt = Props.label;
   var value = Props.value;
   var onChange = Props.onChange;
   var placeholderOpt = Props.placeholder;
@@ -82,6 +81,7 @@ function TextField$Integer(Props) {
   var invalidChecksOpt = Props.invalidChecks;
   var isLazyOpt = Props.isLazy;
   var disabledOpt = Props.disabled;
+  var label = labelOpt !== undefined ? labelOpt : "";
   var placeholder = placeholderOpt !== undefined ? placeholderOpt : "";
   var invalidChecks = invalidChecksOpt !== undefined ? invalidChecksOpt : /* [] */0;
   var isLazy = isLazyOpt !== undefined ? isLazyOpt : false;
@@ -215,13 +215,14 @@ function isValid$1(required, value) {
 
 function TextField$String(Props) {
   var name = Props.name;
-  var label = Props.label;
+  var labelOpt = Props.label;
   var value = Props.value;
   var onChange = Props.onChange;
   var placeholderOpt = Props.placeholder;
   var isLazyOpt = Props.isLazy;
   var requiredOpt = Props.required;
   var disabledOpt = Props.disabled;
+  var label = labelOpt !== undefined ? labelOpt : "";
   var placeholder = placeholderOpt !== undefined ? placeholderOpt : "";
   var isLazy = isLazyOpt !== undefined ? isLazyOpt : false;
   var required = requiredOpt !== undefined ? requiredOpt : false;
