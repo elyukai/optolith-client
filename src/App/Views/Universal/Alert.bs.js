@@ -6,7 +6,7 @@ import * as Overlay$OptolithClient from "./Overlay.bs.js";
 import * as Ley_List$OptolithClient from "../../../Data/Ley_List.bs.js";
 import * as TextField$OptolithClient from "./TextField.bs.js";
 import * as ClassNames$OptolithClient from "../../Utilities/ClassNames.bs.js";
-import * as Ley_Option$OptolithClient from "../../../Data/Ley_Option.bs.js";
+import * as ReactUtils$OptolithClient from "../../Utilities/ReactUtils.bs.js";
 
 function Alert$Button(Props) {
   var label = Props.label;
@@ -26,7 +26,7 @@ function Alert$Button(Props) {
                   ]),
               type: "button",
               onClick: handleClick
-            }, label);
+            }, ReactUtils$OptolithClient.s(label));
 }
 
 var Button = {
@@ -76,8 +76,8 @@ function Alert$StringInput(Props) {
               children: null,
               isOpen: isOpen,
               onBackdrop: onClose
-            }, React.createElement("header", undefined, React.createElement("h2", undefined, title), Ley_Option$OptolithClient.option(null, (function (str) {
-                        return React.createElement("p", undefined, str);
+            }, React.createElement("header", undefined, React.createElement("h2", undefined, ReactUtils$OptolithClient.s(title)), ReactUtils$OptolithClient.optionR((function (str) {
+                        return React.createElement("p", undefined, ReactUtils$OptolithClient.s(str));
                       }), message)), React.createElement("form", {
                   onSubmit: handleSubmit
                 }, React.createElement(TextField$OptolithClient.$$String.make, {
@@ -91,11 +91,11 @@ function Alert$StringInput(Props) {
                       className: "primary",
                       type: "button",
                       onClick: handleClick
-                    }, actionLabel), React.createElement("button", {
+                    }, ReactUtils$OptolithClient.s(actionLabel)), React.createElement("button", {
                       className: "primary",
                       type: "button",
                       onClick: onClose
-                    }, cancelLabel)));
+                    }, ReactUtils$OptolithClient.s(cancelLabel))));
 }
 
 var StringInput = {
@@ -120,8 +120,8 @@ function Alert(Props) {
               children: null,
               isOpen: isOpen,
               onBackdrop: onClose
-            }, React.createElement("header", undefined, React.createElement("h2", undefined, title), Ley_Option$OptolithClient.option(null, (function (str) {
-                        return React.createElement("p", undefined, str);
+            }, React.createElement("header", undefined, React.createElement("h2", undefined, ReactUtils$OptolithClient.s(title)), ReactUtils$OptolithClient.optionR((function (str) {
+                        return React.createElement("p", undefined, ReactUtils$OptolithClient.s(str));
                       }), message)), React.createElement("div", {
                   className: "buttons"
                 }, React.createElement(Alert$Button, {

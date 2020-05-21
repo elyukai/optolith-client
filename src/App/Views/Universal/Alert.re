@@ -1,5 +1,6 @@
 open Ley.List;
 open Ley.Option;
+open ReactUtils;
 
 type alertButtonStyle =
   | Default
@@ -21,7 +22,7 @@ module Button = {
       type_="button"
       className={ClassNames.fold([ClassNames.cond("primary", primary)])}
       onClick=handleClick>
-      {React.string(label)}
+      {s(label)}
     </button>;
   };
 };
@@ -81,18 +82,18 @@ module StringInput = {
 
     <Overlay baseClassName="alert" isOpen onBackdrop=onClose>
       <header>
-        <h2> title </h2>
-        {option(React.null, str => <p> str </p>, message)}
+        <h2> {s(title)} </h2>
+        {optionR(str => <p> {s(str)} </p>, message)}
       </header>
       <form onSubmit=handleSubmit>
         <TextField.String name onChange=handleInput value=input placeholder />
       </form>
       <div className="buttons">
         <button type_="button" className="primary" onClick=handleClick>
-          {React.string(actionLabel)}
+          {s(actionLabel)}
         </button>
         <button type_="button" className="primary" onClick=onClose>
-          {React.string(cancelLabel)}
+          {s(cancelLabel)}
         </button>
       </div>
     </Overlay>;
@@ -142,8 +143,8 @@ let make =
     isOpen
     onBackdrop=onClose>
     <header>
-      <h2> title </h2>
-      {option(React.null, str => <p> str </p>, message)}
+      <h2> {s(title)} </h2>
+      {optionR(str => <p> {s(str)} </p>, message)}
     </header>
     <div className="buttons">
       <Button

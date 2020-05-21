@@ -1,5 +1,5 @@
 open Ley.List;
-open Ley.Option;
+open ReactUtils;
 
 type actionSheetButtonStyle =
   | Default
@@ -28,7 +28,7 @@ module Button = {
         ClassNames.cond("destructive", style === Destructive),
       ])}
       onClick=handleClick>
-      {React.string(label)}
+      {s(label)}
     </button>;
   };
 };
@@ -61,11 +61,7 @@ let make =
     (~description=?, ~buttons, ~isOpen, ~onClick, ~onClose, ~cancelLabel) => {
   <Overlay baseClassName="actionsheet" isOpen onBackdrop=onClose>
     <div className="buttons">
-      {option(
-         React.null,
-         str => <p className="description"> {React.string(str)} </p>,
-         description,
-       )}
+      {optionR(str => <p className="description"> {s(str)} </p>, description)}
       {buttons
        |> map(button =>
             <Button
@@ -81,7 +77,7 @@ let make =
     </div>
     <footer>
       <button type_="button" className="primary" onClick=onClose>
-        {React.string(cancelLabel)}
+        {s(cancelLabel)}
       </button>
     </footer>
   </Overlay>;

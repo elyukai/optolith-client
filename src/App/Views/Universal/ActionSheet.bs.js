@@ -5,7 +5,7 @@ import * as React from "react";
 import * as Overlay$OptolithClient from "./Overlay.bs.js";
 import * as Ley_List$OptolithClient from "../../../Data/Ley_List.bs.js";
 import * as ClassNames$OptolithClient from "../../Utilities/ClassNames.bs.js";
-import * as Ley_Option$OptolithClient from "../../../Data/Ley_Option.bs.js";
+import * as ReactUtils$OptolithClient from "../../Utilities/ReactUtils.bs.js";
 
 function ActionSheet$Button(Props) {
   var label = Props.label;
@@ -33,7 +33,7 @@ function ActionSheet$Button(Props) {
                   ]),
               type: "button",
               onClick: handleClick
-            }, label);
+            }, ReactUtils$OptolithClient.s(label));
 }
 
 var Button = {
@@ -54,10 +54,10 @@ function ActionSheet(Props) {
               onBackdrop: onClose
             }, React.createElement("div", {
                   className: "buttons"
-                }, Ley_Option$OptolithClient.option(null, (function (str) {
+                }, ReactUtils$OptolithClient.optionR((function (str) {
                         return React.createElement("p", {
                                     className: "description"
-                                  }, str);
+                                  }, ReactUtils$OptolithClient.s(str));
                       }), description), Ley_List$OptolithClient.listToArray(Ley_List$OptolithClient.map((function (button) {
                             return React.createElement(ActionSheet$Button, {
                                         label: button.label,
@@ -70,7 +70,7 @@ function ActionSheet(Props) {
                       className: "primary",
                       type: "button",
                       onClick: onClose
-                    }, cancelLabel)));
+                    }, ReactUtils$OptolithClient.s(cancelLabel))));
 }
 
 var make = ActionSheet;
