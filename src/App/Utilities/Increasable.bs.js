@@ -89,29 +89,27 @@ function getMinSrByCraftInstruments(craftInstruments, skills, staticEntry) {
   if (match !== 50 && match !== 54) {
     return /* Nothing */0;
   }
-  if (Activatable$OptolithClient.isActiveM(craftInstruments)) {
-    var otherSkillId;
-    if (match !== 50) {
-      if (match !== 54) {
-        throw [
-              Caml_builtin_exceptions.match_failure,
-              /* tuple */[
-                "Increasable.re",
-                115,
-                12
-              ]
-            ];
-      } else {
-        otherSkillId = /* Woodworking */50;
-      }
-    } else {
-      otherSkillId = /* Metalworking */54;
-    }
-    var otherSkillRating = getValueDef$1(Curry._2(IntMap$OptolithClient.lookup, Id$OptolithClient.skillToInt(otherSkillId), skills));
-    return /* Just */[12 - otherSkillRating | 0];
-  } else {
+  if (!Activatable$OptolithClient.isActiveM(craftInstruments)) {
     return /* Nothing */0;
   }
+  var otherSkillId;
+  if (match !== 50) {
+    if (match !== 54) {
+      throw [
+            Caml_builtin_exceptions.match_failure,
+            /* tuple */[
+              "Increasable.re",
+              115,
+              12
+            ]
+          ];
+    }
+    otherSkillId = /* Woodworking */50;
+  } else {
+    otherSkillId = /* Metalworking */54;
+  }
+  var otherSkillRating = getValueDef$1(Curry._2(IntMap$OptolithClient.lookup, Id$OptolithClient.skillToInt(otherSkillId), skills));
+  return /* Just */[12 - otherSkillRating | 0];
 }
 
 function getMinSrByDeps(heroSkills, heroEntry) {
@@ -374,11 +372,11 @@ function isIncreasable$2(startEl, phase, heroAttrs, exceptionalSkill, propertyKn
 
 function getValidSpellsForPropertyKnowledgeCounter(staticSpells, heroSpells) {
   return Curry._2(IntMap$OptolithClient.countByM, (function (x) {
-                var match = x.value;
-                if (match) {
+                var value = x.value;
+                if (value) {
                   return Maybe$OptolithClient.Functor.$less$amp$great(Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.ensure((function (param) {
                                         return 10 > param;
-                                      }), match[0]), (function (param) {
+                                      }), value[0]), (function (param) {
                                     return Curry._2(IntMap$OptolithClient.lookup, x.id, staticSpells);
                                   })), (function (spell) {
                                 return spell.property;
@@ -415,18 +413,17 @@ function getMinSrByDeps$1(heroSpells, heroEntry) {
                         return getValueDef$3(Curry._2(IntMap$OptolithClient.lookup, id, heroSpells));
                       }), heroEntry.id, heroEntry.dependencies)), (function (param) {
                 return ListH$OptolithClient.Foldable.foldr((function (d, acc) {
-                              if (d) {
-                                var next = d[0];
-                                return Maybe$OptolithClient.maybe(/* Just */[/* Active */[next]], (function (prev) {
-                                              if (prev) {
-                                                return /* Just */[/* Active */[Int$OptolithClient.max(prev[0], next)]];
-                                              } else {
-                                                return /* Just */[/* Inactive */0];
-                                              }
-                                            }), acc);
-                              } else {
+                              if (!d) {
                                 return /* Just */[/* Inactive */0];
                               }
+                              var next = d[0];
+                              return Maybe$OptolithClient.maybe(/* Just */[/* Active */[next]], (function (prev) {
+                                            if (prev) {
+                                              return /* Just */[/* Active */[Int$OptolithClient.max(prev[0], next)]];
+                                            } else {
+                                              return /* Just */[/* Inactive */0];
+                                            }
+                                          }), acc);
                             }), /* Nothing */0, param);
               }));
 }
@@ -535,8 +532,8 @@ function isIncreasable$3(startEl, phase, heroAttrs, exceptionalSkill, aspectKnow
 
 function getValidLiturgicalChantsForAspectKnowledgeCounter(staticLiturgicalChants, heroLiturgicalChants) {
   return Curry._3(IntMap$OptolithClient.Foldable.foldr, (function (x, acc) {
-                var match = x.value;
-                if (match) {
+                var value = x.value;
+                if (value) {
                   return Maybe$OptolithClient.maybe(acc, (function (chant) {
                                 return ListH$OptolithClient.Foldable.foldr((function (aspect) {
                                               return Curry._2(IntMap$OptolithClient.alter, (function (count) {
@@ -545,7 +542,7 @@ function getValidLiturgicalChantsForAspectKnowledgeCounter(staticLiturgicalChant
                                             }), acc, chant.aspects);
                               }), Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.ensure((function (param) {
                                         return 10 > param;
-                                      }), match[0]), (function (param) {
+                                      }), value[0]), (function (param) {
                                     return Curry._2(IntMap$OptolithClient.lookup, x.id, staticLiturgicalChants);
                                   })));
                 } else {
@@ -562,21 +559,20 @@ function getMinSrFromAspectKnowledge(counter, activeAspectKnowledges, staticEntr
             return ListH$OptolithClient.Foldable.elem(sid[1], staticEntry.aspects);
           }
         }), activeAspectKnowledges);
-  if (hasActiveAspectKnowledge) {
-    var isRequired = ListH$OptolithClient.Foldable.any((function (aspect) {
-            return Maybe$OptolithClient.maybe(false, (function (count) {
-                          if (flattenValue$1(heroEntry.value) >= 10) {
-                            return count <= 3;
-                          } else {
-                            return false;
-                          }
-                        }), Curry._2(IntMap$OptolithClient.lookup, aspect, counter));
-          }), staticEntry.aspects);
-    if (isRequired) {
-      return /* Just */[10];
-    } else {
-      return /* Nothing */0;
-    }
+  if (!hasActiveAspectKnowledge) {
+    return /* Nothing */0;
+  }
+  var isRequired = ListH$OptolithClient.Foldable.any((function (aspect) {
+          return Maybe$OptolithClient.maybe(false, (function (count) {
+                        if (flattenValue$1(heroEntry.value) >= 10) {
+                          return count <= 3;
+                        } else {
+                          return false;
+                        }
+                      }), Curry._2(IntMap$OptolithClient.lookup, aspect, counter));
+        }), staticEntry.aspects);
+  if (isRequired) {
+    return /* Just */[10];
   } else {
     return /* Nothing */0;
   }
@@ -587,18 +583,17 @@ function getMinSrByDeps$2(heroLiturgicalChants, heroEntry) {
                         return getValueDef$4(Curry._2(IntMap$OptolithClient.lookup, id, heroLiturgicalChants));
                       }), heroEntry.id, heroEntry.dependencies)), (function (param) {
                 return ListH$OptolithClient.Foldable.foldr((function (d, acc) {
-                              if (d) {
-                                var next = d[0];
-                                return Maybe$OptolithClient.maybe(/* Just */[/* Active */[next]], (function (prev) {
-                                              if (prev) {
-                                                return /* Just */[/* Active */[Int$OptolithClient.max(prev[0], next)]];
-                                              } else {
-                                                return /* Just */[/* Inactive */0];
-                                              }
-                                            }), acc);
-                              } else {
+                              if (!d) {
                                 return /* Just */[/* Inactive */0];
                               }
+                              var next = d[0];
+                              return Maybe$OptolithClient.maybe(/* Just */[/* Active */[next]], (function (prev) {
+                                            if (prev) {
+                                              return /* Just */[/* Active */[Int$OptolithClient.max(prev[0], next)]];
+                                            } else {
+                                              return /* Just */[/* Inactive */0];
+                                            }
+                                          }), acc);
                             }), /* Nothing */0, param);
               }));
 }

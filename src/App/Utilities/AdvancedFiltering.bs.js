@@ -31,37 +31,31 @@ function searchStrings(filterText, xs) {
 function sortByMulti(sortOptions, xs) {
   if (ListH$OptolithClient.Foldable.length(xs) < 2 || ListH$OptolithClient.Foldable.$$null(sortOptions)) {
     return xs;
-  } else {
-    var sortFunctions = ListH$OptolithClient.map((function (x) {
-            if (x.reverse) {
-              var partial_arg = x.compare;
-              return (function (param, param$1) {
-                  return Function$OptolithClient.flip(partial_arg, param, param$1);
-                });
-            } else {
-              return x.compare;
-            }
-          }), sortOptions);
-    return ListH$OptolithClient.sortBy((function (param, param$1) {
-                    var _sortFunctions = sortFunctions;
-                    var a = param;
-                    var b = param$1;
-                    while(true) {
-                      var sortFunctions$1 = _sortFunctions;
-                      if (sortFunctions$1) {
-                        var match = Curry._2(sortFunctions$1[0], a, b);
-                        if (match !== 1) {
-                          return match;
-                        } else {
-                          _sortFunctions = sortFunctions$1[1];
-                          continue ;
-                        }
-                      } else {
-                        return /* EQ */1;
-                      }
-                    };
-                  }))(xs);
   }
+  var sortFunctions = ListH$OptolithClient.map((function (x) {
+          if (!x.reverse) {
+            return x.compare;
+          }
+          var partial_arg = x.compare;
+          return (function (param, param$1) {
+              return Function$OptolithClient.flip(partial_arg, param, param$1);
+            });
+        }), sortOptions);
+  return ListH$OptolithClient.sortBy((function (param, param$1) {
+                  var _sortFunctions = sortFunctions;
+                  while(true) {
+                    var sortFunctions$1 = _sortFunctions;
+                    if (!sortFunctions$1) {
+                      return /* EQ */1;
+                    }
+                    var match = Curry._2(sortFunctions$1[0], param, param$1);
+                    if (match !== 1) {
+                      return match;
+                    }
+                    _sortFunctions = sortFunctions$1[1];
+                    continue ;
+                  };
+                }))(xs);
 }
 
 function sortStrings(staticData, xs) {

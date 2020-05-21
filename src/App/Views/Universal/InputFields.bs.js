@@ -36,22 +36,20 @@ function make(value, onChange) {
   var setValid = match$1[1];
   var handleChange = React.useCallback((function ($$event) {
           var newValue = $$event.target.value;
-          if (roughCheck.test(newValue)) {
-            Curry._1(setInternalValue, (function (param) {
-                    return newValue;
-                  }));
-            var strictValid = strictCheck.test(newValue);
-            Curry._1(setValid, (function (param) {
-                    return strictValid;
-                  }));
-            if (strictValid) {
-              return Curry._1(onChange, newValue);
-            } else {
-              return 0;
-            }
-          } else {
-            return 0;
+          if (!roughCheck.test(newValue)) {
+            return ;
           }
+          Curry._1(setInternalValue, (function (param) {
+                  return newValue;
+                }));
+          var strictValid = strictCheck.test(newValue);
+          Curry._1(setValid, (function (param) {
+                  return strictValid;
+                }));
+          if (strictValid) {
+            return Curry._1(onChange, newValue);
+          }
+          
         }), [onChange]);
   var handleBlur = React.useCallback((function (param) {
           Curry._1(setInternalValue, (function (param) {

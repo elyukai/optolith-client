@@ -71,10 +71,8 @@ var Magical = {
 
 function getHeroEntry(staticData, mp) {
   return Curry._2(IntMap$OptolithClient.Foldable.find, (function (param) {
-                var staticData$1 = staticData;
-                var x = param;
-                if (Curry._2(IntMap$OptolithClient.member, x.id, staticData$1.blessedTraditions)) {
-                  return Activatable$OptolithClient.isActive(x);
+                if (Curry._2(IntMap$OptolithClient.member, param.id, staticData.blessedTraditions)) {
+                  return Activatable$OptolithClient.isActive(param);
                 } else {
                   return false;
                 }

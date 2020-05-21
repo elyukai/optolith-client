@@ -230,10 +230,10 @@ function variant(univ, l10n) {
 }
 
 function t(univ, l10n) {
-  var match = univ.variantOptions;
+  var withVariants = univ.variantOptions;
   var tmp;
-  if (match.tag) {
-    var withoutVariants = match[0];
+  if (withVariants.tag) {
+    var withoutVariants = withVariants[0];
     tmp = /* WithoutVariants */Block.__(1, [{
           commonCultures: Curry._1(IntSet$OptolithClient.fromList, withoutVariants.commonCultures),
           hairColors: withoutVariants.hairColors,
@@ -247,7 +247,7 @@ function t(univ, l10n) {
                       return x.id;
                     }), (function (x) {
                       return x.id;
-                    }), match[0].variants, Maybe$OptolithClient.fromMaybe(/* [] */0, l10n.variants)))
+                    }), withVariants[0].variants, Maybe$OptolithClient.fromMaybe(/* [] */0, l10n.variants)))
         }]);
   }
   return /* tuple */[
