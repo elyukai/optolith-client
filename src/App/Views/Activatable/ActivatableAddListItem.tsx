@@ -14,7 +14,7 @@ import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, InactiveActivatableControlElements, insertFinalCurrentCost, PropertiesAffectedByState } from "../../Utilities/Activatable/activatableInactiveViewUtils"
 import { classListMaybe } from "../../Utilities/CSS"
 import { translate } from "../../Utilities/I18n"
-import { pipe, pipe_ } from "../../Utilities/pipe"
+import { pipe_ } from "../../Utilities/pipe"
 import { renderMaybeWith } from "../../Utilities/ReactUtils"
 import { BasicInputDialog } from "../Universal/BasicInputDialog"
 import { IconButton } from "../Universal/IconButton"
@@ -143,7 +143,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
 
   const handleSetCustomCostPreview =
     React.useCallback (
-      pipe (ensure (notNullStr), setCustomCostPreview),
+      (customCostStr: string) => pipe_ (customCostStr, ensure (notNullStr), setCustomCostPreview),
       [ setCustomCostPreview ]
     )
 

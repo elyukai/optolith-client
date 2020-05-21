@@ -34,14 +34,16 @@ var Functor = {
 };
 
 function $less$star$great(fs, xs) {
-  if (fs && xs) {
-    var x = xs[0];
-    return Pervasives.$at($less$$great((function (f) {
-                      return Curry._1(f, x);
-                    }), fs), $less$star$great(fs, xs[1]));
-  } else {
+  if (!fs) {
     return /* [] */0;
   }
+  if (!xs) {
+    return /* [] */0;
+  }
+  var x = xs[0];
+  return Pervasives.$at($less$$great((function (f) {
+                    return Curry._1(f, x);
+                  }), fs), $less$star$great(fs, xs[1]));
 }
 
 var Applicative = {
@@ -59,7 +61,7 @@ function $less$pipe$great(xs, ys) {
 function guard(pred) {
   if (pred) {
     return /* :: */[
-            /* () */0,
+            undefined,
             /* [] */0
           ];
   } else {
@@ -153,13 +155,12 @@ function foldl(f, _initial, _xs) {
   while(true) {
     var xs = _xs;
     var initial = _initial;
-    if (xs) {
-      _xs = xs[1];
-      _initial = Curry._2(f, initial, xs[0]);
-      continue ;
-    } else {
+    if (!xs) {
       return initial;
     }
+    _xs = xs[1];
+    _initial = Curry._2(f, initial, xs[0]);
+    continue ;
   };
 }
 
@@ -224,64 +225,56 @@ function concatMap(f, xs) {
 function con(_xs) {
   while(true) {
     var xs = _xs;
-    if (xs) {
-      if (xs[0]) {
-        _xs = xs[1];
-        continue ;
-      } else {
-        return false;
-      }
-    } else {
+    if (!xs) {
       return true;
     }
+    if (!xs[0]) {
+      return false;
+    }
+    _xs = xs[1];
+    continue ;
   };
 }
 
 function dis(_xs) {
   while(true) {
     var xs = _xs;
-    if (xs) {
-      if (xs[0]) {
-        return true;
-      } else {
-        _xs = xs[1];
-        continue ;
-      }
-    } else {
+    if (!xs) {
       return false;
     }
+    if (xs[0]) {
+      return true;
+    }
+    _xs = xs[1];
+    continue ;
   };
 }
 
 function any(f, _xs) {
   while(true) {
     var xs = _xs;
-    if (xs) {
-      if (Curry._1(f, xs[0])) {
-        return true;
-      } else {
-        _xs = xs[1];
-        continue ;
-      }
-    } else {
+    if (!xs) {
       return false;
     }
+    if (Curry._1(f, xs[0])) {
+      return true;
+    }
+    _xs = xs[1];
+    continue ;
   };
 }
 
 function all(f, _xs) {
   while(true) {
     var xs = _xs;
-    if (xs) {
-      if (Curry._1(f, xs[0])) {
-        _xs = xs[1];
-        continue ;
-      } else {
-        return false;
-      }
-    } else {
+    if (!xs) {
       return true;
     }
+    if (!Curry._1(f, xs[0])) {
+      return false;
+    }
+    _xs = xs[1];
+    continue ;
   };
 }
 
@@ -292,17 +285,15 @@ function notElem(e, xs) {
 function find(f, _xs) {
   while(true) {
     var xs = _xs;
-    if (xs) {
-      var y = xs[0];
-      if (Curry._1(f, y)) {
-        return /* Just */[y];
-      } else {
-        _xs = xs[1];
-        continue ;
-      }
-    } else {
+    if (!xs) {
       return /* Nothing */0;
     }
+    var y = xs[0];
+    if (Curry._1(f, y)) {
+      return /* Just */[y];
+    }
+    _xs = xs[1];
+    continue ;
   };
 }
 
@@ -350,85 +341,85 @@ function indexed(xs) {
 function deleteAt(index, xs) {
   if (index < 0) {
     return xs;
-  } else if (xs) {
-    var xs$1 = xs[1];
-    if (index === 0) {
-      return xs$1;
-    } else {
-      return /* :: */[
-              xs[0],
-              deleteAt(index - 1 | 0, xs$1)
-            ];
-    }
-  } else {
+  }
+  if (!xs) {
     return /* [] */0;
+  }
+  var xs$1 = xs[1];
+  if (index === 0) {
+    return xs$1;
+  } else {
+    return /* :: */[
+            xs[0],
+            deleteAt(index - 1 | 0, xs$1)
+          ];
   }
 }
 
 function setAt(index, e, xs) {
   if (index < 0) {
     return xs;
-  } else if (xs) {
-    var xs$1 = xs[1];
-    if (index === 0) {
-      return /* :: */[
-              e,
-              xs$1
-            ];
-    } else {
-      return /* :: */[
-              xs[0],
-              setAt(index - 1 | 0, e, xs$1)
-            ];
-    }
-  } else {
+  }
+  if (!xs) {
     return /* [] */0;
+  }
+  var xs$1 = xs[1];
+  if (index === 0) {
+    return /* :: */[
+            e,
+            xs$1
+          ];
+  } else {
+    return /* :: */[
+            xs[0],
+            setAt(index - 1 | 0, e, xs$1)
+          ];
   }
 }
 
 function modifyAt(index, f, xs) {
   if (index < 0) {
     return xs;
-  } else if (xs) {
-    var xs$1 = xs[1];
-    var x = xs[0];
-    if (index === 0) {
-      return /* :: */[
-              Curry._1(f, x),
-              xs$1
-            ];
-    } else {
-      return /* :: */[
-              x,
-              modifyAt(index - 1 | 0, f, xs$1)
-            ];
-    }
-  } else {
+  }
+  if (!xs) {
     return /* [] */0;
+  }
+  var xs$1 = xs[1];
+  var x = xs[0];
+  if (index === 0) {
+    return /* :: */[
+            Curry._1(f, x),
+            xs$1
+          ];
+  } else {
+    return /* :: */[
+            x,
+            modifyAt(index - 1 | 0, f, xs$1)
+          ];
   }
 }
 
 function updateAt(index, f, xs) {
   if (index < 0) {
     return xs;
-  } else if (xs) {
-    var xs$1 = xs[1];
-    var x = xs[0];
-    if (index === 0) {
-      return Maybe$OptolithClient.maybe(xs$1, (function (x$prime) {
-                    return /* :: */[
-                            x$prime,
-                            xs$1
-                          ];
-                  }), Curry._1(f, x));
-    } else {
-      return /* :: */[
-              x,
-              updateAt(index - 1 | 0, f, xs$1)
-            ];
-    }
-  } else {
+  }
+  if (!xs) {
     return /* [] */0;
+  }
+  var xs$1 = xs[1];
+  var x = xs[0];
+  if (index === 0) {
+    return Maybe$OptolithClient.maybe(xs$1, (function (x$prime) {
+                  return /* :: */[
+                          x$prime,
+                          xs$1
+                        ];
+                }), Curry._1(f, x));
+  } else {
+    return /* :: */[
+            x,
+            updateAt(index - 1 | 0, f, xs$1)
+          ];
   }
 }
 
@@ -491,16 +482,15 @@ function reverse(xs) {
 }
 
 function intercalate(separator, xs) {
-  if (xs) {
-    var xs$1 = xs[1];
-    var x = xs[0];
-    if (xs$1) {
-      return x + (separator + intercalate(separator, xs$1));
-    } else {
-      return x;
-    }
-  } else {
+  if (!xs) {
     return "";
+  }
+  var xs$1 = xs[1];
+  var x = xs[0];
+  if (xs$1) {
+    return x + (separator + intercalate(separator, xs$1));
+  } else {
+    return x;
   }
 }
 
@@ -547,6 +537,17 @@ function lookup(k, xs) {
               }));
 }
 
+function take(n, xs) {
+  if (n <= 0 || !xs) {
+    return /* [] */0;
+  } else {
+    return /* :: */[
+            xs[0],
+            take(n - 1 | 0, xs[1])
+          ];
+  }
+}
+
 function isInfixOf(x, y) {
   return x.includes(y);
 }
@@ -573,17 +574,15 @@ function $less$bang$bang$great(xs, i) {
 function $$delete(e, _xs) {
   while(true) {
     var xs = _xs;
-    if (xs) {
-      var xs$1 = xs[1];
-      if (Caml_obj.caml_equal(e, xs[0])) {
-        return xs$1;
-      } else {
-        _xs = xs$1;
-        continue ;
-      }
-    } else {
+    if (!xs) {
       return /* [] */0;
     }
+    var xs$1 = xs[1];
+    if (Caml_obj.caml_equal(e, xs[0])) {
+      return xs$1;
+    }
+    _xs = xs$1;
+    continue ;
   };
 }
 
@@ -622,32 +621,29 @@ function list(def, f, xs) {
 }
 
 function unsnoc(xs) {
-  if (xs) {
-    var xs$1 = xs[1];
-    var x = xs[0];
-    if (xs$1) {
-      var match = unsnoc(xs$1);
-      if (match) {
-        var match$1 = match[0];
-        return /* Just */[/* tuple */[
-                  /* :: */[
-                    x,
-                    match$1[0]
-                  ],
-                  match$1[1]
-                ]];
-      } else {
-        return /* Nothing */0;
-      }
-    } else {
-      return /* Just */[/* tuple */[
-                /* [] */0,
-                x
-              ]];
-    }
-  } else {
+  if (!xs) {
     return /* Nothing */0;
   }
+  var xs$1 = xs[1];
+  var x = xs[0];
+  if (!xs$1) {
+    return /* Just */[/* tuple */[
+              /* [] */0,
+              x
+            ]];
+  }
+  var match = unsnoc(xs$1);
+  if (!match) {
+    return /* Nothing */0;
+  }
+  var match$1 = match[0];
+  return /* Just */[/* tuple */[
+            /* :: */[
+              x,
+              match$1[0]
+            ],
+            match$1[1]
+          ]];
 }
 
 var partial_arg = /[.*+?^${}()|[\]\\]/gu;
@@ -687,6 +683,7 @@ exports.permutations = permutations;
 exports.elem = elem;
 exports.notElem = notElem;
 exports.lookup = lookup;
+exports.take = take;
 exports.isInfixOf = isInfixOf;
 exports.filter = filter;
 exports.$bang$bang = $bang$bang;

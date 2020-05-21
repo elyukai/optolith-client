@@ -45,7 +45,7 @@ function $less$pipe$great(mx, my) {
 
 function guard(pred) {
   if (pred) {
-    return /* Just */[/* () */0];
+    return /* Just */[undefined];
   } else {
     return /* Nothing */0;
   }
@@ -229,13 +229,12 @@ function notElem(e, mx) {
 }
 
 function find(pred, mx) {
-  if (mx) {
-    var x = mx[0];
-    if (Curry._1(pred, x)) {
-      return /* Just */[x];
-    } else {
-      return /* Nothing */0;
-    }
+  if (!mx) {
+    return /* Nothing */0;
+  }
+  var x = mx[0];
+  if (Curry._1(pred, x)) {
+    return /* Just */[x];
   } else {
     return /* Nothing */0;
   }

@@ -17,11 +17,9 @@ function format(type_, staticData, xs) {
   if (xs) {
     if (xs[1]) {
       return Maybe$OptolithClient.maybe("", (function (param) {
-                    var type_$1 = type_;
-                    var staticData$1 = staticData;
                     var lastStr = param[1];
                     var initStr = ListH$OptolithClient.intercalate(", ", param[0]);
-                    return initStr + (" " + (getSeparator(type_$1, staticData$1) + (" " + lastStr)));
+                    return initStr + (" " + (getSeparator(type_, staticData) + (" " + lastStr)));
                   }), ListH$OptolithClient.Extra.unsnoc(xs));
     } else {
       return xs[0];

@@ -289,6 +289,22 @@ let notElem = Foldable.notElem;
 let lookup = (k, xs) =>
   Maybe.Functor.(Foldable.find(((k', _)) => k == k', xs) <&> snd);
 
+// Extracting sublists
+
+/**
+ * `take n`, applied to a list `xs`, returns the prefix of `xs` of length `n`,
+ * or `xs` itself if `n > length xs`.
+ */
+let rec take = (n, xs) =>
+  n <= 0
+    ? []
+    : (
+      switch (xs) {
+      | [] => []
+      | [x, ...xs] => [x, ...take(n - 1, xs)]
+      }
+    );
+
 // Predicates
 
 /**

@@ -37,7 +37,7 @@ jobs:
       - npm run ci:copyschemes
       - npm run re:build
       - npm run ts:build
-      - npm run release:win
+      - npm run stable:win
 
   - name: Build Linux
     os: linux
@@ -47,7 +47,7 @@ jobs:
       - npm run ci:copyschemes
       - npm run re:build
       - npm run ts:build
-      - npm run release:linux
+      - npm run stable:linux
 
   - name: Build OSX
     os: osx
@@ -58,7 +58,7 @@ jobs:
       - npm run ci:copyschemes
       - npm run re:build
       - npm run ts:build
-      - npm run release:osx
+      - npm run stable:osx
 
   # Insider build stage
   - stage: Build Insider
@@ -70,7 +70,7 @@ jobs:
       - npm run ci:copyschemes
       - npm run re:build
       - npm run ts:build
-      - npm run prerelease:win
+      - npm run insider:win
 
   - name: Build Linux Insider
     os: linux
@@ -80,7 +80,7 @@ jobs:
       - npm run ci:copyschemes
       - npm run re:build
       - npm run ts:build
-      - npm run prerelease:linux
+      - npm run insider:linux
 
   - name: Build OSX Insider
     os: osx
@@ -91,4 +91,4 @@ jobs:
       - npm run ci:copyschemes
       - npm run re:build
       - npm run ts:build
-      - npm run prerelease:osx
+      - npm run insider:osx

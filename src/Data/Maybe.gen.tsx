@@ -53,5 +53,3 @@ export const optionToMaybe: <a>(_1:(null | undefined | a)) => t<a> = function <a
     ? {tag:"Just", value:result[0]}
     : $$toJS1024164449[result]
 };
-
-export const Monad: { join: <a>(_1:t<t<a>>) => t<a> } = MaybeBS.Monad

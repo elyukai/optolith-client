@@ -341,7 +341,7 @@ function getLocaleSpecificStaticData(locale) {
 
 function getStaticData(locale) {
   return IO$OptolithClient.Functor.$less$amp$great(Promise.all(/* tuple */[
-                  getUnivStaticData(/* () */0),
+                  getUnivStaticData(undefined),
                   getLocaleSpecificStaticData(locale)
                 ]), (function (param) {
                 var l10n = param[1];
