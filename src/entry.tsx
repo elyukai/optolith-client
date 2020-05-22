@@ -5,6 +5,7 @@ import * as React from "react"
 import { render } from "react-dom"
 import { Provider } from "react-redux"
 import { Action, applyMiddleware, createStore, Store } from "redux"
+import { composeWithDevTools } from "redux-devtools-extension"
 import thunk from "redux-thunk"
 import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from "./App/Actions/AcceleratorActions"
 import { ReduxDispatch } from "./App/Actions/Actions"
@@ -33,7 +34,7 @@ const nativeAppReducer =
                   flip (appReducer)))
 
 const store: Store<AppStateRecord, Action> & { dispatch: ReduxDispatch<Action> } =
-  createStore (nativeAppReducer, applyMiddleware (thunk))
+  createStore (nativeAppReducer, composeWithDevTools (applyMiddleware (thunk)))
 
 store
   .dispatch (requestInitialData)
