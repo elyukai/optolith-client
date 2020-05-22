@@ -81,10 +81,10 @@ const SkillListItem: React.FC<Props> = props => {
   } = props
 
   const handleSelectForInfo =
-  React.useCallback (
-    () => selectForInfo (id),
-    [ selectForInfo, id ]
-  )
+    React.useCallback (
+      () => selectForInfo (id),
+      [ selectForInfo, id ]
+    )
 
   return (
     <ListItem
@@ -93,7 +93,6 @@ const SkillListItem: React.FC<Props> = props => {
       unrecommended={untyp}
       insertTopMargin={insertTopMargin}
       active={Maybe.elem (id) (selectedForInfo)}
-      
       >
       <ListItemName name={name} onClick={handleSelectForInfo}/>
       <ListItemSeparator />
