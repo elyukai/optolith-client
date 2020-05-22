@@ -67,9 +67,9 @@ export const zipBy : <K extends string> (key : K)
                    => (override : C[]|undefined)
                    => Either<Error[], [B, C][]>
                    = key => os => base => override => {
-                    type A1 = ArrayValue<typeof os> extends ObjectWithKey<string, infer A>
-                      ? A
-                      : never
+                     type A1 = ArrayValue<typeof os> extends ObjectWithKey<string, infer A>
+                       ? A
+                       : never
                      const ress : [ArrayValue<typeof os>, ArrayValue<typeof override>][]
                                 = []
 
