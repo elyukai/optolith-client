@@ -19,7 +19,7 @@ export const toArcaneBardTraditions : YamlFileConverter<number, Record<NumIdName
                                     = pipe (
                                         yaml_mp => mergeBy ("id")
                                                         (yaml_mp.ArcaneBardTraditionsL10nDefault)
-                                                        (yaml_mp.ArcaneBardTraditionsL10n),
+                                                        (yaml_mp.ArcaneBardTraditionsL10nOverride),
                                         map (toArcaneBardTradition),
                                         toMapIntegrity,
                                         second (fromMap)

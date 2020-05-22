@@ -39,7 +39,7 @@ export const toConditions : YamlFileConverter<string, Record<Condition>>
                           = pipe (
                               yaml_mp => mergeBy("id")
                                                 (yaml_mp.ConditionsL10nDefault)
-                                                (yaml_mp.ConditionsL10n),
+                                                (yaml_mp.ConditionsL10nOverride),
                               map (toCondition),
                               toMapIntegrity,
                               second (fromMap)

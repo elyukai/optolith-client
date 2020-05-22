@@ -14,7 +14,7 @@ export const toBooks : YamlFileConverter<string, Record<Book>>
                      = pipe (
                        yaml_mp => mergeBy("id")
                                          (yaml_mp.BooksL10nDefault)
-                                         (yaml_mp.BooksL10n),
+                                         (yaml_mp.BooksL10nOverride),
                        map ((x) : [string, Record<Book>] => [ x .id, Book (x) ]),
                        toMapIntegrity,
                        second (fromMap)

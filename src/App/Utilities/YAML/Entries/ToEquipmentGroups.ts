@@ -19,7 +19,7 @@ export const toEquipmentGroups : YamlFileConverter<number, Record<NumIdName>>
                                     = pipe (
                                         yaml_mp => mergeBy("id")
                                                           (yaml_mp.EquipmentGroupsL10nDefault)
-                                                          (yaml_mp.EquipmentGroupsL10n),
+                                                          (yaml_mp.EquipmentGroupsL10nOverride),
                                         map (toEquipmentGroup),
                                         toMapIntegrity,
                                         second (fromMap)

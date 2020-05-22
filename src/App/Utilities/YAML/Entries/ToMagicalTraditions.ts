@@ -42,7 +42,7 @@ export const toMagicalTraditions : YamlFileConverter<string, Record<MagicalTradi
                                        zipBy ("id")
                                              (yaml_mp.MagicalTraditionsUniv)
                                              (yaml_mp.MagicalTraditionsL10nDefault)
-                                             (yaml_mp.MagicalTraditionsL10n),
+                                             (yaml_mp.MagicalTraditionsL10nOverride),
                                      bindF (pipe (
                                        mapM (toMT),
                                        bindF (toMapIntegrity),

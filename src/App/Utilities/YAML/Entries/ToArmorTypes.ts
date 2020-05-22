@@ -19,7 +19,7 @@ export const toArmorTypes : YamlFileConverter<number, Record<NumIdName>>
                           = pipe (
                               yaml_mp => mergeBy("id")
                                                 (yaml_mp.ArmorTypesL10nDefault)
-                                                (yaml_mp.ArmorTypesL10n),
+                                                (yaml_mp.ArmorTypesL10nOverride),
                               map (toArmorType),
                               toMapIntegrity,
                               second (fromMap)

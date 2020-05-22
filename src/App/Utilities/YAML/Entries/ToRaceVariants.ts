@@ -46,7 +46,7 @@ export const toRaceVariants : YamlFileConverter<string, Record<RaceVariant>>
                                        zipBy ("id")
                                              (yaml_mp.RaceVariantsUniv)
                                              (yaml_mp.RaceVariantsL10nDefault)
-                                             (yaml_mp.RaceVariantsL10n),
+                                             (yaml_mp.RaceVariantsL10nOverride),
                                      bindF (pipe (
                                        mapM (toRaceVariant),
                                        bindF (toMapIntegrity),

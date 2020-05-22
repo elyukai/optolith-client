@@ -19,7 +19,7 @@ export const toBrews : YamlFileConverter<number, Record<NumIdName>>
                                     = pipe (
                                         yaml_mp => mergeBy("id")
                                                           (yaml_mp.BrewsL10nDefault)
-                                                          (yaml_mp.BrewsL10n),
+                                                          (yaml_mp.BrewsL10nOverride),
                                         map (toBrew),
                                         toMapIntegrity,
                                         second (fromMap)

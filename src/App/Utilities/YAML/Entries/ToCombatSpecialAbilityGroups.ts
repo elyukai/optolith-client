@@ -19,7 +19,7 @@ export const toCombatSpecialAbilityGroups : YamlFileConverter<number, Record<Num
                                     = pipe (
                                         yaml_mp => mergeBy("id")
                                                           (yaml_mp.CombatSpecialAbilityGroupsL10nDefault)
-                                                          (yaml_mp.CombatSpecialAbilityGroupsL10n),
+                                                          (yaml_mp.CombatSpecialAbilityGroupsL10nOverride),
                                         map (toCombatSAGroup),
                                         toMapIntegrity,
                                         second (fromMap)

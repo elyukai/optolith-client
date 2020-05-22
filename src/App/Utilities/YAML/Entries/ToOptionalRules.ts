@@ -30,7 +30,7 @@ export const toOptionalRules : YamlFileConverter<string, Record<OptionalRule>>
                              = pipe (
                                  yaml_mp => mergeBy("id")
                                                    (yaml_mp.OptionalRulesL10nDefault)
-                                                   (yaml_mp.OptionalRulesL10n),
+                                                   (yaml_mp.OptionalRulesL10nOverride),
                                  map (toOptionalRule),
                                  toMapIntegrity,
                                  second (fromMap)
