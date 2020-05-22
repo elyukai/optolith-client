@@ -21,26 +21,33 @@ export const mergeBy : <K extends string> (key : K)
                   => (main : B[]|undefined)
                   => B[]
                   = key => base => override => {
+                    type A1 = ArrayValue<typeof base> extends ObjectWithKey<string, infer A>
+                      ? A
+                      : never
                     const result : ArrayValue<typeof base>[] = []
 
                     // collect all possible keys
-                    let allkeys = Array.from(base.keys());
+                    let allkeys: (string|number)[] = [];
+                    for (const b of base)
+                      allkeys.push(b[key]);
                     if (override != undefined)
                     {
-                      allkeys = allkeys.concat(Array.from(override.keys()))
-                      // remove duplicates
-                      allkeys = allkeys.filter((item, pos) => allkeys.indexOf(item) === pos)
+                      for (const b of base)
+                        if (allkeys.indexOf(b[key]) < 0)
+                          allkeys.push(b[key]); 
                     }
 
                     // merge
                     for (const k of allkeys)
                     {
-                      if (override === undefined) {
-                        result.push ( base[k] )
-                      } else if (override[k] === undefined) {
-                        result.push ( base[k] )
+                      const b = base.find (x => (x[key] as A1) === (k as A1))
+                      const o = (override !== undefined) ? override.find (x => (x[key] as A1) === (k as A1)) : undefined;
+
+                      if (o === undefined) {
+                        if (b != undefined)
+                          result.push ( b )
                       } else {
-                        result.push ( override[k] )
+                        result.push ( o )
                       }
                     }
 
@@ -60,6 +67,9 @@ export const zipBy : <K extends string> (key : K)
                    => (override : C[]|undefined)
                    => Either<Error[], [B, C][]>
                    = key => os => base => override => {
+                    type A1 = ArrayValue<typeof os> extends ObjectWithKey<string, infer A>
+                      ? A
+                      : never
                      const ress : [ArrayValue<typeof os>, ArrayValue<typeof override>][]
                                 = []
 
@@ -67,30 +77,33 @@ export const zipBy : <K extends string> (key : K)
                                 = []
 
                      // collect all possible keys
-                     let allkeys = Array.from(base.keys());
+                     let allkeys: (string|number)[] = [];
+                     for (const b of base)
+                       allkeys.push(b[key]);
                      if (override != undefined)
                      {
-                       allkeys = allkeys.concat(Array.from(override.keys()))
-                       // remove duplicates
-                       allkeys = allkeys.filter((item, pos) => allkeys.indexOf(item) === pos)
+                       for (const b of base)
+                         if (allkeys.indexOf(b[key]) < 0)
+                           allkeys.push(b[key]); 
                      }
                     
                      // merge for all keys
                      for (const k of allkeys) {
-                       if (os[k] === undefined) {
+                      const u = os .find (x => (x[key] as A1) === (k as A1))
+                      const b = base.find (x => (x[key] as A1) === (k as A1))
+                      const o = (override != undefined) ? override.find (x => (x[key] as A1) === (k as A1)) : undefined;
+
+                       if (u === undefined) {
                          errs.push (new Error (`zipById: No matching entry found for "${JSON.stringify (k)}"`))
                        }
-                       else if ( override === undefined) {
+                       else if ( o === undefined) {
                          // no override found, fall back to base.
-                         ress.push([ os[k], base[k] ])
-                       }
-                       else if (override[k] === undefined) {
-                         // no override found, fall back to base.
-                         ress.push([ os[k], base[k] ])
+                         if (b != undefined)
+                           ress.push([ u, b ])
                        }
                        else {
                          // override found
-                         ress.push ([ os[k], override[k] ])
+                         ress.push ([ u, o])
                        }
                      }
 
