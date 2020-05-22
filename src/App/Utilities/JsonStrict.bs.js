@@ -22,12 +22,11 @@ function optionalField(key, decode, json) {
 function $$const(x, json) {
   if (Caml_obj.caml_equal(json, x)) {
     return x;
-  } else {
-    throw [
-          Json_decode.DecodeError,
-          "Expected \"" + (JSON.stringify(json) + ("\", but received: " + JSON.stringify(json)))
-        ];
   }
+  throw [
+        Json_decode.DecodeError,
+        "Expected \"" + (JSON.stringify(json) + ("\", but received: " + JSON.stringify(json)))
+      ];
 }
 
 exports.maybe = maybe;

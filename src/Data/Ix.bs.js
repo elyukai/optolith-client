@@ -36,9 +36,8 @@ function inRange(param, x) {
 function index(p, x) {
   if (inRange(p, x)) {
     return x - p[0] | 0;
-  } else {
-    throw Pervasives.invalid_arg("Ix.index: Index out of range.");
   }
+  throw Pervasives.invalid_arg("Ix.index: Index out of range.");
 }
 
 function rangeSize(param) {

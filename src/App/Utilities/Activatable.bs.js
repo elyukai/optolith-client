@@ -3,8 +3,13 @@
 
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
+var IC$OptolithClient = require("./IC.bs.js");
+var Id$OptolithClient = require("../Constants/Id.bs.js");
 var Ids$OptolithClient = require("../Constants/Ids.bs.js");
+var Int$OptolithClient = require("../../Data/Int.bs.js");
 var Intl$OptolithClient = require("./Intl.bs.js");
+var Chars$OptolithClient = require("./Chars.bs.js");
 var ListH$OptolithClient = require("../../Data/ListH.bs.js");
 var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
 var IntMap$OptolithClient = require("../../Data/IntMap.bs.js");
@@ -32,6 +37,15 @@ function heroEntryToSingles(x) {
               }), x.active);
 }
 
+function singleToSingleWithId(x, s) {
+  return {
+          id: x.id,
+          options: s.options,
+          level: s.level,
+          customCost: s.customCost
+        };
+}
+
 function activatableOptionToSelectOptionId(id) {
   if (id[0] >= 931971705) {
     return /* Nothing */0;
@@ -42,6 +56,7 @@ function activatableOptionToSelectOptionId(id) {
 
 var Convert = {
   heroEntryToSingles: heroEntryToSingles,
+  singleToSingleWithId: singleToSingleWithId,
   activatableOptionToSelectOptionId: activatableOptionToSelectOptionId
 };
 
@@ -155,54 +170,52 @@ function getDefaultNameAddition(staticEntry, heroEntry) {
   var sid = Maybe$OptolithClient.listToMaybe(heroEntry.options);
   var sid2 = ListH$OptolithClient.$less$bang$bang$great(heroEntry.options, 1);
   if (input$1) {
-    if (sid) {
-      var match = sid[0];
-      if (match[0] >= 931971705) {
-        if (sid2) {
-          return /* Nothing */0;
-        } else {
-          return /* Just */[match[1]];
-        }
-      } else if (sid2) {
-        var match$1 = sid2[0];
-        if (typeof match$1 === "number" || match$1[0] !== 931971705 || Curry._1(Static_SelectOption$OptolithClient.SelectOptionMap.size, selectOptions$1) <= 0) {
-          return /* Nothing */0;
-        } else {
-          return /* Just */[Maybe$OptolithClient.fromMaybe("", getSelectOptionName(staticEntry, match)) + (": " + match$1[1])];
-        }
-      } else {
-        return /* Nothing */0;
-      }
-    } else {
+    if (!sid) {
       return /* Nothing */0;
     }
-  } else if (sid) {
-    var match$2 = sid[0];
-    if (typeof match$2 === "number") {
-      return /* Nothing */0;
-    } else {
-      var variant = match$2[0];
-      if (variant >= 61643255) {
-        if (variant >= 345443720) {
-          if (variant !== 797131559 && variant >= 345443721) {
-            return /* Nothing */0;
-          }
-          
-        } else if (variant !== 290194801 && variant >= 61643256) {
-          return /* Nothing */0;
-        }
-        
-      } else if (variant !== -920806756 && variant !== -841776939 && variant !== -384382742) {
-        return /* Nothing */0;
-      }
+    var match = sid[0];
+    if (match[0] >= 931971705) {
       if (sid2) {
         return /* Nothing */0;
       } else {
-        return getSelectOptionName(staticEntry, match$2);
+        return /* Just */[match[1]];
       }
     }
-  } else {
+    if (!sid2) {
+      return /* Nothing */0;
+    }
+    var match$1 = sid2[0];
+    if (typeof match$1 === "number" || match$1[0] !== 931971705 || Curry._1(Static_SelectOption$OptolithClient.SelectOptionMap.size, selectOptions$1) <= 0) {
+      return /* Nothing */0;
+    } else {
+      return /* Just */[Maybe$OptolithClient.fromMaybe("", getSelectOptionName(staticEntry, match)) + (": " + match$1[1])];
+    }
+  }
+  if (!sid) {
     return /* Nothing */0;
+  }
+  var match$2 = sid[0];
+  if (typeof match$2 === "number") {
+    return /* Nothing */0;
+  }
+  var variant = match$2[0];
+  if (variant >= 61643255) {
+    if (variant >= 345443720) {
+      if (variant !== 797131559 && variant >= 345443721) {
+        return /* Nothing */0;
+      }
+      
+    } else if (variant !== 290194801 && variant >= 61643256) {
+      return /* Nothing */0;
+    }
+    
+  } else if (variant !== -920806756 && variant !== -841776939 && variant !== -384382742) {
+    return /* Nothing */0;
+  }
+  if (sid2) {
+    return /* Nothing */0;
+  } else {
+    return getSelectOptionName(staticEntry, match$2);
   }
 }
 
@@ -211,44 +224,46 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
     case /* Advantage */0 :
         var match = Ids$OptolithClient.AdvantageId.fromInt(staticEntry[0].id);
         var exit = 0;
-        if (typeof match === "number" && match < 22) {
-          switch (match) {
-            case /* Aptitude */0 :
-            case /* ExceptionalSkill */4 :
-                exit = 1;
-                break;
-            case /* ExceptionalCombatTechnique */5 :
-            case /* WeaponAptitude */17 :
-                exit = 2;
-                break;
-            case /* Nimble */1 :
-            case /* Blessed */2 :
-            case /* Luck */3 :
-            case /* IncreasedAstralPower */6 :
-            case /* IncreasedKarmaPoints */7 :
-            case /* IncreasedLifePoints */8 :
-            case /* IncreasedSpirit */9 :
-            case /* IncreasedToughness */10 :
-            case /* ImmunityToPoison */11 :
-            case /* ImmunityToDisease */12 :
-            case /* MagicalAttunement */13 :
-            case /* Rich */14 :
-            case /* SociallyAdaptable */15 :
-            case /* InspireConfidence */16 :
-            case /* Spellcaster */18 :
-            case /* Unyielding */19 :
-            case /* LargeSpellSelection */20 :
-                return getDefaultNameAddition(staticEntry, heroEntry);
-            case /* HatredFor */21 :
-                return Maybe$OptolithClient.Monad.liftM2((function (type_, frequency) {
-                              return type_ + (" (" + (frequency.name + ")"));
-                            }), Maybe$OptolithClient.Monad.$great$great$eq(ListH$OptolithClient.$less$bang$bang$great(heroEntry.options, 1), getCustomInput), Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(heroEntry.options), (function (param) {
-                                  return getSelectOption(staticEntry, param);
-                                })));
-            
-          }
-        } else {
+        if (typeof match !== "number") {
           return getDefaultNameAddition(staticEntry, heroEntry);
+        }
+        if (match >= 22) {
+          return getDefaultNameAddition(staticEntry, heroEntry);
+        }
+        switch (match) {
+          case /* Aptitude */0 :
+          case /* ExceptionalSkill */4 :
+              exit = 1;
+              break;
+          case /* ExceptionalCombatTechnique */5 :
+          case /* WeaponAptitude */17 :
+              exit = 2;
+              break;
+          case /* Nimble */1 :
+          case /* Blessed */2 :
+          case /* Luck */3 :
+          case /* IncreasedAstralPower */6 :
+          case /* IncreasedKarmaPoints */7 :
+          case /* IncreasedLifePoints */8 :
+          case /* IncreasedSpirit */9 :
+          case /* IncreasedToughness */10 :
+          case /* ImmunityToPoison */11 :
+          case /* ImmunityToDisease */12 :
+          case /* MagicalAttunement */13 :
+          case /* Rich */14 :
+          case /* SociallyAdaptable */15 :
+          case /* InspireConfidence */16 :
+          case /* Spellcaster */18 :
+          case /* Unyielding */19 :
+          case /* LargeSpellSelection */20 :
+              return getDefaultNameAddition(staticEntry, heroEntry);
+          case /* HatredFor */21 :
+              return Maybe$OptolithClient.Monad.liftM2((function (type_, frequency) {
+                            return type_ + (" (" + (frequency.name + ")"));
+                          }), Maybe$OptolithClient.Monad.$great$great$eq(ListH$OptolithClient.$less$bang$bang$great(heroEntry.options, 1), getCustomInput), Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(heroEntry.options), (function (param) {
+                                return getSelectOption(staticEntry, param);
+                              })));
+          
         }
         switch (exit) {
           case 1 :
@@ -316,138 +331,67 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
     case /* SpecialAbility */2 :
         var match$2 = Ids$OptolithClient.SpecialAbilityId.fromInt(staticEntry[0].id);
         var exit$1 = 0;
-        if (typeof match$2 === "number") {
-          if (match$2 >= 71) {
-            if (match$2 !== 85) {
-              if (match$2 >= 72) {
-                return getDefaultNameAddition(staticEntry, heroEntry);
-              } else {
-                return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.Monad.join(Maybe$OptolithClient.Monad.liftM2(getSelectOption, Maybe$OptolithClient.Functor.$less$amp$great(Curry._2(IntMap$OptolithClient.lookup, Ids$OptolithClient.SpecialAbilityId.toInt(/* Language */6), staticData.specialAbilities), (function (specialAbility) {
-                                          return /* SpecialAbility */Block.__(2, [specialAbility]);
-                                        })), Maybe$OptolithClient.listToMaybe(heroEntry.options))), (function (language) {
-                              return Maybe$OptolithClient.Monad.$great$great$eq(ListH$OptolithClient.$less$bang$bang$great(heroEntry.options, 1), (function (option2) {
-                                            var variant = option2[0];
-                                            var tmp;
-                                            if (variant !== 61643255) {
-                                              tmp = variant >= 931971705 ? /* Just */[option2[1]] : /* Nothing */0;
-                                            } else {
-                                              var specializationId = option2[1];
-                                              tmp = Maybe$OptolithClient.Monad.$great$great$eq(language.specializations, (function (specializations) {
-                                                      return ListH$OptolithClient.$less$bang$bang$great(specializations, specializationId - 1 | 0);
-                                                    }));
-                                            }
-                                            return Maybe$OptolithClient.Functor.$less$amp$great(tmp, (function (specialization) {
-                                                          return language.name + (": " + specialization);
-                                                        }));
-                                          }));
-                            }));
-              }
+        if (typeof match$2 !== "number") {
+          return getDefaultNameAddition(staticEntry, heroEntry);
+        }
+        var exit$2 = 0;
+        if (match$2 >= 71) {
+          if (match$2 !== 85) {
+            if (match$2 >= 72) {
+              return getDefaultNameAddition(staticEntry, heroEntry);
             } else {
-              return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(heroEntry.options), (function (param) {
-                                return getSkillFromOption(staticData, param);
-                              })), (function (skill) {
-                            var applications = Curry._2(IntMap$OptolithClient.filter, (function (app) {
-                                    return Maybe$OptolithClient.isNothing(app.prerequisite);
-                                  }), skill.applications);
-                            return Maybe$OptolithClient.Functor.$less$amp$great(Maybe$OptolithClient.ensure((function (apps) {
-                                              return 2 === ListH$OptolithClient.Foldable.length(apps);
-                                            }), Maybe$OptolithClient.mapMaybe((function (option) {
-                                                  return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.Monad.$great$great$eq(option, getGenericId), (function (opt) {
-                                                                return Maybe$OptolithClient.Functor.$less$amp$great(Curry._2(IntMap$OptolithClient.Foldable.find, (function (app) {
-                                                                                  return app.id === opt;
-                                                                                }), applications), (function (app) {
-                                                                              return app.name;
-                                                                            }));
-                                                              }));
-                                                }), /* :: */[
-                                                ListH$OptolithClient.$less$bang$bang$great(heroEntry.options, 1),
-                                                /* :: */[
-                                                  ListH$OptolithClient.$less$bang$bang$great(heroEntry.options, 2),
-                                                  /* [] */0
-                                                ]
-                                              ])), (function (apps) {
-                                          var appsStr = Intl$OptolithClient.ListFormat.format(/* Conjunction */0, staticData, AdvancedFiltering$OptolithClient.sortStrings(staticData, apps));
-                                          return skill.name + (": " + appsStr);
+              return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.Monad.join(Maybe$OptolithClient.Monad.liftM2(getSelectOption, Maybe$OptolithClient.Functor.$less$amp$great(Curry._2(IntMap$OptolithClient.lookup, Ids$OptolithClient.SpecialAbilityId.toInt(/* Language */6), staticData.specialAbilities), (function (specialAbility) {
+                                        return /* SpecialAbility */Block.__(2, [specialAbility]);
+                                      })), Maybe$OptolithClient.listToMaybe(heroEntry.options))), (function (language) {
+                            return Maybe$OptolithClient.Monad.$great$great$eq(ListH$OptolithClient.$less$bang$bang$great(heroEntry.options, 1), (function (option2) {
+                                          var variant = option2[0];
+                                          var tmp;
+                                          if (variant !== 61643255) {
+                                            tmp = variant >= 931971705 ? /* Just */[option2[1]] : /* Nothing */0;
+                                          } else {
+                                            var specializationId = option2[1];
+                                            tmp = Maybe$OptolithClient.Monad.$great$great$eq(language.specializations, (function (specializations) {
+                                                    return ListH$OptolithClient.$less$bang$bang$great(specializations, specializationId - 1 | 0);
+                                                  }));
+                                          }
+                                          return Maybe$OptolithClient.Functor.$less$amp$great(tmp, (function (specialization) {
+                                                        return language.name + (": " + specialization);
+                                                      }));
                                         }));
                           }));
             }
-          } else if (match$2 >= 16) {
-            if (match$2 >= 53) {
-              return getDefaultNameAddition(staticEntry, heroEntry);
-            } else {
-              switch (match$2 - 16 | 0) {
-                case /* TerrainKnowledge */1 :
-                    var match$3 = heroEntry.level;
-                    if (match$3 && match$3[0] === 1) {
-                      return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(heroEntry.options), (function (param) {
-                                    return getSelectOptionName(staticEntry, param);
-                                  }));
-                    } else {
-                      return /* Nothing */0;
-                    }
-                case /* SkillSpecialization */0 :
-                case /* CraftInstruments */2 :
-                    exit$1 = 1;
-                    break;
-                case /* SpellEnhancement */25 :
-                    return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(heroEntry.options), (function (sid) {
-                                  if (sid[0] !== -384382742) {
-                                    return /* Nothing */0;
-                                  } else {
-                                    return lookupMap(sid[1], staticData.liturgicalChants, (function (x) {
-                                                  return x.name;
-                                                }));
-                                  }
-                                }));
-                case /* TraditionGuildMages */9 :
-                case /* PredigtDerGemeinschaft */30 :
-                    break;
-                case /* PredigtDesWohlgefallens */33 :
-                    var partial_arg = staticData.arcaneBardTraditions;
-                    return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(heroEntry.options), getGenericId), (function (param) {
-                                  return Function$OptolithClient.flip(IntMap$OptolithClient.lookup, partial_arg, param);
-                                }));
-                case /* PredigtWiderMissgeschicke */34 :
-                    var partial_arg$1 = staticData.arcaneDancerTraditions;
-                    return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(heroEntry.options), getGenericId), (function (param) {
-                                  return Function$OptolithClient.flip(IntMap$OptolithClient.lookup, partial_arg$1, param);
-                                }));
-                case /* Hunter */3 :
-                case /* AreaKnowledge */4 :
-                case /* Literacy */5 :
-                case /* Language */6 :
-                case /* CombatReflexes */7 :
-                case /* ImprovedDodge */8 :
-                case /* Feuerschlucker */14 :
-                case /* CombatStyleCombination */15 :
-                case /* AdaptionZauber */16 :
-                case /* Exorzist */17 :
-                case /* FavoriteSpellwork */18 :
-                case /* TraditionWitches */19 :
-                case /* MagicStyleCombination */20 :
-                case /* Harmoniezauberei */21 :
-                case /* Matrixzauberei */22 :
-                case /* TraditionElves */23 :
-                case /* TraditionDruids */24 :
-                case /* Forschungsgebiet */26 :
-                case /* Expertenwissen */27 :
-                case /* Wissensdurst */28 :
-                case /* Recherchegespuer */29 :
-                case /* PredigtDerZuversicht */31 :
-                case /* PredigtDesGottvertrauens */32 :
-                case /* VisionDerBestimmung */35 :
-                    return getDefaultNameAddition(staticEntry, heroEntry);
-                case /* PropertyKnowledge */10 :
-                case /* PropertyFocus */11 :
-                case /* AspectKnowledge */12 :
-                case /* TraditionChurchOfPraios */13 :
-                case /* VisionDerEntrueckung */36 :
-                    exit$1 = 2;
-                    break;
-                
-              }
-            }
-          } else if (match$2 !== 0) {
+          } else {
+            return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(heroEntry.options), (function (param) {
+                              return getSkillFromOption(staticData, param);
+                            })), (function (skill) {
+                          var applications = Curry._2(IntMap$OptolithClient.filter, (function (app) {
+                                  return Maybe$OptolithClient.isNothing(app.prerequisite);
+                                }), skill.applications);
+                          return Maybe$OptolithClient.Functor.$less$amp$great(Maybe$OptolithClient.ensure((function (apps) {
+                                            return 2 === ListH$OptolithClient.Foldable.length(apps);
+                                          }), Maybe$OptolithClient.mapMaybe((function (option) {
+                                                return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.Monad.$great$great$eq(option, getGenericId), (function (opt) {
+                                                              return Maybe$OptolithClient.Functor.$less$amp$great(Curry._2(IntMap$OptolithClient.Foldable.find, (function (app) {
+                                                                                return app.id === opt;
+                                                                              }), applications), (function (app) {
+                                                                            return app.name;
+                                                                          }));
+                                                            }));
+                                              }), /* :: */[
+                                              ListH$OptolithClient.$less$bang$bang$great(heroEntry.options, 1),
+                                              /* :: */[
+                                                ListH$OptolithClient.$less$bang$bang$great(heroEntry.options, 2),
+                                                /* [] */0
+                                              ]
+                                            ])), (function (apps) {
+                                        var appsStr = Intl$OptolithClient.ListFormat.format(/* Conjunction */0, staticData, AdvancedFiltering$OptolithClient.sortStrings(staticData, apps));
+                                        return skill.name + (": " + appsStr);
+                                      }));
+                        }));
+          }
+        }
+        if (match$2 < 16) {
+          if (match$2 !== 0) {
             return getDefaultNameAddition(staticEntry, heroEntry);
           } else {
             return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(heroEntry.options), (function (param) {
@@ -472,6 +416,83 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                                       }));
                         }));
           }
+        }
+        if (match$2 >= 53) {
+          return getDefaultNameAddition(staticEntry, heroEntry);
+        }
+        switch (match$2 - 16 | 0) {
+          case /* TerrainKnowledge */1 :
+              var match$3 = heroEntry.level;
+              if (match$3 && match$3[0] === 1) {
+                return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(heroEntry.options), (function (param) {
+                              return getSelectOptionName(staticEntry, param);
+                            }));
+              } else {
+                return /* Nothing */0;
+              }
+          case /* SkillSpecialization */0 :
+          case /* CraftInstruments */2 :
+              exit$1 = 1;
+              break;
+          case /* SpellEnhancement */25 :
+              return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(heroEntry.options), (function (sid) {
+                            if (sid[0] !== -384382742) {
+                              return /* Nothing */0;
+                            } else {
+                              return lookupMap(sid[1], staticData.liturgicalChants, (function (x) {
+                                            return x.name;
+                                          }));
+                            }
+                          }));
+          case /* TraditionGuildMages */9 :
+          case /* PredigtDerGemeinschaft */30 :
+              exit$2 = 3;
+              break;
+          case /* PredigtDesWohlgefallens */33 :
+              var partial_arg = staticData.arcaneBardTraditions;
+              return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(heroEntry.options), getGenericId), (function (param) {
+                            return Function$OptolithClient.flip(IntMap$OptolithClient.lookup, partial_arg, param);
+                          }));
+          case /* PredigtWiderMissgeschicke */34 :
+              var partial_arg$1 = staticData.arcaneDancerTraditions;
+              return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(heroEntry.options), getGenericId), (function (param) {
+                            return Function$OptolithClient.flip(IntMap$OptolithClient.lookup, partial_arg$1, param);
+                          }));
+          case /* Hunter */3 :
+          case /* AreaKnowledge */4 :
+          case /* Literacy */5 :
+          case /* Language */6 :
+          case /* CombatReflexes */7 :
+          case /* ImprovedDodge */8 :
+          case /* Feuerschlucker */14 :
+          case /* CombatStyleCombination */15 :
+          case /* AdaptionZauber */16 :
+          case /* Exorzist */17 :
+          case /* FavoriteSpellwork */18 :
+          case /* TraditionWitches */19 :
+          case /* MagicStyleCombination */20 :
+          case /* Harmoniezauberei */21 :
+          case /* Matrixzauberei */22 :
+          case /* TraditionElves */23 :
+          case /* TraditionDruids */24 :
+          case /* Forschungsgebiet */26 :
+          case /* Expertenwissen */27 :
+          case /* Wissensdurst */28 :
+          case /* Recherchegespuer */29 :
+          case /* PredigtDerZuversicht */31 :
+          case /* PredigtDesGottvertrauens */32 :
+          case /* VisionDerBestimmung */35 :
+              return getDefaultNameAddition(staticEntry, heroEntry);
+          case /* PropertyKnowledge */10 :
+          case /* PropertyFocus */11 :
+          case /* AspectKnowledge */12 :
+          case /* TraditionChurchOfPraios */13 :
+          case /* VisionDerEntrueckung */36 :
+              exit$1 = 2;
+              break;
+          
+        }
+        if (exit$2 === 3) {
           return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(heroEntry.options), (function (param) {
                             return getSelectOption(staticEntry, param);
                           })), (function (enhancement) {
@@ -495,8 +516,6 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                                                   }));
                                     }));
                       }));
-        } else {
-          return getDefaultNameAddition(staticEntry, heroEntry);
         }
         switch (exit$1) {
           case 1 :
@@ -522,8 +541,47 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
   }
 }
 
-function getEntrySpecificNameReplacements(staticEntry, heroEntry, nameAddition) {
+function getDisAdvLevelStr(level) {
+  return Maybe$OptolithClient.fromMaybe(Int$OptolithClient.show(level), Integers$OptolithClient.intToRoman(level));
+}
+
+function getSpecialAbilityLevelStr(level) {
+  return (
+          level > 1 ? "I" + (Chars$OptolithClient.nobr + ("\xe2\x80\x93" + Chars$OptolithClient.nobr)) : ""
+        ) + getDisAdvLevelStr(level);
+}
+
+function getLevelName(staticData, staticEntry, singleHeroEntry) {
+  var match = singleHeroEntry.level;
+  switch (staticEntry.tag | 0) {
+    case /* Advantage */0 :
+    case /* Disadvantage */1 :
+        break;
+    case /* SpecialAbility */2 :
+        if (!match) {
+          return /* Nothing */0;
+        }
+        var level = match[0];
+        var match$1 = Id$OptolithClient.specialAbilityFromInt(staticEntry[0].id);
+        if (typeof match$1 === "number" && !(match$1 !== 6 || level !== 4)) {
+          return /* Just */[staticData.messages.specialabilities_nativetonguelevel];
+        } else {
+          return /* Just */[getSpecialAbilityLevelStr(level)];
+        }
+    
+  }
+  if (match) {
+    return /* Just */[getDisAdvLevelStr(match[0])];
+  } else {
+    return /* Nothing */0;
+  }
+}
+
+function getEntrySpecificNameReplacements(addLevelToName, staticEntry, nameAddition, levelName) {
   var name = staticEntry[0].name;
+  var flatLevelName = addLevelToName ? Maybe$OptolithClient.maybe("", (function (param) {
+            return Chars$OptolithClient.nbsp + param;
+          }), levelName) : "";
   var mapDefaultWithParens = function (param) {
     return Maybe$OptolithClient.maybe(name, (function (add) {
                   return name + (" (" + (add + ")"));
@@ -546,87 +604,594 @@ function getEntrySpecificNameReplacements(staticEntry, heroEntry, nameAddition) 
         if (typeof match === "number") {
           if (match >= 13) {
             if (match !== 21) {
-              return mapDefaultWithParens(/* () */0);
+              return mapDefaultWithParens(undefined) + flatLevelName;
             } else {
-              return mapDefaultWithoutParens(/* () */0);
+              return mapDefaultWithoutParens(undefined);
             }
           } else if (match >= 11) {
-            return mapDefaultWithoutParens(/* () */0);
+            return mapDefaultWithoutParens(undefined);
           } else {
-            return mapDefaultWithParens(/* () */0);
+            return mapDefaultWithParens(undefined) + flatLevelName;
           }
         } else {
-          return mapDefaultWithParens(/* () */0);
+          return mapDefaultWithParens(undefined) + flatLevelName;
         }
     case /* Disadvantage */1 :
         var match$1 = Ids$OptolithClient.DisadvantageId.fromInt(staticEntry[0].id);
-        if (typeof match$1 === "number") {
-          var switcher = match$1 - 13 | 0;
-          if (switcher > 6 || switcher < 0) {
-            if (switcher >= -12) {
-              return mapDefaultWithParens(/* () */0);
-            } else {
-              return mapDefaultWithoutParens(/* () */0);
-            }
-          } else if (switcher > 5 || switcher < 1) {
-            return Maybe$OptolithClient.fromMaybe(name, Maybe$OptolithClient.Monad.liftM2((function (level, nameAddition) {
-                              return name + (" " + (level + (" (" + (nameAddition + ")"))));
-                            }), Maybe$OptolithClient.Monad.$great$great$eq(heroEntry.level, Integers$OptolithClient.intToRoman), nameAddition));
+        if (typeof match$1 !== "number") {
+          return mapDefaultWithParens(undefined) + flatLevelName;
+        }
+        var switcher = match$1 - 13 | 0;
+        if (switcher > 6 || switcher < 0) {
+          if (switcher >= -12) {
+            return mapDefaultWithParens(undefined) + flatLevelName;
           } else {
-            return mapDefaultWithParens(/* () */0);
+            return mapDefaultWithoutParens(undefined) + flatLevelName;
           }
+        } else if (switcher > 5 || switcher < 1) {
+          return Maybe$OptolithClient.maybe(name + flatLevelName, (function (nameAddition) {
+                        return name + (flatLevelName + (" (" + (nameAddition + ")")));
+                      }), nameAddition);
         } else {
-          return mapDefaultWithParens(/* () */0);
+          return mapDefaultWithParens(undefined) + flatLevelName;
         }
     case /* SpecialAbility */2 :
         var match$2 = Ids$OptolithClient.SpecialAbilityId.fromInt(staticEntry[0].id);
-        if (typeof match$2 === "number") {
-          switch (match$2) {
-            case /* GebieterDesAspekts */45 :
-                return mapDefaultWithoutParens(/* () */0);
-            case /* TraditionArcaneBard */49 :
-                var f = function (param) {
-                  return Function$OptolithClient.flip(addSndInParens, name, param);
-                };
-                return Maybe$OptolithClient.maybe(name, f, nameAddition);
-            case /* TraditionArcaneDancer */50 :
-                var f$1 = function (param) {
-                  return Function$OptolithClient.flip(addSndInParens, name, param);
-                };
-                return Maybe$OptolithClient.maybe(name, f$1, nameAddition);
-            case /* ChantEnhancement */46 :
-            case /* DunklesAbbildDerBuendnisgabe */47 :
-            case /* TraditionIllusionist */48 :
-            case /* TraditionIntuitiveMage */51 :
-                return mapDefaultWithParens(/* () */0);
-            case /* TraditionSavant */52 :
-                var f$2 = function (param) {
-                  return Function$OptolithClient.flip(addSndInParens, name, param);
-                };
-                return Maybe$OptolithClient.maybe(name, f$2, nameAddition);
-            default:
-              return mapDefaultWithParens(/* () */0);
-          }
-        } else {
-          return mapDefaultWithParens(/* () */0);
+        if (typeof match$2 !== "number") {
+          return mapDefaultWithParens(undefined) + flatLevelName;
+        }
+        switch (match$2) {
+          case /* GebieterDesAspekts */45 :
+              return mapDefaultWithoutParens(undefined);
+          case /* TraditionArcaneBard */49 :
+              return Maybe$OptolithClient.maybe(name, (function (param) {
+                            return Function$OptolithClient.flip(addSndInParens, name, param);
+                          }), nameAddition);
+          case /* TraditionArcaneDancer */50 :
+              return Maybe$OptolithClient.maybe(name, (function (param) {
+                            return Function$OptolithClient.flip(addSndInParens, name, param);
+                          }), nameAddition);
+          case /* ChantEnhancement */46 :
+          case /* DunklesAbbildDerBuendnisgabe */47 :
+          case /* TraditionIllusionist */48 :
+          case /* TraditionIntuitiveMage */51 :
+              return mapDefaultWithParens(undefined) + flatLevelName;
+          case /* TraditionSavant */52 :
+              return Maybe$OptolithClient.maybe(name, (function (param) {
+                            return Function$OptolithClient.flip(addSndInParens, name, param);
+                          }), nameAddition);
+          default:
+            return mapDefaultWithParens(undefined) + flatLevelName;
         }
     
   }
 }
 
-function getName(staticData, staticEntry, heroEntry) {
+function getName(addLevelToName, staticData, staticEntry, heroEntry) {
   var addName = getEntrySpecificNameAddition(staticData, staticEntry, heroEntry);
-  var fullName = getEntrySpecificNameReplacements(staticEntry, heroEntry, addName);
+  var levelName = getLevelName(staticData, staticEntry, heroEntry);
+  var fullName = getEntrySpecificNameReplacements(addLevelToName, staticEntry, addName, levelName);
   return {
           name: fullName,
           baseName: staticEntry[0].name,
           addName: addName,
-          levelName: /* Nothing */0
+          levelName: levelName
         };
+}
+
+function ensureFlat(x) {
+  if (x.tag) {
+    return /* Nothing */0;
+  } else {
+    return /* Just */[x[0]];
+  }
+}
+
+function ensurePerLevel(x) {
+  if (x.tag) {
+    return /* Just */[x[0]];
+  } else {
+    return /* Nothing */0;
+  }
+}
+
+function getDefaultEntryCost(staticEntry, singleHeroEntry) {
+  var sid1 = Maybe$OptolithClient.listToMaybe(singleHeroEntry.options);
+  var level = Maybe$OptolithClient.fromMaybe(1, singleHeroEntry.level);
+  var apValue$1 = Maybe$OptolithClient.fromMaybe(/* Flat */Block.__(0, [0]), apValue(staticEntry));
+  var optionApValue = Maybe$OptolithClient.Monad.$great$great$eq(sid1, (function (param) {
+          return getSelectOptionCost(staticEntry, param);
+        }));
+  if (optionApValue) {
+    return /* Just */[optionApValue[0]];
+  }
+  if (!apValue$1.tag) {
+    return /* Just */[Caml_int32.imul(apValue$1[0], level)];
+  }
+  var xs = apValue$1[0];
+  switch (staticEntry.tag | 0) {
+    case /* Advantage */0 :
+    case /* Disadvantage */1 :
+        return ListH$OptolithClient.$less$bang$bang$great(xs, level - 1 | 0);
+    case /* SpecialAbility */2 :
+        return /* Just */[ListH$OptolithClient.Foldable.sum(ListH$OptolithClient.take(Int$OptolithClient.max(1, level), xs))];
+    
+  }
+}
+
+function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroEntry, singleHeroEntry) {
+  var sid1 = Maybe$OptolithClient.listToMaybe(singleHeroEntry.options);
+  var level = singleHeroEntry.level;
+  var apValue$1 = Maybe$OptolithClient.fromMaybe(/* Flat */Block.__(0, [0]), apValue(staticEntry));
+  switch (staticEntry.tag | 0) {
+    case /* Advantage */0 :
+        var match = Ids$OptolithClient.AdvantageId.fromInt(staticEntry[0].id);
+        var exit = 0;
+        if (typeof match !== "number") {
+          return getDefaultEntryCost(staticEntry, singleHeroEntry);
+        }
+        if (match !== 17) {
+          if (match >= 6) {
+            return getDefaultEntryCost(staticEntry, singleHeroEntry);
+          }
+          switch (match) {
+            case /* Nimble */1 :
+            case /* Blessed */2 :
+            case /* Luck */3 :
+                return getDefaultEntryCost(staticEntry, singleHeroEntry);
+            case /* Aptitude */0 :
+            case /* ExceptionalSkill */4 :
+                exit = 1;
+                break;
+            case /* ExceptionalCombatTechnique */5 :
+                exit = 2;
+                break;
+            
+          }
+        } else {
+          exit = 2;
+        }
+        switch (exit) {
+          case 1 :
+              return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(singleHeroEntry.options), (function (sid) {
+                            if (typeof sid === "number") {
+                              return /* Nothing */0;
+                            }
+                            var variant = sid[0];
+                            if (variant !== -384382742) {
+                              if (variant !== 290194801) {
+                                if (variant !== 345443720) {
+                                  return /* Nothing */0;
+                                }
+                                if (!apValue$1.tag) {
+                                  return /* Nothing */0;
+                                }
+                                var apValues = apValue$1[0];
+                                return Maybe$OptolithClient.Monad.$great$great$eq(Curry._2(IntMap$OptolithClient.lookup, sid[1], staticData.spells), (function ($$static) {
+                                              return ListH$OptolithClient.$less$bang$bang$great(apValues, IC$OptolithClient.icToIx($$static.ic));
+                                            }));
+                              }
+                              if (!apValue$1.tag) {
+                                return /* Nothing */0;
+                              }
+                              var apValues$1 = apValue$1[0];
+                              return Maybe$OptolithClient.Monad.$great$great$eq(Curry._2(IntMap$OptolithClient.lookup, sid[1], staticData.skills), (function ($$static) {
+                                            return ListH$OptolithClient.$less$bang$bang$great(apValues$1, IC$OptolithClient.icToIx($$static.ic));
+                                          }));
+                            }
+                            if (!apValue$1.tag) {
+                              return /* Nothing */0;
+                            }
+                            var apValues$2 = apValue$1[0];
+                            return Maybe$OptolithClient.Monad.$great$great$eq(Curry._2(IntMap$OptolithClient.lookup, sid[1], staticData.liturgicalChants), (function ($$static) {
+                                          return ListH$OptolithClient.$less$bang$bang$great(apValues$2, IC$OptolithClient.icToIx($$static.ic));
+                                        }));
+                          }));
+          case 2 :
+              return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(singleHeroEntry.options), (function (sid) {
+                            if (typeof sid === "number") {
+                              return /* Nothing */0;
+                            }
+                            if (sid[0] !== -920806756) {
+                              return /* Nothing */0;
+                            }
+                            if (!apValue$1.tag) {
+                              return /* Nothing */0;
+                            }
+                            var apValues = apValue$1[0];
+                            return Maybe$OptolithClient.Monad.$great$great$eq(Curry._2(IntMap$OptolithClient.lookup, sid[1], staticData.combatTechniques), (function ($$static) {
+                                          return ListH$OptolithClient.$less$bang$bang$great(apValues, IC$OptolithClient.icToIx($$static.ic));
+                                        }));
+                          }));
+          
+        }
+        break;
+    case /* Disadvantage */1 :
+        var match$1 = Ids$OptolithClient.DisadvantageId.fromInt(staticEntry[0].id);
+        if (typeof match$1 !== "number") {
+          return getDefaultEntryCost(staticEntry, singleHeroEntry);
+        }
+        if (match$1 < 12) {
+          return getDefaultEntryCost(staticEntry, singleHeroEntry);
+        }
+        switch (match$1 - 12 | 0) {
+          case /* AfraidOf */0 :
+              if (!sid1) {
+                return /* Nothing */0;
+              }
+              var match$2 = sid1[0];
+              if (typeof match$2 === "number") {
+                return /* Nothing */0;
+              }
+              if (match$2[0] !== 61643255) {
+                return /* Nothing */0;
+              }
+              var selected_option = match$2[1];
+              var matchOption = function (target_option, current) {
+                if (!current) {
+                  return false;
+                }
+                var match = current[0];
+                if (typeof match === "number" || match[0] !== 61643255) {
+                  return false;
+                } else {
+                  return match[1] === target_option;
+                }
+              };
+              var isPersonalityFlawNotPaid = function (target_option, paid_entries_max) {
+                if (target_option === selected_option) {
+                  return ListH$OptolithClient.countBy((function (e) {
+                                if (matchOption(target_option, Maybe$OptolithClient.listToMaybe(e.options))) {
+                                  return Maybe$OptolithClient.isNothing(e.customCost);
+                                } else {
+                                  return false;
+                                }
+                              }), heroEntry.active) > (
+                          isEntryToAdd ? paid_entries_max - 1 | 0 : paid_entries_max
+                        );
+                } else {
+                  return false;
+                }
+              };
+              if (isPersonalityFlawNotPaid(7, 1) || isPersonalityFlawNotPaid(8, 2)) {
+                return /* Just */[0];
+              } else {
+                return getSelectOptionCost(staticEntry, /* `Generic */[
+                            61643255,
+                            selected_option
+                          ]);
+              }
+          case /* Slow */2 :
+              return Maybe$OptolithClient.Foldable.find((function (param) {
+                            return ListH$OptolithClient.countBy((function (e) {
+                                          return Maybe$OptolithClient.isNothing(e.customCost);
+                                        }), heroEntry.active) > (
+                                    isEntryToAdd ? 2 : 3
+                                  );
+                          }), ensureFlat(apValue$1));
+          case /* DecreasedArcanePower */6 :
+              return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(singleHeroEntry.options), (function (sid) {
+                            if (typeof sid === "number") {
+                              return /* Nothing */0;
+                            }
+                            if (sid[0] !== 290194801) {
+                              return /* Nothing */0;
+                            }
+                            if (!apValue$1.tag) {
+                              return /* Nothing */0;
+                            }
+                            var apValues = apValue$1[0];
+                            return Maybe$OptolithClient.Monad.$great$great$eq(Curry._2(IntMap$OptolithClient.lookup, sid[1], staticData.skills), (function ($$static) {
+                                          return ListH$OptolithClient.$less$bang$bang$great(apValues, IC$OptolithClient.icToIx($$static.ic));
+                                        }));
+                          }));
+          case /* Poor */1 :
+          case /* DecreasedKarmaPoints */7 :
+              break;
+          case /* NoFlyingBalm */3 :
+          case /* NoFamiliar */4 :
+          case /* MagicalRestriction */5 :
+          case /* DecreasedLifePoints */8 :
+          case /* DecreasedSpirit */9 :
+          case /* DecreasedToughness */10 :
+          case /* BadLuck */11 :
+          case /* PersonalityFlaw */12 :
+              return getDefaultEntryCost(staticEntry, singleHeroEntry);
+          
+        }
+        return Maybe$OptolithClient.Monad.$great$great$eq(level, (function (level) {
+                      var match = ListH$OptolithClient.Foldable.foldr((function (active, param) {
+                              var prevSndMax = param[1];
+                              var prevMax = param[0];
+                              var match = active.level;
+                              var match$1 = active.customCost;
+                              if (!match) {
+                                return /* tuple */[
+                                        prevMax,
+                                        prevSndMax
+                                      ];
+                              }
+                              if (match$1) {
+                                return /* tuple */[
+                                        prevMax,
+                                        prevSndMax
+                                      ];
+                              }
+                              var activeLevel = match[0];
+                              if (activeLevel > prevMax) {
+                                return /* tuple */[
+                                        activeLevel,
+                                        prevMax
+                                      ];
+                              } else {
+                                return /* tuple */[
+                                        prevMax,
+                                        prevSndMax
+                                      ];
+                              }
+                            }), /* tuple */[
+                            0,
+                            0
+                          ], heroEntry.active);
+                      if (match[0] > level || ListH$OptolithClient.countBy((function (e) {
+                                return Maybe$OptolithClient.Foldable.elem(level, e.level);
+                              }), heroEntry.active) > (
+                          isEntryToAdd ? 0 : 1
+                        )) {
+                        return /* Nothing */0;
+                      }
+                      var partial_arg = level - match[1] | 0;
+                      return Maybe$OptolithClient.Functor.$less$amp$great(ensureFlat(apValue$1), (function (param) {
+                                    return Caml_int32.imul(partial_arg, param);
+                                  }));
+                    }));
+    case /* SpecialAbility */2 :
+        var match$3 = Ids$OptolithClient.SpecialAbilityId.fromInt(staticEntry[0].id);
+        var exit$1 = 0;
+        if (typeof match$3 !== "number") {
+          return getDefaultEntryCost(staticEntry, singleHeroEntry);
+        }
+        if (match$3 < 82) {
+          var switcher = match$3 - 42 | 0;
+          if (!(switcher > 38 || switcher < 0)) {
+            if (switcher !== 29) {
+              return getDefaultEntryCost(staticEntry, singleHeroEntry);
+            } else {
+              return Maybe$OptolithClient.Monad.$great$great$eq(ensureFlat(apValue$1), (function (flatAp) {
+                            return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.Monad.$great$great$eq(sid1, getGenericId), (function (languageId) {
+                                          return Maybe$OptolithClient.Monad.$great$great$eq(Curry._2(IntMap$OptolithClient.lookup, Id$OptolithClient.specialAbilityToInt(/* Language */6), hero.specialAbilities), (function (language) {
+                                                        return Maybe$OptolithClient.Monad.$great$great$eq(ListH$OptolithClient.Foldable.find((function (e) {
+                                                                          return Maybe$OptolithClient.Foldable.elem(languageId, Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(e.options), getGenericId));
+                                                                        }), language.active), (function (selectedLanguage) {
+                                                                      return Maybe$OptolithClient.Functor.$less$amp$great(selectedLanguage.level, (function (param) {
+                                                                                    if (param !== 4) {
+                                                                                      return flatAp;
+                                                                                    } else {
+                                                                                      return 0;
+                                                                                    }
+                                                                                  }));
+                                                                    }));
+                                                      }));
+                                        }));
+                          }));
+            }
+          }
+          if (switcher >= 39) {
+            exit$1 = 3;
+          } else {
+            switch (switcher + 42 | 0) {
+              case /* SkillSpecialization */0 :
+                  return Maybe$OptolithClient.Functor.$less$amp$great(Maybe$OptolithClient.Monad.$great$great$eq(sid1, (function (param) {
+                                    return getSkillFromOption(staticData, param);
+                                  })), (function (skill) {
+                                return Caml_int32.imul(ListH$OptolithClient.countBy((function (e) {
+                                                  if (Maybe$OptolithClient.Foldable.elem(/* `Skill */[
+                                                          290194801,
+                                                          skill.id
+                                                        ], Maybe$OptolithClient.listToMaybe(e.options))) {
+                                                    return Maybe$OptolithClient.isNothing(e.customCost);
+                                                  } else {
+                                                    return false;
+                                                  }
+                                                }), heroEntry.active) + (
+                                            isEntryToAdd ? 1 : 0
+                                          ) | 0, IC$OptolithClient.getAPForActivatation(skill.ic));
+                              }));
+              case /* Language */6 :
+                  return Maybe$OptolithClient.Monad.$great$great$eq(level, (function (level) {
+                                if (level !== 4) {
+                                  return Maybe$OptolithClient.Functor.$less$amp$great(ensureFlat(apValue$1), (function (param) {
+                                                return Caml_int32.imul(level, param);
+                                              }));
+                                } else {
+                                  return /* Just */[0];
+                                }
+                              }));
+              case /* PropertyKnowledge */10 :
+              case /* AspectKnowledge */12 :
+                  exit$1 = 1;
+                  break;
+              case /* AdaptionZauber */16 :
+              case /* FavoriteSpellwork */18 :
+                  exit$1 = 2;
+                  break;
+              case /* TraditionWitches */19 :
+                  var decreaseCost = function (id, cost) {
+                    if (Maybe$OptolithClient.maybe(false, isActive, Curry._2(IntMap$OptolithClient.lookup, id, hero.disadvantages))) {
+                      return cost - 10 | 0;
+                    } else {
+                      return cost;
+                    }
+                  };
+                  return Maybe$OptolithClient.Functor.$less$amp$great(ensureFlat(apValue$1), (function (flatAp) {
+                                return decreaseCost(Id$OptolithClient.disadvantageToInt(/* NoFamiliar */4), decreaseCost(Id$OptolithClient.disadvantageToInt(/* NoFlyingBalm */3), flatAp));
+                              }));
+              case /* Forschungsgebiet */26 :
+              case /* Expertenwissen */27 :
+              case /* Wissensdurst */28 :
+                  exit$1 = 3;
+                  break;
+              case /* Recherchegespuer */29 :
+                  return Maybe$OptolithClient.Monad.$great$great$eq(Curry._2(IntMap$OptolithClient.lookup, Id$OptolithClient.specialAbilityToInt(/* Wissensdurst */28), hero.specialAbilities), (function (wissensdurst) {
+                                return Maybe$OptolithClient.Monad.$great$great$eq(ensurePerLevel(apValue$1), (function (apPerLevel) {
+                                              var getCostFromHeroEntry = function (entry) {
+                                                return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(entry.options), (function (param) {
+                                                                  return getSkillFromOption(staticData, param);
+                                                                })), (function (skill) {
+                                                              return ListH$OptolithClient.$less$bang$bang$great(apPerLevel, IC$OptolithClient.icToIx(skill.ic));
+                                                            }));
+                                              };
+                                              return Maybe$OptolithClient.Monad.liftM2((function (prim, prim$1) {
+                                                            return prim + prim$1 | 0;
+                                                          }), getCostFromHeroEntry(singleHeroEntry), Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(wissensdurst.active), (function (fst) {
+                                                                return getCostFromHeroEntry(singleToSingleWithId(heroEntry, fst));
+                                                              })));
+                                            }));
+                              }));
+              case /* TerrainKnowledge */1 :
+              case /* CraftInstruments */2 :
+              case /* Hunter */3 :
+              case /* AreaKnowledge */4 :
+              case /* Literacy */5 :
+              case /* CombatReflexes */7 :
+              case /* ImprovedDodge */8 :
+              case /* TraditionGuildMages */9 :
+              case /* PropertyFocus */11 :
+              case /* TraditionChurchOfPraios */13 :
+              case /* Feuerschlucker */14 :
+              case /* CombatStyleCombination */15 :
+              case /* Exorzist */17 :
+              case /* MagicStyleCombination */20 :
+              case /* Harmoniezauberei */21 :
+              case /* Matrixzauberei */22 :
+              case /* TraditionElves */23 :
+              case /* TraditionDruids */24 :
+              case /* SpellEnhancement */25 :
+              case /* PredigtDerGemeinschaft */30 :
+              case /* PredigtDerZuversicht */31 :
+              case /* PredigtDesGottvertrauens */32 :
+              case /* PredigtDesWohlgefallens */33 :
+              case /* PredigtWiderMissgeschicke */34 :
+              case /* VisionDerBestimmung */35 :
+              case /* VisionDerEntrueckung */36 :
+              case /* VisionDerGottheit */37 :
+              case /* VisionDesSchicksals */38 :
+              case /* VisionDesWahrenGlaubens */39 :
+              case /* HoheWeihe */40 :
+                  return getDefaultEntryCost(staticEntry, singleHeroEntry);
+              case /* Lieblingsliturgie */41 :
+                  return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(singleHeroEntry.options), (function (sid) {
+                                if (typeof sid === "number") {
+                                  return /* Nothing */0;
+                                }
+                                if (sid[0] !== -384382742) {
+                                  return /* Nothing */0;
+                                }
+                                if (!apValue$1.tag) {
+                                  return /* Nothing */0;
+                                }
+                                var apValues = apValue$1[0];
+                                return Maybe$OptolithClient.Monad.$great$great$eq(Curry._2(IntMap$OptolithClient.lookup, sid[1], staticData.liturgicalChants), (function ($$static) {
+                                              return ListH$OptolithClient.$less$bang$bang$great(apValues, IC$OptolithClient.icToIx($$static.ic));
+                                            }));
+                              }));
+              
+            }
+          }
+        } else if (match$3 >= 85) {
+          if (match$3 >= 91) {
+            return getDefaultEntryCost(staticEntry, singleHeroEntry);
+          }
+          exit$1 = 3;
+        } else {
+          if (match$3 !== 83) {
+            return getDefaultEntryCost(staticEntry, singleHeroEntry);
+          }
+          exit$1 = 3;
+        }
+        switch (exit$1) {
+          case 1 :
+              return Maybe$OptolithClient.Monad.$great$great$eq(ensurePerLevel(apValue$1), (function (apPerLevel) {
+                            var amountActive = ListH$OptolithClient.countBy((function (e) {
+                                    return Maybe$OptolithClient.isNothing(e.customCost);
+                                  }), heroEntry.active);
+                            var index = amountActive + (
+                              isEntryToAdd ? 0 : -1
+                            ) | 0;
+                            return ListH$OptolithClient.$less$bang$bang$great(apPerLevel, index);
+                          }));
+          case 2 :
+              return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(singleHeroEntry.options), (function (sid) {
+                            if (typeof sid === "number") {
+                              return /* Nothing */0;
+                            }
+                            if (sid[0] !== 345443720) {
+                              return /* Nothing */0;
+                            }
+                            if (!apValue$1.tag) {
+                              return /* Nothing */0;
+                            }
+                            var apValues = apValue$1[0];
+                            return Maybe$OptolithClient.Monad.$great$great$eq(Curry._2(IntMap$OptolithClient.lookup, sid[1], staticData.spells), (function ($$static) {
+                                          return ListH$OptolithClient.$less$bang$bang$great(apValues, IC$OptolithClient.icToIx($$static.ic));
+                                        }));
+                          }));
+          case 3 :
+              return Maybe$OptolithClient.Monad.$great$great$eq(Maybe$OptolithClient.listToMaybe(singleHeroEntry.options), (function (sid) {
+                            if (typeof sid === "number") {
+                              return /* Nothing */0;
+                            }
+                            if (sid[0] !== 290194801) {
+                              return /* Nothing */0;
+                            }
+                            if (!apValue$1.tag) {
+                              return /* Nothing */0;
+                            }
+                            var apValues = apValue$1[0];
+                            return Maybe$OptolithClient.Monad.$great$great$eq(Curry._2(IntMap$OptolithClient.lookup, sid[1], staticData.skills), (function ($$static) {
+                                          return ListH$OptolithClient.$less$bang$bang$great(apValues, IC$OptolithClient.icToIx($$static.ic));
+                                        }));
+                          }));
+          
+        }
+        break;
+    
+  }
+}
+
+function getCost(isEntryToAdd, automaticAdvantages, staticData, hero, staticEntry, heroEntry, singleHeroEntry) {
+  var isAutomatic = ListH$OptolithClient.elem(singleHeroEntry.id, automaticAdvantages);
+  var modifyAbs;
+  switch (staticEntry.tag | 0) {
+    case /* Disadvantage */1 :
+        modifyAbs = Int$OptolithClient.negate;
+        break;
+    case /* Advantage */0 :
+    case /* SpecialAbility */2 :
+        modifyAbs = Function$OptolithClient.id;
+        break;
+    
+  }
+  var customCost = singleHeroEntry.customCost;
+  if (customCost) {
+    return /* tuple */[
+            Curry._1(modifyAbs, customCost[0]),
+            isAutomatic
+          ];
+  } else {
+    return /* tuple */[
+            Curry._1(modifyAbs, Maybe$OptolithClient.fromMaybe(0, getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroEntry, singleHeroEntry))),
+            isAutomatic
+          ];
+  }
 }
 
 var Names = {
   getName: getName
+};
+
+var AdventurePoints = {
+  getCost: getCost
 };
 
 exports.isActive = isActive;
@@ -635,4 +1200,5 @@ exports.Convert = Convert;
 exports.Accessors = Accessors;
 exports.SelectOptions = SelectOptions;
 exports.Names = Names;
+exports.AdventurePoints = AdventurePoints;
 /* IntMap-OptolithClient Not a pure module */

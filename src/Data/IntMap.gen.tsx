@@ -283,26 +283,3 @@ export const mapMaybeWithKey: <a,b>(_1:((_1:key, _2:a) => Maybe_t<b>), _2:t<a>) 
     }, Arg21);
   return result
 };
-
-export const Foldable: {
-  minimum: (_1:t<number>) => number; 
-  foldl: <a,b>(_1:((_1:a, _2:b) => a), _2:a, _3:t<b>) => a; 
-  length: <a>(_1:t<a>) => number; 
-  product: (_1:t<number>) => number; 
-  concat: <a>(_1:t<list<a>>) => list<a>; 
-  elem: <a>(_1:a, _2:t<a>) => boolean; 
-  concatMap: <a,b>(_1:((_1:a) => t<b>), _2:t<a>) => t<b>; 
-  and: (_1:t<boolean>) => boolean; 
-  sum: (_1:t<number>) => number; 
-  notElem: <a>(_1:a, _2:t<a>) => boolean; 
-  toList: <a>(_1:t<a>) => list<[key, a]>; 
-  fnull: <a>(_1:t<a>) => boolean; 
-  any: <a>(_1:((_1:a) => boolean), _2:t<a>) => boolean; 
-  maximum: (_1:t<number>) => number; 
-  or: (_1:t<boolean>) => boolean; 
-  find: <a>(_1:((_1:a) => boolean), _2:t<a>) => Maybe_t<a>; 
-  foldr: <a,b>(_1:((_1:a, _2:b) => b), _2:b, _3:t<a>) => b; 
-  all: <a>(_1:((_1:a) => boolean), _2:t<a>) => boolean
-} = IntMapBS.Foldable
-
-export const Traversable: { mapMEither: <a,b,c>(_1:((_1:a) => Either_t<b,c>), _2:t<a>) => Either_t<b,t<c>> } = IntMapBS.Traversable

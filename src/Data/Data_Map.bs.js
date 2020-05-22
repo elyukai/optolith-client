@@ -239,9 +239,9 @@ function Make(funarg) {
   };
   var mapMaybe = function (f, mp) {
     return Curry._3(TypedMap.fold, (function (k, x, acc) {
-                  var match = Curry._1(f, x);
-                  if (match) {
-                    return Curry._3(insert, k, match[0], acc);
+                  var y = Curry._1(f, x);
+                  if (y) {
+                    return Curry._3(insert, k, y[0], acc);
                   } else {
                     return acc;
                   }
@@ -249,9 +249,9 @@ function Make(funarg) {
   };
   var mapMaybeWithKey = function (f, mp) {
     return Curry._3(TypedMap.fold, (function (k, x, acc) {
-                  var match = Curry._2(f, k, x);
-                  if (match) {
-                    return Curry._3(insert, k, match[0], acc);
+                  var y = Curry._2(f, k, x);
+                  if (y) {
+                    return Curry._3(insert, k, y[0], acc);
                   } else {
                     return acc;
                   }
@@ -279,27 +279,25 @@ function Make(funarg) {
                 }), empty, xs);
   };
   var mapMEitherHelper = function (f, xs) {
-    if (xs) {
-      var match = xs[0];
-      var new_value = Curry._1(f, match[1]);
-      if (new_value.tag) {
-        var match$1 = mapMEitherHelper(f, xs[1]);
-        if (match$1.tag) {
-          return /* Right */Block.__(1, [/* :: */[
-                      /* tuple */[
-                        match[0],
-                        new_value[0]
-                      ],
-                      match$1[0]
-                    ]]);
-        } else {
-          return /* Left */Block.__(0, [match$1[0]]);
-        }
-      } else {
-        return /* Left */Block.__(0, [new_value[0]]);
-      }
-    } else {
+    if (!xs) {
       return /* Right */Block.__(1, [/* [] */0]);
+    }
+    var match = xs[0];
+    var new_value = Curry._1(f, match[1]);
+    if (!new_value.tag) {
+      return /* Left */Block.__(0, [new_value[0]]);
+    }
+    var zs = mapMEitherHelper(f, xs[1]);
+    if (zs.tag) {
+      return /* Right */Block.__(1, [/* :: */[
+                  /* tuple */[
+                    match[0],
+                    new_value[0]
+                  ],
+                  zs[0]
+                ]]);
+    } else {
+      return /* Left */Block.__(0, [zs[0]]);
     }
   };
   var mapMEither = function (f, mp) {

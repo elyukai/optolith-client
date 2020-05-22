@@ -16,13 +16,13 @@ function parseStaticData(locale) {
                   })));
 }
 
-var Decode = /* alias */0;
+var Decode;
 
-var Integrity = /* alias */0;
+var Integrity;
 
-var Raw = /* alias */0;
+var Raw;
 
-var Zip = /* alias */0;
+var Zip;
 
 exports.Decode = Decode;
 exports.Integrity = Integrity;

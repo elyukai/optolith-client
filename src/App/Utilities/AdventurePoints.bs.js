@@ -104,35 +104,33 @@ function getApSpentOnCombatTechniques(staticData) {
 
 function getApSpentOnSpells(staticData) {
   return Curry._2(IntMap$OptolithClient.Foldable.foldr, (function (x) {
-                var match = x.value;
-                if (match) {
-                  var value = match[0];
-                  return Maybe$OptolithClient.maybe(Function$OptolithClient.id, (function (staticEntry) {
-                                var partial_arg = IC$OptolithClient.getAPForRange(staticEntry.ic, 0, value);
-                                return (function (param) {
-                                    return partial_arg + param | 0;
-                                  });
-                              }), Curry._2(IntMap$OptolithClient.lookup, x.id, staticData.spells));
-                } else {
+                var value = x.value;
+                if (!value) {
                   return Function$OptolithClient.id;
                 }
+                var value$1 = value[0];
+                return Maybe$OptolithClient.maybe(Function$OptolithClient.id, (function (staticEntry) {
+                              var partial_arg = IC$OptolithClient.getAPForRange(staticEntry.ic, 0, value$1);
+                              return (function (param) {
+                                  return partial_arg + param | 0;
+                                });
+                            }), Curry._2(IntMap$OptolithClient.lookup, x.id, staticData.spells));
               }), 0);
 }
 
 function getApSpentOnLiturgicalChants(staticData) {
   return Curry._2(IntMap$OptolithClient.Foldable.foldr, (function (x) {
-                var match = x.value;
-                if (match) {
-                  var value = match[0];
-                  return Maybe$OptolithClient.maybe(Function$OptolithClient.id, (function (staticEntry) {
-                                var partial_arg = IC$OptolithClient.getAPForRange(staticEntry.ic, 0, value);
-                                return (function (param) {
-                                    return partial_arg + param | 0;
-                                  });
-                              }), Curry._2(IntMap$OptolithClient.lookup, x.id, staticData.liturgicalChants));
-                } else {
+                var value = x.value;
+                if (!value) {
                   return Function$OptolithClient.id;
                 }
+                var value$1 = value[0];
+                return Maybe$OptolithClient.maybe(Function$OptolithClient.id, (function (staticEntry) {
+                              var partial_arg = IC$OptolithClient.getAPForRange(staticEntry.ic, 0, value$1);
+                              return (function (param) {
+                                  return partial_arg + param | 0;
+                                });
+                            }), Curry._2(IntMap$OptolithClient.lookup, x.id, staticData.liturgicalChants));
               }), 0);
 }
 
