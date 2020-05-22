@@ -156,6 +156,8 @@ export const parseConfig = async () => {
                                  validated_data.enableActiveItemHints,
                                locale:
                                  Maybe (validated_data.locale),
+                               fallbackLocale:
+                                 Maybe (validated_data.fallbackLocale),
                                theme:
                                  validated_data.theme === "dark"
                                  ? Just (Theme.Dark)
@@ -186,6 +188,7 @@ export const writeConfig = (x: Record<Config>): string => {
     ...obj,
     sheetCheckAttributeValueVisibility: maybeToUndefined (obj.sheetCheckAttributeValueVisibility),
     locale: maybeToUndefined (obj.locale),
+    fallbackLocale: maybeToUndefined (obj.fallbackLocale),
     theme: maybeToUndefined (obj.theme),
     enableEditingHeroAfterCreationPhase: maybeToUndefined (obj.enableEditingHeroAfterCreationPhase),
     enableAnimations: maybeToUndefined (obj.enableAnimations),

@@ -24,6 +24,8 @@ export interface SettingsOwnProps {
 export interface SettingsStateProps {
   localeString: Maybe<string>
   localeType: "default" | "set"
+  fallbackLocaleString: Maybe<string>
+  fallbackLocaleType: "default" | "set"
   theme: Theme
   isEditingHeroAfterCreationPhaseEnabled: boolean
   areAnimationsEnabled: boolean
@@ -33,6 +35,7 @@ export interface SettingsStateProps {
 export interface SettingsDispatchProps {
   saveConfig (): void
   setLocale (id: Maybe<string>): void
+  setFallbackLocale (id: Maybe<string>): void
   setTheme (id: Maybe<string>): void
   switchEnableEditingHeroAfterCreationPhase (): void
   switchEnableAnimations (): void
@@ -48,6 +51,9 @@ export const Settings: React.FC<Props> = props => {
     localeString,
     localeType,
     setLocale,
+    fallbackLocaleString,
+    fallbackLocaleType,
+    setFallbackLocale,
     setTheme,
     saveConfig,
     isSettingsOpen,
@@ -83,6 +89,17 @@ export const Settings: React.FC<Props> = props => {
         value={localeType === "default" ? Nothing : localeString}
         label={translate (staticData) ("settings.language")}
         onChange={setLocale}
+        />
+      <Dropdown
+        options={List (
+          DropdownOption ({
+            name: translate (staticData) ("settings.systemlanguage"),
+          }),
+          ...languages
+        )}
+        value={fallbackLocaleType === "default" ? Nothing : fallbackLocaleString}
+        label={translate (staticData) ("settings.fallbacklanguage")}
+        onChange={setFallbackLocale}
         />
       <p>{translate (staticData) ("settings.languagehint")}</p>
       <SegmentedControls
