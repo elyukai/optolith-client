@@ -84,6 +84,10 @@ export const zipBy : <K extends string> (key : K)
                          // no override found, fall back to base.
                          ress.push([ os[k], base[k] ])
                        }
+                       else if (override[k] === undefined) {
+                         // no override found, fall back to base.
+                         ress.push([ os[k], base[k] ])
+                       }
                        else {
                          // override found
                          ress.push ([ os[k], override[k] ])
