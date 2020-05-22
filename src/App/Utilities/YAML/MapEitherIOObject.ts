@@ -1,7 +1,7 @@
 import { Either, fromLeft_, fromRight_, isLeft, Left, Right } from "../../../Data/Either"
 import { IO } from "../../../System/IO"
 
-type MapToEitherIO<L, A> = { [K in keyof A]: IO<Either<L, A [K]>> }
+type MapToEitherIO<L, A> = { [K in keyof A]: IO<Either<L, A [K]>>|undefined }
 
 type MapEitherIORejected<L, A> = { [K in keyof A]?: L }
 
@@ -13,6 +13,9 @@ export const mapMObjectIO =
     let err: MapEitherIORejected<L, A> | undefined = undefined
 
     for (const [ key, ioValue ] of Object.entries (obj) as [keyof A, IO<Either<L, any>>][]) {
+      if (ioValue === undefined)
+        continue;
+        
       const value = await ioValue
 
       if (isLeft (value)) {

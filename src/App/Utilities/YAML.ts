@@ -31,8 +31,8 @@ export const parseStaticData : (locale : string) => Promise<Either<Error[], Stat
                                const default_parser = readYamlL10n("de-DE") (validator)
 
                                const estatic_data_by_file = await parseByFile (univ_parser)
-                                                                              (l10n_parser)
                                                                               (default_parser)
+                                                                              (l10n_parser)
 
                                if (isLeft (estatic_data_by_file)) {
                                  const errs = fromLeft_ (estatic_data_by_file)
