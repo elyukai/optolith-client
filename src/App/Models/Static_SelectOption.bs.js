@@ -200,12 +200,11 @@ function resolveWithoutGroups(f, mp, xs) {
 
 function resolveGroups(f, g, grs, mp, xs) {
   return Curry._3(IntMap$OptolithClient.Foldable.foldr, (function (x) {
-                if (ListH$OptolithClient.Foldable.elem(Curry._1(g, x), grs)) {
-                  var s = Curry._1(f, x);
-                  return Curry._2(SelectOptionMap.insert, s.id, s);
-                } else {
+                if (!ListH$OptolithClient.Foldable.elem(Curry._1(g, x), grs)) {
                   return Function$OptolithClient.id;
                 }
+                var s = Curry._1(f, x);
+                return Curry._2(SelectOptionMap.insert, s.id, s);
               }), xs, mp);
 }
 
@@ -239,18 +238,17 @@ function combatTechniqueToSelectOption(x) {
 }
 
 function resolveCombatTechniques(mgrs) {
-  if (mgrs) {
-    var grs = mgrs[0];
-    return (function (param, param$1) {
-        return resolveGroups(combatTechniqueToSelectOption, (function (x) {
-                      return x.gr;
-                    }), grs, param, param$1);
-      });
-  } else {
+  if (!mgrs) {
     return (function (param, param$1) {
         return resolveWithoutGroups(combatTechniqueToSelectOption, param, param$1);
       });
   }
+  var grs = mgrs[0];
+  return (function (param, param$1) {
+      return resolveGroups(combatTechniqueToSelectOption, (function (x) {
+                    return x.gr;
+                  }), grs, param, param$1);
+    });
 }
 
 function liturgicalChantToSelectOption(x) {
@@ -261,18 +259,17 @@ function liturgicalChantToSelectOption(x) {
 }
 
 function resolveLiturgicalChants(mgrs) {
-  if (mgrs) {
-    var grs = mgrs[0];
-    return (function (param, param$1) {
-        return resolveGroups(liturgicalChantToSelectOption, (function (x) {
-                      return x.gr;
-                    }), grs, param, param$1);
-      });
-  } else {
+  if (!mgrs) {
     return (function (param, param$1) {
         return resolveWithoutGroups(liturgicalChantToSelectOption, param, param$1);
       });
   }
+  var grs = mgrs[0];
+  return (function (param, param$1) {
+      return resolveGroups(liturgicalChantToSelectOption, (function (x) {
+                    return x.gr;
+                  }), grs, param, param$1);
+    });
 }
 
 function skillToSelectOption(x) {
@@ -283,18 +280,17 @@ function skillToSelectOption(x) {
 }
 
 function resolveSkills(mgrs) {
-  if (mgrs) {
-    var grs = mgrs[0];
-    return (function (param, param$1) {
-        return resolveGroups(skillToSelectOption, (function (x) {
-                      return x.gr;
-                    }), grs, param, param$1);
-      });
-  } else {
+  if (!mgrs) {
     return (function (param, param$1) {
         return resolveWithoutGroups(skillToSelectOption, param, param$1);
       });
   }
+  var grs = mgrs[0];
+  return (function (param, param$1) {
+      return resolveGroups(skillToSelectOption, (function (x) {
+                    return x.gr;
+                  }), grs, param, param$1);
+    });
 }
 
 function spellToSelectOption(x) {
@@ -305,18 +301,17 @@ function spellToSelectOption(x) {
 }
 
 function resolveSpells(mgrs) {
-  if (mgrs) {
-    var grs = mgrs[0];
-    return (function (param, param$1) {
-        return resolveGroups(spellToSelectOption, (function (x) {
-                      return x.gr;
-                    }), grs, param, param$1);
-      });
-  } else {
+  if (!mgrs) {
     return (function (param, param$1) {
         return resolveWithoutGroups(spellToSelectOption, param, param$1);
       });
   }
+  var grs = mgrs[0];
+  return (function (param, param$1) {
+      return resolveGroups(spellToSelectOption, (function (x) {
+                    return x.gr;
+                  }), grs, param, param$1);
+    });
 }
 
 function resolveCategories(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, categories) {

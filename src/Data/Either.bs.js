@@ -63,7 +63,7 @@ function maybeToEither$prime(left, x) {
   if (x) {
     return /* Right */Block.__(1, [x[0]]);
   } else {
-    return /* Left */Block.__(0, [Curry._1(left, /* () */0)]);
+    return /* Left */Block.__(0, [Curry._1(left, undefined)]);
   }
 }
 
@@ -297,13 +297,12 @@ function notElem(e, mx) {
 }
 
 function find(pred, mx) {
-  if (mx.tag) {
-    var x = mx[0];
-    if (Curry._1(pred, x)) {
-      return /* Just */[x];
-    } else {
-      return /* Nothing */0;
-    }
+  if (!mx.tag) {
+    return /* Nothing */0;
+  }
+  var x = mx[0];
+  if (Curry._1(pred, x)) {
+    return /* Just */[x];
   } else {
     return /* Nothing */0;
   }
