@@ -149,6 +149,7 @@ const ActivatableRemoveListItem: React.FC<ActivatableRemoveListItemProps> = prop
                     (AAA_.addName (item))
             : AAA_.name (item)
         }
+        onClick={handleSelectForInfo}
         />
       <ListItemSelections>
         {pipe_ (

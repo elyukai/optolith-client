@@ -4,16 +4,19 @@ import { ReduxDispatch } from "../Actions/Actions"
 import * as ConfigActions from "../Actions/ConfigActions"
 import * as IOActions from "../Actions/IOActions"
 import * as LocaleActions from "../Actions/LocaleActions"
+import * as FallbackLocaleActions from "../Actions/FallbackLocaleActions"
 import { AppStateRecord } from "../Models/AppState"
 import { Locale, Theme } from "../Models/Config"
 import { getUserSelectableSupportedLanguages } from "../Selectors/localeSelectors"
-import { getLocaleId, getLocaleType } from "../Selectors/stateSelectors"
+import { getLocaleId, getLocaleType, getFallbackLocaleId, getFallbackLocaleType } from "../Selectors/stateSelectors"
 import { areAnimationsEnabled, getIsEditingHeroAfterCreationPhaseEnabled, getTheme } from "../Selectors/uisettingsSelectors"
 import { Settings, SettingsDispatchProps, SettingsOwnProps, SettingsStateProps } from "../Views/Settings/Settings"
 
 const mapStateToProps = (state: AppStateRecord): SettingsStateProps => ({
   localeString: getLocaleId (state),
   localeType: getLocaleType (state),
+  fallbackLocaleString: getFallbackLocaleId (state),
+  fallbackLocaleType: getFallbackLocaleType (state),
   isEditingHeroAfterCreationPhaseEnabled: getIsEditingHeroAfterCreationPhaseEnabled (state),
   areAnimationsEnabled: areAnimationsEnabled (state),
   theme: getTheme (state),
@@ -34,6 +37,9 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): SettingsDispatchProps => (
   },
   setLocale (id: Maybe<Locale>) {
     dispatch (LocaleActions.setLocale (id))
+  },
+  setFallbackLocale (id: Maybe<Locale>) {
+    dispatch (FallbackLocaleActions.setFallbackLocale (id))
   },
   switchEnableAnimations () {
     dispatch (ConfigActions.switchEnableAnimations ())

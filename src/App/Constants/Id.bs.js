@@ -87,7 +87,7 @@ function derivedCharacteristicToString(id) {
         return "MOV";
     case /* WoundThreshold */8 :
         return "WT";
-    
+
   }
 }
 
@@ -284,7 +284,7 @@ function advantageToInt(id) {
         return 92;
     case /* Einkommen */27 :
         return 99;
-    
+
   }
 }
 
@@ -449,7 +449,7 @@ function disadvantageToInt(id) {
         return 72;
     case /* WenigeVisionen */24 :
         return 73;
-    
+
   }
 }
 
@@ -560,7 +560,7 @@ function combatTechniqueToInt(id) {
         return 20;
     case /* Spiesswaffen */19 :
         return 21;
-    
+
   }
 }
 
@@ -683,7 +683,7 @@ function specialAbilityFromInt(id) {
             return /* Other */[id];
         case 27 :
             return /* Universalgenie */90;
-        
+
       }
     } else {
       if (id >= 809) {
@@ -734,7 +734,7 @@ function specialAbilityFromInt(id) {
               return /* Other */[id];
           case 9 :
               return /* Kraftliniennutzung */76;
-          
+
         }
       } else if (id >= 663) {
         if (id >= 751) {
@@ -858,7 +858,7 @@ function specialAbilityFromInt(id) {
               return /* Other */[id];
           case 87 :
               return /* TraditionZauberalchimisten */73;
-          
+
         }
       } else {
         if (id >= 640) {
@@ -887,7 +887,7 @@ function specialAbilityFromInt(id) {
               return /* Other */[id];
           case 16 :
               return /* GebieterDesAspekts */45;
-          
+
         }
       }
     }
@@ -1059,7 +1059,7 @@ function specialAbilityFromInt(id) {
             return /* TraditionChurchOfPraios */13;
         case 23 :
             return /* AspectKnowledge */12;
-        
+
       }
     } else {
       if (id >= 30) {
@@ -1102,7 +1102,7 @@ function specialAbilityFromInt(id) {
             return /* Other */[id];
         case 20 :
             return /* Language */6;
-        
+
       }
     }
   }
@@ -1307,33 +1307,9 @@ function specialAbilityToInt(id) {
         return 1391;
     case /* TraditionBrobimGeoden */96 :
         return 1438;
-    
+
   }
 }
 
-export {
-  unsafePhaseFromInt ,
-  phaseToInt ,
-  unsafeExperienceLevelFromInt ,
-  experienceLevelToInt ,
-  unsafeAttributeFromInt ,
-  attributeToInt ,
-  unsafeDerivedCharacteristicFromString ,
-  derivedCharacteristicToString ,
-  advantageFromInt ,
-  advantageToInt ,
-  disadvantageFromInt ,
-  disadvantageToInt ,
-  unsafeSkillFromInt ,
-  skillToInt ,
-  combatTechniqueFromInt ,
-  combatTechniqueToInt ,
-  unsafeCombatTechniqueGroupFromInt ,
-  combatTechniqueGroupToInt ,
-  propertyFromInt ,
-  propertyToInt ,
-  specialAbilityFromInt ,
-  specialAbilityToInt ,
-  
-}
+export { unsafePhaseFromInt, phaseToInt, unsafeExperienceLevelFromInt, experienceLevelToInt, unsafeAttributeFromInt, attributeToInt, unsafeDerivedCharacteristicFromString, derivedCharacteristicToString, advantageFromInt, advantageToInt, disadvantageFromInt, disadvantageToInt, unsafeSkillFromInt, skillToInt, combatTechniqueFromInt, combatTechniqueToInt, unsafeCombatTechniqueGroupFromInt, combatTechniqueGroupToInt, propertyFromInt, propertyToInt, specialAbilityFromInt, specialAbilityToInt, };
 /* No side effect */

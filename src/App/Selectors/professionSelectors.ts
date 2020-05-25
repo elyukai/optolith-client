@@ -561,7 +561,7 @@ const filterProfession =
                    ? !is_included && is_from_core_book
 
                    // if not reversed, the entry must be in the list to be common
-                   : is_included && is_from_core_book
+                   : is_included && (is_from_core_book || is_id_included)
                })
                (mcommon_profs_for_gr)
 

@@ -42,7 +42,8 @@ export const toCurses : YamlFileConverter<string, Record<Curse>>
                       = pipe (
                           (yaml_mp : YamlNameMap) => zipBy ("id")
                                                            (yaml_mp.CursesUniv)
-                                                           (yaml_mp.CursesL10n),
+                                                           (yaml_mp.CursesL10nDefault)
+                                                           (yaml_mp.CursesL10nOverride),
                           bindF (pipe (
                             mapM (toCurse),
                             bindF (toMapIntegrity),

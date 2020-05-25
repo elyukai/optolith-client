@@ -80,6 +80,12 @@ const SkillListItem: React.FC<Props> = props => {
     selectForInfo,
   } = props
 
+  const handleSelectForInfo =
+    React.useCallback (
+      () => selectForInfo (id),
+      [ selectForInfo, id ]
+    )
+
   return (
     <ListItem
       noIncrease={noIncrease}
@@ -88,7 +94,7 @@ const SkillListItem: React.FC<Props> = props => {
       insertTopMargin={insertTopMargin}
       active={Maybe.elem (id) (selectedForInfo)}
       >
-      <ListItemName name={name} />
+      <ListItemName name={name} onClick={handleSelectForInfo} />
       <ListItemSeparator />
       <SkillGroup
         addText={addText}

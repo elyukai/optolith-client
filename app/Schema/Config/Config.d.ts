@@ -23,6 +23,7 @@ export interface RawConfig {
   sheetCheckAttributeValueVisibility?: boolean
   enableActiveItemHints: boolean
   locale?: string
+  fallbackLocale?: string
   theme?: "light" | "dark"
   enableEditingHeroAfterCreationPhase?: boolean
   meleeItemTemplatesCombatTechniqueFilter?: string

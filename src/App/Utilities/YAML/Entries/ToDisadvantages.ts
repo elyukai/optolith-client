@@ -121,9 +121,11 @@ export const toDisadvantages : (blessings : StrMap<Record<Blessing>>)
                                liturgicalChants =>
                                skills =>
                                spells => pipe (
-                                 (yaml_mp : YamlNameMap) => zipBy ("id")
-                                                                  (yaml_mp.DisadvantagesUniv)
-                                                                  (yaml_mp.DisadvantagesL10n),
+                                 (yaml_mp : YamlNameMap) =>
+                                  zipBy ("id")
+                                        (yaml_mp.DisadvantagesUniv)
+                                        (yaml_mp.DisadvantagesL10nDefault)
+                                        (yaml_mp.DisadvantagesL10nOverride),
                                  bindF (pipe (
                                    mapM (toDisadv (blessings)
                                                   (cantrips)
