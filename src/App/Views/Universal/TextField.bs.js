@@ -3,25 +3,12 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Js_int from "bs-platform/lib/es6/js_int.js";
+import * as Label$OptolithClient from "./Label.bs.js";
 import * as Ley_Ix$OptolithClient from "../../../Data/Ley_Ix.bs.js";
 import * as Ley_Int$OptolithClient from "../../../Data/Ley_Int.bs.js";
 import * as Ley_List$OptolithClient from "../../../Data/Ley_List.bs.js";
 import * as ClassNames$OptolithClient from "../../Utilities/ClassNames.bs.js";
 import * as Ley_Option$OptolithClient from "../../../Data/Ley_Option.bs.js";
-
-function TextField$Label(Props) {
-  var name = Props.name;
-  var labelText = Props.labelText;
-  return Ley_Option$OptolithClient.option(null, (function (str) {
-                return React.createElement("label", {
-                            htmlFor: name
-                          }, str);
-              }), Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNullStr, labelText));
-}
-
-var Label = {
-  make: TextField$Label
-};
 
 function isValueInvalid(value) {
   return (function (param) {
@@ -184,10 +171,11 @@ function TextField$Integer(Props) {
                       ]
                     ]
                   ])
-            }, React.createElement(TextField$Label, {
+            }, React.createElement(Label$OptolithClient.make, {
                   name: name,
                   labelText: label
                 }), React.createElement("input", {
+                  id: name,
                   name: name,
                   placeholder: placeholder,
                   type: "number",
@@ -292,11 +280,12 @@ function TextField$String(Props) {
                       ]
                     ]
                   ])
-            }, React.createElement(TextField$Label, {
+            }, React.createElement(Label$OptolithClient.make, {
                   name: name,
                   labelText: label
                 }), React.createElement("input", {
                   className: valid ? "" : "invalid",
+                  id: name,
                   name: name,
                   placeholder: placeholder,
                   type: "text",
@@ -312,7 +301,6 @@ var $$String = {
 };
 
 export {
-  Label ,
   Invalid ,
   Integer ,
   $$String ,

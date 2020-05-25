@@ -38,7 +38,7 @@ module Button = {
  * action and displayes a set of two or more choices.
  *
  * An action sheet should be used to initiate an action or to confirm a
- * destructive action.
+ * destructive action; use it to request information on how to proceed.
  *
  * An action sheet contains an optional description and one or more buttons as
  * well as a cancel button, which is included by default and does not need to be

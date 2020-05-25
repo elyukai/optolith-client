@@ -1,5 +1,4 @@
 open Ley.List;
-open Ley.Option;
 open ReactUtils;
 
 type alertButtonStyle =
@@ -31,7 +30,9 @@ module StringInput = {
   /**
    * Alerts provide information about the current state of the app, which
    * (often) requires feedback from the user. An string input alert consists of
-   * a title, an optional message, one or more buttons and a string input.
+   * a title, an optional message, one or more buttons and a string input. It is
+   * often used to inform the user about an (unexpected) error or unusual
+   * conditions.
    *
    * This is a variant of the default alert component, which includes a string
    * input and a strict set of buttons: A submit button and a cancel button. The
@@ -103,7 +104,8 @@ module StringInput = {
 /**
  * Alerts provide information about the current state of the app, which (often)
  * requires feedback from the user. An alert consists of a title, an optional
- * message and one or more buttons.
+ * message and one or more buttons. It is often used to inform the user about an
+ * (unexpected) error or unusual conditions.
  *
  * If your alert has more than two buttons, consider using an action sheet
  * instead.

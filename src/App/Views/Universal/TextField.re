@@ -1,13 +1,3 @@
-module Label = {
-  [@react.component]
-  let make = (~name, ~labelText) =>
-    labelText
-    |> Ley.Option.ensure(Ley.List.Extra.notNullStr)
-    |> Ley.Option.option(React.null, str => {
-         <label htmlFor=name> {React.string(str)} </label>
-       });
-};
-
 module Invalid = {
   /**
    * Iterates through a list of pairs, where the first value is a predicate for
@@ -154,6 +144,7 @@ module Integer = {
       <input
         type_="number"
         name
+        id=name
         value=internalValue
         onChange=handleChange
         onBlur=handleBlur
@@ -237,6 +228,7 @@ module String = {
       <input
         type_="text"
         name
+        id=name
         className={valid ? "" : "invalid"}
         value=internalValue
         onChange=handleChange

@@ -4,6 +4,8 @@
  * inspired by Haskell.
  */
 [@genType]
+module Bool = Ley_Bool;
+[@genType]
 module Function = Ley_Function;
 [@genType]
 module Int = Ley_Int;

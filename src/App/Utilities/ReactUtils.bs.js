@@ -6,13 +6,23 @@ function s(prim) {
   return prim;
 }
 
+function arr(prim) {
+  return prim;
+}
+
 function optionR(f, x) {
   return Ley_Option$OptolithClient.option(null, f, x);
 }
 
+function eventTargetToDom(x) {
+  return x;
+}
+
 export {
   s ,
+  arr ,
   optionR ,
+  eventTargetToDom ,
   
 }
 /* No side effect */

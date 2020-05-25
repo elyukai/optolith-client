@@ -1,30 +1,12 @@
 open Webapi.Dom;
 open Ley.Option.Functor;
+open ReactUtils;
 
-let modalRoot = Document.querySelector("#modals-root", document);
-
-let%private eventTargetToDom =
-            (x: Js.t({..})): Dom.eventTarget_like(Dom._node('a)) =>
-  Obj.magic(x);
+[@bs.scope "document"] [@bs.val] external body: Dom.element = "body";
 
 [@react.component]
 let make = (~baseClassName, ~className=?, ~children, ~isOpen, ~onBackdrop) => {
-  let element = React.useMemo(() => Document.createElement("div", document));
-
   let backdropRef = React.useRef(Js.Nullable.null);
-
-  React.useEffect1(
-    () =>
-      modalRoot
-      <&> (
-        rootElement => {
-          Element.appendChild(element, rootElement);
-
-          () => ignore(Element.removeChild(element, rootElement));
-        }
-      ),
-    [|element|],
-  );
 
   let handleBackdropClick =
     React.useCallback1(
@@ -45,18 +27,20 @@ let make = (~baseClassName, ~className=?, ~children, ~isOpen, ~onBackdrop) => {
       [|onBackdrop|],
     );
 
-  ReactDOMRe.createPortal(
-    isOpen
-      ? <div
+  isOpen
+    ? ReactDOMRe.createPortal(
+        <div
           className={ClassNames.fold([
             Ley.Option.Monad.return(baseClassName ++ "-backdrop"),
             className,
           ])}
           onClick=handleBackdropClick
           ref={ReactDOMRe.Ref.domRef(backdropRef)}>
-          <article className=baseClassName> children </article>
-        </div>
-      : React.null,
-    element,
-  );
+          <div className=baseClassName role="dialog" ariaModal=true>
+            children
+          </div>
+        </div>,
+        body,
+      )
+    : React.null;
 };

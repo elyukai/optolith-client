@@ -6,10 +6,7 @@ import * as ReactDom from "react-dom";
 import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
 import * as ClassNames$OptolithClient from "../../Utilities/ClassNames.bs.js";
 import * as Ley_Option$OptolithClient from "../../../Data/Ley_Option.bs.js";
-
-var modalRoot = document.querySelector("#modals-root");
-
-var modalRoot$1 = (modalRoot == null) ? undefined : Caml_option.some(modalRoot);
+import * as ReactUtils$OptolithClient from "../../Utilities/ReactUtils.bs.js";
 
 function Overlay(Props) {
   var baseClassName = Props.baseClassName;
@@ -17,29 +14,18 @@ function Overlay(Props) {
   var children = Props.children;
   var isOpen = Props.isOpen;
   var onBackdrop = Props.onBackdrop;
-  var element = React.useMemo((function () {
-          return document.createElement("div");
-        }));
   var backdropRef = React.useRef(null);
-  React.useEffect((function () {
-          return Ley_Option$OptolithClient.Functor.$less$amp$great(modalRoot$1, (function (rootElement) {
-                        rootElement.appendChild(element);
-                        return (function (param) {
-                            rootElement.removeChild(element);
-                            
-                          });
-                      }));
-        }), [element]);
   var handleBackdropClick = React.useCallback((function ($$event) {
           Ley_Option$OptolithClient.Functor.$less$amp$great(Caml_option.nullable_to_opt(backdropRef.current), (function (currentRef) {
-                  if (!currentRef.contains($$event.target)) {
+                  if (!currentRef.contains(ReactUtils$OptolithClient.eventTargetToDom($$event.target))) {
                     return Curry._1(onBackdrop, $$event);
                   }
                   
                 }));
           
         }), [onBackdrop]);
-  return ReactDom.createPortal(isOpen ? React.createElement("div", {
+  if (isOpen) {
+    return ReactDom.createPortal(React.createElement("div", {
                     ref: backdropRef,
                     className: ClassNames$OptolithClient.fold(/* :: */[
                           Ley_Option$OptolithClient.Monad.$$return(baseClassName + "-backdrop"),
@@ -49,16 +35,20 @@ function Overlay(Props) {
                           ]
                         ]),
                     onClick: handleBackdropClick
-                  }, React.createElement("article", {
-                        className: baseClassName
-                      }, children)) : null, element);
+                  }, React.createElement("div", {
+                        "aria-modal": true,
+                        className: baseClassName,
+                        role: "dialog"
+                      }, children)), document.body);
+  } else {
+    return null;
+  }
 }
 
 var make = Overlay;
 
 export {
-  modalRoot$1 as modalRoot,
   make ,
   
 }
-/* modalRoot Not a pure module */
+/* react Not a pure module */
