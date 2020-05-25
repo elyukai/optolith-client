@@ -13,9 +13,9 @@ import { mergeBy } from "../ZipById"
 
 export const toAttributes : YamlFileConverter<string, Record<Attribute>>
                           = pipe (
-                            yaml_mp => mergeBy("id")
-                                              (yaml_mp.AttributesL10nDefault)
-                                              (yaml_mp.AttributesL10nOverride),
+                            yaml_mp => mergeBy ("id")
+                                               (yaml_mp.AttributesL10nDefault)
+                                               (yaml_mp.AttributesL10nOverride),
                             map ((x) : [string, Record<Attribute>] => [
                               x .id,
                               Attribute ({

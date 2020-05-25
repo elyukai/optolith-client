@@ -17,9 +17,10 @@ const toSpecialAbilityGroup : (x : SpecialAbilityGroupL10n) => [number, Record<N
 
 export const toSpecialAbilityGroups : YamlFileConverter<number, Record<NumIdName>>
                                     = pipe (
-                                        yaml_mp => mergeBy("id")
-                                                          (yaml_mp.SpecialAbilityGroupsL10nDefault)
-                                                          (yaml_mp.SpecialAbilityGroupsL10nOverride),
+                                        yaml_mp =>
+                                          mergeBy ("id")
+                                                  (yaml_mp.SpecialAbilityGroupsL10nDefault)
+                                                  (yaml_mp.SpecialAbilityGroupsL10nOverride),
                                         map (toSpecialAbilityGroup),
                                         toMapIntegrity,
                                         second (fromMap)

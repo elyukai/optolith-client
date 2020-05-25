@@ -17,9 +17,9 @@ const toSubject : (x : SubjectL10n) => [number, Record<NumIdName>]
 
 export const toSubjects : YamlFileConverter<number, Record<NumIdName>>
                         = pipe (
-                            yaml_mp => mergeBy("id")
-                                              (yaml_mp.SubjectsL10nDefault)
-                                              (yaml_mp.SubjectsL10nOverride),
+                            yaml_mp => mergeBy ("id")
+                                               (yaml_mp.SubjectsL10nDefault)
+                                               (yaml_mp.SubjectsL10nOverride),
                             map (toSubject),
                             toMapIntegrity,
                             second (fromMap)

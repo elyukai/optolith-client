@@ -2,6 +2,7 @@ import { cnst, ident } from "../../Data/Function"
 import { set } from "../../Data/Lens"
 import { bind, fromMaybe, isJust, Just, Nothing } from "../../Data/Maybe"
 import { Record } from "../../Data/Record"
+import { SetFallbackLocaleAction } from "../Actions/FallbackLocaleActions"
 import { ReceiveInitialDataAction } from "../Actions/InitializationActions"
 import { SetLocaleAction } from "../Actions/LocaleActions"
 import * as ActionTypes from "../Constants/ActionTypes"
@@ -9,7 +10,6 @@ import { Config } from "../Models/Config"
 import { LocaleState, LocaleStateL } from "../Models/LocaleState"
 import { StaticData } from "../Models/Wiki/WikiModel"
 import { pipe } from "../Utilities/pipe"
-import { SetFallbackLocaleAction } from '../Actions/FallbackLocaleActions'
 
 type Action = ReceiveInitialDataAction | SetLocaleAction | SetFallbackLocaleAction
 
@@ -48,7 +48,7 @@ export const localeReducer =
           set (LocaleStateL.fallbackId)
               (action.payload.localeType === "set" ? Just (action.payload.locale) : Nothing)
         )
-  
+
       default:
         return ident
     }

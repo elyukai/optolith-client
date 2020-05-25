@@ -2,14 +2,15 @@
 import Ajv from "ajv"
 import { handleE } from "../../Control/Exception"
 import { Either, fromLeft_, fromRight_, isLeft, Left } from "../../Data/Either"
+import { fromJust, isJust, Maybe } from "../../Data/Maybe"
 import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { parseByFile } from "./YAML/ParseByFile"
 import { readYamlL10n, readYamlUniv } from "./YAML/Parser"
 import { getAllSchemes } from "./YAML/Schemes"
 import { toWiki } from "./YAML/ToRecordsByFile"
 
-export const parseStaticData : (locale : string) 
-                               => (fallbackLocale: string) 
+export const parseStaticData : (locale : string)
+                               => (fallbackLocale : Maybe<string>)
                                => Promise<Either<Error[], StaticDataRecord>>
                              = locale => async fallbackLocale => {
                                console.time ("parseStaticData")
@@ -30,12 +31,14 @@ export const parseStaticData : (locale : string)
 
                                const univ_parser = readYamlUniv (validator)
                                const l10n_parser = readYamlL10n (locale) (validator)
-                               const default_parser = (fallbackLocale != "None") && (fallbackLocale != locale)
-                                                        ? readYamlL10n(fallbackLocale) (validator) 
-                                                        : undefined;
+                               const default_parser = isJust (fallbackLocale)
+                                                      && fromJust (fallbackLocale) !== locale
+                                                      ? readYamlL10n (fromJust (fallbackLocale))
+                                                                     (validator)
+                                                      : undefined
 
-                               const estatic_data_by_file = 
-                                   (default_parser === undefined) 
+                               const estatic_data_by_file =
+                                   (default_parser === undefined)
                                      ? await parseByFile (univ_parser)
                                                          (l10n_parser)
                                                          (undefined)

@@ -159,10 +159,11 @@ export const toSpecialAbilities : (blessings : OrderedMap<string, Record<Blessin
                                   spells =>
                                   spell_enhancements =>
                                   lc_enhancements => pipe (
-                                    (yaml_mp : YamlNameMap) => zipBy ("id")
-                                                                     (yaml_mp.SpecialAbilitiesUniv)
-                                                                     (yaml_mp.SpecialAbilitiesL10nDefault)
-                                                                     (yaml_mp.SpecialAbilitiesL10nOverride),
+                                    (yaml_mp : YamlNameMap) =>
+                                      zipBy ("id")
+                                            (yaml_mp.SpecialAbilitiesUniv)
+                                            (yaml_mp.SpecialAbilitiesL10nDefault)
+                                            (yaml_mp.SpecialAbilitiesL10nOverride),
                                     bindF (pipe (
                                       mapM (toSA (blessings)
                                                  (cantrips)

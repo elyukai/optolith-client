@@ -17,9 +17,10 @@ const toLiturgicalChantGroup : (x : LiturgicalChantGroupL10n) => [number, Record
 
 export const toLiturgicalChantGroups : YamlFileConverter<number, Record<NumIdName>>
                                     = pipe (
-                                        yaml_mp => mergeBy("id")
-                                                          (yaml_mp.LiturgicalChantGroupsL10nDefault)
-                                                          (yaml_mp.LiturgicalChantGroupsL10nOverride),
+                                        yaml_mp =>
+                                          mergeBy ("id")
+                                                  (yaml_mp.LiturgicalChantGroupsL10nDefault)
+                                                  (yaml_mp.LiturgicalChantGroupsL10nOverride),
                                         map (toLiturgicalChantGroup),
                                         toMapIntegrity,
                                         second (fromMap)

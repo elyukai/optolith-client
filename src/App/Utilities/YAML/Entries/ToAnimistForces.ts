@@ -41,10 +41,11 @@ const toAnimistForce : YamlPairConverterE<AnimistForceUniv, AnimistForceL10n, st
 
 export const toAnimistForces : YamlFileConverter<string, Record<AnimistForce>>
                              = pipe (
-                                 (yaml_mp : YamlNameMap) => zipBy ("id")
-                                                                  (yaml_mp.AnimistForcesUniv)
-                                                                  (yaml_mp.AnimistForcesL10nDefault)
-                                                                  (yaml_mp.AnimistForcesL10nOverride),
+                                 (yaml_mp : YamlNameMap) =>
+                                   zipBy ("id")
+                                         (yaml_mp.AnimistForcesUniv)
+                                         (yaml_mp.AnimistForcesL10nDefault)
+                                         (yaml_mp.AnimistForcesL10nOverride),
                                  bindF (pipe (
                                    mapM (toAnimistForce),
                                    bindF (toMapIntegrity),

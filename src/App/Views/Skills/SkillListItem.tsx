@@ -94,7 +94,7 @@ const SkillListItem: React.FC<Props> = props => {
       insertTopMargin={insertTopMargin}
       active={Maybe.elem (id) (selectedForInfo)}
       >
-      <ListItemName name={name} onClick={handleSelectForInfo}/>
+      <ListItemName name={name} onClick={handleSelectForInfo} />
       <ListItemSeparator />
       <SkillGroup
         addText={addText}

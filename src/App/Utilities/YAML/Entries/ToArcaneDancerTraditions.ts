@@ -17,9 +17,10 @@ const toArcaneDancerTradition : (x : ArcaneDancerTraditionL10n) => [number, Reco
 
 export const toArcaneDancerTraditions : YamlFileConverter<number, Record<NumIdName>>
                                       = pipe (
-                                          yaml_mp => mergeBy ("id")
-                                                             (yaml_mp.ArcaneDancerTraditionsL10nDefault)
-                                                             (yaml_mp.ArcaneDancerTraditionsL10nOverride),
+                                          yaml_mp =>
+                                            mergeBy ("id")
+                                                    (yaml_mp.ArcaneDancerTraditionsL10nDefault)
+                                                    (yaml_mp.ArcaneDancerTraditionsL10nOverride),
                                           map (toArcaneDancerTradition),
                                           toMapIntegrity,
                                           second (fromMap)

@@ -5,7 +5,9 @@ import { YamlNameMap } from "../SchemaMap"
 
 export const toUI : (locale : string) => (yaml_mp : YamlNameMap) => L10nRecord
                   = locale => pipe (
-                      yaml_mp => (yaml_mp.UIL10nOverride === undefined) ? (yaml_mp.UIL10nDefault) : (yaml_mp.UIL10nOverride),
+                      yaml_mp => yaml_mp.UIL10nOverride === undefined
+                                 ? yaml_mp.UIL10nDefault
+                                 : yaml_mp.UIL10nOverride,
                       l10n => L10n ({
                         id: locale,
                         ...l10n,

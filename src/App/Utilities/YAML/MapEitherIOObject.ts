@@ -13,16 +13,15 @@ export const mapMObjectIO =
     let err: MapEitherIORejected<L, A> | undefined = undefined
 
     for (const [ key, ioValue ] of Object.entries (obj) as [keyof A, IO<Either<L, any>>][]) {
-      if (ioValue === undefined)
-        continue;
-        
-      const value = await ioValue
+      if (ioValue !== undefined) {
+        const value = await ioValue
 
-      if (isLeft (value)) {
-        err = { ...(err ?? {}), [key]: fromLeft_ (value) }
-      }
-      else {
-        res [key] = fromRight_ (value)
+        if (isLeft (value)) {
+          err = { ...(err ?? {}), [key]: fromLeft_ (value) }
+        }
+        else {
+          res [key] = fromRight_ (value)
+        }
       }
     }
 

@@ -17,9 +17,9 @@ const toSocialStatus : (x : SocialStatusL10n) => [number, Record<NumIdName>]
 
 export const toSocialStatuses : YamlFileConverter<number, Record<NumIdName>>
                                     = pipe (
-                                        yaml_mp => mergeBy("id")
-                                                          (yaml_mp.SocialStatusesL10nDefault)
-                                                          (yaml_mp.SocialStatusesL10nOverride),
+                                        yaml_mp => mergeBy ("id")
+                                                           (yaml_mp.SocialStatusesL10nDefault)
+                                                           (yaml_mp.SocialStatusesL10nOverride),
                                         map (toSocialStatus),
                                         toMapIntegrity,
                                         second (fromMap)

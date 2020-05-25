@@ -17,9 +17,9 @@ const toBrew : (x : BrewL10n) => [number, Record<NumIdName>]
 
 export const toBrews : YamlFileConverter<number, Record<NumIdName>>
                                     = pipe (
-                                        yaml_mp => mergeBy("id")
-                                                          (yaml_mp.BrewsL10nDefault)
-                                                          (yaml_mp.BrewsL10nOverride),
+                                        yaml_mp => mergeBy ("id")
+                                                           (yaml_mp.BrewsL10nDefault)
+                                                           (yaml_mp.BrewsL10nOverride),
                                         map (toBrew),
                                         toMapIntegrity,
                                         second (fromMap)
