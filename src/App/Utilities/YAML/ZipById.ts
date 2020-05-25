@@ -27,7 +27,7 @@ export const mergeBy : <K extends string> (key : K)
                     const result : ArrayValue<typeof base>[] = []
 
                     // collect all possible keys
-                    const allkeys : (string | number)[] = []
+                    let allkeys : (string | number)[] = []
 
                     for (const b of base) {
                       allkeys.push (b[key])
@@ -39,6 +39,8 @@ export const mergeBy : <K extends string> (key : K)
                           allkeys.push (b[key])
                         }
                       }
+                      //remove duplicates
+                      allkeys = allkeys.filter( (item, pos) => allkeys.indexOf(item) === pos )
                     }
 
                     // merge
@@ -84,7 +86,7 @@ export const zipBy : <K extends string> (key : K)
                                 = []
 
                      // collect all possible keys
-                     const allkeys : (string|number)[] = []
+                     let allkeys : (string|number)[] = []
                      for (const b of base) {
                        allkeys.push (b[key])
                      }
@@ -94,6 +96,8 @@ export const zipBy : <K extends string> (key : K)
                            allkeys.push (b[key])
                          }
                        }
+                       //remove duplicates
+                       allkeys = allkeys.filter( (item, pos) => allkeys.indexOf(item) === pos )
                      }
 
                      // merge for all keys
