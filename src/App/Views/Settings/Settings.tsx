@@ -93,7 +93,7 @@ export const Settings: React.FC<Props> = props => {
       <Dropdown
         options={List (
           DropdownOption ({
-            name: translate (staticData) ("settings.systemlanguage"),
+            name: translate (staticData) ("general.none"),
           }),
           ...languages
         )}
