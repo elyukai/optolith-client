@@ -40,7 +40,7 @@ export const mergeBy : <K extends string> (key : K)
                         }
                       }
                       // remove duplicates
-                      allkeys = allkeys.filter ((item, pos) => allkeys.indexOf(item) === pos )
+                      allkeys = allkeys.filter ((item, pos) => allkeys.indexOf (item) === pos)
                     }
 
                     // merge
@@ -97,7 +97,7 @@ export const zipBy : <K extends string> (key : K)
                          }
                        }
                        // remove duplicates
-                       allkeys = allkeys.filter ((item, pos) => allkeys.indexOf(item) === pos )
+                       allkeys = allkeys.filter ((item, pos) => allkeys.indexOf (item) === pos)
                      }
 
                      // merge for all keys
