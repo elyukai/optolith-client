@@ -6,7 +6,7 @@ import * as path from "path"
 import { prerelease } from "semver"
 import * as url from "url"
 import { existsFile } from "./System/IO"
-import windowStateKeeper = require("electron-window-state")
+import windowStateKeeper from "electron-window-state"
 
 app.setAppUserModelId ("lukasobermann.optolith")
 
@@ -47,6 +47,7 @@ const createWindow = async () => {
     show: false,
     webPreferences: {
       nodeIntegration: true,
+      preload: path.join (app.getAppPath (), "app", "esmPreload.js"),
     },
   })
 
@@ -132,6 +133,13 @@ const main = () => {
   // @ts-ignore
   autoUpdater.logger.transports.file.level = "info"
   autoUpdater.autoDownload = false
+
+  // install dev extensions
+  const edi = require ("electron-devtools-installer")
+  edi.default ([
+    edi.REACT_DEVELOPER_TOOLS,
+    edi.REDUX_DEVTOOLS,
+  ])
 
   setDerivedUserDataPath ()
     .then (createWindow)
