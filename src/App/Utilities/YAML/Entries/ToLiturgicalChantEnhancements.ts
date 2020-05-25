@@ -101,7 +101,8 @@ export const toLiturgicalChantEnhancements : YamlFileConverter<number, Record<Se
                                                (yaml_mp : YamlNameMap) =>
                                                  zipBy ("target")
                                                        (yaml_mp.LiturgicalChantEnhancementsUniv)
-                                                       (yaml_mp.LiturgicalChantEnhancementsL10n),
+                                                       (yaml_mp.LiturgicalChantEnhancementsL10nDefault)
+                                                       (yaml_mp.LiturgicalChantEnhancementsL10nOverride),
                                                bindF (pipe (
                                                  mapM (toSE),
                                                  bindF (pipe (

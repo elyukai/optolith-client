@@ -12,6 +12,48 @@ export type ObjectWithKey<K extends string, A extends string | number> = {
   [B in K] : A
 }
 
+/**
+ * merges two arrays by the property name 'key'. If the element exists in main, it
+ * will be used, if not the element from def will be used.
+ */
+export const mergeBy : <K extends string> (key : K)
+                  => <A extends string | number, B extends ObjectWithKey<K, A>> (def: B[])
+                  => (main : B[]|undefined)
+                  => B[]
+                  = key => base => override => {
+                    type A1 = ArrayValue<typeof base> extends ObjectWithKey<string, infer A>
+                      ? A
+                      : never
+                    const result : ArrayValue<typeof base>[] = []
+
+                    // collect all possible keys
+                    let allkeys: (string|number)[] = [];
+                    for (const b of base)
+                      allkeys.push(b[key]);
+                    if (override != undefined)
+                    {
+                      for (const b of base)
+                        if (allkeys.indexOf(b[key]) < 0)
+                          allkeys.push(b[key]); 
+                    }
+
+                    // merge
+                    for (const k of allkeys)
+                    {
+                      const b = base.find (x => (x[key] as A1) === (k as A1))
+                      const o = (override !== undefined) ? override.find (x => (x[key] as A1) === (k as A1)) : undefined;
+
+                      if (o === undefined) {
+                        if (b != undefined)
+                          result.push ( b )
+                      } else {
+                        result.push ( o )
+                      }
+                    }
+
+                    return result;
+                  }
+
 
 /**
  * `zipById key os rs` zips two arrays by the property named `key`. There must
@@ -21,27 +63,47 @@ export type ObjectWithKey<K extends string, A extends string | number> = {
  */
 export const zipBy : <K extends string> (key : K)
                    => <A extends string | number, B extends ObjectWithKey<K, A>> (os : B[])
-                   => <C extends ObjectWithKey<K, A>> (rs : C[])
+                   => <C extends ObjectWithKey<K, A>> (base : C[])
+                   => (override : C[]|undefined)
                    => Either<Error[], [B, C][]>
-                   = key => os => rs => {
+                   = key => os => base => override => {
                      type A1 = ArrayValue<typeof os> extends ObjectWithKey<string, infer A>
-                               ? A
-                               : never
-
-                     const ress : [ArrayValue<typeof os>, ArrayValue<typeof rs>][]
+                       ? A
+                       : never
+                     const ress : [ArrayValue<typeof os>, ArrayValue<typeof override>][]
                                 = []
 
                      const errs : Error[]
                                 = []
 
-                     for (const r of rs) {
-                       const o = os .find (x => (x[key] as A1) === (r[key] as A1))
+                     // collect all possible keys
+                     let allkeys: (string|number)[] = [];
+                     for (const b of base)
+                       allkeys.push(b[key]);
+                     if (override != undefined)
+                     {
+                       for (const b of base)
+                         if (allkeys.indexOf(b[key]) < 0)
+                           allkeys.push(b[key]); 
+                     }
+                    
+                     // merge for all keys
+                     for (const k of allkeys) {
+                      const u = os .find (x => (x[key] as A1) === (k as A1))
+                      const b = base.find (x => (x[key] as A1) === (k as A1))
+                      const o = (override != undefined) ? override.find (x => (x[key] as A1) === (k as A1)) : undefined;
 
-                       if (o === undefined) {
-                         errs.push (new Error (`zipById: No matching entry found for "${JSON.stringify (r)}"`))
+                       if (u === undefined) {
+                         errs.push (new Error (`zipById: No matching entry found for "${JSON.stringify (k)}"`))
+                       }
+                       else if ( o === undefined) {
+                         // no override found, fall back to base.
+                         if (b != undefined)
+                           ress.push([ u, b ])
                        }
                        else {
-                         ress.push ([ o, r ])
+                         // override found
+                         ress.push ([ u, o])
                        }
                      }
 

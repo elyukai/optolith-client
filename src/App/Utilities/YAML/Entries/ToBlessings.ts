@@ -40,7 +40,8 @@ export const toBlessings : YamlFileConverter<string, Record<Blessing>>
                                 = pipe (
                                     (yaml_mp : YamlNameMap) => zipBy ("id")
                                                                      (yaml_mp.BlessingsUniv)
-                                                                     (yaml_mp.BlessingsL10n),
+                                                                     (yaml_mp.BlessingsL10nDefault)
+                                                                     (yaml_mp.BlessingsL10nOverride),
                                     bindF (pipe (
                                       mapM (toBlessing),
                                       bindF (toMapIntegrity),

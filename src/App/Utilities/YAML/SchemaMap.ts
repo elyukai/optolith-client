@@ -192,94 +192,152 @@ export type YamlSchemaId = keyof YamlSchemaMap
                          | "Schema/SourceRefs/SourceRefs.schema.json"
 
 export interface YamlNameMap {
-  AdvantagesL10n : AdvantagesL10n
+  AdvantagesL10nOverride : AdvantagesL10n|undefined
+  AdvantagesL10nDefault : AdvantagesL10n
   AdvantagesUniv : AdvantagesUniv
-  AnimistForcesL10n : AnimistForcesL10n
+  AnimistForcesL10nOverride : AnimistForcesL10n|undefined
+  AnimistForcesL10nDefault : AnimistForcesL10n
   AnimistForcesUniv : AnimistForcesUniv
-  ArcaneBardTraditionsL10n : ArcaneBardTraditionsL10n
-  ArcaneDancerTraditionsL10n : ArcaneDancerTraditionsL10n
-  ArmorTypesL10n : ArmorTypesL10n
-  AspectsL10n : AspectsL10n
-  AttributesL10n : AttributesL10n
-  BlessedTraditionsL10n : BlessedTraditionsL10n
+  ArcaneBardTraditionsL10nOverride : ArcaneBardTraditionsL10n|undefined
+  ArcaneBardTraditionsL10nDefault : ArcaneBardTraditionsL10n
+  ArcaneDancerTraditionsL10nOverride : ArcaneDancerTraditionsL10n|undefined
+  ArcaneDancerTraditionsL10nDefault : ArcaneDancerTraditionsL10n
+  ArmorTypesL10nOverride : ArmorTypesL10n|undefined
+  ArmorTypesL10nDefault : ArmorTypesL10n
+  AspectsL10nOverride : AspectsL10n|undefined
+  AspectsL10nDefault : AspectsL10n
+  AttributesL10nOverride : AttributesL10n|undefined
+  AttributesL10nDefault : AttributesL10n
+  BlessedTraditionsL10nOverride : BlessedTraditionsL10n|undefined
+  BlessedTraditionsL10nDefault : BlessedTraditionsL10n
   BlessedTraditionsUniv : BlessedTraditionsUniv
-  BlessingsL10n : BlessingsL10n
+  BlessingsL10nOverride : BlessingsL10n|undefined
+  BlessingsL10nDefault : BlessingsL10n
   BlessingsUniv : BlessingsUniv
-  BooksL10n : BooksL10n
-  BrewsL10n : BrewsL10n
-  CantripsL10n : CantripsL10n
+  BooksL10nOverride : BooksL10n|undefined
+  BooksL10nDefault : BooksL10n
+  BrewsL10nOverride : BrewsL10n
+  BrewsL10nDefault : BrewsL10n
+  CantripsL10nOverride : CantripsL10n|undefined
+  CantripsL10nDefault : CantripsL10n
   CantripsUniv : CantripsUniv
-  CombatSpecialAbilityGroupsL10n : CombatSpecialAbilityGroupsL10n
-  CombatTechniqueGroupsL10n : CombatTechniqueGroupsL10n
-  CombatTechniquesL10n : CombatTechniquesL10n
+  CombatSpecialAbilityGroupsL10nOverride : CombatSpecialAbilityGroupsL10n|undefined
+  CombatSpecialAbilityGroupsL10nDefault : CombatSpecialAbilityGroupsL10n
+  CombatTechniqueGroupsL10nOverride : CombatTechniqueGroupsL10n|undefined
+  CombatTechniqueGroupsL10nDefault : CombatTechniqueGroupsL10n
+  CombatTechniquesL10nOverride : CombatTechniquesL10n|undefined
+  CombatTechniquesL10nDefault : CombatTechniquesL10n
   CombatTechniquesUniv : CombatTechniquesUniv
-  ConditionsL10n : ConditionsL10n
-  CulturesL10n : CulturesL10n
+  ConditionsL10nOverride : ConditionsL10n|undefined
+  ConditionsL10nDefault : ConditionsL10n
+  CulturesL10nOverride : CulturesL10n|undefined
+  CulturesL10nDefault : CulturesL10n
   CulturesUniv : CulturesUniv
-  CursesL10n : CursesL10n
+  CursesL10nOverride : CursesL10n|undefined
+  CursesL10nDefault : CursesL10n
   CursesUniv : CursesUniv
-  DerivedCharacteristicsL10n : DerivedCharacteristicsL10n
-  DisadvantagesL10n : DisadvantagesL10n
+  DerivedCharacteristicsL10nOverride : DerivedCharacteristicsL10n|undefined
+  DerivedCharacteristicsL10nDefault : DerivedCharacteristicsL10n
+  DisadvantagesL10nOverride : DisadvantagesL10n|undefined
+  DisadvantagesL10nDefault : DisadvantagesL10n
   DisadvantagesUniv : DisadvantagesUniv
-  DominationRitualsL10n : DominationRitualsL10n
+  DominationRitualsL10nOverride : DominationRitualsL10n|undefined
+  DominationRitualsL10nDefault : DominationRitualsL10n
   DominationRitualsUniv : DominationRitualsUniv
-  ElvenMagicalSongsL10n : ElvenMagicalSongsL10n
+  ElvenMagicalSongsL10nOverride : ElvenMagicalSongsL10n|undefined
+  ElvenMagicalSongsL10nDefault : ElvenMagicalSongsL10n
   ElvenMagicalSongsUniv : ElvenMagicalSongsUniv
-  EquipmentL10n : EquipmentL10n
+  EquipmentL10nOverride : EquipmentL10n|undefined
+  EquipmentL10nDefault : EquipmentL10n
   EquipmentUniv : EquipmentUniv
-  EquipmentGroupsL10n : EquipmentGroupsL10n
-  EquipmentPackagesL10n : EquipmentPackagesL10n
+  EquipmentGroupsL10nOverride : EquipmentGroupsL10n|undefined
+  EquipmentGroupsL10nDefault : EquipmentGroupsL10n
+  EquipmentPackagesL10nOverride : EquipmentPackagesL10n|undefined
+  EquipmentPackagesL10nDefault : EquipmentPackagesL10n
   EquipmentPackagesUniv : EquipmentPackagesUniv
-  ExperienceLevelsL10n : ExperienceLevelsL10n
+  ExperienceLevelsL10nOverride : ExperienceLevelsL10n|undefined
+  ExperienceLevelsL10nDefault : ExperienceLevelsL10n
   ExperienceLevelsUniv : ExperienceLevelsUniv
-  EyeColorsL10n : EyeColorsL10n
-  FocusRulesL10n : FocusRulesL10n
+  EyeColorsL10nOverride : EyeColorsL10n|undefined
+  EyeColorsL10nDefault : EyeColorsL10n
+  FocusRulesL10nOverride : FocusRulesL10n|undefined
+  FocusRulesL10nDefault : FocusRulesL10n
   FocusRulesUniv : FocusRulesUniv
-  GeodeRitualsL10n : GeodeRitualsL10n
+  GeodeRitualsL10nOverride : GeodeRitualsL10n|undefined
+  GeodeRitualsL10nDefault : GeodeRitualsL10n
   GeodeRitualsUniv : GeodeRitualsUniv
-  HairColorsL10n : HairColorsL10n
-  LiturgicalChantEnhancementsL10n : LiturgicalChantEnhancementsL10n
+  HairColorsL10nOverride : HairColorsL10n|undefined
+  HairColorsL10nDefault : HairColorsL10n
+  LiturgicalChantEnhancementsL10nOverride : LiturgicalChantEnhancementsL10n|undefined
+  LiturgicalChantEnhancementsL10nDefault : LiturgicalChantEnhancementsL10n
   LiturgicalChantEnhancementsUniv : LiturgicalChantEnhancementsUniv
-  LiturgicalChantGroupsL10n : LiturgicalChantGroupsL10n
-  LiturgicalChantsL10n : LiturgicalChantsL10n
+  LiturgicalChantGroupsL10nOverride : LiturgicalChantGroupsL10n|undefined
+  LiturgicalChantGroupsL10nDefault : LiturgicalChantGroupsL10n
+  LiturgicalChantsL10nOverride : LiturgicalChantsL10n|undefined
+  LiturgicalChantsL10nDefault : LiturgicalChantsL10n
   LiturgicalChantsUniv : LiturgicalChantsUniv
-  MagicalDancesL10n : MagicalDancesL10n
+  MagicalDancesL10nOverride : MagicalDancesL10n|undefined
+  MagicalDancesL10nDefault : MagicalDancesL10n
   MagicalDancesUniv : MagicalDancesUniv
-  MagicalMelodiesL10n : MagicalMelodiesL10n
+  MagicalMelodiesL10nOverride : MagicalMelodiesL10n|undefined
+  MagicalMelodiesL10nDefault : MagicalMelodiesL10n
   MagicalMelodiesUniv : MagicalMelodiesUniv
-  MagicalTraditionsL10n : MagicalTraditionsL10n
+  MagicalTraditionsL10nOverride : MagicalTraditionsL10n|undefined
+  MagicalTraditionsL10nDefault : MagicalTraditionsL10n
   MagicalTraditionsUniv : MagicalTraditionsUniv
-  OptionalRulesL10n : OptionalRulesL10n
-  PactsL10n : PactsL10n
-  ProfessionsL10n : ProfessionsL10n
+  OptionalRulesL10nOverride : OptionalRulesL10n|undefined
+  OptionalRulesL10nDefault : OptionalRulesL10n
+  PactsL10nOverride : PactsL10n|undefined
+  PactsL10nDefault : PactsL10n
+  ProfessionsL10nOverride : ProfessionsL10n|undefined
+  ProfessionsL10nDefault : ProfessionsL10n
   ProfessionsUniv : ProfessionsUniv
-  ProfessionVariantsL10n : ProfessionVariantsL10n
+  ProfessionVariantsL10nOverride : ProfessionVariantsL10n|undefined
+  ProfessionVariantsL10nDefault : ProfessionVariantsL10n
   ProfessionVariantsUniv : ProfessionVariantsUniv
-  PropertiesL10n : PropertiesL10n
-  RacesL10n : RacesL10n
+  PropertiesL10nOverride : PropertiesL10n|undefined
+  PropertiesL10nDefault : PropertiesL10n
+  RacesL10nOverride : RacesL10n|undefined
+  RacesL10nDefault : RacesL10n
   RacesUniv : RacesUniv
-  RaceVariantsL10n : RaceVariantsL10n
+  RaceVariantsL10nOverride : RaceVariantsL10n|undefined
+  RaceVariantsL10nDefault : RaceVariantsL10n
   RaceVariantsUniv : RaceVariantsUniv
-  ReachesL10n : ReachesL10n
-  RogueSpellsL10n : RogueSpellsL10n
+  ReachesL10nOverride : ReachesL10n|undefined
+  ReachesL10nDefault : ReachesL10n
+  RogueSpellsL10nOverride : RogueSpellsL10n|undefined
+  RogueSpellsL10nDefault : RogueSpellsL10n
   RogueSpellsUniv : RogueSpellsUniv
-  SkillGroupsL10n : SkillGroupsL10n
-  SkillsL10n : SkillsL10n
+  SkillGroupsL10nOverride : SkillGroupsL10n|undefined
+  SkillGroupsL10nDefault : SkillGroupsL10n
+  SkillsL10nOverride : SkillsL10n|undefined
+  SkillsL10nDefault : SkillsL10n
   SkillsUniv : SkillsUniv
-  SocialStatusesL10n : SocialStatusesL10n
-  SpecialAbilitiesL10n : SpecialAbilitiesL10n
+  SocialStatusesL10nOverride : SocialStatusesL10n|undefined
+  SocialStatusesL10nDefault : SocialStatusesL10n
+  SpecialAbilitiesL10nOverride : SpecialAbilitiesL10n|undefined
+  SpecialAbilitiesL10nDefault : SpecialAbilitiesL10n
   SpecialAbilitiesUniv : SpecialAbilitiesUniv
-  SpecialAbilityGroupsL10n : SpecialAbilityGroupsL10n
-  SpellEnhancementsL10n : SpellEnhancementsL10n
+  SpecialAbilityGroupsL10nOverride : SpecialAbilityGroupsL10n|undefined
+  SpecialAbilityGroupsL10nDefault : SpecialAbilityGroupsL10n
+  SpellEnhancementsL10nOverride : SpellEnhancementsL10n|undefined
+  SpellEnhancementsL10nDefault : SpellEnhancementsL10n
   SpellEnhancementsUniv : SpellEnhancementsUniv
-  SpellGroupsL10n : SpellGroupsL10n
-  SpellsL10n : SpellsL10n
+  SpellGroupsL10nOverride : SpellGroupsL10n|undefined
+  SpellGroupsL10nDefault : SpellGroupsL10n
+  SpellsL10nOverride : SpellsL10n|undefined
+  SpellsL10nDefault : SpellsL10n
   SpellsUniv : SpellsUniv
-  StatesL10n : StatesL10n
-  SubjectsL10n : SubjectsL10n
-  TribesL10n : TribesL10n
-  UIL10n : UIL10n
-  ZibiljaRitualsL10n : ZibiljaRitualsL10n
+  StatesL10nOverride : StatesL10n|undefined
+  StatesL10nDefault : StatesL10n
+  SubjectsL10nOverride : SubjectsL10n|undefined
+  SubjectsL10nDefault : SubjectsL10n
+  TribesL10nOverride : TribesL10n|undefined
+  TribesL10nDefault : TribesL10n
+  UIL10nOverride : UIL10n|undefined
+  UIL10nDefault : UIL10n
+  ZibiljaRitualsL10nOverride : ZibiljaRitualsL10n|undefined
+  ZibiljaRitualsL10nDefault : ZibiljaRitualsL10n
   ZibiljaRitualsUniv : ZibiljaRitualsUniv
 }
 

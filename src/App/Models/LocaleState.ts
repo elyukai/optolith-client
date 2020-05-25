@@ -8,6 +8,8 @@ export interface LocaleState {
   "@@name": "LocaleState"
   id: Maybe<string>
   type: "default" | "set"
+  fallbackId: Maybe<string>
+  fallbackType: "default" | "set"
   messages: Maybe<L10nRecord>
   availableLangs: OrderedMap<string, Record<Locale>>
 }
@@ -17,6 +19,8 @@ export const LocaleState =
               <LocaleState> ({
                 id: Nothing,
                 type: "default",
+                fallbackId: Nothing,
+                fallbackType: "default",
                 messages: Nothing,
                 availableLangs: OrderedMap.empty,
               })
