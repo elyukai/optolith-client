@@ -10,14 +10,46 @@ import * as Ley_Int$OptolithClient from "../../../Data/Ley_Int.bs.js";
 import * as Ley_List$OptolithClient from "../../../Data/Ley_List.bs.js";
 import * as ClassNames$OptolithClient from "../../Utilities/ClassNames.bs.js";
 import * as Ley_Option$OptolithClient from "../../../Data/Ley_Option.bs.js";
+import * as ReactUtils$OptolithClient from "../../Utilities/ReactUtils.bs.js";
+import * as ScrollView$OptolithClient from "./ScrollView.bs.js";
+
+function Dropdown$Item(Props) {
+  var active = Props.active;
+  var option = Props.option;
+  var onChange = Props.onChange;
+  var disabled = Props.disabled;
+  var isActive = Caml_obj.caml_equal(active, option.value);
+  var handleClick = React.useCallback((function (param) {
+          if (!disabled && !isActive) {
+            return Curry._1(onChange, option.value);
+          }
+          
+        }), /* tuple */[
+        isActive,
+        option,
+        onChange,
+        disabled
+      ]);
+  return React.createElement("div", {
+              className: ClassNames$OptolithClient.fold(/* :: */[
+                    ClassNames$OptolithClient.cond("active", isActive),
+                    /* [] */0
+                  ]),
+              onClick: handleClick
+            }, ReactUtils$OptolithClient.s(option.label));
+}
+
+var Item = {
+  make: Dropdown$Item
+};
 
 function Dropdown(Props) {
   var name = Props.name;
   var label = Props.label;
   var options = Props.options;
-  Props.onChange;
-  var disabled = Props.disabled;
+  var valueToKey = Props.valueToKey;
   var onChange = Props.onChange;
+  var disabled = Props.disabled;
   var active = Props.active;
   var placeholder = Props.placeholder;
   var match = React.useState((function () {
@@ -29,8 +61,9 @@ function Dropdown(Props) {
           return /* Bottom */1;
         }));
   var setPosition = match$1[1];
+  var position = match$1[0];
   var containerRef = React.useRef(null);
-  React.useCallback((function (param) {
+  var handleSwitch = React.useCallback((function (param) {
           var maybeRef = containerRef.current;
           if (!(maybeRef == null) && !isOpen) {
             var height = Ley_Int$OptolithClient.min(166, Caml_int32.imul(Ley_List$OptolithClient.Foldable.length(options), 33) + 1 | 0);
@@ -50,16 +83,7 @@ function Dropdown(Props) {
         isOpen,
         options
       ]);
-  React.useCallback((function (option) {
-          Curry._1(setIsOpen, (function (param) {
-                  return false;
-                }));
-          return Curry._1(onChange, option);
-        }), /* tuple */[
-        setIsOpen,
-        onChange
-      ]);
-  React.useCallback((function (option) {
+  var handleChange = React.useCallback((function (option) {
           Curry._1(setIsOpen, (function (param) {
                   return false;
                 }));
@@ -91,29 +115,61 @@ function Dropdown(Props) {
                     
                   });
         }), [handleOutsideClick]);
-  var active$1 = Ley_List$OptolithClient.Foldable.find((function (option) {
+  var activeOption = Ley_List$OptolithClient.Foldable.find((function (option) {
           return Caml_obj.caml_equal(option.value, active);
         }), options);
-  Ley_Option$OptolithClient.fromOption("", Ley_Option$OptolithClient.Alternative.$less$pipe$great(Ley_Option$OptolithClient.Functor.$less$amp$great(active$1, (function (x) {
+  var activetext = Ley_Option$OptolithClient.fromOption("", Ley_Option$OptolithClient.Alternative.$less$pipe$great(Ley_Option$OptolithClient.Functor.$less$amp$great(activeOption, (function (x) {
                   return x.label;
                 })), placeholder));
+  var overlayElement = React.createElement("div", {
+        className: "dropdown-overlay"
+      }, React.createElement(ScrollView$OptolithClient.make, {
+            children: ReactUtils$OptolithClient.list(Ley_List$OptolithClient.map((function (option) {
+                        return React.createElement(Dropdown$Item, {
+                                    active: active,
+                                    option: option,
+                                    onChange: handleChange,
+                                    disabled: disabled,
+                                    key: Curry._1(valueToKey, option.value)
+                                  });
+                      }), options))
+          }));
+  var placeholderElement = React.createElement("div", {
+        style: {
+          height: "0px"
+        }
+      });
   return React.createElement("div", {
+              ref: containerRef,
               className: ClassNames$OptolithClient.fold(/* :: */[
-                    "dropdown",
+                    ClassNames$OptolithClient.safe("dropdown"),
                     /* :: */[
-                      ClassNames$OptolithClient.cond("disabled", disabled),
-                      /* [] */0
+                      ClassNames$OptolithClient.safe(position ? "dropdown--bottom" : "dropdown--top"),
+                      /* :: */[
+                        ClassNames$OptolithClient.cond("disabled", disabled),
+                        /* [] */0
+                      ]
                     ]
                   ])
             }, React.createElement(Label$OptolithClient.make, {
                   name: name,
                   labelText: label
-                }));
+                }), React.createElement("div", undefined, position || !isOpen ? placeholderElement : overlayElement, React.createElement("div", {
+                      className: ClassNames$OptolithClient.fold(/* :: */[
+                            ClassNames$OptolithClient.safe("value"),
+                            /* :: */[
+                              ClassNames$OptolithClient.cond("placeholder", Ley_Option$OptolithClient.isNone(activeOption)),
+                              /* [] */0
+                            ]
+                          ]),
+                      onClick: handleSwitch
+                    }, ReactUtils$OptolithClient.s(activetext)), position && isOpen ? overlayElement : placeholderElement));
 }
 
 var make = Dropdown;
 
 export {
+  Item ,
   make ,
   
 }

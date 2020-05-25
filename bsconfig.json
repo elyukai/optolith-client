@@ -32,7 +32,8 @@
     "@glennsl/bs-json",
     "@glennsl/bs-jest",
     "bs-webapi",
-    "reason-react"
+    "reason-react",
+    "reductive"
   ],
   "reason": {
     "react-jsx": 3

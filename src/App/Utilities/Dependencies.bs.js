@@ -48,5 +48,9 @@ function flattenActivatableSkill(getValueForTargetId, id, dependencies) {
               }), dependencies);
 }
 
-export { flattenSkill, flattenActivatableSkill, };
+export {
+  flattenSkill ,
+  flattenActivatableSkill ,
+  
+}
 /* No side effect */

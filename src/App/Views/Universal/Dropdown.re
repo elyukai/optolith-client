@@ -9,6 +9,28 @@ type dropdownOption('a) = {
   value: 'a,
 };
 
+module Item = {
+  [@react.component]
+  let make = (~active, ~option, ~onChange, ~disabled) => {
+    let isActive = active == option.value;
+
+    let handleClick =
+      React.useCallback4(
+        _ =>
+          if (!disabled && !isActive) {
+            onChange(option.value);
+          },
+        (isActive, option, onChange, disabled),
+      );
+
+    <div
+      className={ClassNames.fold([ClassNames.cond("active", isActive)])}
+      onClick=handleClick>
+      {s(option.label)}
+    </div>;
+  };
+};
+
 type position =
   | Top
   | Bottom;
@@ -19,9 +41,9 @@ let make =
       ~name,
       ~label,
       ~options,
+      ~valueToKey,
       ~onChange,
       ~disabled,
-      ~onChange,
       ~active,
       ~placeholder=?,
     ) => {
@@ -56,15 +78,6 @@ let make =
         setIsOpen((!));
       },
       (isOpen, options),
-    );
-
-  let handleChange =
-    React.useCallback2(
-      option => {
-        setIsOpen(_ => false);
-        onChange(option);
-      },
-      (setIsOpen, onChange),
     );
 
   let handleChange =
@@ -129,17 +142,65 @@ let make =
     [|handleOutsideClick|],
   );
 
-  let active = Foldable.find(option => option.value == active, options);
+  let activeOption = Foldable.find(option => option.value == active, options);
 
   let activetext =
-    active <&> (x => x.label) <|> placeholder |> Ley.Option.fromOption("");
+    activeOption
+    <&> (x => x.label)
+    <|> placeholder
+    |> Ley.Option.fromOption("");
+
+  let overlayElement =
+    <div className="dropdown-overlay">
+      <ScrollView>
+        {options
+         |> map(option =>
+              <Item
+                key={option.value |> valueToKey}
+                active
+                disabled
+                option
+                onChange=handleChange
+              />
+            )
+         |> list}
+      </ScrollView>
+    </div>;
+
+  let placeholderElement =
+    <div style={ReactDOMRe.Style.make(~height="0px", ())} />;
 
   <div
     className={ClassNames.fold([
-      Some("dropdown"),
+      ClassNames.safe("dropdown"),
+      ClassNames.safe(
+        switch (position) {
+        | Top => "dropdown--top"
+        | Bottom => "dropdown--bottom"
+        },
+      ),
       ClassNames.cond("disabled", disabled),
-    ])}>
+    ])}
+    ref={ReactDOMRe.Ref.domRef(containerRef)}>
     <Label name labelText=label />
+    <div>
+      {switch (position) {
+       | Top when isOpen => overlayElement
+       | _ => placeholderElement
+       }}
+      <div
+        onClick=handleSwitch
+        className={ClassNames.fold([
+          ClassNames.safe("value"),
+          ClassNames.cond("placeholder", Ley.Option.isNone(activeOption)),
+        ])}>
+        {s(activetext)}
+      </div>
+      {switch (position) {
+       | Bottom when isOpen => overlayElement
+       | _ => placeholderElement
+       }}
+    </div>
   </div>;
   // <select name id=name onChange>
   //   {options
